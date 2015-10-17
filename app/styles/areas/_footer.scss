@@ -1,0 +1,32 @@
+.footer {
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(row);
+  @include justify-content(flex-start);
+
+  &__db {
+    @include flex(0 0 auto);
+    @include area-selectable(top);
+    padding: $medium-padding;
+    white-space: nowrap;
+    &.footer__db--dimmed {
+      @include th {
+        color: muted-color();
+        &:hover {
+          color: medium-color();
+        }
+      }
+    }
+
+    &--expanded {
+      @include flex(1);
+    }
+  }
+
+  &__btn {
+    @include flex(0 0 auto);
+    @include area-selectable(top);
+    padding: $base-padding;
+    font-size: 1.4em;
+  }
+}

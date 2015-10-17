@@ -1,0 +1,18 @@
+<div class="menu__item <%=
+        active ? 'menu__item--active' : '' %> <%=
+        disabled ? 'menu__item--disabled' : '' %> <%=
+        options && options.length ? 'menu__item--with-options' : '' %> <%=
+        cls ? cls : '' %>">
+    <div class="menu__item-body">
+        <i class="menu__item-icon fa <%= icon ? 'fa-' + icon : 'menu__item-icon--no-icon' %>"></i><span
+            class="menu__item-title">&nbsp;<%- title %></span>
+        <% if (options) { %>
+        <div class="menu__item-options">
+            <% options.forEach(function(option) { %>
+            <div class="menu__item-option <%= option.get('cls') ? option.get('cls') : '' %>"
+                    data-value="<%- option.get('value') %>"><%- option.get('title') %></div>
+            <% }); %>
+        </div>
+        <% } %>
+    </div>
+</div>

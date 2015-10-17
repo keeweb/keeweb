@@ -1,0 +1,16 @@
+.empty-block {
+  @include display(flex);
+  @include align-items(center);
+  @include flex-direction(column);
+  @include justify-content(center);
+  @include size(100%);
+  @include position(absolute, 0 null null 0);
+  text-align: center;
+  &__icon {
+    font-size: 80px;
+    margin-bottom: 10px;
+  }
+  &__text, &__title {
+    padding: 0 $base-padding-h;
+  }
+}

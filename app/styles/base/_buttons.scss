@@ -1,0 +1,88 @@
+#{$all-buttons} {
+  appearance: none;
+  border-radius: $base-border-radius;
+  cursor: pointer;
+  display: inline-block;
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 600;
+  line-height: 1;
+  padding: $small-spacing $base-spacing;
+  text-decoration: none;
+  transition: background-color border-color $base-duration $base-timing;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  outline: none;
+  min-width: 80px;
+
+  @include th {
+    border: 1px solid action-color();
+    background-color: action-color();
+    color: text-color();
+
+    &.btn-error, &.btn-silent {
+      border-color: base-border-color();
+      background-color: transparent;
+    }
+
+    &:hover {
+      border-color: action-background-color-focus();
+      background-color: action-background-color-focus();
+      &.btn-error {
+        border-color: error-background-color-focus();
+        background-color: rgba(error-background-color-focus(), .1);
+      }
+      &.btn-silent {
+        border-color: action-background-color-focus();
+        background-color: rgba(action-background-color-focus(), .1);
+      }
+      color: text-color();
+    }
+
+    &:active {
+      border-color: action-background-color-active();
+      background-color: action-background-color-active();
+      &.btn-error {
+        border-color: error-background-color-active();
+        background-color: rgba(error-background-color-active(), .15);
+      }
+      &.btn-silent {
+        border-color: action-background-color-active();
+        background-color: rgba(action-background-color-active(), .15);
+      }
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      &:hover {
+        border-color: action-color();
+        background-color: action-color();
+        &.btn-error {
+          border-color: error-color();
+          background-color: transparent;
+        }
+        &.btn-silent {
+          border-color: action-color();
+          background-color: transparent;
+        }
+      }
+    }
+  }
+}
+
+@mixin icon-btn($error: false) {
+  @include area-selectable(bottom);
+  padding: .7em .6em 0;
+  height: 1.6em;
+  >i {
+    display: block;
+  }
+  @if $error {
+    &:hover {
+      @include th { border-color: error-color(); }
+    }
+  }
+}

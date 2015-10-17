@@ -1,0 +1,11 @@
+<h1><i class="fa fa-cog"></i> General Settings</h1>
+<div>
+    <form>
+        <label for="settings__general-theme">Theme:</label>
+        <select class="settings__general-theme settings__select" id="settings__general-theme">
+            <% _.forEach(themes, function(name, key) { %>
+            <option value="<%= key %>" <%= key === activeTheme ? 'selected' : '' %>><%- name %></option>
+            <% }); %>
+        </select>
+    </form>
+</div>

@@ -1,0 +1,51 @@
+.modal {
+  @include position(absolute, 0 null null 0);
+  @include size(100vw 100vh);
+  @include th { background-color: rgba(background-color(), .9); }
+  z-index: $z-index-modal;
+
+  transition: background-color $base-duration $base-timing;
+  &.modal--hidden {
+    @include th { background-color: rgba(background-color(), 0); }
+  }
+
+  &__content {
+    @include size(100%);
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(column);
+    @include justify-content(center);
+
+    transition: all $base-duration $base-timing;
+    .modal--hidden & {
+      transform: scale(0.01);
+      opacity: 0;
+    }
+  }
+
+  $modal-width: 40%;
+  &__icon {
+    font-size: 6em;
+    text-align: center;
+  }
+  &__header {
+    @include user-select(text);
+    text-align: center;
+    font-size: $small-header-font-size;
+  }
+  &__body {
+    @include align-self(center);
+    @include user-select(text);
+    text-align: left;
+    width: $modal-width;
+    margin: $base-spacing;
+  }
+  &__buttons {
+    @include align-self(center);
+    text-align: right;
+    width: $modal-width;
+    button ~ button {
+      margin-left: $small-spacing;
+    }
+  }
+}

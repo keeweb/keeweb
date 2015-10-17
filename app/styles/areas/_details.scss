@@ -1,0 +1,449 @@
+.details {
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+  @include user-select(text);
+  width: 100%;
+
+  &__header {
+    @include display(flex);
+    padding-bottom: $small-spacing;
+    overflow: visible;
+    min-height: 40px;
+    &-title {
+      @include user-select(text);
+      @include flex(1);
+      cursor: text;
+      margin: 0 6px;
+      padding: 3px 6px 1px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-radius: $base-border-radius;
+      border: 1px solid transparent;
+      position: relative;
+      top: -2px;
+      &:hover {
+        transition: border-color $base-duration $base-timing;
+        @include th {
+          border: 1px solid light-border-color();
+        }
+      }
+    }
+    input.details__header-title-input {
+      @include user-select(text);
+      @include flex(1);
+      margin: 0 6px;
+      padding: 0 6px;
+      font-size: $large-header-font-size;
+      font-weight: bold;
+      position: relative;
+      top: -2px;
+    }
+    &-color, &-icon {
+      @include user-select(none);
+      @include area-selectable();
+      display: inline;
+      font-size: $large-header-font-size;
+      height: 1em;
+      padding-top: .1em;
+    }
+    &-icon {
+      width: 1.4em;
+      text-align: center;
+    }
+  }
+
+  &__colors-popup {
+    @include user-select(none);
+    display: none;
+    position: absolute;
+    z-index: $z-index-no-modal;
+    border-radius: $base-border-radius;
+    @include th {
+      background: background-color();
+      box-shadow: 0 0 3px background-color();
+    }
+    top: 13px;
+    left: 6px;
+    font-size: $large-header-font-size;
+    &:hover, .details__header-color:hover & {
+      display: block;
+    }
+    &-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      display: block;
+      position: relative;
+      &--active {
+        &:before {
+          content: $fa-var-bookmark;
+        }
+      }
+      &:hover {
+        &:after {
+          content: $fa-var-bookmark;
+          opacity: .3;
+          position: absolute;
+          left: 12px;
+          top: 8px;
+        }
+      }
+    }
+  }
+
+  &__body {
+    @include flex(1);
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(column);
+    @include justify-content(flex-start);
+    @include flex-wrap(wrap);
+    @include scrollbar-on-hover;
+    position: relative;
+    overflow: hidden;
+
+    .details--drag & { display: none; }
+
+    >.scroller {
+      @include flex(1);
+      @include display(flex);
+      @include align-items(stretch);
+      @include flex-direction(row);
+      @include justify-content(flex-start);
+      @include flex-wrap(wrap);
+      overflow-x: hidden;
+      padding-top: 3px;
+    }
+
+    &-fields {
+      @include flex(1 0 auto);
+    }
+
+    &-aside {
+      @include flex(0 0 auto);
+      @include display(flex);
+      @include align-items(stretch);
+      @include flex-direction(column);
+      @include justify-content(flex-start);
+    }
+  }
+
+  &__field {
+    $details-field-line-height: 18px;
+
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(row);
+    @include justify-content(flex-start);
+    margin-bottom: .5em;
+
+    &-label {
+      @include th { color: muted-color(); }
+      @include user-select(text);
+      width: 7em;
+      text-align: right;
+      cursor: pointer;
+      padding-right: 1em;
+      border: 1px solid transparent;
+      line-height: $details-field-line-height;
+      &:hover {
+        @include th { color: medium-color(); }
+      }
+      .details__field--can-edit-title & {
+        cursor: text;
+      }
+      >input {
+        margin: 0;
+        padding: 0 $base-padding-h;
+        line-height: $details-field-line-height;
+        height: $details-field-line-height;
+        @include th { color: text-color(); }
+      }
+    }
+    &-value {
+      @include flex(1);
+      @include user-select(text);
+      @include align-self(flex-start);
+      cursor: text;
+      padding: 0 $base-padding-h;
+      border: 1px solid transparent;
+      min-height: $details-field-line-height;
+      box-sizing: border-box;
+      line-height: $details-field-line-height;
+      .details__field--editable & {
+        border-radius: $base-border-radius;
+        &:hover {
+          transition: border-color $base-duration $base-timing;
+          @include th {
+            border: 1px solid light-border-color();
+            box-shadow: 0 0 3px form-box-shadow-color();
+          }
+        }
+      }
+      .details__field--multiline & {
+        width: 0;
+        word-break: break-all;
+        white-space: pre-wrap;
+      }
+      .details__field--edit &,
+      .details__field--edit.details__field--editable &,
+      .details__field--edit.details__field--editable:hover & {
+        border: 0 solid transparent;
+        padding: 0;
+      }
+      >input, >textarea {
+        margin: 0;
+        padding: 0 $base-padding-h;
+        line-height: $details-field-line-height;
+        height: 20px;
+      }
+      >textarea {
+        display: block;
+        resize: none;
+        line-height: 1.5em;
+        overflow: hidden;
+      }
+      .details__body-aside & {
+        @include th { color: muted-color(); }
+        a { @include th { color: muted-color(); } }
+        width: 12em;
+        @include flex(0 0 auto);
+      }
+    }
+  }
+
+  &__attachments {
+    @include flex(1);
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(row);
+    @include justify-content(flex-end);
+    @include flex-wrap(nowrap);
+    @include user-select(none);
+    overflow: hidden;
+    white-space: nowrap;
+    .details--drag & { display: none; }
+  }
+
+  &__attachment {
+    @include user-select(none);
+    @include area-selectable();
+    @include align-self(flex-end);
+    @include flex(0 1 auto);
+    @include th { border: light-border(); }
+    margin-right: $small-spacing;
+    padding: $base-padding;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    i { margin-right: .4em; }
+    &--active {
+      @include th { border-bottom: 1px solid action-color(); };
+    }
+  }
+
+  &__attachment-add {
+    @include user-select(none);
+    @include align-self(flex-end);
+    @include flex(0 0 auto);
+    @include th { color: muted-color(); }
+    border: 1px solid transparent;
+    margin-right: $small-spacing;
+    padding: $base-padding;
+    text-align: center;
+    overflow: hidden;
+    transition: color $base-duration $base-timing;
+    &:hover {
+      @include th { color: medium-color(); }
+    }
+    &-title {
+      display: none;
+      transition: color $slow-transition-out;
+      margin-right: .4em;
+      color: transparent;
+      .details__attachment-add:hover & {
+        display: inline;
+        transition: color $slow-transition-in;
+        @include th { color: muted-color(); }
+      }
+    }
+  }
+
+  &__attachment-preview {
+    margin-right: $base-padding-h;
+    width: 100%;
+    &-data {
+      > image {
+        width: 100%;
+      }
+      > pre {
+        white-space: pre-wrap;
+      }
+    }
+    &-download-text {
+      @include user-select(none);
+      position: absolute;
+      bottom: $base-padding-v;
+      right: $base-padding-h;
+      white-space: nowrap;
+      opacity: .15;
+    }
+    &-icon {
+      display: none;
+    }
+    &--empty {
+      @include display(flex);
+      @include flex-direction(column);
+      @include flex(1 0 auto);
+      @include justify-content(center);
+      @include align-self(center);
+      @include align-items(center);
+      text-align: center;
+      .details__attachment-preview-icon {
+        display: block;
+        font-size: 10em;
+      }
+      .details__attachment-preview-download-text {
+        position: static;
+        margin-top: 2em;
+        opacity: 1;
+      }
+    }
+  }
+
+  &__buttons {
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(row);
+    @include justify-content(flex-start);
+    margin-top: $base-padding-v;
+
+    .details--drag & { display: none; }
+
+    &-trash {
+      @include icon-btn($error:true);
+      @include align-self(flex-end);
+      margin-right: 10px;
+    }
+
+    button ~ button {
+      margin-left: $small-spacing;
+    }
+  }
+
+  &__icons {
+    @include display(flex);
+    @include align-items(flex-start);
+    @include flex-direction(row);
+    @include justify-content(flex-start);
+    @include flex-wrap(wrap);
+    @include user-select(none);
+    &-icon {
+      @include area-selectable(bottom);
+      width: 26px;
+      text-align: center;
+      font-size: 20px;
+      padding: 10px;
+      &.details__icons-icon--active {
+        @include area-selected(bottom);
+      }
+    }
+  }
+
+  &__history {
+    @include flex(1 0 auto);
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(column);
+    @include justify-content(flex-start);
+    margin-right: $base-padding-h;
+    &-top {
+      @include display(flex);
+      @include align-items(stretch);
+      @include flex-direction(row);
+      @include justify-content(flex-start);
+    }
+    &-desc {
+      @include user-select(none);
+    }
+    &-timeline {
+      @include flex(1 0 auto);
+      position: relative;
+      height: 44px;
+      margin-left: 5px;
+      &-axis {
+        width: 100%;
+        position: absolute;
+        top: 9px;
+        @include th { border-bottom: light-border(); }
+      }
+      &-item {
+        position: absolute;
+        top: 4px;
+        cursor: pointer;
+        transform: translateX(-48%);
+        &:hover {
+          @include th { color: mix(action-color(), text-color(), 50%); }
+        }
+        &--active, &--active:hover {
+          z-index: $z-index-no-modal;
+          cursor: default;
+          @include th { color: action-color(); }
+        }
+      }
+      &-label {
+        position: absolute;
+        top: 16px;
+        white-space: nowrap;
+        transform: translateX(-50%);
+        @include th { color: muted-color(); }
+      }
+    }
+    &-arrow-prev, &-arrow-next {
+      @include transform(scaleX(2));
+      @include transform-origin(left top);
+      cursor: pointer;
+      position: absolute;
+      top: 30px;
+      font-size: 14px;
+      &:hover { @include th { color: mix(action-color(), text-color(), 50%); } }
+    }
+    &-arrow-prev {
+      left: -5px;
+    }
+    &-arrow-next {
+      right: 5px;
+    }
+    &-close {
+      margin-left: 20px;
+    }
+    &-body {
+      @include flex(1 1 auto);
+    }
+    &-buttons {
+      @include user-select(none);
+      @include align-self(flex-end);
+      margin-bottom: $base-padding-v;
+    }
+  }
+
+  &__dropzone {
+    display: none;
+    .details--drag & {
+      @include display(flex);
+      @include flex-direction(column);
+      @include flex(1 0 auto);
+      @include justify-content(center);
+      @include align-self(center);
+      @include align-items(center);
+      text-align: center;
+    }
+    &-icon {
+      font-size: 10em;
+    }
+    &-header {
+      margin-top: 1em;
+    }
+  }
+}

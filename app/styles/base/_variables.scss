@@ -1,0 +1,50 @@
+// Typography
+$base-font-family: system, -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+$font-family-text-thin: system, -apple-system, ".SFNSText-Light", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+$heading-font-family: $base-font-family;
+
+// Font Sizes
+$base-font-size: 12px;
+
+// Line height
+$base-line-height: 1.5;
+$heading-line-height: 1.2;
+
+// Other Sizes
+$base-border-radius: 1px;
+$base-spacing: $base-line-height * 1em;
+$small-spacing: $base-spacing / 2;
+$base-z-index: 0;
+$base-padding-v: .4em;
+$base-padding-h: .8em;
+$base-padding: $base-padding-v $base-padding-h;
+$medium-padding: .8em 1em;
+$base-padding-px: 4px 8px;
+
+// Borders
+@function base-border() { @return 1px solid base-border-color(); };
+@function light-border() { @return 1px solid light-border-color(); };
+@function selected-border-width() { @return 3px; }
+@function selected-border() { @return selected-border-width() solid th(action-color); }
+@function selected-hover-border() { @return 1px solid action-color(); }
+@function selected-transparent-border() { @return 1px solid transparent; }
+
+// Forms
+@function form-box-shadow() { @return inset 0 1px 3px form-box-shadow-color(); }
+@function form-box-shadow-focus() { @return form-box-shadow(), 0 0 3px form-box-shadow-color-focus(); }
+@function form-box-shadow-focus-error() { @return form-box-shadow(), 0 0 3px form-box-shadow-color-focus-error(); }
+
+// Shadows
+@function dropdown-box-shadow() { @return 0 0 50px dropdown-box-shadow-color(); }
+
+// Animations
+$base-duration: 150ms;
+$base-timing: ease;
+$slow-transition-in: $base-duration*2 ease-in;
+$slow-transition-out: $base-duration ease-out;
+
+// Math
+$sqrt2: 1.41;
+
+$z-index-no-modal:  10000;
+$z-index-modal:     100000;

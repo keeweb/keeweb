@@ -1,0 +1,38 @@
+{
+  "name": "keepass-webapp",
+  "version": "0.0.1",
+  "authors": [
+    "Antelle <dmitryvit@gmail.com>"
+  ],
+  "description": "KeePass web app",
+  "main": "app/index.html",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "keepass"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/antelle/keepass-webapp",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "private": true,
+  "dependencies": {
+    "backbone": "~1.2.3",
+    "baron": "~0.7.11",
+    "bourbon": "~4.2.5",
+    "dropbox": "antelle/dropbox-js#0.10.3",
+    "font-awesome": "~4.4.0",
+    "install": "~1.0.4",
+    "kdbxweb": "~0.1.7",
+    "normalize.css": "~3.0.3",
+    "pikaday": "~1.3.3",
+    "zepto": "~1.1.6",
+    "FileSaver.js": "eligrey/FileSaver.js"
+  }
+}

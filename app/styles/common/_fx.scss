@@ -1,0 +1,28 @@
+.hide {
+  display: none !important;
+}
+
+
+.hide-by-pos {
+  position: absolute;
+  top: -10000px;
+  left: -10000px;
+}
+
+.invisible {
+  visibility: hidden !important;
+}
+
+.flip3d {
+  @include animation(flip3d 1s linear 0s infinite);
+  @include transform-style(perspective-3d);
+}
+
+@include keyframes(flip3d) {
+  from {
+    @include transform(rotateY(0));
+  }
+  to {
+    @include transform(rotateY(360deg));
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "keepass-webapp",
+  "version": "1.0.0",
+  "description": "KeePass web app",
+  "main": "Gulpfile.js",
+  "repository": "https://github.com/antelle/keepass-webapp",
+  "dependencies": {},
+  "devDependencies": {
+    "base64-loader": "^1.0.0",
+    "cssnano": "^2.6.1",
+    "ejs-loader": "^0.2.1",
+    "exports-loader": "^0.6.2",
+    "grunt": "^0.4.5",
+    "grunt-bower-install-simple": "^1.1.4",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.8.1",
+    "grunt-contrib-htmlmin": "^0.4.0",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-inline-alt": "^0.3.10",
+    "grunt-postcss": "^0.6.0",
+    "grunt-sass": "^1.0.0",
+    "grunt-webpack": "^1.0.11",
+    "load-grunt-tasks": "^3.2.0",
+    "string-replace-webpack-plugin": "0.0.2",
+    "time-grunt": "^1.2.1",
+    "uglify-loader": "^1.2.0",
+    "webpack": "^1.11.0",
+    "webpack-dev-server": "^1.10.1"
+  },
+  "scripts": {
+    "start": "grunt",
+    "test": "grunt test"
+  },
+  "author": "Antelle",
+  "license": "MIT"
+}

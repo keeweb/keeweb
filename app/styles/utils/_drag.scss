@@ -1,0 +1,22 @@
+.drag-mask {
+  @include size(100vw 100vh);
+  @include position(absolute, 0 null null 0);
+}
+
+@mixin drag-handle {
+  position: relative;
+  transition: background-color $slow-transition-out;
+  @include th { background: light-border-color(); }
+  &:hover, &.dragging {
+    transition: background-color $slow-transition-in;
+    @include th { background: accent-border-color(); }
+  }
+}
+
+.drag-handle__inner {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: calc(100% + 5px);
+  height: calc(100% + 5px);
+}

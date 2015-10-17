@@ -1,0 +1,30 @@
+// modified version of http://www.sitepoint.com/sass-theming-neverending-story/
+// allows to write themified code without breaking modular project structure
+// only one global variable
+
+$th: null;
+
+@function th($key) {
+  @if not map-has-key($th, $key) { @error "Bad theme key: #{$key}"; }
+  @return map-get($th, $key);
+}
+
+@mixin th {
+  @each $theme, $data in $themes {
+    .th-#{$theme} & {
+      $th: $data !global;
+      @content;
+      $th: null !global;
+    }
+  }
+}
+
+@mixin th-self {
+  @each $theme, $data in $themes {
+    &.th-#{$theme} {
+      $th: $data !global;
+      @content;
+      $th: null !global;
+    }
+  }
+}

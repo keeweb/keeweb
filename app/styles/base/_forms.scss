@@ -1,0 +1,140 @@
+fieldset {
+  @include th {
+    background-color: secondary-background-color();
+    border: base-border();
+  }
+  margin: 0 0 $small-spacing;
+  padding: $base-spacing;
+}
+
+input,
+label,
+select {
+  display: block;
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: $small-spacing / 2;
+
+  &.required::after {
+    content: "*";
+  }
+
+  abbr {
+    display: none;
+  }
+}
+
+#{$all-text-inputs} {
+  border-radius: $base-border-radius;
+  box-sizing: border-box;
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+  margin-bottom: $small-spacing;
+  padding: $base-spacing / 3;
+  transition: border-color $base-duration $base-timing;
+  width: 100%;
+
+  &::-ms-clear { display: none; }
+
+  @include th {
+    background-color: background-color();
+    border: base-border();
+    box-shadow: form-box-shadow();
+
+    &:hover {
+      border-color: accent-border-color();
+    }
+
+    &:focus {
+      border-color: action-color();
+      box-shadow: form-box-shadow-focus();
+      outline: none;
+    }
+
+    &:disabled {
+      background-color: disabled-background-color();
+      cursor: not-allowed;
+
+      &:hover {
+        border: base-border();
+      }
+    }
+
+    &.input--error, &.input--error:hover, &.input--error:focus {
+      border-color: error-color();
+      box-shadow: form-box-shadow-focus-error();
+      @include selection(true) {
+        background-color: text-selection-bg-color-error();
+      }
+    }
+  }
+
+  &.input-padding-right {
+    padding-right: 1.7em;
+  }
+
+  @include placeholder {
+    @include th { color: muted-color(); }
+  }
+}
+
+textarea {
+  resize: vertical;
+}
+
+input[type="search"] {
+  appearance: none;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline;
+  margin-right: $small-spacing / 2;
+
+  + label {
+    display: inline-block;
+  }
+}
+
+input[type="file"] {
+  margin-bottom: $small-spacing;
+  width: 100%;
+}
+
+select {
+  margin-bottom: $base-spacing;
+  max-width: 100%;
+  width: auto;
+  @include th {
+    border: light-border();
+    border-radius: $base-border-radius;
+    background-color: background-color();
+    color: text-color();
+    &:hover {
+      border-color: accent-border-color();
+    }
+    &:focus {
+      border-color: action-color();
+      box-shadow: form-box-shadow-focus();
+      outline: none;
+    }
+    &:disabled {
+      background-color: disabled-background-color();
+      cursor: not-allowed;
+      &:hover {
+        border: base-border();
+      }
+    }
+  }
+}
+
+option {
+  @include th {
+    background-color: background-color();
+    color: text-border();
+  }
+}

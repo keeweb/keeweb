@@ -1,0 +1,98 @@
+.open {
+  @include flex(1);
+  @include display(flex);
+  @include align-self(stretch);
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(center);
+  @include th { background: background-color(); }
+
+  &__file {
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(row);
+    @include justify-content(center);
+    .open--drag & {
+      display: none;
+    }
+    &-icon-wrap {
+      width: 50px;
+    }
+    &-icon, &-btn-new, &-btn-key {
+      font-size: 30px;
+      margin: 20px 0 0 0;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+    }
+    &-icon {
+      @include th { color: muted-color(); }
+      border-bottom: 1px transparent;
+      &--opening {
+        &:before {
+          content: $fa-var-spinner;
+        }
+      }
+    }
+    &-btn-new {
+      @include area-selectable;
+    }
+    &-btn-key {
+      &[disabled] {
+        @include th { color: muted-color(); }
+      }
+      &:not([disabled]) {
+        @include area-selectable;
+      }
+      &.open__file-btn-key--active, &.open__file-btn-key--active:hover {
+        @include th { color: action-color(); }
+        .open__file--error & { @include th { color: error-color(); } }
+      }
+    }
+    &-title {
+      @include th { color: muted-color(); }
+      font-size: 12px;
+      cursor: pointer;
+      height: 20px;
+      display: inline-block;
+    }
+    &-warning {
+      @include position(absolute, 0 0 null null);
+      margin: 0;
+      padding: 0;
+    }
+    &-password {
+      position: relative;
+      input[type=password].open__file-input {
+        font-size: 22px;
+        padding-right: 34px;
+        margin-bottom: 0;
+        &[readonly] {
+          cursor: pointer;
+        }
+        &.input--error {
+        }
+      }
+    }
+  }
+
+  &__dropzone {
+    display: none;
+    .open--drag & {
+      @include display(flex);
+      @include flex-direction(column);
+      @include flex(1 0 auto);
+      @include justify-content(center);
+      @include align-self(center);
+      @include align-items(center);
+      text-align: center;
+    }
+    &-icon {
+      font-size: 10em;
+    }
+    &-header {
+      margin-top: 1em;
+    }
+  }
+}

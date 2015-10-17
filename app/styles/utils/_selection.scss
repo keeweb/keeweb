@@ -1,0 +1,30 @@
+@mixin area-selectable($border: false) {
+  cursor: pointer;
+  border-radius: 0;
+  @include th {
+    @if ($border) {
+      border-#{$border}: selected-transparent-border();
+    }
+    &:hover, &.sel--active {
+      background-color: intermediate-background-color();
+      color: medium-color();
+      @if ($border) {
+        border-#{$border}: selected-hover-border();
+      }
+    }
+    &:active {
+      background-color: intermediate-pressed-background-color();
+    }
+  }
+}
+
+@mixin area-selected($border) {
+  cursor: default;
+  @include th {
+    border-#{$border}: selected-border();
+    background-color: secondary-background-color();
+  }
+  &:hover {
+    @include th { color: text-color(); }
+  }
+}

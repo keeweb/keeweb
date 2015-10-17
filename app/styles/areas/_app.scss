@@ -1,0 +1,51 @@
+.app {
+  @include size(100vw 100vh);
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+
+  &__body {
+    @include flex(1);
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(row);
+    @include justify-content(flex-start);
+    overflow: hidden;
+  }
+
+  &__menu {
+    @include flex(0 0 auto);
+    @include display(flex);
+    width: 150px;
+  }
+
+  &__menu-drag, &__list-drag {
+    @include drag-handle;
+    @include flex(0 0 auto);
+    width: 1px;
+    cursor: col-resize;
+  }
+
+  &__list {
+    @include flex(0 0 auto);
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(column);
+    width: 250px;
+    overflow-y: auto;
+  }
+
+  &__details {
+    @include flex(1);
+    @include display(flex);
+    overflow: hidden;
+    padding: $base-spacing;
+    position: relative;
+  }
+
+  &__footer {
+    @include flex(0 0 auto);
+    @include th { border-top: light-border(); }
+  }
+}
