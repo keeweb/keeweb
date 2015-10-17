@@ -104,7 +104,7 @@ module.exports = function(grunt) {
             },
             app: {
                 files: {
-                    'dist/app.html': 'tmp/app.html'
+                    'dist/index.html': 'tmp/app.html'
                 }
             }
         },
