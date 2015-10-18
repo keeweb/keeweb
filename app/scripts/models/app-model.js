@@ -154,6 +154,7 @@ var AppModel = Backbone.Model.extend({
         }
         var entry = EntryModel.newEntry(group, file);
         group.addEntry(entry);
+        entry.isNew = true;
         return entry;
     }
 });

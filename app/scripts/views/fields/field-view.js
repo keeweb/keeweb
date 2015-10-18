@@ -27,7 +27,7 @@ var FieldView = Backbone.View.extend({
     update: function() {
         if (typeof this.model.value === 'function') {
             var newVal = this.model.value();
-            if (!_.isEqual(newVal, this.value)) {
+            if (!_.isEqual(newVal, this.value) || (this.value && newVal && this.value.toString() !== newVal.toString())) {
                 this.render();
             }
         }
