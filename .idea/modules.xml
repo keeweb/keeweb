@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/keepass-webapp.iml" filepath="$PROJECT_DIR$/keepass-webapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keeweb.iml" filepath="$PROJECT_DIR$/keeweb.iml" />
     </modules>
   </component>
 </project>

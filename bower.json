@@ -1,5 +1,5 @@
 {
-  "name": "keepass-webapp",
+  "name": "keeweb",
   "version": "0.0.1",
   "authors": [
     "Antelle <dmitryvit@gmail.com>"
@@ -13,7 +13,7 @@
     "keepass"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/antelle/keepass-webapp",
+  "homepage": "https://github.com/antelle/keeweb",
   "ignore": [
     "**/.*",
     "node_modules",

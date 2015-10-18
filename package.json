@@ -1,9 +1,9 @@
 {
-  "name": "keepass-webapp",
+  "name": "keeweb",
   "version": "1.0.0",
   "description": "KeePass web app",
   "main": "Gulpfile.js",
-  "repository": "https://github.com/antelle/keepass-webapp",
+  "repository": "https://github.com/antelle/keeweb",
   "dependencies": {},
   "devDependencies": {
     "base64-loader": "^1.0.0",
