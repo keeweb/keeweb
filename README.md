@@ -6,4 +6,4 @@ This webapp can read KeePass databases. It doesn't require any server or additio
 
 # Status
 
-Deep under construction, far from usable product; see [TODO](TODO.md).
+Reading and display is mostly complete; modification and sync is deep under construction, please see [TODO](TODO.md) for more details.
