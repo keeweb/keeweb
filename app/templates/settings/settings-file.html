@@ -1,1 +1,8 @@
-<h1><i class="fa fa-lock"></i> <%- get('name') %></h1>
+<h1><i class="fa fa-lock"></i> <%- file.get('name') %></h1>
+<p>This database is opened as local file. To enable auto-save and saving with shortcut <%= cmd %>S,
+please, save it to Dropbox.</p>
+<div class="settings__file-buttons">
+    <button class="settings__file-button-save-file btn-silent">Save to file</button>
+    <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
+    <button class="settings__file-button-save-dropbox btn-silent">Save to Dropbox</button>
+</div>

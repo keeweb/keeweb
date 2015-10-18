@@ -126,6 +126,14 @@ var FileModel = Backbone.Model.extend({
         if (!this.get('demo')) {
             this.set('modified', true);
         }
+    },
+
+    getData: function() {
+        return this.db.save();
+    },
+
+    getXml: function() {
+        return this.db.saveXml();
     }
 });
 

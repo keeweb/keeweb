@@ -2,7 +2,6 @@
 
 - [ ] add/edit groups
 - [ ] dropbox
-- [ ] save+xml
 - [ ] generate
 - [ ] tags autocomplete
 - [ ] file settings

@@ -137,7 +137,7 @@ var AppView = Backbone.View.extend({
             return item.get('file').cid === e.fileId;
         });
         if (this.views.settings) {
-            if (!this.views.settings.file || this.views.settings.file === menuItem.get('file')) {
+            if (this.views.settings.file === menuItem.get('file')) {
                 this.showEntries();
             } else {
                 this.model.menu.select({ item: menuItem });
@@ -186,7 +186,7 @@ var AppView = Backbone.View.extend({
     },
 
     saveAll: function() {
-        Alerts.notImplemented();
+        this.showFileSettings({ fileId: this.model.files.first().cid });
     },
 
     toggleSettings: function() {
