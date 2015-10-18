@@ -2,8 +2,8 @@
 
 This webapp can read KeePass databases. It doesn't require any server or additional resources.
 
-![screenshot](https://antelle.github.io/keeweb/screenshot.png)
+![screenshot](https://antelle.github.io/keeweb/screenshot2x.png)
 
 # Status
 
-Deep under construction, far from usable product; see TODO.
+Deep under construction, far from usable product; see [TODO](TODO.md).
