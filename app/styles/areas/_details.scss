@@ -449,12 +449,7 @@
 
   &__tags-autocomplete {
     position: absolute;
-    @include th {
-      color: text-color();
-      background: background-color();
-      border: 1px solid light-border-color();
-      box-shadow: dropdown-box-shadow();
-    }
+    @include dropdown;
     &-tag {
       padding: $base-padding;
       display: inline-block;

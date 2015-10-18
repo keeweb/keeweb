@@ -3,7 +3,7 @@
 var Backbone = require('backbone'),
     Keys = require('../const/keys'),
     KeyHandler = require('../util/key-handler'),
-    Alerts = require('../util/alerts');
+    GeneratorView = require('./generator-view');
 
 var FooterView = Backbone.View.extend({
     template: require('templates/footer.html'),
@@ -37,7 +37,13 @@ var FooterView = Backbone.View.extend({
     },
 
     genPass: function() {
-        Alerts.notImplemented();
+        var el = this.$el.find('.footer__btn-generate'),
+            rect = el[0].getBoundingClientRect(),
+            bodyRect = document.body.getBoundingClientRect(),
+            right = bodyRect.right - rect.right,
+            bottom = bodyRect.bottom - rect.top;
+        var generator = new GeneratorView({ model: { pos: { right: right, bottom: bottom } } });
+        generator.render();
     },
 
     showFile: function(e) {

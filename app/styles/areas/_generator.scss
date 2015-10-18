@@ -1,0 +1,7 @@
+.gen {
+  position: absolute;
+  @include dropdown;
+  padding: $base-padding;
+  &__input-small {
+  }
+}
