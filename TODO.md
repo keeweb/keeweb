@@ -3,7 +3,6 @@
 - [ ] add/edit groups
 - [ ] dropbox
 - [ ] generate
-- [ ] tags autocomplete
 - [ ] file settings
 
 # FUTURE
