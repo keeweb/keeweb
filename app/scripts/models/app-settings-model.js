@@ -4,7 +4,10 @@ var Backbone = require('backbone');
 
 var AppSettingsModel = Backbone.Model.extend({
     defaults: {
-        theme: 'd'
+        theme: 'd',
+        genOpts: {
+            length: 16, upper: true, lower: true, digits: true, special: false, brackets: false, high: false, ambiguous: false
+        }
     },
 
     initialize: function() {

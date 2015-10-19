@@ -1,7 +1,21 @@
 .gen {
   position: absolute;
   @include dropdown;
-  padding: $base-padding;
-  &__input-small {
+  padding: $base-spacing;
+  width: 10em;
+  &__length-range {
+  }
+  &__check {
+    width: 40%;
+    display: inline-block;
+    &:nth-child(even) {
+      margin-left: 15%;
+    }
+  }
+  &__result {
+    @include user-select(text);
+    font-family: $monospace-font-family;
+    margin-top: $base-padding-v;
+    white-space: nowrap;
   }
 }

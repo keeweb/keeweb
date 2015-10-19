@@ -1,20 +1,21 @@
 <div class="gen">
-    <input type="text" class="gen__input-small" id="gen__text-len" value="16" maxlength="2" size="2" />
-    <label for="gen__text-len">symbols</label>
+    <div>Length: <span class="gen__length-range-val"><%= length %></span></div>
+    <input type="range" class="gen__length-range" value="16" min="2" max="32" />
     <div>
-        <input type="checkbox" id="gen__check-upper" checked><label for="gen__check-upper">ABC</label>
-        <input type="checkbox" id="gen__check-lower" checked><label for="gen__check-lower">abc</label>
-    </div>
-    <div>
-        <input type="checkbox" id="gen__check-digits" checked><label for="gen__check-digits">123</label>
-        <input type="checkbox" id="gen__check-special"><label for="gen__check-special">!@#</label>
-    </div>
-    <div>
-        <input type="checkbox" id="gen__check-brackets"><label for="gen__check-brackets">({<</label>
-        <input type="checkbox" id="gen__check-high"><label for="gen__check-high">äæ±</label>
-    </div>
-    <div>
-        <input type="checkbox" id="gen__check-ambiguous"><label for="gen__check-ambiguous">0Oo</label>
+        <div class="gen__check"><input type="checkbox" id="gen__check-upper"
+            data-id="upper" <%= upper ? 'checked' : '' %>><label for="gen__check-upper">ABC</label></div>
+        <div class="gen__check"><input type="checkbox" id="gen__check-lower"
+            data-id="lower" <%= lower ? 'checked' : '' %>><label for="gen__check-lower">abc</label></div>
+        <div class="gen__check"><input type="checkbox" id="gen__check-digits"
+            data-id="digits" <%= digits ? 'checked' : '' %>><label for="gen__check-digits">123</label></div>
+        <div class="gen__check"><input type="checkbox" id="gen__check-special"
+            data-id="special" <%= special ? 'checked' : '' %>><label for="gen__check-special">!@#</label></div>
+        <div class="gen__check"><input type="checkbox" id="gen__check-brackets"
+            data-id="brackets" <%= brackets ? 'checked' : '' %>><label for="gen__check-brackets">({&lt;</label></div>
+        <div class="gen__check"><input type="checkbox" id="gen__check-high"
+            data-id="high" <%= high ? 'checked' : '' %>><label for="gen__check-high">äæ±</label></div>
+        <div class="gen__check"><input type="checkbox" id="gen__check-ambiguous"
+            data-id="ambiguous" <%= ambiguous ? 'checked' : '' %>><label for="gen__check-ambiguous">0Oo</label></div>
     </div>
     <div class="gen__result">password</div>
 </div>

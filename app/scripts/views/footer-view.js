@@ -18,6 +18,8 @@ var FooterView = Backbone.View.extend({
     },
 
     initialize: function () {
+        this.views = {};
+
         KeyHandler.onKey(Keys.DOM_VK_L, this.lockWorkspace, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_G, this.genPass, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_O, this.openFile, this, KeyHandler.SHORTCUT_ACTION);
@@ -36,14 +38,24 @@ var FooterView = Backbone.View.extend({
         Backbone.trigger('lock-workspace');
     },
 
-    genPass: function() {
+    genPass: function(e) {
+        e.stopPropagation();
+        if (this.views.gen) {
+            this.views.gen.remove();
+            return;
+        }
         var el = this.$el.find('.footer__btn-generate'),
             rect = el[0].getBoundingClientRect(),
             bodyRect = document.body.getBoundingClientRect(),
             right = bodyRect.right - rect.right,
             bottom = bodyRect.bottom - rect.top;
-        var generator = new GeneratorView({ model: { pos: { right: right, bottom: bottom } } });
+        var generator = new GeneratorView({ model: {
+            pos: { right: right, bottom: bottom },
+            genOpts: this.model.settings.get('genOpts')
+        }});
         generator.render();
+        generator.once('remove', (function() { delete this.views.gen; }).bind(this));
+        this.views.gen = generator;
     },
 
     showFile: function(e) {
