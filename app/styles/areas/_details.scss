@@ -165,6 +165,7 @@
       @include flex(1);
       @include user-select(text);
       @include align-self(flex-start);
+      position: relative;
       cursor: text;
       padding: 0 $base-padding-h;
       border: 1px solid transparent;
@@ -209,6 +210,21 @@
         a { @include th { color: muted-color(); } }
         width: 12em;
         @include flex(0 0 auto);
+      }
+      &-gen-btn {
+        @include position(absolute, 0 0 null null);
+        @include th { color: muted-color(); }
+        cursor: pointer;
+        &:hover {
+          @include th { color: medium-color(); }
+        }
+        &:before {
+          @include position(absolute, 0 0 null null);
+          @include fa-icon();
+          cursor: pointer;
+          padding: $base-padding;
+          content: $fa-var-bolt;
+        }
       }
     }
   }

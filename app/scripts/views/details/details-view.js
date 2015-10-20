@@ -236,7 +236,7 @@ var DetailsView = Backbone.View.extend({
     showEntry: function(entry) {
         this.model = entry;
         this.render();
-        if (!entry.title && entry.isNew) {
+        if (entry && !entry.title && entry.isNew) {
             this.editTitle();
         }
     },

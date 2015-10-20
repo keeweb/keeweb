@@ -16,10 +16,13 @@
     @include user-select(text);
     font-family: $monospace-font-family;
     margin-top: $base-padding-v;
-    height: 2.5em;
+    height: 4em;
     text-align: center;
     white-space: pre;
     word-wrap: break-word;
+  }
+  &__btn-wrap {
+    text-align: center;
   }
 }
 

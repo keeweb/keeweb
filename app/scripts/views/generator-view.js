@@ -1,7 +1,9 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    PasswordGenerator = require('../util/password-generator');
+    PasswordGenerator = require('../util/password-generator'),
+    AppSettingsModel = require('../models/app-settings-model'),
+    CopyPaste = require('../util/copy-paste');
 
 var GeneratorView = Backbone.View.extend({
     el: 'body',
@@ -13,18 +15,22 @@ var GeneratorView = Backbone.View.extend({
         'mousedown .gen__length-range': 'generate',
         'mousemove .gen__length-range': 'lengthChange',
         'change .gen__length-range': 'lengthChange',
-        'change .gen__check input[type=checkbox]': 'checkChange'
+        'change .gen__check input[type=checkbox]': 'checkChange',
+        'click .gen__btn-ok': 'btnOkClick'
     },
 
     initialize: function () {
         $('body').one('click', this.remove.bind(this));
-        this.gen = _.clone(this.model.genOpts);
+        this.gen = _.clone(AppSettingsModel.instance.get('genOpts'));
     },
 
     render: function() {
-        this.renderTemplate(this.gen);
+        var canCopy = document.queryCommandSupported('copy');
+        this.renderTemplate({ btnTitle: this.model.copy && canCopy ? 'Copy' : 'OK', opt: this.gen });
+        this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
         this.generate();
+        return this;
     },
 
     click: function(e) {
@@ -49,7 +55,19 @@ var GeneratorView = Backbone.View.extend({
     },
 
     generate: function() {
-        this.$el.find('.gen__result').text(PasswordGenerator.generate(this.gen));
+        this.password = PasswordGenerator.generate(this.gen);
+        this.resultEl.text(this.password);
+    },
+
+    btnOkClick: function() {
+        var selection = window.getSelection();
+        var range = document.createRange();
+        range.selectNodeContents(this.resultEl[0]);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        CopyPaste.tryCopy();
+        this.trigger('result', this.password);
+        this.remove();
     }
 });
 

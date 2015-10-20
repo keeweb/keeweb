@@ -49,11 +49,7 @@ var FooterView = Backbone.View.extend({
             bodyRect = document.body.getBoundingClientRect(),
             right = bodyRect.right - rect.right,
             bottom = bodyRect.bottom - rect.top;
-        var generator = new GeneratorView({ model: {
-            pos: { right: right, bottom: bottom },
-            genOpts: this.model.settings.get('genOpts')
-        }});
-        generator.render();
+        var generator = new GeneratorView({ model: { copy: true, pos: { right: right, bottom: bottom } }}).render();
         generator.once('remove', (function() { delete this.views.gen; }).bind(this));
         this.views.gen = generator;
     },

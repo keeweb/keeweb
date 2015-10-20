@@ -2,7 +2,6 @@
 
 - [ ] add/edit groups
 - [ ] dropbox
-- [ ] generate
 - [ ] file settings
 
 # FUTURE
@@ -17,3 +16,4 @@
 - [ ] secure fields
 - [ ] app settings
 - [ ] trash: groups/empty/untrash
+- [ ] generation templates

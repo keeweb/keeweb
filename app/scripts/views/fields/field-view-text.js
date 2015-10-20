@@ -1,6 +1,7 @@
 'use strict';
 
 var FieldView = require('./field-view'),
+    GeneratorView = require('../generator-view'),
     Keys = require('../../const/keys'),
     kdbxweb = require('kdbxweb');
 
@@ -24,10 +25,56 @@ var FieldViewText = FieldView.extend({
             blur: this.fieldValueBlur.bind(this),
             input: this.fieldValueInput.bind(this),
             keydown: this.fieldValueKeydown.bind(this),
-            keypress: this.fieldValueInput.bind(this)
+            keypress: this.fieldValueInput.bind(this),
+            click: this.fieldValueInputClick.bind(this)
         });
         if (this.model.multiline) {
             this.setInputHeight();
+        }
+        if (this.value && this.value.byteLength) {
+            $('<div/>').addClass('details__field-value-gen-btn').appendTo(this.valueEl)
+                .click(this.showGeneratorClick.bind(this))
+                .mousedown(this.showGenerator.bind(this));
+        }
+    },
+
+    showGeneratorClick: function(e) {
+        e.stopPropagation();
+        if (!this.gen) {
+            this.input.focus();
+        }
+    },
+
+    showGenerator: function() {
+        if (this.gen) {
+            this.hideGenerator();
+        } else {
+            var fieldRect = this.input[0].getBoundingClientRect();
+            this.gen = new GeneratorView({model: {pos: {left: fieldRect.left, top: fieldRect.bottom}}}).render();
+            this.gen.once('remove', this.generatorClosed.bind(this));
+            this.gen.once('result', this.generatorResult.bind(this));
+        }
+    },
+
+    hideGenerator: function() {
+        if (this.gen) {
+            var gen = this.gen;
+            delete this.gen;
+            gen.remove();
+        }
+    },
+
+    generatorClosed: function() {
+        if (this.gen) {
+            delete this.gen;
+            this.endEdit();
+        }
+    },
+
+    generatorResult: function(password) {
+        if (this.gen) {
+            delete this.gen;
+            this.endEdit(password);
         }
     },
 
@@ -44,13 +91,21 @@ var FieldViewText = FieldView.extend({
     },
 
     fieldValueBlur: function(e) {
-        this.endEdit(e.target.value);
+        if (!this.gen) {
+            this.endEdit(e.target.value);
+        }
     },
 
     fieldValueInput: function(e) {
         e.stopPropagation();
         if (this.model.multiline) {
             this.setInputHeight();
+        }
+    },
+
+    fieldValueInputClick: function() {
+        if (this.gen) {
+            this.hideGenerator();
         }
     },
 
@@ -73,6 +128,9 @@ var FieldViewText = FieldView.extend({
     },
 
     endEdit: function(newVal, extra) {
+        if (this.gen) {
+            this.hideGenerator();
+        }
         if (!this.editing) {
             return;
         }
@@ -84,6 +142,10 @@ var FieldViewText = FieldView.extend({
             newVal = $.trim(newVal);
         }
         FieldView.prototype.endEdit.call(this, newVal, extra);
+    },
+
+    render: function() {
+        FieldView.prototype.render.call(this);
     }
 });
 
