@@ -17,3 +17,7 @@
 - [ ] app settings
 - [ ] trash: groups/empty/untrash
 - [ ] generation templates
+- [ ] entry templates
+- [ ] audit
+- [ ] run in electron
+- [ ] auto-type
