@@ -135,7 +135,7 @@ select {
 option {
   @include th {
     background-color: background-color();
-    color: text-border();
+    color: text-color();
   }
 }
 
@@ -161,77 +161,50 @@ input[type=checkbox] {
   }
 }
 
-$thumb-size: 8px;
-$track-width: 100%;
-$track-height: 1px;
-
-@mixin track {
-  @include size(100% 1px);
-  @include th { background: background-color(); }
-  cursor: pointer;
-  border: none;
-}
-
-@mixin thumb {
-  height: 1px;
-  width: 100%;
-  border: none;
-  border-radius: 1px;
-  cursor: pointer;
-  @include th { background: border-color(); }
-}
+$thumb-size: 14px;
 
 &input[type=range] {
   -webkit-appearance: none;
   width: 100%;
   margin: 12px 0;
-  &:focus {
-    outline: none;
-  }
+  padding: 0;
+  &:focus { outline: none; }
   &::-webkit-slider-runnable-track {
+    @include th { background: text-color(); }
     width: 100%;
     height: 1px;
     cursor: pointer;
-    @include th {
-      background: text-color();
-    }
     border-radius: 1px;
     border: none;
   }
   &::-webkit-slider-thumb {
+    @include th { background: text-color(); }
     border: none;
-    height: 14px;
-    width: 14px;
-    border-radius: 14px;
-    @include th {
-      background: text-color();
-    }
+    height: $thumb-size;
+    width: $thumb-size;
+    border-radius: $thumb-size;
     cursor: pointer;
     -webkit-appearance: none;
     margin-top: -6.5px;
   }
-  // &:focus::-webkit-slider-runnable-track {
-  //   @include th { background: active-color(); }
-  // }
   &::-moz-range-track {
+    @include th { background: text-color(); }
     width: 100%;
     height: 1px;
     cursor: pointer;
-    @include th {
-      background: text-color();
-    }
     border-radius: 1px;
     border: none;
   }
   &::-moz-range-thumb {
+    @include th { background: text-color(); }
     border: none;
-    height: 14px;
-    width: 14px;
-    border-radius: 14px;
-    @include th {
-      background: text-color();
-    }
+    height: $thumb-size;
+    width: $thumb-size;
+    border-radius: $thumb-size;
     cursor: pointer;
+  }
+  &::-moz-focus-outer {
+    border: 0;
   }
   &::-ms-track {
     width: 100%;
@@ -239,38 +212,21 @@ $track-height: 1px;
     cursor: pointer;
     background: transparent;
     border-color: transparent;
+    border-width: $thumb-size 0;
     color: transparent;
   }
-  &::-ms-fill-lower {
-    @include th {
-      background: text-color();
-    }
-    border: none;
+  &::-ms-tooltip {
+    display: none;
   }
-  &::-ms-fill-upper {
-    @include th {
-      background: text-color();
-    }
-    border: none;
+  &::-ms-fill-lower, &::-ms-fill-upper, &:focus::-ms-fill-lower, &:focus::-ms-fill-upper {
+    @include th { background: text-color(); }
   }
   &::-ms-thumb {
     border: none;
-    height: 14px;
-    width: 14px;
-    border-radius: 14px;
-    @include th {
-      background: text-color();
-    }
+    height: $thumb-size;
+    width: $thumb-size;
+    border-radius: $thumb-size;
     cursor: pointer;
-  }
-  &:focus::-ms-fill-lower {
-    @include th {
-      background: text-color();
-    }
-  }
-  &:focus::-ms-fill-upper {
-    @include th {
-      background: text-color();
-    }
+    @include th { background: text-color(); }
   }
 }

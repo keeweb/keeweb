@@ -6,31 +6,30 @@ var PasswordGenerator = {
     charRanges: {
         upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
         lower: 'abcdefghijkmnpqrstuvwxyz',
-        digits: '23456789',
+        digits: '123456789',
         special: '!@#$%^&*_+-=,./?;:`"~\'\\',
-        brackets: '()[]<>',
+        brackets: '(){}[]<>',
         high: '¡¢£¤¥¦§©ª«¬®¯°±²³´µ¶¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþ',
-        ambiguous: 'O0oIl1'
+        ambiguous: 'O0oIl'
     },
     generate: function(opts) {
         if (!opts || typeof opts.length !== 'number' || opts.length < 0) {
             return '';
         }
-        var pass = '';
         var ranges = Object.keys(this.charRanges)
             .filter(function(r) { return opts[r]; })
             .map(function(r) { return this.charRanges[r]; }, this);
         if (!ranges.length) {
             return '';
         }
-        var randomBytes = kdbxweb.Random.getBytes(opts.length * 2);
-        var pos = 0;
-        while (pass.length < opts.length) {
-            var rangeNum = randomBytes[pos++] % ranges.length;
-            var range = ranges[rangeNum];
-            pass += range[randomBytes[pos++] % range.length];
+        var randomBytes = kdbxweb.Random.getBytes(opts.length);
+        var chars = [];
+        for (var i = 0; i < opts.length; i++) {
+            var range = ranges[i % ranges.length];
+            var rand = Math.round(Math.random() * 1000) + randomBytes[i];
+            chars.push(range[rand % range.length]);
         }
-        return pass;
+        return _.shuffle(chars).join('');
     }
 };
 
