@@ -13,7 +13,7 @@ app.on('ready', function() {
     var htmlPath = path.join(app.getPath('userData'), 'index.html');
 
     mainWindow = new BrowserWindow({
-        width: 1000, height: 700, 'min-width': 800, 'min-height': 500,
+        width: 1000, height: 700, 'min-width': 600, 'min-height': 300,
         icon: path.join(__dirname, 'icon.png')
     });
     mainWindow.setMenu(null);
