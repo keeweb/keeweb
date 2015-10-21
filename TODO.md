@@ -19,5 +19,4 @@
 - [ ] generation templates
 - [ ] entry templates
 - [ ] audit
-- [ ] run in electron
 - [ ] auto-type
