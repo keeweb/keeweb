@@ -1,8 +1,34 @@
 <h1><i class="fa fa-lock"></i> <%- file.get('name') %></h1>
 <p>This database is opened as local file. To enable auto-save and saving with shortcut <%= cmd %>S,
 please, save it to Dropbox.</p>
-<div class="settings__file-buttons">
-    <button class="settings__file-button-save-file btn-silent">Save to file</button>
-    <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
-    <button class="settings__file-button-save-dropbox btn-silent">Save to Dropbox</button>
-</div>
+<form>
+    <div class="settings__file-buttons">
+        <button class="settings__file-button-save-file btn-silent">Save to file</button>
+        <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
+        <button class="settings__file-button-save-dropbox btn-silent">Save to Dropbox</button>
+    </div>
+
+    <h2>Settings</h2>
+    <label for="settings__file-master-key">Master key:</label>
+    <input type="password" class="settings__input" id="settings__file-master-key" value="<%- file.get('passwordLength') %>" />
+    <input type="checkbox" class="settings__input" id="settings__file-key-file" <%- file.keyFileName ? 'checked' : '' %> />
+    <label for="settings__file-key-file">Use key file</label>
+
+    <h2>Names</h2>
+    <label for="settings__file-name">Name:</label>
+    <input type="text" class="settings__input" id="settings__file-name" value="<%- file.get('name') %>" />
+    <label for="settings__file-def-user">Default username:</label>
+    <input type="text" class="settings__input" id="settings__file-def-user" value="<%- file.db.meta.defaultUser %>" />
+
+    <h2>History</h2>
+    <input type="checkbox" class="settings__input" id="settings__file-trash" <%- file.db.meta.recycleBinEnabled ? 'checked' : '' %> />
+    <label for="settings__file-trash">Enable trash</label>
+    <label for="settings__file-hist-len">History length, keep last records per entry:</label>
+    <input type="text" class="settings__input" id="settings__file-hist-len" value="<%- file.db.meta.historyMaxItems %>" />
+    <label for="settings__file-hist-size">History size, total MB per file:</label>
+    <input type="text" class="settings__input" id="settings__file-hist-size" value="<%- file.db.meta.historyMaxSize/1024/1024 %>" />
+
+    <h2>Advanced</h2>
+    <label for="settings__file-key-rounds">Key encryption rounds:</label>
+    <input type="text" class="settings__input" id="settings__file-key-rounds" value="<%- file.db.header.keyEncryptionRounds %>" />
+</form>

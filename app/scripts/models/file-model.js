@@ -10,6 +10,7 @@ var FileModel = Backbone.Model.extend({
     defaults: {
         name: '',
         keyFileName: '',
+        passwordLength: 0,
         path: '',
         modified: false,
         open: false,
@@ -48,7 +49,7 @@ var FileModel = Backbone.Model.extend({
             return;
         }
         this.readModel(this.get('name'));
-        this.set({ open: true, opening: false, error: false });
+        this.set({ open: true, opening: false, error: false, passwordLength: len });
     },
 
     create: function(name) {

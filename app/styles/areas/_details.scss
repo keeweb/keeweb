@@ -158,6 +158,7 @@
         padding: 0 $base-padding-h;
         line-height: $details-field-line-height;
         height: $details-field-line-height;
+        width: 100%;
         @include th { color: text-color(); }
       }
     }
@@ -197,6 +198,7 @@
         margin: 0;
         padding: 0 $base-padding-h;
         line-height: $details-field-line-height;
+        width: 100%;
         height: 20px;
       }
       >textarea {

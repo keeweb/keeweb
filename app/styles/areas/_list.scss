@@ -39,6 +39,7 @@
       position: relative;
     }
     &-field {
+      width: 100%;
     }
     &-icon-search {
       @include th { color: muted-color(); }

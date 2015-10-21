@@ -43,7 +43,7 @@
     }
   }
 
-  &__select {
+  &__select, &__input {
     width: 60%;
     height: 2em;
     @media (max-width: 800px) {
