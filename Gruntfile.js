@@ -3,7 +3,7 @@
 var fs = require('fs'),
     path = require('path');
 
-var StringReplacePlugin = require("string-replace-webpack-plugin");
+var StringReplacePlugin = require('string-replace-webpack-plugin');
 
 module.exports = function(grunt) {
     require('time-grunt')(grunt);
@@ -106,6 +106,17 @@ module.exports = function(grunt) {
                 files: {
                     'dist/index.html': 'tmp/app.html'
                 }
+            }
+        },
+        'string-replace': {
+            manifest: {
+                options: {
+                    replacements: [{
+                        pattern: '# YYYY-MM-DD:v0.0.0',
+                        replacement: '# ' + new Date().toISOString().replace(/T.*/, '') + ':v' + require('./package').version
+                    }]
+                },
+                files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
             }
         },
         webpack: {
@@ -217,6 +228,7 @@ module.exports = function(grunt) {
         'sass',
         'postcss',
         'inline',
-        'htmlmin'
+        'htmlmin',
+        'string-replace'
     ]);
 };

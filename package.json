@@ -21,6 +21,7 @@
     "grunt-inline-alt": "^0.3.10",
     "grunt-postcss": "^0.6.0",
     "grunt-sass": "^1.0.0",
+    "grunt-string-replace": "^1.2.0",
     "grunt-webpack": "^1.0.11",
     "load-grunt-tasks": "^3.2.0",
     "string-replace-webpack-plugin": "0.0.2",
