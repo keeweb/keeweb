@@ -1,38 +1,40 @@
-<h1><i class="fa fa-lock"></i> <%- name %></h1>
-<p>This database is opened as local file. To enable auto-save and saving with shortcut <%= cmd %>S,
-please, save it to Dropbox.</p>
+<div>
+    <h1><i class="fa fa-lock"></i> <%- name %></h1>
+    <p>This database is opened as local file. To enable auto-save and saving with shortcut <%= cmd %>S,
+    please, save it to Dropbox.</p>
 
-<div class="settings__file-buttons">
-    <button class="settings__file-button-save-file btn-silent">Save to file</button>
-    <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
-    <button class="settings__file-button-save-dropbox btn-silent">Sync with Dropbox</button>
+    <div class="settings__file-buttons">
+        <button class="settings__file-button-save-file btn-silent">Save to file</button>
+        <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
+        <button class="settings__file-button-save-dropbox btn-silent">Sync with Dropbox</button>
+    </div>
+
+    <h2>Settings</h2>
+    <label for="settings__file-master-pass">Master key:</label>
+    <input type="text" class="settings__input" required id="settings__file-master-pass" value="<%= password %>" />
+    <label for="settings__file-key-file">Key file:</label>
+    <select class="settings__select" id="settings__file-key-file">
+        <option value="">Don't use key file</option>
+        <option value="ex">Use existing key file</option>
+        <option value="gen">Generate new key file</option>
+        <option value="sel">Select a key file</option>
+    </select>
+
+    <h2>Names</h2>
+    <label for="settings__file-name">Name:</label>
+    <input type="text" class="settings__input" id="settings__file-name" value="<%- name %>" required />
+    <label for="settings__file-def-user">Default username:</label>
+    <input type="text" class="settings__input" id="settings__file-def-user" value="<%- defaultUser %>" />
+
+    <h2>History</h2>
+    <input type="checkbox" class="settings__input" id="settings__file-trash" <%- recycleBinEnabled ? 'checked' : '' %> />
+    <label for="settings__file-trash">Enable trash</label>
+    <label for="settings__file-hist-len">History length, keep last records per entry:</label>
+    <input type="text" pattern="\d*" required class="settings__input" id="settings__file-hist-len" value="<%= historyMaxItems %>" />
+    <label for="settings__file-hist-size">History size, total MB per file:</label>
+    <input type="text" pattern="\d*" required class="settings__input" id="settings__file-hist-size" value="<%= historyMaxSize %>" />
+
+    <h2>Advanced</h2>
+    <label for="settings__file-key-rounds">Key encryption rounds:</label>
+    <input type="text" pattern="\d*" required class="settings__input" id="settings__file-key-rounds" value="<%= keyEncryptionRounds %>" />
 </div>
-
-<h2>Settings</h2>
-<label for="settings__file-master-pass">Master key:</label>
-<input type="text" class="settings__input" required id="settings__file-master-pass" value="<%= password %>" />
-<label for="settings__file-key-file">Key file:</label>
-<select class="settings__select" id="settings__file-key-file">
-    <option value="">Don't use key file</option>
-    <option value="ex">Use existing key file</option>
-    <option value="gen">Generate new key file</option>
-    <option value="sel">Select a key file</option>
-</select>
-
-<h2>Names</h2>
-<label for="settings__file-name">Name:</label>
-<input type="text" class="settings__input" id="settings__file-name" value="<%- name %>" required />
-<label for="settings__file-def-user">Default username:</label>
-<input type="text" class="settings__input" id="settings__file-def-user" value="<%- defaultUser %>" />
-
-<h2>History</h2>
-<input type="checkbox" class="settings__input" id="settings__file-trash" <%- recycleBinEnabled ? 'checked' : '' %> />
-<label for="settings__file-trash">Enable trash</label>
-<label for="settings__file-hist-len">History length, keep last records per entry:</label>
-<input type="text" pattern="\d*" required class="settings__input" id="settings__file-hist-len" value="<%= historyMaxItems %>" />
-<label for="settings__file-hist-size">History size, total MB per file:</label>
-<input type="text" pattern="\d*" required class="settings__input" id="settings__file-hist-size" value="<%= historyMaxSize %>" />
-
-<h2>Advanced</h2>
-<label for="settings__file-key-rounds">Key encryption rounds:</label>
-<input type="text" pattern="\d*" required class="settings__input" id="settings__file-key-rounds" value="<%= keyEncryptionRounds %>" />

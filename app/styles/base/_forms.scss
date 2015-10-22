@@ -8,7 +8,6 @@ fieldset {
 }
 
 input,
-label,
 select {
   display: block;
   font-family: $base-font-family;
@@ -16,6 +15,9 @@ select {
 }
 
 label {
+  display: inline-block;
+  font-family: $base-font-family;
+  font-size: $base-font-size;
   font-weight: 600;
   margin-bottom: $small-spacing / 2;
 

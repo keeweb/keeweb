@@ -14,7 +14,8 @@ var SettingsAboutView = Backbone.View.extend({
         'click .settings__file-button-export-xml': 'exportAsXml',
         'click .settings__file-button-save-dropbox': 'saveToDropbox',
         'change #settings__file-key-file': 'keyfileChange',
-        'focus #settings__file-master-pass': 'focusMasterPass'
+        'focus #settings__file-master-pass': 'focusMasterPass',
+        'blur #settings__file-master-pass': 'blurMasterPass'
     },
 
     render: function() {
@@ -76,6 +77,13 @@ var SettingsAboutView = Backbone.View.extend({
     },
 
     focusMasterPass: function(e) {
+        e.target.value = '';
+    },
+
+    blurMasterPass: function(e) {
+        if (!e.target.value) {
+            e.target.value = PasswordDisplay.present(this.model.get('passwordLength'));
+        }
     }
 });
 
