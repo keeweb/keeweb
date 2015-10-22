@@ -27,8 +27,10 @@
     <input type="text" class="settings__input" id="settings__file-def-user" value="<%- defaultUser %>" />
 
     <h2>History</h2>
-    <input type="checkbox" class="settings__input" id="settings__file-trash" <%- recycleBinEnabled ? 'checked' : '' %> />
-    <label for="settings__file-trash">Enable trash</label>
+    <div>
+        <input type="checkbox" class="settings__input" id="settings__file-trash" <%- recycleBinEnabled ? 'checked' : '' %> />
+        <label for="settings__file-trash">Enable trash</label>
+    </div>
     <label for="settings__file-hist-len">History length, keep last records per entry:</label>
     <input type="text" pattern="\d*" required class="settings__input" id="settings__file-hist-len" value="<%= historyMaxItems %>" />
     <label for="settings__file-hist-size">History size, total MB per file:</label>
