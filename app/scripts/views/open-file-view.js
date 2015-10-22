@@ -53,7 +53,10 @@ var OpenFileView = Backbone.View.extend({
         }
     },
 
-    openKeyFile: function() {
+    openKeyFile: function(e) {
+        if (e.target.hasAttribute('disabled')) {
+            return;
+        }
         if (!this.model.get('opening')) {
             if (this.keyFileData) {
                 this.keyFileData = null;

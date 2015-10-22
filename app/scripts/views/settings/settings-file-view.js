@@ -11,7 +11,8 @@ var SettingsAboutView = Backbone.View.extend({
     events: {
         'click .settings__file-button-save-file': 'saveToFile',
         'click .settings__file-button-export-xml': 'exportAsXml',
-        'click .settings__file-button-save-dropbox': 'saveToDropbox'
+        'click .settings__file-button-save-dropbox': 'saveToDropbox',
+        'change .settings__file-key-file': 'keyfileChange'
     },
 
     render: function() {
@@ -35,6 +36,35 @@ var SettingsAboutView = Backbone.View.extend({
 
     saveToDropbox: function() {
         Alerts.notImplemented();
+    },
+
+    keyfileChange: function(e) {
+        switch (e.target.value) {
+            case 'ex':
+                this.useExistingKeyFile();
+                break;
+            case 'sel':
+                this.selectKeyFile();
+                break;
+            case 'gen':
+                this.generateKeyFile();
+                break;
+            default:
+                this.clearKeyFile();
+                break;
+        }
+    },
+
+    useExistingKeyFile: function() {
+    },
+
+    selectKeyFile: function() {
+    },
+
+    generateKeyFile: function() {
+    },
+
+    clearKeyFile: function() {
     }
 });
 

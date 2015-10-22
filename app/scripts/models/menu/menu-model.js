@@ -40,12 +40,14 @@ var MenuModel = Backbone.Model.extend({
         this.generalSection = new MenuSectionModel([{ title: 'General', icon: 'cog', page: 'general', active: true }]);
         this.shortcutsSection = new MenuSectionModel([{ title: 'Shortcuts', icon: 'keyboard-o', page: 'shortcuts' }]);
         this.aboutSection = new MenuSectionModel([{ title: 'About', icon: 'info', page: 'about' }]);
+        this.helpSection = new MenuSectionModel([{ title: 'Help', icon: 'question', page: 'help' }]);
         this.filesSection = new MenuSectionModel();
         this.filesSection.set({ scrollable: true, grow: true });
         this.menus.settings = new MenuSectionCollection([
             this.generalSection,
             this.shortcutsSection,
             this.aboutSection,
+            this.helpSection,
             this.filesSection
         ]);
         this.set('sections', this.menus.app);

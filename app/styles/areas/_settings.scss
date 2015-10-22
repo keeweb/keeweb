@@ -43,11 +43,19 @@
     }
   }
 
-  &__select, &__input {
+  &__select, &__input, &__pre {
     width: 60%;
-    height: 2em;
     @media (max-width: 800px) {
       width: calc(100% - 20px);
     }
+  }
+
+  &__select, &__input {
+    height: 2em;
+  }
+
+  &__pre {
+    @include user-select(text);
+    white-space: pre-wrap;
   }
 }

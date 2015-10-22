@@ -10,7 +10,8 @@ var Backbone = require('backbone'),
     SettingsView = require('../views/settings/settings-view'),
     Alerts = require('../util/alerts'),
     Keys = require('../const/keys'),
-    KeyHandler = require('../util/key-handler');
+    KeyHandler = require('../util/key-handler'),
+    Launcher = require('../util/launcher');
 
 var AppView = Backbone.View.extend({
     el: 'body',
@@ -20,7 +21,8 @@ var AppView = Backbone.View.extend({
     events: {
         'contextmenu': 'contextmenu',
         'drop': 'drop',
-        'dragover': 'dragover'
+        'dragover': 'dragover',
+        'click a[target=_blank]': 'extLinkClick'
     },
 
     views: null,
@@ -189,11 +191,24 @@ var AppView = Backbone.View.extend({
         this.showFileSettings({ fileId: this.model.files.first().cid });
     },
 
-    toggleSettings: function() {
+    toggleSettings: function(page) {
+        var menuItem = page ? this.model.menu[page + 'Section'] : null;
+        if (menuItem) {
+            menuItem = menuItem.get('items').first();
+        }
         if (this.views.settings) {
-            this.showEntries();
+            if (this.views.settings.page === page) {
+                this.showEntries();
+            } else {
+                if (menuItem) {
+                    this.model.menu.select({item: menuItem});
+                }
+            }
         } else {
             this.showSettings();
+            if (menuItem) {
+                this.model.menu.select({item: menuItem});
+            }
         }
     },
 
@@ -223,6 +238,13 @@ var AppView = Backbone.View.extend({
             }
         });
         document.body.classList.add('th-' + theme);
+    },
+
+    extLinkClick: function(e) {
+        if (Launcher) {
+            e.preventDefault();
+            Launcher.openLink(e.target.href);
+        }
     }
 });
 

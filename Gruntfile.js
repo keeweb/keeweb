@@ -10,7 +10,8 @@ module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
 
     var webpack = require('webpack');
-    var pkg = require('./package');
+    var pkg = require('./package.json');
+    var dt = new Date().toISOString().replace(/T.*/, '');
 
     function replaceFont(css) {
         css.walkAtRules('font-face', function (rule) {
@@ -113,7 +114,7 @@ module.exports = function(grunt) {
                 options: {
                     replacements: [{
                         pattern: '# YYYY-MM-DD:v0.0.0',
-                        replacement: '# ' + new Date().toISOString().replace(/T.*/, '') + ':v' + require('./package').version
+                        replacement: '# ' + dt + ':v' + require('./package').version
                     }]
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
@@ -158,6 +159,10 @@ module.exports = function(grunt) {
                             pattern: /\r?\n\s*/g,
                             replacement: function() { return '\n'; }
                         }]})},
+                        { test: /runtime\-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
+                            { pattern: /@@VERSION/g, replacement: function() { return pkg.version; } },
+                            { pattern: /@@DATE/g, replacement: function() { return dt; } }
+                        ]})},
                         { test: /zepto(\.min)?\.js$/, loader: 'exports?Zepto; delete window.$; delete window.Zepto;' },
                         { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
                         { test: /pikadat\.js$/, loader: 'uglify' }

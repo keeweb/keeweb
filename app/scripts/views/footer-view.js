@@ -12,6 +12,7 @@ var FooterView = Backbone.View.extend({
         'click .footer__db-item': 'showFile',
         'click .footer__db-open': 'openFile',
         'click .footer__btn-view': 'switchView',
+        'click .footer__btn-help': 'toggleHelp',
         'click .footer__btn-settings': 'toggleSettings',
         'click .footer__btn-generate': 'genPass',
         'click .footer__btn-lock': 'lockWorkspace'
@@ -73,8 +74,12 @@ var FooterView = Backbone.View.extend({
         Backbone.trigger('switch-view');
     },
 
+    toggleHelp: function() {
+        Backbone.trigger('toggle-settings', 'help');
+    },
+
     toggleSettings: function() {
-        Backbone.trigger('toggle-settings');
+        Backbone.trigger('toggle-settings', 'general');
     }
 });
 

@@ -26,7 +26,8 @@ var GeneratorView = Backbone.View.extend({
 
     render: function() {
         var canCopy = document.queryCommandSupported('copy');
-        this.renderTemplate({ btnTitle: this.model.copy && canCopy ? 'Copy' : 'OK', opt: this.gen });
+        var btnTitle = this.model.copy ? canCopy ? 'Copy' : 'Close' : 'OK';
+        this.renderTemplate({ btnTitle: btnTitle, opt: this.gen });
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
         this.generate();

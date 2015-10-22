@@ -48,6 +48,7 @@ var SettingsView = Backbone.View.extend({
         this.views.page = new SettingsPageView({ el: this.pageEl, model: e.file });
         this.views.page.render();
         this.file = e.file;
+        this.page = e.page;
         this.pageResized();
     },
 
