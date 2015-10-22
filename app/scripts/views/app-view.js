@@ -197,7 +197,7 @@ var AppView = Backbone.View.extend({
             menuItem = menuItem.get('items').first();
         }
         if (this.views.settings) {
-            if (this.views.settings.page === page) {
+            if (this.views.settings.page === page || !menuItem) {
                 this.showEntries();
             } else {
                 if (menuItem) {
