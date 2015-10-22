@@ -63,7 +63,7 @@ input[type=text], input[type=password], textarea, input:not([type]) {
       }
     }
 
-    &.input--error, &.input--error:hover, &.input--error:focus {
+    &.input--error, &.input--error:hover, &.input--error:focus, &:invalid {
       border-color: error-color();
       box-shadow: form-box-shadow-focus-error();
       @include selection(true) {
@@ -79,6 +79,11 @@ input[type=text], input[type=password], textarea, input:not([type]) {
   @include placeholder {
     @include th { color: muted-color(); }
   }
+}
+
+input[type='number'] {
+  -moz-appearance:textfield;
+  appearance:textfield;
 }
 
 textarea {

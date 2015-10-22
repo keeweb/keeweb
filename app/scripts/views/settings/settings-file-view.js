@@ -2,6 +2,7 @@
 
 var Backbone = require('backbone'),
     FeatureDetector = require('../../util/feature-detector'),
+    PasswordDisplay = require('../../util/password-display'),
     Alerts = require('../../util/alerts'),
     FileSaver = require('filesaver');
 
@@ -12,13 +13,20 @@ var SettingsAboutView = Backbone.View.extend({
         'click .settings__file-button-save-file': 'saveToFile',
         'click .settings__file-button-export-xml': 'exportAsXml',
         'click .settings__file-button-save-dropbox': 'saveToDropbox',
-        'change .settings__file-key-file': 'keyfileChange'
+        'change #settings__file-key-file': 'keyfileChange',
+        'focus #settings__file-master-pass': 'focusMasterPass'
     },
 
     render: function() {
         this.renderTemplate({
-            file: this.model,
-            cmd: FeatureDetector.actionShortcutSymbol(true)
+            cmd: FeatureDetector.actionShortcutSymbol(true),
+            name: this.model.get('name'),
+            password: PasswordDisplay.present(this.model.get('passwordLength')),
+            defaultUser: this.model.get('defaultUser'),
+            recycleBinEnabled: this.model.get('recycleBinEnabled'),
+            historyMaxItems: this.model.get('historyMaxItems'),
+            historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
+            keyEncryptionRounds: this.model.get('keyEncryptionRounds')
         });
     },
 
@@ -65,6 +73,9 @@ var SettingsAboutView = Backbone.View.extend({
     },
 
     clearKeyFile: function() {
+    },
+
+    focusMasterPass: function(e) {
     }
 });
 

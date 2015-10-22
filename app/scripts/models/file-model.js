@@ -66,12 +66,19 @@ var FileModel = Backbone.Model.extend({
         var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
         this.db = kdbxweb.Kdbx.load(demoFile, credentials);
         this.readModel();
-        this.set({ open: true, created: false, opening: false, error: false, name: 'Demo', demo: true });
+        this.set({ open: true, created: false, opening: false, error: false, name: 'Demo', passwordLength: 4, demo: true });
     },
 
     readModel: function(topGroupTitle) {
         var groups = new GroupCollection();
-        this.set({ groups: groups }, { silent: true });
+        this.set({
+            groups: groups,
+            defaultUser: this.db.meta.defaultUser,
+            recycleBinEnabled: this.db.meta.recycleBinEnabled,
+            historyMaxItems: this.db.meta.historyMaxItems,
+            historyMaxSize: this.db.meta.historyMaxSize,
+            keyEncryptionRounds: this.db.header.keyEncryptionRounds
+        }, { silent: true });
         this.db.groups.forEach(function(group, index) {
             var groupModel = GroupModel.fromGroup(group, this);
             if (index === 0 && topGroupTitle) {
