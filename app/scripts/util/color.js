@@ -41,7 +41,7 @@ Color.prototype.setHsl = function() {
 };
 
 Color.prototype.toHex = function() {
-    return '#' + hex(this.r) + hex(this.g) + (this.b);
+    return '#' + hex(this.r) + hex(this.g) + hex(this.b);
 };
 
 Color.prototype.distanceTo = function(color) {
@@ -65,10 +65,7 @@ Color.getNearest = function(colorStr) {
 };
 
 Color.getKnownBgColor = function(knownColor) {
-    var color = KnownColors[knownColor];
-    if (color) {
-        return color.toHex();
-    }
+    return Colors.BgColors[knownColor] ? '#' + Colors.BgColors[knownColor] : undefined;
 };
 
 _.forEach(Colors.ColorsValues, function(val, name) {

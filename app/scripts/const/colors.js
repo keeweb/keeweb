@@ -4,12 +4,21 @@ var Colors = {
     AllColors: ['yellow', 'green', 'red', 'orange', 'blue', 'violet'],
 
     ColorsValues: {
-        yellow: 'ff0',
-        green: '0f0',
-        red: 'f00',
-        orange: 'f80',
-        blue: '00f',
-        violet: 'f0f'
+        yellow: 'ffff00',
+        green: '00ff00',
+        red: 'ff0000',
+        orange: 'ff8800',
+        blue: '0000ff',
+        violet: 'ff00ff'
+    },
+
+    BgColors: {
+        yellow: 'ffff88',
+        green: '88ff88',
+        red: 'ff8888',
+        orange: 'ffcc88',
+        blue: '8888ff',
+        violet: 'ff88ff'
     }
 };
 
