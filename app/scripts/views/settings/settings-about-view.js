@@ -1,14 +1,17 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    RuntimeInfo = require('../../util/runtime-info');
+    RuntimeInfo = require('../../util/runtime-info'),
+    Links = require('../../const/links');
 
 var SettingsAboutView = Backbone.View.extend({
     template: require('templates/settings/settings-about.html'),
 
     render: function() {
         this.renderTemplate({
-            version: RuntimeInfo.version
+            version: RuntimeInfo.version,
+            licenseLink: Links.License,
+            repoLink: Links.Repo
         });
     }
 });

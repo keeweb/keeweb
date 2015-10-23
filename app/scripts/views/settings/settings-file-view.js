@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     PasswordDisplay = require('../../util/password-display'),
     Alerts = require('../../util/alerts'),
     RuntimeInfo = require('../../util/runtime-info'),
+    Links = require('../../const/links'),
     FileSaver = require('filesaver');
 
 var SettingsAboutView = Backbone.View.extend({
@@ -26,6 +27,7 @@ var SettingsAboutView = Backbone.View.extend({
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             supportFiles: RuntimeInfo.launcher,
+            desktopLink: Links.Desktop,
 
             name: this.model.get('name'),
             path: this.model.get('path'),

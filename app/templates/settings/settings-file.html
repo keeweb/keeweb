@@ -6,7 +6,7 @@
     <p>This database is loaded in memory. To enable auto-save and saving with shortcut <%= cmd %>S,
     please, save it to <%= supportFiles ? ' file or ' : '' %> Dropbox.</p>
     <% if (!supportFiles) { %>
-    <p>Want to work seamlessly with local files? <a href="http://github.com/antelle/keeweb" target="_blank">Download a desktop app</a></p>
+    <p>Want to work seamlessly with local files? <a href="<%= desktopLink %>" target="_blank">Download a desktop app</a></p>
     <% } %>
     <% } %>
 
