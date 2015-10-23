@@ -6,17 +6,18 @@
 
 # FUTURE
 
-- [ ] custom icons
+- [ ] remember last file
+- [ ] trash: groups/empty/untrash
 - [ ] advanced search
-- [ ] merge
 - [ ] move groups/entries
 - [ ] switch view
 - [ ] mobile
 - [ ] help/tips
 - [ ] secure fields
-- [ ] app settings
-- [ ] trash: groups/empty/untrash
 - [ ] generation templates
 - [ ] entry templates
+- [ ] merge
 - [ ] audit
 - [ ] auto-type
+- [ ] custom icons
+- [ ] plugins
