@@ -96,6 +96,9 @@ var OpenFileView = Backbone.View.extend({
             this[this.reading] = e.target.result;
             if (this.reading === 'fileData') {
                 this.model.set('name', file.name.replace(/\.\w+$/i, ''));
+                if (file.path) {
+                    this.model.set('path', file.path);
+                }
             } else {
                 this.model.set('keyFileName', file.name);
             }

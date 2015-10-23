@@ -1,5 +1,6 @@
 <div>
     <h1><i class="fa fa-cog"></i> General Settings</h1>
+    <h2>Appearance</h2>
     <div>
         <label for="settings__general-theme">Theme:</label>
         <select class="settings__general-theme settings__select" id="settings__general-theme">
@@ -8,4 +9,8 @@
             <% }); %>
         </select>
     </div>
+    <% if (devTools) { %>
+    <h2>Advanced</h2>
+    <a class="settings__general-dev-tools-link">Show dev tools</a>
+    <% } %>
 </div>

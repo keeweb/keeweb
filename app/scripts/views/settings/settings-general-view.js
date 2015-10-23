@@ -1,13 +1,15 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    Launcher = require('../../util/launcher'),
     AppSettingsModel = require('../../models/app-settings-model');
 
 var SettingsGeneralView = Backbone.View.extend({
     template: require('templates/settings/settings-general.html'),
 
     events: {
-        'change .settings__general-theme': 'changeTheme'
+        'change .settings__general-theme': 'changeTheme',
+        'click .settings__general-dev-tools-link': 'openDevTools'
     },
 
     allThemes: {
@@ -20,7 +22,8 @@ var SettingsGeneralView = Backbone.View.extend({
         var activeTheme = AppSettingsModel.instance.get('theme');
         this.renderTemplate({
             themes: this.allThemes,
-            activeTheme: activeTheme
+            activeTheme: activeTheme,
+            devTools: Launcher && Launcher.devTools
         });
     },
 
@@ -28,6 +31,12 @@ var SettingsGeneralView = Backbone.View.extend({
         var theme = e.target.value;
         AppSettingsModel.instance.set('theme', theme);
         AppSettingsModel.instance.save();
+    },
+
+    openDevTools: function() {
+        if (Launcher) {
+            Launcher.openDevTools();
+        }
     }
 });
 

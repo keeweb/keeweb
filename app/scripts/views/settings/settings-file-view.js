@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     FeatureDetector = require('../../util/feature-detector'),
     PasswordDisplay = require('../../util/password-display'),
     Alerts = require('../../util/alerts'),
+    RuntimeInfo = require('../../util/runtime-info'),
     FileSaver = require('filesaver');
 
 var SettingsAboutView = Backbone.View.extend({
@@ -18,10 +19,16 @@ var SettingsAboutView = Backbone.View.extend({
         'blur #settings__file-master-pass': 'blurMasterPass'
     },
 
+    initialize: function() {
+    },
+
     render: function() {
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
+            supportFiles: RuntimeInfo.launcher,
+
             name: this.model.get('name'),
+            path: this.model.get('path'),
             password: PasswordDisplay.present(this.model.get('passwordLength')),
             defaultUser: this.model.get('defaultUser'),
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
@@ -77,13 +84,20 @@ var SettingsAboutView = Backbone.View.extend({
     },
 
     focusMasterPass: function(e) {
-        e.target.value = '';
+        if (!this.passwordChanged) {
+            e.target.value = '';
+        }
+        e.target.setAttribute('type', 'text');
     },
 
     blurMasterPass: function(e) {
         if (!e.target.value) {
+            this.passwordChanged = false;
             e.target.value = PasswordDisplay.present(this.model.get('passwordLength'));
+        } else {
+            this.passwordChanged = true;
         }
+        e.target.setAttribute('type', 'password');
     }
 });
 

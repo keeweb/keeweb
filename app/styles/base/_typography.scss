@@ -44,10 +44,7 @@ p {
 a {
   @include th {
     color: text-color();
-    border-bottom: 1px dotted muted-color();
-    &.muted-color {
-      border-bottom: 1px dotted muted-color-border();
-    }
+    border-bottom: 1px dotted;
   }
   text-decoration: none;
   display: inline-block;

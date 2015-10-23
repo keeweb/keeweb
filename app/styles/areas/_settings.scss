@@ -6,7 +6,7 @@
   @include justify-content(flex-start);
   @include flex-wrap(wrap);
   @include scrollbar-on-hover;
-  padding: $base-padding;
+  margin: $base-padding;
   overflow: hidden;
   position: relative;
 
@@ -35,7 +35,7 @@
     display: inline-block;
     position: absolute;
     top: 0;
-    right: $base-padding-h * 2;
+    right: $base-padding-h;
     padding: $base-padding-v * 2 0 1px 0;
     @include th {
       background: background-color();

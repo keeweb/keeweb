@@ -1,10 +1,12 @@
 'use strict';
 
+var Launcher = require('./launcher');
+
 var RuntimeInfo = {
     version: '@@VERSION',
     buildDate: '@@DATE',
     userAgent: navigator.userAgent,
-    launcher: window.process && window.process.versions && window.process.versions.electron
+    launcher: Launcher ? Launcher.name + ' v' + Launcher.version : ''
 };
 
 module.exports = RuntimeInfo;

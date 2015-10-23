@@ -94,6 +94,8 @@ var MenuItemView = Backbone.View.extend({
     },
 
     selectItem: function(e) {
+        e.stopPropagation();
+        e.preventDefault();
         if (this.model.get('active')) {
             return;
         }
@@ -102,8 +104,6 @@ var MenuItemView = Backbone.View.extend({
         } else {
             Backbone.trigger('menu-select', { item: this.model });
         }
-        e.stopPropagation();
-        e.preventDefault();
     },
 
     selectOption: function(e) {

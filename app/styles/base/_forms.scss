@@ -83,11 +83,6 @@ input[type=text], input[type=password], textarea, input:not([type]) {
   }
 }
 
-input[type='number'] {
-  -moz-appearance:textfield;
-  appearance:textfield;
-}
-
 textarea {
   resize: vertical;
 }
@@ -114,12 +109,23 @@ input[type="file"] {
 select {
   margin-bottom: $base-spacing;
   max-width: 100%;
-  width: auto;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  transition: border-color $base-duration $base-timing;
+  border-radius: $base-border-radius;
+  padding-left: $base-spacing / 6;
+
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiDQogICAgd2lkdGg9IjMwNnB4IiBoZWlnaHQ9IjMwNnB4IiB2aWV3Qm94PSIwIDAgMzA2IDMwNiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQogICAgPHBvbHlnb24gcG9pbnRzPSIyNzAuMyw1OC42NSAxNTMsMTc1Ljk1IDM1LjcsNTguNjUgMCw5NC4zNSAxNTMsMjQ3LjM1IDMwNiw5NC4zNSIgZmlsbD0iIzk5ODQ4MyIvPg0KPC9zdmc+DQo=);
+  background-position: calc(100% - 5px) center;
+  background-size: 10px;
+  background-repeat: no-repeat;
+
   @include th {
-    border: light-border();
-    border-radius: $base-border-radius;
     background-color: background-color();
+    border: base-border();
     color: text-color();
+    box-shadow: form-box-shadow();
     &:hover {
       border-color: accent-border-color();
     }
@@ -136,6 +142,7 @@ select {
       }
     }
   }
+  &::-ms-expand { display: none; }
 }
 
 option {

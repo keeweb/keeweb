@@ -1,7 +1,14 @@
 <div>
     <h1><i class="fa fa-lock"></i> <%- name %></h1>
-    <p>This database is opened as local file. To enable auto-save and saving with shortcut <%= cmd %>S,
-    please, save it to Dropbox.</p>
+    <% if (path) { %>
+    <p>File path: <%- path %></p>
+    <% } else { %>
+    <p>This database is loaded in memory. To enable auto-save and saving with shortcut <%= cmd %>S,
+    please, save it to <%= supportFiles ? ' file or ' : '' %> Dropbox.</p>
+    <% if (!supportFiles) { %>
+    <p>Want to work seamlessly with local files? <a href="http://github.com/antelle/keeweb" target="_blank">Download a desktop app</a></p>
+    <% } %>
+    <% } %>
 
     <div class="settings__file-buttons">
         <button class="settings__file-button-save-file btn-silent">Save to file</button>
@@ -11,7 +18,7 @@
 
     <h2>Settings</h2>
     <label for="settings__file-master-pass">Master password:</label>
-    <input type="text" class="settings__input" required id="settings__file-master-pass" value="<%= password %>" />
+    <input type="password" class="settings__input" id="settings__file-master-pass" value="<%= password %>" />
     <label for="settings__file-key-file">Key file:</label>
     <select class="settings__select" id="settings__file-key-file">
         <option value="">Don't use key file</option>
