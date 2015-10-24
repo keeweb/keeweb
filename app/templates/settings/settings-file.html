@@ -17,15 +17,16 @@
     </div>
 
     <h2>Settings</h2>
-    <label for="settings__file-master-pass">Master password:</label>
+    <label for="settings__file-master-pass" class="settings__file-master-pass-label">Master password:
+        <span class="settings__file-master-pass-warning">
+            <i class="fa fa-warning"></i> password was changed; leave the field blank to use old password
+        </span>
+    </label>
     <input type="password" class="settings__input" id="settings__file-master-pass" value="<%= password %>" />
     <label for="settings__file-key-file">Key file:</label>
-    <select class="settings__select" id="settings__file-key-file">
-        <option value="">Don't use key file</option>
-        <option value="ex">Use existing key file</option>
-        <option value="gen">Generate new key file</option>
-        <option value="sel">Select a key file</option>
-    </select>
+    <select class="settings__select settings__select-no-margin" id="settings__file-key-file"></select>
+    <a id="settings__file-file-select-link">Select a key file</a>
+    <input type="file" accept=".key" id="settings__file-file-select" class="hide" />
 
     <h2>Names</h2>
     <label for="settings__file-name">Name:</label>
@@ -39,11 +40,11 @@
         <label for="settings__file-trash">Enable trash</label>
     </div>
     <label for="settings__file-hist-len">History length, keep last records per entry:</label>
-    <input type="text" pattern="\d*" required class="settings__input" id="settings__file-hist-len" value="<%= historyMaxItems %>" />
+    <input type="text" pattern="\d+" required class="settings__input" id="settings__file-hist-len" value="<%= historyMaxItems %>" />
     <label for="settings__file-hist-size">History size, total MB per file:</label>
-    <input type="text" pattern="\d*" required class="settings__input" id="settings__file-hist-size" value="<%= historyMaxSize %>" />
+    <input type="text" pattern="\d+" required class="settings__input" id="settings__file-hist-size" value="<%= historyMaxSize %>" />
 
     <h2>Advanced</h2>
     <label for="settings__file-key-rounds">Key encryption rounds:</label>
-    <input type="text" pattern="\d*" required class="settings__input" id="settings__file-key-rounds" value="<%= keyEncryptionRounds %>" />
+    <input type="text" pattern="\d+" required class="settings__input" id="settings__file-key-rounds" value="<%= keyEncryptionRounds %>" />
 </div>

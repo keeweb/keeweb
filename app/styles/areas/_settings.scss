@@ -43,7 +43,7 @@
     }
   }
 
-  &__select, &__input, &__pre {
+  &__select, &__input, &__pre, &__file-master-pass-label {
     width: 60%;
     @include tablet {
       width: calc(100% - 20px);
@@ -57,5 +57,15 @@
   &__pre {
     @include user-select(text);
     white-space: pre-wrap;
+  }
+
+  &__select-no-margin {
+    margin-bottom: $base-padding-v;
+  }
+
+  &__file-master-pass-warning {
+    font-weight: normal;
+    float: right;
+    display: none;
   }
 }

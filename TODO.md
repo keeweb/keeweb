@@ -1,11 +1,10 @@
 # MVP
 
 - [ ] add/edit groups
-- [ ] dropbox
-- [ ] file settings
 
 # FUTURE
 
+- [ ] dropbox
 - [ ] remember last file
 - [ ] trash: groups/empty/untrash
 - [ ] advanced search

@@ -18,7 +18,11 @@ var FileModel = Backbone.Model.extend({
         error: false,
         created: false,
         demo: false,
-        groups: null
+        groups: null,
+        oldPasswordLength: 0,
+        oldKeyFileName: '',
+        passwordChanged: false,
+        keyFileChanged: false
     },
 
     db: null,
@@ -49,7 +53,10 @@ var FileModel = Backbone.Model.extend({
             return;
         }
         this.readModel(this.get('name'));
-        this.set({ open: true, opening: false, error: false, passwordLength: len });
+        this.setOpenFile({ passwordLength: len });
+        this._oldPasswordHash = this.db.credentials.passwordHash;
+        this._oldKeyFileHash = this.db.credentials.keyFileHash;
+        this._oldKeyChangeDate = this.db.meta.keyChanged;
     },
 
     create: function(name) {
@@ -66,7 +73,18 @@ var FileModel = Backbone.Model.extend({
         var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
         this.db = kdbxweb.Kdbx.load(demoFile, credentials);
         this.readModel();
-        this.set({ open: true, created: false, opening: false, error: false, name: 'Demo', passwordLength: 4, demo: true });
+        this.setOpenFile({ passwordLength: 4, demo: true, name: 'Demo' });
+    },
+
+    setOpenFile: function(props) {
+        _.extend(props, {
+            open: true,
+            opening: false,
+            error: false,
+            oldKeyFileName: this.get('keyFileName'),
+            oldPasswordLength: props.passwordLength
+        });
+        this.set(props);
     },
 
     readModel: function(topGroupTitle) {
@@ -142,6 +160,94 @@ var FileModel = Backbone.Model.extend({
 
     getXml: function() {
         return this.db.saveXml();
+    },
+
+    setPassword: function(password) {
+        this.db.credentials.setPassword(password);
+        this.db.meta.keyChanged = new Date();
+        this.set({ passwordLength: password.byteLength, passwordChanged: true });
+        this.setModified();
+    },
+
+    resetPassword: function() {
+        this.db.credentials.passwordHash = this._oldPasswordHash;
+        if (this.db.credentials.keyFileHash === this._oldKeyFileHash) {
+            this.db.meta.keyChanged = this._oldKeyChangeDate;
+        }
+        this.set({ passwordLength: this.get('oldPasswordLength'), passwordChanged: false });
+    },
+
+    setKeyFile: function(keyFile, keyFileName) {
+        this.db.credentials.setKeyFile(keyFile);
+        this.db.meta.keyChanged = new Date();
+        this.set({ keyFileName: keyFileName, keyFileChanged: true });
+        this.setModified();
+    },
+
+    generateAndSetKeyFile: function() {
+        var keyFile = kdbxweb.Credentials.createRandomKeyFile();
+        var keyFileName = 'Generated';
+        this.setKeyFile(keyFile, keyFileName);
+        return keyFile;
+    },
+
+    resetKeyFile: function() {
+        this.db.credentials.keyFileHash = this._oldKeyFileHash;
+        if (this.db.credentials.passwordHash === this._oldPasswordHash) {
+            this.db.meta.keyChanged = this._oldKeyChangeDate;
+        }
+        this.set({ keyFileName: this.get('oldKeyFileName'), keyFileChanged: false });
+    },
+
+    removeKeyFile: function() {
+        this.db.credentials.keyFileHash = null;
+        var changed = !!this._oldKeyFileHash;
+        if (!changed && this.db.credentials.passwordHash === this._oldPasswordHash) {
+            this.db.meta.keyChanged = this._oldKeyChangeDate;
+        }
+        this.set({ keyFileName: '', keyFileChanged: changed });
+    },
+
+    setName: function(name) {
+        this.db.meta.name = name;
+        this.db.meta.nameChanged = new Date();
+        this.set('name', name);
+        this.setModified();
+    },
+
+    setDefaultUser: function(defaultUser) {
+        this.db.meta.defaultUser = defaultUser;
+        this.db.meta.defaultUserChanged = new Date();
+        this.set('defaultUser', defaultUser);
+        this.setModified();
+    },
+
+    setRecycleBinEnabled: function(enabled) {
+        enabled = !!enabled;
+        this.db.meta.recycleBinEnabled = enabled;
+        if (enabled) {
+            this.db.createRecycleBin();
+        }
+        this.set('setRecycleBinEnabled', enabled);
+        this.setModified();
+    },
+
+    setHistoryMaxItems: function(count) {
+        this.db.meta.historyMaxItems = count;
+        this.set('historyMaxItems', count);
+        this.setModified();
+    },
+
+    setHistoryMaxSize: function(size) {
+        this.db.meta.historyMaxSize = size;
+        this.set('historyMaxSize', size);
+        this.setModified();
+    },
+
+    setKeyEncryptionRounds: function(rounds) {
+        this.db.header.keyEncryptionRounds = rounds;
+        this.set('keyEncryptionRounds', rounds);
+        this.setModified();
     }
 });
 

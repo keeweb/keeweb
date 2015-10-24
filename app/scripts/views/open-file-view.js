@@ -102,12 +102,16 @@ var OpenFileView = Backbone.View.extend({
             } else {
                 this.model.set('keyFileName', file.name);
             }
-            complete(true);
+            if (complete) {
+                complete(true);
+            }
         }).bind(this);
         reader.onerror = (function() {
             Alerts.error({ header: 'Failed to read file' });
             this.showReadyToOpen();
-            complete(false);
+            if (complete) {
+                complete(false);
+            }
         }).bind(this);
         reader.readAsArrayBuffer(file);
     },
