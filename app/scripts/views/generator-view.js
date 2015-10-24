@@ -2,8 +2,11 @@
 
 var Backbone = require('backbone'),
     PasswordGenerator = require('../util/password-generator'),
-    AppSettingsModel = require('../models/app-settings-model'),
     CopyPaste = require('../util/copy-paste');
+
+var DefaultGenOpts = {
+    length: 16, upper: true, lower: true, digits: true, special: false, brackets: false, high: false, ambiguous: false
+};
 
 var GeneratorView = Backbone.View.extend({
     el: 'body',
@@ -21,7 +24,7 @@ var GeneratorView = Backbone.View.extend({
 
     initialize: function () {
         $('body').one('click', this.remove.bind(this));
-        this.gen = _.clone(AppSettingsModel.instance.get('genOpts'));
+        this.gen = _.clone(DefaultGenOpts);
     },
 
     render: function() {

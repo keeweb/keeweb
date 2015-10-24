@@ -2,7 +2,8 @@
 
 var Backbone = require('backbone'),
     OpenFileView = require('./open-file-view'),
-    FileModel = require('../models/file-model');
+    FileModel = require('../models/file-model'),
+    Launcher = require('../util/launcher');
 
 var OpenView = Backbone.View.extend({
     template: require('templates/open.html'),
@@ -93,6 +94,22 @@ var OpenView = Backbone.View.extend({
         var keyFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'key'; });
         if (dataFile) {
             this.views.openFile.setFile(dataFile, keyFile);
+        }
+    },
+
+    showOpenLocalFile: function(path) {
+        if (path && Launcher) {
+            try {
+                var name = path.match(/[^/\\]*$/)[0];
+                var data = Launcher.readFile(path);
+                var file = new Blob([data]);
+                Object.defineProperties(file, {
+                    path: { value: path },
+                    name: { value: name }
+                });
+                this.views.openFile.setFile(file);
+            } catch (e) {
+            }
         }
     }
 });

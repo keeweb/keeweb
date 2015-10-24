@@ -35,6 +35,9 @@ var AppModel = Backbone.Model.extend({
             page: 'file',
             file: file
         });
+        if (file.get('path')) {
+            AppSettingsModel.instance.set('lastOpenFile', file.get('path'));
+        }
         this.refresh();
     },
 

@@ -1,10 +1,12 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    AppSettingsModel = require('../../models/app-settings-model'),
     FeatureDetector = require('../../util/feature-detector'),
     PasswordDisplay = require('../../util/password-display'),
     Alerts = require('../../util/alerts'),
     RuntimeInfo = require('../../util/runtime-info'),
+    Launcher = require('../../util/launcher'),
     Links = require('../../const/links'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
@@ -96,8 +98,37 @@ var SettingsAboutView = Backbone.View.extend({
             return;
         }
         var data = this.model.getData();
-        var blob = new Blob([data], {type: 'application/octet-stream'});
-        FileSaver.saveAs(blob, this.model.get('name') + '.kdbx');
+        var fileName = this.model.get('name') + '.kdbx';
+        if (Launcher) {
+            if (this.model.get('path')) {
+                this.saveToFileWithPath(this.model.get('path'), data);
+            } else {
+                Launcher.getSaveFileName(fileName, (function (path) {
+                    if (path) {
+                        this.saveToFileWithPath(path, data);
+                    }
+                }).bind(this));
+            }
+        } else {
+            var blob = new Blob([data], {type: 'application/octet-stream'});
+            FileSaver.saveAs(blob, fileName);
+            this.model.saved();
+        }
+    },
+
+    saveToFileWithPath: function(path, data) {
+        try {
+            Launcher.writeFile(path, data);
+            this.model.saved(path);
+            if (!AppSettingsModel.instance.get('lastOpenFile')) {
+                AppSettingsModel.instance.set('lastOpenFile', path);
+            }
+        } catch (e) {
+            Alerts.error({
+                header: 'Save error',
+                body: 'Error saving to file ' + path + ': \n' + e
+            });
+        }
     },
 
     exportAsXml: function() {

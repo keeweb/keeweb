@@ -30,7 +30,6 @@ var SettingsGeneralView = Backbone.View.extend({
     changeTheme: function(e) {
         var theme = e.target.value;
         AppSettingsModel.instance.set('theme', theme);
-        AppSettingsModel.instance.save();
     },
 
     openDevTools: function() {

@@ -3,6 +3,7 @@
 var Backbone = require('backbone'),
     GroupCollection = require('../collections/group-collection'),
     GroupModel = require('./group-model'),
+    Launcher = require('../util/launcher'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
 
@@ -54,9 +55,6 @@ var FileModel = Backbone.Model.extend({
         }
         this.readModel(this.get('name'));
         this.setOpenFile({ passwordLength: len });
-        this._oldPasswordHash = this.db.credentials.passwordHash;
-        this._oldKeyFileHash = this.db.credentials.keyFileHash;
-        this._oldKeyChangeDate = this.db.meta.keyChanged;
     },
 
     create: function(name) {
@@ -82,9 +80,14 @@ var FileModel = Backbone.Model.extend({
             opening: false,
             error: false,
             oldKeyFileName: this.get('keyFileName'),
-            oldPasswordLength: props.passwordLength
+            oldPasswordLength: props.passwordLength,
+            passwordChanged: false,
+            keyFileChanged: false
         });
         this.set(props);
+        this._oldPasswordHash = this.db.credentials.passwordHash;
+        this._oldKeyFileHash = this.db.credentials.keyFileHash;
+        this._oldKeyChangeDate = this.db.meta.keyChanged;
     },
 
     readModel: function(topGroupTitle) {
@@ -154,12 +157,24 @@ var FileModel = Backbone.Model.extend({
         }
     },
 
+    autoSave: function() {
+        Launcher.writeFile(this.get('path'), this.getData());
+    },
+
     getData: function() {
         return this.db.save();
     },
 
     getXml: function() {
         return this.db.saveXml();
+    },
+
+    saved: function(path) {
+        this.set({ path: path || '', modified: false, created: false });
+        this.setOpenFile({ passwordLength: this.get('passwordLength') });
+        this.forEachEntry({}, function(entry) {
+            entry.unsaved = false;
+        });
     },
 
     setPassword: function(password) {

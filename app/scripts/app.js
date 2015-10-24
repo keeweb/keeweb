@@ -25,7 +25,8 @@ $(function() {
     }
 
     function showApp() {
-        new AppView({ model: new AppModel() }).render().showOpenFile();
+        var appModel = new AppModel();
+        new AppView({ model: appModel }).render().showOpenFile(appModel.settings.get('lastOpenFile'));
     }
 });
 

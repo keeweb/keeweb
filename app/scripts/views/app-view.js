@@ -51,6 +51,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'switch-view', this.switchView);
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
+        this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
@@ -71,7 +72,7 @@ var AppView = Backbone.View.extend({
         return this;
     },
 
-    showOpenFile: function() {
+    showOpenFile: function(filePath) {
         this.views.menu.hide();
         this.views.menuDrag.hide();
         this.views.list.hide();
@@ -83,6 +84,15 @@ var AppView = Backbone.View.extend({
         this.views.open = new OpenView({ model: this.model });
         this.views.open.setElement(this.$el.find('.app__body')).render();
         this.views.open.on('cancel', this.showEntries, this);
+        if (Launcher && filePath) {
+            this.views.open.showOpenLocalFile(filePath);
+        }
+    },
+
+    launcherOpenFile: function(path) {
+        if (path && /\.kdbx$/i.test(path)) {
+            this.showOpenFile(path);
+        }
     },
 
     showEntries: function() {
@@ -189,7 +199,21 @@ var AppView = Backbone.View.extend({
     },
 
     saveAll: function() {
-        this.showFileSettings({ fileId: this.model.files.first().cid });
+        var fileId;
+        this.model.files.forEach(function(file) {
+            if (file.get('path')) {
+                try {
+                    file.autoSave();
+                } catch (e) {
+                    fileId = file.cid;
+                }
+            } else if (!fileId) {
+                fileId = file.cid;
+            }
+        });
+        if (fileId) {
+            this.showFileSettings({fileId: fileId});
+        }
     },
 
     toggleSettings: function(page) {

@@ -5,19 +5,18 @@ var Backbone = require('backbone');
 var AppSettingsModel = Backbone.Model.extend({
     defaults: {
         theme: 'd',
-        genOpts: {
-            length: 16, upper: true, lower: true, digits: true, special: false, brackets: false, high: false, ambiguous: false
-        }
+        lastOpenFile: ''
     },
 
     initialize: function() {
+        this.listenTo(this, 'change', this.save);
     },
 
     load: function() {
         if (typeof localStorage !== 'undefined' && localStorage.appSettings) {
             try {
                 var data = JSON.parse(localStorage.appSettings);
-                this.set(data);
+                this.set(data, { silent: true });
             } catch (e) { /* failed to load settings */ }
         }
     },
