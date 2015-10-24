@@ -5,7 +5,6 @@
 # FUTURE
 
 - [ ] dropbox
-- [ ] remember last file
 - [ ] trash: groups/empty/untrash
 - [ ] advanced search
 - [ ] move groups/entries
