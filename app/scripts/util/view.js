@@ -12,6 +12,10 @@ _.extend(Backbone.View.prototype, {
     },
 
     toggle: function(visible) {
+        if (visible === undefined) {
+            visible = this._hidden;
+        }
+        this.$el.toggleClass('show', !!visible);
         this.$el.toggleClass('hide', !visible);
         this._hidden = !visible;
         this.trigger(visible ? 'show' : 'hide');

@@ -48,7 +48,7 @@
     @include align-items(stretch);
     @include flex-direction(column);
     @include justify-content(flex-start);
-    
+
     .menu__item--collapsed>& {
       display: none;
     }

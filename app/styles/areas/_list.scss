@@ -58,6 +58,19 @@
     &-btn-sort {
       @include icon-btn;
     }
+    &-btn-menu {
+      display: none;
+      @include mobile {
+        display: block;
+        @include area-selectable;
+        padding: .7em .6em 0;
+        height: 1.6em;
+        margin-right: $base-padding-h;
+        >i {
+          display: block;
+        }
+      }
+    }
   }
 
   &__item {

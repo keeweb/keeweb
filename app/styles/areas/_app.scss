@@ -1,5 +1,5 @@
 .app {
-  @include size(100vw 100vh);
+  @include size(100%);
   @include display(flex);
   @include align-items(stretch);
   @include flex-direction(column);
@@ -18,6 +18,11 @@
     @include flex(0 0 auto);
     @include display(flex);
     width: 150px;
+    @include mobile {
+      &:not(.menu-visible) {
+        display: none;
+      }
+    }
   }
 
   &__menu-drag, &__list-drag {

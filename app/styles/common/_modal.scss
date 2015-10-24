@@ -1,6 +1,6 @@
 .modal {
   @include position(absolute, 0 null null 0);
-  @include size(100vw 100vh);
+  @include size(100%);
   @include th { background-color: rgba(background-color(), .9); }
   z-index: $z-index-modal;
 
@@ -23,7 +23,6 @@
     }
   }
 
-  $modal-width: 40%;
   &__icon {
     font-size: 6em;
     text-align: center;
@@ -34,18 +33,21 @@
     font-size: $small-header-font-size;
   }
   &__body {
-    @include align-self(center);
     @include user-select(text);
     text-align: left;
-    width: $modal-width;
     margin: $base-spacing;
   }
   &__buttons {
-    @include align-self(center);
     text-align: right;
-    width: $modal-width;
     button ~ button {
       margin-left: $small-spacing;
+    }
+  }
+  &__body, &__buttons {
+    @include align-self(center);
+    width: 40%;
+    @include tablet {
+      width: 90%;
     }
   }
 }

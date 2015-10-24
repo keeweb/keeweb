@@ -1,5 +1,5 @@
 .drag-mask {
-  @include size(100vw 100vh);
+  @include size(100%);
   @include position(absolute, 0 null null 0);
 }
 

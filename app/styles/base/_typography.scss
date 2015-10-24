@@ -1,10 +1,11 @@
 body {
-  @include size(100vw 100vh);
+  @include size(100%);
   @include user-select(none);
   @include th-self {
     color: text-color();
     background-color: background-color();
   }
+  overflow: auto;
   font-family: $base-font-family;
   font-feature-settings: "kern", "liga", "pnum";
   font-size: $base-font-size;

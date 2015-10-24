@@ -1,11 +1,13 @@
 html {
   @include size(100%);
   overflow: hidden;
+  position: fixed;
 }
 
 body {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  position: fixed;
 }
 
 noscript {

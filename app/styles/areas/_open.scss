@@ -18,6 +18,9 @@
     }
     &-icon-wrap {
       width: 50px;
+      @include mobile {
+        padding: 0 4px;
+      }
     }
     &-icon, &-btn-new, &-btn-key {
       font-size: 30px;
@@ -68,6 +71,7 @@
         font-size: 22px;
         padding-right: 34px;
         margin-bottom: 0;
+        width: 100%;
         &[readonly] {
           cursor: pointer;
         }

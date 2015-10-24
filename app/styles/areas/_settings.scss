@@ -45,7 +45,7 @@
 
   &__select, &__input, &__pre {
     width: 60%;
-    @media (max-width: 800px) {
+    @include tablet {
       width: calc(100% - 20px);
     }
   }

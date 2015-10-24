@@ -50,6 +50,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'save-all', this.saveAll);
         this.listenTo(Backbone, 'switch-view', this.switchView);
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
+        this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
@@ -210,6 +211,10 @@ var AppView = Backbone.View.extend({
                 this.model.menu.select({item: menuItem});
             }
         }
+    },
+
+    toggleMenu: function() {
+        this.views.menu.switchVisibility();
     },
 
     switchView: function() {

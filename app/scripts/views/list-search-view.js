@@ -15,7 +15,8 @@ var ListSearchView = Backbone.View.extend({
         'input .list__search-field': 'inputChange',
         'click .list__search-btn-new': 'createOptionsClick',
         'click .list__search-btn-sort': 'sortOptionsClick',
-        'click .list__search-icon-search': 'advancedSearchClick'
+        'click .list__search-icon-search': 'advancedSearchClick',
+        'click .list__search-btn-menu': 'toggleMenu'
     },
 
     views: null,
@@ -178,6 +179,10 @@ var ListSearchView = Backbone.View.extend({
 
     advancedSearchClick: function() {
         require('../util/alerts').notImplemented();
+    },
+
+    toggleMenu: function() {
+        Backbone.trigger('toggle-menu');
     },
 
     hideSearchOptions: function() {

@@ -45,6 +45,10 @@ var MenuView = Backbone.View.extend({
 
     menuChanged: function() {
         this.render();
+    },
+
+    switchVisibility: function() {
+        this.$el.toggleClass('menu-visible');
     }
 });
 
