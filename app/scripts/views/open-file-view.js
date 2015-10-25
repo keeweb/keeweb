@@ -190,7 +190,16 @@ var OpenFileView = Backbone.View.extend({
             files.forEach(function(file) {
                 buttons.push({ result: file, title: file.replace(/\.kdbx/i, '') });
             });
-            buttons.push({ result: '', title: 'cancel' });
+            if (!buttons.length) {
+                this.dropboxLoading = null;
+                this.render();
+                Alerts.error({
+                    header: 'Nothing found',
+                    body: 'You have no files in your Dropbox which could opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
+                });
+                return;
+            }
+            buttons.push({ result: '', title: 'Cancel' });
             Alerts.alert({
                 header: 'Select a file',
                 body: 'Select a file from your Dropbox which you would like to open',
