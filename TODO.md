@@ -6,16 +6,17 @@
 
 - [ ] dropbox
 - [ ] trash: groups/empty/untrash
-- [ ] advanced search
 - [ ] move groups/entries
-- [ ] switch view
-- [ ] mobile
 - [ ] help/tips
-- [ ] secure fields
-- [ ] generation templates
-- [ ] entry templates
+- [ ] switch view
 - [ ] merge
-- [ ] audit
+- [ ] generation templates
+- [ ] advanced search
 - [ ] auto-type
+- [ ] mobile
+- [ ] file type associations
+- [ ] secure fields
+- [ ] audit
+- [ ] entry templates
 - [ ] custom icons
 - [ ] plugins
