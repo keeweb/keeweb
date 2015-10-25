@@ -36,13 +36,15 @@ app.on('ready', function() {
 });
 app.on('open-file', function(e, path) {
     e.preventDefault();
-    openFile = path.replace(/"/g, '\\"').replace(/\\/g, '\\\\');
+    openFile = path;
     notifyOpenFile();
 });
 
 function notifyOpenFile() {
     if (ready && openFile && mainWindow) {
+        openFile = openFile.replace(/"/g, '\\"').replace(/\\/g, '\\\\');
         mainWindow.webContents.executeJavaScript('if (window.launcherOpen) { window.launcherOpen("' + openFile + '"); } ' +
             ' else { window.launcherOpenedFile="' + openFile + '"; }');
+        openFile = null;
     }
 }
