@@ -1,12 +1,15 @@
 'use strict';
 
+/* jshint node:true */
+/* jshint browser:false */
+
 var app = require('app'),
     BrowserWindow = require('browser-window'),
     path = require('path'),
     fs = require('fs');
 
 var mainWindow = null,
-    openFile = null,
+    openFile = process.argv.filter(function(arg) { return /\.kdbx$/i.test(arg); })[0],
     ready = false;
 
 app.on('window-all-closed', function() { app.quit(); });
