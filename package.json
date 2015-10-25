@@ -1,6 +1,6 @@
 {
   "name": "keeweb",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "KeePass web app",
   "main": "Gulpfile.js",
   "repository": "https://github.com/antelle/keeweb",
