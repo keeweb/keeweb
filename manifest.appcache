@@ -1,6 +1,9 @@
 CACHE MANIFEST
 
-# 2015-10-25:v0.0.3
+# 2015-10-25:v0.0.4
 
 CACHE:
 index.html
+
+NETWORK:
+*
