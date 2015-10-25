@@ -4,3 +4,6 @@ CACHE MANIFEST
 
 CACHE:
 index.html
+
+NETWORK:
+*
