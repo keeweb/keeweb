@@ -3,12 +3,20 @@
     <h2>Appearance</h2>
     <div>
         <label for="settings__general-theme">Theme:</label>
-        <select class="settings__general-theme settings__select" id="settings__general-theme">
+        <select class="settings__select" id="settings__general-theme">
             <% _.forEach(themes, function(name, key) { %>
             <option value="<%= key %>" <%= key === activeTheme ? 'selected' : '' %>><%- name %></option>
             <% }); %>
         </select>
     </div>
+    <% if (canAutoUpdate) { %>
+    <h2>Function</h2>
+    <div>
+        <input type="checkbox" class="settings__input" id="settings__general-auto-update" <%- autoUpdate ? 'checked' : '' %> />
+        <label for="settings__general-auto-update">Automatic updates</label>
+        <div>Last update check: <%- lastUpdateCheck %></div>
+    </div>
+    <% } %>
     <% if (devTools) { %>
     <h2>Advanced</h2>
     <a class="settings__general-dev-tools-link">Show dev tools</a>

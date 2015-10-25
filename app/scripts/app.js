@@ -4,11 +4,13 @@ var AppModel = require('./models/app-model'),
     AppView = require('./views/app-view'),
     KeyHandler = require('./comp/key-handler'),
     Alerts = require('./comp/alerts'),
-    DropboxLink = require('./comp/dropbox-link');
+    DropboxLink = require('./comp/dropbox-link'),
+    Updater = require('./comp/updater');
 
 $(function() {
     require('./mixins/view');
 
+    Updater.check();
     if (location.href.indexOf('state=') >= 0) {
         DropboxLink.receive();
         return;

@@ -5,7 +5,8 @@ var Backbone = require('backbone');
 var AppSettingsModel = Backbone.Model.extend({
     defaults: {
         theme: 'd',
-        lastOpenFile: ''
+        lastOpenFile: '',
+        autoUpdate: true
     },
 
     initialize: function() {
