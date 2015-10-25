@@ -27,7 +27,7 @@ var FooterView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_S, this.saveAll, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_COMMA, this.toggleSettings, this, KeyHandler.SHORTCUT_ACTION);
 
-        this.listenTo(this.model.files, 'update reset', this.render);
+        this.listenTo(this.model.files, 'update reset change', this.render);
     },
 
     render: function () {

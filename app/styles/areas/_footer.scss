@@ -21,6 +21,13 @@
     &--expanded {
       @include flex(1);
     }
+
+    &-mod-sign {
+      font-size: 6px;
+      vertical-align: top;
+      margin-left: $base-padding-h;
+      @include th { color: action-color(); }
+    }
   }
 
   &__btn {
