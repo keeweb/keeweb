@@ -8,6 +8,7 @@
 - [ ] move groups/entries
 - [ ] help/tips
 - [ ] switch view
+- [ ] optional auto-update
 - [ ] lock without closing
 - [ ] merge
 - [ ] show sync state
