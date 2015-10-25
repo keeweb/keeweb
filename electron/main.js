@@ -36,7 +36,7 @@ app.on('ready', function() {
 });
 app.on('open-file', function(e, path) {
     e.preventDefault();
-    openFile = path.replace(/"/g, '\\"').replace('\\', '\\\\');
+    openFile = path.replace(/"/g, '\\"').replace(/\\/g, '\\\\');
     notifyOpenFile();
 });
 
