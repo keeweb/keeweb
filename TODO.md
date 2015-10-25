@@ -10,6 +10,7 @@
 - [ ] switch view
 - [ ] lock without closing
 - [ ] merge
+- [ ] show sync state
 - [ ] dropbox keyfiles
 - [ ] generation templates
 - [ ] advanced search

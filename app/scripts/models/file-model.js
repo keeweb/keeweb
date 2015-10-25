@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     GroupCollection = require('../collections/group-collection'),
     GroupModel = require('./group-model'),
     Launcher = require('../comp/launcher'),
+    DropboxLink = require('../comp/dropbox-link'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
 
@@ -160,7 +161,22 @@ var FileModel = Backbone.Model.extend({
     },
 
     autoSave: function() {
-        Launcher.writeFile(this.get('path'), this.getData());
+        this.set('syncing', true);
+        switch (this.get('storage')) {
+            case 'file':
+                Launcher.writeFile(this.get('path'), this.getData());
+                this.saved(this.get('path'), this.get('storage'));
+                break;
+            case 'dropbox':
+                DropboxLink.saveFile(this.get('path'), this.getData(), true, (function(err) {
+                    if (!err) {
+                        this.saved(this.get('path'), this.get('storage'));
+                    }
+                }).bind(this));
+                break;
+            default:
+                throw 'Unknown storage; cannot auto save';
+        }
     },
 
     getData: function() {
