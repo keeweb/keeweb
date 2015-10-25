@@ -37,6 +37,7 @@
     top: 0;
     right: $base-padding-h;
     padding: $base-padding-v * 2 0 1px 0;
+    z-index: 1;
     @include th {
       background: background-color();
       box-shadow: 0 0 5px 5px background-color();
