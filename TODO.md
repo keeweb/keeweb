@@ -10,11 +10,12 @@
 - [ ] switch view
 - [ ] lock without closing
 - [ ] merge
+- [ ] dropbox keyfiles
 - [ ] generation templates
 - [ ] advanced search
-- [ ] auto-type
 - [ ] mobile
 - [ ] file type associations
+- [ ] auto-type
 - [ ] secure fields
 - [ ] audit
 - [ ] entry templates

@@ -5,7 +5,6 @@ var Backbone = require('backbone'),
     FeatureDetector = require('../../util/feature-detector'),
     PasswordGenerator = require('../../util/password-generator'),
     Alerts = require('../../comp/alerts'),
-    RuntimeInfo = require('../../comp/runtime-info'),
     Launcher = require('../../comp/launcher'),
     Links = require('../../const/links'),
     DropboxLink = require('../../comp/dropbox-link'),
@@ -115,6 +114,7 @@ var SettingsAboutView = Backbone.View.extend({
         } else {
             var blob = new Blob([data], {type: 'application/octet-stream'});
             FileSaver.saveAs(blob, fileName);
+            this.passwordChanged = false;
             this.model.saved();
         }
     },
@@ -122,6 +122,7 @@ var SettingsAboutView = Backbone.View.extend({
     saveToFileWithPath: function(path, data) {
         try {
             Launcher.writeFile(path, data);
+            this.passwordChanged = false;
             this.model.saved(path, 'file');
             if (!AppSettingsModel.instance.get('lastOpenFile')) {
                 AppSettingsModel.instance.set('lastOpenFile', path);
@@ -177,6 +178,7 @@ var SettingsAboutView = Backbone.View.extend({
                     });
                 }
             } else {
+                this.passwordChanged = false;
                 this.model.saved(fileName, 'dropbox');
                 this.render();
             }

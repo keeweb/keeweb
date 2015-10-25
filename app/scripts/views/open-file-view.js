@@ -28,7 +28,7 @@ var OpenFileView = Backbone.View.extend({
     fileData: null,
     keyFileData: null,
     passwordInput: null,
-    dropboxLoading: false,
+    dropboxLoading: null,
 
     initialize: function () {
         this.fileData = null;
@@ -181,10 +181,10 @@ var OpenFileView = Backbone.View.extend({
     },
 
     openFromDropbox: function() {
-        this.dropboxLoading = true;
+        this.dropboxLoading = 'opening';
         this.render();
         DropboxLink.getFileList((function(err, files) {
-            this.dropboxLoading = false;
+            this.dropboxLoading = null;
             if (err) { return; }
             var buttons = [];
             files.forEach(function(file) {
@@ -205,9 +205,11 @@ var OpenFileView = Backbone.View.extend({
     },
 
     openDropboxFile: function(file) {
-        this.dropboxLoading = true;
+        var fileName = file.replace(/\.kdbx/i, '');
+        this.dropboxLoading = 'opening ' + fileName;
+        this.render();
         DropboxLink.openFile(file, (function(err, data) {
-            this.dropboxLoading = false;
+            this.dropboxLoading = null;
             if (err || !data || !data.size) {
                 this.render();
                 Alerts.error({ header: 'Failed to read file', body: 'Error reading Dropbox file: \n' + err });
@@ -216,14 +218,14 @@ var OpenFileView = Backbone.View.extend({
             Object.defineProperties(data, {
                 storage: { value: 'dropbox' },
                 path: { value: file },
-                name: { value: file.replace(/\.kdbx/i, '') }
+                name: { value: fileName }
             });
             this.setFile(data);
         }).bind(this));
     },
 
     cancelOpenDropboxFile: function() {
-        this.dropboxLoading = false;
+        this.dropboxLoading = null;
         this.render();
     }
 });

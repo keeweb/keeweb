@@ -15,7 +15,7 @@
             <a class="open__file-link-open muted-color" <%= opening ? 'disabled' : '' %>>Open</a> / <a
                 class="open__file-link-new muted-color" <%= opening ? 'disabled' : '' %>>New</a><% if (supportsDropbox) { %> / <a
                 class="open__file-link-dropbox muted-color" <%= (opening || dropboxLoading) ? 'disabled' : '' %>
-                >Dropbox<%= dropboxLoading ? ' (Loading...)' : '' %></a><% } %> / <a
+                >Dropbox<%= dropboxLoading ? ' (' + dropboxLoading + '...)' : '' %></a><% } %> / <a
                 class="open__file-link-demo muted-color" <%= opening ? 'disabled' : '' %>>Demo</a>
             <% } %>
         </div>
