@@ -9,6 +9,7 @@
 - [ ] move groups/entries
 - [ ] help/tips
 - [ ] switch view
+- [ ] lock without closing
 - [ ] merge
 - [ ] generation templates
 - [ ] advanced search

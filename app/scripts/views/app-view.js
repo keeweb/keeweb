@@ -195,7 +195,15 @@ var AppView = Backbone.View.extend({
     },
 
     lockWorkspace: function() {
-        this.model.closeAllFiles();
+        if (this.model.files.hasUnsavedFiles()) {
+            Alerts.yesno({
+                header: 'Unsaved changes',
+                body: 'You have unsaved changes that will be lost. Continue?',
+                success: this.model.closeAllFiles.bind(this.model)
+            });
+        } else {
+            this.model.closeAllFiles();
+        }
     },
 
     saveAll: function() {
