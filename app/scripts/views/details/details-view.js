@@ -1,7 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Scrollable = require('../../util/scrollable'),
+    Scrollable = require('../../mixins/scrollable'),
     FieldViewText = require('../fields/field-view-text'),
     FieldViewDate = require('../fields/field-view-date'),
     FieldViewTags = require('../fields/field-view-tags'),
@@ -13,7 +13,7 @@ var Backbone = require('backbone'),
     DetailsHistoryView = require('./details-history-view'),
     DetailsAttachmentView = require('./details-attachment-view'),
     Keys = require('../../const/keys'),
-    KeyHandler = require('../../util/key-handler'),
+    KeyHandler = require('../../comp/key-handler'),
     CopyPaste = require('../../util/copy-paste'),
     Format = require('../../util/format'),
     FileSaver = require('filesaver'),

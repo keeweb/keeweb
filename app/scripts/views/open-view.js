@@ -3,7 +3,7 @@
 var Backbone = require('backbone'),
     OpenFileView = require('./open-file-view'),
     FileModel = require('../models/file-model'),
-    Launcher = require('../util/launcher');
+    Launcher = require('../comp/launcher');
 
 var OpenView = Backbone.View.extend({
     template: require('templates/open.html'),

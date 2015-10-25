@@ -1,6 +1,6 @@
 'use strict';
 
-var Launcher = require('./launcher');
+var Launcher = require('../comp/launcher');
 
 var RuntimeInfo = {
     version: '@@VERSION',

@@ -1,7 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    RuntimeInfo = require('../../util/runtime-info'),
+    RuntimeInfo = require('../../comp/runtime-info'),
     Links = require('../../const/links');
 
 var SettingsAboutView = Backbone.View.extend({

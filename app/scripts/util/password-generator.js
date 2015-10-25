@@ -30,6 +30,9 @@ var PasswordGenerator = {
             chars.push(range[rand % range.length]);
         }
         return _.shuffle(chars).join('');
+    },
+    present: function(length) {
+        return new Array(length + 1).join('•');
     }
 };
 

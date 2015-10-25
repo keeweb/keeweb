@@ -1,9 +1,9 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    KeyHandler = require('../../util/key-handler'),
+    KeyHandler = require('../../comp/key-handler'),
     Keys = require('../../const/keys'),
-    Alerts = require('../../util/alerts');
+    Alerts = require('../../comp/alerts');
 
 var MenuItemView = Backbone.View.extend({
     template: require('templates/menu/menu-item.html'),

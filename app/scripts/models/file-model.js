@@ -3,7 +3,7 @@
 var Backbone = require('backbone'),
     GroupCollection = require('../collections/group-collection'),
     GroupModel = require('./group-model'),
-    Launcher = require('../util/launcher'),
+    Launcher = require('../comp/launcher'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
 

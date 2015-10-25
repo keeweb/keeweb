@@ -2,7 +2,7 @@
 
 var Backbone = require('backbone'),
     Keys = require('../const/keys'),
-    KeyHandler = require('../util/key-handler'),
+    KeyHandler = require('../comp/key-handler'),
     GeneratorView = require('./generator-view');
 
 var FooterView = Backbone.View.extend({

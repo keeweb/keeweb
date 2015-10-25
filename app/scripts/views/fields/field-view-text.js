@@ -3,12 +3,12 @@
 var FieldView = require('./field-view'),
     GeneratorView = require('../generator-view'),
     Keys = require('../../const/keys'),
-    PasswordDisplay = require('../../util/password-display'),
+    PasswordGenerator = require('../../util/password-generator'),
     kdbxweb = require('kdbxweb');
 
 var FieldViewText = FieldView.extend({
     renderValue: function(value) {
-        return typeof value.byteLength === 'number' ? PasswordDisplay.present(value.byteLength) :
+        return typeof value.byteLength === 'number' ? PasswordGenerator.present(value.byteLength) :
             _.escape(value).replace(/\n/g, '<br/>');
     },
 

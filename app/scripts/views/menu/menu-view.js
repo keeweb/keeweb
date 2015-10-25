@@ -1,7 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Resizable = require('../../util/resizable'),
+    Resizable = require('../../mixins/resizable'),
     MenuSectionView = require('./menu-section-view'),
     DragView = require('../drag-view');
 

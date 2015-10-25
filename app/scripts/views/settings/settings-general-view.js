@@ -1,7 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Launcher = require('../../util/launcher'),
+    Launcher = require('../../comp/launcher'),
     AppSettingsModel = require('../../models/app-settings-model');
 
 var SettingsGeneralView = Backbone.View.extend({

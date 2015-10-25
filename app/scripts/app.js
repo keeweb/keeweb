@@ -2,11 +2,11 @@
 
 var AppModel = require('./models/app-model'),
     AppView = require('./views/app-view'),
-    KeyHandler = require('./util/key-handler'),
-    Alerts = require('./util/alerts');
+    KeyHandler = require('./comp/key-handler'),
+    Alerts = require('./comp/alerts');
 
 $(function() {
-    require('./util/view');
+    require('./mixins/view');
     KeyHandler.init();
     if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0) {
         Alerts.error({ header: 'Not Secure!', icon: 'user-secret', esc: false, enter: false, click: false,

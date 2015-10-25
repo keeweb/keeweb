@@ -3,10 +3,10 @@
 var Backbone = require('backbone'),
     AppSettingsModel = require('../../models/app-settings-model'),
     FeatureDetector = require('../../util/feature-detector'),
-    PasswordDisplay = require('../../util/password-display'),
-    Alerts = require('../../util/alerts'),
-    RuntimeInfo = require('../../util/runtime-info'),
-    Launcher = require('../../util/launcher'),
+    PasswordGenerator = require('../../util/password-generator'),
+    Alerts = require('../../comp/alerts'),
+    RuntimeInfo = require('../../comp/runtime-info'),
+    Launcher = require('../../comp/launcher'),
     Links = require('../../const/links'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
@@ -42,7 +42,7 @@ var SettingsAboutView = Backbone.View.extend({
 
             name: this.model.get('name'),
             path: this.model.get('path'),
-            password: PasswordDisplay.present(this.model.get('passwordLength')),
+            password: PasswordGenerator.present(this.model.get('passwordLength')),
             defaultUser: this.model.get('defaultUser'),
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
             historyMaxItems: this.model.get('historyMaxItems'),
@@ -204,7 +204,7 @@ var SettingsAboutView = Backbone.View.extend({
         if (!e.target.value) {
             this.passwordChanged = false;
             this.model.resetPassword();
-            e.target.value = PasswordDisplay.present(this.model.get('passwordLength'));
+            e.target.value = PasswordGenerator.present(this.model.get('passwordLength'));
             this.$el.find('.settings__file-master-pass-warning').hide();
         } else {
             this.passwordChanged = true;

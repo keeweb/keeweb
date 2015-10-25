@@ -1,8 +1,8 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Resizable = require('../util/resizable'),
-    Scrollable = require('../util/scrollable'),
+    Resizable = require('../mixins/resizable'),
+    Scrollable = require('../mixins/scrollable'),
     ListSearchView = require('./list-search-view'),
     EntryPresenter = require('../presenters/entry-presenter'),
     baron = require('baron');

@@ -2,8 +2,8 @@
 
 var Backbone = require('backbone'),
     Keys = require('../const/keys'),
-    Alerts = require('../util/alerts'),
-    SecureInput = require('../util/secure-input');
+    Alerts = require('../comp/alerts'),
+    SecureInput = require('../comp/secure-input');
 
 var OpenFileView = Backbone.View.extend({
     template: require('templates/open-file.html'),

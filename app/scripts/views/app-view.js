@@ -8,10 +8,10 @@ var Backbone = require('backbone'),
     DetailsView = require('../views/details/details-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
-    Alerts = require('../util/alerts'),
+    Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
-    KeyHandler = require('../util/key-handler'),
-    Launcher = require('../util/launcher');
+    KeyHandler = require('../comp/key-handler'),
+    Launcher = require('../comp/launcher');
 
 var AppView = Backbone.View.extend({
     el: 'body',

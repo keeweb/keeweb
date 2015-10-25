@@ -2,8 +2,8 @@
 
 var Backbone = require('backbone'),
     MenuItemView = require('./menu-item-view'),
-    Resizable = require('../../util/resizable'),
-    Scrollable = require('../../util/scrollable'),
+    Resizable = require('../../mixins/resizable'),
+    Scrollable = require('../../mixins/scrollable'),
     baron = require('baron');
 
 var MenuSectionView = Backbone.View.extend({

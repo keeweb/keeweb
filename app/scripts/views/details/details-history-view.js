@@ -1,10 +1,10 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    KeyHandler = require('../../util/key-handler'),
+    KeyHandler = require('../../comp/key-handler'),
     Keys = require('../../const/keys'),
     Format = require('../../util/format'),
-    Alerts = require('../../util/alerts'),
+    Alerts = require('../../comp/alerts'),
     FieldViewReadOnly = require('../fields/field-view-read-only'),
     FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
 

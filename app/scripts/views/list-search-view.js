@@ -2,7 +2,7 @@
 
 var Backbone = require('backbone'),
     Keys = require('../const/keys'),
-    KeyHandler = require('../util/key-handler'),
+    KeyHandler = require('../comp/key-handler'),
     DropdownView = require('./dropdown-view'),
     FeatureDetector = require('../util/feature-detector');
 
@@ -178,7 +178,7 @@ var ListSearchView = Backbone.View.extend({
     },
 
     advancedSearchClick: function() {
-        require('../util/alerts').notImplemented();
+        require('../comp/alerts').notImplemented();
     },
 
     toggleMenu: function() {

@@ -1,9 +1,9 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Scrollable = require('../../util/scrollable'),
+    Scrollable = require('../../mixins/scrollable'),
     Keys = require('../../const/keys'),
-    KeyHandler = require('../../util/key-handler'),
+    KeyHandler = require('../../comp/key-handler'),
     baron = require('baron');
 
 var SettingsView = Backbone.View.extend({
