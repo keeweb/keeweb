@@ -3,10 +3,16 @@
 var AppModel = require('./models/app-model'),
     AppView = require('./views/app-view'),
     KeyHandler = require('./comp/key-handler'),
-    Alerts = require('./comp/alerts');
+    Alerts = require('./comp/alerts'),
+    DropboxLink = require('./comp/dropbox-link');
 
 $(function() {
     require('./mixins/view');
+
+    if (location.href.indexOf('state=') >= 0) {
+        DropboxLink.receive();
+        return;
+    }
     KeyHandler.init();
     if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0) {
         Alerts.error({ header: 'Not Secure!', icon: 'user-secret', esc: false, enter: false, click: false,

@@ -4,7 +4,6 @@
 
 # FUTURE
 
-- [ ] dropbox
 - [ ] trash: groups/empty/untrash
 - [ ] move groups/entries
 - [ ] help/tips

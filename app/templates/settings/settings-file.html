@@ -1,19 +1,27 @@
 <div>
     <h1><i class="fa fa-lock"></i> <%- name %></h1>
-    <% if (path) { %>
-    <p>File path: <%- path %></p>
+    <% if (storage) { %>
+        <% if (storage === 'file') { %>
+            <p>File path: <%- path %></p>
+        <% } else if (storage === 'dropbox') { %>
+            <p>This file is opened from Dropbox.</p>
+        <% } %>
     <% } else { %>
-    <p>This database is loaded in memory. To enable auto-save and saving with shortcut <%= cmd %>S,
-    please, save it to <%= supportFiles ? ' file or ' : '' %> Dropbox.</p>
-    <% if (!supportFiles) { %>
-    <p>Want to work seamlessly with local files? <a href="<%= desktopLink %>" target="_blank">Download a desktop app</a></p>
-    <% } %>
+        <p>This database is loaded in memory. To enable auto-save and saving with shortcut <%= cmd %>S,
+        please, save it to <%= supportFiles ? 'file' : 'Dropbox' %>.</p>
+        <% if (!supportFiles) { %>
+            <p>Want to work seamlessly with local files? <a href="<%= desktopLink %>" target="_blank">Download a desktop app</a></p>
+        <% } %>
     <% } %>
 
     <div class="settings__file-buttons">
+        <% if (storage !== 'dropbox') { %>
         <button class="settings__file-button-save-file btn-silent">Save to file</button>
+        <% } %>
         <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
+        <% if (supportsDropbox) { %>
         <button class="settings__file-button-save-dropbox btn-silent">Sync with Dropbox</button>
+        <% } %>
     </div>
 
     <h2>Settings</h2>

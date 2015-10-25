@@ -13,6 +13,7 @@ var FileModel = Backbone.Model.extend({
         keyFileName: '',
         passwordLength: 0,
         path: '',
+        storage: null,
         modified: false,
         open: false,
         opening: false,
@@ -23,7 +24,8 @@ var FileModel = Backbone.Model.extend({
         oldPasswordLength: 0,
         oldKeyFileName: '',
         passwordChanged: false,
-        keyFileChanged: false
+        keyFileChanged: false,
+        syncing: false
     },
 
     db: null,
@@ -169,8 +171,8 @@ var FileModel = Backbone.Model.extend({
         return this.db.saveXml();
     },
 
-    saved: function(path) {
-        this.set({ path: path || '', modified: false, created: false });
+    saved: function(path, storage) {
+        this.set({ path: path || '', storage: storage || null, modified: false, created: false, syncing: false });
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
         this.forEachEntry({}, function(entry) {
             entry.unsaved = false;

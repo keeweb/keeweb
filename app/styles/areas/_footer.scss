@@ -7,7 +7,9 @@
   &__db {
     @include flex(0 0 auto);
     @include area-selectable(top);
+    position: relative;
     padding: $medium-padding;
+    padding-right: 1.3em;
     white-space: nowrap;
     &.footer__db--dimmed {
       @include th {
@@ -22,10 +24,13 @@
       @include flex(1);
     }
 
-    &-mod-sign {
+    &-sign {
       font-size: 6px;
       vertical-align: top;
       margin-left: $base-padding-h;
+      position: absolute;
+      right: 1em;
+      top: 1em;
       @include th { color: action-color(); }
     }
   }

@@ -3,7 +3,9 @@
 var Backbone = require('backbone'),
     Keys = require('../const/keys'),
     Alerts = require('../comp/alerts'),
-    SecureInput = require('../comp/secure-input');
+    SecureInput = require('../comp/secure-input'),
+    Launcher = require('../comp/launcher'),
+    DropboxLink = require('../comp/dropbox-link');
 
 var OpenFileView = Backbone.View.extend({
     template: require('templates/open-file.html'),
@@ -12,6 +14,7 @@ var OpenFileView = Backbone.View.extend({
         'click .open__file-btn-new': 'createNew',
         'click .open__file-link-open': 'openFile',
         'click .open__file-link-new': 'createNew',
+        'click .open__file-link-dropbox': 'openFromDropbox',
         'click .open__file-link-demo': 'createDemo',
         'click .open__file-link-name': 'resetFile',
         'click .open__file-btn-key': 'openKeyFile',
@@ -25,6 +28,7 @@ var OpenFileView = Backbone.View.extend({
     fileData: null,
     keyFileData: null,
     passwordInput: null,
+    dropboxLoading: false,
 
     initialize: function () {
         this.fileData = null;
@@ -34,7 +38,10 @@ var OpenFileView = Backbone.View.extend({
     },
 
     render: function () {
-        this.renderTemplate(this.model.attributes);
+        this.renderTemplate($.extend({
+            supportsDropbox: !Launcher,
+            dropboxLoading: this.dropboxLoading
+        }, this.model.attributes));
         this.inputEl = this.$el.find('.open__file-input');
         this.passwordInput.setElement(this.inputEl);
         if (this.inputEl.attr('autofocus')) {
@@ -97,7 +104,7 @@ var OpenFileView = Backbone.View.extend({
             if (this.reading === 'fileData') {
                 this.model.set('name', file.name.replace(/\.\w+$/i, ''));
                 if (file.path) {
-                    this.model.set('path', file.path);
+                    this.model.set({ path: file.path, storage: file.storage || 'file' });
                 }
             } else {
                 this.model.set('keyFileName', file.name);
@@ -171,6 +178,53 @@ var OpenFileView = Backbone.View.extend({
         if (!this.model.get('opening')) {
             this.trigger('create-demo');
         }
+    },
+
+    openFromDropbox: function() {
+        this.dropboxLoading = true;
+        this.render();
+        DropboxLink.getFileList((function(err, files) {
+            this.dropboxLoading = false;
+            if (err) { return; }
+            var buttons = [];
+            files.forEach(function(file) {
+                buttons.push({ result: file, title: file.replace(/\.kdbx/i, '') });
+            });
+            buttons.push({ result: '', title: 'cancel' });
+            Alerts.alert({
+                header: 'Select a file',
+                body: 'Select a file from your Dropbox which you would like to open',
+                icon: 'dropbox',
+                buttons: buttons,
+                esc: '',
+                click: '',
+                success: this.openDropboxFile.bind(this),
+                cancel: this.cancelOpenDropboxFile.bind(this)
+            });
+        }).bind(this));
+    },
+
+    openDropboxFile: function(file) {
+        this.dropboxLoading = true;
+        DropboxLink.openFile(file, (function(err, data) {
+            this.dropboxLoading = false;
+            if (err || !data || !data.size) {
+                this.render();
+                Alerts.error({ header: 'Failed to read file', body: 'Error reading Dropbox file: \n' + err });
+                return;
+            }
+            Object.defineProperties(data, {
+                storage: { value: 'dropbox' },
+                path: { value: file },
+                name: { value: file.replace(/\.kdbx/i, '') }
+            });
+            this.setFile(data);
+        }).bind(this));
+    },
+
+    cancelOpenDropboxFile: function() {
+        this.dropboxLoading = false;
+        this.render();
     }
 });
 

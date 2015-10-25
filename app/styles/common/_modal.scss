@@ -42,6 +42,9 @@
     button ~ button {
       margin-left: $small-spacing;
     }
+    >button {
+      margin-bottom: $small-spacing;
+    }
   }
   &__body, &__buttons {
     @include align-self(center);

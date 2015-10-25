@@ -8,6 +8,7 @@ var Backbone = require('backbone'),
     RuntimeInfo = require('../../comp/runtime-info'),
     Launcher = require('../../comp/launcher'),
     Links = require('../../const/links'),
+    DropboxLink = require('../../comp/dropbox-link'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
 
@@ -17,7 +18,7 @@ var SettingsAboutView = Backbone.View.extend({
     events: {
         'click .settings__file-button-save-file': 'saveToFile',
         'click .settings__file-button-export-xml': 'exportAsXml',
-        'click .settings__file-button-save-dropbox': 'saveToDropbox',
+        'click .settings__file-button-save-dropbox': 'saveToDropboxClick',
         'change #settings__file-key-file': 'keyFileChange',
         'mousedown #settings__file-file-select-link': 'triggerSelectFile',
         'change #settings__file-file-select': 'fileSelected',
@@ -37,11 +38,13 @@ var SettingsAboutView = Backbone.View.extend({
     render: function() {
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
-            supportFiles: RuntimeInfo.launcher,
+            supportFiles: !!Launcher,
+            supportsDropbox: !Launcher,
             desktopLink: Links.Desktop,
 
             name: this.model.get('name'),
             path: this.model.get('path'),
+            storage: this.model.get('storage'),
             password: PasswordGenerator.present(this.model.get('passwordLength')),
             defaultUser: this.model.get('defaultUser'),
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
@@ -119,7 +122,7 @@ var SettingsAboutView = Backbone.View.extend({
     saveToFileWithPath: function(path, data) {
         try {
             Launcher.writeFile(path, data);
-            this.model.saved(path);
+            this.model.saved(path, 'file');
             if (!AppSettingsModel.instance.get('lastOpenFile')) {
                 AppSettingsModel.instance.set('lastOpenFile', path);
             }
@@ -140,11 +143,44 @@ var SettingsAboutView = Backbone.View.extend({
         FileSaver.saveAs(blob, this.model.get('name') + '.xml');
     },
 
-    saveToDropbox: function() {
+    saveToDropboxClick: function() {
+        var nameChanged = this.model.get('path') !== this.model.get('name') + '.kdbx',
+            canOverwrite = !nameChanged;
+        this.saveToDropbox(canOverwrite);
+    },
+
+    saveToDropbox: function(overwrite) {
         if (!this.validate()) {
             return;
         }
-        Alerts.notImplemented();
+        var data = this.model.getData();
+        var fileName = this.model.get('name') + '.kdbx';
+        this.model.set('syncing', true);
+        DropboxLink.saveFile(fileName, data, overwrite, (function(err) {
+            if (err) {
+                this.model.set('syncing', false);
+                if (err.exists) {
+                    Alerts.alert({
+                        header: 'Already exists',
+                        body: 'File ' + fileName + ' already exists in your Dropbox.',
+                        icon: 'question',
+                        buttons: [{result: 'yes', title: 'Overwrite it'}, {result: '', title: 'I\'ll choose another name'}],
+                        esc: '',
+                        click: '',
+                        enter: 'yes',
+                        success: this.saveToDropbox.bind(this, true)
+                    });
+                } else {
+                    Alerts.error({
+                        header: 'Save error',
+                        body: 'Error saving to Dropbox: \n' + err
+                    });
+                }
+            } else {
+                this.model.saved(fileName, 'dropbox');
+                this.render();
+            }
+        }).bind(this));
     },
 
     keyFileChange: function(e) {
