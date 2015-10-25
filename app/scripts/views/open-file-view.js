@@ -195,7 +195,7 @@ var OpenFileView = Backbone.View.extend({
                 this.render();
                 Alerts.error({
                     header: 'Nothing found',
-                    body: 'You have no files in your Dropbox which could opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
+                    body: 'You have no files in your Dropbox which could be opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
                 });
                 return;
             }
