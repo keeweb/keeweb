@@ -18,9 +18,9 @@ Reading and display is mostly complete; modification and sync is under construct
 
 # Building
 
-The app is build with grunt: `grunt` (html file will be in `dist/`) or `grunt watch` (result will be in `tmp/`).
+The app can be built with grunt: `grunt` (html file will be in `dist/`) or `grunt watch` (result will be in `tmp/`).
 Electron app is built manually, scripts and configs are in `util` directory.
-To run Electron app without building, instapp electron package (`npm install electron-prebuilt -g`) and start with `electron ./electron/`.
+To run Electron app without building, install electron package (`npm install electron-prebuilt -g`) and start with `electron ./electron/`.
 
 # Contributing
 
