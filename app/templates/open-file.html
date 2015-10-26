@@ -13,10 +13,10 @@
             <a class="open__file-link-name muted-color" <%= opening ? 'disabled' : '' %>>Open another</a>
             <% } else { %>
             <a class="open__file-link-open muted-color" <%= opening ? 'disabled' : '' %>>Open</a> / <a
-                class="open__file-link-new muted-color" <%= opening ? 'disabled' : '' %>>New</a><% if (supportsDropbox) { %> / <a
+                class="open__file-link-new muted-color" <%= opening ? 'disabled' : '' %>>New</a> / <a
+                class="open__file-link-demo muted-color" <%= opening ? 'disabled' : '' %>>Demo</a><% if (supportsDropbox) { %> / <a
                 class="open__file-link-dropbox muted-color" <%= (opening || dropboxLoading) ? 'disabled' : '' %>
-                >Dropbox<%= dropboxLoading ? ' (' + dropboxLoading + '...)' : '' %></a><% } %> / <a
-                class="open__file-link-demo muted-color" <%= opening ? 'disabled' : '' %>>Demo</a>
+                >Dropbox<%= dropboxLoading ? ' (loading ' + dropboxLoading + '...)' : '' %></a><% } %>
             <% } %>
         </div>
         <div class="open__file-warning muted-color hide"><i class="fa fa-exclamation-triangle"></i> Caps Lock is on</div>
