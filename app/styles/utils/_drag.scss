@@ -19,4 +19,5 @@
   left: -2px;
   width: calc(100% + 5px);
   height: calc(100% + 5px);
+  @include mobile { display: none; }
 }

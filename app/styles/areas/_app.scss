@@ -39,6 +39,12 @@
     @include flex-direction(column);
     width: 250px;
     overflow-y: auto;
+    @include mobile {
+      width: 100vw;
+      &.app__list--details-visible {
+        display: none;
+      }
+    }
   }
 
   &__details {
@@ -47,6 +53,7 @@
     overflow: hidden;
     padding: $base-spacing;
     position: relative;
+    @include mobile { width: 100vw; }
   }
 
   &__footer {

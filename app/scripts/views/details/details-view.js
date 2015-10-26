@@ -34,6 +34,7 @@ var DetailsView = Backbone.View.extend({
         'click .details__header-title': 'editTitle',
         'click .details__history-link': 'showHistory',
         'click .details__buttons-trash': 'moveToTrash',
+        'click .details__back-button': 'backClick',
         'dragover .details': 'dragover',
         'dragleave .details': 'dragleave',
         'drop .details': 'drop'
@@ -452,6 +453,10 @@ var DetailsView = Backbone.View.extend({
     moveToTrash: function() {
         this.model.moveToTrash();
         Backbone.trigger('refresh');
+    },
+
+    backClick: function() {
+        Backbone.trigger('toggle-details', false);
     }
 });
 
