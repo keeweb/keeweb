@@ -381,6 +381,11 @@ var DetailsView = Backbone.View.extend({
             this.setTitle(e.target.value);
         } else if (code === Keys.DOM_VK_ESCAPE) {
             $(e.target).unbind('blur');
+            if (this.model.isNew) {
+                this.model.removeWithoutHistory();
+                Backbone.trigger('refresh');
+                return;
+            }
             this.render();
         } else if (code === Keys.DOM_VK_TAB) {
             e.preventDefault();
@@ -393,6 +398,11 @@ var DetailsView = Backbone.View.extend({
     },
 
     setTitle: function(title) {
+        if (!title && this.model.isNew) {
+            this.model.removeWithoutHistory();
+            Backbone.trigger('refresh');
+            return;
+        }
         if (this.model.title instanceof kdbxweb.ProtectedValue) {
             title = kdbxweb.ProtectedValue.fromString(title);
         }

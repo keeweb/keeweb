@@ -155,10 +155,7 @@ var AppModel = Backbone.Model.extend({
             file = this.files.first();
             group = file.get('groups').first();
         }
-        var entry = EntryModel.newEntry(group, file);
-        group.addEntry(entry);
-        entry.isNew = true;
-        return entry;
+        return EntryModel.newEntry(group, file);
     }
 });
 

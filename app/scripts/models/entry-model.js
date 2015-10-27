@@ -110,6 +110,9 @@ var EntryModel = Backbone.Model.extend({
             this.entry.pushHistory();
             this.file.setModified();
         }
+        if (this.isNew) {
+            this.isNew = false;
+        }
         this.entry.times.update();
     },
 
@@ -222,6 +225,14 @@ var EntryModel = Backbone.Model.extend({
             this.group = trashGroup;
             this.deleted = true;
         }
+    },
+
+    removeWithoutHistory: function() {
+        var ix = this.group.group.entries.indexOf(this.entry);
+        if (ix >= 0) {
+            this.group.group.entries.splice(ix, 1);
+        }
+        this.group.removeEntry(this);
     }
 });
 
@@ -237,6 +248,8 @@ EntryModel.newEntry = function(group, file) {
     model.setEntry(entry, group, file);
     model.entry.times.update();
     model.unsaved = true;
+    model.isNew = true;
+    group.addEntry(model);
     file.setModified();
     return model;
 };
