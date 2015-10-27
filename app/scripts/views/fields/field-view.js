@@ -1,6 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    FeatureDetector = require('../../util/feature-detector'),
     CopyPaste = require('../../util/copy-paste');
 
 var FieldView = Backbone.View.extend({
@@ -36,6 +37,16 @@ var FieldView = Backbone.View.extend({
     fieldLabelClick: function(e) {
         e.stopImmediatePropagation();
         var field = this.model.name;
+        if (FeatureDetector.shouldMoveHiddenInputToCopySource()) {
+            var box = this.valueEl[0].getBoundingClientRect();
+            var textValue = this.value && this.value.getText ? this.value.getText() : this.renderValue(this.value);
+            if (!textValue) {
+                return;
+            }
+            CopyPaste.createHiddenInput(textValue, box);
+            CopyPaste.tryCopy(); // maybe Apple will ever support this?
+            return;
+        }
         if (field) {
             var value = this.value || '';
             if (value && value.getText) {
