@@ -110,8 +110,8 @@ var EntryModel = Backbone.Model.extend({
             this.entry.pushHistory();
             this.file.setModified();
         }
-        if (this.isNew) {
-            this.isNew = false;
+        if (this.isJustCreated) {
+            this.isJustCreated = false;
         }
         this.entry.times.update();
     },
@@ -248,7 +248,7 @@ EntryModel.newEntry = function(group, file) {
     model.setEntry(entry, group, file);
     model.entry.times.update();
     model.unsaved = true;
-    model.isNew = true;
+    model.isJustCreated = true;
     group.addEntry(model);
     file.setModified();
     return model;

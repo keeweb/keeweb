@@ -237,7 +237,7 @@ var DetailsView = Backbone.View.extend({
     showEntry: function(entry) {
         this.model = entry;
         this.render();
-        if (entry && !entry.title && entry.isNew) {
+        if (entry && !entry.title && entry.isJustCreated) {
             this.editTitle();
         }
     },
@@ -381,7 +381,7 @@ var DetailsView = Backbone.View.extend({
             this.setTitle(e.target.value);
         } else if (code === Keys.DOM_VK_ESCAPE) {
             $(e.target).unbind('blur');
-            if (this.model.isNew) {
+            if (this.model.isJustCreated) {
                 this.model.removeWithoutHistory();
                 Backbone.trigger('refresh');
                 return;
@@ -398,7 +398,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     setTitle: function(title) {
-        if (!title && this.model.isNew) {
+        if (!title && this.model.isJustCreated) {
             this.model.removeWithoutHistory();
             Backbone.trigger('refresh');
             return;
