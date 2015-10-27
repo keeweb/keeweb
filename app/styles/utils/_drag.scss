@@ -8,8 +8,12 @@
   transition: background-color $slow-transition-out;
   @include th { background: light-border-color(); }
   &:hover, &.dragging {
-    transition: background-color $slow-transition-in;
-    @include th { background: accent-border-color(); }
+    @include nomobile {
+      transition: background-color $slow-transition-in;
+      @include th {
+        background: accent-border-color();
+      }
+    }
   }
 }
 

@@ -12,7 +12,7 @@ var SettingsView = Backbone.View.extend({
     views: null,
 
     events: {
-        'click .settings__return-link': 'returnToApp'
+        'click .settings__back-button': 'returnToApp'
     },
 
     initialize: function () {

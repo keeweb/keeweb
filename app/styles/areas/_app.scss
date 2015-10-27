@@ -30,6 +30,13 @@
     @include flex(0 0 auto);
     width: 1px;
     cursor: col-resize;
+    @include mobile {
+      display: none;
+    }
+  }
+
+  .menu-visible + &__menu-drag {
+    display: block;
   }
 
   &__list {
@@ -53,7 +60,10 @@
     overflow: hidden;
     padding: $base-spacing;
     position: relative;
-    @include mobile { width: 100vw; }
+    @include mobile {
+      width: 100vw;
+      padding: $base-padding;
+    }
   }
 
   &__footer {
