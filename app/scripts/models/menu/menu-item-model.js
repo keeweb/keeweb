@@ -20,7 +20,10 @@ var MenuItemModel = Backbone.Model.extend({
         filterValue: null
     },
 
-    initialize: function() {
+    initialize: function(model) {
+        if (model && model.file) {
+            this.listenTo(model.file, 'change:name', this.changeTitle, this);
+        }
     },
 
     _loadItemCollectionType: function() {
@@ -55,6 +58,10 @@ var MenuItemModel = Backbone.Model.extend({
             expanded = true;
         }
         this.set('expanded', expanded);
+    },
+
+    changeTitle: function(model, newTitle) {
+        this.set('title', newTitle);
     }
 });
 

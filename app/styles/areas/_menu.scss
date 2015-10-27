@@ -111,6 +111,7 @@
     }
 
     &-title {
+      padding-left: .4em;
       .menu__item-colors & {
         display: inline-block;
         @include th { color: text-color(); }

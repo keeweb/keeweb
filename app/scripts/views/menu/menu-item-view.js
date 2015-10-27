@@ -21,6 +21,7 @@ var MenuItemView = Backbone.View.extend({
 
     initialize: function () {
         this.itemViews = [];
+        this.listenTo(this.model, 'change:title', this.changeTitle);
         this.listenTo(this.model, 'change:active', this.changeActive);
         this.listenTo(this.model, 'change:expanded', this.changeExpanded);
         this.listenTo(this.model, 'change:cls', this.changeCls);
@@ -65,6 +66,10 @@ var MenuItemView = Backbone.View.extend({
     removeInnerViews: function() {
         this.itemViews.forEach(function(itemView) { itemView.remove(); });
         this.itemViews = [];
+    },
+
+    changeTitle: function(model, title) {
+        this.$el.find('.menu__item-title').text(title);
     },
 
     changeActive: function(model, active) {
