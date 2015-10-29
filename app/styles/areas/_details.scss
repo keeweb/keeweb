@@ -283,6 +283,8 @@
     text-align: center;
     overflow: hidden;
     transition: color $base-duration $base-timing;
+    display: none;
+    @include nomobile { display: block; }
     &:hover {
       @include th { color: medium-color(); }
     }
@@ -317,6 +319,8 @@
       right: $base-padding-h;
       white-space: nowrap;
       opacity: .15;
+      display: none;
+      @include nomobile { display: block; }
     }
     &-icon {
       display: none;

@@ -39,12 +39,12 @@ var FieldView = Backbone.View.extend({
         var field = this.model.name;
         if (FeatureDetector.shouldMoveHiddenInputToCopySource()) {
             var box = this.valueEl[0].getBoundingClientRect();
-            var textValue = this.value && this.value.getText ? this.value.getText() : this.renderValue(this.value);
+            var textValue = this.value && this.value.getText ? this.value.getText() : this.getEditValue(this.value);
             if (!textValue) {
                 return;
             }
             CopyPaste.createHiddenInput(textValue, box);
-            CopyPaste.tryCopy(); // maybe Apple will ever support this?
+            //CopyPaste.tryCopy(); // maybe Apple will ever support this?
             return;
         }
         if (field) {
