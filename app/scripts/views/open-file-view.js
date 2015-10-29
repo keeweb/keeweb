@@ -181,41 +181,52 @@ var OpenFileView = Backbone.View.extend({
     },
 
     openFromDropbox: function() {
-        this.dropboxLoading = 'opening';
-        this.render();
-        DropboxLink.getFileList((function(err, files) {
-            this.dropboxLoading = null;
-            if (err) { return; }
-            var buttons = [];
-            files.forEach(function(file) {
-                buttons.push({ result: file, title: file.replace(/\.kdbx/i, '') });
-            });
-            if (!buttons.length) {
-                this.dropboxLoading = null;
-                this.render();
-                Alerts.error({
-                    header: 'Nothing found',
-                    body: 'You have no files in your Dropbox which could opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
-                });
+        if (this.dropboxLoading) {
+            return;
+        }
+        DropboxLink.authenticate((function(err) {
+            if (err) {
                 return;
             }
-            buttons.push({ result: '', title: 'Cancel' });
-            Alerts.alert({
-                header: 'Select a file',
-                body: 'Select a file from your Dropbox which you would like to open',
-                icon: 'dropbox',
-                buttons: buttons,
-                esc: '',
-                click: '',
-                success: this.openDropboxFile.bind(this),
-                cancel: this.cancelOpenDropboxFile.bind(this)
-            });
+            this.dropboxLoading = 'file list';
+            this.render();
+            DropboxLink.getFileList((function(err, files) {
+                this.dropboxLoading = null;
+                if (err) {
+                    this.render();
+                    return;
+                }
+                var buttons = [];
+                files.forEach(function(file) {
+                    buttons.push({ result: file, title: file.replace(/\.kdbx/i, '') });
+                });
+                if (!buttons.length) {
+                    this.dropboxLoading = null;
+                    this.render();
+                    Alerts.error({
+                        header: 'Nothing found',
+                        body: 'You have no files in your Dropbox which could be opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
+                    });
+                    return;
+                }
+                buttons.push({ result: '', title: 'Cancel' });
+                Alerts.alert({
+                    header: 'Select a file',
+                    body: 'Select a file from your Dropbox which you would like to open',
+                    icon: 'dropbox',
+                    buttons: buttons,
+                    esc: '',
+                    click: '',
+                    success: this.openDropboxFile.bind(this),
+                    cancel: this.cancelOpenDropboxFile.bind(this)
+                });
+            }).bind(this));
         }).bind(this));
     },
 
     openDropboxFile: function(file) {
         var fileName = file.replace(/\.kdbx/i, '');
-        this.dropboxLoading = 'opening ' + fileName;
+        this.dropboxLoading = fileName;
         this.render();
         DropboxLink.openFile(file, (function(err, data) {
             this.dropboxLoading = null;

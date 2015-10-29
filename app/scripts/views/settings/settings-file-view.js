@@ -44,6 +44,7 @@ var SettingsAboutView = Backbone.View.extend({
             name: this.model.get('name'),
             path: this.model.get('path'),
             storage: this.model.get('storage'),
+            syncing: this.model.get('syncing'),
             password: PasswordGenerator.present(this.model.get('passwordLength')),
             defaultUser: this.model.get('defaultUser'),
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
@@ -86,9 +87,7 @@ var SettingsAboutView = Backbone.View.extend({
             Alerts.error({
                 header: 'Empty password',
                 body: 'Please, enter the password. You will use it the next time you open this file.',
-                complete: (function() {
-                    this.$el.find('#settings__file-master-pass').focus();
-                }).bind(this)
+                complete: (function() { this.$el.find('#settings__file-master-pass').focus(); }).bind(this)
             });
             return false;
         }
@@ -115,7 +114,9 @@ var SettingsAboutView = Backbone.View.extend({
             var blob = new Blob([data], {type: 'application/octet-stream'});
             FileSaver.saveAs(blob, fileName);
             this.passwordChanged = false;
-            this.model.saved();
+            if (this.model.get('storage') !== 'dropbox') {
+                this.model.saved();
+            }
         }
     },
 
@@ -151,12 +152,13 @@ var SettingsAboutView = Backbone.View.extend({
     },
 
     saveToDropbox: function(overwrite) {
-        if (!this.validate()) {
+        if (this.model.get('syncing') || !this.validate()) {
             return;
         }
         var data = this.model.getData();
         var fileName = this.model.get('name') + '.kdbx';
         this.model.set('syncing', true);
+        this.render();
         DropboxLink.saveFile(fileName, data, overwrite, (function(err) {
             if (err) {
                 this.model.set('syncing', false);
@@ -169,7 +171,8 @@ var SettingsAboutView = Backbone.View.extend({
                         esc: '',
                         click: '',
                         enter: 'yes',
-                        success: this.saveToDropbox.bind(this, true)
+                        success: this.saveToDropbox.bind(this, true),
+                        cancel: (function() { this.$el.find('#settings__file-name').focus(); }).bind(this)
                     });
                 } else {
                     Alerts.error({

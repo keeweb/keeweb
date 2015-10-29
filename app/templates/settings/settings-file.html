@@ -15,12 +15,11 @@
     <% } %>
 
     <div class="settings__file-buttons">
-        <% if (storage !== 'dropbox') { %>
         <button class="settings__file-button-save-file btn-silent">Save to file</button>
-        <% } %>
         <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
         <% if (supportsDropbox) { %>
-        <button class="settings__file-button-save-dropbox btn-silent">Sync with Dropbox</button>
+        <button class="settings__file-button-save-dropbox btn-silent" <%= syncing ? 'disabled' : '' %>>
+            Sync with Dropbox <%= syncing ? '(working...)' : '' %></button>
         <% } %>
     </div>
 

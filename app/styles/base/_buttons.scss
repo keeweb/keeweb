@@ -55,7 +55,7 @@
     }
 
     &:disabled {
-      cursor: not-allowed;
+      cursor: default;
       opacity: 0.5;
       &:hover {
         border-color: action-color();

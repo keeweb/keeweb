@@ -8,8 +8,8 @@ var FieldView = require('./field-view'),
 
 var FieldViewText = FieldView.extend({
     renderValue: function(value) {
-        return typeof value.byteLength === 'number' ? PasswordGenerator.present(value.byteLength) :
-            _.escape(value).replace(/\n/g, '<br/>');
+        return value && typeof value.byteLength === 'number' ? PasswordGenerator.present(value.byteLength) :
+            _.escape(value || '').replace(/\n/g, '<br/>');
     },
 
     getEditValue: function(value) {

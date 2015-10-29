@@ -9,3 +9,9 @@
     @content;
   }
 }
+
+@mixin nomobile {
+  @media (min-width: #{$mobile-width + 1}) {
+    @content;
+  }
+}

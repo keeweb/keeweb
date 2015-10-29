@@ -82,7 +82,9 @@
     height: 32px;
 
     &--active, &--active:hover {
-      @include area-selected(right);
+      @include nomobile {
+        @include area-selected(right);
+      }
     }
 
     &--expired {

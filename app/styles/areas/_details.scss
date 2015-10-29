@@ -6,6 +6,16 @@
   @include user-select(text);
   width: 100%;
 
+  &__back-button {
+    display: none;
+    @include mobile {
+      display: block;
+      padding-bottom: $base-padding-v;
+      cursor: pointer;
+      >i { margin-right: $base-padding-h; }
+    }
+  }
+
   &__header {
     @include display(flex);
     padding-bottom: $small-spacing;
@@ -14,6 +24,7 @@
     &-title {
       @include user-select(text);
       @include flex(1);
+      @include align-self(flex-start);
       cursor: text;
       margin: 0 6px;
       padding: 3px 6px 1px;
@@ -272,6 +283,8 @@
     text-align: center;
     overflow: hidden;
     transition: color $base-duration $base-timing;
+    display: none;
+    @include nomobile { display: block; }
     &:hover {
       @include th { color: medium-color(); }
     }
@@ -306,6 +319,8 @@
       right: $base-padding-h;
       white-space: nowrap;
       opacity: .15;
+      display: none;
+      @include nomobile { display: block; }
     }
     &-icon {
       display: none;

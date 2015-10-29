@@ -79,6 +79,7 @@ var ListView = Backbone.View.extend({
         if (!item.active) {
             this.selectItem(item);
         }
+        Backbone.trigger('toggle-details', true);
     },
 
     selectPrev: function() {

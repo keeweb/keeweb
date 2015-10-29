@@ -34,6 +34,7 @@ var DetailsView = Backbone.View.extend({
         'click .details__header-title': 'editTitle',
         'click .details__history-link': 'showHistory',
         'click .details__buttons-trash': 'moveToTrash',
+        'click .details__back-button': 'backClick',
         'dragover .details': 'dragover',
         'dragleave .details': 'dragleave',
         'drop .details': 'drop'
@@ -236,7 +237,7 @@ var DetailsView = Backbone.View.extend({
     showEntry: function(entry) {
         this.model = entry;
         this.render();
-        if (entry && !entry.title && entry.isNew) {
+        if (entry && !entry.title && entry.isJustCreated) {
             this.editTitle();
         }
     },
@@ -380,6 +381,11 @@ var DetailsView = Backbone.View.extend({
             this.setTitle(e.target.value);
         } else if (code === Keys.DOM_VK_ESCAPE) {
             $(e.target).unbind('blur');
+            if (this.model.isJustCreated) {
+                this.model.removeWithoutHistory();
+                Backbone.trigger('refresh');
+                return;
+            }
             this.render();
         } else if (code === Keys.DOM_VK_TAB) {
             e.preventDefault();
@@ -392,6 +398,11 @@ var DetailsView = Backbone.View.extend({
     },
 
     setTitle: function(title) {
+        if (!title && this.model.isJustCreated) {
+            this.model.removeWithoutHistory();
+            Backbone.trigger('refresh');
+            return;
+        }
         if (this.model.title instanceof kdbxweb.ProtectedValue) {
             title = kdbxweb.ProtectedValue.fromString(title);
         }
@@ -452,6 +463,10 @@ var DetailsView = Backbone.View.extend({
     moveToTrash: function() {
         this.model.moveToTrash();
         Backbone.trigger('refresh');
+    },
+
+    backClick: function() {
+        Backbone.trigger('toggle-details', false);
     }
 });
 

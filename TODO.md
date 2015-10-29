@@ -8,10 +8,12 @@
 - [ ] move groups/entries
 - [ ] help/tips
 - [ ] switch view
+- [ ] optional auto-update
 - [ ] lock without closing
 - [ ] merge
-- [ ] show sync state
+- [ ] show sync date
 - [ ] dropbox keyfiles
+- [ ] save to localstorage
 - [ ] generation templates
 - [ ] advanced search
 - [ ] mobile

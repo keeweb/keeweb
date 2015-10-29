@@ -51,6 +51,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'switch-view', this.switchView);
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
+        this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
@@ -135,6 +136,7 @@ var AppView = Backbone.View.extend({
             selectedMenuItem = this.model.menu.generalSection.get('items').first();
         }
         this.model.menu.select({ item: selectedMenuItem });
+        this.views.menu.switchVisibility(false);
     },
 
     fileListUpdated: function() {
@@ -251,6 +253,11 @@ var AppView = Backbone.View.extend({
 
     switchView: function() {
         Alerts.notImplemented();
+    },
+
+    toggleDetails: function(visible) {
+        this.$el.find('.app__list').toggleClass('app__list--details-visible', visible);
+        this.views.menu.switchVisibility(false);
     },
 
     contextmenu: function(e) {

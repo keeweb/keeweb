@@ -9,6 +9,12 @@ var FeatureDetector = {
     },
     altShortcutSymbol: function(formatting) {
         return this.isMac() ? '⌥' : formatting ? '<span class="thin">alt + </span>' : 'alt-';
+    },
+    shouldMoveHiddenInputToCopySource: function() {
+        return /(iPad|iPhone)/i.test(navigator.userAgent);
+    },
+    canCopyReadonlyInput: function() {
+        return !(/CriOS/i.test(navigator.userAgent));
     }
 };
 
