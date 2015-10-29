@@ -28,6 +28,10 @@ if (window.process && window.process.versions && window.process.versions.electro
                 filters: [{ name: 'KeePass files', extensions: ['kdbx'] }]
             }, cb);
         },
+        writeAppFile: function(data) {
+            var path = this.req('path').join(this.req('remote').require('app').getPath('userData'), 'index.html');
+            this.writeFile(path, data);
+        },
         writeFile: function(path, data) {
             this.req('fs').writeFileSync(path, new window.Buffer(data));
         },
@@ -36,27 +40,6 @@ if (window.process && window.process.versions && window.process.versions.electro
         },
         fileExists: function(path) {
             return this.req('fs').existsSync(path);
-        },
-        httpGet: function(config) {
-            var http = require(config.url.lastIndexOf('https', 0) === 0 ? 'https' : 'http');
-            http.get(config.url, function(res) {
-                var data = [];
-                res.on('data', function (chunk) { data.push(chunk); });
-                res.on('end', function() {
-                    console.log('data', data);
-                    data = Buffer.concat(data);
-                    console.log('data', data);
-                    if (config.utf8) {
-                        data = data.toString('utf8');
-                    }
-                    console.log('data', data);
-                    if (config.complete) {
-                        config.copmlete(null, data);
-                    }
-                });
-            }).on('error', function(err) {
-                if (config.complete) { config.complete(err); }
-            });
         }
     };
     window.launcherOpen = function(path) {

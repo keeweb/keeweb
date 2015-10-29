@@ -53,6 +53,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
+        this.listenTo(Backbone, 'update-app', this.updateApp);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
@@ -93,6 +94,14 @@ var AppView = Backbone.View.extend({
     launcherOpenFile: function(path) {
         if (path && /\.kdbx$/i.test(path)) {
             this.showOpenFile(path);
+        }
+    },
+
+    updateApp: function() {
+        if (this.model.files.hasOpenFiles()) {
+            // TODO: show update bubble
+        } else {
+            this.location.reload();
         }
     },
 

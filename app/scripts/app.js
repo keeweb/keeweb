@@ -10,7 +10,6 @@ var AppModel = require('./models/app-model'),
 $(function() {
     require('./mixins/view');
 
-    Updater.check();
     if (location.href.indexOf('state=') >= 0) {
         DropboxLink.receive();
         return;
@@ -35,6 +34,6 @@ $(function() {
     function showApp() {
         var appModel = new AppModel();
         new AppView({ model: appModel }).render().showOpenFile(appModel.settings.get('lastOpenFile'));
+        Updater.init();
     }
 });
-

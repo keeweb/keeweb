@@ -14,7 +14,7 @@
     <div>
         <input type="checkbox" class="settings__input" id="settings__general-auto-update" <%- autoUpdate ? 'checked' : '' %> />
         <label for="settings__general-auto-update">Automatic updates</label>
-        <div>Last update check: <%- lastUpdateCheck %></div>
+        <div><%- updateInfo %></div>
     </div>
     <% } %>
     <% if (devTools) { %>
