@@ -16,11 +16,12 @@
 - [ ] show sync date
 - [ ] dropbox keyfiles
 - [ ] offline and local storage
+- [ ] trim history by rules
 - [ ] generation templates
 - [ ] advanced search
 - [ ] mobile apps
 - [ ] file type associations
-- [ ] auto-type
+- [ ] auto-type for desktop
 - [ ] audit
 - [ ] native encryption for electron
 - [ ] entry templates
