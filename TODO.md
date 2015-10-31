@@ -10,6 +10,7 @@
 - [ ] switch view
 - [ ] optional auto-update
 - [ ] lock without closing
+- [ ] secure fields
 - [ ] close files
 - [ ] merge
 - [ ] show sync date
@@ -20,8 +21,8 @@
 - [ ] mobile
 - [ ] file type associations
 - [ ] auto-type
-- [ ] secure fields
 - [ ] audit
+- [ ] native encryption for electron
 - [ ] entry templates
 - [ ] custom icons
 - [ ] plugins
