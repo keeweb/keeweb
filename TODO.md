@@ -18,7 +18,7 @@
 - [ ] offline and local storage
 - [ ] generation templates
 - [ ] advanced search
-- [ ] mobile
+- [ ] mobile apps
 - [ ] file type associations
 - [ ] auto-type
 - [ ] audit
