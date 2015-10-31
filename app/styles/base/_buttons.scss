@@ -20,11 +20,12 @@
   @include th {
     border: 1px solid action-color();
     background-color: action-color();
-    color: text-color();
+    color: text-contrast-color(action-color());
 
     &.btn-error, &.btn-silent {
       border-color: base-border-color();
       background-color: transparent;
+      color: text-contrast-color(background-color());
     }
 
     &:hover {
@@ -38,7 +39,6 @@
         border-color: action-background-color-focus();
         background-color: rgba(action-background-color-focus(), .1);
       }
-      color: text-color();
     }
 
     &:active {

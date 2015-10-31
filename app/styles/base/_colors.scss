@@ -20,6 +20,7 @@ $violet: #d946db;
 @function muted-color-border() { @return mix(medium-color(), background-color(), 15%); }
 @function text-selection-bg-color() { @return rgba(action-color(), .3); }
 @function text-selection-bg-color-error() { @return rgba(error-color(), .8); }
+@function text-contrast-color($bg) { @if (lightness($bg) >= lightness(background-color())) { @return text-color(); } @else { @return background-color(); } }
 
 // Borders, shadows
 

@@ -14,6 +14,12 @@ $(function() {
         return;
     }
     KeyHandler.init();
+
+    var appModel = new AppModel();
+    if (appModel.settings.get('theme')) {
+        document.body.setAttribute('class', 'th-' + appModel.settings.get('theme'));
+    }
+
     if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0) {
         Alerts.error({ header: 'Not Secure!', icon: 'user-secret', esc: false, enter: false, click: false,
             body: 'You have loaded this app with insecure connection. ' +
@@ -31,7 +37,6 @@ $(function() {
     }
 
     function showApp() {
-        var appModel = new AppModel();
         new AppView({ model: appModel }).render().showOpenFile(appModel.settings.get('lastOpenFile'));
     }
 });
