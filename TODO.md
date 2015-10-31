@@ -10,10 +10,11 @@
 - [ ] switch view
 - [ ] optional auto-update
 - [ ] lock without closing
+- [ ] close files
 - [ ] merge
 - [ ] show sync date
 - [ ] dropbox keyfiles
-- [ ] save to localstorage
+- [ ] offline and local storage
 - [ ] generation templates
 - [ ] advanced search
 - [ ] mobile
