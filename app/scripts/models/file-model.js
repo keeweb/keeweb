@@ -245,6 +245,7 @@ var FileModel = Backbone.Model.extend({
         this.db.meta.name = name;
         this.db.meta.nameChanged = new Date();
         this.set('name', name);
+        this.get('groups').first().setName(name);
         this.setModified();
     },
 

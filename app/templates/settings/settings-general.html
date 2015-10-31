@@ -3,7 +3,7 @@
     <h2>Appearance</h2>
     <div>
         <label for="settings__general-theme">Theme:</label>
-        <select class="settings__general-theme settings__select" id="settings__general-theme">
+        <select class="settings__general-theme settings__select input-base" id="settings__general-theme">
             <% _.forEach(themes, function(name, key) { %>
             <option value="<%= key %>" <%= key === activeTheme ? 'selected' : '' %>><%- name %></option>
             <% }); %>

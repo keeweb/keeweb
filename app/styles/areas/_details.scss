@@ -365,25 +365,6 @@
     }
   }
 
-  &__icons {
-    @include display(flex);
-    @include align-items(flex-start);
-    @include flex-direction(row);
-    @include justify-content(flex-start);
-    @include flex-wrap(wrap);
-    @include user-select(none);
-    &-icon {
-      @include area-selectable(bottom);
-      width: 26px;
-      text-align: center;
-      font-size: 20px;
-      padding: 10px;
-      &.details__icons-icon--active {
-        @include area-selected(bottom);
-      }
-    }
-  }
-
   &__history {
     @include flex(1 0 auto);
     @include display(flex);

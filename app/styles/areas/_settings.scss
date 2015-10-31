@@ -53,13 +53,6 @@
     }
   }
 
-  &__select, &__input, &__pre, &__file-master-pass-label {
-    width: 60%;
-    @include tablet {
-      width: calc(100% - 20px);
-    }
-  }
-
   &__select, &__input {
     height: 2em;
   }

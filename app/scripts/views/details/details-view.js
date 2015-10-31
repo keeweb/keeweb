@@ -9,7 +9,7 @@ var Backbone = require('backbone'),
     FieldViewReadOnly = require('../fields/field-view-read-only'),
     FieldViewHistory = require('../fields/field-view-history'),
     FieldViewCustom = require('../fields/field-view-custom'),
-    DetailsIconView = require('./details-icon-view'),
+    IconSelectView = require('../icon-select-view'),
     DetailsHistoryView = require('./details-history-view'),
     DetailsAttachmentView = require('./details-attachment-view'),
     Keys = require('../../const/keys'),
@@ -175,12 +175,12 @@ var DetailsView = Backbone.View.extend({
     },
 
     toggleIcons: function() {
-        if (this.views.sub && this.views.sub instanceof DetailsIconView) {
+        if (this.views.sub && this.views.sub instanceof IconSelectView) {
             this.render();
             return;
         }
         this.removeSubView();
-        var subView = new DetailsIconView({ el: this.scroller, model: this.model });
+        var subView = new IconSelectView({ el: this.scroller, model: this.model });
         this.listenTo(subView, 'select', this.iconSelected);
         subView.render();
         this.pageResized();

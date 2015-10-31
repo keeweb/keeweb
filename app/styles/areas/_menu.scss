@@ -44,6 +44,7 @@
   &__item {
     text-overflow: ellipsis;
     overflow: hidden;
+    position: relative;
     @include display(flex);
     @include align-items(stretch);
     @include flex-direction(column);
@@ -118,6 +119,26 @@
       }
       .menu__item--with-options:hover & {
         display: none;
+      }
+    }
+
+    &-edit {
+      display: none;
+      opacity: 0;
+      position: absolute;
+      right: .8em;
+      top: .6em;
+      cursor: pointer;
+      transition: opacity $base-duration $base-timing, color $base-duration $base-timing;
+      @include th {
+        color: muted-color();
+        &:hover { color: medium-color(); }
+      }
+      .menu__item--active>.menu__item-body>& {
+        display: block;
+      }
+      .menu__item--active>.menu__item-body:hover>& {
+        opacity: .5;
       }
     }
 

@@ -1,8 +1,4 @@
-# MVP
-
-- [ ] add/edit groups
-
-# FUTURE
+# TODO
 
 - [ ] trash: groups/empty/untrash
 - [ ] move groups/entries

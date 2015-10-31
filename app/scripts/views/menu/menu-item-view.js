@@ -13,7 +13,8 @@ var MenuItemView = Backbone.View.extend({
         'mouseout': 'mouseout',
         'click .menu__item-option': 'selectOption',
         'click': 'selectItem',
-        'dblclick': 'expandItem'
+        'dblclick': 'expandItem',
+        'click .menu__item-edit': 'editItem'
     },
 
     iconEl: null,
@@ -22,9 +23,12 @@ var MenuItemView = Backbone.View.extend({
     initialize: function () {
         this.itemViews = [];
         this.listenTo(this.model, 'change:title', this.changeTitle);
+        this.listenTo(this.model, 'change:icon', this.changeIcon);
         this.listenTo(this.model, 'change:active', this.changeActive);
         this.listenTo(this.model, 'change:expanded', this.changeExpanded);
         this.listenTo(this.model, 'change:cls', this.changeCls);
+        this.listenTo(this.model, 'delete', this.remove);
+        this.listenTo(this.model, 'insert', this.insertItem);
         var shortcut = this.model.get('shortcut');
         if (shortcut) {
             KeyHandler.onKey(shortcut, this.selectItem, this, KeyHandler.SHORTCUT_OPT);
@@ -42,13 +46,14 @@ var MenuItemView = Backbone.View.extend({
         if (items && this.model.get('expanded')) {
             items.forEach(function (item) {
                 if (item.get('visible')) {
-                    var itemView = new MenuItemView({el: this.$el, model: item});
-                    itemView.listenTo(itemView, 'select', this.itemSelected);
-                    itemView.render();
-                    this.itemViews.push(itemView);
+                    this.insertItem(item);
                 }
             }, this);
         }
+    },
+
+    insertItem: function(item) {
+        this.itemViews.push(new MenuItemView({el: this.$el, model: item}).render());
     },
 
     remove : function() {
@@ -69,7 +74,11 @@ var MenuItemView = Backbone.View.extend({
     },
 
     changeTitle: function(model, title) {
-        this.$el.find('.menu__item-title').text(title);
+        this.$el.find('.menu__item-title').first().text(title);
+    },
+
+    changeIcon: function(model, icon) {
+        this.iconEl[0].className = 'menu__item-icon fa ' + (icon ? 'fa-' + icon : 'menu__item-icon--no-icon');
     },
 
     changeActive: function(model, active) {
@@ -129,6 +138,13 @@ var MenuItemView = Backbone.View.extend({
             this.model.toggleExpanded();
         }
         e.stopPropagation();
+    },
+
+    editItem: function(e) {
+        if (this.model.get('active') && this.model.get('editable')) {
+            e.stopPropagation();
+            Backbone.trigger('edit-group', this.model);
+        }
     }
 });
 

@@ -66,6 +66,17 @@
     }
   }
 
+  &__grp {
+    @include flex(1);
+    @include display(flex);
+    overflow: hidden;
+    padding: $base-spacing;
+    position: relative;
+    @include mobile {
+      padding: $base-padding;
+    }
+  }
+
   &__footer {
     @include flex(0 0 auto);
     @include th { border-top: light-border(); }

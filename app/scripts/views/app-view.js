@@ -6,6 +6,7 @@ var Backbone = require('backbone'),
     FooterView = require('../views/footer-view'),
     ListView = require('../views/list-view'),
     DetailsView = require('../views/details/details-view'),
+    GrpView = require('../views/grp-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
     Alerts = require('../comp/alerts'),
@@ -37,6 +38,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag = new DragView('x');
         this.views.details = new DetailsView();
         this.views.details.appModel = this.model;
+        this.views.grp = new GrpView();
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
@@ -44,6 +46,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
         this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
 
+        this.listenTo(Backbone, 'select-all', this.selectAll);
         this.listenTo(Backbone, 'menu-select', this.menuSelect);
         this.listenTo(Backbone, 'lock-workspace', this.lockWorkspace);
         this.listenTo(Backbone, 'show-file', this.showFileSettings);
@@ -53,6 +56,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
+        this.listenTo(Backbone, 'edit-group', this.editGroup);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
@@ -71,6 +75,7 @@ var AppView = Backbone.View.extend({
         this.views.list.setElement(this.$el.find('.app__list')).render();
         this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
+        this.views.grp.setElement(this.$el.find('.app__grp')).render().hide();
         return this;
     },
 
@@ -80,6 +85,7 @@ var AppView = Backbone.View.extend({
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
+        this.views.grp.hide();
         this.views.footer.toggle(this.model.files.hasOpenFiles());
         this.hideSettings();
         this.hideOpenFile();
@@ -103,6 +109,7 @@ var AppView = Backbone.View.extend({
         this.views.list.show();
         this.views.listDrag.show();
         this.views.details.show();
+        this.views.grp.hide();
         this.views.footer.show();
         this.hideOpenFile();
         this.hideSettings();
@@ -130,6 +137,7 @@ var AppView = Backbone.View.extend({
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
+        this.views.grp.hide();
         this.hideOpenFile();
         this.views.settings = new SettingsView();
         this.views.settings.setElement(this.$el.find('.app__body')).render();
@@ -138,6 +146,13 @@ var AppView = Backbone.View.extend({
         }
         this.model.menu.select({ item: selectedMenuItem });
         this.views.menu.switchVisibility(false);
+    },
+
+    showEditGroup: function() {
+        this.views.list.hide();
+        this.views.listDrag.hide();
+        this.views.details.hide();
+        this.views.grp.show();
     },
 
     fileListUpdated: function() {
@@ -193,8 +208,15 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    menuSelect: function(item) {
-        this.model.menu.select(item);
+    selectAll: function() {
+        this.menuSelect({ item: this.model.menu.allItemsSection.get('items').first() });
+    },
+
+    menuSelect: function(opt) {
+        this.model.menu.select(opt);
+        if (!this.views.grp.isHidden()) {
+            this.showEntries();
+        }
     },
 
     lockWorkspace: function() {
@@ -259,6 +281,15 @@ var AppView = Backbone.View.extend({
     toggleDetails: function(visible) {
         this.$el.find('.app__list').toggleClass('app__list--details-visible', visible);
         this.views.menu.switchVisibility(false);
+    },
+
+    editGroup: function(group) {
+        if (group && this.views.grp.isHidden()) {
+            this.showEditGroup();
+            this.views.grp.showGroup(group);
+        } else {
+            this.showEntries();
+        }
     },
 
     contextmenu: function(e) {

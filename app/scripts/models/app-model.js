@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('./app-settings-model'),
     MenuModel = require('./menu/menu-model'),
     EntryModel = require('./entry-model'),
+    GroupModel = require('./group-model'),
     FileCollection = require('../collections/file-collection'),
     EntryCollection = require('../collections/entry-collection');
 
@@ -139,7 +140,7 @@ var AppModel = Backbone.Model.extend({
         return filter;
     },
 
-    createNewEntry: function() {
+    getFirstSelectedGroup: function() {
         var selGroupId = this.filter.group;
         var file, group;
         if (selGroupId) {
@@ -155,7 +156,17 @@ var AppModel = Backbone.Model.extend({
             file = this.files.first();
             group = file.get('groups').first();
         }
-        return EntryModel.newEntry(group, file);
+        return { group: group, file: file };
+    },
+
+    createNewEntry: function() {
+        var sel = this.getFirstSelectedGroup();
+        return EntryModel.newEntry(sel.group, sel.file);
+    },
+
+    createNewGroup: function() {
+        var sel = this.getFirstSelectedGroup();
+        return GroupModel.newGroup(sel.group, sel.file);
     }
 });
 

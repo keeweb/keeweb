@@ -14,5 +14,8 @@
             <% }); %>
         </div>
         <% } %>
-    </div>
+        <% if (typeof editable !== 'undefined') { %>
+        <i class="menu__item-edit fa fa-cog"></i>
+        <% } %>
+    </i>
 </div>

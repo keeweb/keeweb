@@ -31,6 +31,7 @@ var ListView = Backbone.View.extend({
         this.listenTo(this.views.search, 'select-prev', this.selectPrev);
         this.listenTo(this.views.search, 'select-next', this.selectNext);
         this.listenTo(this.views.search, 'create-entry', this.createEntry);
+        this.listenTo(this.views.search, 'create-group', this.createGroup);
         this.listenTo(this, 'show', this.viewShown);
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(Backbone, 'filter', this.filterChanged);
@@ -103,6 +104,11 @@ var ListView = Backbone.View.extend({
         this.items.unshift(newEntry);
         this.render();
         this.selectItem(newEntry);
+    },
+
+    createGroup: function() {
+        var newGroup = this.model.createNewGroup();
+        Backbone.trigger('edit-group', newGroup);
     },
 
     selectItem: function(item) {

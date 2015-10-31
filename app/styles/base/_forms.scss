@@ -243,3 +243,12 @@ $thumb-size: 14px;
     @include th { background: text-color(); }
   }
 }
+
+
+
+.input-base {
+  width: 60%;
+  @include tablet {
+    width: calc(100% - 20px);
+  }
+}
