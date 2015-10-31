@@ -4,7 +4,8 @@ var AppModel = require('./models/app-model'),
     AppView = require('./views/app-view'),
     KeyHandler = require('./comp/key-handler'),
     Alerts = require('./comp/alerts'),
-    DropboxLink = require('./comp/dropbox-link');
+    DropboxLink = require('./comp/dropbox-link'),
+    ThemeChanger = require('./util/theme-changer');
 
 $(function() {
     require('./mixins/view');
@@ -17,9 +18,8 @@ $(function() {
 
     var appModel = new AppModel();
     if (appModel.settings.get('theme')) {
-        document.body.setAttribute('class', 'th-' + appModel.settings.get('theme'));
+        ThemeChanger.setTheme(appModel.settings.get('theme'));
     }
-
     if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0) {
         Alerts.error({ header: 'Not Secure!', icon: 'user-secret', esc: false, enter: false, click: false,
             body: 'You have loaded this app with insecure connection. ' +

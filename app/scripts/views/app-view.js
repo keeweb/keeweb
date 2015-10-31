@@ -11,7 +11,8 @@ var Backbone = require('backbone'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
-    Launcher = require('../comp/launcher');
+    Launcher = require('../comp/launcher'),
+    ThemeChanger = require('../util/theme-changer');
 
 var AppView = Backbone.View.extend({
     el: 'body',
@@ -275,13 +276,7 @@ var AppView = Backbone.View.extend({
     },
 
     setTheme: function() {
-        var theme = this.model.settings.get('theme');
-        _.forEach(document.body.classList, function(cls) {
-            if (/^th\-/.test(cls)) {
-                document.body.classList.remove(cls);
-            }
-        });
-        document.body.classList.add('th-' + theme);
+        ThemeChanger.setTheme(this.model.settings.get('theme'));
     },
 
     extLinkClick: function(e) {
