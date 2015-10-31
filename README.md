@@ -11,9 +11,7 @@ Web: [Web App](https://antelle.github.io/keeweb/)
 Desktop: [Windows](https://github.com/antelle/keeweb/releases/download/v0.0.1/KeeWeb.win32.exe)
 [Mac OSX](https://github.com/antelle/keeweb/releases/download/v0.0.1/KeeWeb.mac.dmg)
 [Linux](https://github.com/antelle/keeweb/releases/download/v0.0.1/KeeWeb.linux.x64.zip)  
-In one page: [Features](http://antelle.github.io/keeweb/features.html)
-
-
+On one page: [Features](http://antelle.github.io/keeweb/features.html)  
 
 # Status
 
