@@ -50,6 +50,7 @@ var MenuItemView = Backbone.View.extend({
                 }
             }, this);
         }
+        return this;
     },
 
     insertItem: function(item) {
