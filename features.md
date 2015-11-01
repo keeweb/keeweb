@@ -35,4 +35,4 @@
 ## Open-source
 ![ ](https://habrastorage.org/files/0dc/19f/38d/0dc19f38dcac4415a831cd0fec4ceef7.png)  
   
-[https://antelle.github.io/keeweb/](https://antelle.github.io/keeweb)
+[https://antelle.github.io/keeweb/](https://antelle.github.io/keeweb/)
