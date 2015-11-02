@@ -1,11 +1,14 @@
 # TODO
 
+## v0.2
+- [x] support non-xml keyfiles
+- [ ] remove limitation for extensions
+- [ ] use WebCrypto
+
 ## v1.0
 
-- [ ] support non-xml keyfiles
 - [ ] improve open page UX
 - [ ] show engineer error details on file open
-- [ ] remove limitation for extensions
 - [ ] trash: groups/empty/untrash
 - [ ] move groups/entries
 - [ ] help/tips
