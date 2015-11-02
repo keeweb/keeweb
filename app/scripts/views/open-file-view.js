@@ -69,7 +69,7 @@ var OpenFileView = Backbone.View.extend({
                 this.keyFileData = null;
                 this.model.set('keyFileName', '');
             } else {
-                this.openAny('keyFileData', '.key');
+                this.openAny('keyFileData');
             }
         }
     },
@@ -77,7 +77,7 @@ var OpenFileView = Backbone.View.extend({
     openAny: function(reading, ext) {
         this.reading = reading;
         this[reading] = null;
-        this.$el.find('.open__file-ctrl').attr('accept', ext).click();
+        this.$el.find('.open__file-ctrl').attr('accept', ext || '').click();
     },
 
     resetFile: function() {

@@ -2,7 +2,7 @@
 
 ## v0.2
 - [x] support non-xml keyfiles
-- [ ] remove limitation for extensions
+- [x] remove limitation for extensions
 - [ ] use WebCrypto
 
 ## v1.0
