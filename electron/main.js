@@ -6,11 +6,16 @@
 var app = require('app'),
     BrowserWindow = require('browser-window'),
     path = require('path'),
-    fs = require('fs');
+    fs = require('fs'),
+    Tray = require('tray'),
+    Menu = require('menu');
 
 var mainWindow = null,
     openFile = process.argv.filter(function(arg) { return /\.kdbx$/i.test(arg); })[0],
-    ready = false;
+    ready = false,
+    appIcon = null,
+    quiting = false,
+    firstTray = true;
 
 app.on('window-all-closed', function() { app.quit(); });
 app.on('ready', function() {
@@ -33,12 +38,48 @@ app.on('ready', function() {
         notifyOpenFile();
     });
     mainWindow.on('closed', function() { mainWindow = null; });
+
+    mainWindow.on('close', function(e) {
+        if (!quiting) {
+            e.preventDefault();
+            mainWindow.minimize();
+            mainWindow.setSkipTaskbar(true)
+            if (firstTray) {
+                appIcon.displayBalloon({title: 'KeeWeb', content: 'Application minimized to tray!'});
+                firstTray = false;
+            }
+        }
+    });
+
+    appIcon = new Tray(path.join(__dirname, 'icon.png'));
+    var contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Open KeeWeb',
+            click: restoreMainWindow
+        },
+        {
+            label: 'Quit KeeWeb',
+            click: function() {
+                quiting = true;
+                mainWindow.close();
+            }
+        }
+    ]);
+    appIcon.on('clicked', restoreMainWindow)
+    appIcon.setContextMenu(contextMenu);
+    appIcon.setToolTip('KeeWeb Desktop');
 });
+
 app.on('open-file', function(e, path) {
     e.preventDefault();
     openFile = path;
     notifyOpenFile();
 });
+
+function restoreMainWindow() {
+    mainWindow.restore();
+    mainWindow.setSkipTaskbar(false);
+}
 
 function notifyOpenFile() {
     if (ready && openFile && mainWindow) {
