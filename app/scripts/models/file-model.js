@@ -51,13 +51,18 @@ var FileModel = Backbone.Model.extend({
         password = new kdbxweb.ProtectedValue(value.buffer.slice(0, byteLength), salt.buffer.slice(0, byteLength));
         try {
             var credentials = new kdbxweb.Credentials(password, keyFileData);
-            this.db = kdbxweb.Kdbx.load(fileData, credentials);
+            kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
+                if (err) {
+                    this.set({error: true, opening: false});
+                } else {
+                    this.db = db;
+                    this.readModel(this.get('name'));
+                    this.setOpenFile({ passwordLength: len });
+                }
+            }).bind(this));
         } catch (e) {
             this.set({ error: true, opening: false });
-            return;
         }
-        this.readModel(this.get('name'));
-        this.setOpenFile({ passwordLength: len });
     },
 
     create: function(name) {
@@ -72,9 +77,11 @@ var FileModel = Backbone.Model.extend({
         var password = kdbxweb.ProtectedValue.fromString('demo');
         var credentials = new kdbxweb.Credentials(password);
         var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
-        this.db = kdbxweb.Kdbx.load(demoFile, credentials);
-        this.readModel();
-        this.setOpenFile({ passwordLength: 4, demo: true, name: 'Demo' });
+        kdbxweb.Kdbx.load(demoFile, credentials, (function(db) {
+            this.db = db;
+            this.readModel();
+            this.setOpenFile({passwordLength: 4, demo: true, name: 'Demo'});
+        }).bind(this));
     },
 
     setOpenFile: function(props) {
@@ -164,27 +171,31 @@ var FileModel = Backbone.Model.extend({
         this.set('syncing', true);
         switch (this.get('storage')) {
             case 'file':
-                Launcher.writeFile(this.get('path'), this.getData());
-                this.saved(this.get('path'), this.get('storage'));
+                this.getData(function(data) {
+                    Launcher.writeFile(this.get('path'), data);
+                    this.saved(this.get('path'), this.get('storage'));
+                });
                 break;
             case 'dropbox':
-                DropboxLink.saveFile(this.get('path'), this.getData(), true, (function(err) {
-                    if (!err) {
-                        this.saved(this.get('path'), this.get('storage'));
-                    }
-                }).bind(this));
+                this.getData(function(data) {
+                    DropboxLink.saveFile(this.get('path'), data, true, (function (err) {
+                        if (!err) {
+                            this.saved(this.get('path'), this.get('storage'));
+                        }
+                    }).bind(this));
+                });
                 break;
             default:
                 throw 'Unknown storage; cannot auto save';
         }
     },
 
-    getData: function() {
-        return this.db.save();
+    getData: function(cb) {
+        return this.db.save(cb);
     },
 
-    getXml: function() {
-        return this.db.saveXml();
+    getXml: function(cb) {
+        this.db.saveXml(cb);
     },
 
     saved: function(path, storage) {

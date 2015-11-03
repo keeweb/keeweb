@@ -98,26 +98,28 @@ var SettingsAboutView = Backbone.View.extend({
         if (!this.validate()) {
             return;
         }
-        var data = this.model.getData();
-        var fileName = this.model.get('name') + '.kdbx';
-        if (Launcher) {
-            if (this.model.get('path')) {
-                this.saveToFileWithPath(this.model.get('path'), data);
+        var that = this;
+        this.model.getData(function(data) {
+            var fileName = that.model.get('name') + '.kdbx';
+            if (Launcher) {
+                if (that.model.get('path')) {
+                    that.saveToFileWithPath(that.model.get('path'), data);
+                } else {
+                    Launcher.getSaveFileName(fileName, function (path) {
+                        if (path) {
+                            that.saveToFileWithPath(path, data);
+                        }
+                    });
+                }
             } else {
-                Launcher.getSaveFileName(fileName, (function (path) {
-                    if (path) {
-                        this.saveToFileWithPath(path, data);
-                    }
-                }).bind(this));
+                var blob = new Blob([data], {type: 'application/octet-stream'});
+                FileSaver.saveAs(blob, fileName);
+                that.passwordChanged = false;
+                if (that.model.get('storage') !== 'dropbox') {
+                    that.model.saved();
+                }
             }
-        } else {
-            var blob = new Blob([data], {type: 'application/octet-stream'});
-            FileSaver.saveAs(blob, fileName);
-            this.passwordChanged = false;
-            if (this.model.get('storage') !== 'dropbox') {
-                this.model.saved();
-            }
-        }
+        });
     },
 
     saveToFileWithPath: function(path, data) {
@@ -140,9 +142,10 @@ var SettingsAboutView = Backbone.View.extend({
         if (!this.validate()) {
             return;
         }
-        var data = this.model.getXml();
-        var blob = new Blob([data], {type: 'text/xml'});
-        FileSaver.saveAs(blob, this.model.get('name') + '.xml');
+        this.model.getXml((function(xml) {
+            var blob = new Blob([xml], {type: 'text/xml'});
+            FileSaver.saveAs(blob, this.model.get('name') + '.xml');
+        }).bind(this));
     },
 
     saveToDropboxClick: function() {
@@ -155,37 +158,41 @@ var SettingsAboutView = Backbone.View.extend({
         if (this.model.get('syncing') || !this.validate()) {
             return;
         }
-        var data = this.model.getData();
-        var fileName = this.model.get('name') + '.kdbx';
-        this.model.set('syncing', true);
-        this.render();
-        DropboxLink.saveFile(fileName, data, overwrite, (function(err) {
-            if (err) {
-                this.model.set('syncing', false);
-                if (err.exists) {
-                    Alerts.alert({
-                        header: 'Already exists',
-                        body: 'File ' + fileName + ' already exists in your Dropbox.',
-                        icon: 'question',
-                        buttons: [{result: 'yes', title: 'Overwrite it'}, {result: '', title: 'I\'ll choose another name'}],
-                        esc: '',
-                        click: '',
-                        enter: 'yes',
-                        success: this.saveToDropbox.bind(this, true),
-                        cancel: (function() { this.$el.find('#settings__file-name').focus(); }).bind(this)
-                    });
+        var that = this;
+        this.model.getData(function(data) {
+            var fileName = that.model.get('name') + '.kdbx';
+            that.model.set('syncing', true);
+            that.render();
+            DropboxLink.saveFile(fileName, data, overwrite, function (err) {
+                if (err) {
+                    that.model.set('syncing', false);
+                    if (err.exists) {
+                        Alerts.alert({
+                            header: 'Already exists',
+                            body: 'File ' + fileName + ' already exists in your Dropbox.',
+                            icon: 'question',
+                            buttons: [{result: 'yes', title: 'Overwrite it'}, {result: '', title: 'I\'ll choose another name'}],
+                            esc: '',
+                            click: '',
+                            enter: 'yes',
+                            success: that.saveToDropbox.bind(that, true),
+                            cancel: function () {
+                                that.$el.find('#settings__file-name').focus();
+                            }
+                        });
+                    } else {
+                        Alerts.error({
+                            header: 'Save error',
+                            body: 'Error saving to Dropbox: \n' + err
+                        });
+                    }
                 } else {
-                    Alerts.error({
-                        header: 'Save error',
-                        body: 'Error saving to Dropbox: \n' + err
-                    });
+                    that.passwordChanged = false;
+                    that.model.saved(fileName, 'dropbox');
+                    that.render();
                 }
-            } else {
-                this.passwordChanged = false;
-                this.model.saved(fileName, 'dropbox');
-                this.render();
-            }
-        }).bind(this));
+            });
+        });
     },
 
     keyFileChange: function(e) {
