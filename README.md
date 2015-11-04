@@ -8,9 +8,9 @@ It can be run either in browser, or as a desktop app.
 # Quick Links
 
 Web: [Web App](https://antelle.github.io/keeweb/)  
-Desktop: [Windows](https://github.com/antelle/keeweb/releases/download/v0.0.1/KeeWeb.win32.exe)
-[Mac OSX](https://github.com/antelle/keeweb/releases/download/v0.0.1/KeeWeb.mac.dmg)
-[Linux](https://github.com/antelle/keeweb/releases/download/v0.0.1/KeeWeb.linux.x64.zip)  
+Desktop: [Windows](https://github.com/antelle/keeweb/releases/download/v0.1.1/KeeWeb.win32.exe)
+[Mac OSX](https://github.com/antelle/keeweb/releases/download/v0.1.1/KeeWeb.mac.dmg)
+[Linux](https://github.com/antelle/keeweb/releases/download/v0.1.1/KeeWeb.linux.x64.zip)  
 Timeline: [Release Notes](release-notes.md)
 [TODO](TODO.md)  
 On one page: [Features](features.md)  
