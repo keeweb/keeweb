@@ -3,7 +3,7 @@
 This webapp can read KeePass databases. It doesn't require any server or additional resources.
 It can be run either in browser, or as a desktop app. 
 
-![screenshot](https://antelle.github.io/keeweb/screenshot2x.png)
+![screenshot](https://habrastorage.org/files/bc9/092/be4/bc9092be4b11434fae972f2e1cb247e0.png)
 
 # Quick Links
 
