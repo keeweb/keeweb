@@ -29,11 +29,15 @@ if (window.process && window.process.versions && window.process.versions.electro
                 filters: [{ name: 'KeePass files', extensions: ['kdbx'] }]
             }, cb);
         },
+        getUserDataPath: function(fileName) {
+            return this.req('path').join(this.remReq('app').getPath('userData'), fileName || '');
+        },
         writeFile: function(path, data) {
             this.req('fs').writeFileSync(path, new window.Buffer(data));
         },
-        readFile: function(path) {
-            return new Uint8Array(this.req('fs').readFileSync(path));
+        readFile: function(path, encoding) {
+            var contents = this.req('fs').readFileSync(path, encoding);
+            return typeof contents === 'string' ? contents : new Uint8Array(contents);
         },
         fileExists: function(path) {
             return this.req('fs').existsSync(path);
