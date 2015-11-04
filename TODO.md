@@ -29,6 +29,7 @@
 - [ ] native encryption for electron
 - [ ] generation templates
 - [ ] i18n
+- [ ] allow to increase font size
 - [ ] external crypto devices support
 - [ ] entry templates
 - [ ] custom icons
