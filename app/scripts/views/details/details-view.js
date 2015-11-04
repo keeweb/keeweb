@@ -398,11 +398,6 @@ var DetailsView = Backbone.View.extend({
     },
 
     setTitle: function(title) {
-        if (!title && this.model.isJustCreated) {
-            this.model.removeWithoutHistory();
-            Backbone.trigger('refresh');
-            return;
-        }
         if (this.model.title instanceof kdbxweb.ProtectedValue) {
             title = kdbxweb.ProtectedValue.fromString(title);
         }
@@ -410,7 +405,7 @@ var DetailsView = Backbone.View.extend({
             this.model.setField('Title', title);
             this.entryUpdated(true);
         }
-        var newTitle = $('<h1 class="details__header-title"></h1>').text(title);
+        var newTitle = $('<h1 class="details__header-title"></h1>').text(title || '(no title)');
         this.$el.find('.details__header-title-input').replaceWith(newTitle);
     },
 
