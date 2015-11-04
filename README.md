@@ -19,6 +19,11 @@ On one page: [Features](features.md)
 
 Reading and display is mostly complete; modification and sync is under construction, please see [TODO](TODO.md) for more details.
 
+# Self-hosting
+
+Everything you need to host this app on your server is any static file server. The app is a single HTML file + cache manifest (optionally; for offline access).
+You can download the latest distribution files from [gh-pages](https://github.com/antelle/keeweb/tree/gh-pages) branch.
+
 # Building
 
 The app can be built with grunt: `grunt` (html file will be in `dist/`) or `grunt watch` (result will be in `tmp/`).
@@ -29,7 +34,7 @@ To run Electron app without building, install electron package (`npm install ele
 
 Plugins are not supported for now. If you want to add a feature, please contact the author first. Pull requests, patches and issues are very welcome.  
 If you have found an bug, please [open an issue](https://github.com/antelle/keeweb/issues/new) and fill in the app version and your user-agent 
-(you can find these details on Settings/Help section).
+(you can find these details in Settings/Help section).
 
 # License
 
