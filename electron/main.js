@@ -16,6 +16,7 @@ var mainWindow = null,
 app.on('window-all-closed', function() { app.quit(); });
 app.on('ready', function() {
     var htmlPath = path.join(app.getPath('userData'), 'index.html');
+    htmlPath = path.join(__dirname, '../tmp/index.html');
 
     mainWindow = new BrowserWindow({
         show: false,
