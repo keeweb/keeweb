@@ -1,6 +1,8 @@
+#!/usr/bin/env bash
+
 electron-packager electron/ KeeWeb --platform=darwin --arch=x64 --version=0.34.0 --icon=graphics/app.icns
 electron-builder KeeWeb-darwin-x64/KeeWeb.app --platform=osx --out=. --config=./util/electron-builder.json
-#electron-installer-dmg ./KeeWeb-darwin-x64/KeeWeb.app KeeWeb --out=./ --background=./graphics/dmg-bg.png  --icon=./graphics/app.icns --overwrite
+mv KeeWeb.dmg KeeWeb.mac.dmg
 rm -rf ./KeeWeb-darwin-x64/
 
 electron-packager electron/ KeeWeb --platform=linux --arch=x64 --version=0.34.0 --icon=graphics/app.ico
