@@ -3,7 +3,7 @@
 This webapp can read KeePass databases. It doesn't require any server or additional resources.
 It can be run either in browser, or as a desktop app. 
 
-![screenshot](https://habrastorage.org/files/bc9/092/be4/bc9092be4b11434fae972f2e1cb247e0.png)
+![screenshot](https://habrastorage.org/files/bfb/51e/d8d/bfb51ed8d19847d8afb827c4fbff7dd5.png)
 
 # Quick Links
 
