@@ -131,6 +131,7 @@ var SettingsAboutView = Backbone.View.extend({
                 AppSettingsModel.instance.set('lastOpenFile', path);
             }
         } catch (e) {
+            console.error('Error saving file', path, e);
             Alerts.error({
                 header: 'Save error',
                 body: 'Error saving to file ' + path + ': \n' + e

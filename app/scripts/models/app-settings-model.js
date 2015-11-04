@@ -26,7 +26,9 @@ var AppSettingsModel = Backbone.Model.extend({
             if (data) {
                 this.set(data, {silent: true});
             }
-        } catch (e) { /* TODO: log failed to load settings */ }
+        } catch (e) {
+            console.error('Error loading settings', e);
+        }
     },
 
     save: function() {
@@ -36,7 +38,9 @@ var AppSettingsModel = Backbone.Model.extend({
             } else if (typeof localStorage !== 'undefined') {
                 localStorage.appSettings = JSON.stringify(this.attributes);
             }
-        } catch (e) { /* TODO: log failed to save settings */ }
+        } catch (e) {
+            console.error('Error saving settings', e);
+        }
     }
 });
 

@@ -54,6 +54,7 @@ var FileModel = Backbone.Model.extend({
             kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
                 if (err) {
                     this.set({error: true, opening: false});
+                    console.error('Error opening file', err.code, err.message, err);
                 } else {
                     this.db = db;
                     this.readModel(this.get('name'));
@@ -61,6 +62,7 @@ var FileModel = Backbone.Model.extend({
                 }
             }).bind(this));
         } catch (e) {
+            console.error('Error opening file', e, e.code, e.message, e);
             this.set({ error: true, opening: false });
         }
     },

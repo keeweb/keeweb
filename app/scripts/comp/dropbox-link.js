@@ -74,6 +74,7 @@ var DropboxLink = {
                     header: 'Dropbox Sync Error',
                     body: 'Something went wrong during Dropbox sync. Please, try again later. Error: ' + err
                 });
+                console.error('Dropbox error', err);
                 break;
         }
         callback(false);

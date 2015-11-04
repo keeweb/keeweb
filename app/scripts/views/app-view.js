@@ -250,6 +250,7 @@ var AppView = Backbone.View.extend({
                 try {
                     file.autoSave();
                 } catch (e) {
+                    console.error('Failed to auto-save file', file.get('path'), e);
                     fileId = file.cid;
                 }
             } else if (!fileId) {

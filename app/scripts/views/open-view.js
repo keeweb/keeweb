@@ -109,6 +109,7 @@ var OpenView = Backbone.View.extend({
                 });
                 this.views.openFile.setFile(file);
             } catch (e) {
+                console.log('Failed to show local file', e);
             }
         }
     }

@@ -51,6 +51,7 @@ if (window.process && window.process.versions && window.process.versions.electro
         Backbone.trigger('launcher-open-file', path);
     };
     if (window.launcherOpenedFile) {
+        console.log('Open file request', window.launcherOpenedFile);
         Backbone.trigger('launcher-open-file', window.launcherOpenedFile);
         delete window.launcherOpenedFile;
     }
