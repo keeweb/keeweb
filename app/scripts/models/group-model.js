@@ -116,7 +116,7 @@ var GroupModel = MenuItemModel.extend({
 
     moveToTrash: function() {
         this.file.setModified();
-        this.file.db.remove(this.group, this.parentGroup.group);
+        this.file.db.remove(this.group);
         this.parentGroup.removeGroup(this);
         var trashGroup = this.file.getTrashGroup();
         if (trashGroup) {
