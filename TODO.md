@@ -3,7 +3,7 @@
 ## v1.0
 
 - [ ] improve open page UX
-- [ ] show engineer error details on file open
+- [x] provide engineer error details on file open
 - [ ] trash: groups/empty/untrash
 - [ ] move groups/entries
 - [ ] help/tips
