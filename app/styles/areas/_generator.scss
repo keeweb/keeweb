@@ -2,7 +2,7 @@
   position: absolute;
   @include dropdown;
   padding: $base-spacing;
-  width: 10em;
+  width: 11em;
   &__length-range {
   }
   &__check {
@@ -15,11 +15,14 @@
   &__result {
     @include user-select(text);
     font-family: $monospace-font-family;
-    margin-top: $base-padding-v;
-    height: 4em;
+    margin-top: 6px;
+    height: 50px;
     text-align: center;
     white-space: pre;
     word-wrap: break-word;
+    &--long-pass {
+      font-size: .75em;
+    }
   }
   &__btn-wrap {
     text-align: center;

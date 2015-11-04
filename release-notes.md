@@ -1,5 +1,10 @@
 Release notes
 -------------
+##### v0.2.0 (not released yet)
+Bugfixes and new features  
+`-` #12: cannot edit entries without title  
+`+` #13: increase max generated password length  
+
 ##### v0.1.1 (2015-11-04)
 Bugfix and performance enhancements  
 `+` support non-xml keyfiles  
