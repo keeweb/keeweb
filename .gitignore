@@ -1,4 +1,5 @@
 workspace.xml
+misc.xml
 .DS_Store
 node_modules/
 bower_components/
