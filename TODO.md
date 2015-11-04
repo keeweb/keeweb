@@ -1,10 +1,5 @@
 # TODO
 
-## v0.2
-- [x] support non-xml keyfiles
-- [x] remove limitation for extensions
-- [ ] use WebCrypto
-
 ## v1.0
 
 - [ ] improve open page UX
@@ -33,6 +28,8 @@
 - [ ] audit
 - [ ] native encryption for electron
 - [ ] generation templates
+- [ ] i18n
+- [ ] external crypto devices support
 - [ ] entry templates
 - [ ] custom icons
 - [ ] plugins
