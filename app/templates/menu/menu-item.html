@@ -5,7 +5,7 @@
         cls ? cls : '' %>">
     <div class="menu__item-body">
         <i class="menu__item-icon fa <%= icon ? 'fa-' + icon : 'menu__item-icon--no-icon' %>"></i><span
-            class="menu__item-title"><%- title %></span>
+            class="menu__item-title"><%- title || '(no title)' %></span>
         <% if (options) { %>
         <div class="menu__item-options">
             <% options.forEach(function(option) { %>

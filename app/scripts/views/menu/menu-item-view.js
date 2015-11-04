@@ -75,7 +75,7 @@ var MenuItemView = Backbone.View.extend({
     },
 
     changeTitle: function(model, title) {
-        this.$el.find('.menu__item-title').first().text(title);
+        this.$el.find('.menu__item-title').first().text(title || '(no title)');
     },
 
     changeIcon: function(model, icon) {

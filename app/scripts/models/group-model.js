@@ -94,6 +94,7 @@ var GroupModel = MenuItemModel.extend({
 
     removeGroup: function(group) {
         this.get('items').remove(group);
+        this.trigger('remove', group);
     },
 
     addGroup: function(group) {
@@ -132,6 +133,7 @@ var GroupModel = MenuItemModel.extend({
             this.parentGroup.group.groups.splice(ix, 1);
         }
         this.parentGroup.removeGroup(this);
+        this.trigger('delete');
     }
 });
 

@@ -26,6 +26,9 @@ var GrpView = Backbone.View.extend({
                 icon: this.model.get('icon') || 'folder',
                 readonly: this.model.get('top')
             }));
+            if (!this.model.get('title')) {
+                this.$el.find('#grp__field-title').focus();
+            }
         }
         this.scroll = baron({
             root: this.$el.find('.details__body')[0],
