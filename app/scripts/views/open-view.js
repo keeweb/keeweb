@@ -1,117 +1,61 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    OpenFileView = require('./open-file-view'),
+    Keys = require('../const/keys'),
+    Alerts = require('../comp/alerts'),
+    SecureInput = require('../comp/secure-input'),
     FileModel = require('../models/file-model'),
-    Launcher = require('../comp/launcher');
+    Launcher = require('../comp/launcher'),
+    DropboxLink = require('../comp/dropbox-link');
 
 var OpenView = Backbone.View.extend({
     template: require('templates/open.html'),
 
-    views: null,
-    file: null,
-
     events: {
+        'change .open__file-ctrl': 'fileSelected',
+
+        'click .open__icon-open': 'openFile',
+        'click .open__icon-new': 'createNew',
+        'click .open__icon-dropbox': 'openFromDropbox',
+        'click .open__icon-demo': 'createDemo',
+
+        'click .open__pass-input[readonly]': 'openFile',
+        'input .open__pass-input': 'inputInput',
+        'keydown .open__pass-input': 'inputKeydown',
+        'keypress .open__pass-input': 'inputKeypress',
+
+        'click .open__settings-key-file': 'openKeyFile',
+        'change .open__settings-check-offline': 'changeOffline',
+
         'dragover': 'dragover',
         'dragleave': 'dragleave',
         'drop': 'drop'
     },
 
+    fileData: null,
+    keyFileData: null,
+    passwordInput: null,
+    dropboxLoading: null,
+
     initialize: function () {
         this.file = new FileModel();
-        this.views = { openFile: new OpenFileView({ model: this.file }) };
+        this.fileData = null;
+        this.keyFileData = null;
+        this.passwordInput = new SecureInput();
         this.listenTo(this.file, 'change:open', this.fileOpened);
-        this.listenTo(this.views.openFile, 'select', this.selectFile);
-        this.listenTo(this.views.openFile, 'create', this.createNewFile);
-        this.listenTo(this.views.openFile, 'create-demo', this.createDemoFile);
     },
 
     render: function () {
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        this.setElement($(this.template(this.model)).appendTo(this.$el));
-        this.views.openFile.setElement(this.$el).render();
+        this.renderTemplate({
+            supportsDropbox: !Launcher,
+            dropboxLoading: this.dropboxLoading
+        });
+        this.inputEl = this.$el.find('.open__pass-input');
+        this.passwordInput.setElement(this.inputEl);
         return this;
-    },
-
-    selectFile: function(e) {
-        this.file.open(e.password, e.fileData, e.keyFileData);
-    },
-
-    createNewFile: function() {
-        var name;
-        for (var i = 0; ; i++) {
-            name = 'New' + (i || '');
-            if (!this.model.files.getByName(name)) {
-                break;
-            }
-        }
-        this.file.create(name);
-    },
-
-    createDemoFile: function() {
-        if (!this.model.files.getByName('Demo')) {
-            this.file.createDemo();
-        } else {
-            this.trigger('cancel');
-        }
-    },
-
-    fileOpened: function(model, open) {
-        if (open) {
-            this.model.addFile(this.file);
-        }
-    },
-
-    dragover: function(e) {
-        e.preventDefault();
-        if (this.dragTimeout) {
-            clearTimeout(this.dragTimeout);
-        }
-        if (this.model && !this.$el.hasClass('open--drag')) {
-            this.$el.addClass('open--drag');
-        }
-    },
-
-    dragleave: function() {
-        if (this.dragTimeout) {
-            clearTimeout(this.dragTimeout);
-        }
-        this.dragTimeout = setTimeout((function() {
-            this.$el.removeClass('open--drag');
-        }).bind(this), 100);
-    },
-
-    drop: function(e) {
-        e.preventDefault();
-        if (this.dragTimeout) {
-            clearTimeout(this.dragTimeout);
-        }
-        this.$el.removeClass('open--drag');
-        var files = e.target.files || e.dataTransfer.files;
-        var dataFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'kdbx'; });
-        var keyFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'key'; });
-        if (dataFile) {
-            this.views.openFile.setFile(dataFile, keyFile);
-        }
-    },
-
-    showOpenLocalFile: function(path) {
-        if (path && Launcher) {
-            try {
-                var name = path.match(/[^/\\]*$/)[0];
-                var data = Launcher.readFile(path);
-                var file = new Blob([data]);
-                Object.defineProperties(file, {
-                    path: { value: path },
-                    name: { value: name }
-                });
-                this.views.openFile.setFile(file);
-            } catch (e) {
-                console.log('Failed to show local file', e);
-            }
-        }
     }
 });
 

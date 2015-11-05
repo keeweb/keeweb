@@ -3,86 +3,114 @@
   @include display(flex);
   @include align-self(stretch);
   @include display(flex);
-  @include align-items(stretch);
+  @include align-items(center);
   @include flex-direction(column);
   @include justify-content(center);
   @include th { background: background-color(); }
 
-  &__file {
+  &__icons {
     @include display(flex);
     @include align-items(stretch);
     @include flex-direction(row);
-    @include justify-content(center);
-    .open--drag & {
-      display: none;
-    }
-    &-icon-wrap {
-      width: 50px;
-      @include mobile {
-        padding: 0 4px;
-      }
-    }
-    &-icon, &-btn-new, &-btn-key {
-      font-size: 30px;
-      margin: 20px 0 0 0;
-      padding: 10px 0;
-      width: 100%;
-      text-align: center;
-    }
-    &-icon {
+  }
+
+  &__icon {
+    text-align: center;
+    cursor: pointer;
+    margin: 20px;
+    transition: color $base-duration $base-timing;
+    &:hover { @include th { color: medium-color(); } }
+    &-i { font-size: 4em; }
+    &-text {
       @include th { color: muted-color(); }
-      border-bottom: 1px transparent;
-      &--opening {
-        &:before {
-          content: $fa-var-spinner;
-        }
-      }
+      .open__icon:hover>& { @include th { color: medium-color(); } }
     }
-    &-btn-new {
-      @include area-selectable;
-    }
-    &-btn-key {
-      &[disabled] {
-        @include th { color: muted-color(); }
-      }
-      &:not([disabled]) {
-        @include area-selectable;
-      }
-      &.open__file-btn-key--active, &.open__file-btn-key--active:hover {
-        @include th { color: action-color(); }
-        .open__file--error & { @include th { color: error-color(); } }
-      }
-    }
-    &-title {
-      @include th { color: muted-color(); }
-      font-size: 12px;
-      cursor: pointer;
-      height: 20px;
-      display: inline-block;
-    }
-    &-warning {
-      @include position(absolute, 0 0 null null);
-      margin: 0;
-      padding: 0;
-    }
-    &-password {
+  }
+
+  &__pass {
+    &-area {
+      @include display(flex);
+      @include align-items(stretch);
+      @include flex-direction(column);
+      @include justify-content(flex-start);
       position: relative;
-      input[type=password].open__file-input {
-        font-size: 22px;
-        padding-right: 34px;
-        margin-bottom: 0;
-        width: 100%;
-        &[readonly] {
-          cursor: pointer;
-        }
-        &.input--error {
+    }
+    &-warn-wrap {
+      @include display(flex);
+      @include flex-direction(row);
+      @include justify-content(flex-end);
+    }
+    &-field-wrap {
+      @include display(flex);
+      @include flex-direction(row);
+      @include justify-content(flex-start);
+      @include align-items(stretch);
+      margin-bottom: $base-padding-v;
+    }
+    &-enter-btn {
+      padding: .6em $base-spacing;
+      position: absolute;
+      @include th { color: muted-color(); };
+      @include area-selectable;
+      >i { font-size: 3em; }
+    }
+  }
+
+  input[type=password].open__pass-input {
+    font-size: 22px;
+    margin-bottom: 0;
+    &[readonly] { cursor: pointer; }
+  }
+
+  &__settings {
+    @include display(flex);
+    @include flex-direction(row);
+    @include justify-content(space-between);
+    @include align-items(stretch);
+    &-key-file {
+      cursor: pointer;
+      &-dropbox {
+        visibility: hidden;
+        &:hover {
+          visibility: visible;
         }
       }
+      &:hover .open__settings-key-file-dropbox {
+        visibility: visible;
+      }
+    }
+    &-key-file, &-label-offline, &-label-offline:before, input[type=checkbox] + label.open__settings-label-offline:before,
+    &-key-file-dropbox {
+      @include th {
+        color: muted-color();
+        &:hover {
+          color: medium-color();
+        }
+      }
+    }
+    input[type=checkbox] + label.open__settings-label-offline:hover:before {
+      @include th { color: medium-color(); }
+    }
+    &-label-offline { font-weight: normal; }
+  }
+
+  &__last {
+    @include display(flex);
+    @include flex-direction(column);
+    @include justify-content(flex-start);
+    @include align-items(stretch);
+    margin-top: $base-spacing;
+    &-item {
+      @include area-selectable;
+      @include th { color: muted-color(); }
+      padding: $base-padding-v 0;
+      >i { width: 2em; }
     }
   }
 
   &__dropzone {
     display: none;
+    position: absolute;
     .open--drag & {
       @include display(flex);
       @include flex-direction(column);

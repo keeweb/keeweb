@@ -1,4 +1,54 @@
 <div class="open">
+    <input type="file" id="open__file-ctrl" class="hide-by-pos" />
+    <div class="open__icons">
+        <div class="open__icon open__icon-open">
+            <i class="fa fa-lock open__icon-i"></i>
+            <div class="open__icon-text">Open</div>
+        </div>
+        <div class="open__icon open__icon-new">
+            <i class="fa fa-plus open__icon-i"></i>
+            <div class="open__icon-text">New</div>
+        </div>
+        <% if (supportsDropbox) { %>
+        <div class="open__icon open__icon-dropbox">
+            <i class="fa fa-dropbox open__icon-i"></i>
+            <div class="open__icon-text">Dropbox</div>
+        </div>
+        <% } %>
+        <div class="open__icon open__icon-demo">
+            <i class="fa fa-magic open__icon-i"></i>
+            <div class="open__icon-text">Demo</div>
+        </div>
+    </div>
+    <div class="open__pass-area">
+        <div class="open__pass-warn-wrap">
+            <div class="open__pass-warning muted-color _invisible"><i class="fa fa-exclamation-triangle"></i> Caps Lock is on</div>
+        </div>
+        <div class="open__pass-field-wrap">
+            <input class="open__pass-input" type="password" size="30" autocomplete="off" maxlength="128"
+                   placeholder="Click to open a file" readonly />
+            <div class="open__pass-enter-btn"><i class="fa fa-level-down fa-rotate-90"></i></div>
+        </div>
+        <div class="open__settings">
+            <div class="open__settings-key-file">
+                <i class="fa fa-key"></i>
+                keyfile
+                <% if (supportsDropbox) { %>
+                <span class="open__settings-key-file-dropbox"> (from dropbox)</span>
+                <% } %>
+            </div>
+            <div class="open__settings-offline">
+                <input type="checkbox" id="open__settings-check-offline" checked />
+                <label for="open__settings-check-offline" class="open__settings-label-offline">make available offline</label>
+            </div>
+        </div>
+        <div class="open__last">
+            <div class="open__last-item"><i class="fa fa-dropbox"></i>My passwords</div>
+            <div class="open__last-item"><i class="fa fa-dropbox"></i>Work</div>
+            <div class="open__last-item"><i class="fa fa-dropbox"></i>Hard with many rounds</div>
+            <div class="open__last-item"><i class="fa fa-file-text"></i>Local</div>
+        </div>
+    </div>
     <div class="open__dropzone">
         <i class="fa fa-lock muted-color open__dropzone-icon"></i>
         <h1 class="muted-color open__dropzone-header">drop files here</h1>
