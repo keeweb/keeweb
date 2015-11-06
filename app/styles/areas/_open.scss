@@ -12,6 +12,7 @@
     @include display(flex);
     @include align-items(stretch);
     @include flex-direction(row);
+    .open--drag & { display: none; }
   }
 
   &__icon {
@@ -34,6 +35,7 @@
       @include flex-direction(column);
       @include justify-content(flex-start);
       position: relative;
+      .open--drag & { display: none; }
     }
     &-warn-wrap {
       @include display(flex);
@@ -47,12 +49,20 @@
       @include align-items(stretch);
       margin-bottom: $base-padding-v;
     }
+    &-enter-btn, &-opening-icon {
+      position: absolute;
+      @include th { color: muted-color(); }
+      >i { font-size: 3em; }
+    }
     &-enter-btn {
       padding: .6em $base-spacing;
-      position: absolute;
-      @include th { color: muted-color(); };
-      @include area-selectable;
-      >i { font-size: 3em; }
+      .open--file & { @include area-selectable; }
+      .open--opening & { display: none; }
+    }
+    &-opening-icon {
+      padding: .6em $base-padding-h;
+      display: none;
+      .open--opening & { display: block; }
     }
   }
 
@@ -68,30 +78,38 @@
     @include justify-content(space-between);
     @include align-items(stretch);
     &-key-file {
-      cursor: pointer;
+      .open--file:not(.open--opening) & { cursor: pointer; }
+      .open--key-file & { @include th { color: medium-color(); } }
       &-dropbox {
         visibility: hidden;
         &:hover {
-          visibility: visible;
+          .open--file & { visibility: visible; }
         }
       }
+      &-dropbox {
+        .open--key-file, .open--opening & { display: none; }
+      }
       &:hover .open__settings-key-file-dropbox {
-        visibility: visible;
+        .open--file & { visibility: visible; }
       }
     }
+
     &-key-file, &-label-offline, &-label-offline:before, input[type=checkbox] + label.open__settings-label-offline:before,
     &-key-file-dropbox {
       @include th {
         color: muted-color();
-        &:hover {
-          color: medium-color();
+      }
+      &:hover {
+        .open--file:not(.open--opening) & {
+          @include th { color: medium-color(); }
         }
       }
     }
-    input[type=checkbox] + label.open__settings-label-offline:hover:before {
-      @include th { color: medium-color(); }
-    }
     &-label-offline { font-weight: normal; }
+  }
+
+  &--file:not(.open--opening) input[type=checkbox] + label.open__settings-label-offline:hover:before {
+     @include th { color: medium-color(); }
   }
 
   &__last {
@@ -101,7 +119,9 @@
     @include align-items(stretch);
     margin-top: $base-spacing;
     &-item {
-      @include area-selectable;
+      .open:not(.open--opening) & {
+        @include area-selectable;
+      }
       @include th { color: muted-color(); }
       padding: $base-padding-v 0;
       >i { width: 2em; }
@@ -110,7 +130,6 @@
 
   &__dropzone {
     display: none;
-    position: absolute;
     .open--drag & {
       @include display(flex);
       @include flex-direction(column);

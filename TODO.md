@@ -2,7 +2,7 @@
 
 ## v1.0
 
-- [ ] improve open page UX
+- [x] improve open page UX
 - [x] provide engineer error details on file open
 - [ ] trash: groups/empty/untrash
 - [ ] move groups/entries
@@ -13,9 +13,8 @@
 - [ ] secure fields
 - [ ] close files
 - [ ] show sync date
-- [ ] dropbox keyfiles
 - [ ] offline and local storage
-- [ ] use dropbox chooser for keyfile
+- [x] use dropbox chooser for keyfile
 - [ ] trim history by rules
 - [ ] advanced search
 

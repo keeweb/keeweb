@@ -1,5 +1,5 @@
 <div class="open">
-    <input type="file" id="open__file-ctrl" class="hide-by-pos" />
+    <input type="file" class="open__file-ctrl hide-by-pos" />
     <div class="open__icons">
         <div class="open__icon open__icon-open">
             <i class="fa fa-lock open__icon-i"></i>
@@ -22,31 +22,34 @@
     </div>
     <div class="open__pass-area">
         <div class="open__pass-warn-wrap">
-            <div class="open__pass-warning muted-color _invisible"><i class="fa fa-exclamation-triangle"></i> Caps Lock is on</div>
+            <div class="open__pass-warning muted-color invisible"><i class="fa fa-exclamation-triangle"></i> Caps Lock is on</div>
         </div>
         <div class="open__pass-field-wrap">
             <input class="open__pass-input" type="password" size="30" autocomplete="off" maxlength="128"
                    placeholder="Click to open a file" readonly />
             <div class="open__pass-enter-btn"><i class="fa fa-level-down fa-rotate-90"></i></div>
+            <div class="open__pass-opening-icon"><i class="fa fa-spinner fa-spin"></i></div>
         </div>
         <div class="open__settings">
             <div class="open__settings-key-file">
-                <i class="fa fa-key"></i>
-                keyfile
+                <i class="fa fa-key open__settings-key-file-icon"></i>
+                <span class="open__settings-key-file-name">key file</span>
                 <% if (supportsDropbox) { %>
                 <span class="open__settings-key-file-dropbox"> (from dropbox)</span>
                 <% } %>
             </div>
             <div class="open__settings-offline">
-                <input type="checkbox" id="open__settings-check-offline" checked />
+                <input type="checkbox" id="open__settings-check-offline" class="open__settings-check-offline" checked disabled />
+                <% if (supportsDropbox) { %>
                 <label for="open__settings-check-offline" class="open__settings-label-offline">make available offline</label>
+                <% } %>
             </div>
         </div>
         <div class="open__last">
-            <div class="open__last-item"><i class="fa fa-dropbox"></i>My passwords</div>
-            <div class="open__last-item"><i class="fa fa-dropbox"></i>Work</div>
-            <div class="open__last-item"><i class="fa fa-dropbox"></i>Hard with many rounds</div>
-            <div class="open__last-item"><i class="fa fa-file-text"></i>Local</div>
+            <!--<div class="open__last-item"><i class="fa fa-dropbox"></i>My passwords</div>-->
+            <!--<div class="open__last-item"><i class="fa fa-dropbox"></i>Work</div>-->
+            <!--<div class="open__last-item"><i class="fa fa-dropbox"></i>Hard with many rounds</div>-->
+            <!--<div class="open__last-item"><i class="fa fa-file-text"></i>Local</div>-->
         </div>
     </div>
     <div class="open__dropzone">

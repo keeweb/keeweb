@@ -19,6 +19,12 @@ SecureInput.prototype.reset = function() {
     this.el = null;
     this.length = 0;
     this.pseudoValue = '';
+
+    if (this.salt) {
+        for (var i = 0; i < this.salt.length; i++) {
+            this.salt[i] = 0;
+        }
+    }
     this.salt = new Uint32Array(0);
 };
 

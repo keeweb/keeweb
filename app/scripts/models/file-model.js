@@ -59,6 +59,7 @@ var FileModel = Backbone.Model.extend({
                     this.db = db;
                     this.readModel(this.get('name'));
                     this.setOpenFile({ passwordLength: len });
+                    kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                 }
             }).bind(this));
         } catch (e) {
