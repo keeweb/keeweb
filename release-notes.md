@@ -4,6 +4,7 @@ Release notes
 Bugfixes and new features  
 `+` improved open page ux
 `+` keyfiles from Dropbox  
+`+` #17: option to hide entries from subgroups
 `-` #12: cannot edit entries without title  
 `+` #13: increase max generated password length  
 

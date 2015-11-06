@@ -96,6 +96,7 @@ var AppModel = Backbone.Model.extend({
 
     setFilter: function(filter) {
         this.filter = filter;
+        this.filter.subGroups = this.settings.get('expandGroups');
         var entries = this.getEntries();
         Backbone.trigger('filter', { filter: this.filter, sort: this.sort, entries: entries });
         Backbone.trigger('select-entry', entries.length ? entries.first() : null);

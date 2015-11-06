@@ -9,6 +9,10 @@
             <% }); %>
         </select>
     </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" <%- expandGroups ? 'checked' : '' %> />
+        <label for="settings__general-expand">Show entries from all subgroups</label>
+    </div>
     <% if (devTools) { %>
     <h2>Advanced</h2>
     <a class="settings__general-dev-tools-link">Show dev tools</a>

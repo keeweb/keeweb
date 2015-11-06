@@ -151,9 +151,11 @@ var FileModel = Backbone.Model.extend({
             if (top.forEachOwnEntry) {
                 top.forEachOwnEntry(filter, callback);
             }
-            top.forEachGroup(function (group) {
-                group.forEachOwnEntry(filter, callback);
-            });
+            if (!filter.group || filter.subGroups) {
+                top.forEachGroup(function (group) {
+                    group.forEachOwnEntry(filter, callback);
+                });
+            }
         }
     },
 

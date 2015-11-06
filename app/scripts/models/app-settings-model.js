@@ -8,7 +8,8 @@ var FileName = 'app-settings.json';
 var AppSettingsModel = Backbone.Model.extend({
     defaults: {
         theme: 'd',
-        lastOpenFile: ''
+        lastOpenFile: '',
+        expandGroups: true
     },
 
     initialize: function() {
