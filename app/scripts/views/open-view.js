@@ -221,7 +221,7 @@ var OpenView = Backbone.View.extend({
     },
 
     openDb: function() {
-        if (!this.file.get('opening')) {
+        if (!this.file.get('opening') && this.file.get('name')) {
             var arg = {
                 password: this.passwordInput.value,
                 fileData: this.fileData,

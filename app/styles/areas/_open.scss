@@ -50,17 +50,22 @@
       margin-bottom: $base-padding-v;
     }
     &-enter-btn, &-opening-icon {
+      padding: .6em $base-spacing;
       position: absolute;
+      @include mobile { display: none; }
       @include th { color: muted-color(); }
       >i { font-size: 3em; }
     }
     &-enter-btn {
-      padding: .6em $base-spacing;
-      .open--file & { @include area-selectable; }
+      .open--file & {
+        cursor: pointer;
+        &:hover {
+          @include th { color: medium-color(); }
+        }
+      }
       .open--opening & { display: none; }
     }
     &-opening-icon {
-      padding: .6em $base-padding-h;
       display: none;
       .open--opening & { display: block; }
     }
@@ -70,6 +75,9 @@
     font-size: 22px;
     margin-bottom: 0;
     &[readonly] { cursor: pointer; }
+    @include mobile {
+      width: calc(100vw - 20px);
+    }
   }
 
   &__settings {
