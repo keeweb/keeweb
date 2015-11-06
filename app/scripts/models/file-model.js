@@ -51,6 +51,7 @@ var FileModel = Backbone.Model.extend({
         password = new kdbxweb.ProtectedValue(value.buffer.slice(0, byteLength), salt.buffer.slice(0, byteLength));
         try {
             var credentials = new kdbxweb.Credentials(password, keyFileData);
+            var start = performance.now();
             kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
                 if (err) {
                     this.set({error: true, opening: false});
@@ -59,7 +60,11 @@ var FileModel = Backbone.Model.extend({
                     this.db = db;
                     this.readModel(this.get('name'));
                     this.setOpenFile({ passwordLength: len });
-                    kdbxweb.ByteUtils.zeroBuffer(keyFileData);
+                    if (keyFileData) {
+                        kdbxweb.ByteUtils.zeroBuffer(keyFileData);
+                    }
+                    console.log('Opened file ' + this.get('name') + ': ' + Math.round(performance.now() - start) + 'ms, ' +
+                        db.header.keyEncryptionRounds + ' rounds, ' + Math.round(fileData.byteLength / 1024) + ' kB');
                 }
             }).bind(this));
         } catch (e) {
