@@ -246,6 +246,8 @@ var OpenView = Backbone.View.extend({
             this.openDb();
         } else if (code === Keys.DOM_VK_CAPS_LOCK) {
             this.$el.find('.open__pass-warning').removeClass('invisible');
+        } else if (code === Keys.DOM_VK_A) {
+            e.stopImmediatePropagation();
         }
     },
 
