@@ -314,7 +314,7 @@ module.exports = function(grunt) {
             osx: {
                 options: {
                     platform: 'osx',
-                    appPath: path.join(__dirname, 'tmp/desktop/KeeWeb-darwin-x64')
+                    appPath: path.join(__dirname, 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app')
                 }
             },
             win: {
