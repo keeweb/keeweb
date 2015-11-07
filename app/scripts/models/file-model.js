@@ -5,6 +5,8 @@ var Backbone = require('backbone'),
     GroupModel = require('./group-model'),
     Launcher = require('../comp/launcher'),
     DropboxLink = require('../comp/dropbox-link'),
+    Storage = require('../comp/storage'),
+    LastOpenFiles = require('../comp/last-open-files'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
 
@@ -26,7 +28,9 @@ var FileModel = Backbone.Model.extend({
         oldKeyFileName: '',
         passwordChanged: false,
         keyFileChanged: false,
-        syncing: false
+        syncing: false,
+        availOffline: false,
+        offline: false
     },
 
     db: null,
@@ -65,6 +69,7 @@ var FileModel = Backbone.Model.extend({
                     }
                     console.log('Opened file ' + this.get('name') + ': ' + Math.round(performance.now() - start) + 'ms, ' +
                         db.header.keyEncryptionRounds + ' rounds, ' + Math.round(fileData.byteLength / 1024) + ' kB');
+                    this.postOpen(fileData);
                 }
             }).bind(this));
         } catch (e) {
@@ -73,12 +78,38 @@ var FileModel = Backbone.Model.extend({
         }
     },
 
+    postOpen: function(fileData) {
+        var that = this;
+        if (!this.get('offline')) {
+            if (this.get('availOffline')) {
+                Storage.cache.save(this.get('name'), fileData, function (err) {
+                    if (err) {
+                        that.set('availOffline', false);
+                        if (!that.get('storage')) {
+                            return;
+                        }
+                    }
+                    that.addToLastOpenFiles(!err);
+                });
+            } else {
+                if (this.get('storage')) {
+                    this.addToLastOpenFiles(false);
+                }
+                Storage.cache.remove(this.get('name'));
+            }
+        }
+    },
+
+    addToLastOpenFiles: function(hasOfflineCache) {
+        LastOpenFiles.add(this.get('name'), this.get('storage'), this.get('path'), hasOfflineCache);
+    },
+
     create: function(name) {
         var password = kdbxweb.ProtectedValue.fromString('');
         var credentials = new kdbxweb.Credentials(password);
         this.db = kdbxweb.Kdbx.create(credentials, name);
         this.readModel();
-        this.set({ open: true, created: true, opening: false, error: false, name: name });
+        this.set({ open: true, created: true, opening: false, error: false, name: name, offline: false });
     },
 
     createDemo: function() {
@@ -201,7 +232,9 @@ var FileModel = Backbone.Model.extend({
     },
 
     getData: function(cb) {
-        return this.db.save(cb);
+        var data = this.db.save(cb);
+
+        return data;
     },
 
     getXml: function(cb) {
@@ -214,6 +247,7 @@ var FileModel = Backbone.Model.extend({
         this.forEachEntry({}, function(entry) {
             entry.unsaved = false;
         });
+        this.addToLastOpenFiles();
     },
 
     setPassword: function(password) {

@@ -13,7 +13,7 @@
 - [ ] secure fields
 - [ ] close files
 - [ ] show sync date
-- [ ] offline and local storage
+- [x] offline and local storage
 - [x] use dropbox chooser for keyfile
 - [ ] trim history by rules
 - [ ] advanced search

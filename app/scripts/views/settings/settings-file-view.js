@@ -127,9 +127,6 @@ var SettingsAboutView = Backbone.View.extend({
             Launcher.writeFile(path, data);
             this.passwordChanged = false;
             this.model.saved(path, 'file');
-            if (!AppSettingsModel.instance.get('lastOpenFile')) {
-                AppSettingsModel.instance.set('lastOpenFile', path);
-            }
         } catch (e) {
             console.error('Error saving file', path, e);
             Alerts.error({

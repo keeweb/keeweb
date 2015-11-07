@@ -6,6 +6,8 @@ var Backbone = require('backbone'),
     SecureInput = require('../comp/secure-input'),
     FileModel = require('../models/file-model'),
     Launcher = require('../comp/launcher'),
+    LastOpenFiles = require('../comp/last-open-files'),
+    Storage = require('../comp/storage'),
     DropboxLink = require('../comp/dropbox-link');
 
 var OpenView = Backbone.View.extend({
@@ -23,8 +25,7 @@ var OpenView = Backbone.View.extend({
         'keypress .open__pass-input': 'inputKeypress',
         'click .open__pass-enter-btn': 'openDb',
         'click .open__settings-key-file': 'openKeyFile',
-        'change .open__settings-check-offline': 'changeOffline',
-        'click .open__last-itemo': 'openLast',
+        'click .open__last-item': 'openLast',
         'dragover': 'dragover',
         'dragleave': 'dragleave',
         'drop': 'drop'
@@ -49,10 +50,24 @@ var OpenView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        this.renderTemplate({ supportsDropbox: !Launcher });
+        this.renderTemplate({ supportsDropbox: !Launcher, lastOpenFiles: this.getLastOpenFiles() });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
         return this;
+    },
+
+    getLastOpenFiles: function() {
+        return LastOpenFiles.all().map(function(f) {
+            switch (f.storage) {
+                case 'dropbox':
+                    f.icon = 'dropbox';
+                    break;
+                default:
+                    f.icon = 'file-text';
+                    break;
+            }
+            return f;
+        });
     },
 
     remove: function() {
@@ -96,7 +111,7 @@ var OpenView = Backbone.View.extend({
         reader.onload = (function(e) {
             this[this.reading] = e.target.result;
             if (this.reading === 'fileData') {
-                this.file.set('name', file.name.replace(/\.\w+$/i, ''));
+                this.file.set({ name: file.name.replace(/\.\w+$/i, ''), offline: false });
                 if (file.path) {
                     this.file.set({ path: file.path, storage: file.storage || 'file' });
                 }
@@ -122,6 +137,9 @@ var OpenView = Backbone.View.extend({
     displayOpenFile: function() {
         this.$el.addClass('open--file');
         this.$el.find('#open__settings-check-offline')[0].removeAttribute('disabled');
+        var canSwitchOffline = this.file.get('storage') !== 'file' && !this.file.get('offline');
+        this.$el.find('.open__settings-offline').toggleClass('hide', !canSwitchOffline);
+        this.$el.find('.open__settings-offline-warning').toggleClass('hide', !this.file.get('offline'));
         this.inputEl[0].removeAttribute('readonly');
         this.inputEl[0].setAttribute('placeholder', 'Password for ' + this.file.get('name'));
         this.inputEl.focus();
@@ -185,7 +203,7 @@ var OpenView = Backbone.View.extend({
 
     openFile: function() {
         if (!this.file.get('opening')) {
-            this.openAny('fileData'/*, '.kdbx'*/);
+            this.openAny('fileData');
         }
     },
 
@@ -222,6 +240,11 @@ var OpenView = Backbone.View.extend({
 
     openDb: function() {
         if (!this.file.get('opening') && this.file.get('name')) {
+            var offlineChecked = this.$el.find('#open__settings-check-offline').is(':checked');
+            if (this.file.get('offline') ||
+                this.file.get('storage') !== 'file' && offlineChecked) {
+                this.file.set('availOffline', true);
+            }
             var arg = {
                 password: this.passwordInput.value,
                 fileData: this.fileData,
@@ -231,12 +254,6 @@ var OpenView = Backbone.View.extend({
             this.afterPaint(function () {
                 this.file.open(arg.password, arg.fileData, arg.keyFileData);
             });
-        }
-    },
-
-    changeOffline: function(e) {
-        if (!this.file.get('opening')) {
-            this.file.set('availOffline', !!e.target.checked);
         }
     },
 
@@ -263,6 +280,142 @@ var OpenView = Backbone.View.extend({
 
     toggleCapsLockWarning: function(on) {
         this.$el.find('.open__file-warning').toggleClass('invisible', on);
+    },
+
+    openFromDropbox: function() {
+        if (this.dropboxLoading || this.file.get('opening')) {
+            return;
+        }
+        var that = this;
+        DropboxLink.authenticate(function(err) {
+            if (err) {
+                return;
+            }
+            that.dropboxLoading = 'file list';
+            that.displayDropboxLoading();
+            DropboxLink.getFileList(function(err, files) {
+                that.dropboxLoading = null;
+                that.displayDropboxLoading();
+                if (err) {
+                    return;
+                }
+                var buttons = [];
+                var allFileNames = {};
+                files.forEach(function(file) {
+                    var fileName = file.replace(/\.kdbx/i, '');
+                    buttons.push({ result: file, title: fileName });
+                    allFileNames[fileName] = true;
+                });
+                if (!buttons.length) {
+                    Alerts.error({
+                        header: 'Nothing found',
+                        body: 'You have no files in your Dropbox which could be opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
+                    });
+                    return;
+                }
+                buttons.push({ result: '', title: 'Cancel' });
+                Alerts.alert({
+                    header: 'Select a file',
+                    body: 'Select a file from your Dropbox which you would like to open',
+                    icon: 'dropbox',
+                    buttons: buttons,
+                    esc: '',
+                    click: '',
+                    success: that.openDropboxFile.bind(that),
+                    cancel: function() {
+                        that.dropboxLoading = null;
+                        that.displayDropboxLoading();
+                    }
+                });
+                LastOpenFiles.all().forEach(function(lastOpenFile) {
+                    if (lastOpenFile.storage === 'dropbox' && !allFileNames[lastOpenFile.name]) {
+                        that.delLast(lastOpenFile.name);
+                    }
+                });
+            });
+        });
+    },
+
+    openDropboxFile: function(file) {
+        var fileName = file.replace(/\.kdbx/i, '');
+        this.dropboxLoading = fileName;
+        this.displayDropboxLoading();
+        var lastOpen = LastOpenFiles.byName(fileName);
+        var errorAlertCallback = lastOpen && lastOpen.storage === 'dropbox' && lastOpen.availOffline ?
+            this.dropboxErrorCallback.bind(this, fileName) : null;
+        DropboxLink.openFile(file, (function(err, data) {
+            this.dropboxLoading = null;
+            this.displayDropboxLoading();
+            if (err || !data || !data.size) {
+                return;
+            }
+            Object.defineProperties(data, {
+                storage: { value: 'dropbox' },
+                path: { value: file },
+                name: { value: fileName }
+            });
+            this.setFile(data);
+        }).bind(this), errorAlertCallback);
+    },
+
+    dropboxErrorCallback: function(fileName, alertConfig) {
+        alertConfig.body += '<br/>You have offline version of this file cached. Would you like to open it?';
+        alertConfig.buttons = [
+            {result: 'offline', title: 'Open offline file'},
+            {result: 'yes', title: 'OK'}
+        ];
+        alertConfig.success = (function(result) {
+            if (result === 'offline') {
+                this.openCache(fileName, 'dropbox');
+            }
+        }).bind(this);
+        Alerts.error(alertConfig);
+    },
+
+    displayDropboxLoading: function() {
+        this.$el.find('.open__icon-dropbox .open__icon-i').toggleClass('flip3d', !!this.dropboxLoading);
+    },
+
+    openLast: function(e) {
+        if (this.dropboxLoading || this.file.get('opening')) {
+            return;
+        }
+        var name = $(e.target).closest('.open__last-item').data('name');
+        if ($(e.target).is('.open__last-item-icon-del')) {
+            this.delLast(name);
+            return;
+        }
+        var lastOpenFile = LastOpenFiles.byName(name);
+        switch (lastOpenFile.storage) {
+            case 'dropbox':
+                return this.openDropboxFile(lastOpenFile.path);
+            default:
+                return this.openCache(name);
+        }
+    },
+
+    openCache: function(name, storage) {
+        Storage.cache.load(name, (function(data, err) {
+            if (err) {
+                this.delLast(name);
+                Alerts.error({
+                    header: 'Error loading file',
+                    body: 'There was an error loading offline file ' + name + '. Please, open it from file'
+                });
+            } else {
+                this.fileData = data;
+                this.file.set({ name: name, offline: true, availOffline: true });
+                if (storage) {
+                    this.file.set({ storage: storage });
+                }
+                this.displayOpenFile();
+            }
+        }).bind(this));
+    },
+
+    delLast: function(name) {
+        LastOpenFiles.remove(name);
+        this.$el.find('.open__last-item[data-name="' + name + '"]').remove();
     },
 
     dragover: function(e) {
@@ -296,77 +449,6 @@ var OpenView = Backbone.View.extend({
         if (dataFile) {
             this.setFile(dataFile, keyFile);
         }
-    },
-
-    openFromDropbox: function() {
-        if (this.dropboxLoading) {
-            return;
-        }
-        var that = this;
-        DropboxLink.authenticate(function(err) {
-            if (err) {
-                return;
-            }
-            that.dropboxLoading = 'file list';
-            that.displayDropboxLoading();
-            DropboxLink.getFileList(function(err, files) {
-                that.dropboxLoading = null;
-                that.displayDropboxLoading();
-                if (err) {
-                    return;
-                }
-                var buttons = [];
-                files.forEach(function(file) {
-                    buttons.push({ result: file, title: file.replace(/\.kdbx/i, '') });
-                });
-                if (!buttons.length) {
-                    Alerts.error({
-                        header: 'Nothing found',
-                        body: 'You have no files in your Dropbox which could be opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
-                    });
-                    return;
-                }
-                buttons.push({ result: '', title: 'Cancel' });
-                Alerts.alert({
-                    header: 'Select a file',
-                    body: 'Select a file from your Dropbox which you would like to open',
-                    icon: 'dropbox',
-                    buttons: buttons,
-                    esc: '',
-                    click: '',
-                    success: that.openDropboxFile.bind(that),
-                    cancel: function() {
-                        that.dropboxLoading = null;
-                        that.displayDropboxLoading();
-                    }
-                });
-            });
-        });
-    },
-
-    openDropboxFile: function(file) {
-        var fileName = file.replace(/\.kdbx/i, '');
-        this.dropboxLoading = fileName;
-        this.displayDropboxLoading();
-        DropboxLink.openFile(file, (function(err, data) {
-            this.dropboxLoading = null;
-            this.displayDropboxLoading();
-            if (err || !data || !data.size) {
-                // TODO:render
-                Alerts.error({ header: 'Failed to read file', body: 'Error reading Dropbox file: \n' + err });
-                return;
-            }
-            Object.defineProperties(data, {
-                storage: { value: 'dropbox' },
-                path: { value: file },
-                name: { value: fileName }
-            });
-            this.setFile(data);
-        }).bind(this));
-    },
-
-    displayDropboxLoading: function() {
-        this.$el.find('.open__icon-dropbox .open__icon-i').toggleClass('flip3d', !!this.dropboxLoading);
     }
 });
 

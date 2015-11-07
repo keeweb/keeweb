@@ -123,7 +123,11 @@ var DropboxLink = {
         }).bind(this));
     },
 
-    _handleUiError: function(err, callback) {
+    _handleUiError: function(err, alertCallback, callback) {
+        if (!alertCallback) {
+            alertCallback = Alerts.error.bind(Alerts);
+        }
+        console.error('Dropbox error', err);
         switch (err.status) {
             case Dropbox.ApiError.INVALID_TOKEN:
                 Alerts.yesno({
@@ -138,25 +142,25 @@ var DropboxLink = {
                 });
                 return;
             case Dropbox.ApiError.NOT_FOUND:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Error',
                     body: 'The file was not found. Has it been removed from another computer?'
                 });
                 break;
             case Dropbox.ApiError.OVER_QUOTA:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Full',
                     body: 'Your Dropbox is full, there\'s no space left anymore.'
                 });
                 break;
             case Dropbox.ApiError.RATE_LIMITED:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Error',
                     body: 'Too many requests to Dropbox have been made by this app. Please, try again later.'
                 });
                 break;
             case Dropbox.ApiError.NETWORK_ERROR:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Network Error',
                     body: 'Network error occured during Dropbox sync. Please, check your connection and try again.'
                 });
@@ -164,23 +168,22 @@ var DropboxLink = {
             case Dropbox.ApiError.INVALID_PARAM:
             case Dropbox.ApiError.OAUTH_ERROR:
             case Dropbox.ApiError.INVALID_METHOD:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Error',
                     body: 'Something went wrong during Dropbox sync. Please, try again later. Error code: ' + err.status
                 });
                 break;
             default:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Error',
                     body: 'Something went wrong during Dropbox sync. Please, try again later. Error: ' + err
                 });
-                console.error('Dropbox error', err);
                 break;
         }
         callback(false);
     },
 
-    _callAndHandleError: function(callName, args, callback) {
+    _callAndHandleError: function(callName, args, callback, errorAlertCallback) {
         var that = this;
         this._getClient(function(err, client) {
             if (err) {
@@ -188,9 +191,9 @@ var DropboxLink = {
             }
             client[callName].apply(client, args.concat(function(err, res) {
                 if (err) {
-                    that._handleUiError(err, function(repeat) {
+                    that._handleUiError(err, errorAlertCallback, function(repeat) {
                         if (repeat) {
-                            that._callAndHandleError(callName, args, callback);
+                            that._callAndHandleError(callName, args, callback, errorAlertCallback);
                         } else {
                             callback(err);
                         }
@@ -223,8 +226,8 @@ var DropboxLink = {
         }
     },
 
-    openFile: function(fileName, complete) {
-        this._callAndHandleError('readFile', [fileName, { blob: true }], complete);
+    openFile: function(fileName, complete, errorAlertCallback) {
+        this._callAndHandleError('readFile', [fileName, { blob: true }], complete, errorAlertCallback);
     },
 
     getFileList: function(complete) {

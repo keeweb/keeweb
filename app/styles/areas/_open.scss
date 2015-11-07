@@ -86,6 +86,7 @@
     @include justify-content(space-between);
     @include align-items(stretch);
     &-key-file {
+      height: 2em;
       .open--file:not(.open--opening) & { cursor: pointer; }
       .open--key-file & { @include th { color: medium-color(); } }
       &-dropbox {
@@ -127,12 +128,30 @@
     @include align-items(stretch);
     margin-top: $base-spacing;
     &-item {
+      @include display(flex);
+      @include flex-direction(row);
+      @include justify-content(flex-start);
+      @include align-items(baseline);
       .open:not(.open--opening) & {
         @include area-selectable;
       }
       @include th { color: muted-color(); }
       padding: $base-padding-v 0;
-      >i { width: 2em; }
+      &-icon { width: 2em; }
+      &-text { @include flex-grow(1); }
+      &-icon-del {
+        opacity: 0;
+        .open__last-item:hover & {
+          opacity: .3;
+          cursor: pointer;
+          margin-right: $base-padding-h;
+        }
+        @include th { color: muted-color(); }
+        &:hover {
+          .open__last-item:hover & { opacity: 1; }
+          @include th { color: medium-color(); }
+        }
+      }
     }
   }
 
