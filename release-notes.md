@@ -5,8 +5,9 @@ Bugfixes and new features
 `+` improved open page ux
 `+` keyfiles from Dropbox  
 `+` #17: option to hide entries from subgroups
-`-` #12: cannot edit entries without title  
 `+` #13: increase max generated password length  
+`+` #20: default http:// for urls without protocol  
+`-` #12: cannot edit entries without title  
 
 ##### v0.1.1 (2015-11-04)
 Bugfix and performance enhancements  
