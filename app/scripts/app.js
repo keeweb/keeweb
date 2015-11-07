@@ -6,7 +6,6 @@ var AppModel = require('./models/app-model'),
     Alerts = require('./comp/alerts'),
     DropboxLink = require('./comp/dropbox-link'),
     LastOpenFiles = require('./comp/last-open-files'),
-    Storage = require('./comp/storage'),
     ThemeChanger = require('./util/theme-changer');
 
 $(function() {

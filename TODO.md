@@ -11,7 +11,7 @@
 - [ ] optional auto-update
 - [ ] lock without closing
 - [ ] secure fields
-- [ ] close files
+- [x] close files
 - [ ] show sync date
 - [x] offline and local storage
 - [x] use dropbox chooser for keyfile

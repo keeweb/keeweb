@@ -23,6 +23,7 @@ var AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'set-filter', this.setFilter);
         this.listenTo(Backbone, 'add-filter', this.addFilter);
         this.listenTo(Backbone, 'set-sort', this.setSort);
+        this.listenTo(Backbone, 'close-file', this.closeFile);
     },
 
     addFile: function(file) {
@@ -89,6 +90,14 @@ var AppModel = Backbone.Model.extend({
         this.menu.filesSection.removeAllItems();
         this.tags.splice(0, this.tags.length);
         this.setFilter({});
+    },
+
+    closeFile: function(file) {
+        this.files.remove(file);
+        this._tagsChanged();
+        this.menu.groupsSection.removeByFile(file);
+        this.menu.filesSection.removeByFile(file);
+        this.refresh();
     },
 
     setFilter: function(filter) {

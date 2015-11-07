@@ -1,7 +1,6 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    AppSettingsModel = require('../../models/app-settings-model'),
     FeatureDetector = require('../../util/feature-detector'),
     PasswordGenerator = require('../../util/password-generator'),
     Alerts = require('../../comp/alerts'),
@@ -18,6 +17,7 @@ var SettingsAboutView = Backbone.View.extend({
         'click .settings__file-button-save-file': 'saveToFile',
         'click .settings__file-button-export-xml': 'exportAsXml',
         'click .settings__file-button-save-dropbox': 'saveToDropboxClick',
+        'click .settings__file-button-close': 'closeFile',
         'change #settings__file-key-file': 'keyFileChange',
         'mousedown #settings__file-file-select-link': 'triggerSelectFile',
         'change #settings__file-file-select': 'fileSelected',
@@ -191,6 +191,32 @@ var SettingsAboutView = Backbone.View.extend({
                 }
             });
         });
+    },
+
+    closeFile: function() {
+        if (this.model.get('modified')) {
+            var that = this;
+            Alerts.yesno({
+                header: 'Unsaved changes',
+                body: 'There are unsaved changes in this file',
+                buttons: [
+                    //{result: 'save', title: 'Save and close'},
+                    {result: 'close', title: 'Close and lose changes', error: true},
+                    {result: '', title: 'Don\t close'}
+                ],
+                success: function(result) {
+                    if (result === 'close') {
+                        that.closeFileNoCheck();
+                    }
+                }
+            });
+        } else {
+            this.closeFileNoCheck();
+        }
+    },
+
+    closeFileNoCheck: function() {
+        Backbone.trigger('close-file', this.model);
     },
 
     keyFileChange: function(e) {
