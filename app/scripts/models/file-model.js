@@ -209,21 +209,22 @@ var FileModel = Backbone.Model.extend({
     },
 
     autoSave: function() {
-        this.set('syncing', true);
-        switch (this.get('storage')) {
+        var that = this;
+        that.set('syncing', true);
+        switch (that.get('storage')) {
             case 'file':
-                this.getData(function(data) {
-                    Launcher.writeFile(this.get('path'), data);
-                    this.saved(this.get('path'), this.get('storage'));
+                that.getData(function(data) {
+                    Launcher.writeFile(that.get('path'), data);
+                    that.saved(that.get('path'), that.get('storage'));
                 });
                 break;
             case 'dropbox':
-                this.getData(function(data) {
-                    DropboxLink.saveFile(this.get('path'), data, true, (function (err) {
+                that.getData(function(data) {
+                    DropboxLink.saveFile(that.get('path'), data, true, function (err) {
                         if (!err) {
-                            this.saved(this.get('path'), this.get('storage'));
+                            that.saved(that.get('path'), that.get('storage'));
                         }
-                    }).bind(this));
+                    });
                 });
                 break;
             default:
