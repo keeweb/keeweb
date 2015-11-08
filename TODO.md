@@ -29,6 +29,7 @@
 - [ ] generation templates
 - [ ] i18n
 - [ ] allow to increase font size
+- [ ] drag entries across files/to trash
 - [ ] external crypto devices support
 - [ ] entry templates
 - [ ] custom icons

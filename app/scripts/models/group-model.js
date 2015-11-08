@@ -139,7 +139,7 @@ var GroupModel = MenuItemModel.extend({
     },
 
     moveHere: function(object) {
-        if (!object || object.id === this.id) {
+        if (!object || object.id === this.id || object.file !== this.file) {
             return;
         }
         if (object instanceof GroupModel) {
