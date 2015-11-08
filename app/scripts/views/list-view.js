@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     Scrollable = require('../mixins/scrollable'),
     ListSearchView = require('./list-search-view'),
     EntryPresenter = require('../presenters/entry-presenter'),
+    DragDropInfo = require('../comp/drag-drop-info'),
     baron = require('baron');
 
 var ListView = Backbone.View.extend({
@@ -13,7 +14,8 @@ var ListView = Backbone.View.extend({
     emptyTemplate: require('templates/list-empty.html'),
 
     events: {
-        'click .list__item': 'itemClick'
+        'click .list__item': 'itemClick',
+        'dragstart .list__item': 'itemDragStart'
     },
 
     views: null,
@@ -144,6 +146,14 @@ var ListView = Backbone.View.extend({
         var scrollTop = this.itemsEl[0].scrollTop;
         this.render();
         this.itemsEl[0].scrollTop = scrollTop;
+    },
+
+    itemDragStart: function(e) {
+        e.stopPropagation();
+        var id = $(e.target).closest('.list__item').attr('id');
+        e.dataTransfer.setData('text/entry', id);
+        e.dataTransfer.effectAllowed = 'move';
+        DragDropInfo.dragObject = this.items.get(id);
     }
 });
 

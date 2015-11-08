@@ -3,7 +3,8 @@
 var Backbone = require('backbone'),
     KeyHandler = require('../../comp/key-handler'),
     Keys = require('../../const/keys'),
-    Alerts = require('../../comp/alerts');
+    Alerts = require('../../comp/alerts'),
+    DragDropInfo = require('../../comp/drag-drop-info');
 
 var MenuItemView = Backbone.View.extend({
     template: require('templates/menu/menu-item.html'),
@@ -14,7 +15,11 @@ var MenuItemView = Backbone.View.extend({
         'click .menu__item-option': 'selectOption',
         'click': 'selectItem',
         'dblclick': 'expandItem',
-        'click .menu__item-edit': 'editItem'
+        'click .menu__item-edit': 'editItem',
+        'dragstart': 'dragstart',
+        'dragover': 'dragover',
+        'dragleave': 'dragleave',
+        'drop' : 'drop'
     },
 
     iconEl: null,
@@ -99,8 +104,10 @@ var MenuItemView = Backbone.View.extend({
     },
 
     mouseover: function(e) {
-        this.$el.addClass('menu__item--hover');
-        e.stopPropagation();
+        if (!e.button) {
+            this.$el.addClass('menu__item--hover');
+            e.stopPropagation();
+        }
     },
 
     mouseout: function(e) {
@@ -145,6 +152,43 @@ var MenuItemView = Backbone.View.extend({
         if (this.model.get('active') && this.model.get('editable')) {
             e.stopPropagation();
             Backbone.trigger('edit-group', this.model);
+        }
+    },
+
+    dropAllowed: function(e) {
+        return ['text/group', 'text/entry'].indexOf(e.dataTransfer.types[0]) >= 0;
+    },
+
+    dragstart: function(e) {
+        e.stopPropagation();
+        if (this.model.get('drag')) {
+            e.dataTransfer.setData('text/group', this.model.id);
+            e.dataTransfer.effectAllowed = 'move';
+            DragDropInfo.dragObject = this.model;
+        }
+    },
+
+    dragover: function(e) {
+        e.stopPropagation();
+        if (this.model.get('drop') && this.dropAllowed(e)) {
+            e.preventDefault();
+            this.$el.addClass('menu__item--drag');
+        }
+    },
+
+    dragleave: function(e) {
+        e.stopPropagation();
+        if (this.model.get('drop') && this.dropAllowed(e)) {
+            this.$el.removeClass('menu__item--drag');
+        }
+    },
+
+    drop: function(e) {
+        e.stopPropagation();
+        if (this.model.get('drop') && this.dropAllowed(e)) {
+            this.$el.removeClass('menu__item--drag');
+            this.model.moveHere(DragDropInfo.dragObject);
+            Backbone.trigger('refresh');
         }
     }
 });

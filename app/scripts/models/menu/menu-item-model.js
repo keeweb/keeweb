@@ -16,6 +16,8 @@ var MenuItemModel = Backbone.Model.extend({
         cls: null,
         disabled: false,
         visible: true,
+        drag: false,
+        drop: false,
         filterKey: null,
         filterValue: null
     },

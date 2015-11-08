@@ -1,4 +1,4 @@
-<div class="list__item <%= active ? 'list__item--active' : '' %> <%= expired ? 'list__item--expired' : '' %>" id="<%= id %>">
+<div class="list__item <%= active ? 'list__item--active' : '' %> <%= expired ? 'list__item--expired' : '' %>" id="<%= id %>" draggable="true">
     <i class="fa fa-<%= icon %> <%= color ? color+'-color' : '' %>"></i> <span
         class="list__item-title"><%- title || '(no title)' %></span><span class="list__item-descr thin"><%- description %></span>
 </div>

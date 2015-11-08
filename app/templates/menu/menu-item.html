@@ -3,7 +3,7 @@
         disabled ? 'menu__item--disabled' : '' %> <%=
         options && options.length ? 'menu__item--with-options' : '' %> <%=
         cls ? cls : '' %>">
-    <div class="menu__item-body">
+    <div class="menu__item-body" <%= drag ? 'draggable="true"' : '' %>>
         <i class="menu__item-icon fa <%= icon ? 'fa-' + icon : 'menu__item-icon--no-icon' %>"></i><span
             class="menu__item-title"><%- title || '(no title)' %></span>
         <% if (options) { %>
@@ -17,5 +17,5 @@
         <% if (typeof editable !== 'undefined') { %>
         <i class="menu__item-edit fa fa-cog"></i>
         <% } %>
-    </i>
+    </div>
 </div>

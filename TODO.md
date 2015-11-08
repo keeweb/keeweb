@@ -5,7 +5,7 @@
 - [x] improve open page UX
 - [x] provide engineer error details on file open
 - [ ] trash: groups/empty/untrash
-- [ ] move groups/entries
+- [x] move groups/entries
 - [ ] help/tips
 - [ ] switch view
 - [ ] optional auto-update

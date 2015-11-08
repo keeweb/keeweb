@@ -145,5 +145,11 @@
     .fa {
       margin-right: $base-padding-h / 2;
     }
+
+    &--drag {
+      >.menu__item-body {
+        @include th { color: action-color(); }
+      }
+    }
   }
 }

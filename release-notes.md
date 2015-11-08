@@ -1,10 +1,11 @@
 Release notes
 -------------
 ##### v0.2.0 (not released yet)
-Bugfixes and new features  
+UX improvements, new features, bugfixes  
 `+` improved open page ux
 `+` keyfiles from Dropbox  
-`+` #17: option to hide entries from subgroups
+`+` #17: option to hide entries from subgroups  
+`+` #5: groups and entries arranging  
 `+` #13: increase max generated password length  
 `+` #20: default http:// for urls without protocol  
 `-` #12: cannot edit entries without title  
