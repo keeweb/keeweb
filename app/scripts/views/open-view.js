@@ -225,6 +225,9 @@ var OpenView = Backbone.View.extend({
     openKeyFileFromDropbox: function() {
         if (!this.file.get('opening')) {
             DropboxLink.chooseFile((function(err, res) {
+                if (err) {
+                    return;
+                }
                 this.keyFileData = res.data;
                 this.file.set('keyFileName', res.name);
                 this.displayOpenKeyFile();
