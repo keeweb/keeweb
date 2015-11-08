@@ -17,16 +17,15 @@
 - [x] use dropbox chooser for keyfile
 - [ ] trim history by rules
 - [ ] advanced search
+- [ ] sync merge
 
 ## Future
-- [ ] sync merge
 - [ ] keepasshttp
 - [ ] mobile apps
 - [ ] file type associations
 - [ ] auto-type for desktop
 - [ ] TOTP
 - [ ] audit
-- [ ] native encryption for electron
 - [ ] generation templates
 - [ ] i18n
 - [ ] allow to increase font size

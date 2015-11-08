@@ -19,6 +19,14 @@ On one page: [Features](features.md)
 
 Reading and display is mostly complete; modification and sync is under construction, please see [TODO](TODO.md) for more details.
 
+# Known Issues
+
+These major issues are in progress, or will be fixed in next releases, before v1.0:
+
+- auto-update is not implemented
+- dropbox sync is one-way: changes are not loaded from dropbox, only saved
+- cannot add protected field
+
 # Self-hosting
 
 Everything you need to host this app on your server is any static file server. The app is a single HTML file + cache manifest (optionally; for offline access).
