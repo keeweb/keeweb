@@ -25,7 +25,6 @@ These major issues are in progress, or will be fixed in next releases, before v1
 
 - auto-update is not implemented
 - dropbox sync is one-way: changes are not loaded from dropbox, only saved
-- cannot add protected field
 
 # Self-hosting
 
