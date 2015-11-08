@@ -16,6 +16,7 @@ var MenuItemView = Backbone.View.extend({
         'click': 'selectItem',
         'dblclick': 'expandItem',
         'click .menu__item-edit': 'editItem',
+        'click .menu__item-empty-trash': 'emptyTrash',
         'dragstart': 'dragstart',
         'dragover': 'dragover',
         'dragleave': 'dragleave',
@@ -153,6 +154,18 @@ var MenuItemView = Backbone.View.extend({
             e.stopPropagation();
             Backbone.trigger('edit-group', this.model);
         }
+    },
+
+    emptyTrash: function(e) {
+        e.stopPropagation();
+        Alerts.yesno({
+            header: 'Empty trash?',
+            body: 'You will not be able to put items back',
+            icon: 'trash',
+            success: function() {
+                Backbone.trigger('empty-trash');
+            }
+        });
     },
 
     dropAllowed: function(e) {

@@ -338,6 +338,19 @@ var FileModel = Backbone.Model.extend({
         this.db.header.keyEncryptionRounds = rounds;
         this.set('keyEncryptionRounds', rounds);
         this.setModified();
+    },
+
+    emptyTrash: function() {
+        var trashGroup = this.getTrashGroup();
+        if (trashGroup) {
+            trashGroup.getOwnSubGroups().slice().forEach(function(group) {
+                this.db.move(group, null);
+            }, this);
+            trashGroup.group.entries.forEach(function(entry) {
+                this.db.move(entry, null);
+            }, this);
+            trashGroup.get('entries').reset();
+        }
     }
 });
 

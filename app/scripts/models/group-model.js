@@ -86,6 +86,10 @@ var GroupModel = MenuItemModel.extend({
         });
     },
 
+    getOwnSubGroups: function() {
+        return this.group.groups;
+    },
+
     removeEntry: function(entry) {
         this.get('entries').remove(entry);
     },
@@ -122,7 +126,7 @@ var GroupModel = MenuItemModel.extend({
         this.parentGroup.removeGroup(this);
         var trashGroup = this.file.getTrashGroup();
         if (trashGroup) {
-            //trashGroup.addGroup(this); // TODO: groups in trash are currently not displayed
+            trashGroup.addGroup(this);
             this.parentGroup = trashGroup;
             this.deleted = true;
         }

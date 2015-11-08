@@ -24,6 +24,7 @@ var AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'add-filter', this.addFilter);
         this.listenTo(Backbone, 'set-sort', this.setSort);
         this.listenTo(Backbone, 'close-file', this.closeFile);
+        this.listenTo(Backbone, 'empty-trash', this.emptyTrash);
     },
 
     addFile: function(file) {
@@ -100,6 +101,13 @@ var AppModel = Backbone.Model.extend({
         this.refresh();
     },
 
+    emptyTrash: function() {
+        this.files.forEach(function(file) {
+            file.emptyTrash();
+        }, this);
+        this.refresh();
+    },
+
     setFilter: function(filter) {
         this.filter = filter;
         this.filter.subGroups = this.settings.get('expandGroups');
@@ -130,10 +138,24 @@ var AppModel = Backbone.Model.extend({
             });
         });
         entries.sortEntries(this.sort);
+        if (this.filter.trash) {
+            this.addTrashGroups(entries);
+        }
         if (entries.length) {
             entries.setActive(entries.first());
         }
         return entries;
+    },
+
+    addTrashGroups: function(collection) {
+        this.files.forEach(function(file) {
+            var trashGroup = file.getTrashGroup();
+            if (trashGroup) {
+                trashGroup.getOwnSubGroups().forEach(function(group) {
+                    collection.unshift(GroupModel.fromGroup(group, file, trashGroup));
+                });
+            }
+        });
     },
 
     prepareFilter: function() {

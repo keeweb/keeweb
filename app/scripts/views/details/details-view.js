@@ -1,6 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    GroupModel = require('../../models/group-model'),
     Scrollable = require('../../mixins/scrollable'),
     FieldViewText = require('../fields/field-view-text'),
     FieldViewDate = require('../fields/field-view-date'),
@@ -23,6 +24,7 @@ var Backbone = require('backbone'),
 var DetailsView = Backbone.View.extend({
     template: require('templates/details/details.html'),
     emptyTemplate: require('templates/details/details-empty.html'),
+    groupTemplate: require('templates/details/details-group.html'),
 
     fieldViews: null,
     views: null,
@@ -71,6 +73,10 @@ var DetailsView = Backbone.View.extend({
         }
         if (!this.model) {
             this.$el.html(this.emptyTemplate());
+            return;
+        }
+        if (this.model instanceof GroupModel) {
+            this.$el.html(this.groupTemplate());
             return;
         }
         this.$el.html(this.template(this.model));

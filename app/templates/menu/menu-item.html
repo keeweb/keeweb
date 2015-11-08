@@ -17,5 +17,8 @@
         <% if (typeof editable !== 'undefined') { %>
         <i class="menu__item-edit fa fa-cog"></i>
         <% } %>
+        <% if (filterKey === 'trash') { %>
+        <i class="menu__item-empty-trash fa fa-minus-circle"></i>
+        <% } %>
     </div>
 </div>
