@@ -1,11 +1,13 @@
 'use strict';
 
 var FieldViewText = require('./field-view-text'),
-    Keys = require('../../const/keys');
+    FieldView = require('./field-view'),
+    Keys = require('../../const/keys'),
+    kdbxweb = require('kdbxweb');
 
 var FieldViewCustom = FieldViewText.extend({
     events: {
-        'mousedown .details__field-label': 'fieldLabelMousedown',
+        'mousedown .details__field-label': 'fieldLabelMousedown'
     },
 
     initialize: function() {
@@ -19,6 +21,13 @@ var FieldViewCustom = FieldViewText.extend({
             this.$el.find('.details__field-label').text(this.model.newField);
         }
         this.$el.addClass('details__field--can-edit-title');
+        if (this.isProtected === undefined) {
+            this.isProtected = this.value instanceof kdbxweb.ProtectedValue;
+        }
+        this.protectBtn = $('<div/>').addClass('details__field-value-btn details__field-value-btn-protect')
+            .toggleClass('details__field-value-btn-protect--protected', this.isProtected)
+            .appendTo(this.valueEl)
+            .mousedown(this.protectBtnClick.bind(this));
     },
 
     endEdit: function(newVal, extra) {
@@ -32,7 +41,17 @@ var FieldViewCustom = FieldViewText.extend({
             this.$el.removeClass('details__field--can-edit-title');
         }
         extra = _.extend({}, extra, { newField: this.model.newField });
-        FieldViewText.prototype.endEdit.call(this, newVal, extra);
+        if (!this.editing) {
+            return;
+        }
+        delete this.input;
+        if (typeof newVal === 'string') {
+            newVal = $.trim(newVal);
+            if (this.isProtected) {
+                newVal = kdbxweb.ProtectedValue.fromString(newVal);
+            }
+        }
+        FieldView.prototype.endEdit.call(this, newVal, extra);
     },
 
     startEditTitle: function() {
@@ -92,6 +111,11 @@ var FieldViewCustom = FieldViewText.extend({
     },
 
     fieldValueBlur: function(e) {
+        if (this.protectJustChanged) {
+            this.protectJustChanged = false;
+            e.target.focus();
+            return;
+        }
         this.endEdit(e.target.value);
     },
 
@@ -120,6 +144,13 @@ var FieldViewCustom = FieldViewText.extend({
             $(e.target).unbind('blur');
             this.endEditTitle(e.target.value);
         }
+    },
+
+    protectBtnClick: function(e) {
+        e.stopPropagation();
+        this.isProtected = !this.isProtected;
+        this.protectBtn.toggleClass('details__field-value-btn-protect--protected', this.isProtected);
+        this.protectJustChanged = true;
     }
 });
 

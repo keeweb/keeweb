@@ -10,7 +10,7 @@
 - [ ] switch view
 - [ ] optional auto-update
 - [ ] lock without closing
-- [ ] secure fields
+- [x] protected fields
 - [x] close files
 - [ ] show sync date
 - [x] offline and local storage
@@ -20,6 +20,7 @@
 - [ ] sync merge
 
 ## Future
+- [ ] secure inputs for all passwords
 - [ ] keepasshttp
 - [ ] mobile apps
 - [ ] file type associations

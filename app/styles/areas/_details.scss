@@ -224,7 +224,7 @@
         width: 12em;
         @include flex(0 0 auto);
       }
-      &-gen-btn {
+      &-btn {
         @include position(absolute, 0 0 null null);
         @include th { color: muted-color(); }
         cursor: pointer;
@@ -236,8 +236,12 @@
           @include fa-icon();
           cursor: pointer;
           padding: $base-padding;
-          content: $fa-var-bolt;
         }
+      }
+      &-btn-gen:before { content: $fa-var-bolt; }
+      &-btn-protect {
+        &:before { content: $fa-var-unlock; }
+        &--protected:before { content: $fa-var-lock; }
       }
     }
   }

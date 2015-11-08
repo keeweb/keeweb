@@ -98,7 +98,7 @@ var DetailsView = Backbone.View.extend({
         var model = this.model;
         this.fieldViews.push(new FieldViewText({ model: { name: '$UserName', title: 'User',
             value: function() { return model.user; } } }));
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Password', title: 'Password',
+        this.fieldViews.push(new FieldViewText({ model: { name: '$Password', title: 'Password', canGen: true,
             value: function() { return model.password; } } }));
         this.fieldViews.push(new FieldViewUrl({ model: { name: '$URL', title: 'Website',
             value: function() { return model.url; } } }));
