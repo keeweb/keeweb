@@ -24,6 +24,7 @@
 - [ ] mobile apps
 - [ ] file type associations
 - [ ] auto-type for desktop
+- [ ] TOTP
 - [ ] audit
 - [ ] native encryption for electron
 - [ ] generation templates
