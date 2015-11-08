@@ -9,10 +9,10 @@
 - [ ] help/tips
 - [ ] switch view
 - [ ] optional auto-update
-- [ ] lock without closing
+- [ ] lock without closing, auto-lock
+- [ ] minimize to tray
 - [x] protected fields
 - [x] close files
-- [ ] show sync date
 - [x] offline and local storage
 - [x] use dropbox chooser for keyfile
 - [ ] trim history by rules
@@ -25,7 +25,7 @@
 - [ ] mobile apps
 - [ ] file type associations
 - [ ] auto-type for desktop
-- [ ] TOTP
+- [ ] one-time passwords
 - [ ] audit
 - [ ] generation templates
 - [ ] i18n
