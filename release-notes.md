@@ -2,7 +2,7 @@ Release notes
 -------------
 ##### v0.2.0 (not released yet)
 UX improvements, new features, bugfixes  
-`+` improved open page ux
+`+` improved open page ux  
 `+` keyfiles from Dropbox  
 `+` #17: option to hide entries from subgroups  
 `+` #5: groups and entries arranging  
