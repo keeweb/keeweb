@@ -19,9 +19,15 @@
 ![ ](https://habrastorage.org/files/4ba/000/bba/4ba000bbaba842b296749a6872b9e0aa.png)
 ## Drag&amp;drop
 ![ ](https://habrastorage.org/files/4c5/37a/e5f/4c537ae5f5404b64ad2c3110f7badc0b.png)
+## Protected fields
+![ ](https://habrastorage.org/files/40a/77b/fd2/40a77bfd2b66437fb8cf7ca007f7b45b.png)
 ## Password generator
 ![ ](https://habrastorage.org/files/69b/cbd/343/69bcbd3432ca456396c6d2a1ebc760df.png)&nbsp;
 ![ ](https://habrastorage.org/files/5bd/9f1/26f/5bd9f126f6d4496083258fc31d04db19.png)
+## Offline
+![ ](https://habrastorage.org/files/3d5/5d1/7c4/3d55d17c486b46529c38bdfff3284aa2.png)
+## Protected fields
+![ ](https://habrastorage.org/files/40a/77b/fd2/40a77bfd2b66437fb8cf7ca007f7b45b.png)
 ## Shortcuts
 ![ ](https://habrastorage.org/files/f2c/115/19f/f2c11519f4e447a3bc18b03ec0437e34.png)
 ## History
