@@ -81,7 +81,7 @@ var DetailsView = Backbone.View.extend({
             this.$el.html(this.groupTemplate());
             return;
         }
-        var model = $.extend({ deleted: this.appModel.filter.trash }, this.model);
+        var model = $.extend({ deleted: this.appModel.filter.trash }, this.model);
         this.$el.html(this.template(model));
         this.setSelectedColor(this.model.color);
         this.addFieldViews();
