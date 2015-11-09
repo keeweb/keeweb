@@ -392,6 +392,8 @@ var OpenView = Backbone.View.extend({
         switch (lastOpenFile.storage) {
             case 'dropbox':
                 return this.openDropboxFile(lastOpenFile.path);
+            case 'file':
+                return this.showOpenLocalFile(lastOpenFile.path);
             default:
                 return this.openCache(name);
         }
