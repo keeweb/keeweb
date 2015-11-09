@@ -11,6 +11,7 @@ var GrpView = Backbone.View.extend({
     events: {
         'click .grp__icon': 'showIconsSelect',
         'click .grp__buttons-trash': 'moveToTrash',
+        'click .grp__back-button': 'returnToApp',
         'blur #grp__field-title': 'titleBlur'
     },
 
@@ -93,6 +94,10 @@ var GrpView = Backbone.View.extend({
     moveToTrash: function() {
         this.model.moveToTrash();
         Backbone.trigger('select-all');
+    },
+
+    returnToApp: function() {
+        Backbone.trigger('edit-group');
     }
 });
 
