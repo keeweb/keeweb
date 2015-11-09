@@ -10,6 +10,7 @@ UX improvements, new features, bugfixes
 `+` #13: increase max generated password length  
 `+` #20: default http:// for urls without protocol  
 `-` #12: cannot edit entries without title  
+`-` #21: history inside history entries  
 
 ##### v0.1.1 (2015-11-04)
 Bugfix and performance enhancements  
