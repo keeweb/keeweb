@@ -27,7 +27,6 @@ EntryPresenter.prototype = {
     get created() { return this.entry ? Format.dtStr(this.entry.created) : undefined; },
     get updated() { return this.entry ? Format.dtStr(this.entry.updated) : undefined; },
     get expired() { return this.entry ? this.entry.expired : false; },
-    get deleted() { return this.entry ? this.entry.deleted : undefined; },
     get description() {
         if (!this.entry) {
             return '[Group]';

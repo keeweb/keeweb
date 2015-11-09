@@ -20,7 +20,6 @@ var EntryModel = Backbone.Model.extend({
         this.group = group;
         this.file = file;
         this._fillByEntry();
-        this._fillInTrash();
     },
 
     _fillByEntry: function() {
@@ -89,19 +88,6 @@ var EntryModel = Backbone.Model.extend({
             att.push(AttachmentModel.fromAttachment({ data: data, title: title }));
         }, this);
         return att;
-    },
-
-    _fillInTrash: function() {
-        this.deleted = false;
-        if (this.file.db.meta.recycleBinEnabled) {
-            var trashGroupId = this.file.db.meta.recycleBinUuid.id;
-            for (var group = this.group; group; group = group.group) {
-                if (group.id === trashGroupId) {
-                    this.deleted = true;
-                    break;
-                }
-            }
-        }
     },
 
     _entryModified: function() {
@@ -223,8 +209,12 @@ var EntryModel = Backbone.Model.extend({
         if (trashGroup) {
             trashGroup.addEntry(this);
             this.group = trashGroup;
-            this.deleted = true;
         }
+    },
+
+    deleteFromTrash: function() {
+        this.file.db.move(this.entry, null);
+        this.group.removeEntry(this);
     },
 
     removeWithoutHistory: function() {

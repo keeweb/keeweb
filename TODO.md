@@ -4,7 +4,7 @@
 
 - [x] improve open page UX
 - [x] provide engineer error details on file open
-- [ ] trash: delete
+- [x] trash: groups/delete/untrash
 - [x] move groups/entries
 - [ ] help/tips
 - [ ] switch view

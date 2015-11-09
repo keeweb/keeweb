@@ -15,6 +15,7 @@ var Backbone = require('backbone'),
     DetailsAttachmentView = require('./details-attachment-view'),
     Keys = require('../../const/keys'),
     KeyHandler = require('../../comp/key-handler'),
+    Alerts = require('../../comp/alerts'),
     CopyPaste = require('../../util/copy-paste'),
     Format = require('../../util/format'),
     FileSaver = require('filesaver'),
@@ -36,6 +37,7 @@ var DetailsView = Backbone.View.extend({
         'click .details__header-title': 'editTitle',
         'click .details__history-link': 'showHistory',
         'click .details__buttons-trash': 'moveToTrash',
+        'click .details__buttons-trash-del': 'deleteFromTrash',
         'click .details__back-button': 'backClick',
         'dragover .details': 'dragover',
         'dragleave .details': 'dragleave',
@@ -79,7 +81,8 @@ var DetailsView = Backbone.View.extend({
             this.$el.html(this.groupTemplate());
             return;
         }
-        this.$el.html(this.template(this.model));
+        var model = $.extend({ deleted: this.appModel.filter.trash }, this.model);
+        this.$el.html(this.template(model));
         this.setSelectedColor(this.model.color);
         this.addFieldViews();
         this.scroll = baron({
@@ -464,6 +467,18 @@ var DetailsView = Backbone.View.extend({
     moveToTrash: function() {
         this.model.moveToTrash();
         Backbone.trigger('refresh');
+    },
+
+    deleteFromTrash: function() {
+        Alerts.yesno({
+            header: 'Delete from trash?',
+            body: 'You will not be able to put it back<p class="muted-color">To quickly remove all items from trash, click empty icon in Trash menu</p>',
+            icon: 'minus-circle',
+            success: (function() {
+                this.model.deleteFromTrash();
+                Backbone.trigger('refresh');
+            }).bind(this)
+        });
     },
 
     backClick: function() {

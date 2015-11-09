@@ -161,7 +161,7 @@ var MenuItemView = Backbone.View.extend({
         Alerts.yesno({
             header: 'Empty trash?',
             body: 'You will not be able to put items back',
-            icon: 'trash',
+            icon: 'minus-circle',
             success: function() {
                 Backbone.trigger('empty-trash');
             }

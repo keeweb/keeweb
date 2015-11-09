@@ -128,9 +128,13 @@ var GroupModel = MenuItemModel.extend({
         if (trashGroup) {
             trashGroup.addGroup(this);
             this.parentGroup = trashGroup;
-            this.deleted = true;
         }
         this.trigger('delete');
+    },
+
+    deleteFromTrash: function() {
+        this.file.db.move(this.group, null);
+        this.parentGroup.removeGroup(this);
     },
 
     removeWithoutHistory: function() {

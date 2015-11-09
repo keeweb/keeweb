@@ -26,7 +26,8 @@
         <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
     </div>
     <div class="details__buttons">
-        <% if (!deleted) { %><i class="details__buttons-trash fa fa-trash-o"></i><% } %>
+        <% if (deleted) { %><i class="details__buttons-trash-del fa fa-minus-circle"></i>
+        <% } else { %><i class="details__buttons-trash fa fa-trash-o"></i><% } %>
         <div class="details__attachments">
             <% attachments.forEach(function(attachment, ix) { %>
             <div class="details__attachment" data-id="<%= ix %>"><i class="fa fa-<%= attachment.icon %>"></i> <%- attachment.title %></div>

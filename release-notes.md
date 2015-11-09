@@ -1,8 +1,9 @@
 Release notes
 -------------
 ##### v0.2.0 (not released yet)
-UX improvements, new features, bugfixes  
+UX improvements, offline, trash, protected fields, bugfixes  
 `+` improved open page ux  
+`+` trash management  
 `+` protected fields support  
 `+` keyfiles from Dropbox  
 `+` #17: option to hide entries from subgroups  

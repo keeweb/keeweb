@@ -358,10 +358,14 @@
 
     .details--drag & { display: none; }
 
-    &-trash {
+    &-trash, &-trash-del {
       @include icon-btn($error:true);
       @include align-self(flex-end);
       margin-right: 10px;
+    }
+
+    &-trash-del {
+      @include th { color: muted-color(); }
     }
 
     button ~ button {
