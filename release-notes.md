@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v0.2.0 (not released yet)
+##### v0.2.0 (2015-11-09)
 UX improvements, offline, trash, protected fields, bugfixes  
 `+` improved open page ux  
 `+` trash management  
