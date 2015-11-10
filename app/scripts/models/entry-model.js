@@ -135,7 +135,8 @@ var EntryModel = Backbone.Model.extend({
 
     setField: function(field, val) {
         this._entryModified();
-        if (val || this.buildInFields.indexOf(field) >= 0) {
+        var hasValue = val && (typeof val === 'string' || val instanceof kdbxweb.ProtectedValue && val.byteLength);
+        if (hasValue || this.buildInFields.indexOf(field) >= 0) {
             this.entry.fields[field] = val;
         } else {
             delete this.entry.fields[field];
