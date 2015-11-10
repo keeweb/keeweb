@@ -14,6 +14,7 @@ Desktop: [Windows](https://github.com/antelle/keeweb/releases/download/v0.2.0/Ke
 Timeline: [Release Notes](release-notes.md)
 [TODO](TODO.md)  
 On one page: [Features](features.md)  
+Twitter: [kee_web](https://twitter.com/kee_web)  
 
 # Status
 
