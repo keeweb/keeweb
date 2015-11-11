@@ -52,6 +52,7 @@
     &-enter-btn, &-opening-icon {
       padding: .6em $base-spacing;
       position: absolute;
+      left: 100%;
       @include mobile { display: none; }
       @include th { color: muted-color(); }
       >i { font-size: 3em; }
@@ -85,8 +86,8 @@
     @include flex-direction(row);
     @include justify-content(space-between);
     @include align-items(stretch);
+    height: 2em;
     &-key-file {
-      height: 2em;
       .open--file:not(.open--opening) & { cursor: pointer; }
       .open--key-file & { @include th { color: medium-color(); } }
       &-dropbox {

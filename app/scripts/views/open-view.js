@@ -136,6 +136,7 @@ var OpenView = Backbone.View.extend({
 
     displayOpenFile: function() {
         this.$el.addClass('open--file');
+        this.$el.find('.open__settings-key-file').removeClass('hide');
         this.$el.find('#open__settings-check-offline')[0].removeAttribute('disabled');
         var canSwitchOffline = this.file.get('storage') !== 'file' && !this.file.get('offline');
         this.$el.find('.open__settings-offline').toggleClass('hide', !canSwitchOffline);
