@@ -1,4 +1,59 @@
 <div class="open">
+    <input type="file" class="open__file-ctrl hide-by-pos" />
+    <div class="open__icons">
+        <div class="open__icon open__icon-open">
+            <i class="fa fa-lock open__icon-i"></i>
+            <div class="open__icon-text">Open</div>
+        </div>
+        <div class="open__icon open__icon-new">
+            <i class="fa fa-plus open__icon-i"></i>
+            <div class="open__icon-text">New</div>
+        </div>
+        <% if (supportsDropbox) { %>
+        <div class="open__icon open__icon-dropbox">
+            <i class="fa fa-dropbox open__icon-i"></i>
+            <div class="open__icon-text">Dropbox</div>
+        </div>
+        <% } %>
+        <div class="open__icon open__icon-demo">
+            <i class="fa fa-magic open__icon-i"></i>
+            <div class="open__icon-text">Demo</div>
+        </div>
+    </div>
+    <div class="open__pass-area">
+        <div class="open__pass-warn-wrap">
+            <div class="open__pass-warning muted-color invisible"><i class="fa fa-exclamation-triangle"></i> Caps Lock is on</div>
+        </div>
+        <div class="open__pass-field-wrap">
+            <input class="open__pass-input" type="password" size="30" autocomplete="off" maxlength="128"
+                   placeholder="Click to open a file" readonly />
+            <div class="open__pass-enter-btn"><i class="fa fa-level-down fa-rotate-90"></i></div>
+            <div class="open__pass-opening-icon"><i class="fa fa-spinner fa-spin"></i></div>
+        </div>
+        <div class="open__settings">
+            <div class="open__settings-key-file hide">
+                <i class="fa fa-key open__settings-key-file-icon"></i>
+                <span class="open__settings-key-file-name">key file</span>
+                <% if (supportsDropbox) { %>
+                <span class="open__settings-key-file-dropbox"> (from dropbox)</span>
+                <% } %>
+            </div>
+            <div class="open__settings-offline hide">
+                <input type="checkbox" id="open__settings-check-offline" class="open__settings-check-offline" checked disabled />
+                <label for="open__settings-check-offline" class="open__settings-label-offline">make available offline</label>
+            </div>
+            <div class="open__settings-offline-warning hide muted-color"><i class="fa fa-exclamation-triangle"></i> saved offline version</div>
+        </div>
+        <div class="open__last">
+            <% lastOpenFiles.forEach(function(file) { %>
+            <div class="open__last-item" data-name="<%- file.name %>">
+                <i class="fa fa-<%= file.icon %> open__last-item-icon"></i>
+                <span class="open__last-item-text"><%- file.name %></span>
+                <i class="fa fa-times open__last-item-icon-del"></i>
+            </div>
+            <% }); %>
+        </div>
+    </div>
     <div class="open__dropzone">
         <i class="fa fa-lock muted-color open__dropzone-icon"></i>
         <h1 class="muted-color open__dropzone-header">drop files here</h1>

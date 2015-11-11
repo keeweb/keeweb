@@ -32,8 +32,8 @@ var FieldViewText = FieldView.extend({
         if (this.model.multiline) {
             this.setInputHeight();
         }
-        if (this.value && this.value.byteLength) {
-            $('<div/>').addClass('details__field-value-gen-btn').appendTo(this.valueEl)
+        if (this.model.canGen) {
+            $('<div/>').addClass('details__field-value-btn details__field-value-btn-gen').appendTo(this.valueEl)
                 .click(this.showGeneratorClick.bind(this))
                 .mousedown(this.showGenerator.bind(this));
         }

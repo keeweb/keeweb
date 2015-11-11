@@ -1,11 +1,16 @@
 'use strict';
 
-var Backbone = require('backbone');
+var Backbone = require('backbone'),
+    Launcher = require('../comp/launcher');
+
+var FileName = 'app-settings.json';
 
 var AppSettingsModel = Backbone.Model.extend({
     defaults: {
         theme: 'd',
-        lastOpenFile: '',
+        expandGroups: true,
+        listViewWidth: null,
+        menuViewWidth: null,
         autoUpdate: true
     },
 
@@ -14,17 +19,30 @@ var AppSettingsModel = Backbone.Model.extend({
     },
 
     load: function() {
-        if (typeof localStorage !== 'undefined' && localStorage.appSettings) {
-            try {
-                var data = JSON.parse(localStorage.appSettings);
-                this.set(data, { silent: true });
-            } catch (e) { /* failed to load settings */ }
+        try {
+            var data;
+            if (Launcher) {
+                data = JSON.parse(Launcher.readFile(Launcher.getUserDataPath(FileName), 'utf8'));
+            } else if (typeof localStorage !== 'undefined' && localStorage.appSettings) {
+                data = JSON.parse(localStorage.appSettings);
+            }
+            if (data) {
+                this.set(data, {silent: true});
+            }
+        } catch (e) {
+            console.error('Error loading settings', e);
         }
     },
 
     save: function() {
-        if (typeof localStorage !== 'undefined') {
-            localStorage.appSettings = JSON.stringify(this.attributes);
+        try {
+            if (Launcher) {
+                Launcher.writeFile(Launcher.getUserDataPath(FileName), JSON.stringify(this.attributes));
+            } else if (typeof localStorage !== 'undefined') {
+                localStorage.appSettings = JSON.stringify(this.attributes);
+            }
+        } catch (e) {
+            console.error('Error saving settings', e);
         }
     }
 });

@@ -12,8 +12,9 @@ var SettingsGeneralView = Backbone.View.extend({
     template: require('templates/settings/settings-general.html'),
 
     events: {
-        'change #settings__general-theme': 'changeTheme',
-        'change #settings__general-auto-update': 'changeAutoUpdate',
+        'change .settings__general-theme': 'changeTheme',
+        'change .settings__general-expand': 'changeExpandGroups',
+        'change .settings__general-auto-update': 'changeAutoUpdate',
         'click .settings__general-dev-tools-link': 'openDevTools'
     },
 
@@ -31,6 +32,7 @@ var SettingsGeneralView = Backbone.View.extend({
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
+            expandGroups: AppSettingsModel.instance.get('expandGroups'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
             autoUpdate: Updater.enabledAutoUpdate(),
@@ -85,6 +87,12 @@ var SettingsGeneralView = Backbone.View.extend({
         if (autoUpdate) {
             Updater.scheduleNextCheck();
         }
+    },
+
+    changeExpandGroups: function(e) {
+        var expand = e.target.checked;
+        AppSettingsModel.instance.set('expandGroups', expand);
+        Backbone.trigger('refresh');
     },
 
     openDevTools: function() {

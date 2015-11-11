@@ -21,37 +21,38 @@
         <button class="settings__file-button-save-dropbox btn-silent" <%= syncing ? 'disabled' : '' %>>
             Sync with Dropbox <%= syncing ? '(working...)' : '' %></button>
         <% } %>
+        <button class="settings__file-button-close btn-silent">Close</button>
     </div>
 
     <h2>Settings</h2>
-    <label for="settings__file-master-pass" class="settings__file-master-pass-label">Master password:
+    <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">Master password:
         <span class="settings__file-master-pass-warning">
             <i class="fa fa-warning"></i> password was changed; leave the field blank to use old password
         </span>
     </label>
-    <input type="password" class="settings__input" id="settings__file-master-pass" value="<%= password %>" />
+    <input type="password" class="settings__input input-base" id="settings__file-master-pass" value="<%= password %>" />
     <label for="settings__file-key-file">Key file:</label>
-    <select class="settings__select settings__select-no-margin" id="settings__file-key-file"></select>
+    <select class="settings__select settings__select-no-margin input-base" id="settings__file-key-file"></select>
     <a id="settings__file-file-select-link">Select a key file</a>
     <input type="file" accept=".key" id="settings__file-file-select" class="hide" />
 
     <h2>Names</h2>
     <label for="settings__file-name">Name:</label>
-    <input type="text" class="settings__input" id="settings__file-name" value="<%- name %>" required />
+    <input type="text" class="settings__input input-base" id="settings__file-name" value="<%- name %>" required />
     <label for="settings__file-def-user">Default username:</label>
-    <input type="text" class="settings__input" id="settings__file-def-user" value="<%- defaultUser %>" />
+    <input type="text" class="settings__input input-base" id="settings__file-def-user" value="<%- defaultUser %>" />
 
     <h2>History</h2>
     <div>
-        <input type="checkbox" class="settings__input" id="settings__file-trash" <%- recycleBinEnabled ? 'checked' : '' %> />
+        <input type="checkbox" class="settings__input input-base" id="settings__file-trash" <%- recycleBinEnabled ? 'checked' : '' %> />
         <label for="settings__file-trash">Enable trash</label>
     </div>
     <label for="settings__file-hist-len">History length, keep last records per entry:</label>
-    <input type="text" pattern="\d+" required class="settings__input" id="settings__file-hist-len" value="<%= historyMaxItems %>" />
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="<%= historyMaxItems %>" />
     <label for="settings__file-hist-size">History size, total MB per file:</label>
-    <input type="text" pattern="\d+" required class="settings__input" id="settings__file-hist-size" value="<%= historyMaxSize %>" />
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="<%= historyMaxSize %>" />
 
     <h2>Advanced</h2>
     <label for="settings__file-key-rounds">Key encryption rounds:</label>
-    <input type="text" pattern="\d+" required class="settings__input" id="settings__file-key-rounds" value="<%= keyEncryptionRounds %>" />
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="<%= keyEncryptionRounds %>" />
 </div>

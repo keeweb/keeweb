@@ -3,7 +3,8 @@
 var Backbone = require('backbone'),
     Resizable = require('../../mixins/resizable'),
     MenuSectionView = require('./menu-section-view'),
-    DragView = require('../drag-view');
+    DragView = require('../drag-view'),
+    AppSettingsModel = require('../../models/app-settings-model');
 
 var MenuView = Backbone.View.extend({
     template: require('templates/menu/menu.html'),
@@ -17,6 +18,7 @@ var MenuView = Backbone.View.extend({
 
     initialize: function () {
         this.listenTo(this.model, 'change:sections', this.menuChanged);
+        this.listenTo(this, 'view-resize', this.viewResized);
     },
 
     remove: function() {
@@ -40,12 +42,19 @@ var MenuView = Backbone.View.extend({
             }
             this.sectionViews.push(sectionView);
         }, this);
+        if (typeof AppSettingsModel.instance.get('menuViewWidth') === 'number') {
+            this.$el.width(AppSettingsModel.instance.get('menuViewWidth'));
+        }
         return this;
     },
 
     menuChanged: function() {
         this.render();
     },
+
+    viewResized: _.throttle(function(size) {
+        AppSettingsModel.instance.set('menuViewWidth', size);
+    }, 1000),
 
     switchVisibility: function(visible) {
         this.$el.toggleClass('menu-visible', visible);

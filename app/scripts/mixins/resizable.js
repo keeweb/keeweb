@@ -18,6 +18,7 @@ var Resizable = {
         var size = dragInfo.startSize + e.offset;
         size = Math.max(dragInfo.min, Math.min(dragInfo.max, size));
         this.$el[dragInfo.prop](size);
+        this.trigger('view-resize', size);
         Backbone.trigger('page-geometry', { source: 'resizable' });
     },
 
@@ -29,6 +30,7 @@ var Resizable = {
             this.$el.css(dragInfo.prop, 'auto');
         }
         this.fixSize(dragInfo);
+        this.trigger('view-resize', null);
         Backbone.trigger('page-geometry', { source: 'resizable' });
     },
 

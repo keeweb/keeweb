@@ -5,6 +5,8 @@ var Backbone = require('backbone'),
     GroupModel = require('./group-model'),
     Launcher = require('../comp/launcher'),
     DropboxLink = require('../comp/dropbox-link'),
+    Storage = require('../comp/storage'),
+    LastOpenFiles = require('../comp/last-open-files'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
 
@@ -26,7 +28,9 @@ var FileModel = Backbone.Model.extend({
         oldKeyFileName: '',
         passwordChanged: false,
         keyFileChanged: false,
-        syncing: false
+        syncing: false,
+        availOffline: false,
+        offline: false
     },
 
     db: null,
@@ -51,13 +55,53 @@ var FileModel = Backbone.Model.extend({
         password = new kdbxweb.ProtectedValue(value.buffer.slice(0, byteLength), salt.buffer.slice(0, byteLength));
         try {
             var credentials = new kdbxweb.Credentials(password, keyFileData);
-            this.db = kdbxweb.Kdbx.load(fileData, credentials);
+            var start = performance.now();
+            kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
+                if (err) {
+                    this.set({error: true, opening: false});
+                    console.error('Error opening file', err.code, err.message, err);
+                } else {
+                    this.db = db;
+                    this.readModel(this.get('name'));
+                    this.setOpenFile({ passwordLength: len });
+                    if (keyFileData) {
+                        kdbxweb.ByteUtils.zeroBuffer(keyFileData);
+                    }
+                    console.log('Opened file ' + this.get('name') + ': ' + Math.round(performance.now() - start) + 'ms, ' +
+                        db.header.keyEncryptionRounds + ' rounds, ' + Math.round(fileData.byteLength / 1024) + ' kB');
+                    this.postOpen(fileData);
+                }
+            }).bind(this));
         } catch (e) {
+            console.error('Error opening file', e, e.code, e.message, e);
             this.set({ error: true, opening: false });
-            return;
         }
-        this.readModel(this.get('name'));
-        this.setOpenFile({ passwordLength: len });
+    },
+
+    postOpen: function(fileData) {
+        var that = this;
+        if (!this.get('offline')) {
+            if (this.get('availOffline')) {
+                Storage.cache.save(this.get('name'), fileData, function (err) {
+                    if (err) {
+                        that.set('availOffline', false);
+                        if (!that.get('storage')) {
+                            return;
+                        }
+                    }
+                    that.addToLastOpenFiles(!err);
+                });
+            } else {
+                if (this.get('storage')) {
+                    this.addToLastOpenFiles(false);
+                }
+                Storage.cache.remove(this.get('name'));
+            }
+        }
+    },
+
+    addToLastOpenFiles: function(hasOfflineCache) {
+        LastOpenFiles.add(this.get('name'), this.get('storage'), this.get('path'), hasOfflineCache);
     },
 
     create: function(name) {
@@ -65,16 +109,18 @@ var FileModel = Backbone.Model.extend({
         var credentials = new kdbxweb.Credentials(password);
         this.db = kdbxweb.Kdbx.create(credentials, name);
         this.readModel();
-        this.set({ open: true, created: true, opening: false, error: false, name: name });
+        this.set({ open: true, created: true, opening: false, error: false, name: name, offline: false });
     },
 
     createDemo: function() {
         var password = kdbxweb.ProtectedValue.fromString('demo');
         var credentials = new kdbxweb.Credentials(password);
         var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
-        this.db = kdbxweb.Kdbx.load(demoFile, credentials);
-        this.readModel();
-        this.setOpenFile({ passwordLength: 4, demo: true, name: 'Demo' });
+        kdbxweb.Kdbx.load(demoFile, credentials, (function(db) {
+            this.db = db;
+            this.readModel();
+            this.setOpenFile({passwordLength: 4, demo: true, name: 'Demo'});
+        }).bind(this));
     },
 
     setOpenFile: function(props) {
@@ -136,9 +182,11 @@ var FileModel = Backbone.Model.extend({
             if (top.forEachOwnEntry) {
                 top.forEachOwnEntry(filter, callback);
             }
-            top.forEachGroup(function (group) {
-                group.forEachOwnEntry(filter, callback);
-            });
+            if (!filter.group || filter.subGroups) {
+                top.forEachGroup(function (group) {
+                    group.forEachOwnEntry(filter, callback);
+                });
+            }
         }
     },
 
@@ -161,30 +209,37 @@ var FileModel = Backbone.Model.extend({
     },
 
     autoSave: function() {
-        this.set('syncing', true);
-        switch (this.get('storage')) {
+        var that = this;
+        that.set('syncing', true);
+        switch (that.get('storage')) {
             case 'file':
-                Launcher.writeFile(this.get('path'), this.getData());
-                this.saved(this.get('path'), this.get('storage'));
+                that.getData(function(data) {
+                    Launcher.writeFile(that.get('path'), data);
+                    that.saved(that.get('path'), that.get('storage'));
+                });
                 break;
             case 'dropbox':
-                DropboxLink.saveFile(this.get('path'), this.getData(), true, (function(err) {
-                    if (!err) {
-                        this.saved(this.get('path'), this.get('storage'));
-                    }
-                }).bind(this));
+                that.getData(function(data) {
+                    DropboxLink.saveFile(that.get('path'), data, true, function (err) {
+                        if (!err) {
+                            that.saved(that.get('path'), that.get('storage'));
+                        }
+                    });
+                });
                 break;
             default:
                 throw 'Unknown storage; cannot auto save';
         }
     },
 
-    getData: function() {
-        return this.db.save();
+    getData: function(cb) {
+        var data = this.db.save(cb);
+
+        return data;
     },
 
-    getXml: function() {
-        return this.db.saveXml();
+    getXml: function(cb) {
+        this.db.saveXml(cb);
     },
 
     saved: function(path, storage) {
@@ -193,6 +248,7 @@ var FileModel = Backbone.Model.extend({
         this.forEachEntry({}, function(entry) {
             entry.unsaved = false;
         });
+        this.addToLastOpenFiles();
     },
 
     setPassword: function(password) {
@@ -245,6 +301,7 @@ var FileModel = Backbone.Model.extend({
         this.db.meta.name = name;
         this.db.meta.nameChanged = new Date();
         this.set('name', name);
+        this.get('groups').first().setName(name);
         this.setModified();
     },
 
@@ -281,6 +338,19 @@ var FileModel = Backbone.Model.extend({
         this.db.header.keyEncryptionRounds = rounds;
         this.set('keyEncryptionRounds', rounds);
         this.setModified();
+    },
+
+    emptyTrash: function() {
+        var trashGroup = this.getTrashGroup();
+        if (trashGroup) {
+            trashGroup.getOwnSubGroups().slice().forEach(function(group) {
+                this.db.move(group, null);
+            }, this);
+            trashGroup.group.entries.forEach(function(entry) {
+                this.db.move(entry, null);
+            }, this);
+            trashGroup.get('entries').reset();
+        }
     }
 });
 

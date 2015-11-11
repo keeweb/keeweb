@@ -1,0 +1,22 @@
+<div class="grp">
+    <div class="grp__back-button">
+        return to app <i class="fa fa-external-link-square"></i>
+    </div>
+    <div class="scroller">
+        <h1>Group</h1>
+        <div class="grp__field">
+            <label for="grp__field-title">Name:</label>
+            <input type="text" class="input-base" id="grp__field-title" value="<%- title %>" size="50" maxlength="1024"
+                   required <%= readonly ? 'readonly' : '' %> />
+        </div>
+        <label>Icon:</label>
+        <i class="fa fa-<%- icon %> grp__icon"></i>
+        <div class="grp__icons"></div>
+    </div>
+    <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
+    <% if (!readonly) { %>
+    <div class="grp__buttons">
+        <i class="grp__buttons-trash fa fa-trash-o"></i>
+    </div>
+    <% } %>
+</div>

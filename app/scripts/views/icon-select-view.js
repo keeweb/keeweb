@@ -1,13 +1,13 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    IconMap = require('../../const/icon-map');
+    IconMap = require('../const/icon-map');
 
-var DetailsIconView = Backbone.View.extend({
-    template: require('templates/details/details-icon.html'),
+var IconSelectView = Backbone.View.extend({
+    template: require('templates/icon-select.html'),
 
     events: {
-        'click .details__icons-icon': 'iconClick'
+        'click .icon-select__icon': 'iconClick'
     },
 
     render: function() {
@@ -26,4 +26,4 @@ var DetailsIconView = Backbone.View.extend({
     }
 });
 
-module.exports = DetailsIconView;
+module.exports = IconSelectView;

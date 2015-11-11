@@ -24,7 +24,7 @@ button.pika-next {
 }
 
 .pika-table th {
-  @include th { color: medium-color(); }; // TODO
+  @include th { color: medium-color(); };
 }
 
 .pika-button, button.pika-button {

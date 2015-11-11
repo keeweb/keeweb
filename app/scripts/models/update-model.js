@@ -23,7 +23,7 @@ var UpdateModel = Backbone.Model.extend({
                 var data = JSON.parse(localStorage.updateInfo);
                 _.each(data, function(val, key) {
                     if (/Date$/.test(key)) {
-                        data[key] = val ? new Date(val) : null
+                        data[key] = val ? new Date(val) : null;
                     }
                 });
                 this.set(data, { silent: true });

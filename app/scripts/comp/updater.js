@@ -1,6 +1,7 @@
 'use strict';
 
-var RuntimeInfo = require('./runtime-info'),
+var Backbone = require('backbone'),
+    RuntimeInfo = require('./runtime-info'),
     Links = require('../const/links'),
     Launcher = require('../comp/launcher'),
     AppSettingsModel = require('../models/app-settings-model'),
@@ -87,7 +88,7 @@ var Updater = {
         // TODO: potential DDoS in case on any error! Save file with version and check before the download
         UpdateModel.instance.set('updateStatus', 'downloading');
         var xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', (function(e) {
+        xhr.addEventListener('load', (function() {
             if (xhr.response.byteLength > this.MinUpdateSize) {
                 UpdateModel.instance.set('updateStatus', 'downloaded');
                 try {

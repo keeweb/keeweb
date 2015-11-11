@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('./app-settings-model'),
     MenuModel = require('./menu/menu-model'),
     EntryModel = require('./entry-model'),
+    GroupModel = require('./group-model'),
     FileCollection = require('../collections/file-collection'),
     EntryCollection = require('../collections/entry-collection');
 
@@ -22,6 +23,8 @@ var AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'set-filter', this.setFilter);
         this.listenTo(Backbone, 'add-filter', this.addFilter);
         this.listenTo(Backbone, 'set-sort', this.setSort);
+        this.listenTo(Backbone, 'close-file', this.closeFile);
+        this.listenTo(Backbone, 'empty-trash', this.emptyTrash);
     },
 
     addFile: function(file) {
@@ -35,9 +38,6 @@ var AppModel = Backbone.Model.extend({
             page: 'file',
             file: file
         });
-        if (file.get('path')) {
-            AppSettingsModel.instance.set('lastOpenFile', file.get('path'));
-        }
         this.refresh();
     },
 
@@ -93,8 +93,24 @@ var AppModel = Backbone.Model.extend({
         this.setFilter({});
     },
 
+    closeFile: function(file) {
+        this.files.remove(file);
+        this._tagsChanged();
+        this.menu.groupsSection.removeByFile(file);
+        this.menu.filesSection.removeByFile(file);
+        this.refresh();
+    },
+
+    emptyTrash: function() {
+        this.files.forEach(function(file) {
+            file.emptyTrash();
+        }, this);
+        this.refresh();
+    },
+
     setFilter: function(filter) {
         this.filter = filter;
+        this.filter.subGroups = this.settings.get('expandGroups');
         var entries = this.getEntries();
         Backbone.trigger('filter', { filter: this.filter, sort: this.sort, entries: entries });
         Backbone.trigger('select-entry', entries.length ? entries.first() : null);
@@ -122,10 +138,24 @@ var AppModel = Backbone.Model.extend({
             });
         });
         entries.sortEntries(this.sort);
+        if (this.filter.trash) {
+            this.addTrashGroups(entries);
+        }
         if (entries.length) {
             entries.setActive(entries.first());
         }
         return entries;
+    },
+
+    addTrashGroups: function(collection) {
+        this.files.forEach(function(file) {
+            var trashGroup = file.getTrashGroup();
+            if (trashGroup) {
+                trashGroup.getOwnSubGroups().forEach(function(group) {
+                    collection.unshift(GroupModel.fromGroup(group, file, trashGroup));
+                });
+            }
+        });
     },
 
     prepareFilter: function() {
@@ -139,7 +169,7 @@ var AppModel = Backbone.Model.extend({
         return filter;
     },
 
-    createNewEntry: function() {
+    getFirstSelectedGroup: function() {
         var selGroupId = this.filter.group;
         var file, group;
         if (selGroupId) {
@@ -155,7 +185,17 @@ var AppModel = Backbone.Model.extend({
             file = this.files.first();
             group = file.get('groups').first();
         }
-        return EntryModel.newEntry(group, file);
+        return { group: group, file: file };
+    },
+
+    createNewEntry: function() {
+        var sel = this.getFirstSelectedGroup();
+        return EntryModel.newEntry(sel.group, sel.file);
+    },
+
+    createNewGroup: function() {
+        var sel = this.getFirstSelectedGroup();
+        return GroupModel.newGroup(sel.group, sel.file);
     }
 });
 

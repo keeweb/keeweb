@@ -7,6 +7,106 @@ var DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6'
 };
 
+var DropboxChooser = function(callback) {
+    this.cb = callback;
+    this.onMessage = this.onMessage.bind(this);
+};
+
+DropboxChooser.prototype.callback = function(err, res) {
+    if (this.cb) {
+        this.cb(err, res);
+    }
+    this.cb = null;
+};
+
+DropboxChooser.prototype.choose = function() {
+    var windowFeatures = 'width=640,height=552,left=357,top=100,resizable=yes,location=yes';
+    var url = this.buildUrl();
+    this.popup = window.open(url, 'dropbox', windowFeatures);
+    if (!this.popup) {
+        return this.callback('Failed to open window');
+    }
+    window.addEventListener('message', this.onMessage);
+    this.closeInt = setInterval(this.checkClose.bind(this), 200);
+};
+
+DropboxChooser.prototype.buildUrl = function() {
+    var urlParams = {
+        origin: encodeURIComponent(window.location.protocol + '//' + window.location.host),
+        'app_key': DropboxKeys.AppFolder,
+        'link_type': 'direct',
+        trigger: 'js',
+        multiselect: 'false',
+        extensions: '',
+        folderselect: 'false',
+        iframe: 'false',
+        version: 2
+    };
+    return 'https://www.dropbox.com/chooser?' + Object.keys(urlParams).map(function(key) {
+        return key + '=' + urlParams[key];
+    }).join('&');
+};
+
+DropboxChooser.prototype.onMessage = function(e) {
+    if (e.source !== this.popup) {
+        return;
+    }
+    var data = JSON.parse(e.data);
+    switch (data.method) {
+        case 'origin_request':
+            e.source.postMessage(JSON.stringify({ method: 'origin' }), 'https://www.dropbox.com');
+            break;
+        case 'files_selected':
+            this.popup.close();
+            this.success(data.params);
+            break;
+        case 'close_dialog':
+            this.popup.close();
+            break;
+        case 'web_session_error':
+        case 'web_session_unlinked':
+            this.callback(data.method);
+            break;
+        case 'resize':
+            this.popup.resize(data.params);
+            break;
+        case 'error':
+            this.callback(data.params);
+            break;
+    }
+};
+
+DropboxChooser.prototype.checkClose = function() {
+    if (this.popup.closed) {
+        clearInterval(this.closeInt);
+        window.removeEventListener('message', this.onMessage);
+        if (!this.result) {
+            this.callback('closed');
+        }
+    }
+};
+
+DropboxChooser.prototype.success = function(params) {
+    /* jshint camelcase:false */
+    if (!params || !params[0] || !params[0].link || params[0].is_dir) {
+        return this.callback('bad result');
+    }
+    this.result = params[0];
+    this.readFile(this.result.link);
+};
+
+DropboxChooser.prototype.readFile = function(url) {
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', (function() {
+        this.callback(null, { name: this.result.name, data: xhr.response });
+    }).bind(this));
+    xhr.addEventListener('error', this.callback.bind(this, 'download error'));
+    xhr.addEventListener('abort', this.callback.bind(this, 'download abort'));
+    xhr.open('GET', url);
+    xhr.responseType = 'arraybuffer';
+    xhr.send();
+};
+
 var DropboxLink = {
     _getClient: function(complete) {
         if (this._dropboxClient && this._dropboxClient.isAuthenticated()) {
@@ -23,7 +123,11 @@ var DropboxLink = {
         }).bind(this));
     },
 
-    _handleUiError: function(err, callback) {
+    _handleUiError: function(err, alertCallback, callback) {
+        if (!alertCallback) {
+            alertCallback = Alerts.error.bind(Alerts);
+        }
+        console.error('Dropbox error', err);
         switch (err.status) {
             case Dropbox.ApiError.INVALID_TOKEN:
                 Alerts.yesno({
@@ -38,25 +142,25 @@ var DropboxLink = {
                 });
                 return;
             case Dropbox.ApiError.NOT_FOUND:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Error',
                     body: 'The file was not found. Has it been removed from another computer?'
                 });
                 break;
             case Dropbox.ApiError.OVER_QUOTA:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Full',
                     body: 'Your Dropbox is full, there\'s no space left anymore.'
                 });
                 break;
             case Dropbox.ApiError.RATE_LIMITED:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Error',
                     body: 'Too many requests to Dropbox have been made by this app. Please, try again later.'
                 });
                 break;
             case Dropbox.ApiError.NETWORK_ERROR:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Network Error',
                     body: 'Network error occured during Dropbox sync. Please, check your connection and try again.'
                 });
@@ -64,13 +168,13 @@ var DropboxLink = {
             case Dropbox.ApiError.INVALID_PARAM:
             case Dropbox.ApiError.OAUTH_ERROR:
             case Dropbox.ApiError.INVALID_METHOD:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Error',
                     body: 'Something went wrong during Dropbox sync. Please, try again later. Error code: ' + err.status
                 });
                 break;
             default:
-                Alerts.error({
+                alertCallback({
                     header: 'Dropbox Sync Error',
                     body: 'Something went wrong during Dropbox sync. Please, try again later. Error: ' + err
                 });
@@ -79,7 +183,7 @@ var DropboxLink = {
         callback(false);
     },
 
-    _callAndHandleError: function(callName, args, callback) {
+    _callAndHandleError: function(callName, args, callback, errorAlertCallback) {
         var that = this;
         this._getClient(function(err, client) {
             if (err) {
@@ -87,9 +191,9 @@ var DropboxLink = {
             }
             client[callName].apply(client, args.concat(function(err, res) {
                 if (err) {
-                    that._handleUiError(err, function(repeat) {
+                    that._handleUiError(err, errorAlertCallback, function(repeat) {
                         if (repeat) {
-                            that._callAndHandleError(callName, args, callback);
+                            that._callAndHandleError(callName, args, callback, errorAlertCallback);
                         } else {
                             callback(err);
                         }
@@ -122,8 +226,8 @@ var DropboxLink = {
         }
     },
 
-    openFile: function(fileName, complete) {
-        this._callAndHandleError('readFile', [fileName, { blob: true }], complete);
+    openFile: function(fileName, complete, errorAlertCallback) {
+        this._callAndHandleError('readFile', [fileName, { blob: true }], complete, errorAlertCallback);
     },
 
     getFileList: function(complete) {
@@ -133,6 +237,10 @@ var DropboxLink = {
             }
             complete(err, files);
         });
+    },
+
+    chooseFile: function(callback) {
+        new DropboxChooser(callback).choose();
     }
 };
 

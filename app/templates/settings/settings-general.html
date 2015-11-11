@@ -3,16 +3,20 @@
     <h2>Appearance</h2>
     <div>
         <label for="settings__general-theme">Theme:</label>
-        <select class="settings__select" id="settings__general-theme">
+        <select class="settings__general-theme settings__select input-base" id="settings__general-theme">
             <% _.forEach(themes, function(name, key) { %>
             <option value="<%= key %>" <%= key === activeTheme ? 'selected' : '' %>><%- name %></option>
             <% }); %>
         </select>
     </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" <%- expandGroups ? 'checked' : '' %> />
+        <label for="settings__general-expand">Show entries from all subgroups</label>
+    </div>
     <% if (canAutoUpdate) { %>
     <h2>Function</h2>
     <div>
-        <input type="checkbox" class="settings__input" id="settings__general-auto-update" <%- autoUpdate ? 'checked' : '' %> />
+        <input type="checkbox" class="settings__input settings__general-auto-update" id="settings__general-auto-update" <%- autoUpdate ? 'checked' : '' %> />
         <label for="settings__general-auto-update">Automatic updates</label>
         <div><%- updateInfo %></div>
     </div>

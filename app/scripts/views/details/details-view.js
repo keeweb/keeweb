@@ -1,6 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    GroupModel = require('../../models/group-model'),
     Scrollable = require('../../mixins/scrollable'),
     FieldViewText = require('../fields/field-view-text'),
     FieldViewDate = require('../fields/field-view-date'),
@@ -9,11 +10,12 @@ var Backbone = require('backbone'),
     FieldViewReadOnly = require('../fields/field-view-read-only'),
     FieldViewHistory = require('../fields/field-view-history'),
     FieldViewCustom = require('../fields/field-view-custom'),
-    DetailsIconView = require('./details-icon-view'),
+    IconSelectView = require('../icon-select-view'),
     DetailsHistoryView = require('./details-history-view'),
     DetailsAttachmentView = require('./details-attachment-view'),
     Keys = require('../../const/keys'),
     KeyHandler = require('../../comp/key-handler'),
+    Alerts = require('../../comp/alerts'),
     CopyPaste = require('../../util/copy-paste'),
     Format = require('../../util/format'),
     FileSaver = require('filesaver'),
@@ -23,6 +25,7 @@ var Backbone = require('backbone'),
 var DetailsView = Backbone.View.extend({
     template: require('templates/details/details.html'),
     emptyTemplate: require('templates/details/details-empty.html'),
+    groupTemplate: require('templates/details/details-group.html'),
 
     fieldViews: null,
     views: null,
@@ -34,6 +37,7 @@ var DetailsView = Backbone.View.extend({
         'click .details__header-title': 'editTitle',
         'click .details__history-link': 'showHistory',
         'click .details__buttons-trash': 'moveToTrash',
+        'click .details__buttons-trash-del': 'deleteFromTrash',
         'click .details__back-button': 'backClick',
         'dragover .details': 'dragover',
         'dragleave .details': 'dragleave',
@@ -73,7 +77,12 @@ var DetailsView = Backbone.View.extend({
             this.$el.html(this.emptyTemplate());
             return;
         }
-        this.$el.html(this.template(this.model));
+        if (this.model instanceof GroupModel) {
+            this.$el.html(this.groupTemplate());
+            return;
+        }
+        var model = $.extend({ deleted: this.appModel.filter.trash }, this.model);
+        this.$el.html(this.template(model));
         this.setSelectedColor(this.model.color);
         this.addFieldViews();
         this.scroll = baron({
@@ -98,7 +107,7 @@ var DetailsView = Backbone.View.extend({
         var model = this.model;
         this.fieldViews.push(new FieldViewText({ model: { name: '$UserName', title: 'User',
             value: function() { return model.user; } } }));
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Password', title: 'Password',
+        this.fieldViews.push(new FieldViewText({ model: { name: '$Password', title: 'Password', canGen: true,
             value: function() { return model.password; } } }));
         this.fieldViews.push(new FieldViewUrl({ model: { name: '$URL', title: 'Website',
             value: function() { return model.url; } } }));
@@ -175,12 +184,12 @@ var DetailsView = Backbone.View.extend({
     },
 
     toggleIcons: function() {
-        if (this.views.sub && this.views.sub instanceof DetailsIconView) {
+        if (this.views.sub && this.views.sub instanceof IconSelectView) {
             this.render();
             return;
         }
         this.removeSubView();
-        var subView = new DetailsIconView({ el: this.scroller, model: this.model });
+        var subView = new IconSelectView({ el: this.scroller, model: this.model });
         this.listenTo(subView, 'select', this.iconSelected);
         subView.render();
         this.pageResized();
@@ -398,11 +407,6 @@ var DetailsView = Backbone.View.extend({
     },
 
     setTitle: function(title) {
-        if (!title && this.model.isJustCreated) {
-            this.model.removeWithoutHistory();
-            Backbone.trigger('refresh');
-            return;
-        }
         if (this.model.title instanceof kdbxweb.ProtectedValue) {
             title = kdbxweb.ProtectedValue.fromString(title);
         }
@@ -410,7 +414,7 @@ var DetailsView = Backbone.View.extend({
             this.model.setField('Title', title);
             this.entryUpdated(true);
         }
-        var newTitle = $('<h1 class="details__header-title"></h1>').text(title);
+        var newTitle = $('<h1 class="details__header-title"></h1>').text(title || '(no title)');
         this.$el.find('.details__header-title-input').replaceWith(newTitle);
     },
 
@@ -463,6 +467,18 @@ var DetailsView = Backbone.View.extend({
     moveToTrash: function() {
         this.model.moveToTrash();
         Backbone.trigger('refresh');
+    },
+
+    deleteFromTrash: function() {
+        Alerts.yesno({
+            header: 'Delete from trash?',
+            body: 'You will not be able to put it back<p class="muted-color">To quickly remove all items from trash, click empty icon in Trash menu</p>',
+            icon: 'minus-circle',
+            success: (function() {
+                this.model.deleteFromTrash();
+                Backbone.trigger('refresh');
+            }).bind(this)
+        });
     },
 
     backClick: function() {

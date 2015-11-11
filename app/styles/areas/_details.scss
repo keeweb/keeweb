@@ -224,7 +224,7 @@
         width: 12em;
         @include flex(0 0 auto);
       }
-      &-gen-btn {
+      &-btn {
         @include position(absolute, 0 0 null null);
         @include th { color: muted-color(); }
         cursor: pointer;
@@ -236,8 +236,12 @@
           @include fa-icon();
           cursor: pointer;
           padding: $base-padding;
-          content: $fa-var-bolt;
         }
+      }
+      &-btn-gen:before { content: $fa-var-bolt; }
+      &-btn-protect {
+        &:before { content: $fa-var-unlock; }
+        &--protected:before { content: $fa-var-lock; }
       }
     }
   }
@@ -354,33 +358,18 @@
 
     .details--drag & { display: none; }
 
-    &-trash {
+    &-trash, &-trash-del {
       @include icon-btn($error:true);
       @include align-self(flex-end);
       margin-right: 10px;
     }
 
+    &-trash-del {
+      @include th { color: muted-color(); }
+    }
+
     button ~ button {
       margin-left: $small-spacing;
-    }
-  }
-
-  &__icons {
-    @include display(flex);
-    @include align-items(flex-start);
-    @include flex-direction(row);
-    @include justify-content(flex-start);
-    @include flex-wrap(wrap);
-    @include user-select(none);
-    &-icon {
-      @include area-selectable(bottom);
-      width: 26px;
-      text-align: center;
-      font-size: 20px;
-      padding: 10px;
-      &.details__icons-icon--active {
-        @include area-selected(bottom);
-      }
     }
   }
 

@@ -13,4 +13,9 @@
   &__text, &__title {
     padding: 0 $base-padding-h;
   }
+  &__lower-btns {
+    position: absolute;
+    bottom: calc(#{$base-spacing} + 1px);
+    left: $base-spacing;
+  }
 }

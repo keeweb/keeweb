@@ -1,0 +1,5 @@
+<div class="icon-select">
+    <% icons.forEach(function(icon, ix) { %>
+    <i class="fa fa-<%= icon %> icon-select__icon <%= ix === sel ? 'icon-select__icon--active' : '' %>" data-val="<%= ix %>"></i>
+    <% }); %>
+</div>

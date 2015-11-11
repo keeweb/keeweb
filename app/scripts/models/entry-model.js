@@ -20,14 +20,13 @@ var EntryModel = Backbone.Model.extend({
         this.group = group;
         this.file = file;
         this._fillByEntry();
-        this._fillInTrash();
     },
 
     _fillByEntry: function() {
         var entry = this.entry;
         this.fileName = this.file.db.meta.name;
         this.title = entry.fields.Title || '';
-        this.password = entry.fields.Password;
+        this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
         this.notes = entry.fields.Notes || '';
         this.url = entry.fields.URL || '';
         this.user = entry.fields.UserName || '';
@@ -91,19 +90,6 @@ var EntryModel = Backbone.Model.extend({
         return att;
     },
 
-    _fillInTrash: function() {
-        this.deleted = false;
-        if (this.file.db.meta.recycleBinEnabled) {
-            var trashGroupId = this.file.db.meta.recycleBinUuid.id;
-            for (var group = this.group; group; group = group.group) {
-                if (group.id === trashGroupId) {
-                    this.deleted = true;
-                    break;
-                }
-            }
-        }
-    },
-
     _entryModified: function() {
         if (!this.unsaved) {
             this.unsaved = true;
@@ -149,7 +135,8 @@ var EntryModel = Backbone.Model.extend({
 
     setField: function(field, val) {
         this._entryModified();
-        if (val || this.buildInFields.indexOf(field) >= 0) {
+        var hasValue = val && (typeof val === 'string' || val instanceof kdbxweb.ProtectedValue && val.byteLength);
+        if (hasValue || this.buildInFields.indexOf(field) >= 0) {
             this.entry.fields[field] = val;
         } else {
             delete this.entry.fields[field];
@@ -217,14 +204,18 @@ var EntryModel = Backbone.Model.extend({
     },
 
     moveToTrash: function() {
-        this.file.db.remove(this.entry, this.group.group);
+        this.file.db.remove(this.entry);
         this.group.removeEntry(this);
         var trashGroup = this.file.getTrashGroup();
         if (trashGroup) {
             trashGroup.addEntry(this);
             this.group = trashGroup;
-            this.deleted = true;
         }
+    },
+
+    deleteFromTrash: function() {
+        this.file.db.move(this.entry, null);
+        this.group.removeEntry(this);
     },
 
     removeWithoutHistory: function() {

@@ -28,7 +28,16 @@ var MenuItemModel = Backbone.Model.extend({
     },
 
     removeByFile: function(file) {
-        this.get('items').removeByAttr('file', file);
+        var items = this.get('items');
+        var toRemove;
+        items.each(function(item) {
+            if (item.file === file || item.get('file') === file) {
+                toRemove = item;
+            }
+        });
+        if (toRemove) {
+            items.remove(toRemove);
+        }
         this.trigger('change-items');
     },
 

@@ -5,7 +5,9 @@ var AppModel = require('./models/app-model'),
     KeyHandler = require('./comp/key-handler'),
     Alerts = require('./comp/alerts'),
     DropboxLink = require('./comp/dropbox-link'),
-    Updater = require('./comp/updater');
+    Updater = require('./comp/updater'),
+    LastOpenFiles = require('./comp/last-open-files'),
+    ThemeChanger = require('./util/theme-changer');
 
 $(function() {
     require('./mixins/view');
@@ -15,7 +17,12 @@ $(function() {
         return;
     }
     KeyHandler.init();
-    if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0) {
+
+    var appModel = new AppModel();
+    if (appModel.settings.get('theme')) {
+        ThemeChanger.setTheme(appModel.settings.get('theme'));
+    }
+    if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0 && !localStorage.disableSecurityCheck) {
         Alerts.error({ header: 'Not Secure!', icon: 'user-secret', esc: false, enter: false, click: false,
             body: 'You have loaded this app with insecure connection. ' +
                 'Someone may be watching you and stealing your passwords. ' +
@@ -32,8 +39,15 @@ $(function() {
     }
 
     function showApp() {
-        var appModel = new AppModel();
-        new AppView({ model: appModel }).render().showOpenFile(appModel.settings.get('lastOpenFile'));
+        var appView = new AppView({ model: appModel }).render();
+
+        var lastOpenFiles = LastOpenFiles.all();
+        var lastOpenFile = lastOpenFiles[0];
+        if (lastOpenFile && lastOpenFile.storage === 'file' && lastOpenFile.path) {
+            appView.showOpenFile(lastOpenFile.path);
+        } else {
+            appView.showOpenFile();
+        }
         Updater.init();
     }
 });

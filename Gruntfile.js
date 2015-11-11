@@ -8,10 +8,12 @@ var StringReplacePlugin = require('string-replace-webpack-plugin');
 module.exports = function(grunt) {
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
+    grunt.loadTasks('grunt/tasks');
 
     var webpack = require('webpack');
     var pkg = require('./package.json');
     var dt = new Date().toISOString().replace(/T.*/, '');
+    var electronVersion = '0.34.0';
 
     function replaceFont(css) {
         css.walkAtRules('font-face', function (rule) {
@@ -37,12 +39,24 @@ module.exports = function(grunt) {
     }
 
     grunt.initConfig({
+        gitinfo: {
+            branch: {
+                current: {
+                    SHA: 'Current HEAD SHA',
+                    shortSHA: 'Current HEAD short SHA',
+                    name: 'Current branch name',
+                    lastCommitTime: 'Last commit time'
+                }
+            }
+        },
         'bower-install-simple': {
             install: {
             }
         },
         clean: {
-            dist: ['dist', 'tmp']
+            dist: ['dist', 'tmp'],
+            desktop_dist: ['dist/desktop'],
+            desktop_tmp: ['tmp/desktop']
         },
         copy: {
             html: {
@@ -61,6 +75,21 @@ module.exports = function(grunt) {
                 nonull: true,
                 expand: true,
                 flatten: true
+            },
+            'desktop_osx': {
+                src: 'tmp/desktop/KeeWeb.dmg',
+                dest: 'dist/desktop/KeeWeb.mac.dmg',
+                nonull: true
+            },
+            'desktop_win': {
+                src: 'tmp/desktop/KeeWeb Setup.exe',
+                dest: 'dist/desktop/KeeWeb.win32.exe',
+                nonull: true
+            },
+            'desktop_linux': {
+                src: 'tmp/desktop/KeeWeb.linux.x64.zip',
+                dest: 'dist/desktop/KeeWeb.linux.x64.zip',
+                nonull: true
             }
         },
         jshint: {
@@ -114,7 +143,7 @@ module.exports = function(grunt) {
                 options: {
                     replacements: [{
                         pattern: '# YYYY-MM-DD:v0.0.0',
-                        replacement: '# ' + dt + ':v' + require('./package').version
+                        replacement: '# ' + dt + ':v' + pkg.version
                     }]
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
@@ -218,6 +247,90 @@ module.exports = function(grunt) {
                 files: 'app/index.html',
                 tasks: ['copy:html']
             }
+        },
+        electron: {
+            options: {
+                name: 'KeeWeb',
+                dir: 'electron',
+                out: 'tmp/desktop',
+                version: electronVersion,
+                overwrite: true,
+                'app-version': pkg.version,
+                'build-version': '<%= gitinfo.local.branch.current.shortSHA %>'
+            },
+            osx: {
+                options: {
+                    platform: 'darwin',
+                    arch: 'x64',
+                    icon: 'graphics/app.icns'
+                }
+            },
+            linux: {
+                options: {
+                    platform: 'linux',
+                    arch: 'x64',
+                    icon: 'graphics/app.ico'
+                }
+            },
+            win32: {
+                options: {
+                    platform: 'win32',
+                    arch: 'ia32',
+                    icon: 'graphics/app.ico',
+                    'version-string': {
+                        CompanyName: 'antelle.github.io',
+                        LegalCopyright: 'Antelle, MIT license',
+                        FileDescription: 'KeeWeb Desktop',
+                        OriginalFilename: 'KeeWeb.exe',
+                        FileVersion: pkg.version,
+                        ProductVersion: pkg.version,
+                        ProductName: 'KeeWeb',
+                        InternalName: 'KeeWeb'
+                    }
+                }
+            }
+        },
+        'electron_builder': {
+            options: {
+                out: path.join(__dirname, 'tmp/desktop'),
+                basePath: __dirname,
+                config: {
+                    osx: {
+                        title: 'KeeWeb',
+                        background: path.join(__dirname, 'graphics/dmg-bg.png'),
+                        icon: path.join(__dirname, 'graphics/app.icns'),
+                        'icon-size': 80,
+                        contents: [
+                            {'x': 438, 'y': 344, 'type': 'link', 'path': '/Applications'},
+                            {'x': 192, 'y': 344, 'type': 'file'}
+                        ]
+                    },
+                    win: {
+                        title: 'KeeWeb',
+                        icon: path.join(__dirname, 'graphics/app.ico')
+                    }
+                }
+            },
+            osx: {
+                options: {
+                    platform: 'osx',
+                    appPath: path.join(__dirname, 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app')
+                }
+            },
+            win: {
+                options: {
+                    platform: 'win32',
+                    appPath: path.join(__dirname, 'tmp/desktop/KeeWeb-win32-ia32')
+                }
+            }
+        },
+        compress: {
+            linux: {
+                options: {
+                    archive: 'tmp/desktop/KeeWeb.linux.x64.zip'
+                },
+                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true }]
+            }
         }
     });
 
@@ -235,5 +348,18 @@ module.exports = function(grunt) {
         'inline',
         'htmlmin',
         'string-replace'
+    ]);
+
+    grunt.registerTask('desktop', [
+        'gitinfo',
+        'clean:desktop_tmp',
+        'clean:desktop_dist',
+        'electron',
+        'electron_builder',
+        'compress:linux',
+        'copy:desktop_osx',
+        'copy:desktop_win',
+        'copy:desktop_linux',
+        'clean:desktop_tmp'
     ]);
 };

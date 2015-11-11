@@ -3,9 +3,9 @@
         disabled ? 'menu__item--disabled' : '' %> <%=
         options && options.length ? 'menu__item--with-options' : '' %> <%=
         cls ? cls : '' %>">
-    <div class="menu__item-body">
+    <div class="menu__item-body" <%= drag ? 'draggable="true"' : '' %>>
         <i class="menu__item-icon fa <%= icon ? 'fa-' + icon : 'menu__item-icon--no-icon' %>"></i><span
-            class="menu__item-title"><%- title %></span>
+            class="menu__item-title"><%- title || '(no title)' %></span>
         <% if (options) { %>
         <div class="menu__item-options">
             <% options.forEach(function(option) { %>
@@ -13,6 +13,12 @@
                     data-value="<%- option.get('value') %>"><%- option.get('title') %></div>
             <% }); %>
         </div>
+        <% } %>
+        <% if (typeof editable !== 'undefined') { %>
+        <i class="menu__item-edit fa fa-cog"></i>
+        <% } %>
+        <% if (filterKey === 'trash') { %>
+        <i class="menu__item-empty-trash fa fa-minus-circle"></i>
         <% } %>
     </div>
 </div>

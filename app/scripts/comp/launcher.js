@@ -9,6 +9,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         name: 'electron',
         version: window.process.versions.electron,
         req: window.require,
+        remReq: function(mod) {
+            return this.req('remote').require(mod);
+        },
         openLink: function(href) {
             this.req('shell').openExternal(href);
         },
@@ -17,12 +20,11 @@ if (window.process && window.process.versions && window.process.versions.electro
             this.req('remote').getCurrentWindow().openDevTools();
         },
         getSaveFileName: function(defaultPath, cb) {
-            var remote = this.req('remote');
             if (defaultPath) {
-                var homePath = remote.require('app').getPath('userDesktop');
+                var homePath = this.remReq('app').getPath('userDesktop');
                 defaultPath = this.req('path').join(homePath, defaultPath);
             }
-            remote.require('dialog').showSaveDialog({
+            this.remReq('dialog').showSaveDialog({
                 title: 'Save Passwords Database',
                 defaultPath: defaultPath,
                 filters: [{ name: 'KeePass files', extensions: ['kdbx'] }]
@@ -32,20 +34,29 @@ if (window.process && window.process.versions && window.process.versions.electro
             var path = this.req('path').join(this.req('remote').require('app').getPath('userData'), 'index.html');
             this.writeFile(path, data);
         },
+        getUserDataPath: function(fileName) {
+            return this.req('path').join(this.remReq('app').getPath('userData'), fileName || '');
+        },
         writeFile: function(path, data) {
             this.req('fs').writeFileSync(path, new window.Buffer(data));
         },
-        readFile: function(path) {
-            return new Uint8Array(this.req('fs').readFileSync(path));
+        readFile: function(path, encoding) {
+            var contents = this.req('fs').readFileSync(path, encoding);
+            return typeof contents === 'string' ? contents : new Uint8Array(contents);
         },
         fileExists: function(path) {
             return this.req('fs').existsSync(path);
+        },
+        exit: function() {
+            Launcher.exitRequested = true;
+            this.remReq('app').quit();
         }
     };
     window.launcherOpen = function(path) {
         Backbone.trigger('launcher-open-file', path);
     };
     if (window.launcherOpenedFile) {
+        console.log('Open file request', window.launcherOpenedFile);
         Backbone.trigger('launcher-open-file', window.launcherOpenedFile);
         delete window.launcherOpenedFile;
     }

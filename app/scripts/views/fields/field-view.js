@@ -91,8 +91,10 @@ var FieldView = Backbone.View.extend({
         this.editing = false;
         var oldValText = this.value && this.value.getText ? this.value.getText() : this.value;
         var newValText = newVal && newVal.getText ? newVal.getText() : newVal;
+        var textEqual = _.isEqual(newValText, oldValText);
+        var protectedEqual = (newVal && typeof newVal.getText) === (this.value && typeof this.value.getText);
         var arg;
-        if (newVal !== undefined && !_.isEqual(newValText, oldValText)) {
+        if (newVal !== undefined && (!textEqual || !protectedEqual)) {
             arg = { val: newVal, field: this.model.name };
             if (extra) {
                 _.extend(arg, extra);

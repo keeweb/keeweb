@@ -3,7 +3,8 @@
 var Backbone = require('backbone'),
     KeyHandler = require('../../comp/key-handler'),
     Keys = require('../../const/keys'),
-    Alerts = require('../../comp/alerts');
+    Alerts = require('../../comp/alerts'),
+    DragDropInfo = require('../../comp/drag-drop-info');
 
 var MenuItemView = Backbone.View.extend({
     template: require('templates/menu/menu-item.html'),
@@ -13,7 +14,13 @@ var MenuItemView = Backbone.View.extend({
         'mouseout': 'mouseout',
         'click .menu__item-option': 'selectOption',
         'click': 'selectItem',
-        'dblclick': 'expandItem'
+        'dblclick': 'expandItem',
+        'click .menu__item-edit': 'editItem',
+        'click .menu__item-empty-trash': 'emptyTrash',
+        'dragstart': 'dragstart',
+        'dragover': 'dragover',
+        'dragleave': 'dragleave',
+        'drop' : 'drop'
     },
 
     iconEl: null,
@@ -22,9 +29,12 @@ var MenuItemView = Backbone.View.extend({
     initialize: function () {
         this.itemViews = [];
         this.listenTo(this.model, 'change:title', this.changeTitle);
+        this.listenTo(this.model, 'change:icon', this.changeIcon);
         this.listenTo(this.model, 'change:active', this.changeActive);
         this.listenTo(this.model, 'change:expanded', this.changeExpanded);
         this.listenTo(this.model, 'change:cls', this.changeCls);
+        this.listenTo(this.model, 'delete', this.remove);
+        this.listenTo(this.model, 'insert', this.insertItem);
         var shortcut = this.model.get('shortcut');
         if (shortcut) {
             KeyHandler.onKey(shortcut, this.selectItem, this, KeyHandler.SHORTCUT_OPT);
@@ -42,13 +52,15 @@ var MenuItemView = Backbone.View.extend({
         if (items && this.model.get('expanded')) {
             items.forEach(function (item) {
                 if (item.get('visible')) {
-                    var itemView = new MenuItemView({el: this.$el, model: item});
-                    itemView.listenTo(itemView, 'select', this.itemSelected);
-                    itemView.render();
-                    this.itemViews.push(itemView);
+                    this.insertItem(item);
                 }
             }, this);
         }
+        return this;
+    },
+
+    insertItem: function(item) {
+        this.itemViews.push(new MenuItemView({el: this.$el, model: item}).render());
     },
 
     remove : function() {
@@ -69,7 +81,11 @@ var MenuItemView = Backbone.View.extend({
     },
 
     changeTitle: function(model, title) {
-        this.$el.find('.menu__item-title').text(title);
+        this.$el.find('.menu__item-title').first().text(title || '(no title)');
+    },
+
+    changeIcon: function(model, icon) {
+        this.iconEl[0].className = 'menu__item-icon fa ' + (icon ? 'fa-' + icon : 'menu__item-icon--no-icon');
     },
 
     changeActive: function(model, active) {
@@ -89,8 +105,10 @@ var MenuItemView = Backbone.View.extend({
     },
 
     mouseover: function(e) {
-        this.$el.addClass('menu__item--hover');
-        e.stopPropagation();
+        if (!e.button) {
+            this.$el.addClass('menu__item--hover');
+            e.stopPropagation();
+        }
     },
 
     mouseout: function(e) {
@@ -129,6 +147,62 @@ var MenuItemView = Backbone.View.extend({
             this.model.toggleExpanded();
         }
         e.stopPropagation();
+    },
+
+    editItem: function(e) {
+        if (this.model.get('active') && this.model.get('editable')) {
+            e.stopPropagation();
+            Backbone.trigger('edit-group', this.model);
+        }
+    },
+
+    emptyTrash: function(e) {
+        e.stopPropagation();
+        Alerts.yesno({
+            header: 'Empty trash?',
+            body: 'You will not be able to put items back',
+            icon: 'minus-circle',
+            success: function() {
+                Backbone.trigger('empty-trash');
+            }
+        });
+    },
+
+    dropAllowed: function(e) {
+        return ['text/group', 'text/entry'].indexOf(e.dataTransfer.types[0]) >= 0;
+    },
+
+    dragstart: function(e) {
+        e.stopPropagation();
+        if (this.model.get('drag')) {
+            e.dataTransfer.setData('text/group', this.model.id);
+            e.dataTransfer.effectAllowed = 'move';
+            DragDropInfo.dragObject = this.model;
+        }
+    },
+
+    dragover: function(e) {
+        e.stopPropagation();
+        if (this.model.get('drop') && this.dropAllowed(e)) {
+            e.preventDefault();
+            this.$el.addClass('menu__item--drag');
+        }
+    },
+
+    dragleave: function(e) {
+        e.stopPropagation();
+        if (this.model.get('drop') && this.dropAllowed(e)) {
+            this.$el.removeClass('menu__item--drag');
+        }
+    },
+
+    drop: function(e) {
+        e.stopPropagation();
+        if (this.model.get('drop') && this.dropAllowed(e)) {
+            this.$el.removeClass('menu__item--drag');
+            this.model.moveHere(DragDropInfo.dragObject);
+            Backbone.trigger('refresh');
+        }
     }
 });
 

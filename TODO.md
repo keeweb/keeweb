@@ -1,26 +1,37 @@
-# MVP
+# TODO
 
-- [ ] add/edit groups
+## v1.0
 
-# FUTURE
-
-- [ ] trash: groups/empty/untrash
-- [ ] move groups/entries
+- [x] improve open page UX
+- [x] provide engineer error details on file open
+- [x] trash: groups/delete/untrash
+- [x] move groups/entries
+- [ ] auto-update
+- [ ] lock flow, auto-lock
+- [ ] minimize to tray
 - [ ] help/tips
 - [ ] switch view
-- [ ] optional auto-update
-- [ ] lock without closing
-- [ ] merge
-- [ ] show sync date
-- [ ] dropbox keyfiles
-- [ ] save to localstorage
-- [ ] generation templates
+- [x] protected fields
+- [x] close files
+- [x] offline and local storage
+- [x] use dropbox chooser for keyfile
+- [ ] trim history by rules
+- [ ] custom icons, favicons
 - [ ] advanced search
-- [ ] mobile
+- [ ] sync merge
+
+## Future
+- [ ] secure inputs for all passwords
+- [ ] keepasshttp
+- [ ] mobile apps
 - [ ] file type associations
-- [ ] auto-type
-- [ ] secure fields
+- [ ] auto-type for desktop
+- [ ] one-time passwords
 - [ ] audit
+- [ ] generation templates
+- [ ] i18n
+- [ ] allow to increase font size
+- [ ] drag entries across files/to trash
+- [ ] external crypto devices support
 - [ ] entry templates
-- [ ] custom icons
 - [ ] plugins

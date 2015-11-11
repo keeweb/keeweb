@@ -1,7 +1,6 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    AppSettingsModel = require('../../models/app-settings-model'),
     FeatureDetector = require('../../util/feature-detector'),
     PasswordGenerator = require('../../util/password-generator'),
     Alerts = require('../../comp/alerts'),
@@ -18,6 +17,7 @@ var SettingsAboutView = Backbone.View.extend({
         'click .settings__file-button-save-file': 'saveToFile',
         'click .settings__file-button-export-xml': 'exportAsXml',
         'click .settings__file-button-save-dropbox': 'saveToDropboxClick',
+        'click .settings__file-button-close': 'closeFile',
         'change #settings__file-key-file': 'keyFileChange',
         'mousedown #settings__file-file-select-link': 'triggerSelectFile',
         'change #settings__file-file-select': 'fileSelected',
@@ -98,26 +98,28 @@ var SettingsAboutView = Backbone.View.extend({
         if (!this.validate()) {
             return;
         }
-        var data = this.model.getData();
-        var fileName = this.model.get('name') + '.kdbx';
-        if (Launcher) {
-            if (this.model.get('path')) {
-                this.saveToFileWithPath(this.model.get('path'), data);
+        var that = this;
+        this.model.getData(function(data) {
+            var fileName = that.model.get('name') + '.kdbx';
+            if (Launcher) {
+                if (that.model.get('path')) {
+                    that.saveToFileWithPath(that.model.get('path'), data);
+                } else {
+                    Launcher.getSaveFileName(fileName, function (path) {
+                        if (path) {
+                            that.saveToFileWithPath(path, data);
+                        }
+                    });
+                }
             } else {
-                Launcher.getSaveFileName(fileName, (function (path) {
-                    if (path) {
-                        this.saveToFileWithPath(path, data);
-                    }
-                }).bind(this));
+                var blob = new Blob([data], {type: 'application/octet-stream'});
+                FileSaver.saveAs(blob, fileName);
+                that.passwordChanged = false;
+                if (that.model.get('storage') !== 'dropbox') {
+                    that.model.saved();
+                }
             }
-        } else {
-            var blob = new Blob([data], {type: 'application/octet-stream'});
-            FileSaver.saveAs(blob, fileName);
-            this.passwordChanged = false;
-            if (this.model.get('storage') !== 'dropbox') {
-                this.model.saved();
-            }
-        }
+        });
     },
 
     saveToFileWithPath: function(path, data) {
@@ -125,10 +127,8 @@ var SettingsAboutView = Backbone.View.extend({
             Launcher.writeFile(path, data);
             this.passwordChanged = false;
             this.model.saved(path, 'file');
-            if (!AppSettingsModel.instance.get('lastOpenFile')) {
-                AppSettingsModel.instance.set('lastOpenFile', path);
-            }
         } catch (e) {
+            console.error('Error saving file', path, e);
             Alerts.error({
                 header: 'Save error',
                 body: 'Error saving to file ' + path + ': \n' + e
@@ -140,9 +140,10 @@ var SettingsAboutView = Backbone.View.extend({
         if (!this.validate()) {
             return;
         }
-        var data = this.model.getXml();
-        var blob = new Blob([data], {type: 'text/xml'});
-        FileSaver.saveAs(blob, this.model.get('name') + '.xml');
+        this.model.getXml((function(xml) {
+            var blob = new Blob([xml], {type: 'text/xml'});
+            FileSaver.saveAs(blob, this.model.get('name') + '.xml');
+        }).bind(this));
     },
 
     saveToDropboxClick: function() {
@@ -155,37 +156,67 @@ var SettingsAboutView = Backbone.View.extend({
         if (this.model.get('syncing') || !this.validate()) {
             return;
         }
-        var data = this.model.getData();
-        var fileName = this.model.get('name') + '.kdbx';
-        this.model.set('syncing', true);
-        this.render();
-        DropboxLink.saveFile(fileName, data, overwrite, (function(err) {
-            if (err) {
-                this.model.set('syncing', false);
-                if (err.exists) {
-                    Alerts.alert({
-                        header: 'Already exists',
-                        body: 'File ' + fileName + ' already exists in your Dropbox.',
-                        icon: 'question',
-                        buttons: [{result: 'yes', title: 'Overwrite it'}, {result: '', title: 'I\'ll choose another name'}],
-                        esc: '',
-                        click: '',
-                        enter: 'yes',
-                        success: this.saveToDropbox.bind(this, true),
-                        cancel: (function() { this.$el.find('#settings__file-name').focus(); }).bind(this)
-                    });
+        var that = this;
+        this.model.getData(function(data) {
+            var fileName = that.model.get('name') + '.kdbx';
+            that.model.set('syncing', true);
+            that.render();
+            DropboxLink.saveFile(fileName, data, overwrite, function (err) {
+                if (err) {
+                    that.model.set('syncing', false);
+                    if (err.exists) {
+                        Alerts.alert({
+                            header: 'Already exists',
+                            body: 'File ' + fileName + ' already exists in your Dropbox.',
+                            icon: 'question',
+                            buttons: [{result: 'yes', title: 'Overwrite it'}, {result: '', title: 'I\'ll choose another name'}],
+                            esc: '',
+                            click: '',
+                            enter: 'yes',
+                            success: that.saveToDropbox.bind(that, true),
+                            cancel: function () {
+                                that.$el.find('#settings__file-name').focus();
+                            }
+                        });
+                    } else {
+                        Alerts.error({
+                            header: 'Save error',
+                            body: 'Error saving to Dropbox: \n' + err
+                        });
+                    }
                 } else {
-                    Alerts.error({
-                        header: 'Save error',
-                        body: 'Error saving to Dropbox: \n' + err
-                    });
+                    that.passwordChanged = false;
+                    that.model.saved(fileName, 'dropbox');
+                    that.render();
                 }
-            } else {
-                this.passwordChanged = false;
-                this.model.saved(fileName, 'dropbox');
-                this.render();
-            }
-        }).bind(this));
+            });
+        });
+    },
+
+    closeFile: function() {
+        if (this.model.get('modified')) {
+            var that = this;
+            Alerts.yesno({
+                header: 'Unsaved changes',
+                body: 'There are unsaved changes in this file',
+                buttons: [
+                    //{result: 'save', title: 'Save and close'},
+                    {result: 'close', title: 'Close and lose changes', error: true},
+                    {result: '', title: 'Don\t close'}
+                ],
+                success: function(result) {
+                    if (result === 'close') {
+                        that.closeFileNoCheck();
+                    }
+                }
+            });
+        } else {
+            this.closeFileNoCheck();
+        }
+    },
+
+    closeFileNoCheck: function() {
+        Backbone.trigger('close-file', this.model);
     },
 
     keyFileChange: function(e) {
