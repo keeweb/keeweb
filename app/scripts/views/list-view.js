@@ -6,6 +6,7 @@ var Backbone = require('backbone'),
     ListSearchView = require('./list-search-view'),
     EntryPresenter = require('../presenters/entry-presenter'),
     DragDropInfo = require('../comp/drag-drop-info'),
+    AppSettingsModel = require('../models/app-settings-model'),
     baron = require('baron');
 
 var ListView = Backbone.View.extend({
@@ -36,6 +37,7 @@ var ListView = Backbone.View.extend({
         this.listenTo(this.views.search, 'create-group', this.createGroup);
         this.listenTo(this, 'show', this.viewShown);
         this.listenTo(this, 'hide', this.viewHidden);
+        this.listenTo(this, 'view-resize', this.viewResized);
         this.listenTo(Backbone, 'filter', this.filterChanged);
         this.listenTo(Backbone, 'entry-updated', this.entryUpdated);
 
@@ -67,6 +69,9 @@ var ListView = Backbone.View.extend({
             this.itemsEl.html(itemsHtml).scrollTop(0);
         } else {
             this.itemsEl.html(this.emptyTemplate());
+        }
+        if (typeof AppSettingsModel.instance.get('listViewWidth') === 'number') {
+            this.$el.width(AppSettingsModel.instance.get('listViewWidth'));
         }
         this.pageResized();
         return this;
@@ -136,6 +141,10 @@ var ListView = Backbone.View.extend({
     viewHidden: function() {
         this.views.search.hide();
     },
+
+    viewResized: _.throttle(function(size) {
+        AppSettingsModel.instance.set('listViewWidth', size);
+    }, 1000),
 
     filterChanged: function(filter) {
         this.items = filter.entries;

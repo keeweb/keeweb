@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### vNext
 `-` fixed protected field deletion  
+`+` remember menu and list width  
 
 ##### v0.2.1 (2015-11-10)
 Fixed KeePassX compatibility issues

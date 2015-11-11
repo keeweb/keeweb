@@ -8,7 +8,9 @@ var FileName = 'app-settings.json';
 var AppSettingsModel = Backbone.Model.extend({
     defaults: {
         theme: 'd',
-        expandGroups: true
+        expandGroups: true,
+        listViewWidth: null,
+        menuViewWidth: null
     },
 
     initialize: function() {
