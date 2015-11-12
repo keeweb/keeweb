@@ -18,6 +18,7 @@ EntryPresenter.prototype = {
     },
     get id() { return this.entry ? this.entry.id : this.group.get('id'); },
     get icon() { return this.entry ? this.entry.icon : (this.group.get('icon') || 'folder'); },
+    get customIcon() { return this.entry ? this.entry.customIcon : undefined; },
     get color() { return this.entry ? this.entry.color : undefined; },
     get title() { return this.entry ? this.entry.title : this.group.get('title'); },
     get notes() { return this.entry ? this.entry.notes : undefined; },

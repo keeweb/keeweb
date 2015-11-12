@@ -41,6 +41,7 @@ var EntryModel = Backbone.Model.extend({
         this.expires = entry.times.expires ? entry.times.expiryTime : undefined;
         this.expired = entry.times.expires && entry.times.expiryTime <= new Date();
         this.historyLength = entry.history.length;
+        this._buildCustomIcon();
         this._buildSearchText();
         this._buildSearchTags();
         this._buildSearchColor();
@@ -60,6 +61,16 @@ var EntryModel = Backbone.Model.extend({
             text += att.title.toLowerCase() + '\n';
         });
         this.searchText = text;
+    },
+
+    _buildCustomIcon: function() {
+        this.customIcon = null;
+        if (this.entry.customIcon) {
+            var iconData = this.file.db.meta.customIcons[this.entry.customIcon];
+            if (iconData) {
+                this.customIcon = kdbxweb.ByteUtils.bytesToBase64(iconData);
+            }
+        }
     },
 
     _buildSearchTags: function() {

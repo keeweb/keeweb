@@ -91,11 +91,27 @@
       .list__item-title, .list__item-descr { text-decoration: line-through; }
     }
 
-    i {
+    &-icon {
       width: 16px;
+      height: 16px;
+      &--custom {
+        @include filter(grayscale(1));
+        vertical-align: text-bottom;
+        // TODO: find more suitable colors
+        &.yellow { @include filter(grayscale(1) sepia(1) hue-rotate(20deg) brightness(0.4) saturate(3) brightness(2)); }
+        &.green { @include filter(grayscale(1) sepia(1) hue-rotate(70deg) brightness(.5) saturate(2) brightness(1.3)); }
+        &.red { @include filter(grayscale(1) sepia(1) hue-rotate(320deg) brightness(0.6) saturate(4) brightness(1)); }
+        &.orange { @include filter(grayscale(1) sepia(1) hue-rotate(340deg) brightness(.4) saturate(3) brightness(1.8)); }
+        &.blue { @include filter(grayscale(1) sepia(1) hue-rotate(170deg) brightness(0.3) saturate(3) brightness(2)); }
+        &.violet { @include filter(grayscale(1) sepia(1) hue-rotate(240deg) brightness(0.8) saturate(2.7) brightness(.9)); }
+      }
     }
 
-    .list__item-descr {
+    &-title {
+      margin-left: 2px;
+    }
+
+    &-descr {
       font-size: .8em;
       @include th { color: muted-color(); }
       display: block;
