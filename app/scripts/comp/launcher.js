@@ -30,12 +30,11 @@ if (window.process && window.process.versions && window.process.versions.electro
                 filters: [{ name: 'KeePass files', extensions: ['kdbx'] }]
             }, cb);
         },
-        writeAppFile: function(data) {
-            var path = this.req('path').join(this.req('remote').require('app').getPath('userData'), 'index.html');
-            this.writeFile(path, data);
-        },
         getUserDataPath: function(fileName) {
             return this.req('path').join(this.remReq('app').getPath('userData'), fileName || '');
+        },
+        getTempPath: function(fileName) {
+            return this.req('path').join(this.remReq('app').getPath('temp'), fileName || '');
         },
         writeFile: function(path, data) {
             this.req('fs').writeFileSync(path, new window.Buffer(data));

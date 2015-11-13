@@ -5,20 +5,23 @@ var Backbone = require('backbone'),
     Links = require('../const/links'),
     Launcher = require('../comp/launcher'),
     AppSettingsModel = require('../models/app-settings-model'),
-    UpdateModel = require('../models/update-model');
+    UpdateModel = require('../models/update-model'),
+    Transport = require('../comp/transport');
 
 var Updater = {
     UpdateInterval: 1000*60*60*24,
-    MinUpdateTimeout: 500,
-    MinUpdateSize: 100000,
+    MinUpdateTimeout: 500*10,
+    MinUpdateSize: 10000,
+    UpdateCheckFiles: ['index.html', 'app.js'],
     nextCheckTimeout: null,
+    updateCheckDate: new Date(0),
     enabledAutoUpdate: function() {
         return Launcher && AppSettingsModel.instance.get('autoUpdate');
     },
     init: function() {
         var willCheckNow = this.scheduleNextCheck();
         if (!willCheckNow && this.enabledAutoUpdate()) {
-            this.update();
+            this.check();
         }
     },
     scheduleNextCheck: function() {
@@ -29,91 +32,125 @@ var Updater = {
         if (!this.enabledAutoUpdate()) {
             return;
         }
-        var timeDiff = this.StartupUpdateInterval;
+        var timeDiff = this.MinUpdateTimeout;
         var lastCheckDate = UpdateModel.instance.get('lastCheckDate');
         if (lastCheckDate) {
             timeDiff = Math.min(Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout), this.UpdateInterval);
         }
         this.nextCheckTimeout = setTimeout(this.check.bind(this), timeDiff);
+        console.log('Update check will happen in ' + Math.round(timeDiff / 1000) + ' s');
         return timeDiff === this.MinUpdateTimeout;
     },
-    check: function() {
+    check: function(startedByUser) {
         if (!Launcher) {
             return;
         }
         UpdateModel.instance.set('status', 'checking');
         var that = this;
-        // TODO: potential DDoS in case on any error! Introduce rate limiting here
-        $.ajax({
-            type: 'GET',
+        if (!startedByUser) {
+            // additional protection from broken program logic, to ensure that auto-checks are not performed more than once an hour
+            var diffMs = new Date() - this.updateCheckDate;
+            if (isNaN(diffMs) || diffMs < 1000 * 60 * 60) {
+                console.error('Prevented update check; last check was performed at ' + this.updateCheckDate);
+                that.scheduleNextCheck();
+                return;
+            }
+            this.updateCheckDate = new Date();
+        }
+        console.log('Checking for update...');
+        Transport.httpGet({
             url: Links.WebApp + 'manifest.appcache',
-            dataType: 'text',
-            success: function (data) {
+            utf8: true,
+            success: function(data) {
                 var dt = new Date();
-                UpdateModel.instance.set('lastCheckDate', dt);
                 var match = data.match(/#\s*(\d+\-\d+\-\d+):v([\d+\.\w]+)/);
+                console.log('Update check: ' + (match ? match[0] : 'unknown'));
                 if (!match) {
                     var errMsg = 'No version info found';
-                    UpdateModel.instance.set('lastError', errMsg);
-                    UpdateModel.instance.set('status', 'error');
+                    UpdateModel.instance.set({ status: 'error', lastCheckDate: dt, lastCheckError: errMsg });
                     UpdateModel.instance.save();
                     that.scheduleNextCheck();
                     return;
                 }
-                UpdateModel.instance.set('lastSuccessCheckDate', dt);
-                UpdateModel.instance.set('lastVersionReleaseDate', new Date(match[1]));
-                UpdateModel.instance.set('lastVersion', match[2]);
-                UpdateModel.instance.set('status', 'ok');
+                UpdateModel.instance.set({
+                    status: 'ok',
+                    lastCheckDate: dt,
+                    lastSuccessCheckDate: dt,
+                    lastVersionReleaseDate: new Date(match[1]),
+                    lastVersion: match[2],
+                    lastcheckError: null
+                });
                 UpdateModel.instance.save();
                 that.scheduleNextCheck();
-                if (that.enabledAutoUpdate()) {
-                    that.update();
-                }
+                that.update(startedByUser);
             },
-            error: function() {
-                UpdateModel.instance.set('lastCheckDate', new Date());
-                UpdateModel.instance.set('lastError', 'Error downloading last version info');
-                UpdateModel.instance.set('status', 'error');
+            error: function(e) {
+                console.error('Update check error', e);
+                UpdateModel.instance.set({
+                    status: 'error',
+                    lastCheckDate: new Date(),
+                    lastCheckError: 'Error checking last version'
+                });
                 UpdateModel.instance.save();
                 that.scheduleNextCheck();
             }
         });
     },
-    update: function() {
-        if (!Launcher ||
-            UpdateModel.instance.get('version') === RuntimeInfo.version ||
-            UpdateModel.instance.get('updateStatus')) {
+    update: function(startedByUser) {
+        var ver = UpdateModel.instance.get('lastVersion');
+        if (!Launcher || ver === RuntimeInfo.version || UpdateModel.instance.get('updateStatus')) {
+            console.log('You are using the latest version');
             return;
         }
-        // TODO: potential DDoS in case on any error! Save file with version and check before the download
-        UpdateModel.instance.set('updateStatus', 'downloading');
-        var xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', (function() {
-            if (xhr.response.byteLength > this.MinUpdateSize) {
+        UpdateModel.instance.set({ updateStatus: 'downloading', updateError: null });
+        var that = this;
+        console.log('Downloading update', ver);
+        Transport.httpGet({
+            url: Links.UpdateDesktop.replace('{ver}', ver),
+            file: 'KeeWeb-' + ver + '.zip',
+            cache: !startedByUser,
+            success: function(filePath) {
                 UpdateModel.instance.set('updateStatus', 'downloaded');
-                try {
-                    Launcher.writeAppFile(xhr.response);
-                } catch (e) {
-                    console.error('Error writing updated file', e);
-                    UpdateModel.instance.set('updateStatus', 'error');
-                }
-                Backbone.trigger('update-app');
-            } else {
-                console.error('Bad downloaded file size: ' + xhr.response.byteLength);
-                UpdateModel.instance.set('updateStatus', 'error');
+                console.error('Extracting update file', that.UpdateCheckFiles, filePath);
+                that.extractAppUpdate(filePath, function(err) {
+                    if (err) {
+                        console.error('Error extracting update', err);
+                        UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error extracting update' });
+                    } else {
+                        UpdateModel.instance.set({ updateStatus: 'ready', updateError: null });
+                        Backbone.trigger('update-app');
+                    }
+                });
+            },
+            error: function(e) {
+                console.error('Error downloading update', e);
+                UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error downloading update' });
             }
-        }).bind(this));
-        xhr.addEventListener('error', updateFailed);
-        xhr.addEventListener('abort', updateFailed);
-        xhr.addEventListener('timeout', updateFailed);
-        xhr.open('GET', Links.WebApp);
-        xhr.responseType = 'arraybuffer';
-        xhr.send();
+        });
+    },
 
-        function updateFailed(e) {
-            console.error('XHR error downloading update', e);
-            UpdateModel.instance.set('updateStatus', 'error');
-        }
+    extractAppUpdate: function(updateFile, expectedFiles, cb) {
+        var appPath = Launcher.getUserDataPath();
+        var StreamZip = Launcher.req('node-stream-zip');
+        var zip = new StreamZip({ file: updateFile, storeEntries: true });
+        zip.on('error', cb);
+        zip.on('ready', function() {
+            var containsAll = expectedFiles.every(function(expFile) {
+                var entry = zip.entry(expFile);
+                return entry && entry.isFile;
+            });
+            if (!containsAll) {
+                return cb('Bad archive');
+            }
+            zip.extract(null, appPath, function(err) {
+                zip.close();
+                if (err) {
+                    return cb(err);
+                }
+                Launcher.req('fs').unlink(updateFile);
+                cb();
+            });
+        });
     }
 };
 

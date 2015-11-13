@@ -26,12 +26,12 @@ app.on('ready', function() {
     setMenu();
     if (fs.existsSync(htmlPath)) {
         mainWindow.loadUrl('file://' + htmlPath);
-    } else {
-        downloadFile();
     }
+    mainWindow.show(); // remove
+    mainWindow.openDevTools();
     mainWindow.webContents.on('dom-ready', function() {
         setTimeout(function() {
-            mainWindow.show();
+            //mainWindow.show();
             ready = true;
             notifyOpenFile();
         }, 50);
@@ -86,38 +86,5 @@ function notifyOpenFile() {
         mainWindow.webContents.executeJavaScript('if (window.launcherOpen) { window.launcherOpen("' + openFile + '"); } ' +
             ' else { window.launcherOpenedFile="' + openFile + '"; }');
         openFile = null;
-    }
-}
-
-function downloadFile() {
-    console.log('Downloading file...');
-    mainWindow.loadUrl('file://' + path.join(__dirname, 'loading.html'));
-    var fileData = [];
-    require('https').get('https://antelle.github.io/keeweb/index.html', function(res) {
-        res.on('data', function (chunk) {
-            fileData.push(chunk);
-        });
-        res.on('end', function() {
-            fileData = Buffer.concat(fileData);
-            var fileDataStr = fileData.toString('utf8');
-            if (/^\s*<![\s\S]*<\/html>\s*$/.test(fileDataStr) && fileData.byteLength > 100000) {
-                fs.writeFileSync(htmlPath, fileData);
-                if (mainWindow) {
-                    mainWindow.loadUrl('file://' + htmlPath);
-                }
-            } else {
-                showDownloadError('Invalid file downloaded');
-            }
-        });
-    }).on('error', function(err) {
-        showDownloadError(err);
-    });
-}
-
-function showDownloadError(err) {
-    console.error(err);
-    if (mainWindow) {
-        mainWindow.webContents.executeJavaScript('setTitle("Failed to download the app. Please restart me.<br/>' +
-            'This app requires Internet connection to start for the first time.")');
     }
 }

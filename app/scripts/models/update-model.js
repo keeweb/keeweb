@@ -8,10 +8,10 @@ var UpdateModel = Backbone.Model.extend({
         lastCheckDate: null,
         lastVersion: null,
         lastVersionReleaseDate: null,
-        lastError: null,
+        lastCheckError: null,
         status: null,
         updateStatus: null,
-        lastRequestDate: null
+        updateError: null
     },
 
     initialize: function() {
@@ -34,6 +34,7 @@ var UpdateModel = Backbone.Model.extend({
     save: function() {
         var attr = _.clone(this.attributes);
         delete attr.updateStatus;
+        delete attr.updateError;
         localStorage.updateInfo = JSON.stringify(attr);
     }
 });
