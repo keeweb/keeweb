@@ -24,7 +24,6 @@ Reading and display is mostly complete; modification and sync is under construct
 
 These major issues are in progress, or will be fixed in next releases, before v1.0:
 
-- auto-update is not implemented
 - dropbox sync is one-way: changes are not loaded from dropbox, only saved
 
 # Self-hosting
