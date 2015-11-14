@@ -34,9 +34,13 @@ You can download the latest distribution files from [gh-pages](https://github.co
 
 # Building
 
-The app can be built with grunt: `grunt` (html file will be in `dist/`) or `grunt watch` (result will be in `tmp/`).
-Electron app is built with `grunt electron` (works only under mac osx as it builds dmg; requires wine).
-To run Electron app without building, install electron package (`npm install electron-prebuilt -g`) and start with `electron ./electron/`.
+The app can be built with grunt: `grunt` (html file will be in `dist/`) or `grunt watch` (debug version; the result will be in `tmp/`).  
+Desktop apps are built with `grunt desktop`. This works only in mac osx as it builds dmg; requires wine.  
+To run Electron app without building, install electron package (`npm install electron-prebuilt -g`) and start in this way:
+```bash
+$ cd electron
+$ electron . --htmlpath=../tmp
+```
 
 # Contributing
 
