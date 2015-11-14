@@ -10,7 +10,7 @@ if (!/\d+\.\d+\.\d+/.test(version)) {
 
 console.log('Change version to ' + version);
 
-processFile('README.md', /\/download\/v[^\/]+/g);
+//processFile('README.md', /\/download\/v[^\/]+/g);
 processFile('package.json', /"version": "\d+\.\d+\.\d+"+/g);
 processFile('electron/package.json', /"version": "\d+\.\d+\.\d+"+/g);
 
