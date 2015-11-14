@@ -6,15 +6,18 @@
 var app = require('app'),
     BrowserWindow = require('browser-window'),
     path = require('path'),
-    fs = require('fs'),
     Menu = require('menu');
 
 var mainWindow = null,
     openFile = process.argv.filter(function(arg) { return /\.kdbx$/i.test(arg); })[0],
     ready = false,
-    htmlPath = path.join(app.getPath('userData'), 'index.html');
+    htmlPath = path.join(__dirname, 'index.html');
 
-htmlPath = path.join(__dirname, '../tmp/index.html');
+process.argv.forEach(function(arg) {
+    if (arg.lastIndexOf('--htmlpath=', 0) === 0) {
+        htmlPath = path.resolve(arg.replace('--htmlpath=', ''), 'index.html');
+    }
+});
 
 app.on('window-all-closed', function() { app.quit(); });
 app.on('ready', function() {
@@ -24,14 +27,10 @@ app.on('ready', function() {
         icon: path.join(__dirname, 'icon.png')
     });
     setMenu();
-    if (fs.existsSync(htmlPath)) {
-        mainWindow.loadUrl('file://' + htmlPath);
-    }
-    mainWindow.show(); // remove
-    mainWindow.openDevTools();
+    mainWindow.loadUrl('file://' + htmlPath);
     mainWindow.webContents.on('dom-ready', function() {
         setTimeout(function() {
-            //mainWindow.show();
+            mainWindow.show();
             ready = true;
             notifyOpenFile();
         }, 50);

@@ -1,5 +1,13 @@
 {
   "name": "KeeWeb",
   "version": "0.2.1",
-  "main": "main.js"
+  "description": "KeePass web app",
+  "main": "launcher.js",
+  "repository": "https://github.com/antelle/keeweb",
+  "author": "Antelle",
+  "license": "MIT",
+  "readme": "../README.md",
+  "dependencies": {
+    "node-stream-zip": "^1.2.1"
+  }
 }
