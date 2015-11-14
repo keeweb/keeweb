@@ -11,6 +11,7 @@ var AppSettingsModel = Backbone.Model.extend({
         expandGroups: true,
         listViewWidth: null,
         menuViewWidth: null,
+        tagsViewHeight: null,
         autoUpdate: true
     },
 

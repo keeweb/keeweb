@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     MenuItemView = require('./menu-item-view'),
     Resizable = require('../../mixins/resizable'),
     Scrollable = require('../../mixins/scrollable'),
+    AppSettingsModel = require('../../models/app-settings-model'),
     baron = require('baron');
 
 var MenuSectionView = Backbone.View.extend({
@@ -20,6 +21,7 @@ var MenuSectionView = Backbone.View.extend({
     initialize: function () {
         this.itemViews = [];
         this.listenTo(this.model, 'change-items', this.itemsChanged);
+        this.listenTo(this, 'view-resize', this.viewResized);
     },
 
     render: function() {
@@ -45,7 +47,10 @@ var MenuSectionView = Backbone.View.extend({
             itemView.render();
             this.itemViews.push(itemView);
         }, this);
-        if (this.model.get('scrollable')) {
+        if (this.model.get('drag')) {
+            if (typeof AppSettingsModel.instance.get('tagsViewHeight') === 'number') {
+                this.$el.height(AppSettingsModel.instance.get('tagsViewHeight'));
+            }
             this.pageResized();
         }
     },
@@ -65,7 +70,11 @@ var MenuSectionView = Backbone.View.extend({
 
     itemsChanged: function() {
         this.render();
-    }
+    },
+
+    viewResized: _.throttle(function(size) {
+        AppSettingsModel.instance.set('tagsViewHeight', size);
+    }, 1000)
 });
 
 _.extend(MenuSectionView.prototype, Resizable);
