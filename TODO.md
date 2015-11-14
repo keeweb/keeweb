@@ -6,7 +6,7 @@
 - [x] provide engineer error details on file open
 - [x] trash: groups/delete/untrash
 - [x] move groups/entries
-- [ ] auto-update
+- [x] auto-update
 - [ ] lock flow, auto-lock
 - [ ] minimize to tray
 - [ ] help/tips
