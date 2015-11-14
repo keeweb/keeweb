@@ -2,7 +2,7 @@
   "name": "KeeWeb",
   "version": "0.2.1",
   "description": "KeePass web app",
-  "main": "launcher.js",
+  "main": "main.js",
   "repository": "https://github.com/antelle/keeweb",
   "author": "Antelle",
   "license": "MIT",

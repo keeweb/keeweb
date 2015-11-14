@@ -3,6 +3,9 @@
 var fs = require('fs'),
     path = require('path');
 
+/* jshint node:true */
+/* jshint browser:false */
+
 var StringReplacePlugin = require('string-replace-webpack-plugin');
 
 module.exports = function(grunt) {
@@ -55,8 +58,8 @@ module.exports = function(grunt) {
         },
         clean: {
             dist: ['dist', 'tmp'],
-            desktop_dist: ['dist/desktop'],
-            desktop_tmp: ['tmp/desktop']
+            'desktop_dist': ['dist/desktop'],
+            'desktop_tmp': ['tmp/desktop']
         },
         copy: {
             html: {
@@ -338,10 +341,12 @@ module.exports = function(grunt) {
         },
         compress: {
             linux: {
-                options: {
-                    archive: 'tmp/desktop/KeeWeb.linux.x64.zip'
-                },
+                options: { archive: 'tmp/desktop/KeeWeb.linux.x64.zip' },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true }]
+            },
+            'desktop_update': {
+                options: { archive: 'dist/desktop/UpdateDesktop.zip' },
+                files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
             }
         }
     });
@@ -364,11 +369,13 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('desktop', [
+        'default',
         'gitinfo',
         'clean:desktop_tmp',
         'clean:desktop_dist',
         'copy:desktop_app_content',
         'string-replace:desktop_html',
+        'compress:desktop_update',
         'electron',
         'electron_builder',
         'compress:linux',

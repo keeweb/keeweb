@@ -15,6 +15,8 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-theme': 'changeTheme',
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
+        'click .settings__general-update-btn': 'checkUpdate',
+        'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-dev-tools-link': 'openDevTools'
     },
 
@@ -26,6 +28,7 @@ var SettingsGeneralView = Backbone.View.extend({
 
     initialize: function() {
         this.listenTo(UpdateModel.instance, 'change:status', this.render, this);
+        this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render, this);
     },
 
     render: function() {
@@ -36,19 +39,13 @@ var SettingsGeneralView = Backbone.View.extend({
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
             autoUpdate: Updater.enabledAutoUpdate(),
-            updateInfo: this.getUpdateInfo()
+            updateInProgress: Updater.updateInProgress(),
+            updateInfo: this.getUpdateInfo(),
+            updateReady: UpdateModel.instance.get('updateStatus') === 'ready'
         });
     },
 
     getUpdateInfo: function() {
-        switch (UpdateModel.instance.get('updateStatus')) {
-            case 'downloading':
-                return 'Downloading update...';
-            case 'downloaded':
-                return 'Downloaded new version';
-            case 'error':
-                return 'Error downloading new version';
-        }
         switch (UpdateModel.instance.get('status')) {
             case 'checking':
                 return 'Checking for updates...';
@@ -70,6 +67,14 @@ var SettingsGeneralView = Backbone.View.extend({
                     msg += 'new version ' + UpdateModel.instance.get('lastVersion') + ' available, released at ' +
                         Format.dStr(UpdateModel.instance.get('lastVersionReleaseDate'));
                 }
+                switch (UpdateModel.instance.get('updateStatus')) {
+                    case 'downloading':
+                        return msg + '. Downloading update...';
+                    case 'extracting':
+                        return msg + '. Extracting update...';
+                    case 'error':
+                        return msg + '. There was an error downloading new version';
+                }
                 return msg;
             default:
                 return 'Never checked for updates';
@@ -87,6 +92,14 @@ var SettingsGeneralView = Backbone.View.extend({
         if (autoUpdate) {
             Updater.scheduleNextCheck();
         }
+    },
+
+    checkUpdate: function() {
+        Updater.check(true);
+    },
+
+    restartApp: function() {
+        Launcher.requestRestart();
     },
 
     changeExpandGroups: function(e) {

@@ -11,6 +11,7 @@ var app = require('app'),
 var mainWindow = null,
     openFile = process.argv.filter(function(arg) { return /\.kdbx$/i.test(arg); })[0],
     ready = false,
+    restartPending = false,
     htmlPath = path.join(__dirname, 'index.html');
 
 process.argv.forEach(function(arg) {
@@ -19,7 +20,9 @@ process.argv.forEach(function(arg) {
     }
 });
 
-app.on('window-all-closed', function() { app.quit(); });
+app.on('window-all-closed', function() {
+    app.quit();
+});
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
         show: false,
@@ -35,13 +38,25 @@ app.on('ready', function() {
             notifyOpenFile();
         }, 50);
     });
-    mainWindow.on('closed', function() { mainWindow = null; });
+    mainWindow.on('closed', function() {
+        mainWindow = null;
+    });
 });
 app.on('open-file', function(e, path) {
     e.preventDefault();
     openFile = path;
     notifyOpenFile();
 });
+app.on('quit', function() {
+    if (restartPending) {
+        require('child_process').exec(process.execPath);
+    }
+});
+app.quitAndRestart = function() {
+    restartPending = true;
+    app.quit();
+    setTimeout(function() { restartPending = false; }, 1000);
+};
 
 function setMenu() {
     if (process.platform === 'darwin') {

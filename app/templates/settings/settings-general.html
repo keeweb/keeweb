@@ -20,6 +20,16 @@
         <label for="settings__general-auto-update">Automatic updates</label>
         <div><%- updateInfo %></div>
     </div>
+    <div class="settings__general-update-buttons">
+        <% if (updateInProgress) { %>
+        <button class="settings__general-update-btn btn-silent" disabled>Checking for updates</button>
+        <% } else { %>
+        <button class="settings__general-update-btn btn-silent">Check for updates</button>
+        <% } %>
+        <% if (updateReady) { %>
+        <button class="settings__general-restart-btn">Restart to update</button>
+        <% } %>
+    </div>
     <% } %>
     <% if (devTools) { %>
     <h2>Advanced</h2>

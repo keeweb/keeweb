@@ -10,13 +10,17 @@ var Backbone = require('backbone'),
 
 var Updater = {
     UpdateInterval: 1000*60*60*24,
-    MinUpdateTimeout: 500*10,
+    MinUpdateTimeout: 500,
     MinUpdateSize: 10000,
     UpdateCheckFiles: ['index.html', 'app.js'],
     nextCheckTimeout: null,
     updateCheckDate: new Date(0),
     enabledAutoUpdate: function() {
         return Launcher && AppSettingsModel.instance.get('autoUpdate');
+    },
+    updateInProgress: function() {
+        return UpdateModel.instance.get('status') === 'checking' ||
+            ['downloading', 'extracting'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0;
     },
     init: function() {
         var willCheckNow = this.scheduleNextCheck();
@@ -38,11 +42,11 @@ var Updater = {
             timeDiff = Math.min(Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout), this.UpdateInterval);
         }
         this.nextCheckTimeout = setTimeout(this.check.bind(this), timeDiff);
-        console.log('Update check will happen in ' + Math.round(timeDiff / 1000) + ' s');
+        console.log('Update check will happen in ' + Math.round(timeDiff / 1000) + 's');
         return timeDiff === this.MinUpdateTimeout;
     },
     check: function(startedByUser) {
-        if (!Launcher) {
+        if (!Launcher || this.updateInProgress()) {
             return;
         }
         UpdateModel.instance.set('status', 'checking');
@@ -72,6 +76,7 @@ var Updater = {
                     that.scheduleNextCheck();
                     return;
                 }
+                var prevLastVersion = UpdateModel.instance.get('lastVersion');
                 UpdateModel.instance.set({
                     status: 'ok',
                     lastCheckDate: dt,
@@ -82,6 +87,11 @@ var Updater = {
                 });
                 UpdateModel.instance.save();
                 that.scheduleNextCheck();
+                if (prevLastVersion === UpdateModel.instance.get('lastVersion') &&
+                    UpdateModel.instance.get('updateStatus') === 'ready') {
+                    console.log('Waiting for the user to apply downloaded update');
+                    return;
+                }
                 that.update(startedByUser);
             },
             error: function(e) {
@@ -98,7 +108,7 @@ var Updater = {
     },
     update: function(startedByUser) {
         var ver = UpdateModel.instance.get('lastVersion');
-        if (!Launcher || ver === RuntimeInfo.version || UpdateModel.instance.get('updateStatus')) {
+        if (!Launcher || ver === RuntimeInfo.version) {
             console.log('You are using the latest version');
             return;
         }
@@ -110,15 +120,17 @@ var Updater = {
             file: 'KeeWeb-' + ver + '.zip',
             cache: !startedByUser,
             success: function(filePath) {
-                UpdateModel.instance.set('updateStatus', 'downloaded');
-                console.error('Extracting update file', that.UpdateCheckFiles, filePath);
+                UpdateModel.instance.set('updateStatus', 'extracting');
+                console.log('Extracting update file', that.UpdateCheckFiles, filePath);
                 that.extractAppUpdate(filePath, function(err) {
                     if (err) {
                         console.error('Error extracting update', err);
                         UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error extracting update' });
                     } else {
                         UpdateModel.instance.set({ updateStatus: 'ready', updateError: null });
-                        Backbone.trigger('update-app');
+                        if (!startedByUser) {
+                            Backbone.trigger('update-app');
+                        }
                     }
                 });
             },
@@ -129,7 +141,8 @@ var Updater = {
         });
     },
 
-    extractAppUpdate: function(updateFile, expectedFiles, cb) {
+    extractAppUpdate: function(updateFile, cb) {
+        var expectedFiles = this.UpdateCheckFiles;
         var appPath = Launcher.getUserDataPath();
         var StreamZip = Launcher.req('node-stream-zip');
         var zip = new StreamZip({ file: updateFile, storeEntries: true });
