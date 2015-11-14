@@ -1,8 +1,9 @@
 Release notes
 -------------
-##### vNext
-`-` fixed protected field deletion  
+##### v0.3.0 (2015-11-14)
+Auto-update  
 `+` remember menu and list width  
+`-` fixed protected field deletion  
 
 ##### v0.2.1 (2015-11-10)
 Fixed KeePassX compatibility issues
