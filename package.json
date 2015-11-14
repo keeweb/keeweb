@@ -31,7 +31,8 @@
     "string-replace-webpack-plugin": "0.0.2",
     "time-grunt": "^1.2.1",
     "uglify-loader": "^1.2.0",
-    "webpack": "^1.11.0"
+    "webpack": "^1.11.0",
+    "webpack-dev-server": "^1.12.1"
   },
   "scripts": {
     "start": "grunt",
