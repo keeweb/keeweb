@@ -71,4 +71,12 @@
     float: right;
     display: none;
   }
+
+  &__general-update-buttons {
+    margin-top: $base-spacing;
+  }
+  &__general-update-btn {
+    width: 15em;
+    margin-right: $small-spacing;
+  }
 }

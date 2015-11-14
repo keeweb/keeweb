@@ -5,6 +5,7 @@ var AppModel = require('./models/app-model'),
     KeyHandler = require('./comp/key-handler'),
     Alerts = require('./comp/alerts'),
     DropboxLink = require('./comp/dropbox-link'),
+    Updater = require('./comp/updater'),
     LastOpenFiles = require('./comp/last-open-files'),
     ThemeChanger = require('./util/theme-changer');
 
@@ -47,6 +48,6 @@ $(function() {
         } else {
             appView.showOpenFile();
         }
+        Updater.init();
     }
 });
-

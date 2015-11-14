@@ -32,12 +32,14 @@
     "time-grunt": "^1.2.1",
     "uglify-loader": "^1.2.0",
     "webpack": "^1.11.0",
-    "webpack-dev-server": "^1.10.1"
+    "webpack-dev-server": "^1.12.1"
   },
   "scripts": {
     "start": "grunt",
-    "test": "grunt test"
+    "test": "grunt test",
+    "postinstall": "npm install --prefix electron"
   },
   "author": "Antelle",
-  "license": "MIT"
+  "license": "MIT",
+  "readme": "README.md"
 }

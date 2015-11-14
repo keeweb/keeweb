@@ -3,7 +3,8 @@
 var Backbone = require('backbone'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
-    GeneratorView = require('./generator-view');
+    GeneratorView = require('./generator-view'),
+    UpdateModel = require('../models/update-model');
 
 var FooterView = Backbone.View.extend({
     template: require('templates/footer.html'),
@@ -28,10 +29,15 @@ var FooterView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_COMMA, this.toggleSettings, this, KeyHandler.SHORTCUT_ACTION);
 
         this.listenTo(this.model.files, 'update reset change', this.render);
+        this.listenTo(Backbone, 'update-app', this.render);
     },
 
     render: function () {
-        this.$el.html(this.template(this.model));
+        this.listenTo(Backbone, 'update-app', this.updateApp);
+        this.$el.html(this.template({
+            files: this.model.files,
+            updateAvailable: UpdateModel.instance.get('updateStatus') === 'ready'
+        }));
         return this;
     },
 

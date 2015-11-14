@@ -24,7 +24,6 @@ Reading and display is mostly complete; modification and sync is under construct
 
 These major issues are in progress, or will be fixed in next releases, before v1.0:
 
-- auto-update is not implemented
 - dropbox sync is one-way: changes are not loaded from dropbox, only saved
 
 # Self-hosting
@@ -34,10 +33,20 @@ You can download the latest distribution files from [gh-pages](https://github.co
 
 # Building
 
-The app can be built with grunt: `grunt` (html file will be in `dist/`) or `grunt watch` (result will be in `tmp/`).
-Electron app is built with `grunt electron` (works only under mac osx as it builds dmg; requires wine).
-To run Electron app without building, install electron package (`npm install electron-prebuilt -g`) and start with `electron ./electron/`. 
-For debug build: 1. run `grunt`, 2. run `grunt watch`, 3. open `tmp/index.html`.
+The app can be built with grunt: `grunt` (html file will be in `dist/`).    
+Desktop apps are built with `grunt desktop`. This works only in mac osx as it builds dmg; requires wine.  
+To run Electron app without building, install electron package (`npm install electron-prebuilt -g`) and start in this way:
+```bash
+$ cd electron
+$ electron . --htmlpath=../tmp
+```
+
+For debug build:
+
+1. run `grunt`
+2. run `grunt watch`
+3. open `tmp/index.html`
+
 
 # Contributing
 

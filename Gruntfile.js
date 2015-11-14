@@ -3,6 +3,9 @@
 var fs = require('fs'),
     path = require('path');
 
+/* jshint node:true */
+/* jshint browser:false */
+
 var StringReplacePlugin = require('string-replace-webpack-plugin');
 
 module.exports = function(grunt) {
@@ -55,8 +58,8 @@ module.exports = function(grunt) {
         },
         clean: {
             dist: ['dist', 'tmp'],
-            desktop_dist: ['dist/desktop'],
-            desktop_tmp: ['tmp/desktop']
+            'desktop_dist': ['dist/desktop'],
+            'desktop_tmp': ['tmp/desktop']
         },
         copy: {
             html: {
@@ -75,6 +78,13 @@ module.exports = function(grunt) {
                 nonull: true,
                 expand: true,
                 flatten: true
+            },
+            'desktop_app_content': {
+                cwd: 'electron/',
+                src: '**',
+                dest: 'tmp/desktop/app/',
+                expand: true,
+                nonull: true
             },
             'desktop_osx': {
                 src: 'tmp/desktop/KeeWeb.dmg',
@@ -141,12 +151,16 @@ module.exports = function(grunt) {
         'string-replace': {
             manifest: {
                 options: {
-                    replacements: [{
-                        pattern: '# YYYY-MM-DD:v0.0.0',
-                        replacement: '# ' + dt + ':v' + pkg.version
-                    }]
+                    replacements: [
+                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version },
+                        { pattern: 'vElectron', replacement: electronVersion }
+                    ]
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
+            },
+            'desktop_html': {
+                options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
+                files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
             }
         },
         webpack: {
@@ -190,7 +204,8 @@ module.exports = function(grunt) {
                         }]})},
                         { test: /runtime\-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
                             { pattern: /@@VERSION/g, replacement: function() { return pkg.version; } },
-                            { pattern: /@@DATE/g, replacement: function() { return dt; } }
+                            { pattern: /@@DATE/g, replacement: function() { return dt; } },
+                            { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
                         ]})},
                         { test: /zepto(\.min)?\.js$/, loader: 'exports?Zepto; delete window.$; delete window.Zepto;' },
                         { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
@@ -251,7 +266,7 @@ module.exports = function(grunt) {
         electron: {
             options: {
                 name: 'KeeWeb',
-                dir: 'electron',
+                dir: 'tmp/desktop/app',
                 out: 'tmp/desktop',
                 version: electronVersion,
                 overwrite: true,
@@ -326,15 +341,26 @@ module.exports = function(grunt) {
         },
         compress: {
             linux: {
-                options: {
-                    archive: 'tmp/desktop/KeeWeb.linux.x64.zip'
-                },
+                options: { archive: 'tmp/desktop/KeeWeb.linux.x64.zip' },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true }]
+            },
+            'desktop_update': {
+                options: { archive: 'dist/desktop/UpdateDesktop.zip' },
+                files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
+            }
+        },
+        'validate-desktop-update': {
+            desktop: {
+                options: {
+                    file: 'dist/desktop/UpdateDesktop.zip',
+                    expected: ['main.js', 'app.js', 'index.html', 'package.json', 'node_modules/node-stream-zip/node_stream_zip.js']
+                }
             }
         }
     });
 
     grunt.registerTask('default', [
+        'gitinfo',
         'bower-install-simple',
         'clean',
         'jshint',
@@ -347,13 +373,18 @@ module.exports = function(grunt) {
         'postcss',
         'inline',
         'htmlmin',
-        'string-replace'
+        'string-replace:manifest'
     ]);
 
     grunt.registerTask('desktop', [
+        'default',
         'gitinfo',
         'clean:desktop_tmp',
         'clean:desktop_dist',
+        'copy:desktop_app_content',
+        'string-replace:desktop_html',
+        'compress:desktop_update',
+        'validate-desktop-update',
         'electron',
         'electron_builder',
         'compress:linux',

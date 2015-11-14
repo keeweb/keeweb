@@ -4,6 +4,7 @@ var Backbone = require('backbone');
 var Launcher;
 
 if (window.process && window.process.versions && window.process.versions.electron) {
+    /* jshint node:true */
     Launcher = {
         name: 'electron',
         version: window.process.versions.electron,
@@ -17,6 +18,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         devTools: true,
         openDevTools: function() {
             this.req('remote').getCurrentWindow().openDevTools();
+        },
+        getAppVersion: function() {
+            return this.remReq('app').getVersion();
         },
         getSaveFileName: function(defaultPath, cb) {
             if (defaultPath) {
@@ -32,6 +36,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         getUserDataPath: function(fileName) {
             return this.req('path').join(this.remReq('app').getPath('userData'), fileName || '');
         },
+        getTempPath: function(fileName) {
+            return this.req('path').join(this.remReq('app').getPath('temp'), fileName || '');
+        },
         writeFile: function(path, data) {
             this.req('fs').writeFileSync(path, new window.Buffer(data));
         },
@@ -42,9 +49,28 @@ if (window.process && window.process.versions && window.process.versions.electro
         fileExists: function(path) {
             return this.req('fs').existsSync(path);
         },
+        preventExit: function(e) {
+            e.returnValue = false;
+            return false;
+        },
         exit: function() {
             Launcher.exitRequested = true;
-            this.remReq('app').quit();
+            this.requestExit();
+        },
+        requestExit: function() {
+            var app = this.remReq('app');
+            if (this.restartPending) {
+                app.quitAndRestart();
+            } else {
+                app.quit();
+            }
+        },
+        requestRestart: function() {
+            this.restartPending = true;
+            this.requestExit();
+        },
+        cancelRestart: function() {
+            this.restartPending = false;
         }
     };
     window.launcherOpen = function(path) {

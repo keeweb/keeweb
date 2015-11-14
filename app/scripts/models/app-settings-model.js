@@ -10,7 +10,8 @@ var AppSettingsModel = Backbone.Model.extend({
         theme: 'd',
         expandGroups: true,
         listViewWidth: null,
-        menuViewWidth: null
+        menuViewWidth: null,
+        autoUpdate: true
     },
 
     initialize: function() {
@@ -21,7 +22,10 @@ var AppSettingsModel = Backbone.Model.extend({
         try {
             var data;
             if (Launcher) {
-                data = JSON.parse(Launcher.readFile(Launcher.getUserDataPath(FileName), 'utf8'));
+                var settingsFile = Launcher.getUserDataPath(FileName);
+                if (Launcher.fileExists(settingsFile)) {
+                    data = JSON.parse(Launcher.readFile(settingsFile, 'utf8'));
+                }
             } else if (typeof localStorage !== 'undefined' && localStorage.appSettings) {
                 data = JSON.parse(localStorage.appSettings);
             }

@@ -58,6 +58,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'edit-group', this.editGroup);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
+        this.listenTo(Backbone, 'update-app', this.updateApp);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
@@ -100,6 +101,12 @@ var AppView = Backbone.View.extend({
     launcherOpenFile: function(path) {
         if (path && /\.kdbx$/i.test(path)) {
             this.showOpenFile(path);
+        }
+    },
+
+    updateApp: function() {
+        if (!Launcher && !this.model.files.hasOpenFiles()) {
+            window.location.reload();
         }
     },
 
@@ -189,16 +196,25 @@ var AppView = Backbone.View.extend({
     beforeUnload: function(e) {
         if (this.model.files.hasUnsavedFiles()) {
             if (Launcher && !Launcher.exitRequested) {
-                Alerts.yesno({
-                    header: 'Unsaved changes!',
-                    body: 'You have unsaved files, all changes will be lost.',
-                    buttons: [{result: 'yes', title: 'Exit and discard unsaved changes'}, {result: '', title: 'Don\'t exit'}],
-                    success: function() {
-                        Launcher.exit();
-                    }
-                });
-                e.returnValue = false;
-                return false;
+                if (!this.exitAlertShown) {
+                    var that = this;
+                    that.exitAlertShown = true;
+                    Alerts.yesno({
+                        header: 'Unsaved changes!',
+                        body: 'You have unsaved files, all changes will be lost.',
+                        buttons: [{result: 'yes', title: 'Exit and discard unsaved changes'}, {result: '', title: 'Don\'t exit'}],
+                        success: function () {
+                            Launcher.exit();
+                        },
+                        cancel: function() {
+                            Launcher.cancelRestart(false);
+                        },
+                        complete: function () {
+                            that.exitAlertShown = false;
+                        }
+                    });
+                }
+                return Launcher.preventExit(e);
             }
             return 'You have unsaved files, all changes will be lost.';
         }
