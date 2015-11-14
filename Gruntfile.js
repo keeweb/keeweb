@@ -348,6 +348,14 @@ module.exports = function(grunt) {
                 options: { archive: 'dist/desktop/UpdateDesktop.zip' },
                 files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
             }
+        },
+        'validate-desktop-update': {
+            desktop: {
+                options: {
+                    file: 'dist/desktop/UpdateDesktop.zip',
+                    expected: ['main.js', 'app.js', 'index.html', 'package.json', 'node_modules/node-stream-zip/node_stream_zip.js']
+                }
+            }
         }
     });
 
@@ -376,6 +384,7 @@ module.exports = function(grunt) {
         'copy:desktop_app_content',
         'string-replace:desktop_html',
         'compress:desktop_update',
+        'validate-desktop-update',
         'electron',
         'electron_builder',
         'compress:linux',
