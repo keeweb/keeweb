@@ -6,7 +6,8 @@ var Backbone = require('backbone'),
     Format = require('../../util/format'),
     AppSettingsModel = require('../../models/app-settings-model'),
     UpdateModel = require('../../models/update-model'),
-    RuntimeInfo = require('../../comp/runtime-info');
+    RuntimeInfo = require('../../comp/runtime-info'),
+    Links = require('../../const/links');
 
 var SettingsGeneralView = Backbone.View.extend({
     template: require('templates/settings/settings-general.html'),
@@ -17,6 +18,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-auto-update': 'changeAutoUpdate',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
+        'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-dev-tools-link': 'openDevTools'
     },
 
@@ -41,7 +43,8 @@ var SettingsGeneralView = Backbone.View.extend({
             autoUpdate: Updater.enabledAutoUpdate(),
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
-            updateReady: UpdateModel.instance.get('updateStatus') === 'ready'
+            updateReady: UpdateModel.instance.get('updateStatus') === 'ready',
+            updateManual: UpdateModel.instance.get('updateManual')
         });
     },
 
@@ -99,7 +102,15 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     restartApp: function() {
-        Launcher.requestRestart();
+        if (Launcher) {
+            Launcher.requestRestart();
+        } else {
+            window.location.reload();
+        }
+    },
+
+    downloadUpdate: function() {
+        Launcher.openLink(Links.Desktop);
     },
 
     changeExpandGroups: function(e) {

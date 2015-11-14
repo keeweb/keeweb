@@ -19,6 +19,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         openDevTools: function() {
             this.req('remote').getCurrentWindow().openDevTools();
         },
+        getAppVersion: function() {
+            return this.remReq('app').getVersion();
+        },
         getSaveFileName: function(defaultPath, cb) {
             if (defaultPath) {
                 var homePath = this.remReq('app').getPath('userDesktop');

@@ -57,6 +57,5 @@ $all-colors: (
 @each $col, $val in $all-colors {
   .#{$col}-color { color: #{$val}; }
 }
-.muted-color {
-  @include th { color: muted-color(); };
-}
+.muted-color { @include th { color: muted-color(); }; }
+.action-color { @include th { color: action-color(); }; }

@@ -3,9 +3,9 @@
 var Links = {
     Repo: 'https://github.com/antelle/keeweb',
     Desktop: 'https://github.com/antelle/keeweb/releases/latest',
-    WebApp: 'http://localhost:8088/',
+    WebApp: 'http://antelle.github.io/keeweb/',
     License: 'https://github.com/antelle/keeweb/blob/master/MIT-LICENSE.txt',
-    UpdateDesktop: 'http://localhost:8088/releases/download/{ver}/UpdateDesktop.zip'
+    UpdateDesktop: 'https://github.com/antelle/keeweb/releases/download/{ver}/UpdateDesktop.zip'
 };
 
 module.exports = Links;

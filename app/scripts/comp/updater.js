@@ -15,19 +15,27 @@ var Updater = {
     UpdateCheckFiles: ['index.html', 'app.js'],
     nextCheckTimeout: null,
     updateCheckDate: new Date(0),
+
     enabledAutoUpdate: function() {
         return Launcher && AppSettingsModel.instance.get('autoUpdate');
     },
+
     updateInProgress: function() {
         return UpdateModel.instance.get('status') === 'checking' ||
             ['downloading', 'extracting'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0;
     },
+
     init: function() {
         var willCheckNow = this.scheduleNextCheck();
         if (!willCheckNow && this.enabledAutoUpdate()) {
             this.check();
         }
+        if (!Launcher && window.applicationCache) {
+            window.applicationCache.addEventListener('updateready', this.checkAppCacheUpdateReady.bind(this));
+            this.checkAppCacheUpdateReady();
+        }
     },
+
     scheduleNextCheck: function() {
         if (this.nextCheckTimeout) {
             clearTimeout(this.nextCheckTimeout);
@@ -45,8 +53,12 @@ var Updater = {
         console.log('Update check will happen in ' + Math.round(timeDiff / 1000) + 's');
         return timeDiff === this.MinUpdateTimeout;
     },
+
     check: function(startedByUser) {
         if (!Launcher || this.updateInProgress()) {
+            return;
+        }
+        if (this.checkManualDownload()) {
             return;
         }
         UpdateModel.instance.set('status', 'checking');
@@ -106,6 +118,13 @@ var Updater = {
             }
         });
     },
+
+    checkManualDownload: function() {
+        if (+Launcher.getAppVersion().split('.')[1] <= 2) {
+            UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
+        }
+    },
+
     update: function(startedByUser) {
         var ver = UpdateModel.instance.get('lastVersion');
         if (!Launcher || ver === RuntimeInfo.version) {
@@ -164,6 +183,14 @@ var Updater = {
                 cb();
             });
         });
+    },
+
+    checkAppCacheUpdateReady: function() {
+        if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
+            try { window.applicationCache.swapCache(); } catch (e) { }
+            UpdateModel.instance.set('updateStatus', 'ready');
+            Backbone.trigger('update-app');
+        }
     }
 };
 

@@ -25,3 +25,11 @@
     @include transform(rotateY(360deg));
   }
 }
+
+@include keyframes(shake) {
+  0%, 1%, 100% { @include transform(translate3d(0, 0, 0)); }
+  .1%, .9% { @include transform(translate3d(-1px, 0, 0)); }
+  .2%, .8% { @include transform(translate3d(2px, 0, 0)); }
+  .3%, .5%, .7% { @include transform(translate3d(-3px, 0, 0)); }
+  .4%, .6% { @include transform(translate3d(3px, 0, 0)); }
+}

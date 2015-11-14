@@ -1,5 +1,19 @@
 <div>
     <h1><i class="fa fa-cog"></i> General Settings</h1>
+    <% if (updateReady && !canAutoUpdate) { %>
+    <h2 class="action-color">Update</h2>
+    <div>New app version was released and downloaded.</div>
+    <div class="settings__general-update-buttons">
+        <button class="settings__general-restart-btn">Reload to update</button>
+    </div>
+    <% } else if (updateManual) { %>
+    <h2 class="action-color">Update</h2>
+    <div>New version has been released. It will check for updates and install them automatically
+        but auto-upgrading from your version is impossible.</div>
+    <div class="settings__general-update-buttons">
+        <button class="settings__general-download-update-btn">Download update</button>
+    </div>
+    <% } %>
     <h2>Appearance</h2>
     <div>
         <label for="settings__general-theme">Theme:</label>
@@ -13,7 +27,7 @@
         <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" <%- expandGroups ? 'checked' : '' %> />
         <label for="settings__general-expand">Show entries from all subgroups</label>
     </div>
-    <% if (canAutoUpdate) { %>
+    <% if (canAutoUpdate && !updateManual) { %>
     <h2>Function</h2>
     <div>
         <input type="checkbox" class="settings__input settings__general-auto-update" id="settings__general-auto-update" <%- autoUpdate ? 'checked' : '' %> />

@@ -105,9 +105,7 @@ var AppView = Backbone.View.extend({
     },
 
     updateApp: function() {
-        if (this.model.files.hasOpenFiles()) {
-            this.showUpdateBubble(); // TODO
-        } else {
+        if (!Launcher && !this.model.files.hasOpenFiles()) {
             window.location.reload();
         }
     },

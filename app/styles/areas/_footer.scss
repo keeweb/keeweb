@@ -41,4 +41,9 @@
     padding: $base-padding;
     font-size: 1.4em;
   }
+
+  &__update-icon {
+    @include th { color: action-color(); }
+    @include animation(shake 50s cubic-bezier(.36,.07,.19,.97) 0s infinite);
+  }
 }
