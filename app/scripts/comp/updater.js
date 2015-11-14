@@ -122,6 +122,7 @@ var Updater = {
     checkManualDownload: function() {
         if (+Launcher.getAppVersion().split('.')[1] <= 2) {
             UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
+            return true;
         }
     },
 

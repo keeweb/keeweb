@@ -2,7 +2,7 @@
     <h1><i class="fa fa-cog"></i> General Settings</h1>
     <% if (updateReady && !canAutoUpdate) { %>
     <h2 class="action-color">Update</h2>
-    <div>New app version was released and downloaded.</div>
+    <div>New app version was released and downloaded. <a href="<%= releaseNotesLink %>" target="_blank">View release notes</a></div>
     <div class="settings__general-update-buttons">
         <button class="settings__general-restart-btn">Reload to update</button>
     </div>
@@ -33,6 +33,7 @@
         <input type="checkbox" class="settings__input settings__general-auto-update" id="settings__general-auto-update" <%- autoUpdate ? 'checked' : '' %> />
         <label for="settings__general-auto-update">Automatic updates</label>
         <div><%- updateInfo %></div>
+        <a href="<%= releaseNotesLink %>" target="_blank">View release notes</a>
     </div>
     <div class="settings__general-update-buttons">
         <% if (updateInProgress) { %>

@@ -44,7 +44,8 @@ var SettingsGeneralView = Backbone.View.extend({
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
             updateReady: UpdateModel.instance.get('updateStatus') === 'ready',
-            updateManual: UpdateModel.instance.get('updateManual')
+            updateManual: UpdateModel.instance.get('updateManual'),
+            releaseNotesLink: Links.ReleaseNotes
         });
     },
 
