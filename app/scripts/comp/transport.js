@@ -23,7 +23,9 @@ var Transport = {
         }
         var proto = config.url.split(':')[0];
         console.log('GET ' + config.url);
-        Launcher.req(proto).get(config.url, function(res) {
+        var opts = Launcher.req('url').parse(config.url);
+        opts.headers = { 'User-Agent': navigator.userAgent };
+        Launcher.req(proto).get(opts, function(res) {
             console.log('Response from ' + config.url + ': ' + res.statusCode);
             if (res.statusCode === 200) {
                 if (config.file) {
