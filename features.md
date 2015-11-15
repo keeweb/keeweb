@@ -25,7 +25,7 @@
 ![ ](https://habrastorage.org/files/69b/cbd/343/69bcbd3432ca456396c6d2a1ebc760df.png)&nbsp;
 ![ ](https://habrastorage.org/files/5bd/9f1/26f/5bd9f126f6d4496083258fc31d04db19.png)
 ## Offline
-![ ](https://habrastorage.org/files/3d5/5d1/7c4/3d55d17c486b46529c38bdfff3284aa2.png)
+![ ](https://habrastorage.org/files/cd1/b17/78d/cd1b1778d5be47acb4b8731b25f40194.png)
 ## Shortcuts
 ![ ](https://habrastorage.org/files/f2c/115/19f/f2c11519f4e447a3bc18b03ec0437e34.png)
 ## History
