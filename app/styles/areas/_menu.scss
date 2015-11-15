@@ -22,7 +22,12 @@
       }
     }
 
-    &--scrollable {
+    &--drag {
+      @include flex(0 0 auto);
+      max-height: calc(100vh - 180px);
+      >.scroller {
+        max-height: calc(100vh - 180px);
+      }
     }
 
     &--drag.menu__section {
