@@ -2,6 +2,7 @@
 
 ## v0.4
 Nov
+- [x] desktop dropbox
 - [ ] lock flow, auto-lock
 - [ ] minimize to tray
 - [ ] trim history by rules
@@ -35,7 +36,6 @@ Feb
 - [ ] QA
 
 ## Future
-- [ ] desktop dropbox
 - [ ] auto-type for desktop
 - [ ] file type associations
 - [ ] one-time passwords

@@ -50,7 +50,7 @@ var OpenView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        this.renderTemplate({ supportsDropbox: !Launcher, lastOpenFiles: this.getLastOpenFiles() });
+        this.renderTemplate({ lastOpenFiles: this.getLastOpenFiles() });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
         return this;

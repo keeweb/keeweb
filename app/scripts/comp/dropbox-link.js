@@ -1,7 +1,8 @@
 'use strict';
 
 var Dropbox = require('dropbox'),
-    Alerts = require('./alerts');
+    Alerts = require('./alerts'),
+    Launcher = require('./launcher');
 
 var DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6'
@@ -113,8 +114,12 @@ var DropboxLink = {
             complete(null, this._dropboxClient);
             return;
         }
-        var client = new Dropbox.Client({ key: DropboxKeys.AppFolder });
-        client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl: location.href }));
+        var client = new Dropbox.Client({key: DropboxKeys.AppFolder});
+        if (Launcher) {
+            client.authDriver(new Dropbox.AuthDriver.Electron({ receiverUrl: location.href }));
+        } else {
+            client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl: location.href }));
+        }
         client.authenticate((function(error, client) {
             if (!error) {
                 this._dropboxClient = client;

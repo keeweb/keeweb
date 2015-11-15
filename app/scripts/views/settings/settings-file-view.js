@@ -38,7 +38,6 @@ var SettingsAboutView = Backbone.View.extend({
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
-            supportsDropbox: !Launcher,
             desktopLink: Links.Desktop,
 
             name: this.model.get('name'),

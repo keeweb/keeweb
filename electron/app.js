@@ -57,6 +57,9 @@ app.quitAndRestart = function() {
     app.quit();
     setTimeout(function() { restartPending = false; }, 1000);
 };
+app.openWindow = function(opts) {
+    return new BrowserWindow(opts);
+};
 
 function setMenu() {
     if (process.platform === 'darwin') {

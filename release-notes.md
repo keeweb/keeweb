@@ -3,6 +3,7 @@ Release notes
 ##### vNext
 Bugfixes
 `-` fixed tag list scrolling  
+`+` desktop Dropbox  
 
 ##### v0.3.0 (2015-11-14)
 Auto-update  
