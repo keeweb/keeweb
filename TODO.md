@@ -7,7 +7,7 @@ Nov
 - [ ] minimize to tray
 - [ ] trim history by rules
 - [ ] custom icons, favicons
-- [ ] drag to trash
+- [x] drag to trash
 - [ ] switch view
 - [ ] option to check updates without install
 

@@ -26,7 +26,8 @@ var MenuModel = Backbone.Model.extend({
         this.tagsSection = new MenuSectionModel(defTags);
         this.tagsSection.set({ scrollable: true, drag: true });
         this.tagsSection.defaultItems = defTags;
-        this.trashSection = new MenuSectionModel([{ title: 'Trash', icon: 'trash', shortcut: Keys.DOM_VK_D, filterKey: 'trash', filterValue: true }]);
+        this.trashSection = new MenuSectionModel([{ title: 'Trash', icon: 'trash', shortcut: Keys.DOM_VK_D,
+            filterKey: 'trash', filterValue: true, drop: true }]);
         Colors.AllColors.forEach(function(color) { this.colorsSection.get('items').models[0]
             .addOption({ cls: 'fa ' + color + '-color', value: color, filterValue: color }); }, this);
         this.menus.app = new MenuSectionCollection([

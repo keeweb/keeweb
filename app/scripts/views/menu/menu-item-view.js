@@ -200,7 +200,12 @@ var MenuItemView = Backbone.View.extend({
         e.stopPropagation();
         if (this.model.get('drop') && this.dropAllowed(e)) {
             this.$el.removeClass('menu__item--drag');
-            this.model.moveHere(DragDropInfo.dragObject);
+            if (this.model.get('filterKey') === 'trash') {
+                DragDropInfo.dragObject.moveToTrash();
+                Backbone.trigger('refresh');
+            } else {
+                this.model.moveHere(DragDropInfo.dragObject);
+            }
             Backbone.trigger('refresh');
         }
     }
