@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### vNext
+Bugfixes
+`-` fixed tag list scrolling  
+
 ##### v0.3.0 (2015-11-14)
 Auto-update  
 `+` remember menu and list width  
