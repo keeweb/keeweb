@@ -9,7 +9,7 @@ The app can run either in browser, or as a desktop app.
 
 Apps: [Web](https://antelle.github.io/keeweb/) [Desktop](https://github.com/antelle/keeweb/releases/latest)  
 Timeline: [Release Notes](release-notes.md) [TODO](TODO.md)  
-On one page: [Features](features.md)  
+On one page: [Features](features.md) [FAQ](https://github.com/antelle/keeweb/wiki/FAQ)  
 Twitter: [kee_web](https://twitter.com/kee_web)  
 
 # Status
