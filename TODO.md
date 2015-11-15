@@ -50,5 +50,6 @@ Feb
 - [ ] mobile apps
 - [ ] external crypto devices support
 - [ ] draggable items in left panel
+- [ ] user themes support
 - [ ] plugins
 - [ ] auto-tests
