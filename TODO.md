@@ -8,7 +8,7 @@ Nov
 - [ ] custom icons, favicons
 - [ ] drag to trash
 - [ ] switch view
-- [ ] option do check updates without install
+- [ ] option to check updates without install
 
 ## v0.5
 Dec
@@ -17,6 +17,7 @@ Dec
 ## v0.6
 Dec-Jan
 - [ ] secure inputs for all passwords
+- [ ] option to auto-clear clipboard
 - [ ] mobile bugfixes
 - [ ] advanced search
 - [ ] help/tips
