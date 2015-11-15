@@ -43,7 +43,6 @@ Feb
 - [ ] generation templates
 - [ ] entry templates
 - [ ] drag entries across files
-- [ ] rearrange tags and tree
 - [ ] i18n
 - [ ] allow to increase font size
 - [ ] different storage options
