@@ -9,7 +9,7 @@ Nov
 - [ ] custom icons, favicons
 - [x] drag to trash
 - [ ] switch view
-- [ ] option to check updates without install
+- [x] option to check updates without install
 
 ## v0.5
 Dec

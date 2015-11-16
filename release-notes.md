@@ -4,7 +4,8 @@ Release notes
 Bugfixes
 `-` fixed tag list scrolling  
 `+` desktop Dropbox  
-`+` Dropbox notification in self-hosted apps   
+`+` Dropbox notification in self-hosted apps  
+`+` option to check updates without install  
 
 ##### v0.3.0 (2015-11-14)
 Auto-update  

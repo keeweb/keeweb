@@ -12,7 +12,7 @@ var AppSettingsModel = Backbone.Model.extend({
         listViewWidth: null,
         menuViewWidth: null,
         tagsViewHeight: null,
-        autoUpdate: true
+        autoUpdate: 'install'
     },
 
     initialize: function() {

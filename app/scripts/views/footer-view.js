@@ -29,14 +29,13 @@ var FooterView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_COMMA, this.toggleSettings, this, KeyHandler.SHORTCUT_ACTION);
 
         this.listenTo(this.model.files, 'update reset change', this.render);
-        this.listenTo(Backbone, 'update-app', this.render);
+        this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render);
     },
 
     render: function () {
-        this.listenTo(Backbone, 'update-app', this.updateApp);
         this.$el.html(this.template({
             files: this.model.files,
-            updateAvailable: UpdateModel.instance.get('updateStatus') === 'ready'
+            updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
         }));
         return this;
     },

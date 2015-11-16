@@ -19,6 +19,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
+        'click .settings__general-update-found-btn': 'installFoundUpdate',
         'click .settings__general-dev-tools-link': 'openDevTools'
     },
 
@@ -40,10 +41,11 @@ var SettingsGeneralView = Backbone.View.extend({
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
-            autoUpdate: Updater.enabledAutoUpdate(),
+            autoUpdate: Updater.getAutoUpdateType(),
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
             updateReady: UpdateModel.instance.get('updateStatus') === 'ready',
+            updateFound: UpdateModel.instance.get('updateStatus') === 'found',
             updateManual: UpdateModel.instance.get('updateManual'),
             releaseNotesLink: Links.ReleaseNotes
         });
@@ -91,7 +93,7 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     changeAutoUpdate: function(e) {
-        var autoUpdate = e.target.checked;
+        var autoUpdate = e.target.value || false;
         AppSettingsModel.instance.set('autoUpdate', autoUpdate);
         if (autoUpdate) {
             Updater.scheduleNextCheck();
@@ -112,6 +114,12 @@ var SettingsGeneralView = Backbone.View.extend({
 
     downloadUpdate: function() {
         Launcher.openLink(Links.Desktop);
+    },
+
+    installFoundUpdate: function() {
+        Updater.update(true, function() {
+            Launcher.requestRestart();
+        });
     },
 
     changeExpandGroups: function(e) {

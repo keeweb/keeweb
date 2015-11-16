@@ -13,7 +13,8 @@ var Backbone = require('backbone'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
     Launcher = require('../comp/launcher'),
-    ThemeChanger = require('../util/theme-changer');
+    ThemeChanger = require('../util/theme-changer'),
+    UpdateModel = require('../models/update-model');
 
 var AppView = Backbone.View.extend({
     el: 'body',
@@ -58,7 +59,8 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'edit-group', this.editGroup);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
-        this.listenTo(Backbone, 'update-app', this.updateApp);
+
+        this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
@@ -105,7 +107,8 @@ var AppView = Backbone.View.extend({
     },
 
     updateApp: function() {
-        if (!Launcher && !this.model.files.hasOpenFiles()) {
+        if (UpdateModel.instance.get('updateStatus') === 'ready' &&
+            !Launcher && !this.model.files.hasOpenFiles()) {
             window.location.reload();
         }
     },
