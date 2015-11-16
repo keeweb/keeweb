@@ -1,11 +1,17 @@
 'use strict';
 
-var FeatureDetector = require('./feature-detector');
+var FeatureDetector = require('../util/feature-detector'),
+    Launcher = require('./launcher'),
+    AppSettingsModel = require('../models/app-settings-model');
 
 var CopyPaste = {
     tryCopy: function() {
         try {
-            return document.execCommand('copy');
+            var success = document.execCommand('copy');
+            if (success) {
+                this.copied();
+            }
+            return success;
         } catch (e) {
             return false;
         }
@@ -31,6 +37,21 @@ var CopyPaste = {
             'copy cut paste': function() { setTimeout(function() { hiddenInput.blur(); }, 0); },
             blur: function() { hiddenInput.remove(); }
         });
+    },
+
+    copied: function() {
+        if (Launcher) {
+            var clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
+            if (clipboardSeconds > 0) {
+                setTimeout(function() {
+                    setTimeout((function (prevText) {
+                        if (Launcher.getClipboardText() === prevText) {
+                            Launcher.clearClipboardText();
+                        }
+                    }).bind(null, Launcher.getClipboardText()), clipboardSeconds * 1000);
+                }, 0);
+            }
+        }
     }
 };
 

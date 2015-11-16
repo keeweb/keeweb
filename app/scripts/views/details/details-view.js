@@ -16,7 +16,7 @@ var Backbone = require('backbone'),
     Keys = require('../../const/keys'),
     KeyHandler = require('../../comp/key-handler'),
     Alerts = require('../../comp/alerts'),
-    CopyPaste = require('../../util/copy-paste'),
+    CopyPaste = require('../../comp/copy-paste'),
     Format = require('../../util/format'),
     FileSaver = require('filesaver'),
     baron = require('baron'),
@@ -256,6 +256,7 @@ var DetailsView = Backbone.View.extend({
             var pw = this.model.password;
             var password = pw.getText ? pw.getText() : pw;
             CopyPaste.createHiddenInput(password);
+            CopyPaste.copied();
         }
     },
 

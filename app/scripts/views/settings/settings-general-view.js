@@ -16,6 +16,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-theme': 'changeTheme',
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
+        'change .settings__general-clipboard': 'changeClipboard',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
@@ -39,6 +40,8 @@ var SettingsGeneralView = Backbone.View.extend({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
+            canClearClipboard: !!Launcher,
+            clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
             autoUpdate: Updater.getAutoUpdateType(),
@@ -90,6 +93,11 @@ var SettingsGeneralView = Backbone.View.extend({
     changeTheme: function(e) {
         var theme = e.target.value;
         AppSettingsModel.instance.set('theme', theme);
+    },
+
+    changeClipboard: function(e) {
+        var clipboardSeconds = +e.target.value;
+        AppSettingsModel.instance.set('clipboardSeconds', clipboardSeconds);
     },
 
     changeAutoUpdate: function(e) {

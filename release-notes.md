@@ -6,6 +6,7 @@ Bugfixes
 `+` desktop Dropbox  
 `+` Dropbox notification in self-hosted apps  
 `+` option to check updates without install  
+`+` clear clipboard password after timeout  
 
 ##### v0.3.0 (2015-11-14)
 Auto-update  

@@ -51,6 +51,20 @@
         <label for="settings__general-expand">Show entries from all subgroups</label>
     </div>
 
+    <% if (canClearClipboard) { %>
+    <h2>Function</h2>
+    <div>
+        <label for="settings__general-clipboard">Clear clipboard after copy:</label>
+        <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
+            <option value="0" <%= clipboardSeconds ? '' : 'selected' %>>Don't clear</option>
+            <option value="5" <%= clipboardSeconds === 5 ? 'selected' : '' %>>In 5 seconds</option>
+            <option value="10" <%= clipboardSeconds === 10 ? 'selected' : '' %>>In 10 seconds</option>
+            <option value="15" <%= clipboardSeconds === 15 ? 'selected' : '' %>>In 15 seconds</option>
+            <option value="60" <%= clipboardSeconds === 60 ? 'selected' : '' %>>In a minute</option>
+        </select>
+    </div>
+    <% } %>
+
     <% if (devTools) { %>
     <h2>Advanced</h2>
     <a class="settings__general-dev-tools-link">Show dev tools</a>
