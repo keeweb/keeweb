@@ -2,11 +2,23 @@
 
 var Dropbox = require('dropbox'),
     Alerts = require('./alerts'),
-    Launcher = require('./launcher');
+    Launcher = require('./launcher'),
+    Links = require('../const/links');
 
 var DropboxKeys = {
-    AppFolder: 'qp7ctun6qt5n9d6'
+    AppFolder: 'qp7ctun6qt5n9d6',
+    AppFolderKeyParts: ['qp7ctun6', 'qt5n9d6'] // to allow replace key by sed, compare in this way
 };
+
+var DropboxCustomErrors = {
+    BadKey: 'bad-key'
+};
+
+function isValidKey() {
+    var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
+        !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href);
+    return Launcher || !isSelfHostedApp || DropboxKeys.AppFolder !== DropboxKeys.AppFolderKeyParts.join('');
+}
 
 var DropboxChooser = function(callback) {
     this.cb = callback;
@@ -113,6 +125,15 @@ var DropboxLink = {
         if (this._dropboxClient && this._dropboxClient.isAuthenticated()) {
             complete(null, this._dropboxClient);
             return;
+        }
+        if (!isValidKey()) {
+            Alerts.error({
+                icon: 'dropbox',
+                header: 'Dropbox not configured',
+                body: 'So, you are using KeeWeb on your own server? Good!<br/>' +
+                    '<a href="' + Links.SelfHostedDropbox + '" target="blank">Some configuration</a> is required to make Dropbox work, it\'s just 3 steps away.'
+            });
+            return complete(DropboxCustomErrors.BadKey);
         }
         var client = new Dropbox.Client({key: DropboxKeys.AppFolder});
         if (Launcher) {

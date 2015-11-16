@@ -4,6 +4,7 @@ Release notes
 Bugfixes
 `-` fixed tag list scrolling  
 `+` desktop Dropbox  
+`+` Dropbox notification in self-hosted apps   
 
 ##### v0.3.0 (2015-11-14)
 Auto-update  
