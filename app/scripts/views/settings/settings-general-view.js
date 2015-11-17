@@ -17,6 +17,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
         'change .settings__general-clipboard': 'changeClipboard',
+        'change .settings__general-auto-save': 'changeAutoSave',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
@@ -42,6 +43,7 @@ var SettingsGeneralView = Backbone.View.extend({
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             canClearClipboard: !!Launcher,
             clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
+            autoSave: AppSettingsModel.instance.get('autoSave'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
             autoUpdate: Updater.getAutoUpdateType(),
@@ -110,6 +112,11 @@ var SettingsGeneralView = Backbone.View.extend({
 
     checkUpdate: function() {
         Updater.check(true);
+    },
+
+    changeAutoSave: function(e) {
+        var autoSave = e.target.checked || false;
+        AppSettingsModel.instance.set('autoSave', autoSave);
     },
 
     restartApp: function() {

@@ -37,10 +37,14 @@ var OpenView = Backbone.View.extend({
     dropboxLoading: null,
 
     initialize: function () {
-        this.file = new FileModel();
+        this.setFileModel(new FileModel());
         this.fileData = null;
         this.keyFileData = null;
         this.passwordInput = new SecureInput();
+    },
+
+    setFileModel: function(file) {
+        this.file = file;
         this.listenTo(this.file, 'change:open', this.fileOpenChanged);
         this.listenTo(this.file, 'change:opening', this.fileOpeningChanged);
         this.listenTo(this.file, 'change:error', this.fileErrorChanged);
@@ -200,6 +204,12 @@ var OpenView = Backbone.View.extend({
                 console.log('Failed to show local file', e);
             }
         }
+    },
+
+    showClosedFile: function(file) {
+        this.setFileModel(file);
+        this.fileData = file.data;
+        this.displayOpenFile();
     },
 
     openFile: function() {

@@ -84,6 +84,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     closeAllFiles: function() {
+        this.files.each(function(file) { file.close(); });
         this.files.reset();
         this.menu.groupsSection.removeAllItems();
         this.menu.tagsSection.set('scrollable', false);

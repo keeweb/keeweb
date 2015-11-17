@@ -2,10 +2,15 @@
     <div class="modal__content">
         <i class="modal__icon fa fa-<%= icon %>"></i>
         <div class="modal__header"><%= header %></div>
-        <div class="modal__body"><%= body %></div>
+        <div class="modal__body">
+            <%= body %>
+            <% if (typeof checkbox !== 'undefined') { %>
+            <div class="modal__check-wrap"><input type="checkbox" id="modal__check" /><label for="modal__check"><%- checkbox %></label></div>
+            <% } %>
+        </div>
         <div class="modal__buttons">
             <% buttons.forEach(function(btn) { %>
-            <button class="<%= btn.result ? '' : 'btn-error' %>" data-result="<%= btn.result %>"><%= btn.title %></button>
+            <button class="<%= btn.result && !btn.error ? '' : 'btn-error' %>" data-result="<%= btn.result %>"><%= btn.title %></button>
             <% }); %>
         </div>
     </div>

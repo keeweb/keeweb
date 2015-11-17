@@ -251,14 +251,87 @@ var AppView = Backbone.View.extend({
     },
 
     lockWorkspace: function() {
+        var that = this;
         if (this.model.files.hasUnsavedFiles()) {
-            Alerts.yesno({
-                header: 'Unsaved changes',
-                body: 'You have unsaved changes that will be lost. Continue?',
-                success: this.model.closeAllFiles.bind(this.model)
-            });
+            if (this.model.settings.get('autoSave')) {
+                this.saveAndLock();
+            } else {
+                Alerts.alert({
+                    icon: 'lock',
+                    header: 'Lock',
+                    body: 'You have unsaved changes that will be lost. Continue?',
+                    buttons: [
+                        { result: 'save', title: 'Save changes' },
+                        { result: 'discard', title: 'Discard changes', error: true },
+                        { result: '', title: 'Cancel' }
+                    ],
+                    checkbox: 'Auto save changes each time I lock the app',
+                    success: function(result, autoSaveChecked) {
+                        if (result === 'save') {
+                            if (autoSaveChecked) {
+                                that.model.settings.set('autoSave', autoSaveChecked);
+                            }
+                            that.saveAndLock();
+                        } else if (result === 'discard') {
+                            that.model.closeAllFiles();
+                        }
+                    }
+                });
+            }
         } else {
-            this.model.closeAllFiles();
+            this.closeAllFilesAndShowFirst();
+        }
+    },
+
+    saveAndLock: function() {
+        var pendingCallbacks = 0,
+            errorFiles = [],
+            that = this;
+        if (this.model.files.some(function(file) { return file.get('modified') && !file.get('path'); })) {
+            Alerts.error({
+                header: 'Cannot auto-save',
+                body: 'Some opened files cannot be saved automatically. To enable auto-save, you can sync them to Dropbox.'
+            });
+            return;
+        }
+        this.model.files.forEach(function(file) {
+            if (!file.get('modified')) {
+                return;
+            }
+            if (file.get('path')) {
+                try {
+                    file.autoSave(fileSaved.bind(this, file));
+                    pendingCallbacks++;
+                } catch (e) {
+                    console.error('Failed to auto-save file', file.get('path'), e);
+                }
+            }
+        }, this);
+        if (!pendingCallbacks) {
+            this.closeAllFilesAndShowFirst();
+        }
+        function fileSaved(file, err) {
+            if (err) {
+                errorFiles.push(file.get('name'));
+            }
+            if (--pendingCallbacks === 0) {
+                if (errorFiles.length) {
+                    Alerts.error({
+                        header: 'Save Error',
+                        body: 'Failed to auto-save file' + (errorFiles.length > 1 ? 's: ' : '') +  ' ' + errorFiles.join(', ')
+                    });
+                } else {
+                    that.closeAllFilesAndShowFirst();
+                }
+            }
+        }
+    },
+
+    closeAllFilesAndShowFirst: function() {
+        var firstFile = this.model.files.find(function(file) { return !file.get('demo'); });
+        this.model.closeAllFiles();
+        if (firstFile) {
+            this.views.open.showClosedFile(firstFile);
         }
     },
 

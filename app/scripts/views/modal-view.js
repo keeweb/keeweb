@@ -65,7 +65,8 @@ var ModalView = Backbone.View.extend({
     },
 
     closeWithResult: function(result) {
-        this.trigger('result', result);
+        var checked = this.model.checkbox ? this.$el.find('#modal__check').is(':checked') : undefined;
+        this.trigger('result', result, checked);
         this.$el.addClass('modal--hidden');
         this.undelegateEvents();
         setTimeout(this.remove.bind(this), 100);

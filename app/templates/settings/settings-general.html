@@ -51,8 +51,8 @@
         <label for="settings__general-expand">Show entries from all subgroups</label>
     </div>
 
-    <% if (canClearClipboard) { %>
     <h2>Function</h2>
+    <% if (canClearClipboard) { %>
     <div>
         <label for="settings__general-clipboard">Clear clipboard after copy:</label>
         <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
@@ -64,6 +64,11 @@
         </select>
     </div>
     <% } %>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
+            <%- autoSave ? 'checked' : '' %> />
+        <label for="settings__general-auto-save">Auto-save on lock</label>
+    </div>
 
     <% if (devTools) { %>
     <h2>Advanced</h2>

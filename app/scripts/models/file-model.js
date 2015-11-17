@@ -34,6 +34,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     db: null,
+    data: null,
 
     initialize: function() {
     },
@@ -80,6 +81,7 @@ var FileModel = Backbone.Model.extend({
 
     postOpen: function(fileData) {
         var that = this;
+        this.data = fileData;
         if (!this.get('offline')) {
             if (this.get('availOffline')) {
                 Storage.cache.save(this.get('name'), fileData, function (err) {
@@ -158,6 +160,22 @@ var FileModel = Backbone.Model.extend({
         }, this);
     },
 
+    close: function() {
+        this.set({
+            keyFileName: '',
+            passwordLength: 0,
+            modified: false,
+            open: false,
+            opening: false,
+            error: false,
+            created: false,
+            groups: null,
+            passwordChanged: false,
+            keyFileChanged: false,
+            syncing: false
+        });
+    },
+
     getGroup: function(id) {
         var found = null;
         if (id) {
@@ -208,7 +226,7 @@ var FileModel = Backbone.Model.extend({
         }
     },
 
-    autoSave: function() {
+    autoSave: function(complete) {
         var that = this;
         that.set('syncing', true);
         switch (that.get('storage')) {
@@ -216,14 +234,18 @@ var FileModel = Backbone.Model.extend({
                 that.getData(function(data) {
                     Launcher.writeFile(that.get('path'), data);
                     that.saved(that.get('path'), that.get('storage'));
+                    if (complete) { complete(); }
                 });
                 break;
             case 'dropbox':
                 that.getData(function(data) {
                     DropboxLink.saveFile(that.get('path'), data, true, function (err) {
-                        if (!err) {
+                        if (err) {
+                            that.set('syncing', false);
+                        } else {
                             that.saved(that.get('path'), that.get('storage'));
                         }
+                        if (complete) { complete(err); }
                     });
                 });
                 break;
@@ -233,9 +255,8 @@ var FileModel = Backbone.Model.extend({
     },
 
     getData: function(cb) {
-        var data = this.db.save(cb);
-
-        return data;
+        this.data = this.db.save(cb);
+        return this.data;
     },
 
     getXml: function(cb) {
