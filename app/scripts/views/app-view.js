@@ -253,14 +253,19 @@ var AppView = Backbone.View.extend({
         }
     },
 
+    userIdle: function() {
+        this.lockWorkspace(true);
+    },
+
     lockWorkspace: function(autoInit) {
         var that = this;
+        // TODO: check if visual lock or any alert is displayed and stop, if any
         if (this.model.files.hasUnsavedFiles()) {
             if (this.model.settings.get('autoSave')) {
                 this.saveAndLock(autoInit);
             } else {
                 if (autoInit) {
-                    this.visualLock();
+                    this.visualLock({ reason: 'autoSaveDisabled' });
                     return;
                 }
                 Alerts.alert({
@@ -299,7 +304,7 @@ var AppView = Backbone.View.extend({
             errorFiles = [],
             that = this;
         if (this.model.files.some(function(file) { return file.get('modified') && !file.get('path'); })) {
-            this.visualLock();
+            this.visualLock({ reason: 'localFiles' }); // TODO: removed once sync is implemented
             return;
         }
         this.model.files.forEach(function(file) {
@@ -308,10 +313,12 @@ var AppView = Backbone.View.extend({
             }
             if (file.get('path')) {
                 try {
+                    // TODO: prevent Dropbox errors from being displayed
                     file.autoSave(fileSaved.bind(this, file));
                     pendingCallbacks++;
                 } catch (e) {
                     console.error('Failed to auto-save file', file.get('path'), e);
+                    errorFiles.push(file);
                 }
             }
         }, this);
@@ -325,8 +332,9 @@ var AppView = Backbone.View.extend({
             if (--pendingCallbacks === 0) {
                 if (errorFiles.length) {
                     if (autoInit) {
-                        that.visualLock();
+                        that.visualLock({ reason: 'saveError', errorFiles: errorFiles });
                     } else {
+                        // TODO: won't this show double error in case of Dropbox save error?
                         Alerts.error({
                             header: 'Save Error',
                             body: 'Failed to auto-save file' + (errorFiles.length > 1 ? 's: ' : '') + ' ' + errorFiles.join(', ')
@@ -364,10 +372,6 @@ var AppView = Backbone.View.extend({
         if (fileId) {
             this.showFileSettings({fileId: fileId});
         }
-    },
-
-    userIdle: function() {
-        this.lockWorkspace(true);
     },
 
     toggleSettings: function(page) {
