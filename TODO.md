@@ -18,7 +18,6 @@ Dec
 ## v0.6
 Dec-Jan
 - [ ] secure inputs for all passwords
-- [ ] option to auto-clear clipboard
 - [ ] mobile bugfixes
 - [ ] advanced search
 - [ ] help/tips
