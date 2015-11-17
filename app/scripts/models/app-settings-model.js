@@ -14,7 +14,8 @@ var AppSettingsModel = Backbone.Model.extend({
         tagsViewHeight: null,
         autoUpdate: 'install',
         clipboardSeconds: 0,
-        autoSave: false
+        autoSave: false,
+        idleMinutes: 15
     },
 
     initialize: function() {

@@ -12,6 +12,7 @@ var Backbone = require('backbone'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
+    IdleTracker = require('../comp/idle-tracker'),
     Launcher = require('../comp/launcher'),
     ThemeChanger = require('../util/theme-changer'),
     UpdateModel = require('../models/update-model');
@@ -25,7 +26,8 @@ var AppView = Backbone.View.extend({
         'contextmenu': 'contextmenu',
         'drop': 'drop',
         'dragover': 'dragover',
-        'click a[target=_blank]': 'extLinkClick'
+        'click a[target=_blank]': 'extLinkClick',
+        'mousedown': 'bodyClick'
     },
 
     views: null,
@@ -59,6 +61,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'edit-group', this.editGroup);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
+        this.listenTo(Backbone, 'user-idle', this.userIdle);
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
@@ -250,12 +253,16 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    lockWorkspace: function() {
+    lockWorkspace: function(autoInit) {
         var that = this;
         if (this.model.files.hasUnsavedFiles()) {
             if (this.model.settings.get('autoSave')) {
-                this.saveAndLock();
+                this.saveAndLock(autoInit);
             } else {
+                if (autoInit) {
+                    this.visualLock();
+                    return;
+                }
                 Alerts.alert({
                     icon: 'lock',
                     header: 'Lock',
@@ -283,15 +290,16 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    saveAndLock: function() {
+    visualLock: function() {
+        // TODO: think and implement
+    },
+
+    saveAndLock: function(autoInit) {
         var pendingCallbacks = 0,
             errorFiles = [],
             that = this;
         if (this.model.files.some(function(file) { return file.get('modified') && !file.get('path'); })) {
-            Alerts.error({
-                header: 'Cannot auto-save',
-                body: 'Some opened files cannot be saved automatically. To enable auto-save, you can sync them to Dropbox.'
-            });
+            this.visualLock();
             return;
         }
         this.model.files.forEach(function(file) {
@@ -316,10 +324,14 @@ var AppView = Backbone.View.extend({
             }
             if (--pendingCallbacks === 0) {
                 if (errorFiles.length) {
-                    Alerts.error({
-                        header: 'Save Error',
-                        body: 'Failed to auto-save file' + (errorFiles.length > 1 ? 's: ' : '') +  ' ' + errorFiles.join(', ')
-                    });
+                    if (autoInit) {
+                        that.visualLock();
+                    } else {
+                        Alerts.error({
+                            header: 'Save Error',
+                            body: 'Failed to auto-save file' + (errorFiles.length > 1 ? 's: ' : '') + ' ' + errorFiles.join(', ')
+                        });
+                    }
                 } else {
                     that.closeAllFilesAndShowFirst();
                 }
@@ -352,6 +364,10 @@ var AppView = Backbone.View.extend({
         if (fileId) {
             this.showFileSettings({fileId: fileId});
         }
+    },
+
+    userIdle: function() {
+        this.lockWorkspace(true);
     },
 
     toggleSettings: function(page) {
@@ -420,6 +436,10 @@ var AppView = Backbone.View.extend({
             e.preventDefault();
             Launcher.openLink(e.target.href);
         }
+    },
+
+    bodyClick: function() {
+        IdleTracker.regUserAction();
     }
 });
 

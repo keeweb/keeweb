@@ -384,6 +384,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     titleInputKeydown: function(e) {
+        KeyHandler.reg();
         e.stopPropagation();
         var code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
