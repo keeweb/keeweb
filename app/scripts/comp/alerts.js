@@ -3,6 +3,8 @@
 var ModalView = require('../views/modal-view');
 
 var Alerts = {
+    alertDisplayed: false,
+
     buttons: {
         ok: {result: 'yes', title: 'OK'},
         yes: {result: 'yes', title: 'Yes'},
@@ -10,9 +12,11 @@ var Alerts = {
     },
 
     alert: function(config) {
+        Alerts.alertDisplayed = true;
         var view = new ModalView({ model: config });
         view.render();
         view.on('result', function(res, check) {
+            Alerts.alertDisplayed = false;
             if (res && config.success) {
                 config.success(res, check);
             }

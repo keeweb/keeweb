@@ -16,6 +16,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-theme': 'changeTheme',
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
+        'change .settings__general-idle-minutes': 'changeIdleMinutes',
         'change .settings__general-clipboard': 'changeClipboard',
         'change .settings__general-auto-save': 'changeAutoSave',
         'click .settings__general-update-btn': 'checkUpdate',
@@ -44,6 +45,7 @@ var SettingsGeneralView = Backbone.View.extend({
             canClearClipboard: !!Launcher,
             clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
             autoSave: AppSettingsModel.instance.get('autoSave'),
+            idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
             autoUpdate: Updater.getAutoUpdateType(),
@@ -100,6 +102,11 @@ var SettingsGeneralView = Backbone.View.extend({
     changeClipboard: function(e) {
         var clipboardSeconds = +e.target.value;
         AppSettingsModel.instance.set('clipboardSeconds', clipboardSeconds);
+    },
+
+    changeIdleMinutes: function(e) {
+        var idleMinutes = +e.target.value;
+        AppSettingsModel.instance.set('idleMinutes', idleMinutes);
     },
 
     changeAutoUpdate: function(e) {

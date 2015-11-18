@@ -69,6 +69,16 @@
             <%- autoSave ? 'checked' : '' %> />
         <label for="settings__general-auto-save">Auto-save on lock</label>
     </div>
+    <div>
+        <label for="settings__general-idle-minutes">Auto-lock if the app is inactive:</label>
+        <select class="settings__general-idle-minutes settings__select input-base" id="settings__general-idle-minutes">
+            <option value="0" <%= idleMinutes <= 0 ? 'selected' : '' %>>Don't auto-lock</option>
+            <option value="5" <%= idleMinutes === 5 ? 'selected' : '' %>>In 5 minutes</option>
+            <option value="10" <%= idleMinutes === 10 ? 'selected' : '' %>>In 10 minutes</option>
+            <option value="15" <%= idleMinutes === 15 ? 'selected' : '' %>>In 15 minutes</option>
+            <option value="60" <%= idleMinutes === 60 ? 'selected' : '' %>>In an hour</option>
+        </select>
+    </div>
 
     <% if (devTools) { %>
     <h2>Advanced</h2>

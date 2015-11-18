@@ -3,7 +3,7 @@
 ## v0.4
 Nov
 - [x] desktop dropbox
-- [ ] lock flow, auto-lock
+- [x] lock flow, auto-lock
 - [ ] minimize to tray
 - [ ] trim history by rules
 - [ ] custom icons, favicons

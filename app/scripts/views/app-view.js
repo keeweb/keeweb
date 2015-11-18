@@ -259,7 +259,9 @@ var AppView = Backbone.View.extend({
 
     lockWorkspace: function(autoInit) {
         var that = this;
-        // TODO: check if visual lock or any alert is displayed and stop, if any
+        if (Alerts.alertDisplayed) { // TODO: check visual lock as well
+            return;
+        }
         if (this.model.files.hasUnsavedFiles()) {
             if (this.model.settings.get('autoSave')) {
                 this.saveAndLock(autoInit);
@@ -300,6 +302,7 @@ var AppView = Backbone.View.extend({
     },
 
     saveAndLock: function(autoInit) {
+        // TODO: move to file manager
         var pendingCallbacks = 0,
             errorFiles = [],
             that = this;
