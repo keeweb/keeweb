@@ -1,0 +1,11 @@
+<div class="vlock">
+    <div class="vlock__description">
+        <% if (reason === 'localFiles') { %>
+        You have opened some files which cannot be auto-saved
+        <% } else if (reason === 'saveError') { %>
+        Failed to save file<%- (errorFiles.length > 1 ? 's: ' : ' ') + errorFiles.join(', ') %>
+        <% } else if (reason === 'autoSaveDisabled') { %>
+        You can auto-save files on lock. Enable it?
+        <% } %>
+    </div>
+</div>

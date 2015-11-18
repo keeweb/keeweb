@@ -35,16 +35,23 @@ var FooterView = Backbone.View.extend({
     render: function () {
         this.$el.html(this.template({
             files: this.model.files,
-            updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
+            updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0,
+            visualLock: this.model.visualLock
         }));
         return this;
     },
 
     lockWorkspace: function() {
+        if (this.model.visualLock) {
+            return;
+        }
         Backbone.trigger('lock-workspace');
     },
 
     genPass: function(e) {
+        if (this.model.visualLock) {
+            return;
+        }
         e.stopPropagation();
         if (this.views.gen) {
             this.views.gen.remove();
@@ -61,6 +68,9 @@ var FooterView = Backbone.View.extend({
     },
 
     showFile: function(e) {
+        if (this.model.visualLock) {
+            return;
+        }
         var fileId = $(e.target).closest('.footer__db-item').data('file-id');
         if (fileId) {
             Backbone.trigger('show-file', { fileId: fileId });
@@ -68,22 +78,37 @@ var FooterView = Backbone.View.extend({
     },
 
     openFile: function() {
+        if (this.model.visualLock) {
+            return;
+        }
         Backbone.trigger('open-file');
     },
 
     saveAll: function() {
+        if (this.model.visualLock) {
+            return;
+        }
         Backbone.trigger('save-all');
     },
 
     switchView: function() {
+        if (this.model.visualLock) {
+            return;
+        }
         Backbone.trigger('switch-view');
     },
 
     toggleHelp: function() {
+        if (this.model.visualLock) {
+            return;
+        }
         Backbone.trigger('toggle-settings', 'help');
     },
 
     toggleSettings: function() {
+        if (this.model.visualLock) {
+            return;
+        }
         Backbone.trigger('toggle-settings', 'general');
     }
 });

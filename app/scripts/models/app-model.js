@@ -197,6 +197,10 @@ var AppModel = Backbone.Model.extend({
     createNewGroup: function() {
         var sel = this.getFirstSelectedGroup();
         return GroupModel.newGroup(sel.group, sel.file);
+    },
+
+    setVisualLock: function(visualLock) {
+        this.visualLock = visualLock;
     }
 });
 

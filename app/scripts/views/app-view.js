@@ -9,6 +9,7 @@ var Backbone = require('backbone'),
     GrpView = require('../views/grp-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
+    VisualLockView = require('../views/visual-lock-view'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
@@ -259,7 +260,7 @@ var AppView = Backbone.View.extend({
 
     lockWorkspace: function(autoInit) {
         var that = this;
-        if (Alerts.alertDisplayed) { // TODO: check visual lock as well
+        if (Alerts.alertDisplayed || this.model.visualLock) {
             return;
         }
         if (this.model.files.hasUnsavedFiles()) {
@@ -267,7 +268,7 @@ var AppView = Backbone.View.extend({
                 this.saveAndLock(autoInit);
             } else {
                 if (autoInit) {
-                    this.visualLock({ reason: 'autoSaveDisabled' });
+                    this.showVisualLock({ reason: 'autoSaveDisabled' });
                     return;
                 }
                 Alerts.alert({
@@ -297,8 +298,22 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    visualLock: function() {
-        // TODO: think and implement
+    showVisualLock: function(config) {
+        if (this.model.visualLock) {
+            return;
+        }
+        this.views.menu.hide();
+        this.views.menuDrag.hide();
+        this.views.list.hide();
+        this.views.listDrag.hide();
+        this.views.details.hide();
+        this.views.grp.hide();
+        this.views.footer.toggle(this.model.files.hasOpenFiles());
+        this.hideSettings();
+        this.hideOpenFile();
+        this.views.visualLock = new VisualLockView({model: config}).render();
+        this.model.setVisualLock(true);
+        this.views.footer.render();
     },
 
     saveAndLock: function(autoInit) {
@@ -307,7 +322,7 @@ var AppView = Backbone.View.extend({
             errorFiles = [],
             that = this;
         if (this.model.files.some(function(file) { return file.get('modified') && !file.get('path'); })) {
-            this.visualLock({ reason: 'localFiles' }); // TODO: removed once sync is implemented
+            this.showVisualLock({ reason: 'localFiles' }); // TODO: removed once sync is implemented
             return;
         }
         this.model.files.forEach(function(file) {
@@ -316,7 +331,6 @@ var AppView = Backbone.View.extend({
             }
             if (file.get('path')) {
                 try {
-                    // TODO: prevent Dropbox errors from being displayed
                     file.autoSave(fileSaved.bind(this, file));
                     pendingCallbacks++;
                 } catch (e) {
@@ -335,9 +349,8 @@ var AppView = Backbone.View.extend({
             if (--pendingCallbacks === 0) {
                 if (errorFiles.length) {
                     if (autoInit) {
-                        that.visualLock({ reason: 'saveError', errorFiles: errorFiles });
-                    } else {
-                        // TODO: won't this show double error in case of Dropbox save error?
+                        that.showVisualLock({ reason: 'saveError', errorFiles: errorFiles });
+                    } else if (!Alerts.alertDisplayed) {
                         Alerts.error({
                             header: 'Save Error',
                             body: 'Failed to auto-save file' + (errorFiles.length > 1 ? 's: ' : '') + ' ' + errorFiles.join(', ')
@@ -351,7 +364,7 @@ var AppView = Backbone.View.extend({
     },
 
     closeAllFilesAndShowFirst: function() {
-        var firstFile = this.model.files.find(function(file) { return !file.get('demo'); });
+        var firstFile = this.model.files.find(function(file) { return !file.get('demo') && !file.get('created'); });
         this.model.closeAllFiles();
         if (firstFile) {
             this.views.open.showClosedFile(firstFile);
