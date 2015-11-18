@@ -215,7 +215,7 @@ var DropboxLink = {
             if (err) {
                 return callback(err);
             }
-            client[callName].apply(client, args.concat(function(err, res) {
+            client[callName].apply(client, args.concat(function(err) {
                 if (err) {
                     that._handleUiError(err, errorAlertCallback, function(repeat) {
                         if (repeat) {
@@ -225,7 +225,7 @@ var DropboxLink = {
                         }
                     });
                 } else {
-                    callback(err, res);
+                    callback.apply(null, arguments);
                 }
             }));
         });
@@ -257,11 +257,11 @@ var DropboxLink = {
     },
 
     getFileList: function(complete) {
-        this._callAndHandleError('readdir', [''], function(err, files) {
+        this._callAndHandleError('readdir', [''], function(err, files, dirStat) {
             if (files) {
                 files = files.filter(function(f) { return /\.kdbx$/i.test(f); });
             }
-            complete(err, files);
+            complete(err, files, dirStat);
         });
     },
 

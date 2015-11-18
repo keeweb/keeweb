@@ -307,7 +307,7 @@ var OpenView = Backbone.View.extend({
             }
             that.dropboxLoading = 'file list';
             that.displayDropboxLoading();
-            DropboxLink.getFileList(function(err, files) {
+            DropboxLink.getFileList(function(err, files, dirStat) {
                 that.dropboxLoading = null;
                 that.displayDropboxLoading();
                 if (err) {
@@ -323,7 +323,8 @@ var OpenView = Backbone.View.extend({
                 if (!buttons.length) {
                     Alerts.error({
                         header: 'Nothing found',
-                        body: 'You have no files in your Dropbox which could be opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
+                        body: 'You have no files in your Dropbox which could be opened.' +
+                            (dirStat && dirStat.inAppFolder ? ' Files are searched inside app folder in your Dropbox.' : '')
                     });
                     return;
                 }
