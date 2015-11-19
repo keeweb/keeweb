@@ -150,6 +150,7 @@ var GroupModel = MenuItemModel.extend({
         if (!object || object.id === this.id || object.file !== this.file) {
             return;
         }
+        this.file.setModified();
         if (object instanceof GroupModel) {
             if (this.group.groups.indexOf(object.group) >= 0) {
                 return;

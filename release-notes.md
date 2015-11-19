@@ -8,6 +8,7 @@ Locking, better Dropbox, security enhancements, bugfixes
 `+` Dropbox notification in self-hosted apps  
 `+` option to check updates without install  
 `+` clear clipboard password after timeout  
+`-` entry deletion didn't mark file as modified  
 
 ##### v0.3.0 (2015-11-14)
 Auto-update  

@@ -215,6 +215,10 @@ var EntryModel = Backbone.Model.extend({
     },
 
     moveToTrash: function() {
+        this.file.setModified();
+        if (this.isJustCreated) {
+            this.isJustCreated = false;
+        }
         this.file.db.remove(this.entry);
         this.group.removeEntry(this);
         var trashGroup = this.file.getTrashGroup();
@@ -225,6 +229,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     deleteFromTrash: function() {
+        this.file.setModified();
         this.file.db.move(this.entry, null);
         this.group.removeEntry(this);
     },
