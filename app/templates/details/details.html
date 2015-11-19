@@ -3,7 +3,7 @@
         <i class="fa fa-chevron-left"></i> back to list
     </div>
     <div class="details__header">
-        <i class="details__header-color fa fa-bookmark-o">
+        <i class="details__header-color fa fa-bookmark-o" title="Change icon's color">
             <span class="details__colors-popup">
                 <span class="details__colors-popup-item yellow-color fa fa-bookmark-o" data-color="yellow"></span>
                 <span class="details__colors-popup-item green-color fa fa-bookmark-o" data-color="green"></span>
@@ -14,7 +14,7 @@
             </span>
         </i>
         <h1 class="details__header-title"><%- title || '(no title)' %></h1>
-        <i class="details__header-icon fa fa-<%= icon %>"></i>
+        <i class="details__header-icon fa fa-<%= icon %>" title="Change icon"></i>
     </div>
     <div class="details__body">
         <div class="scroller">
@@ -26,8 +26,8 @@
         <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
     </div>
     <div class="details__buttons">
-        <% if (deleted) { %><i class="details__buttons-trash-del fa fa-minus-circle"></i>
-        <% } else { %><i class="details__buttons-trash fa fa-trash-o"></i><% } %>
+        <% if (deleted) { %><i class="details__buttons-trash-del fa fa-minus-circle" title="Delete permanently"></i>
+        <% } else { %><i class="details__buttons-trash fa fa-trash-o" title="Delete item"></i><% } %>
         <div class="details__attachments">
             <% attachments.forEach(function(attachment, ix) { %>
             <div class="details__attachment" data-id="<%= ix %>"><i class="fa fa-<%= attachment.icon %>"></i> <%- attachment.title %></div>
