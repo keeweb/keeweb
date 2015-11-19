@@ -166,6 +166,7 @@ var GroupModel = MenuItemModel.extend({
             this.file.db.move(object.entry, this.group);
             object.group.removeEntry(object);
             this.addEntry(object);
+            object.group = this;
         }
     }
 });
