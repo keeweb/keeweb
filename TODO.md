@@ -14,6 +14,7 @@ Nov
 ## v0.5
 Dec
 - [ ] conflict-free 2-way merge sync
+- [ ] rethink locking and storage concept
 
 ## v0.6
 Dec-Jan
