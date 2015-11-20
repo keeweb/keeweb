@@ -13,7 +13,7 @@ var VisualLockView = Backbone.View.extend({
     },
 
     render: function () {
-        this.renderTemplate(this.model);
+        this.renderTemplate($.extend(this.model, { fileName: 'TODO' }));
         return this;
     }
 });

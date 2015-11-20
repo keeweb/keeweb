@@ -395,7 +395,7 @@ var OpenView = Backbone.View.extend({
         if (this.dropboxLoading || this.file.get('opening')) {
             return;
         }
-        var name = $(e.target).closest('.open__last-item').data('name');
+        var name = $(e.target).closest('.open__last-item').data('name').toString();
         if ($(e.target).is('.open__last-item-icon-del')) {
             this.delLast(name);
             return;

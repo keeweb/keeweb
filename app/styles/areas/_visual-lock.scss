@@ -1,3 +1,30 @@
 .vlock {
+  @include flex(1);
+  @include display(flex);
+  @include align-self(stretch);
+  @include align-items(center);
+  @include flex-direction(column);
+  @include justify-content(center);
 
+  &__input-wrap, &__text {
+    width: 30em;
+    position: relative;
+  }
+  &-enter-btn {
+    padding: .6em $base-spacing;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    cursor: pointer;
+    >i { font-size: 3em; }
+    @include mobile { display: none; }
+    @include th { color: muted-color(); }
+    &:hover {
+      @include th { color: medium-color(); }
+    }
+  }
+  input[type=password].vlock__input {
+    font-size: $large-pass-font-size;
+    width: 100%;
+  }
 }

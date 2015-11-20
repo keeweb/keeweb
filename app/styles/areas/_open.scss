@@ -2,7 +2,6 @@
   @include flex(1);
   @include display(flex);
   @include align-self(stretch);
-  @include display(flex);
   @include align-items(center);
   @include flex-direction(column);
   @include justify-content(center);
@@ -73,7 +72,7 @@
   }
 
   input[type=password].open__pass-input {
-    font-size: 22px;
+    font-size: $large-pass-font-size;
     margin-bottom: 0;
     &[readonly] { cursor: pointer; }
     @include mobile {
