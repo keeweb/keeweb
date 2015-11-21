@@ -8,7 +8,7 @@ Nov
 - [x] trim history by rules
 - [ ] custom icons, favicons
 - [x] drag to trash
-- [ ] switch view
+- [x] switch view
 - [x] option to check updates without install
 
 ## v0.5
@@ -40,6 +40,7 @@ Feb
 - [ ] generation templates
 - [ ] entry templates
 - [ ] drag entries across files
+- [ ] customizable table view
 - [ ] i18n
 - [ ] allow to increase font size
 - [ ] different storage options

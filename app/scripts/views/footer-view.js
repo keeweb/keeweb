@@ -12,7 +12,6 @@ var FooterView = Backbone.View.extend({
     events: {
         'click .footer__db-item': 'showFile',
         'click .footer__db-open': 'openFile',
-        'click .footer__btn-view': 'switchView',
         'click .footer__btn-help': 'toggleHelp',
         'click .footer__btn-settings': 'toggleSettings',
         'click .footer__btn-generate': 'genPass',
@@ -73,10 +72,6 @@ var FooterView = Backbone.View.extend({
 
     saveAll: function() {
         Backbone.trigger('save-all');
-    },
-
-    switchView: function() {
-        Backbone.trigger('switch-view');
     },
 
     toggleHelp: function() {

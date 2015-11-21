@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     MenuView = require('../views/menu/menu-view'),
     FooterView = require('../views/footer-view'),
     ListView = require('../views/list-view'),
+    ListWrapView = require('../views/list-wrap-view'),
     DetailsView = require('../views/details/details-view'),
     GrpView = require('../views/grp-view'),
     OpenView = require('../views/open-view'),
@@ -37,8 +38,10 @@ var AppView = Backbone.View.extend({
         this.views.menu = new MenuView({ model: this.model.menu });
         this.views.menuDrag = new DragView('x');
         this.views.footer = new FooterView({ model: this.model });
+        this.views.listWrap = new ListWrapView({ model: this.model });
         this.views.list = new ListView({ model: this.model });
         this.views.listDrag = new DragView('x');
+        this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView();
         this.views.details.appModel = this.model;
         this.views.grp = new GrpView();
@@ -55,7 +58,6 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'show-file', this.showFileSettings);
         this.listenTo(Backbone, 'open-file', this.toggleOpenFile);
         this.listenTo(Backbone, 'save-all', this.saveAll);
-        this.listenTo(Backbone, 'switch-view', this.switchView);
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
@@ -73,8 +75,9 @@ var AppView = Backbone.View.extend({
     },
 
     render: function () {
-        this.setTheme();
         this.$el.html(this.template());
+        this.setTheme();
+        this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
         this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
         this.views.footer.setElement(this.$el.find('.app__footer')).render();
@@ -88,6 +91,7 @@ var AppView = Backbone.View.extend({
     showOpenFile: function(filePath) {
         this.views.menu.hide();
         this.views.menuDrag.hide();
+        this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
@@ -119,6 +123,7 @@ var AppView = Backbone.View.extend({
     showEntries: function() {
         this.views.menu.show();
         this.views.menuDrag.show();
+        this.views.listWrap.show();
         this.views.list.show();
         this.views.listDrag.show();
         this.views.details.show();
@@ -147,6 +152,7 @@ var AppView = Backbone.View.extend({
         this.model.menu.setMenu('settings');
         this.views.menu.show();
         this.views.menuDrag.show();
+        this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
@@ -162,6 +168,7 @@ var AppView = Backbone.View.extend({
     },
 
     showEditGroup: function() {
+        this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
@@ -411,10 +418,6 @@ var AppView = Backbone.View.extend({
 
     toggleMenu: function() {
         this.views.menu.switchVisibility();
-    },
-
-    switchView: function() {
-        Alerts.notImplemented();
     },
 
     toggleDetails: function(visible) {

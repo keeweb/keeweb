@@ -50,6 +50,12 @@
         <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" <%- expandGroups ? 'checked' : '' %> />
         <label for="settings__general-expand">Show entries from all subgroups</label>
     </div>
+    <% if (canSetTableView) { %>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-table-view" id="settings__general-table-view" <%- tableView ? 'checked' : '' %> />
+        <label for="settings__general-table-view">Entries list table view</label>
+    </div>
+    <% } %>
 
     <h2>Function</h2>
     <div>

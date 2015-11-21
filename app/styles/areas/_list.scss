@@ -73,18 +73,26 @@
     }
   }
 
+  &__table {
+    width: calc(100% - 1px);
+    td, th {
+      padding: $base-padding;
+      text-align: left;
+    }
+  }
+
   &__item {
-    @include area-selectable(right);
     padding: $base-padding-px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    height: 32px;
-
+    @include area-selectable(right);
     &--active, &--active:hover {
-      @include nomobile {
-        @include area-selected(right);
-      }
+      @include nomobile { @include area-selected(right); }
+    }
+
+    &:not(.list__item--table) {
+      height: 32px;
     }
 
     &--expired {

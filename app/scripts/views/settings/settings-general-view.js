@@ -7,6 +7,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../../models/app-settings-model'),
     UpdateModel = require('../../models/update-model'),
     RuntimeInfo = require('../../comp/runtime-info'),
+    FeatureDetector = require('../../util/feature-detector'),
     Links = require('../../const/links');
 
 var SettingsGeneralView = Backbone.View.extend({
@@ -20,6 +21,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-clipboard': 'changeClipboard',
         'change .settings__general-auto-save': 'changeAutoSave',
         'change .settings__general-minimize': 'changeMinimize',
+        'change .settings__general-table-view': 'changeTableView',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
@@ -51,6 +53,8 @@ var SettingsGeneralView = Backbone.View.extend({
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
             canMinimizeOnClose: Launcher && Launcher.canMinimize(),
+            tableView: AppSettingsModel.instance.get('tableView'),
+            canSetTableView: FeatureDetector.isDesktop(),
             autoUpdate: Updater.getAutoUpdateType(),
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
@@ -132,6 +136,12 @@ var SettingsGeneralView = Backbone.View.extend({
     changeMinimize: function(e) {
         var minimizeOnClose = e.target.checked || false;
         AppSettingsModel.instance.set('minimizeOnClose', minimizeOnClose);
+    },
+
+    changeTableView: function(e) {
+        var tableView = e.target.checked || false;
+        AppSettingsModel.instance.set('tableView', tableView);
+        Backbone.trigger('refresh');
     },
 
     restartApp: function() {

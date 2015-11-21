@@ -16,7 +16,8 @@ var AppSettingsModel = Backbone.Model.extend({
         clipboardSeconds: 0,
         autoSave: true,
         idleMinutes: 15,
-        minimizeOnClose: false
+        minimizeOnClose: false,
+        tableView: false
     },
 
     initialize: function() {
