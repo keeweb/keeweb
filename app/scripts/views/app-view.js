@@ -223,6 +223,10 @@ var AppView = Backbone.View.extend({
                 return Launcher.preventExit(e);
             }
             return 'You have unsaved files, all changes will be lost.';
+        } else if (Launcher && !Launcher.exitRequested && Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
+            this.lockWorkspace(true);
+            Launcher.minimizeApp();
+            return Launcher.preventExit(e);
         }
     },
 

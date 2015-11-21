@@ -6,7 +6,8 @@
 var app = require('app'),
     BrowserWindow = require('browser-window'),
     path = require('path'),
-    Menu = require('menu');
+    Menu = require('menu'),
+    Tray = require('tray');
 
 var mainWindow = null,
     openFile = process.argv.filter(function(arg) { return /\.kdbx$/i.test(arg); })[0],
@@ -59,6 +60,18 @@ app.quitAndRestart = function() {
 };
 app.openWindow = function(opts) {
     return new BrowserWindow(opts);
+};
+app.minimizeApp = function() {
+    if (process.platform === 'win32') {
+        mainWindow.minimize();
+        mainWindow.setSkipTaskbar(true);
+        var appIcon = new Tray(path.join(__dirname, 'icon.png'));
+        appIcon.on('clicked', function () {
+            mainWindow.restore();
+            mainWindow.setSkipTaskbar(false);
+        });
+        appIcon.setToolTip('KeeWeb');
+    }
 };
 
 function setMenu() {

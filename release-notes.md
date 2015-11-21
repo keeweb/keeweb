@@ -3,6 +3,7 @@ Release notes
 ##### vNext
 Locking, better Dropbox, security enhancements, bugfixes
 `+` lock flow, auto-lock  
+`+` minimize to tray on windows  
 `-` fixed tag list scrolling  
 `+` desktop Dropbox  
 `+` Dropbox notification in self-hosted apps  

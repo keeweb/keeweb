@@ -19,6 +19,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-idle-minutes': 'changeIdleMinutes',
         'change .settings__general-clipboard': 'changeClipboard',
         'change .settings__general-auto-save': 'changeAutoSave',
+        'change .settings__general-minimize': 'changeMinimize',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
@@ -46,8 +47,10 @@ var SettingsGeneralView = Backbone.View.extend({
             clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
             autoSave: AppSettingsModel.instance.get('autoSave'),
             idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
+            minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
+            canMinimizeOnClose: Launcher && Launcher.canMinimize(),
             autoUpdate: Updater.getAutoUpdateType(),
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
@@ -124,6 +127,11 @@ var SettingsGeneralView = Backbone.View.extend({
     changeAutoSave: function(e) {
         var autoSave = e.target.checked || false;
         AppSettingsModel.instance.set('autoSave', autoSave);
+    },
+
+    changeMinimize: function(e) {
+        var minimizeOnClose = e.target.checked || false;
+        AppSettingsModel.instance.set('minimizeOnClose', minimizeOnClose);
     },
 
     restartApp: function() {

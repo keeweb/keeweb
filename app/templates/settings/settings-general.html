@@ -52,18 +52,6 @@
     </div>
 
     <h2>Function</h2>
-    <% if (canClearClipboard) { %>
-    <div>
-        <label for="settings__general-clipboard">Clear clipboard after copy:</label>
-        <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
-            <option value="0" <%= clipboardSeconds ? '' : 'selected' %>>Don't clear</option>
-            <option value="5" <%= clipboardSeconds === 5 ? 'selected' : '' %>>In 5 seconds</option>
-            <option value="10" <%= clipboardSeconds === 10 ? 'selected' : '' %>>In 10 seconds</option>
-            <option value="15" <%= clipboardSeconds === 15 ? 'selected' : '' %>>In 15 seconds</option>
-            <option value="60" <%= clipboardSeconds === 60 ? 'selected' : '' %>>In a minute</option>
-        </select>
-    </div>
-    <% } %>
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
             <%- autoSave ? 'checked' : '' %> />
@@ -79,6 +67,25 @@
             <option value="60" <%= idleMinutes === 60 ? 'selected' : '' %>>In an hour</option>
         </select>
     </div>
+    <% if (canClearClipboard) { %>
+    <div>
+        <label for="settings__general-clipboard">Clear clipboard after copy:</label>
+        <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
+            <option value="0" <%= clipboardSeconds ? '' : 'selected' %>>Don't clear</option>
+            <option value="5" <%= clipboardSeconds === 5 ? 'selected' : '' %>>In 5 seconds</option>
+            <option value="10" <%= clipboardSeconds === 10 ? 'selected' : '' %>>In 10 seconds</option>
+            <option value="15" <%= clipboardSeconds === 15 ? 'selected' : '' %>>In 15 seconds</option>
+            <option value="60" <%= clipboardSeconds === 60 ? 'selected' : '' %>>In a minute</option>
+        </select>
+    </div>
+    <% } %>
+    <% if (canMinimizeOnClose) { %>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-minimize" id="settings__general-minimize"
+        <%- minimizeOnClose ? 'checked' : '' %> />
+        <label for="settings__general-minimize">Minimize app instead of close</label>
+    </div>
+    <% } %>
 
     <% if (devTools) { %>
     <h2>Advanced</h2>
