@@ -15,6 +15,8 @@ Nov
 Dec
 - [ ] conflict-free 2-way merge sync
 - [ ] rethink locking and storage concept
+- [ ] tech debt: unify storage providers
+- [ ] tech debt: reload after db operations
 
 ## v0.6
 Dec-Jan
@@ -22,12 +24,7 @@ Dec-Jan
 - [ ] mobile bugfixes
 - [ ] advanced search
 - [ ] help/tips
-
-## v0.7
-Jan
-- [ ] tech debt: unify storage providers
 - [ ] tech debt: refactor app-view
-- [ ] tech debt: reload after db operations
 - [ ] tech debt: string globalization
 - [ ] tech debt: binaries and history
 
