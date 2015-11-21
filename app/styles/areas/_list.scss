@@ -105,13 +105,12 @@
       &--custom {
         @include filter(grayscale(1));
         vertical-align: text-bottom;
-        // TODO: find more suitable colors
-        &.yellow { @include filter(grayscale(1) sepia(1) hue-rotate(20deg) brightness(0.4) saturate(3) brightness(2)); }
-        &.green { @include filter(grayscale(1) sepia(1) hue-rotate(70deg) brightness(.5) saturate(2) brightness(1.3)); }
-        &.red { @include filter(grayscale(1) sepia(1) hue-rotate(320deg) brightness(0.6) saturate(4) brightness(1)); }
-        &.orange { @include filter(grayscale(1) sepia(1) hue-rotate(340deg) brightness(.4) saturate(3) brightness(1.8)); }
-        &.blue { @include filter(grayscale(1) sepia(1) hue-rotate(170deg) brightness(0.3) saturate(3) brightness(2)); }
-        &.violet { @include filter(grayscale(1) sepia(1) hue-rotate(240deg) brightness(0.8) saturate(2.7) brightness(.9)); }
+        &.yellow { @include filter(grayscale(1) sepia(1) hue-rotate(20deg) brightness(1.17) saturate(5.7)); }
+        &.green { @include filter(grayscale(1) sepia(1) hue-rotate(55deg) brightness(1.01) saturate(4.9)); }
+        &.red { @include filter(grayscale(1) sepia(1) hue-rotate(316deg) brightness(1) saturate(7.4)); }
+        &.orange { @include filter(grayscale(1) sepia(1) hue-rotate(355deg) brightness(0.92) saturate(5)); }
+        &.blue { @include filter(grayscale(1) sepia(1) hue-rotate(180deg) brightness(0.9) saturate(5)); }
+        &.violet { @include filter(grayscale(1) sepia(1) hue-rotate(238deg) brightness(1) saturate(6.2)); }
       }
     }
 
