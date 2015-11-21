@@ -51,9 +51,7 @@ For debug build:
 
 # Contributing
 
-Plugins are not supported for now. If you want to add a feature, please contact the author first. Pull requests, patches and issues are very welcome.  
-If you have found an bug, please [open an issue](https://github.com/antelle/keeweb/issues/new) and fill in the app version and your user-agent 
-(you can find these details in Settings/Help section). Please check [TODO](TODO.md) before creating a feature request.
+Please, read [contribution guidelines](CONTRIBUTING.md).
 
 # License
 
