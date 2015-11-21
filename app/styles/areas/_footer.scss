@@ -11,13 +11,6 @@
     padding: $medium-padding;
     padding-right: 1.3em;
     white-space: nowrap;
-    .footer--locked>& {
-      cursor: default;
-      &:hover {
-        background: transparent;
-        border-top-color: transparent;
-      }
-    }
     &.footer__db--dimmed {
       @include th {
         color: muted-color();

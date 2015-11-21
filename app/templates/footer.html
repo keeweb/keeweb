@@ -1,4 +1,4 @@
-<div class="footer <%= visualLock ? 'footer--locked' : '' %>">
+<div class="footer">
     <% files.forEach(function(file) { %>
     <div class="footer__db footer__db-item <%= file.get('open') ? '' : 'footer__db--dimmed' %>" data-file-id="<%= file.cid %>">
         <i class="fa fa-<%= file.get('open') ? 'unlock' : 'lock' %>"></i> <%- file.get('name') %>
@@ -6,7 +6,6 @@
         <% if (file.get('syncing')) { %><i class="fa fa-refresh fa-spin footer__db-sign"></i><% } %>
     </div>
     <% }); %>
-    <% if (!visualLock) { %>
     <div class="footer__db footer__db--dimmed footer__db--expanded footer__db-open"><i class="fa fa-plus"></i> Open / New</div>
     <!--<div class="footer__btn footer__btn-view"><i class="fa fa-list-ul"></i></div>-->
     <div class="footer__btn footer__btn-help"><i class="fa fa-question"></i></div>
@@ -19,5 +18,4 @@
     </div>
     <div class="footer__btn footer__btn-generate"><i class="fa fa-bolt"></i></div>
     <div class="footer__btn footer__btn-lock"><i class="fa fa-lock"></i></div>
-    <% } %>
 </div>

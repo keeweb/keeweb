@@ -9,7 +9,6 @@ var Backbone = require('backbone'),
     GrpView = require('../views/grp-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
-    VisualLockView = require('../views/visual-lock-view'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
@@ -260,7 +259,7 @@ var AppView = Backbone.View.extend({
 
     lockWorkspace: function(autoInit) {
         var that = this;
-        if (Alerts.alertDisplayed || this.model.visualLock) {
+        if (Alerts.alertDisplayed) {
             return;
         }
         if (this.model.files.hasUnsavedFiles()) {
@@ -268,7 +267,7 @@ var AppView = Backbone.View.extend({
                 this.saveAndLock(autoInit);
             } else {
                 if (autoInit) {
-                    this.showVisualLock({ reason: 'autoSaveDisabled' });
+                    this.showVisualLock('Auto-save is disabled. Please, enable it, to allow auto-locking');
                     return;
                 }
                 Alerts.alert({
@@ -298,22 +297,17 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    showVisualLock: function(config) {
-        if (this.model.visualLock) {
+    showVisualLock: function(message) {
+        // TODO: remove this
+        if (Alerts.alertDisplayed) {
             return;
         }
-        this.views.menu.hide();
-        this.views.menuDrag.hide();
-        this.views.list.hide();
-        this.views.listDrag.hide();
-        this.views.details.hide();
-        this.views.grp.hide();
-        this.views.footer.toggle(this.model.files.hasOpenFiles());
-        this.hideSettings();
-        this.hideOpenFile();
-        this.views.visualLock = new VisualLockView({model: config}).render();
-        this.model.setVisualLock(true);
-        this.views.footer.render();
+        message += '<div class="muted-color">Note: this will be removed once 2-way sync is implemented</div>';
+        Alerts.info({
+            header: 'Auto-lock failed',
+            body: message,
+            icon: 'lock'
+        });
     },
 
     saveAndLock: function(autoInit) {
@@ -322,7 +316,7 @@ var AppView = Backbone.View.extend({
             errorFiles = [],
             that = this;
         if (this.model.files.some(function(file) { return file.get('modified') && !file.get('path'); })) {
-            this.showVisualLock({ reason: 'localFiles' }); // TODO: removed once sync is implemented
+            this.showVisualLock('You have unsaved files, locking is not possible.');
             return;
         }
         this.model.files.forEach(function(file) {
@@ -349,7 +343,7 @@ var AppView = Backbone.View.extend({
             if (--pendingCallbacks === 0) {
                 if (errorFiles.length) {
                     if (autoInit) {
-                        that.showVisualLock({ reason: 'saveError', errorFiles: errorFiles });
+                        that.showVisualLock('Failed to save files: ' + errorFiles.join(', '));
                     } else if (!Alerts.alertDisplayed) {
                         Alerts.error({
                             header: 'Save Error',
