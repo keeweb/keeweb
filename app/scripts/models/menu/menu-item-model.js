@@ -8,6 +8,7 @@ var MenuItemModel = Backbone.Model.extend({
     defaults: {
         title: '',
         icon: '',
+        customIcon: null,
         active: false,
         expanded: true,
         items: null,

@@ -4,8 +4,9 @@
         options && options.length ? 'menu__item--with-options' : '' %> <%=
         cls ? cls : '' %>">
     <div class="menu__item-body" <%= drag ? 'draggable="true"' : '' %>>
-        <i class="menu__item-icon fa <%= icon ? 'fa-' + icon : 'menu__item-icon--no-icon' %>"></i><span
-            class="menu__item-title"><%- title || '(no title)' %></span>
+        <% if (customIcon) { %><img src="<%= customIcon %>" class="menu__item-icon menu__item-icon--image" /><% }
+        else { %><i class="menu__item-icon fa <%= icon ? 'fa-' + icon : 'menu__item-icon--no-icon' %>"></i><% }
+        %><span class="menu__item-title"><%- title || '(no title)' %></span>
         <% if (options) { %>
         <div class="menu__item-options">
             <% options.forEach(function(option) { %>

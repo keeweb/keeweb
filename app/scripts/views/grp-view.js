@@ -25,6 +25,7 @@ var GrpView = Backbone.View.extend({
             this.$el.html(this.template({
                 title: this.model.get('title'),
                 icon: this.model.get('icon') || 'folder',
+                customIcon: this.model.get('customIcon'),
                 readonly: this.model.get('top')
             }));
             if (!this.model.get('title')) {

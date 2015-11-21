@@ -17,6 +17,10 @@
   @include transform-style(perspective-3d);
 }
 
+.grayscale {
+  @include filter(grayscale(1));
+}
+
 @include keyframes(flip3d) {
   from {
     @include transform(rotateY(0));

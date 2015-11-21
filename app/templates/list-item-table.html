@@ -1,5 +1,5 @@
 <tr class="list__item list__item--table <%= active ? 'list__item--active' : '' %> <%= expired ? 'list__item--expired' : '' %>" id="<%= id %>" draggable="true">
-    <td><% if (customIcon) { %><img src="data:image/png;base64,<%= customIcon %>" class="list__item-icon list__item-icon--custom <%= color || '' %>" /><% }
+    <td><% if (customIcon) { %><img src="<%= customIcon %>" class="list__item-icon list__item-icon--custom <%= color || '' %>" /><% }
         else { %><i class="fa fa-<%= icon %> <%= color ? color+'-color' : '' %> list__item-icon"></i><% } %></td>
     <td><%- title || '(no title)' %></td>
     <td><%- description %></td>

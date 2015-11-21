@@ -14,7 +14,11 @@
             </span>
         </i>
         <h1 class="details__header-title"><%- title || '(no title)' %></h1>
+        <% if (customIcon) { %>
+        <div class="details__header-icon details__header-icon--icon" style="background-image: url(<%= customIcon %>)" title="Change icon"></div>
+        <% } else { %>
         <i class="details__header-icon fa fa-<%= icon %>" title="Change icon"></i>
+        <% } %>
     </div>
     <div class="details__body">
         <div class="scroller">

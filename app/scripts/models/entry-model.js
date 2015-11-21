@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     AttachmentModel = require('./attachment-model'),
     IconMap = require('../const/icon-map'),
     Color = require('../util/color'),
+    IconUrl = require('../util/icon-url'),
     kdbxweb = require('kdbxweb');
 
 var EntryModel = Backbone.Model.extend({
@@ -66,10 +67,7 @@ var EntryModel = Backbone.Model.extend({
     _buildCustomIcon: function() {
         this.customIcon = null;
         if (this.entry.customIcon) {
-            var iconData = this.file.db.meta.customIcons[this.entry.customIcon];
-            if (iconData) {
-                this.customIcon = kdbxweb.ByteUtils.bytesToBase64(iconData);
-            }
+            this.customIcon = IconUrl.toDataUrl(this.file.db.meta.customIcons[this.entry.customIcon]);
         }
     },
 

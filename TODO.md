@@ -1,16 +1,5 @@
 # TODO
 
-## v0.4
-Nov
-- [x] desktop dropbox
-- [x] lock flow, auto-lock
-- [x] minimize to tray
-- [x] trim history by rules
-- [ ] custom icons, favicons
-- [x] drag to trash
-- [x] switch view
-- [x] option to check updates without install
-
 ## v0.5
 Dec
 - [ ] conflict-free 2-way merge sync

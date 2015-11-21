@@ -105,6 +105,12 @@
 
     &-icon {
       width: .8em;
+      &--image {
+        width: 12px;
+        height: 12px;
+        position: relative;
+        top: 1px;
+      }
       &--no-icon:before {
         content: $fa-var-folder-open;
         .menu__item--collapsed>.menu__item-body>& {

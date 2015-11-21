@@ -10,7 +10,11 @@
                    required <%= readonly ? 'readonly' : '' %> />
         </div>
         <label>Icon:</label>
+        <% if (customIcon) { %>
+        <img src="<%= customIcon %>" class="grp__icon grp__icon--image" />
+        <% } else { %>
         <i class="fa fa-<%- icon %> grp__icon"></i>
+        <% } %>
         <div class="grp__icons"></div>
     </div>
     <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>

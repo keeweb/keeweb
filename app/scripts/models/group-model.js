@@ -3,7 +3,9 @@
 var MenuItemModel = require('./menu/menu-item-model'),
     EntryModel = require('../models/entry-model'),
     IconMap = require('../const/icon-map'),
-    KdbxIcons = require('kdbxweb').Consts.Icons,
+    IconUrl = require('../util/icon-url'),
+    kdbxweb = require('kdbxweb'),
+    KdbxIcons = kdbxweb.Consts.Icons,
     GroupCollection, EntryCollection;
 
 var GroupModel = MenuItemModel.extend({
@@ -49,7 +51,8 @@ var GroupModel = MenuItemModel.extend({
         this.set({
             title: this.group.name,
             iconId: this.group.icon,
-            icon: this._iconFromId(this.group.icon)
+            icon: this._iconFromId(this.group.icon),
+            customIcon: this._buildCustomIcon()
         }, { silent: silent });
     },
 
@@ -58,6 +61,14 @@ var GroupModel = MenuItemModel.extend({
             return undefined;
         }
         return IconMap[id];
+    },
+
+    _buildCustomIcon: function() {
+        this.customIcon = null;
+        if (this.group.customIcon) {
+            return IconUrl.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
+        }
+        return null;
     },
 
     _groupModified: function() {
