@@ -15,7 +15,7 @@ Does it happen on Demo or New database? If no, how to reproduce this? If you are
 Plugins are not supported for now. So, if you want to add a feature, please, follow these steps:
 
 1. make sure it's not listed in [banned features](https://github.com/antelle/keeweb/wiki/Unsupported-Features)
-2. check compatibility with [TODO.md](the project roadmap) and key features: you should not break anything
+2. check compatibility with [the project roadmap](TODO.md) and key features: you should not break anything
 3. if your feature is introducing a lot of new UI, or is changing any UX or design concept, please, open an issue to discuss it first
 4. please, respect existing style in code, styles, markup
 5. don't add any dependencies
