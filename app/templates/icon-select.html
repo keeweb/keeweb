@@ -1,5 +1,18 @@
 <div class="icon-select">
-    <% icons.forEach(function(icon, ix) { %>
-    <i class="fa fa-<%= icon %> icon-select__icon <%= ix === sel ? 'icon-select__icon--active' : '' %>" data-val="<%= ix %>"></i>
-    <% }); %>
+    <div class="icon-select__items">
+        <% icons.forEach(function(icon, ix) { %>
+        <i class="fa fa-<%= icon %> icon-select__icon <%= ix === sel ? 'icon-select__icon--active' : '' %>" data-val="<%= ix %>"></i>
+        <% }); %>
+    </div>
+    <div class="icon-select__items icon-select__items--custom">
+        <input type="file" class="icon-select__file-input hide-by-pos" accept="image/*" />
+        <% if (canDownloadFavicon) { %>
+        <span class="icon-select__icon icon-select__icon-btn icon-select__icon-download" title="Download and use website favicon">
+            <i class="fa fa-cloud-download"></i>
+        </span>
+        <% } %>
+        <span class="icon-select__icon icon-select__icon-btn icon-select__icon-select" title="Select custom icon">
+            <i class="fa fa-ellipsis-h"></i>
+        </span>
+    </div>
 </div>

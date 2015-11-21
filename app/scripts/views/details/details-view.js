@@ -189,7 +189,7 @@ var DetailsView = Backbone.View.extend({
             return;
         }
         this.removeSubView();
-        var subView = new IconSelectView({ el: this.scroller, model: this.model });
+        var subView = new IconSelectView({ el: this.scroller, model: this.model, url: this.model.get('url') });
         this.listenTo(subView, 'select', this.iconSelected);
         subView.render();
         this.pageResized();
