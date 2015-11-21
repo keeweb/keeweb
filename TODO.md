@@ -5,7 +5,7 @@ Nov
 - [x] desktop dropbox
 - [x] lock flow, auto-lock
 - [x] minimize to tray
-- [ ] trim history by rules
+- [x] trim history by rules
 - [ ] custom icons, favicons
 - [x] drag to trash
 - [ ] switch view

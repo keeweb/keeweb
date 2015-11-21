@@ -4,11 +4,12 @@ Release notes
 Locking, better Dropbox, security enhancements, bugfixes
 `+` lock flow, auto-lock  
 `+` minimize to tray on windows  
-`-` fixed tag list scrolling  
 `+` desktop Dropbox  
 `+` Dropbox notification in self-hosted apps  
 `+` option to check updates without install  
 `+` clear clipboard password after timeout  
+`+` trim history by rules  
+`-` fixed tag list scrolling  
 `-` entry deletion didn't mark file as modified  
 
 ##### v0.3.0 (2015-11-14)
