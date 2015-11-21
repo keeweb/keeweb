@@ -17,15 +17,18 @@ var IconSelectView = Backbone.View.extend({
         this.renderTemplate({
             sel: this.model.iconId,
             icons: IconMap,
-            canDownloadFavicon: !!this.model.url
+            canDownloadFavicon: !!this.model.url,
+            customIcons: this.model.file.getCustomIcons()
         }, true);
         return this;
     },
 
     iconClick: function(e) {
-        var iconId = +$(e.target).data('val');
-        if (typeof iconId === 'number' && !isNaN(iconId)) {
-            this.trigger('select', iconId);
+        var target = $(e.target).closest('.icon-select__icon');
+        var iconId = target[0].getAttribute('data-val');
+        if (iconId) {
+            var isCustomIcon = target.hasClass('icon-select__icon-custom');
+            this.trigger('select', { id: iconId, custom: isCustomIcon });
         }
     },
 
@@ -39,8 +42,6 @@ var IconSelectView = Backbone.View.extend({
         var url = this.getIconUrl();
         var img = document.createElement('img');
         img.src = url;
-        img.width = 16;
-        img.height = 16;
         img.onload = function() {
             that.$el.find('.icon-select__icon-download img').remove();
             that.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
@@ -78,8 +79,6 @@ var IconSelectView = Backbone.View.extend({
             reader.onload = function(e) {
                 var img = document.createElement('img');
                 img.src = e.target.result;
-                img.width = 16;
-                img.height = 16;
                 that.$el.find('.icon-select__icon-select img').remove();
                 that.$el.find('.icon-select__icon-select').addClass('icon-select__icon--custom-selected').append(img);
             };

@@ -28,6 +28,10 @@
     }
     &-btn {
       padding: 5px 10px;
+      >img {
+        width: 16px;
+        height: 16px;
+      }
     }
     &--custom-selected {
       //@include filter(grayscale(1));

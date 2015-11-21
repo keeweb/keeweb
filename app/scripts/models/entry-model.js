@@ -66,8 +66,10 @@ var EntryModel = Backbone.Model.extend({
 
     _buildCustomIcon: function() {
         this.customIcon = null;
+        this.customIconId = null;
         if (this.entry.customIcon) {
             this.customIcon = IconUrl.toDataUrl(this.file.db.meta.customIcons[this.entry.customIcon]);
+            this.customIconId = this.entry.customIcon.toString();
         }
     },
 
@@ -126,6 +128,13 @@ var EntryModel = Backbone.Model.extend({
     setIcon: function(iconId) {
         this._entryModified();
         this.entry.icon = iconId;
+        this.entry.customIcon = undefined;
+        this._fillByEntry();
+    },
+
+    setCustomIcon: function(customIconId) {
+        this._entryModified();
+        this.entry.customIcon = new kdbxweb.KdbxUuid(customIconId);
         this._fillByEntry();
     },
 

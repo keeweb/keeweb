@@ -7,6 +7,7 @@ var Backbone = require('backbone'),
     DropboxLink = require('../comp/dropbox-link'),
     Storage = require('../comp/storage'),
     LastOpenFiles = require('../comp/last-open-files'),
+    IconUrl = require('../util/icon-url'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
 
@@ -271,6 +272,12 @@ var FileModel = Backbone.Model.extend({
             entry.unsaved = false;
         });
         this.addToLastOpenFiles();
+    },
+
+    getCustomIcons: function() {
+        return _.mapObject(this.db.meta.customIcons, function(customIcon) {
+            return IconUrl.toDataUrl(customIcon);
+        });
     },
 
     setPassword: function(password) {

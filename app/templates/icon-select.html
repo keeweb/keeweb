@@ -14,5 +14,11 @@
         <span class="icon-select__icon icon-select__icon-btn icon-select__icon-select" title="Select custom icon">
             <i class="fa fa-ellipsis-h"></i>
         </span>
+        <% Object.keys(customIcons).forEach(function(ci) { %>
+        <span class="icon-select__icon icon-select__icon-btn icon-select__icon-custom <%= ci === sel ? 'icon-select__icon--active' : '' %>"
+              data-val="<%- ci %>">
+            <img src="<%= customIcons[ci] %>" />
+        </span>
+        <% }); %>
     </div>
 </div>

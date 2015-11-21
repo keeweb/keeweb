@@ -52,7 +52,8 @@ var GroupModel = MenuItemModel.extend({
             title: this.group.name,
             iconId: this.group.icon,
             icon: this._iconFromId(this.group.icon),
-            customIcon: this._buildCustomIcon()
+            customIcon: this._buildCustomIcon(),
+            customIconId: this.group.customIcon ? this.group.customIcon.toString() : null
         }, { silent: silent });
     },
 
@@ -128,6 +129,13 @@ var GroupModel = MenuItemModel.extend({
     setIcon: function(iconId) {
         this._groupModified();
         this.group.icon = iconId;
+        this.group.customIcon = undefined;
+        this._fillByGroup();
+    },
+
+    setCustomIcon: function(customIconId) {
+        this._groupModified();
+        this.group.customIcon = new kdbxweb.KdbxUuid(customIconId);
         this._fillByGroup();
     },
 

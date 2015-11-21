@@ -30,6 +30,7 @@ var MenuItemView = Backbone.View.extend({
         this.itemViews = [];
         this.listenTo(this.model, 'change:title', this.changeTitle);
         this.listenTo(this.model, 'change:icon', this.changeIcon);
+        this.listenTo(this.model, 'change:customIconId', this.render);
         this.listenTo(this.model, 'change:active', this.changeActive);
         this.listenTo(this.model, 'change:expanded', this.changeExpanded);
         this.listenTo(this.model, 'change:cls', this.changeCls);
@@ -49,13 +50,14 @@ var MenuItemView = Backbone.View.extend({
         this.renderTemplate(this.model.attributes);
         this.iconEl = this.$el.find('i');
         var items = this.model.get('items');
-        if (items && this.model.get('expanded')) {
+        if (items) {
             items.forEach(function (item) {
                 if (item.get('visible')) {
                     this.insertItem(item);
                 }
             }, this);
         }
+        this.$el.toggleClass('menu__item--collapsed', !this.model.get('expanded'));
         return this;
     },
 

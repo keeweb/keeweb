@@ -189,7 +189,13 @@ var DetailsView = Backbone.View.extend({
             return;
         }
         this.removeSubView();
-        var subView = new IconSelectView({ el: this.scroller, model: this.model, url: this.model.get('url') });
+        var subView = new IconSelectView({
+            el: this.scroller,
+            model: {
+                iconId: this.model.customIconId || this.model.iconId,
+                url: this.model.url, file: this.model.file
+            }
+        });
         this.listenTo(subView, 'select', this.iconSelected);
         subView.render();
         this.pageResized();
@@ -234,9 +240,16 @@ var DetailsView = Backbone.View.extend({
         FileSaver.saveAs(blob, attachment.title);
     },
 
-    iconSelected: function(iconId) {
-        if (iconId !== this.model.iconId) {
-            this.model.setIcon(iconId);
+    iconSelected: function(sel) {
+        if (sel.custom) {
+            if (sel.id !== this.model.customIconId) {
+                this.model.setCustomIcon(sel.id);
+                this.entryUpdated();
+            } else {
+                this.render();
+            }
+        } else if (sel.id !== this.model.iconId) {
+            this.model.setIcon(sel.id);
             this.entryUpdated();
         } else {
             this.render();
