@@ -33,12 +33,14 @@
 ## Mobile
 ![ ](https://habrastorage.org/files/1f2/91b/b75/1f291bb75ffd4d35838be7f2d3f41345.png)
 ## Entry icons
-![ ](https://habrastorage.org/files/a70/0ea/a55/a700eaa558b941acacbad19d6ad9dbc8.png)
+![ ](https://habrastorage.org/files/947/c3a/fbf/947c3afbf18e4cec870d54e4e6f9f218.png)
+## Table view
+![ ](https://habrastorage.org/files/908/9cf/ea8/9089cfea84c744beac7fcaa48b3b1709.png)
 ## Inline image viewer
 ![ ](https://habrastorage.org/files/f80/e43/45d/f80e4345df354b4aa4ec67c29efb5153.png)
 ## Auto-Update
 ![ ](https://habrastorage.org/files/714/4c1/02f/7144c102fe9344b4957385c51af82f76.png)  
-![ ](https://habrastorage.org/files/2ba/253/ee6/2ba253ee6f224ed6a3770e0e1162c269.png)
+![ ](https://habrastorage.org/files/a0f/d33/55f/a0fd3355ffd2419b8878e7dd6a22eb4b.png)
 ## Open-source
 ![ ](https://habrastorage.org/files/0dc/19f/38d/0dc19f38dcac4415a831cd0fec4ceef7.png)  
   
