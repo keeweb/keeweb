@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### vNext
+##### v0.4.0 (2015-11-22)
 Locking, better Dropbox, custom icons, security enhancements, bugfixes  
 `+` lock flow, auto-lock  
 `+` entries list display table layout  
