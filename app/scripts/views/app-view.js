@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     MenuView = require('../views/menu/menu-view'),
     FooterView = require('../views/footer-view'),
     ListView = require('../views/list-view'),
+    ListWrapView = require('../views/list-wrap-view'),
     DetailsView = require('../views/details/details-view'),
     GrpView = require('../views/grp-view'),
     OpenView = require('../views/open-view'),
@@ -12,8 +13,10 @@ var Backbone = require('backbone'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
+    IdleTracker = require('../comp/idle-tracker'),
     Launcher = require('../comp/launcher'),
-    ThemeChanger = require('../util/theme-changer');
+    ThemeChanger = require('../util/theme-changer'),
+    UpdateModel = require('../models/update-model');
 
 var AppView = Backbone.View.extend({
     el: 'body',
@@ -24,7 +27,8 @@ var AppView = Backbone.View.extend({
         'contextmenu': 'contextmenu',
         'drop': 'drop',
         'dragover': 'dragover',
-        'click a[target=_blank]': 'extLinkClick'
+        'click a[target=_blank]': 'extLinkClick',
+        'mousedown': 'bodyClick'
     },
 
     views: null,
@@ -34,8 +38,10 @@ var AppView = Backbone.View.extend({
         this.views.menu = new MenuView({ model: this.model.menu });
         this.views.menuDrag = new DragView('x');
         this.views.footer = new FooterView({ model: this.model });
+        this.views.listWrap = new ListWrapView({ model: this.model });
         this.views.list = new ListView({ model: this.model });
         this.views.listDrag = new DragView('x');
+        this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView();
         this.views.details.appModel = this.model;
         this.views.grp = new GrpView();
@@ -52,13 +58,14 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'show-file', this.showFileSettings);
         this.listenTo(Backbone, 'open-file', this.toggleOpenFile);
         this.listenTo(Backbone, 'save-all', this.saveAll);
-        this.listenTo(Backbone, 'switch-view', this.switchView);
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'edit-group', this.editGroup);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
-        this.listenTo(Backbone, 'update-app', this.updateApp);
+        this.listenTo(Backbone, 'user-idle', this.userIdle);
+
+        this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
@@ -68,8 +75,9 @@ var AppView = Backbone.View.extend({
     },
 
     render: function () {
-        this.setTheme();
         this.$el.html(this.template());
+        this.setTheme();
+        this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
         this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
         this.views.footer.setElement(this.$el.find('.app__footer')).render();
@@ -83,6 +91,7 @@ var AppView = Backbone.View.extend({
     showOpenFile: function(filePath) {
         this.views.menu.hide();
         this.views.menuDrag.hide();
+        this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
@@ -105,7 +114,8 @@ var AppView = Backbone.View.extend({
     },
 
     updateApp: function() {
-        if (!Launcher && !this.model.files.hasOpenFiles()) {
+        if (UpdateModel.instance.get('updateStatus') === 'ready' &&
+            !Launcher && !this.model.files.hasOpenFiles()) {
             window.location.reload();
         }
     },
@@ -113,6 +123,7 @@ var AppView = Backbone.View.extend({
     showEntries: function() {
         this.views.menu.show();
         this.views.menuDrag.show();
+        this.views.listWrap.show();
         this.views.list.show();
         this.views.listDrag.show();
         this.views.details.show();
@@ -141,6 +152,7 @@ var AppView = Backbone.View.extend({
         this.model.menu.setMenu('settings');
         this.views.menu.show();
         this.views.menuDrag.show();
+        this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
@@ -156,6 +168,7 @@ var AppView = Backbone.View.extend({
     },
 
     showEditGroup: function() {
+        this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
@@ -217,6 +230,10 @@ var AppView = Backbone.View.extend({
                 return Launcher.preventExit(e);
             }
             return 'You have unsaved files, all changes will be lost.';
+        } else if (Launcher && !Launcher.exitRequested && Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
+            this.lockWorkspace(true);
+            Launcher.minimizeApp();
+            return Launcher.preventExit(e);
         }
     },
 
@@ -247,15 +264,106 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    lockWorkspace: function() {
+    userIdle: function() {
+        this.lockWorkspace(true);
+    },
+
+    lockWorkspace: function(autoInit) {
+        var that = this;
+        if (Alerts.alertDisplayed) {
+            return;
+        }
         if (this.model.files.hasUnsavedFiles()) {
-            Alerts.yesno({
-                header: 'Unsaved changes',
-                body: 'You have unsaved changes that will be lost. Continue?',
-                success: this.model.closeAllFiles.bind(this.model)
-            });
+            if (this.model.settings.get('autoSave')) {
+                this.saveAndLock(autoInit);
+            } else {
+                if (autoInit) {
+                    this.showVisualLock('Auto-save is disabled. Please, enable it, to allow auto-locking');
+                    return;
+                }
+                Alerts.alert({
+                    icon: 'lock',
+                    header: 'Lock',
+                    body: 'You have unsaved changes that will be lost. Continue?',
+                    buttons: [
+                        { result: 'save', title: 'Save changes' },
+                        { result: 'discard', title: 'Discard changes', error: true },
+                        { result: '', title: 'Cancel' }
+                    ],
+                    checkbox: 'Auto save changes each time I lock the app',
+                    success: function(result, autoSaveChecked) {
+                        if (result === 'save') {
+                            if (autoSaveChecked) {
+                                that.model.settings.set('autoSave', autoSaveChecked);
+                            }
+                            that.saveAndLock();
+                        } else if (result === 'discard') {
+                            that.model.closeAllFiles();
+                        }
+                    }
+                });
+            }
         } else {
-            this.model.closeAllFiles();
+            this.closeAllFilesAndShowFirst();
+        }
+    },
+
+    showVisualLock: function() {
+        // TODO: remove cases which lead to this
+    },
+
+    saveAndLock: function(autoInit) {
+        // TODO: move to file manager
+        var pendingCallbacks = 0,
+            errorFiles = [],
+            that = this;
+        if (this.model.files.some(function(file) { return file.get('modified') && !file.get('path'); })) {
+            this.showVisualLock('You have unsaved files, locking is not possible.');
+            return;
+        }
+        this.model.files.forEach(function(file) {
+            if (!file.get('modified')) {
+                return;
+            }
+            if (file.get('path')) {
+                try {
+                    file.autoSave(fileSaved.bind(this, file));
+                    pendingCallbacks++;
+                } catch (e) {
+                    console.error('Failed to auto-save file', file.get('path'), e);
+                    errorFiles.push(file);
+                }
+            }
+        }, this);
+        if (!pendingCallbacks) {
+            this.closeAllFilesAndShowFirst();
+        }
+        function fileSaved(file, err) {
+            if (err) {
+                errorFiles.push(file.get('name'));
+            }
+            if (--pendingCallbacks === 0) {
+                if (errorFiles.length) {
+                    if (autoInit) {
+                        that.showVisualLock('Failed to save files: ' + errorFiles.join(', '));
+                    } else if (!Alerts.alertDisplayed) {
+                        Alerts.error({
+                            header: 'Save Error',
+                            body: 'Failed to auto-save file' + (errorFiles.length > 1 ? 's: ' : '') + ' ' + errorFiles.join(', ')
+                        });
+                    }
+                } else {
+                    that.closeAllFilesAndShowFirst();
+                }
+            }
+        }
+    },
+
+    closeAllFilesAndShowFirst: function() {
+        var firstFile = this.model.files.find(function(file) { return !file.get('demo') && !file.get('created'); });
+        this.model.closeAllFiles();
+        if (firstFile) {
+            this.views.open.showClosedFile(firstFile);
         }
     },
 
@@ -303,10 +411,6 @@ var AppView = Backbone.View.extend({
         this.views.menu.switchVisibility();
     },
 
-    switchView: function() {
-        Alerts.notImplemented();
-    },
-
     toggleDetails: function(visible) {
         this.$el.find('.app__list').toggleClass('app__list--details-visible', visible);
         this.views.menu.switchVisibility(false);
@@ -344,6 +448,10 @@ var AppView = Backbone.View.extend({
             e.preventDefault();
             Launcher.openLink(e.target.href);
         }
+    },
+
+    bodyClick: function() {
+        IdleTracker.regUserAction();
     }
 });
 

@@ -3,6 +3,8 @@
 var ModalView = require('../views/modal-view');
 
 var Alerts = {
+    alertDisplayed: false,
+
     buttons: {
         ok: {result: 'yes', title: 'OK'},
         yes: {result: 'yes', title: 'Yes'},
@@ -10,17 +12,19 @@ var Alerts = {
     },
 
     alert: function(config) {
+        Alerts.alertDisplayed = true;
         var view = new ModalView({ model: config });
         view.render();
-        view.on('result', function(res) {
+        view.on('result', function(res, check) {
+            Alerts.alertDisplayed = false;
             if (res && config.success) {
-                config.success(res);
+                config.success(res, check);
             }
             if (!res && config.cancel) {
                 config.cancel();
             }
             if (config.complete) {
-                config.complete(res);
+                config.complete(res, check);
             }
         });
     },

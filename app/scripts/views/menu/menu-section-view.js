@@ -48,11 +48,13 @@ var MenuSectionView = Backbone.View.extend({
             this.itemViews.push(itemView);
         }, this);
         if (this.model.get('drag')) {
-            if (typeof AppSettingsModel.instance.get('tagsViewHeight') === 'number') {
-                this.$el.height(AppSettingsModel.instance.get('tagsViewHeight'));
+            var height = AppSettingsModel.instance.get('tagsViewHeight');
+            if (typeof height === 'number') {
+                this.$el.height();
+                this.$el.css('flex', '0 0 ' + height + 'px');
             }
-            this.pageResized();
         }
+        this.pageResized();
     },
 
     remove : function() {
@@ -72,7 +74,12 @@ var MenuSectionView = Backbone.View.extend({
         this.render();
     },
 
-    viewResized: _.throttle(function(size) {
+    viewResized: function(size) {
+        this.$el.css('flex', '0 0 ' + (size ? size + 'px' : 'auto'));
+        this.saveViewHeight(size);
+    },
+
+    saveViewHeight: _.throttle(function(size) {
         AppSettingsModel.instance.set('tagsViewHeight', size);
     }, 1000)
 });

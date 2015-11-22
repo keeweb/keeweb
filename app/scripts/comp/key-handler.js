@@ -1,7 +1,8 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Keys = require('../const/keys');
+    Keys = require('../const/keys'),
+    IdleTracker = require('../comp/idle-tracker');
 
 var shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
 
@@ -11,6 +12,7 @@ var KeyHandler = {
 
     shortcuts: {},
     modal: false,
+
     init: function() {
         $(document).bind('keypress', this.keypress.bind(this));
         $(document).bind('keydown', this.keydown.bind(this));
@@ -36,6 +38,7 @@ var KeyHandler = {
         return e[shortcutKeyProp];
     },
     keydown: function(e) {
+        IdleTracker.regUserAction();
         var code = e.keyCode || e.which;
         var keyShortcuts = this.shortcuts[code];
         if (keyShortcuts && keyShortcuts.length) {
@@ -72,6 +75,9 @@ var KeyHandler = {
             !e.altKey && !e.ctrlKey && !e.metaKey) {
             this.trigger('keypress', e);
         }
+    },
+    reg: function() {
+        IdleTracker.regUserAction();
     }
 };
 

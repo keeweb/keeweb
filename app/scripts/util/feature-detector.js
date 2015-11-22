@@ -4,6 +4,12 @@ var FeatureDetector = {
     isMac: function() {
         return navigator.platform.indexOf('Mac') >= 0;
     },
+    isMobile: function() {
+        return typeof window.orientation !== 'undefined';
+    },
+    isDesktop: function() {
+        return !this.isMobile();
+    },
     actionShortcutSymbol: function(formatting) {
         return this.isMac() ? '⌘' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl-';
     },

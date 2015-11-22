@@ -2,7 +2,7 @@
 
 var Backbone = require('backbone'),
     FeatureDetector = require('../../util/feature-detector'),
-    CopyPaste = require('../../util/copy-paste');
+    CopyPaste = require('../../comp/copy-paste');
 
 var FieldView = Backbone.View.extend({
     template: require('templates/details/field.html'),

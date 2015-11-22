@@ -1,5 +1,6 @@
 <div>
     <h1><i class="fa fa-cog"></i> General Settings</h1>
+
     <% if (updateReady && !canAutoUpdate) { %>
     <h2 class="action-color">Update</h2>
     <div>New app version was released and downloaded. <a href="<%= releaseNotesLink %>" target="_blank">View release notes</a></div>
@@ -14,6 +15,28 @@
         <button class="settings__general-download-update-btn">Download update</button>
     </div>
     <% } %>
+    <% if (canAutoUpdate && !updateManual) { %>
+    <h2>Update</h2>
+    <div>
+        <select class="settings__general-auto-update settings__select input-base">
+            <option value="install" <%= autoUpdate === 'install' ? 'selected' : '' %>>Download and install automatically</option>
+            <option value="check" <%= autoUpdate === 'check' ? 'selected' : '' %>>Check but don't install</option>
+            <option value="" <%= autoUpdate ? '' : 'selected' %>>Never check for updates</option>
+        </select>
+        <div><%- updateInfo %></div>
+        <a href="<%= releaseNotesLink %>" target="_blank">View release notes</a>
+    </div>
+    <div class="settings__general-update-buttons">
+        <% if (updateInProgress) { %>
+        <button class="settings__general-update-btn btn-silent" disabled>Checking for updates</button>
+        <% } else { %>
+        <button class="settings__general-update-btn btn-silent">Check for updates</button>
+        <% } %>
+        <% if (updateReady) { %><button class="settings__general-restart-btn">Restart to update</button><% } %>
+        <% if (updateFound) { %><button class="settings__general-update-found-btn">Download update and restart</button><% } %>
+    </div>
+    <% } %>
+
     <h2>Appearance</h2>
     <div>
         <label for="settings__general-theme">Theme:</label>
@@ -27,25 +50,49 @@
         <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" <%- expandGroups ? 'checked' : '' %> />
         <label for="settings__general-expand">Show entries from all subgroups</label>
     </div>
-    <% if (canAutoUpdate && !updateManual) { %>
-    <h2>Function</h2>
+    <% if (canSetTableView) { %>
     <div>
-        <input type="checkbox" class="settings__input settings__general-auto-update" id="settings__general-auto-update" <%- autoUpdate ? 'checked' : '' %> />
-        <label for="settings__general-auto-update">Automatic updates</label>
-        <div><%- updateInfo %></div>
-        <a href="<%= releaseNotesLink %>" target="_blank">View release notes</a>
-    </div>
-    <div class="settings__general-update-buttons">
-        <% if (updateInProgress) { %>
-        <button class="settings__general-update-btn btn-silent" disabled>Checking for updates</button>
-        <% } else { %>
-        <button class="settings__general-update-btn btn-silent">Check for updates</button>
-        <% } %>
-        <% if (updateReady) { %>
-        <button class="settings__general-restart-btn">Restart to update</button>
-        <% } %>
+        <input type="checkbox" class="settings__input input-base settings__general-table-view" id="settings__general-table-view" <%- tableView ? 'checked' : '' %> />
+        <label for="settings__general-table-view">Entries list table view</label>
     </div>
     <% } %>
+
+    <h2>Function</h2>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
+            <%- autoSave ? 'checked' : '' %> />
+        <label for="settings__general-auto-save">Automatically save and sync</label>
+    </div>
+    <div>
+        <label for="settings__general-idle-minutes">Auto-lock if the app is inactive:</label>
+        <select class="settings__general-idle-minutes settings__select input-base" id="settings__general-idle-minutes">
+            <option value="0" <%= idleMinutes <= 0 ? 'selected' : '' %>>Don't auto-lock</option>
+            <option value="5" <%= idleMinutes === 5 ? 'selected' : '' %>>In 5 minutes</option>
+            <option value="10" <%= idleMinutes === 10 ? 'selected' : '' %>>In 10 minutes</option>
+            <option value="15" <%= idleMinutes === 15 ? 'selected' : '' %>>In 15 minutes</option>
+            <option value="60" <%= idleMinutes === 60 ? 'selected' : '' %>>In an hour</option>
+        </select>
+    </div>
+    <% if (canClearClipboard) { %>
+    <div>
+        <label for="settings__general-clipboard">Clear clipboard after copy:</label>
+        <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
+            <option value="0" <%= clipboardSeconds ? '' : 'selected' %>>Don't clear</option>
+            <option value="5" <%= clipboardSeconds === 5 ? 'selected' : '' %>>In 5 seconds</option>
+            <option value="10" <%= clipboardSeconds === 10 ? 'selected' : '' %>>In 10 seconds</option>
+            <option value="15" <%= clipboardSeconds === 15 ? 'selected' : '' %>>In 15 seconds</option>
+            <option value="60" <%= clipboardSeconds === 60 ? 'selected' : '' %>>In a minute</option>
+        </select>
+    </div>
+    <% } %>
+    <% if (canMinimizeOnClose) { %>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-minimize" id="settings__general-minimize"
+        <%- minimizeOnClose ? 'checked' : '' %> />
+        <label for="settings__general-minimize">Minimize app instead of close</label>
+    </div>
+    <% } %>
+
     <% if (devTools) { %>
     <h2>Advanced</h2>
     <a class="settings__general-dev-tools-link">Show dev tools</a>

@@ -8,10 +8,14 @@ var DragView = Backbone.View.extend({
     },
 
     initialize: function (coord) {
-        this.coord = coord;
-        this.offsetProp = 'page' + coord.toUpperCase();
+        this.setCoord(coord);
         this.mouseDownTime = -1;
         this.mouseDownCount = 0;
+    },
+
+    setCoord: function(coord) {
+        this.coord = coord;
+        this.offsetProp = 'page' + coord.toUpperCase();
     },
 
     render: function() {

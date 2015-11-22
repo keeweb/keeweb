@@ -3,7 +3,9 @@
 var MenuItemModel = require('./menu/menu-item-model'),
     EntryModel = require('../models/entry-model'),
     IconMap = require('../const/icon-map'),
-    KdbxIcons = require('kdbxweb').Consts.Icons,
+    IconUrl = require('../util/icon-url'),
+    kdbxweb = require('kdbxweb'),
+    KdbxIcons = kdbxweb.Consts.Icons,
     GroupCollection, EntryCollection;
 
 var GroupModel = MenuItemModel.extend({
@@ -49,7 +51,9 @@ var GroupModel = MenuItemModel.extend({
         this.set({
             title: this.group.name,
             iconId: this.group.icon,
-            icon: this._iconFromId(this.group.icon)
+            icon: this._iconFromId(this.group.icon),
+            customIcon: this._buildCustomIcon(),
+            customIconId: this.group.customIcon ? this.group.customIcon.toString() : null
         }, { silent: silent });
     },
 
@@ -58,6 +62,14 @@ var GroupModel = MenuItemModel.extend({
             return undefined;
         }
         return IconMap[id];
+    },
+
+    _buildCustomIcon: function() {
+        this.customIcon = null;
+        if (this.group.customIcon) {
+            return IconUrl.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
+        }
+        return null;
     },
 
     _groupModified: function() {
@@ -117,6 +129,13 @@ var GroupModel = MenuItemModel.extend({
     setIcon: function(iconId) {
         this._groupModified();
         this.group.icon = iconId;
+        this.group.customIcon = undefined;
+        this._fillByGroup();
+    },
+
+    setCustomIcon: function(customIconId) {
+        this._groupModified();
+        this.group.customIcon = new kdbxweb.KdbxUuid(customIconId);
         this._fillByGroup();
     },
 
@@ -150,6 +169,7 @@ var GroupModel = MenuItemModel.extend({
         if (!object || object.id === this.id || object.file !== this.file) {
             return;
         }
+        this.file.setModified();
         if (object instanceof GroupModel) {
             if (this.group.groups.indexOf(object.group) >= 0) {
                 return;
@@ -165,6 +185,7 @@ var GroupModel = MenuItemModel.extend({
             this.file.db.move(object.entry, this.group);
             object.group.removeEntry(object);
             this.addEntry(object);
+            object.group = this;
         }
     }
 });

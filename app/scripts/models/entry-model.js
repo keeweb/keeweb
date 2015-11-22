@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     AttachmentModel = require('./attachment-model'),
     IconMap = require('../const/icon-map'),
     Color = require('../util/color'),
+    IconUrl = require('../util/icon-url'),
     kdbxweb = require('kdbxweb');
 
 var EntryModel = Backbone.Model.extend({
@@ -65,11 +66,10 @@ var EntryModel = Backbone.Model.extend({
 
     _buildCustomIcon: function() {
         this.customIcon = null;
+        this.customIconId = null;
         if (this.entry.customIcon) {
-            var iconData = this.file.db.meta.customIcons[this.entry.customIcon];
-            if (iconData) {
-                this.customIcon = kdbxweb.ByteUtils.bytesToBase64(iconData);
-            }
+            this.customIcon = IconUrl.toDataUrl(this.file.db.meta.customIcons[this.entry.customIcon]);
+            this.customIconId = this.entry.customIcon.toString();
         }
     },
 
@@ -128,6 +128,13 @@ var EntryModel = Backbone.Model.extend({
     setIcon: function(iconId) {
         this._entryModified();
         this.entry.icon = iconId;
+        this.entry.customIcon = undefined;
+        this._fillByEntry();
+    },
+
+    setCustomIcon: function(customIconId) {
+        this._entryModified();
+        this.entry.customIcon = new kdbxweb.KdbxUuid(customIconId);
         this._fillByEntry();
     },
 
@@ -215,6 +222,10 @@ var EntryModel = Backbone.Model.extend({
     },
 
     moveToTrash: function() {
+        this.file.setModified();
+        if (this.isJustCreated) {
+            this.isJustCreated = false;
+        }
         this.file.db.remove(this.entry);
         this.group.removeEntry(this);
         var trashGroup = this.file.getTrashGroup();
@@ -225,6 +236,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     deleteFromTrash: function() {
+        this.file.setModified();
         this.file.db.move(this.entry, null);
         this.group.removeEntry(this);
     },

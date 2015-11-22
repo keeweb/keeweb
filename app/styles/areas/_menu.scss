@@ -22,7 +22,12 @@
       }
     }
 
-    &--scrollable {
+    &--drag {
+      @include flex(0 0 auto);
+      max-height: calc(100vh - 180px);
+      >.scroller {
+        max-height: calc(100vh - 180px);
+      }
     }
 
     &--drag.menu__section {
@@ -100,6 +105,12 @@
 
     &-icon {
       width: .8em;
+      &--image {
+        width: 12px;
+        height: 12px;
+        position: relative;
+        top: 1px;
+      }
       &--no-icon:before {
         content: $fa-var-folder-open;
         .menu__item--collapsed>.menu__item-body>& {

@@ -1,11 +1,24 @@
 'use strict';
 
 var Dropbox = require('dropbox'),
-    Alerts = require('./alerts');
+    Alerts = require('./alerts'),
+    Launcher = require('./launcher'),
+    Links = require('../const/links');
 
 var DropboxKeys = {
-    AppFolder: 'qp7ctun6qt5n9d6'
+    AppFolder: 'qp7ctun6qt5n9d6',
+    AppFolderKeyParts: ['qp7ctun6', 'qt5n9d6'] // to allow replace key by sed, compare in this way
 };
+
+var DropboxCustomErrors = {
+    BadKey: 'bad-key'
+};
+
+function isValidKey() {
+    var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
+        !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href);
+    return Launcher || !isSelfHostedApp || DropboxKeys.AppFolder !== DropboxKeys.AppFolderKeyParts.join('');
+}
 
 var DropboxChooser = function(callback) {
     this.cb = callback;
@@ -113,8 +126,21 @@ var DropboxLink = {
             complete(null, this._dropboxClient);
             return;
         }
-        var client = new Dropbox.Client({ key: DropboxKeys.AppFolder });
-        client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl: location.href }));
+        if (!isValidKey()) {
+            Alerts.error({
+                icon: 'dropbox',
+                header: 'Dropbox not configured',
+                body: 'So, you are using KeeWeb on your own server? Good!<br/>' +
+                    '<a href="' + Links.SelfHostedDropbox + '" target="blank">Some configuration</a> is required to make Dropbox work, it\'s just 3 steps away.'
+            });
+            return complete(DropboxCustomErrors.BadKey);
+        }
+        var client = new Dropbox.Client({key: DropboxKeys.AppFolder});
+        if (Launcher) {
+            client.authDriver(new Dropbox.AuthDriver.Electron({ receiverUrl: location.href }));
+        } else {
+            client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl: location.href }));
+        }
         client.authenticate((function(error, client) {
             if (!error) {
                 this._dropboxClient = client;
@@ -189,7 +215,7 @@ var DropboxLink = {
             if (err) {
                 return callback(err);
             }
-            client[callName].apply(client, args.concat(function(err, res) {
+            client[callName].apply(client, args.concat(function(err) {
                 if (err) {
                     that._handleUiError(err, errorAlertCallback, function(repeat) {
                         if (repeat) {
@@ -199,7 +225,7 @@ var DropboxLink = {
                         }
                     });
                 } else {
-                    callback(err, res);
+                    callback.apply(null, arguments);
                 }
             }));
         });
@@ -231,11 +257,11 @@ var DropboxLink = {
     },
 
     getFileList: function(complete) {
-        this._callAndHandleError('readdir', [''], function(err, files) {
+        this._callAndHandleError('readdir', [''], function(err, files, dirStat) {
             if (files) {
                 files = files.filter(function(f) { return /\.kdbx$/i.test(f); });
             }
-            complete(err, files);
+            complete(err, files, dirStat);
         });
     },
 

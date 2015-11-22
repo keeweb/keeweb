@@ -71,6 +71,18 @@ if (window.process && window.process.versions && window.process.versions.electro
         },
         cancelRestart: function() {
             this.restartPending = false;
+        },
+        getClipboardText: function() {
+            return this.req('clipboard').readText();
+        },
+        clearClipboardText: function() {
+            return this.req('clipboard').clear();
+        },
+        minimizeApp: function() {
+            this.remReq('app').minimizeApp();
+        },
+        canMinimize: function() {
+            return process.platform === 'win32';
         }
     };
     window.launcherOpen = function(path) {

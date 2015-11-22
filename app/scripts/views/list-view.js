@@ -11,7 +11,6 @@ var Backbone = require('backbone'),
 
 var ListView = Backbone.View.extend({
     template: require('templates/list.html'),
-    itemTemplate: require('templates/list-item-short.html'),
     emptyTemplate: require('templates/list-empty.html'),
 
     events: {
@@ -22,7 +21,9 @@ var ListView = Backbone.View.extend({
     views: null,
 
     minWidth: 200,
+    minHeight: 200,
     maxWidth: 500,
+    maxHeight: 500,
 
     itemsEl: null,
 
@@ -41,6 +42,8 @@ var ListView = Backbone.View.extend({
         this.listenTo(Backbone, 'filter', this.filterChanged);
         this.listenTo(Backbone, 'entry-updated', this.entryUpdated);
 
+        this.listenTo(this.model.settings, 'change:tableView', this.setTableView);
+
         this.items = [];
     },
 
@@ -49,6 +52,7 @@ var ListView = Backbone.View.extend({
             this.$el.html(this.template());
             this.itemsEl = this.$el.find('.list__items>.scroller');
             this.views.search.setElement(this.$el.find('.list__header')).render();
+            this.setTableView();
 
             this.scroll = baron({
                 root: this.$el.find('.list__items')[0],
@@ -60,21 +64,41 @@ var ListView = Backbone.View.extend({
             this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
         }
         if (this.items.length) {
+            var itemTemplate = this.getItemTemplate();
+            var itemsTemplate = this.getItemsTemplate();
             var presenter = new EntryPresenter(this.getDescField());
             var itemsHtml = '';
             this.items.forEach(function (item) {
                 presenter.present(item);
-                itemsHtml += this.itemTemplate(presenter);
+                itemsHtml += itemTemplate(presenter);
             }, this);
-            this.itemsEl.html(itemsHtml).scrollTop(0);
+            var html = itemsTemplate({ items: itemsHtml });
+            this.itemsEl.html(html).scrollTop(0);
         } else {
             this.itemsEl.html(this.emptyTemplate());
         }
-        if (typeof AppSettingsModel.instance.get('listViewWidth') === 'number') {
-            this.$el.width(AppSettingsModel.instance.get('listViewWidth'));
-        }
         this.pageResized();
         return this;
+    },
+
+    getItemsTemplate: function() {
+        if (this.model.settings.get('tableView')) {
+            return require('templates/list-table.html');
+        } else {
+            return this.renderPlainItems;
+        }
+    },
+
+    renderPlainItems: function(itemsHtml) {
+        return itemsHtml.items;
+    },
+
+    getItemTemplate: function() {
+        if (this.model.settings.get('tableView')) {
+            return require('templates/list-item-table.html');
+        } else {
+            return require('templates/list-item-short.html');
+        }
     },
 
     getDescField: function() {
@@ -142,7 +166,31 @@ var ListView = Backbone.View.extend({
         this.views.search.hide();
     },
 
-    viewResized: _.throttle(function(size) {
+    setTableView: function() {
+        var isTable = this.model.settings.get('tableView');
+        this.dragView.setCoord(isTable ? 'y' : 'x');
+        this.setDefaultSize();
+    },
+
+    setDefaultSize: function() {
+        this.setSize(this.model.settings.get('listViewWidth'));
+    },
+
+    setSize: function(size) {
+        this.$el.css({ width: null, height: null });
+        if (size) {
+            this.$el.css('flex', '0 0 ' + size + 'px');
+        } else {
+            this.$el.css('flex', null);
+        }
+    },
+
+    viewResized: function(size) {
+        this.setSize(size);
+        this.throttleSetViewSizeSetting(size);
+    },
+
+    throttleSetViewSizeSetting: _.throttle(function(size) {
         AppSettingsModel.instance.set('listViewWidth', size);
     }, 1000),
 

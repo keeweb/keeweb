@@ -37,10 +37,14 @@ var OpenView = Backbone.View.extend({
     dropboxLoading: null,
 
     initialize: function () {
-        this.file = new FileModel();
+        this.setFileModel(new FileModel());
         this.fileData = null;
         this.keyFileData = null;
         this.passwordInput = new SecureInput();
+    },
+
+    setFileModel: function(file) {
+        this.file = file;
         this.listenTo(this.file, 'change:open', this.fileOpenChanged);
         this.listenTo(this.file, 'change:opening', this.fileOpeningChanged);
         this.listenTo(this.file, 'change:error', this.fileErrorChanged);
@@ -50,7 +54,7 @@ var OpenView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        this.renderTemplate({ supportsDropbox: !Launcher, lastOpenFiles: this.getLastOpenFiles() });
+        this.renderTemplate({ lastOpenFiles: this.getLastOpenFiles() });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
         return this;
@@ -202,6 +206,12 @@ var OpenView = Backbone.View.extend({
         }
     },
 
+    showClosedFile: function(file) {
+        this.setFileModel(file);
+        this.fileData = file.data;
+        this.displayOpenFile();
+    },
+
     openFile: function() {
         if (!this.file.get('opening')) {
             this.openAny('fileData');
@@ -297,7 +307,7 @@ var OpenView = Backbone.View.extend({
             }
             that.dropboxLoading = 'file list';
             that.displayDropboxLoading();
-            DropboxLink.getFileList(function(err, files) {
+            DropboxLink.getFileList(function(err, files, dirStat) {
                 that.dropboxLoading = null;
                 that.displayDropboxLoading();
                 if (err) {
@@ -313,7 +323,8 @@ var OpenView = Backbone.View.extend({
                 if (!buttons.length) {
                     Alerts.error({
                         header: 'Nothing found',
-                        body: 'You have no files in your Dropbox which could be opened. Files are searched in your Dropbox app folder: Apps/KeeWeb'
+                        body: 'You have no files in your Dropbox which could be opened.' +
+                            (dirStat && dirStat.inAppFolder ? ' Files are searched inside app folder in your Dropbox.' : '')
                     });
                     return;
                 }
@@ -384,7 +395,7 @@ var OpenView = Backbone.View.extend({
         if (this.dropboxLoading || this.file.get('opening')) {
             return;
         }
-        var name = $(e.target).closest('.open__last-item').data('name');
+        var name = $(e.target).closest('.open__last-item').data('name').toString();
         if ($(e.target).is('.open__last-item-icon-del')) {
             this.delLast(name);
             return;

@@ -33,6 +33,10 @@
     padding: $base-padding-px;
     @include align-self(flex-start);
     @include area-selectable();
+    &--image {
+      width: 28px;
+      height: 28px;
+    }
   }
 
   &__buttons {

@@ -7,6 +7,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../../models/app-settings-model'),
     UpdateModel = require('../../models/update-model'),
     RuntimeInfo = require('../../comp/runtime-info'),
+    FeatureDetector = require('../../util/feature-detector'),
     Links = require('../../const/links');
 
 var SettingsGeneralView = Backbone.View.extend({
@@ -16,9 +17,15 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-theme': 'changeTheme',
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
+        'change .settings__general-idle-minutes': 'changeIdleMinutes',
+        'change .settings__general-clipboard': 'changeClipboard',
+        'change .settings__general-auto-save': 'changeAutoSave',
+        'change .settings__general-minimize': 'changeMinimize',
+        'change .settings__general-table-view': 'changeTableView',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
+        'click .settings__general-update-found-btn': 'installFoundUpdate',
         'click .settings__general-dev-tools-link': 'openDevTools'
     },
 
@@ -38,12 +45,21 @@ var SettingsGeneralView = Backbone.View.extend({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
+            canClearClipboard: !!Launcher,
+            clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
+            autoSave: AppSettingsModel.instance.get('autoSave'),
+            idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
+            minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
-            autoUpdate: Updater.enabledAutoUpdate(),
+            canMinimizeOnClose: Launcher && Launcher.canMinimize(),
+            tableView: AppSettingsModel.instance.get('tableView'),
+            canSetTableView: FeatureDetector.isDesktop(),
+            autoUpdate: Updater.getAutoUpdateType(),
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
             updateReady: UpdateModel.instance.get('updateStatus') === 'ready',
+            updateFound: UpdateModel.instance.get('updateStatus') === 'found',
             updateManual: UpdateModel.instance.get('updateManual'),
             releaseNotesLink: Links.ReleaseNotes
         });
@@ -90,8 +106,18 @@ var SettingsGeneralView = Backbone.View.extend({
         AppSettingsModel.instance.set('theme', theme);
     },
 
+    changeClipboard: function(e) {
+        var clipboardSeconds = +e.target.value;
+        AppSettingsModel.instance.set('clipboardSeconds', clipboardSeconds);
+    },
+
+    changeIdleMinutes: function(e) {
+        var idleMinutes = +e.target.value;
+        AppSettingsModel.instance.set('idleMinutes', idleMinutes);
+    },
+
     changeAutoUpdate: function(e) {
-        var autoUpdate = e.target.checked;
+        var autoUpdate = e.target.value || false;
         AppSettingsModel.instance.set('autoUpdate', autoUpdate);
         if (autoUpdate) {
             Updater.scheduleNextCheck();
@@ -100,6 +126,22 @@ var SettingsGeneralView = Backbone.View.extend({
 
     checkUpdate: function() {
         Updater.check(true);
+    },
+
+    changeAutoSave: function(e) {
+        var autoSave = e.target.checked || false;
+        AppSettingsModel.instance.set('autoSave', autoSave);
+    },
+
+    changeMinimize: function(e) {
+        var minimizeOnClose = e.target.checked || false;
+        AppSettingsModel.instance.set('minimizeOnClose', minimizeOnClose);
+    },
+
+    changeTableView: function(e) {
+        var tableView = e.target.checked || false;
+        AppSettingsModel.instance.set('tableView', tableView);
+        Backbone.trigger('refresh');
     },
 
     restartApp: function() {
@@ -112,6 +154,12 @@ var SettingsGeneralView = Backbone.View.extend({
 
     downloadUpdate: function() {
         Launcher.openLink(Links.Desktop);
+    },
+
+    installFoundUpdate: function() {
+        Updater.update(true, function() {
+            Launcher.requestRestart();
+        });
     },
 
     changeExpandGroups: function(e) {

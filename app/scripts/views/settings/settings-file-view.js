@@ -38,7 +38,6 @@ var SettingsAboutView = Backbone.View.extend({
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
-            supportsDropbox: !Launcher,
             desktopLink: Links.Desktop,
 
             name: this.model.get('name'),
@@ -161,34 +160,42 @@ var SettingsAboutView = Backbone.View.extend({
             var fileName = that.model.get('name') + '.kdbx';
             that.model.set('syncing', true);
             that.render();
-            DropboxLink.saveFile(fileName, data, overwrite, function (err) {
+            DropboxLink.authenticate(function(err) {
                 if (err) {
                     that.model.set('syncing', false);
-                    if (err.exists) {
-                        Alerts.alert({
-                            header: 'Already exists',
-                            body: 'File ' + fileName + ' already exists in your Dropbox.',
-                            icon: 'question',
-                            buttons: [{result: 'yes', title: 'Overwrite it'}, {result: '', title: 'I\'ll choose another name'}],
-                            esc: '',
-                            click: '',
-                            enter: 'yes',
-                            success: that.saveToDropbox.bind(that, true),
-                            cancel: function () {
-                                that.$el.find('#settings__file-name').focus();
-                            }
-                        });
-                    } else {
-                        Alerts.error({
-                            header: 'Save error',
-                            body: 'Error saving to Dropbox: \n' + err
-                        });
-                    }
-                } else {
-                    that.passwordChanged = false;
-                    that.model.saved(fileName, 'dropbox');
                     that.render();
+                    return;
                 }
+                DropboxLink.saveFile(fileName, data, overwrite, function (err) {
+                    if (err) {
+                        that.model.set('syncing', false);
+                        that.render();
+                        if (err.exists) {
+                            Alerts.alert({
+                                header: 'Already exists',
+                                body: 'File ' + fileName + ' already exists in your Dropbox.',
+                                icon: 'question',
+                                buttons: [{result: 'yes', title: 'Overwrite it'}, {result: '', title: 'I\'ll choose another name'}],
+                                esc: '',
+                                click: '',
+                                enter: 'yes',
+                                success: that.saveToDropbox.bind(that, true),
+                                cancel: function () {
+                                    that.$el.find('#settings__file-name').focus();
+                                }
+                            });
+                        } else {
+                            Alerts.error({
+                                header: 'Save error',
+                                body: 'Error saving to Dropbox: \n' + err
+                            });
+                        }
+                    } else {
+                        that.passwordChanged = false;
+                        that.model.saved(fileName, 'dropbox');
+                        that.render();
+                    }
+                });
             });
         });
     },

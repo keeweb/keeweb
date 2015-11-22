@@ -25,13 +25,30 @@
     }
   }
 
+  &__list-wrap {
+    @include flex(1);
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(row);
+    @include justify-content(flex-start);
+    &.app__list-wrap--table {
+      @include flex-direction(column);
+    }
+  }
+
   &__menu-drag, &__list-drag {
     @include drag-handle;
     @include flex(0 0 auto);
     width: 1px;
     cursor: col-resize;
-    @include mobile {
-      display: none;
+    @include mobile { display: none; }
+  }
+
+  &__list-drag {
+    .app__list-wrap--table & {
+      width: auto;
+      height: 1px;
+      cursor: row-resize;
     }
   }
 
@@ -40,12 +57,13 @@
   }
 
   &__list {
-    @include flex(0 0 auto);
+    @include flex(0 0 250px);
     @include display(flex);
     @include align-items(stretch);
     @include flex-direction(column);
-    width: 250px;
     overflow-y: auto;
+    .app__list-wrap--table & {
+    }
     @include mobile {
       width: 100vw;
       &.app__list--details-visible {

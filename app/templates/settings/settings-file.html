@@ -8,7 +8,7 @@
         <% } %>
     <% } else { %>
         <p>This database is loaded in memory. To enable auto-save and saving with shortcut <%= cmd %>S,
-        please, save it to <%= supportFiles ? 'file' : 'Dropbox' %>.</p>
+        please, save it to <%= supportFiles ? 'file or ' : '' %>Dropbox.</p>
         <% if (!supportFiles) { %>
             <p>Want to work seamlessly with local files? <a href="<%= desktopLink %>" target="_blank">Download a desktop app</a></p>
         <% } %>
@@ -17,10 +17,8 @@
     <div class="settings__file-buttons">
         <button class="settings__file-button-save-file btn-silent">Save to file</button>
         <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
-        <% if (supportsDropbox) { %>
         <button class="settings__file-button-save-dropbox btn-silent" <%= syncing ? 'disabled' : '' %>>
             Sync with Dropbox <%= syncing ? '(working...)' : '' %></button>
-        <% } %>
         <button class="settings__file-button-close btn-silent">Close</button>
     </div>
 

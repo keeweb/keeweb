@@ -2,6 +2,7 @@
 
 var FieldView = require('./field-view'),
     GeneratorView = require('../generator-view'),
+    KeyHandler = require('../../comp/key-handler'),
     Keys = require('../../const/keys'),
     PasswordGenerator = require('../../util/password-generator'),
     kdbxweb = require('kdbxweb');
@@ -111,6 +112,7 @@ var FieldViewText = FieldView.extend({
     },
 
     fieldValueKeydown: function(e) {
+        KeyHandler.reg();
         e.stopPropagation();
         var code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {

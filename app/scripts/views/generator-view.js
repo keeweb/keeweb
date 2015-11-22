@@ -2,7 +2,7 @@
 
 var Backbone = require('backbone'),
     PasswordGenerator = require('../util/password-generator'),
-    CopyPaste = require('../util/copy-paste');
+    CopyPaste = require('../comp/copy-paste');
 
 var DefaultGenOpts = {
     length: 16, upper: true, lower: true, digits: true, special: false, brackets: false, high: false, ambiguous: false

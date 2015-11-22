@@ -1,5 +1,19 @@
 Release notes
 -------------
+##### v0.4.0 (2015-11-22)
+Locking, better Dropbox, custom icons, security enhancements, bugfixes  
+`+` lock flow, auto-lock  
+`+` entries list display table layout  
+`+` minimize to tray on windows  
+`+` desktop Dropbox  
+`+` Dropbox notification in self-hosted apps  
+`+` custom icons support  
+`+` option to check updates without install  
+`+` clear clipboard password after timeout  
+`+` trim history by rules  
+`-` fixed tag list scrolling  
+`-` entry deletion didn't mark file as modified  
+
 ##### v0.3.0 (2015-11-14)
 Auto-update  
 `+` remember menu and list width  

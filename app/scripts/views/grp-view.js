@@ -25,6 +25,7 @@ var GrpView = Backbone.View.extend({
             this.$el.html(this.template({
                 title: this.model.get('title'),
                 icon: this.model.get('icon') || 'folder',
+                customIcon: this.model.get('customIcon'),
                 readonly: this.model.get('top')
             }));
             if (!this.model.get('title')) {
@@ -76,7 +77,13 @@ var GrpView = Backbone.View.extend({
         if (this.views.sub) {
             this.removeSubView();
         } else {
-            var subView = new IconSelectView({el: this.$el.find('.grp__icons'), model: {iconId: this.model.get('iconId')}});
+            var subView = new IconSelectView({
+                el: this.$el.find('.grp__icons'),
+                model: {
+                    iconId: this.model.get('customIconId') || this.model.get('iconId'),
+                    file: this.model.file
+                }
+            });
             this.listenTo(subView, 'select', this.iconSelected);
             subView.render();
             this.views.sub = subView;
@@ -84,9 +91,13 @@ var GrpView = Backbone.View.extend({
         this.pageResized();
     },
 
-    iconSelected: function(iconId) {
-        if (iconId !== this.model.get('iconId')) {
-            this.model.setIcon(iconId);
+    iconSelected: function(sel) {
+        if (sel.custom) {
+            if (sel.id !== this.model.get('customIconId')) {
+                this.model.setCustomIcon(sel.id);
+            }
+        } else if (sel.id !== this.model.get('iconId')) {
+            this.model.setIcon(+sel.id);
         }
         this.render();
     },

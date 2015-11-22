@@ -16,8 +16,15 @@ var Updater = {
     nextCheckTimeout: null,
     updateCheckDate: new Date(0),
 
-    enabledAutoUpdate: function() {
-        return Launcher && AppSettingsModel.instance.get('autoUpdate');
+    getAutoUpdateType: function() {
+        if (!Launcher) {
+            return false;
+        }
+        var autoUpdate = AppSettingsModel.instance.get('autoUpdate');
+        if (autoUpdate && autoUpdate === true) {
+            autoUpdate = 'install';
+        }
+        return autoUpdate;
     },
 
     updateInProgress: function() {
@@ -27,7 +34,7 @@ var Updater = {
 
     init: function() {
         var willCheckNow = this.scheduleNextCheck();
-        if (!willCheckNow && this.enabledAutoUpdate()) {
+        if (!willCheckNow && this.getAutoUpdateType()) {
             this.check();
         }
         if (!Launcher && window.applicationCache) {
@@ -41,7 +48,7 @@ var Updater = {
             clearTimeout(this.nextCheckTimeout);
             this.nextCheckTimeout = null;
         }
-        if (!this.enabledAutoUpdate()) {
+        if (!this.getAutoUpdateType()) {
             return;
         }
         var timeDiff = this.MinUpdateTimeout;
@@ -50,7 +57,7 @@ var Updater = {
             timeDiff = Math.min(Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout), this.UpdateInterval);
         }
         this.nextCheckTimeout = setTimeout(this.check.bind(this), timeDiff);
-        console.log('Update check will happen in ' + Math.round(timeDiff / 1000) + 's');
+        console.log('Next update check will happen in ' + Math.round(timeDiff / 1000) + 's');
         return timeDiff === this.MinUpdateTimeout;
     },
 
@@ -104,7 +111,11 @@ var Updater = {
                     console.log('Waiting for the user to apply downloaded update');
                     return;
                 }
-                that.update(startedByUser);
+                if (!startedByUser && that.getAutoUpdateType() === 'install') {
+                    that.update(startedByUser);
+                } else if (UpdateModel.instance.get('lastVersion') !== RuntimeInfo.version) {
+                    UpdateModel.instance.set('updateStatus', 'found');
+                }
             },
             error: function(e) {
                 console.error('Update check error', e);
@@ -126,7 +137,7 @@ var Updater = {
         }
     },
 
-    update: function(startedByUser) {
+    update: function(startedByUser, successCallback) {
         var ver = UpdateModel.instance.get('lastVersion');
         if (!Launcher || ver === RuntimeInfo.version) {
             console.log('You are using the latest version');
@@ -150,6 +161,9 @@ var Updater = {
                         UpdateModel.instance.set({ updateStatus: 'ready', updateError: null });
                         if (!startedByUser) {
                             Backbone.trigger('update-app');
+                        }
+                        if (typeof successCallback === 'function') {
+                            successCallback();
                         }
                     }
                 });
@@ -190,7 +204,6 @@ var Updater = {
         if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
             try { window.applicationCache.swapCache(); } catch (e) { }
             UpdateModel.instance.set('updateStatus', 'ready');
-            Backbone.trigger('update-app');
         }
     }
 };
