@@ -308,17 +308,8 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    showVisualLock: function(message) {
-        // TODO: remove this
-        if (Alerts.alertDisplayed) {
-            return;
-        }
-        message += '<div class="muted-color">Note: this will be removed once 2-way sync is implemented</div>';
-        Alerts.info({
-            header: 'Auto-lock failed',
-            body: message,
-            icon: 'lock'
-        });
+    showVisualLock: function() {
+        // TODO: remove cases which lead to this
     },
 
     saveAndLock: function(autoInit) {
