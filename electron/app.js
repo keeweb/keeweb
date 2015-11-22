@@ -10,6 +10,7 @@ var app = require('app'),
     Tray = require('tray');
 
 var mainWindow = null,
+    appIcon = null,
     openFile = process.argv.filter(function(arg) { return /\.kdbx$/i.test(arg); })[0],
     ready = false,
     restartPending = false,
@@ -65,14 +66,29 @@ app.minimizeApp = function() {
     if (process.platform === 'win32') {
         mainWindow.minimize();
         mainWindow.setSkipTaskbar(true);
-        var appIcon = new Tray(path.join(__dirname, 'icon.png'));
-        appIcon.on('clicked', function () {
-            mainWindow.restore();
-            mainWindow.setSkipTaskbar(false);
-        });
+        appIcon = new Tray(path.join(__dirname, 'icon.png'));
+        appIcon.on('clicked', restoreMainWindow);
+        var contextMenu = Menu.buildFromTemplate([
+            { label: 'Open KeeWeb', click: restoreMainWindow },
+            { label: 'Quit KeeWeb', click: closeMainWindow }
+        ]);
+        appIcon.setContextMenu(contextMenu);
         appIcon.setToolTip('KeeWeb');
     }
 };
+
+function restoreMainWindow() {
+    appIcon.destroy();
+    appIcon = null;
+    mainWindow.restore();
+    mainWindow.setSkipTaskbar(false);
+}
+
+function closeMainWindow() {
+    appIcon.destroy();
+    appIcon = null;
+    mainWindow.webContents.executeJavaScript('Backbone.trigger("launcher-exit-request");');
+}
 
 function setMenu() {
     if (process.platform === 'darwin') {
