@@ -13,6 +13,13 @@ var IconSelectView = Backbone.View.extend({
         'change .icon-select__file-input': 'iconSelected'
     },
 
+    initialize: function() {
+        this.special = {
+            select: null,
+            download: null
+        };
+    },
+
     render: function() {
         this.renderTemplate({
             sel: this.model.iconId,
@@ -26,7 +33,15 @@ var IconSelectView = Backbone.View.extend({
     iconClick: function(e) {
         var target = $(e.target).closest('.icon-select__icon');
         var iconId = target[0].getAttribute('data-val');
-        if (iconId) {
+        if (iconId === 'special') {
+            var iconData = this.special[target.data('special')];
+            if (iconData) {
+                var id = this.model.file.addCustomIcon(iconData.data);
+                this.trigger('select', { id: id, custom: true });
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        } else if (iconId) {
             var isCustomIcon = target.hasClass('icon-select__icon-custom');
             this.trigger('select', { id: iconId, custom: isCustomIcon });
         }
@@ -41,8 +56,10 @@ var IconSelectView = Backbone.View.extend({
         var that = this;
         var url = this.getIconUrl();
         var img = document.createElement('img');
+        img.crossOrigin = 'Anonymous';
         img.src = url;
         img.onload = function() {
+            that.setSpecialImage(img, 'download');
             that.$el.find('.icon-select__icon-download img').remove();
             that.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
             that.$el.find('.icon-select__icon-download').addClass('icon-select__icon--custom-selected').append(img);
@@ -64,6 +81,7 @@ var IconSelectView = Backbone.View.extend({
         if (url.indexOf('://') < 0) {
             url = 'http://' + url;
         }
+        url = 'http://www.google.com/s2/favicons?domain_url=' + encodeURIComponent(url);
         return url;
     },
 
@@ -78,15 +96,29 @@ var IconSelectView = Backbone.View.extend({
             var reader = new FileReader();
             reader.onload = function(e) {
                 var img = document.createElement('img');
+                img.onload = function() {
+                    that.setSpecialImage(img, 'select');
+                    that.$el.find('.icon-select__icon-select img').remove();
+                    that.$el.find('.icon-select__icon-select').addClass('icon-select__icon--custom-selected').append(img);
+                };
                 img.src = e.target.result;
-                that.$el.find('.icon-select__icon-select img').remove();
-                that.$el.find('.icon-select__icon-select').addClass('icon-select__icon--custom-selected').append(img);
             };
             reader.readAsDataURL(file);
         } else {
             that.$el.find('.icon-select__icon-select img').remove();
             that.$el.find('.icon-select__icon-select').removeClass('icon-select__icon--custom-selected');
         }
+    },
+
+    setSpecialImage: function(img, name) {
+        var size = Math.min(img.width, 32);
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = size;
+        canvas.height = size;
+        ctx.drawImage(img, 0, 0, size, size);
+        var data = canvas.toDataURL().replace(/^.*,/, '');
+        this.special[name] = { width: img.width, height: img.height, data: data };
     }
 });
 

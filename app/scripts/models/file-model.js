@@ -274,12 +274,6 @@ var FileModel = Backbone.Model.extend({
         this.addToLastOpenFiles();
     },
 
-    getCustomIcons: function() {
-        return _.mapObject(this.db.meta.customIcons, function(customIcon) {
-            return IconUrl.toDataUrl(customIcon);
-        });
-    },
-
     setPassword: function(password) {
         this.db.credentials.setPassword(password);
         this.db.meta.keyChanged = new Date();
@@ -380,6 +374,18 @@ var FileModel = Backbone.Model.extend({
             }, this);
             trashGroup.get('entries').reset();
         }
+    },
+
+    getCustomIcons: function() {
+        return _.mapObject(this.db.meta.customIcons, function(customIcon) {
+            return IconUrl.toDataUrl(customIcon);
+        });
+    },
+
+    addCustomIcon: function(iconData) {
+        var id = new kdbxweb.KdbxUuid();
+        this.db.meta.customIcons[id] = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData));
+        return id.toString();
     }
 });
 
