@@ -97,7 +97,7 @@ var GrpView = Backbone.View.extend({
                 this.model.setCustomIcon(sel.id);
             }
         } else if (sel.id !== this.model.get('iconId')) {
-            this.model.setIcon(sel.id);
+            this.model.setIcon(+sel.id);
         }
         this.render();
     },

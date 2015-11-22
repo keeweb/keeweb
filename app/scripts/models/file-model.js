@@ -386,7 +386,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     addCustomIcon: function(iconData) {
-        var id = new kdbxweb.KdbxUuid();
+        var id = kdbxweb.KdbxUuid.random();
         this.db.meta.customIcons[id] = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData));
         return id.toString();
     }

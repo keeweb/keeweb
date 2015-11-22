@@ -1,7 +1,8 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    IconMap = require('../const/icon-map');
+    IconMap = require('../const/icon-map'),
+    Launcher = require('../comp/launcher');
 
 var IconSelectView = Backbone.View.extend({
     template: require('templates/icon-select.html'),
@@ -54,18 +55,18 @@ var IconSelectView = Backbone.View.extend({
         this.downloadingFavicon = true;
         this.$el.find('.icon-select__icon-download>i').addClass('fa-spinner fa-spin');
         var that = this;
-        var url = this.getIconUrl();
+        var url = this.getIconUrl(!Launcher); // inside launcher we can load images without CORS
         var img = document.createElement('img');
         img.crossOrigin = 'Anonymous';
         img.src = url;
-        img.onload = function() {
+        img.onload = function () {
             that.setSpecialImage(img, 'download');
             that.$el.find('.icon-select__icon-download img').remove();
             that.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
             that.$el.find('.icon-select__icon-download').addClass('icon-select__icon--custom-selected').append(img);
             that.downloadingFavicon = false;
         };
-        img.onerror = function(e) {
+        img.onerror = function (e) {
             console.error('Favicon download error: ' + url, e);
             that.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
             that.$el.find('.icon-select__icon-download').removeClass('icon-select__icon--custom-selected');
@@ -73,7 +74,7 @@ var IconSelectView = Backbone.View.extend({
         };
     },
 
-    getIconUrl: function() {
+    getIconUrl: function(useGoogle) {
         if (!this.model.url) {
             return null;
         }
@@ -81,7 +82,9 @@ var IconSelectView = Backbone.View.extend({
         if (url.indexOf('://') < 0) {
             url = 'http://' + url;
         }
-        url = 'http://www.google.com/s2/favicons?domain_url=' + encodeURIComponent(url);
+        if (useGoogle) {
+            return 'http://www.google.com/s2/favicons?domain_url=' + encodeURIComponent(url.replace('/favicon.ico', '/'));
+        }
         return url;
     },
 

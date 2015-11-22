@@ -249,7 +249,7 @@ var DetailsView = Backbone.View.extend({
                 this.render();
             }
         } else if (sel.id !== this.model.iconId) {
-            this.model.setIcon(sel.id);
+            this.model.setIcon(+sel.id);
             this.entryUpdated();
         } else {
             this.render();
