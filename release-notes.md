@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v0.4.1, v0.4.2 (2015-11-22)
+Auto-update bugfixes  
+
 ##### v0.4.0 (2015-11-22)
 Locking, better Dropbox, custom icons, security enhancements, bugfixes  
 `+` lock flow, auto-lock  
