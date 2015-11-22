@@ -5,7 +5,8 @@
 ## Issues
 
 If you have found an bug, please [open an issue](https://github.com/antelle/keeweb/issues/new) and fill in the app version and your user-agent 
-(you can find these details in Settings/Help section). Please check [TODO](TODO.md) before creating a feature request.
+(you can find these details in Settings/Help section). Please check [FAQ](https://github.com/antelle/keeweb/wiki/FAQ) before submitting a new issue 
+and [TODO](TODO.md) before creating a feature request.
 
 Please, describe the issue in details: what were your actions? What has happened? 
 Does it happen on Demo or New database? If no, how to reproduce this? If you are using a test db without your personal data, please attach it.
