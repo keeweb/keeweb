@@ -4,8 +4,8 @@
 /* jshint browser:false */
 
 var app = require('app'),
-    BrowserWindow = require('browser-window'),
     path = require('path'),
+    BrowserWindow = require('browser-window'),
     Menu = require('menu'),
     Tray = require('tray');
 
@@ -23,7 +23,18 @@ process.argv.forEach(function(arg) {
 });
 
 app.on('window-all-closed', function() {
-    app.quit();
+    if (restartPending) {
+        // unbind all handlers, load new app.js module and pass control to it
+        app.removeAllListeners('window-all-closed');
+        app.removeAllListeners('ready');
+        app.removeAllListeners('open-file');
+        var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
+        delete require.cache[require.resolve('./app.js')];
+        require(userDataAppFile);
+        app.emit('ready');
+    } else {
+        app.quit();
+    }
 });
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
@@ -49,14 +60,9 @@ app.on('open-file', function(e, path) {
     openFile = path;
     notifyOpenFile();
 });
-app.on('quit', function() {
-    if (restartPending) {
-        require('child_process').exec(process.execPath);
-    }
-});
-app.quitAndRestart = function() {
+app.restartApp = function() {
     restartPending = true;
-    app.quit();
+    mainWindow.close();
     setTimeout(function() { restartPending = false; }, 1000);
 };
 app.openWindow = function(opts) {

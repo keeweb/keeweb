@@ -60,7 +60,7 @@ if (window.process && window.process.versions && window.process.versions.electro
         requestExit: function() {
             var app = this.remReq('app');
             if (this.restartPending) {
-                app.quitAndRestart();
+                app.restartApp();
             } else {
                 app.quit();
             }

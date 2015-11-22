@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v0.4.4 (2015-11-22)
+Auto-update restart on Windows fixed  
+
 ##### v0.4.3 (2015-11-22)
 Windows minimize to tray bugfix  
 
