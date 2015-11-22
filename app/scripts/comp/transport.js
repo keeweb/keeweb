@@ -46,6 +46,13 @@ var Transport = {
                         config.success(data);
                     });
                 }
+            } else if (res.headers.location && [301, 302].indexOf(res.statusCode) >= 0) {
+                if (config.noRedirect) {
+                    return config.error('Too many redirects');
+                }
+                config.url = res.headers.location;
+                config.noRedirect = true;
+                Transport.httpGet(config);
             } else {
                 config.error('HTTP status ' + res.statusCode);
             }
