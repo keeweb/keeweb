@@ -256,7 +256,10 @@ var FileModel = Backbone.Model.extend({
     },
 
     getData: function(cb) {
-        this.db.cutHistory();
+        this.db.cleanup({
+            historyRules: true,
+            customIcons: true
+        });
         this.data = this.db.save(cb);
         return this.data;
     },
