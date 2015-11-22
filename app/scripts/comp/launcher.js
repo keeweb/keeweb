@@ -54,7 +54,7 @@ if (window.process && window.process.versions && window.process.versions.electro
             return false;
         },
         exit: function() {
-            Launcher.exitRequested = true;
+            this.exitRequested = true;
             this.requestExit();
         },
         requestExit: function() {
@@ -85,6 +85,9 @@ if (window.process && window.process.versions && window.process.versions.electro
             return process.platform === 'win32';
         }
     };
+    Backbone.on('launcher-exit-request', function() {
+        setTimeout(function() { Launcher.exit(); }, 0);
+    });
     window.launcherOpen = function(path) {
         Backbone.trigger('launcher-open-file', path);
     };

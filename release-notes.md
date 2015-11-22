@@ -1,7 +1,10 @@
 Release notes
 -------------
+##### v0.4.3 (2015-11-22)
+Windows minimize to tray bugfix  
+
 ##### v0.4.1, v0.4.2 (2015-11-22)
-Auto-update bugfixes  
+Auto-update and bugfixes  
 
 ##### v0.4.0 (2015-11-22)
 Locking, better Dropbox, custom icons, security enhancements, bugfixes  
