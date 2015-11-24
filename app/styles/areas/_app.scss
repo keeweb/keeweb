@@ -62,11 +62,9 @@
     @include align-items(stretch);
     @include flex-direction(column);
     overflow-y: auto;
-    .app__list-wrap--table & {
-    }
     @include mobile {
-      width: 100vw;
-      &.app__list--details-visible {
+      @include flex(1 1);
+      .app--details-visible & {
         display: none;
       }
     }
@@ -81,6 +79,10 @@
     @include mobile {
       width: 100vw;
       padding: $base-padding;
+      display: none;
+      .app--details-visible & {
+        @include display(flex);
+      }
     }
   }
 

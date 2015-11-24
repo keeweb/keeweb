@@ -413,7 +413,7 @@ var AppView = Backbone.View.extend({
     },
 
     toggleDetails: function(visible) {
-        this.$el.find('.app__list').toggleClass('app__list--details-visible', visible);
+        this.$el.find('.app').toggleClass('app--details-visible', visible);
         this.views.menu.switchVisibility(false);
     },
 
