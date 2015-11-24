@@ -21,7 +21,7 @@
       @include flex(1);
       @include align-self(stretch);
       position: relative;
-      // @include size(100%);
+      @include mobile { width: 100% !important; }
     }
   }
 

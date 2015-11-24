@@ -230,7 +230,8 @@ var AppView = Backbone.View.extend({
                 return Launcher.preventExit(e);
             }
             return 'You have unsaved files, all changes will be lost.';
-        } else if (Launcher && !Launcher.exitRequested && Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
+        } else if (Launcher && !Launcher.exitRequested && !Launcher.restartPending &&
+                Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
             this.lockWorkspace(true);
             Launcher.minimizeApp();
             return Launcher.preventExit(e);
@@ -412,7 +413,7 @@ var AppView = Backbone.View.extend({
     },
 
     toggleDetails: function(visible) {
-        this.$el.find('.app__list').toggleClass('app__list--details-visible', visible);
+        this.$el.find('.app').toggleClass('app--details-visible', visible);
         this.views.menu.switchVisibility(false);
     },
 
