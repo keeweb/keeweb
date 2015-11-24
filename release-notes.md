@@ -1,5 +1,10 @@
 Release notes
 -------------
+##### v0.4.5 (2015-11-25)
+Bugfixes  
+`-` mobile safari layout issues  
+`-` auto-restart in windows app  
+
 ##### v0.4.4 (2015-11-22)
 Auto-update restart on Windows fixed  
 
