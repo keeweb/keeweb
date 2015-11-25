@@ -8,13 +8,13 @@ The app can run either in browser, or as a desktop app.
 # Quick Links
 
 Apps: [Web](https://antelle.github.io/keeweb/) [Desktop](https://github.com/antelle/keeweb/releases/latest)  
-Timeline: [Release Notes](release-notes.md) [TODO](TODO.md)  
+Timeline: [Release Notes](release-notes.md) [TODO](https://github.com/antelle/keeweb/wiki/TODO)  
 On one page: [Features](features.md) [FAQ](https://github.com/antelle/keeweb/wiki/FAQ)  
 Twitter: [kee_web](https://twitter.com/kee_web)  
 
 # Status
 
-Reading and display is mostly complete; modification and sync is under construction, please see [TODO](TODO.md) for more details.
+Reading and display is mostly complete; modification and sync is under construction, please see [TODO](https://github.com/antelle/keeweb/wiki/TODO) for more details.
 
 # Known Issues
 

@@ -6,7 +6,7 @@
 
 If you have found an bug, please [open an issue](https://github.com/antelle/keeweb/issues/new) and fill in the app version and your user-agent 
 (you can find these details in Settings/Help section). Please check [FAQ](https://github.com/antelle/keeweb/wiki/FAQ) before submitting a new issue 
-and [TODO](TODO.md) before creating a feature request.
+and [TODO](https://github.com/antelle/keeweb/wiki/TODO) before creating a feature request.
 
 Please, describe the issue in details: what were your actions? What has happened? 
 Does it happen on Demo or New database? If no, how to reproduce this? If you are using a test db without your personal data, please attach it.
@@ -16,7 +16,7 @@ Does it happen on Demo or New database? If no, how to reproduce this? If you are
 Plugins are not supported for now. So, if you want to add a feature, please, follow these steps:
 
 1. make sure it's not listed in [banned features](https://github.com/antelle/keeweb/wiki/Unsupported-Features)
-2. check compatibility with [the project roadmap](TODO.md) and key features: you should not break anything
+2. check compatibility with [the project roadmap](https://github.com/antelle/keeweb/wiki/TODO) and key features: you should not break anything
 3. if your feature is introducing a lot of new UI, or is changing any UX or design concept, please, open an issue to discuss it first
 4. please, respect existing style in code, styles and markup (hint: install and enable [editorconfig](http://editorconfig.org/) in your editor)
 5. don't add any dependencies
