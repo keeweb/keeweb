@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v0.4.6 (2015-11-25)
+`-` #32: visual glitches on Windows 10  
+
 ##### v0.4.5 (2015-11-25)
 Bugfixes  
 `-` mobile safari layout issues  
