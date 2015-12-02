@@ -80,7 +80,9 @@ var OpenView = Backbone.View.extend({
     },
 
     fileOpenChanged: function() {
-        this.model.addFile(this.file);
+        if (!this.model.addFile(this.file)) {
+            this.trigger('cancel');
+        }
     },
 
     fileOpeningChanged: function() {

@@ -13,6 +13,7 @@ var Backbone = require('backbone'),
 
 var FileModel = Backbone.Model.extend({
     defaults: {
+        id: '',
         name: '',
         keyFileName: '',
         passwordLength: 0,
@@ -122,7 +123,7 @@ var FileModel = Backbone.Model.extend({
         kdbxweb.Kdbx.load(demoFile, credentials, (function(db) {
             this.db = db;
             this.readModel();
-            this.setOpenFile({passwordLength: 4, demo: true, name: 'Demo'});
+            this.setOpenFile({passwordLength: 4, demo: true, name: 'Demo' });
         }).bind(this));
     },
 
@@ -145,6 +146,7 @@ var FileModel = Backbone.Model.extend({
     readModel: function(topGroupTitle) {
         var groups = new GroupCollection();
         this.set({
+            id: this.db.getDefaultGroup().uuid.toString(),
             groups: groups,
             defaultUser: this.db.meta.defaultUser,
             recycleBinEnabled: this.db.meta.recycleBinEnabled,

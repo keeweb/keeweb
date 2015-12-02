@@ -28,8 +28,13 @@ var AppModel = Backbone.Model.extend({
     },
 
     addFile: function(file) {
+        if (this.files.getById(file.get('id'))) {
+            return false;
+        }
         this.files.add(file);
-        file.get('groups').forEach(function(group) { this.menu.groupsSection.addItem(group); }, this);
+        file.get('groups').forEach(function (group) {
+            this.menu.groupsSection.addItem(group);
+        }, this);
         this._addTags(file.db);
         this._tagsChanged();
         this.menu.filesSection.addItem({
@@ -39,6 +44,7 @@ var AppModel = Backbone.Model.extend({
             file: file
         });
         this.refresh();
+        return true;
     },
 
     _addTags: function(group) {
