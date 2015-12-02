@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     PasswordGenerator = require('../../util/password-generator'),
     Alerts = require('../../comp/alerts'),
     Launcher = require('../../comp/launcher'),
+    Storage = require('../../storage'),
     Links = require('../../const/links'),
     DropboxLink = require('../../comp/dropbox-link'),
     kdbxweb = require('kdbxweb'),
@@ -122,17 +123,18 @@ var SettingsAboutView = Backbone.View.extend({
     },
 
     saveToFileWithPath: function(path, data) {
-        try {
-            Launcher.writeFile(path, data);
-            this.passwordChanged = false;
-            this.model.saved(path, 'file');
-        } catch (e) {
-            console.error('Error saving file', path, e);
-            Alerts.error({
-                header: 'Save error',
-                body: 'Error saving to file ' + path + ': \n' + e
-            });
-        }
+        var that = this;
+        Storage.file.save(path, data, function(err) {
+            if (err) {
+                Alerts.error({
+                    header: 'Save error',
+                    body: 'Error saving to file ' + path + ': \n' + e
+                });
+            } else {
+                that.passwordChanged = false;
+                that.model.saved(path, 'file');
+            }
+        });
     },
 
     exportAsXml: function() {

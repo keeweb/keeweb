@@ -7,7 +7,7 @@ var Backbone = require('backbone'),
     FileModel = require('../models/file-model'),
     Launcher = require('../comp/launcher'),
     LastOpenFiles = require('../comp/last-open-files'),
-    Storage = require('../comp/storage'),
+    Storage = require('../storage'),
     DropboxLink = require('../comp/dropbox-link');
 
 var OpenView = Backbone.View.extend({
@@ -191,18 +191,18 @@ var OpenView = Backbone.View.extend({
 
     showOpenLocalFile: function(path) {
         if (path && Launcher) {
-            try {
-                var name = path.match(/[^/\\]*$/)[0];
-                var data = Launcher.readFile(path);
-                var file = new Blob([data]);
-                Object.defineProperties(file, {
-                    path: { value: path },
-                    name: { value: name }
-                });
-                this.setFile(file);
-            } catch (e) {
-                console.log('Failed to show local file', e);
-            }
+            var that = this;
+            Storage.file.load(path, function(data, err) {
+                if (!err) {
+                    var name = path.match(/[^/\\]*$/)[0];
+                    var file = new Blob([data]);
+                    Object.defineProperties(file, {
+                        path: { value: path },
+                        name: { value: name }
+                    });
+                    that.setFile(file);
+                }
+            });
         }
     },
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var Storage = require('./storage');
+var Storage = require('../storage');
 
 var MaxItems = 5;
 

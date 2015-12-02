@@ -5,7 +5,7 @@ var Backbone = require('backbone'),
     GroupModel = require('./group-model'),
     Launcher = require('../comp/launcher'),
     DropboxLink = require('../comp/dropbox-link'),
-    Storage = require('../comp/storage'),
+    Storage = require('../storage'),
     LastOpenFiles = require('../comp/last-open-files'),
     IconUrl = require('../util/icon-url'),
     kdbxweb = require('kdbxweb'),
@@ -230,28 +230,20 @@ var FileModel = Backbone.Model.extend({
     autoSave: function(complete) {
         var that = this;
         that.set('syncing', true);
-        switch (that.get('storage')) {
-            case 'file':
-                that.getData(function(data) {
-                    Launcher.writeFile(that.get('path'), data);
-                    that.saved(that.get('path'), that.get('storage'));
-                    if (complete) { complete(); }
+        var storage = Storage[that.get('storage')];
+        if (storage) {
+            that.getData(function(data) {
+                storage.save(that.get('path'), data, function (err) {
+                    if (err) {
+                        that.set('syncing', false);
+                    } else {
+                        that.saved(that.get('path'), that.get('storage'));
+                    }
+                    if (complete) { complete(err); }
                 });
-                break;
-            case 'dropbox':
-                that.getData(function(data) {
-                    DropboxLink.saveFile(that.get('path'), data, true, function (err) {
-                        if (err) {
-                            that.set('syncing', false);
-                        } else {
-                            that.saved(that.get('path'), that.get('storage'));
-                        }
-                        if (complete) { complete(err); }
-                    });
-                });
-                break;
-            default:
-                throw 'Unknown storage; cannot auto save';
+            });
+        } else {
+            throw 'Unknown storage; cannot auto save';
         }
     },
 
