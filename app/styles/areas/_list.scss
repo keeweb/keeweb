@@ -104,7 +104,6 @@
       height: 14px;
       &--custom {
         vertical-align: text-bottom;
-        @include filter(grayscale(1));
         &.yellow { @include filter(grayscale(1) sepia(1) hue-rotate(20deg) brightness(1.17) saturate(5.7)); }
         &.green { @include filter(grayscale(1) sepia(1) hue-rotate(55deg) brightness(1.01) saturate(4.9)); }
         &.red { @include filter(grayscale(1) sepia(1) hue-rotate(316deg) brightness(1.1) saturate(6)); }

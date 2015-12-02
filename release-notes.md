@@ -1,5 +1,10 @@
 Release notes
 -------------
+##### v0.5 (not released yet)
+2-way sync  
+`*` disallow opening same files twice   
+`+` #46: option to show colorful icons  
+
 ##### v0.4.6 (2015-11-25)
 `-` #32: visual glitches on Windows 10  
 

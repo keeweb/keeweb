@@ -22,6 +22,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-auto-save': 'changeAutoSave',
         'change .settings__general-minimize': 'changeMinimize',
         'change .settings__general-table-view': 'changeTableView',
+        'change .settings__general-colorful-icons': 'changeColorfulIcons',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
@@ -61,7 +62,8 @@ var SettingsGeneralView = Backbone.View.extend({
             updateReady: UpdateModel.instance.get('updateStatus') === 'ready',
             updateFound: UpdateModel.instance.get('updateStatus') === 'found',
             updateManual: UpdateModel.instance.get('updateManual'),
-            releaseNotesLink: Links.ReleaseNotes
+            releaseNotesLink: Links.ReleaseNotes,
+            colorfulIcons: AppSettingsModel.instance.get('colorfulIcons')
         });
     },
 
@@ -141,6 +143,12 @@ var SettingsGeneralView = Backbone.View.extend({
     changeTableView: function(e) {
         var tableView = e.target.checked || false;
         AppSettingsModel.instance.set('tableView', tableView);
+        Backbone.trigger('refresh');
+    },
+
+    changeColorfulIcons: function(e) {
+        var colorfulIcons = e.target.checked || false;
+        AppSettingsModel.instance.set('colorfulIcons', colorfulIcons);
         Backbone.trigger('refresh');
     },
 

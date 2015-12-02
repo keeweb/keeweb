@@ -66,7 +66,8 @@ var ListView = Backbone.View.extend({
         if (this.items.length) {
             var itemTemplate = this.getItemTemplate();
             var itemsTemplate = this.getItemsTemplate();
-            var presenter = new EntryPresenter(this.getDescField());
+            var noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
+            var presenter = new EntryPresenter(this.getDescField(), noColor);
             var itemsHtml = '';
             this.items.forEach(function (item) {
                 presenter.present(item);
