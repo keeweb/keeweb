@@ -4,6 +4,7 @@ Release notes
 2-way sync  
 `*` disallow opening same files twice   
 `+` #46: option to show colorful icons  
+`+` #45: optional auto-lock on minimize  
 
 ##### v0.4.6 (2015-11-25)
 `-` #32: visual glitches on Windows 10  

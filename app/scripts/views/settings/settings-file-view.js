@@ -128,7 +128,7 @@ var SettingsAboutView = Backbone.View.extend({
             if (err) {
                 Alerts.error({
                     header: 'Save error',
-                    body: 'Error saving to file ' + path + ': \n' + e
+                    body: 'Error saving to file ' + path + ': \n' + err
                 });
             } else {
                 that.passwordChanged = false;

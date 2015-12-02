@@ -64,6 +64,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'edit-group', this.editGroup);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
         this.listenTo(Backbone, 'user-idle', this.userIdle);
+        this.listenTo(Backbone, 'app-minimized', this.appMinimized);
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
@@ -232,7 +233,6 @@ var AppView = Backbone.View.extend({
             return 'You have unsaved files, all changes will be lost.';
         } else if (Launcher && !Launcher.exitRequested && !Launcher.restartPending &&
                 Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
-            this.lockWorkspace(true);
             Launcher.minimizeApp();
             return Launcher.preventExit(e);
         }
@@ -267,6 +267,12 @@ var AppView = Backbone.View.extend({
 
     userIdle: function() {
         this.lockWorkspace(true);
+    },
+
+    appMinimized: function() {
+        if (this.model.settings.get('lockOnMinimize')) {
+            this.lockWorkspace(true);
+        }
     },
 
     lockWorkspace: function(autoInit) {

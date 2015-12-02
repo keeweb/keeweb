@@ -28,37 +28,31 @@ app.on('window-all-closed', function() {
         app.removeAllListeners('window-all-closed');
         app.removeAllListeners('ready');
         app.removeAllListeners('open-file');
+        app.removeAllListeners('activate');
         var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
         delete require.cache[require.resolve('./app.js')];
         require(userDataAppFile);
         app.emit('ready');
     } else {
-        app.quit();
+        if (process.platform !== 'darwin') {
+            app.quit();
+        }
     }
 });
 app.on('ready', function() {
-    mainWindow = new BrowserWindow({
-        show: false,
-        width: 1000, height: 700, 'min-width': 600, 'min-height': 300,
-        icon: path.join(__dirname, 'icon.png')
-    });
-    setMenu();
-    mainWindow.loadUrl('file://' + htmlPath);
-    mainWindow.webContents.on('dom-ready', function() {
-        setTimeout(function() {
-            mainWindow.show();
-            ready = true;
-            notifyOpenFile();
-        }, 50);
-    });
-    mainWindow.on('closed', function() {
-        mainWindow = null;
-    });
+    createMainWindow();
 });
 app.on('open-file', function(e, path) {
     e.preventDefault();
     openFile = path;
     notifyOpenFile();
+});
+app.on('activate', function() {
+    if (process.platform === 'darwin') {
+        if (!mainWindow) {
+            createMainWindow();
+        }
+    }
 });
 app.restartApp = function() {
     restartPending = true;
@@ -83,6 +77,29 @@ app.minimizeApp = function() {
     }
 };
 
+function createMainWindow() {
+    mainWindow = new BrowserWindow({
+        show: false,
+        width: 1000, height: 700, 'min-width': 600, 'min-height': 300,
+        icon: path.join(__dirname, 'icon.png')
+    });
+    setMenu();
+    mainWindow.loadUrl('file://' + htmlPath);
+    mainWindow.webContents.on('dom-ready', function() {
+        setTimeout(function() {
+            mainWindow.show();
+            ready = true;
+            notifyOpenFile();
+        }, 50);
+    });
+    mainWindow.on('closed', function() {
+        mainWindow = null;
+    });
+    mainWindow.on('minimize', function() {
+        emitBackboneEvent('launcher-minimize');
+    });
+}
+
 function restoreMainWindow() {
     appIcon.destroy();
     appIcon = null;
@@ -93,7 +110,11 @@ function restoreMainWindow() {
 function closeMainWindow() {
     appIcon.destroy();
     appIcon = null;
-    mainWindow.webContents.executeJavaScript('Backbone.trigger("launcher-exit-request");');
+    emitBackboneEvent('launcher-exit-request');
+}
+
+function emitBackboneEvent(e) {
+    mainWindow.webContents.executeJavaScript('Backbone.trigger("' + e + '");');
 }
 
 function setMenu() {

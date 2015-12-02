@@ -3,8 +3,6 @@
 var Backbone = require('backbone'),
     GroupCollection = require('../collections/group-collection'),
     GroupModel = require('./group-model'),
-    Launcher = require('../comp/launcher'),
-    DropboxLink = require('../comp/dropbox-link'),
     Storage = require('../storage'),
     LastOpenFiles = require('../comp/last-open-files'),
     IconUrl = require('../util/icon-url'),
