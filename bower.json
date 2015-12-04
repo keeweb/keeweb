@@ -24,7 +24,7 @@
   "private": true,
   "dependencies": {
     "backbone": "~1.2.3",
-    "baron": "~0.7.11",
+    "baron": "~1.0.1",
     "bourbon": "~4.2.5",
     "dropbox": "antelle/dropbox-js#0.10.5",
     "font-awesome": "~4.4.0",
