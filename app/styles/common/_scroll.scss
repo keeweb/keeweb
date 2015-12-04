@@ -1,12 +1,16 @@
+@mixin scrollbar-padding-hack {
+  // workaround for bugs in custom scrollbar component (baron)
+  // https://github.com/Diokuz/baron/issues/91
+  // https://github.com/Diokuz/baron/issues/93
+  margin-right: -30px !important;
+  padding-right: 30px !important;
+}
+
 .scroller {
   overflow-y: scroll;
   height: 100%;
   @-moz-document url-prefix() {
-    // until Firefox bug is fixed in baron, hide native scroll area manually
-    // https://github.com/Diokuz/baron/issues/91
-    // https://github.com/Diokuz/baron/issues/93
-    margin-right: -30px;
-    padding-right: 30px;
+    @include scrollbar-padding-hack();
   }
   &::-webkit-scrollbar {
     width: 0;
@@ -28,6 +32,15 @@
     width: 8px;
     border-radius: 3px;
     pointer-events: auto;
+  }
+}
+
+@media screen and (-moz-windows-theme) {
+  .scroller {
+    @-moz-document url-prefix() {
+      margin-right: 0 !important;
+      padding-right: 0 !important;
+    }
   }
 }
 
