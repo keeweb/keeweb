@@ -35,8 +35,12 @@ var FileModel = Backbone.Model.extend({
 
     db: null,
     data: null,
+    entryMap: null,
+    groupMap: null,
 
     initialize: function() {
+        this.entryMap = {};
+        this.groupMap = {};
     },
 
     open: function(password, fileData, keyFileData) {
@@ -152,13 +156,38 @@ var FileModel = Backbone.Model.extend({
             historyMaxSize: this.db.meta.historyMaxSize,
             keyEncryptionRounds: this.db.header.keyEncryptionRounds
         }, { silent: true });
-        this.db.groups.forEach(function(group, index) {
-            var groupModel = GroupModel.fromGroup(group, this);
-            if (index === 0 && topGroupTitle) {
+        this.db.groups.forEach(function(group) {
+            var groupModel = this.getGroup(group.uuid.id);
+            if (groupModel) {
+                groupModel.setGroup(group, this);
+            } else {
+                groupModel = GroupModel.fromGroup(group, this);
+            }
+            if (topGroupTitle) {
                 groupModel.set({title: topGroupTitle});
             }
             groups.add(groupModel);
         }, this);
+        this.buildObjectMap();
+    },
+
+    buildObjectMap: function() {
+        var entryMap = {};
+        var groupMap = {};
+        this.forEachGroup(function(group) {
+            groupMap[group.id] = group;
+            group.forEachOwnEntry(null, function(entry) {
+                entryMap[entry.id] = entry;
+            });
+        }, true);
+        this.entryMap = entryMap;
+        this.groupMap = groupMap;
+    },
+
+    reload: function() {
+        this.buildObjectMap();
+        this.readModel(this.get('name'));
+        this.trigger('reload', this);
     },
 
     close: function() {
@@ -177,17 +206,12 @@ var FileModel = Backbone.Model.extend({
         });
     },
 
+    getEntry: function(id) {
+        return this.entryMap[id];
+    },
+
     getGroup: function(id) {
-        var found = null;
-        if (id) {
-            this.forEachGroup(function (group) {
-                if (group.get('id') === id) {
-                    found = group;
-                    return false;
-                }
-            }, true);
-        }
-        return found;
+        return this.groupMap[id];
     },
 
     forEachEntry: function(filter, callback) {

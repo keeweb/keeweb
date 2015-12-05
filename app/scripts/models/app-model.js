@@ -44,7 +44,16 @@ var AppModel = Backbone.Model.extend({
             file: file
         });
         this.refresh();
+        this.listenTo(file, 'reload', this.reloadFile);
         return true;
+    },
+
+    reloadFile: function(file) {
+        this.menu.groupsSection.removeByFile(file, true);
+        file.get('groups').forEach(function (group) {
+            this.menu.groupsSection.addItem(group);
+        }, this);
+        this.updateTags();
     },
 
     _addTags: function(group) {

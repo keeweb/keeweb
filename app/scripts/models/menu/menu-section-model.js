@@ -27,7 +27,7 @@ var MenuItemModel = Backbone.Model.extend({
         this.trigger('change-items');
     },
 
-    removeByFile: function(file) {
+    removeByFile: function(file, skipEvent) {
         var items = this.get('items');
         var toRemove;
         items.each(function(item) {
@@ -38,7 +38,9 @@ var MenuItemModel = Backbone.Model.extend({
         if (toRemove) {
             items.remove(toRemove);
         }
-        this.trigger('change-items');
+        if (!skipEvent) {
+            this.trigger('change-items');
+        }
     },
 
     setItems: function(items) {
