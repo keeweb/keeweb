@@ -3,6 +3,7 @@ Release notes
 ##### v0.5 (not released yet)
 2-way sync  
 `*` disallow opening same files twice   
+`*` default theme is now blue  
 `+` #46: option to show colorful icons  
 `+` #45: optional auto-lock on minimize  
 `-` #55: custom scrollbar issues  
