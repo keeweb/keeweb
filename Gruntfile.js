@@ -152,8 +152,7 @@ module.exports = function(grunt) {
             manifest: {
                 options: {
                     replacements: [
-                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version },
-                        { pattern: 'vElectron', replacement: electronVersion }
+                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version }
                     ]
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
