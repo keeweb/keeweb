@@ -32,9 +32,9 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     allThemes: {
-        d: 'default',
-        fb: 'flat blue',
-        wh: 'white'
+        fb: 'Flat blue',
+        db: 'Dark brown',
+        wh: 'White'
     },
 
     initialize: function() {

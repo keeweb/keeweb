@@ -1,13 +1,11 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Launcher = require('../comp/launcher');
-
-var FileName = 'app-settings.json';
+    SettingsStore = require('../comp/settings-store');
 
 var AppSettingsModel = Backbone.Model.extend({
     defaults: {
-        theme: 'd',
+        theme: 'fb',
         expandGroups: true,
         listViewWidth: null,
         menuViewWidth: null,
@@ -27,34 +25,15 @@ var AppSettingsModel = Backbone.Model.extend({
     },
 
     load: function() {
-        try {
-            var data;
-            if (Launcher) {
-                var settingsFile = Launcher.getUserDataPath(FileName);
-                if (Launcher.fileExists(settingsFile)) {
-                    data = JSON.parse(Launcher.readFile(settingsFile, 'utf8'));
-                }
-            } else if (typeof localStorage !== 'undefined' && localStorage.appSettings) {
-                data = JSON.parse(localStorage.appSettings);
-            }
-            if (data) {
-                this.set(data, {silent: true});
-            }
-        } catch (e) {
-            console.error('Error loading settings', e);
+        var data = SettingsStore.load('app-settings');
+        if (data) {
+            if (data.theme === 'd') { data.theme = 'db'; } // TODO: remove in v0.6
+            this.set(data, {silent: true});
         }
     },
 
     save: function() {
-        try {
-            if (Launcher) {
-                Launcher.writeFile(Launcher.getUserDataPath(FileName), JSON.stringify(this.attributes));
-            } else if (typeof localStorage !== 'undefined') {
-                localStorage.appSettings = JSON.stringify(this.attributes);
-            }
-        } catch (e) {
-            console.error('Error saving settings', e);
-        }
+        SettingsStore.save('app-settings', this.attributes);
     }
 });
 
