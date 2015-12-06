@@ -4,7 +4,6 @@ var Backbone = require('backbone'),
     GroupCollection = require('../collections/group-collection'),
     GroupModel = require('./group-model'),
     Storage = require('../storage'),
-    LastOpenFiles = require('../comp/last-open-files'),
     IconUrl = require('../util/icon-url'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
@@ -19,8 +18,6 @@ var FileModel = Backbone.Model.extend({
         storage: null,
         modified: false,
         open: false,
-        opening: false,
-        error: false,
         created: false,
         demo: false,
         groups: null,
@@ -43,7 +40,7 @@ var FileModel = Backbone.Model.extend({
         this.groupMap = {};
     },
 
-    open: function(password, fileData, keyFileData) {
+    open: function(password, fileData, keyFileData, callback) {
         var len = password.value.length,
             byteLength = 0,
             value = new Uint8Array(len * 4),
@@ -63,8 +60,8 @@ var FileModel = Backbone.Model.extend({
             var start = performance.now();
             kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
                 if (err) {
-                    this.set({error: true, opening: false});
                     console.error('Error opening file', err.code, err.message, err);
+                    callback(err);
                 } else {
                     this.db = db;
                     this.readModel(this.get('name'));
@@ -74,40 +71,13 @@ var FileModel = Backbone.Model.extend({
                     }
                     console.log('Opened file ' + this.get('name') + ': ' + Math.round(performance.now() - start) + 'ms, ' +
                         db.header.keyEncryptionRounds + ' rounds, ' + Math.round(fileData.byteLength / 1024) + ' kB');
-                    this.postOpen(fileData);
+                    callback();
                 }
             }).bind(this));
         } catch (e) {
             console.error('Error opening file', e, e.code, e.message, e);
-            this.set({ error: true, opening: false });
+            callback(e);
         }
-    },
-
-    postOpen: function(fileData) {
-        var that = this;
-        this.data = fileData;
-        if (!this.get('offline')) {
-            if (this.get('availOffline')) {
-                Storage.cache.save(this.get('name'), fileData, function (err) {
-                    if (err) {
-                        that.set('availOffline', false);
-                        if (!that.get('storage')) {
-                            return;
-                        }
-                    }
-                    that.addToLastOpenFiles(!err);
-                });
-            } else {
-                if (this.get('storage')) {
-                    this.addToLastOpenFiles(false);
-                }
-                Storage.cache.remove(this.get('name'));
-            }
-        }
-    },
-
-    addToLastOpenFiles: function(hasOfflineCache) {
-        LastOpenFiles.add(this.get('name'), this.get('storage'), this.get('path'), hasOfflineCache);
     },
 
     create: function(name) {
@@ -115,10 +85,10 @@ var FileModel = Backbone.Model.extend({
         var credentials = new kdbxweb.Credentials(password);
         this.db = kdbxweb.Kdbx.create(credentials, name);
         this.readModel();
-        this.set({ open: true, created: true, opening: false, error: false, name: name, offline: false });
+        this.set({ open: true, created: true, name: name, offline: false });
     },
 
-    createDemo: function() {
+    openDemo: function(callback) {
         var password = kdbxweb.ProtectedValue.fromString('demo');
         var credentials = new kdbxweb.Credentials(password);
         var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
@@ -126,14 +96,13 @@ var FileModel = Backbone.Model.extend({
             this.db = db;
             this.readModel();
             this.setOpenFile({passwordLength: 4, demo: true, name: 'Demo' });
+            callback();
         }).bind(this));
     },
 
     setOpenFile: function(props) {
         _.extend(props, {
             open: true,
-            opening: false,
-            error: false,
             oldKeyFileName: this.get('keyFileName'),
             oldPasswordLength: props.passwordLength,
             passwordChanged: false,
@@ -196,8 +165,6 @@ var FileModel = Backbone.Model.extend({
             passwordLength: 0,
             modified: false,
             open: false,
-            opening: false,
-            error: false,
             created: false,
             groups: null,
             passwordChanged: false,

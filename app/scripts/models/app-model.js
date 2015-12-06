@@ -6,7 +6,11 @@ var Backbone = require('backbone'),
     EntryModel = require('./entry-model'),
     GroupModel = require('./group-model'),
     FileCollection = require('../collections/file-collection'),
-    EntryCollection = require('../collections/entry-collection');
+    EntryCollection = require('../collections/entry-collection'),
+    FileInfoCollection = require('../collections/file-info-collection'),
+    FileModel = require('./file-model'),
+    FileInfoModel = require('./file-info-model'),
+    Storage = require('../storage');
 
 var AppModel = Backbone.Model.extend({
     defaults: {},
@@ -14,6 +18,7 @@ var AppModel = Backbone.Model.extend({
     initialize: function() {
         this.tags = [];
         this.files = new FileCollection();
+        this.fileInfos = FileInfoCollection.load();
         this.menu = new MenuModel();
         this.filter = {};
         this.sort = 'title';
@@ -28,7 +33,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     addFile: function(file) {
-        if (this.files.getById(file.get('id'))) {
+        if (this.files.getById(file.id)) {
             return false;
         }
         this.files.add(file);
@@ -212,6 +217,85 @@ var AppModel = Backbone.Model.extend({
     createNewGroup: function() {
         var sel = this.getFirstSelectedGroup();
         return GroupModel.newGroup(sel.group, sel.file);
+    },
+
+    createDemoFile: function() {
+        var that = this;
+        if (!this.files.getByName('Demo')) {
+            var demoFile = new FileModel();
+            demoFile.openDemo(function() {
+                that.addFile(demoFile);
+            });
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    createNewFile: function() {
+        var name;
+        for (var i = 0; ; i++) {
+            name = 'New' + (i || '');
+            if (!this.files.getByName(name)) {
+                break;
+            }
+        }
+        var newFile = new FileModel();
+        newFile.create(name);
+        this.addFile(newFile);
+    },
+
+    openFile: function(params, callback) {
+        var that = this;
+        var file = new FileModel({
+            name: params.name,
+            availOffline: params.availOffline,
+            storage: params.storage,
+            path: params.path,
+            keyFileName: params.keyFileName
+        });
+        file.open(params.password, params.fileData, params.keyFileData, function(err) {
+            if (err || that.files.get(file.id)) {
+                return callback(err);
+            }
+            if (!params.offline) {
+                if (params.availOffline) {
+                    Storage.cache.save(file.id, params.fileData, function(err) {
+                        if (err) {
+                            file.set('availOffline', false);
+                        }
+                        that.addToLastOpenFiles(file);
+                    });
+                } else {
+                    Storage.cache.remove(file.id);
+                }
+            }
+            that.addFile(file);
+        });
+    },
+
+    addToLastOpenFiles: function(file) {
+        var fileInfo = new FileInfoModel({
+            id: file.id,
+            name: file.get('name'),
+            storage: file.get('storage'),
+            path: file.get('path'),
+            availOffline: file.get('availOffline'),
+            modified: file.get('modified'),
+            editState: null,
+            pullRev: null,
+            pullDate: null,
+            openDate: new Date()
+        });
+        this.fileInfos.remove(file.id);
+        this.fileInfos.push(fileInfo);
+        this.fileInfos.save();
+    },
+
+    removeFileInfo: function(id) {
+        Storage.cache.remove(id);
+        this.fileInfos.remove(id);
+        this.fileInfos.save();
     }
 });
 

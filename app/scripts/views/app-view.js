@@ -86,10 +86,11 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
         this.views.grp.setElement(this.$el.find('.app__grp')).render().hide();
+        this.showLastOpenFile();
         return this;
     },
 
-    showOpenFile: function(filePath) {
+    showOpenFile: function() {
         this.views.menu.hide();
         this.views.menuDrag.hide();
         this.views.listWrap.hide();
@@ -102,15 +103,21 @@ var AppView = Backbone.View.extend({
         this.hideOpenFile();
         this.views.open = new OpenView({ model: this.model });
         this.views.open.setElement(this.$el.find('.app__body')).render();
-        this.views.open.on('cancel', this.showEntries, this);
-        if (Launcher && filePath) {
-            this.views.open.showOpenLocalFile(filePath);
+        this.views.open.on('close', this.showEntries, this);
+    },
+
+    showLastOpenFile: function() {
+        this.showOpenFile();
+        var lastOpenFile = this.model.fileInfos.getLast();
+        if (lastOpenFile) {
+            this.views.open.showOpenFileInfo(lastOpenFile);
         }
     },
 
     launcherOpenFile: function(path) {
         if (path && /\.kdbx$/i.test(path)) {
-            this.showOpenFile(path);
+            this.showOpenFile();
+            this.views.open.showOpenLocalFile(path);
         }
     },
 

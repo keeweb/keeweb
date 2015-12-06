@@ -7,7 +7,7 @@ var StorageDropbox = {
     enabled: true,
 
     load: function(path, callback) {
-        DropboxLink.openFile(path, callback);
+        DropboxLink.openUploadedFile(path, callback);
     },
 
     save: function(path, data, callback) {

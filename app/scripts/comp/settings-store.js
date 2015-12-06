@@ -17,7 +17,7 @@ var SettingsStore = {
                 }
             } else {
                 var data = localStorage[StringUtil.camelCase(key)];
-                return JSON.parse(data);
+                return data ? JSON.parse(data) : undefined;
             }
         } catch (e) {
             console.error('Error loading ' + key, e);

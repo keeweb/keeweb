@@ -49,6 +49,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         fileExists: function(path) {
             return this.req('fs').existsSync(path);
         },
+        deleteFile: function(path) {
+            this.req('fs').unlinkSync(path);
+        },
         preventExit: function(e) {
             e.returnValue = false;
             return false;

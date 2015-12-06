@@ -7,7 +7,6 @@ var AppModel = require('./models/app-model'),
     Alerts = require('./comp/alerts'),
     DropboxLink = require('./comp/dropbox-link'),
     Updater = require('./comp/updater'),
-    LastOpenFiles = require('./comp/last-open-files'),
     ThemeChanger = require('./util/theme-changer');
 
 $(function() {
@@ -41,15 +40,7 @@ $(function() {
     }
 
     function showApp() {
-        var appView = new AppView({ model: appModel }).render();
-
-        var lastOpenFiles = LastOpenFiles.all();
-        var lastOpenFile = lastOpenFiles[0];
-        if (lastOpenFile && lastOpenFile.storage === 'file' && lastOpenFile.path) {
-            appView.showOpenFile(lastOpenFile.path);
-        } else {
-            appView.showOpenFile();
-        }
+        new AppView({ model: appModel }).render();
         Updater.init();
     }
 });

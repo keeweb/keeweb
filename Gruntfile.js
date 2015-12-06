@@ -157,6 +157,10 @@ module.exports = function(grunt) {
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
             },
+            'manifest_html': {
+                options: { replacements: [{ pattern: '<html', replacement: '<html manifest="manifest.appcache"' }] },
+                files: { 'dist/index.html': 'dist/index.html' }
+            },
             'desktop_html': {
                 options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
                 files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
@@ -372,6 +376,7 @@ module.exports = function(grunt) {
         'postcss',
         'inline',
         'htmlmin',
+        'string-replace:manifest_html',
         'string-replace:manifest'
     ]);
 
