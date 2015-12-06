@@ -9,8 +9,6 @@ var StorageFileCache = {
     path: null,
 
     getPath: function(id) {
-        // get safe file name by base64 as described in RFC3548: http://tools.ietf.org/html/rfc3548#page-6
-        id = id.replace(/\//g, '_').replace(/\+/g, '-');
         return Launcher.req('path').join(this.path, id);
     },
 

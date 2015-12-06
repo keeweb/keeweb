@@ -327,7 +327,7 @@ var OpenView = Backbone.View.extend({
                 });
                 that.model.fileInfos.forEach(function(fi) {
                     if (fi.get('storage') === 'dropbox' && !fi.get('modified') && !allFileNames[fi.get('name')]) {
-                        that.model.removeFileInfo(fi.get('id'));
+                        that.model.removeFileInfo(fi.id);
                     }
                 });
             });

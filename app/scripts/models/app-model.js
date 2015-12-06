@@ -10,7 +10,8 @@ var Backbone = require('backbone'),
     FileInfoCollection = require('../collections/file-info-collection'),
     FileModel = require('./file-model'),
     FileInfoModel = require('./file-info-model'),
-    Storage = require('../storage');
+    Storage = require('../storage'),
+    IdGenerator = require('../util/id-generator');
 
 var AppModel = Backbone.Model.extend({
     defaults: {},
@@ -260,11 +261,12 @@ var AppModel = Backbone.Model.extend({
             }
             if (!params.offline) {
                 if (params.availOffline) {
-                    Storage.cache.save(file.id, params.fileData, function(err) {
+                    var cacheId = IdGenerator.uuid();
+                    Storage.cache.save(cacheId, params.fileData, function(err) {
                         if (err) {
                             file.set('availOffline', false);
                         }
-                        that.addToLastOpenFiles(file);
+                        that.addToLastOpenFiles(file, cacheId);
                     });
                 } else {
                     Storage.cache.remove(file.id);
@@ -274,9 +276,9 @@ var AppModel = Backbone.Model.extend({
         });
     },
 
-    addToLastOpenFiles: function(file) {
+    addToLastOpenFiles: function(file, id) {
         var fileInfo = new FileInfoModel({
-            id: file.id,
+            id: id,
             name: file.get('name'),
             storage: file.get('storage'),
             path: file.get('path'),
@@ -287,8 +289,8 @@ var AppModel = Backbone.Model.extend({
             pullDate: null,
             openDate: new Date()
         });
-        this.fileInfos.remove(file.id);
-        this.fileInfos.push(fileInfo);
+        this.fileInfos.remove(id);
+        this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
     },
 
