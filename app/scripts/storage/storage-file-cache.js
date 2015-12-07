@@ -65,7 +65,10 @@ var StorageFileCache = {
                 return callback && callback(err);
             }
             try {
-                Launcher.deleteFile(this.getPath(id));
+                var path = this.getPath(id);
+                if (Launcher.fileExists(path)) {
+                    Launcher.deleteFile(path);
+                }
                 if (callback) { callback(); }
             } catch(e) {
                 console.error('Error removing from cache', id, e);

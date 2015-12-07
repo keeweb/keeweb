@@ -22,7 +22,7 @@ var FileInfoCollection = Backbone.Collection.extend({
     },
 
     getLast: function () {
-        this.max(function(file) { return file.get('openDate'); });
+        return this.first();
     },
 
     getMatch: function (storage, name, path) {

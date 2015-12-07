@@ -302,8 +302,8 @@ var AppModel = Backbone.Model.extend({
             if (that.files.get(file.id)) {
                 return callback('Duplicate file id');
             }
+            var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
             if (params.availOffline && updateCacheOnSuccess) {
-                var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
                 Storage.cache.save(cacheId, params.fileData, function(err) {
                     if (err) {
                         file.set('availOffline', false);
@@ -314,6 +314,9 @@ var AppModel = Backbone.Model.extend({
             }
             if (!params.availOffline && fileInfo && !fileInfo.get('modified')) {
                 that.removeFileInfo(fileInfo.id);
+            }
+            if (params.storage === 'file') {
+                that.addToLastOpenFiles(file, cacheId, params.rev);
             }
             that.addFile(file);
         });

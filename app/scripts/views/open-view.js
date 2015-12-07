@@ -59,7 +59,7 @@ var OpenView = Backbone.View.extend({
     getLastOpenFiles: function() {
         return this.model.fileInfos.map(function(f) {
             var icon;
-            switch (f.storage) {
+            switch (f.get('storage')) {
                 case 'dropbox':
                     icon = 'dropbox';
                     break;
