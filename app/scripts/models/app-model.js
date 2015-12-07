@@ -253,7 +253,7 @@ var AppModel = Backbone.Model.extend({
         } else if (params.fileData) {
             // has user content: load it
             this.openFileWithData(params, callback, fileInfo, params.fileData, true);
-        } else if (fileInfo && fileInfo.get('availOffline') && fileInfo.rev === params.rev) {
+        } else if (fileInfo && fileInfo.get('availOffline') && fileInfo.get('rev') === params.rev) {
             // already latest in cache: use it
             this.openFileFromCache(params, callback, fileInfo);
         } else {
@@ -277,7 +277,7 @@ var AppModel = Backbone.Model.extend({
 
     openFileFromCache: function(params, callback, fileInfo) {
         var that = this;
-        Storage.cache.load(fileInfo.id, function(data, err) {
+        Storage.cache.load(fileInfo.id, function(err, data) {
             if (err) {
                 callback(err);
             } else {
@@ -329,7 +329,7 @@ var AppModel = Backbone.Model.extend({
             availOffline: file.get('availOffline'),
             modified: file.get('modified'),
             editState: null,
-            pullRev: rev,
+            rev: rev,
             pullDate: dt,
             openDate: dt
         });

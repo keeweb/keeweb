@@ -146,20 +146,6 @@ var OpenView = Backbone.View.extend({
         }).bind(this));
     },
 
-    showClosedFile: function(file) {
-        this.params = {
-            id: file.get('id'),
-            name: file.get('name'),
-            storage: file.get('storage'),
-            path: file.get('path'),
-            availOffline: file.get('availOffline'),
-            keyFileName: null,
-            keyFileData: null,
-            fileData: file.data
-        };
-        this.displayOpenFile();
-    },
-
     openFile: function() {
         if (!this.busy) {
             this.openAny('fileData');
@@ -297,8 +283,8 @@ var OpenView = Backbone.View.extend({
                 filesStat.forEach(function(file) {
                     if (!file.isFolder && !file.isRemoved) {
                         var fileName = file.name.replace(/\.kdbx/i, '');
-                        buttons.push({ result: file.name, title: fileName });
-                        allDropboxFiles[file.name] = file;
+                        buttons.push({ result: file.path, title: fileName });
+                        allDropboxFiles[file.path] = file;
                     }
                 });
                 if (!buttons.length) {
@@ -322,7 +308,7 @@ var OpenView = Backbone.View.extend({
                     }
                 });
                 that.model.fileInfos.forEach(function(fi) {
-                    if (fi.get('storage') === 'dropbox' && !fi.get('modified') && !allDropboxFiles[fi.get('name')]) {
+                    if (fi.get('storage') === 'dropbox' && !fi.get('modified') && !allDropboxFiles[fi.get('path')]) {
                         that.model.removeFileInfo(fi.id);
                     }
                 });

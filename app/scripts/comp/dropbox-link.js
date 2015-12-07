@@ -253,7 +253,7 @@ var DropboxLink = {
     },
 
     openFile: function(fileName, complete, errorAlertCallback) {
-        this._callAndHandleError('readFile', [fileName, { blob: true }], complete, errorAlertCallback);
+        this._callAndHandleError('readFile', [fileName, { arrayBuffer: true }], complete, errorAlertCallback);
     },
 
     getFileList: function(complete) {

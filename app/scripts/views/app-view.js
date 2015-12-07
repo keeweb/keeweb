@@ -377,7 +377,10 @@ var AppView = Backbone.View.extend({
         var firstFile = this.model.files.find(function(file) { return !file.get('demo') && !file.get('created'); });
         this.model.closeAllFiles();
         if (firstFile) {
-            this.views.open.showClosedFile(firstFile);
+            var fileInfo = this.model.fileInfos.getMatch(firstFile.get('storage'), firstFile.get('name'), firstFile.get('path'));
+            if (fileInfo) {
+                this.views.open.showOpenFileInfo(fileInfo);
+            }
         }
     },
 

@@ -14,36 +14,32 @@ var StorageFileCache = {
 
     init: function(callback) {
         if (this.path) {
-            return callback();
+            return callback && callback();
         }
-        if (Launcher) {
-            try {
-                var path = Launcher.getUserDataPath('OfflineFiles');
-                var fs = Launcher.req('fs');
-                if (!fs.existsSync(path)) {
-                    fs.mkdirSync(path);
-                }
-                this.path = path;
-            } catch (e) {
-                console.error('Error opening local offline storage', e);
-                callback(e);
+        try {
+            var path = Launcher.getUserDataPath('OfflineFiles');
+            var fs = Launcher.req('fs');
+            if (!fs.existsSync(path)) {
+                fs.mkdirSync(path);
             }
+            this.path = path;
+        } catch (e) {
+            console.error('Error opening local offline storage', e);
+            if (callback) { callback(e); }
         }
     },
 
     save: function(id, data, callback) {
         this.init((function(err) {
             if (err) {
-                return callback(err);
+                return callback && callback(err);
             }
             try {
-                if (Launcher) {
-                    Launcher.writeFile(this.getPath(id), data);
-                    return callback();
-                }
+                Launcher.writeFile(this.getPath(id), data);
+                if (callback) { callback(); }
             } catch (e) {
                 console.error('Error saving to cache', id, e);
-                callback(e);
+                if (callback) { callback(e); }
             }
         }).bind(this));
     },
@@ -51,16 +47,14 @@ var StorageFileCache = {
     load: function(id, callback) {
         this.init((function(err) {
             if (err) {
-                return callback(null, err);
+                return callback && callback(null, err);
             }
             try {
-                if (Launcher) {
-                    var data = Launcher.readFile(this.getPath(id));
-                    return callback(data.buffer);
-                }
+                var data = Launcher.readFile(this.getPath(id));
+                if (callback) { callback(null, data.buffer); }
             } catch (e) {
                 console.error('Error loading from cache', id, e);
-                callback(null, e);
+                if (callback) { callback(e, null); }
             }
         }).bind(this));
     },
@@ -68,16 +62,14 @@ var StorageFileCache = {
     remove: function(id, callback) {
         this.init((function(err) {
             if (err) {
-                return callback(err);
+                return callback && callback(err);
             }
             try {
-                if (Launcher) {
-                    Launcher.deleteFile(this.getPath(id));
-                    return callback();
-                }
+                Launcher.deleteFile(this.getPath(id));
+                if (callback) { callback(); }
             } catch(e) {
                 console.error('Error removing from cache', id, e);
-                callback(e);
+                if (callback) { callback(e); }
             }
         }).bind(this));
     }
