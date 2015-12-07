@@ -67,7 +67,7 @@ app.minimizeApp = function() {
         mainWindow.minimize();
         mainWindow.setSkipTaskbar(true);
         appIcon = new Tray(path.join(__dirname, 'icon.png'));
-        appIcon.on('clicked', restoreMainWindow);
+        appIcon.on('click', restoreMainWindow);
         var contextMenu = Menu.buildFromTemplate([
             { label: 'Open KeeWeb', click: restoreMainWindow },
             { label: 'Quit KeeWeb', click: closeMainWindow }
