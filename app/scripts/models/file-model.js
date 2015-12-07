@@ -26,8 +26,7 @@ var FileModel = Backbone.Model.extend({
         passwordChanged: false,
         keyFileChanged: false,
         syncing: false,
-        availOffline: false,
-        offline: false
+        availOffline: false
     },
 
     db: null,
@@ -85,7 +84,7 @@ var FileModel = Backbone.Model.extend({
         var credentials = new kdbxweb.Credentials(password);
         this.db = kdbxweb.Kdbx.create(credentials, name);
         this.readModel();
-        this.set({ open: true, created: true, name: name, offline: false });
+        this.set({ open: true, created: true, name: name });
     },
 
     openDemo: function(callback) {

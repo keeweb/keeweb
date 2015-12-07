@@ -37,11 +37,11 @@ var OpenView = Backbone.View.extend({
             name: '',
             storage: null,
             path: null,
-            offline: false,
             availOffline: false,
             keyFileName: null,
             keyFileData: null,
-            fileData: null
+            fileData: null,
+            rev: null
         };
         this.passwordInput = new SecureInput();
     },
@@ -93,15 +93,17 @@ var OpenView = Backbone.View.extend({
     processFile: function(file, complete) {
         var reader = new FileReader();
         reader.onload = (function(e) {
-            this.params[this.reading] = e.target.result;
             if (this.reading === 'fileData') {
-                _.extend(this.params, { name: file.name.replace(/\.\w+$/i, ''), offline: false });
-                if (file.path) {
-                    _.extend(this.params, { path: file.path, storage: file.storage || 'file' });
-                }
+                this.params.id = null;
+                this.params.fileData = e.target.result;
+                this.params.name = file.name.replace(/\.\w+$/i, '');
+                this.params.path = file.path || null;
+                this.params.storage = file.path ? 'file' : null;
+                this.params.rev = null;
                 this.displayOpenFile();
             } else {
-                _.extend(this.params, { keyFileName: file.name });
+                this.params.keyFileData = e.target.result;
+                this.params.keyFileName = file.name;
                 this.displayOpenKeyFile();
             }
             if (complete) {
@@ -121,9 +123,8 @@ var OpenView = Backbone.View.extend({
         this.$el.addClass('open--file');
         this.$el.find('.open__settings-key-file').removeClass('hide');
         this.$el.find('#open__settings-check-offline')[0].removeAttribute('disabled');
-        var canSwitchOffline = this.params.storage !== 'file' && !this.params.offline;
+        var canSwitchOffline = this.params.storage !== 'file';
         this.$el.find('.open__settings-offline').toggleClass('hide', !canSwitchOffline);
-        this.$el.find('.open__settings-offline-warning').toggleClass('hide', !this.params.offline);
         this.inputEl[0].removeAttribute('readonly');
         this.inputEl[0].setAttribute('placeholder', 'Password for ' + this.params.name);
         this.inputEl.focus();
@@ -151,7 +152,6 @@ var OpenView = Backbone.View.extend({
             name: file.get('name'),
             storage: file.get('storage'),
             path: file.get('path'),
-            offline: file.get('offline'),
             availOffline: file.get('availOffline'),
             keyFileName: null,
             keyFileData: null,
@@ -210,15 +210,7 @@ var OpenView = Backbone.View.extend({
             this.$el.find('.open__last-item[data-id="' + id + '"]').remove();
             return;
         }
-        //var lastOpenFile = LastOpenFiles.byName(name);
-        //switch (lastOpenFile.storage) {
-        //    case 'dropbox':
-        //        return this.openDropboxFile(lastOpenFile.path);
-        //    case 'file':
-        //        return this.showOpenLocalFile(lastOpenFile.path);
-        //    default:
-        //        return this.openCache(name);
-        //}
+        this.showOpenFileInfo(this.model.fileInfos.get(id));
     },
 
     inputKeydown: function(e) {
@@ -294,18 +286,20 @@ var OpenView = Backbone.View.extend({
             }
             that.busy = true;
             that.displayDropboxLoading(true);
-            DropboxLink.getFileList(function(err, files, dirStat) {
+            DropboxLink.getFileList(function(err, files, dirStat, filesStat) {
                 that.busy = false;
                 that.displayDropboxLoading(false);
                 if (err) {
                     return;
                 }
                 var buttons = [];
-                var allFileNames = {};
-                files.forEach(function(file) {
-                    var fileName = file.replace(/\.kdbx/i, '');
-                    buttons.push({ result: file, title: fileName });
-                    allFileNames[fileName] = true;
+                var allDropboxFiles = {};
+                filesStat.forEach(function(file) {
+                    if (!file.isFolder && !file.isRemoved) {
+                        var fileName = file.name.replace(/\.kdbx/i, '');
+                        buttons.push({ result: file.name, title: fileName });
+                        allDropboxFiles[file.name] = file;
+                    }
                 });
                 if (!buttons.length) {
                     Alerts.error({
@@ -323,10 +317,12 @@ var OpenView = Backbone.View.extend({
                     buttons: buttons,
                     esc: '',
                     click: '',
-                    success: that.openDropboxFile.bind(that)
+                    success: function(file) {
+                        that.openDropboxFile(allDropboxFiles[file]);
+                    }
                 });
                 that.model.fileInfos.forEach(function(fi) {
-                    if (fi.get('storage') === 'dropbox' && !fi.get('modified') && !allFileNames[fi.get('name')]) {
+                    if (fi.get('storage') === 'dropbox' && !fi.get('modified') && !allDropboxFiles[fi.get('name')]) {
                         that.model.removeFileInfo(fi.id);
                     }
                 });
@@ -334,63 +330,45 @@ var OpenView = Backbone.View.extend({
         });
     },
 
-    openDropboxFile: function(file) {
-        //var fileName = file.replace(/\.kdbx/i, '');
-        //this.busy = true;
-        //var lastOpen = LastOpenFiles.byName(fileName);
-        //var errorAlertCallback = lastOpen && lastOpen.storage === 'dropbox' && lastOpen.availOffline ?
-        //    this.dropboxErrorCallback.bind(this, fileName) : null;
-        //DropboxLink.openFile(file, (function(err, data) {
-        //    this.busy = false;
-        //    if (err || !data || !data.size) {
-        //        return;
-        //    }
-        //    Object.defineProperties(data, {
-        //        storage: { value: 'dropbox' },
-        //        path: { value: file },
-        //        name: { value: fileName }
-        //    });
-        //    this.setFile(data);
-        //}).bind(this), errorAlertCallback);
+    openDropboxFile: function(fileStat) {
+        if (this.busy) {
+            return;
+        }
+        this.params.id = null;
+        this.params.storage = 'dropbox';
+        this.params.path = fileStat.path;
+        this.params.name = fileStat.name.replace(/\.kdbx/i, '');
+        this.params.rev = fileStat.versionTag;
+        this.params.fileData = null;
+        this.displayOpenFile();
     },
 
-    showOpenFileInfo: function() {
+    showOpenFileInfo: function(fileInfo) {
+        if (this.busy || !fileInfo) {
+            return;
+        }
+        this.params.id = fileInfo.id;
+        this.params.availOffline = fileInfo.get('availOffline');
+        this.params.storage = fileInfo.get('storage');
+        this.params.path = fileInfo.get('path');
+        this.params.name = fileInfo.get('name');
+        this.params.fileData = null;
+        this.params.rev = null;
+        this.$el.find('#open__settings-check-offline').prop('checked', this.params.availOffline);
+        this.displayOpenFile();
     },
 
     showOpenLocalFile: function(path) {
-        //if (path && Launcher) {
-        //    var that = this;
-        //    Storage.file.load(path, function(data, err) {
-        //        if (!err) {
-        //            var name = path.match(/[^/\\]*$/)[0];
-        //            var file = new Blob([data]);
-        //            Object.defineProperties(file, {
-        //                path: { value: path },
-        //                name: { value: name }
-        //            });
-        //            that.setFile(file);
-        //        }
-        //    });
-        //}
-    },
-
-    openCache: function(name, storage) {
-        //Storage.cache.load(name, (function(data, err) {
-        //    if (err) {
-        //        this.delLast(name);
-        //        Alerts.error({
-        //            header: 'Error loading file',
-        //            body: 'There was an error loading offline file ' + name + '. Please, open it from file'
-        //        });
-        //    } else {
-        //        this.fileData = data;
-        //        this.file.set({ name: name, offline: true, availOffline: true });
-        //        if (storage) {
-        //            this.file.set({ storage: storage });
-        //        }
-        //        this.displayOpenFile();
-        //    }
-        //}).bind(this));
+        if (this.busy) {
+            return;
+        }
+        this.params.id = null;
+        this.params.storage = 'file';
+        this.params.path = path;
+        this.params.name = path.match(/[^/\\]*$/)[0];
+        this.params.rev = null;
+        this.params.fileData = null;
+        this.displayOpenFile();
     },
 
     createDemo: function() {
@@ -410,8 +388,7 @@ var OpenView = Backbone.View.extend({
     openDb: function() {
         if (!this.busy) {
             var offlineChecked = this.$el.find('#open__settings-check-offline').is(':checked');
-            this.params.availOffline = this.params.offline ||
-                this.params.storage !== 'file' && offlineChecked;
+            this.params.availOffline = this.params.storage !== 'file' && offlineChecked;
             this.$el.toggleClass('open--opening', true);
             this.inputEl.attr('disabled', 'disabled');
             this.$el.find('#open__settings-check-offline').attr('disabled', 'disabled');

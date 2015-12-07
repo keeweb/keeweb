@@ -23,6 +23,14 @@ var FileInfoCollection = Backbone.Collection.extend({
 
     getLast: function () {
         this.max(function(file) { return file.get('openDate'); });
+    },
+
+    getMatch: function (storage, name, path) {
+        return this.find(function(fi) {
+            return (fi.get('storage') || '') === (storage || '') &&
+                (fi.get('name') || '') === (name || '') &&
+                (fi.get('path') || '') === (path || '');
+        });
     }
 });
 

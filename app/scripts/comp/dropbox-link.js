@@ -257,11 +257,11 @@ var DropboxLink = {
     },
 
     getFileList: function(complete) {
-        this._callAndHandleError('readdir', [''], function(err, files, dirStat) {
+        this._callAndHandleError('readdir', [''], function(err, files, dirStat, filesStat) {
             if (files) {
                 files = files.filter(function(f) { return /\.kdbx$/i.test(f); });
             }
-            complete(err, files, dirStat);
+            complete(err, files, dirStat, filesStat);
         });
     },
 

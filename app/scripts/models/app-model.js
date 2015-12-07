@@ -41,7 +41,7 @@ var AppModel = Backbone.Model.extend({
         file.get('groups').forEach(function (group) {
             this.menu.groupsSection.addItem(group);
         }, this);
-        this._addTags(file.db);
+        this._addTags(file);
         this._tagsChanged();
         this.menu.filesSection.addItem({
             icon: 'lock',
@@ -62,22 +62,20 @@ var AppModel = Backbone.Model.extend({
         this.updateTags();
     },
 
-    _addTags: function(group) {
+    _addTags: function(file) {
         var tagsHash = {};
         this.tags.forEach(function(tag) {
             tagsHash[tag.toLowerCase()] = true;
         });
-        _.forEach(group.entries, function(entry) {
+        var that = this;
+        file.forEachEntry({}, function(entry) {
             _.forEach(entry.tags, function(tag) {
                 if (!tagsHash[tag.toLowerCase()]) {
                     tagsHash[tag.toLowerCase()] = true;
-                    this.tags.push(tag);
+                    that.tags.push(tag);
                 }
-            }, this);
-        }, this);
-        _.forEach(group.groups, function(subGroup) {
-            this._addTags(subGroup);
-        }, this);
+            });
+        });
         this.tags.sort();
     },
 
@@ -97,7 +95,7 @@ var AppModel = Backbone.Model.extend({
         var oldTags = this.tags.slice();
         this.tags.splice(0, this.tags.length);
         this.files.forEach(function(file) {
-            this._addTags(file.db);
+            this._addTags(file);
         }, this);
         if (!_.isEqual(oldTags, this.tags)) {
             this._tagsChanged();
@@ -248,6 +246,47 @@ var AppModel = Backbone.Model.extend({
 
     openFile: function(params, callback) {
         var that = this;
+        var fileInfo = params.id ? this.fileInfos.get(params.id) : this.fileInfos.getMatch(params.storage, params.name, params.path);
+        if (fileInfo && fileInfo.get('availOffline') && fileInfo.get('modified')) {
+            // modified offline, cannot overwrite: load from cache
+            this.openFileFromCache(params, callback, fileInfo);
+        } else if (params.fileData) {
+            // has user content: load it
+            this.openFileWithData(params, callback, fileInfo, params.fileData, true);
+        } else if (fileInfo && fileInfo.get('availOffline') && fileInfo.rev === params.rev) {
+            // already latest in cache: use it
+            this.openFileFromCache(params, callback, fileInfo);
+        } else {
+            // try to load from storage and update cache
+            Storage[params.storage].load(params.path, function(err, data, rev) {
+                if (err) {
+                    // failed to load from storage: fallback to cache if we can
+                    if (fileInfo && fileInfo.get('availOffline')) {
+                        that.openFileFromCache(params, callback, fileInfo);
+                    } else {
+                        callback(err);
+                    }
+                } else {
+                    params.fileData = data;
+                    params.rev = rev;
+                    that.openFileWithData(params, callback, fileInfo, data, true);
+                }
+            });
+        }
+    },
+
+    openFileFromCache: function(params, callback, fileInfo) {
+        var that = this;
+        Storage.cache.load(fileInfo.id, function(data, err) {
+            if (err) {
+                callback(err);
+            } else {
+                that.openFileWithData(params, callback, fileInfo, data);
+            }
+        });
+    },
+
+    openFileWithData: function(params, callback, fileInfo, data, updateCacheOnSuccess) {
         var file = new FileModel({
             name: params.name,
             availOffline: params.availOffline,
@@ -255,28 +294,33 @@ var AppModel = Backbone.Model.extend({
             path: params.path,
             keyFileName: params.keyFileName
         });
-        file.open(params.password, params.fileData, params.keyFileData, function(err) {
-            if (err || that.files.get(file.id)) {
+        var that = this;
+        file.open(params.password, data, params.keyFileData, function(err) {
+            if (err) {
                 return callback(err);
             }
-            if (!params.offline) {
-                if (params.availOffline) {
-                    var cacheId = IdGenerator.uuid();
-                    Storage.cache.save(cacheId, params.fileData, function(err) {
-                        if (err) {
-                            file.set('availOffline', false);
-                        }
-                        that.addToLastOpenFiles(file, cacheId);
-                    });
-                } else {
-                    Storage.cache.remove(file.id);
-                }
+            if (that.files.get(file.id)) {
+                return callback('Duplicate file id');
+            }
+            if (params.availOffline && updateCacheOnSuccess) {
+                var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
+                Storage.cache.save(cacheId, params.fileData, function(err) {
+                    if (err) {
+                        file.set('availOffline', false);
+                        if (!params.storage) { return; }
+                    }
+                    that.addToLastOpenFiles(file, cacheId, params.rev);
+                });
+            }
+            if (!params.availOffline && fileInfo && !fileInfo.get('modified')) {
+                that.removeFileInfo(fileInfo.id);
             }
             that.addFile(file);
         });
     },
 
-    addToLastOpenFiles: function(file, id) {
+    addToLastOpenFiles: function(file, id, rev) {
+        var dt = new Date();
         var fileInfo = new FileInfoModel({
             id: id,
             name: file.get('name'),
@@ -285,9 +329,9 @@ var AppModel = Backbone.Model.extend({
             availOffline: file.get('availOffline'),
             modified: file.get('modified'),
             editState: null,
-            pullRev: null,
-            pullDate: null,
-            openDate: new Date()
+            pullRev: rev,
+            pullDate: dt,
+            openDate: dt
         });
         this.fileInfos.remove(id);
         this.fileInfos.unshift(fileInfo);
