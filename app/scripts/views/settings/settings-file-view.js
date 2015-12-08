@@ -15,6 +15,7 @@ var SettingsAboutView = Backbone.View.extend({
     template: require('templates/settings/settings-file.html'),
 
     events: {
+        'click .settings__file-button-save-default': 'saveDefault',
         'click .settings__file-button-save-file': 'saveToFile',
         'click .settings__file-button-export-xml': 'exportAsXml',
         'click .settings__file-button-save-dropbox': 'saveToDropboxClick',
@@ -31,6 +32,8 @@ var SettingsAboutView = Backbone.View.extend({
         'blur #settings__file-hist-size': 'blurHistorySize',
         'blur #settings__file-key-rounds': 'blurKeyRounds'
     },
+
+    appModel: null,
 
     initialize: function() {
     },
@@ -82,7 +85,7 @@ var SettingsAboutView = Backbone.View.extend({
         }
     },
 
-    validate: function() {
+    validatePassword: function(continueCallback) {
         if (!this.model.get('passwordLength')) {
             var that = this;
             Alerts.yesno({
@@ -90,7 +93,7 @@ var SettingsAboutView = Backbone.View.extend({
                 body: 'Saving database with empty password makes it completely unprotected. Do you really want to do it?',
                 success: function() {
                     that.model.setPassword(kdbxweb.ProtectedValue.fromString(''));
-                    that.saveToFile(true);
+                    continueCallback();
                 },
                 cancel: function() {
                     that.$el.find('#settings__file-master-pass').focus();
@@ -101,53 +104,41 @@ var SettingsAboutView = Backbone.View.extend({
         return true;
     },
 
+    saveDefault: function() {
+        // TODO: save
+        //that.passwordChanged = false;
+        //that.model.saved(path, 'file');
+    },
+
     saveToFile: function(skipValidation) {
-        if (skipValidation !== true && !this.validate()) {
+        if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
             return;
         }
         var that = this;
         this.model.getData(function(data) {
             var fileName = that.model.get('name') + '.kdbx';
             if (Launcher) {
-                if (that.model.get('path')) {
-                    that.saveToFileWithPath(that.model.get('path'), data);
-                } else {
-                    Launcher.getSaveFileName(fileName, function (path) {
-                        if (path) {
-                            that.saveToFileWithPath(path, data);
-                        }
-                    });
-                }
+                Launcher.getSaveFileName(fileName, function (path) {
+                    if (path) {
+                        Storage.file.save(path, data, function(err) {
+                            if (err) {
+                                Alerts.error({
+                                    header: 'Save error',
+                                    body: 'Error saving to file ' + path + ': \n' + err
+                                });
+                            }
+                        });
+                    }
+                });
             } else {
                 var blob = new Blob([data], {type: 'application/octet-stream'});
                 FileSaver.saveAs(blob, fileName);
                 that.passwordChanged = false;
-                if (that.model.get('storage') !== 'dropbox') {
-                    that.model.saved();
-                }
-            }
-        });
-    },
-
-    saveToFileWithPath: function(path, data) {
-        var that = this;
-        Storage.file.save(path, data, function(err) {
-            if (err) {
-                Alerts.error({
-                    header: 'Save error',
-                    body: 'Error saving to file ' + path + ': \n' + err
-                });
-            } else {
-                that.passwordChanged = false;
-                that.model.saved(path, 'file');
             }
         });
     },
 
     exportAsXml: function() {
-        if (!this.validate()) {
-            return;
-        }
         this.model.getXml((function(xml) {
             var blob = new Blob([xml], {type: 'text/xml'});
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
@@ -161,7 +152,7 @@ var SettingsAboutView = Backbone.View.extend({
     },
 
     saveToDropbox: function(overwrite) {
-        if (this.model.get('syncing') || !this.validate()) {
+        if (this.model.get('syncing') || !this.validatePassword()) {
             return;
         }
         var that = this;
@@ -232,7 +223,7 @@ var SettingsAboutView = Backbone.View.extend({
     },
 
     closeFileNoCheck: function() {
-        Backbone.trigger('close-file', this.model);
+        this.appModel.closeFile(this.model);
     },
 
     keyFileChange: function(e) {

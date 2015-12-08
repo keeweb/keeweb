@@ -29,7 +29,6 @@ var AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'set-filter', this.setFilter);
         this.listenTo(Backbone, 'add-filter', this.addFilter);
         this.listenTo(Backbone, 'set-sort', this.setSort);
-        this.listenTo(Backbone, 'close-file', this.closeFile);
         this.listenTo(Backbone, 'empty-trash', this.emptyTrash);
     },
 
@@ -258,20 +257,37 @@ var AppModel = Backbone.Model.extend({
             this.openFileFromCache(params, callback, fileInfo);
         } else {
             // try to load from storage and update cache
-            Storage[params.storage].load(params.path, function(err, data, rev) {
-                if (err) {
-                    // failed to load from storage: fallback to cache if we can
-                    if (fileInfo) {
+            var storage = Storage[params.storage];
+            var storageLoad = function() {
+                storage.load(params.path, function(err, data, stat) {
+                    if (err) {
+                        // failed to load from storage: fallback to cache if we can
+                        if (fileInfo) {
+                            that.openFileFromCache(params, callback, fileInfo);
+                        } else {
+                            callback(err);
+                        }
+                    } else {
+                        params.fileData = data;
+                        params.rev = stat && stat.rev || null;
+                        that.openFileWithData(params, callback, fileInfo, data, true);
+                    }
+                });
+            };
+            var cacheRev = fileInfo && fileInfo.get('rev') || null;
+            if (cacheRev && storage.stat) {
+                storage.stat(params.path, function(err, stat) {
+                    if (fileInfo && (err || stat && stat.rev === cacheRev)) {
                         that.openFileFromCache(params, callback, fileInfo);
+                    } else if (stat) {
+                        storageLoad();
                     } else {
                         callback(err);
                     }
-                } else {
-                    params.fileData = data;
-                    params.rev = rev;
-                    that.openFileWithData(params, callback, fileInfo, data, true);
-                }
-            });
+                });
+            } else {
+                storageLoad();
+            }
         }
     },
 

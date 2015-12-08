@@ -8,7 +8,13 @@ var StorageDropbox = {
 
     load: function(path, callback) {
         DropboxLink.openFile(path, function(err, data, stat) {
-            if (callback) { callback(err, data, stat ? stat.versionTag : null); }
+            if (callback) { callback(err, data, stat ? { rev: stat.versionTag } : null); }
+        });
+    },
+
+    stat: function(path, callback) {
+        DropboxLink.stat(path, function(err, stat) {
+            if (callback) { callback(err, stat ? { rev: stat.versionTag } : null); }
         });
     },
 

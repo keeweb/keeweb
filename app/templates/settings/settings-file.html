@@ -7,18 +7,18 @@
             <p>This file is opened from Dropbox.</p>
         <% } %>
     <% } else { %>
-        <p>This database is loaded in memory. To enable auto-save and saving with shortcut <%= cmd %>S,
-        please, save it to <%= supportFiles ? 'file or ' : '' %>Dropbox.</p>
+        <p>This file is stored in browser.</p>
         <% if (!supportFiles) { %>
             <p>Want to work seamlessly with local files? <a href="<%= desktopLink %>" target="_blank">Download a desktop app</a></p>
         <% } %>
     <% } %>
 
     <div class="settings__file-buttons">
-        <button class="settings__file-button-save-file btn-silent">Save to file</button>
+        <% if (!storage || storage === 'file') { %><button class="settings__file-button-save-default">Save</button><% } %>
+        <button class="settings__file-button-save-dropbox <%= storage !== 'dropbox' ? 'btn-silent' : '' %>"
+            <%= syncing ? 'disabled' : '' %>>Sync with Dropbox <%= syncing ? '(working...)' : '' %></button>
+        <% if (storage !== 'file') { %><button class="settings__file-button-save-file btn-silent">Save to file</button><% } %>
         <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
-        <button class="settings__file-button-save-dropbox btn-silent" <%= syncing ? 'disabled' : '' %>>
-            Sync with Dropbox <%= syncing ? '(working...)' : '' %></button>
         <button class="settings__file-button-close btn-silent">Close</button>
     </div>
 

@@ -166,7 +166,7 @@ var AppView = Backbone.View.extend({
         this.views.details.hide();
         this.views.grp.hide();
         this.hideOpenFile();
-        this.views.settings = new SettingsView();
+        this.views.settings = new SettingsView({ model: this.model });
         this.views.settings.setElement(this.$el.find('.app__body')).render();
         if (!selectedMenuItem) {
             selectedMenuItem = this.model.menu.generalSection.get('items').first();

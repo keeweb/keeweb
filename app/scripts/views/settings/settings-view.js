@@ -46,6 +46,7 @@ var SettingsView = Backbone.View.extend({
         }
         var SettingsPageView = require('./settings-' + e.page + '-view');
         this.views.page = new SettingsPageView({ el: this.pageEl, model: e.file });
+        this.views.page.appModel = this.model;
         this.views.page.render();
         this.file = e.file;
         this.page = e.page;

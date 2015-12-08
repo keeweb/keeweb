@@ -256,6 +256,10 @@ var DropboxLink = {
         this._callAndHandleError('readFile', [fileName, { arrayBuffer: true }], complete, errorAlertCallback);
     },
 
+    stat: function(fileName, complete) {
+        this._callAndHandleError('stat', [fileName], complete);
+    },
+
     getFileList: function(complete) {
         this._callAndHandleError('readdir', [''], function(err, files, dirStat, filesStat) {
             if (files) {
