@@ -1,7 +1,7 @@
 # KeePass web app (unofficial)
 
 This webapp is a browser and desktop password manager compatible with KeePass databases. It doesn't require any server or additional resources.
-The app can run either in browser, or as a desktop app. 
+The app can run either in browser, or as a desktop app.
 
 ![screenshot](https://habrastorage.org/files/bfb/51e/d8d/bfb51ed8d19847d8afb827c4fbff7dd5.png)
 
@@ -14,7 +14,7 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 # Status
 
-The app is already rather stable but might still need polishing, testing ang improvements before v1 release, which is expected to happen in Feb 2016. 
+The app is already rather stable but might still need polishing, testing and improvements before v1 release, which is expected to happen in Feb 2016.
 Please see [TODO](https://github.com/antelle/keeweb/wiki/TODO) for more details.
 
 # Known Issues
@@ -32,17 +32,17 @@ To make Dropbox work in your self-hosted app:
 
 1. [create](https://www.dropbox.com/developers/apps/create) a Dropbox app
 2. find your app key (in Dropbox App page, go to Settings/App key)
-3. change Dropbox app key in index.html file: `sed -i.bak s/qp7ctun6qt5n9d6/your_app_key/g index.html` 
+3. change Dropbox app key in index.html file: `sed -i.bak s/qp7ctun6qt5n9d6/your_app_key/g index.html`
     (or, if you are building from source, change it [here](scripts/comp/dropbox-link.js#L7))
 
 # Building
 
 The app can be built with grunt: `grunt` (html file will be in `dist/`).    
 Desktop apps are built with `grunt desktop`. This works only in mac osx as it builds dmg; requires wine.  
-To run Electron app without building, install electron package (`npm install electron-prebuilt -g`) and start in this way:
+To run Electron app without building installer, install electron package (`npm install electron-prebuilt -g`), build the app with `grunt` and start in this way:
 ```bash
-$ cd electron
-$ electron . --htmlpath=../tmp
+$ grunt
+$ electron electron --htmlpath=tmp
 ```
 
 For debug build:
