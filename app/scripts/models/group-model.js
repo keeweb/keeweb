@@ -16,7 +16,8 @@ var GroupModel = MenuItemModel.extend({
         editable: true,
         top: false,
         drag: true,
-        drop: true
+        drop: true,
+        enableSearching: true
     }),
 
     initialize: function() {
@@ -33,6 +34,7 @@ var GroupModel = MenuItemModel.extend({
             items: new GroupCollection(),
             entries: new EntryCollection(),
             filterValue: group.uuid.id,
+            enableSearching: group.enableSearching,
             top: !parentGroup,
             drag: !!parentGroup
         }, { silent: true });
@@ -148,6 +150,12 @@ var GroupModel = MenuItemModel.extend({
         this._groupModified();
         this.group.expanded = expanded;
         this.set('expanded', expanded);
+    },
+
+    setEnableSearching: function(enabled) {
+        this._groupModified();
+        this.group.enableSearching = enabled;
+        this.set('enableSearching', enabled);
     },
 
     moveToTrash: function() {
