@@ -14,7 +14,7 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 # Status
 
-The app is already rather stable but might still needs polishing, testing ang improvements before v1 release, which is expected to happend in Feb 2016. 
+The app is already rather stable but might still need polishing, testing ang improvements before v1 release, which is expected to happen in Feb 2016. 
 Please see [TODO](https://github.com/antelle/keeweb/wiki/TODO) for more details.
 
 # Known Issues
