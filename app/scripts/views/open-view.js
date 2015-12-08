@@ -368,13 +368,14 @@ var OpenView = Backbone.View.extend({
     },
 
     openDb: function() {
-        if (!this.busy) {
-            this.$el.toggleClass('open--opening', true);
-            this.inputEl.attr('disabled', 'disabled');
-            this.busy = true;
-            this.params.password = this.passwordInput.value;
-            this.afterPaint(this.model.openFile.bind(this.model, this.params, this.openDbComplete.bind(this)));
+        if (this.busy || !this.params.name) {
+            return;
         }
+        this.$el.toggleClass('open--opening', true);
+        this.inputEl.attr('disabled', 'disabled');
+        this.busy = true;
+        this.params.password = this.passwordInput.value;
+        this.afterPaint(this.model.openFile.bind(this.model, this.params, this.openDbComplete.bind(this)));
     },
 
     openDbComplete: function(err) {
@@ -382,6 +383,7 @@ var OpenView = Backbone.View.extend({
         this.$el.toggleClass('open--opening', false);
         this.inputEl.removeAttr('disabled').toggleClass('input--error', !!err);
         if (err) {
+            console.error('Error opening file', err);
             this.inputEl.focus();
             this.inputEl[0].selectionStart = 0;
             this.inputEl[0].selectionEnd = this.inputEl.val().length;

@@ -18,7 +18,7 @@ var SettingsAboutView = Backbone.View.extend({
         'click .settings__file-button-save-default': 'saveDefault',
         'click .settings__file-button-save-file': 'saveToFile',
         'click .settings__file-button-export-xml': 'exportAsXml',
-        'click .settings__file-button-save-dropbox': 'saveToDropboxClick',
+        'click .settings__file-button-save-dropbox': 'saveToDropbox',
         'click .settings__file-button-close': 'closeFile',
         'change #settings__file-key-file': 'keyFileChange',
         'mousedown #settings__file-file-select-link': 'triggerSelectFile',
@@ -104,10 +104,33 @@ var SettingsAboutView = Backbone.View.extend({
         return true;
     },
 
+    save: function(arg) {
+        var that = this;
+        if (!arg) {
+            arg = {};
+        }
+        arg.startedByUser = true;
+        if (!arg.skipValidation) {
+            var isValid = this.validatePassword(function() {
+                arg.skipValidation = true;
+                that.save(arg);
+            });
+            if (!isValid) {
+                return;
+            }
+        }
+        this.appModel.syncFile(this.model, arg, function(err) {
+            if (err) {
+                console.error('Error saving file', err);
+            } else {
+                that.passwordChanged = false;
+            }
+            that.render();
+        });
+    },
+
     saveDefault: function() {
-        // TODO: save
-        //that.passwordChanged = false;
-        //that.model.saved(path, 'file');
+        this.save();
     },
 
     saveToFile: function(skipValidation) {
@@ -145,58 +168,14 @@ var SettingsAboutView = Backbone.View.extend({
         }).bind(this));
     },
 
-    saveToDropboxClick: function() {
-        var nameChanged = this.model.get('path') !== this.model.get('name') + '.kdbx',
-            canOverwrite = !nameChanged;
-        this.saveToDropbox(canOverwrite);
-    },
-
-    saveToDropbox: function(overwrite) {
-        if (this.model.get('syncing') || !this.validatePassword()) {
-            return;
-        }
+    saveToDropbox: function() {
         var that = this;
-        this.model.getData(function(data) {
-            var fileName = that.model.get('name') + '.kdbx';
-            that.model.set('syncing', true);
-            that.render();
-            DropboxLink.authenticate(function(err) {
-                if (err) {
-                    that.model.set('syncing', false);
-                    that.render();
-                    return;
-                }
-                DropboxLink.saveFile(fileName, data, overwrite, function (err) {
-                    if (err) {
-                        that.model.set('syncing', false);
-                        that.render();
-                        if (err.exists) {
-                            Alerts.alert({
-                                header: 'Already exists',
-                                body: 'File ' + fileName + ' already exists in your Dropbox.',
-                                icon: 'question',
-                                buttons: [{result: 'yes', title: 'Overwrite it'}, {result: '', title: 'I\'ll choose another name'}],
-                                esc: '',
-                                click: '',
-                                enter: 'yes',
-                                success: that.saveToDropbox.bind(that, true),
-                                cancel: function () {
-                                    that.$el.find('#settings__file-name').focus();
-                                }
-                            });
-                        } else {
-                            Alerts.error({
-                                header: 'Save error',
-                                body: 'Error saving to Dropbox: \n' + err
-                            });
-                        }
-                    } else {
-                        that.passwordChanged = false;
-                        that.model.saved(fileName, 'dropbox');
-                        that.render();
-                    }
-                });
-            });
+        DropboxLink.authenticate(function(err) {
+            if (err) {
+                that.render();
+                return;
+            }
+            this.save({ storage: 'dropbox' });
         });
     },
 

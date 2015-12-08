@@ -216,26 +216,6 @@ var FileModel = Backbone.Model.extend({
         }
     },
 
-    autoSave: function(complete) {
-        var that = this;
-        that.set('syncing', true);
-        var storage = Storage[that.get('storage')];
-        if (storage) {
-            that.getData(function(data) {
-                storage.save(that.get('path'), data, function (err) {
-                    if (err) {
-                        that.set('syncing', false);
-                    } else {
-                        that.saved(that.get('path'), that.get('storage'));
-                    }
-                    if (complete) { complete(err); }
-                });
-            });
-        } else {
-            throw 'Unknown storage; cannot auto save';
-        }
-    },
-
     getData: function(cb) {
         this.db.cleanup({
             historyRules: true,
@@ -255,7 +235,6 @@ var FileModel = Backbone.Model.extend({
         this.forEachEntry({}, function(entry) {
             entry.unsaved = false;
         });
-        this.addToLastOpenFiles();
     },
 
     setPassword: function(password) {

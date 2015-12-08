@@ -355,6 +355,12 @@ var AppModel = Backbone.Model.extend({
         Storage.cache.remove(id);
         this.fileInfos.remove(id);
         this.fileInfos.save();
+    },
+
+    syncFile: function(file, options, callback) {
+        if (file.get('syncing')) {
+            return callback('Sync in progress');
+        }
     }
 });
 
