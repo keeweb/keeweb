@@ -7,6 +7,7 @@ Release notes
 `+` #46: option to show colorful icons  
 `+` #45: optional auto-lock on minimize  
 `+` option to disable searching for group  
+`+` #62: saving files with empty password  
 `-` #55: custom scrollbar issues  
 
 ##### v0.4.6 (2015-11-25)

@@ -190,6 +190,8 @@ var OpenView = Backbone.View.extend({
         if ($(e.target).is('.open__last-item-icon-del')) {
             this.model.removeFileInfo(id);
             this.$el.find('.open__last-item[data-id="' + id + '"]').remove();
+            this.initialize();
+            this.render();
             return;
         }
         this.showOpenFileInfo(this.model.fileInfos.get(id));
@@ -197,7 +199,7 @@ var OpenView = Backbone.View.extend({
 
     inputKeydown: function(e) {
         var code = e.keyCode || e.which;
-        if (code === Keys.DOM_VK_RETURN && this.passwordInput.length) {
+        if (code === Keys.DOM_VK_RETURN) {
             this.openDb();
         } else if (code === Keys.DOM_VK_CAPS_LOCK) {
             this.$el.find('.open__pass-warning').removeClass('invisible');

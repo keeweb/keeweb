@@ -84,18 +84,25 @@ var SettingsAboutView = Backbone.View.extend({
 
     validate: function() {
         if (!this.model.get('passwordLength')) {
-            Alerts.error({
+            var that = this;
+            Alerts.yesno({
                 header: 'Empty password',
-                body: 'Please, enter the password. You will use it the next time you open this file.',
-                complete: (function() { this.$el.find('#settings__file-master-pass').focus(); }).bind(this)
+                body: 'Saving database with empty password makes it completely unprotected. Do you really want to do it?',
+                success: function() {
+                    that.model.setPassword(kdbxweb.ProtectedValue.fromString(''));
+                    that.saveToFile(true);
+                },
+                cancel: function() {
+                    that.$el.find('#settings__file-master-pass').focus();
+                }
             });
             return false;
         }
         return true;
     },
 
-    saveToFile: function() {
-        if (!this.validate()) {
+    saveToFile: function(skipValidation) {
+        if (skipValidation !== true && !this.validate()) {
             return;
         }
         var that = this;
