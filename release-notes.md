@@ -1,7 +1,8 @@
 Release notes
 -------------
 ##### v0.5 (not released yet)
-2-way sync  
+2-way merge sync  
+`*` all files are now opened with offline support  
 `*` disallow opening same files twice   
 `*` default theme is now blue  
 `+` #46: option to show colorful icons  
