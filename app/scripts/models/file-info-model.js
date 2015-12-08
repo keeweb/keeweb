@@ -8,7 +8,6 @@ var FileInfoModel = Backbone.Model.extend({
         name: '',
         storage: null,
         path: null,
-        availOffline: false,
         modified: false,
         editState: null,
         rev: null,

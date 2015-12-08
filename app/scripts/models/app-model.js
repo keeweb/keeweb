@@ -247,13 +247,13 @@ var AppModel = Backbone.Model.extend({
     openFile: function(params, callback) {
         var that = this;
         var fileInfo = params.id ? this.fileInfos.get(params.id) : this.fileInfos.getMatch(params.storage, params.name, params.path);
-        if (fileInfo && fileInfo.get('availOffline') && fileInfo.get('modified')) {
+        if (fileInfo && fileInfo.get('modified')) {
             // modified offline, cannot overwrite: load from cache
             this.openFileFromCache(params, callback, fileInfo);
         } else if (params.fileData) {
             // has user content: load it
             this.openFileWithData(params, callback, fileInfo, params.fileData, true);
-        } else if (fileInfo && fileInfo.get('availOffline') && fileInfo.get('rev') === params.rev) {
+        } else if (fileInfo && fileInfo.get('rev') === params.rev) {
             // already latest in cache: use it
             this.openFileFromCache(params, callback, fileInfo);
         } else {
@@ -261,7 +261,7 @@ var AppModel = Backbone.Model.extend({
             Storage[params.storage].load(params.path, function(err, data, rev) {
                 if (err) {
                     // failed to load from storage: fallback to cache if we can
-                    if (fileInfo && fileInfo.get('availOffline')) {
+                    if (fileInfo) {
                         that.openFileFromCache(params, callback, fileInfo);
                     } else {
                         callback(err);
@@ -289,7 +289,6 @@ var AppModel = Backbone.Model.extend({
     openFileWithData: function(params, callback, fileInfo, data, updateCacheOnSuccess) {
         var file = new FileModel({
             name: params.name,
-            availOffline: params.availOffline,
             storage: params.storage,
             path: params.path,
             keyFileName: params.keyFileName
@@ -303,17 +302,13 @@ var AppModel = Backbone.Model.extend({
                 return callback('Duplicate file id');
             }
             var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
-            if (params.availOffline && updateCacheOnSuccess) {
+            if (updateCacheOnSuccess) {
                 Storage.cache.save(cacheId, params.fileData, function(err) {
-                    if (err) {
-                        file.set('availOffline', false);
-                        if (!params.storage) { return; }
+                    if (err && !params.storage) {
+                        return;
                     }
                     that.addToLastOpenFiles(file, cacheId, params.rev);
                 });
-            }
-            if (!params.availOffline && fileInfo && !fileInfo.get('modified')) {
-                that.removeFileInfo(fileInfo.id);
             }
             if (params.storage === 'file') {
                 that.addToLastOpenFiles(file, cacheId, params.rev);
@@ -329,7 +324,6 @@ var AppModel = Backbone.Model.extend({
             name: file.get('name'),
             storage: file.get('storage'),
             path: file.get('path'),
-            availOffline: file.get('availOffline'),
             modified: file.get('modified'),
             editState: null,
             rev: rev,

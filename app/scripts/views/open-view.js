@@ -37,7 +37,6 @@ var OpenView = Backbone.View.extend({
             name: '',
             storage: null,
             path: null,
-            availOffline: false,
             keyFileName: null,
             keyFileData: null,
             fileData: null,
@@ -122,9 +121,6 @@ var OpenView = Backbone.View.extend({
     displayOpenFile: function() {
         this.$el.addClass('open--file');
         this.$el.find('.open__settings-key-file').removeClass('hide');
-        this.$el.find('#open__settings-check-offline')[0].removeAttribute('disabled');
-        var canSwitchOffline = this.params.storage !== 'file';
-        this.$el.find('.open__settings-offline').toggleClass('hide', !canSwitchOffline);
         this.inputEl[0].removeAttribute('readonly');
         this.inputEl[0].setAttribute('placeholder', 'Password for ' + this.params.name);
         this.inputEl.focus();
@@ -334,13 +330,11 @@ var OpenView = Backbone.View.extend({
             return;
         }
         this.params.id = fileInfo.id;
-        this.params.availOffline = fileInfo.get('availOffline');
         this.params.storage = fileInfo.get('storage');
         this.params.path = fileInfo.get('path');
         this.params.name = fileInfo.get('name');
         this.params.fileData = null;
         this.params.rev = null;
-        this.$el.find('#open__settings-check-offline').prop('checked', this.params.availOffline);
         this.displayOpenFile();
     },
 
@@ -373,11 +367,8 @@ var OpenView = Backbone.View.extend({
 
     openDb: function() {
         if (!this.busy) {
-            var offlineChecked = this.$el.find('#open__settings-check-offline').is(':checked');
-            this.params.availOffline = this.params.storage !== 'file' && offlineChecked;
             this.$el.toggleClass('open--opening', true);
             this.inputEl.attr('disabled', 'disabled');
-            this.$el.find('#open__settings-check-offline').attr('disabled', 'disabled');
             this.busy = true;
             this.params.password = this.passwordInput.value;
             this.afterPaint(this.model.openFile.bind(this.model, this.params, this.openDbComplete.bind(this)));
@@ -388,7 +379,6 @@ var OpenView = Backbone.View.extend({
         this.busy = false;
         this.$el.toggleClass('open--opening', false);
         this.inputEl.removeAttr('disabled').toggleClass('input--error', !!err);
-        this.$el.find('#open__settings-check-offline').removeAttr('disabled');
         if (err) {
             this.inputEl.focus();
             this.inputEl[0].selectionStart = 0;
