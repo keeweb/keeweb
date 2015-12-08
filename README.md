@@ -14,7 +14,8 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 # Status
 
-Reading and display is mostly complete; modification and sync is under construction, please see [TODO](https://github.com/antelle/keeweb/wiki/TODO) for more details.
+The app is already rather stable but might still needs polishing, testing ang improvements before v1 release, which is expected to happend in Feb 2016. 
+Please see [TODO](https://github.com/antelle/keeweb/wiki/TODO) for more details.
 
 # Known Issues
 
