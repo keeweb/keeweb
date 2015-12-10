@@ -3,7 +3,6 @@
 var Backbone = require('backbone'),
     GroupCollection = require('../collections/group-collection'),
     GroupModel = require('./group-model'),
-    Storage = require('../storage'),
     IconUrl = require('../util/icon-url'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
@@ -29,7 +28,6 @@ var FileModel = Backbone.Model.extend({
     },
 
     db: null,
-    data: null,
     entryMap: null,
     groupMap: null,
 
@@ -157,6 +155,18 @@ var FileModel = Backbone.Model.extend({
         this.trigger('reload', this);
     },
 
+    merge: function(fileData, callback) {
+        kdbxweb.Kdbx.load(fileData, this.db.credentials, (function(remoteDb, err) {
+            if (err) {
+                console.error('Error opening file to merge', err.code, err.message, err);
+            } else {
+                this.db.merge(remoteDb);
+                this.reload();
+            }
+            callback(err);
+        }).bind(this));
+    },
+
     close: function() {
         this.set({
             keyFileName: '',
@@ -221,8 +231,13 @@ var FileModel = Backbone.Model.extend({
             historyRules: true,
             customIcons: true
         });
-        this.data = this.db.save(cb);
-        return this.data;
+        var that = this;
+        this.db.save(function(data, err) {
+            if (err) {
+                console.error('Error saving file', that.get('name'), err);
+            }
+            cb(data, err);
+        });
     },
 
     getXml: function(cb) {

@@ -18,8 +18,8 @@ var StorageDropbox = {
         });
     },
 
-    save: function(path, data, callback) {
-        DropboxLink.saveFile(path, data, true, callback || _.noop);
+    save: function(path, data, callback, rev) {
+        DropboxLink.saveFile(path, data, rev, callback || _.noop);
     }
 };
 

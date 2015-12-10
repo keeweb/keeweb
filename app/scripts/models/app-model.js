@@ -318,7 +318,7 @@ var AppModel = Backbone.Model.extend({
                 return callback('Duplicate file id');
             }
             var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
-            if (updateCacheOnSuccess) {
+            if (updateCacheOnSuccess && params.storage !== 'file') {
                 Storage.cache.save(cacheId, params.fileData, function(err) {
                     if (err && !params.storage) {
                         return;
@@ -360,6 +360,89 @@ var AppModel = Backbone.Model.extend({
     syncFile: function(file, options, callback) {
         if (file.get('syncing')) {
             return callback('Sync in progress');
+        }
+        // todo: save to cache
+        var fileInfo = this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
+        if (!fileInfo) {
+            var dt = new Date();
+            fileInfo = new FileInfoModel({
+                id: IdGenerator.uuid(),
+                name: file.get('name'),
+                storage: file.get('storage'),
+                path: file.get('path'),
+                modified: file.get('modified'),
+                editState: null,
+                rev: null,
+                pullDate: dt,
+                openDate: dt
+            });
+        }
+        var storage = Storage[options.storage || file.get('storage')];
+        if (!storage) {
+            if (!file.get('modified')) {
+                return callback();
+            }
+            file.getData(function(data, err) {
+                if (err) { return callback(err); }
+                Storage.cache.save(fileInfo.id, data, function(err) {
+                    callback(err);
+                });
+            });
+        } else {
+            var maxLoadLoops = 3, loadLoops = 0;
+            var loadFromStorageAndMerge = function() {
+                if (++loadLoops === maxLoadLoops) {
+                    return callback('Too many load attempts, please try again later');
+                }
+                storage.load(file.get('path'), function(err, data, stat) {
+                    if (err) { return callback(err); }
+                    file.merge(data, function(err) {
+                        if (err) { return callback(err); }
+                        if (stat && stat.rev) {
+                            fileInfo.set('rev', stat.rev);
+                        }
+                        if (file.get('modified')) {
+                            saveToStorage();
+                        } else {
+                            callback();
+                        }
+                    });
+                });
+            };
+            var saveToStorage = function() {
+                file.getData(function(data, err) {
+                    if (err) { return callback(err); }
+                    storage.save(file.get('path'), data, function(err) {
+                        if (err && err.revConflict) {
+                            loadFromStorageAndMerge();
+                        } else if (err) {
+                            callback(err);
+                        } else {
+                            if (storage === Storage.file) {
+                                Storage.cache.remove(fileInfo.id);
+                            }
+                            callback();
+                        }
+                    }, fileInfo.get('rev'));
+                });
+            };
+            if (options.reload) {
+                loadFromStorageAndMerge();
+            } else if (storage === Storage.file) {
+                if (file.get('modified')) {
+                    saveToStorage();
+                } else {
+                    callback();
+                }
+            } else {
+                storage.stat(file.get('path'), function (err, stat) {
+                    if (stat.rev === fileInfo.get('rev')) {
+                        saveToStorage();
+                    } else {
+                        loadFromStorageAndMerge();
+                    }
+                });
+            }
         }
     }
 });

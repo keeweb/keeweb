@@ -239,9 +239,10 @@ var DropboxLink = {
         Dropbox.AuthDriver.Popup.oauthReceiver();
     },
 
-    saveFile: function(fileName, data, overwrite, complete) {
-        if (overwrite) {
-            this._callAndHandleError('writeFile', [fileName, data], complete);
+    saveFile: function(fileName, data, rev, complete) {
+        if (rev) {
+            var opts = typeof rev === 'string' ? { lastVersionTag: rev } : undefined;
+            this._callAndHandleError('writeFile', [fileName, data, opts], complete);
         } else {
             this.getFileList((function(err, files) {
                 if (err) { return complete(err); }
