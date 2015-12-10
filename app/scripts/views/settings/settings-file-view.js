@@ -137,28 +137,36 @@ var SettingsAboutView = Backbone.View.extend({
         if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
             return;
         }
+        var fileName = this.model.get('name') + '.kdbx';
         var that = this;
-        this.model.getData(function(data) {
-            var fileName = that.model.get('name') + '.kdbx';
-            if (Launcher) {
-                Launcher.getSaveFileName(fileName, function (path) {
-                    if (path) {
-                        Storage.file.save(path, data, function(err) {
-                            if (err) {
-                                Alerts.error({
-                                    header: 'Save error',
-                                    body: 'Error saving to file ' + path + ': \n' + err
-                                });
-                            }
-                        });
-                    }
-                });
-            } else {
-                var blob = new Blob([data], {type: 'application/octet-stream'});
-                FileSaver.saveAs(blob, fileName);
-                that.passwordChanged = false;
-            }
-        });
+        if (Launcher && !this.model.get('storage')) {
+            Launcher.getSaveFileName(fileName, function (path) {
+                if (path) {
+                    that.save({storage: 'file', path: path});
+                }
+            });
+        } else {
+            this.model.getData(function (data) {
+                if (Launcher) {
+                    Launcher.getSaveFileName(fileName, function (path) {
+                        if (path) {
+                            Storage.file.save(path, data, function (err) {
+                                if (err) {
+                                    Alerts.error({
+                                        header: 'Save error',
+                                        body: 'Error saving to file ' + path + ': \n' + err
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    var blob = new Blob([data], {type: 'application/octet-stream'});
+                    FileSaver.saveAs(blob, fileName);
+                    that.passwordChanged = false;
+                }
+            });
+        }
     },
 
     exportAsXml: function() {

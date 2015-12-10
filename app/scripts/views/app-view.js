@@ -322,10 +322,6 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    showVisualLock: function() {
-        // TODO: remove cases which lead to this
-    },
-
     saveAndLock: function(autoInit) {
         // TODO: move to file manager
         var pendingCallbacks = 0,

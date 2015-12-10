@@ -234,7 +234,7 @@ var AppModel = Backbone.Model.extend({
         var name;
         for (var i = 0; ; i++) {
             name = 'New' + (i || '');
-            if (!this.files.getByName(name)) {
+            if (!this.files.getByName(name) && !this.fileInfos.getByName(name)) {
                 break;
             }
         }
@@ -317,6 +317,12 @@ var AppModel = Backbone.Model.extend({
             if (that.files.get(file.id)) {
                 return callback('Duplicate file id');
             }
+            if (fileInfo && fileInfo.get('modified')) {
+                if (fileInfo.get('editState')) {
+                    file.setLocalEditState(fileInfo.get('editState'));
+                }
+                file.setModified();
+            }
             var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
             if (updateCacheOnSuccess && params.storage !== 'file') {
                 Storage.cache.save(cacheId, params.fileData, function(err) {
@@ -341,7 +347,7 @@ var AppModel = Backbone.Model.extend({
             storage: file.get('storage'),
             path: file.get('path'),
             modified: file.get('modified'),
-            editState: null,
+            editState: file.getLocalEditState(),
             rev: rev,
             pullDate: dt,
             openDate: dt
@@ -361,7 +367,10 @@ var AppModel = Backbone.Model.extend({
         if (file.get('syncing')) {
             return callback('Sync in progress');
         }
-        // todo: save to cache
+        var complete = function(err) {
+            // TODO: save file info
+            callback(err);
+        };
         var fileInfo = this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
         if (!fileInfo) {
             var dt = new Date();
@@ -378,66 +387,77 @@ var AppModel = Backbone.Model.extend({
             });
         }
         var storage = Storage[options.storage || file.get('storage')];
+        var path = options.path || file.get('path');
         if (!storage) {
             if (!file.get('modified')) {
-                return callback();
+                return complete();
             }
             file.getData(function(data, err) {
-                if (err) { return callback(err); }
+                if (err) { return complete(err); }
                 Storage.cache.save(fileInfo.id, data, function(err) {
-                    callback(err);
+                    complete(err);
                 });
             });
         } else {
             var maxLoadLoops = 3, loadLoops = 0;
             var loadFromStorageAndMerge = function() {
                 if (++loadLoops === maxLoadLoops) {
-                    return callback('Too many load attempts, please try again later');
+                    return complete('Too many load attempts, please try again later');
                 }
-                storage.load(file.get('path'), function(err, data, stat) {
-                    if (err) { return callback(err); }
-                    file.merge(data, function(err) {
-                        if (err) { return callback(err); }
+                storage.load(path, function(err, data, stat) {
+                    if (err) { return complete(err); }
+                    file.mergeOrUpdate(data, function(err) {
+                        if (err) { return complete(err); }
                         if (stat && stat.rev) {
                             fileInfo.set('rev', stat.rev);
                         }
                         if (file.get('modified')) {
-                            saveToStorage();
+                            saveToCacheAndStorage();
                         } else {
-                            callback();
+                            complete();
                         }
                     });
                 });
             };
-            var saveToStorage = function() {
+            var saveToCacheAndStorage = function() {
                 file.getData(function(data, err) {
-                    if (err) { return callback(err); }
-                    storage.save(file.get('path'), data, function(err) {
-                        if (err && err.revConflict) {
-                            loadFromStorageAndMerge();
-                        } else if (err) {
-                            callback(err);
-                        } else {
-                            if (storage === Storage.file) {
-                                Storage.cache.remove(fileInfo.id);
-                            }
-                            callback();
-                        }
-                    }, fileInfo.get('rev'));
+                    if (err) { return complete(err); }
+                    if (storage === Storage.file) {
+                        saveToStorage(data);
+                    } else {
+                        Storage.cache.save(fileInfo.id, data, function (err) {
+                            if (err) { return complete(err); }
+                            saveToStorage(data);
+                        });
+                    }
                 });
+            };
+            var saveToStorage = function(data) {
+                storage.save(path, data, function(err) {
+                    if (err && err.revConflict) {
+                        loadFromStorageAndMerge();
+                    } else if (err) {
+                        complete(err);
+                    } else {
+                        if (storage === Storage.file) {
+                            Storage.cache.remove(fileInfo.id);
+                        }
+                        complete();
+                    }
+                }, fileInfo.get('rev'));
             };
             if (options.reload) {
                 loadFromStorageAndMerge();
             } else if (storage === Storage.file) {
                 if (file.get('modified')) {
-                    saveToStorage();
+                    saveToCacheAndStorage();
                 } else {
-                    callback();
+                    complete();
                 }
             } else {
-                storage.stat(file.get('path'), function (err, stat) {
+                storage.stat(path, function (err, stat) {
                     if (stat.rev === fileInfo.get('rev')) {
-                        saveToStorage();
+                        saveToCacheAndStorage();
                     } else {
                         loadFromStorageAndMerge();
                     }

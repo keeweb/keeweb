@@ -31,6 +31,10 @@ var FileInfoCollection = Backbone.Collection.extend({
                 (fi.get('name') || '') === (name || '') &&
                 (fi.get('path') || '') === (path || '');
         });
+    },
+
+    getByName: function() {
+        return this.find(function(file) { return file.get('name') === name; });
     }
 });
 

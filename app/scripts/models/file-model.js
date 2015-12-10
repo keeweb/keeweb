@@ -24,7 +24,8 @@ var FileModel = Backbone.Model.extend({
         oldKeyFileName: '',
         passwordChanged: false,
         keyFileChanged: false,
-        syncing: false
+        syncing: false,
+        syncError: null
     },
 
     db: null,
@@ -155,16 +156,37 @@ var FileModel = Backbone.Model.extend({
         this.trigger('reload', this);
     },
 
-    merge: function(fileData, callback) {
+    mergeOrUpdate: function(fileData, callback) {
         kdbxweb.Kdbx.load(fileData, this.db.credentials, (function(remoteDb, err) {
             if (err) {
                 console.error('Error opening file to merge', err.code, err.message, err);
             } else {
-                this.db.merge(remoteDb);
-                this.reload();
+                if (this.get('modified')) {
+                    try {
+                        this.db.merge(remoteDb);
+                    } catch (e) {
+                        console.error('File merge error', e);
+                        return callback(e);
+                    }
+                } else {
+                    this.db = remoteDb;
+                    this.reload();
+                }
             }
             callback(err);
         }).bind(this));
+    },
+
+    getLocalEditState: function() {
+        return this.db.getLocalEditState();
+    },
+
+    setLocalEditState: function(editState) {
+        this.db.setLocalEditState(editState);
+    },
+
+    removeLocalEditState: function() {
+        this.db.removeLocalEditState();
     },
 
     close: function() {
@@ -244,8 +266,20 @@ var FileModel = Backbone.Model.extend({
         this.db.saveXml(cb);
     },
 
-    saved: function(path, storage) {
-        this.set({ path: path || '', storage: storage || null, modified: false, created: false, syncing: false });
+    setSyncProgress: function() {
+        this.set({ syncing: true });
+    },
+
+    setSyncComplete: function(path, storage, error) {
+        var modified = this.get('modified') && !!error;
+        this.set({
+            created: false,
+            path: path || this.get('path'),
+            storage: storage || this.get('storage'),
+            modified: modified,
+            syncing: false,
+            syncError: error
+        });
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
         this.forEachEntry({}, function(entry) {
             entry.unsaved = false;
