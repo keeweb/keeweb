@@ -2,7 +2,7 @@
     <td><% if (customIcon) { %><img src="<%= customIcon %>" class="list__item-icon list__item-icon--custom <%= color || '' %>" /><% }
         else { %><i class="fa fa-<%= icon %> <%= color ? color+'-color' : '' %> list__item-icon"></i><% } %></td>
     <td><%- title || '(no title)' %></td>
-    <td><%- description %></td>
+    <td><%- user %></td>
     <td><%- url %></td>
     <td><%- tags %></td>
     <td><%- notes %></td>
