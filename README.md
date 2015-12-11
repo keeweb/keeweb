@@ -17,13 +17,6 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 The app is already rather stable but might still need polishing, testing and improvements before v1 release, which is expected to happen in Feb 2016.
 Please see [TODO](https://github.com/antelle/keeweb/wiki/TODO) for more details.
 
-# Known Issues
-
-These major issues are in progress, or will be fixed in next releases, before v1.0:
-
-- dropbox sync is one-way: changes are not loaded from dropbox, only saved
-- files are considered saved only when they are exported
-
 # Self-hosting
 
 Everything you need to host this app on your server is any static file server. The app is a single HTML file + cache manifest (optionally; for offline access).
