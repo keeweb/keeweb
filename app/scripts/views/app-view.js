@@ -12,6 +12,7 @@ var Backbone = require('backbone'),
     SettingsView = require('../views/settings/settings-view'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
+    Timeouts = require('../const/timeouts'),
     KeyHandler = require('../comp/key-handler'),
     IdleTracker = require('../comp/idle-tracker'),
     Launcher = require('../comp/launcher'),
@@ -73,6 +74,8 @@ var AppView = Backbone.View.extend({
 
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed, this);
+
+        setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
     },
 
     render: function () {
@@ -291,20 +294,18 @@ var AppView = Backbone.View.extend({
             if (this.model.settings.get('autoSave')) {
                 this.saveAndLock(autoInit);
             } else {
-                if (autoInit) {
-                    this.showVisualLock('Auto-save is disabled. Please, enable it, to allow auto-locking');
-                    return;
-                }
+                var message = autoInit ? 'The app cannot be locked because auto save is disabled.'
+                    : 'You have unsaved changes that will be lost. Continue?';
                 Alerts.alert({
                     icon: 'lock',
                     header: 'Lock',
-                    body: 'You have unsaved changes that will be lost. Continue?',
+                    body: message,
                     buttons: [
                         { result: 'save', title: 'Save changes' },
                         { result: 'discard', title: 'Discard changes', error: true },
                         { result: '', title: 'Cancel' }
                     ],
-                    checkbox: 'Auto save changes each time I lock the app',
+                    checkbox: 'Save changes automatically',
                     success: function(result, autoSaveChecked) {
                         if (result === 'save') {
                             if (autoSaveChecked) {
@@ -323,27 +324,14 @@ var AppView = Backbone.View.extend({
     },
 
     saveAndLock: function(autoInit) {
-        // TODO: move to file manager
         var pendingCallbacks = 0,
             errorFiles = [],
             that = this;
-        if (this.model.files.some(function(file) { return file.get('modified') && !file.get('path'); })) {
-            this.showVisualLock('You have unsaved files, locking is not possible.');
-            return;
-        }
         this.model.files.forEach(function(file) {
-            if (!file.get('modified')) {
+            if (!file.get('dirty')) {
                 return;
             }
-            if (file.get('path')) {
-                try {
-                    file.autoSave(fileSaved.bind(this, file));
-                    pendingCallbacks++;
-                } catch (e) {
-                    console.error('Failed to auto-save file', file.get('path'), e);
-                    errorFiles.push(file);
-                }
-            }
+            this.model.syncFile(file, null, fileSaved.bind(this, file));
         }, this);
         if (!pendingCallbacks) {
             this.closeAllFilesAndShowFirst();
@@ -354,9 +342,7 @@ var AppView = Backbone.View.extend({
             }
             if (--pendingCallbacks === 0) {
                 if (errorFiles.length) {
-                    if (autoInit) {
-                        that.showVisualLock('Failed to save files: ' + errorFiles.join(', '));
-                    } else if (!Alerts.alertDisplayed) {
+                    if (!Alerts.alertDisplayed) {
                         Alerts.error({
                             header: 'Save Error',
                             body: 'Failed to auto-save file' + (errorFiles.length > 1 ? 's: ' : '') + ' ' + errorFiles.join(', ')
@@ -381,21 +367,14 @@ var AppView = Backbone.View.extend({
     },
 
     saveAll: function() {
-        var fileId;
         this.model.files.forEach(function(file) {
-            if (file.get('path')) {
-                try {
-                    file.autoSave();
-                } catch (e) {
-                    console.error('Failed to auto-save file', file.get('path'), e);
-                    fileId = file.cid;
-                }
-            } else if (!fileId) {
-                fileId = file.cid;
-            }
-        });
-        if (fileId) {
-            this.showFileSettings({fileId: fileId});
+            this.model.syncFile(file);
+        }, this);
+    },
+
+    syncAllByTimer: function() {
+        if (this.model.settings.get('autoSave')) {
+            this.saveAll();
         }
     },
 

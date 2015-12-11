@@ -16,6 +16,7 @@ var FileModel = Backbone.Model.extend({
         path: '',
         storage: null,
         modified: false,
+        dirty: false,
         open: false,
         created: false,
         demo: false,
@@ -164,6 +165,7 @@ var FileModel = Backbone.Model.extend({
                 if (this.get('modified')) {
                     try {
                         this.db.merge(remoteDb);
+                        this.set('dirty', true);
                     } catch (e) {
                         console.error('File merge error', e);
                         return callback(e);
@@ -185,15 +187,12 @@ var FileModel = Backbone.Model.extend({
         this.db.setLocalEditState(editState);
     },
 
-    removeLocalEditState: function() {
-        this.db.removeLocalEditState();
-    },
-
     close: function() {
         this.set({
             keyFileName: '',
             passwordLength: 0,
             modified: false,
+            dirty: false,
             open: false,
             created: false,
             groups: null,
@@ -244,7 +243,7 @@ var FileModel = Backbone.Model.extend({
 
     setModified: function() {
         if (!this.get('demo')) {
-            this.set('modified', true);
+            this.set({ modified: true, dirty: true });
         }
     },
 
@@ -270,13 +269,18 @@ var FileModel = Backbone.Model.extend({
         this.set({ syncing: true });
     },
 
-    setSyncComplete: function(path, storage, error) {
+    setSyncComplete: function(path, storage, error, savedToCache) {
+        if (!error) {
+            this.db.removeLocalEditState();
+        }
         var modified = this.get('modified') && !!error;
+        var dirty = this.get('dirty') && !savedToCache;
         this.set({
             created: false,
             path: path || this.get('path'),
             storage: storage || this.get('storage'),
             modified: modified,
+            dirty: dirty,
             syncing: false,
             syncError: error
         });

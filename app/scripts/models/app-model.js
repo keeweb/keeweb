@@ -321,7 +321,8 @@ var AppModel = Backbone.Model.extend({
                 if (fileInfo.get('editState')) {
                     file.setLocalEditState(fileInfo.get('editState'));
                 }
-                file.setModified();
+                file.set('modified', true);
+                setTimeout(this.syncFile.bind(this, file), 0);
             }
             var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
             if (updateCacheOnSuccess && params.storage !== 'file') {
@@ -365,12 +366,11 @@ var AppModel = Backbone.Model.extend({
 
     syncFile: function(file, options, callback) {
         if (file.get('syncing')) {
-            return callback('Sync in progress');
+            return callback && callback('Sync in progress');
         }
-        var complete = function(err) {
-            // TODO: save file info
-            callback(err);
-        };
+        if (!options) {
+            options = {};
+        }
         var fileInfo = this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
         if (!fileInfo) {
             var dt = new Date();
@@ -388,6 +388,21 @@ var AppModel = Backbone.Model.extend({
         }
         var storage = Storage[options.storage || file.get('storage')];
         var path = options.path || file.get('path');
+        var complete = function(err, savedToCache) {
+            if (!err) { savedToCache = true; }
+            file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
+            fileInfo.set({
+                storage: storage,
+                path: path,
+                modified: file.get('modified'),
+                editState: file.getLocalEditState()
+            });
+            if (!this.fileInfos.get(id)) {
+                this.fileInfos.unshift(fileInfo);
+            }
+            this.fileInfos.save();
+            if (callback) { callback(err); }
+        };
         if (!storage) {
             if (!file.get('modified')) {
                 return complete();
@@ -411,6 +426,7 @@ var AppModel = Backbone.Model.extend({
                         if (stat && stat.rev) {
                             fileInfo.set('rev', stat.rev);
                         }
+                        fileInfo.set('pullDate', new Date());
                         if (file.get('modified')) {
                             saveToCacheAndStorage();
                         } else {
@@ -422,11 +438,12 @@ var AppModel = Backbone.Model.extend({
             var saveToCacheAndStorage = function() {
                 file.getData(function(data, err) {
                     if (err) { return complete(err); }
-                    if (storage === Storage.file) {
+                    if (!file.get('dirty') || storage === Storage.file) {
                         saveToStorage(data);
                     } else {
                         Storage.cache.save(fileInfo.id, data, function (err) {
                             if (err) { return complete(err); }
+                            file.set('dirty', false);
                             saveToStorage(data);
                         });
                     }
