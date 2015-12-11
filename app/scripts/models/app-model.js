@@ -322,7 +322,10 @@ var AppModel = Backbone.Model.extend({
                     file.setLocalEditState(fileInfo.get('editState'));
                 }
                 file.set('modified', true);
-                setTimeout(this.syncFile.bind(this, file), 0);
+                setTimeout(that.syncFile.bind(that, file), 0);
+            }
+            if (fileInfo) {
+                file.set('syncDate', fileInfo.get('syncDate'));
             }
             var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
             if (updateCacheOnSuccess && params.storage !== 'file') {
@@ -350,7 +353,7 @@ var AppModel = Backbone.Model.extend({
             modified: file.get('modified'),
             editState: file.getLocalEditState(),
             rev: rev,
-            pullDate: dt,
+            syncDate: file.get('syncDate') || dt,
             openDate: dt
         });
         this.fileInfos.remove(id);
@@ -365,6 +368,10 @@ var AppModel = Backbone.Model.extend({
     },
 
     syncFile: function(file, options, callback) {
+        var that = this;
+        if (file.get('demo')) {
+            return callback && callback();
+        }
         if (file.get('syncing')) {
             return callback && callback('Sync in progress');
         }
@@ -382,12 +389,13 @@ var AppModel = Backbone.Model.extend({
                 modified: file.get('modified'),
                 editState: null,
                 rev: null,
-                pullDate: dt,
+                syncDate: dt,
                 openDate: dt
             });
         }
-        var storage = Storage[options.storage || file.get('storage')];
+        var storage = options.storage || file.get('storage');
         var path = options.path || file.get('path');
+        file.setSyncProgress();
         var complete = function(err, savedToCache) {
             if (!err) { savedToCache = true; }
             file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
@@ -395,12 +403,13 @@ var AppModel = Backbone.Model.extend({
                 storage: storage,
                 path: path,
                 modified: file.get('modified'),
-                editState: file.getLocalEditState()
+                editState: file.getLocalEditState(),
+                syncDate: file.get('syncDate')
             });
-            if (!this.fileInfos.get(id)) {
-                this.fileInfos.unshift(fileInfo);
+            if (!that.fileInfos.get(fileInfo.id)) {
+                that.fileInfos.unshift(fileInfo);
             }
-            this.fileInfos.save();
+            that.fileInfos.save();
             if (callback) { callback(err); }
         };
         if (!storage) {
@@ -419,16 +428,22 @@ var AppModel = Backbone.Model.extend({
                 if (++loadLoops === maxLoadLoops) {
                     return complete('Too many load attempts, please try again later');
                 }
-                storage.load(path, function(err, data, stat) {
+                Storage[storage].load(path, function(err, data, stat) {
                     if (err) { return complete(err); }
                     file.mergeOrUpdate(data, function(err) {
                         if (err) { return complete(err); }
                         if (stat && stat.rev) {
                             fileInfo.set('rev', stat.rev);
                         }
-                        fileInfo.set('pullDate', new Date());
+                        file.set('syncDate', new Date());
                         if (file.get('modified')) {
                             saveToCacheAndStorage();
+                        } else if (file.get('dirty') && storage !== 'file') {
+                            Storage.cache.save(fileInfo.id, data, function (err) {
+                                if (err) { return complete(err); }
+                                file.set('dirty', false);
+                                complete();
+                            });
                         } else {
                             complete();
                         }
@@ -438,7 +453,7 @@ var AppModel = Backbone.Model.extend({
             var saveToCacheAndStorage = function() {
                 file.getData(function(data, err) {
                     if (err) { return complete(err); }
-                    if (!file.get('dirty') || storage === Storage.file) {
+                    if (!file.get('dirty') || storage === 'file') {
                         saveToStorage(data);
                     } else {
                         Storage.cache.save(fileInfo.id, data, function (err) {
@@ -450,31 +465,40 @@ var AppModel = Backbone.Model.extend({
                 });
             };
             var saveToStorage = function(data) {
-                storage.save(path, data, function(err) {
+                Storage[storage].save(path, data, function(err) {
                     if (err && err.revConflict) {
                         loadFromStorageAndMerge();
                     } else if (err) {
                         complete(err);
                     } else {
-                        if (storage === Storage.file) {
+                        if (storage === 'file') {
                             Storage.cache.remove(fileInfo.id);
                         }
+                        file.set('syncDate', new Date());
                         complete();
                     }
                 }, fileInfo.get('rev'));
             };
             if (options.reload) {
                 loadFromStorageAndMerge();
-            } else if (storage === Storage.file) {
+            } else if (storage === 'file') {
                 if (file.get('modified')) {
                     saveToCacheAndStorage();
                 } else {
                     complete();
                 }
             } else {
-                storage.stat(path, function (err, stat) {
+                Storage[storage].stat(path, function (err, stat) {
+                    if (err) {
+                        // TODO: save to cache if storage save failed
+                        return complete(err);
+                    }
                     if (stat.rev === fileInfo.get('rev')) {
-                        saveToCacheAndStorage();
+                        if (file.get('modified')) {
+                            saveToCacheAndStorage();
+                        } else {
+                            complete();
+                        }
                     } else {
                         loadFromStorageAndMerge();
                     }

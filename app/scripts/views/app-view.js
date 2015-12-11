@@ -323,7 +323,7 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    saveAndLock: function(autoInit) {
+    saveAndLock: function(/*autoInit*/) {
         var pendingCallbacks = 0,
             errorFiles = [],
             that = this;

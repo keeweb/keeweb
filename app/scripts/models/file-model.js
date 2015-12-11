@@ -26,7 +26,8 @@ var FileModel = Backbone.Model.extend({
         passwordChanged: false,
         keyFileChanged: false,
         syncing: false,
-        syncError: null
+        syncError: null,
+        syncDate: null
     },
 
     db: null,

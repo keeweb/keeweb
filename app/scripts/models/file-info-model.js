@@ -11,7 +11,7 @@ var FileInfoModel = Backbone.Model.extend({
         modified: false,
         editState: null,
         rev: null,
-        pullDate: null,
+        syncDate: null,
         openDate: null
     },
 

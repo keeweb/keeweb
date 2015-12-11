@@ -19,7 +19,13 @@ var StorageDropbox = {
     },
 
     save: function(path, data, callback, rev) {
-        DropboxLink.saveFile(path, data, rev, callback || _.noop);
+        DropboxLink.saveFile(path, data, rev, function(err) {
+            if (!callback) { return; }
+            if (err && err.status === DropboxLink.ERROR_CONFLICT) {
+                err = { revConflict: true };
+            }
+            callback(err);
+        });
     }
 };
 

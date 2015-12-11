@@ -183,7 +183,7 @@ var SettingsAboutView = Backbone.View.extend({
                 that.render();
                 return;
             }
-            this.save({ storage: 'dropbox' });
+            that.save({ storage: 'dropbox' });
         });
     },
 

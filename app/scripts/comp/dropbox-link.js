@@ -121,6 +121,7 @@ DropboxChooser.prototype.readFile = function(url) {
 };
 
 var DropboxLink = {
+    ERROR_CONFLICT: Dropbox.ApiError.CONFLICT,
     _getClient: function(complete) {
         if (this._dropboxClient && this._dropboxClient.isAuthenticated()) {
             complete(null, this._dropboxClient);
@@ -199,6 +200,8 @@ var DropboxLink = {
                     body: 'Something went wrong during Dropbox sync. Please, try again later. Error code: ' + err.status
                 });
                 break;
+            case Dropbox.ApiError.CONFLICT:
+                break;
             default:
                 alertCallback({
                     header: 'Dropbox Sync Error',
@@ -241,7 +244,7 @@ var DropboxLink = {
 
     saveFile: function(fileName, data, rev, complete) {
         if (rev) {
-            var opts = typeof rev === 'string' ? { lastVersionTag: rev } : undefined;
+            var opts = typeof rev === 'string' ? { lastVersionTag: rev, noOverwrite: true, noAutoRename: true } : undefined;
             this._callAndHandleError('writeFile', [fileName, data, opts], complete);
         } else {
             this.getFileList((function(err, files) {
