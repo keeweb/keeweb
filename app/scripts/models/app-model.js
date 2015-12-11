@@ -490,10 +490,21 @@ var AppModel = Backbone.Model.extend({
             } else {
                 Storage[storage].stat(path, function (err, stat) {
                     if (err) {
-                        // TODO: save to cache if storage save failed
-                        return complete(err);
-                    }
-                    if (stat.rev === fileInfo.get('rev')) {
+                        if (file.get('dirty')) {
+                            file.getData(function (data) {
+                                if (data) {
+                                    Storage.cache.save(fileInfo.id, data, function (e) {
+                                        if (!e) {
+                                            file.set('dirty', false);
+                                        }
+                                        complete(err);
+                                    });
+                                }
+                            });
+                        } else {
+                            complete(err);
+                        }
+                    } else if (stat.rev === fileInfo.get('rev')) {
                         if (file.get('modified')) {
                             saveToCacheAndStorage();
                         } else {

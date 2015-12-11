@@ -59,3 +59,4 @@ $all-colors: (
 }
 .muted-color { @include th { color: muted-color(); }; }
 .action-color { @include th { color: action-color(); }; }
+.error-color { @include th { color: error-color(); }; }
