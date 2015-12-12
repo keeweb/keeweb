@@ -25,6 +25,7 @@ var AppModel = Backbone.Model.extend({
         this.filter = {};
         this.sort = 'title';
         this.settings = AppSettingsModel.instance;
+        this.activeEntryId = null;
 
         this.listenTo(Backbone, 'refresh', this.refresh);
         this.listenTo(Backbone, 'set-filter', this.setFilter);
@@ -112,7 +113,7 @@ var AppModel = Backbone.Model.extend({
         this.menu.tagsSection.removeAllItems();
         this.menu.filesSection.removeAllItems();
         this.tags.splice(0, this.tags.length);
-        this.setFilter({});
+        this.filter = {};
     },
 
     closeFile: function(file) {
@@ -134,8 +135,12 @@ var AppModel = Backbone.Model.extend({
         this.filter = filter;
         this.filter.subGroups = this.settings.get('expandGroups');
         var entries = this.getEntries();
+        if (!this.activeEntryId || !entries.get(this.activeEntryId)) {
+            var firstEntry = entries.first();
+            this.activeEntryId = firstEntry ? firstEntry.id : null;
+        }
         Backbone.trigger('filter', { filter: this.filter, sort: this.sort, entries: entries });
-        Backbone.trigger('select-entry', entries.length ? entries.first() : null);
+        Backbone.trigger('select-entry', entries.get(this.activeEntryId));
     },
 
     refresh: function() {
@@ -162,9 +167,6 @@ var AppModel = Backbone.Model.extend({
         entries.sortEntries(this.sort);
         if (this.filter.trash) {
             this.addTrashGroups(entries);
-        }
-        if (entries.length) {
-            entries.setActive(entries.first());
         }
         return entries;
     },

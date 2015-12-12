@@ -2,10 +2,11 @@
 
 var Format = require('../util/format');
 
-var EntryPresenter = function(descField, noColor) {
+var EntryPresenter = function(descField, noColor, activeEntryId) {
     this.entry = null;
     this.descField = descField;
     this.noColor = noColor || '';
+    this.activeEntryId = activeEntryId;
 };
 
 EntryPresenter.prototype = {
@@ -25,7 +26,7 @@ EntryPresenter.prototype = {
     get notes() { return this.entry ? this.entry.notes : undefined; },
     get url() { return this.entry ? this.entry.url : undefined; },
     get user() { return this.entry ? this.entry.user : undefined; },
-    get active() { return this.entry ? this.entry.active : this.group.active; },
+    get active() { return this.entry ? this.entry.id === this.activeEntryId : this.group.active; },
     get created() { return this.entry ? Format.dtStr(this.entry.created) : undefined; },
     get updated() { return this.entry ? Format.dtStr(this.entry.updated) : undefined; },
     get expired() { return this.entry ? this.entry.expired : false; },
