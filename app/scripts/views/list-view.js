@@ -74,7 +74,7 @@ var ListView = Backbone.View.extend({
                 itemsHtml += itemTemplate(presenter);
             }, this);
             var html = itemsTemplate({ items: itemsHtml });
-            this.itemsEl.html(html).scrollTop(0);
+            this.itemsEl.html(html);
         } else {
             this.itemsEl.html(this.emptyTemplate());
         }

@@ -261,6 +261,10 @@ var AppModel = Backbone.Model.extend({
             // has user content: load it
             logger.info('Open file from supplied content');
             this.openFileWithData(params, callback, fileInfo, params.fileData, true);
+        } else if (!params.storage) {
+            // no storage: load from cache as main storage
+            logger.info('Open file from cache as main storage');
+            this.openFileFromCache(params, callback, fileInfo);
         } else if (fileInfo && fileInfo.get('rev') === params.rev) {
             // already latest in cache: use it
             logger.info('Open file from cache because it is latest');
@@ -313,7 +317,7 @@ var AppModel = Backbone.Model.extend({
     openFileFromCache: function(params, callback, fileInfo) {
         var that = this;
         Storage.cache.load(fileInfo.id, function(err, data) {
-            new Logger('open', params.name).info('Loaded file from cache', params.name, err);
+            new Logger('open', params.name).info('Loaded file from cache', err);
             if (err) {
                 callback(err);
             } else {
@@ -363,6 +367,7 @@ var AppModel = Backbone.Model.extend({
             if (params.storage === 'file') {
                 that.addToLastOpenFiles(file, cacheId, params.rev);
             }
+            file.set('cacheId', cacheId);
             that.addFile(file);
         });
     },
@@ -406,8 +411,12 @@ var AppModel = Backbone.Model.extend({
         var logger = new Logger('sync', file.get('name'));
         var storage = options.storage || file.get('storage');
         var path = options.path || file.get('path');
+        if (storage && Storage[storage].getPathForName && !options.path) {
+            path = Storage[storage].getPathForName(file.get('name'));
+        }
         logger.info('Sync started', storage, path, options);
-        var fileInfo = this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
+        var fileInfo = file.get('cacheId') ? this.fileInfos.get(file.get('cacheId')) :
+            this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
         if (!fileInfo) {
             logger.info('Create new file info');
             var dt = new Date();
@@ -426,14 +435,17 @@ var AppModel = Backbone.Model.extend({
         file.setSyncProgress();
         var complete = function(err, savedToCache) {
             if (!err) { savedToCache = true; }
-            logger.info('Sync finished', savedToCache ? 'saved to cache' : '', err);
+            logger.info('Sync finished', err);
             file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
+            file.set('cacheId', fileInfo.id);
             fileInfo.set({
+                name: file.get('name'),
                 storage: storage,
                 path: path,
                 modified: file.get('modified'),
                 editState: file.getLocalEditState(),
-                syncDate: file.get('syncDate')
+                syncDate: file.get('syncDate'),
+                cacheId: fileInfo.id
             });
             if (!that.fileInfos.get(fileInfo.id)) {
                 that.fileInfos.unshift(fileInfo);
@@ -442,7 +454,7 @@ var AppModel = Backbone.Model.extend({
             if (callback) { callback(err); }
         };
         if (!storage) {
-            if (!file.get('modified')) {
+            if (!file.get('modified') && fileInfo.id === file.get('cacheId')) {
                 logger.info('Local, not modified');
                 return complete();
             }
@@ -457,18 +469,19 @@ var AppModel = Backbone.Model.extend({
         } else {
             var maxLoadLoops = 3, loadLoops = 0;
             var loadFromStorageAndMerge = function() {
-                logger.info('Load from storage, attempt ' + loadLoops);
                 if (++loadLoops === maxLoadLoops) {
-                    return complete('Too many load attempts, please try again later');
+                    return complete('Too many load attempts');
                 }
+                logger.info('Load from storage, attempt ' + loadLoops);
                 Storage[storage].load(path, function(err, data, stat) {
                     logger.info('Load from storage', stat, err);
                     if (err) { return complete(err); }
                     file.mergeOrUpdate(data, function(err) {
                         logger.info('Merge complete', err);
+                        that.refresh();
                         if (err) { return complete(err); }
                         if (stat && stat.rev) {
-                            logger.info('Update rev');
+                            logger.info('Update rev in file info');
                             fileInfo.set('rev', stat.rev);
                         }
                         file.set('syncDate', new Date());
@@ -510,7 +523,7 @@ var AppModel = Backbone.Model.extend({
             };
             var saveToStorage = function(data) {
                 logger.info('Save data to storage');
-                Storage[storage].save(path, data, function(err) {
+                Storage[storage].save(path, data, function(err, stat) {
                     if (err && err.revConflict) {
                         logger.info('Save rev conflict, reloading from storage');
                         loadFromStorageAndMerge();
@@ -520,6 +533,10 @@ var AppModel = Backbone.Model.extend({
                     } else {
                         if (storage === 'file') {
                             Storage.cache.remove(fileInfo.id);
+                        }
+                        if (stat && stat.rev) {
+                            logger.info('Update rev in file info');
+                            fileInfo.set('rev', stat.rev);
                         }
                         file.set('syncDate', new Date());
                         logger.info('Save to storage complete, update sync date');
@@ -542,7 +559,10 @@ var AppModel = Backbone.Model.extend({
                 logger.info('Stat file');
                 Storage[storage].stat(path, function (err, stat) {
                     if (err) {
-                        if (file.get('dirty')) {
+                        if (err.notFound) {
+                            logger.info('File does not exist in storage, creating');
+                            saveToCacheAndStorage();
+                        } else if (file.get('dirty')) {
                             logger.info('Stat error, dirty, save to cache', err);
                             file.getData(function (data) {
                                 if (data) {

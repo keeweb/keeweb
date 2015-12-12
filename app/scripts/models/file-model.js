@@ -30,7 +30,8 @@ var FileModel = Backbone.Model.extend({
         keyFileChanged: false,
         syncing: false,
         syncError: null,
-        syncDate: null
+        syncDate: null,
+        cacheId: null
     },
 
     db: null,
@@ -170,6 +171,7 @@ var FileModel = Backbone.Model.extend({
                     try {
                         this.db.merge(remoteDb);
                         this.set('dirty', true);
+                        this.reload();
                     } catch (e) {
                         logger.error('File merge error', e);
                         return callback(e);

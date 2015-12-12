@@ -37,6 +37,7 @@ var SettingsAboutView = Backbone.View.extend({
     appModel: null,
 
     initialize: function() {
+        this.listenTo(this.model, 'change', this.render);
     },
 
     render: function() {
@@ -122,12 +123,7 @@ var SettingsAboutView = Backbone.View.extend({
                 return;
             }
         }
-        this.appModel.syncFile(this.model, arg, function(err) {
-            if (!err) {
-                that.passwordChanged = false;
-            }
-            that.render();
-        });
+        this.appModel.syncFile(this.model, arg);
     },
 
     saveDefault: function() {
@@ -164,7 +160,6 @@ var SettingsAboutView = Backbone.View.extend({
                 } else {
                     var blob = new Blob([data], {type: 'application/octet-stream'});
                     FileSaver.saveAs(blob, fileName);
-                    that.passwordChanged = false;
                 }
             });
         }
@@ -179,12 +174,41 @@ var SettingsAboutView = Backbone.View.extend({
 
     saveToDropbox: function() {
         var that = this;
+        this.model.set('syncing', true);
         DropboxLink.authenticate(function(err) {
+            that.model.set('syncing', false);
             if (err) {
-                that.render();
                 return;
             }
-            that.save({ storage: 'dropbox' });
+            if (that.model.get('storage') === 'dropbox') {
+                that.save();
+            } else {
+                that.model.set('syncing', true);
+                DropboxLink.getFileList(function(err, files) {
+                    that.model.set('syncing', false);
+                    if (!files) { return; }
+                    var expName = that.model.get('name').toLowerCase();
+                    var existingPath = files.filter(function(f) { return f.toLowerCase().replace('/', '') === expName; })[0];
+                    if (existingPath) {
+                        Alerts.yesno({
+                            icon: 'dropbox',
+                            header: 'Already exists',
+                            body: 'File ' + that.model.escape('name') + ' already exists in your Dropbox. Overwrite it?',
+                            success: function() {
+                                that.model.set('syncing', true);
+                                DropboxLink.deleteFile(existingPath, function(err) {
+                                    that.model.set('syncing', false);
+                                    if (!err) {
+                                        that.save({storage: 'dropbox'});
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        that.save({storage: 'dropbox'});
+                    }
+                });
+            }
         });
     },
 
@@ -261,20 +285,16 @@ var SettingsAboutView = Backbone.View.extend({
     },
 
     focusMasterPass: function(e) {
-        if (!this.passwordChanged) {
-            e.target.value = '';
-        }
+        e.target.value = '';
         e.target.setAttribute('type', 'text');
     },
 
     blurMasterPass: function(e) {
         if (!e.target.value) {
-            this.passwordChanged = false;
             this.model.resetPassword();
             e.target.value = PasswordGenerator.present(this.model.get('passwordLength'));
             this.$el.find('.settings__file-master-pass-warning').hide();
         } else {
-            this.passwordChanged = true;
             this.model.setPassword(kdbxweb.ProtectedValue.fromString(e.target.value));
             if (!this.model.get('created')) {
                 this.$el.find('.settings__file-master-pass-warning').show();

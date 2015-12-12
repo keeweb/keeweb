@@ -341,7 +341,7 @@ var AppView = Backbone.View.extend({
                 errorFiles.push(file.get('name'));
             }
             if (--pendingCallbacks === 0) {
-                if (errorFiles.length) {
+                if (errorFiles.length && that.model.files.hasDirtyFiles()) {
                     if (!Alerts.alertDisplayed) {
                         Alerts.error({
                             header: 'Save Error',
