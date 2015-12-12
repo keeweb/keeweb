@@ -218,7 +218,7 @@ var AppView = Backbone.View.extend({
     },
 
     beforeUnload: function(e) {
-        if (this.model.files.hasUnsavedFiles()) {
+        if (this.model.files.hasDirtyFiles()) {
             if (Launcher && !Launcher.exitRequested) {
                 if (!this.exitAlertShown) {
                     var that = this;

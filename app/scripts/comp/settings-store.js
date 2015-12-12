@@ -1,7 +1,10 @@
 'use strict';
 
 var Launcher = require('./launcher'),
-    StringUtil = require('../util/string-util');
+    StringUtil = require('../util/string-util'),
+    Logger = require('../util/logger');
+
+var logger = new Logger('settings');
 
 var SettingsStore = {
     fileName: function(key) {
@@ -20,7 +23,7 @@ var SettingsStore = {
                 return data ? JSON.parse(data) : undefined;
             }
         } catch (e) {
-            console.error('Error loading ' + key, e);
+            logger.error('Error loading ' + key, e);
         }
         return null;
     },
@@ -33,7 +36,7 @@ var SettingsStore = {
                 localStorage[StringUtil.camelCase(key)] = JSON.stringify(data);
             }
         } catch (e) {
-            console.error('Error saving ' + key, e);
+            logger.error('Error saving ' + key, e);
         }
     }
 };

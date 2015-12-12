@@ -1,6 +1,9 @@
 'use strict';
 
-var Launcher = require('./launcher');
+var Launcher = require('./launcher'),
+    Logger = require('../util/logger');
+
+var logger = new Logger('transport');
 
 var Transport = {
     httpGet: function(config) {
@@ -11,7 +14,7 @@ var Transport = {
             if (fs.existsSync(tmpFile)) {
                 try {
                     if (config.cache && fs.statSync(tmpFile).size > 0) {
-                        console.log('File already downloaded ' + config.url);
+                        logger.info('File already downloaded ' + config.url);
                         return config.success(tmpFile);
                     } else {
                         fs.unlinkSync(tmpFile);
@@ -22,11 +25,11 @@ var Transport = {
             }
         }
         var proto = config.url.split(':')[0];
-        console.log('GET ' + config.url);
+        logger.info('GET ' + config.url);
         var opts = Launcher.req('url').parse(config.url);
         opts.headers = { 'User-Agent': navigator.userAgent };
         Launcher.req(proto).get(opts, function(res) {
-            console.log('Response from ' + config.url + ': ' + res.statusCode);
+            logger.info('Response from ' + config.url + ': ' + res.statusCode);
             if (res.statusCode === 200) {
                 if (config.file) {
                     var file = fs.createWriteStream(tmpFile);
@@ -57,7 +60,7 @@ var Transport = {
                 config.error('HTTP status ' + res.statusCode);
             }
         }).on('error', function(e) {
-            console.error('Cannot GET ' + config.url, e);
+            logger.error('Cannot GET ' + config.url, e);
             if (tmpFile) {
                 fs.unlink(tmpFile);
             }

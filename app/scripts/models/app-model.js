@@ -11,7 +11,8 @@ var Backbone = require('backbone'),
     FileModel = require('./file-model'),
     FileInfoModel = require('./file-info-model'),
     Storage = require('../storage'),
-    IdGenerator = require('../util/id-generator');
+    IdGenerator = require('../util/id-generator'),
+    Logger = require('../util/logger');
 
 var AppModel = Backbone.Model.extend({
     defaults: {},
@@ -30,6 +31,8 @@ var AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'add-filter', this.addFilter);
         this.listenTo(Backbone, 'set-sort', this.setSort);
         this.listenTo(Backbone, 'empty-trash', this.emptyTrash);
+
+        this.appLogger = new Logger('app');
     },
 
     addFile: function(file) {
@@ -244,30 +247,40 @@ var AppModel = Backbone.Model.extend({
     },
 
     openFile: function(params, callback) {
+        var logger = new Logger('open', params.name);
+        logger.info('File open request');
         var that = this;
         var fileInfo = params.id ? this.fileInfos.get(params.id) : this.fileInfos.getMatch(params.storage, params.name, params.path);
         if (fileInfo && fileInfo.get('modified')) {
             // modified offline, cannot overwrite: load from cache
+            logger.info('Open file from cache because it is modified');
             this.openFileFromCache(params, callback, fileInfo);
         } else if (params.fileData) {
             // has user content: load it
+            logger.info('Open file from supplied content');
             this.openFileWithData(params, callback, fileInfo, params.fileData, true);
         } else if (fileInfo && fileInfo.get('rev') === params.rev) {
             // already latest in cache: use it
+            logger.info('Open file from cache because it is latest');
             this.openFileFromCache(params, callback, fileInfo);
         } else {
             // try to load from storage and update cache
+            logger.info('Open file from storage', params.storage);
             var storage = Storage[params.storage];
             var storageLoad = function() {
+                logger.info('Load from storage');
                 storage.load(params.path, function(err, data, stat) {
                     if (err) {
                         // failed to load from storage: fallback to cache if we can
                         if (fileInfo) {
+                            logger.info('Open file from cache because of storage load error', err);
                             that.openFileFromCache(params, callback, fileInfo);
                         } else {
+                            logger.info('Storage load error', err);
                             callback(err);
                         }
                     } else {
+                        logger.info('Open file from content loaded from storage');
                         params.fileData = data;
                         params.rev = stat && stat.rev || null;
                         that.openFileWithData(params, callback, fileInfo, data, true);
@@ -276,12 +289,16 @@ var AppModel = Backbone.Model.extend({
             };
             var cacheRev = fileInfo && fileInfo.get('rev') || null;
             if (cacheRev && storage.stat) {
+                logger.info('Stat file');
                 storage.stat(params.path, function(err, stat) {
                     if (fileInfo && (err || stat && stat.rev === cacheRev)) {
+                        logger.info('Open file from cache because it is latest or stat error', err);
                         that.openFileFromCache(params, callback, fileInfo);
                     } else if (stat) {
+                        logger.info('Open file from storage');
                         storageLoad();
                     } else {
+                        logger.info('Stat error', err);
                         callback(err);
                     }
                 });
@@ -294,6 +311,7 @@ var AppModel = Backbone.Model.extend({
     openFileFromCache: function(params, callback, fileInfo) {
         var that = this;
         Storage.cache.load(fileInfo.id, function(err, data) {
+            new Logger('open', params.name).info('Loaded file from cache', params.name, err);
             if (err) {
                 callback(err);
             } else {
@@ -303,6 +321,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     openFileWithData: function(params, callback, fileInfo, data, updateCacheOnSuccess) {
+        var logger = new Logger('open', params.name);
         var file = new FileModel({
             name: params.name,
             storage: params.storage,
@@ -319,8 +338,10 @@ var AppModel = Backbone.Model.extend({
             }
             if (fileInfo && fileInfo.get('modified')) {
                 if (fileInfo.get('editState')) {
+                    logger.info('Loaded local edit state');
                     file.setLocalEditState(fileInfo.get('editState'));
                 }
+                logger.info('Mark file as modified and schedule sync');
                 file.set('modified', true);
                 setTimeout(that.syncFile.bind(that, file), 0);
             }
@@ -329,6 +350,7 @@ var AppModel = Backbone.Model.extend({
             }
             var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
             if (updateCacheOnSuccess && params.storage !== 'file') {
+                logger.info('Save loaded file to cache');
                 Storage.cache.save(cacheId, params.fileData, function(err) {
                     if (err && !params.storage) {
                         return;
@@ -344,6 +366,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     addToLastOpenFiles: function(file, id, rev) {
+        this.appLogger.debug('Add last open file', id, file.get('name'), file.get('storage'), file.get('path'));
         var dt = new Date();
         var fileInfo = new FileInfoModel({
             id: id,
@@ -378,8 +401,13 @@ var AppModel = Backbone.Model.extend({
         if (!options) {
             options = {};
         }
+        var logger = new Logger('sync', file.get('name'));
+        var storage = options.storage || file.get('storage');
+        var path = options.path || file.get('path');
+        logger.info('Sync started', storage, path, options);
         var fileInfo = this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
         if (!fileInfo) {
+            logger.info('Create new file info');
             var dt = new Date();
             fileInfo = new FileInfoModel({
                 id: IdGenerator.uuid(),
@@ -393,11 +421,10 @@ var AppModel = Backbone.Model.extend({
                 openDate: dt
             });
         }
-        var storage = options.storage || file.get('storage');
-        var path = options.path || file.get('path');
         file.setSyncProgress();
         var complete = function(err, savedToCache) {
             if (!err) { savedToCache = true; }
+            logger.info('Sync finished', savedToCache ? 'saved to cache' : '', err);
             file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
             fileInfo.set({
                 storage: storage,
@@ -414,103 +441,132 @@ var AppModel = Backbone.Model.extend({
         };
         if (!storage) {
             if (!file.get('modified')) {
+                logger.info('Local, not modified');
                 return complete();
             }
+            logger.info('Local, save to cache');
             file.getData(function(data, err) {
                 if (err) { return complete(err); }
                 Storage.cache.save(fileInfo.id, data, function(err) {
+                    logger.info('Saved to cache', err);
                     complete(err);
                 });
             });
         } else {
             var maxLoadLoops = 3, loadLoops = 0;
             var loadFromStorageAndMerge = function() {
+                logger.info('Load from storage, attempt ' + loadLoops);
                 if (++loadLoops === maxLoadLoops) {
                     return complete('Too many load attempts, please try again later');
                 }
                 Storage[storage].load(path, function(err, data, stat) {
+                    logger.info('Load from storage', stat, err);
                     if (err) { return complete(err); }
                     file.mergeOrUpdate(data, function(err) {
+                        logger.info('Merge complete', err);
                         if (err) { return complete(err); }
                         if (stat && stat.rev) {
+                            logger.info('Update rev');
                             fileInfo.set('rev', stat.rev);
                         }
                         file.set('syncDate', new Date());
                         if (file.get('modified')) {
+                            logger.info('Updated sync date, saving modified file to cache and storage');
                             saveToCacheAndStorage();
                         } else if (file.get('dirty') && storage !== 'file') {
+                            logger.info('Saving not modified dirty file to cache');
                             Storage.cache.save(fileInfo.id, data, function (err) {
                                 if (err) { return complete(err); }
                                 file.set('dirty', false);
+                                logger.info('Complete, remove dirty flag');
                                 complete();
                             });
                         } else {
+                            logger.info('Complete, no changes');
                             complete();
                         }
                     });
                 });
             };
             var saveToCacheAndStorage = function() {
+                logger.info('Save to cache and storage');
                 file.getData(function(data, err) {
                     if (err) { return complete(err); }
                     if (!file.get('dirty') || storage === 'file') {
+                        logger.info('Save to storage, skip cache because not dirty or file storage');
                         saveToStorage(data);
                     } else {
+                        logger.info('Saving to cache');
                         Storage.cache.save(fileInfo.id, data, function (err) {
                             if (err) { return complete(err); }
                             file.set('dirty', false);
+                            logger.info('Saved to cache, saving to storage');
                             saveToStorage(data);
                         });
                     }
                 });
             };
             var saveToStorage = function(data) {
+                logger.info('Save data to storage');
                 Storage[storage].save(path, data, function(err) {
                     if (err && err.revConflict) {
+                        logger.info('Save rev conflict, reloading from storage');
                         loadFromStorageAndMerge();
                     } else if (err) {
+                        logger.info('Error saving data to storage');
                         complete(err);
                     } else {
                         if (storage === 'file') {
                             Storage.cache.remove(fileInfo.id);
                         }
                         file.set('syncDate', new Date());
+                        logger.info('Save to storage complete, update sync date');
                         complete();
                     }
                 }, fileInfo.get('rev'));
             };
             if (options.reload) {
+                logger.info('Saved to cache');
                 loadFromStorageAndMerge();
             } else if (storage === 'file') {
                 if (file.get('modified')) {
+                    logger.info('Save modified file to storage');
                     saveToCacheAndStorage();
                 } else {
+                    logger.info('Skip not modified file');
                     complete();
                 }
             } else {
+                logger.info('Stat file');
                 Storage[storage].stat(path, function (err, stat) {
                     if (err) {
                         if (file.get('dirty')) {
+                            logger.info('Stat error, dirty, save to cache', err);
                             file.getData(function (data) {
                                 if (data) {
                                     Storage.cache.save(fileInfo.id, data, function (e) {
                                         if (!e) {
                                             file.set('dirty', false);
                                         }
+                                        logger.info('Saved to cache, exit with error', err);
                                         complete(err);
                                     });
                                 }
                             });
                         } else {
+                            logger.info('Stat error, not dirty', err);
                             complete(err);
                         }
                     } else if (stat.rev === fileInfo.get('rev')) {
                         if (file.get('modified')) {
+                            logger.info('Stat found same version, modified, saving to cache and storage');
                             saveToCacheAndStorage();
                         } else {
+                            logger.info('Stat found same version, not modified');
                             complete();
                         }
                     } else {
+                        logger.info('Found new version, loading from storage');
                         loadFromStorageAndMerge();
                     }
                 });

@@ -8,6 +8,7 @@ var Backbone = require('backbone'),
     Storage = require('../../storage'),
     Links = require('../../const/links'),
     DropboxLink = require('../../comp/dropbox-link'),
+    Format = require('../../util/format'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
 
@@ -48,6 +49,8 @@ var SettingsAboutView = Backbone.View.extend({
             path: this.model.get('path'),
             storage: this.model.get('storage'),
             syncing: this.model.get('syncing'),
+            syncError: this.model.get('syncError'),
+            syncDate: Format.dtStr(this.model.get('syncDate')),
             password: PasswordGenerator.present(this.model.get('passwordLength')),
             defaultUser: this.model.get('defaultUser'),
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
@@ -120,9 +123,7 @@ var SettingsAboutView = Backbone.View.extend({
             }
         }
         this.appModel.syncFile(this.model, arg, function(err) {
-            if (err) {
-                console.error('Error saving file', err);
-            } else {
+            if (!err) {
                 that.passwordChanged = false;
             }
             that.render();

@@ -3,7 +3,7 @@
     <div class="footer__db footer__db-item <%= file.get('open') ? '' : 'footer__db--dimmed' %>" data-file-id="<%= file.cid %>">
         <i class="fa fa-<%= file.get('open') ? 'unlock' : 'lock' %>"></i> <%- file.get('name') %>
         <% if (file.get('syncing')) { %><i class="fa fa-refresh fa-spin footer__db-sign"></i><% }
-           else if (file.get('syncError')) { %><i class="fa fa-circle footer__db-sign footer__db-sign--error"
+           else if (file.get('syncError')) { %><i class="fa <%= file.get('modified') ? 'fa-circle' : 'fa-circle-thin' %> footer__db-sign footer__db-sign--error"
                                                   title="Sync error: <%- file.get('syncError') %>"></i><% }
            else if (file.get('modified')) { %><i class="fa fa-circle footer__db-sign"></i><% } %>
     </div>

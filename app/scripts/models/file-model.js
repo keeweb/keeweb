@@ -4,8 +4,11 @@ var Backbone = require('backbone'),
     GroupCollection = require('../collections/group-collection'),
     GroupModel = require('./group-model'),
     IconUrl = require('../util/icon-url'),
+    Logger = require('../util/logger'),
     kdbxweb = require('kdbxweb'),
     demoFileData = require('base64!../../resources/Demo.kdbx');
+
+var logger = new Logger('file');
 
 var FileModel = Backbone.Model.extend({
     defaults: {
@@ -56,10 +59,10 @@ var FileModel = Backbone.Model.extend({
         password = new kdbxweb.ProtectedValue(value.buffer.slice(0, byteLength), salt.buffer.slice(0, byteLength));
         try {
             var credentials = new kdbxweb.Credentials(password, keyFileData);
-            var start = performance.now();
+            var ts = logger.ts();
             kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
                 if (err) {
-                    console.error('Error opening file', err.code, err.message, err);
+                    logger.error('Error opening file', err.code, err.message, err);
                     callback(err);
                 } else {
                     this.db = db;
@@ -68,13 +71,13 @@ var FileModel = Backbone.Model.extend({
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                     }
-                    console.log('Opened file ' + this.get('name') + ': ' + Math.round(performance.now() - start) + 'ms, ' +
+                    logger.info('Opened file ' + this.get('name') + ': ' + logger.ts(ts) + ', ' +
                         db.header.keyEncryptionRounds + ' rounds, ' + Math.round(fileData.byteLength / 1024) + ' kB');
                     callback();
                 }
             }).bind(this));
         } catch (e) {
-            console.error('Error opening file', e, e.code, e.message, e);
+            logger.error('Error opening file', e, e.code, e.message, e);
             callback(e);
         }
     },
@@ -161,14 +164,14 @@ var FileModel = Backbone.Model.extend({
     mergeOrUpdate: function(fileData, callback) {
         kdbxweb.Kdbx.load(fileData, this.db.credentials, (function(remoteDb, err) {
             if (err) {
-                console.error('Error opening file to merge', err.code, err.message, err);
+                logger.error('Error opening file to merge', err.code, err.message, err);
             } else {
                 if (this.get('modified')) {
                     try {
                         this.db.merge(remoteDb);
                         this.set('dirty', true);
                     } catch (e) {
-                        console.error('File merge error', e);
+                        logger.error('File merge error', e);
                         return callback(e);
                     }
                 } else {
@@ -256,7 +259,7 @@ var FileModel = Backbone.Model.extend({
         var that = this;
         this.db.save(function(data, err) {
             if (err) {
-                console.error('Error saving file', that.get('name'), err);
+                logger.error('Error saving file', that.get('name'), err);
             }
             cb(data, err);
         });

@@ -4,7 +4,10 @@ var Backbone = require('backbone'),
     Keys = require('../const/keys'),
     Alerts = require('../comp/alerts'),
     SecureInput = require('../comp/secure-input'),
-    DropboxLink = require('../comp/dropbox-link');
+    DropboxLink = require('../comp/dropbox-link'),
+    Logger = require('../util/logger');
+
+var logger = new Logger('open-view');
 
 var OpenView = Backbone.View.extend({
     template: require('templates/open.html'),
@@ -383,7 +386,7 @@ var OpenView = Backbone.View.extend({
         this.$el.toggleClass('open--opening', false);
         this.inputEl.removeAttr('disabled').toggleClass('input--error', !!err);
         if (err) {
-            console.error('Error opening file', err);
+            logger.error('Error opening file', err);
             this.inputEl.focus();
             this.inputEl[0].selectionStart = 0;
             this.inputEl[0].selectionEnd = this.inputEl.val().length;

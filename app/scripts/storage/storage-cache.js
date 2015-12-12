@@ -1,5 +1,8 @@
 'use strict';
 
+var Logger = require('../util/logger');
+
+var logger = new Logger('storage-cache');
 var idb = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
 var StorageCache = {
@@ -17,7 +20,7 @@ var StorageCache = {
         try {
             var req = idb.open('FilesCache');
             req.onerror = function (e) {
-                console.error('Error opening indexed db', e);
+                logger.error('Error opening indexed db', e);
                 that.errorOpening = e;
                 if (callback) { callback(e); }
             };
@@ -30,69 +33,78 @@ var StorageCache = {
                 db.createObjectStore('files');
             };
         } catch (e) {
-            console.error('Error opening indexed db', e);
+            logger.error('Error opening indexed db', e);
             if (callback) { callback(e); }
         }
     },
 
     save: function(id, data, callback) {
+        logger.debug('Save', id);
         this.init((function(err) {
             if (err) {
                 return callback && callback(err);
             }
             try {
+                var ts = logger.ts();
                 var req = this.db.transaction(['files'], 'readwrite').objectStore('files').put(data, id);
                 req.onsuccess = function () {
+                    logger.debug('Saved', id, logger.ts(ts));
                     if (callback) { callback(); }
                 };
                 req.onerror = function () {
-                    console.error('Error saving to cache', id, req.error);
+                    logger.error('Error saving to cache', id, req.error);
                     if (callback) { callback(req.error); }
                 };
             } catch (e) {
-                console.error('Error saving to cache', id, e);
+                logger.error('Error saving to cache', id, e);
                 if (callback) { callback(e); }
             }
         }).bind(this));
     },
 
     load: function(id, callback) {
+        logger.debug('Load', id);
         this.init((function(err) {
             if (err) {
                 return callback && callback(err, null);
             }
             try {
+                var ts = logger.ts();
                 var req = this.db.transaction(['files'], 'readonly').objectStore('files').get(id);
                 req.onsuccess = function () {
+                    logger.debug('Loaded', id, logger.ts(ts));
                     if (callback) { callback(null, req.result); }
                 };
                 req.onerror = function () {
-                    console.error('Error loading from cache', id, req.error);
+                    logger.error('Error loading from cache', id, req.error);
                     if (callback) { callback(req.error); }
                 };
             } catch (e) {
-                console.error('Error loading from cache', id, e);
+                logger.error('Error loading from cache', id, e);
                 if (callback) { callback(e, null); }
             }
         }).bind(this));
     },
 
     remove: function(id, callback) {
+        logger.debug('Remove', id);
         this.init((function(err) {
             if (err) {
                 return callback && callback(err);
             }
             try {
+                var ts = logger.ts();
                 var req = this.db.transaction(['files'], 'readwrite').objectStore('files').delete(id);
                 req.onsuccess = function () {
+                    logger.debug('Removed', id, logger.ts(ts));
                     if (callback) { callback(); }
                 };
                 req.onerror = function () {
-                    console.error('Error removing from cache', id, req.error);
+                    logger.error('Error removing from cache', id, req.error);
                     if (callback) { callback(req.error); }
                 };
             } catch(e) {
-                console.error('Error removing from cache', id, e);
+                logger.error('Error removing from cache', id, e);
                 if (callback) { callback(e); }
             }
         }).bind(this));
