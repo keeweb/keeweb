@@ -170,16 +170,15 @@ var FileModel = Backbone.Model.extend({
                 if (this.get('modified')) {
                     try {
                         this.db.merge(remoteDb);
-                        this.set('dirty', true);
-                        this.reload();
                     } catch (e) {
                         logger.error('File merge error', e);
                         return callback(e);
                     }
                 } else {
                     this.db = remoteDb;
-                    this.reload();
                 }
+                this.set('dirty', true);
+                this.reload();
             }
             callback(err);
         }).bind(this));
