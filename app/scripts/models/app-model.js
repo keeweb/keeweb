@@ -360,13 +360,14 @@ var AppModel = Backbone.Model.extend({
                 logger.info('Save loaded file to cache');
                 Storage.cache.save(cacheId, params.fileData);
             }
-            that.addToLastOpenFiles(file, params.rev);
+            var rev = params.rev || fileInfo && fileInfo.get('rev');
+            that.addToLastOpenFiles(file, rev);
             that.addFile(file);
         });
     },
 
     addToLastOpenFiles: function(file, rev) {
-        this.appLogger.debug('Add last open file', file.get('cacheId'), file.get('name'), file.get('storage'), file.get('path'));
+        this.appLogger.debug('Add last open file', file.get('cacheId'), file.get('name'), file.get('storage'), file.get('path'), rev);
         var dt = new Date();
         var fileInfo = new FileInfoModel({
             id: file.get('cacheId'),

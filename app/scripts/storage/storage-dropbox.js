@@ -40,7 +40,7 @@ var StorageDropbox = {
         logger.debug('Stat', path);
         var ts = logger.ts();
         DropboxLink.stat(path, function(err, stat) {
-            if (stat.isRemoved) {
+            if (stat && stat.isRemoved) {
                 err = new Error('File removed');
                 err.notFound = true;
             }
