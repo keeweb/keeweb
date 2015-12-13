@@ -67,7 +67,7 @@ var FileModel = Backbone.Model.extend({
                     callback(err);
                 } else {
                     this.db = db;
-                    this.readModel(this.get('name'));
+                    this.readModel();
                     this.setOpenFile({ passwordLength: len });
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
@@ -87,6 +87,7 @@ var FileModel = Backbone.Model.extend({
         var password = kdbxweb.ProtectedValue.fromString('');
         var credentials = new kdbxweb.Credentials(password);
         this.db = kdbxweb.Kdbx.create(credentials, name);
+        this.set('name', name);
         this.readModel();
         this.set({ open: true, created: true, name: name });
     },
@@ -97,8 +98,9 @@ var FileModel = Backbone.Model.extend({
         var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
         kdbxweb.Kdbx.load(demoFile, credentials, (function(db) {
             this.db = db;
+            this.set('name', 'Demo');
             this.readModel();
-            this.setOpenFile({passwordLength: 4, demo: true, name: 'Demo' });
+            this.setOpenFile({passwordLength: 4, demo: true});
             callback();
         }).bind(this));
     },
@@ -117,7 +119,7 @@ var FileModel = Backbone.Model.extend({
         this._oldKeyChangeDate = this.db.meta.keyChanged;
     },
 
-    readModel: function(topGroupTitle) {
+    readModel: function() {
         var groups = new GroupCollection();
         this.set({
             id: this.db.getDefaultGroup().uuid.toString(),
@@ -135,9 +137,7 @@ var FileModel = Backbone.Model.extend({
             } else {
                 groupModel = GroupModel.fromGroup(group, this);
             }
-            if (topGroupTitle) {
-                groupModel.set({title: topGroupTitle});
-            }
+            groupModel.set({title: this.get('name')});
             groups.add(groupModel);
         }, this);
         this.buildObjectMap();
@@ -158,7 +158,7 @@ var FileModel = Backbone.Model.extend({
 
     reload: function() {
         this.buildObjectMap();
-        this.readModel(this.get('name'));
+        this.readModel();
         this.trigger('reload', this);
     },
 
