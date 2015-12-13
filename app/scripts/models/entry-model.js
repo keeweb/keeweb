@@ -28,7 +28,7 @@ var EntryModel = Backbone.Model.extend({
     _fillByEntry: function() {
         var entry = this.entry;
         this.set({id: entry.uuid.id}, {silent: true});
-        this.fileName = this.file.db.meta.name;
+        this.fileName = this.file.get('name');
         this.title = entry.fields.Title || '';
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
         this.notes = entry.fields.Notes || '';

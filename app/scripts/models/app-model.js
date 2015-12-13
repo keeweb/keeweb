@@ -265,7 +265,7 @@ var AppModel = Backbone.Model.extend({
             // no storage: load from cache as main storage
             logger.info('Open file from cache as main storage');
             this.openFileFromCache(params, callback, fileInfo);
-        } else if (fileInfo && fileInfo.get('rev') === params.rev) {
+        } else if (fileInfo && fileInfo.get('rev') === params.rev && fileInfo.get('storage') !== 'file') {
             // already latest in cache: use it
             logger.info('Open file from cache because it is latest');
             this.openFileFromCache(params, callback, fileInfo);
@@ -355,28 +355,21 @@ var AppModel = Backbone.Model.extend({
                 file.set('syncDate', fileInfo.get('syncDate'));
             }
             var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
+            file.set('cacheId', cacheId);
             if (updateCacheOnSuccess && params.storage !== 'file') {
                 logger.info('Save loaded file to cache');
-                Storage.cache.save(cacheId, params.fileData, function(err) {
-                    if (err && !params.storage) {
-                        return;
-                    }
-                    that.addToLastOpenFiles(file, cacheId, params.rev);
-                });
+                Storage.cache.save(cacheId, params.fileData);
             }
-            if (params.storage === 'file') {
-                that.addToLastOpenFiles(file, cacheId, params.rev);
-            }
-            file.set('cacheId', cacheId);
+            that.addToLastOpenFiles(file, params.rev);
             that.addFile(file);
         });
     },
 
-    addToLastOpenFiles: function(file, id, rev) {
-        this.appLogger.debug('Add last open file', id, file.get('name'), file.get('storage'), file.get('path'));
+    addToLastOpenFiles: function(file, rev) {
+        this.appLogger.debug('Add last open file', file.get('cacheId'), file.get('name'), file.get('storage'), file.get('path'));
         var dt = new Date();
         var fileInfo = new FileInfoModel({
-            id: id,
+            id: file.get('cacheId'),
             name: file.get('name'),
             storage: file.get('storage'),
             path: file.get('path'),
@@ -386,7 +379,7 @@ var AppModel = Backbone.Model.extend({
             syncDate: file.get('syncDate') || dt,
             openDate: dt
         });
-        this.fileInfos.remove(id);
+        this.fileInfos.remove(file.get('cacheId'));
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
     },
@@ -548,7 +541,7 @@ var AppModel = Backbone.Model.extend({
                 logger.info('Saved to cache');
                 loadFromStorageAndMerge();
             } else if (storage === 'file') {
-                if (file.get('modified')) {
+                if (file.get('modified') || file.get('path') !== path) {
                     logger.info('Save modified file to storage');
                     saveToCacheAndStorage();
                 } else {

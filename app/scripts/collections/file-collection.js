@@ -19,7 +19,7 @@ var FileCollection = Backbone.Collection.extend({
     },
 
     getByName: function(name) {
-        return this.find(function(file) { return file.get('name') === name; });
+        return this.find(function(file) { return file.get('name').toLowerCase() === name.toLowerCase(); });
     },
 
     getById: function(id) {

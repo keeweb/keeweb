@@ -26,6 +26,7 @@ var StorageFileCache = {
                 fs.mkdirSync(path);
             }
             this.path = path;
+            callback();
         } catch (e) {
             logger.error('Error opening local offline storage', e);
             if (callback) { callback(e); }

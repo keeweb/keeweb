@@ -347,6 +347,7 @@ var FileModel = Backbone.Model.extend({
         this.set('name', name);
         this.get('groups').first().setName(name);
         this.setModified();
+        this.reload();
     },
 
     setDefaultUser: function(defaultUser) {

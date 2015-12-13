@@ -33,8 +33,8 @@ var FileInfoCollection = Backbone.Collection.extend({
         });
     },
 
-    getByName: function() {
-        return this.find(function(file) { return file.get('name') === name; });
+    getByName: function(name) {
+        return this.find(function(file) { return file.get('name').toLowerCase() === name.toLowerCase(); });
     }
 });
 

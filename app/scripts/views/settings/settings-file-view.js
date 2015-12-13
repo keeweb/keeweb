@@ -37,7 +37,7 @@ var SettingsAboutView = Backbone.View.extend({
     appModel: null,
 
     initialize: function() {
-        this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', this.render);
     },
 
     render: function() {
@@ -96,7 +96,6 @@ var SettingsAboutView = Backbone.View.extend({
                 header: 'Empty password',
                 body: 'Saving database with empty password makes it completely unprotected. Do you really want to do it?',
                 success: function() {
-                    that.model.setPassword(kdbxweb.ProtectedValue.fromString(''));
                     continueCallback();
                 },
                 cancel: function() {
