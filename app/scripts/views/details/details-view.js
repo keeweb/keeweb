@@ -115,7 +115,7 @@ var DetailsView = Backbone.View.extend({
             value: function() { return model.notes; } } }));
         this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: 'Tags', tags: this.appModel.tags,
             value: function() { return model.tags; } } }));
-        this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: 'Expires', empty: 'Never', lessThanNow: '(expired)',
+        this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: 'Expires', lessThanNow: '(expired)',
             value: function() { return model.expires; } } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: 'File',
             value: function() { return model.fileName; } } }));
