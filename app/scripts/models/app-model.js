@@ -118,7 +118,7 @@ var AppModel = Backbone.Model.extend({
 
     closeFile: function(file) {
         this.files.remove(file);
-        this._tagsChanged();
+        this.updateTags();
         this.menu.groupsSection.removeByFile(file);
         this.menu.filesSection.removeByFile(file);
         this.refresh();
