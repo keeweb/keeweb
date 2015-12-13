@@ -2,9 +2,11 @@
 
 var Format = require('../util/format');
 
-var EntryPresenter = function(descField) {
+var EntryPresenter = function(descField, noColor, activeEntryId) {
     this.entry = null;
     this.descField = descField;
+    this.noColor = noColor || '';
+    this.activeEntryId = activeEntryId;
 };
 
 EntryPresenter.prototype = {
@@ -19,12 +21,12 @@ EntryPresenter.prototype = {
     get id() { return this.entry ? this.entry.id : this.group.get('id'); },
     get icon() { return this.entry ? this.entry.icon : (this.group.get('icon') || 'folder'); },
     get customIcon() { return this.entry ? this.entry.customIcon : undefined; },
-    get color() { return this.entry ? this.entry.color : undefined; },
+    get color() { return this.entry ? (this.entry.color || (this.entry.customIcon ? this.noColor : undefined)) : undefined; },
     get title() { return this.entry ? this.entry.title : this.group.get('title'); },
     get notes() { return this.entry ? this.entry.notes : undefined; },
     get url() { return this.entry ? this.entry.url : undefined; },
     get user() { return this.entry ? this.entry.user : undefined; },
-    get active() { return this.entry ? this.entry.active : this.group.active; },
+    get active() { return this.entry ? this.entry.id === this.activeEntryId : this.group.active; },
     get created() { return this.entry ? Format.dtStr(this.entry.created) : undefined; },
     get updated() { return this.entry ? Format.dtStr(this.entry.updated) : undefined; },
     get expired() { return this.entry ? this.entry.expired : false; },

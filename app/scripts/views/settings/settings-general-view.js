@@ -21,7 +21,9 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-clipboard': 'changeClipboard',
         'change .settings__general-auto-save': 'changeAutoSave',
         'change .settings__general-minimize': 'changeMinimize',
+        'change .settings__general-lock-on-minimize': 'changeLockOnMinimize',
         'change .settings__general-table-view': 'changeTableView',
+        'change .settings__general-colorful-icons': 'changeColorfulIcons',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
@@ -30,9 +32,9 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     allThemes: {
-        d: 'default',
-        fb: 'flat blue',
-        wh: 'white'
+        fb: 'Flat blue',
+        db: 'Dark brown',
+        wh: 'White'
     },
 
     initialize: function() {
@@ -52,7 +54,8 @@ var SettingsGeneralView = Backbone.View.extend({
             minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: !!Launcher,
-            canMinimizeOnClose: Launcher && Launcher.canMinimize(),
+            canMinimize: Launcher && Launcher.canMinimize(),
+            lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
             tableView: AppSettingsModel.instance.get('tableView'),
             canSetTableView: FeatureDetector.isDesktop(),
             autoUpdate: Updater.getAutoUpdateType(),
@@ -61,7 +64,8 @@ var SettingsGeneralView = Backbone.View.extend({
             updateReady: UpdateModel.instance.get('updateStatus') === 'ready',
             updateFound: UpdateModel.instance.get('updateStatus') === 'found',
             updateManual: UpdateModel.instance.get('updateManual'),
-            releaseNotesLink: Links.ReleaseNotes
+            releaseNotesLink: Links.ReleaseNotes,
+            colorfulIcons: AppSettingsModel.instance.get('colorfulIcons')
         });
     },
 
@@ -138,9 +142,20 @@ var SettingsGeneralView = Backbone.View.extend({
         AppSettingsModel.instance.set('minimizeOnClose', minimizeOnClose);
     },
 
+    changeLockOnMinimize: function(e) {
+        var lockOnMinimize = e.target.checked || false;
+        AppSettingsModel.instance.set('lockOnMinimize', lockOnMinimize);
+    },
+
     changeTableView: function(e) {
         var tableView = e.target.checked || false;
         AppSettingsModel.instance.set('tableView', tableView);
+        Backbone.trigger('refresh');
+    },
+
+    changeColorfulIcons: function(e) {
+        var colorfulIcons = e.target.checked || false;
+        AppSettingsModel.instance.set('colorfulIcons', colorfulIcons);
         Backbone.trigger('refresh');
     },
 

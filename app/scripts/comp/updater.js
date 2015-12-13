@@ -6,7 +6,10 @@ var Backbone = require('backbone'),
     Launcher = require('../comp/launcher'),
     AppSettingsModel = require('../models/app-settings-model'),
     UpdateModel = require('../models/update-model'),
-    Transport = require('../comp/transport');
+    Transport = require('../comp/transport'),
+    Logger = require('../util/logger');
+
+var logger = new Logger('updater');
 
 var Updater = {
     UpdateInterval: 1000*60*60*24,
@@ -57,7 +60,7 @@ var Updater = {
             timeDiff = Math.min(Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout), this.UpdateInterval);
         }
         this.nextCheckTimeout = setTimeout(this.check.bind(this), timeDiff);
-        console.log('Next update check will happen in ' + Math.round(timeDiff / 1000) + 's');
+        logger.info('Next update check will happen in ' + Math.round(timeDiff / 1000) + 's');
         return timeDiff === this.MinUpdateTimeout;
     },
 
@@ -74,20 +77,20 @@ var Updater = {
             // additional protection from broken program logic, to ensure that auto-checks are not performed more than once an hour
             var diffMs = new Date() - this.updateCheckDate;
             if (isNaN(diffMs) || diffMs < 1000 * 60 * 60) {
-                console.error('Prevented update check; last check was performed at ' + this.updateCheckDate);
+                logger.error('Prevented update check; last check was performed at ' + this.updateCheckDate);
                 that.scheduleNextCheck();
                 return;
             }
             this.updateCheckDate = new Date();
         }
-        console.log('Checking for update...');
+        logger.info('Checking for update...');
         Transport.httpGet({
             url: Links.WebApp + 'manifest.appcache',
             utf8: true,
             success: function(data) {
                 var dt = new Date();
                 var match = data.match(/#\s*(\d+\-\d+\-\d+):v([\d+\.\w]+)/);
-                console.log('Update check: ' + (match ? match[0] : 'unknown'));
+                logger.info('Update check: ' + (match ? match[0] : 'unknown'));
                 if (!match) {
                     var errMsg = 'No version info found';
                     UpdateModel.instance.set({ status: 'error', lastCheckDate: dt, lastCheckError: errMsg });
@@ -108,7 +111,7 @@ var Updater = {
                 that.scheduleNextCheck();
                 if (prevLastVersion === UpdateModel.instance.get('lastVersion') &&
                     UpdateModel.instance.get('updateStatus') === 'ready') {
-                    console.log('Waiting for the user to apply downloaded update');
+                    logger.info('Waiting for the user to apply downloaded update');
                     return;
                 }
                 if (!startedByUser && that.getAutoUpdateType() === 'install') {
@@ -118,7 +121,7 @@ var Updater = {
                 }
             },
             error: function(e) {
-                console.error('Update check error', e);
+                logger.error('Update check error', e);
                 UpdateModel.instance.set({
                     status: 'error',
                     lastCheckDate: new Date(),
@@ -140,22 +143,22 @@ var Updater = {
     update: function(startedByUser, successCallback) {
         var ver = UpdateModel.instance.get('lastVersion');
         if (!Launcher || ver === RuntimeInfo.version) {
-            console.log('You are using the latest version');
+            logger.info('You are using the latest version');
             return;
         }
         UpdateModel.instance.set({ updateStatus: 'downloading', updateError: null });
         var that = this;
-        console.log('Downloading update', ver);
+        logger.info('Downloading update', ver);
         Transport.httpGet({
             url: Links.UpdateDesktop.replace('{ver}', ver),
             file: 'KeeWeb-' + ver + '.zip',
             cache: !startedByUser,
             success: function(filePath) {
                 UpdateModel.instance.set('updateStatus', 'extracting');
-                console.log('Extracting update file', that.UpdateCheckFiles, filePath);
+                logger.info('Extracting update file', that.UpdateCheckFiles, filePath);
                 that.extractAppUpdate(filePath, function(err) {
                     if (err) {
-                        console.error('Error extracting update', err);
+                        logger.error('Error extracting update', err);
                         UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error extracting update' });
                     } else {
                         UpdateModel.instance.set({ updateStatus: 'ready', updateError: null });
@@ -169,7 +172,7 @@ var Updater = {
                 });
             },
             error: function(e) {
-                console.error('Error downloading update', e);
+                logger.error('Error downloading update', e);
                 UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error downloading update' });
             }
         });

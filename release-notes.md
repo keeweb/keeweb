@@ -1,5 +1,17 @@
 Release notes
 -------------
+##### v0.5 (not released yet)
+2-way merge sync  
+`*` all files are now opened with offline support  
+`*` disallow opening same files twice   
+`*` default theme is now blue  
+`+` #46: option to show colorful icons  
+`+` #45: optional auto-lock on minimize  
+`+` option to disable searching for group  
+`+` #62: saving files with empty password  
+`+` #56: preserve selected entry after close  
+`-` #55: custom scrollbar issues  
+
 ##### v0.4.6 (2015-11-25)
 `-` #32: visual glitches on Windows 10  
 

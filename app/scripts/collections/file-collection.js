@@ -14,8 +14,16 @@ var FileCollection = Backbone.Collection.extend({
         return this.some(function(file) { return file.get('modified'); });
     },
 
+    hasDirtyFiles: function() {
+        return this.some(function(file) { return file.get('dirty'); });
+    },
+
     getByName: function(name) {
-        return this.find(function(file) { return file.get('name') === name; });
+        return this.find(function(file) { return file.get('name').toLowerCase() === name.toLowerCase(); });
+    },
+
+    getById: function(id) {
+        return this.find(function(file) { return file.get('id') === id; });
     }
 });
 

@@ -2,7 +2,10 @@
 
 var Backbone = require('backbone'),
     IconMap = require('../const/icon-map'),
-    Launcher = require('../comp/launcher');
+    Launcher = require('../comp/launcher'),
+    Logger = require('../util/logger');
+
+var logger = new Logger('icon-select-view');
 
 var IconSelectView = Backbone.View.extend({
     template: require('templates/icon-select.html'),
@@ -67,7 +70,7 @@ var IconSelectView = Backbone.View.extend({
             that.downloadingFavicon = false;
         };
         img.onerror = function (e) {
-            console.error('Favicon download error: ' + url, e);
+            logger.error('Favicon download error: ' + url, e);
             that.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
             that.$el.find('.icon-select__icon-download').removeClass('icon-select__icon--custom-selected');
             that.downloadingFavicon = false;

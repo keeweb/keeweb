@@ -12,7 +12,8 @@ var GrpView = Backbone.View.extend({
         'click .grp__icon': 'showIconsSelect',
         'click .grp__buttons-trash': 'moveToTrash',
         'click .grp__back-button': 'returnToApp',
-        'blur #grp__field-title': 'titleBlur'
+        'blur #grp__field-title': 'titleBlur',
+        'change #grp__check-search': 'setEnableSearching'
     },
 
     initialize: function() {
@@ -26,6 +27,7 @@ var GrpView = Backbone.View.extend({
                 title: this.model.get('title'),
                 icon: this.model.get('icon') || 'folder',
                 customIcon: this.model.get('customIcon'),
+                enableSearching: this.model.get('enableSearching') !== false,
                 readonly: this.model.get('top')
             }));
             if (!this.model.get('title')) {
@@ -105,6 +107,11 @@ var GrpView = Backbone.View.extend({
     moveToTrash: function() {
         this.model.moveToTrash();
         Backbone.trigger('select-all');
+    },
+
+    setEnableSearching: function(e) {
+        var enabled = e.target.checked;
+        this.model.setEnableSearching(enabled);
     },
 
     returnToApp: function() {

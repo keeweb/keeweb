@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     var webpack = require('webpack');
     var pkg = require('./package.json');
     var dt = new Date().toISOString().replace(/T.*/, '');
-    var electronVersion = '0.35.1';
+    var electronVersion = '0.36.0';
 
     function replaceFont(css) {
         css.walkAtRules('font-face', function (rule) {
@@ -152,11 +152,14 @@ module.exports = function(grunt) {
             manifest: {
                 options: {
                     replacements: [
-                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version },
-                        { pattern: 'vElectron', replacement: electronVersion }
+                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version }
                     ]
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
+            },
+            'manifest_html': {
+                options: { replacements: [{ pattern: '<html', replacement: '<html manifest="manifest.appcache"' }] },
+                files: { 'dist/index.html': 'dist/index.html' }
             },
             'desktop_html': {
                 options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
@@ -373,6 +376,7 @@ module.exports = function(grunt) {
         'postcss',
         'inline',
         'htmlmin',
+        'string-replace:manifest_html',
         'string-replace:manifest'
     ]);
 

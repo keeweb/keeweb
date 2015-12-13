@@ -9,6 +9,12 @@
             <input type="text" class="input-base" id="grp__field-title" value="<%- title %>" size="50" maxlength="1024"
                    required <%= readonly ? 'readonly' : '' %> />
         </div>
+        <% if (!readonly) { %>
+        <div>
+            <input type="checkbox" class="input-base" id="grp__check-search" <%= enableSearching ? 'checked' : '' %> />
+            <label for="grp__check-search">Enable searching entries in this group</label>
+        </div>
+        <% } %>
         <label>Icon:</label>
         <% if (customIcon) { %>
         <img src="<%= customIcon %>" class="grp__icon grp__icon--image" />

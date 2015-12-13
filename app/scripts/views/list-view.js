@@ -66,14 +66,15 @@ var ListView = Backbone.View.extend({
         if (this.items.length) {
             var itemTemplate = this.getItemTemplate();
             var itemsTemplate = this.getItemsTemplate();
-            var presenter = new EntryPresenter(this.getDescField());
+            var noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
+            var presenter = new EntryPresenter(this.getDescField(), noColor, this.model.activeEntryId);
             var itemsHtml = '';
             this.items.forEach(function (item) {
                 presenter.present(item);
                 itemsHtml += itemTemplate(presenter);
             }, this);
             var html = itemsTemplate({ items: itemsHtml });
-            this.itemsEl.html(html).scrollTop(0);
+            this.itemsEl.html(html);
         } else {
             this.itemsEl.html(this.emptyTemplate());
         }
@@ -115,16 +116,14 @@ var ListView = Backbone.View.extend({
     },
 
     selectPrev: function() {
-        var activeItem = this.items.getActive(),
-            ix = this.items.indexOf(activeItem);
+        var ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix > 0) {
             this.selectItem(this.items.at(ix - 1));
         }
     },
 
     selectNext: function() {
-        var activeItem = this.items.getActive(),
-            ix = this.items.indexOf(activeItem);
+        var ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix < this.items.length - 1) {
             this.selectItem(this.items.at(ix + 1));
         }
@@ -143,10 +142,10 @@ var ListView = Backbone.View.extend({
     },
 
     selectItem: function(item) {
-        this.items.setActive(item);
+        this.model.activeEntryId = item.id;
         Backbone.trigger('select-entry', item);
         this.itemsEl.find('.list__item--active').removeClass('list__item--active');
-        var itemEl = document.getElementById(item.get('id'));
+        var itemEl = document.getElementById(item.id);
         itemEl.classList.add('list__item--active');
         var listEl = this.itemsEl[0],
             itemRect = itemEl.getBoundingClientRect(),

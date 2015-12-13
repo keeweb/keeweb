@@ -1,6 +1,7 @@
 'use strict';
 
-var Backbone = require('backbone');
+var Backbone = require('backbone'),
+    SettingsStore = require('../comp/settings-store');
 
 var UpdateModel = Backbone.Model.extend({
     defaults: {
@@ -19,9 +20,9 @@ var UpdateModel = Backbone.Model.extend({
     },
 
     load: function() {
-        if (localStorage.updateInfo) {
+        var data = SettingsStore.load('update-info');
+        if (data) {
             try {
-                var data = JSON.parse(localStorage.updateInfo);
                 _.each(data, function(val, key) {
                     if (/Date$/.test(key)) {
                         data[key] = val ? new Date(val) : null;
@@ -39,7 +40,7 @@ var UpdateModel = Backbone.Model.extend({
                 delete attr[key];
             }
         });
-        localStorage.updateInfo = JSON.stringify(attr);
+        SettingsStore.save('update-info', attr);
     }
 });
 

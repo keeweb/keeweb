@@ -16,16 +16,19 @@ var EntryModel = Backbone.Model.extend({
     },
 
     setEntry: function(entry, group, file) {
-        this.set({ id: entry.uuid.id }, {silent: true});
         this.entry = entry;
         this.group = group;
         this.file = file;
+        if (this.id === entry.uuid.id) {
+            this._checkUpdatedEntry();
+        }
         this._fillByEntry();
     },
 
     _fillByEntry: function() {
         var entry = this.entry;
-        this.fileName = this.file.db.meta.name;
+        this.set({id: entry.uuid.id}, {silent: true});
+        this.fileName = this.file.get('name');
         this.title = entry.fields.Title || '';
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
         this.notes = entry.fields.Notes || '';
@@ -46,6 +49,15 @@ var EntryModel = Backbone.Model.extend({
         this._buildSearchText();
         this._buildSearchTags();
         this._buildSearchColor();
+    },
+
+    _checkUpdatedEntry: function() {
+        if (this.isJustCreated) {
+            this.isJustCreated = false;
+        }
+        if (this.unsaved && +this.updated !== +this.entry.times.lastModTime) {
+            this.unsaved = false;
+        }
     },
 
     _buildSearchText: function() {
@@ -114,7 +126,8 @@ var EntryModel = Backbone.Model.extend({
     },
 
     matches: function(filter) {
-        return (!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
+        return !filter ||
+            (!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
             (!filter.textLower || this.searchText.indexOf(filter.textLower) >= 0) &&
             (!filter.color || filter.color === true && this.searchColor || this.searchColor === filter.color);
     },
@@ -190,7 +203,7 @@ var EntryModel = Backbone.Model.extend({
     deleteHistory: function(historyEntry) {
         var ix = this.entry.history.indexOf(historyEntry);
         if (ix >= 0) {
-            this.entry.history.splice(ix, 1);
+            this.entry.removeHistory(ix);
         }
         this._fillByEntry();
     },
@@ -211,9 +224,10 @@ var EntryModel = Backbone.Model.extend({
     },
 
     discardUnsaved: function() {
-        if (this.unsaved) {
+        if (this.unsaved && this.entry.history.length) {
             this.unsaved = false;
-            var historyEntry = this.entry.history.pop();
+            var historyEntry = this.entry.history[this.entry.history.length - 1];
+            this.entry.removeHistory(this.entry.history.length - 1);
             this.entry.fields = {};
             this.entry.binaries = {};
             this.entry.copyFrom(historyEntry);
@@ -227,18 +241,13 @@ var EntryModel = Backbone.Model.extend({
             this.isJustCreated = false;
         }
         this.file.db.remove(this.entry);
-        this.group.removeEntry(this);
-        var trashGroup = this.file.getTrashGroup();
-        if (trashGroup) {
-            trashGroup.addEntry(this);
-            this.group = trashGroup;
-        }
+        this.file.reload();
     },
 
     deleteFromTrash: function() {
         this.file.setModified();
         this.file.db.move(this.entry, null);
-        this.group.removeEntry(this);
+        this.file.reload();
     },
 
     removeWithoutHistory: function() {
@@ -246,7 +255,7 @@ var EntryModel = Backbone.Model.extend({
         if (ix >= 0) {
             this.group.group.entries.splice(ix, 1);
         }
-        this.group.removeEntry(this);
+        this.file.reload();
     }
 });
 

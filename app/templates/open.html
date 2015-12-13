@@ -34,15 +34,10 @@
                 <span class="open__settings-key-file-name">key file</span>
                 <span class="open__settings-key-file-dropbox"> (from dropbox)</span>
             </div>
-            <div class="open__settings-offline hide">
-                <input type="checkbox" id="open__settings-check-offline" class="open__settings-check-offline" checked disabled />
-                <label for="open__settings-check-offline" class="open__settings-label-offline">make available offline</label>
-            </div>
-            <div class="open__settings-offline-warning hide muted-color"><i class="fa fa-exclamation-triangle"></i> saved offline version</div>
         </div>
         <div class="open__last">
             <% lastOpenFiles.forEach(function(file) { %>
-            <div class="open__last-item" data-name="<%- file.name %>">
+            <div class="open__last-item" data-id="<%- file.id %>">
                 <i class="fa fa-<%= file.icon %> open__last-item-icon"></i>
                 <span class="open__last-item-text"><%- file.name %></span>
                 <i class="fa fa-times open__last-item-icon-del"></i>

@@ -155,7 +155,7 @@ option {
 input[type=checkbox] {
   display: none;
 
-  & + label:hover:before {
+  &:not([disabled]) + label:hover:before {
     @include th {
       color: action-color();
     }

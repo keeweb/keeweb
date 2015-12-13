@@ -3,7 +3,10 @@
 var Dropbox = require('dropbox'),
     Alerts = require('./alerts'),
     Launcher = require('./launcher'),
+    Logger = require('../util/logger'),
     Links = require('../const/links');
+
+var logger = new Logger('dropbox');
 
 var DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
@@ -121,6 +124,8 @@ DropboxChooser.prototype.readFile = function(url) {
 };
 
 var DropboxLink = {
+    ERROR_CONFLICT: Dropbox.ApiError.CONFLICT,
+    ERROR_NOT_FOUND: Dropbox.ApiError.NOT_FOUND,
     _getClient: function(complete) {
         if (this._dropboxClient && this._dropboxClient.isAuthenticated()) {
             complete(null, this._dropboxClient);
@@ -151,22 +156,29 @@ var DropboxLink = {
 
     _handleUiError: function(err, alertCallback, callback) {
         if (!alertCallback) {
-            alertCallback = Alerts.error.bind(Alerts);
+            if (!Alerts.alertDisplayed) {
+                alertCallback = Alerts.error.bind(Alerts);
+            }
         }
-        console.error('Dropbox error', err);
+        logger.error('Dropbox error', err);
         switch (err.status) {
             case Dropbox.ApiError.INVALID_TOKEN:
-                Alerts.yesno({
-                    icon: 'dropbox',
-                    header: 'Dropbox Login',
-                    body: 'To continue, you have to sign in to Dropbox.',
-                    buttons: [{result: 'yes', title: 'Sign In'}, {result: '', title: 'Cancel'}],
-                    success: (function() {
-                        this.authenticate(function(err) { callback(!err); });
-                    }).bind(this),
-                    cancel: function() { callback(false); }
-                });
-                return;
+                if (!Alerts.alertDisplayed) {
+                    Alerts.yesno({
+                        icon: 'dropbox',
+                        header: 'Dropbox Login',
+                        body: 'To continue, you have to sign in to Dropbox.',
+                        buttons: [{result: 'yes', title: 'Sign In'}, {result: '', title: 'Cancel'}],
+                        success: (function () {
+                            this.authenticate(function (err) { callback(!err); });
+                        }).bind(this),
+                        cancel: function () {
+                            callback(false);
+                        }
+                    });
+                    return;
+                }
+                break;
             case Dropbox.ApiError.NOT_FOUND:
                 alertCallback({
                     header: 'Dropbox Sync Error',
@@ -199,6 +211,8 @@ var DropboxLink = {
                     body: 'Something went wrong during Dropbox sync. Please, try again later. Error code: ' + err.status
                 });
                 break;
+            case Dropbox.ApiError.CONFLICT:
+                break;
             default:
                 alertCallback({
                     header: 'Dropbox Sync Error',
@@ -215,7 +229,10 @@ var DropboxLink = {
             if (err) {
                 return callback(err);
             }
+            var ts = logger.ts();
+            logger.debug('Call', callName);
             client[callName].apply(client, args.concat(function(err) {
+                logger.debug('Result', callName, logger.ts(ts), arguments);
                 if (err) {
                     that._handleUiError(err, errorAlertCallback, function(repeat) {
                         if (repeat) {
@@ -239,9 +256,10 @@ var DropboxLink = {
         Dropbox.AuthDriver.Popup.oauthReceiver();
     },
 
-    saveFile: function(fileName, data, overwrite, complete) {
-        if (overwrite) {
-            this._callAndHandleError('writeFile', [fileName, data], complete);
+    saveFile: function(fileName, data, rev, complete, alertCallback) {
+        if (rev) {
+            var opts = typeof rev === 'string' ? { lastVersionTag: rev, noOverwrite: true, noAutoRename: true } : undefined;
+            this._callAndHandleError('writeFile', [fileName, data, opts], complete, alertCallback);
         } else {
             this.getFileList((function(err, files) {
                 if (err) { return complete(err); }
@@ -253,16 +271,24 @@ var DropboxLink = {
     },
 
     openFile: function(fileName, complete, errorAlertCallback) {
-        this._callAndHandleError('readFile', [fileName, { blob: true }], complete, errorAlertCallback);
+        this._callAndHandleError('readFile', [fileName, { arrayBuffer: true }], complete, errorAlertCallback);
+    },
+
+    stat: function(fileName, complete, errorAlertCallback) {
+        this._callAndHandleError('stat', [fileName], complete, errorAlertCallback);
     },
 
     getFileList: function(complete) {
-        this._callAndHandleError('readdir', [''], function(err, files, dirStat) {
+        this._callAndHandleError('readdir', [''], function(err, files, dirStat, filesStat) {
             if (files) {
                 files = files.filter(function(f) { return /\.kdbx$/i.test(f); });
             }
-            complete(err, files, dirStat);
+            complete(err, files, dirStat, filesStat);
         });
+    },
+
+    deleteFile: function(fileName, complete) {
+        this._callAndHandleError('remove', [fileName], complete);
     },
 
     chooseFile: function(callback) {

@@ -49,6 +49,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         fileExists: function(path) {
             return this.req('fs').existsSync(path);
         },
+        deleteFile: function(path) {
+            this.req('fs').unlinkSync(path);
+        },
         preventExit: function(e) {
             e.returnValue = false;
             return false;
@@ -87,6 +90,9 @@ if (window.process && window.process.versions && window.process.versions.electro
     };
     Backbone.on('launcher-exit-request', function() {
         setTimeout(function() { Launcher.exit(); }, 0);
+    });
+    Backbone.on('launcher-minimize', function() {
+        setTimeout(function() { Backbone.trigger('app-minimized'); }, 0);
     });
     window.launcherOpen = function(path) {
         Backbone.trigger('launcher-open-file', path);

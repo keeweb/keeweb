@@ -25,25 +25,8 @@ var EntryCollection = Backbone.Collection.extend({
 
     defaultComparator: 'title',
 
-    activeEntry: null,
-
     initialize: function() {
         this.comparator = this.comparators[this.defaultComparator];
-    },
-
-    setActive: function(entry) {
-        if (!(entry instanceof EntryModel)) {
-            entry = this.get(entry);
-        }
-        this.forEach(function(entry) { entry.active = false; });
-        if (entry) {
-            entry.active = true;
-        }
-        this.activeEntry = entry;
-    },
-
-    getActive: function() {
-        return this.activeEntry;
     },
 
     sortEntries: function(comparator) {

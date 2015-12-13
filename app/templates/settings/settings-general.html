@@ -56,6 +56,10 @@
         <label for="settings__general-table-view">Entries list table view</label>
     </div>
     <% } %>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-colorful-icons" id="settings__general-colorful-icons" <%- colorfulIcons ? 'checked' : '' %> />
+        <label for="settings__general-colorful-icons">Colorful custom icons in list</label>
+    </div>
 
     <h2>Function</h2>
     <div>
@@ -85,13 +89,18 @@
         </select>
     </div>
     <% } %>
-    <% if (canMinimizeOnClose) { %>
+    <% if (canMinimize) { %>
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-minimize" id="settings__general-minimize"
-        <%- minimizeOnClose ? 'checked' : '' %> />
+            <%- minimizeOnClose ? 'checked' : '' %> />
         <label for="settings__general-minimize">Minimize app instead of close</label>
     </div>
     <% } %>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-lock-on-minimize" id="settings__general-lock-on-minimize"
+        <%- lockOnMinimize ? 'checked' : '' %> />
+        <label for="settings__general-lock-on-minimize">Auto-lock on minimize</label>
+    </div>
 
     <% if (devTools) { %>
     <h2>Advanced</h2>

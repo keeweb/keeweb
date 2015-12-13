@@ -88,8 +88,6 @@
   "globals"       : {
     "require": true,
     "module": true,
-    "console": true,
-    "performance": true,
     "$": true,
     "_": true
   }

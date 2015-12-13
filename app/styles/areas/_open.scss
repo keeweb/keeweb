@@ -103,8 +103,7 @@
       }
     }
 
-    &-key-file, &-label-offline, &-label-offline:before, input[type=checkbox] + label.open__settings-label-offline:before,
-    &-key-file-dropbox {
+    &-key-file, &-key-file-dropbox {
       @include th {
         color: muted-color();
       }
@@ -114,11 +113,6 @@
         }
       }
     }
-    &-label-offline { font-weight: normal; }
-  }
-
-  &--file:not(.open--opening) input[type=checkbox] + label.open__settings-label-offline:hover:before {
-     @include th { color: medium-color(); }
   }
 
   &__last {

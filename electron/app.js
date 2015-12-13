@@ -28,15 +28,56 @@ app.on('window-all-closed', function() {
         app.removeAllListeners('window-all-closed');
         app.removeAllListeners('ready');
         app.removeAllListeners('open-file');
+        app.removeAllListeners('activate');
         var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
         delete require.cache[require.resolve('./app.js')];
         require(userDataAppFile);
         app.emit('ready');
     } else {
-        app.quit();
+        if (process.platform !== 'darwin') {
+            app.quit();
+        }
     }
 });
 app.on('ready', function() {
+    createMainWindow();
+});
+app.on('open-file', function(e, path) {
+    e.preventDefault();
+    openFile = path;
+    notifyOpenFile();
+});
+app.on('activate', function() {
+    if (process.platform === 'darwin') {
+        if (!mainWindow) {
+            createMainWindow();
+        }
+    }
+});
+app.restartApp = function() {
+    restartPending = true;
+    mainWindow.close();
+    setTimeout(function() { restartPending = false; }, 1000);
+};
+app.openWindow = function(opts) {
+    return new BrowserWindow(opts);
+};
+app.minimizeApp = function() {
+    if (process.platform === 'win32') {
+        mainWindow.minimize();
+        mainWindow.setSkipTaskbar(true);
+        appIcon = new Tray(path.join(__dirname, 'icon.png'));
+        appIcon.on('click', restoreMainWindow);
+        var contextMenu = Menu.buildFromTemplate([
+            { label: 'Open KeeWeb', click: restoreMainWindow },
+            { label: 'Quit KeeWeb', click: closeMainWindow }
+        ]);
+        appIcon.setContextMenu(contextMenu);
+        appIcon.setToolTip('KeeWeb');
+    }
+};
+
+function createMainWindow() {
     mainWindow = new BrowserWindow({
         show: false,
         width: 1000, height: 700, 'min-width': 600, 'min-height': 300,
@@ -54,34 +95,10 @@ app.on('ready', function() {
     mainWindow.on('closed', function() {
         mainWindow = null;
     });
-});
-app.on('open-file', function(e, path) {
-    e.preventDefault();
-    openFile = path;
-    notifyOpenFile();
-});
-app.restartApp = function() {
-    restartPending = true;
-    mainWindow.close();
-    setTimeout(function() { restartPending = false; }, 1000);
-};
-app.openWindow = function(opts) {
-    return new BrowserWindow(opts);
-};
-app.minimizeApp = function() {
-    if (process.platform === 'win32') {
-        mainWindow.minimize();
-        mainWindow.setSkipTaskbar(true);
-        appIcon = new Tray(path.join(__dirname, 'icon.png'));
-        appIcon.on('clicked', restoreMainWindow);
-        var contextMenu = Menu.buildFromTemplate([
-            { label: 'Open KeeWeb', click: restoreMainWindow },
-            { label: 'Quit KeeWeb', click: closeMainWindow }
-        ]);
-        appIcon.setContextMenu(contextMenu);
-        appIcon.setToolTip('KeeWeb');
-    }
-};
+    mainWindow.on('minimize', function() {
+        emitBackboneEvent('launcher-minimize');
+    });
+}
 
 function restoreMainWindow() {
     appIcon.destroy();
@@ -93,7 +110,11 @@ function restoreMainWindow() {
 function closeMainWindow() {
     appIcon.destroy();
     appIcon = null;
-    mainWindow.webContents.executeJavaScript('Backbone.trigger("launcher-exit-request");');
+    emitBackboneEvent('launcher-exit-request');
+}
+
+function emitBackboneEvent(e) {
+    mainWindow.webContents.executeJavaScript('Backbone.trigger("' + e + '");');
 }
 
 function setMenu() {

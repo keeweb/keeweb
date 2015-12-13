@@ -2,8 +2,10 @@
     <% files.forEach(function(file) { %>
     <div class="footer__db footer__db-item <%= file.get('open') ? '' : 'footer__db--dimmed' %>" data-file-id="<%= file.cid %>">
         <i class="fa fa-<%= file.get('open') ? 'unlock' : 'lock' %>"></i> <%- file.get('name') %>
-        <% if (file.get('modified') && !file.get('syncing')) { %><i class="fa fa-circle footer__db-sign"></i><% } %>
-        <% if (file.get('syncing')) { %><i class="fa fa-refresh fa-spin footer__db-sign"></i><% } %>
+        <% if (file.get('syncing')) { %><i class="fa fa-refresh fa-spin footer__db-sign"></i><% }
+           else if (file.get('syncError')) { %><i class="fa <%= file.get('modified') ? 'fa-circle' : 'fa-circle-thin' %> footer__db-sign footer__db-sign--error"
+                                                  title="Sync error: <%- file.get('syncError') %>"></i><% }
+           else if (file.get('modified')) { %><i class="fa fa-circle footer__db-sign"></i><% } %>
     </div>
     <% }); %>
     <div class="footer__db footer__db--dimmed footer__db--expanded footer__db-open"><i class="fa fa-plus"></i> Open / New</div>

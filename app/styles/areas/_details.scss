@@ -130,6 +130,10 @@
       @include flex-wrap(wrap);
       overflow-x: hidden;
       padding-top: 3px;
+
+      @include scrollbar-full-width-hack();
+      @-moz-document url-prefix() { @include scrollbar-padding-hack(); }
+      @at-root { _:-ms-lang(x), .details__body>.scroller { @include scrollbar-padding-hack(); } }
     }
 
     &-fields {

@@ -96,6 +96,7 @@ var MenuItemView = Backbone.View.extend({
 
     changeExpanded: function(model, expanded) {
         this.$el.toggleClass('menu__item--collapsed', !expanded);
+        this.model.setExpanded(expanded);
     },
 
     changeCls: function(model, cls) {
