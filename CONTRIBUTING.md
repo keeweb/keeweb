@@ -9,7 +9,9 @@ If you have found an bug, please [open an issue](https://github.com/antelle/keew
 and [TODO](https://github.com/antelle/keeweb/wiki/TODO) before creating a feature request.
 
 Please, describe the issue in details: what were your actions? What has happened? 
-Does it happen on Demo or New database? If no, how to reproduce this? If you are using a test db without your personal data, please attach it.
+Does it happen on Demo or New database? If no, how to reproduce this? If you are using a test db without your personal data, please attach it. 
+If it's possible, please, open dev tools in your browser and attach output log from it (Console tab). If you are using desktop app, 
+devtools can be opened from Settings/General/Advanced.
 
 ## Pull Requests
 
