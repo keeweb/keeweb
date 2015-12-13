@@ -6,6 +6,13 @@
   padding-right: 30px !important;
 }
 
+@mixin scrollbar-full-width-hack {
+  // workaround for bugs in custom scrollbar component (baron)
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
 .scroller {
   overflow-y: scroll;
   height: 100%;

@@ -131,10 +131,7 @@
       overflow-x: hidden;
       padding-top: 3px;
 
-      // workaround for bugs in custom scrollbar component (baron)
-      width: auto !important;
-      min-width: 0 !important;
-      max-width: none !important;
+      @include scrollbar-full-width-hack();
       @-moz-document url-prefix() { @include scrollbar-padding-hack(); }
       @at-root { _:-ms-lang(x), .details__body>.scroller { @include scrollbar-padding-hack(); } }
     }

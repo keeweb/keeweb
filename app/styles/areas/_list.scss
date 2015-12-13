@@ -21,6 +21,11 @@
       @include flex(1);
       @include align-self(stretch);
       position: relative;
+      .app__list-wrap--table & {
+        @include scrollbar-full-width-hack();
+        @-moz-document url-prefix() { @include scrollbar-padding-hack(); }
+        @at-root { _:-ms-lang(x), .app__list-wrap--table .list__items>.scroller { @include scrollbar-padding-hack(); } }
+      }
       @include mobile { width: 100% !important; }
     }
   }
@@ -74,7 +79,7 @@
   }
 
   &__table {
-    width: calc(100% - 1px);
+    width: calc(100% - 2px);
     td, th {
       padding: $base-padding;
       text-align: left;
