@@ -332,6 +332,7 @@ var AppView = Backbone.View.extend({
                 return;
             }
             this.model.syncFile(file, null, fileSaved.bind(this, file));
+            pendingCallbacks++;
         }, this);
         if (!pendingCallbacks) {
             this.closeAllFilesAndShowFirst();
