@@ -254,30 +254,24 @@ var AppModel = Backbone.Model.extend({
         var that = this;
         var fileInfo = params.id ? this.fileInfos.get(params.id) : this.fileInfos.getMatch(params.storage, params.name, params.path);
         if (fileInfo && fileInfo.get('modified')) {
-            // modified offline, cannot overwrite: load from cache
             logger.info('Open file from cache because it is modified');
             this.openFileFromCache(params, callback, fileInfo);
         } else if (params.fileData) {
-            // has user content: load it
             logger.info('Open file from supplied content');
             this.openFileWithData(params, callback, fileInfo, params.fileData, true);
         } else if (!params.storage) {
-            // no storage: load from cache as main storage
             logger.info('Open file from cache as main storage');
             this.openFileFromCache(params, callback, fileInfo);
         } else if (fileInfo && fileInfo.get('rev') === params.rev && fileInfo.get('storage') !== 'file') {
-            // already latest in cache: use it
             logger.info('Open file from cache because it is latest');
             this.openFileFromCache(params, callback, fileInfo);
         } else {
-            // try to load from storage and update cache
             logger.info('Open file from storage', params.storage);
             var storage = Storage[params.storage];
             var storageLoad = function() {
                 logger.info('Load from storage');
                 storage.load(params.path, function(err, data, stat) {
                     if (err) {
-                        // failed to load from storage: fallback to cache if we can
                         if (fileInfo) {
                             logger.info('Open file from cache because of storage load error', err);
                             that.openFileFromCache(params, callback, fileInfo);
