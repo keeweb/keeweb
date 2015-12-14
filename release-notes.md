@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v0.5 (not released yet)
+##### v0.5 (2015-12-14)
 2-way merge sync  
 `*` all files are now opened with offline support  
 `*` disallow opening same files twice   
