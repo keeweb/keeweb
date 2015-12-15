@@ -12,6 +12,8 @@
 
   >.scroller {
     @include flex(1 0 0);
+    @include scrollbar-full-width-hack();
+    @-moz-document url-prefix() { @include scrollbar-padding-hack(); }
   }
 
   h2,h3 {
