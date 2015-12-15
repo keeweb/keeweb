@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v0.5.1 (2015-12-14)
+##### v0.5.1 (2015-12-15)
 Layout bugfixes  
 `-` #66: keyfile selection in Firefox  
 `-` entries list layout issue in iOS Safari  
