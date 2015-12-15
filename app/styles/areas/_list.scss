@@ -26,7 +26,10 @@
         @-moz-document url-prefix() { @include scrollbar-padding-hack(); }
         @at-root { _:-ms-lang(x), .app__list-wrap--table .list__items>.scroller { @include scrollbar-padding-hack(); } }
       }
-      @include mobile { width: 100% !important; }
+      @include mobile {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
     }
   }
 

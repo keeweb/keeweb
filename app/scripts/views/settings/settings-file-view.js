@@ -22,7 +22,7 @@ var SettingsAboutView = Backbone.View.extend({
         'click .settings__file-button-save-dropbox': 'saveToDropbox',
         'click .settings__file-button-close': 'closeFile',
         'change #settings__file-key-file': 'keyFileChange',
-        'mousedown #settings__file-file-select-link': 'triggerSelectFile',
+        'click #settings__file-file-select-link': 'triggerSelectFile',
         'change #settings__file-file-select': 'fileSelected',
         'focus #settings__file-master-pass': 'focusMasterPass',
         'blur #settings__file-master-pass': 'blurMasterPass',

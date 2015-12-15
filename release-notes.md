@@ -1,6 +1,11 @@
 Release notes
 -------------
-##### v0.5 (2015-12-14)
+##### v0.5.1 (2015-12-14)
+Layout bugfixes  
+`-` #66: keyfile selection in Firefox  
+`-` entries list layout issue in iOS Safari  
+
+##### v0.5.0 (2015-12-14)
 2-way merge sync  
 `*` all files are now opened with offline support  
 `*` disallow opening same files twice   
