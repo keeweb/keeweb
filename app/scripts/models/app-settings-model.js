@@ -27,7 +27,6 @@ var AppSettingsModel = Backbone.Model.extend({
     load: function() {
         var data = SettingsStore.load('app-settings');
         if (data) {
-            if (data.theme === 'd') { data.theme = 'db'; } // TODO: remove in v0.6
             this.set(data, {silent: true});
         }
     },
