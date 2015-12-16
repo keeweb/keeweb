@@ -10,8 +10,8 @@ var Backbone = require('backbone'),
     baron = require('baron');
 
 var ListView = Backbone.View.extend({
-    template: require('templates/list.html'),
-    emptyTemplate: require('templates/list-empty.html'),
+    template: require('templates/list.hbs'),
+    emptyTemplate: require('templates/list-empty.hbs'),
 
     events: {
         'click .list__item': 'itemClick',
@@ -84,7 +84,7 @@ var ListView = Backbone.View.extend({
 
     getItemsTemplate: function() {
         if (this.model.settings.get('tableView')) {
-            return require('templates/list-table.html');
+            return require('templates/list-table.hbs');
         } else {
             return this.renderPlainItems;
         }
@@ -96,9 +96,9 @@ var ListView = Backbone.View.extend({
 
     getItemTemplate: function() {
         if (this.model.settings.get('tableView')) {
-            return require('templates/list-item-table.html');
+            return require('templates/list-item-table.hbs');
         } else {
-            return require('templates/list-item-short.html');
+            return require('templates/list-item-short.hbs');
         }
     },
 

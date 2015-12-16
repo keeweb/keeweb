@@ -7,7 +7,7 @@ var Backbone = require('backbone'),
     DragDropInfo = require('../../comp/drag-drop-info');
 
 var MenuItemView = Backbone.View.extend({
-    template: require('templates/menu/menu-item.html'),
+    template: require('templates/menu/menu-item.hbs'),
 
     events: {
         'mouseover': 'mouseover',

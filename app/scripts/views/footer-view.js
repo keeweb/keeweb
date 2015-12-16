@@ -7,7 +7,7 @@ var Backbone = require('backbone'),
     UpdateModel = require('../models/update-model');
 
 var FooterView = Backbone.View.extend({
-    template: require('templates/footer.html'),
+    template: require('templates/footer.hbs'),
 
     events: {
         'click .footer__db-item': 'showFile',

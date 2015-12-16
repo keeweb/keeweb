@@ -8,7 +8,6 @@
   "devDependencies": {
     "base64-loader": "^1.0.0",
     "cssnano": "^3.3.2",
-    "ejs-loader": "^0.2.1",
     "electron-builder": "^2.1.1",
     "exports-loader": "^0.6.2",
     "grunt": "^0.4.5",
@@ -27,6 +26,8 @@
     "grunt-sass": "^1.1.0",
     "grunt-string-replace": "^1.2.0",
     "grunt-webpack": "^1.0.11",
+    "handlebars": "^4.0.5",
+    "handlebars-loader": "^1.1.4",
     "load-grunt-tasks": "^3.2.0",
     "string-replace-webpack-plugin": "0.0.2",
     "time-grunt": "^1.2.1",

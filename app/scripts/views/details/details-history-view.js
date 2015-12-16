@@ -9,7 +9,7 @@ var Backbone = require('backbone'),
     FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
 
 var DetailsHistoryView = Backbone.View.extend({
-    template: require('templates/details/details-history.html'),
+    template: require('templates/details/details-history.hbs'),
 
     events: {
         'click .details__history-close': 'closeHistory',

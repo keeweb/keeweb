@@ -8,7 +8,7 @@ var Backbone = require('backbone'),
 var logger = new Logger('icon-select-view');
 
 var IconSelectView = Backbone.View.extend({
-    template: require('templates/icon-select.html'),
+    template: require('templates/icon-select.hbs'),
 
     events: {
         'click .icon-select__icon': 'iconClick',

@@ -13,7 +13,7 @@ var Backbone = require('backbone'),
     FileSaver = require('filesaver');
 
 var SettingsAboutView = Backbone.View.extend({
-    template: require('templates/settings/settings-file.html'),
+    template: require('templates/settings/settings-file.hbs'),
 
     events: {
         'click .settings__file-button-save-default': 'saveDefault',

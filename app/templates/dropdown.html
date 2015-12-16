@@ -1,8 +1,0 @@
-<div class="dropdown">
-    <% options.forEach(function(option) { %>
-    <div class="dropdown__item <%= option.active ? 'dropdown__item--active' : '' %>" data-value="<%- option.value %>">
-        <i class="fa fa-<%= option.icon %> dropdown__item-icon"></i>
-        <span class="dropdown__item-text"><%= option.text %></span>
-    </div>
-    <% }); %>
-</div>

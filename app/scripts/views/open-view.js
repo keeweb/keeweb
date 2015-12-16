@@ -10,7 +10,7 @@ var Backbone = require('backbone'),
 var logger = new Logger('open-view');
 
 var OpenView = Backbone.View.extend({
-    template: require('templates/open.html'),
+    template: require('templates/open.hbs'),
 
     events: {
         'change .open__file-ctrl': 'fileSelected',

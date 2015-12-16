@@ -1,0 +1,109 @@
+<div>
+    <h1><i class="fa fa-cog"></i> General Settings</h1>
+
+    {{#if updateWaitingReload}}
+    <h2 class="action-color">Update</h2>
+    <div>New app version was released and downloaded. <a href="{{releaseNotesLink}}" target="_blank">View release notes</a></div>
+    <div class="settings__general-update-buttons">
+        <button class="settings__general-restart-btn">Reload to update</button>
+    </div>
+    {{else if updateManual}}
+    <h2 class="action-color">Update</h2>
+    <div>New version has been released. It will check for updates and install them automatically
+        but auto-upgrading from your version is impossible.</div>
+    <div class="settings__general-update-buttons">
+        <button class="settings__general-download-update-btn">Download update</button>
+    </div>
+    {{/if}}
+    {{#if showUpdateBlock}}
+    <h2>Update</h2>
+    <div>
+        <select class="settings__general-auto-update settings__select input-base">
+            <option value="install" {{#ifeq autoUpdate 'install'}}selected{{/ifeq}}>Download and install automatically</option>
+            <option value="check" {{#ifeq autoUpdate 'check'}}selected{{/ifeq}}>Check but don't install</option>
+            <option value="" {{#unless autoUpdate}}selected{{/unless}}>Never check for updates</option>
+        </select>
+        <div>{{updateInfo}}</div>
+        <a href="{{releaseNotesLink}}" target="_blank">View release notes</a>
+    </div>
+    <div class="settings__general-update-buttons">
+        {{#if updateInProgress}}
+        <button class="settings__general-update-btn btn-silent" disabled>Checking for updates</button>
+        {{else}}
+        <button class="settings__general-update-btn btn-silent">Check for updates</button>
+        {{/if}}
+        {{#if updateReady}}<button class="settings__general-restart-btn">Restart to update</button>{{/if}}
+        {{#if updateFound}}<button class="settings__general-update-found-btn">Download update and restart</button>{{/if}}
+    </div>
+    {{/if}}
+
+    <h2>Appearance</h2>
+    <div>
+        <label for="settings__general-theme">Theme:</label>
+        <select class="settings__general-theme settings__select input-base" id="settings__general-theme">
+            {{#each themes as |name key|}}
+            <option value="{{key}}" {{#ifeq key activeTheme}}selected{{/ifeq}}>{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" {{#if expandGroups}}checked{{/if}} />
+        <label for="settings__general-expand">Show entries from all subgroups</label>
+    </div>
+    {{#if canSetTableView}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-table-view" id="settings__general-table-view" {{#if tableView}}checked{{/if}} />
+        <label for="settings__general-table-view">Entries list table view</label>
+    </div>
+    {{/if}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-colorful-icons" id="settings__general-colorful-icons" {{#if colorfulIcons}}checked{{/if}} />
+        <label for="settings__general-colorful-icons">Colorful custom icons in list</label>
+    </div>
+
+    <h2>Function</h2>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
+            {{#if autoSave}}checked{{/if}} />
+        <label for="settings__general-auto-save">Automatically save and sync</label>
+    </div>
+    <div>
+        <label for="settings__general-idle-minutes">Auto-lock if the app is inactive:</label>
+        <select class="settings__general-idle-minutes settings__select input-base" id="settings__general-idle-minutes">
+            <option value="0" {{#cmp idleMinutes 0 '<='}}selected{{/cmp}}>Don't auto-lock</option>
+            <option value="5" {{#ifeq idleMinutes 5}}selected{{/ifeq}}>In 5 minutes</option>
+            <option value="10" {{#ifeq idleMinutes 10}}selected{{/ifeq}}>In 10 minutes</option>
+            <option value="15" {{#ifeq idleMinutes 15}}selected{{/ifeq}}>In 15 minutes</option>
+            <option value="60" {{#ifeq idleMinutes 60}}selected{{/ifeq}}>In an hour</option>
+        </select>
+    </div>
+    {{#if canClearClipboard}}
+    <div>
+        <label for="settings__general-clipboard">Clear clipboard after copy:</label>
+        <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
+            <option value="0" {{#unless clipboardSeconds}}selected{{/unless}}>Don't clear</option>
+            <option value="5" {{#ifeq clipboardSeconds 5}}selected{{/ifeq}}>In 5 seconds</option>
+            <option value="10" {{#ifeq clipboardSeconds 10}}selected{{/ifeq}}>In 10 seconds</option>
+            <option value="15" {{#ifeq clipboardSeconds 15}}selected{{/ifeq}}>In 15 seconds</option>
+            <option value="60" {{#ifeq clipboardSeconds 60}}selected{{/ifeq}}>In a minute</option>
+        </select>
+    </div>
+    {{/if}}
+    {{#if canMinimize}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-minimize" id="settings__general-minimize"
+            {{#if minimizeOnClose}}checked{{/if}} />
+        <label for="settings__general-minimize">Minimize app instead of close</label>
+    </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-lock-on-minimize" id="settings__general-lock-on-minimize"
+        {{#if lockOnMinimize}}checked{{/if}} />
+        <label for="settings__general-lock-on-minimize">Auto-lock on minimize</label>
+    </div>
+    {{/if}}
+
+    {{#if devTools}}
+    <h2>Advanced</h2>
+    <a class="settings__general-dev-tools-link">Show dev tools</a>
+    {{/if}}
+</div>

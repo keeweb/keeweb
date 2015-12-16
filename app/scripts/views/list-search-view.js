@@ -7,7 +7,7 @@ var Backbone = require('backbone'),
     FeatureDetector = require('../util/feature-detector');
 
 var ListSearchView = Backbone.View.extend({
-    template: require('templates/list-search.html'),
+    template: require('templates/list-search.hbs'),
 
     events: {
         'keydown .list__search-field': 'inputKeyDown',

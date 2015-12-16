@@ -6,7 +6,7 @@ var Backbone = require('backbone'),
     baron = require('baron');
 
 var GrpView = Backbone.View.extend({
-    template: require('templates/grp.html'),
+    template: require('templates/grp.hbs'),
 
     events: {
         'click .grp__icon': 'showIconsSelect',

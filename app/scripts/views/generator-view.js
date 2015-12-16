@@ -11,7 +11,7 @@ var DefaultGenOpts = {
 var GeneratorView = Backbone.View.extend({
     el: 'body',
 
-    template: require('templates/generator.html'),
+    template: require('templates/generator.hbs'),
 
     events: {
         'click': 'click',

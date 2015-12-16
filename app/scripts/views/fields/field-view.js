@@ -5,7 +5,7 @@ var Backbone = require('backbone'),
     CopyPaste = require('../../comp/copy-paste');
 
 var FieldView = Backbone.View.extend({
-    template: require('templates/details/field.html'),
+    template: require('templates/details/field.hbs'),
 
     events: {
         'click .details__field-label': 'fieldLabelClick',

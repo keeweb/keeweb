@@ -23,9 +23,9 @@ var Backbone = require('backbone'),
     kdbxweb = require('kdbxweb');
 
 var DetailsView = Backbone.View.extend({
-    template: require('templates/details/details.html'),
-    emptyTemplate: require('templates/details/details-empty.html'),
-    groupTemplate: require('templates/details/details-group.html'),
+    template: require('templates/details/details.hbs'),
+    emptyTemplate: require('templates/details/details-empty.hbs'),
+    groupTemplate: require('templates/details/details-group.hbs'),
 
     fieldViews: null,
     views: null,

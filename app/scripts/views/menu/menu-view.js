@@ -7,7 +7,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../../models/app-settings-model');
 
 var MenuView = Backbone.View.extend({
-    template: require('templates/menu/menu.html'),
+    template: require('templates/menu/menu.hbs'),
 
     events: {},
 

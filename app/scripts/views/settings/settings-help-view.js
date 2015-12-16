@@ -5,7 +5,7 @@ var Backbone = require('backbone'),
     Links = require('../../const/links');
 
 var SettingsHelpView = Backbone.View.extend({
-    template: require('templates/settings/settings-help.html'),
+    template: require('templates/settings/settings-help.hbs'),
 
     render: function() {
         var appInfo = 'KeeWeb v' + RuntimeInfo.version + ' (' + RuntimeInfo.commit + ', ' + RuntimeInfo.buildDate + ')\n' +

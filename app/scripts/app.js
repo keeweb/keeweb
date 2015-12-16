@@ -10,12 +10,12 @@ var AppModel = require('./models/app-model'),
     ThemeChanger = require('./util/theme-changer');
 
 $(function() {
-    require('./mixins/view');
-
     if (location.href.indexOf('state=') >= 0) {
         DropboxLink.receive();
         return;
     }
+    require('./mixins/view');
+    require('./helpers');
     KeyHandler.init();
     IdleTracker.init();
 

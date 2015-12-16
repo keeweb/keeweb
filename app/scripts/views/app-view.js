@@ -22,7 +22,7 @@ var Backbone = require('backbone'),
 var AppView = Backbone.View.extend({
     el: 'body',
 
-    template: require('templates/app.html'),
+    template: require('templates/app.hbs'),
 
     events: {
         'contextmenu': 'contextmenu',

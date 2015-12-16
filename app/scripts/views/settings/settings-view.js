@@ -7,7 +7,7 @@ var Backbone = require('backbone'),
     baron = require('baron');
 
 var SettingsView = Backbone.View.extend({
-    template: require('templates/settings/settings.html'),
+    template: require('templates/settings/settings.hbs'),
 
     views: null,
 

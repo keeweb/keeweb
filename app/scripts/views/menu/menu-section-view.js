@@ -8,7 +8,7 @@ var Backbone = require('backbone'),
     baron = require('baron');
 
 var MenuSectionView = Backbone.View.extend({
-    template: require('templates/menu/menu-section.html'),
+    template: require('templates/menu/menu-section.hbs'),
 
     events: {},
 

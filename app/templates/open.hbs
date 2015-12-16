@@ -36,13 +36,13 @@
             </div>
         </div>
         <div class="open__last">
-            <% lastOpenFiles.forEach(function(file) { %>
-            <div class="open__last-item" data-id="<%- file.id %>">
-                <i class="fa fa-<%= file.icon %> open__last-item-icon"></i>
-                <span class="open__last-item-text"><%- file.name %></span>
+            {{#each lastOpenFiles as |file|}}
+            <div class="open__last-item" data-id="{{file.id}}">
+                <i class="fa fa-{{file.icon}} open__last-item-icon"></i>
+                <span class="open__last-item-text">{{file.name}}</span>
                 <i class="fa fa-times open__last-item-icon-del"></i>
             </div>
-            <% }); %>
+            {{/each}}
         </div>
     </div>
     <div class="open__dropzone">

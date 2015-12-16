@@ -11,7 +11,7 @@ var Backbone = require('backbone'),
     Links = require('../../const/links');
 
 var SettingsGeneralView = Backbone.View.extend({
-    template: require('templates/settings/settings-general.html'),
+    template: require('templates/settings/settings-general.hbs'),
 
     events: {
         'change .settings__general-theme': 'changeTheme',
@@ -43,6 +43,9 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     render: function() {
+        var updateReady = UpdateModel.instance.get('updateStatus') === 'ready',
+            updateFound = UpdateModel.instance.get('updateStatus') === 'found',
+            updateManual = UpdateModel.instance.get('updateManual');
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
@@ -61,9 +64,11 @@ var SettingsGeneralView = Backbone.View.extend({
             autoUpdate: Updater.getAutoUpdateType(),
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
-            updateReady: UpdateModel.instance.get('updateStatus') === 'ready',
-            updateFound: UpdateModel.instance.get('updateStatus') === 'found',
-            updateManual: UpdateModel.instance.get('updateManual'),
+            updateWaitingReload: updateReady && !Launcher,
+            showUpdateBlock: Launcher && !updateManual,
+            updateReady: updateReady,
+            updateFound: updateFound,
+            updateManual: updateManual,
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.instance.get('colorfulIcons')
         });
