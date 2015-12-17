@@ -1,5 +1,10 @@
 Release notes
 -------------
+##### v0.6.0 (not released yet)
+Improvements  
+`+` more reliable binaries management  
+`+` string resources globalization  
+
 ##### v0.5.1 (2015-12-15)
 Layout bugfixes  
 `-` #66: keyfile selection in Firefox  
