@@ -108,7 +108,12 @@ var EntryModel = Backbone.Model.extend({
     _attachmentsToModel: function(binaries) {
         var att = [];
         _.forEach(binaries, function(data, title) {
-            att.push(AttachmentModel.fromAttachment({ data: data, title: title }));
+            if (data && data.ref) {
+                data = this.file.db.meta.binaries[data.ref];
+            }
+            if (data) {
+                att.push(AttachmentModel.fromAttachment({data: data, title: title}));
+            }
         }, this);
         return att;
     },
@@ -181,7 +186,15 @@ var EntryModel = Backbone.Model.extend({
 
     addAttachment: function(name, data) {
         this._entryModified();
-        this.entry.binaries[name] = kdbxweb.ProtectedValue.fromBinary(data);
+        var binaryId;
+        for (var i = 0; ; i++) {
+            if (!this.file.db.meta.binaries[i]) {
+                binaryId = i.toString();
+                break;
+            }
+        }
+        this.file.db.meta.binaries[binaryId] = data;
+        this.entry.binaries[name] = { ref: binaryId };
         this._fillByEntry();
     },
 

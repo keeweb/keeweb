@@ -255,9 +255,11 @@ var FileModel = Backbone.Model.extend({
     getData: function(cb) {
         this.db.cleanup({
             historyRules: true,
-            customIcons: true
+            customIcons: true,
+            binaries: true
         });
         var that = this;
+        this.db.cleanup({ binaries: true });
         this.db.save(function(data, err) {
             if (err) {
                 logger.error('Error saving file', that.get('name'), err);
