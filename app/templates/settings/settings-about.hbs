@@ -1,9 +1,9 @@
 <div>
-    <h1><i class="fa fa-info"></i> About KeeWeb v{{version}}</h1>
-    <p>This is an open-source app created by <a href="http://antelle.net" target="_blank">Antelle</a> and licensed under
-        <a href="{{licenseLink}}" target="_blank">MIT</a>.
-        The source code and issues are <a href="{{repoLink}}" target="_blank">on GitHub <i class="fa fa-github-alt"></i></a>.</p>
-    <p>This app is built with these awesome tools:</p>
+    <h1><i class="fa fa-info"></i> {{res 'setAboutTitle'}} KeeWeb v{{version}}</h1>
+    <p>{{#res 'setAboutFirst'}}<a href="http://antelle.net" target="_blank">Antelle</a>{{/res~}}
+        {{~#res 'setAboutSecond'}}<a href="{{licenseLink}}" target="_blank">MIT</a>{{/res}}
+        {{#res 'setAboutSource'}}<a href="{{repoLink}}" target="_blank">GitHub <i class="fa fa-github-alt"></i></a>{{/res}}</p>
+    <p>{{res 'setAboutBuilt'}}:</p>
     <h3>Libraries</h3>
     <ul>
         <li><a href="http://electron.atom.io/" target="_blank">electron</a><span class="muted-color">, cross-platform desktop apps framework</span></li>
@@ -54,8 +54,8 @@
             and CSS toolkit</span></li>
     </ul>
 
-    <h2>License</h2>
-    <p>The app itself and all included components which are not in public domain are licensed under MIT license:</p>
+    <h2>{{res 'setAboutLic'}}</h2>
+    <p>{{res 'setAboutLicComment'}}:</p>
     <p></p>
     <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
         documentation files (the "Software"), to deal in the Software without restriction, including without limitation

@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     MenuSectionCollection = require('../../collections/menu/menu-section-collection'),
     MenuSectionModel = require('./menu-section-model'),
     GroupsMenuModel = require('./groups-menu-model'),
+    Locale = require('../../util/locale'),
     Keys = require('../../const/keys'),
     Colors = require('../../const/colors');
 
@@ -16,17 +17,18 @@ var MenuModel = Backbone.Model.extend({
 
     initialize: function() {
         this.menus = {};
-        this.allItemsSection = new MenuSectionModel([{ title: 'All Items', icon: 'th-large', active: true, shortcut: Keys.DOM_VK_A, filterKey: '*' }]);
+        this.allItemsSection = new MenuSectionModel([{ title: Locale.menuAllItems, icon: 'th-large', active: true,
+            shortcut: Keys.DOM_VK_A, filterKey: '*' }]);
         this.groupsSection = new GroupsMenuModel();
-        this.colorsSection = new MenuSectionModel([{ title: 'Colors', icon: 'bookmark', shortcut: Keys.DOM_VK_C, cls: 'menu__item-colors',
-            filterKey: 'color', filterValue: true }]);
+        this.colorsSection = new MenuSectionModel([{ title: Locale.menuColors, icon: 'bookmark', shortcut: Keys.DOM_VK_C,
+            cls: 'menu__item-colors', filterKey: 'color', filterValue: true }]);
         this.colorsItem = this.colorsSection.get('items').models[0];
-        var defTags = [{ title: 'Tags', icon: 'tags', defaultItem: true,
-            disabled: { header: 'No tags', body: 'You can add new tags while editing fields, in tags section.', icon: 'tags' } }];
+        var defTags = [{ title: Locale.menuTags, icon: 'tags', defaultItem: true,
+            disabled: { header: Locale.menuAlertNoTags, body: Locale.menuAlertNoTagsBody, icon: 'tags' } }];
         this.tagsSection = new MenuSectionModel(defTags);
         this.tagsSection.set({ scrollable: true, drag: true });
         this.tagsSection.defaultItems = defTags;
-        this.trashSection = new MenuSectionModel([{ title: 'Trash', icon: 'trash', shortcut: Keys.DOM_VK_D,
+        this.trashSection = new MenuSectionModel([{ title: Locale.menuTrash, icon: 'trash', shortcut: Keys.DOM_VK_D,
             filterKey: 'trash', filterValue: true, drop: true }]);
         Colors.AllColors.forEach(function(color) { this.colorsSection.get('items').models[0]
             .addOption({ cls: 'fa ' + color + '-color', value: color, filterValue: color }); }, this);
@@ -38,10 +40,10 @@ var MenuModel = Backbone.Model.extend({
             this.trashSection
         ]);
 
-        this.generalSection = new MenuSectionModel([{ title: 'General', icon: 'cog', page: 'general', active: true }]);
-        this.shortcutsSection = new MenuSectionModel([{ title: 'Shortcuts', icon: 'keyboard-o', page: 'shortcuts' }]);
-        this.aboutSection = new MenuSectionModel([{ title: 'About', icon: 'info', page: 'about' }]);
-        this.helpSection = new MenuSectionModel([{ title: 'Help', icon: 'question', page: 'help' }]);
+        this.generalSection = new MenuSectionModel([{ title: Locale.menuSetGeneral, icon: 'cog', page: 'general', active: true }]);
+        this.shortcutsSection = new MenuSectionModel([{ title: Locale.menuSetShortcuts, icon: 'keyboard-o', page: 'shortcuts' }]);
+        this.aboutSection = new MenuSectionModel([{ title: Locale.menuSetAbout, icon: 'info', page: 'about' }]);
+        this.helpSection = new MenuSectionModel([{ title: Locale.menuSetHelp, icon: 'question', page: 'help' }]);
         this.filesSection = new MenuSectionModel();
         this.filesSection.set({ scrollable: true, grow: true });
         this.menus.settings = new MenuSectionCollection([

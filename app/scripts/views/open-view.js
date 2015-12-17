@@ -5,7 +5,8 @@ var Backbone = require('backbone'),
     Alerts = require('../comp/alerts'),
     SecureInput = require('../comp/secure-input'),
     DropboxLink = require('../comp/dropbox-link'),
-    Logger = require('../util/logger');
+    Logger = require('../util/logger'),
+    Locale = require('../util/locale');
 
 var logger = new Logger('open-view');
 
@@ -113,7 +114,7 @@ var OpenView = Backbone.View.extend({
             }
         }).bind(this);
         reader.onerror = (function() {
-            Alerts.error({ header: 'Failed to read file' });
+            Alerts.error({ header: Locale.openFailedRead });
             if (complete) {
                 complete(false);
             }
@@ -125,7 +126,7 @@ var OpenView = Backbone.View.extend({
         this.$el.addClass('open--file');
         this.$el.find('.open__settings-key-file').removeClass('hide');
         this.inputEl[0].removeAttribute('readonly');
-        this.inputEl[0].setAttribute('placeholder', 'Password for ' + this.params.name);
+        this.inputEl[0].setAttribute('placeholder', Locale.openPassFor + ' ' + this.params.name);
         this.inputEl.focus();
     },
 
@@ -290,16 +291,15 @@ var OpenView = Backbone.View.extend({
                 });
                 if (!buttons.length) {
                     Alerts.error({
-                        header: 'Nothing found',
-                        body: 'You have no files in your Dropbox which could be opened.' +
-                        (dirStat && dirStat.inAppFolder ? ' Files are searched inside app folder in your Dropbox.' : '')
+                        header: Locale.openNothingFound,
+                        body: Locale.openNothingFoundBody + (dirStat && dirStat.inAppFolder ? ' ' + Locale.openNothingFoundBodyAppFolder : '')
                     });
                     return;
                 }
-                buttons.push({ result: '', title: 'Cancel' });
+                buttons.push({ result: '', title: Locale.alertCancel });
                 Alerts.alert({
-                    header: 'Select a file',
-                    body: 'Select a file from your Dropbox which you would like to open',
+                    header: Locale.openSelectFile,
+                    body: Locale.openSelectFileBody,
                     icon: 'dropbox',
                     buttons: buttons,
                     esc: '',

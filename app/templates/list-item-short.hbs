@@ -4,5 +4,5 @@
     {{~else~}}
         <i class="fa fa-{{icon}} {{#if color}}{{color}}-color{{/if}} list__item-icon"></i>
     {{~/if}}
-    <span class="list__item-title">{{#if title}}{{title}}{{else}}(no title){{/if}}</span><span class="list__item-descr thin">{{description}}</span>
+    <span class="list__item-title">{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</span><span class="list__item-descr thin">{{description}}</span>
 </div>

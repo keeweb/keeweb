@@ -1,6 +1,7 @@
 'use strict';
 
-var Format = require('../util/format');
+var Format = require('../util/format'),
+    Locale = require('../util/locale');
 
 var EntryPresenter = function(descField, noColor, activeEntryId) {
     this.entry = null;
@@ -33,19 +34,19 @@ EntryPresenter.prototype = {
     get tags() { return this.entry ? this.entry.tags : false; },
     get description() {
         if (!this.entry) {
-            return '[Group]';
+            return '[' + Locale.listGroup + ']';
         }
         switch (this.descField) {
             case 'website':
-                return this.url || '(no website)';
+                return this.url || '(' + Locale.listNoWebsite + ')';
             case 'user':
-                return this.user || '(no user)';
+                return this.user || '(' + Locale.listNoUser + ')';
             case 'created':
                 return this.created;
             case 'updated':
                 return this.updated;
             case 'attachments':
-                return this.entry.attachments.map(function(a) { return a.title; }).join(', ') || '(no attachments)';
+                return this.entry.attachments.map(function(a) { return a.title; }).join(', ') || '(' + Locale.listNoAttachments + ')';
             default:
                 return this.notes || this.url || this.user;
         }

@@ -18,6 +18,7 @@ var Backbone = require('backbone'),
     Alerts = require('../../comp/alerts'),
     CopyPaste = require('../../comp/copy-paste'),
     Format = require('../../util/format'),
+    Locale = require('../../util/locale'),
     FileSaver = require('filesaver'),
     baron = require('baron'),
     kdbxweb = require('kdbxweb');
@@ -105,31 +106,31 @@ var DetailsView = Backbone.View.extend({
 
     addFieldViews: function() {
         var model = this.model;
-        this.fieldViews.push(new FieldViewText({ model: { name: '$UserName', title: 'User',
+        this.fieldViews.push(new FieldViewText({ model: { name: '$UserName', title: Locale.detUser,
             value: function() { return model.user; } } }));
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Password', title: 'Password', canGen: true,
+        this.fieldViews.push(new FieldViewText({ model: { name: '$Password', title: Locale.detPassword, canGen: true,
             value: function() { return model.password; } } }));
-        this.fieldViews.push(new FieldViewUrl({ model: { name: '$URL', title: 'Website',
+        this.fieldViews.push(new FieldViewUrl({ model: { name: '$URL', title: Locale.detWebsite,
             value: function() { return model.url; } } }));
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: 'Notes', multiline: 'true',
+        this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: Locale.detNotes, multiline: 'true',
             value: function() { return model.notes; } } }));
-        this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: 'Tags', tags: this.appModel.tags,
+        this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: Locale.detTags, tags: this.appModel.tags,
             value: function() { return model.tags; } } }));
-        this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: 'Expires', lessThanNow: '(expired)',
+        this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: Locale.detExpires, lessThanNow: '(' + Locale.detExpired + ')',
             value: function() { return model.expires; } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: 'File',
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: Locale.detFile,
             value: function() { return model.fileName; } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Created', title: 'Created',
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Created', title: Locale.detCreated,
             value: function() { return Format.dtStr(model.created); } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: 'Updated',
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: Locale.detUpdated,
             value: function() { return Format.dtStr(model.updated); } } }));
-        this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: 'History',
+        this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: Locale.detHistory,
             value: function() { return { length: model.historyLength, unsaved: model.unsaved }; } } }));
         _.forEach(model.fields, function(value, field) {
             this.fieldViews.push(new FieldViewCustom({ model: { name: '$' + field, title: field,
                 value: function() { return model.fields[field]; } } }));
         }, this);
-        var newFieldTitle = 'New Field';
+        var newFieldTitle = Locale.detNetField;
         if (model.fields[newFieldTitle]) {
             for (var i = 1; ; i++) {
                 var newFieldTitleVariant = newFieldTitle + i;
@@ -139,7 +140,7 @@ var DetailsView = Backbone.View.extend({
                 }
             }
         }
-        this.fieldViews.push(new FieldViewCustom({ model: { name: '', title: 'add field', newField: newFieldTitle,
+        this.fieldViews.push(new FieldViewCustom({ model: { name: '', title: Locale.detAddField, newField: newFieldTitle,
             value: function() { return ''; } } }));
 
         var fieldsMainEl = this.$el.find('.details__body-fields');
@@ -486,8 +487,8 @@ var DetailsView = Backbone.View.extend({
 
     deleteFromTrash: function() {
         Alerts.yesno({
-            header: 'Delete from trash?',
-            body: 'You will not be able to put it back<p class="muted-color">To quickly remove all items from trash, click empty icon in Trash menu</p>',
+            header: Locale.detDelFromTrash,
+            body: Locale.detDelFromTrashBody + ' <p class="muted-color">' + Locale.detDelFromTrashBodyHint + '</p>',
             icon: 'minus-circle',
             success: (function() {
                 this.model.deleteFromTrash();

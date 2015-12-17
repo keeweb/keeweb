@@ -17,6 +17,7 @@ var Backbone = require('backbone'),
     IdleTracker = require('../comp/idle-tracker'),
     Launcher = require('../comp/launcher'),
     ThemeChanger = require('../util/theme-changer'),
+    Locale = require('../util/locale'),
     UpdateModel = require('../models/update-model');
 
 var AppView = Backbone.View.extend({
@@ -224,9 +225,9 @@ var AppView = Backbone.View.extend({
                     var that = this;
                     that.exitAlertShown = true;
                     Alerts.yesno({
-                        header: 'Unsaved changes!',
-                        body: 'You have unsaved files, all changes will be lost.',
-                        buttons: [{result: 'yes', title: 'Exit and discard unsaved changes'}, {result: '', title: 'Don\'t exit'}],
+                        header: Locale.appUnsavedWarn,
+                        body: Locale.appUnsavedWarnBody,
+                        buttons: [{result: 'yes', title: Locale.appExitBtn}, {result: '', title: Locale.appDontExitBtn}],
                         success: function () {
                             Launcher.exit();
                         },
@@ -240,7 +241,7 @@ var AppView = Backbone.View.extend({
                 }
                 return Launcher.preventExit(e);
             }
-            return 'You have unsaved files, all changes will be lost.';
+            return Locale.appUnsavedCloseMsg;
         } else if (Launcher && !Launcher.exitRequested && !Launcher.restartPending &&
                 Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
             Launcher.minimizeApp();
@@ -294,18 +295,17 @@ var AppView = Backbone.View.extend({
             if (this.model.settings.get('autoSave')) {
                 this.saveAndLock(autoInit);
             } else {
-                var message = autoInit ? 'The app cannot be locked because auto save is disabled.'
-                    : 'You have unsaved changes that will be lost. Continue?';
+                var message = autoInit ? Locale.appCannotLockAutoInit : Locale.appCannotLock;
                 Alerts.alert({
                     icon: 'lock',
                     header: 'Lock',
                     body: message,
                     buttons: [
-                        { result: 'save', title: 'Save changes' },
-                        { result: 'discard', title: 'Discard changes', error: true },
-                        { result: '', title: 'Cancel' }
+                        { result: 'save', title: Locale.appSaveChangesBtn },
+                        { result: 'discard', title: Locale.appDiscardChangesBtn, error: true },
+                        { result: '', title: Locale.alertCancel }
                     ],
-                    checkbox: 'Save changes automatically',
+                    checkbox: Locale.appAutoSave,
                     success: function(result, autoSaveChecked) {
                         if (result === 'save') {
                             if (autoSaveChecked) {
@@ -344,9 +344,10 @@ var AppView = Backbone.View.extend({
             if (--pendingCallbacks === 0) {
                 if (errorFiles.length && that.model.files.hasDirtyFiles()) {
                     if (!Alerts.alertDisplayed) {
+                        var alertBody = errorFiles.length > 1 ? Locale.appSaveErrorBodyMul : Locale.appSaveErrorBody;
                         Alerts.error({
-                            header: 'Save Error',
-                            body: 'Failed to auto-save file' + (errorFiles.length > 1 ? 's: ' : '') + ' ' + errorFiles.join(', ')
+                            header: Locale.appSaveError,
+                            body: alertBody + ' ' + errorFiles.join(', ')
                         });
                     }
                 } else {

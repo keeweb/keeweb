@@ -30,9 +30,9 @@ var FieldViewDate = FieldViewText.extend({
             i18n: {
                 previousMonth: '',
                 nextMonth: '',
-                months: Locale.Months,
-                weekdays: Locale.Weekdays,
-                weekdaysShort: Locale.WeekdaysShort
+                months: Locale.months,
+                weekdays: Locale.weekdays,
+                weekdaysShort: Locale.weekdaysShort
             }
         });
         _.defer(this.picker.show.bind(this.picker));

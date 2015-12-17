@@ -1,59 +1,59 @@
 <div>
     <h1><i class="fa fa-lock"></i> {{name}}</h1>
     {{#if storage}}
-        {{#ifeq storage 'file'}}<p>File path: {{path}}</p>{{/ifeq}}
-        {{#ifeq storage 'dropbox'}}<p>This file is opened from Dropbox.</p>{{/ifeq}}
+        {{#ifeq storage 'file'}}<p>{{res 'setFilePath'}}: {{path}}</p>{{/ifeq}}
+        {{#ifeq storage 'dropbox'}}<p>{{#res 'setFileStorage'}}Dropbox{{/res}}</p>{{/ifeq}}
     {{else}}
-        <p>This file is stored in internal app storage.</p>
+        <p>{{res 'setFileIntl'}}.</p>
         {{#unless supportFiles}}
-            <p>Want to work seamlessly with local files? <a href="{{desktopLink}}" target="_blank">Download a desktop app</a></p>
+            <p>{{res 'setFileLocalHint'}} <a href="{{desktopLink}}" target="_blank">{{res 'setFileDownloadApp'}}</a></p>
         {{/unless}}
     {{/if}}
 
     <div class="settings__file-buttons">
-        {{#ifemptyoreq storage 'file'}}<button class="settings__file-button-save-default">Save</button>{{/ifemptyoreq}}
+        {{#ifemptyoreq storage 'file'}}<button class="settings__file-button-save-default">{{res 'setFileSave'}}</button>{{/ifemptyoreq}}
         <button class="settings__file-button-save-dropbox {{#ifneq storage 'dropbox'}}btn-silent{{/ifneq}}"
-            {{#if syncing}}disabled{{/if}}>Sync with Dropbox</button>
-        {{#ifneq storage 'file'}}<button class="settings__file-button-save-file btn-silent">Save to file</button>{{/ifneq}}
-        <button class="settings__file-button-export-xml btn-silent">Export to XML</button>
-        <button class="settings__file-button-close btn-silent">Close</button>
+            {{#if syncing}}disabled{{/if}}>{{#res 'setFileSyncWith'}}Dropbox{{/res}}</button>
+        {{#ifneq storage 'file'}}<button class="settings__file-button-save-file btn-silent">{{res 'setFileSaveFile'}}</button>{{/ifneq}}
+        <button class="settings__file-button-export-xml btn-silent">{{res 'setFileExportXml'}}</button>
+        <button class="settings__file-button-close btn-silent">{{res 'setFileClose'}}</button>
     </div>
 
     {{#if storage}}
-    <h2>Sync</h2>
-    <div>Last sync: {{#if syncDate}}{{syncDate}}{{else}}unknown{{/if}} {{#if syncing}}(sync in progress...){{/if}}</div>
-    {{#if syncError}}<div>Sync error: {{syncError}}</div>{{/if}}
+    <h2>{{res 'setFileSync'}}</h2>
+    <div>{{res 'setFileLastSync'}}: {{#if syncDate}}{{syncDate}}{{else}}{{res 'setFileLastSyncUnknown'}}{{/if}} {{#if syncing}}({{res 'setFileSyncInProgress'}}...){{/if}}</div>
+    {{#if syncError}}<div>{{res 'setFileSyncError'}}: {{syncError}}</div>{{/if}}
     {{/if}}
 
-    <h2>Settings</h2>
-    <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">Master password:
+    <h2>{{res 'setFileSettings'}}</h2>
+    <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFilePass'}}:
         <span class="settings__file-master-pass-warning">
-            <i class="fa fa-warning"></i> password was changed; leave the field blank to use old password
+            <i class="fa fa-warning"></i> {{res 'setFilePassChanged'}}
         </span>
     </label>
     <input type="password" class="settings__input input-base" id="settings__file-master-pass" value="{{password}}" />
-    <label for="settings__file-key-file">Key file:</label>
+    <label for="settings__file-key-file">{{res 'setFileKeyFile'}}:</label>
     <select class="settings__select settings__select-no-margin input-base" id="settings__file-key-file"></select>
-    <a id="settings__file-file-select-link">Select a key file</a>
+    <a id="settings__file-file-select-link">{{res 'setFileSelKeyFile'}}</a>
     <input type="file" id="settings__file-file-select" class="hide-by-pos" />
 
-    <h2>Names</h2>
-    <label for="settings__file-name">Name:</label>
+    <h2>{{res 'setFileNames'}}</h2>
+    <label for="settings__file-name">{{res 'setFileName'}}:</label>
     <input type="text" class="settings__input input-base" id="settings__file-name" value="{{name}}" required />
-    <label for="settings__file-def-user">Default username:</label>
+    <label for="settings__file-def-user">{{res 'setFileDefUser'}}:</label>
     <input type="text" class="settings__input input-base" id="settings__file-def-user" value="{{defaultUser}}" />
 
-    <h2>History</h2>
+    <h2>{{res 'setFileHistory'}}</h2>
     <div>
-        <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}}> />
-        <label for="settings__file-trash">Enable trash</label>
+        <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}} />
+        <label for="settings__file-trash">{{res 'setFileEnableTrash'}}</label>
     </div>
-    <label for="settings__file-hist-len">History length, keep last records per entry:</label>
+    <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" />
-    <label for="settings__file-hist-size">History size, total MB per file:</label>
+    <label for="settings__file-hist-size">{{res 'resFileHistSize'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" />
 
-    <h2>Advanced</h2>
-    <label for="settings__file-key-rounds">Key encryption rounds:</label>
+    <h2>{{res 'setFileAdvanced'}}</h2>
+    <label for="settings__file-key-rounds">{{res 'setFileRounds'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="{{keyEncryptionRounds}}" />
 </div>

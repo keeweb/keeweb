@@ -1,6 +1,7 @@
 'use strict';
 
-var Backbone = require('backbone');
+var Backbone = require('backbone'),
+    Locale = require('../util/locale');
 var Launcher;
 
 if (window.process && window.process.versions && window.process.versions.electron) {
@@ -28,9 +29,9 @@ if (window.process && window.process.versions && window.process.versions.electro
                 defaultPath = this.req('path').join(homePath, defaultPath);
             }
             this.remReq('dialog').showSaveDialog({
-                title: 'Save Passwords Database',
+                title: Locale.launcherSave,
                 defaultPath: defaultPath,
-                filters: [{ name: 'KeePass files', extensions: ['kdbx'] }]
+                filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
             }, cb);
         },
         getUserDataPath: function(fileName) {

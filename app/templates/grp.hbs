@@ -1,21 +1,21 @@
 <div class="grp">
     <div class="grp__back-button">
-        return to app <i class="fa fa-external-link-square"></i>
+        {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
     </div>
     <div class="scroller">
-        <h1>Group</h1>
+        <h1>{{res 'grpTitle'}}</h1>
         <div class="grp__field">
-            <label for="grp__field-title">Name:</label>
+            <label for="grp__field-title">{{Res 'name'}}:</label>
             <input type="text" class="input-base" id="grp__field-title" value="{{title}}" size="50" maxlength="1024"
                    required {{#if readonly}}readonly{{/if}} />
         </div>
         {{#unless readonly}}
         <div>
             <input type="checkbox" class="input-base" id="grp__check-search" {{#if enableSearching}}checked{{/if}} />
-            <label for="grp__check-search">Enable searching entries in this group</label>
+            <label for="grp__check-search">{{res 'grpSearch'}}</label>
         </div>
         {{/unless}}
-        <label>Icon:</label>
+        <label>{{Res 'icon'}}:</label>
         {{#if customIcon}}
         <img src="{{{customIcon}}}" class="grp__icon grp__icon--image" />
         {{else}}

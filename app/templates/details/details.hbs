@@ -1,9 +1,9 @@
 <div class="details">
     <div class="details__back-button">
-        <i class="fa fa-chevron-left"></i> back to list
+        <i class="fa fa-chevron-left"></i> {{res 'detBackToList'}}
     </div>
     <div class="details__header">
-        <i class="details__header-color fa fa-bookmark-o" title="Change icon color">
+        <i class="details__header-color fa fa-bookmark-o" title="{{res 'detSetIconColor'}}">
             <span class="details__colors-popup">
                 <span class="details__colors-popup-item yellow-color fa fa-bookmark-o" data-color="yellow"></span>
                 <span class="details__colors-popup-item green-color fa fa-bookmark-o" data-color="green"></span>
@@ -15,9 +15,9 @@
         </i>
         <h1 class="details__header-title">{{#if title}}{{title}}{{else}}(no title){{/if}}</h1>
         {{#if customIcon}}
-        <div class="details__header-icon details__header-icon--icon" style="background-image: url({{{customIcon}}})" title="Change icon"></div>
+        <div class="details__header-icon details__header-icon--icon" style="background-image: url({{{customIcon}}})" title="{{res 'detSetIcon'}}"></div>
         {{else}}
-        <i class="details__header-icon fa fa-{{icon}}" title="Change icon"></i>
+        <i class="details__header-icon fa fa-{{icon}}" title="{{res 'detSetIcon'}}"></i>
         {{/if}}
     </div>
     <div class="details__body">
@@ -31,22 +31,22 @@
     </div>
     <div class="details__buttons">
         {{#if deleted~}}
-            <i class="details__buttons-trash-del fa fa-minus-circle" title="Delete permanently"></i>
+            <i class="details__buttons-trash-del fa fa-minus-circle" title="{{res 'detDelEntryPerm'}}"></i>
         {{~else~}}
-            <i class="details__buttons-trash fa fa-trash-o" title="Delete"></i>
+            <i class="details__buttons-trash fa fa-trash-o" title="{{res 'detDelEntry'}}"></i>
         {{~/if~}}
         <div class="details__attachments">
             {{#each attachments as |attachment ix|}}
                 <div class="details__attachment" data-id="{{ix}}"><i class="fa fa-{{attachment.icon}}"></i> {{attachment.title}}</div>
             {{else}}
                 <div class="details__attachment-add">
-                    <span class="details__attachment-add-title">drag attachments here</span> <i class="fa fa-paperclip"></i>
+                    <span class="details__attachment-add-title">{{res 'detDropAttachments'}}</span> <i class="fa fa-paperclip"></i>
                 </div>
             {{/each}}
         </div>
     </div>
     <div class="details__dropzone">
         <i class="fa fa-paperclip muted-color details__dropzone-icon"></i>
-        <h1 class="muted-color details__dropzone-header">drop attachments here</h1>
+        <h1 class="muted-color details__dropzone-header">{{res 'detDropAttachments'}}</h1>
     </div>
 </div>

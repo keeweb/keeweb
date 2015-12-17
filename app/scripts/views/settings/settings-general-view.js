@@ -8,6 +8,7 @@ var Backbone = require('backbone'),
     UpdateModel = require('../../models/update-model'),
     RuntimeInfo = require('../../comp/runtime-info'),
     FeatureDetector = require('../../util/feature-detector'),
+    Locale = require('../../util/locale'),
     Links = require('../../const/links');
 
 var SettingsGeneralView = Backbone.View.extend({
@@ -77,36 +78,36 @@ var SettingsGeneralView = Backbone.View.extend({
     getUpdateInfo: function() {
         switch (UpdateModel.instance.get('status')) {
             case 'checking':
-                return 'Checking for updates...';
+                return Locale.setGenUpdateChecking + '...';
             case 'error':
-                var errMsg = 'Error checking for updates';
+                var errMsg = Locale.setGenErrorChecking;
                 if (UpdateModel.instance.get('lastError')) {
                     errMsg += ': ' + UpdateModel.instance.get('lastError');
                 }
                 if (UpdateModel.instance.get('lastSuccessCheckDate')) {
-                    errMsg += '. Last successful check was at ' + Format.dtStr(UpdateModel.instance.get('lastSuccessCheckDate')) +
-                        ': the latest version was ' + UpdateModel.instance.get('lastVersion');
+                    errMsg += '. ' + Locale.setGenLastCheckSuccess.replace('{}', Format.dtStr(UpdateModel.instance.get('lastSuccessCheckDate'))) +
+                        ': ' + Locale.setGenLastCheckVer.replace('{}', UpdateModel.instance.get('lastVersion'));
                 }
                 return errMsg;
             case 'ok':
-                var msg = 'Checked at ' + Format.dtStr(UpdateModel.instance.get('lastCheckDate')) + ': ';
+                var msg = Locale.setGenCheckedAt + ' ' + Format.dtStr(UpdateModel.instance.get('lastCheckDate')) + ': ';
                 if (RuntimeInfo.version === UpdateModel.instance.get('lastVersion')) {
-                    msg += 'you are using the latest version';
+                    msg += Locale.setGenLatestVer;
                 } else {
-                    msg += 'new version ' + UpdateModel.instance.get('lastVersion') + ' available, released at ' +
+                    msg += Locale.setGenNewVer.replace('{}', UpdateModel.instance.get('lastVersion')) + ' ' +
                         Format.dStr(UpdateModel.instance.get('lastVersionReleaseDate'));
                 }
                 switch (UpdateModel.instance.get('updateStatus')) {
                     case 'downloading':
-                        return msg + '. Downloading update...';
+                        return msg + '. ' + Locale.setGenDownloadingUpdate;
                     case 'extracting':
-                        return msg + '. Extracting update...';
+                        return msg + '. ' + Locale.setGenExtractingUpdate;
                     case 'error':
-                        return msg + '. There was an error downloading new version';
+                        return msg + '. ' + Locale.setGenCheckErr;
                 }
                 return msg;
             default:
-                return 'Never checked for updates';
+                return Locale.setGenNeverChecked;
         }
     },
 

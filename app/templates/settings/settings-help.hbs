@@ -1,23 +1,20 @@
 <div>
-    <h1><i class="fa fa-question"></i> Help</h1>
-    <h2>File Format</h2>
-    <p>This is a port of <a href="http://keepass.info/" target="_blank">KeePass</a> app built with web technologies.
-        It understands files in KeePass format (kdbx). You can create such files (password databases) either in KeePass, or in this app.
-        The file format is 100% compatible and should be understood by both apps.
+    <h1><i class="fa fa-question"></i> {{res 'setHelpTitle'}}</h1>
+    <h2>{{res 'setHelpFormat'}}</h2>
+    <p>{{#res 'setHelpFormatBody'}}<a href="http://keepass.info/" target="_blank">KeePass</a>{{/res}}</p>
+    <h2>{{res 'setHelpProblems'}}</h2>
+    <p>{{#res 'setHelpProblems1'}}<a href="{{issueLink}}" target="_blank">{{res 'setHelpOpenIssue'}}</a>{{/res}}
+        {{#res 'setHelpProblems2'}}<a href="http://antelle.net/" target="_blank">{{res 'setHelpContactLink'}}</a>{{/res}}.
     </p>
-    <h2>Problems?</h2>
-    <p>If something goes wrong, please, <a href="{{issueLink}}" target="_blank">open an issue on GitHub</a>
-        or <a href="http://antelle.net/" target="_blank">contact a developer</a> directly.
-    </p>
-    <p>App information:</p>
+    <p>{{res 'setHelpAppInfo'}}:</p>
     <pre class="settings__pre input-base">{{appInfo}}</pre>
-    <h2>Other platforms</h2>
+    <h2>{{res 'setHelpOtherPlatforms'}}</h2>
     <ul>
         <li>
             <i class="fa fa-windows"></i>
             <i class="fa fa-apple"></i>
             <i class="fa fa-linux"></i>
-            <a href="{{desktopLink}}" target="_blank">Desktop apps</a>
+            <a href="{{desktopLink}}" target="_blank">{{res 'setHelpDesktopApps'}}</a>
         </li>
         <li>
             <i class="fa fa-chrome"></i>
@@ -25,9 +22,9 @@
             <i class="fa fa-opera"></i>
             <i class="fa fa-compass"></i>
             <i class="fa fa-internet-explorer"></i>
-            <a href="{{webAppLink}}" target="_blank">Web app</a>
+            <a href="{{webAppLink}}" target="_blank">{{res 'setHelpWebApp'}}</a>
         </li>
     </ul>
-    <h2>Updates <i class="fa fa-twitter"></i></h2>
-    <p>App twitter: <a href="https://twitter.com/kee_web" target="_blank">kee_web</a></p>
+    <h2>{{res 'setHelpUpdates'}} <i class="fa fa-twitter"></i></h2>
+    <p>{{res 'setHelpTwitter'}}: <a href="https://twitter.com/kee_web" target="_blank">kee_web</a></p>
 </div>

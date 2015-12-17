@@ -2,7 +2,8 @@
 
 var Backbone = require('backbone'),
     PasswordGenerator = require('../util/password-generator'),
-    CopyPaste = require('../comp/copy-paste');
+    CopyPaste = require('../comp/copy-paste'),
+    Locale = require('../util/locale');
 
 var DefaultGenOpts = {
     length: 16, upper: true, lower: true, digits: true, special: false, brackets: false, high: false, ambiguous: false
@@ -31,7 +32,7 @@ var GeneratorView = Backbone.View.extend({
 
     render: function() {
         var canCopy = document.queryCommandSupported('copy');
-        var btnTitle = this.model.copy ? canCopy ? 'Copy' : 'Close' : 'OK';
+        var btnTitle = this.model.copy ? canCopy ? Locale.alertCopy : Locale.alertClose : Locale.alertOk;
         this.renderTemplate({ btnTitle: btnTitle, opt: this.gen });
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
