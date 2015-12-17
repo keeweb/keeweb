@@ -235,7 +235,7 @@ var Locale = {
     setFileUnsaved: 'Unsaved changes',
     setFileUnsavedBody: 'There are unsaved changes in this file',
     setFileCloseNoSave: 'Close and lose changes',
-    setFileDontClose: 'Don\t close',
+    setFileDontClose: 'Don\'t close',
 
     setShTitle: 'Shortcuts',
     setShShowAll: 'show all items',
