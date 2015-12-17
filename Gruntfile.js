@@ -213,7 +213,8 @@ module.exports = function(grunt) {
                         ]})},
                         { test: /zepto(\.min)?\.js$/, loader: 'exports?Zepto; delete window.$; delete window.Zepto;' },
                         { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
-                        { test: /pikadat\.js$/, loader: 'uglify' }
+                        { test: /pikadat\.js$/, loader: 'uglify' },
+                        { test: /handlebars/, loader: 'strip-sourcemap-loader' }
                     ]
                 },
                 plugins: [
