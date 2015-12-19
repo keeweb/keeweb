@@ -77,16 +77,16 @@ var IconSelectView = Backbone.View.extend({
         };
     },
 
-    getIconUrl: function(useGoogle) {
+    getIconUrl: function(useService) {
         if (!this.model.url) {
             return null;
         }
         var url = this.model.url.replace(/([^\/:]\/.*)?$/, function(match) { return (match && match[0]) + '/favicon.ico'; });
-        if (url.indexOf('://') < 0) {
+        if (url.indexOf('://') >= 0) {
             url = 'http://' + url;
         }
-        if (useGoogle) {
-            return 'http://www.google.com/s2/favicons?domain_url=' + encodeURIComponent(url.replace('/favicon.ico', '/'));
+        if (useService) {
+            return 'https://favicon-antelle.rhcloud.com/' + url.replace(/^.*:\/+/, '').replace(/\/.*/, '');
         }
         return url;
     },
