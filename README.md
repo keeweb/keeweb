@@ -26,7 +26,7 @@ To make Dropbox work in your self-hosted app:
 1. [create](https://www.dropbox.com/developers/apps/create) a Dropbox app
 2. find your app key (in Dropbox App page, go to Settings/App key)
 3. change Dropbox app key in index.html file: `sed -i.bak s/qp7ctun6qt5n9d6/your_app_key/g index.html`
-    (or, if you are building from source, change it [here](scripts/comp/dropbox-link.js#L7))
+    (or, if you are building from source, change it [here](app/scripts/comp/dropbox-link.js#L12))
 
 # Building
 
