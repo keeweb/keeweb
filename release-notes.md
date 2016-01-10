@@ -4,6 +4,7 @@ Release notes
 Improvements  
 `+` more reliable binaries management  
 `+` string resources globalization  
+`-` #74: select all in search field  
 
 ##### v0.5.1 (2015-12-15)
 Layout bugfixes  
