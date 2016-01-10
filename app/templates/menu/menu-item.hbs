@@ -20,6 +20,7 @@
         </div>
         {{/if}}
         {{#if editable}}<i class="menu__item-edit fa fa-cog"></i>{{/if}}
-        {{#ifeq filterKey 'trash'}}<i class="menu__item-empty-trash fa fa-minus-circle" title="{{res 'menuEmptyTrash'}}"></i>{{/ifeq}}
+        {{#ifeq filterKey 'trash'}}<i class="menu__item-empty-trash fa fa-minus-circle" title="{{res 'menuEmptyTrash'}}"
+            tip-placement="right"></i>{{/ifeq}}
     </div>
 </div>

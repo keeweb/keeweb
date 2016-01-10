@@ -3,6 +3,7 @@
 var Backbone = require('backbone'),
     Scrollable = require('../mixins/scrollable'),
     IconSelectView = require('./icon-select-view'),
+    Tip = require('../util/tip'),
     baron = require('baron');
 
 var GrpView = Backbone.View.extend({
@@ -30,6 +31,7 @@ var GrpView = Backbone.View.extend({
                 enableSearching: this.model.get('enableSearching') !== false,
                 readonly: this.model.get('top')
             }));
+            Tip.createTips(this.$el);
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();
             }

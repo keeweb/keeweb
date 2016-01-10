@@ -3,7 +3,7 @@
         <i class="fa fa-chevron-left"></i> {{res 'detBackToList'}}
     </div>
     <div class="details__header">
-        <i class="details__header-color fa fa-bookmark-o" title="{{res 'detSetIconColor'}}">
+        <i class="details__header-color fa fa-bookmark-o" title="{{res 'detSetIconColor'}}" tip-placement="left">
             <span class="details__colors-popup">
                 <span class="details__colors-popup-item yellow-color fa fa-bookmark-o" data-color="yellow"></span>
                 <span class="details__colors-popup-item green-color fa fa-bookmark-o" data-color="green"></span>
@@ -31,9 +31,9 @@
     </div>
     <div class="details__buttons">
         {{#if deleted~}}
-            <i class="details__buttons-trash-del fa fa-minus-circle" title="{{res 'detDelEntryPerm'}}"></i>
+            <i class="details__buttons-trash-del fa fa-minus-circle" title="{{res 'detDelEntryPerm'}}" tip-placement="top"></i>
         {{~else~}}
-            <i class="details__buttons-trash fa fa-trash-o" title="{{res 'detDelEntry'}}"></i>
+            <i class="details__buttons-trash fa fa-trash-o" title="{{res 'detDelEntry'}}" tip-placement="top"></i>
         {{~/if~}}
         <div class="details__attachments">
             {{#each attachments as |attachment ix|}}

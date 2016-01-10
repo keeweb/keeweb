@@ -19,6 +19,7 @@ var Backbone = require('backbone'),
     CopyPaste = require('../../comp/copy-paste'),
     Format = require('../../util/format'),
     Locale = require('../../util/locale'),
+    Tip = require('../../util/tip'),
     FileSaver = require('filesaver'),
     baron = require('baron'),
     kdbxweb = require('kdbxweb');
@@ -80,10 +81,12 @@ var DetailsView = Backbone.View.extend({
         }
         if (this.model instanceof GroupModel) {
             this.$el.html(this.groupTemplate());
+            Tip.createTips(this.$el);
             return;
         }
         var model = $.extend({ deleted: this.appModel.filter.trash }, this.model);
         this.$el.html(this.template(model));
+        Tip.createTips(this.$el);
         this.setSelectedColor(this.model.color);
         this.addFieldViews();
         this.scroll = baron({

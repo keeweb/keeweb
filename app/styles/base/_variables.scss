@@ -44,6 +44,8 @@ $base-duration: 150ms;
 $base-timing: ease;
 $slow-transition-in: $base-duration*2 ease-in;
 $slow-transition-out: $base-duration ease-out;
+$tip-transition-in: 500ms $ease-in-expo;
+$tip-transition-out: $slow-transition-out;
 
 // Math
 $sqrt2: 1.41;

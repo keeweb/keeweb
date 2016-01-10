@@ -1,6 +1,7 @@
 'use strict';
 
-var Backbone = require('backbone');
+var Backbone = require('backbone'),
+    Tip = require('../util/tip');
 
 _.extend(Backbone.View.prototype, {
     hide: function() {
@@ -48,6 +49,7 @@ _.extend(Backbone.View.prototype, {
             this.$el.replaceWith(el);
         }
         this.setElement(el);
+        Tip.createTips(el);
     },
 
     _parentRemove: Backbone.View.prototype.remove,
