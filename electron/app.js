@@ -84,7 +84,7 @@ function createMainWindow() {
         icon: path.join(__dirname, 'icon.png')
     });
     setMenu();
-    mainWindow.loadUrl('file://' + htmlPath);
+    mainWindow.loadURL('file://' + htmlPath);
     mainWindow.webContents.on('dom-ready', function() {
         setTimeout(function() {
             mainWindow.show();
