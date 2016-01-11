@@ -127,6 +127,8 @@ var Locale = {
     detDelFromTrash: 'Delete from trash?',
     detDelFromTrashBody: 'You will not be able to put it back.',
     detDelFromTrashBodyHint: 'To quickly remove all items from trash, click empty icon in Trash menu.',
+    detPassCopied: 'Password copied',
+    detPassCopiedTime: 'Password copied for {} seconds',
 
     appSecWarn: 'Not Secure!',
     appSecWarnBody1: 'You have loaded this app with insecure connection. ' +

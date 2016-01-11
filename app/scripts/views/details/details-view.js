@@ -20,6 +20,7 @@ var Backbone = require('backbone'),
     Format = require('../../util/format'),
     Locale = require('../../util/locale'),
     Tip = require('../../util/tip'),
+    Timeouts = require('../../const/timeouts'),
     FileSaver = require('filesaver'),
     baron = require('baron'),
     kdbxweb = require('kdbxweb');
@@ -31,6 +32,8 @@ var DetailsView = Backbone.View.extend({
 
     fieldViews: null,
     views: null,
+    passEditView: null,
+    passCopyTip: null,
 
     events: {
         'click .details__colors-popup-item': 'selectColor',
@@ -67,6 +70,10 @@ var DetailsView = Backbone.View.extend({
     removeFieldViews: function() {
         this.fieldViews.forEach(function(fieldView) { fieldView.remove(); });
         this.fieldViews = [];
+        if (this.passCopyTip) {
+            this.passCopyTip.hide();
+            this.passCopyTip = null;
+        }
     },
 
     render: function () {
@@ -111,8 +118,9 @@ var DetailsView = Backbone.View.extend({
         var model = this.model;
         this.fieldViews.push(new FieldViewText({ model: { name: '$UserName', title: Locale.detUser,
             value: function() { return model.user; } } }));
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Password', title: Locale.detPassword, canGen: true,
-            value: function() { return model.password; } } }));
+        this.passEditView = new FieldViewText({ model: { name: '$Password', title: Locale.detPassword, canGen: true,
+            value: function() { return model.password; } } });
+        this.fieldViews.push(this.passEditView);
         this.fieldViews.push(new FieldViewUrl({ model: { name: '$URL', title: Locale.detWebsite,
             value: function() { return model.url; } } }));
         this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: Locale.detNotes, multiline: 'true',
@@ -273,7 +281,20 @@ var DetailsView = Backbone.View.extend({
             var pw = this.model.password;
             var password = pw.getText ? pw.getText() : pw;
             CopyPaste.createHiddenInput(password);
-            CopyPaste.copied();
+            var clipboardTime = CopyPaste.copied();
+            if (!this.passCopyTip) {
+                var passLabel = this.passEditView.labelEl;
+                var msg = clipboardTime ? Locale.detPassCopiedTime.replace('{}', clipboardTime)
+                    : Locale.detPassCopied;
+                var tip = new Tip(passLabel, { title: msg, placement: 'right' });
+                this.passCopyTip = tip;
+                tip.show();
+                var that = this;
+                setTimeout(function() {
+                    tip.hide();
+                    that.passCopyTip = null;
+                }, Timeouts.CopyTip);
+            }
         }
     },
 

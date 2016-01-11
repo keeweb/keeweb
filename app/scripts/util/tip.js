@@ -1,17 +1,60 @@
 'use strict';
 
-var Tip = function(el) {
+var Tip = function(el, config) {
     this.el = el;
-    this.title = el.attr('title');
+    this.title = config && config.title || el.attr('title');
+    this.placement = config && config.placement || el.attr('tip-placement');
     this.tipEl = null;
     this.showTimeout = null;
     this.hideTimeout = null;
-    this.init();
 };
 
 Tip.prototype.init = function() {
     this.el.removeAttr('title');
     this.el.mouseenter(this.mouseenter.bind(this)).mouseleave(this.mouseleave.bind(this));
+};
+
+Tip.prototype.show = function() {
+    if (this.tipEl) {
+        this.tipEl.remove();
+        if (this.hideTimeout) {
+            clearTimeout(this.hideTimeout);
+            this.hideTimeout = null;
+        }
+    }
+    var tipEl = this.tipEl = $('<div></div>').addClass('tip').appendTo('body').html(this.title);
+    var rect = this.el[0].getBoundingClientRect(),
+        tipRect = this.tipEl[0].getBoundingClientRect();
+    var placement = this.placement || this.getAutoPlacement(rect, tipRect);
+    tipEl.addClass('tip--' + placement);
+    var top, left;
+    var offset = 10;
+    switch (placement) {
+        case 'top':
+            top = rect.top - tipRect.height - offset;
+            left = rect.left + rect.width / 2 - tipRect.width / 2;
+            break;
+        case 'bottom':
+            top = rect.bottom + offset;
+            left = rect.left + rect.width / 2 - tipRect.width / 2;
+            break;
+        case 'left':
+            top = rect.top + rect.height / 2 - tipRect.height / 2;
+            left = rect.left - tipRect.width - offset;
+            break;
+        case 'right':
+            top = rect.top + rect.height / 2 - tipRect.height / 2;
+            left = rect.right + offset;
+            break;
+    }
+    tipEl.css({ top: top, left: left });
+};
+
+Tip.prototype.hide = function() {
+    if (this.tipEl) {
+        this.tipEl.remove();
+        this.tipEl = null;
+    }
 };
 
 Tip.prototype.mouseenter = function() {
@@ -21,39 +64,7 @@ Tip.prototype.mouseenter = function() {
     }
     this.showTimeout = setTimeout(function() {
         that.showTimeout = null;
-        if (that.tipEl) {
-            that.tipEl.remove();
-            if (that.hideTimeout) {
-                clearTimeout(that.hideTimeout);
-                that.hideTimeout = null;
-            }
-        }
-        var tipEl = that.tipEl = $('<div></div>').addClass('tip').appendTo('body').html(that.title);
-        var rect = that.el[0].getBoundingClientRect(),
-            tipRect = that.tipEl[0].getBoundingClientRect();
-        var placement = that.el.attr('tip-placement') || that.getAutoPlacement(rect, tipRect);
-        tipEl.addClass('tip--' + placement);
-        var top, left;
-        var offset = 10;
-        switch (placement) {
-            case 'top':
-                top = rect.top - tipRect.height - offset;
-                left = rect.left + rect.width / 2 - tipRect.width / 2;
-                break;
-            case 'bottom':
-                top = rect.bottom + offset;
-                left = rect.left + rect.width / 2 - tipRect.width / 2;
-                break;
-            case 'left':
-                top = rect.top + rect.height / 2 - tipRect.height / 2;
-                left = rect.left - tipRect.width - offset;
-                break;
-            case 'right':
-                top = rect.top + rect.height / 2 - tipRect.height / 2;
-                left = rect.right + offset;
-                break;
-        }
-        tipEl.css({ top: top, left: left });
+        that.show();
     }, 200);
 };
 
@@ -63,10 +74,7 @@ Tip.prototype.mouseleave = function() {
         that.tipEl.addClass('tip--hide');
         this.hideTimeout = setTimeout(function () {
             that.hideTimeout = null;
-            if (that.tipEl) {
-                that.tipEl.remove();
-                that.tipEl = null;
-            }
+            that.hide();
         }, 500);
     }
     if (this.showTimeout) {
@@ -104,7 +112,9 @@ Tip.prototype.getAutoPlacement = function(rect, tipRect) {
 Tip.createTips = function(container) {
     container.find('[title]').each(function(ix, el) {
         if (!el._tip) {
-            el._tip = new Tip($(el));
+            var tip = new Tip($(el));
+            tip.init();
+            el._tip = tip;
         }
     });
 };
