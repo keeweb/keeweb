@@ -286,7 +286,7 @@ var DetailsView = Backbone.View.extend({
                 var passLabel = this.passEditView.labelEl;
                 var msg = clipboardTime ? Locale.detPassCopiedTime.replace('{}', clipboardTime)
                     : Locale.detPassCopied;
-                var tip = new Tip(passLabel, { title: msg, placement: 'right' });
+                var tip = new Tip(passLabel, { title: msg, placement: 'right', fast: true });
                 this.passCopyTip = tip;
                 tip.show();
                 var that = this;

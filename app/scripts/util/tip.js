@@ -4,6 +4,7 @@ var Tip = function(el, config) {
     this.el = el;
     this.title = config && config.title || el.attr('title');
     this.placement = config && config.placement || el.attr('tip-placement');
+    this.fast = config && config.fast || false;
     this.tipEl = null;
     this.showTimeout = null;
     this.hideTimeout = null;
@@ -27,6 +28,9 @@ Tip.prototype.show = function() {
         tipRect = this.tipEl[0].getBoundingClientRect();
     var placement = this.placement || this.getAutoPlacement(rect, tipRect);
     tipEl.addClass('tip--' + placement);
+    if (this.fast) {
+        tipEl.addClass('tip--fast');
+    }
     var top, left;
     var offset = 10;
     switch (placement) {

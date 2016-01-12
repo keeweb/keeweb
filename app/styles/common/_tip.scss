@@ -7,6 +7,9 @@
   pointer-events: none;
   animation: tip $tip-transition-in;
   @include dropdown();
+  &--fast {
+    animation-duration: $base-duration;
+  }
   &--hide.tip, &--hide.tip:before, &--hide.tip:after {
     transition: all $tip-transition-out;
     transition-property: color, border-color, background-color, box-shadow;
