@@ -2,6 +2,7 @@
 
 var Backbone = require('backbone'),
     GroupModel = require('../../models/group-model'),
+    AppSettingsModel = require('../../models/app-settings-model'),
     Scrollable = require('../../mixins/scrollable'),
     FieldViewText = require('../fields/field-view-text'),
     FieldViewDate = require('../fields/field-view-date'),
@@ -33,6 +34,7 @@ var DetailsView = Backbone.View.extend({
     fieldViews: null,
     views: null,
     passEditView: null,
+    addNewFieldView: null,
     passCopyTip: null,
 
     events: {
@@ -111,6 +113,7 @@ var DetailsView = Backbone.View.extend({
             clearTimeout(this.dragTimeout);
         }
         this.pageResized();
+        this.showCopyTip();
         return this;
     },
 
@@ -151,8 +154,9 @@ var DetailsView = Backbone.View.extend({
                 }
             }
         }
-        this.fieldViews.push(new FieldViewCustom({ model: { name: '', title: Locale.detAddField, newField: newFieldTitle,
-            value: function() { return ''; } } }));
+        this.addNewFieldView = new FieldViewCustom({ model: { name: '', title: Locale.detAddField, newField: newFieldTitle,
+            value: function() { return ''; } } });
+        this.fieldViews.push(this.addNewFieldView);
 
         var fieldsMainEl = this.$el.find('.details__body-fields');
         var fieldsAsideEl = this.$el.find('.details__body-aside');
@@ -296,6 +300,22 @@ var DetailsView = Backbone.View.extend({
                 }, Timeouts.CopyTip);
             }
         }
+    },
+
+    showCopyTip: function() {
+        if (this.helpTipCopyShown) {
+            return;
+        }
+        this.helpTipCopyShown = AppSettingsModel.instance.get('helpTipCopyShown');
+        if (this.helpTipCopyShown) {
+            return;
+        }
+        AppSettingsModel.instance.set('helpTipCopyShown', true);
+        this.helpTipCopyShown = true;
+        var newFieldLabel = this.addNewFieldView.labelEl;
+        var tip = new Tip(newFieldLabel, { title: Locale.detCopyHint, placement: 'right' });
+        tip.show();
+        setTimeout(function() { tip.hide(); }, Timeouts.AutoHideHint);
     },
 
     fieldChanged: function(e) {
