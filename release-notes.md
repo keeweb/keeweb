@@ -4,6 +4,7 @@ Release notes
 Improvements  
 `+` more reliable binaries management  
 `+` string resources globalization  
+`+` help/tips  
 `+` #50: notification on password copy  
 `-` #74: select all in search field  
 
