@@ -223,13 +223,25 @@ var AppView = Backbone.View.extend({
             if (Launcher && !Launcher.exitRequested) {
                 if (!this.exitAlertShown) {
                     var that = this;
+                    if (this.model.settings.get('autoSave')) {
+                        that.saveAndExit();
+                        return;
+                    }
                     that.exitAlertShown = true;
                     Alerts.yesno({
                         header: Locale.appUnsavedWarn,
                         body: Locale.appUnsavedWarnBody,
-                        buttons: [{result: 'yes', title: Locale.appExitBtn}, {result: '', title: Locale.appDontExitBtn}],
-                        success: function () {
-                            Launcher.exit();
+                        buttons: [
+                            {result: 'save', title: Locale.appExitSaveBtn},
+                            {result: 'exit', title: Locale.appExitBtn, error: true},
+                            {result: '', title: Locale.appDontExitBtn}
+                        ],
+                        success: function (result) {
+                            if (result === 'save') {
+                                that.saveAndExit();
+                            } else {
+                                Launcher.exit();
+                            }
                         },
                         cancel: function() {
                             Launcher.cancelRestart(false);
@@ -241,7 +253,7 @@ var AppView = Backbone.View.extend({
                 }
                 return Launcher.preventExit(e);
             }
-            return Locale.appUnsavedCloseMsg;
+            return Locale.appUnsavedWarnBody;
         } else if (Launcher && !Launcher.exitRequested && !Launcher.restartPending &&
                 Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
             Launcher.minimizeApp();
@@ -293,7 +305,7 @@ var AppView = Backbone.View.extend({
         }
         if (this.model.files.hasUnsavedFiles()) {
             if (this.model.settings.get('autoSave')) {
-                this.saveAndLock(autoInit);
+                this.saveAndLock();
             } else {
                 var message = autoInit ? Locale.appCannotLockAutoInit : Locale.appCannotLock;
                 Alerts.alert({
@@ -323,7 +335,7 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    saveAndLock: function(/*autoInit*/) {
+    saveAndLock: function(complete) {
         var pendingCallbacks = 0,
             errorFiles = [],
             that = this;
@@ -350,11 +362,21 @@ var AppView = Backbone.View.extend({
                             body: alertBody + ' ' + errorFiles.join(', ')
                         });
                     }
+                    if (complete) { complete(true); }
                 } else {
                     that.closeAllFilesAndShowFirst();
+                    if (complete) { complete(true); }
                 }
             }
         }
+    },
+
+    saveAndExit: function() {
+        this.saveAndLock(function(result) {
+            if (result) {
+                Launcher.exit();
+            }
+        });
     },
 
     closeAllFilesAndShowFirst: function() {
