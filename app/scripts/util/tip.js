@@ -1,5 +1,7 @@
 'use strict';
 
+var FeatureDetector = require('./feature-detector');
+
 var Tip = function(el, config) {
     this.el = el;
     this.title = config && config.title || el.attr('title');
@@ -10,12 +12,20 @@ var Tip = function(el, config) {
     this.hideTimeout = null;
 };
 
+Tip.enabled = FeatureDetector.isDesktop();
+
 Tip.prototype.init = function() {
+    if (!Tip.enabled) {
+        return;
+    }
     this.el.removeAttr('title');
     this.el.mouseenter(this.mouseenter.bind(this)).mouseleave(this.mouseleave.bind(this));
 };
 
 Tip.prototype.show = function() {
+    if (!Tip.enabled) {
+        return;
+    }
     if (this.tipEl) {
         this.tipEl.remove();
         if (this.hideTimeout) {
@@ -114,6 +124,9 @@ Tip.prototype.getAutoPlacement = function(rect, tipRect) {
 };
 
 Tip.createTips = function(container) {
+    if (!Tip.enabled) {
+        return;
+    }
     container.find('[title]').each(function(ix, el) {
         if (!el._tip) {
             var tip = new Tip($(el));
