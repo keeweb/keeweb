@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v0.6.0 (not released yet)
 Improvements  
+`+` advanced search  
 `+` save at exit for desktop app  
 `+` more reliable binaries management  
 `+` string resources globalization  

@@ -17,7 +17,8 @@ var ListSearchView = Backbone.View.extend({
         'click .list__search-btn-new': 'createOptionsClick',
         'click .list__search-btn-sort': 'sortOptionsClick',
         'click .list__search-icon-search': 'advancedSearchClick',
-        'click .list__search-btn-menu': 'toggleMenu'
+        'click .list__search-btn-menu': 'toggleMenu',
+        'change .list__search-adv input[type=checkbox]': 'toggleAdvCheck'
     },
 
     views: null,
@@ -26,6 +27,8 @@ var ListSearchView = Backbone.View.extend({
     sortOptions: null,
     sortIcons: null,
     createOptions: null,
+    advancedSearchEnabled: false,
+    advancedSearch: null,
 
     initialize: function () {
         this.sortOptions = [
@@ -51,6 +54,13 @@ var ListSearchView = Backbone.View.extend({
             { value: 'group', icon: 'folder', text: 'Group' }
         ];
         this.views = {};
+        this.advancedSearch = {
+            user: true, other: true,
+            url: true, protect: false,
+            notes: true, pass: false,
+            cs: false, regex: false,
+            history: false
+        };
         KeyHandler.onKey(Keys.DOM_VK_F, this.findKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_N, this.newKeyPress, this, KeyHandler.SHORTCUT_OPT);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downKeyPress, this);
@@ -185,11 +195,19 @@ var ListSearchView = Backbone.View.extend({
     },
 
     advancedSearchClick: function() {
-        require('../comp/alerts').notImplemented();
+        this.advancedSearchEnabled = !this.advancedSearchEnabled;
+        this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
+        Backbone.trigger('add-filter', { advanced: this.advancedSearchEnabled ? this.advancedSearch : false });
     },
 
     toggleMenu: function() {
         Backbone.trigger('toggle-menu');
+    },
+
+    toggleAdvCheck: function(e) {
+        var setting = $(e.target).data('id');
+        this.advancedSearch[setting] = e.target.checked;
+        Backbone.trigger('add-filter', { advanced: this.advancedSearch });
     },
 
     hideSearchOptions: function() {

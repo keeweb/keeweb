@@ -41,6 +41,7 @@
       @include align-items(stretch);
       @include flex-direction(row);
       @include justify-content(flex-start);
+      @include flex-wrap(wrap);
     }
     &-field-wrap {
       @include flex(1);
@@ -78,6 +79,19 @@
           display: block;
         }
       }
+    }
+    &-adv {
+      @include flex(100%);
+      @include display(flex);
+      @include align-items(stretch);
+      @include flex-direction(row);
+      @include flex-wrap(wrap);
+      &-text {
+        @include flex(100%);
+      }
+    }
+    &-check {
+      @include flex(50%);
     }
   }
 

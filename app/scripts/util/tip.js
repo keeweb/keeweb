@@ -20,6 +20,7 @@ Tip.prototype.init = function() {
     }
     this.el.removeAttr('title');
     this.el.mouseenter(this.mouseenter.bind(this)).mouseleave(this.mouseleave.bind(this));
+    this.el.click(this.mouseleave.bind(this));
 };
 
 Tip.prototype.show = function() {
