@@ -25,7 +25,7 @@ EntryPresenter.prototype = {
     get color() { return this.entry ? (this.entry.color || (this.entry.customIcon ? this.noColor : undefined)) : undefined; },
     get title() { return this.entry ? this.entry.title : this.group.get('title'); },
     get notes() { return this.entry ? this.entry.notes : undefined; },
-    get url() { return this.entry ? this.entry.url : undefined; },
+    get url() { return this.entry ? this.entry.displayUrl : undefined; },
     get user() { return this.entry ? this.entry.user : undefined; },
     get active() { return this.entry ? this.entry.id === this.activeEntryId : this.group.active; },
     get created() { return this.entry ? Format.dtStr(this.entry.created) : undefined; },

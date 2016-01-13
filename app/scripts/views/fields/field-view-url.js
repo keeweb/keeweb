@@ -3,12 +3,18 @@
 var FieldViewText = require('./field-view-text');
 
 var FieldViewUrl = FieldViewText.extend({
+    displayUrlRegex: /^http:\/\//i,
+
     renderValue: function(value) {
-        return value ? '<a href="' + _.escape(this.fixUrl(value)) + '" target="_blank">' + _.escape(value) + '</a>' : '';
+        return value ? '<a href="' + _.escape(this.fixUrl(value)) + '" target="_blank">' + _.escape(this.displayUrl(value)) + '</a>' : '';
     },
 
     fixUrl: function(url) {
         return url.indexOf(':') < 0 ? 'http://' + url : url;
+    },
+
+    displayUrl: function(url) {
+        return url.replace(this.displayUrlRegex, '');
     }
 });
 

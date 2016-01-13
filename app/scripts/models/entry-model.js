@@ -9,6 +9,7 @@ var Backbone = require('backbone'),
 
 var EntryModel = Backbone.Model.extend({
     defaults: {},
+    urlRegex: /^https?:\/\//i,
 
     buildInFields: ['Title', 'Password', 'Notes', 'URL', 'UserName'],
 
@@ -33,6 +34,7 @@ var EntryModel = Backbone.Model.extend({
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
         this.notes = entry.fields.Notes || '';
         this.url = entry.fields.URL || '';
+        this.displayUrl = this._getDisplayUrl(entry.fields.URL);
         this.user = entry.fields.UserName || '';
         this.iconId = entry.icon;
         this.icon = this._iconFromId(entry.icon);
@@ -95,6 +97,13 @@ var EntryModel = Backbone.Model.extend({
 
     _iconFromId: function(id) {
         return IconMap[id];
+    },
+
+    _getDisplayUrl: function(url) {
+        if (!url) {
+            return '';
+        }
+        return url.replace(this.urlRegex, '');
     },
 
     _colorToModel: function(color) {
