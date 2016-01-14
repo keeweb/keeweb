@@ -87,7 +87,7 @@ var ListSearchView = Backbone.View.extend({
     },
 
     render: function () {
-        this.renderTemplate();
+        this.renderTemplate({ adv: this.advancedSearch });
         this.inputEl = this.$el.find('.list__search-field');
         return this;
     },
@@ -177,6 +177,10 @@ var ListSearchView = Backbone.View.extend({
         }
         var sortIconCls = this.sortIcons[filter.sort] || 'sort';
         this.$el.find('.list__search-btn-sort>i').attr('class', 'fa fa-' + sortIconCls);
+        if (this.advancedSearchEnabled !== !!filter.filter.advanced) {
+            this.advancedSearchEnabled = !!filter.filter.advanced;
+            this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
+        }
     },
 
     createOptionsClick: function(e) {
