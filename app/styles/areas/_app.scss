@@ -31,6 +31,7 @@
     @include align-items(stretch);
     @include flex-direction(row);
     @include justify-content(flex-start);
+    overflow: hidden;
     &.app__list-wrap--table {
       @include flex-direction(column);
     }
