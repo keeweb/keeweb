@@ -7,9 +7,10 @@ Improvements
 `+` more reliable binaries management  
 `+` string resources globalization  
 `+` help/tips  
+`+` #67: field editing improvements  
+`*` #68: url display without http  
 `+` #50: notification on password copy  
 `-` #74: select all in search field  
-`*` #68: url display without http  
 
 ##### v0.5.1 (2015-12-15)
 Layout bugfixes  

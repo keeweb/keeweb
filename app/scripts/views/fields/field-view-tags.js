@@ -23,7 +23,18 @@ var FieldViewTags = FieldViewText.extend({
 
     endEdit: function(newVal, extra) {
         if (this.selectedTag) {
-            newVal += (newVal ? ', ' : '') + this.selectedTag;
+            if (newVal) {
+                var tags = this.valueToTags(newVal);
+                var last = tags[tags.length - 1];
+                var isLastPart = last && this.model.tags.indexOf(last) < 0;
+                if (isLastPart) {
+                    newVal = newVal.substr(0, newVal.lastIndexOf(last)) + this.selectedTag;
+                } else {
+                    newVal += ', ' + this.selectedTag;
+                }
+            } else {
+                newVal = this.selectedTag;
+            }
             this.input.val(newVal);
             this.input.focus();
             this.setTags();
@@ -61,8 +72,10 @@ var FieldViewTags = FieldViewText.extend({
 
     getAvailableTags: function() {
         var tags = this.valueToTags(this.input.val());
+        var last = tags[tags.length - 1];
+        var isLastPart = last && this.model.tags.indexOf(last) < 0;
         return this.model.tags.filter(function(tag) {
-            return tags.indexOf(tag) < 0;
+            return tags.indexOf(tag) < 0 && (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0);
         });
     },
 
