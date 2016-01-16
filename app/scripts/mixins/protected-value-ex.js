@@ -29,7 +29,7 @@ Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
                     textLength += 2;
                 }
             } else {
-                throw new Error('Malformed UTF8 character at byte offset ' + i);
+                textLength++; // skip error
             }
         }
         return textLength;
