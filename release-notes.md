@@ -3,6 +3,7 @@ Release notes
 ##### v0.6.0 (not released yet)
 Improvements  
 `+` advanced search  
+`+` ability to sync files with changed credentials  
 `+` save at exit for desktop app  
 `+` more reliable binaries management  
 `+` string resources globalization  

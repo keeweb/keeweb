@@ -1,0 +1,55 @@
+.key-change {
+  @include flex(1);
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(center);
+  overflow: hidden;
+  padding: $base-spacing;
+  position: relative;
+  @include mobile {
+    padding: $base-padding;
+  }
+
+  &__icon {
+    font-size: $modal-icon-size;
+    text-align: center;
+  }
+  &__header {
+    font-size: $small-header-font-size;
+    text-align: center;
+  }
+  &__body {
+    @include flex(0);
+    @include display(flex);
+    @include align-items(flex-start);
+    @include flex-direction(column);
+    margin: $base-spacing 0;
+  }
+  &__input {
+    @include align-self(center);
+  }
+  input[type=password].key-change__pass {
+    font-size: $large-pass-font-size;
+    margin: $small-spacing 0 0;
+  }
+  &__keyfile {
+    @include th { color: muted-color(); }
+    &:hover { @include th { color: medium-color(); } }
+    margin-top: $base-padding-v;
+    cursor: pointer;
+  }
+  &__buttons {
+    text-align: right;
+    button ~ button {
+      margin-left: $small-spacing;
+    }
+    >button {
+      margin-bottom: $small-spacing;
+    }
+  }
+  &__body, &__buttons {
+    @include align-self(center);
+    width: 40%;
+  }
+}

@@ -10,6 +10,7 @@ var Backbone = require('backbone'),
     GrpView = require('../views/grp-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
+    KeyChangeView = require('../views/key-change-view'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
     Timeouts = require('../const/timeouts'),
@@ -60,6 +61,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'show-file', this.showFileSettings);
         this.listenTo(Backbone, 'open-file', this.toggleOpenFile);
         this.listenTo(Backbone, 'save-all', this.saveAll);
+        this.listenTo(Backbone, 'remote-key-changed', this.remoteKeyChanged);
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
@@ -105,6 +107,7 @@ var AppView = Backbone.View.extend({
         this.views.footer.toggle(this.model.files.hasOpenFiles());
         this.hideSettings();
         this.hideOpenFile();
+        this.hideKeyChange();
         this.views.open = new OpenView({ model: this.model });
         this.views.open.setElement(this.$el.find('.app__body')).render();
         this.views.open.on('close', this.showEntries, this);
@@ -143,6 +146,7 @@ var AppView = Backbone.View.extend({
         this.views.footer.show();
         this.hideOpenFile();
         this.hideSettings();
+        this.hideKeyChange();
     },
 
     hideOpenFile: function() {
@@ -160,6 +164,13 @@ var AppView = Backbone.View.extend({
         }
     },
 
+    hideKeyChange: function() {
+        if (this.views.keyChange) {
+            this.views.keyChange.hide();
+            this.views.keyChange = null;
+        }
+    },
+
     showSettings: function(selectedMenuItem) {
         this.model.menu.setMenu('settings');
         this.views.menu.show();
@@ -170,6 +181,7 @@ var AppView = Backbone.View.extend({
         this.views.details.hide();
         this.views.grp.hide();
         this.hideOpenFile();
+        this.hideKeyChange();
         this.views.settings = new SettingsView({ model: this.model });
         this.views.settings.setElement(this.$el.find('.app__body')).render();
         if (!selectedMenuItem) {
@@ -185,6 +197,22 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.grp.show();
+    },
+
+    showKeyChange: function(file) {
+        if (this.views.keyChange || Alerts.alertDisplayed) {
+            return;
+        }
+        this.views.menu.hide();
+        this.views.listWrap.hide();
+        this.views.list.hide();
+        this.views.listDrag.hide();
+        this.views.details.hide();
+        this.views.grp.hide();
+        this.views.keyChange = new KeyChangeView({ model: file });
+        this.views.keyChange.setElement(this.$el.find('.app__body')).render();
+        this.views.keyChange.on('accept', this.keyChangeAccept.bind(this));
+        this.views.keyChange.on('cancel', this.showEntries.bind(this));
     },
 
     fileListUpdated: function() {
@@ -400,6 +428,21 @@ var AppView = Backbone.View.extend({
         if (this.model.settings.get('autoSave')) {
             this.saveAll();
         }
+    },
+
+    remoteKeyChanged: function(e) {
+        this.showKeyChange(e.file);
+    },
+
+    keyChangeAccept: function(e) {
+        this.showEntries();
+        this.model.syncFile(e.file, {
+            remoteKey: {
+                password: e.password,
+                keyFileName: e.keyFileName,
+                keyFileData: e.keyFileData
+            }
+        });
     },
 
     toggleSettings: function(page) {

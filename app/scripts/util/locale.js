@@ -42,10 +42,14 @@ var Locale = {
     alertClose: 'Close',
 
     footerOpen: 'Open / New',
+    footerSyncError: 'Sync error',
 
     genLen: 'Length',
     grpTitle: 'Group',
     grpSearch: 'Enable searching entries in this group',
+
+    keyChangeTitle: 'Master Key Changed',
+    keyChangeMessage: 'Master key was changed for this database. Please enter a new key',
 
     iconFavTitle: 'Download and use website favicon',
     iconSelCustom: 'Select custom icon',

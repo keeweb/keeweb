@@ -6,7 +6,7 @@
             <i class="fa fa-refresh fa-spin footer__db-sign"></i>
         {{~else if file.attributes.syncError~}}
             <i class="fa {{#if file.attributes.modified}}fa-circle{{else}}fa-circle-thin{{/if}} footer__db-sign footer__db-sign--error"
-               title="Sync error: {{file.attributes.syncError}}"></i>
+               title="{{res 'footerSyncError'}}: {{file.attributes.syncError}}"></i>
         {{~else if file.attributes.modified~}}
            <i class="fa fa-circle footer__db-sign"></i>
         {{~/if}}
