@@ -1,6 +1,7 @@
 'use strict';
 
-var FieldView = require('./field-view'),
+var Backbone = require('backbone'),
+    FieldView = require('./field-view'),
     GeneratorView = require('../generator-view'),
     KeyHandler = require('../../comp/key-handler'),
     Keys = require('../../const/keys'),
@@ -24,12 +25,13 @@ var FieldViewText = FieldView.extend({
         this.input.attr({ autocomplete: 'off', spellcheck: 'false' })
             .val(text).focus()[0].setSelectionRange(text.length, text.length);
         this.input.bind({
-            blur: this.fieldValueBlur.bind(this),
             input: this.fieldValueInput.bind(this),
             keydown: this.fieldValueKeydown.bind(this),
             keypress: this.fieldValueInput.bind(this),
-            click: this.fieldValueInputClick.bind(this)
+            click: this.fieldValueInputClick.bind(this),
+            mousedown: this.fieldValueInputMouseDown.bind(this)
         });
+        this.listenTo(Backbone, 'click', this.fieldValueBlur);
         if (this.model.multiline) {
             this.setInputHeight();
         }
@@ -92,9 +94,9 @@ var FieldViewText = FieldView.extend({
         this.input.height(newHeight);
     },
 
-    fieldValueBlur: function(e) {
-        if (!this.gen) {
-            this.endEdit(e.target.value);
+    fieldValueBlur: function() {
+        if (!this.gen && this.input) {
+            this.endEdit(this.input.val());
         }
     },
 
@@ -111,21 +113,25 @@ var FieldViewText = FieldView.extend({
         }
     },
 
+    fieldValueInputMouseDown: function(e) {
+        e.stopPropagation();
+    },
+
     fieldValueKeydown: function(e) {
         KeyHandler.reg();
         e.stopPropagation();
         var code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             if (!this.model.multiline || (!e.altKey && !e.shiftKey)) {
-                $(e.target).unbind('blur');
+                this.stopListening(Backbone, 'click', this.fieldValueBlur);
                 this.endEdit(e.target.value);
             }
         } else if (code === Keys.DOM_VK_ESCAPE) {
-            $(e.target).unbind('blur');
+            this.stopListening(Backbone, 'click', this.fieldValueBlur);
             this.endEdit();
         } else if (code === Keys.DOM_VK_TAB) {
             e.preventDefault();
-            $(e.target).unbind('blur');
+            this.stopListening(Backbone, 'click', this.fieldValueBlur);
             this.endEdit(e.target.value, { tab: { field: this.model.name, prev: e.shiftKey } });
         }
     },
@@ -138,6 +144,7 @@ var FieldViewText = FieldView.extend({
             return;
         }
         delete this.input;
+        this.stopListening(Backbone, 'click', this.fieldValueBlur);
         if (typeof newVal === 'string' && this.value instanceof kdbxweb.ProtectedValue) {
             newVal = kdbxweb.ProtectedValue.fromString(newVal);
         }

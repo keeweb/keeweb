@@ -154,7 +154,7 @@ var DetailsView = Backbone.View.extend({
                 }
             }
         }
-        this.addNewFieldView = new FieldViewCustom({ model: { name: '', title: Locale.detAddField, newField: newFieldTitle,
+        this.addNewFieldView = new FieldViewCustom({ model: { name: '$', title: Locale.detAddField, newField: newFieldTitle,
             value: function() { return ''; } } });
         this.fieldViews.push(this.addNewFieldView);
 
@@ -164,13 +164,6 @@ var DetailsView = Backbone.View.extend({
             fieldView.setElement(fieldView.readonly ? fieldsAsideEl : fieldsMainEl).render();
             fieldView.on('change', this.fieldChanged.bind(this));
         }, this);
-    },
-
-    getEditedField: function() {
-        var edited = _.find(this.fieldViews, function(fieldView) {
-            return fieldView.editing;
-        });
-        return edited ? edited.model.name : undefined;
     },
 
     setSelectedColor: function(color) {
@@ -322,12 +315,20 @@ var DetailsView = Backbone.View.extend({
         if (e.field) {
             if (e.field[0] === '$') {
                 var fieldName = e.field.substr(1);
-                if (e.title) {
-                    this.model.setField(fieldName, undefined);
-                    this.model.setField(e.title, e.val);
+                if (e.newField && e.newField !== fieldName) {
+                    if (fieldName) {
+                        this.model.setField(fieldName, undefined);
+                    }
+                    fieldName = e.newField;
+                    var i = 0;
+                    while (this.model.hasField(fieldName)) {
+                        i++;
+                        fieldName = e.newField + i;
+                    }
+                    this.model.setField(fieldName, e.val);
                     this.entryUpdated();
                     return;
-                } else {
+                } else if (fieldName) {
                     this.model.setField(fieldName, e.val);
                 }
             } else if (e.field === 'Tags') {
@@ -349,15 +350,6 @@ var DetailsView = Backbone.View.extend({
                     fieldView.update();
                 }
             }, this);
-        } else if (e.newField && e.val) {
-            var field = e.newField;
-            var i = 0;
-            while (this.model.hasField(field)) {
-                i++;
-                field = e.newField + i;
-            }
-            this.model.setField(field, e.val);
-            this.entryUpdated();
         }
         if (e.tab) {
             this.focusNextField(e.tab);

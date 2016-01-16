@@ -466,8 +466,9 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    bodyClick: function() {
+    bodyClick: function(e) {
         IdleTracker.regUserAction();
+        Backbone.trigger('click', e);
     }
 });
 

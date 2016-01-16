@@ -22,25 +22,6 @@ var FieldViewTags = FieldViewText.extend({
     },
 
     endEdit: function(newVal, extra) {
-        if (this.selectedTag) {
-            if (newVal) {
-                var tags = this.valueToTags(newVal);
-                var last = tags[tags.length - 1];
-                var isLastPart = last && this.model.tags.indexOf(last) < 0;
-                if (isLastPart) {
-                    newVal = newVal.substr(0, newVal.lastIndexOf(last)) + this.selectedTag;
-                } else {
-                    newVal += ', ' + this.selectedTag;
-                }
-            } else {
-                newVal = this.selectedTag;
-            }
-            this.input.val(newVal);
-            this.input.focus();
-            this.setTags();
-            delete this.selectedTag;
-            return;
-        }
         if (newVal !== undefined) {
             newVal = this.valueToTags(newVal);
         }
@@ -91,8 +72,24 @@ var FieldViewTags = FieldViewText.extend({
     tagsAutocompleteClick: function(e) {
         e.stopPropagation();
         if (e.target.classList.contains('details__tags-autocomplete-tag')) {
-            this.selectedTag = $(e.target).text();
+            var selectedTag = $(e.target).text(), newVal = this.input.val();
+            if (newVal) {
+                var tags = this.valueToTags(newVal);
+                var last = tags[tags.length - 1];
+                var isLastPart = last && this.model.tags.indexOf(last) < 0;
+                if (isLastPart) {
+                    newVal = newVal.substr(0, newVal.lastIndexOf(last)) + selectedTag;
+                } else {
+                    newVal += ', ' + selectedTag;
+                }
+            } else {
+                newVal = selectedTag;
+            }
+            this.input.val(newVal);
+            this.input.focus();
+            this.setTags();
         }
+        this.afterPaint(function() { this.input.focus(); });
     }
 });
 

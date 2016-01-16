@@ -12,9 +12,6 @@ var FieldView = Backbone.View.extend({
         'click .details__field-value': 'fieldValueClick'
     },
 
-    initialize: function () {
-    },
-
     render: function () {
         this.value = typeof this.model.value === 'function' ? this.model.value() : this.model.value;
         this.renderTemplate({ editable: !this.readonly, multiline: this.model.multiline, title: this.model.title,
@@ -93,8 +90,9 @@ var FieldView = Backbone.View.extend({
         var newValText = newVal && newVal.getText ? newVal.getText() : newVal;
         var textEqual = _.isEqual(newValText, oldValText);
         var protectedEqual = (newVal && typeof newVal.getText) === (this.value && typeof this.value.getText);
+        var nameChanged = extra && extra.newField;
         var arg;
-        if (newVal !== undefined && (!textEqual || !protectedEqual)) {
+        if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {
             arg = { val: newVal, field: this.model.name };
             if (extra) {
                 _.extend(arg, extra);

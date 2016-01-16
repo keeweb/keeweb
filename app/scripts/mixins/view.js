@@ -33,6 +33,10 @@ _.extend(Backbone.View.prototype, {
         });
     },
 
+    setTimeout: function(callback) {
+        setTimeout(callback.bind(this), 0);
+    },
+
     requestAnimationFrame: function(callback) {
         requestAnimationFrame(callback.bind(this));
     },
