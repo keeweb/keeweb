@@ -28,6 +28,8 @@
 ![ ](https://habrastorage.org/files/cd1/b17/78d/cd1b1778d5be47acb4b8731b25f40194.png)
 ## Shortcuts
 ![ ](https://habrastorage.org/files/f2c/115/19f/f2c11519f4e447a3bc18b03ec0437e34.png)
+## Advanced search options
+![ ](https://habrastorage.org/files/0aa/b8f/abd/0aab8fabd346457294794d18bb1cae4e.png)
 ## History
 ![ ](https://habrastorage.org/files/980/92f/214/98092f2148754d91ac7711e57bc71747.png)
 ## Mobile
