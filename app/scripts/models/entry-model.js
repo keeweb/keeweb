@@ -222,7 +222,7 @@ var EntryModel = Backbone.Model.extend({
 
     matchField: function(entry, field, compare, search) {
         var val = entry.fields[field];
-        return val ? compare(val.getText ? val.getText() : val, search) : false;
+        return val ? compare(val.isProtected ? val.getText() : val, search) : false;
     },
 
     setColor: function(color) {
@@ -259,7 +259,7 @@ var EntryModel = Backbone.Model.extend({
 
     setField: function(field, val) {
         this._entryModified();
-        var hasValue = val && (typeof val === 'string' || val instanceof kdbxweb.ProtectedValue && val.byteLength);
+        var hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
         if (hasValue || this.builtInFields.indexOf(field) >= 0) {
             this.entry.fields[field] = val;
         } else {

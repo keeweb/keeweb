@@ -36,7 +36,7 @@ var FieldView = Backbone.View.extend({
         var field = this.model.name;
         if (FeatureDetector.shouldMoveHiddenInputToCopySource()) {
             var box = this.valueEl[0].getBoundingClientRect();
-            var textValue = this.value && this.value.getText ? this.value.getText() : this.getEditValue(this.value);
+            var textValue = this.value && this.value.isProtected ? this.value.getText() : this.getEditValue(this.value);
             if (!textValue) {
                 return;
             }
@@ -46,7 +46,7 @@ var FieldView = Backbone.View.extend({
         }
         if (field) {
             var value = this.value || '';
-            if (value && value.getText) {
+            if (value && value.isProtected) {
                 CopyPaste.createHiddenInput(value.getText());
                 CopyPaste.tryCopy();
                 return;
@@ -86,10 +86,10 @@ var FieldView = Backbone.View.extend({
             return;
         }
         this.editing = false;
-        var oldValText = this.value && this.value.getText ? this.value.getText() : this.value;
-        var newValText = newVal && newVal.getText ? newVal.getText() : newVal;
+        var oldValText = this.value && this.value.isProtected ? this.value.getText() : this.value;
+        var newValText = newVal && newVal.isProtected ? newVal.getText() : newVal;
         var textEqual = _.isEqual(newValText, oldValText);
-        var protectedEqual = (newVal && typeof newVal.getText) === (this.value && typeof this.value.getText);
+        var protectedEqual = (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
         var nameChanged = extra && extra.newField;
         var arg;
         if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {

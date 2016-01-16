@@ -13,6 +13,7 @@ var Backbone = require('backbone'),
     Storage = require('../storage'),
     IdGenerator = require('../util/id-generator'),
     Logger = require('../util/logger');
+require('../mixins/protected-value-ex');
 
 var AppModel = Backbone.Model.extend({
     defaults: {},

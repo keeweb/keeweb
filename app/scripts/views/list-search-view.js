@@ -177,8 +177,9 @@ var ListSearchView = Backbone.View.extend({
         }
         var sortIconCls = this.sortIcons[filter.sort] || 'sort';
         this.$el.find('.list__search-btn-sort>i').attr('class', 'fa fa-' + sortIconCls);
-        if (this.advancedSearchEnabled !== !!filter.filter.advanced) {
-            this.advancedSearchEnabled = !!filter.filter.advanced;
+        var adv = !!filter.filter.advanced;
+        if (this.advancedSearchEnabled !== adv) {
+            this.advancedSearchEnabled = adv;
             this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
         }
     },

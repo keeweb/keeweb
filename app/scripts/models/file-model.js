@@ -300,7 +300,7 @@ var FileModel = Backbone.Model.extend({
     setPassword: function(password) {
         this.db.credentials.setPassword(password);
         this.db.meta.keyChanged = new Date();
-        this.set({ passwordLength: password.byteLength, passwordChanged: true });
+        this.set({ passwordLength: password.textLength, passwordChanged: true });
         this.setModified();
     },
 

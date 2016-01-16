@@ -10,12 +10,12 @@ var Backbone = require('backbone'),
 
 var FieldViewText = FieldView.extend({
     renderValue: function(value) {
-        return value && typeof value.byteLength === 'number' ? PasswordGenerator.present(value.byteLength) :
+        return value && value.isProtected ? PasswordGenerator.present(value.textLength) :
             _.escape(value || '').replace(/\n/g, '<br/>');
     },
 
     getEditValue: function(value) {
-        return value && value.getText ? value.getText() : value || '';
+        return value && value.isProtected ? value.getText() : value || '';
     },
 
     startEdit: function() {

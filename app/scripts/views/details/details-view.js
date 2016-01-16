@@ -276,7 +276,7 @@ var DetailsView = Backbone.View.extend({
     copyKeyPress: function() { // TODO: fix this in Safari
         if (!window.getSelection().toString()) {
             var pw = this.model.password;
-            var password = pw.getText ? pw.getText() : pw;
+            var password = pw.isProtected ? pw.getText() : pw;
             CopyPaste.createHiddenInput(password);
             var clipboardTime = CopyPaste.copied();
             if (!this.passCopyTip) {
