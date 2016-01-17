@@ -60,13 +60,14 @@ kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
         }
         for (var i = 0; i < foundSeqs.length; i++) {
             var seqIx = ++foundSeqs[i];
-            if (seqIx === len - 1) {
-                matches = true;
-                return;
-            }
             if (findLower[seqIx] !== ch) {
                 foundSeqs.splice(i, 1);
                 i--;
+                continue;
+            }
+            if (seqIx === len - 1) {
+                matches = true;
+                return;
             }
         }
         if (findLower[0] === ch) {
