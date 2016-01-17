@@ -26,8 +26,8 @@ var FieldViewCustom = FieldViewText.extend({
         if (this.isProtected === undefined) {
             this.isProtected = this.value instanceof kdbxweb.ProtectedValue;
         }
-        this.protectBtn = $('<div/>').addClass('details__field-value-btn details__field-value-btn-protect')
-            .toggleClass('details__field-value-btn-protect--protected', this.isProtected)
+        this.$el.toggleClass('details__field--protected', this.isProtected);
+        $('<div/>').addClass('details__field-value-btn details__field-value-btn-protect')
             .appendTo(this.valueEl)
             .mousedown(this.protectBtnClick.bind(this));
     },
@@ -144,7 +144,7 @@ var FieldViewCustom = FieldViewText.extend({
     protectBtnClick: function(e) {
         e.stopPropagation();
         this.isProtected = !this.isProtected;
-        this.protectBtn.toggleClass('details__field-value-btn-protect--protected', this.isProtected);
+        this.$el.toggleClass('details__field--protected', this.isProtected);
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }

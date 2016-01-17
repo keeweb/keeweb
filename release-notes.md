@@ -10,6 +10,7 @@ Improvements
 `+` San-Francisco font in Chrome OS X  
 `+` help/tips  
 `+` #67: field editing improvements  
+`*` monospace fonts for protected fields  
 `*` #68: url display without http  
 `+` #50: notification on password copy  
 `-` #74: select all in search field  

@@ -224,6 +224,7 @@
         line-height: $details-field-line-height;
         width: 100%;
         height: 20px;
+        .details__field--protected & { font-family: $monospace-font-family; }
       }
       >textarea {
         display: block;
@@ -254,7 +255,7 @@
       &-btn-gen:before { content: $fa-var-bolt; }
       &-btn-protect {
         &:before { content: $fa-var-unlock; }
-        &--protected:before { content: $fa-var-lock; }
+        .details__field--protected & { &:before { content: $fa-var-lock; } }
       }
     }
   }

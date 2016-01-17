@@ -45,7 +45,6 @@ var FileModel = Backbone.Model.extend({
 
     open: function(password, fileData, keyFileData, callback) {
         try {
-            password = this.convertPassword(password);
             var credentials = new kdbxweb.Credentials(password, keyFileData);
             var ts = logger.ts();
             kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
@@ -68,23 +67,6 @@ var FileModel = Backbone.Model.extend({
             logger.error('Error opening file', e, e.code, e.message, e);
             callback(e);
         }
-    },
-
-    convertPassword: function(password) {
-        var len = password.value.length,
-            byteLength = 0,
-            value = new Uint8Array(len * 4),
-            salt = kdbxweb.Random.getBytes(len * 4),
-            ch, bytes;
-        for (var i = 0; i < len; i++) {
-            ch = String.fromCharCode(password.value.charCodeAt(i) ^ password.salt[i]);
-            bytes = kdbxweb.ByteUtils.stringToBytes(ch);
-            for (var j = 0; j < bytes.length; j++) {
-                value[byteLength] = bytes[j] ^ salt[byteLength];
-                byteLength++;
-            }
-        }
-        return new kdbxweb.ProtectedValue(value.buffer.slice(0, byteLength), salt.buffer.slice(0, byteLength));
     },
 
     create: function(name) {
@@ -171,7 +153,6 @@ var FileModel = Backbone.Model.extend({
         if (remoteKey) {
             credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(''));
             if (remoteKey.password) {
-                remoteKey.password = this.convertPassword(remoteKey.password);
                 credentials.setPassword(remoteKey.password);
             } else {
                 credentials.passwordHash = this.db.credentials.passwordHash;
