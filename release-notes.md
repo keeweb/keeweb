@@ -7,6 +7,7 @@ Improvements
 `+` save at exit for desktop app  
 `+` more reliable binaries management  
 `+` string resources globalization  
+`+` San-Francisco font in Chrome OS X  
 `+` help/tips  
 `+` #67: field editing improvements  
 `*` #68: url display without http  
