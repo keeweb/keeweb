@@ -1,6 +1,6 @@
 {
   "name": "keeweb",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "KeePass web app",
   "main": "Gruntfile.js",
   "repository": "https://github.com/antelle/keeweb",
