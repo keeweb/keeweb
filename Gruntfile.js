@@ -17,6 +17,7 @@ module.exports = function(grunt) {
     var pkg = require('./package.json');
     var dt = new Date().toISOString().replace(/T.*/, '');
     var electronVersion = '0.36.4';
+    var appUpdateMinVersion = '0.5.0';
 
     function replaceFont(css) {
         css.walkAtRules('font-face', function (rule) {
@@ -152,7 +153,8 @@ module.exports = function(grunt) {
             manifest: {
                 options: {
                     replacements: [
-                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version }
+                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version },
+                        { pattern: '# updmin:v0.0.0', replacement: '# updmin:v' + appUpdateMinVersion }
                     ]
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }

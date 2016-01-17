@@ -98,6 +98,7 @@ var Updater = {
                     that.scheduleNextCheck();
                     return;
                 }
+                var updateMinVersionMatch = data.match(/#\s*updmin:v([\d+\.\w]+)/);
                 var prevLastVersion = UpdateModel.instance.get('lastVersion');
                 UpdateModel.instance.set({
                     status: 'ok',
@@ -105,7 +106,8 @@ var Updater = {
                     lastSuccessCheckDate: dt,
                     lastVersionReleaseDate: new Date(match[1]),
                     lastVersion: match[2],
-                    lastcheckError: null
+                    lastCheckError: null,
+                    lastCheckUpdMin: updateMinVersionMatch ? updateMinVersionMatch[1] : null
                 });
                 UpdateModel.instance.save();
                 that.scheduleNextCheck();
