@@ -23,7 +23,6 @@ var Backbone = require('backbone'),
     Tip = require('../../util/tip'),
     Timeouts = require('../../const/timeouts'),
     FileSaver = require('filesaver'),
-    baron = require('baron'),
     kdbxweb = require('kdbxweb');
 
 var DetailsView = Backbone.View.extend({
@@ -98,15 +97,11 @@ var DetailsView = Backbone.View.extend({
         Tip.createTips(this.$el);
         this.setSelectedColor(this.model.color);
         this.addFieldViews();
-        this.scroll = baron({
+        this.createScroll({
             root: this.$el.find('.details__body')[0],
             scroller: this.$el.find('.scroller')[0],
-            bar: this.$el.find('.scroller__bar')[0],
-            $: Backbone.$
+            bar: this.$el.find('.scroller__bar')[0]
         });
-        this.scroller = this.$el.find('.scroller');
-        this.scrollerBar = this.$el.find('.scroller__bar');
-        this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
         this.$el.find('.details').removeClass('details--drag');
         this.dragging = false;
         if (this.dragTimeout) {

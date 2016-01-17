@@ -4,8 +4,7 @@ var Backbone = require('backbone'),
     MenuItemView = require('./menu-item-view'),
     Resizable = require('../../mixins/resizable'),
     Scrollable = require('../../mixins/scrollable'),
-    AppSettingsModel = require('../../models/app-settings-model'),
-    baron = require('baron');
+    AppSettingsModel = require('../../models/app-settings-model');
 
 var MenuSectionView = Backbone.View.extend({
     template: require('templates/menu/menu-section.hbs'),
@@ -30,14 +29,11 @@ var MenuSectionView = Backbone.View.extend({
             this.itemsEl = this.model.get('scrollable') ? this.$el.find('.scroller') : this.$el;
             if (this.model.get('scrollable')) {
                 this.initScroll();
-                this.scroll = baron({
+                this.createScroll({
                     root: this.$el[0],
                     scroller: this.$el.find('.scroller')[0],
-                    bar: this.$el.find('.scroller__bar')[0],
-                    $: Backbone.$
+                    bar: this.$el.find('.scroller__bar')[0]
                 });
-                this.scrollerBar = this.$el.find('.scroller__bar');
-                this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
             }
         } else {
             this.removeInnerViews();

@@ -6,8 +6,7 @@ var Backbone = require('backbone'),
     ListSearchView = require('./list-search-view'),
     EntryPresenter = require('../presenters/entry-presenter'),
     DragDropInfo = require('../comp/drag-drop-info'),
-    AppSettingsModel = require('../models/app-settings-model'),
-    baron = require('baron');
+    AppSettingsModel = require('../models/app-settings-model');
 
 var ListView = Backbone.View.extend({
     template: require('templates/list.hbs'),
@@ -54,14 +53,11 @@ var ListView = Backbone.View.extend({
             this.views.search.setElement(this.$el.find('.list__header')).render();
             this.setTableView();
 
-            this.scroll = baron({
+            this.createScroll({
                 root: this.$el.find('.list__items')[0],
                 scroller: this.$el.find('.scroller')[0],
-                bar: this.$el.find('.scroller__bar')[0],
-                $: Backbone.$
+                bar: this.$el.find('.scroller__bar')[0]
             });
-            this.scrollerBar = this.$el.find('.scroller__bar');
-            this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
         }
         if (this.items.length) {
             var itemTemplate = this.getItemTemplate();
