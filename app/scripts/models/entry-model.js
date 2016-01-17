@@ -174,14 +174,23 @@ var EntryModel = Backbone.Model.extend({
     },
 
     matchString: function(str, find) {
+        if (str.isProtected) {
+            return str.includes(find);
+        }
         return str.indexOf(find) >= 0;
     },
 
     matchStringLower: function(str, findLower) {
+        if (str.isProtected) {
+            return str.includesLower(findLower);
+        }
         return str.toLowerCase().indexOf(findLower) >= 0;
     },
 
     matchRegex: function(str, regex) {
+        if (str.isProtected) {
+            str = str.getText();
+        }
         return regex.test(str);
     },
 
@@ -222,7 +231,7 @@ var EntryModel = Backbone.Model.extend({
 
     matchField: function(entry, field, compare, search) {
         var val = entry.fields[field];
-        return val ? compare(val.isProtected ? val.getText() : val, search) : false;
+        return val ? compare(val, search) : false;
     },
 
     setColor: function(color) {
