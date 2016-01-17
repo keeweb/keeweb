@@ -1,4 +1,4 @@
-@mixin dropdown {
+@mixin common-dropdown {
   @include th {
     color: text-color();
     background: background-color();

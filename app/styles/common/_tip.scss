@@ -6,7 +6,7 @@
   z-index: $z-index-no-modal;
   pointer-events: none;
   animation: tip $tip-transition-in;
-  @include dropdown();
+  @include common-dropdown;
   &.tip--fast, &.tip--fast:before, &.tip--fast:after {
     animation-duration: $base-duration;
   }

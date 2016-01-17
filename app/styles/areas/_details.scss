@@ -485,7 +485,7 @@
 
   &__tags-autocomplete {
     position: absolute;
-    @include dropdown;
+    @include common-dropdown;
     &-tag {
       padding: $base-padding;
       display: inline-block;

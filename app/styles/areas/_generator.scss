@@ -1,6 +1,6 @@
 .gen {
   position: absolute;
-  @include dropdown;
+  @include common-dropdown;
   padding: $base-spacing;
   width: 11em;
   &__length-range {

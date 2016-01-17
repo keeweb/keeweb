@@ -108,9 +108,11 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    @include area-selectable(right);
-    &--active, &--active:hover {
-      @include nomobile { @include area-selected(right); }
+    @include nomobile {
+      @include area-selectable(right);
+      &--active, &--active:hover {
+        @include area-selected(right);
+      }
     }
 
     &:not(.list__item--table) {
