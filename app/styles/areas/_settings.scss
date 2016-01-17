@@ -68,6 +68,10 @@
     margin-bottom: $base-padding-v;
   }
 
+  #settings__file-master-pass {
+    font-family: $monospace-font-family;
+  }
+
   &__file-master-pass-warning {
     font-weight: normal;
     float: right;
