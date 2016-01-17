@@ -86,9 +86,14 @@ var FieldView = Backbone.View.extend({
             return;
         }
         this.editing = false;
-        var oldValText = this.value && this.value.isProtected ? this.value.getText() : this.value;
-        var newValText = newVal && newVal.isProtected ? newVal.getText() : newVal;
-        var textEqual = _.isEqual(newValText, oldValText);
+        var textEqual;
+        if (this.value && this.value.isProtected) {
+            textEqual = this.value.equals(newVal);
+        } else if (newVal && newVal.isProtected) {
+            textEqual = newVal.equals(this.value);
+        } else {
+            textEqual = _.isEqual(this.value, newVal);
+        }
         var protectedEqual = (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
         var nameChanged = extra && extra.newField;
         var arg;

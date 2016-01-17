@@ -78,4 +78,26 @@ kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
     return matches;
 };
 
+kdbxweb.ProtectedValue.prototype.equals = function(other) {
+    if (!other) {
+        return false;
+    }
+    if (!other.isProtected) {
+        return this.textLength === other.length && this.includes(other);
+    }
+    if (other === this) {
+        return true;
+    }
+    var len = this.byteLength;
+    if (len !== other.byteLength) {
+        return false;
+    }
+    for (var i = 0; i < len; i++) {
+        if ((this._value[i] ^ this._salt[i]) !== (other._value[i] ^ other._salt[i])) {
+            return false;
+        }
+    }
+    return true;
+};
+
 module.exports = kdbxweb.ProtectedValue;
