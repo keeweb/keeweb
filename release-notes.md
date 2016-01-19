@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v0.6.0 (2016-01-20)
+##### v0.6.0 (2016-01-19)
 Improvements  
 `+` advanced search  
 `+` ability to sync files with changed credentials  
