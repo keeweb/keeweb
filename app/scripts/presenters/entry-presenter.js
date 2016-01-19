@@ -1,6 +1,7 @@
 'use strict';
 
-var Format = require('../util/format');
+var Format = require('../util/format'),
+    Locale = require('../util/locale');
 
 var EntryPresenter = function(descField, noColor, activeEntryId) {
     this.entry = null;
@@ -24,7 +25,7 @@ EntryPresenter.prototype = {
     get color() { return this.entry ? (this.entry.color || (this.entry.customIcon ? this.noColor : undefined)) : undefined; },
     get title() { return this.entry ? this.entry.title : this.group.get('title'); },
     get notes() { return this.entry ? this.entry.notes : undefined; },
-    get url() { return this.entry ? this.entry.url : undefined; },
+    get url() { return this.entry ? this.entry.displayUrl : undefined; },
     get user() { return this.entry ? this.entry.user : undefined; },
     get active() { return this.entry ? this.entry.id === this.activeEntryId : this.group.active; },
     get created() { return this.entry ? Format.dtStr(this.entry.created) : undefined; },
@@ -33,19 +34,19 @@ EntryPresenter.prototype = {
     get tags() { return this.entry ? this.entry.tags : false; },
     get description() {
         if (!this.entry) {
-            return '[Group]';
+            return '[' + Locale.listGroup + ']';
         }
         switch (this.descField) {
             case 'website':
-                return this.url || '(no website)';
+                return this.url || '(' + Locale.listNoWebsite + ')';
             case 'user':
-                return this.user || '(no user)';
+                return this.user || '(' + Locale.listNoUser + ')';
             case 'created':
                 return this.created;
             case 'updated':
                 return this.updated;
             case 'attachments':
-                return this.entry.attachments.map(function(a) { return a.title; }).join(', ') || '(no attachments)';
+                return this.entry.attachments.map(function(a) { return a.title; }).join(', ') || '(' + Locale.listNoAttachments + ')';
             default:
                 return this.notes || this.url || this.user;
         }

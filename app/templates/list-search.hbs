@@ -1,0 +1,39 @@
+<div class="list__search">
+    <div class="list__search-header">
+        <div class="list__search-btn-menu">
+            <i class="fa fa-bars"></i>
+        </div>
+        <div class="list__search-field-wrap">
+            <input type="text" class="list__search-field input-padding-right" autocomplete="off">
+            <i class="list__search-icon-search fa fa-search" title="{{res 'searchAdvTitle'}}"></i>
+        </div>
+        <div class="list__search-btn-new" title="{{res 'searchAddNew'}}">
+            <i class="fa fa-plus"></i>
+        </div>
+        <div class="list__search-btn-sort" title="{{res 'searchSort'}}">
+            <i class="fa fa-sort-alpha-asc"></i>
+        </div>
+        <div class="list__search-adv hide">
+            <div class="list__search-adv-text">{{res 'searchSearchIn'}}:</div>
+            <div class="list__search-check"><input type="checkbox" id="list__searcn-adv-check-user" data-id="user"
+               {{#if adv.user}}checked{{/if}}><label for="list__searcn-adv-check-user">{{Res 'user'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-other" data-id="other"
+                {{#if adv.other}}checked{{/if}}><label for="list__search-adv-check-other">{{res 'searchOther'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-website" data-id="url"
+                {{#if adv.url}}checked{{/if}}><label for="list__search-adv-check-website">{{Res 'website'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-protect" data-id="protect"
+                {{#if adv.protect}}checked{{/if}}><label for="list__search-adv-check-protect">{{res 'searchProtect'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-notes" data-id="notes"
+                {{#if adv.notes}}checked{{/if}}><label for="list__search-adv-check-notes">{{Res 'notes'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-pass" data-id="pass"
+                {{#if adv.pass}}checked{{/if}}><label for="list__search-adv-check-pass">{{Res 'password'}}</label></div>
+            <div class="list__search-adv-text">{{res 'searchOptions'}}:</div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-cs" data-id="cs"
+                {{#if adv.cs}}checked{{/if}}><label for="list__search-adv-check-cs">{{res 'searchCase'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-regex" data-id="regex"
+                {{#if adv.regex}}checked{{/if}}><label for="list__search-adv-check-regex">{{res 'searchRegex'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-history" data-id="history"
+                {{#if adv.history}}checked{{/if}}><label for="list__search-adv-check-history">{{res 'searchHistory'}}</label></div>
+        </div>
+    </div>
+</div>

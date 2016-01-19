@@ -1,0 +1,108 @@
+<div>
+    <h1><i class="fa fa-cog"></i> {{res 'setGenTitle'}}</h1>
+
+    {{#if updateWaitingReload}}
+    <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
+    <div>{{res 'setGenNewVersion'}}. <a href="{{releaseNotesLink}}" target="_blank">{{res 'setGenReleaseNotes'}}</a></div>
+    <div class="settings__general-update-buttons">
+        <button class="settings__general-restart-btn">{{res 'setGenReloadToUpdate'}}</button>
+    </div>
+    {{else if updateManual}}
+    <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
+    <div>{{res 'setGenUpdateManual'}}</div>
+    <div class="settings__general-update-buttons">
+        <button class="settings__general-download-update-btn">{{res 'setGenDownloadUpdate'}}</button>
+    </div>
+    {{/if}}
+    {{#if showUpdateBlock}}
+    <h2>{{res 'setGenUpdate'}}</h2>
+    <div>
+        <select class="settings__general-auto-update settings__select input-base">
+            <option value="install" {{#ifeq autoUpdate 'install'}}selected{{/ifeq}}>{{res 'setGenUpdateAuto'}}</option>
+            <option value="check" {{#ifeq autoUpdate 'check'}}selected{{/ifeq}}>{{res 'setGenUpdateCheck'}}</option>
+            <option value="" {{#unless autoUpdate}}selected{{/unless}}>{{res 'setGenNoUpdate'}}</option>
+        </select>
+        <div>{{updateInfo}}</div>
+        <a href="{{releaseNotesLink}}" target="_blank">{{res 'setGenReleaseNotes'}}</a>
+    </div>
+    <div class="settings__general-update-buttons">
+        {{#if updateInProgress}}
+        <button class="settings__general-update-btn btn-silent" disabled>{{res 'setGenUpdateChecking'}}</button>
+        {{else}}
+        <button class="settings__general-update-btn btn-silent">{{res 'setGenCheckUpdate'}}</button>
+        {{/if}}
+        {{#if updateReady}}<button class="settings__general-restart-btn">{{res 'setGenRestartToUpdate'}}</button>{{/if}}
+        {{#if updateFound}}<button class="settings__general-update-found-btn">{{res 'setGenDownloadAndRestart'}}</button>{{/if}}
+    </div>
+    {{/if}}
+
+    <h2>{{res 'setGenAppearance'}}</h2>
+    <div>
+        <label for="settings__general-theme">{{res 'setGenTheme'}}:</label>
+        <select class="settings__general-theme settings__select input-base" id="settings__general-theme">
+            {{#each themes as |name key|}}
+            <option value="{{key}}" {{#ifeq key activeTheme}}selected{{/ifeq}}>{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" {{#if expandGroups}}checked{{/if}} />
+        <label for="settings__general-expand">{{res 'setGenShowSubgroups'}}</label>
+    </div>
+    {{#if canSetTableView}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-table-view" id="settings__general-table-view" {{#if tableView}}checked{{/if}} />
+        <label for="settings__general-table-view">{{res 'setGenTableView'}}</label>
+    </div>
+    {{/if}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-colorful-icons" id="settings__general-colorful-icons" {{#if colorfulIcons}}checked{{/if}} />
+        <label for="settings__general-colorful-icons">{{res 'setGenColorfulIcons'}}</label>
+    </div>
+
+    <h2>Function</h2>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
+            {{#if autoSave}}checked{{/if}} />
+        <label for="settings__general-auto-save">{{res 'setGenAutoSync'}}</label>
+    </div>
+    <div>
+        <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>
+        <select class="settings__general-idle-minutes settings__select input-base" id="settings__general-idle-minutes">
+            <option value="0" {{#cmp idleMinutes 0 '<='}}selected{{/cmp}}>{{res 'setGenNoAutoLock'}}</option>
+            <option value="5" {{#ifeq idleMinutes 5}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}5{{/res}}</option>
+            <option value="10" {{#ifeq idleMinutes 10}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}10{{/res}}</option>
+            <option value="15" {{#ifeq idleMinutes 15}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}15{{/res}}</option>
+            <option value="60" {{#ifeq idleMinutes 60}}selected{{/ifeq}}>{{res 'setGenLockHour'}}</option>
+        </select>
+    </div>
+    {{#if canClearClipboard}}
+    <div>
+        <label for="settings__general-clipboard">{{res 'setGenClearClip'}}:</label>
+        <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
+            <option value="0" {{#unless clipboardSeconds}}selected{{/unless}}>{{res 'setGenNoClear'}}</option>
+            <option value="5" {{#ifeq clipboardSeconds 5}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}5{{/res}}</option>
+            <option value="10" {{#ifeq clipboardSeconds 10}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}10{{/res}}</option>
+            <option value="15" {{#ifeq clipboardSeconds 15}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}15{{/res}}</option>
+            <option value="60" {{#ifeq clipboardSeconds 60}}selected{{/ifeq}}>{{res 'setGenClearMinute'}}</option>
+        </select>
+    </div>
+    {{/if}}
+    {{#if canMinimize}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-minimize" id="settings__general-minimize"
+            {{#if minimizeOnClose}}checked{{/if}} />
+        <label for="settings__general-minimize">{{res 'setGenMinInstead'}}</label>
+    </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-lock-on-minimize" id="settings__general-lock-on-minimize"
+        {{#if lockOnMinimize}}checked{{/if}} />
+        <label for="settings__general-lock-on-minimize">{{res 'setGenLockMinimize'}}</label>
+    </div>
+    {{/if}}
+
+    {{#if devTools}}
+    <h2>{{res 'setGenAdvanced'}}</h2>
+    <a class="settings__general-dev-tools-link">{{res 'setGenDevTools'}}</a>
+    {{/if}}
+</div>

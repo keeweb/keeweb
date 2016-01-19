@@ -1,0 +1,26 @@
+<div class="icon-select">
+    <div class="icon-select__items">
+        {{#each icons as |icon ix|}}
+        <i class="fa fa-{{icon}} icon-select__icon {{#ifeq ix sel}}icon-select__icon--active{{/ifeq}}" data-val="{{ix}}"></i>
+        {{/each}}
+    </div>
+    <div class="icon-select__items icon-select__items--custom">
+        <input type="file" class="icon-select__file-input hide-by-pos" accept="image/*" />
+        {{#if canDownloadFavicon}}
+        <span class="icon-select__icon icon-select__icon-btn icon-select__icon-download"
+              data-val="special" data-special="download" title="{{res 'iconFavTitle'}}">
+            <i class="fa fa-cloud-download"></i>
+        </span>
+        {{/if}}
+        <span class="icon-select__icon icon-select__icon-btn icon-select__icon-select"
+              data-val="special" data-special="select" title="{{res 'iconSelCustom'}}">
+            <i class="fa fa-ellipsis-h"></i>
+        </span>
+        {{#each customIcons as |icon ci|}}
+        <span class="icon-select__icon icon-select__icon-btn icon-select__icon-custom {{#ifeq ci sel}}icon-select__icon--active{{/ifeq}}"
+              data-val="{{ci}}">
+            <img src="{{{icon}}}" />
+        </span>
+        {{/each}}
+    </div>
+</div>

@@ -41,6 +41,7 @@
       @include align-items(stretch);
       @include flex-direction(row);
       @include justify-content(flex-start);
+      @include flex-wrap(wrap);
     }
     &-field-wrap {
       @include flex(1);
@@ -79,6 +80,19 @@
         }
       }
     }
+    &-adv {
+      @include flex(100%);
+      @include display(flex);
+      @include align-items(stretch);
+      @include flex-direction(row);
+      @include flex-wrap(wrap);
+      &-text {
+        @include flex(100%);
+      }
+    }
+    &-check {
+      @include flex(50%);
+    }
   }
 
   &__table {
@@ -94,9 +108,11 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    @include area-selectable(right);
-    &--active, &--active:hover {
-      @include nomobile { @include area-selected(right); }
+    @include nomobile {
+      @include area-selectable(right);
+      &--active, &--active:hover {
+        @include area-selected(right);
+      }
     }
 
     &:not(.list__item--table) {

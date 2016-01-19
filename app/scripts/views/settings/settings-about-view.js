@@ -5,7 +5,7 @@ var Backbone = require('backbone'),
     Links = require('../../const/links');
 
 var SettingsAboutView = Backbone.View.extend({
-    template: require('templates/settings/settings-about.html'),
+    template: require('templates/settings/settings-about.hbs'),
 
     render: function() {
         this.renderTemplate({

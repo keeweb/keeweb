@@ -51,6 +51,7 @@ var CopyPaste = {
                     }).bind(null, Launcher.getClipboardText()), clipboardSeconds * 1000);
                 }, 0);
             }
+            return clipboardSeconds;
         }
     }
 };

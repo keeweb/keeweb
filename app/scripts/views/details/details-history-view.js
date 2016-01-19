@@ -4,12 +4,13 @@ var Backbone = require('backbone'),
     KeyHandler = require('../../comp/key-handler'),
     Keys = require('../../const/keys'),
     Format = require('../../util/format'),
+    Locale = require('../../util/locale'),
     Alerts = require('../../comp/alerts'),
     FieldViewReadOnly = require('../fields/field-view-read-only'),
     FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
 
 var DetailsHistoryView = Backbone.View.extend({
-    template: require('templates/details/details-history.html'),
+    template: require('templates/details/details-history.hbs'),
 
     events: {
         'click .details__history-close': 'closeHistory',
@@ -82,25 +83,26 @@ var DetailsHistoryView = Backbone.View.extend({
         this.removeFieldViews();
         this.bodyEl.html('');
         var colorCls = this.record.color ? this.record.color + '-color' : '';
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Rev', title: 'Version', value: ix + 1 } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: 'Saved',
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Rev', title: Locale.detHistoryVersion, value: ix + 1 } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: Locale.detHistorySaved,
             value: Format.dtStr(this.record.updated) +
-            (this.record.unsaved ? ' (current unsaved state)' : '') +
-            ((ix === this.history.length - 1 && !this.record.unsaved) ? ' (current state)' : '') } }));
-        this.fieldViews.push(new FieldViewReadOnlyRaw({ model: { name: '$Title', title: 'Title',
-            value: '<i class="fa fa-' + this.record.icon + ' ' + colorCls + '"></i> ' + _.escape(this.record.title) || '(no title)' } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$UserName', title: 'User', value: this.record.user } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$Password', title: 'Password', value: this.record.password } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$URL', title: 'Website', value: this.record.url } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$Notes', title: 'Notes', value: this.record.notes } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Tags', title: 'Tags', value: this.record.tags.join(', ') } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Expires', title: 'Expires',
-            value: this.record.expires ? Format.dtStr(this.record.expires) : 'Never' } }));
+            (this.record.unsaved ? ' (' + Locale.detHistoryCurUnsavedState + ')' : '') +
+            ((ix === this.history.length - 1 && !this.record.unsaved) ? ' (' + Locale.detHistoryCurState + ')' : '') } }));
+        this.fieldViews.push(new FieldViewReadOnlyRaw({ model: { name: '$Title', title: Locale.detHistoryTitle,
+            value: '<i class="fa fa-' + this.record.icon + ' ' + colorCls + '"></i> ' +
+            _.escape(this.record.title) || '(' + Locale.detHistoryNoTitle + ')' } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$UserName', title: Locale.detUser, value: this.record.user } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$Password', title: Locale.detPassword, value: this.record.password } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$URL', title: Locale.detWebsite, value: this.record.url } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$Notes', title: Locale.detNotes, value: this.record.notes } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Tags', title: Locale.detTags, value: this.record.tags.join(', ') } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Expires', title: Locale.detExpires,
+            value: this.record.expires ? Format.dtStr(this.record.expires) : '' } }));
         _.forEach(this.record.fields, function(value, field) {
             this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$' + field, title: field, value: value } }));
         }, this);
         if (this.record.attachments.length) {
-            this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Attachments', title: 'Attachments',
+            this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Attachments', title: Locale.detAttachments,
                 value: this.record.attachments.map(function(att) { return att.title; }).join(', ') } }));
         }
         this.fieldViews.forEach(function(fieldView) {

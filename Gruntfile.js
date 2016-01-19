@@ -16,7 +16,8 @@ module.exports = function(grunt) {
     var webpack = require('webpack');
     var pkg = require('./package.json');
     var dt = new Date().toISOString().replace(/T.*/, '');
-    var electronVersion = '0.36.0';
+    var electronVersion = '0.36.4';
+    var appUpdateMinVersion = '0.5.0';
 
     function replaceFont(css) {
         css.walkAtRules('font-face', function (rule) {
@@ -152,7 +153,8 @@ module.exports = function(grunt) {
             manifest: {
                 options: {
                     replacements: [
-                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version }
+                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version },
+                        { pattern: '# updmin:v0.0.0', replacement: '# updmin:v' + appUpdateMinVersion }
                     ]
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
@@ -191,6 +193,7 @@ module.exports = function(grunt) {
                         _: 'underscore/underscore-min.js',
                         zepto: 'zepto/zepto.min.js',
                         jquery: 'zepto/zepto.min.js',
+                        hbs: 'handlebars/runtime.js',
                         kdbxweb: 'kdbxweb/dist/kdbxweb.js',
                         dropbox: 'dropbox/lib/dropbox.min.js',
                         baron: 'baron/baron.min.js',
@@ -201,7 +204,7 @@ module.exports = function(grunt) {
                 },
                 module: {
                     loaders: [
-                        { test: /\.html$/, loader: StringReplacePlugin.replace('ejs', { replacements: [{
+                        { test: /\.hbs$/, loader: StringReplacePlugin.replace('handlebars-loader', { replacements: [{
                             pattern: /\r?\n\s*/g,
                             replacement: function() { return '\n'; }
                         }]})},
@@ -212,7 +215,8 @@ module.exports = function(grunt) {
                         ]})},
                         { test: /zepto(\.min)?\.js$/, loader: 'exports?Zepto; delete window.$; delete window.Zepto;' },
                         { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
-                        { test: /pikadat\.js$/, loader: 'uglify' }
+                        { test: /pikadat\.js$/, loader: 'uglify' },
+                        { test: /handlebars/, loader: 'strip-sourcemap-loader' }
                     ]
                 },
                 plugins: [
@@ -254,7 +258,7 @@ module.exports = function(grunt) {
                 debounceDelay: 500
             },
             scripts: {
-                files: ['app/scripts/**/*.js', 'app/templates/**/*.html'],
+                files: ['app/scripts/**/*.js', 'app/templates/**/*.hbs'],
                 tasks: ['webpack']
             },
             styles: {

@@ -17,7 +17,8 @@ var AppSettingsModel = Backbone.Model.extend({
         minimizeOnClose: false,
         tableView: false,
         colorfulIcons: false,
-        lockOnMinimize: true
+        lockOnMinimize: true,
+        helpTipCopyShown: false
     },
 
     initialize: function() {
@@ -27,7 +28,6 @@ var AppSettingsModel = Backbone.Model.extend({
     load: function() {
         var data = SettingsStore.load('app-settings');
         if (data) {
-            if (data.theme === 'd') { data.theme = 'db'; } // TODO: remove in v0.6
             this.set(data, {silent: true});
         }
     },

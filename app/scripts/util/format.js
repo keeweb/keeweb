@@ -15,7 +15,7 @@ var Format = {
             ':' + this.pad(dt.getSeconds(), 2) : '';
     },
     dStr: function(dt) {
-        return dt ? dt.getDate() + ' ' + Locale.MonthsShort[dt.getMonth()] + ' ' + dt.getFullYear() : '';
+        return dt ? dt.getDate() + ' ' + Locale.monthsShort[dt.getMonth()] + ' ' + dt.getFullYear() : '';
     }
 };
 

@@ -1,6 +1,5 @@
 // Typography
-$base-font-family: -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-$font-family-text-thin: -apple-system, ".SFNSText-Light", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+$base-font-family: -apple-system, "BlinkMacSystemFont", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
 $heading-font-family: $base-font-family;
 $monospace-font-family: monaco,Consolas,"Lucida Console",monospace;
 
@@ -22,6 +21,7 @@ $base-padding-h: .8em;
 $base-padding: $base-padding-v $base-padding-h;
 $medium-padding: .8em 1em;
 $base-padding-px: 4px 8px;
+$modal-icon-size: 6em;
 
 // Borders
 @function base-border() { @return 1px solid base-border-color(); };
@@ -44,6 +44,8 @@ $base-duration: 150ms;
 $base-timing: ease;
 $slow-transition-in: $base-duration*2 ease-in;
 $slow-transition-out: $base-duration ease-out;
+$tip-transition-in: 500ms $ease-in-expo;
+$tip-transition-out: $slow-transition-out;
 
 // Math
 $sqrt2: 1.41;
@@ -53,4 +55,4 @@ $z-index-modal:     100000;
 
 // Screen sizes
 $tablet-width: 736px;
-$mobile-width: 414px;
+$mobile-width: 620px;

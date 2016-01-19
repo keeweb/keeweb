@@ -1,14 +1,15 @@
 'use strict';
 
-var ModalView = require('../views/modal-view');
+var ModalView = require('../views/modal-view'),
+    Locale = require('../util/locale');
 
 var Alerts = {
     alertDisplayed: false,
 
     buttons: {
-        ok: {result: 'yes', title: 'OK'},
-        yes: {result: 'yes', title: 'Yes'},
-        no: {result: '', title: 'No'}
+        ok: {result: 'yes', title: Locale.alertOk},
+        yes: {result: 'yes', title: Locale.alertYes},
+        no: {result: '', title: Locale.alertNo}
     },
 
     alert: function(config) {
@@ -31,7 +32,7 @@ var Alerts = {
 
     notImplemented: function() {
         this.alert({
-            header: 'Not Implemented',
+            header: Locale.notImplemented,
             body: '',
             icon: 'exclamation-triangle',
             buttons: [this.buttons.ok],

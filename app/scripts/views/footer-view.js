@@ -4,10 +4,11 @@ var Backbone = require('backbone'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
     GeneratorView = require('./generator-view'),
+    Tip = require('../util/tip'),
     UpdateModel = require('../models/update-model');
 
 var FooterView = Backbone.View.extend({
-    template: require('templates/footer.html'),
+    template: require('templates/footer.hbs'),
 
     events: {
         'click .footer__db-item': 'showFile',
@@ -36,6 +37,7 @@ var FooterView = Backbone.View.extend({
             files: this.model.files,
             updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
         }));
+        Tip.createTips(this.$el);
         return this;
     },
 

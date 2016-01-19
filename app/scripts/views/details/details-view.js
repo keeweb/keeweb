@@ -2,6 +2,7 @@
 
 var Backbone = require('backbone'),
     GroupModel = require('../../models/group-model'),
+    AppSettingsModel = require('../../models/app-settings-model'),
     Scrollable = require('../../mixins/scrollable'),
     FieldViewText = require('../fields/field-view-text'),
     FieldViewDate = require('../fields/field-view-date'),
@@ -18,17 +19,22 @@ var Backbone = require('backbone'),
     Alerts = require('../../comp/alerts'),
     CopyPaste = require('../../comp/copy-paste'),
     Format = require('../../util/format'),
+    Locale = require('../../util/locale'),
+    Tip = require('../../util/tip'),
+    Timeouts = require('../../const/timeouts'),
     FileSaver = require('filesaver'),
-    baron = require('baron'),
     kdbxweb = require('kdbxweb');
 
 var DetailsView = Backbone.View.extend({
-    template: require('templates/details/details.html'),
-    emptyTemplate: require('templates/details/details-empty.html'),
-    groupTemplate: require('templates/details/details-group.html'),
+    template: require('templates/details/details.hbs'),
+    emptyTemplate: require('templates/details/details-empty.hbs'),
+    groupTemplate: require('templates/details/details-group.hbs'),
 
     fieldViews: null,
     views: null,
+    passEditView: null,
+    addNewFieldView: null,
+    passCopyTip: null,
 
     events: {
         'click .details__colors-popup-item': 'selectColor',
@@ -65,6 +71,10 @@ var DetailsView = Backbone.View.extend({
     removeFieldViews: function() {
         this.fieldViews.forEach(function(fieldView) { fieldView.remove(); });
         this.fieldViews = [];
+        if (this.passCopyTip) {
+            this.passCopyTip.hide();
+            this.passCopyTip = null;
+        }
     },
 
     render: function () {
@@ -79,57 +89,57 @@ var DetailsView = Backbone.View.extend({
         }
         if (this.model instanceof GroupModel) {
             this.$el.html(this.groupTemplate());
+            Tip.createTips(this.$el);
             return;
         }
         var model = $.extend({ deleted: this.appModel.filter.trash }, this.model);
         this.$el.html(this.template(model));
+        Tip.createTips(this.$el);
         this.setSelectedColor(this.model.color);
         this.addFieldViews();
-        this.scroll = baron({
+        this.createScroll({
             root: this.$el.find('.details__body')[0],
             scroller: this.$el.find('.scroller')[0],
-            bar: this.$el.find('.scroller__bar')[0],
-            $: Backbone.$
+            bar: this.$el.find('.scroller__bar')[0]
         });
-        this.scroller = this.$el.find('.scroller');
-        this.scrollerBar = this.$el.find('.scroller__bar');
-        this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
         this.$el.find('.details').removeClass('details--drag');
         this.dragging = false;
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
         this.pageResized();
+        this.showCopyTip();
         return this;
     },
 
     addFieldViews: function() {
         var model = this.model;
-        this.fieldViews.push(new FieldViewText({ model: { name: '$UserName', title: 'User',
+        this.fieldViews.push(new FieldViewText({ model: { name: '$UserName', title: Locale.detUser,
             value: function() { return model.user; } } }));
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Password', title: 'Password', canGen: true,
-            value: function() { return model.password; } } }));
-        this.fieldViews.push(new FieldViewUrl({ model: { name: '$URL', title: 'Website',
+        this.passEditView = new FieldViewText({ model: { name: '$Password', title: Locale.detPassword, canGen: true,
+            value: function() { return model.password; } } });
+        this.fieldViews.push(this.passEditView);
+        this.fieldViews.push(new FieldViewUrl({ model: { name: '$URL', title: Locale.detWebsite,
             value: function() { return model.url; } } }));
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: 'Notes', multiline: 'true',
+        this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: Locale.detNotes, multiline: 'true',
             value: function() { return model.notes; } } }));
-        this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: 'Tags', tags: this.appModel.tags,
+        this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: Locale.detTags, tags: this.appModel.tags,
             value: function() { return model.tags; } } }));
-        this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: 'Expires', lessThanNow: '(expired)',
+        this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: Locale.detExpires, lessThanNow: '(' + Locale.detExpired + ')',
             value: function() { return model.expires; } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: 'File',
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: Locale.detFile,
             value: function() { return model.fileName; } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Created', title: 'Created',
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Created', title: Locale.detCreated,
             value: function() { return Format.dtStr(model.created); } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: 'Updated',
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: Locale.detUpdated,
             value: function() { return Format.dtStr(model.updated); } } }));
-        this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: 'History',
+        this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: Locale.detHistory,
             value: function() { return { length: model.historyLength, unsaved: model.unsaved }; } } }));
         _.forEach(model.fields, function(value, field) {
             this.fieldViews.push(new FieldViewCustom({ model: { name: '$' + field, title: field,
                 value: function() { return model.fields[field]; } } }));
         }, this);
-        var newFieldTitle = 'New Field';
+        var newFieldTitle = Locale.detNetField;
         if (model.fields[newFieldTitle]) {
             for (var i = 1; ; i++) {
                 var newFieldTitleVariant = newFieldTitle + i;
@@ -139,8 +149,9 @@ var DetailsView = Backbone.View.extend({
                 }
             }
         }
-        this.fieldViews.push(new FieldViewCustom({ model: { name: '', title: 'add field', newField: newFieldTitle,
-            value: function() { return ''; } } }));
+        this.addNewFieldView = new FieldViewCustom({ model: { name: '$', title: Locale.detAddField, newField: newFieldTitle,
+            value: function() { return ''; } } });
+        this.fieldViews.push(this.addNewFieldView);
 
         var fieldsMainEl = this.$el.find('.details__body-fields');
         var fieldsAsideEl = this.$el.find('.details__body-aside');
@@ -148,13 +159,6 @@ var DetailsView = Backbone.View.extend({
             fieldView.setElement(fieldView.readonly ? fieldsAsideEl : fieldsMainEl).render();
             fieldView.on('change', this.fieldChanged.bind(this));
         }, this);
-    },
-
-    getEditedField: function() {
-        var edited = _.find(this.fieldViews, function(fieldView) {
-            return fieldView.editing;
-        });
-        return edited ? edited.model.name : undefined;
     },
 
     setSelectedColor: function(color) {
@@ -267,22 +271,59 @@ var DetailsView = Backbone.View.extend({
     copyKeyPress: function() { // TODO: fix this in Safari
         if (!window.getSelection().toString()) {
             var pw = this.model.password;
-            var password = pw.getText ? pw.getText() : pw;
+            var password = pw.isProtected ? pw.getText() : pw;
             CopyPaste.createHiddenInput(password);
-            CopyPaste.copied();
+            var clipboardTime = CopyPaste.copied();
+            if (!this.passCopyTip) {
+                var passLabel = this.passEditView.labelEl;
+                var msg = clipboardTime ? Locale.detPassCopiedTime.replace('{}', clipboardTime)
+                    : Locale.detPassCopied;
+                var tip = new Tip(passLabel, { title: msg, placement: 'right', fast: true });
+                this.passCopyTip = tip;
+                tip.show();
+                var that = this;
+                setTimeout(function() {
+                    tip.hide();
+                    that.passCopyTip = null;
+                }, Timeouts.CopyTip);
+            }
         }
+    },
+
+    showCopyTip: function() {
+        if (this.helpTipCopyShown) {
+            return;
+        }
+        this.helpTipCopyShown = AppSettingsModel.instance.get('helpTipCopyShown');
+        if (this.helpTipCopyShown) {
+            return;
+        }
+        AppSettingsModel.instance.set('helpTipCopyShown', true);
+        this.helpTipCopyShown = true;
+        var newFieldLabel = this.addNewFieldView.labelEl;
+        var tip = new Tip(newFieldLabel, { title: Locale.detCopyHint, placement: 'right' });
+        tip.show();
+        setTimeout(function() { tip.hide(); }, Timeouts.AutoHideHint);
     },
 
     fieldChanged: function(e) {
         if (e.field) {
             if (e.field[0] === '$') {
                 var fieldName = e.field.substr(1);
-                if (e.title) {
-                    this.model.setField(fieldName, undefined);
-                    this.model.setField(e.title, e.val);
+                if (e.newField && e.newField !== fieldName) {
+                    if (fieldName) {
+                        this.model.setField(fieldName, undefined);
+                    }
+                    fieldName = e.newField;
+                    var i = 0;
+                    while (this.model.hasField(fieldName)) {
+                        i++;
+                        fieldName = e.newField + i;
+                    }
+                    this.model.setField(fieldName, e.val);
                     this.entryUpdated();
                     return;
-                } else {
+                } else if (fieldName) {
                     this.model.setField(fieldName, e.val);
                 }
             } else if (e.field === 'Tags') {
@@ -304,15 +345,6 @@ var DetailsView = Backbone.View.extend({
                     fieldView.update();
                 }
             }, this);
-        } else if (e.newField && e.val) {
-            var field = e.newField;
-            var i = 0;
-            while (this.model.hasField(field)) {
-                i++;
-                field = e.newField + i;
-            }
-            this.model.setField(field, e.val);
-            this.entryUpdated();
         }
         if (e.tab) {
             this.focusNextField(e.tab);
@@ -486,8 +518,8 @@ var DetailsView = Backbone.View.extend({
 
     deleteFromTrash: function() {
         Alerts.yesno({
-            header: 'Delete from trash?',
-            body: 'You will not be able to put it back<p class="muted-color">To quickly remove all items from trash, click empty icon in Trash menu</p>',
+            header: Locale.detDelFromTrash,
+            body: Locale.detDelFromTrashBody + ' <p class="muted-color">' + Locale.detDelFromTrashBodyHint + '</p>',
             icon: 'minus-circle',
             success: (function() {
                 this.model.deleteFromTrash();

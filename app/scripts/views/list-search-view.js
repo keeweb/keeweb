@@ -4,10 +4,11 @@ var Backbone = require('backbone'),
     Keys = require('../const/keys'),
     KeyHandler = require('../comp/key-handler'),
     DropdownView = require('./dropdown-view'),
-    FeatureDetector = require('../util/feature-detector');
+    FeatureDetector = require('../util/feature-detector'),
+    Locale = require('../util/locale');
 
 var ListSearchView = Backbone.View.extend({
-    template: require('templates/list-search.html'),
+    template: require('templates/list-search.hbs'),
 
     events: {
         'keydown .list__search-field': 'inputKeyDown',
@@ -16,7 +17,8 @@ var ListSearchView = Backbone.View.extend({
         'click .list__search-btn-new': 'createOptionsClick',
         'click .list__search-btn-sort': 'sortOptionsClick',
         'click .list__search-icon-search': 'advancedSearchClick',
-        'click .list__search-btn-menu': 'toggleMenu'
+        'click .list__search-btn-menu': 'toggleMenu',
+        'change .list__search-adv input[type=checkbox]': 'toggleAdvCheck'
     },
 
     views: null,
@@ -25,31 +27,41 @@ var ListSearchView = Backbone.View.extend({
     sortOptions: null,
     sortIcons: null,
     createOptions: null,
+    advancedSearchEnabled: false,
+    advancedSearch: null,
 
     initialize: function () {
         this.sortOptions = [
-            { value: 'title', icon: 'sort-alpha-asc', text: 'Title A &rarr; Z' },
-            { value: '-title', icon: 'sort-alpha-desc', text: 'Title Z &rarr; A' },
-            { value: 'website', icon: 'sort-alpha-asc', text: 'Website A &rarr; Z' },
-            { value: '-website', icon: 'sort-alpha-desc', text: 'Website Z &rarr; A' },
-            { value: 'user', icon: 'sort-alpha-asc', text: 'User A &rarr; Z' },
-            { value: '-user', icon: 'sort-alpha-desc', text: 'User Z &rarr; A' },
-            { value: 'created', icon: 'sort-numeric-asc', text: 'Created Old &rarr; New' },
-            { value: '-created', icon: 'sort-numeric-desc', text: 'Created New &rarr; Old' },
-            { value: 'updated', icon: 'sort-numeric-asc', text: 'Updated Old &rarr; New' },
-            { value: '-updated', icon: 'sort-numeric-desc', text: 'Updated New &rarr; Old' },
-            { value: '-attachments', icon: 'sort-amount-desc', text: 'Attachments' }
+            { value: 'title', icon: 'sort-alpha-asc', text: Locale.searchTitle + ' ' + Locale.searchAZ },
+            { value: '-title', icon: 'sort-alpha-desc', text: Locale.searchTitle + ' ' + Locale.searchZA },
+            { value: 'website', icon: 'sort-alpha-asc', text: Locale.searchWebsite + ' ' + Locale.searchAZ },
+            { value: '-website', icon: 'sort-alpha-desc', text: Locale.searchWebsite + ' ' + Locale.searchZA },
+            { value: 'user', icon: 'sort-alpha-asc', text: Locale.searchUser + ' ' + Locale.searchAZ },
+            { value: '-user', icon: 'sort-alpha-desc', text: Locale.searchUser + ' ' + Locale.searchZA },
+            { value: 'created', icon: 'sort-numeric-asc', text: Locale.searchCreated + ' ' + Locale.searchON },
+            { value: '-created', icon: 'sort-numeric-desc', text: Locale.searchCreated + ' ' + Locale.searchNO },
+            { value: 'updated', icon: 'sort-numeric-asc', text: Locale.searchUpdated + ' ' + Locale.searchON },
+            { value: '-updated', icon: 'sort-numeric-desc', text: Locale.searchUpdated + ' ' + Locale.searchNO },
+            { value: '-attachments', icon: 'sort-amount-desc', text: Locale.searchAttachments }
         ];
         this.sortIcons = {};
         this.sortOptions.forEach(function(opt) {
             this.sortIcons[opt.value] = opt.icon;
         }, this);
+        var entryDesc = FeatureDetector.isMobile() ? '' : (' <span class="muted-color">(' + Locale.searchShiftClickOr + ' ' +
+            FeatureDetector.altShortcutSymbol(true) + 'N)</span>');
         this.createOptions = [
-            { value: 'entry', icon: 'key', text: 'Entry <span class="muted-color">(shift-click or ' +
-                FeatureDetector.altShortcutSymbol(true) + 'N)</span>' },
+            { value: 'entry', icon: 'key', text: 'Entry' + entryDesc },
             { value: 'group', icon: 'folder', text: 'Group' }
         ];
         this.views = {};
+        this.advancedSearch = {
+            user: true, other: true,
+            url: true, protect: false,
+            notes: true, pass: false,
+            cs: false, regex: false,
+            history: false
+        };
         KeyHandler.onKey(Keys.DOM_VK_F, this.findKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_N, this.newKeyPress, this, KeyHandler.SHORTCUT_OPT);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downKeyPress, this);
@@ -76,7 +88,7 @@ var ListSearchView = Backbone.View.extend({
     },
 
     render: function () {
-        this.renderTemplate();
+        this.renderTemplate({ adv: this.advancedSearch });
         this.inputEl = this.$el.find('.list__search-field');
         return this;
     },
@@ -96,6 +108,12 @@ var ListSearchView = Backbone.View.extend({
                 }
                 e.target.blur();
                 break;
+            case Keys.DOM_VK_A:
+                if (e.metaKey || e.ctrlKey) {
+                    e.stopPropagation();
+                    return;
+                }
+                return;
             default:
                 return;
         }
@@ -160,6 +178,11 @@ var ListSearchView = Backbone.View.extend({
         }
         var sortIconCls = this.sortIcons[filter.sort] || 'sort';
         this.$el.find('.list__search-btn-sort>i').attr('class', 'fa fa-' + sortIconCls);
+        var adv = !!filter.filter.advanced;
+        if (this.advancedSearchEnabled !== adv) {
+            this.advancedSearchEnabled = adv;
+            this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
+        }
     },
 
     createOptionsClick: function(e) {
@@ -178,11 +201,19 @@ var ListSearchView = Backbone.View.extend({
     },
 
     advancedSearchClick: function() {
-        require('../comp/alerts').notImplemented();
+        this.advancedSearchEnabled = !this.advancedSearchEnabled;
+        this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
+        Backbone.trigger('add-filter', { advanced: this.advancedSearchEnabled ? this.advancedSearch : false });
     },
 
     toggleMenu: function() {
         Backbone.trigger('toggle-menu');
+    },
+
+    toggleAdvCheck: function(e) {
+        var setting = $(e.target).data('id');
+        this.advancedSearch[setting] = e.target.checked;
+        Backbone.trigger('add-filter', { advanced: this.advancedSearch });
     },
 
     hideSearchOptions: function() {

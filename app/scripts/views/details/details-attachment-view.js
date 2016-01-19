@@ -5,7 +5,7 @@ var Backbone = require('backbone'),
     FeatureDetector = require('../../util/feature-detector');
 
 var DetailsAttachmentView = Backbone.View.extend({
-    template: require('templates/details/details-attachment.html'),
+    template: require('templates/details/details-attachment.hbs'),
 
     events: {
     },

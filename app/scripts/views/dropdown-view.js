@@ -3,7 +3,7 @@
 var Backbone = require('backbone');
 
 var DropdownView = Backbone.View.extend({
-    template: require('templates/dropdown.html'),
+    template: require('templates/dropdown.hbs'),
 
     events: {
         'click .dropdown__item': 'itemClick'

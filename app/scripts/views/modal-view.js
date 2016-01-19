@@ -7,7 +7,7 @@ var Backbone = require('backbone'),
 var ModalView = Backbone.View.extend({
     el: 'body',
 
-    template: require('templates/modal.html'),
+    template: require('templates/modal.hbs'),
 
     events: {
         'click .modal__buttons button': 'buttonClick',

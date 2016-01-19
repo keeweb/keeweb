@@ -9,11 +9,12 @@ var Backbone = require('backbone'),
     Links = require('../../const/links'),
     DropboxLink = require('../../comp/dropbox-link'),
     Format = require('../../util/format'),
+    Locale = require('../../util/locale'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
 
 var SettingsAboutView = Backbone.View.extend({
-    template: require('templates/settings/settings-file.html'),
+    template: require('templates/settings/settings-file.hbs'),
 
     events: {
         'click .settings__file-button-save-default': 'saveDefault',
@@ -72,14 +73,15 @@ var SettingsAboutView = Backbone.View.extend({
         var sel = this.$el.find('#settings__file-key-file');
         sel.html('');
         if (keyFileName && keyFileChanged) {
-            var text = keyFileName !== 'Generated' ? 'Use key file ' + keyFileName : 'Use generated key file';
+            var text = keyFileName !== 'Generated' ? Locale.setFileUseKeyFile + ' ' + keyFileName : Locale.setFileUseGenKeyFile;
             $('<option/>').val('ex').text(text).appendTo(sel);
         }
         if (oldKeyFileName) {
-            $('<option/>').val('old').text('Use ' + (keyFileChanged ? 'old ' : '') + 'key file ' + oldKeyFileName).appendTo(sel);
+            var useText = keyFileChanged ? Locale.setFileUseOldKeyFile : Locale.setFileUseKeyFile + ' ' + oldKeyFileName;
+            $('<option/>').val('old').text(useText).appendTo(sel);
         }
-        $('<option/>').val('gen').text('Generate new key file').appendTo(sel);
-        $('<option/>').val('none').text('Don\'t use key file').appendTo(sel);
+        $('<option/>').val('gen').text(Locale.setFileGenKeyFile).appendTo(sel);
+        $('<option/>').val('none').text(Locale.setFileDontUseKeyFile).appendTo(sel);
         if (keyFileName && keyFileChanged) {
             sel.val('ex');
         } else if (!keyFileName) {
@@ -93,8 +95,8 @@ var SettingsAboutView = Backbone.View.extend({
         if (!this.model.get('passwordLength')) {
             var that = this;
             Alerts.yesno({
-                header: 'Empty password',
-                body: 'Saving database with empty password makes it completely unprotected. Do you really want to do it?',
+                header: Locale.setFileEmptyPass,
+                body: Locale.setFileEmptyPassBody,
                 success: function() {
                     continueCallback();
                 },
@@ -149,8 +151,8 @@ var SettingsAboutView = Backbone.View.extend({
                             Storage.file.save(path, data, function (err) {
                                 if (err) {
                                     Alerts.error({
-                                        header: 'Save error',
-                                        body: 'Error saving to file ' + path + ': \n' + err
+                                        header: Locale.setFileSaveError,
+                                        body: Locale.setFileSaveErrorBody + ' ' + path + ': \n' + err
                                     });
                                 }
                             });
@@ -191,8 +193,8 @@ var SettingsAboutView = Backbone.View.extend({
                     if (existingPath) {
                         Alerts.yesno({
                             icon: 'dropbox',
-                            header: 'Already exists',
-                            body: 'File ' + that.model.escape('name') + ' already exists in your Dropbox. Overwrite it?',
+                            header: Locale.setFileAlreadyExists,
+                            body: Locale.setFileAlreadyExistsBody.replace('{}', that.model.escape('name')),
                             success: function() {
                                 that.model.set('syncing', true);
                                 DropboxLink.deleteFile(existingPath, function(err) {
@@ -215,12 +217,11 @@ var SettingsAboutView = Backbone.View.extend({
         if (this.model.get('modified')) {
             var that = this;
             Alerts.yesno({
-                header: 'Unsaved changes',
-                body: 'There are unsaved changes in this file',
+                header: Locale.setFileUnsaved,
+                body: Locale.setFileUnsavedBody,
                 buttons: [
-                    //{result: 'save', title: 'Save and close'},
-                    {result: 'close', title: 'Close and lose changes', error: true},
-                    {result: '', title: 'Don\t close'}
+                    {result: 'close', title: Locale.setFileCloseNoSave, error: true},
+                    {result: '', title: Locale.setFileDontClose}
                 ],
                 success: function(result) {
                     if (result === 'close') {

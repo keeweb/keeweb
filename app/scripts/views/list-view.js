@@ -6,12 +6,11 @@ var Backbone = require('backbone'),
     ListSearchView = require('./list-search-view'),
     EntryPresenter = require('../presenters/entry-presenter'),
     DragDropInfo = require('../comp/drag-drop-info'),
-    AppSettingsModel = require('../models/app-settings-model'),
-    baron = require('baron');
+    AppSettingsModel = require('../models/app-settings-model');
 
 var ListView = Backbone.View.extend({
-    template: require('templates/list.html'),
-    emptyTemplate: require('templates/list-empty.html'),
+    template: require('templates/list.hbs'),
+    emptyTemplate: require('templates/list-empty.hbs'),
 
     events: {
         'click .list__item': 'itemClick',
@@ -54,14 +53,11 @@ var ListView = Backbone.View.extend({
             this.views.search.setElement(this.$el.find('.list__header')).render();
             this.setTableView();
 
-            this.scroll = baron({
+            this.createScroll({
                 root: this.$el.find('.list__items')[0],
                 scroller: this.$el.find('.scroller')[0],
-                bar: this.$el.find('.scroller__bar')[0],
-                $: Backbone.$
+                bar: this.$el.find('.scroller__bar')[0]
             });
-            this.scrollerBar = this.$el.find('.scroller__bar');
-            this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
         }
         if (this.items.length) {
             var itemTemplate = this.getItemTemplate();
@@ -84,7 +80,7 @@ var ListView = Backbone.View.extend({
 
     getItemsTemplate: function() {
         if (this.model.settings.get('tableView')) {
-            return require('templates/list-table.html');
+            return require('templates/list-table.hbs');
         } else {
             return this.renderPlainItems;
         }
@@ -96,9 +92,9 @@ var ListView = Backbone.View.extend({
 
     getItemTemplate: function() {
         if (this.model.settings.get('tableView')) {
-            return require('templates/list-item-table.html');
+            return require('templates/list-item-table.hbs');
         } else {
-            return require('templates/list-item-short.html');
+            return require('templates/list-item-short.hbs');
         }
     },
 

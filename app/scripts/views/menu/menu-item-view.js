@@ -4,10 +4,11 @@ var Backbone = require('backbone'),
     KeyHandler = require('../../comp/key-handler'),
     Keys = require('../../const/keys'),
     Alerts = require('../../comp/alerts'),
-    DragDropInfo = require('../../comp/drag-drop-info');
+    DragDropInfo = require('../../comp/drag-drop-info'),
+    Locale = require('../../util/locale');
 
 var MenuItemView = Backbone.View.extend({
-    template: require('templates/menu/menu-item.html'),
+    template: require('templates/menu/menu-item.hbs'),
 
     events: {
         'mouseover': 'mouseover',
@@ -162,8 +163,8 @@ var MenuItemView = Backbone.View.extend({
     emptyTrash: function(e) {
         e.stopPropagation();
         Alerts.yesno({
-            header: 'Empty trash?',
-            body: 'You will not be able to put items back',
+            header: Locale.menuEmptyTrashAlert,
+            body: Locale.menuEmptyTrashAlertBody,
             icon: 'minus-circle',
             success: function() {
                 Backbone.trigger('empty-trash');

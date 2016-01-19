@@ -1,0 +1,26 @@
+<div class="menu__item
+    {{~#if active}} menu__item--active{{/if~}}
+    {{~#if disabled}} menu__item--disabled{{/if~}}
+    {{~#if options.length}} menu__item--with-options {{/if~}}
+    {{~#if cls}} {{cls}}{{/if~}}
+    ">
+    <div class="menu__item-body" {{#if drag}}draggable="true"{{/if}}>
+        {{#if customIcon~}}
+            <img src="{{{customIcon}}}" class="menu__item-icon menu__item-icon--image" />
+        {{~else~}}
+            <i class="menu__item-icon fa {{#if icon}}fa-{{icon}}{{else}}menu__item-icon--no-icon{{/if}}"></i>
+        {{~/if}}
+        <span class="menu__item-title">{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</span>
+        {{#if options}}
+        <div class="menu__item-options">
+            {{#each options.models as |opt|}}
+            <div class="menu__item-option {{#if opt.attributes.cls}}{{opt.attributes.cls}}{{/if}}"
+                    data-value="{{opt.attributes.value}}">{{opt.attributes.title}}</div>
+            {{/each}}
+        </div>
+        {{/if}}
+        {{#if editable}}<i class="menu__item-edit fa fa-cog"></i>{{/if}}
+        {{#ifeq filterKey 'trash'}}<i class="menu__item-empty-trash fa fa-minus-circle" title="{{res 'menuEmptyTrash'}}"
+            tip-placement="right"></i>{{/ifeq}}
+    </div>
+</div>

@@ -5,14 +5,11 @@ var Backbone = require('backbone'),
     CopyPaste = require('../../comp/copy-paste');
 
 var FieldView = Backbone.View.extend({
-    template: require('templates/details/field.html'),
+    template: require('templates/details/field.hbs'),
 
     events: {
         'click .details__field-label': 'fieldLabelClick',
         'click .details__field-value': 'fieldValueClick'
-    },
-
-    initialize: function () {
     },
 
     render: function () {
@@ -39,7 +36,7 @@ var FieldView = Backbone.View.extend({
         var field = this.model.name;
         if (FeatureDetector.shouldMoveHiddenInputToCopySource()) {
             var box = this.valueEl[0].getBoundingClientRect();
-            var textValue = this.value && this.value.getText ? this.value.getText() : this.getEditValue(this.value);
+            var textValue = this.value && this.value.isProtected ? this.value.getText() : this.getEditValue(this.value);
             if (!textValue) {
                 return;
             }
@@ -49,7 +46,7 @@ var FieldView = Backbone.View.extend({
         }
         if (field) {
             var value = this.value || '';
-            if (value && value.getText) {
+            if (value && value.isProtected) {
                 CopyPaste.createHiddenInput(value.getText());
                 CopyPaste.tryCopy();
                 return;
@@ -89,12 +86,18 @@ var FieldView = Backbone.View.extend({
             return;
         }
         this.editing = false;
-        var oldValText = this.value && this.value.getText ? this.value.getText() : this.value;
-        var newValText = newVal && newVal.getText ? newVal.getText() : newVal;
-        var textEqual = _.isEqual(newValText, oldValText);
-        var protectedEqual = (newVal && typeof newVal.getText) === (this.value && typeof this.value.getText);
+        var textEqual;
+        if (this.value && this.value.isProtected) {
+            textEqual = this.value.equals(newVal);
+        } else if (newVal && newVal.isProtected) {
+            textEqual = newVal.equals(this.value);
+        } else {
+            textEqual = _.isEqual(this.value, newVal);
+        }
+        var protectedEqual = (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
+        var nameChanged = extra && extra.newField;
         var arg;
-        if (newVal !== undefined && (!textEqual || !protectedEqual)) {
+        if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {
             arg = { val: newVal, field: this.model.name };
             if (extra) {
                 _.extend(arg, extra);

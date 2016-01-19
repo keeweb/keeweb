@@ -4,6 +4,7 @@ var Dropbox = require('dropbox'),
     Alerts = require('./alerts'),
     Launcher = require('./launcher'),
     Logger = require('../util/logger'),
+    Locale = require('../util/locale'),
     Links = require('../const/links');
 
 var logger = new Logger('dropbox');
@@ -134,9 +135,9 @@ var DropboxLink = {
         if (!isValidKey()) {
             Alerts.error({
                 icon: 'dropbox',
-                header: 'Dropbox not configured',
-                body: 'So, you are using KeeWeb on your own server? Good!<br/>' +
-                    '<a href="' + Links.SelfHostedDropbox + '" target="blank">Some configuration</a> is required to make Dropbox work, it\'s just 3 steps away.'
+                header: Locale.dropboxNotConfigured,
+                body: Locale.dropboxNotConfiguredBody1 + '<br/>' + Locale.dropboxNotConfiguredBody2.replace('{}',
+                        '<a href="' + Links.SelfHostedDropbox + '" target="blank">' + Locale.dropboxNotConfiguredLink + '</a>')
             });
             return complete(DropboxCustomErrors.BadKey);
         }
@@ -166,9 +167,9 @@ var DropboxLink = {
                 if (!Alerts.alertDisplayed) {
                     Alerts.yesno({
                         icon: 'dropbox',
-                        header: 'Dropbox Login',
-                        body: 'To continue, you have to sign in to Dropbox.',
-                        buttons: [{result: 'yes', title: 'Sign In'}, {result: '', title: 'Cancel'}],
+                        header: Locale.dropboxLogin,
+                        body: Locale.dropboxLoginBody,
+                        buttons: [{result: 'yes', title: Locale.alertSignIn}, {result: '', title: Locale.alertCancel}],
                         success: (function () {
                             this.authenticate(function (err) { callback(!err); });
                         }).bind(this),
@@ -181,42 +182,42 @@ var DropboxLink = {
                 break;
             case Dropbox.ApiError.NOT_FOUND:
                 alertCallback({
-                    header: 'Dropbox Sync Error',
-                    body: 'The file was not found. Has it been removed from another computer?'
+                    header: Locale.dropboxSyncError,
+                    body: Locale.dropboxNotFoundBody
                 });
                 break;
             case Dropbox.ApiError.OVER_QUOTA:
                 alertCallback({
-                    header: 'Dropbox Full',
-                    body: 'Your Dropbox is full, there\'s no space left anymore.'
+                    header: Locale.dropboxFull,
+                    body: Locale.dropboxFullBody
                 });
                 break;
             case Dropbox.ApiError.RATE_LIMITED:
                 alertCallback({
-                    header: 'Dropbox Sync Error',
-                    body: 'Too many requests to Dropbox have been made by this app. Please, try again later.'
+                    header: Locale.dropboxSyncError,
+                    body: Locale.dropboxRateLimitedBody
                 });
                 break;
             case Dropbox.ApiError.NETWORK_ERROR:
                 alertCallback({
-                    header: 'Dropbox Sync Network Error',
-                    body: 'Network error occured during Dropbox sync. Please, check your connection and try again.'
+                    header: Locale.dropboxNetError,
+                    body: Locale.dropboxNetErrorBody
                 });
                 break;
             case Dropbox.ApiError.INVALID_PARAM:
             case Dropbox.ApiError.OAUTH_ERROR:
             case Dropbox.ApiError.INVALID_METHOD:
                 alertCallback({
-                    header: 'Dropbox Sync Error',
-                    body: 'Something went wrong during Dropbox sync. Please, try again later. Error code: ' + err.status
+                    header: Locale.dropboxSyncError,
+                    body: Locale.dropboxErrorBody + err.status
                 });
                 break;
             case Dropbox.ApiError.CONFLICT:
                 break;
             default:
                 alertCallback({
-                    header: 'Dropbox Sync Error',
-                    body: 'Something went wrong during Dropbox sync. Please, try again later. Error: ' + err
+                    header: Locale.dropboxSyncError,
+                    body: Locale.dropboxErrorRepeatBody + err
                 });
                 break;
         }

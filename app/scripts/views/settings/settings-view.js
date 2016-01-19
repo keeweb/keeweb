@@ -3,11 +3,10 @@
 var Backbone = require('backbone'),
     Scrollable = require('../../mixins/scrollable'),
     Keys = require('../../const/keys'),
-    KeyHandler = require('../../comp/key-handler'),
-    baron = require('baron');
+    KeyHandler = require('../../comp/key-handler');
 
 var SettingsView = Backbone.View.extend({
-    template: require('templates/settings/settings.html'),
+    template: require('templates/settings/settings.hbs'),
 
     views: null,
 
@@ -28,14 +27,11 @@ var SettingsView = Backbone.View.extend({
 
     render: function () {
         this.renderTemplate();
-        this.scroll = baron({
+        this.createScroll({
             root: this.$el.find('.settings')[0],
             scroller: this.$el.find('.scroller')[0],
-            bar: this.$el.find('.scroller__bar')[0],
-            $: Backbone.$
+            bar: this.$el.find('.scroller__bar')[0]
         });
-        this.scrollerBar = this.$el.find('.scroller__bar');
-        this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
         this.pageEl = this.$el.find('.scroller');
         return this;
     },

@@ -134,10 +134,12 @@
       @include scrollbar-full-width-hack();
       @-moz-document url-prefix() { @include scrollbar-padding-hack(); }
       @at-root { _:-ms-lang(x), .details__body>.scroller { @include scrollbar-padding-hack(); } }
+      @media screen and (-webkit-min-device-pixel-ratio:0) { width: 100% !important; }
     }
 
     &-fields {
-      @include flex(1 0 auto);
+      @include flex(1 0 50%);
+      min-width: 0;
     }
 
     &-aside {
@@ -193,6 +195,8 @@
       min-height: $details-field-line-height;
       box-sizing: border-box;
       line-height: $details-field-line-height;
+      overflow: hidden;
+      text-overflow: ellipsis;
       .details__field--editable & {
         border-radius: $base-border-radius;
         &:hover {
@@ -220,6 +224,7 @@
         line-height: $details-field-line-height;
         width: 100%;
         height: 20px;
+        .details__field--protected & { font-family: $monospace-font-family; }
       }
       >textarea {
         display: block;
@@ -250,7 +255,7 @@
       &-btn-gen:before { content: $fa-var-bolt; }
       &-btn-protect {
         &:before { content: $fa-var-unlock; }
-        &--protected:before { content: $fa-var-lock; }
+        .details__field--protected & { &:before { content: $fa-var-lock; } }
       }
     }
   }
@@ -480,7 +485,7 @@
 
   &__tags-autocomplete {
     position: absolute;
-    @include dropdown;
+    @include common-dropdown;
     &-tag {
       padding: $base-padding;
       display: inline-block;

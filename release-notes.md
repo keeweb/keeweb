@@ -1,5 +1,20 @@
 Release notes
 -------------
+##### v0.6.0 (2016-01-19)
+Improvements  
+`+` advanced search  
+`+` ability to sync files with changed credentials  
+`+` save at exit for desktop app  
+`+` more reliable binaries management  
+`+` string resources globalization  
+`+` San-Francisco font in Chrome OS X  
+`+` help/tips  
+`+` #67: field editing improvements  
+`*` monospace fonts for protected fields  
+`*` #68: url display without http  
+`+` #50: notification on password copy  
+`-` #74: select all in search field  
+
 ##### v0.5.1 (2015-12-15)
 Layout bugfixes  
 `-` #66: keyfile selection in Firefox  

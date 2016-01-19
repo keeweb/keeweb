@@ -1,0 +1,8 @@
+<div class="list__item {{#if active}}list__item--active{{/if}} {{#if expired}}list__item--expired{{/if}}" id="{{id}}" draggable="true">
+    {{#if customIcon~}}
+        <img src="{{{customIcon}}}" class="list__item-icon list__item-icon--custom {{#if color}}{{color}}{{/if}}" />
+    {{~else~}}
+        <i class="fa fa-{{icon}} {{#if color}}{{color}}-color{{/if}} list__item-icon"></i>
+    {{~/if}}
+    <span class="list__item-title">{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</span><span class="list__item-descr thin">{{description}}</span>
+</div>

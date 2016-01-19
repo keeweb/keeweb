@@ -1,0 +1,8 @@
+<div class="dropdown">
+    {{#each options as |option|}}
+    <div class="dropdown__item {{#if option.active}}dropdown__item--active{{/if}}" data-value="{{option.value}}">
+        <i class="fa fa-{{option.icon}} dropdown__item-icon"></i>
+        <span class="dropdown__item-text">{{{option.text}}}</span>
+    </div>
+    {{/each}}
+</div>

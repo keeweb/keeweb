@@ -14,6 +14,8 @@ var Backbone = require('backbone'),
     IdGenerator = require('../util/id-generator'),
     Logger = require('../util/logger');
 
+require('../mixins/protected-value-ex');
+
 var AppModel = Backbone.Model.extend({
     defaults: {},
 
@@ -464,10 +466,16 @@ var AppModel = Backbone.Model.extend({
                 Storage[storage].load(path, function(err, data, stat) {
                     logger.info('Load from storage', stat, err);
                     if (err) { return complete(err); }
-                    file.mergeOrUpdate(data, function(err) {
+                    file.mergeOrUpdate(data, options.remoteKey, function(err) {
                         logger.info('Merge complete', err);
                         that.refresh();
-                        if (err) { return complete(err); }
+                        if (err) {
+                            if (err.code === 'InvalidKey') {
+                                logger.info('Remote key changed, request to enter new key');
+                                Backbone.trigger('remote-key-changed', { file: file });
+                            }
+                            return complete(err);
+                        }
                         if (stat && stat.rev) {
                             logger.info('Update rev in file info');
                             fileInfo.set('rev', stat.rev);

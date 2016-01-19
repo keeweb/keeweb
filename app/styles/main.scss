@@ -8,23 +8,24 @@
 @import "base/base";
 
 @import "utils/drag";
-@import "utils/dropdown";
+@import "utils/common-dropdown";
 @import "utils/selection";
 
 @import "common/dates";
 @import "common/dropdown";
 @import "common/empty";
 @import "common/fx";
-@import "common/help-tip";
 @import "common/icon-select";
 @import "common/modal";
 @import "common/scroll";
+@import "common/tip";
 
 @import "areas/app";
 @import "areas/details";
 @import "areas/footer";
 @import "areas/grp";
 @import "areas/generator";
+@import "areas/key-change";
 @import "areas/list";
 @import "areas/menu";
 @import "areas/open";

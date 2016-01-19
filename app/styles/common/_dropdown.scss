@@ -10,9 +10,15 @@
   &__item {
     padding: 8px 12px;
     cursor: pointer;
-    @include area-selectable(right);
+    white-space: nowrap;
     &--active, &--active:hover {
       @include area-selected(right);
+    }
+    @include nomobile {
+      @include area-selectable(right);
+      &--active, &--active:hover {
+        @include area-selected(right);
+      }
     }
     &-icon {
       margin-right: $base-padding-h;

@@ -9,8 +9,9 @@ var Backbone = require('backbone'),
 
 var EntryModel = Backbone.Model.extend({
     defaults: {},
+    urlRegex: /^https?:\/\//i,
 
-    buildInFields: ['Title', 'Password', 'Notes', 'URL', 'UserName'],
+    builtInFields: ['Title', 'Password', 'Notes', 'URL', 'UserName'],
 
     initialize: function() {
     },
@@ -33,6 +34,7 @@ var EntryModel = Backbone.Model.extend({
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
         this.notes = entry.fields.Notes || '';
         this.url = entry.fields.URL || '';
+        this.displayUrl = this._getDisplayUrl(entry.fields.URL);
         this.user = entry.fields.UserName || '';
         this.iconId = entry.icon;
         this.icon = this._iconFromId(entry.icon);
@@ -97,18 +99,30 @@ var EntryModel = Backbone.Model.extend({
         return IconMap[id];
     },
 
+    _getDisplayUrl: function(url) {
+        if (!url) {
+            return '';
+        }
+        return url.replace(this.urlRegex, '');
+    },
+
     _colorToModel: function(color) {
         return color ? Color.getNearest(color) : null;
     },
 
     _fieldsToModel: function(fields) {
-        return _.omit(fields, this.buildInFields);
+        return _.omit(fields, this.builtInFields);
     },
 
     _attachmentsToModel: function(binaries) {
         var att = [];
         _.forEach(binaries, function(data, title) {
-            att.push(AttachmentModel.fromAttachment({ data: data, title: title }));
+            if (data && data.ref) {
+                data = this.file.db.meta.binaries[data.ref];
+            }
+            if (data) {
+                att.push(AttachmentModel.fromAttachment({data: data, title: title}));
+            }
         }, this);
         return att;
     },
@@ -128,8 +142,96 @@ var EntryModel = Backbone.Model.extend({
     matches: function(filter) {
         return !filter ||
             (!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
-            (!filter.textLower || this.searchText.indexOf(filter.textLower) >= 0) &&
+            (!filter.textLower || (filter.advanced ? this.matchesAdv(filter) : this.searchText.indexOf(filter.textLower) >= 0)) &&
             (!filter.color || filter.color === true && this.searchColor || this.searchColor === filter.color);
+    },
+
+    matchesAdv: function(filter) {
+        var adv = filter.advanced;
+        var search, match;
+        if (adv.regex) {
+            try { search = new RegExp(filter.text, adv.cs ? '' : 'i'); }
+            catch (e) { return false; }
+            match = this.matchRegex;
+        } else if (adv.cs) {
+            search = filter.text;
+            match = this.matchString;
+        } else {
+            search = filter.textLower;
+            match = this.matchStringLower;
+        }
+        if (this.matchEntry(this.entry, adv, match, search)) {
+            return true;
+        }
+        if (adv.history) {
+            for (var i = 0, len = this.entry.history.length; i < len; i++) {
+                if (this.matchEntry(this.entry.history[0], adv, match, search)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    },
+
+    matchString: function(str, find) {
+        if (str.isProtected) {
+            return str.includes(find);
+        }
+        return str.indexOf(find) >= 0;
+    },
+
+    matchStringLower: function(str, findLower) {
+        if (str.isProtected) {
+            return str.includesLower(findLower);
+        }
+        return str.toLowerCase().indexOf(findLower) >= 0;
+    },
+
+    matchRegex: function(str, regex) {
+        if (str.isProtected) {
+            str = str.getText();
+        }
+        return regex.test(str);
+    },
+
+    matchEntry: function(entry, adv, compare, search) {
+        var matchField = this.matchField;
+        if (adv.user && matchField(entry, 'UserName', compare, search)) {
+            return true;
+        }
+        if (adv.url && matchField(entry, 'URL', compare, search)) {
+            return true;
+        }
+        if (adv.notes && matchField(entry, 'Notes', compare, search)) {
+            return true;
+        }
+        if (adv.pass && matchField(entry, 'Password', compare, search)) {
+            return true;
+        }
+        if (adv.other && matchField(entry, 'Title', compare, search)) {
+            return true;
+        }
+        var matches = false;
+        if (adv.other || adv.protect) {
+            var builtInFields = this.builtInFields;
+            var fieldNames = Object.keys(entry.fields);
+            matches = fieldNames.some(function (field) {
+                if (builtInFields.indexOf(field) >= 0) {
+                    return false;
+                }
+                if (typeof entry.fields[field] === 'string') {
+                    return adv.other && matchField(entry, field, compare, search);
+                } else {
+                    return adv.protect && matchField(entry, field, compare, search);
+                }
+            });
+        }
+        return matches;
+    },
+
+    matchField: function(entry, field, compare, search) {
+        var val = entry.fields[field];
+        return val ? compare(val, search) : false;
     },
 
     setColor: function(color) {
@@ -166,8 +268,8 @@ var EntryModel = Backbone.Model.extend({
 
     setField: function(field, val) {
         this._entryModified();
-        var hasValue = val && (typeof val === 'string' || val instanceof kdbxweb.ProtectedValue && val.byteLength);
-        if (hasValue || this.buildInFields.indexOf(field) >= 0) {
+        var hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
+        if (hasValue || this.builtInFields.indexOf(field) >= 0) {
             this.entry.fields[field] = val;
         } else {
             delete this.entry.fields[field];
@@ -181,7 +283,15 @@ var EntryModel = Backbone.Model.extend({
 
     addAttachment: function(name, data) {
         this._entryModified();
-        this.entry.binaries[name] = kdbxweb.ProtectedValue.fromBinary(data);
+        var binaryId;
+        for (var i = 0; ; i++) {
+            if (!this.file.db.meta.binaries[i]) {
+                binaryId = i.toString();
+                break;
+            }
+        }
+        this.file.db.meta.binaries[binaryId] = data;
+        this.entry.binaries[name] = { ref: binaryId };
         this._fillByEntry();
     },
 

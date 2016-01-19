@@ -1,0 +1,18 @@
+<div class="modal modal--hidden">
+    <div class="modal__content">
+        <i class="modal__icon fa fa-{{icon}}"></i>
+        <div class="modal__header">{{{header}}}</div>
+        <div class="modal__body">
+            {{{body}}}
+            {{#if checkbox}}
+            <div class="modal__check-wrap"><input type="checkbox" id="modal__check" /><label for="modal__check">{{checkbox}}</label></div>
+            {{/if}}
+        </div>
+        <div class="modal__buttons">
+            {{#each buttons as |btn|}}
+                <button class="{{#unless btn.result}}btn-error{{/unless}} {{#if btn.error}}btn-error{{/if}}"
+                        data-result="{{btn.result}}">{{btn.title}}</button>
+            {{/each}}
+        </div>
+    </div>
+</div>

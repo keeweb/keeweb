@@ -10,6 +10,7 @@ var UpdateModel = Backbone.Model.extend({
         lastVersion: null,
         lastVersionReleaseDate: null,
         lastCheckError: null,
+        lastCheckUpdMin: null,
         status: null,
         updateStatus: null,
         updateError: null,

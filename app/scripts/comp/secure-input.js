@@ -1,5 +1,7 @@
 'use strict';
 
+var kdbxweb = require('kdbxweb');
+
 var SecureInput = function() {
     this.el = null;
     this.minChar = 0x1400 + Math.round(Math.random() * 100);
@@ -73,7 +75,22 @@ SecureInput.prototype._isSpecialChar = function(ch) {
 Object.defineProperty(SecureInput.prototype, 'value', {
     enumerable: true,
     get: function() {
-        return { value: this.pseudoValue, salt: this.salt };
+        var pseudoValue = this.pseudoValue,
+            salt = this.salt,
+            len = pseudoValue.length,
+            byteLength = 0,
+            valueBytes = new Uint8Array(len * 4),
+            saltBytes = kdbxweb.Random.getBytes(len * 4),
+            ch, bytes;
+        for (var i = 0; i < len; i++) {
+            ch = String.fromCharCode(pseudoValue.charCodeAt(i) ^ salt[i]);
+            bytes = kdbxweb.ByteUtils.stringToBytes(ch);
+            for (var j = 0; j < bytes.length; j++) {
+                valueBytes[byteLength] = bytes[j] ^ saltBytes[byteLength];
+                byteLength++;
+            }
+        }
+        return new kdbxweb.ProtectedValue(valueBytes.buffer.slice(0, byteLength), saltBytes.buffer.slice(0, byteLength));
     }
 });
 

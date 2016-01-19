@@ -3,10 +3,10 @@
 var Backbone = require('backbone'),
     Scrollable = require('../mixins/scrollable'),
     IconSelectView = require('./icon-select-view'),
-    baron = require('baron');
+    Tip = require('../util/tip');
 
 var GrpView = Backbone.View.extend({
-    template: require('templates/grp.html'),
+    template: require('templates/grp.hbs'),
 
     events: {
         'click .grp__icon': 'showIconsSelect',
@@ -30,19 +30,16 @@ var GrpView = Backbone.View.extend({
                 enableSearching: this.model.get('enableSearching') !== false,
                 readonly: this.model.get('top')
             }));
+            Tip.createTips(this.$el);
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();
             }
         }
-        this.scroll = baron({
+        this.createScroll({
             root: this.$el.find('.details__body')[0],
             scroller: this.$el.find('.scroller')[0],
-            bar: this.$el.find('.scroller__bar')[0],
-            $: Backbone.$
+            bar: this.$el.find('.scroller__bar')[0]
         });
-        this.scroller = this.$el.find('.scroller');
-        this.scrollerBar = this.$el.find('.scroller__bar');
-        this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
         this.pageResized();
         return this;
     },

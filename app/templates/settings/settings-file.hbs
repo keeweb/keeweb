@@ -1,0 +1,59 @@
+<div>
+    <h1><i class="fa fa-lock"></i> {{name}}</h1>
+    {{#if storage}}
+        {{#ifeq storage 'file'}}<p>{{res 'setFilePath'}}: {{path}}</p>{{/ifeq}}
+        {{#ifeq storage 'dropbox'}}<p>{{#res 'setFileStorage'}}Dropbox{{/res}}</p>{{/ifeq}}
+    {{else}}
+        <p>{{res 'setFileIntl'}}.</p>
+        {{#unless supportFiles}}
+            <p>{{res 'setFileLocalHint'}} <a href="{{desktopLink}}" target="_blank">{{res 'setFileDownloadApp'}}</a></p>
+        {{/unless}}
+    {{/if}}
+
+    <div class="settings__file-buttons">
+        {{#ifemptyoreq storage 'file'}}<button class="settings__file-button-save-default">{{res 'setFileSave'}}</button>{{/ifemptyoreq}}
+        <button class="settings__file-button-save-dropbox {{#ifneq storage 'dropbox'}}btn-silent{{/ifneq}}"
+            {{#if syncing}}disabled{{/if}}>{{#res 'setFileSyncWith'}}Dropbox{{/res}}</button>
+        {{#ifneq storage 'file'}}<button class="settings__file-button-save-file btn-silent">{{res 'setFileSaveFile'}}</button>{{/ifneq}}
+        <button class="settings__file-button-export-xml btn-silent">{{res 'setFileExportXml'}}</button>
+        <button class="settings__file-button-close btn-silent">{{res 'setFileClose'}}</button>
+    </div>
+
+    {{#if storage}}
+    <h2>{{res 'setFileSync'}}</h2>
+    <div>{{res 'setFileLastSync'}}: {{#if syncDate}}{{syncDate}}{{else}}{{res 'setFileLastSyncUnknown'}}{{/if}} {{#if syncing}}({{res 'setFileSyncInProgress'}}...){{/if}}</div>
+    {{#if syncError}}<div>{{res 'setFileSyncError'}}: {{syncError}}</div>{{/if}}
+    {{/if}}
+
+    <h2>{{res 'setFileSettings'}}</h2>
+    <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFilePass'}}:
+        <span class="settings__file-master-pass-warning">
+            <i class="fa fa-warning"></i> {{res 'setFilePassChanged'}}
+        </span>
+    </label>
+    <input type="password" class="settings__input input-base" id="settings__file-master-pass" value="{{password}}" />
+    <label for="settings__file-key-file">{{res 'setFileKeyFile'}}:</label>
+    <select class="settings__select settings__select-no-margin input-base" id="settings__file-key-file"></select>
+    <a id="settings__file-file-select-link">{{res 'setFileSelKeyFile'}}</a>
+    <input type="file" id="settings__file-file-select" class="hide-by-pos" />
+
+    <h2>{{res 'setFileNames'}}</h2>
+    <label for="settings__file-name">{{res 'setFileName'}}:</label>
+    <input type="text" class="settings__input input-base" id="settings__file-name" value="{{name}}" required />
+    <label for="settings__file-def-user">{{res 'setFileDefUser'}}:</label>
+    <input type="text" class="settings__input input-base" id="settings__file-def-user" value="{{defaultUser}}" />
+
+    <h2>{{res 'setFileHistory'}}</h2>
+    <div>
+        <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}} />
+        <label for="settings__file-trash">{{res 'setFileEnableTrash'}}</label>
+    </div>
+    <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" />
+    <label for="settings__file-hist-size">{{res 'resFileHistSize'}}:</label>
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" />
+
+    <h2>{{res 'setFileAdvanced'}}</h2>
+    <label for="settings__file-key-rounds">{{res 'setFileRounds'}}:</label>
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="{{keyEncryptionRounds}}" />
+</div>

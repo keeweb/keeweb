@@ -44,20 +44,6 @@ var FileModel = Backbone.Model.extend({
     },
 
     open: function(password, fileData, keyFileData, callback) {
-        var len = password.value.length,
-            byteLength = 0,
-            value = new Uint8Array(len * 4),
-            salt = kdbxweb.Random.getBytes(len * 4),
-            ch, bytes;
-        for (var i = 0; i < len; i++) {
-            ch = String.fromCharCode(password.value.charCodeAt(i) ^ password.salt[i]);
-            bytes = kdbxweb.ByteUtils.stringToBytes(ch);
-            for (var j = 0; j < bytes.length; j++) {
-                value[byteLength] = bytes[j] ^ salt[byteLength];
-                byteLength++;
-            }
-        }
-        password = new kdbxweb.ProtectedValue(value.buffer.slice(0, byteLength), salt.buffer.slice(0, byteLength));
         try {
             var credentials = new kdbxweb.Credentials(password, keyFileData);
             var ts = logger.ts();
@@ -68,7 +54,7 @@ var FileModel = Backbone.Model.extend({
                 } else {
                     this.db = db;
                     this.readModel();
-                    this.setOpenFile({ passwordLength: len });
+                    this.setOpenFile({ passwordLength: password.textLength });
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                     }
@@ -162,13 +148,38 @@ var FileModel = Backbone.Model.extend({
         this.trigger('reload', this);
     },
 
-    mergeOrUpdate: function(fileData, callback) {
-        kdbxweb.Kdbx.load(fileData, this.db.credentials, (function(remoteDb, err) {
+    mergeOrUpdate: function(fileData, remoteKey, callback) {
+        var credentials;
+        if (remoteKey) {
+            credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(''));
+            if (remoteKey.password) {
+                credentials.setPassword(remoteKey.password);
+            } else {
+                credentials.passwordHash = this.db.credentials.passwordHash;
+            }
+            if (remoteKey.keyFileName) {
+                if (remoteKey.keyFileData) {
+                    credentials.setKeyFile(remoteKey.keyFileData);
+                } else {
+                    credentials.keyFileHash = this.db.credentials.keyFileHash;
+                }
+            }
+        } else {
+            credentials = this.db.credentials;
+        }
+        kdbxweb.Kdbx.load(fileData, credentials, (function(remoteDb, err) {
             if (err) {
                 logger.error('Error opening file to merge', err.code, err.message, err);
             } else {
                 if (this.get('modified')) {
                     try {
+                        if (remoteKey && remoteDb.meta.keyChanged > this.db.meta.keyChanged) {
+                            this.db.credentials = remoteDb.credentials;
+                            this.set('keyFileName', remoteKey.keyFileName || '');
+                            if (remoteKey.password) {
+                                this.set('passwordLength', remoteKey.password.textLength);
+                            }
+                        }
                         this.db.merge(remoteDb);
                     } catch (e) {
                         logger.error('File merge error', e);
@@ -255,9 +266,11 @@ var FileModel = Backbone.Model.extend({
     getData: function(cb) {
         this.db.cleanup({
             historyRules: true,
-            customIcons: true
+            customIcons: true,
+            binaries: true
         });
         var that = this;
+        this.db.cleanup({ binaries: true });
         this.db.save(function(data, err) {
             if (err) {
                 logger.error('Error saving file', that.get('name'), err);
@@ -298,7 +311,7 @@ var FileModel = Backbone.Model.extend({
     setPassword: function(password) {
         this.db.credentials.setPassword(password);
         this.db.meta.keyChanged = new Date();
-        this.set({ passwordLength: password.byteLength, passwordChanged: true });
+        this.set({ passwordLength: password.textLength, passwordChanged: true });
         this.setModified();
     },
 
