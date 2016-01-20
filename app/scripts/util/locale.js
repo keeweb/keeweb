@@ -147,7 +147,7 @@ var Locale = {
     appSecWarn: 'Not Secure!',
     appSecWarnBody1: 'You have loaded this app with insecure connection. ' +
         'Someone may be watching you and stealing your passwords. ' +
-        'We strongly advice you to stop, unless you clearly understand what you\'re doing.',
+        'We strongly advise you to stop, unless you clearly understand what you\'re doing.',
     appSecWarnBody2: 'Yes, your database is encrypted but no one can guarantee that the app has not been modified on the way to you.',
     appSecWarnBtn: 'I understand the risks, continue',
     appUnsavedWarn: 'Unsaved changes!',
@@ -305,7 +305,7 @@ var Locale = {
     dropboxFullBody: 'Your Dropbox is full, there\'s no space left anymore.',
     dropboxRateLimitedBody: 'Too many requests to Dropbox have been made by this app. Please, try again later.',
     dropboxNetError: 'Dropbox Sync Network Error',
-    dropboxNetErrorBody: 'Network error occured during Dropbox sync. Please, check your connection and try again.',
+    dropboxNetErrorBody: 'Network error occurred during Dropbox sync. Please, check your connection and try again.',
     dropboxErrorBody: 'Something went wrong during Dropbox sync. Please, try again later. Error code: ',
     dropboxErrorRepeatBody: 'Something went wrong during Dropbox sync. Please, try again later. Error: ',
 
