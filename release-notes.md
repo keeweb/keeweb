@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v0.6.0 (not released yet)
+##### v1.0.0 (not released yet)
 Performance, stability and quality improvements  
 `-` #80: prevent data loss on group move  
 `-` issues with clipboard clear fixed  
