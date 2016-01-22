@@ -5,14 +5,28 @@ var FeatureDetector = require('../util/feature-detector'),
     AppSettingsModel = require('../models/app-settings-model');
 
 var CopyPaste = {
-    tryCopy: function() {
-        try {
-            var success = document.execCommand('copy');
-            if (success) {
-                this.copied();
+    simpleCopy: !!Launcher,
+
+    copy: function(text) {
+        if (Launcher) {
+            Launcher.setClipboardText(text);
+            var clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
+            if (clipboardSeconds > 0) {
+                setTimeout(function () {
+                    console.log('compare', Launcher.getClipboardText(), text);
+                    if (Launcher.getClipboardText() === text) {
+                        console.log('cleared clipboard');
+                        Launcher.clearClipboardText();
+                    }
+                }, clipboardSeconds * 1000);
             }
-            return success;
-        } catch (e) {
+            return {success: true, seconds: clipboardSeconds};
+        } else {
+            try {
+                if (document.execCommand('copy')) {
+                    return {success: true};
+                }
+            } catch (e) { }
             return false;
         }
     },
@@ -37,22 +51,6 @@ var CopyPaste = {
             'copy cut paste': function() { setTimeout(function() { hiddenInput.blur(); }, 0); },
             blur: function() { hiddenInput.remove(); }
         });
-    },
-
-    copied: function() {
-        if (Launcher) {
-            var clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
-            if (clipboardSeconds > 0) {
-                setTimeout(function() {
-                    setTimeout((function (prevText) {
-                        if (Launcher.getClipboardText() === prevText) {
-                            Launcher.clearClipboardText();
-                        }
-                    }).bind(null, Launcher.getClipboardText()), clipboardSeconds * 1000);
-                }, 0);
-            }
-            return clipboardSeconds;
-        }
     }
 };
 

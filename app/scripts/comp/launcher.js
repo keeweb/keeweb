@@ -76,6 +76,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         cancelRestart: function() {
             this.restartPending = false;
         },
+        setClipboardText: function(text) {
+            return this.req('clipboard').writeText(text);
+        },
         getClipboardText: function() {
             return this.req('clipboard').readText();
         },
