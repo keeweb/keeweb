@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v0.6.0 (not released yet)
+Performance, stability and quality improvements  
+`-` #80: prevent data loss on group move  
+
 ##### v0.6.0 (2016-01-19)
 Improvements  
 `+` advanced search  
