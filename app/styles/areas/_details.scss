@@ -197,6 +197,7 @@
       line-height: $details-field-line-height;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-right: 20px;
       .details__field--editable & {
         border-radius: $base-border-radius;
         &:hover {
