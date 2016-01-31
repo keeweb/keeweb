@@ -13,9 +13,7 @@ var CopyPaste = {
             var clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
             if (clipboardSeconds > 0) {
                 setTimeout(function () {
-                    console.log('compare', Launcher.getClipboardText(), text);
                     if (Launcher.getClipboardText() === text) {
-                        console.log('cleared clipboard');
                         Launcher.clearClipboardText();
                     }
                 }, clipboardSeconds * 1000);
