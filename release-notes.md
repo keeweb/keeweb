@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.0.0 (not released yet)
 Performance, stability and quality improvements  
+`+` mobile layout made more convenient  
 `-` #80: prevent data loss on group move  
 `-` issues with clipboard clear fixed  
 

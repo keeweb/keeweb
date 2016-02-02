@@ -38,6 +38,8 @@
     &-pre, &-post { display: none; }
     cursor: pointer;
     @include mobile {
+      line-height: $mobile-back-button-height;
+      height: $mobile-back-button-height;
       padding-bottom: $base-padding-v;
       >i { margin-right: $base-padding-h; }
       &-pre { display: inline; }
