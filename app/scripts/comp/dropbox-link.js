@@ -20,7 +20,8 @@ var DropboxCustomErrors = {
 
 function isValidKey() {
     var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
-        !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href);
+        !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href) &&
+        !/http(s?):\/\/app\.keeweb\.info/.test(location.href);
     return Launcher || !isSelfHostedApp || DropboxKeys.AppFolder !== DropboxKeys.AppFolderKeyParts.join('');
 }
 
