@@ -1,10 +1,5 @@
 &.icon-select {
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
   &__items {
-    @include flex(1 1 auto);
     @include display(flex);
     @include align-items(flex-start);
     @include flex-direction(row);

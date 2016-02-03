@@ -168,7 +168,7 @@ var Locale = {
     setGenUpdate: 'Update',
     setGenNewVersion: 'New app version was released and downloaded',
     setGenReleaseNotes: 'View release notes',
-    setGenReloadTpUpdate: 'Reload to update',
+    setGenReloadToUpdate: 'Reload to update',
     setGenUpdateManual: 'New version has been released. It will check for updates and install them automatically ' +
         'but auto-upgrading from your version is impossible.',
     setGenDownloadUpdate: 'Download update',

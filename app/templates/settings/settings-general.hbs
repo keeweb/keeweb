@@ -41,7 +41,7 @@
         <label for="settings__general-theme">{{res 'setGenTheme'}}:</label>
         <select class="settings__general-theme settings__select input-base" id="settings__general-theme">
             {{#each themes as |name key|}}
-            <option value="{{key}}" {{#ifeq key activeTheme}}selected{{/ifeq}}>{{name}}</option>
+            <option value="{{key}}" {{#ifeq key ../activeTheme}}selected{{/ifeq}}>{{name}}</option>
             {{/each}}
         </select>
     </div>
