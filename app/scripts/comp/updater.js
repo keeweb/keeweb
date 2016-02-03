@@ -65,10 +65,10 @@ var Updater = {
     },
 
     check: function(startedByUser) {
-        if (!Launcher || this.updateInProgress()) {
+        if (!startedByUser) {
             return;
         }
-        if (this.checkManualDownload()) {
+        if (!Launcher || this.updateInProgress()) {
             return;
         }
         UpdateModel.instance.set('status', 'checking');
@@ -111,6 +111,9 @@ var Updater = {
                 });
                 UpdateModel.instance.save();
                 that.scheduleNextCheck();
+                if (!that.canAutoUpdate()) {
+                    return;
+                }
                 if (prevLastVersion === UpdateModel.instance.get('lastVersion') &&
                     UpdateModel.instance.get('updateStatus') === 'ready') {
                     logger.info('Waiting for the user to apply downloaded update');
@@ -135,11 +138,24 @@ var Updater = {
         });
     },
 
-    checkManualDownload: function() {
-        //if (+Launcher.getAppVersion().split('.')[1] <= 2) {
-        //    UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
-        //    return true;
-        //}
+    canAutoUpdate: function() {
+        var launcherVersion = Launcher.version.split('.');
+        var minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
+        if (minLauncherVersion) {
+            minLauncherVersion = minLauncherVersion.split('.');
+            for (var num = 0; num < minLauncherVersion.length; num++) {
+                var min = minLauncherVersion[num] | 0,
+                    actual = launcherVersion[num] | 0;
+                if (min < actual) {
+                    return true;
+                }
+                if (min > actual) {
+                    UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
+                    return false;
+                }
+            }
+        }
+        return true;
     },
 
     update: function(startedByUser, successCallback) {
