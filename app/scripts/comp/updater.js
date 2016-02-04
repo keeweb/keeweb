@@ -85,7 +85,7 @@ var Updater = {
         }
         logger.info('Checking for update...');
         Transport.httpGet({
-            url: Links.WebApp + 'manifest.appcache',
+            url: Links.Manifest,
             utf8: true,
             success: function(data) {
                 var dt = new Date();
