@@ -44,10 +44,15 @@ Tip.prototype.show = function() {
     }
     var top, left;
     var offset = 10;
+    var sideOffset = 10;
     switch (placement) {
         case 'top':
             top = rect.top - tipRect.height - offset;
             left = rect.left + rect.width / 2 - tipRect.width / 2;
+            break;
+        case 'top-left':
+            top = rect.top - tipRect.height - offset;
+            left = rect.left + rect.width / 2 - tipRect.width + sideOffset;
             break;
         case 'bottom':
             top = rect.bottom + offset;

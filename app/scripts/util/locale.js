@@ -43,6 +43,10 @@ var Locale = {
 
     footerOpen: 'Open / New',
     footerSyncError: 'Sync error',
+    footerTitleHelp: 'Help',
+    footerTitleSettings: 'Settings',
+    footerTitleGen: 'Generate',
+    footerTitleLock: 'Lock',
 
     genLen: 'Length',
     grpTitle: 'Group',
