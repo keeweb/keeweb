@@ -1,6 +1,7 @@
 'use strict';
 
-var FeatureDetector = require('./feature-detector');
+var Backbone = require('backbone'),
+    FeatureDetector = require('./feature-detector');
 
 var Tip = function(el, config) {
     this.el = el;
@@ -10,6 +11,7 @@ var Tip = function(el, config) {
     this.tipEl = null;
     this.showTimeout = null;
     this.hideTimeout = null;
+    this.hide = this.hide.bind(this);
 };
 
 Tip.enabled = FeatureDetector.isDesktop();
@@ -27,6 +29,7 @@ Tip.prototype.show = function() {
     if (!Tip.enabled) {
         return;
     }
+    Backbone.on('page-geometry', this.hide);
     if (this.tipEl) {
         this.tipEl.remove();
         if (this.hideTimeout) {
@@ -75,6 +78,7 @@ Tip.prototype.hide = function() {
         this.tipEl.remove();
         this.tipEl = null;
     }
+    Backbone.off('page-geometry', this.hide);
 };
 
 Tip.prototype.mouseenter = function() {
