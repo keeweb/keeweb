@@ -370,6 +370,7 @@
     @include display(flex);
     @include align-items(stretch);
     @include flex-direction(row);
+    @include flex-shrink(0);
     @include justify-content(flex-start);
     margin-top: $base-padding-v;
 
