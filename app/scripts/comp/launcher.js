@@ -50,6 +50,16 @@ if (window.process && window.process.versions && window.process.versions.electro
         deleteFile: function(path) {
             this.req('fs').unlinkSync(path);
         },
+        statFile: function(path) {
+            return this.req('fs').statSync(path);
+        },
+        parsePath: function(fileName) {
+            var path = this.req('path');
+            return { path: fileName, dir: path.dirname(fileName), file: path.basename(fileName) };
+        },
+        createFsWatcher: function(path) {
+            return this.req('fs').watch(path, { persistent: false });
+        },
         preventExit: function(e) {
             e.returnValue = false;
             return false;
