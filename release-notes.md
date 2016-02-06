@@ -4,6 +4,7 @@ Release notes
 Performance, stability and quality improvements  
 `+` track changes in local files  
 `+` mobile layout made more convenient  
+`+` command-line option to disable updater  
 `-` #80: prevent data loss on group move  
 `-` issues with clipboard clear fixed  
 

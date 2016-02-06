@@ -18,9 +18,10 @@ var Updater = {
     UpdateCheckFiles: ['index.html', 'app.js'],
     nextCheckTimeout: null,
     updateCheckDate: new Date(0),
+    enabled: Launcher && Launcher.updaterEnabled(),
 
     getAutoUpdateType: function() {
-        if (!Launcher) {
+        if (!this.enabled) {
             return false;
         }
         var autoUpdate = AppSettingsModel.instance.get('autoUpdate');
@@ -68,7 +69,7 @@ var Updater = {
         if (!startedByUser) {
             return;
         }
-        if (!Launcher || this.updateInProgress()) {
+        if (!this.enabled || this.updateInProgress()) {
             return;
         }
         UpdateModel.instance.set('status', 'checking');
@@ -160,7 +161,11 @@ var Updater = {
 
     update: function(startedByUser, successCallback) {
         var ver = UpdateModel.instance.get('lastVersion');
-        if (!Launcher || ver === RuntimeInfo.version) {
+        if (!this.enabled) {
+            logger.info('Updater is disabled');
+            return;
+        }
+        if (ver === RuntimeInfo.version) {
             logger.info('You are using the latest version');
             return;
         }

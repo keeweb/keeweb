@@ -97,6 +97,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         },
         canMinimize: function() {
             return process.platform === 'win32';
+        },
+        updaterEnabled: function() {
+            return this.req('remote').process.argv.indexOf('--disable-updater') === -1;
         }
     };
     Backbone.on('launcher-exit-request', function() {
