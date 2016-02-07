@@ -76,6 +76,9 @@ app.minimizeApp = function() {
         appIcon.setToolTip('KeeWeb');
     }
 };
+app.getMainWindow = function() {
+    return mainWindow;
+};
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({

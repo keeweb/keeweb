@@ -100,6 +100,15 @@ if (window.process && window.process.versions && window.process.versions.electro
         },
         updaterEnabled: function() {
             return this.req('remote').process.argv.indexOf('--disable-updater') === -1;
+        },
+        resolveProxy: function(url, callback) {
+            var window = this.remReq('app').getMainWindow();
+            var session = window.webContents.session;
+            session.resolveProxy(url, function(proxy) {
+                var match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
+                proxy = match && match[1] ? { host: match[1], port: +match[2] } : null;
+                callback(proxy);
+            });
         }
     };
     Backbone.on('launcher-exit-request', function() {

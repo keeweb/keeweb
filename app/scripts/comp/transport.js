@@ -28,43 +28,58 @@ var Transport = {
         logger.info('GET ' + config.url);
         var opts = Launcher.req('url').parse(config.url);
         opts.headers = { 'User-Agent': navigator.userAgent };
-        Launcher.req(proto).get(opts, function(res) {
-            logger.info('Response from ' + config.url + ': ' + res.statusCode);
-            if (res.statusCode === 200) {
-                if (config.file) {
-                    var file = fs.createWriteStream(tmpFile);
-                    res.pipe(file);
-                    file.on('finish', function() {
-                        file.close(function() { config.success(tmpFile); });
-                    });
-                    file.on('error', function(err) { config.error(err); });
+        Launcher.resolveProxy(config.url, function(proxy) {
+            logger.info('Request to ' + config.url + ' ' + (proxy ? 'using proxy ' + proxy.host + ':' + proxy.port : 'without proxy'));
+            if (proxy) {
+                opts.headers.Host = opts.host;
+                opts.host = proxy.host;
+                opts.port = proxy.port;
+                opts.path = config.url;
+            }
+            Launcher.req(proto).get(opts, function (res) {
+                logger.info('Response from ' + config.url + ': ' + res.statusCode);
+                if (res.statusCode === 200) {
+                    if (config.file) {
+                        var file = fs.createWriteStream(tmpFile);
+                        res.pipe(file);
+                        file.on('finish', function () {
+                            file.close(function () {
+                                config.success(tmpFile);
+                            });
+                        });
+                        file.on('error', function (err) {
+                            config.error(err);
+                        });
+                    } else {
+                        var data = [];
+                        res.on('data', function (chunk) {
+                            data.push(chunk);
+                        });
+                        res.on('end', function () {
+                            data = window.Buffer.concat(data);
+                            if (config.utf8) {
+                                data = data.toString('utf8');
+                            }
+                            config.success(data);
+                        });
+                    }
+                } else if (res.headers.location && [301, 302].indexOf(res.statusCode) >= 0) {
+                    if (config.noRedirect) {
+                        return config.error('Too many redirects');
+                    }
+                    config.url = res.headers.location;
+                    config.noRedirect = true;
+                    Transport.httpGet(config);
                 } else {
-                    var data = [];
-                    res.on('data', function(chunk) { data.push(chunk); });
-                    res.on('end', function() {
-                        data = window.Buffer.concat(data);
-                        if (config.utf8) {
-                            data = data.toString('utf8');
-                        }
-                        config.success(data);
-                    });
+                    config.error('HTTP status ' + res.statusCode);
                 }
-            } else if (res.headers.location && [301, 302].indexOf(res.statusCode) >= 0) {
-                if (config.noRedirect) {
-                    return config.error('Too many redirects');
+            }).on('error', function (e) {
+                logger.error('Cannot GET ' + config.url, e);
+                if (tmpFile) {
+                    fs.unlink(tmpFile);
                 }
-                config.url = res.headers.location;
-                config.noRedirect = true;
-                Transport.httpGet(config);
-            } else {
-                config.error('HTTP status ' + res.statusCode);
-            }
-        }).on('error', function(e) {
-            logger.error('Cannot GET ' + config.url, e);
-            if (tmpFile) {
-                fs.unlink(tmpFile);
-            }
-            config.error(e);
+                config.error(e);
+            });
         });
     }
 };
