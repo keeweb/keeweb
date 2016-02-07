@@ -122,7 +122,7 @@ var Updater = {
                 }
                 if (!startedByUser && that.getAutoUpdateType() === 'install') {
                     that.update(startedByUser);
-                } else if (UpdateModel.instance.get('lastVersion') !== RuntimeInfo.version) {
+                } else if (that.compareVersions(UpdateModel.instance.get('lastVersion'), RuntimeInfo.version) > 0) {
                     UpdateModel.instance.set('updateStatus', 'found');
                 }
             },
@@ -140,23 +140,31 @@ var Updater = {
     },
 
     canAutoUpdate: function() {
-        var launcherVersion = Launcher.version.split('.');
         var minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
         if (minLauncherVersion) {
-            minLauncherVersion = minLauncherVersion.split('.');
-            for (var num = 0; num < minLauncherVersion.length; num++) {
-                var min = minLauncherVersion[num] | 0,
-                    actual = launcherVersion[num] | 0;
-                if (min < actual) {
-                    return true;
-                }
-                if (min > actual) {
-                    UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
-                    return false;
-                }
+            var cmp = this.compareVersions(Launcher.version, minLauncherVersion);
+            if (cmp < 0) {
+                UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
+                return false;
             }
         }
         return true;
+    },
+
+    compareVersions: function(left, right) {
+        left = left.split('.');
+        right = right.split('.');
+        for (var num = 0; num < left.length; num++) {
+            var partLeft = left[num] | 0,
+                partRight = right[num] | 0;
+            if (partLeft < partRight) {
+                return -1;
+            }
+            if (partLeft > partRight) {
+                return 1;
+            }
+        }
+        return 0;
     },
 
     update: function(startedByUser, successCallback) {
@@ -165,7 +173,7 @@ var Updater = {
             logger.info('Updater is disabled');
             return;
         }
-        if (ver === RuntimeInfo.version) {
+        if (this.compareVersions(RuntimeInfo.version, ver) >= 0) {
             logger.info('You are using the latest version');
             return;
         }

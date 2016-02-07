@@ -91,7 +91,8 @@ var SettingsGeneralView = Backbone.View.extend({
                 return errMsg;
             case 'ok':
                 var msg = Locale.setGenCheckedAt + ' ' + Format.dtStr(UpdateModel.instance.get('lastCheckDate')) + ': ';
-                if (RuntimeInfo.version === UpdateModel.instance.get('lastVersion')) {
+                var cmp = Updater.compareVersions(RuntimeInfo.version, UpdateModel.instance.get('lastVersion'));
+                if (cmp >= 0) {
                     msg += Locale.setGenLatestVer;
                 } else {
                     msg += Locale.setGenNewVer.replace('{}', UpdateModel.instance.get('lastVersion')) + ' ' +
