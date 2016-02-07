@@ -3,7 +3,7 @@
 This webapp is a browser and desktop password manager compatible with KeePass databases. It doesn't require any server or additional resources.
 The app can run either in browser, or as a desktop app.
 
-![screenshot](https://habrastorage.org/files/498/5ba/54d/4985ba54ddae4566b8f1266e85168877.png)
+![screenshot](https://habrastorage.org/files/ec9/108/3de/ec91083de3e64574a504bc438d038dec.png)
 
 # Quick Links
 
