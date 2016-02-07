@@ -172,7 +172,7 @@ module.exports = function(grunt) {
             js: {
                 entry: {
                     app: 'app',
-                    vendor: ['zepto', 'jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver']
+                    vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver']
                 },
                 output: {
                     path: 'tmp/js',
@@ -191,8 +191,7 @@ module.exports = function(grunt) {
                         backbone: 'backbone/backbone-min.js',
                         underscore: 'underscore/underscore-min.js',
                         _: 'underscore/underscore-min.js',
-                        zepto: 'zepto/zepto.min.js',
-                        jquery: 'zepto/zepto.min.js',
+                        jquery: 'jquery/dist/jquery.min.js',
                         hbs: 'handlebars/runtime.js',
                         kdbxweb: 'kdbxweb/dist/kdbxweb.js',
                         dropbox: 'dropbox/lib/dropbox.min.js',
@@ -213,7 +212,6 @@ module.exports = function(grunt) {
                             { pattern: /@@DATE/g, replacement: function() { return dt; } },
                             { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
                         ]})},
-                        { test: /zepto(\.min)?\.js$/, loader: 'exports?Zepto; delete window.$; delete window.Zepto;' },
                         { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
                         { test: /pikadat\.js$/, loader: 'uglify' },
                         { test: /handlebars/, loader: 'strip-sourcemap-loader' }

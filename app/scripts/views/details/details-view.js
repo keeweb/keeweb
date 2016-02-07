@@ -78,6 +78,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     render: function () {
+        this.removeScroll();
         this.removeFieldViews();
         if (this.views.sub) {
             this.views.sub.remove();

@@ -2,8 +2,7 @@
 
 var Backbone = require('backbone'),
     Scrollable = require('../mixins/scrollable'),
-    IconSelectView = require('./icon-select-view'),
-    Tip = require('../util/tip');
+    IconSelectView = require('./icon-select-view');
 
 var GrpView = Backbone.View.extend({
     template: require('templates/grp.hbs'),
@@ -23,14 +22,13 @@ var GrpView = Backbone.View.extend({
     render: function() {
         this.removeSubView();
         if (this.model) {
-            this.$el.html(this.template({
+            this.renderTemplate({
                 title: this.model.get('title'),
                 icon: this.model.get('icon') || 'folder',
                 customIcon: this.model.get('customIcon'),
                 enableSearching: this.model.get('enableSearching') !== false,
                 readonly: this.model.get('top')
-            }));
-            Tip.createTips(this.$el);
+            }, { plain: true });
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();
             }

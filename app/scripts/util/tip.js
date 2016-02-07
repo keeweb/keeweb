@@ -138,11 +138,8 @@ Tip.createTips = function(container) {
         return;
     }
     container.find('[title]').each(function(ix, el) {
-        if (!el._tip) {
-            var tip = new Tip($(el));
-            tip.init();
-            el._tip = tip;
-        }
+        var tip = new Tip($(el));
+        tip.init();
     });
 };
 
