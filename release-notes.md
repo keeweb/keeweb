@@ -6,6 +6,7 @@ Performance, stability and quality improvements
 `+` mobile layout made more convenient  
 `+` command-line option to disable updater  
 `+` using system proxy settings for updater  
+`+` webapp icon for touch devices  
 `-` #80: prevent data loss on group move  
 `-` issues with clipboard clear fixed  
 

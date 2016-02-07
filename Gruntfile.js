@@ -73,6 +73,11 @@ module.exports = function(grunt) {
                 dest: 'tmp/favicon.png',
                 nonull: true
             },
+            touchicon: {
+                src: 'app/touchicon.png',
+                dest: 'tmp/touchicon.png',
+                nonull: true
+            },
             fonts: {
                 src: 'bower_components/font-awesome/fonts/fontawesome-webfont.*',
                 dest: 'tmp/fonts/',
@@ -371,6 +376,7 @@ module.exports = function(grunt) {
         'jshint',
         'copy:html',
         'copy:favicon',
+        'copy:touchicon',
         'copy:fonts',
         'webpack',
         'uglify',
