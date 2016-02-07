@@ -3,7 +3,7 @@
 This webapp is a browser and desktop password manager compatible with KeePass databases. It doesn't require any server or additional resources.
 The app can run either in browser, or as a desktop app.
 
-![screenshot](https://habrastorage.org/files/bfb/51e/d8d/bfb51ed8d19847d8afb827c4fbff7dd5.png)
+![screenshot](https://habrastorage.org/files/498/5ba/54d/4985ba54ddae4566b8f1266e85168877.png)
 
 # Quick Links
 
@@ -15,7 +15,7 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 # Status
 
-Project roadmap with planned features and approximate schedule is here: [TODO](https://github.com/antelle/keeweb/wiki/TODO).  
+Project roadmap with planned features and approximate schedule is on [TODO](https://github.com/antelle/keeweb/wiki/TODO) page.  
 
 # Self-hosting
 
