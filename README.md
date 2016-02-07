@@ -15,8 +15,7 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 # Status
 
-The app is already rather stable but might still need polishing, testing and improvements before v1 release, which is expected to happen in Feb 2016.
-Please see [TODO](https://github.com/antelle/keeweb/wiki/TODO) for more details.
+Project roadmap with planned features and approximate schedule is here: [TODO](https://github.com/antelle/keeweb/wiki/TODO).  
 
 # Self-hosting
 
