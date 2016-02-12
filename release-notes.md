@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.0.0 (not released yet)
+##### v1.0.0 (2016-02-12)
 Performance, stability and quality improvements  
 `+` track changes in local files  
 `+` mobile layout made more convenient  
