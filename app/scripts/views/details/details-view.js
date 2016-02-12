@@ -78,6 +78,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     render: function () {
+        this.removeScroll();
         this.removeFieldViews();
         if (this.views.sub) {
             this.views.sub.remove();
@@ -272,10 +273,13 @@ var DetailsView = Backbone.View.extend({
         if (!window.getSelection().toString()) {
             var pw = this.model.password;
             var password = pw.isProtected ? pw.getText() : pw;
-            CopyPaste.createHiddenInput(password);
-            var clipboardTime = CopyPaste.copied();
-            if (!this.passCopyTip) {
+            if (!CopyPaste.simpleCopy) {
+                CopyPaste.createHiddenInput(password);
+            }
+            var copyRes = CopyPaste.copy(password);
+            if (copyRes && !this.passCopyTip) {
                 var passLabel = this.passEditView.labelEl;
+                var clipboardTime = copyRes.seconds;
                 var msg = clipboardTime ? Locale.detPassCopiedTime.replace('{}', clipboardTime)
                     : Locale.detPassCopied;
                 var tip = new Tip(passLabel, { title: msg, placement: 'right', fast: true });

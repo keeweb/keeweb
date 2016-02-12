@@ -20,9 +20,6 @@ if (window.process && window.process.versions && window.process.versions.electro
         openDevTools: function() {
             this.req('remote').getCurrentWindow().openDevTools();
         },
-        getAppVersion: function() {
-            return this.remReq('app').getVersion();
-        },
         getSaveFileName: function(defaultPath, cb) {
             if (defaultPath) {
                 var homePath = this.remReq('app').getPath('userDesktop');
@@ -53,6 +50,16 @@ if (window.process && window.process.versions && window.process.versions.electro
         deleteFile: function(path) {
             this.req('fs').unlinkSync(path);
         },
+        statFile: function(path) {
+            return this.req('fs').statSync(path);
+        },
+        parsePath: function(fileName) {
+            var path = this.req('path');
+            return { path: fileName, dir: path.dirname(fileName), file: path.basename(fileName) };
+        },
+        createFsWatcher: function(path) {
+            return this.req('fs').watch(path, { persistent: false });
+        },
         preventExit: function(e) {
             e.returnValue = false;
             return false;
@@ -76,6 +83,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         cancelRestart: function() {
             this.restartPending = false;
         },
+        setClipboardText: function(text) {
+            return this.req('clipboard').writeText(text);
+        },
         getClipboardText: function() {
             return this.req('clipboard').readText();
         },
@@ -87,6 +97,18 @@ if (window.process && window.process.versions && window.process.versions.electro
         },
         canMinimize: function() {
             return process.platform === 'win32';
+        },
+        updaterEnabled: function() {
+            return this.req('remote').process.argv.indexOf('--disable-updater') === -1;
+        },
+        resolveProxy: function(url, callback) {
+            var window = this.remReq('app').getMainWindow();
+            var session = window.webContents.session;
+            session.resolveProxy(url, function(proxy) {
+                var match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
+                proxy = match && match[1] ? { host: match[1], port: +match[2] } : null;
+                callback(proxy);
+            });
         }
     };
     Backbone.on('launcher-exit-request', function() {

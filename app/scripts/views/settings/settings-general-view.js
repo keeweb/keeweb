@@ -57,7 +57,7 @@ var SettingsGeneralView = Backbone.View.extend({
             idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
             minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
             devTools: Launcher && Launcher.devTools,
-            canAutoUpdate: !!Launcher,
+            canAutoUpdate: Updater.enabled,
             canMinimize: Launcher && Launcher.canMinimize(),
             lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
             tableView: AppSettingsModel.instance.get('tableView'),
@@ -66,7 +66,7 @@ var SettingsGeneralView = Backbone.View.extend({
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
             updateWaitingReload: updateReady && !Launcher,
-            showUpdateBlock: Launcher && !updateManual,
+            showUpdateBlock: Updater.enabled && !updateManual,
             updateReady: updateReady,
             updateFound: updateFound,
             updateManual: updateManual,
@@ -91,7 +91,8 @@ var SettingsGeneralView = Backbone.View.extend({
                 return errMsg;
             case 'ok':
                 var msg = Locale.setGenCheckedAt + ' ' + Format.dtStr(UpdateModel.instance.get('lastCheckDate')) + ': ';
-                if (RuntimeInfo.version === UpdateModel.instance.get('lastVersion')) {
+                var cmp = Updater.compareVersions(RuntimeInfo.version, UpdateModel.instance.get('lastVersion'));
+                if (cmp >= 0) {
                     msg += Locale.setGenLatestVer;
                 } else {
                     msg += Locale.setGenNewVer.replace('{}', UpdateModel.instance.get('lastVersion')) + ' ' +

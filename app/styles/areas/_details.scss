@@ -12,6 +12,8 @@
       display: block;
       padding-bottom: $base-padding-v;
       cursor: pointer;
+      line-height: $mobile-back-button-height;
+      height: $mobile-back-button-height;
       >i { margin-right: $base-padding-h; }
     }
   }
@@ -130,10 +132,6 @@
       @include flex-wrap(wrap);
       overflow-x: hidden;
       padding-top: 3px;
-
-      @include scrollbar-full-width-hack();
-      @-moz-document url-prefix() { @include scrollbar-padding-hack(); }
-      @at-root { _:-ms-lang(x), .details__body>.scroller { @include scrollbar-padding-hack(); } }
       @media screen and (-webkit-min-device-pixel-ratio:0) { width: 100% !important; }
     }
 
@@ -197,6 +195,7 @@
       line-height: $details-field-line-height;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-right: 20px;
       .details__field--editable & {
         border-radius: $base-border-radius;
         &:hover {
@@ -367,6 +366,7 @@
     @include display(flex);
     @include align-items(stretch);
     @include flex-direction(row);
+    @include flex-shrink(0);
     @include justify-content(flex-start);
     margin-top: $base-padding-v;
 

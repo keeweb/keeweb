@@ -1,7 +1,7 @@
 <div class="icon-select">
     <div class="icon-select__items">
         {{#each icons as |icon ix|}}
-        <i class="fa fa-{{icon}} icon-select__icon {{#ifeq ix sel}}icon-select__icon--active{{/ifeq}}" data-val="{{ix}}"></i>
+        <i class="fa fa-{{icon}} icon-select__icon {{#ifeq ix ../sel}}icon-select__icon--active{{/ifeq}}" data-val="{{ix}}"></i>
         {{/each}}
     </div>
     <div class="icon-select__items icon-select__items--custom">
@@ -17,7 +17,7 @@
             <i class="fa fa-ellipsis-h"></i>
         </span>
         {{#each customIcons as |icon ci|}}
-        <span class="icon-select__icon icon-select__icon-btn icon-select__icon-custom {{#ifeq ci sel}}icon-select__icon--active{{/ifeq}}"
+        <span class="icon-select__icon icon-select__icon-btn icon-select__icon-custom {{#ifeq ci ../sel}}icon-select__icon--active{{/ifeq}}"
               data-val="{{ci}}">
             <img src="{{{icon}}}" />
         </span>

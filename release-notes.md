@@ -1,7 +1,17 @@
 Release notes
 -------------
+##### v1.0.0 (2016-02-12)
+Performance, stability and quality improvements  
+`+` track changes in local files  
+`+` mobile layout made more convenient  
+`+` command-line option to disable updater  
+`+` using system proxy settings for updater  
+`+` webapp icon for touch devices  
+`-` #80: prevent data loss on group move  
+`-` issues with clipboard clear fixed  
+
 ##### v0.6.1 (2016-02-02)
-App moved to app.keeweb.info
+App moved to app.keeweb.info  
 
 ##### v0.6.0 (2016-01-19)
 Improvements  

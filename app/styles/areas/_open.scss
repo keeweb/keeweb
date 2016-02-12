@@ -11,6 +11,7 @@
     @include display(flex);
     @include align-items(stretch);
     @include flex-direction(row);
+    @include flex-shrink(0);
     .open--drag & { display: none; }
   }
 
@@ -46,6 +47,7 @@
       @include flex-direction(row);
       @include justify-content(flex-start);
       @include align-items(stretch);
+      @include flex-shrink(0);
       margin-bottom: $base-padding-v;
     }
     &-enter-btn, &-opening-icon {
@@ -126,6 +128,7 @@
       @include flex-direction(row);
       @include justify-content(flex-start);
       @include align-items(baseline);
+      @include flex-shrink(0);
       .open:not(.open--opening) & {
         @include area-selectable;
       }

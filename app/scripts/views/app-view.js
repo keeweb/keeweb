@@ -408,10 +408,13 @@ var AppView = Backbone.View.extend({
     },
 
     closeAllFilesAndShowFirst: function() {
-        var firstFile = this.model.files.find(function(file) { return !file.get('demo') && !file.get('created'); });
+        var fileToShow = this.model.files.find(function(file) { return !file.get('demo') && !file.get('created'); });
         this.model.closeAllFiles();
-        if (firstFile) {
-            var fileInfo = this.model.fileInfos.getMatch(firstFile.get('storage'), firstFile.get('name'), firstFile.get('path'));
+        if (!fileToShow) {
+            fileToShow = this.model.fileInfos.getLast();
+        }
+        if (fileToShow) {
+            var fileInfo = this.model.fileInfos.getMatch(fileToShow.get('storage'), fileToShow.get('name'), fileToShow.get('path'));
             if (fileInfo) {
                 this.views.open.showOpenFileInfo(fileInfo);
             }

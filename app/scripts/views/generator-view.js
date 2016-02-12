@@ -74,7 +74,7 @@ var GeneratorView = Backbone.View.extend({
         range.selectNodeContents(this.resultEl[0]);
         selection.removeAllRanges();
         selection.addRange(range);
-        CopyPaste.tryCopy();
+        CopyPaste.copy(this.password);
         this.trigger('result', this.password);
         this.remove();
     }

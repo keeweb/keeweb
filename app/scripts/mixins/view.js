@@ -42,18 +42,22 @@ _.extend(Backbone.View.prototype, {
     },
 
     renderTemplate: function(model, replace) {
-        if (replace) {
-            this.$el.html('');
-        }
-        var el = $(this.template(model));
-        if (!this._elAppended || replace) {
-            this.$el.append(el);
-            this._elAppended = true;
+        if (replace && replace.plain) {
+            this.$el.html(this.template(model));
         } else {
-            this.$el.replaceWith(el);
+            if (replace) {
+                this.$el.html('');
+            }
+            var el = $(this.template(model));
+            if (!this._elAppended || replace) {
+                this.$el.append(el);
+                this._elAppended = true;
+            } else {
+                this.$el.replaceWith(el);
+            }
+            this.setElement(el);
         }
-        this.setElement(el);
-        Tip.createTips(el);
+        Tip.createTips(this.$el);
     },
 
     _parentRemove: Backbone.View.prototype.remove,

@@ -18,9 +18,10 @@ var Updater = {
     UpdateCheckFiles: ['index.html', 'app.js'],
     nextCheckTimeout: null,
     updateCheckDate: new Date(0),
+    enabled: Launcher && Launcher.updaterEnabled(),
 
     getAutoUpdateType: function() {
-        if (!Launcher) {
+        if (!this.enabled) {
             return false;
         }
         var autoUpdate = AppSettingsModel.instance.get('autoUpdate');
@@ -65,10 +66,10 @@ var Updater = {
     },
 
     check: function(startedByUser) {
-        if (!Launcher || this.updateInProgress()) {
+        if (!startedByUser) {
             return;
         }
-        if (this.checkManualDownload()) {
+        if (!this.enabled || this.updateInProgress()) {
             return;
         }
         UpdateModel.instance.set('status', 'checking');
@@ -85,7 +86,7 @@ var Updater = {
         }
         logger.info('Checking for update...');
         Transport.httpGet({
-            url: Links.WebApp + 'manifest.appcache',
+            url: Links.Manifest,
             utf8: true,
             success: function(data) {
                 var dt = new Date();
@@ -111,6 +112,9 @@ var Updater = {
                 });
                 UpdateModel.instance.save();
                 that.scheduleNextCheck();
+                if (!that.canAutoUpdate()) {
+                    return;
+                }
                 if (prevLastVersion === UpdateModel.instance.get('lastVersion') &&
                     UpdateModel.instance.get('updateStatus') === 'ready') {
                     logger.info('Waiting for the user to apply downloaded update');
@@ -118,7 +122,7 @@ var Updater = {
                 }
                 if (!startedByUser && that.getAutoUpdateType() === 'install') {
                     that.update(startedByUser);
-                } else if (UpdateModel.instance.get('lastVersion') !== RuntimeInfo.version) {
+                } else if (that.compareVersions(UpdateModel.instance.get('lastVersion'), RuntimeInfo.version) > 0) {
                     UpdateModel.instance.set('updateStatus', 'found');
                 }
             },
@@ -135,16 +139,41 @@ var Updater = {
         });
     },
 
-    checkManualDownload: function() {
-        if (+Launcher.getAppVersion().split('.')[1] <= 2) {
-            UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
-            return true;
+    canAutoUpdate: function() {
+        var minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
+        if (minLauncherVersion) {
+            var cmp = this.compareVersions(Launcher.version, minLauncherVersion);
+            if (cmp < 0) {
+                UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
+                return false;
+            }
         }
+        return true;
+    },
+
+    compareVersions: function(left, right) {
+        left = left.split('.');
+        right = right.split('.');
+        for (var num = 0; num < left.length; num++) {
+            var partLeft = left[num] | 0,
+                partRight = right[num] | 0;
+            if (partLeft < partRight) {
+                return -1;
+            }
+            if (partLeft > partRight) {
+                return 1;
+            }
+        }
+        return 0;
     },
 
     update: function(startedByUser, successCallback) {
         var ver = UpdateModel.instance.get('lastVersion');
-        if (!Launcher || ver === RuntimeInfo.version) {
+        if (!this.enabled) {
+            logger.info('Updater is disabled');
+            return;
+        }
+        if (this.compareVersions(RuntimeInfo.version, ver) >= 0) {
             logger.info('You are using the latest version');
             return;
         }

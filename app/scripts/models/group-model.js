@@ -183,6 +183,11 @@ var GroupModel = MenuItemModel.extend({
         }
         this.file.setModified();
         if (object instanceof GroupModel) {
+            for (var parent = this; parent; parent = parent.parentGroup) {
+                if (object === parent) {
+                    return;
+                }
+            }
             if (this.group.groups.indexOf(object.group) >= 0) {
                 return;
             }

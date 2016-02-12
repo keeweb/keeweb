@@ -43,6 +43,10 @@ var Locale = {
 
     footerOpen: 'Open / New',
     footerSyncError: 'Sync error',
+    footerTitleHelp: 'Help',
+    footerTitleSettings: 'Settings',
+    footerTitleGen: 'Generate',
+    footerTitleLock: 'Lock',
 
     genLen: 'Length',
     grpTitle: 'Group',
@@ -147,7 +151,7 @@ var Locale = {
     appSecWarn: 'Not Secure!',
     appSecWarnBody1: 'You have loaded this app with insecure connection. ' +
         'Someone may be watching you and stealing your passwords. ' +
-        'We strongly advice you to stop, unless you clearly understand what you\'re doing.',
+        'We strongly advise you to stop, unless you clearly understand what you\'re doing.',
     appSecWarnBody2: 'Yes, your database is encrypted but no one can guarantee that the app has not been modified on the way to you.',
     appSecWarnBtn: 'I understand the risks, continue',
     appUnsavedWarn: 'Unsaved changes!',
@@ -168,7 +172,7 @@ var Locale = {
     setGenUpdate: 'Update',
     setGenNewVersion: 'New app version was released and downloaded',
     setGenReleaseNotes: 'View release notes',
-    setGenReloadTpUpdate: 'Reload to update',
+    setGenReloadToUpdate: 'Reload to update',
     setGenUpdateManual: 'New version has been released. It will check for updates and install them automatically ' +
         'but auto-upgrading from your version is impossible.',
     setGenDownloadUpdate: 'Download update',
@@ -305,7 +309,7 @@ var Locale = {
     dropboxFullBody: 'Your Dropbox is full, there\'s no space left anymore.',
     dropboxRateLimitedBody: 'Too many requests to Dropbox have been made by this app. Please, try again later.',
     dropboxNetError: 'Dropbox Sync Network Error',
-    dropboxNetErrorBody: 'Network error occured during Dropbox sync. Please, check your connection and try again.',
+    dropboxNetErrorBody: 'Network error occurred during Dropbox sync. Please, check your connection and try again.',
     dropboxErrorBody: 'Something went wrong during Dropbox sync. Please, try again later. Error code: ',
     dropboxErrorRepeatBody: 'Something went wrong during Dropbox sync. Please, try again later. Error: ',
 

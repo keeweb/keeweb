@@ -9,12 +9,28 @@ var isEnabled = FeatureDetector.isDesktop();
 var Scrollable = {
     createScroll: function(opts) {
         opts.$ = Backbone.$;
+        //opts.cssGuru = true;
         if (isEnabled) {
+            if (this.scroll) {
+                this.removeScroll();
+            }
             this.scroll = baron(opts);
         }
         this.scroller = this.$el.find('.scroller');
         this.scrollerBar = this.$el.find('.scroller__bar');
         this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
+    },
+
+    removeScroll: function() {
+        if (this.scroll) {
+            this.scroll.dispose();
+            // TODO: remove once the bug in custom scrollbar is resolved
+            var ix = baron._instances.indexOf(this.scroll[0]);
+            if (ix >= 0) {
+                baron._instances.splice(ix, 1);
+            }
+            this.scroll = null;
+        }
     },
 
     pageResized: function() {
