@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     var webpack = require('webpack');
     var pkg = require('./package.json');
     var dt = new Date().toISOString().replace(/T.*/, '');
-    var electronVersion = '0.36.4';
+    var electronVersion = '0.36.7';
     var minElectronVersionForUpdate = '0.32.0';
 
     function replaceFont(css) {
