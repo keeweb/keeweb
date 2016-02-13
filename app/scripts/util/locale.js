@@ -186,7 +186,7 @@ var Locale = {
     setGenLastCheckVer: 'the latest version was {}',
     setGenCheckedAt: 'Checked at',
     setGenLatestVer: 'you are using the latest version',
-    setGenNewVer: 'new version {} available, released at',
+    setGenNewVer: 'new version {} available, released',
     setGenDownloadingUpdate: 'Downloading update...',
     setGenExtractingUpdate: 'Extracting update...',
     setGenCheckErr: 'There was an error downloading new version',
