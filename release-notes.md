@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.1.0 (Q2 2016)
+Storage providers, usability improvements  
+`+` beta version app  
+
 ##### v1.0.0 (2016-02-12)
 Performance, stability and quality improvements  
 `+` track changes in local files  

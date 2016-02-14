@@ -21,6 +21,9 @@ var FeatureDetector = {
     },
     canCopyReadonlyInput: function() {
         return !(/CriOS/i.test(navigator.userAgent));
+    },
+    isBeta: function() {
+        return window.location.href.toLowerCase().indexOf('beta.') > 0;
     }
 };
 

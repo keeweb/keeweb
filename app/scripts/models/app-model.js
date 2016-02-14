@@ -13,7 +13,8 @@ var Backbone = require('backbone'),
     Storage = require('../storage'),
     Timeouts = require('../const/timeouts'),
     IdGenerator = require('../util/id-generator'),
-    Logger = require('../util/logger');
+    Logger = require('../util/logger'),
+    FeatureDetector = require('../util/feature-detector');
 
 require('../mixins/protected-value-ex');
 
@@ -29,6 +30,7 @@ var AppModel = Backbone.Model.extend({
         this.sort = 'title';
         this.settings = AppSettingsModel.instance;
         this.activeEntryId = null;
+        this.isBeta = FeatureDetector.isBeta();
 
         this.listenTo(Backbone, 'refresh', this.refresh);
         this.listenTo(Backbone, 'set-filter', this.setFilter);

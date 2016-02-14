@@ -41,6 +41,8 @@ var Locale = {
     alertCopy: 'Copy',
     alertClose: 'Close',
 
+    appBeta: 'WARNING: beta version, only for preview',
+
     footerOpen: 'Open / New',
     footerSyncError: 'Sync error',
     footerTitleHelp: 'Help',
