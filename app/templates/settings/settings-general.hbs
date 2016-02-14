@@ -60,11 +60,16 @@
         <label for="settings__general-colorful-icons">{{res 'setGenColorfulIcons'}}</label>
     </div>
 
-    <h2>Function</h2>
+    <h2>{{res 'setGenFunction'}}</h2>
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
             {{#if autoSave}}checked{{/if}} />
         <label for="settings__general-auto-save">{{res 'setGenAutoSync'}}</label>
+    </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-remember-key-files" id="settings__general-remember-key-files"
+               {{#if rememberKeyFiles}}checked{{/if}} />
+        <label for="settings__general-remember-key-files">{{res 'setGenRememberKeyFiles'}}</label>
     </div>
     <div>
         <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>

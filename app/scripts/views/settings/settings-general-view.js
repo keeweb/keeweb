@@ -21,6 +21,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-idle-minutes': 'changeIdleMinutes',
         'change .settings__general-clipboard': 'changeClipboard',
         'change .settings__general-auto-save': 'changeAutoSave',
+        'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
         'change .settings__general-lock-on-minimize': 'changeLockOnMinimize',
         'change .settings__general-table-view': 'changeTableView',
@@ -53,6 +54,7 @@ var SettingsGeneralView = Backbone.View.extend({
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             canClearClipboard: !!Launcher,
             clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
+            rememberKeyFiles: AppSettingsModel.instance.get('rememberKeyFiles'),
             autoSave: AppSettingsModel.instance.get('autoSave'),
             idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
             minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
@@ -142,6 +144,14 @@ var SettingsGeneralView = Backbone.View.extend({
     changeAutoSave: function(e) {
         var autoSave = e.target.checked || false;
         AppSettingsModel.instance.set('autoSave', autoSave);
+    },
+
+    changeRememberKeyFiles: function(e) {
+        var rememberKeyFiles = e.target.checked || false;
+        AppSettingsModel.instance.set('rememberKeyFiles', rememberKeyFiles);
+        if (!rememberKeyFiles) {
+            this.appModel.clearStoredKeyFiles();
+        }
     },
 
     changeMinimize: function(e) {

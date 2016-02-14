@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.1.0 (Q2 2016)
 Storage providers, usability improvements  
+`+` option to remember keyfiles  
 `+` beta version app  
 
 ##### v1.0.0 (2016-02-12)

@@ -333,6 +333,10 @@ var AppModel = Backbone.Model.extend({
 
     openFileWithData: function(params, callback, fileInfo, data, updateCacheOnSuccess) {
         var logger = new Logger('open', params.name);
+        if (!params.keyFileName && fileInfo.get('keyFileName') && this.settings.get('rememberKeyFiles')) {
+            params.keyFileName = fileInfo.get('keyFileName');
+            params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
+        }
         var file = new FileModel({
             name: params.name,
             storage: params.storage,
@@ -386,6 +390,12 @@ var AppModel = Backbone.Model.extend({
             syncDate: file.get('syncDate') || dt,
             openDate: dt
         });
+        if (this.settings.get('rememberKeyFiles')) {
+            fileInfo.set({
+                keyFileName: file.get('keyFileName') || null,
+                keyFileHash: file.getKeyFileHash()
+            });
+        }
         this.fileInfos.remove(file.get('cacheId'));
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
@@ -412,6 +422,11 @@ var AppModel = Backbone.Model.extend({
         this.fileInfos.save();
     },
 
+    getFileInfo: function(file) {
+        return file.get('cacheId') ? this.fileInfos.get(file.get('cacheId')) :
+            this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
+    },
+
     syncFile: function(file, options, callback) {
         var that = this;
         if (file.get('demo')) {
@@ -430,8 +445,7 @@ var AppModel = Backbone.Model.extend({
             path = Storage[storage].getPathForName(file.get('name'));
         }
         logger.info('Sync started', storage, path, options);
-        var fileInfo = file.get('cacheId') ? this.fileInfos.get(file.get('cacheId')) :
-            this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
+        var fileInfo = this.getFileInfo(file);
         if (!fileInfo) {
             logger.info('Create new file info');
             var dt = new Date();
@@ -462,6 +476,12 @@ var AppModel = Backbone.Model.extend({
                 syncDate: file.get('syncDate'),
                 cacheId: fileInfo.id
             });
+            if (that.settings.get('rememberKeyFiles')) {
+                fileInfo.set({
+                    keyFileName: file.get('keyFileName') || null,
+                    keyFileHash: file.getKeyFileHash()
+                });
+            }
             if (!that.fileInfos.get(fileInfo.id)) {
                 that.fileInfos.unshift(fileInfo);
             }
@@ -599,6 +619,16 @@ var AppModel = Backbone.Model.extend({
                 }
             });
         }
+    },
+
+    clearStoredKeyFiles: function() {
+        this.fileInfos.each(function(fileInfo) {
+            fileInfo.set({
+                keyFileName: null,
+                keyFileHash: null
+            });
+        });
+        this.fileInfos.save();
     }
 });
 

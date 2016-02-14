@@ -283,6 +283,11 @@ var FileModel = Backbone.Model.extend({
         this.db.saveXml(cb);
     },
 
+    getKeyFileHash: function() {
+        var hash = this.db.credentials.keyFileHash;
+        return hash ? kdbxweb.ByteUtils.bytesToBase64(hash.getBinary()) : null;
+    },
+
     setSyncProgress: function() {
         this.set({ syncing: true });
     },
@@ -352,6 +357,7 @@ var FileModel = Backbone.Model.extend({
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
         this.set({ keyFileName: '', keyFileChanged: changed });
+        this.setModified();
     },
 
     setName: function(name) {
@@ -423,5 +429,9 @@ var FileModel = Backbone.Model.extend({
         return id.toString();
     }
 });
+
+FileModel.createKeyFileWithHash = function(hash) {
+    return kdbxweb.Credentials.createKeyFileWithHash(hash);
+};
 
 module.exports = FileModel;
