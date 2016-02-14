@@ -171,7 +171,7 @@ function restoreMainWindowPosition() {
     fs.readFile(windowPositionFileName, 'utf8', function(err, data) {
         if (data) {
             mainWindowPosition = JSON.parse(data);
-            if (mainWindow) {
+            if (mainWindow && mainWindowPosition) {
                 if (mainWindowPosition.width && mainWindowPosition.height) {
                     var displayBounds = require('screen').getDisplayMatching(mainWindowPosition).bounds;
                     var db = mainWindowPosition.displayBounds;
