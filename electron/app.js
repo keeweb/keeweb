@@ -5,6 +5,7 @@
 
 var app = require('app'),
     path = require('path'),
+    fs = require('fs'),
     BrowserWindow = require('browser-window'),
     Menu = require('menu'),
     Tray = require('tray');
@@ -14,7 +15,10 @@ var mainWindow = null,
     openFile = process.argv.filter(function(arg) { return /\.kdbx$/i.test(arg); })[0],
     ready = false,
     restartPending = false,
-    htmlPath = path.join(__dirname, 'index.html');
+    htmlPath = path.join(__dirname, 'index.html'),
+    mainWindowPosition = {},
+    updateMainWindowPositionTimeout = null,
+    windowPositionFileName = path.join(app.getPath('userData'), 'window-position.json');
 
 process.argv.forEach(function(arg) {
     if (arg.lastIndexOf('--htmlpath=', 0) === 0) {
@@ -83,7 +87,7 @@ app.getMainWindow = function() {
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         show: false,
-        width: 1000, height: 700, 'min-width': 600, 'min-height': 300,
+        width: 1000, height: 700, 'min-width': 700, 'min-height': 400,
         icon: path.join(__dirname, 'icon.png')
     });
     setMenu();
@@ -95,12 +99,17 @@ function createMainWindow() {
             notifyOpenFile();
         }, 50);
     });
+    mainWindow.on('resize', delaySaveMainWindowPosition);
+    mainWindow.on('move', delaySaveMainWindowPosition);
+    mainWindow.on('close', updateMainWindowPositionIfPending);
     mainWindow.on('closed', function() {
         mainWindow = null;
+        saveMainWindowPosition();
     });
     mainWindow.on('minimize', function() {
         emitBackboneEvent('launcher-minimize');
     });
+    restoreMainWindowPosition();
 }
 
 function restoreMainWindow() {
@@ -114,6 +123,68 @@ function closeMainWindow() {
     appIcon.destroy();
     appIcon = null;
     emitBackboneEvent('launcher-exit-request');
+}
+
+function delaySaveMainWindowPosition() {
+    if (updateMainWindowPositionTimeout) {
+        clearTimeout(updateMainWindowPositionTimeout);
+    }
+    updateMainWindowPositionTimeout = setTimeout(updateMainWindowPosition, 500);
+}
+
+function updateMainWindowPositionIfPending() {
+    if (updateMainWindowPositionTimeout) {
+        clearTimeout(updateMainWindowPositionTimeout);
+        updateMainWindowPosition();
+    }
+}
+
+function updateMainWindowPosition() {
+    if (!mainWindow) {
+        return;
+    }
+    updateMainWindowPositionTimeout = null;
+    var bounds = mainWindow.getBounds();
+    if (!mainWindow.isMaximized() && !mainWindow.isMinimized() && !mainWindow.isFullScreen()) {
+        mainWindowPosition.x = bounds.x;
+        mainWindowPosition.y = bounds.y;
+        mainWindowPosition.width = bounds.width;
+        mainWindowPosition.height = bounds.height;
+    }
+    mainWindowPosition.maximized = mainWindow.isMaximized();
+    mainWindowPosition.fullScreen = mainWindow.isFullScreen();
+    mainWindowPosition.displayBounds = require('screen').getDisplayMatching(bounds).bounds;
+    mainWindowPosition.changed = true;
+}
+
+function saveMainWindowPosition() {
+    if (!mainWindowPosition.changed) {
+        return;
+    }
+    delete mainWindowPosition.changed;
+    try {
+        fs.writeFile(windowPositionFileName, JSON.stringify(mainWindowPosition), 'utf8');
+    } catch (e) {}
+}
+
+function restoreMainWindowPosition() {
+    fs.readFile(windowPositionFileName, 'utf8', function(err, data) {
+        if (data) {
+            mainWindowPosition = JSON.parse(data);
+            if (mainWindow) {
+                if (mainWindowPosition.width && mainWindowPosition.height) {
+                    var displayBounds = require('screen').getDisplayMatching(mainWindowPosition).bounds;
+                    var db = mainWindowPosition.displayBounds;
+                    if (displayBounds.x === db.x && displayBounds.y === db.y &&
+                        displayBounds.width === db.width && displayBounds.height === db.height) {
+                        mainWindow.setBounds(mainWindowPosition);
+                    }
+                }
+                if (mainWindowPosition.maximized) { mainWindow.maximize(); }
+                if (mainWindowPosition.fullScreen) { mainWindow.setFullScreen(true); }
+            }
+        }
+    });
 }
 
 function emitBackboneEvent(e) {

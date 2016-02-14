@@ -5,6 +5,7 @@ Storage providers, usability improvements
 `+` option to remember keyfiles  
 `+` beta version app  
 `+` option to lock on password copy  
+`+` save/restore window position after close  
 
 ##### v1.0.0 (2016-02-12)
 Performance, stability and quality improvements  
