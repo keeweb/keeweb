@@ -34,7 +34,7 @@ var DetailsView = Backbone.View.extend({
     views: null,
     passEditView: null,
     addNewFieldView: null,
-    passCopyTip: null,
+    fieldCopyTip: null,
 
     events: {
         'click .details__colors-popup-item': 'selectColor',
@@ -71,9 +71,9 @@ var DetailsView = Backbone.View.extend({
     removeFieldViews: function() {
         this.fieldViews.forEach(function(fieldView) { fieldView.remove(); });
         this.fieldViews = [];
-        if (this.passCopyTip) {
-            this.passCopyTip.hide();
-            this.passCopyTip = null;
+        if (this.fieldCopyTip) {
+            this.fieldCopyTip.hide();
+            this.fieldCopyTip = null;
         }
     },
 
@@ -159,6 +159,7 @@ var DetailsView = Backbone.View.extend({
         this.fieldViews.forEach(function(fieldView) {
             fieldView.setElement(fieldView.readonly ? fieldsAsideEl : fieldsMainEl).render();
             fieldView.on('change', this.fieldChanged.bind(this));
+            fieldView.on('copy', this.fieldCopied.bind(this));
         }, this);
     },
 
@@ -277,19 +278,8 @@ var DetailsView = Backbone.View.extend({
                 CopyPaste.createHiddenInput(password);
             }
             var copyRes = CopyPaste.copy(password);
-            if (copyRes && !this.passCopyTip) {
-                var passLabel = this.passEditView.labelEl;
-                var clipboardTime = copyRes.seconds;
-                var msg = clipboardTime ? Locale.detPassCopiedTime.replace('{}', clipboardTime)
-                    : Locale.detPassCopied;
-                var tip = new Tip(passLabel, { title: msg, placement: 'right', fast: true });
-                this.passCopyTip = tip;
-                tip.show();
-                var that = this;
-                setTimeout(function() {
-                    tip.hide();
-                    that.passCopyTip = null;
-                }, Timeouts.CopyTip);
+            if (copyRes) {
+                this.fieldCopied({ source: this.passEditView, copyRes: copyRes });
             }
         }
     },
@@ -353,6 +343,30 @@ var DetailsView = Backbone.View.extend({
         if (e.tab) {
             this.focusNextField(e.tab);
         }
+    },
+
+    fieldCopied: function(e) {
+        if (this.fieldCopyTip) {
+            this.fieldCopyTip.hide();
+            this.fieldCopyTip = null;
+        }
+        var fieldLabel = e.source.labelEl;
+        var clipboardTime = e.copyRes.seconds;
+        var msg = clipboardTime ? Locale.detFieldCopiedTime.replace('{}', clipboardTime)
+            : Locale.detFieldCopied;
+        var tip = new Tip(fieldLabel, { title: msg, placement: 'right', fast: true });
+        this.fieldCopyTip = tip;
+        tip.show();
+        var that = this;
+        setTimeout(function() {
+            tip.hide();
+            that.fieldCopyTip = null;
+            if (e.source.model.name === '$Password' && AppSettingsModel.instance.get('lockOnCopy')) {
+                setTimeout(function() {
+                    Backbone.trigger('lock-workspace');
+                }, Timeouts.BeforeAutoLock);
+            }
+        }, Timeouts.CopyTip);
     },
 
     dragover: function(e) {

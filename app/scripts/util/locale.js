@@ -146,8 +146,8 @@ var Locale = {
     detDelFromTrash: 'Delete from trash?',
     detDelFromTrashBody: 'You will not be able to put it back.',
     detDelFromTrashBodyHint: 'To quickly remove all items from trash, click empty icon in Trash menu.',
-    detPassCopied: 'Password copied',
-    detPassCopiedTime: 'Password copied for {} seconds',
+    detFieldCopied: 'Copied',
+    detFieldCopiedTime: 'Copied for {} seconds',
     detCopyHint: 'You can copy field value with click on its title',
 
     appSecWarn: 'Not Secure!',
@@ -213,6 +213,7 @@ var Locale = {
     setGenClearMinute: 'In a minute',
     setGenMinInstead: 'Minimize app instead of close',
     setGenLockMinimize: 'Auto-lock on minimize',
+    setGenLockCopy: 'Auto-lock on password copy',
     setGenAdvanced: 'Advanced',
     setGenDevTools: 'Show dev tools',
 

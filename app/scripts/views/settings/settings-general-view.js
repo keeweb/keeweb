@@ -24,6 +24,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
         'change .settings__general-lock-on-minimize': 'changeLockOnMinimize',
+        'change .settings__general-lock-on-copy': 'changeLockOnCopy',
         'change .settings__general-table-view': 'changeTableView',
         'change .settings__general-colorful-icons': 'changeColorfulIcons',
         'click .settings__general-update-btn': 'checkUpdate',
@@ -62,6 +63,7 @@ var SettingsGeneralView = Backbone.View.extend({
             canAutoUpdate: Updater.enabled,
             canMinimize: Launcher && Launcher.canMinimize(),
             lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
+            lockOnCopy: AppSettingsModel.instance.get('lockOnCopy'),
             tableView: AppSettingsModel.instance.get('tableView'),
             canSetTableView: FeatureDetector.isDesktop(),
             autoUpdate: Updater.getAutoUpdateType(),
@@ -162,6 +164,11 @@ var SettingsGeneralView = Backbone.View.extend({
     changeLockOnMinimize: function(e) {
         var lockOnMinimize = e.target.checked || false;
         AppSettingsModel.instance.set('lockOnMinimize', lockOnMinimize);
+    },
+
+    changeLockOnCopy: function(e) {
+        var lockOnCopy = e.target.checked || false;
+        AppSettingsModel.instance.set('lockOnCopy', lockOnCopy);
     },
 
     changeTableView: function(e) {

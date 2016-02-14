@@ -105,6 +105,11 @@
         <label for="settings__general-lock-on-minimize">{{res 'setGenLockMinimize'}}</label>
     </div>
     {{/if}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-lock-on-copy" id="settings__general-lock-on-copy"
+               {{#if lockOnCopy}}checked{{/if}} />
+        <label for="settings__general-lock-on-copy">{{res 'setGenLockCopy'}}</label>
+    </div>
 
     {{#if devTools}}
     <h2>{{res 'setGenAdvanced'}}</h2>

@@ -44,24 +44,36 @@ var FieldView = Backbone.View.extend({
             //CopyPaste.copy(); // maybe Apple will ever support this?
             return;
         }
+        var copyRes;
         if (field) {
             var value = this.value || '';
             if (value && value.isProtected) {
                 var text = value.getText();
+                if (!text) {
+                    return;
+                }
                 if (!CopyPaste.simpleCopy) {
                     CopyPaste.createHiddenInput(text);
                 }
-                CopyPaste.copy(text);
+                copyRes = CopyPaste.copy(text);
+                if (copyRes) {
+                    this.trigger('copy', { source: this, copyRes: copyRes });
+                }
                 return;
             }
+        }
+        if (!this.value) {
+            return;
         }
         var selection = window.getSelection();
         var range = document.createRange();
         range.selectNodeContents(this.valueEl[0]);
         selection.removeAllRanges();
         selection.addRange(range);
-        if (CopyPaste.copy(this.valueEl.text())) {
+        copyRes = CopyPaste.copy(this.valueEl.text());
+        if (copyRes) {
             selection.removeAllRanges();
+            this.trigger('copy', { source: this, copyRes: copyRes });
         }
     },
 

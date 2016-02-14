@@ -4,6 +4,7 @@ Release notes
 Storage providers, usability improvements  
 `+` option to remember keyfiles  
 `+` beta version app  
+`+` option to lock on password copy  
 
 ##### v1.0.0 (2016-02-12)
 Performance, stability and quality improvements  
