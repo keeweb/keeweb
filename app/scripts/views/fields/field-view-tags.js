@@ -66,7 +66,7 @@ var FieldViewTags = FieldViewText.extend({
             return '<div class="details__tags-autocomplete-tag">' + _.escape(tag) + '</div>';
         }).join('');
         this.tagsAutocomplete.html(tagsHtml);
-        this.tagsAutocomplete.toggle(tagsHtml);
+        this.tagsAutocomplete.toggle(!!tagsHtml);
     },
 
     tagsAutocompleteClick: function(e) {

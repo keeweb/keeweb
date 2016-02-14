@@ -7,6 +7,11 @@ Storage providers, usability improvements
 `+` option to lock on password copy  
 `+` save/restore window position after close  
 
+##### v1.0.1 (not released yed)
+Bugfixes  
+`-` fixed tags selection  
+
+
 ##### v1.0.0 (2016-02-12)
 Performance, stability and quality improvements  
 `+` track changes in local files  
