@@ -66,9 +66,6 @@ var Updater = {
     },
 
     check: function(startedByUser) {
-        if (!startedByUser) {
-            return;
-        }
         if (!this.enabled || this.updateInProgress()) {
             return;
         }
