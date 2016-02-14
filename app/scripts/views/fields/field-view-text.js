@@ -85,7 +85,7 @@ var FieldViewText = FieldView.extend({
     },
 
     setInputHeight: function() {
-        var MinHeight = 20;
+        var MinHeight = 18;
         this.input.height(MinHeight);
         var newHeight = this.input[0].scrollHeight;
         if (newHeight <= MinHeight) {

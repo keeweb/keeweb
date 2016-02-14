@@ -1,5 +1,10 @@
 Release notes
 -------------
+##### v1.0.1 (not released yed)
+Bugfixes  
+`-` fixed tags selection  
+
+
 ##### v1.0.0 (2016-02-12)
 Performance, stability and quality improvements  
 `+` track changes in local files  
