@@ -51,6 +51,16 @@ var Locale = {
     footerTitleLock: 'Lock',
 
     genLen: 'Length',
+    genPresetDefault: 'default preset',
+    genPresetDerived: 'like old password',
+    genPresetPronounceable: 'pronounceable',
+    genPresetMed: 'medium length',
+    genPresetLong: 'long',
+    genPresetPin4: '4-digit PIN',
+    genPresetMac: 'MAC address',
+    genPresetHash128: '128-bit hash',
+    genPresetHash256: '256-bit hash',
+
     grpTitle: 'Group',
     grpSearch: 'Enable searching entries in this group',
 
@@ -243,7 +253,7 @@ var Locale = {
     setFileHistory: 'History',
     setFileEnableTrash: 'Enable trash',
     setFileHistLen: 'History length, keep last records per entry',
-    resFileHistSize: 'History size, total MB per file',
+    setFileHistSize: 'History size, total MB per file',
     setFileAdvanced: 'Advanced',
     setFileRounds: 'Key encryption rounds',
     setFileUseKeyFile: 'Use key file',
