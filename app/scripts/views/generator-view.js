@@ -31,6 +31,7 @@ var GeneratorView = Backbone.View.extend({
         this.gen = _.clone(_.find(this.presets, function(pr) { return pr.name === preset; }));
         this.gen = _.clone(this.presets[1]);
         $('body').one('click', this.remove.bind(this));
+        this.listenTo(Backbone, 'lock-workspace', this.remove.bind(this));
     },
 
     render: function() {
