@@ -234,7 +234,9 @@
       .details__body-aside & {
         @include th { color: muted-color(); }
         a { @include th { color: muted-color(); } }
-        width: 12em;
+        width: 13em;
+        padding-right: 0;
+        margin-right: 0;
         @include flex(0 0 auto);
       }
       &-btn {
