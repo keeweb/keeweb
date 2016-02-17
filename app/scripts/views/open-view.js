@@ -251,7 +251,7 @@ var OpenView = Backbone.View.extend({
             clearTimeout(this.dragTimeout);
         }
         this.$el.removeClass('open--drag');
-        var files = e.target.files || e.dataTransfer.files;
+        var files = e.target.files || e.originalEvent.dataTransfer.files;
         var dataFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'kdbx'; });
         var keyFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'key'; });
         if (dataFile) {

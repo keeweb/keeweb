@@ -203,8 +203,8 @@ var ListView = Backbone.View.extend({
     itemDragStart: function(e) {
         e.stopPropagation();
         var id = $(e.target).closest('.list__item').attr('id');
-        e.dataTransfer.setData('text/entry', id);
-        e.dataTransfer.effectAllowed = 'move';
+        e.originalEvent.dataTransfer.setData('text/entry', id);
+        e.originalEvent.dataTransfer.effectAllowed = 'move';
         DragDropInfo.dragObject = this.items.get(id);
     }
 });
