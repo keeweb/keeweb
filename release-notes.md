@@ -7,6 +7,10 @@ Storage providers, usability improvements
 `+` option to lock on password copy  
 `+` save/restore window position after close  
 
+##### v1.0.2 (2016-02-17)
+Hotfix  
+`-` #80: dragdrop bug  
+
 ##### v1.0.1 (2016-02-14)
 Bugfixes  
 `-` fixed tags selection  
