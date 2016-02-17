@@ -173,14 +173,14 @@ var MenuItemView = Backbone.View.extend({
     },
 
     dropAllowed: function(e) {
-        return ['text/group', 'text/entry'].indexOf(e.dataTransfer.types[0]) >= 0;
+        return ['text/group', 'text/entry'].indexOf(e.originalEvent.dataTransfer.types[0]) >= 0;
     },
 
     dragstart: function(e) {
         e.stopPropagation();
         if (this.model.get('drag')) {
-            e.dataTransfer.setData('text/group', this.model.id);
-            e.dataTransfer.effectAllowed = 'move';
+            e.originalEvent.dataTransfer.setData('text/group', this.model.id);
+            e.originalEvent.dataTransfer.effectAllowed = 'move';
             DragDropInfo.dragObject = this.model;
         }
     },

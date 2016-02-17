@@ -386,7 +386,7 @@ var DetailsView = Backbone.View.extend({
         }
         this.$el.find('.details').removeClass('details--drag');
         this.dragging = false;
-        var files = e.target.files || e.dataTransfer.files;
+        var files = e.target.files || e.originalEvent.dataTransfer.files;
         _.forEach(files, function(file) {
             var reader = new FileReader();
             reader.onload = (function() {

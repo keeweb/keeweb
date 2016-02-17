@@ -24,11 +24,6 @@ var Scrollable = {
     removeScroll: function() {
         if (this.scroll) {
             this.scroll.dispose();
-            // TODO: remove once the bug in custom scrollbar is resolved
-            var ix = baron._instances.indexOf(this.scroll[0]);
-            if (ix >= 0) {
-                baron._instances.splice(ix, 1);
-            }
             this.scroll = null;
         }
     },
