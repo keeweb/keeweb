@@ -22,6 +22,7 @@ var OpenView = Backbone.View.extend({
         'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
         'keydown .open__pass-input': 'inputKeydown',
+        'keyup .open__pass-input': 'inputKeyup',
         'keypress .open__pass-input': 'inputKeypress',
         'click .open__pass-enter-btn': 'openDb',
         'click .open__settings-key-file': 'openKeyFile',
@@ -206,9 +207,16 @@ var OpenView = Backbone.View.extend({
         if (code === Keys.DOM_VK_RETURN) {
             this.openDb();
         } else if (code === Keys.DOM_VK_CAPS_LOCK) {
-            this.$el.find('.open__pass-warning').removeClass('invisible');
+            this.toggleCapsLockWarning(false);
         } else if (code === Keys.DOM_VK_A) {
             e.stopImmediatePropagation();
+        }
+    },
+
+    inputKeyup: function(e) {
+        var code = e.keyCode || e.which;
+        if (code === Keys.DOM_VK_CAPS_LOCK) {
+            this.toggleCapsLockWarning(false);
         }
     },
 
@@ -223,7 +231,7 @@ var OpenView = Backbone.View.extend({
     },
 
     toggleCapsLockWarning: function(on) {
-        this.$el.find('.open__file-warning').toggleClass('invisible', on);
+        this.$el.find('.open__pass-warning').toggleClass('invisible', !on);
     },
 
     dragover: function(e) {
