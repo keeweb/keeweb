@@ -21,7 +21,7 @@ var ModalView = Backbone.View.extend({
         if (typeof this.model.enter === 'string') {
             KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
         }
-        KeyHandler.setModal(true);
+        KeyHandler.setModal(!this.model.textinput);
     },
 
     remove : function() {
@@ -66,7 +66,8 @@ var ModalView = Backbone.View.extend({
 
     closeWithResult: function(result) {
         var checked = this.model.checkbox ? this.$el.find('#modal__check').is(':checked') : undefined;
-        this.trigger('result', result, checked);
+        var textinput = this.model.textinput ? this.$el.find('#modal__textinput').val() : undefined;
+        this.trigger('result', result, checked, textinput);
         this.$el.addClass('modal--hidden');
         this.undelegateEvents();
         setTimeout(this.remove.bind(this), 100);

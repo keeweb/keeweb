@@ -6,6 +6,7 @@ var Backbone = require('backbone'),
     SecureInput = require('../comp/secure-input'),
     DropboxLink = require('../comp/dropbox-link'),
     Logger = require('../util/logger'),
+    Alerts = require('../comp/alerts'),
     Locale = require('../util/locale');
 
 var logger = new Logger('open-view');
@@ -16,6 +17,7 @@ var OpenView = Backbone.View.extend({
     events: {
         'change .open__file-ctrl': 'fileSelected',
         'click .open__icon-open': 'openFile',
+        'click .open__icon-link': 'openLink',
         'click .open__icon-new': 'createNew',
         'click .open__icon-dropbox': 'openFromDropbox',
         'click .open__icon-demo': 'createDemo',
@@ -150,6 +152,44 @@ var OpenView = Backbone.View.extend({
     openFile: function() {
         if (!this.busy) {
             this.openAny('fileData');
+        }
+    },
+
+    openLink: function() {
+        var openview = this;
+
+        if (!this.busy) {
+            Alerts.alert({
+                    icon: 'link',
+                    header: Locale.openURL,
+                    body: Locale.openLink,
+                    textinput: 'https://',
+                    esc: '',
+                    enter: 'open',
+                    buttons: [
+                        { result: 'open', title: Locale.openOpen },
+                        { result: '', title: Locale.alertCancel }
+                    ],
+                    success: function(result, check, url) {
+                        if (result === 'open') {
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('GET', url, true);
+                            xhr.responseType = 'arraybuffer';
+
+                            xhr.onload = function(e) {
+                                openview.params.id = null;
+                                openview.params.fileData = e.target.response;
+                                openview.params.name = url;
+                                openview.params.path = null;
+                                openview.params.storage = null;
+                                openview.params.rev = null;
+                                openview.displayOpenFile();
+                            };
+
+                            xhr.send();
+                        }
+                    }
+                });
         }
     },
 

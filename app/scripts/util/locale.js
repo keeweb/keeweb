@@ -100,6 +100,8 @@ var Locale = {
     searchHistory: 'History',
 
     openOpen: 'Open',
+    openURL: 'URL',
+    openLink: 'Enter the url of the keepass file',
     openNew: 'New',
     openDemo: 'Demo',
     openCaps: 'Caps Lock is on',
