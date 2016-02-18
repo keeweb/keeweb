@@ -7,6 +7,9 @@
             {{#if checkbox}}
             <div class="modal__check-wrap"><input type="checkbox" id="modal__check" /><label for="modal__check">{{checkbox}}</label></div>
             {{/if}}
+            {{#if textinput}}
+            <div class="modal__textinput-wrap"><input type="text" id="modal__textinput" size="50" value="{{textinput}}"/></div>
+            {{/if}}
         </div>
         <div class="modal__buttons">
             {{#each buttons as |btn|}}

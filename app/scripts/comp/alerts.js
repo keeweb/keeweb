@@ -16,16 +16,16 @@ var Alerts = {
         Alerts.alertDisplayed = true;
         var view = new ModalView({ model: config });
         view.render();
-        view.on('result', function(res, check) {
+        view.on('result', function(res, check, textinput) {
             Alerts.alertDisplayed = false;
             if (res && config.success) {
-                config.success(res, check);
+                config.success(res, check, textinput);
             }
             if (!res && config.cancel) {
                 config.cancel();
             }
             if (config.complete) {
-                config.complete(res, check);
+                config.complete(res, check, textinput);
             }
         });
     },
