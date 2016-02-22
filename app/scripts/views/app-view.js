@@ -253,7 +253,7 @@ var AppView = Backbone.View.extend({
                     var that = this;
                     if (this.model.settings.get('autoSave')) {
                         that.saveAndExit();
-                        return;
+                        return Launcher.preventExit(e);
                     }
                     that.exitAlertShown = true;
                     Alerts.yesno({
