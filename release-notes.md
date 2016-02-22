@@ -6,6 +6,7 @@ Storage providers, usability improvements
 `+` beta version app  
 `+` option to lock on password copy  
 `+` save/restore window position after close  
+`+` shortcut to copy username  
 `-` fix #88: capslock indicator  
 
 ##### v1.0.2 (2016-02-17)

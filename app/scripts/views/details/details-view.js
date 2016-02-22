@@ -33,6 +33,7 @@ var DetailsView = Backbone.View.extend({
     fieldViews: null,
     views: null,
     passEditView: null,
+    userEditView: null,
     addNewFieldView: null,
     fieldCopyTip: null,
 
@@ -56,12 +57,14 @@ var DetailsView = Backbone.View.extend({
         this.initScroll();
         this.listenTo(Backbone, 'select-entry', this.showEntry);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
     },
 
     remove: function() {
         KeyHandler.offKey(Keys.DOM_VK_C, this.copyKeyPress, this);
+        KeyHandler.offKey(Keys.DOM_VK_B, this.copyUserKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         this.removeFieldViews();
@@ -115,8 +118,9 @@ var DetailsView = Backbone.View.extend({
 
     addFieldViews: function() {
         var model = this.model;
-        this.fieldViews.push(new FieldViewText({ model: { name: '$UserName', title: Locale.detUser,
-            value: function() { return model.user; } } }));
+        this.userEditView = new FieldViewText({ model: { name: '$UserName', title: Locale.detUser,
+            value: function() { return model.user; } } });
+        this.fieldViews.push(this.userEditView);
         this.passEditView = new FieldViewText({ model: { name: '$Password', title: Locale.detPassword, canGen: true,
             value: function() { return model.password; } } });
         this.fieldViews.push(this.passEditView);
@@ -274,12 +278,32 @@ var DetailsView = Backbone.View.extend({
         if (!window.getSelection().toString()) {
             var pw = this.model.password;
             var password = pw.isProtected ? pw.getText() : pw;
+            if (!password) {
+                return;
+            }
             if (!CopyPaste.simpleCopy) {
                 CopyPaste.createHiddenInput(password);
             }
             var copyRes = CopyPaste.copy(password);
             if (copyRes) {
                 this.fieldCopied({ source: this.passEditView, copyRes: copyRes });
+            }
+        }
+    },
+
+    copyUserKeyPress: function() {
+        if (!window.getSelection().toString()) {
+            var userField = this.model.user;
+            var user = userField.isProtected ? userField.getText() : userField;
+            if (!user) {
+                return;
+            }
+            if (!CopyPaste.simpleCopy) {
+                CopyPaste.createHiddenInput(user);
+            }
+            var copyRes = CopyPaste.copy(user);
+            if (copyRes) {
+                this.fieldCopied({ source: this.userEditView, copyRes: copyRes });
             }
         }
     },
