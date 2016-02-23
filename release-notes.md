@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.0.3 (TBD)
 Hotfix
+`+` #94: warn user about local files  
 `-` #92: save files on exit  
 `-` #95: unlock by opening settings  
 
