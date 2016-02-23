@@ -137,7 +137,7 @@ var GeneratorView = Backbone.View.extend({
     },
 
     newPass: function() {
-        this.render();
+        this.generate();
     }
 });
 
