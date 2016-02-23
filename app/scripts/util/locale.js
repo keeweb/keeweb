@@ -51,6 +51,7 @@ var Locale = {
     footerTitleLock: 'Lock',
 
     genLen: 'Length',
+    genNewPass: 'New password',
     genPresetDefault: 'default preset',
     genPresetDerived: 'like old password',
     genPresetPronounceable: 'pronounceable',

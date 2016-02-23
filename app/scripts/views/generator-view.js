@@ -17,7 +17,8 @@ var GeneratorView = Backbone.View.extend({
         'change .gen__length-range': 'lengthChange',
         'change .gen__check input[type=checkbox]': 'checkChange',
         'click .gen__btn-ok': 'btnOkClick',
-        'change .gen__sel-tpl': 'templateChange'
+        'change .gen__sel-tpl': 'templateChange',
+        'click .gen__btn-refresh': 'newPass'
     },
 
     valuesMap: [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,24,26,28,30,32,48,64],
@@ -133,6 +134,10 @@ var GeneratorView = Backbone.View.extend({
         this.preset = name;
         var preset = _.find(this.presets, function(t) { return t.name === name; });
         this.gen = _.clone(preset);
+        this.render();
+    },
+
+    newPass: function() {
         this.render();
     }
 });

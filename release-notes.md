@@ -7,6 +7,8 @@ Storage providers, usability improvements
 `+` option to lock on password copy  
 `+` save/restore window position after close  
 `+` shortcut to copy username  
+`+` password generation presets  
+`+` regenerate password button  
 `-` fix #88: capslock indicator  
 
 ##### v1.0.3 (TBD)
