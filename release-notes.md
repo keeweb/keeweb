@@ -9,6 +9,12 @@ Storage providers, usability improvements
 `+` shortcut to copy username  
 `-` fix #88: capslock indicator  
 
+##### v1.0.3 (TBD)
+Hotfix
+`+` #94: warn user about local files  
+`-` #92: save files on exit  
+`-` #95: unlock by opening settings  
+
 ##### v1.0.2 (2016-02-17)
 Hotfix  
 `-` #80: dragdrop bug  

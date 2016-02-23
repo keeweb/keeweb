@@ -20,7 +20,8 @@ var AppSettingsModel = Backbone.Model.extend({
         colorfulIcons: false,
         lockOnMinimize: true,
         lockOnCopy: false,
-        helpTipCopyShown: false
+        helpTipCopyShown: false,
+        skipOpenLocalWarn: false
     },
 
     initialize: function() {

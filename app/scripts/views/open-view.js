@@ -87,9 +87,34 @@ var OpenView = Backbone.View.extend({
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
+    showLocalFileAlert: function() {
+        if (this.model.settings.get('skipOpenLocalWarn')) {
+            return;
+        }
+        var that = this;
+        Alerts.alert({
+            header: Locale.openLocalFile,
+            body: Locale.openLocalFileBody,
+            icon: 'file-text',
+            buttons: [
+                {result: 'skip', title: Locale.openLocalFileDontShow, error: true},
+                {result: 'ok', title: Locale.alertOk}
+            ],
+            click: '',
+            esc: '',
+            enter: '',
+            success: function(res) {
+                if (res === 'skip') {
+                    that.model.settings.set('skipOpenLocalWarn', true);
+                }
+            }
+        });
+    },
+
     fileSelected: function(e) {
         var file = e.target.files[0];
         if (file) {
+            this.showLocalFileAlert();
             this.processFile(file);
         }
     },
@@ -193,13 +218,33 @@ var OpenView = Backbone.View.extend({
         }
         var id = $(e.target).closest('.open__last-item').data('id').toString();
         if ($(e.target).is('.open__last-item-icon-del')) {
-            this.model.removeFileInfo(id);
-            this.$el.find('.open__last-item[data-id="' + id + '"]').remove();
-            this.initialize();
-            this.render();
+            var fileInfo = this.model.fileInfos.get(id);
+            if (!fileInfo.get('storage')) {
+                var that = this;
+                Alerts.yesno({
+                    header: Locale.openRemoveLastQuestion,
+                    body: Locale.openRemoveLastQuestionBody,
+                    buttons: [
+                        {result: 'yes', title: Locale.alertYes},
+                        {result: '', title: Locale.alertNo}
+                    ],
+                    success: function() {
+                        that.removeFile(id);
+                    }
+                });
+                return;
+            }
+            this.removeFile(id);
             return;
         }
         this.showOpenFileInfo(this.model.fileInfos.get(id));
+    },
+
+    removeFile: function(id) {
+        this.model.removeFileInfo(id);
+        this.$el.find('.open__last-item[data-id="' + id + '"]').remove();
+        this.initialize();
+        this.render();
     },
 
     inputKeydown: function(e) {
@@ -263,6 +308,7 @@ var OpenView = Backbone.View.extend({
         var dataFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'kdbx'; });
         var keyFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'key'; });
         if (dataFile) {
+            this.showLocalFileAlert();
             this.setFile(dataFile, keyFile);
         }
     },
