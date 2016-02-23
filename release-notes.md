@@ -11,9 +11,8 @@ Storage providers, usability improvements
 `+` regenerate password button  
 `-` fix #88: capslock indicator  
 
-##### v1.0.3 (TBD)
 ##### v1.0.3 (2016-02-23)
-Hotfix
+Hotfix  
 `+` #94: warn user about local files  
 `-` #92: save files on exit  
 `-` #95: unlock by opening settings  
