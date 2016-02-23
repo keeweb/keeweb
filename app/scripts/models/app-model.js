@@ -121,6 +121,7 @@ var AppModel = Backbone.Model.extend({
         this.menu.filesSection.removeAllItems();
         this.tags.splice(0, this.tags.length);
         this.filter = {};
+        this.refresh();
     },
 
     closeFile: function(file) {
