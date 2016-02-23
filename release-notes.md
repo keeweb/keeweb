@@ -12,10 +12,12 @@ Storage providers, usability improvements
 `-` fix #88: capslock indicator  
 
 ##### v1.0.3 (TBD)
+##### v1.0.3 (2016-02-23)
 Hotfix
 `+` #94: warn user about local files  
 `-` #92: save files on exit  
 `-` #95: unlock by opening settings  
+`-` fix crash on arch linux startup  
 
 ##### v1.0.2 (2016-02-17)
 Hotfix  
