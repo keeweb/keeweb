@@ -114,7 +114,9 @@ var OpenView = Backbone.View.extend({
     fileSelected: function(e) {
         var file = e.target.files[0];
         if (file) {
-            this.showLocalFileAlert();
+            if (!file.path) {
+                this.showLocalFileAlert();
+            }
             this.processFile(file);
         }
     },
@@ -308,7 +310,9 @@ var OpenView = Backbone.View.extend({
         var dataFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'kdbx'; });
         var keyFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'key'; });
         if (dataFile) {
-            this.showLocalFileAlert();
+            if (!dataFile.path) {
+                this.showLocalFileAlert();
+            }
             this.setFile(dataFile, keyFile);
         }
     },

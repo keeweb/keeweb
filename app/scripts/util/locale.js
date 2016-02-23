@@ -115,9 +115,10 @@ var Locale = {
     openSelectFileBody: 'Select a file from your Dropbox which you would like to open',
     openPassFor: 'Password for',
     openRemoveLastQuestion: 'Delete local file?',
-    openRemoveLastQuestionBody: 'The file you are deleting is stored only in browser. Delete it permanently?',
+    openRemoveLastQuestionBody: 'The file you are deleting is stored only inside the app. Delete it permanently?',
     openLocalFile: 'Local file',
-    openLocalFileBody: 'You are going to open a local file. Changes you make will not be saved back to file system. ' +
+    openLocalFileBody: 'You are going to open a file which will be stored inside the app. ' +
+        'Changes you make will not be saved back to file system. ' +
         'To get the file with your data, export it from settings.',
     openLocalFileDontShow: 'Don\'t show this again',
 
