@@ -1,5 +1,10 @@
 Release notes
 -------------
+##### v1.0.3 (TBD)
+Hotfix
+`-` #92: save files on exit  
+`-` #95: unlock by opening settings  
+
 ##### v1.0.2 (2016-02-17)
 Hotfix  
 `-` #80: dragdrop bug  

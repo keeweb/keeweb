@@ -455,7 +455,11 @@ var AppView = Backbone.View.extend({
         }
         if (this.views.settings) {
             if (this.views.settings.page === page || !menuItem) {
-                this.showEntries();
+                if (this.model.files.hasOpenFiles()) {
+                    this.showEntries();
+                } else {
+                    this.showLastOpenFile();
+                }
             } else {
                 if (menuItem) {
                     this.model.menu.select({item: menuItem});
