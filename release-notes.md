@@ -12,6 +12,10 @@ Storage providers, usability improvements
 `+` option to search in title  
 `-` fix #88: capslock indicator  
 
+##### v1.0.4 (2016-02-25)
+Workaround for Chrome bug  
+`-` #110: fix font rendering in Chrome  
+
 ##### v1.0.3 (2016-02-23)
 Hotfix  
 `+` #94: warn user about local files  
