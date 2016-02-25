@@ -208,7 +208,7 @@ var EntryModel = Backbone.Model.extend({
         if (adv.pass && matchField(entry, 'Password', compare, search)) {
             return true;
         }
-        if (adv.other && matchField(entry, 'Title', compare, search)) {
+        if (adv.title && matchField(entry, 'Title', compare, search)) {
             return true;
         }
         var matches = false;

@@ -9,6 +9,7 @@ Storage providers, usability improvements
 `+` shortcut to copy username  
 `+` password generation presets  
 `+` regenerate password button  
+`+` option to search in title  
 `-` fix #88: capslock indicator  
 
 ##### v1.0.3 (2016-02-23)
