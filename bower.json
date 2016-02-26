@@ -29,7 +29,7 @@
     "dropbox": "antelle/dropbox-js#0.10.6",
     "font-awesome": "~4.4.0",
     "install": "~1.0.4",
-    "kdbxweb": "~0.3.4",
+    "kdbxweb": "~0.3.5",
     "normalize.css": "~3.0.3",
     "pikaday": "~1.3.3",
     "FileSaver.js": "eligrey/FileSaver.js",
