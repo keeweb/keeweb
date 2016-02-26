@@ -49,12 +49,16 @@ var FileModel = Backbone.Model.extend({
             var ts = logger.ts();
             kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
                 if (err) {
+                    if (err.code === kdbxweb.Consts.ErrorCodes.InvalidKey && password && !password.byteLength) {
+                        logger.info('Error opening file with empty password, try to open with null password');
+                        return this.open(null, fileData, keyFileData, callback);
+                    }
                     logger.error('Error opening file', err.code, err.message, err);
                     callback(err);
                 } else {
                     this.db = db;
                     this.readModel();
-                    this.setOpenFile({ passwordLength: password.textLength });
+                    this.setOpenFile({ passwordLength: password ? password.textLength : 0 });
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                     }

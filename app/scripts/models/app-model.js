@@ -334,7 +334,7 @@ var AppModel = Backbone.Model.extend({
 
     openFileWithData: function(params, callback, fileInfo, data, updateCacheOnSuccess) {
         var logger = new Logger('open', params.name);
-        if (!params.keyFileName && fileInfo.get('keyFileName') && this.settings.get('rememberKeyFiles')) {
+        if (!params.keyFileName && fileInfo && fileInfo.get('keyFileName') && this.settings.get('rememberKeyFiles')) {
             params.keyFileName = fileInfo.get('keyFileName');
             params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
         }

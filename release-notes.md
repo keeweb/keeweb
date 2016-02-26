@@ -10,6 +10,7 @@ Storage providers, usability improvements
 `+` password generation presets  
 `+` regenerate password button  
 `+` option to search in title  
+`+` open files created without password  
 `-` fix #88: capslock indicator  
 
 ##### v1.0.4 (2016-02-25)
