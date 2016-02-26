@@ -295,6 +295,7 @@ var Locale = {
     setShOpen: 'open / new',
     setShSave: 'save all files',
     setShGen: 'generate password',
+    setShSet: 'app settings',
 
     setAboutTitle: 'About',
     setAboutBuilt: 'This app is built with these awesome tools',
