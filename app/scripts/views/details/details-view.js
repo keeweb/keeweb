@@ -385,12 +385,17 @@ var DetailsView = Backbone.View.extend({
         var clipboardTime = e.copyRes.seconds;
         var msg = clipboardTime ? Locale.detFieldCopiedTime.replace('{}', clipboardTime)
             : Locale.detFieldCopied;
-        var tip = new Tip(fieldLabel, { title: msg, placement: 'right', fast: true });
-        this.fieldCopyTip = tip;
-        tip.show();
+        var tip;
+        if (!this.isHidden()) {
+            tip = new Tip(fieldLabel, {title: msg, placement: 'right', fast: true});
+            this.fieldCopyTip = tip;
+            tip.show();
+        }
         var that = this;
         setTimeout(function() {
-            tip.hide();
+            if (tip) {
+                tip.hide();
+            }
             that.fieldCopyTip = null;
             if (e.source.model.name === '$Password' && AppSettingsModel.instance.get('lockOnCopy')) {
                 setTimeout(function() {
