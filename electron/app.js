@@ -46,9 +46,17 @@ app.on('window-all-closed', function() {
     }
 });
 app.on('ready', function() {
-    createGlobalShortcut('Ctrl+Alt+B', 'copy-user');
-    createGlobalShortcut('Ctrl+Alt+C', 'copy-password');
-    createGlobalShortcut('Ctrl+Alt+U', 'copy-url');
+    if (process.platform === 'darwin') {
+        createGlobalShortcut('Ctrl+Alt+B', 'copy-user');
+        createGlobalShortcut('Ctrl+Alt+C', 'copy-password');
+        createGlobalShortcut('Ctrl+Alt+U', 'copy-url');
+    }
+    else
+    {
+        createGlobalShortcut('Shift+Alt+B', 'copy-user');
+        createGlobalShortcut('Shift+Alt+C', 'copy-password');
+        createGlobalShortcut('Shift+Alt+U', 'copy-url');
+    }
     createMainWindow();
 });
 app.on('open-file', function(e, path) {
