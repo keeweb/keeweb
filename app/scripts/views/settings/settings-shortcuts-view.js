@@ -9,7 +9,9 @@ var SettingsShortcutsView = Backbone.View.extend({
     render: function() {
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
-            alt: FeatureDetector.altShortcutSymbol(true)
+            alt: FeatureDetector.altShortcutSymbol(true),
+            global: FeatureDetector.globalShortcutSymbol(true),
+            globalIsLarge: FeatureDetector.globalShortcutIsLarge()
         });
     }
 });

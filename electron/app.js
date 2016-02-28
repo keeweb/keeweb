@@ -8,7 +8,8 @@ var app = require('app'),
     fs = require('fs'),
     BrowserWindow = require('browser-window'),
     Menu = require('menu'),
-    Tray = require('tray');
+    Tray = require('tray'),
+    globalShortcut = require('electron').globalShortcut;
 
 var mainWindow = null,
     appIcon = null,
@@ -29,6 +30,7 @@ process.argv.forEach(function(arg) {
 app.on('window-all-closed', function() {
     if (restartPending) {
         // unbind all handlers, load new app.js module and pass control to it
+        globalShortcut.unregisterAll();
         app.removeAllListeners('window-all-closed');
         app.removeAllListeners('ready');
         app.removeAllListeners('open-file');
@@ -45,6 +47,7 @@ app.on('window-all-closed', function() {
 });
 app.on('ready', function() {
     createMainWindow();
+    setGlobalShortcuts();
 });
 app.on('open-file', function(e, path) {
     e.preventDefault();
@@ -57,6 +60,9 @@ app.on('activate', function() {
             createMainWindow();
         }
     }
+});
+app.on('will-quit', function() {
+    globalShortcut.unregisterAll();
 });
 app.restartApp = function() {
     restartPending = true;
@@ -234,4 +240,22 @@ function notifyOpenFile() {
             ' else { window.launcherOpenedFile="' + openFile + '"; }');
         openFile = null;
     }
+}
+
+function setGlobalShortcuts() {
+    var shortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
+    var shortcuts = {
+        C: 'copy-password',
+        B: 'copy-user',
+        U: 'copy-url'
+    };
+    Object.keys(shortcuts).forEach(function(key) {
+        var shortcut = shortcutModifiers + key;
+        var eventName = shortcuts[key];
+        try {
+            globalShortcut.register(shortcut, function () {
+                emitBackboneEvent(eventName);
+            });
+        } catch (e) {}
+    });
 }

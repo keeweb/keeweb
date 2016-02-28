@@ -26,6 +26,9 @@
     text-align: center;
     padding: $base-padding;
     margin: 0 $base-padding-h $base-padding-v $base-padding-h;
+    &-large {
+      width: 80px;
+    }
     &:first-of-type {
       margin-left: 0;
     }

@@ -16,6 +16,12 @@ var FeatureDetector = {
     altShortcutSymbol: function(formatting) {
         return this.isMac() ? '⌥' : formatting ? '<span class="thin">alt + </span>' : 'alt-';
     },
+    globalShortcutSymbol: function(formatting) {
+        return this.isMac() ? '⌃⌥' : formatting ? '<span class="thin">shift+alt+</span>' : 'shift-alt-';
+    },
+    globalShortcutIsLarge: function() {
+        return !this.isMac();
+    },
     shouldMoveHiddenInputToCopySource: function() {
         return /(iPad|iPhone)/i.test(navigator.userAgent);
     },
