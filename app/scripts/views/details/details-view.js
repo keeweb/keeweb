@@ -35,6 +35,7 @@ var DetailsView = Backbone.View.extend({
     views: null,
     passEditView: null,
     userEditView: null,
+    urlEditView: null,
     addNewFieldView: null,
     fieldCopyTip: null,
 
@@ -59,6 +60,7 @@ var DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'select-entry', this.showEntry);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrlKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
     },
@@ -66,6 +68,7 @@ var DetailsView = Backbone.View.extend({
     remove: function() {
         KeyHandler.offKey(Keys.DOM_VK_C, this.copyKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_B, this.copyUserKeyPress, this);
+        KeyHandler.offKey(Keys.DOM_VK_U, this.copyUrlKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         this.removeFieldViews();
@@ -125,8 +128,9 @@ var DetailsView = Backbone.View.extend({
         this.passEditView = new FieldViewText({ model: { name: '$Password', title: Locale.detPassword, canGen: true,
             value: function() { return model.password; } } });
         this.fieldViews.push(this.passEditView);
-        this.fieldViews.push(new FieldViewUrl({ model: { name: '$URL', title: Locale.detWebsite,
-            value: function() { return model.url; } } }));
+        this.urlEditView = new FieldViewUrl({ model: { name: '$URL', title: Locale.detWebsite,
+            value: function() { return model.url; } } });
+        this.fieldViews.push(this.urlEditView);
         this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: Locale.detNotes, multiline: 'true',
             value: function() { return model.notes; } } }));
         this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: Locale.detTags, tags: this.appModel.tags,
@@ -309,6 +313,23 @@ var DetailsView = Backbone.View.extend({
             var copyRes = CopyPaste.copy(user);
             if (copyRes) {
                 this.fieldCopied({ source: this.userEditView, copyRes: copyRes });
+            }
+        }
+    },
+    
+     copyUrlKeyPress: function() {
+        if (!window.getSelection().toString()) {
+            var urlField = this.model.url;
+            var url = urlField.isProtected ? urlField.getText() : urlField;
+            if (!url) {
+                return;
+            }
+            if (!CopyPaste.simpleCopy) {
+                CopyPaste.createHiddenInput(url);
+            }
+            var copyRes = CopyPaste.copy(url);
+            if (copyRes) {
+                this.fieldCopied({ source: this.urlEditView, copyRes: copyRes });
             }
         }
     },
