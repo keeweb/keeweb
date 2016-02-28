@@ -21,6 +21,7 @@ Tip.prototype.init = function() {
         return;
     }
     this.el.removeAttr('title');
+    this.el.attr('data-title', this.title);
     this.el.mouseenter(this.mouseenter.bind(this)).mouseleave(this.mouseleave.bind(this));
     this.el.click(this.mouseleave.bind(this));
 };
@@ -140,6 +141,18 @@ Tip.createTips = function(container) {
     container.find('[title]').each(function(ix, el) {
         var tip = new Tip($(el));
         tip.init();
+        el._tip = tip;
+    });
+};
+
+Tip.hideTips = function(container) {
+    if (!Tip.enabled) {
+        return;
+    }
+    container.find('[data-title]').each(function(ix, el) {
+        if (el._tip) {
+            el._tip.hide();
+        }
     });
 };
 

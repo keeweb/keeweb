@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
 
 _.extend(Backbone.View.prototype, {
     hide: function() {
+        Tip.hideTips(this.$el);
         return this.toggle(false);
     },
 
@@ -20,6 +21,9 @@ _.extend(Backbone.View.prototype, {
         this.$el.toggleClass('hide', !visible);
         this._hidden = !visible;
         this.trigger(visible ? 'show' : 'hide');
+        if (!visible) {
+            Tip.hideTips(this.$el);
+        }
         return this;
     },
 
@@ -42,6 +46,7 @@ _.extend(Backbone.View.prototype, {
     },
 
     renderTemplate: function(model, replace) {
+        Tip.hideTips(this.$el);
         if (replace && replace.plain) {
             this.$el.html(this.template(model));
         } else {
@@ -81,6 +86,7 @@ _.extend(Backbone.View.prototype, {
             try { this.scroll.dispose(); }
             catch (e) { }
         }
+        Tip.hideTips(this.$el);
         this._parentRemove(arguments);
     }
 });
