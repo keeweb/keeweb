@@ -1,6 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    Launcher = require('../../comp/launcher'),
     FeatureDetector = require('../../util/feature-detector');
 
 var SettingsShortcutsView = Backbone.View.extend({
@@ -11,7 +12,8 @@ var SettingsShortcutsView = Backbone.View.extend({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             alt: FeatureDetector.altShortcutSymbol(true),
             global: FeatureDetector.globalShortcutSymbol(true),
-            globalIsLarge: FeatureDetector.globalShortcutIsLarge()
+            globalIsLarge: FeatureDetector.globalShortcutIsLarge(),
+            globalShortcutsSupported: !!Launcher
         });
     }
 });
