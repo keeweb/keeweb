@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../../models/app-settings-model'),
     Scrollable = require('../../mixins/scrollable'),
     FieldViewText = require('../fields/field-view-text'),
+    FieldViewAutocomplete = require('../fields/field-view-autocomplete'),
     FieldViewDate = require('../fields/field-view-date'),
     FieldViewTags = require('../fields/field-view-tags'),
     FieldViewUrl = require('../fields/field-view-url'),
@@ -118,8 +119,8 @@ var DetailsView = Backbone.View.extend({
 
     addFieldViews: function() {
         var model = this.model;
-        this.userEditView = new FieldViewText({ model: { name: '$UserName', title: Locale.detUser,
-            value: function() { return model.user; } } });
+        this.userEditView = new FieldViewAutocomplete({ model: { name: '$UserName', title: Locale.detUser,
+            value: function() { return model.user; }, getCompletions: this.getUserNameCompletions.bind(this) } });
         this.fieldViews.push(this.userEditView);
         this.passEditView = new FieldViewText({ model: { name: '$Password', title: Locale.detPassword, canGen: true,
             value: function() { return model.password; } } });
@@ -165,6 +166,10 @@ var DetailsView = Backbone.View.extend({
             fieldView.on('change', this.fieldChanged.bind(this));
             fieldView.on('copy', this.fieldCopied.bind(this));
         }, this);
+    },
+
+    getUserNameCompletions: function(part) {
+        return this.appModel.completeUserNames(part);
     },
 
     setSelectedColor: function(color) {

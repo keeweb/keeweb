@@ -485,10 +485,10 @@
     }
   }
 
-  &__tags-autocomplete {
+  &__field-autocomplete {
     position: absolute;
     @include common-dropdown;
-    &-tag {
+    &-item {
       padding: $base-padding;
       display: inline-block;
       @include area-selectable(bottom);

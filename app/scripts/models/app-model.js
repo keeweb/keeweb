@@ -224,6 +224,25 @@ var AppModel = Backbone.Model.extend({
         return { group: group, file: file };
     },
 
+    completeUserNames: function(part) {
+        var userNames = {};
+        this.files.forEach(function(file) {
+            file.forEachEntry({ text: part, textLower: part.toLowerCase(), advanced: { user: true } }, function(entry) {
+                var userName = entry.user;
+                if (userName) {
+                    userNames[userName] = (userNames[userName] || 0) + 1;
+                }
+            });
+        });
+        var matches = _.pairs(userNames);
+        matches.sort(function(x, y) { return y[1] - x[1]; });
+        var maxResults = 5;
+        if (matches.length > maxResults) {
+            matches.length = maxResults;
+        }
+        return matches.map(function(m) { return m[0]; });
+    },
+
     createNewEntry: function() {
         var sel = this.getFirstSelectedGroup();
         return EntryModel.newEntry(sel.group, sel.file);
