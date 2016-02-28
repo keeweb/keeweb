@@ -289,6 +289,7 @@ var Locale = {
     setShEntry: 'go to entry',
     setShCopyPass: 'copy password or selected field',
     setShCopyUser: 'copy username',
+    setShCopyUrl: 'copy url',
     setShPrev: 'go to previous item',
     setShNext: 'go to next item',
     setShCreateEntry: 'create entry',
@@ -296,6 +297,9 @@ var Locale = {
     setShSave: 'save all files',
     setShGen: 'generate password',
     setShSet: 'app settings',
+    setShCopyPassGlobal: 'copy password global (works when app is in background)',
+    setShCopyUserGlobal: 'copy username global (works when app is in background)',
+    setShCopyUrlGlobal: 'copy url global (works when app is in background)',
 
     setAboutTitle: 'About',
     setAboutBuilt: 'This app is built with these awesome tools',

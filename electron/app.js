@@ -50,9 +50,7 @@ app.on('ready', function() {
         createGlobalShortcut('Ctrl+Alt+B', 'copy-user');
         createGlobalShortcut('Ctrl+Alt+C', 'copy-password');
         createGlobalShortcut('Ctrl+Alt+U', 'copy-url');
-    }
-    else
-    {
+    } else {
         createGlobalShortcut('Shift+Alt+B', 'copy-user');
         createGlobalShortcut('Shift+Alt+C', 'copy-password');
         createGlobalShortcut('Shift+Alt+U', 'copy-url');
@@ -72,7 +70,7 @@ app.on('activate', function() {
     }
 });
 app.on('will-quit', function() {
-  globalShortcut.unregisterAll();
+    globalShortcut.unregisterAll();
 });
 app.restartApp = function() {
     restartPending = true;
@@ -252,13 +250,8 @@ function notifyOpenFile() {
     }
 }
 
-function createGlobalShortcut(shortcut, backboneEventname)
-{
-    var ret = globalShortcut.register(shortcut, function() {
+function createGlobalShortcut(shortcut, backboneEventname) {
+    globalShortcut.register(shortcut, function() {
         emitBackboneEvent(backboneEventname);     
     });
-
-  if (!ret) {
-    console.log('registration failed');
-  }
 }

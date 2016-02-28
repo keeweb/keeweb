@@ -57,12 +57,12 @@ var DetailsView = Backbone.View.extend({
         this.views = {};
         this.initScroll();
         this.listenTo(Backbone, 'select-entry', this.showEntry);
-        this.listenTo(Backbone, 'copy-password', this.copyKeyPress);
-        this.listenTo(Backbone, 'copy-user', this.copyUserKeyPress);
-        this.listenTo(Backbone, 'copy-url', this.copyUrlKeyPress);
-        KeyHandler.onKey(Keys.DOM_VK_C, this.copyKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrlKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        this.listenTo(Backbone, 'copy-password', function() { this.copyKeyPress(this.passEditView); } );
+        this.listenTo(Backbone, 'copy-user', function() { this.copyKeyPress(this.userEditView); } );
+        this.listenTo(Backbone, 'copy-url', function() { this.copyKeyPress(this.urlEditView); } );
+        KeyHandler.onKey(Keys.DOM_VK_C, function() { this.copyKeyPress(this.passEditView); }, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_B, function() { this.copyKeyPress(this.userEditView); }, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_U, function() { this.copyKeyPress(this.urlEditView); }, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
     },
@@ -281,57 +281,23 @@ var DetailsView = Backbone.View.extend({
         }
     },
 
-    copyKeyPress: function() { // TODO: fix this in Safari
+    copyKeyPress: function(editView) {
         if (!window.getSelection().toString()) {
-            var pw = this.model.password;
-            var password = pw.isProtected ? pw.getText() : pw;
-            if (!password) {
+            var field = editView.value;
+            var fieldText = field.isProtected ? field.getText() : field;
+            if (!fieldText) {
                 return;
             }
             if (!CopyPaste.simpleCopy) {
-                CopyPaste.createHiddenInput(password);
+                CopyPaste.createHiddenInput(fieldText);
             }
-            var copyRes = CopyPaste.copy(password);
+            var copyRes = CopyPaste.copy(fieldText);
             if (copyRes) {
-                this.fieldCopied({ source: this.passEditView, copyRes: copyRes });
-            }
-        }
-    },
-
-    copyUserKeyPress: function() {
-        if (!window.getSelection().toString()) {
-            var userField = this.model.user;
-            var user = userField.isProtected ? userField.getText() : userField;
-            if (!user) {
-                return;
-            }
-            if (!CopyPaste.simpleCopy) {
-                CopyPaste.createHiddenInput(user);
-            }
-            var copyRes = CopyPaste.copy(user);
-            if (copyRes) {
-                this.fieldCopied({ source: this.userEditView, copyRes: copyRes });
+                this.fieldCopied({ source: editView, copyRes: copyRes });
             }
         }
     },
     
-     copyUrlKeyPress: function() {
-        if (!window.getSelection().toString()) {
-            var urlField = this.model.url;
-            var url = urlField.isProtected ? urlField.getText() : urlField;
-            if (!url) {
-                return;
-            }
-            if (!CopyPaste.simpleCopy) {
-                CopyPaste.createHiddenInput(url);
-            }
-            var copyRes = CopyPaste.copy(url);
-            if (copyRes) {
-                this.fieldCopied({ source: this.urlEditView, copyRes: copyRes });
-            }
-        }
-    },
-
     showCopyTip: function() {
         if (this.helpTipCopyShown) {
             return;
