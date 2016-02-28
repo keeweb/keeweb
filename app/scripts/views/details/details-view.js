@@ -57,6 +57,9 @@ var DetailsView = Backbone.View.extend({
         this.views = {};
         this.initScroll();
         this.listenTo(Backbone, 'select-entry', this.showEntry);
+        this.listenTo(Backbone, 'copy-password', this.copyKeyPress);
+        this.listenTo(Backbone, 'copy-user', this.copyUserKeyPress);
+        this.listenTo(Backbone, 'copy-url', this.copyUrlKeyPress);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrlKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
