@@ -70,6 +70,7 @@ var DetailsView = Backbone.View.extend({
     remove: function() {
         KeyHandler.offKey(Keys.DOM_VK_C, this.copyKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_B, this.copyUserKeyPress, this);
+        KeyHandler.offKey(Keys.DOM_VK_U, this.copyUrlKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         this.removeFieldViews();
