@@ -14,6 +14,7 @@ Storage providers, usability improvements
 `+` usernames autocomplete  
 `+` shortcut to copy website  
 `+` shortcuts while the app is in background  
+`+` build for 32-bit linux  
 `-` fix #88: capslock indicator  
 
 ##### v1.0.4 (2016-02-25)
