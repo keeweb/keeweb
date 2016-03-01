@@ -158,7 +158,11 @@ var OpenView = Backbone.View.extend({
                 complete(false);
             }
         }).bind(this);
-        reader.readAsArrayBuffer(file);
+        if (this.reading === 'fileXml') {
+            reader.readAsText(file);
+        } else {
+            reader.readAsArrayBuffer(file);
+        }
     },
 
     displayOpenFile: function() {

@@ -83,7 +83,7 @@ var FileModel = Backbone.Model.extend({
             var ts = logger.ts();
             var password = kdbxweb.ProtectedValue.fromString('');
             var credentials = new kdbxweb.Credentials(password);
-            kdbxweb.Kdbx.import(fileXml, credentials, (function(db, err) {
+            kdbxweb.Kdbx.loadXml(fileXml, credentials, (function(db, err) {
                 if (err) {
                     logger.error('Error importing file', err.code, err.message, err);
                     callback(err);
@@ -91,8 +91,7 @@ var FileModel = Backbone.Model.extend({
                     this.db = db;
                     this.readModel();
                     this.set({ open: true, created: true });
-                    logger.info('Imported file ' + this.get('name') + ': ' + logger.ts(ts) + ', ' +
-                        Math.round(fileXml.byteLength / 1024) + ' kB');
+                    logger.info('Imported file ' + this.get('name') + ': ' + logger.ts(ts));
                     callback();
                 }
             }).bind(this));
