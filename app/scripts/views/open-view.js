@@ -18,6 +18,7 @@ var OpenView = Backbone.View.extend({
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
         'click .open__icon-dropbox': 'openFromDropbox',
+        'click .open__icon-import': 'importFromXml',
         'click .open__icon-demo': 'createDemo',
         'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
@@ -123,18 +124,29 @@ var OpenView = Backbone.View.extend({
     processFile: function(file, complete) {
         var reader = new FileReader();
         reader.onload = (function(e) {
-            if (this.reading === 'fileData') {
-                this.params.id = null;
-                this.params.fileData = e.target.result;
-                this.params.name = file.name.replace(/\.\w+$/i, '');
-                this.params.path = file.path || null;
-                this.params.storage = file.path ? 'file' : null;
-                this.params.rev = null;
-                this.displayOpenFile();
-            } else {
-                this.params.keyFileData = e.target.result;
-                this.params.keyFileName = file.name;
-                this.displayOpenKeyFile();
+            switch (this.reading) {
+                case 'fileData':
+                    this.params.id = null;
+                    this.params.fileData = e.target.result;
+                    this.params.name = file.name.replace(/\.\w+$/i, '');
+                    this.params.path = file.path || null;
+                    this.params.storage = file.path ? 'file' : null;
+                    this.params.rev = null;
+                    this.displayOpenFile();
+                    break;
+                case 'fileXml':
+                    this.params.id = null;
+                    this.params.fileXml = e.target.result;
+                    this.params.name = file.name.replace(/\.\w+$/i, '');
+                    this.params.path = file.path || null;
+                    this.params.storage = file.path ? 'file' : null;
+                    this.params.rev = null;
+                    this.importDb();
+                    break;
+                default:
+                    this.params.keyFileData = e.target.result;
+                    this.params.keyFileName = file.name;
+                    this.displayOpenKeyFile();
             }
             if (complete) {
                 complete(true);
@@ -176,6 +188,12 @@ var OpenView = Backbone.View.extend({
     openFile: function() {
         if (!this.busy) {
             this.openAny('fileData');
+        }
+    },
+
+    importFromXml: function() {
+        if (!this.busy) {
+            this.openAny('fileXml', 'xml');
         }
     },
 
@@ -443,6 +461,16 @@ var OpenView = Backbone.View.extend({
         } else {
             this.trigger('close');
         }
+    },
+
+    importDb: function() {
+        if (this.busy || !this.params.name) {
+            return;
+        }
+        this.$el.toggleClass('open--opening', true);
+        this.inputEl.attr('disabled', 'disabled');
+        this.busy = true;
+        this.afterPaint(this.model.importFile.bind(this.model, this.params, this.openDbComplete.bind(this)));
     }
 });
 
