@@ -4,11 +4,11 @@ var kdbxweb = require('kdbxweb');
 
 var PasswordGenerator = {
     charRanges: {
-        upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
-        lower: 'abcdefghijkmnpqrstuvwxyz',
-        digits: '123456789',
-        special: '!@#$%^&*_+-=,./?;:`"~\'\\',
-        brackets: '(){}[]<>',
+        upper: { left:'ABCDEFGHJKLM', right:'NPQRSTUVWXYZ' },
+        lower: { left:'abcdefghijkm', right:'npqrstuvwxyz' },
+        digits: { left:'12345', right:'6789' },
+        special: { left: '`~!@#$%', right:'^&*_+-=,./?;:`"~\'\\' },
+        brackets: { left:'(){}[]<>' },
         high: '¡¢£¤¥¦§©ª«¬®¯°±²³´µ¶¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþ',
         ambiguous: 'O0oIl'
     },
@@ -16,9 +16,18 @@ var PasswordGenerator = {
         if (!opts || typeof opts.length !== 'number' || opts.length < 0) {
             return '';
         }
+        var isRight = opts.right; var isLeft = opts.left;
+
         var ranges = Object.keys(this.charRanges)
             .filter(function(r) { return opts[r]; })
-            .map(function(r) { return this.charRanges[r]; }, this);
+            .map(function(r) {
+                if (r === 'high' || r ==='ambiguous') { return this.charRanges[r]; }
+                else if (isRight && isLeft) { return this.charRanges[r].right.concat(this.charRanges[r].left); }
+                else if (isRight) { return this.charRanges[r].right; }
+                else if (isLeft) { return this.charRanges[r].left; }
+                return this.charRanges[r];
+                }, this);
+
         if (!ranges.length) {
             return '';
         }

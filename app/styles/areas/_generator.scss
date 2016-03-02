@@ -16,7 +16,7 @@
     @include user-select(text);
     font-family: $monospace-font-family;
     margin-top: 6px;
-    height: 50px;
+    height: 30px;
     text-align: center;
     white-space: pre;
     word-wrap: break-word;
@@ -26,6 +26,19 @@
   }
   &__btn-wrap {
     text-align: center;
+    height: 50px;
+  }
+  &__hands {
+      text-align: center;
+      &__left {
+          width: 40%;
+          display: inline-block;
+      }
+      &__right {
+          margin-left: 15%;
+          width: 40%;
+          display: inline-block;
+      }
   }
 }
 
