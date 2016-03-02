@@ -19,4 +19,10 @@
     </div>
     <div class="gen__result"></div>
     <div class="gen__btn-wrap"><button class="gen__btn-ok">{{btnTitle}}</button></div>
+
+    <div class="gen__hands">Hands to use</div>
+    <div class="gen__check gen__hands__left"><input type="checkbox" id="gen__check-left"
+            data-id="left" {{#if opt.left}}checked{{/if}}><label for="gen__check-left">Left</label></div>
+    <div class="gen__check gen__hands__right"><input type="checkbox" id="gen__check-right"
+            data-id="right" {{#if opt.right}}checked{{/if}}><label for="gen__check-right">Right</label></div>
 </div>

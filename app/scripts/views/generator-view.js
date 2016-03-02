@@ -6,7 +6,7 @@ var Backbone = require('backbone'),
     Locale = require('../util/locale');
 
 var DefaultGenOpts = {
-    length: 16, upper: true, lower: true, digits: true, special: false, brackets: false, high: false, ambiguous: false
+    length: 16, upper: true, lower: true, digits: true, special: false, brackets: false, high: false, ambiguous: false, left: true, right: true
 };
 
 var GeneratorView = Backbone.View.extend({
