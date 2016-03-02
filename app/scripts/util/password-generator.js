@@ -21,11 +21,11 @@ var PasswordGenerator = {
         var ranges = Object.keys(this.charRanges)
             .filter(function(r) { return opts[r]; })
             .map(function(r) {
-                if (r == 'high' || r=='ambiguous') return this.charRanges[r];
-                if (isRight && isLeft)return this.charRanges[r]['right'].concat(this.charRanges[r]['left']);
-                if (isRight)return this.charRanges[r]['right'];
-                if (isLeft)return this.charRanges[r]['left'];
-                return this.charRanges[r]
+                if (r === 'high' || r ==='ambiguous') { return this.charRanges[r]; }
+                else if (isRight && isLeft) { return this.charRanges[r].right.concat(this.charRanges[r].left); }
+                else if (isRight) { return this.charRanges[r].right; }
+                else if (isLeft) { return this.charRanges[r].left; }
+                return this.charRanges[r];
                 }, this);
 
         if (!ranges.length) {
