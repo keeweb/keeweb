@@ -16,9 +16,7 @@ var PasswordGenerator = {
         if (!opts || typeof opts.length !== 'number' || opts.length < 0) {
             return '';
         }
-        console.log(opts);
         var isRight = opts.right; var isLeft = opts.left;
-        console.log(isRight+' '  +isLeft);
 
         var ranges = Object.keys(this.charRanges)
             .filter(function(r) { return opts[r]; })
@@ -29,7 +27,6 @@ var PasswordGenerator = {
                 if (isLeft)return this.charRanges[r]['left'];
                 return this.charRanges[r]
                 }, this);
-        console.log(ranges);
 
         if (!ranges.length) {
             return '';
