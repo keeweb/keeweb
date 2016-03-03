@@ -258,6 +258,13 @@ var AppModel = Backbone.Model.extend({
         this.addFile(newFile);
     },
 
+    importFile: function(params, callback) {
+        var logger = new Logger('open', params.name);
+        logger.info('File import request');
+        logger.info('Open file from supplied content');
+        this.importFileWithData(params, callback, params.fileXml);
+    },
+
     openFile: function(params, callback) {
         var logger = new Logger('open', params.name);
         logger.info('File open request');
@@ -366,6 +373,22 @@ var AppModel = Backbone.Model.extend({
             }
             var rev = params.rev || fileInfo && fileInfo.get('rev');
             that.addToLastOpenFiles(file, rev);
+            that.addFile(file);
+            that.fileOpened(file);
+        });
+    },
+
+    importFileWithData: function(params, callback, data) {
+        var file = new FileModel({
+            name: params.name,
+            storage: params.storage,
+            path: params.path
+        });
+        var that = this;
+        file.import(data, function(err) {
+            if (err) {
+                return callback(err);
+            }
             that.addFile(file);
             that.fileOpened(file);
         });
