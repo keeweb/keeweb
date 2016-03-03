@@ -12,3 +12,4 @@ Please follow these steps:
 8. if your code is platform-dependent, please add corresponding switches
 9. respect each platform: don't create behaviour which breaks interface guidelines or user expectations 
 10. run `grunt` and make sure it's passing 
+11. replace this message with actual description
