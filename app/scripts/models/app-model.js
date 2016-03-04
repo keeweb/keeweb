@@ -396,6 +396,25 @@ var AppModel = Backbone.Model.extend({
         });
     },
 
+    importFileWithXml: function(params, callback) {
+        var logger = new Logger('import', params.name);
+        logger.info('File import request with supplied xml');
+        var file = new FileModel({
+            name: params.name,
+            storage: params.storage,
+            path: params.path
+        });
+        var that = this;
+        file.importWithXml(params.fileXml, function(err) {
+            logger.info('Import xml complete ' + (err ? 'with error' : ''), err);
+            if (err) {
+                return callback(err);
+            }
+            that.addFile(file);
+            that.fileOpened(file);
+        });
+    },
+
     addToLastOpenFiles: function(file, rev) {
         this.appLogger.debug('Add last open file', file.get('cacheId'), file.get('name'), file.get('storage'), file.get('path'), rev);
         var dt = new Date();

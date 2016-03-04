@@ -15,6 +15,7 @@ Storage providers, usability improvements
 `+` shortcut to copy website  
 `+` shortcuts while the app is in background  
 `+` build for 32-bit linux  
+`+` ability to import xml  
 `-` fix #88: capslock indicator  
 `-` fix file settings input behavior  
 
