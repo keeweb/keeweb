@@ -26,19 +26,20 @@ var SettingsAboutView = Backbone.View.extend({
         'click #settings__file-file-select-link': 'triggerSelectFile',
         'change #settings__file-file-select': 'fileSelected',
         'focus #settings__file-master-pass': 'focusMasterPass',
+        'input #settings__file-master-pass': 'changeMasterPass',
         'blur #settings__file-master-pass': 'blurMasterPass',
-        'blur #settings__file-name': 'blurName',
-        'blur #settings__file-def-user': 'blurDefUser',
+        'input #settings__file-name': 'changeName',
+        'input #settings__file-def-user': 'changeDefUser',
         'change #settings__file-trash': 'changeTrash',
-        'blur #settings__file-hist-len': 'blurHistoryLength',
-        'blur #settings__file-hist-size': 'blurHistorySize',
-        'blur #settings__file-key-rounds': 'blurKeyRounds'
+        'input #settings__file-hist-len': 'changeHistoryLength',
+        'input #settings__file-hist-size': 'changeHistorySize',
+        'input #settings__file-key-rounds': 'changeKeyRounds'
     },
 
     appModel: null,
 
     initialize: function() {
-        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', this.render);
+        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', this.deferRender);
     },
 
     render: function() {
@@ -289,10 +290,9 @@ var SettingsAboutView = Backbone.View.extend({
         e.target.setAttribute('type', 'text');
     },
 
-    blurMasterPass: function(e) {
+    changeMasterPass: function(e) {
         if (!e.target.value) {
             this.model.resetPassword();
-            e.target.value = PasswordGenerator.present(this.model.get('passwordLength'));
             this.$el.find('.settings__file-master-pass-warning').hide();
         } else {
             this.model.setPassword(kdbxweb.ProtectedValue.fromString(e.target.value));
@@ -300,19 +300,26 @@ var SettingsAboutView = Backbone.View.extend({
                 this.$el.find('.settings__file-master-pass-warning').show();
             }
         }
+    },
+
+    blurMasterPass: function(e) {
+        if (!e.target.value) {
+            this.model.resetPassword();
+            e.target.value = PasswordGenerator.present(this.model.get('passwordLength'));
+            this.$el.find('.settings__file-master-pass-warning').hide();
+        }
         e.target.setAttribute('type', 'password');
     },
 
-    blurName: function(e) {
+    changeName: function(e) {
         var value = $.trim(e.target.value);
         if (!value) {
-            e.target.value = this.model.get('name');
             return;
         }
         this.model.setName(value);
     },
 
-    blurDefUser: function(e) {
+    changeDefUser: function(e) {
         var value = $.trim(e.target.value);
         this.model.setDefaultUser(value);
     },
@@ -321,7 +328,7 @@ var SettingsAboutView = Backbone.View.extend({
         this.model.setRecycleBinEnabled(e.target.checked);
     },
 
-    blurHistoryLength: function(e) {
+    changeHistoryLength: function(e) {
         var value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('historyMaxItems');
@@ -330,7 +337,7 @@ var SettingsAboutView = Backbone.View.extend({
         this.model.setHistoryMaxItems(value);
     },
 
-    blurHistorySize: function(e) {
+    changeHistorySize: function(e) {
         var value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('historyMaxSize') / 1024 / 1024;
@@ -339,7 +346,7 @@ var SettingsAboutView = Backbone.View.extend({
         this.model.setHistoryMaxSize(value * 1024 * 1024);
     },
 
-    blurKeyRounds: function(e) {
+    changeKeyRounds: function(e) {
         var value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('keyEncryptionRounds');

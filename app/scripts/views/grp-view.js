@@ -11,7 +11,7 @@ var GrpView = Backbone.View.extend({
         'click .grp__icon': 'showIconsSelect',
         'click .grp__buttons-trash': 'moveToTrash',
         'click .grp__back-button': 'returnToApp',
-        'blur #grp__field-title': 'titleBlur',
+        'input #grp__field-title': 'changeTitle',
         'change #grp__check-search': 'setEnableSearching'
     },
 
@@ -54,7 +54,7 @@ var GrpView = Backbone.View.extend({
         this.render();
     },
 
-    titleBlur: function(e) {
+    changeTitle: function(e) {
         var title = $.trim(e.target.value);
         if (title) {
             if (!this.model.get('top') && e.target.value !== this.model.get('title')) {
@@ -64,8 +64,6 @@ var GrpView = Backbone.View.extend({
             if (this.model.isJustCreated) {
                 this.model.removeWithoutHistory();
                 Backbone.trigger('edit-group');
-            } else {
-                this.render();
             }
         }
     },

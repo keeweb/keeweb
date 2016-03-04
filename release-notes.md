@@ -16,6 +16,7 @@ Storage providers, usability improvements
 `+` shortcuts while the app is in background  
 `+` build for 32-bit linux  
 `-` fix #88: capslock indicator  
+`-` fix file settings input behavior  
 
 ##### v1.0.4 (2016-02-25)
 Workaround for Chrome bug  

@@ -88,6 +88,10 @@ _.extend(Backbone.View.prototype, {
         }
         Tip.hideTips(this.$el);
         this._parentRemove(arguments);
+    },
+
+    deferRender: function() {
+        _.defer(this.render.bind(this));
     }
 });
 
