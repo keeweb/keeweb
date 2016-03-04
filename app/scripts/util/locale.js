@@ -121,6 +121,10 @@ var Locale = {
         'Changes you make will not be saved back to file system. ' +
         'To get the file with your data, export it from settings.',
     openLocalFileDontShow: 'Don\'t show this again',
+    openWrongFile: 'Bad file',
+    openWrongFileBody: 'This file format is not supported. This app works with KeePass database format files (KDBX).',
+    openKdbFileBody: 'You are opening an old version format file (KDB). This app supports only new format (KDBX), ' +
+        'please use KeePass v2 to convert between them.',
 
     detAttDownload: 'Shift-click attachment button to download or ',
     detAttDelToRemove: 'Delete to remove',

@@ -1,6 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    kdbxweb = require('kdbxweb'),
     Keys = require('../const/keys'),
     Alerts = require('../comp/alerts'),
     SecureInput = require('../comp/secure-input'),
@@ -127,6 +128,9 @@ var OpenView = Backbone.View.extend({
         reader.onload = (function(e) {
             switch (this.reading) {
                 case 'fileData':
+                    if (!this.checkOpenFileFormat(e.target.result)) {
+                        return;
+                    }
                     this.params.id = null;
                     this.params.fileData = e.target.result;
                     this.params.name = file.name.replace(/\.\w+$/i, '');
@@ -164,6 +168,23 @@ var OpenView = Backbone.View.extend({
         } else {
             reader.readAsArrayBuffer(file);
         }
+    },
+
+    checkOpenFileFormat: function(fileData) {
+        var fileSig = new Uint32Array(fileData, 0, 2);
+        if (fileSig[0] !== kdbxweb.Consts.Signatures.FileMagic) {
+            Alerts.error({ header: Locale.openWrongFile, body: Locale.openWrongFileBody });
+            return false;
+        }
+        if (fileSig[1] === kdbxweb.Consts.Signatures.Sig2Kdb) {
+            Alerts.error({ header: Locale.openWrongFile, body: Locale.openKdbFileBody });
+            return false;
+        }
+        if (fileSig[1] !== kdbxweb.Consts.Signatures.Sig2Kdbx) {
+            Alerts.error({ header: Locale.openWrongFile, body: Locale.openWrongFileBody });
+            return false;
+        }
+        return true;
     },
 
     displayOpenFile: function() {

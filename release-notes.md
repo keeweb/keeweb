@@ -16,6 +16,7 @@ Storage providers, usability improvements
 `+` shortcuts while the app is in background  
 `+` build for 32-bit linux  
 `+` ability to import xml  
+`+` warning for kdb files  
 `-` fix #88: capslock indicator  
 `-` fix file settings input behavior  
 
