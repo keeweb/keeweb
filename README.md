@@ -46,7 +46,8 @@ For debug build:
 
 # Contributing
 
-Please, read [contribution guidelines](CONTRIBUTING.md).
+Please, read contribution guidelines: [for issues](.github/ISSUE_TEMPLATE.md) and [for pull requests](.github/PULL_REQUEST_TEMPLATE.md).  
+For pull requests: branch is important! `master` is only for hotfixes, `develop` is for new features.
 
 # License
 
