@@ -85,7 +85,6 @@ var AppView = Backbone.View.extend({
         this.$el.html(this.template({
             beta: this.model.isBeta
         }));
-        this.setTheme();
         this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
         this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
