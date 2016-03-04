@@ -116,20 +116,22 @@ var OpenView = Backbone.View.extend({
     fileSelected: function(e) {
         var file = e.target.files[0];
         if (file) {
-            if (!file.path) {
-                this.showLocalFileAlert();
-            }
-            this.processFile(file);
+            this.processFile(file, (function(success) {
+                if (success && !file.path && this.reading === 'fileData') {
+                    this.showLocalFileAlert();
+                }
+            }).bind(this));
         }
     },
 
     processFile: function(file, complete) {
         var reader = new FileReader();
         reader.onload = (function(e) {
+            var success = false;
             switch (this.reading) {
                 case 'fileData':
                     if (!this.checkOpenFileFormat(e.target.result)) {
-                        return;
+                        break;
                     }
                     this.params.id = null;
                     this.params.fileData = e.target.result;
@@ -138,6 +140,7 @@ var OpenView = Backbone.View.extend({
                     this.params.storage = file.path ? 'file' : null;
                     this.params.rev = null;
                     this.displayOpenFile();
+                    success = true;
                     break;
                 case 'fileXml':
                     this.params.id = null;
@@ -147,14 +150,17 @@ var OpenView = Backbone.View.extend({
                     this.params.storage = null;
                     this.params.rev = null;
                     this.importDbWithXml();
+                    success = true;
                     break;
-                default:
+                case 'keyFileData':
                     this.params.keyFileData = e.target.result;
                     this.params.keyFileName = file.name;
                     this.displayOpenKeyFile();
+                    success = true;
+                    break;
             }
             if (complete) {
-                complete(true);
+                complete(success);
             }
         }).bind(this);
         reader.onerror = (function() {
@@ -201,12 +207,15 @@ var OpenView = Backbone.View.extend({
         this.inputEl.focus();
     },
 
-    setFile: function(file, keyFile) {
+    setFile: function(file, keyFile, fileReadyCallback) {
         this.reading = 'fileData';
         this.processFile(file, (function(success) {
             if (success && keyFile) {
                 this.reading = 'keyFileData';
                 this.processFile(keyFile);
+            }
+            if (success && typeof fileReadyCallback === 'function') {
+                fileReadyCallback();
             }
         }).bind(this));
     },
@@ -353,10 +362,8 @@ var OpenView = Backbone.View.extend({
         var dataFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'kdbx'; });
         var keyFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'key'; });
         if (dataFile) {
-            if (!dataFile.path) {
-                this.showLocalFileAlert();
-            }
-            this.setFile(dataFile, keyFile);
+            this.setFile(dataFile, keyFile,
+                dataFile.path ? null : this.showLocalFileAlert.bind(this));
         }
     },
 
