@@ -385,7 +385,7 @@ module.exports = function(grunt) {
                 options: {
                     file: 'dist/desktop/UpdateDesktop.zip',
                     signature: zipCommentPlaceholder,
-                    privateKey: '../keys/keeweb-private.pem'
+                    privateKey: 'keys/private-key.pem'
                 }
             }
         },

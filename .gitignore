@@ -8,3 +8,4 @@ dist/
 tmp/
 build/
 coverage/
+keys/
