@@ -207,7 +207,7 @@ var DetailsView = Backbone.View.extend({
                 var moreOptions = [];
                 if (hideEmptyFields) {
                     this.fieldViews.forEach(function(fieldView) {
-                        if (!fieldView.model.value()) {
+                        if (fieldView.isHidden()) {
                             moreOptions.push({value: 'add:' + fieldView.model.name, icon: 'pencil',
                                 text: Locale.detMenuAddField.replace('{}', fieldView.model.title)});
                         }
