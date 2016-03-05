@@ -18,6 +18,11 @@ module.exports = function(grunt) {
     var dt = new Date().toISOString().replace(/T.*/, '');
     var electronVersion = '0.35.6';
     var minElectronVersionForUpdate = '0.32.0';
+    var zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
+
+    while (zipCommentPlaceholder.length < 512) {
+        zipCommentPlaceholder += '.';
+    }
 
     function replaceFont(css) {
         css.walkAtRules('font-face', function (rule) {
@@ -371,15 +376,25 @@ module.exports = function(grunt) {
                 files: [{ cwd: 'tmp/desktop/KeeWeb-linux-ia32', src: '**', expand: true }]
             },
             'desktop_update': {
-                options: { archive: 'dist/desktop/UpdateDesktop.zip' },
+                options: { archive: 'dist/desktop/UpdateDesktop.zip', comment: zipCommentPlaceholder },
                 files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
+            }
+        },
+        'sign-archive': {
+            'desktop_update': {
+                options: {
+                    file: 'dist/desktop/UpdateDesktop.zip',
+                    signature: zipCommentPlaceholder,
+                    privateKey: '../keys/keeweb-private.pem'
+                }
             }
         },
         'validate-desktop-update': {
             desktop: {
                 options: {
                     file: 'dist/desktop/UpdateDesktop.zip',
-                    expected: ['main.js', 'app.js', 'index.html', 'package.json', 'node_modules/node-stream-zip/node_stream_zip.js']
+                    expected: ['main.js', 'app.js', 'index.html', 'package.json', 'node_modules/node-stream-zip/node_stream_zip.js'],
+                    publicKey: '../keys/keeweb-public.pem'
                 }
             }
         }
@@ -412,6 +427,7 @@ module.exports = function(grunt) {
         'copy:desktop_app_content',
         'string-replace:desktop_html',
         'compress:desktop_update',
+        'sign-archive:desktop_update',
         'validate-desktop-update',
         'electron',
         'electron_builder',

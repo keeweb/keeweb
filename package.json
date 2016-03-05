@@ -30,6 +30,7 @@
     "handlebars-loader": "^1.1.4",
     "html-minifier": "=1.1.1",
     "load-grunt-tasks": "^3.2.0",
+    "raw-loader": "^0.5.1",
     "string-replace-webpack-plugin": "0.0.2",
     "strip-sourcemap-loader": "0.0.1",
     "time-grunt": "^1.2.1",
