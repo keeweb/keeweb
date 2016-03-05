@@ -166,8 +166,14 @@ var DetailsView = Backbone.View.extend({
             fieldView.setElement(fieldView.readonly ? fieldsAsideEl : fieldsMainEl).render();
             fieldView.on('change', this.fieldChanged.bind(this));
             fieldView.on('copy', this.fieldCopied.bind(this));
-            if (hideEmptyFields && !fieldView.model.value()) {
-                fieldView.hide();
+            if (hideEmptyFields) {
+                var value = fieldView.model.value();
+                if (!value || value.length === 0) {
+                    if (this.model.isJustCreated && fieldView.model.name === '$UserName') {
+                        return; // don't hide user for new records
+                    }
+                    fieldView.hide();
+                }
             }
         }, this);
 
