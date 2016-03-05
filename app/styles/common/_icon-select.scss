@@ -29,8 +29,10 @@
       }
     }
     &--custom-selected {
-      //@include filter(grayscale(1));
       >i { display: none; }
+    }
+    &--download-error>i:before {
+      content: $fa-var-ban;
     }
   }
 }

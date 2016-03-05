@@ -57,6 +57,7 @@ var IconSelectView = Backbone.View.extend({
         }
         this.downloadingFavicon = true;
         this.$el.find('.icon-select__icon-download>i').addClass('fa-spinner fa-spin');
+        this.$el.find('.icon-select__icon-download').removeClass('icon-select__icon--download-error');
         var that = this;
         var url = this.getIconUrl(!Launcher); // inside launcher we can load images without CORS
         var img = document.createElement('img');
@@ -72,7 +73,9 @@ var IconSelectView = Backbone.View.extend({
         img.onerror = function (e) {
             logger.error('Favicon download error: ' + url, e);
             that.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
-            that.$el.find('.icon-select__icon-download').removeClass('icon-select__icon--custom-selected');
+            that.$el.find('.icon-select__icon-download')
+                .removeClass('icon-select__icon--custom-selected')
+                .addClass('icon-select__icon--download-error');
             that.downloadingFavicon = false;
         };
     },
