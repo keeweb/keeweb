@@ -394,7 +394,7 @@ module.exports = function(grunt) {
                 options: {
                     file: 'dist/desktop/UpdateDesktop.zip',
                     expected: ['main.js', 'app.js', 'index.html', 'package.json', 'node_modules/node-stream-zip/node_stream_zip.js'],
-                    publicKey: '../keys/keeweb-public.pem'
+                    publicKey: 'app/resources/public-key.pem'
                 }
             }
         }

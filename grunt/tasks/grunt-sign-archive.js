@@ -10,7 +10,6 @@ module.exports = function (grunt) {
             grunt.warn('Signature placeholder not found');
             return;
         }
-        console.log('siz pos', ix)
         var sign = crypto.createSign('RSA-SHA256');
         sign.write(file.slice(0, ix));
         sign.end();
