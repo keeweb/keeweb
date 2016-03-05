@@ -266,6 +266,12 @@
         .details__field--protected & { &:before { content: $fa-var-lock; } }
       }
     }
+
+    &--no-select {
+      .details__field-label, .details__field-value {
+        @include user-select(none);
+      }
+    }
   }
 
   &__attachments {
