@@ -196,6 +196,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
       margin-right: 20px;
+      &-add-label {
+        color: transparent;
+      }
       .details__field--editable & {
         border-radius: $base-border-radius;
         &:hover {
@@ -203,6 +206,10 @@
           @include th {
             border: 1px solid light-border-color();
             box-shadow: 0 0 3px form-box-shadow-color();
+          }
+          .details__field-value-add-label {
+            @include th { color: muted-color(); }
+            transition: color $base-duration $base-timing;
           }
         }
       }

@@ -1,6 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    kdbxweb = require('kdbxweb'),
     GroupModel = require('../../models/group-model'),
     AppSettingsModel = require('../../models/app-settings-model'),
     Scrollable = require('../../mixins/scrollable'),
@@ -15,6 +16,8 @@ var Backbone = require('backbone'),
     IconSelectView = require('../icon-select-view'),
     DetailsHistoryView = require('./details-history-view'),
     DetailsAttachmentView = require('./details-attachment-view'),
+    DetailsAddFieldView = require('./details-add-field-view'),
+    DropdownView = require('../../views/dropdown-view'),
     Keys = require('../../const/keys'),
     KeyHandler = require('../../comp/key-handler'),
     Alerts = require('../../comp/alerts'),
@@ -23,8 +26,7 @@ var Backbone = require('backbone'),
     Locale = require('../../util/locale'),
     Tip = require('../../util/tip'),
     Timeouts = require('../../const/timeouts'),
-    FileSaver = require('filesaver'),
-    kdbxweb = require('kdbxweb');
+    FileSaver = require('filesaver');
 
 var DetailsView = Backbone.View.extend({
     template: require('templates/details/details.hbs'),
@@ -36,7 +38,6 @@ var DetailsView = Backbone.View.extend({
     passEditView: null,
     userEditView: null,
     urlEditView: null,
-    addNewFieldView: null,
     fieldCopyTip: null,
 
     events: {
@@ -152,19 +153,8 @@ var DetailsView = Backbone.View.extend({
             this.fieldViews.push(new FieldViewCustom({ model: { name: '$' + field, title: field,
                 value: function() { return model.fields[field]; } } }));
         }, this);
-        var newFieldTitle = Locale.detNetField;
-        if (model.fields[newFieldTitle]) {
-            for (var i = 1; ; i++) {
-                var newFieldTitleVariant = newFieldTitle + i;
-                if (!model.fields[newFieldTitleVariant]) {
-                    newFieldTitle = newFieldTitleVariant;
-                    break;
-                }
-            }
-        }
-        this.addNewFieldView = new FieldViewCustom({ model: { name: '$', title: Locale.detAddField, newField: newFieldTitle,
-            value: function() { return ''; } } });
-        this.fieldViews.push(this.addNewFieldView);
+
+        var hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
 
         var fieldsMainEl = this.$el.find('.details__body-fields');
         var fieldsAsideEl = this.$el.find('.details__body-aside');
@@ -172,7 +162,92 @@ var DetailsView = Backbone.View.extend({
             fieldView.setElement(fieldView.readonly ? fieldsAsideEl : fieldsMainEl).render();
             fieldView.on('change', this.fieldChanged.bind(this));
             fieldView.on('copy', this.fieldCopied.bind(this));
+            if (hideEmptyFields && !fieldView.model.value()) {
+                fieldView.hide();
+            }
         }, this);
+
+        this.moreView = new DetailsAddFieldView();
+        this.moreView.setElement(fieldsMainEl).render();
+        this.moreView.on('add-field', this.addNewField.bind(this));
+        this.moreView.on('more-click', this.toggleMoreOptions.bind(this));
+    },
+
+    addNewField: function() {
+        this.moreView.remove();
+        this.moreView = null;
+        var newFieldTitle = Locale.detNetField;
+        if (this.model.fields[newFieldTitle]) {
+            for (var i = 1; ; i++) {
+                var newFieldTitleVariant = newFieldTitle + i;
+                if (!this.model.fields[newFieldTitleVariant]) {
+                    newFieldTitle = newFieldTitleVariant;
+                    break;
+                }
+            }
+        }
+        var fieldView = new FieldViewCustom({ model: { name: '$' + newFieldTitle, title: newFieldTitle, newField: newFieldTitle,
+            value: function() { return ''; } } });
+        fieldView.on('change', this.fieldChanged.bind(this));
+        fieldView.setElement(this.$el.find('.details__body-fields')).render();
+        fieldView.edit();
+        this.fieldViews.push(fieldView);
+    },
+
+    toggleMoreOptions: function() {
+        if (this.views.dropdownView) {
+            this.views.dropdownView.remove();
+            this.views.dropdownView = null;
+        } else {
+            this.setTimeout(function() {
+                var dropdownView = new DropdownView();
+                this.listenTo(dropdownView, 'cancel', this.toggleMoreOptions);
+                this.listenTo(dropdownView, 'select', this.moreOptionsSelect);
+                var hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
+                var moreOptions = [];
+                if (hideEmptyFields) {
+                    this.fieldViews.forEach(function(fieldView) {
+                        if (!fieldView.model.value()) {
+                            moreOptions.push({value: 'add:' + fieldView.model.name, icon: 'pencil',
+                                text: Locale.detMenuAddField.replace('{}', fieldView.model.title)});
+                        }
+                    }, this);
+                    moreOptions.push({value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField});
+                    moreOptions.push({value: 'toggle-empty', icon: 'eye', text: Locale.detMenuShowEmpty});
+                } else {
+                    moreOptions.push({value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField});
+                    moreOptions.push({value: 'toggle-empty', icon: 'eye-slash', text: Locale.detMenuHideEmpty});
+                }
+                var rect = this.moreView.labelEl[0].getBoundingClientRect();
+                dropdownView.render({
+                    position: {top: rect.bottom, right: rect.right},
+                    options: moreOptions
+                });
+                this.views.dropdownView = dropdownView;
+            });
+        }
+    },
+
+    moreOptionsSelect: function(e) {
+        this.views.dropdownView.remove();
+        this.views.dropdownView = null;
+        switch (e.item) {
+            case 'add-new':
+                this.addNewField();
+                break;
+            case 'toggle-empty':
+                var hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
+                AppSettingsModel.instance.set('hideEmptyFields', !hideEmptyFields);
+                this.render();
+                break;
+            default:
+                if (e.item.lastIndexOf('add:', 0) === 0) {
+                    var fieldName = e.item.substr(4);
+                    var fieldView = _.find(this.fieldViews, function(f) { return f.model.name === fieldName; });
+                    fieldView.show();
+                    fieldView.edit();
+                }
+        }
     },
 
     getUserNameCompletions: function(part) {
@@ -289,7 +364,7 @@ var DetailsView = Backbone.View.extend({
     copyKeyPress: function(editView) {
         if (!window.getSelection().toString()) {
             var fieldValue = editView.value;
-            var fieldText = fieldValue.isProtected ? fieldValue.getText() : fieldValue;
+            var fieldText = fieldValue && fieldValue.isProtected ? fieldValue.getText() : fieldValue;
             if (!fieldText) {
                 return;
             }
@@ -325,8 +400,8 @@ var DetailsView = Backbone.View.extend({
         }
         AppSettingsModel.instance.set('helpTipCopyShown', true);
         this.helpTipCopyShown = true;
-        var newFieldLabel = this.addNewFieldView.labelEl;
-        var tip = new Tip(newFieldLabel, { title: Locale.detCopyHint, placement: 'right' });
+        var label = this.moreView.labelEl;
+        var tip = new Tip(label, { title: Locale.detCopyHint, placement: 'right' });
         tip.show();
         setTimeout(function() { tip.hide(); }, Timeouts.AutoHideHint);
     },
@@ -335,7 +410,7 @@ var DetailsView = Backbone.View.extend({
         if (e.field) {
             if (e.field[0] === '$') {
                 var fieldName = e.field.substr(1);
-                if (e.newField && e.newField !== fieldName) {
+                if (e.newField) {
                     if (fieldName) {
                         this.model.setField(fieldName, undefined);
                     }
@@ -370,6 +445,9 @@ var DetailsView = Backbone.View.extend({
                     fieldView.update();
                 }
             }, this);
+        } else if (e.newField) {
+            this.render();
+            return;
         }
         if (e.tab) {
             this.focusNextField(e.tab);
@@ -538,7 +616,7 @@ var DetailsView = Backbone.View.extend({
             var fieldView = this.fieldViews[i];
             if (fieldView.model.name === config.field) {
                 found = true;
-            } else if (found && !fieldView.readonly) {
+            } else if (found && !fieldView.readonly && !fieldView.isHidden()) {
                 nextFieldView = fieldView;
                 break;
             }

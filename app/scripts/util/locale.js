@@ -163,7 +163,6 @@ var Locale = {
     detUpdated: 'Updated',
     detHistory: 'History',
     detNetField: 'New Field',
-    detAddField: 'add field',
     detAttachments: 'Attachments',
     detDelFromTrash: 'Delete from trash?',
     detDelFromTrashBody: 'You will not be able to put it back.',
@@ -171,6 +170,12 @@ var Locale = {
     detFieldCopied: 'Copied',
     detFieldCopiedTime: 'Copied for {} seconds',
     detCopyHint: 'You can copy field value with click on its title',
+    detMore: 'more',
+    detClickToAddField: 'click to add a new field',
+    detMenuAddNewField: 'Add new field',
+    detMenuShowEmpty: 'Show empty fields',
+    detMenuHideEmpty: 'Hide empty fields',
+    detMenuAddField: 'Add {}',
 
     appSecWarn: 'Not Secure!',
     appSecWarnBody1: 'You have loaded this app with insecure connection. ' +

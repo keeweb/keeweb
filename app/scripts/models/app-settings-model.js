@@ -21,7 +21,8 @@ var AppSettingsModel = Backbone.Model.extend({
         lockOnMinimize: true,
         lockOnCopy: false,
         helpTipCopyShown: false,
-        skipOpenLocalWarn: false
+        skipOpenLocalWarn: false,
+        hideEmptyFields: false
     },
 
     initialize: function() {

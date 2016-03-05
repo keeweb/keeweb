@@ -19,7 +19,8 @@ var DropdownView = Backbone.View.extend({
         this.renderTemplate(config);
         this.$el.appendTo(document.body);
         var ownRect = this.$el[0].getBoundingClientRect();
-        this.$el.css({ top: config.position.top, left: config.position.right - ownRect.right + ownRect.left });
+        var left = config.position.left || (config.position.right - ownRect.right + ownRect.left);
+        this.$el.css({ top: config.position.top, left: left });
         return this;
     },
 

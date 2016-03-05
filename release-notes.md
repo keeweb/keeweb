@@ -17,6 +17,7 @@ Storage providers, usability improvements
 `+` build for 32-bit linux  
 `+` ability to import xml  
 `+` warning for kdb files  
+`+` hide empty fields  
 `-` fix #88: capslock indicator  
 `-` fix file settings input behavior  
 
