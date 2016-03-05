@@ -18,6 +18,7 @@ Storage providers, usability improvements
 `+` ability to import xml  
 `+` warning for kdb files  
 `+` hide empty fields  
+`+` overall spacing increased  
 `-` fix #88: capslock indicator  
 `-` fix file settings input behavior  
 
