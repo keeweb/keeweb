@@ -87,12 +87,17 @@
     @include flex-direction(row);
     @include justify-content(space-between);
     @include align-items(stretch);
+    padding-left: $base-padding-h;
     height: 2em;
     &-key-file {
       .open--file:not(.open--opening) & { cursor: pointer; }
       .open--key-file & { @include th { color: medium-color(); } }
+      &-icon {
+        width: 2em;
+      }
       &-dropbox {
         visibility: hidden;
+        margin-left: .3em;
         &:hover {
           .open--file & { visibility: visible; }
         }
@@ -133,7 +138,7 @@
         @include area-selectable;
       }
       @include th { color: muted-color(); }
-      padding: $base-padding-v 0;
+      padding: $base-padding;
       &-icon { width: 2em; }
       &-text { @include flex-grow(1); }
       &-icon-del {
@@ -141,7 +146,6 @@
         .open__last-item:hover & {
           opacity: .3;
           cursor: pointer;
-          margin-right: $base-padding-h;
         }
         @include th { color: muted-color(); }
         &:hover {
