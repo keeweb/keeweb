@@ -267,11 +267,12 @@ var EntryModel = Backbone.Model.extend({
     },
 
     setField: function(field, val) {
-        this._entryModified();
         var hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
         if (hasValue || this.builtInFields.indexOf(field) >= 0) {
+            this._entryModified();
             this.entry.fields[field] = val;
-        } else {
+        } else if (this.entry.fields.hasOwnProperty(field)) {
+            this._entryModified();
             delete this.entry.fields[field];
         }
         this._fillByEntry();

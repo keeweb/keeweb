@@ -257,7 +257,7 @@
           @include position(absolute, 0 0 null null);
           @include fa-icon();
           cursor: pointer;
-          padding: $base-padding;
+          padding: .3em $base-padding-h;
         }
       }
       &-btn-gen:before { content: $fa-var-bolt; }
