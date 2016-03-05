@@ -95,6 +95,10 @@ var DetailsView = Backbone.View.extend({
             this.views.sub.remove();
             delete this.views.sub;
         }
+        if (this.views.dropdownView) {
+            this.views.dropdownView.remove();
+            delete this.views.dropdownView;
+        }
         if (!this.model) {
             this.$el.html(this.emptyTemplate());
             return;
