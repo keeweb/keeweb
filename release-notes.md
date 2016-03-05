@@ -19,8 +19,9 @@ Storage providers, usability improvements
 `+` warning for kdb files  
 `+` hide empty fields  
 `+` overall spacing increased  
-`-` fix #88: capslock indicator  
+`-` fix capslock indicator  
 `-` fix file settings input behavior  
+`-` fix favicon download  
 
 ##### v1.0.4 (2016-02-25)
 Workaround for Chrome bug  

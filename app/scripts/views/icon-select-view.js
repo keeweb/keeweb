@@ -82,7 +82,7 @@ var IconSelectView = Backbone.View.extend({
             return null;
         }
         var url = this.model.url.replace(/([^\/:]\/.*)?$/, function(match) { return (match && match[0]) + '/favicon.ico'; });
-        if (url.indexOf('://') >= 0) {
+        if (url.indexOf('://') < 0) {
             url = 'http://' + url;
         }
         if (useService) {
