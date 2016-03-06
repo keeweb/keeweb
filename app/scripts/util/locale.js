@@ -278,6 +278,7 @@ var Locale = {
     setShOpen: 'open / new',
     setShSave: 'save all files',
     setShGen: 'generate password',
+    setShLock: 'lock database',
 
     setAboutTitle: 'About',
     setAboutBuilt: 'This app is built with these awesome tools',
