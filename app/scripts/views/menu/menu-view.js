@@ -13,7 +13,7 @@ var MenuView = Backbone.View.extend({
 
     sectionViews: [],
 
-    minWidth: 110,
+    minWidth: 130,
     maxWidth: 300,
 
     initialize: function () {
