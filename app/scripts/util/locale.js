@@ -309,6 +309,7 @@ var Locale = {
     setShCopyPassGlobal: 'copy password (when app is in background)',
     setShCopyUserGlobal: 'copy username (when app is in background)',
     setShCopyUrlGlobal: 'copy website (when app is in background)',
+    setShLock: 'lock database',
 
     setAboutTitle: 'About',
     setAboutBuilt: 'This app is built with these awesome tools',
