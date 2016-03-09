@@ -102,6 +102,7 @@ var Locale = {
 
     openOpen: 'Open',
     openNew: 'New',
+    openMore: 'More',
     openDemo: 'Demo',
     openCaps: 'Caps Lock is on',
     openKeyFile: 'key file',

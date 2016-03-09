@@ -27,7 +27,7 @@
     "baron": "~2.0.2",
     "bourbon": "~4.2.5",
     "dropbox": "antelle/dropbox-js#0.10.6",
-    "font-awesome": "~4.4.0",
+    "font-awesome": "~4.5.0",
     "install": "~1.0.4",
     "kdbxweb": "~0.3.8",
     "normalize.css": "~3.0.3",

@@ -19,8 +19,9 @@ var OpenView = Backbone.View.extend({
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
         'click .open__icon-dropbox': 'openFromDropbox',
-        'click .open__icon-import': 'importFromXml',
+        'click .open__icon-import-xml': 'importFromXml',
         'click .open__icon-demo': 'createDemo',
+        'click .open__icon-more': 'toggleMore',
         'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
         'keydown .open__pass-input': 'inputKeydown',
@@ -511,6 +512,10 @@ var OpenView = Backbone.View.extend({
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
         this.afterPaint(this.model.importFileWithXml.bind(this.model, this.params, this.openDbComplete.bind(this)));
+    },
+
+    toggleMore: function() {
+        this.$el.find('.open__icons--lower').toggleClass('hide');
     }
 });
 
