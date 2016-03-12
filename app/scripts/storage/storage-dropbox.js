@@ -7,6 +7,7 @@ var logger = new Logger('storage-dropbox');
 
 var StorageDropbox = {
     name: 'dropbox',
+    icon: 'dropbox',
     enabled: true,
 
     _convertError: function(err) {

@@ -2,12 +2,14 @@
 
 var Backbone = require('backbone'),
     kdbxweb = require('kdbxweb'),
+    OpenConfigView = require('./open-config-view'),
     Keys = require('../const/keys'),
     Alerts = require('../comp/alerts'),
     SecureInput = require('../comp/secure-input'),
     DropboxLink = require('../comp/dropbox-link'),
     Logger = require('../util/logger'),
-    Locale = require('../util/locale');
+    Locale = require('../util/locale'),
+    Storage = require('../storage');
 
 var logger = new Logger('open-view');
 
@@ -22,6 +24,7 @@ var OpenView = Backbone.View.extend({
         'click .open__icon-import-xml': 'importFromXml',
         'click .open__icon-demo': 'createDemo',
         'click .open__icon-more': 'toggleMore',
+        'click .open__icon-webdav': 'toggleWebDav',
         'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
         'keydown .open__pass-input': 'inputKeydown',
@@ -35,11 +38,13 @@ var OpenView = Backbone.View.extend({
         'drop': 'drop'
     },
 
+    views: null,
     params: null,
     passwordInput: null,
     busy: false,
 
     initialize: function () {
+        this.views = {};
         this.params = {
             id: null,
             name: '',
@@ -65,17 +70,10 @@ var OpenView = Backbone.View.extend({
 
     getLastOpenFiles: function() {
         return this.model.fileInfos.map(function(f) {
-            var icon;
-            switch (f.get('storage')) {
-                case 'dropbox':
-                    icon = 'dropbox';
-                    break;
-                case 'file':
-                    icon = 'hdd-o';
-                    break;
-                default:
-                    icon = 'file-text';
-                    break;
+            var icon = 'file-text';
+            var storage = f.get('storage');
+            if (Storage[storage] && Storage[storage].icon) {
+                icon = Storage[storage].icon;
             }
             return {
                 id: f.get('id'),
@@ -223,12 +221,14 @@ var OpenView = Backbone.View.extend({
 
     openFile: function() {
         if (!this.busy) {
+            this.closeConfig();
             this.openAny('fileData');
         }
     },
 
     importFromXml: function() {
         if (!this.busy) {
+            this.closeConfig();
             this.openAny('fileXml', 'xml');
         }
     },
@@ -355,9 +355,13 @@ var OpenView = Backbone.View.extend({
 
     drop: function(e) {
         e.preventDefault();
+        if (this.busy) {
+            return;
+        }
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
+        this.closeConfig();
         this.$el.removeClass('open--drag');
         var files = e.target.files || e.originalEvent.dataTransfer.files;
         var dataFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'kdbx'; });
@@ -376,6 +380,7 @@ var OpenView = Backbone.View.extend({
         if (this.busy) {
             return;
         }
+        this.closeConfig();
         var that = this;
         DropboxLink.authenticate(function(err) {
             if (err) {
@@ -467,6 +472,7 @@ var OpenView = Backbone.View.extend({
 
     createDemo: function() {
         if (!this.busy) {
+            this.closeConfig();
             if (!this.model.createDemoFile()) {
                 this.trigger('close');
             }
@@ -515,7 +521,75 @@ var OpenView = Backbone.View.extend({
     },
 
     toggleMore: function() {
+        if (this.busy) {
+            return;
+        }
+        this.closeConfig();
         this.$el.find('.open__icons--lower').toggleClass('hide');
+    },
+
+    toggleWebDav: function() {
+        if (this.busy) {
+            return;
+        }
+        this.$el.find('.open__icons--lower').addClass('hide');
+        this.$el.find('.open__pass-area').addClass('hide');
+        this.showConfig(Storage.webdav);
+    },
+
+    showConfig: function(storage) {
+        if (this.busy) {
+            return;
+        }
+        if (this.views.openConfig) {
+            this.views.openConfig.remove();
+        }
+        var config = {
+            id: storage.name,
+            name: Locale[storage.name] || storage.name,
+            icon: storage.icon,
+            fields: storage.openFields
+        };
+        this.views.openConfig = new OpenConfigView({ el: this.$el.find('.open__config-wrap'), model: config }).render();
+        this.views.openConfig.on('cancel', this.closeConfig.bind(this));
+        this.views.openConfig.on('apply', this.applyConfig.bind(this));
+    },
+
+    closeConfig: function() {
+        if (this.busy) {
+            this.storageWaitId = null;
+            this.busy = false;
+        }
+        if (this.views.openConfig) {
+            this.views.openConfig.remove();
+            delete this.views.openConfig;
+        }
+        this.$el.find('.open__pass-area').removeClass('hide');
+        this.$el.find('.open__config').addClass('hide');
+        this.inputEl.focus();
+    },
+
+    applyConfig: function(config) {
+        if (this.busy || !config) {
+            return;
+        }
+        this.busy = true;
+        this.views.openConfig.setDisabled(true);
+        var storage = Storage[config.storage];
+        this.storageWaitId = Math.random();
+        storage.stat(config, this.storageStatComplete.bind(this, this.storageWaitId));
+    },
+
+    storageStatComplete: function(waitId, err) {
+        if (this.storageWaitId !== waitId) {
+            return;
+        }
+        this.storageWaitId = null;
+        this.busy = false;
+        this.views.openConfig.setDisabled(false);
+        if (err) {
+            this.views.openConfig.setError(err);
+        }
     }
 });
 

@@ -9,6 +9,7 @@ var fileWatchers = {};
 
 var StorageFile = {
     name: 'file',
+    icon: 'hdd-o',
     enabled: !!Launcher,
 
     load: function(path, callback) {

@@ -1,0 +1,23 @@
+<div class="open__config">
+    <h2 class="open__config-header"><i class="fa fa-{{icon}}"></i> {{#res 'openConfigHeader'}}{{name}}{{/res}}</h2>
+    <div class="open__config-fields">
+        {{#each fields as |field ix|}}
+        <label for="open__config-field-{{id}}">{{res title}}:</label>
+        {{#if desc}}<div class="open__config-field-desc muted-color">{{res desc}}</div>{{/if}}
+        <input type="{{type}}" class="open__config-field input-base" id="open__config-field-{{id}}"
+            autocomplete="off"
+            {{#if placeholder}}placeholder="{{res placeholder}}"{{/if}}
+            {{#if required}}required{{/if}}
+            {{#if pattern}}pattern="{{pattern}}"{{/if}}
+        />
+        {{/each}}
+    </div>
+    <div class="open__config-error error-color"></div>
+    <div class="open__config-buttons">
+        <button class="btn-silent open__config-btn-cancel">{{res 'alertCancel'}}</button>
+        <button class="open__config-btn-ok">
+            <span class="open__config-btn-ok-text">{{res 'alertOk'}}</span>
+            <i class="open__config-btn-ok-spinner fa fa-spinner fa-spin"></i>
+        </button>
+    </div>
+</div>

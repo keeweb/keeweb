@@ -73,6 +73,35 @@
     }
   }
 
+  &__config {
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(column);
+    @include justify-content(flex-start);
+    position: relative;
+    width: 30em;
+    .open--drag & {
+      display: none;
+    }
+    &-buttons {
+      @include align-self(flex-end);
+    }
+    &-header {
+      >i { margin-right: .3em; }
+    }
+    &-field {
+      width: 100%;
+    }
+    &:not(.open__config--disabled) {
+      .open__config-btn-ok-text { display: inline; }
+      .open__config-btn-ok-spinner { display: none; }
+    }
+    &.open__config--disabled {
+      .open__config-btn-ok-text { display: none; }
+      .open__config-btn-ok-spinner { display: block; }
+    }
+  }
+
   input[type=password].open__pass-input {
     font-size: $large-pass-font-size;
     margin-bottom: 0;

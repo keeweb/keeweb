@@ -19,6 +19,11 @@ var Locale = {
     or: 'or',
     notImplemented: 'Not Implemented',
 
+    cache: 'cache',
+    file: 'file',
+    webdav: 'WebDAV',
+    dropbox: 'Dropbox',
+
     menuAllItems: 'All Items',
     menuColors: 'Colors',
     menuTags: 'Tags',
@@ -126,6 +131,14 @@ var Locale = {
     openWrongFileBody: 'This file format is not supported. This app works with KeePass database format files (KDBX).',
     openKdbFileBody: 'You are opening an old version format file (KDB). This app supports only new format (KDBX), ' +
         'please use KeePass v2 to convert between them.',
+    openConfigHeader: '{} Settings',
+    openUrl: 'URL',
+    openUrlDesc: 'https://server/path/file.kdbx, or just file.kdbx',
+    openUser: 'Username',
+    openUserPlaceholder: 'no username',
+    openPass: 'Password',
+    openPassPlaceholder: 'no password',
+    openConfigError: 'Error: {}',
 
     detAttDownload: 'Shift-click attachment button to download or ',
     detAttDelToRemove: 'Delete to remove',
