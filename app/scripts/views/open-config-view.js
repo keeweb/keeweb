@@ -72,7 +72,8 @@ var OpenConfigView = Backbone.View.extend({
     },
 
     setError: function(err) {
-        this.$el.find('.open__config-error').text(Locale.openConfigError.replace('{}', err));
+        var errText = err && err.notFound ? Locale.openConfigErrorNotFound : Locale.openConfigError.replace('{}', err)
+        this.$el.find('.open__config-error').text(errText);
     }
 });
 

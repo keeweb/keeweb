@@ -141,6 +141,7 @@ var Locale = {
     openPassDesc: 'WebDAV server password (this is not your file password)',
     openPassPlaceholder: 'no password',
     openConfigError: 'Error: {}',
+    openConfigErrorNotFound: 'File not found',
 
     detAttDownload: 'Shift-click attachment button to download or ',
     detAttDelToRemove: 'Delete to remove',
