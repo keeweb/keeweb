@@ -27,7 +27,7 @@ var StorageDropbox = {
         return '/' + fileName + '.kdbx';
     },
 
-    load: function(path, callback) {
+    load: function(path, opts, callback) {
         logger.debug('Load', path);
         var ts = logger.ts();
         DropboxLink.openFile(path, function(err, data, stat) {
@@ -37,7 +37,7 @@ var StorageDropbox = {
         }, _.noop);
     },
 
-    stat: function(path, callback) {
+    stat: function(path, opts, callback) {
         logger.debug('Stat', path);
         var ts = logger.ts();
         DropboxLink.stat(path, function(err, stat) {
@@ -51,7 +51,7 @@ var StorageDropbox = {
         }, _.noop);
     },
 
-    save: function(path, data, callback, rev) {
+    save: function(path, opts, data, callback, rev) {
         logger.debug('Save', path, rev);
         var ts = logger.ts();
         DropboxLink.saveFile(path, data, rev, function(err, stat) {

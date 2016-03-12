@@ -33,7 +33,7 @@ var StorageFileCache = {
         }
     },
 
-    save: function(id, data, callback) {
+    save: function(id, opts, data, callback) {
         logger.debug('Save', id);
         this.init((function(err) {
             if (err) {
@@ -51,7 +51,7 @@ var StorageFileCache = {
         }).bind(this));
     },
 
-    load: function(id, callback) {
+    load: function(id, opts, callback) {
         logger.debug('Load', id);
         this.init((function(err) {
             if (err) {
@@ -69,7 +69,7 @@ var StorageFileCache = {
         }).bind(this));
     },
 
-    remove: function(id, callback) {
+    remove: function(id, opts, callback) {
         logger.debug('Remove', id);
         this.init((function(err) {
             if (err) {

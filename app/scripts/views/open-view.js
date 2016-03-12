@@ -9,6 +9,7 @@ var Backbone = require('backbone'),
     DropboxLink = require('../comp/dropbox-link'),
     Logger = require('../util/logger'),
     Locale = require('../util/locale'),
+    UrlUtil = require('../util/url-util'),
     Storage = require('../storage');
 
 var logger = new Logger('open-view');
@@ -398,7 +399,7 @@ var OpenView = Backbone.View.extend({
                 var allDropboxFiles = {};
                 filesStat.forEach(function(file) {
                     if (!file.isFolder && !file.isRemoved) {
-                        var fileName = file.name.replace(/\.kdbx/i, '');
+                        var fileName = UrlUtil.getDataFileName(file.name);
                         buttons.push({ result: file.path, title: fileName });
                         allDropboxFiles[file.path] = file;
                     }
@@ -438,7 +439,7 @@ var OpenView = Backbone.View.extend({
         this.params.id = null;
         this.params.storage = 'dropbox';
         this.params.path = fileStat.path;
-        this.params.name = fileStat.name.replace(/\.kdbx/i, '');
+        this.params.name = UrlUtil.getDataFileName(fileStat.name);
         this.params.rev = fileStat.versionTag;
         this.params.fileData = null;
         this.displayOpenFile();
@@ -577,18 +578,36 @@ var OpenView = Backbone.View.extend({
         this.views.openConfig.setDisabled(true);
         var storage = Storage[config.storage];
         this.storageWaitId = Math.random();
-        storage.stat(config, this.storageStatComplete.bind(this, this.storageWaitId));
+        var path = config.path;
+        var opts = _.omit(config, 'path');
+        var req = {
+            waitId: this.storageWaitId,
+            storage: config.storage,
+            path: path,
+            opts: opts
+        };
+        storage.stat(path, opts, this.storageStatComplete.bind(this, req));
     },
 
-    storageStatComplete: function(waitId, err) {
-        if (this.storageWaitId !== waitId) {
+    storageStatComplete: function(req, err, stat) {
+        if (this.storageWaitId !== req.waitId) {
             return;
         }
         this.storageWaitId = null;
         this.busy = false;
-        this.views.openConfig.setDisabled(false);
         if (err) {
+            this.views.openConfig.setDisabled(false);
             this.views.openConfig.setError(err);
+        } else {
+            this.closeConfig();
+            this.params.id = null;
+            this.params.storage = req.storage;
+            this.params.path = req.path;
+            this.params.opts = req.opts;
+            this.params.name = UrlUtil.getDataFileName(req.path);
+            this.params.rev = stat.rev;
+            this.params.fileData = null;
+            this.displayOpenFile();
         }
     }
 });

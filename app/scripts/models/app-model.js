@@ -301,7 +301,7 @@ var AppModel = Backbone.Model.extend({
             var storage = Storage[params.storage];
             var storageLoad = function() {
                 logger.info('Load from storage');
-                storage.load(params.path, function(err, data, stat) {
+                storage.load(params.path, null, function(err, data, stat) {
                     if (err) {
                         if (fileInfo) {
                             logger.info('Open file from cache because of storage load error', err);
@@ -321,7 +321,7 @@ var AppModel = Backbone.Model.extend({
             var cacheRev = fileInfo && fileInfo.get('rev') || null;
             if (cacheRev && storage.stat) {
                 logger.info('Stat file');
-                storage.stat(params.path, function(err, stat) {
+                storage.stat(params.path, null, function(err, stat) {
                     if (fileInfo && (err || stat && stat.rev === cacheRev)) {
                         logger.info('Open file from cache because ' + (err ? 'stat error' : 'it is latest'), err);
                         that.openFileFromCache(params, callback, fileInfo);
@@ -341,7 +341,7 @@ var AppModel = Backbone.Model.extend({
 
     openFileFromCache: function(params, callback, fileInfo) {
         var that = this;
-        Storage.cache.load(fileInfo.id, function(err, data) {
+        Storage.cache.load(fileInfo.id, null, function(err, data) {
             new Logger('open', params.name).info('Loaded file from cache', err);
             if (err) {
                 callback(err);
@@ -387,7 +387,7 @@ var AppModel = Backbone.Model.extend({
             file.set('cacheId', cacheId);
             if (updateCacheOnSuccess) {
                 logger.info('Save loaded file to cache');
-                Storage.cache.save(cacheId, params.fileData);
+                Storage.cache.save(cacheId, null, params.fileData);
             }
             var rev = params.rev || fileInfo && fileInfo.get('rev');
             that.addToLastOpenFiles(file, rev);
@@ -535,7 +535,7 @@ var AppModel = Backbone.Model.extend({
             logger.info('Local, save to cache');
             file.getData(function(data, err) {
                 if (err) { return complete(err); }
-                Storage.cache.save(fileInfo.id, data, function(err) {
+                Storage.cache.save(fileInfo.id, null, data, function(err) {
                     logger.info('Saved to cache', err || 'no error');
                     complete(err);
                 });
@@ -547,7 +547,7 @@ var AppModel = Backbone.Model.extend({
                     return complete('Too many load attempts');
                 }
                 logger.info('Load from storage, attempt ' + loadLoops);
-                Storage[storage].load(path, function(err, data, stat) {
+                Storage[storage].load(path, null, function(err, data, stat) {
                     logger.info('Load from storage', stat, err || 'no error');
                     if (err) { return complete(err); }
                     file.mergeOrUpdate(data, options.remoteKey, function(err) {
@@ -570,7 +570,7 @@ var AppModel = Backbone.Model.extend({
                             saveToCacheAndStorage();
                         } else if (file.get('dirty')) {
                             logger.info('Saving not modified dirty file to cache');
-                            Storage.cache.save(fileInfo.id, data, function (err) {
+                            Storage.cache.save(fileInfo.id, null, data, function (err) {
                                 if (err) { return complete(err); }
                                 file.set('dirty', false);
                                 logger.info('Complete, remove dirty flag');
@@ -592,7 +592,7 @@ var AppModel = Backbone.Model.extend({
                         saveToStorage(data);
                     } else {
                         logger.info('Saving to cache');
-                        Storage.cache.save(fileInfo.id, data, function (err) {
+                        Storage.cache.save(fileInfo.id, null, data, function (err) {
                             if (err) { return complete(err); }
                             file.set('dirty', false);
                             logger.info('Saved to cache, saving to storage');
@@ -603,7 +603,7 @@ var AppModel = Backbone.Model.extend({
             };
             var saveToStorage = function(data) {
                 logger.info('Save data to storage');
-                Storage[storage].save(path, data, function(err, stat) {
+                Storage[storage].save(path, null, data, function(err, stat) {
                     if (err && err.revConflict) {
                         logger.info('Save rev conflict, reloading from storage');
                         loadFromStorageAndMerge();
@@ -622,7 +622,7 @@ var AppModel = Backbone.Model.extend({
                 }, fileInfo.get('rev'));
             };
             logger.info('Stat file');
-            Storage[storage].stat(path, function (err, stat) {
+            Storage[storage].stat(path, null, function (err, stat) {
                 if (err) {
                     if (err.notFound) {
                         logger.info('File does not exist in storage, creating');
@@ -631,7 +631,7 @@ var AppModel = Backbone.Model.extend({
                         logger.info('Stat error, dirty, save to cache', err || 'no error');
                         file.getData(function (data) {
                             if (data) {
-                                Storage.cache.save(fileInfo.id, data, function (e) {
+                                Storage.cache.save(fileInfo.id, null, data, function (e) {
                                     if (!e) {
                                         file.set('dirty', false);
                                     }

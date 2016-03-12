@@ -12,7 +12,7 @@ var StorageFile = {
     icon: 'hdd-o',
     enabled: !!Launcher,
 
-    load: function(path, callback) {
+    load: function(path, opts, callback) {
         logger.debug('Load', path);
         var ts = logger.ts();
         try {
@@ -26,7 +26,7 @@ var StorageFile = {
         }
     },
 
-    stat: function(path, callback) {
+    stat: function(path, opts, callback) {
         logger.debug('Stat', path);
         var ts = logger.ts();
         try {
@@ -42,7 +42,7 @@ var StorageFile = {
         }
     },
 
-    save: function(path, data, callback, rev) {
+    save: function(path, opts, data, callback, rev) {
         logger.debug('Save', path, rev);
         var ts = logger.ts();
         try {

@@ -135,8 +135,10 @@ var Locale = {
     openUrl: 'URL',
     openUrlDesc: 'https://server/path/file.kdbx, or just file.kdbx',
     openUser: 'Username',
+    openUserDesc: 'WebDAV server username (if required)',
     openUserPlaceholder: 'no username',
     openPass: 'Password',
+    openPassDesc: 'WebDAV server password (this is not your file password)',
     openPassPlaceholder: 'no password',
     openConfigError: 'Error: {}',
 
