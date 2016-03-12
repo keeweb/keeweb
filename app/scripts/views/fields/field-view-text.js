@@ -124,7 +124,7 @@ var FieldViewText = FieldView.extend({
         e.stopPropagation();
         var code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
-            if (!this.model.multiline || (!e.altKey && !e.shiftKey)) {
+            if (!this.model.multiline || (!e.altKey && !e.shiftKey && !e.ctrlKey)) {
                 this.stopListening(Backbone, 'click', this.fieldValueBlur);
                 this.endEdit(e.target.value);
             }
