@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.1.0 (Q2 2016)
 Storage providers, usability improvements  
+`+` WebDAV  
 `+` option to remember keyfiles  
 `+` beta version app  
 `+` option to lock on password copy  
