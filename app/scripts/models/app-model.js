@@ -284,6 +284,9 @@ var AppModel = Backbone.Model.extend({
         logger.info('File open request');
         var that = this;
         var fileInfo = params.id ? this.fileInfos.get(params.id) : this.fileInfos.getMatch(params.storage, params.name, params.path);
+        if (!params.opts && fileInfo && fileInfo.get('opts')) {
+            params.opts = fileInfo.get('opts');
+        }
         if (fileInfo && fileInfo.get('modified')) {
             logger.info('Open file from cache because it is modified');
             this.openFileFromCache(params, callback, fileInfo);
@@ -301,7 +304,7 @@ var AppModel = Backbone.Model.extend({
             var storage = Storage[params.storage];
             var storageLoad = function() {
                 logger.info('Load from storage');
-                storage.load(params.path, null, function(err, data, stat) {
+                storage.load(params.path, params.opts, function(err, data, stat) {
                     if (err) {
                         if (fileInfo) {
                             logger.info('Open file from cache because of storage load error', err);
@@ -321,7 +324,7 @@ var AppModel = Backbone.Model.extend({
             var cacheRev = fileInfo && fileInfo.get('rev') || null;
             if (cacheRev && storage.stat) {
                 logger.info('Stat file');
-                storage.stat(params.path, null, function(err, stat) {
+                storage.stat(params.path, params.opts, function(err, stat) {
                     if (fileInfo && (err || stat && stat.rev === cacheRev)) {
                         logger.info('Open file from cache because ' + (err ? 'stat error' : 'it is latest'), err);
                         that.openFileFromCache(params, callback, fileInfo);
@@ -361,6 +364,7 @@ var AppModel = Backbone.Model.extend({
             name: params.name,
             storage: params.storage,
             path: params.path,
+            opts: params.opts,
             keyFileName: params.keyFileName
         });
         var that = this;
@@ -423,6 +427,7 @@ var AppModel = Backbone.Model.extend({
             name: file.get('name'),
             storage: file.get('storage'),
             path: file.get('path'),
+            opts: file.get('opts'),
             modified: file.get('modified'),
             editState: file.getLocalEditState(),
             rev: rev,
@@ -480,6 +485,7 @@ var AppModel = Backbone.Model.extend({
         var logger = new Logger('sync', file.get('name'));
         var storage = options.storage || file.get('storage');
         var path = options.path || file.get('path');
+        var opts = options.opts || file.get('opts');
         if (storage && Storage[storage].getPathForName && !options.path) {
             path = Storage[storage].getPathForName(file.get('name'));
         }
@@ -493,6 +499,7 @@ var AppModel = Backbone.Model.extend({
                 name: file.get('name'),
                 storage: file.get('storage'),
                 path: file.get('path'),
+                opts: file.get('opts'),
                 modified: file.get('modified'),
                 editState: null,
                 rev: null,
@@ -510,6 +517,7 @@ var AppModel = Backbone.Model.extend({
                 name: file.get('name'),
                 storage: storage,
                 path: path,
+                opts: opts,
                 modified: file.get('modified'),
                 editState: file.getLocalEditState(),
                 syncDate: file.get('syncDate'),
@@ -547,7 +555,7 @@ var AppModel = Backbone.Model.extend({
                     return complete('Too many load attempts');
                 }
                 logger.info('Load from storage, attempt ' + loadLoops);
-                Storage[storage].load(path, null, function(err, data, stat) {
+                Storage[storage].load(path, opts, function(err, data, stat) {
                     logger.info('Load from storage', stat, err || 'no error');
                     if (err) { return complete(err); }
                     file.mergeOrUpdate(data, options.remoteKey, function(err) {
@@ -603,7 +611,7 @@ var AppModel = Backbone.Model.extend({
             };
             var saveToStorage = function(data) {
                 logger.info('Save data to storage');
-                Storage[storage].save(path, null, data, function(err, stat) {
+                Storage[storage].save(path, opts, data, function(err, stat) {
                     if (err && err.revConflict) {
                         logger.info('Save rev conflict, reloading from storage');
                         loadFromStorageAndMerge();
@@ -622,7 +630,7 @@ var AppModel = Backbone.Model.extend({
                 }, fileInfo.get('rev'));
             };
             logger.info('Stat file');
-            Storage[storage].stat(path, null, function (err, stat) {
+            Storage[storage].stat(path, opts, function (err, stat) {
                 if (err) {
                     if (err.notFound) {
                         logger.info('File does not exist in storage, creating');

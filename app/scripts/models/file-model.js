@@ -17,6 +17,7 @@ var FileModel = Backbone.Model.extend({
         keyFileName: '',
         passwordLength: 0,
         path: '',
+        opts: null,
         storage: null,
         modified: false,
         dirty: false,

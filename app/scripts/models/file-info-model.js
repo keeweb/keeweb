@@ -14,7 +14,8 @@ var FileInfoModel = Backbone.Model.extend({
         syncDate: null,
         openDate: null,
         keyFileName: null,
-        keyFileHash: null
+        keyFileHash: null,
+        opts: null
     },
 
     initialize: function(data, options) {
