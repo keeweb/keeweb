@@ -92,6 +92,9 @@
     &-field {
       width: 100%;
     }
+    &-error {
+      min-height: 1.7em;
+    }
     &:not(.open__config--disabled) {
       .open__config-btn-ok-text { display: inline; }
       .open__config-btn-ok-spinner { display: none; }
