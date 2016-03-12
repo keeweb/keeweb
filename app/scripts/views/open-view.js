@@ -26,6 +26,8 @@ var OpenView = Backbone.View.extend({
         'click .open__icon-demo': 'createDemo',
         'click .open__icon-more': 'toggleMore',
         'click .open__icon-webdav': 'toggleWebDav',
+        'click .open__icon-onedrive': Alerts.notImplemented.bind(Alerts),
+        'click .open__icon-gdrive': Alerts.notImplemented.bind(Alerts),
         'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
         'keydown .open__pass-input': 'inputKeydown',
