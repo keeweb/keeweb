@@ -4,7 +4,7 @@ var Logger = require('../util/logger');
 
 var logger = new Logger('storage-webdav');
 
-var StorageDropbox = {
+var StorageWebDav = {
     name: 'webdav',
     icon: 'server',
     enabled: true,
@@ -156,4 +156,4 @@ var StorageDropbox = {
     }
 };
 
-module.exports = StorageDropbox;
+module.exports = StorageWebDav;
