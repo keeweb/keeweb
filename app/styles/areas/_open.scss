@@ -22,6 +22,10 @@
     transition: color $base-duration $base-timing;
     &:hover { @include th { color: medium-color(); } }
     &-i, &-svg { font-size: 4em; }
+    .open__icons--lower & {
+      &-i, &-svg { font-size: 3em; }
+      margin: $base-padding;
+    }
     &-text {
       @include th { color: muted-color(); }
       .open__icon:hover>& { @include th { color: medium-color(); } }
