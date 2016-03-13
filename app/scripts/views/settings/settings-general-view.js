@@ -7,6 +7,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../../models/app-settings-model'),
     UpdateModel = require('../../models/update-model'),
     RuntimeInfo = require('../../comp/runtime-info'),
+    Storage = require('../../storage'),
     FeatureDetector = require('../../util/feature-detector'),
     Locale = require('../../util/locale'),
     Links = require('../../const/links');
@@ -31,6 +32,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
+        'change .settings__general-prv-check': 'changeStorageEnabled',
         'click .settings__general-dev-tools-link': 'openDevTools'
     },
 
@@ -75,7 +77,8 @@ var SettingsGeneralView = Backbone.View.extend({
             updateFound: updateFound,
             updateManual: updateManual,
             releaseNotesLink: Links.ReleaseNotes,
-            colorfulIcons: AppSettingsModel.instance.get('colorfulIcons')
+            colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
+            storageProviders: this.getStorageProviders()
         });
     },
 
@@ -114,6 +117,23 @@ var SettingsGeneralView = Backbone.View.extend({
             default:
                 return Locale.setGenNeverChecked;
         }
+    },
+
+    getStorageProviders: function() {
+        var storageProviders = [];
+        Object.keys(Storage).forEach(function(name) {
+            var prv = Storage[name];
+            if (!prv.system) {
+                storageProviders.push(prv);
+            }
+        });
+        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
+        return storageProviders.map(function(sp) {
+            return {
+                name: sp.name,
+                enabled: sp.enabled
+            };
+        });
     },
 
     changeTheme: function(e) {
@@ -205,6 +225,14 @@ var SettingsGeneralView = Backbone.View.extend({
         var expand = e.target.checked;
         AppSettingsModel.instance.set('expandGroups', expand);
         Backbone.trigger('refresh');
+    },
+
+    changeStorageEnabled: function(e) {
+        var storage = Storage[$(e.target).data('storage')];
+        if (storage) {
+            storage.enabled = e.target.checked;
+            AppSettingsModel.instance.set(storage.name, storage.enabled);
+        }
     },
 
     openDevTools: function() {

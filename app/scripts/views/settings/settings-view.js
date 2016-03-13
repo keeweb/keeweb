@@ -50,7 +50,7 @@ var SettingsView = Backbone.View.extend({
     },
 
     returnToApp: function() {
-        Backbone.trigger('toggle-settings');
+        Backbone.trigger('toggle-settings', false);
     }
 });
 

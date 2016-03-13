@@ -111,6 +111,7 @@ var Locale = {
     openNew: 'New',
     openMore: 'More',
     openDemo: 'Demo',
+    openSettings: 'Settings',
     openCaps: 'Caps Lock is on',
     openKeyFile: 'key file',
     openKeyFileDropbox: '(from dropbox)',
@@ -259,6 +260,7 @@ var Locale = {
     setGenMinInstead: 'Minimize app instead of close',
     setGenLockMinimize: 'Auto-lock on minimize',
     setGenLockCopy: 'Auto-lock on password copy',
+    setGenStorage: 'Storage',
     setGenAdvanced: 'Advanced',
     setGenDevTools: 'Show dev tools',
 

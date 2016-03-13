@@ -25,6 +25,7 @@ var OpenView = Backbone.View.extend({
         'click .open__icon-demo': 'createDemo',
         'click .open__icon-more': 'toggleMore',
         'click .open__icon-storage': 'openStorage',
+        'click .open__icon-settings': 'openSettings',
         'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
         'keydown .open__pass-input': 'inputKeydown',
@@ -470,6 +471,10 @@ var OpenView = Backbone.View.extend({
         }
         this.closeConfig();
         this.$el.find('.open__icons--lower').toggleClass('hide');
+    },
+
+    openSettings: function() {
+        Backbone.trigger('toggle-settings');
     },
 
     openStorage: function(e) {
