@@ -65,7 +65,10 @@ var OpenView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        this.renderTemplate({ lastOpenFiles: this.getLastOpenFiles() });
+        this.renderTemplate({
+            lastOpenFiles: this.getLastOpenFiles(),
+            demoOpened: this.model.settings.get('demoOpened')
+        });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
         return this;
@@ -478,6 +481,9 @@ var OpenView = Backbone.View.extend({
             this.closeConfig();
             if (!this.model.createDemoFile()) {
                 this.trigger('close');
+            }
+            if (!this.model.settings.get('demoOpened')) {
+                this.model.settings.set('demoOpened', true);
             }
         }
     },

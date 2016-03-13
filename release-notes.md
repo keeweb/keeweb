@@ -20,6 +20,7 @@ Storage providers, usability improvements
 `+` warning for kdb files  
 `+` hide empty fields  
 `+` overall spacing increased  
+`+` hide demo button once opened  
 `-` fix capslock indicator  
 `-` fix file settings input behavior  
 `-` fix favicon download  

@@ -13,6 +13,12 @@
             <i class="fa fa-dropbox open__icon-i"></i>
             <div class="open__icon-text">Dropbox</div>
         </div>
+        {{#ifeq demoOpened false}}
+        <div class="open__icon open__icon-demo">
+            <i class="fa fa-magic open__icon-i"></i>
+            <div class="open__icon-text">{{res 'openDemo'}}</div>
+        </div>
+        {{/ifeq}}
         <div class="open__icon open__icon-more">
             <i class="fa fa-ellipsis-h open__icon-i"></i>
             <div class="open__icon-text">{{res 'openMore'}}</div>
@@ -35,10 +41,12 @@
             <i class="fa fa-code open__icon-i"></i>
             <div class="open__icon-text">Import XML</div>
         </div>
+        {{#if demoOpened}}
         <div class="open__icon open__icon-demo">
             <i class="fa fa-magic open__icon-i"></i>
             <div class="open__icon-text">{{res 'openDemo'}}</div>
         </div>
+        {{/if}}
     </div>
     <div class="open__pass-area">
         <div class="open__pass-warn-wrap">

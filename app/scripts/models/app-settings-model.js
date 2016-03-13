@@ -23,7 +23,8 @@ var AppSettingsModel = Backbone.Model.extend({
         helpTipCopyShown: false,
         skipOpenLocalWarn: false,
         hideEmptyFields: false,
-        skipHttpsWarning: false
+        skipHttpsWarning: false,
+        demoOpened: false
     },
 
     initialize: function() {
