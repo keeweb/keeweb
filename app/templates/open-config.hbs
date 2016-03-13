@@ -1,5 +1,6 @@
 <div class="open__config">
     <h2 class="open__config-header"><i class="fa fa-{{icon}}"></i> {{#res 'openConfigHeader'}}{{name}}{{/res}}</h2>
+    {{#if desc}}<div class="open__config-desc">{{res desc}}</div>{{/if}}
     <div class="open__config-fields">
         {{#each fields as |field ix|}}
         <label for="open__config-field-{{id}}">{{res title}}:</label>
@@ -8,7 +9,7 @@
             autocomplete="off"
             {{#if placeholder}}placeholder="{{res placeholder}}"{{/if}}
             {{#if required}}required{{/if}}
-            {{#if pattern}}pattern="{{pattern}}"{{/if}}
+            {{#if pattern}}pattern="{{{pattern}}}"{{/if}}
         />
         {{/each}}
     </div>

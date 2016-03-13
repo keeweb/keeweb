@@ -25,7 +25,27 @@ var StorageDropbox = {
     },
 
     needShowOpenConfig: function() {
-        return false;
+        return !DropboxLink.isValidKey();
+    },
+
+    getOpenConfig: function() {
+        return {
+            desc: 'dropboxSetupDesc',
+            fields: [
+                {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w{10,}'}
+            ]
+        };
+    },
+
+    applyConfig: function(config, callback) {
+        if (config.key) {
+            DropboxLink.authenticate(function(err) {
+                if (!err) {
+                    DropboxLink.setKey(config.key);
+                }
+                callback(err);
+            }, config.key);
+        }
     },
 
     getPathForName: function(fileName) {

@@ -354,10 +354,6 @@ var Locale = {
     setHelpUpdates: 'Updates',
     setHelpTwitter: 'App twitter',
 
-    dropboxNotConfigured: 'Dropbox not configured',
-    dropboxNotConfiguredBody1: 'So, you are using KeeWeb on your own server? Good!',
-    dropboxNotConfiguredBody2: '{} is required to make Dropbox work, it\'s just 3 steps away.',
-    dropboxNotConfiguredLink: 'Some configuration',
     dropboxLogin: 'Dropbox Login',
     dropboxLoginBody: 'To continue, you have to sign in to Dropbox.',
     dropboxSyncError: 'Dropbox Sync Error',
@@ -369,6 +365,9 @@ var Locale = {
     dropboxNetErrorBody: 'Network error occurred during Dropbox sync. Please, check your connection and try again.',
     dropboxErrorBody: 'Something went wrong during Dropbox sync. Please, try again later. Error code: ',
     dropboxErrorRepeatBody: 'Something went wrong during Dropbox sync. Please, try again later. Error: ',
+    dropboxSetupDesc: 'Some configuration is required to use Dropbox in self-hosted app. Please create your own Dropbox app and fill in its key below.',
+    dropboxAppKey: 'Dropbox app key',
+    dropboxAppKeyDesc: 'Copy it from your Dropbox app (Developer settings)',
 
     launcherSave: 'Save Passwords Database',
     launcherFileFilter: 'KeePass files'

@@ -556,12 +556,11 @@ var OpenView = Backbone.View.extend({
         if (this.views.openConfig) {
             this.views.openConfig.remove();
         }
-        var config = {
+        var config = _.extend({
             id: storage.name,
             name: Locale[storage.name] || storage.name,
-            icon: storage.icon,
-            fields: storage.getOpenConfigFields()
-        };
+            icon: storage.icon
+        }, storage.getOpenConfig());
         this.views.openConfig = new OpenConfigView({ el: this.$el.find('.open__config-wrap'), model: config }).render();
         this.views.openConfig.on('cancel', this.closeConfig.bind(this));
         this.views.openConfig.on('apply', this.applyConfig.bind(this));
@@ -599,7 +598,25 @@ var OpenView = Backbone.View.extend({
             path: path,
             opts: opts
         };
-        storage.stat(path, opts, this.storageStatComplete.bind(this, req));
+        if (storage.applyConfig) {
+            storage.applyConfig(opts, this.storageApplyConfigComplete.bind(this, req));
+        } else {
+            storage.stat(path, opts, this.storageStatComplete.bind(this, req));
+        }
+    },
+
+    storageApplyConfigComplete: function(req, err) {
+        if (this.storageWaitId !== req.waitId) {
+            return;
+        }
+        this.storageWaitId = null;
+        this.busy = false;
+        if (err) {
+            this.views.openConfig.setDisabled(false);
+            this.views.openConfig.setError(err);
+        } else {
+            this.closeConfig();
+        }
     },
 
     storageStatComplete: function(req, err, stat) {

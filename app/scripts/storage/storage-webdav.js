@@ -14,12 +14,14 @@ var StorageWebDav = {
         return true;
     },
 
-    getOpenConfigFields: function() {
-        return [
-            {id: 'path', title: 'openUrl', desc: 'openUrlDesc', type: 'text', required: true},
-            {id: 'user', title: 'openUser', desc: 'openUserDesc', placeholder: 'openUserPlaceholder', type: 'text'},
-            {id: 'password', title: 'openPass', desc: 'openPassDesc', placeholder: 'openPassPlaceholder', type: 'password'}
-        ];
+    getOpenConfig: function() {
+        return {
+            fields: [
+                {id: 'path', title: 'openUrl', desc: 'openUrlDesc', type: 'text', required: true},
+                {id: 'user', title: 'openUser', desc: 'openUserDesc', placeholder: 'openUserPlaceholder', type: 'text'},
+                {id: 'password', title: 'openPass', desc: 'openPassDesc', placeholder: 'openPassPlaceholder', type: 'password'}
+            ]
+        };
     },
 
     load: function(path, opts, callback) {

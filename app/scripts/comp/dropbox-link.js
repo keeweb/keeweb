@@ -5,7 +5,7 @@ var Dropbox = require('dropbox'),
     Launcher = require('./launcher'),
     Logger = require('../util/logger'),
     Locale = require('../util/locale'),
-    Links = require('../const/links');
+    AppSettingsModel = require('../models/app-settings-model');
 
 var logger = new Logger('dropbox');
 
@@ -18,11 +18,8 @@ var DropboxCustomErrors = {
     BadKey: 'bad-key'
 };
 
-function isValidKey() {
-    var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
-        !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href) &&
-        !/http(s?):\/\/app\.keeweb\.info/.test(location.href);
-    return Launcher || !isSelfHostedApp || DropboxKeys.AppFolder !== DropboxKeys.AppFolderKeyParts.join('');
+function getKey() {
+    return AppSettingsModel.instance.get('dropboxAppKey') || DropboxKeys.AppFolder;
 }
 
 var DropboxChooser = function(callback) {
@@ -51,7 +48,7 @@ DropboxChooser.prototype.choose = function() {
 DropboxChooser.prototype.buildUrl = function() {
     var urlParams = {
         origin: encodeURIComponent(window.location.protocol + '//' + window.location.host),
-        'app_key': DropboxKeys.AppFolder,
+        'app_key': getKey(),
         'link_type': 'direct',
         trigger: 'js',
         multiselect: 'false',
@@ -129,21 +126,15 @@ var DropboxLink = {
     ERROR_CONFLICT: Dropbox.ApiError.CONFLICT,
     ERROR_NOT_FOUND: Dropbox.ApiError.NOT_FOUND,
 
-    _getClient: function(complete) {
+    _getClient: function(complete, overrideAppKey) {
         if (this._dropboxClient && this._dropboxClient.isAuthenticated()) {
             complete(null, this._dropboxClient);
             return;
         }
-        if (!isValidKey()) {
-            Alerts.error({
-                icon: 'dropbox',
-                header: Locale.dropboxNotConfigured,
-                body: Locale.dropboxNotConfiguredBody1 + '<br/>' + Locale.dropboxNotConfiguredBody2.replace('{}',
-                        '<a href="' + Links.SelfHostedDropbox + '" target="blank">' + Locale.dropboxNotConfiguredLink + '</a>')
-            });
+        if (!overrideAppKey && !this.isValidKey()) {
             return complete(DropboxCustomErrors.BadKey);
         }
-        var client = new Dropbox.Client({key: DropboxKeys.AppFolder});
+        var client = new Dropbox.Client({key: overrideAppKey || getKey()});
         if (Launcher) {
             client.authDriver(new Dropbox.AuthDriver.Electron({ receiverUrl: location.href }));
         } else {
@@ -251,8 +242,19 @@ var DropboxLink = {
         });
     },
 
-    authenticate: function(copmlete) {
-        this._getClient(function(err) { copmlete(err); });
+    isValidKey: function() {
+        var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
+            !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href) &&
+            !/http(s?):\/\/app\.keeweb\.info/.test(location.href);
+        return Launcher || !isSelfHostedApp || getKey() !== DropboxKeys.AppFolderKeyParts.join('');
+    },
+
+    setKey: function(key) {
+        AppSettingsModel.instance.set('dropboxAppKey', key);
+    },
+
+    authenticate: function(complete, overrideAppKey) {
+        this._getClient(function(err) { complete(err); }, overrideAppKey);
     },
 
     receive: function() {

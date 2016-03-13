@@ -24,7 +24,8 @@ var AppSettingsModel = Backbone.Model.extend({
         skipOpenLocalWarn: false,
         hideEmptyFields: false,
         skipHttpsWarning: false,
-        demoOpened: false
+        demoOpened: false,
+        dropboxAppKey: null
     },
 
     initialize: function() {
