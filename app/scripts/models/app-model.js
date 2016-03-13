@@ -329,7 +329,7 @@ var AppModel = Backbone.Model.extend({
                         logger.info('Open file from cache because ' + (err ? 'stat error' : 'it is latest'), err);
                         that.openFileFromCache(params, callback, fileInfo);
                     } else if (stat) {
-                        logger.info('Open file from storage');
+                        logger.info('Open file from storage (' + stat.rev + ', local ' + cacheRev + ')');
                         storageLoad();
                     } else {
                         logger.info('Stat error', err);

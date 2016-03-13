@@ -16,7 +16,6 @@ var StorageDropbox = {
     ],
 
     load: function(path, opts, callback) {
-        logger.debug('Load', path);
         this._request({
             op: 'Load',
             method: 'GET',
@@ -29,7 +28,6 @@ var StorageDropbox = {
     },
 
     stat: function(path, opts, callback) {
-        logger.debug('Stat', path);
         this._request({
             op: 'Stat',
             method: 'HEAD',
@@ -42,45 +40,69 @@ var StorageDropbox = {
     },
 
     save: function(path, opts, data, callback, rev) {
-        logger.debug('Save', path, rev);
-        var etag, lastModified;
-        if (rev && rev.charAt(0) === 'E') {
-            etag = rev.substr(1);
-        } else if (rev && rev.charAt(0) === 'T') {
-            lastModified = rev.substr(1);
-        }
-        var cb = callback ? function(err, xhr, stat) {
-            callback(err, stat);
-        } : null;
+        var cb = function(err, xhr, stat) {
+            if (callback) {
+                callback(err, stat);
+                callback = null;
+            }
+        };
+        var tmpPath = path.replace(/[^\/]+$/, function(m) { return '.' + m; }) + '.' + Date.now();
         var saveOpts = {
-            op: 'Save',
-            method: 'POST',
             path: path,
             user: opts ? opts.user : null,
-            password: opts ? opts.password : null,
-            data: data,
-            etag: etag
+            password: opts ? opts.password : null
         };
-        if (lastModified) {
-            logger.debug('Stat before save', path, rev);
-            this.stat(path, opts, function(err, stat) {
+        var that = this;
+        this._request(_.defaults({
+            op: 'Save:stat', method: 'HEAD'
+        }, saveOpts), function(err, xhr, stat) {
+            if (err) { return cb(err); }
+            if (stat.rev !== rev) {
+                logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
+                return cb({ revConflict: true }, xhr, stat);
+            }
+            that._request(_.defaults({
+                op: 'Save:put', method: 'PUT', path: tmpPath, data: data, nostat: true
+            }, saveOpts), function(err) {
                 if (err) { return cb(err); }
-                if (stat.rev !== rev) {
-                    logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
-                    return cb({ revConflict: true });
-                }
-                this._request(saveOpts, cb);
+                that._request(_.defaults({
+                    op: 'Save:stat', method: 'HEAD'
+                }, saveOpts), function(err, xhr, stat) {
+                    if (err) {
+                        that._request(_.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts));
+                        return cb(err, xhr, stat);
+                    }
+                    if (stat.rev !== rev) {
+                        logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
+                        that._request(_.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts));
+                        return cb({ revConflict: true }, xhr, stat);
+                    }
+                    that._request(_.defaults({
+                        op: 'Save:move', method: 'MOVE', path: tmpPath, nostat: true,
+                        headers: { Destination: path, 'Overwrite': 'T' }
+                    }, saveOpts), function(err) {
+                        if (err) { return cb(err); }
+                        that._request(_.defaults({
+                            op: 'Save:stat', method: 'HEAD'
+                        }, saveOpts), function(err, xhr, stat) {
+                            cb(err, xhr, stat);
+                        });
+                    });
+                });
             });
-        } else {
-            this._request(saveOpts, cb);
-        }
+        });
     },
 
     _request: function(config, callback) {
+        if (config.rev) {
+            logger.debug(config.op, config.path, config.rev);
+        } else {
+            logger.debug(config.op, config.path);
+        }
         var ts = logger.ts();
         var xhr = new XMLHttpRequest();
         xhr.addEventListener('load', function() {
-            if (xhr.status !== 200) {
+            if ([200, 201, 204].indexOf(xhr.status) < 0) {
                 logger.debug(config.op + ' error', config.path, xhr.status, logger.ts(ts));
                 var err;
                 switch (xhr.status) {
@@ -94,41 +116,36 @@ var StorageDropbox = {
                         err = 'HTTP status ' + xhr.status;
                         break;
                 }
-                if (callback) { callback(err); callback = null; }
+                if (callback) { callback(err, xhr); callback = null; }
                 return;
             }
-            var rev = xhr.getResponseHeader('ETag');
-            if (rev) {
-                rev = 'E' + rev;
-            } else {
-                rev = xhr.getResponseHeader('Last-Modified');
-                if (rev) {
-                    rev = 'T' + rev;
-                }
-            }
-            if (!rev) {
+            var rev = xhr.getResponseHeader('Last-Modified');
+            if (!rev && !config.nostat) {
                 logger.debug(config.op + ' error', config.path, 'no headers', logger.ts(ts));
-                if (callback) { callback('No header ETag or Last-Modified'); callback = null; }
+                if (callback) { callback('No Last-Modified header', xhr); callback = null; }
                 return;
             }
-            logger.debug(config.op + 'ed', config.path, rev, logger.ts(ts));
+            var completedOpName = config.op + (config.op.charAt(config.op.length - 1) === 'e' ? 'd' : 'ed');
+            logger.debug(completedOpName, config.path, rev, logger.ts(ts));
             if (callback) { callback(null, xhr, rev ? { rev: rev } : null); callback = null; }
         });
         xhr.addEventListener('error', function() {
             logger.debug(config.op + ' error', config.path, logger.ts(ts));
-            if (callback) { callback('network error'); callback = null; }
+            if (callback) { callback('network error', xhr); callback = null; }
         });
         xhr.addEventListener('abort', function() {
             logger.debug(config.op + ' error', config.path, 'aborted', logger.ts(ts));
-            if (callback) { callback('aborted'); callback = null; }
+            if (callback) { callback('aborted', xhr); callback = null; }
         });
         xhr.responseType = 'arraybuffer';
         xhr.open(config.method, config.path);
         if (config.user) {
             xhr.setRequestHeader('Authorization', 'Basic ' + btoa(config.user + ':' + config.password));
         }
-        if (config.etag) {
-            xhr.setRequestHeader('If-Match', config.etag);
+        if (config.headers) {
+            _.forEach(config.headers, function(value, header) {
+                xhr.setRequestHeader(header, value);
+            });
         }
         if (config.data) {
             var blob = new Blob([config.data], {type: 'application/octet-stream'});
