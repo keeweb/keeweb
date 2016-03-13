@@ -128,6 +128,7 @@ DropboxChooser.prototype.readFile = function(url) {
 var DropboxLink = {
     ERROR_CONFLICT: Dropbox.ApiError.CONFLICT,
     ERROR_NOT_FOUND: Dropbox.ApiError.NOT_FOUND,
+
     _getClient: function(complete) {
         if (this._dropboxClient && this._dropboxClient.isAuthenticated()) {
             complete(null, this._dropboxClient);

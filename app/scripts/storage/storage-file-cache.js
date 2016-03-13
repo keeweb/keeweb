@@ -8,6 +8,7 @@ var logger = new Logger('storage-file-cache');
 var StorageFileCache = {
     name: 'cache',
     enabled: !!Launcher,
+    system: true,
 
     path: null,
 

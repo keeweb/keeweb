@@ -8,6 +8,7 @@ var idb = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || w
 var StorageCache = {
     name: 'cache',
     enabled: !!idb,
+    system: true,
 
     db: null,
     errorOpening: null,

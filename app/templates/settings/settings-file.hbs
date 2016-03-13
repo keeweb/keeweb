@@ -2,7 +2,7 @@
     <h1><i class="fa fa-lock"></i> {{name}}</h1>
     {{#if storage}}
         {{#ifeq storage 'file'}}<p>{{res 'setFilePath'}}: {{path}}</p>{{/ifeq}}
-        {{#ifeq storage 'dropbox'}}<p>{{#res 'setFileStorage'}}Dropbox{{/res}}</p>{{/ifeq}}
+        {{#ifneq storage 'file'}}<p>{{#res 'setFileStorage'}}{{res storage}}{{/res}}</p>{{/ifneq}}
     {{else}}
         <p>{{res 'setFileIntl'}}.</p>
         {{#unless supportFiles}}

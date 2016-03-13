@@ -21,10 +21,23 @@
     margin: 20px;
     transition: color $base-duration $base-timing;
     &:hover { @include th { color: medium-color(); } }
-    &-i { font-size: 4em; }
+    &-i, &-svg { font-size: 4em; }
     &-text {
       @include th { color: muted-color(); }
       .open__icon:hover>& { @include th { color: medium-color(); } }
+    }
+    &-svg {
+      line-height: 0;
+      >svg {
+        @include size(1em);
+        path {
+          transition: fill $base-duration $base-timing;
+          @include th { fill: text-color(); }
+          .open__icon:hover & {
+            @include th { fill: medium-color(); }
+          }
+        }
+      }
     }
   }
 

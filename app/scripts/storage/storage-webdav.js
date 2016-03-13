@@ -8,12 +8,19 @@ var StorageWebDav = {
     name: 'webdav',
     icon: 'server',
     enabled: true,
+    uipos: 10,
 
-    openFields: [
-        { id: 'path', title: 'openUrl', desc: 'openUrlDesc', type: 'text', required: true },
-        { id: 'user', title: 'openUser', desc: 'openUserDesc', placeholder: 'openUserPlaceholder', type: 'text' },
-        { id: 'password', title: 'openPass', desc: 'openPassDesc', placeholder: 'openPassPlaceholder', type: 'password' }
-    ],
+    needShowOpenConfig: function() {
+        return true;
+    },
+
+    getOpenConfigFields: function() {
+        return [
+            {id: 'path', title: 'openUrl', desc: 'openUrlDesc', type: 'text', required: true},
+            {id: 'user', title: 'openUser', desc: 'openUserDesc', placeholder: 'openUserPlaceholder', type: 'text'},
+            {id: 'password', title: 'openPass', desc: 'openPassDesc', placeholder: 'openPassPlaceholder', type: 'password'}
+        ];
+    },
 
     load: function(path, opts, callback) {
         this._request({

@@ -21,13 +21,10 @@ var OpenView = Backbone.View.extend({
         'change .open__file-ctrl': 'fileSelected',
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
-        'click .open__icon-dropbox': 'openFromDropbox',
         'click .open__icon-import-xml': 'importFromXml',
         'click .open__icon-demo': 'createDemo',
         'click .open__icon-more': 'toggleMore',
-        'click .open__icon-webdav': 'toggleWebDav',
-        'click .open__icon-onedrive': Alerts.notImplemented.bind(Alerts),
-        'click .open__icon-gdrive': Alerts.notImplemented.bind(Alerts),
+        'click .open__icon-storage': 'openStorage',
         'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
         'keydown .open__pass-input': 'inputKeydown',
@@ -65,10 +62,19 @@ var OpenView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
+        var storageProviders = [];
+        Object.keys(Storage).forEach(function(name) {
+            var prv = Storage[name];
+            if (!prv.system && prv.enabled) {
+                storageProviders.push(prv);
+            }
+        });
+        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
         this.renderTemplate({
             lastOpenFiles: this.getLastOpenFiles(),
-            canOpenKeyFromDropbox: DropboxLink.canChooseFile(),
-            demoOpened: this.model.settings.get('demoOpened')
+            canOpenKeyFromDropbox: DropboxLink.canChooseFile() && Storage.dropbox.enabled,
+            demoOpened: this.model.settings.get('demoOpened'),
+            storageProviders: storageProviders
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
@@ -379,78 +385,6 @@ var OpenView = Backbone.View.extend({
         }
     },
 
-    displayDropboxLoading: function(isLoading) {
-        this.$el.find('.open__icon-dropbox .open__icon-i').toggleClass('flip3d', !!isLoading);
-    },
-
-    openFromDropbox: function() {
-        if (this.busy) {
-            return;
-        }
-        this.closeConfig();
-        var that = this;
-        DropboxLink.authenticate(function(err) {
-            if (err) {
-                return;
-            }
-            that.busy = true;
-            that.displayDropboxLoading(true);
-            DropboxLink.getFileList(function(err, files, dirStat, filesStat) {
-                that.busy = false;
-                that.displayDropboxLoading(false);
-                if (err) {
-                    return;
-                }
-                var buttons = [];
-                var allDropboxFiles = {};
-                filesStat.forEach(function(file) {
-                    if (!file.isFolder && !file.isRemoved) {
-                        var fileName = UrlUtil.getDataFileName(file.name);
-                        buttons.push({ result: file.path, title: fileName });
-                        allDropboxFiles[file.path] = file;
-                    }
-                });
-                if (!buttons.length) {
-                    Alerts.error({
-                        header: Locale.openNothingFound,
-                        body: Locale.openNothingFoundBody + (dirStat && dirStat.inAppFolder ? ' ' + Locale.openNothingFoundBodyAppFolder : '')
-                    });
-                    return;
-                }
-                buttons.push({ result: '', title: Locale.alertCancel });
-                Alerts.alert({
-                    header: Locale.openSelectFile,
-                    body: Locale.openSelectFileBody,
-                    icon: 'dropbox',
-                    buttons: buttons,
-                    esc: '',
-                    click: '',
-                    success: function(file) {
-                        that.openDropboxFile(allDropboxFiles[file]);
-                    }
-                });
-                that.model.fileInfos.forEach(function(fi) {
-                    if (fi.get('storage') === 'dropbox' && !fi.get('modified') && !allDropboxFiles[fi.get('path')]) {
-                        that.model.removeFileInfo(fi.id);
-                    }
-                });
-            });
-        });
-    },
-
-    openDropboxFile: function(fileStat) {
-        if (this.busy) {
-            return;
-        }
-        this.params.id = null;
-        this.params.storage = 'dropbox';
-        this.params.path = fileStat.path;
-        this.params.name = UrlUtil.getDataFileName(fileStat.name);
-        this.params.rev = fileStat.versionTag;
-        this.params.fileData = null;
-        this.displayOpenFile();
-    },
-
     showOpenFileInfo: function(fileInfo) {
         if (this.busy || !fileInfo) {
             return;
@@ -538,13 +472,81 @@ var OpenView = Backbone.View.extend({
         this.$el.find('.open__icons--lower').toggleClass('hide');
     },
 
-    toggleWebDav: function() {
+    openStorage: function(e) {
         if (this.busy) {
             return;
         }
-        this.$el.find('.open__icons--lower').addClass('hide');
-        this.$el.find('.open__pass-area').addClass('hide');
-        this.showConfig(Storage.webdav);
+        var storage = Storage[$(e.target).closest('.open__icon').data('storage')];
+        if (!storage) {
+            return;
+        }
+        if (storage.needShowOpenConfig && storage.needShowOpenConfig()) {
+            this.showConfig(storage);
+        } else if (storage.list) {
+            this.listStorage(storage);
+        } else {
+            Alerts.notImplemented();
+        }
+    },
+
+    listStorage: function(storage) {
+        if (this.busy) {
+            return;
+        }
+        this.closeConfig();
+        var icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
+        var that = this;
+        that.busy = true;
+        icon.toggleClass('flip3d', true);
+        storage.list(function(err, files) {
+            icon.toggleClass('flip3d', false);
+            that.busy = false;
+            if (err || !files) {
+                return;
+            }
+
+            var buttons = [];
+            var allStorageFiles = {};
+            files.forEach(function (file) {
+                var fileName = UrlUtil.getDataFileName(file.name);
+                buttons.push({result: file.path, title: fileName});
+                allStorageFiles[file.path] = file;
+            });
+            if (!buttons.length) {
+                Alerts.error({ header: Locale.openNothingFound, body: Locale.openNothingFoundBody });
+                return;
+            }
+            buttons.push({result: '', title: Locale.alertCancel});
+            Alerts.alert({
+                header: Locale.openSelectFile,
+                body: Locale.openSelectFileBody,
+                icon: storage.icon || 'files-o',
+                buttons: buttons,
+                esc: '',
+                click: '',
+                success: function (file) {
+                    that.openStorageFile(storage, allStorageFiles[file]);
+                }
+            });
+            that.model.fileInfos.forEach(function (fi) {
+                if (fi.get('storage') === storage.name && !fi.get('modified') && !allStorageFiles[fi.get('path')]) {
+                    that.model.removeFileInfo(fi.id);
+                }
+            });
+        });
+    },
+
+    openStorageFile: function(storage, file) {
+        if (this.busy) {
+            return;
+        }
+        this.params.id = null;
+        this.params.storage = storage.name;
+        this.params.path = file.path;
+        this.params.name = UrlUtil.getDataFileName(file.name);
+        this.params.rev = file.rev;
+        this.params.fileData = null;
+        this.displayOpenFile();
     },
 
     showConfig: function(storage) {
@@ -558,11 +560,13 @@ var OpenView = Backbone.View.extend({
             id: storage.name,
             name: Locale[storage.name] || storage.name,
             icon: storage.icon,
-            fields: storage.openFields
+            fields: storage.getOpenConfigFields()
         };
         this.views.openConfig = new OpenConfigView({ el: this.$el.find('.open__config-wrap'), model: config }).render();
         this.views.openConfig.on('cancel', this.closeConfig.bind(this));
         this.views.openConfig.on('apply', this.applyConfig.bind(this));
+        this.$el.find('.open__pass-area').addClass('hide');
+        this.$el.find('.open__icons--lower').addClass('hide');
     },
 
     closeConfig: function() {

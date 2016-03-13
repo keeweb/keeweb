@@ -9,6 +9,7 @@ var StorageDropbox = {
     name: 'dropbox',
     icon: 'dropbox',
     enabled: true,
+    uipos: 20,
 
     _convertError: function(err) {
         if (!err) {
@@ -21,6 +22,10 @@ var StorageDropbox = {
             err.revConflict = true;
         }
         return err;
+    },
+
+    needShowOpenConfig: function() {
+        return false;
     },
 
     getPathForName: function(fileName) {
@@ -60,6 +65,19 @@ var StorageDropbox = {
             err = StorageDropbox._convertError(err);
             callback(err, stat ? { rev: stat.versionTag } : null);
         }, _.noop);
+    },
+
+    list: function(callback) {
+        DropboxLink.authenticate(function(err) {
+            if (err) { return callback(err); }
+            DropboxLink.getFileList(function(err, files, dirStat, filesStat) {
+                if (err) { return callback(err); }
+                var result = filesStat
+                    .filter(function(f) { return !f.isFolder && !f.isRemoved; })
+                    .map(function(f) { return { name: f.name, path: f.path, rev: f.versionTag }; });
+                callback(null, result);
+            });
+        });
     }
 };
 

@@ -11,6 +11,7 @@ var StorageFile = {
     name: 'file',
     icon: 'hdd-o',
     enabled: !!Launcher,
+    system: true,
 
     load: function(path, opts, callback) {
         logger.debug('Load', path);
