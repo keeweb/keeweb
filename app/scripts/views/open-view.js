@@ -67,6 +67,7 @@ var OpenView = Backbone.View.extend({
         }
         this.renderTemplate({
             lastOpenFiles: this.getLastOpenFiles(),
+            canOpenKeyFromDropbox: DropboxLink.canChooseFile(),
             demoOpened: this.model.settings.get('demoOpened')
         });
         this.inputEl = this.$el.find('.open__pass-input');

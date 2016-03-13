@@ -293,6 +293,10 @@ var DropboxLink = {
         this._callAndHandleError('remove', [fileName], complete);
     },
 
+    canChooseFile: function() {
+        return !Launcher;
+    },
+
     chooseFile: function(callback) {
         new DropboxChooser(callback).choose();
     }
