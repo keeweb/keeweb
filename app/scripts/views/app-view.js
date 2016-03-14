@@ -460,6 +460,7 @@ var AppView = Backbone.View.extend({
                     this.showEntries();
                 } else {
                     this.showLastOpenFile();
+                    this.views.open.toggleMore();
                 }
             } else {
                 if (menuItem) {

@@ -12,6 +12,8 @@
     @include align-items(stretch);
     @include flex-direction(row);
     @include flex-shrink(0);
+    @include justify-content(center);
+    @include flex-wrap(wrap);
     .open--drag & { display: none; }
   }
 
@@ -22,10 +24,6 @@
     transition: color $base-duration $base-timing;
     &:hover { @include th { color: medium-color(); } }
     &-i, &-svg { font-size: 4em; }
-    .open__icons--lower & {
-      &-i, &-svg { font-size: 3em; }
-      margin: $base-padding;
-    }
     &-text {
       @include th { color: muted-color(); }
       .open__icon:hover>& { @include th { color: medium-color(); } }
