@@ -248,7 +248,6 @@ var DropboxLink = {
         var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
             !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href) &&
             !/http(s?):\/\/app\.keeweb\.info/.test(location.href);
-        isSelfHostedApp = true;
         return Launcher || !isSelfHostedApp || getKey() !== DropboxKeys.AppFolderKeyParts.join('');
     },
 

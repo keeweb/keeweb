@@ -503,7 +503,7 @@ var OpenView = Backbone.View.extend({
         var that = this;
         that.busy = true;
         icon.toggleClass('flip3d', true);
-        storage.list(function(err, files) {
+        storage.list(function(err, files, dir) {
             icon.toggleClass('flip3d', false);
             that.busy = false;
             if (err || !files) {
@@ -518,7 +518,10 @@ var OpenView = Backbone.View.extend({
                 allStorageFiles[file.path] = file;
             });
             if (!buttons.length) {
-                Alerts.error({ header: Locale.openNothingFound, body: Locale.openNothingFoundBody });
+                Alerts.error({
+                    header: Locale.openNothingFound,
+                    body: Locale.openNothingFoundBody.replace('{}', dir)
+                });
                 return;
             }
             buttons.push({result: '', title: Locale.alertCancel});

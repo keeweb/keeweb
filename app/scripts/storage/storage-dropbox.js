@@ -2,6 +2,7 @@
 
 var DropboxLink = require('../comp/dropbox-link'),
     AppSettingsModel = require('../models/app-settings-model'),
+    Locale = require('../util/locale'),
     UrlUtils = require('../util/url-util'),
     Logger = require('../util/logger');
 
@@ -128,7 +129,7 @@ var StorageDropbox = {
             if (err) { return callback(err); }
             DropboxLink.list(that._toFullPath(''), function(err, files, dirStat, filesStat) {
                 if (err) { return callback(err); }
-                var result = filesStat
+                var fileList = filesStat
                     .filter(function(f) { return !f.isFolder && !f.isRemoved; })
                     .map(function(f) {
                         return {
@@ -137,7 +138,8 @@ var StorageDropbox = {
                             rev: f.versionTag
                         };
                     });
-                callback(null, result);
+                var dir = dirStat.inAppFolder ? Locale.openAppFolder : UrlUtils.trimStartSlash(dirStat.path);
+                callback(null, fileList, dir);
             });
         });
     }

@@ -3,6 +3,7 @@
 var UrlUtil = {
     multiSlashRegex: /\/{2,}/g,
     lastPartRegex: /[^\/]+$/,
+    trimStartSlashRegex: /^\\/,
 
     getDataFileName: function(url) {
         var ix = url.lastIndexOf('/');
@@ -19,6 +20,10 @@ var UrlUtil = {
 
     fileToDir: function(url) {
         return url.replace(this.lastPartRegex, '');
+    },
+
+    trimStartSlash: function(url) {
+        return url.replace(this.trimStartSlashRegex, '');
     }
 };
 
