@@ -13,7 +13,7 @@ var Backbone = require('backbone'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
 
-var SettingsAboutView = Backbone.View.extend({
+var SettingsFileView = Backbone.View.extend({
     template: require('templates/settings/settings-file.hbs'),
 
     events: {
@@ -186,7 +186,7 @@ var SettingsAboutView = Backbone.View.extend({
                 that.save();
             } else {
                 that.model.set('syncing', true);
-                DropboxLink.getFileList(function(err, files) {
+                DropboxLink.list('', function(err, files) { // TODO: replace with actual path
                     that.model.set('syncing', false);
                     if (!files) { return; }
                     var expName = that.model.get('name').toLowerCase();
@@ -356,4 +356,4 @@ var SettingsAboutView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsAboutView;
+module.exports = SettingsFileView;

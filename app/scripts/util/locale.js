@@ -369,7 +369,10 @@ var Locale = {
     dropboxErrorRepeatBody: 'Something went wrong during Dropbox sync. Please, try again later. Error: ',
     dropboxSetupDesc: 'Some configuration is required to use Dropbox in self-hosted app. Please create your own Dropbox app and fill in its key below.',
     dropboxAppKey: 'Dropbox app key',
-    dropboxAppKeyDesc: 'Copy it from your Dropbox app (Developer settings)',
+    dropboxAppKeyDesc: 'Copy the key from your Dropbox app (Developer settings)',
+    dropboxFolder: 'App folder',
+    dropboxFolderDesc: 'If your app is linked to entire Dropbox (not app folder), set the folder with your Kdbx files here',
+    dropboxFolderPlaceholder: 'default folder',
 
     launcherSave: 'Save Passwords Database',
     launcherFileFilter: 'KeePass files'

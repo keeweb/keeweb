@@ -5,12 +5,14 @@ var Dropbox = require('dropbox'),
     Launcher = require('./launcher'),
     Logger = require('../util/logger'),
     Locale = require('../util/locale'),
+    UrlUtil = require('../util/url-util'),
     AppSettingsModel = require('../models/app-settings-model');
 
 var logger = new Logger('dropbox');
 
 var DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
+    FullDropbox: 'eor7hvv6u6oslq9',
     AppFolderKeyParts: ['qp7ctun6', 'qt5n9d6'] // to allow replace key by sed, compare in this way
 };
 
@@ -246,11 +248,8 @@ var DropboxLink = {
         var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
             !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href) &&
             !/http(s?):\/\/app\.keeweb\.info/.test(location.href);
+        isSelfHostedApp = true;
         return Launcher || !isSelfHostedApp || getKey() !== DropboxKeys.AppFolderKeyParts.join('');
-    },
-
-    setKey: function(key) {
-        AppSettingsModel.instance.set('dropboxAppKey', key);
     },
 
     authenticate: function(complete, overrideAppKey) {
@@ -266,7 +265,8 @@ var DropboxLink = {
             var opts = typeof rev === 'string' ? { lastVersionTag: rev, noOverwrite: true, noAutoRename: true } : undefined;
             this._callAndHandleError('writeFile', [fileName, data, opts], complete, alertCallback);
         } else {
-            this.getFileList((function(err, files) {
+            var dir = UrlUtil.fileToDir(fileName);
+            this.list(dir, (function(err, files) {
                 if (err) { return complete(err); }
                 var exists = files.some(function(file) { return file.toLowerCase() === fileName.toLowerCase(); });
                 if (exists) { return complete({ exists: true }); }
@@ -283,8 +283,8 @@ var DropboxLink = {
         this._callAndHandleError('stat', [fileName], complete, errorAlertCallback);
     },
 
-    getFileList: function(complete) {
-        this._callAndHandleError('readdir', [''], function(err, files, dirStat, filesStat) {
+    list: function(dir, complete) {
+        this._callAndHandleError('readdir', [dir || ''], function(err, files, dirStat, filesStat) {
             if (files) {
                 files = files.filter(function(f) { return /\.kdbx$/i.test(f); });
             }
