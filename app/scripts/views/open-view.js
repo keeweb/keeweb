@@ -450,6 +450,12 @@ var OpenView = Backbone.View.extend({
             this.inputEl.focus();
             this.inputEl[0].selectionStart = 0;
             this.inputEl[0].selectionEnd = this.inputEl.val().length;
+            if (err.code !== 'InvalidKey') {
+                Alerts.error({
+                    header: Locale.openError,
+                    body: Locale.openErrorDescription + '<pre class="modal__pre">' + _.escape(err.toString()) +'</pre>'
+                });
+            }
         } else {
             this.trigger('close');
         }

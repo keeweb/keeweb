@@ -56,4 +56,7 @@
   &__check-wrap {
     margin-top: $base-spacing;
   }
+  &__pre {
+    white-space: pre-wrap;
+  }
 }

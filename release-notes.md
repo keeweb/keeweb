@@ -21,6 +21,7 @@ Storage providers, usability improvements
 `+` hide empty fields  
 `+` overall spacing increased  
 `+` hide demo button once opened  
+`+` show error details on open  
 `-` fix capslock indicator  
 `-` fix file settings input behavior  
 `-` fix favicon download  

@@ -145,6 +145,8 @@ var Locale = {
     openPassPlaceholder: 'no password',
     openConfigError: 'Error: {}',
     openConfigErrorNotFound: 'File not found',
+    openError: 'Error',
+    openErrorDescription: 'There was an error opening file',
 
     detAttDownload: 'Shift-click attachment button to download or ',
     detAttDelToRemove: 'Delete to remove',
