@@ -542,11 +542,6 @@ var OpenView = Backbone.View.extend({
                     that.openStorageFile(storage, allStorageFiles[file]);
                 }
             });
-            that.model.fileInfos.forEach(function (fi) {
-                if (fi.get('storage') === storage.name && !fi.get('modified') && !allStorageFiles[fi.get('path')]) {
-                    that.model.removeFileInfo(fi.id);
-                }
-            });
         });
     },
 
