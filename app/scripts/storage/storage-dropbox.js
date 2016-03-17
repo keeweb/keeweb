@@ -110,6 +110,7 @@ var StorageDropbox = {
                     dropboxAppKey: config.key,
                     dropboxFolder: config.folder
                 });
+                DropboxLink.resetClient();
             }
             callback(err);
         }, config.key);
@@ -129,7 +130,10 @@ var StorageDropbox = {
                     case 'custom':
                         value = '(your app key)';
                         break;
+                    default:
+                        return;
                 }
+                DropboxLink.resetClient();
                 break;
             case 'key':
                 key = 'dropboxAppKey';
@@ -201,7 +205,8 @@ var StorageDropbox = {
                             rev: f.versionTag
                         };
                     });
-                var dir = dirStat.inAppFolder ? Locale.openAppFolder : UrlUtils.trimStartSlash(dirStat.path);
+                var dir = dirStat.inAppFolder ? Locale.openAppFolder :
+                    (UrlUtils.trimStartSlash(dirStat.path) || Locale.openRootFolder);
                 callback(null, fileList, dir);
             });
         });

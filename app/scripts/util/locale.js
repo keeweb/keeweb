@@ -120,6 +120,7 @@ var Locale = {
     openNothingFound: 'Nothing found',
     openNothingFoundBody: 'No files which could be opened (files are searched inside {} folder).',
     openAppFolder: 'app',
+    openRootFolder: 'root',
     openSelectFile: 'Select a file',
     openSelectFileBody: 'Select a file which you would like to open',
     openPassFor: 'Password for',

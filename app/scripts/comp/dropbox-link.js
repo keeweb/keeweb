@@ -264,6 +264,10 @@ var DropboxLink = {
         this._getClient(function(err) { complete(err); }, overrideAppKey);
     },
 
+    resetClient: function() {
+        this._dropboxClient = null;
+    },
+
     receive: function() {
         Dropbox.AuthDriver.Popup.oauthReceiver();
     },
