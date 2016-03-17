@@ -248,7 +248,7 @@ var DropboxLink = {
     canUseBuiltInKeys: function() {
         var isSelfHosted = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
             !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href) &&
-            !/http(s?):\/\/app\.keeweb\.info/.test(location.href);
+            !/http(s?):\/\/(app|beta)\.keeweb\.info/.test(location.href);
         return !!Launcher || !isSelfHosted;
     },
 
