@@ -379,7 +379,7 @@ var Locale = {
     dropboxFolderPlaceholder: 'default folder',
     dropboxLink: 'Link the app to',
     dropboxLinkApp: 'App folder (Apps/KeeWeb)',
-    dropboxLinkFull: 'Full Dropbox / Select a folder',
+    dropboxLinkFull: 'Full Dropbox or any folder',
     dropboxLinkCustom: 'Own Dropbox app',
 
     launcherSave: 'Save Passwords Database',
