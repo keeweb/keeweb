@@ -1,6 +1,7 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    SettingsPrvView = require('./settings-prv-view'),
     Launcher = require('../../comp/launcher'),
     Updater = require('../../comp/updater'),
     Format = require('../../util/format'),
@@ -36,6 +37,8 @@ var SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-dev-tools-link': 'openDevTools'
     },
 
+    views: {},
+
     allThemes: {
         fb: 'Flat blue',
         db: 'Dark brown',
@@ -50,7 +53,8 @@ var SettingsGeneralView = Backbone.View.extend({
     render: function() {
         var updateReady = UpdateModel.instance.get('updateStatus') === 'ready',
             updateFound = UpdateModel.instance.get('updateStatus') === 'found',
-            updateManual = UpdateModel.instance.get('updateManual');
+            updateManual = UpdateModel.instance.get('updateManual'),
+            storageProviders = this.getStorageProviders();
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
@@ -78,8 +82,23 @@ var SettingsGeneralView = Backbone.View.extend({
             updateManual: updateManual,
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
-            storageProviders: this.getStorageProviders()
+            storageProviders: storageProviders
         });
+        this.renderProviderViews(storageProviders);
+    },
+
+    renderProviderViews: function(storageProviders) {
+        storageProviders.forEach(function(prv) {
+            if (this.views[prv.name]) {
+                this.views[prv.name].remove();
+            }
+            if (prv.hasConfig) {
+                this.views[prv.name] = new SettingsPrvView({
+                    el: this.$el.find('.settings__general-' + prv.name),
+                    model: prv
+                }).render();
+            }
+        }, this);
     },
 
     getUpdateInfo: function() {
@@ -131,7 +150,8 @@ var SettingsGeneralView = Backbone.View.extend({
         return storageProviders.map(function(sp) {
             return {
                 name: sp.name,
-                enabled: sp.enabled
+                enabled: sp.enabled,
+                hasConfig: sp.getSettingsConfig
             };
         });
     },
@@ -232,6 +252,7 @@ var SettingsGeneralView = Backbone.View.extend({
         if (storage) {
             storage.enabled = e.target.checked;
             AppSettingsModel.instance.set(storage.name, storage.enabled);
+            this.$el.find('.settings__general-' + storage.name).toggleClass('hide', !e.target.checked);
         }
     },
 

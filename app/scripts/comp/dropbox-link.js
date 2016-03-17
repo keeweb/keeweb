@@ -12,8 +12,7 @@ var logger = new Logger('dropbox');
 
 var DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
-    FullDropbox: 'eor7hvv6u6oslq9',
-    AppFolderKeyParts: ['qp7ctun6', 'qt5n9d6'] // to allow replace key by sed, compare in this way
+    FullDropbox: 'eor7hvv6u6oslq9'
 };
 
 var DropboxCustomErrors = {
@@ -127,6 +126,8 @@ DropboxChooser.prototype.readFile = function(url) {
 var DropboxLink = {
     ERROR_CONFLICT: Dropbox.ApiError.CONFLICT,
     ERROR_NOT_FOUND: Dropbox.ApiError.NOT_FOUND,
+
+    Keys: DropboxKeys,
 
     _getClient: function(complete, overrideAppKey) {
         if (this._dropboxClient && this._dropboxClient.isAuthenticated()) {
@@ -244,11 +245,19 @@ var DropboxLink = {
         });
     },
 
-    isValidKey: function() {
-        var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
+    canUseBuiltInKeys: function() {
+        var isSelfHosted = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
             !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href) &&
             !/http(s?):\/\/app\.keeweb\.info/.test(location.href);
-        return Launcher || !isSelfHostedApp || getKey() !== DropboxKeys.AppFolderKeyParts.join('');
+        return !!Launcher || !isSelfHosted;
+    },
+
+    getKey: getKey,
+
+    isValidKey: function() {
+        var key = getKey();
+        var isBuiltIn = key === DropboxKeys.AppFolder || key === DropboxKeys.FullDropbox;
+        return key && key.indexOf(' ') < 0 && (!isBuiltIn || this.canUseBuiltInKeys());
     },
 
     authenticate: function(complete, overrideAppKey) {

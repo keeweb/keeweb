@@ -88,4 +88,10 @@
     width: 15em;
     margin-right: $small-spacing;
   }
+  &__general-storage-header {
+    margin-bottom: 0;
+  }
+  &__general-prv {
+    margin-bottom: $base-padding-v;
+  }
 }

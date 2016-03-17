@@ -22,6 +22,7 @@ Storage providers, usability improvements
 `+` overall spacing increased  
 `+` hide demo button once opened  
 `+` show error details on open  
+`+` select dropbox folder  
 `-` fix capslock indicator  
 `-` fix file settings input behavior  
 `-` fix favicon download  

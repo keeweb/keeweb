@@ -49,6 +49,14 @@ var StorageDropbox = {
         return path;
     },
 
+    _fixConfigFolder: function(folder) {
+        folder = folder.replace(/\\/g, '/').trim();
+        if (folder[0] === '/') {
+            folder = folder.substr(1);
+        }
+        return folder;
+    },
+
     needShowOpenConfig: function() {
         return !DropboxLink.isValidKey();
     },
@@ -57,20 +65,46 @@ var StorageDropbox = {
         return {
             desc: 'dropboxSetupDesc',
             fields: [
-                {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w{10,}'},
+                {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w+'},
                 {id: 'folder', title: 'dropboxFolder', desc: 'dropboxFolderDesc', type: 'text', placeholder: 'dropboxFolderPlaceholder'}
             ]
         };
     },
 
+    getSettingsConfig: function() {
+        var fields = [];
+        var appKey = DropboxLink.getKey();
+        var linkField = {id: 'link', title: 'dropboxLink', type: 'select', value: 'custom',
+            options: { app: 'dropboxLinkApp', full: 'dropboxLinkFull', custom: 'dropboxLinkCustom' } };
+        var keyField = {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w+',
+            value: appKey};
+        var folderField = {id: 'folder', title: 'dropboxFolder', desc: 'dropboxFolderSettingsDesc', type: 'text',
+            value: AppSettingsModel.instance.get('dropboxFolder') || ''};
+        var canUseBuiltInKeys = DropboxLink.canUseBuiltInKeys();
+        if (canUseBuiltInKeys) {
+            fields.push(linkField);
+            if (appKey === DropboxLink.Keys.AppFolder) {
+                linkField.value = 'app';
+            } else if (appKey === DropboxLink.Keys.FullDropbox) {
+                linkField.value = 'full';
+                fields.push(folderField);
+            } else {
+                fields.push(keyField);
+                fields.push(folderField);
+            }
+        } else {
+            fields.push(keyField);
+            fields.push(folderField);
+        }
+        return { fields: fields };
+    },
+
     applyConfig: function(config, callback) {
+        var that = this;
         DropboxLink.authenticate(function(err) {
             if (!err) {
                 if (config.folder) {
-                    config.folder = config.folder.replace(/\\/g, '/').trim();
-                    if (config.folder[0] === '/') {
-                        config.folder = config.folder.substr(1);
-                    }
+                    config.folder = that._fixConfigFolder(config.folder);
                 }
                 AppSettingsModel.instance.set({
                     dropboxAppKey: config.key,
@@ -79,6 +113,35 @@ var StorageDropbox = {
             }
             callback(err);
         }, config.key);
+    },
+
+    applySetting: function(key, value) {
+        switch (key) {
+            case 'link':
+                key = 'dropboxAppKey';
+                switch (value) {
+                    case 'app':
+                        value = DropboxLink.Keys.AppFolder;
+                        break;
+                    case 'full':
+                        value = DropboxLink.Keys.FullDropbox;
+                        break;
+                    case 'custom':
+                        value = '(your app key)';
+                        break;
+                }
+                break;
+            case 'key':
+                key = 'dropboxAppKey';
+                break;
+            case 'folder':
+                key = 'dropboxFolder';
+                value = this._fixConfigFolder(value);
+                break;
+            default:
+                return;
+        }
+        AppSettingsModel.instance.set(key, value);
     },
 
     getPathForName: function(fileName) {

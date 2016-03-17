@@ -375,7 +375,12 @@ var Locale = {
     dropboxAppKeyDesc: 'Copy the key from your Dropbox app (Developer settings)',
     dropboxFolder: 'App folder',
     dropboxFolderDesc: 'If your app is linked to entire Dropbox (not app folder), set the folder with your Kdbx files here',
+    dropboxFolderSettingsDesc: 'Select any folder in your Dropbox where files will be stored (root folder by default)',
     dropboxFolderPlaceholder: 'default folder',
+    dropboxLink: 'Link the app to',
+    dropboxLinkApp: 'App folder (Apps/KeeWeb)',
+    dropboxLinkFull: 'Full Dropbox / Select a folder',
+    dropboxLinkCustom: 'Own Dropbox app',
 
     launcherSave: 'Save Passwords Database',
     launcherFileFilter: 'KeePass files'

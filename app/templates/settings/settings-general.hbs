@@ -113,9 +113,11 @@
 
     <h2>{{res 'setGenStorage'}}</h2>
     {{#each storageProviders as |prv|}}
-    <h3><input type="checkbox" id="settings__general-prv-check-{{prv.name}}" class="settings__general-prv-check"
-               data-storage="{{prv.name}}" {{#if prv.enabled}}checked{{/if}}
-    /><label for="settings__general-prv-check-{{prv.name}}">{{res prv.name}}</label></h3>
+    <h4 class="settings__general-storage-header"><input
+            type="checkbox" id="settings__general-prv-check-{{prv.name}}" class="settings__general-prv-check"
+            data-storage="{{prv.name}}" {{#if prv.enabled}}checked{{/if}}
+    /><label for="settings__general-prv-check-{{prv.name}}">{{res prv.name}}</label></h4>
+    <div class="settings__general-prv-wrap settings__general-{{prv.name}} {{#ifeq prv.enabled false}}hide{{/ifeq}}"></div>
     {{/each}}
 
     {{#if devTools}}
