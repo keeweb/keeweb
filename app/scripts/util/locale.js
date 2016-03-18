@@ -23,7 +23,7 @@ var Locale = {
     file: 'file',
     webdav: 'WebDAV',
     dropbox: 'Dropbox',
-    gdrive: 'GDrive',
+    gdrive: 'Google Drive',
     onedrive: 'OneDrive',
 
     menuAllItems: 'All Items',
