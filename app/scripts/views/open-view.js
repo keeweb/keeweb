@@ -288,11 +288,11 @@ var OpenView = Backbone.View.extend({
         var id = $(e.target).closest('.open__last-item').data('id').toString();
         if ($(e.target).is('.open__last-item-icon-del')) {
             var fileInfo = this.model.fileInfos.get(id);
-            if (!fileInfo.get('storage')) {
+            if (!fileInfo.get('storage') || fileInfo.get('modified')) {
                 var that = this;
                 Alerts.yesno({
                     header: Locale.openRemoveLastQuestion,
-                    body: Locale.openRemoveLastQuestionBody,
+                    body: fileInfo.get('modified') ? Locale.openRemoveLastQuestionModBody : Locale.openRemoveLastQuestionBody,
                     buttons: [
                         {result: 'yes', title: Locale.alertYes},
                         {result: '', title: Locale.alertNo}

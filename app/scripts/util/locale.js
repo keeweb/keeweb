@@ -126,6 +126,7 @@ var Locale = {
     openPassFor: 'Password for',
     openRemoveLastQuestion: 'Delete local file?',
     openRemoveLastQuestionBody: 'The file you are deleting is stored only inside the app. Delete it permanently?',
+    openRemoveLastQuestionModBody: 'The file you are deleting has local modifications. Delete it and discard these modifications?',
     openLocalFile: 'Local file',
     openLocalFileBody: 'You are going to open a file which will be stored inside the app. ' +
         'Changes you make will not be saved back to file system. ' +
