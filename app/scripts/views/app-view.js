@@ -77,6 +77,7 @@ var AppView = Backbone.View.extend({
 
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed, this);
+        KeyHandler.onKey(Keys.DOM_VK_F12, this.openDevTools, this, KeyHandler.SHORTCUT_ACTION);
 
         setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
     },
@@ -303,6 +304,12 @@ var AppView = Backbone.View.extend({
     backspacePressed: function(e) {
         if (e.target === document.body) {
             e.preventDefault();
+        }
+    },
+
+    openDevTools: function() {
+        if (Launcher && Launcher.devTools) {
+            Launcher.openDevTools();
         }
     },
 

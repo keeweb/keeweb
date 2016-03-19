@@ -346,7 +346,7 @@ var AppModel = Backbone.Model.extend({
                 storageLoad();
             }
         } else {
-            logger.info('Open file from cache with sync after load', params.storage);
+            logger.info('Open file from cache, after load will sync', params.storage);
             this.openFileFromCache(params, function(err, file) {
                 if (!err && file) {
                     logger.info('Sync just opened file');
