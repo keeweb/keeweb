@@ -102,6 +102,34 @@ var StorageWebDav = {
         });
     },
 
+    fileOptsToStoreOpts: function(opts, file) {
+        var result = {user: opts.user, encpass: opts.encpass};
+        if (opts.password) {
+            var fileId = file.get('id');
+            var password = opts.password;
+            var encpass = '';
+            for (var i = 0; i < password.length; i++) {
+                encpass += String.fromCharCode(password.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length));
+            }
+            result.encpass = btoa(encpass);
+        }
+        return result;
+    },
+
+    storeOptsToFileOpts: function(opts, file) {
+        var result = {user: opts.user, password: opts.password};
+        if (opts.encpass) {
+            var fileId = file.get('id');
+            var encpass = atob(opts.encpass);
+            var password = '';
+            for (var i = 0; i < encpass.length; i++) {
+                password += String.fromCharCode(encpass.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length));
+            }
+            opts.password = password;
+        }
+        return result;
+    },
+
     _request: function(config, callback) {
         if (config.rev) {
             logger.debug(config.op, config.path, config.rev);

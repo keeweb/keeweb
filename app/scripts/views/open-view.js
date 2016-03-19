@@ -600,7 +600,7 @@ var OpenView = Backbone.View.extend({
         var storage = Storage[config.storage];
         this.storageWaitId = Math.random();
         var path = config.path;
-        var opts = _.omit(config, 'path');
+        var opts = _.omit(config, ['path', 'storage']);
         var req = {
             waitId: this.storageWaitId,
             storage: config.storage,

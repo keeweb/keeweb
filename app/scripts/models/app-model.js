@@ -379,7 +379,6 @@ var AppModel = Backbone.Model.extend({
             name: params.name,
             storage: params.storage,
             path: params.path,
-            opts: params.opts,
             keyFileName: params.keyFileName
         });
         var that = this;
@@ -408,6 +407,7 @@ var AppModel = Backbone.Model.extend({
                 Storage.cache.save(cacheId, null, params.fileData);
             }
             var rev = params.rev || fileInfo && fileInfo.get('rev');
+            that.setFileOpts(file, params.opts);
             that.addToLastOpenFiles(file, rev);
             that.addFile(file);
             that.fileOpened(file);
@@ -442,7 +442,7 @@ var AppModel = Backbone.Model.extend({
             name: file.get('name'),
             storage: file.get('storage'),
             path: file.get('path'),
-            opts: file.get('opts'),
+            opts: this.getStoreOpts(file),
             modified: file.get('modified'),
             editState: file.getLocalEditState(),
             rev: rev,
@@ -458,6 +458,21 @@ var AppModel = Backbone.Model.extend({
         this.fileInfos.remove(file.get('cacheId'));
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
+    },
+
+    getStoreOpts: function(file) {
+        var opts = file.get('opts'), storage = file.get('storage');
+        if (Storage[storage]&& Storage[storage].fileOptsToStoreOpts && opts) {
+            return Storage[storage].fileOptsToStoreOpts(opts, file);
+        }
+        return null;
+    },
+
+    setFileOpts: function(file, opts) {
+        var storage = file.get('storage');
+        if (Storage[storage]&& Storage[storage].storeOptsToFileOpts && opts) {
+            file.set('opts', Storage[storage].storeOptsToFileOpts(opts));
+        }
     },
 
     fileOpened: function(file) {
@@ -514,7 +529,7 @@ var AppModel = Backbone.Model.extend({
                 name: file.get('name'),
                 storage: file.get('storage'),
                 path: file.get('path'),
-                opts: file.get('opts'),
+                opts: this.getStoreOpts(file),
                 modified: file.get('modified'),
                 editState: null,
                 rev: null,
