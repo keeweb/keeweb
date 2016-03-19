@@ -335,6 +335,9 @@ var FileModel = Backbone.Model.extend({
             syncing: false,
             syncError: error
         });
+        if (!this.get('open')) {
+            return;
+        }
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
         this.forEachEntry({}, function(entry) {
             entry.unsaved = false;
