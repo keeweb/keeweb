@@ -547,7 +547,7 @@ var AppModel = Backbone.Model.extend({
                 name: file.get('name'),
                 storage: storage,
                 path: path,
-                opts: opts,
+                opts: that.getStoreOpts(file),
                 modified: file.get('modified'),
                 editState: file.getLocalEditState(),
                 syncDate: file.get('syncDate'),
