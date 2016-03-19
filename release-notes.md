@@ -4,6 +4,7 @@ Release notes
 Storage providers, usability improvements  
 `+` WebDAV  
 `+` option to remember keyfiles  
+`+` files open improvements  
 `+` beta version app  
 `+` option to lock on password copy  
 `+` save/restore window position after close  

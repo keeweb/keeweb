@@ -289,7 +289,13 @@ var AppModel = Backbone.Model.extend({
         }
         if (fileInfo && fileInfo.get('modified')) {
             logger.info('Open file from cache because it is modified');
-            this.openFileFromCache(params, callback, fileInfo);
+            this.openFileFromCache(params, function(err, file) {
+                if (!err && file) {
+                    logger.info('Sync just opened modified file');
+                    _.defer(that.syncFile.bind(that, file));
+                }
+                callback(err);
+            }, fileInfo);
         } else if (params.fileData) {
             logger.info('Open file from supplied content');
             this.openFileWithData(params, callback, fileInfo, params.fileData, true);
@@ -299,7 +305,7 @@ var AppModel = Backbone.Model.extend({
         } else if (fileInfo && fileInfo.get('rev') === params.rev && fileInfo.get('storage') !== 'file') {
             logger.info('Open file from cache because it is latest');
             this.openFileFromCache(params, callback, fileInfo);
-        } else {
+        } else if (!fileInfo || params.storage === 'file') {
             logger.info('Open file from storage', params.storage);
             var storage = Storage[params.storage];
             var storageLoad = function() {
@@ -339,6 +345,15 @@ var AppModel = Backbone.Model.extend({
             } else {
                 storageLoad();
             }
+        } else {
+            logger.info('Open file from cache with sync after load', params.storage);
+            this.openFileFromCache(params, function(err, file) {
+                if (!err && file) {
+                    logger.info('Sync just opened file');
+                    _.defer(that.syncFile.bind(that, file));
+                }
+                callback(err);
+            }, fileInfo);
         }
     },
 
@@ -380,9 +395,8 @@ var AppModel = Backbone.Model.extend({
                     logger.info('Loaded local edit state');
                     file.setLocalEditState(fileInfo.get('editState'));
                 }
-                logger.info('Mark file as modified and schedule sync');
+                logger.info('Mark file as modified');
                 file.set('modified', true);
-                setTimeout(that.syncFile.bind(that, file), 0);
             }
             if (fileInfo) {
                 file.set('syncDate', fileInfo.get('syncDate'));
@@ -397,6 +411,7 @@ var AppModel = Backbone.Model.extend({
             that.addToLastOpenFiles(file, rev);
             that.addFile(file);
             that.fileOpened(file);
+            callback(null, file);
         });
     },
 
