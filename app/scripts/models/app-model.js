@@ -471,7 +471,7 @@ var AppModel = Backbone.Model.extend({
     setFileOpts: function(file, opts) {
         var storage = file.get('storage');
         if (Storage[storage]&& Storage[storage].storeOptsToFileOpts && opts) {
-            file.set('opts', Storage[storage].storeOptsToFileOpts(opts));
+            file.set('opts', Storage[storage].storeOptsToFileOpts(opts, file));
         }
     },
 
