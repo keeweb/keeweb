@@ -125,7 +125,7 @@ var StorageWebDav = {
             for (var i = 0; i < encpass.length; i++) {
                 password += String.fromCharCode(encpass.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length));
             }
-            opts.password = password;
+            result.password = password;
         }
         return result;
     },
