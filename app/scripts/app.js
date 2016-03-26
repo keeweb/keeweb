@@ -4,6 +4,7 @@ var AppModel = require('./models/app-model'),
     AppView = require('./views/app-view'),
     KeyHandler = require('./comp/key-handler'),
     IdleTracker = require('./comp/idle-tracker'),
+    PopupNotifier = require('./comp/popup-notifier'),
     Alerts = require('./comp/alerts'),
     DropboxLink = require('./comp/dropbox-link'),
     Updater = require('./comp/updater'),
@@ -19,6 +20,7 @@ $(function() {
     require('./helpers');
     KeyHandler.init();
     IdleTracker.init();
+    PopupNotifier.init();
 
     var appModel = new AppModel();
     if (appModel.settings.get('theme')) {

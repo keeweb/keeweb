@@ -5,7 +5,9 @@ var Timeouts = {
     CopyTip: 1500,
     AutoHideHint: 3000,
     FileChangeSync: 3000,
-    BeforeAutoLock: 300
+    BeforeAutoLock: 300,
+    ScriptLoad: 15000,
+    CheckWindowClosed: 300
 };
 
 module.exports = Timeouts;
