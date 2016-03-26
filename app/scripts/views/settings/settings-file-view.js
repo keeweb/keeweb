@@ -18,10 +18,11 @@ var SettingsFileView = Backbone.View.extend({
 
     events: {
         'click .settings__file-button-save-default': 'saveDefault',
-        'click .settings__file-button-save-file': 'saveToFile',
-        'click .settings__file-button-export-xml': 'exportAsXml',
-        'click .settings__file-button-save-dropbox': 'saveToDropbox',
+        'click .settings__file-button-save-choose': 'toggleChooser',
         'click .settings__file-button-close': 'closeFile',
+        'click .settings__file-save-to-file': 'saveToFile',
+        'click .settings__file-save-to-xml': 'saveToXml',
+        'click .settings__file-save-to-storage': 'saveToStorage',
         'change #settings__file-key-file': 'keyFileChange',
         'click #settings__file-file-select-link': 'triggerSelectFile',
         'change #settings__file-file-select': 'fileSelected',
@@ -43,11 +44,19 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     render: function() {
+        var storageProviders = [];
+        var fileStorage = this.model.get('storage');
+        Object.keys(Storage).forEach(function(name) {
+            var prv = Storage[name];
+            if (!prv.system && prv.enabled && name !== fileStorage) {
+                storageProviders.push(prv);
+            }
+        });
+        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
             desktopLink: Links.Desktop,
-
             name: this.model.get('name'),
             path: this.model.get('path'),
             storage: this.model.get('storage'),
@@ -59,7 +68,8 @@ var SettingsFileView = Backbone.View.extend({
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
             historyMaxItems: this.model.get('historyMaxItems'),
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
-            keyEncryptionRounds: this.model.get('keyEncryptionRounds')
+            keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
+            storageProviders: storageProviders
         });
         if (!this.model.get('created')) {
             this.$el.find('.settings__file-master-pass-warning').toggle(this.model.get('passwordChanged'));
@@ -132,6 +142,10 @@ var SettingsFileView = Backbone.View.extend({
         this.save();
     },
 
+    toggleChooser: function() {
+        this.$el.find('.settings__file-save-choose').toggleClass('hide');
+    },
+
     saveToFile: function(skipValidation) {
         if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
             return;
@@ -167,11 +181,23 @@ var SettingsFileView = Backbone.View.extend({
         }
     },
 
-    exportAsXml: function() {
+    saveToXml: function() {
         this.model.getXml((function(xml) {
             var blob = new Blob([xml], {type: 'text/xml'});
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
         }).bind(this));
+    },
+
+    saveToStorage: function(e) {
+        if (this.model.get('syncing')) {
+            return;
+        }
+        var storageName = $(e.target).closest('.settings__file-save-to-storage').data('storage');
+        var storage = Storage[storageName];
+        if (!storage) {
+            return;
+        }
+        Alerts.notImplemented();
     },
 
     saveToDropbox: function() {

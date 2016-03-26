@@ -81,6 +81,26 @@
     display: none;
   }
 
+  &__file-save-to {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: $base-padding-h;
+    text-align: center;
+    >i, >svg {
+      display: block;
+      font-size: 3em;
+      padding: $base-padding-px;
+      margin: auto;
+    }
+    >svg {
+      @include size(1em);
+    }
+    &:hover {
+      transition: color $base-duration $base-timing;
+      @include th { color: medium-color(); }
+    }
+  }
+
   &__general-update-buttons {
     margin-top: $base-spacing;
   }

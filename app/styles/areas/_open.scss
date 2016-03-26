@@ -32,13 +32,6 @@
       line-height: 0;
       >svg {
         @include size(1em);
-        path {
-          transition: fill $base-duration $base-timing;
-          @include th { fill: text-color(); }
-          .open__icon:hover & {
-            @include th { fill: medium-color(); }
-          }
-        }
       }
     }
   }
