@@ -9,7 +9,7 @@ var logger = new Logger('storage-gdrive');
 var StorageGDrive = {
     name: 'gdrive',
     icon: '',
-    enabled: false,
+    enabled: true,
     uipos: 30,
 
     _clientId: '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com',
