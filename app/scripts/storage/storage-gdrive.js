@@ -26,23 +26,19 @@ var StorageGDrive = StorageBase.extend({
             var url = 'https://www.googleapis.com/drive/v3/files/{id}/revisions/{rev}?alt=media'
                 .replace('{id}', path)
                 .replace('{rev}', stat.rev);
-            var xhr = new XMLHttpRequest();
-            xhr.responseType = 'arraybuffer';
-            xhr.addEventListener('load', function() {
-                if (xhr.status !== 200) {
-                    that.logger.debug('Load error', path, 'http status ' + xhr.status, that.logger.ts(ts));
-                    return callback && callback('load error ' + xhr.status);
+            that._xhr({
+                url: url,
+                responseType: 'arraybuffer',
+                headers: { 'Authorization': that._getAuthHeader() },
+                success: function(response) {
+                    that.logger.debug('Loaded', path, stat.rev, that.logger.ts(ts));
+                    return callback && callback(null, response, { rev: stat.rev });
+                },
+                error: function(err) {
+                    that.logger.debug('Load error', path, err, that.logger.ts(ts));
+                    return callback && callback(err);
                 }
-                that.logger.debug('Loaded', path, stat.rev, that.logger.ts(ts));
-                return callback && callback(null, xhr.response, { rev: stat.rev });
             });
-            xhr.addEventListener('error', function() {
-                that.logger.debug('Load error', path, that.logger.ts(ts));
-                return callback && callback('network error');
-            });
-            xhr.open('GET', url);
-            xhr.setRequestHeader('Authorization', that._getAuthHeader());
-            xhr.send();
         });
     },
 
@@ -54,16 +50,21 @@ var StorageGDrive = StorageBase.extend({
             }
             that.logger.debug('Stat', path);
             var ts = that.logger.ts();
-            that._gapi.client.drive.files.get({
-                fileId: path,
-                fields: 'headRevisionId'
-            }).then(function (resp) {
-                var rev = resp.result.headRevisionId;
-                that.logger.debug('Stated', path, rev, that.logger.ts(ts));
-                return callback && callback(null, { rev: rev });
-            }, function(resp) {
-                that.logger.error('Stat error', that.logger.ts(ts), resp.result.error);
-                return callback && callback(resp.result.error.message || 'stat error');
+            var url = 'https://www.googleapis.com/drive/v3/files/{id}?fields=headRevisionId'
+                .replace('{id}', path);
+            that._xhr({
+                url: url,
+                responseType: 'json',
+                headers: { 'Authorization': that._getAuthHeader() },
+                success: function(response) {
+                    var rev = response.headRevisionId;
+                    that.logger.debug('Stated', path, rev, that.logger.ts(ts));
+                    return callback && callback(null, { rev: rev });
+                },
+                error: function(err) {
+                    that.logger.error('Stat error', that.logger.ts(ts), resp.result.error);
+                    return callback && callback(err);
+                }
             });
         });
     },
@@ -82,28 +83,25 @@ var StorageGDrive = StorageBase.extend({
             var url = 'https://www.googleapis.com/upload/drive/v3/files/{id}?uploadType=media&fields=headRevisionId'
                 .replace('{id}', path)
                 .replace('{rev}', stat.rev);
-            var xhr = new XMLHttpRequest();
-            xhr.responseType = 'json';
-            xhr.addEventListener('load', function() {
-                if (xhr.status !== 200) {
-                    that.logger.debug('Save error', path, 'http status ' + xhr.status, that.logger.ts(ts));
-                    return callback && callback('load error ' + xhr.status);
+            that._xhr({
+                url: url,
+                method: 'PATCH',
+                responseType: 'json',
+                headers: { 'Authorization': that._getAuthHeader() },
+                data: new Blob([data], {type: 'application/octet-stream'}),
+                success: function(response) {
+                    that.logger.debug('Saved', path, that.logger.ts(ts));
+                    var newRev = response.headRevisionId;
+                    if (!newRev) {
+                        return callback && callback('save error: no rev');
+                    }
+                    return callback && callback(null, { rev: newRev });
+                },
+                error: function(err) {
+                    that.logger.debug('Save error', path, err, that.logger.ts(ts));
+                    return callback && callback(err);
                 }
-                that.logger.debug('Saved', path, that.logger.ts(ts));
-                var newRev = xhr.response.headRevisionId;
-                if (!newRev) {
-                    return callback && callback('save error: no rev');
-                }
-                return callback && callback(null, { rev: newRev });
             });
-            xhr.addEventListener('error', function() {
-                that.logger.debug('Save error', path, that.logger.ts(ts));
-                return callback && callback('network error');
-            });
-            xhr.open('PATCH', url);
-            xhr.setRequestHeader('Authorization', that._getAuthHeader());
-            var blob = new Blob([data], {type: 'application/octet-stream'});
-            xhr.send(blob);
         });
     },
 
@@ -112,33 +110,39 @@ var StorageGDrive = StorageBase.extend({
         this._getClient(function(err) {
             if (err) { return callback && callback(err); }
             that.logger.debug('List');
+            var url = 'https://www.googleapis.com/drive/v3/files?fields={fields}&q={q}'
+                .replace('{fields}', encodeURIComponent('files'))
+                .replace('{q}', encodeURIComponent('fileExtension="kdbx" and mimeType="application/octet-stream" and trashed=false'));
             var ts = that.logger.ts();
-            that._gapi.client.drive.files.list({
-                fields: 'files',
-                q: 'fileExtension="kdbx" and mimeType="application/octet-stream" and trashed=false'
-            }).then(function(resp) {
-                that.logger.debug('Listed', that.logger.ts(ts));
-                if (!resp.result.files) {
-                    return callback && callback('list error');
+            that._xhr({
+                url: url,
+                responseType: 'json',
+                headers: { 'Authorization': that._getAuthHeader() },
+                success: function(response) {
+                    that.logger.debug('Listed', that.logger.ts(ts));
+                    if (!response) {
+                        return callback && callback('list error');
+                    }
+                    var fileList = response.files.map(function(f) {
+                        return {
+                            name: f.name,
+                            path: f.id,
+                            rev: f.headRevisionId
+                        };
+                    });
+                    return callback && callback(null, fileList);
+                },
+                error: function(err) {
+                    that.logger.error('List error', that.logger.ts(ts), err);
+                    return callback && callback(err);
                 }
-                var fileList = resp.result.files.map(function(f) {
-                    return {
-                        name: f.name,
-                        path: f.id,
-                        rev: f.headRevisionId
-                    };
-                });
-                return callback && callback(null, fileList);
-            }, function(resp) {
-                that.logger.error('List error', that.logger.ts(ts), resp.result.error);
-                return callback && callback(resp.result.error.message || 'list error');
             });
         });
     },
 
     _getClient: function(callback) {
         var that = this;
-        if (that._gapi && that._gapi.client.drive) {
+        if (that._gapi) {
             return that._authorize(callback);
         }
         that._gapiLoadTimeout = setTimeout(function() {
@@ -146,7 +150,7 @@ var StorageGDrive = StorageBase.extend({
             delete that._gapiLoadTimeout;
         }, Timeouts.ScriptLoad);
         if (that._gapi) {
-            that._loadDriveApi(that._authorize.bind(that, callback));
+            that._authorize.bind(callback);
         } else {
             that.logger.debug('Loading gapi client');
             window.gApiClientLoaded = function() {
@@ -154,7 +158,7 @@ var StorageGDrive = StorageBase.extend({
                     that.logger.debug('Loaded gapi client');
                     delete window.gDriveClientLoaded;
                     that._gapi = window.gapi;
-                    that._loadDriveApi(that._authorize.bind(that, callback));
+                    that._authorize(callback);
                 }
             };
             $.getScript('https://apis.google.com/js/client.js?onload=gApiClientLoaded', function() {
@@ -164,24 +168,6 @@ var StorageGDrive = StorageBase.extend({
                 return callback('gapi load failed');
             });
         }
-    },
-
-    _loadDriveApi: function(callback) {
-        var that = this;
-        that.logger.debug('Loading gdrive api');
-        this._gapi.client.load('drive', 'v3', function(result) {
-            if (that._gapiLoadTimeout) {
-                clearTimeout(that._gapiLoadTimeout);
-                delete that._gapiLoadTimeout;
-                that.logger.debug('Loaded gdrive api');
-                if (result && result.error) {
-                    that.logger.error('Error loading gdrive api', result.error);
-                    callback(result.error);
-                } else {
-                    callback();
-                }
-            }
-        });
     },
 
     _authorize: function(callback) {

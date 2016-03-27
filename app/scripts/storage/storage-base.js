@@ -29,6 +29,31 @@ _.extend(StorageBase.prototype, {
             }
         }
         this.logger = new Logger('storage-' + this.name);
+    },
+
+    _xhr: function(config) {
+        var xhr = new XMLHttpRequest();
+        if (config.responseType) {
+            xhr.responseType = config.responseType;
+        }
+        var statuses = config.statuses || [200];
+        xhr.addEventListener('load', function() {
+            if (statuses.indexOf(xhr.status) < 0) {
+                return config.error && config.error('http status ' + xhr.status, xhr);
+            }
+            return config.success && config.success(xhr.response, xhr);
+        });
+        xhr.addEventListener('error', function() {
+            return config.error && config.error('network error');
+        });
+        xhr.addEventListener('timeout', function() {
+            return config.error && config.error('timeout');
+        });
+        xhr.open(config.method || 'GET', config.url);
+        _.forEach(config.headers, function(value, key) {
+            xhr.setRequestHeader(key, value);
+        });
+        xhr.send(config.data);
     }
 });
 
