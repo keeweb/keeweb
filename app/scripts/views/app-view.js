@@ -205,6 +205,7 @@ var AppView = Backbone.View.extend({
         if (this.views.keyChange || Alerts.alertDisplayed) {
             return;
         }
+        this.hideSettings();
         this.views.menu.hide();
         this.views.listWrap.hide();
         this.views.list.hide();
