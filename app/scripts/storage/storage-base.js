@@ -58,7 +58,7 @@ _.extend(StorageBase.prototype, {
                             that.logger.info('Too many authorize attempts, fail request', config.url);
                             return config.error && config.error('unauthorized', xhr);
                         }
-                        that.logger.info('Repeat request, try #', config.url, config.tryNum);
+                        that.logger.info('Repeat request, try #' + config.tryNum, config.url);
                         that._xhr(config);
                     }
                 });
