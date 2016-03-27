@@ -3,7 +3,10 @@
 var Backbone = require('backbone'),
     StorageBase = require('./storage-base');
 
-var OneDriveClientId = '000000004818ED3A';
+var OneDriveClientId = {
+    Production: '000000004818ED3A',
+    Local: '0000000044183D18'
+};
 
 var StorageOneDrive = StorageBase.extend({
     name: 'onedrive',
@@ -173,11 +176,19 @@ var StorageOneDrive = StorageBase.extend({
         });
     },
 
+    _getClientId: function() {
+        var clientId = this.appSettings.get('onedriveClientId');
+        if (!clientId) {
+            clientId = location.origin.indexOf('localhost') >= 0 ? OneDriveClientId.Local : OneDriveClientId.Production;
+        }
+        return clientId;
+    },
+
     _authorize: function(callback) {
         if (this._token) {
             return callback();
         }
-        var clinetId = this.appSettings.get('onedriveClientId') || OneDriveClientId;
+        var clinetId = this._getClientId();
         var url = 'https://login.live.com/oauth20_authorize.srf?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
             .replace('{cid}', clinetId)
             .replace('{scope}', 'onedrive.readwrite')
