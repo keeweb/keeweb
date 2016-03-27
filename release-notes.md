@@ -3,6 +3,7 @@ Release notes
 ##### v1.1.0 (Q2 2016)
 Storage providers, usability improvements  
 `+` WebDAV  
+`+` Google Drive  
 `+` option to remember keyfiles  
 `+` files open improvements  
 `+` beta version app  
