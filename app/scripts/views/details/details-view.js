@@ -413,6 +413,7 @@ var DetailsView = Backbone.View.extend({
         var label = this.moreView.labelEl;
         var tip = new Tip(label, { title: Locale.detCopyHint, placement: 'right' });
         tip.show();
+        this.fieldCopyTip = tip;
         setTimeout(function() { tip.hide(); }, Timeouts.AutoHideHint);
     },
 
