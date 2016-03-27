@@ -9,6 +9,7 @@ var Backbone = require('backbone'),
     Links = require('../../const/links'),
     Format = require('../../util/format'),
     Locale = require('../../util/locale'),
+    UrlUtil = require('../../util/url-util'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
 
@@ -188,7 +189,7 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     saveToStorage: function(e) {
-        if (this.model.get('syncing')) {
+        if (this.model.get('syncing') || this.model.get('demo')) {
             return;
         }
         var storageName = $(e.target).closest('.settings__file-save-to-storage').data('storage');
@@ -196,48 +197,43 @@ var SettingsFileView = Backbone.View.extend({
         if (!storage) {
             return;
         }
-        Alerts.notImplemented();
+        var that = this;
+        if (that.model.get('storage') === storageName) {
+            that.save();
+        } else {
+            if (!storage.list) {
+                return Alerts.notImplemented();
+            }
+            that.model.set('syncing', true);
+            storage.list(function(err, files) {
+                that.model.set('syncing', false);
+                if (err) {
+                    return;
+                }
+                var expName = that.model.get('name').toLowerCase();
+                var existingFile = _.find(files, function(file) {
+                    return UrlUtil.getDataFileName(file.name).toLowerCase() === expName;
+                });
+                if (existingFile) {
+                    Alerts.yesno({
+                        header: Locale.setFileAlreadyExists,
+                        body: Locale.setFileAlreadyExistsBody.replace('{}', that.model.escape('name')),
+                        success: function() {
+                            that.model.set('syncing', true);
+                            storage.remove(existingFile.path, function(err) {
+                                that.model.set('syncing', false);
+                                if (!err) {
+                                    that.save({storage: storageName});
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    that.save({storage: storageName});
+                }
+            });
+        }
     },
-
-    // saveToDropbox: function() {
-    //     var that = this;
-    //     this.model.set('syncing', true);
-    //     DropboxLink.authenticate(function(err) {
-    //         that.model.set('syncing', false);
-    //         if (err) {
-    //             return;
-    //         }
-    //         if (that.model.get('storage') === 'dropbox') {
-    //             that.save();
-    //         } else {
-    //             that.model.set('syncing', true);
-    //             DropboxLink.list('', function(err, files) { // TODO: replace with actual path
-    //                 that.model.set('syncing', false);
-    //                 if (!files) { return; }
-    //                 var expName = that.model.get('name').toLowerCase();
-    //                 var existingPath = files.filter(function(f) { return f.toLowerCase().replace('/', '') === expName; })[0];
-    //                 if (existingPath) {
-    //                     Alerts.yesno({
-    //                         icon: 'dropbox',
-    //                         header: Locale.setFileAlreadyExists,
-    //                         body: Locale.setFileAlreadyExistsBody.replace('{}', that.model.escape('name')),
-    //                         success: function() {
-    //                             that.model.set('syncing', true);
-    //                             DropboxLink.deleteFile(existingPath, function(err) {
-    //                                 that.model.set('syncing', false);
-    //                                 if (!err) {
-    //                                     that.save({storage: 'dropbox'});
-    //                                 }
-    //                             });
-    //                         }
-    //                     });
-    //                 } else {
-    //                     that.save({storage: 'dropbox'});
-    //                 }
-    //             });
-    //         }
-    //     });
-    // },
 
     closeFile: function() {
         if (this.model.get('modified')) {

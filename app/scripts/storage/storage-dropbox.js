@@ -210,6 +210,17 @@ var StorageDropbox = StorageBase.extend({
                 callback(null, fileList, dir);
             });
         });
+    },
+
+    remove: function(path, callback) {
+        var that = this;
+        that.logger.debug('Remove', path);
+        var ts = that.logger.ts();
+        path = that._toFullPath(path);
+        DropboxLink.deleteFile(path, function(err) {
+            that.logger.debug('Removed', path, that.logger.ts(ts));
+            return callback && callback(err);
+        }, _.noop);
     }
 });
 
