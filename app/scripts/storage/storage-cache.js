@@ -114,4 +114,4 @@ var StorageCache = StorageBase.extend({
     }
 });
 
-module.exports = StorageCache;
+module.exports = new StorageCache();

@@ -62,7 +62,7 @@ var StorageGDrive = StorageBase.extend({
                     return callback && callback(null, { rev: rev });
                 },
                 error: function(err) {
-                    that.logger.error('Stat error', that.logger.ts(ts), resp.result.error);
+                    that.logger.error('Stat error', that.logger.ts(ts), err);
                     return callback && callback(err);
                 }
             });
@@ -213,4 +213,4 @@ var StorageGDrive = StorageBase.extend({
     }
 });
 
-module.exports = StorageGDrive;
+module.exports = new StorageGDrive();

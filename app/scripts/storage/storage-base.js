@@ -29,6 +29,7 @@ _.extend(StorageBase.prototype, {
             }
         }
         this.logger = new Logger('storage-' + this.name);
+        return this;
     },
 
     _xhr: function(config) {

@@ -109,4 +109,4 @@ var StorageFile = StorageBase.extend({
     }
 });
 
-module.exports = StorageFile;
+module.exports = new StorageFile();

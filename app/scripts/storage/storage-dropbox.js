@@ -213,4 +213,4 @@ var StorageDropbox = StorageBase.extend({
     }
 });
 
-module.exports = StorageDropbox;
+module.exports = new StorageDropbox();

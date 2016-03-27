@@ -39,13 +39,13 @@ var StorageFileCache = StorageBase.extend({
             if (err) {
                 return callback && callback(err);
             }
-            var ts = logger.ts();
+            var ts = that.logger.ts();
             try {
                 Launcher.writeFile(that.getPath(id), data);
-                logger.debug('Saved', id, logger.ts(ts));
+                that.logger.debug('Saved', id, that.logger.ts(ts));
                 if (callback) { callback(); }
             } catch (e) {
-                logger.error('Error saving to cache', id, e);
+                that.logger.error('Error saving to cache', id, e);
                 if (callback) { callback(e); }
             }
         });
@@ -93,4 +93,4 @@ var StorageFileCache = StorageBase.extend({
     }
 });
 
-module.exports = StorageFileCache;
+module.exports = new StorageFileCache();

@@ -192,4 +192,4 @@ var StorageWebDav = StorageBase.extend({
     }
 });
 
-module.exports = StorageWebDav;
+module.exports = new StorageWebDav();

@@ -33,4 +33,4 @@ var StorageOneDrive = StorageBase.extend({
     }
 });
 
-module.exports = StorageOneDrive;
+module.exports = new StorageOneDrive();
