@@ -1,7 +1,6 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    StorageBase = require('./storage-base');
+var StorageBase = require('./storage-base');
 
 var OneDriveClientId = {
     Production: '000000004818ED3A',
@@ -24,7 +23,6 @@ var StorageOneDrive = StorageBase.extend({
         '6.28c-17.7-17.7-46.59-21.53-71.15-9.42-9.81 4.84-17.7 11.78-23.65 20.83-4.25 6.45-9.66 18.48-9.66 21.47 0 2.12-1.72 3.18-9.05 5.58-22.69 7.44-' +
         '35.94 24.63-35.93 46.62 0 8 2.06 17.8 4.93 23.41 1.08 2.11 1.68 4.13 1.34 4.47-0.88 0.88-29.11 0.58-33.01-0.35z" /></g></g></g></svg>',
 
-    _token: null,
     _baseUrl: 'https://api.onedrive.com/v1.0',
 
     load: function(path, opts, callback) {
@@ -39,7 +37,6 @@ var StorageOneDrive = StorageBase.extend({
             that._xhr({
                 url: url,
                 responseType: 'json',
-                headers: {'Authorization': that._getAuthHeader()},
                 success: function (response) {
                     var downloadUrl = response['@content.downloadUrl'];
                     var rev = response.eTag;
@@ -50,7 +47,6 @@ var StorageOneDrive = StorageBase.extend({
                     that._xhr({
                         url: downloadUrl,
                         responseType: 'arraybuffer',
-                        headers: {'Authorization': that._getAuthHeader()},
                         success: function (response, xhr) {
                             rev = xhr.getResponseHeader('ETag') || rev;
                             that.logger.debug('Loaded', path, rev, that.logger.ts(ts));
@@ -82,7 +78,6 @@ var StorageOneDrive = StorageBase.extend({
             that._xhr({
                 url: url,
                 responseType: 'json',
-                headers: {'Authorization': that._getAuthHeader()},
                 success: function (response) {
                     var rev = response.eTag;
                     if (!rev) {
@@ -113,10 +108,7 @@ var StorageOneDrive = StorageBase.extend({
                 url: url,
                 method: 'PUT',
                 responseType: 'json',
-                headers: {
-                    'Authorization': that._getAuthHeader(),
-                    'If-Match': rev
-                },
+                headers: { 'If-Match': rev },
                 data: new Blob([data], {type: 'application/octet-stream'}),
                 statuses: [200, 412],
                 success: function (response, xhr) {
@@ -150,7 +142,6 @@ var StorageOneDrive = StorageBase.extend({
             that._xhr({
                 url: url,
                 responseType: 'json',
-                headers: { 'Authorization': that._getAuthHeader() },
                 success: function(response) {
                     if (!response || !response.value) {
                         that.logger.error('List error', that.logger.ts(ts), response);
@@ -185,52 +176,21 @@ var StorageOneDrive = StorageBase.extend({
     },
 
     _authorize: function(callback) {
-        if (this._token) {
+        if (this._oauthToken) {
             return callback();
         }
-        var clinetId = this._getClientId();
-        var url = 'https://login.live.com/oauth20_authorize.srf?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
-            .replace('{cid}', clinetId)
+        var clientId = this._getClientId();
+        var url = 'https://login.live.com/oauth20_authorize.srf' +
+            '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
+            .replace('{cid}', clientId)
             .replace('{scope}', 'onedrive.readwrite')
             .replace('{url}', encodeURIComponent(window.location));
-        this._openPopup(url, 'onedriveAuth', 400, 600);
-        var that = this;
-        var popupClosed = function() {
-            Backbone.off('popup-closed', popupClosed);
-            window.removeEventListener('message', windowMessage);
-            that.logger.error('Auth error', 'popup closed');
-            callback('popup closed');
-        };
-        var windowMessage = function(e) {
-            var msgData = e.data;
-            if (!msgData) {
-                return;
-            }
-            // jshint camelcase:false
-            if (msgData.token_type) {
-                Backbone.off('popup-closed', popupClosed);
-                window.removeEventListener('message', windowMessage);
-                that._token = {
-                    tokenType: msgData.token_type,
-                    accessToken: msgData.access_token,
-                    authenticationToken: msgData.authentication_token,
-                    expiresIn: msgData.expires_in,
-                    scope: msgData.scope,
-                    userId: msgData.user_id
-                };
-                that.logger.debug('Auth success');
-                callback();
-            } else if (msgData.error) {
-                that.logger.error('Auth error', msgData.error, msgData.error_description);
-                callback(msgData.error);
-            }
-        };
-        Backbone.on('popup-closed', popupClosed);
-        window.addEventListener('message', windowMessage);
-    },
-
-    _getAuthHeader: function() {
-        return this._token ? this._token.tokenType + ' ' + this._token.accessToken : undefined;
+        this._oauthAuthorize({
+            url: url,
+            callback: callback,
+            width: 600,
+            height: 500
+        });
     }
 });
 

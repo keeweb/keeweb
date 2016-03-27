@@ -2,7 +2,8 @@
 
 var Backbone = require('backbone'),
     Logger = require('../util/logger'),
-    AppSettingsModel = require('../models/app-settings-model');
+    AppSettingsModel = require('../models/app-settings-model'),
+    RuntimeDataModel = require('../models/runtime-data-model');
 
 var StorageBase = function() {
 };
@@ -17,6 +18,7 @@ _.extend(StorageBase.prototype, {
 
     logger: null,
     appSettings: AppSettingsModel.instance,
+    runtimeData: RuntimeDataModel.instance,
 
     init: function() {
         if (!this.name) {
@@ -51,6 +53,10 @@ _.extend(StorageBase.prototype, {
             return config.error && config.error('timeout');
         });
         xhr.open(config.method || 'GET', config.url);
+        if (this._oauthToken) {
+            xhr.setRequestHeader('Authorization',
+                this._oauthToken.tokenType + ' ' + this._oauthToken.accessToken);
+        }
         _.forEach(config.headers, function(value, key) {
             xhr.setRequestHeader(key, value);
         });
@@ -84,6 +90,58 @@ _.extend(StorageBase.prototype, {
             win.focus();
         }
         return win;
+    },
+
+    _oauthAuthorize: function(opts) {
+        var that = this;
+        var oldToken = that.runtimeData.get(that.name + 'OAuthToken');
+        if (oldToken) {
+            that._oauthToken = oldToken;
+            opts.callback();
+            return;
+        }
+        that.logger.debug('OAuth popup opened');
+        that._openPopup(opts.url, 'OAuth', opts.width, opts.height);
+        var popupClosed = function() {
+            Backbone.off('popup-closed', popupClosed);
+            window.removeEventListener('message', windowMessage);
+            that.logger.error('OAuth error', 'popup closed');
+            opts.callback('popup closed');
+        };
+        var windowMessage = function(e) {
+            if (!e.data) {
+                return;
+            }
+            Backbone.off('popup-closed', popupClosed);
+            window.removeEventListener('message', windowMessage);
+            var token = that._oauthMsgToToken(e.data);
+            if (token.error) {
+                that.logger.error('OAuth error', token.error, token.errorDescription);
+                opts.callback(token.error);
+            } else {
+                that._oauthToken = token;
+                that.runtimeData.set(that.name + 'OAuthToken', token);
+                that.logger.debug('OAuth success');
+                opts.callback();
+            }
+        };
+        Backbone.on('popup-closed', popupClosed);
+        window.addEventListener('message', windowMessage);
+    },
+
+    _oauthMsgToToken: function(data) {
+        // jshint camelcase:false
+        if (data.error || !data.token_type) {
+            return { error: data.error || 'no token', errorDescription: data.error_description };
+        }
+        return {
+            tokenType: data.token_type,
+            accessToken: data.access_token,
+            authenticationToken: data.authentication_token,
+            expiresIn: data.expires_in,
+            scope: data.scope,
+            userId: data.user_id
+        };
     }
 });
 

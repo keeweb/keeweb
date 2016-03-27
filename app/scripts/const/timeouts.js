@@ -6,7 +6,6 @@ var Timeouts = {
     AutoHideHint: 3000,
     FileChangeSync: 3000,
     BeforeAutoLock: 300,
-    ScriptLoad: 15000,
     CheckWindowClosed: 300
 };
 
