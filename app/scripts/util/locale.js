@@ -385,7 +385,10 @@ var Locale = {
     dropboxLinkCustom: 'Own Dropbox app',
 
     launcherSave: 'Save Passwords Database',
-    launcherFileFilter: 'KeePass files'
+    launcherFileFilter: 'KeePass files',
+
+    authPopupRequired: 'Pop-ups are blocked',
+    authPopupRequiredBody: 'Please allow pop-ups for this app in your browser.'
 };
 
 module.exports = Locale;

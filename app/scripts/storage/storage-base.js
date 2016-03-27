@@ -105,7 +105,7 @@ _.extend(StorageBase.prototype, {
         settings = Object.keys(settings).map(function(key) { return key + '=' + settings[key]; }).join(',');
 
         var win = window.open(url, title, settings);
-        if (win.focus) {
+        if (win && win.focus) {
             win.focus();
         }
         return win;
@@ -124,7 +124,9 @@ _.extend(StorageBase.prototype, {
             return;
         }
         that.logger.debug('OAuth popup opened');
-        that._openPopup(opts.url, 'OAuth', opts.width, opts.height);
+        if (!that._openPopup(opts.url, 'OAuth', opts.width, opts.height)) {
+            callback('cannot open popup');
+        }
         var popupClosed = function() {
             Backbone.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);

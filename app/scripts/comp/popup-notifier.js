@@ -1,7 +1,9 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Timeouts = require('../const/timeouts');
+    Alerts = require('./alerts'),
+    Timeouts = require('../const/timeouts'),
+    Locale = require('../util/locale');
 
 var PopupNotifier = {
     init: function() {
@@ -12,6 +14,13 @@ var PopupNotifier = {
                 if (win) {
                     PopupNotifier.deferCheckClosed(win);
                     Backbone.trigger('popup-opened', win);
+                } else {
+                    if (!Alerts.alertDisplayed) {
+                        Alerts.error({
+                            header: Locale.authPopupRequired,
+                            body: Locale.authPopupRequiredBody
+                        });
+                    }
                 }
                 return win;
             };
