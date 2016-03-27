@@ -182,6 +182,7 @@
       &-icon {
         width: 2em;
         &--svg>svg {
+          vertical-align: middle;
           @include size(1em);
           path {
             @include th { fill: muted-color(); }
