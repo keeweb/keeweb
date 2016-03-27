@@ -40,7 +40,7 @@ var StorageGDrive = StorageBase.extend({
 
     stat: function(path, opts, callback) {
         var that = this;
-        this._authorize(function(err) {
+        this._oauthAuthorize(function(err) {
             if (err) {
                 return callback && callback(err);
             }
@@ -101,7 +101,7 @@ var StorageGDrive = StorageBase.extend({
 
     list: function(callback) {
         var that = this;
-        this._authorize(function(err) {
+        this._oauthAuthorize(function(err) {
             if (err) { return callback && callback(err); }
             that.logger.debug('List');
             var url = that._baseUrl + '/files?fields={fields}&q={q}'
@@ -134,22 +134,18 @@ var StorageGDrive = StorageBase.extend({
         });
     },
 
-    _authorize: function(callback) {
-        if (this._oauthToken) {
-            return callback();
-        }
+    _getOAuthConfig: function() {
         var clientId = this.appSettings.get('gdriveClientId') || GDriveClientId;
         var url = 'https://accounts.google.com/o/oauth2/v2/auth' +
             '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
                 .replace('{cid}', clientId)
                 .replace('{scope}', encodeURIComponent('https://www.googleapis.com/auth/drive'))
                 .replace('{url}', encodeURIComponent(window.location));
-        this._oauthAuthorize({
+        return {
             url: url,
-            callback: callback,
             width: 600,
             height: 400
-        });
+        };
     }
 });
 

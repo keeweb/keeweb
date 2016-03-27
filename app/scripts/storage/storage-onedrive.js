@@ -27,7 +27,7 @@ var StorageOneDrive = StorageBase.extend({
 
     load: function(path, opts, callback) {
         var that = this;
-        this._authorize(function(err) {
+        this._oauthAuthorize(function(err) {
             if (err) {
                 return callback && callback(err);
             }
@@ -68,7 +68,7 @@ var StorageOneDrive = StorageBase.extend({
 
     stat: function(path, opts, callback) {
         var that = this;
-        this._authorize(function(err) {
+        this._oauthAuthorize(function(err) {
             if (err) {
                 return callback && callback(err);
             }
@@ -97,7 +97,7 @@ var StorageOneDrive = StorageBase.extend({
 
     save: function(path, opts, data, callback, rev) {
         var that = this;
-        this._authorize(function(err) {
+        this._oauthAuthorize(function(err) {
             if (err) {
                 return callback && callback(err);
             }
@@ -134,7 +134,7 @@ var StorageOneDrive = StorageBase.extend({
 
     list: function(callback) {
         var that = this;
-        this._authorize(function(err) {
+        this._oauthAuthorize(function(err) {
             if (err) { return callback && callback(err); }
             that.logger.debug('List');
             var ts = that.logger.ts();
@@ -175,22 +175,18 @@ var StorageOneDrive = StorageBase.extend({
         return clientId;
     },
 
-    _authorize: function(callback) {
-        if (this._oauthToken) {
-            return callback();
-        }
+    _getOAuthConfig: function(callback) {
         var clientId = this._getClientId();
         var url = 'https://login.live.com/oauth20_authorize.srf' +
             '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
             .replace('{cid}', clientId)
             .replace('{scope}', 'onedrive.readwrite')
             .replace('{url}', encodeURIComponent(window.location));
-        this._oauthAuthorize({
+        return {
             url: url,
-            callback: callback,
             width: 600,
             height: 500
-        });
+        };
     }
 });
 

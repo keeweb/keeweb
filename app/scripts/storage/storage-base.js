@@ -5,6 +5,8 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../models/app-settings-model'),
     RuntimeDataModel = require('../models/runtime-data-model');
 
+var MaxRequestRetries = 3;
+
 var StorageBase = function() {
 };
 
@@ -40,17 +42,34 @@ _.extend(StorageBase.prototype, {
             xhr.responseType = config.responseType;
         }
         var statuses = config.statuses || [200];
+        var that = this;
         xhr.addEventListener('load', function() {
-            if (statuses.indexOf(xhr.status) < 0) {
+            if (statuses.indexOf(xhr.status) >= 0) {
+                return config.success && config.success(xhr.response, xhr);
+            }
+            if (xhr.status === 401 && that._oauthToken) {
+                that._oauthRefreshToken(function(err) {
+                    if (err) {
+                        return config.error && config.error('unauthorized', xhr);
+                    } else {
+                        config.tryNum = (config.tryNum || 0) + 1;
+                        if (config.tryNum >= MaxRequestRetries) {
+                            that.logger.info('Too many authorize attempts, fail request', config.url);
+                            return config.error && config.error('unauthorized', xhr);
+                        }
+                        that.logger.info('Repeat request, try #', config.url, config.tryNum);
+                        that._xhr(config);
+                    }
+                });
+            } else {
                 return config.error && config.error('http status ' + xhr.status, xhr);
             }
-            return config.success && config.success(xhr.response, xhr);
         });
         xhr.addEventListener('error', function() {
-            return config.error && config.error('network error');
+            return config.error && config.error('network error', xhr);
         });
         xhr.addEventListener('timeout', function() {
-            return config.error && config.error('timeout');
+            return config.error && config.error('timeout', xhr);
         });
         xhr.open(config.method || 'GET', config.url);
         if (this._oauthToken) {
@@ -92,12 +111,16 @@ _.extend(StorageBase.prototype, {
         return win;
     },
 
-    _oauthAuthorize: function(opts) {
+    _oauthAuthorize: function(callback) {
         var that = this;
+        if (that._oauthToken && !that._oauthToken.expired) {
+            return callback();
+        }
+        var opts = this._getOAuthConfig();
         var oldToken = that.runtimeData.get(that.name + 'OAuthToken');
-        if (oldToken) {
+        if (oldToken && !oldToken.expired) {
             that._oauthToken = oldToken;
-            opts.callback();
+            callback();
             return;
         }
         that.logger.debug('OAuth popup opened');
@@ -106,7 +129,7 @@ _.extend(StorageBase.prototype, {
             Backbone.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
             that.logger.error('OAuth error', 'popup closed');
-            opts.callback('popup closed');
+            callback('popup closed');
         };
         var windowMessage = function(e) {
             if (!e.data) {
@@ -117,12 +140,12 @@ _.extend(StorageBase.prototype, {
             var token = that._oauthMsgToToken(e.data);
             if (token.error) {
                 that.logger.error('OAuth error', token.error, token.errorDescription);
-                opts.callback(token.error);
+                callback(token.error);
             } else {
                 that._oauthToken = token;
                 that.runtimeData.set(that.name + 'OAuthToken', token);
                 that.logger.debug('OAuth success');
-                opts.callback();
+                callback();
             }
         };
         Backbone.on('popup-closed', popupClosed);
@@ -142,6 +165,12 @@ _.extend(StorageBase.prototype, {
             scope: data.scope,
             userId: data.user_id
         };
+    },
+
+    _oauthRefreshToken: function(callback) {
+        this._oauthToken.expired = true;
+        this.runtimeData.set(this.name + 'OAuthToken', this._oauthToken);
+        this._oauthAuthorize(callback);
     }
 });
 
