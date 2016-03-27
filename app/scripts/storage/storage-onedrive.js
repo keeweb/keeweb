@@ -1,10 +1,8 @@
 'use strict';
 
-//var Logger = require('../util/logger');
+var StorageBase = require('./storage-base');
 
-//var logger = new Logger('storage-onedrive');
-
-var StorageOneDrive = {
+var StorageOneDrive = StorageBase.extend({
     name: 'onedrive',
     icon: '',
     enabled: false,
@@ -33,6 +31,6 @@ var StorageOneDrive = {
     save: function(path, opts, data, callback/*, rev*/) {
         if (callback) { callback('not implemented'); }
     }
-};
+});
 
 module.exports = StorageOneDrive;

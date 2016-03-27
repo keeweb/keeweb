@@ -1,10 +1,8 @@
 'use strict';
 
-var Logger = require('../util/logger');
+var StorageBase = require('./storage-base');
 
-var logger = new Logger('storage-webdav');
-
-var StorageWebDav = {
+var StorageWebDav = StorageBase.extend({
     name: 'webdav',
     icon: 'server',
     enabled: true,
@@ -67,7 +65,7 @@ var StorageWebDav = {
         }, saveOpts), function(err, xhr, stat) {
             if (err) { return cb(err); }
             if (stat.rev !== rev) {
-                logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
+                that.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
                 return cb({ revConflict: true }, xhr, stat);
             }
             that._request(_.defaults({
@@ -82,7 +80,7 @@ var StorageWebDav = {
                         return cb(err, xhr, stat);
                     }
                     if (stat.rev !== rev) {
-                        logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
+                        that.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
                         that._request(_.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts));
                         return cb({ revConflict: true }, xhr, stat);
                     }
@@ -131,16 +129,17 @@ var StorageWebDav = {
     },
 
     _request: function(config, callback) {
+        var that = this;
         if (config.rev) {
-            logger.debug(config.op, config.path, config.rev);
+            that.logger.debug(config.op, config.path, config.rev);
         } else {
-            logger.debug(config.op, config.path);
+            that.logger.debug(config.op, config.path);
         }
-        var ts = logger.ts();
+        var ts = that.logger.ts();
         var xhr = new XMLHttpRequest();
         xhr.addEventListener('load', function() {
             if ([200, 201, 204].indexOf(xhr.status) < 0) {
-                logger.debug(config.op + ' error', config.path, xhr.status, logger.ts(ts));
+                that.logger.debug(config.op + ' error', config.path, xhr.status, that.logger.ts(ts));
                 var err;
                 switch (xhr.status) {
                     case 404:
@@ -158,20 +157,20 @@ var StorageWebDav = {
             }
             var rev = xhr.getResponseHeader('Last-Modified');
             if (!rev && !config.nostat) {
-                logger.debug(config.op + ' error', config.path, 'no headers', logger.ts(ts));
+                that.logger.debug(config.op + ' error', config.path, 'no headers', that.logger.ts(ts));
                 if (callback) { callback('No Last-Modified header', xhr); callback = null; }
                 return;
             }
             var completedOpName = config.op + (config.op.charAt(config.op.length - 1) === 'e' ? 'd' : 'ed');
-            logger.debug(completedOpName, config.path, rev, logger.ts(ts));
+            that.logger.debug(completedOpName, config.path, rev, that.logger.ts(ts));
             if (callback) { callback(null, xhr, rev ? { rev: rev } : null); callback = null; }
         });
         xhr.addEventListener('error', function() {
-            logger.debug(config.op + ' error', config.path, logger.ts(ts));
+            that.logger.debug(config.op + ' error', config.path, that.logger.ts(ts));
             if (callback) { callback('network error', xhr); callback = null; }
         });
         xhr.addEventListener('abort', function() {
-            logger.debug(config.op + ' error', config.path, 'aborted', logger.ts(ts));
+            that.logger.debug(config.op + ' error', config.path, 'aborted', that.logger.ts(ts));
             if (callback) { callback('aborted', xhr); callback = null; }
         });
         xhr.responseType = 'arraybuffer';
@@ -191,6 +190,6 @@ var StorageWebDav = {
             xhr.send();
         }
     }
-};
+});
 
 module.exports = StorageWebDav;

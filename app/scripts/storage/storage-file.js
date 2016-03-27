@@ -1,41 +1,39 @@
 'use strict';
 
-var Launcher = require('../comp/launcher'),
-    Logger = require('../util/logger');
-
-var logger = new Logger('storage-file');
+var StorageBase = require('./storage-base'),
+    Launcher = require('../comp/launcher');
 
 var fileWatchers = {};
 
-var StorageFile = {
+var StorageFile = StorageBase.extend({
     name: 'file',
     icon: 'hdd-o',
     enabled: !!Launcher,
     system: true,
 
     load: function(path, opts, callback) {
-        logger.debug('Load', path);
-        var ts = logger.ts();
+        this.logger.debug('Load', path);
+        var ts = this.logger.ts();
         try {
             var data = Launcher.readFile(path);
             var rev = Launcher.statFile(path).mtime.getTime().toString();
-            logger.debug('Loaded', path, rev, logger.ts(ts));
+            this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
             if (callback) { callback(null, data.buffer, { rev: rev }); }
         } catch (e) {
-            logger.error('Error reading local file', path, e);
+            this.logger.error('Error reading local file', path, e);
             if (callback) { callback(e, null); }
         }
     },
 
     stat: function(path, opts, callback) {
-        logger.debug('Stat', path);
-        var ts = logger.ts();
+        this.logger.debug('Stat', path);
+        var ts = this.logger.ts();
         try {
             var stat = Launcher.statFile(path);
-            logger.debug('Stat done', path, logger.ts(ts));
+            this.logger.debug('Stat done', path, this.logger.ts(ts));
             if (callback) { callback(null, { rev: stat.mtime.getTime().toString() }); }
         } catch (e) {
-            logger.error('Error stat local file', path, e);
+            this.logger.error('Error stat local file', path, e);
             if (e.code === 'ENOENT') {
                 e.notFound = true;
             }
@@ -44,15 +42,15 @@ var StorageFile = {
     },
 
     save: function(path, opts, data, callback, rev) {
-        logger.debug('Save', path, rev);
-        var ts = logger.ts();
+        this.logger.debug('Save', path, rev);
+        var ts = this.logger.ts();
         try {
             if (rev) {
                 try {
                     var stat = Launcher.statFile(path);
                     var fileRev = stat.mtime.getTime().toString();
                     if (fileRev !== rev) {
-                        logger.debug('Save mtime differs', rev, fileRev);
+                        this.logger.debug('Save mtime differs', rev, fileRev);
                         if (callback) { callback({ revConflict: true }, { rev: fileRev }); }
                         return;
                     }
@@ -62,10 +60,10 @@ var StorageFile = {
             }
             Launcher.writeFile(path, data);
             var newRev = Launcher.statFile(path).mtime.getTime().toString();
-            logger.debug('Saved', path, logger.ts(ts));
+            this.logger.debug('Saved', path, this.logger.ts(ts));
             if (callback) { callback(undefined, { rev: newRev }); }
         } catch (e) {
-            logger.error('Error writing local file', path, e);
+            this.logger.error('Error writing local file', path, e);
             if (callback) { callback(e); }
         }
     },
@@ -73,7 +71,7 @@ var StorageFile = {
     watch: function(path, callback) {
         var names = Launcher.parsePath(path);
         if (!fileWatchers[names.dir]) {
-            logger.debug('Watch dir', names.dir);
+            this.logger.debug('Watch dir', names.dir);
             var fsWatcher = Launcher.createFsWatcher(names.dir);
             fsWatcher.on('change', this.fsWatcherChange.bind(this, names.dir));
             fileWatchers[names.dir] = { fsWatcher: fsWatcher, callbacks: [] };
@@ -90,7 +88,7 @@ var StorageFile = {
                 watcher.callbacks.splice(ix, 1);
             }
             if (!watcher.callbacks.length) {
-                logger.debug('Stop watch dir', names.dir);
+                this.logger.debug('Stop watch dir', names.dir);
                 watcher.fsWatcher.close();
                 delete fileWatchers[names.dir];
             }
@@ -99,15 +97,16 @@ var StorageFile = {
 
     fsWatcherChange: function(dirname, evt, fileName) {
         var watcher = fileWatchers[dirname];
+        var that = this;
         if (watcher) {
             watcher.callbacks.forEach(function(cb) {
                 if (cb.file === fileName && typeof cb.callback === 'function') {
-                    logger.debug('File changed', dirname, evt, fileName);
+                    that.logger.debug('File changed', dirname, evt, fileName);
                     cb.callback();
                 }
             });
         }
     }
-};
+});
 
 module.exports = StorageFile;

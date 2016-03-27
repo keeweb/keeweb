@@ -1,14 +1,11 @@
 'use strict';
 
-var DropboxLink = require('../comp/dropbox-link'),
-    AppSettingsModel = require('../models/app-settings-model'),
+var StorageBase = require('./storage-base'),
+    DropboxLink = require('../comp/dropbox-link'),
     Locale = require('../util/locale'),
-    UrlUtils = require('../util/url-util'),
-    Logger = require('../util/logger');
+    UrlUtils = require('../util/url-util');
 
-var logger = new Logger('storage-dropbox');
-
-var StorageDropbox = {
+var StorageDropbox = StorageBase.extend({
     name: 'dropbox',
     icon: 'dropbox',
     enabled: true,
@@ -28,7 +25,7 @@ var StorageDropbox = {
     },
 
     _toFullPath: function(path) {
-        var rootFolder = AppSettingsModel.instance.get('dropboxFolder');
+        var rootFolder = this.appSettings.get('dropboxFolder');
         if (rootFolder) {
             path = UrlUtils.fixSlashes('/' + rootFolder + '/' + path);
         }
@@ -36,7 +33,7 @@ var StorageDropbox = {
     },
 
     _toRelPath: function(path) {
-        var rootFolder = AppSettingsModel.instance.get('dropboxFolder');
+        var rootFolder = this.appSettings.get('dropboxFolder');
         if (rootFolder) {
             var ix = path.toLowerCase().indexOf(rootFolder.toLowerCase());
             if (ix === 0) {
@@ -79,7 +76,7 @@ var StorageDropbox = {
         var keyField = {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w+',
             value: appKey};
         var folderField = {id: 'folder', title: 'dropboxFolder', desc: 'dropboxFolderSettingsDesc', type: 'text',
-            value: AppSettingsModel.instance.get('dropboxFolder') || ''};
+            value: this.appSettings.get('dropboxFolder') || ''};
         var canUseBuiltInKeys = DropboxLink.canUseBuiltInKeys();
         if (canUseBuiltInKeys) {
             fields.push(linkField);
@@ -106,7 +103,7 @@ var StorageDropbox = {
                 if (config.folder) {
                     config.folder = that._fixConfigFolder(config.folder);
                 }
-                AppSettingsModel.instance.set({
+                that.appSettings.set({
                     dropboxAppKey: config.key,
                     dropboxFolder: config.folder
                 });
@@ -145,7 +142,7 @@ var StorageDropbox = {
             default:
                 return;
         }
-        AppSettingsModel.instance.set(key, value);
+        this.appSettings.set(key, value);
     },
 
     getPathForName: function(fileName) {
@@ -153,39 +150,42 @@ var StorageDropbox = {
     },
 
     load: function(path, opts, callback) {
-        logger.debug('Load', path);
-        var ts = logger.ts();
-        path = this._toFullPath(path);
+        var that = this;
+        that.logger.debug('Load', path);
+        var ts = that.logger.ts();
+        path = that._toFullPath(path);
         DropboxLink.openFile(path, function(err, data, stat) {
-            logger.debug('Loaded', path, stat ? stat.versionTag : null, logger.ts(ts));
-            err = StorageDropbox._convertError(err);
+            that.logger.debug('Loaded', path, stat ? stat.versionTag : null, that.logger.ts(ts));
+            err = that._convertError(err);
             if (callback) { callback(err, data, stat ? { rev: stat.versionTag } : null); }
         }, _.noop);
     },
 
     stat: function(path, opts, callback) {
-        logger.debug('Stat', path);
-        var ts = logger.ts();
-        path = this._toFullPath(path);
+        var that = this;
+        that.logger.debug('Stat', path);
+        var ts = that.logger.ts();
+        path = that._toFullPath(path);
         DropboxLink.stat(path, function(err, stat) {
             if (stat && stat.isRemoved) {
                 err = new Error('File removed');
                 err.notFound = true;
             }
-            logger.debug('Stated', path, stat ? stat.versionTag : null, logger.ts(ts));
-            err = StorageDropbox._convertError(err);
+            that.logger.debug('Stated', path, stat ? stat.versionTag : null, that.logger.ts(ts));
+            err = that._convertError(err);
             if (callback) { callback(err, stat ? { rev: stat.versionTag } : null); }
         }, _.noop);
     },
 
     save: function(path, opts, data, callback, rev) {
-        logger.debug('Save', path, rev);
-        var ts = logger.ts();
-        path = this._toFullPath(path);
+        var that = this;
+        that.logger.debug('Save', path, rev);
+        var ts = that.logger.ts();
+        path = that._toFullPath(path);
         DropboxLink.saveFile(path, data, rev, function(err, stat) {
-            logger.debug('Saved', path, logger.ts(ts));
+            that.logger.debug('Saved', path, that.logger.ts(ts));
             if (!callback) { return; }
-            err = StorageDropbox._convertError(err);
+            err = that._convertError(err);
             callback(err, stat ? { rev: stat.versionTag } : null);
         }, _.noop);
     },
@@ -211,6 +211,6 @@ var StorageDropbox = {
             });
         });
     }
-};
+});
 
 module.exports = StorageDropbox;
