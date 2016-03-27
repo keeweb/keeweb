@@ -4,18 +4,17 @@ var StorageBase = require('./storage-base'),
     Backbone = require('backbone'),
     Timeouts = require('../const/timeouts');
 
+var GDriveClinetId = '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com';
+
 var StorageGDrive = StorageBase.extend({
     name: 'gdrive',
-    icon: '',
     enabled: true,
     uipos: 30,
-
-    _clientId: '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com',
-    _gapi: null,
-
     iconSvg: '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" version="1.1">' +
         '<path d="M120.76421 71.989219 84.87226 9.6679848l-41.828196 0 35.899791 62.3212342zM58.014073 56.294956 37.107816 19.986746 1.2237094 82.284404 ' +
         '22.137808 118.59261Zm-21.415974 63.012814 69.180421 0 20.9141-39.459631-67.635587 0z"/></svg>',
+
+    _gapi: null,
 
     load: function(path, opts, callback) {
         var that = this;
@@ -176,7 +175,8 @@ var StorageGDrive = StorageBase.extend({
         if (that._gapi.auth.getToken()) {
             return callback();
         }
-        that._gapi.auth.authorize({'client_id': that._clientId, scope: scopes, immediate: true}, function(res) {
+        var clientId = this.appSettings.get('gdriveClientId') || GDriveClinetId;
+        that._gapi.auth.authorize({'client_id': clientId, scope: scopes, immediate: true}, function(res) {
             if (res && !res.error) {
                 callback();
             } else {
@@ -189,7 +189,7 @@ var StorageGDrive = StorageBase.extend({
                 };
                 Backbone.on('popup-closed', handlePopupClosed);
                 var ts = that.logger.ts();
-                that._gapi.auth.authorize({'client_id': that._clientId, scope: scopes, immediate: false}, function(res) {
+                that._gapi.auth.authorize({'client_id': clientId, scope: scopes, immediate: false}, function(res) {
                     if (!callback) {
                         return;
                     }
