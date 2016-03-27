@@ -202,7 +202,16 @@ var SettingsFileView = Backbone.View.extend({
             that.save();
         } else {
             if (!storage.list) {
-                return Alerts.notImplemented();
+                if (storage.name === 'webdav') {
+                    Alerts.info({
+                        icon: storage.icon,
+                        header: Locale.setFileNoWebDavUpload,
+                        body: Locale.setFileNoWebDavUploadBody
+                    });
+                } else {
+                    Alerts.notImplemented();
+                }
+                return;
             }
             that.model.set('syncing', true);
             storage.list(function(err, files) {
