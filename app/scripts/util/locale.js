@@ -314,7 +314,7 @@ var Locale = {
     setFileCloseNoSave: 'Close and lose changes',
     setFileDontClose: 'Don\'t close',
     setFileNoWebDavUpload: 'Cannot save to WebDAV',
-    setFileNoWebDavUploadBody: 'Saving files to WebDAV is currently not supported. Please, upload your file manually and open in the app.',
+    setFileNoWebDavUploadBody: 'Adding new files to WebDAV is currently not supported. Please upload your file manually and open in the app.',
 
     setShTitle: 'Shortcuts',
     setShShowAll: 'show all items',
