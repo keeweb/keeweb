@@ -109,6 +109,9 @@ if (window.process && window.process.versions && window.process.versions.electro
                 proxy = match && match[1] ? { host: match[1], port: +match[2] } : null;
                 callback(proxy);
             });
+        },
+        openWindow: function(opts) {
+            return this.remReq('app').openWindow(opts);
         }
     };
     Backbone.on('launcher-exit-request', function() {

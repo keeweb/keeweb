@@ -3,7 +3,8 @@
 var Backbone = require('backbone'),
     Logger = require('../util/logger'),
     AppSettingsModel = require('../models/app-settings-model'),
-    RuntimeDataModel = require('../models/runtime-data-model');
+    RuntimeDataModel = require('../models/runtime-data-model'),
+    Links = require('../const/links');
 
 var MaxRequestRetries = 3;
 
@@ -123,8 +124,16 @@ _.extend(StorageBase.prototype, {
             callback();
             return;
         }
+        var redirectUrl = window.location.href;
+        if (redirectUrl.lastIndexOf('file:', 0) === 0) {
+            redirectUrl = Links.WebApp;
+        }
+        var url = opts.url + '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
+            .replace('{cid}', opts.clientId)
+            .replace('{scope}', encodeURIComponent(opts.scope))
+            .replace('{url}', encodeURIComponent(redirectUrl));
         that.logger.debug('OAuth popup opened');
-        if (!that._openPopup(opts.url, 'OAuth', opts.width, opts.height)) {
+        if (!that._openPopup(url, 'OAuth', opts.width, opts.height)) {
             callback('cannot open popup');
         }
         var popupClosed = function() {

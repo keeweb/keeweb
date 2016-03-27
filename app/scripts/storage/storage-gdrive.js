@@ -136,13 +136,10 @@ var StorageGDrive = StorageBase.extend({
 
     _getOAuthConfig: function() {
         var clientId = this.appSettings.get('gdriveClientId') || GDriveClientId;
-        var url = 'https://accounts.google.com/o/oauth2/v2/auth' +
-            '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
-                .replace('{cid}', clientId)
-                .replace('{scope}', encodeURIComponent('https://www.googleapis.com/auth/drive'))
-                .replace('{url}', encodeURIComponent(window.location));
         return {
-            url: url,
+            scope: 'https://www.googleapis.com/auth/drive',
+            url: 'https://accounts.google.com/o/oauth2/v2/auth',
+            clientId: clientId,
             width: 600,
             height: 400
         };

@@ -8,15 +8,20 @@ var AuthReceiver = {
         if (location.href.indexOf('state=') >= 0) {
             DropboxLink.receive();
         } else {
-            var message = {};
-            window.location.href.split(/[\?#&]/g).forEach(function(part) {
-                var parts = part.split('=');
-                if (parts.length === 2) {
-                    message[parts[0]] = parts[1];
-                }
-            });
+            var message = this.urlArgsToMessage(window.location.href);
             opener.postMessage(message, window.location.origin);
         }
+    },
+
+    urlArgsToMessage: function(url) {
+        var message = {};
+        url.split(/[\?#&]/g).forEach(function(part) {
+            var parts = part.split('=');
+            if (parts.length === 2) {
+                message[parts[0]] = parts[1];
+            }
+        });
+        return message;
     }
 };
 

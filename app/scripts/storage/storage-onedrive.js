@@ -177,13 +177,10 @@ var StorageOneDrive = StorageBase.extend({
 
     _getOAuthConfig: function() {
         var clientId = this._getClientId();
-        var url = 'https://login.live.com/oauth20_authorize.srf' +
-            '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
-            .replace('{cid}', clientId)
-            .replace('{scope}', 'onedrive.readwrite')
-            .replace('{url}', encodeURIComponent(window.location));
         return {
-            url: url,
+            url: 'https://login.live.com/oauth20_authorize.srf',
+            scope: 'onedrive.readwrite',
+            clientId: clientId,
             width: 600,
             height: 500
         };
