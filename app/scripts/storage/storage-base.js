@@ -55,6 +55,35 @@ _.extend(StorageBase.prototype, {
             xhr.setRequestHeader(key, value);
         });
         xhr.send(config.data);
+    },
+
+    _openPopup: function(url, title, width, height) {
+        var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
+        var dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
+
+        var winWidth = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+        var winHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+        var left = ((winWidth / 2) - (width / 2)) + dualScreenLeft;
+        var top = ((winHeight / 2) - (height / 2)) + dualScreenTop;
+
+        var settings = {
+            width: width,
+            height: height,
+            left: left,
+            top: top,
+            dialog: 'yes',
+            dependent: 'yes',
+            scrollbars: 'yes',
+            location: 'yes'
+        };
+        settings = Object.keys(settings).map(function(key) { return key + '=' + settings[key]; }).join(',');
+
+        var win = window.open(url, title, settings);
+        if (win.focus) {
+            win.focus();
+        }
+        return win;
     }
 });
 

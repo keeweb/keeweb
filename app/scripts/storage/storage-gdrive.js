@@ -118,10 +118,11 @@ var StorageGDrive = StorageBase.extend({
                 responseType: 'json',
                 headers: { 'Authorization': that._getAuthHeader() },
                 success: function(response) {
-                    that.logger.debug('Listed', that.logger.ts(ts));
                     if (!response) {
+                        that.logger.error('List error', that.logger.ts(ts));
                         return callback && callback('list error');
                     }
+                    that.logger.debug('Listed', that.logger.ts(ts));
                     var fileList = response.files.map(function(f) {
                         return {
                             name: f.name,

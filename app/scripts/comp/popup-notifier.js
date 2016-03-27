@@ -24,10 +24,14 @@ var PopupNotifier = {
 
     checkClosed: function(win) {
         if (win.closed) {
-            Backbone.trigger('popup-closed', win);
+            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
         } else {
             PopupNotifier.deferCheckClosed(win);
         }
+    },
+
+    triggerClosed: function(win) {
+        Backbone.trigger('popup-closed', win);
     }
 };
 

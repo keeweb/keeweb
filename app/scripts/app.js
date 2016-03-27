@@ -6,15 +6,15 @@ var AppModel = require('./models/app-model'),
     IdleTracker = require('./comp/idle-tracker'),
     PopupNotifier = require('./comp/popup-notifier'),
     Alerts = require('./comp/alerts'),
-    DropboxLink = require('./comp/dropbox-link'),
     Updater = require('./comp/updater'),
+    AuthReceiver = require('./comp/auth-receiver'),
     ThemeChanger = require('./util/theme-changer'),
     Locale = require('./util/locale');
 
 $(function() {
-    if (location.href.indexOf('state=') >= 0) {
-        DropboxLink.receive();
-        return;
+    if ((window.parent !== window.top) || window.opener) {
+        AuthReceiver.receive();
+        return window.close();
     }
     require('./mixins/view');
     require('./helpers');

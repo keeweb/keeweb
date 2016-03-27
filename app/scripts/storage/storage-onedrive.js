@@ -1,13 +1,14 @@
 'use strict';
 
-var StorageBase = require('./storage-base');
+var Backbone = require('backbone'),
+    StorageBase = require('./storage-base');
+
+var OneDriveClientId = '000000004818ED3A';
 
 var StorageOneDrive = StorageBase.extend({
     name: 'onedrive',
-    icon: '',
-    enabled: false,
+    enabled: true,
     uipos: 40,
-
     iconSvg: '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="256" height="256" version="1.1" viewBox="0 0 256 256">' +
         '<g transform="translate(296.64282,-100.61434)"><g transform="translate(222.85714,-11.428576)"><g transform="matrix(0.83394139,0,0,0.83394139,' +
         '-86.101383,10.950635)"><path d="m-419.5 365.94c-18.48-4.62-28.77-19.31-28.81-41.1-0.01-6.97 0.49-10.31 2.23-14.79 4.26-10.99 15.55-19.27 ' +
@@ -20,16 +21,205 @@ var StorageOneDrive = StorageBase.extend({
         '6.28c-17.7-17.7-46.59-21.53-71.15-9.42-9.81 4.84-17.7 11.78-23.65 20.83-4.25 6.45-9.66 18.48-9.66 21.47 0 2.12-1.72 3.18-9.05 5.58-22.69 7.44-' +
         '35.94 24.63-35.93 46.62 0 8 2.06 17.8 4.93 23.41 1.08 2.11 1.68 4.13 1.34 4.47-0.88 0.88-29.11 0.58-33.01-0.35z" /></g></g></g></svg>',
 
+    _token: null,
+    _baseUrl: 'https://api.onedrive.com/v1.0',
+
     load: function(path, opts, callback) {
-        if (callback) { callback('not implemented'); }
+        var that = this;
+        this._authorize(function(err) {
+            if (err) {
+                return callback && callback(err);
+            }
+            that.logger.debug('Load', path);
+            var ts = that.logger.ts();
+            var url = that._baseUrl + '/drive/items/{id}'.replace('{id}', path);
+            that._xhr({
+                url: url,
+                responseType: 'json',
+                headers: {'Authorization': that._getAuthHeader()},
+                success: function (response) {
+                    var downloadUrl = response['@content.downloadUrl'];
+                    var rev = response.eTag;
+                    if (!downloadUrl || !response.eTag) {
+                        that.logger.debug('Load error', path, 'no download url', response, that.logger.ts(ts));
+                        return callback && callback('no download url');
+                    }
+                    that._xhr({
+                        url: downloadUrl,
+                        responseType: 'arraybuffer',
+                        headers: {'Authorization': that._getAuthHeader()},
+                        success: function (response, xhr) {
+                            rev = xhr.getResponseHeader('ETag') || rev;
+                            that.logger.debug('Loaded', path, rev, that.logger.ts(ts));
+                            return callback && callback(null, response, {rev: rev});
+                        },
+                        error: function (err) {
+                            that.logger.debug('Load error', path, err, that.logger.ts(ts));
+                            return callback && callback(err);
+                        }
+                    });
+                },
+                error: function (err) {
+                    that.logger.debug('Load error', path, err, that.logger.ts(ts));
+                    return callback && callback(err);
+                }
+            });
+        });
     },
 
     stat: function(path, opts, callback) {
-        if (callback) { callback('not implemented'); }
+        var that = this;
+        this._authorize(function(err) {
+            if (err) {
+                return callback && callback(err);
+            }
+            that.logger.debug('Stat', path);
+            var ts = that.logger.ts();
+            var url = that._baseUrl + '/drive/items/{id}'.replace('{id}', path);
+            that._xhr({
+                url: url,
+                responseType: 'json',
+                headers: {'Authorization': that._getAuthHeader()},
+                success: function (response) {
+                    var rev = response.eTag;
+                    if (!rev) {
+                        that.logger.debug('Stat error', path, 'no eTag', that.logger.ts(ts));
+                        return callback && callback('no eTag');
+                    }
+                    that.logger.debug('Stated', path, rev, that.logger.ts(ts));
+                    return callback && callback(null, {rev: rev});
+                },
+                error: function (err) {
+                    that.logger.debug('Stat error', path, err, that.logger.ts(ts));
+                    return callback && callback(err);
+                }
+            });
+        });
     },
 
-    save: function(path, opts, data, callback/*, rev*/) {
-        if (callback) { callback('not implemented'); }
+    save: function(path, opts, data, callback, rev) {
+        var that = this;
+        this._authorize(function(err) {
+            if (err) {
+                return callback && callback(err);
+            }
+            that.logger.debug('Save', path, rev);
+            var ts = that.logger.ts();
+            var url = that._baseUrl + '/drive/items/{id}/content'.replace('{id}', path);
+            that._xhr({
+                url: url,
+                method: 'PUT',
+                responseType: 'json',
+                headers: {
+                    'Authorization': that._getAuthHeader(),
+                    'If-Match': rev
+                },
+                data: new Blob([data], {type: 'application/octet-stream'}),
+                statuses: [200, 412],
+                success: function (response, xhr) {
+                    rev = response.eTag;
+                    if (!rev) {
+                        that.logger.debug('Save error', path, 'no eTag', that.logger.ts(ts));
+                        return callback && callback('no eTag');
+                    }
+                    if (xhr.status === 412) {
+                        that.logger.debug('Save conflict', path, rev, that.logger.ts(ts));
+                        return callback && callback({ revConflict: true }, { rev: rev });
+                    }
+                    that.logger.debug('Saved', path, rev, that.logger.ts(ts));
+                    return callback && callback(null, {rev: rev});
+                },
+                error: function (err) {
+                    that.logger.debug('Save error', path, err, that.logger.ts(ts));
+                    return callback && callback(err);
+                }
+            });
+        });
+    },
+
+    list: function(callback) {
+        var that = this;
+        this._authorize(function(err) {
+            if (err) { return callback && callback(err); }
+            that.logger.debug('List');
+            var ts = that.logger.ts();
+            var url = that._baseUrl + '/drive/root/view.search?q=.kdbx&filter=' + encodeURIComponent('file ne null');
+            that._xhr({
+                url: url,
+                responseType: 'json',
+                headers: { 'Authorization': that._getAuthHeader() },
+                success: function(response) {
+                    if (!response || !response.value) {
+                        that.logger.error('List error', that.logger.ts(ts), response);
+                        return callback && callback('list error');
+                    }
+                    that.logger.debug('Listed', that.logger.ts(ts));
+                    var fileList = response.value
+                        .filter(function(f) { return f.name && /\.kdbx$/i.test(f.name); })
+                        .map(function(f) {
+                            return {
+                                name: f.name,
+                                path: f.id,
+                                rev: f.eTag
+                            };
+                        });
+                    return callback && callback(null, fileList);
+                },
+                error: function(err) {
+                    that.logger.error('List error', that.logger.ts(ts), err);
+                    return callback && callback(err);
+                }
+            });
+        });
+    },
+
+    _authorize: function(callback) {
+        if (this._token) {
+            return callback();
+        }
+        var clinetId = this.appSettings.get('onedriveClientId') || OneDriveClientId;
+        var url = 'https://login.live.com/oauth20_authorize.srf?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
+            .replace('{cid}', clinetId)
+            .replace('{scope}', 'onedrive.readwrite')
+            .replace('{url}', encodeURIComponent(window.location));
+        this._openPopup(url, 'onedriveAuth', 400, 600);
+        var that = this;
+        var popupClosed = function() {
+            Backbone.off('popup-closed', popupClosed);
+            window.removeEventListener('message', windowMessage);
+            that.logger.error('Auth error', 'popup closed');
+            callback('popup closed');
+        };
+        var windowMessage = function(e) {
+            var msgData = e.data;
+            if (!msgData) {
+                return;
+            }
+            // jshint camelcase:false
+            if (msgData.token_type) {
+                Backbone.off('popup-closed', popupClosed);
+                window.removeEventListener('message', windowMessage);
+                that._token = {
+                    tokenType: msgData.token_type,
+                    accessToken: msgData.access_token,
+                    authenticationToken: msgData.authentication_token,
+                    expiresIn: msgData.expires_in,
+                    scope: msgData.scope,
+                    userId: msgData.user_id
+                };
+                that.logger.debug('Auth success');
+                callback();
+            } else if (msgData.error) {
+                that.logger.error('Auth error', msgData.error, msgData.error_description);
+                callback(msgData.error);
+            }
+        };
+        Backbone.on('popup-closed', popupClosed);
+        window.addEventListener('message', windowMessage);
+    },
+
+    _getAuthHeader: function() {
+        return this._token ? this._token.tokenType + ' ' + this._token.accessToken : undefined;
     }
 });
 
