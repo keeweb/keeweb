@@ -10,6 +10,7 @@ var AuthReceiver = {
         } else {
             var message = this.urlArgsToMessage(window.location.href);
             opener.postMessage(message, window.location.origin);
+            window.close();
         }
     },
 

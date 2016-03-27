@@ -13,8 +13,7 @@ var AppModel = require('./models/app-model'),
 
 $(function() {
     if ((window.parent !== window.top) || window.opener) {
-        AuthReceiver.receive();
-        return window.close();
+        return AuthReceiver.receive();
     }
     require('./mixins/view');
     require('./helpers');
