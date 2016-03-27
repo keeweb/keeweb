@@ -516,7 +516,7 @@ var AppModel = Backbone.Model.extend({
         var storage = options.storage || file.get('storage');
         var path = options.path || file.get('path');
         var opts = options.opts || file.get('opts');
-        if (storage && Storage[storage].getPathForName && !options.path) {
+        if (storage && Storage[storage].getPathForName && !path) {
             path = Storage[storage].getPathForName(file.get('name'));
         }
         logger.info('Sync started', storage, path, options);

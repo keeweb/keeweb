@@ -25,6 +25,10 @@ var StorageOneDrive = StorageBase.extend({
 
     _baseUrl: 'https://api.onedrive.com/v1.0',
 
+    getPathForName: function(fileName) {
+        return '/drive/root:/' + fileName + '.kdbx';
+    },
+
     load: function(path, opts, callback) {
         var that = this;
         this._oauthAuthorize(function(err) {
@@ -33,7 +37,7 @@ var StorageOneDrive = StorageBase.extend({
             }
             that.logger.debug('Load', path);
             var ts = that.logger.ts();
-            var url = that._baseUrl + '/drive/items/{id}'.replace('{id}', path);
+            var url = that._baseUrl + path;
             that._xhr({
                 url: url,
                 responseType: 'json',
@@ -74,21 +78,25 @@ var StorageOneDrive = StorageBase.extend({
             }
             that.logger.debug('Stat', path);
             var ts = that.logger.ts();
-            var url = that._baseUrl + '/drive/items/{id}'.replace('{id}', path);
+            var url = that._baseUrl + path;
             that._xhr({
                 url: url,
                 responseType: 'json',
                 success: function (response) {
                     var rev = response.eTag;
                     if (!rev) {
-                        that.logger.debug('Stat error', path, 'no eTag', that.logger.ts(ts));
+                        that.logger.error('Stat error', path, 'no eTag', that.logger.ts(ts));
                         return callback && callback('no eTag');
                     }
                     that.logger.debug('Stated', path, rev, that.logger.ts(ts));
                     return callback && callback(null, {rev: rev});
                 },
-                error: function (err) {
-                    that.logger.debug('Stat error', path, err, that.logger.ts(ts));
+                error: function (err, xhr) {
+                    if (xhr.status === 404) {
+                        that.logger.debug('Stated not found', path, that.logger.ts(ts));
+                        return callback && callback({ notFound: true });
+                    }
+                    that.logger.error('Stat error', path, err, that.logger.ts(ts));
                     return callback && callback(err);
                 }
             });
@@ -103,18 +111,18 @@ var StorageOneDrive = StorageBase.extend({
             }
             that.logger.debug('Save', path, rev);
             var ts = that.logger.ts();
-            var url = that._baseUrl + '/drive/items/{id}/content'.replace('{id}', path);
+            var url = that._baseUrl + path + ':/content';
             that._xhr({
                 url: url,
                 method: 'PUT',
                 responseType: 'json',
-                headers: { 'If-Match': rev },
+                headers: rev ? { 'If-Match': rev } : null,
                 data: new Blob([data], {type: 'application/octet-stream'}),
-                statuses: [200, 412],
+                statuses: [200, 201, 412],
                 success: function (response, xhr) {
                     rev = response.eTag;
                     if (!rev) {
-                        that.logger.debug('Save error', path, 'no eTag', that.logger.ts(ts));
+                        that.logger.error('Save error', path, 'no eTag', that.logger.ts(ts));
                         return callback && callback('no eTag');
                     }
                     if (xhr.status === 412) {
@@ -125,7 +133,7 @@ var StorageOneDrive = StorageBase.extend({
                     return callback && callback(null, {rev: rev});
                 },
                 error: function (err) {
-                    that.logger.debug('Save error', path, err, that.logger.ts(ts));
+                    that.logger.error('Save error', path, err, that.logger.ts(ts));
                     return callback && callback(err);
                 }
             });
@@ -153,7 +161,7 @@ var StorageOneDrive = StorageBase.extend({
                         .map(function(f) {
                             return {
                                 name: f.name,
-                                path: f.id,
+                                path: f.parentReference.path + '/' + f.name,
                                 rev: f.eTag
                             };
                         });
@@ -164,6 +172,27 @@ var StorageOneDrive = StorageBase.extend({
                     return callback && callback(err);
                 }
             });
+        });
+    },
+
+    remove: function(path, callback) {
+        var that = this;
+        that.logger.debug('Remove', path);
+        var ts = that.logger.ts();
+        var url = that._baseUrl + path;
+        that._xhr({
+            url: url,
+            method: 'DELETE',
+            responseType: 'json',
+            statuses: [200, 204],
+            success: function () {
+                that.logger.debug('Removed', path, that.logger.ts(ts));
+                return callback && callback();
+            },
+            error: function (err) {
+                that.logger.error('Remove error', path, err, that.logger.ts(ts));
+                return callback && callback(err);
+            }
         });
     },
 
