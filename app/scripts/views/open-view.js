@@ -85,14 +85,18 @@ var OpenView = Backbone.View.extend({
     getLastOpenFiles: function() {
         return this.model.fileInfos.map(function(f) {
             var icon = 'file-text';
-            var storage = f.get('storage');
-            if (Storage[storage] && Storage[storage].icon) {
-                icon = Storage[storage].icon;
+            var storage = Storage[f.get('storage')];
+            if (storage && storage.icon) {
+                icon = storage.icon;
+            }
+            if (storage && storage.iconSvg) {
+                icon = null;
             }
             return {
                 id: f.get('id'),
                 name: f.get('name'),
-                icon: icon
+                icon: icon,
+                iconSvg: storage ? storage.iconSvg : undefined
             };
         });
     },

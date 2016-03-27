@@ -179,7 +179,15 @@
       }
       @include th { color: muted-color(); }
       padding: $base-padding;
-      &-icon { width: 2em; }
+      &-icon {
+        width: 2em;
+        &--svg>svg {
+          @include size(1em);
+          path {
+            @include th { fill: muted-color(); }
+          }
+        }
+      }
       &-text { @include flex-grow(1); }
       &-icon-del {
         opacity: 0;
