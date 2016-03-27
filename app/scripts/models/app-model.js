@@ -653,6 +653,12 @@ var AppModel = Backbone.Model.extend({
                             logger.info('Update rev in file info');
                             fileInfo.set('rev', stat.rev);
                         }
+                        if (stat && stat.path) {
+                            logger.info('Update path in file info', stat.path);
+                            file.set('path', stat.path);
+                            fileInfo.set('path', stat.path);
+                            path = stat.path;
+                        }
                         file.set('syncDate', new Date());
                         logger.info('Save to storage complete, update sync date');
                         complete();

@@ -57,13 +57,13 @@ var StorageOneDrive = StorageBase.extend({
                             return callback && callback(null, response, {rev: rev});
                         },
                         error: function (err) {
-                            that.logger.debug('Load error', path, err, that.logger.ts(ts));
+                            that.logger.error('Load error', path, err, that.logger.ts(ts));
                             return callback && callback(err);
                         }
                     });
                 },
                 error: function (err) {
-                    that.logger.debug('Load error', path, err, that.logger.ts(ts));
+                    that.logger.error('Load error', path, err, that.logger.ts(ts));
                     return callback && callback(err);
                 }
             });

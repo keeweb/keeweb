@@ -3,6 +3,7 @@
 var StorageBase = require('./storage-base');
 
 var GDriveClientId = '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com';
+var NewFileIdPrefix = 'NewFile:';
 
 var StorageGDrive = StorageBase.extend({
     name: 'gdrive',
@@ -13,6 +14,10 @@ var StorageGDrive = StorageBase.extend({
         '22.137808 118.59261Zm-21.415974 63.012814 69.180421 0 20.9141-39.459631-67.635587 0z"/></svg>',
 
     _baseUrl: 'https://www.googleapis.com/drive/v3',
+
+    getPathForName: function(fileName) {
+        return NewFileIdPrefix + fileName;
+    },
 
     load: function(path, opts, callback) {
         var that = this;
@@ -31,7 +36,7 @@ var StorageGDrive = StorageBase.extend({
                     return callback && callback(null, response, { rev: stat.rev });
                 },
                 error: function(err) {
-                    that.logger.debug('Load error', path, err, that.logger.ts(ts));
+                    that.logger.error('Load error', path, err, that.logger.ts(ts));
                     return callback && callback(err);
                 }
             });
@@ -40,6 +45,9 @@ var StorageGDrive = StorageBase.extend({
 
     stat: function(path, opts, callback) {
         var that = this;
+        if (path.lastIndexOf(NewFileIdPrefix, 0) === 0) {
+            return callback && callback({ notFound: true });
+        }
         this._oauthAuthorize(function(err) {
             if (err) {
                 return callback && callback(err);
@@ -75,24 +83,41 @@ var StorageGDrive = StorageBase.extend({
             }
             that.logger.debug('Save', path);
             var ts = that.logger.ts();
-            var url = 'https://www.googleapis.com/upload/drive/v3/files/{id}?uploadType=media&fields=headRevisionId'
-                .replace('{id}', path)
-                .replace('{rev}', stat.rev);
+            var isNew = path.lastIndexOf(NewFileIdPrefix, 0) === 0;
+            var url;
+            if (isNew) {
+                url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,headRevisionId';
+                var fileName = path.replace(NewFileIdPrefix, '') + '.kdbx';
+                var boundry = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
+                data = new Blob([
+                    '--', boundry, '\r\n',
+                    'Content-Type: application/json; charset=UTF-8', '\r\n\r\n',
+                    JSON.stringify({ name: fileName }), '\r\n',
+                    '--', boundry, '\r\n',
+                    'Content-Type: application/octet-stream', '\r\n\r\n',
+                    data, '\r\n',
+                    '--', boundry, '--', '\r\n'
+                ], {type: 'multipart/related; boundary="' + boundry + '"'});
+            } else {
+                url = 'https://www.googleapis.com/upload/drive/v3/files/{id}?uploadType=media&fields=headRevisionId'
+                    .replace('{id}', path);
+                data = new Blob([data], {type: 'application/octet-stream'});
+            }
             that._xhr({
                 url: url,
-                method: 'PATCH',
+                method: isNew ? 'POST' : 'PATCH',
                 responseType: 'json',
-                data: new Blob([data], {type: 'application/octet-stream'}),
+                data: data,
                 success: function(response) {
                     that.logger.debug('Saved', path, that.logger.ts(ts));
                     var newRev = response.headRevisionId;
                     if (!newRev) {
                         return callback && callback('save error: no rev');
                     }
-                    return callback && callback(null, { rev: newRev });
+                    return callback && callback(null, { rev: newRev, path: isNew ? response.id : null });
                 },
                 error: function(err) {
-                    that.logger.debug('Save error', path, err, that.logger.ts(ts));
+                    that.logger.error('Save error', path, err, that.logger.ts(ts));
                     return callback && callback(err);
                 }
             });
@@ -131,6 +156,27 @@ var StorageGDrive = StorageBase.extend({
                     return callback && callback(err);
                 }
             });
+        });
+    },
+
+    remove: function(path, callback) {
+        var that = this;
+        that.logger.debug('Remove', path);
+        var ts = that.logger.ts();
+        var url = that._baseUrl + '/files/{id}'.replace('{id}', path);
+        that._xhr({
+            url: url,
+            method: 'DELETE',
+            responseType: 'json',
+            statuses: [200, 204],
+            success: function () {
+                that.logger.debug('Removed', path, that.logger.ts(ts));
+                return callback && callback();
+            },
+            error: function (err) {
+                that.logger.error('Remove error', path, err, that.logger.ts(ts));
+                return callback && callback(err);
+            }
         });
     },
 
