@@ -22,6 +22,7 @@ var Backbone = require('backbone'),
     KeyHandler = require('../../comp/key-handler'),
     Alerts = require('../../comp/alerts'),
     CopyPaste = require('../../comp/copy-paste'),
+    OtpQrReqder = require('../../comp/otp-qr-reader'),
     Format = require('../../util/format'),
     Locale = require('../../util/locale'),
     Tip = require('../../util/tip'),
@@ -62,6 +63,7 @@ var DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'copy-password', this.copyPassword);
         this.listenTo(Backbone, 'copy-user', this.copyUserName);
         this.listenTo(Backbone, 'copy-url', this.copyUrl);
+        this.listenTo(OtpQrReqder, 'qr-read', this.otpCodeRead);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyPassword, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserName, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrl, this, KeyHandler.SHORTCUT_ACTION, false, true);
@@ -228,6 +230,7 @@ var DetailsView = Backbone.View.extend({
                     moreOptions.push({value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField});
                     moreOptions.push({value: 'toggle-empty', icon: 'eye-slash', text: Locale.detMenuHideEmpty});
                 }
+                moreOptions.push({value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp});
                 var rect = this.moreView.labelEl[0].getBoundingClientRect();
                 dropdownView.render({
                     position: {top: rect.bottom, right: rect.right},
@@ -249,6 +252,9 @@ var DetailsView = Backbone.View.extend({
                 var hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
                 AppSettingsModel.instance.set('hideEmptyFields', !hideEmptyFields);
                 this.render();
+                break;
+            case 'otp':
+                this.setupOtp();
                 break;
             default:
                 if (e.item.lastIndexOf('add:', 0) === 0) {
@@ -673,6 +679,14 @@ var DetailsView = Backbone.View.extend({
 
     backClick: function() {
         Backbone.trigger('toggle-details', false);
+    },
+
+    setupOtp: function() {
+        OtpQrReqder.read();
+    },
+
+    otpCodeRead: function(/*otpParams*/) {
+        Alerts.notImplemented();
     }
 });
 

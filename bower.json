@@ -33,6 +33,7 @@
     "normalize.css": "~3.0.3",
     "pikaday": "~1.3.3",
     "FileSaver.js": "eligrey/FileSaver.js",
-    "jquery": "~2.2.0"
+    "jquery": "~2.2.0",
+    "jsqrcode": "antelle/jsqrcode#^0.1.0"
   }
 }

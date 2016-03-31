@@ -53,4 +53,4 @@ For pull requests: branch is important! `master` is only for hotfixes, `develop`
 
 # License
 
-[MIT](https://github.com/antelle/keeweb/blob/master/MIT-LICENSE.txt)
+[MIT](https://github.com/antelle/keeweb/blob/master/LICENSE.txt)

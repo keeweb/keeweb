@@ -187,7 +187,7 @@ module.exports = function(grunt) {
             js: {
                 entry: {
                     app: 'app',
-                    vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver']
+                    vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode']
                 },
                 output: {
                     path: 'tmp/js',
@@ -213,6 +213,7 @@ module.exports = function(grunt) {
                         baron: 'baron/baron.min.js',
                         pikaday: 'pikaday/pikaday.js',
                         filesaver: 'FileSaver.js/FileSaver.min.js',
+                        qrcode: 'jsqrcode/dist/qrcode.min.js',
                         templates: path.join(__dirname, 'app/templates')
                     }
                 },

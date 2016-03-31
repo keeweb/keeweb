@@ -43,6 +43,12 @@ var ModalView = Backbone.View.extend({
         return this;
     },
 
+    change: function(config) {
+        if (config.header) {
+            this.$el.find('.modal__header').html(config.header);
+        }
+    },
+
     buttonClick: function(e) {
         var result = $(e.target).data('result');
         this.closeWithResult(result);
