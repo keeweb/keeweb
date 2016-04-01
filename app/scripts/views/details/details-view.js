@@ -24,7 +24,6 @@ var Backbone = require('backbone'),
     Alerts = require('../../comp/alerts'),
     CopyPaste = require('../../comp/copy-paste'),
     OtpQrReqder = require('../../comp/otp-qr-reader'),
-    Otp = require('../../comp/otp'),
     Format = require('../../util/format'),
     Locale = require('../../util/locale'),
     Tip = require('../../util/tip'),
@@ -42,10 +41,6 @@ var DetailsView = Backbone.View.extend({
     userEditView: null,
     urlEditView: null,
     fieldCopyTip: null,
-    otpTimer: null,
-    otp: null,
-    otpValue: null,
-    otpView: null,
 
     events: {
         'click .details__colors-popup-item': 'selectColor',
@@ -84,7 +79,6 @@ var DetailsView = Backbone.View.extend({
         KeyHandler.offKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         this.removeFieldViews();
-        this.stopOtpTimer();
         Backbone.View.prototype.remove.call(this);
     },
 
@@ -97,19 +91,9 @@ var DetailsView = Backbone.View.extend({
         }
     },
 
-    stopOtpTimer: function() {
-        if (this.otpTimer) {
-            clearTimeout(this.otpTimer);
-            this.otpTimer = null;
-        }
-        this.otp = null;
-        this.otpValue = null;
-    },
-
     render: function () {
         this.removeScroll();
         this.removeFieldViews();
-        this.stopOtpTimer();
         if (this.views.sub) {
             this.views.sub.remove();
             delete this.views.sub;
@@ -131,7 +115,7 @@ var DetailsView = Backbone.View.extend({
         this.$el.html(this.template(model));
         Tip.createTips(this.$el);
         this.setSelectedColor(this.model.color);
-        this.setOtpByEntry();
+        this.model.initOtpGenerator();
         this.addFieldViews();
         this.createScroll({
             root: this.$el.find('.details__body')[0],
@@ -174,11 +158,9 @@ var DetailsView = Backbone.View.extend({
         this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: Locale.detHistory,
             value: function() { return { length: model.historyLength, unsaved: model.unsaved }; } } }));
         _.forEach(model.fields, function(value, field) {
-            if (field.toLowerCase() === 'otp') {
-                var that = this;
-                this.otpView = new FieldViewOtp({ model: { name: '$' + field, title: field,
-                    value: function() { return that.otpValue; } } });
-                this.fieldViews.push(this.otpView);
+            if (field.toLowerCase() === 'otp' && this.model.otpGenerator) {
+                this.fieldViews.push(new FieldViewOtp({ model: { name: '$' + field, title: field,
+                    value: function() { return model.otpGenerator; } } }));
             } else {
                 this.fieldViews.push(new FieldViewCustom({ model: { name: '$' + field, title: field,
                     value: function() { return model.fields[field]; } } }));
@@ -706,88 +688,13 @@ var DetailsView = Backbone.View.extend({
         Backbone.trigger('toggle-details', false);
     },
 
-    setOtpByEntry: function() {
-        this.otp = null;
-        this.otpValue = null;
-        this.stopOtpTimer();
-        var otpUrl;
-        if (this.model.fields.otp) {
-            otpUrl = this.model.fields.otp;
-            if (otpUrl.isProtected) {
-                otpUrl = otpUrl.getText();
-            }
-            if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
-                // KeeOTP plugin format
-                var args = {};
-                otpUrl.split('&').forEach(function(part) {
-                    var parts = part.split('=', 2);
-                    args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
-                });
-                if (args.key) {
-                    otpUrl = 'otpauth://totp/null?secret=' + args.key +
-                        (args.step ? '&period=' + args.step : '') +
-                        (args.size ? '&digits=' + args.size : '');
-                }
-            }
-        }
-        if (this.model.fields['TOTP Seed']) {
-            // TrayTOTP plugin format
-            var key = this.model.fields['TOTP Seed'];
-            if (key.isProtected) {
-                key = key.getText();
-            }
-            if (key) {
-                otpUrl = 'otpauth://totp/null?secret=' + key;
-            }
-            var settings = this.model.fields['TOTP Settings'];
-            if (settings && settings.isProtected) {
-                settings = settings.getText();
-            }
-            if (settings) {
-                settings = settings.split(';');
-                if (settings.length > 0 && settings[0] > 0) {
-                    otpUrl += '&period=' + settings[0];
-                }
-                if (settings.length > 1 && settings[1] > 0) {
-                    otpUrl += '&digits=' + settings[1];
-                }
-            }
-            this.model.fields.otp = kdbxweb.ProtectedValue.fromString(otpUrl);
-        }
-        if (otpUrl) {
-            try {
-                this.otp = Otp.parseUrl(otpUrl);
-                this.refreshOtp();
-            } catch (e) {
-                this.otp = null;
-            }
-        }
-    },
-
     setupOtp: function() {
         OtpQrReqder.read();
     },
 
-    otpCodeRead: function(otpParams) {
-        this.otp = otpParams;
-        this.refreshOtp();
-    },
-
-    refreshOtp: function() {
-        this.otpValue = null;
-        if (this.otp) {
-            var that = this;
-            this.otp.next(function (pass, timeLeft) {
-                if (!pass || !that.otp) {
-                    return;
-                }
-                that.otpValue = { url: that.otp.url, pass: pass, time: timeLeft };
-                if (that.otpView) {
-                    that.otpView.update();
-                }
-                setTimeout(that.refreshOtp.bind(that), timeLeft);
-            });
-        }
+    otpCodeRead: function(otp) {
+        this.model.setOtp(otp);
+        this.entryUpdated();
     }
 });
 

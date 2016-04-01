@@ -5,7 +5,7 @@ var Backbone = require('backbone'),
     Locale = require('../util/locale'),
     Logger = require('../util/logger'),
     FeatureDetector = require('../util/feature-detector'),
-    Otp = require('../comp/otp'),
+    Otp = require('../util/otp'),
     QrCode = require('qrcode');
 
 var logger = new Logger('otp-qr-reader');

@@ -1,6 +1,6 @@
 'use strict';
 
-var Logger = require('../util/logger');
+var Logger = require('./logger');
 
 var logger = new Logger('otp');
 

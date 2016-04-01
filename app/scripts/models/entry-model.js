@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     IconMap = require('../const/icon-map'),
     Color = require('../util/color'),
     IconUrl = require('../util/icon-url'),
+    Otp = require('../util/otp'),
     kdbxweb = require('kdbxweb');
 
 var EntryModel = Backbone.Model.extend({
@@ -367,6 +368,66 @@ var EntryModel = Backbone.Model.extend({
             this.group.group.entries.splice(ix, 1);
         }
         this.file.reload();
+    },
+
+    initOtpGenerator: function() {
+        this.otpGenerator = null;
+        var otpUrl;
+        if (this.fields.otp) {
+            otpUrl = this.fields.otp;
+            if (otpUrl.isProtected) {
+                otpUrl = otpUrl.getText();
+            }
+            if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
+                // KeeOTP plugin format
+                var args = {};
+                otpUrl.split('&').forEach(function(part) {
+                    var parts = part.split('=', 2);
+                    args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
+                });
+                if (args.key) {
+                    otpUrl = 'otpauth://totp/null?secret=' + args.key +
+                        (args.step ? '&period=' + args.step : '') +
+                        (args.size ? '&digits=' + args.size : '');
+                }
+            }
+        }
+        if (this.fields['TOTP Seed']) {
+            // TrayTOTP plugin format
+            var key = this.fields['TOTP Seed'];
+            if (key.isProtected) {
+                key = key.getText();
+            }
+            if (key) {
+                otpUrl = 'otpauth://totp/null?secret=' + key;
+            }
+            var settings = this.fields['TOTP Settings'];
+            if (settings && settings.isProtected) {
+                settings = settings.getText();
+            }
+            if (settings) {
+                settings = settings.split(';');
+                if (settings.length > 0 && settings[0] > 0) {
+                    otpUrl += '&period=' + settings[0];
+                }
+                if (settings.length > 1 && settings[1] > 0) {
+                    otpUrl += '&digits=' + settings[1];
+                }
+            }
+            this.fields.otp = kdbxweb.ProtectedValue.fromString(otpUrl);
+        }
+        if (otpUrl) {
+            try {
+                this.otpGenerator = Otp.parseUrl(otpUrl);
+            } catch (e) {
+                this.otpGenerator = null;
+            }
+        }
+    },
+
+    setOtp: function(otp) {
+        this.otpGenerator = otp;
+        this.setField('otp', kdbxweb.ProtectedValue.fromString(otp.url));
     }
 });
 
