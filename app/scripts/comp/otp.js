@@ -1,5 +1,9 @@
 'use strict';
 
+var Logger = require('../util/logger');
+
+var logger = new Logger('otp');
+
 var Otp = function(url, params) {
     if (['hotp', 'totp'].indexOf(params.type) < 0) {
         throw 'Bad type: ' + params.type;
@@ -19,7 +23,9 @@ var Otp = function(url, params) {
     if (params.period && isNaN(params.period) || params.period < 1) {
         throw 'Bad period: ' + params.period;
     }
+
     this.url = url;
+
     this.type = params.type;
     this.issuer = params.issuer;
     this.account = params.account;
@@ -29,6 +35,71 @@ var Otp = function(url, params) {
     this.digits = params.digits ? +params.digits : 6;
     this.counter = params.counter;
     this.period = params.period ? +params.period : 30;
+
+    this.key = Otp.fromBase32(this.secret);
+};
+
+Otp.prototype.next = function(callback) {
+    var now = Date.now();
+    var epoch = Math.round(now / 1000);
+    var time = Math.floor(epoch / this.period);
+    var msPeriod = this.period * 1000;
+    var timeLeft = msPeriod - (now % msPeriod);
+    var data = new Uint8Array(8);
+    new DataView(data.buffer).setUint32(4, time);
+    var that = this;
+    this.hmac(data, function(sig, err) {
+        if (!sig) {
+            logger.error('OTP calculation error', err);
+            return callback();
+        }
+        sig = new DataView(sig);
+        var offset = sig.getInt8(sig.byteLength - 1) & 0xf;
+        var pass = (sig.getUint32(offset) & 0x7fffffff).toString();
+        pass = Otp.leftPad(pass.substr(pass.length - that.digits), that.digits);
+        callback(pass, timeLeft);
+    });
+};
+
+Otp.prototype.hmac = function(data, callback) {
+    var subtle = window.crypto.subtle || window.crypto.webkitSubtle;
+    subtle.importKey('raw', this.key,
+        { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } },
+        false, ['sign'])
+        .then(function(key) {
+            subtle.sign({ name: 'HMAC' }, key, data)
+                .then(function(sig) {
+                    callback(sig);
+                })
+                .catch(function(err) { callback(null, err); });
+        })
+        .catch(function(err) { callback(null, err); });
+};
+
+Otp.fromBase32 = function(str) {
+    var alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
+    var bin = '';
+    var i;
+    for (i = 0; i < str.length; i++) {
+        var ix = alphabet.indexOf(str[i].toLowerCase());
+        if (ix < 0) {
+            throw 'Bad base32: ' + str;
+        }
+        bin += Otp.leftPad(ix.toString(2), 5);
+    }
+    var hex = new Uint8Array(Math.floor(bin.length / 8));
+    for (i = 0; i < hex.length; i++) {
+        var chunk = bin.substr(i * 8, 8);
+        hex[i] = parseInt(chunk, 2);
+    }
+    return hex.buffer;
+};
+
+Otp.leftPad = function(str, len) {
+    while (str.length < len) {
+        str = '0' + str;
+    }
+    return str;
 };
 
 Otp.parseUrl = function(url) {

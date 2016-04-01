@@ -85,13 +85,14 @@ var OtpQrReader = {
             try {
                 var ts = logger.ts();
                 var url = new QrCode(image).decode();
-                logger.info('QR code read', logger.ts(ts), url);
+                logger.info('QR code read', logger.ts(ts));
                 OtpQrReader.alert.remove();
                 OtpQrReader.stopListenClipboard();
                 try {
                     var otp = Otp.parseUrl(url);
                     OtpQrReader.trigger('qr-read', otp);
                 } catch (err) {
+                    logger.error('Error parsing QR code', err);
                     Alerts.error({
                         header: Locale.detOtpQrWrong,
                         body: Locale.detOtpQrWrongBody + '<pre class="modal__pre">' + _.escape(err.toString()) +'</pre>'
