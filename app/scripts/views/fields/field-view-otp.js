@@ -48,7 +48,7 @@ var FieldViewOtp = FieldViewText.extend({
         }
         this.otpValue = pass || '';
         this.render();
-        if (this.otpValue) {
+        if (this.otpValue && timeLeft) {
             this.otpTimeout = setTimeout(this.requestOtpUpdate.bind(this), timeLeft);
         }
     }

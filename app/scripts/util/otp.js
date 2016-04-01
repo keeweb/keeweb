@@ -40,13 +40,19 @@ var Otp = function(url, params) {
 };
 
 Otp.prototype.next = function(callback) {
-    var now = Date.now();
-    var epoch = Math.round(now / 1000);
-    var time = Math.floor(epoch / this.period);
-    var msPeriod = this.period * 1000;
-    var timeLeft = msPeriod - (now % msPeriod);
+    var valueForHashing;
+    var timeLeft;
+    if (this.type === 'totp') {
+        var now = Date.now();
+        var epoch = Math.round(now / 1000);
+        valueForHashing = Math.floor(epoch / this.period);
+        var msPeriod = this.period * 1000;
+        timeLeft = msPeriod - (now % msPeriod);
+    } else {
+        valueForHashing = this.counter;
+    }
     var data = new Uint8Array(8);
-    new DataView(data.buffer).setUint32(4, time);
+    new DataView(data.buffer).setUint32(4, valueForHashing);
     var that = this;
     this.hmac(data, function(sig, err) {
         if (!sig) {
