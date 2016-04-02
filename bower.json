@@ -1,6 +1,5 @@
 {
   "name": "keeweb",
-  "version": "0.0.1",
   "authors": [
     "Antelle <dmitryvit@gmail.com>"
   ],
@@ -28,7 +27,6 @@
     "bourbon": "~4.2.5",
     "dropbox": "antelle/dropbox-js#0.10.6",
     "font-awesome": "~4.5.0",
-    "install": "~1.0.4",
     "kdbxweb": "~0.3.8",
     "normalize.css": "~3.0.3",
     "pikaday": "~1.3.3",
