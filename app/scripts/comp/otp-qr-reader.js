@@ -50,12 +50,10 @@ var OtpQrReader = {
                 }
             }
         });
+        // transparent window with QR scanner - is it better? check usability of this
         // var BrowserWindow = require('../../comp/launcher').remReq('browser-window');
-        // var win = new BrowserWindow({ width: 800, height: 600, show: false, alwaysOnTop: true, backgroundColor: '#80FFFFFF',
-        //     transparent: true });
-        // win.on('closed', function() { win = null; });
-        // win.loadURL('https://github.com');
-        // win.show();
+        // new BrowserWindow({ width: 800, height: 600, show: false, alwaysOnTop: true, backgroundColor: '#80FFFFFF',
+        //     transparent: true }).show();
     },
 
     selectFile: function() {
