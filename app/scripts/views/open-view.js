@@ -123,6 +123,7 @@ var OpenView = Backbone.View.extend({
             esc: '',
             enter: '',
             success: function(res) {
+                that.inputEl.focus();
                 if (res === 'skip') {
                     that.model.settings.set('skipOpenLocalWarn', true);
                 }
