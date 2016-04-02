@@ -445,6 +445,14 @@ module.exports = function(grunt) {
                     publicKey: 'app/resources/public-key.pem'
                 }
             }
+        },
+        'sign-html': {
+            'app': {
+                options: {
+                    file: 'dist/index.html',
+                    privateKey: 'keys/private-key.pem'
+                }
+            }
         }
     });
 
@@ -464,7 +472,8 @@ module.exports = function(grunt) {
         'inline',
         'htmlmin',
         'string-replace:manifest_html',
-        'string-replace:manifest'
+        'string-replace:manifest',
+        'sign-html'
     ]);
 
     grunt.registerTask('desktop', [
