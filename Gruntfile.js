@@ -419,7 +419,7 @@ module.exports = function(grunt) {
                         nonull: true
                     },
                     {
-                        src: 'electron/icon.png',
+                        src: 'graphics/128x128.png',
                         dest: '/usr/share/icons/hicolor/128x128/apps/keeweb.png',
                         nonull: true
                     }]

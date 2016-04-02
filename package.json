@@ -20,7 +20,7 @@
     "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-compress": "^0.14.0",
     "grunt-contrib-copy": "^0.8.2",
-    "grunt-contrib-deb": "github:antelle/grunt-contrib-deb#e00e14a",
+    "grunt-contrib-deb": "github:antelle/grunt-contrib-deb#e65898f",
     "grunt-contrib-htmlmin": "^0.6.0",
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-uglify": "^0.10.1",
