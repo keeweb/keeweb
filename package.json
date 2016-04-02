@@ -1,9 +1,13 @@
 {
   "name": "keeweb",
   "version": "1.0.4",
-  "description": "KeePass web app",
+  "description": "Free cross-platform password manager compatible with KeePass",
   "main": "Gruntfile.js",
-  "repository": "https://github.com/antelle/keeweb",
+  "homepage": "https://keeweb.info",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antelle/keeweb"
+  },
   "dependencies": {},
   "devDependencies": {
     "base64-loader": "^1.0.0",
@@ -16,6 +20,7 @@
     "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-compress": "^0.14.0",
     "grunt-contrib-copy": "^0.8.2",
+    "grunt-contrib-deb": "github:antelle/grunt-contrib-deb#e00e14a",
     "grunt-contrib-htmlmin": "^0.6.0",
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-uglify": "^0.10.1",
@@ -24,7 +29,6 @@
     "grunt-gitinfo": "^0.1.7",
     "grunt-inline-alt": "^0.3.10",
     "grunt-postcss": "^0.7.1",
-    "grunt-run": "^0.5.2",
     "grunt-sass": "^1.1.0",
     "grunt-string-replace": "^1.2.0",
     "grunt-webpack": "^1.0.11",
@@ -46,7 +50,11 @@
     "postinstall": "npm install --prefix electron",
     "copy-beta": "grunt && sed 's/<html manifest=\"manifest.appcache\">//' dist/index.html > ../keeweb-beta/diy/index.html && cd ../keeweb-beta && git add diy/index.html && git commit -a -m 'beta' && git push origin master"
   },
-  "author": "Antelle",
+  "author": {
+    "name": "Antelle",
+    "email": "antelle.net@gmail.com",
+    "url": "http://antelle.net"
+  },
   "license": "MIT",
   "readme": "README.md"
 }

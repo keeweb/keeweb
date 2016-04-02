@@ -118,27 +118,8 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'desktop_linux_deb_x64': {
-                src: 'tmp/desktop/KeeWeb-linux-deb-x64.deb',
+                src: 'tmp/desktop/keeweb-desktop_1.0.4-1_amd64.deb',
                 dest: 'dist/desktop/KeeWeb.linux.x64.deb',
-                nonull: true
-            },
-            'desktop_linux_deb_x64_src': {
-                cwd: 'package/deb/',
-                src: '**',
-                dest: 'tmp/desktop/KeeWeb-linux-deb-x64',
-                expand: true,
-                nonull: true
-            },
-            'desktop_linux_deb_x64_src_files': {
-                cwd: 'tmp/desktop/KeeWeb-linux-x64/',
-                src: '**',
-                dest: 'tmp/desktop/KeeWeb-linux-deb-x64/opt/keeweb-desktop',
-                expand: true,
-                nonull: true
-            },
-            'desktop_linux_deb_x64_src_icon': {
-                src: 'electron/icon.png',
-                dest: 'tmp/desktop/KeeWeb-linux-deb-x64/usr/share/icons/hicolor/128x128/apps/keeweb.png',
                 nonull: true
             }
         },
@@ -205,15 +186,6 @@ module.exports = function(grunt) {
             'desktop_html': {
                 options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
                 files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
-            },
-            'desktop_linux_deb_x64': {
-                options: {
-                    replacements: [
-                        { pattern: '{ver}', replacement: pkg.version },
-                        { pattern: '{size}', replacement: '<%= dir_size_linux_x64 %>' }
-                    ]
-                },
-                files: { 'tmp/desktop/KeeWeb-linux-deb-x64/DEBIAN/control': 'package/deb/DEBIAN/control' }
             }
         },
         webpack: {
@@ -400,25 +372,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-        'get-dir-size': {
-            'desktop_linux_x64': {
-                files: { 'dir_size_linux_x64': 'tmp/desktop/KeeWeb-linux-x64' }
-            }
-        },
-        run: {
-            'deb_x64': {
-                options: {
-                    cwd: 'tmp/desktop/',
-                    failOnError: true
-                },
-                cmd: 'fakeroot',
-                args: [
-                    'dpkg-deb',
-                    '--build',
-                    'KeeWeb-linux-deb-x64'
-                ]
-            }
-        },
         compress: {
             linux64: {
                 options: { archive: 'tmp/desktop/KeeWeb.linux.x64.zip' },
@@ -431,6 +384,45 @@ module.exports = function(grunt) {
             'desktop_update': {
                 options: { archive: 'dist/desktop/UpdateDesktop.zip', comment: zipCommentPlaceholder },
                 files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
+            }
+        },
+        deb: {
+            linux64: {
+                options: {
+                    tmpPath: 'tmp/desktop/',
+                    package: {
+                        name: 'keeweb-desktop',
+                        version: pkg.version,
+                        description: pkg.description,
+                        author: pkg.author,
+                        homepage: pkg.homepage,
+                        rev: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); }
+                    },
+                    info: {
+                        arch: 'amd64',
+                        targetDir: 'tmp/desktop'
+                    }
+                },
+                files: [
+                    {
+                        cwd: 'package/deb/usr',
+                        src: '**',
+                        dest: '/usr',
+                        expand: true,
+                        nonull: true
+                    },
+                    {
+                        cwd: 'tmp/desktop/KeeWeb-linux-x64/',
+                        src: '**',
+                        dest: '/opt/keeweb-desktop',
+                        expand: true,
+                        nonull: true
+                    },
+                    {
+                        src: 'electron/icon.png',
+                        dest: '/usr/share/icons/hicolor/128x128/apps/keeweb.png',
+                        nonull: true
+                    }]
             }
         },
         'sign-archive': {
@@ -484,14 +476,9 @@ module.exports = function(grunt) {
         'validate-desktop-update',
         'electron',
         'electron_builder',
-        'get-dir-size:desktop_linux_x64',
-        'copy:desktop_linux_deb_x64_src',
-        'copy:desktop_linux_deb_x64_src_files',
-        'copy:desktop_linux_deb_x64_src_icon',
-        'string-replace:desktop_linux_deb_x64',
         'compress:linux64',
         'compress:linux32',
-        'run:deb_x64',
+        'deb:linux64',
         'copy:desktop_osx',
         'copy:desktop_win',
         'copy:desktop_linux_x64',
