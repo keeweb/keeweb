@@ -68,6 +68,9 @@ Otp.prototype.next = function(callback) {
 };
 
 Otp.prototype.hmac = function(data, callback) {
+    if (!window.crypto && window.msCrypto) {
+        return this.hmacMsCrypto(data, callback);
+    }
     var subtle = window.crypto.subtle || window.crypto.webkitSubtle;
     var algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
     subtle.importKey('raw', this.key, algo, false, ['sign'])
@@ -77,6 +80,18 @@ Otp.prototype.hmac = function(data, callback) {
                 .catch(function(err) { callback(null, err); });
         })
         .catch(function(err) { callback(null, err); });
+};
+
+Otp.prototype.hmacMsCrypto = function(data, callback) {
+    var subtle = window.msCrypto.subtle;
+    var algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
+    subtle.importKey('raw', this.key, algo, false, ['sign']).oncomplete = function(e) {
+        var key = e.target.result;
+        subtle.sign(algo, key, data).oncomplete = function(e) {
+            var sig = e.target.result;
+            callback(sig);
+        };
+    };
 };
 
 Otp.fromBase32 = function(str) {
