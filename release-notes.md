@@ -1,20 +1,21 @@
 Release notes
 -------------
 ##### v1.1.0 (Q2 2016)
-Storage providers, usability improvements  
+Storage providers, one-time passwords, usability improvements  
 `+` WebDAV  
-`+` Google Drive  
+`+` Google Drive, OneDrive  
+`+` one-time passwords  
 `+` option to remember keyfiles  
+`+` password generation presets  
+`+` open files created without password  
+`+` usernames autocomplete  
 `+` files open improvements  
 `+` beta version app  
 `+` option to lock on password copy  
 `+` save/restore window position after close  
 `+` shortcut to copy username  
-`+` password generation presets  
 `+` regenerate password button  
 `+` option to search in title  
-`+` open files created without password  
-`+` usernames autocomplete  
 `+` shortcut to copy website  
 `+` shortcuts while the app is in background  
 `+` build for 32-bit linux  
