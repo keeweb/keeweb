@@ -13,6 +13,8 @@ var logger = new Logger('otp-qr-reader');
 var OtpQrReader = {
     alert: null,
 
+    fileInput: null,
+
     read: function() {
         var screenshotKey = FeatureDetector.screenshotToClipboardShortcut();
         if (screenshotKey) {
@@ -22,21 +24,30 @@ var OtpQrReader = {
             Locale.detSetupOtpAlertBodyWith.replace('{}',
                 '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>');
         OtpQrReader.startListenClipoard();
+        var buttons = [Alerts.buttons.cancel];
+        if (FeatureDetector.isMobile()) {
+            buttons.unshift({result: 'select', title: Locale.detSetupOtoScanButton});
+        }
+        var lastLine = FeatureDetector.isMobile() ? Locale.detSetupOtpAlertBody3Mobile :
+            Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
         OtpQrReader.alert = Alerts.alert({
             icon: 'qrcode',
             header: Locale.detSetupOtpAlert,
             body: [Locale.detSetupOtpAlertBody,
                 Locale.detSetupOtpAlertBody1,
                 Locale.detSetupOtpAlertBody2.replace('{}', screenshotKey || ''),
-                Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '')
+                lastLine
             ].join('<br/>'),
             esc: '',
             click: '',
             enter: '',
-            buttons: [Alerts.buttons.cancel],
-            complete: function() {
+            buttons: buttons,
+            complete: function(res) {
                 OtpQrReader.alert = null;
                 OtpQrReader.stopListenClipboard();
+                if (res === 'select') {
+                    OtpQrReader.selectFile();
+                }
             }
         });
         // var BrowserWindow = require('../../comp/launcher').remReq('browser-window');
@@ -45,6 +56,27 @@ var OtpQrReader = {
         // win.on('closed', function() { win = null; });
         // win.loadURL('https://github.com');
         // win.show();
+    },
+
+    selectFile: function() {
+        if (!OtpQrReader.fileInput) {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('capture', 'camera');
+            input.setAttribute('accept', 'image/*');
+            input.setAttribute('class', 'hide-by-pos');
+            OtpQrReader.fileInput = input;
+            OtpQrReader.fileInput.onchange = OtpQrReader.fileSelected;
+        }
+        OtpQrReader.fileInput.click();
+    },
+
+    fileSelected: function() {
+        var file = OtpQrReader.fileInput.files[0];
+        if (!file || file.type.indexOf('image') < 0) {
+            return;
+        }
+        OtpQrReader.readFile(file);
     },
 
     startListenClipoard: function() {
@@ -56,26 +88,29 @@ var OtpQrReader = {
     },
 
     pasteEvent: function(e) {
-        logger.debug('Paste event');
         var item = _.find(e.clipboardData.items, function(item) {
             return item.kind === 'file' && item.type.indexOf('image') !== -1;
         });
         if (!item) {
+            logger.debug('Paste without file');
             return;
         }
-        logger.info('Reading image', item.type);
+        logger.info('Reading pasted image', item.type);
         if (OtpQrReader.alert) {
             OtpQrReader.alert.change({
                 header: Locale.detOtpImageReading
             });
         }
-        var blob = item.getAsFile();
+        OtpQrReader.readFile(item.getAsFile());
+    },
+
+    readFile: function(file) {
         var reader = new FileReader();
         reader.onload = function() {
             logger.debug('Image data loaded');
             OtpQrReader.readQr(reader.result);
         };
-        reader.readAsDataURL(blob);
+        reader.readAsDataURL(file);
     },
 
     readQr: function(imageData) {
@@ -86,8 +121,7 @@ var OtpQrReader = {
                 var ts = logger.ts();
                 var url = new QrCode(image).decode();
                 logger.info('QR code read', logger.ts(ts));
-                OtpQrReader.alert.remove();
-                OtpQrReader.stopListenClipboard();
+                OtpQrReader.removeAlert();
                 try {
                     var otp = Otp.parseUrl(url);
                     OtpQrReader.trigger('qr-read', otp);
@@ -100,8 +134,7 @@ var OtpQrReader = {
                 }
             } catch (e) {
                 logger.error('Error reading QR code', e);
-                OtpQrReader.alert.remove();
-                OtpQrReader.stopListenClipboard();
+                OtpQrReader.removeAlert();
                 Alerts.error({
                     header: Locale.detOtpQrError,
                     body: Locale.detOtpQrErrorBody
@@ -110,14 +143,20 @@ var OtpQrReader = {
         };
         image.onerror = function() {
             logger.debug('Image load error');
-            OtpQrReader.alert.remove();
-            OtpQrReader.stopListenClipboard();
+            OtpQrReader.removeAlert();
             Alerts.error({
                 header: Locale.detOtpImageError,
                 body: Locale.detOtpImageErrorBody
             });
         };
         image.src = imageData;
+    },
+
+    removeAlert: function() {
+        if (OtpQrReader.alert) {
+            OtpQrReader.alert.remove();
+        }
+        OtpQrReader.stopListenClipboard();
     }
 };
 

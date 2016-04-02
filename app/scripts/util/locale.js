@@ -206,6 +206,8 @@ var Locale = {
     detSetupOtpAlertBody1: '1. go to the authorization page',
     detSetupOtpAlertBody2: '2. make a screenshot of the QR code {}',
     detSetupOtpAlertBody3: '3. paste it here {}',
+    detSetupOtpAlertBody3Mobile: '3. select it or scan with your camera using Select/Scan button below',
+    detSetupOtoScanButton: 'Select/Scan',
     detSetupOtpAlertBodyWith: 'with {}',
     detOtpImageError: 'Error reading image',
     detOtpImageErrorBody: 'Sorry, we could not read the image format, please contact the app authors with error details.',

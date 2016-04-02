@@ -3,7 +3,7 @@
 var FieldViewText = require('./field-view-text'),
     Timeouts = require('../../const/timeouts');
 
-var MinOpacity = 0.2;
+var MinOpacity = 0.1;
 
 var FieldViewOtp = FieldViewText.extend({
     otpTimeout: null,
