@@ -51,8 +51,8 @@ Otp.prototype.next = function(callback) {
     } else {
         valueForHashing = this.counter;
     }
-    var data = new Uint8Array(8);
-    new DataView(data.buffer).setUint32(4, valueForHashing);
+    var data = new Uint8Array(8).buffer;
+    new DataView(data).setUint32(4, valueForHashing);
     var that = this;
     this.hmac(data, function(sig, err) {
         if (!sig) {
@@ -69,14 +69,11 @@ Otp.prototype.next = function(callback) {
 
 Otp.prototype.hmac = function(data, callback) {
     var subtle = window.crypto.subtle || window.crypto.webkitSubtle;
-    subtle.importKey('raw', this.key,
-        { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } },
-        false, ['sign'])
+    var algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
+    subtle.importKey('raw', this.key, algo, false, ['sign'])
         .then(function(key) {
-            subtle.sign({ name: 'HMAC' }, key, data)
-                .then(function(sig) {
-                    callback(sig);
-                })
+            subtle.sign(algo, key, data)
+                .then(function(sig) { callback(sig); })
                 .catch(function(err) { callback(null, err); });
         })
         .catch(function(err) { callback(null, err); });
