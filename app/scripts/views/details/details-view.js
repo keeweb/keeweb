@@ -158,7 +158,7 @@ var DetailsView = Backbone.View.extend({
         this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: Locale.detHistory,
             value: function() { return { length: model.historyLength, unsaved: model.unsaved }; } } }));
         _.forEach(model.fields, function(value, field) {
-            if (field.toLowerCase() === 'otp' && this.model.otpGenerator) {
+            if (field === 'otp' && this.model.otpGenerator) {
                 this.fieldViews.push(new FieldViewOtp({ model: { name: '$' + field, title: field,
                     value: function() { return model.otpGenerator; } } }));
             } else {
@@ -434,7 +434,12 @@ var DetailsView = Backbone.View.extend({
         if (e.field) {
             if (e.field[0] === '$') {
                 var fieldName = e.field.substr(1);
-                if (e.newField) {
+                if (fieldName === 'otp') {
+                    if (this.otpFieldChanged(e.val)) {
+                        this.entryUpdated();
+                        return;
+                    }
+                } else if (e.newField) {
                     if (fieldName) {
                         this.model.setField(fieldName, undefined);
                     }
@@ -476,6 +481,18 @@ var DetailsView = Backbone.View.extend({
         if (e.tab) {
             this.focusNextField(e.tab);
         }
+    },
+
+    otpFieldChanged: function(value) {
+        var oldValue = this.model.fields.otp;
+        if (oldValue && oldValue.isProtected) {
+            oldValue = oldValue.getText();
+        }
+        if (oldValue === value) {
+            return false;
+        }
+        this.model.setOtpUrl(value);
+        return true;
     },
 
     fieldCopied: function(e) {

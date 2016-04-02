@@ -371,7 +371,6 @@ var EntryModel = Backbone.Model.extend({
     },
 
     initOtpGenerator: function() {
-        this.otpGenerator = null;
         var otpUrl;
         if (this.fields.otp) {
             otpUrl = this.fields.otp;
@@ -391,8 +390,7 @@ var EntryModel = Backbone.Model.extend({
                         (args.size ? '&digits=' + args.size : '');
                 }
             }
-        }
-        if (this.fields['TOTP Seed']) {
+        } else if (this.fields['TOTP Seed']) {
             // TrayTOTP plugin format
             var key = this.fields['TOTP Seed'];
             if (key.isProtected) {
@@ -417,17 +415,26 @@ var EntryModel = Backbone.Model.extend({
             this.fields.otp = kdbxweb.ProtectedValue.fromString(otpUrl);
         }
         if (otpUrl) {
+            if (this.otpGenerator && this.otpGenerator.url === otpUrl) {
+                return;
+            }
             try {
                 this.otpGenerator = Otp.parseUrl(otpUrl);
             } catch (e) {
                 this.otpGenerator = null;
             }
+        } else {
+            this.otpGenerator = null;
         }
     },
 
     setOtp: function(otp) {
         this.otpGenerator = otp;
-        this.setField('otp', kdbxweb.ProtectedValue.fromString(otp.url));
+        this.setOtpUrl(otp.url);
+    },
+
+    setOtpUrl: function(url) {
+        this.setField('otp', kdbxweb.ProtectedValue.fromString(url));
     }
 });
 

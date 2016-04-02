@@ -6,7 +6,8 @@ var Timeouts = {
     AutoHideHint: 3000,
     FileChangeSync: 3000,
     BeforeAutoLock: 300,
-    CheckWindowClosed: 300
+    CheckWindowClosed: 300,
+    OtpFadeDuration: 10000
 };
 
 module.exports = Timeouts;
