@@ -25,6 +25,7 @@ Storage providers, usability improvements
 `+` hide demo button once opened  
 `+` show error details on open  
 `+` select dropbox folder  
+`+` building deb  
 `-` fix capslock indicator  
 `-` fix file settings input behavior  
 `-` fix favicon download  
