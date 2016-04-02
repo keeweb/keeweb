@@ -400,7 +400,10 @@ module.exports = function(grunt) {
                     },
                     info: {
                         arch: 'amd64',
-                        targetDir: 'tmp/desktop'
+                        targetDir: 'tmp/desktop',
+                        scripts: {
+                            postinst: 'package/deb/scripts/postinst'
+                        }
                     }
                 },
                 files: [
