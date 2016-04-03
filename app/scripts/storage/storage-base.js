@@ -112,6 +112,14 @@ _.extend(StorageBase.prototype, {
         return win;
     },
 
+    _getOauthRedirectUrl: function() {
+        var redirectUrl = window.location.href;
+        if (redirectUrl.lastIndexOf('file:', 0) === 0) {
+            redirectUrl = Links.WebApp;
+        }
+        return redirectUrl;
+    },
+
     _oauthAuthorize: function(callback) {
         var that = this;
         if (that._oauthToken && !that._oauthToken.expired) {
@@ -124,14 +132,10 @@ _.extend(StorageBase.prototype, {
             callback();
             return;
         }
-        var redirectUrl = window.location.href;
-        if (redirectUrl.lastIndexOf('file:', 0) === 0) {
-            redirectUrl = Links.WebApp;
-        }
         var url = opts.url + '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
-            .replace('{cid}', opts.clientId)
+            .replace('{cid}', encodeURIComponent(opts.clientId))
             .replace('{scope}', encodeURIComponent(opts.scope))
-            .replace('{url}', encodeURIComponent(redirectUrl));
+            .replace('{url}', encodeURIComponent(this._getOauthRedirectUrl()));
         that.logger.debug('OAuth popup opened');
         if (!that._openPopup(url, 'OAuth', opts.width, opts.height)) {
             callback('cannot open popup');
