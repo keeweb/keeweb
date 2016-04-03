@@ -15,7 +15,7 @@ var FieldView = Backbone.View.extend({
     render: function () {
         this.value = typeof this.model.value === 'function' ? this.model.value() : this.model.value;
         this.renderTemplate({ editable: !this.readonly, multiline: this.model.multiline, title: this.model.title,
-            canEditTitle: this.model.newField });
+            canEditTitle: this.model.newField, protect: this.value && this.value.isProtected });
         this.valueEl = this.$el.find('.details__field-value');
         this.valueEl.html(this.renderValue(this.value));
         this.labelEl = this.$el.find('.details__field-label');

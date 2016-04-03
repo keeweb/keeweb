@@ -31,6 +31,7 @@ Storage providers, one-time passwords, usability improvements
 `-` fix capslock indicator  
 `-` fix file settings input behavior  
 `-` fix favicon download  
+`-` fix protected fields copy-paste  
 
 ##### v1.0.4 (2016-02-25)
 Workaround for Chrome bug  

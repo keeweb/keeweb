@@ -213,6 +213,9 @@
           }
         }
       }
+      .details__field--protect & {
+        @include user-select(none);
+      }
       .details__field--multiline & {
         width: 0;
         word-break: break-all;
