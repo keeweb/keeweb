@@ -338,7 +338,7 @@ module.exports = function(grunt) {
                 }
             }
         },
-        'electron_builder': {
+        'electron-builder': {
             options: {
                 out: path.join(__dirname, 'tmp/desktop'),
                 basePath: __dirname,
@@ -487,7 +487,7 @@ module.exports = function(grunt) {
         'sign-archive:desktop_update',
         'validate-desktop-update',
         'electron',
-        'electron_builder',
+        'electron-builder',
         'compress:linux64',
         'compress:linux32',
         'deb:linux64',
