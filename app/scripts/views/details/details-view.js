@@ -240,7 +240,7 @@ var DetailsView = Backbone.View.extend({
                 moreOptions.push({value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp});
                 var rect = this.moreView.labelEl[0].getBoundingClientRect();
                 dropdownView.render({
-                    position: {top: rect.bottom, right: rect.right},
+                    position: {top: rect.bottom, left: rect.left},
                     options: moreOptions
                 });
                 this.views.dropdownView = dropdownView;
