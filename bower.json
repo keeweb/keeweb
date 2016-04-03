@@ -28,7 +28,7 @@
     "dropbox": "antelle/dropbox-js#0.10.6",
     "font-awesome": "~4.5.0",
     "kdbxweb": "~0.3.8",
-    "normalize.css": "~3.0.3",
+    "normalize.css": "=3.0.3",
     "pikaday": "~1.4.0",
     "FileSaver.js": "eligrey/FileSaver.js",
     "jquery": "~2.2.0",
