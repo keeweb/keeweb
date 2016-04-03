@@ -76,6 +76,12 @@ var ModalView = Backbone.View.extend({
         this.$el.addClass('modal--hidden');
         this.undelegateEvents();
         setTimeout(this.remove.bind(this), 100);
+    },
+
+    closeImmediate: function() {
+        this.trigger('result', undefined);
+        this.undelegateEvents();
+        this.remove();
     }
 });
 

@@ -152,9 +152,8 @@ var OtpQrReader = {
 
     removeAlert: function() {
         if (OtpQrReader.alert) {
-            OtpQrReader.alert.remove();
+            OtpQrReader.alert.closeImmediate();
         }
-        OtpQrReader.stopListenClipboard();
     }
 };
 
