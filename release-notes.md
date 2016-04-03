@@ -27,6 +27,7 @@ Storage providers, one-time passwords, usability improvements
 `+` show error details on open  
 `+` select dropbox folder  
 `+` building deb  
+`+` theme color for mobile chrome  
 `-` fix capslock indicator  
 `-` fix file settings input behavior  
 `-` fix favicon download  
