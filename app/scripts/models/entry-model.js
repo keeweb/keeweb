@@ -12,7 +12,7 @@ var EntryModel = Backbone.Model.extend({
     defaults: {},
     urlRegex: /^https?:\/\//i,
 
-    builtInFields: ['Title', 'Password', 'Notes', 'URL', 'UserName'],
+    builtInFields: ['Title', 'Password', 'Notes', 'URL', 'UserName', 'TOTP Seed', 'TOTP Settings'],
 
     initialize: function() {
     },
@@ -390,16 +390,16 @@ var EntryModel = Backbone.Model.extend({
                         (args.size ? '&digits=' + args.size : '');
                 }
             }
-        } else if (this.fields['TOTP Seed']) {
+        } else if (this.entry.fields['TOTP Seed']) {
             // TrayTOTP plugin format
-            var key = this.fields['TOTP Seed'];
+            var key = this.entry.fields['TOTP Seed'];
             if (key.isProtected) {
                 key = key.getText();
             }
             if (key) {
                 otpUrl = 'otpauth://totp/null?secret=' + key;
             }
-            var settings = this.fields['TOTP Settings'];
+            var settings = this.entry.fields['TOTP Settings'];
             if (settings && settings.isProtected) {
                 settings = settings.getText();
             }
