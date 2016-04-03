@@ -435,6 +435,8 @@ var EntryModel = Backbone.Model.extend({
 
     setOtpUrl: function(url) {
         this.setField('otp', kdbxweb.ProtectedValue.fromString(url));
+        delete this.entry.fields['TOTP Seed'];
+        delete this.entry.fields['TOTP Settings'];
     }
 });
 
