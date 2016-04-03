@@ -3,7 +3,7 @@
 var StorageBase = require('./storage-base'),
     DropboxLink = require('../comp/dropbox-link'),
     Locale = require('../util/locale'),
-    UrlUtils = require('../util/url-util');
+    UrlUtil = require('../util/url-util');
 
 var StorageDropbox = StorageBase.extend({
     name: 'dropbox',
@@ -27,7 +27,7 @@ var StorageDropbox = StorageBase.extend({
     _toFullPath: function(path) {
         var rootFolder = this.appSettings.get('dropboxFolder');
         if (rootFolder) {
-            path = UrlUtils.fixSlashes('/' + rootFolder + '/' + path);
+            path = UrlUtil.fixSlashes('/' + rootFolder + '/' + path);
         }
         return path;
     },
@@ -41,7 +41,7 @@ var StorageDropbox = StorageBase.extend({
             } else if (ix === 1) {
                 path = path.substr(rootFolder.length + 1);
             }
-            path = UrlUtils.fixSlashes('/' + path);
+            path = UrlUtil.fixSlashes('/' + path);
         }
         return path;
     },
@@ -197,7 +197,9 @@ var StorageDropbox = StorageBase.extend({
             DropboxLink.list(that._toFullPath(''), function(err, files, dirStat, filesStat) {
                 if (err) { return callback(err); }
                 var fileList = filesStat
-                    .filter(function(f) { return !f.isFolder && !f.isRemoved; })
+                    .filter(function(f) {
+                        return !f.isFolder && !f.isRemoved && UrlUtil.isKdbx(f.name);
+                    })
                     .map(function(f) {
                         return {
                             name: f.name,
@@ -206,7 +208,7 @@ var StorageDropbox = StorageBase.extend({
                         };
                     });
                 var dir = dirStat.inAppFolder ? Locale.openAppFolder :
-                    (UrlUtils.trimStartSlash(dirStat.path) || Locale.openRootFolder);
+                    (UrlUtil.trimStartSlash(dirStat.path) || Locale.openRootFolder);
                 callback(null, fileList, dir);
             });
         });

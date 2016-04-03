@@ -1,6 +1,7 @@
 'use strict';
 
-var StorageBase = require('./storage-base');
+var StorageBase = require('./storage-base'),
+    UrlUtil = require('../util/url-util');
 
 var OneDriveClientId = {
     Production: '000000004818ED3A',
@@ -157,7 +158,7 @@ var StorageOneDrive = StorageBase.extend({
                     }
                     that.logger.debug('Listed', that.logger.ts(ts));
                     var fileList = response.value
-                        .filter(function(f) { return f.name && /\.kdbx$/i.test(f.name); })
+                        .filter(function(f) { return f.name && UrlUtil.isKdbx(f.name); })
                         .map(function(f) {
                             return {
                                 name: f.name,

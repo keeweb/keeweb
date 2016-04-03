@@ -4,6 +4,7 @@ var UrlUtil = {
     multiSlashRegex: /\/{2,}/g,
     lastPartRegex: /[^\/]+$/,
     trimStartSlashRegex: /^\\/,
+    kdbxEndRegex: /\.kdbx$/i,
 
     getDataFileName: function(url) {
         var ix = url.lastIndexOf('/');
@@ -12,6 +13,10 @@ var UrlUtil = {
         }
         url = url.replace(/\?.*/, '').replace(/\.kdbx/i, '');
         return url;
+    },
+
+    isKdbx: function(url) {
+        return url && this.kdbxEndRegex.test(url);
     },
 
     fixSlashes: function(url) {
