@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     var webpack = require('webpack');
     var pkg = require('./package.json');
     var dt = new Date().toISOString().replace(/T.*/, '');
-    var electronVersion = '0.35.6';
+    var electronVersion = '0.37.3';
     var minElectronVersionForUpdate = '0.32.0';
     var zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
 
