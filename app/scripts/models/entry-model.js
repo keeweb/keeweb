@@ -377,7 +377,9 @@ var EntryModel = Backbone.Model.extend({
             if (otpUrl.isProtected) {
                 otpUrl = otpUrl.getText();
             }
-            if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
+            if (Otp.isSecret(otpUrl)) {
+                otpUrl = Otp.makeUrl(otpUrl);
+            } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
                 // KeeOTP plugin format
                 var args = {};
                 otpUrl.split('&').forEach(function(part) {
@@ -385,34 +387,33 @@ var EntryModel = Backbone.Model.extend({
                     args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
                 });
                 if (args.key) {
-                    otpUrl = 'otpauth://totp/null?secret=' + args.key +
-                        (args.step ? '&period=' + args.step : '') +
-                        (args.size ? '&digits=' + args.size : '');
+                    otpUrl = Otp.makeUrl(args.key, args.step, args.size);
                 }
             }
         } else if (this.entry.fields['TOTP Seed']) {
             // TrayTOTP plugin format
-            var key = this.entry.fields['TOTP Seed'];
-            if (key.isProtected) {
-                key = key.getText();
+            var secret = this.entry.fields['TOTP Seed'];
+            if (secret.isProtected) {
+                secret = secret.getText();
             }
-            if (key) {
-                otpUrl = 'otpauth://totp/null?secret=' + key;
-            }
-            var settings = this.entry.fields['TOTP Settings'];
-            if (settings && settings.isProtected) {
-                settings = settings.getText();
-            }
-            if (settings) {
-                settings = settings.split(';');
-                if (settings.length > 0 && settings[0] > 0) {
-                    otpUrl += '&period=' + settings[0];
+            if (secret) {
+                var settings = this.entry.fields['TOTP Settings'];
+                if (settings && settings.isProtected) {
+                    settings = settings.getText();
                 }
-                if (settings.length > 1 && settings[1] > 0) {
-                    otpUrl += '&digits=' + settings[1];
+                var period, digits;
+                if (settings) {
+                    settings = settings.split(';');
+                    if (settings.length > 0 && settings[0] > 0) {
+                        period = settings[0];
+                    }
+                    if (settings.length > 1 && settings[1] > 0) {
+                        digits = settings[1];
+                    }
                 }
+                otpUrl = Otp.makeUrl(secret, period, digits);
+                this.fields.otp = kdbxweb.ProtectedValue.fromString(otpUrl);
             }
-            this.fields.otp = kdbxweb.ProtectedValue.fromString(otpUrl);
         }
         if (otpUrl) {
             if (this.otpGenerator && this.otpGenerator.url === otpUrl) {
@@ -434,7 +435,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     setOtpUrl: function(url) {
-        this.setField('otp', kdbxweb.ProtectedValue.fromString(url));
+        this.setField('otp', url ? kdbxweb.ProtectedValue.fromString(url) : undefined);
         delete this.entry.fields['TOTP Seed'];
         delete this.entry.fields['TOTP Settings'];
     }

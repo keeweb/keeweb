@@ -24,11 +24,12 @@ var OtpQrReader = {
             Locale.detSetupOtpAlertBodyWith.replace('{}',
                 '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>');
         OtpQrReader.startListenClipoard();
-        var buttons = [Alerts.buttons.cancel];
+        var buttons = [{result: 'manually', title: Locale.detSetupOtpManualButton, silent: true},
+            Alerts.buttons.cancel];
         if (FeatureDetector.isMobile()) {
-            buttons.unshift({result: 'select', title: Locale.detSetupOtoScanButton});
+            buttons.unshift({result: 'select', title: Locale.detSetupOtpScanButton});
         }
-        var lastLine = FeatureDetector.isMobile() ? Locale.detSetupOtpAlertBody3Mobile :
+        var line3 = FeatureDetector.isMobile() ? Locale.detSetupOtpAlertBody3Mobile :
             Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
         OtpQrReader.alert = Alerts.alert({
             icon: 'qrcode',
@@ -36,7 +37,8 @@ var OtpQrReader = {
             body: [Locale.detSetupOtpAlertBody,
                 Locale.detSetupOtpAlertBody1,
                 Locale.detSetupOtpAlertBody2.replace('{}', screenshotKey || ''),
-                lastLine
+                line3,
+                Locale.detSetupOtpAlertBody4
             ].join('<br/>'),
             esc: '',
             click: '',
@@ -47,6 +49,8 @@ var OtpQrReader = {
                 OtpQrReader.stopListenClipboard();
                 if (res === 'select') {
                     OtpQrReader.selectFile();
+                } else if (res === 'manually') {
+                    OtpQrReader.enterManually();
                 }
             }
         });
@@ -148,6 +152,10 @@ var OtpQrReader = {
             });
         };
         image.src = imageData;
+    },
+
+    enterManually: function() {
+        OtpQrReader.trigger('enter-manually');
     },
 
     removeAlert: function() {

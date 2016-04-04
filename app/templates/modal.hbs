@@ -10,7 +10,7 @@
         </div>
         <div class="modal__buttons">
             {{#each buttons as |btn|}}
-                <button class="{{#unless btn.result}}btn-error{{/unless}} {{#if btn.error}}btn-error{{/if}}"
+                <button class="{{#unless btn.result}}btn-error{{/unless}} {{#if btn.error}}btn-error{{/if}} {{#if btn.silent}}btn-silent{{/if}}"
                         data-result="{{btn.result}}">{{btn.title}}</button>
             {{/each}}
         </div>

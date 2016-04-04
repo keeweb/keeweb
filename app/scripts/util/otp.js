@@ -37,6 +37,9 @@ var Otp = function(url, params) {
     this.period = params.period ? +params.period : 30;
 
     this.key = Otp.fromBase32(this.secret);
+    if (!this.key) {
+        throw 'Bad key: ' + this.key;
+    }
 };
 
 Otp.prototype.next = function(callback) {
@@ -101,7 +104,7 @@ Otp.fromBase32 = function(str) {
     for (i = 0; i < str.length; i++) {
         var ix = alphabet.indexOf(str[i].toLowerCase());
         if (ix < 0) {
-            throw 'Bad base32: ' + str;
+            return null;
         }
         bin += Otp.leftPad(ix.toString(2), 5);
     }
@@ -140,6 +143,14 @@ Otp.parseUrl = function(url) {
         params[parts[0].toLowerCase()] = decodeURIComponent(parts[1]);
     });
     return new Otp(url, params);
+};
+
+Otp.isSecret = function(str) {
+    return !!Otp.fromBase32(str);
+};
+
+Otp.makeUrl = function(secret, period, digits) {
+    return 'otpauth://totp/default?secret=' + secret + (period ? '&period=' + period : '') + (digits ? '&digits=' + digits : '');
 };
 
 module.exports = Otp;

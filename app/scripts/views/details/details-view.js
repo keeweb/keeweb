@@ -65,6 +65,7 @@ var DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'copy-user', this.copyUserName);
         this.listenTo(Backbone, 'copy-url', this.copyUrl);
         this.listenTo(OtpQrReqder, 'qr-read', this.otpCodeRead);
+        this.listenTo(OtpQrReqder, 'enter-manually', this.otpEnterManually);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyPassword, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserName, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrl, this, KeyHandler.SHORTCUT_ACTION, false, true);
@@ -488,7 +489,11 @@ var DetailsView = Backbone.View.extend({
         if (oldValue && oldValue.isProtected) {
             oldValue = oldValue.getText();
         }
+        if (value && value.isProtected) {
+            value = value.getText();
+        }
         if (oldValue === value) {
+            this.render();
             return false;
         }
         this.model.setOtpUrl(value);
@@ -712,6 +717,26 @@ var DetailsView = Backbone.View.extend({
     otpCodeRead: function(otp) {
         this.model.setOtp(otp);
         this.entryUpdated();
+    },
+
+    otpEnterManually: function() {
+        if (this.model.fields.otp) {
+            var otpField = this.fieldViews.find(function(f) { return f.model.name === '$otp'; });
+            if (otpField) {
+                otpField.edit();
+            }
+        } else {
+            this.moreView.remove();
+            this.moreView = null;
+            var fieldView = new FieldViewCustom({ model: {
+                name: '$otp', title: 'otp', newField: 'otp',
+                value: kdbxweb.ProtectedValue.fromString('')
+            }});
+            fieldView.on('change', this.fieldChanged.bind(this));
+            fieldView.setElement(this.$el.find('.details__body-fields')).render();
+            fieldView.edit();
+            this.fieldViews.push(fieldView);
+        }
     }
 });
 
