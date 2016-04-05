@@ -12,6 +12,8 @@
     @include align-items(stretch);
     @include flex-direction(row);
     @include flex-shrink(0);
+    @include justify-content(center);
+    @include flex-wrap(wrap);
     .open--drag & { display: none; }
   }
 
@@ -21,10 +23,16 @@
     margin: 20px;
     transition: color $base-duration $base-timing;
     &:hover { @include th { color: medium-color(); } }
-    &-i { font-size: 4em; }
+    &-i, &-svg { font-size: 4em; }
     &-text {
       @include th { color: muted-color(); }
       .open__icon:hover>& { @include th { color: medium-color(); } }
+    }
+    &-svg {
+      line-height: 0;
+      >svg {
+        @include size(1em);
+      }
     }
   }
 
@@ -73,6 +81,38 @@
     }
   }
 
+  &__config {
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(column);
+    @include justify-content(flex-start);
+    position: relative;
+    width: 30em;
+    .open--drag & {
+      display: none;
+    }
+    &-buttons {
+      @include align-self(flex-end);
+    }
+    &-header {
+      >i { margin-right: .3em; }
+    }
+    &-field {
+      width: 100%;
+    }
+    &-error {
+      min-height: 1.7em;
+    }
+    &:not(.open__config--disabled) {
+      .open__config-btn-ok-text { display: inline; }
+      .open__config-btn-ok-spinner { display: none; }
+    }
+    &.open__config--disabled {
+      .open__config-btn-ok-text { display: none; }
+      .open__config-btn-ok-spinner { display: block; }
+    }
+  }
+
   input[type=password].open__pass-input {
     font-size: $large-pass-font-size;
     margin-bottom: 0;
@@ -87,12 +127,17 @@
     @include flex-direction(row);
     @include justify-content(space-between);
     @include align-items(stretch);
+    padding-left: $base-padding-h;
     height: 2em;
     &-key-file {
       .open--file:not(.open--opening) & { cursor: pointer; }
       .open--key-file & { @include th { color: medium-color(); } }
+      &-icon {
+        width: 2em;
+      }
       &-dropbox {
         visibility: hidden;
+        margin-left: .3em;
         &:hover {
           .open--file & { visibility: visible; }
         }
@@ -133,15 +178,23 @@
         @include area-selectable;
       }
       @include th { color: muted-color(); }
-      padding: $base-padding-v 0;
-      &-icon { width: 2em; }
+      padding: $base-padding;
+      &-icon {
+        width: 2em;
+        &--svg>svg {
+          vertical-align: middle;
+          @include size(1em);
+          path {
+            @include th { fill: muted-color(); }
+          }
+        }
+      }
       &-text { @include flex-grow(1); }
       &-icon-del {
         opacity: 0;
         .open__last-item:hover & {
           opacity: .3;
           cursor: pointer;
-          margin-right: $base-padding-h;
         }
         @include th { color: muted-color(); }
         &:hover {

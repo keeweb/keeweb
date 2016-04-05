@@ -5,13 +5,14 @@ var Backbone = require('backbone'),
     IconMap = require('../const/icon-map'),
     Color = require('../util/color'),
     IconUrl = require('../util/icon-url'),
+    Otp = require('../util/otp'),
     kdbxweb = require('kdbxweb');
 
 var EntryModel = Backbone.Model.extend({
     defaults: {},
     urlRegex: /^https?:\/\//i,
 
-    builtInFields: ['Title', 'Password', 'Notes', 'URL', 'UserName'],
+    builtInFields: ['Title', 'Password', 'Notes', 'URL', 'UserName', 'TOTP Seed', 'TOTP Settings'],
 
     initialize: function() {
     },
@@ -208,7 +209,7 @@ var EntryModel = Backbone.Model.extend({
         if (adv.pass && matchField(entry, 'Password', compare, search)) {
             return true;
         }
-        if (adv.other && matchField(entry, 'Title', compare, search)) {
+        if (adv.title && matchField(entry, 'Title', compare, search)) {
             return true;
         }
         var matches = false;
@@ -267,11 +268,12 @@ var EntryModel = Backbone.Model.extend({
     },
 
     setField: function(field, val) {
-        this._entryModified();
         var hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
         if (hasValue || this.builtInFields.indexOf(field) >= 0) {
+            this._entryModified();
             this.entry.fields[field] = val;
-        } else {
+        } else if (this.entry.fields.hasOwnProperty(field)) {
+            this._entryModified();
             delete this.entry.fields[field];
         }
         this._fillByEntry();
@@ -366,6 +368,76 @@ var EntryModel = Backbone.Model.extend({
             this.group.group.entries.splice(ix, 1);
         }
         this.file.reload();
+    },
+
+    initOtpGenerator: function() {
+        var otpUrl;
+        if (this.fields.otp) {
+            otpUrl = this.fields.otp;
+            if (otpUrl.isProtected) {
+                otpUrl = otpUrl.getText();
+            }
+            if (Otp.isSecret(otpUrl)) {
+                otpUrl = Otp.makeUrl(otpUrl);
+            } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
+                // KeeOTP plugin format
+                var args = {};
+                otpUrl.split('&').forEach(function(part) {
+                    var parts = part.split('=', 2);
+                    args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
+                });
+                if (args.key) {
+                    otpUrl = Otp.makeUrl(args.key, args.step, args.size);
+                }
+            }
+        } else if (this.entry.fields['TOTP Seed']) {
+            // TrayTOTP plugin format
+            var secret = this.entry.fields['TOTP Seed'];
+            if (secret.isProtected) {
+                secret = secret.getText();
+            }
+            if (secret) {
+                var settings = this.entry.fields['TOTP Settings'];
+                if (settings && settings.isProtected) {
+                    settings = settings.getText();
+                }
+                var period, digits;
+                if (settings) {
+                    settings = settings.split(';');
+                    if (settings.length > 0 && settings[0] > 0) {
+                        period = settings[0];
+                    }
+                    if (settings.length > 1 && settings[1] > 0) {
+                        digits = settings[1];
+                    }
+                }
+                otpUrl = Otp.makeUrl(secret, period, digits);
+                this.fields.otp = kdbxweb.ProtectedValue.fromString(otpUrl);
+            }
+        }
+        if (otpUrl) {
+            if (this.otpGenerator && this.otpGenerator.url === otpUrl) {
+                return;
+            }
+            try {
+                this.otpGenerator = Otp.parseUrl(otpUrl);
+            } catch (e) {
+                this.otpGenerator = null;
+            }
+        } else {
+            this.otpGenerator = null;
+        }
+    },
+
+    setOtp: function(otp) {
+        this.otpGenerator = otp;
+        this.setOtpUrl(otp.url);
+    },
+
+    setOtpUrl: function(url) {
+        this.setField('otp', url ? kdbxweb.ProtectedValue.fromString(url) : undefined);
+        delete this.entry.fields['TOTP Seed'];
+        delete this.entry.fields['TOTP Settings'];
     }
 });
 

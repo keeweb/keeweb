@@ -60,11 +60,16 @@
         <label for="settings__general-colorful-icons">{{res 'setGenColorfulIcons'}}</label>
     </div>
 
-    <h2>Function</h2>
+    <h2>{{res 'setGenFunction'}}</h2>
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
             {{#if autoSave}}checked{{/if}} />
         <label for="settings__general-auto-save">{{res 'setGenAutoSync'}}</label>
+    </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-remember-key-files" id="settings__general-remember-key-files"
+               {{#if rememberKeyFiles}}checked{{/if}} />
+        <label for="settings__general-remember-key-files">{{res 'setGenRememberKeyFiles'}}</label>
     </div>
     <div>
         <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>
@@ -100,6 +105,20 @@
         <label for="settings__general-lock-on-minimize">{{res 'setGenLockMinimize'}}</label>
     </div>
     {{/if}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-lock-on-copy" id="settings__general-lock-on-copy"
+               {{#if lockOnCopy}}checked{{/if}} />
+        <label for="settings__general-lock-on-copy">{{res 'setGenLockCopy'}}</label>
+    </div>
+
+    <h2>{{res 'setGenStorage'}}</h2>
+    {{#each storageProviders as |prv|}}
+    <h4 class="settings__general-storage-header"><input
+            type="checkbox" id="settings__general-prv-check-{{prv.name}}" class="settings__general-prv-check"
+            data-storage="{{prv.name}}" {{#if prv.enabled}}checked{{/if}}
+    /><label for="settings__general-prv-check-{{prv.name}}">{{res prv.name}}</label></h4>
+    <div class="settings__general-prv-wrap settings__general-{{prv.name}} {{#ifeq prv.enabled false}}hide{{/ifeq}}"></div>
+    {{/each}}
 
     {{#if devTools}}
     <h2>{{res 'setGenAdvanced'}}</h2>

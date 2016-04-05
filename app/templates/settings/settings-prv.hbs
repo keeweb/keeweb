@@ -1,0 +1,33 @@
+<div class="settings__general-prv settings__general-prv-{{name}}">
+    {{#if desc}}<div class="settings__general-prv-desc">{{res desc}}</div>{{/if}}
+    <div class="settings__general-prv-fields">
+        {{#each fields as |field ix|}}
+            {{#ifeq type 'select'}}
+                <div>
+                    <label for="settings__general-prv-field-sel-{{id}}">{{res title}}:</label>
+                    <select
+                            class="settings__select input-base settings__general-prv-field settings__general-prv-field-sel"
+                            id="settings__general-prv-field-sel-{{id}}"
+                            data-id="{{id}}">
+                    {{#each options as |title val|}}
+                        <option value="{{val}}" {{#ifeq ../value val}}selected{{/ifeq}}>{{res title}}</option>
+                    {{/each}}
+                    </select>
+                </div>
+            {{else}}
+                <label for="settings__general-prv-field-txt-{{id}}">{{res title}}:</label>
+                {{#if desc}}<div class="settings__general-prv-field-desc muted-color">{{res desc}}</div>{{/if}}
+                <input type="{{type}}"
+                       class="input-base settings__general-prv-field settings__input settings__general-prv-field-txt"
+                       id="settings__general-prv-field-txt-{{id}}"
+                       autocomplete="off"
+                       value="{{value}}"
+                       data-id="{{id}}"
+                       {{#if placeholder}}placeholder="{{res placeholder}}"{{/if}}
+                    {{#if required}}required{{/if}}
+                    {{#if pattern}}pattern="{{{pattern}}}"{{/if}}
+                />
+            {{/ifeq}}
+        {{/each}}
+    </div>
+</div>

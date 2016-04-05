@@ -13,13 +13,22 @@ var AppSettingsModel = Backbone.Model.extend({
         autoUpdate: 'install',
         clipboardSeconds: 0,
         autoSave: true,
+        rememberKeyFiles: false,
         idleMinutes: 15,
         minimizeOnClose: false,
         tableView: false,
         colorfulIcons: false,
         lockOnMinimize: true,
+        lockOnCopy: false,
         helpTipCopyShown: false,
-        skipOpenLocalWarn: false
+        skipOpenLocalWarn: false,
+        hideEmptyFields: false,
+        skipHttpsWarning: false,
+        demoOpened: false,
+        dropbox: true,
+        webdav: true,
+        gdrive: true,
+        onedrive: true
     },
 
     initialize: function() {

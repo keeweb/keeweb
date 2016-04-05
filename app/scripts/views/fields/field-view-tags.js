@@ -35,7 +35,7 @@ var FieldViewTags = FieldViewText.extend({
     startEdit: function() {
         FieldViewText.prototype.startEdit.call(this);
         var fieldRect = this.input[0].getBoundingClientRect();
-        this.tagsAutocomplete = $('<div class="details__tags-autocomplete"></div>').appendTo('body');
+        this.tagsAutocomplete = $('<div class="details__field-autocomplete"></div>').appendTo('body');
         this.tagsAutocomplete.css({
             top: fieldRect.bottom,
             left: fieldRect.left,
@@ -63,7 +63,7 @@ var FieldViewTags = FieldViewText.extend({
     setTags: function() {
         var availableTags = this.getAvailableTags();
         var tagsHtml = availableTags.map(function(tag) {
-            return '<div class="details__tags-autocomplete-tag">' + _.escape(tag) + '</div>';
+            return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
         }).join('');
         this.tagsAutocomplete.html(tagsHtml);
         this.tagsAutocomplete.toggle(!!tagsHtml);
@@ -71,7 +71,7 @@ var FieldViewTags = FieldViewText.extend({
 
     tagsAutocompleteClick: function(e) {
         e.stopPropagation();
-        if (e.target.classList.contains('details__tags-autocomplete-tag')) {
+        if (e.target.classList.contains('details__field-autocomplete-item')) {
             var selectedTag = $(e.target).text(), newVal = this.input.val();
             if (newVal) {
                 var tags = this.valueToTags(newVal);

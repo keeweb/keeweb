@@ -5,24 +5,22 @@ var Dropbox = require('dropbox'),
     Launcher = require('./launcher'),
     Logger = require('../util/logger'),
     Locale = require('../util/locale'),
-    Links = require('../const/links');
+    UrlUtil = require('../util/url-util'),
+    AppSettingsModel = require('../models/app-settings-model');
 
 var logger = new Logger('dropbox');
 
 var DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
-    AppFolderKeyParts: ['qp7ctun6', 'qt5n9d6'] // to allow replace key by sed, compare in this way
+    FullDropbox: 'eor7hvv6u6oslq9'
 };
 
 var DropboxCustomErrors = {
     BadKey: 'bad-key'
 };
 
-function isValidKey() {
-    var isSelfHostedApp = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
-        !/http(s?):\/\/antelle\.github\.io\/keeweb/.test(location.href) &&
-        !/http(s?):\/\/app\.keeweb\.info/.test(location.href);
-    return Launcher || !isSelfHostedApp || DropboxKeys.AppFolder !== DropboxKeys.AppFolderKeyParts.join('');
+function getKey() {
+    return AppSettingsModel.instance.get('dropboxAppKey') || DropboxKeys.AppFolder;
 }
 
 var DropboxChooser = function(callback) {
@@ -51,7 +49,7 @@ DropboxChooser.prototype.choose = function() {
 DropboxChooser.prototype.buildUrl = function() {
     var urlParams = {
         origin: encodeURIComponent(window.location.protocol + '//' + window.location.host),
-        'app_key': DropboxKeys.AppFolder,
+        'app_key': getKey(),
         'link_type': 'direct',
         trigger: 'js',
         multiselect: 'false',
@@ -128,21 +126,18 @@ DropboxChooser.prototype.readFile = function(url) {
 var DropboxLink = {
     ERROR_CONFLICT: Dropbox.ApiError.CONFLICT,
     ERROR_NOT_FOUND: Dropbox.ApiError.NOT_FOUND,
-    _getClient: function(complete) {
+
+    Keys: DropboxKeys,
+
+    _getClient: function(complete, overrideAppKey) {
         if (this._dropboxClient && this._dropboxClient.isAuthenticated()) {
             complete(null, this._dropboxClient);
             return;
         }
-        if (!isValidKey()) {
-            Alerts.error({
-                icon: 'dropbox',
-                header: Locale.dropboxNotConfigured,
-                body: Locale.dropboxNotConfiguredBody1 + '<br/>' + Locale.dropboxNotConfiguredBody2.replace('{}',
-                        '<a href="' + Links.SelfHostedDropbox + '" target="blank">' + Locale.dropboxNotConfiguredLink + '</a>')
-            });
+        if (!overrideAppKey && !this.isValidKey()) {
             return complete(DropboxCustomErrors.BadKey);
         }
-        var client = new Dropbox.Client({key: DropboxKeys.AppFolder});
+        var client = new Dropbox.Client({key: overrideAppKey || getKey()});
         if (Launcher) {
             client.authDriver(new Dropbox.AuthDriver.Electron({ receiverUrl: location.href }));
         } else {
@@ -250,8 +245,26 @@ var DropboxLink = {
         });
     },
 
-    authenticate: function(copmlete) {
-        this._getClient(function(err) { copmlete(err); });
+    canUseBuiltInKeys: function() {
+        var isSelfHosted = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
+            !/http(s?):\/\/(app|beta)\.keeweb\.info/.test(location.href);
+        return !!Launcher || !isSelfHosted;
+    },
+
+    getKey: getKey,
+
+    isValidKey: function() {
+        var key = getKey();
+        var isBuiltIn = key === DropboxKeys.AppFolder || key === DropboxKeys.FullDropbox;
+        return key && key.indexOf(' ') < 0 && (!isBuiltIn || this.canUseBuiltInKeys());
+    },
+
+    authenticate: function(complete, overrideAppKey) {
+        this._getClient(function(err) { complete(err); }, overrideAppKey);
+    },
+
+    resetClient: function() {
+        this._dropboxClient = null;
     },
 
     receive: function() {
@@ -263,7 +276,8 @@ var DropboxLink = {
             var opts = typeof rev === 'string' ? { lastVersionTag: rev, noOverwrite: true, noAutoRename: true } : undefined;
             this._callAndHandleError('writeFile', [fileName, data, opts], complete, alertCallback);
         } else {
-            this.getFileList((function(err, files) {
+            var dir = UrlUtil.fileToDir(fileName);
+            this.list(dir, (function(err, files) {
                 if (err) { return complete(err); }
                 var exists = files.some(function(file) { return file.toLowerCase() === fileName.toLowerCase(); });
                 if (exists) { return complete({ exists: true }); }
@@ -280,8 +294,8 @@ var DropboxLink = {
         this._callAndHandleError('stat', [fileName], complete, errorAlertCallback);
     },
 
-    getFileList: function(complete) {
-        this._callAndHandleError('readdir', [''], function(err, files, dirStat, filesStat) {
+    list: function(dir, complete) {
+        this._callAndHandleError('readdir', [dir || ''], function(err, files, dirStat, filesStat) {
             if (files) {
                 files = files.filter(function(f) { return /\.kdbx$/i.test(f); });
             }
@@ -291,6 +305,10 @@ var DropboxLink = {
 
     deleteFile: function(fileName, complete) {
         this._callAndHandleError('remove', [fileName], complete);
+    },
+
+    canChooseFile: function() {
+        return !Launcher;
     },
 
     chooseFile: function(callback) {

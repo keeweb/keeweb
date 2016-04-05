@@ -4,7 +4,6 @@ var Backbone = require('backbone'),
     FieldViewText = require('./field-view-text'),
     FieldView = require('./field-view'),
     Keys = require('../../const/keys'),
-    Locale = require('../../util/locale'),
     kdbxweb = require('kdbxweb');
 
 var FieldViewCustom = FieldViewText.extend({
@@ -18,10 +17,6 @@ var FieldViewCustom = FieldViewText.extend({
 
     startEdit: function() {
         FieldViewText.prototype.startEdit.call(this);
-        if (this.model.newField && this.model.title === Locale.detAddField) {
-            this.model.title = this.model.newField;
-            this.$el.find('.details__field-label').text(this.model.newField);
-        }
         this.$el.addClass('details__field--can-edit-title');
         if (this.isProtected === undefined) {
             this.isProtected = this.value instanceof kdbxweb.ProtectedValue;
@@ -50,10 +45,6 @@ var FieldViewCustom = FieldViewText.extend({
             }
         }
         FieldView.prototype.endEdit.call(this, newVal, extra);
-        if (!newVal && this.model.newField) {
-            this.model.title = Locale.detAddField;
-            this.$el.find('.details__field-label').text(this.model.title);
-        }
         if (this.model.titleChanged) {
             delete this.model.titleChanged;
         }
@@ -88,11 +79,10 @@ var FieldViewCustom = FieldViewText.extend({
 
     fieldLabelClick: function(e) {
         e.stopImmediatePropagation();
-        if (this.editing) {
-            this.startEditTitle();
-        } else if (this.model.newField) {
-            this.edit();
+        if (this.model.newField) {
             this.startEditTitle(true);
+        } else if (this.editing) {
+            this.startEditTitle();
         } else {
             FieldViewText.prototype.fieldLabelClick.call(this, e);
         }

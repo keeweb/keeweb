@@ -1,6 +1,13 @@
 <div class="gen">
-    <div>{{res 'genLen'}}: <span class="gen__length-range-val">{{opt.length}}</span></div>
-    <input type="range" class="gen__length-range" value="13" min="0" max="25" />
+    <div>{{res 'genLen'}}: <span class="gen__length-range-val">{{opt.length}}</span>
+        <i class="fa fa-refresh gen__btn-refresh" title="{{res 'genNewPass'}}"></i>
+    </div>
+    <select class="gen__sel-tpl input-base">
+        {{#each presets as |ps|}}
+        <option value="{{ps.name}}" {{#ifeq ps.name ../preset}}selected{{/ifeq}}>{{ps.title}}</option>
+        {{/each}}
+    </select>
+    <input type="range" class="gen__length-range" value="{{opt.pseudoLength}}" min="0" max="25" />
     <div>
         <div class="gen__check"><input type="checkbox" id="gen__check-upper"
             data-id="upper" {{#if opt.upper}}checked{{/if}}><label for="gen__check-upper">ABC</label></div>

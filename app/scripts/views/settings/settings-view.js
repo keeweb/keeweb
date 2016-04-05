@@ -37,10 +37,13 @@ var SettingsView = Backbone.View.extend({
     },
 
     setPage: function (e) {
+        var SettingsPageView = require('./settings-' + e.page + '-view');
         if (this.views.page) {
+            if (this.views.page instanceof SettingsPageView) {
+                return;
+            }
             this.views.page.remove();
         }
-        var SettingsPageView = require('./settings-' + e.page + '-view');
         this.views.page = new SettingsPageView({ el: this.pageEl, model: e.file });
         this.views.page.appModel = this.model;
         this.views.page.render();
@@ -50,7 +53,7 @@ var SettingsView = Backbone.View.extend({
     },
 
     returnToApp: function() {
-        Backbone.trigger('toggle-settings');
+        Backbone.trigger('toggle-settings', false);
     }
 });
 

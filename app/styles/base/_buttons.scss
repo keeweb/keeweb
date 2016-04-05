@@ -86,3 +86,13 @@
     }
   }
 }
+
+.svg-btn {
+  svg path {
+    transition: fill $base-duration $base-timing;
+    @include th { fill: text-color(); }
+  }
+  &:hover svg path {
+    @include th { fill: medium-color(); }
+  }
+}

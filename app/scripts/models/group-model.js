@@ -90,11 +90,10 @@ var GroupModel = MenuItemModel.extend({
     },
 
     _groupModified: function() {
-        this.file.setModified();
         if (this.isJustCreated) {
             this.isJustCreated = false;
         }
-        this.group.times.update();
+        // this.group.times.update(); // for now, we don't remember this setting
     },
 
     forEachGroup: function(callback, includeDisabled) {

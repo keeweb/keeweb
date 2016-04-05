@@ -56,7 +56,7 @@ var FieldViewText = FieldView.extend({
             this.hideGenerator();
         } else {
             var fieldRect = this.input[0].getBoundingClientRect();
-            this.gen = new GeneratorView({model: {pos: {left: fieldRect.left, top: fieldRect.bottom}}}).render();
+            this.gen = new GeneratorView({model: {pos: {left: fieldRect.left, top: fieldRect.bottom}, password: this.value}}).render();
             this.gen.once('remove', this.generatorClosed.bind(this));
             this.gen.once('result', this.generatorResult.bind(this));
         }
@@ -124,7 +124,7 @@ var FieldViewText = FieldView.extend({
         e.stopPropagation();
         var code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
-            if (!this.model.multiline || (!e.altKey && !e.shiftKey)) {
+            if (!this.model.multiline || (!e.altKey && !e.shiftKey && !e.ctrlKey)) {
                 this.stopListening(Backbone, 'click', this.fieldValueBlur);
                 this.endEdit(e.target.value);
             }

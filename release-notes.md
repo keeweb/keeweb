@@ -1,5 +1,38 @@
 Release notes
 -------------
+##### v1.1.0 (2016-04-05)
+Storage providers, one-time passwords, usability improvements  
+`+` WebDAV  
+`+` Google Drive, OneDrive  
+`+` one-time passwords  
+`+` option to remember keyfiles  
+`+` password generation presets  
+`+` open files created without password  
+`+` usernames autocomplete  
+`+` files open improvements  
+`+` beta version app  
+`+` option to lock on password copy  
+`+` save/restore window position after close  
+`+` shortcut to copy username  
+`+` regenerate password button  
+`+` option to search in title  
+`+` shortcut to copy website  
+`+` shortcuts while the app is in background  
+`+` build for 32-bit linux  
+`+` ability to import xml  
+`+` warning for kdb files  
+`+` hide empty fields  
+`+` overall spacing increased  
+`+` hide demo button once opened  
+`+` show error details on open  
+`+` select dropbox folder  
+`+` building deb  
+`+` theme color for mobile chrome  
+`-` fix capslock indicator  
+`-` fix file settings input behavior  
+`-` fix favicon download  
+`-` fix protected fields copy-paste  
+
 ##### v1.0.4 (2016-02-25)
 Workaround for Chrome bug  
 `-` #110: fix font rendering in Chrome  

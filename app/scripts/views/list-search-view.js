@@ -60,7 +60,7 @@ var ListSearchView = Backbone.View.extend({
             url: true, protect: false,
             notes: true, pass: false,
             cs: false, regex: false,
-            history: false
+            history: false, title: true
         };
         KeyHandler.onKey(Keys.DOM_VK_F, this.findKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_N, this.newKeyPress, this, KeyHandler.SHORTCUT_OPT);

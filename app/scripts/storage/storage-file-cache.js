@@ -1,13 +1,12 @@
 'use strict';
 
-var Launcher = require('../comp/launcher'),
-    Logger = require('../util/logger');
+var StorageBase = require('./storage-base'),
+    Launcher = require('../comp/launcher');
 
-var logger = new Logger('storage-file-cache');
-
-var StorageFileCache = {
+var StorageFileCache = StorageBase.extend({
     name: 'cache',
     enabled: !!Launcher,
+    system: true,
 
     path: null,
 
@@ -15,7 +14,7 @@ var StorageFileCache = {
         return Launcher.req('path').join(this.path, id);
     },
 
-    init: function(callback) {
+    initFs: function(callback) {
         if (this.path) {
             return callback && callback();
         }
@@ -28,67 +27,70 @@ var StorageFileCache = {
             this.path = path;
             callback();
         } catch (e) {
-            logger.error('Error opening local offline storage', e);
+            this.logger.error('Error opening local offline storage', e);
             if (callback) { callback(e); }
         }
     },
 
-    save: function(id, data, callback) {
-        logger.debug('Save', id);
-        this.init((function(err) {
+    save: function(id, opts, data, callback) {
+        var that = this;
+        that.logger.debug('Save', id);
+        that.initFs(function(err) {
             if (err) {
                 return callback && callback(err);
             }
-            var ts = logger.ts();
+            var ts = that.logger.ts();
             try {
-                Launcher.writeFile(this.getPath(id), data);
-                logger.debug('Saved', id, logger.ts(ts));
+                Launcher.writeFile(that.getPath(id), data);
+                that.logger.debug('Saved', id, that.logger.ts(ts));
                 if (callback) { callback(); }
             } catch (e) {
-                logger.error('Error saving to cache', id, e);
+                that.logger.error('Error saving to cache', id, e);
                 if (callback) { callback(e); }
             }
-        }).bind(this));
+        });
     },
 
-    load: function(id, callback) {
-        logger.debug('Load', id);
-        this.init((function(err) {
+    load: function(id, opts, callback) {
+        var that = this;
+        that.logger.debug('Load', id);
+        that.initFs(function(err) {
             if (err) {
                 return callback && callback(null, err);
             }
-            var ts = logger.ts();
+            var ts = that.logger.ts();
             try {
-                var data = Launcher.readFile(this.getPath(id));
-                logger.debug('Loaded', id, logger.ts(ts));
+                var data = Launcher.readFile(that.getPath(id));
+                that.logger.debug('Loaded', id, that.logger.ts(ts));
                 if (callback) { callback(null, data.buffer); }
             } catch (e) {
-                logger.error('Error loading from cache', id, e);
+                that.logger.error('Error loading from cache', id, e);
                 if (callback) { callback(e, null); }
             }
-        }).bind(this));
+        });
     },
 
-    remove: function(id, callback) {
-        logger.debug('Remove', id);
-        this.init((function(err) {
+    remove: function(id, opts, callback) {
+        var that = this;
+        that.logger.debug('Remove', id);
+        that.initFs(function(err) {
             if (err) {
                 return callback && callback(err);
             }
-            var ts = logger.ts();
+            var ts = that.logger.ts();
             try {
-                var path = this.getPath(id);
+                var path = that.getPath(id);
                 if (Launcher.fileExists(path)) {
                     Launcher.deleteFile(path);
                 }
-                logger.debug('Removed', id, logger.ts(ts));
+                that.logger.debug('Removed', id, that.logger.ts(ts));
                 if (callback) { callback(); }
             } catch(e) {
-                logger.error('Error removing from cache', id, e);
+                that.logger.error('Error removing from cache', id, e);
                 if (callback) { callback(e); }
             }
-        }).bind(this));
+        });
     }
-};
+});
 
-module.exports = StorageFileCache;
+module.exports = new StorageFileCache();

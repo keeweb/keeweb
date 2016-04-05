@@ -43,6 +43,12 @@ var ModalView = Backbone.View.extend({
         return this;
     },
 
+    change: function(config) {
+        if (config.header) {
+            this.$el.find('.modal__header').html(config.header);
+        }
+    },
+
     buttonClick: function(e) {
         var result = $(e.target).data('result');
         this.closeWithResult(result);
@@ -70,6 +76,12 @@ var ModalView = Backbone.View.extend({
         this.$el.addClass('modal--hidden');
         this.undelegateEvents();
         setTimeout(this.remove.bind(this), 100);
+    },
+
+    closeImmediate: function() {
+        this.trigger('result', undefined);
+        this.undelegateEvents();
+        this.remove();
     }
 });
 

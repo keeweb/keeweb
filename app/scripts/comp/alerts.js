@@ -9,7 +9,8 @@ var Alerts = {
     buttons: {
         ok: {result: 'yes', title: Locale.alertOk},
         yes: {result: 'yes', title: Locale.alertYes},
-        no: {result: '', title: Locale.alertNo}
+        no: {result: '', title: Locale.alertNo},
+        cancel: {result: '', title: Locale.alertCancel}
     },
 
     alert: function(config) {
@@ -28,6 +29,7 @@ var Alerts = {
                 config.complete(res, check);
             }
         });
+        return view;
     },
 
     notImplemented: function() {

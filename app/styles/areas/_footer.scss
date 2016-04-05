@@ -11,6 +11,8 @@
     padding: $medium-padding;
     padding-right: 1.3em;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     &.footer__db--dimmed {
       @include th {
         color: muted-color();
@@ -34,6 +36,10 @@
       @include th { color: action-color(); }
       &--error { @include th { color: error-color(); } }
     }
+
+    &-open-title {
+      margin-left: .3em;
+    }
   }
 
   &__btn {
@@ -41,6 +47,8 @@
     @include area-selectable(top);
     padding: $base-padding;
     font-size: 1.4em;
+    text-align: center;
+    width: 1em;
   }
 
   &__update-icon {

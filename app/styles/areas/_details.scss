@@ -196,6 +196,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
       margin-right: 20px;
+      &-add-label {
+        color: transparent;
+      }
       .details__field--editable & {
         border-radius: $base-border-radius;
         &:hover {
@@ -204,7 +207,14 @@
             border: 1px solid light-border-color();
             box-shadow: 0 0 3px form-box-shadow-color();
           }
+          .details__field-value-add-label {
+            @include th { color: muted-color(); }
+            transition: color $base-duration $base-timing;
+          }
         }
+      }
+      .details__field--protect & {
+        @include user-select(none);
       }
       .details__field--multiline & {
         width: 0;
@@ -234,7 +244,9 @@
       .details__body-aside & {
         @include th { color: muted-color(); }
         a { @include th { color: muted-color(); } }
-        width: 12em;
+        width: 13em;
+        padding-right: 0;
+        margin-right: 0;
         @include flex(0 0 auto);
       }
       &-btn {
@@ -248,13 +260,19 @@
           @include position(absolute, 0 0 null null);
           @include fa-icon();
           cursor: pointer;
-          padding: $base-padding;
+          padding: .3em $base-padding-h;
         }
       }
       &-btn-gen:before { content: $fa-var-bolt; }
       &-btn-protect {
         &:before { content: $fa-var-unlock; }
         .details__field--protected & { &:before { content: $fa-var-lock; } }
+      }
+    }
+
+    &--no-select {
+      .details__field-label, .details__field-value {
+        @include user-select(none);
       }
     }
   }
@@ -483,10 +501,10 @@
     }
   }
 
-  &__tags-autocomplete {
+  &__field-autocomplete {
     position: absolute;
     @include common-dropdown;
-    &-tag {
+    &-item {
       padding: $base-padding;
       display: inline-block;
       @include area-selectable(bottom);

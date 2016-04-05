@@ -5,6 +5,20 @@
   width: 11em;
   &__length-range {
   }
+  &__btn-refresh {
+    float: right;
+    cursor: pointer;
+    position: relative;
+    top: 2px;
+    @include th {
+      color: muted-color();
+      &:hover { color: text-color(); }
+    }
+  }
+  &__sel-tpl {
+    width: 100%;
+    margin-top: $base-padding-v;
+  }
   &__check {
     width: 40%;
     display: inline-block;

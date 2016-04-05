@@ -1,12 +1,14 @@
 'use strict';
 
 var Backbone = require('backbone'),
+    SettingsPrvView = require('./settings-prv-view'),
     Launcher = require('../../comp/launcher'),
     Updater = require('../../comp/updater'),
     Format = require('../../util/format'),
     AppSettingsModel = require('../../models/app-settings-model'),
     UpdateModel = require('../../models/update-model'),
     RuntimeInfo = require('../../comp/runtime-info'),
+    Storage = require('../../storage'),
     FeatureDetector = require('../../util/feature-detector'),
     Locale = require('../../util/locale'),
     Links = require('../../const/links');
@@ -21,16 +23,21 @@ var SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-idle-minutes': 'changeIdleMinutes',
         'change .settings__general-clipboard': 'changeClipboard',
         'change .settings__general-auto-save': 'changeAutoSave',
+        'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
         'change .settings__general-lock-on-minimize': 'changeLockOnMinimize',
+        'change .settings__general-lock-on-copy': 'changeLockOnCopy',
         'change .settings__general-table-view': 'changeTableView',
         'change .settings__general-colorful-icons': 'changeColorfulIcons',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
+        'change .settings__general-prv-check': 'changeStorageEnabled',
         'click .settings__general-dev-tools-link': 'openDevTools'
     },
+
+    views: {},
 
     allThemes: {
         fb: 'Flat blue',
@@ -46,13 +53,15 @@ var SettingsGeneralView = Backbone.View.extend({
     render: function() {
         var updateReady = UpdateModel.instance.get('updateStatus') === 'ready',
             updateFound = UpdateModel.instance.get('updateStatus') === 'found',
-            updateManual = UpdateModel.instance.get('updateManual');
+            updateManual = UpdateModel.instance.get('updateManual'),
+            storageProviders = this.getStorageProviders();
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             canClearClipboard: !!Launcher,
             clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
+            rememberKeyFiles: AppSettingsModel.instance.get('rememberKeyFiles'),
             autoSave: AppSettingsModel.instance.get('autoSave'),
             idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
             minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
@@ -60,6 +69,7 @@ var SettingsGeneralView = Backbone.View.extend({
             canAutoUpdate: Updater.enabled,
             canMinimize: Launcher && Launcher.canMinimize(),
             lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
+            lockOnCopy: AppSettingsModel.instance.get('lockOnCopy'),
             tableView: AppSettingsModel.instance.get('tableView'),
             canSetTableView: FeatureDetector.isDesktop(),
             autoUpdate: Updater.getAutoUpdateType(),
@@ -71,8 +81,24 @@ var SettingsGeneralView = Backbone.View.extend({
             updateFound: updateFound,
             updateManual: updateManual,
             releaseNotesLink: Links.ReleaseNotes,
-            colorfulIcons: AppSettingsModel.instance.get('colorfulIcons')
+            colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
+            storageProviders: storageProviders
         });
+        this.renderProviderViews(storageProviders);
+    },
+
+    renderProviderViews: function(storageProviders) {
+        storageProviders.forEach(function(prv) {
+            if (this.views[prv.name]) {
+                this.views[prv.name].remove();
+            }
+            if (prv.hasConfig) {
+                this.views[prv.name] = new SettingsPrvView({
+                    el: this.$el.find('.settings__general-' + prv.name),
+                    model: prv
+                }).render();
+            }
+        }, this);
     },
 
     getUpdateInfo: function() {
@@ -112,6 +138,24 @@ var SettingsGeneralView = Backbone.View.extend({
         }
     },
 
+    getStorageProviders: function() {
+        var storageProviders = [];
+        Object.keys(Storage).forEach(function(name) {
+            var prv = Storage[name];
+            if (!prv.system) {
+                storageProviders.push(prv);
+            }
+        });
+        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
+        return storageProviders.map(function(sp) {
+            return {
+                name: sp.name,
+                enabled: sp.enabled,
+                hasConfig: sp.getSettingsConfig
+            };
+        });
+    },
+
     changeTheme: function(e) {
         var theme = e.target.value;
         AppSettingsModel.instance.set('theme', theme);
@@ -144,6 +188,14 @@ var SettingsGeneralView = Backbone.View.extend({
         AppSettingsModel.instance.set('autoSave', autoSave);
     },
 
+    changeRememberKeyFiles: function(e) {
+        var rememberKeyFiles = e.target.checked || false;
+        AppSettingsModel.instance.set('rememberKeyFiles', rememberKeyFiles);
+        if (!rememberKeyFiles) {
+            this.appModel.clearStoredKeyFiles();
+        }
+    },
+
     changeMinimize: function(e) {
         var minimizeOnClose = e.target.checked || false;
         AppSettingsModel.instance.set('minimizeOnClose', minimizeOnClose);
@@ -152,6 +204,11 @@ var SettingsGeneralView = Backbone.View.extend({
     changeLockOnMinimize: function(e) {
         var lockOnMinimize = e.target.checked || false;
         AppSettingsModel.instance.set('lockOnMinimize', lockOnMinimize);
+    },
+
+    changeLockOnCopy: function(e) {
+        var lockOnCopy = e.target.checked || false;
+        AppSettingsModel.instance.set('lockOnCopy', lockOnCopy);
     },
 
     changeTableView: function(e) {
@@ -188,6 +245,15 @@ var SettingsGeneralView = Backbone.View.extend({
         var expand = e.target.checked;
         AppSettingsModel.instance.set('expandGroups', expand);
         Backbone.trigger('refresh');
+    },
+
+    changeStorageEnabled: function(e) {
+        var storage = Storage[$(e.target).data('storage')];
+        if (storage) {
+            storage.enabled = e.target.checked;
+            AppSettingsModel.instance.set(storage.name, storage.enabled);
+            this.$el.find('.settings__general-' + storage.name).toggleClass('hide', !e.target.checked);
+        }
     },
 
     openDevTools: function() {

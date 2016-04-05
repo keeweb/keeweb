@@ -11,6 +11,7 @@ var SettingsAboutView = Backbone.View.extend({
         this.renderTemplate({
             version: RuntimeInfo.version,
             licenseLink: Links.License,
+            licenseLinkApache: Links.LicenseApache,
             repoLink: Links.Repo
         });
     }

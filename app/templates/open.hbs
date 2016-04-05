@@ -9,13 +9,38 @@
             <i class="fa fa-plus open__icon-i"></i>
             <div class="open__icon-text">{{res 'openNew'}}</div>
         </div>
-        <div class="open__icon open__icon-dropbox">
-            <i class="fa fa-dropbox open__icon-i"></i>
-            <div class="open__icon-text">Dropbox</div>
-        </div>
+        {{#ifeq demoOpened false}}
         <div class="open__icon open__icon-demo">
             <i class="fa fa-magic open__icon-i"></i>
             <div class="open__icon-text">{{res 'openDemo'}}</div>
+        </div>
+        {{/ifeq}}
+        <div class="open__icon open__icon-more">
+            <i class="fa fa-ellipsis-h open__icon-i"></i>
+            <div class="open__icon-text">{{res 'openMore'}}</div>
+        </div>
+    </div>
+    <div class="open__icons open__icons--lower hide">
+        {{#each storageProviders as |prv|}}
+        <div class="open__icon open__icon-storage svg-btn" data-storage="{{prv.name}}">
+            {{#if prv.icon}}<i class="fa fa-{{prv.icon}} open__icon-i"></i>{{/if}}
+            {{#if prv.iconSvg}}<div class="open__icon-svg">{{{prv.iconSvg}}}</div>{{/if}}
+            <div class="open__icon-text">{{res prv.name}}</div>
+        </div>
+        {{/each}}
+        <div class="open__icon open__icon-import-xml">
+            <i class="fa fa-code open__icon-i"></i>
+            <div class="open__icon-text">Import XML</div>
+        </div>
+        {{#if demoOpened}}
+        <div class="open__icon open__icon-demo">
+            <i class="fa fa-magic open__icon-i"></i>
+            <div class="open__icon-text">{{res 'openDemo'}}</div>
+        </div>
+        {{/if}}
+        <div class="open__icon open__icon-settings">
+            <i class="fa fa-cog open__icon-i"></i>
+            <div class="open__icon-text">{{res 'openSettings'}}</div>
         </div>
     </div>
     <div class="open__pass-area">
@@ -30,20 +55,23 @@
         </div>
         <div class="open__settings">
             <div class="open__settings-key-file hide">
-                <i class="fa fa-key open__settings-key-file-icon"></i>
-                <span class="open__settings-key-file-name">{{res 'openKeyFile'}}</span>
-                <span class="open__settings-key-file-dropbox"> {{res 'openKeyFileDropbox'}}</span>
+                <i class="fa fa-key open__settings-key-file-icon">
+                </i><span class="open__settings-key-file-name">{{res 'openKeyFile'}}</span>
+                {{#if canOpenKeyFromDropbox}}<span class="open__settings-key-file-dropbox"> {{res 'openKeyFileDropbox'}}</span>{{/if}}
             </div>
         </div>
         <div class="open__last">
             {{#each lastOpenFiles as |file|}}
             <div class="open__last-item" data-id="{{file.id}}">
-                <i class="fa fa-{{file.icon}} open__last-item-icon"></i>
+                {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
+                {{#if file.iconSvg}}<div class="open__last-item-icon open__last-item-icon--svg">{{{file.iconSvg}}}</div>{{/if}}
                 <span class="open__last-item-text">{{file.name}}</span>
                 <i class="fa fa-times open__last-item-icon-del"></i>
             </div>
             {{/each}}
         </div>
+    </div>
+    <div class="open__config-wrap">
     </div>
     <div class="open__dropzone">
         <i class="fa fa-lock muted-color open__dropzone-icon"></i>

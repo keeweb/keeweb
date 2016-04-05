@@ -77,13 +77,15 @@ var AppView = Backbone.View.extend({
 
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed, this);
+        KeyHandler.onKey(Keys.DOM_VK_F12, this.openDevTools, this, KeyHandler.SHORTCUT_ACTION);
 
         setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
     },
 
     render: function () {
-        this.$el.html(this.template());
-        this.setTheme();
+        this.$el.html(this.template({
+            beta: this.model.isBeta
+        }));
         this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
         this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
@@ -203,6 +205,7 @@ var AppView = Backbone.View.extend({
         if (this.views.keyChange || Alerts.alertDisplayed) {
             return;
         }
+        this.hideSettings();
         this.views.menu.hide();
         this.views.listWrap.hide();
         this.views.list.hide();
@@ -302,6 +305,12 @@ var AppView = Backbone.View.extend({
     backspacePressed: function(e) {
         if (e.target === document.body) {
             e.preventDefault();
+        }
+    },
+
+    openDevTools: function() {
+        if (Launcher && Launcher.devTools) {
+            Launcher.openDevTools();
         }
     },
 
@@ -459,6 +468,7 @@ var AppView = Backbone.View.extend({
                     this.showEntries();
                 } else {
                     this.showLastOpenFile();
+                    this.views.open.toggleMore();
                 }
             } else {
                 if (menuItem) {

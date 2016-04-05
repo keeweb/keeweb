@@ -7,6 +7,11 @@ fieldset {
   padding: $base-spacing;
 }
 
+input {
+  line-height: normal;
+  color: inherit;
+}
+
 input,
 select {
   display: block;

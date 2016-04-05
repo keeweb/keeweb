@@ -7,46 +7,56 @@ var Backbone = require('backbone'),
     Launcher = require('../../comp/launcher'),
     Storage = require('../../storage'),
     Links = require('../../const/links'),
-    DropboxLink = require('../../comp/dropbox-link'),
     Format = require('../../util/format'),
     Locale = require('../../util/locale'),
+    UrlUtil = require('../../util/url-util'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
 
-var SettingsAboutView = Backbone.View.extend({
+var SettingsFileView = Backbone.View.extend({
     template: require('templates/settings/settings-file.hbs'),
 
     events: {
         'click .settings__file-button-save-default': 'saveDefault',
-        'click .settings__file-button-save-file': 'saveToFile',
-        'click .settings__file-button-export-xml': 'exportAsXml',
-        'click .settings__file-button-save-dropbox': 'saveToDropbox',
+        'click .settings__file-button-save-choose': 'toggleChooser',
         'click .settings__file-button-close': 'closeFile',
+        'click .settings__file-save-to-file': 'saveToFile',
+        'click .settings__file-save-to-xml': 'saveToXml',
+        'click .settings__file-save-to-storage': 'saveToStorage',
         'change #settings__file-key-file': 'keyFileChange',
         'click #settings__file-file-select-link': 'triggerSelectFile',
         'change #settings__file-file-select': 'fileSelected',
         'focus #settings__file-master-pass': 'focusMasterPass',
+        'input #settings__file-master-pass': 'changeMasterPass',
         'blur #settings__file-master-pass': 'blurMasterPass',
-        'blur #settings__file-name': 'blurName',
-        'blur #settings__file-def-user': 'blurDefUser',
+        'input #settings__file-name': 'changeName',
+        'input #settings__file-def-user': 'changeDefUser',
         'change #settings__file-trash': 'changeTrash',
-        'blur #settings__file-hist-len': 'blurHistoryLength',
-        'blur #settings__file-hist-size': 'blurHistorySize',
-        'blur #settings__file-key-rounds': 'blurKeyRounds'
+        'input #settings__file-hist-len': 'changeHistoryLength',
+        'input #settings__file-hist-size': 'changeHistorySize',
+        'input #settings__file-key-rounds': 'changeKeyRounds'
     },
 
     appModel: null,
 
     initialize: function() {
-        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', this.render);
+        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', this.deferRender);
     },
 
     render: function() {
+        var storageProviders = [];
+        var fileStorage = this.model.get('storage');
+        Object.keys(Storage).forEach(function(name) {
+            var prv = Storage[name];
+            if (!prv.system && prv.enabled && name !== fileStorage) {
+                storageProviders.push(prv);
+            }
+        });
+        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
             desktopLink: Links.Desktop,
-
             name: this.model.get('name'),
             path: this.model.get('path'),
             storage: this.model.get('storage'),
@@ -58,7 +68,8 @@ var SettingsAboutView = Backbone.View.extend({
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
             historyMaxItems: this.model.get('historyMaxItems'),
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
-            keyEncryptionRounds: this.model.get('keyEncryptionRounds')
+            keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
+            storageProviders: storageProviders
         });
         if (!this.model.get('created')) {
             this.$el.find('.settings__file-master-pass-warning').toggle(this.model.get('passwordChanged'));
@@ -131,6 +142,10 @@ var SettingsAboutView = Backbone.View.extend({
         this.save();
     },
 
+    toggleChooser: function() {
+        this.$el.find('.settings__file-save-choose').toggleClass('hide');
+    },
+
     saveToFile: function(skipValidation) {
         if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
             return;
@@ -166,51 +181,67 @@ var SettingsAboutView = Backbone.View.extend({
         }
     },
 
-    exportAsXml: function() {
+    saveToXml: function() {
         this.model.getXml((function(xml) {
             var blob = new Blob([xml], {type: 'text/xml'});
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
         }).bind(this));
     },
 
-    saveToDropbox: function() {
+    saveToStorage: function(e) {
+        if (this.model.get('syncing') || this.model.get('demo')) {
+            return;
+        }
+        var storageName = $(e.target).closest('.settings__file-save-to-storage').data('storage');
+        var storage = Storage[storageName];
+        if (!storage) {
+            return;
+        }
         var that = this;
-        this.model.set('syncing', true);
-        DropboxLink.authenticate(function(err) {
-            that.model.set('syncing', false);
-            if (err) {
+        if (that.model.get('storage') === storageName) {
+            that.save();
+        } else {
+            if (!storage.list) {
+                if (storage.name === 'webdav') {
+                    Alerts.info({
+                        icon: storage.icon,
+                        header: Locale.setFileNoWebDavUpload,
+                        body: Locale.setFileNoWebDavUploadBody
+                    });
+                } else {
+                    Alerts.notImplemented();
+                }
                 return;
             }
-            if (that.model.get('storage') === 'dropbox') {
-                that.save();
-            } else {
-                that.model.set('syncing', true);
-                DropboxLink.getFileList(function(err, files) {
-                    that.model.set('syncing', false);
-                    if (!files) { return; }
-                    var expName = that.model.get('name').toLowerCase();
-                    var existingPath = files.filter(function(f) { return f.toLowerCase().replace('/', '') === expName; })[0];
-                    if (existingPath) {
-                        Alerts.yesno({
-                            icon: 'dropbox',
-                            header: Locale.setFileAlreadyExists,
-                            body: Locale.setFileAlreadyExistsBody.replace('{}', that.model.escape('name')),
-                            success: function() {
-                                that.model.set('syncing', true);
-                                DropboxLink.deleteFile(existingPath, function(err) {
-                                    that.model.set('syncing', false);
-                                    if (!err) {
-                                        that.save({storage: 'dropbox'});
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        that.save({storage: 'dropbox'});
-                    }
+            that.model.set('syncing', true);
+            storage.list(function(err, files) {
+                that.model.set('syncing', false);
+                if (err) {
+                    return;
+                }
+                var expName = that.model.get('name').toLowerCase();
+                var existingFile = _.find(files, function(file) {
+                    return UrlUtil.getDataFileName(file.name).toLowerCase() === expName;
                 });
-            }
-        });
+                if (existingFile) {
+                    Alerts.yesno({
+                        header: Locale.setFileAlreadyExists,
+                        body: Locale.setFileAlreadyExistsBody.replace('{}', that.model.escape('name')),
+                        success: function() {
+                            that.model.set('syncing', true);
+                            storage.remove(existingFile.path, function(err) {
+                                that.model.set('syncing', false);
+                                if (!err) {
+                                    that.save({storage: storageName});
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    that.save({storage: storageName});
+                }
+            });
+        }
     },
 
     closeFile: function() {
@@ -289,10 +320,9 @@ var SettingsAboutView = Backbone.View.extend({
         e.target.setAttribute('type', 'text');
     },
 
-    blurMasterPass: function(e) {
+    changeMasterPass: function(e) {
         if (!e.target.value) {
             this.model.resetPassword();
-            e.target.value = PasswordGenerator.present(this.model.get('passwordLength'));
             this.$el.find('.settings__file-master-pass-warning').hide();
         } else {
             this.model.setPassword(kdbxweb.ProtectedValue.fromString(e.target.value));
@@ -300,19 +330,26 @@ var SettingsAboutView = Backbone.View.extend({
                 this.$el.find('.settings__file-master-pass-warning').show();
             }
         }
+    },
+
+    blurMasterPass: function(e) {
+        if (!e.target.value) {
+            this.model.resetPassword();
+            e.target.value = PasswordGenerator.present(this.model.get('passwordLength'));
+            this.$el.find('.settings__file-master-pass-warning').hide();
+        }
         e.target.setAttribute('type', 'password');
     },
 
-    blurName: function(e) {
+    changeName: function(e) {
         var value = $.trim(e.target.value);
         if (!value) {
-            e.target.value = this.model.get('name');
             return;
         }
         this.model.setName(value);
     },
 
-    blurDefUser: function(e) {
+    changeDefUser: function(e) {
         var value = $.trim(e.target.value);
         this.model.setDefaultUser(value);
     },
@@ -321,7 +358,7 @@ var SettingsAboutView = Backbone.View.extend({
         this.model.setRecycleBinEnabled(e.target.checked);
     },
 
-    blurHistoryLength: function(e) {
+    changeHistoryLength: function(e) {
         var value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('historyMaxItems');
@@ -330,7 +367,7 @@ var SettingsAboutView = Backbone.View.extend({
         this.model.setHistoryMaxItems(value);
     },
 
-    blurHistorySize: function(e) {
+    changeHistorySize: function(e) {
         var value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('historyMaxSize') / 1024 / 1024;
@@ -339,7 +376,7 @@ var SettingsAboutView = Backbone.View.extend({
         this.model.setHistoryMaxSize(value * 1024 * 1024);
     },
 
-    blurKeyRounds: function(e) {
+    changeKeyRounds: function(e) {
         var value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('keyEncryptionRounds');
@@ -349,4 +386,4 @@ var SettingsAboutView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsAboutView;
+module.exports = SettingsFileView;

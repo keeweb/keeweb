@@ -24,10 +24,8 @@
 
     &--drag {
       @include flex(0 0 auto);
-      max-height: calc(100vh - 180px);
-      >.scroller {
-        max-height: calc(100vh - 180px);
-      }
+      max-height: calc(100vh - 200px);
+      >.scroller { max-height: calc(100vh - 200px); }
     }
 
     &--drag.menu__section {
@@ -137,8 +135,8 @@
       display: none;
       opacity: 0;
       position: absolute;
-      right: .8em;
-      top: .6em;
+      right: 1.1em;
+      top: .75em;
       cursor: pointer;
       transition: opacity $base-duration $base-timing, color $base-duration $base-timing;
       @include th {

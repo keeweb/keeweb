@@ -8,6 +8,10 @@ var ThemeChanger = {
             }
         });
         document.body.classList.add('th-' + theme);
+        var metaThemeColor = document.head.querySelector('meta[name=theme-color]');
+        if (metaThemeColor) {
+            metaThemeColor.content = window.getComputedStyle(document.body).backgroundColor;
+        }
     }
 };
 

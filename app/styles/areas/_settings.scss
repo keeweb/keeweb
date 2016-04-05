@@ -26,6 +26,9 @@
     text-align: center;
     padding: $base-padding;
     margin: 0 $base-padding-h $base-padding-v $base-padding-h;
+    &-large {
+      width: 80px;
+    }
     &:first-of-type {
       margin-left: 0;
     }
@@ -78,11 +81,37 @@
     display: none;
   }
 
+  &__file-save-to {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: $base-padding-h;
+    text-align: center;
+    >i, >svg {
+      display: block;
+      font-size: 3em;
+      padding: $base-padding-px;
+      margin: auto;
+    }
+    >svg {
+      @include size(1em);
+    }
+    &:hover {
+      transition: color $base-duration $base-timing;
+      @include th { color: medium-color(); }
+    }
+  }
+
   &__general-update-buttons {
     margin-top: $base-spacing;
   }
   &__general-update-btn {
     width: 15em;
     margin-right: $small-spacing;
+  }
+  &__general-storage-header {
+    margin-bottom: 0;
+  }
+  &__general-prv {
+    margin-bottom: $base-padding-v;
   }
 }

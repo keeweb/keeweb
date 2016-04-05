@@ -7,7 +7,8 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../models/app-settings-model'),
     UpdateModel = require('../models/update-model'),
     Transport = require('../comp/transport'),
-    Logger = require('../util/logger');
+    Logger = require('../util/logger'),
+    publicKey = require('raw!../../resources/public-key.pem');
 
 var logger = new Logger('updater');
 
@@ -210,6 +211,7 @@ var Updater = {
         var expectedFiles = this.UpdateCheckFiles;
         var appPath = Launcher.getUserDataPath();
         var StreamZip = Launcher.req('node-stream-zip');
+        var that = this;
         var zip = new StreamZip({ file: updateFile, storeEntries: true });
         zip.on('error', cb);
         zip.on('ready', function() {
@@ -220,6 +222,10 @@ var Updater = {
             if (!containsAll) {
                 return cb('Bad archive');
             }
+            var validationError = that.validateArchiveSignature(updateFile, zip);
+            if (validationError) {
+                return cb('Invalid archive: ' + validationError);
+            }
             zip.extract(null, appPath, function(err) {
                 zip.close();
                 if (err) {
@@ -229,6 +235,28 @@ var Updater = {
                 cb();
             });
         });
+    },
+
+    validateArchiveSignature: function(archivePath, zip) {
+        if (!zip.comment) {
+            return 'No comment in ZIP';
+        }
+        if (zip.comment.length !== 512) {
+            return 'Bad comment length in ZIP: ' + zip.comment.length;
+        }
+        try {
+            var zipFileData = Launcher.req('fs').readFileSync(archivePath);
+            var verify = Launcher.req('crypto').createVerify('RSA-SHA256');
+            verify.write(zipFileData.slice(0, zip.centralDirectory.headerOffset + 22));
+            verify.end();
+            var signature = new window.Buffer(zip.comment, 'hex');
+            if (!verify.verify(publicKey, signature)) {
+                return 'Invalid signature';
+            }
+        } catch (err) {
+            return err.toString();
+        }
+        return null;
     },
 
     checkAppCacheUpdateReady: function() {

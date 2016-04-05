@@ -17,6 +17,7 @@ var FileModel = Backbone.Model.extend({
         keyFileName: '',
         passwordLength: 0,
         path: '',
+        opts: null,
         storage: null,
         modified: false,
         dirty: false,
@@ -49,12 +50,16 @@ var FileModel = Backbone.Model.extend({
             var ts = logger.ts();
             kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
                 if (err) {
+                    if (err.code === kdbxweb.Consts.ErrorCodes.InvalidKey && password && !password.byteLength) {
+                        logger.info('Error opening file with empty password, try to open with null password');
+                        return this.open(null, fileData, keyFileData, callback);
+                    }
                     logger.error('Error opening file', err.code, err.message, err);
                     callback(err);
                 } else {
                     this.db = db;
                     this.readModel();
-                    this.setOpenFile({ passwordLength: password.textLength });
+                    this.setOpenFile({ passwordLength: password ? password.textLength : 0 });
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                     }
@@ -76,6 +81,29 @@ var FileModel = Backbone.Model.extend({
         this.set('name', name);
         this.readModel();
         this.set({ open: true, created: true, name: name });
+    },
+
+    importWithXml: function(fileXml, callback) {
+        try {
+            var ts = logger.ts();
+            var password = kdbxweb.ProtectedValue.fromString('');
+            var credentials = new kdbxweb.Credentials(password);
+            kdbxweb.Kdbx.loadXml(fileXml, credentials, (function(db, err) {
+                if (err) {
+                    logger.error('Error importing file', err.code, err.message, err);
+                    callback(err);
+                } else {
+                    this.db = db;
+                    this.readModel();
+                    this.set({ open: true, created: true });
+                    logger.info('Imported file ' + this.get('name') + ': ' + logger.ts(ts));
+                    callback();
+                }
+            }).bind(this));
+        } catch (e) {
+            logger.error('Error importing file', e, e.code, e.message, e);
+            callback(e);
+        }
     },
 
     openDemo: function(callback) {
@@ -283,6 +311,11 @@ var FileModel = Backbone.Model.extend({
         this.db.saveXml(cb);
     },
 
+    getKeyFileHash: function() {
+        var hash = this.db.credentials.keyFileHash;
+        return hash ? kdbxweb.ByteUtils.bytesToBase64(hash.getBinary()) : null;
+    },
+
     setSyncProgress: function() {
         this.set({ syncing: true });
     },
@@ -302,6 +335,9 @@ var FileModel = Backbone.Model.extend({
             syncing: false,
             syncError: error
         });
+        if (!this.get('open')) {
+            return;
+        }
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
         this.forEachEntry({}, function(entry) {
             entry.unsaved = false;
@@ -352,6 +388,7 @@ var FileModel = Backbone.Model.extend({
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
         this.set({ keyFileName: '', keyFileChanged: changed });
+        this.setModified();
     },
 
     setName: function(name) {
@@ -423,5 +460,9 @@ var FileModel = Backbone.Model.extend({
         return id.toString();
     }
 });
+
+FileModel.createKeyFileWithHash = function(hash) {
+    return kdbxweb.Credentials.createKeyFileWithHash(hash);
+};
 
 module.exports = FileModel;
