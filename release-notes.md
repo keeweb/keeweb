@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.1.0 (Q2 2016)
+##### v1.1.0 (2016-04-05)
 Storage providers, one-time passwords, usability improvements  
 `+` WebDAV  
 `+` Google Drive, OneDrive  
