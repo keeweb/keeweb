@@ -118,7 +118,7 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'desktop_linux_deb_x64': {
-                src: 'tmp/desktop/keeweb-desktop_1.0.4-1_amd64.deb',
+                src: 'tmp/desktop/keeweb-desktop_*_amd64.deb',
                 dest: 'dist/desktop/KeeWeb.linux.x64.deb',
                 nonull: true
             }
