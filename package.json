@@ -47,7 +47,7 @@
   "scripts": {
     "start": "grunt",
     "test": "grunt test",
-    "postinstall": "npm install --prefix electron",
+    "postinstall": "cd electron && npm install",
     "copy-beta": "grunt && sed 's/<html manifest=\"manifest.appcache\">//' dist/index.html > ../keeweb-beta/diy/index.html && cd ../keeweb-beta && git add diy/index.html && git commit -a -m 'beta' && git push origin master"
   },
   "author": {
