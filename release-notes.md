@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.1.1 (2016-04-**)
+Hotfix  
+`-` fix #181: save window position on Windows  
+
 ##### v1.1.0 (2016-04-05)
 Storage providers, one-time passwords, usability improvements  
 `+` WebDAV  

@@ -169,7 +169,7 @@ function saveMainWindowPosition() {
     }
     delete mainWindowPosition.changed;
     try {
-        fs.writeFile(windowPositionFileName, JSON.stringify(mainWindowPosition), 'utf8');
+        fs.writeFileSync(windowPositionFileName, JSON.stringify(mainWindowPosition), 'utf8');
     } catch (e) {}
 }
 
