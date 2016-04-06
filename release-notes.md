@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.1.1 (2016-04-**)
 Hotfix  
+`+` display remembered keyfile name  
 `-` fix #182: save window position on Windows  
 
 ##### v1.1.0 (2016-04-05)
