@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-sudo gtk-update-icon-cache --force /usr/share/icons/hicolor
+gtk-update-icon-cache --force /usr/share/icons/hicolor
