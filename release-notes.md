@@ -1,5 +1,11 @@
 Release notes
 -------------
+##### v1.1.1 (2016-04-07)
+Hotfix  
+`+` minimize app on linux  
+`+` display remembered keyfile name  
+`-` fix #182: save window position on Windows  
+
 ##### v1.1.0 (2016-04-05)
 Storage providers, one-time passwords, usability improvements  
 `+` WebDAV  
