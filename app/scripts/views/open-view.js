@@ -157,7 +157,11 @@ var OpenView = Backbone.View.extend({
                     this.params.path = file.path || null;
                     this.params.storage = file.path ? 'file' : null;
                     this.params.rev = null;
+                    if (!this.params.keyFileData) {
+                        this.params.keyFileName = null;
+                    }
                     this.displayOpenFile();
+                    this.displayOpenKeyFile();
                     success = true;
                     break;
                 case 'fileXml':
