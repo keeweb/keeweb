@@ -243,7 +243,9 @@ var AppView = Backbone.View.extend({
 
     toggleOpenFile: function() {
         if (this.views.open) {
-            this.showEntries();
+            if (this.model.files.hasOpenFiles()) {
+                this.showEntries();
+            }
         } else {
             this.showOpenFile();
         }
