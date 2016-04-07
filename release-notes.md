@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.1.1 (2016-04-**)
+##### v1.1.1 (2016-04-07)
 Hotfix  
 `+` minimize app on linux  
 `+` display remembered keyfile name  
