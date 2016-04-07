@@ -73,7 +73,7 @@ app.openWindow = function(opts) {
     return new BrowserWindow(opts);
 };
 app.minimizeApp = function() {
-    if (process.platform === 'win32') {
+    if (process.platform !== 'darwin') {
         mainWindow.minimize();
         mainWindow.setSkipTaskbar(true);
         appIcon = new Tray(path.join(__dirname, 'icon.png'));
