@@ -96,7 +96,7 @@ if (window.process && window.process.versions && window.process.versions.electro
             this.remReq('app').minimizeApp();
         },
         canMinimize: function() {
-            return process.platform === 'win32';
+            return process.platform !== 'darwin';
         },
         updaterEnabled: function() {
             return this.req('remote').process.argv.indexOf('--disable-updater') === -1;

@@ -73,7 +73,7 @@ app.openWindow = function(opts) {
     return new BrowserWindow(opts);
 };
 app.minimizeApp = function() {
-    if (process.platform === 'win32') {
+    if (process.platform !== 'darwin') {
         mainWindow.minimize();
         mainWindow.setSkipTaskbar(true);
         appIcon = new Tray(path.join(__dirname, 'icon.png'));
@@ -169,7 +169,7 @@ function saveMainWindowPosition() {
     }
     delete mainWindowPosition.changed;
     try {
-        fs.writeFile(windowPositionFileName, JSON.stringify(mainWindowPosition), 'utf8');
+        fs.writeFileSync(windowPositionFileName, JSON.stringify(mainWindowPosition), 'utf8');
     } catch (e) {}
 }
 
