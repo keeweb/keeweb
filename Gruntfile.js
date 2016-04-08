@@ -401,6 +401,7 @@ module.exports = function(grunt) {
                     info: {
                         arch: 'amd64',
                         targetDir: 'tmp/desktop',
+                        appName: 'KeeWeb',
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
                         }
