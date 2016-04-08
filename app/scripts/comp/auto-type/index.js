@@ -11,13 +11,13 @@ var AutoType = {
         try {
             var parser = new AutoTypeParser(sequence);
             var runner = parser.parse();
-            logger.debug('Parsed', runner.ops.length);
+            logger.debug('Parsed', runner.ops);
             runner.resolve(entry, function(err) {
                 if (err) {
                     logger.error('Error', err);
                     return callback(err);
                 }
-                logger.debug('Running', runner.ops);
+                logger.debug('Running');
                 runner.run(function(err) {
                     if (err) {
                         logger.error('Run error', err);

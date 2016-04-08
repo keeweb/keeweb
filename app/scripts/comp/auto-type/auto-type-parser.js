@@ -18,7 +18,7 @@ AutoTypeParser.prototype.parse = function() {
         switch (ch) {
             case '{':
                 this.readOp();
-                break;
+                continue;
             case '+':
             case '%':
             case '^':
@@ -37,8 +37,9 @@ AutoTypeParser.prototype.parse = function() {
                 this.addChar(ch);
                 break;
         }
+        this.ix++;
     }
-    if (this.states.length !== 0) {
+    if (this.states.length !== 1) {
         throw 'Groups count mismatch';
     }
     return new AutoTypeRunner(this.state().ops);
@@ -76,9 +77,9 @@ AutoTypeParser.prototype.readOp = function() {
     }
     var parts = contents.split(AutoTypeParser.opSepRegex, 2);
     if (parts.length > 1 && parts[0].length && parts[1].length) {
-        var op = parts[1];
+        var op = parts[0];
         var sep = contents.substr(op.length, 1);
-        var arg = parts[2];
+        var arg = parts[1];
         this.addOp(op, sep, arg);
     } else {
         this.addOp(contents);
@@ -91,15 +92,17 @@ AutoTypeParser.prototype.readModifier = function(modifier) {
         state.modifiers = {};
     }
     if (modifier === '^' && state.modifiers['^']) {
-        state.modifiers['^'] = false;
+        delete state.modifiers['^'];
         modifier = '^^';
     }
     state.modifiers[modifier] = true;
 };
 
 AutoTypeParser.prototype.resetModifiers = function() {
-    this.state.modifiers = null;
-    return this.state.modifiers;
+    var state = this.state();
+    var modifiers = state.modifiers;
+    state.modifiers = null;
+    return modifiers;
 };
 
 AutoTypeParser.prototype.addState = function(state) {
