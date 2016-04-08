@@ -17,7 +17,7 @@ var AutoType = {
                     logger.error('Error', err);
                     return callback(err);
                 }
-                logger.debug('Running');
+                logger.debug('Running', runner.ops);
                 runner.run(function(err) {
                     if (err) {
                         logger.error('Run error', err);

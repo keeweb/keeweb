@@ -50,11 +50,12 @@ AutoTypeRunner.Commands = {
 
 AutoTypeRunner.prototype.resolve = function(entry, callback) {
     this.entry = entry;
-    this.resolveCallback = callback;
     try {
         this.resolveOps(this.ops);
         if (!this.pendingResolves) {
             callback();
+        } else {
+            this.resolveCallback = callback;
         }
     } catch (e) {
         return callback(e);
@@ -63,20 +64,15 @@ AutoTypeRunner.prototype.resolve = function(entry, callback) {
 
 AutoTypeRunner.prototype.resolveOps = function(ops) {
     for (var i = 0, len = ops.length; i < len; i++) {
-        this.forEachOp(ops[i], this.resolveOp, this);
-    }
-};
-
-AutoTypeRunner.prototype.forEachOp = function(op, fn, context) {
-    switch (op.type) {
-        case 'group':
-            return this.resolveOps(op.value);
-        case 'op':
-            return fn.call(context, op);
+        this.resolveOp(ops[i]);
     }
 };
 
 AutoTypeRunner.prototype.resolveOp = function(op) {
+    if (op.type === 'group') {
+        this.resolveOps(op.value);
+        return;
+    }
     if (op.value.length === 1 && !op.sep) {
         // {x}
         op.type = 'text';
@@ -99,9 +95,9 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
             // {TAB 3}
             op.type = 'group';
             op.value = [];
-            var count = 0;
+            var count = +op.arg;
             for (var i = 0; i < count; i++) {
-                op.value.push({ type: 'key', value: key });
+                op.value.push({type: 'key', value: key});
             }
         } else {
             // {TAB}
@@ -112,6 +108,7 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
     }
     var substitution = AutoTypeRunner.Substitutions[lowerValue];
     if (substitution) {
+        // {title}
         op.type = 'text';
         op.value = substitution(this, op);
         if (op.value === AutoTypeRunner.PendingResolve) {
@@ -119,22 +116,45 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
         }
         return;
     }
-    switch (lowerValue) {
+    if (!this.tryParseCommand(op)) {
+        throw 'Bad op: ' + op.value;
+    }
+};
+
+AutoTypeRunner.prototype.tryParseCommand = function(op) {
+    switch (op.value.toLowerCase()) {
         case 'clearfield':
+            // {CLEARFIELD}
             op.type = 'group';
             op.value = [{ type: 'key', value: 'a', mod: { '^': true } }, { type: 'key', value: 'bs' }];
-            return;
+            return true;
         case 'vkey':
+            // {VKEY 10} {VKEY 0x1F}
             op.type = 'key';
-            op.value = parseInt(op.value);
-            break;
+            op.value = parseInt(op.arg);
+            if (isNaN(op.value) || op.value <= 0) {
+                throw 'Bad vkey: ' + op.arg;
+            }
+            return true;
         case 'delay':
+            // {DELAY 5} {DELAY=5}
             op.type = 'cmd';
             op.value = op.sep === '=' ? 'setDelay' : 'wait';
+            if (!op.arg) {
+                throw 'Delay requires seconds count';
+            }
+            if (isNaN(+op.arg)) {
+                throw 'Bad delay: ' + op.arg;
+            }
+            if (op.arg <= 0) {
+                throw 'Delay requires positive interval';
+            }
             op.arg = +op.arg;
-            break;
+            return true;
+        default:
+            return false;
     }
-    throw 'Bad op: ' + op.value;
+
 };
 
 AutoTypeRunner.prototype.run = function() {
