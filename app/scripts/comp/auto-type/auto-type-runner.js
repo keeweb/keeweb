@@ -1,8 +1,12 @@
 'use strict';
 
+var Format = require('../../util/format');
+
 var AutoTypeRunner = function(ops) {
     this.ops = ops;
     this.pendingResolves = 0;
+    this.entry = null;
+    this.now = new Date();
 };
 
 AutoTypeRunner.PendingResolve = { pending: true };
@@ -19,28 +23,28 @@ AutoTypeRunner.Keys = {
 };
 
 AutoTypeRunner.Substitutions = {
-    title: function() {},
-    username: function() {},
-    url: function() {},
-    password: function() {},
-    notes: function() {},
-    group: function() {},
-    totp: function() {},
-    s: function() {},
-    'dt_simple': function() {},
-    'dt_year': function() {},
-    'dt_month': function() {},
-    'dt_day': function() {},
-    'dt_hour': function() {},
-    'dt_minute': function() {},
-    'dt_second': function() {},
-    'dt_utc_simple': function() {},
-    'dt_utc_year': function() {},
-    'dt_utc_month': function() {},
-    'dt_utc_day': function() {},
-    'dt_utc_hour': function() {},
-    'dt_utc_minute': function() {},
-    'dt_utc_second': function() {}
+    title: function(runner, op) { return runner.getEntryFieldKeys('Title', op); },
+    username: function(runner, op) { return runner.getEntryFieldKeys('UserName', op); },
+    url: function(runner, op) { return runner.getEntryFieldKeys('URL', op); },
+    password: function(runner, op) { return runner.getEntryFieldKeys('Password', op); },
+    notes: function(runner, op) { return runner.getEntryFieldKeys('Notes', op); },
+    group: function(runner) { return runner.getEntryGroupName(); },
+    totp: function() { /*TODO*/ },
+    s: function(runner, op) { return runner.getEntryFieldKeys(op.arg, op); },
+    'dt_simple': function(runner) { return runner.dt('simple'); },
+    'dt_year': function(runner) { return runner.dt('Y'); },
+    'dt_month': function(runner) { return runner.dt('M'); },
+    'dt_day': function(runner) { return runner.dt('D'); },
+    'dt_hour': function(runner) { return runner.dt('h'); },
+    'dt_minute': function(runner) { return runner.dt('m'); },
+    'dt_second': function(runner) { return runner.dt('s'); },
+    'dt_utc_simple': function(runner) { return runner.udt('simple'); },
+    'dt_utc_year': function(runner) { return runner.udt('Y'); },
+    'dt_utc_month': function(runner) { return runner.udt('M'); },
+    'dt_utc_day': function(runner) { return runner.udt('D'); },
+    'dt_utc_hour': function(runner) { return runner.udt('h'); },
+    'dt_utc_minute': function(runner) { return runner.udt('m'); },
+    'dt_utc_second': function(runner) { return runner.udt('s'); }
 };
 
 AutoTypeRunner.Commands = {
@@ -153,6 +157,79 @@ AutoTypeRunner.prototype.tryParseCommand = function(op) {
             return true;
         default:
             return false;
+    }
+
+};
+
+AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
+    if (!field) {
+        return '';
+    }
+    field = field.toLowerCase();
+    var value = null;
+    _.findKey(this.entry.entry.fields, function(val, f) {
+        if (f.toLowerCase() === field) {
+            value = val;
+            return true;
+        }
+    });
+    if (!value) {
+        return '';
+    }
+    if (value.isProtected) {
+        op.type = 'group';
+        var ops = [];
+        value.forEachChar(function(ch) {
+            ops.push({ type: 'text', value: String.fromCharCode(ch) });
+        });
+        return ops.length ? ops : '';
+    }
+    return value;
+};
+
+AutoTypeRunner.prototype.getEntryGroupName = function() {
+    return this.entry.group.get('title');
+};
+
+AutoTypeRunner.prototype.dt = function(part) {
+    switch (part) {
+        case 'simple':
+            return this.dt('Y') + this.dt('M') + this.dt('D') + this.dt('h') + this.dt('m') + this.dt('s');
+        case 'Y':
+            return this.now.getFullYear().toString();
+        case 'M':
+            return Format.pad(this.now.getMonth() + 1, 2);
+        case 'D':
+            return Format.pad(this.now.getDate(), 2);
+        case 'h':
+            return Format.pad(this.now.getHours(), 2);
+        case 'm':
+            return Format.pad(this.now.getMinutes(), 2);
+        case 's':
+            return Format.pad(this.now.getSeconds(), 2);
+        default:
+            throw 'Bad part: ' + part;
+    }
+};
+
+AutoTypeRunner.prototype.udt = function(part) {
+    switch (part) {
+        case 'simple':
+            return this.udt('Y') + this.udt('M') + this.udt('D') + this.udt('h') + this.udt('m') + this.udt('s');
+        case 'Y':
+            return this.now.getUTCFullYear().toString();
+        case 'M':
+            return Format.pad(this.now.getUTCMonth() + 1, 2);
+        case 'D':
+            return Format.pad(this.now.getUTCDate(), 2);
+        case 'h':
+            return Format.pad(this.now.getUTCHours(), 2);
+        case 'm':
+            return Format.pad(this.now.getUTCMinutes(), 2);
+        case 's':
+            return Format.pad(this.now.getUTCSeconds(), 2);
+        default:
+            throw 'Bad part: ' + part;
     }
 
 };
