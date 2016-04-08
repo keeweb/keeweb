@@ -14,7 +14,7 @@ var AutoType = {
             logger.debug('Parsed', runner.ops);
             runner.resolve(entry, function(err) {
                 if (err) {
-                    logger.error('Error', err);
+                    logger.error('Resolve error', err);
                     return callback(err);
                 }
                 logger.debug('Running', runner.ops);
