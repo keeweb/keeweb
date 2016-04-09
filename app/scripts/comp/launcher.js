@@ -2,6 +2,7 @@
 
 var Backbone = require('backbone'),
     Locale = require('../util/locale');
+
 var Launcher;
 
 if (window.process && window.process.versions && window.process.versions.electron) {
@@ -112,6 +113,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         },
         openWindow: function(opts) {
             return this.remReq('app').openWindow(opts);
+        },
+        platform: function() {
+            return process.platform;
         }
     };
     Backbone.on('launcher-exit-request', function() {
