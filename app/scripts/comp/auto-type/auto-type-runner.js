@@ -4,7 +4,7 @@ var Format = require('../../util/format');
 
 var AutoTypeRunner = function(ops) {
     this.ops = ops;
-    this.pendingResolves = 0;
+    this.pendingResolvesCount = 0;
     this.entry = null;
     this.now = new Date();
 };
@@ -29,7 +29,7 @@ AutoTypeRunner.Substitutions = {
     password: function(runner, op) { return runner.getEntryFieldKeys('Password', op); },
     notes: function(runner, op) { return runner.getEntryFieldKeys('Notes', op); },
     group: function(runner) { return runner.getEntryGroupName(); },
-    totp: function() { /*TODO*/ },
+    totp: function(runner, op) { return runner.getOtp(op); },
     s: function(runner, op) { return runner.getEntryFieldKeys(op.arg, op); },
     'dt_simple': function(runner) { return runner.dt('simple'); },
     'dt_year': function(runner) { return runner.dt('Y'); },
@@ -56,7 +56,7 @@ AutoTypeRunner.prototype.resolve = function(entry, callback) {
     this.entry = entry;
     try {
         this.resolveOps(this.ops);
-        if (!this.pendingResolves) {
+        if (!this.pendingResolvesCount) {
             callback();
         } else {
             this.resolveCallback = callback;
@@ -116,7 +116,7 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
         op.type = 'text';
         op.value = substitution(this, op);
         if (op.value === AutoTypeRunner.PendingResolve) {
-            this.pendingResolves++;
+            this.pendingResolvesCount++;
         }
         return;
     }
@@ -232,6 +232,33 @@ AutoTypeRunner.prototype.udt = function(part) {
             throw 'Bad part: ' + part;
     }
 
+};
+
+AutoTypeRunner.prototype.getOtp = function(op) {
+    this.entry.initOtpGenerator();
+    if (!this.entry.otpGenerator) {
+        return '';
+    }
+    var that = this;
+    this.entry.otpGenerator.next(function(otp) {
+        that.pendingResolved(op, otp, otp ? undefined : 'OTP error');
+    });
+    return AutoTypeRunner.PendingResolve;
+};
+
+AutoTypeRunner.prototype.pendingResolved = function(op, value, error) {
+    var wasPending = op.value === AutoTypeRunner.PendingResolve;
+    if (value) {
+        op.value = value;
+    }
+    if (!wasPending) {
+        return;
+    }
+    this.pendingResolvesCount--;
+    if ((this.pendingResolvesCount === 0 || error) && this.resolveCallback) {
+        this.resolveCallback(error);
+        this.resolveCallback = null;
+    }
 };
 
 AutoTypeRunner.prototype.run = function() {
