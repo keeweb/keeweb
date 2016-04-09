@@ -49,7 +49,9 @@ AutoTypeRunner.Substitutions = {
 
 AutoTypeRunner.Commands = {
     wait: function() {},
-    setDelay: function() {}
+    setDelay: function() {},
+    paste: function() {},
+    copyText: function() {}
 };
 
 AutoTypeRunner.prototype.resolve = function(entry, callback) {
@@ -68,15 +70,16 @@ AutoTypeRunner.prototype.resolve = function(entry, callback) {
 
 AutoTypeRunner.prototype.resolveOps = function(ops) {
     for (var i = 0, len = ops.length; i < len; i++) {
-        this.resolveOp(ops[i]);
+        var op = ops[i];
+        if (op.type === 'group') {
+            this.resolveOps(op.value);
+        } else {
+            this.resolveOp(op);
+        }
     }
 };
 
 AutoTypeRunner.prototype.resolveOp = function(op) {
-    if (op.type === 'group') {
-        this.resolveOps(op.value);
-        return;
-    }
     if (op.value.length === 1 && !op.sep) {
         // {x}
         op.type = 'text';
@@ -258,6 +261,44 @@ AutoTypeRunner.prototype.pendingResolved = function(op, value, error) {
     if ((this.pendingResolvesCount === 0 || error) && this.resolveCallback) {
         this.resolveCallback(error);
         this.resolveCallback = null;
+    }
+};
+
+AutoTypeRunner.prototype.obfuscate = function() {
+    this.obfuscateOps(this.ops);
+};
+
+AutoTypeRunner.prototype.obfuscateOps = function(ops) {
+    for (var i = 0, len = ops.length; i < len; i++) {
+        var op = ops[i];
+        if (op.mod) {
+            continue;
+        }
+        if (op.type === 'text') {
+            this.obfuscateOp(op);
+        } else if (op.type === 'group') {
+            var onlyText = op.value.every(function(grOp) { return grOp.type === 'text' && !grOp.mod; });
+            if (onlyText) {
+                this.obfuscateOp(op);
+            } else {
+                this.obfuscateOps(op.value);
+            }
+        }
+    }
+};
+
+AutoTypeRunner.prototype.obfuscateOp = function(op) {
+    var letters = [];
+    if (op.type === 'text') {
+        if (!op.value || op.value.length <= 1) {
+            return;
+        }
+        letters = op.value.split('');
+    } else {
+        op.value.forEach(function(grOp) { letters.push.apply(letters, grOp.value.split('')); });
+    }
+    if (letters.length <= 1) {
+        return;
     }
 };
 

@@ -6,7 +6,7 @@ var Logger = require('../../util/logger');
 var logger = new Logger('auto-type');
 
 var AutoType = {
-    run: function(entry, sequence, callback) {
+    run: function(entry, sequence, obfuscate, callback) {
         logger.debug('Start', sequence);
         try {
             var parser = new AutoTypeParser(sequence);
@@ -17,7 +17,11 @@ var AutoType = {
                     logger.error('Resolve error', err);
                     return callback(err);
                 }
-                logger.debug('Running', runner.ops);
+                logger.debug('Resolved', runner.ops);
+                if (obfuscate) {
+                    runner.obfuscate();
+                    logger.debug('Obfuscated', runner.ops);
+                }
                 runner.run(function(err) {
                     if (err) {
                         logger.error('Run error', err);
