@@ -30,6 +30,8 @@ AutoTypeParser.prototype.parse = function() {
             case ')':
                 this.popState();
                 break;
+            case ' ':
+                break;
             case '~':
                 this.addOp('ENTER');
                 break;
