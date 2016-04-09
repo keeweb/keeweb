@@ -5,6 +5,8 @@ var Logger = require('../../util/logger');
 
 var logger = new Logger('auto-type');
 
+var clearTextAutoTypeLog = localStorage.clearTextAutoTypeLog;
+
 var AutoType = {
     run: function(entry, sequence, obfuscate, callback) {
         logger.debug('Start', sequence);
@@ -49,7 +51,11 @@ var AutoType = {
             return mod + this.printOps(op.value);
         }
         if (op.type === 'text') {
-            return mod + op.value.replace(/./g, '*');
+            var value = op.value;
+            if (!clearTextAutoTypeLog) {
+                value = value.replace(/./g, '*');
+            }
+            return mod + value;
         }
         return mod + op.type + ':' + op.value;
     }
