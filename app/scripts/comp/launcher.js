@@ -114,6 +114,20 @@ if (window.process && window.process.versions && window.process.versions.electro
         openWindow: function(opts) {
             return this.remReq('app').openWindow(opts);
         },
+        hideWindowIfActive: function() {
+            var app = this.remReq('app');
+            var win = app.getMainWindow();
+            var visible = win.isVisible(), focused = win.isFocused();
+            if (!visible || !focused) {
+                return false;
+            }
+            if (process.platform === 'darwin') {
+                app.hide();
+            } else {
+                win.minimize();
+            }
+            return true;
+        },
         platform: function() {
             return process.platform;
         }

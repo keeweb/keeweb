@@ -1,13 +1,17 @@
 'use strict';
 
-var AutoTypeParser = require('./auto-type-parser');
-var Logger = require('../../util/logger');
+var AutoTypeParser = require('./auto-type-parser'),
+    AutoTypeHelperFactory = require('./auto-type-helper-factory'),
+    Launcher = require('../launcher'),
+    Logger = require('../../util/logger'),
+    Timeouts = require('../../const/timeouts');
 
 var logger = new Logger('auto-type');
-
 var clearTextAutoTypeLog = localStorage.autoTypeDebug;
 
 var AutoType = {
+    helper: AutoTypeHelperFactory.create(),
+
     run: function(entry, sequence, obfuscate, callback) {
         logger.debug('Start', sequence);
         var that = this;
@@ -62,6 +66,27 @@ var AutoType = {
             return mod + value;
         }
         return mod + op.type + ':' + op.value;
+    },
+
+    hideWindow: function(callback) {
+        logger.debug('Hide window');
+        if (Launcher.hideWindowIfActive()) {
+            setTimeout(callback, Timeouts.AutoTypeAfterHide);
+        } else {
+            callback();
+        }
+    },
+
+    getActiveWindowTitle: function(callback) {
+        logger.debug('Get window title');
+        return this.helper.getActiveWindowTitle(function(err, title) {
+            if (err) {
+                logger.error('Error get window title', err);
+            } else {
+                logger.debug('Window title: ', title);
+            }
+            return callback(err, title);
+        });
     }
 };
 
