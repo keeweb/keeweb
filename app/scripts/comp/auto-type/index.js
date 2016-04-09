@@ -8,19 +8,20 @@ var logger = new Logger('auto-type');
 var AutoType = {
     run: function(entry, sequence, obfuscate, callback) {
         logger.debug('Start', sequence);
+        var that = this;
         try {
             var parser = new AutoTypeParser(sequence);
             var runner = parser.parse();
-            logger.debug('Parsed', runner.ops);
+            logger.debug('Parsed', that.printOps(runner.ops));
             runner.resolve(entry, function(err) {
                 if (err) {
                     logger.error('Resolve error', err);
                     return callback(err);
                 }
-                logger.debug('Resolved', runner.ops);
+                logger.debug('Resolved', that.printOps(runner.ops));
                 if (obfuscate) {
                     runner.obfuscate();
-                    logger.debug('Obfuscated', runner.ops);
+                    logger.debug('Obfuscated', that.printOps(runner.ops));
                 }
                 runner.run(function(err) {
                     if (err) {
@@ -36,6 +37,21 @@ var AutoType = {
             logger.error('Parse error', ex);
             return callback(ex);
         }
+    },
+
+    printOps: function(ops) {
+        return '[' + ops.map(this.printOp, this).join(',') + ']';
+    },
+
+    printOp: function(op) {
+        var mod = op.mod ? Object.keys(op.mod).join('') : '';
+        if (op.type === 'group') {
+            return mod + this.printOps(op.value);
+        }
+        if (op.type === 'text') {
+            return mod + op.value.replace(/./g, '*');
+        }
+        return mod + op.type + ':' + op.value;
     }
 };
 
