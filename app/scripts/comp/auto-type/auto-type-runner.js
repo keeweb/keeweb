@@ -128,7 +128,11 @@ AutoTypeRunner.prototype.tryParseCommand = function(op) {
         case 'clearfield':
             // {CLEARFIELD}
             op.type = 'group';
-            op.value = [{ type: 'key', value: 'a', mod: { '^': true } }, { type: 'key', value: 'bs' }];
+            op.value = [
+                { type: 'key', value: 'end' },
+                { type: 'key', value: 'home', mod: { '+': true } },
+                { type: 'key', value: 'bs' }
+            ];
             return true;
         case 'vkey':
             // {VKEY 10} {VKEY 0x1F}
@@ -310,10 +314,14 @@ AutoTypeRunner.prototype.run = function(callback) {
         mod: {},
         activeMod: {}
     };
-    this.emitNext(this.ops);
+    this.emitNext();
 };
 
-AutoTypeRunner.prototype.emitNext = function() {
+AutoTypeRunner.prototype.emitNext = function(err) {
+    if (err) {
+        this.emitterState.callback(err);
+        return;
+    }
     this.resetEmitterMod(this.emitterState.mod);
     if (this.emitterState.opIx >= this.emitterState.ops.length) {
         var state = this.emitterState.stack.pop();
