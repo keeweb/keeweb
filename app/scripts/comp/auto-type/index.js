@@ -5,7 +5,7 @@ var Logger = require('../../util/logger');
 
 var logger = new Logger('auto-type');
 
-var clearTextAutoTypeLog = localStorage.clearTextAutoTypeLog;
+var clearTextAutoTypeLog = localStorage.autoTypeDebug;
 
 var AutoType = {
     run: function(entry, sequence, obfuscate, callback) {
@@ -22,7 +22,12 @@ var AutoType = {
                 }
                 logger.debug('Resolved', that.printOps(runner.ops));
                 if (obfuscate) {
-                    runner.obfuscate();
+                    try {
+                        runner.obfuscate();
+                    } catch (e) {
+                        logger.error('Obfuscate error', e);
+                        return callback(e);
+                    }
                     logger.debug('Obfuscated', that.printOps(runner.ops));
                 }
                 runner.run(function(err) {

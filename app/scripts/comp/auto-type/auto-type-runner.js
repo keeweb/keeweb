@@ -1,6 +1,7 @@
 'use strict';
 
-var Format = require('../../util/format');
+var AutoTypeObfuscator = require('./auto-type-obfuscator'),
+    Format = require('../../util/format');
 
 var AutoTypeRunner = function(ops) {
     this.ops = ops;
@@ -50,7 +51,6 @@ AutoTypeRunner.Substitutions = {
 AutoTypeRunner.Commands = {
     wait: function() {},
     setDelay: function() {},
-    paste: function() {},
     copyText: function() {}
 };
 
@@ -300,6 +300,9 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
     if (letters.length <= 1) {
         return;
     }
+    var obfuscator = new AutoTypeObfuscator(letters);
+    op.value = obfuscator.obfuscate();
+    op.type = 'group';
 };
 
 AutoTypeRunner.prototype.run = function() {

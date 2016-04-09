@@ -33,7 +33,7 @@ AutoTypeParser.prototype.parse = function() {
             case ' ':
                 break;
             case '~':
-                this.addOp('ENTER');
+                this.addOp('enter');
                 break;
             default:
                 this.addChar(ch);
