@@ -159,8 +159,8 @@ AutoTypeObfuscator.prototype.inputChar = function(ch) {
 
 AutoTypeObfuscator.prototype.copyPaste = function(ch) {
     logger.debug('copyPaste', ch);
-    this.ops.push({type: 'copyText', value: ch});
-    this.ops.push({type: 'waitComplete', value: ch});
+    this.ops.push({type: 'cmd', value: 'copyText', arg: ch});
+    this.ops.push({type: 'cmd', value: 'waitComplete'});
     this.ops.push({type: 'key', value: 'v', mod: {'^': true}});
     this.inputChars.splice(this.inputCursor, this.inputSel, { ch: ch });
     this.inputCursor++;

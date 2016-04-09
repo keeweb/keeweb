@@ -1,6 +1,7 @@
 'use strict';
 
 var AutoTypeObfuscator = require('./auto-type-obfuscator'),
+    AutoTypeEmitter = require('./auto-type-emitter'),
     Format = require('../../util/format');
 
 var AutoTypeRunner = function(ops) {
@@ -46,12 +47,6 @@ AutoTypeRunner.Substitutions = {
     'dt_utc_hour': function(runner) { return runner.udt('h'); },
     'dt_utc_minute': function(runner) { return runner.udt('m'); },
     'dt_utc_second': function(runner) { return runner.udt('s'); }
-};
-
-AutoTypeRunner.Commands = {
-    wait: function() {},
-    setDelay: function() {},
-    copyText: function() {}
 };
 
 AutoTypeRunner.prototype.resolve = function(entry, callback) {
@@ -305,7 +300,89 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
     op.type = 'group';
 };
 
-AutoTypeRunner.prototype.run = function() {
+AutoTypeRunner.prototype.run = function(callback) {
+    this.emitter = new AutoTypeEmitter(this.emitNext.bind(this));
+    this.emitterState = {
+        callback: callback,
+        stack: [],
+        ops: this.ops,
+        opIx: 0,
+        mod: {},
+        activeMod: {}
+    };
+    this.emitNext(this.ops);
+};
+
+AutoTypeRunner.prototype.emitNext = function() {
+    this.resetEmitterMod(this.emitterState.mod);
+    if (this.emitterState.opIx >= this.emitterState.ops.length) {
+        var state = this.emitterState.stack.pop();
+        if (state) {
+            _.extend(this.emitterState, { ops: state.ops, opIx: state.opIx, mod: state.mod });
+            this.emitNext();
+        } else {
+            this.resetEmitterMod({});
+            this.emitterState.callback();
+        }
+        return;
+    }
+    var op = this.emitterState.ops[this.emitterState.opIx];
+    if (op.type === 'group') {
+        if (op.mod) {
+            this.setEmitterMod(op.mod);
+        }
+        this.emitterState.stack.push({
+            ops: this.emitterState.ops,
+            opIx: this.emitterState.opIx + 1,
+            mod: _.clone(this.emitterState.mod)
+        });
+        _.extend(this.emitterState, {
+            ops: op.value,
+            opIx: 0,
+            mod: _.clone(this.emitterState.activeMod)
+        });
+        this.emitNext();
+        return;
+    }
+    this.emitterState.opIx++;
+    if (op.mod) {
+        this.setEmitterMod(op.mod);
+    }
+    switch (op.type) {
+        case 'text':
+            this.emitter.text(op.value);
+            break;
+        case 'key':
+            this.emitter.key(op.value);
+            break;
+        case 'cmd':
+            var method = this.emitter[op.value];
+            if (!method) {
+                throw 'Bad cmd: ' + op.value;
+            }
+            method.call(this.emitter, op.arg);
+            break;
+        default:
+            throw 'Bad op: ' + op.type;
+    }
+};
+
+AutoTypeRunner.prototype.setEmitterMod = function(addedMod) {
+    Object.keys(addedMod).forEach(function(mod) {
+        if (addedMod[mod] && !this.emitterState.activeMod[mod]) {
+            this.emitter.setMod(mod, true);
+            this.emitterState.activeMod[mod] = true;
+        }
+    }, this);
+};
+
+AutoTypeRunner.prototype.resetEmitterMod = function(targetState) {
+    Object.keys(this.emitterState.activeMod).forEach(function(mod) {
+        if (this.emitterState.activeMod[mod] && !targetState[mod]) {
+            this.emitter.setMod(mod, false);
+            delete this.emitterState.activeMod[mod];
+        }
+    }, this);
 };
 
 module.exports = AutoTypeRunner;

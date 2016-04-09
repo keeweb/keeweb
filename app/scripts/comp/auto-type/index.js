@@ -39,7 +39,6 @@ var AutoType = {
                     return callback();
                 });
             });
-            runner.run();
         } catch (ex) {
             logger.error('Parse error', ex);
             return callback(ex);
