@@ -79,11 +79,11 @@ var AutoType = {
 
     getActiveWindowTitle: function(callback) {
         logger.debug('Get window title');
-        return this.helper.getActiveWindowTitle(function(err, title) {
+        return this.helper.getActiveWindowTitle(function(err, title, url) {
             if (err) {
                 logger.error('Error get window title', err);
             } else {
-                logger.debug('Window title: ', title);
+                logger.debug('Window title', title, url);
             }
             return callback(err, title);
         });
