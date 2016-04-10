@@ -26,6 +26,10 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
     AutoTypeHelper.exec(ForeMostAppScript, function(err, out) {
         if (err) { return callback(err); }
         var appName = out.trim();
+        // getting urls and titles from Chrome or Safari:
+        // - will suit in 90% cases
+        // - does not require assistive access
+        // - allows to get url
         if (['Google Chrome', 'Chromium', 'Google Chrome Canary'].indexOf(appName) >= 0) {
             AutoTypeHelper.exec(ChromeScript.replace(/\{}/g, appName), function(err, out) {
                 if (err) { return callback(err); }
@@ -39,6 +43,7 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
                 return callback(null, parts[1].trim(), parts[0].trim());
             });
         } else {
+            // special cases are not available. this method may ask the user about assistive access
             AutoTypeHelper.exec(OtherAppsScript.replace(/\{}/g, appName), function(err, out) {
                 if (err) { return callback(err); }
                 return callback(null, out.trim());
