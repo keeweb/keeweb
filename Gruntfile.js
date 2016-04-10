@@ -240,7 +240,7 @@ module.exports = function(grunt) {
                 },
                 plugins: [
                     new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-                    new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) 2015 ' + pkg.author +
+                    new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) 2015 ' + pkg.author.name +
                         ', opensource.org/licenses/' + pkg.license),
                     new webpack.optimize.OccurenceOrderPlugin(),
                     new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
