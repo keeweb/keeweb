@@ -386,6 +386,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     copyKeyPress: function(editView) {
+        if (this.isHidden()) { return; }
         if (!window.getSelection().toString()) {
             var fieldValue = editView.value;
             var fieldText = fieldValue && fieldValue.isProtected ? fieldValue.getText() : fieldValue;
