@@ -90,6 +90,7 @@ input[type=text], input[type=password], textarea, input:not([type]) {
 
 textarea {
   resize: vertical;
+  color: inherit;
 }
 
 input[type="search"] {
