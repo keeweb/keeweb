@@ -1,5 +1,14 @@
 Release notes
 -------------
+
+##### v1.1.2 (2016-04-10)
+Hotfix  
+`+` option to try beta version in desktop app  
+`-` fix notes field text color  
+`-` fix some console assertions  
+`-` fix message about not found files  
+`-` fix deletion to trash when there's no trash folder  
+
 ##### v1.1.1 (2016-04-07)
 Hotfix  
 `+` minimize app on linux  

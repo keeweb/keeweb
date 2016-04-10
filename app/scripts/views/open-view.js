@@ -535,9 +535,13 @@ var OpenView = Backbone.View.extend({
                 allStorageFiles[file.path] = file;
             });
             if (!buttons.length) {
+                var body = Locale.openNothingFoundBody;
+                if (dir) {
+                    body += ' ' + Locale.openNothingFoundBodyFolder.replace('{}', dir);
+                }
                 Alerts.error({
                     header: Locale.openNothingFound,
-                    body: Locale.openNothingFoundBody.replace('{}', dir)
+                    body: body
                 });
                 return;
             }

@@ -4,6 +4,7 @@ var Links = {
     Repo: 'https://github.com/antelle/keeweb',
     Desktop: 'https://github.com/antelle/keeweb/releases/latest',
     WebApp: 'https://app.keeweb.info',
+    BetaWebApp: 'https://beta.keeweb.info',
     License: 'https://github.com/antelle/keeweb/blob/master/LICENSE.txt',
     LicenseApache: 'https://opensource.org/licenses/Apache-2.0',
     UpdateDesktop: 'https://github.com/antelle/keeweb/releases/download/v{ver}/UpdateDesktop.zip',

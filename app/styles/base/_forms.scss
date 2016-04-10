@@ -47,6 +47,7 @@ input[type=text], input[type=password], textarea, input:not([type]) {
   &::-ms-clear { display: none; }
 
   @include th {
+    color: text-color();
     background-color: background-color();
     border: base-border();
     box-shadow: form-box-shadow();
