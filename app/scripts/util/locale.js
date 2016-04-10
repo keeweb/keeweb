@@ -287,6 +287,9 @@ var Locale = {
     setGenStorage: 'Storage',
     setGenAdvanced: 'Advanced',
     setGenDevTools: 'Show dev tools',
+    setGenTryBeta: 'Try beta version for one time',
+    setGenTryBetaWarning: 'Unsaved files',
+    setGenTryBetaWarningBody: 'Please save all files and click this button again',
 
     setFilePath: 'File path',
     setFileStorage: 'This file is opened from {}.',

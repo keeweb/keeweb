@@ -3,6 +3,7 @@ Release notes
 
 ##### v1.1.2 (2016-04-*)
 Hotfix  
+`+` option to try beta version in desktop app  
 `-` fix notes field text color  
 `-` fix some console assertions  
 `-` fix message about not found files  
