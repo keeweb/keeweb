@@ -8,6 +8,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../../models/app-settings-model'),
     UpdateModel = require('../../models/update-model'),
     RuntimeInfo = require('../../comp/runtime-info'),
+    Alerts = require('../../comp/alerts'),
     Storage = require('../../storage'),
     FeatureDetector = require('../../util/feature-detector'),
     Locale = require('../../util/locale'),
@@ -34,7 +35,8 @@ var SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
         'change .settings__general-prv-check': 'changeStorageEnabled',
-        'click .settings__general-dev-tools-link': 'openDevTools'
+        'click .settings__general-dev-tools-link': 'openDevTools',
+        'click .settings__general-try-beta-link': 'tryBeta'
     },
 
     views: {},
@@ -259,6 +261,17 @@ var SettingsGeneralView = Backbone.View.extend({
     openDevTools: function() {
         if (Launcher) {
             Launcher.openDevTools();
+        }
+    },
+
+    tryBeta: function() {
+        if (this.appModel.files.hasUnsavedFiles()) {
+            Alerts.info({
+                header: Locale.setGenTryBetaWarning,
+                body: Locale.setGenTryBetaWarningBody
+            });
+        } else {
+            location.href = Links.BetaWebApp;
         }
     }
 });
