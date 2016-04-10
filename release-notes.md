@@ -1,7 +1,7 @@
 Release notes
 -------------
 
-##### v1.1.2 (2016-04-*)
+##### v1.1.2 (2016-04-10)
 Hotfix  
 `+` option to try beta version in desktop app  
 `-` fix notes field text color  
