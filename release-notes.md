@@ -4,7 +4,8 @@ Release notes
 ##### v1.1.2 (2016-04-*)
 Hotfix  
 `-` fix notes field text color  
-`-` fixed some console assertions  
+`-` fix some console assertions  
+`-` fix message about not found files  
 
 ##### v1.1.1 (2016-04-07)
 Hotfix  
