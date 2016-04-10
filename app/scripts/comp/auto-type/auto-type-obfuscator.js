@@ -7,6 +7,7 @@ logger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.War
 
 var MaxFakeOps = 50;
 var MaxSteps = 1000;
+var MaxCopy = 2;
 var FakeCharAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789O0oIl';
 
 var AutoTypeObfuscator = function(chars) {
@@ -16,6 +17,7 @@ var AutoTypeObfuscator = function(chars) {
     this.inputSel = 0;
     this.ops = [];
     this.stepCount = 0;
+    this.copyCount = 0;
 };
 
 AutoTypeObfuscator.prototype.obfuscate = function() {
@@ -56,14 +58,14 @@ AutoTypeObfuscator.prototype.stepFake = function() {
     this.moveToPos(pos);
     var insert = this.inputChars.length === 0 || Math.random() > 0.3;
     if (insert) {
-        if (Math.random() > 0.1) {
-            this.inputChar(ch);
-        } else {
-            this.copyPaste(ch);
-        }
+        this.inputChar(ch);
     } else {
-        var moveLeft = pos > 0 && Math.random() > 0.5;
+        var moveLeft = Math.random() > 0.5;
         var maxMove = moveLeft ? pos : this.inputChars.length - pos;
+        if (maxMove === 0) {
+            moveLeft = !moveLeft;
+            maxMove = moveLeft ? pos : this.inputChars.length - pos;
+        }
         var moveCount = Math.max(Math.floor(Math.pow(Math.random(), 3) * maxMove), 1);
         if (moveCount <= 1 && Math.random() > 0.5) {
             this.deleteText(moveLeft);
@@ -116,10 +118,11 @@ AutoTypeObfuscator.prototype.stepReal = function() {
     } else {
         var insPos = action.from + Math.floor(Math.random() * (action.to - action.from));
         this.moveToPos(insPos);
-        if (Math.random() > 0.5) {
-            this.inputChar(action.ch);
-        } else {
+        if (this.copyCount < MaxCopy && Math.random() > 0.5) {
+            this.copyCount++;
             this.copyPaste(action.ch);
+        } else {
+            this.inputChar(action.ch);
         }
         this.inputChars[insPos].ix = action.ix;
     }
@@ -159,9 +162,7 @@ AutoTypeObfuscator.prototype.inputChar = function(ch) {
 
 AutoTypeObfuscator.prototype.copyPaste = function(ch) {
     logger.debug('copyPaste', ch);
-    this.ops.push({type: 'cmd', value: 'copyText', arg: ch});
-    this.ops.push({type: 'cmd', value: 'waitComplete'});
-    this.ops.push({type: 'key', value: 'v', mod: {'^': true}});
+    this.ops.push({type: 'cmd', value: 'copyPaste', arg: ch});
     this.inputChars.splice(this.inputCursor, this.inputSel, { ch: ch });
     this.inputCursor++;
     this.inputSel = 0;
@@ -188,12 +189,15 @@ AutoTypeObfuscator.prototype.selectText = function(backward, count) {
 AutoTypeObfuscator.prototype.deleteText = function(backward) {
     logger.debug('deleteText', backward ? 'left' : 'right');
     this.ops.push({ type: 'key', value: backward ? 'bs' : 'del' });
-    var deleteCount = this.inputSel || 1;
-    this.inputChars.splice(backward ? this.inputCursor - deleteCount : this.inputCursor, deleteCount);
-    if (backward) {
-        this.inputCursor--;
+    if (this.inputSel) {
+        this.inputChars.splice(this.inputCursor, this.inputSel);
+        this.inputSel = 0;
+    } else {
+        this.inputChars.splice(backward ? this.inputCursor - 1 : this.inputCursor, 1);
+        if (backward) {
+            this.inputCursor--;
+        }
     }
-    this.inputSel = 0;
 };
 
 module.exports = AutoTypeObfuscator;

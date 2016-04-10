@@ -40,19 +40,19 @@ AutoTypeEmitter.prototype.wait = function(time) {
 };
 
 AutoTypeEmitter.prototype.setDelay = function(delay) {
-    logger.debug('Set delay', delay);
+    logger.debug('SetDelay', delay);
     this.delay = delay || 0;
     this.callback();
 };
 
-AutoTypeEmitter.prototype.copyText = function(text) {
-    logger.debug('Copy text', text);
+AutoTypeEmitter.prototype.copyPaste = function(text) {
+    logger.debug('CopyPaste', text);
     Launcher.setClipboardText(text);
-    this.callback();
+    this.impl.paste(this.callback);
 };
 
 AutoTypeEmitter.prototype.waitComplete = function() {
-    logger.debug('Wait complete');
+    logger.debug('WaitComplete');
     this.impl.waitComplete(this.callback);
 };
 

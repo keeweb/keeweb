@@ -25,6 +25,7 @@ var ModMap = {
 
 var AutoTypeEmitterImpl = function() {
     this.mod = {};
+    this.pendingScript = [];
 };
 
 AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
@@ -40,7 +41,8 @@ AutoTypeEmitterImpl.prototype.text = function(text, callback) {
         return callback();
     }
     text = text.replace(/"/g, '\\"');
-    this.runScript('keystroke "' + text + '"'+ this.modString(), callback);
+    this.pendingScript.push('keystroke "' + text + '"'+ this.modString());
+    callback();
 };
 
 AutoTypeEmitterImpl.prototype.key = function(key, callback) {
@@ -50,11 +52,24 @@ AutoTypeEmitterImpl.prototype.key = function(key, callback) {
         }
         key = KeyMap[key];
     }
-    this.runScript('key code ' + key + this.modString(), callback);
+    this.pendingScript.push('key code ' + key + this.modString());
+    callback();
+};
+
+AutoTypeEmitterImpl.prototype.paste = function(callback) {
+    this.pendingScript.push('keystroke "v" using command down');
+    this.pendingScript.push('delay 0.2');
+    this.waitComplete(callback);
 };
 
 AutoTypeEmitterImpl.prototype.waitComplete = function(callback) {
-    callback();
+    if (this.pendingScript.length) {
+        var script = this.pendingScript.join('\n');
+        this.pendingScript.length = 0;
+        this.runScript(script, callback);
+    } else {
+        callback();
+    }
 };
 
 AutoTypeEmitterImpl.prototype.modString = function() {
@@ -70,7 +85,8 @@ AutoTypeEmitterImpl.prototype.mapMod = function(mod) {
 };
 
 AutoTypeEmitterImpl.prototype.runScript = function(script, callback) {
-    var ps = spawn('osascript', ['-e', 'tell application "System Events" to ' + script]);
+    script = 'tell application "System Events" \n' + script + '\nend tell';
+    var ps = spawn('osascript', ['-e', script]);
     ps.on('close', function(code) { callback(code ? 'Exit code ' + code : undefined); });
 };
 

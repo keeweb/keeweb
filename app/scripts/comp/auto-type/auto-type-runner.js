@@ -312,14 +312,20 @@ AutoTypeRunner.prototype.run = function(callback) {
         ops: this.ops,
         opIx: 0,
         mod: {},
-        activeMod: {}
+        activeMod: {},
+        finished: null
     };
     this.emitNext();
 };
 
 AutoTypeRunner.prototype.emitNext = function(err) {
     if (err) {
+        this.emitterState.finished = true;
         this.emitterState.callback(err);
+        return;
+    }
+    if (this.emitterState.finished) {
+        this.emitterState.callback();
         return;
     }
     this.resetEmitterMod(this.emitterState.mod);
@@ -330,7 +336,8 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             this.emitNext();
         } else {
             this.resetEmitterMod({});
-            this.emitterState.callback();
+            this.emitterState.finished = true;
+            this.emitter.waitComplete();
         }
         return;
     }
