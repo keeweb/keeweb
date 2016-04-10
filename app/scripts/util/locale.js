@@ -345,6 +345,7 @@ var Locale = {
     setShCopyPass: 'copy password or selected field',
     setShCopyUser: 'copy username',
     setShCopyUrl: 'copy website',
+    setShAutoType: 'auto-type selected entry',
     setShPrev: 'go to previous item',
     setShNext: 'go to next item',
     setShCreateEntry: 'create entry',
@@ -355,6 +356,7 @@ var Locale = {
     setShCopyPassGlobal: 'copy password (when app is in background)',
     setShCopyUserGlobal: 'copy username (when app is in background)',
     setShCopyUrlGlobal: 'copy website (when app is in background)',
+    setShAutoTypeGlobal: 'auto-type (when app is in background)',
     setShLock: 'lock database',
 
     setAboutTitle: 'About',

@@ -24,6 +24,7 @@ var Backbone = require('backbone'),
     Alerts = require('../../comp/alerts'),
     CopyPaste = require('../../comp/copy-paste'),
     OtpQrReqder = require('../../comp/otp-qr-reader'),
+    AutoType = require('../../comp/auto-type'),
     Format = require('../../util/format'),
     Locale = require('../../util/locale'),
     Tip = require('../../util/tip'),
@@ -62,6 +63,7 @@ var DetailsView = Backbone.View.extend({
         this.initScroll();
         this.listenTo(Backbone, 'select-entry', this.showEntry);
         this.listenTo(Backbone, 'copy-password', this.copyPassword);
+        this.listenTo(Backbone, 'auto-type', this.autoTypeGlobal);
         this.listenTo(Backbone, 'copy-user', this.copyUserName);
         this.listenTo(Backbone, 'copy-url', this.copyUrl);
         this.listenTo(OtpQrReqder, 'qr-read', this.otpCodeRead);
@@ -69,6 +71,7 @@ var DetailsView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyPassword, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserName, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrl, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_T, this.autoType, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
     },
@@ -738,6 +741,17 @@ var DetailsView = Backbone.View.extend({
             fieldView.edit();
             this.fieldViews.push(fieldView);
         }
+    },
+
+    autoType: function() {
+        var entry = this.model;
+        AutoType.hideWindow(function() {
+            AutoType.run(entry, '{password}', false, _.noop);
+        });
+    },
+
+    autoTypeGlobal: function() {
+        // TODO
     }
 });
 

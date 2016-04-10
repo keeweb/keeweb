@@ -247,7 +247,8 @@ function setGlobalShortcuts() {
     var shortcuts = {
         C: 'copy-password',
         B: 'copy-user',
-        U: 'copy-url'
+        U: 'copy-url',
+        T: 'auto-type'
     };
     Object.keys(shortcuts).forEach(function(key) {
         var shortcut = shortcutModifiers + key;

@@ -9,6 +9,9 @@
     <div><span class="shortcut">{{{cmd}}}C</span> {{res 'setShCopyPass'}}</div>
     <div><span class="shortcut">{{{cmd}}}B</span> {{res 'setShCopyUser'}}</div>
     <div><span class="shortcut">{{{cmd}}}U</span> {{res 'setShCopyUrl'}}</div>
+    {{#if autoTypeSupported}}
+    <div><span class="shortcut">{{{cmd}}}T</span> {{res 'setShAutoType'}}</div>
+    {{/if}}
     <div><span class="shortcut">&uarr;</span> {{res 'setShPrev'}}</div>
     <div><span class="shortcut">&darr;</span> {{res 'setShNext'}}</div>
     <div><span class="shortcut">{{{alt}}}N</span> {{res 'setShCreateEntry'}}</div>
@@ -21,5 +24,6 @@
     <div><span class="shortcut {{#if globalIsLarge}}shortcut-large{{/if}}">{{{global}}}C</span> {{res 'setShCopyPassGlobal'}}</div>
     <div><span class="shortcut {{#if globalIsLarge}}shortcut-large{{/if}}">{{{global}}}B</span> {{res 'setShCopyUserGlobal'}}</div>
     <div><span class="shortcut {{#if globalIsLarge}}shortcut-large{{/if}}">{{{global}}}U</span> {{res 'setShCopyUrlGlobal'}}</div>
+    <div><span class="shortcut {{#if globalIsLarge}}shortcut-large{{/if}}">{{{global}}}T</span> {{res 'setShAutoTypeGlobal'}}</div>
     {{/if}}
 </div>

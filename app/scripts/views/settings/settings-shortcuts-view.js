@@ -13,7 +13,8 @@ var SettingsShortcutsView = Backbone.View.extend({
             alt: FeatureDetector.altShortcutSymbol(true),
             global: FeatureDetector.globalShortcutSymbol(true),
             globalIsLarge: FeatureDetector.globalShortcutIsLarge(),
-            globalShortcutsSupported: !!Launcher
+            globalShortcutsSupported: !!Launcher,
+            autoTypeSupported: !!Launcher
         });
     }
 });
