@@ -47,7 +47,7 @@ AutoTypeObfuscator.prototype.step = function() {
         this.stepReal();
     }
     if (logger.getLevel() >= Logger.Level.Debug) {
-        logger.debug('value', this.inputChars.map(ic => ic.ch).join(''));
+        logger.debug('value', this.inputChars.map(function(ic) { return ic.ch; }).join(''));
     }
 };
 
