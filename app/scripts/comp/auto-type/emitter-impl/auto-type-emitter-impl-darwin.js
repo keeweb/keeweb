@@ -58,7 +58,7 @@ AutoTypeEmitterImpl.prototype.key = function(key, callback) {
 
 AutoTypeEmitterImpl.prototype.paste = function(callback) {
     this.pendingScript.push('keystroke "v" using command down');
-    this.pendingScript.push('delay 0.2');
+    this.pendingScript.push('delay 0.5');
     this.waitComplete(callback);
 };
 
