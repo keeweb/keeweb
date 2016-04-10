@@ -46,6 +46,7 @@ app.on('window-all-closed', function() {
     }
 });
 app.on('ready', function() {
+    setAppOptions();
     createMainWindow();
     setGlobalShortcuts();
 });
@@ -89,6 +90,10 @@ app.minimizeApp = function() {
 app.getMainWindow = function() {
     return mainWindow;
 };
+
+function setAppOptions() {
+    app.commandLine.appendSwitch('disable-background-timer-throttling');
+}
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
