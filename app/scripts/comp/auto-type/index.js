@@ -32,7 +32,7 @@ var AutoType = {
                         logger.error('Obfuscate error', e);
                         return callback(e);
                     }
-                    logger.debug('Obfuscated', that.printOps(runner.ops));
+                    logger.debug('Obfuscated');
                 }
                 runner.run(function(err) {
                     if (err) {
