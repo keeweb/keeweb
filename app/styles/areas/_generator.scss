@@ -33,7 +33,7 @@
     height: 50px;
     text-align: center;
     white-space: pre-wrap;
-    word-wrap: break-word;
+    word-break: break-all;
     &--long-pass {
       font-size: .75em;
     }
