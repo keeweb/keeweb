@@ -46,9 +46,11 @@ app.on('window-all-closed', function() {
     }
 });
 app.on('ready', function() {
-    setAppOptions();
-    createMainWindow();
-    setGlobalShortcuts();
+    if (!checkSingleInstance()) {
+        setAppOptions();
+        createMainWindow();
+        setGlobalShortcuts();
+    }
 });
 app.on('open-file', function(e, path) {
     e.preventDefault();
@@ -91,6 +93,17 @@ app.getMainWindow = function() {
     return mainWindow;
 };
 
+function checkSingleInstance() {
+    var shouldQuit = app.makeSingleInstance(function(/*commandLine, workingDirectory*/) {
+        restoreMainWindow();
+    });
+
+    if (shouldQuit) {
+        app.quit();
+    }
+    return shouldQuit;
+}
+
 function setAppOptions() {
     app.commandLine.appendSwitch('disable-background-timer-throttling');
 }
@@ -124,16 +137,24 @@ function createMainWindow() {
 }
 
 function restoreMainWindow() {
-    appIcon.destroy();
-    appIcon = null;
-    mainWindow.restore();
+    destroyAppIcon();
+    if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+    }
     mainWindow.setSkipTaskbar(false);
+    mainWindow.focus();
 }
 
 function closeMainWindow() {
-    appIcon.destroy();
-    appIcon = null;
+    destroyAppIcon();
     emitBackboneEvent('launcher-exit-request');
+}
+
+function destroyAppIcon() {
+    if (appIcon) {
+        appIcon.destroy();
+        appIcon = null;
+    }
 }
 
 function delaySaveMainWindowPosition() {
