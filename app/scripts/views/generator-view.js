@@ -55,7 +55,7 @@ var GeneratorView = Backbone.View.extend({
             { name: 'Hash128', length: 32, lower: true, digits: true },
             { name: 'Hash256', length: 64, lower: true, digits: true }
         ];
-        if (this.model.password) {
+        if (this.model.password && (!this.model.password.isProtected || this.model.password.byteLength)) {
             var derivedPreset = { name: 'Derived' };
             _.extend(derivedPreset, PasswordGenerator.deriveOpts(this.model.password));
             for (var i = 0; i < this.valuesMap.length; i++) {
