@@ -171,7 +171,7 @@ var Locale = {
     detHistoryCurState: 'current state',
     detHistoryCurUnsavedState: 'current unsaved state',
     detBackToList: 'back to list',
-    detSetIconColor: 'Change icon color',
+    detSetIconColor: 'Change color',
     detSetIcon: 'Change icon',
     detDropAttachments: 'drop attachments here',
     detDelEntry: 'Delete',
