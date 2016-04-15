@@ -27,6 +27,7 @@ var FooterView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_S, this.saveAll, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_COMMA, this.toggleSettings, this, KeyHandler.SHORTCUT_ACTION);
 
+        this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(this.model.files, 'update reset change', this.render);
         this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render);
     },
@@ -37,6 +38,13 @@ var FooterView = Backbone.View.extend({
             updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
         }, { plain: true });
         return this;
+    },
+
+    viewHidden: function() {
+        if (this.views.gen) {
+            this.views.gen.remove();
+            delete this.views.gen;
+        }
     },
 
     lockWorkspace: function() {
