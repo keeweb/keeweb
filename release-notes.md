@@ -6,6 +6,7 @@ Release notes
 
 ##### v1.1.3 (2016-04-*)
 `+` fix some layout bugs  
+`+` google drive stability improvements  
 
 ##### v1.1.2 (2016-04-10)
 Hotfix  
