@@ -1,7 +1,7 @@
 {
   "name": "keeweb",
   "authors": [
-    "Antelle <dmitryvit@gmail.com>"
+    "Antelle <antelle.net@gmail.com>"
   ],
   "description": "Free cross-platform password manager compatible with KeePass",
   "main": "app/index.html",
