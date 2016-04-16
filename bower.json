@@ -3,7 +3,7 @@
   "authors": [
     "Antelle <dmitryvit@gmail.com>"
   ],
-  "description": "KeePass web app",
+  "description": "Free cross-platform password manager compatible with KeePass",
   "main": "app/index.html",
   "moduleType": [
     "amd"
