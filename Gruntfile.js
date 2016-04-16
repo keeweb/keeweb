@@ -453,7 +453,7 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('desktop', [
-        // 'default',
+        'default',
         'gitinfo',
         'clean:desktop_tmp',
         'clean:desktop_dist',
