@@ -2,6 +2,7 @@ Release notes
 -------------
 
 ##### v1.2.0 (TBD)
+`+` register file associations  
 `-` prevent second app instance on windows  
 
 ##### v1.1.3 (2016-04-*)
