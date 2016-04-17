@@ -71,6 +71,9 @@ var Locale = {
 
     grpTitle: 'Group',
     grpSearch: 'Enable searching entries in this group',
+    grpAutoType: 'Enable auto-type',
+    grpAutoTypeSeq: 'Auto-type sequence',
+    grpAutoTypeSeqDefault: 'Use default auto-type sequence',
 
     keyChangeTitle: 'Master Key Changed',
     keyChangeMessage: 'Master key was changed for this database. Please enter a new key',
@@ -113,6 +116,7 @@ var Locale = {
     openDemo: 'Demo',
     openSettings: 'Settings',
     openCaps: 'Caps Lock is on',
+    openClickToOpen: 'Click to open a file',
     openKeyFile: 'key file',
     openKeyFileDropbox: '(from dropbox)',
     openDropHere: 'drop files here',

@@ -2,7 +2,8 @@
 
 var Backbone = require('backbone'),
     Scrollable = require('../mixins/scrollable'),
-    IconSelectView = require('./icon-select-view');
+    IconSelectView = require('./icon-select-view'),
+    Launcher = require('../comp/launcher');
 
 var GrpView = Backbone.View.extend({
     template: require('templates/grp.hbs'),
@@ -12,7 +13,9 @@ var GrpView = Backbone.View.extend({
         'click .grp__buttons-trash': 'moveToTrash',
         'click .grp__back-button': 'returnToApp',
         'input #grp__field-title': 'changeTitle',
-        'change #grp__check-search': 'setEnableSearching'
+        'input #grp__field-auto-type-seq': 'changeAutoTypeSeq',
+        'change #grp__check-search': 'setEnableSearching',
+        'change #grp__check-auto-type': 'setEnableAutoType'
     },
 
     initialize: function() {
@@ -27,7 +30,10 @@ var GrpView = Backbone.View.extend({
                 icon: this.model.get('icon') || 'folder',
                 customIcon: this.model.get('customIcon'),
                 enableSearching: this.model.get('enableSearching') !== false,
-                readonly: this.model.get('top')
+                readonly: this.model.get('top'),
+                canAutoType: !!Launcher,
+                autoTypeSeq: this.model.get('autoTypeSeq'),
+                autoTypeEnabled: this.model.get('enableAutoType') !== false
             }, { plain: true });
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();
@@ -68,6 +74,11 @@ var GrpView = Backbone.View.extend({
         }
     },
 
+    changeAutoTypeSeq: function(e) {
+        var seq = $.trim(e.target.value);
+        this.model.setAutoTypeSeq(seq);
+    },
+
     showIconsSelect: function() {
         if (this.views.sub) {
             this.removeSubView();
@@ -105,6 +116,11 @@ var GrpView = Backbone.View.extend({
     setEnableSearching: function(e) {
         var enabled = e.target.checked;
         this.model.setEnableSearching(enabled);
+    },
+
+    setEnableAutoType: function(e) {
+        var enabled = e.target.checked;
+        this.model.setEnableAutoType(enabled);
     },
 
     returnToApp: function() {
