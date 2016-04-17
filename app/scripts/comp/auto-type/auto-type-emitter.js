@@ -1,7 +1,6 @@
 'use strict';
 
 var Logger = require('../../util/logger'),
-    Launcher = require('../launcher'),
     AutoTypeEmitterImplFactory = require('./auto-type-emitter-impl-factory');
 
 var logger = new Logger('auto-type-emitter');
