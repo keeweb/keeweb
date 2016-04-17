@@ -36,6 +36,7 @@
             <i class="details__buttons-trash fa fa-trash-o" title="{{res 'detDelEntry'}}" tip-placement="top"></i>
         {{~/if~}}
         <div class="details__attachments">
+            <input type="file" class="details__attachment-input-file hide-by-pos" multiple />
             {{#each attachments as |attachment ix|}}
                 <div class="details__attachment" data-id="{{ix}}"><i class="fa fa-{{attachment.icon}}"></i> {{attachment.title}}</div>
             {{else}}

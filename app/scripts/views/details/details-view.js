@@ -52,6 +52,8 @@ var DetailsView = Backbone.View.extend({
         'click .details__buttons-trash': 'moveToTrash',
         'click .details__buttons-trash-del': 'deleteFromTrash',
         'click .details__back-button': 'backClick',
+        'click .details__attachment-add': 'attachmentBtnClick',
+        'change .details__attachment-input-file': 'attachmentFileChange',
         'dragover .details': 'dragover',
         'dragleave .details': 'dragleave',
         'drop .details': 'drop'
@@ -565,6 +567,18 @@ var DetailsView = Backbone.View.extend({
         this.$el.find('.details').removeClass('details--drag');
         this.dragging = false;
         var files = e.target.files || e.originalEvent.dataTransfer.files;
+        this.addAttachedFiles(files);
+    },
+
+    attachmentBtnClick: function() {
+        this.$el.find('.details__attachment-input-file')[0].click();
+    },
+
+    attachmentFileChange: function(e) {
+        this.addAttachedFiles(e.target.files);
+    },
+
+    addAttachedFiles: function(files) {
         _.forEach(files, function(file) {
             var reader = new FileReader();
             reader.onload = (function() {
