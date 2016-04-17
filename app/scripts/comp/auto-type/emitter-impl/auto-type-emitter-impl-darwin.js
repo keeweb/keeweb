@@ -89,7 +89,10 @@ AutoTypeEmitterImpl.prototype.mapMod = function(mod) {
 
 AutoTypeEmitterImpl.prototype.runScript = function(script, callback) {
     script = 'tell application "System Events" \n' + script + '\nend tell';
-    var ps = spawn('osascript', ['-e', script]);
+    var ps = spawn('osascript');
+    ps.stdin.setEncoding('utf-8');
+    ps.stdin.write(script);
+    ps.stdin.end();
     ps.on('close', function(code) { callback(code ? 'Exit code ' + code : undefined); });
 };
 
