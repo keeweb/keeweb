@@ -56,10 +56,13 @@ AutoTypeEmitterImpl.prototype.key = function(key, callback) {
     callback();
 };
 
-AutoTypeEmitterImpl.prototype.paste = function(callback) {
+AutoTypeEmitterImpl.prototype.copyPaste = function(text, callback) {
+    this.pendingScript.push('delay 0.5');
+    this.pendingScript.push('set the clipboard to "' + text.replace(/"/g, '\\"') + '"');
+    this.pendingScript.push('delay 0.5');
     this.pendingScript.push('keystroke "v" using command down');
     this.pendingScript.push('delay 0.5');
-    this.waitComplete(callback);
+    callback();
 };
 
 AutoTypeEmitterImpl.prototype.waitComplete = function(callback) {

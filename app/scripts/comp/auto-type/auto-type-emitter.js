@@ -47,8 +47,7 @@ AutoTypeEmitter.prototype.setDelay = function(delay) {
 
 AutoTypeEmitter.prototype.copyPaste = function(text) {
     logger.debug('CopyPaste', text);
-    Launcher.setClipboardText(text);
-    this.impl.paste(this.callback);
+    this.impl.copyPaste(text, this.callback);
 };
 
 AutoTypeEmitter.prototype.waitComplete = function() {

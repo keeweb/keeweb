@@ -62,7 +62,8 @@ AutoTypeEmitterImpl.prototype.key = function(key, callback) {
     callback();
 };
 
-AutoTypeEmitterImpl.prototype.paste = function(callback) {
+AutoTypeEmitterImpl.prototype.copyPaste = function(text, callback) {
+    // todo
     this.pendingScript.push('^v');
     this.waitComplete(callback);
 };
