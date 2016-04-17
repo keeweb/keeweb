@@ -75,6 +75,17 @@ var Locale = {
     grpAutoType: 'Enable auto-type',
     grpAutoTypeSeq: 'Auto-type sequence',
     grpAutoTypeSeqDefault: 'Use default auto-type sequence',
+    grpTrash: 'Delete group with all entries',
+
+    tagTitle: 'Tag',
+    tagTrash: 'Remove tag from all entries',
+    tagRename: 'Rename',
+    tagTrashQuestion: 'Remove tag from all entries?',
+    tagTrashQuestionBody: 'This tag will be removed from all entries. There will be no easy way to put it back.',
+    tagExists: 'Tag already exists',
+    tagExistsBody: 'Tag with this name already exists. Please choose another name.',
+    tagBadName: 'Bad name',
+    tagBadNameBody: 'Tag name can not contain characters `,`, `;`, `:`. Please remove them.',
 
     keyChangeTitle: 'Master Key Changed',
     keyChangeMessage: 'Master key was changed for this database. Please enter a new key',

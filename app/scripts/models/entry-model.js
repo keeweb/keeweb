@@ -267,6 +267,19 @@ var EntryModel = Backbone.Model.extend({
         this._fillByEntry();
     },
 
+    renameTag: function(from, to) {
+        var ix = _.findIndex(this.entry.tags, function(tag) { return tag.toLowerCase() === from.toLowerCase(); });
+        if (ix < 0) {
+            return;
+        }
+        this._entryModified();
+        this.entry.tags.splice(ix, 1);
+        if (to) {
+            this.entry.tags.push(to);
+        }
+        this._fillByEntry();
+    },
+
     setField: function(field, val) {
         var hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
         if (hasValue || this.builtInFields.indexOf(field) >= 0) {

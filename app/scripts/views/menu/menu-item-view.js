@@ -156,7 +156,14 @@ var MenuItemView = Backbone.View.extend({
     editItem: function(e) {
         if (this.model.get('active') && this.model.get('editable')) {
             e.stopPropagation();
-            Backbone.trigger('edit-group', this.model);
+            switch (this.model.get('filterKey')) {
+                case 'tag':
+                    Backbone.trigger('edit-tag', this.model);
+                    break;
+                case 'group':
+                    Backbone.trigger('edit-group', this.model);
+                    break;
+            }
         }
     },
 

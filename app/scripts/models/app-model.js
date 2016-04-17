@@ -91,7 +91,7 @@ var AppModel = Backbone.Model.extend({
         if (this.tags.length) {
             this.menu.tagsSection.set('scrollable', true);
             this.menu.tagsSection.setItems(this.tags.map(function (tag) {
-                return {title: tag, icon: 'tag', filterKey: 'tag', filterValue: tag};
+                return {title: tag, icon: 'tag', filterKey: 'tag', filterValue: tag, editable: true};
             }));
         } else {
             this.menu.tagsSection.set('scrollable', false);
@@ -108,6 +108,13 @@ var AppModel = Backbone.Model.extend({
         if (!_.isEqual(oldTags, this.tags)) {
             this._tagsChanged();
         }
+    },
+
+    renameTag: function(from, to) {
+        this.files.forEach(function(file) {
+            file.renameTag(from, to);
+        });
+        this.updateTags();
     },
 
     closeAllFiles: function() {

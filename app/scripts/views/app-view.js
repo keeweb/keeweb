@@ -8,6 +8,7 @@ var Backbone = require('backbone'),
     ListWrapView = require('../views/list-wrap-view'),
     DetailsView = require('../views/details/details-view'),
     GrpView = require('../views/grp-view'),
+    TagView = require('../views/tag-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
     KeyChangeView = require('../views/key-change-view'),
@@ -48,6 +49,7 @@ var AppView = Backbone.View.extend({
         this.views.details = new DetailsView();
         this.views.details.appModel = this.model;
         this.views.grp = new GrpView();
+        this.views.tag = new TagView({ model: this.model });
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
@@ -66,6 +68,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'edit-group', this.editGroup);
+        this.listenTo(Backbone, 'edit-tag', this.editTag);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
         this.listenTo(Backbone, 'user-idle', this.userIdle);
         this.listenTo(Backbone, 'app-minimized', this.appMinimized);
@@ -94,6 +97,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
         this.views.grp.setElement(this.$el.find('.app__grp')).render().hide();
+        this.views.tag.setElement(this.$el.find('.app__tag')).render().hide();
         this.showLastOpenFile();
         return this;
     },
@@ -106,6 +110,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.grp.hide();
+        this.views.tag.hide();
         this.views.footer.toggle(this.model.files.hasOpenFiles());
         this.hideSettings();
         this.hideOpenFile();
@@ -145,6 +150,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.show();
         this.views.details.show();
         this.views.grp.hide();
+        this.views.tag.hide();
         this.views.footer.show();
         this.hideOpenFile();
         this.hideSettings();
@@ -182,6 +188,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.grp.hide();
+        this.views.tag.hide();
         this.hideOpenFile();
         this.hideKeyChange();
         this.views.settings = new SettingsView({ model: this.model });
@@ -198,7 +205,17 @@ var AppView = Backbone.View.extend({
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
+        this.views.tag.hide();
         this.views.grp.show();
+    },
+
+    showEditTag: function() {
+        this.views.listWrap.hide();
+        this.views.list.hide();
+        this.views.listDrag.hide();
+        this.views.details.hide();
+        this.views.grp.hide();
+        this.views.tag.show();
     },
 
     showKeyChange: function(file) {
@@ -212,6 +229,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.grp.hide();
+        this.views.tag.hide();
         this.views.keyChange = new KeyChangeView({ model: file });
         this.views.keyChange.setElement(this.$el.find('.app__body')).render();
         this.views.keyChange.on('accept', this.keyChangeAccept.bind(this));
@@ -322,7 +340,7 @@ var AppView = Backbone.View.extend({
 
     menuSelect: function(opt) {
         this.model.menu.select(opt);
-        if (!this.views.grp.isHidden()) {
+        if (!this.views.grp.isHidden() || !this.views.tag.isHidden()) {
             this.showEntries();
         }
     },
@@ -498,6 +516,15 @@ var AppView = Backbone.View.extend({
         if (group && this.views.grp.isHidden()) {
             this.showEditGroup();
             this.views.grp.showGroup(group);
+        } else {
+            this.showEntries();
+        }
+    },
+
+    editTag: function(tag) {
+        if (tag && this.views.tag.isHidden()) {
+            this.showEditTag();
+            this.views.tag.showTag(tag);
         } else {
             this.showEntries();
         }
