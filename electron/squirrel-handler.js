@@ -12,8 +12,8 @@ var app = require('app'),
     spawn = require('child_process').spawn;
 
 var Reg = {
-    FileKey: 'HKCU\\Software\\Classes\\*\\shell\\KeeWeb',
-    ApplicationsKey: 'HKCU\\Software\\Classes\\Applications\\keeweb.exe'
+    FileKey: 'HKCU\\Software\\Classes\\kdbxfile.1',
+    ExtensionKey: 'HKCU\\Software\\Classes\\.kdbx'
 };
 
 var regPath = process.env.SystemRoot ? path.join(process.env.SystemRoot, 'System32', 'reg.exe') : 'reg.exe',
@@ -26,17 +26,17 @@ function handleSquirrelArg() {
     switch (squirrelCommand) {
         case '--squirrel-install':
             createShortcuts(function() {
-                app.quit(); // installContextMenu(app.quit);
+                installContextMenu(function() { app.quit(); });
             });
             return true;
         case '--squirrel-updated':
             updateShortcuts(function() {
-                app.quit(); // installContextMenu(app.quit);
+                installContextMenu(function() { app.quit(); });
             });
             return true;
         case '--squirrel-uninstall':
             removeShortcuts(function() {
-                app.quit(); // uninstallContextMenu(app.quit);
+                uninstallContextMenu(function() { app.quit(); });
             });
             return true;
         case '--squirrel-obsolete':
@@ -74,30 +74,17 @@ function removeShortcuts(callback) {
 }
 
 function installContextMenu(callback) {
-    var addToRegistry, installFileHandler, installMenu;
-    addToRegistry = function(args, callback) {
+    var addToRegistry = function(args, callback) {
         args.unshift('add');
         args.push('/f');
         return spawnReg(args, callback);
     };
-    installFileHandler = function(callback) {
-        var args;
-        args = [Reg.ApplicationsKey + '\\shell\\open\\command', '/ve', '/d', '"' + process.execPath + '" "%1"'];
-        return addToRegistry(args, callback);
-    };
-    installMenu = function(keyPath, arg, callback) {
-        var args;
-        args = [keyPath, '/ve', '/d', 'Open with KeeWeb'];
-        return addToRegistry(args, function() {
-            args = [keyPath, '/v', 'Icon', '/d', '"' + process.execPath + '"'];
-            return addToRegistry(args, function() {
-                args = [keyPath + '\\command', '/ve', '/d', '"' + process.execPath + '" "' + arg + '"'];
-                return addToRegistry(args, callback);
+    addToRegistry([Reg.ExtensionKey, '/ve', '/d', 'kdbxfile.1'], function() {
+        addToRegistry([Reg.FileKey, '/ve', '/d', 'Password Database'], function() {
+            addToRegistry([Reg.FileKey + '\\DefaultIcon', '/ve', '/d', '"' + process.execPath + '",0'], function () {
+                addToRegistry([Reg.FileKey + '\\shell\\open\\command', '/ve', '/d', '"' + process.execPath + '" "%1"'], callback);
             });
         });
-    };
-    return installMenu(Reg.FileKey, '%1', function() {
-        return installFileHandler(callback);
     });
 }
 
@@ -106,16 +93,16 @@ function uninstallContextMenu(callback) {
         return spawnReg(['delete', keyPath, '/f'], callback);
     };
     return deleteFromRegistry(Reg.FileKey, function() {
-        return deleteFromRegistry(Reg.ApplicationsKey, callback);
+        return deleteFromRegistry(Reg.ExtensionKey, callback);
     });
 }
 
-function spawnUpdate(args) {
-    spawn(updateDotExe, args, { detached: true }).on('close', app.quit);
+function spawnUpdate(args, callback) {
+    spawn(updateDotExe, args, { detached: true }).on('close', callback);
 }
 
 function spawnReg(args, callback) {
-    return spawn(regPath, args, callback);
+    spawn(regPath, args, { detached: true }).on('close', callback);
 }
 
 module.exports = handleSquirrelArg;
