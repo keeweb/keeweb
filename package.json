@@ -70,7 +70,7 @@
       "icon-size": 80
     },
     "win": {
-      "loadingGif": "graphics/background.png"
+      "loadingGif": "graphics/install.gif"
     }
   },
   "directories": {
