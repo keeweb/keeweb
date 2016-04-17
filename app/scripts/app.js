@@ -8,6 +8,7 @@ var AppModel = require('./models/app-model'),
     Alerts = require('./comp/alerts'),
     Updater = require('./comp/updater'),
     AuthReceiver = require('./comp/auth-receiver'),
+    ExportApi = require('./comp/export-api'),
     ThemeChanger = require('./util/theme-changer'),
     Locale = require('./util/locale');
 
@@ -20,6 +21,7 @@ $(function() {
     KeyHandler.init();
     IdleTracker.init();
     PopupNotifier.init();
+    window.kw = ExportApi;
 
     var appModel = new AppModel();
     if (appModel.settings.get('theme')) {
