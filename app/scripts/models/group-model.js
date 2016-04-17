@@ -157,20 +157,66 @@ var GroupModel = MenuItemModel.extend({
 
     setEnableSearching: function(enabled) {
         this._groupModified();
+        var parentEnableSearching = true;
+        var parentGroup = this.parentGroup;
+        while (parentGroup) {
+            if (typeof parentGroup.get('enableSearching') === 'boolean') {
+                parentEnableSearching = parentGroup.get('enableSearching');
+                break;
+            }
+            parentGroup = parentGroup.parentGroup;
+        }
+        if (enabled === parentEnableSearching) {
+            enabled = undefined;
+        }
         this.group.enableSearching = enabled;
-        this.set('enableSearching', enabled);
+        this.set('enableSearching', this.group.enableSearching);
+    },
+
+    getEffectiveEnableSearching: function() {
+        var grp = this;
+        while (grp) {
+            if (typeof grp.get('enableSearching') === 'boolean') {
+                return grp.get('enableSearching');
+            }
+            grp = grp.parentGroup;
+        }
+        return true;
     },
 
     setEnableAutoType: function(enabled) {
         this._groupModified();
+        var parentEnableAutoType = true;
+        var parentGroup = this.parentGroup;
+        while (parentGroup) {
+            if (typeof parentGroup.get('enableAutoType') === 'boolean') {
+                parentEnableAutoType = parentGroup.get('enableAutoType');
+                break;
+            }
+            parentGroup = parentGroup.parentGroup;
+        }
+        if (enabled === parentEnableAutoType) {
+            enabled = undefined;
+        }
         this.group.enableAutoType = enabled;
-        this.set('enableAutoType', enabled);
+        this.set('enableAutoType', this.group.enableAutoType);
+    },
+
+    getEffectiveEnableAutoType: function() {
+        var grp = this;
+        while (grp) {
+            if (typeof grp.get('enableAutoType') === 'boolean') {
+                return grp.get('enableAutoType');
+            }
+            grp = grp.parentGroup;
+        }
+        return true;
     },
 
     setAutoTypeSeq: function(seq) {
         this._groupModified();
         this.group.defaultAutoTypeSeq = seq || undefined;
-        this.set('autoTypeSeq', seq || undefined);
+        this.set('autoTypeSeq', this.group.defaultAutoTypeSeq);
     },
 
     moveToTrash: function() {

@@ -29,11 +29,11 @@ var GrpView = Backbone.View.extend({
                 title: this.model.get('title'),
                 icon: this.model.get('icon') || 'folder',
                 customIcon: this.model.get('customIcon'),
-                enableSearching: this.model.get('enableSearching') !== false,
+                enableSearching: this.model.getEffectiveEnableSearching(),
                 readonly: this.model.get('top'),
                 canAutoType: !!Launcher,
                 autoTypeSeq: this.model.get('autoTypeSeq'),
-                autoTypeEnabled: this.model.get('enableAutoType') !== false
+                autoTypeEnabled: this.model.getEffectiveEnableAutoType()
             }, { plain: true });
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();
