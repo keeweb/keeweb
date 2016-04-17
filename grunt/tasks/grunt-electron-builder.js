@@ -4,6 +4,7 @@ var builder = require('electron-builder');
 var macPackager = require('electron-builder/out/macPackager');
 var platformPackager = require('electron-builder/out/platformPackager');
 var linuxPackager = require('electron-builder/out/linuxPackager');
+var plist = require('plist');
 
 var version;
 

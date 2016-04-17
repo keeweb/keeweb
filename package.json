@@ -62,6 +62,7 @@
     "iconUrl": "https://raw.githubusercontent.com/antelle/keeweb/master/graphics/icon.ico",
     "compression": "maximum",
     "asar": false,
+    "extend-info": "package/osx/extend.plist",
     "osx": {
       "contents": [
         { "x": 438, "y": 344, "type": "link", "path": "/Applications" },
