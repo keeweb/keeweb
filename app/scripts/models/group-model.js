@@ -40,7 +40,8 @@ var GroupModel = MenuItemModel.extend({
             enableAutoType: group.enableAutoType,
             autoTypeSeq: group.defaultAutoTypeSeq,
             top: !parentGroup,
-            drag: !!parentGroup
+            drag: !!parentGroup,
+            collapsible: !!parentGroup
         }, { silent: true });
         this.group = group;
         this.file = file;
@@ -74,7 +75,8 @@ var GroupModel = MenuItemModel.extend({
             iconId: this.group.icon,
             icon: this._iconFromId(this.group.icon),
             customIcon: this._buildCustomIcon(),
-            customIconId: this.group.customIcon ? this.group.customIcon.toString() : null
+            customIconId: this.group.customIcon ? this.group.customIcon.toString() : null,
+            expanded: this.group.expanded !== false
         }, { silent: silent });
     },
 
@@ -97,7 +99,8 @@ var GroupModel = MenuItemModel.extend({
         if (this.isJustCreated) {
             this.isJustCreated = false;
         }
-        // this.group.times.update(); // for now, we don't remember this setting
+        this.file.setModified();
+        this.group.times.update();
     },
 
     forEachGroup: function(callback, includeDisabled) {
@@ -150,7 +153,7 @@ var GroupModel = MenuItemModel.extend({
     },
 
     setExpanded: function(expanded) {
-        this._groupModified();
+        // this._groupModified(); // it's not good to mark the file as modified when a group is collapsed
         this.group.expanded = expanded;
         this.set('expanded', expanded);
     },

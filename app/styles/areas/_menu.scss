@@ -57,6 +57,17 @@
       display: none;
     }
 
+    &-collapse {
+      display: none;
+      .menu__item--collapsed>& {
+        display: block;
+        position: absolute;
+        cursor: pointer;
+        @include position(absolute, 50% null null 1em);
+        @include transform(translateY(-50%));
+      }
+    }
+
     &-body {
       @include area-selectable();
       padding: $base-padding;

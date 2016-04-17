@@ -3,6 +3,7 @@ Release notes
 
 ##### v1.2.0 (TBD)
 `+` allow selecting attachments with click  
+`+` save groups collapsed/expanded state  
 `+` register file associations  
 `-` prevent second app instance on windows  
 

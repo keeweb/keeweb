@@ -39,6 +39,7 @@ var Locale = {
     menuEmptyTrash: 'Empty Trash',
     menuEmptyTrashAlert: 'Empty Trash?',
     menuEmptyTrashAlertBody: 'You will not be able to put items back',
+    menuItemCollapsed: 'Double-click to expand',
 
     alertYes: 'Yes',
     alertNo: 'No',

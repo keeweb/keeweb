@@ -20,7 +20,8 @@ var MenuItemModel = Backbone.Model.extend({
         drag: false,
         drop: false,
         filterKey: null,
-        filterValue: null
+        filterValue: null,
+        collapsible: false
     },
 
     initialize: function(model) {

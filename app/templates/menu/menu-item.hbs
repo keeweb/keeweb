@@ -4,6 +4,7 @@
     {{~#if options.length}} menu__item--with-options {{/if~}}
     {{~#if cls}} {{cls}}{{/if~}}
     ">
+    {{#if collapsible}}<i class="menu__item-collapse fa fa-ellipsis-v muted-color" title="{{res 'menuItemCollapsed'}}"></i>{{/if}}
     <div class="menu__item-body" {{#if drag}}draggable="true"{{/if}}>
         {{#if customIcon~}}
             <img src="{{{customIcon}}}" class="menu__item-icon menu__item-icon--image" />
