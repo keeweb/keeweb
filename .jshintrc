@@ -51,7 +51,7 @@
   "laxbreak"      : false,     // true: Tolerate possibly unsafe line breakings
   "laxcomma"      : false,     // true: Tolerate comma-first style coding
   "loopfunc"      : false,     // true: Tolerate functions being defined in loops
-  "multistr"      : false,     // true: Tolerate multi-line strings
+  "multistr"      : true,     // true: Tolerate multi-line strings
   "noyield"       : false,     // true: Tolerate generator functions with no yield statement in them.
   "notypeof"      : false,     // true: Tolerate invalid typeof operator values
   "proto"         : false,     // true: Tolerate using the `__proto__` property
