@@ -35,9 +35,6 @@ AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitterImpl.prototype.text = function(text, callback) {
-    if (!text) {
-        return callback();
-    }
     text = text.replace(/"/g, '\\"');
     this.pendingScript.push('keystroke "' + text + '"'+ this.modString());
     callback();

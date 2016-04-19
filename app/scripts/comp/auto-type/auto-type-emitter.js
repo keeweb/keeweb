@@ -25,6 +25,9 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 
 AutoTypeEmitter.prototype.text = function(text) {
     logger.debug('Text', text);
+    if (!text) {
+        return this.callback();
+    }
     setTimeout(this.impl.text.bind(this.impl, text, this.callback), this.delay);
 };
 

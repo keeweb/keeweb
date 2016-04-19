@@ -43,9 +43,6 @@ AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitterImpl.prototype.text = function(text, callback) {
-    if (!text) {
-        return callback();
-    }
     text = this.addMod(this.escapeText(text.replace(TextReplaceRegex, function(match) { return '{' + match + '}'; })));
     this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '")');
     callback();
