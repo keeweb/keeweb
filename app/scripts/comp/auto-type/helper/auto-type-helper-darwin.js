@@ -2,8 +2,6 @@
 
 var Launcher = require('../../launcher');
 
-var spawn = Launcher.req('child_process').spawn;
-
 var ForeMostAppScript = 'tell application "System Events" to set frontApp to name of first process whose frontmost is true';
 var ChromeScript = 'tell application "{}" to set appUrl to URL of active tab of front window\n' +
     'tell application "{}" to set appTitle to title of active tab of front window\n' +
@@ -53,21 +51,10 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
 };
 
 AutoTypeHelper.exec = function(script, callback) {
-    var ps = spawn('osascript', ['-e', script]);
-    var stderr = '';
-    var stdout = '';
-    ps.stdout.on('data', function(data) {
-        stdout += data.toString();
-    });
-    ps.stderr.on('data', function(data) {
-        stderr += data.toString();
-    });
-    ps.on('close', function(code) {
-        if (code) {
-            callback('Exit code ' + code + ': ' + stderr + (stdout ? '\nout: ' + stdout : ''));
-        } else {
-            callback(null, stdout);
-        }
+    Launcher.spawn({
+        cmd: 'osascript',
+        args: ['-e', script],
+        complete: callback
     });
 };
 

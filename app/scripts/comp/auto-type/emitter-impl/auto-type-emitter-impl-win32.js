@@ -2,8 +2,6 @@
 
 var Launcher = require('../../launcher');
 
-var spawn = Launcher.req('child_process').spawn;
-
 var KeyMap = {
     tab: '{tab}', enter: '{enter}', space: '{space}',
     up: '{up}', down: '{down}', left: '{left}', right: '{right}', home: '{home}', end: '{end}', pgup: '{pgup}', pgdn: '{pgdn}',
@@ -49,7 +47,7 @@ AutoTypeEmitterImpl.prototype.text = function(text, callback) {
         return callback();
     }
     text = this.addMod(this.escapeText(text.replace(TextReplaceRegex, function(match) { return '{' + match + '}'; })));
-    this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '");');
+    this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '")');
     callback();
 };
 
@@ -66,18 +64,18 @@ AutoTypeEmitterImpl.prototype.key = function(key, callback) {
         Object.keys(this.mod).forEach(function(mod) { this.pendingScript.push('[KwHelper]::Up(' + ModVk[mod] + ')'); }, this);
     } else {
         var text = this.addMod(key);
-        this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '");');
+        this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '")');
     }
     callback();
 };
 
 AutoTypeEmitterImpl.prototype.copyPaste = function(text, callback) {
-    this.pendingScript.push('[System.Threading.Thread]::Sleep(5000)');
+    this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
     this.pendingScript.push('[System.Windows.Forms.Clipboard]::SetText("' + this.escapeText(text) + '")');
-    this.pendingScript.push('[System.Threading.Thread]::Sleep(5000)');
+    this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
     this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("+{ins}")');
-    this.pendingScript.push('[System.Threading.Thread]::Sleep(5000)');
-    this.waitComplete(callback);
+    this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
+    callback();
 };
 
 AutoTypeEmitterImpl.prototype.waitComplete = function(callback) {
@@ -103,25 +101,29 @@ AutoTypeEmitterImpl.prototype.addMod = function(text) {
 };
 
 AutoTypeEmitterImpl.prototype.runScript = function(script, callback) {
-    script = 'Add-Type @"\
-using System;\
-using System.Runtime.InteropServices;\
-public static class KwHelper {\
-    [DllImport("user32.dll")]\
-    static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);\
-    public static void Down(byte code) { keybd_event(code, 0, 1, UIntPtr.Zero); }\
-    public static void Up(byte code) { keybd_event(code, 0, 3, UIntPtr.Zero); }\
-    public static void Press(byte code) { Down(code); Up(code); }\
-}\
-"@\
-[Console]::InputEncoding = [System.Text.Encoding]::UTF8\
-[System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")\n' + script;
+    script =
+'Add-Type @"\n' +
+'using System;\n' +
+'using System.Runtime.InteropServices;\n' +
+'public static class KwHelper {\n' +
+    '[DllImport("user32.dll")]\n' +
+    'static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);\n' +
+    'public static void Down(byte code) { keybd_event(code, 0, 1, UIntPtr.Zero); }\n' +
+    'public static void Up(byte code) { keybd_event(code, 0, 3, UIntPtr.Zero); }\n' +
+    'public static void Press(byte code) { Down(code); Up(code); }\n' +
+'}\n' +
+'"@\n\n' +
+'[Console]::InputEncoding = [System.Text.Encoding]::UTF8\n' +
+'[Console]::OutputEncoding = [System.Text.Encoding]::UTF8\n' +
+'[System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")\n' +
+script;
 
-    var ps = spawn('powershell', ['-Command', '-']);
-    ps.stdin.setEncoding('utf-8');
-    ps.stdin.write(script);
-    ps.stdin.end();
-    ps.on('close', function(code) { callback(code ? 'Exit code ' + code : undefined); });
+    Launcher.spawn({
+        cmd: 'powershell',
+        args: ['-Command', '-'],
+        data: script,
+        complete: callback
+    });
 };
 
 module.exports = AutoTypeEmitterImpl;

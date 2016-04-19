@@ -2,8 +2,6 @@
 
 var Launcher = require('../../launcher');
 
-var spawn = Launcher.req('child_process').spawn;
-
 var KeyMap = {
     tab: 48, enter: 36, space: 49,
     up: 126, down: 125, left: 123, right: 124, home: 115, end: 119, pgup: 116, pgdn: 121,
@@ -89,11 +87,11 @@ AutoTypeEmitterImpl.prototype.mapMod = function(mod) {
 
 AutoTypeEmitterImpl.prototype.runScript = function(script, callback) {
     script = 'tell application "System Events" \n' + script + '\nend tell';
-    var ps = spawn('osascript');
-    ps.stdin.setEncoding('utf-8');
-    ps.stdin.write(script);
-    ps.stdin.end();
-    ps.on('close', function(code) { callback(code ? 'Exit code ' + code : undefined); });
+    Launcher.spawn({
+        cmd: 'osascript',
+        data: script,
+        complete: callback
+    });
 };
 
 module.exports = AutoTypeEmitterImpl;

@@ -5,7 +5,7 @@ var Logger = require('../../util/logger');
 var logger = new Logger('auto-type-obfuscator');
 logger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);
 
-var MaxFakeOps = 50;
+var MaxFakeOps = 30;
 var MaxSteps = 1000;
 var MaxCopy = 2;
 var FakeCharAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789O0oIl';

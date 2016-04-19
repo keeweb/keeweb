@@ -1,9 +1,12 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Locale = require('../util/locale');
+    Locale = require('../util/locale'),
+    Logger = require('../util/logger');
 
 var Launcher;
+
+var logger = new Logger('launcher');
 
 if (window.process && window.process.versions && window.process.versions.electron) {
     /* jshint node:true */
@@ -127,6 +130,42 @@ if (window.process && window.process.versions && window.process.versions.electro
                 win.minimize();
             }
             return true;
+        },
+        spawn: function(config) {
+            var ts = logger.ts();
+            var complete = config.complete;
+            var ps = this.req('child_process').spawn(config.cmd, config.args);
+            [ps.stdin, ps.stdout, ps.stderr].forEach(function(s) { s.setEncoding('utf-8'); });
+            var stderr = '';
+            var stdout = '';
+            ps.stderr.on('data', function(d) { stderr += d.toString('utf-8'); });
+            ps.stdout.on('data', function(d) { stdout += d.toString('utf-8'); });
+            ps.on('close', function(code) {
+                stdout = stdout.trim();
+                stderr = stderr.trim();
+                var msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
+                if (code) {
+                    logger.error(msg + '\n' + stdout + '\n' + stderr);
+                } else {
+                    logger.info(msg + (stdout ? '\n' + stdout : ''));
+                }
+                if (complete) {
+                    complete(code ? 'Exit code ' + code : null, stdout, code);
+                    complete = null;
+                }
+            });
+            ps.on('error', function(err) {
+                logger.error('spawn error: ' + config.cmd + ', ' + logger.ts(ts), err);
+                if (complete) {
+                    complete(err);
+                    complete = null;
+                }
+            });
+            if (config.data) {
+                ps.stdin.write(config.data);
+                ps.stdin.end();
+            }
+            return ps;
         },
         platform: function() {
             return process.platform;
