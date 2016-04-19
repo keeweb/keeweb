@@ -53,8 +53,8 @@ AutoTypeEmitter.prototype.key = function(key) {
 };
 
 AutoTypeEmitter.prototype.copyPaste = function(text) {
-    // TODO
-    this.callback();
+    Launcher.setClipboardText(text);
+    this.waitComplete();
 };
 
 AutoTypeEmitter.prototype.waitComplete = function() {
