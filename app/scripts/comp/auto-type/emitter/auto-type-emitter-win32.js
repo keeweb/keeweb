@@ -29,12 +29,13 @@ var ModVk = {
 
 var TextReplaceRegex = /[\(\)\{}\[\]\+\^%~]/g;
 
-var AutoTypeEmitterImpl = function() {
+var AutoTypeEmitter = function(callback) {
+    this.callback = callback;
     this.mod = {};
     this.pendingScript = [];
 };
 
-AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
+AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
     if (enabled) {
         this.mod[ModMap[mod]] = true;
     } else {
@@ -42,17 +43,17 @@ AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
     }
 };
 
-AutoTypeEmitterImpl.prototype.text = function(text, callback) {
+AutoTypeEmitter.prototype.text = function(text) {
     text = this.addMod(this.escapeText(text.replace(TextReplaceRegex, function(match) { return '{' + match + '}'; })));
     this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '")');
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.key = function(key, callback) {
+AutoTypeEmitter.prototype.key = function(key) {
     if (typeof key !== 'number') {
         key = KeyMap[key];
         if (!key) {
-            return callback('Bad key: ' + key);
+            return this.callback('Bad key: ' + key);
         }
     }
     if (typeof key === 'number') {
@@ -63,33 +64,43 @@ AutoTypeEmitterImpl.prototype.key = function(key, callback) {
         var text = this.addMod(key);
         this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '")');
     }
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.copyPaste = function(text, callback) {
+AutoTypeEmitter.prototype.copyPaste = function(text) {
     this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
     this.pendingScript.push('[System.Windows.Forms.Clipboard]::SetText("' + this.escapeText(text) + '")');
     this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
     this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("+{ins}")');
     this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.waitComplete = function(callback) {
+AutoTypeEmitter.prototype.wait = function(time) {
+    this.pendingScript.push('[System.Threading.Thread]::Sleep(' + time + ')');
+    this.callback();
+};
+
+AutoTypeEmitter.prototype.waitComplete = function() {
     if (this.pendingScript.length) {
         var script = this.pendingScript.join('\n');
         this.pendingScript.length = 0;
-        this.runScript(script, callback);
+        this.runScript(script);
     } else {
-        callback();
+        this.callback();
     }
 };
 
-AutoTypeEmitterImpl.prototype.escapeText = function(text) {
+AutoTypeEmitter.prototype.setDelay = function(delay) {
+    this.delay = delay || 0;
+    this.callback('Not implemented');
+};
+
+AutoTypeEmitter.prototype.escapeText = function(text) {
     return text.replace(/"/g, '`"').replace(/`/g, '``').replace(/\n/g, '``n');
 };
 
-AutoTypeEmitterImpl.prototype.addMod = function(text) {
+AutoTypeEmitter.prototype.addMod = function(text) {
     var keys = Object.keys(this.mod);
     if (!keys.length || !text) {
         return text;
@@ -97,7 +108,7 @@ AutoTypeEmitterImpl.prototype.addMod = function(text) {
     return keys.join('') + (text.length > 1 ? '(' + text + ')' : text);
 };
 
-AutoTypeEmitterImpl.prototype.runScript = function(script, callback) {
+AutoTypeEmitter.prototype.runScript = function(script) {
     script =
 'Add-Type @"\n' +
 'using System;\n' +
@@ -119,8 +130,8 @@ script;
         cmd: 'powershell',
         args: ['-Command', '-'],
         data: script,
-        complete: callback
+        complete: this.callback
     });
 };
 
-module.exports = AutoTypeEmitterImpl;
+module.exports = AutoTypeEmitter;

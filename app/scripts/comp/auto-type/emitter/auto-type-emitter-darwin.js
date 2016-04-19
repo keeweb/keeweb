@@ -21,12 +21,13 @@ var ModMap = {
     '^^': 'control'
 };
 
-var AutoTypeEmitterImpl = function() {
+var AutoTypeEmitter = function(callback) {
+    this.callback = callback;
     this.mod = {};
     this.pendingScript = [];
 };
 
-AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
+AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
     if (enabled) {
         this.mod[mod] = true;
     } else {
@@ -34,61 +35,71 @@ AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
     }
 };
 
-AutoTypeEmitterImpl.prototype.text = function(text, callback) {
+AutoTypeEmitter.prototype.text = function(text) {
     text = text.replace(/"/g, '\\"');
     this.pendingScript.push('keystroke "' + text + '"'+ this.modString());
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.key = function(key, callback) {
+AutoTypeEmitter.prototype.key = function(key) {
     if (typeof key !== 'number') {
         if (!KeyMap[key]) {
-            return callback('Bad key: ' + key);
+            return this.callback('Bad key: ' + key);
         }
         key = KeyMap[key];
     }
     this.pendingScript.push('key code ' + key + this.modString());
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.copyPaste = function(text, callback) {
+AutoTypeEmitter.prototype.copyPaste = function(text) {
     this.pendingScript.push('delay 0.5');
     this.pendingScript.push('set the clipboard to "' + text.replace(/"/g, '\\"') + '"');
     this.pendingScript.push('delay 0.5');
     this.pendingScript.push('keystroke "v" using command down');
     this.pendingScript.push('delay 0.5');
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.waitComplete = function(callback) {
+AutoTypeEmitter.prototype.wait = function(time) {
+    this.pendingScript.push('delay ' + (time / 1000));
+    this.callback();
+};
+
+AutoTypeEmitter.prototype.waitComplete = function() {
     if (this.pendingScript.length) {
         var script = this.pendingScript.join('\n');
         this.pendingScript.length = 0;
-        this.runScript(script, callback);
+        this.runScript(script);
     } else {
-        callback();
+        this.callback();
     }
 };
 
-AutoTypeEmitterImpl.prototype.modString = function() {
+AutoTypeEmitter.prototype.setDelay = function(delay) {
+    this.delay = delay || 0;
+    this.callback('Not implemented');
+};
+
+AutoTypeEmitter.prototype.modString = function() {
     var keys = Object.keys(this.mod);
     if (!keys.length) {
         return '';
     }
-    return ' using {' + keys.map(AutoTypeEmitterImpl.prototype.mapMod).join(', ') + '}';
+    return ' using {' + keys.map(AutoTypeEmitter.prototype.mapMod).join(', ') + '}';
 };
 
-AutoTypeEmitterImpl.prototype.mapMod = function(mod) {
+AutoTypeEmitter.prototype.mapMod = function(mod) {
     return ModMap[mod] + ' down';
 };
 
-AutoTypeEmitterImpl.prototype.runScript = function(script, callback) {
+AutoTypeEmitter.prototype.runScript = function(script) {
     script = 'tell application "System Events" \n' + script + '\nend tell';
     Launcher.spawn({
         cmd: 'osascript',
         data: script,
-        complete: callback
+        complete: this.callback
     });
 };
 
-module.exports = AutoTypeEmitterImpl;
+module.exports = AutoTypeEmitter;

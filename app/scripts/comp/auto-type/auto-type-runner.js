@@ -1,8 +1,12 @@
 'use strict';
 
 var AutoTypeObfuscator = require('./auto-type-obfuscator'),
-    AutoTypeEmitter = require('./auto-type-emitter'),
-    Format = require('../../util/format');
+    AutoTypeEmitterFactory = require('./auto-type-emitter-factory'),
+    Format = require('../../util/format'),
+    Logger = require('../../util/logger');
+
+var emitterLogger = new Logger('auto-type-emitter');
+emitterLogger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);
 
 var AutoTypeRunner = function(ops) {
     this.ops = ops;
@@ -305,7 +309,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
 };
 
 AutoTypeRunner.prototype.run = function(callback) {
-    this.emitter = new AutoTypeEmitter(this.emitNext.bind(this));
+    this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this));
     this.emitterState = {
         callback: callback,
         stack: [],
@@ -337,6 +341,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
         } else {
             this.resetEmitterMod({});
             this.emitterState.finished = true;
+            emitterLogger.debug('waitComplete');
             this.emitter.waitComplete();
         }
         return;
@@ -365,9 +370,13 @@ AutoTypeRunner.prototype.emitNext = function(err) {
     }
     switch (op.type) {
         case 'text':
-            this.emitter.text(op.value);
+            emitterLogger.debug('text', op.value);
+            if (op.value) {
+                this.emitter.text(op.value);
+            }
             break;
         case 'key':
+            emitterLogger.debug('key', op.value);
             this.emitter.key(op.value);
             break;
         case 'cmd':
@@ -375,6 +384,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             if (!method) {
                 throw 'Bad cmd: ' + op.value;
             }
+            emitterLogger.debug(op.value, op.arg);
             method.call(this.emitter, op.arg);
             break;
         default:
@@ -385,6 +395,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
 AutoTypeRunner.prototype.setEmitterMod = function(addedMod) {
     Object.keys(addedMod).forEach(function(mod) {
         if (addedMod[mod] && !this.emitterState.activeMod[mod]) {
+            emitterLogger.debug('mod', mod, true);
             this.emitter.setMod(mod, true);
             this.emitterState.activeMod[mod] = true;
         }
@@ -394,6 +405,7 @@ AutoTypeRunner.prototype.setEmitterMod = function(addedMod) {
 AutoTypeRunner.prototype.resetEmitterMod = function(targetState) {
     Object.keys(this.emitterState.activeMod).forEach(function(mod) {
         if (this.emitterState.activeMod[mod] && !targetState[mod]) {
+            emitterLogger.debug('mod', mod, false);
             this.emitter.setMod(mod, false);
             delete this.emitterState.activeMod[mod];
         }

@@ -22,12 +22,13 @@ var ModMap = {
     '^^': 'ctrl'
 };
 
-var AutoTypeEmitterImpl = function() {
+var AutoTypeEmitter = function(callback) {
+    this.callback = callback;
     this.mod = {};
     this.pendingScript = [];
 };
 
-AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
+AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
     if (enabled) {
         this.mod[ModMap[mod]] = true;
     } else {
@@ -35,38 +36,38 @@ AutoTypeEmitterImpl.prototype.setMod = function(mod, enabled) {
     }
 };
 
-AutoTypeEmitterImpl.prototype.text = function(text, callback) {
+AutoTypeEmitter.prototype.text = function(text) {
     this.pendingScript.push('text ' + this.modString() + text);
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.key = function(key, callback) {
+AutoTypeEmitter.prototype.key = function(key) {
     if (typeof key !== 'number') {
         if (!KeyMap[key]) {
-            return callback('Bad key: ' + key);
+            return this.callback('Bad key: ' + key);
         }
         key = KeyMap[key].toString(16);
     }
     this.pendingScript.push('key ' + this.modString() + key);
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.copyPaste = function(text, callback) {
+AutoTypeEmitter.prototype.copyPaste = function(text) {
     // TODO
-    callback();
+    this.callback();
 };
 
-AutoTypeEmitterImpl.prototype.waitComplete = function(callback) {
+AutoTypeEmitter.prototype.waitComplete = function() {
     if (this.pendingScript.length) {
         var script = this.pendingScript.join(' ');
         this.pendingScript.length = 0;
-        this.runScript(script, callback);
+        this.runScript(script);
     } else {
-        callback();
+        this.callback();
     }
 };
 
-AutoTypeEmitterImpl.prototype.modString = function() {
+AutoTypeEmitter.prototype.modString = function() {
     var mod = '';
     Object.keys(this.mod).forEach(function (key) {
         mod += key + '+';
@@ -74,12 +75,12 @@ AutoTypeEmitterImpl.prototype.modString = function() {
     return mod;
 };
 
-AutoTypeEmitterImpl.prototype.runScript = function(script, callback) {
+AutoTypeEmitter.prototype.runScript = function(script) {
     Launcher.spawn({
         cmd: 'xdotool',
         data: script,
-        complete: callback
+        complete: this.callback
     });
 };
 
-module.exports = AutoTypeEmitterImpl;
+module.exports = AutoTypeEmitter;
