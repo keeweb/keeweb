@@ -32,8 +32,8 @@
     margin-top: 6px;
     height: 50px;
     text-align: center;
-    white-space: pre;
-    word-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: break-all;
     &--long-pass {
       font-size: .75em;
     }

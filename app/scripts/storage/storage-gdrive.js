@@ -131,7 +131,7 @@ var StorageGDrive = StorageBase.extend({
             that.logger.debug('List');
             var url = that._baseUrl + '/files?fields={fields}&q={q}'
                 .replace('{fields}', encodeURIComponent('files'))
-                .replace('{q}', encodeURIComponent('fileExtension="kdbx" and mimeType="application/octet-stream" and trashed=false'));
+                .replace('{q}', encodeURIComponent('fileExtension="kdbx" and trashed=false'));
             var ts = that.logger.ts();
             that._xhr({
                 url: url,

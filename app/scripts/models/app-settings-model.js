@@ -50,4 +50,9 @@ var AppSettingsModel = Backbone.Model.extend({
 AppSettingsModel.instance = new AppSettingsModel();
 AppSettingsModel.instance.load();
 
+window.kwSettings = {
+    get: function(key) { return AppSettingsModel.instance.get(key); },
+    set: function(key, value) { AppSettingsModel.instance.set(key, value); }
+};
+
 module.exports = AppSettingsModel;

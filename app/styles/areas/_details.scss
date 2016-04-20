@@ -503,10 +503,12 @@
 
   &__field-autocomplete {
     position: absolute;
+    overflow: hidden;
     @include common-dropdown;
     &-item {
       padding: $base-padding;
       display: inline-block;
+      word-break: break-all;
       @include area-selectable(bottom);
     }
   }

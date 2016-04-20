@@ -1,6 +1,12 @@
 Release notes
 -------------
 
+##### v1.1.3 (2016-04-21)
+`+` google drive stability improvements  
+`+` fix some layout bugs  
+`-` fix generator preset for empty passwords  
+`+` export settings get/set interface  
+
 ##### v1.1.2 (2016-04-10)
 Hotfix  
 `+` option to try beta version in desktop app  
