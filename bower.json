@@ -27,7 +27,7 @@
     "bourbon": "~4.2.5",
     "dropbox": "antelle/dropbox-js#0.10.6",
     "font-awesome": "~4.5.0",
-    "kdbxweb": "^0.4.0",
+    "kdbxweb": "^0.4.1",
     "normalize.css": "~4.0.0",
     "pikaday": "~1.4.0",
     "FileSaver.js": "eligrey/FileSaver.js",
