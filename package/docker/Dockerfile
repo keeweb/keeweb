@@ -4,7 +4,7 @@
 # Based on nginx-ssl-secure https://github.com/MarvAmBass/docker-nginx-ssl-secure/
 
 # docker build -t keeweb .
-# docker run --name keeweb -d -p 443:443 keeweb
+# docker run --name keeweb -d -p 443:443 -p 80:80 keeweb
 
 FROM nginx:stable
 MAINTAINER Antelle "antelle.net@gmail.com"
@@ -32,3 +32,4 @@ CMD ["nginx"]
 RUN git clone --depth 1 --single-branch --branch gh-pages https://github.com/antelle/keeweb.git
 
 EXPOSE 443
+EXPOSE 80
