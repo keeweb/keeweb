@@ -326,7 +326,7 @@
     &-title {
       display: none;
       transition: color $slow-transition-out;
-      margin-right: .4em;
+      margin-right: $base-padding-h;
       color: transparent;
       .details__attachment-add:hover & {
         display: inline;
