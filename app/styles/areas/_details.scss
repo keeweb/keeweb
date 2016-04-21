@@ -318,8 +318,6 @@
     text-align: center;
     overflow: hidden;
     transition: color $base-duration $base-timing;
-    display: none;
-    @include nomobile { display: block; }
     &:hover {
       @include th { color: medium-color(); }
     }
