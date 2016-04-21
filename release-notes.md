@@ -1,6 +1,9 @@
 Release notes
 -------------
 
+##### v1.1.4 (2016-04-21)
+`-` fixed Firefox loading issues  
+
 ##### v1.1.3 (2016-04-21)
 `+` google drive stability improvements  
 `+` fix some layout bugs  
