@@ -5,7 +5,7 @@ echo "Welcome to KeeWeb docker container!"
 if [ -z ${DH_SIZE+x} ]
 then
   >&2 echo ">> no \$DH_SIZE specified using default"
-  DH_SIZE="1024"
+  DH_SIZE="512"
 fi
 
 
