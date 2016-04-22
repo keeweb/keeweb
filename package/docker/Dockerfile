@@ -3,8 +3,15 @@
 # (C) Antelle 2016, MIT license https://github.com/antelle/keeweb
 # Based on nginx-ssl-secure https://github.com/MarvAmBass/docker-nginx-ssl-secure/
 
+# Building locally:
 # docker build -t keeweb .
 # docker run --name keeweb -d -p 443:443 -p 80:80 -e 'DH_SIZE=512' -v $EXT_DIR:/etc/nginx/external/ keeweb
+
+# Using pre-built image from dockerhub:
+# If you have SSL certs, put your dh.pem, cert.pem, key.pem to /etc/nginx/external/ and run with:
+# docker run --name keeweb -d -p 443:443 -p 80:80 -v $EXT_DIR:/etc/nginx/external/ antelle/keeweb
+# Or, to generate self-signed cert, run:
+# docker run --name keeweb -d -p 443:443 -p 80:80 -e 'DH_SIZE=512' antelle/keeweb
 
 FROM nginx:stable
 MAINTAINER Antelle "antelle.net@gmail.com"
