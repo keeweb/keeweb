@@ -25,11 +25,11 @@ ADD keeweb.conf /etc/nginx/conf.d/keeweb.conf
 ADD entrypoint.sh /opt/entrypoint.sh
 RUN chmod a+x /opt/entrypoint.sh
 
-ENTRYPOINT ["/opt/entrypoint.sh"]
-CMD ["nginx"]
-
 # clone keeweb
 RUN git clone --depth 1 --single-branch --branch gh-pages https://github.com/antelle/keeweb.git
+
+ENTRYPOINT ["/opt/entrypoint.sh"]
+CMD ["nginx"]
 
 EXPOSE 443
 EXPOSE 80
