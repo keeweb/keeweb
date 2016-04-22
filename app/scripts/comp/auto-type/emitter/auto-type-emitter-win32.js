@@ -2,6 +2,7 @@
 
 var Launcher = require('../../launcher');
 
+// https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 var KeyMap = {
     tab: '{tab}', enter: '{enter}', space: '{space}',
     up: '{up}', down: '{down}', left: '{left}', right: '{right}', home: '{home}', end: '{end}', pgup: '{pgup}', pgdn: '{pgdn}',

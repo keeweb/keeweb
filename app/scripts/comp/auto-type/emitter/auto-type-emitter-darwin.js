@@ -2,6 +2,7 @@
 
 var Launcher = require('../../launcher');
 
+// http://eastmanreference.com/complete-list-of-applescript-key-codes/
 var KeyMap = {
     tab: 48, enter: 36, space: 49,
     up: 126, down: 125, left: 123, right: 124, home: 115, end: 119, pgup: 116, pgdn: 121,
