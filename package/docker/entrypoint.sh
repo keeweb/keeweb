@@ -9,7 +9,7 @@ then
 fi
 
 
-DH="/etc/nginx/cert/dh.pem"
+DH="/etc/nginx/external/dh.pem"
 
 if [ ! -e "$DH" ]
 then
@@ -21,13 +21,13 @@ then
   openssl dhparam -out "$DH" $DH_SIZE
 fi
 
-if [ ! -e "/etc/nginx/cert/cert.pem" ] || [ ! -e "/etc/nginx/cert/key.pem" ]
+if [ ! -e "/etc/nginx/external/cert.pem" ] || [ ! -e "/etc/nginx/external/key.pem" ]
 then
   echo ">> generating self signed cert"
   openssl req -x509 -newkey rsa:4086 \
   -subj "/C=XX/ST=XXXX/L=XXXX/O=XXXX/CN=localhost" \
-  -keyout "/etc/nginx/cert/key.pem" \
-  -out "/etc/nginx/cert/cert.pem" \
+  -keyout "/etc/nginx/external/key.pem" \
+  -out "/etc/nginx/external/cert.pem" \
   -days 3650 -nodes -sha256
 fi
 

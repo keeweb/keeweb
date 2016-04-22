@@ -4,7 +4,7 @@
 # Based on nginx-ssl-secure https://github.com/MarvAmBass/docker-nginx-ssl-secure/
 
 # docker build -t keeweb .
-# docker run --name keeweb -d -p 443:443 -p 80:80 keeweb
+# docker run --name keeweb -d -p 443:443 -p 80:80 -e 'DH_SIZE=512' -v $EXT_DIR:/etc/nginx/external/ keeweb
 
 FROM nginx:stable
 MAINTAINER Antelle "antelle.net@gmail.com"
@@ -14,7 +14,7 @@ RUN apt-get -y update && apt-get -y install git openssl
 
 # setup nginx
 RUN rm -rf /etc/nginx/conf.d/*; \
-    mkdir -p /etc/nginx/cert
+    mkdir -p /etc/nginx/external
 
 RUN sed -i 's/access_log.*/access_log \/dev\/stdout;/g' /etc/nginx/nginx.conf; \
     sed -i 's/error_log.*/error_log \/dev\/stdout info;/g' /etc/nginx/nginx.conf; \
