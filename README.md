@@ -22,13 +22,16 @@ Project roadmap with planned features and approximate schedule is on [TODO](http
 # Self-hosting
 
 Everything you need to host this app on your server is any static file server. The app is a single HTML file + cache manifest (optionally; for offline access).
-You can download the latest distribution files from [gh-pages](https://github.com/antelle/keeweb/tree/gh-pages) branch.
+You can download the latest distribution files from [gh-pages](https://github.com/antelle/keeweb/tree/gh-pages) branch.  
+
 If you are using Docker:
+
 1. put your dh.pem, cert.pem, key.pem to /etc/nginx/external/ 
 2. run this script:
 ```bash
 docker run --name keeweb -d -p 443:443 -p 80:80 -v $EXT_DIR:/etc/nginx/external/ antelle/keeweb
 ```
+
 To make Dropbox work in your self-hosted app:
 
 1. [create](https://www.dropbox.com/developers/apps/create) a Dropbox app
