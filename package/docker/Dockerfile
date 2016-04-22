@@ -10,7 +10,7 @@ FROM nginx:stable
 MAINTAINER Antelle "antelle.net@gmail.com"
 
 # install
-RUN apt-get -y update && apt-get -y install git openssl
+RUN apt-get -y update && apt-get -y install openssl wget unzip
 
 # setup nginx
 RUN rm -rf /etc/nginx/conf.d/*; \
@@ -26,7 +26,11 @@ ADD entrypoint.sh /opt/entrypoint.sh
 RUN chmod a+x /opt/entrypoint.sh
 
 # clone keeweb
-RUN git clone --depth 1 --single-branch --branch gh-pages https://github.com/antelle/keeweb.git
+RUN wget https://github.com/antelle/keeweb/archive/gh-pages.zip; \
+    unzip gh-pages.zip; \
+    rm gh-pages.zip; \
+    mv keeweb-gh-pages keeweb; \
+    rm keeweb/CNAME
 
 ENTRYPOINT ["/opt/entrypoint.sh"]
 CMD ["nginx"]
