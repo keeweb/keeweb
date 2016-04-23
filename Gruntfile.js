@@ -253,6 +253,9 @@ module.exports = function(grunt) {
                     Buffer: false,
                     __filename: false,
                     __dirname: false
+                },
+                externals: {
+                    xmldom: '0'
                 }
             }
         },
