@@ -18,13 +18,14 @@ var Backbone = require('backbone'),
     DetailsHistoryView = require('./details-history-view'),
     DetailsAttachmentView = require('./details-attachment-view'),
     DetailsAddFieldView = require('./details-add-field-view'),
+    DetailsAutoTypeView = require('./details-auto-type-view'),
     DropdownView = require('../../views/dropdown-view'),
     Keys = require('../../const/keys'),
     KeyHandler = require('../../comp/key-handler'),
     Alerts = require('../../comp/alerts'),
     CopyPaste = require('../../comp/copy-paste'),
     OtpQrReqder = require('../../comp/otp-qr-reader'),
-    AutoType = require('../../comp/auto-type'),
+    AutoType = require('../../auto-type'),
     Format = require('../../util/format'),
     Locale = require('../../util/locale'),
     Tip = require('../../util/tip'),
@@ -100,14 +101,7 @@ var DetailsView = Backbone.View.extend({
     render: function () {
         this.removeScroll();
         this.removeFieldViews();
-        if (this.views.sub) {
-            this.views.sub.remove();
-            delete this.views.sub;
-        }
-        if (this.views.dropdownView) {
-            this.views.dropdownView.remove();
-            delete this.views.dropdownView;
-        }
+        this.removeInnerViews();
         if (!this.model) {
             this.$el.html(this.emptyTemplate());
             return;
@@ -244,6 +238,9 @@ var DetailsView = Backbone.View.extend({
                     moreOptions.push({value: 'toggle-empty', icon: 'eye-slash', text: Locale.detMenuHideEmpty});
                 }
                 moreOptions.push({value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp});
+                if (AutoType.enabled) {
+                    moreOptions.push({value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoType});
+                }
                 var rect = this.moreView.labelEl[0].getBoundingClientRect();
                 dropdownView.render({
                     position: {top: rect.bottom, left: rect.left},
@@ -268,6 +265,9 @@ var DetailsView = Backbone.View.extend({
                 break;
             case 'otp':
                 this.setupOtp();
+                break;
+            case 'auto-type':
+                this.toggleAutoType();
                 break;
             default:
                 if (e.item.lastIndexOf('add:', 0) === 0) {
@@ -755,6 +755,18 @@ var DetailsView = Backbone.View.extend({
             fieldView.edit();
             this.fieldViews.push(fieldView);
         }
+    },
+
+    toggleAutoType: function() {
+        if (this.views.autoType) {
+            this.views.autoType.remove();
+            delete this.views.autoType;
+            return;
+        }
+        this.views.autoType = new DetailsAutoTypeView({
+            el: this.$el.find('.details__body-fields'),
+            model: this.model
+        }).render();
     },
 
     autoType: function() {

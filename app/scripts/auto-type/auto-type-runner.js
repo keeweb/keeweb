@@ -2,8 +2,8 @@
 
 var AutoTypeObfuscator = require('./auto-type-obfuscator'),
     AutoTypeEmitterFactory = require('./auto-type-emitter-factory'),
-    Format = require('../../util/format'),
-    Logger = require('../../util/logger');
+    Format = require('../util/format'),
+    Logger = require('../util/logger');
 
 var emitterLogger = new Logger('auto-type-emitter');
 emitterLogger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);

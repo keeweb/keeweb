@@ -1,6 +1,6 @@
 'use strict';
 
-var Launcher = require('../../launcher');
+var Launcher = require('../../comp/launcher');
 
 // http://eastmanreference.com/complete-list-of-applescript-key-codes/
 var KeyMap = {

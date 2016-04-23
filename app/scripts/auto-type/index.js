@@ -2,15 +2,17 @@
 
 var AutoTypeParser = require('./auto-type-parser'),
     AutoTypeHelperFactory = require('./auto-type-helper-factory'),
-    Launcher = require('../launcher'),
-    Logger = require('../../util/logger'),
-    Timeouts = require('../../const/timeouts');
+    Launcher = require('../comp/launcher'),
+    Logger = require('../util/logger'),
+    Timeouts = require('../const/timeouts');
 
 var logger = new Logger('auto-type');
 var clearTextAutoTypeLog = localStorage.autoTypeDebug;
 
 var AutoType = {
     helper: AutoTypeHelperFactory.create(),
+
+    enabled: !!Launcher,
 
     run: function(entry, sequence, obfuscate, callback) {
         logger.debug('Start', sequence);
@@ -45,6 +47,16 @@ var AutoType = {
             });
         } catch (ex) {
             logger.error('Parse error', ex);
+            return callback(ex);
+        }
+    },
+
+    validate: function(entry, sequence, callback) {
+        try {
+            var parser = new AutoTypeParser(sequence);
+            var runner = parser.parse();
+            runner.resolve(entry, callback);
+        } catch (ex) {
             return callback(ex);
         }
     },

@@ -1,6 +1,6 @@
 'use strict';
 
-var Launcher = require('../../launcher');
+var Launcher = require('../../comp/launcher');
 
 // https://cgit.freedesktop.org/xorg/proto/x11proto/plain/keysymdef.h
 var KeyMap = {

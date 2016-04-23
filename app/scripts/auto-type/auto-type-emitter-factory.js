@@ -1,6 +1,6 @@
 'use strict';
 
-var Launcher = require('../../comp/launcher');
+var Launcher = require('../comp/launcher');
 
 var AutoTypeEmitterFactory = {
     create: function(callback) {

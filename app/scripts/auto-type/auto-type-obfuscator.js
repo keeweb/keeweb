@@ -1,6 +1,6 @@
 'use strict';
 
-var Logger = require('../../util/logger');
+var Logger = require('../util/logger');
 
 var logger = new Logger('auto-type-obfuscator');
 logger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);

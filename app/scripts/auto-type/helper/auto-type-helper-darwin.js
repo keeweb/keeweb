@@ -1,6 +1,6 @@
 'use strict';
 
-var Launcher = require('../../launcher');
+var Launcher = require('../../comp/launcher');
 
 var ForeMostAppScript = 'tell application "System Events" to set frontApp to name of first process whose frontmost is true';
 var ChromeScript = 'tell application "{}" to set appUrl to URL of active tab of front window\n' +

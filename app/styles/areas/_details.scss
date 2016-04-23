@@ -241,6 +241,10 @@
         line-height: 1.5em;
         overflow: hidden;
       }
+      >label {
+        font-weight: normal;
+        @include user-select(none);
+      }
       .details__body-aside & {
         @include th { color: muted-color(); }
         a { @include th { color: muted-color(); } }

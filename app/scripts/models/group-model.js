@@ -170,7 +170,7 @@ var GroupModel = MenuItemModel.extend({
             parentGroup = parentGroup.parentGroup;
         }
         if (enabled === parentEnableSearching) {
-            enabled = undefined;
+            enabled = null;
         }
         this.group.enableSearching = enabled;
         this.set('enableSearching', this.group.enableSearching);
@@ -199,7 +199,7 @@ var GroupModel = MenuItemModel.extend({
             parentGroup = parentGroup.parentGroup;
         }
         if (enabled === parentEnableAutoType) {
-            enabled = undefined;
+            enabled = null;
         }
         this.group.enableAutoType = enabled;
         this.set('enableAutoType', this.group.enableAutoType);
@@ -220,6 +220,17 @@ var GroupModel = MenuItemModel.extend({
         this._groupModified();
         this.group.defaultAutoTypeSeq = seq || undefined;
         this.set('autoTypeSeq', this.group.defaultAutoTypeSeq);
+    },
+
+    getEffectiveAutoTypeSeq: function() {
+        var grp = this;
+        while (grp) {
+            if (grp.get('autoTypeSeq')) {
+                return grp.get('autoTypeSeq');
+            }
+            grp = grp.parentGroup;
+        }
+        return '{username}{tab}{password}{enter}';
     },
 
     moveToTrash: function() {

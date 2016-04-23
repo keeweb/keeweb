@@ -52,6 +52,7 @@ var EntryModel = Backbone.Model.extend({
         this._buildSearchText();
         this._buildSearchTags();
         this._buildSearchColor();
+        this._buildAutoType();
     },
 
     _checkUpdatedEntry: function() {
@@ -94,6 +95,12 @@ var EntryModel = Backbone.Model.extend({
 
     _buildSearchColor: function() {
         this.searchColor = this.color;
+    },
+
+    _buildAutoType: function() {
+        this.autoTypeEnabled = this.entry.autoType.enabled;
+        this.autoTypeObfuscation = this.entry.autoType.obfuscation === kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard;
+        this.autoTypeSequence = this.entry.autoType.defaultSequence;
     },
 
     _iconFromId: function(id) {
@@ -451,6 +458,35 @@ var EntryModel = Backbone.Model.extend({
         this.setField('otp', url ? kdbxweb.ProtectedValue.fromString(url) : undefined);
         delete this.entry.fields['TOTP Seed'];
         delete this.entry.fields['TOTP Settings'];
+    },
+
+    getEffectiveEnableAutoType: function() {
+        if (typeof this.entry.autoType.enabled === 'boolean') {
+            return this.entry.autoType.enabled;
+        }
+        return this.group.getEffectiveEnableAutoType();
+    },
+
+    setEnableAutoType: function(enabled) {
+        this._entryModified();
+        if (enabled === this.group.getEffectiveEnableAutoType()) {
+            enabled = null;
+        }
+        this.entry.autoType.enabled = enabled;
+        this._buildAutoType();
+    },
+
+    setAutoTypeObfuscation: function(enabled) {
+        this._entryModified();
+        this.entry.autoType.obfuscation =
+            enabled ? kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard : kdbxweb.Consts.AutoTypeObfuscationOptions.None;
+        this._buildAutoType();
+    },
+
+    setAutoTypeSeq: function(seq) {
+        this._entryModified();
+        this.entry.autoType.defaultSequence = seq || undefined;
+        this._buildAutoType();
     }
 });
 

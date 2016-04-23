@@ -1,6 +1,6 @@
 'use strict';
 
-var Launcher = require('../../launcher');
+var Launcher = require('../../comp/launcher');
 
 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 var KeyMap = {
