@@ -8,6 +8,8 @@ var MenuItemModel = require('./menu/menu-item-model'),
     KdbxIcons = kdbxweb.Consts.Icons,
     GroupCollection, EntryCollection;
 
+var DefaultAutoTypeSequence = '{username}{tab}{password}{enter}';
+
 var GroupModel = MenuItemModel.extend({
     defaults: _.extend({}, MenuItemModel.prototype.defaults, {
         iconId: 0,
@@ -230,7 +232,7 @@ var GroupModel = MenuItemModel.extend({
             }
             grp = grp.parentGroup;
         }
-        return '{username}{tab}{password}{enter}';
+        return DefaultAutoTypeSequence;
     },
 
     moveToTrash: function() {
