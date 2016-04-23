@@ -33,7 +33,8 @@ var GrpView = Backbone.View.extend({
                 readonly: this.model.get('top'),
                 canAutoType: !!Launcher,
                 autoTypeSeq: this.model.get('autoTypeSeq'),
-                autoTypeEnabled: this.model.getEffectiveEnableAutoType()
+                autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
+                defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
             }, { plain: true });
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();

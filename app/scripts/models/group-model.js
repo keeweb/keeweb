@@ -235,6 +235,10 @@ var GroupModel = MenuItemModel.extend({
         return DefaultAutoTypeSequence;
     },
 
+    getParentEffectiveAutoTypeSeq: function() {
+        return this.parentGroup ? this.parentGroup.getEffectiveAutoTypeSeq() : DefaultAutoTypeSequence;
+    },
+
     moveToTrash: function() {
         this.file.setModified();
         this.file.db.remove(this.group);
