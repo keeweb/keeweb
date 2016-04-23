@@ -186,11 +186,30 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
         op.type = 'group';
         var ops = [];
         value.forEachChar(function(ch) {
-            ops.push({ type: 'text', value: String.fromCharCode(ch) });
+            if (ch === 10 || ch === 13) {
+                ops.push({type: 'key', value: 'enter'});
+            } else {
+                ops.push({type: 'text', value: String.fromCharCode(ch)});
+            }
         });
         return ops.length ? ops : '';
+    } else {
+        var parts = value.split(/[\r\n]/g);
+        if (parts.length === 1) {
+            return value;
+        }
+        op.type = 'group';
+        var partsOps = [];
+        parts.forEach(function(part) {
+            if (partsOps.length) {
+                partsOps.push({type: 'key', value: 'enter'});
+            }
+            if (part) {
+                partsOps.push({type: 'text', value: part});
+            }
+        });
+        return partsOps;
     }
-    return value;
 };
 
 AutoTypeRunner.prototype.getEntryGroupName = function() {
