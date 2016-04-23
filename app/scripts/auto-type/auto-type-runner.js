@@ -156,7 +156,7 @@ AutoTypeRunner.prototype.tryParseCommand = function(op) {
             if (isNaN(+op.arg)) {
                 throw 'Bad delay: ' + op.arg;
             }
-            if (op.arg <= 0) {
+            if (op.arg < 0) {
                 throw 'Delay requires positive interval';
             }
             op.arg = +op.arg;
