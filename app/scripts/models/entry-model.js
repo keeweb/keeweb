@@ -467,6 +467,10 @@ var EntryModel = Backbone.Model.extend({
         return this.group.getEffectiveEnableAutoType();
     },
 
+    getEffectiveAutoTypeSeq: function() {
+        return this.entry.autoType.defaultSequence || this.group.getEffectiveAutoTypeSeq();
+    },
+
     setEnableAutoType: function(enabled) {
         this._entryModified();
         if (enabled === this.group.getEffectiveEnableAutoType()) {

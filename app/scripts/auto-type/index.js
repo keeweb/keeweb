@@ -14,9 +14,11 @@ var AutoType = {
 
     enabled: !!Launcher,
 
-    run: function(entry, sequence, obfuscate, callback) {
+    run: function(entry, callback) {
+        var sequence = entry.getEffectiveAutoTypeSeq();
         logger.debug('Start', sequence);
         var that = this;
+        var ts = logger.ts();
         try {
             var parser = new AutoTypeParser(sequence);
             var runner = parser.parse();
@@ -24,30 +26,30 @@ var AutoType = {
             runner.resolve(entry, function(err) {
                 if (err) {
                     logger.error('Resolve error', err);
-                    return callback(err);
+                    return callback && callback(err);
                 }
                 logger.debug('Resolved', that.printOps(runner.ops));
-                if (obfuscate) {
+                if (entry.get('autoTypeObfuscation')) {
                     try {
                         runner.obfuscate();
                     } catch (e) {
                         logger.error('Obfuscate error', e);
-                        return callback(e);
+                        return callback && callback(e);
                     }
                     logger.debug('Obfuscated');
                 }
                 runner.run(function(err) {
                     if (err) {
                         logger.error('Run error', err);
-                        return callback(err);
+                        return callback && callback(err);
                     }
-                    logger.debug('Complete');
-                    return callback();
+                    logger.debug('Complete', logger.ts(ts));
+                    return callback && callback();
                 });
             });
         } catch (ex) {
             logger.error('Parse error', ex);
-            return callback(ex);
+            return callback && callback(ex);
         }
     },
 

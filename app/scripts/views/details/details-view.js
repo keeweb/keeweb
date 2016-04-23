@@ -772,7 +772,7 @@ var DetailsView = Backbone.View.extend({
     autoType: function() {
         var entry = this.model;
         AutoType.hideWindow(function() {
-            AutoType.run(entry, '{password}', true, _.noop);
+            AutoType.run(entry);
         });
     },
 
