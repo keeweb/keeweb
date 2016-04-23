@@ -29,7 +29,7 @@ var AutoType = {
                     return callback && callback(err);
                 }
                 logger.debug('Resolved', that.printOps(runner.ops));
-                if (entry.get('autoTypeObfuscation')) {
+                if (entry.autoTypeObfuscation) {
                     try {
                         runner.obfuscate();
                     } catch (e) {
