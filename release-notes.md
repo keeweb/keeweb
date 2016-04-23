@@ -2,12 +2,14 @@ Release notes
 -------------
 
 ##### v1.2.0 (TBD)
+Auto-type, ui improvements
 `+` allow selecting attachments with click  
 `+` save groups collapsed/expanded state  
 `+` docker container  
 `+` edit and remove tags  
 `+` register file associations  
 `-` prevent second app instance on windows  
+`*` don't check updates at startup  
 
 ##### v1.1.4 (2016-04-21)
 `-` fixed Firefox loading issues  
