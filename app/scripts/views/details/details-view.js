@@ -764,7 +764,7 @@ var DetailsView = Backbone.View.extend({
             return;
         }
         this.views.autoType = new DetailsAutoTypeView({
-            el: this.$el.find('.details__body-fields'),
+            el: this.$el.find('.details__body-after'),
             model: this.model
         }).render();
     },
