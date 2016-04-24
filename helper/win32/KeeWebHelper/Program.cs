@@ -15,7 +15,7 @@ namespace KeeWebHelper
                 GetWindowInfo();
                 return;
             }
-            var printTime = true;// args.Length > 0 && args[0] == "--print-time";
+            var printTime = args.Length > 0 && args[0] == "--print-time";
             var sw = System.Diagnostics.Stopwatch.StartNew();
             Console.WriteLine("Start: " + sw.ElapsedMilliseconds);
             while (true)
