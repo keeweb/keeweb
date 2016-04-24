@@ -21,9 +21,9 @@ namespace KeeWebHelper.InputCommands
             if ((Modifiers & ModifierKeys.Shift) != 0) { Down((byte)Keys.ShiftKey); }
             if ((Modifiers & ModifierKeys.Alt) != 0) { Down((byte)Keys.Menu); }
             Press(Key);
-            if ((Modifiers & ModifierKeys.Alt) != 0) { Down((byte)Keys.Menu); }
-            if ((Modifiers & ModifierKeys.Shift) != 0) { Down((byte)Keys.ShiftKey); }
-            if ((Modifiers & ModifierKeys.Ctrl) != 0) { Down((byte)Keys.ControlKey); }
+            if ((Modifiers & ModifierKeys.Alt) != 0) { Up((byte)Keys.Menu); }
+            if ((Modifiers & ModifierKeys.Shift) != 0) { Up((byte)Keys.ShiftKey); }
+            if ((Modifiers & ModifierKeys.Ctrl) != 0) { Up((byte)Keys.ControlKey); }
         }
 
         [DllImport("user32.dll")]
