@@ -7,7 +7,7 @@ var AutoTypeHelper = function() {
 
 AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
     Launcher.spawn({
-        cmd: 'C:\\Projects\\KeeWebHelper\\KeeWebHelper\\bin\\Release\\KeeWebHelper.exe',
+        cmd: this.getHelperPath(),
         args: ['--window-info'],
         complete: function(err, out) {
             if (err) { return callback(err); }
@@ -16,6 +16,10 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
                 parts[1] ? parts[1].trim() : undefined);
         }
     });
+};
+
+AutoTypeHelper.getHelperPath = function() {
+    return Launcher.getAppPath('KeeWebHelper.exe');
 };
 
 module.exports = AutoTypeHelper;

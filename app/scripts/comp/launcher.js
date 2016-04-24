@@ -41,6 +41,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         getTempPath: function(fileName) {
             return this.req('path').join(this.remReq('app').getPath('temp'), fileName || '');
         },
+        getAppPath: function(fileName) {
+            return this.req('path').join(__dirname, fileName || '');
+        },
         writeFile: function(path, data) {
             this.req('fs').writeFileSync(path, new window.Buffer(data));
         },

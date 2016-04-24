@@ -1,6 +1,7 @@
 'use strict';
 
-var Launcher = require('../../comp/launcher');
+var Launcher = require('../../comp/launcher'),
+    AutoTypeHelper = require('../helper/auto-type-helper-win32');
 
 // https://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.send(v=vs.110).aspx
 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
@@ -96,7 +97,7 @@ AutoTypeEmitter.prototype.addMod = function(text) {
 
 AutoTypeEmitter.prototype.runScript = function(script) {
     Launcher.spawn({
-        cmd: 'C:\\Projects\\KeeWebHelper\\KeeWebHelper\\bin\\Release\\KeeWebHelper.exe',
+        cmd: AutoTypeHelper.getHelperPath(),
         data: script,
         complete: this.callback
     });
