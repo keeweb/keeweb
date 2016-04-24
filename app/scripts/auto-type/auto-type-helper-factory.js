@@ -7,8 +7,8 @@ var AutoTypeHelperFactory = {
         if (!Launcher) {
             return null;
         }
-        var AutoTypeHelperImpl = require('./helper/auto-type-helper-' + Launcher.platform());
-        return new AutoTypeHelperImpl();
+        var AutoTypeHelper = require('./helper/auto-type-helper-' + Launcher.platform());
+        return new AutoTypeHelper();
     }
 };
 
