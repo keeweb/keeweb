@@ -118,7 +118,7 @@ AutoTypeObfuscator.prototype.stepReal = function() {
     } else {
         var insPos = action.from + Math.floor(Math.random() * (action.to - action.from));
         this.moveToPos(insPos);
-        if (this.copyCount < MaxCopy && Math.random() > 0.5) {
+        if (this.copyCount < MaxCopy && action.ch !== '\n' && Math.random() > 0.5) {
             this.copyCount++;
             this.copyPaste(action.ch);
         } else {

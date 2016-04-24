@@ -771,6 +771,9 @@ var DetailsView = Backbone.View.extend({
 
     autoType: function() {
         var entry = this.model;
+        // AutoType.getActiveWindowTitle(function() {
+        //     console.log(arguments);
+        // });
         AutoType.hideWindow(function() {
             AutoType.run(entry);
         });

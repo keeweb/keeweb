@@ -2,6 +2,7 @@
 
 var Launcher = require('../../comp/launcher');
 
+// https://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.send(v=vs.110).aspx
 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 var KeyMap = {
     tab: '{tab}', enter: '{enter}', space: '{space}',
@@ -22,12 +23,6 @@ var ModMap = {
     '^^': '^'
 };
 
-var ModVk = {
-    '+': 0x10,
-    '^': 0x11,
-    '%': 0x12
-};
-
 var TextReplaceRegex = /[\(\)\{}\[\]\+\^%~]/g;
 
 var AutoTypeEmitter = function(callback) {
@@ -45,8 +40,8 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitter.prototype.text = function(text) {
-    text = this.addMod(this.escapeText(text.replace(TextReplaceRegex, function(match) { return '{' + match + '}'; })));
-    this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '")');
+    text = this.addMod(text.replace(TextReplaceRegex, function(match) { return '{' + match + '}'; }));
+    this.pendingScript.push('text ' + text);
     this.callback();
 };
 
@@ -58,27 +53,21 @@ AutoTypeEmitter.prototype.key = function(key) {
         }
     }
     if (typeof key === 'number') {
-        Object.keys(this.mod).forEach(function(mod) { this.pendingScript.push('[KwHelper]::Down(' + ModVk[mod] + ')'); }, this);
-        this.pendingScript.push('[KwHelper]::Press(' + key + ')');
-        Object.keys(this.mod).forEach(function(mod) { this.pendingScript.push('[KwHelper]::Up(' + ModVk[mod] + ')'); }, this);
+        this.pendingScript.push('key ' + this.addMod('') + key);
     } else {
         var text = this.addMod(key);
-        this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("' + text + '")');
+        this.pendingScript.push('text ' + text);
     }
     this.callback();
 };
 
 AutoTypeEmitter.prototype.copyPaste = function(text) {
-    this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
-    this.pendingScript.push('[System.Windows.Forms.Clipboard]::SetText("' + this.escapeText(text) + '")');
-    this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
-    this.pendingScript.push('[System.Windows.Forms.SendKeys]::SendWait("+{ins}")');
-    this.pendingScript.push('[System.Threading.Thread]::Sleep(500)');
+    this.pendingScript.push('copypaste ' + text);
     this.callback();
 };
 
 AutoTypeEmitter.prototype.wait = function(time) {
-    this.pendingScript.push('[System.Threading.Thread]::Sleep(' + time + ')');
+    this.pendingScript.push('wait ' + time);
     this.callback();
 };
 
@@ -97,10 +86,6 @@ AutoTypeEmitter.prototype.setDelay = function(delay) {
     this.callback('Not implemented');
 };
 
-AutoTypeEmitter.prototype.escapeText = function(text) {
-    return text.replace(/"/g, '`"').replace(/`/g, '``').replace(/\n/g, '``n');
-};
-
 AutoTypeEmitter.prototype.addMod = function(text) {
     var keys = Object.keys(this.mod);
     if (!keys.length || !text) {
@@ -110,26 +95,8 @@ AutoTypeEmitter.prototype.addMod = function(text) {
 };
 
 AutoTypeEmitter.prototype.runScript = function(script) {
-    script =
-'Add-Type @"\n' +
-'using System;\n' +
-'using System.Runtime.InteropServices;\n' +
-'public static class KwHelper {\n' +
-    '[DllImport("user32.dll")]\n' +
-    'static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);\n' +
-    'public static void Down(byte code) { keybd_event(code, 0, 1, UIntPtr.Zero); }\n' +
-    'public static void Up(byte code) { keybd_event(code, 0, 3, UIntPtr.Zero); }\n' +
-    'public static void Press(byte code) { Down(code); Up(code); }\n' +
-'}\n' +
-'"@\n\n' +
-'[Console]::InputEncoding = [System.Text.Encoding]::UTF8\n' +
-'[Console]::OutputEncoding = [System.Text.Encoding]::UTF8\n' +
-'[System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")\n' +
-script;
-
     Launcher.spawn({
-        cmd: 'powershell',
-        args: ['-Command', '-'],
+        cmd: 'C:\\Projects\\KeeWebHelper\\KeeWebHelper\\bin\\Release\\KeeWebHelper.exe',
         data: script,
         complete: this.callback
     });

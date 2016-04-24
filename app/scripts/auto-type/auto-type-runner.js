@@ -192,7 +192,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
                 ops.push({type: 'text', value: String.fromCharCode(ch)});
             }
         });
-        return ops.length ? ops : '';
+        return ops;
     } else {
         var parts = value.split(/[\r\n]/g);
         if (parts.length === 1) {
