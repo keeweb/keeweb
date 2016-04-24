@@ -7,7 +7,7 @@ var AutoTypeHelper = function() {
 
 AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
     Launcher.spawn({
-        cmd: this.getHelperPath(),
+        cmd: AutoTypeHelper.getHelperPath(),
         args: ['--window-info'],
         complete: function(err, out) {
             if (err) { return callback(err); }
