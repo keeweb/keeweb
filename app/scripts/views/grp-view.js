@@ -3,7 +3,8 @@
 var Backbone = require('backbone'),
     Scrollable = require('../mixins/scrollable'),
     IconSelectView = require('./icon-select-view'),
-    Launcher = require('../comp/launcher');
+    AutoTypeHintView = require('./auto-type-hint-view'),
+    AutoType = require('../auto-type');
 
 var GrpView = Backbone.View.extend({
     template: require('templates/grp.hbs'),
@@ -13,6 +14,7 @@ var GrpView = Backbone.View.extend({
         'click .grp__buttons-trash': 'moveToTrash',
         'click .grp__back-button': 'returnToApp',
         'input #grp__field-title': 'changeTitle',
+        'focus #grp__field-auto-type-seq': 'focusAutoTypeSeq',
         'input #grp__field-auto-type-seq': 'changeAutoTypeSeq',
         'change #grp__check-search': 'setEnableSearching',
         'change #grp__check-auto-type': 'setEnableAutoType'
@@ -31,7 +33,7 @@ var GrpView = Backbone.View.extend({
                 customIcon: this.model.get('customIcon'),
                 enableSearching: this.model.getEffectiveEnableSearching(),
                 readonly: this.model.get('top'),
-                canAutoType: !!Launcher,
+                canAutoType: AutoType.enabled,
                 autoTypeSeq: this.model.get('autoTypeSeq'),
                 autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
                 defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
@@ -76,8 +78,22 @@ var GrpView = Backbone.View.extend({
     },
 
     changeAutoTypeSeq: function(e) {
-        var seq = $.trim(e.target.value);
-        this.model.setAutoTypeSeq(seq);
+        var that = this;
+        var el = e.target;
+        var seq = $.trim(el.value);
+        AutoType.validate(null, seq, function(err) {
+            $(e.target).toggleClass('input--error', !!err);
+            if (!err) {
+                that.model.setAutoTypeSeq(seq);
+            }
+        });
+    },
+
+    focusAutoTypeSeq: function(e) {
+        if (!this.views.hint) {
+            this.views.hint = new AutoTypeHintView({input: e.target}).render();
+            this.views.hint.on('remove', (function() {delete this.views.hint; }).bind(this));
+        }
     },
 
     showIconsSelect: function() {

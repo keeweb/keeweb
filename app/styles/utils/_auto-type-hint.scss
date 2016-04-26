@@ -1,0 +1,24 @@
+.auto-type-hint {
+  @include common-dropdown;
+  position: absolute;
+  z-index: $z-index-no-modal;
+  border-radius: $base-border-radius;
+  padding: $base-padding;
+  box-sizing: border-box;
+  overflow: hidden;
+  &__block {
+    margin-bottom: $base-padding-v;
+    >a, >b {
+      font-weight: normal;
+      display: inline-block;
+      margin-right: $base-padding-h;
+      margin-bottom: $base-padding-v;
+    }
+  }
+  &__link-details {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: $base-padding;
+  }
+}

@@ -24,4 +24,15 @@
         <div class="details__field-label">{{res 'detAutoTypeShortcuts'}}</div>
         <div class="details__field-value">{{{detAutoTypeShortcutsDesc}}}</div>
     </div>
+    {{!--{{#each windows as |win|}}
+        <div class="details__field">
+            <div class="details__field-label">{{res 'detAutoTypeWindow'}}</div>
+            <div class="details__field-value details__auto-type-windows">
+                <input type="text" maxlength="1024" class="details__auto-type-window-title"
+                       value="{{win.window}}" placeholder="{{res 'detAutoTypeInputWindow'}}" />
+                <input type="text" maxlength="1024" class="details__auto-type-window-sequence"
+                       value="{{win.sequence}}" placeholder="{{../defaultSequence}}" />
+            </div>
+        </div>
+    {{/each}}--}}
 </div>

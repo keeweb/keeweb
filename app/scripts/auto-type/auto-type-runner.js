@@ -151,7 +151,7 @@ AutoTypeRunner.prototype.tryParseCommand = function(op) {
             op.type = 'cmd';
             op.value = op.sep === '=' ? 'setDelay' : 'wait';
             if (!op.arg) {
-                throw 'Delay requires seconds count';
+                throw 'Delay requires milliseconds count';
             }
             if (isNaN(+op.arg)) {
                 throw 'Bad delay: ' + op.arg;
@@ -168,7 +168,7 @@ AutoTypeRunner.prototype.tryParseCommand = function(op) {
 };
 
 AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
-    if (!field) {
+    if (!field || !this.entry) {
         return '';
     }
     field = field.toLowerCase();
@@ -213,7 +213,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
 };
 
 AutoTypeRunner.prototype.getEntryGroupName = function() {
-    return this.entry.group.get('title');
+    return this.entry && this.entry.group.get('title');
 };
 
 AutoTypeRunner.prototype.dt = function(part) {
@@ -260,6 +260,9 @@ AutoTypeRunner.prototype.udt = function(part) {
 };
 
 AutoTypeRunner.prototype.getOtp = function(op) {
+    if (!this.entry) {
+        return '';
+    }
     this.entry.initOtpGenerator();
     if (!this.entry.otpGenerator) {
         return '';

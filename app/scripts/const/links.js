@@ -10,7 +10,8 @@ var Links = {
     UpdateDesktop: 'https://github.com/antelle/keeweb/releases/download/v{ver}/UpdateDesktop.zip',
     ReleaseNotes: 'https://github.com/antelle/keeweb/blob/master/release-notes.md#release-notes',
     SelfHostedDropbox: 'https://github.com/antelle/keeweb#self-hosting',
-    Manifest: 'https://antelle.github.io/keeweb/manifest.appcache'
+    Manifest: 'https://antelle.github.io/keeweb/manifest.appcache',
+    AutoType: 'https://github.com/antelle/keeweb/wiki/Auto-Type'
 };
 
 module.exports = Links;

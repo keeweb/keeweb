@@ -8,7 +8,7 @@ var MenuItemModel = require('./menu/menu-item-model'),
     KdbxIcons = kdbxweb.Consts.Icons,
     GroupCollection, EntryCollection;
 
-var DefaultAutoTypeSequence = '{username}{tab}{password}{enter}';
+var DefaultAutoTypeSequence = '{USERNAME}{TAB}{PASSWORD}{ENTER}';
 
 var GroupModel = MenuItemModel.extend({
     defaults: _.extend({}, MenuItemModel.prototype.defaults, {

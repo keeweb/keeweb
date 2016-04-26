@@ -8,7 +8,8 @@ var Timeouts = {
     BeforeAutoLock: 300,
     CheckWindowClosed: 300,
     OtpFadeDuration: 10000,
-    AutoTypeAfterHide: 100
+    AutoTypeAfterHide: 100,
+    DrobDownClickWait: 500
 };
 
 module.exports = Timeouts;

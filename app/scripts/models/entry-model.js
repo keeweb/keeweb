@@ -101,6 +101,11 @@ var EntryModel = Backbone.Model.extend({
         this.autoTypeEnabled = this.entry.autoType.enabled;
         this.autoTypeObfuscation = this.entry.autoType.obfuscation === kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard;
         this.autoTypeSequence = this.entry.autoType.defaultSequence;
+        this.autoTypeWindows = this.entry.autoType.items.map(this._convertAutoTypeItem);
+    },
+
+    _convertAutoTypeItem: function(item) {
+        return { window: item.window, sequence: item.keystrokeSequence };
     },
 
     _iconFromId: function(id) {

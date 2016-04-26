@@ -225,6 +225,8 @@ var Locale = {
     detAutoTypeShortcuts: 'Shortcuts',
     detAutoTypeShortcutsDesc: '{} or {} while the app is inactive',
     detAutoTypeObfuscation: 'Mix real keystrokes with random',
+    detAutoTypeWindow: 'Window',
+    detAutoTypeInputWindow: 'Window title',
     detSetupOtpAlert: 'Scan the QR code',
     detSetupOtpAlertBody: 'Please copy the QR code which is displayed on the authorization page.',
     detSetupOtpAlertBody1: '1. go to the authorization page',
@@ -242,6 +244,11 @@ var Locale = {
     detOtpQrErrorBody: 'Sorry, we could not read the QR code, please try once again or contact the app authors with error details.',
     detOtpQrWrong: 'Wrong QR code',
     detOtpQrWrongBody: 'Your QR code was successfully scanned but it doesn\'t contain one-time password data.',
+
+    autoTypeEntryFields: 'Entry fields',
+    autoTypeModifiers: 'Modifier keys',
+    autoTypeKeys: 'Keys',
+    autoTypeLink: 'more...',
 
     appSecWarn: 'Not Secure!',
     appSecWarnBody1: 'You have loaded this app with insecure connection. ' +
