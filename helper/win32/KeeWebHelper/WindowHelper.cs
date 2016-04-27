@@ -8,11 +8,17 @@ namespace KeeWebHelper
 {
     class WindowHelper
     {
+        static readonly string[] BrowserProcessNames = new[] { "chrome", "firefox", "iexplore", "edge", "opera", "browser" };
+        static readonly string[] BrowserWindowClasses = new[] { "Chrome_WidgetWin_1" };
+
         [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32.dll")]
         static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
@@ -20,13 +26,13 @@ namespace KeeWebHelper
         public static WindowInfo GetActiveWindowInfo()
         {
             const int nChars = 2048;
-            StringBuilder Buff = new StringBuilder(nChars);
+            var buff = new StringBuilder(nChars);
             IntPtr hwnd = GetForegroundWindow();
 
             var result = new WindowInfo();
-            if (GetWindowText(hwnd, Buff, nChars) > 0)
+            if (GetWindowText(hwnd, buff, nChars) > 0)
             {
-                result.Title = Buff.ToString();
+                result.Title = buff.ToString();
             }
 
             try
@@ -47,11 +53,17 @@ namespace KeeWebHelper
                 return null;
             }
             var process = Process.GetProcessById((int)pid);
-            return GetUrlAcc(process);
-        }
 
-        static string GetUrlAcc(Process process)
-        {
+            if (!IsBrowser(process.ProcessName))
+            {
+                const int maxChars = 64;
+                var cls = new StringBuilder(maxChars);
+                var clsId = GetClassName(hwnd, cls, maxChars);
+                if (Array.IndexOf(BrowserWindowClasses, cls.ToString()) < 0) {
+                    return null;
+                }
+            }
+
             var el = AutomationElement.FromHandle(process.MainWindowHandle);
             if (el == null)
             {
@@ -78,6 +90,19 @@ namespace KeeWebHelper
 
             var val = (ValuePattern)urlEl.GetCurrentPattern(ValuePattern.Pattern);
             return val.Current.Value;
+        }
+
+        static bool IsBrowser(string processName)
+        {
+            processName = processName.ToLower();
+            foreach (var br in BrowserProcessNames)
+            {
+                if (processName.IndexOf(br) >= 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
