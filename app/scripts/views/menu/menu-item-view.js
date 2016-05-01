@@ -49,7 +49,7 @@ var MenuItemView = Backbone.View.extend({
     render: function() {
         this.removeInnerViews();
         this.renderTemplate(this.model.attributes);
-        this.iconEl = this.$el.find('i');
+        this.iconEl = this.$el.find('i.menu__item-icon');
         var items = this.model.get('items');
         if (items) {
             items.forEach(function (item) {
