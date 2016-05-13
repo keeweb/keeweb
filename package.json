@@ -13,7 +13,7 @@
     "base64-loader": "^1.0.0",
     "cssnano": "^3.3.2",
     "electron-builder": "^3.5.2",
-    "electron-prebuilt": "^0.37.4",
+    "electron-prebuilt": "^1.0.1",
     "exports-loader": "^0.6.2",
     "get-folder-size": "^1.0.0",
     "grunt": "^0.4.5",

@@ -14,19 +14,25 @@ if (window.process && window.process.versions && window.process.versions.electro
         name: 'electron',
         version: window.process.versions.electron,
         req: window.require,
+        electron: function() {
+            return this.req('electron');
+        },
+        remoteApp: function() {
+            return this.electron().remote.app;
+        },
         remReq: function(mod) {
-            return this.req('remote').require(mod);
+            return this.electron().remote.require(mod);
         },
         openLink: function(href) {
-            this.req('shell').openExternal(href);
+            this.electron().shell.openExternal(href);
         },
         devTools: true,
         openDevTools: function() {
-            this.req('remote').getCurrentWindow().openDevTools();
+            this.electron().remote.getCurrentWindow().openDevTools();
         },
         getSaveFileName: function(defaultPath, cb) {
             if (defaultPath) {
-                var homePath = this.remReq('app').getPath('userDesktop');
+                var homePath = this.remReq('electron').app.getPath('userDesktop');
                 defaultPath = this.req('path').join(homePath, defaultPath);
             }
             this.remReq('dialog').showSaveDialog({
@@ -36,10 +42,10 @@ if (window.process && window.process.versions && window.process.versions.electro
             }, cb);
         },
         getUserDataPath: function(fileName) {
-            return this.req('path').join(this.remReq('app').getPath('userData'), fileName || '');
+            return this.req('path').join(this.remoteApp().getPath('userData'), fileName || '');
         },
         getTempPath: function(fileName) {
-            return this.req('path').join(this.remReq('app').getPath('temp'), fileName || '');
+            return this.req('path').join(this.remoteApp().getPath('temp'), fileName || '');
         },
         getAppPath: function(fileName) {
             return this.req('path').join(__dirname, fileName || '');
@@ -76,7 +82,7 @@ if (window.process && window.process.versions && window.process.versions.electro
             this.requestExit();
         },
         requestExit: function() {
-            var app = this.remReq('app');
+            var app = this.remoteApp();
             if (this.restartPending) {
                 app.restartApp();
             } else {
@@ -91,25 +97,25 @@ if (window.process && window.process.versions && window.process.versions.electro
             this.restartPending = false;
         },
         setClipboardText: function(text) {
-            return this.req('clipboard').writeText(text);
+            return this.electron().clipboard.writeText(text);
         },
         getClipboardText: function() {
-            return this.req('clipboard').readText();
+            return this.electron().clipboard.readText();
         },
         clearClipboardText: function() {
-            return this.req('clipboard').clear();
+            return this.electron().clipboard.clear();
         },
         minimizeApp: function() {
-            this.remReq('app').minimizeApp();
+            this.remoteApp().minimizeApp();
         },
         canMinimize: function() {
             return process.platform !== 'darwin';
         },
         updaterEnabled: function() {
-            return this.req('remote').process.argv.indexOf('--disable-updater') === -1;
+            return this.electron().remote.process.argv.indexOf('--disable-updater') === -1;
         },
         resolveProxy: function(url, callback) {
-            var window = this.remReq('app').getMainWindow();
+            var window = this.remoteApp().getMainWindow();
             var session = window.webContents.session;
             session.resolveProxy(url, function(proxy) {
                 var match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
@@ -118,10 +124,10 @@ if (window.process && window.process.versions && window.process.versions.electro
             });
         },
         openWindow: function(opts) {
-            return this.remReq('app').openWindow(opts);
+            return this.remoteApp().openWindow(opts);
         },
         hideWindowIfActive: function() {
-            var app = this.remReq('app');
+            var app = this.remoteApp();
             var win = app.getMainWindow();
             var visible = win.isVisible(), focused = win.isFocused();
             if (!visible || !focused) {

@@ -3,13 +3,10 @@
 /* jshint node:true */
 /* jshint browser:false */
 
-var app = require('app'),
+var electron = require('electron'),
+    app = electron.app,
     path = require('path'),
-    fs = require('fs'),
-    BrowserWindow = require('browser-window'),
-    Menu = require('menu'),
-    Tray = require('tray'),
-    globalShortcut = require('electron').globalShortcut;
+    fs = require('fs');
 
 var mainWindow = null,
     appIcon = null,
@@ -31,7 +28,7 @@ if (!handleStartupSquirrelEvent()) {
     app.on('window-all-closed', function () {
         if (restartPending) {
             // unbind all handlers, load new app.js module and pass control to it
-            globalShortcut.unregisterAll();
+            electron.globalShortcut.unregisterAll();
             app.removeAllListeners('window-all-closed');
             app.removeAllListeners('ready');
             app.removeAllListeners('open-file');
@@ -66,7 +63,7 @@ if (!handleStartupSquirrelEvent()) {
         }
     });
     app.on('will-quit', function () {
-        globalShortcut.unregisterAll();
+        electron.globalShortcut.unregisterAll();
     });
     app.restartApp = function () {
         restartPending = true;
@@ -76,15 +73,15 @@ if (!handleStartupSquirrelEvent()) {
         }, 1000);
     };
     app.openWindow = function (opts) {
-        return new BrowserWindow(opts);
+        return new electron.BrowserWindow(opts);
     };
     app.minimizeApp = function () {
         if (process.platform !== 'darwin') {
             mainWindow.minimize();
             mainWindow.setSkipTaskbar(true);
-            appIcon = new Tray(path.join(__dirname, 'icon.png'));
+            appIcon = new electron.Tray(path.join(__dirname, 'icon.png'));
             appIcon.on('click', restoreMainWindow);
-            var contextMenu = Menu.buildFromTemplate([
+            var contextMenu = electron.Menu.buildFromTemplate([
                 {label: 'Open KeeWeb', click: restoreMainWindow},
                 {label: 'Quit KeeWeb', click: closeMainWindow}
             ]);
@@ -113,7 +110,7 @@ function setAppOptions() {
 }
 
 function createMainWindow() {
-    mainWindow = new BrowserWindow({
+    mainWindow = new electron.BrowserWindow({
         show: false,
         width: 1000, height: 700, 'min-width': 700, 'min-height': 400,
         icon: path.join(__dirname, 'icon.png')
@@ -189,7 +186,7 @@ function updateMainWindowPosition() {
     }
     mainWindowPosition.maximized = mainWindow.isMaximized();
     mainWindowPosition.fullScreen = mainWindow.isFullScreen();
-    mainWindowPosition.displayBounds = require('screen').getDisplayMatching(bounds).bounds;
+    mainWindowPosition.displayBounds = require('electron').screen.getDisplayMatching(bounds).bounds;
     mainWindowPosition.changed = true;
 }
 
@@ -209,7 +206,7 @@ function restoreMainWindowPosition() {
             mainWindowPosition = JSON.parse(data);
             if (mainWindow && mainWindowPosition) {
                 if (mainWindowPosition.width && mainWindowPosition.height) {
-                    var displayBounds = require('screen').getDisplayMatching(mainWindowPosition).bounds;
+                    var displayBounds = require('electron').screen.getDisplayMatching(mainWindowPosition).bounds;
                     var db = mainWindowPosition.displayBounds;
                     if (displayBounds.x === db.x && displayBounds.y === db.y &&
                         displayBounds.width === db.width && displayBounds.height === db.height) {
@@ -229,7 +226,7 @@ function emitBackboneEvent(e) {
 
 function setMenu() {
     if (process.platform === 'darwin') {
-        var name = require('app').getName();
+        var name = require('electron').app.getName();
         var template = [
             {
                 label: name,
@@ -258,8 +255,8 @@ function setMenu() {
                 ]
             }
         ];
-        var menu = Menu.buildFromTemplate(template);
-        Menu.setApplicationMenu(menu);
+        var menu = electron.Menu.buildFromTemplate(template);
+        electron.Menu.setApplicationMenu(menu);
     }
 }
 
@@ -284,7 +281,7 @@ function setGlobalShortcuts() {
         var shortcut = shortcutModifiers + key;
         var eventName = shortcuts[key];
         try {
-            globalShortcut.register(shortcut, function () {
+            electron.globalShortcut.register(shortcut, function () {
                 emitBackboneEvent(eventName);
             });
         } catch (e) {}

@@ -11,7 +11,7 @@
 /* jshint node:true */
 /* jshint browser:false */
 
-var app = require('app'),
+var app = require('electron').app,
     path = require('path'),
     fs = require('fs');
 

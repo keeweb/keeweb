@@ -1,15 +1,14 @@
 'use strict';
 
 var builder = require('electron-builder');
-var macPackager = require('electron-builder/out/macPackager');
+var osxPackager = require('electron-builder/out/osxPackager');
 var platformPackager = require('electron-builder/out/platformPackager');
 var linuxPackager = require('electron-builder/out/linuxPackager');
-var plist = require('plist');
 
 var version;
 
 // workaround for https://github.com/electron-userland/electron-builder/issues/322
-macPackager.default.prototype.zipMacApp = function() {
+osxPackager.default.prototype.zipMacApp = function() {
     return Promise.resolve();
 };
 
@@ -30,7 +29,6 @@ linuxPackager.LinuxPackager.prototype.createFromIcns = function() {
 module.exports = function (grunt) {
     grunt.registerMultiTask('electron-builder', 'Create app installer with electron-builder', function () {
         version = grunt.config.get('gitinfo.local.branch.current.shortSHA');
-        console.log();
         var done = this.async();
         builder.build(this.options())
             .then(function () { done(); })
