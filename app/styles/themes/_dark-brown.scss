@@ -1,9 +1,9 @@
 $themes: map-merge($themes, (
-  db: (
+  db: map-merge($theme-defaults, (
     background-color: #342F2E,
     medium-color: #FED9D8,
     text-color: #FFEAE9,
     action-color: #2C9957,
     error-color: #FD6D67,
-  )
+  ))
 ));

@@ -16,24 +16,22 @@ $violet: #d946db;
 @function error-color() { @return th(error-color); }
 
 // Text
-@function muted-color() { @return mix(medium-color(), background-color(), 30%); }
-@function muted-color-border() { @return mix(medium-color(), background-color(), 15%); }
+@function muted-color() { @return mix(medium-color(), background-color(), th(mute-percent)); }
+@function muted-color-border() { @return mix(medium-color(), background-color(), th(mute-percent) / 2); }
 @function text-selection-bg-color() { @return rgba(action-color(), .3); }
 @function text-selection-bg-color-error() { @return rgba(error-color(), .8); }
 @function text-contrast-color($bg) { @if (lightness($bg) >= lightness(background-color())) { @return text-color(); } @else { @return background-color(); } }
 
 // Borders, shadows
-
 @function base-border-color() { @return mix(medium-color(), background-color(), 50%); }
 @function accent-border-color() { @return mix(medium-color(), background-color(), 65%); }
-@function light-border-color() { @return mix(medium-color(), background-color(), 10%); }
+@function light-border-color() { @return mix(medium-color(), background-color(), th(light-border-percent)); }
 @function form-box-shadow-color() { @return rgba($black, 0.06); }
 @function form-box-shadow-color-focus() { @return adjust-color(action-color(), $lightness: -5%, $alpha: -0.3); }
 @function form-box-shadow-color-focus-error() { @return adjust-color(error-color(), $lightness: -5%, $alpha: -0.3); }
 @function dropdown-box-shadow-color() { @return rgba(medium-color(), .05); }
 
 // Backgrounds
-
 @function secondary-background-color() { @return mix(medium-color(), background-color(), 10%); }
 @function intermediate-background-color() { @return mix(medium-color(), background-color(), 3%); }
 @function intermediate-pressed-background-color() { @return mix(medium-color(), background-color(), 2.6%); }

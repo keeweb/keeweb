@@ -42,9 +42,10 @@ var SettingsGeneralView = Backbone.View.extend({
     views: {},
 
     allThemes: {
-        fb: 'Flat blue',
-        db: 'Dark brown',
-        wh: 'White'
+        fb: Locale.setGenThemeFb,
+        db: Locale.setGenThemeDb,
+        wh: Locale.setGenThemeWh,
+        hc: Locale.setGenThemeHc
     },
 
     initialize: function() {

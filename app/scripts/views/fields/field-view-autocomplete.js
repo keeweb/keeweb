@@ -21,7 +21,9 @@ var FieldViewAutocomplete = FieldViewText.extend({
             width: fieldRect.width - 2
         });
         this.autocomplete.mousedown(this.autocompleteClick.bind(this));
-        if (!this.input.val()) {
+        if (this.input.val()) {
+            this.autocomplete.hide();
+        } else {
             this.updateAutocomplete();
         }
     },

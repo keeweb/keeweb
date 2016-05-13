@@ -8,6 +8,7 @@ Auto-type, ui improvements
 `+` docker container  
 `+` edit and remove tags  
 `+` register file associations  
+`+` high contrast theme  
 `-` prevent second app instance on windows  
 `*` don't check updates at startup  
 

@@ -1,9 +1,9 @@
 $themes: map-merge($themes, (
-  fb: (
+  fb: map-merge($theme-defaults, (
     background-color: #282C34,
     medium-color: #ABB2BF,
     text-color: #D7DAE0,
     action-color: #528BFF,
     error-color: #C34034,
-  )
+  ))
 ));
