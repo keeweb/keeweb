@@ -255,7 +255,7 @@ module.exports = function(grunt) {
                     __dirname: false
                 },
                 externals: {
-                    xmldom: '0'
+                    xmldom: 'null'
                 }
             }
         },
