@@ -323,7 +323,7 @@ var Locale = {
 
     setFilePath: 'File path',
     setFileStorage: 'This file is opened from {}.',
-    setFileIntl: 'This file is stored in internal app storage',
+    setFileIntl: 'This file is stored in the internal app storage',
     setFileLocalHint: 'Want to work seamlessly with local files?',
     setFileDownloadApp: 'Download a desktop app',
     setFileSave: 'Save',
