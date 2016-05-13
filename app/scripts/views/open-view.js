@@ -7,6 +7,7 @@ var Backbone = require('backbone'),
     Alerts = require('../comp/alerts'),
     SecureInput = require('../comp/secure-input'),
     DropboxLink = require('../comp/dropbox-link'),
+    FeatureDetector = require('../util/feature-detector'),
     Logger = require('../util/logger'),
     Locale = require('../util/locale'),
     UrlUtil = require('../util/url-util'),
@@ -82,6 +83,12 @@ var OpenView = Backbone.View.extend({
         return this;
     },
 
+    focusInput: function() {
+        if (!FeatureDetector.isMobile()) {
+            this.inputEl.focus();
+        }
+    },
+
     getLastOpenFiles: function() {
         return this.model.fileInfos.map(function(f) {
             var icon = 'file-text';
@@ -123,7 +130,7 @@ var OpenView = Backbone.View.extend({
             esc: '',
             enter: '',
             success: function(res) {
-                that.inputEl.focus();
+                that.focusInput();
                 if (res === 'skip') {
                     that.model.settings.set('skipOpenLocalWarn', true);
                 }
@@ -220,13 +227,13 @@ var OpenView = Backbone.View.extend({
         this.$el.find('.open__settings-key-file').removeClass('hide');
         this.inputEl[0].removeAttribute('readonly');
         this.inputEl[0].setAttribute('placeholder', Locale.openPassFor + ' ' + this.params.name);
-        this.inputEl.focus();
+        this.focusInput();
     },
 
     displayOpenKeyFile: function() {
         this.$el.toggleClass('open--key-file', !!this.params.keyFileName);
         this.$el.find('.open__settings-key-file-name').text(this.params.keyFileName || Locale.openKeyFile);
-        this.inputEl.focus();
+        this.focusInput();
     },
 
     setFile: function(file, keyFile, fileReadyCallback) {
@@ -458,7 +465,7 @@ var OpenView = Backbone.View.extend({
         this.inputEl.removeAttr('disabled').toggleClass('input--error', !!err);
         if (err) {
             logger.error('Error opening file', err);
-            this.inputEl.focus();
+            this.focusInput();
             this.inputEl[0].selectionStart = 0;
             this.inputEl[0].selectionEnd = this.inputEl.val().length;
             if (err.code !== 'InvalidKey') {
@@ -603,7 +610,7 @@ var OpenView = Backbone.View.extend({
         }
         this.$el.find('.open__pass-area').removeClass('hide');
         this.$el.find('.open__config').addClass('hide');
-        this.inputEl.focus();
+        this.focusInput();
     },
 
     applyConfig: function(config) {
