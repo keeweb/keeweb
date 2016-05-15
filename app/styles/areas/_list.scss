@@ -99,7 +99,7 @@
   }
 
   &__item {
-    padding: $base-padding-px;
+    padding: 6px 10px 0;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -111,7 +111,7 @@
     }
 
     &:not(.list__item--table) {
-      height: 32px;
+      height: 3rem;
     }
 
     &--expired {

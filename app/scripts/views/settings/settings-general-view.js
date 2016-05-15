@@ -19,6 +19,7 @@ var SettingsGeneralView = Backbone.View.extend({
 
     events: {
         'change .settings__general-theme': 'changeTheme',
+        'change .settings__general-font-size': 'changeFontSize',
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
         'change .settings__general-idle-minutes': 'changeIdleMinutes',
@@ -61,6 +62,7 @@ var SettingsGeneralView = Backbone.View.extend({
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
+            fontSize: AppSettingsModel.instance.get('fontSize'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             canClearClipboard: !!Launcher,
             clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
@@ -162,6 +164,11 @@ var SettingsGeneralView = Backbone.View.extend({
     changeTheme: function(e) {
         var theme = e.target.value;
         AppSettingsModel.instance.set('theme', theme);
+    },
+
+    changeFontSize: function(e) {
+        var fontSize = +e.target.value;
+        AppSettingsModel.instance.set('fontSize', fontSize);
     },
 
     changeClipboard: function(e) {

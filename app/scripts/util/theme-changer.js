@@ -1,6 +1,15 @@
 'use strict';
 
 var ThemeChanger = {
+    setBySettings: function(settings) {
+        if (settings.get('theme')) {
+            this.setTheme(settings.get('theme'));
+        }
+        if (settings.get('fontSize')) {
+            this.setFontSize(settings.get('fontSize'));
+        }
+    },
+
     setTheme: function(theme) {
         _.forEach(document.body.classList, function(cls) {
             if (/^th\-/.test(cls)) {
@@ -12,6 +21,10 @@ var ThemeChanger = {
         if (metaThemeColor) {
             metaThemeColor.content = window.getComputedStyle(document.body).backgroundColor;
         }
+    },
+
+    setFontSize: function(fontSize) {
+        document.documentElement.style.fontSize = fontSize ? (12 + fontSize * 2) + 'px' : '';
     }
 };
 

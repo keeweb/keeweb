@@ -24,9 +24,7 @@ $(function() {
     window.kw = ExportApi;
 
     var appModel = new AppModel();
-    if (appModel.settings.get('theme')) {
-        ThemeChanger.setTheme(appModel.settings.get('theme'));
-    }
+    ThemeChanger.setBySettings(appModel.settings);
     var skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
     if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0 && !skipHttpsWarning) {
         Alerts.error({ header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,

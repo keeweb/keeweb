@@ -46,6 +46,14 @@
         </select>
     </div>
     <div>
+        <label for="settings__general-font-size">{{res 'setGenFontSize'}}:</label>
+        <select class="settings__general-font-size settings__select input-base" id="settings__general-font-size">
+            <option value="0" {{#ifeq fontSize 0}}selected{{/ifeq}}>{{res 'setGenFontSizeNormal'}}</option>
+            <option value="1" {{#ifeq fontSize 1}}selected{{/ifeq}}>{{res 'setGenFontSizeLarge'}}</option>
+            <option value="2" {{#ifeq fontSize 2}}selected{{/ifeq}}>{{res 'setGenFontSizeLargest'}}</option>
+        </select>
+    </div>
+    <div>
         <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" {{#if expandGroups}}checked{{/if}} />
         <label for="settings__general-expand">{{res 'setGenShowSubgroups'}}</label>
     </div>

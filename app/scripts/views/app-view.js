@@ -55,6 +55,7 @@ var AppView = Backbone.View.extend({
         this.views.list.listenDrag(this.views.listDrag);
 
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
+        this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
         this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
 
         this.listenTo(Backbone, 'select-all', this.selectAll);
@@ -546,6 +547,10 @@ var AppView = Backbone.View.extend({
 
     setTheme: function() {
         ThemeChanger.setTheme(this.model.settings.get('theme'));
+    },
+
+    setFontSize: function() {
+        ThemeChanger.setFontSize(this.model.settings.get('fontSize'));
     },
 
     extLinkClick: function(e) {
