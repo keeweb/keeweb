@@ -9,6 +9,7 @@ Auto-type, ui improvements
 `+` edit and remove tags  
 `+` register file associations  
 `+` high contrast theme  
+`+` improved start page ux on mobile  
 `-` prevent second app instance on windows  
 `*` don't check updates at startup  
 
