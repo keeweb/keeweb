@@ -12,6 +12,7 @@ Auto-type, ui improvements
 `+` ability to increase font size  
 `+` improved start page ux on mobile  
 `+` option to show app logs  
+`+` group info in entry details  
 `*` don't check updates at startup  
 `-` prevent second app instance on windows  
 `-` fix drag-drop in Safari  

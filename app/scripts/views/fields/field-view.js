@@ -2,7 +2,8 @@
 
 var Backbone = require('backbone'),
     FeatureDetector = require('../../util/feature-detector'),
-    CopyPaste = require('../../comp/copy-paste');
+    CopyPaste = require('../../comp/copy-paste'),
+    Tip = require('../../util/tip');
 
 var FieldView = Backbone.View.extend({
     template: require('templates/details/field.hbs'),
@@ -12,14 +13,28 @@ var FieldView = Backbone.View.extend({
         'click .details__field-value': 'fieldValueClick'
     },
 
-    render: function () {
+    render: function() {
         this.value = typeof this.model.value === 'function' ? this.model.value() : this.model.value;
         this.renderTemplate({ editable: !this.readonly, multiline: this.model.multiline, title: this.model.title,
             canEditTitle: this.model.newField, protect: this.value && this.value.isProtected });
         this.valueEl = this.$el.find('.details__field-value');
         this.valueEl.html(this.renderValue(this.value));
         this.labelEl = this.$el.find('.details__field-label');
+        if (this.model.tip) {
+            this.tip = typeof this.model.tip === 'function' ? this.model.tip() : this.model.tip;
+            if (this.tip) {
+                this.valueEl.attr('title', this.tip);
+                Tip.createTip(this.valueEl);
+            }
+        }
         return this;
+    },
+
+    remove: function() {
+        if (this.tip) {
+            Tip.hideTip(this.valueEl);
+        }
+        Backbone.View.prototype.remove.apply(this, arguments);
     },
 
     update: function() {

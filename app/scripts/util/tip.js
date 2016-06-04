@@ -139,10 +139,17 @@ Tip.createTips = function(container) {
         return;
     }
     container.find('[title]').each(function(ix, el) {
-        var tip = new Tip($(el));
-        tip.init();
-        el._tip = tip;
+        Tip.createTip(el);
     });
+};
+
+Tip.createTip = function(el) {
+    if (!Tip.enabled) {
+        return;
+    }
+    var tip = new Tip($(el));
+    tip.init();
+    el._tip = tip;
 };
 
 Tip.hideTips = function(container) {
@@ -150,10 +157,17 @@ Tip.hideTips = function(container) {
         return;
     }
     container.find('[data-title]').each(function(ix, el) {
-        if (el._tip) {
-            el._tip.hide();
-        }
+        Tip.hideTip(el);
     });
+};
+
+Tip.hideTip = function(el) {
+    if (!Tip.enabled) {
+        return;
+    }
+    if (el._tip) {
+        el._tip.hide();
+    }
 };
 
 module.exports = Tip;

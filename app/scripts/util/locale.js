@@ -200,6 +200,7 @@ var Locale = {
     detExpires: 'Expires',
     detExpired: 'expired',
     detFile: 'File',
+    detGroup: 'Group',
     detCreated: 'Created',
     detUpdated: 'Updated',
     detHistory: 'History',

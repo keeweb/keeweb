@@ -31,6 +31,7 @@ var EntryModel = Backbone.Model.extend({
         var entry = this.entry;
         this.set({id: entry.uuid.id}, {silent: true});
         this.fileName = this.file.get('name');
+        this.groupName = this.group.get('title');
         this.title = entry.fields.Title || '';
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
         this.notes = entry.fields.Notes || '';
@@ -496,6 +497,16 @@ var EntryModel = Backbone.Model.extend({
         this._entryModified();
         this.entry.autoType.defaultSequence = seq || undefined;
         this._buildAutoType();
+    },
+
+    getGroupPath: function() {
+        var group = this.group;
+        var groupPath = [];
+        while (group) {
+            groupPath.unshift(group.get('title'));
+            group = group.parentGroup;
+        }
+        return groupPath;
     }
 });
 

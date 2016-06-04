@@ -151,6 +151,8 @@ var DetailsView = Backbone.View.extend({
             value: function() { return model.expires; } } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: Locale.detFile,
             value: function() { return model.fileName; } } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Group', title: Locale.detGroup,
+            value: function() { return model.groupName; }, tip: function() { return model.getGroupPath().join(' / '); } } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Created', title: Locale.detCreated,
             value: function() { return Format.dtStr(model.created); } } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: Locale.detUpdated,
