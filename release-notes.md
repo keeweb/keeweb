@@ -15,6 +15,7 @@ Auto-type, ui improvements
 `+` group info in entry details  
 `+` logout from remote storages on disable  
 `*` don't check updates at startup  
+`*` repos moved to github organisation account  
 `-` prevent second app instance on windows  
 `-` fix drag-drop in Safari  
 
