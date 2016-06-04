@@ -1,2 +1,2 @@
 #!/bin/bash
-/opt/keeweb-desktop/KeeWeb --disable-updater $1
+/opt/keeweb-desktop/KeeWeb --disable-updater "$1"
