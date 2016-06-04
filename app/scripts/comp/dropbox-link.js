@@ -263,6 +263,17 @@ var DropboxLink = {
         this._getClient(function(err) { complete(err); }, overrideAppKey);
     },
 
+    logout: function() {
+        if (this._dropboxClient) {
+            try {
+                this._dropboxClient.signOut();
+            } catch (e) {
+            } finally {
+                this._dropboxClient.reset();
+            }
+        }
+    },
+
     resetClient: function() {
         this._dropboxClient = null;
     },

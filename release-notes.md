@@ -13,6 +13,7 @@ Auto-type, ui improvements
 `+` improved start page ux on mobile  
 `+` option to show app logs  
 `+` group info in entry details  
+`+` logout from remote storages on disable  
 `*` don't check updates at startup  
 `-` prevent second app instance on windows  
 `-` fix drag-drop in Safari  

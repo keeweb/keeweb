@@ -264,7 +264,7 @@ var SettingsGeneralView = Backbone.View.extend({
     changeStorageEnabled: function(e) {
         var storage = Storage[$(e.target).data('storage')];
         if (storage) {
-            storage.enabled = e.target.checked;
+            storage.setEnabled(e.target.checked);
             AppSettingsModel.instance.set(storage.name, storage.enabled);
             this.$el.find('.settings__general-' + storage.name).toggleClass('hide', !e.target.checked);
         }

@@ -180,6 +180,13 @@ var StorageGDrive = StorageBase.extend({
         });
     },
 
+    setEnabled: function(enabled) {
+        if (!enabled) {
+            this._oauthRevokeToken('https://accounts.google.com/o/oauth2/revoke?token={token}');
+        }
+        StorageBase.prototype.setEnabled.call(this, enabled);
+    },
+
     _getOAuthConfig: function() {
         var clientId = this.appSettings.get('gdriveClientId') || GDriveClientId;
         return {

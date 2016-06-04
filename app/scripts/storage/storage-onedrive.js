@@ -197,6 +197,16 @@ var StorageOneDrive = StorageBase.extend({
         });
     },
 
+    setEnabled: function(enabled) {
+        if (!enabled) {
+            var url = 'https://login.live.com/oauth20_logout.srf?client_id={client_id}&redirect_uri={url}'
+                .replace('{client_id}', this._getClientId())
+                .replace('{url}', this._getOauthRedirectUrl());
+            this._oauthRevokeToken(url);
+        }
+        StorageBase.prototype.setEnabled.call(this, enabled);
+    },
+
     _getClientId: function() {
         var clientId = this.appSettings.get('onedriveClientId');
         if (!clientId) {
