@@ -12,8 +12,9 @@ Auto-type, ui improvements
 `+` ability to increase font size  
 `+` improved start page ux on mobile  
 `+` option to show app logs  
-`-` prevent second app instance on windows  
 `*` don't check updates at startup  
+`-` prevent second app instance on windows  
+`-` fix drag-drop in Safari  
 
 ##### v1.1.4 (2016-04-21)
 `-` fixed Firefox loading issues  

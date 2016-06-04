@@ -180,7 +180,8 @@ var MenuItemView = Backbone.View.extend({
     },
 
     dropAllowed: function(e) {
-        return ['text/group', 'text/entry'].indexOf(e.originalEvent.dataTransfer.types[0]) >= 0;
+        var types = e.originalEvent.dataTransfer.types;
+        return types.indexOf('text/group') >= 0 || types.indexOf('text/entry') >= 0;
     },
 
     dragstart: function(e) {
