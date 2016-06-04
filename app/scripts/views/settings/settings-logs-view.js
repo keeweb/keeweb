@@ -15,6 +15,7 @@ var SettingsLogView = Backbone.View.extend({
             };
         });
         this.renderTemplate({ logs: logs });
+        return this;
     }
 });
 

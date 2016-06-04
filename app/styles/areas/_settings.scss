@@ -119,6 +119,7 @@
     margin-top: $base-padding-v;
     &-log {
       margin: 0;
+      white-space: pre-wrap;
       &--debug { color: $white; opacity: .8; }
       &--info { color: $white; }
       &--warn { color: $yellow; }

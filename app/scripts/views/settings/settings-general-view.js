@@ -43,7 +43,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-show-logs-link': 'showLogs'
     },
 
-    views: {},
+    views: null,
 
     allThemes: {
         fb: Locale.setGenThemeFb,
@@ -53,6 +53,7 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     initialize: function() {
+        this.views = {};
         this.listenTo(UpdateModel.instance, 'change:status', this.render, this);
         this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render, this);
     },
@@ -292,7 +293,10 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     showLogs: function() {
-        new SettingsLogsView({ el: this.$el.find('.settings__general-advanced') }).render();
+        if (this.views.logView) {
+            this.views.logView.remove();
+        }
+        this.views.logView = new SettingsLogsView({ el: this.$el.find('.settings__general-advanced') }).render();
         this.scrollToBottom();
     },
 
