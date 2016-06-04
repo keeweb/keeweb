@@ -84,9 +84,13 @@ var StorageWebDav = StorageBase.extend({
                         that._request(_.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts));
                         return cb({ revConflict: true }, xhr, stat);
                     }
+                    var movePath = path;
+                    if (movePath.indexOf('://') < 0) {
+                        movePath = location.href.replace(/[^/]*$/, movePath);
+                    }
                     that._request(_.defaults({
                         op: 'Save:move', method: 'MOVE', path: tmpPath, nostat: true,
-                        headers: { Destination: path, 'Overwrite': 'T' }
+                        headers: { Destination: movePath, 'Overwrite': 'T' }
                     }, saveOpts), function(err) {
                         if (err) { return cb(err); }
                         that._request(_.defaults({
