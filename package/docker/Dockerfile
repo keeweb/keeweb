@@ -1,6 +1,6 @@
 # KeeWeb official docker container
 # https://keeweb.info
-# (C) Antelle 2016, MIT license https://github.com/antelle/keeweb
+# (C) Antelle 2016, MIT license https://github.com/keeweb/keeweb
 # Based on nginx-ssl-secure https://github.com/MarvAmBass/docker-nginx-ssl-secure/
 
 # Building locally:
@@ -33,7 +33,7 @@ ADD entrypoint.sh /opt/entrypoint.sh
 RUN chmod a+x /opt/entrypoint.sh
 
 # clone keeweb
-RUN wget https://github.com/antelle/keeweb/archive/gh-pages.zip; \
+RUN wget https://github.com/keeweb/keeweb/archive/gh-pages.zip; \
     unzip gh-pages.zip; \
     rm gh-pages.zip; \
     mv keeweb-gh-pages keeweb; \

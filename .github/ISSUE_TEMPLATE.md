@@ -1,6 +1,6 @@
 Thanks for taking the time to contribute!
 
-Please, read https://github.com/antelle/keeweb/wiki/FAQ before submitting a new issue and fill in the following (if applicable):
+Please, read https://github.com/keeweb/keeweb/wiki/FAQ before submitting a new issue and fill in the following (if applicable):
 
 - what were your actions?
 - what was wrong?
