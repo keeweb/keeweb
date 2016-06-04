@@ -324,10 +324,12 @@ var Locale = {
     setGenLockCopy: 'Auto-lock on password copy',
     setGenStorage: 'Storage',
     setGenAdvanced: 'Advanced',
+    setGenShowAdvanced: 'Show advanced settings (these settings may be dangerous)',
     setGenDevTools: 'Show dev tools',
     setGenTryBeta: 'Try beta version for one time',
     setGenTryBetaWarning: 'Unsaved files',
     setGenTryBetaWarningBody: 'Please save all files and click this button again',
+    setGenShowAppLogs: 'Show app logs',
 
     setFilePath: 'File path',
     setFileStorage: 'This file is opened from {}.',

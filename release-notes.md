@@ -11,6 +11,7 @@ Auto-type, ui improvements
 `+` high contrast theme  
 `+` ability to increase font size  
 `+` improved start page ux on mobile  
+`+` option to show app logs  
 `-` prevent second app instance on windows  
 `*` don't check updates at startup  
 

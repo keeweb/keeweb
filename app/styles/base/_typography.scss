@@ -10,7 +10,7 @@ body {
     background-color: background-color();
   }
   font-family: $base-font-family;
-  font-feature-settings: "kern", "liga";
+  font-feature-settings: "kern", "liga 0";
   font-size: 1rem;
   line-height: $base-line-height;
 }

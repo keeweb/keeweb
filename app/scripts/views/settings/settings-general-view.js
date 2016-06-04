@@ -2,6 +2,7 @@
 
 var Backbone = require('backbone'),
     SettingsPrvView = require('./settings-prv-view'),
+    SettingsLogsView = require('./settings-logs-view'),
     Launcher = require('../../comp/launcher'),
     Updater = require('../../comp/updater'),
     Format = require('../../util/format'),
@@ -36,8 +37,10 @@ var SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
         'change .settings__general-prv-check': 'changeStorageEnabled',
+        'click .settings__general-show-advanced': 'showAdvancedSettings',
         'click .settings__general-dev-tools-link': 'openDevTools',
-        'click .settings__general-try-beta-link': 'tryBeta'
+        'click .settings__general-try-beta-link': 'tryBeta',
+        'click .settings__general-show-logs-link': 'showLogs'
     },
 
     views: {},
@@ -266,6 +269,11 @@ var SettingsGeneralView = Backbone.View.extend({
         }
     },
 
+    showAdvancedSettings: function() {
+        this.$el.find('.settings__general-show-advanced, .settings__general-advanced').toggleClass('hide');
+        this.scrollToBottom();
+    },
+
     openDevTools: function() {
         if (Launcher) {
             Launcher.openDevTools();
@@ -281,6 +289,15 @@ var SettingsGeneralView = Backbone.View.extend({
         } else {
             location.href = Links.BetaWebApp;
         }
+    },
+
+    showLogs: function() {
+        new SettingsLogsView({ el: this.$el.find('.settings__general-advanced') }).render();
+        this.scrollToBottom();
+    },
+
+    scrollToBottom: function() {
+        this.$el.closest('.scroller').scrollTop(this.$el.height());
     }
 });
 
