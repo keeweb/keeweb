@@ -21,7 +21,7 @@ var EntryModel = Backbone.Model.extend({
         this.entry = entry;
         this.group = group;
         this.file = file;
-        if (this.id === entry.uuid.id) {
+        if (this.get('uuid') === entry.uuid.id) {
             this._checkUpdatedEntry();
         }
         this._fillByEntry();
@@ -29,7 +29,7 @@ var EntryModel = Backbone.Model.extend({
 
     _fillByEntry: function() {
         var entry = this.entry;
-        this.set({id: entry.uuid.id}, {silent: true});
+        this.set({id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id}, {silent: true});
         this.fileName = this.file.get('name');
         this.groupName = this.group.get('title');
         this.title = entry.fields.Title || '';

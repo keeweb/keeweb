@@ -449,6 +449,10 @@ var OpenView = Backbone.View.extend({
     },
 
     openDb: function() {
+        if (this.params.id && this.model.files.getById(this.params.id)) {
+            this.trigger('close');
+            return;
+        }
         if (this.busy || !this.params.name) {
             return;
         }

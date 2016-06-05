@@ -107,7 +107,7 @@ var StorageWebDav = StorageBase.extend({
     fileOptsToStoreOpts: function(opts, file) {
         var result = {user: opts.user, encpass: opts.encpass};
         if (opts.password) {
-            var fileId = file.get('id');
+            var fileId = file.get('uuid');
             var password = opts.password;
             var encpass = '';
             for (var i = 0; i < password.length; i++) {
@@ -121,7 +121,7 @@ var StorageWebDav = StorageBase.extend({
     storeOptsToFileOpts: function(opts, file) {
         var result = {user: opts.user, password: opts.password};
         if (opts.encpass) {
-            var fileId = file.get('id');
+            var fileId = file.get('uuid');
             var encpass = atob(opts.encpass);
             var password = '';
             for (var i = 0; i < encpass.length; i++) {

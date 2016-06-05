@@ -263,7 +263,7 @@ var AppModel = Backbone.Model.extend({
     createDemoFile: function() {
         var that = this;
         if (!this.files.getByName('Demo')) {
-            var demoFile = new FileModel();
+            var demoFile = new FileModel({ id: IdGenerator.uuid() });
             demoFile.openDemo(function() {
                 that.addFile(demoFile);
             });
@@ -281,7 +281,7 @@ var AppModel = Backbone.Model.extend({
                 break;
             }
         }
-        var newFile = new FileModel();
+        var newFile = new FileModel({ id: IdGenerator.uuid() });
         newFile.create(name);
         this.addFile(newFile);
     },
@@ -383,6 +383,7 @@ var AppModel = Backbone.Model.extend({
             params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
         }
         var file = new FileModel({
+            id: fileInfo ? fileInfo.id : IdGenerator.uuid(),
             name: params.name,
             storage: params.storage,
             path: params.path,
@@ -407,11 +408,9 @@ var AppModel = Backbone.Model.extend({
             if (fileInfo) {
                 file.set('syncDate', fileInfo.get('syncDate'));
             }
-            var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
-            file.set('cacheId', cacheId);
             if (updateCacheOnSuccess) {
                 logger.info('Save loaded file to cache');
-                Storage.cache.save(cacheId, null, params.fileData);
+                Storage.cache.save(file.id, null, params.fileData);
             }
             var rev = params.rev || fileInfo && fileInfo.get('rev');
             that.setFileOpts(file, params.opts);
@@ -426,6 +425,7 @@ var AppModel = Backbone.Model.extend({
         var logger = new Logger('import', params.name);
         logger.info('File import request with supplied xml');
         var file = new FileModel({
+            id: IdGenerator.uuid(),
             name: params.name,
             storage: params.storage,
             path: params.path
@@ -442,10 +442,10 @@ var AppModel = Backbone.Model.extend({
     },
 
     addToLastOpenFiles: function(file, rev) {
-        this.appLogger.debug('Add last open file', file.get('cacheId'), file.get('name'), file.get('storage'), file.get('path'), rev);
+        this.appLogger.debug('Add last open file', file.id, file.get('name'), file.get('storage'), file.get('path'), rev);
         var dt = new Date();
         var fileInfo = new FileInfoModel({
-            id: file.get('cacheId'),
+            id: file.id,
             name: file.get('name'),
             storage: file.get('storage'),
             path: file.get('path'),
@@ -462,7 +462,7 @@ var AppModel = Backbone.Model.extend({
                 keyFileHash: file.getKeyFileHash()
             });
         }
-        this.fileInfos.remove(file.get('cacheId'));
+        this.fileInfos.remove(file.id);
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
     },
@@ -504,7 +504,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     getFileInfo: function(file) {
-        return file.get('cacheId') ? this.fileInfos.get(file.get('cacheId')) :
+        return this.fileInfos.get(file.id) ||
             this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
     },
 
@@ -549,7 +549,6 @@ var AppModel = Backbone.Model.extend({
             if (!err) { savedToCache = true; }
             logger.info('Sync finished', err || 'no error');
             file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
-            file.set('cacheId', fileInfo.id);
             fileInfo.set({
                 name: file.get('name'),
                 storage: storage,
@@ -557,8 +556,7 @@ var AppModel = Backbone.Model.extend({
                 opts: that.getStoreOpts(file),
                 modified: file.get('modified'),
                 editState: file.getLocalEditState(),
-                syncDate: file.get('syncDate'),
-                cacheId: fileInfo.id
+                syncDate: file.get('syncDate')
             });
             if (that.settings.get('rememberKeyFiles')) {
                 fileInfo.set({
@@ -573,7 +571,7 @@ var AppModel = Backbone.Model.extend({
             if (callback) { callback(err); }
         };
         if (!storage) {
-            if (!file.get('modified') && fileInfo.id === file.get('cacheId')) {
+            if (!file.get('modified') && fileInfo.id === file.id) {
                 logger.info('Local, not modified');
                 return complete();
             }

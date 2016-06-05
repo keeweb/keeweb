@@ -31,13 +31,15 @@ var GroupModel = MenuItemModel.extend({
 
     setGroup: function(group, file, parentGroup) {
         var isRecycleBin = file.db.meta.recycleBinUuid && file.db.meta.recycleBinUuid.id === group.uuid.id;
+        var id = file.subId(group.uuid.id);
         this.set({
-            id: group.uuid.id,
+            id: id,
+            uuid: group.uuid.id,
             expanded: group.expanded,
             visible: !isRecycleBin,
             items: new GroupCollection(),
             entries: new EntryCollection(),
-            filterValue: group.uuid.id,
+            filterValue: id,
             enableSearching: group.enableSearching,
             enableAutoType: group.enableAutoType,
             autoTypeSeq: group.defaultAutoTypeSeq,
@@ -52,7 +54,7 @@ var GroupModel = MenuItemModel.extend({
         var items = this.get('items'),
             entries = this.get('entries');
         group.groups.forEach(function(subGroup) {
-            var existing = file.getGroup(subGroup.uuid);
+            var existing = file.getGroup(file.subId(subGroup.uuid.id));
             if (existing) {
                 existing.setGroup(subGroup, file, this);
                 items.add(existing);
@@ -61,7 +63,7 @@ var GroupModel = MenuItemModel.extend({
             }
         }, this);
         group.entries.forEach(function(entry) {
-            var existing = file.getEntry(entry.uuid);
+            var existing = file.getEntry(file.subId(entry.uuid.id));
             if (existing) {
                 existing.setEntry(entry, this, file);
                 entries.add(existing);
@@ -73,7 +75,7 @@ var GroupModel = MenuItemModel.extend({
 
     _fillByGroup: function(silent) {
         this.set({
-            title: this.group.name,
+            title: this.parentGroup ? this.group.name : this.file.get('name'),
             iconId: this.group.icon,
             icon: this._iconFromId(this.group.icon),
             customIcon: this._buildCustomIcon(),

@@ -19,7 +19,7 @@ EntryPresenter.prototype = {
         }
         return this;
     },
-    get id() { return this.entry ? this.entry.id : this.group.get('id'); },
+    get id() { return this.entry ? this.entry.id : this.group.id; },
     get icon() { return this.entry ? this.entry.icon : (this.group.get('icon') || 'folder'); },
     get customIcon() { return this.entry ? this.entry.customIcon : undefined; },
     get color() { return this.entry ? (this.entry.color || (this.entry.customIcon ? this.noColor : undefined)) : undefined; },

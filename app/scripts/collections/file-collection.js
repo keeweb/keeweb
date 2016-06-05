@@ -23,7 +23,7 @@ var FileCollection = Backbone.Collection.extend({
     },
 
     getById: function(id) {
-        return this.find(function(file) { return file.get('id') === id; });
+        return this.find(function(file) { return file.id === id; });
     }
 });
 
