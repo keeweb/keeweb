@@ -305,7 +305,8 @@ var AppModel = Backbone.Model.extend({
             }, fileInfo);
         } else if (params.fileData) {
             logger.info('Open file from supplied content');
-            this.openFileWithData(params, callback, fileInfo, params.fileData, true);
+            var needSaveToCache = params.storage !== 'file';
+            this.openFileWithData(params, callback, fileInfo, params.fileData, needSaveToCache);
         } else if (!params.storage) {
             logger.info('Open file from cache as main storage');
             this.openFileFromCache(params, callback, fileInfo);
@@ -330,7 +331,8 @@ var AppModel = Backbone.Model.extend({
                         logger.info('Open file from content loaded from storage');
                         params.fileData = data;
                         params.rev = stat && stat.rev || null;
-                        that.openFileWithData(params, callback, fileInfo, data, true);
+                        var needSaveToCache = storage.name !== 'file';
+                        that.openFileWithData(params, callback, fileInfo, data, needSaveToCache);
                     }
                 });
             };
@@ -338,7 +340,7 @@ var AppModel = Backbone.Model.extend({
             if (cacheRev && storage.stat) {
                 logger.info('Stat file');
                 storage.stat(params.path, params.opts, function(err, stat) {
-                    if (fileInfo && (err || stat && stat.rev === cacheRev)) {
+                    if (fileInfo && storage.name !== 'file' && (err || stat && stat.rev === cacheRev)) {
                         logger.info('Open file from cache because ' + (err ? 'stat error' : 'it is latest'), err);
                         that.openFileFromCache(params, callback, fileInfo);
                     } else if (stat) {
@@ -353,7 +355,7 @@ var AppModel = Backbone.Model.extend({
                 storageLoad();
             }
         } else {
-            logger.info('Open file from cache, after load will sync', params.storage);
+            logger.info('Open file from cache, will sync after load', params.storage);
             this.openFileFromCache(params, function(err, file) {
                 if (!err && file) {
                     logger.info('Sync just opened file');
@@ -609,7 +611,7 @@ var AppModel = Backbone.Model.extend({
                         }
                         file.set('syncDate', new Date());
                         if (file.get('modified')) {
-                            logger.info('Updated sync date, saving modified file to cache and storage');
+                            logger.info('Updated sync date, saving modified file');
                             saveToCacheAndStorage();
                         } else if (file.get('dirty')) {
                             logger.info('Saving not modified dirty file to cache');
@@ -627,11 +629,14 @@ var AppModel = Backbone.Model.extend({
                 });
             };
             var saveToCacheAndStorage = function() {
-                logger.info('Save to cache and storage');
+                logger.info('Getting file data for saving');
                 file.getData(function(data, err) {
                     if (err) { return complete(err); }
-                    if (!file.get('dirty')) {
-                        logger.info('Save to storage, skip cache because not dirty');
+                    if (storage === 'file') {
+                        logger.info('Saving to file storage');
+                        saveToStorage(data);
+                    } else if (!file.get('dirty')) {
+                        logger.info('Saving to storage, skip cache because not dirty');
                         saveToStorage(data);
                     } else {
                         logger.info('Saving to cache');
@@ -695,7 +700,7 @@ var AppModel = Backbone.Model.extend({
                     }
                 } else if (stat.rev === fileInfo.get('rev')) {
                     if (file.get('modified')) {
-                        logger.info('Stat found same version, modified, saving to cache and storage');
+                        logger.info('Stat found same version, modified, saving');
                         saveToCacheAndStorage();
                     } else {
                         logger.info('Stat found same version, not modified');

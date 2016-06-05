@@ -17,6 +17,7 @@ Auto-type, ui improvements
 `*` don't check updates at startup  
 `*` repos moved to github organization account  
 `*` allow opening same file twice  
+`*` local files are not saved to cache  
 `-` prevent second app instance on windows  
 `-` fix drag-drop in Safari  
 
