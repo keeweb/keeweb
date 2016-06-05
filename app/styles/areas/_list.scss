@@ -91,6 +91,7 @@
   }
 
   &__table {
+    border-collapse: collapse;
     width: calc(100% - 2px);
     td, th {
       padding: $base-padding;
