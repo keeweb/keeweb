@@ -42,7 +42,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     addFile: function(file) {
-        if (this.files.getById(file.id)) {
+        if (this.files.get(file.id)) {
             return false;
         }
         this.files.add(file);
@@ -63,10 +63,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     reloadFile: function(file) {
-        this.menu.groupsSection.removeByFile(file, true);
-        file.get('groups').forEach(function (group) {
-            this.menu.groupsSection.addItem(group);
-        }, this);
+        this.menu.groupsSection.replaceByFile(file, file.get('groups').first());
         this.updateTags();
     },
 
@@ -140,7 +137,7 @@ var AppModel = Backbone.Model.extend({
         this.updateTags();
         this.menu.groupsSection.removeByFile(file);
         this.menu.filesSection.removeByFile(file);
-        this.refresh();
+        this.menu.select({ item: this.menu.allItemsSection.get('items').first() });
     },
 
     emptyTrash: function() {

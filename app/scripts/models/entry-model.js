@@ -60,6 +60,9 @@ var EntryModel = Backbone.Model.extend({
         if (this.isJustCreated) {
             this.isJustCreated = false;
         }
+        if (this.canBeDeleted) {
+            this.canBeDeleted = false;
+        }
         if (this.unsaved && +this.updated !== +this.entry.times.lastModTime) {
             this.unsaved = false;
         }
@@ -151,6 +154,15 @@ var EntryModel = Backbone.Model.extend({
             this.isJustCreated = false;
         }
         this.entry.times.update();
+    },
+
+    setSaved: function() {
+        if (this.unsaved) {
+            this.unsaved = false;
+        }
+        if (this.canBeDeleted) {
+            this.canBeDeleted = false;
+        }
     },
 
     matches: function(filter) {
@@ -389,11 +401,28 @@ var EntryModel = Backbone.Model.extend({
     },
 
     removeWithoutHistory: function() {
-        var ix = this.group.group.entries.indexOf(this.entry);
-        if (ix >= 0) {
-            this.group.group.entries.splice(ix, 1);
+        if (this.canBeDeleted) {
+            var ix = this.group.group.entries.indexOf(this.entry);
+            if (ix >= 0) {
+                this.group.group.entries.splice(ix, 1);
+            }
+            this.file.reload();
         }
-        this.file.reload();
+    },
+
+    moveToFile: function(file) {
+        if (this.canBeDeleted) {
+            this.removeWithoutHistory();
+            this.group = file.get('groups').first();
+            this.file = file;
+            this._fillByEntry();
+            this.entry.times.update();
+            this.group.group.entries.push(this.entry);
+            this.group.addEntry(this);
+            this.isJustCreated = true;
+            this.unsaved = true;
+            this.file.setModified();
+        }
     },
 
     initOtpGenerator: function() {
@@ -523,6 +552,7 @@ EntryModel.newEntry = function(group, file) {
     model.entry.times.update();
     model.unsaved = true;
     model.isJustCreated = true;
+    model.canBeDeleted = true;
     group.addEntry(model);
     file.setModified();
     return model;

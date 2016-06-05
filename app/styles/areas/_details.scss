@@ -208,8 +208,9 @@
         border-radius: $base-border-radius;
         &:hover {
           transition: border-color $base-duration $base-timing;
+          border: 1px solid;
           @include th {
-            border: 1px solid light-border-color();
+            border-color: light-border-color();
             box-shadow: 0 0 3px form-box-shadow-color();
           }
           .details__field-value-add-label {
@@ -275,6 +276,16 @@
       &-btn-protect {
         &:before { content: $fa-var-unlock; }
         .details__field--protected & { &:before { content: $fa-var-lock; } }
+      }
+      &--select {
+        border-width: 0;
+        padding: 0;
+        .details__field--editable:hover & { border-width: 0; }
+      }
+      >select {
+        margin: 0;
+        width: 100%;
+        padding: 0 $base-padding-h;
       }
     }
 

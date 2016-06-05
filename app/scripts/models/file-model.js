@@ -343,7 +343,7 @@ var FileModel = Backbone.Model.extend({
         }
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
         this.forEachEntry({}, function(entry) {
-            entry.unsaved = false;
+            entry.setSaved();
         });
     },
 

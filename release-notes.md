@@ -14,6 +14,7 @@ Auto-type, ui improvements
 `+` option to show app logs  
 `+` group info in entry details  
 `+` logout from remote storages on disable  
+`+` select file for new records  
 `*` don't check updates at startup  
 `*` repos moved to github organization account  
 `*` allow opening same file twice  

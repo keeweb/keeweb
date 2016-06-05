@@ -6,6 +6,7 @@ var Backbone = require('backbone'),
     AppSettingsModel = require('../../models/app-settings-model'),
     Scrollable = require('../../mixins/scrollable'),
     FieldViewText = require('../fields/field-view-text'),
+    FieldViewSelect = require('../fields/field-view-select'),
     FieldViewAutocomplete = require('../fields/field-view-autocomplete'),
     FieldViewDate = require('../fields/field-view-date'),
     FieldViewTags = require('../fields/field-view-tags'),
@@ -134,6 +135,17 @@ var DetailsView = Backbone.View.extend({
 
     addFieldViews: function() {
         var model = this.model;
+        if (model.isJustCreated && this.appModel.files.length > 1) {
+            var fileNames = this.appModel.files.map(function(file) {
+                return { id: file.id, value: file.get('name'), selected: file === this.model.file };
+            }, this);
+            this.fileEditView = new FieldViewSelect({ model: { name: '$File', title: Locale.detFile,
+                value: function() { return fileNames; } } });
+            this.fieldViews.push(this.fileEditView);
+        } else {
+            this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: Locale.detFile,
+                value: function() { return model.fileName; } } }));
+        }
         this.userEditView = new FieldViewAutocomplete({ model: { name: '$UserName', title: Locale.detUser,
             value: function() { return model.user; }, getCompletions: this.getUserNameCompletions.bind(this) } });
         this.fieldViews.push(this.userEditView);
@@ -149,8 +161,6 @@ var DetailsView = Backbone.View.extend({
             value: function() { return model.tags; } } }));
         this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: Locale.detExpires, lessThanNow: '(' + Locale.detExpired + ')',
             value: function() { return model.expires; } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: Locale.detFile,
-            value: function() { return model.fileName; } } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Group', title: Locale.detGroup,
             value: function() { return model.groupName; }, tip: function() { return model.getGroupPath().join(' / '); } } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Created', title: Locale.detCreated,
@@ -460,6 +470,13 @@ var DetailsView = Backbone.View.extend({
                     }
                     this.model.setField(fieldName, e.val);
                     this.entryUpdated();
+                    return;
+                } else if (fieldName === 'File') {
+                    var newFile = this.appModel.files.get(e.val);
+                    this.model.moveToFile(newFile);
+                    this.appModel.activeEntryId = this.model.id;
+                    this.entryUpdated();
+                    Backbone.trigger('select-entry', this.model);
                     return;
                 } else if (fieldName) {
                     this.model.setField(fieldName, e.val);

@@ -136,11 +136,15 @@ var FieldView = Backbone.View.extend({
             arg = extra;
         }
         if (arg) {
-            arg.sender = this;
-            this.trigger('change', arg);
+            this.triggerChange(arg);
         }
         this.valueEl.html(this.renderValue(this.value));
         this.$el.removeClass('details__field--edit');
+    },
+
+    triggerChange: function(arg) {
+        arg.sender = this;
+        this.trigger('change', arg);
     }
 });
 
