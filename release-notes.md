@@ -20,7 +20,6 @@ Auto-type, ui improvements
 `*` allow opening same file twice  
 `*` local files are not saved to cache  
 `-` prevent second app instance on windows  
-`-` fix drag-drop in Safari  
 
 ##### v1.1.4 (2016-04-21)
 `-` fixed Firefox loading issues  
