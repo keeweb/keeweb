@@ -23,7 +23,7 @@
   "private": true,
   "dependencies": {
     "backbone": "1.3.3",
-    "baron": "=2.2.2",
+    "baron": "2.2.2",
     "bourbon": "4.2.7",
     "dropbox": "keeweb/dropbox-js#0.10.6",
     "font-awesome": "4.6.3",
@@ -31,7 +31,7 @@
     "normalize.css": "4.1.1",
     "pikaday": "1.4.0",
     "FileSaver.js": "eligrey/FileSaver.js",
-    "jquery": "2.2.4",
+    "jquery": "3.0.0",
     "jsqrcode": "antelle/jsqrcode#0.1.3"
   }
 }
