@@ -14,6 +14,7 @@ var ListView = Backbone.View.extend({
 
     events: {
         'click .list__item': 'itemClick',
+        'click .list__table-options': 'tableOptionsClick',
         'dragstart .list__item': 'itemDragStart'
     },
 
@@ -206,6 +207,10 @@ var ListView = Backbone.View.extend({
         e.originalEvent.dataTransfer.setData('text/entry', id);
         e.originalEvent.dataTransfer.effectAllowed = 'move';
         DragDropInfo.dragObject = this.items.get(id);
+    },
+
+    tableOptionsClick: function() {
+        // TODO: show available columns list
     }
 });
 

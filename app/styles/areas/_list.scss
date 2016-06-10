@@ -96,6 +96,17 @@
     td, th {
       padding: $base-padding;
       text-align: left;
+      &:first-child {
+        text-align: center;
+      }
+    }
+    th:first-child {
+      padding: 0;
+      width: 3em;
+    }
+    &-options {
+      @include icon-btn();
+      cursor: pointer;
     }
   }
 
