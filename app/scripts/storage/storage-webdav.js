@@ -177,8 +177,8 @@ var StorageWebDav = StorageBase.extend({
             that.logger.debug(config.op + ' error', config.path, 'aborted', that.logger.ts(ts));
             if (callback) { callback('aborted', xhr); callback = null; }
         });
-        xhr.responseType = 'arraybuffer';
         xhr.open(config.method, config.path);
+        xhr.responseType = 'arraybuffer';
         if (config.user) {
             xhr.setRequestHeader('Authorization', 'Basic ' + btoa(config.user + ':' + config.password));
         }
