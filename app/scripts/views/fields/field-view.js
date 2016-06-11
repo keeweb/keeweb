@@ -85,7 +85,7 @@ var FieldView = Backbone.View.extend({
         range.selectNodeContents(this.valueEl[0]);
         selection.removeAllRanges();
         selection.addRange(range);
-        copyRes = CopyPaste.copy(this.valueEl.text());
+        copyRes = CopyPaste.copy(this.valueEl[0].innerText || this.valueEl.text());
         if (copyRes) {
             selection.removeAllRanges();
             this.trigger('copy', { source: this, copyRes: copyRes });
