@@ -6,9 +6,11 @@
             <i class="fa fa-{{icon}} {{#if color}}{{color}}-color{{/if}} list__item-icon"></i>
         {{~/if~}}
     </td>
-    <td>{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</td>
-    <td>{{user}}</td>
-    <td>{{url}}</td>
-    <td>{{tags}}</td>
-    <td>{{notes}}</td>
+    {{#if columns.title}}<td>{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</td>{{/if}}
+    {{#if columns.user}}<td>{{user}}</td>{{/if}}
+    {{#if columns.url}}<td>{{url}}</td>{{/if}}
+    {{#if columns.tags}}<td>{{tags}}</td>{{/if}}
+    {{#if columns.notes}}<td>{{notes}}</td>{{/if}}
+    {{#if columns.groupName}}<td>{{groupName}}</td>{{/if}}
+    {{#if columns.fileName}}<td>{{fileName}}</td>{{/if}}
 </tr>

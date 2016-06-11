@@ -15,6 +15,7 @@ Auto-type, ui improvements
 `+` group info in entry details  
 `+` logout from remote storages on disable  
 `+` select file for new records  
+`+` customizable table view  
 `*` don't check updates at startup  
 `*` repos moved to github organization account  
 `*` allow opening same file twice  

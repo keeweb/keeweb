@@ -15,6 +15,7 @@ var Locale = {
     website: 'website',
     tags: 'tags',
     notes: 'notes',
+    group: 'group',
     noTitle: 'no title',
     or: 'or',
     notImplemented: 'Not Implemented',

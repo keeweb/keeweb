@@ -31,7 +31,9 @@ EntryPresenter.prototype = {
     get created() { return this.entry ? Format.dtStr(this.entry.created) : undefined; },
     get updated() { return this.entry ? Format.dtStr(this.entry.updated) : undefined; },
     get expired() { return this.entry ? this.entry.expired : false; },
-    get tags() { return this.entry ? this.entry.tags : false; },
+    get tags() { return this.entry ? this.entry.tags : undefined; },
+    get groupName() { return this.entry ? this.entry.groupName : undefined; },
+    get fileName() { return this.entry ? this.entry.fileName : undefined; },
     get description() {
         if (!this.entry) {
             return '[' + Locale.listGroup + ']';

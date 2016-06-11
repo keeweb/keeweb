@@ -22,6 +22,9 @@ var Format = {
     },
     dStr: function(dt) {
         return dt ? dt.getDate() + ' ' + Locale.monthsShort[dt.getMonth()] + ' ' + dt.getFullYear() : '';
+    },
+    capFirst: function(str) {
+        return str[0].toUpperCase() + str.substr(1);
     }
 };
 
