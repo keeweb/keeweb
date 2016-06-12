@@ -48,7 +48,7 @@
     &-icon-search {
       @include th { color: muted-color(); }
       position: absolute;
-      top: .6em;
+      top: .5em;
       right: .5em;
       cursor: pointer;
       &:hover {
