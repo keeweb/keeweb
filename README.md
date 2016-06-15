@@ -9,20 +9,20 @@ The app can run either in browser, or as a desktop app.
 
 # Quick Links
 
-Apps: [Web](https://app.keeweb.info/) [Desktop](https://github.com/antelle/keeweb/releases/latest)  
-Timeline: [Release Notes](release-notes.md) [TODO](https://github.com/antelle/keeweb/wiki/TODO)  
-On one page: [Features](https://keeweb.info/#features) [FAQ](https://github.com/antelle/keeweb/wiki/FAQ)  
+Apps: [Web](https://app.keeweb.info/) [Desktop](https://github.com/keeweb/keeweb/releases/latest)  
+Timeline: [Release Notes](release-notes.md) [TODO](https://github.com/keeweb/keeweb/wiki/TODO)  
+On one page: [Features](https://keeweb.info/#features) [FAQ](https://github.com/keeweb/keeweb/wiki/FAQ)  
 Website: [keeweb.info](https://keeweb.info)  
 Twitter: [kee_web](https://twitter.com/kee_web)  
 
 # Status
 
-Project roadmap with planned features and approximate schedule is on [TODO](https://github.com/antelle/keeweb/wiki/TODO) page.  
+Project roadmap with planned features and approximate schedule is on [TODO](https://github.com/keeweb/keeweb/wiki/TODO) page.  
 
 # Self-hosting
 
 Everything you need to host this app on your server is any static file server. The app is a single HTML file + cache manifest (optionally; for offline access).
-You can download the latest distribution files from [gh-pages](https://github.com/antelle/keeweb/tree/gh-pages) branch.  
+You can download the latest distribution files from [gh-pages](https://github.com/keeweb/keeweb/tree/gh-pages) branch.  
 
 If you are using Docker:
 
@@ -62,4 +62,4 @@ For pull requests: branch is important! `master` is only for hotfixes, `develop`
 
 # License
 
-[MIT](https://github.com/antelle/keeweb/blob/master/LICENSE.txt)
+[MIT](https://github.com/keeweb/keeweb/blob/master/LICENSE.txt)
