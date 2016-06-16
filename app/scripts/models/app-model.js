@@ -41,6 +41,29 @@ var AppModel = Backbone.Model.extend({
         this.appLogger = new Logger('app');
     },
 
+    loadConfig: function(configLocation, callback) {
+        this.appLogger.debug('Loading config from', configLocation);
+        var ts = this.appLogger.ts();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', configLocation);
+        xhr.responseType = 'json';
+        xhr.send();
+        var that = this;
+        xhr.addEventListener('load', function() {
+            if (!xhr.response) {
+                that.appLogger.error('Error loading app config', xhr.statusText);
+                return callback(true);
+            }
+            that.appLogger.info('Loaded app config from', configLocation, that.appLogger.ts(ts));
+            that.settings.set(xhr.response);
+            callback();
+        });
+        xhr.addEventListener('error', function() {
+            that.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
+            callback(true);
+        });
+    },
+
     addFile: function(file) {
         if (this.files.get(file.id)) {
             return false;

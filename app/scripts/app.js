@@ -13,33 +13,78 @@ var AppModel = require('./models/app-model'),
     Locale = require('./util/locale');
 
 $(function() {
-    if ((window.parent !== window.top) || window.opener) {
+    if (isPopup()) {
         return AuthReceiver.receive();
     }
-    require('./mixins/view');
-    require('./helpers');
-    KeyHandler.init();
-    IdleTracker.init();
-    PopupNotifier.init();
-    window.kw = ExportApi;
+    loadMixins();
+    initModules();
 
     var appModel = new AppModel();
     ThemeChanger.setBySettings(appModel.settings);
-    var skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
-    if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0 && !skipHttpsWarning) {
-        Alerts.error({ header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
-            body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
-            buttons: [
-                { result: '', title: Locale.appSecWarnBtn, error: true }
-            ],
-            complete: showApp
+    var configParam = getConfigParam();
+    if (configParam) {
+        appModel.loadConfig(configParam, function(err) {
+            if (err) {
+                showSettingsLoadError();
+            } else {
+                ThemeChanger.setBySettings(appModel.settings);
+                showApp();
+            }
         });
     } else {
         showApp();
     }
 
+    function isPopup() {
+        return (window.parent !== window.top) || window.opener;
+    }
+
+    function loadMixins() {
+        require('./mixins/view');
+        require('./helpers');
+    }
+
+    function initModules() {
+        KeyHandler.init();
+        IdleTracker.init();
+        PopupNotifier.init();
+        window.kw = ExportApi;
+    }
+
+    function showSettingsLoadError() {
+        ThemeChanger.setBySettings(appModel.settings);
+        Alerts.error({
+            header: Locale.appSettingsError,
+            body: Locale.appSettingsErrorBody,
+            buttons: [],
+            esc: false, enter: false, click: false
+        });
+    }
+
     function showApp() {
+        var skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
+        if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0 && !skipHttpsWarning) {
+            Alerts.error({ header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
+                body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
+                buttons: [
+                    { result: '', title: Locale.appSecWarnBtn, error: true }
+                ],
+                complete: showView
+            });
+        } else {
+            showView();
+        }
+    }
+
+    function showView() {
         new AppView({ model: appModel }).render();
         Updater.init();
+    }
+
+    function getConfigParam() {
+        var match = location.search.match(/[\?&]config=([^&]+)/i);
+        if (match && match[1]) {
+            return match[1];
+        }
     }
 });

@@ -271,6 +271,8 @@ var Locale = {
     appSaveError: 'Save Error',
     appSaveErrorBody: 'Failed to auto-save file',
     appSaveErrorBodyMul: 'Failed to auto-save files:',
+    appSettingsError: 'Error loading app',
+    appSettingsErrorBody: 'There was an error loading app settings. Please double check app url or contact your administrator.',
 
     setGenTitle: 'General Settings',
     setGenUpdate: 'Update',

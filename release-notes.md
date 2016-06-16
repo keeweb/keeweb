@@ -16,6 +16,7 @@ Auto-type, ui improvements
 `+` logout from remote storages on disable  
 `+` select file for new records  
 `+` customizable table view  
+`+` ability to load json config  
 `*` don't check updates at startup  
 `*` repos moved to github organization account  
 `*` allow opening same file twice  
