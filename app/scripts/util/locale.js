@@ -64,7 +64,7 @@ var Locale = {
     genPresetDefault: 'default preset',
     genPresetDerived: 'like old password',
     genPresetPronounceable: 'pronounceable',
-    genPresetMed: 'medium length',
+    genPresetMed: 'medium',
     genPresetLong: 'long',
     genPresetPin4: '4-digit PIN',
     genPresetMac: 'MAC address',
