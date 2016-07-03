@@ -65,6 +65,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'open-file', this.toggleOpenFile);
         this.listenTo(Backbone, 'save-all', this.saveAll);
         this.listenTo(Backbone, 'remote-key-changed', this.remoteKeyChanged);
+        this.listenTo(Backbone, 'key-change-pending', this.keyChangePending);
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
@@ -219,8 +220,11 @@ var AppView = Backbone.View.extend({
         this.views.tag.show();
     },
 
-    showKeyChange: function(file) {
-        if (this.views.keyChange || Alerts.alertDisplayed) {
+    showKeyChange: function(file, viewConfig) {
+        if (Alerts.alertDisplayed) {
+            return;
+        }
+        if (this.views.keyChange && this.views.keyChange.model.remote) {
             return;
         }
         this.hideSettings();
@@ -231,7 +235,9 @@ var AppView = Backbone.View.extend({
         this.views.details.hide();
         this.views.grp.hide();
         this.views.tag.hide();
-        this.views.keyChange = new KeyChangeView({ model: file });
+        this.views.keyChange = new KeyChangeView({
+            model: { file: file, expired: viewConfig.expired, remote: viewConfig.remote }
+        });
         this.views.keyChange.setElement(this.$el.find('.app__body')).render();
         this.views.keyChange.on('accept', this.keyChangeAccept.bind(this));
         this.views.keyChange.on('cancel', this.showEntries.bind(this));
@@ -464,18 +470,31 @@ var AppView = Backbone.View.extend({
     },
 
     remoteKeyChanged: function(e) {
-        this.showKeyChange(e.file);
+        this.showKeyChange(e.file, { remote: true });
+    },
+
+    keyChangePending: function(e) {
+        this.showKeyChange(e.file, { expired: true });
     },
 
     keyChangeAccept: function(e) {
         this.showEntries();
-        this.model.syncFile(e.file, {
-            remoteKey: {
-                password: e.password,
-                keyFileName: e.keyFileName,
-                keyFileData: e.keyFileData
+        if (e.expired) {
+            e.file.setPassword(e.password);
+            if (e.keyFileData && e.keyFileName) {
+                e.file.setKeyFile(e.keyFileData, e.keyFileName);
+            } else {
+                e.file.removeKeyFile();
             }
-        });
+        } else {
+            this.model.syncFile(e.file, {
+                remoteKey: {
+                    password: e.password,
+                    keyFileName: e.keyFileName,
+                    keyFileData: e.keyFileData
+                }
+            });
+        }
     },
 
     toggleSettings: function(page) {

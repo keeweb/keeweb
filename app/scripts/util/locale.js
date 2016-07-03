@@ -88,8 +88,10 @@ var Locale = {
     tagBadName: 'Bad name',
     tagBadNameBody: 'Tag name can not contain characters `,`, `;`, `:`. Please remove them.',
 
-    keyChangeTitle: 'Master Key Changed',
-    keyChangeMessage: 'Master key was changed for this database. Please enter a new key',
+    keyChangeTitleRemote: 'Master Key Changed',
+    keyChangeMessageRemote: 'Master key was changed for this database. Please enter a new key',
+    keyChangeTitleExpired: 'Master Key Expired',
+    keyChangeMessageExpired: 'Master key for this database is expired. Please enter a new key',
 
     iconFavTitle: 'Download and use website favicon',
     iconSelCustom: 'Select custom icon',
@@ -364,6 +366,7 @@ var Locale = {
     setFileHistSize: 'History size, total MB per file',
     setFileAdvanced: 'Advanced',
     setFileRounds: 'Key encryption rounds',
+    setFileKeyChangeForce: 'Ask to change key after (days)',
     setFileUseKeyFile: 'Use key file',
     setFileUseGenKeyFile: 'Use generated key file',
     setFileUseOldKeyFile: 'Use old key file',

@@ -34,7 +34,8 @@ var SettingsFileView = Backbone.View.extend({
         'change #settings__file-trash': 'changeTrash',
         'input #settings__file-hist-len': 'changeHistoryLength',
         'input #settings__file-hist-size': 'changeHistorySize',
-        'input #settings__file-key-rounds': 'changeKeyRounds'
+        'input #settings__file-key-rounds': 'changeKeyRounds',
+        'input #settings__file-key-change-force': 'changeKeyChangeForce'
     },
 
     appModel: null,
@@ -69,6 +70,7 @@ var SettingsFileView = Backbone.View.extend({
             historyMaxItems: this.model.get('historyMaxItems'),
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
+            keyChangeForce: this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
             storageProviders: storageProviders
         });
         if (!this.model.get('created')) {
@@ -383,6 +385,14 @@ var SettingsFileView = Backbone.View.extend({
             return;
         }
         this.model.setKeyEncryptionRounds(value);
+    },
+
+    changeKeyChangeForce: function(e) {
+        var value = Math.round(e.target.value);
+        if (isNaN(value) || value <= 0) {
+            value = -1;
+        }
+        this.model.setKeyChange(true, value);
     }
 });
 

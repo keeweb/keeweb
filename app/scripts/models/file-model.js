@@ -30,6 +30,7 @@ var FileModel = Backbone.Model.extend({
         oldKeyFileName: '',
         passwordChanged: false,
         keyFileChanged: false,
+        keyChangeForce: -1,
         syncing: false,
         syncError: null,
         syncDate: null
@@ -142,7 +143,8 @@ var FileModel = Backbone.Model.extend({
             recycleBinEnabled: this.db.meta.recycleBinEnabled,
             historyMaxItems: this.db.meta.historyMaxItems,
             historyMaxSize: this.db.meta.historyMaxSize,
-            keyEncryptionRounds: this.db.header.keyEncryptionRounds
+            keyEncryptionRounds: this.db.header.keyEncryptionRounds,
+            keyChangeForce: this.db.meta.keyChangeForce
         }, { silent: true });
         this.db.groups.forEach(function(group) {
             var groupModel = this.getGroup(this.subId(group.uuid.id));
@@ -391,6 +393,28 @@ var FileModel = Backbone.Model.extend({
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
         this.set({ keyFileName: '', keyFileChanged: changed });
+        this.setModified();
+    },
+
+    isKeyChangePending: function(force) {
+        if (!this.db.meta.keyChanged) {
+            return false;
+        }
+        var expiryDays = force ? this.db.meta.keyChangeForce : this.db.meta.keyChangeRec;
+        if (!expiryDays || expiryDays < 0 || isNaN(expiryDays)) {
+            return false;
+        }
+        var daysDiff = (Date.now() - this.db.meta.keyChanged) / 1000 / 3600 / 24;
+        return daysDiff > expiryDays;
+    },
+
+    setKeyChange: function(force, days) {
+        if (isNaN(days) || !days || days < 0) {
+            days = -1;
+        }
+        var prop = force ? 'keyChangeForce' : 'keyChangeRec';
+        this.db.meta[prop] = days;
+        this.set(prop, days);
         this.setModified();
     },
 

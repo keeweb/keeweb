@@ -438,8 +438,8 @@ var AppModel = Backbone.Model.extend({
             that.setFileOpts(file, params.opts);
             that.addToLastOpenFiles(file, rev);
             that.addFile(file);
-            that.fileOpened(file);
             callback(null, file);
+            that.fileOpened(file);
         });
     },
 
@@ -510,6 +510,9 @@ var AppModel = Backbone.Model.extend({
             Storage.file.watch(file.get('path'), _.debounce(function() {
                 that.syncFile(file);
             }, Timeouts.FileChangeSync));
+        }
+        if (file.isKeyChangePending(true)) {
+            Backbone.trigger('key-change-pending', { file: file });
         }
     },
 

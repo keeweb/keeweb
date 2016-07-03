@@ -25,11 +25,13 @@ var KeyChangeView = Backbone.View.extend({
     },
 
     render: function() {
-        this.keyFileName = this.model.get('keyFileName') || null;
+        this.keyFileName = this.model.file.get('keyFileName') || null;
         this.keyFileData = null;
         this.renderTemplate({
-            fileName: this.model.get('name'),
-            keyFileName: this.model.get('keyFileName')
+            fileName: this.model.file.get('name'),
+            keyFileName: this.model.file.get('keyFileName'),
+            title: this.model.expired ? Locale.keyChangeTitleExpired : Locale.keyChangeTitleRemote,
+            message: this.model.expired ? Locale.keyChangeMessageExpired : Locale.keyChangeMessageRemote
         });
         this.$el.find('.key-change__keyfile-name').text(this.keyFileName ? ': ' + this.keyFileName : '');
         this.inputEl = this.$el.find('.key-change__pass');
@@ -81,7 +83,8 @@ var KeyChangeView = Backbone.View.extend({
 
     accept: function() {
         this.trigger('accept', {
-            file: this.model,
+            file: this.model.file,
+            expired: this.model.expired,
             password: this.passwordInput.value,
             keyFileName: this.keyFileName,
             keyFileData: this.keyFileData

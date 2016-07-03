@@ -73,4 +73,7 @@
     <h2>{{res 'setFileAdvanced'}}</h2>
     <label for="settings__file-key-rounds">{{res 'setFileRounds'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="{{keyEncryptionRounds}}" />
+
+    <label for="settings__file-key-rounds">{{res 'setFileKeyChangeForce'}}:</label>
+    <input type="text" pattern="\d*" class="settings__input input-base" id="settings__file-key-change-force" value="{{keyChangeForce}}" />
 </div>

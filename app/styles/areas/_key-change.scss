@@ -20,7 +20,6 @@
     text-align: center;
   }
   &__body {
-    @include flex(0);
     @include display(flex);
     @include align-items(flex-start);
     @include flex-direction(column);
