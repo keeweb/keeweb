@@ -63,7 +63,8 @@
     "compression": "maximum",
     "asar": false,
     "extend-info": "package/osx/extend.plist",
-    "osx": {
+    "mac": {
+      "target": "dmg",
       "contents": [
         {
           "x": 438,
@@ -80,6 +81,7 @@
       "icon-size": 80
     },
     "win": {
+      "target": "squirrel",
       "loadingGif": "graphics/install.gif"
     }
   },
