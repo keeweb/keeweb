@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-##### v1.2.0 (TBD)
-Auto-type, ui improvements
+##### v1.2.0 (2016-06-11)
+Auto-type, ui improvements  
 `+` allow selecting attachments with click  
 `+` save groups collapsed/expanded state  
 `+` docker container  
