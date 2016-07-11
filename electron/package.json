@@ -1,6 +1,6 @@
 {
   "name": "KeeWeb",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "Free cross-platform password manager compatible with KeePass",
   "main": "main.js",
   "repository": { "type": "git", "url": "https://github.com/keeweb/keeweb" },
