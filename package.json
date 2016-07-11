@@ -12,7 +12,7 @@
   "devDependencies": {
     "base64-loader": "1.0.0",
     "cssnano": "3.6.2",
-    "electron-builder": "4.2.2",
+    "electron-builder": "5.12.1",
     "electron-prebuilt": "1.2.6",
     "exports-loader": "0.6.3",
     "get-folder-size": "1.0.0",
