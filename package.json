@@ -13,7 +13,7 @@
     "base64-loader": "1.0.0",
     "cssnano": "3.6.2",
     "electron-builder": "4.2.2",
-    "electron-prebuilt": "^1.2.1",
+    "electron-prebuilt": "1.2.6",
     "exports-loader": "0.6.3",
     "get-folder-size": "1.0.0",
     "grunt": "1.0.1",
@@ -85,7 +85,8 @@
   },
   "directories": {
     "buildResources": "graphics",
-    "output": "tmp/desktop"
+    "output": "tmp/desktop",
+    "app": "electron"
   },
   "license": "MIT",
   "readme": "README.md"
