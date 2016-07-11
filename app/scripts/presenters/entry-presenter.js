@@ -19,7 +19,7 @@ EntryPresenter.prototype = {
         }
         return this;
     },
-    get id() { return this.entry ? this.entry.id : this.group.get('id'); },
+    get id() { return this.entry ? this.entry.id : this.group.id; },
     get icon() { return this.entry ? this.entry.icon : (this.group.get('icon') || 'folder'); },
     get customIcon() { return this.entry ? this.entry.customIcon : undefined; },
     get color() { return this.entry ? (this.entry.color || (this.entry.customIcon ? this.noColor : undefined)) : undefined; },
@@ -31,7 +31,9 @@ EntryPresenter.prototype = {
     get created() { return this.entry ? Format.dtStr(this.entry.created) : undefined; },
     get updated() { return this.entry ? Format.dtStr(this.entry.updated) : undefined; },
     get expired() { return this.entry ? this.entry.expired : false; },
-    get tags() { return this.entry ? this.entry.tags : false; },
+    get tags() { return this.entry ? this.entry.tags : undefined; },
+    get groupName() { return this.entry ? this.entry.groupName : undefined; },
+    get fileName() { return this.entry ? this.entry.fileName : undefined; },
     get description() {
         if (!this.entry) {
             return '[' + Locale.listGroup + ']';

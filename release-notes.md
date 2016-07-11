@@ -1,6 +1,28 @@
 Release notes
 -------------
 
+##### v1.2.0 (2016-06-11)
+Auto-type, ui improvements  
+`+` allow selecting attachments with click  
+`+` save groups collapsed/expanded state  
+`+` docker container  
+`+` edit and remove tags  
+`+` register file associations  
+`+` high contrast theme  
+`+` ability to increase font size  
+`+` improved start page ux on mobile  
+`+` option to show app logs  
+`+` group info in entry details  
+`+` logout from remote storages on disable  
+`+` select file for new records  
+`+` customizable table view  
+`+` ability to load json config  
+`*` don't check updates at startup  
+`*` repos moved to github organization account  
+`*` allow opening same file twice  
+`*` local files are not saved to cache  
+`-` prevent second app instance on windows  
+
 ##### v1.1.4 (2016-04-21)
 `-` fixed Firefox loading issues  
 

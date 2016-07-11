@@ -8,6 +8,8 @@ var MenuItemModel = require('./menu/menu-item-model'),
     KdbxIcons = kdbxweb.Consts.Icons,
     GroupCollection, EntryCollection;
 
+var DefaultAutoTypeSequence = '{USERNAME}{TAB}{PASSWORD}{ENTER}';
+
 var GroupModel = MenuItemModel.extend({
     defaults: _.extend({}, MenuItemModel.prototype.defaults, {
         iconId: 0,
@@ -17,7 +19,9 @@ var GroupModel = MenuItemModel.extend({
         top: false,
         drag: true,
         drop: true,
-        enableSearching: true
+        enableSearching: true,
+        enableAutoType: null,
+        autoTypeSeq: null
     }),
 
     initialize: function() {
@@ -27,16 +31,21 @@ var GroupModel = MenuItemModel.extend({
 
     setGroup: function(group, file, parentGroup) {
         var isRecycleBin = file.db.meta.recycleBinUuid && file.db.meta.recycleBinUuid.id === group.uuid.id;
+        var id = file.subId(group.uuid.id);
         this.set({
-            id: group.uuid.id,
+            id: id,
+            uuid: group.uuid.id,
             expanded: group.expanded,
             visible: !isRecycleBin,
             items: new GroupCollection(),
             entries: new EntryCollection(),
-            filterValue: group.uuid.id,
+            filterValue: id,
             enableSearching: group.enableSearching,
+            enableAutoType: group.enableAutoType,
+            autoTypeSeq: group.defaultAutoTypeSeq,
             top: !parentGroup,
-            drag: !!parentGroup
+            drag: !!parentGroup,
+            collapsible: !!parentGroup
         }, { silent: true });
         this.group = group;
         this.file = file;
@@ -45,7 +54,7 @@ var GroupModel = MenuItemModel.extend({
         var items = this.get('items'),
             entries = this.get('entries');
         group.groups.forEach(function(subGroup) {
-            var existing = file.getGroup(subGroup.uuid);
+            var existing = file.getGroup(file.subId(subGroup.uuid.id));
             if (existing) {
                 existing.setGroup(subGroup, file, this);
                 items.add(existing);
@@ -54,7 +63,7 @@ var GroupModel = MenuItemModel.extend({
             }
         }, this);
         group.entries.forEach(function(entry) {
-            var existing = file.getEntry(entry.uuid);
+            var existing = file.getEntry(file.subId(entry.uuid.id));
             if (existing) {
                 existing.setEntry(entry, this, file);
                 entries.add(existing);
@@ -66,11 +75,12 @@ var GroupModel = MenuItemModel.extend({
 
     _fillByGroup: function(silent) {
         this.set({
-            title: this.group.name,
+            title: this.parentGroup ? this.group.name : this.file.get('name'),
             iconId: this.group.icon,
             icon: this._iconFromId(this.group.icon),
             customIcon: this._buildCustomIcon(),
-            customIconId: this.group.customIcon ? this.group.customIcon.toString() : null
+            customIconId: this.group.customIcon ? this.group.customIcon.toString() : null,
+            expanded: this.group.expanded !== false
         }, { silent: silent });
     },
 
@@ -93,7 +103,8 @@ var GroupModel = MenuItemModel.extend({
         if (this.isJustCreated) {
             this.isJustCreated = false;
         }
-        // this.group.times.update(); // for now, we don't remember this setting
+        this.file.setModified();
+        this.group.times.update();
     },
 
     forEachGroup: function(callback, includeDisabled) {
@@ -146,15 +157,88 @@ var GroupModel = MenuItemModel.extend({
     },
 
     setExpanded: function(expanded) {
-        this._groupModified();
+        // this._groupModified(); // it's not good to mark the file as modified when a group is collapsed
         this.group.expanded = expanded;
         this.set('expanded', expanded);
     },
 
     setEnableSearching: function(enabled) {
         this._groupModified();
+        var parentEnableSearching = true;
+        var parentGroup = this.parentGroup;
+        while (parentGroup) {
+            if (typeof parentGroup.get('enableSearching') === 'boolean') {
+                parentEnableSearching = parentGroup.get('enableSearching');
+                break;
+            }
+            parentGroup = parentGroup.parentGroup;
+        }
+        if (enabled === parentEnableSearching) {
+            enabled = null;
+        }
         this.group.enableSearching = enabled;
-        this.set('enableSearching', enabled);
+        this.set('enableSearching', this.group.enableSearching);
+    },
+
+    getEffectiveEnableSearching: function() {
+        var grp = this;
+        while (grp) {
+            if (typeof grp.get('enableSearching') === 'boolean') {
+                return grp.get('enableSearching');
+            }
+            grp = grp.parentGroup;
+        }
+        return true;
+    },
+
+    setEnableAutoType: function(enabled) {
+        this._groupModified();
+        var parentEnableAutoType = true;
+        var parentGroup = this.parentGroup;
+        while (parentGroup) {
+            if (typeof parentGroup.get('enableAutoType') === 'boolean') {
+                parentEnableAutoType = parentGroup.get('enableAutoType');
+                break;
+            }
+            parentGroup = parentGroup.parentGroup;
+        }
+        if (enabled === parentEnableAutoType) {
+            enabled = null;
+        }
+        this.group.enableAutoType = enabled;
+        this.set('enableAutoType', this.group.enableAutoType);
+    },
+
+    getEffectiveEnableAutoType: function() {
+        var grp = this;
+        while (grp) {
+            if (typeof grp.get('enableAutoType') === 'boolean') {
+                return grp.get('enableAutoType');
+            }
+            grp = grp.parentGroup;
+        }
+        return true;
+    },
+
+    setAutoTypeSeq: function(seq) {
+        this._groupModified();
+        this.group.defaultAutoTypeSeq = seq || undefined;
+        this.set('autoTypeSeq', this.group.defaultAutoTypeSeq);
+    },
+
+    getEffectiveAutoTypeSeq: function() {
+        var grp = this;
+        while (grp) {
+            if (grp.get('autoTypeSeq')) {
+                return grp.get('autoTypeSeq');
+            }
+            grp = grp.parentGroup;
+        }
+        return DefaultAutoTypeSequence;
+    },
+
+    getParentEffectiveAutoTypeSeq: function() {
+        return this.parentGroup ? this.parentGroup.getEffectiveAutoTypeSeq() : DefaultAutoTypeSequence;
     },
 
     moveToTrash: function() {

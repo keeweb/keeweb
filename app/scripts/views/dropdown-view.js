@@ -35,8 +35,9 @@ var DropdownView = Backbone.View.extend({
 
     itemClick: function(e) {
         e.stopPropagation();
-        var selected = $(e.target).closest('.dropdown__item').data('value');
-        this.trigger('select', { item: selected });
+        var el = $(e.target).closest('.dropdown__item');
+        var selected = el.data('value');
+        this.trigger('select', { item: selected, el: el });
     }
 });
 

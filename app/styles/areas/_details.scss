@@ -127,6 +127,7 @@
       @include flex(1);
       @include display(flex);
       @include align-items(stretch);
+      @include align-content(flex-start);
       @include flex-direction(row);
       @include justify-content(flex-start);
       @include flex-wrap(wrap);
@@ -146,6 +147,10 @@
       @include align-items(stretch);
       @include flex-direction(column);
       @include justify-content(flex-start);
+    }
+
+    &-after {
+      @include flex(100% 1 0);
     }
   }
 
@@ -203,8 +208,9 @@
         border-radius: $base-border-radius;
         &:hover {
           transition: border-color $base-duration $base-timing;
+          border: 1px solid;
           @include th {
-            border: 1px solid light-border-color();
+            border-color: light-border-color();
             box-shadow: 0 0 3px form-box-shadow-color();
           }
           .details__field-value-add-label {
@@ -218,7 +224,6 @@
       }
       .details__field--multiline & {
         width: 0;
-        word-break: break-all;
         white-space: pre-wrap;
       }
       .details__field--edit &,
@@ -240,6 +245,10 @@
         resize: none;
         line-height: 1.5em;
         overflow: hidden;
+      }
+      >label {
+        font-weight: normal;
+        @include user-select(none);
       }
       .details__body-aside & {
         @include th { color: muted-color(); }
@@ -267,6 +276,16 @@
       &-btn-protect {
         &:before { content: $fa-var-unlock; }
         .details__field--protected & { &:before { content: $fa-var-lock; } }
+      }
+      &--select {
+        border-width: 0;
+        padding: 0;
+        .details__field--editable:hover & { border-width: 0; }
+      }
+      >select {
+        margin: 0;
+        width: 100%;
+        padding: 0 $base-padding-h;
       }
     }
 
@@ -318,15 +337,13 @@
     text-align: center;
     overflow: hidden;
     transition: color $base-duration $base-timing;
-    display: none;
-    @include nomobile { display: block; }
     &:hover {
       @include th { color: medium-color(); }
     }
     &-title {
       display: none;
       transition: color $slow-transition-out;
-      margin-right: .4em;
+      margin-right: $base-padding-h;
       color: transparent;
       .details__attachment-add:hover & {
         display: inline;

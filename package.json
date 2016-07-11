@@ -6,43 +6,44 @@
   "homepage": "https://keeweb.info",
   "repository": {
     "type": "git",
-    "url": "https://github.com/antelle/keeweb"
+    "url": "https://github.com/keeweb/keeweb"
   },
   "dependencies": {},
   "devDependencies": {
-    "base64-loader": "^1.0.0",
-    "cssnano": "^3.3.2",
-    "electron-builder": "=2.1.1",
-    "exports-loader": "^0.6.2",
-    "get-folder-size": "^1.0.0",
-    "grunt": "^0.4.5",
-    "grunt-bower-install-simple": "^1.1.4",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-compress": "^1.2.0",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-deb": "github:antelle/grunt-contrib-deb#ddb2ef4",
-    "grunt-contrib-jshint": "^1.0.0",
-    "grunt-contrib-htmlmin": "^1.2.0",
-    "grunt-contrib-uglify": "^1.0.1",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-electron": "^2.0.1",
-    "grunt-gitinfo": "^0.1.7",
-    "grunt-inline-alt": "^0.3.10",
-    "grunt-postcss": "^0.8.0",
-    "grunt-sass": "^1.1.0",
-    "grunt-string-replace": "^1.2.0",
-    "grunt-webpack": "^1.0.11",
-    "handlebars": "^4.0.5",
-    "handlebars-loader": "^1.1.4",
-    "html-minifier": "=1.4.0",
-    "load-grunt-tasks": "^3.2.0",
-    "raw-loader": "^0.5.1",
+    "base64-loader": "1.0.0",
+    "cssnano": "3.6.2",
+    "electron-builder": "4.2.2",
+    "electron-prebuilt": "^1.2.1",
+    "exports-loader": "0.6.3",
+    "get-folder-size": "1.0.0",
+    "grunt": "1.0.1",
+    "grunt-bower-install-simple": "1.2.3",
+    "grunt-contrib-clean": "1.0.0",
+    "grunt-contrib-compress": "1.3.0",
+    "grunt-contrib-copy": "1.0.0",
+    "grunt-contrib-deb": "github:keeweb/grunt-contrib-deb#ddb2ef4",
+    "grunt-contrib-htmlmin": "1.4.0",
+    "grunt-contrib-jshint": "1.0.0",
+    "grunt-contrib-uglify": "1.0.1",
+    "grunt-contrib-watch": "1.0.0",
+    "grunt-electron": "4.0.0",
+    "grunt-gitinfo": "0.1.8",
+    "grunt-inline-alt": "0.3.10",
+    "grunt-postcss": "0.8.0",
+    "grunt-sass": "1.2.0",
+    "grunt-string-replace": "1.2.1",
+    "grunt-webpack": "1.0.11",
+    "handlebars": "4.0.5",
+    "handlebars-loader": "1.3.0",
+    "html-minifier": "2.1.3",
+    "load-grunt-tasks": "3.5.0",
+    "raw-loader": "0.5.1",
     "string-replace-webpack-plugin": "0.0.3",
     "strip-sourcemap-loader": "0.0.1",
-    "time-grunt": "^1.2.1",
-    "uglify-loader": "^1.3.0",
-    "webpack": "^1.12.6",
-    "webpack-dev-server": "^1.12.1"
+    "time-grunt": "1.3.0",
+    "uglify-loader": "1.3.0",
+    "webpack": "1.13.1",
+    "webpack-dev-server": "1.14.1"
   },
   "scripts": {
     "start": "grunt",
@@ -54,6 +55,37 @@
     "name": "Antelle",
     "email": "antelle.net@gmail.com",
     "url": "http://antelle.net"
+  },
+  "build": {
+    "app-bundle-id": "net.antelle.keeweb",
+    "app-category-type": "public.app-category.productivity",
+    "iconUrl": "https://raw.githubusercontent.com/keeweb/keeweb/master/graphics/icon.ico",
+    "compression": "maximum",
+    "asar": false,
+    "extend-info": "package/osx/extend.plist",
+    "osx": {
+      "contents": [
+        {
+          "x": 438,
+          "y": 344,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 192,
+          "y": 344,
+          "type": "file"
+        }
+      ],
+      "icon-size": 80
+    },
+    "win": {
+      "loadingGif": "graphics/install.gif"
+    }
+  },
+  "directories": {
+    "buildResources": "graphics",
+    "output": "tmp/desktop"
   },
   "license": "MIT",
   "readme": "README.md"

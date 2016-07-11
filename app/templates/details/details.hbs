@@ -26,6 +26,7 @@
             </div>
             <div class="details__body-aside">
             </div>
+            <div class="details__body-after"></div>
         </div>
         <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
     </div>
@@ -36,6 +37,12 @@
             <i class="details__buttons-trash fa fa-trash-o" title="{{res 'detDelEntry'}}" tip-placement="top"></i>
         {{~/if~}}
         <div class="details__attachments">
+            <input type="file" class="details__attachment-input-file hide-by-pos" multiple />
+            {{#ifneq attachments.length 0}}
+                <div class="details__attachment-add">
+                    <i class="fa fa-paperclip"></i>
+                </div>
+            {{/ifneq}}
             {{#each attachments as |attachment ix|}}
                 <div class="details__attachment" data-id="{{ix}}"><i class="fa fa-{{attachment.icon}}"></i> {{attachment.title}}</div>
             {{else}}

@@ -49,7 +49,7 @@ var MenuItemView = Backbone.View.extend({
     render: function() {
         this.removeInnerViews();
         this.renderTemplate(this.model.attributes);
-        this.iconEl = this.$el.find('i');
+        this.iconEl = this.$el.find('i.menu__item-icon');
         var items = this.model.get('items');
         if (items) {
             items.forEach(function (item) {
@@ -156,7 +156,14 @@ var MenuItemView = Backbone.View.extend({
     editItem: function(e) {
         if (this.model.get('active') && this.model.get('editable')) {
             e.stopPropagation();
-            Backbone.trigger('edit-group', this.model);
+            switch (this.model.get('filterKey')) {
+                case 'tag':
+                    Backbone.trigger('edit-tag', this.model);
+                    break;
+                case 'group':
+                    Backbone.trigger('edit-group', this.model);
+                    break;
+            }
         }
     },
 
@@ -173,7 +180,8 @@ var MenuItemView = Backbone.View.extend({
     },
 
     dropAllowed: function(e) {
-        return ['text/group', 'text/entry'].indexOf(e.originalEvent.dataTransfer.types[0]) >= 0;
+        var types = e.originalEvent.dataTransfer.types;
+        return types.indexOf('text/group') >= 0 || types.indexOf('text/entry') >= 0;
     },
 
     dragstart: function(e) {

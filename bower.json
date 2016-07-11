@@ -1,9 +1,9 @@
 {
   "name": "keeweb",
   "authors": [
-    "Antelle <dmitryvit@gmail.com>"
+    "Antelle <antelle.net@gmail.com>"
   ],
-  "description": "KeePass web app",
+  "description": "Free cross-platform password manager compatible with KeePass",
   "main": "app/index.html",
   "moduleType": [
     "amd"
@@ -12,7 +12,7 @@
     "keepass"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/antelle/keeweb",
+  "homepage": "https://github.com/keeweb/keeweb",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -22,16 +22,16 @@
   ],
   "private": true,
   "dependencies": {
-    "backbone": "~1.3.2",
-    "baron": "~2.2.2",
-    "bourbon": "~4.2.5",
-    "dropbox": "antelle/dropbox-js#0.10.6",
-    "font-awesome": "~4.5.0",
-    "kdbxweb": "^0.4.1",
-    "normalize.css": "~4.0.0",
-    "pikaday": "~1.4.0",
+    "backbone": "1.3.3",
+    "baron": "2.2.2",
+    "bourbon": "4.2.7",
+    "dropbox": "keeweb/dropbox-js#0.10.6",
+    "font-awesome": "4.6.3",
+    "kdbxweb": "0.4.1",
+    "normalize.css": "4.1.1",
+    "pikaday": "1.4.0",
     "FileSaver.js": "eligrey/FileSaver.js",
-    "jquery": "~2.2.0",
-    "jsqrcode": "antelle/jsqrcode#^0.1.3"
+    "jquery": "3.0.0",
+    "jsqrcode": "antelle/jsqrcode#0.1.3"
   }
 }

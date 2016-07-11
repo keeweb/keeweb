@@ -4,9 +4,12 @@ var Backbone = require('backbone'),
     Resizable = require('../mixins/resizable'),
     Scrollable = require('../mixins/scrollable'),
     ListSearchView = require('./list-search-view'),
+    DropdownView = require('./dropdown-view'),
     EntryPresenter = require('../presenters/entry-presenter'),
     DragDropInfo = require('../comp/drag-drop-info'),
-    AppSettingsModel = require('../models/app-settings-model');
+    AppSettingsModel = require('../models/app-settings-model'),
+    Locale = require('../util/locale'),
+    Format = require('../util/format');
 
 var ListView = Backbone.View.extend({
     template: require('templates/list.hbs'),
@@ -14,6 +17,7 @@ var ListView = Backbone.View.extend({
 
     events: {
         'click .list__item': 'itemClick',
+        'click .list__table-options': 'tableOptionsClick',
         'dragstart .list__item': 'itemDragStart'
     },
 
@@ -25,6 +29,17 @@ var ListView = Backbone.View.extend({
     maxHeight: 500,
 
     itemsEl: null,
+
+
+    tableColumns: [
+        { val: 'title', name: 'title', enabled: true },
+        { val: 'user', name: 'user', enabled: true },
+        { val: 'url', name: 'website', enabled: true },
+        { val: 'tags', name: 'tags', enabled: true },
+        { val: 'notes', name: 'notes', enabled: true },
+        { val: 'groupName', name: 'group', enabled: false },
+        { val: 'fileName', name: 'file', enabled: false }
+    ],
 
     initialize: function () {
         this.initScroll();
@@ -64,12 +79,19 @@ var ListView = Backbone.View.extend({
             var itemsTemplate = this.getItemsTemplate();
             var noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
             var presenter = new EntryPresenter(this.getDescField(), noColor, this.model.activeEntryId);
+            var columns = {};
+            this.tableColumns.forEach(function(col) {
+                if (col.enabled) {
+                    columns[col.val] = true;
+                }
+            });
+            presenter.columns = columns;
             var itemsHtml = '';
             this.items.forEach(function (item) {
                 presenter.present(item);
                 itemsHtml += itemTemplate(presenter);
             }, this);
-            var html = itemsTemplate({ items: itemsHtml });
+            var html = itemsTemplate({ items: itemsHtml, columns: this.tableColumns });
             this.itemsEl.html(html);
         } else {
             this.itemsEl.html(this.emptyTemplate());
@@ -206,6 +228,47 @@ var ListView = Backbone.View.extend({
         e.originalEvent.dataTransfer.setData('text/entry', id);
         e.originalEvent.dataTransfer.effectAllowed = 'move';
         DragDropInfo.dragObject = this.items.get(id);
+    },
+
+    tableOptionsClick: function(e) {
+        e.stopImmediatePropagation();
+        if (this.views.optionsDropdown) {
+            this.hideOptionsDropdown();
+            return;
+        }
+        var view = new DropdownView();
+        this.listenTo(view, 'cancel', this.hideOptionsDropdown);
+        this.listenTo(view, 'select', this.optionsDropdownSelect);
+        var targetElRect = this.$el.find('.list__table-options')[0].getBoundingClientRect();
+        var options = this.tableColumns.map(function(col) {
+            return {
+                value: col.val,
+                icon: col.enabled ? 'check-square-o' : 'square-o',
+                text: Format.capFirst(Locale[col.name])
+            };
+        });
+        view.render({
+            position: {
+                top: targetElRect.bottom,
+                left: targetElRect.left
+            },
+            options: options
+        });
+        this.views.optionsDropdown = view;
+    },
+
+    hideOptionsDropdown: function() {
+        if (this.views.optionsDropdown) {
+            this.views.optionsDropdown.remove();
+            delete this.views.optionsDropdown;
+        }
+    },
+
+    optionsDropdownSelect: function(e) {
+        var col = _.find(this.tableColumns, function(c) { return c.val === e.item; });
+        col.enabled = !col.enabled;
+        e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
+        this.render();
     }
 });
 

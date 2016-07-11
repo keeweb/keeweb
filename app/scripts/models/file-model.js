@@ -13,6 +13,7 @@ var logger = new Logger('file');
 var FileModel = Backbone.Model.extend({
     defaults: {
         id: '',
+        uuid: '',
         name: '',
         keyFileName: '',
         passwordLength: 0,
@@ -29,10 +30,10 @@ var FileModel = Backbone.Model.extend({
         oldKeyFileName: '',
         passwordChanged: false,
         keyFileChanged: false,
+        keyChangeForce: -1,
         syncing: false,
         syncError: null,
-        syncDate: null,
-        cacheId: null
+        syncDate: null
     },
 
     db: null,
@@ -136,25 +137,29 @@ var FileModel = Backbone.Model.extend({
     readModel: function() {
         var groups = new GroupCollection();
         this.set({
-            id: this.db.getDefaultGroup().uuid.toString(),
+            uuid: this.db.getDefaultGroup().uuid.toString(),
             groups: groups,
             defaultUser: this.db.meta.defaultUser,
             recycleBinEnabled: this.db.meta.recycleBinEnabled,
             historyMaxItems: this.db.meta.historyMaxItems,
             historyMaxSize: this.db.meta.historyMaxSize,
-            keyEncryptionRounds: this.db.header.keyEncryptionRounds
+            keyEncryptionRounds: this.db.header.keyEncryptionRounds,
+            keyChangeForce: this.db.meta.keyChangeForce
         }, { silent: true });
         this.db.groups.forEach(function(group) {
-            var groupModel = this.getGroup(group.uuid.id);
+            var groupModel = this.getGroup(this.subId(group.uuid.id));
             if (groupModel) {
                 groupModel.setGroup(group, this);
             } else {
                 groupModel = GroupModel.fromGroup(group, this);
             }
-            groupModel.set({title: this.get('name')});
             groups.add(groupModel);
         }, this);
         this.buildObjectMap();
+    },
+
+    subId: function(id) {
+        return this.id + ':' + id;
     },
 
     buildObjectMap: function() {
@@ -257,7 +262,7 @@ var FileModel = Backbone.Model.extend({
     forEachEntry: function(filter, callback) {
         var top = this;
         if (filter.trash) {
-            top = this.getGroup(this.db.meta.recycleBinUuid ? this.db.meta.recycleBinUuid.id : null);
+            top = this.getGroup(this.db.meta.recycleBinUuid ? this.subId(this.db.meta.recycleBinUuid.id) : null);
         } else if (filter.group) {
             top = this.getGroup(filter.group);
         }
@@ -282,7 +287,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     getTrashGroup: function() {
-        return this.db.meta.recycleBinEnabled ? this.getGroup(this.db.meta.recycleBinUuid.id) : null;
+        return this.db.meta.recycleBinEnabled ? this.getGroup(this.subId(this.db.meta.recycleBinUuid.id)) : null;
     },
 
     setModified: function() {
@@ -340,7 +345,7 @@ var FileModel = Backbone.Model.extend({
         }
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
         this.forEachEntry({}, function(entry) {
-            entry.unsaved = false;
+            entry.setSaved();
         });
     },
 
@@ -388,6 +393,28 @@ var FileModel = Backbone.Model.extend({
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
         this.set({ keyFileName: '', keyFileChanged: changed });
+        this.setModified();
+    },
+
+    isKeyChangePending: function(force) {
+        if (!this.db.meta.keyChanged) {
+            return false;
+        }
+        var expiryDays = force ? this.db.meta.keyChangeForce : this.db.meta.keyChangeRec;
+        if (!expiryDays || expiryDays < 0 || isNaN(expiryDays)) {
+            return false;
+        }
+        var daysDiff = (Date.now() - this.db.meta.keyChanged) / 1000 / 3600 / 24;
+        return daysDiff > expiryDays;
+    },
+
+    setKeyChange: function(force, days) {
+        if (isNaN(days) || !days || days < 0) {
+            days = -1;
+        }
+        var prop = force ? 'keyChangeForce' : 'keyChangeRec';
+        this.db.meta[prop] = days;
+        this.set(prop, days);
         this.setModified();
     },
 
@@ -455,9 +482,15 @@ var FileModel = Backbone.Model.extend({
     },
 
     addCustomIcon: function(iconData) {
-        var id = kdbxweb.KdbxUuid.random();
-        this.db.meta.customIcons[id] = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData));
-        return id.toString();
+        var uuid = kdbxweb.KdbxUuid.random();
+        this.db.meta.customIcons[uuid] = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData));
+        return uuid.toString();
+    },
+
+    renameTag: function(from, to) {
+        this.forEachEntry({}, function(entry) {
+            entry.renameTag(from, to);
+        });
     }
 });
 

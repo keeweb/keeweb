@@ -27,20 +27,27 @@ var MenuItemModel = Backbone.Model.extend({
         this.trigger('change-items');
     },
 
-    removeByFile: function(file, skipEvent) {
+    removeByFile: function(file) {
         var items = this.get('items');
-        var toRemove;
-        items.each(function(item) {
+        items.find(function(item) {
             if (item.file === file || item.get('file') === file) {
-                toRemove = item;
+                items.remove(item);
+                return true;
             }
         });
-        if (toRemove) {
-            items.remove(toRemove);
-        }
-        if (!skipEvent) {
-            this.trigger('change-items');
-        }
+        this.trigger('change-items');
+    },
+
+    replaceByFile: function(file, newItem) {
+        var items = this.get('items');
+        items.find(function(item, ix) {
+            if (item.file === file || item.get('file') === file) {
+                items.remove(item);
+                items.add(newItem, { at: ix });
+                return true;
+            }
+        });
+        this.trigger('change-items');
     },
 
     setItems: function(items) {

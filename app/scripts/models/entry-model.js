@@ -21,7 +21,7 @@ var EntryModel = Backbone.Model.extend({
         this.entry = entry;
         this.group = group;
         this.file = file;
-        if (this.id === entry.uuid.id) {
+        if (this.get('uuid') === entry.uuid.id) {
             this._checkUpdatedEntry();
         }
         this._fillByEntry();
@@ -29,8 +29,9 @@ var EntryModel = Backbone.Model.extend({
 
     _fillByEntry: function() {
         var entry = this.entry;
-        this.set({id: entry.uuid.id}, {silent: true});
+        this.set({id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id}, {silent: true});
         this.fileName = this.file.get('name');
+        this.groupName = this.group.get('title');
         this.title = entry.fields.Title || '';
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
         this.notes = entry.fields.Notes || '';
@@ -52,11 +53,15 @@ var EntryModel = Backbone.Model.extend({
         this._buildSearchText();
         this._buildSearchTags();
         this._buildSearchColor();
+        this._buildAutoType();
     },
 
     _checkUpdatedEntry: function() {
         if (this.isJustCreated) {
             this.isJustCreated = false;
+        }
+        if (this.canBeDeleted) {
+            this.canBeDeleted = false;
         }
         if (this.unsaved && +this.updated !== +this.entry.times.lastModTime) {
             this.unsaved = false;
@@ -94,6 +99,17 @@ var EntryModel = Backbone.Model.extend({
 
     _buildSearchColor: function() {
         this.searchColor = this.color;
+    },
+
+    _buildAutoType: function() {
+        this.autoTypeEnabled = this.entry.autoType.enabled;
+        this.autoTypeObfuscation = this.entry.autoType.obfuscation === kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard;
+        this.autoTypeSequence = this.entry.autoType.defaultSequence;
+        this.autoTypeWindows = this.entry.autoType.items.map(this._convertAutoTypeItem);
+    },
+
+    _convertAutoTypeItem: function(item) {
+        return { window: item.window, sequence: item.keystrokeSequence };
     },
 
     _iconFromId: function(id) {
@@ -138,6 +154,15 @@ var EntryModel = Backbone.Model.extend({
             this.isJustCreated = false;
         }
         this.entry.times.update();
+    },
+
+    setSaved: function() {
+        if (this.unsaved) {
+            this.unsaved = false;
+        }
+        if (this.canBeDeleted) {
+            this.canBeDeleted = false;
+        }
     },
 
     matches: function(filter) {
@@ -267,6 +292,19 @@ var EntryModel = Backbone.Model.extend({
         this._fillByEntry();
     },
 
+    renameTag: function(from, to) {
+        var ix = _.findIndex(this.entry.tags, function(tag) { return tag.toLowerCase() === from.toLowerCase(); });
+        if (ix < 0) {
+            return;
+        }
+        this._entryModified();
+        this.entry.tags.splice(ix, 1);
+        if (to) {
+            this.entry.tags.push(to);
+        }
+        this._fillByEntry();
+    },
+
     setField: function(field, val) {
         var hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
         if (hasValue || this.builtInFields.indexOf(field) >= 0) {
@@ -363,11 +401,28 @@ var EntryModel = Backbone.Model.extend({
     },
 
     removeWithoutHistory: function() {
-        var ix = this.group.group.entries.indexOf(this.entry);
-        if (ix >= 0) {
-            this.group.group.entries.splice(ix, 1);
+        if (this.canBeDeleted) {
+            var ix = this.group.group.entries.indexOf(this.entry);
+            if (ix >= 0) {
+                this.group.group.entries.splice(ix, 1);
+            }
+            this.file.reload();
         }
-        this.file.reload();
+    },
+
+    moveToFile: function(file) {
+        if (this.canBeDeleted) {
+            this.removeWithoutHistory();
+            this.group = file.get('groups').first();
+            this.file = file;
+            this._fillByEntry();
+            this.entry.times.update();
+            this.group.group.entries.push(this.entry);
+            this.group.addEntry(this);
+            this.isJustCreated = true;
+            this.unsaved = true;
+            this.file.setModified();
+        }
     },
 
     initOtpGenerator: function() {
@@ -438,6 +493,49 @@ var EntryModel = Backbone.Model.extend({
         this.setField('otp', url ? kdbxweb.ProtectedValue.fromString(url) : undefined);
         delete this.entry.fields['TOTP Seed'];
         delete this.entry.fields['TOTP Settings'];
+    },
+
+    getEffectiveEnableAutoType: function() {
+        if (typeof this.entry.autoType.enabled === 'boolean') {
+            return this.entry.autoType.enabled;
+        }
+        return this.group.getEffectiveEnableAutoType();
+    },
+
+    getEffectiveAutoTypeSeq: function() {
+        return this.entry.autoType.defaultSequence || this.group.getEffectiveAutoTypeSeq();
+    },
+
+    setEnableAutoType: function(enabled) {
+        this._entryModified();
+        if (enabled === this.group.getEffectiveEnableAutoType()) {
+            enabled = null;
+        }
+        this.entry.autoType.enabled = enabled;
+        this._buildAutoType();
+    },
+
+    setAutoTypeObfuscation: function(enabled) {
+        this._entryModified();
+        this.entry.autoType.obfuscation =
+            enabled ? kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard : kdbxweb.Consts.AutoTypeObfuscationOptions.None;
+        this._buildAutoType();
+    },
+
+    setAutoTypeSeq: function(seq) {
+        this._entryModified();
+        this.entry.autoType.defaultSequence = seq || undefined;
+        this._buildAutoType();
+    },
+
+    getGroupPath: function() {
+        var group = this.group;
+        var groupPath = [];
+        while (group) {
+            groupPath.unshift(group.get('title'));
+            group = group.parentGroup;
+        }
+        return groupPath;
     }
 });
 
@@ -454,6 +552,7 @@ EntryModel.newEntry = function(group, file) {
     model.entry.times.update();
     model.unsaved = true;
     model.isJustCreated = true;
+    model.canBeDeleted = true;
     group.addEntry(model);
     file.setModified();
     return model;

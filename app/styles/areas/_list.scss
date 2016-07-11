@@ -48,7 +48,7 @@
     &-icon-search {
       @include th { color: muted-color(); }
       position: absolute;
-      top: .6em;
+      top: .5em;
       right: .5em;
       cursor: pointer;
       &:hover {
@@ -91,15 +91,27 @@
   }
 
   &__table {
+    border-collapse: collapse;
     width: calc(100% - 2px);
     td, th {
       padding: $base-padding;
       text-align: left;
+      &:first-child {
+        text-align: center;
+      }
+    }
+    th:first-child {
+      padding: 0;
+      width: 3em;
+    }
+    &-options {
+      @include icon-btn();
+      cursor: pointer;
     }
   }
 
   &__item {
-    padding: $base-padding-px;
+    padding: 6px 10px 0;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -111,7 +123,7 @@
     }
 
     &:not(.list__item--table) {
-      height: 32px;
+      height: 3rem;
     }
 
     &--expired {

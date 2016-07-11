@@ -38,10 +38,7 @@ var Updater = {
     },
 
     init: function() {
-        var willCheckNow = this.scheduleNextCheck();
-        if (!willCheckNow && this.getAutoUpdateType()) {
-            this.check();
-        }
+        this.scheduleNextCheck();
         if (!Launcher && window.applicationCache) {
             window.applicationCache.addEventListener('updateready', this.checkAppCacheUpdateReady.bind(this));
             this.checkAppCacheUpdateReady();
@@ -63,7 +60,6 @@ var Updater = {
         }
         this.nextCheckTimeout = setTimeout(this.check.bind(this), timeDiff);
         logger.info('Next update check will happen in ' + Math.round(timeDiff / 1000) + 's');
-        return timeDiff === this.MinUpdateTimeout;
     },
 
     check: function(startedByUser) {

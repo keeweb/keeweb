@@ -8,6 +8,7 @@ var Backbone = require('backbone'),
     ListWrapView = require('../views/list-wrap-view'),
     DetailsView = require('../views/details/details-view'),
     GrpView = require('../views/grp-view'),
+    TagView = require('../views/tag-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
     KeyChangeView = require('../views/key-change-view'),
@@ -48,11 +49,13 @@ var AppView = Backbone.View.extend({
         this.views.details = new DetailsView();
         this.views.details.appModel = this.model;
         this.views.grp = new GrpView();
+        this.views.tag = new TagView({ model: this.model });
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
 
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
+        this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
         this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
 
         this.listenTo(Backbone, 'select-all', this.selectAll);
@@ -62,10 +65,12 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'open-file', this.toggleOpenFile);
         this.listenTo(Backbone, 'save-all', this.saveAll);
         this.listenTo(Backbone, 'remote-key-changed', this.remoteKeyChanged);
+        this.listenTo(Backbone, 'key-change-pending', this.keyChangePending);
         this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
         this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'edit-group', this.editGroup);
+        this.listenTo(Backbone, 'edit-tag', this.editTag);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
         this.listenTo(Backbone, 'user-idle', this.userIdle);
         this.listenTo(Backbone, 'app-minimized', this.appMinimized);
@@ -94,6 +99,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
         this.views.grp.setElement(this.$el.find('.app__grp')).render().hide();
+        this.views.tag.setElement(this.$el.find('.app__tag')).render().hide();
         this.showLastOpenFile();
         return this;
     },
@@ -106,6 +112,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.grp.hide();
+        this.views.tag.hide();
         this.views.footer.toggle(this.model.files.hasOpenFiles());
         this.hideSettings();
         this.hideOpenFile();
@@ -145,6 +152,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.show();
         this.views.details.show();
         this.views.grp.hide();
+        this.views.tag.hide();
         this.views.footer.show();
         this.hideOpenFile();
         this.hideSettings();
@@ -182,6 +190,7 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.grp.hide();
+        this.views.tag.hide();
         this.hideOpenFile();
         this.hideKeyChange();
         this.views.settings = new SettingsView({ model: this.model });
@@ -198,11 +207,24 @@ var AppView = Backbone.View.extend({
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
+        this.views.tag.hide();
         this.views.grp.show();
     },
 
-    showKeyChange: function(file) {
-        if (this.views.keyChange || Alerts.alertDisplayed) {
+    showEditTag: function() {
+        this.views.listWrap.hide();
+        this.views.list.hide();
+        this.views.listDrag.hide();
+        this.views.details.hide();
+        this.views.grp.hide();
+        this.views.tag.show();
+    },
+
+    showKeyChange: function(file, viewConfig) {
+        if (Alerts.alertDisplayed) {
+            return;
+        }
+        if (this.views.keyChange && this.views.keyChange.model.remote) {
             return;
         }
         this.hideSettings();
@@ -212,7 +234,10 @@ var AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.grp.hide();
-        this.views.keyChange = new KeyChangeView({ model: file });
+        this.views.tag.hide();
+        this.views.keyChange = new KeyChangeView({
+            model: { file: file, expired: viewConfig.expired, remote: viewConfig.remote }
+        });
         this.views.keyChange.setElement(this.$el.find('.app__body')).render();
         this.views.keyChange.on('accept', this.keyChangeAccept.bind(this));
         this.views.keyChange.on('cancel', this.showEntries.bind(this));
@@ -322,7 +347,7 @@ var AppView = Backbone.View.extend({
 
     menuSelect: function(opt) {
         this.model.menu.select(opt);
-        if (!this.views.grp.isHidden()) {
+        if (!this.views.grp.isHidden() || !this.views.tag.isHidden()) {
             this.showEntries();
         }
     },
@@ -445,18 +470,31 @@ var AppView = Backbone.View.extend({
     },
 
     remoteKeyChanged: function(e) {
-        this.showKeyChange(e.file);
+        this.showKeyChange(e.file, { remote: true });
+    },
+
+    keyChangePending: function(e) {
+        this.showKeyChange(e.file, { expired: true });
     },
 
     keyChangeAccept: function(e) {
         this.showEntries();
-        this.model.syncFile(e.file, {
-            remoteKey: {
-                password: e.password,
-                keyFileName: e.keyFileName,
-                keyFileData: e.keyFileData
+        if (e.expired) {
+            e.file.setPassword(e.password);
+            if (e.keyFileData && e.keyFileName) {
+                e.file.setKeyFile(e.keyFileData, e.keyFileName);
+            } else {
+                e.file.removeKeyFile();
             }
-        });
+        } else {
+            this.model.syncFile(e.file, {
+                remoteKey: {
+                    password: e.password,
+                    keyFileName: e.keyFileName,
+                    keyFileData: e.keyFileData
+                }
+            });
+        }
     },
 
     toggleSettings: function(page) {
@@ -503,6 +541,15 @@ var AppView = Backbone.View.extend({
         }
     },
 
+    editTag: function(tag) {
+        if (tag && this.views.tag.isHidden()) {
+            this.showEditTag();
+            this.views.tag.showTag(tag);
+        } else {
+            this.showEntries();
+        }
+    },
+
     contextmenu: function(e) {
         if (['input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) < 0) {
             e.preventDefault();
@@ -519,6 +566,10 @@ var AppView = Backbone.View.extend({
 
     setTheme: function() {
         ThemeChanger.setTheme(this.model.settings.get('theme'));
+    },
+
+    setFontSize: function() {
+        ThemeChanger.setFontSize(this.model.settings.get('fontSize'));
     },
 
     extLinkClick: function(e) {

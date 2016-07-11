@@ -1,0 +1,32 @@
+.tag {
+  @include flex(1);
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+  width: 100%;
+  user-select: none;
+
+  &__back-button {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: $base-padding-h;
+    padding: $base-padding-v * 2 0 1px 0;
+    z-index: 1;
+  }
+
+  &__space {
+    @include flex(1);
+  }
+
+  &__buttons {
+    @include display(flex);
+    @include flex-direction(row);
+    margin-top: $base-padding-v;
+
+    &-trash {
+      @include icon-btn($error:true);
+    }
+  }
+}

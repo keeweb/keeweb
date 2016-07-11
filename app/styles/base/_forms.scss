@@ -16,13 +16,13 @@ input,
 select {
   display: block;
   font-family: $base-font-family;
-  font-size: $base-font-size;
+  font-size: 1rem;
 }
 
 label {
   display: inline-block;
   font-family: $base-font-family;
-  font-size: $base-font-size;
+  font-size: 1rem;
   font-weight: 600;
   margin-bottom: $small-spacing / 2;
 
@@ -39,7 +39,7 @@ input[type=text], input[type=password], textarea, input:not([type]) {
   border-radius: $base-border-radius;
   box-sizing: border-box;
   font-family: $base-font-family;
-  font-size: $base-font-size;
+  font-size: 1rem;
   margin-bottom: $small-spacing;
   padding: $base-spacing / 3;
   transition: border-color $base-duration $base-timing;

@@ -16,9 +16,9 @@ module.exports = function(grunt) {
     var webpack = require('webpack');
     var pkg = require('./package.json');
     var dt = new Date().toISOString().replace(/T.*/, '');
-    var electronVersion = '0.37.4';
-    var minElectronVersionForUpdate = '0.32.0';
+    var minElectronVersionForUpdate = '1.0.1';
     var zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
+    var electronVersion = pkg.devDependencies['electron-prebuilt'].replace(/^\D/, '');
 
     while (zipCommentPlaceholder.length < 512) {
         zipCommentPlaceholder += '.';
@@ -98,12 +98,12 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'desktop_osx': {
-                src: 'tmp/desktop/KeeWeb.dmg',
+                src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb-' + pkg.version + '.dmg',
                 dest: 'dist/desktop/KeeWeb.mac.dmg',
                 nonull: true
             },
             'desktop_win': {
-                src: 'tmp/desktop/KeeWeb Setup.exe',
+                src: 'tmp/desktop/win/KeeWebSetup-' + pkg.version + '-ia32.exe',
                 dest: 'dist/desktop/KeeWeb.win32.exe',
                 nonull: true
             },
@@ -253,6 +253,9 @@ module.exports = function(grunt) {
                     Buffer: false,
                     __filename: false,
                     __dirname: false
+                },
+                externals: {
+                    xmldom: 'null'
                 }
             }
         },
@@ -299,13 +302,6 @@ module.exports = function(grunt) {
                 'app-version': pkg.version,
                 'build-version': '<%= gitinfo.local.branch.current.shortSHA %>'
             },
-            osx: {
-                options: {
-                    platform: 'darwin',
-                    arch: 'x64',
-                    icon: 'graphics/app.icns'
-                }
-            },
             linux64: {
                 options: {
                     platform: 'linux',
@@ -319,58 +315,40 @@ module.exports = function(grunt) {
                     arch: 'ia32',
                     icon: 'graphics/app.ico'
                 }
-            },
-            win32: {
-                options: {
-                    platform: 'win32',
-                    arch: 'ia32',
-                    icon: 'graphics/app.ico',
-                    'version-string': {
-                        CompanyName: 'antelle.github.io',
-                        LegalCopyright: 'Antelle, MIT license',
-                        FileDescription: 'KeeWeb Desktop',
-                        OriginalFilename: 'KeeWeb.exe',
-                        FileVersion: pkg.version,
-                        ProductVersion: pkg.version,
-                        ProductName: 'KeeWeb',
-                        InternalName: 'KeeWeb'
-                    }
-                }
             }
         },
         'electron-builder': {
             options: {
-                out: path.join(__dirname, 'tmp/desktop'),
-                basePath: __dirname,
-                config: {
-                    osx: {
-                        title: 'KeeWeb',
-                        background: path.join(__dirname, 'graphics/dmg-bg.png'),
-                        icon: path.join(__dirname, 'graphics/app.icns'),
-                        'icon-size': 80,
-                        contents: [
-                            {'x': 438, 'y': 344, 'type': 'link', 'path': '/Applications'},
-                            {'x': 192, 'y': 344, 'type': 'file'}
-                        ]
-                    },
-                    win: {
-                        title: 'KeeWeb',
-                        icon: path.join(__dirname, 'graphics/app.ico')
-                    }
-                }
+                publish: 'never',
+                dist: false,
+                projectDir: __dirname,
+                appDir: 'tmp/desktop/app',
+                sign: false
             },
             osx: {
                 options: {
-                    platform: 'osx',
-                    appPath: path.join(__dirname, 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app')
+                    platforms: ['osx'],
+                    arch: 'x64'
                 }
             },
             win: {
                 options: {
-                    platform: 'win32',
-                    appPath: path.join(__dirname, 'tmp/desktop/KeeWeb-win32-ia32')
+                    platform: ['win32'],
+                    arch: 'ia32'
                 }
             }
+            // linux64: {
+            //     options: {
+            //         platform: ['linux'],
+            //         arch: 'x64'
+            //     }
+            // },
+            // linux32: {
+            //     options: {
+            //         platform: ['linux'],
+            //         arch: 'ia32'
+            //     }
+            // }
         },
         compress: {
             linux64: {
@@ -488,7 +466,8 @@ module.exports = function(grunt) {
         'sign-archive:desktop_update',
         'validate-desktop-update',
         'electron',
-        'electron-builder',
+        'electron-builder:osx',
+        'electron-builder:win',
         'compress:linux64',
         'compress:linux32',
         'deb:linux64',

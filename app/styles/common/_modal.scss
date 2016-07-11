@@ -1,7 +1,7 @@
 .modal {
   @include position(absolute, 0 null null 0);
   @include size(100%);
-  @include th { background-color: rgba(background-color(), .9); }
+  @include th { background-color: rgba(background-color(), th(modal-opacity)); }
   z-index: $z-index-modal;
 
   transition: background-color $base-duration $base-timing;

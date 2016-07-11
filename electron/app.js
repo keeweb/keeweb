@@ -3,17 +3,14 @@
 /* jshint node:true */
 /* jshint browser:false */
 
-var app = require('app'),
+var electron = require('electron'),
+    app = electron.app,
     path = require('path'),
-    fs = require('fs'),
-    BrowserWindow = require('browser-window'),
-    Menu = require('menu'),
-    Tray = require('tray'),
-    globalShortcut = require('electron').globalShortcut;
+    fs = require('fs');
 
 var mainWindow = null,
     appIcon = null,
-    openFile = process.argv.filter(function(arg) { return /\.kdbx$/i.test(arg); })[0],
+    openFile = process.argv.filter(function (arg) { return /\.kdbx$/i.test(arg); })[0],
     ready = false,
     restartPending = false,
     htmlPath = path.join(__dirname, 'index.html'),
@@ -21,82 +18,99 @@ var mainWindow = null,
     updateMainWindowPositionTimeout = null,
     windowPositionFileName = path.join(app.getPath('userData'), 'window-position.json');
 
-process.argv.forEach(function(arg) {
-    if (arg.lastIndexOf('--htmlpath=', 0) === 0) {
-        htmlPath = path.resolve(arg.replace('--htmlpath=', ''), 'index.html');
-    }
-});
+if (!handleStartupSquirrelEvent()) {
+    process.argv.forEach(function (arg) {
+        if (arg.lastIndexOf('--htmlpath=', 0) === 0) {
+            htmlPath = path.resolve(arg.replace('--htmlpath=', ''), 'index.html');
+        }
+    });
 
-app.on('window-all-closed', function() {
-    if (restartPending) {
-        // unbind all handlers, load new app.js module and pass control to it
-        globalShortcut.unregisterAll();
-        app.removeAllListeners('window-all-closed');
-        app.removeAllListeners('ready');
-        app.removeAllListeners('open-file');
-        app.removeAllListeners('activate');
-        var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
-        delete require.cache[require.resolve('./app.js')];
-        require(userDataAppFile);
-        app.emit('ready');
-    } else {
-        if (process.platform !== 'darwin') {
-            app.quit();
+    app.on('window-all-closed', function () {
+        if (restartPending) {
+            // unbind all handlers, load new app.js module and pass control to it
+            electron.globalShortcut.unregisterAll();
+            app.removeAllListeners('window-all-closed');
+            app.removeAllListeners('ready');
+            app.removeAllListeners('open-file');
+            app.removeAllListeners('activate');
+            var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
+            delete require.cache[require.resolve('./app.js')];
+            require(userDataAppFile);
+            app.emit('ready');
+        } else {
+            if (process.platform !== 'darwin') {
+                app.quit();
+            }
         }
-    }
-});
-app.on('ready', function() {
-    setAppOptions();
-    createMainWindow();
-    setGlobalShortcuts();
-});
-app.on('open-file', function(e, path) {
-    e.preventDefault();
-    openFile = path;
-    notifyOpenFile();
-});
-app.on('activate', function() {
-    if (process.platform === 'darwin') {
-        if (!mainWindow) {
+    });
+    app.on('ready', function () {
+        if (!checkSingleInstance()) {
+            setAppOptions();
             createMainWindow();
+            setGlobalShortcuts();
         }
+    });
+    app.on('open-file', function (e, path) {
+        e.preventDefault();
+        openFile = path;
+        notifyOpenFile();
+    });
+    app.on('activate', function () {
+        if (process.platform === 'darwin') {
+            if (!mainWindow) {
+                createMainWindow();
+            }
+        }
+    });
+    app.on('will-quit', function () {
+        electron.globalShortcut.unregisterAll();
+    });
+    app.restartApp = function () {
+        restartPending = true;
+        mainWindow.close();
+        setTimeout(function () {
+            restartPending = false;
+        }, 1000);
+    };
+    app.openWindow = function (opts) {
+        return new electron.BrowserWindow(opts);
+    };
+    app.minimizeApp = function () {
+        if (process.platform !== 'darwin') {
+            mainWindow.minimize();
+            mainWindow.setSkipTaskbar(true);
+            appIcon = new electron.Tray(path.join(__dirname, 'icon.png'));
+            appIcon.on('click', restoreMainWindow);
+            var contextMenu = electron.Menu.buildFromTemplate([
+                {label: 'Open KeeWeb', click: restoreMainWindow},
+                {label: 'Quit KeeWeb', click: closeMainWindow}
+            ]);
+            appIcon.setContextMenu(contextMenu);
+            appIcon.setToolTip('KeeWeb');
+        }
+    };
+    app.getMainWindow = function () {
+        return mainWindow;
+    };
+}
+
+function checkSingleInstance() {
+    var shouldQuit = app.makeSingleInstance(function(/*commandLine, workingDirectory*/) {
+        restoreMainWindow();
+    });
+
+    if (shouldQuit) {
+        app.quit();
     }
-});
-app.on('will-quit', function() {
-    globalShortcut.unregisterAll();
-});
-app.restartApp = function() {
-    restartPending = true;
-    mainWindow.close();
-    setTimeout(function() { restartPending = false; }, 1000);
-};
-app.openWindow = function(opts) {
-    return new BrowserWindow(opts);
-};
-app.minimizeApp = function() {
-    if (process.platform !== 'darwin') {
-        mainWindow.minimize();
-        mainWindow.setSkipTaskbar(true);
-        appIcon = new Tray(path.join(__dirname, 'icon.png'));
-        appIcon.on('click', restoreMainWindow);
-        var contextMenu = Menu.buildFromTemplate([
-            { label: 'Open KeeWeb', click: restoreMainWindow },
-            { label: 'Quit KeeWeb', click: closeMainWindow }
-        ]);
-        appIcon.setContextMenu(contextMenu);
-        appIcon.setToolTip('KeeWeb');
-    }
-};
-app.getMainWindow = function() {
-    return mainWindow;
-};
+    return shouldQuit;
+}
 
 function setAppOptions() {
     app.commandLine.appendSwitch('disable-background-timer-throttling');
 }
 
 function createMainWindow() {
-    mainWindow = new BrowserWindow({
+    mainWindow = new electron.BrowserWindow({
         show: false,
         width: 1000, height: 700, 'min-width': 700, 'min-height': 400,
         icon: path.join(__dirname, 'icon.png')
@@ -124,16 +138,24 @@ function createMainWindow() {
 }
 
 function restoreMainWindow() {
-    appIcon.destroy();
-    appIcon = null;
-    mainWindow.restore();
+    destroyAppIcon();
+    if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+    }
     mainWindow.setSkipTaskbar(false);
+    mainWindow.focus();
 }
 
 function closeMainWindow() {
-    appIcon.destroy();
-    appIcon = null;
+    destroyAppIcon();
     emitBackboneEvent('launcher-exit-request');
+}
+
+function destroyAppIcon() {
+    if (appIcon) {
+        appIcon.destroy();
+        appIcon = null;
+    }
 }
 
 function delaySaveMainWindowPosition() {
@@ -164,7 +186,7 @@ function updateMainWindowPosition() {
     }
     mainWindowPosition.maximized = mainWindow.isMaximized();
     mainWindowPosition.fullScreen = mainWindow.isFullScreen();
-    mainWindowPosition.displayBounds = require('screen').getDisplayMatching(bounds).bounds;
+    mainWindowPosition.displayBounds = require('electron').screen.getDisplayMatching(bounds).bounds;
     mainWindowPosition.changed = true;
 }
 
@@ -184,7 +206,7 @@ function restoreMainWindowPosition() {
             mainWindowPosition = JSON.parse(data);
             if (mainWindow && mainWindowPosition) {
                 if (mainWindowPosition.width && mainWindowPosition.height) {
-                    var displayBounds = require('screen').getDisplayMatching(mainWindowPosition).bounds;
+                    var displayBounds = require('electron').screen.getDisplayMatching(mainWindowPosition).bounds;
                     var db = mainWindowPosition.displayBounds;
                     if (displayBounds.x === db.x && displayBounds.y === db.y &&
                         displayBounds.width === db.width && displayBounds.height === db.height) {
@@ -204,7 +226,7 @@ function emitBackboneEvent(e) {
 
 function setMenu() {
     if (process.platform === 'darwin') {
-        var name = require('app').getName();
+        var name = require('electron').app.getName();
         var template = [
             {
                 label: name,
@@ -233,8 +255,8 @@ function setMenu() {
                 ]
             }
         ];
-        var menu = Menu.buildFromTemplate(template);
-        Menu.setApplicationMenu(menu);
+        var menu = electron.Menu.buildFromTemplate(template);
+        electron.Menu.setApplicationMenu(menu);
     }
 }
 
@@ -252,15 +274,24 @@ function setGlobalShortcuts() {
     var shortcuts = {
         C: 'copy-password',
         B: 'copy-user',
-        U: 'copy-url'
+        U: 'copy-url',
+        T: 'auto-type'
     };
     Object.keys(shortcuts).forEach(function(key) {
         var shortcut = shortcutModifiers + key;
         var eventName = shortcuts[key];
         try {
-            globalShortcut.register(shortcut, function () {
+            electron.globalShortcut.register(shortcut, function () {
                 emitBackboneEvent(eventName);
             });
         } catch (e) {}
     });
+}
+
+function handleStartupSquirrelEvent() {
+    if (process.platform !== 'win32') {
+        return false;
+    }
+    var handleSquirrelArg = require('./squirrel-handler');
+    return handleSquirrelArg();
 }

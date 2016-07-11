@@ -1,0 +1,38 @@
+<div class="details__auto-type">
+    <div class="details__field">
+        <div class="details__field-label">{{res 'detAutoType'}}</div>
+        <div class="details__field-value">
+            <input type="checkbox" class="input-base" id="details__auto-type-enabled" {{#if enabled}}checked{{/if}} />
+            <label for="details__auto-type-enabled">{{res 'detAutoTypeEnabled'}}</label>
+        </div>
+    </div>
+    <div class="details__field">
+        <div class="details__field-label">{{res 'detAutoTypeSequence'}}</div>
+        <div class="details__field-value">
+            <input type="text" id="details__auto-type-sequence" maxlength="1024"
+                   value="{{sequence}}" placeholder="{{defaultSequence}}" />
+        </div>
+    </div>
+    <div class="details__field">
+        <div class="details__field-label">{{res 'detAutoTypeInput'}}</div>
+        <div class="details__field-value">
+            <input type="checkbox" class="input-base" id="details__auto-type-obfuscation" {{#if obfuscation}}checked{{/if}} />
+            <label for="details__auto-type-obfuscation">{{res 'detAutoTypeObfuscation'}}</label>
+        </div>
+    </div>
+    <div class="details__field">
+        <div class="details__field-label">{{res 'detAutoTypeShortcuts'}}</div>
+        <div class="details__field-value">{{{detAutoTypeShortcutsDesc}}}</div>
+    </div>
+    {{!--{{#each windows as |win|}}
+        <div class="details__field">
+            <div class="details__field-label">{{res 'detAutoTypeWindow'}}</div>
+            <div class="details__field-value details__auto-type-windows">
+                <input type="text" maxlength="1024" class="details__auto-type-window-title"
+                       value="{{win.window}}" placeholder="{{res 'detAutoTypeInputWindow'}}" />
+                <input type="text" maxlength="1024" class="details__auto-type-window-sequence"
+                       value="{{win.sequence}}" placeholder="{{../defaultSequence}}" />
+            </div>
+        </div>
+    {{/each}}--}}
+</div>

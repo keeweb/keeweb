@@ -25,6 +25,7 @@ var AppSettingsModel = Backbone.Model.extend({
         hideEmptyFields: false,
         skipHttpsWarning: false,
         demoOpened: false,
+        fontSize: 0,
         dropbox: true,
         webdav: true,
         gdrive: true,
@@ -49,10 +50,5 @@ var AppSettingsModel = Backbone.Model.extend({
 
 AppSettingsModel.instance = new AppSettingsModel();
 AppSettingsModel.instance.load();
-
-window.kwSettings = {
-    get: function(key) { return AppSettingsModel.instance.get(key); },
-    set: function(key, value) { AppSettingsModel.instance.set(key, value); }
-};
 
 module.exports = AppSettingsModel;

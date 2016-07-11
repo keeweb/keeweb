@@ -69,6 +69,16 @@ _.extend(Backbone.View.prototype, {
 
     remove: function() {
         this.trigger('remove');
+        this.removeInnerViews();
+        if (this.scroll) {
+            try { this.scroll.dispose(); }
+            catch (e) { }
+        }
+        Tip.hideTips(this.$el);
+        this._parentRemove(arguments);
+    },
+
+    removeInnerViews: function() {
         if (this.views) {
             _.each(this.views, function(view) {
                 if (view) {
@@ -81,13 +91,8 @@ _.extend(Backbone.View.prototype, {
                     }
                 }
             });
+            this.views = {};
         }
-        if (this.scroll) {
-            try { this.scroll.dispose(); }
-            catch (e) { }
-        }
-        Tip.hideTips(this.$el);
-        this._parentRemove(arguments);
     },
 
     deferRender: function() {

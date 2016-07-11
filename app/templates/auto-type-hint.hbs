@@ -1,0 +1,17 @@
+<div class="auto-type-hint">
+    <a href="{{link}}" class="auto-type-hint__link-details" target="_blank">{{res 'autoTypeLink'}}</a>
+    <div class="auto-type-hint__block">
+        <div>{{res 'autoTypeEntryFields'}}:</div>
+        <a>{TITLE}</a><a>{USERNAME}</a><a>{URL}</a><a>{PASSWORD}</a><a>{NOTES}</a><a>{GROUP}</a>
+        <a>{TOTP}</a><a>{S:Custom Field Name}</a>
+    </div>
+    <div class="auto-type-hint__block">
+        <div>{{res 'autoTypeModifiers'}}:</div>
+        <a>+ (shift)</a><a>% (alt)</a><a>^ ({{cmd}})</a>{{#if hasCtrl}}<a>^^ (ctrl)</a>{{/if}}
+    </div>
+    <div class="auto-type-hint__block">
+        <div>{{res 'autoTypeKeys'}}:</div>
+        <a>{TAB}</a><a>{ENTER}</a><a>{SPACE}</a><a>{UP}</a><a>{DOWN}</a><a>{LEFT}</a><a>{RIGHT}</a><a>{HOME}</a><a>{END}</a>
+        <a>{+}</a><a>{%}</a><a>{^}</a><a>{~}</a><a>{(}</a><a>{)}</a><a>{[}</a><a>{]}</a><a>\{{}</a><a>{}}</a>
+    </div>
+</div>

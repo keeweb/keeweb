@@ -37,6 +37,10 @@ _.extend(StorageBase.prototype, {
         return this;
     },
 
+    setEnabled: function(enabled) {
+        this.enabled = enabled;
+    },
+
     _xhr: function(config) {
         var xhr = new XMLHttpRequest();
         if (config.responseType) {
@@ -186,6 +190,18 @@ _.extend(StorageBase.prototype, {
         this._oauthToken.expired = true;
         this.runtimeData.set(this.name + 'OAuthToken', this._oauthToken);
         this._oauthAuthorize(callback);
+    },
+
+    _oauthRevokeToken: function(url) {
+        var token = this.runtimeData.get(this.name + 'OAuthToken');
+        if (token) {
+            this._xhr({
+                url: url.replace('{token}', token.accessToken),
+                statuses: [200, 401]
+            });
+            this.runtimeData.unset(this.name + 'OAuthToken');
+            this._oauthToken = null;
+        }
     }
 });
 

@@ -1,3 +1,7 @@
+html {
+  font-size: $base-font-size;
+}
+
 body {
   @include size(100%);
   @include user-select(none);
@@ -5,12 +9,10 @@ body {
     color: text-color();
     background-color: background-color();
   }
-  overflow: auto;
   font-family: $base-font-family;
-  font-feature-settings: "kern", "liga";
-  font-size: $base-font-size;
+  font-feature-settings: "kern", "liga 0";
+  font-size: 1rem;
   line-height: $base-line-height;
-  cursor: default;
 }
 
 @-moz-document url-prefix() {
@@ -28,13 +30,13 @@ h6 {
   margin: 0 0 $small-spacing;
 }
 
-$small-header-font-size: modular-scale(2, $base-font-size);
-$large-header-font-size: modular-scale(3, $base-font-size);
+$small-header-font-size: modular-scale(2, 1rem);
+$large-header-font-size: modular-scale(3, 1rem);
 
-h6 { font-size: $base-font-size; }
-h5 { font-size: modular-scale(1, $base-font-size, 1.1); }
-h4 { font-size: modular-scale(2, $base-font-size, 1.1); }
-h3 { font-size: modular-scale(3, $base-font-size, 1.1); }
+h6 { font-size: 1rem; }
+h5 { font-size: modular-scale(1, 1rem, 1.1); }
+h4 { font-size: modular-scale(2, 1rem, 1.1); }
+h3 { font-size: modular-scale(3, 1rem, 1.1); }
 h2 { font-size: $small-header-font-size; }
 h1 { font-size: $large-header-font-size; }
 

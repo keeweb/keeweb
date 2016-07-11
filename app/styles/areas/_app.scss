@@ -87,7 +87,7 @@
     }
   }
 
-  &__grp {
+  &__grp, &__tag {
     @include flex(1);
     @include display(flex);
     overflow: hidden;

@@ -223,6 +223,13 @@ var StorageDropbox = StorageBase.extend({
             that.logger.debug('Removed', path, that.logger.ts(ts));
             return callback && callback(err);
         }, _.noop);
+    },
+
+    setEnabled: function(enabled) {
+        if (!enabled) {
+            DropboxLink.logout();
+        }
+        StorageBase.prototype.setEnabled.call(this, enabled);
     }
 });
 

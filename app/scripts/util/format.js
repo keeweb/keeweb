@@ -10,12 +10,21 @@ var Format = {
         }
         return str;
     },
+    padStr: function(str, len) {
+        while (str.length < len) {
+            str += ' ';
+        }
+        return str;
+    },
     dtStr: function(dt) {
         return dt ? this.dStr(dt) + ' ' + this.pad(dt.getHours(), 2) + ':' + this.pad(dt.getMinutes(), 2) +
             ':' + this.pad(dt.getSeconds(), 2) : '';
     },
     dStr: function(dt) {
         return dt ? dt.getDate() + ' ' + Locale.monthsShort[dt.getMonth()] + ' ' + dt.getFullYear() : '';
+    },
+    capFirst: function(str) {
+        return str[0].toUpperCase() + str.substr(1);
     }
 };
 

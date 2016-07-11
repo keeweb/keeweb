@@ -7,8 +7,9 @@
 
 @import "base/base";
 
-@import "utils/drag";
 @import "utils/common-dropdown";
+@import "utils/auto-type-hint";
+@import "utils/drag";
 @import "utils/selection";
 
 @import "common/dates";
@@ -24,6 +25,7 @@
 @import "areas/details";
 @import "areas/footer";
 @import "areas/grp";
+@import "areas/tag";
 @import "areas/generator";
 @import "areas/key-change";
 @import "areas/list";

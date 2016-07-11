@@ -1,8 +1,12 @@
 'use strict';
 
 var Backbone = require('backbone'),
-    Locale = require('../util/locale');
+    Locale = require('../util/locale'),
+    Logger = require('../util/logger');
+
 var Launcher;
+
+var logger = new Logger('launcher');
 
 if (window.process && window.process.versions && window.process.versions.electron) {
     /* jshint node:true */
@@ -10,19 +14,25 @@ if (window.process && window.process.versions && window.process.versions.electro
         name: 'electron',
         version: window.process.versions.electron,
         req: window.require,
+        electron: function() {
+            return this.req('electron');
+        },
+        remoteApp: function() {
+            return this.electron().remote.app;
+        },
         remReq: function(mod) {
-            return this.req('remote').require(mod);
+            return this.electron().remote.require(mod);
         },
         openLink: function(href) {
-            this.req('shell').openExternal(href);
+            this.electron().shell.openExternal(href);
         },
         devTools: true,
         openDevTools: function() {
-            this.req('remote').getCurrentWindow().openDevTools();
+            this.electron().remote.getCurrentWindow().openDevTools();
         },
         getSaveFileName: function(defaultPath, cb) {
             if (defaultPath) {
-                var homePath = this.remReq('app').getPath('userDesktop');
+                var homePath = this.remReq('electron').app.getPath('userDesktop');
                 defaultPath = this.req('path').join(homePath, defaultPath);
             }
             this.remReq('dialog').showSaveDialog({
@@ -32,10 +42,13 @@ if (window.process && window.process.versions && window.process.versions.electro
             }, cb);
         },
         getUserDataPath: function(fileName) {
-            return this.req('path').join(this.remReq('app').getPath('userData'), fileName || '');
+            return this.req('path').join(this.remoteApp().getPath('userData'), fileName || '');
         },
         getTempPath: function(fileName) {
-            return this.req('path').join(this.remReq('app').getPath('temp'), fileName || '');
+            return this.req('path').join(this.remoteApp().getPath('temp'), fileName || '');
+        },
+        getAppPath: function(fileName) {
+            return this.req('path').join(__dirname, fileName || '');
         },
         writeFile: function(path, data) {
             this.req('fs').writeFileSync(path, new window.Buffer(data));
@@ -69,7 +82,7 @@ if (window.process && window.process.versions && window.process.versions.electro
             this.requestExit();
         },
         requestExit: function() {
-            var app = this.remReq('app');
+            var app = this.remoteApp();
             if (this.restartPending) {
                 app.restartApp();
             } else {
@@ -84,25 +97,25 @@ if (window.process && window.process.versions && window.process.versions.electro
             this.restartPending = false;
         },
         setClipboardText: function(text) {
-            return this.req('clipboard').writeText(text);
+            return this.electron().clipboard.writeText(text);
         },
         getClipboardText: function() {
-            return this.req('clipboard').readText();
+            return this.electron().clipboard.readText();
         },
         clearClipboardText: function() {
-            return this.req('clipboard').clear();
+            return this.electron().clipboard.clear();
         },
         minimizeApp: function() {
-            this.remReq('app').minimizeApp();
+            this.remoteApp().minimizeApp();
         },
         canMinimize: function() {
             return process.platform !== 'darwin';
         },
         updaterEnabled: function() {
-            return this.req('remote').process.argv.indexOf('--disable-updater') === -1;
+            return this.electron().remote.process.argv.indexOf('--disable-updater') === -1;
         },
         resolveProxy: function(url, callback) {
-            var window = this.remReq('app').getMainWindow();
+            var window = this.remoteApp().getMainWindow();
             var session = window.webContents.session;
             session.resolveProxy(url, function(proxy) {
                 var match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
@@ -111,7 +124,60 @@ if (window.process && window.process.versions && window.process.versions.electro
             });
         },
         openWindow: function(opts) {
-            return this.remReq('app').openWindow(opts);
+            return this.remoteApp().openWindow(opts);
+        },
+        hideWindowIfActive: function() {
+            var app = this.remoteApp();
+            var win = app.getMainWindow();
+            var visible = win.isVisible(), focused = win.isFocused();
+            if (!visible || !focused) {
+                return false;
+            }
+            if (process.platform === 'darwin') {
+                app.hide();
+            } else {
+                win.minimize();
+            }
+            return true;
+        },
+        spawn: function(config) {
+            var ts = logger.ts();
+            var complete = config.complete;
+            var ps = this.req('child_process').spawn(config.cmd, config.args);
+            [ps.stdin, ps.stdout, ps.stderr].forEach(function(s) { s.setEncoding('utf-8'); });
+            var stderr = '';
+            var stdout = '';
+            ps.stderr.on('data', function(d) { stderr += d.toString('utf-8'); });
+            ps.stdout.on('data', function(d) { stdout += d.toString('utf-8'); });
+            ps.on('close', function(code) {
+                stdout = stdout.trim();
+                stderr = stderr.trim();
+                var msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
+                if (code) {
+                    logger.error(msg + '\n' + stdout + '\n' + stderr);
+                } else {
+                    logger.info(msg + (stdout ? '\n' + stdout : ''));
+                }
+                if (complete) {
+                    complete(code ? 'Exit code ' + code : null, stdout, code);
+                    complete = null;
+                }
+            });
+            ps.on('error', function(err) {
+                logger.error('spawn error: ' + config.cmd + ', ' + logger.ts(ts), err);
+                if (complete) {
+                    complete(err);
+                    complete = null;
+                }
+            });
+            if (config.data) {
+                ps.stdin.write(config.data);
+                ps.stdin.end();
+            }
+            return ps;
+        },
+        platform: function() {
+            return process.platform;
         }
     };
     Backbone.on('launcher-exit-request', function() {

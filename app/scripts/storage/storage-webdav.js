@@ -84,9 +84,13 @@ var StorageWebDav = StorageBase.extend({
                         that._request(_.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts));
                         return cb({ revConflict: true }, xhr, stat);
                     }
+                    var movePath = path;
+                    if (movePath.indexOf('://') < 0) {
+                        movePath = location.href.replace(/[^/]*$/, movePath);
+                    }
                     that._request(_.defaults({
                         op: 'Save:move', method: 'MOVE', path: tmpPath, nostat: true,
-                        headers: { Destination: path, 'Overwrite': 'T' }
+                        headers: { Destination: movePath, 'Overwrite': 'T' }
                     }, saveOpts), function(err) {
                         if (err) { return cb(err); }
                         that._request(_.defaults({
@@ -103,7 +107,7 @@ var StorageWebDav = StorageBase.extend({
     fileOptsToStoreOpts: function(opts, file) {
         var result = {user: opts.user, encpass: opts.encpass};
         if (opts.password) {
-            var fileId = file.get('id');
+            var fileId = file.get('uuid');
             var password = opts.password;
             var encpass = '';
             for (var i = 0; i < password.length; i++) {
@@ -117,7 +121,7 @@ var StorageWebDav = StorageBase.extend({
     storeOptsToFileOpts: function(opts, file) {
         var result = {user: opts.user, password: opts.password};
         if (opts.encpass) {
-            var fileId = file.get('id');
+            var fileId = file.get('uuid');
             var encpass = atob(opts.encpass);
             var password = '';
             for (var i = 0; i < encpass.length; i++) {
@@ -173,8 +177,8 @@ var StorageWebDav = StorageBase.extend({
             that.logger.debug(config.op + ' error', config.path, 'aborted', that.logger.ts(ts));
             if (callback) { callback('aborted', xhr); callback = null; }
         });
-        xhr.responseType = 'arraybuffer';
         xhr.open(config.method, config.path);
+        xhr.responseType = 'arraybuffer';
         if (config.user) {
             xhr.setRequestHeader('Authorization', 'Basic ' + btoa(config.user + ':' + config.password));
         }

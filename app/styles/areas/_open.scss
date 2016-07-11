@@ -34,6 +34,13 @@
         @include size(1em);
       }
     }
+    @include mobile() {
+      .open__icons--lower & {
+        margin: 8px;
+        &-i, &-svg { font-size: 2em; }
+        &-text { font-size: .5em; }
+      }
+    }
   }
 
   &__pass {

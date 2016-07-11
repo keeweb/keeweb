@@ -114,4 +114,16 @@
   &__general-prv {
     margin-bottom: $base-padding-v;
   }
+  &__logs {
+    @include user-select(text);
+    margin-top: $base-padding-v;
+    &-log {
+      margin: 0;
+      white-space: pre-wrap;
+      &--debug { color: $white; opacity: .8; }
+      &--info { color: $white; }
+      &--warn { color: $yellow; }
+      &--error { color: $red; }
+    }
+  }
 }

@@ -1,0 +1,15 @@
+<div class="tag">
+    <div class="tag__back-button">
+        {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
+    </div>
+    <h1>{{res 'tagTitle'}}</h1>
+    <div class="tag__field">
+        <label for="tag__field-title">{{Res 'name'}}:</label>
+        <input type="text" class="input-base" id="tag__field-title" value="{{title}}" size="50" maxlength="128" required />
+        <button class="tag__btn-rename">{{res 'tagRename'}}</button>
+    </div>
+    <div class="tag__space"></div>
+    <div class="tag__buttons">
+        <i class="tag__buttons-trash fa fa-trash-o" title="{{res 'tagTrash'}}" tip-placement="right"></i>
+    </div>
+</div>

@@ -2,6 +2,7 @@
 
 var Backbone = require('backbone'),
     SettingsPrvView = require('./settings-prv-view'),
+    SettingsLogsView = require('./settings-logs-view'),
     Launcher = require('../../comp/launcher'),
     Updater = require('../../comp/updater'),
     Format = require('../../util/format'),
@@ -19,6 +20,7 @@ var SettingsGeneralView = Backbone.View.extend({
 
     events: {
         'change .settings__general-theme': 'changeTheme',
+        'change .settings__general-font-size': 'changeFontSize',
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
         'change .settings__general-idle-minutes': 'changeIdleMinutes',
@@ -35,19 +37,23 @@ var SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
         'change .settings__general-prv-check': 'changeStorageEnabled',
+        'click .settings__general-show-advanced': 'showAdvancedSettings',
         'click .settings__general-dev-tools-link': 'openDevTools',
-        'click .settings__general-try-beta-link': 'tryBeta'
+        'click .settings__general-try-beta-link': 'tryBeta',
+        'click .settings__general-show-logs-link': 'showLogs'
     },
 
-    views: {},
+    views: null,
 
     allThemes: {
-        fb: 'Flat blue',
-        db: 'Dark brown',
-        wh: 'White'
+        fb: Locale.setGenThemeFb,
+        db: Locale.setGenThemeDb,
+        wh: Locale.setGenThemeWh,
+        hc: Locale.setGenThemeHc
     },
 
     initialize: function() {
+        this.views = {};
         this.listenTo(UpdateModel.instance, 'change:status', this.render, this);
         this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render, this);
     },
@@ -60,6 +66,7 @@ var SettingsGeneralView = Backbone.View.extend({
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
+            fontSize: AppSettingsModel.instance.get('fontSize'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             canClearClipboard: !!Launcher,
             clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
@@ -163,6 +170,11 @@ var SettingsGeneralView = Backbone.View.extend({
         AppSettingsModel.instance.set('theme', theme);
     },
 
+    changeFontSize: function(e) {
+        var fontSize = +e.target.value;
+        AppSettingsModel.instance.set('fontSize', fontSize);
+    },
+
     changeClipboard: function(e) {
         var clipboardSeconds = +e.target.value;
         AppSettingsModel.instance.set('clipboardSeconds', clipboardSeconds);
@@ -252,10 +264,15 @@ var SettingsGeneralView = Backbone.View.extend({
     changeStorageEnabled: function(e) {
         var storage = Storage[$(e.target).data('storage')];
         if (storage) {
-            storage.enabled = e.target.checked;
+            storage.setEnabled(e.target.checked);
             AppSettingsModel.instance.set(storage.name, storage.enabled);
             this.$el.find('.settings__general-' + storage.name).toggleClass('hide', !e.target.checked);
         }
+    },
+
+    showAdvancedSettings: function() {
+        this.$el.find('.settings__general-show-advanced, .settings__general-advanced').toggleClass('hide');
+        this.scrollToBottom();
     },
 
     openDevTools: function() {
@@ -273,6 +290,18 @@ var SettingsGeneralView = Backbone.View.extend({
         } else {
             location.href = Links.BetaWebApp;
         }
+    },
+
+    showLogs: function() {
+        if (this.views.logView) {
+            this.views.logView.remove();
+        }
+        this.views.logView = new SettingsLogsView({ el: this.$el.find('.settings__general-advanced') }).render();
+        this.scrollToBottom();
+    },
+
+    scrollToBottom: function() {
+        this.$el.closest('.scroller').scrollTop(this.$el.height());
     }
 });
 

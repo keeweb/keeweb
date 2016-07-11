@@ -36,10 +36,12 @@ var Scrollable = {
         if (this.scroll) {
             this.scroll.update();
             this.requestAnimationFrame(function() {
-                this.scroll.update();
-                var barHeight = this.scrollerBar.height(),
-                    wrapperHeight = this.scrollerBarWrapper.height();
-                this.scrollerBarWrapper.toggleClass('invisible', barHeight >= wrapperHeight);
+                if (this.scroll) {
+                    this.scroll.update();
+                    var barHeight = this.scrollerBar.height(),
+                        wrapperHeight = this.scrollerBarWrapper.height();
+                    this.scrollerBarWrapper.toggleClass('invisible', barHeight >= wrapperHeight);
+                }
             });
         }
     },

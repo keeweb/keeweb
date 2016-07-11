@@ -41,8 +41,31 @@ var AppModel = Backbone.Model.extend({
         this.appLogger = new Logger('app');
     },
 
+    loadConfig: function(configLocation, callback) {
+        this.appLogger.debug('Loading config from', configLocation);
+        var ts = this.appLogger.ts();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', configLocation);
+        xhr.responseType = 'json';
+        xhr.send();
+        var that = this;
+        xhr.addEventListener('load', function() {
+            if (!xhr.response) {
+                that.appLogger.error('Error loading app config', xhr.statusText);
+                return callback(true);
+            }
+            that.appLogger.info('Loaded app config from', configLocation, that.appLogger.ts(ts));
+            that.settings.set(xhr.response);
+            callback();
+        });
+        xhr.addEventListener('error', function() {
+            that.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
+            callback(true);
+        });
+    },
+
     addFile: function(file) {
-        if (this.files.getById(file.id)) {
+        if (this.files.get(file.id)) {
             return false;
         }
         this.files.add(file);
@@ -63,10 +86,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     reloadFile: function(file) {
-        this.menu.groupsSection.removeByFile(file, true);
-        file.get('groups').forEach(function (group) {
-            this.menu.groupsSection.addItem(group);
-        }, this);
+        this.menu.groupsSection.replaceByFile(file, file.get('groups').first());
         this.updateTags();
     },
 
@@ -91,7 +111,7 @@ var AppModel = Backbone.Model.extend({
         if (this.tags.length) {
             this.menu.tagsSection.set('scrollable', true);
             this.menu.tagsSection.setItems(this.tags.map(function (tag) {
-                return {title: tag, icon: 'tag', filterKey: 'tag', filterValue: tag};
+                return {title: tag, icon: 'tag', filterKey: 'tag', filterValue: tag, editable: true};
             }));
         } else {
             this.menu.tagsSection.set('scrollable', false);
@@ -108,6 +128,13 @@ var AppModel = Backbone.Model.extend({
         if (!_.isEqual(oldTags, this.tags)) {
             this._tagsChanged();
         }
+    },
+
+    renameTag: function(from, to) {
+        this.files.forEach(function(file) {
+            file.renameTag(from, to);
+        });
+        this.updateTags();
     },
 
     closeAllFiles: function() {
@@ -133,7 +160,7 @@ var AppModel = Backbone.Model.extend({
         this.updateTags();
         this.menu.groupsSection.removeByFile(file);
         this.menu.filesSection.removeByFile(file);
-        this.refresh();
+        this.menu.select({ item: this.menu.allItemsSection.get('items').first() });
     },
 
     emptyTrash: function() {
@@ -256,7 +283,7 @@ var AppModel = Backbone.Model.extend({
     createDemoFile: function() {
         var that = this;
         if (!this.files.getByName('Demo')) {
-            var demoFile = new FileModel();
+            var demoFile = new FileModel({ id: IdGenerator.uuid() });
             demoFile.openDemo(function() {
                 that.addFile(demoFile);
             });
@@ -274,7 +301,7 @@ var AppModel = Backbone.Model.extend({
                 break;
             }
         }
-        var newFile = new FileModel();
+        var newFile = new FileModel({ id: IdGenerator.uuid() });
         newFile.create(name);
         this.addFile(newFile);
     },
@@ -298,7 +325,8 @@ var AppModel = Backbone.Model.extend({
             }, fileInfo);
         } else if (params.fileData) {
             logger.info('Open file from supplied content');
-            this.openFileWithData(params, callback, fileInfo, params.fileData, true);
+            var needSaveToCache = params.storage !== 'file';
+            this.openFileWithData(params, callback, fileInfo, params.fileData, needSaveToCache);
         } else if (!params.storage) {
             logger.info('Open file from cache as main storage');
             this.openFileFromCache(params, callback, fileInfo);
@@ -323,7 +351,8 @@ var AppModel = Backbone.Model.extend({
                         logger.info('Open file from content loaded from storage');
                         params.fileData = data;
                         params.rev = stat && stat.rev || null;
-                        that.openFileWithData(params, callback, fileInfo, data, true);
+                        var needSaveToCache = storage.name !== 'file';
+                        that.openFileWithData(params, callback, fileInfo, data, needSaveToCache);
                     }
                 });
             };
@@ -331,7 +360,7 @@ var AppModel = Backbone.Model.extend({
             if (cacheRev && storage.stat) {
                 logger.info('Stat file');
                 storage.stat(params.path, params.opts, function(err, stat) {
-                    if (fileInfo && (err || stat && stat.rev === cacheRev)) {
+                    if (fileInfo && storage.name !== 'file' && (err || stat && stat.rev === cacheRev)) {
                         logger.info('Open file from cache because ' + (err ? 'stat error' : 'it is latest'), err);
                         that.openFileFromCache(params, callback, fileInfo);
                     } else if (stat) {
@@ -346,7 +375,7 @@ var AppModel = Backbone.Model.extend({
                 storageLoad();
             }
         } else {
-            logger.info('Open file from cache, after load will sync', params.storage);
+            logger.info('Open file from cache, will sync after load', params.storage);
             this.openFileFromCache(params, function(err, file) {
                 if (!err && file) {
                     logger.info('Sync just opened file');
@@ -376,6 +405,7 @@ var AppModel = Backbone.Model.extend({
             params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
         }
         var file = new FileModel({
+            id: fileInfo ? fileInfo.id : IdGenerator.uuid(),
             name: params.name,
             storage: params.storage,
             path: params.path,
@@ -400,18 +430,16 @@ var AppModel = Backbone.Model.extend({
             if (fileInfo) {
                 file.set('syncDate', fileInfo.get('syncDate'));
             }
-            var cacheId = fileInfo && fileInfo.id || IdGenerator.uuid();
-            file.set('cacheId', cacheId);
             if (updateCacheOnSuccess) {
                 logger.info('Save loaded file to cache');
-                Storage.cache.save(cacheId, null, params.fileData);
+                Storage.cache.save(file.id, null, params.fileData);
             }
             var rev = params.rev || fileInfo && fileInfo.get('rev');
             that.setFileOpts(file, params.opts);
             that.addToLastOpenFiles(file, rev);
             that.addFile(file);
-            that.fileOpened(file);
             callback(null, file);
+            that.fileOpened(file);
         });
     },
 
@@ -419,6 +447,7 @@ var AppModel = Backbone.Model.extend({
         var logger = new Logger('import', params.name);
         logger.info('File import request with supplied xml');
         var file = new FileModel({
+            id: IdGenerator.uuid(),
             name: params.name,
             storage: params.storage,
             path: params.path
@@ -435,10 +464,10 @@ var AppModel = Backbone.Model.extend({
     },
 
     addToLastOpenFiles: function(file, rev) {
-        this.appLogger.debug('Add last open file', file.get('cacheId'), file.get('name'), file.get('storage'), file.get('path'), rev);
+        this.appLogger.debug('Add last open file', file.id, file.get('name'), file.get('storage'), file.get('path'), rev);
         var dt = new Date();
         var fileInfo = new FileInfoModel({
-            id: file.get('cacheId'),
+            id: file.id,
             name: file.get('name'),
             storage: file.get('storage'),
             path: file.get('path'),
@@ -455,7 +484,7 @@ var AppModel = Backbone.Model.extend({
                 keyFileHash: file.getKeyFileHash()
             });
         }
-        this.fileInfos.remove(file.get('cacheId'));
+        this.fileInfos.remove(file.id);
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
     },
@@ -482,6 +511,9 @@ var AppModel = Backbone.Model.extend({
                 that.syncFile(file);
             }, Timeouts.FileChangeSync));
         }
+        if (file.isKeyChangePending(true)) {
+            Backbone.trigger('key-change-pending', { file: file });
+        }
     },
 
     fileClosed: function(file) {
@@ -497,7 +529,7 @@ var AppModel = Backbone.Model.extend({
     },
 
     getFileInfo: function(file) {
-        return file.get('cacheId') ? this.fileInfos.get(file.get('cacheId')) :
+        return this.fileInfos.get(file.id) ||
             this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'));
     },
 
@@ -542,7 +574,6 @@ var AppModel = Backbone.Model.extend({
             if (!err) { savedToCache = true; }
             logger.info('Sync finished', err || 'no error');
             file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
-            file.set('cacheId', fileInfo.id);
             fileInfo.set({
                 name: file.get('name'),
                 storage: storage,
@@ -550,8 +581,7 @@ var AppModel = Backbone.Model.extend({
                 opts: that.getStoreOpts(file),
                 modified: file.get('modified'),
                 editState: file.getLocalEditState(),
-                syncDate: file.get('syncDate'),
-                cacheId: fileInfo.id
+                syncDate: file.get('syncDate')
             });
             if (that.settings.get('rememberKeyFiles')) {
                 fileInfo.set({
@@ -566,7 +596,7 @@ var AppModel = Backbone.Model.extend({
             if (callback) { callback(err); }
         };
         if (!storage) {
-            if (!file.get('modified') && fileInfo.id === file.get('cacheId')) {
+            if (!file.get('modified') && fileInfo.id === file.id) {
                 logger.info('Local, not modified');
                 return complete();
             }
@@ -604,7 +634,7 @@ var AppModel = Backbone.Model.extend({
                         }
                         file.set('syncDate', new Date());
                         if (file.get('modified')) {
-                            logger.info('Updated sync date, saving modified file to cache and storage');
+                            logger.info('Updated sync date, saving modified file');
                             saveToCacheAndStorage();
                         } else if (file.get('dirty')) {
                             logger.info('Saving not modified dirty file to cache');
@@ -622,11 +652,14 @@ var AppModel = Backbone.Model.extend({
                 });
             };
             var saveToCacheAndStorage = function() {
-                logger.info('Save to cache and storage');
+                logger.info('Getting file data for saving');
                 file.getData(function(data, err) {
                     if (err) { return complete(err); }
-                    if (!file.get('dirty')) {
-                        logger.info('Save to storage, skip cache because not dirty');
+                    if (storage === 'file') {
+                        logger.info('Saving to file storage');
+                        saveToStorage(data);
+                    } else if (!file.get('dirty')) {
+                        logger.info('Saving to storage, skip cache because not dirty');
                         saveToStorage(data);
                     } else {
                         logger.info('Saving to cache');
@@ -690,7 +723,7 @@ var AppModel = Backbone.Model.extend({
                     }
                 } else if (stat.rev === fileInfo.get('rev')) {
                     if (file.get('modified')) {
-                        logger.info('Stat found same version, modified, saving to cache and storage');
+                        logger.info('Stat found same version, modified, saving');
                         saveToCacheAndStorage();
                     } else {
                         logger.info('Stat found same version, not modified');

@@ -6,8 +6,10 @@ html {
 
 body {
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  cursor: default;
   position: fixed;
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
 }
 
 noscript {
