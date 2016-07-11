@@ -19,7 +19,7 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
 };
 
 AutoTypeHelper.getHelperPath = function() {
-    return Launcher.getAppPath('KeeWebHelper.exe');
+    return Launcher.getAppPath('helper/win32/KeeWebHelper.exe');
 };
 
 module.exports = AutoTypeHelper;
