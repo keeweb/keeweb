@@ -97,13 +97,18 @@ module.exports = function(grunt) {
                 expand: true,
                 nonull: true
             },
+            'desktop_windows_helper': {
+                src: 'helper/win32/KeeWebHelper.exe',
+                dest: 'tmp/desktop/app/',
+                nonull: true
+            },
             'desktop_osx': {
-                src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb-' + pkg.version + '.dmg',
+                src: 'tmp/desktop/mac/KeeWeb-' + pkg.version + '.dmg',
                 dest: 'dist/desktop/KeeWeb.mac.dmg',
                 nonull: true
             },
             'desktop_win': {
-                src: 'tmp/desktop/win/KeeWebSetup-' + pkg.version + '-ia32.exe',
+                src: 'tmp/desktop/win-ia32/KeeWeb Setup ' + pkg.version + '-ia32.exe',
                 dest: 'dist/desktop/KeeWeb.win32.exe',
                 nonull: true
             },
@@ -467,6 +472,7 @@ module.exports = function(grunt) {
         'validate-desktop-update',
         'electron',
         'electron-builder:osx',
+        'copy:desktop_windows_helper',
         'electron-builder:win',
         'compress:linux64',
         'compress:linux32',

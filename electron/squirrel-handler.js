@@ -6,7 +6,8 @@
 /* jshint node:true */
 /* jshint browser:false */
 
-var app = require('app'),
+var electron = require('electron'),
+    app = electron.app,
     fs = require('fs'),
     path = require('path'),
     spawn = require('child_process').spawn;

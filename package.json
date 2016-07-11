@@ -1,6 +1,6 @@
 {
   "name": "keeweb",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "Free cross-platform password manager compatible with KeePass",
   "main": "Gruntfile.js",
   "homepage": "https://keeweb.info",
@@ -12,8 +12,8 @@
   "devDependencies": {
     "base64-loader": "1.0.0",
     "cssnano": "3.6.2",
-    "electron-builder": "4.2.2",
-    "electron-prebuilt": "^1.2.1",
+    "electron-builder": "5.12.1",
+    "electron-prebuilt": "1.2.6",
     "exports-loader": "0.6.3",
     "get-folder-size": "1.0.0",
     "grunt": "1.0.1",
@@ -63,7 +63,8 @@
     "compression": "maximum",
     "asar": false,
     "extend-info": "package/osx/extend.plist",
-    "osx": {
+    "mac": {
+      "target": "dmg",
       "contents": [
         {
           "x": 438,
@@ -80,12 +81,14 @@
       "icon-size": 80
     },
     "win": {
+      "target": "squirrel",
       "loadingGif": "graphics/install.gif"
     }
   },
   "directories": {
     "buildResources": "graphics",
-    "output": "tmp/desktop"
+    "output": "tmp/desktop",
+    "app": "tmp/desktop/app"
   },
   "license": "MIT",
   "readme": "README.md"

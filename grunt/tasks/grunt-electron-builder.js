@@ -1,21 +1,16 @@
 'use strict';
 
 var builder = require('electron-builder');
-var osxPackager = require('electron-builder/out/osxPackager');
-var platformPackager = require('electron-builder/out/platformPackager');
+var macPackager = require('electron-builder/out/macPackager');
 var linuxPackager = require('electron-builder/out/linuxPackager');
 
 var version;
 
-// workaround for https://github.com/electron-userland/electron-builder/issues/322
-osxPackager.default.prototype.zipMacApp = function() {
-    return Promise.resolve();
-};
-
 // workaround for https://github.com/electron-userland/electron-builder/issues/323
-platformPackager.PlatformPackager.prototype.computeBuildNumber = function() {
-    this.devMetadata.build['build-version'] = version;
-    return version;
+macPackager.default.prototype._origPrepareAppInfo = macPackager.default.prototype.prepareAppInfo;
+macPackager.default.prototype.prepareAppInfo = function(appInfo) {
+    this.platformSpecificBuildOptions.bundleVersion = version;
+    return this._origPrepareAppInfo(appInfo);
 };
 
 // we don't have 512x512 icon

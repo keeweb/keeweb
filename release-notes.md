@@ -1,7 +1,7 @@
 Release notes
 -------------
 
-##### v1.2.0 (2016-06-11)
+##### v1.2.0 (2016-07-11)
 Auto-type, ui improvements  
 `+` allow selecting attachments with click  
 `+` save groups collapsed/expanded state  
