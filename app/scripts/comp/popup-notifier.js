@@ -68,7 +68,7 @@ var PopupNotifier = {
                 PopupNotifier.processReturnToApp(toUrl);
             }
         });
-        win.loadUrl(url);
+        win.loadURL(url);
         win.show();
         win.on('closed', function() {
             setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
