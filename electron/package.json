@@ -1,6 +1,6 @@
 {
   "name": "KeeWeb",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Free cross-platform password manager compatible with KeePass",
   "main": "main.js",
   "homepage": "https://keeweb.info",
