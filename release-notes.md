@@ -1,7 +1,7 @@
 Release notes
 -------------
 
-##### v1.2.1 (2016-07-)
+##### v1.2.1 (2016-07-12)
 `-` fix storage auth popups on desktop  
 
 ##### v1.2.0 (2016-07-11)
