@@ -1,6 +1,9 @@
 Release notes
 -------------
 
+##### v1.2.1 (2016-07-)
+`-` fix storage auth popups on desktop  
+
 ##### v1.2.0 (2016-07-11)
 Auto-type, ui improvements  
 `+` allow selecting attachments with click  

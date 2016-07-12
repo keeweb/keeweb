@@ -35,11 +35,11 @@ var PopupNotifier = {
     _openLauncherWindow: function(url, title, settings) {
         var opts = {
             show: false,
-            'web-preferences': {
-                'node-integration': false,
-                'web-security': false,
-                'allow-displaying-insecure-content': true,
-                'allow-running-insecure-content': true
+            webPreferences: {
+                nodeIntegration: false,
+                webSecurity: false,
+                allowDisplayingInsecureContent: true,
+                allowRunningInsecureContent: true
             }
         };
         if (settings) {
@@ -68,7 +68,7 @@ var PopupNotifier = {
                 PopupNotifier.processReturnToApp(toUrl);
             }
         });
-        win.loadUrl(url);
+        win.loadURL(url);
         win.show();
         win.on('closed', function() {
             setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
