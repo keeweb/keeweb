@@ -134,14 +134,12 @@ module.exports = function(grunt) {
             },
             all: ['app/scripts/**/*.js']
         },
-        sass: {
-            options: {
-                sourceMap: false,
-                includePaths: ['./bower_components']
-            },
+        compass: {
             dist: {
-                files: {
-                    'tmp/css/main.css': 'app/styles/main.scss'
+                options: {
+                    sassDir: 'app/styles',
+                    cssDir: 'tmp/css',
+                    importPath: ['./bower_components']
                 }
             }
         },
@@ -290,7 +288,7 @@ module.exports = function(grunt) {
             },
             styles: {
                 files: 'app/styles/**/*.scss',
-                tasks: ['sass']
+                tasks: ['compass']
             },
             indexhtml: {
                 files: 'app/index.html',
@@ -451,7 +449,7 @@ module.exports = function(grunt) {
         'copy:fonts',
         'webpack',
         'uglify',
-        'sass',
+        'compass',
         'postcss',
         'inline',
         'htmlmin',
