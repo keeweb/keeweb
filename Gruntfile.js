@@ -137,8 +137,7 @@ module.exports = function(grunt) {
         },
         clean: {
             dist: ['dist', 'tmp'],
-            'desktop_dist': ['dist/desktop'],
-            'desktop_tmp': ['tmp/desktop']
+            desktop: ['tmp/desktop', 'dist/desktop']
         },
         copy: {
             html: {
@@ -163,41 +162,21 @@ module.exports = function(grunt) {
                 expand: true,
                 flatten: true
             },
-            'desktop_app_content': {
+            'desktop-app-content': {
                 cwd: 'electron/',
                 src: '**',
                 dest: 'tmp/desktop/app/',
                 expand: true,
                 nonull: true
             },
-            'desktop_windows_helper': {
+            'desktop-windows-helper-ia32': {
                 src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/app/',
+                dest: 'tmp/desktop/KeeWeb-win32-ia32/',
                 nonull: true
             },
-            'desktop_osx': {
-                src: 'tmp/desktop/mac/KeeWeb-' + pkg.version + '.dmg',
-                dest: 'dist/desktop/KeeWeb.mac.dmg',
-                nonull: true
-            },
-            'desktop_win': {
-                src: 'tmp/desktop/win-ia32/KeeWeb Setup ' + pkg.version + '-ia32.exe',
-                dest: 'dist/desktop/KeeWeb.win32.exe',
-                nonull: true
-            },
-            'desktop_linux_x64': {
-                src: 'tmp/desktop/KeeWeb.linux.x64.zip',
-                dest: 'dist/desktop/KeeWeb.linux.x64.zip',
-                nonull: true
-            },
-            'desktop_linux_ia32': {
-                src: 'tmp/desktop/KeeWeb.linux.ia32.zip',
-                dest: 'dist/desktop/KeeWeb.linux.ia32.zip',
-                nonull: true
-            },
-            'desktop_linux_deb_x64': {
-                src: 'tmp/desktop/keeweb-desktop_*_amd64.deb',
-                dest: 'dist/desktop/KeeWeb.linux.x64.deb',
+            'desktop-windows-helper-x64': {
+                src: 'helper/win32/KeeWebHelper.exe',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/',
                 nonull: true
             }
         },
@@ -257,11 +236,11 @@ module.exports = function(grunt) {
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
             },
-            'manifest_html': {
+            'manifest-html': {
                 options: { replacements: [{ pattern: '<html', replacement: '<html manifest="manifest.appcache"' }] },
                 files: { 'dist/index.html': 'dist/index.html' }
             },
-            'desktop_html': {
+            'desktop-html': {
                 options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
                 files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
             }
@@ -323,61 +302,80 @@ module.exports = function(grunt) {
                 out: 'tmp/desktop',
                 version: electronVersion,
                 overwrite: true,
+                'app-copyright': 'Copyright © 2016 Antelle',
                 'app-version': pkg.version,
-                'build-version': '<%= gitinfo.local.branch.current.shortSHA %>'
+                'build-version': '<%= gitinfo.local.branch.current.shortSHA %>',
             },
-            linux64: {
+            linux: {
                 options: {
                     platform: 'linux',
-                    arch: 'x64',
+                    arch: ['x64', 'ia32'],
                     icon: 'graphics/app.ico'
                 }
             },
-            linux32: {
+            darwin: {
                 options: {
-                    platform: 'linux',
-                    arch: 'ia32',
-                    icon: 'graphics/app.ico'
-                }
-            }
-        },
-        'electron-builder': {
-            options: {
-                publish: 'never',
-                dist: false,
-                projectDir: __dirname,
-                appDir: 'tmp/desktop/app',
-                sign: false
-            },
-            osx: {
-                options: {
-                    platforms: ['osx'],
-                    arch: 'x64'
+                    platform: 'darwin',
+                    arch: ['x64'],
+                    icon: 'graphics/icon.icns',
+                    'app-bundle-id': 'net.antelle.keeweb',
+                    'app-category-type': 'public.app-category.productivity',
+                    'extend-info': 'package/osx/extend.plist'
                 }
             },
-            win: {
+            win32: {
                 options: {
-                    platform: ['win32'],
-                    arch: 'ia32'
+                    platform: 'win32',
+                    arch: ['ia32', 'x64'],
+                    icon: 'graphics/app.ico',
+                    'build-version': pkg.version
                 }
             }
         },
         compress: {
-            linux64: {
-                options: { archive: 'tmp/desktop/KeeWeb.linux.x64.zip' },
-                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true }]
+            options: {
+                level: 6
             },
-            linux32: {
-                options: { archive: 'tmp/desktop/KeeWeb.linux.ia32.zip' },
-                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-ia32', src: '**', expand: true }]
-            },
-            'desktop_update': {
+            'desktop-update': {
                 options: { archive: 'dist/desktop/UpdateDesktop.zip', comment: zipCommentPlaceholder },
                 files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
+            },
+            'win32-x64': {
+                options: { archive: 'dist/desktop/KeeWeb.win32.x64.zip' },
+                files: [{ cwd: 'tmp/desktop/KeeWeb-win32-x64', src: '**', expand: true }]
+            },
+            'win32-ia32': {
+                options: { archive: 'dist/desktop/KeeWeb.win32.ia32.zip' },
+                files: [{ cwd: 'tmp/desktop/KeeWeb-win32-ia32', src: '**', expand: true }]
+            },
+            'linux-x64': {
+                options: { archive: 'dist/desktop/KeeWeb.linux.x64.zip' },
+                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true }]
+            },
+            'linux-ia32': {
+                options: { archive: 'dist/desktop/KeeWeb.linux.ia32.zip' },
+                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-ia32', src: '**', expand: true }]
+            }
+        },
+        appdmg: {
+            options: {
+                title: 'KeeWeb',
+                icon: 'graphics/icon.icns',
+                background: 'graphics/background.png',
+                'background-color': '#E0E6F9',
+                'icon-size': 80,
+                window: { size: { width: 658, height: 498 } },
+                contents: [
+                    { x: 438, y: 344, type: 'link', path: '/Applications' },
+                    { x: 192, y: 344, type: 'file', path: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app' }
+                ]
+            },
+            app: {
+                dest: 'dist/desktop/KeeWeb.mac.dmg'
             }
         },
         deb: {
-            linux64: {
+            'linux-x64': {
                 options: {
                     tmpPath: 'tmp/desktop/',
                     package: {
@@ -390,7 +388,8 @@ module.exports = function(grunt) {
                     },
                     info: {
                         arch: 'amd64',
-                        targetDir: 'tmp/desktop',
+                        targetDir: 'dist/desktop',
+                        pkgName: 'KeeWeb.linux.x64.deb',
                         appName: 'KeeWeb',
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
@@ -420,7 +419,7 @@ module.exports = function(grunt) {
             }
         },
         'sign-archive': {
-            'desktop_update': {
+            'desktop-update': {
                 options: {
                     file: 'dist/desktop/UpdateDesktop.zip',
                     signature: zipCommentPlaceholder,
@@ -456,7 +455,9 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', [
+    // compound builder tasks
+
+    grunt.registerTask('build-web-app', [
         'gitinfo',
         'bower-install-simple',
         'clean',
@@ -471,40 +472,74 @@ module.exports = function(grunt) {
         'postcss',
         'inline',
         'htmlmin',
-        'string-replace:manifest_html',
+        'string-replace:manifest-html',
         'string-replace:manifest',
         'sign-html'
     ]);
 
-    grunt.registerTask('dev', [
-        'concurrent:dev-server'
+    grunt.registerTask('build-desktop-app-content', [
+        'copy:desktop-app-content',
+        'string-replace:desktop-html',
+    ]);
+
+    grunt.registerTask('build-desktop-update', [
+        'compress:desktop-update',
+        'sign-archive:desktop-update',
+        'validate-desktop-update',
+    ]);
+
+    grunt.registerTask('build-desktop-executables', [
+        'electron',
+        'copy:desktop-windows-helper-ia32',
+        'copy:desktop-windows-helper-x64',
+    ]);
+
+    grunt.registerTask('build-desktop-archives', [
+        'compress:win32-x64',
+        'compress:win32-ia32',
+        'compress:linux-x64',
+        'compress:linux-ia32',
+    ]);
+
+    grunt.registerTask('build-desktop-dist-darwin', [
+        'appdmg'
+    ]);
+
+    grunt.registerTask('build-desktop-dist-win32', [
+        // TODO: windows installer
+    ]);
+
+    grunt.registerTask('build-desktop-dist-linux', [
+        'deb:linux-x64'
+    ]);
+
+    grunt.registerTask('build-desktop-dist', [
+        'build-desktop-dist-darwin',
+        'build-desktop-dist-win32',
+        'build-desktop-dist-linux'
     ]);
 
     grunt.registerTask('build-desktop', [
         'gitinfo',
-        'clean:desktop_tmp',
-        'clean:desktop_dist',
-        'copy:desktop_app_content',
-        'string-replace:desktop_html',
-        'compress:desktop_update',
-        'sign-archive:desktop_update',
-        'validate-desktop-update',
-        'electron',
-        'electron-builder:osx',
-        'copy:desktop_windows_helper',
-        'electron-builder:win',
-        'compress:linux64',
-        'compress:linux32',
-        'deb:linux64',
-        'copy:desktop_osx',
-        'copy:desktop_win',
-        'copy:desktop_linux_x64',
-        'copy:desktop_linux_ia32',
-        'copy:desktop_linux_deb_x64',
-        'clean:desktop_tmp'
+        'clean:desktop',
+        'build-desktop-app-content',
+        'build-desktop-update',
+        'build-desktop-executables',
+        'build-desktop-archives',
+        'build-desktop-dist'
     ]);
 
-    grunt.registerTask('desktop', [
+    // entry point tasks
+
+    grunt.registerTask('default', 'Default: build web app', [
+        'build-web-app'
+    ]);
+
+    grunt.registerTask('dev', 'Start web server and watcher', [
+        'concurrent:dev-server'
+    ]);
+
+    grunt.registerTask('desktop', 'Build web and desktop apps for all platforms', [
         'default',
         'build-desktop'
     ]);

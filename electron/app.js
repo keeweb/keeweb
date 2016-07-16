@@ -18,81 +18,79 @@ var mainWindow = null,
     updateMainWindowPositionTimeout = null,
     windowPositionFileName = path.join(app.getPath('userData'), 'window-position.json');
 
-if (!handleStartupSquirrelEvent()) {
-    process.argv.forEach(function (arg) {
-        if (arg.lastIndexOf('--htmlpath=', 0) === 0) {
-            htmlPath = path.resolve(arg.replace('--htmlpath=', ''), 'index.html');
-        }
-    });
+process.argv.forEach(function (arg) {
+    if (arg.lastIndexOf('--htmlpath=', 0) === 0) {
+        htmlPath = path.resolve(arg.replace('--htmlpath=', ''), 'index.html');
+    }
+});
 
-    app.on('window-all-closed', function () {
-        if (restartPending) {
-            // unbind all handlers, load new app.js module and pass control to it
-            electron.globalShortcut.unregisterAll();
-            app.removeAllListeners('window-all-closed');
-            app.removeAllListeners('ready');
-            app.removeAllListeners('open-file');
-            app.removeAllListeners('activate');
-            var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
-            delete require.cache[require.resolve('./app.js')];
-            require(userDataAppFile);
-            app.emit('ready');
-        } else {
-            if (process.platform !== 'darwin') {
-                app.quit();
-            }
-        }
-    });
-    app.on('ready', function () {
-        if (!checkSingleInstance()) {
-            setAppOptions();
-            createMainWindow();
-            setGlobalShortcuts();
-        }
-    });
-    app.on('open-file', function (e, path) {
-        e.preventDefault();
-        openFile = path;
-        notifyOpenFile();
-    });
-    app.on('activate', function () {
-        if (process.platform === 'darwin') {
-            if (!mainWindow) {
-                createMainWindow();
-            }
-        }
-    });
-    app.on('will-quit', function () {
+app.on('window-all-closed', function () {
+    if (restartPending) {
+        // unbind all handlers, load new app.js module and pass control to it
         electron.globalShortcut.unregisterAll();
-    });
-    app.restartApp = function () {
-        restartPending = true;
-        mainWindow.close();
-        setTimeout(function () {
-            restartPending = false;
-        }, 1000);
-    };
-    app.openWindow = function (opts) {
-        return new electron.BrowserWindow(opts);
-    };
-    app.minimizeApp = function () {
+        app.removeAllListeners('window-all-closed');
+        app.removeAllListeners('ready');
+        app.removeAllListeners('open-file');
+        app.removeAllListeners('activate');
+        var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
+        delete require.cache[require.resolve('./app.js')];
+        require(userDataAppFile);
+        app.emit('ready');
+    } else {
         if (process.platform !== 'darwin') {
-            mainWindow.minimize();
-            mainWindow.setSkipTaskbar(true);
-            appIcon = new electron.Tray(path.join(__dirname, 'icon.png'));
-            appIcon.on('click', restoreMainWindow);
-            var contextMenu = electron.Menu.buildFromTemplate([
-                {label: 'Open KeeWeb', click: restoreMainWindow},
-                {label: 'Quit KeeWeb', click: closeMainWindow}
-            ]);
-            appIcon.setContextMenu(contextMenu);
-            appIcon.setToolTip('KeeWeb');
+            app.quit();
         }
-    };
-    app.getMainWindow = function () {
-        return mainWindow;
-    };
-}
+    }
+});
+app.on('ready', function () {
+    if (!checkSingleInstance()) {
+        setAppOptions();
+        createMainWindow();
+        setGlobalShortcuts();
+    }
+});
+app.on('open-file', function (e, path) {
+    e.preventDefault();
+    openFile = path;
+    notifyOpenFile();
+});
+app.on('activate', function () {
+    if (process.platform === 'darwin') {
+        if (!mainWindow) {
+            createMainWindow();
+        }
+    }
+});
+app.on('will-quit', function () {
+    electron.globalShortcut.unregisterAll();
+});
+app.restartApp = function () {
+    restartPending = true;
+    mainWindow.close();
+    setTimeout(function () {
+        restartPending = false;
+    }, 1000);
+};
+app.openWindow = function (opts) {
+    return new electron.BrowserWindow(opts);
+};
+app.minimizeApp = function () {
+    if (process.platform !== 'darwin') {
+        mainWindow.minimize();
+        mainWindow.setSkipTaskbar(true);
+        appIcon = new electron.Tray(path.join(__dirname, 'icon.png'));
+        appIcon.on('click', restoreMainWindow);
+        var contextMenu = electron.Menu.buildFromTemplate([
+            {label: 'Open KeeWeb', click: restoreMainWindow},
+            {label: 'Quit KeeWeb', click: closeMainWindow}
+        ]);
+        appIcon.setContextMenu(contextMenu);
+        appIcon.setToolTip('KeeWeb');
+    }
+};
+app.getMainWindow = function () {
+    return mainWindow;
+};
 
 function checkSingleInstance() {
     var shouldQuit = app.makeSingleInstance(function(/*commandLine, workingDirectory*/) {
@@ -286,12 +284,4 @@ function setGlobalShortcuts() {
             });
         } catch (e) {}
     });
-}
-
-function handleStartupSquirrelEvent() {
-    if (process.platform !== 'win32') {
-        return false;
-    }
-    var handleSquirrelArg = require('./squirrel-handler');
-    return handleSquirrelArg();
 }
