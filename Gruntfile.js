@@ -240,7 +240,10 @@ module.exports = function(grunt) {
                         ]})},
                         { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
                         { test: /pikadat\.js$/, loader: 'uglify' },
-                        { test: /handlebars/, loader: 'strip-sourcemap-loader' }
+                        { test: /handlebars/, loader: 'strip-sourcemap-loader' },
+                        { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel',
+                            query: { presets: ['es2015'], cacheDirectory: true }
+                        }
                     ]
                 },
                 plugins: [
