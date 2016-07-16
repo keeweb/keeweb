@@ -28,10 +28,10 @@
     "dropbox": "keeweb/dropbox-js#0.10.8",
     "font-awesome": "4.6.3",
     "kdbxweb": "0.4.1",
-    "normalize.css": "4.1.1",
+    "normalize.css": "4.2.0",
     "pikaday": "1.4.0",
     "FileSaver.js": "eligrey/FileSaver.js",
-    "jquery": "3.0.0",
+    "jquery": "3.1.0",
     "jsqrcode": "antelle/jsqrcode#0.1.3"
   }
 }
