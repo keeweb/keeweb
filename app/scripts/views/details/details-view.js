@@ -70,6 +70,7 @@ var DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'auto-type', this.autoTypeGlobal);
         this.listenTo(Backbone, 'copy-user', this.copyUserName);
         this.listenTo(Backbone, 'copy-url', this.copyUrl);
+        this.listenTo(Backbone, 'toggle-settings', this.settingsToggled);
         this.listenTo(OtpQrReqder, 'qr-read', this.otpCodeRead);
         this.listenTo(OtpQrReqder, 'enter-manually', this.otpEnterManually);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyPassword, this, KeyHandler.SHORTCUT_ACTION, false, true);
@@ -93,10 +94,7 @@ var DetailsView = Backbone.View.extend({
     removeFieldViews: function() {
         this.fieldViews.forEach(function(fieldView) { fieldView.remove(); });
         this.fieldViews = [];
-        if (this.fieldCopyTip) {
-            this.fieldCopyTip.hide();
-            this.fieldCopyTip = null;
-        }
+        this.hideFieldCopyTip();
     },
 
     render: function () {
@@ -449,6 +447,17 @@ var DetailsView = Backbone.View.extend({
         setTimeout(function() { tip.hide(); }, Timeouts.AutoHideHint);
     },
 
+    hideFieldCopyTip: function() {
+        if (this.fieldCopyTip) {
+            this.fieldCopyTip.hide();
+            this.fieldCopyTip = null;
+        }
+    },
+
+    settingsToggled: function() {
+        this.hideFieldCopyTip();
+    },
+
     fieldChanged: function(e) {
         if (e.field) {
             if (e.field[0] === '$') {
@@ -526,10 +535,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     fieldCopied: function(e) {
-        if (this.fieldCopyTip) {
-            this.fieldCopyTip.hide();
-            this.fieldCopyTip = null;
-        }
+        this.hideFieldCopyTip();
         var fieldLabel = e.source.labelEl;
         var clipboardTime = e.copyRes.seconds;
         var msg = clipboardTime ? Locale.detFieldCopiedTime.replace('{}', clipboardTime)
