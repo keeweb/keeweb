@@ -52,7 +52,7 @@ $ electron electron --htmlpath=tmp
 For debug build:
 
 1. run `grunt`
-2. run `grunt watch`
+2. run `grunt dev`
 3. open `tmp/index.html`
 
 # Contributing

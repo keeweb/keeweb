@@ -47,6 +47,79 @@ module.exports = function(grunt) {
         });
     }
 
+    var webpackConfig = {
+        entry: {
+            app: 'app',
+            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode']
+        },
+        output: {
+            path: 'tmp/js',
+            filename: 'app.js'
+        },
+        stats: {
+            colors: false,
+            modules: true,
+            reasons: true
+        },
+        progress: false,
+        failOnError: true,
+        resolve: {
+            root: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'bower_components')],
+            alias: {
+                backbone: 'backbone/backbone-min.js',
+                underscore: 'underscore/underscore-min.js',
+                _: 'underscore/underscore-min.js',
+                jquery: 'jquery/dist/jquery.min.js',
+                hbs: 'handlebars/runtime.js',
+                kdbxweb: 'kdbxweb/dist/kdbxweb.js',
+                dropbox: 'dropbox/lib/dropbox.min.js',
+                baron: 'baron/baron.min.js',
+                pikaday: 'pikaday/pikaday.js',
+                filesaver: 'FileSaver.js/FileSaver.min.js',
+                qrcode: 'jsqrcode/dist/qrcode.min.js',
+                templates: path.join(__dirname, 'app/templates')
+            }
+        },
+        module: {
+            loaders: [
+                { test: /\.hbs$/, loader: StringReplacePlugin.replace('handlebars-loader', { replacements: [{
+                    pattern: /\r?\n\s*/g,
+                    replacement: function() { return '\n'; }
+                }]})},
+                { test: /runtime\-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
+                    { pattern: /@@VERSION/g, replacement: function() { return pkg.version; } },
+                    { pattern: /@@DATE/g, replacement: function() { return dt; } },
+                    { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
+                ]})},
+                { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
+                { test: /pikadat\.js$/, loader: 'uglify' },
+                { test: /handlebars/, loader: 'strip-sourcemap-loader' },
+                { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel',
+                    query: { presets: ['es2015'], cacheDirectory: true }
+                }
+            ]
+        },
+        plugins: [
+            new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
+            new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) 2015 ' + pkg.author.name +
+                ', opensource.org/licenses/' + pkg.license),
+            new webpack.optimize.OccurenceOrderPlugin(),
+            new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
+            new webpack.IgnorePlugin(/^(moment)$/),
+            new StringReplacePlugin()
+        ],
+        node: {
+            console: false,
+            process: false,
+            Buffer: false,
+            __filename: false,
+            __dirname: false
+        },
+        externals: {
+            xmldom: 'null'
+        }
+    };
+
     grunt.initConfig({
         gitinfo: {
             branch: {
@@ -194,77 +267,20 @@ module.exports = function(grunt) {
             }
         },
         webpack: {
+            js: webpackConfig
+        },
+        'webpack-dev-server': {
+            options: {
+                webpack: webpackConfig,
+                publicPath: '/tmp/js',
+                progress: false
+            },
             js: {
-                entry: {
-                    app: 'app',
-                    vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode']
+                keepAlive: true,
+                webpack: {
+                    devtool: 'source-map'
                 },
-                output: {
-                    path: 'tmp/js',
-                    filename: 'app.js'
-                },
-                stats: {
-                    colors: false,
-                    modules: true,
-                    reasons: true
-                },
-                progress: false,
-                failOnError: true,
-                resolve: {
-                    root: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'bower_components')],
-                    alias: {
-                        backbone: 'backbone/backbone-min.js',
-                        underscore: 'underscore/underscore-min.js',
-                        _: 'underscore/underscore-min.js',
-                        jquery: 'jquery/dist/jquery.min.js',
-                        hbs: 'handlebars/runtime.js',
-                        kdbxweb: 'kdbxweb/dist/kdbxweb.js',
-                        dropbox: 'dropbox/lib/dropbox.min.js',
-                        baron: 'baron/baron.min.js',
-                        pikaday: 'pikaday/pikaday.js',
-                        filesaver: 'FileSaver.js/FileSaver.min.js',
-                        qrcode: 'jsqrcode/dist/qrcode.min.js',
-                        templates: path.join(__dirname, 'app/templates')
-                    }
-                },
-                module: {
-                    loaders: [
-                        { test: /\.hbs$/, loader: StringReplacePlugin.replace('handlebars-loader', { replacements: [{
-                            pattern: /\r?\n\s*/g,
-                            replacement: function() { return '\n'; }
-                        }]})},
-                        { test: /runtime\-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
-                            { pattern: /@@VERSION/g, replacement: function() { return pkg.version; } },
-                            { pattern: /@@DATE/g, replacement: function() { return dt; } },
-                            { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
-                        ]})},
-                        { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
-                        { test: /pikadat\.js$/, loader: 'uglify' },
-                        { test: /handlebars/, loader: 'strip-sourcemap-loader' },
-                        { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel',
-                            query: { presets: ['es2015'], cacheDirectory: true }
-                        }
-                    ]
-                },
-                plugins: [
-                    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-                    new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) 2015 ' + pkg.author.name +
-                        ', opensource.org/licenses/' + pkg.license),
-                    new webpack.optimize.OccurenceOrderPlugin(),
-                    new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
-                    new webpack.IgnorePlugin(/^(moment)$/),
-                    new StringReplacePlugin()
-                ],
-                node: {
-                    console: false,
-                    process: false,
-                    Buffer: false,
-                    __filename: false,
-                    __dirname: false
-                },
-                externals: {
-                    xmldom: 'null'
-                }
+                port: 8085
             }
         },
         uglify: {
@@ -287,10 +303,10 @@ module.exports = function(grunt) {
                 interrupt: true,
                 debounceDelay: 500
             },
-            scripts: {
-                files: ['app/scripts/**/*.js', 'app/templates/**/*.hbs'],
-                tasks: ['webpack']
-            },
+            // scripts: {
+            //     files: ['app/scripts/**/*.js', 'app/templates/**/*.hbs'],
+            //     tasks: ['webpack']
+            // },
             styles: {
                 files: 'app/styles/**/*.scss',
                 tasks: ['sass']
@@ -345,18 +361,6 @@ module.exports = function(grunt) {
                     arch: 'ia32'
                 }
             }
-            // linux64: {
-            //     options: {
-            //         platform: ['linux'],
-            //         arch: 'x64'
-            //     }
-            // },
-            // linux32: {
-            //     options: {
-            //         platform: ['linux'],
-            //         arch: 'ia32'
-            //     }
-            // }
         },
         compress: {
             linux64: {
@@ -440,6 +444,15 @@ module.exports = function(grunt) {
                     privateKey: 'keys/private-key.pem'
                 }
             }
+        },
+        'concurrent': {
+            options: {
+                logConcurrentOutput: true,
+            },
+            'dev-server': [
+                'watch',
+                'webpack-dev-server'
+            ]
         }
     });
 
@@ -463,8 +476,11 @@ module.exports = function(grunt) {
         'sign-html'
     ]);
 
-    grunt.registerTask('desktop', [
-        'default',
+    grunt.registerTask('dev', [
+        'concurrent:dev-server'
+    ]);
+
+    grunt.registerTask('build-desktop', [
         'gitinfo',
         'clean:desktop_tmp',
         'clean:desktop_dist',
@@ -486,5 +502,10 @@ module.exports = function(grunt) {
         'copy:desktop_linux_ia32',
         'copy:desktop_linux_deb_x64',
         'clean:desktop_tmp'
+    ]);
+
+    grunt.registerTask('desktop', [
+        'default',
+        'build-desktop'
     ]);
 };
