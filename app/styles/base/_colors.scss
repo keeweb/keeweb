@@ -1,5 +1,3 @@
-@import "compass/utilities/color/contrast";
-
 // Named colors
 $black: #111;
 $white: #d8e5f1;
@@ -22,7 +20,11 @@ $violet: #d946db;
 @function muted-color-border() { @return mix(medium-color(), background-color(), th(mute-percent) / 2); }
 @function text-selection-bg-color() { @return rgba(action-color(), .3); }
 @function text-selection-bg-color-error() { @return rgba(error-color(), .8); }
-@function text-contrast-color($bg) { @return contrast-color($bg, text-color(), background-color()); }
+@function text-contrast-color($bg) {
+  @if ($bg == background-color()) { @return text-color(); }
+  @if (lightness($bg) - th(color-lightness-shift) >= lightness(background-color())) { @return text-color(); }
+  @else { @return background-color(); }
+}
 
 // Borders, shadows
 @function base-border-color() { @return mix(medium-color(), background-color(), 50%); }

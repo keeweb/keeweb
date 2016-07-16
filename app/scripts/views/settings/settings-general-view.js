@@ -46,12 +46,12 @@ var SettingsGeneralView = Backbone.View.extend({
     views: null,
 
     allThemes: {
-        db: Locale.setGenThemeDb,
         fb: Locale.setGenThemeFb,
-        hc: Locale.setGenThemeHc,
+        db: Locale.setGenThemeDb,
         sd: Locale.setGenThemeSd,
         sl: Locale.setGenThemeSl,
-        wh: Locale.setGenThemeWh
+        wh: Locale.setGenThemeWh,
+        hc: Locale.setGenThemeHc,
     },
 
     initialize: function() {
