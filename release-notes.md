@@ -1,6 +1,9 @@
 Release notes
 -------------
 
+##### v1.3.0 (TBD)
+`+` solarized themes  
+
 ##### v1.2.2 (2016-07-14)
 `-` fix special keys auto-type in linux  
 
