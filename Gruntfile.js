@@ -331,7 +331,7 @@ module.exports = function(grunt) {
                     'build-version': pkg.version,
                     'version-string': {
                         'CompanyName': 'KeeWeb',
-                        'FileDescription': 'Free cross-platform password manager compatible with KeePass',
+                        'FileDescription': pkg.description,
                         'OriginalFilename': 'KeeWeb.exe',
                         'ProductName': 'KeeWeb',
                         'InternalName': 'KeeWeb'
