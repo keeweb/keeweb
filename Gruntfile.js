@@ -328,7 +328,14 @@ module.exports = function(grunt) {
                     platform: 'win32',
                     arch: ['ia32', 'x64'],
                     icon: 'graphics/icon.ico',
-                    'build-version': pkg.version
+                    'build-version': pkg.version,
+                    'version-string': {
+                        'CompanyName': 'KeeWeb',
+                        'FileDescription': 'Free cross-platform password manager compatible with KeePass',
+                        'OriginalFilename': 'KeeWeb.exe',
+                        'ProductName': 'KeeWeb',
+                        'InternalName': 'KeeWeb'
+                    }
                 }
             }
         },
