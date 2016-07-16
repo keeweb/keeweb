@@ -19,6 +19,7 @@ var MenuModel = Backbone.Model.extend({
         this.menus = {};
         this.allItemsSection = new MenuSectionModel([{ title: Locale.menuAllItems, icon: 'th-large', active: true,
             shortcut: Keys.DOM_VK_A, filterKey: '*' }]);
+        this.allItemsItem = this.allItemsSection.get('items').models[0];
         this.groupsSection = new GroupsMenuModel();
         this.colorsSection = new MenuSectionModel([{ title: Locale.menuColors, icon: 'bookmark', shortcut: Keys.DOM_VK_C,
             cls: 'menu__item-colors', filterKey: 'color', filterValue: true }]);
