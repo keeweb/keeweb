@@ -310,7 +310,7 @@ module.exports = function(grunt) {
                 options: {
                     platform: 'linux',
                     arch: ['x64', 'ia32'],
-                    icon: 'graphics/app.ico'
+                    icon: 'graphics/icon.ico'
                 }
             },
             darwin: {
@@ -327,7 +327,7 @@ module.exports = function(grunt) {
                 options: {
                     platform: 'win32',
                     arch: ['ia32', 'x64'],
-                    icon: 'graphics/app.ico',
+                    icon: 'graphics/icon.ico',
                     'build-version': pkg.version
                 }
             }
