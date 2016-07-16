@@ -381,6 +381,26 @@ module.exports = function(grunt) {
                 dest: 'dist/desktop/KeeWeb.mac.dmg'
             }
         },
+        nsis: {
+            options: {
+                installScript: 'package/nsis/main.nsi',
+                vars: {
+                    version: pkg.version,
+                    rev: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); },
+                    homepage: pkg.homepage
+                }
+            },
+            'win32-x64': {
+                options: {
+                    arch: 'x64'
+                }
+            },
+            'win32-ia32': {
+                options: {
+                    arch: 'ia32'
+                }
+            }
+        },
         deb: {
             'linux-x64': {
                 options: {
@@ -513,7 +533,8 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('build-desktop-dist-win32', [
-        // TODO: windows installer
+        'nsis:win32-x64',
+        'nsis:win32-ia32'
     ]);
 
     grunt.registerTask('build-desktop-dist-linux', [
