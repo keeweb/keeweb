@@ -15,6 +15,7 @@ module.exports = function (grunt) {
             args.push(`${prefix}D${key}=${value}`);
         });
         args.push(`${prefix}Darch=${opt.arch}`);
+        args.push(`${prefix}Doutput=${opt.output}`);
         args.push(`${prefix}NOCD`);
         args.push(opt.installScript);
         let executable = win ? 'C:\\Program Files (x86)\\NSIS\\makensis.exe' : 'makensis';

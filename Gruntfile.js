@@ -348,11 +348,11 @@ module.exports = function(grunt) {
                 files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
             },
             'win32-x64': {
-                options: { archive: 'dist/desktop/KeeWeb.win32.x64.zip' },
+                options: { archive: 'dist/desktop/KeeWeb.win.x64.zip' },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-win32-x64', src: '**', expand: true }]
             },
             'win32-ia32': {
-                options: { archive: 'dist/desktop/KeeWeb.win32.ia32.zip' },
+                options: { archive: 'dist/desktop/KeeWeb.win.ia32.zip' },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-win32-ia32', src: '**', expand: true }]
             },
             'linux-x64': {
@@ -392,12 +392,14 @@ module.exports = function(grunt) {
             },
             'win32-x64': {
                 options: {
-                    arch: 'x64'
+                    arch: 'x64',
+                    output: 'dist/desktop/KeeWeb.win.x64.exe'
                 }
             },
             'win32-ia32': {
                 options: {
-                    arch: 'ia32'
+                    arch: 'ia32',
+                    output: 'dist/desktop/KeeWeb.win.ia32.exe'
                 }
             }
         },

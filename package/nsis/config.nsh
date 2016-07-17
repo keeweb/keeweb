@@ -1,5 +1,5 @@
 Name "${PRODUCT_NAME}"
-OutFile dist/desktop/KeeWeb.win32.${arch}.exe
+OutFile "${output}"
 InstallDir "$PROGRAMFILES\KeeWeb"
 ShowInstDetails show
 ShowUnInstDetails show
