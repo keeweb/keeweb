@@ -25,7 +25,7 @@
     "backbone": "1.3.3",
     "baron": "2.2.2",
     "bourbon": "4.2.7",
-    "dropbox": "keeweb/dropbox-js#3364af7617ea5c0edac94034e658375968759b06",
+    "dropbox": "keeweb/dropbox-js#0ac0efdc2711eece73f6ac044459e1fd0d5e9390",
     "font-awesome": "4.6.3",
     "kdbxweb": "0.4.1",
     "normalize.css": "4.2.0",
