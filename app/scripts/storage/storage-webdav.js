@@ -29,7 +29,7 @@ var StorageWebDav = StorageBase.extend({
             path: path,
             user: opts ? opts.user : null,
             password: opts ? opts.password : null
-        }, callback ? function(err, xhr, stat) {
+        }, callback ? (err, xhr, stat) => {
             callback(err, xhr.response, stat);
         } : null);
     },
@@ -41,7 +41,7 @@ var StorageWebDav = StorageBase.extend({
             path: path,
             user: opts ? opts.user : null,
             password: opts ? opts.password : null
-        }, callback ? function(err, xhr, stat) {
+        }, callback ? (err, xhr, stat) => {
             callback(err, stat);
         } : null);
     },
@@ -53,7 +53,7 @@ var StorageWebDav = StorageBase.extend({
                 callback = null;
             }
         };
-        var tmpPath = path.replace(/[^\/]+$/, function(m) { return '.' + m; }) + '.' + Date.now();
+        var tmpPath = path.replace(/[^\/]+$/, m => '.' + m) + '.' + Date.now();
         var saveOpts = {
             path: path,
             user: opts ? opts.user : null,
@@ -62,7 +62,7 @@ var StorageWebDav = StorageBase.extend({
         var that = this;
         this._request(_.defaults({
             op: 'Save:stat', method: 'HEAD'
-        }, saveOpts), function(err, xhr, stat) {
+        }, saveOpts), (err, xhr, stat) => {
             if (err) { return cb(err); }
             if (stat.rev !== rev) {
                 that.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
@@ -70,11 +70,11 @@ var StorageWebDav = StorageBase.extend({
             }
             that._request(_.defaults({
                 op: 'Save:put', method: 'PUT', path: tmpPath, data: data, nostat: true
-            }, saveOpts), function(err) {
+            }, saveOpts), (err) => {
                 if (err) { return cb(err); }
                 that._request(_.defaults({
                     op: 'Save:stat', method: 'HEAD'
-                }, saveOpts), function(err, xhr, stat) {
+                }, saveOpts), (err, xhr, stat) => {
                     if (err) {
                         that._request(_.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts));
                         return cb(err, xhr, stat);
@@ -91,11 +91,11 @@ var StorageWebDav = StorageBase.extend({
                     that._request(_.defaults({
                         op: 'Save:move', method: 'MOVE', path: tmpPath, nostat: true,
                         headers: { Destination: movePath, 'Overwrite': 'T' }
-                    }, saveOpts), function(err) {
+                    }, saveOpts), (err) => {
                         if (err) { return cb(err); }
                         that._request(_.defaults({
                             op: 'Save:stat', method: 'HEAD'
-                        }, saveOpts), function(err, xhr, stat) {
+                        }, saveOpts), (err, xhr, stat) => {
                             cb(err, xhr, stat);
                         });
                     });
@@ -141,7 +141,7 @@ var StorageWebDav = StorageBase.extend({
         }
         var ts = that.logger.ts();
         var xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', function() {
+        xhr.addEventListener('load', () => {
             if ([200, 201, 204].indexOf(xhr.status) < 0) {
                 that.logger.debug(config.op + ' error', config.path, xhr.status, that.logger.ts(ts));
                 var err;
@@ -169,11 +169,11 @@ var StorageWebDav = StorageBase.extend({
             that.logger.debug(completedOpName, config.path, rev, that.logger.ts(ts));
             if (callback) { callback(null, xhr, rev ? { rev: rev } : null); callback = null; }
         });
-        xhr.addEventListener('error', function() {
+        xhr.addEventListener('error', () => {
             that.logger.debug(config.op + ' error', config.path, that.logger.ts(ts));
             if (callback) { callback('network error', xhr); callback = null; }
         });
-        xhr.addEventListener('abort', function() {
+        xhr.addEventListener('abort', () => {
             that.logger.debug(config.op + ' error', config.path, 'aborted', that.logger.ts(ts));
             if (callback) { callback('aborted', xhr); callback = null; }
         });
@@ -183,7 +183,7 @@ var StorageWebDav = StorageBase.extend({
             xhr.setRequestHeader('Authorization', 'Basic ' + btoa(config.user + ':' + config.password));
         }
         if (config.headers) {
-            _.forEach(config.headers, function(value, header) {
+            _.forEach(config.headers, (value, header) => {
                 xhr.setRequestHeader(header, value);
             });
         }

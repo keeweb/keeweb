@@ -36,7 +36,7 @@ var FieldViewAutocomplete = FieldViewText.extend({
 
     updateAutocomplete: function() {
         var completions = this.model.getCompletions(this.input.val());
-        var completionsHtml = completions.map(function(item) {
+        var completionsHtml = completions.map(item => {
             return '<div class="details__field-autocomplete-item">' + _.escape(item) + '</div>';
         }).join('');
         this.autocomplete.html(completionsHtml);

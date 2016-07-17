@@ -10,8 +10,8 @@ var Backbone = require('backbone'),
 
 var FieldViewText = FieldView.extend({
     renderValue: function(value) {
-        return value && value.isProtected ? PasswordGenerator.present(value.textLength) :
-            _.escape(value || '').replace(/\n/g, '<br/>');
+        return value && value.isProtected ? PasswordGenerator.present(value.textLength)
+            : _.escape(value || '').replace(/\n/g, '<br/>');
     },
 
     getEditValue: function(value) {

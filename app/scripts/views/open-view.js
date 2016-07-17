@@ -65,13 +65,13 @@ var OpenView = Backbone.View.extend({
             clearTimeout(this.dragTimeout);
         }
         var storageProviders = [];
-        Object.keys(Storage).forEach(function(name) {
+        Object.keys(Storage).forEach(name => {
             var prv = Storage[name];
             if (!prv.system && prv.enabled) {
                 storageProviders.push(prv);
             }
         });
-        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
+        storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         this.renderTemplate({
             lastOpenFiles: this.getLastOpenFiles(),
             canOpenKeyFromDropbox: DropboxLink.canChooseFile() && Storage.dropbox.enabled,
@@ -90,7 +90,7 @@ var OpenView = Backbone.View.extend({
     },
 
     getLastOpenFiles: function() {
-        return this.model.fileInfos.map(function(f) {
+        return this.model.fileInfos.map(f => {
             var icon = 'file-text';
             var storage = Storage[f.get('storage')];
             if (storage && storage.icon) {
@@ -117,7 +117,6 @@ var OpenView = Backbone.View.extend({
         if (this.model.settings.get('skipOpenLocalWarn')) {
             return;
         }
-        var that = this;
         Alerts.alert({
             header: Locale.openLocalFile,
             body: Locale.openLocalFileBody,
@@ -129,10 +128,10 @@ var OpenView = Backbone.View.extend({
             click: '',
             esc: '',
             enter: '',
-            success: function(res) {
-                that.focusInput();
+            success: res => {
+                this.focusInput();
                 if (res === 'skip') {
-                    that.model.settings.set('skipOpenLocalWarn', true);
+                    this.model.settings.set('skipOpenLocalWarn', true);
                 }
             }
         });
@@ -141,17 +140,17 @@ var OpenView = Backbone.View.extend({
     fileSelected: function(e) {
         var file = e.target.files[0];
         if (file) {
-            this.processFile(file, (function(success) {
+            this.processFile(file, success => {
                 if (success && !file.path && this.reading === 'fileData') {
                     this.showLocalFileAlert();
                 }
-            }).bind(this));
+            });
         }
     },
 
     processFile: function(file, complete) {
         var reader = new FileReader();
-        reader.onload = (function(e) {
+        reader.onload = e => {
             var success = false;
             switch (this.reading) {
                 case 'fileData':
@@ -191,13 +190,13 @@ var OpenView = Backbone.View.extend({
             if (complete) {
                 complete(success);
             }
-        }).bind(this);
-        reader.onerror = (function() {
+        };
+        reader.onerror = () => {
             Alerts.error({ header: Locale.openFailedRead });
             if (complete) {
                 complete(false);
             }
-        }).bind(this);
+        };
         if (this.reading === 'fileXml') {
             reader.readAsText(file);
         } else {
@@ -238,7 +237,7 @@ var OpenView = Backbone.View.extend({
 
     setFile: function(file, keyFile, fileReadyCallback) {
         this.reading = 'fileData';
-        this.processFile(file, (function(success) {
+        this.processFile(file, success => {
             if (success && keyFile) {
                 this.reading = 'keyFileData';
                 this.processFile(keyFile);
@@ -246,7 +245,7 @@ var OpenView = Backbone.View.extend({
             if (success && typeof fileReadyCallback === 'function') {
                 fileReadyCallback();
             }
-        }).bind(this));
+        });
     },
 
     openFile: function() {
@@ -280,14 +279,14 @@ var OpenView = Backbone.View.extend({
 
     openKeyFileFromDropbox: function() {
         if (!this.busy) {
-            DropboxLink.chooseFile((function(err, res) {
+            DropboxLink.chooseFile((err, res) => {
                 if (err) {
                     return;
                 }
                 this.params.keyFileData = res.data;
                 this.params.keyFileName = res.name;
                 this.displayOpenKeyFile();
-            }).bind(this));
+            });
         }
     },
 
@@ -305,7 +304,6 @@ var OpenView = Backbone.View.extend({
         if ($(e.target).is('.open__last-item-icon-del')) {
             var fileInfo = this.model.fileInfos.get(id);
             if (!fileInfo.get('storage') || fileInfo.get('modified')) {
-                var that = this;
                 Alerts.yesno({
                     header: Locale.openRemoveLastQuestion,
                     body: fileInfo.get('modified') ? Locale.openRemoveLastQuestionModBody : Locale.openRemoveLastQuestionBody,
@@ -313,8 +311,8 @@ var OpenView = Backbone.View.extend({
                         {result: 'yes', title: Locale.alertYes},
                         {result: '', title: Locale.alertNo}
                     ],
-                    success: function() {
-                        that.removeFile(id);
+                    success: () => {
+                        this.removeFile(id);
                     }
                 });
                 return;
@@ -378,9 +376,9 @@ var OpenView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        this.dragTimeout = setTimeout((function() {
+        this.dragTimeout = setTimeout(() => {
             this.$el.removeClass('open--drag');
-        }).bind(this), 100);
+        }, 100);
     },
 
     drop: function(e) {
@@ -394,8 +392,8 @@ var OpenView = Backbone.View.extend({
         this.closeConfig();
         this.$el.removeClass('open--drag');
         var files = e.target.files || e.originalEvent.dataTransfer.files;
-        var dataFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'kdbx'; });
-        var keyFile = _.find(files, function(file) { return file.name.split('.').pop().toLowerCase() === 'key'; });
+        var dataFile = _.find(files, file => file.name.split('.').pop().toLowerCase() === 'kdbx');
+        var keyFile = _.find(files, file => file.name.split('.').pop().toLowerCase() === 'key');
         if (dataFile) {
             this.setFile(dataFile, keyFile,
                 dataFile.path ? null : this.showLocalFileAlert.bind(this));
@@ -475,7 +473,7 @@ var OpenView = Backbone.View.extend({
             if (err.code !== 'InvalidKey') {
                 Alerts.error({
                     header: Locale.openError,
-                    body: Locale.openErrorDescription + '<pre class="modal__pre">' + _.escape(err.toString()) +'</pre>'
+                    body: Locale.openErrorDescription + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
                 });
             }
         } else {
@@ -528,19 +526,18 @@ var OpenView = Backbone.View.extend({
         }
         this.closeConfig();
         var icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
-        var that = this;
-        that.busy = true;
+        this.busy = true;
         icon.toggleClass('flip3d', true);
-        storage.list(function(err, files, dir) {
+        storage.list((err, files, dir) => {
             icon.toggleClass('flip3d', false);
-            that.busy = false;
+            this.busy = false;
             if (err || !files) {
                 return;
             }
 
             var buttons = [];
             var allStorageFiles = {};
-            files.forEach(function (file) {
+            files.forEach(file => {
                 var fileName = UrlUtil.getDataFileName(file.name);
                 buttons.push({result: file.path, title: fileName});
                 allStorageFiles[file.path] = file;
@@ -564,8 +561,8 @@ var OpenView = Backbone.View.extend({
                 buttons: buttons,
                 esc: '',
                 click: '',
-                success: function (file) {
-                    that.openStorageFile(storage, allStorageFiles[file]);
+                success: file => {
+                    this.openStorageFile(storage, allStorageFiles[file]);
                 }
             });
         });

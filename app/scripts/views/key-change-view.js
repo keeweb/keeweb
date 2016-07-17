@@ -66,12 +66,12 @@ var KeyChangeView = Backbone.View.extend({
         var file = e.target.files[0];
         if (file) {
             var reader = new FileReader();
-            reader.onload = (function(e) {
+            reader.onload = e => {
                 this.keyFileName = file.name;
                 this.keyFileData = e.target.result;
                 this.$el.find('.key-change__keyfile-name').text(': ' + this.keyFileName);
-            }).bind(this);
-            reader.onerror = function() {
+            };
+            reader.onerror = () => {
                 Alerts.error({ header: Locale.openFailedRead });
             };
             reader.readAsArrayBuffer(file);

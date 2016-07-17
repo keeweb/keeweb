@@ -70,15 +70,15 @@ var EntryModel = Backbone.Model.extend({
 
     _buildSearchText: function() {
         var text = '';
-        _.forEach(this.entry.fields, function(value) {
+        _.forEach(this.entry.fields, value => {
             if (typeof value === 'string') {
                 text += value.toLowerCase() + '\n';
             }
         });
-        this.entry.tags.forEach(function(tag) {
+        this.entry.tags.forEach(tag => {
             text += tag.toLowerCase() + '\n';
         });
-        this.attachments.forEach(function(att) {
+        this.attachments.forEach(att => {
             text += att.title.toLowerCase() + '\n';
         });
         this.searchText = text;
@@ -94,7 +94,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     _buildSearchTags: function() {
-        this.searchTags = this.entry.tags.map(function(tag) { return tag.toLowerCase(); });
+        this.searchTags = this.entry.tags.map(tag => tag.toLowerCase());
     },
 
     _buildSearchColor: function() {
@@ -176,8 +176,9 @@ var EntryModel = Backbone.Model.extend({
         var adv = filter.advanced;
         var search, match;
         if (adv.regex) {
-            try { search = new RegExp(filter.text, adv.cs ? '' : 'i'); }
-            catch (e) { return false; }
+            try {
+                search = new RegExp(filter.text, adv.cs ? '' : 'i');
+            } catch (e) { return false; }
             match = this.matchRegex;
         } else if (adv.cs) {
             search = filter.text;
@@ -241,7 +242,7 @@ var EntryModel = Backbone.Model.extend({
         if (adv.other || adv.protect) {
             var builtInFields = this.builtInFields;
             var fieldNames = Object.keys(entry.fields);
-            matches = fieldNames.some(function (field) {
+            matches = fieldNames.some(field => {
                 if (builtInFields.indexOf(field) >= 0) {
                     return false;
                 }
@@ -293,7 +294,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     renameTag: function(from, to) {
-        var ix = _.findIndex(this.entry.tags, function(tag) { return tag.toLowerCase() === from.toLowerCase(); });
+        var ix = _.findIndex(this.entry.tags, tag => tag.toLowerCase() === from.toLowerCase());
         if (ix < 0) {
             return;
         }
@@ -346,7 +347,7 @@ var EntryModel = Backbone.Model.extend({
             return EntryModel.fromEntry(rec, this.group, this.file);
         }, this);
         history.push(this);
-        history.sort(function(x, y) { return x.updated - y.updated; });
+        history.sort((x, y) => x.updated - y.updated);
         return history;
     },
 
@@ -437,7 +438,7 @@ var EntryModel = Backbone.Model.extend({
             } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
                 // KeeOTP plugin format
                 var args = {};
-                otpUrl.split('&').forEach(function(part) {
+                otpUrl.split('&').forEach(part => {
                     var parts = part.split('=', 2);
                     args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
                 });

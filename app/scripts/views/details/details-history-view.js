@@ -25,11 +25,11 @@ var DetailsHistoryView = Backbone.View.extend({
     formats: [
         { name: 'ms', round: 1, format: function(d) { return Format.dtStr(d); } },
         { name: 'sec', round: 1000, format: function(d) { return Format.dtStr(d); } },
-        { name: 'min', round: 1000*60, format: function(d) { return Format.dtStr(d).replace(':00 ', ' '); } },
-        { name: 'hour', round: 1000*60*60, format: function(d) { return Format.dtStr(d).replace(':00', ''); } },
-        { name: 'day', round: 1000*60*60*24, format: function(d) { return Format.dStr(d); } },
-        { name: 'month', round: 1000*60*60*24*31, format: function(d) { return Format.dStr(d); } },
-        { name: 'year', round: 1000*60*60*24*365, format: function(d) { return d.getFullYear(); } }
+        { name: 'min', round: 1000 * 60, format: function(d) { return Format.dtStr(d).replace(':00 ', ' '); } },
+        { name: 'hour', round: 1000 * 60 * 60, format: function(d) { return Format.dtStr(d).replace(':00', ''); } },
+        { name: 'day', round: 1000 * 60 * 60 * 24, format: function(d) { return Format.dStr(d); } },
+        { name: 'month', round: 1000 * 60 * 60 * 24 * 31, format: function(d) { return Format.dStr(d); } },
+        { name: 'year', round: 1000 * 60 * 60 * 24 * 365, format: function(d) { return d.getFullYear(); } }
     ],
 
     fieldViews: null,
@@ -71,7 +71,7 @@ var DetailsHistoryView = Backbone.View.extend({
     },
 
     removeFieldViews: function() {
-        this.fieldViews.forEach(function(fieldView) { fieldView.remove(); });
+        this.fieldViews.forEach(fieldView => fieldView.remove());
         this.fieldViews = [];
     },
 
@@ -103,7 +103,7 @@ var DetailsHistoryView = Backbone.View.extend({
         }, this);
         if (this.record.attachments.length) {
             this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Attachments', title: Locale.detAttachments,
-                value: this.record.attachments.map(function(att) { return att.title; }).join(', ') } }));
+                value: this.record.attachments.map(att => att.title).join(', ') } }));
         }
         this.fieldViews.forEach(function(fieldView) {
             fieldView.setElement(this.bodyEl).render();
@@ -135,22 +135,18 @@ var DetailsHistoryView = Backbone.View.extend({
     buildTimeline: function() {
         var firstRec = this.history[0],
             lastRec = this.history[this.history.length - 1];
-        this.timeline = this.history.map(function(rec) {
-            return {
-                pos: (rec.updated - firstRec.updated) / (lastRec.updated - firstRec.updated),
-                rec: rec
-            };
-        }, this);
+        this.timeline = this.history.map(rec => ({
+            pos: (rec.updated - firstRec.updated) / (lastRec.updated - firstRec.updated),
+            rec: rec
+        }));
         var period = lastRec.updated - firstRec.updated;
         var format = this.getDateFormat(period);
         this.labels = this.getLabels(firstRec.updated.getTime(), lastRec.updated.getTime(), format.round)
-            .map(function(label) {
-                return {
-                    pos: (label - firstRec.updated) / (lastRec.updated - firstRec.updated),
-                    val: label,
-                    text: format.format(new Date(label))
-                };
-            });
+            .map(label => ({
+                pos: (label - firstRec.updated) / (lastRec.updated - firstRec.updated),
+                val: label,
+                text: format.format(new Date(label))
+            }));
     },
 
     getDateFormat: function(period) {
@@ -187,10 +183,10 @@ var DetailsHistoryView = Backbone.View.extend({
         Alerts.yesno({
             header: 'Revert to this history state?',
             body: 'Your current state will be saved to history.',
-            success: (function() {
+            success: () => {
                 this.model.revertToHistoryState(this.record.entry);
                 this.closeHistory(true);
-            }).bind(this)
+            }
         });
     },
 
@@ -198,10 +194,10 @@ var DetailsHistoryView = Backbone.View.extend({
         Alerts.yesno({
             header: 'Delete this history state?',
             body: 'You will not be able to restore it.',
-            success: (function() {
+            success: () => {
                 this.model.deleteHistory(this.record.entry);
                 this.render(this.activeIx);
-            }).bind(this)
+            }
         });
     },
 
@@ -209,10 +205,10 @@ var DetailsHistoryView = Backbone.View.extend({
         Alerts.yesno({
             header: 'Discard changed made to entry?',
             body: 'Unsaved changed will by lost, there will be no way back.',
-            success: (function() {
+            success: () => {
                 this.model.discardUnsaved();
                 this.closeHistory(true);
-            }).bind(this)
+            }
         });
     }
 });

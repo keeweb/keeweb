@@ -4,10 +4,10 @@ var FieldView = require('./field-view');
 
 var FieldViewSelect = FieldView.extend({
     readonly: true,
-    
+
     renderValue: function(value) {
         return '<select>' +
-            value.map(function(opt) {
+            value.map(opt => {
                 return '<option ' + 'value="' + _.escape(opt.id) + '" ' + (opt.selected ? 'selected ' : '') + '>' +
                     _.escape(opt.value) +
                     '</option>';
@@ -16,11 +16,10 @@ var FieldViewSelect = FieldView.extend({
     },
 
     render: function() {
-        var that = this;
         FieldView.prototype.render.call(this);
         this.valueEl.addClass('details__field-value--select');
-        this.valueEl.find('select:first').change(function(e) {
-            that.triggerChange({ val: e.target.value, field: that.model.name });
+        this.valueEl.find('select:first').change(e => {
+            this.triggerChange({ val: e.target.value, field: this.model.name });
         });
     },
 

@@ -17,18 +17,17 @@ var AutoType = {
     run: function(entry, callback) {
         var sequence = entry.getEffectiveAutoTypeSeq();
         logger.debug('Start', sequence);
-        var that = this;
         var ts = logger.ts();
         try {
             var parser = new AutoTypeParser(sequence);
             var runner = parser.parse();
-            logger.debug('Parsed', that.printOps(runner.ops));
-            runner.resolve(entry, function(err) {
+            logger.debug('Parsed', this.printOps(runner.ops));
+            runner.resolve(entry, err => {
                 if (err) {
                     logger.error('Resolve error', err);
                     return callback && callback(err);
                 }
-                logger.debug('Resolved', that.printOps(runner.ops));
+                logger.debug('Resolved', this.printOps(runner.ops));
                 if (entry.autoTypeObfuscation) {
                     try {
                         runner.obfuscate();
@@ -38,7 +37,7 @@ var AutoType = {
                     }
                     logger.debug('Obfuscated');
                 }
-                runner.run(function(err) {
+                runner.run(err => {
                     if (err) {
                         logger.error('Run error', err);
                         return callback && callback(err);
@@ -93,7 +92,7 @@ var AutoType = {
 
     getActiveWindowTitle: function(callback) {
         logger.debug('Get window title');
-        return this.helper.getActiveWindowTitle(function(err, title, url) {
+        return this.helper.getActiveWindowTitle((err, title, url) => {
             if (err) {
                 logger.error('Error get window title', err);
             } else {

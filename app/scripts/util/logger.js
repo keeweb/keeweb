@@ -1,8 +1,5 @@
 'use strict';
 
-/* globals console */
-/* globals performance */
-
 var Level = {
     Off: 0,
     Error: 1,
@@ -37,7 +34,7 @@ Logger.prototype.debug = function() {
     arguments[0] = this.getPrefix() + arguments[0];
     if (this.level > Level.Debug) {
         Logger.saveLast('debug', arguments);
-        console.debug.apply(console, arguments);
+        console.debug.apply(console, arguments); // eslint-disable-line no-console
     }
 };
 
@@ -45,7 +42,7 @@ Logger.prototype.info = function() {
     arguments[0] = this.getPrefix() + arguments[0];
     if (this.level > Level.Info) {
         Logger.saveLast('info', arguments);
-        console.log.apply(console, arguments);
+        console.log.apply(console, arguments); // eslint-disable-line no-console
     }
 };
 
@@ -53,7 +50,7 @@ Logger.prototype.warn = function() {
     arguments[0] = this.getPrefix() + arguments[0];
     if (this.level > Level.Warn) {
         Logger.saveLast('warn', arguments);
-        console.warn.apply(console, arguments);
+        console.warn.apply(console, arguments); // eslint-disable-line no-console
     }
 };
 
@@ -61,7 +58,7 @@ Logger.prototype.error = function() {
     arguments[0] = this.getPrefix() + arguments[0];
     if (this.level > Level.Error) {
         Logger.saveLast('error', arguments);
-        console.error.apply(console, arguments);
+        console.error.apply(console, arguments); // eslint-disable-line no-console
     }
 };
 

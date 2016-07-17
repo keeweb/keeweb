@@ -44,7 +44,7 @@ var PopupNotifier = {
         };
         if (settings) {
             var settingsObj = {};
-            settings.split(',').forEach(function(part) {
+            settings.split(',').forEach(part => {
                 var parts = part.split('=');
                 settingsObj[parts[0].trim()] = parts[1].trim();
             });
@@ -54,14 +54,14 @@ var PopupNotifier = {
             if (settings.left) { opts.x = settings.left; }
         }
         var win = Launcher.openWindow(opts);
-        win.webContents.on('did-get-redirect-request', function(e, fromUrl, toUrl) {
+        win.webContents.on('did-get-redirect-request', (e, fromUrl, toUrl) => {
             if (toUrl.lastIndexOf(Links.WebApp, 0) === 0) {
                 win.webContents.stop();
                 win.close();
                 PopupNotifier.processReturnToApp(toUrl);
             }
         });
-        win.webContents.on('will-navigate', function(e, toUrl) {
+        win.webContents.on('will-navigate', (e, toUrl) => {
             if (toUrl.lastIndexOf(Links.WebApp, 0) === 0) {
                 e.preventDefault();
                 win.close();
@@ -70,7 +70,7 @@ var PopupNotifier = {
         });
         win.loadURL(url);
         win.show();
-        win.on('closed', function() {
+        win.on('closed', () => {
             setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
         });
         Backbone.trigger('popup-opened', win);

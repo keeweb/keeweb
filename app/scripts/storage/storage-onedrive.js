@@ -32,7 +32,7 @@ var StorageOneDrive = StorageBase.extend({
 
     load: function(path, opts, callback) {
         var that = this;
-        this._oauthAuthorize(function(err) {
+        this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
             }
@@ -73,7 +73,7 @@ var StorageOneDrive = StorageBase.extend({
 
     stat: function(path, opts, callback) {
         var that = this;
-        this._oauthAuthorize(function(err) {
+        this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
             }
@@ -106,7 +106,7 @@ var StorageOneDrive = StorageBase.extend({
 
     save: function(path, opts, data, callback, rev) {
         var that = this;
-        this._oauthAuthorize(function(err) {
+        this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
             }
@@ -143,7 +143,7 @@ var StorageOneDrive = StorageBase.extend({
 
     list: function(callback) {
         var that = this;
-        this._oauthAuthorize(function(err) {
+        this._oauthAuthorize(err => {
             if (err) { return callback && callback(err); }
             that.logger.debug('List');
             var ts = that.logger.ts();
@@ -158,14 +158,12 @@ var StorageOneDrive = StorageBase.extend({
                     }
                     that.logger.debug('Listed', that.logger.ts(ts));
                     var fileList = response.value
-                        .filter(function(f) { return f.name && UrlUtil.isKdbx(f.name); })
-                        .map(function(f) {
-                            return {
-                                name: f.name,
-                                path: f.parentReference.path + '/' + f.name,
-                                rev: f.eTag
-                            };
-                        });
+                        .filter(f => f.name && UrlUtil.isKdbx(f.name))
+                        .map(f => ({
+                            name: f.name,
+                            path: f.parentReference.path + '/' + f.name,
+                            rev: f.eTag
+                        }));
                     return callback && callback(null, fileList);
                 },
                 error: function(err) {

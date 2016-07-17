@@ -21,7 +21,7 @@ var StorageGDrive = StorageBase.extend({
 
     load: function(path, opts, callback) {
         var that = this;
-        that.stat(path, opts, function(err, stat) {
+        that.stat(path, opts, (err, stat) => {
             if (err) { return callback && callback(err); }
             that.logger.debug('Load', path);
             var ts = that.logger.ts();
@@ -48,7 +48,7 @@ var StorageGDrive = StorageBase.extend({
         if (path.lastIndexOf(NewFileIdPrefix, 0) === 0) {
             return callback && callback({ notFound: true });
         }
-        this._oauthAuthorize(function(err) {
+        this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
             }
@@ -74,7 +74,7 @@ var StorageGDrive = StorageBase.extend({
 
     save: function(path, opts, data, callback, rev) {
         var that = this;
-        that.stat(path, opts, function(err, stat) {
+        that.stat(path, opts, (err, stat) => {
             if (rev) {
                 if (err) { return callback && callback(err); }
                 if (stat.rev !== rev) {
@@ -126,7 +126,7 @@ var StorageGDrive = StorageBase.extend({
 
     list: function(callback) {
         var that = this;
-        this._oauthAuthorize(function(err) {
+        this._oauthAuthorize((err) => {
             if (err) { return callback && callback(err); }
             that.logger.debug('List');
             var url = that._baseUrl + '/files?fields={fields}&q={q}'
@@ -142,13 +142,11 @@ var StorageGDrive = StorageBase.extend({
                         return callback && callback('list error');
                     }
                     that.logger.debug('Listed', that.logger.ts(ts));
-                    var fileList = response.files.map(function(f) {
-                        return {
-                            name: f.name,
-                            path: f.id,
-                            rev: f.headRevisionId
-                        };
-                    });
+                    var fileList = response.files.map(f => ({
+                        name: f.name,
+                        path: f.id,
+                        rev: f.headRevisionId
+                    }));
                     return callback && callback(null, fileList);
                 },
                 error: function(err) {

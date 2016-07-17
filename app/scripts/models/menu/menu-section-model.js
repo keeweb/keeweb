@@ -29,7 +29,7 @@ var MenuItemModel = Backbone.Model.extend({
 
     removeByFile: function(file) {
         var items = this.get('items');
-        items.find(function(item) {
+        items.find(item => {
             if (item.file === file || item.get('file') === file) {
                 items.remove(item);
                 return true;
@@ -40,7 +40,7 @@ var MenuItemModel = Backbone.Model.extend({
 
     replaceByFile: function(file, newItem) {
         var items = this.get('items');
-        items.find(function(item, ix) {
+        items.find((item, ix) => {
             if (item.file === file || item.get('file') === file) {
                 items.remove(item);
                 items.add(newItem, { at: ix });

@@ -21,7 +21,7 @@ var GeneratorView = Backbone.View.extend({
         'click .gen__btn-refresh': 'newPass'
     },
 
-    valuesMap: [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,24,26,28,30,32,48,64],
+    valuesMap: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 32, 48, 64],
 
     presets: null,
     preset: null,
@@ -29,7 +29,7 @@ var GeneratorView = Backbone.View.extend({
     initialize: function () {
         this.createPresets();
         var preset = this.preset;
-        this.gen = _.clone(_.find(this.presets, function(pr) { return pr.name === preset; }));
+        this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
         $('body').one('click', this.remove.bind(this));
         this.listenTo(Backbone, 'lock-workspace', this.remove.bind(this));
     },
@@ -131,7 +131,7 @@ var GeneratorView = Backbone.View.extend({
     templateChange: function(e) {
         var name = e.target.value;
         this.preset = name;
-        var preset = _.find(this.presets, function(t) { return t.name === name; });
+        var preset = _.find(this.presets, t => t.name === name);
         this.gen = _.clone(preset);
         this.render();
     },

@@ -9,7 +9,6 @@ var Launcher;
 var logger = new Logger('launcher');
 
 if (window.process && window.process.versions && window.process.versions.electron) {
-    /* jshint node:true */
     Launcher = {
         name: 'electron',
         version: window.process.versions.electron,
@@ -117,7 +116,7 @@ if (window.process && window.process.versions && window.process.versions.electro
         resolveProxy: function(url, callback) {
             var window = this.remoteApp().getMainWindow();
             var session = window.webContents.session;
-            session.resolveProxy(url, function(proxy) {
+            session.resolveProxy(url, proxy => {
                 var match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
                 proxy = match && match[1] ? { host: match[1], port: +match[2] } : null;
                 callback(proxy);
@@ -144,12 +143,12 @@ if (window.process && window.process.versions && window.process.versions.electro
             var ts = logger.ts();
             var complete = config.complete;
             var ps = this.req('child_process').spawn(config.cmd, config.args);
-            [ps.stdin, ps.stdout, ps.stderr].forEach(function(s) { s.setEncoding('utf-8'); });
+            [ps.stdin, ps.stdout, ps.stderr].forEach(s => s.setEncoding('utf-8'));
             var stderr = '';
             var stdout = '';
-            ps.stderr.on('data', function(d) { stderr += d.toString('utf-8'); });
-            ps.stdout.on('data', function(d) { stdout += d.toString('utf-8'); });
-            ps.on('close', function(code) {
+            ps.stderr.on('data', d => { stderr += d.toString('utf-8'); });
+            ps.stdout.on('data', d => { stdout += d.toString('utf-8'); });
+            ps.on('close', code => {
                 stdout = stdout.trim();
                 stderr = stderr.trim();
                 var msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
@@ -163,7 +162,7 @@ if (window.process && window.process.versions && window.process.versions.electro
                     complete = null;
                 }
             });
-            ps.on('error', function(err) {
+            ps.on('error', err => {
                 logger.error('spawn error: ' + config.cmd + ', ' + logger.ts(ts), err);
                 if (complete) {
                     complete(err);
@@ -180,17 +179,15 @@ if (window.process && window.process.versions && window.process.versions.electro
             return process.platform;
         }
     };
-    Backbone.on('launcher-exit-request', function() {
-        setTimeout(function() { Launcher.exit(); }, 0);
+    Backbone.on('launcher-exit-request', () => {
+        setTimeout(() => Launcher.exit(), 0);
     });
-    Backbone.on('launcher-minimize', function() {
-        setTimeout(function() { Backbone.trigger('app-minimized'); }, 0);
-    });
+    Backbone.on('launcher-minimize', () => setTimeout(() => Backbone.trigger('app-minimized'), 0));
     window.launcherOpen = function(path) {
         Backbone.trigger('launcher-open-file', path);
     };
     if (window.launcherOpenedFile) {
-        console.log('Open file request', window.launcherOpenedFile);
+        logger.info('Open file request', window.launcherOpenedFile);
         Backbone.trigger('launcher-open-file', window.launcherOpenedFile);
         delete window.launcherOpenedFile;
     }

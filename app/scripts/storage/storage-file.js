@@ -83,7 +83,7 @@ var StorageFile = StorageBase.extend({
         var names = Launcher.parsePath(path);
         var watcher = fileWatchers[names.dir];
         if (watcher) {
-            var ix = watcher.callbacks.findIndex(function(cb) { return cb.file === names.file; });
+            var ix = watcher.callbacks.findIndex(cb => cb.file === names.file);
             if (ix >= 0) {
                 watcher.callbacks.splice(ix, 1);
             }
@@ -97,11 +97,10 @@ var StorageFile = StorageBase.extend({
 
     fsWatcherChange: function(dirname, evt, fileName) {
         var watcher = fileWatchers[dirname];
-        var that = this;
         if (watcher) {
-            watcher.callbacks.forEach(function(cb) {
+            watcher.callbacks.forEach(cb => {
                 if (cb.file === fileName && typeof cb.callback === 'function') {
-                    that.logger.debug('File changed', dirname, evt, fileName);
+                    this.logger.debug('File changed', dirname, evt, fileName);
                     cb.callback();
                 }
             });

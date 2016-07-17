@@ -1,0 +1,22 @@
+{
+    "extends": "standard",
+    "rules": {
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "semi": ["error", "always"],
+        "one-var": "off",
+        "space-before-function-paren": "off",
+        "no-throw-literal": "off",
+        "camelcase": ["error", { "properties": "always" }],
+        "no-console": "error",
+        "no-alert": "error",
+        "no-debugger": "error",
+        "prefer-arrow-callback": "error"
+    },
+    "globals": {
+        "_": true,
+        "$": true
+    },
+    "env": {
+        "browser": true
+    }
+}

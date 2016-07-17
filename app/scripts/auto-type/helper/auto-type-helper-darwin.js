@@ -21,7 +21,7 @@ var AutoTypeHelper = function() {
 };
 
 AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
-    AutoTypeHelper.exec(ForeMostAppScript, function(err, out) {
+    AutoTypeHelper.exec(ForeMostAppScript, (err, out) => {
         if (err) { return callback(err); }
         var appName = out.trim();
         // getting urls and titles from Chrome or Safari:
@@ -29,20 +29,20 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
         // - does not require assistive access
         // - allows to get url
         if (['Google Chrome', 'Chromium', 'Google Chrome Canary'].indexOf(appName) >= 0) {
-            AutoTypeHelper.exec(ChromeScript.replace(/\{}/g, appName), function(err, out) {
+            AutoTypeHelper.exec(ChromeScript.replace(/\{}/g, appName), (err, out) => {
                 if (err) { return callback(err); }
                 var parts = out.split('\n');
                 return callback(null, parts[1].trim(), parts[0].trim());
             });
         } else if (['Safari', 'Webkit'].indexOf(appName) >= 0) {
-            AutoTypeHelper.exec(SafariScript.replace(/\{}/g, appName), function(err, out) {
+            AutoTypeHelper.exec(SafariScript.replace(/\{}/g, appName), (err, out) => {
                 if (err) { return callback(err); }
                 var parts = out.split('\n');
                 return callback(null, parts[1].trim(), parts[0].trim());
             });
         } else {
             // special cases are not available. this method may ask the user about assistive access
-            AutoTypeHelper.exec(OtherAppsScript.replace(/\{}/g, appName), function(err, out) {
+            AutoTypeHelper.exec(OtherAppsScript.replace(/\{}/g, appName), (err, out) => {
                 if (err) { return callback(err); }
                 return callback(null, out.trim());
             });

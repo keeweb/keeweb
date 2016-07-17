@@ -43,14 +43,14 @@ var Resizable = {
     },
 
     // TODO: check size on window resize
-    //checkSize: function() {
-    //    if (this.maxWidth) {
-    //        this.fixSize(this.getDragInfo('x'));
-    //    }
-    //    if (this.maxHeight) {
-    //        this.fixSize(this.getDragInfo('y'));
-    //    }
-    //},
+    // checkSize: function() {
+    //     if (this.maxWidth) {
+    //         this.fixSize(this.getDragInfo('x'));
+    //     }
+    //     if (this.maxHeight) {
+    //         this.fixSize(this.getDragInfo('y'));
+    //     }
+    // },
 
     getDragInfo: function(coord) {
         var prop = coord === 'x' ? 'Width' : 'Height',

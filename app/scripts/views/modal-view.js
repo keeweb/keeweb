@@ -24,7 +24,7 @@ var ModalView = Backbone.View.extend({
         KeyHandler.setModal(true);
     },
 
-    remove : function() {
+    remove: function() {
         KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
         KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
         KeyHandler.setModal(false);
@@ -37,7 +37,7 @@ var ModalView = Backbone.View.extend({
         parent.append(this.$el);
         var el = this.$el;
         el.addClass('modal--hidden');
-        setTimeout(function() {
+        setTimeout(() => {
             el.removeClass('modal--hidden');
         }, 20);
         return this;

@@ -37,19 +37,18 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitter.prototype.text = function(text) {
-    var that = this;
-    Object.keys(this.mod).forEach(function (mod) {
-        that.pendingScript.push('keydown ' + ModMap[mod]);
+    Object.keys(this.mod).forEach(mod => {
+        this.pendingScript.push('keydown ' + ModMap[mod]);
     });
-    that.pendingScript.push('type ' + text.split('').map(function(char) {
+    this.pendingScript.push('type ' + text.split('').map(char => {
         return char === '\'' ? '"\'"' : '\'' + char + '\'';
     }).join(''));
-    this.waitComplete(function(err) {
-        if (err) { return that.callback(err); }
-        Object.keys(that.mod).forEach(function (mod) {
-            that.pendingScript.push('keyup ' + ModMap[mod]);
+    this.waitComplete(err => {
+        if (err) { return this.callback(err); }
+        Object.keys(this.mod).forEach(mod => {
+            this.pendingScript.push('keyup ' + ModMap[mod]);
         });
-        that.callback();
+        this.callback();
     });
 };
 
@@ -89,7 +88,7 @@ AutoTypeEmitter.prototype.waitComplete = function(callback) {
 
 AutoTypeEmitter.prototype.modString = function() {
     var mod = '';
-    Object.keys(this.mod).forEach(function (key) {
+    Object.keys(this.mod).forEach(key => {
         mod += key + '+';
     });
     return mod;

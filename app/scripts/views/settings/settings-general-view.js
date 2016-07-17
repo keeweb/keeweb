@@ -51,7 +51,7 @@ var SettingsGeneralView = Backbone.View.extend({
         sd: Locale.setGenThemeSd,
         sl: Locale.setGenThemeSl,
         wh: Locale.setGenThemeWh,
-        hc: Locale.setGenThemeHc,
+        hc: Locale.setGenThemeHc
     },
 
     initialize: function() {
@@ -151,20 +151,18 @@ var SettingsGeneralView = Backbone.View.extend({
 
     getStorageProviders: function() {
         var storageProviders = [];
-        Object.keys(Storage).forEach(function(name) {
+        Object.keys(Storage).forEach(name => {
             var prv = Storage[name];
             if (!prv.system) {
                 storageProviders.push(prv);
             }
         });
-        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
-        return storageProviders.map(function(sp) {
-            return {
-                name: sp.name,
-                enabled: sp.enabled,
-                hasConfig: sp.getSettingsConfig
-            };
-        });
+        storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
+        return storageProviders.map(sp => ({
+            name: sp.name,
+            enabled: sp.enabled,
+            hasConfig: sp.getSettingsConfig
+        }));
     },
 
     changeTheme: function(e) {
@@ -252,7 +250,7 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     installFoundUpdate: function() {
-        Updater.update(true, function() {
+        Updater.update(true, () => {
             Launcher.requestRestart();
         });
     },

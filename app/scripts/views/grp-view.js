@@ -78,13 +78,12 @@ var GrpView = Backbone.View.extend({
     },
 
     changeAutoTypeSeq: function(e) {
-        var that = this;
         var el = e.target;
         var seq = $.trim(el.value);
-        AutoType.validate(null, seq, function(err) {
+        AutoType.validate(null, seq, err => {
             $(e.target).toggleClass('input--error', !!err);
             if (!err) {
-                that.model.setAutoTypeSeq(seq);
+                this.model.setAutoTypeSeq(seq);
             }
         });
     },
@@ -92,7 +91,7 @@ var GrpView = Backbone.View.extend({
     focusAutoTypeSeq: function(e) {
         if (!this.views.hint) {
             this.views.hint = new AutoTypeHintView({input: e.target}).render();
-            this.views.hint.on('remove', (function() {delete this.views.hint; }).bind(this));
+            this.views.hint.on('remove', () => { delete this.views.hint; });
         }
     },
 

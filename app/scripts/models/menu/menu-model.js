@@ -31,8 +31,10 @@ var MenuModel = Backbone.Model.extend({
         this.tagsSection.defaultItems = defTags;
         this.trashSection = new MenuSectionModel([{ title: Locale.menuTrash, icon: 'trash', shortcut: Keys.DOM_VK_D,
             filterKey: 'trash', filterValue: true, drop: true }]);
-        Colors.AllColors.forEach(function(color) { this.colorsSection.get('items').models[0]
-            .addOption({ cls: 'fa ' + color + '-color', value: color, filterValue: color }); }, this);
+        Colors.AllColors.forEach(color => {
+            this.colorsSection.get('items').models[0]
+                .addOption({ cls: 'fa ' + color + '-color', value: color, filterValue: color });
+        });
         this.menus.app = new MenuSectionCollection([
             this.allItemsSection,
             this.colorsSection,
@@ -61,9 +63,7 @@ var MenuModel = Backbone.Model.extend({
         var sections = this.get('sections');
         sections.forEach(function(section) { this._select(section, sel.item); }, this);
         if (sections === this.menus.app) {
-            this.colorsItem.get('options').forEach(function (opt) {
-                opt.set('active', opt === sel.option);
-            });
+            this.colorsItem.get('options').forEach(opt => opt.set('active', opt === sel.option));
             var selColor = sel.item === this.colorsItem && sel.option ? sel.option.get('value') + '-color' : '';
             this.colorsItem.set('cls', 'menu__item-colors ' + selColor);
             var filterKey = sel.item.get('filterKey'),

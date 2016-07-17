@@ -16,6 +16,9 @@
     "base64-loader": "1.0.0",
     "cssnano": "3.7.3",
     "electron-prebuilt": "1.2.6",
+    "eslint-config-standard": "5.3.5",
+    "eslint-plugin-promise": "2.0.0",
+    "eslint-plugin-standard": "2.0.0",
     "exports-loader": "0.6.3",
     "get-folder-size": "1.0.0",
     "grunt": "1.0.1",
@@ -26,10 +29,10 @@
     "grunt-contrib-copy": "1.0.0",
     "grunt-contrib-deb": "github:keeweb/grunt-contrib-deb#45d31f6",
     "grunt-contrib-htmlmin": "1.5.0",
-    "grunt-contrib-jshint": "1.0.0",
     "grunt-contrib-uglify": "1.0.1",
     "grunt-contrib-watch": "1.0.0",
     "grunt-electron": "4.0.0",
+    "grunt-eslint": "19.0.0",
     "grunt-gitinfo": "0.1.8",
     "grunt-inline-alt": "0.3.10",
     "grunt-postcss": "0.8.0",
@@ -49,7 +52,7 @@
     "webpack-dev-server": "1.14.1"
   },
   "optionalDependencies": {
-      "grunt-appdmg": "0.4.0"
+    "grunt-appdmg": "0.4.0"
   },
   "scripts": {
     "start": "grunt",

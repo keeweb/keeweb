@@ -41,7 +41,7 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitter.prototype.text = function(text) {
-    text = this.addMod(text.replace(TextReplaceRegex, function(match) { return '{' + match + '}'; }));
+    text = this.addMod(text.replace(TextReplaceRegex, match => '{' + match + '}'));
     this.pendingScript.push('text ' + text);
     this.callback();
 };

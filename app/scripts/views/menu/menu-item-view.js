@@ -21,7 +21,7 @@ var MenuItemView = Backbone.View.extend({
         'dragstart': 'dragstart',
         'dragover': 'dragover',
         'dragleave': 'dragleave',
-        'drop' : 'drop'
+        'drop': 'drop'
     },
 
     iconEl: null,
@@ -66,7 +66,7 @@ var MenuItemView = Backbone.View.extend({
         this.itemViews.push(new MenuItemView({el: this.$el, model: item}).render());
     },
 
-    remove : function() {
+    remove: function() {
         this.removeInnerViews();
         var shortcut = this.model.get('shortcut');
         if (shortcut) {
@@ -79,7 +79,7 @@ var MenuItemView = Backbone.View.extend({
     },
 
     removeInnerViews: function() {
-        this.itemViews.forEach(function(itemView) { itemView.remove(); });
+        this.itemViews.forEach(itemView => itemView.remove());
         this.itemViews = [];
     },
 
@@ -137,7 +137,7 @@ var MenuItemView = Backbone.View.extend({
         var options = this.model.get('options');
         var value = $(e.target).data('value');
         if (options && options.length) {
-            var option = options.find(function(op) { return op.get('value') === value; });
+            var option = options.find(op => op.get('value') === value);
             if (option) {
                 Backbone.trigger('menu-select', { item: this.model, option: option });
             }

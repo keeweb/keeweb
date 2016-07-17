@@ -43,7 +43,7 @@ kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
 Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
     get: function() {
         var textLength = 0;
-        this.forEachChar(function() { textLength++; });
+        this.forEachChar(() => { textLength++; });
         return textLength;
     }
 });
@@ -51,9 +51,8 @@ Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
 kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
     var matches = false;
     var foundSeqs = [];
-    var ix = 0;
     var len = findLower.length;
-    this.forEachChar(function(ch) {
+    this.forEachChar(ch => {
         ch = String.fromCharCode(ch).toLowerCase();
         if (matches) {
             return;
@@ -73,7 +72,6 @@ kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
         if (findLower[0] === ch) {
             foundSeqs.push(0);
         }
-        ix++;
     });
     return matches;
 };

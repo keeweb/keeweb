@@ -11,8 +11,6 @@ var Storage = {
     cache: Launcher ? require('./storage-file-cache') : require('./storage-cache')
 };
 
-_.forEach(Storage, function(prv) {
-    prv.init();
-});
+_.forEach(Storage, prv => prv.init());
 
 module.exports = Storage;

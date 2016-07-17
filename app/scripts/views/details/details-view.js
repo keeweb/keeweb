@@ -92,7 +92,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     removeFieldViews: function() {
-        this.fieldViews.forEach(function(fieldView) { fieldView.remove(); });
+        this.fieldViews.forEach(fieldView => fieldView.remove());
         this.fieldViews = [];
         this.hideFieldCopyTip();
     },
@@ -235,7 +235,7 @@ var DetailsView = Backbone.View.extend({
                 var hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
                 var moreOptions = [];
                 if (hideEmptyFields) {
-                    this.fieldViews.forEach(function(fieldView) {
+                    this.fieldViews.forEach(fieldView => {
                         if (fieldView.isHidden()) {
                             moreOptions.push({value: 'add:' + fieldView.model.name, icon: 'pencil',
                                 text: Locale.detMenuAddField.replace('{}', fieldView.model.title)});
@@ -282,7 +282,7 @@ var DetailsView = Backbone.View.extend({
             default:
                 if (e.item.lastIndexOf('add:', 0) === 0) {
                     var fieldName = e.item.substr(4);
-                    var fieldView = _.find(this.fieldViews, function(f) { return f.model.name === fieldName; });
+                    var fieldView = _.find(this.fieldViews, f => f.model.name === fieldName);
                     fieldView.show();
                     fieldView.edit();
                 }
@@ -296,7 +296,7 @@ var DetailsView = Backbone.View.extend({
     setSelectedColor: function(color) {
         this.$el.find('.details__colors-popup > .details__colors-popup-item').removeClass('details__colors-popup-item--active');
         var colorEl = this.$el.find('.details__header-color')[0];
-        _.forEach(colorEl.classList, function(cls) {
+        _.forEach(colorEl.classList, cls => {
             if (cls.indexOf('color') > 0 && cls.lastIndexOf('details', 0) !== 0) {
                 colorEl.classList.remove(cls);
             }
@@ -444,7 +444,7 @@ var DetailsView = Backbone.View.extend({
         var tip = new Tip(label, { title: Locale.detCopyHint, placement: 'right' });
         tip.show();
         this.fieldCopyTip = tip;
-        setTimeout(function() { tip.hide(); }, Timeouts.AutoHideHint);
+        setTimeout(() => { tip.hide(); }, Timeouts.AutoHideHint);
     },
 
     hideFieldCopyTip: function() {
@@ -546,14 +546,13 @@ var DetailsView = Backbone.View.extend({
             this.fieldCopyTip = tip;
             tip.show();
         }
-        var that = this;
-        setTimeout(function() {
+        setTimeout(() => {
             if (tip) {
                 tip.hide();
             }
-            that.fieldCopyTip = null;
+            this.fieldCopyTip = null;
             if (e.source.model.name === '$Password' && AppSettingsModel.instance.get('lockOnCopy')) {
-                setTimeout(function() {
+                setTimeout(() => {
                     Backbone.trigger('lock-workspace');
                 }, Timeouts.BeforeAutoLock);
             }
@@ -575,10 +574,10 @@ var DetailsView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        this.dragTimeout = setTimeout((function() {
+        this.dragTimeout = setTimeout(() => {
             this.$el.find('.details').removeClass('details--drag');
             this.dragging = false;
-        }).bind(this), 100);
+        }, 100);
     },
 
     drop: function(e) {
@@ -606,9 +605,9 @@ var DetailsView = Backbone.View.extend({
     addAttachedFiles: function(files) {
         _.forEach(files, function(file) {
             var reader = new FileReader();
-            reader.onload = (function() {
+            reader.onload = () => {
                 this.addAttachment(file.name, reader.result);
-            }).bind(this);
+            };
             reader.readAsArrayBuffer(file);
         }, this);
     },
@@ -742,10 +741,10 @@ var DetailsView = Backbone.View.extend({
             header: Locale.detDelFromTrash,
             body: Locale.detDelFromTrashBody + ' <p class="muted-color">' + Locale.detDelFromTrashBodyHint + '</p>',
             icon: 'minus-circle',
-            success: (function() {
+            success: () => {
                 this.model.deleteFromTrash();
                 Backbone.trigger('refresh');
-            }).bind(this)
+            }
         });
     },
 
@@ -764,7 +763,7 @@ var DetailsView = Backbone.View.extend({
 
     otpEnterManually: function() {
         if (this.model.fields.otp) {
-            var otpField = this.fieldViews.find(function(f) { return f.model.name === '$otp'; });
+            var otpField = this.fieldViews.find(f => f.model.name === '$otp');
             if (otpField) {
                 otpField.edit();
             }
@@ -799,7 +798,7 @@ var DetailsView = Backbone.View.extend({
         // AutoType.getActiveWindowTitle(function() {
         //     console.log(arguments);
         // });
-        AutoType.hideWindow(function() {
+        AutoType.hideWindow(() => {
             AutoType.run(entry);
         });
     },

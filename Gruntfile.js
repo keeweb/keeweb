@@ -1,10 +1,9 @@
 'use strict';
 
+/* eslint-env node */
+
 var fs = require('fs'),
     path = require('path');
-
-/* jshint node:true */
-/* jshint browser:false */
 
 var StringReplacePlugin = require('string-replace-webpack-plugin');
 
@@ -25,8 +24,8 @@ module.exports = function(grunt) {
     }
 
     function replaceFont(css) {
-        css.walkAtRules('font-face', function (rule) {
-            var fontFamily = rule.nodes.filter(function(n) { return n.prop === 'font-family'; })[0];
+        css.walkAtRules('font-face', rule => {
+            var fontFamily = rule.nodes.filter(n => n.prop === 'font-family')[0];
             if (!fontFamily) {
                 throw 'Bad font rule: ' + rule.toString();
             }
@@ -41,8 +40,8 @@ module.exports = function(grunt) {
             var data = fs.readFileSync('tmp/fonts/' + fontFile, 'base64');
             var src = 'url(data:application/font-woff;charset=utf-8;base64,{data}) format(\'woff\')'
                 .replace('{data}', data);
-            //var src = 'url(\'../fonts/fontawesome-webfont.woff\') format(\'woff\')';
-            rule.nodes = rule.nodes.filter(function(n) { return n.prop !== 'src'; });
+            // var src = 'url(\'../fonts/fontawesome-webfont.woff\') format(\'woff\')';
+            rule.nodes = rule.nodes.filter(n => n.prop !== 'src');
             rule.append({ prop: 'src', value: src });
         });
     }
@@ -180,11 +179,10 @@ module.exports = function(grunt) {
                 nonull: true
             }
         },
-        jshint: {
-            options: {
-                jshintrc: true
-            },
-            all: ['app/scripts/**/*.js']
+        eslint: {
+            app: ['app/scripts/**/*.js'],
+            electron: ['electron/**/*.js', '!electron/node_modules/**'],
+            grunt: ['Gruntfile.js', 'grunt/**/*.js']
         },
         sass: {
             options: {
@@ -304,7 +302,7 @@ module.exports = function(grunt) {
                 overwrite: true,
                 'app-copyright': 'Copyright © 2016 Antelle',
                 'app-version': pkg.version,
-                'build-version': '<%= gitinfo.local.branch.current.shortSHA %>',
+                'build-version': '<%= gitinfo.local.branch.current.shortSHA %>'
             },
             linux: {
                 options: {
@@ -475,7 +473,7 @@ module.exports = function(grunt) {
         },
         'concurrent': {
             options: {
-                logConcurrentOutput: true,
+                logConcurrentOutput: true
             },
             'dev-server': [
                 'watch',
@@ -490,7 +488,7 @@ module.exports = function(grunt) {
         'gitinfo',
         'bower-install-simple',
         'clean',
-        'jshint',
+        'eslint',
         'copy:html',
         'copy:favicon',
         'copy:touchicon',
@@ -508,26 +506,26 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-app-content', [
         'copy:desktop-app-content',
-        'string-replace:desktop-html',
+        'string-replace:desktop-html'
     ]);
 
     grunt.registerTask('build-desktop-update', [
         'compress:desktop-update',
         'sign-archive:desktop-update',
-        'validate-desktop-update',
+        'validate-desktop-update'
     ]);
 
     grunt.registerTask('build-desktop-executables', [
         'electron',
         'copy:desktop-windows-helper-ia32',
-        'copy:desktop-windows-helper-x64',
+        'copy:desktop-windows-helper-x64'
     ]);
 
     grunt.registerTask('build-desktop-archives', [
         'compress:win32-x64',
         'compress:win32-ia32',
         'compress:linux-x64',
-        'compress:linux-ia32',
+        'compress:linux-ia32'
     ]);
 
     grunt.registerTask('build-desktop-dist-darwin', [

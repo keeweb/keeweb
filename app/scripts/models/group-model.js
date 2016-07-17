@@ -109,7 +109,7 @@ var GroupModel = MenuItemModel.extend({
 
     forEachGroup: function(callback, includeDisabled) {
         var result = true;
-        this.get('items').forEach(function(group) {
+        this.get('items').forEach(group => {
             if (includeDisabled || group.group.enableSearching !== false) {
                 result = callback(group) !== false && group.forEachGroup(callback, includeDisabled) !== false;
             }

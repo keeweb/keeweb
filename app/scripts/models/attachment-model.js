@@ -26,8 +26,8 @@ var AttachmentModel = Backbone.Model.extend({
             case 'txt': case 'log': case 'rtf':
                 return 'file-text-o';
             case 'html': case 'htm': case 'js': case 'css': case 'xml': case 'config': case 'json': case 'yaml':
-            case 'cpp': case 'c': case 'h': case 'cc': case 'hpp':  case 'mm': case 'cs': case 'php': case 'sh':
-            case 'py':  case 'java': case 'rb': case 'cfg': case 'properties': case 'yml': case 'asm': case 'bat':
+            case 'cpp': case 'c': case 'h': case 'cc': case 'hpp': case 'mm': case 'cs': case 'php': case 'sh':
+            case 'py': case 'java': case 'rb': case 'cfg': case 'properties': case 'yml': case 'asm': case 'bat':
                 return 'file-code-o';
             case 'pdf':
                 return 'file-pdf-o';
@@ -41,7 +41,7 @@ var AttachmentModel = Backbone.Model.extend({
             case 'ppt': case 'pptx':
                 return 'file-powerpoint-o';
             case 'jpeg': case 'jpg': case 'png': case 'gif': case 'bmp': case 'tiff': case 'svg': case 'ico': case 'psd':
-               return 'file-image-o';
+                return 'file-image-o';
             case 'avi': case 'mp4': case '3gp': case 'm4v': case 'mov': case 'mpeg': case 'mpg': case 'mpe':
                 return 'file-video-o';
             case 'mp3': case 'wav': case 'flac':
@@ -54,8 +54,8 @@ var AttachmentModel = Backbone.Model.extend({
         switch (ext) {
             case 'txt': case 'log':
             case 'html': case 'htm': case 'js': case 'css': case 'xml': case 'config': case 'json': case 'yaml':
-            case 'cpp': case 'c': case 'h': case 'cc': case 'hpp':  case 'mm': case 'cs': case 'php': case 'sh':
-            case 'py':  case 'java': case 'rb': case 'cfg': case 'properties': case 'yml': case 'asm':
+            case 'cpp': case 'c': case 'h': case 'cc': case 'hpp': case 'mm': case 'cs': case 'php': case 'sh':
+            case 'py': case 'java': case 'rb': case 'cfg': case 'properties': case 'yml': case 'asm':
                 return 'text/plain';
             case 'pdf':
                 return 'application/pdf';

@@ -56,7 +56,7 @@ var FieldView = Backbone.View.extend({
                 return;
             }
             CopyPaste.createHiddenInput(textValue, box);
-            //CopyPaste.copy(); // maybe Apple will ever support this?
+            // CopyPaste.copy(); // maybe Apple will ever support this?
             return;
         }
         var copyRes;

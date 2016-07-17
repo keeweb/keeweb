@@ -24,7 +24,7 @@ module.exports = function (grunt) {
             cmd: executable,
             args: args,
             opts: {stdio: 'inherit'}
-        }, function (error, result, code) {
+        }, (error, result, code) => {
             if (error) {
                 return grunt.warn('NSIS error: ' + error);
             }

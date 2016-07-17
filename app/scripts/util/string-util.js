@@ -4,7 +4,7 @@ var StringUtil = {
     camelCaseRegex: /\-./g,
 
     camelCase: function(str) {
-        return str.replace(this.camelCaseRegex, function(match) { return match[1].toUpperCase(); });
+        return str.replace(this.camelCaseRegex, match => match[1].toUpperCase());
     }
 };
 

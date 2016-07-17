@@ -16,7 +16,7 @@ var SettingsView = Backbone.View.extend({
 
     initialize: function () {
         this.listenTo(Backbone, 'set-page', this.setPage);
-        this.views = {  };
+        this.views = { };
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.returnToApp, this);
     },
 

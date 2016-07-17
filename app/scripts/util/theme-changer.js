@@ -11,7 +11,7 @@ var ThemeChanger = {
     },
 
     setTheme: function(theme) {
-        _.forEach(document.body.classList, function(cls) {
+        _.forEach(document.body.classList, cls => {
             if (/^th\-/.test(cls)) {
                 document.body.classList.remove(cls);
             }

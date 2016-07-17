@@ -164,7 +164,6 @@ AutoTypeRunner.prototype.tryParseCommand = function(op) {
         default:
             return false;
     }
-
 };
 
 AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
@@ -173,7 +172,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
     }
     field = field.toLowerCase();
     var value = null;
-    _.findKey(this.entry.entry.fields, function(val, f) {
+    _.findKey(this.entry.entry.fields, (val, f) => {
         if (f.toLowerCase() === field) {
             value = val;
             return true;
@@ -185,7 +184,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
     if (value.isProtected) {
         op.type = 'group';
         var ops = [];
-        value.forEachChar(function(ch) {
+        value.forEachChar(ch => {
             if (ch === 10 || ch === 13) {
                 ops.push({type: 'key', value: 'enter'});
             } else {
@@ -200,7 +199,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
         }
         op.type = 'group';
         var partsOps = [];
-        parts.forEach(function(part) {
+        parts.forEach(part => {
             if (partsOps.length) {
                 partsOps.push({type: 'key', value: 'enter'});
             }
@@ -256,7 +255,6 @@ AutoTypeRunner.prototype.udt = function(part) {
         default:
             throw 'Bad part: ' + part;
     }
-
 };
 
 AutoTypeRunner.prototype.getOtp = function(op) {
@@ -267,9 +265,8 @@ AutoTypeRunner.prototype.getOtp = function(op) {
     if (!this.entry.otpGenerator) {
         return '';
     }
-    var that = this;
-    this.entry.otpGenerator.next(function(otp) {
-        that.pendingResolved(op, otp, otp ? undefined : 'OTP error');
+    this.entry.otpGenerator.next(otp => {
+        this.pendingResolved(op, otp, otp ? undefined : 'OTP error');
     });
     return AutoTypeRunner.PendingResolve;
 };
@@ -302,7 +299,7 @@ AutoTypeRunner.prototype.obfuscateOps = function(ops) {
         if (op.type === 'text') {
             this.obfuscateOp(op);
         } else if (op.type === 'group') {
-            var onlyText = op.value.every(function(grOp) { return grOp.type === 'text' && !grOp.mod; });
+            var onlyText = op.value.every(grOp => grOp.type === 'text' && !grOp.mod);
             if (onlyText) {
                 this.obfuscateOp(op);
             } else {
@@ -320,7 +317,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
         }
         letters = op.value.split('');
     } else {
-        op.value.forEach(function(grOp) { letters.push.apply(letters, grOp.value.split('')); });
+        op.value.forEach(grOp => letters.push.apply(letters, grOp.value.split('')));
     }
     if (letters.length <= 1) {
         return;

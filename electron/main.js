@@ -8,9 +8,6 @@
 
 'use strict';
 
-/* jshint node:true */
-/* jshint browser:false */
-
 var app = require('electron').app,
     path = require('path'),
     fs = require('fs');
@@ -34,9 +31,8 @@ if (fs.existsSync(appPathUserData)) {
                 break;
             }
         }
-    }
-    catch (e) {
-        console.error('Error reading user file version', e);
+    } catch (e) {
+        console.error('Error reading user file version', e); // eslint-disable-line no-console
     }
 }
 

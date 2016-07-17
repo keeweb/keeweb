@@ -28,7 +28,7 @@ var Transport = {
         logger.info('GET ' + config.url);
         var opts = Launcher.req('url').parse(config.url);
         opts.headers = { 'User-Agent': navigator.userAgent };
-        Launcher.resolveProxy(config.url, function(proxy) {
+        Launcher.resolveProxy(config.url, proxy => {
             logger.info('Request to ' + config.url + ' ' + (proxy ? 'using proxy ' + proxy.host + ':' + proxy.port : 'without proxy'));
             if (proxy) {
                 opts.headers.Host = opts.host;
@@ -36,26 +36,26 @@ var Transport = {
                 opts.port = proxy.port;
                 opts.path = config.url;
             }
-            Launcher.req(proto).get(opts, function (res) {
+            Launcher.req(proto).get(opts, res => {
                 logger.info('Response from ' + config.url + ': ' + res.statusCode);
                 if (res.statusCode === 200) {
                     if (config.file) {
                         var file = fs.createWriteStream(tmpFile);
                         res.pipe(file);
-                        file.on('finish', function () {
-                            file.close(function () {
+                        file.on('finish', () => {
+                            file.close(() => {
                                 config.success(tmpFile);
                             });
                         });
-                        file.on('error', function (err) {
+                        file.on('error', err => {
                             config.error(err);
                         });
                     } else {
                         var data = [];
-                        res.on('data', function (chunk) {
+                        res.on('data', chunk => {
                             data.push(chunk);
                         });
-                        res.on('end', function () {
+                        res.on('end', () => {
                             data = window.Buffer.concat(data);
                             if (config.utf8) {
                                 data = data.toString('utf8');
@@ -73,7 +73,7 @@ var Transport = {
                 } else {
                     config.error('HTTP status ' + res.statusCode);
                 }
-            }).on('error', function (e) {
+            }).on('error', e => {
                 logger.error('Cannot GET ' + config.url, e);
                 if (tmpFile) {
                     fs.unlink(tmpFile);

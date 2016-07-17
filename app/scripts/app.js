@@ -12,7 +12,7 @@ var AppModel = require('./models/app-model'),
     ThemeChanger = require('./util/theme-changer'),
     Locale = require('./util/locale');
 
-$(function() {
+$(() => {
     if (isPopup()) {
         return AuthReceiver.receive();
     }
@@ -23,7 +23,7 @@ $(function() {
     ThemeChanger.setBySettings(appModel.settings);
     var configParam = getConfigParam();
     if (configParam) {
-        appModel.loadConfig(configParam, function(err) {
+        appModel.loadConfig(configParam, err => {
             if (err) {
                 showSettingsLoadError();
             } else {

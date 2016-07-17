@@ -26,7 +26,7 @@ var KeyHandler = {
     },
     offKey: function(key, handler, thisArg) {
         if (this.shortcuts[key]) {
-            this.shortcuts[key] = _.reject(this.shortcuts[key],  function(sh) {
+            this.shortcuts[key] = _.reject(this.shortcuts[key], sh => {
                 return sh.handler === handler && sh.thisArg === thisArg;
             });
         }

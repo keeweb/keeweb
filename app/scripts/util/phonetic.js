@@ -167,10 +167,8 @@ function getOptions(overrides) {
     overrides = overrides || {};
     options.length = overrides.length || 16;
     options.seed = overrides.seed || Math.random();
-    options.phoneticSimplicity = overrides.phoneticSimplicity ?
-        Math.max(overrides.phoneticSimplicity, 1) : 5;
-    options.compoundSimplicity = overrides.compoundSimplicity ?
-        Math.max(overrides.compoundSimplicity, 1) : 5;
+    options.phoneticSimplicity = overrides.phoneticSimplicity ? Math.max(overrides.phoneticSimplicity, 1) : 5;
+    options.compoundSimplicity = overrides.compoundSimplicity ? Math.max(overrides.compoundSimplicity, 1) : 5;
     return options;
 }
 

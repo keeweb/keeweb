@@ -1,8 +1,5 @@
 'use strict';
 
-/* jshint node:true */
-/* jshint browser:false */
-
 var electron = require('electron'),
     app = electron.app,
     path = require('path'),
@@ -10,7 +7,7 @@ var electron = require('electron'),
 
 var mainWindow = null,
     appIcon = null,
-    openFile = process.argv.filter(function (arg) { return /\.kdbx$/i.test(arg); })[0],
+    openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0],
     ready = false,
     restartPending = false,
     htmlPath = path.join(__dirname, 'index.html'),
@@ -18,13 +15,13 @@ var mainWindow = null,
     updateMainWindowPositionTimeout = null,
     windowPositionFileName = path.join(app.getPath('userData'), 'window-position.json');
 
-process.argv.forEach(function (arg) {
+process.argv.forEach(arg => {
     if (arg.lastIndexOf('--htmlpath=', 0) === 0) {
         htmlPath = path.resolve(arg.replace('--htmlpath=', ''), 'index.html');
     }
 });
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
     if (restartPending) {
         // unbind all handlers, load new app.js module and pass control to it
         electron.globalShortcut.unregisterAll();
@@ -42,32 +39,32 @@ app.on('window-all-closed', function () {
         }
     }
 });
-app.on('ready', function () {
+app.on('ready', () => {
     if (!checkSingleInstance()) {
         setAppOptions();
         createMainWindow();
         setGlobalShortcuts();
     }
 });
-app.on('open-file', function (e, path) {
+app.on('open-file', (e, path) => {
     e.preventDefault();
     openFile = path;
     notifyOpenFile();
 });
-app.on('activate', function () {
+app.on('activate', () => {
     if (process.platform === 'darwin') {
         if (!mainWindow) {
             createMainWindow();
         }
     }
 });
-app.on('will-quit', function () {
+app.on('will-quit', () => {
     electron.globalShortcut.unregisterAll();
 });
 app.restartApp = function () {
     restartPending = true;
     mainWindow.close();
-    setTimeout(function () {
+    setTimeout(() => {
         restartPending = false;
     }, 1000);
 };
@@ -93,7 +90,7 @@ app.getMainWindow = function () {
 };
 
 function checkSingleInstance() {
-    var shouldQuit = app.makeSingleInstance(function(/*commandLine, workingDirectory*/) {
+    var shouldQuit = app.makeSingleInstance((/* commandLine, workingDirectory */) => {
         restoreMainWindow();
     });
 
@@ -115,8 +112,8 @@ function createMainWindow() {
     });
     setMenu();
     mainWindow.loadURL('file://' + htmlPath);
-    mainWindow.webContents.on('dom-ready', function() {
-        setTimeout(function() {
+    mainWindow.webContents.on('dom-ready', () => {
+        setTimeout(() => {
             mainWindow.show();
             ready = true;
             notifyOpenFile();
@@ -125,11 +122,11 @@ function createMainWindow() {
     mainWindow.on('resize', delaySaveMainWindowPosition);
     mainWindow.on('move', delaySaveMainWindowPosition);
     mainWindow.on('close', updateMainWindowPositionIfPending);
-    mainWindow.on('closed', function() {
+    mainWindow.on('closed', () => {
         mainWindow = null;
         saveMainWindowPosition();
     });
-    mainWindow.on('minimize', function() {
+    mainWindow.on('minimize', () => {
         emitBackboneEvent('launcher-minimize');
     });
     restoreMainWindowPosition();
@@ -199,7 +196,7 @@ function saveMainWindowPosition() {
 }
 
 function restoreMainWindowPosition() {
-    fs.readFile(windowPositionFileName, 'utf8', function(err, data) {
+    fs.readFile(windowPositionFileName, 'utf8', (e, data) => {
         if (data) {
             mainWindowPosition = JSON.parse(data);
             if (mainWindow && mainWindowPosition) {
@@ -275,11 +272,11 @@ function setGlobalShortcuts() {
         U: 'copy-url',
         T: 'auto-type'
     };
-    Object.keys(shortcuts).forEach(function(key) {
+    Object.keys(shortcuts).forEach(key => {
         var shortcut = shortcutModifiers + key;
         var eventName = shortcuts[key];
         try {
-            electron.globalShortcut.register(shortcut, function () {
+            electron.globalShortcut.register(shortcut, () => {
                 emitBackboneEvent(eventName);
             });
         } catch (e) {}

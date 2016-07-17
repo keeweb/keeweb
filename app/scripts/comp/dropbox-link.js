@@ -58,7 +58,7 @@ DropboxChooser.prototype.buildUrl = function() {
         iframe: 'false',
         version: 2
     };
-    return 'https://www.dropbox.com/chooser?' + Object.keys(urlParams).map(function(key) {
+    return 'https://www.dropbox.com/chooser?' + Object.keys(urlParams).map(key => {
         return key + '=' + urlParams[key];
     }).join('&');
 };
@@ -103,7 +103,6 @@ DropboxChooser.prototype.checkClose = function() {
 };
 
 DropboxChooser.prototype.success = function(params) {
-    /* jshint camelcase:false */
     if (!params || !params[0] || !params[0].link || params[0].is_dir) {
         return this.callback('bad result');
     }
@@ -113,9 +112,9 @@ DropboxChooser.prototype.success = function(params) {
 
 DropboxChooser.prototype.readFile = function(url) {
     var xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', (function() {
+    xhr.addEventListener('load', () => {
         this.callback(null, { name: this.result.name, data: xhr.response });
-    }).bind(this));
+    });
     xhr.addEventListener('error', this.callback.bind(this, 'download error'));
     xhr.addEventListener('abort', this.callback.bind(this, 'download abort'));
     xhr.open('GET', url);
@@ -143,12 +142,12 @@ var DropboxLink = {
         } else {
             client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl: location.href }));
         }
-        client.authenticate((function(error, client) {
+        client.authenticate((error, client) => {
             if (!error) {
                 this._dropboxClient = client;
             }
             complete(error, client);
-        }).bind(this));
+        });
     },
 
     _handleUiError: function(err, alertCallback, callback) {
@@ -166,10 +165,10 @@ var DropboxLink = {
                         header: Locale.dropboxLogin,
                         body: Locale.dropboxLoginBody,
                         buttons: [{result: 'yes', title: Locale.alertSignIn}, {result: '', title: Locale.alertCancel}],
-                        success: (function () {
-                            this.authenticate(function (err) { callback(!err); });
-                        }).bind(this),
-                        cancel: function () {
+                        success: () => {
+                            this.authenticate(err => { callback(!err); });
+                        },
+                        cancel: () => {
                             callback(false);
                         }
                     });
@@ -221,19 +220,18 @@ var DropboxLink = {
     },
 
     _callAndHandleError: function(callName, args, callback, errorAlertCallback) {
-        var that = this;
-        this._getClient(function(err, client) {
+        this._getClient((err, client) => {
             if (err) {
                 return callback(err);
             }
             var ts = logger.ts();
             logger.debug('Call', callName);
-            client[callName].apply(client, args.concat(function(err) {
+            client[callName].apply(client, args.concat(err => {
                 logger.debug('Result', callName, logger.ts(ts), arguments);
                 if (err) {
-                    that._handleUiError(err, errorAlertCallback, function(repeat) {
+                    this._handleUiError(err, errorAlertCallback, repeat => {
                         if (repeat) {
-                            that._callAndHandleError(callName, args, callback, errorAlertCallback);
+                            this._callAndHandleError(callName, args, callback, errorAlertCallback);
                         } else {
                             callback(err);
                         }
@@ -260,7 +258,7 @@ var DropboxLink = {
     },
 
     authenticate: function(complete, overrideAppKey) {
-        this._getClient(function(err) { complete(err); }, overrideAppKey);
+        this._getClient(err => { complete(err); }, overrideAppKey);
     },
 
     logout: function() {
@@ -288,12 +286,12 @@ var DropboxLink = {
             this._callAndHandleError('writeFile', [fileName, data, opts], complete, alertCallback);
         } else {
             var dir = UrlUtil.fileToDir(fileName);
-            this.list(dir, (function(err, files) {
+            this.list(dir, (err, files) => {
                 if (err) { return complete(err); }
-                var exists = files.some(function(file) { return file.toLowerCase() === fileName.toLowerCase(); });
+                var exists = files.some(file => file.toLowerCase() === fileName.toLowerCase());
                 if (exists) { return complete({ exists: true }); }
                 this._callAndHandleError('writeFile', [fileName, data], complete);
-            }).bind(this));
+            });
         }
     },
 
@@ -306,9 +304,9 @@ var DropboxLink = {
     },
 
     list: function(dir, complete) {
-        this._callAndHandleError('readdir', [dir || ''], function(err, files, dirStat, filesStat) {
+        this._callAndHandleError('readdir', [dir || ''], (err, files, dirStat, filesStat) => {
             if (files) {
-                files = files.filter(function(f) { return /\.kdbx$/i.test(f); });
+                files = files.filter(f => /\.kdbx$/i.test(f));
             }
             complete(err, files, dirStat, filesStat);
         });

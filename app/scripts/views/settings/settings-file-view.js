@@ -47,13 +47,13 @@ var SettingsFileView = Backbone.View.extend({
     render: function() {
         var storageProviders = [];
         var fileStorage = this.model.get('storage');
-        Object.keys(Storage).forEach(function(name) {
+        Object.keys(Storage).forEach(name => {
             var prv = Storage[name];
             if (!prv.system && prv.enabled && name !== fileStorage) {
                 storageProviders.push(prv);
             }
         });
-        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
+        storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
@@ -106,15 +106,14 @@ var SettingsFileView = Backbone.View.extend({
 
     validatePassword: function(continueCallback) {
         if (!this.model.get('passwordLength')) {
-            var that = this;
             Alerts.yesno({
                 header: Locale.setFileEmptyPass,
                 body: Locale.setFileEmptyPassBody,
-                success: function() {
+                success: () => {
                     continueCallback();
                 },
-                cancel: function() {
-                    that.$el.find('#settings__file-master-pass').focus();
+                cancel: () => {
+                    this.$el.find('#settings__file-master-pass').focus();
                 }
             });
             return false;
@@ -123,15 +122,14 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     save: function(arg) {
-        var that = this;
         if (!arg) {
             arg = {};
         }
         arg.startedByUser = true;
         if (!arg.skipValidation) {
-            var isValid = this.validatePassword(function() {
+            var isValid = this.validatePassword(() => {
                 arg.skipValidation = true;
-                that.save(arg);
+                this.save(arg);
             });
             if (!isValid) {
                 return;
@@ -153,19 +151,18 @@ var SettingsFileView = Backbone.View.extend({
             return;
         }
         var fileName = this.model.get('name') + '.kdbx';
-        var that = this;
         if (Launcher && !this.model.get('storage')) {
-            Launcher.getSaveFileName(fileName, function (path) {
+            Launcher.getSaveFileName(fileName, path => {
                 if (path) {
-                    that.save({storage: 'file', path: path});
+                    this.save({storage: 'file', path: path});
                 }
             });
         } else {
-            this.model.getData(function (data) {
+            this.model.getData(data => {
                 if (Launcher) {
-                    Launcher.getSaveFileName(fileName, function (path) {
+                    Launcher.getSaveFileName(fileName, path => {
                         if (path) {
-                            Storage.file.save(path, data, function (err) {
+                            Storage.file.save(path, data, err => {
                                 if (err) {
                                     Alerts.error({
                                         header: Locale.setFileSaveError,
@@ -184,10 +181,10 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     saveToXml: function() {
-        this.model.getXml((function(xml) {
+        this.model.getXml(xml => {
             var blob = new Blob([xml], {type: 'text/xml'});
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
-        }).bind(this));
+        });
     },
 
     saveToStorage: function(e) {
@@ -199,9 +196,8 @@ var SettingsFileView = Backbone.View.extend({
         if (!storage) {
             return;
         }
-        var that = this;
-        if (that.model.get('storage') === storageName) {
-            that.save();
+        if (this.model.get('storage') === storageName) {
+            this.save();
         } else {
             if (!storage.list) {
                 if (storage.name === 'webdav') {
@@ -215,32 +211,32 @@ var SettingsFileView = Backbone.View.extend({
                 }
                 return;
             }
-            that.model.set('syncing', true);
-            storage.list(function(err, files) {
-                that.model.set('syncing', false);
+            this.model.set('syncing', true);
+            storage.list((err, files) => {
+                this.model.set('syncing', false);
                 if (err) {
                     return;
                 }
-                var expName = that.model.get('name').toLowerCase();
-                var existingFile = _.find(files, function(file) {
+                var expName = this.model.get('name').toLowerCase();
+                var existingFile = _.find(files, file => {
                     return UrlUtil.getDataFileName(file.name).toLowerCase() === expName;
                 });
                 if (existingFile) {
                     Alerts.yesno({
                         header: Locale.setFileAlreadyExists,
-                        body: Locale.setFileAlreadyExistsBody.replace('{}', that.model.escape('name')),
-                        success: function() {
-                            that.model.set('syncing', true);
-                            storage.remove(existingFile.path, function(err) {
-                                that.model.set('syncing', false);
+                        body: Locale.setFileAlreadyExistsBody.replace('{}', this.model.escape('name')),
+                        success: () => {
+                            this.model.set('syncing', true);
+                            storage.remove(existingFile.path, err => {
+                                this.model.set('syncing', false);
                                 if (!err) {
-                                    that.save({storage: storageName});
+                                    this.save({storage: storageName});
                                 }
                             });
                         }
                     });
                 } else {
-                    that.save({storage: storageName});
+                    this.save({storage: storageName});
                 }
             });
         }
@@ -248,7 +244,6 @@ var SettingsFileView = Backbone.View.extend({
 
     closeFile: function() {
         if (this.model.get('modified')) {
-            var that = this;
             Alerts.yesno({
                 header: Locale.setFileUnsaved,
                 body: Locale.setFileUnsavedBody,
@@ -256,9 +251,9 @@ var SettingsFileView = Backbone.View.extend({
                     {result: 'close', title: Locale.setFileCloseNoSave, error: true},
                     {result: '', title: Locale.setFileDontClose}
                 ],
-                success: function(result) {
+                success: result => {
                     if (result === 'close') {
-                        that.closeFileNoCheck();
+                        this.closeFileNoCheck();
                     }
                 }
             });
@@ -309,11 +304,11 @@ var SettingsFileView = Backbone.View.extend({
     fileSelected: function(e) {
         var file = e.target.files[0];
         var reader = new FileReader();
-        reader.onload = (function(e) {
+        reader.onload = e => {
             var res = e.target.result;
             this.model.setKeyFile(res, file.name);
             this.renderKeyFileSelect();
-        }).bind(this);
+        };
         reader.readAsArrayBuffer(file);
     },
 

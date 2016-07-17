@@ -252,9 +252,7 @@ var AppView = Backbone.View.extend({
     },
 
     showFileSettings: function(e) {
-        var menuItem = this.model.menu.filesSection.get('items').find(function(item) {
-            return item.get('file').cid === e.fileId;
-        });
+        var menuItem = this.model.menu.filesSection.get('items').find(item => item.get('file').cid === e.fileId);
         if (this.views.settings) {
             if (this.views.settings.file === menuItem.get('file')) {
                 this.showEntries();
@@ -280,12 +278,11 @@ var AppView = Backbone.View.extend({
         if (this.model.files.hasDirtyFiles()) {
             if (Launcher && !Launcher.exitRequested) {
                 if (!this.exitAlertShown) {
-                    var that = this;
                     if (this.model.settings.get('autoSave')) {
-                        that.saveAndExit();
+                        this.saveAndExit();
                         return Launcher.preventExit(e);
                     }
-                    that.exitAlertShown = true;
+                    this.exitAlertShown = true;
                     Alerts.yesno({
                         header: Locale.appUnsavedWarn,
                         body: Locale.appUnsavedWarnBody,
@@ -294,18 +291,18 @@ var AppView = Backbone.View.extend({
                             {result: 'exit', title: Locale.appExitBtn, error: true},
                             {result: '', title: Locale.appDontExitBtn}
                         ],
-                        success: function (result) {
+                        success: result => {
                             if (result === 'save') {
-                                that.saveAndExit();
+                                this.saveAndExit();
                             } else {
                                 Launcher.exit();
                             }
                         },
-                        cancel: function() {
+                        cancel: () => {
                             Launcher.cancelRestart(false);
                         },
-                        complete: function () {
-                            that.exitAlertShown = false;
+                        complete: () => {
+                            this.exitAlertShown = false;
                         }
                     });
                 }
@@ -363,7 +360,6 @@ var AppView = Backbone.View.extend({
     },
 
     lockWorkspace: function(autoInit) {
-        var that = this;
         if (Alerts.alertDisplayed) {
             return;
         }
@@ -382,14 +378,14 @@ var AppView = Backbone.View.extend({
                         { result: '', title: Locale.alertCancel }
                     ],
                     checkbox: Locale.appAutoSave,
-                    success: function(result, autoSaveChecked) {
+                    success: (result, autoSaveChecked) => {
                         if (result === 'save') {
                             if (autoSaveChecked) {
-                                that.model.settings.set('autoSave', autoSaveChecked);
+                                this.model.settings.set('autoSave', autoSaveChecked);
                             }
-                            that.saveAndLock();
+                            this.saveAndLock();
                         } else if (result === 'discard') {
-                            that.model.closeAllFiles();
+                            this.model.closeAllFiles();
                         }
                     }
                 });
@@ -436,7 +432,7 @@ var AppView = Backbone.View.extend({
     },
 
     saveAndExit: function() {
-        this.saveAndLock(function(result) {
+        this.saveAndLock(result => {
             if (result) {
                 Launcher.exit();
             }
@@ -444,7 +440,7 @@ var AppView = Backbone.View.extend({
     },
 
     closeAllFilesAndShowFirst: function() {
-        var fileToShow = this.model.files.find(function(file) { return !file.get('demo') && !file.get('created'); });
+        var fileToShow = this.model.files.find(file => !file.get('demo') && !file.get('created'));
         this.model.closeAllFiles();
         if (!fileToShow) {
             fileToShow = this.model.fileInfos.getLast();
