@@ -108,11 +108,13 @@
         <label for="settings__general-minimize">{{res 'setGenMinInstead'}}</label>
     </div>
     {{/if}}
+    {{#if canDetectMinimize}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-lock-on-minimize" id="settings__general-lock-on-minimize"
                {{#if lockOnMinimize}}checked{{/if}} />
         <label for="settings__general-lock-on-minimize">{{res 'setGenLockMinimize'}}</label>
     </div>
+    {{/if}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-lock-on-copy" id="settings__general-lock-on-copy"
                {{#if lockOnCopy}}checked{{/if}} />

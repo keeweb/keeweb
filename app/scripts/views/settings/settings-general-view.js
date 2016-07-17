@@ -79,6 +79,7 @@ var SettingsGeneralView = Backbone.View.extend({
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: Updater.enabled,
             canMinimize: Launcher && Launcher.canMinimize(),
+            canDetectMinimize: !!Launcher,
             lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
             lockOnCopy: AppSettingsModel.instance.get('lockOnCopy'),
             tableView: AppSettingsModel.instance.get('tableView'),
