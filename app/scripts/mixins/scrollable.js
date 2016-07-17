@@ -4,7 +4,7 @@ var Backbone = require('backbone'),
     FeatureDetector = require('../util/feature-detector'),
     baron = require('baron');
 
-var isEnabled = FeatureDetector.isDesktop();
+var isEnabled = !FeatureDetector.isMobile;
 
 var Scrollable = {
     createScroll: function(opts) {

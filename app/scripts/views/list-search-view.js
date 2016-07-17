@@ -48,7 +48,7 @@ var ListSearchView = Backbone.View.extend({
         this.sortOptions.forEach(function(opt) {
             this.sortIcons[opt.value] = opt.icon;
         }, this);
-        var entryDesc = FeatureDetector.isMobile() ? '' : (' <span class="muted-color">(' + Locale.searchShiftClickOr + ' ' +
+        var entryDesc = FeatureDetector.isMobile ? '' : (' <span class="muted-color">(' + Locale.searchShiftClickOr + ' ' +
             FeatureDetector.altShortcutSymbol(true) + 'N)</span>');
         this.createOptions = [
             { value: 'entry', icon: 'key', text: 'Entry' + entryDesc },

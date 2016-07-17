@@ -14,7 +14,7 @@ var Tip = function(el, config) {
     this.hide = this.hide.bind(this);
 };
 
-Tip.enabled = FeatureDetector.isDesktop();
+Tip.enabled = !FeatureDetector.isMobile;
 
 Tip.prototype.init = function() {
     if (!Tip.enabled) {

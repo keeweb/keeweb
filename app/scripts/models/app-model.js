@@ -30,7 +30,7 @@ var AppModel = Backbone.Model.extend({
         this.sort = 'title';
         this.settings = AppSettingsModel.instance;
         this.activeEntryId = null;
-        this.isBeta = FeatureDetector.isBeta();
+        this.isBeta = FeatureDetector.isBeta;
 
         this.listenTo(Backbone, 'refresh', this.refresh);
         this.listenTo(Backbone, 'set-filter', this.setFilter);

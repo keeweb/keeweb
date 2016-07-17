@@ -84,7 +84,7 @@ var OpenView = Backbone.View.extend({
     },
 
     focusInput: function() {
-        if (!FeatureDetector.isMobile()) {
+        if (!FeatureDetector.isMobile) {
             this.inputEl.focus();
         }
     },

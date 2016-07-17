@@ -20,16 +20,16 @@ var OtpQrReader = {
         if (screenshotKey) {
             screenshotKey = Locale.detSetupOtpAlertBodyWith.replace('{}', '<code>' + screenshotKey + '</code>');
         }
-        var pasteKey = FeatureDetector.isMobile() ? ''
+        var pasteKey = FeatureDetector.isMobile ? ''
             : Locale.detSetupOtpAlertBodyWith.replace('{}',
                 '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>');
         OtpQrReader.startListenClipoard();
         var buttons = [{result: 'manually', title: Locale.detSetupOtpManualButton, silent: true},
             Alerts.buttons.cancel];
-        if (FeatureDetector.isMobile()) {
+        if (FeatureDetector.isMobile) {
             buttons.unshift({result: 'select', title: Locale.detSetupOtpScanButton});
         }
-        var line3 = FeatureDetector.isMobile() ? Locale.detSetupOtpAlertBody3Mobile
+        var line3 = FeatureDetector.isMobile ? Locale.detSetupOtpAlertBody3Mobile
             : Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
         OtpQrReader.alert = Alerts.alert({
             icon: 'qrcode',
