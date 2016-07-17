@@ -4,6 +4,11 @@ Release notes
 ##### v1.3.0 (TBD)
 `+` solarized themes  
 
+##### v1.2.3 (2016-07-17)
+`+` option to skip lock on minimize under mac  
+`-` fix dropbox popup error  
+`-` fix auto-type input  
+
 ##### v1.2.2 (2016-07-14)
 `-` fix special keys auto-type in linux  
 
@@ -41,16 +46,14 @@ Auto-type, ui improvements
 `-` fix generator preset for empty passwords  
 `+` export settings get/set interface  
 
-##### v1.1.2 (2016-04-10)
-Hotfix  
+##### v1.1.2 (2016-04-10)  
 `+` option to try beta version in desktop app  
 `-` fix notes field text color  
 `-` fix some console assertions  
 `-` fix message about not found files  
 `-` fix deletion to trash when there's no trash folder  
 
-##### v1.1.1 (2016-04-07)
-Hotfix  
+##### v1.1.1 (2016-04-07)  
 `+` minimize app on linux  
 `+` display remembered keyfile name  
 `-` fix #182: save window position on Windows  
@@ -92,15 +95,13 @@ Storage providers, one-time passwords, usability improvements
 Workaround for Chrome bug  
 `-` #110: fix font rendering in Chrome  
 
-##### v1.0.3 (2016-02-23)
-Hotfix  
+##### v1.0.3 (2016-02-23)  
 `+` #94: warn user about local files  
 `-` #92: save files on exit  
 `-` #95: unlock by opening settings  
 `-` fix crash on arch linux startup  
 
-##### v1.0.2 (2016-02-17)
-Hotfix  
+##### v1.0.2 (2016-02-17)  
 `-` #80: dragdrop bug  
 
 ##### v1.0.1 (2016-02-14)
