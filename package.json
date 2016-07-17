@@ -49,7 +49,7 @@
     "webpack-dev-server": "1.14.1"
   },
   "optionalDependencies": {
-      "grunt-appdmg": "0.4.0",
+      "grunt-appdmg": "0.4.0"
   },
   "scripts": {
     "start": "grunt",
