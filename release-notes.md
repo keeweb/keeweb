@@ -1,6 +1,9 @@
 Release notes
 -------------
 
+##### v1.2.3 (2016-07-17)
+`-` fix dropbox popup error  
+
 ##### v1.2.2 (2016-07-14)
 `-` fix special keys auto-type in linux  
 
