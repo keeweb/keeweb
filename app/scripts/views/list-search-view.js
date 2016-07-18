@@ -147,7 +147,7 @@ var ListSearchView = Backbone.View.extend({
         if (!this._hidden) {
             e.preventDefault();
             this.hideSearchOptions();
-            this.inputEl.focus();
+            this.inputEl.select().focus();
         }
     },
 

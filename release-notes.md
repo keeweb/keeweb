@@ -3,6 +3,7 @@ Release notes
 
 ##### v1.3.0 (TBD)
 `+` solarized themes  
+`+` select field contents on search hotkey  
 
 ##### v1.2.3 (2016-07-17)
 `+` option to skip lock on minimize under mac  
