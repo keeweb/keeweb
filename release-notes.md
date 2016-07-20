@@ -5,6 +5,11 @@ Release notes
 `+` solarized themes  
 `+` select field contents on search hotkey  
 
+##### v1.2.4 (2016-07-20)
+`+` digital signature in installer  
+`-` fix save to file  
+`-` mark file as modified on trash empty  
+
 ##### v1.2.3 (2016-07-17)
 `+` option to skip lock on minimize under mac  
 `-` fix dropbox popup error  

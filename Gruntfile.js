@@ -471,6 +471,18 @@ module.exports = function(grunt) {
                 }
             }
         },
+        'sign-exe': {
+            'win-installer': {
+                options: {
+                    file: 'tmp/desktop/win-ia32/KeeWeb Setup ' + pkg.version + '-ia32.exe',
+                    spc: 'keys/code-sign-win32.spc',
+                    pvk: 'keys/code-sign-win32.pvk',
+                    algo: 'sha1',
+                    name: 'KeeWeb Setup',
+                    url: pkg.homepage
+                }
+            }
+        },
         'concurrent': {
             options: {
                 logConcurrentOutput: true

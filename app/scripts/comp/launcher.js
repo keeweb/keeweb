@@ -34,7 +34,7 @@ if (window.process && window.process.versions && window.process.versions.electro
                 var homePath = this.remReq('electron').app.getPath('userDesktop');
                 defaultPath = this.req('path').join(homePath, defaultPath);
             }
-            this.remReq('dialog').showSaveDialog({
+            this.remReq('electron').dialog.showSaveDialog({
                 title: Locale.launcherSave,
                 defaultPath: defaultPath,
                 filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]

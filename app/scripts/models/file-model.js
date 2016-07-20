@@ -462,13 +462,19 @@ var FileModel = Backbone.Model.extend({
     emptyTrash: function() {
         var trashGroup = this.getTrashGroup();
         if (trashGroup) {
+            var modified = false;
             trashGroup.getOwnSubGroups().slice().forEach(function(group) {
                 this.db.move(group, null);
+                modified = true;
             }, this);
             trashGroup.group.entries.forEach(function(entry) {
                 this.db.move(entry, null);
+                modified = true;
             }, this);
             trashGroup.get('entries').reset();
+            if (modified) {
+                this.setModified();
+            }
         }
     },
 
