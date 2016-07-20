@@ -437,6 +437,18 @@ module.exports = function(grunt) {
                     privateKey: 'keys/private-key.pem'
                 }
             }
+        },
+        'sign-exe': {
+            'win-installer': {
+                options: {
+                    file: 'tmp/desktop/win-ia32/KeeWeb Setup ' + pkg.version + '-ia32.exe',
+                    spc: 'keys/code-sign-win32.spc',
+                    pvk: 'keys/code-sign-win32.pvk',
+                    algo: 'sha1',
+                    name: 'KeeWeb Setup',
+                    url: pkg.homepage
+                }
+            }
         }
     });
 
@@ -477,6 +489,7 @@ module.exports = function(grunt) {
         'compress:linux64',
         'compress:linux32',
         'deb:linux64',
+        'sign-exe:win-installer',
         'copy:desktop_osx',
         'copy:desktop_win',
         'copy:desktop_linux_x64',

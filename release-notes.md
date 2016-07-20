@@ -1,7 +1,8 @@
 Release notes
 -------------
 
-##### v1.2.4 (2016-07-*)
+##### v1.2.4 (2016-07-20)
+`+` digital signature in installer  
 `-` fix save to file  
 `-` mark file as modified on trash empty  
 
