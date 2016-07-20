@@ -20,7 +20,7 @@ module.exports = function (grunt) {
                 opt.file
             ],
             opts: { stdio: 'inherit' }
-        }, function(error, result, code) {
+        }, (error, result, code) => {
             if (error || code) {
                 return grunt.log.warn(`signtool error ${code}: ${error}`);
             }
