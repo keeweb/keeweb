@@ -13,20 +13,36 @@ Function .onInit
       Quit
     ${EndIf}
   ${EndIf}
-  
+
   ${IfNot} ${AtLeastWin7}
     MessageBox MB_OK "Windows 7 and above required"
     Quit
   ${EndIf}
-  
+
+  System::Call 'kernel32::CreateMutex(i 0, i 0, t "KeeWeb-Installer-Mutex-8843DCD0") ?e'
+  Pop $R0
+  ${If} $R0 != 0
+    MessageBox MB_ICONSTOP|MB_OK "The installer is already running."
+    Abort
+  ${EndIf}
+
   !insertmacro MULTIUSER_INIT
 FunctionEnd
 
 Section "MainSection" SEC01
   ReadRegStr $R0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString"
   ${If} $R0 != ""
-    ClearErrors
-    ExecWait '"$R0" /S _?=$INSTDIR'
+    ExecWait '$R0 /S _?=$INSTDIR'
+  ${EndIf}
+
+  ReadRegStr $R0 "HKCU" "${PRODUCT_UNINST_KEY}" "QuietUninstallString"
+  ${If} $R0 != ""
+    ExecWait '$R0'
+  ${EndIf}
+
+  ReadRegStr $R0 "HKCU" "${PRODUCT_UNINST_KEY}" "UninstallString"
+  ${If} $R0 != ""
+    ExecWait '$R0'
   ${EndIf}
 
   SetOutPath "$INSTDIR"
@@ -44,7 +60,8 @@ SectionEnd
 Section -Post
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" '"$INSTDIR\uninst.exe"'
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "QuietUninstallString" '"$INSTDIR\uninst.exe" /S'
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\KeeWeb.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
