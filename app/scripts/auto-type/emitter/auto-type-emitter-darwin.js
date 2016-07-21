@@ -65,9 +65,11 @@ AutoTypeEmitter.prototype.key = function(key) {
 };
 
 AutoTypeEmitter.prototype.copyPaste = function(text) {
+    this.pendingScript.push('delay 0.5');
     this.pendingScript.push('set the clipboard to "' + this.escape(text) + '"');
+    this.pendingScript.push('delay 0.5');
     this.pendingScript.push('keystroke "v" using command down');
-    this.pendingScript.push('delay 0.05');
+    this.pendingScript.push('delay 0.5');
     this.callback();
 };
 
