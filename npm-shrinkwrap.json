@@ -3378,6 +3378,18 @@
       "from": "jsprim@>=1.2.2 <2.0.0",
       "resolved": "https://registry.npmjs.org/jsprim/-/jsprim-1.3.0.tgz"
     },
+    "keytar": {
+      "version": "3.0.2",
+      "from": "keytar@latest",
+      "resolved": "https://registry.npmjs.org/keytar/-/keytar-3.0.2.tgz",
+      "dependencies": {
+        "nan": {
+          "version": "2.3.2",
+          "from": "nan@2.3.2",
+          "resolved": "https://registry.npmjs.org/nan/-/nan-2.3.2.tgz"
+        }
+      }
+    },
     "kind-of": {
       "version": "3.0.3",
       "from": "kind-of@>=3.0.2 <4.0.0",

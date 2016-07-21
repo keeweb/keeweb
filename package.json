@@ -42,6 +42,7 @@
     "handlebars": "4.0.5",
     "handlebars-loader": "1.3.0",
     "html-minifier": "3.0.1",
+    "keytar": "3.0.2",
     "load-grunt-tasks": "3.5.0",
     "node-sass": "3.8.0",
     "raw-loader": "0.5.1",
