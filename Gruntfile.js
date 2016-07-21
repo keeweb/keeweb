@@ -418,6 +418,7 @@ module.exports = function(grunt) {
                         targetDir: 'dist/desktop',
                         pkgName: 'KeeWeb.linux.x64.deb',
                         appName: 'KeeWeb',
+                        depends: 'libappindicator1',
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
                         }
