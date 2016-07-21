@@ -15,7 +15,7 @@ Function .onInit
   ${EndIf}
 
   ${IfNot} ${AtLeastWin7}
-    MessageBox MB_OK "Windows 7 and above required"
+    MessageBox MB_ICONSTOP|MB_OK "Windows 7 and above required"
     Quit
   ${EndIf}
 
@@ -30,6 +30,8 @@ Function .onInit
 FunctionEnd
 
 Section "MainSection" SEC01
+  !insertmacro EnsureAppIsNotRunning
+
   ReadRegStr $R0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString"
   ${If} $R0 != ""
     ExecWait '$R0 /S _?=$INSTDIR'
