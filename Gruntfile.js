@@ -177,6 +177,13 @@ module.exports = function(grunt) {
                 src: 'helper/win32/KeeWebHelper.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/',
                 nonull: true
+            },
+            'desktop-win32-dist': {
+                cwd: 'tmp/desktop',
+                src: ['KeeWeb.win.x64.exe', 'KeeWeb.win.ia32.exe'],
+                dest: 'dist/desktop/',
+                expand: true,
+                nonull: true
             }
         },
         eslint: {
@@ -391,13 +398,13 @@ module.exports = function(grunt) {
             'win32-x64': {
                 options: {
                     arch: 'x64',
-                    output: 'dist/desktop/KeeWeb.win.x64.exe'
+                    output: 'tmp/desktop/KeeWeb.win.x64.exe'
                 }
             },
             'win32-ia32': {
                 options: {
                     arch: 'ia32',
-                    output: 'dist/desktop/KeeWeb.win.ia32.exe'
+                    output: 'tmp/desktop/KeeWeb.win.ia32.exe'
                 }
             }
         },
@@ -473,16 +480,24 @@ module.exports = function(grunt) {
             }
         },
         'sign-exe': {
-            'win-installer': {
+            options: {
+                spc: 'keys/code-sign-win32.spc',
+                pvk: 'keys/code-sign-win32.pvk',
+                algo: 'sha1',
+                url: pkg.homepage,
+                keytarPasswordService: 'code-sign-win32-keeweb',
+                keytarPasswordAccount: 'code-sign-win32-keeweb'
+            },
+            'win32-installer-x64': {
                 options: {
-                    file: 'dist/desktop/KeeWeb.win.x64.exe',
-                    spc: 'keys/code-sign-win32.spc',
-                    pvk: 'keys/code-sign-win32.pvk',
-                    algo: 'sha1',
-                    name: 'KeeWeb Setup',
-                    url: pkg.homepage,
-                    keytarPasswordService: 'code-sign-win32-keeweb',
-                    keytarPasswordAccount: 'code-sign-win32-keeweb'
+                    file: 'tmp/desktop/KeeWeb.win.x64.exe',
+                    name: 'KeeWeb Setup'
+                }
+            },
+            'win32-installer-ia32': {
+                options: {
+                    file: 'tmp/desktop/KeeWeb.win.ia32.exe',
+                    name: 'KeeWeb Setup'
                 }
             }
         },
@@ -549,7 +564,10 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-dist-win32', [
         'nsis:win32-x64',
-        'nsis:win32-ia32'
+        'nsis:win32-ia32',
+        'sign-exe:win32-installer-x64',
+        'sign-exe:win32-installer-ia32',
+        'copy:desktop-win32-dist'
     ]);
 
     grunt.registerTask('build-desktop-dist-linux', [
