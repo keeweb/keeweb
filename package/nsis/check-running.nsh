@@ -4,11 +4,11 @@
     Pop $0
     ${If} $0 != 0
       DetailPrint "Error checking ${PRODUCT_EXE}: $0"
-      MessageBox MB_ICONSTOP|MB_OK "Failed to check whether process is running"
+      MessageBox MB_ICONSTOP|MB_OK "Failed to check whether process is running" /SD IDOK
       Quit
     ${EndIf}
     Pop $1
-    ${StrContains} $0 "${PRODUCT_EXE}" $1
+    ${StrStr} $0 $1 "${PRODUCT_EXE}"
     ${If} $0 == ""
       DetailPrint "${PRODUCT_EXE} is not running"
       ${ExitDo}

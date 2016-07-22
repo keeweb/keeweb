@@ -178,11 +178,14 @@ module.exports = function(grunt) {
                 dest: 'tmp/desktop/KeeWeb-win32-x64/',
                 nonull: true
             },
-            'desktop-win32-dist': {
-                cwd: 'tmp/desktop',
-                src: ['KeeWeb.win.x64.exe', 'KeeWeb.win.ia32.exe'],
-                dest: 'dist/desktop/',
-                expand: true,
+            'desktop-win32-dist-x64': {
+                src: 'tmp/desktop/KeeWeb.win.x64.exe',
+                dest: `dist/desktop/KeeWeb-${pkg.version}.win.x64.exe`,
+                nonull: true
+            },
+            'desktop-win32-dist-ia32': {
+                src: 'tmp/desktop/KeeWeb.win.ia32.exe',
+                dest: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.exe`,
                 nonull: true
             }
         },
@@ -353,19 +356,19 @@ module.exports = function(grunt) {
                 files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
             },
             'win32-x64': {
-                options: { archive: 'dist/desktop/KeeWeb.win.x64.zip' },
+                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.x64.zip` },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-win32-x64', src: '**', expand: true }]
             },
             'win32-ia32': {
-                options: { archive: 'dist/desktop/KeeWeb.win.ia32.zip' },
+                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.zip` },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-win32-ia32', src: '**', expand: true }]
             },
             'linux-x64': {
-                options: { archive: 'dist/desktop/KeeWeb.linux.x64.zip' },
+                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true }]
             },
             'linux-ia32': {
-                options: { archive: 'dist/desktop/KeeWeb.linux.ia32.zip' },
+                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.ia32.zip` },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-linux-ia32', src: '**', expand: true }]
             }
         },
@@ -383,12 +386,11 @@ module.exports = function(grunt) {
                 ]
             },
             app: {
-                dest: 'dist/desktop/KeeWeb.mac.dmg'
+                dest: `dist/desktop/KeeWeb-${pkg.version}.mac.dmg`
             }
         },
         nsis: {
             options: {
-                installScript: 'package/nsis/main.nsi',
                 vars: {
                     version: pkg.version,
                     rev: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); },
@@ -397,14 +399,30 @@ module.exports = function(grunt) {
             },
             'win32-x64': {
                 options: {
+                    installScript: 'package/nsis/main.nsi',
                     arch: 'x64',
                     output: 'tmp/desktop/KeeWeb.win.x64.exe'
                 }
             },
+            'win32-un-x64': {
+                options: {
+                    installScript: 'package/nsis/main-un.nsi',
+                    arch: 'x64',
+                    output: 'tmp/desktop/KeeWeb-win32-x64/uninst.exe'
+                }
+            },
             'win32-ia32': {
                 options: {
+                    installScript: 'package/nsis/main.nsi',
                     arch: 'ia32',
                     output: 'tmp/desktop/KeeWeb.win.ia32.exe'
+                }
+            },
+            'win32-un-ia32': {
+                options: {
+                    installScript: 'package/nsis/main-un.nsi',
+                    arch: 'ia32',
+                    output: 'tmp/desktop/KeeWeb-win32-ia32/uninst.exe'
                 }
             }
         },
@@ -423,7 +441,7 @@ module.exports = function(grunt) {
                     info: {
                         arch: 'amd64',
                         targetDir: 'dist/desktop',
-                        pkgName: 'KeeWeb.linux.x64.deb',
+                        pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
                         appName: 'KeeWeb',
                         depends: 'libappindicator1',
                         scripts: {
@@ -488,16 +506,54 @@ module.exports = function(grunt) {
                 keytarPasswordService: 'code-sign-win32-keeweb',
                 keytarPasswordAccount: 'code-sign-win32-keeweb'
             },
+            'win32-build-x64': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-x64/ffmpeg.dll': '',
+                        'tmp/desktop/KeeWeb-win32-x64/libEGL.dll': 'ANGLE libEGL Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-x64/libGLESv2.dll': 'ANGLE libGLESv2 Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-x64/node.dll': 'Node.js'
+                    }
+                }
+            },
+            'win32-build-ia32': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-ia32/ffmpeg.dll': '',
+                        'tmp/desktop/KeeWeb-win32-ia32/libEGL.dll': 'ANGLE libEGL Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-ia32/libGLESv2.dll': 'ANGLE libGLESv2 Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-ia32/node.dll': 'Node.js'
+                    }
+                }
+            },
+            'win32-uninst-x64': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb-win32-x64/uninst.exe': 'KeeWeb Uninstaller'
+                    }
+                }
+            },
+            'win32-uninst-ia32': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb-win32-ia32/uninst.exe': 'KeeWeb Uninstaller'
+                    }
+                }
+            },
             'win32-installer-x64': {
                 options: {
-                    file: 'tmp/desktop/KeeWeb.win.x64.exe',
-                    name: 'KeeWeb Setup'
+                    files: {
+                        'tmp/desktop/KeeWeb.win.x64.exe': 'KeeWeb Setup'
+                    }
                 }
             },
             'win32-installer-ia32': {
                 options: {
-                    file: 'tmp/desktop/KeeWeb.win.ia32.exe',
-                    name: 'KeeWeb Setup'
+                    files: {
+                        'tmp/desktop/KeeWeb.win.ia32.exe': 'KeeWeb Setup'
+                    }
                 }
             }
         },
@@ -547,6 +603,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-executables', [
         'electron',
+        'sign-exe:win32-build-x64',
+        'sign-exe:win32-build-ia32',
         'copy:desktop-windows-helper-ia32',
         'copy:desktop-windows-helper-x64'
     ]);
@@ -563,11 +621,16 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('build-desktop-dist-win32', [
+        'nsis:win32-un-x64',
+        'nsis:win32-un-ia32',
+        'sign-exe:win32-uninst-x64',
+        'sign-exe:win32-uninst-ia32',
         'nsis:win32-x64',
         'nsis:win32-ia32',
         'sign-exe:win32-installer-x64',
         'sign-exe:win32-installer-ia32',
-        'copy:desktop-win32-dist'
+        'copy:desktop-win32-dist-x64',
+        'copy:desktop-win32-dist-ia32'
     ]);
 
     grunt.registerTask('build-desktop-dist-linux', [

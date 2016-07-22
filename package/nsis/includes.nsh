@@ -4,7 +4,7 @@
 !include x64.nsh
 !include nsDialogs.nsh
 !include LogicLib.nsh
+!include StrFunc.nsh
 !include WinVer.nsh
 
 !include package\nsis\lib\FileAssoc.nsh
-!include package\nsis\lib\StrContains.nsh

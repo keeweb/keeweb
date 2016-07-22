@@ -2,6 +2,8 @@
 
 // https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Build_Instructions/Signing_an_executable_with_Authenticode
 
+const fs = require('fs');
+
 module.exports = function (grunt) {
     grunt.registerMultiTask('sign-exe', 'Signs exe file with authenticode certificate', function () {
         const keytar = require('keytar');
@@ -11,30 +13,44 @@ module.exports = function (grunt) {
         if (!password) {
             return grunt.warn('Code sign password not found');
         }
-        let spawned = grunt.util.spawn({
-            cmd: 'signcode',
-            args: [
+        let promises = Object.keys(opt.files).map(file => signFile(file, opt.files[file], opt, password));
+        Promise.all(promises).then(done);
+    });
+
+    function signFile(file, name, opt, password) {
+        let signedFile = file + '.sign';
+        return new Promise((resolve, reject) => {
+            let args = [
                 '-spc', opt.spc,
-                '-v', opt.pvk,
-                '-a', opt.algo,
-                '-$', 'commercial',
-                '-n', opt.name,
+                '-key', require('path').resolve(opt.pvk),
+                '-h', opt.algo,
+                '-n', name,
                 '-i', opt.url,
                 '-t', 'http://timestamp.verisign.com/scripts/timstamp.dll',
-                '-tr', 10,
-                opt.file
-            ]
-        }, (error, result, code) => {
-            if (error || code) {
-                spawned.kill();
-                return grunt.warn(`signtool error ${code}: ${error}`);
-            }
-            done();
+                '-pass', password,
+                '-in', file,
+                '-out', signedFile
+            ];
+            let spawned = grunt.util.spawn({
+                cmd: 'osslsigncode',
+                args: args
+            }, (error, result, code) => {
+                if (error || code) {
+                    spawned.kill();
+                    grunt.warn(`Cannot sign file ${file}, signtool error ${code}: ${error}`);
+                    return reject();
+                }
+                if (fs.existsSync(file)) {
+                    fs.renameSync(signedFile, file);
+                }
+                grunt.log.writeln(`Signed: ${file}: ${name}`);
+                resolve();
+            });
+            // spawned.stdout.pipe(process.stdout);
+            spawned.stderr.pipe(process.stderr);
+            // spawned.stdin.setEncoding('utf-8');
+            // spawned.stdin.write(password);
+            // spawned.stdin.write('\n');
         });
-        spawned.stdout.pipe(process.stdout);
-        spawned.stderr.pipe(process.stderr);
-        spawned.stdin.setEncoding('utf-8');
-        spawned.stdin.write(password);
-        spawned.stdin.write('\n');
-    });
+    }
 };
