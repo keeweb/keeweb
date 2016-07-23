@@ -36,10 +36,21 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
     }
 };
 
+AutoTypeEmitter.prototype.isAlphaNumeric = function(text) {
+    return !(/[^a-zA-Z0-9]/.test(text));
+};
+
+AutoTypeEmitter.prototype.escape = function(text) {
+    return text.replace(/"/g, '\\"').replace(/\\/g, '\\\\');
+};
+
 AutoTypeEmitter.prototype.text = function(text) {
-    text = text.replace(/"/g, '\\"').replace(/\\/g, '\\\\');
-    this.pendingScript.push('keystroke "' + text + '"' + this.modString());
-    this.callback();
+    if (this.isAlphaNumeric(text)) {
+        this.pendingScript.push('keystroke "' + this.escape(text) + '"' + this.modString());
+        this.callback();
+    } else {
+        this.copyPaste(text);
+    }
 };
 
 AutoTypeEmitter.prototype.key = function(key) {
@@ -55,7 +66,7 @@ AutoTypeEmitter.prototype.key = function(key) {
 
 AutoTypeEmitter.prototype.copyPaste = function(text) {
     this.pendingScript.push('delay 0.5');
-    this.pendingScript.push('set the clipboard to "' + text.replace(/"/g, '\\"') + '"');
+    this.pendingScript.push('set the clipboard to "' + this.escape(text) + '"');
     this.pendingScript.push('delay 0.5');
     this.pendingScript.push('keystroke "v" using command down');
     this.pendingScript.push('delay 0.5');
