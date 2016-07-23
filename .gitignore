@@ -12,3 +12,5 @@ keys/
 *.user
 bin/
 obj/
+*.xcworkspace/
+xcuserdata/
