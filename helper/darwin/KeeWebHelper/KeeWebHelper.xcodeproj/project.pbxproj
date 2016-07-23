@@ -8,6 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		48395FC01D434F0000BF9A6E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48395FBF1D434F0000BF9A6E /* main.swift */; };
+		48395FC71D43E2C100BF9A6E /* InputParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48395FC61D43E2C100BF9A6E /* InputParser.swift */; };
+		487383751D43E4330034D5BB /* InputCommandBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487383741D43E4330034D5BB /* InputCommandBase.swift */; };
+		487383771D43E9920034D5BB /* NoOpCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487383761D43E9920034D5BB /* NoOpCommand.swift */; };
+		487383791D43EB1E0034D5BB /* CopyPasteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487383781D43EB1E0034D5BB /* CopyPasteCommand.swift */; };
+		4873837D1D43EB460034D5BB /* SendKeyCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4873837C1D43EB460034D5BB /* SendKeyCommand.swift */; };
+		4873837F1D43EB750034D5BB /* ModifierKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4873837E1D43EB750034D5BB /* ModifierKeys.swift */; };
+		487383811D43EC000034D5BB /* SendTextCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487383801D43EC000034D5BB /* SendTextCommand.swift */; };
+		487383831D43EC1C0034D5BB /* UnknownCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487383821D43EC1C0034D5BB /* UnknownCommand.swift */; };
+		487383851D43EC360034D5BB /* WaitCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487383841D43EC360034D5BB /* WaitCommand.swift */; };
+		487383871D43FDDF0034D5BB /* KeyRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487383861D43FDDF0034D5BB /* KeyRunner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +35,16 @@
 /* Begin PBXFileReference section */
 		48395FBC1D434F0000BF9A6E /* KeeWebHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = KeeWebHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		48395FBF1D434F0000BF9A6E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		48395FC61D43E2C100BF9A6E /* InputParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputParser.swift; sourceTree = "<group>"; };
+		487383741D43E4330034D5BB /* InputCommandBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InputCommandBase.swift; path = InputCommands/InputCommandBase.swift; sourceTree = "<group>"; };
+		487383761D43E9920034D5BB /* NoOpCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NoOpCommand.swift; path = InputCommands/NoOpCommand.swift; sourceTree = "<group>"; };
+		487383781D43EB1E0034D5BB /* CopyPasteCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CopyPasteCommand.swift; path = InputCommands/CopyPasteCommand.swift; sourceTree = "<group>"; };
+		4873837C1D43EB460034D5BB /* SendKeyCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SendKeyCommand.swift; path = InputCommands/SendKeyCommand.swift; sourceTree = "<group>"; };
+		4873837E1D43EB750034D5BB /* ModifierKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModifierKeys.swift; path = InputCommands/ModifierKeys.swift; sourceTree = "<group>"; };
+		487383801D43EC000034D5BB /* SendTextCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SendTextCommand.swift; path = InputCommands/SendTextCommand.swift; sourceTree = "<group>"; };
+		487383821D43EC1C0034D5BB /* UnknownCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnknownCommand.swift; path = InputCommands/UnknownCommand.swift; sourceTree = "<group>"; };
+		487383841D43EC360034D5BB /* WaitCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WaitCommand.swift; path = InputCommands/WaitCommand.swift; sourceTree = "<group>"; };
+		487383861D43FDDF0034D5BB /* KeyRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyRunner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,9 +77,27 @@
 		48395FBE1D434F0000BF9A6E /* KeeWebHelper */ = {
 			isa = PBXGroup;
 			children = (
+				487383731D43E4180034D5BB /* InputCommands */,
 				48395FBF1D434F0000BF9A6E /* main.swift */,
+				48395FC61D43E2C100BF9A6E /* InputParser.swift */,
+				487383861D43FDDF0034D5BB /* KeyRunner.swift */,
 			);
 			path = KeeWebHelper;
+			sourceTree = "<group>";
+		};
+		487383731D43E4180034D5BB /* InputCommands */ = {
+			isa = PBXGroup;
+			children = (
+				487383781D43EB1E0034D5BB /* CopyPasteCommand.swift */,
+				487383741D43E4330034D5BB /* InputCommandBase.swift */,
+				4873837E1D43EB750034D5BB /* ModifierKeys.swift */,
+				487383761D43E9920034D5BB /* NoOpCommand.swift */,
+				4873837C1D43EB460034D5BB /* SendKeyCommand.swift */,
+				487383801D43EC000034D5BB /* SendTextCommand.swift */,
+				487383821D43EC1C0034D5BB /* UnknownCommand.swift */,
+				487383841D43EC360034D5BB /* WaitCommand.swift */,
+			);
+			name = InputCommands;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -119,7 +157,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				487383851D43EC360034D5BB /* WaitCommand.swift in Sources */,
 				48395FC01D434F0000BF9A6E /* main.swift in Sources */,
+				487383751D43E4330034D5BB /* InputCommandBase.swift in Sources */,
+				48395FC71D43E2C100BF9A6E /* InputParser.swift in Sources */,
+				4873837D1D43EB460034D5BB /* SendKeyCommand.swift in Sources */,
+				487383791D43EB1E0034D5BB /* CopyPasteCommand.swift in Sources */,
+				487383871D43FDDF0034D5BB /* KeyRunner.swift in Sources */,
+				4873837F1D43EB750034D5BB /* ModifierKeys.swift in Sources */,
+				487383831D43EC1C0034D5BB /* UnknownCommand.swift in Sources */,
+				487383811D43EC000034D5BB /* SendTextCommand.swift in Sources */,
+				487383771D43E9920034D5BB /* NoOpCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +289,7 @@
 				48395FC51D434F0000BF9A6E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
