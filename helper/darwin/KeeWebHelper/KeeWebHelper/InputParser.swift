@@ -36,8 +36,9 @@ class InputParser {
         }
         var modifiers = ModifierKeys()
         var keyText = text
-        let firstChar = text.characters.first!
-        if firstChar < "0" || firstChar > "9" {
+        while keyText.characters.count > 0 &&
+            (keyText.characters.first! < "0" || keyText.characters.first! > "9") {
+            let firstChar = keyText.characters.first!
             switch firstChar {
             case "^":
                 modifiers.insert(ModifierKeys.ctrl)
@@ -51,7 +52,7 @@ class InputParser {
                 fputs("Bad modifier: \(firstChar)\n", stderr)
                 return NoOpCommand()
             }
-            keyText = text.substringFromIndex(text.startIndex.advancedBy(1))
+            keyText = keyText.substringFromIndex(keyText.startIndex.advancedBy(1))
         }
         let keyCode = UInt16(keyText)
         if keyCode == nil {
