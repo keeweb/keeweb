@@ -5,8 +5,10 @@ class InputParser {
         let maybeStr = readLine()
         if let str = maybeStr {
             let parts = str.characters.split(" ", maxSplit: 1)
+            if parts.count == 0 {
+                return NoOpCommand()
+            }
             let cmd = String(parts[0])
-                .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
             if cmd.characters.count == 0 {
                 return NoOpCommand()
             }
