@@ -253,6 +253,10 @@ var Locale = {
     autoTypeModifiers: 'Modifier keys',
     autoTypeKeys: 'Keys',
     autoTypeLink: 'more...',
+    autoTypeError: 'Auto-type error',
+    autoTypeErrorGeneric: 'There was an error performing auto-type: {}',
+    autoTypeErrorGlobal: 'To use system-wide shortcut, please focus the app where you want to type your password',
+    autoTypePopup: 'KeeWeb: Auto Type',
 
     appSecWarn: 'Not Secure!',
     appSecWarnBody1: 'You have loaded this app with insecure connection. ' +

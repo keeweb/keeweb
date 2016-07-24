@@ -67,7 +67,6 @@ var DetailsView = Backbone.View.extend({
         this.initScroll();
         this.listenTo(Backbone, 'select-entry', this.showEntry);
         this.listenTo(Backbone, 'copy-password', this.copyPassword);
-        this.listenTo(Backbone, 'auto-type', this.autoTypeGlobal);
         this.listenTo(Backbone, 'copy-user', this.copyUserName);
         this.listenTo(Backbone, 'copy-url', this.copyUrl);
         this.listenTo(Backbone, 'toggle-settings', this.settingsToggled);
@@ -794,17 +793,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     autoType: function() {
-        var entry = this.model;
-        // AutoType.getActiveWindowTitle(function() {
-        //     console.log(arguments);
-        // });
-        AutoType.hideWindow(() => {
-            AutoType.run(entry);
-        });
-    },
-
-    autoTypeGlobal: function() {
-        // TODO
+        Backbone.emit('auto-type', { entry: this.model });
     }
 });
 

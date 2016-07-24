@@ -88,6 +88,7 @@ app.minimizeApp = function () {
 app.getMainWindow = function () {
     return mainWindow;
 };
+app.emitBackboneEvent = emitBackboneEvent;
 
 function checkSingleInstance() {
     var shouldQuit = app.makeSingleInstance((/* commandLine, workingDirectory */) => {
@@ -112,6 +113,7 @@ function createMainWindow() {
     });
     setMenu();
     mainWindow.loadURL('file://' + htmlPath);
+    mainWindow.setContentProtection(true);
     mainWindow.webContents.on('dom-ready', () => {
         setTimeout(() => {
             mainWindow.show();
@@ -215,8 +217,9 @@ function restoreMainWindowPosition() {
     });
 }
 
-function emitBackboneEvent(e) {
-    mainWindow.webContents.executeJavaScript('Backbone.trigger("' + e + '");');
+function emitBackboneEvent(e, arg) {
+    arg = JSON.stringify(arg);
+    mainWindow.webContents.executeJavaScript(`Backbone.trigger('${e}', ${arg});`);
 }
 
 function setMenu() {

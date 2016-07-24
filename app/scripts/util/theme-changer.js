@@ -16,11 +16,15 @@ var ThemeChanger = {
                 document.body.classList.remove(cls);
             }
         });
-        document.body.classList.add('th-' + theme);
+        document.body.classList.add(this.getThemeClass(theme));
         var metaThemeColor = document.head.querySelector('meta[name=theme-color]');
         if (metaThemeColor) {
             metaThemeColor.content = window.getComputedStyle(document.body).backgroundColor;
         }
+    },
+
+    getThemeClass: function(theme) {
+        return 'th-' + theme;
     },
 
     setFontSize: function(fontSize) {

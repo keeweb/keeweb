@@ -125,19 +125,22 @@ if (window.process && window.process.versions && window.process.versions.electro
         openWindow: function(opts) {
             return this.remoteApp().openWindow(opts);
         },
-        hideWindowIfActive: function() {
+        hideApp: function() {
             var app = this.remoteApp();
-            var win = app.getMainWindow();
-            var visible = win.isVisible(), focused = win.isFocused();
-            if (!visible || !focused) {
-                return false;
-            }
-            if (process.platform === 'darwin') {
-                app.hide();
+            if (this.canMinimize()) {
+                app.getMainWindow().minimize();
             } else {
-                win.minimize();
+                app.hide();
             }
-            return true;
+        },
+        hideMainWindow: function() {
+            this.remoteApp().getMainWindow().hide();
+        },
+        unhideMainWindow: function() {
+            this.remoteApp().getMainWindow().showInactive();
+        },
+        isAppFocused: function() {
+            return !!this.electron().remote.BrowserWindow.getFocusedWindow();
         },
         spawn: function(config) {
             var ts = logger.ts();
