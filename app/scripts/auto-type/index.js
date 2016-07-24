@@ -5,7 +5,7 @@ var Backbone = require('backbone'),
     AutoTypeHelperFactory = require('./auto-type-helper-factory'),
     Launcher = require('../comp/launcher'),
     Alerts = require('../comp/alerts'),
-    AutoTypePopupView = require('../views/auto-type/auto-type-popup-view'),
+    AutoTypeSelectView = require('../views/auto-type/auto-type-select-view'),
     Logger = require('../util/logger'),
     Locale = require('../util/locale'),
     Timeouts = require('../const/timeouts');
@@ -15,12 +15,14 @@ var clearTextAutoTypeLog = localStorage.autoTypeDebug;
 
 var AutoType = {
     helper: AutoTypeHelperFactory.create(),
-
     enabled: !!Launcher,
+    selectEntryView: false,
 
-    selectEntryView: null,
-
-    init: function() {
+    init: function(appModel) {
+        if (!this.enabled) {
+            return;
+        }
+        this.appModel = appModel;
         Backbone.on('auto-type', this.handleEvent.bind(this));
     },
 
@@ -146,30 +148,36 @@ var AutoType = {
 
     selectEntryAndRun: function() {
         this.getActiveWindowTitle((e, title, url) => {
-            let entries = this.getMatchingEntries(title, url);
+            let filter = { title, url };
+            let entries = this.getMatchingEntries(filter);
             if (entries.length === 1) {
                 this.runAndHandleResult(entries[0]);
                 return;
             }
-            Launcher.hideMainWindow();
-            this.selectEntryView = new AutoTypePopupView().render();
-            this.selectEntryView.on('closed', e => {
-                Launcher.unhideMainWindow();
-                Launcher.hideApp();
-                logger.debug('Popup closed', e.result);
+            this.selectEntryView = new AutoTypeSelectView({
+                model: {
+                    appModel: this.appModel,
+                    filter: filter
+                }
+            }).render();
+            this.selectEntryView.on('result', result => {
+                logger.debug('Entry selected', result);
+                this.selectEntryView.off('result');
+                this.selectEntryView.remove();
                 this.selectEntryView = null;
-                // this.hideWindow(() => { /* this.runAndHandleResult(e.result); */ });
+                this.hideWindow(() => {
+                    if (result) {
+                        this.runAndHandleResult(result);
+                    }
+                });
             });
+            setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
         });
     },
 
     getMatchingEntries: function() {
-        return [];
+        return this.appModel.getEntries(); // TODO
     }
 };
-
-if (AutoType.enabled) {
-    AutoType.init();
-}
 
 module.exports = AutoType;

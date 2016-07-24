@@ -113,8 +113,11 @@ if (window.process && window.process.versions && window.process.versions.electro
         updaterEnabled: function() {
             return this.electron().remote.process.argv.indexOf('--disable-updater') === -1;
         },
+        getMainWindow: function() {
+            return this.remoteApp().getMainWindow();
+        },
         resolveProxy: function(url, callback) {
-            var window = this.remoteApp().getMainWindow();
+            var window = this.getMainWindow();
             var session = window.webContents.session;
             session.resolveProxy(url, proxy => {
                 var match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
@@ -133,14 +136,11 @@ if (window.process && window.process.versions && window.process.versions.electro
                 app.hide();
             }
         },
-        hideMainWindow: function() {
-            this.remoteApp().getMainWindow().hide();
-        },
-        unhideMainWindow: function() {
-            this.remoteApp().getMainWindow().showInactive();
-        },
         isAppFocused: function() {
             return !!this.electron().remote.BrowserWindow.getFocusedWindow();
+        },
+        showMainWindow: function() {
+            this.getMainWindow().show();
         },
         spawn: function(config) {
             var ts = logger.ts();

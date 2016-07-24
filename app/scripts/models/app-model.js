@@ -14,7 +14,8 @@ var Backbone = require('backbone'),
     Timeouts = require('../const/timeouts'),
     IdGenerator = require('../util/id-generator'),
     Logger = require('../util/logger'),
-    FeatureDetector = require('../util/feature-detector');
+    FeatureDetector = require('../util/feature-detector'),
+    AutoType = require('../auto-type');
 
 require('../mixins/protected-value-ex');
 
@@ -39,6 +40,8 @@ var AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'empty-trash', this.emptyTrash);
 
         this.appLogger = new Logger('app');
+
+        AutoType.init(this);
     },
 
     loadConfig: function(configLocation, callback) {
@@ -189,17 +192,20 @@ var AppModel = Backbone.Model.extend({
     },
 
     getEntries: function() {
-        var entries = new EntryCollection();
         var filter = this.prepareFilter();
-        this.files.forEach(file => {
-            file.forEachEntry(filter, (entry) => {
-                entries.push(entry);
-            });
-        });
+        let entries = this.getEntriesByFilter(filter);
         entries.sortEntries(this.sort);
-        if (this.filter.trash) {
+        if (filter.trash) {
             this.addTrashGroups(entries);
         }
+        return entries;
+    },
+
+    getEntriesByFilter: function(filter) {
+        var entries = new EntryCollection();
+        this.files.forEach(file => {
+            file.forEachEntry(filter, entry => entries.push(entry));
+        });
         return entries;
     },
 
