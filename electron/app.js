@@ -127,6 +127,7 @@ function createMainWindow() {
     mainWindow.on('resize', delaySaveMainWindowPosition);
     mainWindow.on('move', delaySaveMainWindowPosition);
     mainWindow.on('close', updateMainWindowPositionIfPending);
+    mainWindow.on('blur', mainWindowBlur);
     mainWindow.on('closed', () => {
         mainWindow = null;
         saveMainWindowPosition();
@@ -218,6 +219,10 @@ function restoreMainWindowPosition() {
             }
         }
     });
+}
+
+function mainWindowBlur() {
+    emitBackboneEvent('main-window-blur');
 }
 
 function emitBackboneEvent(e, arg) {

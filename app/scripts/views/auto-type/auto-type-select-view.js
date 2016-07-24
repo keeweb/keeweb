@@ -15,6 +15,7 @@ let AutoTypePopupView = Backbone.View.extend({
     result: null,
 
     initialize() {
+        this.listenTo(Backbone, 'main-window-blur', this.mainWindowBlur);
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
@@ -39,9 +40,13 @@ let AutoTypePopupView = Backbone.View.extend({
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
-    escPressed() {
+    cancelAndClose() {
         this.result = null;
         this.trigger('result', this.result);
+    },
+
+    escPressed() {
+        this.cancelAndClose();
     },
 
     enterPressed() {
@@ -56,6 +61,10 @@ let AutoTypePopupView = Backbone.View.extend({
 
     keyPressed(e) {
         // let char = e.charCode;
+    },
+
+    mainWindowBlur() {
+        this.cancelAndClose();
     }
 });
 
