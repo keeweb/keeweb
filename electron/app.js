@@ -109,7 +109,10 @@ function createMainWindow() {
     mainWindow = new electron.BrowserWindow({
         show: false,
         width: 1000, height: 700, 'min-width': 700, 'min-height': 400,
-        icon: path.join(__dirname, 'icon.png')
+        icon: path.join(__dirname, 'icon.png'),
+        webPreferences: {
+            backgroundThrottling: false
+        }
     });
     setMenu();
     mainWindow.loadURL('file://' + htmlPath);

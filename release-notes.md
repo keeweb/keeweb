@@ -4,6 +4,7 @@ Release notes
 ##### v1.3.0 (TBD)
 `+` solarized themes  
 `+` select field contents on search hotkey  
+`-` fix app redraw in background  
 
 ##### v1.2.4 (2016-07-20)
 `+` digital signature in installer  
