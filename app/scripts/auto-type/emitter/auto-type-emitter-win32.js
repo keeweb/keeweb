@@ -1,7 +1,7 @@
 'use strict';
 
 var Launcher = require('../../comp/launcher'),
-    AutoTypeHelper = require('../helper/auto-type-helper-win32');
+    AutoTypeNativeHelper = require('../helper/auto-type-native-helper');
 
 // https://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.send(v=vs.110).aspx
 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
@@ -24,7 +24,7 @@ var ModMap = {
     '^^': '^'
 };
 
-var TextReplaceRegex = /[\(\)\{}\[\]\+\^%~]/g;
+var TextReplaceRegex = /[(){}\[\]+\^%~]/g;
 
 var AutoTypeEmitter = function(callback) {
     this.callback = callback;
@@ -48,10 +48,10 @@ AutoTypeEmitter.prototype.text = function(text) {
 
 AutoTypeEmitter.prototype.key = function(key) {
     if (typeof key !== 'number') {
-        key = KeyMap[key];
-        if (!key) {
+        if (!KeyMap[key]) {
             return this.callback('Bad key: ' + key);
         }
+        key = KeyMap[key];
     }
     if (typeof key === 'number') {
         this.pendingScript.push('key ' + this.addMod('') + key);
@@ -97,7 +97,7 @@ AutoTypeEmitter.prototype.addMod = function(text) {
 
 AutoTypeEmitter.prototype.runScript = function(script) {
     Launcher.spawn({
-        cmd: AutoTypeHelper.getHelperPath(),
+        cmd: AutoTypeNativeHelper.getHelperPath(),
         data: script,
         complete: this.callback
     });
