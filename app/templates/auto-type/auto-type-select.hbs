@@ -1,3 +1,11 @@
 <div class="at-select">
-    <h1>{{res 'autoTypeHeader'}}</h1>
+    <div class="at-select__header">
+        <h1 class="at-select__header-text">{{res 'autoTypeHeader'}}</h1>
+        {{#if filterText}}
+        <div class="at-select__header-filter">
+            <input type="text" readonly value="{{filterText}}" class="at-select__header-filter-input" />
+            <i class="at-select__header-filter-clear fa fa-times" />
+        </div>
+        {{/if}}
+    </div>
 </div>

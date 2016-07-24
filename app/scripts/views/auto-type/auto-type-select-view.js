@@ -10,6 +10,7 @@ let AutoTypePopupView = Backbone.View.extend({
     template: require('templates/auto-type/auto-type-select.hbs'),
 
     events: {
+        'click .at-select__header-filter-clear': 'clearFilterText'
     },
 
     result: null,
@@ -20,12 +21,15 @@ let AutoTypePopupView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this, false, true);
         KeyHandler.on('keypress:auto-type', this.keyPressed.bind(this));
         KeyHandler.setModal('auto-type');
     },
 
     render() {
-        this.renderTemplate(this.model);
+        this.renderTemplate({
+            filterText: this.model.filter.text
+        });
         document.activeElement.blur();
         return this;
     },
@@ -35,6 +39,7 @@ let AutoTypePopupView = Backbone.View.extend({
         KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
         KeyHandler.offKey(Keys.DOM_VK_UP, this.upPressed, this);
         KeyHandler.offKey(Keys.DOM_VK_DOWN, this.downPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this);
         KeyHandler.off('keypress:auto-type');
         KeyHandler.setModal(null);
         Backbone.View.prototype.remove.apply(this, arguments);
@@ -60,7 +65,22 @@ let AutoTypePopupView = Backbone.View.extend({
     },
 
     keyPressed(e) {
-        // let char = e.charCode;
+        if (e.which) {
+            this.model.filter.text += String.fromCharCode(e.which);
+            this.render();
+        }
+    },
+
+    backSpacePressed() {
+        if (this.model.filter.text) {
+            this.model.filter.text = this.model.filter.text.substr(0, this.model.filter.text.length - 1);
+            this.render();
+        }
+    },
+
+    clearFilterText() {
+        this.model.filter.text = '';
+        this.render();
     },
 
     mainWindowBlur() {

@@ -148,7 +148,7 @@ var AutoType = {
 
     selectEntryAndRun: function() {
         this.getActiveWindowTitle((e, title, url) => {
-            let filter = { title, url };
+            let filter = { title, url, text: '' };
             let entries = this.getMatchingEntries(filter);
             if (entries.length === 1) {
                 this.runAndHandleResult(entries[0]);

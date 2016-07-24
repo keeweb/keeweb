@@ -256,7 +256,7 @@ var Locale = {
     autoTypeError: 'Auto-type error',
     autoTypeErrorGeneric: 'There was an error performing auto-type: {}',
     autoTypeErrorGlobal: 'To use system-wide shortcut, please focus the app where you want to type your password',
-    autoTypeHeader: 'Auto-Type: Select Entry',
+    autoTypeHeader: 'Auto-Type: Select',
 
     appSecWarn: 'Not Secure!',
     appSecWarnBody1: 'You have loaded this app with insecure connection. ' +

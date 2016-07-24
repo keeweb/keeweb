@@ -6,4 +6,28 @@
   z-index: $z-index-no-modal;
   opacity: 1;
   padding: $base-padding;
+
+  &__header {
+    @include display(flex);
+    &-text {
+      @include flex(1 1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: $base-padding-h;
+    }
+    &-filter {
+      @include flex(auto 0);
+      position: relative;
+    }
+    &-filter-input {
+      width: 200px;
+    }
+    &-filter-clear {
+      cursor: pointer;
+      position: absolute;
+      right: .7em;
+      top: .7em;
+    }
+  }
 }
