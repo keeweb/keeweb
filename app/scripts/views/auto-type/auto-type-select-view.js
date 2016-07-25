@@ -3,19 +3,26 @@
 const Backbone = require('backbone');
 const Keys = require('../../const/keys');
 const KeyHandler = require('../../comp/key-handler');
+const Locale = require('../../util/locale');
+const AppSettingsModel = require('../../models/app-settings-model');
+const EntryPresenter = require('../../presenters/entry-presenter');
+const Scrollable = require('../../mixins/scrollable');
 
 let AutoTypePopupView = Backbone.View.extend({
     el: 'body',
 
     template: require('templates/auto-type/auto-type-select.hbs'),
+    itemTemplate: require('templates/auto-type/auto-type-select-item.hbs'),
 
     events: {
-        'click .at-select__header-filter-clear': 'clearFilterText'
+        'click .at-select__header-filter-clear': 'clearFilterText',
+        'click .at-select__message-clear-filter': 'clearFilterWindow'
     },
 
     result: null,
 
     initialize() {
+        this.initScroll();
         this.listenTo(Backbone, 'main-window-blur', this.mainWindowBlur);
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
@@ -27,10 +34,34 @@ let AutoTypePopupView = Backbone.View.extend({
     },
 
     render() {
+        let topMessage, topClearFilterVisible;
+        if (this.model.filter.title || this.model.filter.url) {
+            topMessage = Locale.autoTypeMsgMatchedByWindow.replace('{}',
+                this.model.filter.title || this.model.filter.url);
+            topClearFilterVisible = !this.model.filter.ignoreWindowInfo;
+        } else {
+            topMessage = Locale.autoTypeMsgNoWindow;
+        }
+        let noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
+        let presenter = new EntryPresenter(null, noColor);
+        let itemsHtml = '';
+        let itemTemplate = this.itemTemplate;
+        this.model.filter.getEntries().forEach(entry => {
+            presenter.present(entry);
+            itemsHtml += itemTemplate(presenter);
+        });
         this.renderTemplate({
-            filterText: this.model.filter.text
+            filterText: this.model.filter.text,
+            topMessage: topMessage,
+            topClearFilterVisible: topClearFilterVisible,
+            itemsHtml: itemsHtml
         });
         document.activeElement.blur();
+        this.createScroll({
+            root: this.$el.find('.at-select__items')[0],
+            scroller: this.$el.find('.scroller')[0],
+            bar: this.$el.find('.scroller__bar')[0]
+        });
         return this;
     },
 
@@ -51,7 +82,11 @@ let AutoTypePopupView = Backbone.View.extend({
     },
 
     escPressed() {
-        this.cancelAndClose();
+        if (this.model.filter.text) {
+            this.clearFilterText();
+        } else {
+            this.cancelAndClose();
+        }
     },
 
     enterPressed() {
@@ -83,9 +118,16 @@ let AutoTypePopupView = Backbone.View.extend({
         this.render();
     },
 
+    clearFilterWindow() {
+        this.model.filter.ignoreWindowInfo = true;
+        this.render();
+    },
+
     mainWindowBlur() {
         this.cancelAndClose();
     }
 });
+
+_.extend(AutoTypePopupView.prototype, Scrollable);
 
 module.exports = AutoTypePopupView;

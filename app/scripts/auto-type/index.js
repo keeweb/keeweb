@@ -2,6 +2,7 @@
 
 var Backbone = require('backbone'),
     AutoTypeParser = require('./auto-type-parser'),
+    AutoTypeFilter = require('./auto-type-filter'),
     AutoTypeHelperFactory = require('./auto-type-helper-factory'),
     Launcher = require('../comp/launcher'),
     Alerts = require('../comp/alerts'),
@@ -148,15 +149,14 @@ var AutoType = {
 
     selectEntryAndRun: function() {
         this.getActiveWindowTitle((e, title, url) => {
-            let filter = { title, url, text: '' };
-            let entries = this.getMatchingEntries(filter);
+            let filter = new AutoTypeFilter({title, url}, this.appModel);
+            let entries = filter.getEntries();
             if (entries.length === 1) {
                 this.runAndHandleResult(entries[0]);
                 return;
             }
             this.selectEntryView = new AutoTypeSelectView({
                 model: {
-                    appModel: this.appModel,
                     filter: filter
                 }
             }).render();
@@ -173,10 +173,6 @@ var AutoType = {
             });
             setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
         });
-    },
-
-    getMatchingEntries: function() {
-        return this.appModel.getEntries(); // TODO
     }
 };
 

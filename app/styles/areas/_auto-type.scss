@@ -30,4 +30,32 @@
       top: .7em;
     }
   }
+  &__message {
+    @include display(flex);
+    &-text {
+      @include flex(1 1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: $base-padding-h;
+    }
+  }
+  &__items {
+    // TODO: fix scroller
+    @include display(flex);
+    @include flex-direction(column);
+    @include align-items(stretch);
+    @include scrollbar-on-hover;
+    overflow: hidden;
+    position: relative;
+    >.scroller {
+      @include flex(1);
+      @include align-self(stretch);
+      position: relative;
+      @include mobile {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+  }
 }

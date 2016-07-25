@@ -140,7 +140,9 @@ if (window.process && window.process.versions && window.process.versions.electro
             return !!this.electron().remote.BrowserWindow.getFocusedWindow();
         },
         showMainWindow: function() {
-            this.getMainWindow().show();
+            let win = this.getMainWindow();
+            win.show();
+            win.restore();
         },
         spawn: function(config) {
             var ts = logger.ts();
