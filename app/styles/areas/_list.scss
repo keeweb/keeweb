@@ -21,6 +21,7 @@
       @include flex(1);
       @include align-self(stretch);
       position: relative;
+      overflow-x: hidden;
       @include mobile {
         width: 100% !important;
         max-width: 100% !important;

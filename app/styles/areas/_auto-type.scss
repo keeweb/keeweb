@@ -2,6 +2,10 @@
   @include position(absolute, 0 null null 0);
   @include size(100%);
   @include th { background-color: background-color(); }
+  @include display(flex);
+  @include flex-direction(column);
+  @include align-items(stretch);
+  @include justify-content(flex-start);
   box-sizing: border-box;
   z-index: $z-index-no-modal;
   opacity: 1;
@@ -32,6 +36,7 @@
   }
   &__message {
     @include display(flex);
+    margin-bottom: $base-padding-v * 2;
     &-text {
       @include flex(1 1);
       overflow: hidden;
@@ -41,21 +46,38 @@
     }
   }
   &__items {
-    // TODO: fix scroller
-    @include display(flex);
-    @include flex-direction(column);
-    @include align-items(stretch);
+    @include flex(1);
     @include scrollbar-on-hover;
-    overflow: hidden;
+    margin-bottom: $base-padding-v;
     position: relative;
+    overflow: hidden;
     >.scroller {
-      @include flex(1);
-      @include align-self(stretch);
-      position: relative;
-      @include mobile {
-        width: 100% !important;
-        max-width: 100% !important;
+      @include display(flex);
+      @include flex-direction(row);
+      @include justify-content(center);
+    }
+  }
+  &__table {
+    @include flex(1);
+    width: 100%;
+    overflow: hidden;
+    border-collapse: collapse;
+    td, th {
+      padding: $base-padding;
+      &:first-of-type {
+        width: 1em;
+        text-align: center;
       }
     }
+  }
+  &__item {
+    @include area-selectable(right);
+    &--active, &--active:hover {
+      @include area-selected(right);
+      cursor: pointer;
+    }
+  }
+  &__empty-title {
+    @include align-self(center);
   }
 }

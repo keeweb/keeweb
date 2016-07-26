@@ -16,10 +16,12 @@ let AutoTypePopupView = Backbone.View.extend({
 
     events: {
         'click .at-select__header-filter-clear': 'clearFilterText',
-        'click .at-select__message-clear-filter': 'clearFilterWindow'
+        'click .at-select__message-clear-filter': 'clearFilterWindow',
+        'click .at-select__item': 'itemClicked'
     },
 
     result: null,
+    entries: null,
 
     initialize() {
         this.initScroll();
@@ -43,10 +45,12 @@ let AutoTypePopupView = Backbone.View.extend({
             topMessage = Locale.autoTypeMsgNoWindow;
         }
         let noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
-        let presenter = new EntryPresenter(null, noColor);
+        this.entries = this.model.filter.getEntries();
+        this.result = this.entries.first();
+        let presenter = new EntryPresenter(null, noColor, this.result && this.result.id);
         let itemsHtml = '';
         let itemTemplate = this.itemTemplate;
-        this.model.filter.getEntries().forEach(entry => {
+        this.entries.forEach(entry => {
             presenter.present(entry);
             itemsHtml += itemTemplate(presenter);
         });
@@ -81,6 +85,10 @@ let AutoTypePopupView = Backbone.View.extend({
         this.trigger('result', this.result);
     },
 
+    closeWithResult() {
+        this.trigger('result', this.result);
+    },
+
     escPressed() {
         if (this.model.filter.text) {
             this.clearFilterText();
@@ -90,13 +98,38 @@ let AutoTypePopupView = Backbone.View.extend({
     },
 
     enterPressed() {
-        this.trigger('result', this.result);
+        this.closeWithResult();
     },
 
-    upPressed() {
+    upPressed(e) {
+        e.preventDefault();
+        let activeIndex = this.entries.indexOf(this.result) - 1;
+        if (activeIndex >= 0) {
+            this.result = this.entries.at(activeIndex);
+            this.highlightActive();
+        }
     },
 
-    downPressed() {
+    downPressed(e) {
+        e.preventDefault();
+        let activeIndex = this.entries.indexOf(this.result) + 1;
+        if (activeIndex < this.entries.length) {
+            this.result = this.entries.at(activeIndex);
+            this.highlightActive();
+        }
+    },
+
+    highlightActive() {
+        this.$el.find('.at-select__item').removeClass('at-select__item--active');
+        let activeItem = this.$el.find('.at-select__item[data-id="' + this.result.id + '"]');
+        activeItem.addClass('at-select__item--active');
+        let itemRect = activeItem[0].getBoundingClientRect();
+        let listRect = this.scroller[0].getBoundingClientRect();
+        if (itemRect.top < listRect.top) {
+            this.scroller[0].scrollTop += itemRect.top - listRect.top;
+        } else if (itemRect.bottom > listRect.bottom) {
+            this.scroller[0].scrollTop += itemRect.bottom - listRect.bottom;
+        }
     },
 
     keyPressed(e) {
@@ -123,8 +156,11 @@ let AutoTypePopupView = Backbone.View.extend({
         this.render();
     },
 
-    mainWindowBlur() {
-        this.cancelAndClose();
+    itemClicked(e) {
+        let itemEl = $(e.target).closest('.at-select__item');
+        let id = itemEl.data('id');
+        this.result = this.entries.get(id);
+        this.closeWithResult();
     }
 });
 
