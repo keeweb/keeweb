@@ -26,6 +26,7 @@ var AppSettingsModel = Backbone.Model.extend({
         skipHttpsWarning: false,
         demoOpened: false,
         fontSize: 0,
+        tableViewColumns: null,
         dropbox: true,
         webdav: true,
         gdrive: true,

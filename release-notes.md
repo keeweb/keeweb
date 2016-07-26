@@ -5,6 +5,7 @@ Release notes
 `+` solarized themes  
 `+` select field contents on search hotkey  
 `+` option to preload default config  
+`+` save displayed table columns  
 `-` fix app redraw in background  
 
 ##### v1.2.4 (2016-07-20)

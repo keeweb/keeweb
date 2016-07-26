@@ -57,6 +57,8 @@ var ListView = Backbone.View.extend({
 
         this.listenTo(this.model.settings, 'change:tableView', this.setTableView);
 
+        this.readTableColumnsEnabled();
+
         this.items = [];
     },
 
@@ -266,6 +268,21 @@ var ListView = Backbone.View.extend({
         col.enabled = !col.enabled;
         e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
         this.render();
+        this.saveTableColumnsEnabled();
+    },
+
+    readTableColumnsEnabled() {
+        let tableViewColumns = AppSettingsModel.instance.get('tableViewColumns');
+        if (tableViewColumns && tableViewColumns.length) {
+            this.tableColumns.forEach(col => {
+                col.enabled = tableViewColumns.indexOf(col.name) >= 0;
+            });
+        }
+    },
+
+    saveTableColumnsEnabled() {
+        let tableViewColumns = this.tableColumns.filter(column => column.enabled).map(column => column.name);
+        AppSettingsModel.instance.set('tableViewColumns', tableViewColumns);
     }
 });
 
