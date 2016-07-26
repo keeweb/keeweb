@@ -82,7 +82,11 @@ $(() => {
     }
 
     function getConfigParam() {
-        var match = location.search.match(/[\?&]config=([^&]+)/i);
+        let metaConfig = document.head.querySelector('meta[name=kw-config]');
+        if (metaConfig && metaConfig.content) {
+            return metaConfig.content;
+        }
+        var match = location.search.match(/[?&]config=([^&]+)/i);
         if (match && match[1]) {
             return match[1];
         }
