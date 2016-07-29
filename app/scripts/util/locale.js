@@ -307,6 +307,8 @@ var Locale = {
     setGenThemeDb: 'Dark brown',
     setGenThemeWh: 'White',
     setGenThemeHc: 'High contrast',
+    setGenThemeSd: 'Solarized dark',
+    setGenThemeSl: 'Solarized light',
     setGenFontSize: 'Font size',
     setGenFontSizeNormal: 'Normal',
     setGenFontSizeLarge: 'Large',

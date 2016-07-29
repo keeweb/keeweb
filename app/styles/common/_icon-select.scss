@@ -1,4 +1,4 @@
-&.icon-select {
+.icon-select {
   &__items {
     @include display(flex);
     @include align-items(flex-start);
