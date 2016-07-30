@@ -16,5 +16,6 @@ while true {
     } else {
         break
     }
+    // ugly way to wait for all keystrokes to be sent. is there a better way?
     usleep(100);
 }
