@@ -40,16 +40,13 @@ AutoTypeEmitter.prototype.text = function(text) {
     Object.keys(this.mod).forEach(mod => {
         this.pendingScript.push('keydown ' + ModMap[mod]);
     });
-    this.pendingScript.push('type ' + text.split('').map(char => {
-        return char === '\'' ? '"\'"' : '\'' + char + '\'';
-    }).join(''));
-    this.waitComplete(err => {
-        if (err) { return this.callback(err); }
-        Object.keys(this.mod).forEach(mod => {
-            this.pendingScript.push('keyup ' + ModMap[mod]);
-        });
-        this.callback();
+    text.split('').map(char => {
+        this.pendingScript.push('key U' + char.charCodeAt(0).toString(16));
     });
+    Object.keys(this.mod).forEach(mod => {
+        this.pendingScript.push('keyup ' + ModMap[mod]);
+    });
+    this.waitComplete();
 };
 
 AutoTypeEmitter.prototype.key = function(key) {
