@@ -56,14 +56,34 @@ var AppModel = Backbone.Model.extend({
                 this.appLogger.error('Error loading app config', xhr.statusText);
                 return callback(true);
             }
+            if (!xhr.response.settings) {
+                this.appLogger.error('Invalid app config, no settings section', xhr.response);
+                return callback(true);
+            }
             this.appLogger.info('Loaded app config from', configLocation, this.appLogger.ts(ts));
-            this.settings.set(xhr.response);
+            this.applyUserConfig(xhr.response);
             callback();
         });
         xhr.addEventListener('error', () => {
             this.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
             callback(true);
         });
+    },
+
+    applyUserConfig(config) {
+        this.settings.set(config.settings);
+        if (config.file && config.file.storage && config.file.name && config.file.path) {
+            if (!this.fileInfos.getMatch(config.file.storage, config.file.name, config.file.path)) {
+                var fileInfo = new FileInfoModel({
+                    id: IdGenerator.uuid(),
+                    name: config.file.name,
+                    storage: config.file.storage,
+                    path: config.file.path,
+                    opts: config.file.options
+                });
+                this.fileInfos.unshift(fileInfo);
+            }
+        }
     },
 
     addFile: function(file) {
@@ -328,10 +348,10 @@ var AppModel = Backbone.Model.extend({
         } else if (!params.storage) {
             logger.info('Open file from cache as main storage');
             this.openFileFromCache(params, callback, fileInfo);
-        } else if (fileInfo && fileInfo.get('rev') === params.rev && fileInfo.get('storage') !== 'file') {
+        } else if (fileInfo && fileInfo.openDate && fileInfo.get('rev') === params.rev && fileInfo.get('storage') !== 'file') {
             logger.info('Open file from cache because it is latest');
             this.openFileFromCache(params, callback, fileInfo);
-        } else if (!fileInfo || params.storage === 'file') {
+        } else if (!fileInfo || !fileInfo.openDate || params.storage === 'file') {
             logger.info('Open file from storage', params.storage);
             var storage = Storage[params.storage];
             var storageLoad = function() {

@@ -5,7 +5,7 @@ Release notes
 `+` context menu  
 `+` solarized themes  
 `+` select field contents on search hotkey  
-`+` option to preload default config  
+`+` option to preload default config and file  
 `+` save displayed table columns  
 `-` fix app redraw in background  
 
