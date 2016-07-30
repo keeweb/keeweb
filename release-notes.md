@@ -2,6 +2,7 @@ Release notes
 -------------
 
 ##### v1.3.0 (TBD)
+`+` context menu  
 `+` solarized themes  
 `+` select field contents on search hotkey  
 `+` option to preload default config  

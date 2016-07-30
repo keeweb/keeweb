@@ -1,8 +1,8 @@
 'use strict';
 
-var Backbone = require('backbone');
+const Backbone = require('backbone');
 
-var DropdownView = Backbone.View.extend({
+let DropdownView = Backbone.View.extend({
     template: require('templates/dropdown.hbs'),
 
     events: {
@@ -11,26 +11,38 @@ var DropdownView = Backbone.View.extend({
 
     initialize: function () {
         this.bodyClick = this.bodyClick.bind(this);
-        $('body').on('click', this.bodyClick);
+        this.listenTo(Backbone, 'show-context-menu', this.bodyClick);
+        $('body').on('click contextmenu keyup', this.bodyClick);
     },
 
     render: function (config) {
         this.options = config.options;
         this.renderTemplate(config);
         this.$el.appendTo(document.body);
-        var ownRect = this.$el[0].getBoundingClientRect();
-        var left = config.position.left || (config.position.right - ownRect.right + ownRect.left);
-        this.$el.css({ top: config.position.top, left: left });
+        let ownRect = this.$el[0].getBoundingClientRect();
+        let bodyRect = document.body.getBoundingClientRect();
+        let left = config.position.left || (config.position.right - ownRect.right + ownRect.left);
+        let top = config.position.top;
+        if (left + ownRect.width > bodyRect.right) {
+            left = Math.max(0, bodyRect.right - ownRect.width);
+        }
+        if (top + ownRect.height > bodyRect.bottom) {
+            top = Math.max(0, bodyRect.bottom - ownRect.height);
+        }
+        this.$el.css({ top: top, left: left });
         return this;
     },
 
     remove: function() {
-        $('body').off('click', this.bodyClick);
+        this.viewRemoved = true;
+        $('body').off('click contextmenu keyup', this.bodyClick);
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
     bodyClick: function() {
-        this.trigger('cancel');
+        if (!this.viewRemoved) {
+            this.trigger('cancel');
+        }
     },
 
     itemClick: function(e) {

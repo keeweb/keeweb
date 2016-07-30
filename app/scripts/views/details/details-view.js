@@ -58,7 +58,8 @@ var DetailsView = Backbone.View.extend({
         'change .details__attachment-input-file': 'attachmentFileChange',
         'dragover .details': 'dragover',
         'dragleave .details': 'dragleave',
-        'drop .details': 'drop'
+        'drop .details': 'drop',
+        'contextmenu .details': 'contextMenu'
     },
 
     initialize: function () {
@@ -70,6 +71,7 @@ var DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'copy-user', this.copyUserName);
         this.listenTo(Backbone, 'copy-url', this.copyUrl);
         this.listenTo(Backbone, 'toggle-settings', this.settingsToggled);
+        this.listenTo(Backbone, 'context-menu-select', this.contextMenuSelect);
         this.listenTo(OtpQrReqder, 'qr-read', this.otpCodeRead);
         this.listenTo(OtpQrReqder, 'enter-manually', this.otpEnterManually);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyPassword, this, KeyHandler.SHORTCUT_ACTION, false, true);
@@ -749,6 +751,31 @@ var DetailsView = Backbone.View.extend({
 
     backClick: function() {
         Backbone.trigger('toggle-details', false);
+    },
+
+    contextMenu(e) {
+        var canCopy = document.queryCommandSupported('copy');
+        let options = [];
+        if (canCopy) {
+            options.push({ value: 'det-copy-password', icon: 'clipboard', text: Locale.detMenuCopyPassword });
+            options.push({ value: 'det-copy-user', icon: 'clipboard', text: Locale.detMenuCopyUser });
+        }
+        options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
+        Backbone.trigger('show-context-menu', _.extend(e, { options }));
+    },
+
+    contextMenuSelect(e) {
+        switch (e.item) {
+            case 'det-copy-password':
+                this.copyPassword();
+                break;
+            case 'det-copy-user':
+                this.copyUserName();
+                break;
+            case 'det-add-new':
+                this.addNewField();
+                break;
+        }
     },
 
     setupOtp: function() {

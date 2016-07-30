@@ -12,6 +12,7 @@ var Backbone = require('backbone'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
     KeyChangeView = require('../views/key-change-view'),
+    DropdownView = require('../views/dropdown-view'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
     Timeouts = require('../const/timeouts'),
@@ -28,7 +29,7 @@ var AppView = Backbone.View.extend({
     template: require('templates/app.hbs'),
 
     events: {
-        'contextmenu': 'contextmenu',
+        'contextmenu': 'contextMenu',
         'drop': 'drop',
         'dragover': 'dragover',
         'click a[target=_blank]': 'extLinkClick',
@@ -74,6 +75,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
         this.listenTo(Backbone, 'user-idle', this.userIdle);
         this.listenTo(Backbone, 'app-minimized', this.appMinimized);
+        this.listenTo(Backbone, 'show-context-menu', this.showContextMenu);
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
@@ -105,6 +107,7 @@ var AppView = Backbone.View.extend({
     },
 
     showOpenFile: function() {
+        this.hideContextMenu();
         this.views.menu.hide();
         this.views.menuDrag.hide();
         this.views.listWrap.hide();
@@ -546,10 +549,44 @@ var AppView = Backbone.View.extend({
         }
     },
 
-    contextmenu: function(e) {
-        if (['input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) < 0) {
+    isContextMenuAllowed(e) {
+        return ['input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) < 0;
+    },
+
+    contextMenu: function(e) {
+        if (this.isContextMenuAllowed(e)) {
             e.preventDefault();
         }
+    },
+
+    showContextMenu: function(e) {
+        if (e.options && this.isContextMenuAllowed(e)) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            if (this.views.contextMenu) {
+                this.views.contextMenu.remove();
+            }
+            let menu = new DropdownView({ model: e });
+            menu.render({
+                position: { left: e.pageX, top: e.pageY },
+                options: e.options
+            });
+            menu.on('cancel', e => this.hideContextMenu());
+            menu.on('select', e => this.contextMenuSelect(e));
+            this.views.contextMenu = menu;
+        }
+    },
+
+    hideContextMenu: function() {
+        if (this.views.contextMenu) {
+            this.views.contextMenu.remove();
+            delete this.views.contextMenu;
+        }
+    },
+
+    contextMenuSelect: function(e) {
+        this.hideContextMenu();
+        Backbone.trigger('context-menu-select', e);
     },
 
     dragover: function(e) {
