@@ -4,6 +4,7 @@ Release notes
 ##### v1.3.0 (TBD)
 `+` context menu  
 `+` solarized themes  
+`+` group reorder  
 `+` select field contents on search hotkey  
 `+` option to preload default config and file  
 `+` save displayed table columns  

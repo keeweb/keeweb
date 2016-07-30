@@ -27,7 +27,7 @@
     "bourbon": "4.2.7",
     "dropbox": "keeweb/dropbox-js#0ac0efdc2711eece73f6ac044459e1fd0d5e9390",
     "font-awesome": "4.6.3",
-    "kdbxweb": "0.4.1",
+    "kdbxweb": "0.4.3",
     "normalize.css": "4.2.0",
     "pikaday": "1.4.0",
     "FileSaver.js": "eligrey/FileSaver.js",
