@@ -278,6 +278,13 @@ var AppView = Backbone.View.extend({
     },
 
     beforeUnload: function(e) {
+        let exitEvent = { preventDefault() { this.prevented = true; } };
+        Backbone.trigger('main-window-will-close', exitEvent);
+        if (exitEvent.prevented) {
+            Launcher.preventExit(e);
+            console.log('prevented');
+            return;
+        }
         if (this.model.files.hasDirtyFiles()) {
             if (Launcher && !Launcher.exitRequested) {
                 if (!this.exitAlertShown) {
