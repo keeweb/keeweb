@@ -1,0 +1,9 @@
+{
+  "name": "KeeWeb",
+  "short_name": "KeeWeb",
+  "description": "Free cross-platform password manager compatible with KeePass",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#6386EC",
+  "background_color": "#6386EC"
+}
