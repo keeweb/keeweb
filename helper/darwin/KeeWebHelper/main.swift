@@ -16,4 +16,5 @@ while true {
     } else {
         break
     }
+    usleep(100);
 }
