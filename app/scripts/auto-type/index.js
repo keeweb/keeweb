@@ -28,7 +28,7 @@ var AutoType = {
     },
 
     handleEvent: function(e) {
-        let entry = e && entry || null;
+        let entry = e && e.entry || null;
         logger.debug('Auto type event', entry);
         if (entry) {
             this.hideWindow(() => { this.runAndHandleResult(entry); });

@@ -820,7 +820,7 @@ var DetailsView = Backbone.View.extend({
     },
 
     autoType: function() {
-        Backbone.emit('auto-type', { entry: this.model });
+        Backbone.trigger('auto-type', { entry: this.model });
     }
 });
 
