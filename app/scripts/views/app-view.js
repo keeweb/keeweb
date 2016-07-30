@@ -282,7 +282,6 @@ var AppView = Backbone.View.extend({
         Backbone.trigger('main-window-will-close', exitEvent);
         if (exitEvent.prevented) {
             Launcher.preventExit(e);
-            console.log('prevented');
             return;
         }
         if (this.model.files.hasDirtyFiles()) {
