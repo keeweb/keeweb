@@ -214,16 +214,16 @@ var AppModel = Backbone.Model.extend({
     },
 
     getEntries: function() {
-        var filter = this.prepareFilter();
-        let entries = this.getEntriesByFilter(filter);
+        let entries = this.getEntriesByFilter(this.filter);
         entries.sortEntries(this.sort);
-        if (filter.trash) {
+        if (this.filter.trash) {
             this.addTrashGroups(entries);
         }
         return entries;
     },
 
     getEntriesByFilter: function(filter) {
+        filter = this.prepareFilter(filter);
         var entries = new EntryCollection();
         this.files.forEach(file => {
             file.forEachEntry(filter, entry => entries.push(entry));
@@ -242,8 +242,8 @@ var AppModel = Backbone.Model.extend({
         });
     },
 
-    prepareFilter: function() {
-        var filter = _.clone(this.filter);
+    prepareFilter: function(filter) {
+        filter = _.clone(filter);
         if (filter.text) {
             filter.textLower = filter.text.toLowerCase();
         }

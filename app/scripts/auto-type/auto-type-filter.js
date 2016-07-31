@@ -9,7 +9,14 @@ let AutoTypeFilter = function(windowInfo, appModel) {
 };
 
 AutoTypeFilter.prototype.getEntries = function() {
-    return this.appModel.getEntries(); // TODO
+    let filter = {
+        text: this.text
+    };
+    if (!this.ignoreWindowInfo) {
+        filter.title = this.title; // TODO
+        filter.url = this.url; // TODO
+    }
+    return this.appModel.getEntriesByFilter(filter); // TODO: sort entries
 };
 
 module.exports = AutoTypeFilter;
