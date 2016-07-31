@@ -72,17 +72,19 @@ var AppModel = Backbone.Model.extend({
 
     applyUserConfig(config) {
         this.settings.set(config.settings);
-        if (config.file && config.file.storage && config.file.name && config.file.path) {
-            if (!this.fileInfos.getMatch(config.file.storage, config.file.name, config.file.path)) {
-                var fileInfo = new FileInfoModel({
+        if (config.files) {
+            config.files
+                .filter(file => file && file.storage && file.name && file.path &&
+                    !this.fileInfos.getMatch(file.storage, file.name, file.path))
+                .map(file => new FileInfoModel({
                     id: IdGenerator.uuid(),
-                    name: config.file.name,
-                    storage: config.file.storage,
-                    path: config.file.path,
-                    opts: config.file.options
-                });
-                this.fileInfos.unshift(fileInfo);
-            }
+                    name: file.name,
+                    storage: file.storage,
+                    path: file.path,
+                    opts: file.options
+                }))
+                .reverse()
+                .forEach(fi => this.fileInfos.unshift(fi));
         }
     },
 
@@ -358,7 +360,7 @@ var AppModel = Backbone.Model.extend({
                 logger.info('Load from storage');
                 storage.load(params.path, params.opts, (err, data, stat) => {
                     if (err) {
-                        if (fileInfo) {
+                        if (fileInfo && fileInfo.openDate) {
                             logger.info('Open file from cache because of storage load error', err);
                             that.openFileFromCache(params, callback, fileInfo);
                         } else {

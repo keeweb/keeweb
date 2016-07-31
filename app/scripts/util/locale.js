@@ -169,6 +169,7 @@ var Locale = {
     openConfigErrorNotFound: 'File not found',
     openError: 'Error',
     openErrorDescription: 'There was an error opening file',
+    openErrorFileNotFound: 'File not found',
 
     detAttDownload: 'Shift-click attachment button to download or ',
     detAttDelToRemove: 'Delete to remove',

@@ -35,10 +35,10 @@
     "onedrive": true,
     "onedriveClientId": null
   },
-  "file": {
+  "files": [{
     "storage": "webdav",
     "name": "",
     "path": "",
     "options": { "user": "", "password": "" }
-  }
+  }]
 }
