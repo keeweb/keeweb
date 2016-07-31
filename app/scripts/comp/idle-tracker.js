@@ -1,20 +1,25 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    AppSettingsModel = require('../models/app-settings-model');
+const Backbone = require('backbone');
+const AppSettingsModel = require('../models/app-settings-model');
 
-var IdleTracker = {
-    idleMinutes: 0,
+let IdleTracker = {
+    idleTimeout: 0,
     init: function() {
-        setInterval(this.minuteTick.bind(this), 1000 * 60);
+        this.scheduleLock();
     },
-    minuteTick: function() {
-        if (++this.idleMinutes === AppSettingsModel.instance.get('idleMinutes')) {
-            Backbone.trigger('user-idle');
+    scheduleLock() {
+        let idleMinutes = AppSettingsModel.instance.get('idleMinutes');
+        if (this.idleTimeout) {
+            clearTimeout(this.idleTimeout);
         }
+        this.idleTimeout = setTimeout(this.triggerIdle, idleMinutes * 60 * 1000);
     },
-    regUserAction: function() {
-        this.idleMinutes = 0;
+    triggerIdle() {
+        Backbone.trigger('user-idle');
+    },
+    regUserAction() {
+        this.scheduleLock();
     }
 };
 
