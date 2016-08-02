@@ -52,7 +52,7 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
             if (entryUrlParts[2] === this.urlParts[2]) {
                 rank += 10;
                 // path
-                rank += this.getStringRank(this.getStringRank(entryUrlParts[3], this.urlParts[3]));
+                rank += this.getStringRank(entryUrlParts[3], this.urlParts[3]);
                 // scheme
                 if (entryUrlParts[1] === this.urlParts[1]) {
                     rank += 5;
