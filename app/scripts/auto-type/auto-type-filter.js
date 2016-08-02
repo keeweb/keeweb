@@ -52,10 +52,18 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
             if (entryUrlParts[2] === this.urlParts[2]) {
                 rank += 10;
                 // path
-                rank += this.getStringRank(entryUrlParts[3], this.urlParts[3]);
+                if (entryUrlParts[3] === this.urlParts[3]) {
+                    rank += 10;
+                } else if (entryUrlParts[3] && this.urlParts[3]) {
+                    if (entryUrlParts[3].lastIndexOf(this.urlParts[3], 0) === 0) {
+                        rank += 5;
+                    } else if (this.urlParts.lastIndexOf(entryUrlParts[3], 0) === 0) {
+                        rank += 3;
+                    }
+                }
                 // scheme
                 if (entryUrlParts[1] === this.urlParts[1]) {
-                    rank += 5;
+                    rank += 1;
                 }
             } else {
                 if (entry.searchText.indexOf(this.urlLower) >= 0) {
