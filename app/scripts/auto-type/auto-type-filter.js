@@ -23,7 +23,7 @@ AutoTypeFilter.prototype.getEntries = function() {
             .map(e => [e, this.getEntryRank(e)])
             .filter(e => e[1])
             .sort((x, y) => x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1])
-            .map(p => p[1]));
+            .map(p => p[0]));
     } else {
         entries.sortEntries('title');
     }
@@ -37,7 +37,7 @@ AutoTypeFilter.prototype.hasWindowInfo = function() {
 AutoTypeFilter.prototype.prepareFilter = function() {
     this.titleLower = this.title ? this.title.toLowerCase() : null;
     this.urlLower = this.url ? this.url.toLowerCase() : null;
-    this.urlParts = urlPartsRegex.exec(this.urlLower);
+    this.urlParts = this.url ? urlPartsRegex.exec(this.urlLower) : null;
 };
 
 AutoTypeFilter.prototype.getEntryRank = function(entry) {
