@@ -25,6 +25,6 @@ int main(int argc, const char * argv[]) {
         }
     }
     // TODO: ugly way to wait for all keystrokes to be sent. is there a better way?
-    usleep(100);
+    usleep(100000);
     return 0;
 }

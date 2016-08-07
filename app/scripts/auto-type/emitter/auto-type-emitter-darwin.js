@@ -38,7 +38,7 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitter.prototype.text = function(text) {
-    this.pendingScript.push('text ' + text);
+    this.pendingScript.push('text ' + this.modString() + ' ' + text);
     this.callback();
 };
 

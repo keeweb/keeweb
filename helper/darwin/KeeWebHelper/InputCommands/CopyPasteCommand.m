@@ -20,9 +20,9 @@
     [pasteboard clearContents];
     [pasteboard setString:text forType:NSStringPboardType];
     usleep(500000);
-    [KeyRunner keyUpDown:0 code:kVK_Command flags:0 down:true];
+    [KeyRunner keyModUpDown:kCGEventFlagMaskCommand down:true];
     [KeyRunner keyPress:0 code:kVK_ANSI_V flags:kCGEventFlagMaskCommand];
-    [KeyRunner keyUpDown:0 code:kVK_Command flags:0 down:false];
+    [KeyRunner keyModUpDown:kCGEventFlagMaskCommand down:false];
     usleep(500000);
 }
 

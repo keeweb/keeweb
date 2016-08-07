@@ -27,13 +27,9 @@
         if ([command isEqualToString:@"exit"]) {
             return nil;
         } else if ([command isEqualToString:@"key"]) {
-            return [self parseSendKeyCommand:line];
+            return [self parseSendCommand:line text:false];
         } else if ([command isEqualToString:@"text"]) {
-            if (line.length) {
-                return [[SendTextCommand alloc] initWithText:line];
-            } else {
-                return [[NoOpCommand alloc] init];
-            }
+            return [self parseSendCommand:line text:true];
         } else if ([command isEqualToString:@"copypaste"]) {
             if (line.length) {
                 return [[CopyPasteCommand alloc] initWithText:line];
@@ -54,16 +50,18 @@
     }
 }
 
-- (id<InputCommandBase>)parseSendKeyCommand:(NSString*)args {
+- (id<InputCommandBase>)parseSendCommand:(NSString*)args text:(bool)text {
     if (!args.length) {
         return [[NoOpCommand alloc] init];
     }
     CGEventFlags modifier = 0;
-    NSCharacterSet *digitChars = [NSCharacterSet decimalDigitCharacterSet];
+    NSMutableCharacterSet *stopChars = [[NSMutableCharacterSet alloc] init];
+    [stopChars formUnionWithCharacterSet:[NSCharacterSet decimalDigitCharacterSet]];
+    [stopChars formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
     NSInteger index = 0;
     while (args.length) {
         unichar firstChar = [args characterAtIndex:index];
-        if ([digitChars characterIsMember:firstChar]) {
+        if ([stopChars characterIsMember:firstChar]) {
             break;
         }
         switch (firstChar) {
@@ -84,17 +82,24 @@
         }
         index++;
     }
+    if (text) {
+        index++;
+    }
     if (index > 0) {
-        if (index == args.length) {
+        if (index >= args.length) {
             return [[NoOpCommand alloc] initWithMessage:@"No key code"];
         }
         args = [args substringFromIndex:index];
     }
-    NSInteger key = [args integerValue];
-    if (key <= 0) {
-        return [[NoOpCommand alloc] initWithMessage:@"Bad key code"];
+    if (text) {
+        return [[SendTextCommand alloc] initWithText:args andModifier:modifier];
+    } else {
+        NSInteger key = [args integerValue];
+        if (key <= 0) {
+            return [[NoOpCommand alloc] initWithMessage:@"Bad key code"];
+        }
+        return [[SendKeyCommand alloc] initWithKey:(CGKeyCode)key andModifier:modifier];
     }
-    return [[SendKeyCommand alloc] initWithKey:(CGKeyCode)key andModifier:modifier];
 }
 
 @end

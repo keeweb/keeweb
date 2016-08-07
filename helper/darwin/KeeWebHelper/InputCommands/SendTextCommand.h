@@ -4,8 +4,10 @@
 
 @interface SendTextCommand : NSObject<InputCommandBase> {
     NSString *text;
+    CGEventFlags modifier;
 }
 
-- (id)initWithText:(NSString *)aText;
+- (id)initWithText:(NSString *)aText andModifier:(CGEventFlags)aModifier;
++ (void)initialize;
 
 @end
