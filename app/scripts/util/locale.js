@@ -259,6 +259,7 @@ var Locale = {
     autoTypeError: 'Auto-type error',
     autoTypeErrorGeneric: 'There was an error performing auto-type: {}',
     autoTypeErrorGlobal: 'To use system-wide shortcut, please focus the app where you want to type your password',
+    autoTypeErrorNotInstalled: '{} is not installed',
     autoTypeHeader: 'Auto-Type: Select',
     autoTypeMsgNoWindow: 'We were unable to get active window title, start typing to search',
     autoTypeMsgMatchedByWindow: 'Select a password for {}',

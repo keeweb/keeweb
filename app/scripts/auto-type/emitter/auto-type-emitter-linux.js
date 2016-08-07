@@ -1,9 +1,10 @@
 'use strict';
 
-var Launcher = require('../../comp/launcher');
+const Launcher = require('../../comp/launcher');
+const Locale = require('../../util/locale');
 
 // https://cgit.freedesktop.org/xorg/proto/x11proto/plain/keysymdef.h
-var KeyMap = {
+const KeyMap = {
     tab: 'Tab', enter: 'KP_Enter', space: 'KP_Space',
     up: 'Up', down: 'Down', left: 'Left', right: 'Right', home: 'Home', end: 'End', pgup: 'Page_Up', pgdn: 'Page_Down',
     ins: 'Insert', del: 'Delete', bs: 'BackSpace', esc: 'Escape',
@@ -15,7 +16,7 @@ var KeyMap = {
     n5: 'KP_5', n6: 'KP_6', n7: 'KP_7', n8: 'KP_8', n9: 'KP_9'
 };
 
-var ModMap = {
+const ModMap = {
     '^': 'ctrl',
     '+': 'shift',
     '%': 'alt',
@@ -96,7 +97,13 @@ AutoTypeEmitter.prototype.runScript = function(script, callback) {
         cmd: 'xdotool',
         args: ['-'],
         data: script,
-        complete: callback || this.callback
+        complete: (err, stdout, code) => {
+            if (err && err.code === 'ENOENT') {
+                err = Locale.autoTypeErrorNotInstalled.replace('{}', 'xdotool');
+            }
+            let cb = callback || this.callback;
+            cb(err, stdout, code);
+        }
     });
 };
 
