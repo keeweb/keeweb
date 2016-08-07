@@ -18,16 +18,18 @@ var AutoType = {
     helper: AutoTypeHelperFactory.create(),
     enabled: !!Launcher,
     selectEntryView: false,
+    pendingEvent: null,
 
-    init: function(appModel) {
+    init(appModel) {
         if (!this.enabled) {
             return;
         }
         this.appModel = appModel;
-        Backbone.on('auto-type', this.handleEvent.bind(this));
+        Backbone.on('auto-type', this.handleEvent, this);
+        Backbone.on('main-window-blur main-window-will-close', this.resetPendingEvent, this);
     },
 
-    handleEvent: function(e) {
+    handleEvent(e) {
         let entry = e && e.entry || null;
         logger.debug('Auto type event', entry);
         if (entry) {
@@ -47,7 +49,7 @@ var AutoType = {
         }
     },
 
-    runAndHandleResult: function(entry) {
+    runAndHandleResult(entry) {
         this.run(entry, err => {
             if (err) {
                 Alerts.error({
@@ -58,7 +60,7 @@ var AutoType = {
         });
     },
 
-    run: function(entry, callback) {
+    run(entry, callback) {
         var sequence = entry.getEffectiveAutoTypeSeq();
         logger.debug('Start', sequence);
         var ts = logger.ts();
@@ -96,7 +98,7 @@ var AutoType = {
         }
     },
 
-    validate: function(entry, sequence, callback) {
+    validate(entry, sequence, callback) {
         try {
             var parser = new AutoTypeParser(sequence);
             var runner = parser.parse();
@@ -106,11 +108,11 @@ var AutoType = {
         }
     },
 
-    printOps: function(ops) {
+    printOps(ops) {
         return '[' + ops.map(this.printOp, this).join(',') + ']';
     },
 
-    printOp: function(op) {
+    printOp(op) {
         var mod = op.mod ? Object.keys(op.mod).join('') : '';
         if (op.type === 'group') {
             return mod + this.printOps(op.value);
@@ -125,7 +127,7 @@ var AutoType = {
         return mod + op.type + ':' + op.value;
     },
 
-    hideWindow: function(callback) {
+    hideWindow(callback) {
         logger.debug('Hide window');
         if (Launcher.isAppFocused()) {
             Launcher.hideApp();
@@ -135,7 +137,7 @@ var AutoType = {
         }
     },
 
-    getActiveWindowTitle: function(callback) {
+    getActiveWindowTitle(callback) {
         logger.debug('Get window title');
         return this.helper.getActiveWindowTitle((err, title, url) => {
             if (err) {
@@ -147,32 +149,60 @@ var AutoType = {
         });
     },
 
-    selectEntryAndRun: function() {
+    selectEntryAndRun() {
         this.getActiveWindowTitle((e, title, url) => {
             let filter = new AutoTypeFilter({title, url}, this.appModel);
-            let entries = filter.getEntries();
-            if (entries.length === 1) {
-                this.runAndHandleResult(entries[0]);
-                return;
+            let evt = { filter };
+            if (!this.appModel.files.hasOpenFiles()) {
+                this.pendingEvent = evt;
+                this.appModel.files.once('update', this.processPendingEvent, this);
+                logger.debug('auto-type event delayed');
+            } else {
+                this.processEventWithFilter(evt);
             }
-            this.selectEntryView = new AutoTypeSelectView({
-                model: {
-                    filter: filter
-                }
-            }).render();
-            this.selectEntryView.on('result', result => {
-                logger.debug('Entry selected', result);
-                this.selectEntryView.off('result');
-                this.selectEntryView.remove();
-                this.selectEntryView = null;
-                this.hideWindow(() => {
-                    if (result) {
-                        this.runAndHandleResult(result);
-                    }
-                });
-            });
             setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
         });
+    },
+
+    processEventWithFilter(evt) {
+        let entries = evt.filter.getEntries();
+        if (entries.length === 1) {
+            this.runAndHandleResult(entries[0]);
+            return;
+        }
+        this.selectEntryView = new AutoTypeSelectView({
+            model: { filter: evt.filter }
+        }).render();
+        this.selectEntryView.on('result', result => {
+            logger.debug('Entry selected', result);
+            this.selectEntryView.off('result');
+            this.selectEntryView.remove();
+            this.selectEntryView = null;
+            this.hideWindow(() => {
+                if (result) {
+                    this.runAndHandleResult(result);
+                }
+            });
+        });
+    },
+
+    resetPendingEvent() {
+        if (this.pendingEvent) {
+            this.pendingEvent = null;
+            this.appModel.files.off('update', this.processPendingEvent, this);
+            logger.debug('auto-type event cancelled');
+        }
+    },
+
+    processPendingEvent() {
+        if (!this.pendingEvent) {
+            return;
+        }
+        logger.debug('processing pending auto-type event');
+        let evt = this.pendingEvent;
+        this.appModel.files.off('update', this.processPendingEvent, this);
+        this.pendingEvent = null;
+        this.processEventWithFilter(evt);
     }
 };
 
