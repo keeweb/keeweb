@@ -2,7 +2,7 @@ Release notes
 -------------
 
 ##### v1.3.0 (TBD)
-`-` auto-type improvements  
+`+` auto-type improvements  
 `+` context menu  
 `+` solarized themes  
 `+` group reorder  
