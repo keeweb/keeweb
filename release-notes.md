@@ -2,6 +2,7 @@ Release notes
 -------------
 
 ##### v1.3.0 (TBD)
+`-` auto-type improvements  
 `+` context menu  
 `+` solarized themes  
 `+` group reorder  
@@ -9,7 +10,6 @@ Release notes
 `+` option to preload default config and file  
 `+` save displayed table columns  
 `-` fix app redraw in background  
-`-` fix unicode auto-type on mac and linux  
 `-` fix idle timer on computer sleep  
 
 ##### v1.2.4 (2016-07-20)
