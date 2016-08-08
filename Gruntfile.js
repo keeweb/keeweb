@@ -169,13 +169,18 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'desktop-windows-helper-ia32': {
-                src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-ia32/',
+                src: 'helper/win32/bin/KeeWebHelper.exe',
+                dest: 'tmp/desktop/KeeWeb-win32-ia32/resources/app/',
                 nonull: true
             },
             'desktop-windows-helper-x64': {
-                src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/',
+                src: 'helper/win32/bin/KeeWebHelper.exe',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/resources/app/',
+                nonull: true
+            },
+            'desktop-darwin-helper-x64': {
+                src: 'helper/darwin/bin/KeeWebHelper',
+                dest: 'tmp/desktop/KeeWeb-dawrin-x64/KeeWeb.app/Contents/Resources/app/',
                 nonull: true
             },
             'desktop-win32-dist-x64': {
@@ -605,6 +610,7 @@ module.exports = function(grunt) {
         'electron',
         'sign-exe:win32-build-x64',
         'sign-exe:win32-build-ia32',
+        'copy:desktop-darwin-helper-x64',
         'copy:desktop-windows-helper-ia32',
         'copy:desktop-windows-helper-x64'
     ]);
