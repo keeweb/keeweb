@@ -47,7 +47,10 @@ if (window.process && window.process.versions && window.process.versions.electro
             return this.req('path').join(this.remoteApp().getPath('temp'), fileName || '');
         },
         getAppPath: function(fileName) {
-            return this.req('path').join(__dirname, fileName || '');
+            return this.req('path').join(this.remoteApp().getAppPath(), fileName || '');
+        },
+        getWorkDirPath: function(fileName) {
+            return this.req('path').join(process.cwd(), fileName || '');
         },
         writeFile: function(path, data) {
             this.req('fs').writeFileSync(path, new window.Buffer(data));
