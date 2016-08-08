@@ -23,9 +23,9 @@ namespace KeeWebHelper
                 case "exit":
                     return null;
                 case "key":
-                    return ParseSendKeyCommand(parts[1]);
+                    return ParseSendCommand(parts[1], false);
                 case "text":
-                    return new SendTextCommand(parts[1]);
+                    return ParseSendCommand(parts[1], true);
                 case "copypaste":
                     return new CopyPasteCommand(parts[1]);
                 case "wait":
@@ -35,12 +35,13 @@ namespace KeeWebHelper
             }
         }
 
-        static InputCommandBase ParseSendKeyCommand(string arg)
+        static InputCommandBase ParseSendCommand(string arg, bool text)
         {
             ModifierKeys modifiers = ModifierKeys.None;
-            while (arg[0] < '0' || arg[0] > '9')
+            var index = 0;
+            while (index < arg.Length && !Char.IsDigit(arg[index]) && !Char.IsWhiteSpace(arg[index]))
             {
-                switch (arg[0])
+                switch (arg[index])
                 {
                     case '^':
                         modifiers |= ModifierKeys.Ctrl;
@@ -52,10 +53,25 @@ namespace KeeWebHelper
                         modifiers |= ModifierKeys.Alt;
                         break;
                 }
-                arg = arg.Substring(1);
+                index++;
             }
-            var key = byte.Parse(arg);
-            return new SendKeyCommand(key, modifiers);
+            if (text)
+            {
+                index++;
+            }
+            if (index >= arg.Length)
+            {
+                return new NoOpCommand();
+            }
+            if (text)
+            {
+                return new SendTextCommand(arg.Substring(index), modifiers);
+            }
+            else
+            {
+                var key = byte.Parse(arg.Substring(index));
+                return new SendKeyCommand(key, modifiers);
+            }
         }
     }
 }

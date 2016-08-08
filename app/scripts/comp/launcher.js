@@ -175,8 +175,12 @@ if (window.process && window.process.versions && window.process.versions.electro
                 }
             });
             if (config.data) {
-                ps.stdin.write(config.data);
-                ps.stdin.end();
+                try {
+                    ps.stdin.write(config.data);
+                    ps.stdin.end();
+                } catch (e) {
+                    logger.error('spawn write error', e);
+                }
             }
             return ps;
         },
