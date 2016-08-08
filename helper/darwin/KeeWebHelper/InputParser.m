@@ -59,7 +59,7 @@
     [stopChars formUnionWithCharacterSet:[NSCharacterSet decimalDigitCharacterSet]];
     [stopChars formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
     NSInteger index = 0;
-    while (args.length) {
+    while (index < args.length) {
         unichar firstChar = [args characterAtIndex:index];
         if ([stopChars characterIsMember:firstChar]) {
             break;
