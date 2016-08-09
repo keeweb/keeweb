@@ -169,17 +169,17 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'desktop-windows-helper-ia32': {
-                src: 'helper/win32/bin/KeeWebHelper.exe',
+                src: 'helper/win32/KeeWebHelper.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/resources/app/',
                 nonull: true
             },
             'desktop-windows-helper-x64': {
-                src: 'helper/win32/bin/KeeWebHelper.exe',
+                src: 'helper/win32/KeeWebHelper.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/resources/app/',
                 nonull: true
             },
             'desktop-darwin-helper-x64': {
-                src: 'helper/darwin/bin/KeeWebHelper',
+                src: 'helper/darwin/KeeWebHelper',
                 dest: 'tmp/desktop/KeeWeb-dawrin-x64/KeeWeb.app/Contents/Resources/app/',
                 nonull: true
             },
