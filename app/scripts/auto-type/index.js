@@ -167,7 +167,7 @@ var AutoType = {
     processEventWithFilter(evt) {
         let entries = evt.filter.getEntries();
         if (entries.length === 1) {
-            this.runAndHandleResult(entries[0]);
+            this.runAndHandleResult(entries.at(0));
             return;
         }
         this.selectEntryView = new AutoTypeSelectView({
