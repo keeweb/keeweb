@@ -14,6 +14,7 @@ var ListSearchView = Backbone.View.extend({
         'keydown .list__search-field': 'inputKeyDown',
         'keypress .list__search-field': 'inputKeyPress',
         'input .list__search-field': 'inputChange',
+        'focus .list__search-field': 'inputFocus',
         'click .list__search-btn-new': 'createOptionsClick',
         'click .list__search-btn-sort': 'sortOptionsClick',
         'click .list__search-icon-search': 'advancedSearchClick',
@@ -126,6 +127,10 @@ var ListSearchView = Backbone.View.extend({
 
     inputChange: function() {
         Backbone.trigger('add-filter', { text: this.inputEl.val() });
+    },
+
+    inputFocus: function(e) {
+        $(e.target).select();
     },
 
     documentKeyPress: function(e) {
