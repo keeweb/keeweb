@@ -180,7 +180,7 @@ module.exports = function(grunt) {
             },
             'desktop-darwin-helper-x64': {
                 src: 'helper/darwin/KeeWebHelper',
-                dest: 'tmp/desktop/KeeWeb-dawrin-x64/KeeWeb.app/Contents/Resources/app/',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/app/',
                 nonull: true
             },
             'desktop-win32-dist-x64': {
