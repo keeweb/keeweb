@@ -1,7 +1,6 @@
 !include package\nsis\defines.nsh
 !include package\nsis\includes.nsh
 !include package\nsis\check-running.nsh
-!include package\nsis\install.nsh
 
 !insertmacro MUI_PAGE_WELCOME
 #!insertmacro MULTIUSER_PAGE_INSTALLMODE
