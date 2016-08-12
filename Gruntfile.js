@@ -182,7 +182,7 @@ module.exports = function(grunt) {
                 src: 'helper/darwin/KeeWebHelper',
                 dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/app/',
                 nonull: true,
-                mode: '0755'
+                options: { mode: '0755' }
             },
             'desktop-win32-dist-x64': {
                 src: 'tmp/desktop/KeeWeb.win.x64.exe',
