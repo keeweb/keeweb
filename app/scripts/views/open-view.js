@@ -159,7 +159,7 @@ var OpenView = Backbone.View.extend({
                     }
                     this.params.id = null;
                     this.params.fileData = e.target.result;
-                    this.params.name = file.name.replace(/\.\w+$/i, '');
+                    this.params.name = file.name.replace(/(.+)\.\w+$/i, '$1');
                     this.params.path = file.path || null;
                     this.params.storage = file.path ? 'file' : null;
                     this.params.rev = null;
