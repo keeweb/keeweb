@@ -7,6 +7,7 @@
 
 @import "base/base";
 
+@import "utils/back-button";
 @import "utils/common-dropdown";
 @import "utils/auto-type-hint";
 @import "utils/drag";
@@ -28,6 +29,7 @@
 @import "areas/grp";
 @import "areas/tag";
 @import "areas/generator";
+@import "areas/generator-presets";
 @import "areas/key-change";
 @import "areas/list";
 @import "areas/menu";

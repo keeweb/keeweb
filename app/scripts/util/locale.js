@@ -88,6 +88,8 @@ var Locale = {
     tagBadName: 'Bad name',
     tagBadNameBody: 'Tag name can not contain characters `,`, `;`, `:`. Please remove them.',
 
+    genPsTitle: 'Generator Presets',
+
     keyChangeTitleRemote: 'Master Key Changed',
     keyChangeMessageRemote: 'Master key was changed for this database. Please enter a new key',
     keyChangeTitleExpired: 'Master Key Expired',

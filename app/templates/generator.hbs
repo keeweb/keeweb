@@ -6,6 +6,7 @@
         {{#each presets as |ps|}}
         <option value="{{ps.name}}" {{#ifeq ps.name ../preset}}selected{{/ifeq}}>{{ps.title}}</option>
         {{/each}}
+        <option value="...">...</option>
     </select>
     <input type="range" class="gen__length-range" value="{{opt.pseudoLength}}" min="0" max="25" />
     <div>

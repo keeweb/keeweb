@@ -17,7 +17,7 @@ var GeneratorView = Backbone.View.extend({
         'change .gen__length-range': 'lengthChange',
         'change .gen__check input[type=checkbox]': 'checkChange',
         'click .gen__btn-ok': 'btnOkClick',
-        'change .gen__sel-tpl': 'templateChange',
+        'change .gen__sel-tpl': 'presetChange',
         'click .gen__btn-refresh': 'newPass'
     },
 
@@ -128,8 +128,13 @@ var GeneratorView = Backbone.View.extend({
         this.remove();
     },
 
-    templateChange: function(e) {
+    presetChange: function(e) {
         var name = e.target.value;
+        if (name === '...') {
+            Backbone.trigger('edit-generator-presets');
+            this.remove();
+            return;
+        }
         this.preset = name;
         var preset = _.find(this.presets, t => t.name === name);
         this.gen = _.clone(preset);

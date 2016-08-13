@@ -7,15 +7,6 @@
   width: 100%;
   user-select: none;
 
-  &__back-button {
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: $base-padding-h;
-    padding: $base-padding-v * 2 0 1px 0;
-    z-index: 1;
-  }
-
   &__space {
     @include flex(1);
   }

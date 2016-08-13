@@ -9,7 +9,7 @@ var TagView = Backbone.View.extend({
 
     events: {
         'click .tag__buttons-trash': 'moveToTrash',
-        'click .tag__back-button': 'returnToApp',
+        'click .back-button': 'returnToApp',
         'click .tag__btn-rename': 'renameTag'
     },
 
@@ -21,7 +21,7 @@ var TagView = Backbone.View.extend({
         if (this.model) {
             this.renderTemplate({
                 title: this.model.get('title')
-            }, { plain: true });
+            }, true);
         }
         return this;
     },

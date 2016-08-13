@@ -9,6 +9,7 @@ var Backbone = require('backbone'),
     DetailsView = require('../views/details/details-view'),
     GrpView = require('../views/grp-view'),
     TagView = require('../views/tag-view'),
+    GeneratorPresetsView = require('../views/generator-presets-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
     KeyChangeView = require('../views/key-change-view'),
@@ -49,8 +50,6 @@ var AppView = Backbone.View.extend({
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView();
         this.views.details.appModel = this.model;
-        this.views.grp = new GrpView();
-        this.views.tag = new TagView({ model: this.model });
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
@@ -72,6 +71,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'edit-group', this.editGroup);
         this.listenTo(Backbone, 'edit-tag', this.editTag);
+        this.listenTo(Backbone, 'edit-generator-presets', this.editGeneratorPresets);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
         this.listenTo(Backbone, 'user-idle', this.userIdle);
         this.listenTo(Backbone, 'app-minimized', this.appMinimized);
@@ -93,6 +93,7 @@ var AppView = Backbone.View.extend({
         this.$el.html(this.template({
             beta: this.model.isBeta
         }));
+        this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
         this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
@@ -100,8 +101,6 @@ var AppView = Backbone.View.extend({
         this.views.list.setElement(this.$el.find('.app__list')).render();
         this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
-        this.views.grp.setElement(this.$el.find('.app__grp')).render().hide();
-        this.views.tag.setElement(this.$el.find('.app__tag')).render().hide();
         this.showLastOpenFile();
         return this;
     },
@@ -114,9 +113,8 @@ var AppView = Backbone.View.extend({
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
-        this.views.grp.hide();
-        this.views.tag.hide();
         this.views.footer.toggle(this.model.files.hasOpenFiles());
+        this.hidePanelView();
         this.hideSettings();
         this.hideOpenFile();
         this.hideKeyChange();
@@ -154,9 +152,8 @@ var AppView = Backbone.View.extend({
         this.views.list.show();
         this.views.listDrag.show();
         this.views.details.show();
-        this.views.grp.hide();
-        this.views.tag.hide();
         this.views.footer.show();
+        this.hidePanelView();
         this.hideOpenFile();
         this.hideSettings();
         this.hideKeyChange();
@@ -167,6 +164,24 @@ var AppView = Backbone.View.extend({
             this.views.open.remove();
             this.views.open = null;
         }
+    },
+
+    hidePanelView: function() {
+        if (this.views.panel) {
+            this.views.panel.remove();
+            this.views.panel = null;
+            this.panelEl.addClass('hide');
+        }
+    },
+
+    showPanelView: function(view) {
+        this.views.listWrap.hide();
+        this.views.list.hide();
+        this.views.listDrag.hide();
+        this.views.details.hide();
+        this.hidePanelView();
+        this.views.panel = view.setElement(this.panelEl).render();
+        this.panelEl.removeClass('hide');
     },
 
     hideSettings: function() {
@@ -192,8 +207,7 @@ var AppView = Backbone.View.extend({
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
-        this.views.grp.hide();
-        this.views.tag.hide();
+        this.hidePanelView();
         this.hideOpenFile();
         this.hideKeyChange();
         this.views.settings = new SettingsView({ model: this.model });
@@ -206,21 +220,11 @@ var AppView = Backbone.View.extend({
     },
 
     showEditGroup: function() {
-        this.views.listWrap.hide();
-        this.views.list.hide();
-        this.views.listDrag.hide();
-        this.views.details.hide();
-        this.views.tag.hide();
-        this.views.grp.show();
+        this.showPanelView(new GrpView());
     },
 
     showEditTag: function() {
-        this.views.listWrap.hide();
-        this.views.list.hide();
-        this.views.listDrag.hide();
-        this.views.details.hide();
-        this.views.grp.hide();
-        this.views.tag.show();
+        this.showPanelView(new TagView({ model: this.model }));
     },
 
     showKeyChange: function(file, viewConfig) {
@@ -231,13 +235,12 @@ var AppView = Backbone.View.extend({
             return;
         }
         this.hideSettings();
+        this.hidePanelView();
         this.views.menu.hide();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
-        this.views.grp.hide();
-        this.views.tag.hide();
         this.views.keyChange = new KeyChangeView({
             model: { file: file, expired: viewConfig.expired, remote: viewConfig.remote }
         });
@@ -353,7 +356,7 @@ var AppView = Backbone.View.extend({
 
     menuSelect: function(opt) {
         this.model.menu.select(opt);
-        if (!this.views.grp.isHidden() || !this.views.tag.isHidden()) {
+        if (this.views.panel && !this.views.panel.isHidden()) {
             this.showEntries();
         }
     },
@@ -538,18 +541,29 @@ var AppView = Backbone.View.extend({
     },
 
     editGroup: function(group) {
-        if (group && this.views.grp.isHidden()) {
+        if (group && !(this.views.panel instanceof GrpView)) {
             this.showEditGroup();
-            this.views.grp.showGroup(group);
+            this.views.panel.showGroup(group);
         } else {
             this.showEntries();
         }
     },
 
     editTag: function(tag) {
-        if (tag && this.views.tag.isHidden()) {
+        if (tag && !(this.views.panel instanceof TagView)) {
             this.showEditTag();
-            this.views.tag.showTag(tag);
+            this.views.panel.showTag(tag);
+        } else {
+            this.showEntries();
+        }
+    },
+
+    editGeneratorPresets: function() {
+        if (!(this.views.panel instanceof GeneratorPresetsView)) {
+            if (this.views.settings) {
+                this.showEntries();
+            }
+            this.showPanelView(new GeneratorPresetsView({ model: this.model }));
         } else {
             this.showEntries();
         }

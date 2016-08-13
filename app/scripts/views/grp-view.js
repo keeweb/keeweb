@@ -12,7 +12,7 @@ var GrpView = Backbone.View.extend({
     events: {
         'click .grp__icon': 'showIconsSelect',
         'click .grp__buttons-trash': 'moveToTrash',
-        'click .grp__back-button': 'returnToApp',
+        'click .back-button': 'returnToApp',
         'input #grp__field-title': 'changeTitle',
         'focus #grp__field-auto-type-seq': 'focusAutoTypeSeq',
         'input #grp__field-auto-type-seq': 'changeAutoTypeSeq',
@@ -37,7 +37,7 @@ var GrpView = Backbone.View.extend({
                 autoTypeSeq: this.model.get('autoTypeSeq'),
                 autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
                 defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
-            }, { plain: true });
+            }, true);
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();
             }
