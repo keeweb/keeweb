@@ -22,6 +22,7 @@
     "demoOpened": false,
     "fontSize": 0,
     "tableViewColumns": null,
+    "generatorPresets": null,
 
     "dropbox": true,
     "dropboxFolder": null,

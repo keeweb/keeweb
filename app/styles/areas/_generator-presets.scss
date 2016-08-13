@@ -1,3 +1,17 @@
 .gen-ps {
+  @include flex(1);
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+  width: 100%;
+  user-select: none;
 
+  &__empty-text {
+    padding-bottom: $large-padding;
+  }
+
+  &__list, &__input {
+    height: 2em;
+  }
 }

@@ -89,6 +89,11 @@ var Locale = {
     tagBadNameBody: 'Tag name can not contain characters `,`, `;`, `:`. Please remove them.',
 
     genPsTitle: 'Generator Presets',
+    genPsEmpty: 'You have no presets yet',
+    genPsEmptyDesc: 'Presets allow you to generate passwords by your rules faster',
+    genPsCreate: 'New preset',
+    genPsDelete: 'Delete preset',
+    genPsNew: 'preset',
 
     keyChangeTitleRemote: 'Master Key Changed',
     keyChangeMessageRemote: 'Master key was changed for this database. Please enter a new key',

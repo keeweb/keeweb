@@ -66,8 +66,8 @@ var GrpView = Backbone.View.extend({
     changeTitle: function(e) {
         var title = $.trim(e.target.value);
         if (title) {
-            if (!this.model.get('top') && e.target.value !== this.model.get('title')) {
-                this.model.setName(e.target.value);
+            if (!this.model.get('top') && title !== this.model.get('title')) {
+                this.model.setName(title);
             }
         } else {
             if (this.model.isJustCreated) {

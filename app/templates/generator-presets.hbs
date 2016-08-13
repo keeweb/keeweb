@@ -3,4 +3,26 @@
         {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
     </div>
     <h1>{{res 'genPsTitle'}}</h1>
+    {{#if empty}}
+        <div class="empty-block empty-block--flex muted-color">
+            <h1 class="empty-block__title">{{res 'genPsEmpty'}}</h1>
+            <div class="gen-ps__empty-text">{{res 'genPsEmptyDesc'}}</div>
+            <button class="gen-ps__btn-create">{{res 'genPsCreate'}}</button>
+        </div>
+    {{else}}
+    <select class="gen-ps__list input-base">
+        {{#each presets as |ps|}}
+            <option value="{{ps.id}}" {{#ifeq ps ../selected}}selected{{/ifeq}}>{{ps.name}}</option>
+        {{/each}}
+    </select>
+    <div class="gen-ps__field">
+        <label for="gen-ps__field-name">{{Res 'name'}}:</label>
+        <input type="text" class="input-base" id="gen-ps__field-name" value="{{selected.name}}"
+               size="50" maxlength="64" required />
+    </div>
+    <div class="gen-ps__buttons">
+        <button class="gen-ps__btn-create">{{res 'genPsCreate'}}</button>
+        <button class="gen-ps__btn-delete btn-error">{{res 'genPsDelete'}}</button>
+    </div>
+    {{/if}}
 </div>
