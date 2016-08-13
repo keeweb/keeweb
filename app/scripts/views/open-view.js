@@ -11,6 +11,7 @@ var Backbone = require('backbone'),
     Logger = require('../util/logger'),
     Locale = require('../util/locale'),
     UrlUtil = require('../util/url-util'),
+    InputFx = require('../util/input-fx'),
     Storage = require('../storage');
 
 var logger = new Logger('open-view');
@@ -470,7 +471,9 @@ var OpenView = Backbone.View.extend({
             this.focusInput();
             this.inputEl[0].selectionStart = 0;
             this.inputEl[0].selectionEnd = this.inputEl.val().length;
-            if (err.code !== 'InvalidKey') {
+            if (err.code === 'InvalidKey') {
+                InputFx.shake(this.inputEl);
+            } else {
                 if (err.notFound) {
                     err = Locale.openErrorFileNotFound;
                 }

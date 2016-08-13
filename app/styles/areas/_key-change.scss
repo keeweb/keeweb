@@ -23,12 +23,13 @@
     @include display(flex);
     @include align-items(flex-start);
     @include flex-direction(column);
+    @include flex-shrink(0);
     margin: $base-spacing 0;
   }
   &__input {
     @include align-self(center);
   }
-  input[type=password].key-change__pass {
+  input[type=password].key-change__pass, input[type=password].key-change__pass-repeat {
     font-size: $large-pass-font-size;
     margin: $small-spacing 0 0;
   }

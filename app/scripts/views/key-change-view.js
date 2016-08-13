@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
     SecureInput = require('../comp/secure-input'),
     Alerts = require('../comp/alerts'),
     Locale = require('../util/locale'),
+    InputFx = require('../util/input-fx'),
     Keys = require('../const/keys');
 
 var KeyChangeView = Backbone.View.extend({
@@ -11,6 +12,7 @@ var KeyChangeView = Backbone.View.extend({
 
     events: {
         'keydown .key-change__pass': 'inputKeydown',
+        'keydown .key-change__pass-repeat': 'inputKeydown',
         'click .key-change__keyfile': 'keyFileClicked',
         'change .key-change__file': 'keyFileSelected',
         'click .key-change__btn-ok': 'accept',
@@ -18,6 +20,7 @@ var KeyChangeView = Backbone.View.extend({
     },
 
     passwordInput: null,
+    passwordRepeatInput: null,
     inputEl: null,
 
     initialize: function() {
@@ -27,16 +30,24 @@ var KeyChangeView = Backbone.View.extend({
     render: function() {
         this.keyFileName = this.model.file.get('keyFileName') || null;
         this.keyFileData = null;
+        let repeat = this.model.expired;
         this.renderTemplate({
             fileName: this.model.file.get('name'),
             keyFileName: this.model.file.get('keyFileName'),
             title: this.model.expired ? Locale.keyChangeTitleExpired : Locale.keyChangeTitleRemote,
-            message: this.model.expired ? Locale.keyChangeMessageExpired : Locale.keyChangeMessageRemote
+            message: this.model.expired ? Locale.keyChangeMessageExpired : Locale.keyChangeMessageRemote,
+            repeat: repeat
         });
         this.$el.find('.key-change__keyfile-name').text(this.keyFileName ? ': ' + this.keyFileName : '');
         this.inputEl = this.$el.find('.key-change__pass');
         this.passwordInput.reset();
         this.passwordInput.setElement(this.inputEl);
+        this.inputEl.focus();
+        if (repeat) {
+            this.passwordRepeatInput = new SecureInput();
+            this.passwordRepeatInput.reset();
+            this.passwordRepeatInput.setElement(this.$el.find('.key-change__pass-repeat'));
+        }
     },
 
     remove: function() {
@@ -82,6 +93,22 @@ var KeyChangeView = Backbone.View.extend({
     },
 
     accept: function() {
+        if (!this.passwordInput.value.byteLength) {
+            this.passwordInput.el.focus();
+            this.passwordRepeatInput.el.addClass('input--error');
+            InputFx.shake(this.passwordInput.el);
+            return;
+        } else {
+            this.passwordRepeatInput.el.removeClass('input--error');
+        }
+        if (this.passwordRepeatInput) {
+            if (!this.passwordRepeatInput.value.equals(this.passwordInput.value)) {
+                this.passwordRepeatInput.el.addClass('input--error');
+                this.passwordRepeatInput.el.focus();
+                InputFx.shake(this.passwordRepeatInput.el);
+                return;
+            }
+        }
         this.trigger('accept', {
             file: this.model.file,
             expired: this.model.expired,

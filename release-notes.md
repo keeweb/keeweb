@@ -9,6 +9,7 @@ Release notes
 `+` select field contents on search hotkey  
 `+` option to preload default config and file  
 `+` save displayed table columns  
+`+` confirmation in password change dialog  
 `-` fix app redraw in background  
 `-` fix idle timer on computer sleep  
 

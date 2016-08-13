@@ -92,6 +92,7 @@ var Locale = {
     keyChangeMessageRemote: 'Master key was changed for this database. Please enter a new key',
     keyChangeTitleExpired: 'Master Key Expired',
     keyChangeMessageExpired: 'Master key for this database is expired. Please enter a new key',
+    keyChangeRepeatPassword: 'Password, once again',
 
     iconFavTitle: 'Download and use website favicon',
     iconSelCustom: 'Select custom icon',
