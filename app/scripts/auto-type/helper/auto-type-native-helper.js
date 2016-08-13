@@ -15,7 +15,7 @@ const AutoTypeNativeHelper = {
         let possiblePaths = [
             Launcher.getAppPath(part),
             Launcher.getUserDataPath(part),
-            Launcher.getWorkDirPath('KeeWebHelper')
+            Launcher.getWorkDirPath(part)
         ];
         let helperPath, helperCTime = -1;
         possiblePaths.forEach(possiblePath => {
