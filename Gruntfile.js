@@ -296,10 +296,10 @@ module.exports = function(grunt) {
                 interrupt: true,
                 debounceDelay: 500
             },
-            scripts: {
-                files: ['app/scripts/**/*.js', 'app/templates/**/*.hbs'],
-                tasks: ['webpack']
-            },
+            // scripts: {
+            //     files: ['app/scripts/**/*.js', 'app/templates/**/*.hbs'],
+            //     tasks: ['webpack']
+            // },
             styles: {
                 files: 'app/styles/**/*.scss',
                 tasks: ['sass']
@@ -668,10 +668,6 @@ module.exports = function(grunt) {
 
     grunt.registerTask('dev', 'Start web server and watcher', [
         'concurrent:dev-server'
-    ]);
-
-    grunt.registerTask('dev-desktop', 'Start watcher for desktop app', [
-        'watch'
     ]);
 
     grunt.registerTask('desktop', 'Build web and desktop apps for all platforms', [

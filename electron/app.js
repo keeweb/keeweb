@@ -10,16 +10,14 @@ var mainWindow = null,
     openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0],
     ready = false,
     restartPending = false,
-    htmlPath = path.join(__dirname, 'index.html'),
     mainWindowPosition = {},
     updateMainWindowPositionTimeout = null,
     windowPositionFileName = path.join(app.getPath('userData'), 'window-position.json');
 
-process.argv.forEach(arg => {
-    if (arg.lastIndexOf('--htmlpath=', 0) === 0) {
-        htmlPath = path.resolve(arg.replace('--htmlpath=', ''), 'index.html');
-    }
-});
+let htmlPath = process.argv.filter(arg => arg.startsWith('--htmlpath=')).map(arg => arg.replace('--htmlpath=', ''))[0];
+if (!htmlPath) {
+    htmlPath = 'file://' + path.join(__dirname, 'index.html');
+}
 
 app.on('window-all-closed', () => {
     if (restartPending) {
@@ -115,7 +113,7 @@ function createMainWindow() {
         }
     });
     setMenu();
-    mainWindow.loadURL('file://' + htmlPath);
+    mainWindow.loadURL(htmlPath);
     mainWindow.setContentProtection(true);
     mainWindow.webContents.on('dom-ready', () => {
         setTimeout(() => {
