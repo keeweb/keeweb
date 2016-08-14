@@ -11,6 +11,7 @@ Release notes
 `+` option to preload default config and file  
 `+` save displayed table columns  
 `+` confirmation in password change dialog  
+`+` inline generator keyboard management  
 `-` fix app redraw in background  
 `-` fix idle timer on computer sleep  
 
