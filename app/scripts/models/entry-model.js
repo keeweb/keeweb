@@ -275,26 +275,48 @@ var EntryModel = Backbone.Model.extend({
         this.hasFieldRefs = false;
         this.fieldRefFields.forEach(field => {
             let fieldValue = this[field];
-            if (!fieldValue) {
-                return;
+            let refValue = this._resolveFieldReference(fieldValue);
+            if (refValue !== undefined) {
+                this[field] = refValue;
+                this.hasFieldRefs = true;
             }
-            if (fieldValue.isProtected && fieldValue.isFieldReference()) {
-                fieldValue = fieldValue.getText();
-            }
-            if (typeof fieldValue !== 'string') {
-                return;
-            }
-            let match = fieldValue.match(this.fieldRefRegex);
-            if (!match) {
-                return;
-            }
-            this.hasFieldRefs = true;
-            let value = this._getReferenceValue(match[1], match[2]);
-            if (!value) {
-                return;
-            }
-            this[field] = value;
         });
+    },
+
+    getFieldValue: function(field) {
+        field = field.toLowerCase();
+        let resolvedField;
+        Object.keys(this.entry.fields).some(entryField => {
+            if (entryField.toLowerCase() === field) {
+                resolvedField = entryField;
+                return true;
+            }
+        });
+        if (resolvedField) {
+            let fieldValue = this.entry.fields[resolvedField];
+            let refValue = this._resolveFieldReference(fieldValue);
+            if (refValue !== undefined) {
+                fieldValue = refValue;
+            }
+            return fieldValue;
+        }
+    },
+
+    _resolveFieldReference: function(fieldValue) {
+        if (!fieldValue) {
+            return;
+        }
+        if (fieldValue.isProtected && fieldValue.isFieldReference()) {
+            fieldValue = fieldValue.getText();
+        }
+        if (typeof fieldValue !== 'string') {
+            return;
+        }
+        let match = fieldValue.match(this.fieldRefRegex);
+        if (!match) {
+            return;
+        }
+        return this._getReferenceValue(match[1], match[2]);
     },
 
     _getReferenceValue: function(fieldRefId, idStr) {
@@ -305,7 +327,7 @@ var EntryModel = Backbone.Model.extend({
         let uuid = new kdbxweb.KdbxUuid(id);
         let entry = this.file.getEntry(this.file.subId(uuid.id));
         if (!entry) {
-            return undefined;
+            return;
         }
         return entry.entry.fields[this.fieldRefIds[fieldRefId]];
     },

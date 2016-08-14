@@ -170,14 +170,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
     if (!field || !this.entry) {
         return '';
     }
-    field = field.toLowerCase();
-    var value = null;
-    _.findKey(this.entry.entry.fields, (val, f) => {
-        if (f.toLowerCase() === field) {
-            value = val;
-            return true;
-        }
-    });
+    var value = this.entry.getFieldValue(field);
     if (!value) {
         return '';
     }
