@@ -156,6 +156,7 @@ var FileModel = Backbone.Model.extend({
             groups.add(groupModel);
         }, this);
         this.buildObjectMap();
+        this.resolveFieldReferences();
     },
 
     subId: function(id) {
@@ -173,6 +174,13 @@ var FileModel = Backbone.Model.extend({
         }, true);
         this.entryMap = entryMap;
         this.groupMap = groupMap;
+    },
+
+    resolveFieldReferences: function() {
+        let entryMap = this.entryMap;
+        Object.keys(entryMap).forEach(e => {
+            entryMap[e].resolveFieldReferences();
+        });
     },
 
     reload: function() {

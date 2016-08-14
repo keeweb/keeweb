@@ -13,6 +13,7 @@ Audit, generator presets, auto-type and ui improvements
 `+` save displayed table columns  
 `+` confirmation in password change dialog  
 `+` inline generator keyboard management  
+`+` field references decoding  
 `-` fix app redraw in background  
 `-` fix idle timer on computer sleep  
 

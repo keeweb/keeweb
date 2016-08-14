@@ -10,9 +10,13 @@ var Backbone = require('backbone'),
 
 var EntryModel = Backbone.Model.extend({
     defaults: {},
-    urlRegex: /^https?:\/\//i,
 
-    builtInFields: ['Title', 'Password', 'Notes', 'URL', 'UserName', 'TOTP Seed', 'TOTP Settings'],
+    urlRegex: /^https?:\/\//i,
+    fieldRefRegex: /^\{REF:([TNPAU])@I:(\w{32})}$/,
+
+    builtInFields: ['Title', 'Password', 'UserName', 'URL', 'Notes', 'TOTP Seed', 'TOTP Settings'],
+    fieldRefFields: ['title', 'password', 'user', 'url', 'notes'],
+    fieldRefIds: { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' },
 
     initialize: function() {
     },
@@ -24,7 +28,10 @@ var EntryModel = Backbone.Model.extend({
         if (this.get('uuid') === entry.uuid.id) {
             this._checkUpdatedEntry();
         }
+        // we cannot calculate field references now because database index has not yet been built
+        this.hasFieldRefs = false;
         this._fillByEntry();
+        this.hasFieldRefs = true;
     },
 
     _fillByEntry: function() {
@@ -54,6 +61,9 @@ var EntryModel = Backbone.Model.extend({
         this._buildSearchTags();
         this._buildSearchColor();
         this._buildAutoType();
+        if (this.hasFieldRefs) {
+            this.resolveFieldReferences();
+        }
     },
 
     _checkUpdatedEntry: function() {
@@ -259,6 +269,45 @@ var EntryModel = Backbone.Model.extend({
     matchField: function(entry, field, compare, search) {
         var val = entry.fields[field];
         return val ? compare(val, search) : false;
+    },
+
+    resolveFieldReferences: function() {
+        this.hasFieldRefs = false;
+        this.fieldRefFields.forEach(field => {
+            let fieldValue = this[field];
+            if (!fieldValue) {
+                return;
+            }
+            if (fieldValue.isProtected && fieldValue.isFieldReference()) {
+                fieldValue = fieldValue.getText();
+            }
+            if (typeof fieldValue !== 'string') {
+                return;
+            }
+            let match = fieldValue.match(this.fieldRefRegex);
+            if (!match) {
+                return;
+            }
+            this.hasFieldRefs = true;
+            let value = this._getReferenceValue(match[1], match[2]);
+            if (!value) {
+                return;
+            }
+            this[field] = value;
+        });
+    },
+
+    _getReferenceValue: function(fieldRefId, idStr) {
+        let id = new Uint8Array(16);
+        for (let i = 0; i < 16; i++) {
+            id[i] = parseInt(idStr.substr(i * 2, 2), 16);
+        }
+        let uuid = new kdbxweb.KdbxUuid(id);
+        let entry = this.file.getEntry(this.file.subId(uuid.id));
+        if (!entry) {
+            return undefined;
+        }
+        return entry.entry.fields[this.fieldRefIds[fieldRefId]];
     },
 
     setColor: function(color) {
