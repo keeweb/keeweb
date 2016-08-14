@@ -55,14 +55,14 @@ var PopupNotifier = {
         }
         var win = Launcher.openWindow(opts);
         win.webContents.on('did-get-redirect-request', (e, fromUrl, toUrl) => {
-            if (toUrl.lastIndexOf(Links.WebApp, 0) === 0) {
+            if (PopupNotifier.isOwnUrl(toUrl)) {
                 win.webContents.stop();
                 win.close();
                 PopupNotifier.processReturnToApp(toUrl);
             }
         });
         win.webContents.on('will-navigate', (e, toUrl) => {
-            if (toUrl.lastIndexOf(Links.WebApp, 0) === 0) {
+            if (PopupNotifier.isOwnUrl(toUrl)) {
                 e.preventDefault();
                 win.close();
                 PopupNotifier.processReturnToApp(toUrl);
@@ -75,6 +75,11 @@ var PopupNotifier = {
         });
         Backbone.trigger('popup-opened', win);
         return win;
+    },
+
+    isOwnUrl(url) {
+        return url.lastIndexOf(Links.WebApp, 0) === 0 ||
+            url.lastIndexOf(location.origin + location.pathname, 0) === 0;
     },
 
     processReturnToApp: function(url) {
