@@ -7,15 +7,12 @@
   @include scrollbar-on-hover;
   width: 100%;
   user-select: none;
+  overflow: hidden;
+  position: relative;
 
   >.scroller {
     @include flex(1);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
     overflow-x: hidden;
-    padding-top: 3px;
   }
 
   &__icon {
@@ -28,6 +25,10 @@
       width: 28px;
       height: 28px;
     }
+  }
+
+  &__icon-wrap {
+    @include display(flex);
   }
 
   &__buttons {

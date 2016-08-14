@@ -43,7 +43,7 @@ var GrpView = Backbone.View.extend({
             }
         }
         this.createScroll({
-            root: this.$el.find('.details__body')[0],
+            root: this.$el.find('.grp')[0],
             scroller: this.$el.find('.scroller')[0],
             bar: this.$el.find('.scroller__bar')[0]
         });

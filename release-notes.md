@@ -5,6 +5,7 @@ Release notes
 `+` auto-type improvements  
 `+` context menu  
 `+` solarized themes  
+`+` generator presets  
 `+` group reorder  
 `+` select field contents on search hotkey  
 `+` option to preload default config and file  

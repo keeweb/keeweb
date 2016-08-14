@@ -1,9 +1,10 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    PasswordGenerator = require('../util/password-generator'),
-    CopyPaste = require('../comp/copy-paste'),
-    Locale = require('../util/locale');
+const Backbone = require('backbone');
+const PasswordGenerator = require('../util/password-generator');
+const CopyPaste = require('../comp/copy-paste');
+const GeneratorPresets = require('../comp/generator-presets');
+const Locale = require('../util/locale');
 
 var GeneratorView = Backbone.View.extend({
     el: 'body',
@@ -13,7 +14,6 @@ var GeneratorView = Backbone.View.extend({
     events: {
         'click': 'click',
         'mousedown .gen__length-range': 'generate',
-        'mousemove .gen__length-range': 'lengthChange',
         'change .gen__length-range': 'lengthChange',
         'change .gen__check input[type=checkbox]': 'checkChange',
         'click .gen__btn-ok': 'btnOkClick',
@@ -45,37 +45,28 @@ var GeneratorView = Backbone.View.extend({
     },
 
     createPresets: function() {
-        this.presets = [
-            { name: 'Default', length: 16, upper: true, lower: true, digits: true },
-            { name: 'Pronounceable', length: 10, lower: true, upper: true },
-            { name: 'Med', length: 16, upper: true, lower: true, digits: true, special: true, brackets: true, ambiguous: true },
-            { name: 'Long', length: 32, upper: true, lower: true, digits: true },
-            { name: 'Pin4', length: 4, digits: true },
-            { name: 'Mac', length: 17, upper: true, digits: true, special: true },
-            { name: 'Hash128', length: 32, lower: true, digits: true },
-            { name: 'Hash256', length: 64, lower: true, digits: true }
-        ];
+        this.presets = GeneratorPresets.enabled;
         if (this.model.password && (!this.model.password.isProtected || this.model.password.byteLength)) {
-            var derivedPreset = { name: 'Derived' };
+            var derivedPreset = { name: 'Derived', title: Locale.genPresetDerived };
             _.extend(derivedPreset, PasswordGenerator.deriveOpts(this.model.password));
-            for (var i = 0; i < this.valuesMap.length; i++) {
-                if (this.valuesMap[i] >= derivedPreset.length) {
-                    derivedPreset.length = this.valuesMap[i];
-                    break;
-                }
-            }
-            if (derivedPreset.length > this.valuesMap[this.valuesMap.length - 1]) {
-                derivedPreset.length = this.valuesMap[this.valuesMap.length - 1];
-            }
-            this.presets.splice(1, 0, derivedPreset);
+            this.presets.splice(0, 0, derivedPreset);
             this.preset = 'Derived';
         } else {
-            this.preset = 'Default';
+            let defaultPreset = this.presets.filter(p => p.default)[0] || this.presets[0];
+            this.preset = defaultPreset.name;
         }
         this.presets.forEach(function(pr) {
-            pr.pseudoLength = this.valuesMap.indexOf(pr.length);
-            pr.title = Locale['genPreset' + pr.name];
+            pr.pseudoLength = this.lengthToPseudoValue(pr.length);
         }, this);
+    },
+
+    lengthToPseudoValue: function(length) {
+        for (let ix = 0; ix < this.valuesMap.length; ix++) {
+            if (this.valuesMap[ix] >= length) {
+                return ix;
+            }
+        }
+        return this.valuesMap.length - 1;
     },
 
     click: function(e) {
