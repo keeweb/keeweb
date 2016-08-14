@@ -157,10 +157,10 @@ var AutoType = {
                 this.pendingEvent = evt;
                 this.appModel.files.once('update', this.processPendingEvent, this);
                 logger.debug('auto-type event delayed');
+                setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
             } else {
                 this.processEventWithFilter(evt);
             }
-            setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
         });
     },
 
