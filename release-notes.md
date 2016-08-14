@@ -2,6 +2,7 @@ Release notes
 -------------
 
 ##### v1.3.0 (TBD)
+Audit, generator presets, auto-type and ui improvements  
 `+` auto-type improvements  
 `+` context menu  
 `+` solarized themes  
