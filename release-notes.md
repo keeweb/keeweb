@@ -1,7 +1,7 @@
 Release notes
 -------------
 
-##### v1.3.0 (TBD)
+##### v1.3.0 (WIP)
 Audit, generator presets, auto-type and ui improvements  
 `+` auto-type improvements  
 `+` context menu  
