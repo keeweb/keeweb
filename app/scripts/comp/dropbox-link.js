@@ -226,8 +226,9 @@ var DropboxLink = {
             }
             var ts = logger.ts();
             logger.debug('Call', callName);
-            client[callName].apply(client, args.concat(err => {
-                logger.debug('Result', callName, logger.ts(ts), arguments);
+            client[callName].apply(client, args.concat((...args) => {
+                let [err] = args;
+                logger.debug('Result', callName, logger.ts(ts), args);
                 if (err) {
                     this._handleUiError(err, errorAlertCallback, repeat => {
                         if (repeat) {
@@ -237,7 +238,7 @@ var DropboxLink = {
                         }
                     });
                 } else {
-                    callback.apply(null, arguments);
+                    callback(...args);
                 }
             }));
         });
