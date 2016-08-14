@@ -10,7 +10,8 @@ var Timeouts = {
     OtpFadeDuration: 10000,
     AutoTypeAfterHide: 100,
     DrobDownClickWait: 500,
-    RedrawInactiveWindow: 50
+    RedrawInactiveWindow: 50,
+    PopupWaitTime: 1000
 };
 
 module.exports = Timeouts;

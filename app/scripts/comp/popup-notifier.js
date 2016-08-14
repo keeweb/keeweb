@@ -69,9 +69,17 @@ var PopupNotifier = {
             }
         });
         win.loadURL(url);
-        win.show();
+        win.once('page-title-updated', () => {
+            setTimeout(() => {
+                if (win) {
+                    win.show();
+                    win.focus();
+                }
+            }, Timeouts.PopupWaitTime);
+        });
         win.on('closed', () => {
             setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            win = null;
         });
         Backbone.trigger('popup-opened', win);
         return win;

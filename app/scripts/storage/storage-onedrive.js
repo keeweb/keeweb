@@ -31,40 +31,39 @@ var StorageOneDrive = StorageBase.extend({
     },
 
     load: function(path, opts, callback) {
-        var that = this;
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
             }
-            that.logger.debug('Load', path);
-            var ts = that.logger.ts();
-            var url = that._baseUrl + path;
-            that._xhr({
+            this.logger.debug('Load', path);
+            var ts = this.logger.ts();
+            var url = this._baseUrl + path;
+            this._xhr({
                 url: url,
                 responseType: 'json',
-                success: function (response) {
+                success: (response) => {
                     var downloadUrl = response['@content.downloadUrl'];
                     var rev = response.eTag;
                     if (!downloadUrl || !response.eTag) {
-                        that.logger.debug('Load error', path, 'no download url', response, that.logger.ts(ts));
+                        this.logger.debug('Load error', path, 'no download url', response, this.logger.ts(ts));
                         return callback && callback('no download url');
                     }
-                    that._xhr({
+                    this._xhr({
                         url: downloadUrl,
                         responseType: 'arraybuffer',
-                        success: function (response, xhr) {
+                        success: (response, xhr) => {
                             rev = xhr.getResponseHeader('ETag') || rev;
-                            that.logger.debug('Loaded', path, rev, that.logger.ts(ts));
+                            this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
                             return callback && callback(null, response, {rev: rev});
                         },
-                        error: function (err) {
-                            that.logger.error('Load error', path, err, that.logger.ts(ts));
+                        error: (err) => {
+                            this.logger.error('Load error', path, err, this.logger.ts(ts));
                             return callback && callback(err);
                         }
                     });
                 },
-                error: function (err) {
-                    that.logger.error('Load error', path, err, that.logger.ts(ts));
+                error: (err) => {
+                    this.logger.error('Load error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
             });
@@ -72,32 +71,31 @@ var StorageOneDrive = StorageBase.extend({
     },
 
     stat: function(path, opts, callback) {
-        var that = this;
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
             }
-            that.logger.debug('Stat', path);
-            var ts = that.logger.ts();
-            var url = that._baseUrl + path;
-            that._xhr({
+            this.logger.debug('Stat', path);
+            var ts = this.logger.ts();
+            var url = this._baseUrl + path;
+            this._xhr({
                 url: url,
                 responseType: 'json',
-                success: function (response) {
+                success: (response) => {
                     var rev = response.eTag;
                     if (!rev) {
-                        that.logger.error('Stat error', path, 'no eTag', that.logger.ts(ts));
+                        this.logger.error('Stat error', path, 'no eTag', this.logger.ts(ts));
                         return callback && callback('no eTag');
                     }
-                    that.logger.debug('Stated', path, rev, that.logger.ts(ts));
+                    this.logger.debug('Stated', path, rev, this.logger.ts(ts));
                     return callback && callback(null, {rev: rev});
                 },
-                error: function (err, xhr) {
+                error: (err, xhr) => {
                     if (xhr.status === 404) {
-                        that.logger.debug('Stated not found', path, that.logger.ts(ts));
+                        this.logger.debug('Stated not found', path, this.logger.ts(ts));
                         return callback && callback({ notFound: true });
                     }
-                    that.logger.error('Stat error', path, err, that.logger.ts(ts));
+                    this.logger.error('Stat error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
             });
@@ -105,36 +103,35 @@ var StorageOneDrive = StorageBase.extend({
     },
 
     save: function(path, opts, data, callback, rev) {
-        var that = this;
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
             }
-            that.logger.debug('Save', path, rev);
-            var ts = that.logger.ts();
-            var url = that._baseUrl + path + ':/content';
-            that._xhr({
+            this.logger.debug('Save', path, rev);
+            var ts = this.logger.ts();
+            var url = this._baseUrl + path + ':/content';
+            this._xhr({
                 url: url,
                 method: 'PUT',
                 responseType: 'json',
                 headers: rev ? { 'If-Match': rev } : null,
                 data: new Blob([data], {type: 'application/octet-stream'}),
                 statuses: [200, 201, 412],
-                success: function (response, xhr) {
+                success: (response, xhr) => {
                     rev = response.eTag;
                     if (!rev) {
-                        that.logger.error('Save error', path, 'no eTag', that.logger.ts(ts));
+                        this.logger.error('Save error', path, 'no eTag', this.logger.ts(ts));
                         return callback && callback('no eTag');
                     }
                     if (xhr.status === 412) {
-                        that.logger.debug('Save conflict', path, rev, that.logger.ts(ts));
+                        this.logger.debug('Save conflict', path, rev, this.logger.ts(ts));
                         return callback && callback({ revConflict: true }, { rev: rev });
                     }
-                    that.logger.debug('Saved', path, rev, that.logger.ts(ts));
+                    this.logger.debug('Saved', path, rev, this.logger.ts(ts));
                     return callback && callback(null, {rev: rev});
                 },
-                error: function (err) {
-                    that.logger.error('Save error', path, err, that.logger.ts(ts));
+                error: (err) => {
+                    this.logger.error('Save error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
             });
@@ -142,21 +139,20 @@ var StorageOneDrive = StorageBase.extend({
     },
 
     list: function(callback) {
-        var that = this;
         this._oauthAuthorize(err => {
             if (err) { return callback && callback(err); }
-            that.logger.debug('List');
-            var ts = that.logger.ts();
-            var url = that._baseUrl + '/drive/root/view.search?q=.kdbx&filter=' + encodeURIComponent('file ne null');
-            that._xhr({
+            this.logger.debug('List');
+            var ts = this.logger.ts();
+            var url = this._baseUrl + '/drive/root/view.search?q=.kdbx&filter=' + encodeURIComponent('file ne null');
+            this._xhr({
                 url: url,
                 responseType: 'json',
-                success: function(response) {
+                success: (response) => {
                     if (!response || !response.value) {
-                        that.logger.error('List error', that.logger.ts(ts), response);
+                        this.logger.error('List error', this.logger.ts(ts), response);
                         return callback && callback('list error');
                     }
-                    that.logger.debug('Listed', that.logger.ts(ts));
+                    this.logger.debug('Listed', this.logger.ts(ts));
                     var fileList = response.value
                         .filter(f => f.name && UrlUtil.isKdbx(f.name))
                         .map(f => ({
@@ -166,8 +162,8 @@ var StorageOneDrive = StorageBase.extend({
                         }));
                     return callback && callback(null, fileList);
                 },
-                error: function(err) {
-                    that.logger.error('List error', that.logger.ts(ts), err);
+                error: (err) => {
+                    this.logger.error('List error', this.logger.ts(ts), err);
                     return callback && callback(err);
                 }
             });
@@ -175,21 +171,20 @@ var StorageOneDrive = StorageBase.extend({
     },
 
     remove: function(path, callback) {
-        var that = this;
-        that.logger.debug('Remove', path);
-        var ts = that.logger.ts();
-        var url = that._baseUrl + path;
-        that._xhr({
+        this.logger.debug('Remove', path);
+        var ts = this.logger.ts();
+        var url = this._baseUrl + path;
+        this._xhr({
             url: url,
             method: 'DELETE',
             responseType: 'json',
             statuses: [200, 204],
-            success: function () {
-                that.logger.debug('Removed', path, that.logger.ts(ts));
+            success: () => {
+                this.logger.debug('Removed', path, this.logger.ts(ts));
                 return callback && callback();
             },
-            error: function (err) {
-                that.logger.error('Remove error', path, err, that.logger.ts(ts));
+            error: (err) => {
+                this.logger.error('Remove error', path, err, this.logger.ts(ts));
                 return callback && callback(err);
             }
         });

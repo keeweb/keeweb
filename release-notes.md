@@ -16,6 +16,7 @@ Audit, generator presets, auto-type and ui improvements
 `+` field references decoding  
 `-` fix app redraw in background  
 `-` fix idle timer on computer sleep  
+`-` fix storage popup when no action is required  
 
 ##### v1.2.4 (2016-07-20)
 `+` digital signature in installer  

@@ -108,11 +108,7 @@ _.extend(StorageBase.prototype, {
         };
         settings = Object.keys(settings).map(key => key + '=' + settings[key]).join(',');
 
-        var win = window.open(url, title, settings);
-        if (win && win.focus) {
-            win.focus();
-        }
-        return win;
+        return window.open(url, title, settings);
     },
 
     _getOauthRedirectUrl: function() {
