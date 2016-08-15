@@ -140,7 +140,7 @@ var FieldViewText = FieldView.extend({
             e.preventDefault();
             this.stopListening(Backbone, 'click', this.fieldValueBlur);
             this.endEdit(e.target.value, { tab: { field: this.model.name, prev: e.shiftKey } });
-        } else if (code === Keys.DOM_VK_G) {
+        } else if (code === Keys.DOM_VK_G && e.metaKey) {
             e.preventDefault();
             this.showGenerator();
         }
