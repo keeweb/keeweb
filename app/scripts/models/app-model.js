@@ -763,6 +763,14 @@ var AppModel = Backbone.Model.extend({
             });
         });
         this.fileInfos.save();
+    },
+
+    setFileBackup: function(fileId, backup) {
+        let fileInfo = this.fileInfos.get(fileId);
+        if (fileInfo) {
+            fileInfo.set('backup', backup);
+        }
+        this.fileInfos.save();
     }
 });
 

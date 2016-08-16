@@ -395,25 +395,30 @@ var SettingsFileView = Backbone.View.extend({
         }
         this.$el.find('.settings__file-backups').toggleClass('hide', !enabled);
         backup.enabled = enabled;
-        this.model.set('backup', backup);
+        this.setBackup(backup);
     },
 
     changeBackupPath: function(e) {
         let backup = this.model.get('backup');
         backup.path = e.target.value.trim();
-        this.model.set('backup', backup);
+        this.setBackup(backup);
     },
 
     changeBackupStorage: function(e) {
         let backup = this.model.get('backup');
         backup.storage = e.target.value;
-        this.model.set('backup', backup);
+        this.setBackup(backup);
     },
 
     changeBackupSchedule: function(e) {
         let backup = this.model.get('backup');
         backup.schedule = e.target.value;
+        this.setBackup(backup);
+    },
+
+    setBackup: function(backup) {
         this.model.set('backup', backup);
+        this.appModel.setFileBackup(this.model.id, backup);
     },
 
     backupFile: function() {

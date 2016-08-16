@@ -8,6 +8,7 @@ Audit, generator presets, auto-type and ui improvements
 `+` solarized themes  
 `+` generator presets  
 `+` group reorder  
+`+` auto backups  
 `+` select field contents on search hotkey  
 `+` option to preload default config and file  
 `+` save displayed table columns  
