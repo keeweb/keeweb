@@ -33,7 +33,8 @@ var FileModel = Backbone.Model.extend({
         keyChangeForce: -1,
         syncing: false,
         syncError: null,
-        syncDate: null
+        syncDate: null,
+        backup: null
     },
 
     db: null,

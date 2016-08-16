@@ -13,6 +13,8 @@ var Backbone = require('backbone'),
     kdbxweb = require('kdbxweb'),
     FileSaver = require('filesaver');
 
+const DefaultBackupPath = 'Backups/{name}.{date}.bak';
+
 var SettingsFileView = Backbone.View.extend({
     template: require('templates/settings/settings-file.hbs'),
 
@@ -31,6 +33,7 @@ var SettingsFileView = Backbone.View.extend({
         'blur #settings__file-master-pass': 'blurMasterPass',
         'input #settings__file-name': 'changeName',
         'input #settings__file-def-user': 'changeDefUser',
+        'change #settings__file-backup-enabled': 'changeBackupsEnabled',
         'change #settings__file-trash': 'changeTrash',
         'input #settings__file-hist-len': 'changeHistoryLength',
         'input #settings__file-hist-size': 'changeHistorySize',
@@ -54,6 +57,7 @@ var SettingsFileView = Backbone.View.extend({
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
+        let backup = this.model.get('backup');
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
@@ -67,6 +71,8 @@ var SettingsFileView = Backbone.View.extend({
             password: PasswordGenerator.present(this.model.get('passwordLength')),
             defaultUser: this.model.get('defaultUser'),
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
+            backupStorage: backup && backup.storage,
+            backupPath: backup && backup.path || DefaultBackupPath.replace('{name}', this.model.get('name')),
             historyMaxItems: this.model.get('historyMaxItems'),
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
@@ -349,6 +355,11 @@ var SettingsFileView = Backbone.View.extend({
     changeDefUser: function(e) {
         var value = $.trim(e.target.value);
         this.model.setDefaultUser(value);
+    },
+
+    changeBackupsEnabled: function(e) {
+        let enabled = e.target.checked;
+        this.$el.find('.settings__file-backups').toggleClass('hide', !enabled);
     },
 
     changeTrash: function(e) {

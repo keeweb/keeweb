@@ -60,6 +60,32 @@
     <label for="settings__file-def-user">{{res 'setFileDefUser'}}:</label>
     <input type="text" class="settings__input input-base" id="settings__file-def-user" value="{{defaultUser}}" />
 
+    <h2>{{res 'setFileBackups'}}</h2>
+    <div>
+        <input type="checkbox" class="settings__input input-base" id="settings__file-backup-enabled" {{#if backupStorage}}checked{{/if}} />
+        <label for="settings__file-backup-enabled">{{res 'setFileBackupEnable'}}</label>
+    </div>
+    <div class="settings__file-backups {{#unless backupStorage}}hide{{/unless}}">
+        <select class="settings__select input-base" id="settings__file-backup-storage">
+            {{#if supportFiles}}<option value="file" {{#ifeq backupStorage 'file'}}selected{{/ifeq}}>{{Res 'file'}}</option>{{/if}}
+            {{#each storageProviders as |prv|}}
+                <option value="{{prv.name}}" {{#ifeq backupStorage prv.name}}selected{{/ifeq}}>{{res prv.name}}</option>
+            {{/each}}
+        </select>
+        <label for="settings__file-backup-path">{{res 'setFileBackupPath'}}:</label>
+        <input type="text" class="settings__input input-base" id="settings__file-backup-path" value="{{backupPath}}"
+            placeholder="{{backupPath}}" />
+        <label for="settings__file-backup-time">{{res 'setFileBackupTime'}}:</label>
+        <select class="settings__select input-base" id="settings__file-backup-time">
+            <option value="0">{{res 'setFileBackupOnSave'}}</option>
+            <option value="1d">{{res 'setFileBackupDaily'}}</option>
+            <option value="1w">{{res 'setFileBackupWeekly'}}</option>
+            <option value="1m">{{res 'setFileBackupMonthly'}}</option>
+            <option value="-1">{{res 'setFileBackupManually'}}</option>
+        </select>
+        <button class="btn-silent settings__file-button-backup">{{res 'setFileBackupNow'}}</button>
+    </div>
+
     <h2>{{res 'setFileHistory'}}</h2>
     <div>
         <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}} />

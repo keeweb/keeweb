@@ -428,7 +428,8 @@ var AppModel = Backbone.Model.extend({
             name: params.name,
             storage: params.storage,
             path: params.path,
-            keyFileName: params.keyFileName
+            keyFileName: params.keyFileName,
+            backup: fileInfo ? fileInfo.get('backup') : null
         });
         file.open(params.password, data, params.keyFileData, err => {
             if (err) {
@@ -582,7 +583,8 @@ var AppModel = Backbone.Model.extend({
                 editState: null,
                 rev: null,
                 syncDate: dt,
-                openDate: dt
+                openDate: dt,
+                backup: file.get('backup')
             });
         }
         file.setSyncProgress();
