@@ -206,8 +206,8 @@ var OpenView = Backbone.View.extend({
     },
 
     checkOpenFileFormat: function(fileData) {
-        var fileSig = new Uint32Array(fileData, 0, 2);
-        if (fileSig[0] !== kdbxweb.Consts.Signatures.FileMagic) {
+        var fileSig = fileData.byteLength < 8 ? null : new Uint32Array(fileData, 0, 2);
+        if (!fileSig || fileSig[0] !== kdbxweb.Consts.Signatures.FileMagic) {
             Alerts.error({ header: Locale.openWrongFile, body: Locale.openWrongFileBody });
             return false;
         }
