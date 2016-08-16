@@ -405,7 +405,7 @@ var Locale = {
     setFileBackupDaily: 'Daily',
     setFileBackupWeekly: 'Weekly',
     setFileBackupMonthly: 'Monthly',
-    setFileBackupManually: 'Manually',
+    setFileBackupManually: 'Manually, no auto-backups',
     setFileAdvanced: 'Advanced',
     setFileRounds: 'Key encryption rounds',
     setFileKeyChangeForce: 'Ask to change key after (days)',

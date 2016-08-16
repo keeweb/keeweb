@@ -46,6 +46,9 @@ if (window.process && window.process.versions && window.process.versions.electro
         getTempPath: function(fileName) {
             return this.req('path').join(this.remoteApp().getPath('temp'), fileName || '');
         },
+        getDocumentsPath: function(fileName) {
+            return this.req('path').join(this.remoteApp().getPath('documents'), fileName || '');
+        },
         getAppPath: function(fileName) {
             return this.req('path').join(this.remoteApp().getAppPath(), fileName || '');
         },

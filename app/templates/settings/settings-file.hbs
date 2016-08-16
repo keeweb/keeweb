@@ -69,19 +69,19 @@
         <select class="settings__select input-base" id="settings__file-backup-storage">
             {{#if supportFiles}}<option value="file" {{#ifeq backupStorage 'file'}}selected{{/ifeq}}>{{Res 'file'}}</option>{{/if}}
             {{#each storageProviders as |prv|}}
-                <option value="{{prv.name}}" {{#ifeq backupStorage prv.name}}selected{{/ifeq}}>{{res prv.name}}</option>
+                <option value="{{prv.name}}" {{#ifeq ../backupStorage prv.name}}selected{{/ifeq}}>{{res prv.name}}</option>
             {{/each}}
         </select>
         <label for="settings__file-backup-path">{{res 'setFileBackupPath'}}:</label>
         <input type="text" class="settings__input input-base" id="settings__file-backup-path" value="{{backupPath}}"
             placeholder="{{backupPath}}" />
-        <label for="settings__file-backup-time">{{res 'setFileBackupTime'}}:</label>
-        <select class="settings__select input-base" id="settings__file-backup-time">
-            <option value="0">{{res 'setFileBackupOnSave'}}</option>
-            <option value="1d">{{res 'setFileBackupDaily'}}</option>
-            <option value="1w">{{res 'setFileBackupWeekly'}}</option>
-            <option value="1m">{{res 'setFileBackupMonthly'}}</option>
-            <option value="-1">{{res 'setFileBackupManually'}}</option>
+        <label for="settings__file-backup-schedule">{{res 'setFileBackupTime'}}:</label>
+        <select class="settings__select input-base" id="settings__file-backup-schedule">
+            <option value="0" {{#ifeq backupSchedule '0'}}selected{{/ifeq}}>{{res 'setFileBackupOnSave'}}</option>
+            <option value="1d" {{#ifeq backupSchedule '1d'}}selected{{/ifeq}}>{{res 'setFileBackupDaily'}}</option>
+            <option value="1w" {{#ifeq backupSchedule '1w'}}selected{{/ifeq}}>{{res 'setFileBackupWeekly'}}</option>
+            <option value="1m" {{#ifeq backupSchedule '1m'}}selected{{/ifeq}}>{{res 'setFileBackupMonthly'}}</option>
+            <option value="" {{#unless backupSchedule}}selected{{/unless}}>{{res 'setFileBackupManually'}}</option>
         </select>
         <button class="btn-silent settings__file-button-backup">{{res 'setFileBackupNow'}}</button>
     </div>

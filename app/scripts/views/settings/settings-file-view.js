@@ -14,6 +14,7 @@ var Backbone = require('backbone'),
     FileSaver = require('filesaver');
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
+const DefaultBackupSchedule = '1w';
 
 var SettingsFileView = Backbone.View.extend({
     template: require('templates/settings/settings-file.hbs'),
@@ -33,7 +34,11 @@ var SettingsFileView = Backbone.View.extend({
         'blur #settings__file-master-pass': 'blurMasterPass',
         'input #settings__file-name': 'changeName',
         'input #settings__file-def-user': 'changeDefUser',
-        'change #settings__file-backup-enabled': 'changeBackupsEnabled',
+        'change #settings__file-backup-enabled': 'changeBackupEnabled',
+        'input #settings__file-backup-path': 'changeBackupPath',
+        'change #settings__file-backup-storage': 'changeBackupStorage',
+        'change #settings__file-backup-schedule': 'changeBackupSchedule',
+        'click .settings__file-button-backup': 'backupFile',
         'change #settings__file-trash': 'changeTrash',
         'input #settings__file-hist-len': 'changeHistoryLength',
         'input #settings__file-hist-size': 'changeHistorySize',
@@ -73,6 +78,7 @@ var SettingsFileView = Backbone.View.extend({
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
             backupStorage: backup && backup.storage,
             backupPath: backup && backup.path || DefaultBackupPath.replace('{name}', this.model.get('name')),
+            backupSchedule: backup ? backup.schedule : DefaultBackupSchedule,
             historyMaxItems: this.model.get('historyMaxItems'),
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
@@ -357,9 +363,61 @@ var SettingsFileView = Backbone.View.extend({
         this.model.setDefaultUser(value);
     },
 
-    changeBackupsEnabled: function(e) {
+    changeBackupEnabled: function(e) {
         let enabled = e.target.checked;
+        let backup = this.model.get('backup');
+        if (!backup) {
+            backup = { enabled: enabled, schedule: DefaultBackupSchedule };
+            if (Launcher) {
+                backup.storage = 'file';
+                backup.path = Launcher.getDocumentsPath(DefaultBackupPath);
+            } else if (this.model.get('storage') === 'webdav') {
+                backup.storage = 'webdav';
+                backup.path = this.model.get('path') + '.{date}.bak';
+            } else if (this.model.get('storage')) {
+                backup.storage = this.model.get('storage');
+                backup.path = DefaultBackupPath.replace('{name}', this.model.get('name'));
+            } else {
+                Object.keys(Storage).forEach(name => {
+                    var prv = Storage[name];
+                    if (!backup.storage && !prv.system && prv.enabled) {
+                        backup.storage = name;
+                    }
+                });
+                if (!backup.storage) {
+                    e.target.checked = false;
+                    return;
+                }
+                backup.path = DefaultBackupPath.replace('{name}', this.model.get('name'));
+            }
+            this.$el.find('#settings__file-backup-storage').val(backup.storage);
+            this.$el.find('#settings__file-backup-path').val(backup.path);
+        }
         this.$el.find('.settings__file-backups').toggleClass('hide', !enabled);
+        backup.enabled = enabled;
+        this.model.set('backup', backup);
+    },
+
+    changeBackupPath: function(e) {
+        let backup = this.model.get('backup');
+        backup.path = e.target.value.trim();
+        this.model.set('backup', backup);
+    },
+
+    changeBackupStorage: function(e) {
+        let backup = this.model.get('backup');
+        backup.storage = e.target.value;
+        this.model.set('backup', backup);
+    },
+
+    changeBackupSchedule: function(e) {
+        let backup = this.model.get('backup');
+        backup.schedule = e.target.value;
+        this.model.set('backup', backup);
+    },
+
+    backupFile: function() {
+        Alerts.notImplemented();
     },
 
     changeTrash: function(e) {
