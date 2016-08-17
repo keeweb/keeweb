@@ -505,7 +505,7 @@ var EntryModel = Backbone.Model.extend({
                 otpUrl = otpUrl.getText();
             }
             if (Otp.isSecret(otpUrl)) {
-                otpUrl = Otp.makeUrl(otpUrl);
+                otpUrl = Otp.makeUrl(otpUrl.toUpperCase());
             } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
                 // KeeOTP plugin format
                 var args = {};
