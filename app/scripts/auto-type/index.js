@@ -167,11 +167,15 @@ var AutoType = {
                 this.pendingEvent = evt;
                 this.appModel.files.once('update', this.processPendingEvent, this);
                 logger.debug('auto-type event delayed');
-                setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
+                this.focusMainWindow();
             } else {
                 this.processEventWithFilter(evt);
             }
         });
+    },
+
+    focusMainWindow() {
+        setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
     },
 
     processEventWithFilter(evt) {
@@ -180,6 +184,7 @@ var AutoType = {
             this.runAndHandleResult(entries.at(0));
             return;
         }
+        this.focusMainWindow();
         this.selectEntryView = new AutoTypeSelectView({
             model: { filter: evt.filter }
         }).render();
