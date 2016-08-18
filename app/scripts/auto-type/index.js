@@ -19,6 +19,7 @@ var AutoType = {
     enabled: !!Launcher,
     selectEntryView: false,
     pendingEvent: null,
+    running: false,
 
     init(appModel) {
         if (!this.enabled) {
@@ -32,6 +33,10 @@ var AutoType = {
     handleEvent(e) {
         let entry = e && e.entry || null;
         logger.debug('Auto type event', entry);
+        if (this.running) {
+            logger.debug('Already running, skipping event');
+            return;
+        }
         if (entry) {
             this.hideWindow(() => { this.runAndHandleResult(entry); });
         } else {
@@ -61,6 +66,7 @@ var AutoType = {
     },
 
     run(entry, callback) {
+        this.running = true;
         var sequence = entry.getEffectiveAutoTypeSeq();
         logger.debug('Start', sequence);
         var ts = logger.ts();
@@ -70,6 +76,7 @@ var AutoType = {
             logger.debug('Parsed', this.printOps(runner.ops));
             runner.resolve(entry, err => {
                 if (err) {
+                    this.running = false;
                     logger.error('Resolve error', err);
                     return callback && callback(err);
                 }
@@ -78,12 +85,14 @@ var AutoType = {
                     try {
                         runner.obfuscate();
                     } catch (e) {
+                        this.running = false;
                         logger.error('Obfuscate error', e);
                         return callback && callback(e);
                     }
                     logger.debug('Obfuscated');
                 }
                 runner.run(err => {
+                    this.running = false;
                     if (err) {
                         logger.error('Run error', err);
                         return callback && callback(err);
@@ -93,6 +102,7 @@ var AutoType = {
                 });
             });
         } catch (ex) {
+            this.running = false;
             logger.error('Parse error', ex);
             return callback && callback(ex);
         }

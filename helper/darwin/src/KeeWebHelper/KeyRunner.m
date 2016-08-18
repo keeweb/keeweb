@@ -3,6 +3,7 @@
 @implementation KeyRunner
 
 CGEventSourceRef eventSource = nil;
+bool keyboardStateIsValid = false;
 
 + (void)initialize {
     eventSource = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
@@ -29,6 +30,7 @@ CGEventSourceRef eventSource = nil;
 }
 
 + (void)keyUpDown:(unichar)ch code:(CGKeyCode)code flags:(CGEventFlags)flags down:(bool)down {
+    [KeyRunner validateSystemState];
     CGEventRef keyEvent = CGEventCreateKeyboardEvent(eventSource, code, down);
     if (ch) {
         CGEventKeyboardSetUnicodeString(keyEvent, 1, &ch);
@@ -38,6 +40,26 @@ CGEventSourceRef eventSource = nil;
     }
     CGEventPost(kCGHIDEventTap, keyEvent);
     CFRelease(keyEvent);
+}
+
++ (void)validateSystemState {
+    if (keyboardStateIsValid) {
+        return;
+    }
+    int totalWaitTime = 10 * 1000 * 1000;
+    int loopWaitTime = 10000;
+    while (totalWaitTime > 0) {
+        CGEventFlags flags = CGEventSourceFlagsState(kCGEventSourceStateHIDSystemState);
+        if ((flags & (kCGEventFlagMaskCommand | kCGEventFlagMaskShift | kCGEventFlagMaskAlternate | kCGEventFlagMaskControl)) == 0) {
+            keyboardStateIsValid = true;
+            break;
+        }
+        usleep(loopWaitTime);
+        totalWaitTime -= loopWaitTime;
+    }
+    if (!keyboardStateIsValid) {
+        exit(8);
+    }
 }
 
 @end
