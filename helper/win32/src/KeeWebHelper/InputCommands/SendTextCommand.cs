@@ -15,6 +15,7 @@
 
         public override void Execute()
         {
+            InputStateValidator.EnsureNoKeyIsPressed();
             if ((Modifiers & ModifierKeys.Ctrl) != 0) { _simulator.KeyDown(WindowsInput.Native.VirtualKeyCode.CONTROL); }
             if ((Modifiers & ModifierKeys.Shift) != 0) { _simulator.KeyDown(WindowsInput.Native.VirtualKeyCode.SHIFT); }
             if ((Modifiers & ModifierKeys.Alt) != 0) { _simulator.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU); }

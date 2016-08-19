@@ -14,6 +14,7 @@ namespace KeeWebHelper.InputCommands
 
         public override void Execute()
         {
+            InputStateValidator.EnsureNoKeyIsPressed();
             Thread.Sleep(500);
             Clipboard.SetText(Text);
             Thread.Sleep(500);

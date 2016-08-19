@@ -68,6 +68,7 @@
     <Compile Include="InputCommands\UnknownCommand.cs" />
     <Compile Include="InputCommands\WaitCommand.cs" />
     <Compile Include="InputParser.cs" />
+    <Compile Include="InputStateValidator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WindowHelper.cs" />
