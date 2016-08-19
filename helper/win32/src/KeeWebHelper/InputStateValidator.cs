@@ -13,7 +13,7 @@ namespace KeeWebHelper
             WindowsInput.Native.VirtualKeyCode.MENU,
             WindowsInput.Native.VirtualKeyCode.CONTROL,
             WindowsInput.Native.VirtualKeyCode.LWIN,
-            WindowsInput.Native.VirtualKeyCode.LWIN
+            WindowsInput.Native.VirtualKeyCode.RWIN
         };
 
         static bool _isValid = false;
