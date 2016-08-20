@@ -42,6 +42,7 @@ app.on('ready', () => {
         setAppOptions();
         createMainWindow();
         setGlobalShortcuts();
+        subscribePowerEvents();
     }
 });
 app.on('open-file', (e, path) => {
@@ -291,5 +292,14 @@ function setGlobalShortcuts() {
                 emitBackboneEvent(eventName);
             });
         } catch (e) {}
+    });
+}
+
+function subscribePowerEvents() {
+    electron.powerMonitor.on('suspend', () => {
+        emitBackboneEvent('power-monitor-suspend');
+    });
+    electron.powerMonitor.on('resume', () => {
+        emitBackboneEvent('power-monitor-resume');
     });
 }

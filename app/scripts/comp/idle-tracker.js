@@ -4,23 +4,22 @@ const Backbone = require('backbone');
 const AppSettingsModel = require('../models/app-settings-model');
 
 let IdleTracker = {
-    idleTimeout: 0,
+    actionTime: Date.now(),
     init: function() {
-        this.scheduleLock();
+        setInterval(this.checkIdle.bind(this), 1000 * 60);
     },
-    scheduleLock() {
-        let idleMinutes = AppSettingsModel.instance.get('idleMinutes');
-        if (this.idleTimeout) {
-            clearTimeout(this.idleTimeout);
+    checkIdle: function() {
+        let idleMinutes = (Date.now() - this.actionTime) / 1000 / 60;
+        let maxIdleMinutes = AppSettingsModel.instance.get('idleMinutes');
+        if (maxIdleMinutes && idleMinutes > maxIdleMinutes) {
+            Backbone.trigger('user-idle');
         }
-        this.idleTimeout = setTimeout(this.triggerIdle, idleMinutes * 60 * 1000);
     },
-    triggerIdle() {
-        Backbone.trigger('user-idle');
-    },
-    regUserAction() {
-        this.scheduleLock();
+    regUserAction: function() {
+        this.actionTime = Date.now();
     }
 };
+
+Backbone.on('power-monitor-resume', IdleTracker.checkIdle, IdleTracker);
 
 module.exports = IdleTracker;
