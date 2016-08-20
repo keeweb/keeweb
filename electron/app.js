@@ -22,11 +22,13 @@ if (!htmlPath) {
 app.on('window-all-closed', () => {
     if (restartPending) {
         // unbind all handlers, load new app.js module and pass control to it
-        electron.globalShortcut.unregisterAll();
         app.removeAllListeners('window-all-closed');
         app.removeAllListeners('ready');
         app.removeAllListeners('open-file');
         app.removeAllListeners('activate');
+        electron.globalShortcut.unregisterAll();
+        electron.powerMonitor.removeAllListeners('suspend');
+        electron.powerMonitor.removeAllListeners('resume');
         var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
         delete require.cache[require.resolve('./app.js')];
         require(userDataAppFile);
