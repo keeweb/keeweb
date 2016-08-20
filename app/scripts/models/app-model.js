@@ -430,7 +430,7 @@ var AppModel = Backbone.Model.extend({
             storage: params.storage,
             path: params.path,
             keyFileName: params.keyFileName,
-            backup: fileInfo ? fileInfo.get('backup') : null
+            backup: fileInfo.get('backup')
         });
         file.open(params.password, data, params.keyFileData, err => {
             if (err) {
@@ -495,7 +495,8 @@ var AppModel = Backbone.Model.extend({
             editState: file.getLocalEditState(),
             rev: rev,
             syncDate: file.get('syncDate') || dt,
-            openDate: dt
+            openDate: dt,
+            backup: file.get('backup')
         });
         if (this.settings.get('rememberKeyFiles')) {
             fileInfo.set({
