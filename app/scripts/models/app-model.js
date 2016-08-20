@@ -15,6 +15,7 @@ var Backbone = require('backbone'),
     IdGenerator = require('../util/id-generator'),
     Logger = require('../util/logger'),
     FeatureDetector = require('../util/feature-detector'),
+    Format = require('../util/format'),
     AutoType = require('../auto-type');
 
 require('../mixins/protected-value-ex');
@@ -771,6 +772,25 @@ var AppModel = Backbone.Model.extend({
             fileInfo.set('backup', backup);
         }
         this.fileInfos.save();
+    },
+
+    backupFile: function(file, data, callback) {
+        let opts = file.get('opts');
+        let backup = file.get('backup');
+        let logger = new Logger('sync', file.get('name'));
+        if (!backup || !backup.storage || !backup.path) {
+            return callback('Invalid backup settings');
+        }
+        let path = backup.path.replace('{date}', Format.dtStrFs(new Date()));
+        logger.info('Backup file to', backup.storage, path);
+        Storage[backup.storage].save(path, opts, data, (err) => {
+            if (err) {
+                logger.error('Backup error', err);
+            } else {
+                logger.info('Backup complete');
+            }
+            callback(err);
+        });
     }
 });
 

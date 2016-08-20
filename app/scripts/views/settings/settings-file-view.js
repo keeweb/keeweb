@@ -171,6 +171,9 @@ var SettingsFileView = Backbone.View.extend({
             });
         } else {
             this.model.getData(data => {
+                if (!data) {
+                    return;
+                }
                 if (Launcher) {
                     Launcher.getSaveFileName(fileName, path => {
                         if (path) {
@@ -422,7 +425,28 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     backupFile: function() {
-        Alerts.notImplemented();
+        if (this.backupInProgress) {
+            return;
+        }
+        let backupButton = this.$el.find('.settings__file-button-backup');
+        backupButton.text(Locale.setFileBackupNowWorking);
+        this.model.getData(data => {
+            if (!data) {
+                this.backupInProgress = false;
+                backupButton.text(Locale.setFileBackupNow);
+                return;
+            }
+            this.appModel.backupFile(this.model, data, (err) => {
+                this.backupInProgress = false;
+                backupButton.text(Locale.setFileBackupNow);
+                if (err) {
+                    Alerts.error({
+                        title: Locale.setFileBackupError,
+                        body: Locale.setFileBackupErrorDescription + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                    });
+                }
+            });
+        });
     },
 
     changeTrash: function(e) {
