@@ -57,8 +57,8 @@ var SettingsFileView = Backbone.View.extend({
         var fileStorage = this.model.get('storage');
         Object.keys(Storage).forEach(name => {
             var prv = Storage[name];
-            if (!prv.system && prv.enabled && name !== fileStorage) {
-                storageProviders.push(prv);
+            if (!prv.system && prv.enabled) {
+                storageProviders.push({ name: prv.name, icon: prv.icon, iconSvg: prv.iconSvg, own: name === fileStorage });
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));

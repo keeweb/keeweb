@@ -25,11 +25,13 @@
         </div>
         {{/ifneq}}
         {{#each storageProviders as |prv|}}
+            {{#unless prv.own}}
             <div class="settings__file-save-to settings__file-save-to-storage svg-btn" data-storage="{{prv.name}}">
                 {{#if prv.icon}}<i class="fa fa-{{prv.icon}}"></i>{{/if}}
                 {{#if prv.iconSvg}}{{{prv.iconSvg}}}{{/if}}
                 <span>{{res prv.name}}</span>
             </div>
+            {{/unless}}
         {{/each}}
         <div class="settings__file-save-to settings__file-save-to-xml">
             <i class="fa fa-code"></i>{{res 'setFileSaveToXml'}}
