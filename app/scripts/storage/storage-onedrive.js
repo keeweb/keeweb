@@ -190,6 +190,31 @@ var StorageOneDrive = StorageBase.extend({
         });
     },
 
+    mkdir: function(path, callback) {
+        this._oauthAuthorize(err => {
+            if (err) { return callback && callback(err); }
+            this.logger.debug('Make dir', path);
+            var ts = this.logger.ts();
+            var url = this._baseUrl + '/drive/root/children';
+            var data = JSON.stringify({ name: path.replace('/drive/root:/', ''), folder: {} });
+            this._xhr({
+                url: url,
+                method: 'POST',
+                responseType: 'json',
+                statuses: [200, 204],
+                data: new Blob([data], {type: 'application/json'}),
+                success: () => {
+                    this.logger.debug('Made dir', path, this.logger.ts(ts));
+                    return callback && callback();
+                },
+                error: (err) => {
+                    this.logger.error('Make dir error', path, err, this.logger.ts(ts));
+                    return callback && callback(err);
+                }
+            });
+        });
+    },
+
     setEnabled: function(enabled) {
         if (!enabled) {
             var url = 'https://login.live.com/oauth20_logout.srf?client_id={client_id}&redirect_uri={url}'

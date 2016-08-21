@@ -71,52 +71,59 @@ var StorageGDrive = StorageBase.extend({
     },
 
     save: function(path, opts, data, callback, rev) {
-        this.stat(path, opts, (err, stat) => {
-            if (rev) {
-                if (err) { return callback && callback(err); }
-                if (stat.rev !== rev) {
-                    return callback && callback({revConflict: true}, stat);
-                }
+        this._oauthAuthorize(err => {
+            if (err) {
+                return callback && callback(err);
             }
-            this.logger.debug('Save', path);
-            var ts = this.logger.ts();
-            var isNew = path.lastIndexOf(NewFileIdPrefix, 0) === 0;
-            var url;
-            if (isNew) {
-                url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,headRevisionId';
-                var fileName = path.replace(NewFileIdPrefix, '') + '.kdbx';
-                var boundry = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
-                data = new Blob([
-                    '--', boundry, '\r\n',
-                    'Content-Type: application/json; charset=UTF-8', '\r\n\r\n',
-                    JSON.stringify({ name: fileName }), '\r\n',
-                    '--', boundry, '\r\n',
-                    'Content-Type: application/octet-stream', '\r\n\r\n',
-                    data, '\r\n',
-                    '--', boundry, '--', '\r\n'
-                ], {type: 'multipart/related; boundary="' + boundry + '"'});
-            } else {
-                url = 'https://www.googleapis.com/upload/drive/v3/files/{id}?uploadType=media&fields=headRevisionId'
-                    .replace('{id}', path);
-                data = new Blob([data], {type: 'application/octet-stream'});
-            }
-            this._xhr({
-                url: url,
-                method: isNew ? 'POST' : 'PATCH',
-                responseType: 'json',
-                data: data,
-                success: (response) => {
-                    this.logger.debug('Saved', path, this.logger.ts(ts));
-                    var newRev = response.headRevisionId;
-                    if (!newRev) {
-                        return callback && callback('save error: no rev');
+            this.stat(path, opts, (err, stat) => {
+                if (rev) {
+                    if (err) {
+                        return callback && callback(err);
                     }
-                    return callback && callback(null, { rev: newRev, path: isNew ? response.id : null });
-                },
-                error: (err) => {
-                    this.logger.error('Save error', path, err, this.logger.ts(ts));
-                    return callback && callback(err);
+                    if (stat.rev !== rev) {
+                        return callback && callback({ revConflict: true }, stat);
+                    }
                 }
+                this.logger.debug('Save', path);
+                var ts = this.logger.ts();
+                var isNew = path.lastIndexOf(NewFileIdPrefix, 0) === 0;
+                var url;
+                if (isNew) {
+                    url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,headRevisionId';
+                    var fileName = path.replace(NewFileIdPrefix, '') + '.kdbx';
+                    var boundry = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
+                    data = new Blob([
+                        '--', boundry, '\r\n',
+                        'Content-Type: application/json; charset=UTF-8', '\r\n\r\n',
+                        JSON.stringify({ name: fileName }), '\r\n',
+                        '--', boundry, '\r\n',
+                        'Content-Type: application/octet-stream', '\r\n\r\n',
+                        data, '\r\n',
+                        '--', boundry, '--', '\r\n'
+                    ], { type: 'multipart/related; boundary="' + boundry + '"' });
+                } else {
+                    url = 'https://www.googleapis.com/upload/drive/v3/files/{id}?uploadType=media&fields=headRevisionId'
+                        .replace('{id}', path);
+                    data = new Blob([data], { type: 'application/octet-stream' });
+                }
+                this._xhr({
+                    url: url,
+                    method: isNew ? 'POST' : 'PATCH',
+                    responseType: 'json',
+                    data: data,
+                    success: (response) => {
+                        this.logger.debug('Saved', path, this.logger.ts(ts));
+                        var newRev = response.headRevisionId;
+                        if (!newRev) {
+                            return callback && callback('save error: no rev');
+                        }
+                        return callback && callback(null, { rev: newRev, path: isNew ? response.id : null });
+                    },
+                    error: (err) => {
+                        this.logger.error('Save error', path, err, this.logger.ts(ts));
+                        return callback && callback(err);
+                    }
+                });
             });
         });
     },

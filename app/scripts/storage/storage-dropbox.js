@@ -215,6 +215,19 @@ var StorageDropbox = StorageBase.extend({
         }, _.noop);
     },
 
+    mkdir: function(path, callback) {
+        DropboxLink.authenticate((err) => {
+            if (err) { return callback(err); }
+            this.logger.debug('Make dir', path);
+            let ts = this.logger.ts();
+            path = this._toFullPath(path);
+            DropboxLink.mkdir(path, err => {
+                this.logger.debug('Made dir', path, this.logger.ts(ts));
+                return callback && callback(err);
+            }, _.noop);
+        });
+    },
+
     setEnabled: function(enabled) {
         if (!enabled) {
             DropboxLink.logout();

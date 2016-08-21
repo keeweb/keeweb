@@ -317,6 +317,10 @@ var DropboxLink = {
         this._callAndHandleError('remove', [fileName], complete);
     },
 
+    mkdir: function(path, complete) {
+        this._callAndHandleError('mkdir', [path], complete);
+    },
+
     canChooseFile: function() {
         return !Launcher;
     },

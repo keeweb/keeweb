@@ -16,6 +16,7 @@ var Backbone = require('backbone'),
     Logger = require('../util/logger'),
     FeatureDetector = require('../util/feature-detector'),
     Format = require('../util/format'),
+    UrlUtil = require('../util/url-util'),
     AutoType = require('../auto-type');
 
 require('../mixins/protected-value-ex');
@@ -784,13 +785,47 @@ var AppModel = Backbone.Model.extend({
         }
         let path = backup.path.replace('{date}', Format.dtStrFs(new Date()));
         logger.info('Backup file to', backup.storage, path);
-        Storage[backup.storage].save(path, opts, data, (err) => {
-            if (err) {
-                logger.error('Backup error', err);
-            } else {
-                logger.info('Backup complete');
+        let saveToFolder = () => {
+            if (Storage[backup.storage].getPathForName) {
+                path = Storage[backup.storage].getPathForName(path);
             }
-            callback(err);
+            Storage[backup.storage].save(path, opts, data, (err) => {
+                if (err) {
+                    logger.error('Backup error', err);
+                } else {
+                    logger.info('Backup complete');
+                }
+                callback(err);
+            });
+        };
+        let folderPath = UrlUtil.fileToDir(path);
+        if (Storage[backup.storage].getPathForName) {
+            folderPath = Storage[backup.storage].getPathForName(folderPath).replace('.kdbx', '');
+        }
+        Storage[backup.storage].stat(folderPath, opts, (err) => {
+            if (err) {
+                if (err.notFound) {
+                    logger.info('Backup folder does not exist');
+                    if (!Storage[backup.storage].mkdir) {
+                        return callback('Mkdir not supported by ' + backup.storage);
+                    }
+                    Storage[backup.storage].mkdir(folderPath, (err) => {
+                        if (err) {
+                            logger.error('Error creating backup folder', err);
+                            callback('Error creating backup folder');
+                        } else {
+                            logger.info('Backup folder created');
+                            saveToFolder();
+                        }
+                    });
+                } else {
+                    logger.error('Stat folder error', err);
+                    callback('Cannot stat backup folder');
+                }
+            } else {
+                logger.info('Backup folder exists, saving');
+                saveToFolder();
+            }
         });
     }
 });
