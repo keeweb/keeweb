@@ -15,6 +15,7 @@ Audit, generator presets, auto-type and ui improvements
 `+` confirmation in password change dialog  
 `+` inline generator keyboard management  
 `+` field references decoding  
+`+` copy entries  
 `-` fix app redraw in background  
 `-` fix idle timer on computer sleep  
 `-` fix storage popup when no action is required  

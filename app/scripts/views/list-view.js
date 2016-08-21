@@ -162,7 +162,7 @@ var ListView = Backbone.View.extend({
 
     selectItem: function(item) {
         this.model.activeEntryId = item.id;
-        Backbone.trigger('select-entry', item);
+        Backbone.trigger('entry-selected', item);
         this.itemsEl.find('.list__item--active').removeClass('list__item--active');
         var itemEl = document.getElementById(item.id);
         itemEl.classList.add('list__item--active');

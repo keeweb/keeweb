@@ -66,7 +66,7 @@ var DetailsView = Backbone.View.extend({
         this.fieldViews = [];
         this.views = {};
         this.initScroll();
-        this.listenTo(Backbone, 'select-entry', this.showEntry);
+        this.listenTo(Backbone, 'entry-selected', this.showEntry);
         this.listenTo(Backbone, 'copy-password', this.copyPassword);
         this.listenTo(Backbone, 'copy-user', this.copyUserName);
         this.listenTo(Backbone, 'copy-url', this.copyUrl);
@@ -252,6 +252,7 @@ var DetailsView = Backbone.View.extend({
                 if (AutoType.enabled) {
                     moreOptions.push({value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoType});
                 }
+                moreOptions.push({value: 'clone', icon: 'clone', text: Locale.detClone});
                 var rect = this.moreView.labelEl[0].getBoundingClientRect();
                 dropdownView.render({
                     position: {top: rect.bottom, left: rect.left},
@@ -279,6 +280,9 @@ var DetailsView = Backbone.View.extend({
                 break;
             case 'auto-type':
                 this.toggleAutoType();
+                break;
+            case 'clone':
+                this.clone();
                 break;
             default:
                 if (e.item.lastIndexOf('add:', 0) === 0) {
@@ -486,7 +490,7 @@ var DetailsView = Backbone.View.extend({
                     this.model.moveToFile(newFile);
                     this.appModel.activeEntryId = this.model.id;
                     this.entryUpdated();
-                    Backbone.trigger('select-entry', this.model);
+                    Backbone.trigger('entry-selected', this.model);
                     return;
                 } else if (fieldName) {
                     this.model.setField(fieldName, e.val);
@@ -737,6 +741,11 @@ var DetailsView = Backbone.View.extend({
         Backbone.trigger('refresh');
     },
 
+    clone: function() {
+        let newEntry = this.model.cloneEntry(' ' + Locale.detClonedName);
+        Backbone.trigger('select-entry', newEntry);
+    },
+
     deleteFromTrash: function() {
         Alerts.yesno({
             header: Locale.detDelFromTrash,
@@ -761,6 +770,7 @@ var DetailsView = Backbone.View.extend({
             options.push({ value: 'det-copy-user', icon: 'clipboard', text: Locale.detMenuCopyUser });
         }
         options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
+        options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });
         Backbone.trigger('show-context-menu', _.extend(e, { options }));
     },
 
@@ -774,6 +784,9 @@ var DetailsView = Backbone.View.extend({
                 break;
             case 'det-add-new':
                 this.addNewField();
+                break;
+            case 'det-clone':
+                this.clone();
                 break;
         }
     },

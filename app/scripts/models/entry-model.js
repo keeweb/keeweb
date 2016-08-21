@@ -608,6 +608,17 @@ var EntryModel = Backbone.Model.extend({
             group = group.parentGroup;
         }
         return groupPath;
+    },
+
+    cloneEntry: function(nameSuffix) {
+        let newEntry = EntryModel.newEntry(this.group, this.file);
+        newEntry.entry.copyFrom(this.entry);
+        newEntry.entry.uuid = kdbxweb.KdbxUuid.random();
+        newEntry.entry.times.update();
+        newEntry.entry.fields.Title = this.title + nameSuffix;
+        newEntry._fillByEntry();
+        this.file.reload();
+        return newEntry;
     }
 });
 

@@ -40,6 +40,7 @@ var AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'add-filter', this.addFilter);
         this.listenTo(Backbone, 'set-sort', this.setSort);
         this.listenTo(Backbone, 'empty-trash', this.emptyTrash);
+        this.listenTo(Backbone, 'select-entry', this.selectEntry);
 
         this.appLogger = new Logger('app');
 
@@ -199,11 +200,16 @@ var AppModel = Backbone.Model.extend({
             this.activeEntryId = firstEntry ? firstEntry.id : null;
         }
         Backbone.trigger('filter', { filter: this.filter, sort: this.sort, entries: entries });
-        Backbone.trigger('select-entry', entries.get(this.activeEntryId));
+        Backbone.trigger('entry-selected', entries.get(this.activeEntryId));
     },
 
     refresh: function() {
         this.setFilter(this.filter);
+    },
+
+    selectEntry: function(entry) {
+        this.activeEntryId = entry.id;
+        this.refresh();
     },
 
     addFilter: function(filter) {

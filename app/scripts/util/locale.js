@@ -243,6 +243,8 @@ var Locale = {
     detMenuCopyPassword: 'Copy password',
     detMenuCopyUser: 'Copy user',
     detSetupOtp: 'One-time passwords',
+    detClone: 'Make a copy',
+    detClonedName: 'Copy',
     detAutoType: 'Auto-type',
     detAutoTypeEnabled: 'Enable auto-type for this entry',
     detAutoTypeSequence: 'Keystrokes',
