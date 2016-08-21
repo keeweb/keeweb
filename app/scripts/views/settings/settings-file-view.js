@@ -58,7 +58,9 @@ var SettingsFileView = Backbone.View.extend({
         Object.keys(Storage).forEach(name => {
             var prv = Storage[name];
             if (!prv.system && prv.enabled) {
-                storageProviders.push({ name: prv.name, icon: prv.icon, iconSvg: prv.iconSvg, own: name === fileStorage });
+                storageProviders.push({
+                    name: prv.name, icon: prv.icon, iconSvg: prv.iconSvg, own: name === fileStorage, backup: prv.backup
+                });
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
@@ -371,28 +373,33 @@ var SettingsFileView = Backbone.View.extend({
         let backup = this.model.get('backup');
         if (!backup) {
             backup = { enabled: enabled, schedule: DefaultBackupSchedule };
+            let defaultPath = DefaultBackupPath.replace('{name}', this.model.get('name'));
             if (Launcher) {
                 backup.storage = 'file';
-                backup.path = Launcher.getDocumentsPath(DefaultBackupPath);
-            } else if (this.model.get('storage') === 'webdav') {
-                backup.storage = 'webdav';
-                backup.path = this.model.get('path') + '.{date}.bak';
-            } else if (this.model.get('storage')) {
-                backup.storage = this.model.get('storage');
-                backup.path = DefaultBackupPath.replace('{name}', this.model.get('name'));
+                backup.path = Launcher.getDocumentsPath(defaultPath);
             } else {
-                Object.keys(Storage).forEach(name => {
-                    var prv = Storage[name];
-                    if (!backup.storage && !prv.system && prv.enabled) {
-                        backup.storage = name;
-                    }
-                });
-                if (!backup.storage) {
-                    e.target.checked = false;
-                    return;
-                }
-                backup.path = DefaultBackupPath.replace('{name}', this.model.get('name'));
+                backup.storage = 'dropbox';
+                backup.path = defaultPath;
             }
+            // } else if (this.model.get('storage') === 'webdav') {
+            //     backup.storage = 'webdav';
+            //     backup.path = this.model.get('path') + '.{date}.bak';
+            // } else if (this.model.get('storage')) {
+            //     backup.storage = this.model.get('storage');
+            //     backup.path = DefaultBackupPath.replace('{name}', this.model.get('name'));
+            // } else {
+            //     Object.keys(Storage).forEach(name => {
+            //         var prv = Storage[name];
+            //         if (!backup.storage && !prv.system && prv.enabled) {
+            //             backup.storage = name;
+            //         }
+            //     });
+            //     if (!backup.storage) {
+            //         e.target.checked = false;
+            //         return;
+            //     }
+            //     backup.path = DefaultBackupPath.replace('{name}', this.model.get('name'));
+            // }
             this.$el.find('#settings__file-backup-storage').val(backup.storage);
             this.$el.find('#settings__file-backup-path').val(backup.path);
         }

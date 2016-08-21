@@ -71,6 +71,23 @@ if (window.process && window.process.versions && window.process.versions.electro
         statFile: function(path) {
             return this.req('fs').statSync(path);
         },
+        mkdir: function(dir) {
+            let fs = this.req('fs');
+            let path = this.req('path');
+            let stack = [];
+            while (true) {
+                if (fs.existsSync(dir)) {
+                    break;
+                }
+                stack.unshift(dir);
+                let newDir = path.dirname(dir);
+                if (newDir === dir || !newDir || newDir === '.' || newDir === '/') {
+                    break;
+                }
+                dir = newDir;
+            }
+            stack.forEach(dir => fs.mkdirSync(dir));
+        },
         parsePath: function(fileName) {
             var path = this.req('path');
             return { path: fileName, dir: path.dirname(fileName), file: path.basename(fileName) };

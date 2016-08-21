@@ -10,6 +10,7 @@ var StorageFile = StorageBase.extend({
     icon: 'hdd-o',
     enabled: !!Launcher,
     system: true,
+    backup: true,
 
     load: function(path, opts, callback) {
         this.logger.debug('Load', path);
@@ -64,6 +65,19 @@ var StorageFile = StorageBase.extend({
             if (callback) { callback(undefined, { rev: newRev }); }
         } catch (e) {
             this.logger.error('Error writing local file', path, e);
+            if (callback) { callback(e); }
+        }
+    },
+
+    mkdir: function(path, callback) {
+        this.logger.debug('Make dir', path);
+        var ts = this.logger.ts();
+        try {
+            Launcher.mkdir(path);
+            this.logger.debug('Made dir', path, this.logger.ts(ts));
+            if (callback) { callback(); }
+        } catch (e) {
+            this.logger.error('Error making local dir', path, e);
             if (callback) { callback(e); }
         }
     },

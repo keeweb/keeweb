@@ -71,7 +71,9 @@
         <select class="settings__select input-base" id="settings__file-backup-storage">
             {{#if supportFiles}}<option value="file" {{#ifeq backupStorage 'file'}}selected{{/ifeq}}>{{Res 'file'}}</option>{{/if}}
             {{#each storageProviders as |prv|}}
+                {{#if prv.backup}}
                 <option value="{{prv.name}}" {{#ifeq ../backupStorage prv.name}}selected{{/ifeq}}>{{res prv.name}}</option>
+                {{/if}}
             {{/each}}
         </select>
         <label for="settings__file-backup-path">{{res 'setFileBackupPath'}}:</label>

@@ -10,6 +10,7 @@ var StorageDropbox = StorageBase.extend({
     icon: 'dropbox',
     enabled: true,
     uipos: 20,
+    backup: true,
 
     _convertError: function(err) {
         if (!err) {
