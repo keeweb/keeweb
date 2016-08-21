@@ -6,6 +6,7 @@ var Backbone = require('backbone'),
 var AppSettingsModel = Backbone.Model.extend({
     defaults: {
         theme: 'fb',
+        locale: null,
         expandGroups: true,
         listViewWidth: null,
         menuViewWidth: null,

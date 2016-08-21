@@ -37,6 +37,17 @@
     {{/if}}
 
     <h2>{{res 'setGenAppearance'}}</h2>
+    {{#if locales}}
+    <div>
+        <label for="settings__general-locale">{{res 'setGenLocale'}}:</label>
+        <select class="settings__general-locale settings__select input-base" id="settings__general-locale">
+            {{#each locales as |name key|}}
+                <option value="{{key}}" {{#ifeq key ../activeLocale}}selected{{/ifeq}}>{{name}}</option>
+            {{/each}}
+            <option value="...">({{res 'setGenLocImprove'}})</option>
+        </select>
+    </div>
+    {{/if}}
     <div>
         <label for="settings__general-theme">{{res 'setGenTheme'}}:</label>
         <select class="settings__general-theme settings__select input-base" id="settings__general-theme">

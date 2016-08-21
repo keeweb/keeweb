@@ -1,12 +1,19 @@
 'use strict';
 
-var ThemeChanger = {
+const Locale = require('./locale');
+
+const SettingsManager = {
+    neutralLocale: null,
+
     setBySettings: function(settings) {
         if (settings.get('theme')) {
             this.setTheme(settings.get('theme'));
         }
         if (settings.get('fontSize')) {
             this.setFontSize(settings.get('fontSize'));
+        }
+        if (settings.get('locale') && settings.get('locale') !== 'en') {
+            this.setLocale(settings.get('locale'));
         }
     },
 
@@ -29,7 +36,18 @@ var ThemeChanger = {
 
     setFontSize: function(fontSize) {
         document.documentElement.style.fontSize = fontSize ? (12 + fontSize * 2) + 'px' : '';
+    },
+
+    setLocale(locale) {
+        if (!this.neutralLocale) {
+            this.neutralLocale = _.clone(Locale);
+        }
+        _.extend(Locale, this.neutralLocale);
+        if (locale && locale !== 'en') {
+            let localeValues = require('../locales/' + locale + '.json');
+            _.extend(Locale, localeValues);
+        }
     }
 };
 
-module.exports = ThemeChanger;
+module.exports = SettingsManager;

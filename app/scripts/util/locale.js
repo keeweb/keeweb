@@ -1,6 +1,6 @@
 'use strict';
 
-var Locale = {
+const Locale = {
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -341,6 +341,13 @@ var Locale = {
     setGenThemeHc: 'High contrast',
     setGenThemeSd: 'Solarized dark',
     setGenThemeSl: 'Solarized light',
+    setGenLocale: 'Language',
+    setGenLocEn: 'English',
+    setGenLocNl: 'Dutch - Nederlands',
+    setGenLocImprove: 'translate the app to your language',
+    setGenLocMsg: 'Help translating KeeWeb',
+    setGenLocMsgBody: 'If you would like to see KeeWeb in your language, please help us with translation.',
+    setGenLocMsgLink: 'Translate the app',
     setGenFontSize: 'Font size',
     setGenFontSizeNormal: 'Normal',
     setGenFontSizeLarge: 'Large',

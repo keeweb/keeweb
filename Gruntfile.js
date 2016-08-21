@@ -91,11 +91,12 @@ module.exports = function(grunt) {
                     { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
                 ]})},
                 { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
-                { test: /pikadat\.js$/, loader: 'uglify' },
+                { test: /pikaday\.js$/, loader: 'uglify' },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
                 { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel',
                     query: { presets: ['es2015'], cacheDirectory: true }
-                }
+                },
+                { test: /\.json$/, loader: 'json' }
             ]
         },
         plugins: [

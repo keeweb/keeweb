@@ -31,6 +31,10 @@ _.extend(Backbone.View.prototype, {
         return this._hidden;
     },
 
+    isVisible: function() {
+        return !this._hidden;
+    },
+
     afterPaint: function(callback) {
         this.requestAnimationFrame(function() {
             this.requestAnimationFrame(callback);

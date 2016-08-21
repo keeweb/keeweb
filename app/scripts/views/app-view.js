@@ -20,7 +20,7 @@ var Backbone = require('backbone'),
     KeyHandler = require('../comp/key-handler'),
     IdleTracker = require('../comp/idle-tracker'),
     Launcher = require('../comp/launcher'),
-    ThemeChanger = require('../util/theme-changer'),
+    SettingsManager = require('../util/settings-manager'),
     Locale = require('../util/locale'),
     UpdateModel = require('../models/update-model');
 
@@ -55,6 +55,7 @@ var AppView = Backbone.View.extend({
         this.views.list.listenDrag(this.views.listDrag);
 
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
+        this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
         this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
 
@@ -618,11 +619,19 @@ var AppView = Backbone.View.extend({
     },
 
     setTheme: function() {
-        ThemeChanger.setTheme(this.model.settings.get('theme'));
+        SettingsManager.setTheme(this.model.settings.get('theme'));
     },
 
     setFontSize: function() {
-        ThemeChanger.setFontSize(this.model.settings.get('fontSize'));
+        SettingsManager.setFontSize(this.model.settings.get('fontSize'));
+    },
+
+    setLocale: function() {
+        SettingsManager.setLocale(this.model.settings.get('locale'));
+        if (this.views.settings.isVisible()) {
+            this.hideSettings();
+            this.showSettings();
+        }
     },
 
     extLinkClick: function(e) {

@@ -20,6 +20,7 @@ var SettingsGeneralView = Backbone.View.extend({
 
     events: {
         'change .settings__general-theme': 'changeTheme',
+        'change .settings__general-locale': 'changeLocale',
         'change .settings__general-font-size': 'changeFontSize',
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
@@ -54,6 +55,11 @@ var SettingsGeneralView = Backbone.View.extend({
         hc: Locale.setGenThemeHc
     },
 
+    allLocales: {
+        en: Locale.setGenLocEn,
+        nl: Locale.setGenLocNl
+    },
+
     initialize: function() {
         this.views = {};
         this.listenTo(UpdateModel.instance, 'change:status', this.render, this);
@@ -68,6 +74,8 @@ var SettingsGeneralView = Backbone.View.extend({
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
+            locales: null,//this.allLocales,
+            activeLocale: AppSettingsModel.instance.get('locale') || 'en',
             fontSize: AppSettingsModel.instance.get('fontSize'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             canClearClipboard: !!Launcher,
@@ -169,6 +177,23 @@ var SettingsGeneralView = Backbone.View.extend({
     changeTheme: function(e) {
         var theme = e.target.value;
         AppSettingsModel.instance.set('theme', theme);
+    },
+
+    changeLocale: function(e) {
+        var locale = e.target.value;
+        if (locale === 'en') {
+            locale = null;
+        }
+        if (locale === '...') {
+            e.target.value = AppSettingsModel.instance.get('locale') || 'en';
+            Alerts.info({
+                icon: 'language',
+                header: Locale.setGenLocMsg,
+                body: Locale.setGenLocMsgBody + ` <a target="_blank" href="${Links.Translation}">${Locale.setGenLocMsgLink}</a>`
+            });
+            return;
+        }
+        AppSettingsModel.instance.set('locale', locale);
     },
 
     changeFontSize: function(e) {
