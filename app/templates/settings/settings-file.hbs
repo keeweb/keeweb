@@ -64,10 +64,10 @@
 
     <h2>{{res 'setFileBackups'}}</h2>
     <div>
-        <input type="checkbox" class="settings__input input-base" id="settings__file-backup-enabled" {{#if backupStorage}}checked{{/if}} />
+        <input type="checkbox" class="settings__input input-base" id="settings__file-backup-enabled" {{#if backupEnabled}}checked{{/if}} />
         <label for="settings__file-backup-enabled">{{res 'setFileBackupEnable'}}</label>
     </div>
-    <div class="settings__file-backups {{#unless backupStorage}}hide{{/unless}}">
+    <div class="settings__file-backups {{#unless backupEnabled}}hide{{/unless}}">
         <select class="settings__select input-base" id="settings__file-backup-storage">
             {{#if supportFiles}}<option value="file" {{#ifeq backupStorage 'file'}}selected{{/ifeq}}>{{Res 'file'}}</option>{{/if}}
             {{#each storageProviders as |prv|}}

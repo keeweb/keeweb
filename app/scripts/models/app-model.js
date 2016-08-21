@@ -460,7 +460,7 @@ var AppModel = Backbone.Model.extend({
             this.addToLastOpenFiles(file, rev);
             this.addFile(file);
             callback(null, file);
-            this.fileOpened(file);
+            this.fileOpened(file, data);
         });
     },
 
@@ -525,7 +525,7 @@ var AppModel = Backbone.Model.extend({
         }
     },
 
-    fileOpened: function(file) {
+    fileOpened: function(file, data) {
         if (file.get('storage') === 'file') {
             Storage.file.watch(file.get('path'), _.debounce(() => {
                 this.syncFile(file);
@@ -533,6 +533,10 @@ var AppModel = Backbone.Model.extend({
         }
         if (file.isKeyChangePending(true)) {
             Backbone.trigger('key-change-pending', { file: file });
+        }
+        let backup = file.get('backup');
+        if (data && backup && backup.enabled && backup.pending) {
+            this.scheduleBackupFile(file, data);
         }
     },
 
@@ -627,6 +631,9 @@ var AppModel = Backbone.Model.extend({
                 Storage.cache.save(fileInfo.id, null, data, (err) => {
                     logger.info('Saved to cache', err || 'no error');
                     complete(err);
+                    if (!err) {
+                        this.scheduleBackupFile(file, data);
+                    }
                 });
             });
         } else {
@@ -715,6 +722,7 @@ var AppModel = Backbone.Model.extend({
                         }
                         file.set('syncDate', new Date());
                         logger.info('Save to storage complete, update sync date');
+                        this.scheduleBackupFile(file, data);
                         complete();
                     }
                 }, fileInfo.get('rev'));
@@ -779,7 +787,7 @@ var AppModel = Backbone.Model.extend({
     backupFile: function(file, data, callback) {
         let opts = file.get('opts');
         let backup = file.get('backup');
-        let logger = new Logger('sync', file.get('name'));
+        let logger = new Logger('backup', file.get('name'));
         if (!backup || !backup.storage || !backup.path) {
             return callback('Invalid backup settings');
         }
@@ -794,6 +802,11 @@ var AppModel = Backbone.Model.extend({
                     logger.error('Backup error', err);
                 } else {
                     logger.info('Backup complete');
+                    backup = file.get('backup');
+                    backup.lastTime = Date.now();
+                    delete backup.pending;
+                    file.set('backup', backup);
+                    this.setFileBackup(file.id, backup);
                 }
                 callback(err);
             });
@@ -827,6 +840,50 @@ var AppModel = Backbone.Model.extend({
                 saveToFolder();
             }
         });
+    },
+
+    scheduleBackupFile: function(file, data) {
+        let backup = file.get('backup');
+        if (!backup || !backup.enabled) {
+            return;
+        }
+        let logger = new Logger('backup', file.get('name'));
+        let needBackup = false;
+        if (!backup.lastTime) {
+            needBackup = true;
+            logger.debug('No last backup time, backup now');
+        } else {
+            let dt = new Date(backup.lastTime);
+            switch (backup.schedule) {
+                case '0':
+                    break;
+                case '1d':
+                    dt.setDate(dt.getDate() + 1);
+                    break;
+                case '1w':
+                    dt.setDate(dt.getDate() + 7);
+                    break;
+                case '1m':
+                    dt.setMonth(dt.getMonth() + 1);
+                    break;
+                default:
+                    return;
+            }
+            if (dt.getTime() <= Date.now()) {
+                needBackup = true;
+            }
+            logger.debug('Last backup time: ' + new Date(backup.lastTime) +
+                ', schedule: ' + backup.schedule +
+                ', next time: ' + dt +
+                ', ' + (needBackup ? 'backup now' : 'skip backup'));
+        }
+        if (!backup.pending) {
+            backup.pending = true;
+            this.setFileBackup(file.id, backup);
+        }
+        if (needBackup) {
+            this.backupFile(file, data, _.noop);
+        }
     }
 });
 

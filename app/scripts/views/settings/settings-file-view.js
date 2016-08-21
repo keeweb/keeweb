@@ -78,6 +78,7 @@ var SettingsFileView = Backbone.View.extend({
             password: PasswordGenerator.present(this.model.get('passwordLength')),
             defaultUser: this.model.get('defaultUser'),
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
+            backupEnabled: backup && backup.enabled,
             backupStorage: backup && backup.storage,
             backupPath: backup && backup.path || DefaultBackupPath.replace('{name}', this.model.get('name')),
             backupSchedule: backup ? backup.schedule : DefaultBackupSchedule,
