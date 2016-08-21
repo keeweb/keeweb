@@ -16,6 +16,7 @@ Audit, generator presets, auto-type and ui improvements
 `+` inline generator keyboard management  
 `+` field references decoding  
 `+` copy entries  
+`+` option to disable open, new and demo buttons  
 `-` fix app redraw in background  
 `-` fix idle timer on computer sleep  
 `-` fix storage popup when no action is required  

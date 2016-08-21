@@ -65,7 +65,7 @@ var OpenView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        var storageProviders = [];
+        let storageProviders = [];
         Object.keys(Storage).forEach(name => {
             var prv = Storage[name];
             if (!prv.system && prv.enabled) {
@@ -73,11 +73,21 @@ var OpenView = Backbone.View.extend({
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
+        let showMore = storageProviders.length || this.model.settings.get('canOpenSettings');
+        let showLogo = !showMore && !this.model.settings.get('canOpen') && !this.model.settings.get('canCreate') &&
+            !(this.model.settings.get('canOpenDemo') && !this.model.settings.get('demoOpened'));
         this.renderTemplate({
             lastOpenFiles: this.getLastOpenFiles(),
             canOpenKeyFromDropbox: DropboxLink.canChooseFile() && Storage.dropbox.enabled,
             demoOpened: this.model.settings.get('demoOpened'),
-            storageProviders: storageProviders
+            storageProviders: storageProviders,
+            canOpen: this.model.settings.get('canOpen'),
+            canOpenDemo: this.model.settings.get('canOpenDemo'),
+            canOpenSettings: this.model.settings.get('canOpenSettings'),
+            canCreate: this.model.settings.get('canCreate'),
+            canImportXml: this.model.settings.get('canImportXml'),
+            showMore: showMore,
+            showLogo: showLogo
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
@@ -364,6 +374,9 @@ var OpenView = Backbone.View.extend({
     },
 
     dragover: function(e) {
+        if (this.model.settings.get('canOpen') === false) {
+            return;
+        }
         e.preventDefault();
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
@@ -374,6 +387,9 @@ var OpenView = Backbone.View.extend({
     },
 
     dragleave: function() {
+        if (this.model.settings.get('canOpen') === false) {
+            return;
+        }
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
@@ -383,6 +399,9 @@ var OpenView = Backbone.View.extend({
     },
 
     drop: function(e) {
+        if (this.model.settings.get('canOpen') === false) {
+            return;
+        }
         e.preventDefault();
         if (this.busy) {
             return;
