@@ -21,6 +21,7 @@ Audit, generator presets, auto-type and ui improvements
 `-` fix idle timer on computer sleep  
 `-` fix storage popup when no action is required  
 `-` fix loading raw 32-byte and 64-byte keyfiles  
+`-` fix data loss on exit with focused field  
 
 ##### v1.2.4 (2016-07-20)
 `+` digital signature in installer  
