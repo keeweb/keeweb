@@ -24,6 +24,12 @@
     "tableViewColumns": null,
     "generatorPresets": null,
 
+    "canOpen": true,
+    "canOpenDemo": true,
+    "canOpenSettings": true,
+    "canCreate": true,
+    "canImportXml": true,
+
     "dropbox": true,
     "dropboxFolder": null,
     "dropboxAppKey": null,
