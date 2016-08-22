@@ -12,7 +12,7 @@ var Links = {
     SelfHostedDropbox: 'https://github.com/keeweb/keeweb#self-hosting',
     Manifest: 'https://app.keeweb.info/manifest.appcache',
     AutoType: 'https://github.com/keeweb/keeweb/wiki/Auto-Type',
-    Translation: 'https://github.com/keeweb/keeweb'
+    Translation: 'https://keeweb.oneskyapp.com/'
 };
 
 module.exports = Links;
