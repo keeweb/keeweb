@@ -56,8 +56,8 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     allLocales: {
-        en: Locale.setGenLocEn,
-        nl: Locale.setGenLocNl
+        en: 'English',
+        nl: 'Dutch - Nederlands'
     },
 
     initialize: function() {
@@ -74,7 +74,7 @@ var SettingsGeneralView = Backbone.View.extend({
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
-            locales: null, // this.allLocales,
+            locales: this.allLocales,
             activeLocale: AppSettingsModel.instance.get('locale') || 'en',
             fontSize: AppSettingsModel.instance.get('fontSize'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),

@@ -204,7 +204,7 @@ var DropboxLink = {
             case Dropbox.ApiError.INVALID_METHOD:
                 alertCallback({
                     header: Locale.dropboxSyncError,
-                    body: Locale.dropboxErrorBody + err.status
+                    body: Locale.dropboxErrorBody + ' ' + err.status
                 });
                 break;
             case Dropbox.ApiError.CONFLICT:
@@ -212,7 +212,7 @@ var DropboxLink = {
             default:
                 alertCallback({
                     header: Locale.dropboxSyncError,
-                    body: Locale.dropboxErrorRepeatBody + err
+                    body: Locale.dropboxErrorRepeatBody + ' ' + err
                 });
                 break;
         }
