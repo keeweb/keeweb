@@ -121,7 +121,6 @@ var FieldViewText = FieldView.extend({
 
     fieldValueKeydown: function(e) {
         KeyHandler.reg();
-        e.stopPropagation();
         var code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             if (!this.model.multiline || (!e.altKey && !e.shiftKey && !e.ctrlKey)) {
@@ -143,7 +142,12 @@ var FieldViewText = FieldView.extend({
         } else if (code === Keys.DOM_VK_G && e.metaKey) {
             e.preventDefault();
             this.showGenerator();
+        } else if (code === Keys.DOM_VK_S && (e.metaKey || e.ctrlKey)) {
+            this.stopBlurListener();
+            this.endEdit(e.target.value);
+            return;
         }
+        e.stopPropagation();
     },
 
     endEdit: function(newVal, extra) {
