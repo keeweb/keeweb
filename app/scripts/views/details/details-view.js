@@ -138,25 +138,25 @@ var DetailsView = Backbone.View.extend({
             var fileNames = this.appModel.files.map(function(file) {
                 return { id: file.id, value: file.get('name'), selected: file === this.model.file };
             }, this);
-            this.fileEditView = new FieldViewSelect({ model: { name: '$File', title: Locale.detFile,
+            this.fileEditView = new FieldViewSelect({ model: { name: '$File', title: Format.capFirst(Locale.file),
                 value: function() { return fileNames; } } });
             this.fieldViews.push(this.fileEditView);
         } else {
-            this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: Locale.detFile,
+            this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: Format.capFirst(Locale.file),
                 value: function() { return model.fileName; } } }));
         }
-        this.userEditView = new FieldViewAutocomplete({ model: { name: '$UserName', title: Locale.detUser,
+        this.userEditView = new FieldViewAutocomplete({ model: { name: '$UserName', title: Format.capFirst(Locale.user),
             value: function() { return model.user; }, getCompletions: this.getUserNameCompletions.bind(this) } });
         this.fieldViews.push(this.userEditView);
-        this.passEditView = new FieldViewText({ model: { name: '$Password', title: Locale.detPassword, canGen: true,
+        this.passEditView = new FieldViewText({ model: { name: '$Password', title: Format.capFirst(Locale.password), canGen: true,
             value: function() { return model.password; } } });
         this.fieldViews.push(this.passEditView);
-        this.urlEditView = new FieldViewUrl({ model: { name: '$URL', title: Locale.detWebsite,
+        this.urlEditView = new FieldViewUrl({ model: { name: '$URL', title: Format.capFirst(Locale.website),
             value: function() { return model.url; } } });
         this.fieldViews.push(this.urlEditView);
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: Locale.detNotes, multiline: 'true',
+        this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: Format.capFirst(Locale.notes), multiline: 'true',
             value: function() { return model.notes; } } }));
-        this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: Locale.detTags, tags: this.appModel.tags,
+        this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: Format.capFirst(Locale.tags), tags: this.appModel.tags,
             value: function() { return model.tags; } } }));
         this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: Locale.detExpires, lessThanNow: '(' + Locale.detExpired + ')',
             value: function() { return model.expires; } } }));
@@ -166,7 +166,7 @@ var DetailsView = Backbone.View.extend({
             value: function() { return Format.dtStr(model.created); } } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: Locale.detUpdated,
             value: function() { return Format.dtStr(model.updated); } } }));
-        this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: Locale.detHistory,
+        this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: Format.capFirst(Locale.history),
             value: function() { return { length: model.historyLength, unsaved: model.unsaved }; } } }));
         _.forEach(model.fields, function(value, field) {
             if (field === 'otp' && this.model.otpGenerator) {

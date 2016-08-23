@@ -300,8 +300,8 @@ var AppView = Backbone.View.extend({
                         header: Locale.appUnsavedWarn,
                         body: Locale.appUnsavedWarnBody,
                         buttons: [
-                            {result: 'save', title: Locale.appExitSaveBtn},
-                            {result: 'exit', title: Locale.appExitBtn, error: true},
+                            {result: 'save', title: Locale.saveChanges},
+                            {result: 'exit', title: Locale.discardChanges, error: true},
                             {result: '', title: Locale.appDontExitBtn}
                         ],
                         success: result => {
@@ -386,8 +386,8 @@ var AppView = Backbone.View.extend({
                     header: 'Lock',
                     body: message,
                     buttons: [
-                        { result: 'save', title: Locale.appSaveChangesBtn },
-                        { result: 'discard', title: Locale.appDiscardChangesBtn, error: true },
+                        { result: 'save', title: Locale.saveChanges },
+                        { result: 'discard', title: Locale.discardChanges, error: true },
                         { result: '', title: Locale.alertCancel }
                     ],
                     checkbox: Locale.appAutoSave,

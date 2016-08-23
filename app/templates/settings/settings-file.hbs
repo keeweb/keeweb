@@ -21,7 +21,7 @@
         <h2>{{res 'setFileSaveTo'}}</h2>
         {{#ifneq storage 'file'}}
         <div class="settings__file-save-to settings__file-save-to-file">
-            <i class="fa fa-file-text-o"></i>{{res 'setFileSaveToFile'}}
+            <i class="fa fa-file-text-o"></i>{{Res 'file'}}
         </div>
         {{/ifneq}}
         {{#each storageProviders as |prv|}}
@@ -44,7 +44,7 @@
     {{#if syncError}}<div>{{res 'setFileSyncError'}}: {{syncError}}</div>{{/if}}
     {{/if}}
 
-    <h2>{{res 'setFileSettings'}}</h2>
+    <h2>{{res 'settings'}}</h2>
     <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFilePass'}}:
         <span class="settings__file-master-pass-warning">
             <i class="fa fa-warning"></i> {{res 'setFilePassChanged'}}
@@ -57,7 +57,7 @@
     <input type="file" id="settings__file-file-select" class="hide-by-pos" />
 
     <h2>{{res 'setFileNames'}}</h2>
-    <label for="settings__file-name">{{res 'setFileName'}}:</label>
+    <label for="settings__file-name">{{Res 'name'}}:</label>
     <input type="text" class="settings__input input-base" id="settings__file-name" value="{{name}}" required />
     <label for="settings__file-def-user">{{res 'setFileDefUser'}}:</label>
     <input type="text" class="settings__input input-base" id="settings__file-def-user" value="{{defaultUser}}" />
@@ -90,7 +90,7 @@
         <button class="btn-silent settings__file-button-backup">{{res 'setFileBackupNow'}}</button>
     </div>
 
-    <h2>{{res 'setFileHistory'}}</h2>
+    <h2>{{Res 'history'}}</h2>
     <div>
         <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}} />
         <label for="settings__file-trash">{{res 'setFileEnableTrash'}}</label>
@@ -100,7 +100,7 @@
     <label for="settings__file-hist-size">{{res 'setFileHistSize'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" />
 
-    <h2>{{res 'setFileAdvanced'}}</h2>
+    <h2>{{res 'advanced'}}</h2>
     <label for="settings__file-key-rounds">{{res 'setFileRounds'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="{{keyEncryptionRounds}}" />
 

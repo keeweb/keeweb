@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     KeyHandler = require('../comp/key-handler'),
     DropdownView = require('./dropdown-view'),
     FeatureDetector = require('../util/feature-detector'),
+    Format = require('../util/format'),
     Locale = require('../util/locale');
 
 var ListSearchView = Backbone.View.extend({
@@ -33,12 +34,12 @@ var ListSearchView = Backbone.View.extend({
 
     initialize: function () {
         this.sortOptions = [
-            { value: 'title', icon: 'sort-alpha-asc', text: Locale.searchTitle + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-title', icon: 'sort-alpha-desc', text: Locale.searchTitle + ' ' + this.addArrow(Locale.searchZA) },
-            { value: 'website', icon: 'sort-alpha-asc', text: Locale.searchWebsite + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-website', icon: 'sort-alpha-desc', text: Locale.searchWebsite + ' ' + this.addArrow(Locale.searchZA) },
-            { value: 'user', icon: 'sort-alpha-asc', text: Locale.searchUser + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-user', icon: 'sort-alpha-desc', text: Locale.searchUser + ' ' + this.addArrow(Locale.searchZA) },
+            { value: 'title', icon: 'sort-alpha-asc', text: Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ) },
+            { value: '-title', icon: 'sort-alpha-desc', text: Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA) },
+            { value: 'website', icon: 'sort-alpha-asc', text: Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ) },
+            { value: '-website', icon: 'sort-alpha-desc', text: Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA) },
+            { value: 'user', icon: 'sort-alpha-asc', text: Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ) },
+            { value: '-user', icon: 'sort-alpha-desc', text: Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA) },
             { value: 'created', icon: 'sort-numeric-asc', text: Locale.searchCreated + ' ' + this.addArrow(Locale.searchON) },
             { value: '-created', icon: 'sort-numeric-desc', text: Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO) },
             { value: 'updated', icon: 'sort-numeric-asc', text: Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON) },

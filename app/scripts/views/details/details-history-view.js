@@ -88,14 +88,15 @@ var DetailsHistoryView = Backbone.View.extend({
             value: Format.dtStr(this.record.updated) +
             (this.record.unsaved ? ' (' + Locale.detHistoryCurUnsavedState + ')' : '') +
             ((ix === this.history.length - 1 && !this.record.unsaved) ? ' (' + Locale.detHistoryCurState + ')' : '') } }));
-        this.fieldViews.push(new FieldViewReadOnlyRaw({ model: { name: '$Title', title: Locale.detHistoryTitle,
+        this.fieldViews.push(new FieldViewReadOnlyRaw({ model: { name: '$Title', title: Format.capFirst(Locale.title),
             value: '<i class="fa fa-' + this.record.icon + ' ' + colorCls + '"></i> ' +
             _.escape(this.record.title) || '(' + Locale.detHistoryNoTitle + ')' } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$UserName', title: Locale.detUser, value: this.record.user } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$Password', title: Locale.detPassword, value: this.record.password } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$URL', title: Locale.detWebsite, value: this.record.url } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$Notes', title: Locale.detNotes, value: this.record.notes } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Tags', title: Locale.detTags, value: this.record.tags.join(', ') } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$UserName', title: Format.capFirst(Locale.user), value: this.record.user } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$Password', title: Format.capFirst(Locale.password), value: this.record.password } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$URL', title: Format.capFirst(Locale.website), value: this.record.url } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: '$Notes', title: Format.capFirst(Locale.notes), value: this.record.notes } }));
+        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Tags', title: Format.capFirst(Locale.tags),
+            value: this.record.tags.join(', ') } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Expires', title: Locale.detExpires,
             value: this.record.expires ? Format.dtStr(this.record.expires) : '' } }));
         _.forEach(this.record.fields, function(value, field) {

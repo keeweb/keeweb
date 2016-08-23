@@ -5,6 +5,7 @@ var Backbone = require('backbone'),
     MenuSectionModel = require('./menu-section-model'),
     GroupsMenuModel = require('./groups-menu-model'),
     Locale = require('../../util/locale'),
+    Format = require('../../util/format'),
     Keys = require('../../const/keys'),
     Colors = require('../../const/colors');
 
@@ -24,7 +25,7 @@ var MenuModel = Backbone.Model.extend({
         this.colorsSection = new MenuSectionModel([{ title: Locale.menuColors, icon: 'bookmark', shortcut: Keys.DOM_VK_C,
             cls: 'menu__item-colors', filterKey: 'color', filterValue: true }]);
         this.colorsItem = this.colorsSection.get('items').models[0];
-        var defTags = [{ title: Locale.menuTags, icon: 'tags', defaultItem: true,
+        var defTags = [{ title: Format.capFirst(Locale.tags), icon: 'tags', defaultItem: true,
             disabled: { header: Locale.menuAlertNoTags, body: Locale.menuAlertNoTagsBody, icon: 'tags' } }];
         this.tagsSection = new MenuSectionModel(defTags);
         this.tagsSection.set({ scrollable: true, drag: true });
@@ -44,9 +45,9 @@ var MenuModel = Backbone.Model.extend({
         ]);
 
         this.generalSection = new MenuSectionModel([{ title: Locale.menuSetGeneral, icon: 'cog', page: 'general', active: true }]);
-        this.shortcutsSection = new MenuSectionModel([{ title: Locale.menuSetShortcuts, icon: 'keyboard-o', page: 'shortcuts' }]);
+        this.shortcutsSection = new MenuSectionModel([{ title: Locale.shortcuts, icon: 'keyboard-o', page: 'shortcuts' }]);
         this.aboutSection = new MenuSectionModel([{ title: Locale.menuSetAbout, icon: 'info', page: 'about' }]);
-        this.helpSection = new MenuSectionModel([{ title: Locale.menuSetHelp, icon: 'question', page: 'help' }]);
+        this.helpSection = new MenuSectionModel([{ title: Locale.help, icon: 'question', page: 'help' }]);
         this.filesSection = new MenuSectionModel();
         this.filesSection.set({ scrollable: true, grow: true });
         this.menus.settings = new MenuSectionCollection([
