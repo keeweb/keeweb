@@ -117,9 +117,6 @@ function createMainWindow() {
     });
     setMenu();
     mainWindow.loadURL(htmlPath);
-    if (mainWindow.setContentProtection) {
-        mainWindow.setContentProtection(true);
-    }
     mainWindow.webContents.on('dom-ready', () => {
         setTimeout(() => {
             mainWindow.show();
