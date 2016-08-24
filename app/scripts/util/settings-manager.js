@@ -1,9 +1,11 @@
 'use strict';
 
+const Backbone = require('backbone');
 const Locale = require('./locale');
 
 const SettingsManager = {
     neutralLocale: null,
+    activeLocale: null,
 
     setBySettings: function(settings) {
         if (settings.get('theme')) {
@@ -42,10 +44,15 @@ const SettingsManager = {
         if (!this.neutralLocale) {
             this.neutralLocale = _.clone(Locale);
         }
-        _.extend(Locale, this.neutralLocale);
-        if (locale && locale !== 'en') {
-            let localeValues = require('../locales/' + locale + '.json');
-            _.extend(Locale, localeValues);
+        let activeLocale = locale && locale !== 'en' ? locale : null;
+        if (activeLocale !== this.activeLocale) {
+            _.extend(Locale, this.neutralLocale);
+            if (activeLocale) {
+                let localeValues = require('../locales/' + locale + '.json');
+                _.extend(Locale, localeValues);
+            }
+            this.activeLocale = activeLocale;
+            Backbone.trigger('set-locale', activeLocale);
         }
     }
 };
