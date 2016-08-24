@@ -94,7 +94,7 @@ var MenuModel = Backbone.Model.extend({
         [this.menus.app, this.menus.settings].forEach(menu => {
             menu.each(section => section.get('items').each(item => {
                 if (item.get('locTitle')) {
-                    item.set('title', Locale[item.get('locTitle')]);
+                    item.set('title', Format.capFirst(Locale[item.get('locTitle')]));
                 }
             }));
         });
