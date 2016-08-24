@@ -25,8 +25,7 @@ var MenuModel = Backbone.Model.extend({
         this.colorsSection = new MenuSectionModel([{ locTitle: 'menuColors', icon: 'bookmark', shortcut: Keys.DOM_VK_C,
             cls: 'menu__item-colors', filterKey: 'color', filterValue: true }]);
         this.colorsItem = this.colorsSection.get('items').models[0];
-        var defTags = [{ locTitle: 'tags', icon: 'tags', defaultItem: true,
-            disabled: { header: Locale.menuAlertNoTags, body: Locale.menuAlertNoTagsBody, icon: 'tags' } }];
+        var defTags = [this._getDefaultTagItem()];
         this.tagsSection = new MenuSectionModel(defTags);
         this.tagsSection.set({ scrollable: true, drag: true });
         this.tagsSection.defaultItems = defTags;
@@ -98,6 +97,12 @@ var MenuModel = Backbone.Model.extend({
                 }
             }));
         });
+        this.tagsSection.defaultItems[0] = this._getDefaultTagItem();
+    },
+
+    _getDefaultTagItem: function() {
+        return { title: Format.capFirst(Locale.tags), icon: 'tags', defaultItem: true,
+            disabled: { header: Locale.menuAlertNoTags, body: Locale.menuAlertNoTagsBody, icon: 'tags' } };
     },
 
     setMenu: function(type) {
