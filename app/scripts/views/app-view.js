@@ -632,6 +632,7 @@ var AppView = Backbone.View.extend({
             this.hideSettings();
             this.showSettings();
         }
+        this.$el.find('.app__beta:first').text(Locale.appBeta);
     },
 
     extLinkClick: function(e) {

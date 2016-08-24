@@ -54,6 +54,7 @@ var ListView = Backbone.View.extend({
         this.listenTo(this, 'view-resize', this.viewResized);
         this.listenTo(Backbone, 'filter', this.filterChanged);
         this.listenTo(Backbone, 'entry-updated', this.entryUpdated);
+        this.listenTo(Backbone, 'set-locale', this.render);
 
         this.listenTo(this.model.settings, 'change:tableView', this.setTableView);
 

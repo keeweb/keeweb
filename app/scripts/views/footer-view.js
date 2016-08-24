@@ -29,6 +29,7 @@ var FooterView = Backbone.View.extend({
 
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(this.model.files, 'update reset change', this.render);
+        this.listenTo(Backbone, 'set-locale', this.render);
         this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render);
     },
 

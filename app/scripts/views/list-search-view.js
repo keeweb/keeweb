@@ -71,6 +71,7 @@ var ListSearchView = Backbone.View.extend({
         this.listenTo(this, 'show', this.viewShown);
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(Backbone, 'filter', this.filterChanged);
+        this.listenTo(Backbone, 'set-locale', this.render);
     },
 
     remove: function() {
