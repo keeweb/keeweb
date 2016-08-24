@@ -57,7 +57,7 @@ var SettingsGeneralView = Backbone.View.extend({
 
     allLocales: {
         en: 'English',
-        'de-DE': 'German (Germany)'
+        'de-DE': 'Deutsch (Deutschland)'
     },
 
     initialize: function() {
