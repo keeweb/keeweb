@@ -72,6 +72,7 @@ var DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'copy-url', this.copyUrl);
         this.listenTo(Backbone, 'toggle-settings', this.settingsToggled);
         this.listenTo(Backbone, 'context-menu-select', this.contextMenuSelect);
+        this.listenTo(Backbone, 'set-locale', this.render);
         this.listenTo(OtpQrReqder, 'qr-read', this.otpCodeRead);
         this.listenTo(OtpQrReqder, 'enter-manually', this.otpEnterManually);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyPassword, this, KeyHandler.SHORTCUT_ACTION, false, true);
