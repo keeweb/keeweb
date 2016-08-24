@@ -181,7 +181,9 @@ var AutoType = {
     processEventWithFilter(evt) {
         let entries = evt.filter.getEntries();
         if (entries.length === 1) {
-            this.runAndHandleResult(entries.at(0));
+            this.hideWindow(() => {
+                this.runAndHandleResult(entries.at(0));
+            });
             return;
         }
         this.focusMainWindow();
