@@ -21,7 +21,7 @@ var FooterView = Backbone.View.extend({
     initialize: function () {
         this.views = {};
 
-        KeyHandler.onKey(Keys.DOM_VK_L, this.lockWorkspace, this, KeyHandler.SHORTCUT_ACTION);
+        KeyHandler.onKey(Keys.DOM_VK_L, this.lockWorkspace, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_G, this.genPass, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_O, this.openFile, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_S, this.saveAll, this, KeyHandler.SHORTCUT_ACTION);
@@ -48,8 +48,11 @@ var FooterView = Backbone.View.extend({
         }
     },
 
-    lockWorkspace: function() {
-        Backbone.trigger('lock-workspace');
+    lockWorkspace: function(e) {
+        if (this.model.files.hasOpenFiles()) {
+            e.preventDefault();
+            Backbone.trigger('lock-workspace');
+        }
     },
 
     genPass: function(e) {
