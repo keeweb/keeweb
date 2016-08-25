@@ -78,7 +78,7 @@ var ListSearchView = Backbone.View.extend({
     },
 
     setLocale: function() {
-        this.sortOptions.forEach(opt => { opt.text = opt.loc() });
+        this.sortOptions.forEach(opt => { opt.text = opt.loc(); });
         var entryDesc = FeatureDetector.isMobile ? '' : (' <span class="muted-color">(' + Locale.searchShiftClickOr + ' ' +
         FeatureDetector.altShortcutSymbol(true) + 'N)</span>');
         this.createOptions = [
