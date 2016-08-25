@@ -1,4 +1,5 @@
 {
+    "entry": "Eintrag",
     "months": [
         "Januar",
         "Februar",
@@ -54,7 +55,6 @@
     "website": "Website",
     "tags": "Tags",
     "notes": "Notizen",
-    "entry": "Eintrag",
     "group": "Gruppe",
     "noTitle": "Keinen Titel",
     "or": "oder",
