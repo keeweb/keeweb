@@ -1,0 +1,10 @@
+$themes: map-merge($themes, (
+  sl: map-merge($theme-defaults, (
+    background-color: #FDF6E3,
+    medium-color: #586E75,
+    text-color: #657B83,
+    action-color: #859900,
+    error-color: #DC322F,
+    mute-percent: 60%,
+  ))
+));

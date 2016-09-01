@@ -9,7 +9,7 @@ module.exports = function (grunt) {
             return;
         }
         var file = fs.readFileSync(this.options().file).toString('utf8');
-        var marker = '<meta name="signature" content="';
+        var marker = '<meta name="kw-signature" content="';
         var ix = file.indexOf(marker);
         if (ix < 0) {
             grunt.warn('Signature placeholder not found');

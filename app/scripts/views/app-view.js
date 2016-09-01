@@ -9,16 +9,18 @@ var Backbone = require('backbone'),
     DetailsView = require('../views/details/details-view'),
     GrpView = require('../views/grp-view'),
     TagView = require('../views/tag-view'),
+    GeneratorPresetsView = require('../views/generator-presets-view'),
     OpenView = require('../views/open-view'),
     SettingsView = require('../views/settings/settings-view'),
     KeyChangeView = require('../views/key-change-view'),
+    DropdownView = require('../views/dropdown-view'),
     Alerts = require('../comp/alerts'),
     Keys = require('../const/keys'),
     Timeouts = require('../const/timeouts'),
     KeyHandler = require('../comp/key-handler'),
     IdleTracker = require('../comp/idle-tracker'),
     Launcher = require('../comp/launcher'),
-    ThemeChanger = require('../util/theme-changer'),
+    SettingsManager = require('../util/settings-manager'),
     Locale = require('../util/locale'),
     UpdateModel = require('../models/update-model');
 
@@ -28,7 +30,7 @@ var AppView = Backbone.View.extend({
     template: require('templates/app.hbs'),
 
     events: {
-        'contextmenu': 'contextmenu',
+        'contextmenu': 'contextMenu',
         'drop': 'drop',
         'dragover': 'dragover',
         'click a[target=_blank]': 'extLinkClick',
@@ -48,13 +50,12 @@ var AppView = Backbone.View.extend({
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView();
         this.views.details.appModel = this.model;
-        this.views.grp = new GrpView();
-        this.views.tag = new TagView({ model: this.model });
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
 
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
+        this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
         this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
 
@@ -71,9 +72,11 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
         this.listenTo(Backbone, 'edit-group', this.editGroup);
         this.listenTo(Backbone, 'edit-tag', this.editTag);
+        this.listenTo(Backbone, 'edit-generator-presets', this.editGeneratorPresets);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
         this.listenTo(Backbone, 'user-idle', this.userIdle);
         this.listenTo(Backbone, 'app-minimized', this.appMinimized);
+        this.listenTo(Backbone, 'show-context-menu', this.showContextMenu);
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
@@ -91,6 +94,7 @@ var AppView = Backbone.View.extend({
         this.$el.html(this.template({
             beta: this.model.isBeta
         }));
+        this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
         this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
@@ -98,22 +102,20 @@ var AppView = Backbone.View.extend({
         this.views.list.setElement(this.$el.find('.app__list')).render();
         this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
-        this.views.grp.setElement(this.$el.find('.app__grp')).render().hide();
-        this.views.tag.setElement(this.$el.find('.app__tag')).render().hide();
         this.showLastOpenFile();
         return this;
     },
 
     showOpenFile: function() {
+        this.hideContextMenu();
         this.views.menu.hide();
         this.views.menuDrag.hide();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
-        this.views.grp.hide();
-        this.views.tag.hide();
         this.views.footer.toggle(this.model.files.hasOpenFiles());
+        this.hidePanelView();
         this.hideSettings();
         this.hideOpenFile();
         this.hideKeyChange();
@@ -151,9 +153,8 @@ var AppView = Backbone.View.extend({
         this.views.list.show();
         this.views.listDrag.show();
         this.views.details.show();
-        this.views.grp.hide();
-        this.views.tag.hide();
         this.views.footer.show();
+        this.hidePanelView();
         this.hideOpenFile();
         this.hideSettings();
         this.hideKeyChange();
@@ -164,6 +165,24 @@ var AppView = Backbone.View.extend({
             this.views.open.remove();
             this.views.open = null;
         }
+    },
+
+    hidePanelView: function() {
+        if (this.views.panel) {
+            this.views.panel.remove();
+            this.views.panel = null;
+            this.panelEl.addClass('hide');
+        }
+    },
+
+    showPanelView: function(view) {
+        this.views.listWrap.hide();
+        this.views.list.hide();
+        this.views.listDrag.hide();
+        this.views.details.hide();
+        this.hidePanelView();
+        this.views.panel = view.setElement(this.panelEl).render();
+        this.panelEl.removeClass('hide');
     },
 
     hideSettings: function() {
@@ -189,8 +208,7 @@ var AppView = Backbone.View.extend({
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
-        this.views.grp.hide();
-        this.views.tag.hide();
+        this.hidePanelView();
         this.hideOpenFile();
         this.hideKeyChange();
         this.views.settings = new SettingsView({ model: this.model });
@@ -203,21 +221,11 @@ var AppView = Backbone.View.extend({
     },
 
     showEditGroup: function() {
-        this.views.listWrap.hide();
-        this.views.list.hide();
-        this.views.listDrag.hide();
-        this.views.details.hide();
-        this.views.tag.hide();
-        this.views.grp.show();
+        this.showPanelView(new GrpView());
     },
 
     showEditTag: function() {
-        this.views.listWrap.hide();
-        this.views.list.hide();
-        this.views.listDrag.hide();
-        this.views.details.hide();
-        this.views.grp.hide();
-        this.views.tag.show();
+        this.showPanelView(new TagView({ model: this.model }));
     },
 
     showKeyChange: function(file, viewConfig) {
@@ -228,13 +236,12 @@ var AppView = Backbone.View.extend({
             return;
         }
         this.hideSettings();
+        this.hidePanelView();
         this.views.menu.hide();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
         this.views.details.hide();
-        this.views.grp.hide();
-        this.views.tag.hide();
         this.views.keyChange = new KeyChangeView({
             model: { file: file, expired: viewConfig.expired, remote: viewConfig.remote }
         });
@@ -252,9 +259,7 @@ var AppView = Backbone.View.extend({
     },
 
     showFileSettings: function(e) {
-        var menuItem = this.model.menu.filesSection.get('items').find(function(item) {
-            return item.get('file').cid === e.fileId;
-        });
+        var menuItem = this.model.menu.filesSection.get('items').find(item => item.get('file').cid === e.fileId);
         if (this.views.settings) {
             if (this.views.settings.file === menuItem.get('file')) {
                 this.showEntries();
@@ -277,35 +282,40 @@ var AppView = Backbone.View.extend({
     },
 
     beforeUnload: function(e) {
+        let exitEvent = { preventDefault() { this.prevented = true; } };
+        Backbone.trigger('main-window-will-close', exitEvent);
+        if (exitEvent.prevented) {
+            Launcher.preventExit(e);
+            return;
+        }
         if (this.model.files.hasDirtyFiles()) {
             if (Launcher && !Launcher.exitRequested) {
                 if (!this.exitAlertShown) {
-                    var that = this;
                     if (this.model.settings.get('autoSave')) {
-                        that.saveAndExit();
+                        this.saveAndExit();
                         return Launcher.preventExit(e);
                     }
-                    that.exitAlertShown = true;
+                    this.exitAlertShown = true;
                     Alerts.yesno({
                         header: Locale.appUnsavedWarn,
                         body: Locale.appUnsavedWarnBody,
                         buttons: [
-                            {result: 'save', title: Locale.appExitSaveBtn},
-                            {result: 'exit', title: Locale.appExitBtn, error: true},
+                            {result: 'save', title: Locale.saveChanges},
+                            {result: 'exit', title: Locale.discardChanges, error: true},
                             {result: '', title: Locale.appDontExitBtn}
                         ],
-                        success: function (result) {
+                        success: result => {
                             if (result === 'save') {
-                                that.saveAndExit();
+                                this.saveAndExit();
                             } else {
                                 Launcher.exit();
                             }
                         },
-                        cancel: function() {
+                        cancel: () => {
                             Launcher.cancelRestart(false);
                         },
-                        complete: function () {
-                            that.exitAlertShown = false;
+                        complete: () => {
+                            this.exitAlertShown = false;
                         }
                     });
                 }
@@ -347,7 +357,7 @@ var AppView = Backbone.View.extend({
 
     menuSelect: function(opt) {
         this.model.menu.select(opt);
-        if (!this.views.grp.isHidden() || !this.views.tag.isHidden()) {
+        if (this.views.panel && !this.views.panel.isHidden()) {
             this.showEntries();
         }
     },
@@ -363,7 +373,6 @@ var AppView = Backbone.View.extend({
     },
 
     lockWorkspace: function(autoInit) {
-        var that = this;
         if (Alerts.alertDisplayed) {
             return;
         }
@@ -377,19 +386,19 @@ var AppView = Backbone.View.extend({
                     header: 'Lock',
                     body: message,
                     buttons: [
-                        { result: 'save', title: Locale.appSaveChangesBtn },
-                        { result: 'discard', title: Locale.appDiscardChangesBtn, error: true },
+                        { result: 'save', title: Locale.saveChanges },
+                        { result: 'discard', title: Locale.discardChanges, error: true },
                         { result: '', title: Locale.alertCancel }
                     ],
                     checkbox: Locale.appAutoSave,
-                    success: function(result, autoSaveChecked) {
+                    success: (result, autoSaveChecked) => {
                         if (result === 'save') {
                             if (autoSaveChecked) {
-                                that.model.settings.set('autoSave', autoSaveChecked);
+                                this.model.settings.set('autoSave', autoSaveChecked);
                             }
-                            that.saveAndLock();
+                            this.saveAndLock();
                         } else if (result === 'discard') {
-                            that.model.closeAllFiles();
+                            this.model.closeAllFiles();
                         }
                     }
                 });
@@ -436,7 +445,7 @@ var AppView = Backbone.View.extend({
     },
 
     saveAndExit: function() {
-        this.saveAndLock(function(result) {
+        this.saveAndLock(result => {
             if (result) {
                 Launcher.exit();
             }
@@ -444,7 +453,7 @@ var AppView = Backbone.View.extend({
     },
 
     closeAllFilesAndShowFirst: function() {
-        var fileToShow = this.model.files.find(function(file) { return !file.get('demo') && !file.get('created'); });
+        var fileToShow = this.model.files.find(file => !file.get('demo') && !file.get('created'));
         this.model.closeAllFiles();
         if (!fileToShow) {
             fileToShow = this.model.fileInfos.getLast();
@@ -533,27 +542,72 @@ var AppView = Backbone.View.extend({
     },
 
     editGroup: function(group) {
-        if (group && this.views.grp.isHidden()) {
+        if (group && !(this.views.panel instanceof GrpView)) {
             this.showEditGroup();
-            this.views.grp.showGroup(group);
+            this.views.panel.showGroup(group);
         } else {
             this.showEntries();
         }
     },
 
     editTag: function(tag) {
-        if (tag && this.views.tag.isHidden()) {
+        if (tag && !(this.views.panel instanceof TagView)) {
             this.showEditTag();
-            this.views.tag.showTag(tag);
+            this.views.panel.showTag(tag);
         } else {
             this.showEntries();
         }
     },
 
-    contextmenu: function(e) {
-        if (['input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) < 0) {
+    editGeneratorPresets: function() {
+        if (!(this.views.panel instanceof GeneratorPresetsView)) {
+            if (this.views.settings) {
+                this.showEntries();
+            }
+            this.showPanelView(new GeneratorPresetsView({ model: this.model }));
+        } else {
+            this.showEntries();
+        }
+    },
+
+    isContextMenuAllowed(e) {
+        return ['input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) < 0;
+    },
+
+    contextMenu: function(e) {
+        if (this.isContextMenuAllowed(e)) {
             e.preventDefault();
         }
+    },
+
+    showContextMenu: function(e) {
+        if (e.options && this.isContextMenuAllowed(e)) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            if (this.views.contextMenu) {
+                this.views.contextMenu.remove();
+            }
+            let menu = new DropdownView({ model: e });
+            menu.render({
+                position: { left: e.pageX, top: e.pageY },
+                options: e.options
+            });
+            menu.on('cancel', e => this.hideContextMenu());
+            menu.on('select', e => this.contextMenuSelect(e));
+            this.views.contextMenu = menu;
+        }
+    },
+
+    hideContextMenu: function() {
+        if (this.views.contextMenu) {
+            this.views.contextMenu.remove();
+            delete this.views.contextMenu;
+        }
+    },
+
+    contextMenuSelect: function(e) {
+        this.hideContextMenu();
+        Backbone.trigger('context-menu-select', e);
     },
 
     dragover: function(e) {
@@ -565,11 +619,20 @@ var AppView = Backbone.View.extend({
     },
 
     setTheme: function() {
-        ThemeChanger.setTheme(this.model.settings.get('theme'));
+        SettingsManager.setTheme(this.model.settings.get('theme'));
     },
 
     setFontSize: function() {
-        ThemeChanger.setFontSize(this.model.settings.get('fontSize'));
+        SettingsManager.setFontSize(this.model.settings.get('fontSize'));
+    },
+
+    setLocale: function() {
+        SettingsManager.setLocale(this.model.settings.get('locale'));
+        if (this.views.settings.isVisible()) {
+            this.hideSettings();
+            this.showSettings();
+        }
+        this.$el.find('.app__beta:first').text(Locale.appBeta);
     },
 
     extLinkClick: function(e) {

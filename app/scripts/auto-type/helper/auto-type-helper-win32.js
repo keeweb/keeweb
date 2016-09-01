@@ -1,13 +1,14 @@
 'use strict';
 
-var Launcher = require('../../comp/launcher');
+const Launcher = require('../../comp/launcher');
+const AutoTypeNativeHelper = require('./auto-type-native-helper');
 
-var AutoTypeHelper = function() {
+const AutoTypeHelper = function() {
 };
 
 AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
     Launcher.spawn({
-        cmd: AutoTypeHelper.getHelperPath(),
+        cmd: AutoTypeNativeHelper.getHelperPath(),
         args: ['--window-info'],
         complete: function(err, out) {
             if (err) { return callback(err); }
@@ -16,10 +17,6 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
                 parts[1] ? parts[1].trim() : undefined);
         }
     });
-};
-
-AutoTypeHelper.getHelperPath = function() {
-    return Launcher.getAppPath('helper/win32/KeeWebHelper.exe');
 };
 
 module.exports = AutoTypeHelper;

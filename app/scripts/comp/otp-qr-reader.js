@@ -20,17 +20,17 @@ var OtpQrReader = {
         if (screenshotKey) {
             screenshotKey = Locale.detSetupOtpAlertBodyWith.replace('{}', '<code>' + screenshotKey + '</code>');
         }
-        var pasteKey = FeatureDetector.isMobile() ? '' :
-            Locale.detSetupOtpAlertBodyWith.replace('{}',
+        var pasteKey = FeatureDetector.isMobile ? ''
+            : Locale.detSetupOtpAlertBodyWith.replace('{}',
                 '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>');
         OtpQrReader.startListenClipoard();
         var buttons = [{result: 'manually', title: Locale.detSetupOtpManualButton, silent: true},
             Alerts.buttons.cancel];
-        if (FeatureDetector.isMobile()) {
+        if (FeatureDetector.isMobile) {
             buttons.unshift({result: 'select', title: Locale.detSetupOtpScanButton});
         }
-        var line3 = FeatureDetector.isMobile() ? Locale.detSetupOtpAlertBody3Mobile :
-            Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
+        var line3 = FeatureDetector.isMobile ? Locale.detSetupOtpAlertBody3Mobile
+            : Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
         OtpQrReader.alert = Alerts.alert({
             icon: 'qrcode',
             header: Locale.detSetupOtpAlert,
@@ -90,9 +90,7 @@ var OtpQrReader = {
     },
 
     pasteEvent: function(e) {
-        var item = _.find(e.clipboardData.items, function(item) {
-            return item.kind === 'file' && item.type.indexOf('image') !== -1;
-        });
+        var item = _.find(e.clipboardData.items, item => item.kind === 'file' && item.type.indexOf('image') !== -1);
         if (!item) {
             logger.debug('Paste without file');
             return;
@@ -131,7 +129,7 @@ var OtpQrReader = {
                     logger.error('Error parsing QR code', err);
                     Alerts.error({
                         header: Locale.detOtpQrWrong,
-                        body: Locale.detOtpQrWrongBody + '<pre class="modal__pre">' + _.escape(err.toString()) +'</pre>'
+                        body: Locale.detOtpQrWrongBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
                     });
                 }
             } catch (e) {

@@ -109,7 +109,7 @@ var GroupModel = MenuItemModel.extend({
 
     forEachGroup: function(callback, includeDisabled) {
         var result = true;
-        this.get('items').forEach(function(group) {
+        this.get('items').forEach(group => {
             if (includeDisabled || group.group.enableSearching !== false) {
                 result = callback(group) !== false && group.forEachGroup(callback, includeDisabled) !== false;
             }
@@ -283,6 +283,23 @@ var GroupModel = MenuItemModel.extend({
             this.file.db.move(object.entry, this.group);
             this.file.reload();
         }
+    },
+
+    moveToTop: function(object) {
+        if (!object || object.id === this.id || object.file !== this.file || !(object instanceof GroupModel)) {
+            return;
+        }
+        this.file.setModified();
+        for (var parent = this; parent; parent = parent.parentGroup) {
+            if (object === parent) {
+                return;
+            }
+        }
+        let atIndex = this.parentGroup.group.groups.indexOf(this.group);
+        if (atIndex >= 0) {
+            this.file.db.move(object.group, this.parentGroup.group, atIndex);
+        }
+        this.file.reload();
     }
 });
 

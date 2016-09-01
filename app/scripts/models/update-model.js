@@ -24,7 +24,7 @@ var UpdateModel = Backbone.Model.extend({
         var data = SettingsStore.load('update-info');
         if (data) {
             try {
-                _.each(data, function(val, key) {
+                _.each(data, (val, key) => {
                     if (/Date$/.test(key)) {
                         data[key] = val ? new Date(val) : null;
                     }
@@ -36,7 +36,7 @@ var UpdateModel = Backbone.Model.extend({
 
     save: function() {
         var attr = _.clone(this.attributes);
-        Object.keys(attr).forEach(function(key) {
+        Object.keys(attr).forEach(key => {
             if (key.lastIndexOf('update', 0) === 0) {
                 delete attr[key];
             }

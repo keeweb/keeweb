@@ -1,9 +1,10 @@
 'use strict';
 
-var Launcher = require('../../comp/launcher');
+const Launcher = require('../../comp/launcher');
+const Locale = require('../../util/locale');
 
 // https://cgit.freedesktop.org/xorg/proto/x11proto/plain/keysymdef.h
-var KeyMap = {
+const KeyMap = {
     tab: 'Tab', enter: 'KP_Enter', space: 'KP_Space',
     up: 'Up', down: 'Down', left: 'Left', right: 'Right', home: 'Home', end: 'End', pgup: 'Page_Up', pgdn: 'Page_Down',
     ins: 'Insert', del: 'Delete', bs: 'BackSpace', esc: 'Escape',
@@ -15,7 +16,7 @@ var KeyMap = {
     n5: 'KP_5', n6: 'KP_6', n7: 'KP_7', n8: 'KP_8', n9: 'KP_9'
 };
 
-var ModMap = {
+const ModMap = {
     '^': 'ctrl',
     '+': 'shift',
     '%': 'alt',
@@ -37,20 +38,16 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitter.prototype.text = function(text) {
-    var that = this;
-    Object.keys(this.mod).forEach(function (mod) {
-        that.pendingScript.push('keydown ' + ModMap[mod]);
+    Object.keys(this.mod).forEach(mod => {
+        this.pendingScript.push('keydown ' + ModMap[mod]);
     });
-    that.pendingScript.push('type ' + text.split('').map(function(char) {
-        return char === '\'' ? '"\'"' : '\'' + char + '\'';
-    }).join(''));
-    this.waitComplete(function(err) {
-        if (err) { return that.callback(err); }
-        Object.keys(that.mod).forEach(function (mod) {
-            that.pendingScript.push('keyup ' + ModMap[mod]);
-        });
-        that.callback();
+    text.split('').map(char => {
+        this.pendingScript.push('key U' + char.charCodeAt(0).toString(16));
     });
+    Object.keys(this.mod).forEach(mod => {
+        this.pendingScript.push('keyup ' + ModMap[mod]);
+    });
+    this.waitComplete();
 };
 
 AutoTypeEmitter.prototype.key = function(key) {
@@ -89,7 +86,7 @@ AutoTypeEmitter.prototype.waitComplete = function(callback) {
 
 AutoTypeEmitter.prototype.modString = function() {
     var mod = '';
-    Object.keys(this.mod).forEach(function (key) {
+    Object.keys(this.mod).forEach(key => {
         mod += key + '+';
     });
     return mod;
@@ -100,7 +97,13 @@ AutoTypeEmitter.prototype.runScript = function(script, callback) {
         cmd: 'xdotool',
         args: ['-'],
         data: script,
-        complete: callback || this.callback
+        complete: (err, stdout, code) => {
+            if (err && err.code === 'ENOENT') {
+                err = Locale.autoTypeErrorNotInstalled.replace('{}', 'xdotool');
+            }
+            let cb = callback || this.callback;
+            cb(err, stdout, code);
+        }
     });
 };
 

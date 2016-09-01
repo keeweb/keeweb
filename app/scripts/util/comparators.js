@@ -2,10 +2,9 @@
 
 var LastChar = String.fromCharCode(0xffffffff);
 
-var ciCompare = (window.Intl && window.Intl.Collator) ?
-    new Intl.Collator(undefined, { sensitivity: 'base' }).compare : function(x, y) {
-    return x.toLocaleLowerCase().localeCompare(y.toLocaleLowerCase());
-};
+var ciCompare = (window.Intl && window.Intl.Collator)
+    ? new Intl.Collator(undefined, { sensitivity: 'base' }).compare
+    : (x, y) => x.toLocaleLowerCase().localeCompare(y.toLocaleLowerCase());
 
 var Comparators = {
     stringComparator: function(field, asc) {

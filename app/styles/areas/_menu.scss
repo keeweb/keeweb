@@ -166,7 +166,21 @@
       margin-right: $base-padding-h / 2;
     }
 
-    &--drag {
+    &-drag-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      transition: background-color $slow-transition-out;
+    }
+
+    &--drag-top > .menu__item-body > .menu__item-drag-top {
+      transition: background-color $slow-transition-in;
+      @include th { background-color: action-color(); }
+    }
+
+    &--drag:not(.menu__item--drag-top) {
       >.menu__item-body {
         @include th { color: action-color(); }
       }

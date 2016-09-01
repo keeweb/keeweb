@@ -39,13 +39,12 @@ var DetailsAutoTypeView = Backbone.View.extend({
     },
 
     seqInput: function(e) {
-        var that = this;
         var el = e.target;
         var seq = $.trim(el.value);
-        AutoType.validate(this.model, seq, function(err) {
+        AutoType.validate(this.model, seq, err => {
             $(el).toggleClass('input--error', !!err);
             if (!err) {
-                that.model.setAutoTypeSeq(seq);
+                this.model.setAutoTypeSeq(seq);
             }
         });
     },
@@ -61,7 +60,7 @@ var DetailsAutoTypeView = Backbone.View.extend({
     seqFocus: function(e) {
         if (!this.views.hint) {
             this.views.hint = new AutoTypeHintView({input: e.target}).render();
-            this.views.hint.on('remove', (function() {delete this.views.hint; }).bind(this));
+            this.views.hint.on('remove', () => { delete this.views.hint; });
         }
     },
 

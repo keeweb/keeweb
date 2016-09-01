@@ -10,8 +10,8 @@ var Backbone = require('backbone'),
 
 var FieldViewText = FieldView.extend({
     renderValue: function(value) {
-        return value && value.isProtected ? PasswordGenerator.present(value.textLength) :
-            _.escape(value || '').replace(/\n/g, '<br/>');
+        return value && value.isProtected ? PasswordGenerator.present(value.textLength)
+            : _.escape(value || '').replace(/\n/g, '<br/>');
     },
 
     getEditValue: function(value) {
@@ -33,7 +33,7 @@ var FieldViewText = FieldView.extend({
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        this.listenTo(Backbone, 'click', this.fieldValueBlur);
+        this.listenTo(Backbone, 'click main-window-will-close', this.fieldValueBlur);
         if (this.model.multiline) {
             this.setInputHeight();
         }
@@ -121,21 +121,33 @@ var FieldViewText = FieldView.extend({
 
     fieldValueKeydown: function(e) {
         KeyHandler.reg();
-        e.stopPropagation();
         var code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             if (!this.model.multiline || (!e.altKey && !e.shiftKey && !e.ctrlKey)) {
-                this.stopListening(Backbone, 'click', this.fieldValueBlur);
+                if (this.gen) {
+                    e.target.value = this.gen.password;
+                    this.hideGenerator();
+                    return;
+                }
+                this.stopBlurListener();
                 this.endEdit(e.target.value);
             }
         } else if (code === Keys.DOM_VK_ESCAPE) {
-            this.stopListening(Backbone, 'click', this.fieldValueBlur);
+            this.stopBlurListener();
             this.endEdit();
         } else if (code === Keys.DOM_VK_TAB) {
             e.preventDefault();
-            this.stopListening(Backbone, 'click', this.fieldValueBlur);
+            this.stopBlurListener();
             this.endEdit(e.target.value, { tab: { field: this.model.name, prev: e.shiftKey } });
+        } else if (code === Keys.DOM_VK_G && e.metaKey) {
+            e.preventDefault();
+            this.showGenerator();
+        } else if (code === Keys.DOM_VK_S && (e.metaKey || e.ctrlKey)) {
+            this.stopBlurListener();
+            this.endEdit(e.target.value);
+            return;
         }
+        e.stopPropagation();
     },
 
     endEdit: function(newVal, extra) {
@@ -146,7 +158,7 @@ var FieldViewText = FieldView.extend({
             return;
         }
         delete this.input;
-        this.stopListening(Backbone, 'click', this.fieldValueBlur);
+        this.stopBlurListener();
         if (typeof newVal === 'string' && this.value instanceof kdbxweb.ProtectedValue) {
             newVal = kdbxweb.ProtectedValue.fromString(newVal);
         }
@@ -154,6 +166,10 @@ var FieldViewText = FieldView.extend({
             newVal = $.trim(newVal);
         }
         FieldView.prototype.endEdit.call(this, newVal, extra);
+    },
+
+    stopBlurListener: function() {
+        this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
     },
 
     render: function() {

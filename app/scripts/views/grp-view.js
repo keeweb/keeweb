@@ -12,7 +12,7 @@ var GrpView = Backbone.View.extend({
     events: {
         'click .grp__icon': 'showIconsSelect',
         'click .grp__buttons-trash': 'moveToTrash',
-        'click .grp__back-button': 'returnToApp',
+        'click .back-button': 'returnToApp',
         'input #grp__field-title': 'changeTitle',
         'focus #grp__field-auto-type-seq': 'focusAutoTypeSeq',
         'input #grp__field-auto-type-seq': 'changeAutoTypeSeq',
@@ -37,13 +37,13 @@ var GrpView = Backbone.View.extend({
                 autoTypeSeq: this.model.get('autoTypeSeq'),
                 autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
                 defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
-            }, { plain: true });
+            }, true);
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();
             }
         }
         this.createScroll({
-            root: this.$el.find('.details__body')[0],
+            root: this.$el.find('.grp')[0],
             scroller: this.$el.find('.scroller')[0],
             bar: this.$el.find('.scroller__bar')[0]
         });
@@ -66,8 +66,8 @@ var GrpView = Backbone.View.extend({
     changeTitle: function(e) {
         var title = $.trim(e.target.value);
         if (title) {
-            if (!this.model.get('top') && e.target.value !== this.model.get('title')) {
-                this.model.setName(e.target.value);
+            if (!this.model.get('top') && title !== this.model.get('title')) {
+                this.model.setName(title);
             }
         } else {
             if (this.model.isJustCreated) {
@@ -78,13 +78,12 @@ var GrpView = Backbone.View.extend({
     },
 
     changeAutoTypeSeq: function(e) {
-        var that = this;
         var el = e.target;
         var seq = $.trim(el.value);
-        AutoType.validate(null, seq, function(err) {
+        AutoType.validate(null, seq, err => {
             $(e.target).toggleClass('input--error', !!err);
             if (!err) {
-                that.model.setAutoTypeSeq(seq);
+                this.model.setAutoTypeSeq(seq);
             }
         });
     },
@@ -92,7 +91,7 @@ var GrpView = Backbone.View.extend({
     focusAutoTypeSeq: function(e) {
         if (!this.views.hint) {
             this.views.hint = new AutoTypeHintView({input: e.target}).render();
-            this.views.hint.on('remove', (function() {delete this.views.hint; }).bind(this));
+            this.views.hint.on('remove', () => { delete this.views.hint; });
         }
     },
 

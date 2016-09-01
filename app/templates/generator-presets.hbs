@@ -1,0 +1,53 @@
+<div class="gen-ps">
+    <div class="back-button">
+        {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
+    </div>
+    <div class="scroller">
+        <h1>{{res 'genPsTitle'}}</h1>
+        <select class="gen-ps__list input-base">
+            {{#each presets as |ps|}}
+                <option value="{{ps.name}}" {{#ifeq ps ../selected}}selected{{/ifeq}}>{{#if ps.builtIn}}* {{/if}}{{ps.title}}</option>
+            {{/each}}
+        </select>
+        <div class="gen-ps__field">
+            <input type="checkbox" class="input-base" id="gen-ps__check-enabled" {{#unless selected.disabled}}checked{{/unless}} />
+            <label for="gen-ps__check-enabled">{{res 'genPsEnabled'}}</label>
+        </div>
+        <div class="gen-ps__field">
+            <input type="checkbox" class="input-base" id="gen-ps__check-default" {{#if selected.default}}checked{{/if}} />
+            <label for="gen-ps__check-default">{{res 'genPsDefault'}}</label>
+        </div>
+        <div class="gen-ps__field">
+            <label for="gen-ps__field-title">{{Res 'name'}}:</label>
+            <input type="text" class="input-base" id="gen-ps__field-title" value="{{selected.title}}"
+                   size="50" maxlength="64" required {{#if selected.builtIn}}readonly{{/if}} />
+        </div>
+        <div class="gen-ps__field">
+            <label for="gen-ps__field-length">{{res 'genPsDefaultLength'}}:</label>
+            <input type="text" class="input-base" id="gen-ps__field-length" value="{{selected.length}}"
+                   size="50" maxlength="3" required pattern="\d+" {{#if selected.builtIn}}readonly{{/if}} />
+        </div>
+        {{#each ranges as |range|}}
+        <div class="gen-ps__field">
+            <input type="checkbox" class="input-base gen-ps__check-range" id="gen-ps__check-{{range.name}}"
+                   data-range="{{range.name}}"
+                {{#if range.enabled}}checked{{/if}} {{#if ../selected.builtIn}}disabled{{/if}} />
+            <label for="gen-ps__check-{{range.name}}">{{range.title}}<span class="gen-ps__sample"> {{range.sample}}</span></label>
+        </div>
+        {{/each}}
+        <div class="gen-ps__field">
+            <label for="gen-ps__field-include">{{res 'genPsInclude'}}:</label>
+            <input type="text" class="input-base" id="gen-ps__field-include" value="{{selected.include}}"
+                   {{#if selected.builtIn}}readonly{{/if}} />
+        </div>
+        <div class="gen-ps__field">
+            <label>{{res 'genPsExample'}}:</label>
+            <div class="gen-ps__example"></div>
+        </div>
+    </div>
+    <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
+    <div class="gen-ps__buttons">
+        <button class="gen-ps__btn-create">{{res 'genPsCreate'}}</button>
+        {{#unless selected.builtIn}}<button class="gen-ps__btn-delete btn-error">{{res 'genPsDelete'}}</button>{{/unless}}
+    </div>
+</div>

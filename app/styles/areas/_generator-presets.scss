@@ -1,0 +1,38 @@
+.gen-ps {
+  @include flex(1);
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+  @include scrollbar-on-hover;
+  width: 100%;
+  user-select: none;
+  overflow: hidden;
+  position: relative;
+
+  >.scroller {
+    @include flex(1);
+    overflow-x: hidden;
+  }
+
+  &__buttons {
+    margin-top: $base-padding-v;
+  }
+
+  &__sample {
+    font-weight: normal;
+    @include th { color: muted-color(); }
+  }
+
+  &__example {
+    @include user-select(text);
+    font-family: $monospace-font-family;
+    margin-top: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  &__list, &__input {
+    height: 2em;
+  }
+}

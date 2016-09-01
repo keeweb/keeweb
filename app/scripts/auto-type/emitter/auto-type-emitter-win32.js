@@ -1,20 +1,19 @@
 'use strict';
 
 var Launcher = require('../../comp/launcher'),
-    AutoTypeHelper = require('../helper/auto-type-helper-win32');
+    AutoTypeNativeHelper = require('../helper/auto-type-native-helper');
 
-// https://msdn.microsoft.com/en-us/library/system.windows.forms.sendkeys.send(v=vs.110).aspx
 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 var KeyMap = {
-    tab: '{tab}', enter: '{enter}', space: '{space}',
-    up: '{up}', down: '{down}', left: '{left}', right: '{right}', home: '{home}', end: '{end}', pgup: '{pgup}', pgdn: '{pgdn}',
-    ins: '{ins}', del: '{del}', bs: '{bs}', esc: '{esc}',
+    tab: 0x09, enter: 0x0D, space: 0x20,
+    up: 0x26, down: 0x28, left: 0x25, right: 0x27, home: 0x24, end: 0x23, pgup: 0x21, pgdn: 0x22,
+    ins: 0x2D, del: 0x2E, bs: 0x08, esc: 0x1B,
     win: 0x5B, rwin: 0x5C,
-    f1: '{f1}', f2: '{f2}', f3: '{f3}', f4: '{f4}', f5: '{f5}', f6: '{f6}', f7: '{f7}', f8: '{f8}', f9: '{f9}',
-    f10: '{f10}', f11: '{f11}', f12: '{f12}', f13: '{f13}', f14: '{f14}', f15: '{f15}', f16: '{f16}',
-    add: '{add}', subtract: '{subtract}', multiply: '{multiply}', divide: '{divide}',
-    n0: '0', n1: '1', n2: '2', n3: '3', n4: '4',
-    n5: '5', n6: '6', n7: '7', n8: '8', n9: '9'
+    f1: 0x70, f2: 0x71, f3: 0x72, f4: 0x73, f5: 0x74, f6: 0x75, f7: 0x76, f8: 0x77, f9: 0x78,
+    f10: 0x79, f11: 0x7A, f12: 0x7B, f13: 0x7C, f14: 0x7D, f15: 0x7E, f16: 0x7F,
+    add: 0x6B, subtract: 0x6D, multiply: 0x6A, divide: 0x6F,
+    n0: 0x30, n1: 0x31, n2: 0x32, n3: 0x33, n4: 0x34,
+    n5: 0x35, n6: 0x36, n7: 0x37, n8: 0x38, n9: 0x39
 };
 
 var ModMap = {
@@ -23,8 +22,6 @@ var ModMap = {
     '%': '%',
     '^^': '^'
 };
-
-var TextReplaceRegex = /[\(\)\{}\[\]\+\^%~]/g;
 
 var AutoTypeEmitter = function(callback) {
     this.callback = callback;
@@ -41,24 +38,20 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitter.prototype.text = function(text) {
-    text = this.addMod(text.replace(TextReplaceRegex, function(match) { return '{' + match + '}'; }));
-    this.pendingScript.push('text ' + text);
+    if (text) {
+        this.pendingScript.push('text ' + this.modStr() + ' ' + text);
+    }
     this.callback();
 };
 
 AutoTypeEmitter.prototype.key = function(key) {
     if (typeof key !== 'number') {
-        key = KeyMap[key];
-        if (!key) {
+        if (!KeyMap[key]) {
             return this.callback('Bad key: ' + key);
         }
+        key = KeyMap[key];
     }
-    if (typeof key === 'number') {
-        this.pendingScript.push('key ' + this.addMod('') + key);
-    } else {
-        var text = this.addMod(key);
-        this.pendingScript.push('text ' + text);
-    }
+    this.pendingScript.push('key ' + this.modStr() + key);
     this.callback();
 };
 
@@ -87,17 +80,13 @@ AutoTypeEmitter.prototype.setDelay = function(delay) {
     this.callback('Not implemented');
 };
 
-AutoTypeEmitter.prototype.addMod = function(text) {
-    var keys = Object.keys(this.mod);
-    if (!keys.length || !text) {
-        return text;
-    }
-    return keys.join('') + (text.length > 1 ? '(' + text + ')' : text);
+AutoTypeEmitter.prototype.modStr = function() {
+    return Object.keys(this.mod).join('');
 };
 
 AutoTypeEmitter.prototype.runScript = function(script) {
     Launcher.spawn({
-        cmd: AutoTypeHelper.getHelperPath(),
+        cmd: AutoTypeNativeHelper.getHelperPath(),
         data: script,
         complete: this.callback
     });

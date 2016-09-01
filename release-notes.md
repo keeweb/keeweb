@@ -1,6 +1,28 @@
 Release notes
 -------------
 
+##### v1.3.0 (2016-09-01)
+Generator presets, auto-type and ui improvements  
+`+` auto-type improvements  
+`+` context menu  
+`+` solarized themes  
+`+` generator presets  
+`+` group reorder  
+`+` auto backups  
+`+` select field contents on search hotkey  
+`+` option to preload default config and file  
+`+` save displayed table columns  
+`+` confirmation in password change dialog  
+`+` inline generator keyboard management  
+`+` field references decoding  
+`+` copy entries  
+`+` option to disable open, new and demo buttons  
+`-` fix app redraw in background  
+`-` fix idle timer on computer sleep  
+`-` fix storage popup when no action is required  
+`-` fix loading raw 32-byte and 64-byte keyfiles  
+`-` fix data loss on exit with focused field  
+
 ##### v1.2.4 (2016-07-20)
 `+` digital signature in installer  
 `-` fix save to file  

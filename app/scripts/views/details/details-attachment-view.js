@@ -19,10 +19,10 @@ var DetailsAttachmentView = Backbone.View.extend({
         switch ((this.model.mimeType || '').split('/')[0]) {
             case 'text':
                 var reader = new FileReader();
-                reader.addEventListener('loadend', (function() {
+                reader.addEventListener('loadend', () => {
                     $('<pre/>').text(reader.result).appendTo(dataEl);
                     complete();
-                }).bind(this));
+                });
                 reader.readAsText(blob);
                 return this;
             case 'image':

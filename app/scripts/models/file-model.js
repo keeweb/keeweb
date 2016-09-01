@@ -33,7 +33,8 @@ var FileModel = Backbone.Model.extend({
         keyChangeForce: -1,
         syncing: false,
         syncError: null,
-        syncDate: null
+        syncDate: null,
+        backup: null
     },
 
     db: null,
@@ -49,7 +50,7 @@ var FileModel = Backbone.Model.extend({
         try {
             var credentials = new kdbxweb.Credentials(password, keyFileData);
             var ts = logger.ts();
-            kdbxweb.Kdbx.load(fileData, credentials, (function(db, err) {
+            kdbxweb.Kdbx.load(fileData, credentials, (db, err) => {
                 if (err) {
                     if (err.code === kdbxweb.Consts.ErrorCodes.InvalidKey && password && !password.byteLength) {
                         logger.info('Error opening file with empty password, try to open with null password');
@@ -68,7 +69,7 @@ var FileModel = Backbone.Model.extend({
                         db.header.keyEncryptionRounds + ' rounds, ' + Math.round(fileData.byteLength / 1024) + ' kB');
                     callback();
                 }
-            }).bind(this));
+            });
         } catch (e) {
             logger.error('Error opening file', e, e.code, e.message, e);
             callback(e);
@@ -89,7 +90,7 @@ var FileModel = Backbone.Model.extend({
             var ts = logger.ts();
             var password = kdbxweb.ProtectedValue.fromString('');
             var credentials = new kdbxweb.Credentials(password);
-            kdbxweb.Kdbx.loadXml(fileXml, credentials, (function(db, err) {
+            kdbxweb.Kdbx.loadXml(fileXml, credentials, (db, err) => {
                 if (err) {
                     logger.error('Error importing file', err.code, err.message, err);
                     callback(err);
@@ -100,7 +101,7 @@ var FileModel = Backbone.Model.extend({
                     logger.info('Imported file ' + this.get('name') + ': ' + logger.ts(ts));
                     callback();
                 }
-            }).bind(this));
+            });
         } catch (e) {
             logger.error('Error importing file', e, e.code, e.message, e);
             callback(e);
@@ -111,13 +112,13 @@ var FileModel = Backbone.Model.extend({
         var password = kdbxweb.ProtectedValue.fromString('demo');
         var credentials = new kdbxweb.Credentials(password);
         var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
-        kdbxweb.Kdbx.load(demoFile, credentials, (function(db) {
+        kdbxweb.Kdbx.load(demoFile, credentials, db => {
             this.db = db;
             this.set('name', 'Demo');
             this.readModel();
             this.setOpenFile({passwordLength: 4, demo: true});
             callback();
-        }).bind(this));
+        });
     },
 
     setOpenFile: function(props) {
@@ -156,6 +157,7 @@ var FileModel = Backbone.Model.extend({
             groups.add(groupModel);
         }, this);
         this.buildObjectMap();
+        this.resolveFieldReferences();
     },
 
     subId: function(id) {
@@ -165,14 +167,21 @@ var FileModel = Backbone.Model.extend({
     buildObjectMap: function() {
         var entryMap = {};
         var groupMap = {};
-        this.forEachGroup(function(group) {
+        this.forEachGroup(group => {
             groupMap[group.id] = group;
-            group.forEachOwnEntry(null, function(entry) {
+            group.forEachOwnEntry(null, entry => {
                 entryMap[entry.id] = entry;
             });
         }, true);
         this.entryMap = entryMap;
         this.groupMap = groupMap;
+    },
+
+    resolveFieldReferences: function() {
+        let entryMap = this.entryMap;
+        Object.keys(entryMap).forEach(e => {
+            entryMap[e].resolveFieldReferences();
+        });
     },
 
     reload: function() {
@@ -200,7 +209,7 @@ var FileModel = Backbone.Model.extend({
         } else {
             credentials = this.db.credentials;
         }
-        kdbxweb.Kdbx.load(fileData, credentials, (function(remoteDb, err) {
+        kdbxweb.Kdbx.load(fileData, credentials, (remoteDb, err) => {
             if (err) {
                 logger.error('Error opening file to merge', err.code, err.message, err);
             } else {
@@ -225,7 +234,7 @@ var FileModel = Backbone.Model.extend({
                 this.reload();
             }
             callback(err);
-        }).bind(this));
+        });
     },
 
     getLocalEditState: function() {
@@ -271,7 +280,7 @@ var FileModel = Backbone.Model.extend({
                 top.forEachOwnEntry(filter, callback);
             }
             if (!filter.group || filter.subGroups) {
-                top.forEachGroup(function (group) {
+                top.forEachGroup(group => {
                     group.forEachOwnEntry(filter, callback);
                 });
             }
@@ -279,7 +288,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     forEachGroup: function(callback, includeDisabled) {
-        this.get('groups').forEach(function(group) {
+        this.get('groups').forEach(group => {
             if (callback(group) !== false) {
                 group.forEachGroup(callback, includeDisabled);
             }
@@ -302,11 +311,10 @@ var FileModel = Backbone.Model.extend({
             customIcons: true,
             binaries: true
         });
-        var that = this;
         this.db.cleanup({ binaries: true });
-        this.db.save(function(data, err) {
+        this.db.save((data, err) => {
             if (err) {
-                logger.error('Error saving file', that.get('name'), err);
+                logger.error('Error saving file', this.get('name'), err);
             }
             cb(data, err);
         });
@@ -344,9 +352,7 @@ var FileModel = Backbone.Model.extend({
             return;
         }
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
-        this.forEachEntry({}, function(entry) {
-            entry.setSaved();
-        });
+        this.forEachEntry({}, entry => entry.setSaved());
     },
 
     setPassword: function(password) {
@@ -482,9 +488,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     getCustomIcons: function() {
-        return _.mapObject(this.db.meta.customIcons, function(customIcon) {
-            return IconUrl.toDataUrl(customIcon);
-        });
+        return _.mapObject(this.db.meta.customIcons, customIcon => IconUrl.toDataUrl(customIcon));
     },
 
     addCustomIcon: function(iconData) {
@@ -494,9 +498,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     renameTag: function(from, to) {
-        this.forEachEntry({}, function(entry) {
-            entry.renameTag(from, to);
-        });
+        this.forEachEntry({}, entry => entry.renameTag(from, to));
     }
 });
 

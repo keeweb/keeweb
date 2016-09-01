@@ -16,98 +16,94 @@ var StorageCache = StorageBase.extend({
         if (this.db) {
             return callback && callback();
         }
-        var that = this;
         try {
             var req = idb.open('FilesCache');
-            req.onerror = function (e) {
-                that.logger.error('Error opening indexed db', e);
-                that.errorOpening = e;
+            req.onerror = e => {
+                this.logger.error('Error opening indexed db', e);
+                this.errorOpening = e;
                 if (callback) { callback(e); }
             };
-            req.onsuccess = function (e) {
-                that.db = e.target.result;
+            req.onsuccess = e => {
+                this.db = e.target.result;
                 if (callback) { callback(); }
             };
-            req.onupgradeneeded = function (e) {
+            req.onupgradeneeded = e => {
                 var db = e.target.result;
                 db.createObjectStore('files');
             };
         } catch (e) {
-            that.logger.error('Error opening indexed db', e);
+            this.logger.error('Error opening indexed db', e);
             if (callback) { callback(e); }
         }
     },
 
     save: function(id, opts, data, callback) {
-        var that = this;
-        that.logger.debug('Save', id);
-        that.initDb(function(err) {
+        this.logger.debug('Save', id);
+        this.initDb(err => {
             if (err) {
                 return callback && callback(err);
             }
             try {
-                var ts = that.logger.ts();
-                var req = that.db.transaction(['files'], 'readwrite').objectStore('files').put(data, id);
-                req.onsuccess = function () {
-                    that.logger.debug('Saved', id, that.logger.ts(ts));
+                var ts = this.logger.ts();
+                var req = this.db.transaction(['files'], 'readwrite').objectStore('files').put(data, id);
+                req.onsuccess = () => {
+                    this.logger.debug('Saved', id, this.logger.ts(ts));
                     if (callback) { callback(); }
                 };
-                req.onerror = function () {
-                    that.logger.error('Error saving to cache', id, req.error);
+                req.onerror = () => {
+                    this.logger.error('Error saving to cache', id, req.error);
                     if (callback) { callback(req.error); }
                 };
             } catch (e) {
-                that.logger.error('Error saving to cache', id, e);
+                this.logger.error('Error saving to cache', id, e);
                 if (callback) { callback(e); }
             }
         });
     },
 
     load: function(id, opts, callback) {
-        var that = this;
-        that.logger.debug('Load', id);
-        that.initDb(function(err) {
+        this.logger.debug('Load', id);
+        this.initDb(err => {
             if (err) {
                 return callback && callback(err, null);
             }
             try {
-                var ts = that.logger.ts();
-                var req = that.db.transaction(['files'], 'readonly').objectStore('files').get(id);
-                req.onsuccess = function () {
-                    that.logger.debug('Loaded', id, that.logger.ts(ts));
+                var ts = this.logger.ts();
+                var req = this.db.transaction(['files'], 'readonly').objectStore('files').get(id);
+                req.onsuccess = () => {
+                    this.logger.debug('Loaded', id, this.logger.ts(ts));
                     if (callback) { callback(null, req.result); }
                 };
-                req.onerror = function () {
-                    that.logger.error('Error loading from cache', id, req.error);
+                req.onerror = () => {
+                    this.logger.error('Error loading from cache', id, req.error);
                     if (callback) { callback(req.error); }
                 };
             } catch (e) {
-                that.logger.error('Error loading from cache', id, e);
+                this.logger.error('Error loading from cache', id, e);
                 if (callback) { callback(e, null); }
             }
         });
     },
 
     remove: function(id, opts, callback) {
-        var that = this;
-        that.logger.debug('Remove', id);
-        that.initDb(function(err) {
+        this.logger.debug('Remove', id);
+        this.initDb(err => {
             if (err) {
                 return callback && callback(err);
             }
             try {
-                var ts = that.logger.ts();
-                var req = that.db.transaction(['files'], 'readwrite').objectStore('files').delete(id);
-                req.onsuccess = function () {
-                    that.logger.debug('Removed', id, that.logger.ts(ts));
+                var ts = this.logger.ts();
+                var req = this.db.transaction(['files'], 'readwrite').objectStore('files').delete(id);
+                req.onsuccess = () => {
+                    this.logger.debug('Removed', id, this.logger.ts(ts));
                     if (callback) { callback(); }
                 };
-                req.onerror = function () {
-                    that.logger.error('Error removing from cache', id, req.error);
+                req.onerror = () => {
+                    this.logger.error('Error removing from cache', id, req.error);
                     if (callback) { callback(req.error); }
                 };
-            } catch(e) {
-                that.logger.error('Error removing from cache', id, e);
+            } catch (e) {
+                this.logger.error('Error removing from cache', id, e);
                 if (callback) { callback(e); }
             }
         });

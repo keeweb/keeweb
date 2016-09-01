@@ -29,8 +29,11 @@ var PasswordGenerator = {
                 return this.generateMac();
         }
         var ranges = Object.keys(this.charRanges)
-            .filter(function(r) { return opts[r]; })
+            .filter(r => opts[r])
             .map(function(r) { return this.charRanges[r]; }, this);
+        if (opts.include && opts.include.length) {
+            ranges.push(opts.include);
+        }
         if (!ranges.length) {
             return '';
         }
@@ -92,10 +95,10 @@ var PasswordGenerator = {
         var length = 0;
         if (password) {
             var charRanges = this.charRanges;
-            password.forEachChar(function(ch) {
+            password.forEachChar(ch => {
                 length++;
                 ch = String.fromCharCode(ch);
-                _.forEach(charRanges, function(chars, range) {
+                _.forEach(charRanges, (chars, range) => {
                     if (chars.indexOf(ch) >= 0) {
                         opts[range] = true;
                     }

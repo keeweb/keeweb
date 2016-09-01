@@ -1,0 +1,12 @@
+<tr class="at-select__item {{#if active}}at-select__item--active{{/if}}" data-id="{{id}}">
+    <td>
+        {{~#if customIcon~}}
+            <img src="{{{customIcon}}}" class="at-select__item-icon at-select__item-icon--custom {{#if color}}{{color}}{{/if}}" />
+        {{~else~}}
+            <i class="fa fa-{{icon}} {{#if color}}{{color}}-color{{/if}} at-select__item-icon"></i>
+        {{~/if~}}
+    </td>
+    <td>{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</td>
+    <td>{{user}}</td>
+    <td>{{url}}</td>
+</tr>

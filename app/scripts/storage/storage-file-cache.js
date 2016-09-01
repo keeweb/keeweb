@@ -33,60 +33,57 @@ var StorageFileCache = StorageBase.extend({
     },
 
     save: function(id, opts, data, callback) {
-        var that = this;
-        that.logger.debug('Save', id);
-        that.initFs(function(err) {
+        this.logger.debug('Save', id);
+        this.initFs(err => {
             if (err) {
                 return callback && callback(err);
             }
-            var ts = that.logger.ts();
+            var ts = this.logger.ts();
             try {
-                Launcher.writeFile(that.getPath(id), data);
-                that.logger.debug('Saved', id, that.logger.ts(ts));
+                Launcher.writeFile(this.getPath(id), data);
+                this.logger.debug('Saved', id, this.logger.ts(ts));
                 if (callback) { callback(); }
             } catch (e) {
-                that.logger.error('Error saving to cache', id, e);
+                this.logger.error('Error saving to cache', id, e);
                 if (callback) { callback(e); }
             }
         });
     },
 
     load: function(id, opts, callback) {
-        var that = this;
-        that.logger.debug('Load', id);
-        that.initFs(function(err) {
+        this.logger.debug('Load', id);
+        this.initFs(err => {
             if (err) {
                 return callback && callback(null, err);
             }
-            var ts = that.logger.ts();
+            var ts = this.logger.ts();
             try {
-                var data = Launcher.readFile(that.getPath(id));
-                that.logger.debug('Loaded', id, that.logger.ts(ts));
+                var data = Launcher.readFile(this.getPath(id));
+                this.logger.debug('Loaded', id, this.logger.ts(ts));
                 if (callback) { callback(null, data.buffer); }
             } catch (e) {
-                that.logger.error('Error loading from cache', id, e);
+                this.logger.error('Error loading from cache', id, e);
                 if (callback) { callback(e, null); }
             }
         });
     },
 
     remove: function(id, opts, callback) {
-        var that = this;
-        that.logger.debug('Remove', id);
-        that.initFs(function(err) {
+        this.logger.debug('Remove', id);
+        this.initFs(err => {
             if (err) {
                 return callback && callback(err);
             }
-            var ts = that.logger.ts();
+            var ts = this.logger.ts();
             try {
-                var path = that.getPath(id);
+                var path = this.getPath(id);
                 if (Launcher.fileExists(path)) {
                     Launcher.deleteFile(path);
                 }
-                that.logger.debug('Removed', id, that.logger.ts(ts));
+                this.logger.debug('Removed', id, this.logger.ts(ts));
                 if (callback) { callback(); }
-            } catch(e) {
-                that.logger.error('Error removing from cache', id, e);
+            } catch (e) {
+                this.logger.error('Error removing from cache', id, e);
                 if (callback) { callback(e); }
             }
         });

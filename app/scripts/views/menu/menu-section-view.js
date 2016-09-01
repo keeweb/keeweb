@@ -53,7 +53,7 @@ var MenuSectionView = Backbone.View.extend({
         this.pageResized();
     },
 
-    remove : function() {
+    remove: function() {
         if (this.scroll) {
             this.scroll.dispose();
         }
@@ -62,7 +62,7 @@ var MenuSectionView = Backbone.View.extend({
     },
 
     removeInnerViews: function() {
-        this.itemViews.forEach(function(itemView) { itemView.remove(); });
+        this.itemViews.forEach(itemView => itemView.remove());
         this.itemViews = [];
     },
 
@@ -75,7 +75,7 @@ var MenuSectionView = Backbone.View.extend({
         this.saveViewHeight(size);
     },
 
-    saveViewHeight: _.throttle(function(size) {
+    saveViewHeight: _.throttle(size => {
         AppSettingsModel.instance.set('tagsViewHeight', size);
     }, 1000)
 });

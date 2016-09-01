@@ -21,6 +21,10 @@
   @include filter(grayscale(1));
 }
 
+.input-shake {
+  @include animation(shake 50s cubic-bezier(.36,.07,.19,.97) 0s);
+}
+
 @include keyframes(flip3d) {
   from {
     @include transform(rotateY(0));

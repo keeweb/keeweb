@@ -56,8 +56,7 @@ Otp.prototype.next = function(callback) {
     }
     var data = new Uint8Array(8).buffer;
     new DataView(data).setUint32(4, valueForHashing);
-    var that = this;
-    this.hmac(data, function(sig, err) {
+    this.hmac(data, (sig, err) => {
         if (!sig) {
             logger.error('OTP calculation error', err);
             return callback();
@@ -65,7 +64,7 @@ Otp.prototype.next = function(callback) {
         sig = new DataView(sig);
         var offset = sig.getInt8(sig.byteLength - 1) & 0xf;
         var pass = (sig.getUint32(offset) & 0x7fffffff).toString();
-        pass = Otp.leftPad(pass.substr(pass.length - that.digits), that.digits);
+        pass = Otp.leftPad(pass.substr(pass.length - this.digits), this.digits);
         callback(pass, timeLeft);
     });
 };
@@ -77,12 +76,12 @@ Otp.prototype.hmac = function(data, callback) {
     var subtle = window.crypto.subtle || window.crypto.webkitSubtle;
     var algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
     subtle.importKey('raw', this.key, algo, false, ['sign'])
-        .then(function(key) {
+        .then(key => {
             subtle.sign(algo, key, data)
-                .then(function(sig) { callback(sig); })
-                .catch(function(err) { callback(null, err); });
+                .then(sig => { callback(sig); })
+                .catch(err => { callback(null, err); });
         })
-        .catch(function(err) { callback(null, err); });
+        .catch(err => { callback(null, err); });
 };
 
 Otp.prototype.hmacMsCrypto = function(data, callback) {
@@ -138,7 +137,7 @@ Otp.parseUrl = function(url) {
         }
     }
     params.type = match[1].toLowerCase();
-    match[3].split('&').forEach(function(part) {
+    match[3].split('&').forEach(part => {
         var parts = part.split('=', 2);
         params[parts[0].toLowerCase()] = decodeURIComponent(parts[1]);
     });

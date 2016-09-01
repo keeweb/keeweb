@@ -22,7 +22,7 @@ var MenuView = Backbone.View.extend({
     },
 
     remove: function() {
-        this.sectionViews.forEach(function(sectionView) { sectionView.remove(); });
+        this.sectionViews.forEach(sectionView => sectionView.remove());
         this.sectionViews = [];
         Backbone.View.prototype.remove.apply(this, arguments);
     },
@@ -52,7 +52,7 @@ var MenuView = Backbone.View.extend({
         this.render();
     },
 
-    viewResized: _.throttle(function(size) {
+    viewResized: _.throttle(size => {
         AppSettingsModel.instance.set('menuViewWidth', size);
     }, 1000),
 

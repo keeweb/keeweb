@@ -1,0 +1,90 @@
+.at-select {
+  @include position(absolute, 0 null null 0);
+  @include size(100%);
+  @include th { background-color: background-color(); }
+  @include display(flex);
+  @include flex-direction(column);
+  @include align-items(stretch);
+  @include justify-content(flex-start);
+  box-sizing: border-box;
+  z-index: $z-index-no-modal;
+  opacity: 1;
+  padding: $base-padding;
+
+  &__header {
+    @include display(flex);
+    &-text {
+      @include flex(1 1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: $base-padding-h;
+    }
+    &-filter {
+      @include flex(auto 0);
+      position: relative;
+    }
+    &-filter-input {
+      width: 200px;
+    }
+    &-filter-clear {
+      cursor: pointer;
+      position: absolute;
+      right: .7em;
+      top: .7em;
+    }
+  }
+  &__message {
+    @include display(flex);
+    margin-bottom: $base-padding-v * 2;
+    &-text {
+      @include flex(1 1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: $base-padding-h;
+    }
+  }
+  &__items {
+    @include flex(1);
+    @include scrollbar-on-hover;
+    margin-bottom: $base-padding-v;
+    position: relative;
+    overflow: hidden;
+    >.scroller {
+      @include display(flex);
+      @include flex-direction(row);
+      @include justify-content(center);
+    }
+  }
+  &__table {
+    @include flex(1);
+    width: 100%;
+    overflow: hidden;
+    border-collapse: collapse;
+    table-layout: fixed;
+    tr.at-select__item {
+      border-right-width: 3px;
+    }
+    td, th {
+      padding: $base-padding;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-wrap: break-word;
+      &:first-of-type { width: 1em; text-align: center; }
+      &:nth-of-type(2) { width: 50%; }
+      &:nth-of-type(3) { width: 25%; }
+      &:nth-of-type(4) { width: 25%; }
+    }
+  }
+  &__item {
+    @include area-selectable(right);
+    &--active, &--active:hover {
+      @include area-selected(right);
+      cursor: pointer;
+    }
+  }
+  &__empty-title {
+    @include align-self(center);
+  }
+}

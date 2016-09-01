@@ -1,0 +1,308 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		48035AAD1D5724FF00EB44C4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035AAC1D5724FF00EB44C4 /* main.m */; };
+		48035AB41D57263A00EB44C4 /* InputParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035AB31D57263A00EB44C4 /* InputParser.m */; };
+		48035ABF1D57286F00EB44C4 /* NoOpCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035ABE1D57286F00EB44C4 /* NoOpCommand.m */; };
+		48035AC11D57393200EB44C4 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 48035AC01D57393200EB44C4 /* libreadline.tbd */; };
+		48035AC41D573A8F00EB44C4 /* UnknownCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035AC31D573A8F00EB44C4 /* UnknownCommand.m */; };
+		48035AC61D573C1200EB44C4 /* WaitCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035AC51D573C1200EB44C4 /* WaitCommand.m */; };
+		48035ACA1D573E0D00EB44C4 /* CopyPasteCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035AC91D573E0D00EB44C4 /* CopyPasteCommand.m */; };
+		48035ACD1D573F0600EB44C4 /* SendTextCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035ACC1D573F0600EB44C4 /* SendTextCommand.m */; };
+		48035AD01D573FD900EB44C4 /* KeyRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035ACF1D573FD900EB44C4 /* KeyRunner.m */; };
+		48035AD51D57410600EB44C4 /* SendKeyCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 48035AD41D57410600EB44C4 /* SendKeyCommand.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		48035AA71D5724FF00EB44C4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		48035AA91D5724FF00EB44C4 /* KeeWebHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = KeeWebHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		48035AAC1D5724FF00EB44C4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		48035AB31D57263A00EB44C4 /* InputParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputParser.m; sourceTree = "<group>"; };
+		48035AB51D57267600EB44C4 /* InputParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputParser.h; sourceTree = "<group>"; };
+		48035AB71D57275600EB44C4 /* InputCommandBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = InputCommandBase.h; path = InputCommands/InputCommandBase.h; sourceTree = "<group>"; };
+		48035ABD1D57286F00EB44C4 /* NoOpCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoOpCommand.h; path = InputCommands/NoOpCommand.h; sourceTree = "<group>"; };
+		48035ABE1D57286F00EB44C4 /* NoOpCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoOpCommand.m; path = InputCommands/NoOpCommand.m; sourceTree = "<group>"; };
+		48035AC01D57393200EB44C4 /* libreadline.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libreadline.tbd; path = usr/lib/libreadline.tbd; sourceTree = SDKROOT; };
+		48035AC21D573A8300EB44C4 /* UnknownCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UnknownCommand.h; path = InputCommands/UnknownCommand.h; sourceTree = "<group>"; };
+		48035AC31D573A8F00EB44C4 /* UnknownCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UnknownCommand.m; path = InputCommands/UnknownCommand.m; sourceTree = "<group>"; };
+		48035AC51D573C1200EB44C4 /* WaitCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WaitCommand.m; path = InputCommands/WaitCommand.m; sourceTree = "<group>"; };
+		48035AC71D573C2200EB44C4 /* WaitCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WaitCommand.h; path = InputCommands/WaitCommand.h; sourceTree = "<group>"; };
+		48035AC81D573DE800EB44C4 /* CopyPasteCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CopyPasteCommand.h; path = InputCommands/CopyPasteCommand.h; sourceTree = "<group>"; };
+		48035AC91D573E0D00EB44C4 /* CopyPasteCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CopyPasteCommand.m; path = InputCommands/CopyPasteCommand.m; sourceTree = "<group>"; };
+		48035ACB1D573EE800EB44C4 /* SendTextCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SendTextCommand.h; path = InputCommands/SendTextCommand.h; sourceTree = "<group>"; };
+		48035ACC1D573F0600EB44C4 /* SendTextCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SendTextCommand.m; path = InputCommands/SendTextCommand.m; sourceTree = "<group>"; };
+		48035ACE1D573F8100EB44C4 /* KeyRunner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyRunner.h; sourceTree = "<group>"; };
+		48035ACF1D573FD900EB44C4 /* KeyRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyRunner.m; sourceTree = "<group>"; };
+		48035AD11D57406700EB44C4 /* SendKeyCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SendKeyCommand.h; path = InputCommands/SendKeyCommand.h; sourceTree = "<group>"; };
+		48035AD41D57410600EB44C4 /* SendKeyCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SendKeyCommand.m; path = InputCommands/SendKeyCommand.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		48035AA61D5724FF00EB44C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48035AC11D57393200EB44C4 /* libreadline.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		48035AA01D5724FF00EB44C4 = {
+			isa = PBXGroup;
+			children = (
+				48035AC01D57393200EB44C4 /* libreadline.tbd */,
+				48035AAB1D5724FF00EB44C4 /* KeeWebHelper */,
+				48035AAA1D5724FF00EB44C4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		48035AAA1D5724FF00EB44C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				48035AA91D5724FF00EB44C4 /* KeeWebHelper */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		48035AAB1D5724FF00EB44C4 /* KeeWebHelper */ = {
+			isa = PBXGroup;
+			children = (
+				48035AB61D57273300EB44C4 /* InputCommands */,
+				48035AAC1D5724FF00EB44C4 /* main.m */,
+				48035AB31D57263A00EB44C4 /* InputParser.m */,
+				48035AB51D57267600EB44C4 /* InputParser.h */,
+				48035ACE1D573F8100EB44C4 /* KeyRunner.h */,
+				48035ACF1D573FD900EB44C4 /* KeyRunner.m */,
+			);
+			path = KeeWebHelper;
+			sourceTree = "<group>";
+		};
+		48035AB61D57273300EB44C4 /* InputCommands */ = {
+			isa = PBXGroup;
+			children = (
+				48035AB71D57275600EB44C4 /* InputCommandBase.h */,
+				48035ABD1D57286F00EB44C4 /* NoOpCommand.h */,
+				48035ABE1D57286F00EB44C4 /* NoOpCommand.m */,
+				48035AC21D573A8300EB44C4 /* UnknownCommand.h */,
+				48035AC31D573A8F00EB44C4 /* UnknownCommand.m */,
+				48035AC51D573C1200EB44C4 /* WaitCommand.m */,
+				48035AC71D573C2200EB44C4 /* WaitCommand.h */,
+				48035AC81D573DE800EB44C4 /* CopyPasteCommand.h */,
+				48035AC91D573E0D00EB44C4 /* CopyPasteCommand.m */,
+				48035ACB1D573EE800EB44C4 /* SendTextCommand.h */,
+				48035ACC1D573F0600EB44C4 /* SendTextCommand.m */,
+				48035AD11D57406700EB44C4 /* SendKeyCommand.h */,
+				48035AD41D57410600EB44C4 /* SendKeyCommand.m */,
+			);
+			name = InputCommands;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		48035AA81D5724FF00EB44C4 /* KeeWebHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 48035AB01D5724FF00EB44C4 /* Build configuration list for PBXNativeTarget "KeeWebHelper" */;
+			buildPhases = (
+				48035AA51D5724FF00EB44C4 /* Sources */,
+				48035AA61D5724FF00EB44C4 /* Frameworks */,
+				48035AA71D5724FF00EB44C4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KeeWebHelper;
+			productName = KeeWebHelper;
+			productReference = 48035AA91D5724FF00EB44C4 /* KeeWebHelper */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		48035AA11D5724FF00EB44C4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = KeeWeb;
+				TargetAttributes = {
+					48035AA81D5724FF00EB44C4 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 48035AA41D5724FF00EB44C4 /* Build configuration list for PBXProject "KeeWebHelper" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 48035AA01D5724FF00EB44C4;
+			productRefGroup = 48035AAA1D5724FF00EB44C4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				48035AA81D5724FF00EB44C4 /* KeeWebHelper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		48035AA51D5724FF00EB44C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48035ACA1D573E0D00EB44C4 /* CopyPasteCommand.m in Sources */,
+				48035AD51D57410600EB44C4 /* SendKeyCommand.m in Sources */,
+				48035AD01D573FD900EB44C4 /* KeyRunner.m in Sources */,
+				48035AAD1D5724FF00EB44C4 /* main.m in Sources */,
+				48035AB41D57263A00EB44C4 /* InputParser.m in Sources */,
+				48035AC61D573C1200EB44C4 /* WaitCommand.m in Sources */,
+				48035ACD1D573F0600EB44C4 /* SendTextCommand.m in Sources */,
+				48035AC41D573A8F00EB44C4 /* UnknownCommand.m in Sources */,
+				48035ABF1D57286F00EB44C4 /* NoOpCommand.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		48035AAE1D5724FF00EB44C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		48035AAF1D5724FF00EB44C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		48035AB11D5724FF00EB44C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		48035AB21D5724FF00EB44C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		48035AA41D5724FF00EB44C4 /* Build configuration list for PBXProject "KeeWebHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48035AAE1D5724FF00EB44C4 /* Debug */,
+				48035AAF1D5724FF00EB44C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		48035AB01D5724FF00EB44C4 /* Build configuration list for PBXNativeTarget "KeeWebHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48035AB11D5724FF00EB44C4 /* Debug */,
+				48035AB21D5724FF00EB44C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 48035AA11D5724FF00EB44C4 /* Project object */;
+}

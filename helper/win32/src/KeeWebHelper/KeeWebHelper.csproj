@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B2BD93BD-87D8-4070-9218-2C5AF47611B5}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KeeWebHelper</RootNamespace>
+    <AssemblyName>KeeWebHelper</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>KeeWebHelper.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="InputCommands\CopyPasteCommand.cs" />
+    <Compile Include="InputCommands\InputCommandBase.cs" />
+    <Compile Include="InputCommands\ModifierKeys.cs" />
+    <Compile Include="InputCommands\NoOpCommand.cs" />
+    <Compile Include="InputCommands\SendKeyCommand.cs" />
+    <Compile Include="InputCommands\SendTextCommand.cs" />
+    <Compile Include="InputCommands\UnknownCommand.cs" />
+    <Compile Include="InputCommands\WaitCommand.cs" />
+    <Compile Include="InputParser.cs" />
+    <Compile Include="InputStateValidator.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowHelper.cs" />
+    <Compile Include="WindowInfo.cs" />
+    <Compile Include="WindowsInput\IInputDeviceStateAdaptor.cs" />
+    <Compile Include="WindowsInput\IInputMessageDispatcher.cs" />
+    <Compile Include="WindowsInput\IInputSimulator.cs" />
+    <Compile Include="WindowsInput\IKeyboardSimulator.cs" />
+    <Compile Include="WindowsInput\IMouseSimulator.cs" />
+    <Compile Include="WindowsInput\InputBuilder.cs" />
+    <Compile Include="WindowsInput\InputSimulator.cs" />
+    <Compile Include="WindowsInput\KeyboardSimulator.cs" />
+    <Compile Include="WindowsInput\MouseButton.cs" />
+    <Compile Include="WindowsInput\MouseSimulator.cs" />
+    <Compile Include="WindowsInput\Native\HARDWAREINPUT.cs" />
+    <Compile Include="WindowsInput\Native\INPUT.cs" />
+    <Compile Include="WindowsInput\Native\InputType.cs" />
+    <Compile Include="WindowsInput\Native\KEYBDINPUT.cs" />
+    <Compile Include="WindowsInput\Native\KeyboardFlag.cs" />
+    <Compile Include="WindowsInput\Native\MouseFlag.cs" />
+    <Compile Include="WindowsInput\Native\MOUSEINPUT.cs" />
+    <Compile Include="WindowsInput\Native\MOUSEKEYBDHARDWAREINPUT.cs" />
+    <Compile Include="WindowsInput\Native\NativeMethods.cs" />
+    <Compile Include="WindowsInput\Native\VirtualKeyCode.cs" />
+    <Compile Include="WindowsInput\Native\XButton.cs" />
+    <Compile Include="WindowsInput\WindowsInputDeviceStateAdaptor.cs" />
+    <Compile Include="WindowsInput\WindowsInputMessageDispatcher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="WindowsInput\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

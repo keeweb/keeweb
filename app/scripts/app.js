@@ -9,10 +9,10 @@ var AppModel = require('./models/app-model'),
     Updater = require('./comp/updater'),
     AuthReceiver = require('./comp/auth-receiver'),
     ExportApi = require('./comp/export-api'),
-    ThemeChanger = require('./util/theme-changer'),
+    SettingsManager = require('./util/settings-manager'),
     Locale = require('./util/locale');
 
-$(function() {
+$(() => {
     if (isPopup()) {
         return AuthReceiver.receive();
     }
@@ -20,14 +20,14 @@ $(function() {
     initModules();
 
     var appModel = new AppModel();
-    ThemeChanger.setBySettings(appModel.settings);
+    SettingsManager.setBySettings(appModel.settings);
     var configParam = getConfigParam();
     if (configParam) {
-        appModel.loadConfig(configParam, function(err) {
+        appModel.loadConfig(configParam, err => {
+            SettingsManager.setBySettings(appModel.settings);
             if (err) {
                 showSettingsLoadError();
             } else {
-                ThemeChanger.setBySettings(appModel.settings);
                 showApp();
             }
         });
@@ -52,7 +52,6 @@ $(function() {
     }
 
     function showSettingsLoadError() {
-        ThemeChanger.setBySettings(appModel.settings);
         Alerts.error({
             header: Locale.appSettingsError,
             body: Locale.appSettingsErrorBody,
@@ -82,7 +81,11 @@ $(function() {
     }
 
     function getConfigParam() {
-        var match = location.search.match(/[\?&]config=([^&]+)/i);
+        let metaConfig = document.head.querySelector('meta[name=kw-config]');
+        if (metaConfig && metaConfig.content && metaConfig.content[0] !== '(') {
+            return metaConfig.content;
+        }
+        var match = location.search.match(/[?&]config=([^&]+)/i);
         if (match && match[1]) {
             return match[1];
         }

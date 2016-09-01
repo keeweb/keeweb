@@ -26,7 +26,7 @@ var FileInfoCollection = Backbone.Collection.extend({
     },
 
     getMatch: function (storage, name, path) {
-        return this.find(function(fi) {
+        return this.find(fi => {
             return (fi.get('storage') || '') === (storage || '') &&
                 (fi.get('name') || '') === (name || '') &&
                 (fi.get('path') || '') === (path || '');
@@ -34,7 +34,7 @@ var FileInfoCollection = Backbone.Collection.extend({
     },
 
     getByName: function(name) {
-        return this.find(function(file) { return file.get('name').toLowerCase() === name.toLowerCase(); });
+        return this.find(file => file.get('name').toLowerCase() === name.toLowerCase());
     }
 });
 

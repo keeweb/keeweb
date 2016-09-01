@@ -1,6 +1,7 @@
 'use strict';
 
-var Launcher = require('../../comp/launcher');
+const Launcher = require('../../comp/launcher');
+const AutoTypeNativeHelper = require('../helper/auto-type-native-helper');
 
 // http://eastmanreference.com/complete-list-of-applescript-key-codes/
 var KeyMap = {
@@ -16,10 +17,10 @@ var KeyMap = {
 };
 
 var ModMap = {
-    '^': 'command',
-    '+': 'shift',
-    '%': 'option',
-    '^^': 'control'
+    '^': '@',
+    '+': '+',
+    '%': '%',
+    '^^': '^'
 };
 
 var AutoTypeEmitter = function(callback) {
@@ -30,15 +31,14 @@ var AutoTypeEmitter = function(callback) {
 
 AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
     if (enabled) {
-        this.mod[mod] = true;
+        this.mod[ModMap[mod]] = true;
     } else {
-        delete this.mod[mod];
+        delete this.mod[ModMap[mod]];
     }
 };
 
 AutoTypeEmitter.prototype.text = function(text) {
-    text = text.replace(/"/g, '\\"').replace(/\\/g, '\\\\');
-    this.pendingScript.push('keystroke "' + text + '"'+ this.modString());
+    this.pendingScript.push('text ' + this.modString() + ' ' + text);
     this.callback();
 };
 
@@ -49,21 +49,17 @@ AutoTypeEmitter.prototype.key = function(key) {
         }
         key = KeyMap[key];
     }
-    this.pendingScript.push('key code ' + key + this.modString());
+    this.pendingScript.push('key ' + this.modString() + key);
     this.callback();
 };
 
 AutoTypeEmitter.prototype.copyPaste = function(text) {
-    this.pendingScript.push('delay 0.5');
-    this.pendingScript.push('set the clipboard to "' + text.replace(/"/g, '\\"') + '"');
-    this.pendingScript.push('delay 0.5');
-    this.pendingScript.push('keystroke "v" using command down');
-    this.pendingScript.push('delay 0.5');
+    this.pendingScript.push('copypaste ' + text);
     this.callback();
 };
 
 AutoTypeEmitter.prototype.wait = function(time) {
-    this.pendingScript.push('delay ' + (time / 1000));
+    this.pendingScript.push('wait ' + time);
     this.callback();
 };
 
@@ -83,21 +79,12 @@ AutoTypeEmitter.prototype.setDelay = function(delay) {
 };
 
 AutoTypeEmitter.prototype.modString = function() {
-    var keys = Object.keys(this.mod);
-    if (!keys.length) {
-        return '';
-    }
-    return ' using {' + keys.map(AutoTypeEmitter.prototype.mapMod).join(', ') + '}';
-};
-
-AutoTypeEmitter.prototype.mapMod = function(mod) {
-    return ModMap[mod] + ' down';
+    return Object.keys(this.mod).join('');
 };
 
 AutoTypeEmitter.prototype.runScript = function(script) {
-    script = 'tell application "System Events" \n' + script + '\nend tell';
     Launcher.spawn({
-        cmd: 'osascript',
+        cmd: AutoTypeNativeHelper.getHelperPath(),
         data: script,
         complete: this.callback
     });

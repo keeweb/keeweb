@@ -26,7 +26,7 @@ var KeyHandler = {
     },
     offKey: function(key, handler, thisArg) {
         if (this.shortcuts[key]) {
-            this.shortcuts[key] = _.reject(this.shortcuts[key],  function(sh) {
+            this.shortcuts[key] = _.reject(this.shortcuts[key], sh => {
                 return sh.handler === handler && sh.thisArg === thisArg;
             });
         }
@@ -44,7 +44,6 @@ var KeyHandler = {
         if (keyShortcuts && keyShortcuts.length) {
             keyShortcuts.forEach(function(sh) {
                 if (this.modal && !sh.modal) {
-                    e.preventDefault();
                     e.stopPropagation();
                     return;
                 }
@@ -74,6 +73,8 @@ var KeyHandler = {
             e.charCode !== Keys.DOM_VK_TAB &&
             !e.altKey && !e.ctrlKey && !e.metaKey) {
             this.trigger('keypress', e);
+        } else if (this.modal) {
+            this.trigger('keypress:' + this.modal, e);
         }
     },
     reg: function() {

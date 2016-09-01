@@ -21,13 +21,13 @@ var ModalView = Backbone.View.extend({
         if (typeof this.model.enter === 'string') {
             KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
         }
-        KeyHandler.setModal(true);
+        KeyHandler.setModal('alert');
     },
 
-    remove : function() {
+    remove: function() {
         KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
         KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
-        KeyHandler.setModal(false);
+        KeyHandler.setModal(null);
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
@@ -37,8 +37,9 @@ var ModalView = Backbone.View.extend({
         parent.append(this.$el);
         var el = this.$el;
         el.addClass('modal--hidden');
-        setTimeout(function() {
+        setTimeout(() => {
             el.removeClass('modal--hidden');
+            document.activeElement.blur();
         }, 20);
         return this;
     },

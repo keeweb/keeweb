@@ -13,10 +13,10 @@ var FieldViewTags = FieldViewText.extend({
 
     valueToTags: function(val) {
         var allTags = {};
-        this.model.tags.forEach(function(tag) {
+        this.model.tags.forEach(tag => {
             allTags[tag.toLowerCase()] = tag;
         });
-        return _.unique(val.split(/\s*[;,:]\s*/).filter(_.identity).map(function (tag) {
+        return _.unique(val.split(/\s*[;,:]\s*/).filter(_.identity).map(tag => {
             return allTags[tag.toLowerCase()] || tag;
         }));
     },
@@ -55,14 +55,14 @@ var FieldViewTags = FieldViewText.extend({
         var tags = this.valueToTags(this.input.val());
         var last = tags[tags.length - 1];
         var isLastPart = last && this.model.tags.indexOf(last) < 0;
-        return this.model.tags.filter(function(tag) {
+        return this.model.tags.filter(tag => {
             return tags.indexOf(tag) < 0 && (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0);
         });
     },
 
     setTags: function() {
         var availableTags = this.getAvailableTags();
-        var tagsHtml = availableTags.map(function(tag) {
+        var tagsHtml = availableTags.map(tag => {
             return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
         }).join('');
         this.tagsAutocomplete.html(tagsHtml);

@@ -10,6 +10,7 @@ var StorageDropbox = StorageBase.extend({
     icon: 'dropbox',
     enabled: true,
     uipos: 20,
+    backup: true,
 
     _convertError: function(err) {
         if (!err) {
@@ -97,13 +98,12 @@ var StorageDropbox = StorageBase.extend({
     },
 
     applyConfig: function(config, callback) {
-        var that = this;
-        DropboxLink.authenticate(function(err) {
+        DropboxLink.authenticate(err => {
             if (!err) {
                 if (config.folder) {
-                    config.folder = that._fixConfigFolder(config.folder);
+                    config.folder = this._fixConfigFolder(config.folder);
                 }
-                that.appSettings.set({
+                this.appSettings.set({
                     dropboxAppKey: config.key,
                     dropboxFolder: config.folder
                 });
@@ -150,79 +150,83 @@ var StorageDropbox = StorageBase.extend({
     },
 
     load: function(path, opts, callback) {
-        var that = this;
-        that.logger.debug('Load', path);
-        var ts = that.logger.ts();
-        path = that._toFullPath(path);
-        DropboxLink.openFile(path, function(err, data, stat) {
-            that.logger.debug('Loaded', path, stat ? stat.versionTag : null, that.logger.ts(ts));
-            err = that._convertError(err);
+        this.logger.debug('Load', path);
+        var ts = this.logger.ts();
+        path = this._toFullPath(path);
+        DropboxLink.openFile(path, (err, data, stat) => {
+            this.logger.debug('Loaded', path, stat ? stat.versionTag : null, this.logger.ts(ts));
+            err = this._convertError(err);
             if (callback) { callback(err, data, stat ? { rev: stat.versionTag } : null); }
         }, _.noop);
     },
 
     stat: function(path, opts, callback) {
-        var that = this;
-        that.logger.debug('Stat', path);
-        var ts = that.logger.ts();
-        path = that._toFullPath(path);
-        DropboxLink.stat(path, function(err, stat) {
+        this.logger.debug('Stat', path);
+        var ts = this.logger.ts();
+        path = this._toFullPath(path);
+        DropboxLink.stat(path, (err, stat) => {
             if (stat && stat.isRemoved) {
                 err = new Error('File removed');
                 err.notFound = true;
             }
-            that.logger.debug('Stated', path, stat ? stat.versionTag : null, that.logger.ts(ts));
-            err = that._convertError(err);
+            this.logger.debug('Stated', path, stat ? stat.versionTag : null, this.logger.ts(ts));
+            err = this._convertError(err);
             if (callback) { callback(err, stat ? { rev: stat.versionTag } : null); }
         }, _.noop);
     },
 
     save: function(path, opts, data, callback, rev) {
-        var that = this;
-        that.logger.debug('Save', path, rev);
-        var ts = that.logger.ts();
-        path = that._toFullPath(path);
-        DropboxLink.saveFile(path, data, rev, function(err, stat) {
-            that.logger.debug('Saved', path, that.logger.ts(ts));
+        this.logger.debug('Save', path, rev);
+        var ts = this.logger.ts();
+        path = this._toFullPath(path);
+        DropboxLink.saveFile(path, data, rev, (err, stat) => {
+            this.logger.debug('Saved', path, this.logger.ts(ts));
             if (!callback) { return; }
-            err = that._convertError(err);
+            err = this._convertError(err);
             callback(err, stat ? { rev: stat.versionTag } : null);
         }, _.noop);
     },
 
     list: function(callback) {
-        var that = this;
-        DropboxLink.authenticate(function(err) {
+        DropboxLink.authenticate((err) => {
             if (err) { return callback(err); }
-            DropboxLink.list(that._toFullPath(''), function(err, files, dirStat, filesStat) {
+            DropboxLink.list(this._toFullPath(''), (err, files, dirStat, filesStat) => {
                 if (err) { return callback(err); }
                 var fileList = filesStat
-                    .filter(function(f) {
-                        return !f.isFolder && !f.isRemoved && UrlUtil.isKdbx(f.name);
-                    })
-                    .map(function(f) {
-                        return {
-                            name: f.name,
-                            path: that._toRelPath(f.path),
-                            rev: f.versionTag
-                        };
-                    });
-                var dir = dirStat.inAppFolder ? Locale.openAppFolder :
-                    (UrlUtil.trimStartSlash(dirStat.path) || Locale.openRootFolder);
+                    .filter(f => !f.isFolder && !f.isRemoved && UrlUtil.isKdbx(f.name))
+                    .map(f => ({
+                        name: f.name,
+                        path: this._toRelPath(f.path),
+                        rev: f.versionTag
+                    }));
+                var dir = dirStat.inAppFolder ? Locale.openAppFolder
+                    : (UrlUtil.trimStartSlash(dirStat.path) || Locale.openRootFolder);
                 callback(null, fileList, dir);
             });
         });
     },
 
     remove: function(path, callback) {
-        var that = this;
-        that.logger.debug('Remove', path);
-        var ts = that.logger.ts();
-        path = that._toFullPath(path);
-        DropboxLink.deleteFile(path, function(err) {
-            that.logger.debug('Removed', path, that.logger.ts(ts));
+        this.logger.debug('Remove', path);
+        var ts = this.logger.ts();
+        path = this._toFullPath(path);
+        DropboxLink.deleteFile(path, err => {
+            this.logger.debug('Removed', path, this.logger.ts(ts));
             return callback && callback(err);
         }, _.noop);
+    },
+
+    mkdir: function(path, callback) {
+        DropboxLink.authenticate((err) => {
+            if (err) { return callback(err); }
+            this.logger.debug('Make dir', path);
+            let ts = this.logger.ts();
+            path = this._toFullPath(path);
+            DropboxLink.mkdir(path, err => {
+                this.logger.debug('Made dir', path, this.logger.ts(ts));
+                return callback && callback(err);
+            }, _.noop);
+        });
     },
 
     setEnabled: function(enabled) {

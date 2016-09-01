@@ -1,5 +1,5 @@
 <div class="grp">
-    <div class="grp__back-button">
+    <div class="back-button">
         {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
     </div>
     <div class="scroller">
@@ -16,11 +16,13 @@
         </div>
         {{/unless}}
         <label>{{Res 'icon'}}:</label>
-        {{#if customIcon}}
-        <img src="{{{customIcon}}}" class="grp__icon grp__icon--image" />
-        {{else}}
-        <i class="fa fa-{{icon}} grp__icon"></i>
-        {{/if}}
+        <div class="grp__icon-wrap">
+            {{#if customIcon}}
+            <img src="{{{customIcon}}}" class="grp__icon grp__icon--image" />
+            {{else}}
+            <i class="fa fa-{{icon}} grp__icon"></i>
+            {{/if}}
+        </div>
         <div class="grp__icons"></div>
         {{#if canAutoType}}
         {{#unless readonly}}

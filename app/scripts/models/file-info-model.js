@@ -15,7 +15,8 @@ var FileInfoModel = Backbone.Model.extend({
         openDate: null,
         keyFileName: null,
         keyFileHash: null,
-        opts: null
+        opts: null,
+        backup: null
     },
 
     initialize: function(data, options) {

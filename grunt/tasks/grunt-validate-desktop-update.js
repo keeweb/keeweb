@@ -9,12 +9,13 @@ module.exports = function (grunt) {
         var StreamZip = require(path.resolve(__dirname, '../../electron/node_modules/node-stream-zip'));
         var zip = new StreamZip({ file: this.options().file, storeEntries: true });
         var expFiles = this.options().expected;
+        var expFilesCount = this.options().expectedCount;
         var publicKey = fs.readFileSync(this.options().publicKey, 'binary');
         var zipFileData = fs.readFileSync(this.options().file);
-        zip.on('error', function(err) {
+        zip.on('error', err => {
             grunt.warn(err);
         });
-        zip.on('ready', function() {
+        zip.on('ready', () => {
             var valid = true;
             if (!zip.comment) {
                 grunt.warn('No comment in ZIP');
@@ -24,7 +25,7 @@ module.exports = function (grunt) {
                 grunt.warn('Bad comment length in ZIP');
                 return;
             }
-            var verify  = crypto.createVerify('RSA-SHA256');
+            var verify = crypto.createVerify('RSA-SHA256');
             verify.write(zipFileData.slice(0, zip.centralDirectory.headerOffset + 22));
             verify.end();
             var signature = new Buffer(zip.comment, 'hex');
@@ -32,7 +33,11 @@ module.exports = function (grunt) {
                 grunt.warn('Invalid ZIP signature');
                 return;
             }
-            expFiles.forEach(function(entry) {
+            if (zip.entriesCount !== expFilesCount) {
+                grunt.warn(`ZIP contains ${zip.entriesCount} entries, expected ${expFilesCount}`);
+                valid = false;
+            }
+            expFiles.forEach(entry => {
                 try {
                     if (!zip.entryDataSync(entry)) {
                         grunt.warn('Corrupted entry in desktop update archive: ' + entry);

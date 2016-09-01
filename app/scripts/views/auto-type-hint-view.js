@@ -20,8 +20,8 @@ var AutoTypeHintView = Backbone.View.extend({
 
     render: function () {
         this.renderTemplate({
-            cmd: FeatureDetector.isMac() ? 'command' : 'ctrl',
-            hasCtrl: FeatureDetector.isMac(),
+            cmd: FeatureDetector.isMac ? 'command' : 'ctrl',
+            hasCtrl: FeatureDetector.isMac,
             link: Links.AutoType
         });
         var rect = this.input.getBoundingClientRect();

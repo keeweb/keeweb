@@ -1,24 +1,38 @@
 <div class="open">
     <input type="file" class="open__file-ctrl hide-by-pos" />
     <div class="open__icons">
+        {{#if canOpen}}
         <div class="open__icon open__icon-open">
             <i class="fa fa-lock open__icon-i"></i>
             <div class="open__icon-text">{{res 'openOpen'}}</div>
         </div>
+        {{/if}}
+        {{#if canCreate}}
         <div class="open__icon open__icon-new">
             <i class="fa fa-plus open__icon-i"></i>
             <div class="open__icon-text">{{res 'openNew'}}</div>
         </div>
-        {{#ifeq demoOpened false}}
-        <div class="open__icon open__icon-demo">
-            <i class="fa fa-magic open__icon-i"></i>
-            <div class="open__icon-text">{{res 'openDemo'}}</div>
-        </div>
-        {{/ifeq}}
+        {{/if}}
+        {{#if canOpenDemo}}
+            {{#ifeq demoOpened false}}
+            <div class="open__icon open__icon-demo">
+                <i class="fa fa-magic open__icon-i"></i>
+                <div class="open__icon-text">{{res 'openDemo'}}</div>
+            </div>
+            {{/ifeq}}
+        {{/if}}
+        {{#if showMore}}
         <div class="open__icon open__icon-more">
             <i class="fa fa-ellipsis-h open__icon-i"></i>
             <div class="open__icon-text">{{res 'openMore'}}</div>
         </div>
+        {{/if}}
+        {{#if showLogo}}
+            <div class="open__icon open__icon-more">
+                <i class="fa fa-key open__icon-i"></i>
+                <div class="open__icon-text">KeeWeb</div>
+            </div>
+        {{/if}}
     </div>
     <div class="open__icons open__icons--lower hide">
         {{#each storageProviders as |prv|}}
@@ -28,20 +42,26 @@
             <div class="open__icon-text">{{res prv.name}}</div>
         </div>
         {{/each}}
+        {{#if canImportXml}}
         <div class="open__icon open__icon-import-xml">
             <i class="fa fa-code open__icon-i"></i>
-            <div class="open__icon-text">Import XML</div>
-        </div>
-        {{#if demoOpened}}
-        <div class="open__icon open__icon-demo">
-            <i class="fa fa-magic open__icon-i"></i>
-            <div class="open__icon-text">{{res 'openDemo'}}</div>
+            <div class="open__icon-text">{{ res 'openXml' }}</div>
         </div>
         {{/if}}
+        {{#if canOpenDemo}}
+            {{#if demoOpened}}
+            <div class="open__icon open__icon-demo">
+                <i class="fa fa-magic open__icon-i"></i>
+                <div class="open__icon-text">{{res 'openDemo'}}</div>
+            </div>
+            {{/if}}
+        {{/if}}
+        {{#if canOpenSettings}}
         <div class="open__icon open__icon-settings">
             <i class="fa fa-cog open__icon-i"></i>
-            <div class="open__icon-text">{{res 'openSettings'}}</div>
+            <div class="open__icon-text">{{res 'settings'}}</div>
         </div>
+        {{/if}}
     </div>
     <div class="open__pass-area">
         <div class="open__pass-warn-wrap">

@@ -20,6 +20,7 @@ var SettingsGeneralView = Backbone.View.extend({
 
     events: {
         'change .settings__general-theme': 'changeTheme',
+        'change .settings__general-locale': 'changeLocale',
         'change .settings__general-font-size': 'changeFontSize',
         'change .settings__general-expand': 'changeExpandGroups',
         'change .settings__general-auto-update': 'changeAutoUpdate',
@@ -48,8 +49,15 @@ var SettingsGeneralView = Backbone.View.extend({
     allThemes: {
         fb: Locale.setGenThemeFb,
         db: Locale.setGenThemeDb,
+        sd: Locale.setGenThemeSd,
+        sl: Locale.setGenThemeSl,
         wh: Locale.setGenThemeWh,
         hc: Locale.setGenThemeHc
+    },
+
+    allLocales: {
+        en: 'English',
+        'de-DE': 'Deutsch'
     },
 
     initialize: function() {
@@ -66,6 +74,8 @@ var SettingsGeneralView = Backbone.View.extend({
         this.renderTemplate({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
+            locales: this.allLocales,
+            activeLocale: AppSettingsModel.instance.get('locale') || 'en',
             fontSize: AppSettingsModel.instance.get('fontSize'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             canClearClipboard: !!Launcher,
@@ -77,10 +87,11 @@ var SettingsGeneralView = Backbone.View.extend({
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: Updater.enabled,
             canMinimize: Launcher && Launcher.canMinimize(),
+            canDetectMinimize: !!Launcher,
             lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
             lockOnCopy: AppSettingsModel.instance.get('lockOnCopy'),
             tableView: AppSettingsModel.instance.get('tableView'),
-            canSetTableView: FeatureDetector.isDesktop(),
+            canSetTableView: !FeatureDetector.isMobile,
             autoUpdate: Updater.getAutoUpdateType(),
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
@@ -149,25 +160,40 @@ var SettingsGeneralView = Backbone.View.extend({
 
     getStorageProviders: function() {
         var storageProviders = [];
-        Object.keys(Storage).forEach(function(name) {
+        Object.keys(Storage).forEach(name => {
             var prv = Storage[name];
             if (!prv.system) {
                 storageProviders.push(prv);
             }
         });
-        storageProviders.sort(function(x, y) { return (x.uipos || Infinity) - (y.uipos || Infinity); });
-        return storageProviders.map(function(sp) {
-            return {
-                name: sp.name,
-                enabled: sp.enabled,
-                hasConfig: sp.getSettingsConfig
-            };
-        });
+        storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
+        return storageProviders.map(sp => ({
+            name: sp.name,
+            enabled: sp.enabled,
+            hasConfig: sp.getSettingsConfig
+        }));
     },
 
     changeTheme: function(e) {
         var theme = e.target.value;
         AppSettingsModel.instance.set('theme', theme);
+    },
+
+    changeLocale: function(e) {
+        var locale = e.target.value;
+        if (locale === 'en') {
+            locale = null;
+        }
+        if (locale === '...') {
+            e.target.value = AppSettingsModel.instance.get('locale') || 'en';
+            Alerts.info({
+                icon: 'language',
+                header: Locale.setGenLocMsg,
+                body: Locale.setGenLocMsgBody + ` <a target="_blank" href="${Links.Translation}">${Locale.setGenLocMsgLink}</a>`
+            });
+            return;
+        }
+        AppSettingsModel.instance.set('locale', locale);
     },
 
     changeFontSize: function(e) {
@@ -250,7 +276,7 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     installFoundUpdate: function() {
-        Updater.update(true, function() {
+        Updater.update(true, () => {
             Launcher.requestRestart();
         });
     },

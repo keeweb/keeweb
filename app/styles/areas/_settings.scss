@@ -120,8 +120,8 @@
     &-log {
       margin: 0;
       white-space: pre-wrap;
-      &--debug { color: $white; opacity: .8; }
-      &--info { color: $white; }
+      &--debug { opacity: .8; }
+      &--info {  }
       &--warn { color: $yellow; }
       &--error { color: $red; }
     }

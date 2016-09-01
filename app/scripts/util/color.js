@@ -54,7 +54,7 @@ Color.getNearest = function(colorStr) {
         return null;
     }
     var selected = null, minDistance = Number.MAX_VALUE;
-    _.forEach(KnownColors, function(col, name) {
+    _.forEach(KnownColors, (col, name) => {
         var distance = color.distanceTo(col);
         if (distance < minDistance) {
             minDistance = distance;
@@ -68,7 +68,7 @@ Color.getKnownBgColor = function(knownColor) {
     return Colors.BgColors[knownColor] ? '#' + Colors.BgColors[knownColor] : undefined;
 };
 
-_.forEach(Colors.ColorsValues, function(val, name) {
+_.forEach(Colors.ColorsValues, (val, name) => {
     KnownColors[name] = new Color(val);
 });
 

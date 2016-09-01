@@ -9,9 +9,9 @@ The app can run either in browser, or as a desktop app.
 
 # Quick Links
 
-Apps: [Web](https://app.keeweb.info/) [Desktop](https://github.com/keeweb/keeweb/releases/latest)  
-Timeline: [Release Notes](release-notes.md) [TODO](https://github.com/keeweb/keeweb/wiki/TODO)  
-On one page: [Features](https://keeweb.info/#features) [FAQ](https://github.com/keeweb/keeweb/wiki/FAQ)  
+Apps: [Web](https://app.keeweb.info/), [Desktop](https://github.com/keeweb/keeweb/releases/latest)  
+Timeline: [Release Notes](release-notes.md), [TODO](https://github.com/keeweb/keeweb/wiki/TODO)  
+On one page: [Features](https://keeweb.info/#features), [FAQ](https://github.com/keeweb/keeweb/wiki/FAQ)  
 Website: [keeweb.info](https://keeweb.info)  
 Twitter: [kee_web](https://twitter.com/kee_web)  
 
@@ -44,14 +44,14 @@ The app can be built with grunt: `grunt` (html file will be in `dist/`).
 Desktop apps are built with `grunt desktop`. This works only in mac osx as it builds dmg; requires wine.  
 To run Electron app without building installer, install electron package (`npm install electron-prebuilt -g`), build the app with `grunt` and start in this way:
 ```bash
-$ grunt
-$ electron electron --htmlpath=tmp
+$ grunt && grunt dev
+$ npm run-script electron
 ```
 
 For debug build:
 
 1. run `grunt`
-2. run `grunt watch`
+2. run `grunt dev`
 3. open `tmp/index.html`
 
 # Contributing

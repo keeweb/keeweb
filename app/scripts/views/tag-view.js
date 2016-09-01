@@ -9,7 +9,7 @@ var TagView = Backbone.View.extend({
 
     events: {
         'click .tag__buttons-trash': 'moveToTrash',
-        'click .tag__back-button': 'returnToApp',
+        'click .back-button': 'returnToApp',
         'click .tag__btn-rename': 'renameTag'
     },
 
@@ -21,7 +21,7 @@ var TagView = Backbone.View.extend({
         if (this.model) {
             this.renderTemplate({
                 title: this.model.get('title')
-            }, { plain: true });
+            }, true);
         }
         return this;
     },
@@ -37,10 +37,10 @@ var TagView = Backbone.View.extend({
             return;
         }
         if (/[;,:]/.test(title)) {
-            Alerts.error({ header: Locale.tagBadName, body: Locale.tagBadNameBody });
+            Alerts.error({ header: Locale.tagBadName, body: Locale.tagBadNameBody.replace('{}', '`,`, `;`, `:`') });
             return;
         }
-        if (this.appModel.tags.some(function(t) { return t.toLowerCase() === title.toLowerCase(); })) {
+        if (this.appModel.tags.some(t => t.toLowerCase() === title.toLowerCase())) {
             Alerts.error({ header: Locale.tagExists, body: Locale.tagExistsBody });
             return;
         }
@@ -50,12 +50,11 @@ var TagView = Backbone.View.extend({
 
     moveToTrash: function() {
         this.title = null;
-        var that = this;
         Alerts.yesno({
             header: Locale.tagTrashQuestion,
             body: Locale.tagTrashQuestionBody,
-            success: function() {
-                that.appModel.renameTag(that.model.get('title'), undefined);
+            success: () => {
+                this.appModel.renameTag(this.model.get('title'), undefined);
                 Backbone.trigger('select-all');
             }
         });

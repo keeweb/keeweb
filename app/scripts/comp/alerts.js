@@ -14,10 +14,13 @@ var Alerts = {
     },
 
     alert: function(config) {
+        if (config.skipIfAlertDisplayed && Alerts.alertDisplayed) {
+            return null;
+        }
         Alerts.alertDisplayed = true;
         var view = new ModalView({ model: config });
         view.render();
-        view.on('result', function(res, check) {
+        view.on('result', (res, check) => {
             Alerts.alertDisplayed = false;
             if (res && config.success) {
                 config.success(res, check);

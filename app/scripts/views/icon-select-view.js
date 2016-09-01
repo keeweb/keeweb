@@ -58,25 +58,24 @@ var IconSelectView = Backbone.View.extend({
         this.downloadingFavicon = true;
         this.$el.find('.icon-select__icon-download>i').addClass('fa-spinner fa-spin');
         this.$el.find('.icon-select__icon-download').removeClass('icon-select__icon--download-error');
-        var that = this;
         var url = this.getIconUrl(!Launcher); // inside launcher we can load images without CORS
         var img = document.createElement('img');
         img.crossOrigin = 'Anonymous';
         img.src = url;
-        img.onload = function () {
-            that.setSpecialImage(img, 'download');
-            that.$el.find('.icon-select__icon-download img').remove();
-            that.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
-            that.$el.find('.icon-select__icon-download').addClass('icon-select__icon--custom-selected').append(img);
-            that.downloadingFavicon = false;
+        img.onload = () => {
+            this.setSpecialImage(img, 'download');
+            this.$el.find('.icon-select__icon-download img').remove();
+            this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
+            this.$el.find('.icon-select__icon-download').addClass('icon-select__icon--custom-selected').append(img);
+            this.downloadingFavicon = false;
         };
-        img.onerror = function (e) {
+        img.onerror = e => {
             logger.error('Favicon download error: ' + url, e);
-            that.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
-            that.$el.find('.icon-select__icon-download')
+            this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
+            this.$el.find('.icon-select__icon-download')
                 .removeClass('icon-select__icon--custom-selected')
                 .addClass('icon-select__icon--download-error');
-            that.downloadingFavicon = false;
+            this.downloadingFavicon = false;
         };
     },
 
@@ -84,7 +83,7 @@ var IconSelectView = Backbone.View.extend({
         if (!this.model.url) {
             return null;
         }
-        var url = this.model.url.replace(/([^\/:]\/.*)?$/, function(match) { return (match && match[0]) + '/favicon.ico'; });
+        var url = this.model.url.replace(/([^\/:]\/.*)?$/, match => (match && match[0]) + '/favicon.ico');
         if (url.indexOf('://') < 0) {
             url = 'http://' + url;
         }
@@ -99,23 +98,22 @@ var IconSelectView = Backbone.View.extend({
     },
 
     iconSelected: function(e) {
-        var that = this;
         var file = e.target.files[0];
         if (file) {
             var reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = e => {
                 var img = document.createElement('img');
-                img.onload = function() {
-                    that.setSpecialImage(img, 'select');
-                    that.$el.find('.icon-select__icon-select img').remove();
-                    that.$el.find('.icon-select__icon-select').addClass('icon-select__icon--custom-selected').append(img);
+                img.onload = () => {
+                    this.setSpecialImage(img, 'select');
+                    this.$el.find('.icon-select__icon-select img').remove();
+                    this.$el.find('.icon-select__icon-select').addClass('icon-select__icon--custom-selected').append(img);
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         } else {
-            that.$el.find('.icon-select__icon-select img').remove();
-            that.$el.find('.icon-select__icon-select').removeClass('icon-select__icon--custom-selected');
+            this.$el.find('.icon-select__icon-select img').remove();
+            this.$el.find('.icon-select__icon-select').removeClass('icon-select__icon--custom-selected');
         }
     },
 

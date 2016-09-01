@@ -30,7 +30,6 @@ var ListView = Backbone.View.extend({
 
     itemsEl: null,
 
-
     tableColumns: [
         { val: 'title', name: 'title', enabled: true },
         { val: 'user', name: 'user', enabled: true },
@@ -55,8 +54,11 @@ var ListView = Backbone.View.extend({
         this.listenTo(this, 'view-resize', this.viewResized);
         this.listenTo(Backbone, 'filter', this.filterChanged);
         this.listenTo(Backbone, 'entry-updated', this.entryUpdated);
+        this.listenTo(Backbone, 'set-locale', this.render);
 
         this.listenTo(this.model.settings, 'change:tableView', this.setTableView);
+
+        this.readTableColumnsEnabled();
 
         this.items = [];
     },
@@ -80,14 +82,14 @@ var ListView = Backbone.View.extend({
             var noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
             var presenter = new EntryPresenter(this.getDescField(), noColor, this.model.activeEntryId);
             var columns = {};
-            this.tableColumns.forEach(function(col) {
+            this.tableColumns.forEach(col => {
                 if (col.enabled) {
                     columns[col.val] = true;
                 }
             });
             presenter.columns = columns;
             var itemsHtml = '';
-            this.items.forEach(function (item) {
+            this.items.forEach(item => {
                 presenter.present(item);
                 itemsHtml += itemTemplate(presenter);
             }, this);
@@ -161,7 +163,7 @@ var ListView = Backbone.View.extend({
 
     selectItem: function(item) {
         this.model.activeEntryId = item.id;
-        Backbone.trigger('select-entry', item);
+        Backbone.trigger('entry-selected', item);
         this.itemsEl.find('.list__item--active').removeClass('list__item--active');
         var itemEl = document.getElementById(item.id);
         itemEl.classList.add('list__item--active');
@@ -207,7 +209,7 @@ var ListView = Backbone.View.extend({
         this.throttleSetViewSizeSetting(size);
     },
 
-    throttleSetViewSizeSetting: _.throttle(function(size) {
+    throttleSetViewSizeSetting: _.throttle(size => {
         AppSettingsModel.instance.set('listViewWidth', size);
     }, 1000),
 
@@ -240,13 +242,11 @@ var ListView = Backbone.View.extend({
         this.listenTo(view, 'cancel', this.hideOptionsDropdown);
         this.listenTo(view, 'select', this.optionsDropdownSelect);
         var targetElRect = this.$el.find('.list__table-options')[0].getBoundingClientRect();
-        var options = this.tableColumns.map(function(col) {
-            return {
-                value: col.val,
-                icon: col.enabled ? 'check-square-o' : 'square-o',
-                text: Format.capFirst(Locale[col.name])
-            };
-        });
+        var options = this.tableColumns.map(col => ({
+            value: col.val,
+            icon: col.enabled ? 'check-square-o' : 'square-o',
+            text: Format.capFirst(Locale[col.name])
+        }));
         view.render({
             position: {
                 top: targetElRect.bottom,
@@ -265,10 +265,25 @@ var ListView = Backbone.View.extend({
     },
 
     optionsDropdownSelect: function(e) {
-        var col = _.find(this.tableColumns, function(c) { return c.val === e.item; });
+        var col = _.find(this.tableColumns, c => c.val === e.item);
         col.enabled = !col.enabled;
         e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
         this.render();
+        this.saveTableColumnsEnabled();
+    },
+
+    readTableColumnsEnabled() {
+        let tableViewColumns = AppSettingsModel.instance.get('tableViewColumns');
+        if (tableViewColumns && tableViewColumns.length) {
+            this.tableColumns.forEach(col => {
+                col.enabled = tableViewColumns.indexOf(col.name) >= 0;
+            });
+        }
+    },
+
+    saveTableColumnsEnabled() {
+        let tableViewColumns = this.tableColumns.filter(column => column.enabled).map(column => column.name);
+        AppSettingsModel.instance.set('tableViewColumns', tableViewColumns);
     }
 });
 

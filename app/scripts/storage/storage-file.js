@@ -10,6 +10,7 @@ var StorageFile = StorageBase.extend({
     icon: 'hdd-o',
     enabled: !!Launcher,
     system: true,
+    backup: true,
 
     load: function(path, opts, callback) {
         this.logger.debug('Load', path);
@@ -68,6 +69,19 @@ var StorageFile = StorageBase.extend({
         }
     },
 
+    mkdir: function(path, callback) {
+        this.logger.debug('Make dir', path);
+        var ts = this.logger.ts();
+        try {
+            Launcher.mkdir(path);
+            this.logger.debug('Made dir', path, this.logger.ts(ts));
+            if (callback) { callback(); }
+        } catch (e) {
+            this.logger.error('Error making local dir', path, e);
+            if (callback) { callback(e); }
+        }
+    },
+
     watch: function(path, callback) {
         var names = Launcher.parsePath(path);
         if (!fileWatchers[names.dir]) {
@@ -83,7 +97,7 @@ var StorageFile = StorageBase.extend({
         var names = Launcher.parsePath(path);
         var watcher = fileWatchers[names.dir];
         if (watcher) {
-            var ix = watcher.callbacks.findIndex(function(cb) { return cb.file === names.file; });
+            var ix = watcher.callbacks.findIndex(cb => cb.file === names.file);
             if (ix >= 0) {
                 watcher.callbacks.splice(ix, 1);
             }
@@ -97,11 +111,10 @@ var StorageFile = StorageBase.extend({
 
     fsWatcherChange: function(dirname, evt, fileName) {
         var watcher = fileWatchers[dirname];
-        var that = this;
         if (watcher) {
-            watcher.callbacks.forEach(function(cb) {
+            watcher.callbacks.forEach(cb => {
                 if (cb.file === fileName && typeof cb.callback === 'function') {
-                    that.logger.debug('File changed', dirname, evt, fileName);
+                    this.logger.debug('File changed', dirname, evt, fileName);
                     cb.callback();
                 }
             });

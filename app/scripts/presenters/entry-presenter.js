@@ -48,7 +48,7 @@ EntryPresenter.prototype = {
             case 'updated':
                 return this.updated;
             case 'attachments':
-                return this.entry.attachments.map(function(a) { return a.title; }).join(', ') || '(' + Locale.listNoAttachments + ')';
+                return this.entry.attachments.map(a => a.title).join(', ') || '(' + Locale.listNoAttachments + ')';
             default:
                 return this.notes || this.url || this.user;
         }

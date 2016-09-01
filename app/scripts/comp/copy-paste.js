@@ -12,7 +12,7 @@ var CopyPaste = {
             Launcher.setClipboardText(text);
             var clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
             if (clipboardSeconds > 0) {
-                setTimeout(function () {
+                setTimeout(() => {
                     if (Launcher.getClipboardText() === text) {
                         Launcher.clearClipboardText();
                     }
@@ -46,7 +46,7 @@ var CopyPaste = {
         hiddenInput[0].selectionEnd = text.length;
         hiddenInput.focus();
         hiddenInput.on({
-            'copy cut paste': function() { setTimeout(function() { hiddenInput.blur(); }, 0); },
+            'copy cut paste': function() { setTimeout(() => hiddenInput.blur(), 0); },
             blur: function() { hiddenInput.remove(); }
         });
     }
