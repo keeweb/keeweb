@@ -71,6 +71,17 @@ if (window.process && window.process.versions && window.process.versions.electro
         statFile: function(path) {
             return this.req('fs').statSync(path);
         },
+        ensureRunnable: function(path) {
+            if (process.platform !== 'win32') {
+                const fs = this.req('fs');
+                let stat = fs.statSync(path);
+                if ((stat.mode & 0o0111) === 0) {
+                    let mode = stat.mode | 0o0100;
+                    logger.info(`chmod 0${mode.toString(8)} ${path}`);
+                    fs.chmodSync(path, mode);
+                }
+            }
+        },
         mkdir: function(dir) {
             let fs = this.req('fs');
             let path = this.req('path');

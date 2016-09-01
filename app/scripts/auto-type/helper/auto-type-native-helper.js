@@ -30,6 +30,7 @@ const AutoTypeNativeHelper = {
             logger.error('Helper not found. Searched paths:', possiblePaths.join(', '));
             throw 'Helper not found';
         }
+        Launcher.ensureRunnable(helperPath);
         logger.debug('Using auto-type helper', helperPath);
         this._helperPath = helperPath;
         return helperPath;
