@@ -9,6 +9,7 @@ module.exports = function (grunt) {
         var StreamZip = require(path.resolve(__dirname, '../../electron/node_modules/node-stream-zip'));
         var zip = new StreamZip({ file: this.options().file, storeEntries: true });
         var expFiles = this.options().expected;
+        var expFilesCount = this.options().expectedCount;
         var publicKey = fs.readFileSync(this.options().publicKey, 'binary');
         var zipFileData = fs.readFileSync(this.options().file);
         zip.on('error', err => {
@@ -31,6 +32,10 @@ module.exports = function (grunt) {
             if (!verify.verify(publicKey, signature)) {
                 grunt.warn('Invalid ZIP signature');
                 return;
+            }
+            if (zip.entriesCount !== expFilesCount) {
+                grunt.warn(`ZIP contains ${zip.entriesCount} entries, expected ${expFilesCount}`);
+                valid = false;
             }
             expFiles.forEach(entry => {
                 try {
