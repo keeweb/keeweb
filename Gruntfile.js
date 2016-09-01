@@ -360,7 +360,11 @@ module.exports = function(grunt) {
             },
             'desktop-update': {
                 options: { archive: 'dist/desktop/UpdateDesktop.zip', comment: zipCommentPlaceholder },
-                files: [{ cwd: 'tmp/desktop/app', src: '**', expand: true }]
+                files: [
+                    { cwd: 'tmp/desktop/app', src: '**', expand: true, nonull: true },
+                    { src: 'helper/darwin/KeeWebHelper', nonull: true },
+                    { src: 'helper/win32/KeeWebHelper.exe', nonull: true }
+                ]
             },
             'win32-x64': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.x64.zip` },
@@ -491,7 +495,12 @@ module.exports = function(grunt) {
             desktop: {
                 options: {
                     file: 'dist/desktop/UpdateDesktop.zip',
-                    expected: ['main.js', 'app.js', 'index.html', 'package.json', 'node_modules/node-stream-zip/node_stream_zip.js'],
+                    expected: [
+                        'main.js', 'app.js', 'index.html', 'package.json',
+                        'node_modules/node-stream-zip/node_stream_zip.js',
+                        'helper/darwin/KeeWebHelper',
+                        'helper/win32/KeeWebHelper.exe'
+                    ],
                     publicKey: 'app/resources/public-key.pem'
                 }
             }
