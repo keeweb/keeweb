@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-##### v1.3.0 (WIP)
-Audit, generator presets, auto-type and ui improvements  
+##### v1.3.0 (2016-09-01)
+Generator presets, auto-type and ui improvements  
 `+` auto-type improvements  
 `+` context menu  
 `+` solarized themes  
