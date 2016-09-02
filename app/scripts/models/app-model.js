@@ -337,7 +337,6 @@ var AppModel = Backbone.Model.extend({
     openFile: function(params, callback) {
         var logger = new Logger('open', params.name);
         logger.info('File open request');
-        var that = this;
         var fileInfo = params.id ? this.fileInfos.get(params.id) : this.fileInfos.getMatch(params.storage, params.name, params.path);
         if (!params.opts && fileInfo && fileInfo.get('opts')) {
             params.opts = fileInfo.get('opts');
@@ -347,7 +346,7 @@ var AppModel = Backbone.Model.extend({
             this.openFileFromCache(params, (err, file) => {
                 if (!err && file) {
                     logger.info('Sync just opened modified file');
-                    _.defer(that.syncFile.bind(that, file));
+                    _.defer(() => this.syncFile(file));
                 }
                 callback(err);
             }, fileInfo);
@@ -364,13 +363,13 @@ var AppModel = Backbone.Model.extend({
         } else if (!fileInfo || !fileInfo.openDate || params.storage === 'file') {
             logger.info('Open file from storage', params.storage);
             var storage = Storage[params.storage];
-            var storageLoad = function() {
+            var storageLoad = () => {
                 logger.info('Load from storage');
                 storage.load(params.path, params.opts, (err, data, stat) => {
                     if (err) {
                         if (fileInfo && fileInfo.openDate) {
                             logger.info('Open file from cache because of storage load error', err);
-                            that.openFileFromCache(params, callback, fileInfo);
+                            this.openFileFromCache(params, callback, fileInfo);
                         } else {
                             logger.info('Storage load error', err);
                             callback(err);
@@ -380,7 +379,7 @@ var AppModel = Backbone.Model.extend({
                         params.fileData = data;
                         params.rev = stat && stat.rev || null;
                         var needSaveToCache = storage.name !== 'file';
-                        that.openFileWithData(params, callback, fileInfo, data, needSaveToCache);
+                        this.openFileWithData(params, callback, fileInfo, data, needSaveToCache);
                     }
                 });
             };
@@ -390,7 +389,7 @@ var AppModel = Backbone.Model.extend({
                 storage.stat(params.path, params.opts, (err, stat) => {
                     if (fileInfo && storage.name !== 'file' && (err || stat && stat.rev === cacheRev)) {
                         logger.info('Open file from cache because ' + (err ? 'stat error' : 'it is latest'), err);
-                        that.openFileFromCache(params, callback, fileInfo);
+                        this.openFileFromCache(params, callback, fileInfo);
                     } else if (stat) {
                         logger.info('Open file from storage (' + stat.rev + ', local ' + cacheRev + ')');
                         storageLoad();
@@ -407,7 +406,7 @@ var AppModel = Backbone.Model.extend({
             this.openFileFromCache(params, (err, file) => {
                 if (!err && file) {
                     logger.info('Sync just opened file');
-                    _.defer(that.syncFile.bind(that, file));
+                    _.defer(() => this.syncFile(file));
                 }
                 callback(err);
             }, fileInfo);
@@ -564,7 +563,6 @@ var AppModel = Backbone.Model.extend({
     },
 
     syncFile: function(file, options, callback) {
-        var that = this;
         if (file.get('demo')) {
             return callback && callback();
         }
@@ -601,7 +599,7 @@ var AppModel = Backbone.Model.extend({
             });
         }
         file.setSyncProgress();
-        var complete = function(err, savedToCache) {
+        var complete = (err, savedToCache) => {
             if (!err) { savedToCache = true; }
             logger.info('Sync finished', err || 'no error');
             file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
@@ -609,21 +607,21 @@ var AppModel = Backbone.Model.extend({
                 name: file.get('name'),
                 storage: storage,
                 path: path,
-                opts: that.getStoreOpts(file),
+                opts: this.getStoreOpts(file),
                 modified: file.get('modified'),
                 editState: file.getLocalEditState(),
                 syncDate: file.get('syncDate')
             });
-            if (that.settings.get('rememberKeyFiles')) {
+            if (this.settings.get('rememberKeyFiles')) {
                 fileInfo.set({
                     keyFileName: file.get('keyFileName') || null,
                     keyFileHash: file.getKeyFileHash()
                 });
             }
-            if (!that.fileInfos.get(fileInfo.id)) {
-                that.fileInfos.unshift(fileInfo);
+            if (!this.fileInfos.get(fileInfo.id)) {
+                this.fileInfos.unshift(fileInfo);
             }
-            that.fileInfos.save();
+            this.fileInfos.save();
             if (callback) { callback(err); }
         };
         if (!storage) {
@@ -644,7 +642,7 @@ var AppModel = Backbone.Model.extend({
             });
         } else {
             var maxLoadLoops = 3, loadLoops = 0;
-            var loadFromStorageAndMerge = function() {
+            var loadFromStorageAndMerge = () => {
                 if (++loadLoops === maxLoadLoops) {
                     return complete('Too many load attempts');
                 }
@@ -654,7 +652,7 @@ var AppModel = Backbone.Model.extend({
                     if (err) { return complete(err); }
                     file.mergeOrUpdate(data, options.remoteKey, (err) => {
                         logger.info('Merge complete', err || 'no error');
-                        that.refresh();
+                        this.refresh();
                         if (err) {
                             if (err.code === 'InvalidKey') {
                                 logger.info('Remote key changed, request to enter new key');
@@ -685,7 +683,7 @@ var AppModel = Backbone.Model.extend({
                     });
                 });
             };
-            var saveToCacheAndStorage = function() {
+            var saveToCacheAndStorage = () => {
                 logger.info('Getting file data for saving');
                 file.getData((data, err) => {
                     if (err) { return complete(err); }
@@ -706,7 +704,7 @@ var AppModel = Backbone.Model.extend({
                     }
                 });
             };
-            var saveToStorage = function(data) {
+            var saveToStorage = (data) => {
                 logger.info('Save data to storage');
                 Storage[storage].save(path, opts, data, (err, stat) => {
                     if (err && err.revConflict) {
