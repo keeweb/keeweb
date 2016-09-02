@@ -1,6 +1,9 @@
 Release notes
 -------------
 
+##### v1.3.0 (2016-09-02)
+`-` fix #337: storage sync error  
+
 ##### v1.3.0 (2016-09-01)
 Generator presets, auto-type and ui improvements  
 `+` auto-type improvements  
