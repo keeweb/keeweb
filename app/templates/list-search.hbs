@@ -16,7 +16,7 @@
         <div class="list__search-btn-sort" title="{{res 'searchSort'}}">
             <i class="fa fa-sort-alpha-asc"></i>
         </div>
-        <div class="list__search-adv hide">
+        <div class="list__search-adv {{#unless advEnabled}}hide{{/unless}}">
             <div class="list__search-adv-text">{{res 'searchSearchIn'}}:</div>
             <div class="list__search-check"><input type="checkbox" id="list__searcn-adv-check-user" data-id="user"
                {{#if adv.user}}checked{{/if}}><label for="list__searcn-adv-check-user">{{Res 'user'}}</label></div>

@@ -85,6 +85,7 @@ var ListSearchView = Backbone.View.extend({
             { value: 'entry', icon: 'key', text: Format.capFirst(Locale.entry) + entryDesc },
             { value: 'group', icon: 'folder', text: Format.capFirst(Locale.group) }
         ];
+        this.render();
     },
 
     viewShown: function() {
@@ -96,8 +97,18 @@ var ListSearchView = Backbone.View.extend({
     },
 
     render: function () {
-        this.renderTemplate({ adv: this.advancedSearch });
+        let searchVal;
+        if (this.inputEl) {
+            searchVal = this.inputEl.val();
+        }
+        this.renderTemplate({
+            adv: this.advancedSearch,
+            advEnabled: this.advancedSearchEnabled
+        });
         this.inputEl = this.$el.find('.list__search-field');
+        if (searchVal) {
+            this.inputEl.val(searchVal);
+        }
         return this;
     },
 
