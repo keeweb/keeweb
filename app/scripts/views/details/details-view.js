@@ -79,8 +79,8 @@ var DetailsView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserName, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrl, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_T, this.autoType, this, KeyHandler.SHORTCUT_ACTION);
-        KeyHandler.onKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
-        KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
+        KeyHandler.onKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
     },
 
     remove: function() {
@@ -623,8 +623,9 @@ var DetailsView = Backbone.View.extend({
         this.entryUpdated();
     },
 
-    deleteKeyPress: function() {
+    deleteKeyPress: function(e) {
         if (this.views.sub && this.views.sub.attId !== undefined) {
+            e.preventDefault();
             var attachment = this.model.attachments[this.views.sub.attId];
             this.model.removeAttachment(attachment.title);
             this.render();
