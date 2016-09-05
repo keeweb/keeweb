@@ -1,6 +1,9 @@
 Release notes
 -------------
 
+##### v1.4.0 (WIP)
+`+` support auto-type in edge  
+
 ##### v1.3.1 (2016-09-02)
 `-` fix #337: storage sync error  
 
