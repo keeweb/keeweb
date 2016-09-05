@@ -8,7 +8,8 @@ namespace KeeWebHelper
 {
     class WindowHelper
     {
-        static readonly string[] BrowserProcessNames = new[] { "chrome", "firefox", "iexplore", "edge", "opera", "browser" };
+        static readonly string[] BrowserProcessNames = new[] { "chrome", "firefox", "opera", "browser",
+            "applicationframehost", "iexplore", "edge" };
         static readonly string[] BrowserWindowClasses = new[] { "Chrome_WidgetWin_1" };
 
         [DllImport("user32.dll")]
