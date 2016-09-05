@@ -67,6 +67,7 @@ var ListSearchView = Backbone.View.extend({
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(Backbone, 'filter', this.filterChanged);
         this.listenTo(Backbone, 'set-locale', this.setLocale);
+        this.listenTo(Backbone, 'page-blur', this.pageBlur);
     },
 
     remove: function() {
@@ -86,6 +87,10 @@ var ListSearchView = Backbone.View.extend({
             { value: 'group', icon: 'folder', text: Format.capFirst(Locale.group) }
         ];
         this.render();
+    },
+
+    pageBlur: function() {
+        this.inputEl.blur();
     },
 
     viewShown: function() {

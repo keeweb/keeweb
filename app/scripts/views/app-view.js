@@ -82,6 +82,7 @@ var AppView = Backbone.View.extend({
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
+        window.onblur = this.windowBlur.bind(this);
 
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed, this);
@@ -331,6 +332,12 @@ var AppView = Backbone.View.extend({
 
     windowResize: function() {
         Backbone.trigger('page-geometry', { source: 'window' });
+    },
+
+    windowBlur: function(e) {
+        if (e.target === window) {
+            Backbone.trigger('page-blur');
+        }
     },
 
     escPressed: function() {
