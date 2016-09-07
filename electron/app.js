@@ -226,8 +226,10 @@ function mainWindowBlur() {
 }
 
 function emitBackboneEvent(e, arg) {
-    arg = JSON.stringify(arg);
-    mainWindow.webContents.executeJavaScript(`Backbone.trigger('${e}', ${arg});`);
+    if (mainWindow && mainWindow.webContents) {
+        arg = JSON.stringify(arg);
+        mainWindow.webContents.executeJavaScript(`Backbone.trigger('${e}', ${arg});`);
+    }
 }
 
 function setMenu() {
