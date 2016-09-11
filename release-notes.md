@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.3.2 (WIP)
 `-` fix #351: error alert on power shutdown  
+`-` fix #344: prevent caching WebDAV requests  
 
 ##### v1.3.1 (2016-09-02)
 `-` fix #337: storage sync error  
