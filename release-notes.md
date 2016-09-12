@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.3.2 (WIP)
+`-` fix #342: url detection in Microsoft Edge  
 `-` fix #351: error alert on power shutdown  
 `-` fix #344: prevent caching WebDAV requests  
 `-` fix #363: drag-drop in Firefox  
