@@ -38,7 +38,7 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 };
 
 AutoTypeEmitter.prototype.text = function(text) {
-    this.pendingScript.push('keyup ctrl alt shift');
+    this.pendingScript.push('keyup ctrl alt shift t');
     Object.keys(this.mod).forEach(mod => {
         this.pendingScript.push('keydown ' + ModMap[mod]);
     });
