@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.3.2 (WIP)
+##### v1.3.2 (2016-09-13)
 `-` fix #342: url detection in Microsoft Edge  
 `-` fix #351: error alert on power shutdown  
 `-` fix #344: prevent caching WebDAV requests  
