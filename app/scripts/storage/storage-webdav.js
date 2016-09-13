@@ -187,6 +187,9 @@ var StorageWebDav = StorageBase.extend({
                 xhr.setRequestHeader(header, value);
             });
         }
+        if (['GET', 'HEAD'].indexOf(config.method) >= 0) {
+            xhr.setRequestHeader('Cache-Control', 'no-cache');
+        }
         if (config.data) {
             var blob = new Blob([config.data], {type: 'application/octet-stream'});
             xhr.send(blob);

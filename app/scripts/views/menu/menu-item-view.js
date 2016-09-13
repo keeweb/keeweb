@@ -183,7 +183,12 @@ var MenuItemView = Backbone.View.extend({
 
     dropAllowed(e) {
         var types = e.originalEvent.dataTransfer.types;
-        return types.indexOf('text/group') >= 0 || types.indexOf('text/entry') >= 0;
+        for (let i = 0; i < types.length; i++) {
+            if (types[i] === 'text/group' || types[i] === 'text/entry') {
+                return true;
+            }
+        }
+        return false;
     },
 
     dragstart(e) {
@@ -229,7 +234,13 @@ var MenuItemView = Backbone.View.extend({
     },
 
     dropTopAllowed(e) {
-        return e.originalEvent.dataTransfer.types.indexOf('text/group') >= 0;
+        var types = e.originalEvent.dataTransfer.types;
+        for (let i = 0; i < types.length; i++) {
+            if (types[i] === 'text/group') {
+                return true;
+            }
+        }
+        return false;
     },
 
     dragoverTop(e) {
