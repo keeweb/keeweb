@@ -14,6 +14,8 @@ var GeneratorView = Backbone.View.extend({
     events: {
         'click': 'click',
         'mousedown .gen__length-range': 'generate',
+        'mousemove .gen__length-range': 'lengthMouseMove',
+        'input .gen__length-range': 'lengthChange',
         'change .gen__length-range': 'lengthChange',
         'change .gen__check input[type=checkbox]': 'checkChange',
         'click .gen__btn-ok': 'btnOkClick',
