@@ -548,7 +548,7 @@ var DetailsView = Backbone.View.extend({
             : Locale.detFieldCopied;
         var tip;
         if (!this.isHidden()) {
-            tip = new Tip(fieldLabel, {title: msg, placement: 'right', fast: true});
+            tip = new Tip(fieldLabel, {title: msg, placement: 'right', fast: true, force: true});
             this.fieldCopyTip = tip;
             tip.show();
         }

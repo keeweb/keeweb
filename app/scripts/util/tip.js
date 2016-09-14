@@ -11,6 +11,7 @@ var Tip = function(el, config) {
     this.tipEl = null;
     this.showTimeout = null;
     this.hideTimeout = null;
+    this.force = config && config.force || false;
     this.hide = this.hide.bind(this);
 };
 
@@ -27,7 +28,7 @@ Tip.prototype.init = function() {
 };
 
 Tip.prototype.show = function() {
-    if (!Tip.enabled) {
+    if (!Tip.enabled && !this.force) {
         return;
     }
     Backbone.on('page-geometry', this.hide);

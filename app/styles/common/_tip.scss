@@ -5,7 +5,7 @@
   white-space: nowrap;
   z-index: $z-index-no-modal;
   pointer-events: none;
-  animation: tip $tip-transition-in;
+  @include nomobile { animation: tip $tip-transition-in; }
   @include common-dropdown;
   &.tip--fast, &.tip--fast:before, &.tip--fast:after {
     animation-duration: $base-duration;
@@ -19,7 +19,7 @@
     box-shadow: none;
   }
   &:before, &:after {
-    animation: tip $tip-transition-in;
+    @include nomobile { animation: tip $tip-transition-in; }
     content: " ";
     width: 0;
     height: 0;

@@ -1,14 +1,14 @@
 Release notes
 -------------
+##### v1.4.0 (WIP)
+`+` allow password copy on mobile Safari  
+
 ##### v1.3.2 (2016-09-13)
 `-` fix #342: url detection in Microsoft Edge  
 `-` fix #351: error alert on power shutdown  
 `-` fix #344: prevent caching WebDAV requests  
 `-` fix #363: drag-drop in Firefox  
 `-` fix #357: linux auto-type issues  
-
-##### v1.4.0 (WIP)
-`+` support auto-type in edge  
 
 ##### v1.3.1 (2016-09-02)
 `-` fix #337: storage sync error  
