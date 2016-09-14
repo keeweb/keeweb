@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.4.0 (WIP)
 `+` allow password copy on mobile Safari  
+`+` password generator usability improvements  
 
 ##### v1.3.2 (2016-09-13)
 `-` fix #342: url detection in Microsoft Edge  

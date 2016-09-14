@@ -21,6 +21,7 @@
 
   &__sample {
     font-weight: normal;
+    @include user-select(text);
     @include th { color: muted-color(); }
   }
 
