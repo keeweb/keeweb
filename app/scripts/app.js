@@ -5,6 +5,7 @@ var AppModel = require('./models/app-model'),
     KeyHandler = require('./comp/key-handler'),
     IdleTracker = require('./comp/idle-tracker'),
     PopupNotifier = require('./comp/popup-notifier'),
+    SingleInstanceChecker = require('./comp/single-instance-checker'),
     Alerts = require('./comp/alerts'),
     Updater = require('./comp/updater'),
     AuthReceiver = require('./comp/auth-receiver'),
@@ -78,6 +79,7 @@ $(() => {
     function showView() {
         new AppView({ model: appModel }).render();
         Updater.init();
+        SingleInstanceChecker.init();
     }
 
     function getConfigParam() {

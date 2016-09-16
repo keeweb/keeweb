@@ -285,6 +285,8 @@
   "appSaveErrorBodyMul": "Failed to auto-save files:",
   "appSettingsError": "Error loading app",
   "appSettingsErrorBody": "There was an error loading app settings. Please double check app url or contact your administrator.",
+  "appTabWarn": "Too many tabs",
+  "appTabWarnBody": "KeeWeb cannot be used in two browser tabs simultaneously, please close this tab.",
 
   "setGenTitle": "General Settings",
   "setGenUpdate": "Update",

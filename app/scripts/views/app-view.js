@@ -77,6 +77,7 @@ var AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'user-idle', this.userIdle);
         this.listenTo(Backbone, 'app-minimized', this.appMinimized);
         this.listenTo(Backbone, 'show-context-menu', this.showContextMenu);
+        this.listenTo(Backbone, 'second-instance', this.showSingleInstanceAlert);
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
@@ -615,6 +616,14 @@ var AppView = Backbone.View.extend({
     contextMenuSelect: function(e) {
         this.hideContextMenu();
         Backbone.trigger('context-menu-select', e);
+    },
+
+    showSingleInstanceAlert: function() {
+        this.hideOpenFile();
+        Alerts.error({
+            header: Locale.appTabWarn, body: Locale.appTabWarnBody,
+            esc: false, enter: false, click: false, buttons: []
+        });
     },
 
     dragover: function(e) {
