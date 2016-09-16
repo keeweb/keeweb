@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.3.3 (WIP)
+`-` fix #368: desktop file save error  
+
 ##### v1.3.2 (2016-09-13)
 `-` fix #342: url detection in Microsoft Edge  
 `-` fix #351: error alert on power shutdown  
