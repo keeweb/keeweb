@@ -44,15 +44,14 @@ The app can be built with grunt: `grunt` (html file will be in `dist/`).
 Desktop apps are built with `grunt desktop`. This works only in mac osx as it builds dmg; requires wine.  
 To run Electron app without building installer, install electron package (`npm install electron-prebuilt -g`), build the app with `grunt` and start in this way:
 ```bash
-$ grunt && grunt dev
+$ grunt dev
 $ npm run-script electron
 ```
 
 For debug build:
 
-1. run `grunt`
-2. run `grunt dev`
-3. open `tmp/index.html`
+1. run `grunt dev`
+2. open `http://localhost:8085/tmp`
 
 # Contributing
 
