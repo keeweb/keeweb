@@ -357,17 +357,17 @@ var AppModel = Backbone.Model.extend({
         } else if (!params.storage) {
             logger.info('Open file from cache as main storage');
             this.openFileFromCache(params, callback, fileInfo);
-        } else if (fileInfo && fileInfo.openDate && fileInfo.get('rev') === params.rev && fileInfo.get('storage') !== 'file') {
+        } else if (fileInfo && fileInfo.get('openDate') && fileInfo.get('rev') === params.rev && fileInfo.get('storage') !== 'file') {
             logger.info('Open file from cache because it is latest');
             this.openFileFromCache(params, callback, fileInfo);
-        } else if (!fileInfo || !fileInfo.openDate || params.storage === 'file') {
+        } else if (!fileInfo || !fileInfo.get('openDate') || params.storage === 'file') {
             logger.info('Open file from storage', params.storage);
             var storage = Storage[params.storage];
             var storageLoad = () => {
                 logger.info('Load from storage');
                 storage.load(params.path, params.opts, (err, data, stat) => {
                     if (err) {
-                        if (fileInfo && fileInfo.openDate) {
+                        if (fileInfo && fileInfo.get('openDate')) {
                             logger.info('Open file from cache because of storage load error', err);
                             this.openFileFromCache(params, callback, fileInfo);
                         } else {
