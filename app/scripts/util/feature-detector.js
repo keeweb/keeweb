@@ -30,9 +30,8 @@ var FeatureDetector = {
         if (this.isWindows) { return 'Alt+PrintScreen'; }
         return '';
     },
-
     shouldMoveHiddenInputToCopySource: function() {
-        return this.isiOS;
+        return this.isiOS && !/Version\/10/.test(navigator.userAgent);
     },
     canCopyReadonlyInput: function() {
         return !(/CriOS/i.test(navigator.userAgent));
