@@ -1621,9 +1621,9 @@
       }
     },
     "eslint-config-standard": {
-      "version": "6.0.1",
-      "from": "eslint-config-standard@6.0.1",
-      "resolved": "https://registry.npmjs.org/eslint-config-standard/-/eslint-config-standard-6.0.1.tgz"
+      "version": "5.3.5",
+      "from": "eslint-config-standard@5.3.5",
+      "resolved": "https://registry.npmjs.org/eslint-config-standard/-/eslint-config-standard-5.3.5.tgz"
     },
     "eslint-plugin-promise": {
       "version": "2.0.1",
