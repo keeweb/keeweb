@@ -60,7 +60,7 @@ var SettingsGeneralView = Backbone.View.extend({
         'de-DE': 'Deutsch',
         'fr-FR': 'Français',
         'pl': 'Polski',
-        'pt-PT': 'Português',
+        'pt-PT': 'Português'
     },
 
     initialize: function() {
