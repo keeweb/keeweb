@@ -130,6 +130,9 @@ var EntryModel = Backbone.Model.extend({
         if (!url) {
             return '';
         }
+        if (url.isProtected) {
+            url = url.getText();
+        }
         return url.replace(this.urlRegex, '');
     },
 
