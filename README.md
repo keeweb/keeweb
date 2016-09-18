@@ -59,7 +59,15 @@ For debug build:
 Please, read contribution guidelines: [for issues](.github/ISSUE_TEMPLATE.md) and [for pull requests](.github/PULL_REQUEST_TEMPLATE.md).  
 For pull requests: branch is important! `master` is only for hotfixes, `develop` is for new features.  
 Here's a [list of issues](https://github.com/keeweb/keeweb/labels/need%20help) which heed help. 
-Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your language.
+Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your language.  
+
+# Donate
+
+Donate with PayPal:  
+[![Donate with PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VE75PM997C2GW)  
+
+Please note: donation does not imply any type of service contract.  
+
 
 # License
 
