@@ -33,7 +33,7 @@ var FieldViewText = FieldView.extend({
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        this.listenTo(Backbone, 'click main-window-will-close', this.fieldValueBlur);
+        this.listenTo(Backbone, 'click main-window-will-close user-idle', this.externalEndEdit);
         if (this.model.multiline) {
             this.setInputHeight();
         }
@@ -148,6 +148,12 @@ var FieldViewText = FieldView.extend({
             return;
         }
         e.stopPropagation();
+    },
+
+    externalEndEdit: function() {
+        if (this.input) {
+            this.endEdit(this.input.val());
+        }
     },
 
     endEdit: function(newVal, extra) {
