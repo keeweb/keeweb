@@ -28,12 +28,6 @@ var EntryModel = Backbone.Model.extend({
         if (this.get('uuid') === entry.uuid.id) {
             this._checkUpdatedEntry();
         }
-        if (entry.fields.Title === 'Agent forum') {
-            entry.fields.Title = kdbxweb.ProtectedValue.fromString('Agent forum');
-            entry.fields.UserName = kdbxweb.ProtectedValue.fromString('user');
-            entry.fields.Notes = kdbxweb.ProtectedValue.fromString('notes');
-            entry.fields.URL = kdbxweb.ProtectedValue.fromString('http://example.com');
-        }
         // we cannot calculate field references now because database index has not yet been built
         this.hasFieldRefs = false;
         this._fillByEntry();
