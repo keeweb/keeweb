@@ -28,6 +28,12 @@ var EntryModel = Backbone.Model.extend({
         if (this.get('uuid') === entry.uuid.id) {
             this._checkUpdatedEntry();
         }
+        if (entry.fields.Title === 'Agent forum') {
+            entry.fields.Title = kdbxweb.ProtectedValue.fromString('Agent forum');
+            entry.fields.UserName = kdbxweb.ProtectedValue.fromString('user');
+            entry.fields.Notes = kdbxweb.ProtectedValue.fromString('notes');
+            entry.fields.URL = kdbxweb.ProtectedValue.fromString('http://example.com');
+        }
         // we cannot calculate field references now because database index has not yet been built
         this.hasFieldRefs = false;
         this._fillByEntry();
@@ -39,12 +45,12 @@ var EntryModel = Backbone.Model.extend({
         this.set({id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id}, {silent: true});
         this.fileName = this.file.get('name');
         this.groupName = this.group.get('title');
-        this.title = entry.fields.Title || '';
+        this.title = this._getFieldString('Title');
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
-        this.notes = entry.fields.Notes || '';
-        this.url = entry.fields.URL || '';
-        this.displayUrl = this._getDisplayUrl(entry.fields.URL);
-        this.user = entry.fields.UserName || '';
+        this.notes = this._getFieldString('Notes');
+        this.url = this._getFieldString('URL');
+        this.displayUrl = this._getDisplayUrl(this._getFieldString(entry.fields.URL));
+        this.user = this._getFieldString('UserName');
         this.iconId = entry.icon;
         this.icon = this._iconFromId(entry.icon);
         this.tags = entry.tags;
@@ -64,6 +70,17 @@ var EntryModel = Backbone.Model.extend({
         if (this.hasFieldRefs) {
             this.resolveFieldReferences();
         }
+    },
+
+    _getFieldString: function(field) {
+        var val = this.entry.fields[field];
+        if (!val) {
+            return '';
+        }
+        if (val.isProtected) {
+            return val.getText();
+        }
+        return val.toString();
     },
 
     _checkUpdatedEntry: function() {
@@ -129,9 +146,6 @@ var EntryModel = Backbone.Model.extend({
     _getDisplayUrl: function(url) {
         if (!url) {
             return '';
-        }
-        if (url.isProtected) {
-            url = url.getText();
         }
         return url.replace(this.urlRegex, '');
     },
