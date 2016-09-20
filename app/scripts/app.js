@@ -9,6 +9,7 @@ var AppModel = require('./models/app-model'),
     Updater = require('./comp/updater'),
     AuthReceiver = require('./comp/auth-receiver'),
     ExportApi = require('./comp/export-api'),
+    Storage = require('./storage'),
     SettingsManager = require('./util/settings-manager'),
     Locale = require('./util/locale');
 
@@ -76,6 +77,7 @@ $(() => {
     }
 
     function showView() {
+        appModel.prepare();
         new AppView({ model: appModel }).render();
         Updater.init();
     }
