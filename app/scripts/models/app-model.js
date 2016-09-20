@@ -43,8 +43,11 @@ var AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'select-entry', this.selectEntry);
 
         this.appLogger = new Logger('app');
+    },
 
+    prepare: function() {
         AutoType.init(this);
+        _.forEach(Storage, prv => prv.init());
     },
 
     loadConfig: function(configLocation, callback) {

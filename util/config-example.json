@@ -40,8 +40,8 @@
   },
   "files": [{
     "storage": "webdav",
-    "name": "",
-    "path": "",
+    "name": "My file",
+    "path": "webdav-url",
     "options": { "user": "", "password": "" }
   }]
 }
