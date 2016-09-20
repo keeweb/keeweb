@@ -1,5 +1,11 @@
 Release notes
 -------------
+##### v1.3.3 (2016-09-20)
+`+` translations: fr, pl, pt  
+`-` fix #368: desktop file save error  
+`-` fix #369: removed additional webdav request  
+`+` allow password copy on mobile Safari  
+
 ##### v1.3.2 (2016-09-13)
 `-` fix #342: url detection in Microsoft Edge  
 `-` fix #351: error alert on power shutdown  

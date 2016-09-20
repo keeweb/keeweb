@@ -180,7 +180,7 @@ var SettingsFileView = Backbone.View.extend({
                 if (Launcher) {
                     Launcher.getSaveFileName(fileName, path => {
                         if (path) {
-                            Storage.file.save(path, data, err => {
+                            Storage.file.save(path, null, data, err => {
                                 if (err) {
                                     Alerts.error({
                                         header: Locale.setFileSaveError,

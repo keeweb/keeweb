@@ -39,12 +39,12 @@ var EntryModel = Backbone.Model.extend({
         this.set({id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id}, {silent: true});
         this.fileName = this.file.get('name');
         this.groupName = this.group.get('title');
-        this.title = entry.fields.Title || '';
+        this.title = this._getFieldString('Title');
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
-        this.notes = entry.fields.Notes || '';
-        this.url = entry.fields.URL || '';
-        this.displayUrl = this._getDisplayUrl(entry.fields.URL);
-        this.user = entry.fields.UserName || '';
+        this.notes = this._getFieldString('Notes');
+        this.url = this._getFieldString('URL');
+        this.displayUrl = this._getDisplayUrl(this._getFieldString(entry.fields.URL));
+        this.user = this._getFieldString('UserName');
         this.iconId = entry.icon;
         this.icon = this._iconFromId(entry.icon);
         this.tags = entry.tags;
@@ -64,6 +64,17 @@ var EntryModel = Backbone.Model.extend({
         if (this.hasFieldRefs) {
             this.resolveFieldReferences();
         }
+    },
+
+    _getFieldString: function(field) {
+        var val = this.entry.fields[field];
+        if (!val) {
+            return '';
+        }
+        if (val.isProtected) {
+            return val.getText();
+        }
+        return val.toString();
     },
 
     _checkUpdatedEntry: function() {

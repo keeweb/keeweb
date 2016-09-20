@@ -76,6 +76,7 @@ $(() => {
     }
 
     function showView() {
+        appModel.prepare();
         new AppView({ model: appModel }).render();
         Updater.init();
     }
