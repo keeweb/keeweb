@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.3.3 (WIP)
+##### v1.3.3 (2016-09-20)
 `+` translations: fr, pl, pt  
 `-` fix #368: desktop file save error  
 `-` fix #369: removed additional webdav request  
