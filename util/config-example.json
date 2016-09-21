@@ -1,6 +1,7 @@
 {
   "settings": {
     "theme": "fb",
+    "locale": "en",
     "expandGroups": true,
     "listViewWidth": null,
     "menuViewWidth": null,
