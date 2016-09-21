@@ -64,8 +64,11 @@ var AppModel = Backbone.Model.extend({
                 return callback(true);
             }
             if (typeof response === 'string') {
-                try { response = JSON.parse(response); }
-                catch (e) { this.appLogger.error('Error parsing response', e, response); }
+                try {
+                    response = JSON.parse(response);
+                } catch (e) {
+                    this.appLogger.error('Error parsing response', e, response);
+                }
             }
             if (!response.settings) {
                 this.appLogger.error('Invalid app config, no settings section', response);
