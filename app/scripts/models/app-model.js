@@ -58,16 +58,21 @@ var AppModel = Backbone.Model.extend({
         xhr.responseType = 'json';
         xhr.send();
         xhr.addEventListener('load', () => {
-            if (!xhr.response) {
+            let response = xhr.response;
+            if (!response) {
                 this.appLogger.error('Error loading app config', xhr.statusText);
                 return callback(true);
             }
-            if (!xhr.response.settings) {
-                this.appLogger.error('Invalid app config, no settings section', xhr.response);
+            if (typeof response === 'string') {
+                try { response = JSON.parse(response); }
+                catch (e) { this.appLogger.error('Error parsing response', e, response); }
+            }
+            if (!response.settings) {
+                this.appLogger.error('Invalid app config, no settings section', response);
                 return callback(true);
             }
             this.appLogger.info('Loaded app config from', configLocation, this.appLogger.ts(ts));
-            this.applyUserConfig(xhr.response);
+            this.applyUserConfig(response);
             callback();
         });
         xhr.addEventListener('error', () => {
