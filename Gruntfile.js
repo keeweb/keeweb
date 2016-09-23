@@ -6,6 +6,7 @@ var fs = require('fs'),
     path = require('path');
 
 var StringReplacePlugin = require('string-replace-webpack-plugin');
+var StatsPlugin = require('stats-webpack-plugin');
 
 module.exports = function(grunt) {
     require('time-grunt')(grunt);
@@ -106,7 +107,8 @@ module.exports = function(grunt) {
             new webpack.optimize.OccurenceOrderPlugin(),
             new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
             new webpack.IgnorePlugin(/^(moment)$/),
-            new StringReplacePlugin()
+            new StringReplacePlugin(),
+            new StatsPlugin('stats.json', { chunkModules: true })
         ],
         node: {
             console: false,
