@@ -1,6 +1,6 @@
 {
   "name": "keeweb",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "dependencies": {
     "abbrev": {
       "version": "1.0.7",
@@ -5060,6 +5060,11 @@
           "resolved": "https://registry.npmjs.org/assert-plus/-/assert-plus-1.0.0.tgz"
         }
       }
+    },
+    "stats-webpack-plugin": {
+      "version": "0.4.2",
+      "from": "stats-webpack-plugin@latest",
+      "resolved": "https://registry.npmjs.org/stats-webpack-plugin/-/stats-webpack-plugin-0.4.2.tgz"
     },
     "statuses": {
       "version": "1.2.1",
