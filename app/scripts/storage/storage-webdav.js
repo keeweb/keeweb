@@ -86,7 +86,11 @@ var StorageWebDav = StorageBase.extend({
                     }
                     var movePath = path;
                     if (movePath.indexOf('://') < 0) {
-                        movePath = location.href.replace(/[^/]*$/, movePath);
+                        if (movePath.indexOf('/') === 0) {
+                            movePath = location.protocol + '//' + location.host + movePath;
+                        } else {
+                            movePath = location.href.replace(/\?(.*)/, '').replace(/[^/]*$/, movePath);
+                        }
                     }
                     that._request(_.defaults({
                         op: 'Save:move', method: 'MOVE', path: tmpPath, nostat: true,
