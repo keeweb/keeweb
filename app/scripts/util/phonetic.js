@@ -204,10 +204,12 @@ function getNextPhonetic(phoneticSet, simpleCap, wordObj, forceSimple) {
  * @returns {number}
  */
 function getNumericHash(data) {
-    var numeric = 0;
+    let numeric = 0;
     data += '-Phonetic';
-    for (var i = 0; i < data.length; i++) {
-        numeric += data.charCodeAt(i);
+    for (let i = 0, len = data.length; i < len; i++) {
+        let chr = data.charCodeAt(i);
+        numeric = ((numeric << 5) - numeric) + chr;
+        numeric >>>= 0;
     }
     return numeric;
 }

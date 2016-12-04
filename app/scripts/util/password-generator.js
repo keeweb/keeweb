@@ -71,7 +71,10 @@ var PasswordGenerator = {
     },
 
     generatePronounceable: function(opts) {
-        var pass = phonetic.generate({ length: opts.length });
+        var pass = phonetic.generate({
+            length: opts.length,
+            seed: this.generateHash(1024)
+        });
         var result = '';
         var upper = [];
         var i;
