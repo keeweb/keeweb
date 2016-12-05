@@ -33,7 +33,8 @@ var FieldViewText = FieldView.extend({
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        this.listenTo(Backbone, 'click main-window-will-close user-idle', this.externalEndEdit);
+        this.listenTo(Backbone, 'click', this.fieldValueBlur);
+        this.listenTo(Backbone, 'main-window-will-close user-idle', this.externalEndEdit);
         if (this.model.multiline) {
             this.setInputHeight();
         }
