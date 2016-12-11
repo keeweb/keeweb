@@ -86,9 +86,12 @@
         <label for="settings__general-auto-save">{{res 'setGenAutoSync'}}</label>
     </div>
     <div>
-        <input type="checkbox" class="settings__input input-base settings__general-remember-key-files" id="settings__general-remember-key-files"
-               {{#if rememberKeyFiles}}checked{{/if}} />
-        <label for="settings__general-remember-key-files">{{res 'setGenRememberKeyFiles'}}</label>
+        <label for="settings__general-remember-key-files">{{res 'setGenRememberKeyFiles'}}:</label>
+        <select class="settings__general-remember-key-files settings__select input-base" id="settings__general-remember-key-files">
+            <option value="" {{#unless rememberKeyFiles}}selected{{/unless}}>{{res 'setGenNoRememberKeyFiles'}}</option>
+            <option value="data" {{#ifeq rememberKeyFiles 'data'}}selected{{/ifeq}}>{{res 'setGenRememberKeyFilesData'}}</option>
+            {{#if supportFiles}}<option value="path" {{#ifeq rememberKeyFiles 'path'}}selected{{/ifeq}}>{{res 'setGenRememberKeyFilesPath'}}</option>{{/if}}
+        </select>
     </div>
     <div>
         <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>

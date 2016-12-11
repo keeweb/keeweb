@@ -55,6 +55,7 @@ var OpenView = Backbone.View.extend({
             path: null,
             keyFileName: null,
             keyFileData: null,
+            keyFilePath: null,
             fileData: null,
             rev: null
         };
@@ -194,6 +195,9 @@ var OpenView = Backbone.View.extend({
                 case 'keyFileData':
                     this.params.keyFileData = e.target.result;
                     this.params.keyFileName = file.name;
+                    if (this.model.settings.get('rememberKeyFiles') === 'path') {
+                        this.params.keyFilePath = file.path;
+                    }
                     this.displayOpenKeyFile();
                     success = true;
                     break;
@@ -242,7 +246,7 @@ var OpenView = Backbone.View.extend({
 
     displayOpenKeyFile: function() {
         this.$el.toggleClass('open--key-file', !!this.params.keyFileName);
-        this.$el.find('.open__settings-key-file-name').text(this.params.keyFileName || Locale.openKeyFile);
+        this.$el.find('.open__settings-key-file-name').text(this.params.keyFilePath || this.params.keyFileName || Locale.openKeyFile);
         this.focusInput();
     },
 
@@ -277,8 +281,9 @@ var OpenView = Backbone.View.extend({
         if ($(e.target).hasClass('open__settings-key-file-dropbox')) {
             this.openKeyFileFromDropbox();
         } else if (!this.busy && this.params.name) {
-            if (this.params.keyFileData) {
+            if (this.params.keyFileName) {
                 this.params.keyFileData = null;
+                this.params.keyFilePath = null;
                 this.params.keyFileName = '';
                 this.$el.removeClass('open--key-file');
                 this.$el.find('.open__settings-key-file-name').text(Locale.openKeyFile);
@@ -431,6 +436,7 @@ var OpenView = Backbone.View.extend({
         this.params.fileData = null;
         this.params.rev = null;
         this.params.keyFileName = fileInfo.get('keyFileName');
+        this.params.keyFilePath = fileInfo.get('keyFilePath');
         this.displayOpenFile();
         this.displayOpenKeyFile();
     },

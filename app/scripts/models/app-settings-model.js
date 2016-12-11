@@ -46,6 +46,11 @@ var AppSettingsModel = Backbone.Model.extend({
 
     load: function() {
         var data = SettingsStore.load('app-settings');
+
+        if (data.rememberKeyFiles === true) {
+            data.rememberKeyFiles = 'data';
+        }
+
         if (data) {
             this.set(data, {silent: true});
         }

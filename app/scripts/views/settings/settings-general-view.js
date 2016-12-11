@@ -85,6 +85,7 @@ var SettingsGeneralView = Backbone.View.extend({
             canClearClipboard: !!Launcher,
             clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
             rememberKeyFiles: AppSettingsModel.instance.get('rememberKeyFiles'),
+            supportFiles: !!Launcher,
             autoSave: AppSettingsModel.instance.get('autoSave'),
             idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
             minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
@@ -233,11 +234,9 @@ var SettingsGeneralView = Backbone.View.extend({
     },
 
     changeRememberKeyFiles: function(e) {
-        var rememberKeyFiles = e.target.checked || false;
+        var rememberKeyFiles = e.target.value || false;
         AppSettingsModel.instance.set('rememberKeyFiles', rememberKeyFiles);
-        if (!rememberKeyFiles) {
-            this.appModel.clearStoredKeyFiles();
-        }
+        this.appModel.clearStoredKeyFiles();
     },
 
     changeMinimize: function(e) {

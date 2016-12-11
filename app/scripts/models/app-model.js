@@ -437,9 +437,23 @@ var AppModel = Backbone.Model.extend({
 
     openFileWithData: function(params, callback, fileInfo, data, updateCacheOnSuccess) {
         var logger = new Logger('open', params.name);
-        if (!params.keyFileData && fileInfo && fileInfo.get('keyFileName') && this.settings.get('rememberKeyFiles')) {
+        if (!params.keyFileData && fileInfo && fileInfo.get('keyFileName')) {
             params.keyFileName = fileInfo.get('keyFileName');
-            params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
+            if (this.settings.get('rememberKeyFiles') === 'data') {
+                params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
+            } else if (this.settings.get('rememberKeyFiles') === 'path' && fileInfo.get('keyFilePath')) {
+                params.keyFilePath = fileInfo.get('keyFilePath');
+                if (Storage.file.enabled) {
+                    Storage.file.load(params.keyFilePath, {}, (err, data, stat) => {
+                        if (err) {
+                            logger.info('Storage load error', err);
+                            callback(err);
+                        } else {
+                            params.keyFileData = data;
+                        }
+                    });
+                }
+            }
         }
         var file = new FileModel({
             id: fileInfo ? fileInfo.id : IdGenerator.uuid(),
@@ -447,6 +461,7 @@ var AppModel = Backbone.Model.extend({
             storage: params.storage,
             path: params.path,
             keyFileName: params.keyFileName,
+            keyFilePath: params.keyFilePath,
             backup: fileInfo && fileInfo.get('backup') || null
         });
         file.open(params.password, data, params.keyFileData, err => {
@@ -515,11 +530,18 @@ var AppModel = Backbone.Model.extend({
             openDate: dt,
             backup: file.get('backup')
         });
-        if (this.settings.get('rememberKeyFiles')) {
-            fileInfo.set({
-                keyFileName: file.get('keyFileName') || null,
-                keyFileHash: file.getKeyFileHash()
-            });
+        switch (this.settings.get('rememberKeyFiles')) {
+            case 'data':
+                fileInfo.set({
+                    keyFileName: file.get('keyFileName') || null,
+                    keyFileHash: file.getKeyFileHash()
+                });
+                break;
+            case 'path':
+                fileInfo.set({
+                    keyFileName: file.get('keyFileName') || null,
+                    keyFilePath: file.get('keyFilePath') || null
+                });
         }
         this.fileInfos.remove(file.id);
         this.fileInfos.unshift(fileInfo);
@@ -623,7 +645,7 @@ var AppModel = Backbone.Model.extend({
                 editState: file.getLocalEditState(),
                 syncDate: file.get('syncDate')
             });
-            if (this.settings.get('rememberKeyFiles')) {
+            if (this.settings.get('rememberKeyFiles') === 'data') {
                 fileInfo.set({
                     keyFileName: file.get('keyFileName') || null,
                     keyFileHash: file.getKeyFileHash()
@@ -785,6 +807,7 @@ var AppModel = Backbone.Model.extend({
         this.fileInfos.each(fileInfo => {
             fileInfo.set({
                 keyFileName: null,
+                keyFilePath: null,
                 keyFileHash: null
             });
         });
