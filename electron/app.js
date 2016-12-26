@@ -9,6 +9,7 @@ var mainWindow = null,
     appIcon = null,
     openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0],
     ready = false,
+    appReady = false,
     restartPending = false,
     mainWindowPosition = {},
     updateMainWindowPositionTimeout = null,
@@ -41,6 +42,7 @@ app.on('window-all-closed', () => {
 });
 app.on('ready', () => {
     if (!checkSingleInstance()) {
+        appReady = true;
         setAppOptions();
         createMainWindow();
         setGlobalShortcuts();
@@ -54,7 +56,7 @@ app.on('open-file', (e, path) => {
 });
 app.on('activate', () => {
     if (process.platform === 'darwin') {
-        if (!mainWindow) {
+        if (appReady && !mainWindow) {
             createMainWindow();
         }
     }
