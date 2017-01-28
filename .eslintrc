@@ -10,7 +10,9 @@
         "no-console": "error",
         "no-alert": "error",
         "no-debugger": "error",
-        "prefer-arrow-callback": "error"
+        "prefer-arrow-callback": "error",
+        "object-property-newline": "off",
+        "no-useless-escape": "off"
     },
     "globals": {
         "_": true,

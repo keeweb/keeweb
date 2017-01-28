@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     var dt = new Date().toISOString().replace(/T.*/, '');
     var minElectronVersionForUpdate = '1.0.1';
     var zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
-    var electronVersion = pkg.devDependencies['electron-prebuilt'].replace(/^\D/, '');
+    var electronVersion = pkg.devDependencies['electron'].replace(/^\D/, '');
 
     while (zipCommentPlaceholder.length < 512) {
         zipCommentPlaceholder += '.';
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
                     pattern: /\r?\n\s*/g,
                     replacement: function() { return '\n'; }
                 }]})},
-                { test: /runtime\-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
+                { test: /runtime-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
                     { pattern: /@@VERSION/g, replacement: function() { return pkg.version; } },
                     { pattern: /@@DATE/g, replacement: function() { return dt; } },
                     { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
@@ -165,7 +165,7 @@ module.exports = function(grunt) {
                 flatten: true
             },
             'desktop-app-content': {
-                cwd: 'electron/',
+                cwd: 'desktop/',
                 src: '**',
                 dest: 'tmp/desktop/app/',
                 expand: true,
@@ -200,7 +200,7 @@ module.exports = function(grunt) {
         },
         eslint: {
             app: ['app/scripts/**/*.js'],
-            electron: ['electron/**/*.js', '!electron/node_modules/**'],
+            desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
             grunt: ['Gruntfile.js', 'grunt/**/*.js']
         },
         sass: {

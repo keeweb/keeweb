@@ -42,7 +42,7 @@ To make Dropbox work in your self-hosted app:
 
 The app can be built with grunt: `grunt` (html file will be in `dist/`).    
 Desktop apps are built with `grunt desktop`. This works only in mac osx as it builds dmg; requires wine.  
-To run Electron app without building installer, install electron package (`npm install electron-prebuilt -g`), build the app with `grunt` and start in this way:
+To run Electron app without building installer, install electron package (`npm install electron -g`), build the app with `grunt` and start in this way:
 ```bash
 $ grunt dev
 $ npm run-script electron
