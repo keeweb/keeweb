@@ -60,10 +60,14 @@ var SettingsGeneralView = Backbone.View.extend({
     allLocales: {
         en: 'English',
         de: 'Deutsch',
+        es: 'Español',
         fr: 'Français',
         it: 'Italiano',
+        nl: 'Nederlands',
         pl: 'Polski',
-        pt: 'Português'
+        pt: 'Português',
+        ru: 'Русский',
+        zh: '汉语'
     },
 
     initialize: function() {
