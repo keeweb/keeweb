@@ -113,12 +113,14 @@ module.exports = function(grunt) {
         node: {
             console: false,
             process: false,
+            crypto: false,
             Buffer: false,
             __filename: false,
             __dirname: false
         },
         externals: {
-            xmldom: 'null'
+            xmldom: 'null',
+            crypto: 'null'
         }
     };
 

@@ -50,15 +50,9 @@ var FileModel = Backbone.Model.extend({
         try {
             var credentials = new kdbxweb.Credentials(password, keyFileData);
             var ts = logger.ts();
-            kdbxweb.Kdbx.load(fileData, credentials, (db, err) => {
-                if (err) {
-                    if (err.code === kdbxweb.Consts.ErrorCodes.InvalidKey && password && !password.byteLength) {
-                        logger.info('Error opening file with empty password, try to open with null password');
-                        return this.open(null, fileData, keyFileData, callback);
-                    }
-                    logger.error('Error opening file', err.code, err.message, err);
-                    callback(err);
-                } else {
+
+            kdbxweb.Kdbx.load(fileData, credentials)
+                .then(db => {
                     this.db = db;
                     this.readModel();
                     this.setOpenFile({ passwordLength: password ? password.textLength : 0 });
@@ -68,8 +62,15 @@ var FileModel = Backbone.Model.extend({
                     logger.info('Opened file ' + this.get('name') + ': ' + logger.ts(ts) + ', ' +
                         db.header.keyEncryptionRounds + ' rounds, ' + Math.round(fileData.byteLength / 1024) + ' kB');
                     callback();
-                }
-            });
+                })
+                .catch(err => {
+                    if (err.code === kdbxweb.Consts.ErrorCodes.InvalidKey && password && !password.byteLength) {
+                        logger.info('Error opening file with empty password, try to open with null password');
+                        return this.open(null, fileData, keyFileData, callback);
+                    }
+                    logger.error('Error opening file', err.code, err.message, err);
+                    callback(err);
+                });
         } catch (e) {
             logger.error('Error opening file', e, e.code, e.message, e);
             callback(e);
@@ -90,18 +91,18 @@ var FileModel = Backbone.Model.extend({
             var ts = logger.ts();
             var password = kdbxweb.ProtectedValue.fromString('');
             var credentials = new kdbxweb.Credentials(password);
-            kdbxweb.Kdbx.loadXml(fileXml, credentials, (db, err) => {
-                if (err) {
-                    logger.error('Error importing file', err.code, err.message, err);
-                    callback(err);
-                } else {
+            kdbxweb.Kdbx.loadXml(fileXml, credentials)
+                .then(db => {
                     this.db = db;
                     this.readModel();
                     this.set({ open: true, created: true });
                     logger.info('Imported file ' + this.get('name') + ': ' + logger.ts(ts));
                     callback();
-                }
-            });
+                })
+                .catch(err => {
+                    logger.error('Error importing file', err.code, err.message, err);
+                    callback(err);
+                });
         } catch (e) {
             logger.error('Error importing file', e, e.code, e.message, e);
             callback(e);
@@ -112,13 +113,14 @@ var FileModel = Backbone.Model.extend({
         var password = kdbxweb.ProtectedValue.fromString('demo');
         var credentials = new kdbxweb.Credentials(password);
         var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
-        kdbxweb.Kdbx.load(demoFile, credentials, db => {
-            this.db = db;
-            this.set('name', 'Demo');
-            this.readModel();
-            this.setOpenFile({passwordLength: 4, demo: true});
-            callback();
-        });
+        kdbxweb.Kdbx.load(demoFile, credentials)
+            .then(db => {
+                this.db = db;
+                this.set('name', 'Demo');
+                this.readModel();
+                this.setOpenFile({passwordLength: 4, demo: true});
+                callback();
+            });
     },
 
     setOpenFile: function(props) {
@@ -191,49 +193,57 @@ var FileModel = Backbone.Model.extend({
     },
 
     mergeOrUpdate: function(fileData, remoteKey, callback) {
-        var credentials;
+        let credentials;
+        let credentialsPromise = Promise.resolve();
         if (remoteKey) {
             credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(''));
-            if (remoteKey.password) {
-                credentials.setPassword(remoteKey.password);
-            } else {
-                credentials.passwordHash = this.db.credentials.passwordHash;
-            }
-            if (remoteKey.keyFileName) {
-                if (remoteKey.keyFileData) {
-                    credentials.setKeyFile(remoteKey.keyFileData);
+            credentialsPromise = credentials.ready.then(() => {
+                let promises = [];
+                if (remoteKey.password) {
+                    promises.push(credentials.setPassword(remoteKey.password));
                 } else {
-                    credentials.keyFileHash = this.db.credentials.keyFileHash;
+                    credentials.passwordHash = this.db.credentials.passwordHash;
                 }
-            }
+                if (remoteKey.keyFileName) {
+                    if (remoteKey.keyFileData) {
+                        promises.push(credentials.setKeyFile(remoteKey.keyFileData));
+                    } else {
+                        credentials.keyFileHash = this.db.credentials.keyFileHash;
+                    }
+                }
+                credentialsPromise = Promise.all(promises);
+            });
         } else {
             credentials = this.db.credentials;
         }
-        kdbxweb.Kdbx.load(fileData, credentials, (remoteDb, err) => {
-            if (err) {
-                logger.error('Error opening file to merge', err.code, err.message, err);
-            } else {
-                if (this.get('modified')) {
-                    try {
-                        if (remoteKey && remoteDb.meta.keyChanged > this.db.meta.keyChanged) {
-                            this.db.credentials = remoteDb.credentials;
-                            this.set('keyFileName', remoteKey.keyFileName || '');
-                            if (remoteKey.password) {
-                                this.set('passwordLength', remoteKey.password.textLength);
+        credentialsPromise.then(() => {
+            kdbxweb.Kdbx.load(fileData, credentials)
+                .then(remoteDb => {
+                    if (this.get('modified')) {
+                        try {
+                            if (remoteKey && remoteDb.meta.keyChanged > this.db.meta.keyChanged) {
+                                this.db.credentials = remoteDb.credentials;
+                                this.set('keyFileName', remoteKey.keyFileName || '');
+                                if (remoteKey.password) {
+                                    this.set('passwordLength', remoteKey.password.textLength);
+                                }
                             }
+                            this.db.merge(remoteDb);
+                        } catch (e) {
+                            logger.error('File merge error', e);
+                            return callback(e);
                         }
-                        this.db.merge(remoteDb);
-                    } catch (e) {
-                        logger.error('File merge error', e);
-                        return callback(e);
+                    } else {
+                        this.db = remoteDb;
                     }
-                } else {
-                    this.db = remoteDb;
-                }
-                this.set('dirty', true);
-                this.reload();
-            }
-            callback(err);
+                    this.set('dirty', true);
+                    this.reload();
+                    callback();
+                })
+                .catch(err => {
+                    logger.error('Error opening file to merge', err.code, err.message, err);
+                    callback(err);
+                });
         });
     },
 
@@ -312,16 +322,19 @@ var FileModel = Backbone.Model.extend({
             binaries: true
         });
         this.db.cleanup({ binaries: true });
-        this.db.save((data, err) => {
-            if (err) {
+        this.db.save()
+            .then(data => {
+                cb(data);
+            })
+            .catch(err => {
                 logger.error('Error saving file', this.get('name'), err);
-            }
-            cb(data, err);
-        });
+                cb(undefined, err);
+            });
     },
 
     getXml: function(cb) {
-        this.db.saveXml(cb);
+        this.db.saveXml()
+            .then(xml => { cb(xml); });
     },
 
     getKeyFileHash: function() {

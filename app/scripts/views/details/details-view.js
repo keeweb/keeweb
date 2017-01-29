@@ -619,8 +619,9 @@ var DetailsView = Backbone.View.extend({
     },
 
     addAttachment: function(name, data) {
-        this.model.addAttachment(name, data);
-        this.entryUpdated();
+        this.model.addAttachment(name, data).then(() => {
+            this.entryUpdated();
+        });
     },
 
     deleteKeyPress: function(e) {
