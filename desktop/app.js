@@ -263,6 +263,12 @@ function setMenu() {
                     { label: 'Paste', accelerator: 'CmdOrCtrl+V', role: 'paste' },
                     { label: 'Select All', accelerator: 'CmdOrCtrl+A', role: 'selectall' }
                 ]
+            },
+            {
+                label: 'Window',
+                submenu: [
+                    { label: 'Minimize', accelerator: 'CmdOrCtrl+M', role: 'minimize' }
+                ]
             }
         ];
         var menu = electron.Menu.buildFromTemplate(template);
