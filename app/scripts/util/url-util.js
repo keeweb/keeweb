@@ -2,7 +2,7 @@
 
 var UrlUtil = {
     multiSlashRegex: /\/{2,}/g,
-    lastPartRegex: /[^\/]+$/,
+    lastPartRegex: /[^\/\\]+$/,
     trimStartSlashRegex: /^\\/,
     kdbxEndRegex: /\.kdbx$/i,
 
