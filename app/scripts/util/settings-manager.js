@@ -5,7 +5,7 @@ const Locale = require('./locale');
 
 const SettingsManager = {
     neutralLocale: null,
-    activeLocale: null,
+    activeLocale: 'en',
 
     setBySettings: function(settings) {
         if (settings.get('theme')) {
@@ -14,8 +14,13 @@ const SettingsManager = {
         if (settings.get('fontSize')) {
             this.setFontSize(settings.get('fontSize'));
         }
-        if (settings.get('locale') && settings.get('locale') !== 'en') {
+        let locale = settings.get('locale');
+        if (locale) {
             this.setLocale(settings.get('locale'));
+        } else {
+            try {
+                this.setLocale(this.getBrowserLocale());
+            } catch (ex) {}
         }
     },
 
@@ -40,20 +45,25 @@ const SettingsManager = {
         document.documentElement.style.fontSize = fontSize ? (12 + fontSize * 2) + 'px' : '';
     },
 
-    setLocale(locale) {
+    setLocale(loc) {
+        if (!loc || loc === this.activeLocale) {
+            return;
+        }
+        let localeValues;
+        if (loc !== 'en') {
+            localeValues = require('../locales/' + loc + '.json');
+        }
         if (!this.neutralLocale) {
             this.neutralLocale = _.clone(Locale);
         }
-        let activeLocale = locale && locale !== 'en' ? locale : null;
-        if (activeLocale !== this.activeLocale) {
-            _.extend(Locale, this.neutralLocale);
-            if (activeLocale) {
-                let localeValues = require('../locales/' + locale + '.json');
-                _.extend(Locale, localeValues);
-            }
-            this.activeLocale = activeLocale;
-            Backbone.trigger('set-locale', activeLocale);
-        }
+        _.extend(Locale, this.neutralLocale, localeValues);
+        this.activeLocale = loc;
+        Backbone.trigger('set-locale', loc);
+    },
+
+    getBrowserLocale: function() {
+        let language = navigator.languages && navigator.languages[0] || navigator.language;
+        return language ? language.substr(0, 2).toLowerCase() : null;
     }
 };
 

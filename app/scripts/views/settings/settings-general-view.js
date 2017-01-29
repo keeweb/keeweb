@@ -13,6 +13,7 @@ var Backbone = require('backbone'),
     Storage = require('../../storage'),
     FeatureDetector = require('../../util/feature-detector'),
     Locale = require('../../util/locale'),
+    SettingsManager = require('../../util/settings-manager'),
     Links = require('../../const/links');
 
 var SettingsGeneralView = Backbone.View.extend({
@@ -58,11 +59,11 @@ var SettingsGeneralView = Backbone.View.extend({
 
     allLocales: {
         en: 'English',
-        'de-DE': 'Deutsch',
-        'fr-FR': 'Français',
-        'it-IT': 'Italiano',
-        'pl': 'Polski',
-        'pt-PT': 'Português'
+        de: 'Deutsch',
+        fr: 'Français',
+        it: 'Italiano',
+        pl: 'Polski',
+        pt: 'Português'
     },
 
     initialize: function() {
@@ -80,7 +81,7 @@ var SettingsGeneralView = Backbone.View.extend({
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
             locales: this.allLocales,
-            activeLocale: AppSettingsModel.instance.get('locale') || 'en',
+            activeLocale: SettingsManager.activeLocale,
             fontSize: AppSettingsModel.instance.get('fontSize'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),
             canClearClipboard: !!Launcher,
@@ -187,9 +188,6 @@ var SettingsGeneralView = Backbone.View.extend({
 
     changeLocale: function(e) {
         var locale = e.target.value;
-        if (locale === 'en') {
-            locale = null;
-        }
         if (locale === '...') {
             e.target.value = AppSettingsModel.instance.get('locale') || 'en';
             Alerts.info({
