@@ -291,10 +291,17 @@ var AppView = Backbone.View.extend({
             return;
         }
         if (this.model.files.hasDirtyFiles()) {
+            let exit = () => {
+                if (this.model.settings.get('minimizeOnClose')) {
+                    Launcher.minimizeApp();
+                } else {
+                    Launcher.exit();
+                }
+            };
             if (Launcher && !Launcher.exitRequested) {
                 if (!this.exitAlertShown) {
                     if (this.model.settings.get('autoSave')) {
-                        this.saveAndExit();
+                        this.saveAndLock(result => { if (result) { exit(); } });
                         return Launcher.preventExit(e);
                     }
                     this.exitAlertShown = true;
@@ -308,9 +315,9 @@ var AppView = Backbone.View.extend({
                         ],
                         success: result => {
                             if (result === 'save') {
-                                this.saveAndExit();
+                                this.saveAndLock(result => { if (result) { exit(); } });
                             } else {
-                                Launcher.exit();
+                                exit();
                             }
                         },
                         cancel: () => {
@@ -450,14 +457,6 @@ var AppView = Backbone.View.extend({
                 }
             }
         }
-    },
-
-    saveAndExit: function() {
-        this.saveAndLock(result => {
-            if (result) {
-                Launcher.exit();
-            }
-        });
     },
 
     closeAllFilesAndShowFirst: function() {
