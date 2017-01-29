@@ -7,6 +7,7 @@ Release notes
 `+` auto-lock in 12 hours or day  
 `+` text fields context menu on desktop  
 `+` option to disable latest file removal  
+`-` fix #432: drag-drop in vivaldi  
 
 ##### v1.3.3 (2016-09-20)
 `+` translations: fr, pl, pt  
