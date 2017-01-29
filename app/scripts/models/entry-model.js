@@ -591,9 +591,6 @@ var EntryModel = Backbone.Model.extend({
 
     setEnableAutoType: function(enabled) {
         this._entryModified();
-        if (enabled === this.group.getEffectiveEnableAutoType()) {
-            enabled = null;
-        }
         this.entry.autoType.enabled = enabled;
         this._buildAutoType();
     },
