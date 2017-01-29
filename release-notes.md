@@ -5,6 +5,7 @@ Release notes
 `+` warning about several tabs  
 `+` use browser language as default locale  
 `+` auto-lock in 12 hours or day  
+`+` text fields context menu on desktop  
 
 ##### v1.3.3 (2016-09-20)
 `+` translations: fr, pl, pt  

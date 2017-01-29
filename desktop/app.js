@@ -126,6 +126,7 @@ function createMainWindow() {
             notifyOpenFile();
         }, 50);
     });
+    mainWindow.webContents.on('context-menu', onContextMenu);
     mainWindow.on('resize', delaySaveMainWindowPosition);
     mainWindow.on('move', delaySaveMainWindowPosition);
     mainWindow.on('close', updateMainWindowPositionIfPending);
@@ -241,39 +242,57 @@ function setMenu() {
             {
                 label: name,
                 submenu: [
-                    { label: 'About ' + name, role: 'about' },
+                    { role: 'about' },
                     { type: 'separator' },
-                    { label: 'Services', role: 'services', submenu: [] },
+                    { role: 'services', submenu: [] },
                     { type: 'separator' },
-                    { label: 'Hide ' + name, accelerator: 'Command+H', role: 'hide' },
-                    { label: 'Hide Others', accelerator: 'Command+Shift+H', role: 'hideothers' },
-                    { label: 'Show All', role: 'unhide' },
+                    { accelerator: 'Command+H', role: 'hide' },
+                    { accelerator: 'Command+Shift+H', role: 'hideothers' },
+                    { role: 'unhide' },
                     { type: 'separator' },
-                    { label: 'Quit', accelerator: 'Command+Q', click: function() { app.quit(); } }
+                    { role: 'quit', accelerator: 'Command+Q' }
                 ]
             },
             {
                 label: 'Edit',
                 submenu: [
-                    { label: 'Undo', accelerator: 'CmdOrCtrl+Z', role: 'undo' },
-                    { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo' },
+                    { accelerator: 'CmdOrCtrl+Z', role: 'undo' },
+                    { accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo' },
                     { type: 'separator' },
-                    { label: 'Cut', accelerator: 'CmdOrCtrl+X', role: 'cut' },
-                    { label: 'Copy', accelerator: 'CmdOrCtrl+C', role: 'copy' },
-                    { label: 'Paste', accelerator: 'CmdOrCtrl+V', role: 'paste' },
-                    { label: 'Select All', accelerator: 'CmdOrCtrl+A', role: 'selectall' }
+                    { accelerator: 'CmdOrCtrl+X', role: 'cut' },
+                    { accelerator: 'CmdOrCtrl+C', role: 'copy' },
+                    { accelerator: 'CmdOrCtrl+V', role: 'paste' },
+                    { accelerator: 'CmdOrCtrl+A', role: 'selectall' }
                 ]
             },
             {
                 label: 'Window',
                 submenu: [
-                    { label: 'Minimize', accelerator: 'CmdOrCtrl+M', role: 'minimize' }
+                    { accelerator: 'CmdOrCtrl+M', role: 'minimize' }
                 ]
             }
         ];
         var menu = electron.Menu.buildFromTemplate(template);
         electron.Menu.setApplicationMenu(menu);
     }
+}
+
+function onContextMenu(e, props) {
+    if (props.inputFieldType !== 'plainText' || !props.isEditable) {
+        return;
+    }
+    const Menu = electron.Menu;
+    const inputMenu = Menu.buildFromTemplate([
+        {role: 'undo'},
+        {role: 'redo'},
+        {type: 'separator'},
+        {role: 'cut'},
+        {role: 'copy'},
+        {role: 'paste'},
+        {type: 'separator'},
+        {role: 'selectall'}
+    ]);
+    inputMenu.popup(mainWindow);
 }
 
 function notifyOpenFile() {
