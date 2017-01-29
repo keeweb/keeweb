@@ -87,6 +87,7 @@ var OpenView = Backbone.View.extend({
             canOpenSettings: this.model.settings.get('canOpenSettings'),
             canCreate: this.model.settings.get('canCreate'),
             canImportXml: this.model.settings.get('canImportXml'),
+            canRemoveLatest: this.model.settings.get('canRemoveLatest'),
             showMore: showMore,
             showLogo: showLogo
         });

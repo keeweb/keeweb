@@ -86,7 +86,7 @@
                 {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
                 {{#if file.iconSvg}}<div class="open__last-item-icon open__last-item-icon--svg">{{{file.iconSvg}}}</div>{{/if}}
                 <span class="open__last-item-text">{{file.name}}</span>
-                <i class="fa fa-times open__last-item-icon-del"></i>
+                {{#if ../canRemoveLatest}}<i class="fa fa-times open__last-item-icon-del"></i>{{/if}}
             </div>
             {{/each}}
         </div>

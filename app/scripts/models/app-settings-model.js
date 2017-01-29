@@ -34,6 +34,7 @@ var AppSettingsModel = Backbone.Model.extend({
         canOpenSettings: true,
         canCreate: true,
         canImportXml: true,
+        canRemoveLatest: true,
         dropbox: true,
         webdav: true,
         gdrive: true,

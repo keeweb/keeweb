@@ -26,6 +26,7 @@
     "canOpenSettings": true,
     "canCreate": true,
     "canImportXml": true,
+    "canRemoveLatest": true,
 
     "dropbox": true,
     "dropboxFolder": null,
