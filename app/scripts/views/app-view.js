@@ -292,7 +292,7 @@ var AppView = Backbone.View.extend({
         }
         if (this.model.files.hasDirtyFiles()) {
             let exit = () => {
-                if (this.model.settings.get('minimizeOnClose')) {
+                if (Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
                     Launcher.minimizeApp();
                 } else {
                     Launcher.exit();
