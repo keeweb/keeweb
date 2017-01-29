@@ -46,7 +46,9 @@ var AppSettingsModel = Backbone.Model.extend({
 
     load: function() {
         let data = SettingsStore.load('app-settings');
-        this.upgrade(data);
+        if (data) {
+            this.upgrade(data);
+        }
 
         if (data) {
             this.set(data, {silent: true});
