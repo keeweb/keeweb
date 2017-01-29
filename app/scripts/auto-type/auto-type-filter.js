@@ -14,7 +14,8 @@ let AutoTypeFilter = function(windowInfo, appModel) {
 
 AutoTypeFilter.prototype.getEntries = function() {
     let filter = {
-        text: this.text
+        text: this.text,
+        autoType: true
     };
     let entries = this.appModel.getEntriesByFilter(filter);
     if (!this.ignoreWindowInfo && this.hasWindowInfo()) {

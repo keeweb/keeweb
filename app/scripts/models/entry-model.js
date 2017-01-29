@@ -190,7 +190,8 @@ var EntryModel = Backbone.Model.extend({
         return !filter ||
             (!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
             (!filter.textLower || (filter.advanced ? this.matchesAdv(filter) : this.searchText.indexOf(filter.textLower) >= 0)) &&
-            (!filter.color || filter.color === true && this.searchColor || this.searchColor === filter.color);
+            (!filter.color || filter.color === true && this.searchColor || this.searchColor === filter.color) &&
+            (!filter.autoType || this.autoTypeEnabled);
     },
 
     matchesAdv: function(filter) {

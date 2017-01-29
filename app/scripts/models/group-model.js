@@ -107,11 +107,11 @@ var GroupModel = MenuItemModel.extend({
         this.group.times.update();
     },
 
-    forEachGroup: function(callback, includeDisabled) {
+    forEachGroup: function(callback, filter) {
         var result = true;
         this.get('items').forEach(group => {
-            if (includeDisabled || group.group.enableSearching !== false) {
-                result = callback(group) !== false && group.forEachGroup(callback, includeDisabled) !== false;
+            if (group.matches(filter)) {
+                result = callback(group) !== false && group.forEachGroup(callback, filter) !== false;
             }
         });
         return result;
@@ -123,6 +123,11 @@ var GroupModel = MenuItemModel.extend({
                 callback(entry, this);
             }
         });
+    },
+
+    matches: function(filter) {
+        return (filter && filter.includeDisabled || this.group.enableSearching !== false) &&
+            (!filter || !filter.autoType || this.group.enableAutoType !== false);
     },
 
     getOwnSubGroups: function() {

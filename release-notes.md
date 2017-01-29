@@ -8,6 +8,7 @@ Release notes
 `+` text fields context menu on desktop  
 `+` option to disable latest file removal  
 `-` fix #432: drag-drop in vivaldi  
+`-` fix auto-type enabled/disabled issues  
 
 ##### v1.3.3 (2016-09-20)
 `+` translations: fr, pl, pt  

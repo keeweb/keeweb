@@ -172,7 +172,7 @@ var FileModel = Backbone.Model.extend({
             group.forEachOwnEntry(null, entry => {
                 entryMap[entry.id] = entry;
             });
-        }, true);
+        }, { includeDisabled: true });
         this.entryMap = entryMap;
         this.groupMap = groupMap;
     },
@@ -282,15 +282,15 @@ var FileModel = Backbone.Model.extend({
             if (!filter.group || filter.subGroups) {
                 top.forEachGroup(group => {
                     group.forEachOwnEntry(filter, callback);
-                });
+                }, filter);
             }
         }
     },
 
-    forEachGroup: function(callback, includeDisabled) {
+    forEachGroup: function(callback, filter) {
         this.get('groups').forEach(group => {
             if (callback(group) !== false) {
-                group.forEachGroup(callback, includeDisabled);
+                group.forEachGroup(callback, filter);
             }
         });
     },
