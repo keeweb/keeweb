@@ -66,6 +66,11 @@ For pull requests: branch is important! `master` is only for hotfixes, `develop`
 Here's a [list of issues](https://github.com/keeweb/keeweb/labels/need%20help) which need help.
 Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your language.  
 
+### Important notes for pull requests
+
+- please branch from `develop`, not `master`
+- don't edit translation files except base.json, they will be replaced
+
 # Donations
 
 Donate with PayPal:  
