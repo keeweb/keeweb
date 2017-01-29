@@ -4,6 +4,7 @@ Release notes
 `+` password generator usability improvements  
 `+` warning about several tabs  
 `+` use browser language as default locale  
+`+` auto-lock in 12 hours or day  
 
 ##### v1.3.3 (2016-09-20)
 `+` translations: fr, pl, pt  

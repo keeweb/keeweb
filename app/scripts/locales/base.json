@@ -343,6 +343,8 @@
   "setGenNoAutoLock": "Don't auto-lock",
   "setGenLockMinutes": "In {} minutes",
   "setGenLockHour": "In an hour",
+  "setGenLockHours": "In {} hours",
+  "setGenLockDay": "In a day",
   "setGenClearClip": "Clear clipboard after copy",
   "setGenNoClear": "Don't clear",
   "setGenClearSeconds": "In {} seconds",
