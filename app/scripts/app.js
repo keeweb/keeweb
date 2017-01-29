@@ -8,7 +8,6 @@ var AppModel = require('./models/app-model'),
     SingleInstanceChecker = require('./comp/single-instance-checker'),
     Alerts = require('./comp/alerts'),
     Updater = require('./comp/updater'),
-    Launcher = require('./comp/launcher'),
     AuthReceiver = require('./comp/auth-receiver'),
     ExportApi = require('./comp/export-api'),
     SettingsManager = require('./util/settings-manager'),
@@ -63,8 +62,10 @@ $(() => {
     }
 
     function showApp() {
-        var skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning') || !!Launcher;
-        if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0 && !skipHttpsWarning) {
+        let skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
+        let protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
+        let hostIsInsecure = location.hostname !== 'localhost';
+        if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
             Alerts.error({ header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
                 body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
                 buttons: [
