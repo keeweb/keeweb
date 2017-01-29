@@ -276,12 +276,10 @@ var AppModel = Backbone.Model.extend({
         var selGroupId = this.filter.group;
         var file, group;
         if (selGroupId) {
-            this.files.forEach(f => {
+            this.files.some(f => {
+                file = f;
                 group = f.getGroup(selGroupId);
-                if (group) {
-                    file = f;
-                    return false;
-                }
+                return group;
             });
         }
         if (!group) {
