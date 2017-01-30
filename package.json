@@ -39,7 +39,7 @@
     "grunt-postcss": "0.8.0",
     "grunt-sass": "2.0.0",
     "grunt-string-replace": "1.3.1",
-    "grunt-webpack": "1.0.18",
+    "grunt-webpack": "2.0.1",
     "handlebars": "4.0.6",
     "handlebars-loader": "1.4.0",
     "html-minifier": "3.3.0",
@@ -53,8 +53,8 @@
     "strip-sourcemap-loader": "0.0.1",
     "time-grunt": "1.4.0",
     "uglify-loader": "1.4.0",
-    "webpack": "1.14.0",
-    "webpack-dev-server": "1.16.2"
+    "webpack": "^2.2.0",
+    "webpack-dev-server": "^2.2.0"
   },
   "optionalDependencies": {
     "grunt-appdmg": "0.4.0",

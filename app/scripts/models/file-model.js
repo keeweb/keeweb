@@ -6,7 +6,7 @@ var Backbone = require('backbone'),
     IconUrl = require('../util/icon-url'),
     Logger = require('../util/logger'),
     kdbxweb = require('kdbxweb'),
-    demoFileData = require('base64!../../resources/Demo.kdbx');
+    demoFileData = require('base64-loader!../../resources/Demo.kdbx');
 
 var logger = new Logger('file');
 

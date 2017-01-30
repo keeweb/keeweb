@@ -8,7 +8,7 @@ var Backbone = require('backbone'),
     UpdateModel = require('../models/update-model'),
     Transport = require('../comp/transport'),
     Logger = require('../util/logger'),
-    publicKey = require('raw!../../resources/public-key.pem');
+    publicKey = require('raw-loader!../../resources/public-key.pem');
 
 var logger = new Logger('updater');
 

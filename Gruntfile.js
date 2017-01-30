@@ -53,7 +53,7 @@ module.exports = function(grunt) {
             vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode', 'argon2']
         },
         output: {
-            path: 'tmp/js',
+            path: path.resolve('.', 'tmp/js'),
             filename: 'app.js'
         },
         stats: {
@@ -64,13 +64,13 @@ module.exports = function(grunt) {
         progress: false,
         failOnError: true,
         resolve: {
-            root: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'bower_components')],
+            modules: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'bower_components')],
             alias: {
                 backbone: 'backbone/backbone-min.js',
                 underscore: 'underscore/underscore-min.js',
                 _: 'underscore/underscore-min.js',
                 jquery: 'jquery/dist/jquery.min.js',
-                hbs: 'handlebars/runtime.js',
+                hbs: path.resolve(__dirname, 'node_modules', 'handlebars/runtime.js'),
                 kdbxweb: 'kdbxweb/dist/kdbxweb.js',
                 dropbox: 'dropbox/lib/dropbox.min.js',
                 baron: 'baron/baron.min.js',
@@ -92,21 +92,20 @@ module.exports = function(grunt) {
                     { pattern: /@@DATE/g, replacement: function() { return dt; } },
                     { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
                 ]})},
-                { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
-                { test: /pikaday\.js$/, loader: 'uglify' },
+                { test: /baron(\.min)?\.js$/, loader: 'exports-loader?baron; delete window.baron;' },
+                { test: /pikaday\.js$/, loader: 'uglify-loader' },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
-                { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel',
+                { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel-loader',
                     query: { presets: ['es2015'], cacheDirectory: true }
                 },
-                { test: /\.json$/, loader: 'json' },
-                { test: /argon2-asm\.min\.js$/, loader: 'exports?Module' }
+                { test: /\.json$/, loader: 'json-loader' },
+                { test: /argon2-asm\.min\.js$/, loader: 'exports-loader?Module' }
             ]
         },
         plugins: [
-            new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
+            new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', minChunks: Infinity, filename: 'vendor.js' }),
             new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) ' + new Date().getFullYear() + ' ' + pkg.author.name +
                 ', opensource.org/licenses/' + pkg.license),
-            new webpack.optimize.OccurenceOrderPlugin(),
             new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
             new webpack.IgnorePlugin(/^(moment)$/),
             new StringReplacePlugin(),
@@ -119,7 +118,8 @@ module.exports = function(grunt) {
             Buffer: false,
             __filename: false,
             __dirname: false,
-            fs: false
+            fs: false,
+            setImmediate: false
         },
         externals: {
             xmldom: 'null',
@@ -278,7 +278,7 @@ module.exports = function(grunt) {
                 progress: false
             },
             js: {
-                keepAlive: true,
+                keepalive: true,
                 webpack: {
                     devtool: 'source-map'
                 },
@@ -305,10 +305,6 @@ module.exports = function(grunt) {
                 interrupt: true,
                 debounceDelay: 500
             },
-            // scripts: {
-            //     files: ['app/scripts/**/*.js', 'app/templates/**/*.hbs'],
-            //     tasks: ['webpack']
-            // },
             styles: {
                 files: 'app/styles/**/*.scss',
                 tasks: ['sass']
