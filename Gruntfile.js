@@ -119,12 +119,14 @@ module.exports = function(grunt) {
             __filename: false,
             __dirname: false,
             fs: false,
-            setImmediate: false
+            setImmediate: false,
+            path: false
         },
         externals: {
             xmldom: 'null',
             crypto: 'null',
-            fs: 'null'
+            fs: 'null',
+            path: 'null'
         }
     };
 
