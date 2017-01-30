@@ -20,7 +20,7 @@ var Backbone = require('backbone'),
     KeyHandler = require('../comp/key-handler'),
     IdleTracker = require('../comp/idle-tracker'),
     Launcher = require('../comp/launcher'),
-    SettingsManager = require('../util/settings-manager'),
+    SettingsManager = require('../comp/settings-manager'),
     Locale = require('../util/locale'),
     UpdateModel = require('../models/update-model');
 

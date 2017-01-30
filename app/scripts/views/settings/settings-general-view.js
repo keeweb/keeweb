@@ -10,10 +10,10 @@ var Backbone = require('backbone'),
     UpdateModel = require('../../models/update-model'),
     RuntimeInfo = require('../../comp/runtime-info'),
     Alerts = require('../../comp/alerts'),
+    SettingsManager = require('../../comp/settings-manager'),
     Storage = require('../../storage'),
     FeatureDetector = require('../../util/feature-detector'),
     Locale = require('../../util/locale'),
-    SettingsManager = require('../../util/settings-manager'),
     Links = require('../../const/links');
 
 var SettingsGeneralView = Backbone.View.extend({

@@ -1,7 +1,7 @@
 'use strict';
 
 const Backbone = require('backbone');
-const Locale = require('./locale');
+const Locale = require('./../util/locale');
 
 const SettingsManager = {
     neutralLocale: null,

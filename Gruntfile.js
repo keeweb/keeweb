@@ -50,7 +50,7 @@ module.exports = function(grunt) {
     var webpackConfig = {
         entry: {
             app: 'app',
-            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode']
+            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode', 'argon2']
         },
         output: {
             path: 'tmp/js',
@@ -77,6 +77,7 @@ module.exports = function(grunt) {
                 pikaday: 'pikaday/pikaday.js',
                 filesaver: 'FileSaver.js/FileSaver.min.js',
                 qrcode: 'jsqrcode/dist/qrcode.min.js',
+                argon2: 'argon2-browser/docs/dist/argon2-asm.min.js',
                 templates: path.join(__dirname, 'app/templates')
             }
         },
@@ -97,12 +98,13 @@ module.exports = function(grunt) {
                 { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel',
                     query: { presets: ['es2015'], cacheDirectory: true }
                 },
-                { test: /\.json$/, loader: 'json' }
+                { test: /\.json$/, loader: 'json' },
+                { test: /argon2-asm\.min\.js$/, loader: 'exports?Module' }
             ]
         },
         plugins: [
             new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-            new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) 2015 ' + pkg.author.name +
+            new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) ' + new Date().getFullYear() + ' ' + pkg.author.name +
                 ', opensource.org/licenses/' + pkg.license),
             new webpack.optimize.OccurenceOrderPlugin(),
             new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
@@ -116,11 +118,13 @@ module.exports = function(grunt) {
             crypto: false,
             Buffer: false,
             __filename: false,
-            __dirname: false
+            __dirname: false,
+            fs: false
         },
         externals: {
             xmldom: 'null',
-            crypto: 'null'
+            crypto: 'null',
+            fs: 'null'
         }
     };
 

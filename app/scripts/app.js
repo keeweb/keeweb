@@ -10,7 +10,8 @@ var AppModel = require('./models/app-model'),
     Updater = require('./comp/updater'),
     AuthReceiver = require('./comp/auth-receiver'),
     ExportApi = require('./comp/export-api'),
-    SettingsManager = require('./util/settings-manager'),
+    SettingsManager = require('./comp/settings-manager'),
+    KdbxwebInit = require('./util/kdbxweb-init'),
     Locale = require('./util/locale');
 
 $(() => {
@@ -49,6 +50,7 @@ $(() => {
         KeyHandler.init();
         IdleTracker.init();
         PopupNotifier.init();
+        KdbxwebInit.init();
         window.kw = ExportApi;
     }
 
