@@ -48,8 +48,8 @@ var FileModel = Backbone.Model.extend({
 
     open: function(password, fileData, keyFileData, callback) {
         try {
-            var credentials = new kdbxweb.Credentials(password, keyFileData);
-            var ts = logger.ts();
+            let credentials = new kdbxweb.Credentials(password, keyFileData);
+            let ts = logger.ts();
 
             kdbxweb.Kdbx.load(fileData, credentials)
                 .then(db => {
@@ -59,8 +59,23 @@ var FileModel = Backbone.Model.extend({
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                     }
+                    let kdfParams = '';
+                    if (db.header.kdfParameters) {
+                        kdfParams = db.header.kdfParameters.keys().map(key => {
+                            let val = db.header.kdfParameters.get(key);
+                            if (val instanceof ArrayBuffer) {
+                                return;
+                            }
+                            if (val.value) {
+                                val = val.value;
+                            }
+                            return key + '=' + val;
+                        }).filter(p => p).join('&');
+                    } else if (db.header.keyEncryptionRounds) {
+                        kdfParams = db.header.keyEncryptionRounds + ' rounds';
+                    }
                     logger.info('Opened file ' + this.get('name') + ': ' + logger.ts(ts) + ', ' +
-                        db.header.keyEncryptionRounds + ' rounds, ' + Math.round(fileData.byteLength / 1024) + ' kB');
+                        kdfParams + ', ' + Math.round(fileData.byteLength / 1024) + ' kB');
                     callback();
                 })
                 .catch(err => {
