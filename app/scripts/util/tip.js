@@ -1,9 +1,9 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    FeatureDetector = require('./feature-detector');
+const Backbone = require('backbone');
+const FeatureDetector = require('./feature-detector');
 
-var Tip = function(el, config) {
+const Tip = function(el, config) {
     this.el = el;
     this.title = config && config.title || el.attr('title');
     this.placement = config && config.placement || el.attr('tip-placement');
@@ -39,17 +39,18 @@ Tip.prototype.show = function() {
             this.hideTimeout = null;
         }
     }
-    var tipEl = this.tipEl = $('<div></div>').addClass('tip').appendTo('body').html(this.title);
-    var rect = this.el[0].getBoundingClientRect(),
-        tipRect = this.tipEl[0].getBoundingClientRect();
-    var placement = this.placement || this.getAutoPlacement(rect, tipRect);
+    const tipEl = this.tipEl = $('<div></div>').addClass('tip').appendTo('body').html(this.title);
+    const rect = this.el[0].getBoundingClientRect();
+    const tipRect = this.tipEl[0].getBoundingClientRect();
+    const placement = this.placement || this.getAutoPlacement(rect, tipRect);
     tipEl.addClass('tip--' + placement);
     if (this.fast) {
         tipEl.addClass('tip--fast');
     }
-    var top, left;
-    var offset = 10;
-    var sideOffset = 10;
+    let top,
+        left;
+    const offset = 10;
+    const sideOffset = 10;
     switch (placement) {
         case 'top':
             top = rect.top - tipRect.height - offset;
@@ -108,13 +109,13 @@ Tip.prototype.mouseleave = function() {
 };
 
 Tip.prototype.getAutoPlacement = function(rect, tipRect) {
-    var padding = 20;
-    var bodyRect = document.body.getBoundingClientRect();
-    var canShowToBottom = bodyRect.bottom - rect.bottom > padding + tipRect.height,
-        canShowToHalfRight = bodyRect.right - rect.right > padding + tipRect.width / 2,
-        canShowToRight = bodyRect.right - rect.right > padding + tipRect.width,
-        canShowToHalfLeft = rect.left > padding + tipRect.width / 2,
-        canShowToLeft = rect.left > padding + tipRect.width;
+    const padding = 20;
+    const bodyRect = document.body.getBoundingClientRect();
+    const canShowToBottom = bodyRect.bottom - rect.bottom > padding + tipRect.height;
+    const canShowToHalfRight = bodyRect.right - rect.right > padding + tipRect.width / 2;
+    const canShowToRight = bodyRect.right - rect.right > padding + tipRect.width;
+    const canShowToHalfLeft = rect.left > padding + tipRect.width / 2;
+    const canShowToLeft = rect.left > padding + tipRect.width;
     if (canShowToBottom) {
         if (canShowToLeft && !canShowToHalfRight) {
             return 'left';
@@ -146,7 +147,7 @@ Tip.createTip = function(el) {
     if (!Tip.enabled) {
         return;
     }
-    var tip = new Tip($(el));
+    const tip = new Tip($(el));
     tip.init();
     el._tip = tip;
 };

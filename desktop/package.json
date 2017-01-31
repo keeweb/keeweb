@@ -13,6 +13,6 @@
   "license": "MIT",
   "readme": "../README.md",
   "dependencies": {
-    "node-stream-zip": "1.3.3"
+    "node-stream-zip": "1.3.7"
   }
 }

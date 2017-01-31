@@ -1,9 +1,9 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    SettingsStore = require('../comp/settings-store');
+const Backbone = require('backbone');
+const SettingsStore = require('../comp/settings-store');
 
-var UpdateModel = Backbone.Model.extend({
+const UpdateModel = Backbone.Model.extend({
     defaults: {
         lastSuccessCheckDate: null,
         lastCheckDate: null,
@@ -21,7 +21,7 @@ var UpdateModel = Backbone.Model.extend({
     },
 
     load: function() {
-        var data = SettingsStore.load('update-info');
+        const data = SettingsStore.load('update-info');
         if (data) {
             try {
                 _.each(data, (val, key) => {
@@ -35,7 +35,7 @@ var UpdateModel = Backbone.Model.extend({
     },
 
     save: function() {
-        var attr = _.clone(this.attributes);
+        const attr = _.clone(this.attributes);
         Object.keys(attr).forEach(key => {
             if (key.lastIndexOf('update', 0) === 0) {
                 delete attr[key];

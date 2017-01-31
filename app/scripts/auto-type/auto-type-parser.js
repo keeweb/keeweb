@@ -1,8 +1,8 @@
 'use strict';
 
-var AutoTypeRunner = require('./auto-type-runner');
+const AutoTypeRunner = require('./auto-type-runner');
 
-var AutoTypeParser = function(sequence) {
+const AutoTypeParser = function(sequence) {
     this.sequence = sequence;
     this.ix = 0;
     this.states = [];
@@ -11,10 +11,10 @@ var AutoTypeParser = function(sequence) {
 AutoTypeParser.opSepRegex = /[\s:=]+/;
 
 AutoTypeParser.prototype.parse = function() {
-    var len = this.sequence.length;
+    const len = this.sequence.length;
     this.pushState();
     while (this.ix < len) {
-        var ch = this.sequence[this.ix];
+        const ch = this.sequence[this.ix];
         switch (ch) {
             case '{':
                 this.readOp();
@@ -58,7 +58,7 @@ AutoTypeParser.prototype.popState = function() {
     if (this.states.length <= 1) {
         throw 'Unexpected ")" at index ' + this.ix;
     }
-    var state = this.states.shift();
+    const state = this.states.shift();
     this.addState(state);
 };
 
@@ -67,21 +67,21 @@ AutoTypeParser.prototype.state = function() {
 };
 
 AutoTypeParser.prototype.readOp = function() {
-    var toIx = this.sequence.indexOf('}', this.ix + 2);
+    const toIx = this.sequence.indexOf('}', this.ix + 2);
     if (toIx < 0) {
         throw 'Mismatched "{" at index ' + this.ix;
     }
-    var contents = this.sequence.substring(this.ix + 1, toIx);
+    const contents = this.sequence.substring(this.ix + 1, toIx);
     this.ix = toIx + 1;
     if (contents.length === 1) {
         this.addChar(contents);
         return;
     }
-    var parts = contents.split(AutoTypeParser.opSepRegex, 2);
+    const parts = contents.split(AutoTypeParser.opSepRegex, 2);
     if (parts.length > 1 && parts[0].length && parts[1].length) {
-        var op = parts[0];
-        var sep = contents.substr(op.length, 1);
-        var arg = parts[1];
+        const op = parts[0];
+        const sep = contents.substr(op.length, 1);
+        const arg = parts[1];
         this.addOp(op, sep, arg);
     } else {
         this.addOp(contents);
@@ -89,7 +89,7 @@ AutoTypeParser.prototype.readOp = function() {
 };
 
 AutoTypeParser.prototype.readModifier = function(modifier) {
-    var state = this.state();
+    const state = this.state();
     if (!state.modifiers) {
         state.modifiers = {};
     }
@@ -101,8 +101,8 @@ AutoTypeParser.prototype.readModifier = function(modifier) {
 };
 
 AutoTypeParser.prototype.resetModifiers = function() {
-    var state = this.state();
-    var modifiers = state.modifiers;
+    const state = this.state();
+    const modifiers = state.modifiers;
     state.modifiers = null;
     return modifiers;
 };

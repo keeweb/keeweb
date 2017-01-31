@@ -1,10 +1,10 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Locale = require('../util/locale'),
-    Keys = require('../const/keys');
+const Backbone = require('backbone');
+const Locale = require('../util/locale');
+const Keys = require('../const/keys');
 
-var OpenConfigView = Backbone.View.extend({
+const OpenConfigView = Backbone.View.extend({
     template: require('templates/open-config.hbs'),
 
     events: {
@@ -26,7 +26,7 @@ var OpenConfigView = Backbone.View.extend({
     },
 
     apply: function() {
-        var data = this.getData();
+        const data = this.getData();
         if (data) {
             this.trigger('apply', data);
         }
@@ -43,14 +43,14 @@ var OpenConfigView = Backbone.View.extend({
     },
 
     checkValidity: function() {
-        var isValid = this.getData();
+        const isValid = this.getData();
         this.$el.find('.open__config-btn-ok').prop('disabled', !isValid);
     },
 
     getData: function() {
-        var data = { storage: this.model.id };
+        let data = { storage: this.model.id };
         this.model.fields.every(function(field) {
-            var input = this.$el.find('#open__config-field-' + field.id)[0];
+            const input = this.$el.find('#open__config-field-' + field.id)[0];
             if (data && input.checkValidity()) {
                 data[field.id] = input.value;
             } else {
@@ -72,7 +72,7 @@ var OpenConfigView = Backbone.View.extend({
     },
 
     setError: function(err) {
-        var errText = err && err.notFound ? Locale.openConfigErrorNotFound : Locale.openConfigError.replace('{}', err);
+        const errText = err && err.notFound ? Locale.openConfigErrorNotFound : Locale.openConfigError.replace('{}', err);
         this.$el.find('.open__config-error').text(errText);
     }
 });

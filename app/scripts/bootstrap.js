@@ -1,16 +1,18 @@
 'use strict';
 
-var AppModel = require('./models/app-model'),
-    AppView = require('./views/app-view'),
-    KeyHandler = require('./comp/key-handler'),
-    IdleTracker = require('./comp/idle-tracker'),
-    PopupNotifier = require('./comp/popup-notifier'),
-    Alerts = require('./comp/alerts'),
-    Updater = require('./comp/updater'),
-    AuthReceiver = require('./comp/auth-receiver'),
-    ExportApi = require('./comp/export-api'),
-    SettingsManager = require('./util/settings-manager'),
-    Locale = require('./util/locale');
+const AppModel = require('./models/app-model');
+const AppView = require('./views/app-view');
+const KeyHandler = require('./comp/key-handler');
+const IdleTracker = require('./comp/idle-tracker');
+const PopupNotifier = require('./comp/popup-notifier');
+const SingleInstanceChecker = require('./comp/single-instance-checker');
+const Alerts = require('./comp/alerts');
+const Updater = require('./comp/updater');
+const AuthReceiver = require('./comp/auth-receiver');
+const ExportApi = require('./comp/export-api');
+const SettingsManager = require('./comp/settings-manager');
+const KdbxwebInit = require('./util/kdbxweb-init');
+const Locale = require('./util/locale');
 
 $(() => {
     if (isPopup()) {
@@ -19,9 +21,9 @@ $(() => {
     loadMixins();
     initModules();
 
-    var appModel = new AppModel();
+    const appModel = new AppModel();
     SettingsManager.setBySettings(appModel.settings);
-    var configParam = getConfigParam();
+    const configParam = getConfigParam();
     if (configParam) {
         appModel.loadConfig(configParam, err => {
             SettingsManager.setBySettings(appModel.settings);
@@ -48,6 +50,7 @@ $(() => {
         KeyHandler.init();
         IdleTracker.init();
         PopupNotifier.init();
+        KdbxwebInit.init();
         window.kw = ExportApi;
     }
 
@@ -61,8 +64,10 @@ $(() => {
     }
 
     function showApp() {
-        var skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
-        if (['https:', 'file:', 'app:'].indexOf(location.protocol) < 0 && !skipHttpsWarning) {
+        const skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
+        const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
+        const hostIsInsecure = location.hostname !== 'localhost';
+        if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
             Alerts.error({ header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
                 body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
                 buttons: [
@@ -79,14 +84,15 @@ $(() => {
         appModel.prepare();
         new AppView({ model: appModel }).render();
         Updater.init();
+        SingleInstanceChecker.init();
     }
 
     function getConfigParam() {
-        let metaConfig = document.head.querySelector('meta[name=kw-config]');
+        const metaConfig = document.head.querySelector('meta[name=kw-config]');
         if (metaConfig && metaConfig.content && metaConfig.content[0] !== '(') {
             return metaConfig.content;
         }
-        var match = location.search.match(/[?&]config=([^&]+)/i);
+        const match = location.search.match(/[?&]config=([^&]+)/i);
         if (match && match[1]) {
             return match[1];
         }

@@ -1,18 +1,18 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    RuntimeInfo = require('./runtime-info'),
-    Links = require('../const/links'),
-    Launcher = require('../comp/launcher'),
-    AppSettingsModel = require('../models/app-settings-model'),
-    UpdateModel = require('../models/update-model'),
-    Transport = require('../comp/transport'),
-    Logger = require('../util/logger'),
-    publicKey = require('raw!../../resources/public-key.pem');
+const Backbone = require('backbone');
+const RuntimeInfo = require('./runtime-info');
+const Links = require('../const/links');
+const Launcher = require('../comp/launcher');
+const AppSettingsModel = require('../models/app-settings-model');
+const UpdateModel = require('../models/update-model');
+const Transport = require('../comp/transport');
+const Logger = require('../util/logger');
+const publicKey = require('raw-loader!../../resources/public-key.pem');
 
-var logger = new Logger('updater');
+const logger = new Logger('updater');
 
-var Updater = {
+const Updater = {
     UpdateInterval: 1000 * 60 * 60 * 24,
     MinUpdateTimeout: 500,
     MinUpdateSize: 10000,
@@ -25,7 +25,7 @@ var Updater = {
         if (!this.enabled) {
             return false;
         }
-        var autoUpdate = AppSettingsModel.instance.get('autoUpdate');
+        let autoUpdate = AppSettingsModel.instance.get('autoUpdate');
         if (autoUpdate && autoUpdate === true) {
             autoUpdate = 'install';
         }
@@ -53,8 +53,8 @@ var Updater = {
         if (!this.getAutoUpdateType()) {
             return;
         }
-        var timeDiff = this.MinUpdateTimeout;
-        var lastCheckDate = UpdateModel.instance.get('lastCheckDate');
+        let timeDiff = this.MinUpdateTimeout;
+        const lastCheckDate = UpdateModel.instance.get('lastCheckDate');
         if (lastCheckDate) {
             timeDiff = Math.min(Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout), this.UpdateInterval);
         }
@@ -69,7 +69,7 @@ var Updater = {
         UpdateModel.instance.set('status', 'checking');
         if (!startedByUser) {
             // additional protection from broken program logic, to ensure that auto-checks are not performed more than once an hour
-            var diffMs = new Date() - this.updateCheckDate;
+            const diffMs = new Date() - this.updateCheckDate;
             if (isNaN(diffMs) || diffMs < 1000 * 60 * 60) {
                 logger.error('Prevented update check; last check was performed at ' + this.updateCheckDate);
                 this.scheduleNextCheck();
@@ -82,18 +82,18 @@ var Updater = {
             url: Links.Manifest,
             utf8: true,
             success: data => {
-                var dt = new Date();
-                var match = data.match(/#\s*(\d+\-\d+\-\d+):v([\d+\.\w]+)/);
+                const dt = new Date();
+                const match = data.match(/#\s*(\d+\-\d+\-\d+):v([\d+\.\w]+)/);
                 logger.info('Update check: ' + (match ? match[0] : 'unknown'));
                 if (!match) {
-                    var errMsg = 'No version info found';
+                    const errMsg = 'No version info found';
                     UpdateModel.instance.set({ status: 'error', lastCheckDate: dt, lastCheckError: errMsg });
                     UpdateModel.instance.save();
                     this.scheduleNextCheck();
                     return;
                 }
-                var updateMinVersionMatch = data.match(/#\s*updmin:v([\d+\.\w]+)/);
-                var prevLastVersion = UpdateModel.instance.get('lastVersion');
+                const updateMinVersionMatch = data.match(/#\s*updmin:v([\d+\.\w]+)/);
+                const prevLastVersion = UpdateModel.instance.get('lastVersion');
                 UpdateModel.instance.set({
                     status: 'ok',
                     lastCheckDate: dt,
@@ -133,9 +133,9 @@ var Updater = {
     },
 
     canAutoUpdate: function() {
-        var minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
+        const minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
         if (minLauncherVersion) {
-            var cmp = this.compareVersions(Launcher.version, minLauncherVersion);
+            const cmp = this.compareVersions(Launcher.version, minLauncherVersion);
             if (cmp < 0) {
                 UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
                 return false;
@@ -147,9 +147,9 @@ var Updater = {
     compareVersions: function(left, right) {
         left = left.split('.');
         right = right.split('.');
-        for (var num = 0; num < left.length; num++) {
-            var partLeft = left[num] | 0,
-                partRight = right[num] | 0;
+        for (let num = 0; num < left.length; num++) {
+            const partLeft = left[num] | 0;
+            const partRight = right[num] | 0;
             if (partLeft < partRight) {
                 return -1;
             }
@@ -161,7 +161,7 @@ var Updater = {
     },
 
     update: function(startedByUser, successCallback) {
-        var ver = UpdateModel.instance.get('lastVersion');
+        const ver = UpdateModel.instance.get('lastVersion');
         if (!this.enabled) {
             logger.info('Updater is disabled');
             return;
@@ -202,20 +202,20 @@ var Updater = {
     },
 
     extractAppUpdate: function(updateFile, cb) {
-        var expectedFiles = this.UpdateCheckFiles;
-        var appPath = Launcher.getUserDataPath();
-        var StreamZip = Launcher.req('node-stream-zip');
-        var zip = new StreamZip({ file: updateFile, storeEntries: true });
+        const expectedFiles = this.UpdateCheckFiles;
+        const appPath = Launcher.getUserDataPath();
+        const StreamZip = Launcher.req('node-stream-zip');
+        const zip = new StreamZip({ file: updateFile, storeEntries: true });
         zip.on('error', cb);
         zip.on('ready', () => {
-            var containsAll = expectedFiles.every(expFile => {
-                var entry = zip.entry(expFile);
+            const containsAll = expectedFiles.every(expFile => {
+                const entry = zip.entry(expFile);
                 return entry && entry.isFile;
             });
             if (!containsAll) {
                 return cb('Bad archive');
             }
-            var validationError = this.validateArchiveSignature(updateFile, zip);
+            const validationError = this.validateArchiveSignature(updateFile, zip);
             if (validationError) {
                 return cb('Invalid archive: ' + validationError);
             }
@@ -238,11 +238,11 @@ var Updater = {
             return 'Bad comment length in ZIP: ' + zip.comment.length;
         }
         try {
-            var zipFileData = Launcher.req('fs').readFileSync(archivePath);
-            var verify = Launcher.req('crypto').createVerify('RSA-SHA256');
+            const zipFileData = Launcher.req('fs').readFileSync(archivePath);
+            const verify = Launcher.req('crypto').createVerify('RSA-SHA256');
             verify.write(zipFileData.slice(0, zip.centralDirectory.headerOffset + 22));
             verify.end();
-            var signature = new window.Buffer(zip.comment, 'hex');
+            const signature = new window.Buffer(zip.comment, 'hex');
             if (!verify.verify(publicKey, signature)) {
                 return 'Invalid signature';
             }

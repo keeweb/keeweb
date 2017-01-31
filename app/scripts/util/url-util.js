@@ -1,13 +1,13 @@
 'use strict';
 
-var UrlUtil = {
+const UrlUtil = {
     multiSlashRegex: /\/{2,}/g,
-    lastPartRegex: /[^\/]+$/,
+    lastPartRegex: /[^\/\\]+$/,
     trimStartSlashRegex: /^\\/,
     kdbxEndRegex: /\.kdbx$/i,
 
     getDataFileName: function(url) {
-        var ix = url.lastIndexOf('/');
+        const ix = url.lastIndexOf('/');
         if (ix >= 0) {
             url = url.substr(ix + 1);
         }

@@ -1,13 +1,13 @@
 'use strict';
 
-var FieldViewText = require('./field-view-text'),
-    Locale = require('../../util/locale'),
-    Pikaday = require('pikaday'),
-    Format = require('../../util/format');
+const FieldViewText = require('./field-view-text');
+const Locale = require('../../util/locale');
+const Pikaday = require('pikaday');
+const Format = require('../../util/format');
 
-var FieldViewDate = FieldViewText.extend({
+const FieldViewDate = FieldViewText.extend({
     renderValue: function(value) {
-        var result = value ? Format.dStr(value) : '';
+        let result = value ? Format.dStr(value) : '';
         if (value && this.model.lessThanNow && value < new Date()) {
             result += ' ' + this.model.lessThanNow;
         }

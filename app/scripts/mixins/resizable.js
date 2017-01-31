@@ -1,8 +1,8 @@
 'use strict';
 
-var Backbone = require('backbone');
+const Backbone = require('backbone');
 
-var Resizable = {
+const Resizable = {
     listenDrag: function(dragView) {
         this.listenTo(dragView, 'dragstart', this.dragStart);
         this.listenTo(dragView, 'drag', this.drag);
@@ -14,8 +14,8 @@ var Resizable = {
     },
 
     drag: function(e) {
-        var dragInfo = this._dragInfo;
-        var size = dragInfo.startSize + e.offset;
+        const dragInfo = this._dragInfo;
+        let size = dragInfo.startSize + e.offset;
         size = Math.max(dragInfo.min, Math.min(dragInfo.max, size));
         this.$el[dragInfo.prop](size);
         this.trigger('view-resize', size);
@@ -23,7 +23,7 @@ var Resizable = {
     },
 
     autoSize: function(e) {
-        var dragInfo = this.getDragInfo(e.coord);
+        const dragInfo = this.getDragInfo(e.coord);
         if (dragInfo.auto !== undefined) {
             this.$el.css(dragInfo.prop, dragInfo.auto);
         } else {
@@ -35,8 +35,8 @@ var Resizable = {
     },
 
     fixSize: function(cfg) {
-        var size = this.$el[cfg.prop]();
-        var newSize = Math.max(cfg.min, Math.min(cfg.max, size));
+        const size = this.$el[cfg.prop]();
+        const newSize = Math.max(cfg.min, Math.min(cfg.max, size));
         if (newSize !== size) {
             this.$el[cfg.prop](size);
         }
@@ -53,17 +53,17 @@ var Resizable = {
     // },
 
     getDragInfo: function(coord) {
-        var prop = coord === 'x' ? 'Width' : 'Height',
-            propLower = prop.toLowerCase(),
-            min = this.getSizeProp('min' + prop),
-            max = this.getSizeProp('max' + prop),
-            auto = this.getSizeProp('auto' + prop) || 'auto',
-            startSize = this.$el[propLower]();
+        const prop = coord === 'x' ? 'Width' : 'Height';
+        const propLower = prop.toLowerCase();
+        const min = this.getSizeProp('min' + prop);
+        const max = this.getSizeProp('max' + prop);
+        const auto = this.getSizeProp('auto' + prop) || 'auto';
+        const startSize = this.$el[propLower]();
         return { startSize: startSize, prop: propLower, min: min, max: max, auto: auto };
     },
 
     getSizeProp: function(prop) {
-        var member = this[prop];
+        const member = this[prop];
         return typeof member === 'function' ? member.call(this) : member;
     }
 };

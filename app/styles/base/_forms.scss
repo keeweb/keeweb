@@ -250,11 +250,13 @@ input[type=range] {
   }
 }
 
-
-
-.input-base {
+.input-size-base {
   width: 60%;
   @include tablet {
     width: calc(100% - 20px);
   }
+}
+
+.input-base {
+  @extend .input-size-base;
 }

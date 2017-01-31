@@ -1,8 +1,8 @@
 'use strict';
 
-var kdbxweb = require('kdbxweb');
+const kdbxweb = require('kdbxweb');
 
-var SecureInput = function() {
+const SecureInput = function() {
     this.el = null;
     this.minChar = 0x1400 + Math.round(Math.random() * 100);
     this.maxLen = 1024;
@@ -23,7 +23,7 @@ SecureInput.prototype.reset = function() {
     this.pseudoValue = '';
 
     if (this.salt) {
-        for (var i = 0; i < this.salt.length; i++) {
+        for (let i = 0; i < this.salt.length; i++) {
             this.salt[i] = 0;
         }
     }
@@ -31,15 +31,16 @@ SecureInput.prototype.reset = function() {
 };
 
 SecureInput.prototype._input = function() {
-    var selStart = this.el[0].selectionStart;
-    var value = this.el.val();
-    var newPs = '',
-        newSalt = new Uint32Array(this.maxLen);
-    var valIx = 0, psIx = 0;
+    const selStart = this.el[0].selectionStart;
+    const value = this.el.val();
+    let newPs = '';
+    const newSalt = new Uint32Array(this.maxLen);
+    let valIx = 0,
+        psIx = 0;
     while (valIx < value.length) {
-        var valCh = value.charCodeAt(valIx),
-            psCh = this.pseudoValue.charCodeAt(psIx),
-            isSpecial = this._isSpecialChar(valCh);
+        const valCh = value.charCodeAt(valIx);
+        const psCh = this.pseudoValue.charCodeAt(psIx);
+        const isSpecial = this._isSpecialChar(valCh);
         if (psCh === valCh) {
             // not changed
             newPs += this._getChar(newPs.length);
@@ -75,17 +76,18 @@ SecureInput.prototype._isSpecialChar = function(ch) {
 Object.defineProperty(SecureInput.prototype, 'value', {
     enumerable: true,
     get: function() {
-        var pseudoValue = this.pseudoValue,
-            salt = this.salt,
-            len = pseudoValue.length,
-            byteLength = 0,
-            valueBytes = new Uint8Array(len * 4),
-            saltBytes = kdbxweb.Random.getBytes(len * 4),
-            ch, bytes;
-        for (var i = 0; i < len; i++) {
+        const pseudoValue = this.pseudoValue;
+        const salt = this.salt;
+        const len = pseudoValue.length;
+        let byteLength = 0;
+        const valueBytes = new Uint8Array(len * 4);
+        const saltBytes = kdbxweb.Random.getBytes(len * 4);
+        let ch;
+        let bytes;
+        for (let i = 0; i < len; i++) {
             ch = String.fromCharCode(pseudoValue.charCodeAt(i) ^ salt[i]);
             bytes = kdbxweb.ByteUtils.stringToBytes(ch);
-            for (var j = 0; j < bytes.length; j++) {
+            for (let j = 0; j < bytes.length; j++) {
                 valueBytes[byteLength] = bytes[j] ^ saltBytes[byteLength];
                 byteLength++;
             }

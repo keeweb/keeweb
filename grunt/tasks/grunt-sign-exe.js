@@ -13,14 +13,14 @@ module.exports = function (grunt) {
         if (!password) {
             return grunt.warn('Code sign password not found');
         }
-        let promises = Object.keys(opt.files).map(file => signFile(file, opt.files[file], opt, password));
+        const promises = Object.keys(opt.files).map(file => signFile(file, opt.files[file], opt, password));
         Promise.all(promises).then(done);
     });
 
     function signFile(file, name, opt, password) {
-        let signedFile = file + '.sign';
+        const signedFile = file + '.sign';
         return new Promise((resolve, reject) => {
-            let args = [
+            const args = [
                 '-spc', opt.spc,
                 '-key', require('path').resolve(opt.pvk),
                 '-h', opt.algo,
@@ -31,7 +31,7 @@ module.exports = function (grunt) {
                 '-in', file,
                 '-out', signedFile
             ];
-            let spawned = grunt.util.spawn({
+            const spawned = grunt.util.spawn({
                 cmd: 'osslsigncode',
                 args: args
             }, (error, result, code) => {

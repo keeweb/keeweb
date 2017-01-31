@@ -1,35 +1,35 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Alerts = require('./alerts'),
-    Locale = require('../util/locale'),
-    Logger = require('../util/logger'),
-    FeatureDetector = require('../util/feature-detector'),
-    Otp = require('../util/otp'),
-    QrCode = require('qrcode');
+const Backbone = require('backbone');
+const Alerts = require('./alerts');
+const Locale = require('../util/locale');
+const Logger = require('../util/logger');
+const FeatureDetector = require('../util/feature-detector');
+const Otp = require('../util/otp');
+const QrCode = require('qrcode');
 
-var logger = new Logger('otp-qr-reader');
+const logger = new Logger('otp-qr-reader');
 
-var OtpQrReader = {
+const OtpQrReader = {
     alert: null,
 
     fileInput: null,
 
     read: function() {
-        var screenshotKey = FeatureDetector.screenshotToClipboardShortcut();
+        let screenshotKey = FeatureDetector.screenshotToClipboardShortcut();
         if (screenshotKey) {
             screenshotKey = Locale.detSetupOtpAlertBodyWith.replace('{}', '<code>' + screenshotKey + '</code>');
         }
-        var pasteKey = FeatureDetector.isMobile ? ''
+        const pasteKey = FeatureDetector.isMobile ? ''
             : Locale.detSetupOtpAlertBodyWith.replace('{}',
                 '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>');
         OtpQrReader.startListenClipoard();
-        var buttons = [{result: 'manually', title: Locale.detSetupOtpManualButton, silent: true},
+        const buttons = [{result: 'manually', title: Locale.detSetupOtpManualButton, silent: true},
             Alerts.buttons.cancel];
         if (FeatureDetector.isMobile) {
             buttons.unshift({result: 'select', title: Locale.detSetupOtpScanButton});
         }
-        var line3 = FeatureDetector.isMobile ? Locale.detSetupOtpAlertBody3Mobile
+        const line3 = FeatureDetector.isMobile ? Locale.detSetupOtpAlertBody3Mobile
             : Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
         OtpQrReader.alert = Alerts.alert({
             icon: 'qrcode',
@@ -62,7 +62,7 @@ var OtpQrReader = {
 
     selectFile: function() {
         if (!OtpQrReader.fileInput) {
-            var input = document.createElement('input');
+            const input = document.createElement('input');
             input.setAttribute('type', 'file');
             input.setAttribute('capture', 'camera');
             input.setAttribute('accept', 'image/*');
@@ -74,7 +74,7 @@ var OtpQrReader = {
     },
 
     fileSelected: function() {
-        var file = OtpQrReader.fileInput.files[0];
+        const file = OtpQrReader.fileInput.files[0];
         if (!file || file.type.indexOf('image') < 0) {
             return;
         }
@@ -90,7 +90,7 @@ var OtpQrReader = {
     },
 
     pasteEvent: function(e) {
-        var item = _.find(e.clipboardData.items, item => item.kind === 'file' && item.type.indexOf('image') !== -1);
+        const item = _.find(e.clipboardData.items, item => item.kind === 'file' && item.type.indexOf('image') !== -1);
         if (!item) {
             logger.debug('Paste without file');
             return;
@@ -105,7 +105,7 @@ var OtpQrReader = {
     },
 
     readFile: function(file) {
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.onload = function() {
             logger.debug('Image data loaded');
             OtpQrReader.readQr(reader.result);
@@ -114,16 +114,16 @@ var OtpQrReader = {
     },
 
     readQr: function(imageData) {
-        var image = new Image();
+        const image = new Image();
         image.onload = function() {
             logger.debug('Image format loaded');
             try {
-                var ts = logger.ts();
-                var url = new QrCode(image).decode();
+                const ts = logger.ts();
+                const url = new QrCode(image).decode();
                 logger.info('QR code read', logger.ts(ts));
                 OtpQrReader.removeAlert();
                 try {
-                    var otp = Otp.parseUrl(url);
+                    const otp = Otp.parseUrl(url);
                     OtpQrReader.trigger('qr-read', otp);
                 } catch (err) {
                     logger.error('Error parsing QR code', err);

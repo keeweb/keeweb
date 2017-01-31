@@ -1,13 +1,13 @@
 
 'use strict';
 
-var Backbone = require('backbone'),
-    AutoTypeHintView = require('../auto-type-hint-view'),
-    Locale = require('../../util/locale'),
-    FeatureDetector = require('../../util/feature-detector'),
-    AutoType = require('../../auto-type');
+const Backbone = require('backbone');
+const AutoTypeHintView = require('../auto-type-hint-view');
+const Locale = require('../../util/locale');
+const FeatureDetector = require('../../util/feature-detector');
+const AutoType = require('../../auto-type');
 
-var DetailsAutoTypeView = Backbone.View.extend({
+const DetailsAutoTypeView = Backbone.View.extend({
     template: require('templates/details/details-auto-type.hbs'),
 
     events: {
@@ -24,7 +24,7 @@ var DetailsAutoTypeView = Backbone.View.extend({
     },
 
     render: function() {
-        var detAutoTypeShortcutsDesc = Locale.detAutoTypeShortcutsDesc
+        const detAutoTypeShortcutsDesc = Locale.detAutoTypeShortcutsDesc
             .replace('{}', FeatureDetector.actionShortcutSymbol() + 'T')
             .replace('{}', FeatureDetector.globalShortcutSymbol() + 'T');
         this.renderTemplate({
@@ -39,8 +39,8 @@ var DetailsAutoTypeView = Backbone.View.extend({
     },
 
     seqInput: function(e) {
-        var el = e.target;
-        var seq = $.trim(el.value);
+        const el = e.target;
+        const seq = $.trim(el.value);
         AutoType.validate(this.model, seq, err => {
             $(el).toggleClass('input--error', !!err);
             if (!err) {

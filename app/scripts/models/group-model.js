@@ -1,16 +1,17 @@
 'use strict';
 
-var MenuItemModel = require('./menu/menu-item-model'),
-    EntryModel = require('../models/entry-model'),
-    IconMap = require('../const/icon-map'),
-    IconUrl = require('../util/icon-url'),
-    kdbxweb = require('kdbxweb'),
-    KdbxIcons = kdbxweb.Consts.Icons,
-    GroupCollection, EntryCollection;
+const MenuItemModel = require('./menu/menu-item-model');
+const EntryModel = require('../models/entry-model');
+const IconMap = require('../const/icon-map');
+const IconUrl = require('../util/icon-url');
+const kdbxweb = require('kdbxweb');
+const KdbxIcons = kdbxweb.Consts.Icons;
+let GroupCollection;
+let EntryCollection;
 
-var DefaultAutoTypeSequence = '{USERNAME}{TAB}{PASSWORD}{ENTER}';
+const DefaultAutoTypeSequence = '{USERNAME}{TAB}{PASSWORD}{ENTER}';
 
-var GroupModel = MenuItemModel.extend({
+const GroupModel = MenuItemModel.extend({
     defaults: _.extend({}, MenuItemModel.prototype.defaults, {
         iconId: 0,
         entries: null,
@@ -30,8 +31,8 @@ var GroupModel = MenuItemModel.extend({
     },
 
     setGroup: function(group, file, parentGroup) {
-        var isRecycleBin = file.db.meta.recycleBinUuid && file.db.meta.recycleBinUuid.id === group.uuid.id;
-        var id = file.subId(group.uuid.id);
+        const isRecycleBin = file.db.meta.recycleBinUuid && file.db.meta.recycleBinUuid.id === group.uuid.id;
+        const id = file.subId(group.uuid.id);
         this.set({
             id: id,
             uuid: group.uuid.id,
@@ -51,10 +52,10 @@ var GroupModel = MenuItemModel.extend({
         this.file = file;
         this.parentGroup = parentGroup;
         this._fillByGroup(true);
-        var items = this.get('items'),
-            entries = this.get('entries');
+        const items = this.get('items');
+        const entries = this.get('entries');
         group.groups.forEach(function(subGroup) {
-            var existing = file.getGroup(file.subId(subGroup.uuid.id));
+            const existing = file.getGroup(file.subId(subGroup.uuid.id));
             if (existing) {
                 existing.setGroup(subGroup, file, this);
                 items.add(existing);
@@ -63,7 +64,7 @@ var GroupModel = MenuItemModel.extend({
             }
         }, this);
         group.entries.forEach(function(entry) {
-            var existing = file.getEntry(file.subId(entry.uuid.id));
+            const existing = file.getEntry(file.subId(entry.uuid.id));
             if (existing) {
                 existing.setEntry(entry, this, file);
                 entries.add(existing);
@@ -107,11 +108,11 @@ var GroupModel = MenuItemModel.extend({
         this.group.times.update();
     },
 
-    forEachGroup: function(callback, includeDisabled) {
-        var result = true;
+    forEachGroup: function(callback, filter) {
+        let result = true;
         this.get('items').forEach(group => {
-            if (includeDisabled || group.group.enableSearching !== false) {
-                result = callback(group) !== false && group.forEachGroup(callback, includeDisabled) !== false;
+            if (group.matches(filter)) {
+                result = callback(group) !== false && group.forEachGroup(callback, filter) !== false;
             }
         });
         return result;
@@ -123,6 +124,11 @@ var GroupModel = MenuItemModel.extend({
                 callback(entry, this);
             }
         });
+    },
+
+    matches: function(filter) {
+        return (filter && filter.includeDisabled || this.group.enableSearching !== false) &&
+            (!filter || !filter.autoType || this.group.enableAutoType !== false);
     },
 
     getOwnSubGroups: function() {
@@ -164,8 +170,8 @@ var GroupModel = MenuItemModel.extend({
 
     setEnableSearching: function(enabled) {
         this._groupModified();
-        var parentEnableSearching = true;
-        var parentGroup = this.parentGroup;
+        let parentEnableSearching = true;
+        let parentGroup = this.parentGroup;
         while (parentGroup) {
             if (typeof parentGroup.get('enableSearching') === 'boolean') {
                 parentEnableSearching = parentGroup.get('enableSearching');
@@ -181,7 +187,7 @@ var GroupModel = MenuItemModel.extend({
     },
 
     getEffectiveEnableSearching: function() {
-        var grp = this;
+        let grp = this;
         while (grp) {
             if (typeof grp.get('enableSearching') === 'boolean') {
                 return grp.get('enableSearching');
@@ -193,8 +199,8 @@ var GroupModel = MenuItemModel.extend({
 
     setEnableAutoType: function(enabled) {
         this._groupModified();
-        var parentEnableAutoType = true;
-        var parentGroup = this.parentGroup;
+        let parentEnableAutoType = true;
+        let parentGroup = this.parentGroup;
         while (parentGroup) {
             if (typeof parentGroup.get('enableAutoType') === 'boolean') {
                 parentEnableAutoType = parentGroup.get('enableAutoType');
@@ -210,7 +216,7 @@ var GroupModel = MenuItemModel.extend({
     },
 
     getEffectiveEnableAutoType: function() {
-        var grp = this;
+        let grp = this;
         while (grp) {
             if (typeof grp.get('enableAutoType') === 'boolean') {
                 return grp.get('enableAutoType');
@@ -227,7 +233,7 @@ var GroupModel = MenuItemModel.extend({
     },
 
     getEffectiveAutoTypeSeq: function() {
-        var grp = this;
+        let grp = this;
         while (grp) {
             if (grp.get('autoTypeSeq')) {
                 return grp.get('autoTypeSeq');
@@ -253,7 +259,7 @@ var GroupModel = MenuItemModel.extend({
     },
 
     removeWithoutHistory: function() {
-        var ix = this.parentGroup.group.groups.indexOf(this.group);
+        const ix = this.parentGroup.group.groups.indexOf(this.group);
         if (ix >= 0) {
             this.parentGroup.group.groups.splice(ix, 1);
         }
@@ -266,7 +272,7 @@ var GroupModel = MenuItemModel.extend({
         }
         this.file.setModified();
         if (object instanceof GroupModel) {
-            for (var parent = this; parent; parent = parent.parentGroup) {
+            for (let parent = this; parent; parent = parent.parentGroup) {
                 if (object === parent) {
                     return;
                 }
@@ -290,12 +296,12 @@ var GroupModel = MenuItemModel.extend({
             return;
         }
         this.file.setModified();
-        for (var parent = this; parent; parent = parent.parentGroup) {
+        for (let parent = this; parent; parent = parent.parentGroup) {
             if (object === parent) {
                 return;
             }
         }
-        let atIndex = this.parentGroup.group.groups.indexOf(this.group);
+        const atIndex = this.parentGroup.group.groups.indexOf(this.group);
         if (atIndex >= 0) {
             this.file.db.move(object.group, this.parentGroup.group, atIndex);
         }
@@ -304,14 +310,14 @@ var GroupModel = MenuItemModel.extend({
 });
 
 GroupModel.fromGroup = function(group, file, parentGroup) {
-    var model = new GroupModel();
+    const model = new GroupModel();
     model.setGroup(group, file, parentGroup);
     return model;
 };
 
 GroupModel.newGroup = function(group, file) {
-    var model = new GroupModel();
-    var grp = file.db.createGroup(group.group);
+    const model = new GroupModel();
+    const grp = file.db.createGroup(group.group);
     model.setGroup(grp, file, group);
     model.group.times.update();
     model.isJustCreated = true;

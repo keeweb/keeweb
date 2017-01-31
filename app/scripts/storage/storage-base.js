@@ -1,14 +1,14 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Logger = require('../util/logger'),
-    AppSettingsModel = require('../models/app-settings-model'),
-    RuntimeDataModel = require('../models/runtime-data-model'),
-    Links = require('../const/links');
+const Backbone = require('backbone');
+const Logger = require('../util/logger');
+const AppSettingsModel = require('../models/app-settings-model');
+const RuntimeDataModel = require('../models/runtime-data-model');
+const Links = require('../const/links');
 
-var MaxRequestRetries = 3;
+const MaxRequestRetries = 3;
 
-var StorageBase = function() {
+const StorageBase = function() {
 };
 
 _.extend(StorageBase.prototype, {
@@ -28,7 +28,7 @@ _.extend(StorageBase.prototype, {
             throw 'Failed to init provider: no name';
         }
         if (!this.system) {
-            var enabled = this.appSettings.get(this.name);
+            const enabled = this.appSettings.get(this.name);
             if (typeof enabled === 'boolean') {
                 this.enabled = enabled;
             }
@@ -42,11 +42,11 @@ _.extend(StorageBase.prototype, {
     },
 
     _xhr: function(config) {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         if (config.responseType) {
             xhr.responseType = config.responseType;
         }
-        var statuses = config.statuses || [200];
+        const statuses = config.statuses || [200];
         xhr.addEventListener('load', () => {
             if (statuses.indexOf(xhr.status) >= 0) {
                 return config.success && config.success(xhr.response, xhr);
@@ -87,16 +87,16 @@ _.extend(StorageBase.prototype, {
     },
 
     _openPopup: function(url, title, width, height) {
-        var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
-        var dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
+        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
+        const dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
 
-        var winWidth = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-        var winHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+        const winWidth = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+        const winHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
 
-        var left = ((winWidth / 2) - (width / 2)) + dualScreenLeft;
-        var top = ((winHeight / 2) - (height / 2)) + dualScreenTop;
+        const left = ((winWidth / 2) - (width / 2)) + dualScreenLeft;
+        const top = ((winHeight / 2) - (height / 2)) + dualScreenTop;
 
-        var settings = {
+        let settings = {
             width: width,
             height: height,
             left: left,
@@ -112,7 +112,7 @@ _.extend(StorageBase.prototype, {
     },
 
     _getOauthRedirectUrl: function() {
-        var redirectUrl = window.location.href;
+        let redirectUrl = window.location.href;
         if (redirectUrl.lastIndexOf('file:', 0) === 0) {
             redirectUrl = Links.WebApp;
         }
@@ -123,14 +123,14 @@ _.extend(StorageBase.prototype, {
         if (this._oauthToken && !this._oauthToken.expired) {
             return callback();
         }
-        var opts = this._getOAuthConfig();
-        var oldToken = this.runtimeData.get(this.name + 'OAuthToken');
+        const opts = this._getOAuthConfig();
+        const oldToken = this.runtimeData.get(this.name + 'OAuthToken');
         if (oldToken && !oldToken.expired) {
             this._oauthToken = oldToken;
             callback();
             return;
         }
-        var url = opts.url + '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
+        const url = opts.url + '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
             .replace('{cid}', encodeURIComponent(opts.clientId))
             .replace('{scope}', encodeURIComponent(opts.scope))
             .replace('{url}', encodeURIComponent(this._getOauthRedirectUrl()));
@@ -138,19 +138,19 @@ _.extend(StorageBase.prototype, {
         if (!this._openPopup(url, 'OAuth', opts.width, opts.height)) {
             callback('cannot open popup');
         }
-        var popupClosed = () => {
+        const popupClosed = () => {
             Backbone.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
             this.logger.error('OAuth error', 'popup closed');
             callback('popup closed');
         };
-        var windowMessage = e => {
+        const windowMessage = e => {
             if (!e.data) {
                 return;
             }
             Backbone.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
-            var token = this._oauthMsgToToken(e.data);
+            const token = this._oauthMsgToToken(e.data);
             if (token.error) {
                 this.logger.error('OAuth error', token.error, token.errorDescription);
                 callback(token.error);
@@ -186,7 +186,7 @@ _.extend(StorageBase.prototype, {
     },
 
     _oauthRevokeToken: function(url) {
-        var token = this.runtimeData.get(this.name + 'OAuthToken');
+        const token = this.runtimeData.get(this.name + 'OAuthToken');
         if (token) {
             this._xhr({
                 url: url.replace('{token}', token.accessToken),

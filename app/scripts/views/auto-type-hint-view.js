@@ -1,11 +1,11 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    FeatureDetector = require('../util/feature-detector'),
-    Links = require('../const/links'),
-    Timeouts = require('../const/timeouts');
+const Backbone = require('backbone');
+const FeatureDetector = require('../util/feature-detector');
+const Links = require('../const/links');
+const Timeouts = require('../const/timeouts');
 
-var AutoTypeHintView = Backbone.View.extend({
+const AutoTypeHintView = Backbone.View.extend({
     template: require('templates/auto-type-hint.hbs'),
 
     events: {},
@@ -24,12 +24,12 @@ var AutoTypeHintView = Backbone.View.extend({
             hasCtrl: FeatureDetector.isMac,
             link: Links.AutoType
         });
-        var rect = this.input.getBoundingClientRect();
+        const rect = this.input.getBoundingClientRect();
         this.$el.appendTo(document.body).css({
             left: rect.left, top: rect.bottom + 1, width: rect.width
         });
-        var selfRect = this.$el[0].getBoundingClientRect();
-        var bodyRect = document.body.getBoundingClientRect();
+        const selfRect = this.$el[0].getBoundingClientRect();
+        const bodyRect = document.body.getBoundingClientRect();
         if (selfRect.bottom > bodyRect.bottom) {
             this.$el.css('height', selfRect.height + bodyRect.bottom - selfRect.bottom - 1);
         }
@@ -54,7 +54,7 @@ var AutoTypeHintView = Backbone.View.extend({
         if ($.contains(this.$el[0], e.target) || e.target === this.$el[0]) {
             e.stopPropagation();
             if (e.target.tagName.toLowerCase() === 'a' && !e.target.href) {
-                var text = $(e.target).text();
+                let text = $(e.target).text();
                 if (text[0] !== '{') {
                     text = text.split(' ')[0];
                 }
@@ -73,7 +73,7 @@ var AutoTypeHintView = Backbone.View.extend({
     },
 
     insertText: function(text) {
-        var pos = this.input.selectionEnd || this.input.value.length;
+        const pos = this.input.selectionEnd || this.input.value.length;
         this.input.value = this.input.value.substr(0, pos) + text + this.input.value.substr(pos);
         this.input.selectionStart = this.input.selectionEnd = pos + text.length;
         $(this.input).trigger('input');

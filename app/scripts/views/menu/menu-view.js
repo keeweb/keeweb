@@ -1,12 +1,12 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Resizable = require('../../mixins/resizable'),
-    MenuSectionView = require('./menu-section-view'),
-    DragView = require('../drag-view'),
-    AppSettingsModel = require('../../models/app-settings-model');
+const Backbone = require('backbone');
+const Resizable = require('../../mixins/resizable');
+const MenuSectionView = require('./menu-section-view');
+const DragView = require('../drag-view');
+const AppSettingsModel = require('../../models/app-settings-model');
 
-var MenuView = Backbone.View.extend({
+const MenuView = Backbone.View.extend({
     template: require('templates/menu/menu.hbs'),
 
     events: {},
@@ -29,13 +29,13 @@ var MenuView = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template());
-        var sectionsEl = this.$el.find('.menu');
+        const sectionsEl = this.$el.find('.menu');
         this.model.get('sections').forEach(function(section) {
-            var sectionView = new MenuSectionView({ el: sectionsEl, model: section });
+            const sectionView = new MenuSectionView({ el: sectionsEl, model: section });
             sectionView.render();
             if (section.get('drag')) {
-                var dragView = new DragView('y');
-                var dragEl = $('<div/>').addClass('menu__drag-section').appendTo(sectionsEl);
+                const dragView = new DragView('y');
+                const dragEl = $('<div/>').addClass('menu__drag-section').appendTo(sectionsEl);
                 sectionView.listenDrag(dragView);
                 dragView.setElement(dragEl).render();
                 this.sectionViews.push(dragView);

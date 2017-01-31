@@ -1,8 +1,8 @@
 'use strict';
 
-var Launcher = require('../comp/launcher');
+const Launcher = require('../comp/launcher');
 
-var Storage = {
+const Storage = {
     file: require('./storage-file'),
     dropbox: require('./storage-dropbox'),
     webdav: require('./storage-webdav'),

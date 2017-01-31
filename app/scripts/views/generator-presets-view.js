@@ -6,7 +6,7 @@ const Locale = require('../util/locale');
 const GeneratorPresets = require('../comp/generator-presets');
 const PasswordGenerator = require('../util/password-generator');
 
-let GeneratorPresetsView = Backbone.View.extend({
+const GeneratorPresetsView = Backbone.View.extend({
     template: require('templates/generator-presets.hbs'),
 
     events: {
@@ -50,19 +50,19 @@ let GeneratorPresetsView = Backbone.View.extend({
     },
 
     renderExample: function() {
-        let selectedPreset = this.getPreset(this.selected);
-        let example = PasswordGenerator.generate(selectedPreset);
+        const selectedPreset = this.getPreset(this.selected);
+        const example = PasswordGenerator.generate(selectedPreset);
         this.$el.find('.gen-ps__example').text(example);
         this.pageResized();
     },
 
     getSelectedRanges: function() {
-        let sel = this.getPreset(this.selected);
-        let rangeOverride = {
+        const sel = this.getPreset(this.selected);
+        const rangeOverride = {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
         };
         return ['Upper', 'Lower', 'Digits', 'Special', 'Brackets', 'High', 'Ambiguous'].map(name => {
-            let nameLower = name.toLowerCase();
+            const nameLower = name.toLowerCase();
             return {
                 name: nameLower,
                 title: Locale['genPs' + name],
@@ -89,16 +89,16 @@ let GeneratorPresetsView = Backbone.View.extend({
         let name;
         let title;
         for (let i = 1; ; i++) {
-            let newName = 'Custom' + i;
-            let newTitle = Locale.genPsNew + ' ' + i;
+            const newName = 'Custom' + i;
+            const newTitle = Locale.genPsNew + ' ' + i;
             if (!this.presets.filter(p => p.name === newName || p.title === newTitle).length) {
                 name = newName;
                 title = newTitle;
                 break;
             }
         }
-        let selected = this.getPreset(this.selected);
-        let preset = {
+        const selected = this.getPreset(this.selected);
+        const preset = {
             name, title,
             length: selected.length,
             upper: selected.upper, lower: selected.lower, digits: selected.digits,
@@ -116,7 +116,7 @@ let GeneratorPresetsView = Backbone.View.extend({
     },
 
     changeTitle: function(e) {
-        let title = $.trim(e.target.value);
+        const title = $.trim(e.target.value);
         if (title && title !== this.getPreset(this.selected).title) {
             let duplicate = this.presets.some(p => p.title.toLowerCase() === title.toLowerCase());
             if (!duplicate) {
@@ -134,17 +134,17 @@ let GeneratorPresetsView = Backbone.View.extend({
     },
 
     changeEnabled: function(e) {
-        let enabled = e.target.checked;
+        const enabled = e.target.checked;
         GeneratorPresets.setDisabled(this.selected, !enabled);
     },
 
     changeDefault: function(e) {
-        let isDefault = e.target.checked;
+        const isDefault = e.target.checked;
         GeneratorPresets.setDefault(isDefault ? this.selected : null);
     },
 
     changeLength: function(e) {
-        let length = +e.target.value;
+        const length = +e.target.value;
         if (length > 0) {
             GeneratorPresets.setPreset(this.selected, { length });
             $(e.target).removeClass('input--error');
@@ -156,15 +156,15 @@ let GeneratorPresetsView = Backbone.View.extend({
     },
 
     changeRange: function(e) {
-        let enabled = e.target.checked;
-        let range = e.target.dataset.range;
+        const enabled = e.target.checked;
+        const range = e.target.dataset.range;
         GeneratorPresets.setPreset(this.selected, { [range]: enabled });
         this.presets = GeneratorPresets.all;
         this.renderExample();
     },
 
     changeInclude: function(e) {
-        let include = e.target.value;
+        const include = e.target.value;
         if (include !== this.getPreset(this.selected).include) {
             GeneratorPresets.setPreset(this.selected, { include: include });
         }

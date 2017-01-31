@@ -1,6 +1,6 @@
 'use strict';
 
-var IconMap = [
+const IconMap = [
     'key', 'globe', 'exclamation-triangle', 'server', 'thumb-tack',
     'comments-o', 'puzzle-piece', 'pencil-square-o', 'plug', 'newspaper-o',
     'paperclip', 'camera', 'wifi', 'link', 'battery-three-quarters',

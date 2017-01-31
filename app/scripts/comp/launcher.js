@@ -1,6 +1,6 @@
 'use strict';
 
-var Launcher;
+let Launcher;
 
 if (window.process && window.process.versions && window.process.versions.electron) {
     Launcher = require('./launcher-electron');

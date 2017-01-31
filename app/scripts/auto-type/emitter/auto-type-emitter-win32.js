@@ -1,10 +1,10 @@
 'use strict';
 
-var Launcher = require('../../comp/launcher'),
-    AutoTypeNativeHelper = require('../helper/auto-type-native-helper');
+const Launcher = require('../../comp/launcher');
+const AutoTypeNativeHelper = require('../helper/auto-type-native-helper');
 
 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
-var KeyMap = {
+const KeyMap = {
     tab: 0x09, enter: 0x0D, space: 0x20,
     up: 0x26, down: 0x28, left: 0x25, right: 0x27, home: 0x24, end: 0x23, pgup: 0x21, pgdn: 0x22,
     ins: 0x2D, del: 0x2E, bs: 0x08, esc: 0x1B,
@@ -16,14 +16,14 @@ var KeyMap = {
     n5: 0x35, n6: 0x36, n7: 0x37, n8: 0x38, n9: 0x39
 };
 
-var ModMap = {
+const ModMap = {
     '^': '^',
     '+': '+',
     '%': '%',
     '^^': '^'
 };
 
-var AutoTypeEmitter = function(callback) {
+const AutoTypeEmitter = function(callback) {
     this.callback = callback;
     this.mod = {};
     this.pendingScript = [];
@@ -67,7 +67,7 @@ AutoTypeEmitter.prototype.wait = function(time) {
 
 AutoTypeEmitter.prototype.waitComplete = function() {
     if (this.pendingScript.length) {
-        var script = this.pendingScript.join('\n');
+        const script = this.pendingScript.join('\n');
         this.pendingScript.length = 0;
         this.runScript(script);
     } else {

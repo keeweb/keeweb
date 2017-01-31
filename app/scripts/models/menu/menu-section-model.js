@@ -1,9 +1,9 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    MenuItemCollection = require('../../collections/menu/menu-item-collection');
+const Backbone = require('backbone');
+const MenuItemCollection = require('../../collections/menu/menu-item-collection');
 
-var MenuItemModel = Backbone.Model.extend({
+const MenuItemModel = Backbone.Model.extend({
     defaults: {
         items: null,
         scrollable: false,
@@ -28,7 +28,7 @@ var MenuItemModel = Backbone.Model.extend({
     },
 
     removeByFile: function(file) {
-        var items = this.get('items');
+        const items = this.get('items');
         items.find(item => {
             if (item.file === file || item.get('file') === file) {
                 items.remove(item);
@@ -39,7 +39,7 @@ var MenuItemModel = Backbone.Model.extend({
     },
 
     replaceByFile: function(file, newItem) {
-        var items = this.get('items');
+        const items = this.get('items');
         items.find((item, ix) => {
             if (item.file === file || item.get('file') === file) {
                 items.remove(item);

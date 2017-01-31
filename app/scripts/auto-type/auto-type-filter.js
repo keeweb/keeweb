@@ -2,9 +2,9 @@
 
 const EntryCollection = require('../collections/entry-collection');
 
-let urlPartsRegex = /^(\w+:\/\/)?(?:www\.)?([^\/]+)\/?(.*)/;
+const urlPartsRegex = /^(\w+:\/\/)?(?:www\.)?([^\/]+)\/?(.*)/;
 
-let AutoTypeFilter = function(windowInfo, appModel) {
+const AutoTypeFilter = function(windowInfo, appModel) {
     this.title = windowInfo.title;
     this.url = windowInfo.url;
     this.text = '';
@@ -13,8 +13,9 @@ let AutoTypeFilter = function(windowInfo, appModel) {
 };
 
 AutoTypeFilter.prototype.getEntries = function() {
-    let filter = {
-        text: this.text
+    const filter = {
+        text: this.text,
+        autoType: true
     };
     let entries = this.appModel.getEntriesByFilter(filter);
     if (!this.ignoreWindowInfo && this.hasWindowInfo()) {
@@ -46,7 +47,7 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
         rank += this.getStringRank(entry.title.toLowerCase(), this.titleLower);
     }
     if (this.urlParts && entry.url) {
-        let entryUrlParts = urlPartsRegex.exec(entry.url.toLowerCase());
+        const entryUrlParts = urlPartsRegex.exec(entry.url.toLowerCase());
         if (entryUrlParts) {
             // domain
             if (entryUrlParts[2] === this.urlParts[2]) {

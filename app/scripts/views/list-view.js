@@ -1,17 +1,17 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Resizable = require('../mixins/resizable'),
-    Scrollable = require('../mixins/scrollable'),
-    ListSearchView = require('./list-search-view'),
-    DropdownView = require('./dropdown-view'),
-    EntryPresenter = require('../presenters/entry-presenter'),
-    DragDropInfo = require('../comp/drag-drop-info'),
-    AppSettingsModel = require('../models/app-settings-model'),
-    Locale = require('../util/locale'),
-    Format = require('../util/format');
+const Backbone = require('backbone');
+const Resizable = require('../mixins/resizable');
+const Scrollable = require('../mixins/scrollable');
+const ListSearchView = require('./list-search-view');
+const DropdownView = require('./dropdown-view');
+const EntryPresenter = require('../presenters/entry-presenter');
+const DragDropInfo = require('../comp/drag-drop-info');
+const AppSettingsModel = require('../models/app-settings-model');
+const Locale = require('../util/locale');
+const Format = require('../util/format');
 
-var ListView = Backbone.View.extend({
+const ListView = Backbone.View.extend({
     template: require('templates/list.hbs'),
     emptyTemplate: require('templates/list-empty.hbs'),
 
@@ -77,23 +77,23 @@ var ListView = Backbone.View.extend({
             });
         }
         if (this.items.length) {
-            var itemTemplate = this.getItemTemplate();
-            var itemsTemplate = this.getItemsTemplate();
-            var noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
-            var presenter = new EntryPresenter(this.getDescField(), noColor, this.model.activeEntryId);
-            var columns = {};
+            const itemTemplate = this.getItemTemplate();
+            const itemsTemplate = this.getItemsTemplate();
+            const noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
+            const presenter = new EntryPresenter(this.getDescField(), noColor, this.model.activeEntryId);
+            const columns = {};
             this.tableColumns.forEach(col => {
                 if (col.enabled) {
                     columns[col.val] = true;
                 }
             });
             presenter.columns = columns;
-            var itemsHtml = '';
+            let itemsHtml = '';
             this.items.forEach(item => {
                 presenter.present(item);
                 itemsHtml += itemTemplate(presenter);
             }, this);
-            var html = itemsTemplate({ items: itemsHtml, columns: this.tableColumns });
+            const html = itemsTemplate({ items: itemsHtml, columns: this.tableColumns });
             this.itemsEl.html(html);
         } else {
             this.itemsEl.html(this.emptyTemplate());
@@ -127,8 +127,8 @@ var ListView = Backbone.View.extend({
     },
 
     itemClick: function(e) {
-        var id = $(e.target).closest('.list__item').attr('id');
-        var item = this.items.get(id);
+        const id = $(e.target).closest('.list__item').attr('id');
+        const item = this.items.get(id);
         if (!item.active) {
             this.selectItem(item);
         }
@@ -136,28 +136,28 @@ var ListView = Backbone.View.extend({
     },
 
     selectPrev: function() {
-        var ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
+        const ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix > 0) {
             this.selectItem(this.items.at(ix - 1));
         }
     },
 
     selectNext: function() {
-        var ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
+        const ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix < this.items.length - 1) {
             this.selectItem(this.items.at(ix + 1));
         }
     },
 
     createEntry: function() {
-        var newEntry = this.model.createNewEntry();
+        const newEntry = this.model.createNewEntry();
         this.items.unshift(newEntry);
         this.render();
         this.selectItem(newEntry);
     },
 
     createGroup: function() {
-        var newGroup = this.model.createNewGroup();
+        const newGroup = this.model.createNewGroup();
         Backbone.trigger('edit-group', newGroup);
     },
 
@@ -165,11 +165,11 @@ var ListView = Backbone.View.extend({
         this.model.activeEntryId = item.id;
         Backbone.trigger('entry-selected', item);
         this.itemsEl.find('.list__item--active').removeClass('list__item--active');
-        var itemEl = document.getElementById(item.id);
+        const itemEl = document.getElementById(item.id);
         itemEl.classList.add('list__item--active');
-        var listEl = this.itemsEl[0],
-            itemRect = itemEl.getBoundingClientRect(),
-            listRect = listEl.getBoundingClientRect();
+        const listEl = this.itemsEl[0];
+        const itemRect = itemEl.getBoundingClientRect();
+        const listRect = listEl.getBoundingClientRect();
         if (itemRect.top < listRect.top) {
             listEl.scrollTop += itemRect.top - listRect.top;
         } else if (itemRect.bottom > listRect.bottom) {
@@ -186,7 +186,7 @@ var ListView = Backbone.View.extend({
     },
 
     setTableView: function() {
-        var isTable = this.model.settings.get('tableView');
+        const isTable = this.model.settings.get('tableView');
         this.dragView.setCoord(isTable ? 'y' : 'x');
         this.setDefaultSize();
     },
@@ -219,16 +219,17 @@ var ListView = Backbone.View.extend({
     },
 
     entryUpdated: function() {
-        var scrollTop = this.itemsEl[0].scrollTop;
+        const scrollTop = this.itemsEl[0].scrollTop;
         this.render();
         this.itemsEl[0].scrollTop = scrollTop;
     },
 
     itemDragStart: function(e) {
         e.stopPropagation();
-        var id = $(e.target).closest('.list__item').attr('id');
+        const id = $(e.target).closest('.list__item').attr('id');
         e.originalEvent.dataTransfer.setData('text/entry', id);
         e.originalEvent.dataTransfer.effectAllowed = 'move';
+        DragDropInfo.dragType = 'text/entry';
         DragDropInfo.dragObject = this.items.get(id);
     },
 
@@ -238,11 +239,11 @@ var ListView = Backbone.View.extend({
             this.hideOptionsDropdown();
             return;
         }
-        var view = new DropdownView();
+        const view = new DropdownView();
         this.listenTo(view, 'cancel', this.hideOptionsDropdown);
         this.listenTo(view, 'select', this.optionsDropdownSelect);
-        var targetElRect = this.$el.find('.list__table-options')[0].getBoundingClientRect();
-        var options = this.tableColumns.map(col => ({
+        const targetElRect = this.$el.find('.list__table-options')[0].getBoundingClientRect();
+        const options = this.tableColumns.map(col => ({
             value: col.val,
             icon: col.enabled ? 'check-square-o' : 'square-o',
             text: Format.capFirst(Locale[col.name])
@@ -265,7 +266,7 @@ var ListView = Backbone.View.extend({
     },
 
     optionsDropdownSelect: function(e) {
-        var col = _.find(this.tableColumns, c => c.val === e.item);
+        const col = _.find(this.tableColumns, c => c.val === e.item);
         col.enabled = !col.enabled;
         e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
         this.render();
@@ -273,7 +274,7 @@ var ListView = Backbone.View.extend({
     },
 
     readTableColumnsEnabled() {
-        let tableViewColumns = AppSettingsModel.instance.get('tableViewColumns');
+        const tableViewColumns = AppSettingsModel.instance.get('tableViewColumns');
         if (tableViewColumns && tableViewColumns.length) {
             this.tableColumns.forEach(col => {
                 col.enabled = tableViewColumns.indexOf(col.name) >= 0;
@@ -282,7 +283,7 @@ var ListView = Backbone.View.extend({
     },
 
     saveTableColumnsEnabled() {
-        let tableViewColumns = this.tableColumns.filter(column => column.enabled).map(column => column.name);
+        const tableViewColumns = this.tableColumns.filter(column => column.enabled).map(column => column.name);
         AppSettingsModel.instance.set('tableViewColumns', tableViewColumns);
     }
 });

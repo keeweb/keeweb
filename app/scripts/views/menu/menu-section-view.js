@@ -1,12 +1,12 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    MenuItemView = require('./menu-item-view'),
-    Resizable = require('../../mixins/resizable'),
-    Scrollable = require('../../mixins/scrollable'),
-    AppSettingsModel = require('../../models/app-settings-model');
+const Backbone = require('backbone');
+const MenuItemView = require('./menu-item-view');
+const Resizable = require('../../mixins/resizable');
+const Scrollable = require('../../mixins/scrollable');
+const AppSettingsModel = require('../../models/app-settings-model');
 
-var MenuSectionView = Backbone.View.extend({
+const MenuSectionView = Backbone.View.extend({
     template: require('templates/menu/menu-section.hbs'),
 
     events: {},
@@ -39,12 +39,12 @@ var MenuSectionView = Backbone.View.extend({
             this.removeInnerViews();
         }
         this.model.get('items').forEach(function(item) {
-            var itemView = new MenuItemView({ el: this.itemsEl, model: item });
+            const itemView = new MenuItemView({ el: this.itemsEl, model: item });
             itemView.render();
             this.itemViews.push(itemView);
         }, this);
         if (this.model.get('drag')) {
-            var height = AppSettingsModel.instance.get('tagsViewHeight');
+            const height = AppSettingsModel.instance.get('tagsViewHeight');
             if (typeof height === 'number') {
                 this.$el.height();
                 this.$el.css('flex', '0 0 ' + height + 'px');

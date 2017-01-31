@@ -1,14 +1,14 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    AttachmentModel = require('./attachment-model'),
-    IconMap = require('../const/icon-map'),
-    Color = require('../util/color'),
-    IconUrl = require('../util/icon-url'),
-    Otp = require('../util/otp'),
-    kdbxweb = require('kdbxweb');
+const Backbone = require('backbone');
+const AttachmentModel = require('./attachment-model');
+const IconMap = require('../const/icon-map');
+const Color = require('../util/color');
+const IconUrl = require('../util/icon-url');
+const Otp = require('../util/otp');
+const kdbxweb = require('kdbxweb');
 
-var EntryModel = Backbone.Model.extend({
+const EntryModel = Backbone.Model.extend({
     defaults: {},
 
     urlRegex: /^https?:\/\//i,
@@ -35,7 +35,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     _fillByEntry: function() {
-        var entry = this.entry;
+        const entry = this.entry;
         this.set({id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id}, {silent: true});
         this.fileName = this.file.get('name');
         this.groupName = this.group.get('title');
@@ -43,7 +43,7 @@ var EntryModel = Backbone.Model.extend({
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
         this.notes = this._getFieldString('Notes');
         this.url = this._getFieldString('URL');
-        this.displayUrl = this._getDisplayUrl(this._getFieldString(entry.fields.URL));
+        this.displayUrl = this._getDisplayUrl(this._getFieldString('URL'));
         this.user = this._getFieldString('UserName');
         this.iconId = entry.icon;
         this.icon = this._iconFromId(entry.icon);
@@ -67,7 +67,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     _getFieldString: function(field) {
-        var val = this.entry.fields[field];
+        const val = this.entry.fields[field];
         if (!val) {
             return '';
         }
@@ -90,7 +90,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     _buildSearchText: function() {
-        var text = '';
+        let text = '';
         _.forEach(this.entry.fields, value => {
             if (typeof value === 'string') {
                 text += value.toLowerCase() + '\n';
@@ -153,10 +153,10 @@ var EntryModel = Backbone.Model.extend({
     },
 
     _attachmentsToModel: function(binaries) {
-        var att = [];
-        _.forEach(binaries, function(data, title) {
+        const att = [];
+        _.forEach(binaries, (data, title) => {
             if (data && data.ref) {
-                data = this.file.db.meta.binaries[data.ref];
+                data = data.value;
             }
             if (data) {
                 att.push(AttachmentModel.fromAttachment({data: data, title: title}));
@@ -190,12 +190,14 @@ var EntryModel = Backbone.Model.extend({
         return !filter ||
             (!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
             (!filter.textLower || (filter.advanced ? this.matchesAdv(filter) : this.searchText.indexOf(filter.textLower) >= 0)) &&
-            (!filter.color || filter.color === true && this.searchColor || this.searchColor === filter.color);
+            (!filter.color || filter.color === true && this.searchColor || this.searchColor === filter.color) &&
+            (!filter.autoType || this.autoTypeEnabled);
     },
 
     matchesAdv: function(filter) {
-        var adv = filter.advanced;
-        var search, match;
+        const adv = filter.advanced;
+        let search,
+            match;
         if (adv.regex) {
             try {
                 search = new RegExp(filter.text, adv.cs ? '' : 'i');
@@ -212,7 +214,7 @@ var EntryModel = Backbone.Model.extend({
             return true;
         }
         if (adv.history) {
-            for (var i = 0, len = this.entry.history.length; i < len; i++) {
+            for (let i = 0, len = this.entry.history.length; i < len; i++) {
                 if (this.matchEntry(this.entry.history[0], adv, match, search)) {
                     return true;
                 }
@@ -243,7 +245,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     matchEntry: function(entry, adv, compare, search) {
-        var matchField = this.matchField;
+        const matchField = this.matchField;
         if (adv.user && matchField(entry, 'UserName', compare, search)) {
             return true;
         }
@@ -259,10 +261,10 @@ var EntryModel = Backbone.Model.extend({
         if (adv.title && matchField(entry, 'Title', compare, search)) {
             return true;
         }
-        var matches = false;
+        let matches = false;
         if (adv.other || adv.protect) {
-            var builtInFields = this.builtInFields;
-            var fieldNames = Object.keys(entry.fields);
+            const builtInFields = this.builtInFields;
+            const fieldNames = Object.keys(entry.fields);
             matches = fieldNames.some(field => {
                 if (builtInFields.indexOf(field) >= 0) {
                     return false;
@@ -278,15 +280,15 @@ var EntryModel = Backbone.Model.extend({
     },
 
     matchField: function(entry, field, compare, search) {
-        var val = entry.fields[field];
+        const val = entry.fields[field];
         return val ? compare(val, search) : false;
     },
 
     resolveFieldReferences: function() {
         this.hasFieldRefs = false;
         this.fieldRefFields.forEach(field => {
-            let fieldValue = this[field];
-            let refValue = this._resolveFieldReference(fieldValue);
+            const fieldValue = this[field];
+            const refValue = this._resolveFieldReference(fieldValue);
             if (refValue !== undefined) {
                 this[field] = refValue;
                 this.hasFieldRefs = true;
@@ -305,7 +307,7 @@ var EntryModel = Backbone.Model.extend({
         });
         if (resolvedField) {
             let fieldValue = this.entry.fields[resolvedField];
-            let refValue = this._resolveFieldReference(fieldValue);
+            const refValue = this._resolveFieldReference(fieldValue);
             if (refValue !== undefined) {
                 fieldValue = refValue;
             }
@@ -323,7 +325,7 @@ var EntryModel = Backbone.Model.extend({
         if (typeof fieldValue !== 'string') {
             return;
         }
-        let match = fieldValue.match(this.fieldRefRegex);
+        const match = fieldValue.match(this.fieldRefRegex);
         if (!match) {
             return;
         }
@@ -331,12 +333,12 @@ var EntryModel = Backbone.Model.extend({
     },
 
     _getReferenceValue: function(fieldRefId, idStr) {
-        let id = new Uint8Array(16);
+        const id = new Uint8Array(16);
         for (let i = 0; i < 16; i++) {
             id[i] = parseInt(idStr.substr(i * 2, 2), 16);
         }
-        let uuid = new kdbxweb.KdbxUuid(id);
-        let entry = this.file.getEntry(this.file.subId(uuid.id));
+        const uuid = new kdbxweb.KdbxUuid(id);
+        const entry = this.file.getEntry(this.file.subId(uuid.id));
         if (!entry) {
             return;
         }
@@ -376,7 +378,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     renameTag: function(from, to) {
-        var ix = _.findIndex(this.entry.tags, tag => tag.toLowerCase() === from.toLowerCase());
+        const ix = _.findIndex(this.entry.tags, tag => tag.toLowerCase() === from.toLowerCase());
         if (ix < 0) {
             return;
         }
@@ -389,7 +391,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     setField: function(field, val) {
-        var hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
+        const hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
         if (hasValue || this.builtInFields.indexOf(field) >= 0) {
             this._entryModified();
             this.entry.fields[field] = val;
@@ -406,16 +408,10 @@ var EntryModel = Backbone.Model.extend({
 
     addAttachment: function(name, data) {
         this._entryModified();
-        var binaryId;
-        for (var i = 0; ; i++) {
-            if (!this.file.db.meta.binaries[i]) {
-                binaryId = i.toString();
-                break;
-            }
-        }
-        this.file.db.meta.binaries[binaryId] = data;
-        this.entry.binaries[name] = { ref: binaryId };
-        this._fillByEntry();
+        return this.file.db.createBinary(data).then(binaryRef => {
+            this.entry.binaries[name] = binaryRef;
+            this._fillByEntry();
+        });
     },
 
     removeAttachment: function(name) {
@@ -425,7 +421,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     getHistory: function() {
-        var history = this.entry.history.map(function(rec) {
+        const history = this.entry.history.map(function(rec) {
             return EntryModel.fromEntry(rec, this.group, this.file);
         }, this);
         history.push(this);
@@ -434,7 +430,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     deleteHistory: function(historyEntry) {
-        var ix = this.entry.history.indexOf(historyEntry);
+        const ix = this.entry.history.indexOf(historyEntry);
         if (ix >= 0) {
             this.entry.removeHistory(ix);
         }
@@ -442,7 +438,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     revertToHistoryState: function(historyEntry) {
-        var ix = this.entry.history.indexOf(historyEntry);
+        const ix = this.entry.history.indexOf(historyEntry);
         if (ix < 0) {
             return;
         }
@@ -459,7 +455,7 @@ var EntryModel = Backbone.Model.extend({
     discardUnsaved: function() {
         if (this.unsaved && this.entry.history.length) {
             this.unsaved = false;
-            var historyEntry = this.entry.history[this.entry.history.length - 1];
+            const historyEntry = this.entry.history[this.entry.history.length - 1];
             this.entry.removeHistory(this.entry.history.length - 1);
             this.entry.fields = {};
             this.entry.binaries = {};
@@ -485,7 +481,7 @@ var EntryModel = Backbone.Model.extend({
 
     removeWithoutHistory: function() {
         if (this.canBeDeleted) {
-            var ix = this.group.group.entries.indexOf(this.entry);
+            const ix = this.group.group.entries.indexOf(this.entry);
             if (ix >= 0) {
                 this.group.group.entries.splice(ix, 1);
             }
@@ -509,7 +505,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     initOtpGenerator: function() {
-        var otpUrl;
+        let otpUrl;
         if (this.fields.otp) {
             otpUrl = this.fields.otp;
             if (otpUrl.isProtected) {
@@ -519,9 +515,9 @@ var EntryModel = Backbone.Model.extend({
                 otpUrl = Otp.makeUrl(otpUrl.replace(/\s/g, '').toUpperCase());
             } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
                 // KeeOTP plugin format
-                var args = {};
+                const args = {};
                 otpUrl.split('&').forEach(part => {
-                    var parts = part.split('=', 2);
+                    const parts = part.split('=', 2);
                     args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
                 });
                 if (args.key) {
@@ -530,16 +526,17 @@ var EntryModel = Backbone.Model.extend({
             }
         } else if (this.entry.fields['TOTP Seed']) {
             // TrayTOTP plugin format
-            var secret = this.entry.fields['TOTP Seed'];
+            let secret = this.entry.fields['TOTP Seed'];
             if (secret.isProtected) {
                 secret = secret.getText();
             }
             if (secret) {
-                var settings = this.entry.fields['TOTP Settings'];
+                let settings = this.entry.fields['TOTP Settings'];
                 if (settings && settings.isProtected) {
                     settings = settings.getText();
                 }
-                var period, digits;
+                let period,
+                    digits;
                 if (settings) {
                     settings = settings.split(';');
                     if (settings.length > 0 && settings[0] > 0) {
@@ -591,9 +588,6 @@ var EntryModel = Backbone.Model.extend({
 
     setEnableAutoType: function(enabled) {
         this._entryModified();
-        if (enabled === this.group.getEffectiveEnableAutoType()) {
-            enabled = null;
-        }
         this.entry.autoType.enabled = enabled;
         this._buildAutoType();
     },
@@ -612,8 +606,8 @@ var EntryModel = Backbone.Model.extend({
     },
 
     getGroupPath: function() {
-        var group = this.group;
-        var groupPath = [];
+        let group = this.group;
+        const groupPath = [];
         while (group) {
             groupPath.unshift(group.get('title'));
             group = group.parentGroup;
@@ -622,7 +616,7 @@ var EntryModel = Backbone.Model.extend({
     },
 
     cloneEntry: function(nameSuffix) {
-        let newEntry = EntryModel.newEntry(this.group, this.file);
+        const newEntry = EntryModel.newEntry(this.group, this.file);
         newEntry.entry.copyFrom(this.entry);
         newEntry.entry.uuid = kdbxweb.KdbxUuid.random();
         newEntry.entry.times.update();
@@ -634,14 +628,14 @@ var EntryModel = Backbone.Model.extend({
 });
 
 EntryModel.fromEntry = function(entry, group, file) {
-    var model = new EntryModel();
+    const model = new EntryModel();
     model.setEntry(entry, group, file);
     return model;
 };
 
 EntryModel.newEntry = function(group, file) {
-    var model = new EntryModel();
-    var entry = file.db.createEntry(group.group);
+    const model = new EntryModel();
+    const entry = file.db.createEntry(group.group);
     model.setEntry(entry, group, file);
     model.entry.times.update();
     model.unsaved = true;

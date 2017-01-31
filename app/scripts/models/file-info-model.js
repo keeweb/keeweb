@@ -1,8 +1,8 @@
 'use strict';
 
-var Backbone = require('backbone');
+const Backbone = require('backbone');
 
-var FileInfoModel = Backbone.Model.extend({
+const FileInfoModel = Backbone.Model.extend({
     defaults: {
         id: '',
         name: '',
