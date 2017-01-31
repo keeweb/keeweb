@@ -59,23 +59,8 @@ const FileModel = Backbone.Model.extend({
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                     }
-                    let kdfParams = '';
-                    if (db.header.kdfParameters) {
-                        kdfParams = db.header.kdfParameters.keys().map(key => {
-                            let val = db.header.kdfParameters.get(key);
-                            if (val instanceof ArrayBuffer) {
-                                return;
-                            }
-                            if (val.value) {
-                                val = val.value;
-                            }
-                            return key + '=' + val;
-                        }).filter(p => p).join('&');
-                    } else if (db.header.keyEncryptionRounds) {
-                        kdfParams = db.header.keyEncryptionRounds + ' rounds';
-                    }
                     logger.info('Opened file ' + this.get('name') + ': ' + logger.ts(ts) + ', ' +
-                        kdfParams + ', ' + Math.round(fileData.byteLength / 1024) + ' kB');
+                        this.kdfArgsToString(db.header) + ', ' + Math.round(fileData.byteLength / 1024) + ' kB');
                     callback();
                 })
                 .catch(err => {
@@ -89,6 +74,22 @@ const FileModel = Backbone.Model.extend({
         } catch (e) {
             logger.error('Error opening file', e, e.code, e.message, e);
             callback(e);
+        }
+    },
+
+    kdfArgsToString: function(header) {
+        if (header.kdfParameters) {
+            return header.kdfParameters.keys().map(key => {
+                const val = header.kdfParameters.get(key);
+                if (val instanceof ArrayBuffer) {
+                    return;
+                }
+                return key + '=' + val;
+            }).filter(p => p).join('&');
+        } else if (header.keyEncryptionRounds) {
+            return header.keyEncryptionRounds + ' rounds';
+        } else {
+            return '?';
         }
     },
 
@@ -162,7 +163,8 @@ const FileModel = Backbone.Model.extend({
             historyMaxItems: this.db.meta.historyMaxItems,
             historyMaxSize: this.db.meta.historyMaxSize,
             keyEncryptionRounds: this.db.header.keyEncryptionRounds,
-            keyChangeForce: this.db.meta.keyChangeForce
+            keyChangeForce: this.db.meta.keyChangeForce,
+            kdfParameters: this.readKdfParams()
         }, { silent: true });
         this.db.groups.forEach(function(group) {
             let groupModel = this.getGroup(this.subId(group.uuid.id));
@@ -175,6 +177,26 @@ const FileModel = Backbone.Model.extend({
         }, this);
         this.buildObjectMap();
         this.resolveFieldReferences();
+    },
+
+    readKdfParams: function() {
+        const kdfParameters = this.db.header.kdfParameters;
+        if (!kdfParameters) {
+            return undefined;
+        }
+        let uuid = kdfParameters.get('$UUID');
+        if (!uuid) {
+            return undefined;
+        }
+        uuid = kdbxweb.ByteUtils.bytesToBase64(uuid);
+        if (uuid !== kdbxweb.Consts.KdfId.Argon2) {
+            return undefined;
+        }
+        return {
+            parallelism: kdfParameters.get('P').valueOf(),
+            iterations: kdfParameters.get('I').valueOf(),
+            memory: kdfParameters.get('M').valueOf()
+        };
     },
 
     subId: function(id) {
@@ -493,6 +515,25 @@ const FileModel = Backbone.Model.extend({
     setKeyEncryptionRounds: function(rounds) {
         this.db.header.keyEncryptionRounds = rounds;
         this.set('keyEncryptionRounds', rounds);
+        this.setModified();
+    },
+
+    setKdfParameter: function(field, value) {
+        const ValueType = kdbxweb.VarDictionary.ValueType;
+        switch (field) {
+            case 'memory':
+                this.db.header.kdfParameters.set('M', ValueType.UInt64, kdbxweb.Int64.from(value));
+                break;
+            case 'iterations':
+                this.db.header.kdfParameters.set('I', ValueType.UInt64, kdbxweb.Int64.from(value));
+                break;
+            case 'parallelism':
+                this.db.header.kdfParameters.set('P', ValueType.UInt32, value);
+                break;
+            default:
+                return;
+        }
+        this.set('kdfParameters', this.readKdfParams());
         this.setModified();
     },
 

@@ -43,7 +43,8 @@ const SettingsFileView = Backbone.View.extend({
         'input #settings__file-hist-len': 'changeHistoryLength',
         'input #settings__file-hist-size': 'changeHistorySize',
         'input #settings__file-key-rounds': 'changeKeyRounds',
-        'input #settings__file-key-change-force': 'changeKeyChangeForce'
+        'input #settings__file-key-change-force': 'changeKeyChangeForce',
+        'input .settings__input-kdf': 'changeKdfParameter'
     },
 
     appModel: null,
@@ -86,12 +87,17 @@ const SettingsFileView = Backbone.View.extend({
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
             keyChangeForce: this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
+            kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
             storageProviders: storageProviders
         });
         if (!this.model.get('created')) {
             this.$el.find('.settings__file-master-pass-warning').toggle(this.model.get('passwordChanged'));
         }
         this.renderKeyFileSelect();
+    },
+
+    kdfParametersToUi: function(kdfParameters) {
+        return kdfParameters ? _.extend({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) }) : null;
     },
 
     renderKeyFileSelect: function() {
@@ -494,6 +500,19 @@ const SettingsFileView = Backbone.View.extend({
             value = -1;
         }
         this.model.setKeyChange(true, value);
+    },
+
+    changeKdfParameter: function(e) {
+        const field = $(e.target).data('field');
+        const mul = $(e.target).data('mul') || 1;
+        const value = e.target.value * mul;
+        if (isNaN(value)) {
+            e.target.value = Math.round(this.model.get('kdfParameters')[field] / mul);
+            return;
+        }
+        if (value > 0) {
+            this.model.setKdfParameter(field, value);
+        }
     }
 });
 
