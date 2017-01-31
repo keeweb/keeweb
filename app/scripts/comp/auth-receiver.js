@@ -1,23 +1,23 @@
 'use strict';
 
-var DropboxLink = require('./dropbox-link');
+const DropboxLink = require('./dropbox-link');
 
-var AuthReceiver = {
+const AuthReceiver = {
     receive: function() {
-        var opener = window.opener || window.parent;
+        const opener = window.opener || window.parent;
         if (location.href.indexOf('state=') >= 0) {
             DropboxLink.receive();
         } else {
-            var message = this.urlArgsToMessage(window.location.href);
+            const message = this.urlArgsToMessage(window.location.href);
             opener.postMessage(message, window.location.origin);
             window.close();
         }
     },
 
     urlArgsToMessage: function(url) {
-        var message = {};
+        const message = {};
         url.split(/[\?#&]/g).forEach(part => {
-            var parts = part.split('=');
+            const parts = part.split('=');
             if (parts.length === 2) {
                 message[parts[0]] = parts[1];
             }

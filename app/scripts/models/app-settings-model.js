@@ -1,9 +1,9 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    SettingsStore = require('../comp/settings-store');
+const Backbone = require('backbone');
+const SettingsStore = require('../comp/settings-store');
 
-var AppSettingsModel = Backbone.Model.extend({
+const AppSettingsModel = Backbone.Model.extend({
     defaults: {
         theme: 'fb',
         locale: null,
@@ -46,7 +46,7 @@ var AppSettingsModel = Backbone.Model.extend({
     },
 
     load: function() {
-        let data = SettingsStore.load('app-settings');
+        const data = SettingsStore.load('app-settings');
         if (data) {
             this.upgrade(data);
         }

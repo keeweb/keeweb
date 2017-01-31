@@ -1,21 +1,21 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Alerts = require('./alerts'),
-    Launcher = require('./launcher'),
-    AuthReceiver = require('./auth-receiver'),
-    Links = require('../const/links'),
-    Timeouts = require('../const/timeouts'),
-    Locale = require('../util/locale');
+const Backbone = require('backbone');
+const Alerts = require('./alerts');
+const Launcher = require('./launcher');
+const AuthReceiver = require('./auth-receiver');
+const Links = require('../const/links');
+const Timeouts = require('../const/timeouts');
+const Locale = require('../util/locale');
 
-var PopupNotifier = {
+const PopupNotifier = {
     init: function() {
         if (Launcher) {
             window.open = this._openLauncherWindow;
         } else {
-            var windowOpen = window.open;
+            const windowOpen = window.open;
             window.open = function() {
-                var win = windowOpen.apply(window, arguments);
+                const win = windowOpen.apply(window, arguments);
                 if (win) {
                     PopupNotifier.deferCheckClosed(win);
                     Backbone.trigger('popup-opened', win);
@@ -33,7 +33,7 @@ var PopupNotifier = {
     },
 
     _openLauncherWindow: function(url, title, settings) {
-        var opts = {
+        const opts = {
             show: false,
             webPreferences: {
                 nodeIntegration: false,
@@ -43,9 +43,9 @@ var PopupNotifier = {
             }
         };
         if (settings) {
-            var settingsObj = {};
+            const settingsObj = {};
             settings.split(',').forEach(part => {
-                var parts = part.split('=');
+                const parts = part.split('=');
                 settingsObj[parts[0].trim()] = parts[1].trim();
             });
             if (settings.width) { opts.width = settings.width; }
@@ -53,7 +53,7 @@ var PopupNotifier = {
             if (settings.top) { opts.y = settings.top; }
             if (settings.left) { opts.x = settings.left; }
         }
-        var win = Launcher.openWindow(opts);
+        let win = Launcher.openWindow(opts);
         win.webContents.on('did-get-redirect-request', (e, fromUrl, toUrl) => {
             if (PopupNotifier.isOwnUrl(toUrl)) {
                 win.webContents.stop();
@@ -91,9 +91,9 @@ var PopupNotifier = {
     },
 
     processReturnToApp: function(url) {
-        var returnMessage = AuthReceiver.urlArgsToMessage(url);
+        const returnMessage = AuthReceiver.urlArgsToMessage(url);
         if (Object.keys(returnMessage).length > 0) {
-            var evt = new Event('message');
+            const evt = new Event('message');
             evt.data = returnMessage;
             window.dispatchEvent(evt);
         }

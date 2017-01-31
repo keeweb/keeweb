@@ -2,23 +2,23 @@
 
 /* eslint-env node */
 
-var fs = require('fs'),
-    path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var StringReplacePlugin = require('string-replace-webpack-plugin');
-var StatsPlugin = require('stats-webpack-plugin');
+const StringReplacePlugin = require('string-replace-webpack-plugin');
+const StatsPlugin = require('stats-webpack-plugin');
 
 module.exports = function(grunt) {
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
     grunt.loadTasks('grunt/tasks');
 
-    var webpack = require('webpack');
-    var pkg = require('./package.json');
-    var dt = new Date().toISOString().replace(/T.*/, '');
-    var minElectronVersionForUpdate = '1.0.1';
-    var zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
-    var electronVersion = pkg.devDependencies['electron'].replace(/^\D/, '');
+    const webpack = require('webpack');
+    const pkg = require('./package.json');
+    const dt = new Date().toISOString().replace(/T.*/, '');
+    const minElectronVersionForUpdate = '1.0.1';
+    let zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
+    const electronVersion = pkg.devDependencies['electron'].replace(/^\D/, '');
 
     while (zipCommentPlaceholder.length < 512) {
         zipCommentPlaceholder += '.';
@@ -26,20 +26,20 @@ module.exports = function(grunt) {
 
     function replaceFont(css) {
         css.walkAtRules('font-face', rule => {
-            var fontFamily = rule.nodes.filter(n => n.prop === 'font-family')[0];
+            const fontFamily = rule.nodes.filter(n => n.prop === 'font-family')[0];
             if (!fontFamily) {
                 throw 'Bad font rule: ' + rule.toString();
             }
-            var value = fontFamily.value.replace(/["']/g, '');
-            var fontFiles = {
+            const value = fontFamily.value.replace(/["']/g, '');
+            const fontFiles = {
                 FontAwesome: 'fontawesome-webfont.woff'
             };
-            var fontFile = fontFiles[value];
+            const fontFile = fontFiles[value];
             if (!fontFile) {
                 throw 'Unsupported font ' + value + ': ' + rule.toString();
             }
-            var data = fs.readFileSync('tmp/fonts/' + fontFile, 'base64');
-            var src = 'url(data:application/font-woff;charset=utf-8;base64,{data}) format(\'woff\')'
+            const data = fs.readFileSync('tmp/fonts/' + fontFile, 'base64');
+            const src = 'url(data:application/font-woff;charset=utf-8;base64,{data}) format(\'woff\')'
                 .replace('{data}', data);
             // var src = 'url(\'../fonts/fontawesome-webfont.woff\') format(\'woff\')';
             rule.nodes = rule.nodes.filter(n => n.prop !== 'src');
@@ -47,7 +47,7 @@ module.exports = function(grunt) {
         });
     }
 
-    var webpackConfig = {
+    const webpackConfig = {
         entry: {
             app: 'app',
             vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode', 'argon2']

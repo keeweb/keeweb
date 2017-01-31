@@ -23,7 +23,7 @@ const ModMap = {
     '^^': 'ctrl'
 };
 
-var AutoTypeEmitter = function(callback) {
+const AutoTypeEmitter = function(callback) {
     this.callback = callback;
     this.mod = {};
     this.pendingScript = [];
@@ -77,7 +77,7 @@ AutoTypeEmitter.prototype.wait = function(time) {
 
 AutoTypeEmitter.prototype.waitComplete = function(callback) {
     if (this.pendingScript.length) {
-        var script = this.pendingScript.join(' ');
+        const script = this.pendingScript.join(' ');
         this.pendingScript.length = 0;
         this.runScript(script, callback);
     } else {
@@ -86,7 +86,7 @@ AutoTypeEmitter.prototype.waitComplete = function(callback) {
 };
 
 AutoTypeEmitter.prototype.modString = function() {
-    var mod = '';
+    let mod = '';
     Object.keys(this.mod).forEach(key => {
         mod += key + '+';
     });
@@ -102,7 +102,7 @@ AutoTypeEmitter.prototype.runScript = function(script, callback) {
             if (err && err.code === 'ENOENT') {
                 err = Locale.autoTypeErrorNotInstalled.replace('{}', 'xdotool');
             }
-            let cb = callback || this.callback;
+            const cb = callback || this.callback;
             cb(err, stdout, code);
         }
     });

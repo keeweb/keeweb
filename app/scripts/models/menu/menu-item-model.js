@@ -1,10 +1,10 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    MenuOptionCollection = require('../../collections/menu/menu-option-collection'),
-    ItemCollection;
+const Backbone = require('backbone');
+const MenuOptionCollection = require('../../collections/menu/menu-option-collection');
+let ItemCollection;
 
-var MenuItemModel = Backbone.Model.extend({
+const MenuItemModel = Backbone.Model.extend({
     defaults: {
         title: '',
         icon: '',
@@ -38,7 +38,7 @@ var MenuItemModel = Backbone.Model.extend({
         if (!ItemCollection) {
             ItemCollection = this._loadItemCollectionType();
         }
-        var items = this.get('items');
+        let items = this.get('items');
         if (!items) {
             items = new ItemCollection();
             this.set('items', items);
@@ -47,7 +47,7 @@ var MenuItemModel = Backbone.Model.extend({
     },
 
     addOption: function(option) {
-        var options = this.get('options');
+        let options = this.get('options');
         if (!options) {
             options = new MenuOptionCollection();
             this.set('options', options);
@@ -56,8 +56,8 @@ var MenuItemModel = Backbone.Model.extend({
     },
 
     toggleExpanded: function() {
-        var items = this.get('items'),
-            expanded = !this.get('expanded');
+        const items = this.get('items');
+        let expanded = !this.get('expanded');
         if (!items || !items.length) {
             expanded = true;
         }

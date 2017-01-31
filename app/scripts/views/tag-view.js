@@ -1,10 +1,10 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Locale = require('../util/locale'),
-    Alerts = require('../comp/alerts');
+const Backbone = require('backbone');
+const Locale = require('../util/locale');
+const Alerts = require('../comp/alerts');
 
-var TagView = Backbone.View.extend({
+const TagView = Backbone.View.extend({
     template: require('templates/tag.hbs'),
 
     events: {
@@ -32,7 +32,7 @@ var TagView = Backbone.View.extend({
     },
 
     renameTag: function() {
-        var title = $.trim(this.$el.find('#tag__field-title').val());
+        const title = $.trim(this.$el.find('#tag__field-title').val());
         if (!title || title === this.model.get('title')) {
             return;
         }

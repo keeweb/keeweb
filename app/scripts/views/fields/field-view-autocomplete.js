@@ -1,8 +1,8 @@
 'use strict';
 
-var FieldViewText = require('./field-view-text');
+const FieldViewText = require('./field-view-text');
 
-var FieldViewAutocomplete = FieldViewText.extend({
+const FieldViewAutocomplete = FieldViewText.extend({
     endEdit: function(newVal, extra) {
         if (this.autocomplete) {
             this.autocomplete.remove();
@@ -13,7 +13,7 @@ var FieldViewAutocomplete = FieldViewText.extend({
 
     startEdit: function() {
         FieldViewText.prototype.startEdit.call(this);
-        var fieldRect = this.input[0].getBoundingClientRect();
+        const fieldRect = this.input[0].getBoundingClientRect();
         this.autocomplete = $('<div class="details__field-autocomplete"></div>').appendTo('body');
         this.autocomplete.css({
             top: fieldRect.bottom,
@@ -35,8 +35,8 @@ var FieldViewAutocomplete = FieldViewText.extend({
     },
 
     updateAutocomplete: function() {
-        var completions = this.model.getCompletions(this.input.val());
-        var completionsHtml = completions.map(item => {
+        const completions = this.model.getCompletions(this.input.val());
+        const completionsHtml = completions.map(item => {
             return '<div class="details__field-autocomplete-item">' + _.escape(item) + '</div>';
         }).join('');
         this.autocomplete.html(completionsHtml);
@@ -46,7 +46,7 @@ var FieldViewAutocomplete = FieldViewText.extend({
     autocompleteClick: function(e) {
         e.stopPropagation();
         if (e.target.classList.contains('details__field-autocomplete-item')) {
-            var selectedItem = $(e.target).text();
+            const selectedItem = $(e.target).text();
             this.input.val(selectedItem);
             this.endEdit(selectedItem);
         } else {

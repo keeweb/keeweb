@@ -1,8 +1,8 @@
 'use strict';
 
-var IdGenerator = {
+const IdGenerator = {
     uuid: function() {
-        var s4 = IdGenerator.s4;
+        const s4 = IdGenerator.s4;
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     },
     s4: function() {

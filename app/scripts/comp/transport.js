@@ -1,14 +1,14 @@
 'use strict';
 
-var Launcher = require('./launcher'),
-    Logger = require('../util/logger');
+const Launcher = require('./launcher');
+const Logger = require('../util/logger');
 
-var logger = new Logger('transport');
+const logger = new Logger('transport');
 
-var Transport = {
+const Transport = {
     httpGet: function(config) {
-        var tmpFile;
-        var fs = Launcher.req('fs');
+        let tmpFile;
+        const fs = Launcher.req('fs');
         if (config.file) {
             tmpFile = Launcher.getTempPath(config.file);
             if (fs.existsSync(tmpFile)) {
@@ -24,9 +24,9 @@ var Transport = {
                 }
             }
         }
-        var proto = config.url.split(':')[0];
+        const proto = config.url.split(':')[0];
         logger.info('GET ' + config.url);
-        var opts = Launcher.req('url').parse(config.url);
+        const opts = Launcher.req('url').parse(config.url);
         opts.headers = { 'User-Agent': navigator.userAgent };
         Launcher.resolveProxy(config.url, proxy => {
             logger.info('Request to ' + config.url + ' ' + (proxy ? 'using proxy ' + proxy.host + ':' + proxy.port : 'without proxy'));
@@ -40,7 +40,7 @@ var Transport = {
                 logger.info('Response from ' + config.url + ': ' + res.statusCode);
                 if (res.statusCode === 200) {
                     if (config.file) {
-                        var file = fs.createWriteStream(tmpFile);
+                        const file = fs.createWriteStream(tmpFile);
                         res.pipe(file);
                         file.on('finish', () => {
                             file.close(() => {
@@ -51,7 +51,7 @@ var Transport = {
                             config.error(err);
                         });
                     } else {
-                        var data = [];
+                        let data = [];
                         res.on('data', chunk => {
                             data.push(chunk);
                         });

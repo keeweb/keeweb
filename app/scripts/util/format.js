@@ -1,10 +1,10 @@
 'use strict';
 
-var Locale = require('./locale');
+const Locale = require('./locale');
 
-var Format = {
+const Format = {
     pad: function(num, digits) {
-        var str = num.toString();
+        let str = num.toString();
         while (str.length < digits) {
             str = '0' + str;
         }

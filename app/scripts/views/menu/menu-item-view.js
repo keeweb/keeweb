@@ -1,13 +1,13 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    KeyHandler = require('../../comp/key-handler'),
-    Keys = require('../../const/keys'),
-    Alerts = require('../../comp/alerts'),
-    DragDropInfo = require('../../comp/drag-drop-info'),
-    Locale = require('../../util/locale');
+const Backbone = require('backbone');
+const KeyHandler = require('../../comp/key-handler');
+const Keys = require('../../const/keys');
+const Alerts = require('../../comp/alerts');
+const DragDropInfo = require('../../comp/drag-drop-info');
+const Locale = require('../../util/locale');
 
-var MenuItemView = Backbone.View.extend({
+const MenuItemView = Backbone.View.extend({
     template: require('templates/menu/menu-item.hbs'),
 
     isDropNotWorkingProperly: navigator.userAgent.indexOf('Vivaldi') > 0,
@@ -42,7 +42,7 @@ var MenuItemView = Backbone.View.extend({
         this.listenTo(this.model, 'change:cls', this.changeCls);
         this.listenTo(this.model, 'delete', this.remove);
         this.listenTo(this.model, 'insert', this.insertItem);
-        var shortcut = this.model.get('shortcut');
+        const shortcut = this.model.get('shortcut');
         if (shortcut) {
             KeyHandler.onKey(shortcut, this.selectItem, this, KeyHandler.SHORTCUT_OPT);
             if (shortcut !== Keys.DOM_VK_C) {
@@ -55,7 +55,7 @@ var MenuItemView = Backbone.View.extend({
         this.removeInnerViews();
         this.renderTemplate(this.model.attributes);
         this.iconEl = this.$el.find('i.menu__item-icon');
-        var items = this.model.get('items');
+        const items = this.model.get('items');
         if (items) {
             items.forEach(function (item) {
                 if (item.get('visible')) {
@@ -73,7 +73,7 @@ var MenuItemView = Backbone.View.extend({
 
     remove: function() {
         this.removeInnerViews();
-        var shortcut = this.model.get('shortcut');
+        const shortcut = this.model.get('shortcut');
         if (shortcut) {
             KeyHandler.offKey(shortcut, this.selectItem, this, KeyHandler.SHORTCUT_OPT);
             if (shortcut !== Keys.DOM_VK_C) {
@@ -106,7 +106,7 @@ var MenuItemView = Backbone.View.extend({
     },
 
     changeCls: function(model, cls) {
-        var oldCls = model.previousAttributes().cls;
+        const oldCls = model.previousAttributes().cls;
         if (oldCls) {
             this.$el.removeClass(oldCls);
         }
@@ -139,10 +139,10 @@ var MenuItemView = Backbone.View.extend({
     },
 
     selectOption: function(e) {
-        var options = this.model.get('options');
-        var value = $(e.target).data('value');
+        const options = this.model.get('options');
+        const value = $(e.target).data('value');
         if (options && options.length) {
-            var option = options.find(op => op.get('value') === value);
+            const option = options.find(op => op.get('value') === value);
             if (option) {
                 Backbone.trigger('menu-select', { item: this.model, option: option });
             }
@@ -185,7 +185,7 @@ var MenuItemView = Backbone.View.extend({
     },
 
     dropAllowed(e) {
-        var types = e.originalEvent.dataTransfer.types;
+        const types = e.originalEvent.dataTransfer.types;
         for (let i = 0; i < types.length; i++) {
             if (types[i] === 'text/group' || types[i] === 'text/entry') {
                 return true;
@@ -230,7 +230,7 @@ var MenuItemView = Backbone.View.extend({
     drop(e) {
         e.stopPropagation();
         if (DragDropInfo.dragObject && this.model.get('drop') && this.dropAllowed(e)) {
-            let isTop = this.$el.hasClass('menu__item--drag-top');
+            const isTop = this.$el.hasClass('menu__item--drag-top');
             this.$el.removeClass('menu__item--drag menu__item--drag-top');
             if (isTop) {
                 this.model.moveToTop(DragDropInfo.dragObject);
@@ -256,7 +256,7 @@ var MenuItemView = Backbone.View.extend({
     },
 
     dropTopAllowed(e) {
-        var types = e.originalEvent.dataTransfer.types;
+        const types = e.originalEvent.dataTransfer.types;
         for (let i = 0; i < types.length; i++) {
             if (types[i] === 'text/group') {
                 return true;

@@ -1,12 +1,12 @@
 'use strict';
 
-var Colors = require('../const/colors');
+const Colors = require('../const/colors');
 
-var KnownColors = {};
+const KnownColors = {};
 
-var Color = function(str) {
-    var start = str[0] === '#' ? 1 : 0,
-        len = str.length === 3 ? 1 : 2;
+const Color = function(str) {
+    const start = str[0] === '#' ? 1 : 0;
+    const len = str.length === 3 ? 1 : 2;
     this.r = parseInt(str.substr(start, len), 16);
     this.g = parseInt(str.substr(start + len, len), 16);
     this.b = parseInt(str.substr(start + len * 2, len), 16);
@@ -14,18 +14,20 @@ var Color = function(str) {
 };
 
 Color.prototype.setHsl = function() {
-    var r = this.r / 255;
-    var g = this.g / 255;
-    var b = this.b / 255;
+    const r = this.r / 255;
+    const g = this.g / 255;
+    const b = this.b / 255;
 
-    var max = Math.max(r, g, b),
-        min = Math.min(r, g, b),
-        h, s, l = (max + min) / 2;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h;
+    let s;
+    const l = (max + min) / 2;
 
     if (max === min) {
         h = s = 0; // achromatic
     } else {
-        var d = max - min;
+        const d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
         switch (max) {
             case r: h = (g - b) / d + (g < b ? 6 : 0); break;
@@ -49,13 +51,14 @@ Color.prototype.distanceTo = function(color) {
 };
 
 Color.getNearest = function(colorStr) {
-    var color = new Color(colorStr);
+    const color = new Color(colorStr);
     if (!color.s) {
         return null;
     }
-    var selected = null, minDistance = Number.MAX_VALUE;
+    let selected = null,
+        minDistance = Number.MAX_VALUE;
     _.forEach(KnownColors, (col, name) => {
-        var distance = color.distanceTo(col);
+        const distance = color.distanceTo(col);
         if (distance < minDistance) {
             minDistance = distance;
             selected = name;
@@ -73,7 +76,7 @@ _.forEach(Colors.ColorsValues, (val, name) => {
 });
 
 function hex(num) {
-    var str = (num || 0).toString(16);
+    const str = (num || 0).toString(16);
     return str.length < 2 ? '0' + str : str;
 }
 

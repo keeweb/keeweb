@@ -1,12 +1,12 @@
 'use strict';
 
-var LastChar = String.fromCharCode(0xffffffff);
+const LastChar = String.fromCharCode(0xffffffff);
 
-var ciCompare = (window.Intl && window.Intl.Collator)
+const ciCompare = (window.Intl && window.Intl.Collator)
     ? new Intl.Collator(undefined, { sensitivity: 'base' }).compare
     : (x, y) => x.toLocaleLowerCase().localeCompare(y.toLocaleLowerCase());
 
-var Comparators = {
+const Comparators = {
     stringComparator: function(field, asc) {
         if (asc) {
             return function (x, y) { return ciCompare(x[field] || LastChar, y[field] || LastChar); };

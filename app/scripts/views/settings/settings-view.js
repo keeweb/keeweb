@@ -1,11 +1,11 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Scrollable = require('../../mixins/scrollable'),
-    Keys = require('../../const/keys'),
-    KeyHandler = require('../../comp/key-handler');
+const Backbone = require('backbone');
+const Scrollable = require('../../mixins/scrollable');
+const Keys = require('../../const/keys');
+const KeyHandler = require('../../comp/key-handler');
 
-var SettingsView = Backbone.View.extend({
+const SettingsView = Backbone.View.extend({
     template: require('templates/settings/settings.hbs'),
 
     views: null,
@@ -37,7 +37,7 @@ var SettingsView = Backbone.View.extend({
     },
 
     setPage: function (e) {
-        var SettingsPageView = require('./settings-' + e.page + '-view');
+        const SettingsPageView = require('./settings-' + e.page + '-view');
         if (this.views.page) {
             if (this.views.page instanceof SettingsPageView) {
                 return;

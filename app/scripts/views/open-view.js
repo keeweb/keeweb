@@ -1,22 +1,22 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    kdbxweb = require('kdbxweb'),
-    OpenConfigView = require('./open-config-view'),
-    Keys = require('../const/keys'),
-    Alerts = require('../comp/alerts'),
-    SecureInput = require('../comp/secure-input'),
-    DropboxLink = require('../comp/dropbox-link'),
-    FeatureDetector = require('../util/feature-detector'),
-    Logger = require('../util/logger'),
-    Locale = require('../util/locale'),
-    UrlUtil = require('../util/url-util'),
-    InputFx = require('../util/input-fx'),
-    Storage = require('../storage');
+const Backbone = require('backbone');
+const kdbxweb = require('kdbxweb');
+const OpenConfigView = require('./open-config-view');
+const Keys = require('../const/keys');
+const Alerts = require('../comp/alerts');
+const SecureInput = require('../comp/secure-input');
+const DropboxLink = require('../comp/dropbox-link');
+const FeatureDetector = require('../util/feature-detector');
+const Logger = require('../util/logger');
+const Locale = require('../util/locale');
+const UrlUtil = require('../util/url-util');
+const InputFx = require('../util/input-fx');
+const Storage = require('../storage');
 
-var logger = new Logger('open-view');
+const logger = new Logger('open-view');
 
-var OpenView = Backbone.View.extend({
+const OpenView = Backbone.View.extend({
     template: require('templates/open.hbs'),
 
     events: {
@@ -66,16 +66,16 @@ var OpenView = Backbone.View.extend({
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
-        let storageProviders = [];
+        const storageProviders = [];
         Object.keys(Storage).forEach(name => {
-            var prv = Storage[name];
+            const prv = Storage[name];
             if (!prv.system && prv.enabled) {
                 storageProviders.push(prv);
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
-        let showMore = storageProviders.length || this.model.settings.get('canOpenSettings');
-        let showLogo = !showMore && !this.model.settings.get('canOpen') && !this.model.settings.get('canCreate') &&
+        const showMore = storageProviders.length || this.model.settings.get('canOpenSettings');
+        const showLogo = !showMore && !this.model.settings.get('canOpen') && !this.model.settings.get('canCreate') &&
             !(this.model.settings.get('canOpenDemo') && !this.model.settings.get('demoOpened'));
         this.renderTemplate({
             lastOpenFiles: this.getLastOpenFiles(),
@@ -104,8 +104,8 @@ var OpenView = Backbone.View.extend({
 
     getLastOpenFiles: function() {
         return this.model.fileInfos.map(f => {
-            var icon = 'file-text';
-            var storage = Storage[f.get('storage')];
+            let icon = 'file-text';
+            const storage = Storage[f.get('storage')];
             if (storage && storage.icon) {
                 icon = storage.icon;
             }
@@ -151,7 +151,7 @@ var OpenView = Backbone.View.extend({
     },
 
     fileSelected: function(e) {
-        var file = e.target.files[0];
+        const file = e.target.files[0];
         if (file) {
             this.processFile(file, success => {
                 if (success && !file.path && this.reading === 'fileData') {
@@ -162,9 +162,9 @@ var OpenView = Backbone.View.extend({
     },
 
     processFile: function(file, complete) {
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.onload = e => {
-            var success = false;
+            let success = false;
             switch (this.reading) {
                 case 'fileData':
                     if (!this.checkOpenFileFormat(e.target.result)) {
@@ -221,7 +221,7 @@ var OpenView = Backbone.View.extend({
     },
 
     checkOpenFileFormat: function(fileData) {
-        var fileSig = fileData.byteLength < 8 ? null : new Uint32Array(fileData, 0, 2);
+        const fileSig = fileData.byteLength < 8 ? null : new Uint32Array(fileData, 0, 2);
         if (!fileSig || fileSig[0] !== kdbxweb.Consts.Signatures.FileMagic) {
             Alerts.error({ header: Locale.openWrongFile, body: Locale.openWrongFileBody });
             return false;
@@ -317,9 +317,9 @@ var OpenView = Backbone.View.extend({
         if (this.busy) {
             return;
         }
-        var id = $(e.target).closest('.open__last-item').data('id').toString();
+        const id = $(e.target).closest('.open__last-item').data('id').toString();
         if ($(e.target).is('.open__last-item-icon-del')) {
-            var fileInfo = this.model.fileInfos.get(id);
+            const fileInfo = this.model.fileInfos.get(id);
             if (!fileInfo.get('storage') || fileInfo.get('modified')) {
                 Alerts.yesno({
                     header: Locale.openRemoveLastQuestion,
@@ -348,7 +348,7 @@ var OpenView = Backbone.View.extend({
     },
 
     inputKeydown: function(e) {
-        var code = e.keyCode || e.which;
+        const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             this.openDb();
         } else if (code === Keys.DOM_VK_CAPS_LOCK) {
@@ -359,17 +359,17 @@ var OpenView = Backbone.View.extend({
     },
 
     inputKeyup: function(e) {
-        var code = e.keyCode || e.which;
+        const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_CAPS_LOCK) {
             this.toggleCapsLockWarning(false);
         }
     },
 
     inputKeypress: function(e) {
-        var charCode = e.keyCode || e.which;
-        var ch = String.fromCharCode(charCode),
-            lower = ch.toLowerCase(),
-            upper = ch.toUpperCase();
+        const charCode = e.keyCode || e.which;
+        const ch = String.fromCharCode(charCode);
+        const lower = ch.toLowerCase();
+        const upper = ch.toUpperCase();
         if (lower !== upper && !e.shiftKey) {
             this.toggleCapsLockWarning(ch !== lower);
         }
@@ -417,9 +417,9 @@ var OpenView = Backbone.View.extend({
         }
         this.closeConfig();
         this.$el.removeClass('open--drag');
-        var files = e.target.files || e.originalEvent.dataTransfer.files;
-        var dataFile = _.find(files, file => file.name.split('.').pop().toLowerCase() === 'kdbx');
-        var keyFile = _.find(files, file => file.name.split('.').pop().toLowerCase() === 'key');
+        const files = e.target.files || e.originalEvent.dataTransfer.files;
+        const dataFile = _.find(files, file => file.name.split('.').pop().toLowerCase() === 'kdbx');
+        const keyFile = _.find(files, file => file.name.split('.').pop().toLowerCase() === 'key');
         if (dataFile) {
             this.setFile(dataFile, keyFile,
                 dataFile.path ? null : this.showLocalFileAlert.bind(this));
@@ -539,7 +539,7 @@ var OpenView = Backbone.View.extend({
         if (this.busy) {
             return;
         }
-        var storage = Storage[$(e.target).closest('.open__icon').data('storage')];
+        const storage = Storage[$(e.target).closest('.open__icon').data('storage')];
         if (!storage) {
             return;
         }
@@ -557,7 +557,7 @@ var OpenView = Backbone.View.extend({
             return;
         }
         this.closeConfig();
-        var icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
+        const icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
         this.busy = true;
         icon.toggleClass('flip3d', true);
         storage.list((err, files, dir) => {
@@ -567,15 +567,15 @@ var OpenView = Backbone.View.extend({
                 return;
             }
 
-            var buttons = [];
-            var allStorageFiles = {};
+            const buttons = [];
+            const allStorageFiles = {};
             files.forEach(file => {
-                var fileName = UrlUtil.getDataFileName(file.name);
+                const fileName = UrlUtil.getDataFileName(file.name);
                 buttons.push({result: file.path, title: fileName});
                 allStorageFiles[file.path] = file;
             });
             if (!buttons.length) {
-                var body = Locale.openNothingFoundBody;
+                let body = Locale.openNothingFoundBody;
                 if (dir) {
                     body += ' ' + Locale.openNothingFoundBodyFolder.replace('{}', dir);
                 }
@@ -620,7 +620,7 @@ var OpenView = Backbone.View.extend({
         if (this.views.openConfig) {
             this.views.openConfig.remove();
         }
-        var config = _.extend({
+        const config = _.extend({
             id: storage.name,
             name: Locale[storage.name] || storage.name,
             icon: storage.icon
@@ -652,11 +652,11 @@ var OpenView = Backbone.View.extend({
         }
         this.busy = true;
         this.views.openConfig.setDisabled(true);
-        var storage = Storage[config.storage];
+        const storage = Storage[config.storage];
         this.storageWaitId = Math.random();
-        var path = config.path;
-        var opts = _.omit(config, ['path', 'storage']);
-        var req = {
+        const path = config.path;
+        const opts = _.omit(config, ['path', 'storage']);
+        const req = {
             waitId: this.storageWaitId,
             storage: config.storage,
             path: path,

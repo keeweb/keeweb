@@ -2,11 +2,11 @@
 
 module.exports = function (grunt) {
     grunt.registerMultiTask('nsis', 'Launches NSIS installer', function () {
-        let done = this.async();
-        let opt = this.options();
-        let args = [];
-        let win = process.platform === 'win32';
-        let prefix = win ? '/' : '-';
+        const done = this.async();
+        const opt = this.options();
+        const args = [];
+        const win = process.platform === 'win32';
+        const prefix = win ? '/' : '-';
         Object.keys(opt.vars).forEach(key => {
             let value = opt.vars[key];
             if (typeof value === 'function') {
@@ -21,7 +21,7 @@ module.exports = function (grunt) {
         args.push(`${prefix}NOCD`);
         args.push(`${prefix}V2`);
         args.push(opt.installScript);
-        let executable = win ? 'C:\\Program Files (x86)\\NSIS\\makensis.exe' : 'makensis';
+        const executable = win ? 'C:\\Program Files (x86)\\NSIS\\makensis.exe' : 'makensis';
         grunt.log.writeln('Running NSIS:', args.join(' '));
         grunt.util.spawn({
             cmd: executable,

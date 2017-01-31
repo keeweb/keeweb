@@ -1,6 +1,6 @@
 'use strict';
 
-var StringUtil = {
+const StringUtil = {
     camelCaseRegex: /\-./g,
 
     camelCase: function(str) {

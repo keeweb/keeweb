@@ -1,9 +1,9 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Storage = require('../../storage');
+const Backbone = require('backbone');
+const Storage = require('../../storage');
 
-var SettingsPrvView = Backbone.View.extend({
+const SettingsPrvView = Backbone.View.extend({
     template: require('templates/settings/settings-prv.hbs'),
 
     events: {
@@ -12,7 +12,7 @@ var SettingsPrvView = Backbone.View.extend({
     },
 
     render: function () {
-        var storage = Storage[this.model.name];
+        const storage = Storage[this.model.name];
         if (storage && storage.getSettingsConfig) {
             this.renderTemplate(storage.getSettingsConfig());
         }
@@ -20,12 +20,12 @@ var SettingsPrvView = Backbone.View.extend({
     },
 
     changeField: function(e) {
-        var id = e.target.dataset.id,
-            value = e.target.value;
+        const id = e.target.dataset.id;
+        const value = e.target.value;
         if (!e.target.checkValidity()) {
             return;
         }
-        var storage = Storage[this.model.name];
+        const storage = Storage[this.model.name];
         storage.applySetting(id, value);
         if ($(e.target).is('select')) {
             this.render();

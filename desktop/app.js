@@ -1,19 +1,19 @@
 'use strict';
 
-var electron = require('electron'),
-    app = electron.app,
-    path = require('path'),
-    fs = require('fs');
+const electron = require('electron');
+const app = electron.app;
+const path = require('path');
+const fs = require('fs');
 
-var mainWindow = null,
-    appIcon = null,
-    openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0],
-    ready = false,
-    appReady = false,
-    restartPending = false,
-    mainWindowPosition = {},
-    updateMainWindowPositionTimeout = null,
-    windowPositionFileName = path.join(app.getPath('userData'), 'window-position.json');
+let mainWindow = null;
+let appIcon = null;
+let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
+let ready = false;
+let appReady = false;
+let restartPending = false;
+let mainWindowPosition = {};
+let updateMainWindowPositionTimeout = null;
+const windowPositionFileName = path.join(app.getPath('userData'), 'window-position.json');
 
 let htmlPath = process.argv.filter(arg => arg.startsWith('--htmlpath=')).map(arg => arg.replace('--htmlpath=', ''))[0];
 if (!htmlPath) {
@@ -30,7 +30,7 @@ app.on('window-all-closed', () => {
         electron.globalShortcut.unregisterAll();
         electron.powerMonitor.removeAllListeners('suspend');
         electron.powerMonitor.removeAllListeners('resume');
-        var userDataAppFile = path.join(app.getPath('userData'), 'app.js');
+        const userDataAppFile = path.join(app.getPath('userData'), 'app.js');
         delete require.cache[require.resolve('./app.js')];
         require(userDataAppFile);
         app.emit('ready');
@@ -80,7 +80,7 @@ app.minimizeApp = function () {
         mainWindow.setSkipTaskbar(true);
         appIcon = new electron.Tray(path.join(__dirname, 'icon.png'));
         appIcon.on('click', restoreMainWindow);
-        var contextMenu = electron.Menu.buildFromTemplate([
+        const contextMenu = electron.Menu.buildFromTemplate([
             {label: 'Open KeeWeb', click: restoreMainWindow},
             {label: 'Quit KeeWeb', click: closeMainWindow}
         ]);
@@ -94,7 +94,7 @@ app.getMainWindow = function () {
 app.emitBackboneEvent = emitBackboneEvent;
 
 function checkSingleInstance() {
-    var shouldQuit = app.makeSingleInstance((/* commandLine, workingDirectory */) => {
+    const shouldQuit = app.makeSingleInstance((/* commandLine, workingDirectory */) => {
         restoreMainWindow();
     });
 
@@ -181,7 +181,7 @@ function updateMainWindowPosition() {
         return;
     }
     updateMainWindowPositionTimeout = null;
-    var bounds = mainWindow.getBounds();
+    const bounds = mainWindow.getBounds();
     if (!mainWindow.isMaximized() && !mainWindow.isMinimized() && !mainWindow.isFullScreen()) {
         mainWindowPosition.x = bounds.x;
         mainWindowPosition.y = bounds.y;
@@ -210,8 +210,8 @@ function restoreMainWindowPosition() {
             mainWindowPosition = JSON.parse(data);
             if (mainWindow && mainWindowPosition) {
                 if (mainWindowPosition.width && mainWindowPosition.height) {
-                    var displayBounds = require('electron').screen.getDisplayMatching(mainWindowPosition).bounds;
-                    var db = mainWindowPosition.displayBounds;
+                    const displayBounds = require('electron').screen.getDisplayMatching(mainWindowPosition).bounds;
+                    const db = mainWindowPosition.displayBounds;
                     if (displayBounds.x === db.x && displayBounds.y === db.y &&
                         displayBounds.width === db.width && displayBounds.height === db.height) {
                         mainWindow.setBounds(mainWindowPosition);
@@ -237,8 +237,8 @@ function emitBackboneEvent(e, arg) {
 
 function setMenu() {
     if (process.platform === 'darwin') {
-        var name = require('electron').app.getName();
-        var template = [
+        const name = require('electron').app.getName();
+        const template = [
             {
                 label: name,
                 submenu: [
@@ -272,7 +272,7 @@ function setMenu() {
                 ]
             }
         ];
-        var menu = electron.Menu.buildFromTemplate(template);
+        const menu = electron.Menu.buildFromTemplate(template);
         electron.Menu.setApplicationMenu(menu);
     }
 }
@@ -305,16 +305,16 @@ function notifyOpenFile() {
 }
 
 function setGlobalShortcuts() {
-    var shortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
-    var shortcuts = {
+    const shortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
+    const shortcuts = {
         C: 'copy-password',
         B: 'copy-user',
         U: 'copy-url',
         T: 'auto-type'
     };
     Object.keys(shortcuts).forEach(key => {
-        var shortcut = shortcutModifiers + key;
-        var eventName = shortcuts[key];
+        const shortcut = shortcutModifiers + key;
+        const eventName = shortcuts[key];
         try {
             electron.globalShortcut.register(shortcut, () => {
                 emitBackboneEvent(eventName);

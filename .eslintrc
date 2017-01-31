@@ -12,7 +12,9 @@
         "no-debugger": "error",
         "prefer-arrow-callback": "error",
         "object-property-newline": "off",
-        "no-useless-escape": "off"
+        "no-useless-escape": "off",
+        "no-var": "error",
+        "prefer-const": "error"
     },
     "globals": {
         "_": true,

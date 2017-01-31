@@ -1,11 +1,11 @@
 'use strict';
 
-var FieldViewText = require('./field-view-text'),
-    Timeouts = require('../../const/timeouts');
+const FieldViewText = require('./field-view-text');
+const Timeouts = require('../../const/timeouts');
 
-var MinOpacity = 0.1;
+const MinOpacity = 0.1;
 
-var FieldViewOtp = FieldViewText.extend({
+const FieldViewOtp = FieldViewText.extend({
     otpTimeout: null,
     otpTickInterval: null,
     otpValue: null,
@@ -85,8 +85,8 @@ var FieldViewOtp = FieldViewText.extend({
         if (!this.value || !this.otpValidUntil) {
             return;
         }
-        var opacity;
-        var timeLeft = this.otpValidUntil - Date.now();
+        let opacity;
+        const timeLeft = this.otpValidUntil - Date.now();
         if (timeLeft >= Timeouts.OtpFadeDuration || this.editing) {
             opacity = 1;
         } else if (timeLeft <= 0) {

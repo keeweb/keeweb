@@ -2,7 +2,7 @@
 
 const Backbone = require('backbone');
 
-let DropdownView = Backbone.View.extend({
+const DropdownView = Backbone.View.extend({
     template: require('templates/dropdown.hbs'),
 
     events: {
@@ -19,8 +19,8 @@ let DropdownView = Backbone.View.extend({
         this.options = config.options;
         this.renderTemplate(config);
         this.$el.appendTo(document.body);
-        let ownRect = this.$el[0].getBoundingClientRect();
-        let bodyRect = document.body.getBoundingClientRect();
+        const ownRect = this.$el[0].getBoundingClientRect();
+        const bodyRect = document.body.getBoundingClientRect();
         let left = config.position.left || (config.position.right - ownRect.right + ownRect.left);
         let top = config.position.top;
         if (left + ownRect.width > bodyRect.right) {
@@ -47,8 +47,8 @@ let DropdownView = Backbone.View.extend({
 
     itemClick: function(e) {
         e.stopPropagation();
-        var el = $(e.target).closest('.dropdown__item');
-        var selected = el.data('value');
+        const el = $(e.target).closest('.dropdown__item');
+        const selected = el.data('value');
         this.trigger('select', { item: selected, el: el });
     }
 });

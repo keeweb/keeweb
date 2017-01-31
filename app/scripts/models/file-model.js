@@ -1,16 +1,16 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    GroupCollection = require('../collections/group-collection'),
-    GroupModel = require('./group-model'),
-    IconUrl = require('../util/icon-url'),
-    Logger = require('../util/logger'),
-    kdbxweb = require('kdbxweb'),
-    demoFileData = require('base64-loader!../../resources/Demo.kdbx');
+const Backbone = require('backbone');
+const GroupCollection = require('../collections/group-collection');
+const GroupModel = require('./group-model');
+const IconUrl = require('../util/icon-url');
+const Logger = require('../util/logger');
+const kdbxweb = require('kdbxweb');
+const demoFileData = require('base64-loader!../../resources/Demo.kdbx');
 
-var logger = new Logger('file');
+const logger = new Logger('file');
 
-var FileModel = Backbone.Model.extend({
+const FileModel = Backbone.Model.extend({
     defaults: {
         id: '',
         uuid: '',
@@ -48,8 +48,8 @@ var FileModel = Backbone.Model.extend({
 
     open: function(password, fileData, keyFileData, callback) {
         try {
-            let credentials = new kdbxweb.Credentials(password, keyFileData);
-            let ts = logger.ts();
+            const credentials = new kdbxweb.Credentials(password, keyFileData);
+            const ts = logger.ts();
 
             kdbxweb.Kdbx.load(fileData, credentials)
                 .then(db => {
@@ -93,8 +93,8 @@ var FileModel = Backbone.Model.extend({
     },
 
     create: function(name) {
-        var password = kdbxweb.ProtectedValue.fromString('');
-        var credentials = new kdbxweb.Credentials(password);
+        const password = kdbxweb.ProtectedValue.fromString('');
+        const credentials = new kdbxweb.Credentials(password);
         this.db = kdbxweb.Kdbx.create(credentials, name);
         this.set('name', name);
         this.readModel();
@@ -103,9 +103,9 @@ var FileModel = Backbone.Model.extend({
 
     importWithXml: function(fileXml, callback) {
         try {
-            var ts = logger.ts();
-            var password = kdbxweb.ProtectedValue.fromString('');
-            var credentials = new kdbxweb.Credentials(password);
+            const ts = logger.ts();
+            const password = kdbxweb.ProtectedValue.fromString('');
+            const credentials = new kdbxweb.Credentials(password);
             kdbxweb.Kdbx.loadXml(fileXml, credentials)
                 .then(db => {
                     this.db = db;
@@ -125,9 +125,9 @@ var FileModel = Backbone.Model.extend({
     },
 
     openDemo: function(callback) {
-        var password = kdbxweb.ProtectedValue.fromString('demo');
-        var credentials = new kdbxweb.Credentials(password);
-        var demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
+        const password = kdbxweb.ProtectedValue.fromString('demo');
+        const credentials = new kdbxweb.Credentials(password);
+        const demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
         kdbxweb.Kdbx.load(demoFile, credentials)
             .then(db => {
                 this.db = db;
@@ -153,7 +153,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     readModel: function() {
-        var groups = new GroupCollection();
+        const groups = new GroupCollection();
         this.set({
             uuid: this.db.getDefaultGroup().uuid.toString(),
             groups: groups,
@@ -165,7 +165,7 @@ var FileModel = Backbone.Model.extend({
             keyChangeForce: this.db.meta.keyChangeForce
         }, { silent: true });
         this.db.groups.forEach(function(group) {
-            var groupModel = this.getGroup(this.subId(group.uuid.id));
+            let groupModel = this.getGroup(this.subId(group.uuid.id));
             if (groupModel) {
                 groupModel.setGroup(group, this);
             } else {
@@ -182,8 +182,8 @@ var FileModel = Backbone.Model.extend({
     },
 
     buildObjectMap: function() {
-        var entryMap = {};
-        var groupMap = {};
+        const entryMap = {};
+        const groupMap = {};
         this.forEachGroup(group => {
             groupMap[group.id] = group;
             group.forEachOwnEntry(null, entry => {
@@ -195,7 +195,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     resolveFieldReferences: function() {
-        let entryMap = this.entryMap;
+        const entryMap = this.entryMap;
         Object.keys(entryMap).forEach(e => {
             entryMap[e].resolveFieldReferences();
         });
@@ -213,7 +213,7 @@ var FileModel = Backbone.Model.extend({
         if (remoteKey) {
             credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(''));
             credentialsPromise = credentials.ready.then(() => {
-                let promises = [];
+                const promises = [];
                 if (remoteKey.password) {
                     promises.push(credentials.setPassword(remoteKey.password));
                 } else {
@@ -294,7 +294,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     forEachEntry: function(filter, callback) {
-        var top = this;
+        let top = this;
         if (filter.trash) {
             top = this.getGroup(this.db.meta.recycleBinUuid ? this.subId(this.db.meta.recycleBinUuid.id) : null);
         } else if (filter.group) {
@@ -353,7 +353,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     getKeyFileHash: function() {
-        var hash = this.db.credentials.keyFileHash;
+        const hash = this.db.credentials.keyFileHash;
         return hash ? kdbxweb.ByteUtils.bytesToBase64(hash.getBinary()) : null;
     },
 
@@ -365,8 +365,8 @@ var FileModel = Backbone.Model.extend({
         if (!error) {
             this.db.removeLocalEditState();
         }
-        var modified = this.get('modified') && !!error;
-        var dirty = this.get('dirty') && !savedToCache;
+        const modified = this.get('modified') && !!error;
+        const dirty = this.get('dirty') && !savedToCache;
         this.set({
             created: false,
             path: path || this.get('path'),
@@ -406,8 +406,8 @@ var FileModel = Backbone.Model.extend({
     },
 
     generateAndSetKeyFile: function() {
-        var keyFile = kdbxweb.Credentials.createRandomKeyFile();
-        var keyFileName = 'Generated';
+        const keyFile = kdbxweb.Credentials.createRandomKeyFile();
+        const keyFileName = 'Generated';
         this.setKeyFile(keyFile, keyFileName);
         return keyFile;
     },
@@ -422,7 +422,7 @@ var FileModel = Backbone.Model.extend({
 
     removeKeyFile: function() {
         this.db.credentials.keyFileHash = null;
-        var changed = !!this._oldKeyFileHash;
+        const changed = !!this._oldKeyFileHash;
         if (!changed && this.db.credentials.passwordHash === this._oldPasswordHash) {
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
@@ -434,11 +434,11 @@ var FileModel = Backbone.Model.extend({
         if (!this.db.meta.keyChanged) {
             return false;
         }
-        var expiryDays = force ? this.db.meta.keyChangeForce : this.db.meta.keyChangeRec;
+        const expiryDays = force ? this.db.meta.keyChangeForce : this.db.meta.keyChangeRec;
         if (!expiryDays || expiryDays < 0 || isNaN(expiryDays)) {
             return false;
         }
-        var daysDiff = (Date.now() - this.db.meta.keyChanged) / 1000 / 3600 / 24;
+        const daysDiff = (Date.now() - this.db.meta.keyChanged) / 1000 / 3600 / 24;
         return daysDiff > expiryDays;
     },
 
@@ -446,7 +446,7 @@ var FileModel = Backbone.Model.extend({
         if (isNaN(days) || !days || days < 0) {
             days = -1;
         }
-        var prop = force ? 'keyChangeForce' : 'keyChangeRec';
+        const prop = force ? 'keyChangeForce' : 'keyChangeRec';
         this.db.meta[prop] = days;
         this.set(prop, days);
         this.setModified();
@@ -497,9 +497,9 @@ var FileModel = Backbone.Model.extend({
     },
 
     emptyTrash: function() {
-        var trashGroup = this.getTrashGroup();
+        const trashGroup = this.getTrashGroup();
         if (trashGroup) {
-            var modified = false;
+            let modified = false;
             trashGroup.getOwnSubGroups().slice().forEach(function(group) {
                 this.db.move(group, null);
                 modified = true;
@@ -520,7 +520,7 @@ var FileModel = Backbone.Model.extend({
     },
 
     addCustomIcon: function(iconData) {
-        var uuid = kdbxweb.KdbxUuid.random();
+        const uuid = kdbxweb.KdbxUuid.random();
         this.db.meta.customIcons[uuid] = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData));
         return uuid.toString();
     },

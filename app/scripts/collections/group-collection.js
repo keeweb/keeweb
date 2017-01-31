@@ -1,9 +1,9 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    GroupModel = require('../models/group-model');
+const Backbone = require('backbone');
+const GroupModel = require('../models/group-model');
 
-var GroupCollection = Backbone.Collection.extend({
+const GroupCollection = Backbone.Collection.extend({
     model: GroupModel
 });
 

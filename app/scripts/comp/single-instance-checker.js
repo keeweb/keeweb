@@ -6,9 +6,9 @@ const Launcher = require('./launcher');
 const LocalStorageKeyName = 'instanceCheck';
 const LocalStorageResponseKeyName = 'instanceMaster';
 
-let instanceKey = Date.now().toString();
+const instanceKey = Date.now().toString();
 
-let SingleInstanceChecker = {
+const SingleInstanceChecker = {
     init: function() {
         if (Launcher) {
             return;

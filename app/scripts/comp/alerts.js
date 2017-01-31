@@ -1,9 +1,9 @@
 'use strict';
 
-var ModalView = require('../views/modal-view'),
-    Locale = require('../util/locale');
+const ModalView = require('../views/modal-view');
+const Locale = require('../util/locale');
 
-var Alerts = {
+const Alerts = {
     alertDisplayed: false,
 
     buttons: {
@@ -18,7 +18,7 @@ var Alerts = {
             return null;
         }
         Alerts.alertDisplayed = true;
-        var view = new ModalView({ model: config });
+        const view = new ModalView({ model: config });
         view.render();
         view.on('result', (res, check) => {
             Alerts.alertDisplayed = false;

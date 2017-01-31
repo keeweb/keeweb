@@ -1,15 +1,15 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    KeyHandler = require('../../comp/key-handler'),
-    Keys = require('../../const/keys'),
-    Format = require('../../util/format'),
-    Locale = require('../../util/locale'),
-    Alerts = require('../../comp/alerts'),
-    FieldViewReadOnly = require('../fields/field-view-read-only'),
-    FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
+const Backbone = require('backbone');
+const KeyHandler = require('../../comp/key-handler');
+const Keys = require('../../const/keys');
+const Format = require('../../util/format');
+const Locale = require('../../util/locale');
+const Alerts = require('../../comp/alerts');
+const FieldViewReadOnly = require('../fields/field-view-read-only');
+const FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
 
-var DetailsHistoryView = Backbone.View.extend({
+const DetailsHistoryView = Backbone.View.extend({
     template: require('templates/details/details-history.hbs'),
 
     events: {
@@ -82,7 +82,7 @@ var DetailsHistoryView = Backbone.View.extend({
         this.timelineEl.find('.details__history-timeline-item[data-id="' + ix + '"]').addClass('details__history-timeline-item--active');
         this.removeFieldViews();
         this.bodyEl.html('');
-        var colorCls = this.record.color ? this.record.color + '-color' : '';
+        const colorCls = this.record.color ? this.record.color + '-color' : '';
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Rev', title: Locale.detHistoryVersion, value: ix + 1 } }));
         this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: Locale.detHistorySaved,
             value: Format.dtStr(this.record.updated) +
@@ -109,7 +109,7 @@ var DetailsHistoryView = Backbone.View.extend({
         this.fieldViews.forEach(function(fieldView) {
             fieldView.setElement(this.bodyEl).render();
         }, this);
-        var buttons = this.$el.find('.details__history-buttons');
+        const buttons = this.$el.find('.details__history-buttons');
         buttons.find('.details__history-button-revert').toggle(ix < this.history.length - 1);
         buttons.find('.details__history-button-delete').toggle(ix < this.history.length - 1);
         buttons.find('.details__history-button-discard').toggle(this.record.unsaved && ix === this.history.length - 1 &&
@@ -117,7 +117,7 @@ var DetailsHistoryView = Backbone.View.extend({
     },
 
     timelineItemClick: function(e) {
-        var id = $(e.target).closest('.details__history-timeline-item').data('id');
+        const id = $(e.target).closest('.details__history-timeline-item').data('id');
         this.showRecord(id);
     },
 
@@ -134,14 +134,14 @@ var DetailsHistoryView = Backbone.View.extend({
     },
 
     buildTimeline: function() {
-        var firstRec = this.history[0],
-            lastRec = this.history[this.history.length - 1];
+        const firstRec = this.history[0];
+        const lastRec = this.history[this.history.length - 1];
         this.timeline = this.history.map(rec => ({
             pos: (rec.updated - firstRec.updated) / (lastRec.updated - firstRec.updated),
             rec: rec
         }));
-        var period = lastRec.updated - firstRec.updated;
-        var format = this.getDateFormat(period);
+        const period = lastRec.updated - firstRec.updated;
+        const format = this.getDateFormat(period);
         this.labels = this.getLabels(firstRec.updated.getTime(), lastRec.updated.getTime(), format.round)
             .map(label => ({
                 pos: (label - firstRec.updated) / (lastRec.updated - firstRec.updated),
@@ -151,7 +151,7 @@ var DetailsHistoryView = Backbone.View.extend({
     },
 
     getDateFormat: function(period) {
-        for (var i = 0; i < this.formats.length; i++) {
+        for (let i = 0; i < this.formats.length; i++) {
             if (period < this.formats[i].round * 1.2) {
                 return this.formats[i > 0 ? i - 1 : 0];
             }
@@ -160,12 +160,12 @@ var DetailsHistoryView = Backbone.View.extend({
     },
 
     getLabels: function(first, last, round) {
-        var count = Math.floor((last - first) / round);
+        const count = Math.floor((last - first) / round);
         if (count > 2) {
             round *= Math.ceil(count / 2);
         }
-        var labels = [];
-        var label = Math.ceil(first / round) * round;
+        const labels = [];
+        let label = Math.ceil(first / round) * round;
         while (label < last) {
             labels.push(label);
             label += round;

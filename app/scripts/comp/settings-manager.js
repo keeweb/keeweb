@@ -14,7 +14,7 @@ const SettingsManager = {
         if (settings.get('fontSize')) {
             this.setFontSize(settings.get('fontSize'));
         }
-        let locale = settings.get('locale');
+        const locale = settings.get('locale');
         if (locale) {
             this.setLocale(settings.get('locale'));
         } else {
@@ -31,7 +31,7 @@ const SettingsManager = {
             }
         });
         document.body.classList.add(this.getThemeClass(theme));
-        var metaThemeColor = document.head.querySelector('meta[name=theme-color]');
+        const metaThemeColor = document.head.querySelector('meta[name=theme-color]');
         if (metaThemeColor) {
             metaThemeColor.content = window.getComputedStyle(document.body).backgroundColor;
         }
@@ -62,7 +62,7 @@ const SettingsManager = {
     },
 
     getBrowserLocale: function() {
-        let language = navigator.languages && navigator.languages[0] || navigator.language;
+        const language = navigator.languages && navigator.languages[0] || navigator.language;
         return language ? language.substr(0, 2).toLowerCase() : null;
     }
 };

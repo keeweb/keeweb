@@ -1,9 +1,9 @@
 'use strict';
 
-var StorageBase = require('./storage-base'),
-    Launcher = require('../comp/launcher');
+const StorageBase = require('./storage-base');
+const Launcher = require('../comp/launcher');
 
-var StorageFileCache = StorageBase.extend({
+const StorageFileCache = StorageBase.extend({
     name: 'cache',
     enabled: !!Launcher,
     system: true,
@@ -19,8 +19,8 @@ var StorageFileCache = StorageBase.extend({
             return callback && callback();
         }
         try {
-            var path = Launcher.getUserDataPath('OfflineFiles');
-            var fs = Launcher.req('fs');
+            const path = Launcher.getUserDataPath('OfflineFiles');
+            const fs = Launcher.req('fs');
             if (!fs.existsSync(path)) {
                 fs.mkdirSync(path);
             }
@@ -38,7 +38,7 @@ var StorageFileCache = StorageBase.extend({
             if (err) {
                 return callback && callback(err);
             }
-            var ts = this.logger.ts();
+            const ts = this.logger.ts();
             try {
                 Launcher.writeFile(this.getPath(id), data);
                 this.logger.debug('Saved', id, this.logger.ts(ts));
@@ -56,9 +56,9 @@ var StorageFileCache = StorageBase.extend({
             if (err) {
                 return callback && callback(null, err);
             }
-            var ts = this.logger.ts();
+            const ts = this.logger.ts();
             try {
-                var data = Launcher.readFile(this.getPath(id));
+                const data = Launcher.readFile(this.getPath(id));
                 this.logger.debug('Loaded', id, this.logger.ts(ts));
                 if (callback) { callback(null, data.buffer); }
             } catch (e) {
@@ -74,9 +74,9 @@ var StorageFileCache = StorageBase.extend({
             if (err) {
                 return callback && callback(err);
             }
-            var ts = this.logger.ts();
+            const ts = this.logger.ts();
             try {
-                var path = this.getPath(id);
+                const path = this.getPath(id);
                 if (Launcher.fileExists(path)) {
                     Launcher.deleteFile(path);
                 }

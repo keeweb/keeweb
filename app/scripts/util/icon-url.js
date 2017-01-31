@@ -1,8 +1,8 @@
 'use strict';
 
-var kdbxweb = require('kdbxweb');
+const kdbxweb = require('kdbxweb');
 
-var IconUrl = {
+const IconUrl = {
     toDataUrl: function(iconData) {
         return iconData ? 'data:image/png;base64,' + kdbxweb.ByteUtils.bytesToBase64(iconData) : null;
     }

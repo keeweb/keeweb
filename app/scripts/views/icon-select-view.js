@@ -1,13 +1,13 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    IconMap = require('../const/icon-map'),
-    Launcher = require('../comp/launcher'),
-    Logger = require('../util/logger');
+const Backbone = require('backbone');
+const IconMap = require('../const/icon-map');
+const Launcher = require('../comp/launcher');
+const Logger = require('../util/logger');
 
-var logger = new Logger('icon-select-view');
+const logger = new Logger('icon-select-view');
 
-var IconSelectView = Backbone.View.extend({
+const IconSelectView = Backbone.View.extend({
     template: require('templates/icon-select.hbs'),
 
     events: {
@@ -35,18 +35,18 @@ var IconSelectView = Backbone.View.extend({
     },
 
     iconClick: function(e) {
-        var target = $(e.target).closest('.icon-select__icon');
-        var iconId = target[0].getAttribute('data-val');
+        const target = $(e.target).closest('.icon-select__icon');
+        const iconId = target[0].getAttribute('data-val');
         if (iconId === 'special') {
-            var iconData = this.special[target.data('special')];
+            const iconData = this.special[target.data('special')];
             if (iconData) {
-                var id = this.model.file.addCustomIcon(iconData.data);
+                const id = this.model.file.addCustomIcon(iconData.data);
                 this.trigger('select', { id: id, custom: true });
                 e.preventDefault();
                 e.stopImmediatePropagation();
             }
         } else if (iconId) {
-            var isCustomIcon = target.hasClass('icon-select__icon-custom');
+            const isCustomIcon = target.hasClass('icon-select__icon-custom');
             this.trigger('select', { id: iconId, custom: isCustomIcon });
         }
     },
@@ -58,8 +58,8 @@ var IconSelectView = Backbone.View.extend({
         this.downloadingFavicon = true;
         this.$el.find('.icon-select__icon-download>i').addClass('fa-spinner fa-spin');
         this.$el.find('.icon-select__icon-download').removeClass('icon-select__icon--download-error');
-        var url = this.getIconUrl(!Launcher); // inside launcher we can load images without CORS
-        var img = document.createElement('img');
+        const url = this.getIconUrl(!Launcher); // inside launcher we can load images without CORS
+        const img = document.createElement('img');
         img.crossOrigin = 'Anonymous';
         img.src = url;
         img.onload = () => {
@@ -83,7 +83,7 @@ var IconSelectView = Backbone.View.extend({
         if (!this.model.url) {
             return null;
         }
-        var url = this.model.url.replace(/([^\/:]\/.*)?$/, match => (match && match[0]) + '/favicon.ico');
+        let url = this.model.url.replace(/([^\/:]\/.*)?$/, match => (match && match[0]) + '/favicon.ico');
         if (url.indexOf('://') < 0) {
             url = 'http://' + url;
         }
@@ -98,11 +98,11 @@ var IconSelectView = Backbone.View.extend({
     },
 
     iconSelected: function(e) {
-        var file = e.target.files[0];
+        const file = e.target.files[0];
         if (file) {
-            var reader = new FileReader();
+            const reader = new FileReader();
             reader.onload = e => {
-                var img = document.createElement('img');
+                const img = document.createElement('img');
                 img.onload = () => {
                     this.setSpecialImage(img, 'select');
                     this.$el.find('.icon-select__icon-select img').remove();
@@ -118,13 +118,13 @@ var IconSelectView = Backbone.View.extend({
     },
 
     setSpecialImage: function(img, name) {
-        var size = Math.min(img.width, 32);
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
+        const size = Math.min(img.width, 32);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
         canvas.width = size;
         canvas.height = size;
         ctx.drawImage(img, 0, 0, size, size);
-        var data = canvas.toDataURL().replace(/^.*,/, '');
+        const data = canvas.toDataURL().replace(/^.*,/, '');
         this.special[name] = { width: img.width, height: img.height, data: data };
     }
 });

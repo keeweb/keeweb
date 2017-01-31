@@ -1,21 +1,21 @@
 'use strict';
 
-var Dropbox = require('dropbox'),
-    Alerts = require('./alerts'),
-    Launcher = require('./launcher'),
-    Logger = require('../util/logger'),
-    Locale = require('../util/locale'),
-    UrlUtil = require('../util/url-util'),
-    AppSettingsModel = require('../models/app-settings-model');
+const Dropbox = require('dropbox');
+const Alerts = require('./alerts');
+const Launcher = require('./launcher');
+const Logger = require('../util/logger');
+const Locale = require('../util/locale');
+const UrlUtil = require('../util/url-util');
+const AppSettingsModel = require('../models/app-settings-model');
 
-var logger = new Logger('dropbox');
+const logger = new Logger('dropbox');
 
-var DropboxKeys = {
+const DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
     FullDropbox: 'eor7hvv6u6oslq9'
 };
 
-var DropboxCustomErrors = {
+const DropboxCustomErrors = {
     BadKey: 'bad-key'
 };
 
@@ -23,7 +23,7 @@ function getKey() {
     return AppSettingsModel.instance.get('dropboxAppKey') || DropboxKeys.AppFolder;
 }
 
-var DropboxChooser = function(callback) {
+const DropboxChooser = function(callback) {
     this.cb = callback;
     this.onMessage = this.onMessage.bind(this);
 };
@@ -36,8 +36,8 @@ DropboxChooser.prototype.callback = function(err, res) {
 };
 
 DropboxChooser.prototype.choose = function() {
-    var windowFeatures = 'width=640,height=552,left=357,top=100,resizable=yes,location=yes';
-    var url = this.buildUrl();
+    const windowFeatures = 'width=640,height=552,left=357,top=100,resizable=yes,location=yes';
+    const url = this.buildUrl();
     this.popup = window.open(url, 'dropbox', windowFeatures);
     if (!this.popup) {
         return this.callback('Failed to open window');
@@ -47,7 +47,7 @@ DropboxChooser.prototype.choose = function() {
 };
 
 DropboxChooser.prototype.buildUrl = function() {
-    var urlParams = {
+    const urlParams = {
         origin: encodeURIComponent(window.location.protocol + '//' + window.location.host),
         'app_key': getKey(),
         'link_type': 'direct',
@@ -67,7 +67,7 @@ DropboxChooser.prototype.onMessage = function(e) {
     if (e.source !== this.popup) {
         return;
     }
-    var data = JSON.parse(e.data);
+    const data = JSON.parse(e.data);
     switch (data.method) {
         case 'origin_request':
             e.source.postMessage(JSON.stringify({ method: 'origin' }), 'https://www.dropbox.com');
@@ -111,7 +111,7 @@ DropboxChooser.prototype.success = function(params) {
 };
 
 DropboxChooser.prototype.readFile = function(url) {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', () => {
         this.callback(null, { name: this.result.name, data: xhr.response });
     });
@@ -122,7 +122,7 @@ DropboxChooser.prototype.readFile = function(url) {
     xhr.send();
 };
 
-var DropboxLink = {
+const DropboxLink = {
     ERROR_CONFLICT: Dropbox.ApiError.CONFLICT,
     ERROR_NOT_FOUND: Dropbox.ApiError.NOT_FOUND,
 
@@ -136,7 +136,7 @@ var DropboxLink = {
         if (!overrideAppKey && !this.isValidKey()) {
             return complete(DropboxCustomErrors.BadKey);
         }
-        var client = new Dropbox.Client({key: overrideAppKey || getKey()});
+        const client = new Dropbox.Client({key: overrideAppKey || getKey()});
         if (Launcher) {
             client.authDriver(new Dropbox.AuthDriver.Electron({ receiverUrl: location.href }));
         } else {
@@ -224,10 +224,10 @@ var DropboxLink = {
             if (err) {
                 return callback(err);
             }
-            var ts = logger.ts();
+            const ts = logger.ts();
             logger.debug('Call', callName);
             client[callName].apply(client, args.concat((...args) => {
-                let [err] = args;
+                const [err] = args;
                 logger.debug('Result', callName, logger.ts(ts), args);
                 if (err) {
                     this._handleUiError(err, errorAlertCallback, repeat => {
@@ -245,7 +245,7 @@ var DropboxLink = {
     },
 
     canUseBuiltInKeys: function() {
-        var isSelfHosted = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
+        const isSelfHosted = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
             !/http(s?):\/\/(app|beta)\.keeweb\.info/.test(location.href);
         return !!Launcher || !isSelfHosted;
     },
@@ -253,8 +253,8 @@ var DropboxLink = {
     getKey: getKey,
 
     isValidKey: function() {
-        var key = getKey();
-        var isBuiltIn = key === DropboxKeys.AppFolder || key === DropboxKeys.FullDropbox;
+        const key = getKey();
+        const isBuiltIn = key === DropboxKeys.AppFolder || key === DropboxKeys.FullDropbox;
         return key && key.indexOf(' ') < 0 && (!isBuiltIn || this.canUseBuiltInKeys());
     },
 
@@ -283,13 +283,13 @@ var DropboxLink = {
 
     saveFile: function(fileName, data, rev, complete, alertCallback) {
         if (rev) {
-            var opts = typeof rev === 'string' ? { lastVersionTag: rev, noOverwrite: true, noAutoRename: true } : undefined;
+            const opts = typeof rev === 'string' ? { lastVersionTag: rev, noOverwrite: true, noAutoRename: true } : undefined;
             this._callAndHandleError('writeFile', [fileName, data, opts], complete, alertCallback);
         } else {
-            var dir = UrlUtil.fileToDir(fileName);
+            const dir = UrlUtil.fileToDir(fileName);
             this.list(dir, (err, files) => {
                 if (err) { return complete(err); }
-                var exists = files.some(file => file.toLowerCase() === fileName.toLowerCase());
+                const exists = files.some(file => file.toLowerCase() === fileName.toLowerCase());
                 if (exists) { return complete({ exists: true }); }
                 this._callAndHandleError('writeFile', [fileName, data], complete);
             });

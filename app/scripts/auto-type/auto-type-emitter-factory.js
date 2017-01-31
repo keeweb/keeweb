@@ -1,13 +1,13 @@
 'use strict';
 
-var Launcher = require('../comp/launcher');
+const Launcher = require('../comp/launcher');
 
-var AutoTypeEmitterFactory = {
+const AutoTypeEmitterFactory = {
     create: function(callback) {
         if (!Launcher) {
             return null;
         }
-        var AutoTypeEmitter = require('./emitter/auto-type-emitter-' + Launcher.platform());
+        const AutoTypeEmitter = require('./emitter/auto-type-emitter-' + Launcher.platform());
         return new AutoTypeEmitter(callback);
     }
 };

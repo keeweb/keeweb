@@ -8,21 +8,21 @@
 
 'use strict';
 
-var app = require('electron').app,
-    path = require('path'),
-    fs = require('fs');
+const app = require('electron').app;
+const path = require('path');
+const fs = require('fs');
 
-var userDataDir = app.getPath('userData'),
-    appPathUserData = path.join(userDataDir, 'app.js'),
-    appPath = path.join(__dirname, 'app.js');
+const userDataDir = app.getPath('userData');
+const appPathUserData = path.join(userDataDir, 'app.js');
+let appPath = path.join(__dirname, 'app.js');
 
 if (fs.existsSync(appPathUserData)) {
-    var versionLocal = require('./package.json').version;
+    let versionLocal = require('./package.json').version;
     try {
-        var versionUserData = require(path.join(userDataDir, 'package.json')).version;
+        let versionUserData = require(path.join(userDataDir, 'package.json')).version;
         versionLocal = versionLocal.split('.');
         versionUserData = versionUserData.split('.');
-        for (var i = 0; i < versionLocal.length; i++) {
+        for (let i = 0; i < versionLocal.length; i++) {
             if (+versionUserData[i] > +versionLocal[i]) {
                 appPath = appPathUserData;
                 break;

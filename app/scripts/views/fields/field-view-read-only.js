@@ -1,8 +1,8 @@
 'use strict';
 
-var FieldView = require('./field-view');
+const FieldView = require('./field-view');
 
-var FieldViewReadOnly = FieldView.extend({
+const FieldViewReadOnly = FieldView.extend({
     renderValue: function(value) {
         return value.isProtected ? new Array(value.textLength + 1).join('•') : _.escape(value);
     },

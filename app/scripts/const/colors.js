@@ -1,6 +1,6 @@
 'use strict';
 
-var Colors = {
+const Colors = {
     AllColors: ['yellow', 'green', 'red', 'orange', 'blue', 'violet'],
 
     ColorsValues: {

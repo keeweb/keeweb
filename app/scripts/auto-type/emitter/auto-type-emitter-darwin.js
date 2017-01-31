@@ -4,7 +4,7 @@ const Launcher = require('../../comp/launcher');
 const AutoTypeNativeHelper = require('../helper/auto-type-native-helper');
 
 // http://eastmanreference.com/complete-list-of-applescript-key-codes/
-var KeyMap = {
+const KeyMap = {
     tab: 48, enter: 36, space: 49,
     up: 126, down: 125, left: 123, right: 124, home: 115, end: 119, pgup: 116, pgdn: 121,
     ins: 114, del: 117, bs: 51, esc: 53,
@@ -16,14 +16,14 @@ var KeyMap = {
     n5: 87, n6: 88, n7: 89, n8: 91, n9: 92
 };
 
-var ModMap = {
+const ModMap = {
     '^': '@',
     '+': '+',
     '%': '%',
     '^^': '^'
 };
 
-var AutoTypeEmitter = function(callback) {
+const AutoTypeEmitter = function(callback) {
     this.callback = callback;
     this.mod = {};
     this.pendingScript = [];
@@ -65,7 +65,7 @@ AutoTypeEmitter.prototype.wait = function(time) {
 
 AutoTypeEmitter.prototype.waitComplete = function() {
     if (this.pendingScript.length) {
-        var script = this.pendingScript.join('\n');
+        const script = this.pendingScript.join('\n');
         this.pendingScript.length = 0;
         this.runScript(script);
     } else {

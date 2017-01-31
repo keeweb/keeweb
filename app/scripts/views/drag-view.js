@@ -1,8 +1,8 @@
 'use strict';
 
-var Backbone = require('backbone');
+const Backbone = require('backbone');
 
-var DragView = Backbone.View.extend({
+const DragView = Backbone.View.extend({
     events: {
         'mousedown': 'mousedown'
     },
@@ -24,7 +24,7 @@ var DragView = Backbone.View.extend({
 
     mousedown: function(e) {
         if (e.which === 1) {
-            var now = Date.now();
+            const now = Date.now();
             if (now - this.mouseDownTime < 500) {
                 this.mouseDownCount++;
                 if (this.mouseDownCount === 2) {
@@ -36,7 +36,7 @@ var DragView = Backbone.View.extend({
                 this.mouseDownCount = 1;
             }
             this.initialOffset = e[this.offsetProp];
-            var cursor = this.$el.css('cursor');
+            const cursor = this.$el.css('cursor');
             this.dragMask = $('<div/>', {'class': 'drag-mask'}).css('cursor', cursor).appendTo('body');
             this.dragMask.on('mousemove', this.mousemove.bind(this));
             this.dragMask.on('mouseup', this.mouseup.bind(this));

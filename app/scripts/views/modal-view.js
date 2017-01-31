@@ -1,10 +1,10 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Keys = require('../const/keys'),
-    KeyHandler = require('../comp/key-handler');
+const Backbone = require('backbone');
+const Keys = require('../const/keys');
+const KeyHandler = require('../comp/key-handler');
 
-var ModalView = Backbone.View.extend({
+const ModalView = Backbone.View.extend({
     el: 'body',
 
     template: require('templates/modal.hbs'),
@@ -32,10 +32,10 @@ var ModalView = Backbone.View.extend({
     },
 
     render: function () {
-        var parent = this.$el;
+        const parent = this.$el;
         this.setElement($(this.template(this.model)));
         parent.append(this.$el);
-        var el = this.$el;
+        const el = this.$el;
         el.addClass('modal--hidden');
         setTimeout(() => {
             el.removeClass('modal--hidden');
@@ -51,7 +51,7 @@ var ModalView = Backbone.View.extend({
     },
 
     buttonClick: function(e) {
-        var result = $(e.target).data('result');
+        const result = $(e.target).data('result');
         this.closeWithResult(result);
     },
 
@@ -72,7 +72,7 @@ var ModalView = Backbone.View.extend({
     },
 
     closeWithResult: function(result) {
-        var checked = this.model.checkbox ? this.$el.find('#modal__check').is(':checked') : undefined;
+        const checked = this.model.checkbox ? this.$el.find('#modal__check').is(':checked') : undefined;
         this.trigger('result', result, checked);
         this.$el.addClass('modal--hidden');
         this.undelegateEvents();

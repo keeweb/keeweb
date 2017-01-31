@@ -1,8 +1,8 @@
 'use strict';
 
-var Backbone = require('backbone');
+const Backbone = require('backbone');
 
-var DetailsAddFieldView = Backbone.View.extend({
+const DetailsAddFieldView = Backbone.View.extend({
     template: require('templates/details/details-add-field.hbs'),
 
     events: {
