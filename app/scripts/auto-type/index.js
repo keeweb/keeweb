@@ -16,7 +16,7 @@ var clearTextAutoTypeLog = localStorage.autoTypeDebug;
 
 var AutoType = {
     helper: AutoTypeHelperFactory.create(),
-    enabled: !!Launcher,
+    enabled: !!(Launcher && Launcher.autoTypeSupported),
     selectEntryView: false,
     pendingEvent: null,
     running: false,
