@@ -15,13 +15,13 @@ const SettingsManager = {
             this.setFontSize(settings.get('fontSize'));
         }
         const locale = settings.get('locale');
-        if (locale) {
-            this.setLocale(settings.get('locale'));
-        } else {
-            try {
+        try {
+            if (locale) {
+                this.setLocale(settings.get('locale'));
+            } else {
                 this.setLocale(this.getBrowserLocale());
-            } catch (ex) {}
-        }
+            }
+        } catch (ex) {}
     },
 
     setTheme: function(theme) {
