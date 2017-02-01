@@ -63,7 +63,7 @@ let Launcher = {
         } catch(e) {
             error(e);
         }
-        
+
     },
     readFile: function(path, callback, error) {
         try {

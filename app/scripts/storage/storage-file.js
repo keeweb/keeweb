@@ -25,7 +25,7 @@ const StorageFile = StorageBase.extend({
 
         Launcher.readFile(path, data => {
             Launcher.statFile(path, stat => {
-                
+
                 const rev = stat.mtime.getTime().toString();
                 this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
                 if (callback) {

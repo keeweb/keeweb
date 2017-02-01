@@ -87,7 +87,7 @@ const StorageFileCache = StorageBase.extend({
 
             Launcher.fileExists(path, exists => {
                 if (exists) {
-                    Launcher.deleteFile(path, () => { 
+                    Launcher.deleteFile(path, () => {
                         this.logger.debug('Removed', id, this.logger.ts(ts));
                         if (callback) {
                             callback();
