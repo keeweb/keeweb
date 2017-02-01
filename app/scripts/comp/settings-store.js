@@ -6,17 +6,23 @@ const Logger = require('../util/logger');
 
 const logger = new Logger('settings');
 
+//TODO async
 const SettingsStore = {
+
+    useFileStore: function() {
+        return Launcher && Launcher.platform() !== 'android';
+    },
+
     fileName: function(key) {
         return key + '.json';
     },
 
     load: function(key) {
         try {
-            if (Launcher) {
+            if (this.useFileStore()) {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));
                 if (Launcher.fileExists(settingsFile)) {
-                    return JSON.parse(Launcher.readFile(settingsFile, 'utf8'));
+                    return JSON.parse(Launcher.readFile(settingsFile));
                 }
             } else {
                 const data = localStorage[StringUtil.camelCase(key)];
@@ -30,7 +36,7 @@ const SettingsStore = {
 
     save: function(key, data) {
         try {
-            if (Launcher) {
+            if (this.useFileStore()) {
                 Launcher.writeFile(Launcher.getUserDataPath(this.fileName(key)), JSON.stringify(data));
             } else if (typeof localStorage !== 'undefined') {
                 localStorage[StringUtil.camelCase(key)] = JSON.stringify(data);

@@ -56,31 +56,46 @@ let Launcher = {
     getWorkDirPath: function(fileName) {
         return this.req('path').join(process.cwd(), fileName || '');
     },
-    writeFile: function(path, data) {
-        this.req('fs').writeFileSync(path, new window.Buffer(data));
+    writeFile: function(path, data, callback, error) {
+        try {
+            this.req('fs').writeFileSync(path, new window.Buffer(data));
+            callback();
+        } catch(e) {
+            error(e);
+        }
+        
     },
-    readFile: function(path, encoding) {
-        const contents = this.req('fs').readFileSync(path, encoding);
-        return typeof contents === 'string' ? contents : new Uint8Array(contents);
+    readFile: function(path, callback, error) {
+        try {
+            const contents = this.req('fs').readFileSync(path);
+            const data = typeof contents === 'string' ? contents : new Uint8Array(contents);
+            callback(data);
+        } catch(e) {
+            error(e);
+        }
     },
-    fileExists: function(path) {
-        return this.req('fs').existsSync(path);
+    fileExists: function(path, callback) {
+        try {
+            const exists = this.req('fs').existsSync(path);
+            callback(exists);
+        } catch(e) {
+            callback(false);
+        }
     },
-    deleteFile: function(path) {
-        this.req('fs').unlinkSync(path);
+    deleteFile: function(path, callback, error) {
+        try {
+            this.req('fs').unlinkSync(path);
+            callback();
+        } catch(e) {
+            error(e);
+        }
     },
-    statFile: function(path) {
-        return this.req('fs').statSync(path);
-    },
-    ensureRunnable: function(path) {
-        if (process.platform !== 'win32') {
-            const fs = this.req('fs');
-            const stat = fs.statSync(path);
-            if ((stat.mode & 0o0111) === 0) {
-                const mode = stat.mode | 0o0100;
-                logger.info(`chmod 0${mode.toString(8)} ${path}`);
-                fs.chmodSync(path, mode);
-            }
+    statFile: function(path, callback, error) {
+        try {
+            const stat = this.req('fs').statSync(path);
+            callback(stat);
+        } catch(e) {
+            error(e);
         }
     },
     mkdir: function(dir) {
@@ -102,10 +117,25 @@ let Launcher = {
     },
     parsePath: function(fileName) {
         const path = this.req('path');
-        return { path: fileName, dir: path.dirname(fileName), file: path.basename(fileName) };
+        return {
+            path: fileName,
+            dir: path.dirname(fileName),
+            file: path.basename(fileName)
+        };
     },
     createFsWatcher: function(path) {
         return this.req('fs').watch(path, { persistent: false });
+    },
+    ensureRunnable: function(path) {
+        if (process.platform !== 'win32') {
+            const fs = this.req('fs');
+            const stat = fs.statSync(path);
+            if ((stat.mode & 0o0111) === 0) {
+                const mode = stat.mode | 0o0100;
+                logger.info(`chmod 0${mode.toString(8)} ${path}`);
+                fs.chmodSync(path, mode);
+            }
+        }
     },
     preventExit: function(e) {
         e.returnValue = false;

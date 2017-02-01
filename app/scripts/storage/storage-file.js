@@ -15,71 +15,109 @@ const StorageFile = StorageBase.extend({
     load: function(path, opts, callback) {
         this.logger.debug('Load', path);
         const ts = this.logger.ts();
-        try {
-            const data = Launcher.readFile(path);
-            const rev = Launcher.statFile(path).mtime.getTime().toString();
-            this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
-            if (callback) { callback(null, data.buffer, { rev: rev }); }
-        } catch (e) {
+
+        const onError = e => {
             this.logger.error('Error reading local file', path, e);
-            if (callback) { callback(e, null); }
-        }
+            if (callback) {
+                callback(e, null);
+            }
+        };
+
+        Launcher.readFile(path, data => {
+            Launcher.statFile(path, stat => {
+                
+                const rev = stat.mtime.getTime().toString();
+                this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
+                if (callback) {
+                    callback(null, data.buffer, { rev: rev });
+                }
+
+            }, onError);
+        }, onError);
     },
 
     stat: function(path, opts, callback) {
         this.logger.debug('Stat', path);
         const ts = this.logger.ts();
-        try {
-            const stat = Launcher.statFile(path);
+
+        Launcher.statFile(path, stat => {
             this.logger.debug('Stat done', path, this.logger.ts(ts));
-            if (callback) { callback(null, { rev: stat.mtime.getTime().toString() }); }
-        } catch (e) {
-            this.logger.error('Error stat local file', path, e);
-            if (e.code === 'ENOENT') {
-                e.notFound = true;
+            if (callback) {
+                const fileRev = stat.mtime.getTime().toString();
+                callback(null, { rev: fileRev });
             }
-            if (callback) { callback(e, null); }
-        }
+        }, e => {
+            this.logger.error('Error stat local file', path, e);
+            if (callback) {
+                callback(e, null);
+            }
+        });
     },
 
     save: function(path, opts, data, callback, rev) {
         this.logger.debug('Save', path, rev);
         const ts = this.logger.ts();
-        try {
-            if (rev) {
-                try {
-                    const stat = Launcher.statFile(path);
-                    const fileRev = stat.mtime.getTime().toString();
-                    if (fileRev !== rev) {
-                        this.logger.debug('Save mtime differs', rev, fileRev);
-                        if (callback) { callback({ revConflict: true }, { rev: fileRev }); }
-                        return;
-                    }
-                } catch (e) {
-                    // file doesn't exist or we cannot stat it: don't care and overwrite
-                }
-            }
-            Launcher.writeFile(path, data);
-            const newRev = Launcher.statFile(path).mtime.getTime().toString();
-            this.logger.debug('Saved', path, this.logger.ts(ts));
-            if (callback) { callback(undefined, { rev: newRev }); }
-        } catch (e) {
+
+        const onError = e => {
             this.logger.error('Error writing local file', path, e);
-            if (callback) { callback(e); }
+            if (callback) {
+                callback(e);
+            }
+        };
+
+        const write = () => {
+
+            Launcher.writeFile(path, data, () => {
+                Launcher.statFile(path, stat => {
+
+                    var newRev = stat.mtime.getTime().toString();
+                    this.logger.debug('Saved', path, this.logger.ts(ts));
+                    if (callback) {
+                        callback(undefined, { rev: newRev });
+                    }
+
+                }, onError);
+            }, onError);
+
+        };
+
+        if (rev) {
+
+            Launcher.statFile(path, stat => {
+
+                var fileRev = stat.mtime.getTime().toString();
+                if (fileRev !== rev) {
+                    this.logger.debug('Save mtime differs', rev, fileRev);
+                    if (callback) {
+                        callback({ revConflict: true }, { rev: fileRev });
+                    }
+                }
+
+                write();
+
+            }, onError);
+
+        } else {
+            write();
         }
+
     },
 
     mkdir: function(path, callback) {
         this.logger.debug('Make dir', path);
         const ts = this.logger.ts();
-        try {
-            Launcher.mkdir(path);
+
+        Launcher.mkdir(path, () => {
             this.logger.debug('Made dir', path, this.logger.ts(ts));
-            if (callback) { callback(); }
-        } catch (e) {
+            if (callback) {
+                callback();
+            }
+        }, e => {
             this.logger.error('Error making local dir', path, e);
-            if (callback) { callback(e); }
-        }
+            if (callback) {
+                callback(e);
+            }
+        });
     },
 
     watch: function(path, callback) {
@@ -103,7 +141,7 @@ const StorageFile = StorageBase.extend({
             }
             if (!watcher.callbacks.length) {
                 this.logger.debug('Stop watch dir', names.dir);
-                watcher.fsWatcher.close();
+                watcher.fsWatcher.close && watcher.fsWatcher.close();
                 delete fileWatchers[names.dir];
             }
         }
