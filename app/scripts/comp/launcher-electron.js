@@ -6,7 +6,7 @@ const Logger = require('../util/logger');
 
 const logger = new Logger('launcher');
 
-let Launcher = {
+const Launcher = {
     name: 'electron',
     version: window.process.versions.electron,
     autoTypeSupported: true,
@@ -60,17 +60,16 @@ let Launcher = {
         try {
             this.req('fs').writeFileSync(path, new window.Buffer(data));
             callback();
-        } catch(e) {
+        } catch (e) {
             error(e);
         }
-
     },
     readFile: function(path, callback, error) {
         try {
             const contents = this.req('fs').readFileSync(path);
             const data = typeof contents === 'string' ? contents : new Uint8Array(contents);
             callback(data);
-        } catch(e) {
+        } catch (e) {
             error(e);
         }
     },
@@ -78,7 +77,7 @@ let Launcher = {
         try {
             const exists = this.req('fs').existsSync(path);
             callback(exists);
-        } catch(e) {
+        } catch (e) {
             callback(false);
         }
     },
@@ -86,7 +85,7 @@ let Launcher = {
         try {
             this.req('fs').unlinkSync(path);
             callback();
-        } catch(e) {
+        } catch (e) {
             error(e);
         }
     },
@@ -94,7 +93,7 @@ let Launcher = {
         try {
             const stat = this.req('fs').statSync(path);
             callback(stat);
-        } catch(e) {
+        } catch (e) {
             error(e);
         }
     },

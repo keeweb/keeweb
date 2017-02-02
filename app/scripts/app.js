@@ -2,9 +2,9 @@
 
 const bootstrap = () => {
     require('./bootstrap');
-}
+};
 
-if(window.cordova) {
+if (window.cordova) {
     document.addEventListener('deviceready', bootstrap, false);
 } else {
     bootstrap();

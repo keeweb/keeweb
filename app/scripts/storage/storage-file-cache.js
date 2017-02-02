@@ -22,14 +22,12 @@ const StorageFileCache = StorageBase.extend({
         const path = Launcher.getUserDataPath('OfflineFiles');
 
         Launcher.fileExists(path, exists => {
-
             if (!exists) {
                 Launcher.mkdir(path, () => {
                     this.path = path;
                     callback();
                 });
             }
-
         });
     },
 
@@ -71,7 +69,6 @@ const StorageFileCache = StorageBase.extend({
                     callback(e, null);
                 }
             });
-
         });
     },
 

@@ -25,13 +25,11 @@ const StorageFile = StorageBase.extend({
 
         Launcher.readFile(path, data => {
             Launcher.statFile(path, stat => {
-
                 const rev = stat.mtime.getTime().toString();
                 this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
                 if (callback) {
                     callback(null, data.buffer, { rev: rev });
                 }
-
             }, onError);
         }, onError);
     },
@@ -66,41 +64,31 @@ const StorageFile = StorageBase.extend({
         };
 
         const write = () => {
-
             Launcher.writeFile(path, data, () => {
                 Launcher.statFile(path, stat => {
-
-                    var newRev = stat.mtime.getTime().toString();
+                    const newRev = stat.mtime.getTime().toString();
                     this.logger.debug('Saved', path, this.logger.ts(ts));
                     if (callback) {
                         callback(undefined, { rev: newRev });
                     }
-
                 }, onError);
             }, onError);
-
         };
 
         if (rev) {
-
             Launcher.statFile(path, stat => {
-
-                var fileRev = stat.mtime.getTime().toString();
+                const fileRev = stat.mtime.getTime().toString();
                 if (fileRev !== rev) {
                     this.logger.debug('Save mtime differs', rev, fileRev);
                     if (callback) {
                         callback({ revConflict: true }, { rev: fileRev });
                     }
                 }
-
                 write();
-
             }, onError);
-
         } else {
             write();
         }
-
     },
 
     mkdir: function(path, callback) {

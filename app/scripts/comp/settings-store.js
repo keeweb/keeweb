@@ -6,7 +6,7 @@ const Logger = require('../util/logger');
 
 const logger = new Logger('settings');
 
-//TODO async
+// TODO async
 const SettingsStore = {
 
     useFileStore: function() {
