@@ -58,16 +58,16 @@ const SettingsGeneralView = Backbone.View.extend({
     },
 
     allLocales: {
-        en: 'English',
-        de: 'Deutsch',
-        es: 'Español',
-        fr: 'Français',
-        it: 'Italiano',
-        nl: 'Nederlands',
-        pl: 'Polski',
-        pt: 'Português',
-        ru: 'Русский',
-        zh: '汉语'
+        'en': 'English',
+        'de-DE': 'Deutsch',
+        'es-ES': 'Español',
+        'fr-FR': 'Français',
+        'it-IT': 'Italiano',
+        'nl-NL': 'Nederlands',
+        'pl': 'Polski',
+        'pt-PT': 'Português',
+        'ru-RU': 'Русский',
+        'zh-CN': '汉语'
     },
 
     initialize: function() {

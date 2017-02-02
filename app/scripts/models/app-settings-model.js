@@ -60,9 +60,6 @@ const AppSettingsModel = Backbone.Model.extend({
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
         }
-        if (data.locale && data.locale.length > 2) {
-            data.locale = data.locale.substr(0, 2);
-        }
     },
 
     save: function() {

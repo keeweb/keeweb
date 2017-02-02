@@ -63,7 +63,10 @@ const SettingsManager = {
 
     getBrowserLocale: function() {
         const language = navigator.languages && navigator.languages[0] || navigator.language;
-        return language ? language.substr(0, 2).toLowerCase() : null;
+        if (language && language.lastIndexOf('en', 0) === 0) {
+            return 'en';
+        }
+        return language;
     }
 };
 
