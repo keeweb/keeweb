@@ -1,4 +1,12 @@
 {
+    "appTabWarn": "Слишком много вкладок",
+    "appTabWarnBody": "Нельзя использовать KeeWeb в двух вкладках одновременно. Пожалуйста, закройте эту вкладку.",
+    "setGenThemeTe": "Терминал",
+    "setGenNoRememberKeyFiles": "Не запоминать",
+    "setGenRememberKeyFilesData": "Во внутреннем хранилище приложения",
+    "setGenRememberKeyFilesPath": "Запомнить только путь к ключевому файлу",
+    "setGenLockHours": "Раз в {} часов",
+    "setGenLockDay": "Раз в день",
     "months": [
         "Января",
         "Февраля",
@@ -199,6 +207,7 @@
     "openUrl": "URL",
     "openUrlDesc": "https://server/path/file.kdbx, или просто file.kdbx",
     "openUser": "Логин",
+    "openUserDesc": "Пользователь WebDAV (если требуется)",
     "openUserPlaceholder": "нет логина",
     "openPass": "Пароль",
     "openPassDesc": "Пароль сервера WebDAV  (не вашего файла паролей)",
