@@ -321,7 +321,7 @@ module.exports = function(grunt) {
                 name: 'KeeWeb',
                 dir: 'tmp/desktop/app',
                 out: 'tmp/desktop',
-                version: electronVersion,
+                electronVersion: electronVersion,
                 overwrite: true,
                 'app-copyright': 'Copyright © 2016 Antelle',
                 'app-version': pkg.version,
