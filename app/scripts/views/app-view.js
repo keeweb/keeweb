@@ -254,7 +254,6 @@ const AppView = Backbone.View.extend({
     },
 
     fileListUpdated: function() {
-        console.log('fileListUpdated');
         if (this.model.files.hasOpenFiles()) {
             this.showEntries();
         } else {
