@@ -131,11 +131,19 @@ const OpenView = Backbone.View.extend({
             return {
                 id: f.get('id'),
                 name: f.get('name'),
-                path: f.get('storage') === 'file' ? f.get('path') : null,
+                path: this.getDisplayedPath(f),
                 icon: icon,
                 iconSvg: storage ? storage.iconSvg : undefined
             };
         });
+    },
+
+    getDisplayedPath: function(fileInfo) {
+        const storage = fileInfo.get('storage');
+        if (storage === 'file' || storage === 'webdav') {
+            return fileInfo.get('path');
+        }
+        return null;
     },
 
     remove: function() {
