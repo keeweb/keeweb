@@ -7,10 +7,10 @@ const Alerts = {
     alertDisplayed: false,
 
     buttons: {
-        ok: {result: 'yes', title: Locale.alertOk},
-        yes: {result: 'yes', title: Locale.alertYes},
-        no: {result: '', title: Locale.alertNo},
-        cancel: {result: '', title: Locale.alertCancel}
+        ok: {result: 'yes', get title() { return Locale.alertOk; }},
+        yes: {result: 'yes', get title() { return Locale.alertYes; }},
+        no: {result: '', get title() { return Locale.alertNo; }},
+        cancel: {result: '', get title() { return Locale.alertCancel; }}
     },
 
     alert: function(config) {
