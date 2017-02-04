@@ -1,6 +1,6 @@
 # KeeWeb official docker container
 # https://keeweb.info
-# (C) Antelle 2016, MIT license https://github.com/keeweb/keeweb
+# (C) Antelle 2017, MIT license https://github.com/keeweb/keeweb
 # Based on nginx-ssl-secure https://github.com/MarvAmBass/docker-nginx-ssl-secure/
 
 # Building locally:
