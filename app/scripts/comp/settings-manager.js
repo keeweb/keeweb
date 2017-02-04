@@ -15,13 +15,13 @@ const SettingsManager = {
             this.setFontSize(settings.get('fontSize'));
         }
         const locale = settings.get('locale');
-        if (locale) {
-            this.setLocale(settings.get('locale'));
-        } else {
-            try {
+        try {
+            if (locale) {
+                this.setLocale(settings.get('locale'));
+            } else {
                 this.setLocale(this.getBrowserLocale());
-            } catch (ex) {}
-        }
+            }
+        } catch (ex) {}
     },
 
     setTheme: function(theme) {
@@ -63,7 +63,10 @@ const SettingsManager = {
 
     getBrowserLocale: function() {
         const language = navigator.languages && navigator.languages[0] || navigator.language;
-        return language ? language.substr(0, 2).toLowerCase() : null;
+        if (language && language.lastIndexOf('en', 0) === 0) {
+            return 'en';
+        }
+        return language;
     }
 };
 

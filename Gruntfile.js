@@ -17,12 +17,10 @@ module.exports = function(grunt) {
     const pkg = require('./package.json');
     const dt = new Date().toISOString().replace(/T.*/, '');
     const minElectronVersionForUpdate = '1.0.1';
-    let zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
+    const zipCommentPlaceholderPart = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
+    const zipCommentPlaceholder = zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.devDependencies['electron'].replace(/^\D/, '');
-
-    while (zipCommentPlaceholder.length < 512) {
-        zipCommentPlaceholder += '.';
-    }
+    const year = new Date().getFullYear();
 
     function replaceFont(css) {
         css.walkAtRules('font-face', rule => {
@@ -50,7 +48,8 @@ module.exports = function(grunt) {
     const webpackConfig = {
         entry: {
             app: 'app',
-            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode', 'argon2']
+            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode',
+                'argon2-asm', 'argon2-wasm', 'argon2']
         },
         output: {
             path: path.resolve('.', 'tmp/js'),
@@ -77,7 +76,9 @@ module.exports = function(grunt) {
                 pikaday: 'pikaday/pikaday.js',
                 filesaver: 'FileSaver.js/FileSaver.min.js',
                 qrcode: 'jsqrcode/dist/qrcode.min.js',
-                argon2: 'argon2-browser/docs/dist/argon2-asm.min.js',
+                'argon2-asm': 'argon2-browser/docs/dist/argon2-asm.min.js',
+                'argon2-wasm': 'argon2-browser/docs/dist/argon2.wasm',
+                'argon2': 'argon2-browser/docs/dist/argon2.min.js',
                 templates: path.join(__dirname, 'app/templates')
             }
         },
@@ -99,12 +100,14 @@ module.exports = function(grunt) {
                     query: { presets: ['es2015'], cacheDirectory: true }
                 },
                 { test: /\.json$/, loader: 'json-loader' },
-                { test: /argon2-asm\.min\.js$/, loader: 'exports-loader?Module' }
+                { test: /argon2-asm\.min\.js$/, loader: 'raw-loader' },
+                { test: /argon2\.wasm$/, loader: 'base64-loader' },
+                { test: /argon2\.min\.js/, loader: 'raw-loader' } // exports-loader?Module
             ]
         },
         plugins: [
             new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', minChunks: Infinity, filename: 'vendor.js' }),
-            new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) ' + new Date().getFullYear() + ' ' + pkg.author.name +
+            new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) ' + year + ' ' + pkg.author.name +
                 ', opensource.org/licenses/' + pkg.license),
             new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
             new webpack.IgnorePlugin(/^(moment)$/),
@@ -331,9 +334,9 @@ module.exports = function(grunt) {
                 name: 'KeeWeb',
                 dir: 'tmp/desktop/app',
                 out: 'tmp/desktop',
-                version: electronVersion,
+                electronVersion: electronVersion,
                 overwrite: true,
-                'app-copyright': 'Copyright © 2016 Antelle',
+                'app-copyright': `Copyright © ${year} Antelle`,
                 'app-version': pkg.version,
                 'build-version': '<%= gitinfo.local.branch.current.shortSHA %>'
             },

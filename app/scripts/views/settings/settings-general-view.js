@@ -48,26 +48,26 @@ const SettingsGeneralView = Backbone.View.extend({
     views: null,
 
     allThemes: {
-        fb: Locale.setGenThemeFb,
-        db: Locale.setGenThemeDb,
-        sd: Locale.setGenThemeSd,
-        sl: Locale.setGenThemeSl,
-        wh: Locale.setGenThemeWh,
-        te: Locale.setGenThemeTe,
-        hc: Locale.setGenThemeHc
+        fb: 'setGenThemeFb',
+        db: 'setGenThemeDb',
+        sd: 'setGenThemeSd',
+        sl: 'setGenThemeSl',
+        wh: 'setGenThemeWh',
+        te: 'setGenThemeTe',
+        hc: 'setGenThemeHc'
     },
 
     allLocales: {
-        en: 'English',
-        de: 'Deutsch',
-        es: 'Español',
-        fr: 'Français',
-        it: 'Italiano',
-        nl: 'Nederlands',
-        pl: 'Polski',
-        pt: 'Português',
-        ru: 'Русский',
-        zh: '汉语'
+        'en': 'English',
+        'de-DE': 'Deutsch',
+        'es-ES': 'Español',
+        'fr-FR': 'Français',
+        'it-IT': 'Italiano',
+        'nl-NL': 'Nederlands',
+        'pl': 'Polski',
+        'pt-PT': 'Português',
+        'ru-RU': 'Русский',
+        'zh-CN': '汉语'
     },
 
     initialize: function() {
@@ -82,7 +82,7 @@ const SettingsGeneralView = Backbone.View.extend({
         const updateManual = UpdateModel.instance.get('updateManual');
         const storageProviders = this.getStorageProviders();
         this.renderTemplate({
-            themes: this.allThemes,
+            themes: _.mapObject(this.allThemes, theme => Locale[theme]),
             activeTheme: AppSettingsModel.instance.get('theme'),
             locales: this.allLocales,
             activeLocale: SettingsManager.activeLocale,

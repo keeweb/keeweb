@@ -28,7 +28,7 @@ Tip.prototype.init = function() {
 };
 
 Tip.prototype.show = function() {
-    if (!Tip.enabled && !this.force) {
+    if (!Tip.enabled && !this.force || !this.title) {
         return;
     }
     Backbone.on('page-geometry', this.hide);

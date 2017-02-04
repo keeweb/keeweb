@@ -3,6 +3,7 @@
 const Backbone = require('backbone');
 const kdbxweb = require('kdbxweb');
 const OpenConfigView = require('./open-config-view');
+const AppSettingsModel = require('../models/app-settings-model');
 const Keys = require('../const/keys');
 const Alerts = require('../comp/alerts');
 const SecureInput = require('../comp/secure-input');
@@ -93,6 +94,21 @@ const OpenView = Backbone.View.extend({
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
+
+        if (!this.versionWarningShown) {
+            // TODO: remove in v1.5
+            this.versionWarningShown = AppSettingsModel.instance.get('versionWarningShown');
+            if (!this.versionWarningShown) {
+                AppSettingsModel.instance.set('versionWarningShown', true);
+                this.versionWarningShown = true;
+                if (this.model.fileInfos.length) {
+                    Alerts.info({
+                        header: 'KeeWeb updated',
+                        body: 'There was a major update of KeeWeb. Please make sure you have a backup of your password files!'
+                    });
+                }
+            }
+        }
         return this;
     },
 
@@ -115,10 +131,19 @@ const OpenView = Backbone.View.extend({
             return {
                 id: f.get('id'),
                 name: f.get('name'),
+                path: this.getDisplayedPath(f),
                 icon: icon,
                 iconSvg: storage ? storage.iconSvg : undefined
             };
         });
+    },
+
+    getDisplayedPath: function(fileInfo) {
+        const storage = fileInfo.get('storage');
+        if (storage === 'file' || storage === 'webdav') {
+            return fileInfo.get('path');
+        }
+        return null;
     },
 
     remove: function() {

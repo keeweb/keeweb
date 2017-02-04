@@ -30,29 +30,28 @@ https.get(url, res => {
         return;
     }
     console.log('Response received, reading...');
-    let data = [];
+    const data = [];
     res.on('data', chunk => data.push(chunk));
     res.on('end', () => {
         console.log('Data received, parsing...');
-        let json = Buffer.concat(data).toString('utf8');
-        let languages = JSON.parse(json);
+        const json = Buffer.concat(data).toString('utf8');
+        const languages = JSON.parse(json);
         let langCount = 0;
         let skipCount = 0;
-        let totalPhraseCount = Object.keys(languages['en-US'].translation).length;
+        const totalPhraseCount = Object.keys(languages['en-US'].translation).length;
         Object.keys(languages).forEach(lang => {
-            let languageTranslations = languages[lang].translation;
-            lang = lang.substr(0, 2);
-            if (lang === 'en' || !languageTranslations) {
+            const languageTranslations = languages[lang].translation;
+            if (lang === 'en-US' || !languageTranslations) {
                 return;
             }
-            let langPhraseCount = Object.keys(languageTranslations).length;
-            let percentage = Math.round(langPhraseCount / totalPhraseCount * 100);
-            let included = percentage >= PHRASE_COUNT_THRESHOLD_PERCENT;
-            let action = included ? 'OK' : 'SKIP';
+            const langPhraseCount = Object.keys(languageTranslations).length;
+            const percentage = Math.round(langPhraseCount / totalPhraseCount * 100);
+            const included = percentage >= PHRASE_COUNT_THRESHOLD_PERCENT;
+            const action = included ? 'OK' : 'SKIP';
             console.log(`${lang}: ${langPhraseCount} / ${totalPhraseCount} (${percentage}%) -> ${action}`);
             if (included) {
                 langCount++;
-                let languageJson = JSON.stringify(languageTranslations, null, 4);
+                const languageJson = JSON.stringify(languageTranslations, null, 4);
                 fs.writeFileSync(`app/scripts/locales/${lang}.json`, languageJson);
             } else {
                 skipCount++;
