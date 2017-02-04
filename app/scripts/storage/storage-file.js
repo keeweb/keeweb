@@ -113,10 +113,20 @@ const StorageFile = StorageBase.extend({
         if (!fileWatchers[names.dir]) {
             this.logger.debug('Watch dir', names.dir);
             const fsWatcher = Launcher.createFsWatcher(names.dir);
-            fsWatcher.on('change', this.fsWatcherChange.bind(this, names.dir));
-            fileWatchers[names.dir] = { fsWatcher: fsWatcher, callbacks: [] };
+            if (fsWatcher) {
+                fsWatcher.on('change', this.fsWatcherChange.bind(this, names.dir));
+                fileWatchers[names.dir] = {
+                    fsWatcher: fsWatcher,
+                    callbacks: []
+                };
+            }
         }
-        fileWatchers[names.dir].callbacks.push({ file: names.file, callback: callback });
+
+        const fsWatcher = fileWatchers[names.dir];
+        fsWatcher && fsWatcher.callbacks.push({
+            file: names.file,
+            callback: callback
+        });
     },
 
     unwatch: function(path) {
