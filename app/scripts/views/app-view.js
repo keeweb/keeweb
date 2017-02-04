@@ -58,6 +58,7 @@ const AppView = Backbone.View.extend({
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
         this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
+        this.listenTo(this.model.fileInfos, 'change', this.render);
 
         this.listenTo(Backbone, 'select-all', this.selectAll);
         this.listenTo(Backbone, 'menu-select', this.menuSelect);
@@ -253,6 +254,7 @@ const AppView = Backbone.View.extend({
     },
 
     fileListUpdated: function() {
+        console.log('fileListUpdated');
         if (this.model.files.hasOpenFiles()) {
             this.showEntries();
         } else {

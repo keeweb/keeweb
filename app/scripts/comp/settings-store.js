@@ -19,7 +19,8 @@ const SettingsStore = {
                 Launcher.fileExists(settingsFile, exists => {
                     if (exists) {
                         Launcher.readFile(settingsFile, data => {
-                            callback(JSON.parse(data));
+                            const contents = typeof data === 'string' ? data : String.fromCharCode.apply(null, data);
+                            callback(JSON.parse(contents));
                         }, err => { // eslint-disable-line handle-callback-err
                             callback(undefined);
                         });

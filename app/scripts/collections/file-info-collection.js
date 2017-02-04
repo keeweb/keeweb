@@ -17,6 +17,7 @@ const FileInfoCollection = Backbone.Collection.extend({
     onLoaded: function(data) {
         if (data) {
             this.reset(data, { silent: true });
+            this.trigger('change', this);
         }
     },
 
