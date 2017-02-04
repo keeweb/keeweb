@@ -11,9 +11,12 @@ const FileInfoCollection = Backbone.Collection.extend({
     },
 
     load: function () {
-        const data = SettingsStore.load('file-info');
+        SettingsStore.load('file-info', this.onLoaded.bind(this));
+    },
+
+    onLoaded: function(data) {
         if (data) {
-            this.reset(data, {silent: true});
+            this.reset(data, { silent: true });
         }
     },
 
