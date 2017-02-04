@@ -131,6 +131,7 @@ const OpenView = Backbone.View.extend({
             return {
                 id: f.get('id'),
                 name: f.get('name'),
+                path: f.get('storage') === 'file' ? f.get('path') : null,
                 icon: icon,
                 iconSvg: storage ? storage.iconSvg : undefined
             };
