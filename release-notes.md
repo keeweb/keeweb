@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.4.0 (2017-02-04)
+KDBX4 format support and minor improvements  
 `+` password generator usability improvements  
 `+` warning about several tabs  
 `+` use browser language as default locale  
