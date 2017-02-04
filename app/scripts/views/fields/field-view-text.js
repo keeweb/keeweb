@@ -1,14 +1,14 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    FieldView = require('./field-view'),
-    GeneratorView = require('../generator-view'),
-    KeyHandler = require('../../comp/key-handler'),
-    Keys = require('../../const/keys'),
-    PasswordGenerator = require('../../util/password-generator'),
-    kdbxweb = require('kdbxweb');
+const Backbone = require('backbone');
+const FieldView = require('./field-view');
+const GeneratorView = require('../generator-view');
+const KeyHandler = require('../../comp/key-handler');
+const Keys = require('../../const/keys');
+const PasswordGenerator = require('../../util/password-generator');
+const kdbxweb = require('kdbxweb');
 
-var FieldViewText = FieldView.extend({
+const FieldViewText = FieldView.extend({
     renderValue: function(value) {
         return value && value.isProtected ? PasswordGenerator.present(value.textLength)
             : _.escape(value || '').replace(/\n/g, '<br/>');
@@ -19,8 +19,8 @@ var FieldViewText = FieldView.extend({
     },
 
     startEdit: function() {
-        var text = this.getEditValue(this.value);
-        var isProtected = !!(this.value && this.value.isProtected);
+        const text = this.getEditValue(this.value);
+        const isProtected = !!(this.value && this.value.isProtected);
         this.$el.toggleClass('details__field--protected', isProtected);
         this.input = $(document.createElement(this.model.multiline ? 'textarea' : 'input'));
         this.valueEl.html('').append(this.input);
@@ -33,7 +33,8 @@ var FieldViewText = FieldView.extend({
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        this.listenTo(Backbone, 'click main-window-will-close', this.fieldValueBlur);
+        this.listenTo(Backbone, 'click', this.fieldValueBlur);
+        this.listenTo(Backbone, 'main-window-will-close user-idle', this.externalEndEdit);
         if (this.model.multiline) {
             this.setInputHeight();
         }
@@ -55,7 +56,7 @@ var FieldViewText = FieldView.extend({
         if (this.gen) {
             this.hideGenerator();
         } else {
-            var fieldRect = this.input[0].getBoundingClientRect();
+            const fieldRect = this.input[0].getBoundingClientRect();
             this.gen = new GeneratorView({model: {pos: {left: fieldRect.left, top: fieldRect.bottom}, password: this.value}}).render();
             this.gen.once('remove', this.generatorClosed.bind(this));
             this.gen.once('result', this.generatorResult.bind(this));
@@ -64,7 +65,7 @@ var FieldViewText = FieldView.extend({
 
     hideGenerator: function() {
         if (this.gen) {
-            var gen = this.gen;
+            const gen = this.gen;
             delete this.gen;
             gen.remove();
         }
@@ -85,9 +86,9 @@ var FieldViewText = FieldView.extend({
     },
 
     setInputHeight: function() {
-        var MinHeight = 18;
+        const MinHeight = 18;
         this.input.height(MinHeight);
-        var newHeight = this.input[0].scrollHeight;
+        let newHeight = this.input[0].scrollHeight;
         if (newHeight <= MinHeight) {
             newHeight = MinHeight;
         } else {
@@ -121,7 +122,7 @@ var FieldViewText = FieldView.extend({
 
     fieldValueKeydown: function(e) {
         KeyHandler.reg();
-        var code = e.keyCode || e.which;
+        const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             if (!this.model.multiline || (!e.altKey && !e.shiftKey && !e.ctrlKey)) {
                 if (this.gen) {
@@ -148,6 +149,12 @@ var FieldViewText = FieldView.extend({
             return;
         }
         e.stopPropagation();
+    },
+
+    externalEndEdit: function() {
+        if (this.input) {
+            this.endEdit(this.input.val());
+        }
     },
 
     endEdit: function(newVal, extra) {

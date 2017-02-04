@@ -1,8 +1,8 @@
 'use strict';
 
-var FieldViewText = require('./field-view-text');
+const FieldViewText = require('./field-view-text');
 
-var FieldViewTags = FieldViewText.extend({
+const FieldViewTags = FieldViewText.extend({
     renderValue: function(value) {
         return value ? _.escape(value.join(', ')) : '';
     },
@@ -12,7 +12,7 @@ var FieldViewTags = FieldViewText.extend({
     },
 
     valueToTags: function(val) {
-        var allTags = {};
+        const allTags = {};
         this.model.tags.forEach(tag => {
             allTags[tag.toLowerCase()] = tag;
         });
@@ -34,7 +34,7 @@ var FieldViewTags = FieldViewText.extend({
 
     startEdit: function() {
         FieldViewText.prototype.startEdit.call(this);
-        var fieldRect = this.input[0].getBoundingClientRect();
+        const fieldRect = this.input[0].getBoundingClientRect();
         this.tagsAutocomplete = $('<div class="details__field-autocomplete"></div>').appendTo('body');
         this.tagsAutocomplete.css({
             top: fieldRect.bottom,
@@ -52,17 +52,17 @@ var FieldViewTags = FieldViewText.extend({
     },
 
     getAvailableTags: function() {
-        var tags = this.valueToTags(this.input.val());
-        var last = tags[tags.length - 1];
-        var isLastPart = last && this.model.tags.indexOf(last) < 0;
+        const tags = this.valueToTags(this.input.val());
+        const last = tags[tags.length - 1];
+        const isLastPart = last && this.model.tags.indexOf(last) < 0;
         return this.model.tags.filter(tag => {
             return tags.indexOf(tag) < 0 && (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0);
         });
     },
 
     setTags: function() {
-        var availableTags = this.getAvailableTags();
-        var tagsHtml = availableTags.map(tag => {
+        const availableTags = this.getAvailableTags();
+        const tagsHtml = availableTags.map(tag => {
             return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
         }).join('');
         this.tagsAutocomplete.html(tagsHtml);
@@ -72,11 +72,12 @@ var FieldViewTags = FieldViewText.extend({
     tagsAutocompleteClick: function(e) {
         e.stopPropagation();
         if (e.target.classList.contains('details__field-autocomplete-item')) {
-            var selectedTag = $(e.target).text(), newVal = this.input.val();
+            const selectedTag = $(e.target).text();
+            let newVal = this.input.val();
             if (newVal) {
-                var tags = this.valueToTags(newVal);
-                var last = tags[tags.length - 1];
-                var isLastPart = last && this.model.tags.indexOf(last) < 0;
+                const tags = this.valueToTags(newVal);
+                const last = tags[tags.length - 1];
+                const isLastPart = last && this.model.tags.indexOf(last) < 0;
                 if (isLastPart) {
                     newVal = newVal.substr(0, newVal.lastIndexOf(last)) + selectedTag;
                 } else {

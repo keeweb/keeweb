@@ -1,10 +1,10 @@
 'use strict';
 
-var Logger = require('./logger');
+const Logger = require('./logger');
 
-var logger = new Logger('otp');
+const logger = new Logger('otp');
 
-var Otp = function(url, params) {
+const Otp = function(url, params) {
     if (['hotp', 'totp'].indexOf(params.type) < 0) {
         throw 'Bad type: ' + params.type;
     }
@@ -43,18 +43,18 @@ var Otp = function(url, params) {
 };
 
 Otp.prototype.next = function(callback) {
-    var valueForHashing;
-    var timeLeft;
+    let valueForHashing;
+    let timeLeft;
     if (this.type === 'totp') {
-        var now = Date.now();
-        var epoch = Math.round(now / 1000);
+        const now = Date.now();
+        const epoch = Math.round(now / 1000);
         valueForHashing = Math.floor(epoch / this.period);
-        var msPeriod = this.period * 1000;
+        const msPeriod = this.period * 1000;
         timeLeft = msPeriod - (now % msPeriod);
     } else {
         valueForHashing = this.counter;
     }
-    var data = new Uint8Array(8).buffer;
+    const data = new Uint8Array(8).buffer;
     new DataView(data).setUint32(4, valueForHashing);
     this.hmac(data, (sig, err) => {
         if (!sig) {
@@ -62,8 +62,8 @@ Otp.prototype.next = function(callback) {
             return callback();
         }
         sig = new DataView(sig);
-        var offset = sig.getInt8(sig.byteLength - 1) & 0xf;
-        var pass = (sig.getUint32(offset) & 0x7fffffff).toString();
+        const offset = sig.getInt8(sig.byteLength - 1) & 0xf;
+        let pass = (sig.getUint32(offset) & 0x7fffffff).toString();
         pass = Otp.leftPad(pass.substr(pass.length - this.digits), this.digits);
         callback(pass, timeLeft);
     });
@@ -73,8 +73,8 @@ Otp.prototype.hmac = function(data, callback) {
     if (!window.crypto && window.msCrypto) {
         return this.hmacMsCrypto(data, callback);
     }
-    var subtle = window.crypto.subtle || window.crypto.webkitSubtle;
-    var algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
+    const subtle = window.crypto.subtle || window.crypto.webkitSubtle;
+    const algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
     subtle.importKey('raw', this.key, algo, false, ['sign'])
         .then(key => {
             subtle.sign(algo, key, data)
@@ -85,31 +85,31 @@ Otp.prototype.hmac = function(data, callback) {
 };
 
 Otp.prototype.hmacMsCrypto = function(data, callback) {
-    var subtle = window.msCrypto.subtle;
-    var algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
+    const subtle = window.msCrypto.subtle;
+    const algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
     subtle.importKey('raw', this.key, algo, false, ['sign']).oncomplete = function(e) {
-        var key = e.target.result;
+        const key = e.target.result;
         subtle.sign(algo, key, data).oncomplete = function(e) {
-            var sig = e.target.result;
+            const sig = e.target.result;
             callback(sig);
         };
     };
 };
 
 Otp.fromBase32 = function(str) {
-    var alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
-    var bin = '';
-    var i;
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
+    let bin = '';
+    let i;
     for (i = 0; i < str.length; i++) {
-        var ix = alphabet.indexOf(str[i].toLowerCase());
+        const ix = alphabet.indexOf(str[i].toLowerCase());
         if (ix < 0) {
             return null;
         }
         bin += Otp.leftPad(ix.toString(2), 5);
     }
-    var hex = new Uint8Array(Math.floor(bin.length / 8));
+    const hex = new Uint8Array(Math.floor(bin.length / 8));
     for (i = 0; i < hex.length; i++) {
-        var chunk = bin.substr(i * 8, 8);
+        const chunk = bin.substr(i * 8, 8);
         hex[i] = parseInt(chunk, 2);
     }
     return hex.buffer;
@@ -123,14 +123,14 @@ Otp.leftPad = function(str, len) {
 };
 
 Otp.parseUrl = function(url) {
-    var match = /^otpauth:\/\/(\w+)\/([^\?]+)\?(.*)/i.exec(url);
+    const match = /^otpauth:\/\/(\w+)\/([^\?]+)\?(.*)/i.exec(url);
     if (!match) {
         throw 'Not OTP url';
     }
-    var params = {};
-    var label = decodeURIComponent(match[2]);
+    const params = {};
+    const label = decodeURIComponent(match[2]);
     if (label) {
-        var parts = label.split(':');
+        const parts = label.split(':');
         params.issuer = parts[0].trim();
         if (parts.length > 1) {
             params.account = parts[1].trim();
@@ -138,7 +138,7 @@ Otp.parseUrl = function(url) {
     }
     params.type = match[1].toLowerCase();
     match[3].split('&').forEach(part => {
-        var parts = part.split('=', 2);
+        const parts = part.split('=', 2);
         params[parts[0].toLowerCase()] = decodeURIComponent(parts[1]);
     });
     return new Otp(url, params);

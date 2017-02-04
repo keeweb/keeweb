@@ -1,11 +1,11 @@
 'use strict';
 
 const Backbone = require('backbone');
-const Locale = require('./locale');
+const Locale = require('./../util/locale');
 
 const SettingsManager = {
     neutralLocale: null,
-    activeLocale: null,
+    activeLocale: 'en',
 
     setBySettings: function(settings) {
         if (settings.get('theme')) {
@@ -14,9 +14,14 @@ const SettingsManager = {
         if (settings.get('fontSize')) {
             this.setFontSize(settings.get('fontSize'));
         }
-        if (settings.get('locale') && settings.get('locale') !== 'en') {
-            this.setLocale(settings.get('locale'));
-        }
+        const locale = settings.get('locale');
+        try {
+            if (locale) {
+                this.setLocale(settings.get('locale'));
+            } else {
+                this.setLocale(this.getBrowserLocale());
+            }
+        } catch (ex) {}
     },
 
     setTheme: function(theme) {
@@ -26,7 +31,7 @@ const SettingsManager = {
             }
         });
         document.body.classList.add(this.getThemeClass(theme));
-        var metaThemeColor = document.head.querySelector('meta[name=theme-color]');
+        const metaThemeColor = document.head.querySelector('meta[name=theme-color]');
         if (metaThemeColor) {
             metaThemeColor.content = window.getComputedStyle(document.body).backgroundColor;
         }
@@ -40,20 +45,28 @@ const SettingsManager = {
         document.documentElement.style.fontSize = fontSize ? (12 + fontSize * 2) + 'px' : '';
     },
 
-    setLocale(locale) {
+    setLocale(loc) {
+        if (!loc || loc === this.activeLocale) {
+            return;
+        }
+        let localeValues;
+        if (loc !== 'en') {
+            localeValues = require('../locales/' + loc + '.json');
+        }
         if (!this.neutralLocale) {
             this.neutralLocale = _.clone(Locale);
         }
-        let activeLocale = locale && locale !== 'en' ? locale : null;
-        if (activeLocale !== this.activeLocale) {
-            _.extend(Locale, this.neutralLocale);
-            if (activeLocale) {
-                let localeValues = require('../locales/' + locale + '.json');
-                _.extend(Locale, localeValues);
-            }
-            this.activeLocale = activeLocale;
-            Backbone.trigger('set-locale', activeLocale);
+        _.extend(Locale, this.neutralLocale, localeValues);
+        this.activeLocale = loc;
+        Backbone.trigger('set-locale', loc);
+    },
+
+    getBrowserLocale: function() {
+        const language = navigator.languages && navigator.languages[0] || navigator.language;
+        if (language && language.lastIndexOf('en', 0) === 0) {
+            return 'en';
         }
+        return language;
     }
 };
 

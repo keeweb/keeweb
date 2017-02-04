@@ -1,16 +1,16 @@
 'use strict';
 
-var Logger = require('../util/logger');
+const Logger = require('../util/logger');
 
-var logger = new Logger('auto-type-obfuscator');
+const logger = new Logger('auto-type-obfuscator');
 logger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);
 
-var MaxFakeOps = 30;
-var MaxSteps = 1000;
-var MaxCopy = 2;
-var FakeCharAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789O0oIl';
+const MaxFakeOps = 30;
+const MaxSteps = 1000;
+const MaxCopy = 2;
+const FakeCharAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789O0oIl';
 
-var AutoTypeObfuscator = function(chars) {
+const AutoTypeObfuscator = function(chars) {
     this.chars = chars;
     this.inputChars = [];
     this.inputCursor = 0;
@@ -27,7 +27,7 @@ AutoTypeObfuscator.prototype.obfuscate = function() {
             throw 'Obfuscate failed';
         }
     }
-    for (var i = 0; i < this.chars.length; i++) {
+    for (let i = 0; i < this.chars.length; i++) {
         this.chars[i] = null;
         this.inputChars[i] = null;
     }
@@ -40,7 +40,7 @@ AutoTypeObfuscator.prototype.finished = function() {
 };
 
 AutoTypeObfuscator.prototype.step = function() {
-    var isFake = this.stepCount < MaxFakeOps && Math.random() > this.stepCount / MaxFakeOps;
+    const isFake = this.stepCount < MaxFakeOps && Math.random() > this.stepCount / MaxFakeOps;
     if (isFake) {
         this.stepFake();
     } else {
@@ -52,21 +52,21 @@ AutoTypeObfuscator.prototype.step = function() {
 };
 
 AutoTypeObfuscator.prototype.stepFake = function() {
-    var pos = Math.floor(Math.random() * (this.inputChars.length + 1));
-    var ch = FakeCharAlphabet[Math.floor(Math.random() * FakeCharAlphabet.length)];
+    const pos = Math.floor(Math.random() * (this.inputChars.length + 1));
+    const ch = FakeCharAlphabet[Math.floor(Math.random() * FakeCharAlphabet.length)];
     logger.info('step.fake', pos, ch);
     this.moveToPos(pos);
-    var insert = this.inputChars.length === 0 || Math.random() > 0.3;
+    const insert = this.inputChars.length === 0 || Math.random() > 0.3;
     if (insert) {
         this.inputChar(ch);
     } else {
-        var moveLeft = Math.random() > 0.5;
-        var maxMove = moveLeft ? pos : this.inputChars.length - pos;
+        let moveLeft = Math.random() > 0.5;
+        let maxMove = moveLeft ? pos : this.inputChars.length - pos;
         if (maxMove === 0) {
             moveLeft = !moveLeft;
             maxMove = moveLeft ? pos : this.inputChars.length - pos;
         }
-        var moveCount = Math.max(Math.floor(Math.pow(Math.random(), 3) * maxMove), 1);
+        const moveCount = Math.max(Math.floor(Math.pow(Math.random(), 3) * maxMove), 1);
         if (moveCount <= 1 && Math.random() > 0.5) {
             this.deleteText(moveLeft);
         } else {
@@ -81,14 +81,14 @@ AutoTypeObfuscator.prototype.stepFake = function() {
 };
 
 AutoTypeObfuscator.prototype.stepReal = function() {
-    var possibleActions = [];
-    var inputRealPositions = [];
-    var i;
+    const possibleActions = [];
+    const inputRealPositions = [];
+    let i;
     for (i = 0; i < this.chars.length; i++) {
         inputRealPositions.push(-1);
     }
     for (i = 0; i < this.inputChars.length; i++) {
-        var ix = this.inputChars[i].ix;
+        const ix = this.inputChars[i].ix;
         if (ix === undefined) {
             possibleActions.push({ del: true, pos: i });
         } else {
@@ -97,8 +97,9 @@ AutoTypeObfuscator.prototype.stepReal = function() {
     }
     for (i = 0; i < this.chars.length; i++) {
         if (inputRealPositions[i] < 0) {
-            var from = 0, to = this.inputChars.length;
-            for (var j = 0; j < this.chars.length; j++) {
+            let from = 0,
+                to = this.inputChars.length;
+            for (let j = 0; j < this.chars.length; j++) {
                 if (j < i && inputRealPositions[j] >= 0) {
                     from = inputRealPositions[j] + 1;
                 }
@@ -110,13 +111,13 @@ AutoTypeObfuscator.prototype.stepReal = function() {
             possibleActions.push({ ins: true, ch: this.chars[i], ix: i, from: from, to: to });
         }
     }
-    var action = possibleActions[Math.floor(Math.random() * possibleActions.length)];
+    const action = possibleActions[Math.floor(Math.random() * possibleActions.length)];
     logger.info('step.real', inputRealPositions, action);
     if (action.del) {
         this.moveToPos(action.pos + 1);
         this.deleteText(true);
     } else {
-        var insPos = action.from + Math.floor(Math.random() * (action.to - action.from));
+        const insPos = action.from + Math.floor(Math.random() * (action.to - action.from));
         this.moveToPos(insPos);
         if (this.copyCount < MaxCopy && action.ch !== '\n' && Math.random() > 0.5) {
             this.copyCount++;
@@ -170,8 +171,8 @@ AutoTypeObfuscator.prototype.copyPaste = function(ch) {
 
 AutoTypeObfuscator.prototype.selectText = function(backward, count) {
     logger.debug('selectText', backward ? 'left' : 'right', count);
-    var ops = [];
-    for (var i = 0; i < count; i++) {
+    const ops = [];
+    for (let i = 0; i < count; i++) {
         ops.push({ type: 'key', value: backward ? 'left' : 'right' });
     }
     if (ops.length === 1) {

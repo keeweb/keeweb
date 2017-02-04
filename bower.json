@@ -27,11 +27,12 @@
     "bourbon": "4.2.7",
     "dropbox": "keeweb/dropbox-js#0ac0efdc2711eece73f6ac044459e1fd0d5e9390",
     "font-awesome": "4.6.3",
-    "kdbxweb": "0.4.6",
+    "kdbxweb": "a4d58631f2c98667e0de2f46915db2dd79bddd07",
     "normalize.css": "4.2.0",
     "pikaday": "1.4.0",
     "FileSaver.js": "eligrey/FileSaver.js",
     "jquery": "3.1.0",
-    "jsqrcode": "antelle/jsqrcode#0.1.3"
+    "jsqrcode": "antelle/jsqrcode#0.1.3",
+    "argon2-browser": "0.0.5"
   }
 }

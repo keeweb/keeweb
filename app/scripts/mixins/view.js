@@ -1,7 +1,7 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Tip = require('../util/tip');
+const Backbone = require('backbone');
+const Tip = require('../util/tip');
 
 _.extend(Backbone.View.prototype, {
     hide: function() {
@@ -57,7 +57,7 @@ _.extend(Backbone.View.prototype, {
             if (replace) {
                 this.$el.html('');
             }
-            var el = $(this.template(model));
+            const el = $(this.template(model));
             if (!this._elAppended || replace) {
                 this.$el.append(el);
                 this._elAppended = true;

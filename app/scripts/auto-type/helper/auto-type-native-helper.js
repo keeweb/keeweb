@@ -10,17 +10,18 @@ const AutoTypeNativeHelper = {
         if (this._helperPath) {
             return this._helperPath;
         }
-        let ext = process.platform === 'win32' ? '.exe' : '';
-        let part = `helper/${process.platform}/KeeWebHelper${ext}`;
-        let possiblePaths = [
+        const ext = process.platform === 'win32' ? '.exe' : '';
+        const part = `helper/${process.platform}/KeeWebHelper${ext}`;
+        const possiblePaths = [
             Launcher.getAppPath(part),
             Launcher.getUserDataPath(part),
             Launcher.getWorkDirPath(part)
         ];
-        let helperPath, helperCTime = -1;
+        let helperPath;
+        const helperCTime = -1;
         possiblePaths.forEach(possiblePath => {
             try {
-                let ctime = Launcher.statFile(possiblePath).ctime;
+                const ctime = Launcher.statFile(possiblePath).ctime;
                 if (ctime > helperCTime) {
                     helperPath = possiblePath;
                 }

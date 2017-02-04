@@ -2,22 +2,23 @@
 
 /* eslint-env node */
 
-var fs = require('fs'),
-    path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var StringReplacePlugin = require('string-replace-webpack-plugin');
+const StringReplacePlugin = require('string-replace-webpack-plugin');
+const StatsPlugin = require('stats-webpack-plugin');
 
 module.exports = function(grunt) {
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
     grunt.loadTasks('grunt/tasks');
 
-    var webpack = require('webpack');
-    var pkg = require('./package.json');
-    var dt = new Date().toISOString().replace(/T.*/, '');
-    var minElectronVersionForUpdate = '1.0.1';
-    var zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
-    var electronVersion = pkg.devDependencies['electron-prebuilt'].replace(/^\D/, '');
+    const webpack = require('webpack');
+    const pkg = require('./package.json');
+    const dt = new Date().toISOString().replace(/T.*/, '');
+    const minElectronVersionForUpdate = '1.0.1';
+    let zipCommentPlaceholder = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
+    const electronVersion = pkg.devDependencies['electron'].replace(/^\D/, '');
 
     while (zipCommentPlaceholder.length < 512) {
         zipCommentPlaceholder += '.';
@@ -25,20 +26,20 @@ module.exports = function(grunt) {
 
     function replaceFont(css) {
         css.walkAtRules('font-face', rule => {
-            var fontFamily = rule.nodes.filter(n => n.prop === 'font-family')[0];
+            const fontFamily = rule.nodes.filter(n => n.prop === 'font-family')[0];
             if (!fontFamily) {
                 throw 'Bad font rule: ' + rule.toString();
             }
-            var value = fontFamily.value.replace(/["']/g, '');
-            var fontFiles = {
+            const value = fontFamily.value.replace(/["']/g, '');
+            const fontFiles = {
                 FontAwesome: 'fontawesome-webfont.woff'
             };
-            var fontFile = fontFiles[value];
+            const fontFile = fontFiles[value];
             if (!fontFile) {
                 throw 'Unsupported font ' + value + ': ' + rule.toString();
             }
-            var data = fs.readFileSync('tmp/fonts/' + fontFile, 'base64');
-            var src = 'url(data:application/font-woff;charset=utf-8;base64,{data}) format(\'woff\')'
+            const data = fs.readFileSync('tmp/fonts/' + fontFile, 'base64');
+            const src = 'url(data:application/font-woff;charset=utf-8;base64,{data}) format(\'woff\')'
                 .replace('{data}', data);
             // var src = 'url(\'../fonts/fontawesome-webfont.woff\') format(\'woff\')';
             rule.nodes = rule.nodes.filter(n => n.prop !== 'src');
@@ -46,13 +47,14 @@ module.exports = function(grunt) {
         });
     }
 
-    var webpackConfig = {
+    const webpackConfig = {
         entry: {
             app: 'app',
-            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode']
+            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode',
+                'argon2-asm', 'argon2-wasm', 'argon2']
         },
         output: {
-            path: 'tmp/js',
+            path: path.resolve('.', 'tmp/js'),
             filename: 'app.js'
         },
         stats: {
@@ -63,19 +65,22 @@ module.exports = function(grunt) {
         progress: false,
         failOnError: true,
         resolve: {
-            root: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'bower_components')],
+            modules: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'bower_components')],
             alias: {
                 backbone: 'backbone/backbone-min.js',
                 underscore: 'underscore/underscore-min.js',
                 _: 'underscore/underscore-min.js',
                 jquery: 'jquery/dist/jquery.min.js',
-                hbs: 'handlebars/runtime.js',
+                hbs: path.resolve(__dirname, 'node_modules', 'handlebars/runtime.js'),
                 kdbxweb: 'kdbxweb/dist/kdbxweb.js',
                 dropbox: 'dropbox/lib/dropbox.min.js',
                 baron: 'baron/baron.min.js',
                 pikaday: 'pikaday/pikaday.js',
                 filesaver: 'FileSaver.js/FileSaver.min.js',
                 qrcode: 'jsqrcode/dist/qrcode.min.js',
+                'argon2-asm': 'argon2-browser/docs/dist/argon2-asm.min.js',
+                'argon2-wasm': 'argon2-browser/docs/dist/argon2.wasm',
+                'argon2': 'argon2-browser/docs/dist/argon2.min.js',
                 templates: path.join(__dirname, 'app/templates')
             }
         },
@@ -85,38 +90,48 @@ module.exports = function(grunt) {
                     pattern: /\r?\n\s*/g,
                     replacement: function() { return '\n'; }
                 }]})},
-                { test: /runtime\-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
+                { test: /runtime-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
                     { pattern: /@@VERSION/g, replacement: function() { return pkg.version; } },
                     { pattern: /@@DATE/g, replacement: function() { return dt; } },
                     { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
                 ]})},
-                { test: /baron(\.min)?\.js$/, loader: 'exports?baron; delete window.baron;' },
-                { test: /pikaday\.js$/, loader: 'uglify' },
+                { test: /baron(\.min)?\.js$/, loader: 'exports-loader?baron; delete window.baron;' },
+                { test: /pikaday\.js$/, loader: 'uglify-loader' },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
-                { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel',
+                { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel-loader',
                     query: { presets: ['es2015'], cacheDirectory: true }
                 },
-                { test: /\.json$/, loader: 'json' }
+                { test: /\.json$/, loader: 'json-loader' },
+                { test: /argon2-asm\.min\.js$/, loader: 'raw-loader' },
+                { test: /argon2\.wasm$/, loader: 'base64-loader' },
+                { test: /argon2\.min\.js/, loader: 'raw-loader' } // exports-loader?Module
             ]
         },
         plugins: [
-            new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-            new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) 2015 ' + pkg.author.name +
+            new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', minChunks: Infinity, filename: 'vendor.js' }),
+            new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) ' + new Date().getFullYear() + ' ' + pkg.author.name +
                 ', opensource.org/licenses/' + pkg.license),
-            new webpack.optimize.OccurenceOrderPlugin(),
             new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
             new webpack.IgnorePlugin(/^(moment)$/),
-            new StringReplacePlugin()
+            new StringReplacePlugin(),
+            new StatsPlugin('stats.json', { chunkModules: true })
         ],
         node: {
             console: false,
             process: false,
+            crypto: false,
             Buffer: false,
             __filename: false,
-            __dirname: false
+            __dirname: false,
+            fs: false,
+            setImmediate: false,
+            path: false
         },
         externals: {
-            xmldom: 'null'
+            xmldom: 'null',
+            crypto: 'null',
+            fs: 'null',
+            path: 'null'
         }
     };
 
@@ -163,7 +178,7 @@ module.exports = function(grunt) {
                 flatten: true
             },
             'desktop-app-content': {
-                cwd: 'electron/',
+                cwd: 'desktop/',
                 src: '**',
                 dest: 'tmp/desktop/app/',
                 expand: true,
@@ -198,7 +213,7 @@ module.exports = function(grunt) {
         },
         eslint: {
             app: ['app/scripts/**/*.js'],
-            electron: ['electron/**/*.js', '!electron/node_modules/**'],
+            desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
             grunt: ['Gruntfile.js', 'grunt/**/*.js']
         },
         sass: {
@@ -270,7 +285,7 @@ module.exports = function(grunt) {
                 progress: false
             },
             js: {
-                keepAlive: true,
+                keepalive: true,
                 webpack: {
                     devtool: 'source-map'
                 },
@@ -297,10 +312,6 @@ module.exports = function(grunt) {
                 interrupt: true,
                 debounceDelay: 500
             },
-            // scripts: {
-            //     files: ['app/scripts/**/*.js', 'app/templates/**/*.hbs'],
-            //     tasks: ['webpack']
-            // },
             styles: {
                 files: 'app/styles/**/*.scss',
                 tasks: ['sass']
@@ -315,7 +326,7 @@ module.exports = function(grunt) {
                 name: 'KeeWeb',
                 dir: 'tmp/desktop/app',
                 out: 'tmp/desktop',
-                version: electronVersion,
+                electronVersion: electronVersion,
                 overwrite: true,
                 'app-copyright': 'Copyright © 2016 Antelle',
                 'app-version': pkg.version,
@@ -680,7 +691,12 @@ module.exports = function(grunt) {
         'build-web-app'
     ]);
 
-    grunt.registerTask('dev', 'Start web server and watcher', [
+    grunt.registerTask('dev', 'Build project and start web server and watcher', [
+        'build-web-app',
+        'devsrv'
+    ]);
+
+    grunt.registerTask('devsrv', 'Start web server and watcher', [
         'concurrent:dev-server'
     ]);
 

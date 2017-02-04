@@ -11,7 +11,7 @@
  * Phonetics that sound best before a vowel.
  * @type {Array}
  */
-var PHONETIC_PRE = [
+const PHONETIC_PRE = [
     // Simple phonetics
     'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p',
     'qu', 'r', 's', 't',
@@ -33,13 +33,13 @@ var PHONETIC_PRE = [
  * The number of simple phonetics within the 'pre' set.
  * @type {number}
  */
-var PHONETIC_PRE_SIMPLE_LENGTH = 16;
+const PHONETIC_PRE_SIMPLE_LENGTH = 16;
 
 /**
  * Vowel sound phonetics.
  * @type {Array}
  */
-var PHONETIC_MID = [
+const PHONETIC_MID = [
     // Simple phonetics
     'a', 'e', 'i', 'o', 'u',
     // Complex phonetics
@@ -50,13 +50,13 @@ var PHONETIC_MID = [
  * The number of simple phonetics within the 'mid' set.
  * @type {number}
  */
-var PHONETIC_MID_SIMPLE_LENGTH = 5;
+const PHONETIC_MID_SIMPLE_LENGTH = 5;
 
 /**
  * Phonetics that sound best after a vowel.
  * @type {Array}
  */
-var PHONETIC_POST = [
+const PHONETIC_POST = [
     // Simple phonetics
     'b', 'd', 'f', 'g', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'y',
     // Complex phonetics
@@ -73,7 +73,7 @@ var PHONETIC_POST = [
  * The number of simple phonetics within the 'post' set.
  * @type {number}
  */
-var PHONETIC_POST_SIMPLE_LENGTH = 13;
+const PHONETIC_POST_SIMPLE_LENGTH = 13;
 
 /**
  * A mapping of regular expressions to replacements, which will be run on the
@@ -83,7 +83,7 @@ var PHONETIC_POST_SIMPLE_LENGTH = 13;
  * a word, 'ey' more pronounceable than 'iy', etc.
  * @type {{}}
  */
-var REPLACEMENTS = {
+const REPLACEMENTS = {
     'quu': 'que',
     'qu([aeiou]){2}': 'qu$1',
     '[iu]y': 'ey',
@@ -104,10 +104,10 @@ var REPLACEMENTS = {
  *      word object on which to operate.
  */
 function addSyllable(wordObj) {
-    var deriv = getDerivative(wordObj.numeric),
-        compound = deriv % wordObj.opts.compoundSimplicity === 0,
-        first = wordObj.word === '',
-        preOnFirst = deriv % 6 > 0;
+    const deriv = getDerivative(wordObj.numeric);
+    const compound = deriv % wordObj.opts.compoundSimplicity === 0;
+    const first = wordObj.word === '';
+    const preOnFirst = deriv % 6 > 0;
     if ((first && preOnFirst) || wordObj.lastSkippedPost || compound) {
         wordObj.word += getNextPhonetic(PHONETIC_PRE,
             PHONETIC_PRE_SIMPLE_LENGTH, wordObj);
@@ -136,7 +136,7 @@ function addSyllable(wordObj) {
  * @returns {number} The derivative.
  */
 function getDerivative(num) {
-    var derivative = 1;
+    let derivative = 1;
     while (num) {
         derivative += num % 7;
         num = Math.floor(num / 7);
@@ -163,7 +163,7 @@ function getDerivative(num) {
  *      An options object.
  */
 function getOptions(overrides) {
-    var options = {};
+    const options = {};
     overrides = overrides || {};
     options.length = overrides.length || 16;
     options.seed = overrides.seed || Math.random();
@@ -188,10 +188,10 @@ function getOptions(overrides) {
  * @returns {string} The chosen phonetic.
  */
 function getNextPhonetic(phoneticSet, simpleCap, wordObj, forceSimple) {
-    var deriv = getDerivative(wordObj.numeric),
-        simple = (wordObj.numeric + deriv) % wordObj.opts.phoneticSimplicity > 0,
-        cap = simple || forceSimple ? simpleCap : phoneticSet.length,
-        phonetic = phoneticSet[wordObj.numeric % cap];
+    const deriv = getDerivative(wordObj.numeric);
+    const simple = (wordObj.numeric + deriv) % wordObj.opts.phoneticSimplicity > 0;
+    const cap = simple || forceSimple ? simpleCap : phoneticSet.length;
+    const phonetic = phoneticSet[wordObj.numeric % cap];
     wordObj.numeric = getNumericHash(wordObj.numeric + wordObj.word);
     return phonetic;
 }
@@ -204,10 +204,12 @@ function getNextPhonetic(phoneticSet, simpleCap, wordObj, forceSimple) {
  * @returns {number}
  */
 function getNumericHash(data) {
-    var numeric = 0;
+    let numeric = 0;
     data += '-Phonetic';
-    for (var i = 0; i < data.length; i++) {
-        numeric += data.charCodeAt(i);
+    for (let i = 0, len = data.length; i < len; i++) {
+        const chr = data.charCodeAt(i);
+        numeric = ((numeric << 5) - numeric) + chr;
+        numeric >>>= 0;
     }
     return numeric;
 }
@@ -223,8 +225,8 @@ function getNumericHash(data) {
  * @returns {string} The processed word.
  */
 function postProcess(wordObj) {
-    var regex;
-    for (var i in REPLACEMENTS) {
+    let regex;
+    for (const i in REPLACEMENTS) {
         if (REPLACEMENTS.hasOwnProperty(i)) {
             regex = new RegExp(i);
             wordObj.word = wordObj.word.replace(regex, REPLACEMENTS[i]);
@@ -242,13 +244,13 @@ function postProcess(wordObj) {
  */
 module.exports.generate = function(options) {
     options = getOptions(options);
-    var length = options.length,
-        wordObj = {
-            numeric: getNumericHash(options.seed),
-            lastSkippedPost: false,
-            word: '',
-            opts: options
-        };
+    const length = options.length;
+    const wordObj = {
+        numeric: getNumericHash(options.seed),
+        lastSkippedPost: false,
+        word: '',
+        opts: options
+    };
     while (wordObj.word.length < length) {
         addSyllable(wordObj);
     }

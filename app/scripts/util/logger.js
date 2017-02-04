@@ -1,6 +1,6 @@
 'use strict';
 
-var Level = {
+const Level = {
     Off: 0,
     Error: 1,
     Warn: 2,
@@ -9,11 +9,11 @@ var Level = {
     All: 5
 };
 
-var MaxLogsToSave = 100;
+const MaxLogsToSave = 100;
 
-var lastLogs = [];
+const lastLogs = [];
 
-var Logger = function(name, id) {
+const Logger = function(name, id) {
     this.prefix = (name ? name + (id ? ':' + id : '') : 'default');
     this.level = Level.All;
 };

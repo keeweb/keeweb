@@ -1,11 +1,11 @@
 'use strict';
 
-var StorageBase = require('./storage-base'),
-    DropboxLink = require('../comp/dropbox-link'),
-    Locale = require('../util/locale'),
-    UrlUtil = require('../util/url-util');
+const StorageBase = require('./storage-base');
+const DropboxLink = require('../comp/dropbox-link');
+const Locale = require('../util/locale');
+const UrlUtil = require('../util/url-util');
 
-var StorageDropbox = StorageBase.extend({
+const StorageDropbox = StorageBase.extend({
     name: 'dropbox',
     icon: 'dropbox',
     enabled: true,
@@ -26,7 +26,7 @@ var StorageDropbox = StorageBase.extend({
     },
 
     _toFullPath: function(path) {
-        var rootFolder = this.appSettings.get('dropboxFolder');
+        const rootFolder = this.appSettings.get('dropboxFolder');
         if (rootFolder) {
             path = UrlUtil.fixSlashes('/' + rootFolder + '/' + path);
         }
@@ -34,9 +34,9 @@ var StorageDropbox = StorageBase.extend({
     },
 
     _toRelPath: function(path) {
-        var rootFolder = this.appSettings.get('dropboxFolder');
+        const rootFolder = this.appSettings.get('dropboxFolder');
         if (rootFolder) {
-            var ix = path.toLowerCase().indexOf(rootFolder.toLowerCase());
+            const ix = path.toLowerCase().indexOf(rootFolder.toLowerCase());
             if (ix === 0) {
                 path = path.substr(rootFolder.length);
             } else if (ix === 1) {
@@ -70,15 +70,15 @@ var StorageDropbox = StorageBase.extend({
     },
 
     getSettingsConfig: function() {
-        var fields = [];
-        var appKey = DropboxLink.getKey();
-        var linkField = {id: 'link', title: 'dropboxLink', type: 'select', value: 'custom',
+        const fields = [];
+        const appKey = DropboxLink.getKey();
+        const linkField = {id: 'link', title: 'dropboxLink', type: 'select', value: 'custom',
             options: { app: 'dropboxLinkApp', full: 'dropboxLinkFull', custom: 'dropboxLinkCustom' } };
-        var keyField = {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w+',
+        const keyField = {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w+',
             value: appKey};
-        var folderField = {id: 'folder', title: 'dropboxFolder', desc: 'dropboxFolderSettingsDesc', type: 'text',
+        const folderField = {id: 'folder', title: 'dropboxFolder', desc: 'dropboxFolderSettingsDesc', type: 'text',
             value: this.appSettings.get('dropboxFolder') || ''};
-        var canUseBuiltInKeys = DropboxLink.canUseBuiltInKeys();
+        const canUseBuiltInKeys = DropboxLink.canUseBuiltInKeys();
         if (canUseBuiltInKeys) {
             fields.push(linkField);
             if (appKey === DropboxLink.Keys.AppFolder) {
@@ -151,7 +151,7 @@ var StorageDropbox = StorageBase.extend({
 
     load: function(path, opts, callback) {
         this.logger.debug('Load', path);
-        var ts = this.logger.ts();
+        const ts = this.logger.ts();
         path = this._toFullPath(path);
         DropboxLink.openFile(path, (err, data, stat) => {
             this.logger.debug('Loaded', path, stat ? stat.versionTag : null, this.logger.ts(ts));
@@ -162,7 +162,7 @@ var StorageDropbox = StorageBase.extend({
 
     stat: function(path, opts, callback) {
         this.logger.debug('Stat', path);
-        var ts = this.logger.ts();
+        const ts = this.logger.ts();
         path = this._toFullPath(path);
         DropboxLink.stat(path, (err, stat) => {
             if (stat && stat.isRemoved) {
@@ -177,7 +177,7 @@ var StorageDropbox = StorageBase.extend({
 
     save: function(path, opts, data, callback, rev) {
         this.logger.debug('Save', path, rev);
-        var ts = this.logger.ts();
+        const ts = this.logger.ts();
         path = this._toFullPath(path);
         DropboxLink.saveFile(path, data, rev, (err, stat) => {
             this.logger.debug('Saved', path, this.logger.ts(ts));
@@ -192,14 +192,14 @@ var StorageDropbox = StorageBase.extend({
             if (err) { return callback(err); }
             DropboxLink.list(this._toFullPath(''), (err, files, dirStat, filesStat) => {
                 if (err) { return callback(err); }
-                var fileList = filesStat
+                const fileList = filesStat
                     .filter(f => !f.isFolder && !f.isRemoved && UrlUtil.isKdbx(f.name))
                     .map(f => ({
                         name: f.name,
                         path: this._toRelPath(f.path),
                         rev: f.versionTag
                     }));
-                var dir = dirStat.inAppFolder ? Locale.openAppFolder
+                const dir = dirStat.inAppFolder ? Locale.openAppFolder
                     : (UrlUtil.trimStartSlash(dirStat.path) || Locale.openRootFolder);
                 callback(null, fileList, dir);
             });
@@ -208,7 +208,7 @@ var StorageDropbox = StorageBase.extend({
 
     remove: function(path, callback) {
         this.logger.debug('Remove', path);
-        var ts = this.logger.ts();
+        const ts = this.logger.ts();
         path = this._toFullPath(path);
         DropboxLink.deleteFile(path, err => {
             this.logger.debug('Removed', path, this.logger.ts(ts));
@@ -220,7 +220,7 @@ var StorageDropbox = StorageBase.extend({
         DropboxLink.authenticate((err) => {
             if (err) { return callback(err); }
             this.logger.debug('Make dir', path);
-            let ts = this.logger.ts();
+            const ts = this.logger.ts();
             path = this._toFullPath(path);
             DropboxLink.mkdir(path, err => {
                 this.logger.debug('Made dir', path, this.logger.ts(ts));

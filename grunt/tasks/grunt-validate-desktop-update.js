@@ -2,21 +2,21 @@
 
 module.exports = function (grunt) {
     grunt.registerMultiTask('validate-desktop-update', 'Validates desktop update package', function () {
-        var path = require('path');
-        var crypto = require('crypto');
-        var fs = require('fs');
-        var done = this.async();
-        var StreamZip = require(path.resolve(__dirname, '../../electron/node_modules/node-stream-zip'));
-        var zip = new StreamZip({ file: this.options().file, storeEntries: true });
-        var expFiles = this.options().expected;
-        var expFilesCount = this.options().expectedCount;
-        var publicKey = fs.readFileSync(this.options().publicKey, 'binary');
-        var zipFileData = fs.readFileSync(this.options().file);
+        const path = require('path');
+        const crypto = require('crypto');
+        const fs = require('fs');
+        const done = this.async();
+        const StreamZip = require(path.resolve(__dirname, '../../desktop/node_modules/node-stream-zip'));
+        const zip = new StreamZip({ file: this.options().file, storeEntries: true });
+        const expFiles = this.options().expected;
+        const expFilesCount = this.options().expectedCount;
+        const publicKey = fs.readFileSync(this.options().publicKey, 'binary');
+        const zipFileData = fs.readFileSync(this.options().file);
         zip.on('error', err => {
             grunt.warn(err);
         });
         zip.on('ready', () => {
-            var valid = true;
+            let valid = true;
             if (!zip.comment) {
                 grunt.warn('No comment in ZIP');
                 return;
@@ -25,10 +25,10 @@ module.exports = function (grunt) {
                 grunt.warn('Bad comment length in ZIP');
                 return;
             }
-            var verify = crypto.createVerify('RSA-SHA256');
+            const verify = crypto.createVerify('RSA-SHA256');
             verify.write(zipFileData.slice(0, zip.centralDirectory.headerOffset + 22));
             verify.end();
-            var signature = new Buffer(zip.comment, 'hex');
+            const signature = new Buffer(zip.comment, 'hex');
             if (!verify.verify(publicKey, signature)) {
                 grunt.warn('Invalid ZIP signature');
                 return;

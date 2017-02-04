@@ -1,11 +1,11 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    FeatureDetector = require('../../util/feature-detector'),
-    CopyPaste = require('../../comp/copy-paste'),
-    Tip = require('../../util/tip');
+const Backbone = require('backbone');
+const FeatureDetector = require('../../util/feature-detector');
+const CopyPaste = require('../../comp/copy-paste');
+const Tip = require('../../util/tip');
 
-var FieldView = Backbone.View.extend({
+const FieldView = Backbone.View.extend({
     template: require('templates/details/field.hbs'),
 
     events: {
@@ -39,7 +39,7 @@ var FieldView = Backbone.View.extend({
 
     update: function() {
         if (typeof this.model.value === 'function') {
-            var newVal = this.model.value();
+            const newVal = this.model.value();
             if (!_.isEqual(newVal, this.value) || (this.value && newVal && this.value.toString() !== newVal.toString())) {
                 this.render();
             }
@@ -48,10 +48,10 @@ var FieldView = Backbone.View.extend({
 
     fieldLabelClick: function(e) {
         e.stopImmediatePropagation();
-        var field = this.model.name;
+        const field = this.model.name;
         if (FeatureDetector.shouldMoveHiddenInputToCopySource()) {
-            var box = this.valueEl[0].getBoundingClientRect();
-            var textValue = this.value && this.value.isProtected ? this.value.getText() : this.getEditValue(this.value);
+            const box = this.valueEl[0].getBoundingClientRect();
+            const textValue = this.value && this.value.isProtected ? this.value.getText() : this.getEditValue(this.value);
             if (!textValue) {
                 return;
             }
@@ -59,11 +59,11 @@ var FieldView = Backbone.View.extend({
             // CopyPaste.copy(); // maybe Apple will ever support this?
             return;
         }
-        var copyRes;
+        let copyRes;
         if (field) {
-            var value = this.value || '';
+            const value = this.value || '';
             if (value && value.isProtected) {
-                var text = value.getText();
+                const text = value.getText();
                 if (!text) {
                     return;
                 }
@@ -80,8 +80,8 @@ var FieldView = Backbone.View.extend({
         if (!this.value) {
             return;
         }
-        var selection = window.getSelection();
-        var range = document.createRange();
+        const selection = window.getSelection();
+        const range = document.createRange();
         range.selectNodeContents(this.valueEl[0]);
         selection.removeAllRanges();
         selection.addRange(range);
@@ -96,7 +96,7 @@ var FieldView = Backbone.View.extend({
         if (['a', 'input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) >= 0) {
             return;
         }
-        var sel = window.getSelection().toString();
+        const sel = window.getSelection().toString();
         if (!sel) {
             this.edit();
         }
@@ -116,7 +116,7 @@ var FieldView = Backbone.View.extend({
             return;
         }
         this.editing = false;
-        var textEqual;
+        let textEqual;
         if (this.value && this.value.isProtected) {
             textEqual = this.value.equals(newVal);
         } else if (newVal && newVal.isProtected) {
@@ -124,9 +124,9 @@ var FieldView = Backbone.View.extend({
         } else {
             textEqual = _.isEqual(this.value, newVal);
         }
-        var protectedEqual = (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
-        var nameChanged = extra && extra.newField;
-        var arg;
+        const protectedEqual = (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
+        const nameChanged = extra && extra.newField;
+        let arg;
         if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {
             arg = { val: newVal, field: this.model.name };
             if (extra) {

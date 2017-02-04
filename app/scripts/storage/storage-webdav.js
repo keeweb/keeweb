@@ -1,8 +1,8 @@
 'use strict';
 
-var StorageBase = require('./storage-base');
+const StorageBase = require('./storage-base');
 
-var StorageWebDav = StorageBase.extend({
+const StorageWebDav = StorageBase.extend({
     name: 'webdav',
     icon: 'server',
     enabled: true,
@@ -47,19 +47,19 @@ var StorageWebDav = StorageBase.extend({
     },
 
     save: function(path, opts, data, callback, rev) {
-        var cb = function(err, xhr, stat) {
+        const cb = function(err, xhr, stat) {
             if (callback) {
                 callback(err, stat);
                 callback = null;
             }
         };
-        var tmpPath = path.replace(/[^\/]+$/, m => '.' + m) + '.' + Date.now();
-        var saveOpts = {
+        const tmpPath = path.replace(/[^\/]+$/, m => '.' + m) + '.' + Date.now();
+        const saveOpts = {
             path: path,
             user: opts ? opts.user : null,
             password: opts ? opts.password : null
         };
-        var that = this;
+        const that = this;
         this._request(_.defaults({
             op: 'Save:stat', method: 'HEAD'
         }, saveOpts), (err, xhr, stat) => {
@@ -84,7 +84,7 @@ var StorageWebDav = StorageBase.extend({
                         that._request(_.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts));
                         return cb({ revConflict: true }, xhr, stat);
                     }
-                    var movePath = path;
+                    let movePath = path;
                     if (movePath.indexOf('://') < 0) {
                         if (movePath.indexOf('/') === 0) {
                             movePath = location.protocol + '//' + location.host + movePath;
@@ -109,12 +109,12 @@ var StorageWebDav = StorageBase.extend({
     },
 
     fileOptsToStoreOpts: function(opts, file) {
-        var result = {user: opts.user, encpass: opts.encpass};
+        const result = {user: opts.user, encpass: opts.encpass};
         if (opts.password) {
-            var fileId = file.get('uuid');
-            var password = opts.password;
-            var encpass = '';
-            for (var i = 0; i < password.length; i++) {
+            const fileId = file.get('uuid');
+            const password = opts.password;
+            let encpass = '';
+            for (let i = 0; i < password.length; i++) {
                 encpass += String.fromCharCode(password.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length));
             }
             result.encpass = btoa(encpass);
@@ -123,12 +123,12 @@ var StorageWebDav = StorageBase.extend({
     },
 
     storeOptsToFileOpts: function(opts, file) {
-        var result = {user: opts.user, password: opts.password};
+        const result = {user: opts.user, password: opts.password};
         if (opts.encpass) {
-            var fileId = file.get('uuid');
-            var encpass = atob(opts.encpass);
-            var password = '';
-            for (var i = 0; i < encpass.length; i++) {
+            const fileId = file.get('uuid');
+            const encpass = atob(opts.encpass);
+            let password = '';
+            for (let i = 0; i < encpass.length; i++) {
                 password += String.fromCharCode(encpass.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length));
             }
             result.password = password;
@@ -137,18 +137,18 @@ var StorageWebDav = StorageBase.extend({
     },
 
     _request: function(config, callback) {
-        var that = this;
+        const that = this;
         if (config.rev) {
             that.logger.debug(config.op, config.path, config.rev);
         } else {
             that.logger.debug(config.op, config.path);
         }
-        var ts = that.logger.ts();
-        var xhr = new XMLHttpRequest();
+        const ts = that.logger.ts();
+        const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
             if ([200, 201, 204].indexOf(xhr.status) < 0) {
                 that.logger.debug(config.op + ' error', config.path, xhr.status, that.logger.ts(ts));
-                var err;
+                let err;
                 switch (xhr.status) {
                     case 404:
                         err = { notFound: true };
@@ -163,13 +163,13 @@ var StorageWebDav = StorageBase.extend({
                 if (callback) { callback(err, xhr); callback = null; }
                 return;
             }
-            var rev = xhr.getResponseHeader('Last-Modified');
+            const rev = xhr.getResponseHeader('Last-Modified');
             if (!rev && !config.nostat) {
                 that.logger.debug(config.op + ' error', config.path, 'no headers', that.logger.ts(ts));
                 if (callback) { callback('No Last-Modified header', xhr); callback = null; }
                 return;
             }
-            var completedOpName = config.op + (config.op.charAt(config.op.length - 1) === 'e' ? 'd' : 'ed');
+            const completedOpName = config.op + (config.op.charAt(config.op.length - 1) === 'e' ? 'd' : 'ed');
             that.logger.debug(completedOpName, config.path, rev, that.logger.ts(ts));
             if (callback) { callback(null, xhr, rev ? { rev: rev } : null); callback = null; }
         });
@@ -195,7 +195,7 @@ var StorageWebDav = StorageBase.extend({
             xhr.setRequestHeader('Cache-Control', 'no-cache');
         }
         if (config.data) {
-            var blob = new Blob([config.data], {type: 'application/octet-stream'});
+            const blob = new Blob([config.data], {type: 'application/octet-stream'});
             xhr.send(blob);
         } else {
             xhr.send();

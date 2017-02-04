@@ -1,6 +1,7 @@
 'use strict';
 
-var DragDropInfo = {
+const DragDropInfo = {
+    dragType: null,
     dragObject: null
 };
 

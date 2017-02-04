@@ -6,7 +6,7 @@ const CopyPaste = require('../comp/copy-paste');
 const GeneratorPresets = require('../comp/generator-presets');
 const Locale = require('../util/locale');
 
-var GeneratorView = Backbone.View.extend({
+const GeneratorView = Backbone.View.extend({
     el: 'body',
 
     template: require('templates/generator.hbs'),
@@ -14,6 +14,8 @@ var GeneratorView = Backbone.View.extend({
     events: {
         'click': 'click',
         'mousedown .gen__length-range': 'generate',
+        'mousemove .gen__length-range': 'lengthMouseMove',
+        'input .gen__length-range': 'lengthChange',
         'change .gen__length-range': 'lengthChange',
         'change .gen__check input[type=checkbox]': 'checkChange',
         'click .gen__btn-ok': 'btnOkClick',
@@ -28,15 +30,15 @@ var GeneratorView = Backbone.View.extend({
 
     initialize: function () {
         this.createPresets();
-        var preset = this.preset;
+        const preset = this.preset;
         this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
         $('body').one('click', this.remove.bind(this));
         this.listenTo(Backbone, 'lock-workspace', this.remove.bind(this));
     },
 
     render: function() {
-        var canCopy = document.queryCommandSupported('copy');
-        var btnTitle = this.model.copy ? canCopy ? Locale.alertCopy : Locale.alertClose : Locale.alertOk;
+        const canCopy = document.queryCommandSupported('copy');
+        const btnTitle = this.model.copy ? canCopy ? Locale.alertCopy : Locale.alertClose : Locale.alertOk;
         this.renderTemplate({ btnTitle: btnTitle, opt: this.gen, presets: this.presets, preset: this.preset });
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
@@ -47,12 +49,12 @@ var GeneratorView = Backbone.View.extend({
     createPresets: function() {
         this.presets = GeneratorPresets.enabled;
         if (this.model.password && (!this.model.password.isProtected || this.model.password.byteLength)) {
-            var derivedPreset = { name: 'Derived', title: Locale.genPresetDerived };
+            const derivedPreset = { name: 'Derived', title: Locale.genPresetDerived };
             _.extend(derivedPreset, PasswordGenerator.deriveOpts(this.model.password));
             this.presets.splice(0, 0, derivedPreset);
             this.preset = 'Derived';
         } else {
-            let defaultPreset = this.presets.filter(p => p.default)[0] || this.presets[0];
+            const defaultPreset = this.presets.filter(p => p.default)[0] || this.presets[0];
             this.preset = defaultPreset.name;
         }
         this.presets.forEach(function(pr) {
@@ -74,7 +76,7 @@ var GeneratorView = Backbone.View.extend({
     },
 
     lengthChange: function(e) {
-        var val = this.valuesMap[e.target.value];
+        const val = this.valuesMap[e.target.value];
         if (val !== this.gen.length) {
             this.gen.length = val;
             this.$el.find('.gen__length-range-val').html(val);
@@ -84,7 +86,7 @@ var GeneratorView = Backbone.View.extend({
     },
 
     checkChange: function(e) {
-        var id = $(e.target).data('id');
+        const id = $(e.target).data('id');
         if (id) {
             this.gen[id] = e.target.checked;
         }
@@ -104,13 +106,13 @@ var GeneratorView = Backbone.View.extend({
     generate: function() {
         this.password = PasswordGenerator.generate(this.gen);
         this.resultEl.text(this.password);
-        var isLong = this.password.length > 32;
+        const isLong = this.password.length > 32;
         this.resultEl.toggleClass('gen__result--long-pass', isLong);
     },
 
     btnOkClick: function() {
-        var selection = window.getSelection();
-        var range = document.createRange();
+        const selection = window.getSelection();
+        const range = document.createRange();
         range.selectNodeContents(this.resultEl[0]);
         selection.removeAllRanges();
         selection.addRange(range);
@@ -120,14 +122,14 @@ var GeneratorView = Backbone.View.extend({
     },
 
     presetChange: function(e) {
-        var name = e.target.value;
+        const name = e.target.value;
         if (name === '...') {
             Backbone.trigger('edit-generator-presets');
             this.remove();
             return;
         }
         this.preset = name;
-        var preset = _.find(this.presets, t => t.name === name);
+        const preset = _.find(this.presets, t => t.name === name);
         this.gen = _.clone(preset);
         this.render();
     },

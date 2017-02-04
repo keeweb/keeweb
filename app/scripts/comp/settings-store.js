@@ -1,12 +1,12 @@
 'use strict';
 
-var Launcher = require('./launcher'),
-    StringUtil = require('../util/string-util'),
-    Logger = require('../util/logger');
+const Launcher = require('./launcher');
+const StringUtil = require('../util/string-util');
+const Logger = require('../util/logger');
 
-var logger = new Logger('settings');
+const logger = new Logger('settings');
 
-var SettingsStore = {
+const SettingsStore = {
     fileName: function(key) {
         return key + '.json';
     },
@@ -14,12 +14,12 @@ var SettingsStore = {
     load: function(key) {
         try {
             if (Launcher) {
-                var settingsFile = Launcher.getUserDataPath(this.fileName(key));
+                const settingsFile = Launcher.getUserDataPath(this.fileName(key));
                 if (Launcher.fileExists(settingsFile)) {
                     return JSON.parse(Launcher.readFile(settingsFile, 'utf8'));
                 }
             } else {
-                var data = localStorage[StringUtil.camelCase(key)];
+                const data = localStorage[StringUtil.camelCase(key)];
                 return data ? JSON.parse(data) : undefined;
             }
         } catch (e) {

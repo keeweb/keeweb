@@ -1,22 +1,22 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    FeatureDetector = require('../../util/feature-detector'),
-    PasswordGenerator = require('../../util/password-generator'),
-    Alerts = require('../../comp/alerts'),
-    Launcher = require('../../comp/launcher'),
-    Storage = require('../../storage'),
-    Links = require('../../const/links'),
-    Format = require('../../util/format'),
-    Locale = require('../../util/locale'),
-    UrlUtil = require('../../util/url-util'),
-    kdbxweb = require('kdbxweb'),
-    FileSaver = require('filesaver');
+const Backbone = require('backbone');
+const FeatureDetector = require('../../util/feature-detector');
+const PasswordGenerator = require('../../util/password-generator');
+const Alerts = require('../../comp/alerts');
+const Launcher = require('../../comp/launcher');
+const Storage = require('../../storage');
+const Links = require('../../const/links');
+const Format = require('../../util/format');
+const Locale = require('../../util/locale');
+const UrlUtil = require('../../util/url-util');
+const kdbxweb = require('kdbxweb');
+const FileSaver = require('filesaver');
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';
 
-var SettingsFileView = Backbone.View.extend({
+const SettingsFileView = Backbone.View.extend({
     template: require('templates/settings/settings-file.hbs'),
 
     events: {
@@ -43,7 +43,8 @@ var SettingsFileView = Backbone.View.extend({
         'input #settings__file-hist-len': 'changeHistoryLength',
         'input #settings__file-hist-size': 'changeHistorySize',
         'input #settings__file-key-rounds': 'changeKeyRounds',
-        'input #settings__file-key-change-force': 'changeKeyChangeForce'
+        'input #settings__file-key-change-force': 'changeKeyChangeForce',
+        'input .settings__input-kdf': 'changeKdfParameter'
     },
 
     appModel: null,
@@ -53,10 +54,10 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     render: function() {
-        var storageProviders = [];
-        var fileStorage = this.model.get('storage');
+        const storageProviders = [];
+        const fileStorage = this.model.get('storage');
         Object.keys(Storage).forEach(name => {
-            var prv = Storage[name];
+            const prv = Storage[name];
             if (!prv.system && prv.enabled) {
                 storageProviders.push({
                     name: prv.name, icon: prv.icon, iconSvg: prv.iconSvg, own: name === fileStorage, backup: prv.backup
@@ -64,7 +65,7 @@ var SettingsFileView = Backbone.View.extend({
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
-        let backup = this.model.get('backup');
+        const backup = this.model.get('backup');
         this.renderTemplate({
             cmd: FeatureDetector.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
@@ -86,6 +87,7 @@ var SettingsFileView = Backbone.View.extend({
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
             keyChangeForce: this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
+            kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
             storageProviders: storageProviders
         });
         if (!this.model.get('created')) {
@@ -94,18 +96,22 @@ var SettingsFileView = Backbone.View.extend({
         this.renderKeyFileSelect();
     },
 
+    kdfParametersToUi: function(kdfParameters) {
+        return kdfParameters ? _.extend({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) }) : null;
+    },
+
     renderKeyFileSelect: function() {
-        var keyFileName = this.model.get('keyFileName'),
-            oldKeyFileName = this.model.get('oldKeyFileName'),
-            keyFileChanged = this.model.get('keyFileChanged');
-        var sel = this.$el.find('#settings__file-key-file');
+        const keyFileName = this.model.get('keyFileName');
+        const oldKeyFileName = this.model.get('oldKeyFileName');
+        const keyFileChanged = this.model.get('keyFileChanged');
+        const sel = this.$el.find('#settings__file-key-file');
         sel.html('');
         if (keyFileName && keyFileChanged) {
-            var text = keyFileName !== 'Generated' ? Locale.setFileUseKeyFile + ' ' + keyFileName : Locale.setFileUseGenKeyFile;
+            const text = keyFileName !== 'Generated' ? Locale.setFileUseKeyFile + ' ' + keyFileName : Locale.setFileUseGenKeyFile;
             $('<option/>').val('ex').text(text).appendTo(sel);
         }
         if (oldKeyFileName) {
-            var useText = keyFileChanged ? Locale.setFileUseOldKeyFile : Locale.setFileUseKeyFile + ' ' + oldKeyFileName;
+            const useText = keyFileChanged ? Locale.setFileUseOldKeyFile : Locale.setFileUseKeyFile + ' ' + oldKeyFileName;
             $('<option/>').val('old').text(useText).appendTo(sel);
         }
         $('<option/>').val('gen').text(Locale.setFileGenKeyFile).appendTo(sel);
@@ -142,7 +148,7 @@ var SettingsFileView = Backbone.View.extend({
         }
         arg.startedByUser = true;
         if (!arg.skipValidation) {
-            var isValid = this.validatePassword(() => {
+            const isValid = this.validatePassword(() => {
                 arg.skipValidation = true;
                 this.save(arg);
             });
@@ -165,7 +171,7 @@ var SettingsFileView = Backbone.View.extend({
         if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
             return;
         }
-        var fileName = this.model.get('name') + '.kdbx';
+        const fileName = this.model.get('name') + '.kdbx';
         if (Launcher && !this.model.get('storage')) {
             Launcher.getSaveFileName(fileName, path => {
                 if (path) {
@@ -191,7 +197,7 @@ var SettingsFileView = Backbone.View.extend({
                         }
                     });
                 } else {
-                    var blob = new Blob([data], {type: 'application/octet-stream'});
+                    const blob = new Blob([data], {type: 'application/octet-stream'});
                     FileSaver.saveAs(blob, fileName);
                 }
             });
@@ -200,7 +206,7 @@ var SettingsFileView = Backbone.View.extend({
 
     saveToXml: function() {
         this.model.getXml(xml => {
-            var blob = new Blob([xml], {type: 'text/xml'});
+            const blob = new Blob([xml], {type: 'text/xml'});
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
         });
     },
@@ -209,8 +215,8 @@ var SettingsFileView = Backbone.View.extend({
         if (this.model.get('syncing') || this.model.get('demo')) {
             return;
         }
-        var storageName = $(e.target).closest('.settings__file-save-to-storage').data('storage');
-        var storage = Storage[storageName];
+        const storageName = $(e.target).closest('.settings__file-save-to-storage').data('storage');
+        const storage = Storage[storageName];
         if (!storage) {
             return;
         }
@@ -235,8 +241,8 @@ var SettingsFileView = Backbone.View.extend({
                 if (err) {
                     return;
                 }
-                var expName = this.model.get('name').toLowerCase();
-                var existingFile = _.find(files, file => {
+                const expName = this.model.get('name').toLowerCase();
+                const existingFile = _.find(files, file => {
                     return UrlUtil.getDataFileName(file.name).toLowerCase() === expName;
                 });
                 if (existingFile) {
@@ -304,8 +310,8 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     generateKeyFile: function() {
-        var keyFile = this.model.generateAndSetKeyFile();
-        var blob = new Blob([keyFile], {type: 'application/octet-stream'});
+        const keyFile = this.model.generateAndSetKeyFile();
+        const blob = new Blob([keyFile], {type: 'application/octet-stream'});
         FileSaver.saveAs(blob, this.model.get('name') + '.key');
         this.renderKeyFileSelect();
     },
@@ -320,10 +326,10 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     fileSelected: function(e) {
-        var file = e.target.files[0];
-        var reader = new FileReader();
+        const file = e.target.files[0];
+        const reader = new FileReader();
         reader.onload = e => {
-            var res = e.target.result;
+            const res = e.target.result;
             this.model.setKeyFile(res, file.name);
             this.renderKeyFileSelect();
         };
@@ -357,7 +363,7 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     changeName: function(e) {
-        var value = $.trim(e.target.value);
+        const value = $.trim(e.target.value);
         if (!value) {
             return;
         }
@@ -365,16 +371,16 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     changeDefUser: function(e) {
-        var value = $.trim(e.target.value);
+        const value = $.trim(e.target.value);
         this.model.setDefaultUser(value);
     },
 
     changeBackupEnabled: function(e) {
-        let enabled = e.target.checked;
+        const enabled = e.target.checked;
         let backup = this.model.get('backup');
         if (!backup) {
             backup = { enabled: enabled, schedule: DefaultBackupSchedule };
-            let defaultPath = DefaultBackupPath.replace('{name}', this.model.get('name'));
+            const defaultPath = DefaultBackupPath.replace('{name}', this.model.get('name'));
             if (Launcher) {
                 backup.storage = 'file';
                 backup.path = Launcher.getDocumentsPath(defaultPath);
@@ -410,19 +416,19 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     changeBackupPath: function(e) {
-        let backup = this.model.get('backup');
+        const backup = this.model.get('backup');
         backup.path = e.target.value.trim();
         this.setBackup(backup);
     },
 
     changeBackupStorage: function(e) {
-        let backup = this.model.get('backup');
+        const backup = this.model.get('backup');
         backup.storage = e.target.value;
         this.setBackup(backup);
     },
 
     changeBackupSchedule: function(e) {
-        let backup = this.model.get('backup');
+        const backup = this.model.get('backup');
         backup.schedule = e.target.value;
         this.setBackup(backup);
     },
@@ -436,7 +442,7 @@ var SettingsFileView = Backbone.View.extend({
         if (this.backupInProgress) {
             return;
         }
-        let backupButton = this.$el.find('.settings__file-button-backup');
+        const backupButton = this.$el.find('.settings__file-button-backup');
         backupButton.text(Locale.setFileBackupNowWorking);
         this.model.getData(data => {
             if (!data) {
@@ -462,7 +468,7 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     changeHistoryLength: function(e) {
-        var value = +e.target.value;
+        const value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('historyMaxItems');
             return;
@@ -471,7 +477,7 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     changeHistorySize: function(e) {
-        var value = +e.target.value;
+        const value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('historyMaxSize') / 1024 / 1024;
             return;
@@ -480,7 +486,7 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     changeKeyRounds: function(e) {
-        var value = +e.target.value;
+        const value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('keyEncryptionRounds');
             return;
@@ -489,11 +495,24 @@ var SettingsFileView = Backbone.View.extend({
     },
 
     changeKeyChangeForce: function(e) {
-        var value = Math.round(e.target.value);
+        let value = Math.round(e.target.value);
         if (isNaN(value) || value <= 0) {
             value = -1;
         }
         this.model.setKeyChange(true, value);
+    },
+
+    changeKdfParameter: function(e) {
+        const field = $(e.target).data('field');
+        const mul = $(e.target).data('mul') || 1;
+        const value = e.target.value * mul;
+        if (isNaN(value)) {
+            e.target.value = Math.round(this.model.get('kdfParameters')[field] / mul);
+            return;
+        }
+        if (value > 0) {
+            this.model.setKdfParameter(field, value);
+        }
     }
 });
 

@@ -1,13 +1,13 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    SecureInput = require('../comp/secure-input'),
-    Alerts = require('../comp/alerts'),
-    Locale = require('../util/locale'),
-    InputFx = require('../util/input-fx'),
-    Keys = require('../const/keys');
+const Backbone = require('backbone');
+const SecureInput = require('../comp/secure-input');
+const Alerts = require('../comp/alerts');
+const Locale = require('../util/locale');
+const InputFx = require('../util/input-fx');
+const Keys = require('../const/keys');
 
-var KeyChangeView = Backbone.View.extend({
+const KeyChangeView = Backbone.View.extend({
     template: require('templates/key-change.hbs'),
 
     events: {
@@ -30,7 +30,7 @@ var KeyChangeView = Backbone.View.extend({
     render: function() {
         this.keyFileName = this.model.file.get('keyFileName') || null;
         this.keyFileData = null;
-        let repeat = this.model.expired;
+        const repeat = this.model.expired;
         this.renderTemplate({
             fileName: this.model.file.get('name'),
             keyFileName: this.model.file.get('keyFileName'),
@@ -55,7 +55,7 @@ var KeyChangeView = Backbone.View.extend({
     },
 
     inputKeydown: function(e) {
-        var code = e.keyCode || e.which;
+        const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             this.accept();
         } else if (code === Keys.DOM_VK_A) {
@@ -74,9 +74,9 @@ var KeyChangeView = Backbone.View.extend({
     },
 
     keyFileSelected: function(e) {
-        var file = e.target.files[0];
+        const file = e.target.files[0];
         if (file) {
-            var reader = new FileReader();
+            const reader = new FileReader();
             reader.onload = e => {
                 this.keyFileName = file.name;
                 this.keyFileData = e.target.result;

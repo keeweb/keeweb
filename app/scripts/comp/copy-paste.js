@@ -1,16 +1,16 @@
 'use strict';
 
-var FeatureDetector = require('../util/feature-detector'),
-    Launcher = require('./launcher'),
-    AppSettingsModel = require('../models/app-settings-model');
+const FeatureDetector = require('../util/feature-detector');
+const Launcher = require('./launcher');
+const AppSettingsModel = require('../models/app-settings-model');
 
-var CopyPaste = {
+const CopyPaste = {
     simpleCopy: !!Launcher,
 
     copy: function(text) {
         if (Launcher) {
             Launcher.setClipboardText(text);
-            var clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
+            const clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
             if (clipboardSeconds > 0) {
                 setTimeout(() => {
                     if (Launcher.getClipboardText() === text) {
@@ -30,7 +30,7 @@ var CopyPaste = {
     },
 
     createHiddenInput: function(text, pos) {
-        var hiddenInput = $('<input/>')
+        const hiddenInput = $('<input/>')
             .val(text)
             .attr({ type: 'text', 'class': pos ? '' : 'hide-by-pos' })
             .appendTo(document.body);

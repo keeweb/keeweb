@@ -1,14 +1,14 @@
 'use strict';
 
-var AutoTypeObfuscator = require('./auto-type-obfuscator'),
-    AutoTypeEmitterFactory = require('./auto-type-emitter-factory'),
-    Format = require('../util/format'),
-    Logger = require('../util/logger');
+const AutoTypeObfuscator = require('./auto-type-obfuscator');
+const AutoTypeEmitterFactory = require('./auto-type-emitter-factory');
+const Format = require('../util/format');
+const Logger = require('../util/logger');
 
-var emitterLogger = new Logger('auto-type-emitter');
+const emitterLogger = new Logger('auto-type-emitter');
 emitterLogger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);
 
-var AutoTypeRunner = function(ops) {
+const AutoTypeRunner = function(ops) {
     this.ops = ops;
     this.pendingResolvesCount = 0;
     this.entry = null;
@@ -68,8 +68,8 @@ AutoTypeRunner.prototype.resolve = function(entry, callback) {
 };
 
 AutoTypeRunner.prototype.resolveOps = function(ops) {
-    for (var i = 0, len = ops.length; i < len; i++) {
-        var op = ops[i];
+    for (let i = 0, len = ops.length; i < len; i++) {
+        const op = ops[i];
         if (op.type === 'group') {
             this.resolveOps(op.value);
         } else {
@@ -87,22 +87,24 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
     if (op.value.length === 1 && op.sep === ' ') {
         // {x 3}
         op.type = 'text';
-        var ch = op.value, text = ch, len = +op.arg;
+        const ch = op.value;
+        let text = ch;
+        const len = +op.arg;
         while (text.length < len) {
             text += ch;
         }
         op.value = text;
         return;
     }
-    var lowerValue = op.value.toLowerCase();
-    var key = AutoTypeRunner.Keys[lowerValue];
+    const lowerValue = op.value.toLowerCase();
+    const key = AutoTypeRunner.Keys[lowerValue];
     if (key) {
         if (op.sep === ' ' && +op.arg > 0) {
             // {TAB 3}
             op.type = 'group';
             op.value = [];
-            var count = +op.arg;
-            for (var i = 0; i < count; i++) {
+            const count = +op.arg;
+            for (let i = 0; i < count; i++) {
                 op.value.push({type: 'key', value: key});
             }
         } else {
@@ -112,7 +114,7 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
         }
         return;
     }
-    var substitution = AutoTypeRunner.Substitutions[lowerValue];
+    const substitution = AutoTypeRunner.Substitutions[lowerValue];
     if (substitution) {
         // {title}
         op.type = 'text';
@@ -170,13 +172,13 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
     if (!field || !this.entry) {
         return '';
     }
-    var value = this.entry.getFieldValue(field);
+    const value = this.entry.getFieldValue(field);
     if (!value) {
         return '';
     }
     if (value.isProtected) {
         op.type = 'group';
-        var ops = [];
+        const ops = [];
         value.forEachChar(ch => {
             if (ch === 10 || ch === 13) {
                 ops.push({type: 'key', value: 'enter'});
@@ -186,12 +188,12 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
         });
         return ops;
     } else {
-        var parts = value.split(/[\r\n]/g);
+        const parts = value.split(/[\r\n]/g);
         if (parts.length === 1) {
             return value;
         }
         op.type = 'group';
-        var partsOps = [];
+        const partsOps = [];
         parts.forEach(part => {
             if (partsOps.length) {
                 partsOps.push({type: 'key', value: 'enter'});
@@ -265,7 +267,7 @@ AutoTypeRunner.prototype.getOtp = function(op) {
 };
 
 AutoTypeRunner.prototype.pendingResolved = function(op, value, error) {
-    var wasPending = op.value === AutoTypeRunner.PendingResolve;
+    const wasPending = op.value === AutoTypeRunner.PendingResolve;
     if (value) {
         op.value = value;
     }
@@ -284,15 +286,15 @@ AutoTypeRunner.prototype.obfuscate = function() {
 };
 
 AutoTypeRunner.prototype.obfuscateOps = function(ops) {
-    for (var i = 0, len = ops.length; i < len; i++) {
-        var op = ops[i];
+    for (let i = 0, len = ops.length; i < len; i++) {
+        const op = ops[i];
         if (op.mod) {
             continue;
         }
         if (op.type === 'text') {
             this.obfuscateOp(op);
         } else if (op.type === 'group') {
-            var onlyText = op.value.every(grOp => grOp.type === 'text' && !grOp.mod);
+            const onlyText = op.value.every(grOp => grOp.type === 'text' && !grOp.mod);
             if (onlyText) {
                 this.obfuscateOp(op);
             } else {
@@ -303,7 +305,7 @@ AutoTypeRunner.prototype.obfuscateOps = function(ops) {
 };
 
 AutoTypeRunner.prototype.obfuscateOp = function(op) {
-    var letters = [];
+    let letters = [];
     if (op.type === 'text') {
         if (!op.value || op.value.length <= 1) {
             return;
@@ -315,7 +317,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
     if (letters.length <= 1) {
         return;
     }
-    var obfuscator = new AutoTypeObfuscator(letters);
+    const obfuscator = new AutoTypeObfuscator(letters);
     op.value = obfuscator.obfuscate();
     op.type = 'group';
 };
@@ -346,7 +348,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
     }
     this.resetEmitterMod(this.emitterState.mod);
     if (this.emitterState.opIx >= this.emitterState.ops.length) {
-        var state = this.emitterState.stack.pop();
+        const state = this.emitterState.stack.pop();
         if (state) {
             _.extend(this.emitterState, { ops: state.ops, opIx: state.opIx, mod: state.mod });
             this.emitNext();
@@ -358,7 +360,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
         }
         return;
     }
-    var op = this.emitterState.ops[this.emitterState.opIx];
+    const op = this.emitterState.ops[this.emitterState.opIx];
     if (op.type === 'group') {
         if (op.mod) {
             this.setEmitterMod(op.mod);
@@ -392,7 +394,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             this.emitter.key(op.value);
             break;
         case 'cmd':
-            var method = this.emitter[op.value];
+            const method = this.emitter[op.value];
             if (!method) {
                 throw 'Bad cmd: ' + op.value;
             }

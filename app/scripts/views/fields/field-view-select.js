@@ -1,8 +1,8 @@
 'use strict';
 
-var FieldView = require('./field-view');
+const FieldView = require('./field-view');
 
-var FieldViewSelect = FieldView.extend({
+const FieldViewSelect = FieldView.extend({
     readonly: true,
 
     renderValue: function(value) {

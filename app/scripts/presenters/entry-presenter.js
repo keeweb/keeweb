@@ -1,9 +1,9 @@
 'use strict';
 
-var Format = require('../util/format'),
-    Locale = require('../util/locale');
+const Format = require('../util/format');
+const Locale = require('../util/locale');
 
-var EntryPresenter = function(descField, noColor, activeEntryId) {
+const EntryPresenter = function(descField, noColor, activeEntryId) {
     this.entry = null;
     this.descField = descField;
     this.noColor = noColor || '';

@@ -1,16 +1,16 @@
 'use strict';
 
-var ModalView = require('../views/modal-view'),
-    Locale = require('../util/locale');
+const ModalView = require('../views/modal-view');
+const Locale = require('../util/locale');
 
-var Alerts = {
+const Alerts = {
     alertDisplayed: false,
 
     buttons: {
-        ok: {result: 'yes', title: Locale.alertOk},
-        yes: {result: 'yes', title: Locale.alertYes},
-        no: {result: '', title: Locale.alertNo},
-        cancel: {result: '', title: Locale.alertCancel}
+        ok: {result: 'yes', get title() { return Locale.alertOk; }},
+        yes: {result: 'yes', get title() { return Locale.alertYes; }},
+        no: {result: '', get title() { return Locale.alertNo; }},
+        cancel: {result: '', get title() { return Locale.alertCancel; }}
     },
 
     alert: function(config) {
@@ -18,7 +18,7 @@ var Alerts = {
             return null;
         }
         Alerts.alertDisplayed = true;
-        var view = new ModalView({ model: config });
+        const view = new ModalView({ model: config });
         view.render();
         view.on('result', (res, check) => {
             Alerts.alertDisplayed = false;

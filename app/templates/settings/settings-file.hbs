@@ -101,8 +101,29 @@
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" />
 
     <h2>{{res 'advanced'}}</h2>
+    {{#if keyEncryptionRounds}}
     <label for="settings__file-key-rounds">{{res 'setFileRounds'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="{{keyEncryptionRounds}}" />
+    {{else if kdfParameters}}
+    <label>{{res 'setFileKdfParams'}}: Argon2</label>
+    <div class="settings__row">
+        <div class="settings__col-small">
+            <label class="settings__col-small-label" for="settings__file-kdf-iter">{{res 'setFileKdfParamsIter'}}:</label>
+            <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
+                   data-field="iterations" id="settings__file-kdf-iter" value="{{kdfParameters.iterations}}" maxlength="10" />
+        </div>
+        <div class="settings__col-small">
+            <label class="settings__col-small-label" for="settings__file-kdf-mem">{{res 'setFileKdfParamsMem'}}:</label>
+            <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
+                   data-field="memory" data-mul="1024" id="settings__file-kdf-mem" value="{{kdfParameters.memory}}" maxlength="10" />
+        </div>
+        <div class="settings__col-small">
+            <label class="settings__col-small-label" for="settings__file-kdf-par">{{res 'setFileKdfParamsPar'}}:</label>
+            <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
+                   data-field="parallelism" id="settings__file-kdf-par" value="{{kdfParameters.parallelism}}" maxlength="2" />
+        </div>
+    </div>
+    {{/if}}
 
     <label for="settings__file-key-change-force">{{res 'setFileKeyChangeForce'}}:</label>
     <input type="text" pattern="\d*" class="settings__input input-base" id="settings__file-key-change-force" value="{{keyChangeForce}}" />

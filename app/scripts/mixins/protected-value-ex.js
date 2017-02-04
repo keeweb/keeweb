@@ -1,6 +1,6 @@
 'use strict';
 
-var kdbxweb = require('kdbxweb');
+const kdbxweb = require('kdbxweb');
 
 const ExpectedFieldRefChars = '{REF:0@I:00000000000000000000000000000000}'.split('');
 const ExpectedFieldRefByteLength = ExpectedFieldRefChars.length;
@@ -8,9 +8,13 @@ const ExpectedFieldRefByteLength = ExpectedFieldRefChars.length;
 kdbxweb.ProtectedValue.prototype.isProtected = true;
 
 kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
-    var value = this._value, salt = this._salt;
-    var b, b1, b2, b3;
-    for (var i = 0, len = value.length; i < len; i++) {
+    const value = this._value;
+    const salt = this._salt;
+    let b,
+        b1,
+        b2,
+        b3;
+    for (let i = 0, len = value.length; i < len; i++) {
         b = value[i] ^ salt[i];
         if (b < 128) {
             if (fn(b) === false) {
@@ -36,7 +40,7 @@ kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
         i++; b3 = value[i] ^ salt[i];
         if (i === len) { break; }
         if (b >= 240 && b < 248) {
-            var c = ((b & 7) << 18) | ((b1 & 0x3f) << 12) | ((b2 & 0x3f) << 6) | (b3 & 0x3f);
+            let c = ((b & 7) << 18) | ((b1 & 0x3f) << 12) | ((b2 & 0x3f) << 6) | (b3 & 0x3f);
             if (c <= 0xffff) {
                 if (fn(c) === false) {
                     return;
@@ -57,23 +61,23 @@ kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
 
 Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
     get: function() {
-        var textLength = 0;
+        let textLength = 0;
         this.forEachChar(() => { textLength++; });
         return textLength;
     }
 });
 
 kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
-    var matches = false;
-    var foundSeqs = [];
-    var len = findLower.length;
+    let matches = false;
+    const foundSeqs = [];
+    const len = findLower.length;
     this.forEachChar(ch => {
         ch = String.fromCharCode(ch).toLowerCase();
         if (matches) {
             return;
         }
-        for (var i = 0; i < foundSeqs.length; i++) {
-            var seqIx = ++foundSeqs[i];
+        for (let i = 0; i < foundSeqs.length; i++) {
+            const seqIx = ++foundSeqs[i];
             if (findLower[seqIx] !== ch) {
                 foundSeqs.splice(i, 1);
                 i--;
@@ -101,11 +105,11 @@ kdbxweb.ProtectedValue.prototype.equals = function(other) {
     if (other === this) {
         return true;
     }
-    var len = this.byteLength;
+    const len = this.byteLength;
     if (len !== other.byteLength) {
         return false;
     }
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
         if ((this._value[i] ^ this._salt[i]) !== (other._value[i] ^ other._salt[i])) {
             return false;
         }
@@ -119,7 +123,7 @@ kdbxweb.ProtectedValue.prototype.isFieldReference = function() {
     }
     let ix = 0;
     this.forEachChar(ch => {
-        let expected = ExpectedFieldRefChars[ix++];
+        const expected = ExpectedFieldRefChars[ix++];
         if (expected !== '0' && ch !== expected) {
             return false;
         }

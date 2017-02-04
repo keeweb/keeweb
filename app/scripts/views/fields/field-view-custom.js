@@ -1,12 +1,12 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    FieldViewText = require('./field-view-text'),
-    FieldView = require('./field-view'),
-    Keys = require('../../const/keys'),
-    kdbxweb = require('kdbxweb');
+const Backbone = require('backbone');
+const FieldViewText = require('./field-view-text');
+const FieldView = require('./field-view');
+const Keys = require('../../const/keys');
+const kdbxweb = require('kdbxweb');
 
-var FieldViewCustom = FieldViewText.extend({
+const FieldViewCustom = FieldViewText.extend({
     events: {
         'mousedown .details__field-label': 'fieldLabelMousedown'
     },
@@ -51,7 +51,7 @@ var FieldViewCustom = FieldViewText.extend({
     },
 
     startEditTitle: function(emptyTitle) {
-        var text = emptyTitle ? '' : this.model.title || '';
+        const text = emptyTitle ? '' : this.model.title || '';
         this.labelInput = $('<input/>');
         this.labelEl.html('').append(this.labelInput);
         this.labelInput.attr({ autocomplete: 'off', spellcheck: 'false' })
@@ -113,7 +113,7 @@ var FieldViewCustom = FieldViewText.extend({
 
     fieldLabelKeydown: function(e) {
         e.stopPropagation();
-        var code = e.keyCode || e.which;
+        const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             this.endEditTitle(e.target.value);
         } else if (code === Keys.DOM_VK_ESCAPE) {

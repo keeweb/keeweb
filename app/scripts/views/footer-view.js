@@ -1,12 +1,12 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Keys = require('../const/keys'),
-    KeyHandler = require('../comp/key-handler'),
-    GeneratorView = require('./generator-view'),
-    UpdateModel = require('../models/update-model');
+const Backbone = require('backbone');
+const Keys = require('../const/keys');
+const KeyHandler = require('../comp/key-handler');
+const GeneratorView = require('./generator-view');
+const UpdateModel = require('../models/update-model');
 
-var FooterView = Backbone.View.extend({
+const FooterView = Backbone.View.extend({
     template: require('templates/footer.hbs'),
 
     events: {
@@ -61,18 +61,18 @@ var FooterView = Backbone.View.extend({
             this.views.gen.remove();
             return;
         }
-        var el = this.$el.find('.footer__btn-generate'),
-            rect = el[0].getBoundingClientRect(),
-            bodyRect = document.body.getBoundingClientRect(),
-            right = bodyRect.right - rect.right,
-            bottom = bodyRect.bottom - rect.top;
-        var generator = new GeneratorView({ model: { copy: true, pos: { right: right, bottom: bottom } } }).render();
+        const el = this.$el.find('.footer__btn-generate');
+        const rect = el[0].getBoundingClientRect();
+        const bodyRect = document.body.getBoundingClientRect();
+        const right = bodyRect.right - rect.right;
+        const bottom = bodyRect.bottom - rect.top;
+        const generator = new GeneratorView({ model: { copy: true, pos: { right: right, bottom: bottom } } }).render();
         generator.once('remove', () => { delete this.views.gen; });
         this.views.gen = generator;
     },
 
     showFile: function(e) {
-        var fileId = $(e.target).closest('.footer__db-item').data('file-id');
+        const fileId = $(e.target).closest('.footer__db-item').data('file-id');
         if (fileId) {
             Backbone.trigger('show-file', { fileId: fileId });
         }

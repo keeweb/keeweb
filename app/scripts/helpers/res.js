@@ -1,12 +1,12 @@
 'use strict';
 
-var Handlebars = require('hbs'),
-    Locale = require('../util/locale');
+const Handlebars = require('hbs');
+const Locale = require('../util/locale');
 
 Handlebars.registerHelper('res', function(key, options) {
-    var value = Locale[key];
+    let value = Locale[key];
     if (value) {
-        var ix = value.indexOf('{}');
+        const ix = value.indexOf('{}');
         if (ix >= 0) {
             value = value.replace('{}', options.fn(this));
         }
@@ -15,7 +15,7 @@ Handlebars.registerHelper('res', function(key, options) {
 });
 
 Handlebars.registerHelper('Res', function(key) { // eslint-disable-line prefer-arrow-callback
-    var value = Locale[key];
+    let value = Locale[key];
     if (value) {
         value = value[0].toUpperCase() + value.substr(1);
     }

@@ -1,10 +1,10 @@
 'use strict';
 
-var StorageBase = require('./storage-base');
+const StorageBase = require('./storage-base');
 
-var idb = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+const idb = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
-var StorageCache = StorageBase.extend({
+const StorageCache = StorageBase.extend({
     name: 'cache',
     enabled: !!idb,
     system: true,
@@ -17,7 +17,7 @@ var StorageCache = StorageBase.extend({
             return callback && callback();
         }
         try {
-            var req = idb.open('FilesCache');
+            const req = idb.open('FilesCache');
             req.onerror = e => {
                 this.logger.error('Error opening indexed db', e);
                 this.errorOpening = e;
@@ -28,7 +28,7 @@ var StorageCache = StorageBase.extend({
                 if (callback) { callback(); }
             };
             req.onupgradeneeded = e => {
-                var db = e.target.result;
+                const db = e.target.result;
                 db.createObjectStore('files');
             };
         } catch (e) {
@@ -44,8 +44,8 @@ var StorageCache = StorageBase.extend({
                 return callback && callback(err);
             }
             try {
-                var ts = this.logger.ts();
-                var req = this.db.transaction(['files'], 'readwrite').objectStore('files').put(data, id);
+                const ts = this.logger.ts();
+                const req = this.db.transaction(['files'], 'readwrite').objectStore('files').put(data, id);
                 req.onsuccess = () => {
                     this.logger.debug('Saved', id, this.logger.ts(ts));
                     if (callback) { callback(); }
@@ -68,8 +68,8 @@ var StorageCache = StorageBase.extend({
                 return callback && callback(err, null);
             }
             try {
-                var ts = this.logger.ts();
-                var req = this.db.transaction(['files'], 'readonly').objectStore('files').get(id);
+                const ts = this.logger.ts();
+                const req = this.db.transaction(['files'], 'readonly').objectStore('files').get(id);
                 req.onsuccess = () => {
                     this.logger.debug('Loaded', id, this.logger.ts(ts));
                     if (callback) { callback(null, req.result); }
@@ -92,8 +92,8 @@ var StorageCache = StorageBase.extend({
                 return callback && callback(err);
             }
             try {
-                var ts = this.logger.ts();
-                var req = this.db.transaction(['files'], 'readwrite').objectStore('files').delete(id);
+                const ts = this.logger.ts();
+                const req = this.db.transaction(['files'], 'readwrite').objectStore('files').delete(id);
                 req.onsuccess = () => {
                     this.logger.debug('Removed', id, this.logger.ts(ts));
                     if (callback) { callback(); }

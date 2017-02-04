@@ -1,5 +1,15 @@
 Release notes
 -------------
+##### v1.4.0 (WIP)
+`+` password generator usability improvements  
+`+` warning about several tabs  
+`+` use browser language as default locale  
+`+` auto-lock in 12 hours or day  
+`+` text fields context menu on desktop  
+`+` option to disable latest file removal  
+`-` fix #432: drag-drop in vivaldi  
+`-` fix auto-type enabled/disabled issues  
+
 ##### v1.3.3 (2016-09-20)
 `+` translations: fr, pl, pt  
 `-` fix #368: desktop file save error  

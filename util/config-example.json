@@ -1,6 +1,7 @@
 {
   "settings": {
     "theme": "fb",
+    "locale": "en",
     "expandGroups": true,
     "listViewWidth": null,
     "menuViewWidth": null,
@@ -25,6 +26,7 @@
     "canOpenSettings": true,
     "canCreate": true,
     "canImportXml": true,
+    "canRemoveLatest": true,
 
     "dropbox": true,
     "dropboxFolder": null,

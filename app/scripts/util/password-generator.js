@@ -1,9 +1,9 @@
 'use strict';
 
-var kdbxweb = require('kdbxweb'),
-    phonetic = require('./phonetic');
+const kdbxweb = require('kdbxweb');
+const phonetic = require('./phonetic');
 
-var PasswordGenerator = {
+const PasswordGenerator = {
     charRanges: {
         upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
         lower: 'abcdefghijkmnpqrstuvwxyz',
@@ -28,7 +28,7 @@ var PasswordGenerator = {
             case 'Mac':
                 return this.generateMac();
         }
-        var ranges = Object.keys(this.charRanges)
+        const ranges = Object.keys(this.charRanges)
             .filter(r => opts[r])
             .map(function(r) { return this.charRanges[r]; }, this);
         if (opts.include && opts.include.length) {
@@ -37,22 +37,22 @@ var PasswordGenerator = {
         if (!ranges.length) {
             return '';
         }
-        var randomBytes = kdbxweb.Random.getBytes(opts.length);
-        var chars = [];
-        for (var i = 0; i < opts.length; i++) {
-            var range = ranges[i % ranges.length];
-            var rand = Math.round(Math.random() * 1000) + randomBytes[i];
+        const randomBytes = kdbxweb.Random.getBytes(opts.length);
+        const chars = [];
+        for (let i = 0; i < opts.length; i++) {
+            const range = ranges[i % ranges.length];
+            const rand = Math.round(Math.random() * 1000) + randomBytes[i];
             chars.push(range[rand % range.length]);
         }
         return _.shuffle(chars).join('');
     },
 
     generateMac: function() {
-        var segmentsCount = 6;
-        var randomBytes = kdbxweb.Random.getBytes(segmentsCount);
-        var result = '';
-        for (var i = 0; i < segmentsCount; i++) {
-            var segment = randomBytes[i].toString(16).toUpperCase();
+        const segmentsCount = 6;
+        const randomBytes = kdbxweb.Random.getBytes(segmentsCount);
+        let result = '';
+        for (let i = 0; i < segmentsCount; i++) {
+            let segment = randomBytes[i].toString(16).toUpperCase();
             if (segment.length < 2) {
                 segment = '0' + segment;
             }
@@ -62,26 +62,29 @@ var PasswordGenerator = {
     },
 
     generateHash: function(length) {
-        var randomBytes = kdbxweb.Random.getBytes(length);
-        var result = '';
-        for (var i = 0; i < length; i++) {
+        const randomBytes = kdbxweb.Random.getBytes(length);
+        let result = '';
+        for (let i = 0; i < length; i++) {
             result += randomBytes[i].toString(16)[0];
         }
         return result;
     },
 
     generatePronounceable: function(opts) {
-        var pass = phonetic.generate({ length: opts.length });
-        var result = '';
-        var upper = [];
-        var i;
+        const pass = phonetic.generate({
+            length: opts.length,
+            seed: this.generateHash(1024)
+        });
+        let result = '';
+        const upper = [];
+        let i;
         if (opts.upper) {
             for (i = 0; i < pass.length; i += 8) {
                 upper.push(Math.floor(Math.random() * opts.length));
             }
         }
         for (i = 0; i < pass.length; i++) {
-            var ch = pass[i];
+            let ch = pass[i];
             if (upper.indexOf(i) >= 0) {
                 ch = ch.toUpperCase();
             }
@@ -91,10 +94,10 @@ var PasswordGenerator = {
     },
 
     deriveOpts: function(password) {
-        var opts = {};
-        var length = 0;
+        const opts = {};
+        let length = 0;
         if (password) {
-            var charRanges = this.charRanges;
+            const charRanges = this.charRanges;
             password.forEachChar(ch => {
                 length++;
                 ch = String.fromCharCode(ch);

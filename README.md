@@ -38,28 +38,38 @@ To make Dropbox work in your self-hosted app:
 2. find your app key (in Dropbox App page, go to Settings/App key)
 3. add your Dropbox app key to [settings json](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
 
+To make Google Drive work in your self-hosted app:
+1. [Create](https://cloud.google.com/resource-manager/docs/creating-project#via_console) a Google Cloud Project
+2. Create credentials (OAuth client ID and Web application)
+3. Enter your self-hosted URL (e.g. https://www.example.com) in both Authorized JavaScript origins and Authorized redirect URIs
+4. Add the new client ID to your [settings json](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
+
 # Building
 
 The app can be built with grunt: `grunt` (html file will be in `dist/`).    
 Desktop apps are built with `grunt desktop`. This works only in mac osx as it builds dmg; requires wine.  
-To run Electron app without building installer, install electron package (`npm install electron-prebuilt -g`), build the app with `grunt` and start in this way:
+To run Electron app without building installer, install electron package (`npm install electron -g`), build the app with `grunt` and start in this way:
 ```bash
-$ grunt && grunt dev
+$ grunt dev
 $ npm run-script electron
 ```
 
 For debug build:
 
-1. run `grunt`
-2. run `grunt dev`
-3. open `tmp/index.html`
+1. run `grunt dev`
+2. open `http://localhost:8085/tmp`
 
 # Contributing
 
 Please, read contribution guidelines: [for issues](.github/ISSUE_TEMPLATE.md) and [for pull requests](.github/PULL_REQUEST_TEMPLATE.md).  
 For pull requests: branch is important! `master` is only for hotfixes, `develop` is for new features.  
-Here's a [list of issues](https://github.com/keeweb/keeweb/labels/need%20help) which heed help. 
+Here's a [list of issues](https://github.com/keeweb/keeweb/labels/need%20help) which need help.
 Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your language.  
+
+### Important notes for pull requests
+
+- please branch from `develop`, not `master`
+- don't edit translation files except base.json, they will be replaced
 
 # Donations
 

@@ -1,8 +1,8 @@
 'use strict';
 
-var Launcher = require('../../comp/launcher');
+const Launcher = require('../../comp/launcher');
 
-var AutoTypeHelper = function() {
+const AutoTypeHelper = function() {
 };
 
 AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {

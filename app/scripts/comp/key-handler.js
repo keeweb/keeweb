@@ -1,12 +1,12 @@
 'use strict';
 
-var Backbone = require('backbone'),
-    Keys = require('../const/keys'),
-    IdleTracker = require('../comp/idle-tracker');
+const Backbone = require('backbone');
+const Keys = require('../const/keys');
+const IdleTracker = require('../comp/idle-tracker');
 
-var shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
+const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
 
-var KeyHandler = {
+const KeyHandler = {
     SHORTCUT_ACTION: 1,
     SHORTCUT_OPT: 2,
 
@@ -18,7 +18,7 @@ var KeyHandler = {
         $(document).bind('keydown', this.keydown.bind(this));
     },
     onKey: function(key, handler, thisArg, shortcut, modal, noPrevent) {
-        var keyShortcuts = this.shortcuts[key];
+        let keyShortcuts = this.shortcuts[key];
         if (!keyShortcuts) {
             this.shortcuts[key] = keyShortcuts = [];
         }
@@ -39,15 +39,15 @@ var KeyHandler = {
     },
     keydown: function(e) {
         IdleTracker.regUserAction();
-        var code = e.keyCode || e.which;
-        var keyShortcuts = this.shortcuts[code];
+        const code = e.keyCode || e.which;
+        const keyShortcuts = this.shortcuts[code];
         if (keyShortcuts && keyShortcuts.length) {
             keyShortcuts.forEach(function(sh) {
                 if (this.modal && !sh.modal) {
                     e.stopPropagation();
                     return;
                 }
-                var isActionKey = this.isActionKey(e);
+                const isActionKey = this.isActionKey(e);
                 switch (sh.shortcut) {
                     case this.SHORTCUT_ACTION:
                         if (!isActionKey) { return; }
