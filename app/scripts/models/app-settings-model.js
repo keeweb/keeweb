@@ -29,17 +29,19 @@ const AppSettingsModel = Backbone.Model.extend({
         fontSize: 0,
         tableViewColumns: null,
         generatorPresets: null,
+        cacheConfigSettings: false,
+
         canOpen: true,
         canOpenDemo: true,
         canOpenSettings: true,
         canCreate: true,
         canImportXml: true,
         canRemoveLatest: true,
+
         dropbox: true,
         webdav: true,
         gdrive: true,
-        onedrive: true,
-        cacheConfigSettings: false
+        onedrive: true
     },
 
     initialize: function() {
