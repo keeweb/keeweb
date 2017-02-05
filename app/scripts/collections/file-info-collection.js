@@ -41,10 +41,6 @@ const FileInfoCollection = Backbone.Collection.extend({
     }
 });
 
-FileInfoCollection.load = function() {
-    const coll = new FileInfoCollection();
-    coll.load();
-    return coll;
-};
+FileInfoCollection.instance = new FileInfoCollection();
 
 module.exports = FileInfoCollection;

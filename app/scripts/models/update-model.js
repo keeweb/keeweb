@@ -49,6 +49,5 @@ const UpdateModel = Backbone.Model.extend({
 });
 
 UpdateModel.instance = new UpdateModel();
-UpdateModel.instance.load();
 
 module.exports = UpdateModel;

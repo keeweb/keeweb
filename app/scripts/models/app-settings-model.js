@@ -71,6 +71,5 @@ const AppSettingsModel = Backbone.Model.extend({
 });
 
 AppSettingsModel.instance = new AppSettingsModel();
-AppSettingsModel.instance.load();
 
 module.exports = AppSettingsModel;

@@ -26,6 +26,5 @@ const RuntimeDataModel = Backbone.Model.extend({
 });
 
 RuntimeDataModel.instance = new RuntimeDataModel();
-RuntimeDataModel.instance.load();
 
 module.exports = RuntimeDataModel;
