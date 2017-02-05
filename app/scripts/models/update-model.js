@@ -21,7 +21,10 @@ const UpdateModel = Backbone.Model.extend({
     },
 
     load: function() {
-        const data = SettingsStore.load('update-info');
+        SettingsStore.load('update-info', this.onLoaded.bind(this));
+    },
+
+    onLoaded: function(data) {
         if (data) {
             try {
                 _.each(data, (val, key) => {

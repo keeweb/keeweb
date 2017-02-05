@@ -11,7 +11,10 @@ const RuntimeDataModel = Backbone.Model.extend({
     },
 
     load: function() {
-        const data = SettingsStore.load('runtime-data');
+        SettingsStore.load('runtime-data', this.onLoaded.bind(this));
+    },
+
+    onLoaded: function(data) {
         if (data) {
             this.set(data, {silent: true});
         }

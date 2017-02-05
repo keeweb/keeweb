@@ -158,6 +158,11 @@ module.exports = function(grunt) {
                 dest: 'tmp/index.html',
                 nonull: true
             },
+            cordova: {
+                src: 'app/cordova.html',
+                dest: 'tmp/cordova.html',
+                nonull: true
+            },
             favicon: {
                 src: 'app/favicon.png',
                 dest: 'tmp/favicon.png',
@@ -240,7 +245,11 @@ module.exports = function(grunt) {
         inline: {
             app: {
                 src: 'tmp/index.html',
-                dest: 'tmp/app.html'
+                dest: 'tmp/index_inline.html'
+            },
+            cordova: {
+                src: 'tmp/cordova.html',
+                dest: 'tmp/cordova_inline.html'
             }
         },
         htmlmin: {
@@ -250,7 +259,8 @@ module.exports = function(grunt) {
             },
             app: {
                 files: {
-                    'dist/index.html': 'tmp/app.html'
+                    'dist/index.html': 'tmp/index_inline.html',
+                    'dist/cordova.html': 'tmp/cordova_inline.html'
                 }
             }
         },
@@ -605,6 +615,7 @@ module.exports = function(grunt) {
         'clean',
         'eslint',
         'copy:html',
+        'copy:cordova',
         'copy:favicon',
         'copy:touchicon',
         'copy:fonts',
