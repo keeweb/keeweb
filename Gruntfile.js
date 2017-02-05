@@ -150,17 +150,13 @@ module.exports = function(grunt) {
         },
         clean: {
             dist: ['dist', 'tmp'],
-            desktop: ['tmp/desktop', 'dist/desktop']
+            desktop: ['tmp/desktop', 'dist/desktop'],
+            cordova: ['tmp/cordova', 'dist/cordova']
         },
         copy: {
             html: {
                 src: 'app/index.html',
                 dest: 'tmp/index.html',
-                nonull: true
-            },
-            cordova: {
-                src: 'app/cordova.html',
-                dest: 'tmp/cordova.html',
                 nonull: true
             },
             favicon: {
@@ -246,10 +242,6 @@ module.exports = function(grunt) {
             app: {
                 src: 'tmp/index.html',
                 dest: 'tmp/index_inline.html'
-            },
-            cordova: {
-                src: 'tmp/cordova.html',
-                dest: 'tmp/cordova_inline.html'
             }
         },
         htmlmin: {
@@ -259,8 +251,7 @@ module.exports = function(grunt) {
             },
             app: {
                 files: {
-                    'dist/index.html': 'tmp/index_inline.html',
-                    'dist/cordova.html': 'tmp/cordova_inline.html'
+                    'dist/index.html': 'tmp/index_inline.html'
                 }
             }
         },
@@ -281,6 +272,10 @@ module.exports = function(grunt) {
             'desktop-html': {
                 options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
                 files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
+            },
+            'cordova-html': {
+                options: { replacements: [{ pattern: '<script', replacement: '<script src="cordova.js"></script><script' }] },
+                files: { 'tmp/cordova/app/index.html': 'dist/index.html' }
             }
         },
         webpack: {
@@ -615,7 +610,6 @@ module.exports = function(grunt) {
         'clean',
         'eslint',
         'copy:html',
-        'copy:cordova',
         'copy:favicon',
         'copy:touchicon',
         'copy:fonts',
@@ -694,6 +688,16 @@ module.exports = function(grunt) {
         'build-desktop-dist'
     ]);
 
+    grunt.registerTask('build-cordova-app-content', [
+        'string-replace:cordova-html'
+    ]);
+
+    grunt.registerTask('build-cordova', [
+        'gitinfo',
+        'clean:cordova',
+        'build-cordova-app-content'
+    ]);
+
     // entry point tasks
 
     grunt.registerTask('default', 'Default: build web app', [
@@ -712,5 +716,10 @@ module.exports = function(grunt) {
     grunt.registerTask('desktop', 'Build web and desktop apps for all platforms', [
         'default',
         'build-desktop'
+    ]);
+
+    grunt.registerTask('cordova', 'Build cordova app', [
+        'default',
+        'build-cordova'
     ]);
 };

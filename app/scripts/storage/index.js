@@ -14,4 +14,4 @@ const ThirdPartyStorage = {
     onedrive: require('./storage-onedrive')
 };
 
-module.exports = Object.assign(FileStorage, ThirdPartyStorage);
+module.exports = _.extend({}, FileStorage, ThirdPartyStorage);

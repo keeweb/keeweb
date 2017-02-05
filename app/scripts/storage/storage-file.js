@@ -23,15 +23,21 @@ const StorageFile = StorageBase.extend({
             }
         };
 
-        Launcher.readFile(path, data => {
-            Launcher.statFile(path, stat => {
+        Launcher.readFile(path, undefined, (data, err) => {
+            if (err) {
+                return onError(err);
+            }
+            Launcher.statFile(path, (stat, err) => {
+                if (err) {
+                    return onError(err);
+                }
                 const rev = stat.mtime.getTime().toString();
                 this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
                 if (callback) {
                     callback(null, data.buffer, { rev: rev });
                 }
-            }, onError);
-        }, onError);
+            });
+        });
     },
 
     stat: function(path, opts, callback) {
@@ -64,15 +70,21 @@ const StorageFile = StorageBase.extend({
         };
 
         const write = () => {
-            Launcher.writeFile(path, data, () => {
-                Launcher.statFile(path, stat => {
+            Launcher.writeFile(path, data, err => {
+                if (err) {
+                    return onError(err);
+                }
+                Launcher.statFile(path, (stat, err) => {
+                    if (err) {
+                        return onError(err);
+                    }
                     const newRev = stat.mtime.getTime().toString();
                     this.logger.debug('Saved', path, this.logger.ts(ts));
                     if (callback) {
                         callback(undefined, { rev: newRev });
                     }
-                }, onError);
-            }, onError);
+                });
+            });
         };
 
         if (rev) {

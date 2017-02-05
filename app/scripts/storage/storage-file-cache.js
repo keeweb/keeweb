@@ -39,12 +39,13 @@ const StorageFileCache = StorageBase.extend({
             }
 
             const ts = this.logger.ts();
-            Launcher.writeFile(this.getPath(id), data, () => {
+            Launcher.writeFile(this.getPath(id), data, err => {
+                if (err) {
+                    this.logger.error('Error saving to cache', id, err);
+                    return callback && callback(e);
+                }
                 this.logger.debug('Saved', id, this.logger.ts(ts));
                 if (callback) { callback(); }
-            }, e => {
-                this.logger.error('Error saving to cache', id, e);
-                if (callback) { callback(e); }
             });
         });
     },
@@ -58,15 +59,14 @@ const StorageFileCache = StorageBase.extend({
 
             const ts = this.logger.ts();
 
-            Launcher.readFile(this.getPath(id), data => {
+            Launcher.readFile(this.getPath(id), undefined, (data, err) => {
+                if (err) {
+                    this.logger.error('Error loading from cache', id, e);
+                    return callback && callback(err, null);
+                }
                 this.logger.debug('Loaded', id, this.logger.ts(ts));
                 if (callback) {
                     callback(null, data.buffer);
-                }
-            }, e => {
-                this.logger.error('Error loading from cache', id, e);
-                if (callback) {
-                    callback(e, null);
                 }
             });
         });

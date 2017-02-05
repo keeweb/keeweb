@@ -18,12 +18,16 @@ const SettingsStore = {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));
                 Launcher.fileExists(settingsFile, exists => {
                     if (exists) {
-                        Launcher.readFile(settingsFile, data => {
-                            const contents = typeof data === 'string' ? data : String.fromCharCode.apply(null, data);
-                            callback(JSON.parse(contents));
-                        }, err => { // eslint-disable-line handle-callback-err
-                            callback(undefined);
+                        Launcher.readFile(settingsFile, 'utf8', (data, err) => {
+                            if (data) {
+                                callback(JSON.parse(data));
+                            } else {
+                                logger.error(`Error loading ${key}`, err);
+                                callback(undefined, err);
+                            }
                         });
+                    } else {
+                        callback();
                     }
                 });
             } else {
@@ -32,6 +36,7 @@ const SettingsStore = {
             }
         } catch (e) {
             logger.error(`Error loading ${key}`, e);
+            callback(undefined, e);
         }
     },
 
@@ -39,13 +44,19 @@ const SettingsStore = {
         try {
             if (Launcher) {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));
-                Launcher.writeFile(settingsFile, JSON.stringify(data), callback, callback);
+                Launcher.writeFile(settingsFile, JSON.stringify(data), err => {
+                    if (err) {
+                        logger.error(`Error saving ${key}`, err);
+                    }
+                    callback && callback(err);
+                });
             } else if (typeof localStorage !== 'undefined') {
                 localStorage[StringUtil.camelCase(key)] = JSON.stringify(data);
                 callback && callback();
             }
         } catch (e) {
             logger.error(`Error saving ${key}`, e);
+            callback && callback(e);
         }
     }
 };

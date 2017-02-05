@@ -58,7 +58,6 @@ const AppView = Backbone.View.extend({
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
         this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
-        this.listenTo(this.model.fileInfos, 'change', this.fileListUpdated);
 
         this.listenTo(Backbone, 'select-all', this.selectAll);
         this.listenTo(Backbone, 'menu-select', this.menuSelect);
