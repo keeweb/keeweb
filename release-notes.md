@@ -3,6 +3,7 @@ Release notes
 ##### v1.5.0 (TBD)
 `+` file path hint in recent files list  
 `+` cacheConfigSettings config option  
+`+` keyboard-accessible autocomplete  
 
 ##### v1.4.0 (2017-02-04)
 KDBX4 format support and minor improvements  

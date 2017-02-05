@@ -527,6 +527,12 @@
       display: inline-block;
       word-break: break-all;
       @include area-selectable(bottom);
+      &--selected {
+        @include th {
+          background-color: secondary-background-color();
+          border-bottom: selected-hover-border();
+        }
+      }
     }
   }
 }
