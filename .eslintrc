@@ -14,7 +14,8 @@
         "object-property-newline": "off",
         "no-useless-escape": "off",
         "no-var": "error",
-        "prefer-const": "error"
+        "prefer-const": "error",
+        "no-unused-expressions": "error"
     },
     "globals": {
         "_": true,
