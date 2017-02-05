@@ -14,12 +14,4 @@ const ThirdPartyStorage = {
     onedrive: require('./storage-onedrive')
 };
 
-let Storage = [];
-
-if (window.cordova) {
-    Storage = FileStorage;
-} else {
-    Storage = FileStorage.concat(ThirdPartyStorage);
-}
-
-module.exports = Storage;
+module.exports = Object.assign(FileStorage, ThirdPartyStorage);
