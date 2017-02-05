@@ -39,7 +39,6 @@ module.exports = function(grunt) {
             const data = fs.readFileSync('tmp/fonts/' + fontFile, 'base64');
             const src = 'url(data:application/font-woff;charset=utf-8;base64,{data}) format(\'woff\')'
                 .replace('{data}', data);
-            // var src = 'url(\'../fonts/fontawesome-webfont.woff\') format(\'woff\')';
             rule.nodes = rule.nodes.filter(n => n.prop !== 'src');
             rule.append({ prop: 'src', value: src });
         });
