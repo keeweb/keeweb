@@ -3,7 +3,6 @@
 const Backbone = require('backbone');
 const kdbxweb = require('kdbxweb');
 const OpenConfigView = require('./open-config-view');
-const AppSettingsModel = require('../models/app-settings-model');
 const Keys = require('../const/keys');
 const Alerts = require('../comp/alerts');
 const SecureInput = require('../comp/secure-input');
