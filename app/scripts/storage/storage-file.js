@@ -44,16 +44,18 @@ const StorageFile = StorageBase.extend({
         this.logger.debug('Stat', path);
         const ts = this.logger.ts();
 
-        Launcher.statFile(path, stat => {
+        Launcher.statFile(path, (stat, err) => {
+            if (err) {
+                this.logger.error('Error stat local file', path, err);
+                if (err.code === 'ENOENT') {
+                    err.notFound = true;
+                }
+                return callback && callback(err, null);
+            }
             this.logger.debug('Stat done', path, this.logger.ts(ts));
             if (callback) {
                 const fileRev = stat.mtime.getTime().toString();
                 callback(null, { rev: fileRev });
-            }
-        }, e => {
-            this.logger.error('Error stat local file', path, e);
-            if (callback) {
-                callback(e, null);
             }
         });
     },
@@ -88,16 +90,17 @@ const StorageFile = StorageBase.extend({
         };
 
         if (rev) {
-            Launcher.statFile(path, stat => {
+            Launcher.statFile(path, (stat, err) => {
+                if (err) {
+                    return onError(err);
+                }
                 const fileRev = stat.mtime.getTime().toString();
                 if (fileRev !== rev) {
                     this.logger.debug('Save mtime differs', rev, fileRev);
-                    if (callback) {
-                        callback({ revConflict: true }, { rev: fileRev });
-                    }
+                    return callback && callback({ revConflict: true }, { rev: fileRev });
                 }
                 write();
-            }, onError);
+            });
         } else {
             write();
         }
@@ -107,17 +110,18 @@ const StorageFile = StorageBase.extend({
         this.logger.debug('Make dir', path);
         const ts = this.logger.ts();
 
-        Launcher.mkdir(path, () => {
+        try {
+            Launcher.mkdir(path);
             this.logger.debug('Made dir', path, this.logger.ts(ts));
             if (callback) {
                 callback();
             }
-        }, e => {
+        } catch (e) {
             this.logger.error('Error making local dir', path, e);
             if (callback) {
                 callback(e);
             }
-        });
+        }
     },
 
     watch: function(path, callback) {
@@ -135,10 +139,12 @@ const StorageFile = StorageBase.extend({
         }
 
         const fsWatcher = fileWatchers[names.dir];
-        fsWatcher && fsWatcher.callbacks.push({
-            file: names.file,
-            callback: callback
-        });
+        if (fsWatcher) {
+            fsWatcher.callbacks.push({
+                file: names.file,
+                callback: callback
+            });
+        }
     },
 
     unwatch: function(path) {

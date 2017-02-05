@@ -23,10 +23,11 @@ const StorageFileCache = StorageBase.extend({
 
         Launcher.fileExists(path, exists => {
             if (!exists) {
-                Launcher.mkdir(path, () => {
-                    this.path = path;
-                    callback();
-                });
+                Launcher.mkdir(path);
+                this.path = path;
+                if (callback) { callback(); }
+            } else {
+                if (callback) { callback(); }
             }
         });
     },
@@ -37,12 +38,11 @@ const StorageFileCache = StorageBase.extend({
             if (err) {
                 return callback && callback(err);
             }
-
             const ts = this.logger.ts();
             Launcher.writeFile(this.getPath(id), data, err => {
                 if (err) {
                     this.logger.error('Error saving to cache', id, err);
-                    return callback && callback(e);
+                    return callback && callback(err);
                 }
                 this.logger.debug('Saved', id, this.logger.ts(ts));
                 if (callback) { callback(); }
@@ -61,13 +61,11 @@ const StorageFileCache = StorageBase.extend({
 
             Launcher.readFile(this.getPath(id), undefined, (data, err) => {
                 if (err) {
-                    this.logger.error('Error loading from cache', id, e);
+                    this.logger.error('Error loading from cache', id, err);
                     return callback && callback(err, null);
                 }
                 this.logger.debug('Loaded', id, this.logger.ts(ts));
-                if (callback) {
-                    callback(null, data.buffer);
-                }
+                return callback && callback(null, data.buffer);
             });
         });
     },
@@ -84,17 +82,16 @@ const StorageFileCache = StorageBase.extend({
 
             Launcher.fileExists(path, exists => {
                 if (exists) {
-                    Launcher.deleteFile(path, () => {
-                        this.logger.debug('Removed', id, this.logger.ts(ts));
-                        if (callback) {
-                            callback();
+                    Launcher.deleteFile(path, err => {
+                        if (err) {
+                            this.logger.error('Error removing from cache', id, err);
+                        } else {
+                            this.logger.debug('Removed', id, this.logger.ts(ts));
                         }
-                    }, e => {
-                        this.logger.error('Error removing from cache', id, e);
-                        if (callback) {
-                            callback(e);
-                        }
+                        return callback && callback(err);
                     });
+                } else if (callback) {
+                    callback();
                 }
             });
         });

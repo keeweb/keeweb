@@ -57,45 +57,25 @@ const Launcher = {
         return this.req('path').join(process.cwd(), fileName || '');
     },
     writeFile: function(path, data, callback) {
-        try {
-            this.req('fs').writeFileSync(path, new window.Buffer(data));
-            callback();
-        } catch (e) {
-            callback(e);
-        }
+        this.req('fs').writeFile(path, new window.Buffer(data), callback);
     },
     readFile: function(path, encoding, callback) {
-        try {
-            const contents = this.req('fs').readFileSync(path, encoding);
+        this.req('fs').readFile(path, encoding, (err, contents) => {
             const data = typeof contents === 'string' ? contents : new Uint8Array(contents);
-            callback(data);
-        } catch (e) {
-            callback(null, e);
-        }
+            callback(data, err);
+        });
     },
     fileExists: function(path, callback) {
-        try {
-            const exists = this.req('fs').existsSync(path);
-            callback(exists);
-        } catch (e) {
-            callback(false);
-        }
+        this.req('fs').exists(path, callback);
     },
-    deleteFile: function(path, callback, error) {
-        try {
-            this.req('fs').unlinkSync(path);
-            callback();
-        } catch (e) {
-            error(e);
-        }
+    deleteFile: function(path, callback) {
+        this.req('fs').unlink(path, callback);
     },
-    statFile: function(path, callback, error) {
-        try {
-            const stat = this.req('fs').statSync(path);
-            callback(stat);
-        } catch (e) {
-            error(e);
-        }
+    statFile: function(path, callback) {
+        this.req('fs').stat(path, (err, stats) => callback(stats, err));
+    },
+    statFileSync: function(path) {
+        this.req('fs').statSync(path);
     },
     mkdir: function(dir) {
         const fs = this.req('fs');

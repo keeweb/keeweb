@@ -48,15 +48,15 @@ const SettingsStore = {
                     if (err) {
                         logger.error(`Error saving ${key}`, err);
                     }
-                    callback && callback(err);
+                    if (callback) { callback(err); }
                 });
             } else if (typeof localStorage !== 'undefined') {
                 localStorage[StringUtil.camelCase(key)] = JSON.stringify(data);
-                callback && callback();
+                if (callback) { callback(); }
             }
         } catch (e) {
             logger.error(`Error saving ${key}`, e);
-            callback && callback(e);
+            if (callback) { callback(e); }
         }
     }
 };
