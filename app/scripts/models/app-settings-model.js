@@ -46,15 +46,21 @@ const AppSettingsModel = Backbone.Model.extend({
     },
 
     load: function() {
-        SettingsStore.load('app-settings', this.onLoaded.bind(this));
+        return new Promise((resolve, reject) => {
+            SettingsStore.load('app-settings', (data, err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    this.onLoaded(data);
+                    resolve();
+                }
+            });
+        });
     },
 
     onLoaded: function(data) {
         if (data) {
             this.upgrade(data);
-        }
-
-        if (data) {
             this.set(data, {silent: true});
         }
     },

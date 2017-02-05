@@ -27,7 +27,7 @@ const AppModel = Backbone.Model.extend({
     initialize: function() {
         this.tags = [];
         this.files = new FileCollection();
-        this.fileInfos = FileInfoCollection.load();
+        this.fileInfos = FileInfoCollection.instance;
         this.menu = new MenuModel();
         this.filter = {};
         this.sort = 'title';

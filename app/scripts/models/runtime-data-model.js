@@ -11,7 +11,16 @@ const RuntimeDataModel = Backbone.Model.extend({
     },
 
     load: function() {
-        SettingsStore.load('runtime-data', this.onLoaded.bind(this));
+        return new Promise((resolve, reject) => {
+            SettingsStore.load('runtime-data', (data, err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    this.onLoaded(data);
+                    resolve();
+                }
+            });
+        });
     },
 
     onLoaded: function(data) {
