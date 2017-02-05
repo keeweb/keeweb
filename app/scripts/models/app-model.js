@@ -854,14 +854,14 @@ const AppModel = Backbone.Model.extend({
         if (Storage[backup.storage].getPathForName) {
             folderPath = Storage[backup.storage].getPathForName(folderPath).replace('.kdbx', '');
         }
-        Storage[backup.storage].stat(folderPath, opts, (err) => {
+        Storage[backup.storage].stat(folderPath, opts, err => {
             if (err) {
                 if (err.notFound) {
                     logger.info('Backup folder does not exist');
                     if (!Storage[backup.storage].mkdir) {
                         return callback('Mkdir not supported by ' + backup.storage);
                     }
-                    Storage[backup.storage].mkdir(folderPath, (err) => {
+                    Storage[backup.storage].mkdir(folderPath, err => {
                         if (err) {
                             logger.error('Error creating backup folder', err);
                             callback('Error creating backup folder');

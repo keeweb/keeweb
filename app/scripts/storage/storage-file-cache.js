@@ -23,9 +23,12 @@ const StorageFileCache = StorageBase.extend({
 
         Launcher.fileExists(path, exists => {
             if (!exists) {
-                Launcher.mkdir(path);
-                this.path = path;
-                if (callback) { callback(); }
+                Launcher.mkdir(path, err => {
+                    if (!err) {
+                        this.path = path;
+                    }
+                    if (callback) { callback(); }
+                });
             } else {
                 if (callback) { callback(); }
             }

@@ -110,18 +110,15 @@ const StorageFile = StorageBase.extend({
         this.logger.debug('Make dir', path);
         const ts = this.logger.ts();
 
-        try {
-            Launcher.mkdir(path);
-            this.logger.debug('Made dir', path, this.logger.ts(ts));
-            if (callback) {
-                callback();
+        Launcher.mkdir(path, err => {
+            if (err) {
+                this.logger.error('Error making local dir', path, err);
+                if (callback) { callback('Error making local dir'); }
+            } else {
+                this.logger.debug('Made dir', path, this.logger.ts(ts));
+                if (callback) { callback(); }
             }
-        } catch (e) {
-            this.logger.error('Error making local dir', path, e);
-            if (callback) {
-                callback(e);
-            }
-        }
+        });
     },
 
     watch: function(path, callback) {

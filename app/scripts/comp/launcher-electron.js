@@ -80,22 +80,44 @@ const Launcher = {
     statFileSync: function(path) {
         this.req('fs').statSync(path);
     },
-    mkdir: function(dir) {
+    mkdir: function(dir, callback) {
         const fs = this.req('fs');
         const path = this.req('path');
         const stack = [];
-        while (true) {
-            if (fs.existsSync(dir)) {
-                break;
+
+        const collect = function(dir, stack, callback) {
+            fs.exists(dir, exists => {
+                if (exists) {
+                    return callback();
+                }
+
+                stack.unshift(dir);
+                const newDir = path.dirname(dir);
+                if (newDir === dir || !newDir || newDir === '.' || newDir === '/') {
+                    return callback();
+                }
+
+                collect(newDir, stack, callback);
+            });
+        };
+
+        const create = function(stack, callback) {
+            if (!stack.length) {
+                if (callback) {
+                    callback();
+                }
             }
-            stack.unshift(dir);
-            const newDir = path.dirname(dir);
-            if (newDir === dir || !newDir || newDir === '.' || newDir === '/') {
-                break;
-            }
-            dir = newDir;
-        }
-        stack.forEach(dir => fs.mkdirSync(dir));
+
+            fs.mkdir(stack.shift(), err => {
+                if (err) {
+                    return callback(err);
+                }
+
+                create(stack, callback);
+            });
+        };
+
+        collect(dir, stack, () => create(stack, callback));
     },
     parsePath: function(fileName) {
         const path = this.req('path');
