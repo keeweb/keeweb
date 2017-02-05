@@ -11,6 +11,9 @@ const Launcher = {
     version: window.process.versions.electron,
     autoTypeSupported: true,
     req: window.require,
+    ready: function(callback) {
+        callback();
+    },
     platform: function() {
         return process.platform;
     },
