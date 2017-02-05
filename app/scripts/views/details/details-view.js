@@ -251,7 +251,7 @@ const DetailsView = Backbone.View.extend({
                 }
                 moreOptions.push({value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp});
                 if (AutoType.enabled) {
-                    moreOptions.push({value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoType});
+                    moreOptions.push({value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoTypeSettings});
                 }
                 moreOptions.push({value: 'clone', icon: 'clone', text: Locale.detClone});
                 const rect = this.moreView.labelEl[0].getBoundingClientRect();
@@ -774,6 +774,9 @@ const DetailsView = Backbone.View.extend({
         }
         options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
         options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });
+        if (AutoType.enabled) {
+            options.push({ value: 'det-auto-type', icon: 'keyboard-o', text: Locale.detAutoType });
+        }
         Backbone.trigger('show-context-menu', _.extend(e, { options }));
     },
 
@@ -790,6 +793,9 @@ const DetailsView = Backbone.View.extend({
                 break;
             case 'det-clone':
                 this.clone();
+                break;
+            case 'det-auto-type':
+                this.autoType();
                 break;
         }
     },
