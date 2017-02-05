@@ -63,6 +63,9 @@ const AppSettingsModel = Backbone.Model.extend({
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
         }
+        if (data.versionWarningShown) {
+            delete data.versionWarningShown;
+        }
     },
 
     save: function() {
