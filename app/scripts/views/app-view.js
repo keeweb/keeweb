@@ -90,6 +90,14 @@ const AppView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_F12, this.openDevTools, this, KeyHandler.SHORTCUT_ACTION);
 
         setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
+
+        this.setWindowClass();
+    },
+
+    setWindowClass: function() {
+        if (window.chrome && window.chrome.webstore) {
+            this.$el.addClass('chrome');
+        }
     },
 
     render: function () {
