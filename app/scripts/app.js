@@ -27,7 +27,7 @@ $(() => {
     if (configParam) {
         appModel.loadConfig(configParam, err => {
             SettingsManager.setBySettings(appModel.settings);
-            if (err) {
+            if (err && !appModel.settings.get('cacheConfigSettings')) {
                 showSettingsLoadError();
             } else {
                 showApp();

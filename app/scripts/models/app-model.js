@@ -68,6 +68,7 @@ const AppModel = Backbone.Model.extend({
                     response = JSON.parse(response);
                 } catch (e) {
                     this.appLogger.error('Error parsing response', e, response);
+                    return callback(true);
                 }
             }
             if (!response.settings) {
