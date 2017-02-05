@@ -139,7 +139,7 @@ const StorageFile = StorageBase.extend({
             }
             if (!watcher.callbacks.length) {
                 this.logger.debug('Stop watch dir', names.dir);
-                watcher.fsWatcher.close && watcher.fsWatcher.close();
+                watcher.fsWatcher.close();
                 delete fileWatchers[names.dir];
             }
         }
