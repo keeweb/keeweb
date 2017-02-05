@@ -181,12 +181,59 @@ const Launcher = {
          // skip
     },
 
+    openFileChooser: function(context) {
+        const onFileSelected = function(selected) {
+            window.resolveLocalFileSystemURL(selected.uri,
+                fileEntry => {
+                    fileEntry.file(file => {
+                        file.path = file.localURL;
+                        file.name = selected.name;
+                        context.processFile(file);
+                    });
+                }
+            );
+        };
+
+        window.cordova.exec(onFileSelected, e => { }, 'FileChooser', 'choose');
+    },
+
     fingerprints: {
-        register: function(appModel, fileInfo, password) {
-
+        config: {
+            disableBackup: true,
+            clientId: 'keeweb'
         },
-        auth: function(fileInfo, callback) {
 
+        register: function(appModel, fileInfo, password) {
+            FingerprintAuth.isAvailable(result => { // eslint-disable-line no-undef
+                if (!result.isAvailable) {
+                    return;
+                }
+
+                const encryptConfig = _.extend({}, this.config, {
+                    username: fileInfo.id,
+                    password: password.getText()
+                });
+
+                FingerprintAuth.encrypt(encryptConfig, result => { // eslint-disable-line no-undef
+                    fileInfo.set('fingerprint', result.token);
+                    appModel.fileInfos.save();
+                });
+            });
+        },
+
+        auth: function(fileInfo, callback) {
+            if (!fileInfo.has('fingerprint')) {
+                return;
+            }
+
+            const decryptConfig = _.extend({}, this.config, {
+                username: fileInfo.id,
+                token: fileInfo.get('fingerprint')
+            });
+
+            FingerprintAuth.decrypt(decryptConfig, result => { // eslint-disable-line no-undef
+                callback(result.password);
+            });
         }
     }
 };
