@@ -12,7 +12,7 @@ const Launcher = {
     autoTypeSupported: true,
     req: window.require,
     ready: function(callback) {
-        callback();
+        $(callback);
     },
     platform: function() {
         return process.platform;
