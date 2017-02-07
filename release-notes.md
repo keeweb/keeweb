@@ -6,6 +6,7 @@ Release notes
 `+` keyboard-accessible autocomplete  
 `+` entry auto-type context menu  
 `+` `kw.require` now provides access to modules  
+`+` showOnlyFilesFromConfig config option  
 
 ##### v1.4.0 (2017-02-04)
 KDBX4 format support and minor improvements  

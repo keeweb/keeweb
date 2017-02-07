@@ -47,5 +47,6 @@
     "name": "My file",
     "path": "webdav-url",
     "options": { "user": "", "password": "" }
-  }]
+  }],
+  "showOnlyFilesFromConfig": false
 }
