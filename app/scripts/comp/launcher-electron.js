@@ -103,18 +103,12 @@ const Launcher = {
 
         const create = function(stack, callback) {
             if (!stack.length) {
-                if (callback) {
-                    callback();
-                }
+                return callback && callback();
             }
 
-            fs.mkdir(stack.shift(), err => {
-                if (err) {
-                    return callback(err);
-                }
-
-                create(stack, callback);
-            });
+            fs.mkdir(stack.shift(), err =>
+                err ? callback(err) : create(stack, callback)
+            );
         };
 
         collect(dir, stack, () => create(stack, callback));
