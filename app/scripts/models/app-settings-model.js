@@ -29,12 +29,15 @@ const AppSettingsModel = Backbone.Model.extend({
         fontSize: 0,
         tableViewColumns: null,
         generatorPresets: null,
+        cacheConfigSettings: false,
+
         canOpen: true,
         canOpenDemo: true,
         canOpenSettings: true,
         canCreate: true,
         canImportXml: true,
         canRemoveLatest: true,
+
         dropbox: true,
         webdav: true,
         gdrive: true,
@@ -68,6 +71,9 @@ const AppSettingsModel = Backbone.Model.extend({
     upgrade: function(data) {
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
+        }
+        if (data.versionWarningShown) {
+            delete data.versionWarningShown;
         }
     },
 

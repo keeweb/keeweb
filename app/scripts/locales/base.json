@@ -231,6 +231,7 @@
   "detClone": "Make a copy",
   "detClonedName": "Copy",
   "detAutoType": "Auto-type",
+  "detAutoTypeSettings": "Auto-type settings",
   "detAutoTypeEnabled": "Enable auto-type for this entry",
   "detAutoTypeSequence": "Keystrokes",
   "detAutoTypeInput": "Input",

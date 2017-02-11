@@ -39,7 +39,6 @@ module.exports = function(grunt) {
             const data = fs.readFileSync('tmp/fonts/' + fontFile, 'base64');
             const src = 'url(data:application/font-woff;charset=utf-8;base64,{data}) format(\'woff\')'
                 .replace('{data}', data);
-            // var src = 'url(\'../fonts/fontawesome-webfont.woff\') format(\'woff\')';
             rule.nodes = rule.nodes.filter(n => n.prop !== 'src');
             rule.append({ prop: 'src', value: src });
         });
@@ -102,7 +101,7 @@ module.exports = function(grunt) {
                 { test: /\.json$/, loader: 'json-loader' },
                 { test: /argon2-asm\.min\.js$/, loader: 'raw-loader' },
                 { test: /argon2\.wasm$/, loader: 'base64-loader' },
-                { test: /argon2\.min\.js/, loader: 'raw-loader' } // exports-loader?Module
+                { test: /argon2\.min\.js/, loader: 'raw-loader' }
             ]
         },
         plugins: [

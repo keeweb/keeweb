@@ -68,6 +68,7 @@ const AppModel = Backbone.Model.extend({
                     response = JSON.parse(response);
                 } catch (e) {
                     this.appLogger.error('Error parsing response', e, response);
+                    return callback(true);
                 }
             }
             if (!response.settings) {
@@ -87,6 +88,9 @@ const AppModel = Backbone.Model.extend({
     applyUserConfig(config) {
         this.settings.set(config.settings);
         if (config.files) {
+            if (config.showOnlyFilesFromConfig) {
+                this.fileInfos.reset();
+            }
             config.files
                 .filter(file => file && file.storage && file.name && file.path &&
                     !this.fileInfos.getMatch(file.storage, file.name, file.path))

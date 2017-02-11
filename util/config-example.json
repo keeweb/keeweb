@@ -38,12 +38,15 @@
     "gdriveClientId": null,
 
     "onedrive": true,
-    "onedriveClientId": null
+    "onedriveClientId": null,
+
+    "cacheConfigSettings": false
   },
   "files": [{
     "storage": "webdav",
     "name": "My file",
     "path": "webdav-url",
     "options": { "user": "", "password": "" }
-  }]
+  }],
+  "showOnlyFilesFromConfig": false
 }

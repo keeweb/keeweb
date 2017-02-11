@@ -2,6 +2,11 @@ Release notes
 -------------
 ##### v1.5.0 (TBD)
 `+` file path hint in recent files list  
+`+` cacheConfigSettings config option  
+`+` keyboard-accessible autocomplete  
+`+` entry auto-type context menu  
+`+` `kw.require` now provides access to modules  
+`+` showOnlyFilesFromConfig config option  
 
 ##### v1.4.0 (2017-02-04)
 KDBX4 format support and minor improvements  
