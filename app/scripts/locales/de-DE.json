@@ -202,10 +202,7 @@
     "openRemoveLastQuestionBody": "Die Datei, die Sie löschen möchten, ist nur innerhalb der App gespeichert. Möchten Sie sie unwiederbringlich löschen?",
     "openRemoveLastQuestionModBody": "Die Datei, die Sie löschen möchten, beinhaltet lokale Änderungen. Möchten Sie diese Änderungen verwerfen und die Datei löschen?",
     "openLocalFile": "Lokale Datei",
-    "openLocalFileBody": [
-        "Sie sind dabei, eine Datei zu öffnen, die innerhalb der App gespeichert wird.",
-        "Wenn Sie an dieser Datei Änderungen vornehmen, werden diese nicht im Dateisystem gespeichert. Um die Datei mit den Änderungen zu erhalten, können Sie sie aus den Einstellungen heraus exportieren."
-    ],
+    "openLocalFileBody": "Sie sind dabei, eine Datei zu öffnen, die innerhalb der App gespeichert wird. Wenn Sie an dieser Datei Änderungen vornehmen, werden diese nicht im Dateisystem gespeichert. Um die Datei mit den Änderungen zu erhalten, können Sie sie aus den Einstellungen heraus exportieren.",
     "openLocalFileDontShow": "Nicht wieder anzeigen",
     "openWrongFile": "Inkompatibles Dateiformat",
     "openWrongFileBody": "Dieses Dateiformat ist nicht kompatibel. Die App unterstützt KeePass-Datenbanken im kdbx-Format.",

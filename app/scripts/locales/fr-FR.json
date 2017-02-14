@@ -1,4 +1,16 @@
 {
+    "appTabWarn": "Trop d'onglets",
+    "appTabWarnBody": "KeeWeb ne peut être utilisé dans 2 onglets de navigateurs simultanément. Fermer cet onglet, s'il vous plait.",
+    "setGenThemeTe": "Terminal",
+    "setGenNoRememberKeyFiles": "Ne pas se souvenir",
+    "setGenRememberKeyFilesData": "Sauvegarder dans le stockage interne de l'appli",
+    "setGenRememberKeyFilesPath": "Se souvenir seulement des chemins des fichiers",
+    "setGenLockHours": "Dans {} heures",
+    "setGenLockDay": "Dans 1 jour",
+    "setFileKdfParamsIter": "Itérations",
+    "setFileKdfParamsMem": "Mémoire, Ko",
+    "setFileKdfParams": "Fonction de dérivation de clé",
+    "setFileKdfParamsPar": "Parallèlisme",
     "months": [
         "Janvier",
         "Février",

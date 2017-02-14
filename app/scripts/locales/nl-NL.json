@@ -422,7 +422,7 @@
     "setFileSaveError": "Fout met opslaan",
     "setFileSaveErrorBody": "bestand",
     "setFileAlreadyExists": "Bestaat al",
-    "setFileAlreadyExistsBody": "Bestand",
+    "setFileAlreadyExistsBody": "File {} bestaat al. Wilt u het overschrijven?",
     "setFileUnsaved": "Niet opgeslagen wijzigingen",
     "setFileUnsavedBody": "bestand",
     "setFileCloseNoSave": "Sluiten en wijzigingen ongedaan maken",
