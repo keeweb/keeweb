@@ -67,6 +67,7 @@ const SettingsGeneralView = Backbone.View.extend({
         'pl': 'Polski',
         'pt-PT': 'Português',
         'ru-RU': 'Русский',
+        'sv-SE': 'Svenska',
         'zh-CN': '汉语'
     },
 
