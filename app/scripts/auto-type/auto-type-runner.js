@@ -387,6 +387,8 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             emitterLogger.debug('text', op.value);
             if (op.value) {
                 this.emitter.text(op.value);
+            } else {
+                this.emitNext();
             }
             break;
         case 'key':
