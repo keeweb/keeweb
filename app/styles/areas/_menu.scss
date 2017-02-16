@@ -6,6 +6,10 @@
   @include justify-content(flex-start);
   overflow: hidden;
 
+  &.darwin{
+    margin-top: 22px;
+  }
+
   &__section {
     @include flex(0 0 auto);
     @include th { border-bottom: light-border(); }
