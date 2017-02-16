@@ -113,6 +113,7 @@ function createMainWindow() {
         show: false,
         width: 1000, height: 700, minWidth: 700, minHeight: 400,
         icon: path.join(__dirname, 'icon.png'),
+        titleBarStyle: 'hidden',
         webPreferences: {
             backgroundThrottling: false
         }
