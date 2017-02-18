@@ -146,4 +146,9 @@
       &--error { color: $red; }
     }
   }
+  &__plugins {
+    &-install-error {
+      margin-top: $base-padding-h;
+    }
+  }
 }

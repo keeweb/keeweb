@@ -24,6 +24,7 @@
   "shortcuts": "Shortcuts",
   "help": "Help",
   "settings": "Settings",
+  "plugins": "Plugins",
   "history": "history",
 
   "cache": "cache",
@@ -443,6 +444,12 @@
   "setShCopyUrlGlobal": "copy website (when app is in background)",
   "setShAutoTypeGlobal": "auto-type (when app is in background)",
   "setShLock": "lock database",
+
+  "setPlInstallTitle": "Install new plugins",
+  "setPlInstallDesc": "KeeWeb plugins add features, themes and locales to KeeWeb. Plugins run with the same privileges as KeeWeb, they can access and manage all your passwords. Never install plugins you don't trust.",
+  "setPlInstallLabel": "Plugin URL",
+  "setPlInstallBtn": "Install",
+  "setPlInstallBtnProgress": "Installing",
 
   "setAboutTitle": "About",
   "setAboutBuilt": "This app is built with these awesome tools",

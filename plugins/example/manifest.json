@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "manifestVersion": "0.1.0",
+  "name": "example",
+  "description": "KeeWeb plugin example",
+  "author": {
+    "name": "antelle",
+    "email": "antelle.net@gmail.com",
+    "url": "http://antelle.net"
+  },
+  "licence": "MIT",
+  "url": "https://keeweb.info",
+  "resources": {
+    "js": "X/xB9Y09Pkctu0Cwbl5i17+t9ngE2iD43kU/sv6rrXdw030N8mHWc667jE0OJQnDslOSleg5FCnnQ11/An3xZy/hgmDHZfgIu4nqJmkMwJVgxqiaBR28yl664PhJEY9te9XYqH213OSrM3HwWkqFx5qGn7lNZOPD5Wbq5lEflj2a+yTnQlx5AO1vRhdLBYl1OatsQ9smRhPb24AfTtWbNfOnoYCwgKtbvhReSu6R5Z7iei9TV6VeTFrCspXIQr9NWCHzbRunGTZjbtK0zYFK1+w4xAIxKUdfuMx00lrebq5y4Xn6Kv6NEFF9iouPUxH4oQ8lXeNd4FpsMdGOOQNlzQ==",
+    "css": "ny7Aj5PURIaD6Y6CLE6FMaIaj/z77XN6j7eUIA2N6agFLvwRBsZDVtM02oidivtVDA5nimc7/5iKzS2ppijFK67g1zMKfdZwZHOz5VdDGijBA8Zu4IybfSu4FWnbnWVjkCKLdaCS0kf6q/ivjgvovTqTMnuhzobN9jgTyV+TgYbof+dK1EiQCeQxf/ylJJTa3Sj9IMOdHNmu1y8Gxm1Zo58mlYA8ZQsImVjL6aNNn7Lc5yooexBxTzpHqBHe2KNlJoGorZG4VUOb1lIdnUlUke17pmbidueZt5tYJzJXFUPpd8yHxDDqAGxmaTEbohVCwslgDptEF56V1Xe9y0IzCw=="
+  },
+  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB"
+}
