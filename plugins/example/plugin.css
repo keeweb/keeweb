@@ -1,4 +1,4 @@
-i, svg {
+.footer i, .menu i {
   animation: psychodelic-spin 1s linear 0s infinite;
   transform-origin: center center;
 }

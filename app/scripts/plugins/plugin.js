@@ -2,7 +2,7 @@
 
 const kdbxweb = require('kdbxweb');
 const Backbone = require('backbone');
-const PluginApi = require('./plugin-api')
+const PluginApi = require('./plugin-api');
 const Logger = require('../util/logger');
 
 const commonLogger = new Logger('plugin');
