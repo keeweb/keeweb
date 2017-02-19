@@ -18,9 +18,8 @@ const PluginManager = Backbone.Model.extend({
         this.set({ installing: url, lastInstall: lastInstall });
         return Plugin.load(url).then(plugin =>
             this.uninstall(plugin.id).then(() => {
-                const plugins = this.get('plugins');
-                plugins.push(plugin);
                 return plugin.install().then(() => {
+                    this.get('plugins').push(plugin);
                     this.set({ installing: null });
                 });
             })
