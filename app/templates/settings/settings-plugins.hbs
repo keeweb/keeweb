@@ -13,8 +13,9 @@
                 </ul>
             </div>
             <div class="settings__plugins-plugin-desc">
-                <a href="{{plugin.manifest.url}}" target="_blank">{{plugin.manifest.url}}</a>, v{{plugin.manifest.version}}, created by
-                <a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}})
+                <a href="{{plugin.manifest.url}}" target="_blank">{{plugin.manifest.url}}</a>, v{{plugin.manifest.version}},
+                {{#res 'setPlCreatedBy'}}<a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}}){{/res}},
+                {{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}
             </div>
             <div class="settings__plugins-plugin-buttons">
                 <button class="settings_plugins-uninstall-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlUninstallBtn'}}</button>

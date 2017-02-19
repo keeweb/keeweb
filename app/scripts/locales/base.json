@@ -455,6 +455,8 @@
   "setPlJs": "code",
   "setPlCss": "styles",
   "setPlLoc": "language",
+  "setPlCreatedBy": "created by {}",
+  "setPlLoadTime": "took {} to load",
 
   "setAboutTitle": "About",
   "setAboutBuilt": "This app is built with these awesome tools",

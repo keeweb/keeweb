@@ -48,7 +48,7 @@ const Plugin = Backbone.Model.extend({
                 throw 'Plugin validation error: ' + error;
             }
             return this.installWithManifest()
-                .then(this.set('installTime', this.logger.ts() - ts));
+                .then(() => this.set('installTime', this.logger.ts() - ts));
         });
     },
 
