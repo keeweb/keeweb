@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 /**
  * KeeWeb plugin creator
  * (C) Antelle 2017, MIT license https://github.com/keeweb/keeweb
@@ -12,6 +14,7 @@ const readline = require('readline');
 const crypto = require('crypto');
 
 const args = process.argv.splice(2);
+const pkg = require('./package.json');
 
 const op = args.shift();
 
@@ -34,14 +37,14 @@ switch (op) {
 }
 
 function showBanner() {
-    console.log('KeeWeb plugin control');
+    console.log(`KeeWeb plugin utils v${pkg.version}`);
 }
 
 function showHelp() {
     rl.close();
     console.log('Usage:');
-    console.log(' - node kw-plugin-control.js create');
-    console.log(' - node kw-plugin-control.js sign <plugin_name>');
+    console.log(' - node keeweb-plugin create');
+    console.log(' - node keeweb-plugin sign <plugin_name>');
 }
 
 function createPlugin() {
