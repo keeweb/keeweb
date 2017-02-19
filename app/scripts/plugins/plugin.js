@@ -6,6 +6,7 @@ const PluginApi = require('./plugin-api');
 const Logger = require('../util/logger');
 const SettingsManager = require('../comp/settings-manager');
 const IoCache = require('../storage/io-cache');
+const AppSettingsModel = require('../models/app-settings-model');
 
 const commonLogger = new Logger('plugin');
 const io = new IoCache({
@@ -295,7 +296,7 @@ const Plugin = Backbone.Model.extend({
         delete SettingsManager.allLocales[locale.name];
         delete SettingsManager.customLocales[locale.name];
         if (SettingsManager.activeLocale === locale.name) {
-            SettingsManager.setLocale('en');
+            AppSettingsModel.instance.set('locale', 'en');
         }
     },
 
