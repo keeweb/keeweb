@@ -60,6 +60,7 @@ const PluginManager = Backbone.Model.extend({
         return plugin.uninstall().then(() => {
             plugins.remove(id);
             this.set('uninstalling', null);
+            this.saveState();
         });
     },
 
