@@ -1,8 +1,8 @@
 {
   "version": "0.0.1",
   "manifestVersion": "0.1.0",
-  "name": "example",
-  "description": "KeeWeb plugin example",
+  "name": "psychodelic",
+  "description": "Crazy animations for KeeWeb",
   "author": {
     "name": "antelle",
     "email": "antelle.net@gmail.com",

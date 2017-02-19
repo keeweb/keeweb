@@ -233,7 +233,8 @@ function createResources(data) {
  * @license ${data.licence}
  */
 
-/* global kw */
+module.exports.uninstall = function() {
+};
 `);
     }
     if (data.resources.css) {

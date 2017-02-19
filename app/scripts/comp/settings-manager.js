@@ -7,6 +7,23 @@ const SettingsManager = {
     neutralLocale: null,
     activeLocale: 'en',
 
+    allLocales: {
+        'en': 'English',
+        'de-DE': 'Deutsch',
+        'es-ES': 'Español',
+        'fr-FR': 'Français',
+        'it-IT': 'Italiano',
+        'nl-NL': 'Nederlands',
+        'pl': 'Polski',
+        'pt-PT': 'Português',
+        'ru-RU': 'Русский',
+        'sv-SE': 'Svenska',
+        'zh-CN': '汉语'
+    },
+
+    customLocales: {
+    },
+
     setBySettings: function(settings) {
         if (settings.get('theme')) {
             this.setTheme(settings.get('theme'));
@@ -51,7 +68,11 @@ const SettingsManager = {
         }
         let localeValues;
         if (loc !== 'en') {
-            localeValues = require('../locales/' + loc + '.json');
+            if (this.customLocales[loc]) {
+                localeValues = this.customLocales[loc];
+            } else {
+                localeValues = require('../locales/' + loc + '.json');
+            }
         }
         if (!this.neutralLocale) {
             this.neutralLocale = _.clone(Locale);

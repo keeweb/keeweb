@@ -57,20 +57,6 @@ const SettingsGeneralView = Backbone.View.extend({
         hc: 'setGenThemeHc'
     },
 
-    allLocales: {
-        'en': 'English',
-        'de-DE': 'Deutsch',
-        'es-ES': 'Español',
-        'fr-FR': 'Français',
-        'it-IT': 'Italiano',
-        'nl-NL': 'Nederlands',
-        'pl': 'Polski',
-        'pt-PT': 'Português',
-        'ru-RU': 'Русский',
-        'sv-SE': 'Svenska',
-        'zh-CN': '汉语'
-    },
-
     initialize: function() {
         this.views = {};
         this.listenTo(UpdateModel.instance, 'change:status', this.render, this);
@@ -85,7 +71,7 @@ const SettingsGeneralView = Backbone.View.extend({
         this.renderTemplate({
             themes: _.mapObject(this.allThemes, theme => Locale[theme]),
             activeTheme: AppSettingsModel.instance.get('theme'),
-            locales: this.allLocales,
+            locales: SettingsManager.allLocales,
             activeLocale: SettingsManager.activeLocale,
             fontSize: AppSettingsModel.instance.get('fontSize'),
             expandGroups: AppSettingsModel.instance.get('expandGroups'),

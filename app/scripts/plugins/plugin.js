@@ -4,10 +4,13 @@ const kdbxweb = require('kdbxweb');
 const Backbone = require('backbone');
 const PluginApi = require('./plugin-api');
 const Logger = require('../util/logger');
+const SettingsManager = require('../comp/settings-manager');
 
 const commonLogger = new Logger('plugin');
 
 const Plugin = Backbone.Model.extend({
+    idAttribute: 'name',
+
     defaults: {
         name: '',
         manifest: '',
@@ -83,7 +86,7 @@ const Plugin = Backbone.Model.extend({
             results.push(this.loadResource('js', url + 'plugin.js'));
         }
         if (manifest.resources.loc) {
-            results.push(this.loadResource('js', url + manifest.locale.name + '.json'));
+            results.push(this.loadResource('loc', url + manifest.locale.name + '.json'));
         }
         return Promise.all(results)
             .catch(() => { throw 'Error loading plugin resources'; })
@@ -197,14 +200,17 @@ const Plugin = Backbone.Model.extend({
 
     applyLoc(locale, data) {
         return Promise.resolve().then(() => {
-            data = JSON.parse(data);
-            // TODO: apply locale
+            const text = kdbxweb.ByteUtils.bytesToString(data);
+            const localeData = JSON.parse(text);
+            SettingsManager.allLocales[locale.name] = locale.title;
+            SettingsManager.customLocales[locale.name] = localeData;
             this.logger.debug('Plugin locale installed');
         });
     },
 
     removeLoc(locale) {
-        // TODO: remove locale
+        delete SettingsManager.allLocales[locale.name];
+        delete SettingsManager.customLocales[locale.name];
     },
 
     uninstall() {

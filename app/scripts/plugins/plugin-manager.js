@@ -1,28 +1,40 @@
 'use strict';
 
-// const Logger = require('../util/logger');
+const Backbone = require('backbone');
 const Plugin = require('./plugin');
+const PluginCollection = require('./plugin-collection');
 
-// const logger = new Logger('plugin-manager');
-
-const PluginManager = {
-    plugins: {},
+const PluginManager = Backbone.Model.extend({
+    defaults: {
+        state: '',
+        installing: false,
+        plugins: new PluginCollection()
+    },
 
     install(url) {
+        this.set('installing', true);
         return Plugin.load(url).then(plugin => {
-            const name = plugin.get('name');
+            const plugins = this.get('plugins');
             return Promise.resolve().then(() => {
-                if (this.plugins[name]) {
-                    return this.plugins[name].uninstall().then(() => {
-                        delete this.plugins[name];
+                if (plugins.get(plugin.id)) {
+                    return plugins.get(plugin.id).uninstall().then(() => {
+                        plugins.remove(plugin.id);
                     });
                 }
             }).then(() => {
-                this.plugins[name] = plugin;
-                return plugin.install();
+                plugins.push(plugin);
+                return plugin.install().then(() => {
+                    this.set('installing', false);
+                }).catch(e => {
+                    this.set('installing', false);
+                    throw e;
+                });
             });
+        }).catch(e => {
+            this.set('installing', false);
+            throw e;
         });
     }
-};
+});
 
-module.exports = PluginManager;
+module.exports = new PluginManager();
