@@ -14,6 +14,7 @@ const SettingsManager = require('./comp/settings-manager');
 const PluginManager = require('./plugins/plugin-manager');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
+const Logger = require('./util/logger');
 
 $(() => {
     if (isPopup()) {
@@ -21,6 +22,7 @@ $(() => {
     }
     loadMixins();
     let appModel;
+    const logger = new Logger('app');
     initModules().then(() => {
         appModel = new AppModel();
         SettingsManager.setBySettings(appModel.settings);
@@ -90,6 +92,8 @@ $(() => {
         new AppView({ model: appModel }).render();
         Updater.init();
         SingleInstanceChecker.init();
+        const time = Math.round(performance.now());
+        logger.info(`Started in ${time}ms ¯\\_(ツ)_/¯`);
     }
 
     function getConfigParam() {
