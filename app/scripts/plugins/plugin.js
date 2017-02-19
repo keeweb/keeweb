@@ -5,8 +5,13 @@ const Backbone = require('backbone');
 const PluginApi = require('./plugin-api');
 const Logger = require('../util/logger');
 const SettingsManager = require('../comp/settings-manager');
+const IoCache = require('../storage/io-cache');
 
 const commonLogger = new Logger('plugin');
+const io = new IoCache({
+    cacheName: 'PluginFiles',
+    logger: new Logger('storage-plugin-files')
+});
 
 const Plugin = Backbone.Model.extend({
     idAttribute: 'name',
@@ -15,21 +20,25 @@ const Plugin = Backbone.Model.extend({
         name: '',
         manifest: '',
         url: '',
-        status: 'inactive'
+        status: 'inactive',
+        installTime: null
     },
 
     resources: null,
 
-    initialize(manifest, url) {
+    initialize(manifest, url, local) {
+        const name = manifest.name;
         this.set({
-            name: manifest.name,
+            name,
             manifest,
-            url
+            url,
+            local
         });
-        this.logger = new Logger(`plugin:${manifest.name}`);
+        this.logger = new Logger(`plugin:${name}`);
     },
 
     install() {
+        const ts = this.logger.ts();
         this.set('status', 'installing');
         return Promise.resolve().then(() => {
             const error = this.validateManifest();
@@ -38,7 +47,8 @@ const Plugin = Backbone.Model.extend({
                 this.set('status', 'invalid');
                 throw 'Plugin validation error: ' + error;
             }
-            return this.installWithManifest();
+            return this.installWithManifest()
+                .then(this.set('installTime', this.logger.ts() - ts));
         });
     },
 
@@ -76,29 +86,46 @@ const Plugin = Backbone.Model.extend({
 
     installWithManifest() {
         const manifest = this.get('manifest');
-        const url = this.get('url');
-        this.logger.info('Loading plugin with resources', Object.keys(manifest.resources).join(', '));
+        const local = this.get('local');
+        this.logger.info('Loading plugin with resources', Object.keys(manifest.resources).join(', '), local ? '(local)' : '(url)');
         this.resources = {};
         const ts = this.logger.ts();
-        const results = [];
-        if (manifest.resources.css) {
-            results.push(this.loadResource('css', url + 'plugin.css'));
-        }
-        if (manifest.resources.js) {
-            results.push(this.loadResource('js', url + 'plugin.js'));
-        }
-        if (manifest.resources.loc) {
-            results.push(this.loadResource('loc', url + manifest.locale.name + '.json'));
-        }
+        const results = Object.keys(manifest.resources)
+            .map(res => this.loadResource(res));
         return Promise.all(results)
             .catch(() => { throw 'Error loading plugin resources'; })
             .then(() => this.installWithResources())
-            .then(() => {
-                this.logger.info('Install complete', this.logger.ts(ts));
-            });
+            .then(() => local ? undefined : this.saveResources())
+            .then(() => { this.logger.info('Install complete', this.logger.ts(ts)); });
     },
 
-    loadResource(type, url) {
+    getResourcePath(res) {
+        switch (res) {
+            case 'css':
+                return 'plugin.css';
+            case 'js':
+                return 'plugin.js';
+            case 'loc':
+                return this.get('manifest').locale.name + '.json';
+            default:
+                throw `Unknown resource ${res}`;
+        }
+    },
+
+    loadResource(type) {
+        let res;
+        if (this.get('local')) {
+            res = this.loadLocalResource(type);
+        } else {
+            const url = this.get('url');
+            res = this.loadResourceFromUrl(type, url + this.getResourcePath(type));
+        }
+        return res.then(data => {
+            this.resources[type] = data;
+        });
+    },
+
+    loadResourceFromUrl(type, url) {
         let ts = this.logger.ts();
         const manifest = this.get('manifest');
         return httpGet(url, true).then(data => {
@@ -116,12 +143,25 @@ const Plugin = Backbone.Model.extend({
                 .then(valid => {
                     if (valid) {
                         this.logger.debug('Resource signature valid', type, this.logger.ts(ts));
-                        this.resources[type] = data;
+                        return data;
                     } else {
                         this.logger.error('Resource signature invalid', type);
                         throw `Signature invalid: ${type}`;
                     }
                 });
+        });
+    },
+
+    loadLocalResource(type) {
+        return new Promise((resolve, reject) => {
+            const storageKey = this.id + '/' + this.getResourcePath(type);
+            io.load(storageKey, (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
         });
     },
 
@@ -144,9 +184,48 @@ const Plugin = Backbone.Model.extend({
             })
             .catch(e => {
                 this.logger.info('Install error', e);
-                this.uninstall();
-                throw e;
+                return this.uninstall().then(() => { throw e; });
             });
+    },
+
+    saveResources() {
+        const resourceSavePromises = [];
+        for (const key of Object.keys(this.resources)) {
+            resourceSavePromises.push(this.saveResource(key, this.resources[key]));
+        }
+        return Promise.all(resourceSavePromises)
+            .catch(e => {
+                this.logger.debug('Error saving plugin resources', e);
+                return this.uninstall().then(() => { throw 'Error saving plugin resources'; });
+            });
+    },
+
+    saveResource(key, value) {
+        return new Promise((resolve, reject) => {
+            const storageKey = this.id + '/' + this.getResourcePath(key);
+            io.save(storageKey, value, e => {
+                if (e) {
+                    reject(e);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    },
+
+    deleteResources() {
+        const resourceDeletePromises = [];
+        for (const key of Object.keys(this.resources)) {
+            resourceDeletePromises.push(this.deleteResource(key));
+        }
+        return Promise.all(resourceDeletePromises);
+    },
+
+    deleteResource(key) {
+        return new Promise(resolve => {
+            const storageKey = this.id + '/' + this.getResourcePath(key);
+            io.remove(storageKey, () => resolve());
+        });
     },
 
     applyCss(name, data) {
@@ -240,13 +319,15 @@ const Plugin = Backbone.Model.extend({
             if (manifest.resources.loc) {
                 this.removeLoc(this.get('manifest').locale);
             }
-            this.set('status', 'inactive');
-            this.logger.info('Uninstall complete', this.logger.ts(ts));
+            return this.deleteResources().then(() => {
+                this.set('status', 'inactive');
+                this.logger.info('Uninstall complete', this.logger.ts(ts));
+            });
         });
     }
 });
 
-Plugin.load = function(url) {
+Plugin.loadFromUrl = function(url) {
     if (url[url.length - 1] !== '/') {
         url += '/';
     }

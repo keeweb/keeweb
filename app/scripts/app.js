@@ -11,6 +11,7 @@ const Updater = require('./comp/updater');
 const AuthReceiver = require('./comp/auth-receiver');
 const ExportApi = require('./comp/export-api');
 const SettingsManager = require('./comp/settings-manager');
+const PluginManager = require('./plugins/plugin-manager');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
 
@@ -19,23 +20,24 @@ $(() => {
         return AuthReceiver.receive();
     }
     loadMixins();
-    initModules();
-
-    const appModel = new AppModel();
-    SettingsManager.setBySettings(appModel.settings);
-    const configParam = getConfigParam();
-    if (configParam) {
-        appModel.loadConfig(configParam, err => {
-            SettingsManager.setBySettings(appModel.settings);
-            if (err && !appModel.settings.get('cacheConfigSettings')) {
-                showSettingsLoadError();
-            } else {
-                showApp();
-            }
-        });
-    } else {
-        showApp();
-    }
+    let appModel;
+    initModules().then(() => {
+        appModel = new AppModel();
+        SettingsManager.setBySettings(appModel.settings);
+        const configParam = getConfigParam();
+        if (configParam) {
+            appModel.loadConfig(configParam, err => {
+                SettingsManager.setBySettings(appModel.settings);
+                if (err && !appModel.settings.get('cacheConfigSettings')) {
+                    showSettingsLoadError();
+                } else {
+                    showApp();
+                }
+            });
+        } else {
+            showApp();
+        }
+    });
 
     function isPopup() {
         return (window.parent !== window.top) || window.opener;
@@ -47,11 +49,14 @@ $(() => {
     }
 
     function initModules() {
+        const promises = [];
         KeyHandler.init();
         IdleTracker.init();
         PopupNotifier.init();
         KdbxwebInit.init();
+        promises.push(PluginManager.init());
         window.kw = ExportApi;
+        return Promise.all(promises);
     }
 
     function showSettingsLoadError() {
