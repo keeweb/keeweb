@@ -21,7 +21,7 @@ const PluginManager = Backbone.Model.extend({
         const ts = this.logger.ts();
         return Promise.resolve().then(() => {
             const state = this.loadState();
-            if (!state || !state.plugins) {
+            if (!state || !state.plugins || !state.plugins.length) {
                 return;
             }
             const promises = state.plugins.map(plugin => this.loadPlugin(plugin));
