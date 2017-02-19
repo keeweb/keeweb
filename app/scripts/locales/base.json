@@ -450,6 +450,11 @@
   "setPlInstallLabel": "Plugin URL",
   "setPlInstallBtn": "Install",
   "setPlInstallBtnProgress": "Installing",
+  "setPlUninstallBtn": "Uninstall",
+  "setPlLocaleBtn": "Switch to this language",
+  "setPlJs": "code",
+  "setPlCss": "styles",
+  "setPlLoc": "language",
 
   "setAboutTitle": "About",
   "setAboutBuilt": "This app is built with these awesome tools",

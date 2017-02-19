@@ -21,9 +21,11 @@ const Plugin = Backbone.Model.extend({
     resources: null,
 
     initialize(manifest, url) {
-        this.set('name', manifest.name);
-        this.set('manifest', manifest);
-        this.set('url', url);
+        this.set({
+            name: manifest.name,
+            manifest,
+            url
+        });
         this.logger = new Logger(`plugin:${manifest.name}`);
     },
 
@@ -136,8 +138,10 @@ const Plugin = Backbone.Model.extend({
         if (this.resources.loc) {
             promises.push(this.applyLoc(manifest.locale, this.resources.loc));
         }
-        this.set('status', 'active');
         return Promise.all(promises)
+            .then(() => {
+                this.set('status', 'active');
+            })
             .catch(e => {
                 this.logger.info('Install error', e);
                 this.uninstall();
@@ -211,11 +215,15 @@ const Plugin = Backbone.Model.extend({
     removeLoc(locale) {
         delete SettingsManager.allLocales[locale.name];
         delete SettingsManager.customLocales[locale.name];
+        if (SettingsManager.activeLocale === locale.name) {
+            SettingsManager.setLocale('en');
+        }
     },
 
     uninstall() {
         const manifest = this.get('manifest');
         this.logger.info('Uninstalling plugin with resources', Object.keys(manifest.resources).join(', '));
+        this.set('status', 'uninstalling');
         const ts = this.logger.ts();
         return Promise.resolve().then(() => {
             if (manifest.resources.css) {
@@ -232,6 +240,7 @@ const Plugin = Backbone.Model.extend({
             if (manifest.resources.loc) {
                 this.removeLoc(this.get('manifest').locale);
             }
+            this.set('status', 'inactive');
             this.logger.info('Uninstall complete', this.logger.ts(ts));
         });
     }

@@ -148,7 +148,17 @@
   }
   &__plugins {
     &-install-error {
-      margin-top: $base-padding-h;
+      margin-top: $base-padding-v;
+    }
+    &-plugin-files {
+      margin-top: $base-padding-v;
+      margin-bottom: $base-padding-v;
+    }
+    &-plugin-file {
+      padding-left: $base-padding-h;
+    }
+    &-plugin-desc {
+      margin-bottom: $base-padding-v;
     }
   }
 }

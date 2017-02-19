@@ -7,32 +7,39 @@ const PluginCollection = require('./plugin-collection');
 const PluginManager = Backbone.Model.extend({
     defaults: {
         state: '',
-        installing: false,
+        installing: null,
+        uninstalling: null,
+        lastInstall: null,
         plugins: new PluginCollection()
     },
 
     install(url) {
-        this.set('installing', true);
-        return Plugin.load(url).then(plugin => {
-            const plugins = this.get('plugins');
-            return Promise.resolve().then(() => {
-                if (plugins.get(plugin.id)) {
-                    return plugins.get(plugin.id).uninstall().then(() => {
-                        plugins.remove(plugin.id);
-                    });
-                }
-            }).then(() => {
+        const lastInstall = { url, dt: new Date() };
+        this.set({ installing: url, lastInstall: lastInstall });
+        return Plugin.load(url).then(plugin =>
+            this.uninstall(plugin.id).then(() => {
+                const plugins = this.get('plugins');
                 plugins.push(plugin);
                 return plugin.install().then(() => {
-                    this.set('installing', false);
-                }).catch(e => {
-                    this.set('installing', false);
-                    throw e;
+                    this.set({ installing: null });
                 });
-            });
-        }).catch(e => {
-            this.set('installing', false);
+            })
+        ).catch(e => {
+            this.set({ installing: null, lastInstall: _.extend(lastInstall, { error: e.toString() }) });
             throw e;
+        });
+    },
+
+    uninstall(id) {
+        const plugins = this.get('plugins');
+        const plugin = plugins.get(id);
+        if (!plugin) {
+            return Promise.resolve();
+        }
+        this.set('uninstalling', id);
+        return plugin.uninstall().then(() => {
+            plugins.remove(id);
+            this.set('uninstalling', null);
         });
     }
 });
