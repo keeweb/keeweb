@@ -19,8 +19,7 @@ const PluginManager = Backbone.Model.extend({
 
     init() {
         const ts = this.logger.ts();
-        return Promise.resolve().then(() => {
-            const state = this.loadState();
+        return SettingsStore.load('plugins').then(state => {
             if (!state || !state.plugins || !state.plugins.length) {
                 return;
             }
@@ -78,10 +77,6 @@ const PluginManager = Backbone.Model.extend({
                 url: plugin.get('url')
             }))
         });
-    },
-
-    loadState() {
-        return SettingsStore.load('plugins');
     }
 });
 

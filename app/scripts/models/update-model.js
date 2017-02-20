@@ -21,29 +21,19 @@ const UpdateModel = Backbone.Model.extend({
     },
 
     load: function() {
-        return new Promise((resolve, reject) => {
-            SettingsStore.load('update-info', (data, err) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    this.onLoaded(data);
-                    resolve();
+        return SettingsStore.load('update-info').then(data => {
+            if (data) {
+                try {
+                    _.each(data, (val, key) => {
+                        if (/Date$/.test(key)) {
+                            data[key] = val ? new Date(val) : null;
+                        }
+                    });
+                    this.set(data, {silent: true});
+                } catch (e) { /* failed to load model */
                 }
-            });
+            }
         });
-    },
-
-    onLoaded: function(data) {
-        if (data) {
-            try {
-                _.each(data, (val, key) => {
-                    if (/Date$/.test(key)) {
-                        data[key] = val ? new Date(val) : null;
-                    }
-                });
-                this.set(data, { silent: true });
-            } catch (e) { /* failed to load model */ }
-        }
     },
 
     save: function() {

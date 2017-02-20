@@ -19,7 +19,6 @@ const PluginManager = require('./plugins/plugin-manager');
 const Launcher = require('./comp/launcher');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
-const Logger = require('./util/logger');
 
 const ready = Launcher && Launcher.ready || $;
 
@@ -28,52 +27,14 @@ ready(() => {
         return AuthReceiver.receive();
     }
     loadMixins();
-    let appModel;
-    const logger = new Logger('app');
-    initModules().then(() => {
-        appModel = new AppModel();
-        SettingsManager.setBySettings(appModel.settings);
-        const configParam = getConfigParam();
-        if (configParam) {
-            appModel.loadConfig(configParam, err => {
-                SettingsManager.setBySettings(appModel.settings);
-                if (err && !appModel.settings.get('cacheConfigSettings')) {
-                    showSettingsLoadError();
-                } else {
-                    showApp();
-                }
-            });
-        } else {
-            showApp();
-        }
-    });
 
     const appModel = new AppModel();
-    SettingsManager.setBySettings(appModel.settings);
-    const configParam = getConfigParam();
-    if (configParam) {
-        appModel.loadConfig(configParam, err => {
-            SettingsManager.setBySettings(appModel.settings);
-            if (err && !appModel.settings.get('cacheConfigSettings')) {
-                showSettingsLoadError();
-            } else {
-                showApp();
-            }
-        });
-    } else {
-        showApp();
-    }
 
-    /* const appModel = new AppModel();
-
-    Promise.all([
-        AppSettingsModel.instance.load(),
-        UpdateModel.instance.load(),
-        RuntimeDataModel.instance.load(),
-        FileInfoCollection.instance.load()
-    ])
-    .then(loadRemoteConfig())
-    .then(showApp); */
+    Promise.resolve()
+        .then(loadConfigs)
+        .then(initModules)
+        .then(loadRemoteConfig)
+        .then(showApp);
 
     function isPopup() {
         return (window.parent !== window.top) || window.opener;
@@ -84,15 +45,22 @@ ready(() => {
         require('./helpers');
     }
 
+    function loadConfigs() {
+        return Promise.all([
+            AppSettingsModel.instance.load(),
+            UpdateModel.instance.load(),
+            RuntimeDataModel.instance.load(),
+            FileInfoCollection.instance.load()
+        ]);
+    }
+
     function initModules() {
-        const promises = [];
         KeyHandler.init();
         IdleTracker.init();
         PopupNotifier.init();
         KdbxwebInit.init();
-        promises.push(PluginManager.init());
         window.kw = ExportApi;
-        return Promise.all(promises);
+        return PluginManager.init();
     }
 
     function showSettingsLoadError() {
@@ -147,7 +115,7 @@ ready(() => {
         Updater.init();
         SingleInstanceChecker.init();
         const time = Math.round(performance.now());
-        logger.info(`Started in ${time}ms ¯\\_(ツ)_/¯`);
+        appModel.appLogger.info(`Started in ${time}ms ¯\\_(ツ)_/¯`);
     }
 
     function getConfigParam() {

@@ -7,57 +7,58 @@ const Logger = require('../util/logger');
 const logger = new Logger('settings');
 
 const SettingsStore = {
-
     fileName: function(key) {
         return `${key}.json`;
     },
 
-    load: function(key, callback) {
-        try {
+    load: function(key) {
+        return new Promise(resolve => {
             if (Launcher) {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));
                 Launcher.fileExists(settingsFile, exists => {
                     if (exists) {
-                        Launcher.readFile(settingsFile, 'utf8', (data, err) => {
-                            if (data) {
-                                callback(JSON.parse(data));
-                            } else {
-                                logger.error(`Error loading ${key}`, err);
-                                callback(undefined, err);
-                            }
+                        Launcher.readFile(settingsFile, 'utf8', data => {
+                            return this.parseData(key, data, resolve);
                         });
                     } else {
-                        callback();
+                        resolve();
                     }
                 });
             } else {
                 const data = localStorage[StringUtil.camelCase(key)];
-                callback(data ? JSON.parse(data) : undefined);
+                return this.parseData(key, data, resolve);
+            }
+        });
+    },
+
+    parseData: function(key, data, resolve) {
+        try {
+            if (data) {
+                return resolve(JSON.parse(data));
+            } else {
+                resolve();
             }
         } catch (e) {
-            logger.error(`Error loading ${key}`, e);
-            callback(undefined, e);
+            logger.error('Error loading ' + key, e);
+            resolve();
         }
     },
 
-    save: function(key, data, callback) {
-        try {
+    save: function(key, data) {
+        return new Promise(resolve => {
             if (Launcher) {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));
                 Launcher.writeFile(settingsFile, JSON.stringify(data), err => {
                     if (err) {
                         logger.error(`Error saving ${key}`, err);
                     }
-                    if (callback) { callback(err); }
+                    resolve();
                 });
             } else if (typeof localStorage !== 'undefined') {
                 localStorage[StringUtil.camelCase(key)] = JSON.stringify(data);
-                if (callback) { callback(); }
+                resolve();
             }
-        } catch (e) {
-            logger.error(`Error saving ${key}`, e);
-            if (callback) { callback(e); }
-        }
+        });
     }
 };
 
