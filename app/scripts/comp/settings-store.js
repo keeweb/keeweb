@@ -7,36 +7,56 @@ const Logger = require('../util/logger');
 const logger = new Logger('settings');
 
 const SettingsStore = {
+
     fileName: function(key) {
-        return key + '.json';
+        return `${key}.json`;
     },
 
-    load: function(key) {
+    load: function(key, callback) {
         try {
             if (Launcher) {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));
-                if (Launcher.fileExists(settingsFile)) {
-                    return JSON.parse(Launcher.readFile(settingsFile, 'utf8'));
-                }
+                Launcher.fileExists(settingsFile, exists => {
+                    if (exists) {
+                        Launcher.readFile(settingsFile, 'utf8', (data, err) => {
+                            if (data) {
+                                callback(JSON.parse(data));
+                            } else {
+                                logger.error(`Error loading ${key}`, err);
+                                callback(undefined, err);
+                            }
+                        });
+                    } else {
+                        callback();
+                    }
+                });
             } else {
                 const data = localStorage[StringUtil.camelCase(key)];
-                return data ? JSON.parse(data) : undefined;
+                callback(data ? JSON.parse(data) : undefined);
             }
         } catch (e) {
-            logger.error('Error loading ' + key, e);
+            logger.error(`Error loading ${key}`, e);
+            callback(undefined, e);
         }
-        return null;
     },
 
-    save: function(key, data) {
+    save: function(key, data, callback) {
         try {
             if (Launcher) {
-                Launcher.writeFile(Launcher.getUserDataPath(this.fileName(key)), JSON.stringify(data));
+                const settingsFile = Launcher.getUserDataPath(this.fileName(key));
+                Launcher.writeFile(settingsFile, JSON.stringify(data), err => {
+                    if (err) {
+                        logger.error(`Error saving ${key}`, err);
+                    }
+                    if (callback) { callback(err); }
+                });
             } else if (typeof localStorage !== 'undefined') {
                 localStorage[StringUtil.camelCase(key)] = JSON.stringify(data);
+                if (callback) { callback(); }
             }
         } catch (e) {
-            logger.error('Error saving ' + key, e);
+            logger.error(`Error saving ${key}`, e);
+            if (callback) { callback(e); }
         }
     }
 };

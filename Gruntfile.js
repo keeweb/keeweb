@@ -149,7 +149,8 @@ module.exports = function(grunt) {
         },
         clean: {
             dist: ['dist', 'tmp'],
-            desktop: ['tmp/desktop', 'dist/desktop']
+            desktop: ['tmp/desktop', 'dist/desktop'],
+            cordova: ['tmp/cordova', 'dist/cordova']
         },
         copy: {
             html: {
@@ -270,6 +271,10 @@ module.exports = function(grunt) {
             'desktop-html': {
                 options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
                 files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
+            },
+            'cordova-html': {
+                options: { replacements: [{ pattern: '<script', replacement: '<script src="cordova.js"></script><script' }] },
+                files: { 'tmp/cordova/app/index.html': 'dist/index.html' }
             }
         },
         webpack: {
@@ -682,6 +687,16 @@ module.exports = function(grunt) {
         'build-desktop-dist'
     ]);
 
+    grunt.registerTask('build-cordova-app-content', [
+        'string-replace:cordova-html'
+    ]);
+
+    grunt.registerTask('build-cordova', [
+        'gitinfo',
+        'clean:cordova',
+        'build-cordova-app-content'
+    ]);
+
     // entry point tasks
 
     grunt.registerTask('default', 'Default: build web app', [
@@ -700,5 +715,10 @@ module.exports = function(grunt) {
     grunt.registerTask('desktop', 'Build web and desktop apps for all platforms', [
         'default',
         'build-desktop'
+    ]);
+
+    grunt.registerTask('cordova', 'Build cordova app', [
+        'default',
+        'build-cordova'
     ]);
 };

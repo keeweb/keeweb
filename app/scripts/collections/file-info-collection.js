@@ -11,9 +11,21 @@ const FileInfoCollection = Backbone.Collection.extend({
     },
 
     load: function () {
-        const data = SettingsStore.load('file-info');
+        return new Promise((resolve, reject) => {
+            SettingsStore.load('file-info', (data, err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    this.onLoaded(data);
+                    resolve();
+                }
+            });
+        });
+    },
+
+    onLoaded: function(data) {
         if (data) {
-            this.reset(data, {silent: true});
+            this.reset(data, { silent: true });
         }
     },
 
@@ -38,10 +50,6 @@ const FileInfoCollection = Backbone.Collection.extend({
     }
 });
 
-FileInfoCollection.load = function() {
-    const coll = new FileInfoCollection();
-    coll.load();
-    return coll;
-};
+FileInfoCollection.instance = new FileInfoCollection();
 
 module.exports = FileInfoCollection;

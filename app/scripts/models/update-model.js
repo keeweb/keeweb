@@ -21,7 +21,19 @@ const UpdateModel = Backbone.Model.extend({
     },
 
     load: function() {
-        const data = SettingsStore.load('update-info');
+        return new Promise((resolve, reject) => {
+            SettingsStore.load('update-info', (data, err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    this.onLoaded(data);
+                    resolve();
+                }
+            });
+        });
+    },
+
+    onLoaded: function(data) {
         if (data) {
             try {
                 _.each(data, (val, key) => {
@@ -46,6 +58,5 @@ const UpdateModel = Backbone.Model.extend({
 });
 
 UpdateModel.instance = new UpdateModel();
-UpdateModel.instance.load();
 
 module.exports = UpdateModel;

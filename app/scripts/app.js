@@ -2,6 +2,10 @@
 
 const AppModel = require('./models/app-model');
 const AppView = require('./views/app-view');
+const AppSettingsModel = require('./models/app-settings-model');
+const UpdateModel = require('./models/update-model');
+const RuntimeDataModel = require('./models/runtime-data-model');
+const FileInfoCollection = require('./collections/file-info-collection');
 const KeyHandler = require('./comp/key-handler');
 const IdleTracker = require('./comp/idle-tracker');
 const PopupNotifier = require('./comp/popup-notifier');
@@ -12,11 +16,14 @@ const AuthReceiver = require('./comp/auth-receiver');
 const ExportApi = require('./comp/export-api');
 const SettingsManager = require('./comp/settings-manager');
 const PluginManager = require('./plugins/plugin-manager');
+const Launcher = require('./comp/launcher');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
 const Logger = require('./util/logger');
 
-$(() => {
+const ready = Launcher && Launcher.ready || $;
+
+ready(() => {
     if (isPopup()) {
         return AuthReceiver.receive();
     }
@@ -40,6 +47,33 @@ $(() => {
             showApp();
         }
     });
+
+    const appModel = new AppModel();
+    SettingsManager.setBySettings(appModel.settings);
+    const configParam = getConfigParam();
+    if (configParam) {
+        appModel.loadConfig(configParam, err => {
+            SettingsManager.setBySettings(appModel.settings);
+            if (err && !appModel.settings.get('cacheConfigSettings')) {
+                showSettingsLoadError();
+            } else {
+                showApp();
+            }
+        });
+    } else {
+        showApp();
+    }
+
+    /* const appModel = new AppModel();
+
+    Promise.all([
+        AppSettingsModel.instance.load(),
+        UpdateModel.instance.load(),
+        RuntimeDataModel.instance.load(),
+        FileInfoCollection.instance.load()
+    ])
+    .then(loadRemoteConfig())
+    .then(showApp); */
 
     function isPopup() {
         return (window.parent !== window.top) || window.opener;
@@ -67,6 +101,26 @@ $(() => {
             body: Locale.appSettingsErrorBody,
             buttons: [],
             esc: false, enter: false, click: false
+        });
+    }
+
+    function loadRemoteConfig() {
+        return new Promise((resolve, reject) => {
+            SettingsManager.setBySettings(appModel.settings);
+            const configParam = getConfigParam();
+            if (configParam) {
+                appModel.loadConfig(configParam, err => {
+                    SettingsManager.setBySettings(appModel.settings);
+                    if (err && !appModel.settings.get('cacheConfigSettings')) {
+                        showSettingsLoadError();
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            } else {
+                resolve();
+            }
         });
     }
 
