@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "manifestVersion": "0.1.0",
+  "name": "fail-storage",
+  "description": "KeeWeb storage that always fails",
+  "author": {
+    "name": "antelle",
+    "email": "antelle.net@gmail.com",
+    "url": "http://antelle.net"
+  },
+  "licence": "MIT",
+  "url": "https://keeweb.info",
+  "resources": {
+    "js": "AXUK3TetuHvs0wZU0BW4fHHKhxO+GB6ji2YxuAS8UF64hsF4FQXA9dxg4KSDkUyUSvs8DMucmUNSevOw3UOLGP86jvBmiaGrS0M+/EXD4LUEXMtDVhn2mZmlCaX34sA9AyPVbZuP1eI+6o6vcTyS/ugH8T38i6pLAR3Xzl6iC0Z16WkyX0+3zmQGhMEJwAxTQNVfe+RjUtvsXoBIeay/tIohCRgpkXKoB1bOVT/cETdVThaFHeEEPAweGcX0/b3QQ6AU+oqJGB3RoEJJGWFc/rv40OMAlvw310QHtlv9eE+jMLcewQiF/x1LtBOb/a8whp5vhn3HR6jlUhhXOHbwhg=="
+  },
+  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB"
+}

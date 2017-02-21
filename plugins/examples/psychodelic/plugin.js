@@ -1,5 +1,5 @@
 /**
- * KeeWeb plugin: example
+ * KeeWeb plugin: psychodelic
  * @author antelle
  * @license MIT
  */
