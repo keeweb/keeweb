@@ -1,4 +1,4 @@
-.th-rainbow * {
+.th-rainbow * { /* never do such things! */
   animation: rainbow 5s linear 0s infinite;
 }
 .th-rainbow button {
