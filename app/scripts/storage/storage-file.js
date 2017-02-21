@@ -92,7 +92,7 @@ const StorageFile = StorageBase.extend({
         if (rev) {
             Launcher.statFile(path, (stat, err) => {
                 if (err) {
-                    return onError(err);
+                    return write();
                 }
                 const fileRev = stat.mtime.getTime().toString();
                 if (fileRev !== rev) {
