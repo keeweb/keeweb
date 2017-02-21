@@ -21,6 +21,16 @@ const SettingsManager = {
         'zh-CN': '汉语'
     },
 
+    allThemes: {
+        fb: 'setGenThemeFb',
+        db: 'setGenThemeDb',
+        sd: 'setGenThemeSd',
+        sl: 'setGenThemeSl',
+        wh: 'setGenThemeWh',
+        te: 'setGenThemeTe',
+        hc: 'setGenThemeHc'
+    },
+
     customLocales: {
     },
 

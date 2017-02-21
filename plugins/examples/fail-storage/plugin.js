@@ -5,7 +5,7 @@
  */
 
 const Storage = require('storage/index');
-const Locale = require('locales/base');
+const BaseLocale = require('locales/base');
 const StorageBase = require('storage/storage-base');
 
 const FailStorage = StorageBase.extend({
@@ -43,11 +43,11 @@ const FailStorage = StorageBase.extend({
     }
 });
 
-Locale.failStorage = 'Fail';
+BaseLocale.failStorage = 'Fail';
 
 Storage.failStorage = new FailStorage();
 
 module.exports.uninstall = function() {
-    delete Locale.failStorage;
+    delete BaseLocale.failStorage;
     delete Storage.failStorage;
 };

@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "manifestVersion": "0.1.0",
   "name": "square-language",
-  "description": "KeeWeb language which replaces everything with squares",
+  "description": "Language which replaces everything with squares",
   "author": {
     "name": "antelle",
     "email": "antelle.net@gmail.com",

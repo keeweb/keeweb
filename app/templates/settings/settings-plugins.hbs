@@ -19,8 +19,11 @@
             </div>
             <div class="settings__plugins-plugin-buttons">
                 <button class="settings_plugins-uninstall-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlUninstallBtn'}}</button>
-                {{#if plugin.manifest.resources.loc}}
+                {{#if plugin.manifest.locale}}
                 <button class="settings_plugins-use-locale-btn btn-silent" data-locale="{{plugin.manifest.locale.name}}">{{res 'setPlLocaleBtn'}}</button>
+                {{/if}}
+                {{#if plugin.manifest.theme}}
+                <button class="settings_plugins-use-theme-btn btn-silent" data-theme="{{plugin.manifest.theme.name}}">{{res 'setPlThemeBtn'}}</button>
                 {{/if}}
             </div>
         </div>

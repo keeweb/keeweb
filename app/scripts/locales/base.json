@@ -452,6 +452,7 @@
   "setPlInstallBtnProgress": "Installing",
   "setPlUninstallBtn": "Uninstall",
   "setPlLocaleBtn": "Switch to this language",
+  "setPlThemeBtn": "Switch to this theme",
   "setPlJs": "code",
   "setPlCss": "styles",
   "setPlLoc": "language",

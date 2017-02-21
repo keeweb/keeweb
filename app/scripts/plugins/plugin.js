@@ -7,6 +7,7 @@ const Logger = require('../util/logger');
 const SettingsManager = require('../comp/settings-manager');
 const IoCache = require('../storage/io-cache');
 const AppSettingsModel = require('../models/app-settings-model');
+const BaseLocale = require('../locales/base.json');
 
 const commonLogger = new Logger('plugin');
 const io = new IoCache({
@@ -171,7 +172,7 @@ const Plugin = Backbone.Model.extend({
         const manifest = this.get('manifest');
         const promises = [];
         if (this.resources.css) {
-            promises.push(this.applyCss(manifest.name, this.resources.css));
+            promises.push(this.applyCss(manifest.name, this.resources.css, manifest.theme));
         }
         if (this.resources.js) {
             promises.push(this.applyJs(manifest.name, this.resources.js));
@@ -229,10 +230,15 @@ const Plugin = Backbone.Model.extend({
         });
     },
 
-    applyCss(name, data) {
+    applyCss(name, data, theme) {
         return Promise.resolve().then(() => {
             const text = kdbxweb.ByteUtils.bytesToString(data);
             this.createElementInHead('style', 'plugin-css-' + name, 'text/css', text);
+            if (theme) {
+                const locKey = this.getThemeLocaleKey(theme.name);
+                SettingsManager.allThemes[theme.name] = locKey;
+                BaseLocale[locKey] = theme.title;
+            }
             this.logger.debug('Plugin style installed');
         });
     },
@@ -300,6 +306,18 @@ const Plugin = Backbone.Model.extend({
         }
     },
 
+    getThemeLocaleKey(name) {
+        return `setGenThemeCustom_${name}`;
+    },
+
+    removeTheme(theme) {
+        delete SettingsManager.allThemes[theme.name];
+        if (AppSettingsModel.instance.get('theme') === theme.name) {
+            AppSettingsModel.instance.set('theme', 'fb');
+        }
+        delete BaseLocale[this.getThemeLocaleKey(theme.name)];
+    },
+
     uninstall() {
         const manifest = this.get('manifest');
         this.logger.info('Uninstalling plugin with resources', Object.keys(manifest.resources).join(', '));
@@ -319,6 +337,9 @@ const Plugin = Backbone.Model.extend({
             }
             if (manifest.resources.loc) {
                 this.removeLoc(this.get('manifest').locale);
+            }
+            if (manifest.theme) {
+                this.removeTheme(manifest.theme);
             }
             return this.deleteResources().then(() => {
                 this.set('status', 'inactive');

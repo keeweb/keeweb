@@ -1,0 +1,31 @@
+.th-rainbow * {
+  animation: rainbow 5s linear 0s infinite;
+}
+.th-rainbow button {
+  animation: bgrainbow 5s linear 0s infinite;
+  border: 1px solid;
+}
+.th-rainbow input {
+  border: 1px solid;
+}
+*:nth-child(5n+1) { animation-delay: -1s; }
+*:nth-child(5n+2) { animation-delay: -2s; }
+*:nth-child(5n+3) { animation-delay: -3s; }
+*:nth-child(5n+4) { animation-delay: -4s; }
+*:nth-child(5n+5) { animation-delay: -5s; }
+@keyframes rainbow {
+  0% { color: lightseagreen; }
+  20% { color: darkviolet; }
+  40% { color: gold; }
+  60% { color: hotpink; }
+  80% { color: palegoldenrod; }
+  100% { color: lightseagreen; }
+}
+@keyframes bgrainbow {
+  0% { color: darkviolet; background-color: lightseagreen; }
+  20% { color: gold; background-color: darkviolet; }
+  40% { color: hotpink; background-color: gold; }
+  60% { color: palegoldenrod; background-color: hotpink; }
+  80% { color: lightseagreen; background-color: palegoldenrod; }
+  100% { color: darkviolet; background-color: lightseagreen; }
+}

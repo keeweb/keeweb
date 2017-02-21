@@ -11,7 +11,8 @@ const SettingsPluginsView = Backbone.View.extend({
     events: {
         'click .settings_plugins-install-btn': 'installClick',
         'click .settings_plugins-uninstall-btn': 'uninstallClick',
-        'click .settings_plugins-use-locale-btn': 'useLocaleClick'
+        'click .settings_plugins-use-locale-btn': 'useLocaleClick',
+        'click .settings_plugins-use-theme-btn': 'useThemeClick'
     },
 
     initialize() {
@@ -70,6 +71,11 @@ const SettingsPluginsView = Backbone.View.extend({
     useLocaleClick(e) {
         const locale = $(e.target).data('locale');
         AppSettingsModel.instance.set('locale', locale);
+    },
+
+    useThemeClick(e) {
+        const theme = $(e.target).data('theme');
+        AppSettingsModel.instance.set('theme', theme);
     }
 });
 

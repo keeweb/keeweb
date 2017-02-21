@@ -133,7 +133,8 @@ function gatherPluginData(callback) {
             '1: js only\n ' +
             '2: js + css\n ' +
             '3: css only\n ' +
-            '4: locale\n' +
+            '4: locale\n ' +
+            '5: theme\n' +
             'Your plugin type is',
         callback: res => {
             const placeholder = `<resource signature will be here, please run 'kw-plugin-control sign ${data.name}'>`;
@@ -149,6 +150,11 @@ function gatherPluginData(callback) {
                     break;
                 case '4':
                     data.resources = { loc: placeholder };
+                    data.locale = {};
+                    break;
+                case '5':
+                    data.resources = { css: placeholder };
+                    data.theme = {};
                     break;
                 default:
                     console.error('Please enter number from 1 to 4');
@@ -158,24 +164,42 @@ function gatherPluginData(callback) {
         }
     }, {
         text: 'Locale code (format: xx or xx-XX)',
-        if: () => data.resources.loc,
+        if: () => data.locale,
         callback: loc => {
             if (!/^[a-z]{2}(-[A-Z]{2})?$/.test(loc) || loc === 'en') {
                 console.error('Invalid locale');
                 return true;
             }
-            data.locale = { name: loc };
+            data.locale.name = loc;
             next();
         }
     }, {
         text: 'Locale name (human-readable)',
-        if: () => data.resources.loc,
+        if: () => data.locale,
         callback: loc => {
             if (!loc || loc.toLowerCase() === 'english' || loc.toLowerCase() === 'default') {
                 console.error('Invalid locale');
                 return true;
             }
             data.locale.title = loc;
+            next();
+        }
+    }, {
+        text: 'Theme class name (lowercase letters and dashes only)',
+        if: () => data.theme,
+        callback: loc => {
+            if (!/^[a-z\-]+$/.test(loc)) {
+                console.error('Invalid theme');
+                return true;
+            }
+            data.theme.name = loc;
+            next();
+        }
+    }, {
+        text: 'Theme name (human-readable)',
+        if: () => data.theme,
+        callback: loc => {
+            data.theme.title = loc;
             next();
         }
     }];

@@ -1,0 +1,21 @@
+{
+  "version": "0.0.1",
+  "manifestVersion": "0.1.0",
+  "name": "rainbow-theme",
+  "description": "Rainbow theme",
+  "author": {
+    "name": "antelle",
+    "email": "antelle.net@gmail.com",
+    "url": "http://antelle.net"
+  },
+  "licence": "MIT",
+  "url": "https://keeweb.info",
+  "resources": {
+    "css": "VMBsTo36lliqTzhith4BqWOYW4n4nW5jt+Pj9LqnCJzUChZPtb2eQex1Al3YNC9gCxej1Dw0VNDr55HzBv/q/k4F1/zszaR1twtfRP2fiwGkxN5Cvso0IFjB1PUjr3VeMAnNMtkkkqAz9hHLaFkdIwVZf98wZ2WEIok+lAM2g9vSklZ34aikhvDbRojNZ0Waqovo41IA4Z3xhb0KQkud8WaH3oNxulitsiRdgIbigj43Gd5XlJYE+/JpAcnG033mC0W0XmXXrjEiD0CH8ZoEX/3vo7LVH+AfUuhJWl0zj49+VSjBe9X6+XiPIb2ZUEJEuSaD3vwg9GNSkjF49lB8gA=="
+  },
+  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB",
+  "theme": {
+    "name": "rainbow",
+    "title": "Rainbow"
+  }
+}

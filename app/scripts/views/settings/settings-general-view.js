@@ -47,16 +47,6 @@ const SettingsGeneralView = Backbone.View.extend({
 
     views: null,
 
-    allThemes: {
-        fb: 'setGenThemeFb',
-        db: 'setGenThemeDb',
-        sd: 'setGenThemeSd',
-        sl: 'setGenThemeSl',
-        wh: 'setGenThemeWh',
-        te: 'setGenThemeTe',
-        hc: 'setGenThemeHc'
-    },
-
     initialize: function() {
         this.views = {};
         this.listenTo(UpdateModel.instance, 'change:status', this.render, this);
@@ -69,7 +59,7 @@ const SettingsGeneralView = Backbone.View.extend({
         const updateManual = UpdateModel.instance.get('updateManual');
         const storageProviders = this.getStorageProviders();
         this.renderTemplate({
-            themes: _.mapObject(this.allThemes, theme => Locale[theme]),
+            themes: _.mapObject(SettingsManager.allThemes, theme => Locale[theme]),
             activeTheme: AppSettingsModel.instance.get('theme'),
             locales: SettingsManager.allLocales,
             activeLocale: SettingsManager.activeLocale,
