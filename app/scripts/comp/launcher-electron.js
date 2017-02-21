@@ -100,7 +100,7 @@ const Launcher = {
 
         const create = function(stack, callback) {
             if (!stack.length) {
-                return callback && callback();
+                return callback();
             }
 
             fs.mkdir(stack.shift(), err =>
