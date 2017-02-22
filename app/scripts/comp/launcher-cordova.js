@@ -1,9 +1,7 @@
 'use strict';
 
-const Alerts = require('../comp/alerts');
-
 const Launcher = {
-    name: 'android',
+    name: 'cordova',
     version: '6.0.0',
     autoTypeSupported: false,
     ready: function(callback) {
@@ -16,17 +14,7 @@ const Launcher = {
         window.open(href, '_system');
     },
     getSaveFileName: function(defaultPath, callback) {
-        if (defaultPath) {
-            defaultPath = [this.externalRoot, defaultPath].join('/');
-
-            Alerts.yesno({
-                header: 'Save file',
-                body: defaultPath,
-                success: () => {
-                    callback(defaultPath);
-                }
-            });
-        }
+        // Not in cordova
     },
     getDir: function() {
         const storagePath = window.cordova.file.externalDataDirectory;
