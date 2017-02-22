@@ -28,7 +28,7 @@ const Launcher = {
     openDevTools: function() {
         this.electron().remote.getCurrentWindow().openDevTools();
     },
-    getSaveFileName: function(defaultPath, cb) {
+    getSaveFileName: function(defaultPath, callback) {
         if (defaultPath) {
             const homePath = this.remReq('electron').app.getPath('userDesktop');
             defaultPath = this.req('path').join(homePath, defaultPath);
@@ -37,7 +37,7 @@ const Launcher = {
             title: Locale.launcherSave,
             defaultPath: defaultPath,
             filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
-        }, cb);
+        }, callback);
     },
     getUserDataPath: function(fileName) {
         return this.req('path').join(this.remoteApp().getPath('userData'), fileName || '');
@@ -244,6 +244,9 @@ const Launcher = {
             }
         }
         return ps;
+    },
+    openFileChooser: function(context, fileInput) {
+        fileInput.click();
     }
 };
 

@@ -550,7 +550,7 @@ const AppModel = Backbone.Model.extend({
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
 
-        if (Launcher.fingerprints && !existing) {
+        if (Launcher && Launcher.fingerprints && !existing) {
             Launcher.fingerprints.register(this, fileInfo, password);
         }
     },

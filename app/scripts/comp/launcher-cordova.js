@@ -1,17 +1,13 @@
 'use strict';
 
 const Alerts = require('../comp/alerts');
-// const Locale = require('../util/locale');
 
 const Launcher = {
     name: 'android',
     version: '6.0.0',
     autoTypeSupported: false,
     ready: function(callback) {
-        document.addEventListener('deviceready', () => {
-            callback();
-            // window.addEventListener('filePluginIsReady', () => {}, false);
-        }, false);
+        document.addEventListener('deviceready', callback, false);
     },
     platform: function() {
         return 'cordova';
@@ -60,33 +56,7 @@ const Launcher = {
             }, callback);
         };
 
-        const createDir = (dirEntry, path, callback) => {
-            const name = path.shift();
-            dirEntry.getDirectory(name, { create: true }, dirEntry => {
-                if (path.length) { // there is more to create
-                    createDir(dirEntry, path, callback);
-                } else {
-                    callback(dirEntry);
-                }
-            }, callback);
-        };
-
-        if (path.startsWith(this.appStorage)) { // file://
-            const localPath = path.replace(this.appStorage, '').split('/').filter(s => !!s);
-            const fileName = localPath.pop();
-
-            if (localPath.length) {
-                window.resolveLocalFileSystemURL(this.appStorage, dirEntry => {
-                    createDir(dirEntry, localPath, destDir => {
-                        destDir.getFile(fileName, { create: true }, writeFile, callback, callback);
-                    });
-                }, callback);
-            } else {
-                window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
-            }
-        } else { // cdvfile://
-            window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
-        }
+        window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
     },
     readFile: function(path, encoding, callback) {
         window.resolveLocalFileSystemURL(path, fileEntry => {
@@ -119,8 +89,28 @@ const Launcher = {
             }, err => callback(undefined, err));
         }, err => callback(undefined, err));
     },
-    mkdir: function(dir) {
-        // TODO
+    mkdir: function(dir, callback) {
+        const createDir = (dirEntry, path, callback) => {
+            const name = path.shift();
+            dirEntry.getDirectory(name, { create: true }, dirEntry => {
+                if (path.length) { // there is more to create
+                    createDir(dirEntry, path, callback);
+                } else {
+                    callback();
+                }
+            }, callback);
+        };
+
+        const localPath = dir.replace(this.appStorage, '').split('/').filter(s => !!s);
+        localPath.pop(); // pop file name
+
+        if (localPath.length) {
+            window.resolveLocalFileSystemURL(this.appStorage, dirEntry => {
+                createDir(dirEntry, localPath, callback);
+            }, callback);
+        } else {
+            callback();
+        }
     },
     parsePath: function(fileName) {
         const parts = fileName.split('/');
@@ -181,20 +171,20 @@ const Launcher = {
          // skip
     },
 
-    openFileChooser: function(context) {
+    openFileChooser: function(callback, button) {
         const onFileSelected = function(selected) {
-            window.resolveLocalFileSystemURL(selected.uri,
-                fileEntry => {
-                    fileEntry.file(file => {
-                        file.path = file.localURL;
-                        file.name = selected.name;
-                        context.processFile(file);
-                    });
-                }
-            );
+            window.resolveLocalFileSystemURL(selected.uri, fileEntry => {
+                fileEntry.file(file => {
+                    file.path = file.localURL;
+                    file.name = selected.name;
+                    callback(file);
+                });
+            });
         };
 
-        window.cordova.exec(onFileSelected, e => { }, 'FileChooser', 'choose');
+        window.cordova.exec(onFileSelected, e => {
+            // TODO logging
+        }, 'FileChooser', 'choose');
     },
 
     fingerprints: {
