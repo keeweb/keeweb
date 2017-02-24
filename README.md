@@ -17,7 +17,8 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 # Status
 
-Project roadmap with planned features and approximate schedule is on [TODO](https://github.com/keeweb/keeweb/wiki/TODO) page.  
+The app is already rather stable, so basic stuff should work.  
+Project roadmap with planned features and approximate schedule is on [TODO](https://github.com/keeweb/keeweb/wiki/TODO) page.
 
 # Self-hosting
 
