@@ -8,6 +8,9 @@ Release notes
 `+` `kw.require` now provides access to modules  
 `+` showOnlyFilesFromConfig config option  
 
+##### v1.4.1 (TBD)
+`+` fix #544: read files with empty binaries  
+
 ##### v1.4.0 (2017-02-04)
 KDBX4 format support and minor improvements  
 `+` password generator usability improvements  
