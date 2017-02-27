@@ -33,17 +33,7 @@ If you are using Docker:
 docker run --name keeweb -d -p 443:443 -p 80:80 -v $EXT_DIR:/etc/nginx/external/ antelle/keeweb
 ```
 
-To make Dropbox work in your self-hosted app:
-
-1. [create](https://www.dropbox.com/developers/apps/create) a Dropbox app
-2. find your app key (in Dropbox App page, go to Settings/App key)
-3. add your Dropbox app key to [settings json](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
-
-To make Google Drive work in your self-hosted app:
-1. [Create](https://cloud.google.com/resource-manager/docs/creating-project#via_console) a Google Cloud Project
-2. Create credentials (OAuth client ID and Web application)
-3. Enter your self-hosted URL (e.g. https://www.example.com) in both Authorized JavaScript origins and Authorized redirect URIs
-4. Add the new client ID to your [settings json](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
+To make Dropbox work in your self-hosted app, [go to this Wiki page](https://github.com/keeweb/keeweb/wiki/Dropbox-and-GDrive).
 
 # Building
 
