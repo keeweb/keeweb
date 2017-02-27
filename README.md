@@ -39,10 +39,18 @@ To make Dropbox work in your self-hosted app:
 3. add your Dropbox app key to [settings json](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
 
 To make Google Drive work in your self-hosted app:
-1. [Create](https://cloud.google.com/resource-manager/docs/creating-project#via_console) a Google Cloud Project
-2. Create credentials (OAuth client ID and Web application)
-3. Enter your self-hosted URL (e.g. https://www.example.com) in both Authorized JavaScript origins and Authorized redirect URIs
-4. Add the new client ID to your [settings json](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
+
+1. Go to [Google Cloud Platform Console](https://console.cloud.google.com/home/dashboard).
+2. Click the drop-down project link on top-left (next to Google Cloud Platform title) and click **New Project**.
+3. Enter the project name and press **CREATE**.
+4. Press the menu button from top-left corner and go to **API Manager**.
+5. Click on the **Credentials** button from the menu on the left.
+6. Press **OAuth consent screen** tab on the main screen.
+7. Enter the data and press **Save**.
+8. Select **Web Application** and enter the name. Remember to put your URL of your KeeWeb website into Authorized JavaScript origins and Authorized redirect URIs.
+9. Jot down the **Client ID** and **Client Secret**.
+10. Add the client ID to your settings.json. You can follow the [link]](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
+
 
 # Building
 
