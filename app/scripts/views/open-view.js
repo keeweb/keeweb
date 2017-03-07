@@ -447,6 +447,7 @@ const OpenView = Backbone.View.extend({
         this.params.rev = null;
         this.params.keyFileName = fileInfo.get('keyFileName');
         this.params.keyFilePath = fileInfo.get('keyFilePath');
+        this.params.keyFileData = null;
         this.displayOpenFile();
         this.displayOpenKeyFile();
     },
