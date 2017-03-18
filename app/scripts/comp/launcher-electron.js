@@ -119,6 +119,9 @@ const Launcher = {
             file: path.basename(fileName)
         };
     },
+    joinPath: function(dir, fileName) {
+        return this.req('path').join(dir, fileName);
+    },
     createFsWatcher: function(path) {
         return this.req('fs').watch(path, { persistent: false });
     },
@@ -245,8 +248,8 @@ const Launcher = {
         }
         return ps;
     },
-    openFileChooser: function(context, fileInput) {
-        fileInput.click();
+    openFileChooser: function(callback, button) {
+        button.click();
     }
 };
 

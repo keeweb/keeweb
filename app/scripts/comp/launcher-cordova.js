@@ -13,27 +13,29 @@ const Launcher = {
     openLink: function(href) {
         window.open(href, '_system');
     },
+    devTools: false,
+    // openDevTools: function() { },
     getSaveFileName: function(defaultPath, callback) {
         // Not in cordova
     },
-    getDir: function() {
+    getDataPath: function() {
         const storagePath = window.cordova.file.externalDataDirectory;
         return [storagePath].concat(Array.from(arguments)).filter(s => !!s);
     },
     getUserDataPath: function(fileName) {
-        return this.getDir('userdata', fileName).join('/');
+        return this.getDataPath('userdata', fileName).join('/');
     },
     getTempPath: function(fileName) {
-        return this.getDir('temp', fileName).join('/');
+        return this.getDataPath('temp', fileName).join('/');
     },
     getDocumentsPath: function(fileName) {
-        return this.getDir('documents', fileName).join('/');
+        return this.getDataPath('documents', fileName).join('/');
     },
     getAppPath: function(fileName) {
-        return this.getDir(fileName).join('/');
+        return this.getDataPath(fileName).join('/');
     },
     getWorkDirPath: function(fileName) {
-        return this.getDir(fileName).join('/');
+        return this.getDataPath(fileName).join('/');
     },
     writeFile: function(path, data, callback) {
         const writeFile = fileEntry => {
@@ -77,7 +79,11 @@ const Launcher = {
             }, err => callback(undefined, err));
         }, err => callback(undefined, err));
     },
+    statFileSync: function(path) {
+        this.req('fs').statSync(path);
+    },
     mkdir: function(dir, callback) {
+        const basePath = this.getDataPath().join('/');
         const createDir = (dirEntry, path, callback) => {
             const name = path.shift();
             dirEntry.getDirectory(name, { create: true }, dirEntry => {
@@ -89,11 +95,10 @@ const Launcher = {
             }, callback);
         };
 
-        const localPath = dir.replace(this.appStorage, '').split('/').filter(s => !!s);
-        localPath.pop(); // pop file name
+        const localPath = dir.replace(basePath, '').split('/').filter(s => !!s);
 
         if (localPath.length) {
-            window.resolveLocalFileSystemURL(this.appStorage, dirEntry => {
+            window.resolveLocalFileSystemURL(basePath, dirEntry => {
                 createDir(dirEntry, localPath, callback);
             }, callback);
         } else {
@@ -109,21 +114,28 @@ const Launcher = {
             file: parts.join('/')
         };
     },
+    joinPath: function(dir, fileName) {
+        return [dir, fileName].join('/');
+    },
     createFsWatcher: function(path) {
         return null; // not in android with content provider
     },
+    // ensureRunnable: function(path) { },
     preventExit: function(e) {
         e.returnValue = false;
         return false;
     },
     exit: function() {
-        // skip
+        this.hideApp();
+    },
+    requestExit: function() {
+        // skip in cordova
     },
     requestRestart: function() {
         window.location.reload();
     },
     cancelRestart: function() {
-        // skip
+        // skip in cordova
     },
     setClipboardText: function(text) {
         return document.execCommand('copy');
@@ -143,36 +155,35 @@ const Launcher = {
     updaterEnabled: function() {
         return false;
     },
+    // getMainWindow: function() { },
     resolveProxy: function(url, callback) {
-        // TODO
+        // skip in cordova
     },
     openWindow: function(opts) {
-        // skip
+        // skip in cordova
     },
     hideApp: function() { // home button
         // TODO
     },
     isAppFocused: function() {
-        return false; // skip
+        return false; // skip in cordova
     },
     showMainWindow: function() {
-         // skip
+         // skip in cordova
     },
-
+    // spawn: function(config) { },
     openFileChooser: function(callback, button) {
         const onFileSelected = function(selected) {
             window.resolveLocalFileSystemURL(selected.uri, fileEntry => {
                 fileEntry.file(file => {
                     file.path = file.localURL;
                     file.name = selected.name;
-                    callback(file);
+                    callback(null, file);
                 });
             });
         };
 
-        window.cordova.exec(onFileSelected, e => {
-            // TODO logging
-        }, 'FileChooser', 'choose');
+        window.cordova.exec(onFileSelected, callback, 'FileChooser', 'choose');
     },
 
     fingerprints: {
