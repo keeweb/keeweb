@@ -78,6 +78,14 @@
         <input type="checkbox" class="settings__input input-base settings__general-colorful-icons" id="settings__general-colorful-icons" {{#if colorfulIcons}}checked{{/if}} />
         <label for="settings__general-colorful-icons">{{res 'setGenColorfulIcons'}}</label>
     </div>
+    <div>
+        <label for="settings__general-titlebar-style">{{res 'setGenTitlebarStyle'}}:</label>
+        <select class="settings__general-titlebar-style settings__select input-base" id="settings__general-titlebar-style">
+            <option value="0" {{#ifeq titlebarStyle 0}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleDefault'}}</option>
+            <option value="1" {{#ifeq titlebarStyle 1}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHidden'}}</option>
+            <option value="2" {{#ifeq titlebarStyle 2}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHiddenInset'}}</option>
+        </select>
+    </div>
 
     <h2>{{res 'setGenFunction'}}</h2>
     <div>
