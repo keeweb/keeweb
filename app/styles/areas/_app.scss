@@ -23,6 +23,9 @@
         display: none;
       }
     }
+    &.macos {
+      padding-top: 40px;
+    }
   }
 
   &__list-wrap {
