@@ -21,6 +21,7 @@
     width: 8px;
     border-radius: 3px;
     pointer-events: auto;
+    -webkit-app-region: no-drag;
   }
 }
 
