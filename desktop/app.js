@@ -141,6 +141,12 @@ function createMainWindow() {
     mainWindow.on('minimize', () => {
         emitBackboneEvent('launcher-minimize');
     });
+    mainWindow.on('leave-full-screen', () => {
+        emitBackboneEvent('leave-full-screen');
+    });
+    mainWindow.on('enter-full-screen', () => {
+        emitBackboneEvent('enter-full-screen');
+    });
     restoreMainWindowPosition();
 }
 
