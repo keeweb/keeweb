@@ -82,10 +82,8 @@ const SettingsGeneralView = Backbone.View.extend({
         const updateFound = UpdateModel.instance.get('updateStatus') === 'found';
         const updateManual = UpdateModel.instance.get('updateManual');
         const storageProviders = this.getStorageProviders();
-        const platform = (typeof process !== 'undefined') ? process.platform : 'web';
 
         this.renderTemplate({
-            platform: platform,
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
             locales: this.allLocales,
@@ -117,6 +115,7 @@ const SettingsGeneralView = Backbone.View.extend({
             updateManual: updateManual,
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
+            supportsTitleBarStyles: FeatureDetector.supportsTitleBarStyles,
             titlebarStyle: AppSettingsModel.instance.get('titlebarStyle'),
             storageProviders: storageProviders
         });

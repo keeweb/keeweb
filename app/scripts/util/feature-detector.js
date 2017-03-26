@@ -35,6 +35,9 @@ const FeatureDetector = {
     },
     canCopyReadonlyInput: function() {
         return !(/CriOS/i.test(navigator.userAgent));
+    },
+    supportsTitleBarStyles: function () {
+        return this.isMac;
     }
 };
 

@@ -64,7 +64,7 @@
             <option value="2" {{#ifeq fontSize 2}}selected{{/ifeq}}>{{res 'setGenFontSizeLargest'}}</option>
         </select>
     </div>
-    {{#ifeq platform 'darwin'}}
+    {{#if supportsTitleBarStyles}}
     <div>
       <label for="settings__general-titlebar-style">{{res 'setGenTitlebarStyle'}}:</label>
       <select class="settings__general-titlebar-style settings__select input-base" id="settings__general-titlebar-style">
@@ -73,7 +73,7 @@
         <option value="hidden-inset" {{#ifeq titlebarStyle 'hidden-inset'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHiddenInset'}}</option>
       </select>
     </div>
-    {{/ifeq}}
+    {{/if}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" {{#if expandGroups}}checked{{/if}} />
         <label for="settings__general-expand">{{res 'setGenShowSubgroups'}}</label>
