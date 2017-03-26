@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.4.1 (TBD)
+##### v1.4.1 (2017-03-26)
 `+` fix #544: read files with empty binaries  
 `+` fix #555: keyfile selection issue  
 
