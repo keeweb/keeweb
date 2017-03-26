@@ -82,7 +82,10 @@ const SettingsGeneralView = Backbone.View.extend({
         const updateFound = UpdateModel.instance.get('updateStatus') === 'found';
         const updateManual = UpdateModel.instance.get('updateManual');
         const storageProviders = this.getStorageProviders();
+        const platform = (typeof process !== 'undefined') ? process.platform : 'web';
+
         this.renderTemplate({
+            platform: platform,
             themes: this.allThemes,
             activeTheme: AppSettingsModel.instance.get('theme'),
             locales: this.allLocales,
