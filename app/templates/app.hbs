@@ -1,5 +1,6 @@
-<div class="app">
+<div class="app{{#ifeq titlebarStyle 'hidden-inset'}} draggable{{/ifeq}}">
     {{#if beta}}<div class="app__beta"><i class="fa fa-exclamation-triangle"></i> {{res 'appBeta'}}</div>{{/if}}
+    {{#ifeq titlebarStyle 'hidden'}}<div class="app__titlebar-drag"></div>{{/ifeq}}
     <div class="app__body">
         <div class="app__menu titlebar-style-{{titlebarStyle}}"></div>
         <div class="app__menu-drag"></div>

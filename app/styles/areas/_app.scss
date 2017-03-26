@@ -5,6 +5,10 @@
   @include flex-direction(column);
   @include justify-content(flex-start);
 
+  &.draggable {
+    -webkit-app-region: drag;
+  }
+
   &__body {
     @include flex(1);
     @include display(flex);
@@ -12,6 +16,15 @@
     @include flex-direction(row);
     @include justify-content(flex-start);
     overflow: hidden;
+  }
+
+  &__titlebar-drag {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    top: 0;
+    right: 0;
+    -webkit-app-region: drag;
   }
 
   &__menu {
