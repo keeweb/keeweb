@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.4.1 (2017-03-26)
+`+` fix #544: read files with empty binaries  
+`+` fix #555: keyfile selection issue  
+
 ##### v1.4.0 (2017-02-04)
 KDBX4 format support and minor improvements  
 `+` password generator usability improvements  
