@@ -23,7 +23,10 @@
         display: none;
       }
     }
-    &.macos {
+    &.titlebar-style-hidden {
+      padding-top: 20px;
+    }
+    &.titlebar-style-hidden-inset {
       padding-top: 40px;
     }
   }

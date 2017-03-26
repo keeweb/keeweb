@@ -39,8 +39,6 @@ const AppView = Backbone.View.extend({
 
     views: null,
 
-    isMacOS: false,
-
     initialize: function () {
         this.views = {};
         this.views.menu = new MenuView({ model: this.model.menu });
@@ -83,8 +81,6 @@ const AppView = Backbone.View.extend({
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
-        this.isMacOS = (typeof process !== 'undefined') ? (process.platform === 'darwin') : false;
-
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
         window.onblur = this.windowBlur.bind(this);
@@ -99,7 +95,7 @@ const AppView = Backbone.View.extend({
     render: function () {
         this.$el.html(this.template({
             beta: this.model.isBeta,
-            macos: this.isMacOS
+            titlebarStyle: this.model.settings.get('titlebarStyle')
         }));
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();

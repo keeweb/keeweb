@@ -1,7 +1,7 @@
 <div class="app">
     {{#if beta}}<div class="app__beta"><i class="fa fa-exclamation-triangle"></i> {{res 'appBeta'}}</div>{{/if}}
     <div class="app__body">
-        <div class="app__menu {{#if macos}}macos{{/if}}"></div>
+        <div class="app__menu titlebar-style-{{titlebarStyle}}"></div>
         <div class="app__menu-drag"></div>
         <div class="app__list-wrap">
             <div class="app__list"></div>
