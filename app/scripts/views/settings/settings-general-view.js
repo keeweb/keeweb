@@ -212,7 +212,7 @@ const SettingsGeneralView = Backbone.View.extend({
     },
 
     changeTitlebarStyle: function(e) {
-        const titlebarStyle = +e.target.value;
+        const titlebarStyle = e.target.value;
         AppSettingsModel.instance.set('titlebarStyle', titlebarStyle);
     },
 
