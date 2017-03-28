@@ -138,6 +138,9 @@ function createMainWindow() {
     mainWindow.on('minimize', () => {
         emitBackboneEvent('launcher-minimize');
     });
+    mainWindow.on('hide', () => {
+        emitBackboneEvent('launcher-minimize');
+    });
     restoreMainWindowPosition();
 }
 
