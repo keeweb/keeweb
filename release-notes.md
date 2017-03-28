@@ -7,6 +7,8 @@ Release notes
 `+` entry auto-type context menu  
 `+` `kw.require` now provides access to modules  
 `+` showOnlyFilesFromConfig config option  
+`+` mac os window style options  
+`+` lock on hide mac os hide  
 
 ##### v1.4.1 (2017-03-26)
 `+` fix #544: read files with empty binaries  
