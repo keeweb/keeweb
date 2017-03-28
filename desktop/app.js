@@ -155,6 +155,9 @@ function createMainWindow() {
     mainWindow.on('enter-full-screen', () => {
         emitBackboneEvent('enter-full-screen');
     });
+    mainWindow.on('hide', () => {
+        emitBackboneEvent('launcher-minimize');
+    });
     restoreMainWindowPosition();
 }
 
