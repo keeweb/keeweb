@@ -10,6 +10,7 @@ fieldset {
 input {
   line-height: normal;
   color: inherit;
+  -webkit-app-region: no-drag;
 }
 
 input,

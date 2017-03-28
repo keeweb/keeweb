@@ -1,6 +1,7 @@
 @mixin area-selectable($border: false) {
   cursor: pointer;
   border-radius: 0;
+  -webkit-app-region: no-drag;
   @include th {
     @if ($border) {
       border-#{$border}: selected-transparent-border();
@@ -20,6 +21,7 @@
 
 @mixin area-selected($border) {
   cursor: default;
+  -webkit-app-region: no-drag;
   @include th {
     border-#{$border}: selected-border();
     background-color: secondary-background-color();
