@@ -36,7 +36,7 @@
         display: none;
       }
     }
-    transition: padding-top 0.25s;
+    transition: padding-top 150ms;
     &.titlebar-style-hidden {
       padding-top: 24px;
     }
