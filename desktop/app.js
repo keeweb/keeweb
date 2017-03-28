@@ -110,7 +110,12 @@ function setAppOptions() {
 }
 
 function createMainWindow() {
-    const titlebarStyle = JSON.parse(fs.readFileSync(appSettingsFileName, 'utf8')).titlebarStyle;
+    let titlebarStyle = 'default'; // predefined value  may not be needed
+    try {
+      titlebarStyle = JSON.parse(fs.readFileSync(appSettingsFileName, 'utf8')).titlebarStyle;
+    } catch (e) {
+      if (e.code !== 'ENOENT') throw err;
+    }
     mainWindow = new electron.BrowserWindow({
         show: false,
         width: 1000, height: 700, minWidth: 700, minHeight: 400,
