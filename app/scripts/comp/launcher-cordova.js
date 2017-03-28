@@ -15,9 +15,7 @@ const Launcher = {
     },
     devTools: false,
     // openDevTools: function() { },
-    getSaveFileName: function(defaultPath, callback) {
-        // Not in cordova
-    },
+    getSaveFileName: function(defaultPath, callback) { /* skip in cordova */ },
     getDataPath: function() {
         const storagePath = window.cordova.file.externalDataDirectory;
         return [storagePath].concat(Array.from(arguments)).filter(s => !!s);
@@ -128,15 +126,11 @@ const Launcher = {
     exit: function() {
         this.hideApp();
     },
-    requestExit: function() {
-        // skip in cordova
-    },
+    requestExit: function() { /* skip in cordova */ },
     requestRestart: function() {
         window.location.reload();
     },
-    cancelRestart: function() {
-        // skip in cordova
-    },
+    cancelRestart: function() { /* skip in cordova */ },
     setClipboardText: function(text) {
         return document.execCommand('copy');
     },
@@ -150,27 +144,19 @@ const Launcher = {
         this.hideApp();
     },
     canMinimize: function() {
-        return true;
+        return false;
     },
     updaterEnabled: function() {
         return false;
     },
     // getMainWindow: function() { },
-    resolveProxy: function(url, callback) {
-        // skip in cordova
-    },
-    openWindow: function(opts) {
-        // skip in cordova
-    },
-    hideApp: function() { // home button
-        // TODO
-    },
+    resolveProxy: function(url, callback) { /* skip in cordova */ },
+    openWindow: function(opts) { /* skip in cordova */ },
+    hideApp: function() { /* skip in cordova */ },
     isAppFocused: function() {
-        return false; // skip in cordova
+        return false; /* skip in cordova */
     },
-    showMainWindow: function() {
-         // skip in cordova
-    },
+    showMainWindow: function() { /* skip in cordova */ },
     // spawn: function(config) { },
     openFileChooser: function(callback, button) {
         const onFileSelected = function(selected) {
