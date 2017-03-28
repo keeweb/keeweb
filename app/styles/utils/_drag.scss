@@ -1,10 +1,12 @@
 .drag-mask {
   @include size(100%);
   @include position(absolute, 0 null null 0);
+  -webkit-app-region: no-drag;
 }
 
 @mixin drag-handle {
   position: relative;
+  -webkit-app-region: no-drag;
   transition: background-color $slow-transition-out;
   @include th { background: light-border-color(); }
   &:hover, &.dragging {

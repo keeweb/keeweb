@@ -17,6 +17,7 @@ select {
   display: block;
   font-family: $base-font-family;
   font-size: 1rem;
+  -webkit-app-region: no-drag;
 }
 
 label {

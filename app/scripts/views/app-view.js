@@ -39,6 +39,8 @@ const AppView = Backbone.View.extend({
 
     views: null,
 
+    titlebarStyle: 'default',
+
     initialize: function () {
         this.views = {};
         this.views.menu = new MenuView({ model: this.model.menu });
@@ -53,6 +55,8 @@ const AppView = Backbone.View.extend({
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
+
+        this.titlebarStyle = this.model.settings.get('titlebarStyle');
 
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
@@ -81,6 +85,9 @@ const AppView = Backbone.View.extend({
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
+        this.listenTo(Backbone, 'enter-full-screen', this.enterFullScreen);
+        this.listenTo(Backbone, 'leave-full-screen', this.leaveFullScreen);
+
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
         window.onblur = this.windowBlur.bind(this);
@@ -102,7 +109,8 @@ const AppView = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template({
-            beta: this.model.isBeta
+            beta: this.model.isBeta,
+            titlebarStyle: this.titlebarStyle
         }));
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
@@ -354,6 +362,14 @@ const AppView = Backbone.View.extend({
         if (e.target === window) {
             Backbone.trigger('page-blur');
         }
+    },
+
+    enterFullScreen: function () {
+        this.$el.addClass('fullscreen');
+    },
+
+    leaveFullScreen: function () {
+        this.$el.removeClass('fullscreen');
     },
 
     escPressed: function() {
