@@ -94,21 +94,6 @@ const OpenView = Backbone.View.extend({
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
-
-        if (!this.versionWarningShown) {
-            // TODO: remove in v1.5
-            this.versionWarningShown = AppSettingsModel.instance.get('versionWarningShown');
-            if (!this.versionWarningShown) {
-                AppSettingsModel.instance.set('versionWarningShown', true);
-                this.versionWarningShown = true;
-                if (this.model.fileInfos.length) {
-                    Alerts.info({
-                        header: 'KeeWeb updated',
-                        body: 'There was a major update of KeeWeb. Please make sure you have a backup of your password files!'
-                    });
-                }
-            }
-        }
         return this;
     },
 
