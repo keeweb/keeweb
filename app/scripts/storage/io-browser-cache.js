@@ -8,8 +8,6 @@ const IoBrowserCache = function(config) {
     this.logger = config.logger;
 };
 
-IoBrowserCache.enabled = !!idb;
-
 _.extend(IoBrowserCache.prototype, {
     initDb(callback) {
         if (this.db) {

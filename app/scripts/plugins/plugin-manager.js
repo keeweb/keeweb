@@ -67,7 +67,7 @@ const PluginManager = Backbone.Model.extend({
         const plugin = new Plugin(desc.manifest, desc.url, true);
         return plugin.install()
             .then(() => plugin)
-            .catch(() => undefined);
+            .catch(() => plugin);
     },
 
     saveState() {

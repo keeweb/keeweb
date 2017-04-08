@@ -18,12 +18,20 @@ const io = new IoCache({
 const Plugin = Backbone.Model.extend({
     idAttribute: 'name',
 
+    STATUS_ACTIVE: 'active',
+    STATUS_INACTIVE: 'inactive',
+    STATUS_INSTALLING: 'installing',
+    STATUS_UNINSTALLING: 'uninstalling',
+    STATUS_INVALID: 'invalid',
+    STATUS_ERROR: 'error',
+
     defaults: {
         name: '',
         manifest: '',
         url: '',
         status: 'inactive',
-        installTime: null
+        installTime: null,
+        installError: null
     },
 
     resources: null,
@@ -41,16 +49,25 @@ const Plugin = Backbone.Model.extend({
 
     install() {
         const ts = this.logger.ts();
-        this.set('status', 'installing');
+        this.set('status', this.STATUS_INSTALLING);
         return Promise.resolve().then(() => {
             const error = this.validateManifest();
             if (error) {
                 this.logger.error('Manifest validation error', error);
-                this.set('status', 'invalid');
+                this.set('status', this.STATUS_INVALID);
                 throw 'Plugin validation error: ' + error;
             }
             return this.installWithManifest()
-                .then(() => this.set('installTime', this.logger.ts() - ts));
+                .then(() => this.set('installTime', this.logger.ts() - ts))
+                .catch(err => {
+                    this.logger.error('Error installing plugin', err);
+                    this.set({
+                        status: this.STATUS_ERROR,
+                        installError: err,
+                        installTime: this.logger.ts() - ts
+                    });
+                    throw err;
+                });
         });
     },
 
@@ -114,6 +131,10 @@ const Plugin = Backbone.Model.extend({
         }
     },
 
+    getStorageResourcePath(res) {
+        return this.id + '_' + this.getResourcePath(res);
+    },
+
     loadResource(type) {
         let res;
         if (this.get('local')) {
@@ -156,7 +177,7 @@ const Plugin = Backbone.Model.extend({
 
     loadLocalResource(type) {
         return new Promise((resolve, reject) => {
-            const storageKey = this.id + '/' + this.getResourcePath(type);
+            const storageKey = this.getStorageResourcePath(type);
             io.load(storageKey, (err, data) => {
                 if (err) {
                     reject(err);
@@ -182,7 +203,7 @@ const Plugin = Backbone.Model.extend({
         }
         return Promise.all(promises)
             .then(() => {
-                this.set('status', 'active');
+                this.set('status', this.STATUS_ACTIVE);
             })
             .catch(e => {
                 this.logger.info('Install error', e);
@@ -204,7 +225,7 @@ const Plugin = Backbone.Model.extend({
 
     saveResource(key, value) {
         return new Promise((resolve, reject) => {
-            const storageKey = this.id + '/' + this.getResourcePath(key);
+            const storageKey = this.getStorageResourcePath(key);
             io.save(storageKey, value, e => {
                 if (e) {
                     reject(e);
@@ -225,7 +246,7 @@ const Plugin = Backbone.Model.extend({
 
     deleteResource(key) {
         return new Promise(resolve => {
-            const storageKey = this.id + '/' + this.getResourcePath(key);
+            const storageKey = this.getStorageResourcePath(key);
             io.remove(storageKey, () => resolve());
         });
     },
@@ -321,7 +342,7 @@ const Plugin = Backbone.Model.extend({
     uninstall() {
         const manifest = this.get('manifest');
         this.logger.info('Uninstalling plugin with resources', Object.keys(manifest.resources).join(', '));
-        this.set('status', 'uninstalling');
+        this.set('status', this.STATUS_UNINSTALLING);
         const ts = this.logger.ts();
         return Promise.resolve().then(() => {
             if (manifest.resources.css) {
@@ -342,7 +363,7 @@ const Plugin = Backbone.Model.extend({
                 this.removeTheme(manifest.theme);
             }
             return this.deleteResources().then(() => {
-                this.set('status', 'inactive');
+                this.set('status', this.STATUS_INACTIVE);
                 this.logger.info('Uninstall complete', this.logger.ts(ts));
             });
         });

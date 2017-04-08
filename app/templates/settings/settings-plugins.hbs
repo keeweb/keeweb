@@ -16,6 +16,7 @@
                 <a href="{{plugin.manifest.url}}" target="_blank">{{plugin.manifest.url}}</a>, v{{plugin.manifest.version}},
                 {{#res 'setPlCreatedBy'}}<a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}}){{/res}},
                 {{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}
+                {{#ifeq plugin.status 'error'}}<span class="error-color">&nbsp;({{res 'setPlLoadError'}}){{/ifeq}}
             </div>
             <div class="settings__plugins-plugin-buttons">
                 <button class="settings_plugins-uninstall-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlUninstallBtn'}}</button>

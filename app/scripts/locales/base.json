@@ -462,6 +462,7 @@
   "setPlLoc": "language",
   "setPlCreatedBy": "created by {}",
   "setPlLoadTime": "took {} to load",
+  "setPlLoadError": "error loading plugin",
 
   "setAboutTitle": "About",
   "setAboutBuilt": "This app is built with these awesome tools",

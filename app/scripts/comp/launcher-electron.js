@@ -56,6 +56,9 @@ const Launcher = {
     getWorkDirPath: function(fileName) {
         return this.req('path').join(process.cwd(), fileName || '');
     },
+    joinPath: function(...parts) {
+        return this.req('path').join(...parts);
+    },
     writeFile: function(path, data, callback) {
         this.req('fs').writeFile(path, new window.Buffer(data), callback);
     },
