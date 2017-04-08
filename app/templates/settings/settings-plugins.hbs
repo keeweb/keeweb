@@ -17,9 +17,13 @@
                 {{#res 'setPlCreatedBy'}}<a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}}){{/res}},
                 {{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}
                 {{#ifeq plugin.status 'error'}}<span class="error-color">&nbsp;({{res 'setPlLoadError'}}){{/ifeq}}
+                {{#if plugin.updateError}}<div class="error-color settings__plugins-upd-error">{{res 'setPlUpdateError'}}: <pre>{{plugin.updateError}}</pre></div>{{/if}}
             </div>
             <div class="settings__plugins-plugin-buttons">
-                <button class="settings_plugins-uninstall-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlUninstallBtn'}}</button>
+                <button class="settings_plugins-uninstall-btn btn-error" data-plugin="{{plugin.id}}">{{res 'setPlUninstallBtn'}}</button>
+                <button class="settings_plugins-update-btn btn-silent" data-plugin="{{plugin.id}}">
+                    {{~#ifeq plugin.id ../updating}}{{res 'setPlUpdating'}}&hellip;{{else}}{{res 'setPlUpdateBtn'}}{{/ifeq~}}
+                </button>
                 {{#if plugin.manifest.locale}}
                 <button class="settings_plugins-use-locale-btn btn-silent" data-locale="{{plugin.manifest.locale.name}}">{{res 'setPlLocaleBtn'}}</button>
                 {{/if}}

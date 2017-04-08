@@ -9,12 +9,13 @@ const SettingsPluginsView = Backbone.View.extend({
     events: {
         'click .settings_plugins-install-btn': 'installClick',
         'click .settings_plugins-uninstall-btn': 'uninstallClick',
+        'click .settings_plugins-update-btn': 'updateClick',
         'click .settings_plugins-use-locale-btn': 'useLocaleClick',
         'click .settings_plugins-use-theme-btn': 'useThemeClick'
     },
 
     initialize() {
-        this.listenTo(PluginManager, 'change:installing change:uninstalling', this.render.bind(this));
+        this.listenTo(PluginManager, 'change:installing change:uninstalling change:updating', this.render.bind(this));
     },
 
     render() {
@@ -24,10 +25,12 @@ const SettingsPluginsView = Backbone.View.extend({
                 id: plugin.id,
                 manifest: plugin.get('manifest'),
                 status: plugin.get('status'),
-                installTime: Math.round(plugin.get('installTime'))
+                installTime: Math.round(plugin.get('installTime')),
+                updateError: plugin.get('updateError')
             })),
             lastInstallUrl: PluginManager.get('installing') || (lastInstall.error ? lastInstall.url : ''),
-            lastInstallError: lastInstall.error
+            lastInstallError: lastInstall.error,
+            updating: PluginManager.get('updating')
         });
         return this;
     },
@@ -63,7 +66,18 @@ const SettingsPluginsView = Backbone.View.extend({
 
     uninstallClick(e) {
         const pluginId = $(e.target).data('plugin');
+        if (PluginManager.get('updating') === pluginId || PluginManager.get('uninstalling') === pluginId) {
+            return;
+        }
         PluginManager.uninstall(pluginId);
+    },
+
+    updateClick(e) {
+        const pluginId = $(e.target).data('plugin');
+        if (PluginManager.get('updating') === pluginId || PluginManager.get('uninstalling') === pluginId) {
+            return;
+        }
+        PluginManager.update(pluginId);
     },
 
     useLocaleClick(e) {

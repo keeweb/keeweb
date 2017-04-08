@@ -455,6 +455,8 @@
   "setPlInstallBtn": "Install",
   "setPlInstallBtnProgress": "Installing",
   "setPlUninstallBtn": "Uninstall",
+  "setPlUpdateBtn": "Update",
+  "setPlUpdating": "Updating",
   "setPlLocaleBtn": "Switch to this language",
   "setPlThemeBtn": "Switch to this theme",
   "setPlJs": "code",
@@ -463,6 +465,7 @@
   "setPlCreatedBy": "created by {}",
   "setPlLoadTime": "took {} to load",
   "setPlLoadError": "error loading plugin",
+  "setPlUpdateError": "There was an error during update",
 
   "setAboutTitle": "About",
   "setAboutBuilt": "This app is built with these awesome tools",

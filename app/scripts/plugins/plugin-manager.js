@@ -9,6 +9,7 @@ const PluginManager = Backbone.Model.extend({
         state: '',
         installing: null,
         uninstalling: null,
+        updating: null,
         lastInstall: null,
         plugins: new PluginCollection()
     },
@@ -33,15 +34,15 @@ const PluginManager = Backbone.Model.extend({
     install(url) {
         const lastInstall = { url, dt: new Date() };
         this.set({ installing: url, lastInstall: lastInstall });
-        return Plugin.loadFromUrl(url).then(plugin =>
-            this.uninstall(plugin.id).then(() => {
+        return Plugin.loadFromUrl(url).then(plugin => {
+            return this.uninstall(plugin.id).then(() => {
                 return plugin.install().then(() => {
                     this.get('plugins').push(plugin);
                     this.set({ installing: null });
                     this.saveState();
                 });
-            })
-        ).catch(e => {
+            });
+        }).catch(e => {
             this.set({ installing: null, lastInstall: _.extend(lastInstall, { error: e.toString() }) });
             throw e;
         });
@@ -61,8 +62,34 @@ const PluginManager = Backbone.Model.extend({
         });
     },
 
+    update(id) {
+        const plugins = this.get('plugins');
+        const oldPlugin = plugins.get(id);
+        if (!oldPlugin) {
+            return Promise.reject();
+        }
+        const url = oldPlugin.get('url');
+        this.set({ updating: id });
+        return Plugin.loadFromUrl(url).then(newPlugin => {
+            return oldPlugin.update(newPlugin).then(() => {
+                this.set({ updating: null });
+                this.saveState();
+            }).catch(e => {
+                this.set('updating', null);
+                throw e;
+            });
+        }).catch(e => {
+            this.set({ updating: null });
+            throw e;
+        });
+    },
+
     loadPlugin(desc) {
-        const plugin = new Plugin(desc.manifest, desc.url, true);
+        const plugin = new Plugin({
+            manifest: desc.manifest,
+            url: desc.url,
+            local: true
+        });
         return plugin.install()
             .then(() => plugin)
             .catch(() => plugin);

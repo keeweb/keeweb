@@ -20,6 +20,7 @@ const Plugin = Backbone.Model.extend({
     STATUS_INACTIVE: 'inactive',
     STATUS_INSTALLING: 'installing',
     STATUS_UNINSTALLING: 'uninstalling',
+    STATUS_UPDATING: 'updating',
     STATUS_INVALID: 'invalid',
     STATUS_ERROR: 'error',
 
@@ -29,19 +30,16 @@ const Plugin = Backbone.Model.extend({
         url: '',
         status: 'inactive',
         installTime: null,
-        installError: null
+        installError: null,
+        updateError: null
     },
 
     resources: null,
+    module: null,
 
-    initialize(manifest, url, local) {
-        const name = manifest.name;
-        this.set({
-            name,
-            manifest,
-            url,
-            local
-        });
+    initialize(options) {
+        const name = options.manifest.name;
+        this.set({ name });
         this.logger = new Logger(`plugin:${name}`);
     },
 
@@ -62,7 +60,8 @@ const Plugin = Backbone.Model.extend({
                     this.set({
                         status: this.STATUS_ERROR,
                         installError: err,
-                        installTime: this.logger.ts() - ts
+                        installTime: this.logger.ts() - ts,
+                        updateError: null
                     });
                     throw err;
                 });
@@ -98,6 +97,16 @@ const Plugin = Backbone.Model.extend({
         if (manifest.resources.loc &&
             (!manifest.locale || !manifest.locale.title || !/^[a-z]{2}(-[A-Z]{2})?$/.test(manifest.locale.name))) {
             return 'Bad plugin locale';
+        }
+    },
+
+    validateUpdatedManifest(newManifest) {
+        const manifest = this.get('manifest');
+        if (manifest.name !== newManifest.name) {
+            return 'Plugin name mismatch';
+        }
+        if (manifest.publicKey !== newManifest.publicKey) {
+            return 'Public key mismatch';
         }
     },
 
@@ -187,7 +196,7 @@ const Plugin = Backbone.Model.extend({
     },
 
     installWithResources() {
-        this.logger.info('Installing loaded plugin');
+        this.logger.info('Installing plugin code');
         const manifest = this.get('manifest');
         const promises = [];
         if (this.resources.css) {
@@ -337,6 +346,14 @@ const Plugin = Backbone.Model.extend({
         delete BaseLocale[this.getThemeLocaleKey(theme.name)];
     },
 
+    uninstallPluginCode() {
+        try {
+            this.module.exports.uninstall();
+        } catch (e) {
+            this.logger.error('Plugin uninstall method returned an error', e);
+        }
+    },
+
     uninstall() {
         const manifest = this.get('manifest');
         this.logger.info('Uninstalling plugin with resources', Object.keys(manifest.resources).join(', '));
@@ -347,11 +364,7 @@ const Plugin = Backbone.Model.extend({
                 this.removeElement('plugin-css-' + this.get('name'));
             }
             if (manifest.resources.js) {
-                try {
-                    this.module.exports.uninstall();
-                } catch (e) {
-                    this.logger.error('Plugin uninstall method returned an error', e);
-                }
+                this.uninstallPluginCode();
                 this.removeElement('plugin-js-' + this.get('name'));
             }
             if (manifest.resources.loc) {
@@ -364,6 +377,54 @@ const Plugin = Backbone.Model.extend({
                 this.set('status', this.STATUS_INACTIVE);
                 this.logger.info('Uninstall complete', this.logger.ts(ts));
             });
+        });
+    },
+
+    update(newPlugin) {
+        const ts = this.logger.ts();
+        const prevStatus = this.get('status');
+        this.set('status', this.STATUS_UPDATING);
+        return Promise.resolve().then(() => {
+            const manifest = this.get('manifest');
+            const newManifest = newPlugin.get('manifest');
+            if (manifest.version === newManifest.version) {
+                this.set({ status: prevStatus, updateError: null });
+                this.logger.info(`v${manifest.version} is the latest plugin version`);
+                return;
+            }
+            this.logger.info(`Updating plugin from v${manifest.version} to v${newManifest.version}`);
+            const error = newPlugin.validateManifest() || this.validateUpdatedManifest(newManifest);
+            if (error) {
+                this.logger.error('Manifest validation error', error);
+                this.set({ status: prevStatus, updateError: error });
+                throw 'Plugin validation error: ' + error;
+            }
+            this.uninstallPluginCode();
+            return newPlugin.installWithManifest()
+                .then(() => {
+                    this.module = newPlugin.module;
+                    this.resources = newPlugin.resources;
+                    this.set({
+                        status: this.STATUS_ACTIVE,
+                        manifest: newManifest,
+                        installTime: this.logger.ts() - ts,
+                        installError: null,
+                        updateError: null
+                    });
+                    this.logger.info('Update complete', this.logger.ts(ts));
+                })
+                .catch(err => {
+                    this.logger.error('Error updating plugin', err);
+                    if (prevStatus === this.STATUS_ACTIVE) {
+                        this.logger.info('Activating previous version');
+                        this.installWithResources();
+                    }
+                    this.set({
+                        status: prevStatus,
+                        updateError: err
+                    });
+                    throw err;
+                });
         });
     }
 });
@@ -387,7 +448,9 @@ Plugin.loadFromUrl = function(url) {
                 throw 'Failed to parse manifest';
             }
             commonLogger.debug('Loaded manifest', manifest);
-            return new Plugin(manifest, url);
+            return new Plugin({
+                manifest, url
+            });
         });
 };
 
