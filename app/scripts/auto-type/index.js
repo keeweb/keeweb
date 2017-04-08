@@ -8,6 +8,7 @@ const AutoTypeSelectView = require('../views/auto-type/auto-type-select-view');
 const Logger = require('../util/logger');
 const Locale = require('../util/locale');
 const Timeouts = require('../const/timeouts');
+const AppSettingsModel = require('../models/app-settings-model');
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = localStorage.autoTypeDebug;
@@ -142,6 +143,10 @@ const AutoType = {
             setTimeout(callback, Timeouts.AutoTypeAfterHide);
         } else {
             callback();
+        }
+
+        if (AppSettingsModel.instance.get('lockOnAutoType')) {
+            Backbone.trigger('lock-workspace');
         }
     },
 

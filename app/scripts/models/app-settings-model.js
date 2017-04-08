@@ -20,6 +20,7 @@ const AppSettingsModel = Backbone.Model.extend({
         titlebarStyle: 'default',
         lockOnMinimize: true,
         lockOnCopy: false,
+        lockOnAutoType: false,
         helpTipCopyShown: false,
         skipOpenLocalWarn: false,
         hideEmptyFields: false,
