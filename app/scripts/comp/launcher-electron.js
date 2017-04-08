@@ -76,7 +76,7 @@ const Launcher = {
         this.req('fs').stat(path, (err, stats) => callback(stats, err));
     },
     statFileSync: function(path) {
-        this.req('fs').statSync(path);
+        return this.req('fs').statSync(path);
     },
     mkdir: function(dir, callback) {
         const fs = this.req('fs');
