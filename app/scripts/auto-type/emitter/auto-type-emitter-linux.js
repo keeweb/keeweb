@@ -1,5 +1,3 @@
-'use strict';
-
 const Launcher = require('../../comp/launcher');
 const Locale = require('../../util/locale');
 

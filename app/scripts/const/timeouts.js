@@ -1,5 +1,3 @@
-'use strict';
-
 const Timeouts = {
     AutoSync: 30 * 1000 * 60,
     CopyTip: 1500,

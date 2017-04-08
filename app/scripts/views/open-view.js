@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const kdbxweb = require('kdbxweb');
 const OpenConfigView = require('./open-config-view');

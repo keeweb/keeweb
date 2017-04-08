@@ -1,5 +1,3 @@
-'use strict';
-
 const kdbxweb = require('kdbxweb');
 
 const ExpectedFieldRefChars = '{REF:0@I:00000000000000000000000000000000}'.split('');

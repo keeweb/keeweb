@@ -1,5 +1,3 @@
-'use strict';
-
 const MenuItemModel = require('./menu/menu-item-model');
 const EntryModel = require('../models/entry-model');
 const IconMap = require('../const/icon-map');

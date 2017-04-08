@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const AutoTypeParser = require('./auto-type-parser');
 const AutoTypeFilter = require('./auto-type-filter');

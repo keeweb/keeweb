@@ -1,5 +1,3 @@
-'use strict';
-
 const Colors = require('../const/colors');
 
 const KnownColors = {};

@@ -1,5 +1,3 @@
-'use strict';
-
 const Launcher = require('../../comp/launcher');
 const Logger = require('../../util/logger');
 

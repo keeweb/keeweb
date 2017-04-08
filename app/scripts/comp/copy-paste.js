@@ -1,5 +1,3 @@
-'use strict';
-
 const FeatureDetector = require('../util/feature-detector');
 const Launcher = require('./launcher');
 const AppSettingsModel = require('../models/app-settings-model');

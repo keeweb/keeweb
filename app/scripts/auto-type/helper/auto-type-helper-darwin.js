@@ -1,5 +1,3 @@
-'use strict';
-
 const Launcher = require('../../comp/launcher');
 
 const ForeMostAppScript = 'tell application "System Events" to set frontApp to name of first process whose frontmost is true';

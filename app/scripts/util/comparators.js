@@ -1,5 +1,3 @@
-'use strict';
-
 const LastChar = String.fromCharCode(0xffffffff);
 
 const ciCompare = (window.Intl && window.Intl.Collator)

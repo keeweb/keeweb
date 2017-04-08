@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Logger = require('../util/logger');
 const AppSettingsModel = require('../models/app-settings-model');

@@ -1,5 +1,3 @@
-'use strict';
-
 const Level = {
     Off: 0,
     Error: 1,

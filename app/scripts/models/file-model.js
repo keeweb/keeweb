@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const GroupCollection = require('../collections/group-collection');
 const GroupModel = require('./group-model');

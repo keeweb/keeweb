@@ -1,5 +1,3 @@
-'use strict';
-
 let Launcher;
 
 if (window.process && window.process.versions && window.process.versions.electron) {

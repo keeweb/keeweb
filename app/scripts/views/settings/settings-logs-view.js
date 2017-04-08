@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Logger = require('../../util/logger');
 const Format = require('../../util/format');

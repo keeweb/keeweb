@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const MenuItemView = require('./menu-item-view');
 const Resizable = require('../../mixins/resizable');

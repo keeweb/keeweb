@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = function (grunt) {
     grunt.registerMultiTask('sign-archive', 'Signs archive with a private key', function () {
         const fs = require('fs');

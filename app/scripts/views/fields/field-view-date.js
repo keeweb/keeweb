@@ -1,5 +1,3 @@
-'use strict';
-
 const FieldViewText = require('./field-view-text');
 const Locale = require('../../util/locale');
 const Pikaday = require('pikaday');

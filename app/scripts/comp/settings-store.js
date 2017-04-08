@@ -1,5 +1,3 @@
-'use strict';
-
 const Launcher = require('./launcher');
 const StringUtil = require('../util/string-util');
 const Logger = require('../util/logger');

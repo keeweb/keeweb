@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const kdbxweb = require('kdbxweb');
 const GroupModel = require('../../models/group-model');

@@ -1,5 +1,3 @@
-'use strict';
-
 const Format = require('../util/format');
 const Locale = require('../util/locale');
 

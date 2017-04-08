@@ -1,5 +1,3 @@
-'use strict';
-
 const AutoTypeObfuscator = require('./auto-type-obfuscator');
 const AutoTypeEmitterFactory = require('./auto-type-emitter-factory');
 const Format = require('../util/format');

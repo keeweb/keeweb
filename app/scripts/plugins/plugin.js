@@ -1,5 +1,3 @@
-'use strict';
-
 const kdbxweb = require('kdbxweb');
 const Backbone = require('backbone');
 const PluginApi = require('./plugin-api');

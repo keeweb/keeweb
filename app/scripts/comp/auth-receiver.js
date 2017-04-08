@@ -1,5 +1,3 @@
-'use strict';
-
 const DropboxLink = require('./dropbox-link');
 
 const AuthReceiver = {

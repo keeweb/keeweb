@@ -1,5 +1,3 @@
-'use strict';
-
 const FieldViewText = require('./field-view-text');
 const Keys = require('../../const/keys');
 

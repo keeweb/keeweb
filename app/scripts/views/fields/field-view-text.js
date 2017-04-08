@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const FieldView = require('./field-view');
 const GeneratorView = require('../generator-view');

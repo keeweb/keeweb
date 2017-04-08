@@ -1,5 +1,3 @@
-'use strict';
-
 const StorageBase = require('./storage-base');
 
 const GDriveClientId = '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com';

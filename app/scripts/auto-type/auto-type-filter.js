@@ -1,5 +1,3 @@
-'use strict';
-
 const EntryCollection = require('../collections/entry-collection');
 
 const urlPartsRegex = /^(\w+:\/\/)?(?:www\.)?([^\/]+)\/?(.*)/;

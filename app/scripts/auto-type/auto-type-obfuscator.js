@@ -1,5 +1,3 @@
-'use strict';
-
 const Logger = require('../util/logger');
 
 const logger = new Logger('auto-type-obfuscator');

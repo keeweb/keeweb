@@ -1,5 +1,3 @@
-'use strict';
-
 const UrlUtil = {
     multiSlashRegex: /\/{2,}/g,
     lastPartRegex: /[^\/\\]+$/,

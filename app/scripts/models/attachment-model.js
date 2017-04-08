@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 
 const AttachmentModel = Backbone.Model.extend({

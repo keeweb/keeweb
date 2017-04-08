@@ -1,5 +1,3 @@
-'use strict';
-
 const AutoTypeRunner = require('./auto-type-runner');
 
 const AutoTypeParser = function(sequence) {

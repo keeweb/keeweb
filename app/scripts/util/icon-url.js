@@ -1,5 +1,3 @@
-'use strict';
-
 const kdbxweb = require('kdbxweb');
 
 const IconUrl = {

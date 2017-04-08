@@ -1,5 +1,3 @@
-'use strict';
-
 const MobileRegex = /iPhone|iPad|iPod|Android|BlackBerry|Opera Mini|IEMobile|WPDesktop|Windows Phone|webOS/i;
 const MinDesktopScreenWidth = 800;
 

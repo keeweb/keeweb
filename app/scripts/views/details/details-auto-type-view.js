@@ -1,6 +1,4 @@
 
-'use strict';
-
 const Backbone = require('backbone');
 const AutoTypeHintView = require('../auto-type-hint-view');
 const Locale = require('../../util/locale');

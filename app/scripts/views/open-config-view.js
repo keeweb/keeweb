@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Locale = require('../util/locale');
 const Keys = require('../const/keys');

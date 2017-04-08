@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const SecureInput = require('../comp/secure-input');
 const Alerts = require('../comp/alerts');

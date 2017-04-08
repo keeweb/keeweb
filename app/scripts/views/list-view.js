@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Resizable = require('../mixins/resizable');
 const Scrollable = require('../mixins/scrollable');

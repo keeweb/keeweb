@@ -1,5 +1,3 @@
-'use strict';
-
 const Handlebars = require('hbs');
 
 Handlebars.registerHelper('ifemptyoreq', function(lvalue, rvalue, options) {

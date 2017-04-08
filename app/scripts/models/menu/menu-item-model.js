@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const MenuOptionCollection = require('../../collections/menu/menu-option-collection');
 let ItemCollection;

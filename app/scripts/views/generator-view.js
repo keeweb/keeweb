@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const PasswordGenerator = require('../util/password-generator');
 const CopyPaste = require('../comp/copy-paste');

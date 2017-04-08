@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const EntryModel = require('../models/entry-model');
 const Comparators = require('../util/comparators');

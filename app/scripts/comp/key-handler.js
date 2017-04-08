@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Keys = require('../const/keys');
 const IdleTracker = require('../comp/idle-tracker');

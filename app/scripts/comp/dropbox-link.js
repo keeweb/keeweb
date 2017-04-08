@@ -1,5 +1,3 @@
-'use strict';
-
 const Dropbox = require('dropbox');
 const Alerts = require('./alerts');
 const Launcher = require('./launcher');

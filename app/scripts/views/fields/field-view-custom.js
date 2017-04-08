@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const FieldViewText = require('./field-view-text');
 const FieldView = require('./field-view');

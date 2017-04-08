@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const RuntimeInfo = require('./runtime-info');
 const Links = require('../const/links');

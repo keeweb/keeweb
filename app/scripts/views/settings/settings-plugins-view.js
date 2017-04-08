@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Locale = require('../../util/locale');
 const PluginManager = require('../../plugins/plugin-manager');

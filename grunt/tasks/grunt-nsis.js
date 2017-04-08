@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = function (grunt) {
     grunt.registerMultiTask('nsis', 'Launches NSIS installer', function () {
         const done = this.async();

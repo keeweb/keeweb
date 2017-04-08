@@ -1,5 +1,3 @@
-'use strict';
-
 const Libs = {
     backbone: require('backbone'),
     _: require('underscore'),

@@ -1,5 +1,3 @@
-'use strict';
-
 const Handlebars = require('hbs');
 const Locale = require('../util/locale');
 

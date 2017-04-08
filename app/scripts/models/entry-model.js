@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const AttachmentModel = require('./attachment-model');
 const IconMap = require('../const/icon-map');

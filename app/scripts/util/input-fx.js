@@ -1,5 +1,3 @@
-'use strict';
-
 const InputFx = {
     shake: function(el) {
         el.addClass('input-shake');

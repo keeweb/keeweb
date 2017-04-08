@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const FeatureDetector = require('../util/feature-detector');
 const baron = require('baron');

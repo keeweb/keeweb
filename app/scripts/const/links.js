@@ -1,5 +1,3 @@
-'use strict';
-
 const Links = {
     Repo: 'https://github.com/keeweb/keeweb',
     Desktop: 'https://github.com/keeweb/keeweb/releases/latest',

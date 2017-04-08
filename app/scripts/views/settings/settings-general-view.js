@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const SettingsPrvView = require('./settings-prv-view');
 const SettingsLogsView = require('./settings-logs-view');

@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Alerts = require('./alerts');
 const Locale = require('../util/locale');

@@ -1,5 +1,3 @@
-'use strict';
-
 const AppSettingsModel = require('../models/app-settings-model');
 const Locale = require('../util/locale');
 

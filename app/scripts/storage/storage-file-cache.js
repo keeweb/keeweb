@@ -1,5 +1,3 @@
-'use strict';
-
 const StorageBase = require('./storage-base');
 const Launcher = require('../comp/launcher');
 

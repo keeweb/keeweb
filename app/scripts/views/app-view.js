@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const DragView = require('../views/drag-view');
 const MenuView = require('../views/menu/menu-view');

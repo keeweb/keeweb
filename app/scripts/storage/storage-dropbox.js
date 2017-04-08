@@ -1,5 +1,3 @@
-'use strict';
-
 const StorageBase = require('./storage-base');
 const DropboxLink = require('../comp/dropbox-link');
 const Locale = require('../util/locale');
