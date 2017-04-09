@@ -214,6 +214,7 @@ const Plugin = Backbone.Model.extend({
             })
             .catch(e => {
                 this.logger.info('Install error', e);
+                this.set('status', this.STATUS_ERROR);
                 return this.uninstall().then(() => { throw e; });
             });
     },
@@ -347,10 +348,12 @@ const Plugin = Backbone.Model.extend({
     },
 
     uninstallPluginCode() {
-        try {
-            this.module.exports.uninstall();
-        } catch (e) {
-            this.logger.error('Plugin uninstall method returned an error', e);
+        if (this.get('manifest').resources.js && this.module && this.module.exports && this.module.exports.uninstall) {
+            try {
+                this.module.exports.uninstall();
+            } catch (e) {
+                this.logger.error('Plugin uninstall method returned an error', e);
+            }
         }
     },
 
@@ -417,13 +420,15 @@ const Plugin = Backbone.Model.extend({
                     this.logger.error('Error updating plugin', err);
                     if (prevStatus === this.STATUS_ACTIVE) {
                         this.logger.info('Activating previous version');
-                        this.installWithResources();
+                        return this.installWithResources()
+                            .then(() => {
+                                this.set({ updateError: err });
+                                throw err;
+                            });
+                    } else {
+                        this.set({ status: prevStatus, updateError: err });
+                        throw err;
                     }
-                    this.set({
-                        status: prevStatus,
-                        updateError: err
-                    });
-                    throw err;
                 });
         });
     }
