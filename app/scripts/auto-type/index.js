@@ -62,6 +62,10 @@ const AutoType = {
                 });
             }
         });
+
+        if (AppSettingsModel.instance.get('lockOnAutoType')) {
+            Backbone.trigger('lock-workspace');
+        }
     },
 
     run(entry, callback) {
@@ -143,10 +147,6 @@ const AutoType = {
             setTimeout(callback, Timeouts.AutoTypeAfterHide);
         } else {
             callback();
-        }
-
-        if (AppSettingsModel.instance.get('lockOnAutoType')) {
-            Backbone.trigger('lock-workspace');
         }
     },
 

@@ -146,13 +146,13 @@
                {{#if lockOnCopy}}checked{{/if}} />
         <label for="settings__general-lock-on-copy">{{res 'setGenLockCopy'}}</label>
     </div>
-
+    {{#if canAutoType}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-lock-on-auto-type" id="settings__general-lock-on-auto-type"
                {{#if lockOnAutoType}}checked{{/if}} />
         <label for="settings__general-lock-on-auto-type">{{res 'setGenLockAutoType'}}</label>
     </div>
-
+    {{/if}}
     <h2>{{res 'setGenStorage'}}</h2>
     {{#each storageProviders as |prv|}}
     <h4 class="settings__general-storage-header"><input
