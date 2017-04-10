@@ -132,7 +132,7 @@ const Launcher = {
     },
     cancelRestart: function() { /* skip in cordova */ },
     setClipboardText: function(text) {
-        return document.execCommand('copy');
+        // TODO
     },
     getClipboardText: function() {
         // TODO
