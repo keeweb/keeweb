@@ -35,6 +35,9 @@ const Launcher = {
     getWorkDirPath: function(fileName) {
         return this.getDataPath(fileName).join('/');
     },
+    joinPath: function(...parts) {
+        return [...parts].join('/');
+    },
     writeFile: function(path, data, callback) {
         const writeFile = fileEntry => {
             fileEntry.createWriter(fileWriter => {
@@ -111,9 +114,6 @@ const Launcher = {
             dir: parts.pop(),
             file: parts.join('/')
         };
-    },
-    joinPath: function(dir, fileName) {
-        return [dir, fileName].join('/');
     },
     createFsWatcher: function(path) {
         return null; // not in android with content provider
