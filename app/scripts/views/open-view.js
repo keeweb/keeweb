@@ -325,7 +325,7 @@ const OpenView = Backbone.View.extend({
         if (Launcher) {
             Launcher.openFileChooser((err, file) => {
                 if (err) {
-                    logger.error('Error opening ашду срщщыук', err);
+                    logger.error('Error opening file chooser', err);
                 } else {
                     this.processFile(file);
                 }
