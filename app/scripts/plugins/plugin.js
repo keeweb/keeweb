@@ -460,7 +460,8 @@ Plugin.loadFromUrl = function(url) {
 };
 
 function httpGet(url, binary) {
-    commonLogger.debug('GET', url + '?ts=' + Date.now());
+    url += '?ts=' + Date.now();
+    commonLogger.debug('GET', url);
     const ts = commonLogger.ts();
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
