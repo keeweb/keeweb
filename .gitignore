@@ -14,4 +14,3 @@ bin/
 obj/
 *.xcworkspace/
 xcuserdata/
-translations.json

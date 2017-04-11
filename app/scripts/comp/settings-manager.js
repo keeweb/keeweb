@@ -6,17 +6,7 @@ const SettingsManager = {
     activeLocale: 'en',
 
     allLocales: {
-        'en': 'English',
-        'de-DE': 'Deutsch',
-        'es-ES': 'Español',
-        'fr-FR': 'Français',
-        'it-IT': 'Italiano',
-        'nl-NL': 'Nederlands',
-        'pl': 'Polski',
-        'pt-PT': 'Português',
-        'ru-RU': 'Русский',
-        'sv-SE': 'Svenska',
-        'zh-CN': '汉语'
+        'en': 'English'
     },
 
     allThemes: {

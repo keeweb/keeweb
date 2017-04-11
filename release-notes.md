@@ -1,6 +1,8 @@
 Release notes
 -------------
 ##### v1.5.0 (TBD)
+`+` plugins  
+`*` translations are available only as plugins  
 `+` file path hint in recent files list  
 `+` cacheConfigSettings config option  
 `+` keyboard-accessible autocomplete  
