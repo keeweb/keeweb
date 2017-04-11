@@ -322,14 +322,14 @@ const OpenView = Backbone.View.extend({
 
         const fileInput = this.$el.find('.open__file-ctrl').attr('accept', ext || '').val(null);
 
-        if (Launcher) {
+        if (Launcher && Launcher.openFileChooser) {
             Launcher.openFileChooser((err, file) => {
                 if (err) {
                     logger.error('Error opening file chooser', err);
                 } else {
                     this.processFile(file);
                 }
-            }, fileInput);
+            });
         } else {
             fileInput.click();
         }

@@ -12,11 +12,9 @@ const ThirdPartyStorage = {
     onedrive: require('./storage-onedrive')
 };
 
-let storages;
-if (Launcher.name === 'cordova') {
+let storages = _.extend(BuiltInStorage, ThirdPartyStorage);
+if (Launcher && !Launcher.thirdPartyStoragesSupported) {
     storages = BuiltInStorage;
-} else {
-    storages = _.extend(BuiltInStorage, ThirdPartyStorage);
 }
 
 module.exports = storages;

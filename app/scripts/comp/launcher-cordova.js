@@ -1,9 +1,10 @@
-'use strict';
+/* global FingerprintAuth */
 
 const Launcher = {
     name: 'cordova',
     version: '6.0.0',
     autoTypeSupported: false,
+    thirdPartyStoragesSupported: false,
     ready: function(callback) {
         document.addEventListener('deviceready', callback, false);
     },
@@ -158,7 +159,7 @@ const Launcher = {
     },
     showMainWindow: function() { /* skip in cordova */ },
     // spawn: function(config) { },
-    openFileChooser: function(callback, button) {
+    openFileChooser: function(callback) {
         const onFileSelected = function(selected) {
             window.resolveLocalFileSystemURL(selected.uri, fileEntry => {
                 fileEntry.file(file => {
@@ -178,20 +179,19 @@ const Launcher = {
             clientId: 'keeweb'
         },
 
-        register: function(appModel, fileInfo, password) {
-            FingerprintAuth.isAvailable(result => { // eslint-disable-line no-undef
+        register: function(fileId, password, callback) {
+            FingerprintAuth.isAvailable(result => {
                 if (!result.isAvailable) {
                     return;
                 }
 
                 const encryptConfig = _.extend({}, this.config, {
-                    username: fileInfo.id,
-                    password: password.getText()
+                    username: fileId,
+                    password: password
                 });
 
-                FingerprintAuth.encrypt(encryptConfig, result => { // eslint-disable-line no-undef
-                    fileInfo.set('fingerprint', result.token);
-                    appModel.fileInfos.save();
+                FingerprintAuth.encrypt(encryptConfig, result => {
+                    callback(result.token);
                 });
             });
         },
@@ -206,7 +206,7 @@ const Launcher = {
                 token: fileInfo.get('fingerprint')
             });
 
-            FingerprintAuth.decrypt(decryptConfig, result => { // eslint-disable-line no-undef
+            FingerprintAuth.decrypt(decryptConfig, result => {
                 callback(result.password);
             });
         }

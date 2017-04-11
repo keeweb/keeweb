@@ -8,6 +8,7 @@ const Launcher = {
     name: 'electron',
     version: window.process.versions.electron,
     autoTypeSupported: true,
+    thirdPartyStoragesSupported: true,
     req: window.require,
     platform: function() {
         return process.platform;
@@ -244,10 +245,8 @@ const Launcher = {
             }
         }
         return ps;
-    },
-    openFileChooser: function(callback, button) {
-        button.click();
     }
+    // openFileChooser: function(callback) { }
 };
 
 Backbone.on('launcher-exit-request', () => {
