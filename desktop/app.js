@@ -148,7 +148,6 @@ function createMainWindow() {
         emitBackboneEvent('launcher-minimize');
     });
     mainWindow.on('hide', () => {
-        console.log('hidden');
         emitBackboneEvent('launcher-minimize');
     });
     mainWindow.on('leave-full-screen', () => {
