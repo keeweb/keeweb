@@ -147,9 +147,6 @@ function createMainWindow() {
     mainWindow.on('minimize', () => {
         emitBackboneEvent('launcher-minimize');
     });
-    mainWindow.on('hide', () => {
-        emitBackboneEvent('launcher-minimize');
-    });
     mainWindow.on('leave-full-screen', () => {
         emitBackboneEvent('leave-full-screen');
     });

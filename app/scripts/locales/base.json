@@ -358,6 +358,7 @@
   "setGenMinInstead": "Minimize app instead of close",
   "setGenLockMinimize": "Auto-lock on minimize",
   "setGenLockCopy": "Auto-lock on password copy",
+  "setGenLockAutoType": "Auto-lock on auto-type",
   "setGenStorage": "Storage",
   "setGenShowAdvanced": "Show advanced settings",
   "setGenDevTools": "Show dev tools",
