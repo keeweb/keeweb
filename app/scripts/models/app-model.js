@@ -16,6 +16,7 @@ const FeatureDetector = require('../util/feature-detector');
 const Format = require('../util/format');
 const UrlUtil = require('../util/url-util');
 const AutoType = require('../auto-type');
+const Launcher = require('../comp/launcher');
 
 require('../mixins/protected-value-ex');
 
@@ -489,7 +490,7 @@ const AppModel = Backbone.Model.extend({
             }
             const rev = params.rev || fileInfo && fileInfo.get('rev');
             this.setFileOpts(file, params.opts);
-            this.addToLastOpenFiles(file, rev);
+            this.addToLastOpenFiles(file, fileInfo, params.password, rev);
             this.addFile(file);
             callback(null, file);
             this.fileOpened(file, data);
@@ -515,7 +516,7 @@ const AppModel = Backbone.Model.extend({
         });
     },
 
-    addToLastOpenFiles: function(file, rev) {
+    addToLastOpenFiles: function(file, existing, password, rev) {
         this.appLogger.debug('Add last open file', file.id, file.get('name'), file.get('storage'), file.get('path'), rev);
         const dt = new Date();
         const fileInfo = new FileInfoModel({
@@ -529,7 +530,8 @@ const AppModel = Backbone.Model.extend({
             rev: rev,
             syncDate: file.get('syncDate') || dt,
             openDate: dt,
-            backup: file.get('backup')
+            backup: file.get('backup'),
+            fingerprint: existing && existing.get('fingerprint')
         });
         switch (this.settings.get('rememberKeyFiles')) {
             case 'data':
@@ -547,6 +549,13 @@ const AppModel = Backbone.Model.extend({
         this.fileInfos.remove(file.id);
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
+
+        if (Launcher && Launcher.fingerprints && !existing) { // only if file is not registered yet
+            Launcher.fingerprints.register(fileInfo.id, password.getText(), token => {
+                fileInfo.set('fingerprint', token);
+                this.fileInfos.save();
+            });
+        }
     },
 
     getStoreOpts: function(file) {
