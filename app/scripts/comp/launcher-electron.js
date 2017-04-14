@@ -8,6 +8,7 @@ const Launcher = {
     name: 'electron',
     version: window.process.versions.electron,
     autoTypeSupported: true,
+    thirdPartyStoragesSupported: true,
     req: window.require,
     platform: function() {
         return process.platform;
@@ -28,31 +29,31 @@ const Launcher = {
     openDevTools: function() {
         this.electron().remote.getCurrentWindow().openDevTools();
     },
-    getSaveFileName: function(defaultPath, cb) {
+    getSaveFileName: function(defaultPath, callback) {
         if (defaultPath) {
             const homePath = this.remReq('electron').app.getPath('userDesktop');
-            defaultPath = this.req('path').join(homePath, defaultPath);
+            defaultPath = this.joinPath(homePath, defaultPath);
         }
         this.remReq('electron').dialog.showSaveDialog({
             title: Locale.launcherSave,
             defaultPath: defaultPath,
             filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
-        }, cb);
+        }, callback);
     },
     getUserDataPath: function(fileName) {
-        return this.req('path').join(this.remoteApp().getPath('userData'), fileName || '');
+        return this.joinPath(this.remoteApp().getPath('userData'), fileName || '');
     },
     getTempPath: function(fileName) {
-        return this.req('path').join(this.remoteApp().getPath('temp'), fileName || '');
+        return this.joinPath(this.remoteApp().getPath('temp'), fileName || '');
     },
     getDocumentsPath: function(fileName) {
-        return this.req('path').join(this.remoteApp().getPath('documents'), fileName || '');
+        return this.joinPath(this.remoteApp().getPath('documents'), fileName || '');
     },
     getAppPath: function(fileName) {
-        return this.req('path').join(this.remoteApp().getAppPath(), fileName || '');
+        return this.joinPath(this.remoteApp().getAppPath(), fileName || '');
     },
     getWorkDirPath: function(fileName) {
-        return this.req('path').join(process.cwd(), fileName || '');
+        return this.joinPath(process.cwd(), fileName || '');
     },
     joinPath: function(...parts) {
         return this.req('path').join(...parts);

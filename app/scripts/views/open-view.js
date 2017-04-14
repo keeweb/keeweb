@@ -11,6 +11,7 @@ const Locale = require('../util/locale');
 const UrlUtil = require('../util/url-util');
 const InputFx = require('../util/input-fx');
 const Storage = require('../storage');
+const Launcher = require('../comp/launcher');
 
 const logger = new Logger('open-view');
 
@@ -317,7 +318,20 @@ const OpenView = Backbone.View.extend({
     openAny: function(reading, ext) {
         this.reading = reading;
         this.params[reading] = null;
-        this.$el.find('.open__file-ctrl').attr('accept', ext || '').val(null).click();
+
+        const fileInput = this.$el.find('.open__file-ctrl').attr('accept', ext || '').val(null);
+
+        if (Launcher && Launcher.openFileChooser) {
+            Launcher.openFileChooser((err, file) => {
+                if (err) {
+                    logger.error('Error opening file chooser', err);
+                } else {
+                    this.processFile(file);
+                }
+            });
+        } else {
+            fileInput.click();
+        }
     },
 
     openLast: function(e) {
@@ -344,7 +358,23 @@ const OpenView = Backbone.View.extend({
             this.removeFile(id);
             return;
         }
-        this.showOpenFileInfo(this.model.fileInfos.get(id));
+
+        const fileInfo = this.model.fileInfos.get(id);
+        this.showOpenFileInfo(fileInfo);
+
+        if (fileInfo && Launcher && Launcher.fingerprints) {
+            this.openFileWithFingerprint(fileInfo);
+        }
+    },
+
+    openFileWithFingerprint(fileInfo) {
+        if (fileInfo.get('fingerprint')) {
+            Launcher.fingerprints.auth(fileInfo.id, fileInfo.get('fingerprint'), password => {
+                this.inputEl.val(password);
+                this.inputEl.trigger('input');
+                this.openDb();
+            });
+        }
     },
 
     removeFile: function(id) {

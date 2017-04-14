@@ -9,7 +9,7 @@ const StorageFileCache = StorageBase.extend({
     path: null,
 
     getPath: function(id) {
-        return Launcher.req('path').join(this.path, id);
+        return Launcher.joinPath(this.path, id);
     },
 
     initFs: function(callback) {

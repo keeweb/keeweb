@@ -16,6 +16,7 @@ const FeatureDetector = require('../util/feature-detector');
 const Format = require('../util/format');
 const UrlUtil = require('../util/url-util');
 const AutoType = require('../auto-type');
+const Launcher = require('../comp/launcher');
 
 require('../mixins/protected-value-ex');
 
@@ -463,7 +464,8 @@ const AppModel = Backbone.Model.extend({
             path: params.path,
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
-            backup: fileInfo && fileInfo.get('backup') || null
+            backup: fileInfo && fileInfo.get('backup') || null,
+            fingerprint: fileInfo && fileInfo.get('fingerprint') || null
         });
         file.open(params.password, data, params.keyFileData, err => {
             if (err) {
@@ -492,7 +494,7 @@ const AppModel = Backbone.Model.extend({
             this.addToLastOpenFiles(file, rev);
             this.addFile(file);
             callback(null, file);
-            this.fileOpened(file, data);
+            this.fileOpened(file, data, params);
         });
     },
 
@@ -529,7 +531,8 @@ const AppModel = Backbone.Model.extend({
             rev: rev,
             syncDate: file.get('syncDate') || dt,
             openDate: dt,
-            backup: file.get('backup')
+            backup: file.get('backup'),
+            fingerprint: file.get('fingerprint')
         });
         switch (this.settings.get('rememberKeyFiles')) {
             case 'data':
@@ -565,7 +568,7 @@ const AppModel = Backbone.Model.extend({
         }
     },
 
-    fileOpened: function(file, data) {
+    fileOpened: function(file, data, params) {
         if (file.get('storage') === 'file') {
             Storage.file.watch(file.get('path'), _.debounce(() => {
                 this.syncFile(file);
@@ -578,6 +581,7 @@ const AppModel = Backbone.Model.extend({
         if (data && backup && backup.enabled && backup.pending) {
             this.scheduleBackupFile(file, data);
         }
+        this.saveFileFingerprint(file, params.password);
     },
 
     fileClosed: function(file) {
@@ -924,6 +928,18 @@ const AppModel = Backbone.Model.extend({
         }
         if (needBackup) {
             this.backupFile(file, data, _.noop);
+        }
+    },
+
+    saveFileFingerprint: function(file, password) {
+        if (Launcher && Launcher.fingerprints && password) {
+            const fileInfo = this.fileInfos.get(file.id);
+            Launcher.fingerprints.register(file.id, this.params.password, token => {
+                if (token) {
+                    fileInfo.set('fingerprint', token);
+                    this.model.fileInfos.save();
+                }
+            });
         }
     }
 });

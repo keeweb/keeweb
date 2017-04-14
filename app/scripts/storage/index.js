@@ -12,4 +12,9 @@ const ThirdPartyStorage = {
     onedrive: require('./storage-onedrive')
 };
 
-module.exports = _.extend({}, BuiltInStorage, ThirdPartyStorage);
+const storage = BuiltInStorage;
+if (!Launcher || Launcher.thirdPartyStoragesSupported) {
+    _.extend(storage, ThirdPartyStorage);
+}
+
+module.exports = storage;
