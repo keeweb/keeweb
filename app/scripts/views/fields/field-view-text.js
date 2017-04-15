@@ -4,6 +4,7 @@ const GeneratorView = require('../generator-view');
 const KeyHandler = require('../../comp/key-handler');
 const Keys = require('../../const/keys');
 const PasswordGenerator = require('../../util/password-generator');
+const FeatureDetector = require('../../util/feature-detector');
 const kdbxweb = require('kdbxweb');
 
 const FieldViewText = FieldView.extend({
@@ -36,11 +37,29 @@ const FieldViewText = FieldView.extend({
         if (this.model.multiline) {
             this.setInputHeight();
         }
+        if (FeatureDetector.isMobile) {
+            this.createMobileControls();
+        }
         if (this.model.canGen) {
             $('<div/>').addClass('details__field-value-btn details__field-value-btn-gen').appendTo(this.valueEl)
                 .click(this.showGeneratorClick.bind(this))
                 .mousedown(this.showGenerator.bind(this));
         }
+    },
+
+    createMobileControls: function() {
+        this.mobileControls = {};
+        ['cancel', 'apply'].forEach(action => {
+            this.mobileControls[action] = $('<div/>')
+                .addClass('details__field-value-btn details__field-value-btn-' + action)
+                .appendTo(this.labelEl)
+                .data('action', action)
+                .on({
+                    mousedown: this.mobileFieldControlClick.bind(this),
+                    touchstart: this.mobileFieldControlTouchStart.bind(this),
+                    touchend: this.mobileFieldControlTouchEnd.bind(this)
+                });
+        });
     },
 
     showGeneratorClick: function(e) {
@@ -163,6 +182,11 @@ const FieldViewText = FieldView.extend({
             return;
         }
         delete this.input;
+        if (this.mobileControls) {
+            this.mobileControls.cancel.remove();
+            this.mobileControls.apply.remove();
+            delete this.mobileControls;
+        }
         this.stopBlurListener();
         if (typeof newVal === 'string' && this.value instanceof kdbxweb.ProtectedValue) {
             newVal = kdbxweb.ProtectedValue.fromString(newVal);
@@ -177,7 +201,26 @@ const FieldViewText = FieldView.extend({
         this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
     },
 
-    render: function() {
+    mobileFieldControlClick(e) {
+        e.stopPropagation();
+        this.stopBlurListener();
+        const action = $(e.target).data('action');
+        if (action === 'apply') {
+            this.endEdit(this.input.val());
+        } else {
+            this.endEdit();
+        }
+    },
+
+    mobileFieldControlTouchStart(e) {
+        this.$el.attr('active-mobile-action', $(e.target).data('action'));
+    },
+
+    mobileFieldControlTouchEnd() {
+        this.$el.removeAttr('active-mobile-action');
+    },
+
+    render() {
         FieldView.prototype.render.call(this);
     }
 });
