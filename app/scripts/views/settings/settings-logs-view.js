@@ -21,6 +21,9 @@ const SettingsLogView = Backbone.View.extend({
         if (arg === undefined) {
             return 'undefined';
         }
+        if (arg === '') {
+            return '""';
+        }
         if (!arg || !arg.toString() || typeof arg !== 'object') {
             return arg ? arg.toString() : arg;
         }
