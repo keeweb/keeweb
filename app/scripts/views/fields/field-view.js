@@ -1,5 +1,4 @@
 const Backbone = require('backbone');
-const FeatureDetector = require('../../util/feature-detector');
 const CopyPaste = require('../../comp/copy-paste');
 const Tip = require('../../util/tip');
 
@@ -47,16 +46,6 @@ const FieldView = Backbone.View.extend({
     fieldLabelClick: function(e) {
         e.stopImmediatePropagation();
         const field = this.model.name;
-        if (FeatureDetector.shouldMoveHiddenInputToCopySource()) {
-            const box = this.valueEl[0].getBoundingClientRect();
-            const textValue = this.value && this.value.isProtected ? this.value.getText() : this.getEditValue(this.value);
-            if (!textValue) {
-                return;
-            }
-            CopyPaste.createHiddenInput(textValue, box);
-            // CopyPaste.copy(); // maybe Apple will ever support this?
-            return;
-        }
         let copyRes;
         if (field) {
             const value = this.value || '';
@@ -69,9 +58,7 @@ const FieldView = Backbone.View.extend({
                     CopyPaste.createHiddenInput(text);
                 }
                 copyRes = CopyPaste.copy(text);
-                if (copyRes) {
-                    this.trigger('copy', { source: this, copyRes: copyRes });
-                }
+                this.trigger('copy', { source: this, copyRes: copyRes });
                 return;
             }
         }
