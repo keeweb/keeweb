@@ -75,8 +75,7 @@ _.extend(StorageBase.prototype, {
         });
         xhr.open(config.method || 'GET', config.url);
         if (this._oauthToken) {
-            xhr.setRequestHeader('Authorization',
-                this._oauthToken.tokenType + ' ' + this._oauthToken.accessToken);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + this._oauthToken.accessToken);
         }
         _.forEach(config.headers, (value, key) => {
             xhr.setRequestHeader(key, value);
@@ -128,9 +127,11 @@ _.extend(StorageBase.prototype, {
             callback();
             return;
         }
-        const url = opts.url + '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
+        const responseType = opts.code ? 'code' : 'token';
+        const url = opts.url + '?client_id={cid}&scope={scope}&response_type={type}&redirect_uri={url}'
             .replace('{cid}', encodeURIComponent(opts.clientId))
             .replace('{scope}', encodeURIComponent(opts.scope))
+            .replace('{type}', encodeURIComponent(responseType))
             .replace('{url}', encodeURIComponent(this._getOauthRedirectUrl()));
         this.logger.debug('OAuth popup opened');
         if (!this._openPopup(url, 'OAuth', opts.width, opts.height)) {
@@ -155,7 +156,7 @@ _.extend(StorageBase.prototype, {
             } else {
                 this._oauthToken = token;
                 this.runtimeData.set(this.name + 'OAuthToken', token);
-                this.logger.debug('OAuth success');
+                this.logger.debug('OAuth token received');
                 callback();
             }
         };
@@ -186,10 +187,12 @@ _.extend(StorageBase.prototype, {
     _oauthRevokeToken: function(url) {
         const token = this.runtimeData.get(this.name + 'OAuthToken');
         if (token) {
-            this._xhr({
-                url: url.replace('{token}', token.accessToken),
-                statuses: [200, 401]
-            });
+            if (url) {
+                this._xhr({
+                    url: url.replace('{token}', token.accessToken),
+                    statuses: [200, 401]
+                });
+            }
             this.runtimeData.unset(this.name + 'OAuthToken');
             this._oauthToken = null;
         }

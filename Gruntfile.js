@@ -45,7 +45,7 @@ module.exports = function(grunt) {
     const webpackConfig = {
         entry: {
             app: 'app',
-            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'dropbox', 'pikaday', 'filesaver', 'qrcode',
+            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'pikaday', 'filesaver', 'qrcode',
                 'argon2-asm', 'argon2-wasm', 'argon2']
         },
         output: {
@@ -68,7 +68,6 @@ module.exports = function(grunt) {
                 jquery: 'jquery/dist/jquery.min.js',
                 hbs: path.resolve(__dirname, 'node_modules', 'handlebars/runtime.js'),
                 kdbxweb: 'kdbxweb/dist/kdbxweb.js',
-                dropbox: 'dropbox/lib/dropbox.min.js',
                 baron: 'baron/baron.min.js',
                 pikaday: 'pikaday/pikaday.js',
                 filesaver: 'FileSaver.js/FileSaver.min.js',

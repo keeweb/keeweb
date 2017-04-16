@@ -1,7 +1,6 @@
 const UrlUtil = {
     multiSlashRegex: /\/{2,}/g,
-    lastPartRegex: /[^\/\\]+$/,
-    trimStartSlashRegex: /^\\/,
+    lastPartRegex: /\/?[^\/\\]+$/,
     kdbxEndRegex: /\.kdbx$/i,
 
     getDataFileName: function(url) {
@@ -22,11 +21,7 @@ const UrlUtil = {
     },
 
     fileToDir: function(url) {
-        return url.replace(this.lastPartRegex, '');
-    },
-
-    trimStartSlash: function(url) {
-        return url.replace(this.trimStartSlashRegex, '');
+        return url.replace(this.lastPartRegex, '') || '/';
     }
 };
 

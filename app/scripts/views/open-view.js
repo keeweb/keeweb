@@ -4,7 +4,7 @@ const OpenConfigView = require('./open-config-view');
 const Keys = require('../const/keys');
 const Alerts = require('../comp/alerts');
 const SecureInput = require('../comp/secure-input');
-const DropboxLink = require('../comp/dropbox-link');
+const DropboxChooser = require('../comp/dropbox-chooser');
 const FeatureDetector = require('../util/feature-detector');
 const Logger = require('../util/logger');
 const Locale = require('../util/locale');
@@ -78,7 +78,7 @@ const OpenView = Backbone.View.extend({
             !(this.model.settings.get('canOpenDemo') && !this.model.settings.get('demoOpened'));
         this.renderTemplate({
             lastOpenFiles: this.getLastOpenFiles(),
-            canOpenKeyFromDropbox: DropboxLink.canChooseFile() && Storage.dropbox.enabled,
+            canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
             demoOpened: this.model.settings.get('demoOpened'),
             storageProviders: storageProviders,
             canOpen: this.model.settings.get('canOpen'),
@@ -304,14 +304,14 @@ const OpenView = Backbone.View.extend({
 
     openKeyFileFromDropbox: function() {
         if (!this.busy) {
-            DropboxLink.chooseFile((err, res) => {
+            new DropboxChooser((err, res) => {
                 if (err) {
                     return;
                 }
                 this.params.keyFileData = res.data;
                 this.params.keyFileName = res.name;
                 this.displayOpenKeyFile();
-            });
+            }).choose();
         }
     },
 
@@ -598,7 +598,7 @@ const OpenView = Backbone.View.extend({
         const icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
         this.busy = true;
         icon.toggleClass('flip3d', true);
-        storage.list((err, files, dir) => {
+        storage.list((err, files) => {
             icon.toggleClass('flip3d', false);
             this.busy = false;
             if (err || !files) {
@@ -613,13 +613,9 @@ const OpenView = Backbone.View.extend({
                 allStorageFiles[file.path] = file;
             });
             if (!buttons.length) {
-                let body = Locale.openNothingFoundBody;
-                if (dir) {
-                    body += ' ' + Locale.openNothingFoundBodyFolder.replace('{}', dir);
-                }
                 Alerts.error({
                     header: Locale.openNothingFound,
-                    body: body
+                    body: Locale.openNothingFoundBody
                 });
                 return;
             }

@@ -1,15 +1,9 @@
-const DropboxLink = require('./dropbox-link');
-
 const AuthReceiver = {
     receive: function() {
         const opener = window.opener || window.parent;
-        if (location.href.indexOf('state=') >= 0) {
-            DropboxLink.receive();
-        } else {
-            const message = this.urlArgsToMessage(window.location.href);
-            opener.postMessage(message, window.location.origin);
-            window.close();
-        }
+        const message = this.urlArgsToMessage(window.location.href);
+        opener.postMessage(message, window.location.origin);
+        window.close();
     },
 
     urlArgsToMessage: function(url) {
