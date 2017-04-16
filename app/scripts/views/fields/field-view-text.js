@@ -58,7 +58,8 @@ const FieldViewText = FieldView.extend({
                 .appendTo(this.labelEl)
                 .data('action', action)
                 .on({
-                    mousedown: this.mobileFieldControlClick.bind(this),
+                    mousedown: this.mobileFieldControlMouseDown.bind(this),
+                    click: this.mobileFieldControlClick.bind(this),
                     touchstart: this.mobileFieldControlTouchStart.bind(this),
                     touchend: this.mobileFieldControlTouchEnd.bind(this),
                     touchmove: this.mobileFieldControlTouchMove.bind(this)
@@ -205,7 +206,7 @@ const FieldViewText = FieldView.extend({
         this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
     },
 
-    mobileFieldControlClick(e) {
+    mobileFieldControlMouseDown(e) {
         e.stopPropagation();
         this.stopBlurListener();
         const action = $(e.target).data('action');
@@ -214,6 +215,10 @@ const FieldViewText = FieldView.extend({
         } else {
             this.endEdit();
         }
+    },
+
+    mobileFieldControlClick(e) {
+        e.stopPropagation();
     },
 
     mobileFieldControlTouchStart(e) {
