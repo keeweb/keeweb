@@ -298,6 +298,7 @@
           width: 50%;
           position: absolute;
           top: 0;
+          @include user-select(none);
           &:before { padding: .2em 1.5em; }
           @include th { background: background-color(); }
         }
