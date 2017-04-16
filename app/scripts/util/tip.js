@@ -142,7 +142,7 @@ Tip.createTips = function(container) {
 };
 
 Tip.createTip = function(el, options) {
-    if (!Tip.enabled) {
+    if (!Tip.enabled && (!options || !options.force)) {
         return;
     }
     const tip = new Tip($(el), options);
