@@ -1,19 +1,19 @@
 .open {
-  @include flex(1);
-  @include display(flex);
-  @include align-self(stretch);
-  @include align-items(center);
-  @include flex-direction(column);
-  @include justify-content(center);
+  flex: 1;
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
   @include th { background: background-color(); }
 
   &__icons {
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include flex-shrink(0);
-    @include justify-content(center);
-    @include flex-wrap(wrap);
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: center;
+    flex-wrap: wrap;
     .open--drag & { display: none; }
   }
 
@@ -45,24 +45,24 @@
 
   &__pass {
     &-area {
-      @include display(flex);
-      @include align-items(stretch);
-      @include flex-direction(column);
-      @include justify-content(flex-start);
+      display: flex;
+      align-items: stretch;
+      flex-direction: column;
+      justify-content: flex-start;
       position: relative;
       .open--drag & { display: none; }
     }
     &-warn-wrap {
-      @include display(flex);
-      @include flex-direction(row);
-      @include justify-content(flex-end);
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
     }
     &-field-wrap {
-      @include display(flex);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
-      @include align-items(stretch);
-      @include flex-shrink(0);
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: stretch;
+      flex-shrink: 0;
       margin-bottom: $base-padding-v;
     }
     &-enter-btn, &-opening-icon {
@@ -89,17 +89,17 @@
   }
 
   &__config {
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
     position: relative;
     width: 30em;
     .open--drag & {
       display: none;
     }
     &-buttons {
-      @include align-self(flex-end);
+      align-self: flex-end;
     }
     &-header {
       >i { margin-right: .3em; }
@@ -130,10 +130,10 @@
   }
 
   &__settings {
-    @include display(flex);
-    @include flex-direction(row);
-    @include justify-content(space-between);
-    @include align-items(stretch);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
     padding-left: $base-padding-h;
     height: 2em;
     &-key-file {
@@ -170,17 +170,17 @@
   }
 
   &__last {
-    @include display(flex);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
-    @include align-items(stretch);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
     margin-top: $base-spacing;
     &-item {
-      @include display(flex);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
-      @include align-items(baseline);
-      @include flex-shrink(0);
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: baseline;
+      flex-shrink: 0;
       .open:not(.open--opening) & {
         @include area-selectable;
       }
@@ -196,7 +196,7 @@
           }
         }
       }
-      &-text { @include flex-grow(1); }
+      &-text { flex-grow: 1; }
       &-icon-del {
         opacity: 0;
         .open__last-item:hover & {
@@ -215,12 +215,12 @@
   &__dropzone {
     display: none;
     .open--drag & {
-      @include display(flex);
-      @include flex-direction(column);
-      @include flex(1 0 auto);
-      @include justify-content(center);
-      @include align-self(center);
-      @include align-items(center);
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+      justify-content: center;
+      align-self: center;
+      align-items: center;
       text-align: center;
     }
     &-icon {

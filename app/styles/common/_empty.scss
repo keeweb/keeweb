@@ -1,8 +1,8 @@
 .empty-block {
-  @include display(flex);
-  @include align-items(center);
-  @include flex-direction(column);
-  @include justify-content(center);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
   @include size(100%);
   @include position(absolute, 0 null null 0);
   text-align: center;

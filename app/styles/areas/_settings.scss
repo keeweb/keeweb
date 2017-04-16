@@ -1,17 +1,17 @@
 .settings {
-  @include flex(1);
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
-  @include flex-wrap(wrap);
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   @include scrollbar-on-hover;
   margin: $base-padding;
   overflow: hidden;
   position: relative;
 
   >.scroller {
-    @include flex(1 0 0);
+    flex: 1 0 0;
   }
 
   h2,h3 {

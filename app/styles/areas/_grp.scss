@@ -1,9 +1,9 @@
 .grp {
-  @include flex(1);
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
   @include scrollbar-on-hover;
   width: 100%;
   user-select: none;
@@ -11,7 +11,7 @@
   position: relative;
 
   >.scroller {
-    @include flex(1);
+    flex: 1;
     overflow-x: hidden;
   }
 
@@ -19,7 +19,7 @@
     display: block;
     font-size: $large-header-font-size;
     padding: $base-padding-px;
-    @include align-self(flex-start);
+    align-self: flex-start;
     @include area-selectable();
     &--image {
       width: 28px;
@@ -28,12 +28,12 @@
   }
 
   &__icon-wrap {
-    @include display(flex);
+    display: flex;
   }
 
   &__buttons {
-    @include display(flex);
-    @include flex-direction(row);
+    display: flex;
+    flex-direction: row;
     margin-top: $base-padding-v;
 
     &-trash {

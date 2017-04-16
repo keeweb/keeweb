@@ -1,20 +1,20 @@
 .app {
   @include size(100%);
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
 
   &--titlebar-style-hidden-inset {
     -webkit-app-region: drag;
   }
 
   &__body {
-    @include flex(1);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include justify-content(flex-start);
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: flex-start;
     overflow: hidden;
   }
 
@@ -28,8 +28,8 @@
   }
 
   &__menu {
-    @include flex(0 0 auto);
-    @include display(flex);
+    flex: 0 0 auto;
+    display: flex;
     width: 150px;
     @include mobile {
       &:not(.menu-visible) {
@@ -49,20 +49,20 @@
   }
 
   &__list-wrap {
-    @include flex(1);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include justify-content(flex-start);
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: flex-start;
     overflow: hidden;
     &.app__list-wrap--table {
-      @include flex-direction(column);
+      flex-direction: column;
     }
   }
 
   &__menu-drag, &__list-drag {
     @include drag-handle;
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
     width: 1px;
     cursor: col-resize;
     @include mobile { display: none; }
@@ -81,13 +81,13 @@
   }
 
   &__list {
-    @include flex(0 0 250px);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
+    flex: 0 0 250px;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
     overflow-y: auto;
     @include mobile {
-      @include flex(1 1);
+      flex: 1 1;
       .app--details-visible & {
         display: none;
       }
@@ -95,8 +95,8 @@
   }
 
   &__details {
-    @include flex(1);
-    @include display(flex);
+    flex: 1;
+    display: flex;
     overflow: hidden;
     padding: $base-spacing;
     position: relative;
@@ -105,14 +105,14 @@
       padding: $base-padding;
       display: none;
       .app--details-visible & {
-        @include display(flex);
+        display: flex;
       }
     }
   }
 
   &__panel {
-    @include flex(1);
-    @include display(flex);
+    flex: 1;
+    display: flex;
     overflow: hidden;
     padding: $base-spacing;
     position: relative;
@@ -122,7 +122,7 @@
   }
 
   &__footer {
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
     @include th { border-top: light-border(); }
   }
 

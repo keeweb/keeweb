@@ -11,10 +11,10 @@
 
   &__content {
     @include size(100%);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(center);
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: center;
 
     transition: all $base-duration $base-timing;
     .modal--hidden & {
@@ -47,7 +47,7 @@
     }
   }
   &__body, &__buttons {
-    @include align-self(center);
+    align-self: center;
     width: 40%;
     @include tablet {
       width: 90%;

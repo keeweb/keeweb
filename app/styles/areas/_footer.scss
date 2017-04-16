@@ -1,11 +1,11 @@
 .footer {
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(row);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: flex-start;
 
   &__db {
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
     @include area-selectable(top);
     position: relative;
     padding: $medium-padding;
@@ -23,9 +23,9 @@
     }
 
     &--expanded {
-      @include flex(1);
+      flex: 1;
       @include mobile {
-        @include flex(0 0 auto);
+        flex: 0 0 auto;
         >.footer__db-text {
           display: none;
         }
@@ -52,7 +52,7 @@
         > .fa {
           display: none;
         }
-        @include flex(1 1 auto);
+        flex: 1 1 auto;
         overflow: hidden;
         text-overflow: ellipsis;
       }
@@ -60,7 +60,7 @@
   }
 
   &__btn {
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
     @include area-selectable(top);
     padding: $base-padding;
     font-size: 1.4em;

@@ -1,8 +1,8 @@
 .details {
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
   @include user-select(text);
   width: 100%;
 
@@ -19,14 +19,14 @@
   }
 
   &__header {
-    @include display(flex);
+    display: flex;
     padding-bottom: $small-spacing;
     overflow: visible;
     min-height: 40px;
     &-title {
       @include user-select(text);
-      @include flex(1);
-      @include align-self(flex-start);
+      flex: 1;
+      align-self: flex-start;
       cursor: text;
       margin: 0 6px;
       padding: 3px 6px 1px;
@@ -45,7 +45,7 @@
     }
     input.details__header-title-input {
       @include user-select(text);
-      @include flex(1);
+      flex: 1;
       margin: 0 6px;
       padding: 0 6px;
       font-size: $large-header-font-size;
@@ -111,12 +111,12 @@
   }
 
   &__body {
-    @include flex(1);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
-    @include flex-wrap(wrap);
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-wrap: wrap;
     @include scrollbar-on-hover;
     position: relative;
     overflow: hidden;
@@ -124,43 +124,43 @@
     .details--drag & { display: none; }
 
     >.scroller {
-      @include flex(1);
-      @include display(flex);
-      @include align-items(stretch);
-      @include align-content(flex-start);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
-      @include flex-wrap(wrap);
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      align-content: flex-start;
+      flex-direction: row;
+      justify-content: flex-start;
+      flex-wrap: wrap;
       overflow-x: hidden;
       padding-top: 3px;
       @media screen and (-webkit-min-device-pixel-ratio:0) { width: 100% !important; }
     }
 
     &-fields {
-      @include flex(1 0 50%);
+      flex: 1 0 50%;
       min-width: 0;
     }
 
     &-aside {
-      @include flex(0 0 auto);
-      @include display(flex);
-      @include align-items(stretch);
-      @include flex-direction(column);
-      @include justify-content(flex-start);
+      flex: 0 0 auto;
+      display: flex;
+      align-items: stretch;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
     &-after {
-      @include flex(100% 1 0);
+      flex: 100% 1 0;
     }
   }
 
   &__field {
     $details-field-line-height: 18px;
 
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include justify-content(flex-start);
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: flex-start;
     margin-bottom: .5em;
 
     &-label {
@@ -190,9 +190,9 @@
       }
     }
     &-value {
-      @include flex(1);
+      flex: 1;
       @include user-select(text);
-      @include align-self(flex-start);
+      align-self: flex-start;
       position: relative;
       cursor: text;
       padding: 0 $base-padding-h;
@@ -271,7 +271,7 @@
         width: 13em;
         padding-right: 0;
         margin-right: 0;
-        @include flex(0 0 auto);
+        flex: 0 0 auto;
       }
       &-btn {
         @include position(absolute, 0 0 null null);
@@ -331,12 +331,12 @@
   }
 
   &__attachments {
-    @include flex(1);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include justify-content(flex-end);
-    @include flex-wrap(nowrap);
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
     @include user-select(none);
     overflow: hidden;
     white-space: nowrap;
@@ -346,8 +346,8 @@
   &__attachment {
     @include user-select(none);
     @include area-selectable();
-    @include align-self(flex-end);
-    @include flex(0 1 auto);
+    align-self: flex-end;
+    flex: 0 1 auto;
     @include th { border: light-border(); }
     margin-right: $small-spacing;
     padding: $base-padding;
@@ -362,8 +362,8 @@
 
   &__attachment-add {
     @include user-select(none);
-    @include align-self(flex-end);
-    @include flex(0 0 auto);
+    align-self: flex-end;
+    flex: 0 0 auto;
     @include th { color: muted-color(); }
     border: 1px solid transparent;
     margin-right: $small-spacing;
@@ -412,12 +412,12 @@
       display: none;
     }
     &--empty {
-      @include display(flex);
-      @include flex-direction(column);
-      @include flex(1 0 auto);
-      @include justify-content(center);
-      @include align-self(center);
-      @include align-items(center);
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+      justify-content: center;
+      align-self: center;
+      align-items: center;
       text-align: center;
       .details__attachment-preview-icon {
         display: block;
@@ -432,18 +432,18 @@
   }
 
   &__buttons {
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include flex-shrink(0);
-    @include justify-content(flex-start);
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: flex-start;
     margin-top: $base-padding-v;
 
     .details--drag & { display: none; }
 
     &-trash, &-trash-del {
       @include icon-btn($error:true);
-      @include align-self(flex-end);
+      align-self: flex-end;
       margin-right: 10px;
     }
 
@@ -457,23 +457,23 @@
   }
 
   &__history {
-    @include flex(1 0 auto);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
+    flex: 1 0 auto;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
     margin-right: $base-padding-h;
     &-top {
-      @include display(flex);
-      @include align-items(stretch);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
+      display: flex;
+      align-items: stretch;
+      flex-direction: row;
+      justify-content: flex-start;
     }
     &-desc {
       @include user-select(none);
     }
     &-timeline {
-      @include flex(1 0 auto);
+      flex: 1 0 auto;
       position: relative;
       height: 44px;
       margin-left: 5px;
@@ -524,11 +524,11 @@
       margin-left: 20px;
     }
     &-body {
-      @include flex(1 1 auto);
+      flex: 1 1 auto;
     }
     &-buttons {
       @include user-select(none);
-      @include align-self(flex-end);
+      align-self: flex-end;
       margin-bottom: $base-padding-v;
     }
   }
@@ -536,12 +536,12 @@
   &__dropzone {
     display: none;
     .details--drag & {
-      @include display(flex);
-      @include flex-direction(column);
-      @include flex(1 0 auto);
-      @include justify-content(center);
-      @include align-self(center);
-      @include align-items(center);
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+      justify-content: center;
+      align-self: center;
+      align-items: center;
       text-align: center;
     }
     &-icon {
