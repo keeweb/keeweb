@@ -7,20 +7,20 @@ const DropboxKeys = {
     FullDropbox: 'eor7hvv6u6oslq9'
 };
 
-const ApiError = {
-    NETWORK_ERROR: 0,
-    NO_CONTENT: 304,
-    INVALID_PARAM: 400,
-    INVALID_TOKEN: 401,
-    OAUTH_ERROR: 403,
-    NOT_FOUND: 404,
-    INVALID_METHOD: 405,
-    NOT_ACCEPTABLE: 406,
-    CONFLICT: 409,
-    RATE_LIMITED: 429,
-    SERVER_ERROR: 503,
-    OVER_QUOTA: 507
-};
+// const ApiError = {
+//     NETWORK_ERROR: 0,
+//     NO_CONTENT: 304,
+//     INVALID_PARAM: 400,
+//     INVALID_TOKEN: 401,
+//     OAUTH_ERROR: 403,
+//     NOT_FOUND: 404,
+//     INVALID_METHOD: 405,
+//     NOT_ACCEPTABLE: 406,
+//     CONFLICT: 409,
+//     RATE_LIMITED: 429,
+//     SERVER_ERROR: 503,
+//     OVER_QUOTA: 507
+// };
 
 const DropboxCustomErrors = {
     BadKey: 'bad-key'
@@ -32,19 +32,6 @@ const StorageDropbox = StorageBase.extend({
     enabled: true,
     uipos: 20,
     backup: true,
-
-    _convertError: function(err) {
-        if (!err) {
-            return err;
-        }
-        if (err.status === ApiError.NOT_FOUND) {
-            err.notFound = true;
-        }
-        if (err.status === ApiError.CONFLICT) {
-            err.revConflict = true;
-        }
-        return err;
-    },
 
     _toFullPath: function(path) {
         const rootFolder = this.appSettings.get('dropboxFolder');
