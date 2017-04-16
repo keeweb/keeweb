@@ -511,8 +511,8 @@
   "dropboxLinkCustom": "Own Dropbox app",
 
   "webdavSaveMethod": "Save method",
-  "webdavSaveMove": "Upload temporary file and move",
-  "webdavSavePut": "Overwrite file with PUT",
+  "webdavSaveMove": "Upload a temporary file and move",
+  "webdavSavePut": "Overwrite kdbx file with PUT",
 
   "launcherSave": "Save Passwords Database",
   "launcherFileFilter": "KeePass files",
