@@ -6,6 +6,7 @@ const Keys = require('../../const/keys');
 const PasswordGenerator = require('../../util/password-generator');
 const FeatureDetector = require('../../util/feature-detector');
 const kdbxweb = require('kdbxweb');
+const Tip = require('../../util/tip');
 
 const FieldViewText = FieldView.extend({
     renderValue: function(value) {
@@ -45,6 +46,8 @@ const FieldViewText = FieldView.extend({
                 .click(this.showGeneratorClick.bind(this))
                 .mousedown(this.showGenerator.bind(this));
         }
+        Tip.hideTip(this.valueEl[0]);
+        Tip.hideTip(this.labelEl[0]);
     },
 
     createMobileControls: function() {

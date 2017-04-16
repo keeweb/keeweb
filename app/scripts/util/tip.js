@@ -141,13 +141,16 @@ Tip.createTips = function(container) {
     });
 };
 
-Tip.createTip = function(el) {
+Tip.createTip = function(el, options) {
     if (!Tip.enabled) {
         return;
     }
-    const tip = new Tip($(el));
-    tip.init();
+    const tip = new Tip($(el), options);
+    if (!options || !options.noInit) {
+        tip.init();
+    }
     el._tip = tip;
+    return tip;
 };
 
 Tip.hideTips = function(container) {

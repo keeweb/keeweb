@@ -29,7 +29,7 @@ const FieldView = Backbone.View.extend({
 
     remove: function() {
         if (this.tip) {
-            Tip.hideTip(this.valueEl);
+            Tip.hideTip(this.valueEl[0]);
         }
         Backbone.View.prototype.remove.apply(this, arguments);
     },
