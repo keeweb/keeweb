@@ -229,7 +229,7 @@ const FieldViewText = FieldView.extend({
         const shouldExecute = this.$el.attr('active-mobile-action') === $(e.target).data('action');
         this.$el.removeAttr('active-mobile-action');
         if (shouldExecute) {
-            this.mobileFieldControlClick(e);
+            this.mobileFieldControlMouseDown(e);
         }
     },
 
