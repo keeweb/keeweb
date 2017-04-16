@@ -33,6 +33,7 @@
     "dropboxAppKey": null,
 
     "webdav": true,
+    "webdavSaveMethod": "move",
 
     "gdrive": true,
     "gdriveClientId": null,
