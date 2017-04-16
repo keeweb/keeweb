@@ -4,6 +4,7 @@ Release notes
 `+` plugins  
 `*` translations are available only as plugins  
 `*` Dropbox API V2  
+`+` support cloud providers in iOS homescreen apps  
 `+` mobile field editing improvements  
 `+` file path hint in recent files list  
 `+` cacheConfigSettings config option  

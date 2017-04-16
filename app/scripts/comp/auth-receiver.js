@@ -1,9 +1,18 @@
+const FeatureDetector = require('../util/feature-detector');
+const Storage = require('../storage');
+
 const AuthReceiver = {
     receive: function() {
         const opener = window.opener || window.parent;
         const message = this.urlArgsToMessage(window.location.href);
-        opener.postMessage(message, window.location.origin);
-        window.close();
+        if (FeatureDetector.isStandalone) {
+            Storage[sessionStorage.authStorage].handleOAuthReturnMessage(message);
+            return false;
+        } else {
+            opener.postMessage(message, window.location.origin);
+            window.close();
+            return true;
+        }
     },
 
     urlArgsToMessage: function(url) {

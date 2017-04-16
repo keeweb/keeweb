@@ -137,6 +137,7 @@
   &__logs {
     @include user-select(text);
     margin-top: $base-padding-v;
+    word-break: break-all;
     &-log {
       margin: 0;
       white-space: pre-wrap;

@@ -15,14 +15,15 @@ const ExportApi = require('./comp/export-api');
 const SettingsManager = require('./comp/settings-manager');
 const PluginManager = require('./plugins/plugin-manager');
 const Launcher = require('./comp/launcher');
+const FeatureDetector = require('./util/feature-detector');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
 
 const ready = Launcher && Launcher.ready || $;
 
 ready(() => {
-    if (isPopup()) {
-        return AuthReceiver.receive();
+    if (FeatureDetector.isPopup && AuthReceiver.receive()) {
+        return;
     }
     loadMixins();
 
@@ -33,10 +34,6 @@ ready(() => {
         .then(initModules)
         .then(loadRemoteConfig)
         .then(showApp);
-
-    function isPopup() {
-        return (window.parent !== window.top) || window.opener;
-    }
 
     function loadMixins() {
         require('./mixins/view');

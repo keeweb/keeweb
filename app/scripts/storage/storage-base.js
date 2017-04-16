@@ -3,6 +3,7 @@ const Logger = require('../util/logger');
 const AppSettingsModel = require('../models/app-settings-model');
 const RuntimeDataModel = require('../models/runtime-data-model');
 const Links = require('../const/links');
+const FeatureDetector = require('../util/feature-detector');
 
 const MaxRequestRetries = 3;
 
@@ -32,11 +33,21 @@ _.extend(StorageBase.prototype, {
             }
         }
         this.logger = new Logger('storage-' + this.name);
+        if (this._oauthReturnMessage) {
+            this.logger.debug('OAuth return message', this._oauthReturnMessage);
+            this._oauthProcessReturn(this._oauthReturnMessage, _.noop);
+            delete this._oauthReturnMessage;
+            delete sessionStorage.authStorage;
+        }
         return this;
     },
 
     setEnabled: function(enabled) {
         this.enabled = enabled;
+    },
+
+    handleOAuthReturnMessage(message) {
+        this._oauthReturnMessage = message;
     },
 
     _xhr: function(config) {
@@ -104,6 +115,9 @@ _.extend(StorageBase.prototype, {
             location: 'yes'
         };
         settings = Object.keys(settings).map(key => key + '=' + settings[key]).join(',');
+        if (FeatureDetector.isStandalone) {
+            sessionStorage.authStorage = this.name;
+        }
 
         return window.open(url, title, settings);
     },
@@ -147,19 +161,23 @@ _.extend(StorageBase.prototype, {
             }
             Backbone.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
-            const token = this._oauthMsgToToken(e.data);
-            if (token.error) {
-                this.logger.error('OAuth error', token.error, token.errorDescription);
-                callback(token.error);
-            } else {
-                this._oauthToken = token;
-                this.runtimeData.set(this.name + 'OAuthToken', token);
-                this.logger.debug('OAuth token received');
-                callback();
-            }
+            this._oauthProcessReturn(e.data, callback);
         };
         Backbone.on('popup-closed', popupClosed);
         window.addEventListener('message', windowMessage);
+    },
+
+    _oauthProcessReturn: function(message, callback) {
+        const token = this._oauthMsgToToken(message);
+        if (token.error) {
+            this.logger.error('OAuth error', token.error, token.errorDescription);
+            callback(token.error);
+        } else {
+            this._oauthToken = token;
+            this.runtimeData.set(this.name + 'OAuthToken', token);
+            this.logger.debug('OAuth token received');
+            callback();
+        }
     },
 
     _oauthMsgToToken: function(data) {
