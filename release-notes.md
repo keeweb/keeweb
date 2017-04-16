@@ -10,7 +10,7 @@ Release notes
 `+` cacheConfigSettings config option  
 `+` keyboard-accessible autocomplete  
 `+` entry auto-type context menu  
-`+` `kw.require` now provides access to modules  
+`+` save to WebDAV with PUT  
 `+` showOnlyFilesFromConfig config option  
 `+` mac os window style options  
 `+` lock on hide mac os hide  
