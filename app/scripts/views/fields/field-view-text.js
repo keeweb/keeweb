@@ -57,7 +57,8 @@ const FieldViewText = FieldView.extend({
                 .on({
                     mousedown: this.mobileFieldControlClick.bind(this),
                     touchstart: this.mobileFieldControlTouchStart.bind(this),
-                    touchend: this.mobileFieldControlTouchEnd.bind(this)
+                    touchend: this.mobileFieldControlTouchEnd.bind(this),
+                    touchmove: this.mobileFieldControlTouchMove.bind(this)
                 });
         });
     },
@@ -216,8 +217,24 @@ const FieldViewText = FieldView.extend({
         this.$el.attr('active-mobile-action', $(e.target).data('action'));
     },
 
-    mobileFieldControlTouchEnd() {
+    mobileFieldControlTouchEnd(e) {
+        const shouldExecute = this.$el.attr('active-mobile-action') === $(e.target).data('action');
         this.$el.removeAttr('active-mobile-action');
+        if (shouldExecute) {
+            this.mobileFieldControlClick(e);
+        }
+    },
+
+    mobileFieldControlTouchMove(e) {
+        const touch = e.originalEvent.targetTouches[0];
+        const rect = touch.target.getBoundingClientRect();
+        const inside = touch.clientX >= rect.left && touch.clientX <= rect.right &&
+            touch.clientY >= rect.top && touch.clientY <= rect.bottom;
+        if (inside) {
+            this.$el.attr('active-mobile-action', $(e.target).data('action'));
+        } else {
+            this.$el.removeAttr('active-mobile-action');
+        }
     },
 
     render() {
