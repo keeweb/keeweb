@@ -59,7 +59,6 @@ const FieldViewText = FieldView.extend({
                 .data('action', action)
                 .on({
                     mousedown: this.mobileFieldControlMouseDown.bind(this),
-                    click: this.mobileFieldControlClick.bind(this),
                     touchstart: this.mobileFieldControlTouchStart.bind(this),
                     touchend: this.mobileFieldControlTouchEnd.bind(this),
                     touchmove: this.mobileFieldControlTouchMove.bind(this)
@@ -215,10 +214,6 @@ const FieldViewText = FieldView.extend({
         } else {
             this.endEdit();
         }
-    },
-
-    mobileFieldControlClick(e) {
-        e.stopPropagation();
     },
 
     mobileFieldControlTouchStart(e) {

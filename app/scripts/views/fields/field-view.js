@@ -45,6 +45,9 @@ const FieldView = Backbone.View.extend({
 
     fieldLabelClick: function(e) {
         e.stopImmediatePropagation();
+        if (this.preventCopy) {
+            return;
+        }
         const field = this.model.name;
         let copyRes;
         if (field) {
@@ -94,6 +97,7 @@ const FieldView = Backbone.View.extend({
         this.$el.addClass('details__field--edit');
         this.startEdit();
         this.editing = true;
+        this.preventCopy = true;
     },
 
     endEdit: function(newVal, extra) {
@@ -101,6 +105,7 @@ const FieldView = Backbone.View.extend({
             return;
         }
         this.editing = false;
+        setTimeout(() => { this.preventCopy = false; }, 300);
         let textEqual;
         if (this.value && this.value.isProtected) {
             textEqual = this.value.equals(newVal);

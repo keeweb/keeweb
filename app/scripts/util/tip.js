@@ -163,9 +163,6 @@ Tip.hideTips = function(container) {
 };
 
 Tip.hideTip = function(el) {
-    if (!Tip.enabled) {
-        return;
-    }
     if (el._tip) {
         el._tip.hide();
     }
