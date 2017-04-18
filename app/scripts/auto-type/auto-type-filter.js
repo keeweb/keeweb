@@ -48,7 +48,7 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
         const entryUrlParts = urlPartsRegex.exec(entry.url.toLowerCase());
         if (entryUrlParts) {
             const [, scheme, domain, path] = entryUrlParts;
-            const [, thisScheme, thisDomain, thisPath] = entryUrlParts;
+            const [, thisScheme, thisDomain, thisPath] = this.urlParts;
             if (domain === thisDomain) {
                 rank += 10;
                 if (path === thisPath) {
