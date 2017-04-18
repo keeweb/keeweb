@@ -1,6 +1,6 @@
 const EntryCollection = require('../collections/entry-collection');
 
-const urlPartsRegex = /^(\w+:\/\/)?(?:www\.)?([^\/]+)\/?(.*)/;
+const urlPartsRegex = /^(\w+:\/\/)?(?:(?:www|wwws|secure)\.)?([^\/]+)\/?(.*)/;
 
 const AutoTypeFilter = function(windowInfo, appModel) {
     this.title = windowInfo.title;
