@@ -26,20 +26,20 @@ $modal-icon-size: 6em;
 $large-padding: 2em;
 
 // Borders
-@function base-border() { @return 1px solid base-border-color(); };
-@function light-border() { @return 1px solid light-border-color(); };
+@function base-border() { @return 1px solid th(base-border-color); };
+@function light-border() { @return 1px solid th(light-border-color); };
 @function selected-border-width() { @return 3px; }
 @function selected-border() { @return selected-border-width() solid th(action-color); }
-@function selected-hover-border() { @return 1px solid action-color(); }
+@function selected-hover-border() { @return 1px solid th(action-color); }
 @function selected-transparent-border() { @return 1px solid transparent; }
 
 // Forms
-@function form-box-shadow() { @return inset 0 1px 3px form-box-shadow-color(); }
-@function form-box-shadow-focus() { @return form-box-shadow(), 0 0 3px form-box-shadow-color-focus(); }
-@function form-box-shadow-focus-error() { @return form-box-shadow(), 0 0 3px form-box-shadow-color-focus-error(); }
+@function form-box-shadow() { @return inset 0 1px 3px th(form-box-shadow-color); }
+@function form-box-shadow-focus() { @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus); }
+@function form-box-shadow-focus-error() { @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus-error); }
 
 // Shadows
-@function dropdown-box-shadow() { @return 0 0 50px dropdown-box-shadow-color(); }
+@function dropdown-box-shadow() { @return 0 0 50px th(dropdown-box-shadow-color); }
 
 // Animations
 $base-duration: 150ms;

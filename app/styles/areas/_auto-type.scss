@@ -1,7 +1,7 @@
 .at-select {
   @include position(absolute, 0 null null 0);
   @include size(100%);
-  @include th { background-color: background-color(); }
+  @include th { background-color: th(background-color); }
   display: flex;
   flex-direction: column;
   align-items: stretch;

@@ -15,9 +15,9 @@
     text-overflow: ellipsis;
     &.footer__db--dimmed {
       @include th {
-        color: muted-color();
+        color: th(muted-color);
         &:hover {
-          color: medium-color();
+          color: th(medium-color);
         }
       }
     }
@@ -39,8 +39,8 @@
       position: absolute;
       right: 1em;
       top: 1em;
-      @include th { color: action-color(); }
-      &--error { @include th { color: error-color(); } }
+      @include th { color: th(action-color); }
+      &--error { @include th { color: th(error-color); } }
     }
 
     &-open-title {
@@ -69,7 +69,7 @@
   }
 
   &__update-icon {
-    @include th { color: action-color(); }
+    @include th { color: th(action-color); }
     @include animation(shake 50s cubic-bezier(.36,.07,.19,.97) 0s infinite);
   }
 }

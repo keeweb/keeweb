@@ -1,0 +1,62 @@
+@function val-th($val) {
+  @if type_of($val) == 'string' {
+    @return th($val);
+  }
+  @if unitless($val) {
+    @return $val;
+  }
+  @return $val / 100%;
+}
+
+@function raw-hsla($h, $s, $l, $a: 1) {
+  @return #{'hsla(#{$h},#{$s},#{$l},#{$a})'};
+}
+
+@function col-mix($color1, $color2, $weight: .5, $weightMultiplier: 1) {
+  @if $th {
+    @return mix(th($color1), th($color2), val-th($weight) * $weightMultiplier);
+  }
+  $mul1: #{'#{val-th($weight)}'};
+  $mul2: #{'(1 - #{val-th($weight)})'};
+  @return raw-hsla(
+    #{'calc((#{th($color1 + '-h')} * #{$mul1} + #{th($color2 + '-h')} * #{$mul2}))'},
+    #{'calc((#{th($color1 + '-s')} * #{$mul1} + #{th($color2 + '-s')} * #{$mul2}))'},
+    #{'calc((#{th($color1 + '-l')} * #{$mul1} + #{th($color2 + '-l')} * #{$mul2}))'},
+    1
+  );
+}
+
+@function col-shade($color, $percent, $opacity: 1) {
+  @if $th {
+    @return rgba(mix(#000, th($color), $percent), $opacity);
+  }
+  $mul: #{'(1 - #{val-th($percent)})'};
+  @return raw-hsla(
+    #{'calc((#{th($color + '-h')}) * #{$mul})'},
+    #{'calc((#{th($color + '-s')}) * #{$mul})'},
+    #{'calc((#{th($color + '-l')}) * #{$mul})'},
+    val-th($opacity)
+  );
+}
+
+@function col-lightness($color, $lightness, $alpha: 1) {
+  @if $th { @return adjust_color(th($color), $lightness: $lightness, $alpha: 1 - $alpha); }
+  @return raw-hsla(
+    th(#{$color}-h),
+    th(#{$color}-s),
+    #{'calc(#{th($color + '-l')} + #{$lightness * 100%})'},
+    val-th($alpha)
+  );
+}
+
+@function col-rgba($color, $alpha) {
+  @if $th {
+    @return rgba(th($color), val-th($alpha));
+  }
+  @return raw-hsla(
+    th(#{$color}-h),
+    th(#{$color}-s),
+    th(#{$color}-l),
+    val-th($alpha)
+  );
+}

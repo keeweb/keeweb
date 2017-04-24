@@ -5,7 +5,7 @@
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  @include th { background: background-color(); }
+  @include th { background: th(background-color); }
 
   &__icons {
     display: flex;
@@ -22,11 +22,11 @@
     cursor: pointer;
     margin: 20px;
     transition: color $base-duration $base-timing;
-    &:hover { @include th { color: medium-color(); } }
+    &:hover { @include th { color: th(medium-color); } }
     &-i, &-svg { font-size: 4em; }
     &-text {
-      @include th { color: muted-color(); }
-      .open__icon:hover>& { @include th { color: medium-color(); } }
+      @include th { color: th(muted-color); }
+      .open__icon:hover>& { @include th { color: th(medium-color); } }
     }
     &-svg {
       line-height: 0;
@@ -70,14 +70,14 @@
       position: absolute;
       left: 100%;
       @include mobile { display: none; }
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       >i { font-size: 3em; }
     }
     &-enter-btn {
       .open--file & {
         cursor: pointer;
         &:hover {
-          @include th { color: medium-color(); }
+          @include th { color: th(medium-color); }
         }
       }
       .open--opening & { display: none; }
@@ -138,7 +138,7 @@
     height: 2em;
     &-key-file {
       .open--file:not(.open--opening) & { cursor: pointer; }
-      .open--key-file & { @include th { color: medium-color(); } }
+      .open--key-file & { @include th { color: th(medium-color); } }
       &-icon {
         width: 2em;
       }
@@ -159,11 +159,11 @@
 
     &-key-file, &-key-file-dropbox {
       @include th {
-        color: muted-color();
+        color: th(muted-color);
       }
       &:hover {
         .open--file:not(.open--opening) & {
-          @include th { color: medium-color(); }
+          @include th { color: th(medium-color); }
         }
       }
     }
@@ -184,7 +184,7 @@
       .open:not(.open--opening) & {
         @include area-selectable;
       }
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       padding: $base-padding;
       &-icon {
         width: 2em;
@@ -192,7 +192,7 @@
           vertical-align: middle;
           @include size(1em);
           path {
-            @include th { fill: muted-color(); }
+            @include th { fill: th(muted-color); }
           }
         }
       }
@@ -203,10 +203,10 @@
           opacity: .3;
           cursor: pointer;
         }
-        @include th { color: muted-color(); }
+        @include th { color: th(muted-color); }
         &:hover {
           .open__last-item:hover & { opacity: 1; }
-          @include th { color: medium-color(); }
+          @include th { color: th(medium-color); }
         }
       }
     }

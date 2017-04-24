@@ -130,8 +130,8 @@
     padding: $base-padding;
     text-align: center;
     @include th {
-      background-color: error-color();
-      color: text-contrast-color(error-color());
+      background-color: th(error-color);
+      color: th(text-contrast-error-color);
     }
   }
 }

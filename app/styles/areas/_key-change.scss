@@ -34,8 +34,8 @@
     margin: $small-spacing 0 0;
   }
   &__keyfile {
-    @include th { color: muted-color(); }
-    &:hover { @include th { color: medium-color(); } }
+    @include th { color: th(muted-color); }
+    &:hover { @include th { color: th(medium-color); } }
     margin-top: $base-padding-v;
     cursor: pointer;
   }

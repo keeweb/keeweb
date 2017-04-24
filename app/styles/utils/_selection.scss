@@ -7,14 +7,14 @@
       border-#{$border}: selected-transparent-border();
     }
     &:hover, &.sel--active {
-      background-color: intermediate-background-color();
-      color: medium-color();
+      background-color: th(intermediate-background-color);
+      color: th(medium-color);
       @if ($border) {
         border-#{$border}: selected-hover-border();
       }
     }
     &:active {
-      background-color: intermediate-pressed-background-color();
+      background-color: th(intermediate-pressed-background-color);
     }
   }
 }
@@ -24,9 +24,9 @@
   -webkit-app-region: no-drag;
   @include th {
     border-#{$border}: selected-border();
-    background-color: secondary-background-color();
+    background-color: th(secondary-background-color);
   }
   &:hover {
-    @include th { color: text-color(); }
+    @include th { color: th(text-color); }
   }
 }

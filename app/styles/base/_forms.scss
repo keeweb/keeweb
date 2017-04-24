@@ -1,6 +1,6 @@
 fieldset {
   @include th {
-    background-color: secondary-background-color();
+    background-color: th(secondary-background-color);
     border: base-border();
   }
   margin: 0 0 $small-spacing;
@@ -48,23 +48,23 @@ input[type=text], input[type=password], textarea, input:not([type]) {
   &::-ms-clear { display: none; }
 
   @include th {
-    color: text-color();
-    background-color: background-color();
+    color: th(text-color);
+    background-color: th(background-color);
     border: base-border();
     box-shadow: form-box-shadow();
 
     &:hover {
-      border-color: accent-border-color();
+      border-color: th(accent-border-color);
     }
 
     &:focus {
-      border-color: action-color();
+      border-color: th(action-color);
       box-shadow: form-box-shadow-focus();
       outline: none;
     }
 
     &:disabled {
-      background-color: disabled-background-color();
+      background-color: th(disabled-background-color);
       cursor: not-allowed;
 
       &:hover {
@@ -73,10 +73,10 @@ input[type=text], input[type=password], textarea, input:not([type]) {
     }
 
     &.input--error, &.input--error:hover, &.input--error:focus, &:invalid {
-      border-color: error-color();
+      border-color: th(error-color);
       box-shadow: form-box-shadow-focus-error();
       @include selection(true) {
-        background-color: text-selection-bg-color-error();
+        background-color: th(text-selection-bg-color-error);
       }
     }
   }
@@ -86,7 +86,7 @@ input[type=text], input[type=password], textarea, input:not([type]) {
   }
 
   @include placeholder {
-    @include th { color: muted-color(); }
+    @include th { color: th(muted-color); }
   }
 }
 
@@ -129,20 +129,20 @@ select {
   background-repeat: no-repeat;
 
   @include th {
-    background-color: background-color();
+    background-color: th(background-color);
     border: base-border();
-    color: text-color();
+    color: th(text-color);
     box-shadow: form-box-shadow();
     &:hover {
-      border-color: accent-border-color();
+      border-color: th(accent-border-color);
     }
     &:focus {
-      border-color: action-color();
+      border-color: th(action-color);
       box-shadow: form-box-shadow-focus();
       outline: none;
     }
     &:disabled {
-      background-color: disabled-background-color();
+      background-color: th(disabled-background-color);
       cursor: not-allowed;
       &:hover {
         border: base-border();
@@ -154,8 +154,8 @@ select {
 
 option {
   @include th {
-    background-color: background-color();
-    color: text-color();
+    background-color: th(background-color);
+    color: th(text-color);
   }
 }
 
@@ -164,7 +164,7 @@ input[type=checkbox] {
 
   &:not([disabled]) + label:hover:before {
     @include th {
-      color: action-color();
+      color: th(action-color);
     }
   }
   & + label:before {
@@ -173,7 +173,7 @@ input[type=checkbox] {
     display: inline-block;
     width: 1.3em;
     @include th {
-      color: text-color();
+      color: th(text-color);
     }
   }
   &:checked + label:before {
@@ -190,7 +190,7 @@ input[type=range] {
   padding: 0;
   &:focus { outline: none; }
   &::-webkit-slider-runnable-track {
-    @include th { background: text-color(); }
+    @include th { background: th(text-color); }
     width: 100%;
     height: 1px;
     cursor: pointer;
@@ -198,7 +198,7 @@ input[type=range] {
     border: none;
   }
   &::-webkit-slider-thumb {
-    @include th { background: text-color(); }
+    @include th { background: th(text-color); }
     border: none;
     height: $thumb-size;
     width: $thumb-size;
@@ -208,7 +208,7 @@ input[type=range] {
     margin-top: -6.5px;
   }
   &::-moz-range-track {
-    @include th { background: text-color(); }
+    @include th { background: th(text-color); }
     width: 100%;
     height: 1px;
     cursor: pointer;
@@ -216,7 +216,7 @@ input[type=range] {
     border: none;
   }
   &::-moz-range-thumb {
-    @include th { background: text-color(); }
+    @include th { background: th(text-color); }
     border: none;
     height: $thumb-size;
     width: $thumb-size;
@@ -239,7 +239,7 @@ input[type=range] {
     display: none;
   }
   &::-ms-fill-lower, &::-ms-fill-upper, &:focus::-ms-fill-lower, &:focus::-ms-fill-upper {
-    @include th { background: text-color(); }
+    @include th { background: th(text-color); }
   }
   &::-ms-thumb {
     border: none;
@@ -247,7 +247,7 @@ input[type=range] {
     width: $thumb-size;
     border-radius: $thumb-size;
     cursor: pointer;
-    @include th { background: text-color(); }
+    @include th { background: th(text-color); }
   }
 }
 

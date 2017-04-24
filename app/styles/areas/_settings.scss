@@ -19,7 +19,7 @@
   }
 
   .shortcut {
-    @include th { border: 1px solid muted-color(); }
+    @include th { border: 1px solid th(muted-color); }
     display: inline-block;
     border-radius: $base-border-radius;
     width: 40px;
@@ -51,8 +51,8 @@
       padding: $base-padding-v * 2 0 1px 0;
       z-index: 1;
       @include th {
-        background: background-color();
-        box-shadow: 0 0 5px 5px background-color();
+        background: th(background-color);
+        box-shadow: 0 0 5px 5px th(background-color);
       }
       &-post { display: inline; }
     }
@@ -117,7 +117,7 @@
     }
     &:hover {
       transition: color $base-duration $base-timing;
-      @include th { color: medium-color(); }
+      @include th { color: th(medium-color); }
     }
   }
 

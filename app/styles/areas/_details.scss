@@ -39,7 +39,7 @@
       &:hover {
         transition: border-color $base-duration $base-timing;
         @include th {
-          border: 1px solid light-border-color();
+          border: 1px solid th(light-border-color);
         }
       }
     }
@@ -79,8 +79,8 @@
     z-index: $z-index-no-modal;
     border-radius: $base-border-radius;
     @include th {
-      background: background-color();
-      box-shadow: 0 0 3px background-color();
+      background: th(background-color);
+      box-shadow: 0 0 3px th(background-color);
     }
     top: 13px;
     left: 6px;
@@ -164,7 +164,7 @@
     margin-bottom: .5em;
 
     &-label {
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       @include user-select(text);
       width: 7em;
       text-align: right;
@@ -174,7 +174,7 @@
       line-height: $details-field-line-height;
       position: relative;
       &:hover {
-        @include th { color: medium-color(); }
+        @include th { color: th(medium-color); }
       }
       .details__field--can-edit-title & {
         cursor: text;
@@ -185,7 +185,7 @@
         line-height: $details-field-line-height;
         height: $details-field-line-height;
         width: 100%;
-        @include th { color: text-color(); }
+        @include th { color: th(text-color); }
         .chrome & { padding-bottom: 1px; } // TODO: find a better cross-browser way to do it
       }
     }
@@ -212,11 +212,11 @@
           transition: border-color $base-duration $base-timing;
           border: 1px solid;
           @include th {
-            border-color: light-border-color();
-            box-shadow: 0 0 3px form-box-shadow-color();
+            border-color: th(light-border-color);
+            box-shadow: 0 0 3px th(form-box-shadow-color);
           }
           .details__field-value-add-label {
-            @include th { color: muted-color(); }
+            @include th { color: th(muted-color); }
             transition: color $base-duration $base-timing;
           }
         }
@@ -246,10 +246,10 @@
           transition: background-color $slow-transition-in, border-color $slow-transition-in;
         }
         .details__field--edit[active-mobile-action=apply] & {
-          @include th { background: action-color(); }
+          @include th { background: th(action-color); }
         }
         .details__field--edit[active-mobile-action=cancel] & {
-          @include th { background: error-color(); border-color: error-color(); }
+          @include th { background: th(error-color); border-color: th(error-color); }
         }
       }
       >input {
@@ -266,8 +266,8 @@
         @include user-select(none);
       }
       .details__body-aside & {
-        @include th { color: muted-color(); }
-        a { @include th { color: muted-color(); } }
+        @include th { color: th(muted-color); }
+        a { @include th { color: th(muted-color); } }
         width: 13em;
         padding-right: 0;
         margin-right: 0;
@@ -275,10 +275,10 @@
       }
       &-btn {
         @include position(absolute, 0 0 null null);
-        @include th { color: muted-color(); }
+        @include th { color: th(muted-color); }
         cursor: pointer;
         &:hover {
-          @include th { color: medium-color(); }
+          @include th { color: th(medium-color); }
         }
         &:before {
           @include position(absolute, 0 0 null null);
@@ -300,7 +300,7 @@
           top: 0;
           @include user-select(none);
           &:before { padding: .2em 1.5em; }
-          @include th { background: background-color(); }
+          @include th { background: th(background-color); }
         }
         &-btn-apply {
           &:before { content: $fa-var-check; }
@@ -356,7 +356,7 @@
     text-overflow: ellipsis;
     i { margin-right: .4em; }
     &--active {
-      @include th { border-bottom: 1px solid action-color(); };
+      @include th { border-bottom: 1px solid th(action-color); };
     }
   }
 
@@ -364,7 +364,7 @@
     @include user-select(none);
     align-self: flex-end;
     flex: 0 0 auto;
-    @include th { color: muted-color(); }
+    @include th { color: th(muted-color); }
     border: 1px solid transparent;
     margin-right: $small-spacing;
     padding: $base-padding;
@@ -372,7 +372,7 @@
     overflow: hidden;
     transition: color $base-duration $base-timing;
     &:hover {
-      @include th { color: medium-color(); }
+      @include th { color: th(medium-color); }
     }
     &-title {
       display: none;
@@ -382,7 +382,7 @@
       .details__attachment-add:hover & {
         display: inline;
         transition: color $slow-transition-in;
-        @include th { color: muted-color(); }
+        @include th { color: th(muted-color); }
       }
     }
   }
@@ -448,7 +448,7 @@
     }
 
     &-trash-del {
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
     }
 
     button ~ button {
@@ -489,12 +489,12 @@
         cursor: pointer;
         transform: translateX(-48%);
         &:hover {
-          @include th { color: mix(action-color(), text-color(), 50%); }
+          @include th { color: th(text-semi-muted-color); }
         }
         &--active, &--active:hover {
           z-index: $z-index-no-modal;
           cursor: default;
-          @include th { color: action-color(); }
+          @include th { color: th(action-color); }
         }
       }
       &-label {
@@ -502,7 +502,7 @@
         top: 16px;
         white-space: nowrap;
         transform: translateX(-50%);
-        @include th { color: muted-color(); }
+        @include th { color: th(muted-color); }
       }
     }
     &-arrow-prev, &-arrow-next {
@@ -512,7 +512,7 @@
       position: absolute;
       top: 30px;
       font-size: 14px;
-      &:hover { @include th { color: mix(action-color(), text-color(), 50%); } }
+      &:hover { @include th { color: th(text-semi-muted-color); } }
     }
     &-arrow-prev {
       left: -5px;
@@ -563,7 +563,7 @@
       @include area-selectable(bottom);
       &--selected {
         @include th {
-          background-color: secondary-background-color();
+          background-color: th(secondary-background-color);
           border-bottom: selected-hover-border();
         }
       }

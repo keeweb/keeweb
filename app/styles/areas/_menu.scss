@@ -135,7 +135,7 @@
       padding-left: .4em;
       .menu__item-colors & {
         display: inline-block;
-        @include th { color: text-color(); }
+        @include th { color: th(text-color); }
       }
       .menu__item--with-options:hover & {
         display: none;
@@ -151,8 +151,8 @@
       cursor: pointer;
       transition: opacity $base-duration $base-timing, color $base-duration $base-timing;
       @include th {
-        color: muted-color();
-        &:hover { color: medium-color(); }
+        color: th(muted-color);
+        &:hover { color: th(medium-color); }
       }
       .menu__item--active>.menu__item-body>& {
         display: block;
@@ -177,12 +177,12 @@
 
     &--drag-top > .menu__item-body > .menu__item-drag-top {
       transition: background-color $slow-transition-in;
-      @include th { background-color: action-color(); }
+      @include th { background-color: th(action-color); }
     }
 
     &--drag:not(.menu__item--drag-top) {
       >.menu__item-body {
-        @include th { color: action-color(); }
+        @include th { color: th(action-color); }
       }
     }
   }

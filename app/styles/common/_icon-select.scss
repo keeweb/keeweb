@@ -9,7 +9,7 @@
     padding-bottom: $base-padding-h;
     &--custom {
       padding-top: $base-padding-h;
-      @include th { border-top: 1px solid light-border-color(); }
+      @include th { border-top: 1px solid th(light-border-color); }
     }
   }
   &__icon {

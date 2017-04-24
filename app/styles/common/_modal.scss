@@ -1,12 +1,12 @@
 .modal {
   @include position(absolute, 0 null null 0);
   @include size(100%);
-  @include th { background-color: rgba(background-color(), th(modal-opacity)); }
+  @include th { background-color: th(modal-background-color); }
   z-index: $z-index-modal;
 
   transition: background-color $base-duration $base-timing;
   &.modal--hidden {
-    @include th { background-color: rgba(background-color(), 0); }
+    @include th { background-color: th(modal-background-color-transparent); }
   }
 
   &__content {

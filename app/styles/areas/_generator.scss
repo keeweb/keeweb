@@ -11,8 +11,8 @@
     position: relative;
     top: 2px;
     @include th {
-      color: muted-color();
-      &:hover { color: text-color(); }
+      color: th(muted-color);
+      &:hover { color: th(text-color); }
     }
   }
   &__sel-tpl {

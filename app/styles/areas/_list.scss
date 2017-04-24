@@ -47,13 +47,13 @@
       width: 100%;
     }
     &-icon-search {
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       position: absolute;
       top: .5em;
       right: .5em;
       cursor: pointer;
       &:hover {
-        @include th { color: medium-color(); }
+        @include th { color: th(medium-color); }
       }
     }
     &-btn-new {
@@ -152,7 +152,7 @@
 
     &-descr {
       font-size: .8em;
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       display: block;
       text-overflow: ellipsis;
       overflow: hidden;
