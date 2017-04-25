@@ -1021,12 +1021,12 @@ const AppModel = Backbone.Model.extend({
     },
 
     saveFileFingerprint: function(file, password) {
-        if (Launcher && Launcher.fingerprints && password) {
+        if (Launcher && Launcher.fingerprints && !file.has('fingerprint')) {
             const fileInfo = this.fileInfos.get(file.id);
-            Launcher.fingerprints.register(file.id, this.params.password, token => {
+            Launcher.fingerprints.register(file.id, password, token => {
                 if (token) {
                     fileInfo.set('fingerprint', token);
-                    this.model.fileInfos.save();
+                    this.fileInfos.save();
                 }
             });
         }

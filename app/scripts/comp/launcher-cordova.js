@@ -48,7 +48,10 @@ const Launcher = {
             }, callback);
         };
 
-        window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
+        const filePath = this.parsePath(path);
+        window.resolveLocalFileSystemURL(filePath.dir, dir => {
+            dir.getFile(filePath.file, {create: true}, writeFile);
+        }, callback, callback);
     },
     readFile: function(path, encoding, callback) {
         window.resolveLocalFileSystemURL(path, fileEntry => {
@@ -109,8 +112,8 @@ const Launcher = {
 
         return {
             path: fileName,
-            dir: parts.pop(),
-            file: parts.join('/')
+            file: parts.pop(),
+            dir: parts.join('/')
         };
     },
     createFsWatcher: function(path) {
@@ -184,7 +187,7 @@ const Launcher = {
 
                 const encryptConfig = _.extend({}, this.config, {
                     username: fileId,
-                    password: password
+                    password: password.getText()
                 });
 
                 FingerprintAuth.encrypt(encryptConfig, result => {
