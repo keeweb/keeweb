@@ -33,11 +33,11 @@
       background-color: th(action-background-color-focus);
       &.btn-error {
         border-color: th(error-background-color-focus);
-        background-color: th(error-background-color-focus-opaque);
+        background-color: th(error-background-color-focus-tr);
       }
       &.btn-silent {
         border-color: th(action-background-color-focus);
-        background-color: th(action-background-color-focus-opaque);
+        background-color: th(action-background-color-focus-tr);
       }
     }
 
@@ -50,7 +50,7 @@
       }
       &.btn-silent {
         border-color: th(action-background-color-active);
-        background-color: th(action-background-color-active-opaque);
+        background-color: th(action-background-color-active-tr);
       }
     }
 

@@ -27,11 +27,11 @@
   --intermediate-pressed-background-color: #f4f4f4;
   --disabled-background-color: #eeeeee;
   --action-background-color-focus: #394cac;
-  --action-background-color-focus-opaque: rgba(57, 76, 172, 0.1);
+  --action-background-color-focus-tr: rgba(57, 76, 172, 0.1);
   --error-background-color-focus: #b9455e;
-  --error-background-color-focus-opaque: rgba(185, 69, 94, 0.1);
+  --error-background-color-focus-tr: rgba(185, 69, 94, 0.1);
   --action-background-color-active: #3547a1;
-  --action-background-color-active-opaque: rgba(53, 71, 161, 0.15);
+  --action-background-color-active-tr: rgba(53, 71, 161, 0.15);
   --error-background-color-active: #ad4158;
   --error-background-color-active-opqaue: rgba(173, 65, 88, 0.15);
   --modal-background-color: rgba(250, 250, 250, 0.9);
