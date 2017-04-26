@@ -13,22 +13,26 @@ const io = new IoCache({
     logger: new Logger('storage-plugin-files')
 });
 
-const Plugin = Backbone.Model.extend({
-    idAttribute: 'name',
-
+const PluginStatus = {
+    STATUS_NONE: '',
     STATUS_ACTIVE: 'active',
     STATUS_INACTIVE: 'inactive',
     STATUS_INSTALLING: 'installing',
+    STATUS_ACTIVATING: 'activating',
     STATUS_UNINSTALLING: 'uninstalling',
     STATUS_UPDATING: 'updating',
     STATUS_INVALID: 'invalid',
     STATUS_ERROR: 'error',
+};
+
+const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
+    idAttribute: 'name',
 
     defaults: {
         name: '',
         manifest: '',
         url: '',
-        status: 'inactive',
+        status: '',
         installTime: null,
         installError: null,
         updateError: null
@@ -43,7 +47,7 @@ const Plugin = Backbone.Model.extend({
         this.logger = new Logger(`plugin:${name}`);
     },
 
-    install() {
+    install(activate) {
         const ts = this.logger.ts();
         this.set('status', this.STATUS_INSTALLING);
         return Promise.resolve().then(() => {
@@ -52,6 +56,11 @@ const Plugin = Backbone.Model.extend({
                 this.logger.error('Manifest validation error', error);
                 this.set('status', this.STATUS_INVALID);
                 throw 'Plugin validation error: ' + error;
+            }
+            this.set('status', this.STATUS_INACTIVE);
+            if (!activate) {
+                this.logger.info('Loaded inactive plugin');
+                return;
             }
             return this.installWithManifest()
                 .then(() => this.set('installTime', this.logger.ts() - ts))
@@ -358,8 +367,17 @@ const Plugin = Backbone.Model.extend({
     },
 
     uninstall() {
+        return this.disable.then(() => {
+            return this.deleteResources().then(() => {
+                this.set('status', '');
+                this.logger.info('Uninstall complete', this.logger.ts(ts));
+            });
+        });
+    },
+
+    disable() {
         const manifest = this.get('manifest');
-        this.logger.info('Uninstalling plugin with resources', Object.keys(manifest.resources).join(', '));
+        this.logger.info('Disabling plugin with resources', Object.keys(manifest.resources).join(', '));
         this.set('status', this.STATUS_UNINSTALLING);
         const ts = this.logger.ts();
         return Promise.resolve().then(() => {
@@ -376,10 +394,8 @@ const Plugin = Backbone.Model.extend({
             if (manifest.theme) {
                 this.removeTheme(manifest.theme);
             }
-            return this.deleteResources().then(() => {
-                this.set('status', this.STATUS_INACTIVE);
-                this.logger.info('Uninstall complete', this.logger.ts(ts));
-            });
+            this.set('status', this.STATUS_INACTIVE);
+            this.logger.info('Disable complete', this.logger.ts(ts));
         });
     },
 
@@ -432,7 +448,9 @@ const Plugin = Backbone.Model.extend({
                 });
         });
     }
-});
+}));
+
+_.extend(Plugin, PluginStatus);
 
 Plugin.loadFromUrl = function(url) {
     if (url[url.length - 1] !== '/') {

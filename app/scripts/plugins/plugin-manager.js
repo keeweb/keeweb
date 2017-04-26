@@ -6,10 +6,7 @@ const Logger = require('../util/logger');
 
 const PluginManager = Backbone.Model.extend({
     defaults: {
-        state: '',
         installing: null,
-        uninstalling: null,
-        updating: null,
         lastInstall: null,
         plugins: new PluginCollection()
     },
@@ -54,10 +51,36 @@ const PluginManager = Backbone.Model.extend({
         if (!plugin) {
             return Promise.resolve();
         }
-        this.set('uninstalling', id);
+        this.trigger('change');
         return plugin.uninstall().then(() => {
             plugins.remove(id);
-            this.set('uninstalling', null);
+            this.trigger('change');
+            this.saveState();
+        });
+    },
+
+    disable(id) {
+        const plugins = this.get('plugins');
+        const plugin = plugins.get(id);
+        if (!plugin || plugin.get('status') !== Plugin.STATUS_ACTIVE) {
+            return Promise.resolve();
+        }
+        this.trigger('change');
+        return plugin.disable().then(() => {
+            this.trigger('change');
+            this.saveState();
+        });
+    },
+
+    activate(id) {
+        const plugins = this.get('plugins');
+        const plugin = plugins.get(id);
+        if (!plugin || plugin.get('status') === Plugin.STATUS_ACTIVE) {
+            return Promise.resolve();
+        }
+        this.trigger('change');
+        return plugin.install(true).then(() => {
+            this.trigger('change');
             this.saveState();
         });
     },
@@ -65,21 +88,21 @@ const PluginManager = Backbone.Model.extend({
     update(id) {
         const plugins = this.get('plugins');
         const oldPlugin = plugins.get(id);
-        if (!oldPlugin) {
+        if (!oldPlugin || [Plugin.STATUS_ACTIVE, Plugin.STATUS_INACTIVE, Plugin.STATUS_NONE].indexOf(oldPlugin.get('status')) < 0) {
             return Promise.reject();
         }
         const url = oldPlugin.get('url');
-        this.set({ updating: id });
+        this.trigger('change');
         return Plugin.loadFromUrl(url).then(newPlugin => {
             return oldPlugin.update(newPlugin).then(() => {
-                this.set({ updating: null });
+                this.trigger('change');
                 this.saveState();
             }).catch(e => {
-                this.set('updating', null);
+                this.trigger('change');
                 throw e;
             });
         }).catch(e => {
-            this.set({ updating: null });
+            this.trigger('change');
             throw e;
         });
     },
@@ -90,7 +113,7 @@ const PluginManager = Backbone.Model.extend({
             url: desc.url,
             local: true
         });
-        return plugin.install()
+        return plugin.install(desc.enabled)
             .then(() => plugin)
             .catch(() => plugin);
     },
@@ -99,9 +122,15 @@ const PluginManager = Backbone.Model.extend({
         SettingsStore.save('plugins', {
             plugins: this.get('plugins').map(plugin => ({
                 manifest: plugin.get('manifest'),
-                url: plugin.get('url')
+                url: plugin.get('url'),
+                enabled: plugin.get('status') === 'active'
             }))
         });
+    },
+
+    getStatus(id) {
+        const plugin = this.get('plugins').get(id);
+        return plugin ? plugin.get('status') : '';
     }
 });
 

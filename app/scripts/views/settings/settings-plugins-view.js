@@ -9,13 +9,15 @@ const SettingsPluginsView = Backbone.View.extend({
     events: {
         'click .settings_plugins-install-btn': 'installClick',
         'click .settings_plugins-uninstall-btn': 'uninstallClick',
+        'click .settings_plugins-disable-btn': 'disableClick',
+        'click .settings_plugins-enable-btn': 'enableClick',
         'click .settings_plugins-update-btn': 'updateClick',
         'click .settings_plugins-use-locale-btn': 'useLocaleClick',
         'click .settings_plugins-use-theme-btn': 'useThemeClick'
     },
 
     initialize() {
-        this.listenTo(PluginManager, 'change:installing change:uninstalling change:updating', this.render.bind(this));
+        this.listenTo(PluginManager, 'change', this.render.bind(this));
     },
 
     render() {
@@ -29,8 +31,7 @@ const SettingsPluginsView = Backbone.View.extend({
                 updateError: plugin.get('updateError')
             })),
             lastInstallUrl: PluginManager.get('installing') || (lastInstall.error ? lastInstall.url : ''),
-            lastInstallError: lastInstall.error,
-            updating: PluginManager.get('updating')
+            lastInstallError: lastInstall.error
         });
         return this;
     },
@@ -66,17 +67,21 @@ const SettingsPluginsView = Backbone.View.extend({
 
     uninstallClick(e) {
         const pluginId = $(e.target).data('plugin');
-        if (PluginManager.get('updating') === pluginId || PluginManager.get('uninstalling') === pluginId) {
-            return;
-        }
         PluginManager.uninstall(pluginId);
+    },
+
+    disableClick(e) {
+        const pluginId = $(e.target).data('plugin');
+        PluginManager.disable(pluginId);
+    },
+
+    enableClick(e) {
+        const pluginId = $(e.target).data('plugin');
+        PluginManager.activate(pluginId);
     },
 
     updateClick(e) {
         const pluginId = $(e.target).data('plugin');
-        if (PluginManager.get('updating') === pluginId || PluginManager.get('uninstalling') === pluginId) {
-            return;
-        }
         PluginManager.update(pluginId);
     },
 
