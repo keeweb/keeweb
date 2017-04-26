@@ -22,7 +22,7 @@ const PluginStatus = {
     STATUS_UNINSTALLING: 'uninstalling',
     STATUS_UPDATING: 'updating',
     STATUS_INVALID: 'invalid',
-    STATUS_ERROR: 'error',
+    STATUS_ERROR: 'error'
 };
 
 const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
@@ -367,6 +367,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
     },
 
     uninstall() {
+        const ts = this.logger.ts();
         return this.disable.then(() => {
             return this.deleteResources().then(() => {
                 this.set('status', '');
