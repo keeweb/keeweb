@@ -6,7 +6,7 @@
 
   transition: background-color $base-duration $base-timing;
   &.modal--hidden {
-    @include th { background-color: th(modal-background-color-transparent); }
+    @include th { background-color: th(modal-background-color-tr); }
   }
 
   &__content {

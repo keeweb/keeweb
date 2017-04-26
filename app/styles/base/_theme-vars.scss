@@ -43,6 +43,6 @@
     error-background-color-active: shade(map-get($t, error-color), 25%),
     error-background-color-active-tr: rgba(shade(map-get($t, error-color), 25%), .15),
     modal-background-color: rgba(map-get($t, background-color), map-get($t, modal-opacity)),
-    modal-background-color-transparent: rgba(map-get($t, background-color), 0),
+    modal-background-color-tr: rgba(map-get($t, background-color), 0),
   ));
 }
