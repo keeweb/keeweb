@@ -33,7 +33,7 @@
   --action-background-color-active: #3547a1;
   --action-background-color-active-tr: rgba(53, 71, 161, 0.15);
   --error-background-color-active: #ad4158;
-  --error-background-color-active-opqaue: rgba(173, 65, 88, 0.15);
+  --error-background-color-active-tr: rgba(173, 65, 88, 0.15);
   --modal-background-color: rgba(250, 250, 250, 0.9);
   --modal-background-color-transparent: rgba(250, 250, 250, 0);
 }
