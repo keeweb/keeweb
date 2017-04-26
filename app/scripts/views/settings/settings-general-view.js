@@ -94,7 +94,7 @@ const SettingsGeneralView = Backbone.View.extend({
             updateManual: updateManual,
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
-            supportsTitleBarStyles: FeatureDetector.supportsTitleBarStyles(),
+            supportsTitleBarStyles: Launcher && FeatureDetector.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.instance.get('titlebarStyle'),
             storageProviders: storageProviders
         });
