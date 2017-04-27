@@ -6,6 +6,11 @@
   --action-color: #475FD7;
   --error-color: #E75675;
   --muted-color: #b1b1b1;
+
+  /* if you want, you can customize additional variables here, you can find them in _theme-vars.scss */
+  /* for example, highlighted border color: */
+  --accent-border-color: red;
+  /* but if you skip them, they will be computed automatically based on base colors above */
 }
 
 /* any other custom css goes here */
