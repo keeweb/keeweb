@@ -365,6 +365,21 @@ module.exports = function(grunt) {
                 }
             }
         },
+        codesign: {
+            app: {
+                options: {
+                    identity: 'app',
+                    deep: true
+                },
+                src: ['tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app']
+            },
+            dmg: {
+                options: {
+                    identity: 'app'
+                },
+                src: [`dist/desktop/KeeWeb-${pkg.version}.mac.dmg`]
+            }
+        },
         compress: {
             options: {
                 level: 6
@@ -634,6 +649,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-executables', [
         'electron',
+        'codesign:app',
         'sign-exe:win32-build-x64',
         'sign-exe:win32-build-ia32',
         'copy:desktop-darwin-helper-x64',
@@ -649,7 +665,8 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('build-desktop-dist-darwin', [
-        'appdmg'
+        'appdmg',
+        'codesign:dmg'
     ]);
 
     grunt.registerTask('build-desktop-dist-win32', [
