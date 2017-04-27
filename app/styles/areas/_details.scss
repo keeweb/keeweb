@@ -213,7 +213,7 @@
           border: 1px solid;
           @include th {
             border-color: th(light-border-color);
-            box-shadow: 0 0 3px th(form-box-shadow-color);
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.06);
           }
           .details__field-value-add-label {
             @include th { color: th(muted-color); }

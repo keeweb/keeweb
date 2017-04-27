@@ -11,7 +11,6 @@
     base-border-color: mix(map-get($t, medium-color), map-get($t, background-color), 50%),
     accent-border-color: mix(map-get($t, medium-color), map-get($t, background-color), 65%),
     light-border-color: mix(map-get($t, medium-color), map-get($t, background-color), map-get($t, light-border-percent)),
-    form-box-shadow-color: rgba(0, 0, 0, 0.06),
     form-box-shadow-color-focus: lightness-alpha(map-get($t, action-color), -5%, -.3),
     form-box-shadow-color-focus-error: lightness-alpha(map-get($t, error-color), -5%, -.3),
     dropdown-box-shadow-color: rgba(map-get($t, medium-color), .05),
