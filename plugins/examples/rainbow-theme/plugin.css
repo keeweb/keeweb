@@ -1,39 +1,11 @@
 .th-rainbow {
-  /* basic theme style variables */
+  /* theme style variables */
   --background-color: #FAFAFA;
   --medium-color: #050505;
   --text-color: #424243;
   --action-color: #475FD7;
   --error-color: #E75675;
   --muted-color: #b1b1b1;
-
-  /* dependent theme style variables */
-  --muted-color-border: #d5d5d5;
-  --text-selection-bg-color: rgba(71, 95, 215, 0.3);
-  --text-selection-bg-color-error: rgba(231, 86, 117, 0.8);
-  --text-semi-muted-color: #424244;
-  --text-contrast-action-color: #FAFAFA;
-  --text-contrast-error-color: #FAFAFA;
-  --base-border-color: gray;
-  --accent-border-color: #5b5b5b;
-  --light-border-color: #e2e2e2;
-  --form-box-shadow-color-focus: rgba(50, 77, 210, 0.7);
-  --form-box-shadow-color-focus-error: rgba(228, 64, 99, 0.7);
-  --dropdown-box-shadow-color: rgba(5, 5, 5, 0.05);
-  --secondary-background-color: #e2e2e2;
-  --intermediate-background-color: #f3f3f3;
-  --intermediate-pressed-background-color: #f4f4f4;
-  --disabled-background-color: #eeeeee;
-  --action-background-color-focus: #394cac;
-  --action-background-color-focus-tr: rgba(57, 76, 172, 0.1);
-  --error-background-color-focus: #b9455e;
-  --error-background-color-focus-tr: rgba(185, 69, 94, 0.1);
-  --action-background-color-active: #3547a1;
-  --action-background-color-active-tr: rgba(53, 71, 161, 0.15);
-  --error-background-color-active: #ad4158;
-  --error-background-color-active-tr: rgba(173, 65, 88, 0.15);
-  --modal-background-color: rgba(250, 250, 250, 0.9);
-  --modal-background-color-tr: rgba(250, 250, 250, 0);
 }
 
 /* any other custom css goes here */

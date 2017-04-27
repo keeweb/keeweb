@@ -98,7 +98,8 @@ module.exports = function(grunt) {
                 { test: /\.json$/, loader: 'json-loader' },
                 { test: /argon2-asm\.min\.js$/, loader: 'raw-loader' },
                 { test: /argon2\.wasm$/, loader: 'base64-loader' },
-                { test: /argon2\.min\.js/, loader: 'raw-loader' }
+                { test: /argon2\.min\.js/, loader: 'raw-loader' },
+                { test: /\.scss$/, loader: 'raw-loader' }
             ]
         },
         plugins: [

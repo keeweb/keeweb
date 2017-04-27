@@ -1,6 +1,7 @@
 const kdbxweb = require('kdbxweb');
 const Backbone = require('backbone');
 const PluginApi = require('./plugin-api');
+const ThemeVars = require('./theme-vars');
 const Logger = require('../util/logger');
 const SettingsManager = require('../comp/settings-manager');
 const IoCache = require('../storage/io-cache');
@@ -205,7 +206,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
     },
 
     installWithResources() {
-        this.logger.info('Installing plugin code');
+        this.logger.info('Installing plugin resources');
         const manifest = this.get('manifest');
         const promises = [];
         if (this.resources.css) {
@@ -271,14 +272,35 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
     applyCss(name, data, theme) {
         return Promise.resolve().then(() => {
             const text = kdbxweb.ByteUtils.bytesToString(data);
-            this.createElementInHead('style', 'plugin-css-' + name, 'text/css', text);
+            const id = 'plugin-css-' + name;
+            this.createElementInHead('style', id, 'text/css', text);
             if (theme) {
                 const locKey = this.getThemeLocaleKey(theme.name);
                 SettingsManager.allThemes[theme.name] = locKey;
                 BaseLocale[locKey] = theme.title;
+                for (const styleSheet of document.styleSheets) {
+                    if (styleSheet.ownerNode.id === id) {
+                        this.processThemeStyleSheet(styleSheet, theme);
+                        break;
+                    }
+                }
             }
             this.logger.debug('Plugin style installed');
         });
+    },
+
+    processThemeStyleSheet(styleSheet, theme) {
+        const themeSelector = '.th-' + theme.name;
+        for (const rule of styleSheet.cssRules) {
+            if (rule.selectorText === themeSelector) {
+                this.addThemeVariables(rule);
+                break;
+            }
+        }
+    },
+
+    addThemeVariables(rule) {
+        ThemeVars.apply(rule.style);
     },
 
     applyJs(name, data) {
