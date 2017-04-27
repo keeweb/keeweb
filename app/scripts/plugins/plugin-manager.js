@@ -33,7 +33,7 @@ const PluginManager = Backbone.Model.extend({
         this.set({ installing: url, lastInstall: lastInstall });
         return Plugin.loadFromUrl(url).then(plugin => {
             return this.uninstall(plugin.id).then(() => {
-                return plugin.install(true).then(() => {
+                return plugin.install().then(() => {
                     this.get('plugins').push(plugin);
                     this.set({ installing: null });
                     this.saveState();
@@ -88,7 +88,8 @@ const PluginManager = Backbone.Model.extend({
     update(id) {
         const plugins = this.get('plugins');
         const oldPlugin = plugins.get(id);
-        if (!oldPlugin || [Plugin.STATUS_ACTIVE, Plugin.STATUS_INACTIVE, Plugin.STATUS_NONE].indexOf(oldPlugin.get('status')) < 0) {
+        const validStatuses = [Plugin.STATUS_ACTIVE, Plugin.STATUS_INACTIVE, Plugin.STATUS_NONE, Plugin.STATUS_ERROR, Plugin.STATUS_INVALID];
+        if (!oldPlugin || validStatuses.indexOf(oldPlugin.get('status')) < 0) {
             return Promise.reject();
         }
         const url = oldPlugin.get('url');

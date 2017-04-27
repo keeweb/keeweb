@@ -29,7 +29,8 @@ const SettingsPluginsView = Backbone.View.extend({
                 manifest: plugin.get('manifest'),
                 status: plugin.get('status'),
                 installTime: Math.round(plugin.get('installTime')),
-                updateError: plugin.get('updateError')
+                updateError: plugin.get('updateError'),
+                installError: plugin.get('installError')
             })).sort(Comparators.stringComparator('id', true)),
             lastInstallUrl: PluginManager.get('installing') || (lastInstall.error ? lastInstall.url : ''),
             lastInstallError: lastInstall.error

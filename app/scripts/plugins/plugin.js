@@ -225,7 +225,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
             .catch(e => {
                 this.logger.info('Install error', e);
                 this.set('status', this.STATUS_ERROR);
-                return this.uninstall().then(() => { throw e; });
+                return this.disable().then(() => { throw e; });
             });
     },
 

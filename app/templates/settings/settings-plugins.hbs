@@ -15,17 +15,27 @@
             <div class="settings__plugins-plugin-desc">
                 <a href="{{plugin.manifest.url}}" target="_blank">{{plugin.manifest.url}}</a>, v{{plugin.manifest.version}},
                 {{#res 'setPlCreatedBy'}}<a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}}){{/res}},
-                {{#ifeq plugin.status 'active'}}{{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}{{else}}{{plugin.status}}{{/ifeq}}
-                {{#ifeq plugin.status 'error'}}<span class="error-color">&nbsp;({{res 'setPlLoadError'}}){{/ifeq}}
-                {{#if plugin.updateError}}<div class="error-color settings__plugins-upd-error">{{res 'setPlUpdateError'}}: <pre>{{plugin.updateError}}</pre></div>{{/if}}
+                {{#ifeq plugin.status 'active'}}
+                    {{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}
+                {{else}}
+                    {{#ifeq plugin.status 'error'}}
+                        <span class="error-color">&nbsp;{{res 'setPlLoadError'}}
+                    {{else}}
+                        {{plugin.status}}
+                    {{/ifeq}}
+                {{/ifeq}}
+                {{#if plugin.installError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.installError}}</pre></div>{{/if}}
+                {{#if plugin.updateError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.updateError}}</pre></div>{{/if}}
             </div>
             <div class="settings__plugins-plugin-buttons">
                 <button class="settings_plugins-uninstall-btn btn-error" data-plugin="{{plugin.id}}">{{res 'setPlUninstallBtn'}}</button>
                 {{#ifeq plugin.status 'active'}}<button class="settings_plugins-disable-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlDisableBtn'}}</button>{{/ifeq}}
                 {{#ifeq plugin.status 'inactive'}}<button class="settings_plugins-enable-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlEnableBtn'}}</button>{{/ifeq}}
                 <button class="settings_plugins-update-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlUpdateBtn'}}</button>
-                {{#if plugin.manifest.locale}}<button class="settings_plugins-use-locale-btn btn-silent" data-locale="{{plugin.manifest.locale.name}}">{{res 'setPlLocaleBtn'}}</button>{{/if}}
-                {{#if plugin.manifest.theme}}<button class="settings_plugins-use-theme-btn btn-silent" data-theme="{{plugin.manifest.theme.name}}">{{res 'setPlThemeBtn'}}</button>{{/if}}
+                {{#ifeq plugin.status 'active'}}
+                    {{#if plugin.manifest.locale}}<button class="settings_plugins-use-locale-btn btn-silent" data-locale="{{plugin.manifest.locale.name}}">{{res 'setPlLocaleBtn'}}</button>{{/if}}
+                    {{#if plugin.manifest.theme}}<button class="settings_plugins-use-theme-btn btn-silent" data-theme="{{plugin.manifest.theme.name}}">{{res 'setPlThemeBtn'}}</button>{{/if}}
+                {{/ifeq}}
             </div>
         </div>
         {{/each}}
