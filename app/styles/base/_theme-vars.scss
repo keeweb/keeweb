@@ -1,7 +1,4 @@
 @function text-contrast-color($t, $bg) {
-  @if ($bg == map-get($t, background-color)) {
-    @return map-get($t, text-color);
-  }
   @if (lightness($bg) - map-get($t, color-lightness-shift) >= lightness(map-get($t, background-color))) {
     @return map-get($t, text-color);
   }
@@ -18,7 +15,6 @@
     text-semi-muted-color: mix(map-get($t, action-color), map-get($t, text-color), .5),
     text-contrast-action-color: text-contrast-color($t, map-get($t, action-color)),
     text-contrast-error-color: text-contrast-color($t, map-get($t, error-color)),
-    text-contrast-background-color: text-contrast-color($t, map-get($t, background-color)),
 
     // Borders, shadows
     base-border-color: mix(map-get($t, medium-color), map-get($t, background-color), 50%),

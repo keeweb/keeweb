@@ -25,7 +25,7 @@
     &.btn-error, &.btn-silent {
       border-color: th(base-border-color);
       background-color: transparent;
-      color: th(text-contrast-background-color);
+      color: th(text-color);
     }
 
     &:hover {
