@@ -1,31 +1,21 @@
-@function text-contrast-color($t, $bg) {
-  @if (lightness($bg) - map-get($t, color-lightness-shift) >= lightness(map-get($t, background-color))) {
-    @return map-get($t, text-color);
-  }
-  @return map-get($t, background-color);
-}
-
 @function set-theme-vars($t) {
   @return map-merge($t, (
-    // Colors
     muted-color: mix(map-get($t, medium-color), map-get($t, background-color), map-get($t, mute-percent)),
-    muted-color-border: mix(map-get($t, medium-color), map-get($t, background-color), map-get($t, mute-percent) / 2),
+    muted-color-border: mix(map-get($t, medium-color), map-get($t, background-color), semi-mute-percent(map-get($t, mute-percent))),
     text-selection-bg-color: rgba(map-get($t, action-color), .3),
     text-selection-bg-color-error: rgba(map-get($t, error-color), .8),
     text-semi-muted-color: mix(map-get($t, action-color), map-get($t, text-color), .5),
-    text-contrast-action-color: text-contrast-color($t, map-get($t, action-color)),
-    text-contrast-error-color: text-contrast-color($t, map-get($t, error-color)),
+    text-contrast-action-color: text-contrast-color(map-get($t, action-color), map-get($t, color-lightness-shift), map-get($t, background-color), map-get($t, text-color)),
+    text-contrast-error-color: text-contrast-color(map-get($t, error-color), map-get($t, color-lightness-shift), map-get($t, background-color), map-get($t, text-color)),
 
-    // Borders, shadows
     base-border-color: mix(map-get($t, medium-color), map-get($t, background-color), 50%),
     accent-border-color: mix(map-get($t, medium-color), map-get($t, background-color), 65%),
     light-border-color: mix(map-get($t, medium-color), map-get($t, background-color), map-get($t, light-border-percent)),
     form-box-shadow-color: rgba(0, 0, 0, 0.06),
-    form-box-shadow-color-focus: adjust_color(map-get($t, action-color), $lightness: -5%, $alpha: -.3),
-    form-box-shadow-color-focus-error: adjust_color(map-get($t, error-color), $lightness: -5%, $alpha: -.3),
+    form-box-shadow-color-focus: lightness-alpha(map-get($t, action-color), -5%, -.3),
+    form-box-shadow-color-focus-error: lightness-alpha(map-get($t, error-color), -5%, -.3),
     dropdown-box-shadow-color: rgba(map-get($t, medium-color), .05),
 
-    // Backgrounds
     secondary-background-color: mix(map-get($t, medium-color), map-get($t, background-color), 10%),
     intermediate-background-color: mix(map-get($t, medium-color), map-get($t, background-color), 3%),
     intermediate-pressed-background-color: mix(map-get($t, medium-color), map-get($t, background-color), 2.6%),

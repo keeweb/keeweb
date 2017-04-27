@@ -1,0 +1,14 @@
+@function text-contrast-color($bg, $lshift, $th-bg, $th-text) {
+  @if (lightness($bg) - $lshift >= lightness($th-bg)) {
+    @return $th-text;
+  }
+  @return $th-bg;
+}
+
+@function lightness-alpha($color, $lightness, $alpha) {
+  @return adjust_color($color, $lightness: $lightness, $alpha: $alpha);
+}
+
+@function semi-mute-percent($percent) {
+  @return $percent / 2;
+}
