@@ -147,6 +147,35 @@
       &--error { color: $red; }
     }
   }
+  &__donate-btn {
+    margin-bottom: $base-padding-h;
+    background: #FFAE32;
+    display: inline-block;
+    padding: 4px 24px;
+    text-decoration: none;
+    color: #043667;
+    font-family: sans-serif;
+    font-size: 18px;
+    line-height: 24px;
+    font-style: italic;
+    font-weight: 900;
+    border-radius: 26px;
+    border: 1px solid #FFB163;
+    outline: none;
+    background: linear-gradient(to bottom, #FEE1AA, #FEE1AA 80%, #FFEED5);
+    box-shadow: 0 -3px 2px 2px rgba(255, 238, 213, .3) inset,
+    0 -11px 1px 0px #FFB33C inset;
+    &:active, &:hover, &:focus, &:visited {
+      border-color: #FFB163;
+      color: #043667;
+    }
+    &:hover {
+      background: linear-gradient(to bottom, #FED891, #FED891 80%, #FFEED5);
+    }
+    &:active {
+      background: linear-gradient(to bottom, #FED585, #FED585 80%, #FFEED5);
+    }
+  }
   &__plugins {
     &-install-error {
       margin-top: $base-padding-v;
