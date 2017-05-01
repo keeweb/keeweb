@@ -59,7 +59,8 @@ const AppModel = Backbone.Model.extend({
         xhr.addEventListener('load', () => {
             let response = xhr.response;
             if (!response) {
-                this.appLogger.error('Error loading app config', xhr.statusText);
+                const errorDesc = xhr.statusText === 'OK' ? 'Malformed JSON' : xhr.statusText;
+                this.appLogger.error('Error loading app config', errorDesc);
                 return callback(true);
             }
             if (typeof response === 'string') {
