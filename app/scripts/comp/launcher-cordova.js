@@ -48,10 +48,14 @@ const Launcher = {
             }, callback);
         };
 
-        const filePath = this.parsePath(path);
-        window.resolveLocalFileSystemURL(filePath.dir, dir => {
-            dir.getFile(filePath.file, {create: true}, writeFile);
-        }, callback, callback);
+        if (path.startsWith('cdvfile://')) { // then file exists
+            window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
+        } else { // create file on sd card
+            const filePath = this.parsePath(path);
+            window.resolveLocalFileSystemURL(filePath.dir, dir => {
+                dir.getFile(filePath.file, {create: true}, writeFile);
+            }, callback, callback);
+        }
     },
     readFile: function(path, encoding, callback) {
         window.resolveLocalFileSystemURL(path, fileEntry => {
@@ -187,7 +191,7 @@ const Launcher = {
 
                 const encryptConfig = _.extend({}, this.config, {
                     username: fileId,
-                    password: password.getText()
+                    password: password
                 });
 
                 FingerprintAuth.encrypt(encryptConfig, result => {
