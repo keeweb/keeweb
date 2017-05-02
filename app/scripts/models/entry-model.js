@@ -622,6 +622,12 @@ const EntryModel = Backbone.Model.extend({
         newEntry._fillByEntry();
         this.file.reload();
         return newEntry;
+    },
+
+    copyFromTemplate: function(templateEntry) {
+        this.entry.copyFrom(templateEntry.entry);
+        this.entry.fields.Title = '';
+        this._fillByEntry();
     }
 });
 

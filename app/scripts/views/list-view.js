@@ -8,6 +8,7 @@ const DragDropInfo = require('../comp/drag-drop-info');
 const AppSettingsModel = require('../models/app-settings-model');
 const Locale = require('../util/locale');
 const Format = require('../util/format');
+const Alerts = require('../comp/alerts');
 
 const ListView = Backbone.View.extend({
     template: require('templates/list.hbs'),
@@ -47,6 +48,7 @@ const ListView = Backbone.View.extend({
         this.listenTo(this.views.search, 'select-next', this.selectNext);
         this.listenTo(this.views.search, 'create-entry', this.createEntry);
         this.listenTo(this.views.search, 'create-group', this.createGroup);
+        this.listenTo(this.views.search, 'create-template', this.createTemplate);
         this.listenTo(this, 'show', this.viewShown);
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(this, 'view-resize', this.viewResized);
@@ -147,8 +149,8 @@ const ListView = Backbone.View.extend({
         }
     },
 
-    createEntry: function() {
-        const newEntry = this.model.createNewEntry();
+    createEntry: function(arg) {
+        const newEntry = this.model.createNewEntry(arg);
         this.items.unshift(newEntry);
         this.render();
         this.selectItem(newEntry);
@@ -157,6 +159,10 @@ const ListView = Backbone.View.extend({
     createGroup: function() {
         const newGroup = this.model.createNewGroup();
         Backbone.trigger('edit-group', newGroup);
+    },
+
+    createTemplate: function() {
+        Alerts.notImplemented();
     },
 
     selectItem: function(item) {

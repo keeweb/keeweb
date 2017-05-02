@@ -377,6 +377,17 @@ const FileModel = Backbone.Model.extend({
         return hash ? kdbxweb.ByteUtils.bytesToBase64(hash.getBinary()) : null;
     },
 
+    forEachEntryTemplate: function(callback) {
+        if (!this.db.meta.entryTemplatesGroup) {
+            return;
+        }
+        const group = this.getGroup(this.subId(this.db.meta.entryTemplatesGroup.id));
+        if (!group) {
+            return;
+        }
+        group.forEachOwnEntry({}, callback);
+    },
+
     setSyncProgress: function() {
         this.set({ syncing: true });
     },

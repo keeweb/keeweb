@@ -313,9 +313,30 @@ const AppModel = Backbone.Model.extend({
         return matches.map(m => m[0]);
     },
 
-    createNewEntry: function() {
+    getEntryTemplates: function() {
+        const entryTemplates = [];
+        this.files.forEach(file => {
+            file.forEachEntryTemplate(entry => {
+                entryTemplates.push({ file, entry });
+            });
+        });
+        return entryTemplates;
+    },
+
+    createNewEntry: function(args) {
         const sel = this.getFirstSelectedGroup();
-        return EntryModel.newEntry(sel.group, sel.file);
+        if (args && args.template) {
+            if (sel.file !== args.template.file) {
+                sel.file = args.template.file;
+                sel.group = args.template.file.get('groups').first();
+            }
+            const templateEntry = args.template.entry;
+            const newEntry = EntryModel.newEntry(sel.group, sel.file);
+            newEntry.copyFromTemplate(templateEntry);
+            return newEntry;
+        } else {
+            return EntryModel.newEntry(sel.group, sel.file);
+        }
     },
 
     createNewGroup: function() {
@@ -724,27 +745,6 @@ const AppModel = Backbone.Model.extend({
                     });
                 });
             };
-            const saveToCacheAndStorage = () => {
-                logger.info('Getting file data for saving');
-                file.getData((data, err) => {
-                    if (err) { return complete(err); }
-                    if (storage === 'file') {
-                        logger.info('Saving to file storage');
-                        saveToStorage(data);
-                    } else if (!file.get('dirty')) {
-                        logger.info('Saving to storage, skip cache because not dirty');
-                        saveToStorage(data);
-                    } else {
-                        logger.info('Saving to cache');
-                        Storage.cache.save(fileInfo.id, null, data, (err) => {
-                            if (err) { return complete(err); }
-                            file.set('dirty', false);
-                            logger.info('Saved to cache, saving to storage');
-                            saveToStorage(data);
-                        });
-                    }
-                });
-            };
             const saveToStorage = (data) => {
                 logger.info('Save data to storage');
                 Storage[storage].save(path, opts, data, (err, stat) => {
@@ -771,6 +771,27 @@ const AppModel = Backbone.Model.extend({
                         complete();
                     }
                 }, fileInfo.get('rev'));
+            };
+            const saveToCacheAndStorage = () => {
+                logger.info('Getting file data for saving');
+                file.getData((data, err) => {
+                    if (err) { return complete(err); }
+                    if (storage === 'file') {
+                        logger.info('Saving to file storage');
+                        saveToStorage(data);
+                    } else if (!file.get('dirty')) {
+                        logger.info('Saving to storage, skip cache because not dirty');
+                        saveToStorage(data);
+                    } else {
+                        logger.info('Saving to cache');
+                        Storage.cache.save(fileInfo.id, null, data, (err) => {
+                            if (err) { return complete(err); }
+                            file.set('dirty', false);
+                            logger.info('Saved to cache, saving to storage');
+                            saveToStorage(data);
+                        });
+                    }
+                });
             };
             logger.info('Stat file');
             Storage[storage].stat(path, opts, (err, stat) => {

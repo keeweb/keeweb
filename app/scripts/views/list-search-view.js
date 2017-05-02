@@ -5,6 +5,7 @@ const DropdownView = require('./dropdown-view');
 const FeatureDetector = require('../util/feature-detector');
 const Format = require('../util/format');
 const Locale = require('../util/locale');
+const Comparators = require('../util/comparators');
 
 const ListSearchView = Backbone.View.extend({
     template: require('templates/list-search.hbs'),
@@ -278,6 +279,7 @@ const ListSearchView = Backbone.View.extend({
             this.hideSearchOptions();
             return;
         }
+
         this.hideSearchOptions();
         this.$el.find('.list__search-btn-new').addClass('sel--active');
         const view = new DropdownView();
@@ -288,9 +290,28 @@ const ListSearchView = Backbone.View.extend({
                 top: this.$el.find('.list__search-btn-new')[0].getBoundingClientRect().bottom,
                 right: this.$el[0].getBoundingClientRect().right + 1
             },
-            options: this.createOptions
+            options: this.createOptions.concat(this.getCreateEntryTemplateOptions())
         });
         this.views.searchDropdown = view;
+    },
+
+    getCreateEntryTemplateOptions: function() {
+        const entryTemplates = this.model.getEntryTemplates();
+        const hasMultipleFiles = this.model.files.length > 1;
+        this.entryTemplates = {};
+        const options = [];
+        entryTemplates.forEach(tmpl => {
+            const id = 'tmpl:' + tmpl.entry.id;
+            options.push({
+                value: id,
+                icon: tmpl.entry.icon,
+                text: hasMultipleFiles ? tmpl.file.get('name') + ' / ' + tmpl.entry.title : tmpl.entry.title
+            });
+            this.entryTemplates[id] = tmpl;
+        });
+        options.sort(Comparators.stringComparator('text', true));
+        options.push({ value: 'tmpl', icon: 'sticky-note-o', text: Format.capFirst(Locale.template) });
+        return options;
     },
 
     sortDropdownSelect: function(e) {
@@ -307,6 +328,13 @@ const ListSearchView = Backbone.View.extend({
             case 'group':
                 this.trigger('create-group');
                 break;
+            case 'tmpl':
+                this.trigger('create-template');
+                break;
+            default:
+                if (this.entryTemplates[e.item]) {
+                    this.trigger('create-entry', { template: this.entryTemplates[e.item] });
+                }
         }
     },
 

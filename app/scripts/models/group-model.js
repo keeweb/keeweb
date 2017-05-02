@@ -29,7 +29,7 @@ const GroupModel = MenuItemModel.extend({
     },
 
     setGroup: function(group, file, parentGroup) {
-        const isRecycleBin = file.db.meta.recycleBinUuid && file.db.meta.recycleBinUuid.id === group.uuid.id;
+        const isRecycleBin = group.uuid.equals(file.db.meta.recycleBinUuid);
         const id = file.subId(group.uuid.id);
         this.set({
             id: id,
@@ -125,7 +125,10 @@ const GroupModel = MenuItemModel.extend({
     },
 
     matches: function(filter) {
-        return (filter && filter.includeDisabled || this.group.enableSearching !== false) &&
+        return (filter && filter.includeDisabled ||
+                this.group.enableSearching !== false &&
+                !this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup)
+            ) &&
             (!filter || !filter.autoType || this.group.enableAutoType !== false);
     },
 

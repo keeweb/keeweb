@@ -17,6 +17,8 @@
   "group": "group",
   "noTitle": "no title",
   "or": "or",
+  "history": "history",
+  "template": "template",
   "notImplemented": "Not Implemented",
   "saveChanges": "Save changes",
   "discardChanges": "Discard changes",
@@ -25,7 +27,6 @@
   "help": "Help",
   "settings": "Settings",
   "plugins": "Plugins",
-  "history": "history",
 
   "cache": "cache",
   "file": "file",
