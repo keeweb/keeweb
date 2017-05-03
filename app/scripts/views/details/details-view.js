@@ -479,7 +479,8 @@ const DetailsView = Backbone.View.extend({
                         i++;
                         fieldName = e.newField + i;
                     }
-                    this.model.setField(fieldName, e.val);
+                    const allowEmpty = this.model.group.isEntryTemplatesGroup();
+                    this.model.setField(fieldName, e.val, allowEmpty);
                     this.entryUpdated();
                     return;
                 } else if (fieldName === 'File') {

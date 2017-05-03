@@ -248,6 +248,10 @@ const GroupModel = MenuItemModel.extend({
         return this.parentGroup ? this.parentGroup.getEffectiveAutoTypeSeq() : DefaultAutoTypeSequence;
     },
 
+    isEntryTemplatesGroup: function() {
+        return this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup);
+    },
+
     moveToTrash: function() {
         this.file.setModified();
         this.file.db.remove(this.group);
