@@ -162,7 +162,24 @@ const ListView = Backbone.View.extend({
     },
 
     createTemplate: function() {
-        Alerts.notImplemented();
+        if (!this.model.settings.get('templateHelpShown')) {
+            Alerts.yesno({
+                icon: 'sticky-note-o',
+                header: Locale.listAddTemplateHeader,
+                body: Locale.listAddTemplateBody1.replace('{}', '<i class="fa fa-plus"></i>') + '<br/>' +
+                    Locale.listAddTemplateBody2.replace('{}', 'Templates'),
+                buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
+                success: () => {
+                    this.model.settings.set('templateHelpShown', true);
+                    this.createTemplate();
+                }
+            });
+            return;
+        }
+        const templateEntry = this.model.createNewTemplateEntry();
+        this.items.unshift(templateEntry);
+        this.render();
+        this.selectItem(templateEntry);
     },
 
     selectItem: function(item) {

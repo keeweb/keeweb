@@ -252,13 +252,14 @@ const ListSearchView = Backbone.View.extend({
     },
 
     toggleSortOptions: function() {
-        if (this.views.searchDropdown && this.views.searchDropdown.options === this.sortOptions) {
+        if (this.views.searchDropdown && this.views.searchDropdown.isSort) {
             this.hideSearchOptions();
             return;
         }
         this.hideSearchOptions();
         this.$el.find('.list__search-btn-sort').addClass('sel--active');
         const view = new DropdownView();
+        view.isSort = true;
         this.listenTo(view, 'cancel', this.hideSearchOptions);
         this.listenTo(view, 'select', this.sortDropdownSelect);
         this.sortOptions.forEach(function(opt) {
@@ -275,7 +276,7 @@ const ListSearchView = Backbone.View.extend({
     },
 
     toggleCreateOptions: function() {
-        if (this.views.searchDropdown && this.views.searchDropdown.options === this.createOptions) {
+        if (this.views.searchDropdown && this.views.searchDropdown.isCreate) {
             this.hideSearchOptions();
             return;
         }
@@ -283,6 +284,7 @@ const ListSearchView = Backbone.View.extend({
         this.hideSearchOptions();
         this.$el.find('.list__search-btn-new').addClass('sel--active');
         const view = new DropdownView();
+        view.isCreate = true;
         this.listenTo(view, 'cancel', this.hideSearchOptions);
         this.listenTo(view, 'select', this.createDropdownSelect);
         view.render({

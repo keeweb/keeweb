@@ -344,6 +344,19 @@ const FileModel = Backbone.Model.extend({
         return this.db.meta.recycleBinEnabled ? this.getGroup(this.subId(this.db.meta.recycleBinUuid.id)) : null;
     },
 
+    getEntryTemplatesGroup: function() {
+        return this.db.meta.entryTemplatesGroup ? this.getGroup(this.subId(this.db.meta.entryTemplatesGroup.id)) : null;
+    },
+
+    createEntryTemplatesGroup: function() {
+        const rootGroup = this.get('groups').first();
+        const templatesGroup = GroupModel.newGroup(rootGroup, this);
+        templatesGroup.setName('Templates');
+        this.db.meta.entryTemplatesGroup = templatesGroup.group.uuid;
+        this.reload();
+        return templatesGroup;
+    },
+
     setModified: function() {
         if (!this.get('demo')) {
             this.set({ modified: true, dirty: true });

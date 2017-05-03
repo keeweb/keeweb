@@ -344,6 +344,12 @@ const AppModel = Backbone.Model.extend({
         return GroupModel.newGroup(sel.group, sel.file);
     },
 
+    createNewTemplateEntry: function() {
+        const file = this.getFirstSelectedGroup().file;
+        const group = file.getEntryTemplatesGroup() || file.createEntryTemplatesGroup();
+        return EntryModel.newEntry(group, file);
+    },
+
     createDemoFile: function() {
         if (!this.files.getByName('Demo')) {
             const demoFile = new FileModel({ id: IdGenerator.uuid() });

@@ -123,6 +123,9 @@
   "listNoWebsite": "no website",
   "listNoUser": "no user",
   "listNoAttachments": "no attachments",
+  "listAddTemplateHeader": "Templates",
+  "listAddTemplateBody1": "Templates allow you to create entries with one click. Add something to template entry and then click {} again to use this template.",
+  "listAddTemplateBody2": "You can always find your templates in {} group.",
 
   "searchAddNew": "Add New",
   "searchSort": "Sort",
