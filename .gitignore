@@ -14,3 +14,5 @@ bin/
 obj/
 *.xcworkspace/
 xcuserdata/
+*.iml
+.idea/
