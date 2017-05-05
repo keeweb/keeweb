@@ -6,7 +6,10 @@ const SettingsManager = {
     activeLocale: 'en',
 
     allLocales: {
-        'en': 'English'
+        'en': 'English',
+        'de-DE': 'Deutsch',
+        'fr-FR': 'Français',
+        'nl-NL': 'Nederlands'
     },
 
     allThemes: {
