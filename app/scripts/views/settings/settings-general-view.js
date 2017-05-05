@@ -177,11 +177,7 @@ const SettingsGeneralView = Backbone.View.extend({
         const locale = e.target.value;
         if (locale === '...') {
             e.target.value = AppSettingsModel.instance.get('locale') || 'en';
-            Alerts.info({
-                icon: 'language',
-                header: Locale.setGenLocMsg,
-                body: Locale.setGenLocMsgBody + ` <a target="_blank" href="${Links.Translation}">${Locale.setGenLocMsgLink}</a>`
-            });
+            this.appModel.menu.select({ item: this.appModel.menu.pluginsSection.get('items').first() });
             return;
         }
         AppSettingsModel.instance.set('locale', locale);

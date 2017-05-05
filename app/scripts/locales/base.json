@@ -326,6 +326,7 @@
   "setGenThemeSl": "Solarized light",
   "setGenLocale": "Language",
   "setGenLocImprove": "translate the app to your language",
+  "setGenLocOther": "other languages are available as plugins",
   "setGenLocMsg": "Help translating KeeWeb",
   "setGenLocMsgBody": "If you would like to see KeeWeb in your language, please help us with translation.",
   "setGenLocMsgLink": "Translate the app",
