@@ -8,8 +8,7 @@ const SettingsManager = {
     allLocales: {
         'en': 'English',
         'de-DE': 'Deutsch',
-        'fr-FR': 'Français',
-        'nl-NL': 'Nederlands'
+        'fr-FR': 'Français'
     },
 
     allThemes: {
