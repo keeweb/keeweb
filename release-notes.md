@@ -6,7 +6,7 @@ Release notes
 `*` Dropbox API V2  
 `+` entry templates  
 `+` support cloud providers in iOS homescreen apps  
-`+` auto-type improvements  
+`+` auto-type improvements and bugfixes  
 `+` mobile field editing improvements  
 `+` file path hint in recent files list  
 `+` cacheConfigSettings config option  
