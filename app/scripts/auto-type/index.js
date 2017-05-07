@@ -190,6 +190,7 @@ const AutoType = {
             return;
         }
         this.focusMainWindow();
+        evt.filter.ignoreWindowInfo = true;
         this.selectEntryView = new AutoTypeSelectView({
             model: { filter: evt.filter }
         }).render();

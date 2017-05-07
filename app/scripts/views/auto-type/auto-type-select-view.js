@@ -14,7 +14,6 @@ const AutoTypePopupView = Backbone.View.extend({
 
     events: {
         'click .at-select__header-filter-clear': 'clearFilterText',
-        'click .at-select__message-clear-filter': 'clearFilterWindow',
         'click .at-select__item': 'itemClicked'
     },
 
@@ -35,11 +34,10 @@ const AutoTypePopupView = Backbone.View.extend({
     },
 
     render() {
-        let topMessage, topClearFilterVisible;
+        let topMessage;
         if (this.model.filter.title || this.model.filter.url) {
             topMessage = Locale.autoTypeMsgMatchedByWindow.replace('{}',
                 this.model.filter.title || this.model.filter.url);
-            topClearFilterVisible = !this.model.filter.ignoreWindowInfo;
         } else {
             topMessage = Locale.autoTypeMsgNoWindow;
         }
@@ -56,7 +54,6 @@ const AutoTypePopupView = Backbone.View.extend({
         this.renderTemplate({
             filterText: this.model.filter.text,
             topMessage: topMessage,
-            topClearFilterVisible: topClearFilterVisible,
             itemsHtml: itemsHtml
         });
         document.activeElement.blur();
@@ -147,11 +144,6 @@ const AutoTypePopupView = Backbone.View.extend({
 
     clearFilterText() {
         this.model.filter.text = '';
-        this.render();
-    },
-
-    clearFilterWindow() {
-        this.model.filter.ignoreWindowInfo = true;
         this.render();
     },
 

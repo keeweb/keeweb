@@ -270,7 +270,6 @@
   "autoTypeHeader": "Auto-Type: Select",
   "autoTypeMsgNoWindow": "We were unable to get active window title, start typing to search",
   "autoTypeMsgMatchedByWindow": "Select a password for {}",
-  "autoTypeClearFilter": "show all entries",
   "autoTypeNoMatches": "no matches",
 
   "appSecWarn": "Not Secure!",
