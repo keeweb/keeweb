@@ -753,6 +753,7 @@ const AppModel = Backbone.Model.extend({
             };
             const saveToStorage = (data) => {
                 logger.info('Save data to storage');
+                const storageRev = fileInfo.get('storage') === storage ? fileInfo.get('rev') : undefined;
                 Storage[storage].save(path, opts, data, (err, stat) => {
                     if (err && err.revConflict) {
                         logger.info('Save rev conflict, reloading from storage');
@@ -776,7 +777,7 @@ const AppModel = Backbone.Model.extend({
                         this.scheduleBackupFile(file, data);
                         complete();
                     }
-                }, fileInfo.get('rev'));
+                }, storageRev);
             };
             const saveToCacheAndStorage = () => {
                 logger.info('Getting file data for saving');
