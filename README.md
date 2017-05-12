@@ -63,7 +63,7 @@ Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your 
 # Donations
 
 Donate with PayPal:  
-[![Donate with PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VE75PM997C2GW)  
+[![Donate with PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.me/dvitkovsky)  
 
 Please note: donation does not imply any type of service contract.  
 

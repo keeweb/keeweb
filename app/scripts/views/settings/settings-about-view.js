@@ -10,7 +10,8 @@ const SettingsAboutView = Backbone.View.extend({
             version: RuntimeInfo.version,
             licenseLink: Links.License,
             licenseLinkApache: Links.LicenseApache,
-            repoLink: Links.Repo
+            repoLink: Links.Repo,
+            donationLink: Links.Donation
         });
     }
 });
