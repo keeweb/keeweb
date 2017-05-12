@@ -467,48 +467,52 @@ module.exports = function(grunt) {
             }
         },
         deb: {
+            options: {
+                tmpPath: 'tmp/desktop/',
+                package: {
+                    name: 'keeweb-desktop',
+                    version: pkg.version,
+                    description: pkg.description,
+                    author: pkg.author,
+                    homepage: pkg.homepage,
+                    rev: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); }
+                },
+                info: {
+                    arch: 'amd64',
+                    targetDir: 'dist/desktop',
+                    pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
+                    appName: 'KeeWeb',
+                    depends: 'libappindicator1, libgconf2-4',
+                    scripts: {
+                        postinst: 'package/deb/scripts/postinst'
+                    }
+                }
+            },
             'linux-x64': {
                 options: {
-                    tmpPath: 'tmp/desktop/',
-                    package: {
-                        name: 'keeweb-desktop',
-                        version: pkg.version,
-                        description: pkg.description,
-                        author: pkg.author,
-                        homepage: pkg.homepage,
-                        rev: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); }
-                    },
                     info: {
                         arch: 'amd64',
-                        targetDir: 'dist/desktop',
                         pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
-                        appName: 'KeeWeb',
-                        depends: 'libappindicator1, libgconf2-4',
-                        scripts: {
-                            postinst: 'package/deb/scripts/postinst'
-                        }
                     }
                 },
                 files: [
-                    {
-                        cwd: 'package/deb/usr',
-                        src: '**',
-                        dest: '/usr',
-                        expand: true,
-                        nonull: true
-                    },
-                    {
-                        cwd: 'tmp/desktop/KeeWeb-linux-x64/',
-                        src: '**',
-                        dest: '/opt/keeweb-desktop',
-                        expand: true,
-                        nonull: true
-                    },
-                    {
-                        src: 'graphics/128x128.png',
-                        dest: '/usr/share/icons/hicolor/128x128/apps/keeweb.png',
-                        nonull: true
-                    }]
+                    { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
+                    { cwd: 'tmp/desktop/KeeWeb-linux-x64/', src: '**', dest: '/opt/keeweb-desktop', expand: true, nonull: true },
+                    { src: 'graphics/128x128.png', dest: '/usr/share/icons/hicolor/128x128/apps/keeweb.png', nonull: true }
+                ]
+            },
+            'linux-ia32': {
+                options: {
+                    info: {
+                        arch: 'i386',
+                        pkgName: `KeeWeb-${pkg.version}.linux.ia32.deb`,
+                    }
+                },
+                files: [
+                    { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
+                    { cwd: 'tmp/desktop/KeeWeb-linux-ia32/', src: '**', dest: '/opt/keeweb-desktop', expand: true, nonull: true },
+                    { src: 'graphics/128x128.png', dest: '/usr/share/icons/hicolor/128x128/apps/keeweb.png', nonull: true }
+                ]
             }
         },
         'sign-archive': {
@@ -694,7 +698,8 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('build-desktop-dist-linux', [
-        'deb:linux-x64'
+        'deb:linux-x64',
+        'deb:linux-ia32'
     ]);
 
     grunt.registerTask('build-desktop-dist', [
