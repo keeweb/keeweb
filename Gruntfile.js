@@ -611,6 +611,17 @@ module.exports = function(grunt) {
                 'watch:styles',
                 'webpack-dev-server'
             ]
+        },
+        'sign-dist': {
+            'dist': {
+                options: {
+                    sign: 'dist/desktop/Verify.sign.sha256',
+                    privateKey: 'keys/private-key.pem'
+                },
+                files: {
+                    'dist/desktop/Verify.sha256': ['dist/desktop/KeeWeb-*', 'dist/desktop/UpdateDesktop.zip']
+                }
+            }
         }
     });
 
@@ -699,7 +710,8 @@ module.exports = function(grunt) {
         'build-desktop-update',
         'build-desktop-executables',
         'build-desktop-archives',
-        'build-desktop-dist'
+        'build-desktop-dist',
+        'sign-dist'
     ]);
 
     grunt.registerTask('build-cordova-app-content', [
