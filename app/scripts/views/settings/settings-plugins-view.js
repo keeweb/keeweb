@@ -42,16 +42,20 @@ const SettingsPluginsView = Backbone.View.extend({
             lastInstallError: lastInstall.error,
             galleryLoading: PluginGallery.loading,
             galleryLoadError: PluginGallery.loadError,
-            gallery: this.getGallery()
+            galleryPlugins: this.getGalleryPlugins()
         });
         return this;
     },
 
-    getGallery() {
+    getGalleryPlugins() {
         if (!PluginGallery.gallery) {
             return null;
         }
-        return PluginGallery.gallery;
+        const plugins = PluginManager.get('plugins');
+        return PluginGallery.gallery.plugins
+            .map(pl => pl)
+            .filter(pl => !plugins.get(pl.manifest.name))
+            .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
     },
 
     installClick() {
@@ -114,9 +118,15 @@ const SettingsPluginsView = Backbone.View.extend({
     },
 
     galleryInstallClick(e) {
-        const pluginId = $(e.target).data('plugin');
+        const installBtn = $(e.target);
+        const pluginId = installBtn.data('plugin');
         const plugin = PluginGallery.gallery.plugins.find(pl => pl.manifest.name === pluginId);
-        PluginManager.install(plugin.url, plugin.manifest);
+        installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
+        PluginManager.install(plugin.url, plugin.manifest)
+            .catch(() => { })
+            .then(() => {
+                installBtn.prop('disabled', true);
+            });
     }
 });
 

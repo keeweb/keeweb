@@ -49,9 +49,9 @@
     <div class="settings__plugins-install">
         <div>{{res 'setPlInstallDesc'}}</div>
         {{#if galleryLoadError}}<div class="error-color">{{res 'setPlGalleryLoadError'}}</div>{{/if}}
-        {{#if gallery}}
+        {{#if galleryPlugins}}
             <div class="settings__plugins-gallery">
-            {{#each gallery.plugins as |plugin|}}
+            {{#each galleryPlugins as |plugin|}}
                 <div class="settings__plugins-gallery-plugin">
                     <h3 class="settings__plugins-gallery-plugin-title">{{plugin.manifest.name}}</h3>
                     <div class="settings__plugins-gallery-plugin-desc">{{plugin.manifest.description}}</div>
@@ -69,7 +69,14 @@
                     </div>
                     <button class="settings__plugins-gallery-plugin-install-btn"
                             data-plugin="{{plugin.manifest.name}}"
-                    >{{res 'setPlInstallBtn'}}</button>
+                            {{#ifeq ../lastInstallUrl plugin.url}}disabled{{/ifeq}}
+                    >
+                        {{#ifeq ../lastInstallUrl plugin.url}}
+                            {{res 'setPlInstallBtnProgress'}}...
+                        {{else}}
+                            {{res 'setPlInstallBtn'}}
+                        {{/ifeq}}
+                    </button>
                 </div>
             {{/each}}
             </div>
