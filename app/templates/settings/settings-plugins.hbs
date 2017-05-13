@@ -53,7 +53,7 @@
             <div class="settings__plugins-gallery">
             {{#each galleryPlugins as |plugin|}}
                 <div class="settings__plugins-gallery-plugin">
-                    <h3 class="settings__plugins-gallery-plugin-title">{{plugin.manifest.name}}</h3>
+                    <h4 class="settings__plugins-gallery-plugin-title">{{plugin.manifest.name}}</h4>
                     <div class="settings__plugins-gallery-plugin-desc">{{plugin.manifest.description}}</div>
                     <ul class="settings__plugins-plugin-files">
                         {{#if plugin.manifest.resources.js}}<li class="settings__plugins-plugin-file"><i class="fa fa-code"></i> {{res 'setPlJs'}}</li>{{/if}}
