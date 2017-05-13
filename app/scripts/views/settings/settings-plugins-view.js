@@ -1,6 +1,7 @@
 const Backbone = require('backbone');
 const Locale = require('../../util/locale');
 const PluginManager = require('../../plugins/plugin-manager');
+const PluginGallery = require('../../plugins/plugin-gallery');
 const AppSettingsModel = require('../../models/app-settings-model');
 const Comparators = require('../../util/comparators');
 const Format = require('../../util/format');
@@ -15,11 +16,14 @@ const SettingsPluginsView = Backbone.View.extend({
         'click .settings_plugins-enable-btn': 'enableClick',
         'click .settings_plugins-update-btn': 'updateClick',
         'click .settings_plugins-use-locale-btn': 'useLocaleClick',
-        'click .settings_plugins-use-theme-btn': 'useThemeClick'
+        'click .settings_plugins-use-theme-btn': 'useThemeClick',
+        'click .settings__plugins-gallery-plugin-install-btn': 'galleryInstallClick'
     },
 
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
+        this.listenTo(Backbone, 'plugin-gallery-load-complete', this.render.bind(this));
+        PluginGallery.loadPlugins();
     },
 
     render() {
@@ -32,12 +36,22 @@ const SettingsPluginsView = Backbone.View.extend({
                 installTime: Math.round(plugin.get('installTime')),
                 updateError: plugin.get('updateError'),
                 updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
-                installError: plugin.get('installError')
+                installError: plugin.get('installError'),
             })).sort(Comparators.stringComparator('id', true)),
             lastInstallUrl: PluginManager.get('installing') || (lastInstall.error ? lastInstall.url : ''),
-            lastInstallError: lastInstall.error
+            lastInstallError: lastInstall.error,
+            galleryLoading: PluginGallery.loading,
+            galleryLoadError: PluginGallery.loadError,
+            gallery: this.getGallery()
         });
         return this;
+    },
+
+    getGallery() {
+        if (!PluginGallery.gallery) {
+            return null;
+        }
+        return PluginGallery.gallery;
     },
 
     installClick() {
@@ -97,6 +111,12 @@ const SettingsPluginsView = Backbone.View.extend({
     useThemeClick(e) {
         const theme = $(e.target).data('theme');
         AppSettingsModel.instance.set('theme', theme);
+    },
+
+    galleryInstallClick(e) {
+        const pluginId = $(e.target).data('plugin');
+        const plugin = PluginGallery.gallery.plugins.find(pl => pl.manifest.name === pluginId);
+        PluginManager.install(plugin.url, plugin.manifest);
     }
 });
 

@@ -477,7 +477,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
 
 _.extend(Plugin, PluginStatus);
 
-Plugin.loadFromUrl = function(url) {
+Plugin.loadFromUrl = function(url, expectedManifest) {
     if (url[url.length - 1] !== '/') {
         url += '/';
     }
@@ -496,6 +496,14 @@ Plugin.loadFromUrl = function(url) {
                 throw 'Failed to parse manifest';
             }
             commonLogger.debug('Loaded manifest', manifest);
+            if (expectedManifest) {
+                if (expectedManifest.name !== manifest.name) {
+                    throw 'Bad plugin name';
+                }
+                if (expectedManifest.privateKey !== manifest.privateKey) {
+                    throw 'Bad plugin private key';
+                }
+            }
             return new Plugin({
                 manifest, url
             });

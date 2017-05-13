@@ -43,9 +43,41 @@
         </div>
         {{/each}}
     </div>
-    <h2>{{res 'setPlInstallTitle'}}</h2>
+    <h2>
+        {{#if galleryLoading}}{{res 'setPlGalleryLoading'}}...{{else}}{{res 'setPlInstallTitle'}}{{/if}}
+    </h2>
     <div class="settings__plugins-install">
         <div>{{res 'setPlInstallDesc'}}</div>
+        {{#if galleryLoadError}}<div class="error-color">{{res 'setPlGalleryLoadError'}}</div>{{/if}}
+        {{#if gallery}}
+            <div class="settings__plugins-gallery">
+            {{#each gallery.plugins as |plugin|}}
+                <div class="settings__plugins-gallery-plugin">
+                    <h3 class="settings__plugins-gallery-plugin-title">{{plugin.manifest.name}}</h3>
+                    <div class="settings__plugins-gallery-plugin-desc">{{plugin.manifest.description}}</div>
+                    <ul class="settings__plugins-plugin-files">
+                        {{#if plugin.manifest.resources.js}}<li class="settings__plugins-plugin-file"><i class="fa fa-code"></i> {{res 'setPlJs'}}</li>{{/if}}
+                        {{#if plugin.manifest.resources.css}}<li class="settings__plugins-plugin-file"><i class="fa fa-paint-brush"></i> {{res 'setPlCss'}}</li>{{/if}}
+                        {{#if plugin.manifest.resources.loc}}<li class="settings__plugins-plugin-file"><i class="fa fa-language"></i> {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}}</li>{{/if}}
+                    </ul>
+                    <div class="settings__plugins-gallery-plugin-author muted-color">
+                        {{#if plugin.official}}
+                            <i class="fa fa-check"></i> {{res 'setPlOfficial'}}
+                        {{else}}
+                            <i class="fa fa-at"></i> <a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}})
+                        {{/if}}
+                    </div>
+                    <button class="settings__plugins-gallery-plugin-install-btn"
+                            data-plugin="{{plugin.manifest.name}}"
+                    >{{res 'setPlInstallBtn'}}</button>
+                </div>
+            {{/each}}
+            </div>
+        {{/if}}
+    </div>
+    <h2>{{res 'setPlInstallUrlTitle'}}</h2>
+    <div class="settings__plugins-install-url">
+        <div>{{res 'setPlInstallUrlDesc'}}</div>
         <label for="settings__plugins-install-url">{{res 'setPlInstallLabel'}}</label>
         <input type="text" class="settings__input input-base" id="settings__plugins-install-url" value="{{lastInstallUrl}}" />
         <button class="settings_plugins-install-btn" {{#if installing}}disabled{{/if}}>

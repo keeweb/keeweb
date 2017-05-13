@@ -190,5 +190,25 @@
     &-plugin-desc {
       margin-bottom: $base-padding-v;
     }
+    &-gallery {
+      margin-top: $base-spacing;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    &-gallery-plugin {
+      position: relative;
+      width: calc(50% - 40px);
+      border-radius: $base-border-radius;
+      border: light-border();
+      padding: 0 $base-padding-h $base-padding-v;
+      box-sizing: border-box;
+      margin: 0 $base-padding-v $base-padding-h 0;
+      vertical-align: top;
+      &-install-btn {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+    }
   }
 }

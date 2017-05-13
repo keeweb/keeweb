@@ -469,6 +469,11 @@
   "setPlLoadTime": "took {} to load",
   "setPlLastUpdate": "Last check for updates",
   "setPlLoadError": "error loading plugin",
+  "setPlGalleryLoading": "Loading plugins, please wait a bit",
+  "setPlGalleryLoadError": "Error loading plugins",
+  "setPlInstallUrlTitle": "Add plugin from URL",
+  "setPlInstallUrlDesc": "If the plugin is not in the gallery, you can install it manually from URL",
+  "setPlOfficial": "Official KeeWeb plugin",
 
   "setAboutTitle": "About",
   "setAboutBuilt": "This app is built with these awesome tools",
