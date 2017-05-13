@@ -3,6 +3,7 @@ const Locale = require('../../util/locale');
 const PluginManager = require('../../plugins/plugin-manager');
 const AppSettingsModel = require('../../models/app-settings-model');
 const Comparators = require('../../util/comparators');
+const Format = require('../../util/format');
 
 const SettingsPluginsView = Backbone.View.extend({
     template: require('templates/settings/settings-plugins.hbs'),
@@ -30,6 +31,7 @@ const SettingsPluginsView = Backbone.View.extend({
                 status: plugin.get('status'),
                 installTime: Math.round(plugin.get('installTime')),
                 updateError: plugin.get('updateError'),
+                updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
                 installError: plugin.get('installError')
             })).sort(Comparators.stringComparator('id', true)),
             lastInstallUrl: PluginManager.get('installing') || (lastInstall.error ? lastInstall.url : ''),

@@ -36,6 +36,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         status: '',
         installTime: null,
         installError: null,
+        updateCheckDate: null,
         updateError: null
     },
 
@@ -430,7 +431,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
             const manifest = this.get('manifest');
             const newManifest = newPlugin.get('manifest');
             if (manifest.version === newManifest.version) {
-                this.set({ status: prevStatus, updateError: null });
+                this.set({ status: prevStatus, updateCheckDate: new Date().getTime(), updateError: null });
                 this.logger.info(`v${manifest.version} is the latest plugin version`);
                 return;
             }
@@ -438,7 +439,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
             const error = newPlugin.validateManifest() || this.validateUpdatedManifest(newManifest);
             if (error) {
                 this.logger.error('Manifest validation error', error);
-                this.set({ status: prevStatus, updateError: error });
+                this.set({ status: prevStatus, updateCheckDate: new Date().getTime(), updateError: error });
                 throw 'Plugin validation error: ' + error;
             }
             this.uninstallPluginCode();
@@ -451,6 +452,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                         manifest: newManifest,
                         installTime: this.logger.ts() - ts,
                         installError: null,
+                        updateCheckDate: new Date().getTime(),
                         updateError: null
                     });
                     this.logger.info('Update complete', this.logger.ts(ts));
@@ -461,11 +463,11 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                         this.logger.info('Activating previous version');
                         return this.installWithResources()
                             .then(() => {
-                                this.set({ updateError: err });
+                                this.set({ updateCheckDate: new Date().getTime(), updateError: err });
                                 throw err;
                             });
                     } else {
-                        this.set({ status: prevStatus, updateError: err });
+                        this.set({ status: prevStatus, updateCheckDate: new Date().getTime(), updateError: err });
                         throw err;
                     }
                 });

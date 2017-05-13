@@ -467,6 +467,7 @@
   "setPlLoc": "language",
   "setPlCreatedBy": "created by {}",
   "setPlLoadTime": "took {} to load",
+  "setPlLastUpdate": "Last check for updates",
   "setPlLoadError": "error loading plugin",
 
   "setAboutTitle": "About",

@@ -24,6 +24,9 @@
                         {{plugin.status}}
                     {{/ifeq}}
                 {{/ifeq}}
+                {{#if updateCheckDate}}
+                    <div>{{res 'setPlLastUpdate'}}: {{updateCheckDate}}</div>
+                {{/if}}
                 {{#if plugin.installError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.installError}}</pre></div>{{/if}}
                 {{#if plugin.updateError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.updateError}}</pre></div>{{/if}}
             </div>
