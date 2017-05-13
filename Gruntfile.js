@@ -492,7 +492,7 @@ module.exports = function(grunt) {
                 options: {
                     info: {
                         arch: 'amd64',
-                        pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
+                        pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`
                     }
                 },
                 files: [
@@ -505,7 +505,7 @@ module.exports = function(grunt) {
                 options: {
                     info: {
                         arch: 'i386',
-                        pkgName: `KeeWeb-${pkg.version}.linux.ia32.deb`,
+                        pkgName: `KeeWeb-${pkg.version}.linux.ia32.deb`
                     }
                 },
                 files: [
