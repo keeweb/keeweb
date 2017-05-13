@@ -27,11 +27,10 @@ const PluginGallery = {
             xhr.addEventListener('load', () => {
                 const data = xhr.response;
                 const gallery = JSON.parse(data);
-                const signature = gallery.signature;
-                const dataToVerify = data.replace(signature, '');
+                const dataToVerify = data.replace(gallery.signature, '');
                 SignatureVerifier.verify(
                     kdbxweb.ByteUtils.stringToBytes(dataToVerify),
-                    kdbxweb.ByteUtils.base64ToBytes(signature)
+                    gallery.signature
                 ).then(isValid => {
                     if (!isValid) {
                         this.logger.error('JSON signature invalid');

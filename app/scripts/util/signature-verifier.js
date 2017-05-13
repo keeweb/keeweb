@@ -5,12 +5,14 @@ const kdbxweb = require('kdbxweb');
 const SignatureVerifier = {
     logger: new Logger('signature-verifier'),
 
-    verify(data, signature) {
+    verify(data, signature, pk) {
         return new Promise((resolve, reject) => {
             try {
-                let pk = publicKey.match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1];
-                pk = pk.replace(/\s+/g, '');
+                if (!pk) {
+                    pk = this.getPublicKey();
+                }
                 pk = kdbxweb.ByteUtils.base64ToBytes(pk);
+                signature = kdbxweb.ByteUtils.base64ToBytes(signature);
                 crypto.subtle.importKey('spki', pk,
                     {name: 'RSASSA-PKCS1-v1_5', hash: {name: 'SHA-256'}},
                     false, ['verify']
@@ -33,6 +35,12 @@ const SignatureVerifier = {
                 reject();
             }
         });
+    },
+
+    getPublicKey() {
+        return publicKey
+            .match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1]
+            .replace(/\s+/g, '');
     }
 };
 
