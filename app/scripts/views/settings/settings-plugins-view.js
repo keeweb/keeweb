@@ -5,6 +5,7 @@ const PluginGallery = require('../../plugins/plugin-gallery');
 const AppSettingsModel = require('../../models/app-settings-model');
 const Comparators = require('../../util/comparators');
 const Format = require('../../util/format');
+const SettingsManager = require('../../comp/settings-manager');
 
 const SettingsPluginsView = Backbone.View.extend({
     template: require('templates/settings/settings-plugins.hbs'),
@@ -54,7 +55,8 @@ const SettingsPluginsView = Backbone.View.extend({
         const plugins = PluginManager.get('plugins');
         return PluginGallery.gallery.plugins
             .map(pl => pl)
-            .filter(pl => !plugins.get(pl.manifest.name))
+            .filter(pl => !plugins.get(pl.manifest.name) &&
+                (!pl.manifest.locale || !SettingsManager.allLocales[pl.manifest.locale.name]))
             .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
     },
 
