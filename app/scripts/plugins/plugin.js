@@ -188,24 +188,6 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                     this.logger.error('Error validating resource signature', type);
                     throw `Error validating resource signature for ${type}`;
                 });
-            // const key = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(manifest.publicKey));
-            // const signature = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(manifest.resources[type]));
-            // const algo = { name: 'RSASSA-PKCS1-v1_5', hash: { name: 'SHA-256' } };
-            // return kdbxweb.CryptoEngine.subtle.importKey('spki', key, algo, false, ['verify'])
-            //     .then(subtleKey => kdbxweb.CryptoEngine.subtle.verify(algo, subtleKey, signature, data))
-            //     .catch(e => {
-            //         this.logger.error('Error validating resource signature', type, e);
-            //         throw e;
-            //     })
-            //     .then(valid => {
-            //         if (valid) {
-            //             this.logger.debug('Resource signature valid', type, this.logger.ts(ts));
-            //             return data;
-            //         } else {
-            //             this.logger.error('Resource signature invalid', type);
-            //             throw `Signature invalid: ${type}`;
-            //         }
-            //     });
         });
     },
 
