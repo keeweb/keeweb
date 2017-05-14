@@ -28,21 +28,26 @@ const SignatureVerifier = {
                     algo,
                     false, ['verify']
                 ).then(cryptoKey => {
-                    subtle.verify(algo, cryptoKey,
-                        kdbxweb.ByteUtils.arrayToBuffer(signature),
-                        kdbxweb.ByteUtils.arrayToBuffer(data)
-                    ).then(isValid => {
-                        resolve(isValid);
-                    }).catch(e => {
-                        this.logger.error('Verify error', e);
+                    try {
+                        subtle.verify(algo, cryptoKey,
+                            kdbxweb.ByteUtils.arrayToBuffer(signature),
+                            kdbxweb.ByteUtils.arrayToBuffer(data)
+                        ).then(isValid => {
+                            resolve(isValid);
+                        }).catch(e => {
+                            this.logger.error('Verify error', e);
+                            reject();
+                        });
+                    } catch (e) {
+                        this.logger.error('Signature verification error', e);
                         reject();
-                    });
+                    }
                 }).catch(e => {
                     this.logger.error('ImportKey error', e);
                     reject();
                 });
             } catch (e) {
-                this.logger.error('Signature verification error', e);
+                this.logger.error('Signature key verification error', e);
                 reject();
             }
         });
