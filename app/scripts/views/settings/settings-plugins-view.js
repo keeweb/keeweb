@@ -6,6 +6,7 @@ const AppSettingsModel = require('../../models/app-settings-model');
 const Comparators = require('../../util/comparators');
 const Format = require('../../util/format');
 const SettingsManager = require('../../comp/settings-manager');
+const SignatureVerifier = require('../../util/signature-verifier');
 
 const SettingsPluginsView = Backbone.View.extend({
     template: require('templates/settings/settings-plugins.hbs'),
@@ -47,7 +48,8 @@ const SettingsPluginsView = Backbone.View.extend({
             galleryLoading: PluginGallery.loading,
             galleryLoadError: PluginGallery.loadError,
             galleryPlugins: this.getGalleryPlugins(),
-            searchStr: this.searchStr
+            searchStr: this.searchStr,
+            publicKey: SignatureVerifier.getPublicKey()
         });
         if (this.searchStr) {
             this.showFilterResults();

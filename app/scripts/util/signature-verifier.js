@@ -5,6 +5,8 @@ const kdbxweb = require('kdbxweb');
 const SignatureVerifier = {
     logger: new Logger('signature-verifier'),
 
+    publicKey: null,
+
     verify(data, signature, pk) {
         return new Promise((resolve, reject) => {
             const algo = {name: 'RSASSA-PKCS1-v1_5', hash: {name: 'SHA-256'}};
@@ -70,9 +72,12 @@ const SignatureVerifier = {
     },
 
     getPublicKey() {
-        return publicKey
-            .match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1]
-            .replace(/\s+/g, '');
+        if (!this.publicKey) {
+            this.publicKey = publicKey
+                .match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1]
+                .replace(/\s+/g, '');
+        }
+        return this.publicKey;
     }
 };
 

@@ -15,8 +15,12 @@
                 </ul>
             </div>
             <div class="settings__plugins-plugin-desc">
-                <a href="{{plugin.manifest.url}}" target="_blank">{{plugin.manifest.url}}</a>, v{{plugin.manifest.version}},
-                {{#res 'setPlCreatedBy'}}<a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}}){{/res}},
+                <a href="{{plugin.manifest.url}}" target="_blank">{{plugin.manifest.url}}</a>, v{{plugin.manifest.version}}.
+                {{#ifeq plugin.manifest.publicKey ../publicKey}}
+                    {{res 'setPlOfficial'}},
+                {{else}}
+                    {{#res 'setPlCreatedBy'}}<a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}}){{/res}},
+                {{/ifeq}}
                 {{#ifeq plugin.status 'active'}}
                     {{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}
                 {{else}}
@@ -69,11 +73,11 @@
                         {{#if plugin.manifest.resources.loc}}<li class="settings__plugins-plugin-file"><i class="fa fa-language"></i> {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}}</li>{{/if}}
                     </ul>
                     <div class="settings__plugins-gallery-plugin-author muted-color">
-                        {{#if plugin.official}}
+                        {{#ifeq plugin.manifest.publicKey ../publicKey}}
                             <i class="fa fa-check"></i> {{res 'setPlOfficial'}}
                         {{else}}
                             <i class="fa fa-at"></i> <a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}})
-                        {{/if}}
+                        {{/ifeq}}
                     </div>
                     <button class="settings__plugins-gallery-plugin-install-btn"
                             data-plugin="{{plugin.manifest.name}}"
