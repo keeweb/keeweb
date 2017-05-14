@@ -18,8 +18,11 @@ const SettingsPluginsView = Backbone.View.extend({
         'click .settings_plugins-update-btn': 'updateClick',
         'click .settings_plugins-use-locale-btn': 'useLocaleClick',
         'click .settings_plugins-use-theme-btn': 'useThemeClick',
-        'click .settings__plugins-gallery-plugin-install-btn': 'galleryInstallClick'
+        'click .settings__plugins-gallery-plugin-install-btn': 'galleryInstallClick',
+        'input .settings__plugins-gallery-search': 'gallerySearchInput'
     },
+
+    searchStr: null,
 
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
@@ -43,8 +46,12 @@ const SettingsPluginsView = Backbone.View.extend({
             lastInstallError: lastInstall.error,
             galleryLoading: PluginGallery.loading,
             galleryLoadError: PluginGallery.loadError,
-            galleryPlugins: this.getGalleryPlugins()
+            galleryPlugins: this.getGalleryPlugins(),
+            searchStr: this.searchStr
         });
+        if (this.searchStr) {
+            this.showFilterResults();
+        }
         return this;
     },
 
@@ -129,6 +136,34 @@ const SettingsPluginsView = Backbone.View.extend({
             .then(() => {
                 installBtn.prop('disabled', true);
             });
+    },
+
+    gallerySearchInput(e) {
+        this.searchStr = e.target.value.toLowerCase();
+        this.showFilterResults();
+    },
+
+    showFilterResults() {
+        const pluginsById = {};
+        for (const plugin of PluginGallery.gallery.plugins) {
+            pluginsById[plugin.manifest.name] = plugin;
+        }
+        for (const pluginEl of $('.settings__plugins-gallery-plugin', this.$el)) {
+            const pluginId = pluginEl.dataset.plugin;
+            const visible = this.pluginMatchesFilter(pluginsById[pluginId]);
+            $(pluginEl).toggle(visible);
+        }
+    },
+
+    pluginMatchesFilter(plugin) {
+        const searchStr = this.searchStr;
+        const manifest = plugin.manifest;
+        return !searchStr ||
+            manifest.name.toLowerCase().indexOf(searchStr) >= 0 ||
+            manifest.description && manifest.description.toLowerCase().indexOf(searchStr) >= 0 ||
+            manifest.locale &&
+                (manifest.locale.name.toLowerCase().indexOf(searchStr) >= 0 ||
+                manifest.locale.title.toLowerCase().indexOf(searchStr) >= 0);
     }
 });
 

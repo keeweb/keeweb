@@ -474,6 +474,7 @@
   "setPlInstallUrlTitle": "Add plugin from URL",
   "setPlInstallUrlDesc": "If the plugin is not in the gallery, you can install it manually from URL",
   "setPlOfficial": "Official KeeWeb plugin",
+  "setPlSearch": "Search for plugins",
 
   "setAboutTitle": "About",
   "setAboutBuilt": "This app is built with these awesome tools",

@@ -209,6 +209,16 @@
         right: 0;
         bottom: 0;
       }
+      &-country-flag {
+        position: absolute;
+        right: 10px;
+        top: 6px;
+        font-size: 1.5em;
+      }
+    }
+    &-gallery-search {
+      margin-top: $medium-padding-v;
+      width: calc(100% - 74px);
     }
   }
 }

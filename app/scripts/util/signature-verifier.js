@@ -13,11 +13,12 @@ const SignatureVerifier = {
                 }
                 pk = kdbxweb.ByteUtils.base64ToBytes(pk);
                 signature = kdbxweb.ByteUtils.base64ToBytes(signature);
-                crypto.subtle.importKey('spki', pk,
+                const subtle = window.crypto.subtle || window.crypto.webkitSubtle;
+                subtle.importKey('spki', pk,
                     {name: 'RSASSA-PKCS1-v1_5', hash: {name: 'SHA-256'}},
                     false, ['verify']
                 ).then(cryptoKey => {
-                    crypto.subtle.verify({name: 'RSASSA-PKCS1-v1_5'}, cryptoKey,
+                    subtle.verify({name: 'RSASSA-PKCS1-v1_5'}, cryptoKey,
                         kdbxweb.ByteUtils.arrayToBuffer(signature),
                         kdbxweb.ByteUtils.arrayToBuffer(data)
                     ).then(isValid => {
