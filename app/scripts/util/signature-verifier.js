@@ -7,18 +7,28 @@ const SignatureVerifier = {
 
     verify(data, signature, pk) {
         return new Promise((resolve, reject) => {
+            const algo = {name: 'RSASSA-PKCS1-v1_5', hash: {name: 'SHA-256'}};
             try {
                 if (!pk) {
                     pk = this.getPublicKey();
                 }
-                pk = kdbxweb.ByteUtils.base64ToBytes(pk);
                 signature = kdbxweb.ByteUtils.base64ToBytes(signature);
-                const subtle = window.crypto.subtle || window.crypto.webkitSubtle;
-                subtle.importKey('spki', pk,
-                    {name: 'RSASSA-PKCS1-v1_5', hash: {name: 'SHA-256'}},
+                let subtle = window.crypto.subtle;
+                let keyFormat = 'spki';
+                if (subtle) {
+                    pk = kdbxweb.ByteUtils.base64ToBytes(pk);
+                } else {
+                    // TODO: remove this shit after Safari 10.2 with spki support goes live
+                    subtle = window.crypto.webkitSubtle;
+                    keyFormat = 'jwk';
+                    pk = this.spkiToJwk(pk);
+                }
+                subtle.importKey(
+                    keyFormat, pk,
+                    algo,
                     false, ['verify']
                 ).then(cryptoKey => {
-                    subtle.verify({name: 'RSASSA-PKCS1-v1_5'}, cryptoKey,
+                    subtle.verify(algo, cryptoKey,
                         kdbxweb.ByteUtils.arrayToBuffer(signature),
                         kdbxweb.ByteUtils.arrayToBuffer(data)
                     ).then(isValid => {
@@ -36,6 +46,22 @@ const SignatureVerifier = {
                 reject();
             }
         });
+    },
+
+    spkiToJwk(key) {
+        // This is terribly wrong but we don't want to handle complete ASN1 format here
+        const n = key
+            .replace('MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA', '')
+            .replace('IDAQAB', '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+        return kdbxweb.ByteUtils.stringToBytes(JSON.stringify({
+            kty: 'RSA',
+            alg: 'RS256',
+            e: 'AQAB',
+            n: n,
+            ext: true
+        }));
     },
 
     getPublicKey() {
