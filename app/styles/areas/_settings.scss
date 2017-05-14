@@ -199,7 +199,7 @@
       position: relative;
       width: calc(50% - 40px);
       border-radius: $base-border-radius;
-      border: light-border();
+      @include th { border: light-border(); }
       padding: $medium-padding;
       box-sizing: border-box;
       margin: 0 $base-padding-v $base-padding-h 0;

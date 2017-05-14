@@ -20,10 +20,6 @@ $th-default: null;
   @content;
 }
 
-@mixin th-self {
-  @content;
-}
-
 @each $theme-name, $theme-vars in $themes {
   $theme-vars: set-theme-vars($theme-vars);
   $themes: map-merge($themes, ( $theme-name: $theme-vars ));
