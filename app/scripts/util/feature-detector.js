@@ -29,7 +29,10 @@ const FeatureDetector = {
         if (this.isWindows) { return 'Alt+PrintScreen'; }
         return '';
     },
-    supportsTitleBarStyles: function () {
+    supportsTitleBarStyles: function() {
+        return this.isMac;
+    },
+    hasUnicodeFlags: function() {
         return this.isMac;
     }
 };

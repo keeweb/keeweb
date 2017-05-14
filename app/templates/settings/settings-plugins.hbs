@@ -10,7 +10,7 @@
                     {{#if plugin.manifest.resources.js}}<li class="settings__plugins-plugin-file"><i class="fa fa-code"></i> {{res 'setPlJs'}}</li>{{/if}}
                     {{#if plugin.manifest.resources.css}}<li class="settings__plugins-plugin-file"><i class="fa fa-paint-brush"></i> {{res 'setPlCss'}}</li>{{/if}}
                     {{#if plugin.manifest.resources.loc}}<li class="settings__plugins-plugin-file"><i class="fa fa-language"></i>&nbsp;
-                        {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}} {{#if plugin.manifest.locale}}{{#if plugin.manifest.locale.flag}}&nbsp;{{plugin.manifest.locale.flag}}{{/if}}{{/if}}</li>
+                        {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}} {{#if ../hasUnicodeFlags}}{{#if plugin.manifest.locale}}{{#if plugin.manifest.locale.flag}}&nbsp;{{plugin.manifest.locale.flag}}{{/if}}{{/if}}{{/if}}</li>
                     {{/if}}
                 </ul>
             </div>
@@ -61,9 +61,11 @@
             {{#each galleryPlugins as |plugin|}}
                 <div class="settings__plugins-gallery-plugin" data-plugin="{{plugin.manifest.name}}">
                     <h4 class="settings__plugins-gallery-plugin-title">{{plugin.manifest.name}}</h4>
-                    {{#if plugin.manifest.locale}}
-                        {{#if plugin.manifest.locale.flag}}
-                            <div class="settings__plugins-gallery-plugin-country-flag">{{plugin.manifest.locale.flag}}</div>
+                    {{#if ../hasUnicodeFlags}}
+                        {{#if plugin.manifest.locale}}
+                            {{#if plugin.manifest.locale.flag}}
+                                <div class="settings__plugins-gallery-plugin-country-flag">{{plugin.manifest.locale.flag}}</div>
+                            {{/if}}
                         {{/if}}
                     {{/if}}
                     <div class="settings__plugins-gallery-plugin-desc">{{plugin.manifest.description}}</div>
