@@ -33,7 +33,7 @@ const PluginManager = Backbone.Model.extend({
         this.set({ installing: url, lastInstall: lastInstall });
         return Plugin.loadFromUrl(url, expectedManifest).then(plugin => {
             return this.uninstall(plugin.id).then(() => {
-                return plugin.install(true).then(() => {
+                return plugin.install(true, false).then(() => {
                     this.get('plugins').push(plugin);
                     this.set({ installing: null });
                     this.saveState();
@@ -79,7 +79,7 @@ const PluginManager = Backbone.Model.extend({
             return Promise.resolve();
         }
         this.trigger('change');
-        return plugin.install(true).then(() => {
+        return plugin.install(true, true).then(() => {
             this.trigger('change');
             this.saveState();
         });
@@ -111,10 +111,9 @@ const PluginManager = Backbone.Model.extend({
     loadPlugin(desc) {
         const plugin = new Plugin({
             manifest: desc.manifest,
-            url: desc.url,
-            local: true
+            url: desc.url
         });
-        return plugin.install(desc.enabled)
+        return plugin.install(desc.enabled, true)
             .then(() => plugin)
             .catch(() => plugin);
     },

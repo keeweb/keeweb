@@ -50,7 +50,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         this.logger = new Logger(`plugin:${name}`);
     },
 
-    install(activate) {
+    install(activate, local) {
         const ts = this.logger.ts();
         this.set('status', this.STATUS_INSTALLING);
         return Promise.resolve().then(() => {
@@ -65,7 +65,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                 this.logger.info('Loaded inactive plugin');
                 return;
             }
-            return this.installWithManifest()
+            return this.installWithManifest(local)
                 .then(() => this.set('installTime', this.logger.ts() - ts))
                 .catch(err => {
                     this.logger.error('Error installing plugin', err);
@@ -122,14 +122,13 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         }
     },
 
-    installWithManifest() {
+    installWithManifest(local) {
         const manifest = this.get('manifest');
-        const local = this.get('local');
         this.logger.info('Loading plugin with resources', Object.keys(manifest.resources).join(', '), local ? '(local)' : '(url)');
         this.resources = {};
         const ts = this.logger.ts();
         const results = Object.keys(manifest.resources)
-            .map(res => this.loadResource(res));
+            .map(res => this.loadResource(res, local));
         return Promise.all(results)
             .catch(() => { throw 'Error loading plugin resources'; })
             .then(() => this.installWithResources())
@@ -154,9 +153,9 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         return this.id + '_' + this.getResourcePath(res);
     },
 
-    loadResource(type) {
+    loadResource(type, local) {
         let res;
-        if (this.get('local')) {
+        if (local) {
             res = this.loadLocalResource(type);
         } else {
             const url = this.get('url');
@@ -441,7 +440,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                 throw 'Plugin validation error: ' + error;
             }
             this.uninstallPluginCode();
-            return newPlugin.installWithManifest()
+            return newPlugin.installWithManifest(false)
                 .then(() => {
                     this.module = newPlugin.module;
                     this.resources = newPlugin.resources;
