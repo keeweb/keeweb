@@ -62,6 +62,7 @@
     <label for="settings__file-def-user">{{res 'setFileDefUser'}}:</label>
     <input type="text" class="settings__input input-base" id="settings__file-def-user" value="{{defaultUser}}" />
 
+    {{#if canBackup}}
     <h2>{{res 'setFileBackups'}}</h2>
     <div>
         <input type="checkbox" class="settings__input input-base" id="settings__file-backup-enabled" {{#if backupEnabled}}checked{{/if}} />
@@ -89,6 +90,7 @@
         </select>
         <button class="btn-silent settings__file-button-backup">{{res 'setFileBackupNow'}}</button>
     </div>
+    {{/if}}
 
     <h2>{{Res 'history'}}</h2>
     <div>

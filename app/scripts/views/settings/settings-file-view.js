@@ -54,12 +54,16 @@ const SettingsFileView = Backbone.View.extend({
     render: function() {
         const storageProviders = [];
         const fileStorage = this.model.get('storage');
+        let canBackup = false;
         Object.keys(Storage).forEach(name => {
             const prv = Storage[name];
             if (!prv.system && prv.enabled) {
                 storageProviders.push({
                     name: prv.name, icon: prv.icon, iconSvg: prv.iconSvg, own: name === fileStorage, backup: prv.backup
                 });
+                if (!canBackup && prv.backup) {
+                    canBackup = true;
+                }
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
@@ -86,7 +90,8 @@ const SettingsFileView = Backbone.View.extend({
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
             keyChangeForce: this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
             kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
-            storageProviders: storageProviders
+            storageProviders: storageProviders,
+            canBackup: canBackup
         });
         if (!this.model.get('created')) {
             this.$el.find('.settings__file-master-pass-warning').toggle(this.model.get('passwordChanged'));
