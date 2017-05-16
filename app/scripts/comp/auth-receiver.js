@@ -17,7 +17,7 @@ const AuthReceiver = {
 
     urlArgsToMessage: function(url) {
         const message = {};
-        url.split(/[\?#&]/g).forEach(part => {
+        url.split(/[?#&]/g).forEach(part => {
             const parts = part.split('=');
             if (parts.length === 2) {
                 message[parts[0]] = parts[1];
