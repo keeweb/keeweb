@@ -16,11 +16,11 @@
             </div>
             <div class="settings__plugins-plugin-desc">
                 <a href="{{plugin.manifest.url}}" target="_blank">{{plugin.manifest.url}}</a>, v{{plugin.manifest.version}}.
-                {{#ifeq plugin.manifest.publicKey ../publicKey}}
+                {{#if plugin.official}}
                     {{res 'setPlOfficial'}},
                 {{else}}
                     {{#res 'setPlCreatedBy'}}<a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}}){{/res}},
-                {{/ifeq}}
+                {{/if}}
                 {{#ifeq plugin.status 'active'}}
                     {{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}
                 {{else}}
@@ -75,21 +75,24 @@
                         {{#if plugin.manifest.resources.loc}}<li class="settings__plugins-plugin-file"><i class="fa fa-language"></i> {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}}</li>{{/if}}
                     </ul>
                     <div class="settings__plugins-gallery-plugin-author muted-color">
-                        {{#ifeq plugin.manifest.publicKey ../publicKey}}
+                        {{#if plugin.official}}
                             <i class="fa fa-check"></i> {{res 'setPlOfficial'}}
                         {{else}}
                             <i class="fa fa-at"></i> <a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}})
-                        {{/ifeq}}
+                        {{/if}}
                     </div>
+                    {{#if plugin.installError}}
+                        <div class="error-color">{{plugin.installError}}</div>
+                    {{/if}}
                     <button class="settings__plugins-gallery-plugin-install-btn"
                             data-plugin="{{plugin.manifest.name}}"
-                            {{#ifeq ../lastInstallUrl plugin.url}}disabled{{/ifeq}}
+                            {{#if plugin.installing}}disabled{{/if}}
                     >
-                        {{#ifeq ../lastInstallUrl plugin.url}}
+                        {{#if plugin.installing}}
                             {{res 'setPlInstallBtnProgress'}}...
                         {{else}}
                             {{res 'setPlInstallBtn'}}
-                        {{/ifeq}}
+                        {{/if}}
                     </button>
                 </div>
             {{/each}}
@@ -100,12 +103,10 @@
     <div class="settings__plugins-install-url">
         <div>{{res 'setPlInstallUrlDesc'}}</div>
         <label for="settings__plugins-install-url">{{res 'setPlInstallLabel'}}</label>
-        <input type="text" class="settings__input input-base" id="settings__plugins-install-url" value="{{lastInstallUrl}}" />
-        <button class="settings_plugins-install-btn" {{#if installing}}disabled{{/if}}>
-            {{#if installing}}{{res 'setPlInstallBtnProgress'}}{{else}}{{res 'setPlInstallBtn'}}{{/if}}
+        <input type="text" class="settings__input input-base" id="settings__plugins-install-url" value="{{installUrl}}" />
+        <button class="settings_plugins-install-btn" {{#if installingFromUrl}}disabled{{/if}}>
+            {{#if installingFromUrl}}{{res 'setPlInstallBtnProgress'}}{{else}}{{res 'setPlInstallBtn'}}{{/if}}
         </button>
-        {{#if lastInstallError}}
-            <div class="error-color settings__plugins-install-error">{{lastInstallError}}</div>
-        {{/if}}
+        <div class="error-color settings__plugins-install-error">{{installUrlError}}</div>
     </div>
 </div>

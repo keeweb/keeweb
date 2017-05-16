@@ -6,8 +6,6 @@ const Logger = require('../util/logger');
 
 const PluginManager = Backbone.Model.extend({
     defaults: {
-        installing: null,
-        lastInstall: null,
         plugins: new PluginCollection()
     },
 
@@ -29,18 +27,17 @@ const PluginManager = Backbone.Model.extend({
     },
 
     install(url, expectedManifest) {
-        const lastInstall = { url, dt: new Date() };
-        this.set({ installing: url, lastInstall: lastInstall });
+        this.trigger('change');
         return Plugin.loadFromUrl(url, expectedManifest).then(plugin => {
             return this.uninstall(plugin.id).then(() => {
                 return plugin.install(true, false).then(() => {
                     this.get('plugins').push(plugin);
-                    this.set({ installing: null });
+                    this.trigger('change');
                     this.saveState();
                 });
             });
         }).catch(e => {
-            this.set({ installing: null, lastInstall: _.extend(lastInstall, { error: e.toString() }) });
+            this.trigger('change');
             throw e;
         });
     },

@@ -25,6 +25,9 @@ const SettingsPluginsView = Backbone.View.extend({
     },
 
     searchStr: null,
+    installFromUrl: null,
+    installing: {},
+    installErrors: {},
 
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
@@ -33,7 +36,7 @@ const SettingsPluginsView = Backbone.View.extend({
     },
 
     render() {
-        const lastInstall = PluginManager.get('lastInstall') || {};
+        const publicKey = SignatureVerifier.getPublicKey();
         this.renderTemplate({
             plugins: PluginManager.get('plugins').map(plugin => ({
                 id: plugin.id,
@@ -42,15 +45,16 @@ const SettingsPluginsView = Backbone.View.extend({
                 installTime: Math.round(plugin.get('installTime')),
                 updateError: plugin.get('updateError'),
                 updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
-                installError: plugin.get('installError')
+                installError: plugin.get('installError'),
+                official: plugin.get('manifest').publicKey === publicKey
             })).sort(Comparators.stringComparator('id', true)),
-            lastInstallUrl: PluginManager.get('installing') || (lastInstall.error ? lastInstall.url : ''),
-            lastInstallError: lastInstall.error,
+            installingFromUrl: this.installFromUrl && !this.installFromUrl.error,
+            installUrl: this.installFromUrl ? this.installFromUrl.url : null,
+            installUrlError: this.installFromUrl ? this.installFromUrl.error : null,
             galleryLoading: PluginGallery.loading,
             galleryLoadError: PluginGallery.loadError,
             galleryPlugins: this.getGalleryPlugins(),
             searchStr: this.searchStr,
-            publicKey: SignatureVerifier.getPublicKey(),
             hasUnicodeFlags: FeatureDetector.hasUnicodeFlags()
         });
         if (this.searchStr) {
@@ -63,9 +67,16 @@ const SettingsPluginsView = Backbone.View.extend({
         if (!PluginGallery.gallery) {
             return null;
         }
+        const publicKey = SignatureVerifier.getPublicKey();
         const plugins = PluginManager.get('plugins');
         return PluginGallery.gallery.plugins
-            .map(pl => pl)
+            .map(pl => ({
+                url: pl.url,
+                manifest: pl.manifest,
+                installing: this.installing[pl.url],
+                installError: this.installErrors[pl.url],
+                official: pl.manifest.publicKey === publicKey
+            }))
             .filter(pl => !plugins.get(pl.manifest.name) &&
                 (!pl.manifest.locale || !SettingsManager.allLocales[pl.manifest.locale.name]))
             .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
@@ -82,14 +93,19 @@ const SettingsPluginsView = Backbone.View.extend({
         }
         urlTextBox.prop('disabled', true);
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
+        this.installFromUrl = { url };
         PluginManager.install(url)
             .then(() => {
                 this.installFinished();
-                urlTextBox.val('');
+                this.installFromUrl = null;
+                this.render();
+                this.$el.closest('.scroller').scrollTop(0);
             })
             .catch(e => {
                 this.installFinished();
-                errorBox.text(e.toString());
+                this.installFromUrl.error = e;
+                this.$el.find('.settings__plugins-install-error').text(e.toString());
+                this.$el.closest('.scroller').scrollTop(this.$el.height());
             });
     },
 
@@ -135,10 +151,17 @@ const SettingsPluginsView = Backbone.View.extend({
         const pluginId = installBtn.data('plugin');
         const plugin = PluginGallery.gallery.plugins.find(pl => pl.manifest.name === pluginId);
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
+        this.installing[plugin.url] = true;
+        delete this.installErrors[plugin.url];
         PluginManager.install(plugin.url, plugin.manifest)
-            .catch(() => { })
+            .catch(e => {
+                this.installErrors[plugin.url] = e;
+                delete this.installing[plugin.url];
+                this.render();
+            })
             .then(() => {
                 installBtn.prop('disabled', true);
+                delete this.installing[plugin.url];
             });
     },
 
