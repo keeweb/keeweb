@@ -7,7 +7,7 @@ const FeatureDetector = {
     isiOS: /iPad|iPhone|iPod/i.test(navigator.userAgent),
     isMobile: MobileRegex.test(navigator.userAgent) || screen.width < MinDesktopScreenWidth,
     isPopup: !!((window.parent !== window.top) || window.opener),
-    isStandalone: !!(navigator.standalone || window.matchMedia('(display-mode: standalone)').matches),
+    isStandalone: !!navigator.standalone,
     isBeta: window.location.href.toLowerCase().indexOf('beta.') > 0,
 
     actionShortcutSymbol: function(formatting) {
