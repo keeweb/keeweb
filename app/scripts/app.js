@@ -33,7 +33,10 @@ ready(() => {
         .then(loadConfigs)
         .then(initModules)
         .then(loadRemoteConfig)
-        .then(showApp);
+        .then(showApp)
+        .catch(e => {
+            appModel.appLogger.error('Error starting app', e);
+        });
 
     function loadMixins() {
         require('./mixins/view');
@@ -68,21 +71,18 @@ ready(() => {
     }
 
     function loadRemoteConfig() {
-        return new Promise((resolve, reject) => {
+        return Promise.resolve().then(() => {
             SettingsManager.setBySettings(appModel.settings);
             const configParam = getConfigParam();
             if (configParam) {
-                appModel.loadConfig(configParam, err => {
+                return appModel.loadConfig(configParam).then(() => {
                     SettingsManager.setBySettings(appModel.settings);
-                    if (err && !appModel.settings.get('cacheConfigSettings')) {
+                }).catch(e => {
+                    if (!appModel.settings.get('cacheConfigSettings')) {
                         showSettingsLoadError();
-                        reject(err);
-                    } else {
-                        resolve();
+                        throw e;
                     }
                 });
-            } else {
-                resolve();
             }
         });
     }

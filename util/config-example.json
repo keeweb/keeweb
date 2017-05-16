@@ -49,5 +49,8 @@
     "path": "webdav-url",
     "options": { "user": "", "password": "" }
   }],
+  "plugins": [{
+    "url": ""
+  }],
   "showOnlyFilesFromConfig": false
 }

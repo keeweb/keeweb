@@ -17,6 +17,7 @@ const Format = require('../util/format');
 const UrlUtil = require('../util/url-util');
 const AutoType = require('../auto-type');
 const Launcher = require('../comp/launcher');
+const PluginManager = require('../plugins/plugin-manager');
 
 require('../mixins/protected-value-ex');
 
@@ -49,39 +50,42 @@ const AppModel = Backbone.Model.extend({
         _.forEach(Storage, prv => prv.init());
     },
 
-    loadConfig: function(configLocation, callback) {
-        this.appLogger.debug('Loading config from', configLocation);
-        const ts = this.appLogger.ts();
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', configLocation);
-        xhr.responseType = 'json';
-        xhr.send();
-        xhr.addEventListener('load', () => {
-            let response = xhr.response;
-            if (!response) {
-                const errorDesc = xhr.statusText === 'OK' ? 'Malformed JSON' : xhr.statusText;
-                this.appLogger.error('Error loading app config', errorDesc);
-                return callback(true);
-            }
-            if (typeof response === 'string') {
-                try {
-                    response = JSON.parse(response);
-                } catch (e) {
-                    this.appLogger.error('Error parsing response', e, response);
-                    return callback(true);
+    loadConfig: function(configLocation) {
+        return new Promise((resolve, reject) => {
+            this.appLogger.debug('Loading config from', configLocation);
+            const ts = this.appLogger.ts();
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', configLocation);
+            xhr.responseType = 'json';
+            xhr.send();
+            xhr.addEventListener('load', () => {
+                let response = xhr.response;
+                if (!response) {
+                    const errorDesc = xhr.statusText === 'OK' ? 'Malformed JSON' : xhr.statusText;
+                    this.appLogger.error('Error loading app config', errorDesc);
+                    return reject('Error loading app config');
                 }
-            }
-            if (!response.settings) {
-                this.appLogger.error('Invalid app config, no settings section', response);
-                return callback(true);
-            }
-            this.appLogger.info('Loaded app config from', configLocation, this.appLogger.ts(ts));
-            this.applyUserConfig(response);
-            callback();
-        });
-        xhr.addEventListener('error', () => {
-            this.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
-            callback(true);
+                if (typeof response === 'string') {
+                    try {
+                        response = JSON.parse(response);
+                    } catch (e) {
+                        this.appLogger.error('Error parsing response', e, response);
+                        return reject('Error parsing response');
+                    }
+                }
+                if (!response.settings) {
+                    this.appLogger.error('Invalid app config, no settings section', response);
+                    return reject('Invalid app config, no settings section');
+                }
+                this.appLogger.info('Loaded app config from', configLocation, this.appLogger.ts(ts));
+                resolve(response);
+            });
+            xhr.addEventListener('error', () => {
+                this.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
+                reject('Error loading app config');
+            });
+        }).then(config => {
+            return this.applyUserConfig(config);
         });
     },
 
@@ -103,6 +107,9 @@ const AppModel = Backbone.Model.extend({
                 }))
                 .reverse()
                 .forEach(fi => this.fileInfos.unshift(fi));
+        }
+        if (config.plugins) {
+            return Promise.all(config.plugins.map(plugin => PluginManager.installIfNew(plugin.url, plugin.manifest)));
         }
     },
 

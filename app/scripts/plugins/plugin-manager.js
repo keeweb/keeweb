@@ -45,6 +45,11 @@ const PluginManager = Backbone.Model.extend({
         });
     },
 
+    installIfNew(url, expectedManifest) {
+        const plugin = this.get('plugins').find({ url });
+        return plugin ? Promise.resolve() : this.install(url, expectedManifest);
+    },
+
     uninstall(id) {
         const plugins = this.get('plugins');
         const plugin = plugins.get(id);
