@@ -34,6 +34,18 @@ const FeatureDetector = {
     },
     hasUnicodeFlags: function() {
         return this.isMac;
+    },
+    ensureCanRun: function() {
+        if (/MSIE |Trident/.test(navigator.userAgent)) {
+            throw 'IE detected';
+        }
+        if (!localStorage.length) {
+            try {
+                localStorage.appSettings = '';
+            } catch (e) {
+                throw 'localStorage not available';
+            }
+        }
     }
 };
 

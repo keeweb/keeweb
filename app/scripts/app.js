@@ -33,6 +33,7 @@ ready(() => {
         .then(loadConfigs)
         .then(initModules)
         .then(loadRemoteConfig)
+        .then(ensureCanRun)
         .then(showApp)
         .catch(e => {
             appModel.appLogger.error('Error starting app', e);
@@ -41,6 +42,20 @@ ready(() => {
     function loadMixins() {
         require('./mixins/view');
         require('./helpers');
+    }
+
+    function ensureCanRun() {
+        return Promise.resolve()
+            .then(() => FeatureDetector.ensureCanRun())
+            .catch(e => {
+                Alerts.error({
+                    header: Locale.appSettingsError,
+                    body: Locale.appNotSupportedError,
+                    buttons: [],
+                    esc: false, enter: false, click: false
+                });
+                throw e;
+            });
     }
 
     function loadConfigs() {

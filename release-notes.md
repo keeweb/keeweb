@@ -4,6 +4,7 @@ Release notes
 `+` plugins  
 `*` translations are available only as plugins  
 `*` Dropbox API V2  
+`*` deprecated IE  
 `+` entry templates  
 `+` support cloud providers in iOS homescreen apps  
 `+` auto-type improvements and bugfixes  
@@ -17,6 +18,7 @@ Release notes
 `+` mac os window style options  
 `+` lock on hide mac os hide  
 `+` release distribution improvements  
+`+` error message for not supported browsers  
 `-` removed support of devices without clipboard api  
 
 ##### v1.4.1 (2017-03-26)
