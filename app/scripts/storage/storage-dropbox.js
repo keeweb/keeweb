@@ -7,21 +7,6 @@ const DropboxKeys = {
     FullDropbox: 'eor7hvv6u6oslq9'
 };
 
-// const ApiError = {
-//     NETWORK_ERROR: 0,
-//     NO_CONTENT: 304,
-//     INVALID_PARAM: 400,
-//     INVALID_TOKEN: 401,
-//     OAUTH_ERROR: 403,
-//     NOT_FOUND: 404,
-//     INVALID_METHOD: 405,
-//     NOT_ACCEPTABLE: 406,
-//     CONFLICT: 409,
-//     RATE_LIMITED: 429,
-//     SERVER_ERROR: 503,
-//     OVER_QUOTA: 507
-// };
-
 const DropboxCustomErrors = {
     BadKey: 'bad-key'
 };
@@ -83,8 +68,6 @@ const StorageDropbox = StorageBase.extend({
         return {
             scope: '',
             url: 'https://www.dropbox.com/oauth2/authorize',
-            // tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
-            // code: true
             clientId: this._getKey(),
             width: 600,
             height: 400
