@@ -9,18 +9,12 @@
 
 const path = require('path');
 const fs = require('fs');
-const readline = require('readline');
 const crypto = require('crypto');
 
 const args = process.argv.splice(2);
 const pkg = require('./package.json');
 
 const op = args.shift();
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
 
 showBanner();
 
@@ -37,13 +31,11 @@ function showBanner() {
 }
 
 function showHelp() {
-    rl.close();
     console.log('Usage:');
     console.log(' - node keeweb-plugin sign <plugin_name>');
 }
 
 function signPlugin() {
-    rl.close();
     const packageName = args.shift();
     if (!packageName) {
         showHelp();
