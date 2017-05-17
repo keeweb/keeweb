@@ -64,7 +64,9 @@
             <div class="settings__plugins-gallery">
             {{#each galleryPlugins as |plugin|}}
                 <div class="settings__plugins-gallery-plugin" data-plugin="{{plugin.manifest.name}}">
-                    <h4 class="settings__plugins-gallery-plugin-title">{{plugin.manifest.name}}</h4>
+                    <h4 class="settings__plugins-gallery-plugin-title">
+                        <a href="{{plugin.url}}" target="_blank" class="settings__plugins-gallery-plugin-title-link">{{plugin.manifest.name}}</a>
+                    </h4>
                     {{#if ../hasUnicodeFlags}}
                         {{#if plugin.manifest.locale}}
                             {{#if plugin.manifest.locale.flag}}

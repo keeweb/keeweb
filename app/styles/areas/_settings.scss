@@ -215,6 +215,12 @@
         top: 6px;
         font-size: 1.5em;
       }
+      &-title-link {
+        border-bottom: 0;
+        &:hover, &:visited, &:hover, &:active, &:focus {
+          border-bottom: 0;
+        }
+      }
     }
     &-gallery-search {
       margin-top: $medium-padding-v;
