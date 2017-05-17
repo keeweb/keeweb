@@ -12,7 +12,8 @@ const Links = {
     AutoType: 'https://github.com/keeweb/keeweb/wiki/Auto-Type',
     Translation: 'https://keeweb.oneskyapp.com/',
     Donation: 'https://www.paypal.me/dvitkovsky',
-    Plugins: 'https://plugins.keeweb.info'
+    Plugins: 'https://plugins.keeweb.info',
+    PluginDevelopStart: 'https://github.com/keeweb/keeweb/wiki/Plugins'
 };
 
 module.exports = Links;

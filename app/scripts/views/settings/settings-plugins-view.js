@@ -8,6 +8,7 @@ const Format = require('../../util/format');
 const SettingsManager = require('../../comp/settings-manager');
 const SignatureVerifier = require('../../util/signature-verifier');
 const FeatureDetector = require('../../util/feature-detector');
+const Links = require('../../const/links');
 
 const SettingsPluginsView = Backbone.View.extend({
     template: require('templates/settings/settings-plugins.hbs'),
@@ -55,7 +56,9 @@ const SettingsPluginsView = Backbone.View.extend({
             galleryLoadError: PluginGallery.loadError,
             galleryPlugins: this.getGalleryPlugins(),
             searchStr: this.searchStr,
-            hasUnicodeFlags: FeatureDetector.hasUnicodeFlags()
+            hasUnicodeFlags: FeatureDetector.hasUnicodeFlags(),
+            pluginDevLink: Links.PluginDevelopStart,
+            translateLink: Links.Translation
         });
         if (this.searchStr) {
             this.showFilterResults();

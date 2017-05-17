@@ -1,5 +1,9 @@
 <div>
     <h1><i class="fa fa-puzzle-piece"></i> {{res 'plugins'}}</h1>
+    <div>
+        {{res 'setPlDevelop'}} <a href="{{pluginDevLink}}" target="_blank">{{res 'setPlDevelopStart'}}</a>.
+        {{#res 'setPlTranslate'}}<a href="{{translateLink}}" target="_blank">{{res 'setPlTranslateLink'}}</a>{{/res}}.
+    </div>
     <div class="settings__plugins-list">
         {{#each plugins as |plugin|}}
         <div class="settings__plugins-plugin">
