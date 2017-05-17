@@ -97,7 +97,7 @@ const KeyChangeView = Backbone.View.extend({
             InputFx.shake(this.passwordInput.el);
             return;
         } else {
-            this.passwordRepeatInput.el.removeClass('input--error');
+            this.passwordInput.el.removeClass('input--error');
         }
         if (this.passwordRepeatInput) {
             if (!this.passwordRepeatInput.value.equals(this.passwordInput.value)) {

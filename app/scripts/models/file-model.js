@@ -246,7 +246,7 @@ const FileModel = Backbone.Model.extend({
                         credentials.keyFileHash = this.db.credentials.keyFileHash;
                     }
                 }
-                credentialsPromise = Promise.all(promises);
+                return Promise.all(promises);
             });
         } else {
             credentials = this.db.credentials;
