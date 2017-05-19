@@ -1,4 +1,5 @@
 const Backbone = require('backbone');
+const EntryCollection = require('../collections/entry-collection');
 const Resizable = require('../mixins/resizable');
 const Scrollable = require('../mixins/scrollable');
 const ListSearchView = require('./list-search-view');
@@ -60,7 +61,7 @@ const ListView = Backbone.View.extend({
 
         this.readTableColumnsEnabled();
 
-        this.items = [];
+        this.items = new EntryCollection();
     },
 
     render: function () {
