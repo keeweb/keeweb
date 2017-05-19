@@ -318,6 +318,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                     delete global[id];
                     if (this.module.exports.uninstall) {
                         this.logger.debug('Plugin script installed', this.logger.ts(ts));
+                        this.loadPluginSettings();
                         resolve();
                     } else {
                         reject('Plugin script installation failed');
@@ -374,6 +375,27 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
             AppSettingsModel.instance.set('theme', 'fb');
         }
         delete BaseLocale[this.getThemeLocaleKey(theme.name)];
+    },
+
+    loadPluginSettings() {
+        if (!this.module || !this.module.exports || !this.module.exports.setSettings) {
+            return;
+        }
+        const ts = this.logger.ts();
+        const settingPrefix = this.getSettingPrefix();
+        let settings = null;
+        for (const key of Object.keys(AppSettingsModel.instance.attributes)) {
+            if (key.lastIndexOf(settingPrefix, 0) === 0) {
+                if (!settings) {
+                    settings = {};
+                }
+                settings[key.replace(settingPrefix, '')] = AppSettingsModel.instance.attributes[key];
+            }
+        }
+        if (settings) {
+            this.setSettings(settings);
+        }
+        this.logger.debug('Plugin settings loaded', this.logger.ts(ts));
     },
 
     uninstallPluginCode() {
@@ -469,6 +491,46 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                     }
                 });
         });
+    },
+
+    getSettingPrefix() {
+        return `plugin:${this.id}:`;
+    },
+
+    getSettings() {
+        if (this.get('status') === PluginStatus.STATUS_ACTIVE && this.module && this.module.exports && this.module.exports.getSettings) {
+            try {
+                const settings = this.module.exports.getSettings();
+                const settingsPrefix = this.getSettingPrefix();
+                if (settings instanceof Array) {
+                    return settings.map(setting => {
+                        setting = _.clone(setting);
+                        const value = AppSettingsModel.instance.get(settingsPrefix + setting.name);
+                        if (value !== undefined) {
+                            setting.value = value;
+                        }
+                        return setting;
+                    });
+                }
+                this.logger.error('getSettings: expected Array, got ', typeof settings);
+            } catch (e) {
+                this.logger.error('getSettings error', e);
+            }
+        }
+    },
+
+    setSettings(settings) {
+        for (const key of Object.keys(settings)) {
+            const value = settings[key];
+            AppSettingsModel.instance.set(this.getSettingPrefix() + key, value);
+        }
+        if (this.module.exports.setSettings) {
+            try {
+                this.module.exports.setSettings(settings);
+            } catch (e) {
+                this.logger.error('setSettings error', e);
+            }
+        }
     }
 }));
 

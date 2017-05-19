@@ -133,6 +133,10 @@ const PluginManager = Backbone.Model.extend({
     getStatus(id) {
         const plugin = this.get('plugins').get(id);
         return plugin ? plugin.get('status') : '';
+    },
+
+    getPlugin(id) {
+        return this.get('plugins').get(id);
     }
 });
 

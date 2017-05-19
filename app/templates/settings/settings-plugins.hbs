@@ -29,7 +29,7 @@
                     {{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}
                 {{else}}
                     {{#ifeq plugin.status 'error'}}
-                        <span class="error-color">&nbsp;{{res 'setPlLoadError'}}
+                        <span class="error-color">&nbsp;{{res 'setPlLoadError'}}</span>
                     {{else}}
                         {{plugin.status}}
                     {{/ifeq}}
@@ -40,6 +40,46 @@
                 {{#if plugin.installError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.installError}}</pre></div>{{/if}}
                 {{#if plugin.updateError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.updateError}}</pre></div>{{/if}}
             </div>
+            {{#if plugin.settings}}
+                <div class="settings__plugins-plugin-settings">
+                    {{#each plugin.settings as |setting|}}
+                    <div class="settings__plugins-plugin-setting"
+                         data-setting="{{setting.name}}"
+                         data-plugin="{{../id}}"
+                    >
+                        {{#ifeq setting.type 'checkbox'}}
+                            <input type="checkbox"
+                                   class="settings__plugins-plugin-input settings__input input-base"
+                                   id="plugin-{{../id}}-setting-{{setting.name}}"
+                                   {{#if setting.value}}checked{{/if}}
+                            />
+                        {{/ifeq}}
+                        <label
+                            class="settings__plugins-plugin-label"
+                            for="plugin-{{../id}}-setting-{{setting.name}}"
+                        >{{setting.label}}</label>
+                        {{#ifeq setting.type 'text'}}
+                            <input type="text"
+                                   class="settings__plugins-plugin-input settings__input input-base"
+                                   id="plugin-{{../id}}-setting-{{setting.name}}"
+                                   {{#if setting.placeholder}}placeholder="{{setting.placeholder}}"{{/if}}
+                                   {{#if setting.maxlength}}maxlength="{{setting.maxlength}}"{{/if}}
+                                   value="{{setting.value}}"
+                            />
+                        {{/ifeq}}
+                        {{#ifeq setting.type 'select'}}
+                            <select class="settings__plugins-plugin-input settings__select input-base"
+                                    id="plugin-{{../name}}-setting-{{setting.name}}"
+                            >
+                                {{#each setting.options as |opt|}}
+                                    <option value="{{opt.value}}" {{#ifeq opt.value ../value}}selected{{/ifeq}}>{{opt.label}}</option>
+                                {{/each}}
+                            </select>
+                        {{/ifeq}}
+                    </div>
+                    {{/each}}
+                </div>
+            {{/if}}
             <div class="settings__plugins-plugin-buttons">
                 <button class="settings_plugins-uninstall-btn btn-error" data-plugin="{{plugin.id}}">{{res 'setPlUninstallBtn'}}</button>
                 {{#ifeq plugin.status 'active'}}<button class="settings_plugins-disable-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlDisableBtn'}}</button>{{/ifeq}}

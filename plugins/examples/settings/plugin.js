@@ -1,0 +1,45 @@
+/**
+ * KeeWeb plugin: settings-example
+ * @author antelle
+ * @license MIT
+ */
+
+const AppSettingsModel = require('models/app-settings-model');
+
+// get setting: 'plugin:<plugin-name>:<setting-name>'
+const settingValue = AppSettingsModel.instance.get('plugin:settings-example:MyText');
+
+module.exports.getSettings = function() {
+    return [{
+        name: 'MyText',
+        label: 'Text setting',
+        type: 'text',
+        maxlength: 20,
+        placeholder: 'Please enter something',
+        value: ''
+    }, {
+        name: 'MySel',
+        label: 'Select setting',
+        type: 'select',
+        options: [{value: 'apple', label: 'Green apple'}, {value: 'banana', label: 'Yellow banana'}],
+        value: 'banana'
+    }, {
+        name: 'MyCheckbox',
+        label: 'Checkbox setting',
+        type: 'checkbox',
+        value: true
+    }];
+};
+
+module.exports.setSettings = function(changes) {
+    // apply changed settings in plugin logic
+    // this method will be called:
+    // 1. on modifications my user
+    // 2. during plugin startup
+    // only changed settings will be passed
+
+    // example: { MyText: 'value', MySel: 'selected-value', MyCheckbox: true }
+};
+
+module.exports.uninstall = function() {
+};

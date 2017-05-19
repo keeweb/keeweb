@@ -22,7 +22,10 @@ const SettingsPluginsView = Backbone.View.extend({
         'click .settings_plugins-use-locale-btn': 'useLocaleClick',
         'click .settings_plugins-use-theme-btn': 'useThemeClick',
         'click .settings__plugins-gallery-plugin-install-btn': 'galleryInstallClick',
-        'input .settings__plugins-gallery-search': 'gallerySearchInput'
+        'input .settings__plugins-gallery-search': 'gallerySearchInput',
+        'change select.settings__plugins-plugin-input': 'pluginSettingChange',
+        'change input[type=checkbox].settings__plugins-plugin-input': 'pluginSettingChange',
+        'input input[type=text].settings__plugins-plugin-input': 'pluginSettingChange'
     },
 
     searchStr: null,
@@ -33,7 +36,7 @@ const SettingsPluginsView = Backbone.View.extend({
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
         this.listenTo(Backbone, 'plugin-gallery-load-complete', this.render.bind(this));
-        PluginGallery.loadPlugins();
+        // PluginGallery.loadPlugins();
     },
 
     render() {
@@ -47,7 +50,8 @@ const SettingsPluginsView = Backbone.View.extend({
                 updateError: plugin.get('updateError'),
                 updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
                 installError: plugin.get('installError'),
-                official: plugin.get('manifest').publicKey === publicKey
+                official: plugin.get('manifest').publicKey === publicKey,
+                settings: plugin.getSettings()
             })).sort(Comparators.stringComparator('id', true)),
             installingFromUrl: this.installFromUrl && !this.installFromUrl.error,
             installUrl: this.installFromUrl ? this.installFromUrl.url : null,
@@ -194,6 +198,16 @@ const SettingsPluginsView = Backbone.View.extend({
             manifest.locale &&
                 (manifest.locale.name.toLowerCase().indexOf(searchStr) >= 0 ||
                 manifest.locale.title.toLowerCase().indexOf(searchStr) >= 0);
+    },
+
+    pluginSettingChange(e) {
+        const el = e.target;
+        const settingEl = $(el).closest('.settings__plugins-plugin-setting');
+        const setting = settingEl.data('setting');
+        const pluginId = settingEl.data('plugin');
+        const val = el.type === 'checkbox' ? el.checked : el.value;
+        const plugin = PluginManager.getPlugin(pluginId);
+        plugin.setSettings({ [setting]: val });
     }
 });
 
