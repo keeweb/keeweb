@@ -4,11 +4,6 @@
  * @license MIT
  */
 
-const AppSettingsModel = require('models/app-settings-model');
-
-// get setting: 'plugin:<plugin-name>:<setting-name>'
-const settingValue = AppSettingsModel.instance.get('plugin:settings-example:MyText');
-
 module.exports.getSettings = function() {
     return [{
         name: 'MyText',
