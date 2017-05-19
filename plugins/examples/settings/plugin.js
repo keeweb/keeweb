@@ -29,8 +29,8 @@ module.exports.getSettings = function() {
 module.exports.setSettings = function(changes) {
     // apply changed settings in plugin logic
     // this method will be called:
-    // 1. on modifications my user
-    // 2. during plugin startup
+    // 1. when the field is modified by user
+    // 2. after plugin startup
     // only changed settings will be passed
 
     // example: { MyText: 'value', MySel: 'selected-value', MyCheckbox: true }
