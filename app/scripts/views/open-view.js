@@ -390,8 +390,6 @@ const OpenView = Backbone.View.extend({
             this.openDb();
         } else if (code === Keys.DOM_VK_CAPS_LOCK) {
             this.toggleCapsLockWarning(false);
-        } else if (code === Keys.DOM_VK_A) {
-            e.stopImmediatePropagation();
         }
     },
 

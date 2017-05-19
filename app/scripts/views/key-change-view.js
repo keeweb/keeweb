@@ -56,8 +56,6 @@ const KeyChangeView = Backbone.View.extend({
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             this.accept();
-        } else if (code === Keys.DOM_VK_A) {
-            e.stopImmediatePropagation();
         }
     },
 

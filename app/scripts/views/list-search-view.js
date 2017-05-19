@@ -131,12 +131,6 @@ const ListSearchView = Backbone.View.extend({
                 }
                 e.target.blur();
                 break;
-            case Keys.DOM_VK_A:
-                if (e.metaKey || e.ctrlKey) {
-                    e.stopPropagation();
-                    return;
-                }
-                return;
             default:
                 return;
         }
