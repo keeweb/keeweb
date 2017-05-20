@@ -1,5 +1,3 @@
-'use strict';
-
 const MenuSectionModel = require('./menu-section-model');
 const GroupCollection = require('../../collections/group-collection');
 

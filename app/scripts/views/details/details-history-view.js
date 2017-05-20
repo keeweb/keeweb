@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const KeyHandler = require('../../comp/key-handler');
 const Keys = require('../../const/keys');

@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const MenuSectionModel = require('../../models/menu/menu-section-model');
 

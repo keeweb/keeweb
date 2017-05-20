@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const FeatureDetector = require('./feature-detector');
 
@@ -28,7 +26,7 @@ Tip.prototype.init = function() {
 };
 
 Tip.prototype.show = function() {
-    if (!Tip.enabled && !this.force) {
+    if (!Tip.enabled && !this.force || !this.title) {
         return;
     }
     Backbone.on('page-geometry', this.hide);
@@ -143,13 +141,16 @@ Tip.createTips = function(container) {
     });
 };
 
-Tip.createTip = function(el) {
-    if (!Tip.enabled) {
+Tip.createTip = function(el, options) {
+    if (!Tip.enabled && (!options || !options.force)) {
         return;
     }
-    const tip = new Tip($(el));
-    tip.init();
+    const tip = new Tip($(el), options);
+    if (!options || !options.noInit) {
+        tip.init();
+    }
     el._tip = tip;
+    return tip;
 };
 
 Tip.hideTips = function(container) {
@@ -162,9 +163,6 @@ Tip.hideTips = function(container) {
 };
 
 Tip.hideTip = function(el) {
-    if (!Tip.enabled) {
-        return;
-    }
     if (el._tip) {
         el._tip.hide();
     }

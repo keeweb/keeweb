@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = function (grunt) {
     grunt.registerMultiTask('sign-html', 'Signs html page with a private key', function () {
         const fs = require('fs');

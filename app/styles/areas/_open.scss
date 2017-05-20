@@ -1,19 +1,19 @@
 .open {
-  @include flex(1);
-  @include display(flex);
-  @include align-self(stretch);
-  @include align-items(center);
-  @include flex-direction(column);
-  @include justify-content(center);
-  @include th { background: background-color(); }
+  flex: 1;
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  @include th { background: th(background-color); }
 
   &__icons {
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include flex-shrink(0);
-    @include justify-content(center);
-    @include flex-wrap(wrap);
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: center;
+    flex-wrap: wrap;
     .open--drag & { display: none; }
   }
 
@@ -22,11 +22,11 @@
     cursor: pointer;
     margin: 20px;
     transition: color $base-duration $base-timing;
-    &:hover { @include th { color: medium-color(); } }
+    &:hover { @include th { color: th(medium-color); } }
     &-i, &-svg { font-size: 4em; }
     &-text {
-      @include th { color: muted-color(); }
-      .open__icon:hover>& { @include th { color: medium-color(); } }
+      @include th { color: th(muted-color); }
+      .open__icon:hover>& { @include th { color: th(medium-color); } }
     }
     &-svg {
       line-height: 0;
@@ -45,24 +45,24 @@
 
   &__pass {
     &-area {
-      @include display(flex);
-      @include align-items(stretch);
-      @include flex-direction(column);
-      @include justify-content(flex-start);
+      display: flex;
+      align-items: stretch;
+      flex-direction: column;
+      justify-content: flex-start;
       position: relative;
       .open--drag & { display: none; }
     }
     &-warn-wrap {
-      @include display(flex);
-      @include flex-direction(row);
-      @include justify-content(flex-end);
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
     }
     &-field-wrap {
-      @include display(flex);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
-      @include align-items(stretch);
-      @include flex-shrink(0);
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: stretch;
+      flex-shrink: 0;
       margin-bottom: $base-padding-v;
     }
     &-enter-btn, &-opening-icon {
@@ -70,14 +70,14 @@
       position: absolute;
       left: 100%;
       @include mobile { display: none; }
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       >i { font-size: 3em; }
     }
     &-enter-btn {
       .open--file & {
         cursor: pointer;
         &:hover {
-          @include th { color: medium-color(); }
+          @include th { color: th(medium-color); }
         }
       }
       .open--opening & { display: none; }
@@ -89,17 +89,17 @@
   }
 
   &__config {
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
     position: relative;
     width: 30em;
     .open--drag & {
       display: none;
     }
     &-buttons {
-      @include align-self(flex-end);
+      align-self: flex-end;
     }
     &-header {
       >i { margin-right: .3em; }
@@ -130,15 +130,15 @@
   }
 
   &__settings {
-    @include display(flex);
-    @include flex-direction(row);
-    @include justify-content(space-between);
-    @include align-items(stretch);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
     padding-left: $base-padding-h;
     height: 2em;
     &-key-file {
       .open--file:not(.open--opening) & { cursor: pointer; }
-      .open--key-file & { @include th { color: medium-color(); } }
+      .open--key-file & { @include th { color: th(medium-color); } }
       &-icon {
         width: 2em;
       }
@@ -159,32 +159,32 @@
 
     &-key-file, &-key-file-dropbox {
       @include th {
-        color: muted-color();
+        color: th(muted-color);
       }
       &:hover {
         .open--file:not(.open--opening) & {
-          @include th { color: medium-color(); }
+          @include th { color: th(medium-color); }
         }
       }
     }
   }
 
   &__last {
-    @include display(flex);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
-    @include align-items(stretch);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
     margin-top: $base-spacing;
     &-item {
-      @include display(flex);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
-      @include align-items(baseline);
-      @include flex-shrink(0);
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: baseline;
+      flex-shrink: 0;
       .open:not(.open--opening) & {
         @include area-selectable;
       }
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       padding: $base-padding;
       &-icon {
         width: 2em;
@@ -192,21 +192,21 @@
           vertical-align: middle;
           @include size(1em);
           path {
-            @include th { fill: muted-color(); }
+            @include th { fill: th(muted-color); }
           }
         }
       }
-      &-text { @include flex-grow(1); }
+      &-text { flex-grow: 1; }
       &-icon-del {
         opacity: 0;
         .open__last-item:hover & {
           opacity: .3;
           cursor: pointer;
         }
-        @include th { color: muted-color(); }
+        @include th { color: th(muted-color); }
         &:hover {
           .open__last-item:hover & { opacity: 1; }
-          @include th { color: medium-color(); }
+          @include th { color: th(medium-color); }
         }
       }
     }
@@ -215,12 +215,12 @@
   &__dropzone {
     display: none;
     .open--drag & {
-      @include display(flex);
-      @include flex-direction(column);
-      @include flex(1 0 auto);
-      @include justify-content(center);
-      @include align-self(center);
-      @include align-items(center);
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+      justify-content: center;
+      align-self: center;
+      align-items: center;
       text-align: center;
     }
     &-icon {

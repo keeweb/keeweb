@@ -1,9 +1,15 @@
-'use strict';
-
 const StorageBase = require('./storage-base');
-const DropboxLink = require('../comp/dropbox-link');
-const Locale = require('../util/locale');
 const UrlUtil = require('../util/url-util');
+const Launcher = require('../comp/launcher');
+
+const DropboxKeys = {
+    AppFolder: 'qp7ctun6qt5n9d6',
+    FullDropbox: 'eor7hvv6u6oslq9'
+};
+
+const DropboxCustomErrors = {
+    BadKey: 'bad-key'
+};
 
 const StorageDropbox = StorageBase.extend({
     name: 'dropbox',
@@ -11,19 +17,6 @@ const StorageDropbox = StorageBase.extend({
     enabled: true,
     uipos: 20,
     backup: true,
-
-    _convertError: function(err) {
-        if (!err) {
-            return err;
-        }
-        if (err.status === DropboxLink.ERROR_NOT_FOUND) {
-            err.notFound = true;
-        }
-        if (err.status === DropboxLink.ERROR_CONFLICT) {
-            err.revConflict = true;
-        }
-        return err;
-    },
 
     _toFullPath: function(path) {
         const rootFolder = this.appSettings.get('dropboxFolder');
@@ -55,8 +48,34 @@ const StorageDropbox = StorageBase.extend({
         return folder;
     },
 
+    _getKey: function() {
+        return this.appSettings.get('dropboxAppKey') || DropboxKeys.AppFolder;
+    },
+
+    _isValidKey: function() {
+        const key = this._getKey();
+        const isBuiltIn = key === DropboxKeys.AppFolder || key === DropboxKeys.FullDropbox;
+        return key && key.indexOf(' ') < 0 && (!isBuiltIn || this._canUseBuiltInKeys());
+    },
+
+    _canUseBuiltInKeys: function() {
+        const isSelfHosted = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
+            !/http(s?):\/\/(app|beta)\.keeweb\.info/.test(location.href);
+        return !!Launcher || !isSelfHosted;
+    },
+
+    _getOAuthConfig: function() {
+        return {
+            scope: '',
+            url: 'https://www.dropbox.com/oauth2/authorize',
+            clientId: this._getKey(),
+            width: 600,
+            height: 400
+        };
+    },
+
     needShowOpenConfig: function() {
-        return !DropboxLink.isValidKey();
+        return !this._isValidKey();
     },
 
     getOpenConfig: function() {
@@ -71,19 +90,19 @@ const StorageDropbox = StorageBase.extend({
 
     getSettingsConfig: function() {
         const fields = [];
-        const appKey = DropboxLink.getKey();
+        const appKey = this._getKey();
         const linkField = {id: 'link', title: 'dropboxLink', type: 'select', value: 'custom',
             options: { app: 'dropboxLinkApp', full: 'dropboxLinkFull', custom: 'dropboxLinkCustom' } };
         const keyField = {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w+',
             value: appKey};
         const folderField = {id: 'folder', title: 'dropboxFolder', desc: 'dropboxFolderSettingsDesc', type: 'text',
             value: this.appSettings.get('dropboxFolder') || ''};
-        const canUseBuiltInKeys = DropboxLink.canUseBuiltInKeys();
+        const canUseBuiltInKeys = this._canUseBuiltInKeys();
         if (canUseBuiltInKeys) {
             fields.push(linkField);
-            if (appKey === DropboxLink.Keys.AppFolder) {
+            if (appKey === DropboxKeys.AppFolder) {
                 linkField.value = 'app';
-            } else if (appKey === DropboxLink.Keys.FullDropbox) {
+            } else if (appKey === DropboxKeys.FullDropbox) {
                 linkField.value = 'full';
                 fields.push(folderField);
             } else {
@@ -98,19 +117,18 @@ const StorageDropbox = StorageBase.extend({
     },
 
     applyConfig: function(config, callback) {
-        DropboxLink.authenticate(err => {
-            if (!err) {
-                if (config.folder) {
-                    config.folder = this._fixConfigFolder(config.folder);
-                }
-                this.appSettings.set({
-                    dropboxAppKey: config.key,
-                    dropboxFolder: config.folder
-                });
-                DropboxLink.resetClient();
-            }
-            callback(err);
-        }, config.key);
+        if (config.key === DropboxKeys.AppFolder || config.key === DropboxKeys.FullDropbox) {
+            return callback(DropboxCustomErrors.BadKey);
+        }
+        // TODO: try to connect using new key
+        if (config.folder) {
+            config.folder = this._fixConfigFolder(config.folder);
+        }
+        this.appSettings.set({
+            dropboxAppKey: config.key,
+            dropboxFolder: config.folder
+        });
+        callback();
     },
 
     applySetting: function(key, value) {
@@ -119,10 +137,10 @@ const StorageDropbox = StorageBase.extend({
                 key = 'dropboxAppKey';
                 switch (value) {
                     case 'app':
-                        value = DropboxLink.Keys.AppFolder;
+                        value = DropboxKeys.AppFolder;
                         break;
                     case 'full':
-                        value = DropboxLink.Keys.FullDropbox;
+                        value = DropboxKeys.FullDropbox;
                         break;
                     case 'custom':
                         value = '(your app key)';
@@ -130,10 +148,11 @@ const StorageDropbox = StorageBase.extend({
                     default:
                         return;
                 }
-                DropboxLink.resetClient();
+                this._oauthRevokeToken();
                 break;
             case 'key':
                 key = 'dropboxAppKey';
+                this._oauthRevokeToken();
                 break;
             case 'folder':
                 key = 'dropboxFolder';
@@ -149,60 +168,130 @@ const StorageDropbox = StorageBase.extend({
         return '/' + fileName + '.kdbx';
     },
 
+    _apiCall: function(args) {
+        this._oauthAuthorize(err => {
+            if (err) {
+                return args.error(err);
+            }
+            const host = args.host || 'api';
+            let headers;
+            let data = args.data;
+            if (args.apiArg) {
+                headers = { 'Dropbox-API-Arg': JSON.stringify(args.apiArg) };
+                if (args.data) {
+                    headers['Content-Type'] = 'application/octet-stream';
+                }
+            } else if (args.data) {
+                data = JSON.stringify(data);
+                headers = {
+                    'Content-Type': 'application/json'
+                };
+            }
+            this._xhr({
+                url: `https://${host}.dropboxapi.com/2/${args.method}`,
+                method: 'POST',
+                responseType: args.responseType || 'json',
+                headers: headers,
+                data: data,
+                statuses: args.statuses || undefined,
+                success: args.success,
+                error: (e, xhr) => {
+                    let err = xhr.response && xhr.response.error || new Error('Network error');
+                    if (err && err.path && err.path['.tag'] === 'not_found') {
+                        err = new Error('File removed');
+                        err.notFound = true;
+                        this.logger.debug('File not found', args.method);
+                    } else {
+                        this.logger.error('API error', args.method, xhr.status, err);
+                    }
+                    err.status = xhr.status;
+                    args.error(err);
+                }
+            });
+        });
+    },
+
     load: function(path, opts, callback) {
         this.logger.debug('Load', path);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
-        DropboxLink.openFile(path, (err, data, stat) => {
-            this.logger.debug('Loaded', path, stat ? stat.versionTag : null, this.logger.ts(ts));
-            err = this._convertError(err);
-            if (callback) { callback(err, data, stat ? { rev: stat.versionTag } : null); }
-        }, _.noop);
+        this._apiCall({
+            method: 'files/download',
+            host: 'content',
+            apiArg: { path },
+            responseType: 'arraybuffer',
+            success: (response, xhr) => {
+                const stat = JSON.parse(xhr.getResponseHeader('dropbox-api-result'));
+                this.logger.debug('Loaded', path, stat.rev, this.logger.ts(ts));
+                callback(null, response, { rev: stat.rev });
+            },
+            error: callback
+        });
     },
 
     stat: function(path, opts, callback) {
         this.logger.debug('Stat', path);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
-        DropboxLink.stat(path, (err, stat) => {
-            if (stat && stat.isRemoved) {
-                err = new Error('File removed');
-                err.notFound = true;
-            }
-            this.logger.debug('Stated', path, stat ? stat.versionTag : null, this.logger.ts(ts));
-            err = this._convertError(err);
-            if (callback) { callback(err, stat ? { rev: stat.versionTag } : null); }
-        }, _.noop);
+        this._apiCall({
+            method: 'files/get_metadata',
+            data: { path },
+            success: stat => {
+                if (stat['.tag'] === 'file') {
+                    stat = { rev: stat.rev };
+                } else if (stat['.tag'] === 'folder') {
+                    stat = { folder: true };
+                }
+                this.logger.debug('Stated', path, stat.folder ? 'folder' : stat.rev, this.logger.ts(ts));
+                if (callback) { callback(null, stat); }
+            },
+            error: callback
+        });
     },
 
     save: function(path, opts, data, callback, rev) {
         this.logger.debug('Save', path, rev);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
-        DropboxLink.saveFile(path, data, rev, (err, stat) => {
-            this.logger.debug('Saved', path, this.logger.ts(ts));
-            if (!callback) { return; }
-            err = this._convertError(err);
-            callback(err, stat ? { rev: stat.versionTag } : null);
-        }, _.noop);
+        const arg = {
+            path,
+            mode: rev ? { '.tag': 'update', update: rev } : { '.tag': 'overwrite' }
+        };
+        this._apiCall({
+            method: 'files/upload',
+            host: 'content',
+            apiArg: arg,
+            data: data,
+            responseType: 'json',
+            success: stat => {
+                this.logger.debug('Saved', path, stat.rev, this.logger.ts(ts));
+                callback(null, { rev: stat.rev });
+            },
+            error: callback
+        });
     },
 
     list: function(callback) {
-        DropboxLink.authenticate((err) => {
-            if (err) { return callback(err); }
-            DropboxLink.list(this._toFullPath(''), (err, files, dirStat, filesStat) => {
-                if (err) { return callback(err); }
-                const fileList = filesStat
-                    .filter(f => !f.isFolder && !f.isRemoved && UrlUtil.isKdbx(f.name))
+        this.logger.debug('List');
+        const ts = this.logger.ts();
+        this._apiCall({
+            method: 'files/list_folder',
+            data: {
+                path: this._toFullPath(''),
+                recursive: false
+            },
+            success: data => {
+                this.logger.debug('Listed', this.logger.ts(ts));
+                const fileList = data.entries
+                    .filter(f => f['.tag'] === 'file' && f.rev && UrlUtil.isKdbx(f.name))
                     .map(f => ({
                         name: f.name,
-                        path: this._toRelPath(f.path),
-                        rev: f.versionTag
+                        path: this._toRelPath(f['path_display']),
+                        ref: f.rev
                     }));
-                const dir = dirStat.inAppFolder ? Locale.openAppFolder
-                    : (UrlUtil.trimStartSlash(dirStat.path) || Locale.openRootFolder);
-                callback(null, fileList, dir);
-            });
+                callback(null, fileList);
+            },
+            error: callback
         });
     },
 
@@ -210,28 +299,35 @@ const StorageDropbox = StorageBase.extend({
         this.logger.debug('Remove', path);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
-        DropboxLink.deleteFile(path, err => {
-            this.logger.debug('Removed', path, this.logger.ts(ts));
-            return callback && callback(err);
-        }, _.noop);
+        this._apiCall({
+            method: 'files/delete',
+            data: { path },
+            success: () => {
+                this.logger.debug('Removed', path, this.logger.ts(ts));
+                callback();
+            },
+            error: callback
+        });
     },
 
     mkdir: function(path, callback) {
-        DropboxLink.authenticate((err) => {
-            if (err) { return callback(err); }
-            this.logger.debug('Make dir', path);
-            const ts = this.logger.ts();
-            path = this._toFullPath(path);
-            DropboxLink.mkdir(path, err => {
+        this.logger.debug('Make dir', path);
+        const ts = this.logger.ts();
+        path = this._toFullPath(path);
+        this._apiCall({
+            method: 'files/create_folder',
+            data: { path },
+            success: () => {
                 this.logger.debug('Made dir', path, this.logger.ts(ts));
-                return callback && callback(err);
-            }, _.noop);
+                callback();
+            },
+            error: callback
         });
     },
 
     setEnabled: function(enabled) {
         if (!enabled) {
-            DropboxLink.logout();
+            this._oauthRevokeToken();
         }
         StorageBase.prototype.setEnabled.call(this, enabled);
     }

@@ -1,5 +1,3 @@
-'use strict';
-
 // https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Build_Instructions/Signing_an_executable_with_Authenticode
 
 const fs = require('fs');

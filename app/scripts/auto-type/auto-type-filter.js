@@ -1,8 +1,6 @@
-'use strict';
-
 const EntryCollection = require('../collections/entry-collection');
 
-const urlPartsRegex = /^(\w+:\/\/)?(?:www\.)?([^\/]+)\/?(.*)/;
+const urlPartsRegex = /^(\w+:\/\/)?(?:(?:www|wwws|secure)\.)?([^\/]+)\/?(.*)/;
 
 const AutoTypeFilter = function(windowInfo, appModel) {
     this.title = windowInfo.title;
@@ -17,18 +15,15 @@ AutoTypeFilter.prototype.getEntries = function() {
         text: this.text,
         autoType: true
     };
-    let entries = this.appModel.getEntriesByFilter(filter);
-    if (!this.ignoreWindowInfo && this.hasWindowInfo()) {
-        this.prepareFilter();
-        entries = new EntryCollection(entries
-            .map(e => [e, this.getEntryRank(e)])
-            .filter(e => e[1])
-            .sort((x, y) => x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1])
-            .map(p => p[0]));
-    } else {
-        entries.sortEntries('title');
+    this.prepareFilter();
+    let entries = this.appModel.getEntriesByFilter(filter)
+        .map(e => [e, this.getEntryRank(e)]);
+    if (!this.ignoreWindowInfo) {
+        entries = entries.filter(e => e[1]);
     }
-    return entries;
+    entries = entries.sort((x, y) => x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1]);
+    entries = entries.map(p => p[0]);
+    return new EntryCollection(entries, {comparator: 'none'});
 };
 
 AutoTypeFilter.prototype.hasWindowInfo = function() {
@@ -49,21 +44,20 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
     if (this.urlParts && entry.url) {
         const entryUrlParts = urlPartsRegex.exec(entry.url.toLowerCase());
         if (entryUrlParts) {
-            // domain
-            if (entryUrlParts[2] === this.urlParts[2]) {
+            const [, scheme, domain, path] = entryUrlParts;
+            const [, thisScheme, thisDomain, thisPath] = this.urlParts;
+            if (domain === thisDomain) {
                 rank += 10;
-                // path
-                if (entryUrlParts[3] === this.urlParts[3]) {
+                if (path === thisPath) {
                     rank += 10;
-                } else if (entryUrlParts[3] && this.urlParts[3]) {
-                    if (entryUrlParts[3].lastIndexOf(this.urlParts[3], 0) === 0) {
+                } else if (path && thisPath) {
+                    if (path.lastIndexOf(thisPath, 0) === 0) {
                         rank += 5;
-                    } else if (this.urlParts.lastIndexOf(entryUrlParts[3], 0) === 0) {
+                    } else if (thisPath.lastIndexOf(path, 0) === 0) {
                         rank += 3;
                     }
                 }
-                // scheme
-                if (entryUrlParts[1] === this.urlParts[1]) {
+                if (scheme === thisScheme) {
                     rank += 1;
                 }
             } else {

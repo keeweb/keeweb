@@ -1,11 +1,28 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Locale = require('./../util/locale');
 
 const SettingsManager = {
     neutralLocale: null,
     activeLocale: 'en',
+
+    allLocales: {
+        'en': 'English',
+        'de-DE': 'Deutsch',
+        'fr-FR': 'Français'
+    },
+
+    allThemes: {
+        fb: 'setGenThemeFb',
+        db: 'setGenThemeDb',
+        sd: 'setGenThemeSd',
+        sl: 'setGenThemeSl',
+        wh: 'setGenThemeWh',
+        te: 'setGenThemeTe',
+        hc: 'setGenThemeHc'
+    },
+
+    customLocales: {
+    },
 
     setBySettings: function(settings) {
         if (settings.get('theme')) {
@@ -51,7 +68,11 @@ const SettingsManager = {
         }
         let localeValues;
         if (loc !== 'en') {
-            localeValues = require('../locales/' + loc + '.json');
+            if (this.customLocales[loc]) {
+                localeValues = this.customLocales[loc];
+            } else {
+                localeValues = require('../locales/' + loc + '.json');
+            }
         }
         if (!this.neutralLocale) {
             this.neutralLocale = _.clone(Locale);

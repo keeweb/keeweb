@@ -1,9 +1,9 @@
 .key-change {
-  @include flex(1);
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(center);
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: center;
   overflow: hidden;
   padding: $base-spacing;
   position: relative;
@@ -20,22 +20,22 @@
     text-align: center;
   }
   &__body {
-    @include display(flex);
-    @include align-items(flex-start);
-    @include flex-direction(column);
-    @include flex-shrink(0);
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    flex-shrink: 0;
     margin: $base-spacing 0;
   }
   &__input {
-    @include align-self(center);
+    align-self: center;
   }
   input[type=password].key-change__pass, input[type=password].key-change__pass-repeat {
     font-size: $large-pass-font-size;
     margin: $small-spacing 0 0;
   }
   &__keyfile {
-    @include th { color: muted-color(); }
-    &:hover { @include th { color: medium-color(); } }
+    @include th { color: th(muted-color); }
+    &:hover { @include th { color: th(medium-color); } }
     margin-top: $base-padding-v;
     cursor: pointer;
   }
@@ -49,7 +49,7 @@
     }
   }
   &__body, &__buttons {
-    @include align-self(center);
+    align-self: center;
     width: 40%;
   }
 }

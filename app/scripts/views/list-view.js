@@ -1,6 +1,5 @@
-'use strict';
-
 const Backbone = require('backbone');
+const EntryCollection = require('../collections/entry-collection');
 const Resizable = require('../mixins/resizable');
 const Scrollable = require('../mixins/scrollable');
 const ListSearchView = require('./list-search-view');
@@ -10,6 +9,7 @@ const DragDropInfo = require('../comp/drag-drop-info');
 const AppSettingsModel = require('../models/app-settings-model');
 const Locale = require('../util/locale');
 const Format = require('../util/format');
+const Alerts = require('../comp/alerts');
 
 const ListView = Backbone.View.extend({
     template: require('templates/list.hbs'),
@@ -49,6 +49,7 @@ const ListView = Backbone.View.extend({
         this.listenTo(this.views.search, 'select-next', this.selectNext);
         this.listenTo(this.views.search, 'create-entry', this.createEntry);
         this.listenTo(this.views.search, 'create-group', this.createGroup);
+        this.listenTo(this.views.search, 'create-template', this.createTemplate);
         this.listenTo(this, 'show', this.viewShown);
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(this, 'view-resize', this.viewResized);
@@ -60,7 +61,7 @@ const ListView = Backbone.View.extend({
 
         this.readTableColumnsEnabled();
 
-        this.items = [];
+        this.items = new EntryCollection();
     },
 
     render: function () {
@@ -149,8 +150,8 @@ const ListView = Backbone.View.extend({
         }
     },
 
-    createEntry: function() {
-        const newEntry = this.model.createNewEntry();
+    createEntry: function(arg) {
+        const newEntry = this.model.createNewEntry(arg);
         this.items.unshift(newEntry);
         this.render();
         this.selectItem(newEntry);
@@ -159,6 +160,27 @@ const ListView = Backbone.View.extend({
     createGroup: function() {
         const newGroup = this.model.createNewGroup();
         Backbone.trigger('edit-group', newGroup);
+    },
+
+    createTemplate: function() {
+        if (!this.model.settings.get('templateHelpShown')) {
+            Alerts.yesno({
+                icon: 'sticky-note-o',
+                header: Locale.listAddTemplateHeader,
+                body: Locale.listAddTemplateBody1.replace('{}', '<i class="fa fa-plus"></i>') + '<br/>' +
+                    Locale.listAddTemplateBody2.replace('{}', 'Templates'),
+                buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
+                success: () => {
+                    this.model.settings.set('templateHelpShown', true);
+                    this.createTemplate();
+                }
+            });
+            return;
+        }
+        const templateEntry = this.model.createNewTemplateEntry();
+        this.items.unshift(templateEntry);
+        this.render();
+        this.selectItem(templateEntry);
     },
 
     selectItem: function(item) {

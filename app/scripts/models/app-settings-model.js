@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const SettingsStore = require('../comp/settings-store');
 
@@ -19,9 +17,12 @@ const AppSettingsModel = Backbone.Model.extend({
         minimizeOnClose: false,
         tableView: false,
         colorfulIcons: false,
+        titlebarStyle: 'default',
         lockOnMinimize: true,
         lockOnCopy: false,
+        lockOnAutoType: false,
         helpTipCopyShown: false,
+        templateHelpShown: false,
         skipOpenLocalWarn: false,
         hideEmptyFields: false,
         skipHttpsWarning: false,
@@ -29,12 +30,15 @@ const AppSettingsModel = Backbone.Model.extend({
         fontSize: 0,
         tableViewColumns: null,
         generatorPresets: null,
+        cacheConfigSettings: false,
+
         canOpen: true,
         canOpenDemo: true,
         canOpenSettings: true,
         canCreate: true,
         canImportXml: true,
         canRemoveLatest: true,
+
         dropbox: true,
         webdav: true,
         gdrive: true,
@@ -46,19 +50,20 @@ const AppSettingsModel = Backbone.Model.extend({
     },
 
     load: function() {
-        const data = SettingsStore.load('app-settings');
-        if (data) {
-            this.upgrade(data);
-        }
-
-        if (data) {
-            this.set(data, {silent: true});
-        }
+        return SettingsStore.load('app-settings').then(data => {
+            if (data) {
+                this.upgrade(data);
+                this.set(data, {silent: true});
+            }
+        });
     },
 
     upgrade: function(data) {
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
+        }
+        if (data.versionWarningShown) {
+            delete data.versionWarningShown;
         }
     },
 
@@ -68,6 +73,5 @@ const AppSettingsModel = Backbone.Model.extend({
 });
 
 AppSettingsModel.instance = new AppSettingsModel();
-AppSettingsModel.instance.load();
 
 module.exports = AppSettingsModel;

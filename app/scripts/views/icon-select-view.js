@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const IconMap = require('../const/icon-map');
 const Launcher = require('../comp/launcher');

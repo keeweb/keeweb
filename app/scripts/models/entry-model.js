@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const AttachmentModel = require('./attachment-model');
 const IconMap = require('../const/icon-map');
@@ -390,9 +388,9 @@ const EntryModel = Backbone.Model.extend({
         this._fillByEntry();
     },
 
-    setField: function(field, val) {
+    setField: function(field, val, allowEmpty) {
         const hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
-        if (hasValue || this.builtInFields.indexOf(field) >= 0) {
+        if (hasValue || allowEmpty || this.builtInFields.indexOf(field) >= 0) {
             this._entryModified();
             this.entry.fields[field] = val;
         } else if (this.entry.fields.hasOwnProperty(field)) {
@@ -624,6 +622,12 @@ const EntryModel = Backbone.Model.extend({
         newEntry._fillByEntry();
         this.file.reload();
         return newEntry;
+    },
+
+    copyFromTemplate: function(templateEntry) {
+        this.entry.copyFrom(templateEntry.entry);
+        this.entry.fields.Title = '';
+        this._fillByEntry();
     }
 });
 

@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const AutoTypeParser = require('./auto-type-parser');
 const AutoTypeFilter = require('./auto-type-filter');
@@ -10,13 +8,14 @@ const AutoTypeSelectView = require('../views/auto-type/auto-type-select-view');
 const Logger = require('../util/logger');
 const Locale = require('../util/locale');
 const Timeouts = require('../const/timeouts');
+const AppSettingsModel = require('../models/app-settings-model');
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = localStorage.autoTypeDebug;
 
 const AutoType = {
     helper: AutoTypeHelperFactory.create(),
-    enabled: !!Launcher,
+    enabled: !!(Launcher && Launcher.autoTypeSupported),
     selectEntryView: false,
     pendingEvent: null,
     running: false,
@@ -63,6 +62,10 @@ const AutoType = {
                 });
             }
         });
+
+        if (AppSettingsModel.instance.get('lockOnAutoType')) {
+            Backbone.trigger('lock-workspace');
+        }
     },
 
     run(entry, callback) {
@@ -187,6 +190,7 @@ const AutoType = {
             return;
         }
         this.focusMainWindow();
+        evt.filter.ignoreWindowInfo = true;
         this.selectEntryView = new AutoTypeSelectView({
             model: { filter: evt.filter }
         }).render();

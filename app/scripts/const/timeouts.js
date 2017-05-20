@@ -1,5 +1,3 @@
-'use strict';
-
 const Timeouts = {
     AutoSync: 30 * 1000 * 60,
     CopyTip: 1500,
@@ -11,7 +9,8 @@ const Timeouts = {
     AutoTypeAfterHide: 100,
     DrobDownClickWait: 500,
     RedrawInactiveWindow: 50,
-    PopupWaitTime: 1000
+    PopupWaitTime: 1000,
+    AutoUpdatePluginsAfterStart: 500
 };
 
 module.exports = Timeouts;

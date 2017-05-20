@@ -6,8 +6,6 @@
 
 // (C) Antelle 2015, MIT license https://github.com/keeweb/keeweb
 
-'use strict';
-
 const app = require('electron').app;
 const path = require('path');
 const fs = require('fs');

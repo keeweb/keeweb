@@ -1,16 +1,38 @@
-'use strict';
-
 const Colors = require('../const/colors');
 
 const KnownColors = {};
 
-const Color = function(str) {
-    const start = str[0] === '#' ? 1 : 0;
-    const len = str.length === 3 ? 1 : 2;
-    this.r = parseInt(str.substr(start, len), 16);
-    this.g = parseInt(str.substr(start + len, len), 16);
-    this.b = parseInt(str.substr(start + len * 2, len), 16);
-    this.setHsl();
+const Color = function(arg) {
+    const rgbaMatch = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*([\d.]+))?\)$/.exec(arg);
+    if (rgbaMatch) {
+        this.r = +rgbaMatch[1];
+        this.g = +rgbaMatch[2];
+        this.b = +rgbaMatch[2];
+        this.a = rgbaMatch[4] ? rgbaMatch[4] : 1;
+        this.setHsl();
+    } else {
+        const hexMatch = /^#?([0-9a-f]{3,6})$/i.exec(arg);
+        if (hexMatch) {
+            const digits = hexMatch[1];
+            const len = digits.length === 3 ? 1 : 2;
+            this.r = parseInt(digits.substr(0, len), 16);
+            this.g = parseInt(digits.substr(len, len), 16);
+            this.b = parseInt(digits.substr(len * 2, len), 16);
+            this.a = 1;
+            this.setHsl();
+        } else if (arg instanceof Color) {
+            this.r = arg.r;
+            this.g = arg.g;
+            this.b = arg.b;
+            this.h = arg.h;
+            this.s = arg.s;
+            this.l = arg.l;
+            this.a = arg.a;
+        } else {
+            this.r = this.g = this.b = this.h = this.s = this.l = 0;
+            this.a = 1;
+        }
+    }
 };
 
 Color.prototype.setHsl = function() {
@@ -46,8 +68,26 @@ Color.prototype.toHex = function() {
     return '#' + hex(this.r) + hex(this.g) + hex(this.b);
 };
 
+Color.prototype.toRgba = function() {
+    return `rgba(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)},${this.a})`;
+};
+
+Color.prototype.toHsla = function() {
+    return `hsla(${Math.round(this.h * 100)},${Math.round(this.s * 100)}%,${Math.round(this.l * 100)}%,${this.a})`;
+};
+
 Color.prototype.distanceTo = function(color) {
     return Math.abs(this.h - color.h);
+};
+
+Color.prototype.mix = function(another, weight) {
+    const res = new Color(this);
+    const anotherWeight = 1 - weight;
+    res.r = this.r * weight + another.r * anotherWeight;
+    res.g = this.g * weight + another.g * anotherWeight;
+    res.b = this.b * weight + another.b * anotherWeight;
+    res.a = this.a * weight + another.a * anotherWeight;
+    return res;
 };
 
 Color.getNearest = function(colorStr) {
@@ -74,6 +114,8 @@ Color.getKnownBgColor = function(knownColor) {
 _.forEach(Colors.ColorsValues, (val, name) => {
     KnownColors[name] = new Color(val);
 });
+
+Color.black = new Color('#000');
 
 function hex(num) {
     const str = (num || 0).toString(16);

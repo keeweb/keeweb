@@ -1,5 +1,3 @@
-'use strict';
-
 const FieldView = require('./field-view');
 
 const FieldViewReadOnly = FieldView.extend({

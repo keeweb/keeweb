@@ -18,39 +18,39 @@
   min-width: 80px;
 
   @include th {
-    border: 1px solid action-color();
-    background-color: action-color();
-    color: text-contrast-color(action-color());
+    border: 1px solid th(action-color);
+    background-color: th(action-color);
+    color: th(text-contrast-action-color);
 
     &.btn-error, &.btn-silent {
-      border-color: base-border-color();
+      border-color: th(base-border-color);
       background-color: transparent;
-      color: text-contrast-color(background-color());
+      color: th(text-color);
     }
 
     &:hover {
-      border-color: action-background-color-focus();
-      background-color: action-background-color-focus();
+      border-color: th(action-background-color-focus);
+      background-color: th(action-background-color-focus);
       &.btn-error {
-        border-color: error-background-color-focus();
-        background-color: rgba(error-background-color-focus(), .1);
+        border-color: th(error-background-color-focus);
+        background-color: th(error-background-color-focus-tr);
       }
       &.btn-silent {
-        border-color: action-background-color-focus();
-        background-color: rgba(action-background-color-focus(), .1);
+        border-color: th(action-background-color-focus);
+        background-color: th(action-background-color-focus-tr);
       }
     }
 
     &:active {
-      border-color: action-background-color-active();
-      background-color: action-background-color-active();
+      border-color: th(action-background-color-active);
+      background-color: th(action-background-color-active);
       &.btn-error {
-        border-color: error-background-color-active();
-        background-color: rgba(error-background-color-active(), .15);
+        border-color: th(error-background-color-active);
+        background-color: th(error-background-color-active-tr);
       }
       &.btn-silent {
-        border-color: action-background-color-active();
-        background-color: rgba(action-background-color-active(), .15);
+        border-color: th(action-background-color-active);
+        background-color: th(action-background-color-active-tr);
       }
     }
 
@@ -58,14 +58,14 @@
       cursor: default;
       opacity: 0.5;
       &:hover {
-        border-color: action-color();
-        background-color: action-color();
+        border-color: th(action-color);
+        background-color: th(action-color);
         &.btn-error {
-          border-color: error-color();
+          border-color: th(error-color);
           background-color: transparent;
         }
         &.btn-silent {
-          border-color: action-color();
+          border-color: th(action-color);
           background-color: transparent;
         }
       }
@@ -82,7 +82,7 @@
   }
   @if $error {
     &:hover {
-      @include th { border-color: error-color(); }
+      @include th { border-color: th(error-color); }
     }
   }
 }
@@ -90,9 +90,9 @@
 .svg-btn {
   svg path {
     transition: fill $base-duration $base-timing;
-    @include th { fill: text-color(); }
+    @include th { fill: th(text-color); }
   }
   &:hover svg path {
-    @include th { fill: medium-color(); }
+    @include th { fill: th(medium-color); }
   }
 }

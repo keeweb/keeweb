@@ -1,0 +1,50 @@
+.th-rainbow {
+  /* theme style variables */
+  --background-color: #FAFAFA;
+  --medium-color: #050505;
+  --text-color: #424243;
+  --action-color: #475FD7;
+  --error-color: #E75675;
+
+  /* if you want, you can customize additional variables here, you can find them in _theme-vars.scss */
+  /* for example, highlighted border color: */
+  --accent-border-color: red;
+  /* but if you skip them, they will be computed automatically based on base colors above */
+}
+
+/* any other custom css goes here */
+
+/* everything in themes must start with your theme class (.th-) */
+/* if your theme contains global styles, 'Invalid theme' error will be thrown on install */
+
+.th-rainbow * { /* never do such things! */
+  animation: rainbow 5s linear 0s infinite;
+}
+.th-rainbow button {
+  animation: bgrainbow 5s linear 0s infinite;
+  border: 1px solid;
+}
+.th-rainbow input {
+  border: 1px solid;
+}
+.th-rainbow *:nth-child(5n+1) { animation-delay: -1s; }
+.th-rainbow *:nth-child(5n+2) { animation-delay: -2s; }
+.th-rainbow *:nth-child(5n+3) { animation-delay: -3s; }
+.th-rainbow *:nth-child(5n+4) { animation-delay: -4s; }
+.th-rainbow *:nth-child(5n+5) { animation-delay: -5s; }
+@keyframes rainbow {
+  0% { color: lightseagreen; }
+  20% { color: darkviolet; }
+  40% { color: gold; }
+  60% { color: hotpink; }
+  80% { color: palegoldenrod; }
+  100% { color: lightseagreen; }
+}
+@keyframes bgrainbow {
+  0% { color: darkviolet; background-color: lightseagreen; }
+  20% { color: gold; background-color: darkviolet; }
+  40% { color: hotpink; background-color: gold; }
+  60% { color: palegoldenrod; background-color: hotpink; }
+  80% { color: lightseagreen; background-color: palegoldenrod; }
+  100% { color: darkviolet; background-color: lightseagreen; }
+}

@@ -1,19 +1,17 @@
-'use strict';
-
 const Backbone = require('backbone');
 const kdbxweb = require('kdbxweb');
 const OpenConfigView = require('./open-config-view');
-const AppSettingsModel = require('../models/app-settings-model');
 const Keys = require('../const/keys');
 const Alerts = require('../comp/alerts');
 const SecureInput = require('../comp/secure-input');
-const DropboxLink = require('../comp/dropbox-link');
+const DropboxChooser = require('../comp/dropbox-chooser');
 const FeatureDetector = require('../util/feature-detector');
 const Logger = require('../util/logger');
 const Locale = require('../util/locale');
 const UrlUtil = require('../util/url-util');
 const InputFx = require('../util/input-fx');
 const Storage = require('../storage');
+const Launcher = require('../comp/launcher');
 
 const logger = new Logger('open-view');
 
@@ -80,7 +78,7 @@ const OpenView = Backbone.View.extend({
             !(this.model.settings.get('canOpenDemo') && !this.model.settings.get('demoOpened'));
         this.renderTemplate({
             lastOpenFiles: this.getLastOpenFiles(),
-            canOpenKeyFromDropbox: DropboxLink.canChooseFile() && Storage.dropbox.enabled,
+            canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
             demoOpened: this.model.settings.get('demoOpened'),
             storageProviders: storageProviders,
             canOpen: this.model.settings.get('canOpen'),
@@ -116,10 +114,19 @@ const OpenView = Backbone.View.extend({
             return {
                 id: f.get('id'),
                 name: f.get('name'),
+                path: this.getDisplayedPath(f),
                 icon: icon,
                 iconSvg: storage ? storage.iconSvg : undefined
             };
         });
+    },
+
+    getDisplayedPath: function(fileInfo) {
+        const storage = fileInfo.get('storage');
+        if (storage === 'file' || storage === 'webdav') {
+            return fileInfo.get('path');
+        }
+        return null;
     },
 
     remove: function() {
@@ -297,21 +304,34 @@ const OpenView = Backbone.View.extend({
 
     openKeyFileFromDropbox: function() {
         if (!this.busy) {
-            DropboxLink.chooseFile((err, res) => {
+            new DropboxChooser((err, res) => {
                 if (err) {
                     return;
                 }
                 this.params.keyFileData = res.data;
                 this.params.keyFileName = res.name;
                 this.displayOpenKeyFile();
-            });
+            }).choose();
         }
     },
 
     openAny: function(reading, ext) {
         this.reading = reading;
         this.params[reading] = null;
-        this.$el.find('.open__file-ctrl').attr('accept', ext || '').val(null).click();
+
+        const fileInput = this.$el.find('.open__file-ctrl').attr('accept', ext || '').val(null);
+
+        if (Launcher && Launcher.openFileChooser) {
+            Launcher.openFileChooser((err, file) => {
+                if (err) {
+                    logger.error('Error opening file chooser', err);
+                } else {
+                    this.processFile(file);
+                }
+            });
+        } else {
+            fileInput.click();
+        }
     },
 
     openLast: function(e) {
@@ -338,7 +358,23 @@ const OpenView = Backbone.View.extend({
             this.removeFile(id);
             return;
         }
-        this.showOpenFileInfo(this.model.fileInfos.get(id));
+
+        const fileInfo = this.model.fileInfos.get(id);
+        this.showOpenFileInfo(fileInfo);
+
+        if (fileInfo && Launcher && Launcher.fingerprints) {
+            this.openFileWithFingerprint(fileInfo);
+        }
+    },
+
+    openFileWithFingerprint(fileInfo) {
+        if (fileInfo.get('fingerprint')) {
+            Launcher.fingerprints.auth(fileInfo.id, fileInfo.get('fingerprint'), password => {
+                this.inputEl.val(password);
+                this.inputEl.trigger('input');
+                this.openDb();
+            });
+        }
     },
 
     removeFile: function(id) {
@@ -354,8 +390,6 @@ const OpenView = Backbone.View.extend({
             this.openDb();
         } else if (code === Keys.DOM_VK_CAPS_LOCK) {
             this.toggleCapsLockWarning(false);
-        } else if (code === Keys.DOM_VK_A) {
-            e.stopImmediatePropagation();
         }
     },
 
@@ -562,7 +596,7 @@ const OpenView = Backbone.View.extend({
         const icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
         this.busy = true;
         icon.toggleClass('flip3d', true);
-        storage.list((err, files, dir) => {
+        storage.list((err, files) => {
             icon.toggleClass('flip3d', false);
             this.busy = false;
             if (err || !files) {
@@ -577,13 +611,9 @@ const OpenView = Backbone.View.extend({
                 allStorageFiles[file.path] = file;
             });
             if (!buttons.length) {
-                let body = Locale.openNothingFoundBody;
-                if (dir) {
-                    body += ' ' + Locale.openNothingFoundBodyFolder.replace('{}', dir);
-                }
                 Alerts.error({
                     header: Locale.openNothingFound,
-                    body: body
+                    body: Locale.openNothingFoundBody
                 });
                 return;
             }

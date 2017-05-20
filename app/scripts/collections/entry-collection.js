@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const EntryModel = require('../models/entry-model');
 const Comparators = require('../util/comparators');
@@ -7,9 +5,10 @@ const Comparators = require('../util/comparators');
 const EntryCollection = Backbone.Collection.extend({
     model: EntryModel,
 
-    comparator: function() {},
+    comparator: null,
 
     comparators: {
+        'none': null,
         'title': Comparators.stringComparator('title', true),
         '-title': Comparators.stringComparator('title', false),
         'website': Comparators.stringComparator('url', true),
@@ -25,8 +24,9 @@ const EntryCollection = Backbone.Collection.extend({
 
     defaultComparator: 'title',
 
-    initialize: function() {
-        this.comparator = this.comparators[this.defaultComparator];
+    initialize: function(models, options) {
+        const comparatorName = options && options.comparator || this.defaultComparator;
+        this.comparator = this.comparators[comparatorName];
     },
 
     sortEntries: function(comparator) {

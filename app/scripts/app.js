@@ -1,7 +1,9 @@
-'use strict';
-
 const AppModel = require('./models/app-model');
 const AppView = require('./views/app-view');
+const AppSettingsModel = require('./models/app-settings-model');
+const UpdateModel = require('./models/update-model');
+const RuntimeDataModel = require('./models/runtime-data-model');
+const FileInfoCollection = require('./collections/file-info-collection');
 const KeyHandler = require('./comp/key-handler');
 const IdleTracker = require('./comp/idle-tracker');
 const PopupNotifier = require('./comp/popup-notifier');
@@ -11,39 +13,60 @@ const Updater = require('./comp/updater');
 const AuthReceiver = require('./comp/auth-receiver');
 const ExportApi = require('./comp/export-api');
 const SettingsManager = require('./comp/settings-manager');
+const PluginManager = require('./plugins/plugin-manager');
+const Launcher = require('./comp/launcher');
+const Timeouts = require('./const/timeouts');
+const FeatureDetector = require('./util/feature-detector');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
 
-$(() => {
-    if (isPopup()) {
-        return AuthReceiver.receive();
+const ready = Launcher && Launcher.ready || $;
+
+ready(() => {
+    if (FeatureDetector.isPopup && AuthReceiver.receive()) {
+        return;
     }
     loadMixins();
-    initModules();
 
     const appModel = new AppModel();
-    SettingsManager.setBySettings(appModel.settings);
-    const configParam = getConfigParam();
-    if (configParam) {
-        appModel.loadConfig(configParam, err => {
-            SettingsManager.setBySettings(appModel.settings);
-            if (err) {
-                showSettingsLoadError();
-            } else {
-                showApp();
-            }
-        });
-    } else {
-        showApp();
-    }
 
-    function isPopup() {
-        return (window.parent !== window.top) || window.opener;
-    }
+    Promise.resolve()
+        .then(loadConfigs)
+        .then(initModules)
+        .then(loadRemoteConfig)
+        .then(ensureCanRun)
+        .then(showApp)
+        .then(autoUpdatePlugins)
+        .catch(e => {
+            appModel.appLogger.error('Error starting app', e);
+        });
 
     function loadMixins() {
         require('./mixins/view');
         require('./helpers');
+    }
+
+    function ensureCanRun() {
+        return Promise.resolve()
+            .then(() => FeatureDetector.ensureCanRun())
+            .catch(e => {
+                Alerts.error({
+                    header: Locale.appSettingsError,
+                    body: Locale.appNotSupportedError,
+                    buttons: [],
+                    esc: false, enter: false, click: false
+                });
+                throw e;
+            });
+    }
+
+    function loadConfigs() {
+        return Promise.all([
+            AppSettingsModel.instance.load(),
+            UpdateModel.instance.load(),
+            RuntimeDataModel.instance.load(),
+            FileInfoCollection.instance.load()
+        ]);
     }
 
     function initModules() {
@@ -52,6 +75,7 @@ $(() => {
         PopupNotifier.init();
         KdbxwebInit.init();
         window.kw = ExportApi;
+        return PluginManager.init();
     }
 
     function showSettingsLoadError() {
@@ -60,6 +84,23 @@ $(() => {
             body: Locale.appSettingsErrorBody,
             buttons: [],
             esc: false, enter: false, click: false
+        });
+    }
+
+    function loadRemoteConfig() {
+        return Promise.resolve().then(() => {
+            SettingsManager.setBySettings(appModel.settings);
+            const configParam = getConfigParam();
+            if (configParam) {
+                return appModel.loadConfig(configParam).then(() => {
+                    SettingsManager.setBySettings(appModel.settings);
+                }).catch(e => {
+                    if (!appModel.settings.get('cacheConfigSettings')) {
+                        showSettingsLoadError();
+                        throw e;
+                    }
+                });
+            }
         });
     }
 
@@ -80,11 +121,17 @@ $(() => {
         }
     }
 
+    function autoUpdatePlugins() {
+        setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
+    }
+
     function showView() {
         appModel.prepare();
         new AppView({ model: appModel }).render();
         Updater.init();
         SingleInstanceChecker.init();
+        const time = Math.round(performance.now());
+        appModel.appLogger.info(`Started in ${time}ms ¯\\_(ツ)_/¯`);
     }
 
     function getConfigParam() {

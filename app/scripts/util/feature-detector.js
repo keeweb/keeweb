@@ -1,5 +1,3 @@
-'use strict';
-
 const MobileRegex = /iPhone|iPad|iPod|Android|BlackBerry|Opera Mini|IEMobile|WPDesktop|Windows Phone|webOS/i;
 const MinDesktopScreenWidth = 800;
 
@@ -8,7 +6,8 @@ const FeatureDetector = {
     isWindows: navigator.platform.indexOf('Win') >= 0,
     isiOS: /iPad|iPhone|iPod/i.test(navigator.userAgent),
     isMobile: MobileRegex.test(navigator.userAgent) || screen.width < MinDesktopScreenWidth,
-
+    isPopup: !!((window.parent !== window.top) || window.opener),
+    isStandalone: !!navigator.standalone,
     isBeta: window.location.href.toLowerCase().indexOf('beta.') > 0,
 
     actionShortcutSymbol: function(formatting) {
@@ -30,11 +29,23 @@ const FeatureDetector = {
         if (this.isWindows) { return 'Alt+PrintScreen'; }
         return '';
     },
-    shouldMoveHiddenInputToCopySource: function() {
-        return this.isiOS && !/Version\/10/.test(navigator.userAgent);
+    supportsTitleBarStyles: function() {
+        return this.isMac;
     },
-    canCopyReadonlyInput: function() {
-        return !(/CriOS/i.test(navigator.userAgent));
+    hasUnicodeFlags: function() {
+        return this.isMac;
+    },
+    ensureCanRun: function() {
+        if (/MSIE |Trident/.test(navigator.userAgent)) {
+            throw 'IE detected';
+        }
+        if (!localStorage.length) {
+            try {
+                localStorage.appSettings = '';
+            } catch (e) {
+                throw 'localStorage not available';
+            }
+        }
     }
 };
 

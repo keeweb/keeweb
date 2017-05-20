@@ -1,5 +1,3 @@
-'use strict';
-
 const Launcher = require('../../comp/launcher');
 const Logger = require('../../util/logger');
 
@@ -21,7 +19,7 @@ const AutoTypeNativeHelper = {
         const helperCTime = -1;
         possiblePaths.forEach(possiblePath => {
             try {
-                const ctime = Launcher.statFile(possiblePath).ctime;
+                const ctime = Launcher.statFileSync(possiblePath).ctime;
                 if (ctime > helperCTime) {
                     helperPath = possiblePath;
                 }

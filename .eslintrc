@@ -14,7 +14,15 @@
         "object-property-newline": "off",
         "no-useless-escape": "off",
         "no-var": "error",
-        "prefer-const": "error"
+        "prefer-const": "error",
+        "no-unused-expressions": "error",
+        "strict": ["error", "never"]
+    },
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "impliedStrict": true
+        }
     },
     "globals": {
         "_": true,

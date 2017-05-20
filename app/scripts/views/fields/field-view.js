@@ -1,7 +1,4 @@
-'use strict';
-
 const Backbone = require('backbone');
-const FeatureDetector = require('../../util/feature-detector');
 const CopyPaste = require('../../comp/copy-paste');
 const Tip = require('../../util/tip');
 
@@ -32,7 +29,7 @@ const FieldView = Backbone.View.extend({
 
     remove: function() {
         if (this.tip) {
-            Tip.hideTip(this.valueEl);
+            Tip.hideTip(this.valueEl[0]);
         }
         Backbone.View.prototype.remove.apply(this, arguments);
     },
@@ -48,17 +45,10 @@ const FieldView = Backbone.View.extend({
 
     fieldLabelClick: function(e) {
         e.stopImmediatePropagation();
-        const field = this.model.name;
-        if (FeatureDetector.shouldMoveHiddenInputToCopySource()) {
-            const box = this.valueEl[0].getBoundingClientRect();
-            const textValue = this.value && this.value.isProtected ? this.value.getText() : this.getEditValue(this.value);
-            if (!textValue) {
-                return;
-            }
-            CopyPaste.createHiddenInput(textValue, box);
-            // CopyPaste.copy(); // maybe Apple will ever support this?
+        if (this.preventCopy) {
             return;
         }
+        const field = this.model.name;
         let copyRes;
         if (field) {
             const value = this.value || '';
@@ -71,9 +61,7 @@ const FieldView = Backbone.View.extend({
                     CopyPaste.createHiddenInput(text);
                 }
                 copyRes = CopyPaste.copy(text);
-                if (copyRes) {
-                    this.trigger('copy', { source: this, copyRes: copyRes });
-                }
+                this.trigger('copy', { source: this, copyRes: copyRes });
                 return;
             }
         }
@@ -109,6 +97,7 @@ const FieldView = Backbone.View.extend({
         this.$el.addClass('details__field--edit');
         this.startEdit();
         this.editing = true;
+        this.preventCopy = true;
     },
 
     endEdit: function(newVal, extra) {
@@ -116,6 +105,7 @@ const FieldView = Backbone.View.extend({
             return;
         }
         this.editing = false;
+        setTimeout(() => { this.preventCopy = false; }, 300);
         let textEqual;
         if (this.value && this.value.isProtected) {
             textEqual = this.value.equals(newVal);

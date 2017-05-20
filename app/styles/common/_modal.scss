@@ -1,20 +1,20 @@
 .modal {
   @include position(absolute, 0 null null 0);
   @include size(100%);
-  @include th { background-color: rgba(background-color(), th(modal-opacity)); }
+  @include th { background-color: th(modal-background-color); }
   z-index: $z-index-modal;
 
   transition: background-color $base-duration $base-timing;
   &.modal--hidden {
-    @include th { background-color: rgba(background-color(), 0); }
+    @include th { background-color: th(modal-background-color-tr); }
   }
 
   &__content {
     @include size(100%);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(center);
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: center;
 
     transition: all $base-duration $base-timing;
     .modal--hidden & {
@@ -47,7 +47,7 @@
     }
   }
   &__body, &__buttons {
-    @include align-self(center);
+    align-self: center;
     width: 40%;
     @include tablet {
       width: 90%;

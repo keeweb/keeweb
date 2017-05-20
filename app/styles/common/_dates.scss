@@ -4,7 +4,7 @@
 
 .pika-label {
   @include th {
-    background: background-color();
+    background: th(background-color);
   }
 }
 
@@ -24,47 +24,47 @@ button.pika-next {
 }
 
 .pika-table th {
-  @include th { color: medium-color(); };
+  @include th { color: th(medium-color); };
 }
 
 .pika-button, button.pika-button {
   min-width: 0;
   border: none;
   @include th {
-    color: text-color();
-    background-color: background-color();
+    color: th(text-color);
+    background-color: th(background-color);
     border-radius: $base-border-radius;
   }
 }
 
 .pika-week {
   @include th {
-    color: medium-color();
+    color: th(medium-color);
   }
 }
 
 .is-today .pika-button {
   @include th {
-    color: action-color();
+    color: th(action-color);
   }
 }
 
 .is-selected .pika-button {
   @include th {
-    color: text-color();
-    background: action-color();
-    box-shadow: inset 0 1px 3px action-color(); // make darker?
+    color: th(text-color);
+    background: th(action-color);
+    box-shadow: inset 0 1px 3px th(action-color); // make darker?
   }
 }
 
 .is-disabled .pika-button {
-  @include th { color: muted-color(); }
+  @include th { color: th(muted-color); }
   opacity: .3;
 }
 
 .pika-button:hover {
   @include th {
-    color: text-color() !important;
-    background: action-color() !important;
+    color: th(text-color) !important;
+    background: th(action-color) !important;
   }
 }

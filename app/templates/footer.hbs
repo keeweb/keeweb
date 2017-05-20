@@ -12,7 +12,9 @@
         {{~/if}}
     </div>
     {{/each}}
-    <div class="footer__db footer__db--dimmed footer__db--expanded footer__db-open"><i class="fa fa-plus"></i> {{res 'footerOpen'}}</div>
+    <div class="footer__db footer__db--dimmed footer__db--expanded footer__db-open">
+        <i class="fa fa-plus"></i><span class="footer__db-text">&nbsp;{{res 'footerOpen'}}</span>
+    </div>
     <div class="footer__btn footer__btn-help" title="{{res 'help'}}" tip-placement="top"><i class="fa fa-question"></i></div>
     <div class="footer__btn footer__btn-settings" title="{{res 'settings'}}" tip-placement="top">
         {{#if updateAvailable}}

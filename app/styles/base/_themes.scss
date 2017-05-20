@@ -1,30 +1,34 @@
-// modified version of http://www.sitepoint.com/sass-theming-neverending-story/
-// allows to write themified code without breaking modular project structure
-// only one global variable
+@import "theme-vars-support";
+@import "theme-vars";
 
 $th: null;
+$th-default: null;
 
 @function th($key) {
-  @if not map-has-key($th, $key) { @error "Bad theme key: #{$key}"; }
-  @return map-get($th, $key);
+  @if $th {
+    @if not map-has-key($th, $key) { @error "Bad theme key: #{$key}"; }
+    @return map-get($th, $key);
+  }
+  @return var(--#{$key});
 }
 
 @mixin th {
-  @each $theme, $data in $themes {
-    .th-#{$theme} & {
-      $th: $data !global;
-      @content;
-      $th: null !global;
+  // TODO: remove it, when we don't have to support browsers without CSS variables, replace with @content
+  $th: $th-default !global;
+  @content;
+  $th: null !global;
+  @content;
+}
+
+@each $theme-name, $theme-vars in $themes {
+  $theme-vars: set-theme-vars($theme-vars);
+  $themes: map-merge($themes, ( $theme-name: $theme-vars ));
+
+  .th-#{$theme-name} {
+    @each $key, $value in $theme-vars {
+      --#{$key}: #{$value};
     }
   }
 }
 
-@mixin th-self {
-  @each $theme, $data in $themes {
-    &.th-#{$theme} {
-      $th: $data !global;
-      @content;
-      $th: null !global;
-    }
-  }
-}
+$th-default: map-get($themes, 'fb');

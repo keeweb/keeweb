@@ -1,11 +1,11 @@
 .footer {
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(row);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: flex-start;
 
   &__db {
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
     @include area-selectable(top);
     position: relative;
     padding: $medium-padding;
@@ -15,15 +15,21 @@
     text-overflow: ellipsis;
     &.footer__db--dimmed {
       @include th {
-        color: muted-color();
+        color: th(muted-color);
         &:hover {
-          color: medium-color();
+          color: th(medium-color);
         }
       }
     }
 
     &--expanded {
-      @include flex(1);
+      flex: 1;
+      @include mobile {
+        flex: 0 0 auto;
+        >.footer__db-text {
+          display: none;
+        }
+      }
     }
 
     &-sign {
@@ -33,17 +39,28 @@
       position: absolute;
       right: 1em;
       top: 1em;
-      @include th { color: action-color(); }
-      &--error { @include th { color: error-color(); } }
+      @include th { color: th(action-color); }
+      &--error { @include th { color: th(error-color); } }
     }
 
     &-open-title {
       margin-left: .3em;
     }
+
+    &-item {
+      @include mobile {
+        > .fa {
+          display: none;
+        }
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   }
 
   &__btn {
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
     @include area-selectable(top);
     padding: $base-padding;
     font-size: 1.4em;
@@ -52,7 +69,7 @@
   }
 
   &__update-icon {
-    @include th { color: action-color(); }
+    @include th { color: th(action-color); }
     @include animation(shake 50s cubic-bezier(.36,.07,.19,.97) 0s infinite);
   }
 }

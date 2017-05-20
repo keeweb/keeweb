@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const SettingsStore = require('../comp/settings-store');
 
@@ -21,17 +19,19 @@ const UpdateModel = Backbone.Model.extend({
     },
 
     load: function() {
-        const data = SettingsStore.load('update-info');
-        if (data) {
-            try {
-                _.each(data, (val, key) => {
-                    if (/Date$/.test(key)) {
-                        data[key] = val ? new Date(val) : null;
-                    }
-                });
-                this.set(data, { silent: true });
-            } catch (e) { /* failed to load model */ }
-        }
+        return SettingsStore.load('update-info').then(data => {
+            if (data) {
+                try {
+                    _.each(data, (val, key) => {
+                        if (/Date$/.test(key)) {
+                            data[key] = val ? new Date(val) : null;
+                        }
+                    });
+                    this.set(data, {silent: true});
+                } catch (e) { /* failed to load model */
+                }
+            }
+        });
     },
 
     save: function() {
@@ -46,6 +46,5 @@ const UpdateModel = Backbone.Model.extend({
 });
 
 UpdateModel.instance = new UpdateModel();
-UpdateModel.instance.load();
 
 module.exports = UpdateModel;

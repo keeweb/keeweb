@@ -12,8 +12,6 @@
     bottom: 10px;
     right: 5px;
     width: 8px;
-    //border-radius: 5px;
-    //background: rgba(128, 128, 128, .05);
   }
   &__bar {
     position: absolute;
@@ -21,6 +19,7 @@
     width: 8px;
     border-radius: 3px;
     pointer-events: auto;
+    -webkit-app-region: no-drag;
   }
 }
 

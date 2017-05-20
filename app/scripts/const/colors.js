@@ -1,5 +1,3 @@
-'use strict';
-
 const Colors = {
     AllColors: ['yellow', 'green', 'red', 'orange', 'blue', 'violet'],
 

@@ -1,4 +1,3 @@
-// Named colors
 $black: #111;
 $white: #d8e5f1;
 $red: #df3c06;
@@ -7,43 +6,6 @@ $yellow: #e9d92a;
 $green: #0dc94b;
 $blue: #4e6af8;
 $violet: #d946db;
-
-// Theme colors
-@function background-color() { @return th(background-color); }
-@function medium-color() { @return th(medium-color); }
-@function text-color() { @return th(text-color); }
-@function action-color() { @return th(action-color); }
-@function error-color() { @return th(error-color); }
-
-// Text
-@function muted-color() { @return mix(medium-color(), background-color(), th(mute-percent)); }
-@function muted-color-border() { @return mix(medium-color(), background-color(), th(mute-percent) / 2); }
-@function text-selection-bg-color() { @return rgba(action-color(), .3); }
-@function text-selection-bg-color-error() { @return rgba(error-color(), .8); }
-@function text-contrast-color($bg) {
-  @if ($bg == background-color()) { @return text-color(); }
-  @if (lightness($bg) - th(color-lightness-shift) >= lightness(background-color())) { @return text-color(); }
-  @else { @return background-color(); }
-}
-
-// Borders, shadows
-@function base-border-color() { @return mix(medium-color(), background-color(), 50%); }
-@function accent-border-color() { @return mix(medium-color(), background-color(), 65%); }
-@function light-border-color() { @return mix(medium-color(), background-color(), th(light-border-percent)); }
-@function form-box-shadow-color() { @return rgba($black, 0.06); }
-@function form-box-shadow-color-focus() { @return adjust-color(action-color(), $lightness: -5%, $alpha: -0.3); }
-@function form-box-shadow-color-focus-error() { @return adjust-color(error-color(), $lightness: -5%, $alpha: -0.3); }
-@function dropdown-box-shadow-color() { @return rgba(medium-color(), .05); }
-
-// Backgrounds
-@function secondary-background-color() { @return mix(medium-color(), background-color(), 10%); }
-@function intermediate-background-color() { @return mix(medium-color(), background-color(), 3%); }
-@function intermediate-pressed-background-color() { @return mix(medium-color(), background-color(), 2.6%); }
-@function disabled-background-color() { @return shade(background-color(), 5%); }
-@function action-background-color-focus() { @return shade(action-color(), 20%); }
-@function error-background-color-focus() { @return shade(error-color(), 20%); }
-@function action-background-color-active() { @return shade(action-color(), 25%); }
-@function error-background-color-active() { @return shade(error-color(), 25%); }
 
 $all-colors: (
   "white": $white,
@@ -59,6 +21,6 @@ $all-colors: (
 @each $col, $val in $all-colors {
   .#{$col}-color { color: #{$val}; }
 }
-.muted-color { @include th { color: muted-color(); }; }
-.action-color { @include th { color: action-color(); }; }
-.error-color { @include th { color: error-color(); }; }
+.muted-color { @include th { color: th(muted-color); }; }
+.action-color { @include th { color: th(action-color); }; }
+.error-color { @include th { color: th(error-color); }; }

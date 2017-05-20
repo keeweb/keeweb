@@ -1,27 +1,27 @@
 .at-select {
   @include position(absolute, 0 null null 0);
   @include size(100%);
-  @include th { background-color: background-color(); }
-  @include display(flex);
-  @include flex-direction(column);
-  @include align-items(stretch);
-  @include justify-content(flex-start);
+  @include th { background-color: th(background-color); }
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   box-sizing: border-box;
   z-index: $z-index-no-modal;
   opacity: 1;
   padding: $base-padding;
 
   &__header {
-    @include display(flex);
+    display: flex;
     &-text {
-      @include flex(1 1);
+      flex: 1 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       padding-right: $base-padding-h;
     }
     &-filter {
-      @include flex(auto 0);
+      flex: auto 0;
       position: relative;
     }
     &-filter-input {
@@ -35,10 +35,10 @@
     }
   }
   &__message {
-    @include display(flex);
+    display: flex;
     margin-bottom: $base-padding-v * 2;
     &-text {
-      @include flex(1 1);
+      flex: 1 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -46,19 +46,19 @@
     }
   }
   &__items {
-    @include flex(1);
+    flex: 1;
     @include scrollbar-on-hover;
     margin-bottom: $base-padding-v;
     position: relative;
     overflow: hidden;
     >.scroller {
-      @include display(flex);
-      @include flex-direction(row);
-      @include justify-content(center);
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
     }
   }
   &__table {
-    @include flex(1);
+    flex: 1;
     width: 100%;
     overflow: hidden;
     border-collapse: collapse;
@@ -85,6 +85,6 @@
     }
   }
   &__empty-title {
-    @include align-self(center);
+    align-self: center;
   }
 }

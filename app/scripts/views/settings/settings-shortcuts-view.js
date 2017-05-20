@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Launcher = require('../../comp/launcher');
 const FeatureDetector = require('../../util/feature-detector');

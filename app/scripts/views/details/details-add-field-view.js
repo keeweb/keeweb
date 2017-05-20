@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 
 const DetailsAddFieldView = Backbone.View.extend({

@@ -3,7 +3,7 @@
   z-index: $z-index-no-modal;
   border-radius: $base-border-radius;
   @include th {
-    background: background-color();
+    background: th(background-color);
     border: light-border();
     box-shadow: dropdown-box-shadow();
   }

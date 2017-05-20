@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const GroupCollection = require('../collections/group-collection');
 const GroupModel = require('./group-model');
@@ -248,7 +246,7 @@ const FileModel = Backbone.Model.extend({
                         credentials.keyFileHash = this.db.credentials.keyFileHash;
                     }
                 }
-                credentialsPromise = Promise.all(promises);
+                return Promise.all(promises);
             });
         } else {
             credentials = this.db.credentials;
@@ -346,6 +344,19 @@ const FileModel = Backbone.Model.extend({
         return this.db.meta.recycleBinEnabled ? this.getGroup(this.subId(this.db.meta.recycleBinUuid.id)) : null;
     },
 
+    getEntryTemplatesGroup: function() {
+        return this.db.meta.entryTemplatesGroup ? this.getGroup(this.subId(this.db.meta.entryTemplatesGroup.id)) : null;
+    },
+
+    createEntryTemplatesGroup: function() {
+        const rootGroup = this.get('groups').first();
+        const templatesGroup = GroupModel.newGroup(rootGroup, this);
+        templatesGroup.setName('Templates');
+        this.db.meta.entryTemplatesGroup = templatesGroup.group.uuid;
+        this.reload();
+        return templatesGroup;
+    },
+
     setModified: function() {
         if (!this.get('demo')) {
             this.set({ modified: true, dirty: true });
@@ -377,6 +388,17 @@ const FileModel = Backbone.Model.extend({
     getKeyFileHash: function() {
         const hash = this.db.credentials.keyFileHash;
         return hash ? kdbxweb.ByteUtils.bytesToBase64(hash.getBinary()) : null;
+    },
+
+    forEachEntryTemplate: function(callback) {
+        if (!this.db.meta.entryTemplatesGroup) {
+            return;
+        }
+        const group = this.getGroup(this.subId(this.db.meta.entryTemplatesGroup.id));
+        if (!group) {
+            return;
+        }
+        group.forEachOwnEntry({}, callback);
     },
 
     setSyncProgress: function() {

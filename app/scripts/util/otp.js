@@ -1,5 +1,3 @@
-'use strict';
-
 const Logger = require('./logger');
 
 const logger = new Logger('otp');
@@ -70,9 +68,6 @@ Otp.prototype.next = function(callback) {
 };
 
 Otp.prototype.hmac = function(data, callback) {
-    if (!window.crypto && window.msCrypto) {
-        return this.hmacMsCrypto(data, callback);
-    }
     const subtle = window.crypto.subtle || window.crypto.webkitSubtle;
     const algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
     subtle.importKey('raw', this.key, algo, false, ['sign'])
@@ -82,18 +77,6 @@ Otp.prototype.hmac = function(data, callback) {
                 .catch(err => { callback(null, err); });
         })
         .catch(err => { callback(null, err); });
-};
-
-Otp.prototype.hmacMsCrypto = function(data, callback) {
-    const subtle = window.msCrypto.subtle;
-    const algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
-    subtle.importKey('raw', this.key, algo, false, ['sign']).oncomplete = function(e) {
-        const key = e.target.result;
-        subtle.sign(algo, key, data).oncomplete = function(e) {
-            const sig = e.target.result;
-            callback(sig);
-        };
-    };
 };
 
 Otp.fromBase32 = function(str) {

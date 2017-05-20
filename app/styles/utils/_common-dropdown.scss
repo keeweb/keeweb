@@ -1,8 +1,8 @@
 @mixin common-dropdown {
   @include th {
-    color: text-color();
-    background: background-color();
-    border: 1px solid light-border-color();
+    color: th(text-color);
+    background: th(background-color);
+    border: 1px solid th(light-border-color);
     box-shadow: dropdown-box-shadow();
   }
 }

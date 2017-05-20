@@ -1,5 +1,3 @@
-'use strict';
-
 const kdbxweb = require('kdbxweb');
 const Logger = require('../util/logger');
 
@@ -11,36 +9,17 @@ const KdbxwebInit = {
     },
 
     argon2(password, salt, memory, iterations, length, parallelism, type, version) {
-        return this.loadRuntime().then((Module) => {
-            const passwordLen = password.byteLength;
-            password = Module.allocate(new Uint8Array(password), 'i8', Module.ALLOC_NORMAL);
-            const saltLen = salt.byteLength;
-            salt = Module.allocate(new Uint8Array(salt), 'i8', Module.ALLOC_NORMAL);
-            const hash = Module.allocate(new Array(length), 'i8', Module.ALLOC_NORMAL);
-            const encodedLen = 512;
-            const encoded = Module.allocate(new Array(encodedLen), 'i8', Module.ALLOC_NORMAL);
-
+        const args = { password, salt, memory, iterations, length, parallelism, type, version };
+        return this.loadRuntime().then(runtime => {
             const ts = logger.ts();
-            const res = Module._argon2_hash(iterations, memory, parallelism,
-                password, passwordLen, salt, saltLen,
-                hash, length, encoded, encodedLen, type, version);
-            if (res) {
-                throw new Error('Argon2 error ' + res);
-            }
-            logger.debug('Hash computed', logger.ts(ts));
-            const hashArr = new Uint8Array(length);
-            for (let i = 0; i < length; i++) {
-                hashArr[i] = Module.HEAP8[hash + i];
-            }
-            Module._free(password);
-            Module._free(salt);
-            Module._free(hash);
-            Module._free(encoded);
-            return hashArr;
+            return runtime.hash(args).then(hash => {
+                logger.debug('Hash computed', logger.ts(ts));
+                return hash;
+            });
         });
     },
 
-    loadRuntime: function() {
+    loadRuntime() {
         if (this.runtimeModule) {
             return Promise.resolve(this.runtimeModule);
         }
@@ -53,20 +32,54 @@ const KdbxwebInit = {
                 const ts = logger.ts();
                 const argon2LoaderCode = require('argon2');
                 const wasmBinaryBase64 = require('argon2-wasm');
-                const wasmBinary = kdbxweb.ByteUtils.base64ToBytes(wasmBinaryBase64).buffer;
-                const Module = global.Module = {
-                    print: (...args) => logger.debug(...args),
-                    printErr: (...args) => logger.debug(...args),
-                    wasmBinary: wasmBinary,
-                    wasmJSMethod: 'native-wasm',
-                    postRun: () => {
-                        logger.debug('WebAssembly runtime loaded', logger.ts(ts));
-                        clearTimeout(loadTimeout);
-                        this.runtimeModule = Module;
-                        resolve(this.runtimeModule);
+                const moduleDecl = '{' +
+                    'wasmJSMethod: "native-wasm",' +
+                    'wasmBinary: Uint8Array.from(atob("' + wasmBinaryBase64 + '"), c => c.charCodeAt(0)),' +
+                    'print(...args) { postMessage({op:"log",args}) },' +
+                    'printErr(...args) { postMessage({op:"log",args}) },' +
+                    'postRun:' + this.workerPostRun.toString() + ',' +
+                    'calcHash:' + this.calcHash.toString() + ',' +
+                    '}';
+                const script = argon2LoaderCode.replace('var Module', 'var Module=' + moduleDecl);
+                const blob = new Blob([script], {type: 'application/javascript'});
+                const objectUrl = URL.createObjectURL(blob);
+                const worker = new Worker(objectUrl);
+                const onMessage = e => {
+                    switch (e.data.op) {
+                        case 'log':
+                            logger.debug(...e.data.args);
+                            break;
+                        case 'postRun':
+                            logger.debug('WebAssembly runtime loaded', logger.ts(ts));
+                            URL.revokeObjectURL(objectUrl);
+                            clearTimeout(loadTimeout);
+                            worker.removeEventListener('message', onMessage);
+                            this.runtimeModule = {
+                                hash(args) {
+                                    return new Promise((resolve, reject) => {
+                                        worker.postMessage(args);
+                                        const onHashMessage = e => {
+                                            worker.removeEventListener('message', onHashMessage);
+                                            if (!e.data || e.data.error || !e.data.hash) {
+                                                const ex = e.data && e.data.error || 'unexpected error';
+                                                logger.error('Worker error', ex);
+                                                reject(ex);
+                                            }
+                                            resolve(e.data.hash);
+                                        };
+                                        worker.addEventListener('message', onHashMessage);
+                                    });
+                                }
+                            };
+                            resolve(this.runtimeModule);
+                            break;
+                        default:
+                            logger.error('Unknown message', e.data);
+                            URL.revokeObjectURL(objectUrl);
+                            reject('Load error');
                     }
                 };
-                global.eval(argon2LoaderCode); // eslint-disable-line
+                worker.addEventListener('message', onMessage);
             } catch (err) {
                 reject(err);
             }
@@ -76,17 +89,59 @@ const KdbxwebInit = {
         });
     },
 
-    loadAsmJsFallbackRuntime: function() {
+    workerPostRun() {
+        self.postMessage({ op: 'postRun' });
+        self.onmessage = e => {
+            try {
+                const hash = self.Module.calcHash(self.Module, e.data);
+                self.postMessage({ hash });
+            } catch (e) {
+                self.postMessage({ error: e.toString() });
+            }
+        };
+    },
+
+    loadAsmJsFallbackRuntime() {
         logger.debug('Loading asm.js fallback runtime');
         return new Promise(resolve => {
             const ts = logger.ts();
             global.Module = undefined;
             const argon2Code = require('argon2-asm');
             global.eval(argon2Code); // eslint-disable-line
-            this.runtimeModule = global.Module;
+            this.runtimeModule = {
+                hash: args => Promise.resolve().then(() => this.calcHash(global.Module, args))
+            };
             logger.debug('Fallback runtime loaded', logger.ts(ts));
             resolve(this.runtimeModule);
         });
+    },
+
+    calcHash(Module, args) {
+        let { password, salt } = args;
+        const { memory, iterations, length, parallelism, type, version } = args;
+        const passwordLen = password.byteLength;
+        password = Module.allocate(new Uint8Array(password), 'i8', Module.ALLOC_NORMAL);
+        const saltLen = salt.byteLength;
+        salt = Module.allocate(new Uint8Array(salt), 'i8', Module.ALLOC_NORMAL);
+        const hash = Module.allocate(new Array(length), 'i8', Module.ALLOC_NORMAL);
+        const encodedLen = 512;
+        const encoded = Module.allocate(new Array(encodedLen), 'i8', Module.ALLOC_NORMAL);
+
+        const res = Module._argon2_hash(iterations, memory, parallelism,
+            password, passwordLen, salt, saltLen,
+            hash, length, encoded, encodedLen, type, version);
+        if (res) {
+            throw new Error('Argon2 error ' + res);
+        }
+        const hashArr = new Uint8Array(length);
+        for (let i = 0; i < length; i++) {
+            hashArr[i] = Module.HEAP8[hash + i];
+        }
+        Module._free(password);
+        Module._free(salt);
+        Module._free(hash);
+        Module._free(encoded);
+        return hashArr;
     }
 };
 

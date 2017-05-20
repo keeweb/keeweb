@@ -1,9 +1,9 @@
 .gen-ps {
-  @include flex(1);
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
   @include scrollbar-on-hover;
   width: 100%;
   user-select: none;
@@ -11,7 +11,7 @@
   position: relative;
 
   >.scroller {
-    @include flex(1);
+    flex: 1;
     overflow-x: hidden;
   }
 
@@ -22,7 +22,7 @@
   &__sample {
     font-weight: normal;
     @include user-select(text);
-    @include th { color: muted-color(); }
+    @include th { color: th(muted-color); }
   }
 
   &__example {

@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const SecureInput = require('../comp/secure-input');
 const Alerts = require('../comp/alerts');
@@ -58,8 +56,6 @@ const KeyChangeView = Backbone.View.extend({
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             this.accept();
-        } else if (code === Keys.DOM_VK_A) {
-            e.stopImmediatePropagation();
         }
     },
 
@@ -99,7 +95,7 @@ const KeyChangeView = Backbone.View.extend({
             InputFx.shake(this.passwordInput.el);
             return;
         } else {
-            this.passwordRepeatInput.el.removeClass('input--error');
+            this.passwordInput.el.removeClass('input--error');
         }
         if (this.passwordRepeatInput) {
             if (!this.passwordRepeatInput.value.equals(this.passwordInput.value)) {

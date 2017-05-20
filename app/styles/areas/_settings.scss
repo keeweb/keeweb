@@ -1,17 +1,17 @@
 .settings {
-  @include flex(1);
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
-  @include flex-wrap(wrap);
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   @include scrollbar-on-hover;
   margin: $base-padding;
   overflow: hidden;
   position: relative;
 
   >.scroller {
-    @include flex(1 0 0);
+    flex: 1 0 0;
   }
 
   h2,h3 {
@@ -19,7 +19,7 @@
   }
 
   .shortcut {
-    @include th { border: 1px solid muted-color(); }
+    @include th { border: 1px solid th(muted-color); }
     display: inline-block;
     border-radius: $base-border-radius;
     width: 40px;
@@ -51,8 +51,8 @@
       padding: $base-padding-v * 2 0 1px 0;
       z-index: 1;
       @include th {
-        background: background-color();
-        box-shadow: 0 0 5px 5px background-color();
+        background: th(background-color);
+        box-shadow: 0 0 5px 5px th(background-color);
       }
       &-post { display: inline; }
     }
@@ -117,7 +117,7 @@
     }
     &:hover {
       transition: color $base-duration $base-timing;
-      @include th { color: medium-color(); }
+      @include th { color: th(medium-color); }
     }
   }
 
@@ -137,6 +137,7 @@
   &__logs {
     @include user-select(text);
     margin-top: $base-padding-v;
+    word-break: break-all;
     &-log {
       margin: 0;
       white-space: pre-wrap;
@@ -144,6 +145,91 @@
       &--info {  }
       &--warn { color: $yellow; }
       &--error { color: $red; }
+    }
+  }
+  &__donate-btn {
+    margin-bottom: $base-padding-h;
+    background: #FFAE32;
+    display: inline-block;
+    padding: 2px 20px;
+    text-decoration: none;
+    color: #043667;
+    font-family: sans-serif;
+    font-size: 16px;
+    line-height: 20px;
+    font-style: italic;
+    font-weight: 900;
+    border-radius: 26px;
+    border: 1px solid #FFB163;
+    outline: none;
+    background: linear-gradient(to bottom, #FEE1AA, #FEE1AA 80%, #FFEED5);
+    box-shadow: 0 -3px 2px 2px rgba(255, 238, 213, .3) inset,
+    0 -11px 1px 0px #FFB33C inset;
+    &:active, &:hover, &:focus, &:visited {
+      border-color: #FFB163;
+      color: #043667;
+    }
+    &:hover {
+      background: linear-gradient(to bottom, #FED891, #FED891 80%, #FFEED5);
+    }
+    &:active {
+      background: linear-gradient(to bottom, #FED585, #FED585 80%, #FFEED5);
+    }
+  }
+  &__plugins {
+    &-install-error {
+      margin-top: $base-padding-v;
+    }
+    &-plugin-files {
+      margin-top: $base-padding-v;
+      margin-bottom: $base-padding-v;
+    }
+    &-plugin-file {
+      padding-left: $base-padding-h;
+    }
+    &-plugin-desc {
+      margin-bottom: $base-padding-v;
+    }
+    &-plugin-updates {
+      >label {
+        font-weight: normal;
+      }
+    }
+    &-gallery {
+      margin-top: $base-spacing;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    &-gallery-plugin {
+      position: relative;
+      width: calc(50% - 40px);
+      border-radius: $base-border-radius;
+      @include th { border: light-border(); }
+      padding: $medium-padding;
+      box-sizing: border-box;
+      margin: 0 $base-padding-v $base-padding-h 0;
+      vertical-align: top;
+      &-install-btn {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+      &-country-flag {
+        position: absolute;
+        right: 10px;
+        top: 6px;
+        font-size: 1.5em;
+      }
+      &-title-link {
+        border-bottom: 0;
+        &:hover, &:visited, &:hover, &:active, &:focus {
+          border-bottom: 0;
+        }
+      }
+    }
+    &-gallery-search {
+      margin-top: $medium-padding-v;
+      width: calc(100% - 74px);
     }
   }
 }

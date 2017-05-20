@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const MenuSectionCollection = require('../../collections/menu/menu-section-collection');
 const MenuSectionModel = require('./menu-section-model');
@@ -45,6 +43,7 @@ const MenuModel = Backbone.Model.extend({
 
         this.generalSection = new MenuSectionModel([{ locTitle: 'menuSetGeneral', icon: 'cog', page: 'general', active: true }]);
         this.shortcutsSection = new MenuSectionModel([{ locTitle: 'shortcuts', icon: 'keyboard-o', page: 'shortcuts' }]);
+        this.pluginsSection = new MenuSectionModel([{ locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }]);
         this.aboutSection = new MenuSectionModel([{ locTitle: 'menuSetAbout', icon: 'info', page: 'about' }]);
         this.helpSection = new MenuSectionModel([{ locTitle: 'help', icon: 'question', page: 'help' }]);
         this.filesSection = new MenuSectionModel();
@@ -52,6 +51,7 @@ const MenuModel = Backbone.Model.extend({
         this.menus.settings = new MenuSectionCollection([
             this.generalSection,
             this.shortcutsSection,
+            this.pluginsSection,
             this.aboutSection,
             this.helpSection,
             this.filesSection

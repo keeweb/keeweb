@@ -1,25 +1,25 @@
 .list {
-  @include flex(1);
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
   overflow: hidden;
 
   &__header {
   }
 
   &__items {
-    @include flex(1);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
     @include scrollbar-on-hover;
     overflow: hidden;
     position: relative;
     >.scroller {
-      @include flex(1);
-      @include align-self(stretch);
+      flex: 1;
+      align-self: stretch;
       position: relative;
       overflow-x: hidden;
       @include mobile {
@@ -33,27 +33,27 @@
     padding: $small-spacing;
 
     &-header {
-      @include display(flex);
-      @include align-items(stretch);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
-      @include flex-wrap(wrap);
+      display: flex;
+      align-items: stretch;
+      flex-direction: row;
+      justify-content: flex-start;
+      flex-wrap: wrap;
     }
     &-field-wrap {
-      @include flex(1);
+      flex: 1;
       position: relative;
     }
     &-field {
       width: 100%;
     }
     &-icon-search {
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       position: absolute;
       top: .5em;
       right: .5em;
       cursor: pointer;
       &:hover {
-        @include th { color: medium-color(); }
+        @include th { color: th(medium-color); }
       }
     }
     &-btn-new {
@@ -77,17 +77,17 @@
       }
     }
     &-adv {
-      @include flex(100%);
-      @include display(flex);
-      @include align-items(stretch);
-      @include flex-direction(row);
-      @include flex-wrap(wrap);
+      flex: 100%;
+      display: flex;
+      align-items: stretch;
+      flex-direction: row;
+      flex-wrap: wrap;
       &-text {
-        @include flex(100%);
+        flex: 100%;
       }
     }
     &-check {
-      @include flex(50%);
+      flex: 50%;
     }
   }
 
@@ -152,7 +152,7 @@
 
     &-descr {
       font-size: .8em;
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       display: block;
       text-overflow: ellipsis;
       overflow: hidden;

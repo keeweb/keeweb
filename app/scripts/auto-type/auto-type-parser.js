@@ -1,5 +1,3 @@
-'use strict';
-
 const AutoTypeRunner = require('./auto-type-runner');
 
 const AutoTypeParser = function(sequence) {
@@ -8,7 +6,7 @@ const AutoTypeParser = function(sequence) {
     this.states = [];
 };
 
-AutoTypeParser.opSepRegex = /[\s:=]+/;
+AutoTypeParser.opRegex = /^(.*?)(?:([\s:=])[\s:=]*(.*))?$/;
 
 AutoTypeParser.prototype.parse = function() {
     const len = this.sequence.length;
@@ -77,15 +75,8 @@ AutoTypeParser.prototype.readOp = function() {
         this.addChar(contents);
         return;
     }
-    const parts = contents.split(AutoTypeParser.opSepRegex, 2);
-    if (parts.length > 1 && parts[0].length && parts[1].length) {
-        const op = parts[0];
-        const sep = contents.substr(op.length, 1);
-        const arg = parts[1];
-        this.addOp(op, sep, arg);
-    } else {
-        this.addOp(contents);
-    }
+    const [, op, sep, arg] = contents.match(AutoTypeParser.opRegex);
+    this.addOp(op, sep, arg);
 };
 
 AutoTypeParser.prototype.readModifier = function(modifier) {

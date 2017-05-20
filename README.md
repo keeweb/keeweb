@@ -15,7 +15,8 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 # Status
 
-Project roadmap with planned features and approximate schedule is on [TODO](https://github.com/keeweb/keeweb/wiki/TODO) page.  
+The app is already rather stable, so basic stuff should work.  
+Project roadmap with planned features and approximate schedule is on [TODO](https://github.com/keeweb/keeweb/wiki/TODO) page.
 
 # Self-hosting
 
@@ -30,17 +31,7 @@ If you are using Docker:
 docker run --name keeweb -d -p 443:443 -p 80:80 -v $EXT_DIR:/etc/nginx/external/ antelle/keeweb
 ```
 
-To make Dropbox work in your self-hosted app:
-
-1. [create](https://www.dropbox.com/developers/apps/create) a Dropbox app
-2. find your app key (in Dropbox App page, go to Settings/App key)
-3. add your Dropbox app key to [settings json](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
-
-To make Google Drive work in your self-hosted app:
-1. [Create](https://cloud.google.com/resource-manager/docs/creating-project#via_console) a Google Cloud Project
-2. Create credentials (OAuth client ID and Web application)
-3. Enter your self-hosted URL (e.g. https://www.example.com) in both Authorized JavaScript origins and Authorized redirect URIs
-4. Add the new client ID to your [settings json](https://github.com/keeweb/keeweb/wiki/Configuration#json-app-config)
+To make Dropbox work in your self-hosted app, [go to this Wiki page](https://github.com/keeweb/keeweb/wiki/Dropbox-and-GDrive).
 
 # Building
 
@@ -71,8 +62,9 @@ Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your 
 
 # Donations
 
-Donate with PayPal:  
-[![Donate with PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VE75PM997C2GW)  
+KeeWeb is not free to develop. It takes time, requires paid code signing certificates and domains.  
+You can help the project or say "thank you" with this button:  
+[![Donate with PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.me/dvitkovsky)  
 
 Please note: donation does not imply any type of service contract.  
 

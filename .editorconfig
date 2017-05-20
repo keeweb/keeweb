@@ -24,5 +24,8 @@ indent_size = 4
 [*.scss]
 indent_size = 2
 
+[*.css]
+indent_size = 2
+
 [*.nsh]
 indent_size = 2

@@ -1,0 +1,164 @@
+<div>
+    <h1><i class="fa fa-puzzle-piece"></i> {{res 'plugins'}}</h1>
+    <div>
+        {{res 'setPlDevelop'}} <a href="{{pluginDevLink}}" target="_blank">{{res 'setPlDevelopStart'}}</a>.
+        {{#res 'setPlTranslate'}}<a href="{{translateLink}}" target="_blank">{{res 'setPlTranslateLink'}}</a>{{/res}}.
+    </div>
+    <div class="settings__plugins-list">
+        {{#each plugins as |plugin|}}
+        <div class="settings__plugins-plugin">
+            <h2>{{plugin.id}}</h2>
+            <div>{{plugin.manifest.description}}</div>
+            <div>
+                <ul class="settings__plugins-plugin-files">
+                    {{#if plugin.manifest.resources.js}}<li class="settings__plugins-plugin-file"><i class="fa fa-code"></i> {{res 'setPlJs'}}</li>{{/if}}
+                    {{#if plugin.manifest.resources.css}}<li class="settings__plugins-plugin-file"><i class="fa fa-paint-brush"></i> {{res 'setPlCss'}}</li>{{/if}}
+                    {{#if plugin.manifest.resources.loc}}<li class="settings__plugins-plugin-file"><i class="fa fa-language"></i>&nbsp;
+                        {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}} {{#if ../hasUnicodeFlags}}{{#if plugin.manifest.locale}}{{#if plugin.manifest.locale.flag}}&nbsp;{{plugin.manifest.locale.flag}}{{/if}}{{/if}}{{/if}}</li>
+                    {{/if}}
+                </ul>
+            </div>
+            <div class="settings__plugins-plugin-desc">
+                <a href="{{plugin.manifest.url}}" target="_blank">{{plugin.manifest.url}}</a>, v{{plugin.manifest.version}}.
+                {{#if plugin.official}}
+                    {{res 'setPlOfficial'}},
+                {{else}}
+                    {{#res 'setPlCreatedBy'}}<a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}}){{/res}},
+                {{/if}}
+                {{#ifeq plugin.status 'active'}}
+                    {{#res 'setPlLoadTime'}}{{plugin.installTime}}ms{{/res}}
+                {{else}}
+                    {{#ifeq plugin.status 'error'}}
+                        <span class="error-color">&nbsp;{{res 'setPlLoadError'}}</span>
+                    {{else}}
+                        {{plugin.status}}
+                    {{/ifeq}}
+                {{/ifeq}}
+                {{#if updateCheckDate}}
+                    <div>{{res 'setPlLastUpdate'}}: {{updateCheckDate}}</div>
+                {{/if}}
+                {{#if plugin.installError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.installError}}</pre></div>{{/if}}
+                {{#if plugin.updateError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.updateError}}</pre></div>{{/if}}
+            </div>
+            <div class="settings__plugins-plugin-updates">
+                <input type="checkbox" class="settings__plugins-plugin-update-check settings__input input-base"
+                    id="plugin-{{plugin.id}}-auto-update" data-plugin="{{plugin.id}}"
+                    {{#if plugin.autoUpdate}}checked{{/if}} />
+                <label for="plugin-{{plugin.id}}-auto-update">{{res 'setPlAutoUpdate'}}</label>
+            </div>
+            {{#if plugin.settings}}
+                <div class="settings__plugins-plugin-settings">
+                    {{#each plugin.settings as |setting|}}
+                    <div class="settings__plugins-plugin-setting"
+                         data-setting="{{setting.name}}"
+                         data-plugin="{{../id}}"
+                    >
+                        {{#ifeq setting.type 'checkbox'}}
+                            <input type="checkbox"
+                                   class="settings__plugins-plugin-input settings__input input-base"
+                                   id="plugin-{{../id}}-setting-{{setting.name}}"
+                                   {{#if setting.value}}checked{{/if}}
+                            />
+                        {{/ifeq}}
+                        <label
+                            class="settings__plugins-plugin-label"
+                            for="plugin-{{../id}}-setting-{{setting.name}}"
+                        >{{setting.label}}</label>
+                        {{#ifeq setting.type 'text'}}
+                            <input type="text"
+                                   class="settings__plugins-plugin-input settings__input input-base"
+                                   id="plugin-{{../id}}-setting-{{setting.name}}"
+                                   {{#if setting.placeholder}}placeholder="{{setting.placeholder}}"{{/if}}
+                                   {{#if setting.maxlength}}maxlength="{{setting.maxlength}}"{{/if}}
+                                   value="{{setting.value}}"
+                            />
+                        {{/ifeq}}
+                        {{#ifeq setting.type 'select'}}
+                            <select class="settings__plugins-plugin-input settings__select input-base"
+                                    id="plugin-{{../name}}-setting-{{setting.name}}"
+                            >
+                                {{#each setting.options as |opt|}}
+                                    <option value="{{opt.value}}" {{#ifeq opt.value ../value}}selected{{/ifeq}}>{{opt.label}}</option>
+                                {{/each}}
+                            </select>
+                        {{/ifeq}}
+                    </div>
+                    {{/each}}
+                </div>
+            {{/if}}
+            <div class="settings__plugins-plugin-buttons">
+                <button class="settings_plugins-uninstall-btn btn-error" data-plugin="{{plugin.id}}">{{res 'setPlUninstallBtn'}}</button>
+                {{#ifeq plugin.status 'active'}}<button class="settings_plugins-disable-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlDisableBtn'}}</button>{{/ifeq}}
+                {{#ifeq plugin.status 'inactive'}}<button class="settings_plugins-enable-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlEnableBtn'}}</button>{{/ifeq}}
+                <button class="settings_plugins-update-btn btn-silent" data-plugin="{{plugin.id}}">{{res 'setPlUpdateBtn'}}</button>
+                {{#ifeq plugin.status 'active'}}
+                    {{#if plugin.manifest.locale}}<button class="settings_plugins-use-locale-btn btn-silent" data-locale="{{plugin.manifest.locale.name}}">{{res 'setPlLocaleBtn'}}</button>{{/if}}
+                    {{#if plugin.manifest.theme}}<button class="settings_plugins-use-theme-btn btn-silent" data-theme="{{plugin.manifest.theme.name}}">{{res 'setPlThemeBtn'}}</button>{{/if}}
+                {{/ifeq}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    <h2>
+        {{#if galleryLoading}}{{res 'setPlGalleryLoading'}}...{{else}}{{res 'setPlInstallTitle'}}{{/if}}
+    </h2>
+    <div class="settings__plugins-install">
+        <div>{{res 'setPlInstallDesc'}}</div>
+        {{#if galleryLoadError}}<div class="error-color">{{res 'setPlGalleryLoadError'}}</div>{{/if}}
+        {{#if galleryPlugins}}
+            <input type="text" class="input-base settings__plugins-gallery-search" placeholder="{{res 'setPlSearch'}}" value="{{searchStr}}" />
+            <div class="settings__plugins-gallery">
+            {{#each galleryPlugins as |plugin|}}
+                <div class="settings__plugins-gallery-plugin" data-plugin="{{plugin.manifest.name}}">
+                    <h4 class="settings__plugins-gallery-plugin-title">
+                        <a href="{{plugin.url}}" target="_blank" class="settings__plugins-gallery-plugin-title-link">{{plugin.manifest.name}}</a>
+                    </h4>
+                    {{#if ../hasUnicodeFlags}}
+                        {{#if plugin.manifest.locale}}
+                            {{#if plugin.manifest.locale.flag}}
+                                <div class="settings__plugins-gallery-plugin-country-flag">{{plugin.manifest.locale.flag}}</div>
+                            {{/if}}
+                        {{/if}}
+                    {{/if}}
+                    <div class="settings__plugins-gallery-plugin-desc">{{plugin.manifest.description}}</div>
+                    <ul class="settings__plugins-plugin-files">
+                        {{#if plugin.manifest.resources.js}}<li class="settings__plugins-plugin-file"><i class="fa fa-code"></i> {{res 'setPlJs'}}</li>{{/if}}
+                        {{#if plugin.manifest.resources.css}}<li class="settings__plugins-plugin-file"><i class="fa fa-paint-brush"></i> {{res 'setPlCss'}}</li>{{/if}}
+                        {{#if plugin.manifest.resources.loc}}<li class="settings__plugins-plugin-file"><i class="fa fa-language"></i> {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}}</li>{{/if}}
+                    </ul>
+                    <div class="settings__plugins-gallery-plugin-author muted-color">
+                        {{#if plugin.official}}
+                            <i class="fa fa-check"></i> {{res 'setPlOfficial'}}
+                        {{else}}
+                            <i class="fa fa-at"></i> <a href="{{plugin.manifest.author.url}}" target="_blank">{{plugin.manifest.author.name}}</a> ({{plugin.manifest.author.email}})
+                        {{/if}}
+                    </div>
+                    {{#if plugin.installError}}
+                        <div class="error-color">{{plugin.installError}}</div>
+                    {{/if}}
+                    <button class="settings__plugins-gallery-plugin-install-btn"
+                            data-plugin="{{plugin.manifest.name}}"
+                            {{#if plugin.installing}}disabled{{/if}}
+                    >
+                        {{#if plugin.installing}}
+                            {{res 'setPlInstallBtnProgress'}}...
+                        {{else}}
+                            {{res 'setPlInstallBtn'}}
+                        {{/if}}
+                    </button>
+                </div>
+            {{/each}}
+            </div>
+        {{/if}}
+    </div>
+    <h2>{{res 'setPlInstallUrlTitle'}}</h2>
+    <div class="settings__plugins-install-url">
+        <div>{{res 'setPlInstallUrlDesc'}}</div>
+        <label for="settings__plugins-install-url">{{res 'setPlInstallLabel'}}</label>
+        <input type="text" class="settings__input input-base" id="settings__plugins-install-url" value="{{installUrl}}" />
+        <button class="settings_plugins-install-btn" {{#if installingFromUrl}}disabled{{/if}}>
+            {{#if installingFromUrl}}{{res 'setPlInstallBtnProgress'}}{{else}}{{res 'setPlInstallBtn'}}{{/if}}
+        </button>
+        <div class="error-color settings__plugins-install-error">{{installUrlError}}</div>
+    </div>
+</div>

@@ -1,6 +1,3 @@
-'use strict';
-
-const FeatureDetector = require('../util/feature-detector');
 const Launcher = require('./launcher');
 const AppSettingsModel = require('../models/app-settings-model');
 
@@ -29,19 +26,11 @@ const CopyPaste = {
         }
     },
 
-    createHiddenInput: function(text, pos) {
+    createHiddenInput: function(text) {
         const hiddenInput = $('<input/>')
             .val(text)
-            .attr({ type: 'text', 'class': pos ? '' : 'hide-by-pos' })
+            .attr({ type: 'text', 'class': 'hide-by-pos' })
             .appendTo(document.body);
-        if (FeatureDetector.canCopyReadonlyInput()) {
-            hiddenInput.attr('readonly', true);
-        }
-        if (pos) {
-            hiddenInput.css({ position: 'absolute', zIndex: 100, padding: '0 .6em',
-                border: 'none', background: 'transparent', color: 'transparent',
-                left: pos.left, top: pos.top, width: pos.width, height: pos.height });
-        }
         hiddenInput[0].selectionStart = 0;
         hiddenInput[0].selectionEnd = text.length;
         hiddenInput.focus();

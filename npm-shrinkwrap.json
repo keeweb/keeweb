@@ -1,6 +1,6 @@
 {
   "name": "keeweb",
-  "version": "1.3.3",
+  "version": "1.4.1",
   "dependencies": {
     "abbrev": {
       "version": "1.0.9",
@@ -1459,7 +1459,7 @@
     },
     "electron": {
       "version": "1.4.15",
-      "from": "electron@latest",
+      "from": "electron@1.4.15",
       "resolved": "https://registry.npmjs.org/electron/-/electron-1.4.15.tgz",
       "dev": true
     },

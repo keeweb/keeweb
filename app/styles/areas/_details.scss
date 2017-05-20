@@ -1,8 +1,8 @@
 .details {
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
   @include user-select(text);
   width: 100%;
 
@@ -19,14 +19,14 @@
   }
 
   &__header {
-    @include display(flex);
+    display: flex;
     padding-bottom: $small-spacing;
     overflow: visible;
     min-height: 40px;
     &-title {
       @include user-select(text);
-      @include flex(1);
-      @include align-self(flex-start);
+      flex: 1;
+      align-self: flex-start;
       cursor: text;
       margin: 0 6px;
       padding: 3px 6px 1px;
@@ -39,13 +39,13 @@
       &:hover {
         transition: border-color $base-duration $base-timing;
         @include th {
-          border: 1px solid light-border-color();
+          border: 1px solid th(light-border-color);
         }
       }
     }
     input.details__header-title-input {
       @include user-select(text);
-      @include flex(1);
+      flex: 1;
       margin: 0 6px;
       padding: 0 6px;
       font-size: $large-header-font-size;
@@ -79,8 +79,8 @@
     z-index: $z-index-no-modal;
     border-radius: $base-border-radius;
     @include th {
-      background: background-color();
-      box-shadow: 0 0 3px background-color();
+      background: th(background-color);
+      box-shadow: 0 0 3px th(background-color);
     }
     top: 13px;
     left: 6px;
@@ -111,12 +111,12 @@
   }
 
   &__body {
-    @include flex(1);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
-    @include flex-wrap(wrap);
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-wrap: wrap;
     @include scrollbar-on-hover;
     position: relative;
     overflow: hidden;
@@ -124,47 +124,47 @@
     .details--drag & { display: none; }
 
     >.scroller {
-      @include flex(1);
-      @include display(flex);
-      @include align-items(stretch);
-      @include align-content(flex-start);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
-      @include flex-wrap(wrap);
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      align-content: flex-start;
+      flex-direction: row;
+      justify-content: flex-start;
+      flex-wrap: wrap;
       overflow-x: hidden;
       padding-top: 3px;
       @media screen and (-webkit-min-device-pixel-ratio:0) { width: 100% !important; }
     }
 
     &-fields {
-      @include flex(1 0 50%);
+      flex: 1 0 50%;
       min-width: 0;
     }
 
     &-aside {
-      @include flex(0 0 auto);
-      @include display(flex);
-      @include align-items(stretch);
-      @include flex-direction(column);
-      @include justify-content(flex-start);
+      flex: 0 0 auto;
+      display: flex;
+      align-items: stretch;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
     &-after {
-      @include flex(100% 1 0);
+      flex: 100% 1 0;
     }
   }
 
   &__field {
     $details-field-line-height: 18px;
 
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include justify-content(flex-start);
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: flex-start;
     margin-bottom: .5em;
 
     &-label {
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
       @include user-select(text);
       width: 7em;
       text-align: right;
@@ -172,8 +172,9 @@
       padding-right: 1em;
       border: 1px solid transparent;
       line-height: $details-field-line-height;
+      position: relative;
       &:hover {
-        @include th { color: medium-color(); }
+        @include th { color: th(medium-color); }
       }
       .details__field--can-edit-title & {
         cursor: text;
@@ -184,13 +185,14 @@
         line-height: $details-field-line-height;
         height: $details-field-line-height;
         width: 100%;
-        @include th { color: text-color(); }
+        @include th { color: th(text-color); }
+        .chrome & { padding-bottom: 1px; } // TODO: find a better cross-browser way to do it
       }
     }
     &-value {
-      @include flex(1);
+      flex: 1;
       @include user-select(text);
-      @include align-self(flex-start);
+      align-self: flex-start;
       position: relative;
       cursor: text;
       padding: 0 $base-padding-h;
@@ -210,11 +212,11 @@
           transition: border-color $base-duration $base-timing;
           border: 1px solid;
           @include th {
-            border-color: light-border-color();
-            box-shadow: 0 0 3px form-box-shadow-color();
+            border-color: th(light-border-color);
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.06);
           }
           .details__field-value-add-label {
-            @include th { color: muted-color(); }
+            @include th { color: th(muted-color); }
             transition: color $base-duration $base-timing;
           }
         }
@@ -239,6 +241,19 @@
         width: 100%;
         height: 20px;
         .details__field--protected & { font-family: $monospace-font-family; }
+        transition: background-color $slow-transition-out, border-color $slow-transition-out;
+        .details__field--edit[active-mobile-action] & {
+          transition: background-color $slow-transition-in, border-color $slow-transition-in;
+        }
+        .details__field--edit[active-mobile-action=apply] & {
+          @include th { background: th(action-color); }
+        }
+        .details__field--edit[active-mobile-action=cancel] & {
+          @include th { background: th(error-color); border-color: th(error-color); }
+        }
+      }
+      >input {
+        .chrome & { padding-bottom: 1px; } // TODO: find a better cross-browser way to do it
       }
       >textarea {
         display: block;
@@ -251,19 +266,19 @@
         @include user-select(none);
       }
       .details__body-aside & {
-        @include th { color: muted-color(); }
-        a { @include th { color: muted-color(); } }
+        @include th { color: th(muted-color); }
+        a { @include th { color: th(muted-color); } }
         width: 13em;
         padding-right: 0;
         margin-right: 0;
-        @include flex(0 0 auto);
+        flex: 0 0 auto;
       }
       &-btn {
         @include position(absolute, 0 0 null null);
-        @include th { color: muted-color(); }
+        @include th { color: th(muted-color); }
         cursor: pointer;
         &:hover {
-          @include th { color: medium-color(); }
+          @include th { color: th(medium-color); }
         }
         &:before {
           @include position(absolute, 0 0 null null);
@@ -276,6 +291,25 @@
       &-btn-protect {
         &:before { content: $fa-var-unlock; }
         .details__field--protected & { &:before { content: $fa-var-lock; } }
+      }
+      @include mobile {
+        &-btn-apply, &-btn-cancel {
+          height: 100%;
+          width: 50%;
+          position: absolute;
+          top: 0;
+          @include user-select(none);
+          &:before { padding: .2em 1.5em; }
+          @include th { background: th(background-color); }
+        }
+        &-btn-apply {
+          &:before { content: $fa-var-check; }
+          right: 0;
+        }
+        &-btn-cancel {
+          &:before { content: $fa-var-times; }
+          left: 0;
+        }
       }
       &--select {
         border-width: 0;
@@ -297,12 +331,12 @@
   }
 
   &__attachments {
-    @include flex(1);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include justify-content(flex-end);
-    @include flex-wrap(nowrap);
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
     @include user-select(none);
     overflow: hidden;
     white-space: nowrap;
@@ -312,8 +346,8 @@
   &__attachment {
     @include user-select(none);
     @include area-selectable();
-    @include align-self(flex-end);
-    @include flex(0 1 auto);
+    align-self: flex-end;
+    flex: 0 1 auto;
     @include th { border: light-border(); }
     margin-right: $small-spacing;
     padding: $base-padding;
@@ -322,15 +356,15 @@
     text-overflow: ellipsis;
     i { margin-right: .4em; }
     &--active {
-      @include th { border-bottom: 1px solid action-color(); };
+      @include th { border-bottom: 1px solid th(action-color); };
     }
   }
 
   &__attachment-add {
     @include user-select(none);
-    @include align-self(flex-end);
-    @include flex(0 0 auto);
-    @include th { color: muted-color(); }
+    align-self: flex-end;
+    flex: 0 0 auto;
+    @include th { color: th(muted-color); }
     border: 1px solid transparent;
     margin-right: $small-spacing;
     padding: $base-padding;
@@ -338,7 +372,7 @@
     overflow: hidden;
     transition: color $base-duration $base-timing;
     &:hover {
-      @include th { color: medium-color(); }
+      @include th { color: th(medium-color); }
     }
     &-title {
       display: none;
@@ -348,7 +382,7 @@
       .details__attachment-add:hover & {
         display: inline;
         transition: color $slow-transition-in;
-        @include th { color: muted-color(); }
+        @include th { color: th(muted-color); }
       }
     }
   }
@@ -378,12 +412,12 @@
       display: none;
     }
     &--empty {
-      @include display(flex);
-      @include flex-direction(column);
-      @include flex(1 0 auto);
-      @include justify-content(center);
-      @include align-self(center);
-      @include align-items(center);
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+      justify-content: center;
+      align-self: center;
+      align-items: center;
       text-align: center;
       .details__attachment-preview-icon {
         display: block;
@@ -398,23 +432,23 @@
   }
 
   &__buttons {
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(row);
-    @include flex-shrink(0);
-    @include justify-content(flex-start);
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: flex-start;
     margin-top: $base-padding-v;
 
     .details--drag & { display: none; }
 
     &-trash, &-trash-del {
       @include icon-btn($error:true);
-      @include align-self(flex-end);
+      align-self: flex-end;
       margin-right: 10px;
     }
 
     &-trash-del {
-      @include th { color: muted-color(); }
+      @include th { color: th(muted-color); }
     }
 
     button ~ button {
@@ -423,23 +457,23 @@
   }
 
   &__history {
-    @include flex(1 0 auto);
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
+    flex: 1 0 auto;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
     margin-right: $base-padding-h;
     &-top {
-      @include display(flex);
-      @include align-items(stretch);
-      @include flex-direction(row);
-      @include justify-content(flex-start);
+      display: flex;
+      align-items: stretch;
+      flex-direction: row;
+      justify-content: flex-start;
     }
     &-desc {
       @include user-select(none);
     }
     &-timeline {
-      @include flex(1 0 auto);
+      flex: 1 0 auto;
       position: relative;
       height: 44px;
       margin-left: 5px;
@@ -455,12 +489,12 @@
         cursor: pointer;
         transform: translateX(-48%);
         &:hover {
-          @include th { color: mix(action-color(), text-color(), 50%); }
+          @include th { color: th(text-semi-muted-color); }
         }
         &--active, &--active:hover {
           z-index: $z-index-no-modal;
           cursor: default;
-          @include th { color: action-color(); }
+          @include th { color: th(action-color); }
         }
       }
       &-label {
@@ -468,7 +502,7 @@
         top: 16px;
         white-space: nowrap;
         transform: translateX(-50%);
-        @include th { color: muted-color(); }
+        @include th { color: th(muted-color); }
       }
     }
     &-arrow-prev, &-arrow-next {
@@ -478,7 +512,7 @@
       position: absolute;
       top: 30px;
       font-size: 14px;
-      &:hover { @include th { color: mix(action-color(), text-color(), 50%); } }
+      &:hover { @include th { color: th(text-semi-muted-color); } }
     }
     &-arrow-prev {
       left: -5px;
@@ -490,11 +524,11 @@
       margin-left: 20px;
     }
     &-body {
-      @include flex(1 1 auto);
+      flex: 1 1 auto;
     }
     &-buttons {
       @include user-select(none);
-      @include align-self(flex-end);
+      align-self: flex-end;
       margin-bottom: $base-padding-v;
     }
   }
@@ -502,12 +536,12 @@
   &__dropzone {
     display: none;
     .details--drag & {
-      @include display(flex);
-      @include flex-direction(column);
-      @include flex(1 0 auto);
-      @include justify-content(center);
-      @include align-self(center);
-      @include align-items(center);
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+      justify-content: center;
+      align-self: center;
+      align-items: center;
       text-align: center;
     }
     &-icon {
@@ -527,6 +561,12 @@
       display: inline-block;
       word-break: break-all;
       @include area-selectable(bottom);
+      &--selected {
+        @include th {
+          background-color: th(secondary-background-color);
+          border-bottom: selected-hover-border();
+        }
+      }
     }
   }
 }

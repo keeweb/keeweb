@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const kdbxweb = require('kdbxweb');
 const GroupModel = require('../../models/group-model');
@@ -251,7 +249,7 @@ const DetailsView = Backbone.View.extend({
                 }
                 moreOptions.push({value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp});
                 if (AutoType.enabled) {
-                    moreOptions.push({value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoType});
+                    moreOptions.push({value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoTypeSettings});
                 }
                 moreOptions.push({value: 'clone', icon: 'clone', text: Locale.detClone});
                 const rect = this.moreView.labelEl[0].getBoundingClientRect();
@@ -418,9 +416,7 @@ const DetailsView = Backbone.View.extend({
                 CopyPaste.createHiddenInput(fieldText);
             }
             const copyRes = CopyPaste.copy(fieldText);
-            if (copyRes) {
-                this.fieldCopied({ source: editView, copyRes: copyRes });
-            }
+            this.fieldCopied({ source: editView, copyRes: copyRes });
         }
     },
 
@@ -483,7 +479,8 @@ const DetailsView = Backbone.View.extend({
                         i++;
                         fieldName = e.newField + i;
                     }
-                    this.model.setField(fieldName, e.val);
+                    const allowEmpty = this.model.group.isEntryTemplatesGroup();
+                    this.model.setField(fieldName, e.val, allowEmpty);
                     this.entryUpdated();
                     return;
                 } else if (fieldName === 'File') {
@@ -548,7 +545,7 @@ const DetailsView = Backbone.View.extend({
             : Locale.detFieldCopied;
         let tip;
         if (!this.isHidden()) {
-            tip = new Tip(fieldLabel, {title: msg, placement: 'right', fast: true, force: true});
+            tip = Tip.createTip(fieldLabel[0], {title: msg, placement: 'right', fast: true, force: true, noInit: true});
             this.fieldCopyTip = tip;
             tip.show();
         }
@@ -774,6 +771,9 @@ const DetailsView = Backbone.View.extend({
         }
         options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
         options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });
+        if (AutoType.enabled) {
+            options.push({ value: 'det-auto-type', icon: 'keyboard-o', text: Locale.detAutoType });
+        }
         Backbone.trigger('show-context-menu', _.extend(e, { options }));
     },
 
@@ -790,6 +790,9 @@ const DetailsView = Backbone.View.extend({
                 break;
             case 'det-clone':
                 this.clone();
+                break;
+            case 'det-auto-type':
+                this.autoType();
                 break;
         }
     },

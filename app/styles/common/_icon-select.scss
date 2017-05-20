@@ -1,15 +1,15 @@
 .icon-select {
   &__items {
-    @include display(flex);
-    @include align-items(flex-start);
-    @include flex-direction(row);
-    @include justify-content(flex-start);
-    @include flex-wrap(wrap);
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
     @include user-select(none);
     padding-bottom: $base-padding-h;
     &--custom {
       padding-top: $base-padding-h;
-      @include th { border-top: 1px solid light-border-color(); }
+      @include th { border-top: 1px solid th(light-border-color); }
     }
   }
   &__icon {

@@ -1,22 +1,23 @@
-'use strict';
-
-const DropboxLink = require('./dropbox-link');
+const FeatureDetector = require('../util/feature-detector');
+const Storage = require('../storage');
 
 const AuthReceiver = {
     receive: function() {
         const opener = window.opener || window.parent;
-        if (location.href.indexOf('state=') >= 0) {
-            DropboxLink.receive();
+        const message = this.urlArgsToMessage(window.location.href);
+        if (FeatureDetector.isStandalone) {
+            Storage[sessionStorage.authStorage].handleOAuthReturnMessage(message);
+            return false;
         } else {
-            const message = this.urlArgsToMessage(window.location.href);
             opener.postMessage(message, window.location.origin);
             window.close();
+            return true;
         }
     },
 
     urlArgsToMessage: function(url) {
         const message = {};
-        url.split(/[\?#&]/g).forEach(part => {
+        url.split(/[?#&]/g).forEach(part => {
             const parts = part.split('=');
             if (parts.length === 2) {
                 message[parts[0]] = parts[1];

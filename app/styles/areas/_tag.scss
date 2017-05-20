@@ -1,19 +1,19 @@
 .tag {
-  @include flex(1);
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
   width: 100%;
   user-select: none;
 
   &__space {
-    @include flex(1);
+    flex: 1;
   }
 
   &__buttons {
-    @include display(flex);
-    @include flex-direction(row);
+    display: flex;
+    flex-direction: row;
     margin-top: $base-padding-v;
 
     &-trash {

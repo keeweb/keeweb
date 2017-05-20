@@ -1,5 +1,3 @@
-'use strict';
-
 /*
  * Phonetic
  * Copyright 2013 Tom Frost

@@ -1,0 +1,11 @@
+.footer i, .menu i {
+  animation: psychodelic-spin 1s linear 0s infinite;
+  transform-origin: center center;
+}
+@keyframes psychodelic-spin {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); color: darkviolet; }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-10deg); color: hotpink; }
+  100% { transform: rotate(0deg); }
+}

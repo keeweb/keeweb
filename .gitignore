@@ -8,9 +8,10 @@ dist/
 tmp/
 build/
 coverage/
-keys/
+keys
 *.user
 bin/
 obj/
 *.xcworkspace/
 xcuserdata/
+*.suo

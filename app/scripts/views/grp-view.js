@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Scrollable = require('../mixins/scrollable');
 const IconSelectView = require('./icon-select-view');

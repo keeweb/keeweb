@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const AppSettingsModel = require('./app-settings-model');
 const MenuModel = require('./menu/menu-model');
@@ -18,6 +16,8 @@ const FeatureDetector = require('../util/feature-detector');
 const Format = require('../util/format');
 const UrlUtil = require('../util/url-util');
 const AutoType = require('../auto-type');
+const Launcher = require('../comp/launcher');
+const PluginManager = require('../plugins/plugin-manager');
 
 require('../mixins/protected-value-ex');
 
@@ -27,7 +27,7 @@ const AppModel = Backbone.Model.extend({
     initialize: function() {
         this.tags = [];
         this.files = new FileCollection();
-        this.fileInfos = FileInfoCollection.load();
+        this.fileInfos = FileInfoCollection.instance;
         this.menu = new MenuModel();
         this.filter = {};
         this.sort = 'title';
@@ -50,43 +50,51 @@ const AppModel = Backbone.Model.extend({
         _.forEach(Storage, prv => prv.init());
     },
 
-    loadConfig: function(configLocation, callback) {
-        this.appLogger.debug('Loading config from', configLocation);
-        const ts = this.appLogger.ts();
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', configLocation);
-        xhr.responseType = 'json';
-        xhr.send();
-        xhr.addEventListener('load', () => {
-            let response = xhr.response;
-            if (!response) {
-                this.appLogger.error('Error loading app config', xhr.statusText);
-                return callback(true);
-            }
-            if (typeof response === 'string') {
-                try {
-                    response = JSON.parse(response);
-                } catch (e) {
-                    this.appLogger.error('Error parsing response', e, response);
+    loadConfig: function(configLocation) {
+        return new Promise((resolve, reject) => {
+            this.appLogger.debug('Loading config from', configLocation);
+            const ts = this.appLogger.ts();
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', configLocation);
+            xhr.responseType = 'json';
+            xhr.send();
+            xhr.addEventListener('load', () => {
+                let response = xhr.response;
+                if (!response) {
+                    const errorDesc = xhr.statusText === 'OK' ? 'Malformed JSON' : xhr.statusText;
+                    this.appLogger.error('Error loading app config', errorDesc);
+                    return reject('Error loading app config');
                 }
-            }
-            if (!response.settings) {
-                this.appLogger.error('Invalid app config, no settings section', response);
-                return callback(true);
-            }
-            this.appLogger.info('Loaded app config from', configLocation, this.appLogger.ts(ts));
-            this.applyUserConfig(response);
-            callback();
-        });
-        xhr.addEventListener('error', () => {
-            this.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
-            callback(true);
+                if (typeof response === 'string') {
+                    try {
+                        response = JSON.parse(response);
+                    } catch (e) {
+                        this.appLogger.error('Error parsing response', e, response);
+                        return reject('Error parsing response');
+                    }
+                }
+                if (!response.settings) {
+                    this.appLogger.error('Invalid app config, no settings section', response);
+                    return reject('Invalid app config, no settings section');
+                }
+                this.appLogger.info('Loaded app config from', configLocation, this.appLogger.ts(ts));
+                resolve(response);
+            });
+            xhr.addEventListener('error', () => {
+                this.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
+                reject('Error loading app config');
+            });
+        }).then(config => {
+            return this.applyUserConfig(config);
         });
     },
 
     applyUserConfig(config) {
         this.settings.set(config.settings);
         if (config.files) {
+            if (config.showOnlyFilesFromConfig) {
+                this.fileInfos.reset();
+            }
             config.files
                 .filter(file => file && file.storage && file.name && file.path &&
                     !this.fileInfos.getMatch(file.storage, file.name, file.path))
@@ -99,6 +107,9 @@ const AppModel = Backbone.Model.extend({
                 }))
                 .reverse()
                 .forEach(fi => this.fileInfos.unshift(fi));
+        }
+        if (config.plugins) {
+            return Promise.all(config.plugins.map(plugin => PluginManager.installIfNew(plugin.url, plugin.manifest)));
         }
     },
 
@@ -309,14 +320,41 @@ const AppModel = Backbone.Model.extend({
         return matches.map(m => m[0]);
     },
 
-    createNewEntry: function() {
+    getEntryTemplates: function() {
+        const entryTemplates = [];
+        this.files.forEach(file => {
+            file.forEachEntryTemplate(entry => {
+                entryTemplates.push({ file, entry });
+            });
+        });
+        return entryTemplates;
+    },
+
+    createNewEntry: function(args) {
         const sel = this.getFirstSelectedGroup();
-        return EntryModel.newEntry(sel.group, sel.file);
+        if (args && args.template) {
+            if (sel.file !== args.template.file) {
+                sel.file = args.template.file;
+                sel.group = args.template.file.get('groups').first();
+            }
+            const templateEntry = args.template.entry;
+            const newEntry = EntryModel.newEntry(sel.group, sel.file);
+            newEntry.copyFromTemplate(templateEntry);
+            return newEntry;
+        } else {
+            return EntryModel.newEntry(sel.group, sel.file);
+        }
     },
 
     createNewGroup: function() {
         const sel = this.getFirstSelectedGroup();
         return GroupModel.newGroup(sel.group, sel.file);
+    },
+
+    createNewTemplateEntry: function() {
+        const file = this.getFirstSelectedGroup().file;
+        const group = file.getEntryTemplatesGroup() || file.createEntryTemplatesGroup();
+        return EntryModel.newEntry(group, file);
     },
 
     createDemoFile: function() {
@@ -461,7 +499,8 @@ const AppModel = Backbone.Model.extend({
             path: params.path,
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
-            backup: fileInfo && fileInfo.get('backup') || null
+            backup: fileInfo && fileInfo.get('backup') || null,
+            fingerprint: fileInfo && fileInfo.get('fingerprint') || null
         });
         file.open(params.password, data, params.keyFileData, err => {
             if (err) {
@@ -490,7 +529,7 @@ const AppModel = Backbone.Model.extend({
             this.addToLastOpenFiles(file, rev);
             this.addFile(file);
             callback(null, file);
-            this.fileOpened(file, data);
+            this.fileOpened(file, data, params);
         });
     },
 
@@ -527,7 +566,8 @@ const AppModel = Backbone.Model.extend({
             rev: rev,
             syncDate: file.get('syncDate') || dt,
             openDate: dt,
-            backup: file.get('backup')
+            backup: file.get('backup'),
+            fingerprint: file.get('fingerprint')
         });
         switch (this.settings.get('rememberKeyFiles')) {
             case 'data':
@@ -563,7 +603,7 @@ const AppModel = Backbone.Model.extend({
         }
     },
 
-    fileOpened: function(file, data) {
+    fileOpened: function(file, data, params) {
         if (file.get('storage') === 'file') {
             Storage.file.watch(file.get('path'), _.debounce(() => {
                 this.syncFile(file);
@@ -576,6 +616,7 @@ const AppModel = Backbone.Model.extend({
         if (data && backup && backup.enabled && backup.pending) {
             this.scheduleBackupFile(file, data);
         }
+        this.saveFileFingerprint(file, params.password);
     },
 
     fileClosed: function(file) {
@@ -717,29 +758,9 @@ const AppModel = Backbone.Model.extend({
                     });
                 });
             };
-            const saveToCacheAndStorage = () => {
-                logger.info('Getting file data for saving');
-                file.getData((data, err) => {
-                    if (err) { return complete(err); }
-                    if (storage === 'file') {
-                        logger.info('Saving to file storage');
-                        saveToStorage(data);
-                    } else if (!file.get('dirty')) {
-                        logger.info('Saving to storage, skip cache because not dirty');
-                        saveToStorage(data);
-                    } else {
-                        logger.info('Saving to cache');
-                        Storage.cache.save(fileInfo.id, null, data, (err) => {
-                            if (err) { return complete(err); }
-                            file.set('dirty', false);
-                            logger.info('Saved to cache, saving to storage');
-                            saveToStorage(data);
-                        });
-                    }
-                });
-            };
             const saveToStorage = (data) => {
                 logger.info('Save data to storage');
+                const storageRev = fileInfo.get('storage') === storage ? fileInfo.get('rev') : undefined;
                 Storage[storage].save(path, opts, data, (err, stat) => {
                     if (err && err.revConflict) {
                         logger.info('Save rev conflict, reloading from storage');
@@ -763,7 +784,28 @@ const AppModel = Backbone.Model.extend({
                         this.scheduleBackupFile(file, data);
                         complete();
                     }
-                }, fileInfo.get('rev'));
+                }, storageRev);
+            };
+            const saveToCacheAndStorage = () => {
+                logger.info('Getting file data for saving');
+                file.getData((data, err) => {
+                    if (err) { return complete(err); }
+                    if (storage === 'file') {
+                        logger.info('Saving to file storage');
+                        saveToStorage(data);
+                    } else if (!file.get('dirty')) {
+                        logger.info('Saving to storage, skip cache because not dirty');
+                        saveToStorage(data);
+                    } else {
+                        logger.info('Saving to cache');
+                        Storage.cache.save(fileInfo.id, null, data, (err) => {
+                            if (err) { return complete(err); }
+                            file.set('dirty', false);
+                            logger.info('Saved to cache, saving to storage');
+                            saveToStorage(data);
+                        });
+                    }
+                });
             };
             logger.info('Stat file');
             Storage[storage].stat(path, opts, (err, stat) => {
@@ -854,14 +896,14 @@ const AppModel = Backbone.Model.extend({
         if (Storage[backup.storage].getPathForName) {
             folderPath = Storage[backup.storage].getPathForName(folderPath).replace('.kdbx', '');
         }
-        Storage[backup.storage].stat(folderPath, opts, (err) => {
+        Storage[backup.storage].stat(folderPath, opts, err => {
             if (err) {
                 if (err.notFound) {
                     logger.info('Backup folder does not exist');
                     if (!Storage[backup.storage].mkdir) {
                         return callback('Mkdir not supported by ' + backup.storage);
                     }
-                    Storage[backup.storage].mkdir(folderPath, (err) => {
+                    Storage[backup.storage].mkdir(folderPath, err => {
                         if (err) {
                             logger.error('Error creating backup folder', err);
                             callback('Error creating backup folder');
@@ -922,6 +964,18 @@ const AppModel = Backbone.Model.extend({
         }
         if (needBackup) {
             this.backupFile(file, data, _.noop);
+        }
+    },
+
+    saveFileFingerprint: function(file, password) {
+        if (Launcher && Launcher.fingerprints && password) {
+            const fileInfo = this.fileInfos.get(file.id);
+            Launcher.fingerprints.register(file.id, this.params.password, token => {
+                if (token) {
+                    fileInfo.set('fingerprint', token);
+                    this.model.fileInfos.save();
+                }
+            });
         }
     }
 });

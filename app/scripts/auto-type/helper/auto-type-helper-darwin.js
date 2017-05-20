@@ -1,5 +1,3 @@
-'use strict';
-
 const Launcher = require('../../comp/launcher');
 
 const ForeMostAppScript = 'tell application "System Events" to set frontApp to name of first process whose frontmost is true';
@@ -32,13 +30,13 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
             AutoTypeHelper.exec(ChromeScript.replace(/\{}/g, appName), (err, out) => {
                 if (err) { return callback(err); }
                 const parts = out.split('\n');
-                return callback(null, parts[1].trim(), parts[0].trim());
+                return callback(null, (parts[1] || '').trim(), parts[0].trim());
             });
         } else if (['Safari', 'Webkit'].indexOf(appName) >= 0) {
             AutoTypeHelper.exec(SafariScript.replace(/\{}/g, appName), (err, out) => {
                 if (err) { return callback(err); }
                 const parts = out.split('\n');
-                return callback(null, parts[1].trim(), parts[0].trim());
+                return callback(null, (parts[1] || '').trim(), parts[0].trim());
             });
         } else {
             // special cases are not available. this method may ask the user about assistive access

@@ -1,29 +1,29 @@
 .menu {
   width: 100%;
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
   overflow: hidden;
 
   &__section {
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
     @include th { border-bottom: light-border(); }
     @include scrollbar-on-hover;
     position: relative;
     overflow: hidden;
 
     &--grow {
-      @include flex(1);
-      @include display(flex);
-      @include flex-direction(column);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       >.scroller {
-        @include flex(1);
+        flex: 1;
       }
     }
 
     &--drag {
-      @include flex(0 0 auto);
+      flex: 0 0 auto;
       max-height: calc(100vh - 200px);
       >.scroller { max-height: calc(100vh - 200px); }
     }
@@ -39,7 +39,7 @@
 
   &__drag-section {
     @include drag-handle;
-    @include flex(0 0 auto);
+    flex: 0 0 auto;
     height: 1px;
     cursor: row-resize;
   }
@@ -48,10 +48,10 @@
     text-overflow: ellipsis;
     overflow: hidden;
     position: relative;
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
 
     .menu__item--collapsed>& {
       display: none;
@@ -135,7 +135,7 @@
       padding-left: .4em;
       .menu__item-colors & {
         display: inline-block;
-        @include th { color: text-color(); }
+        @include th { color: th(text-color); }
       }
       .menu__item--with-options:hover & {
         display: none;
@@ -151,8 +151,8 @@
       cursor: pointer;
       transition: opacity $base-duration $base-timing, color $base-duration $base-timing;
       @include th {
-        color: muted-color();
-        &:hover { color: medium-color(); }
+        color: th(muted-color);
+        &:hover { color: th(medium-color); }
       }
       .menu__item--active>.menu__item-body>& {
         display: block;
@@ -177,12 +177,12 @@
 
     &--drag-top > .menu__item-body > .menu__item-drag-top {
       transition: background-color $slow-transition-in;
-      @include th { background-color: action-color(); }
+      @include th { background-color: th(action-color); }
     }
 
     &--drag:not(.menu__item--drag-top) {
       >.menu__item-body {
-        @include th { color: action-color(); }
+        @include th { color: th(action-color); }
       }
     }
   }

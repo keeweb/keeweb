@@ -1,5 +1,3 @@
-'use strict';
-
 const Handlebars = require('hbs');
 
 Handlebars.registerHelper('ifneq', function(lvalue, rvalue, options) {

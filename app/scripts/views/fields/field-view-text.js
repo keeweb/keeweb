@@ -1,12 +1,12 @@
-'use strict';
-
 const Backbone = require('backbone');
 const FieldView = require('./field-view');
 const GeneratorView = require('../generator-view');
 const KeyHandler = require('../../comp/key-handler');
 const Keys = require('../../const/keys');
 const PasswordGenerator = require('../../util/password-generator');
+const FeatureDetector = require('../../util/feature-detector');
 const kdbxweb = require('kdbxweb');
+const Tip = require('../../util/tip');
 
 const FieldViewText = FieldView.extend({
     renderValue: function(value) {
@@ -38,11 +38,32 @@ const FieldViewText = FieldView.extend({
         if (this.model.multiline) {
             this.setInputHeight();
         }
+        if (FeatureDetector.isMobile) {
+            this.createMobileControls();
+        }
         if (this.model.canGen) {
             $('<div/>').addClass('details__field-value-btn details__field-value-btn-gen').appendTo(this.valueEl)
                 .click(this.showGeneratorClick.bind(this))
                 .mousedown(this.showGenerator.bind(this));
         }
+        Tip.hideTip(this.valueEl[0]);
+        Tip.hideTip(this.labelEl[0]);
+    },
+
+    createMobileControls: function() {
+        this.mobileControls = {};
+        ['cancel', 'apply'].forEach(action => {
+            this.mobileControls[action] = $('<div/>')
+                .addClass('details__field-value-btn details__field-value-btn-' + action)
+                .appendTo(this.labelEl)
+                .data('action', action)
+                .on({
+                    mousedown: this.mobileFieldControlMouseDown.bind(this),
+                    touchstart: this.mobileFieldControlTouchStart.bind(this),
+                    touchend: this.mobileFieldControlTouchEnd.bind(this),
+                    touchmove: this.mobileFieldControlTouchMove.bind(this)
+                });
+        });
     },
 
     showGeneratorClick: function(e) {
@@ -165,6 +186,11 @@ const FieldViewText = FieldView.extend({
             return;
         }
         delete this.input;
+        if (this.mobileControls) {
+            this.mobileControls.cancel.remove();
+            this.mobileControls.apply.remove();
+            delete this.mobileControls;
+        }
         this.stopBlurListener();
         if (typeof newVal === 'string' && this.value instanceof kdbxweb.ProtectedValue) {
             newVal = kdbxweb.ProtectedValue.fromString(newVal);
@@ -179,7 +205,42 @@ const FieldViewText = FieldView.extend({
         this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
     },
 
-    render: function() {
+    mobileFieldControlMouseDown(e) {
+        e.stopPropagation();
+        this.stopBlurListener();
+        const action = $(e.target).data('action');
+        if (action === 'apply') {
+            this.endEdit(this.input.val());
+        } else {
+            this.endEdit();
+        }
+    },
+
+    mobileFieldControlTouchStart(e) {
+        this.$el.attr('active-mobile-action', $(e.target).data('action'));
+    },
+
+    mobileFieldControlTouchEnd(e) {
+        const shouldExecute = this.$el.attr('active-mobile-action') === $(e.target).data('action');
+        this.$el.removeAttr('active-mobile-action');
+        if (shouldExecute) {
+            this.mobileFieldControlMouseDown(e);
+        }
+    },
+
+    mobileFieldControlTouchMove(e) {
+        const touch = e.originalEvent.targetTouches[0];
+        const rect = touch.target.getBoundingClientRect();
+        const inside = touch.clientX >= rect.left && touch.clientX <= rect.right &&
+            touch.clientY >= rect.top && touch.clientY <= rect.bottom;
+        if (inside) {
+            this.$el.attr('active-mobile-action', $(e.target).data('action'));
+        } else {
+            this.$el.removeAttr('active-mobile-action');
+        }
+    },
+
+    render() {
         FieldView.prototype.render.call(this);
     }
 });

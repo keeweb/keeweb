@@ -1,5 +1,3 @@
-'use strict';
-
 const StorageBase = require('./storage-base');
 const Launcher = require('../comp/launcher');
 
@@ -11,25 +9,31 @@ const StorageFileCache = StorageBase.extend({
     path: null,
 
     getPath: function(id) {
-        return Launcher.req('path').join(this.path, id);
+        return Launcher.joinPath(this.path, id);
     },
 
     initFs: function(callback) {
         if (this.path) {
             return callback && callback();
         }
-        try {
-            const path = Launcher.getUserDataPath('OfflineFiles');
-            const fs = Launcher.req('fs');
-            if (!fs.existsSync(path)) {
-                fs.mkdirSync(path);
+
+        const path = Launcher.getUserDataPath('OfflineFiles');
+
+        const setPath = (err) => {
+            this.path = err ? null : path;
+            if (err) {
+                this.logger.error('Error opening local offline storage', err);
             }
-            this.path = path;
-            callback();
-        } catch (e) {
-            this.logger.error('Error opening local offline storage', e);
-            if (callback) { callback(e); }
-        }
+            return callback && callback(err);
+        };
+
+        Launcher.fileExists(path, exists => {
+            if (exists) {
+                setPath();
+            } else {
+                Launcher.mkdir(path, setPath);
+            }
+        });
     },
 
     save: function(id, opts, data, callback) {
@@ -39,14 +43,14 @@ const StorageFileCache = StorageBase.extend({
                 return callback && callback(err);
             }
             const ts = this.logger.ts();
-            try {
-                Launcher.writeFile(this.getPath(id), data);
+            Launcher.writeFile(this.getPath(id), data, err => {
+                if (err) {
+                    this.logger.error('Error saving to cache', id, err);
+                    return callback && callback(err);
+                }
                 this.logger.debug('Saved', id, this.logger.ts(ts));
                 if (callback) { callback(); }
-            } catch (e) {
-                this.logger.error('Error saving to cache', id, e);
-                if (callback) { callback(e); }
-            }
+            });
         });
     },
 
@@ -56,15 +60,17 @@ const StorageFileCache = StorageBase.extend({
             if (err) {
                 return callback && callback(null, err);
             }
+
             const ts = this.logger.ts();
-            try {
-                const data = Launcher.readFile(this.getPath(id));
+
+            Launcher.readFile(this.getPath(id), undefined, (data, err) => {
+                if (err) {
+                    this.logger.error('Error loading from cache', id, err);
+                    return callback && callback(err, null);
+                }
                 this.logger.debug('Loaded', id, this.logger.ts(ts));
-                if (callback) { callback(null, data.buffer); }
-            } catch (e) {
-                this.logger.error('Error loading from cache', id, e);
-                if (callback) { callback(e, null); }
-            }
+                return callback && callback(null, data.buffer);
+            });
         });
     },
 
@@ -74,18 +80,24 @@ const StorageFileCache = StorageBase.extend({
             if (err) {
                 return callback && callback(err);
             }
+
             const ts = this.logger.ts();
-            try {
-                const path = this.getPath(id);
-                if (Launcher.fileExists(path)) {
-                    Launcher.deleteFile(path);
+            const path = this.getPath(id);
+
+            Launcher.fileExists(path, exists => {
+                if (exists) {
+                    Launcher.deleteFile(path, err => {
+                        if (err) {
+                            this.logger.error('Error removing from cache', id, err);
+                        } else {
+                            this.logger.debug('Removed', id, this.logger.ts(ts));
+                        }
+                        return callback && callback(err);
+                    });
+                } else if (callback) {
+                    callback();
                 }
-                this.logger.debug('Removed', id, this.logger.ts(ts));
-                if (callback) { callback(); }
-            } catch (e) {
-                this.logger.error('Error removing from cache', id, e);
-                if (callback) { callback(e); }
-            }
+            });
         });
     }
 });

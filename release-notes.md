@@ -1,5 +1,26 @@
 Release notes
 -------------
+##### v1.5.0 (2015-05-20)
+`+` plugins  
+`*` translations are available only as plugins  
+`*` Dropbox API V2  
+`*` deprecated IE  
+`+` entry templates  
+`+` support cloud providers in iOS homescreen apps  
+`+` auto-type improvements and bugfixes  
+`+` mobile field editing improvements  
+`+` file path hint in recent files list  
+`+` cacheConfigSettings config option  
+`+` keyboard-accessible autocomplete  
+`+` entry auto-type context menu  
+`+` save to WebDAV with PUT  
+`+` showOnlyFilesFromConfig config option  
+`+` mac os window style options  
+`+` lock on hide mac os hide  
+`+` release distribution improvements  
+`+` error message for not supported browsers  
+`-` removed support of devices without clipboard api  
+
 ##### v1.4.1 (2017-03-26)
 `+` fix #544: read files with empty binaries  
 `+` fix #555: keyfile selection issue  
