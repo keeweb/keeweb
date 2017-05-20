@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.5.0 (TBD)
+##### v1.5.0 (2015-05-20)
 `+` plugins  
 `*` translations are available only as plugins  
 `*` Dropbox API V2  
