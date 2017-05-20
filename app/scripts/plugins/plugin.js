@@ -35,6 +35,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         manifest: '',
         url: '',
         status: '',
+        autoUpdate: false,
         installTime: null,
         installError: null,
         updateCheckDate: null,
@@ -491,6 +492,10 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                     }
                 });
         });
+    },
+
+    setAutoUpdate(enabled) {
+        this.set('autoUpdate', !!enabled);
     },
 
     getSettingPrefix() {

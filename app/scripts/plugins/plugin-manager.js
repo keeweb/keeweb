@@ -110,10 +110,22 @@ const PluginManager = Backbone.Model.extend({
         });
     },
 
+    setAutoUpdate(id, enabled) {
+        const plugins = this.get('plugins');
+        const plugin = plugins.get(id);
+        if (!plugin || plugin.get('autoUpdate') === enabled) {
+            return;
+        }
+        plugin.setAutoUpdate(enabled);
+        this.trigger('change');
+        this.saveState();
+    },
+
     loadPlugin(desc) {
         const plugin = new Plugin({
             manifest: desc.manifest,
-            url: desc.url
+            url: desc.url,
+            autoUpdate: desc.autoUpdate
         });
         return plugin.install(desc.enabled, true)
             .then(() => plugin)
@@ -125,7 +137,8 @@ const PluginManager = Backbone.Model.extend({
             plugins: this.get('plugins').map(plugin => ({
                 manifest: plugin.get('manifest'),
                 url: plugin.get('url'),
-                enabled: plugin.get('status') === 'active'
+                enabled: plugin.get('status') === 'active',
+                autoUpdate: plugin.get('autoUpdate')
             }))
         });
     },

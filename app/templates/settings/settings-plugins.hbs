@@ -40,6 +40,12 @@
                 {{#if plugin.installError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.installError}}</pre></div>{{/if}}
                 {{#if plugin.updateError}}<div class="error-color settings__plugins-install-error"><pre>{{plugin.updateError}}</pre></div>{{/if}}
             </div>
+            <div class="settings__plugins-plugin-updates">
+                <input type="checkbox" class="settings__plugins-plugin-update-check settings__input input-base"
+                    id="plugin-{{plugin.id}}-auto-update" data-plugin="{{plugin.id}}"
+                    {{#if plugin.autoUpdate}}checked{{/if}} />
+                <label for="plugin-{{plugin.id}}-auto-update">{{res 'setPlAutoUpdate'}}</label>
+            </div>
             {{#if plugin.settings}}
                 <div class="settings__plugins-plugin-settings">
                     {{#each plugin.settings as |setting|}}

@@ -25,7 +25,8 @@ const SettingsPluginsView = Backbone.View.extend({
         'input .settings__plugins-gallery-search': 'gallerySearchInput',
         'change select.settings__plugins-plugin-input': 'pluginSettingChange',
         'change input[type=checkbox].settings__plugins-plugin-input': 'pluginSettingChange',
-        'input input[type=text].settings__plugins-plugin-input': 'pluginSettingChange'
+        'input input[type=text].settings__plugins-plugin-input': 'pluginSettingChange',
+        'change .settings__plugins-plugin-updates': 'autoUpdateChange'
     },
 
     searchStr: null,
@@ -36,7 +37,7 @@ const SettingsPluginsView = Backbone.View.extend({
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
         this.listenTo(Backbone, 'plugin-gallery-load-complete', this.render.bind(this));
-        PluginGallery.loadPlugins();
+        // PluginGallery.loadPlugins();
     },
 
     render() {
@@ -51,6 +52,7 @@ const SettingsPluginsView = Backbone.View.extend({
                 updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
                 installError: plugin.get('installError'),
                 official: plugin.get('manifest').publicKey === publicKey,
+                autoUpdate: plugin.get('autoUpdate'),
                 settings: plugin.getSettings()
             })).sort(Comparators.stringComparator('id', true)),
             installingFromUrl: this.installFromUrl && !this.installFromUrl.error,
@@ -208,6 +210,12 @@ const SettingsPluginsView = Backbone.View.extend({
         const val = el.type === 'checkbox' ? el.checked : el.value;
         const plugin = PluginManager.getPlugin(pluginId);
         plugin.setSettings({ [setting]: val });
+    },
+
+    autoUpdateChange(e) {
+        const pluginId = $(e.target).data('plugin');
+        const enabled = e.target.checked;
+        PluginManager.setAutoUpdate(pluginId, enabled);
     }
 });
 

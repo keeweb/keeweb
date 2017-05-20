@@ -190,6 +190,11 @@
     &-plugin-desc {
       margin-bottom: $base-padding-v;
     }
+    &-plugin-updates {
+      >label {
+        font-weight: normal;
+      }
+    }
     &-gallery {
       margin-top: $base-spacing;
       display: flex;
