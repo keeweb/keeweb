@@ -15,7 +15,7 @@
 /* any other custom css goes here */
 
 /* everything in themes must start with your theme class (.th-) */
-/* if your themes contains global styles, 'Invalid theme' error will be thrown on install */
+/* if your theme contains global styles, 'Invalid theme' error will be thrown on install */
 
 .th-rainbow * { /* never do such things! */
   animation: rainbow 5s linear 0s infinite;
