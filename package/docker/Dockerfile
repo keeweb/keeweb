@@ -44,7 +44,7 @@ RUN wget https://github.com/keeweb/keeweb-plugins/archive/master.zip; \
     unzip master.zip; \
     rm master.zip; \
     mv keeweb-plugins-master/docs keeweb/plugins; \
-    rm -rf keeweb-plugins-master
+    rm -rf keeweb-plugins-master \
     rm keeweb/plugins/CNAME
 
 ENTRYPOINT ["/opt/entrypoint.sh"]
