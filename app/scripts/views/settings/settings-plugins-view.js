@@ -37,7 +37,7 @@ const SettingsPluginsView = Backbone.View.extend({
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
         this.listenTo(Backbone, 'plugin-gallery-load-complete', this.render.bind(this));
-        // PluginGallery.loadPlugins();
+        PluginGallery.loadPlugins();
     },
 
     render() {
