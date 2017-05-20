@@ -476,23 +476,19 @@ module.exports = function(grunt) {
                     author: pkg.author,
                     homepage: pkg.homepage,
                     rev: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); }
-                },
-                info: {
-                    arch: 'amd64',
-                    targetDir: 'dist/desktop',
-                    pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
-                    appName: 'KeeWeb',
-                    depends: 'libappindicator1, libgconf2-4',
-                    scripts: {
-                        postinst: 'package/deb/scripts/postinst'
-                    }
                 }
             },
             'linux-x64': {
                 options: {
                     info: {
                         arch: 'amd64',
-                        pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`
+                        pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
+                        targetDir: 'dist/desktop',
+                        appName: 'KeeWeb',
+                        depends: 'libappindicator1, libgconf2-4',
+                        scripts: {
+                            postinst: 'package/deb/scripts/postinst'
+                        }
                     }
                 },
                 files: [
@@ -505,7 +501,13 @@ module.exports = function(grunt) {
                 options: {
                     info: {
                         arch: 'i386',
-                        pkgName: `KeeWeb-${pkg.version}.linux.ia32.deb`
+                        pkgName: `KeeWeb-${pkg.version}.linux.ia32.deb`,
+                        targetDir: 'dist/desktop',
+                        appName: 'KeeWeb',
+                        depends: 'libappindicator1, libgconf2-4',
+                        scripts: {
+                            postinst: 'package/deb/scripts/postinst'
+                        }
                     }
                 },
                 files: [
