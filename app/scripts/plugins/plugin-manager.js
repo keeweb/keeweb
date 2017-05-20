@@ -2,11 +2,16 @@ const Backbone = require('backbone');
 const Plugin = require('./plugin');
 const PluginCollection = require('./plugin-collection');
 const SettingsStore = require('../comp/settings-store');
+const RuntimeInfo = require('../comp/runtime-info');
 const Logger = require('../util/logger');
 
 const PluginManager = Backbone.Model.extend({
+    UpdateInterval: 1000 * 60 * 60 * 24 * 7,
+
     defaults: {
-        plugins: new PluginCollection()
+        plugins: new PluginCollection(),
+        autoUpdateAppVersion: null,
+        autoUpdateDate: null
     },
 
     logger: new Logger('plugin-mgr'),
@@ -14,6 +19,13 @@ const PluginManager = Backbone.Model.extend({
     init() {
         const ts = this.logger.ts();
         return SettingsStore.load('plugins').then(state => {
+            if (!state) {
+                return;
+            }
+            this.set({
+                autoUpdateAppVersion: state.autoUpdateAppVersion,
+                autoUpdateDate: state.autoUpdateDate
+            });
             if (!state || !state.plugins || !state.plugins.length) {
                 return;
             }
@@ -121,6 +133,32 @@ const PluginManager = Backbone.Model.extend({
         this.saveState();
     },
 
+    runAutoUpdate() {
+        const queue = this.get('plugins').filter(p => p.get('autoUpdate')).map(p => p.id);
+        if (!queue.length) {
+            return Promise.resolve();
+        }
+        const anotherVersion = this.get('autoUpdateAppVersion') !== RuntimeInfo.version;
+        const wasLongAgo = !this.get('autoUpdateDate') || Date.now() - this.get('autoUpdateDate') > this.UpdateInterval;
+        const autoUpdateRequired = anotherVersion || wasLongAgo;
+        if (!autoUpdateRequired) {
+            return;
+        }
+        this.logger.info('Auto-updating plugins', queue.join(', '));
+        this.set({
+            autoUpdateAppVersion: RuntimeInfo.version,
+            autoUpdateDate: Date.now()
+        });
+        this.saveState();
+        const updateNext = () => {
+            const pluginId = queue.shift();
+            if (pluginId) {
+                return this.update(pluginId).catch(() => {}).then(updateNext);
+            }
+        };
+        return updateNext();
+    },
+
     loadPlugin(desc) {
         const plugin = new Plugin({
             manifest: desc.manifest,
@@ -134,6 +172,8 @@ const PluginManager = Backbone.Model.extend({
 
     saveState() {
         SettingsStore.save('plugins', {
+            autoUpdateAppVersion: this.get('autoUpdateAppVersion'),
+            autoUpdateDate: this.get('autoUpdateDate'),
             plugins: this.get('plugins').map(plugin => ({
                 manifest: plugin.get('manifest'),
                 url: plugin.get('url'),

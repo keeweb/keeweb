@@ -21,7 +21,7 @@ const PluginGallery = {
             const ts = this.logger.ts();
             this.logger.debug('Loading plugins...');
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', Links.Plugins + '/plugins.json?_=' + new Date().getTime());
+            xhr.open('GET', Links.Plugins + '/plugins.json?_=' + Date.now());
             xhr.responseType = 'text';
             xhr.send();
             xhr.addEventListener('load', () => {

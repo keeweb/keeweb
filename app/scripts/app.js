@@ -15,6 +15,7 @@ const ExportApi = require('./comp/export-api');
 const SettingsManager = require('./comp/settings-manager');
 const PluginManager = require('./plugins/plugin-manager');
 const Launcher = require('./comp/launcher');
+const Timeouts = require('./const/timeouts');
 const FeatureDetector = require('./util/feature-detector');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
@@ -35,6 +36,7 @@ ready(() => {
         .then(loadRemoteConfig)
         .then(ensureCanRun)
         .then(showApp)
+        .then(autoUpdatePlugins)
         .catch(e => {
             appModel.appLogger.error('Error starting app', e);
         });
@@ -117,6 +119,10 @@ ready(() => {
         } else {
             showView();
         }
+    }
+
+    function autoUpdatePlugins() {
+        setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
     }
 
     function showView() {
