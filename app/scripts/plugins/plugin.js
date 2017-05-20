@@ -290,11 +290,18 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
 
     processThemeStyleSheet(styleSheet, theme) {
         const themeSelector = '.th-' + theme.name;
+        const badSelectors = [];
         for (const rule of styleSheet.cssRules) {
+            if (rule.selectorText && rule.selectorText.lastIndexOf(themeSelector, 0) !== 0) {
+                badSelectors.push(rule.selectorText);
+            }
             if (rule.selectorText === themeSelector) {
                 this.addThemeVariables(rule);
-                break;
             }
+        }
+        if (badSelectors.length) {
+            this.logger.error('Themes must not add rules outside theme namespace. Bad selectors:', badSelectors);
+            throw 'Invalid theme';
         }
     },
 

@@ -24,11 +24,11 @@
 .th-rainbow input {
   border: 1px solid;
 }
-*:nth-child(5n+1) { animation-delay: -1s; }
-*:nth-child(5n+2) { animation-delay: -2s; }
-*:nth-child(5n+3) { animation-delay: -3s; }
-*:nth-child(5n+4) { animation-delay: -4s; }
-*:nth-child(5n+5) { animation-delay: -5s; }
+.th-rainbow *:nth-child(5n+1) { animation-delay: -1s; }
+.th-rainbow *:nth-child(5n+2) { animation-delay: -2s; }
+.th-rainbow *:nth-child(5n+3) { animation-delay: -3s; }
+.th-rainbow *:nth-child(5n+4) { animation-delay: -4s; }
+.th-rainbow *:nth-child(5n+5) { animation-delay: -5s; }
 @keyframes rainbow {
   0% { color: lightseagreen; }
   20% { color: darkviolet; }
