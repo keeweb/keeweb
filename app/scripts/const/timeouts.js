@@ -10,7 +10,7 @@ const Timeouts = {
     DrobDownClickWait: 500,
     RedrawInactiveWindow: 50,
     PopupWaitTime: 1000,
-    AutoUpdatePluginsAfterStart: 1000
+    AutoUpdatePluginsAfterStart: 500
 };
 
 module.exports = Timeouts;
