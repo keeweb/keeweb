@@ -1,7 +1,13 @@
 {
   "name": "keeweb",
-  "version": "1.3.3",
+  "version": "1.4.1",
   "dependencies": {
+    "@types/node": {
+      "version": "7.0.21",
+      "from": "@types/node@>=7.0.18 <8.0.0",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-7.0.21.tgz",
+      "dev": true
+    },
     "abbrev": {
       "version": "1.0.9",
       "from": "abbrev@>=1.0.0 <2.0.0",
@@ -1458,9 +1464,9 @@
       "dev": true
     },
     "electron": {
-      "version": "1.4.15",
-      "from": "electron@latest",
-      "resolved": "https://registry.npmjs.org/electron/-/electron-1.4.15.tgz",
+      "version": "1.7.1",
+      "from": "electron@1.7.1",
+      "resolved": "https://registry.npmjs.org/electron/-/electron-1.7.1.tgz",
       "dev": true
     },
     "electron-download": {
