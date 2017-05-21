@@ -666,12 +666,12 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-executables', [
         'electron',
-        'codesign:app',
         'sign-exe:win32-build-x64',
         'sign-exe:win32-build-ia32',
         'copy:desktop-darwin-helper-x64',
         'copy:desktop-windows-helper-ia32',
-        'copy:desktop-windows-helper-x64'
+        'copy:desktop-windows-helper-x64',
+        'codesign:app'
     ]);
 
     grunt.registerTask('build-desktop-archives', [
