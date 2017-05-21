@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KeeWeb Release Stats</title>
+    <!--<script src="http://code.highcharts.com/highcharts.js"></script>-->
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script>
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+        xhr.open('GET', 'release-stats.json', true);
+        xhr.addEventListener('load', () => {
+            drawChart(xhr.response);
+        });
+        xhr.send();
+
+        function drawChart(data) {
+            Highcharts.chart('chart-size', {
+                title: {
+                    text: 'KeeWeb Code Size'
+                },
+                chart: {
+                    zoomType: 'x'
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Bytes'
+                    }
+                },
+                legend: {
+                    enabled: true
+                },
+                plotOptions: {
+                    area: {
+                        marker: {
+                            radius: 2
+                        },
+                        lineWidth: 1,
+                        states: {
+                            hover: {
+                                lineWidth: 1
+                            }
+                        },
+                        threshold: null
+                    },
+                    series: {
+                        stacking: 'normal'
+                    }
+                },
+                tooltip: {
+                    split: true
+                },
+                series: [{
+                    type: 'area',
+                    name: 'Favicons',
+                    data: data.map(item => [item.dt, item.size.favicons])
+                }, {
+                    type: 'area',
+                    name: 'CSS',
+                    data: data.map(item => [item.dt, item.size.css])
+                }, {
+                    type: 'area',
+                    name: 'JS-Vendor',
+                    data: data.map(item => [item.dt, item.size.jsVendor])
+                }, {
+                    type: 'area',
+                    name: 'JS-App',
+                    data: data.map(item => [item.dt, item.size.jsApp])
+                }, {
+                    type: 'flags',
+                    shape: 'squarepin',
+                    y: -55,
+                    showInLegend: false,
+                    stacking: false,
+                    data: data.filter(item => /.0$/.test(item.tag)).map(item => ({ x: item.dt, title: item.tag }))
+                }]
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="chart-size" style="height: 90vh;"></div>
+</body>
+</html>
