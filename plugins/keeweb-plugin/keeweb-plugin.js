@@ -16,6 +16,8 @@ const pkg = require('./package.json');
 
 const op = args.shift();
 
+const bumpVersion = args.some(arg => arg === '--bump-version');
+
 showBanner();
 
 switch (op) {
@@ -47,6 +49,7 @@ function signPlugin(packageName) {
     }
     const manifest = JSON.parse(fs.readFileSync(path.join(packageName, 'manifest.json')));
     const privateKey = fs.readFileSync(path.join(packageName, 'private_key.pem'), 'binary');
+    let changed = false;
     for (const res of Object.keys(manifest.resources)) {
         console.log(`Signing ${res}...`);
         let fileName;
@@ -65,10 +68,21 @@ function signPlugin(packageName) {
         const sign = crypto.createSign('RSA-SHA256');
         sign.write(fs.readFileSync(fileName));
         sign.end();
-        manifest.resources[res] = sign.sign(privateKey).toString('base64');
+        const signature = sign.sign(privateKey).toString('base64');
+        if (manifest.resources[res] !== signature) {
+            manifest.resources[res] = signature;
+            changed = true;
+        }
     }
-    fs.writeFileSync(path.join(packageName, 'manifest.json'), JSON.stringify(manifest, null, 2));
-    console.log('Done, package manifest updated');
+    if (changed) {
+        if (bumpVersion) {
+            manifest.version = manifest.version.replace(/\d+$/, v => +v + 1);
+        }
+        fs.writeFileSync(path.join(packageName, 'manifest.json'), JSON.stringify(manifest, null, 2));
+        console.log('Done, package manifest updated');
+    } else {
+        console.log('No changes');
+    }
 }
 
 function watchSignPlugin() {
