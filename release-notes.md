@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.5.1 (TBD)
+`-` fix #631: unicode characters in Dropbox files  
+
 ##### v1.5.0 (2015-05-20)
 `+` plugins  
 `*` translations are available only as plugins  
