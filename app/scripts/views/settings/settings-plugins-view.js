@@ -6,6 +6,7 @@ const AppSettingsModel = require('../../models/app-settings-model');
 const Comparators = require('../../util/comparators');
 const Format = require('../../util/format');
 const SettingsManager = require('../../comp/settings-manager');
+const Launcher = require('../../comp/launcher');
 const SignatureVerifier = require('../../util/signature-verifier');
 const FeatureDetector = require('../../util/feature-detector');
 const Links = require('../../const/links');
@@ -87,7 +88,8 @@ const SettingsPluginsView = Backbone.View.extend({
                 official: pl.manifest.publicKey === publicKey
             }))
             .filter(pl => !plugins.get(pl.manifest.name) &&
-                (!pl.manifest.locale || !SettingsManager.allLocales[pl.manifest.locale.name]))
+                (!pl.manifest.locale || !SettingsManager.allLocales[pl.manifest.locale.name]) &&
+                (!pl.manifest.desktop || Launcher))
             .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
     },
 
