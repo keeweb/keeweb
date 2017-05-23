@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.5.1 (TBD)
+##### v1.5.1 (2017-05-23)
 `-` fix #631: unicode characters in Dropbox files  
 `-` fix backups in desktop  
 `+` plugin API improvements  
