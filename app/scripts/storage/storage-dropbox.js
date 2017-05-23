@@ -168,6 +168,10 @@ const StorageDropbox = StorageBase.extend({
         return '/' + fileName + '.kdbx';
     },
 
+    _encodeJsonHttpHeader(json) {
+        return json.replace(/[\u007f-\uffff]/g, c => '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4));
+    },
+
     _apiCall: function(args) {
         this._oauthAuthorize(err => {
             if (err) {
@@ -177,7 +181,7 @@ const StorageDropbox = StorageBase.extend({
             let headers;
             let data = args.data;
             if (args.apiArg) {
-                headers = { 'Dropbox-API-Arg': JSON.stringify(args.apiArg) };
+                headers = { 'Dropbox-API-Arg': this._encodeJsonHttpHeader(JSON.stringify(args.apiArg)) };
                 if (args.data) {
                     headers['Content-Type'] = 'application/octet-stream';
                 }

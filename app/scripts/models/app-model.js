@@ -43,6 +43,8 @@ const AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'select-entry', this.selectEntry);
 
         this.appLogger = new Logger('app');
+
+        AppModel.instance = this;
     },
 
     prepare: function() {

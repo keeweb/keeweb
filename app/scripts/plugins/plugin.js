@@ -8,6 +8,8 @@ const IoCache = require('../storage/io-cache');
 const AppSettingsModel = require('../models/app-settings-model');
 const BaseLocale = require('../locales/base.json');
 const SignatureVerifier = require('../util/signature-verifier');
+const SemVer = require('../util/semver');
+const RuntimeInfo = require('../comp/runtime-info');
 
 const commonLogger = new Logger('plugin');
 const io = new IoCache({
@@ -110,6 +112,25 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         if (manifest.resources.loc &&
             (!manifest.locale || !manifest.locale.title || !/^[a-z]{2}(-[A-Z]{2})?$/.test(manifest.locale.name))) {
             return 'Bad plugin locale';
+        }
+        if (manifest.desktop && !RuntimeInfo.launcher) {
+            return 'Desktop plugin';
+        }
+        if (manifest.versionMin) {
+            if (!/^\d+\.\d+\.\d+$/.test(manifest.versionMin)) {
+                return 'Invalid versionMin';
+            }
+            if (SemVer.compareVersions(manifest.versionMin, RuntimeInfo.version) > 0) {
+                return `Required min app version is ${manifest.versionMin}, actual ${RuntimeInfo.version}`;
+            }
+        }
+        if (manifest.versionMax) {
+            if (!/^\d+\.\d+\.\d+$/.test(manifest.versionMax)) {
+                return 'Invalid versionMin';
+            }
+            if (SemVer.compareVersions(manifest.versionMax, RuntimeInfo.version) < 0) {
+                return `Required max app version is ${manifest.versionMax}, actual ${RuntimeInfo.version}`;
+            }
         }
     },
 
