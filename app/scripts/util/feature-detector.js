@@ -36,8 +36,8 @@ const FeatureDetector = {
         return this.isMac;
     },
     ensureCanRun: function() {
-        if (/MSIE |Trident/.test(navigator.userAgent)) {
-            throw 'IE detected';
+        if (!window.crypto) {
+            throw 'WebCrypto not available';
         }
         if (!localStorage.length) {
             try {

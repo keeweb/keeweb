@@ -8,6 +8,8 @@ const Format = require('../../util/format');
 const SettingsManager = require('../../comp/settings-manager');
 const SignatureVerifier = require('../../util/signature-verifier');
 const FeatureDetector = require('../../util/feature-detector');
+const SemVer = require('../../util/semver');
+const RuntimeInfo = require('../../comp/runtime-info');
 const Links = require('../../const/links');
 
 const SettingsPluginsView = Backbone.View.extend({
@@ -86,9 +88,24 @@ const SettingsPluginsView = Backbone.View.extend({
                 installError: this.installErrors[pl.url],
                 official: pl.manifest.publicKey === publicKey
             }))
-            .filter(pl => !plugins.get(pl.manifest.name) &&
-                (!pl.manifest.locale || !SettingsManager.allLocales[pl.manifest.locale.name]))
+            .filter(pl => !plugins.get(pl.manifest.name) && this.canInstallPlugin(pl))
             .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
+    },
+
+    canInstallPlugin(plugin) {
+        if (plugin.manifest.locale && SettingsManager.allLocales[plugin.manifest.locale.name]) {
+            return false;
+        }
+        if (plugin.manifest.desktop && !RuntimeInfo.launcher) {
+            return false;
+        }
+        if (plugin.manifest.versionMin && SemVer.compareVersions(plugin.manufest.versionMin, RuntimeInfo.version) > 0) {
+            return false;
+        }
+        if (plugin.manifest.versionMax && SemVer.compareVersions(plugin.manufest.versionMax, RuntimeInfo.version) > 0) {
+            return false;
+        }
+        return true;
     },
 
     installClick() {

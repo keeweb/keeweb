@@ -6,6 +6,7 @@ const AppSettingsModel = require('../models/app-settings-model');
 const UpdateModel = require('../models/update-model');
 const Transport = require('../comp/transport');
 const Logger = require('../util/logger');
+const SemVer = require('../util/semver');
 const publicKey = require('raw-loader!../../resources/public-key.pem');
 
 const logger = new Logger('updater');
@@ -113,7 +114,7 @@ const Updater = {
                 }
                 if (!startedByUser && this.getAutoUpdateType() === 'install') {
                     this.update(startedByUser);
-                } else if (this.compareVersions(UpdateModel.instance.get('lastVersion'), RuntimeInfo.version) > 0) {
+                } else if (SemVer.compareVersions(UpdateModel.instance.get('lastVersion'), RuntimeInfo.version) > 0) {
                     UpdateModel.instance.set('updateStatus', 'found');
                 }
             },
@@ -133,7 +134,7 @@ const Updater = {
     canAutoUpdate: function() {
         const minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
         if (minLauncherVersion) {
-            const cmp = this.compareVersions(Launcher.version, minLauncherVersion);
+            const cmp = SemVer.compareVersions(Launcher.version, minLauncherVersion);
             if (cmp < 0) {
                 UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
                 return false;
@@ -142,29 +143,13 @@ const Updater = {
         return true;
     },
 
-    compareVersions: function(left, right) {
-        left = left.split('.');
-        right = right.split('.');
-        for (let num = 0; num < left.length; num++) {
-            const partLeft = left[num] | 0;
-            const partRight = right[num] | 0;
-            if (partLeft < partRight) {
-                return -1;
-            }
-            if (partLeft > partRight) {
-                return 1;
-            }
-        }
-        return 0;
-    },
-
     update: function(startedByUser, successCallback) {
         const ver = UpdateModel.instance.get('lastVersion');
         if (!this.enabled) {
             logger.info('Updater is disabled');
             return;
         }
-        if (this.compareVersions(RuntimeInfo.version, ver) >= 0) {
+        if (SemVer.compareVersions(RuntimeInfo.version, ver) >= 0) {
             logger.info('You are using the latest version');
             return;
         }

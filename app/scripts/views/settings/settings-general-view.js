@@ -12,6 +12,7 @@ const SettingsManager = require('../../comp/settings-manager');
 const Storage = require('../../storage');
 const FeatureDetector = require('../../util/feature-detector');
 const Locale = require('../../util/locale');
+const SemVer = require('../../util/semver');
 const Links = require('../../const/links');
 const AutoType = require('../../auto-type');
 
@@ -131,7 +132,7 @@ const SettingsGeneralView = Backbone.View.extend({
                 return errMsg;
             case 'ok':
                 let msg = Locale.setGenCheckedAt + ' ' + Format.dtStr(UpdateModel.instance.get('lastCheckDate')) + ': ';
-                const cmp = Updater.compareVersions(RuntimeInfo.version, UpdateModel.instance.get('lastVersion'));
+                const cmp = SemVer.compareVersions(RuntimeInfo.version, UpdateModel.instance.get('lastVersion'));
                 if (cmp >= 0) {
                     msg += Locale.setGenLatestVer;
                 } else {

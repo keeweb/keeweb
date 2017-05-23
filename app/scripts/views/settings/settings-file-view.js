@@ -57,13 +57,13 @@ const SettingsFileView = Backbone.View.extend({
         let canBackup = false;
         Object.keys(Storage).forEach(name => {
             const prv = Storage[name];
+            if (!canBackup && prv.backup && prv.enabled) {
+                canBackup = true;
+            }
             if (!prv.system && prv.enabled) {
                 storageProviders.push({
                     name: prv.name, icon: prv.icon, iconSvg: prv.iconSvg, own: name === fileStorage, backup: prv.backup
                 });
-                if (!canBackup && prv.backup) {
-                    canBackup = true;
-                }
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
