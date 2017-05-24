@@ -615,8 +615,9 @@ const EntryModel = Backbone.Model.extend({
 
     cloneEntry: function(nameSuffix) {
         const newEntry = EntryModel.newEntry(this.group, this.file);
+        const uuid = newEntry.uuid;
         newEntry.entry.copyFrom(this.entry);
-        newEntry.entry.uuid = kdbxweb.KdbxUuid.random();
+        newEntry.entry.uuid = uuid;
         newEntry.entry.times.update();
         newEntry.entry.fields.Title = this.title + nameSuffix;
         newEntry._fillByEntry();
@@ -625,7 +626,9 @@ const EntryModel = Backbone.Model.extend({
     },
 
     copyFromTemplate: function(templateEntry) {
+        const uuid = this.entry.uuid;
         this.entry.copyFrom(templateEntry.entry);
+        this.entry.uuid = uuid;
         this.entry.fields.Title = '';
         this._fillByEntry();
     }
