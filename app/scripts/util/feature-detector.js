@@ -46,6 +46,15 @@ const FeatureDetector = {
                 throw 'localStorage not available';
             }
         }
+    },
+    getBrowserCssClass: function() {
+        if (window.chrome && window.chrome.webstore) {
+            return 'chrome';
+        }
+        if (window.navigator.userAgent.indexOf('Edge/') > -1) {
+            return 'edge';
+        }
+        return '';
     }
 };
 

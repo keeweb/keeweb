@@ -81,7 +81,7 @@ img {
   font-weight: 200;
 }
 
-* {
+body:not(.edge) * {
   @include selection(true) {
     @include th {
       background-color: th(text-selection-bg-color);

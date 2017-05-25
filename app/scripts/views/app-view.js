@@ -20,6 +20,7 @@ const IdleTracker = require('../comp/idle-tracker');
 const Launcher = require('../comp/launcher');
 const SettingsManager = require('../comp/settings-manager');
 const Locale = require('../util/locale');
+const FeatureDetector = require('../util/feature-detector');
 const UpdateModel = require('../models/update-model');
 
 const AppView = Backbone.View.extend({
@@ -100,8 +101,9 @@ const AppView = Backbone.View.extend({
     },
 
     setWindowClass: function() {
-        if (window.chrome && window.chrome.webstore) {
-            this.$el.addClass('chrome');
+        const getBrowserCssClass = FeatureDetector.getBrowserCssClass();
+        if (getBrowserCssClass) {
+            this.$el.addClass(getBrowserCssClass);
         }
     },
 
