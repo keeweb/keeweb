@@ -1,4 +1,5 @@
 @mixin common-dropdown {
+  -webkit-app-region: no-drag;
   @include th {
     color: th(text-color);
     background: th(background-color);

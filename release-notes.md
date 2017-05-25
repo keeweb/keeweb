@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.5.3 (TBD)
+`-` fix #638: password generator drag issues  
+
 ##### v1.5.2 (2017-05-25)
 `-` fix #633: template ids issues  
 
