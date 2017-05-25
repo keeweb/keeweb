@@ -99,10 +99,10 @@ const SettingsPluginsView = Backbone.View.extend({
         if (plugin.manifest.desktop && !RuntimeInfo.launcher) {
             return false;
         }
-        if (plugin.manifest.versionMin && SemVer.compareVersions(plugin.manufest.versionMin, RuntimeInfo.version) > 0) {
+        if (plugin.manifest.versionMin && SemVer.compareVersions(plugin.manifest.versionMin, RuntimeInfo.version) > 0) {
             return false;
         }
-        if (plugin.manifest.versionMax && SemVer.compareVersions(plugin.manufest.versionMax, RuntimeInfo.version) > 0) {
+        if (plugin.manifest.versionMax && SemVer.compareVersions(plugin.manifest.versionMax, RuntimeInfo.version) > 0) {
             return false;
         }
         return true;
