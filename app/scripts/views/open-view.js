@@ -502,7 +502,7 @@ const OpenView = Backbone.View.extend({
         this.displayOpenFile();
         this.displayOpenKeyFile();
 
-        this.openFileWithFingerprint(fileInfo)
+        this.openFileWithFingerprint(fileInfo);
     },
 
     showOpenLocalFile: function(path, keyFilePath) {
