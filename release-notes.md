@@ -3,6 +3,7 @@ Release notes
 ##### v1.5.3 (TBD)
 `-` fix #638: password generator drag issues  
 `-` fix #636: broken layout in edge 15  
+`-` fix #641: fixed mac app layout issues  
 
 ##### v1.5.2 (2017-05-25)
 `-` fix #633: template ids issues  

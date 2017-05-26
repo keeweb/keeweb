@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: flex-start;
 
-  &--titlebar-style-hidden-inset {
+  .titlebar-hidden & {
     -webkit-app-region: drag;
   }
 
@@ -37,11 +37,11 @@
       }
     }
     transition: padding-top 150ms;
-    .app--titlebar-style-hidden & {
-      padding-top: 24px;
+    .titlebar-hidden & {
+      padding-top: $titlebar-padding-small;
     }
-    .app--titlebar-style-hidden-inset & {
-      padding-top: 40px;
+    .titlebar-hidden-inset & {
+      padding-top: $titlebar-padding-large;
     }
     .fullscreen .app & {
       padding-top: 0;

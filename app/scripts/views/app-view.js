@@ -105,6 +105,9 @@ const AppView = Backbone.View.extend({
         if (getBrowserCssClass) {
             this.$el.addClass(getBrowserCssClass);
         }
+        if (this.titlebarStyle !== 'default') {
+            this.$el.addClass('titlebar-' + this.titlebarStyle);
+        }
     },
 
     render: function () {
