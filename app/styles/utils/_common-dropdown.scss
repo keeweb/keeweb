@@ -5,5 +5,6 @@
     background: th(background-color);
     border: 1px solid th(light-border-color);
     box-shadow: dropdown-box-shadow();
+    .edge & { border-width: 1px !important; } // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12132854/
   }
 }
