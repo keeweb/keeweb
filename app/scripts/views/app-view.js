@@ -114,12 +114,11 @@ const AppView = Backbone.View.extend({
     fixClicksInEdge: function() {
         // MS Edge doesn't want to handle clicks by default
         // TODO: remove once Edge 14 share drops enough
-        // https://github.com/keeweb/keeweb/issues/636
         // https://github.com/keeweb/keeweb/issues/636#issuecomment-304225634
         // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5782378/
         if (FeatureDetector.needFixClicks) {
             const msEdgeScrewer = $('<input/>').appendTo(this.$el).focus();
-            msEdgeScrewer.remove();
+            setTimeout(() => msEdgeScrewer.remove(), 0);
         }
     },
 
