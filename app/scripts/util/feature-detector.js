@@ -9,6 +9,7 @@ const FeatureDetector = {
     isPopup: !!((window.parent !== window.top) || window.opener),
     isStandalone: !!navigator.standalone,
     isBeta: window.location.href.toLowerCase().indexOf('beta.') > 0,
+    needFixClicks: /Edge\/14/.test(navigator.appVersion),
 
     actionShortcutSymbol: function(formatting) {
         return this.isMac ? '⌘' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl-';
