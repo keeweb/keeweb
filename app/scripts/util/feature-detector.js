@@ -40,7 +40,7 @@ const FeatureDetector = {
         if (!window.crypto) {
             throw 'WebCrypto not available';
         }
-        if (!localStorage.length) {
+        if (!localStorage.length && (!window.process || !window.process.versions || !window.process.versions.electron)) {
             try {
                 localStorage.appSettings = '';
             } catch (e) {
