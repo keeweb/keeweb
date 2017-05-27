@@ -47,6 +47,14 @@ input[type=text], input[type=password], textarea, input:not([type]) {
 
   &::-ms-clear { display: none; }
 
+  &::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }
+
   @include th {
     color: th(text-color);
     background-color: th(background-color);
