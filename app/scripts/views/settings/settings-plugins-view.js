@@ -28,7 +28,8 @@ const SettingsPluginsView = Backbone.View.extend({
         'change select.settings__plugins-plugin-input': 'pluginSettingChange',
         'change input[type=checkbox].settings__plugins-plugin-input': 'pluginSettingChange',
         'input input[type=text].settings__plugins-plugin-input': 'pluginSettingChange',
-        'change .settings__plugins-plugin-updates': 'autoUpdateChange'
+        'change .settings__plugins-plugin-updates': 'autoUpdateChange',
+        'click .settings__plugins-gallery-load-btn': 'loadPluginGalleryClick'
     },
 
     searchStr: null,
@@ -39,7 +40,6 @@ const SettingsPluginsView = Backbone.View.extend({
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
         this.listenTo(Backbone, 'plugin-gallery-load-complete', this.render.bind(this));
-        PluginGallery.loadPlugins();
     },
 
     render() {
@@ -106,6 +106,14 @@ const SettingsPluginsView = Backbone.View.extend({
             return false;
         }
         return true;
+    },
+
+    loadPluginGalleryClick() {
+        if (PluginGallery.loading) {
+            return;
+        }
+        PluginGallery.loadPlugins();
+        this.render();
     },
 
     installClick() {

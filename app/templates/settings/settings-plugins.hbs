@@ -149,6 +149,8 @@
                 </div>
             {{/each}}
             </div>
+        {{else}}
+            <button class="settings__plugins-gallery-load-btn" {{#if galleryLoading}}disabled="disabled"{{/if}}>{{res 'setPlLoadGallery'}}</button>
         {{/if}}
     </div>
     <h2>{{res 'setPlInstallUrlTitle'}}</h2>
