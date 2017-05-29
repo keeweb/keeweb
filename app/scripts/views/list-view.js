@@ -218,7 +218,7 @@ const ListView = Backbone.View.extend({
     },
 
     setSize: function(size) {
-        this.$el.css({ width: null, height: null });
+        this.$el.css({ width: 'auto', height: 'auto' });
         if (size) {
             this.$el.css('flex', '0 0 ' + size + 'px');
         } else {
