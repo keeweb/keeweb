@@ -1,6 +1,6 @@
 const StorageBase = require('./storage-base');
 const UrlUtil = require('../util/url-util');
-const Launcher = require('../comp/launcher');
+const FeatureDetector = require('../util/feature-detector');
 
 const DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
@@ -59,9 +59,7 @@ const StorageDropbox = StorageBase.extend({
     },
 
     _canUseBuiltInKeys: function() {
-        const isSelfHosted = !/^http(s?):\/\/localhost:8085/.test(location.href) &&
-            !/http(s?):\/\/(app|beta)\.keeweb\.info/.test(location.href);
-        return !!Launcher || !isSelfHosted;
+        return !FeatureDetector.isSelfHosted;
     },
 
     _getOAuthConfig: function() {

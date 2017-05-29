@@ -180,6 +180,18 @@ module.exports = function(grunt) {
                 expand: true,
                 nonull: true
             },
+            'desktop-update': {
+                cwd: 'tmp/desktop/app/',
+                src: '**',
+                dest: 'tmp/desktop/update/',
+                expand: true,
+                nonull: true
+            },
+            'desktop-update-helper': {
+                src: ['helper/darwin/KeeWebHelper', 'helper/win32/KeeWebHelper.exe'],
+                dest: 'tmp/desktop/update/',
+                nonull: true
+            },
             'desktop-windows-helper-ia32': {
                 src: 'helper/win32/KeeWebHelper.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/resources/app/',
@@ -387,12 +399,7 @@ module.exports = function(grunt) {
             'desktop-update': {
                 options: { archive: 'dist/desktop/UpdateDesktop.zip', comment: zipCommentPlaceholder },
                 files: [
-                    { cwd: 'tmp/desktop/app', src: '**', expand: true, nonull: true },
-                    { src: 'helper', nonull: true },
-                    { src: 'helper/darwin', nonull: true },
-                    { src: 'helper/darwin/KeeWebHelper', nonull: true },
-                    { src: 'helper/win32', nonull: true },
-                    { src: 'helper/win32/KeeWebHelper.exe', nonull: true }
+                    { cwd: 'tmp/desktop/update', src: '**', expand: true, nonull: true }
                 ]
             },
             'win32-x64': {
@@ -526,6 +533,14 @@ module.exports = function(grunt) {
                 }
             }
         },
+        'sign-desktop-files': {
+            'desktop-update': {
+                options: {
+                    path: 'tmp/desktop/update',
+                    privateKey: 'keys/private-key.pem'
+                }
+            }
+        },
         'validate-desktop-update': {
             desktop: {
                 options: {
@@ -536,7 +551,7 @@ module.exports = function(grunt) {
                         'helper/darwin/KeeWebHelper',
                         'helper/win32/KeeWebHelper.exe'
                     ],
-                    expectedCount: 15,
+                    expectedCount: 16,
                     publicKey: 'app/resources/public-key.pem'
                 }
             }
@@ -659,6 +674,9 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('build-desktop-update', [
+        'copy:desktop-update',
+        'copy:desktop-update-helper',
+        'sign-desktop-files:desktop-update',
         'compress:desktop-update',
         'sign-archive:desktop-update',
         'validate-desktop-update'

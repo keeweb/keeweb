@@ -11,6 +11,13 @@
   opacity: 1;
   padding: $base-padding;
 
+  .titlebar-hidden & {
+    padding-top: $titlebar-padding-small;
+  }
+  .titlebar-hidden-inset & {
+    padding-top: $titlebar-padding-large;
+  }
+
   &__header {
     display: flex;
     &-text {

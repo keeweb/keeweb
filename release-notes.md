@@ -1,5 +1,11 @@
 Release notes
 -------------
+##### v1.5.3 (2017-05-29)
+`-` fix #638: password generator drag issues  
+`-` fix #636: broken layout in edge 15  
+`-` fix #641: fixed mac app layout issues  
+`-` plugin gallery load button  
+
 ##### v1.5.2 (2017-05-25)
 `-` fix #633: template ids issues  
 
