@@ -200,6 +200,9 @@
       display: flex;
       flex-wrap: wrap;
     }
+    &-gallery-load-btn {
+      margin-top: $base-padding-h;
+    }
     &-gallery-plugin {
       position: relative;
       width: calc(50% - 40px);

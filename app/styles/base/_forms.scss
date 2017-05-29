@@ -47,6 +47,14 @@ input[type=text], input[type=password], textarea, input:not([type]) {
 
   &::-ms-clear { display: none; }
 
+  &::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }
+
   @include th {
     color: th(text-color);
     background-color: th(background-color);
@@ -239,7 +247,8 @@ input[type=range] {
     display: none;
   }
   &::-ms-fill-lower, &::-ms-fill-upper, &:focus::-ms-fill-lower, &:focus::-ms-fill-upper {
-    @include th { background: th(text-color); }
+    background: lightgray; // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12132854/
+    //@include th { background: th(text-color); }
   }
   &::-ms-thumb {
     border: none;
@@ -247,7 +256,8 @@ input[type=range] {
     width: $thumb-size;
     border-radius: $thumb-size;
     cursor: pointer;
-    @include th { background: th(text-color); }
+    background: lightgray; // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12132854/
+    //@include th { background: th(text-color); }
   }
 }
 

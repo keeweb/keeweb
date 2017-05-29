@@ -20,6 +20,7 @@ const IdleTracker = require('../comp/idle-tracker');
 const Launcher = require('../comp/launcher');
 const SettingsManager = require('../comp/settings-manager');
 const Locale = require('../util/locale');
+const FeatureDetector = require('../util/feature-detector');
 const UpdateModel = require('../models/update-model');
 
 const AppView = Backbone.View.extend({
@@ -97,11 +98,27 @@ const AppView = Backbone.View.extend({
         setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
 
         this.setWindowClass();
+        this.fixClicksInEdge();
     },
 
     setWindowClass: function() {
-        if (window.chrome && window.chrome.webstore) {
-            this.$el.addClass('chrome');
+        const getBrowserCssClass = FeatureDetector.getBrowserCssClass();
+        if (getBrowserCssClass) {
+            this.$el.addClass(getBrowserCssClass);
+        }
+        if (this.titlebarStyle !== 'default') {
+            this.$el.addClass('titlebar-' + this.titlebarStyle);
+        }
+    },
+
+    fixClicksInEdge: function() {
+        // MS Edge doesn't want to handle clicks by default
+        // TODO: remove once Edge 14 share drops enough
+        // https://github.com/keeweb/keeweb/issues/636#issuecomment-304225634
+        // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5782378/
+        if (FeatureDetector.needFixClicks) {
+            const msEdgeScrewer = $('<input/>').appendTo(this.$el).focus();
+            setTimeout(() => msEdgeScrewer.remove(), 0);
         }
     },
 
@@ -272,6 +289,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.showOpenFile();
         }
+        this.fixClicksInEdge();
     },
 
     showFileSettings: function(e) {

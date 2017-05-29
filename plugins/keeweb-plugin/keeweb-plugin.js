@@ -17,6 +17,7 @@ const pkg = require('./package.json');
 const op = args.shift();
 
 const bumpVersion = args.some(arg => arg === '--bump-version');
+const privateKeyPath = args.filter(arg => arg.startsWith('--private-key=')).map(arg => arg.replace('--private-key=', ''))[0];
 
 showBanner();
 
@@ -41,6 +42,12 @@ function showHelp() {
     console.log('    sign plugin and exit');
     console.log(' - node keeweb-plugin watch <plugin_name>');
     console.log('    watch plugin directory and sign on changes');
+    console.log('');
+    console.log('Optional arguments:');
+    console.log('  --bump-version');
+    console.log('    bump version in package.json');
+    console.log('  --private-key=/path/to/your/key.pem');
+    console.log('    path to your private key');
 }
 
 function signPlugin(packageName) {
@@ -48,7 +55,7 @@ function signPlugin(packageName) {
         packageName = getPackageArg();
     }
     const manifest = JSON.parse(fs.readFileSync(path.join(packageName, 'manifest.json')));
-    const privateKey = fs.readFileSync(path.join(packageName, 'private_key.pem'), 'binary');
+    const privateKey = fs.readFileSync(privateKeyPath || path.join(packageName, 'private_key.pem'), 'binary');
     let changed = false;
     for (const res of Object.keys(manifest.resources)) {
         console.log(`Signing ${res}...`);

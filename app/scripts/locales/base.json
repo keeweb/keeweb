@@ -477,6 +477,7 @@
   "setPlTranslate": "Or you can {}",
   "setPlTranslateLink": "translate the app to your language",
   "setPlAutoUpdate": "Update automatically",
+  "setPlLoadGallery": "Load plugin gallery",
 
   "setAboutTitle": "About",
   "setAboutBuilt": "This app is built with these awesome tools",
