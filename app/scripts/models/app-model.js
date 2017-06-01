@@ -476,6 +476,7 @@ const AppModel = Backbone.Model.extend({
 
     openFileWithData: function(params, callback, fileInfo, data, updateCacheOnSuccess) {
         const logger = new Logger('open', params.name);
+        let needLoadKeyFile = false;
         if (!params.keyFileData && fileInfo && fileInfo.get('keyFileName')) {
             params.keyFileName = fileInfo.get('keyFileName');
             if (this.settings.get('rememberKeyFiles') === 'data') {
@@ -483,14 +484,7 @@ const AppModel = Backbone.Model.extend({
             } else if (this.settings.get('rememberKeyFiles') === 'path' && fileInfo.get('keyFilePath')) {
                 params.keyFilePath = fileInfo.get('keyFilePath');
                 if (Storage.file.enabled) {
-                    Storage.file.load(params.keyFilePath, {}, (err, data, stat) => {
-                        if (err) {
-                            logger.info('Storage load error', err);
-                            callback(err);
-                        } else {
-                            params.keyFileData = data;
-                        }
-                    });
+                    needLoadKeyFile = true;
                 }
             }
         }
@@ -504,7 +498,7 @@ const AppModel = Backbone.Model.extend({
             backup: fileInfo && fileInfo.get('backup') || null,
             fingerprint: fileInfo && fileInfo.get('fingerprint') || null
         });
-        file.open(params.password, data, params.keyFileData, err => {
+        const openComplete = err => {
             if (err) {
                 return callback(err);
             }
@@ -532,7 +526,23 @@ const AppModel = Backbone.Model.extend({
             this.addFile(file);
             callback(null, file);
             this.fileOpened(file, data, params);
-        });
+        };
+        const open = () => {
+            file.open(params.password, data, params.keyFileData, openComplete);
+        };
+        if (needLoadKeyFile) {
+            Storage.file.load(params.keyFilePath, {}, (err, data) => {
+                if (err) {
+                    logger.info('Storage load error', err);
+                    callback(err);
+                } else {
+                    params.keyFileData = data;
+                    open();
+                }
+            });
+        } else {
+            open();
+        }
     },
 
     importFileWithXml: function(params, callback) {
