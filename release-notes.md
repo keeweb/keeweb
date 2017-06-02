@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.6.0 (WIP)
+`+` auto-lock when Windows is locked  
+
 ##### v1.5.3 (2017-05-29)
 `-` fix #638: password generator drag issues  
 `-` fix #636: broken layout in edge 15  

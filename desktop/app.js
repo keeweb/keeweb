@@ -153,6 +153,9 @@ function createMainWindow() {
     mainWindow.on('enter-full-screen', () => {
         emitBackboneEvent('enter-full-screen');
     });
+    mainWindow.on('session-end', () => {
+        emitBackboneEvent('os-lock');
+    });
     restoreMainWindowPosition();
 }
 
