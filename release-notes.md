@@ -1,7 +1,7 @@
 Release notes
 -------------
 ##### v1.6.0 (WIP)
-`+` auto-lock when Windows is locked  
+`+` auto-lock on computer lock  
 
 ##### v1.5.3 (2017-05-29)
 `-` fix #638: password generator drag issues  

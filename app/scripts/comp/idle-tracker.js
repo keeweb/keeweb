@@ -13,15 +13,11 @@ const IdleTracker = {
             Backbone.trigger('user-idle');
         }
     },
-    osLock: function() {
-        Backbone.trigger('user-idle');
-    },
     regUserAction: function() {
         this.actionTime = Date.now();
     }
 };
 
 Backbone.on('power-monitor-resume', IdleTracker.checkIdle, IdleTracker);
-Backbone.on('os-lock', IdleTracker.osLock, IdleTracker);
 
 module.exports = IdleTracker;
