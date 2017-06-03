@@ -615,7 +615,7 @@ const EntryModel = Backbone.Model.extend({
 
     cloneEntry: function(nameSuffix) {
         const newEntry = EntryModel.newEntry(this.group, this.file);
-        const uuid = newEntry.uuid;
+        const uuid = newEntry.entry.uuid;
         newEntry.entry.copyFrom(this.entry);
         newEntry.entry.uuid = uuid;
         newEntry.entry.times.update();
