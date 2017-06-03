@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.6.0 (WIP)
 `+` auto-lock on computer lock  
+`-` fixed auto-closing tab when starting from link  
 
 ##### v1.5.4 (2017-06-03)
 `-` fix #649: loading keyfiles with path  
