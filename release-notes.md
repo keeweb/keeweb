@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.5.4 (2017-06-03)
+`-` fix #652: create a copy bug  
+
 ##### v1.5.3 (2017-05-29)
 `-` fix #638: password generator drag issues  
 `-` fix #636: broken layout in edge 15  
