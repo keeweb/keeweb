@@ -1,6 +1,9 @@
 Release notes
 -------------
 ##### v1.5.4 (2017-06-03)
+`-` fix #649: loading keyfiles with path  
+`-` fix #645: layout issues while switching table view  
+`-` fix #651: window drag style  
 `-` fix #652: create a copy bug  
 
 ##### v1.5.3 (2017-05-29)
