@@ -23,6 +23,7 @@ if (!htmlPath) {
 }
 
 app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
+setEnv();
 
 app.on('window-all-closed', () => {
     if (restartPending) {
@@ -354,6 +355,13 @@ function subscribePowerEvents() {
     electron.powerMonitor.on('resume', () => {
         emitBackboneEvent('power-monitor-resume');
     });
+}
+
+function setEnv() {
+    if (process.platform === 'linux' && ['Pantheon', 'Unity:Unity7'].indexOf(process.env.XDG_CURRENT_DESKTOP) !== -1) {
+        // https://github.com/electron/electron/issues/9046
+        process.env.XDG_CURRENT_DESKTOP = 'Unity';
+    }
 }
 
 function deleteOldTempFiles() {
