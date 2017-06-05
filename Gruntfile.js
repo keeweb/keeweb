@@ -292,7 +292,7 @@ module.exports = function(grunt) {
             },
             'desktop-public-key': {
                 options: { replacements: [{ pattern: '\'PUBLIC_KEY_CONTENT\'', replacement:
-                    '`' + fs.readFileSync('keys/public-key.pem', {encoding: 'utf8'}).trim() + '`' }] },
+                    '`' + fs.readFileSync('app/resources/public-key.pem', {encoding: 'utf8'}).trim() + '`' }] },
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
             },
             'cordova-html': {
