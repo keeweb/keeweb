@@ -3,6 +3,8 @@ const kdbxweb = require('kdbxweb');
 const Links = require('../const/links');
 const SignatureVerifier = require('../util/signature-verifier');
 const Logger = require('../util/logger');
+const Launcher = require('../comp/launcher');
+const SettingsStore = require('../comp/settings-store');
 
 const PluginGallery = {
     logger: new Logger('plugin-gallery'),
@@ -39,6 +41,9 @@ const PluginGallery = {
                         return;
                     }
                     this.logger.debug(`Loaded ${gallery.plugins.length} plugins`, this.logger.ts(ts));
+                    if (Launcher) {
+                        this.saveGallery(data);
+                    }
                     resolve(gallery);
                 }).catch(e => {
                     this.logger.error('Error verifying plugins signature', e);
@@ -58,6 +63,10 @@ const PluginGallery = {
             Backbone.trigger('plugin-gallery-load-complete');
             return gallery;
         });
+    },
+
+    saveGallery(data) {
+        SettingsStore.save('plugin-gallery', data);
     }
 };
 
