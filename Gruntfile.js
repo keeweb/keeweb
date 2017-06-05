@@ -208,6 +208,14 @@ module.exports = function(grunt) {
                 nonull: true,
                 options: { mode: '0755' }
             },
+            'desktop-darwin-installer': {
+                cwd: 'package/osx/KeeWeb Installer.app',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Helpers/KeeWeb Installer.app',
+                src: '**',
+                expand: true,
+                nonull: true,
+                options: { mode: true }
+            },
             'desktop-win32-dist-x64': {
                 src: 'tmp/desktop/KeeWeb.win.x64.exe',
                 dest: `dist/desktop/KeeWeb-${pkg.version}.win.x64.exe`,
@@ -687,6 +695,7 @@ module.exports = function(grunt) {
         'sign-exe:win32-build-x64',
         'sign-exe:win32-build-ia32',
         'copy:desktop-darwin-helper-x64',
+        'copy:desktop-darwin-installer',
         'copy:desktop-windows-helper-ia32',
         'copy:desktop-windows-helper-x64',
         'codesign:app'

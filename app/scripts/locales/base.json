@@ -54,6 +54,7 @@
   "alertSignIn": "Sign In",
   "alertCopy": "Copy",
   "alertClose": "Close",
+  "alertDoNotAsk": "Don't ask me anymore",
 
   "appBeta": "WARNING: beta version, only for preview",
 
@@ -290,6 +291,9 @@
   "appNotSupportedError": "Your browser is not supported.",
   "appTabWarn": "Too many tabs",
   "appTabWarnBody": "KeeWeb cannot be used in two browser tabs simultaneously, please close this tab.",
+  "appRightsAlert": "Locking app folder",
+  "appRightsAlertBody1": "Your {} folder is writable. We're asking you for administrator permissions, to make it writable only for administrators.",
+  "appRightsAlertBody2": "Don't want to give administrator permission? You can do it yourself in Terminal",
 
   "setGenTitle": "General Settings",
   "setGenUpdate": "Update",
