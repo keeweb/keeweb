@@ -176,8 +176,8 @@ function restoreMainWindow() {
 }
 
 function closeMainWindow() {
-    destroyAppIcon();
     emitBackboneEvent('launcher-exit-request');
+    setTimeout(destroyAppIcon, 0);
 }
 
 function destroyAppIcon() {
