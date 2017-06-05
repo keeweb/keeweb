@@ -166,12 +166,12 @@ function createMainWindow() {
 }
 
 function restoreMainWindow() {
-    destroyAppIcon();
     if (mainWindow.isMinimized()) {
         mainWindow.restore();
     }
     mainWindow.setSkipTaskbar(false);
     mainWindow.focus();
+    setTimeout(destroyAppIcon, 0);
 }
 
 function closeMainWindow() {
