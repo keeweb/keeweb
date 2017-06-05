@@ -33,7 +33,7 @@ const AppRightsChecker = {
     },
 
     showAlert() {
-        const command = 'sudo shown -R root ' + this.AppPath;
+        const command = 'sudo chown -R root ' + this.AppPath;
         this.alert = Alerts.alert({
             icon: 'lock',
             header: Locale.appRightsAlert,
