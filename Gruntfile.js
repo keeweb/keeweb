@@ -290,6 +290,11 @@ module.exports = function(grunt) {
                 options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
                 files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
             },
+            'desktop-public-key': {
+                options: { replacements: [{ pattern: '\'PUBLIC_KEY_CONTENT\'', replacement:
+                    '`' + fs.readFileSync('keys/public-key.pem', {encoding: 'utf8'}).trim() + '`' }] },
+                files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
+            },
             'cordova-html': {
                 options: { replacements: [{ pattern: '<script', replacement: '<script src="cordova.js"></script><script' }] },
                 files: { 'tmp/cordova/app/index.html': 'dist/index.html' }
@@ -678,6 +683,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-app-content', [
         'copy:desktop-app-content',
+        'string-replace:desktop-public-key',
         'string-replace:desktop-html'
     ]);
 
