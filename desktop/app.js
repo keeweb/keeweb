@@ -256,7 +256,7 @@ function mainWindowBlur() {
 function emitBackboneEvent(e, arg) {
     if (mainWindow && mainWindow.webContents) {
         arg = JSON.stringify(arg);
-        mainWindow.webContents.executeJavaScript(`Backbone.trigger('${e}', ${arg});`);
+        mainWindow.webContents.executeJavaScript(`Backbone.trigger('${e}', ${arg}); void 0;`);
     }
 }
 
