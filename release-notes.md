@@ -4,6 +4,7 @@ Release notes
 `+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
 `-` fixed auto-closing tab when starting from link  
+`-` fixed tray icon click crash  
 
 ##### v1.5.4 (2017-06-03)
 `-` fix #649: loading keyfiles with path  
