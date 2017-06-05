@@ -41,7 +41,12 @@ const Launcher = {
         }, callback);
     },
     getUserDataPath: function(fileName) {
-        return this.joinPath(this.remoteApp().getPath('userData'), fileName || '');
+        if (!this.userDataPath) {
+            const realUserDataPath = this.remoteApp().getPath('userData');
+            const suffixReplacementRegex = /[\\/]temp[\\/]\d+\.\d+[\\/]?$/;
+            this.userDataPath = realUserDataPath.replace(suffixReplacementRegex, '');
+        }
+        return this.joinPath(this.userDataPath, fileName || '');
     },
     getTempPath: function(fileName) {
         return this.joinPath(this.remoteApp().getPath('temp'), fileName || '');

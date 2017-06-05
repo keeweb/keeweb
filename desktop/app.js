@@ -11,13 +11,18 @@ let appReady = false;
 let restartPending = false;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
-const windowPositionFileName = path.join(app.getPath('userData'), 'window-position.json');
-const appSettingsFileName = path.join(app.getPath('userData'), 'app-settings.json');
+const userDataDir = app.getPath('userData');
+const windowPositionFileName = path.join(userDataDir, 'window-position.json');
+const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
+const tempUserDataPath = path.join(userDataDir, 'temp');
+const tempUserDataPathRand = Date.now().toString() + Math.random().toString();
 
 let htmlPath = process.argv.filter(arg => arg.startsWith('--htmlpath=')).map(arg => arg.replace('--htmlpath=', ''))[0];
 if (!htmlPath) {
     htmlPath = 'file://' + path.join(__dirname, 'index.html');
 }
+
+app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
 
 app.on('window-all-closed', () => {
     if (restartPending) {
@@ -29,7 +34,7 @@ app.on('window-all-closed', () => {
         electron.globalShortcut.unregisterAll();
         electron.powerMonitor.removeAllListeners('suspend');
         electron.powerMonitor.removeAllListeners('resume');
-        const userDataAppFile = path.join(app.getPath('userData'), 'app.js');
+        const userDataAppFile = path.join(userDataDir, 'app.js');
         delete require.cache[require.resolve('./app.js')];
         require(userDataAppFile);
         app.emit('ready');
@@ -46,6 +51,7 @@ app.on('ready', () => {
         createMainWindow();
         setGlobalShortcuts();
         subscribePowerEvents();
+        deleteOldTempFiles();
     }
 });
 app.on('open-file', (e, path) => {
@@ -348,4 +354,28 @@ function subscribePowerEvents() {
     electron.powerMonitor.on('resume', () => {
         emitBackboneEvent('power-monitor-resume');
     });
+}
+
+function deleteOldTempFiles() {
+    setTimeout(() => {
+        for (const dir of fs.readdirSync(tempUserDataPath)) {
+            if (dir !== tempUserDataPathRand) {
+                try {
+                    deleteRecursive(path.join(tempUserDataPath, dir));
+                } catch (e) {}
+            }
+        }
+    }, 1000);
+}
+
+function deleteRecursive(dir) {
+    for (const file of fs.readdirSync(dir)) {
+        const filePath = path.join(dir, file);
+        if (fs.lstatSync(filePath).isDirectory()) {
+            deleteRecursive(filePath);
+        } else {
+            fs.unlinkSync(filePath);
+        }
+    }
+    fs.rmdirSync(dir);
 }
