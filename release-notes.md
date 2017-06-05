@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.6.0 (WIP)
+`+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
 `-` fixed auto-closing tab when starting from link  
 
