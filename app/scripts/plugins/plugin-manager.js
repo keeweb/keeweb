@@ -1,8 +1,10 @@
 const Backbone = require('backbone');
 const Plugin = require('./plugin');
 const PluginCollection = require('./plugin-collection');
+const PluginGallery = require('./plugin-gallery');
 const SettingsStore = require('../comp/settings-store');
 const RuntimeInfo = require('../comp/runtime-info');
+const SignatureVerifier = require('../util/signature-verifier');
 const Logger = require('../util/logger');
 
 const PluginManager = Backbone.Model.extend({
@@ -29,11 +31,13 @@ const PluginManager = Backbone.Model.extend({
             if (!state || !state.plugins || !state.plugins.length) {
                 return;
             }
-            const promises = state.plugins.map(plugin => this.loadPlugin(plugin));
-            return Promise.all(promises).then(loadedPlugins => {
-                const plugins = this.get('plugins');
-                plugins.add(loadedPlugins.filter(plugin => plugin));
-                this.logger.info(`Loaded ${plugins.length} plugins`, this.logger.ts(ts));
+            return PluginGallery.getCachedGallery().then(gallery => {
+                const promises = state.plugins.map(plugin => this.loadPlugin(plugin, gallery));
+                return Promise.all(promises).then(loadedPlugins => {
+                    const plugins = this.get('plugins');
+                    plugins.add(loadedPlugins.filter(plugin => plugin));
+                    this.logger.info(`Loaded ${plugins.length} plugins`, this.logger.ts(ts));
+                });
             });
         });
     },
@@ -159,13 +163,19 @@ const PluginManager = Backbone.Model.extend({
         return updateNext();
     },
 
-    loadPlugin(desc) {
+    loadPlugin(desc, gallery) {
         const plugin = new Plugin({
             manifest: desc.manifest,
             url: desc.url,
             autoUpdate: desc.autoUpdate
         });
-        return plugin.install(desc.enabled, true)
+        let enabled = desc.enabled;
+        if (enabled) {
+            const galleryPlugin = gallery ? gallery.plugins.find(pl => pl.manifest.name === desc.manifest.name) : null;
+            const expectedPublicKey = galleryPlugin ? galleryPlugin.manifest.publicKey : SignatureVerifier.getPublicKey();
+            enabled = desc.manifest.publicKey === expectedPublicKey;
+        }
+        return plugin.install(enabled, true)
             .then(() => plugin)
             .catch(() => plugin);
     },

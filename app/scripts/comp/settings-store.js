@@ -46,9 +46,7 @@ const SettingsStore = {
         return new Promise(resolve => {
             if (Launcher) {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));
-                if (typeof data !== 'string') {
-                    data = JSON.stringify(data);
-                }
+                data = JSON.stringify(data);
                 Launcher.writeFile(settingsFile, data, err => {
                     if (err) {
                         logger.error(`Error saving ${key}`, err);
