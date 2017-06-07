@@ -3,6 +3,7 @@ Release notes
 ##### v1.6.0 (WIP)
 `+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
+`*` prevent master password autocomplete  
 `-` fixed auto-closing tab when starting from link  
 `-` fixed tray icon click crash  
 
