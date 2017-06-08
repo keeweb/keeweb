@@ -111,7 +111,7 @@ const PasswordGenerator = {
     },
 
     present: function(length) {
-        return new Array(length + 1).join('•');
+        return '• • • • •';
     }
 };
 
