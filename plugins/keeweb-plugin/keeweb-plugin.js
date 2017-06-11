@@ -18,6 +18,7 @@ const op = args.shift();
 
 const bumpVersion = args.some(arg => arg === '--bump-version');
 const privateKeyPath = args.filter(arg => arg.startsWith('--private-key=')).map(arg => arg.replace('--private-key=', ''))[0];
+const signerModule = args.filter(arg => arg.startsWith('--signer-module=')).map(arg => arg.replace('--signer-module=', ''))[0];
 
 showBanner();
 
@@ -55,8 +56,7 @@ function signPlugin(packageName) {
         packageName = getPackageArg();
     }
     const manifest = JSON.parse(fs.readFileSync(path.join(packageName, 'manifest.json')));
-    const privateKey = fs.readFileSync(privateKeyPath || path.join(packageName, 'private_key.pem'), 'binary');
-    let changed = false;
+    let signPromise = Promise.resolve(false);
     for (const res of Object.keys(manifest.resources)) {
         console.log(`Signing ${res}...`);
         let fileName;
@@ -71,24 +71,42 @@ function signPlugin(packageName) {
                 fileName = manifest.locale.name + '.json';
                 break;
         }
-        fileName = path.join(packageName, fileName);
-        const sign = crypto.createSign('RSA-SHA256');
-        sign.write(fs.readFileSync(fileName));
-        sign.end();
-        const signature = sign.sign(privateKey).toString('base64');
-        if (manifest.resources[res] !== signature) {
-            manifest.resources[res] = signature;
-            changed = true;
-        }
+        signPromise = signPromise.then(changed => {
+            return signResource(packageName, fileName).then(signature => {
+                if (manifest.resources[res] !== signature) {
+                    manifest.resources[res] = signature;
+                    changed = true;
+                }
+                return changed;
+            });
+        });
     }
-    if (changed) {
-        if (bumpVersion) {
-            manifest.version = manifest.version.replace(/\d+$/, v => +v + 1);
+    signPromise.then(changed => {
+        if (changed) {
+            if (bumpVersion) {
+                manifest.version = manifest.version.replace(/\d+$/, v => +v + 1);
+            }
+            fs.writeFileSync(path.join(packageName, 'manifest.json'), JSON.stringify(manifest, null, 2));
+            console.log('Done, package manifest updated');
+        } else {
+            console.log('No changes');
         }
-        fs.writeFileSync(path.join(packageName, 'manifest.json'), JSON.stringify(manifest, null, 2));
-        console.log('Done, package manifest updated');
+    });
+}
+
+function signResource(packageName, fileName) {
+    fileName = path.join(packageName, fileName);
+    const data = fs.readFileSync(fileName);
+    if (signerModule) {
+        return require(signerModule)(data);
     } else {
-        console.log('No changes');
+        const privateKey = fs.readFileSync(privateKeyPath || path.join(packageName, 'private_key.pem'), 'binary');
+        return Promise.resolve().then(() => {
+            const sign = crypto.createSign('RSA-SHA256');
+            sign.write(data);
+            sign.end();
+            return sign.sign(privateKey).toString('base64');
+        });
     }
 }
 
