@@ -4,6 +4,7 @@ Release notes
 `+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
 `*` prevent master password autocomplete  
+`*` build with node.js 8  
 `-` fixed auto-closing tab when starting from link  
 `-` fixed tray icon click crash  
 

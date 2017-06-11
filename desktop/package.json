@@ -4,7 +4,10 @@
   "description": "Free cross-platform password manager compatible with KeePass",
   "main": "main.js",
   "homepage": "https://keeweb.info",
-  "repository": { "type": "git", "url": "https://github.com/keeweb/keeweb" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/keeweb/keeweb"
+  },
   "author": {
     "name": "Antelle",
     "email": "antelle.net@gmail.com",

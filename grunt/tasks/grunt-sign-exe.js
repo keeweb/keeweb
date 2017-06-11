@@ -7,12 +7,15 @@ module.exports = function (grunt) {
         const keytar = require('keytar');
         const opt = this.options();
         const done = this.async();
-        const password = keytar.getPassword(opt.keytarPasswordService, opt.keytarPasswordAccount);
-        if (!password) {
-            return grunt.warn('Code sign password not found');
-        }
-        const promises = Object.keys(opt.files).map(file => signFile(file, opt.files[file], opt, password));
-        Promise.all(promises).then(done);
+        keytar.getPassword(opt.keytarPasswordService, opt.keytarPasswordAccount).then(password => {
+            if (!password) {
+                return grunt.warn('Code sign password not found');
+            }
+            const promises = Object.keys(opt.files).map(file => signFile(file, opt.files[file], opt, password));
+            Promise.all(promises).then(done);
+        }).catch(e => {
+            grunt.warn('Code sign error: ' + e);
+        });
     });
 
     function signFile(file, name, opt, password) {
