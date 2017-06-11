@@ -600,10 +600,13 @@ const OpenView = Backbone.View.extend({
             icon.toggleClass('flip3d', false);
             this.busy = false;
             if (err || !files) {
-                Alerts.error({
-                    header: Locale.openError,
-                    body: Locale.openListErrorBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
-                });
+                err = err ? err.toString() : '';
+                if (err.lastIndexOf('OAuth', 0) !== 0) {
+                    Alerts.error({
+                        header: Locale.openError,
+                        body: Locale.openListErrorBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                    });
+                }
                 return;
             }
 

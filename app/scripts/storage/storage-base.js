@@ -145,15 +145,15 @@ _.extend(StorageBase.prototype, {
             .replace('{cid}', encodeURIComponent(opts.clientId))
             .replace('{scope}', encodeURIComponent(opts.scope))
             .replace('{url}', encodeURIComponent(this._getOauthRedirectUrl()));
-        this.logger.debug('OAuth popup opened');
+        this.logger.debug('OAuth: popup opened');
         if (!this._openPopup(url, 'OAuth', opts.width, opts.height)) {
-            callback('cannot open popup');
+            callback('OAuth: cannot open popup');
         }
         const popupClosed = () => {
             Backbone.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
             this.logger.error('OAuth error', 'popup closed');
-            callback('popup closed');
+            callback('OAuth: popup closed');
         };
         const windowMessage = e => {
             if (!e.data) {
@@ -171,7 +171,7 @@ _.extend(StorageBase.prototype, {
         const token = this._oauthMsgToToken(message);
         if (token.error) {
             this.logger.error('OAuth error', token.error, token.errorDescription);
-            callback(token.error);
+            callback('OAuth: ' + token.error);
         } else {
             this._oauthToken = token;
             this.runtimeData.set(this.name + 'OAuthToken', token);
