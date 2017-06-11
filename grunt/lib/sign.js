@@ -2,7 +2,7 @@ const fs = require('fs');
 const signer = require('pkcs15-smartcard-sign');
 const keytar = require('keytar');
 
-const verifyKey = fs.readFileSync('keys/public-key.pem');
+const verifyKey = fs.readFileSync('app/resources/public-key.pem');
 const key = '02';
 
 function getPin() {
