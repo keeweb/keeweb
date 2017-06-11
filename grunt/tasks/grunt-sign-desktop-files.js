@@ -1,42 +1,42 @@
 module.exports = function (grunt) {
-    grunt.registerMultiTask('sign-desktop-files', 'Signs desktop files', function () {
+    grunt.registerMultiTask('sign-desktop-files', 'Signs desktop files', async function () {
+        const done = this.async();
         const fs = require('fs');
         const path = require('path');
-        const crypto = require('crypto');
+        const sign = require('../lib/sign');
         const appPath = this.options().path;
-        const privateKey = grunt.file.read(this.options().privateKey, { encoding: null });
 
         const signatures = {};
         const signedFiles = [];
-        walk(appPath);
+        await walk(appPath);
 
         const data = JSON.stringify(signatures);
-        signatures.self = getSignature(Buffer.from(data));
+        signatures.self = await getSignature(Buffer.from(data));
         grunt.file.write(path.join(appPath, 'signatures.json'), JSON.stringify(signatures));
 
-        grunt.log.writeln(`Signed ${signedFiles.length} files: ${signedFiles.join(', ')}`);
+        grunt.log.writeln(`\nSigned ${signedFiles.length} files: ${signedFiles.join(', ')}`);
+        done();
 
-        function walk(dir) {
+        async function walk(dir) {
             const list = fs.readdirSync(dir);
-            list.forEach(file => {
-                file = dir + '/' + file;
+            for (const fileName of list) {
+                const file = dir + '/' + fileName;
                 const stat = fs.statSync(file);
                 if (stat && stat.isDirectory()) {
-                    walk(file);
+                    await walk(file);
                 } else {
                     const relFile = file.substr(appPath.length + 1);
                     const fileData = grunt.file.read(file, { encoding: null });
-                    signatures[relFile] = getSignature(fileData);
+                    signatures[relFile] = await getSignature(fileData);
                     signedFiles.push(relFile);
                 }
-            });
+            }
         }
 
-        function getSignature(data) {
-            const sign = crypto.createSign('RSA-SHA256');
-            sign.write(data);
-            sign.end();
-            return sign.sign(privateKey).toString('base64');
+        async function getSignature(data) {
+            const signature = await sign(grunt, data);
+            grunt.log.write('.');
+            return signature.toString('base64');
         }
     });
 };

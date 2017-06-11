@@ -1,5 +1,6 @@
 Release notes
 -------------
+
 ##### v1.5.4 (2017-06-03)
 `-` fix #649: loading keyfiles with path  
 `-` fix #645: layout issues while switching table view  
