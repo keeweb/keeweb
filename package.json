@@ -53,6 +53,7 @@
     "stats-webpack-plugin": "0.4.3",
     "string-replace-webpack-plugin": "0.0.5",
     "strip-sourcemap-loader": "0.0.1",
+    "sumchecker": "^2.0.2",
     "time-grunt": "1.4.0",
     "uglify-loader": "1.4.0",
     "webpack": "^2.2.0",
