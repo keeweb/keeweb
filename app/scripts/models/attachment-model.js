@@ -21,7 +21,7 @@ const AttachmentModel = Backbone.Model.extend({
 
     _getIcon: function(ext) {
         switch (ext) {
-            case 'txt': case 'log': case 'rtf':
+            case 'txt': case 'log': case 'rtf': case 'pem':
                 return 'file-text-o';
             case 'html': case 'htm': case 'js': case 'css': case 'xml': case 'config': case 'json': case 'yaml':
             case 'cpp': case 'c': case 'h': case 'cc': case 'hpp': case 'mm': case 'cs': case 'php': case 'sh':
@@ -53,7 +53,7 @@ const AttachmentModel = Backbone.Model.extend({
             case 'txt': case 'log':
             case 'html': case 'htm': case 'js': case 'css': case 'xml': case 'config': case 'json': case 'yaml':
             case 'cpp': case 'c': case 'h': case 'cc': case 'hpp': case 'mm': case 'cs': case 'php': case 'sh':
-            case 'py': case 'java': case 'rb': case 'cfg': case 'properties': case 'yml': case 'asm':
+            case 'py': case 'java': case 'rb': case 'cfg': case 'properties': case 'yml': case 'asm': case 'pem':
                 return 'text/plain';
             case 'pdf':
                 return 'application/pdf';
