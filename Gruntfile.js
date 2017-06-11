@@ -579,7 +579,7 @@ module.exports = function(grunt) {
             options: {
                 spc: 'keys/code-sign-win32.spc',
                 pvk: 'keys/code-sign-win32.pvk',
-                algo: 'sha1',
+                algo: 'sha256',
                 url: pkg.homepage,
                 keytarPasswordService: 'code-sign-win32-keeweb',
                 keytarPasswordAccount: 'code-sign-win32-keeweb'
