@@ -600,6 +600,10 @@ const OpenView = Backbone.View.extend({
             icon.toggleClass('flip3d', false);
             this.busy = false;
             if (err || !files) {
+                Alerts.error({
+                    header: Locale.openError,
+                    body: Locale.openListErrorBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                });
                 return;
             }
 

@@ -185,6 +185,7 @@
   "openError": "Error",
   "openErrorDescription": "There was an error opening file",
   "openErrorFileNotFound": "File not found",
+  "openListErrorBody": "There was an error loading file list",
 
   "detAttDownload": "Shift-click attachment button to download or",
   "detAttDelToRemove": "Delete to remove",
