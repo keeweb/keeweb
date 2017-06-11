@@ -29,3 +29,5 @@ module.exports = function sign(grunt, data) {
             throw err;
         });
 };
+
+module.exports.getPin = getPin;
