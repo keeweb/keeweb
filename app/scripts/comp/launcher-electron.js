@@ -177,6 +177,9 @@ const Launcher = {
     canMinimize: function() {
         return process.platform !== 'darwin';
     },
+    canDetectOsSleep: function() {
+        return process.platform !== 'linux';
+    },
     updaterEnabled: function() {
         return this.electron().remote.process.argv.indexOf('--disable-updater') === -1;
     },
