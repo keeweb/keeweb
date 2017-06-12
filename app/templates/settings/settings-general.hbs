@@ -159,9 +159,7 @@
         <div>
             <input type="checkbox" class="settings__input input-base settings__general-lock-on-os-lock" id="settings__general-lock-on-os-lock"
                    {{#if lockOnOsLock}}checked{{/if}} />
-            <label for="settings__general-lock-on-os-lock">
-                {{~#if canDetectOsLock}}{{res 'setGenLockOsLockSleep'}}{{else}}{{res 'setGenLockOsSleep'}}{{/if~}}
-            </label>
+            <label for="settings__general-lock-on-os-lock">{{res 'setGenLockOrSleep'}}</label>
         </div>
     {{/if}}
     <h2>{{res 'setGenStorage'}}</h2>

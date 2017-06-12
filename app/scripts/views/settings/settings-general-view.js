@@ -81,7 +81,6 @@ const SettingsGeneralView = Backbone.View.extend({
             canMinimize: Launcher && Launcher.canMinimize(),
             canDetectMinimize: !!Launcher,
             canDetectOsSleep: !!Launcher,
-            canDetectOsLock: !!Launcher && FeatureDetector.isWindows,
             canAutoType: AutoType.enabled,
             lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
             lockOnCopy: AppSettingsModel.instance.get('lockOnCopy'),
