@@ -42,8 +42,8 @@ if (fs.existsSync(appPathUserData)) {
 function validateSignature(appPath) {
     const signatures = JSON.parse(fs.readFileSync(path.join(appPath, 'signatures.json')));
     const selfSignature = signatures.kwResSelf;
-    if (!selfSignature) {
-        exitWithError('No self signature');
+    if (!selfSignature || !signatures['app.js']) {
+        exitWithError('Invalid signature file');
     }
     delete signatures.kwResSelf;
     const data = JSON.stringify(signatures);
