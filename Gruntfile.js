@@ -580,9 +580,7 @@ module.exports = function(grunt) {
                 spc: 'keys/keeweb.spc',
                 key: '4:01',
                 algo: 'sha256',
-                url: pkg.homepage,
-                keytarPasswordService: 'code-sign-win32-keeweb',
-                keytarPasswordAccount: 'code-sign-win32-keeweb'
+                url: pkg.homepage
             },
             'win32-build-x64': {
                 options: {
