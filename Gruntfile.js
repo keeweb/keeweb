@@ -577,8 +577,8 @@ module.exports = function(grunt) {
         },
         'sign-exe': {
             options: {
-                spc: 'keys/code-sign-win32.spc',
-                pvk: 'keys/code-sign-win32.pvk',
+                spc: 'keys/keeweb.spc',
+                key: '01',
                 algo: 'sha256',
                 url: pkg.homepage,
                 keytarPasswordService: 'code-sign-win32-keeweb',
