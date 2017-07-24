@@ -19,6 +19,14 @@ const Comparators = {
         } else {
             return function (x, y) { return y[field] - x[field]; };
         }
+    },
+
+    boolComparator: function(field, asc) {
+        if (asc) {
+            return function (x, y) { return (x[field] ? 1 : 0) - (y[field] ? 1 : 0); };
+        } else {
+            return function (x, y) { return (y[field] ? 1 : 0) - (x[field] ? 1 : 0); };
+        }
     }
 };
 
