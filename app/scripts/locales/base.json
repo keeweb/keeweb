@@ -135,6 +135,8 @@
   "searchAttachments": "Attachments",
   "searchAZ": "A {} Z",
   "searchZA": "Z {} A",
+  "searchFT": "False {} True",
+  "searchTF": "True {} False",
   "searchON": "Old {} New",
   "searchNO": "New {} Old",
   "searchShiftClickOr": "shift-click or",
@@ -145,6 +147,8 @@
   "searchOptions": "Options",
   "searchCase": "Match case",
   "searchRegex": "RegEx",
+  "searchExpires": "Expires",
+  "searchExpired": "Expired",
 
   "openOpen": "Open",
   "openNew": "New",
