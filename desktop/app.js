@@ -312,7 +312,7 @@ function onContextMenu(e, props) {
 
 function notifyOpenFile() {
     if (ready && openFile && mainWindow) {
-        openFile = openFile.replace(/"/g, '\\"').replace(/\\/g, '\\\\');
+        openFile = openFile.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
         mainWindow.webContents.executeJavaScript('if (window.launcherOpen) { window.launcherOpen("' + openFile + '"); } ' +
             ' else { window.launcherOpenedFile="' + openFile + '"; }');
         openFile = null;
