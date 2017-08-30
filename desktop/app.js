@@ -157,12 +157,12 @@ function createMainWindow() {
 }
 
 function restoreMainWindow() {
-    destroyAppIcon();
     if (mainWindow.isMinimized()) {
         mainWindow.restore();
     }
     mainWindow.setSkipTaskbar(false);
     mainWindow.focus();
+    setTimeout(destroyAppIcon, 0);
 }
 
 function closeMainWindow() {
@@ -312,7 +312,7 @@ function onContextMenu(e, props) {
 
 function notifyOpenFile() {
     if (ready && openFile && mainWindow) {
-        openFile = openFile.replace(/"/g, '\\"').replace(/\\/g, '\\\\');
+        openFile = openFile.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
         mainWindow.webContents.executeJavaScript('if (window.launcherOpen) { window.launcherOpen("' + openFile + '"); } ' +
             ' else { window.launcherOpenedFile="' + openFile + '"; }');
         openFile = null;

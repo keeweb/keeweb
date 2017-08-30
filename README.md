@@ -21,7 +21,7 @@ Project roadmap with planned features and approximate schedule is on [TODO](http
 # Self-hosting
 
 Everything you need to host this app on your server is any static file server. The app is a single HTML file + cache manifest (optionally; for offline access).
-You can download the latest distribution files from [gh-pages](https://github.com/keeweb/keeweb/tree/gh-pages) branch.  
+You can download the latest distribution files from [gh-pages](https://github.com/keeweb/keeweb/archive/gh-pages.zip) branch.  
 
 If you are using Docker:
 

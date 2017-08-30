@@ -26,7 +26,7 @@ module.exports = function (grunt) {
             const verify = crypto.createVerify('RSA-SHA256');
             verify.write(zipFileData.slice(0, zip.centralDirectory.headerOffset + 22));
             verify.end();
-            const signature = new Buffer(zip.comment, 'hex');
+            const signature = Buffer.from(zip.comment, 'hex');
             if (!verify.verify(publicKey, signature)) {
                 grunt.warn('Invalid ZIP signature');
                 return;

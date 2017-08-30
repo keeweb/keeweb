@@ -175,14 +175,14 @@ module.exports = function(grunt) {
             },
             'desktop-app-content': {
                 cwd: 'desktop/',
-                src: '**',
+                src: ['**', '!package-lock.json'],
                 dest: 'tmp/desktop/app/',
                 expand: true,
                 nonull: true
             },
             'desktop-update': {
                 cwd: 'tmp/desktop/app/',
-                src: '**',
+                src: ['**', '!package-lock.json'],
                 dest: 'tmp/desktop/update/',
                 expand: true,
                 nonull: true
@@ -528,16 +528,14 @@ module.exports = function(grunt) {
             'desktop-update': {
                 options: {
                     file: 'dist/desktop/UpdateDesktop.zip',
-                    signature: zipCommentPlaceholder,
-                    privateKey: 'keys/private-key.pem'
+                    signature: zipCommentPlaceholder
                 }
             }
         },
         'sign-desktop-files': {
             'desktop-update': {
                 options: {
-                    path: 'tmp/desktop/update',
-                    privateKey: 'keys/private-key.pem'
+                    path: 'tmp/desktop/update'
                 }
             }
         },
@@ -560,18 +558,16 @@ module.exports = function(grunt) {
             'app': {
                 options: {
                     file: 'dist/index.html',
-                    privateKey: 'keys/private-key.pem'
+                    skip: grunt.option('skip-sign')
                 }
             }
         },
         'sign-exe': {
             options: {
-                spc: 'keys/code-sign-win32.spc',
-                pvk: 'keys/code-sign-win32.pvk',
-                algo: 'sha1',
-                url: pkg.homepage,
-                keytarPasswordService: 'code-sign-win32-keeweb',
-                keytarPasswordAccount: 'code-sign-win32-keeweb'
+                spc: 'keys/keeweb.spc',
+                key: '01',
+                algo: 'sha256',
+                url: pkg.homepage
             },
             'win32-build-x64': {
                 options: {
@@ -636,8 +632,7 @@ module.exports = function(grunt) {
         'sign-dist': {
             'dist': {
                 options: {
-                    sign: 'dist/desktop/Verify.sign.sha256',
-                    privateKey: 'keys/private-key.pem'
+                    sign: 'dist/desktop/Verify.sign.sha256'
                 },
                 files: {
                     'dist/desktop/Verify.sha256': ['dist/desktop/KeeWeb-*', 'dist/desktop/UpdateDesktop.zip']

@@ -1,24 +1,31 @@
 module.exports = function (grunt) {
     grunt.registerMultiTask('sign-html', 'Signs html page with a private key', function () {
-        const fs = require('fs');
-        const crypto = require('crypto');
-        if (!fs.existsSync(this.options().privateKey)) {
-            grunt.log.warn('Private key is missing, app html will not be signed.');
+        if (this.options().skip) {
+            grunt.log.writeln('Skipped app html signing');
             return;
         }
-        let file = fs.readFileSync(this.options().file).toString('utf8');
+        const done = this.async();
+        const fs = require('fs');
+        const sign = require('../lib/sign');
+        const data = fs.readFileSync(this.options().file);
+        let fileStr = data.toString();
         const marker = '<meta name="kw-signature" content="';
-        const ix = file.indexOf(marker);
+        const ix = fileStr.indexOf(marker);
         if (ix < 0) {
             grunt.warn('Signature placeholder not found');
             return;
         }
-        const sign = crypto.createSign('RSA-SHA256');
-        sign.write(file);
-        sign.end();
-        const privateKey = fs.readFileSync(this.options().privateKey, 'binary');
-        const signature = sign.sign(privateKey).toString('base64');
-        file = file.replace(marker, marker + signature);
-        fs.writeFileSync(this.options().file, file, 'utf8');
+        sign(null, data).then(signature => {
+            signature = signature.toString('base64');
+            fileStr = fileStr.replace(marker, marker + signature);
+            fs.writeFileSync(this.options().file, fileStr, 'utf8');
+            done();
+        }).catch(e => {
+            if (e === 'Cannot find PIN') {
+                grunt.warn('Error signing app html. To build without sign, please launch grunt with --skip-sign.');
+            } else {
+                grunt.warn('Sign error: ' + e);
+            }
+        });
     });
 };

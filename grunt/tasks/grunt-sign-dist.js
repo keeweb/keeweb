@@ -1,12 +1,11 @@
 module.exports = function (grunt) {
-    grunt.registerMultiTask('sign-dist', 'Creates files signatures', function () {
+    grunt.registerMultiTask('sign-dist', 'Creates files signatures', async function () {
         const path = require('path');
         const crypto = require('crypto');
+        const sign = require('../lib/sign');
 
         const done = this.async();
         const opt = this.options();
-
-        const privateKey = grunt.file.read(opt.privateKey, { encoding: null });
 
         const results = [];
 
@@ -20,10 +19,8 @@ module.exports = function (grunt) {
                 hash.update(file);
                 const digest = hash.digest('hex');
 
-                const sign = crypto.createSign('RSA-SHA256');
-                sign.write(file);
-                sign.end();
-                const signature = sign.sign(privateKey).toString('hex');
+                const rawSignature = await sign(grunt, file);
+                const signature = rawSignature.toString('hex');
 
                 results.push({ basename, digest, signature });
 

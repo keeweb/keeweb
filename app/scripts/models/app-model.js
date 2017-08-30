@@ -54,6 +54,9 @@ const AppModel = Backbone.Model.extend({
 
     loadConfig: function(configLocation) {
         return new Promise((resolve, reject) => {
+            if (configLocation.indexOf('//') >= 0) {
+                throw 'Config must be located on the same domain';
+            }
             this.appLogger.debug('Loading config from', configLocation);
             const ts = this.appLogger.ts();
             const xhr = new XMLHttpRequest();
