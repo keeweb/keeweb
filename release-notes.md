@@ -8,6 +8,9 @@ Release notes
 `-` fixed auto-closing tab when starting from link  
 `-` fixed tray icon click crash  
 
+##### v1.5.5 (2017-08-30)
+`-` fixed some security issues
+
 ##### v1.5.4 (2017-06-03)
 `-` fix #649: loading keyfiles with path  
 `-` fix #645: layout issues while switching table view  
