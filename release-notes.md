@@ -5,7 +5,6 @@ Release notes
 `+` auto-lock on computer lock  
 `*` prevent master password autocomplete  
 `*` build with node.js 8  
-`-` fixed auto-closing tab when starting from link  
 `-` fixed tray icon click crash  
 
 ##### v1.5.6 (2017-08-31)
