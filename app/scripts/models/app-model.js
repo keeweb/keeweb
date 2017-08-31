@@ -54,9 +54,7 @@ const AppModel = Backbone.Model.extend({
 
     loadConfig: function(configLocation) {
         return new Promise((resolve, reject) => {
-            if (configLocation.indexOf('//') >= 0) {
-                throw 'Config must be located on the same domain';
-            }
+            this.ensureCanLoadConfig(configLocation);
             this.appLogger.debug('Loading config from', configLocation);
             const ts = this.appLogger.ts();
             const xhr = new XMLHttpRequest();
@@ -92,6 +90,19 @@ const AppModel = Backbone.Model.extend({
         }).then(config => {
             return this.applyUserConfig(config);
         });
+    },
+
+    ensureCanLoadConfig(url) {
+        if (!FeatureDetector.isSelfHosted) {
+            throw 'Configs are supported only in self-hosted installations';
+        }
+        const link = document.createElement('a');
+        link.href = url;
+        const isExternal = link.host && link.host !== location.host;
+        if (isExternal) {
+            throw 'Loading config from this location is not allowed';
+        }
+        document.removeChild(link);
     },
 
     applyUserConfig(config) {
