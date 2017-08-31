@@ -102,7 +102,6 @@ const AppModel = Backbone.Model.extend({
         if (isExternal) {
             throw 'Loading config from this location is not allowed';
         }
-        document.removeChild(link);
     },
 
     applyUserConfig(config) {
