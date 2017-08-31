@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.5.6 (2017-08-31)
+`-` fix #722: hang on start in desktop  
+`-` fix #653: auto-closing tab when starting from link  
+
 ##### v1.5.5 (2017-08-30)
 `-` fix #621, #340: tray icon crash  
 `-` fixed some security issues  
