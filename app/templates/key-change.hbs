@@ -5,13 +5,13 @@
         <div class="key-change__message">{{message}}:</div>
         <div class="key-change__input">
             <input class="key-change__file hide-by-pos" type="file"  />
-            <input class="key-change__pass" type="password" size="30" autocomplete="off" maxlength="1024" autofocus
+            <input class="key-change__pass" type="password" size="30" autocomplete="new-password" maxlength="1024" autofocus
                 placeholder="{{Res 'password'}}" />
             <div class="key-change__keyfile">
                 <i class="fa fa-key"></i> {{res 'openKeyFile'}}<span class="key-change__keyfile-name"></span>
             </div>
             {{#if repeat}}
-            <input class="key-change__pass-repeat" type="password" size="30" autocomplete="off" maxlength="1024"
+            <input class="key-change__pass-repeat" type="password" size="30" autocomplete="new-password" maxlength="1024"
                 placeholder="Repeat password" />
             {{/if}}
         </div>
