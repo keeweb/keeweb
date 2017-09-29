@@ -641,7 +641,9 @@ const AppModel = Backbone.Model.extend({
         if (data && backup && backup.enabled && backup.pending) {
             this.scheduleBackupFile(file, data);
         }
-        this.saveFileFingerprint(file, params.password);
+        if (params) {
+            this.saveFileFingerprint(file, params.password);
+        }
     },
 
     fileClosed: function(file) {
