@@ -556,7 +556,13 @@ const OpenView = Backbone.View.extend({
         this.$el.toggleClass('open--opening', true);
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
-        this.afterPaint(this.model.importFileWithXml.bind(this.model, this.params, this.openDbComplete.bind(this)));
+        this.afterPaint(() => this.model.importFileWithXml(this.params, err => {
+            if (err) {
+                this.params.name = '';
+                this.params.fileXml = null;
+            }
+            this.openDbComplete(err);
+        }));
     },
 
     toggleMore: function() {
