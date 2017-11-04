@@ -187,8 +187,8 @@ const DetailsView = Backbone.View.extend({
             fieldView.on('copy', this.fieldCopied.bind(this));
             if (hideEmptyFields) {
                 const value = fieldView.model.value();
-                if (!value || value.length === 0) {
-                    if (this.model.isJustCreated && fieldView.model.name === '$UserName') {
+                if (!value || value.length === 0 || value.byteLength === 0) {
+                    if (this.model.isJustCreated && ['$UserName', '$Password'].indexOf(fieldView.model.name) >= 0) {
                         return; // don't hide user for new records
                     }
                     fieldView.hide();

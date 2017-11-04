@@ -6,7 +6,8 @@ Release notes
 `*` prevent master password autocomplete  
 `*` build with node.js 8  
 `-` fixed tray icon click crash  
-`*` show usernames in in entry list  
+`*` show usernames in entry list  
+`*` password can be hidden as other fields  
 
 ##### v1.5.6 (2017-08-31)
 `-` fix #722: hang on start in desktop  
