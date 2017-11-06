@@ -619,6 +619,7 @@ const EntryModel = Backbone.Model.extend({
         newEntry.entry.copyFrom(this.entry);
         newEntry.entry.uuid = uuid;
         newEntry.entry.times.update();
+        newEntry.entry.times.creationTime = newEntry.entry.times.lastModTime;
         newEntry.entry.fields.Title = this.title + nameSuffix;
         newEntry._fillByEntry();
         this.file.reload();
@@ -629,6 +630,8 @@ const EntryModel = Backbone.Model.extend({
         const uuid = this.entry.uuid;
         this.entry.copyFrom(templateEntry.entry);
         this.entry.uuid = uuid;
+        this.entry.times.update();
+        this.entry.times.creationTime = this.entry.times.lastModTime;
         this.entry.fields.Title = '';
         this._fillByEntry();
     }
