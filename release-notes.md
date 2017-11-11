@@ -3,6 +3,7 @@ Release notes
 ##### v1.6.0 (WIP)
 `+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
+`+` safari tab icons  
 `*` prevent master password autocomplete  
 `*` build with node.js 8  
 `-` fixed tray icon click crash  

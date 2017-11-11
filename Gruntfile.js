@@ -161,9 +161,18 @@ module.exports = function(grunt) {
                 dest: 'tmp/favicon.png',
                 nonull: true
             },
-            touchicon: {
-                src: 'app/touchicon.png',
-                dest: 'tmp/touchicon.png',
+            icons: {
+                cwd: 'app/icons/',
+                src: ['*.png', '*.svg'],
+                dest: 'tmp/icons/',
+                expand: true,
+                nonull: true
+            },
+            'dist-icons': {
+                cwd: 'app/icons/',
+                src: ['*.png', '*.svg'],
+                dest: 'dist/icons/',
+                expand: true,
                 nonull: true
             },
             fonts: {
@@ -663,7 +672,7 @@ module.exports = function(grunt) {
         'eslint',
         'copy:html',
         'copy:favicon',
-        'copy:touchicon',
+        'copy:icons',
         'copy:fonts',
         'webpack',
         'uglify',
@@ -673,6 +682,7 @@ module.exports = function(grunt) {
         'htmlmin',
         'string-replace:manifest-html',
         'string-replace:manifest',
+        'copy:dist-icons',
         'sign-html'
     ]);
 
