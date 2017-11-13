@@ -86,7 +86,7 @@ const IconSelectView = Backbone.View.extend({
             url = 'http://' + url;
         }
         if (useService) {
-            return 'https://favicon-antelle.rhcloud.com/' + url.replace(/^.*:\/+/, '').replace(/\/.*/, '');
+            return 'https://favicon.keeweb.info/' + url.replace(/^.*:\/+/, '').replace(/\/.*/, '');
         }
         return url;
     },
