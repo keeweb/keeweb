@@ -4,7 +4,7 @@ Thanks for taking the time to contribute! :gift:
 
 ## Code of conduct
 
-This project and everyone participating in it is governed by the [KeeWeb Code of Conduct](https://github.com/keeweb/keeweb/blob/master/.github/CODE_OF_CONDUCT.md#readme). By participating, you are expected to uphold this code. Please report unacceptable behavior to antelle.net@github.com.
+This project and everyone participating in it is governed by the [KeeWeb Code of Conduct](https://github.com/keeweb/keeweb/blob/master/.github/CODE_OF_CONDUCT.md#readme). By participating, you are expected to uphold this code. Please report unacceptable behavior to antelle.net@gmail.com.
 
 ## Issues
 
