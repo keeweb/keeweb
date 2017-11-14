@@ -10,7 +10,7 @@ const KdbxwebInit = {
 
     argon2(password, salt, memory, iterations, length, parallelism, type, version) {
         const args = { password, salt, memory, iterations, length, parallelism, type, version };
-        return this.loadRuntime().then(runtime => {
+        return this.loadRuntime(memory).then(runtime => {
             const ts = logger.ts();
             return runtime.hash(args).then(hash => {
                 logger.debug('Hash computed', logger.ts(ts));
@@ -19,7 +19,7 @@ const KdbxwebInit = {
         });
     },
 
-    loadRuntime() {
+    loadRuntime(requiredMemory) {
         if (this.runtimeModule) {
             return Promise.resolve(this.runtimeModule);
         }
@@ -32,15 +32,27 @@ const KdbxwebInit = {
                 const ts = logger.ts();
                 const argon2LoaderCode = require('argon2');
                 const wasmBinaryBase64 = require('argon2-wasm');
-                const moduleDecl = '{' +
+
+                const KB = 1024 * 1024;
+                const MB = 1024 * KB;
+                const GB = 1024 * MB;
+                const WASM_PAGE_SIZE = 64 * 1024;
+                const totalMemory = (2 * GB - 64 * KB) / 1024 / WASM_PAGE_SIZE;
+                const initialMemory = Math.min(Math.max(Math.ceil(requiredMemory * 1024 / WASM_PAGE_SIZE), 256) + 256, totalMemory);
+
+                const memoryDecl = `var wasmMemory=new WebAssembly.Memory({initial:${initialMemory},maximum:${totalMemory}});`;
+                const moduleDecl = 'var Module={' +
                     'wasmJSMethod: "native-wasm",' +
                     'wasmBinary: Uint8Array.from(atob("' + wasmBinaryBase64 + '"), c => c.charCodeAt(0)),' +
                     'print(...args) { postMessage({op:"log",args}) },' +
                     'printErr(...args) { postMessage({op:"log",args}) },' +
                     'postRun:' + this.workerPostRun.toString() + ',' +
                     'calcHash:' + this.calcHash.toString() + ',' +
+                    'wasmMemory:wasmMemory,' +
+                    'buffer:wasmMemory.buffer,' +
+                    'TOTAL_MEMORY:' + initialMemory * WASM_PAGE_SIZE +
                     '}';
-                const script = argon2LoaderCode.replace('var Module', 'var Module=' + moduleDecl);
+                const script = argon2LoaderCode.replace('var Module', memoryDecl + moduleDecl);
                 const blob = new Blob([script], {type: 'application/javascript'});
                 const objectUrl = URL.createObjectURL(blob);
                 const worker = new Worker(objectUrl);
@@ -60,6 +72,8 @@ const KdbxwebInit = {
                                         worker.postMessage(args);
                                         const onHashMessage = e => {
                                             worker.removeEventListener('message', onHashMessage);
+                                            worker.terminate();
+                                            KdbxwebInit.runtimeModule = null;
                                             if (!e.data || e.data.error || !e.data.hash) {
                                                 const ex = e.data && e.data.error || 'unexpected error';
                                                 logger.error('Worker error', ex);
