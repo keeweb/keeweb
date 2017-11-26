@@ -137,8 +137,8 @@ function watchSignPlugin() {
 
 function servePlugin(packageName) {
     const options = {
-        key: fs.readFileSync(path.join(__dirname, 'self-signed/key.pem')),
-        cert: fs.readFileSync(path.join(__dirname, 'self-signed/cert.pem'))
+        key: fs.readFileSync(path.join(__dirname, 'self-signed-key.pem')),
+        cert: fs.readFileSync(path.join(__dirname, 'self-signed-cert.pem'))
     };
     const port = serverPort || 8089;
     https.createServer(options, (req, res) => {
