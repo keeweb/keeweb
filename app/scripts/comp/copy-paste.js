@@ -1,3 +1,4 @@
+const Backbone = require('backbone');
 const Launcher = require('./launcher');
 const AppSettingsModel = require('../models/app-settings-model');
 
@@ -9,10 +10,15 @@ const CopyPaste = {
             Launcher.setClipboardText(text);
             const clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
             if (clipboardSeconds > 0) {
-                setTimeout(() => {
+                const clearClipboard = () => {
                     if (Launcher.getClipboardText() === text) {
                         Launcher.clearClipboardText();
                     }
+                };
+                Backbone.on('main-window-will-close', clearClipboard);
+                setTimeout(() => {
+                    clearClipboard();
+                    Backbone.off('main-window-will-close', clearClipboard);
                 }, clipboardSeconds * 1000);
             }
             return {success: true, seconds: clipboardSeconds};

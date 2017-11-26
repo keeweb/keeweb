@@ -10,6 +10,7 @@ Release notes
 `-` fixed tray icon click crash  
 `*` show usernames in entry list  
 `*` password can be hidden as other fields  
+`*` clear clipboard on exit  
 
 ##### v1.5.6 (2017-08-31)
 `-` fix #722: hang on start in desktop  
