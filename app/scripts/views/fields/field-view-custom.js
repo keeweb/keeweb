@@ -37,9 +37,10 @@ const FieldViewCustom = FieldViewText.extend({
         delete this.input;
         this.stopListening(Backbone, 'click', this.fieldValueBlur);
         if (typeof newVal === 'string') {
-            newVal = $.trim(newVal);
             if (this.isProtected) {
                 newVal = kdbxweb.ProtectedValue.fromString(newVal);
+            } else {
+                newVal = $.trim(newVal);
             }
         }
         FieldView.prototype.endEdit.call(this, newVal, extra);

@@ -11,6 +11,7 @@ Release notes
 `*` show usernames in entry list  
 `*` password can be hidden as other fields  
 `*` clear clipboard on exit  
+`*` don't remove spaces in custom fields  
 
 ##### v1.5.6 (2017-08-31)
 `-` fix #722: hang on start in desktop  
