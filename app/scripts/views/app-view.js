@@ -332,7 +332,10 @@ const AppView = Backbone.View.extend({
                     Launcher.exit();
                 }
             };
-            if (Launcher && !Launcher.exitRequested) {
+            if (Launcher && Launcher.exitRequested) {
+                return;
+            }
+            if (Launcher) {
                 if (!this.exitAlertShown) {
                     if (this.model.settings.get('autoSave')) {
                         this.saveAndLock(result => { if (result) { exit(); } });
