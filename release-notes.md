@@ -12,6 +12,7 @@ Release notes
 `*` password can be hidden as other fields  
 `*` clear clipboard on exit  
 `*` don't remove spaces in custom fields  
+`*` auto-type on subdomains  
 
 ##### v1.5.6 (2017-08-31)
 `-` fix #722: hang on start in desktop  
