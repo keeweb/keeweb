@@ -5,6 +5,7 @@
   white-space: nowrap;
   z-index: $z-index-no-modal;
   pointer-events: none;
+  opacity: 1;
   @include nomobile { animation: tip $tip-transition-in; }
   @include common-dropdown;
   &.tip--fast, &.tip--fast:before, &.tip--fast:after {
@@ -84,5 +85,5 @@
 }
 
 @keyframes tip {
-  from { color: transparent; background-color: transparent; border-color: transparent; box-shadow: none; }
+  from { opacity: 0; }
 }
