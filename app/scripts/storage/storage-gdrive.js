@@ -134,7 +134,7 @@ const StorageGDrive = StorageBase.extend({
             const parents = dir || 'root';
             const url = this._baseUrl + '/files?fields={fields}&q={q}'
                 .replace('{fields}', encodeURIComponent('files(id,name,mimeType,headRevisionId)'))
-                .replace('{q}', encodeURIComponent(`parents="${parents}" and trashed=false and trashed=false`));
+                .replace('{q}', encodeURIComponent(`parents="${parents}" and trashed=false`));
             const ts = this.logger.ts();
             this._xhr({
                 url: url,
