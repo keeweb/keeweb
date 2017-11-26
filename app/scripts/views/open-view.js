@@ -5,6 +5,7 @@ const Keys = require('../const/keys');
 const Alerts = require('../comp/alerts');
 const SecureInput = require('../comp/secure-input');
 const DropboxChooser = require('../comp/dropbox-chooser');
+const KeyHandler = require('../comp/key-handler');
 const StorageFileListView = require('../views/storage-file-list-view');
 const FeatureDetector = require('../util/feature-detector');
 const Logger = require('../util/logger');
@@ -61,6 +62,7 @@ const OpenView = Backbone.View.extend({
             rev: null
         };
         this.passwordInput = new SecureInput();
+        KeyHandler.onKey(Keys.DOM_VK_Z, this.undoKeyPress, this, KeyHandler.SHORTCUT_ACTION);
     },
 
     render: function () {
@@ -133,6 +135,7 @@ const OpenView = Backbone.View.extend({
 
     remove: function() {
         this.passwordInput.reset();
+        KeyHandler.offKey(Keys.DOM_VK_Z, this.undoKeyPress, this);
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
@@ -464,6 +467,10 @@ const OpenView = Backbone.View.extend({
             this.setFile(dataFile, keyFile,
                 dataFile.path ? null : this.showLocalFileAlert.bind(this));
         }
+    },
+
+    undoKeyPress: function(e) {
+        e.preventDefault();
     },
 
     showOpenFileInfo: function(fileInfo) {
