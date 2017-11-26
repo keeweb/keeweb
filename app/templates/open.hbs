@@ -74,7 +74,7 @@
         </div>
         <div class="open__pass-field-wrap">
             <input class="open__pass-input" type="password" size="30" autocomplete="new-password" maxlength="1024"
-                   placeholder="{{res 'openClickToOpen'}}" readonly />
+                   placeholder="{{#if canOpen}}{{res 'openClickToOpen'}}{{/if}}" readonly />
             <div class="open__pass-enter-btn"><i class="fa fa-level-down fa-rotate-90"></i></div>
             <div class="open__pass-opening-icon"><i class="fa fa-spinner fa-spin"></i></div>
         </div>

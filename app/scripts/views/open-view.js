@@ -275,6 +275,9 @@ const OpenView = Backbone.View.extend({
     },
 
     openFile: function() {
+        if (this.model.settings.get('canOpen') === false) {
+            return;
+        }
         if (!this.busy) {
             this.closeConfig();
             this.openAny('fileData');
