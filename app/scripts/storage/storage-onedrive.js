@@ -136,7 +136,7 @@ const StorageOneDrive = StorageBase.extend({
         });
     },
 
-    list: function(callback) {
+    list: function(dir, callback) {
         this._oauthAuthorize(err => {
             if (err) { return callback && callback(err); }
             this.logger.debug('List');

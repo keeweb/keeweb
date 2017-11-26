@@ -3,6 +3,7 @@ Release notes
 ##### v1.6.0 (WIP)
 `+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
+`+` redesigned Dropbox chooser  
 `+` safari tab icons  
 `*` prevent master password autocomplete  
 `*` build with node.js 8  

@@ -39,6 +39,10 @@ const ModalView = Backbone.View.extend({
             el.removeClass('modal--hidden');
             document.activeElement.blur();
         }, 20);
+        if (this.model.view) {
+            this.model.view.setElement(this.$el.find('.modal__body'));
+            this.model.view.render();
+        }
         return this;
     },
 

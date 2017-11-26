@@ -5,11 +5,13 @@ const Keys = require('../const/keys');
 const Alerts = require('../comp/alerts');
 const SecureInput = require('../comp/secure-input');
 const DropboxChooser = require('../comp/dropbox-chooser');
+const StorageFileListView = require('../views/storage-file-list-view');
 const FeatureDetector = require('../util/feature-detector');
 const Logger = require('../util/logger');
 const Locale = require('../util/locale');
 const UrlUtil = require('../util/url-util');
 const InputFx = require('../util/input-fx');
+const Comparators = require('../util/comparators');
 const Storage = require('../storage');
 const Launcher = require('../comp/launcher');
 
@@ -594,7 +596,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    listStorage: function(storage) {
+    listStorage: function(storage, config) {
         if (this.busy) {
             return;
         }
@@ -602,7 +604,7 @@ const OpenView = Backbone.View.extend({
         const icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
         this.busy = true;
         icon.toggleClass('flip3d', true);
-        storage.list((err, files) => {
+        storage.list(config && config.dir, (err, files) => {
             icon.toggleClass('flip3d', false);
             this.busy = false;
             if (err || !files) {
@@ -615,32 +617,53 @@ const OpenView = Backbone.View.extend({
                 }
                 return;
             }
-
-            const buttons = [];
-            const allStorageFiles = {};
-            files.forEach(file => {
-                const fileName = UrlUtil.getDataFileName(file.name);
-                buttons.push({result: file.path, title: fileName});
-                allStorageFiles[file.path] = file;
-            });
-            if (!buttons.length) {
+            if (!files.length) {
                 Alerts.error({
                     header: Locale.openNothingFound,
                     body: Locale.openNothingFoundBody
                 });
                 return;
             }
-            buttons.push({result: '', title: Locale.alertCancel});
+
+            const fileNameComparator = Comparators.stringComparator('path', true);
+            files.sort((x, y) => {
+                if (x.dir !== y.dir) {
+                    return !!y.dir - !!x.dir;
+                }
+                return fileNameComparator(x, y);
+            });
+            if (config && config.dir) {
+                files.unshift({
+                    path: config.prevDir,
+                    name: '..',
+                    dir: true
+                });
+            }
+            const listView = new StorageFileListView({
+                model: {
+                    files,
+                    showHiddenFiles: config && config.showHiddenFiles
+                }
+            });
+            listView.on('selected', file => {
+                if (file.dir) {
+                    this.listStorage(storage, {
+                        dir: file.path,
+                        prevDir: config && config.dir || '',
+                        showHiddenFiles: true
+                    });
+                } else {
+                    this.openStorageFile(storage, file);
+                }
+            });
             Alerts.alert({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
                 icon: storage.icon || 'files-o',
-                buttons: buttons,
+                buttons: [{result: '', title: Locale.alertCancel}],
                 esc: '',
                 click: '',
-                success: file => {
-                    this.openStorageFile(storage, allStorageFiles[file]);
-                }
+                view: listView
             });
         });
     },

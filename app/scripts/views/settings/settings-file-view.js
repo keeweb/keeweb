@@ -239,7 +239,7 @@ const SettingsFileView = Backbone.View.extend({
                 return;
             }
             this.model.set('syncing', true);
-            storage.list((err, files) => {
+            storage.list('', (err, files) => {
                 this.model.set('syncing', false);
                 if (err) {
                     return;
