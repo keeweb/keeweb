@@ -26,9 +26,13 @@ const StorageFileListView = Backbone.View.extend({
         });
         let hasHiddenFiles = this.showHiddenFiles;
         if (!this.showHiddenFiles) {
-            const allFilesLength = files.length;
-            files = files.filter(f => !f.dir && f.kdbx);
-            hasHiddenFiles = files.length - allFilesLength;
+            const visibleFiles = files.filter(f => !f.dir && f.kdbx);
+            hasHiddenFiles = files.length > visibleFiles.length;
+            if (visibleFiles.length > 0) {
+                files = visibleFiles;
+            } else {
+                this.showHiddenFiles = true;
+            }
         }
         const density = files.length > 14 ? 3 : files.length > 7 ? 2 : 1;
         this.renderTemplate({
