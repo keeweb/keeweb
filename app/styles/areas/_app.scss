@@ -25,6 +25,7 @@
     top: 0;
     right: 0;
     -webkit-app-region: drag;
+    pointer-events: none;
   }
 
   &__menu {
