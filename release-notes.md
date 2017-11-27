@@ -4,6 +4,7 @@ Release notes
 `+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
 `+` redesigned Dropbox chooser  
+`+` WebDAV file creation  
 `+` safari tab icons  
 `*` prevent master password autocomplete  
 `*` build with node.js 8  

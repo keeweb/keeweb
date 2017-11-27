@@ -701,7 +701,8 @@ const OpenView = Backbone.View.extend({
         const config = _.extend({
             id: storage.name,
             name: Locale[storage.name] || storage.name,
-            icon: storage.icon
+            icon: storage.icon,
+            buttons: true
         }, storage.getOpenConfig());
         this.views.openConfig = new OpenConfigView({ el: this.$el.find('.open__config-wrap'), model: config }).render();
         this.views.openConfig.on('cancel', this.closeConfig.bind(this));

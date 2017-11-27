@@ -75,12 +75,18 @@ const StorageWebDav = StorageBase.extend({
         this._request(_.defaults({
             op: 'Save:stat', method: 'HEAD'
         }, saveOpts), (err, xhr, stat) => {
-            if (err) { return cb(err); }
-            if (stat.rev !== rev) {
+            let useTmpPath = this.appSettings.get('webdavSaveMethod') !== 'put';
+            if (err) {
+                if (!err.notFound) {
+                    return cb(err);
+                } else {
+                    that.logger.debug('Save: not found, creating');
+                    useTmpPath = false;
+                }
+            } else if (stat.rev !== rev) {
                 that.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
                 return cb({ revConflict: true }, xhr, stat);
             }
-            const useTmpPath = this.appSettings.get('webdavSaveMethod') !== 'put';
             if (useTmpPath) {
                 that._request(_.defaults({
                     op: 'Save:put', method: 'PUT', path: tmpPath, data: data, nostat: true
