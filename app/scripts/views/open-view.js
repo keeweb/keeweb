@@ -619,7 +619,7 @@ const OpenView = Backbone.View.extend({
             this.busy = false;
             if (err || !files) {
                 err = err ? err.toString() : '';
-                if (err.lastIndexOf('OAuth', 0) !== 0) {
+                if (err.lastIndexOf('OAuth', 0) !== 0 && !Alerts.alertDisplayed) {
                     Alerts.error({
                         header: Locale.openError,
                         body: Locale.openListErrorBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'

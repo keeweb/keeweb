@@ -131,15 +131,14 @@ _.extend(StorageBase.prototype, {
     },
 
     _oauthAuthorize: function(callback) {
-        if (this._oauthToken && !this._oauthToken.expired) {
+        if (this._tokenIsValid(this._oauthToken)) {
             return callback();
         }
         const opts = this._getOAuthConfig();
         const oldToken = this.runtimeData.get(this.name + 'OAuthToken');
-        if (oldToken && !oldToken.expired) {
+        if (this._tokenIsValid(oldToken)) {
             this._oauthToken = oldToken;
-            callback();
-            return;
+            return callback();
         }
         const url = opts.url + '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
             .replace('{cid}', encodeURIComponent(opts.clientId))
@@ -147,7 +146,7 @@ _.extend(StorageBase.prototype, {
             .replace('{url}', encodeURIComponent(this._getOauthRedirectUrl()));
         this.logger.debug('OAuth: popup opened');
         if (!this._openPopup(url, 'OAuth', opts.width, opts.height)) {
-            callback('OAuth: cannot open popup');
+            return callback('OAuth: cannot open popup');
         }
         const popupClosed = () => {
             Backbone.off('popup-closed', popupClosed);
@@ -185,10 +184,11 @@ _.extend(StorageBase.prototype, {
             return { error: data.error || 'no token', errorDescription: data.error_description };
         }
         return {
+            dt: Date.now() - 60 * 1000,
             tokenType: data.token_type,
             accessToken: data.access_token,
             authenticationToken: data.authentication_token,
-            expiresIn: data.expires_in,
+            expiresIn: +data.expires_in,
             scope: data.scope,
             userId: data.user_id
         };
@@ -212,6 +212,16 @@ _.extend(StorageBase.prototype, {
             this.runtimeData.unset(this.name + 'OAuthToken');
             this._oauthToken = null;
         }
+    },
+
+    _tokenIsValid(token) {
+        if (!token || token.expired) {
+            return false;
+        }
+        if (token.dt && token.expiresIn && token.dt + token.expiresIn * 1000 < Date.now()) {
+            return false;
+        }
+        return true;
     }
 });
 
