@@ -190,8 +190,8 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'desktop-update': {
-                cwd: 'tmp/desktop/app/',
-                src: ['**', '!package-lock.json'],
+                cwd: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
+                src: 'app.asar',
                 dest: 'tmp/desktop/update/',
                 expand: true,
                 nonull: true
@@ -203,23 +203,23 @@ module.exports = function(grunt) {
             },
             'desktop-windows-helper-ia32': {
                 src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-ia32/resources/app/',
+                dest: 'tmp/desktop/KeeWeb-win32-ia32/Resources/',
                 nonull: true
             },
             'desktop-windows-helper-x64': {
                 src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/resources/app/',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
                 nonull: true
             },
             'desktop-darwin-helper-x64': {
                 src: 'helper/darwin/KeeWebHelper',
-                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/app/',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'desktop-darwin-installer': {
                 cwd: 'package/osx/KeeWeb Installer.app',
-                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Helpers/KeeWeb Installer.app',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 src: '**',
                 expand: true,
                 nonull: true,
@@ -362,6 +362,7 @@ module.exports = function(grunt) {
                 out: 'tmp/desktop',
                 electronVersion: electronVersion,
                 overwrite: true,
+                asar: true,
                 'appCopyright': `Copyright © ${year} Antelle`,
                 'appVersion': pkg.version,
                 'buildVersion': '<%= gitinfo.local.branch.current.shortSHA %>'
@@ -566,12 +567,11 @@ module.exports = function(grunt) {
                 options: {
                     file: 'dist/desktop/UpdateDesktop.zip',
                     expected: [
-                        'main.js', 'app.js', 'index.html', 'package.json', 'icon.png',
-                        'node_modules/node-stream-zip/node_stream_zip.js',
+                        'app.asar',
                         'helper/darwin/KeeWebHelper',
                         'helper/win32/KeeWebHelper.exe'
                     ],
-                    expectedCount: 16,
+                    expectedCount: 7,
                     publicKey: 'app/resources/public-key.pem'
                 }
             }
@@ -752,8 +752,8 @@ module.exports = function(grunt) {
         'gitinfo',
         'clean:desktop',
         'build-desktop-app-content',
-        'build-desktop-update',
         'build-desktop-executables',
+        'build-desktop-update',
         'build-desktop-archives',
         'build-desktop-dist',
         'sign-dist'

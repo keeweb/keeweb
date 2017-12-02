@@ -15,7 +15,7 @@ const Updater = {
     UpdateInterval: 1000 * 60 * 60 * 24,
     MinUpdateTimeout: 500,
     MinUpdateSize: 10000,
-    UpdateCheckFiles: ['index.html', 'app.js'],
+    UpdateCheckFiles: ['app.asar'],
     nextCheckTimeout: null,
     updateCheckDate: new Date(0),
     enabled: Launcher && Launcher.updaterEnabled(),
@@ -188,6 +188,7 @@ const Updater = {
         const expectedFiles = this.UpdateCheckFiles;
         const appPath = Launcher.getUserDataPath();
         const StreamZip = Launcher.req('node-stream-zip');
+        StreamZip.setFs(Launcher.req('original-fs'));
         const zip = new StreamZip({ file: updateFile, storeEntries: true });
         zip.on('error', cb);
         zip.on('ready', () => {

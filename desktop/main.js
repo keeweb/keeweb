@@ -11,20 +11,20 @@ const path = require('path');
 const fs = require('fs');
 
 const userDataDir = app.getPath('userData');
-const appPathUserData = path.join(userDataDir, 'app.js');
-let appPath = path.join(__dirname, 'app.js');
+const userDataAppArchivePath = path.join(userDataDir, 'app.asar');
+let entryPointDir = __dirname;
 
-if (fs.existsSync(appPathUserData)) {
+if (fs.existsSync(userDataAppArchivePath)) {
     let versionLocal = require('./package.json').version;
     try {
-        let versionUserData = require(path.join(userDataDir, 'package.json')).version;
+        let versionUserData = require(path.join(userDataAppArchivePath, 'package.json')).version;
         versionLocal = versionLocal.split('.');
         versionUserData = versionUserData.split('.');
         for (let i = 0; i < versionLocal.length; i++) {
             if (+versionUserData[i] > +versionLocal[i]) {
-                appPath = appPathUserData;
+                entryPointDir = userDataAppArchivePath;
                 try {
-                    validateSignature(path);
+                    validateSignature(userDataDir);
                 } catch (e) {
                     exitWithError('Error validating signatures: ' + e);
                 }
@@ -40,9 +40,10 @@ if (fs.existsSync(appPathUserData)) {
 }
 
 function validateSignature(appPath) {
+    const fs = require('original-fs');
     const signatures = JSON.parse(fs.readFileSync(path.join(appPath, 'signatures.json')));
     const selfSignature = signatures.kwResSelf;
-    if (!selfSignature || !signatures['app.js']) {
+    if (!selfSignature || !signatures['app.asar']) {
         exitWithError('Invalid signature file');
     }
     delete signatures.kwResSelf;
@@ -72,4 +73,5 @@ function exitWithError(err) {
     process.exit(1);
 }
 
-require(appPath);
+const entryPointFile = path.join(entryPointDir, 'app.js');
+require(entryPointFile);

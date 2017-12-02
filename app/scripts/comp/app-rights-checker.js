@@ -54,7 +54,7 @@ const AppRightsChecker = {
 
     runInstaller() {
         Launcher.spawn({
-            cmd: this.AppPath + '/Contents/Helpers/KeeWeb\ Installer.app/Contents/MacOS/applet',
+            cmd: this.AppPath + '/Contents/Installer/KeeWeb\ Installer.app/Contents/MacOS/applet',
             complete: () => {
                 this.needRunInstaller(needRun => {
                     if (this.alert && !needRun) {

@@ -55,7 +55,9 @@ const Launcher = {
         return this.joinPath(this.remoteApp().getPath('documents'), fileName || '');
     },
     getAppPath: function(fileName) {
-        return this.joinPath(this.remoteApp().getAppPath(), fileName || '');
+        const dirname = this.req('path').dirname;
+        const appPath = __dirname.endsWith('app.asar') ? __dirname : this.remoteApp().getAppPath();
+        return this.joinPath(dirname(appPath), fileName || '');
     },
     getWorkDirPath: function(fileName) {
         return this.joinPath(process.cwd(), fileName || '');
@@ -80,9 +82,6 @@ const Launcher = {
     },
     statFile: function(path, callback) {
         this.req('fs').stat(path, (err, stats) => callback(stats, err));
-    },
-    statFileSync: function(path) {
-        return this.req('fs').statSync(path);
     },
     mkdir: function(dir, callback) {
         const fs = this.req('fs');

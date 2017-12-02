@@ -11,7 +11,7 @@ let appReady = false;
 let restartPending = false;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
-const userDataDir = app.getPath('userData');
+const userDataDir = app.getPath('userData').replace(/[\\/]temp[\\/]\d+\.\d+[\\/]?$/, '');
 const windowPositionFileName = path.join(userDataDir, 'window-position.json');
 const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
 const tempUserDataPath = path.join(userDataDir, 'temp');
@@ -24,6 +24,7 @@ if (!htmlPath) {
 }
 
 app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
+
 setEnv();
 
 app.on('window-all-closed', () => {
@@ -40,7 +41,7 @@ app.on('window-all-closed', () => {
             electron.systemPreferences.unsubscribeNotification(id);
         }
         systemNotificationIds.length = 0;
-        const userDataAppFile = path.join(userDataDir, 'app.js');
+        const userDataAppFile = path.join(userDataDir, 'app.asar/app.js');
         delete require.cache[require.resolve('./app.js')];
         require(userDataAppFile);
         app.emit('ready');
@@ -376,6 +377,9 @@ function setEnv() {
 }
 
 function deleteOldTempFiles() {
+    if (app.oldTempFilesDeleted) {
+        return;
+    }
     setTimeout(() => {
         for (const dir of fs.readdirSync(tempUserDataPath)) {
             if (dir !== tempUserDataPathRand) {
@@ -384,6 +388,7 @@ function deleteOldTempFiles() {
                 } catch (e) {}
             }
         }
+        app.oldTempFilesDeleted = true; // this is added to prevent file deletion on restart
     }, 1000);
 }
 
