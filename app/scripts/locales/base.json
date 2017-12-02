@@ -54,7 +54,7 @@
   "alertSignIn": "Sign In",
   "alertCopy": "Copy",
   "alertClose": "Close",
-  "alertDoNotAsk": "Don't ask me any more",
+  "alertDoNotAsk": "Don't ask me anymore",
 
   "appBeta": "WARNING: beta version, only for preview",
 
@@ -507,17 +507,6 @@
   "setHelpUpdates": "Updates",
   "setHelpTwitter": "App twitter",
 
-  "dropboxLogin": "Dropbox Login",
-  "dropboxLoginBody": "To continue, you have to sign in to Dropbox.",
-  "dropboxSyncError": "Dropbox Sync Error",
-  "dropboxNotFoundBody": "The file was not found. Has it been removed from another computer?",
-  "dropboxFull": "Dropbox Full",
-  "dropboxFullBody": "Your Dropbox is full, there's no space left any more.",
-  "dropboxRateLimitedBody": "Too many requests to Dropbox have been made by this app. Please, try again later.",
-  "dropboxNetError": "Dropbox Sync Network Error",
-  "dropboxNetErrorBody": "A network error occurred during Dropbox sync. Please, check your connection and try again.",
-  "dropboxErrorBody": "Something went wrong during Dropbox sync. Please, try again later. Error code:",
-  "dropboxErrorRepeatBody": "Something went wrong during Dropbox sync. Please, try again later. Error:",
   "dropboxSetupDesc": "Some configuration is required to use Dropbox in a self-hosted app. Please create your own Dropbox app and fill in its key below.",
   "dropboxAppKey": "Dropbox app key",
   "dropboxAppKeyDesc": "Copy the key from your Dropbox app (Developer settings)",
