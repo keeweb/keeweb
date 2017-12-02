@@ -362,9 +362,9 @@ module.exports = function(grunt) {
                 out: 'tmp/desktop',
                 electronVersion: electronVersion,
                 overwrite: true,
-                'app-copyright': `Copyright © ${year} Antelle`,
-                'app-version': pkg.version,
-                'build-version': '<%= gitinfo.local.branch.current.shortSHA %>'
+                'appCopyright': `Copyright © ${year} Antelle`,
+                'appVersion': pkg.version,
+                'buildVersion': '<%= gitinfo.local.branch.current.shortSHA %>'
             },
             linux: {
                 options: {
@@ -378,9 +378,9 @@ module.exports = function(grunt) {
                     platform: 'darwin',
                     arch: ['x64'],
                     icon: 'graphics/icon.icns',
-                    'app-bundle-id': 'net.antelle.keeweb',
-                    'app-category-type': 'public.app-category.productivity',
-                    'extend-info': 'package/osx/extend.plist'
+                    'appBundleId': 'net.antelle.keeweb',
+                    'appCategoryType': 'public.app-category.productivity',
+                    'extendInfo': 'package/osx/extend.plist'
                 }
             },
             win32: {
