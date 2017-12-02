@@ -293,9 +293,9 @@
   "appNotSupportedError": "Your browser is not supported.",
   "appTabWarn": "Too many tabs",
   "appTabWarnBody": "KeeWeb cannot be used in two browser tabs simultaneously, please close this tab.",
-  "appRightsAlert": "Locking app folder",
-  "appRightsAlertBody1": "Your {} folder is writable. We're asking you for administrator permissions, to make it writable only for administrators.",
-  "appRightsAlertBody2": "Don't want to give administrator permission? You can do it yourself in Terminal",
+  "appRightsAlert": "Locking KeeWeb app",
+  "appRightsAlertBody1": "Your KeeWeb app is currently not guarded against unauthorized changes. We're asking you for permissions to make the app writable only for administrators.",
+  "appRightsAlertBody2": "Don't want to give permissions? You can do it yourself in Terminal",
 
   "setGenTitle": "General Settings",
   "setGenUpdate": "Update",
