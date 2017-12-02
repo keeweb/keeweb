@@ -41,7 +41,8 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         installTime: null,
         installError: null,
         updateCheckDate: null,
-        updateError: null
+        updateError: null,
+        skipSignatureValidation: false
     },
 
     resources: {},
@@ -105,6 +106,9 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         }
         if (!manifest.publicKey) {
             return 'No plugin public key';
+        }
+        if (!this.get('skipSignatureValidation') && manifest.publicKey !== SignatureVerifier.getPublicKey()) {
+            return 'Public key mismatch';
         }
         if (!manifest.resources || !Object.keys(manifest.resources).length) {
             return 'No plugin resources';

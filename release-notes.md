@@ -14,6 +14,7 @@ Release notes
 `*` clear clipboard on exit  
 `*` don't remove spaces in custom fields  
 `*` auto-type on subdomains  
+`*` plugin signature validation  
 
 ##### v1.5.6 (2017-08-31)
 `-` fix #722: hang on start in desktop  

@@ -125,7 +125,7 @@ const SettingsPluginsView = Backbone.View.extend({
         urlTextBox.prop('disabled', true);
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installFromUrl = { url };
-        PluginManager.install(url)
+        PluginManager.install(url, undefined, true)
             .then(() => {
                 this.installFinished();
                 this.installFromUrl = null;

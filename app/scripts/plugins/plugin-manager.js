@@ -42,10 +42,13 @@ const PluginManager = Backbone.Model.extend({
         });
     },
 
-    install(url, expectedManifest) {
+    install(url, expectedManifest, skipSignatureValidation) {
         this.trigger('change');
         return Plugin.loadFromUrl(url, expectedManifest).then(plugin => {
             return this.uninstall(plugin.id).then(() => {
+                if (skipSignatureValidation) {
+                    plugin.set('skipSignatureValidation', true);
+                }
                 return plugin.install(true, false).then(() => {
                     this.get('plugins').push(plugin);
                     this.trigger('change');
