@@ -16,7 +16,7 @@
     "babel-preset-es2015": "6.24.1",
     "base64-loader": "1.0.0",
     "cssnano": "3.10.0",
-    "electron": "^1.7.3",
+    "electron": "^1.7.9",
     "eslint": "^3.19.0",
     "eslint-config-standard": "10.2.1",
     "eslint-plugin-import": "^2.3.0",
