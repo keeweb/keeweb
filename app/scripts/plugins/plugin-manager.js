@@ -61,9 +61,12 @@ const PluginManager = Backbone.Model.extend({
         });
     },
 
-    installIfNew(url, expectedManifest) {
+    installIfNew(url, expectedManifest, skipSignatureValidation) {
         const plugin = this.get('plugins').find({ url });
-        return plugin ? Promise.resolve() : this.install(url, expectedManifest);
+        if (plugin && plugin.get('status') !== 'invalid') {
+            return Promise.resolve();
+        }
+        return this.install(url, expectedManifest, skipSignatureValidation);
     },
 
     uninstall(id) {

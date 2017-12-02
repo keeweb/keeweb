@@ -124,7 +124,7 @@ const AppModel = Backbone.Model.extend({
                 .forEach(fi => this.fileInfos.unshift(fi));
         }
         if (config.plugins) {
-            return Promise.all(config.plugins.map(plugin => PluginManager.installIfNew(plugin.url, plugin.manifest)));
+            return Promise.all(config.plugins.map(plugin => PluginManager.installIfNew(plugin.url, plugin.manifest, true)));
         }
     },
 
