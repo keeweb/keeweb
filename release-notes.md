@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.6.0 (WIP)
+##### v1.6.0 (2017-12-02)
 `+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
 `+` redesigned Dropbox chooser  
