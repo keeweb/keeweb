@@ -388,7 +388,7 @@ module.exports = function(grunt) {
                     platform: 'win32',
                     arch: ['ia32', 'x64'],
                     icon: 'graphics/icon.ico',
-                    'build-version': pkg.version,
+                    'buildVersion': pkg.version,
                     'version-string': {
                         'CompanyName': 'KeeWeb',
                         'FileDescription': pkg.description,
