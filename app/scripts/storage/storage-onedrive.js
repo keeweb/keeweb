@@ -1,5 +1,4 @@
 const StorageBase = require('./storage-base');
-const UrlUtil = require('../util/url-util');
 
 const OneDriveClientId = {
     Production: '000000004818ED3A',
@@ -22,7 +21,7 @@ const StorageOneDrive = StorageBase.extend({
         '6.28c-17.7-17.7-46.59-21.53-71.15-9.42-9.81 4.84-17.7 11.78-23.65 20.83-4.25 6.45-9.66 18.48-9.66 21.47 0 2.12-1.72 3.18-9.05 5.58-22.69 7.44-' +
         '35.94 24.63-35.93 46.62 0 8 2.06 17.8 4.93 23.41 1.08 2.11 1.68 4.13 1.34 4.47-0.88 0.88-29.11 0.58-33.01-0.35z" /></g></g></g></svg>',
 
-    _baseUrl: 'https://api.onedrive.com/v1.0',
+    _baseUrl: 'https://graph.microsoft.com/v1.0',
 
     getPathForName: function(fileName) {
         return '/drive/root:/' + fileName + '.kdbx';
@@ -40,7 +39,7 @@ const StorageOneDrive = StorageBase.extend({
                 url: url,
                 responseType: 'json',
                 success: (response) => {
-                    const downloadUrl = response['@content.downloadUrl'];
+                    const downloadUrl = response['@microsoft.graph.downloadUrl'];
                     let rev = response.eTag;
                     if (!downloadUrl || !response.eTag) {
                         this.logger.debug('Load error', path, 'no download url', response, this.logger.ts(ts));
@@ -136,12 +135,12 @@ const StorageOneDrive = StorageBase.extend({
         });
     },
 
-    list: function(callback) {
+    list: function(dir, callback) {
         this._oauthAuthorize(err => {
             if (err) { return callback && callback(err); }
             this.logger.debug('List');
             const ts = this.logger.ts();
-            const url = this._baseUrl + '/drive/root/view.search?q=.kdbx&filter=' + encodeURIComponent('file ne null');
+            const url = this._baseUrl + (dir ? `/me${dir}:/children` : '/me/drive/root/children');
             this._xhr({
                 url: url,
                 responseType: 'json',
@@ -152,11 +151,12 @@ const StorageOneDrive = StorageBase.extend({
                     }
                     this.logger.debug('Listed', this.logger.ts(ts));
                     const fileList = response.value
-                        .filter(f => f.name && UrlUtil.isKdbx(f.name))
+                        .filter(f => f.name)
                         .map(f => ({
                             name: f.name,
                             path: f.parentReference.path + '/' + f.name,
-                            rev: f.eTag
+                            rev: f.eTag,
+                            dir: !!f.folder
                         }));
                     return callback && callback(null, fileList);
                 },
@@ -215,8 +215,7 @@ const StorageOneDrive = StorageBase.extend({
 
     setEnabled: function(enabled) {
         if (!enabled) {
-            const url = 'https://login.live.com/oauth20_logout.srf?client_id={client_id}&redirect_uri={url}'
-                .replace('{client_id}', this._getClientId())
+            const url = 'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={url}'
                 .replace('{url}', this._getOauthRedirectUrl());
             this._oauthRevokeToken(url);
         }
@@ -234,8 +233,8 @@ const StorageOneDrive = StorageBase.extend({
     _getOAuthConfig: function() {
         const clientId = this._getClientId();
         return {
-            url: 'https://login.live.com/oauth20_authorize.srf',
-            scope: 'onedrive.readwrite',
+            url: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            scope: 'files.readwrite',
             clientId: clientId,
             width: 600,
             height: 500

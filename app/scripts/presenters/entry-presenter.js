@@ -48,7 +48,7 @@ EntryPresenter.prototype = {
             case 'attachments':
                 return this.entry.attachments.map(a => a.title).join(', ') || '(' + Locale.listNoAttachments + ')';
             default:
-                return this.notes || this.url || this.user;
+                return this.user || this.notes || this.url;
         }
     }
 };

@@ -102,7 +102,6 @@ const AppModel = Backbone.Model.extend({
         if (isExternal) {
             throw 'Loading config from this location is not allowed';
         }
-        document.removeChild(link);
     },
 
     applyUserConfig(config) {
@@ -125,7 +124,7 @@ const AppModel = Backbone.Model.extend({
                 .forEach(fi => this.fileInfos.unshift(fi));
         }
         if (config.plugins) {
-            return Promise.all(config.plugins.map(plugin => PluginManager.installIfNew(plugin.url, plugin.manifest)));
+            return Promise.all(config.plugins.map(plugin => PluginManager.installIfNew(plugin.url, plugin.manifest, true)));
         }
     },
 
@@ -642,7 +641,9 @@ const AppModel = Backbone.Model.extend({
         if (data && backup && backup.enabled && backup.pending) {
             this.scheduleBackupFile(file, data);
         }
-        this.saveFileFingerprint(file, params.password);
+        if (params) {
+            this.saveFileFingerprint(file, params.password);
+        }
     },
 
     fileClosed: function(file) {

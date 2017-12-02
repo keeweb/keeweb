@@ -273,23 +273,23 @@ const StorageDropbox = StorageBase.extend({
         });
     },
 
-    list: function(callback) {
+    list: function(dir, callback) {
         this.logger.debug('List');
         const ts = this.logger.ts();
         this._apiCall({
             method: 'files/list_folder',
             data: {
-                path: this._toFullPath(''),
+                path: this._toFullPath(dir || ''),
                 recursive: false
             },
             success: data => {
                 this.logger.debug('Listed', this.logger.ts(ts));
                 const fileList = data.entries
-                    .filter(f => f['.tag'] === 'file' && f.rev && UrlUtil.isKdbx(f.name))
                     .map(f => ({
                         name: f.name,
                         path: this._toRelPath(f['path_display']),
-                        ref: f.rev
+                        rev: f.rev,
+                        dir: f['.tag'] !== 'file'
                     }));
                 callback(null, fileList);
             },

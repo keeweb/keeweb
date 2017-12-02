@@ -81,9 +81,6 @@ const Launcher = {
             }, err => callback(undefined, err));
         }, err => callback(undefined, err));
     },
-    statFileSync: function(path) {
-        this.req('fs').statSync(path);
-    },
     mkdir: function(dir, callback) {
         const basePath = this.getDataPath().join('/');
         const createDir = (dirEntry, path, callback) => {

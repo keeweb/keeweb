@@ -30,7 +30,7 @@ const FailStorage = StorageBase.extend({
         callback('fail');
     },
 
-    list(callback) {
+    list(dir, callback) {
         callback('fail');
     },
 

@@ -1,0 +1,32 @@
+<div class="open-list open-list--density{{density}}">
+    <div class="open-list__content">
+        <div class="open-list__scrollable">
+            <div class="open-list__files">
+                {{#each files as |file|}}
+                    {{#if file.dir}}
+                    <div class="open-list__file" data-path="{{file.path}}">
+                        <i class="open-list__file-icon fa fa-{{#ifeq file.name '..'}}arrow-left{{else}}folder-o{{/ifeq}}"></i>
+                        <span class="open-list__file-text">{{file.name}}</span>
+                    </div>
+                    {{/if}}
+                {{/each}}
+            </div>
+            <div class="open-list__files">
+                {{#each files as |file|}}
+                    {{#unless file.dir}}
+                    <div class="open-list__file {{#unless file.kdbx}}open-list__file--another{{/unless}}" data-path="{{file.path}}">
+                        <i class="open-list__file-icon fa fa-{{#if file.kdbx}}key{{else}}file-text-o{{/if}}"></i>
+                        <span class="open-list__file-text">{{file.name}}</span>
+                    </div>
+                    {{/unless}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    {{#if hasHiddenFiles}}
+    <div class="open-list__check-wrap">
+        <input type="checkbox" id="open-list__check" {{#if showHiddenFiles}}checked{{/if}}
+        /><label class="open-list__check-label" for="open-list__check">{{res 'openShowAllFiles'}}</label>
+    </div>
+    {{/if}}
+</div>

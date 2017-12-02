@@ -46,8 +46,12 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
         if (entryUrlParts) {
             const [, scheme, domain, path] = entryUrlParts;
             const [, thisScheme, thisDomain, thisPath] = this.urlParts;
-            if (domain === thisDomain) {
-                rank += 10;
+            if (domain === thisDomain || thisDomain.indexOf('.' + domain) > 0) {
+                if (domain === thisDomain) {
+                    rank += 20;
+                } else {
+                    rank += 10;
+                }
                 if (path === thisPath) {
                     rank += 10;
                 } else if (path && thisPath) {

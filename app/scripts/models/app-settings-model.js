@@ -21,6 +21,7 @@ const AppSettingsModel = Backbone.Model.extend({
         lockOnMinimize: true,
         lockOnCopy: false,
         lockOnAutoType: false,
+        lockOnOsLock: false,
         helpTipCopyShown: false,
         templateHelpShown: false,
         skipOpenLocalWarn: false,

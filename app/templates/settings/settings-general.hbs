@@ -103,18 +103,6 @@
             {{#if supportFiles}}<option value="path" {{#ifeq rememberKeyFiles 'path'}}selected{{/ifeq}}>{{res 'setGenRememberKeyFilesPath'}}</option>{{/if}}
         </select>
     </div>
-    <div>
-        <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>
-        <select class="settings__general-idle-minutes settings__select input-base" id="settings__general-idle-minutes">
-            <option value="0" {{#cmp idleMinutes 0 '<='}}selected{{/cmp}}>{{res 'setGenNoAutoLock'}}</option>
-            <option value="5" {{#ifeq idleMinutes 5}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}5{{/res}}</option>
-            <option value="10" {{#ifeq idleMinutes 10}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}10{{/res}}</option>
-            <option value="15" {{#ifeq idleMinutes 15}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}15{{/res}}</option>
-            <option value="60" {{#ifeq idleMinutes 60}}selected{{/ifeq}}>{{res 'setGenLockHour'}}</option>
-            <option value="720" {{#ifeq idleMinutes 720}}selected{{/ifeq}}>{{#res 'setGenLockHours'}}12{{/res}}</option>
-            <option value="1440" {{#ifeq idleMinutes 1440}}selected{{/ifeq}}>{{res 'setGenLockDay'}}</option>
-        </select>
-    </div>
     {{#if canClearClipboard}}
     <div>
         <label for="settings__general-clipboard">{{res 'setGenClearClip'}}:</label>
@@ -134,6 +122,20 @@
         <label for="settings__general-minimize">{{res 'setGenMinInstead'}}</label>
     </div>
     {{/if}}
+
+    <h2>{{res 'setGenLock'}}</h2>
+    <div>
+        <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>
+        <select class="settings__general-idle-minutes settings__select input-base" id="settings__general-idle-minutes">
+            <option value="0" {{#cmp idleMinutes 0 '<='}}selected{{/cmp}}>{{res 'setGenNoAutoLock'}}</option>
+            <option value="5" {{#ifeq idleMinutes 5}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}5{{/res}}</option>
+            <option value="10" {{#ifeq idleMinutes 10}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}10{{/res}}</option>
+            <option value="15" {{#ifeq idleMinutes 15}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}15{{/res}}</option>
+            <option value="60" {{#ifeq idleMinutes 60}}selected{{/ifeq}}>{{res 'setGenLockHour'}}</option>
+            <option value="720" {{#ifeq idleMinutes 720}}selected{{/ifeq}}>{{#res 'setGenLockHours'}}12{{/res}}</option>
+            <option value="1440" {{#ifeq idleMinutes 1440}}selected{{/ifeq}}>{{res 'setGenLockDay'}}</option>
+        </select>
+    </div>
     {{#if canDetectMinimize}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-lock-on-minimize" id="settings__general-lock-on-minimize"
@@ -152,6 +154,13 @@
                {{#if lockOnAutoType}}checked{{/if}} />
         <label for="settings__general-lock-on-auto-type">{{res 'setGenLockAutoType'}}</label>
     </div>
+    {{/if}}
+    {{#if canDetectOsSleep}}
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-lock-on-os-lock" id="settings__general-lock-on-os-lock"
+                   {{#if lockOnOsLock}}checked{{/if}} />
+            <label for="settings__general-lock-on-os-lock">{{res 'setGenLockOrSleep'}}</label>
+        </div>
     {{/if}}
     <h2>{{res 'setGenStorage'}}</h2>
     {{#each storageProviders as |prv|}}

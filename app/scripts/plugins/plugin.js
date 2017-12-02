@@ -41,7 +41,8 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         installTime: null,
         installError: null,
         updateCheckDate: null,
-        updateError: null
+        updateError: null,
+        skipSignatureValidation: false
     },
 
     resources: {},
@@ -105,6 +106,9 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
         }
         if (!manifest.publicKey) {
             return 'No plugin public key';
+        }
+        if (!this.get('skipSignatureValidation') && manifest.publicKey !== SignatureVerifier.getPublicKey()) {
+            return 'Public key mismatch';
         }
         if (!manifest.resources || !Object.keys(manifest.resources).length) {
             return 'No plugin resources';
@@ -176,53 +180,43 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
     },
 
     loadResource(type, local) {
+        const ts = this.logger.ts();
         let res;
         if (local) {
-            res = this.loadLocalResource(type);
+            res = new Promise((resolve, reject) => {
+                const storageKey = this.getStorageResourcePath(type);
+                io.load(storageKey, (err, data) => err ? reject(err) : resolve(data));
+            });
         } else {
             const url = this.get('url');
-            res = this.loadResourceFromUrl(type, url + this.getResourcePath(type));
+            res = httpGet(url + this.getResourcePath(type), true);
         }
         return res.then(data => {
-            this.resources[type] = data;
-        });
-    },
-
-    loadResourceFromUrl(type, url) {
-        let ts = this.logger.ts();
-        const manifest = this.get('manifest');
-        return httpGet(url, true).then(data => {
             this.logger.debug('Resource data loaded', type, this.logger.ts(ts));
-            ts = this.logger.ts();
-            const signature = manifest.resources[type];
-            return SignatureVerifier.verify(data, signature, manifest.publicKey)
-                .then(valid => {
-                    if (valid) {
-                        this.logger.debug('Resource signature valid', type, this.logger.ts(ts));
-                        return data;
-                    } else {
-                        this.logger.error('Resource signature invalid', type);
-                        throw `Signature invalid: ${type}`;
-                    }
-                })
-                .catch(() => {
-                    this.logger.error('Error validating resource signature', type);
-                    throw `Error validating resource signature for ${type}`;
-                });
-        });
-    },
-
-    loadLocalResource(type) {
-        return new Promise((resolve, reject) => {
-            const storageKey = this.getStorageResourcePath(type);
-            io.load(storageKey, (err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(data);
-                }
+            return this.verifyResource(data, type).then(data => {
+                this.resources[type] = data;
             });
         });
+    },
+
+    verifyResource(data, type) {
+        const ts = this.logger.ts();
+        const manifest = this.get('manifest');
+        const signature = manifest.resources[type];
+        return SignatureVerifier.verify(data, signature, manifest.publicKey)
+            .then(valid => {
+                if (valid) {
+                    this.logger.debug('Resource signature validated', type, this.logger.ts(ts));
+                    return data;
+                } else {
+                    this.logger.error('Resource signature invalid', type);
+                    throw `Signature invalid: ${type}`;
+                }
+            })
+            .catch(() => {
+                this.logger.error('Error validating resource signature', type);
+                throw `Error validating resource signature for ${type}`;
+            });
     },
 
     installWithResources() {

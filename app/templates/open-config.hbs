@@ -14,6 +14,7 @@
         {{/each}}
     </div>
     <div class="open__config-error error-color"></div>
+    {{#if buttons}}
     <div class="open__config-buttons">
         <button class="btn-silent open__config-btn-cancel">{{res 'alertCancel'}}</button>
         <button class="open__config-btn-ok">
@@ -21,4 +22,5 @@
             <i class="open__config-btn-ok-spinner fa fa-spinner fa-spin"></i>
         </button>
     </div>
+    {{/if}}
 </div>

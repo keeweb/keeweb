@@ -10,6 +10,7 @@
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const https = require('https');
 
 const args = process.argv.splice(2);
 const pkg = require('./package.json');
@@ -19,6 +20,7 @@ const op = args.shift();
 const bumpVersion = args.some(arg => arg === '--bump-version');
 const privateKeyPath = args.filter(arg => arg.startsWith('--private-key=')).map(arg => arg.replace('--private-key=', ''))[0];
 const signerModule = args.filter(arg => arg.startsWith('--signer-module=')).map(arg => arg.replace('--signer-module=', ''))[0];
+const serverPort = args.filter(arg => arg.startsWith('--port=')).map(arg => arg.replace('--port=', ''))[0];
 
 showBanner();
 
@@ -129,7 +131,41 @@ function watchSignPlugin() {
             changed = {};
         }, 1000);
     });
+    servePlugin(packageName);
     console.log('Waiting for changes...');
+}
+
+function servePlugin(packageName) {
+    const options = {
+        key: fs.readFileSync(path.join(__dirname, 'self-signed-key.pem')),
+        cert: fs.readFileSync(path.join(__dirname, 'self-signed-cert.pem'))
+    };
+    const port = serverPort || 8089;
+    https.createServer(options, (req, res) => {
+        console.log('GET', req.connection.remoteAddress, req.url);
+        const filePath = path.resolve(packageName, '.' + req.url.replace(/\.\./g, '').replace(/\?.*/, ''));
+        const packagePath = path.resolve(packageName);
+        if (!filePath.startsWith(packagePath)) {
+            res.writeHead(404);
+            res.end('Not found');
+            return;
+        }
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.writeHead(404);
+                res.end('Not found');
+            } else {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Credentials', true);
+                res.setHeader('Access-Control-Allow-Methods', 'GET');
+                res.setHeader('Content-type', 'text/plain');
+                res.writeHead(200);
+                res.end(data);
+            }
+        });
+    }).listen(serverPort);
+    console.log(`This is your plugin URL for keeweb: https://127.0.0.1:${port}`);
+    console.log('But first, open it in browser and click Proceed on unsafe website warning screen');
 }
 
 function getPackageArg() {

@@ -9,6 +9,10 @@
     @include th { background-color: th(modal-background-color-tr); }
   }
 
+  &.modal--opaque {
+    @include th { background-color: th(background-color); }
+  }
+
   &__content {
     @include size(100%);
     display: flex;

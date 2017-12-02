@@ -6,7 +6,6 @@ const AppSettingsModel = require('../../models/app-settings-model');
 const Comparators = require('../../util/comparators');
 const Format = require('../../util/format');
 const SettingsManager = require('../../comp/settings-manager');
-const SignatureVerifier = require('../../util/signature-verifier');
 const FeatureDetector = require('../../util/feature-detector');
 const SemVer = require('../../util/semver');
 const RuntimeInfo = require('../../comp/runtime-info');
@@ -43,7 +42,6 @@ const SettingsPluginsView = Backbone.View.extend({
     },
 
     render() {
-        const publicKey = SignatureVerifier.getPublicKey();
         this.renderTemplate({
             plugins: PluginManager.get('plugins').map(plugin => ({
                 id: plugin.id,
@@ -53,7 +51,7 @@ const SettingsPluginsView = Backbone.View.extend({
                 updateError: plugin.get('updateError'),
                 updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
                 installError: plugin.get('installError'),
-                official: plugin.get('manifest').publicKey === publicKey,
+                official: plugin.get('official'),
                 autoUpdate: plugin.get('autoUpdate'),
                 settings: plugin.getSettings()
             })).sort(Comparators.stringComparator('id', true)),
@@ -78,7 +76,6 @@ const SettingsPluginsView = Backbone.View.extend({
         if (!PluginGallery.gallery) {
             return null;
         }
-        const publicKey = SignatureVerifier.getPublicKey();
         const plugins = PluginManager.get('plugins');
         return PluginGallery.gallery.plugins
             .map(pl => ({
@@ -86,7 +83,7 @@ const SettingsPluginsView = Backbone.View.extend({
                 manifest: pl.manifest,
                 installing: this.installing[pl.url],
                 installError: this.installErrors[pl.url],
-                official: pl.manifest.publicKey === publicKey
+                official: pl.official
             }))
             .filter(pl => !plugins.get(pl.manifest.name) && this.canInstallPlugin(pl))
             .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
@@ -128,7 +125,7 @@ const SettingsPluginsView = Backbone.View.extend({
         urlTextBox.prop('disabled', true);
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installFromUrl = { url };
-        PluginManager.install(url)
+        PluginManager.install(url, undefined, true)
             .then(() => {
                 this.installFinished();
                 this.installFromUrl = null;

@@ -78,6 +78,8 @@ const AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'edit-generator-presets', this.editGeneratorPresets);
         this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
         this.listenTo(Backbone, 'user-idle', this.userIdle);
+        this.listenTo(Backbone, 'os-lock', this.osLocked);
+        this.listenTo(Backbone, 'power-monitor-suspend', this.osLocked);
         this.listenTo(Backbone, 'app-minimized', this.appMinimized);
         this.listenTo(Backbone, 'show-context-menu', this.showContextMenu);
         this.listenTo(Backbone, 'second-instance', this.showSingleInstanceAlert);
@@ -330,7 +332,10 @@ const AppView = Backbone.View.extend({
                     Launcher.exit();
                 }
             };
-            if (Launcher && !Launcher.exitRequested) {
+            if (Launcher && Launcher.exitRequested) {
+                return;
+            }
+            if (Launcher) {
                 if (!this.exitAlertShown) {
                     if (this.model.settings.get('autoSave')) {
                         this.saveAndLock(result => { if (result) { exit(); } });
@@ -419,6 +424,12 @@ const AppView = Backbone.View.extend({
 
     userIdle: function() {
         this.lockWorkspace(true);
+    },
+
+    osLocked: function() {
+        if (this.model.settings.get('lockOnOsLock')) {
+            this.lockWorkspace(true);
+        }
     },
 
     appMinimized: function() {

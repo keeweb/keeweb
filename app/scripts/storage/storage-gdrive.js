@@ -12,6 +12,7 @@ const StorageGDrive = StorageBase.extend({
         '119.08 Z M38.793088,9.003712 L0,76.30496 L20.671872,112.110016 L59.464704,44.808128 L38.793088,9.003712 Z"></path></svg>',
 
     _baseUrl: 'https://www.googleapis.com/drive/v3',
+    _baseUrlUpload: 'https://www.googleapis.com/upload/drive/v3',
 
     getPathForName: function(fileName) {
         return NewFileIdPrefix + fileName;
@@ -87,7 +88,7 @@ const StorageGDrive = StorageBase.extend({
                 const isNew = path.lastIndexOf(NewFileIdPrefix, 0) === 0;
                 let url;
                 if (isNew) {
-                    url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,headRevisionId';
+                    url = this._baseUrlUpload + '/files?uploadType=multipart&fields=id,headRevisionId';
                     const fileName = path.replace(NewFileIdPrefix, '') + '.kdbx';
                     const boundry = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
                     data = new Blob([
@@ -100,7 +101,7 @@ const StorageGDrive = StorageBase.extend({
                         '--', boundry, '--', '\r\n'
                     ], { type: 'multipart/related; boundary="' + boundry + '"' });
                 } else {
-                    url = 'https://www.googleapis.com/upload/drive/v3/files/{id}?uploadType=media&fields=headRevisionId'
+                    url = this._baseUrlUpload + '/files/{id}?uploadType=media&fields=headRevisionId'
                         .replace('{id}', path);
                     data = new Blob([data], { type: 'application/octet-stream' });
                 }
@@ -126,13 +127,14 @@ const StorageGDrive = StorageBase.extend({
         });
     },
 
-    list: function(callback) {
+    list: function(dir, callback) {
         this._oauthAuthorize((err) => {
             if (err) { return callback && callback(err); }
             this.logger.debug('List');
+            const parents = dir || 'root';
             const url = this._baseUrl + '/files?fields={fields}&q={q}'
-                .replace('{fields}', encodeURIComponent('files'))
-                .replace('{q}', encodeURIComponent('fileExtension="kdbx" and trashed=false'));
+                .replace('{fields}', encodeURIComponent('files(id,name,mimeType,headRevisionId)'))
+                .replace('{q}', encodeURIComponent(`parents="${parents}" and trashed=false`));
             const ts = this.logger.ts();
             this._xhr({
                 url: url,
@@ -146,7 +148,8 @@ const StorageGDrive = StorageBase.extend({
                     const fileList = response.files.map(f => ({
                         name: f.name,
                         path: f.id,
-                        rev: f.headRevisionId
+                        rev: f.headRevisionId,
+                        dir: f.mimeType === 'application/vnd.google-apps.folder'
                     }));
                     return callback && callback(null, fileList);
                 },

@@ -255,6 +255,9 @@ const GroupModel = MenuItemModel.extend({
     moveToTrash: function() {
         this.file.setModified();
         this.file.db.remove(this.group);
+        if (this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup)) {
+            this.file.db.meta.entryTemplatesGroup = undefined;
+        }
         this.file.reload();
     },
 

@@ -1,5 +1,21 @@
 Release notes
 -------------
+##### v1.6.0 (2017-12-02)
+`+` desktop apps integrity protection  
+`+` auto-lock on computer lock  
+`+` redesigned Dropbox chooser  
+`+` WebDAV file creation  
+`+` safari tab icons  
+`*` prevent master password autocomplete  
+`*` build with node.js 8  
+`-` fixed tray icon click crash  
+`*` show usernames in entry list  
+`*` password can be hidden as other fields  
+`*` clear clipboard on exit  
+`*` don't remove spaces in custom fields  
+`*` auto-type on subdomains  
+`*` plugin signature validation  
+
 ##### v1.5.6 (2017-08-31)
 `-` fix #722: hang on start in desktop  
 `-` fix #653: auto-closing tab when starting from link  

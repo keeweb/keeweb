@@ -231,3 +231,47 @@
     }
   }
 }
+
+.open-list {
+  &__content {
+    margin: $base-padding-v 0 $base-padding-v (-$base-padding-h);
+    max-height: calc(100vh - 22em);
+    position: relative;
+    overflow: hidden;
+  }
+  &__scrollable {
+    max-height: calc(100vh - 22em);
+    width: calc(100% + 50px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  &__files {
+    display: flex;
+    flex-wrap: wrap;
+    width: calc(100% - 50px);
+  }
+  &__file {
+    cursor: pointer;
+    padding: $base-padding;
+    border-radius: $base-border-radius;
+    box-sizing: border-box;
+    flex-basis: 100%;
+    @include nomobile {
+      .open-list--density2 & { flex-basis: 50%; }
+      .open-list--density3 & { flex-basis: 33.33333%; }
+    }
+    &:hover {
+      @include th { background-color: th(action-background-color-focus-tr); }
+    }
+    &-icon {
+      margin-right: .3em;
+    }
+    &--another {
+      @include th { color: th(medium-color); }
+    }
+  }
+  &__check-label {
+    width: 100%;
+    display: inline-block;
+  }
+}

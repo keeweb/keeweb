@@ -1,4 +1,5 @@
 const Backbone = require('backbone');
+const OpenConfigView = require('../open-config-view');
 const FeatureDetector = require('../../util/feature-detector');
 const PasswordGenerator = require('../../util/password-generator');
 const Alerts = require('../../comp/alerts');
@@ -227,11 +228,33 @@ const SettingsFileView = Backbone.View.extend({
             this.save();
         } else {
             if (!storage.list) {
-                if (storage.name === 'webdav') {
-                    Alerts.info({
+                if (storage.getOpenConfig) {
+                    const config = _.extend({
+                        id: storage.name,
+                        name: Locale[storage.name] || storage.name,
                         icon: storage.icon,
-                        header: Locale.setFileNoWebDavUpload,
-                        body: Locale.setFileNoWebDavUploadBody
+                        buttons: false
+                    }, storage.getOpenConfig());
+                    const openConfigView = new OpenConfigView({ model: config });
+                    Alerts.alert({
+                        header: '',
+                        body: '',
+                        icon: storage.icon || 'files-o',
+                        buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
+                        esc: '',
+                        opaque: true,
+                        view: openConfigView,
+                        success: () => {
+                            const storageConfig = openConfigView.getData();
+                            if (!storageConfig) {
+                                return;
+                            }
+                            const opts = _.omit(storageConfig, ['path', 'storage']);
+                            if (opts && Object.keys(opts).length) {
+                                this.model.set('opts', opts);
+                            }
+                            this.save({ storage: storageName, path: storageConfig.path, opts });
+                        }
                     });
                 } else {
                     Alerts.notImplemented();
@@ -239,7 +262,7 @@ const SettingsFileView = Backbone.View.extend({
                 return;
             }
             this.model.set('syncing', true);
-            storage.list((err, files) => {
+            storage.list('', (err, files) => {
                 this.model.set('syncing', false);
                 if (err) {
                     return;

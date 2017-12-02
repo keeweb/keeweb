@@ -33,6 +33,7 @@ const SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-lock-on-minimize': 'changeLockOnMinimize',
         'change .settings__general-lock-on-copy': 'changeLockOnCopy',
         'change .settings__general-lock-on-auto-type': 'changeLockOnAutoType',
+        'change .settings__general-lock-on-os-lock': 'changeLockOnOsLock',
         'change .settings__general-table-view': 'changeTableView',
         'change .settings__general-colorful-icons': 'changeColorfulIcons',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
@@ -79,10 +80,12 @@ const SettingsGeneralView = Backbone.View.extend({
             canAutoUpdate: Updater.enabled,
             canMinimize: Launcher && Launcher.canMinimize(),
             canDetectMinimize: !!Launcher,
+            canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
             canAutoType: AutoType.enabled,
             lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
             lockOnCopy: AppSettingsModel.instance.get('lockOnCopy'),
             lockOnAutoType: AppSettingsModel.instance.get('lockOnAutoType'),
+            lockOnOsLock: AppSettingsModel.instance.get('lockOnOsLock'),
             tableView: AppSettingsModel.instance.get('tableView'),
             canSetTableView: !FeatureDetector.isMobile,
             autoUpdate: Updater.getAutoUpdateType(),
@@ -245,6 +248,11 @@ const SettingsGeneralView = Backbone.View.extend({
     changeLockOnAutoType: function(e) {
         const lockOnAutoType = e.target.checked || false;
         AppSettingsModel.instance.set('lockOnAutoType', lockOnAutoType);
+    },
+
+    changeLockOnOsLock: function(e) {
+        const lockOnOsLock = e.target.checked || false;
+        AppSettingsModel.instance.set('lockOnOsLock', lockOnOsLock);
     },
 
     changeTableView: function(e) {

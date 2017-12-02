@@ -71,4 +71,4 @@ Please note: donation does not imply any type of service contract.
 
 # License
 
-[MIT](https://github.com/keeweb/keeweb/blob/master/LICENSE.txt)
+[MIT](https://github.com/keeweb/keeweb/blob/master/LICENSE)

@@ -5,11 +5,14 @@ const Keys = require('../const/keys');
 const Alerts = require('../comp/alerts');
 const SecureInput = require('../comp/secure-input');
 const DropboxChooser = require('../comp/dropbox-chooser');
+const KeyHandler = require('../comp/key-handler');
+const StorageFileListView = require('../views/storage-file-list-view');
 const FeatureDetector = require('../util/feature-detector');
 const Logger = require('../util/logger');
 const Locale = require('../util/locale');
 const UrlUtil = require('../util/url-util');
 const InputFx = require('../util/input-fx');
+const Comparators = require('../util/comparators');
 const Storage = require('../storage');
 const Launcher = require('../comp/launcher');
 
@@ -59,6 +62,7 @@ const OpenView = Backbone.View.extend({
             rev: null
         };
         this.passwordInput = new SecureInput();
+        KeyHandler.onKey(Keys.DOM_VK_Z, this.undoKeyPress, this, KeyHandler.SHORTCUT_ACTION);
     },
 
     render: function () {
@@ -131,6 +135,7 @@ const OpenView = Backbone.View.extend({
 
     remove: function() {
         this.passwordInput.reset();
+        KeyHandler.offKey(Keys.DOM_VK_Z, this.undoKeyPress, this);
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
@@ -273,6 +278,9 @@ const OpenView = Backbone.View.extend({
     },
 
     openFile: function() {
+        if (this.model.settings.get('canOpen') === false) {
+            return;
+        }
         if (!this.busy) {
             this.closeConfig();
             this.openAny('fileData');
@@ -461,6 +469,10 @@ const OpenView = Backbone.View.extend({
         }
     },
 
+    undoKeyPress: function(e) {
+        e.preventDefault();
+    },
+
     showOpenFileInfo: function(fileInfo) {
         if (this.busy || !fileInfo) {
             return;
@@ -556,7 +568,13 @@ const OpenView = Backbone.View.extend({
         this.$el.toggleClass('open--opening', true);
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
-        this.afterPaint(this.model.importFileWithXml.bind(this.model, this.params, this.openDbComplete.bind(this)));
+        this.afterPaint(() => this.model.importFileWithXml(this.params, err => {
+            if (err) {
+                this.params.name = '';
+                this.params.fileXml = null;
+            }
+            this.openDbComplete(err);
+        }));
     },
 
     toggleMore: function() {
@@ -588,7 +606,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    listStorage: function(storage) {
+    listStorage: function(storage, config) {
         if (this.busy) {
             return;
         }
@@ -596,38 +614,66 @@ const OpenView = Backbone.View.extend({
         const icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
         this.busy = true;
         icon.toggleClass('flip3d', true);
-        storage.list((err, files) => {
+        storage.list(config && config.dir, (err, files) => {
             icon.toggleClass('flip3d', false);
             this.busy = false;
             if (err || !files) {
+                err = err ? err.toString() : '';
+                if (err.lastIndexOf('OAuth', 0) !== 0 && !Alerts.alertDisplayed) {
+                    Alerts.error({
+                        header: Locale.openError,
+                        body: Locale.openListErrorBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                    });
+                }
                 return;
             }
-
-            const buttons = [];
-            const allStorageFiles = {};
-            files.forEach(file => {
-                const fileName = UrlUtil.getDataFileName(file.name);
-                buttons.push({result: file.path, title: fileName});
-                allStorageFiles[file.path] = file;
-            });
-            if (!buttons.length) {
+            if (!files.length) {
                 Alerts.error({
                     header: Locale.openNothingFound,
                     body: Locale.openNothingFoundBody
                 });
                 return;
             }
-            buttons.push({result: '', title: Locale.alertCancel});
+
+            const fileNameComparator = Comparators.stringComparator('path', true);
+            files.sort((x, y) => {
+                if (x.dir !== y.dir) {
+                    return !!y.dir - !!x.dir;
+                }
+                return fileNameComparator(x, y);
+            });
+            if (config && config.dir) {
+                files.unshift({
+                    path: config.prevDir,
+                    name: '..',
+                    dir: true
+                });
+            }
+            const listView = new StorageFileListView({
+                model: {
+                    files,
+                    showHiddenFiles: config && config.showHiddenFiles
+                }
+            });
+            listView.on('selected', file => {
+                if (file.dir) {
+                    this.listStorage(storage, {
+                        dir: file.path,
+                        prevDir: config && config.dir || '',
+                        showHiddenFiles: true
+                    });
+                } else {
+                    this.openStorageFile(storage, file);
+                }
+            });
             Alerts.alert({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
                 icon: storage.icon || 'files-o',
-                buttons: buttons,
+                buttons: [{result: '', title: Locale.alertCancel}],
                 esc: '',
                 click: '',
-                success: file => {
-                    this.openStorageFile(storage, allStorageFiles[file]);
-                }
+                view: listView
             });
         });
     },
@@ -655,7 +701,8 @@ const OpenView = Backbone.View.extend({
         const config = _.extend({
             id: storage.name,
             name: Locale[storage.name] || storage.name,
-            icon: storage.icon
+            icon: storage.icon,
+            buttons: true
         }, storage.getOpenConfig());
         this.views.openConfig = new OpenConfigView({ el: this.$el.find('.open__config-wrap'), model: config }).render();
         this.views.openConfig.on('cancel', this.closeConfig.bind(this));
