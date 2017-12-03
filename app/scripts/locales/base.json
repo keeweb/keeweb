@@ -302,7 +302,7 @@
   "setGenNewVersion": "New app version was released and downloaded",
   "setGenReleaseNotes": "View release notes",
   "setGenReloadToUpdate": "Reload to update",
-  "setGenUpdateManual": "A new version has been released. It will check for updates and install them automatically, but auto-upgrading from your version is impossible.",
+  "setGenUpdateManual": "A new version has been released. It will check for updates and install them automatically, but auto-upgrading from your version is not possible.",
   "setGenDownloadUpdate": "Download update",
   "setGenUpdateAuto": "Download and install automatically",
   "setGenUpdateCheck": "Check but don't install",
