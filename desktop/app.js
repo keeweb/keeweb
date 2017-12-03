@@ -331,12 +331,15 @@ function onContextMenu(e, props) {
 
 function notifyOpenFile() {
     if (ready && openFile && mainWindow) {
-        openFile = openFile.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-        mainWindow.webContents.executeJavaScript('if (window.launcherOpen) { window.launcherOpen("' + openFile + '"); } ' +
-            ' else { window.launcherOpenedFile="' + openFile + '"; }');
+        const openKeyfile = process.argv.filter(arg => arg.startsWith('--keyfile=')).map(arg => arg.replace('--keyfile=', ''))[0];
+        const fileInfo = JSON.stringify({ data: openFile, key: openKeyfile });
+        mainWindow.webContents.executeJavaScript('if (window.launcherOpen) { window.launcherOpen(' + fileInfo + '); } ' +
+            ' else { window.launcherOpenedFile=' + fileInfo + '; }');
         openFile = null;
     }
 }
+
+
 
 function setGlobalShortcuts() {
     const shortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
