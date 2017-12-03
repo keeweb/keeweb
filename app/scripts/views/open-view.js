@@ -270,7 +270,7 @@ const OpenView = Backbone.View.extend({
 
     displayOpenKeyFile: function() {
         this.$el.toggleClass('open--key-file', !!this.params.keyFileName);
-        this.$el.find('.open__settings-key-file-name').text(this.params.keyFilePath || this.params.keyFileName || Locale.openKeyFile);
+        this.$el.find('.open__settings-key-file-name').text(this.params.keyFileName || this.params.keyFilePath || Locale.openKeyFile);
         this.focusInput();
     },
 
@@ -531,7 +531,7 @@ const OpenView = Backbone.View.extend({
         this.displayOpenKeyFile();
     },
 
-    showOpenLocalFile: function(path) {
+    showOpenLocalFile: function(path, keyFilePath) {
         if (this.busy) {
             return;
         }
@@ -542,6 +542,13 @@ const OpenView = Backbone.View.extend({
         this.params.rev = null;
         this.params.fileData = null;
         this.displayOpenFile();
+        if (keyFilePath) {
+            const parsed = Launcher.parsePath(keyFilePath);
+            this.params.keyFileName = parsed.file;
+            this.params.keyFilePath = keyFilePath;
+            this.params.keyFileData = null;
+            this.displayOpenKeyFile();
+        }
     },
 
     createDemo: function() {

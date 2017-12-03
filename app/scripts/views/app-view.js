@@ -167,10 +167,10 @@ const AppView = Backbone.View.extend({
         }
     },
 
-    launcherOpenFile: function(path) {
-        if (path && /\.kdbx$/i.test(path)) {
+    launcherOpenFile: function(file) {
+        if (file && file.data && /\.kdbx$/i.test(file.data)) {
             this.showOpenFile();
-            this.views.open.showOpenLocalFile(path);
+            this.views.open.showOpenLocalFile(file.data, file.key);
         }
     },
 

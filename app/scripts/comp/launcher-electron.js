@@ -253,6 +253,20 @@ const Launcher = {
         }
         return ps;
     },
+    checkOpenFiles() {
+        this.readyToOpenFiles = true;
+        if (this.pendingFileToOpen) {
+            this.openFile(this.pendingFileToOpen);
+            delete this.pendingFileToOpen;
+        }
+    },
+    openFile(file) {
+        if (this.readyToOpenFiles) {
+            Backbone.trigger('launcher-open-file', file);
+        } else {
+            this.pendingFileToOpen = file;
+        }
+    },
     getCookies(callback) {
         this.electron().remote.session.defaultSession.cookies.get({}, callback);
     },
@@ -270,13 +284,12 @@ Backbone.on('launcher-exit-request', () => {
     setTimeout(() => Launcher.exit(), 0);
 });
 Backbone.on('launcher-minimize', () => setTimeout(() => Backbone.trigger('app-minimized'), 0));
-window.launcherOpen = function(path) {
-    Backbone.trigger('launcher-open-file', path);
-};
+window.launcherOpen = file => Launcher.openFile(file);
 if (window.launcherOpenedFile) {
     logger.info('Open file request', window.launcherOpenedFile);
-    Backbone.trigger('launcher-open-file', window.launcherOpenedFile);
+    Launcher.openFile(window.launcherOpenedFile);
     delete window.launcherOpenedFile;
 }
+Backbone.on('app-ready', () => setTimeout(() => Launcher.checkOpenFiles(), 0));
 
 module.exports = Launcher;

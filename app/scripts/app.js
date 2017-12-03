@@ -1,3 +1,4 @@
+const Backbone = require('backbone');
 const AppModel = require('./models/app-model');
 const AppView = require('./views/app-view');
 const AppSettingsModel = require('./models/app-settings-model');
@@ -142,6 +143,7 @@ ready(() => {
     function showView() {
         appModel.prepare();
         new AppView({ model: appModel }).render();
+        Backbone.trigger('app-ready');
         logStartupTime();
     }
 

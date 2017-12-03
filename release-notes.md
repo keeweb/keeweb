@@ -4,6 +4,7 @@ Release notes
 `-` fixed color flash on startup  
 `+` downgrading desktop app  
 `-` fixed calendar colors  
+`+` option to open keyfile from command line  
 
 ##### v1.6.3 (2017-12-11)
 `-` fixed Windows installer upgrade issue  
