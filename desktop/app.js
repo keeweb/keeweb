@@ -22,6 +22,7 @@ let htmlPath = process.argv.filter(arg => arg.startsWith('--htmlpath=')).map(arg
 if (!htmlPath) {
     htmlPath = 'file://' + path.join(__dirname, 'index.html');
 }
+const showDevToolsOnStart = process.argv.some(arg => arg.startsWith('--devtools'));
 
 app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
 
@@ -141,6 +142,9 @@ function createMainWindow() {
     });
     setMenu();
     mainWindow.loadURL(htmlPath);
+    if (showDevToolsOnStart) {
+        mainWindow.openDevTools();
+    }
     mainWindow.webContents.on('dom-ready', () => {
         setTimeout(() => {
             mainWindow.show();
