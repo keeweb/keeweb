@@ -136,6 +136,7 @@ function createMainWindow() {
         width: 1000, height: 700, minWidth: 700, minHeight: 400,
         icon: path.join(__dirname, 'icon.png'),
         titleBarStyle: appSettings ? appSettings.titlebarStyle : undefined,
+        backgroundColor: '#282C34',
         webPreferences: {
             backgroundThrottling: false
         }
@@ -145,7 +146,7 @@ function createMainWindow() {
     if (showDevToolsOnStart) {
         mainWindow.openDevTools();
     }
-    mainWindow.webContents.on('dom-ready', () => {
+    mainWindow.once('ready-to-show', () => {
         setTimeout(() => {
             mainWindow.show();
             ready = true;
