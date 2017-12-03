@@ -300,7 +300,7 @@ module.exports = function(grunt) {
                 files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
             },
             'desktop-public-key': {
-                options: { replacements: [{ pattern: '\'PUBLIC_KEY_CONTENT\'', replacement:
+                options: { replacements: [{ pattern: '\'@@PUBLIC_KEY_CONTENT\'', replacement:
                     '`' + fs.readFileSync('app/resources/public-key.pem', {encoding: 'utf8'}).trim() + '`' }] },
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
             },
