@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.7.0 (WIP)
 `-` fixed color flash on startup  
+`+` downgrading desktop app  
 
 ##### v1.6.1 (2017-12-03)
 `-` fixed white screen on startup  

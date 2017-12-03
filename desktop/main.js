@@ -8,39 +8,50 @@
 
 const app = require('electron').app;
 const path = require('path');
-const fs = require('fs');
+const fs = require('original-fs');
 
 const userDataDir = app.getPath('userData');
 const userDataAppArchivePath = path.join(userDataDir, 'app.asar');
 let entryPointDir = __dirname;
 
-if (fs.existsSync(userDataAppArchivePath)) {
-    let versionLocal = require('./package.json').version;
+try {
+    const appFilePath = entryPointDir.endsWith('app.asar') ? entryPointDir : __filename;
+    let userPackageStat;
     try {
-        let versionUserData = require(path.join(userDataAppArchivePath, 'package.json')).version;
-        versionLocal = versionLocal.split('.');
-        versionUserData = versionUserData.split('.');
-        for (let i = 0; i < versionLocal.length; i++) {
-            if (+versionUserData[i] > +versionLocal[i]) {
-                entryPointDir = userDataAppArchivePath;
-                try {
-                    validateSignature(userDataDir);
-                } catch (e) {
-                    exitWithError('Error validating signatures: ' + e);
+        userPackageStat = fs.statSync(userDataAppArchivePath);
+    } catch (e) {}
+    if (userPackageStat) {
+        const packageStat = fs.statSync(appFilePath);
+        const userPackageStatTime = Math.max(userPackageStat.mtime.getTime(), userPackageStat.ctime.getTime());
+        const packageStatTime = Math.max(packageStat.mtime.getTime(), packageStat.ctime.getTime());
+        if (userPackageStatTime > packageStatTime) {
+            let versionLocal = require('./package.json').version;
+            let versionUserData = require(path.join(userDataAppArchivePath, 'package.json')).version;
+            versionLocal = versionLocal.split('.');
+            versionUserData = versionUserData.split('.');
+            for (let i = 0; i < versionLocal.length; i++) {
+                if (+versionUserData[i] > +versionLocal[i]) {
+                    entryPointDir = userDataAppArchivePath;
+                    try {
+                        validateSignature(userDataDir);
+                    } catch (e) {
+                        exitWithError('Error validating signatures: ' + e);
+                    }
+                    break;
                 }
-                break;
-            }
-            if (+versionUserData[i] < +versionLocal[i]) {
-                break;
+                if (+versionUserData[i] < +versionLocal[i]) {
+                    break;
+                }
             }
         }
-    } catch (e) {
-        console.error('Error reading user file version', e); // eslint-disable-line no-console
     }
+} catch (e) {
+    console.error('Error reading user file version', e); // eslint-disable-line no-console
 }
+const entryPointFile = path.join(entryPointDir, 'app.js');
+require(entryPointFile);
 
 function validateSignature(appPath) {
-    const fs = require('original-fs');
     const signatures = JSON.parse(fs.readFileSync(path.join(appPath, 'signatures.json')));
     const selfSignature = signatures.kwResSelf;
     if (!selfSignature || !signatures['app.asar']) {
@@ -58,8 +69,11 @@ function validateSignature(appPath) {
 
 function validateDataSignature(data, signature, name) {
     const crypto = require('crypto');
-    const publicKey = 'PUBLIC_KEY_CONTENT';
     const verify = crypto.createVerify('RSA-SHA256');
+    let publicKey = '@@PUBLIC_KEY_CONTENT';
+    if (publicKey.startsWith('@@')) {
+        publicKey = fs.readFileSync('app/resources/public-key.pem', {encoding: 'utf8'}).trim();
+    }
     verify.write(data);
     verify.end();
     signature = Buffer.from(signature, 'base64');
@@ -72,6 +86,3 @@ function exitWithError(err) {
     console.error(err); // eslint-disable-line no-console
     process.exit(1);
 }
-
-const entryPointFile = path.join(entryPointDir, 'app.js');
-require(entryPointFile);
