@@ -5,6 +5,7 @@
 .pika-label {
   @include th {
     background: th(background-color);
+    color: th(muted-color);
   }
 }
 
@@ -13,14 +14,23 @@ button.pika-prev, button.pika-next {
   background: none;
   border: none;
   border-radius: $base-border-radius;
+  position: relative;
 }
 
-button.pika-prev {
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAQAAACGG/bgAAAAQ0lEQVR4Ae3KIQ4AIBTD0N0/IeHGI3UIRA3ut/Zl+ltXc5++htVAmIAwAWECwgSEKbgthEoIlRAqIVRCqINQB9nDgQd7ktwFo6UpWQAAAABJRU5ErkJggg==');
+button.pika-prev:after, button.pika-next:after {
+  display: block;
+  content: " ";
+  position: absolute;
+  top: 8px;
+  left: 6px
 }
 
-button.pika-next {
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAQAAACGG/bgAAAAP0lEQVQ4y+3TMQoAMAgEwfwfAvvjTZ1uGzuvHhBPPGczEG+FRqqRaqQaqUaqkX6QBmmjacvQ6qEVTjsh+xizebvlaWptGXZAAAAAAElFTkSuQmCC');
+button.pika-prev:after {
+  @include th { @include triangle(14px 7px, th(text-color), left); }
+}
+
+button.pika-next:after {
+  @include th { @include triangle(14px 7px, th(text-color), right); }
 }
 
 .pika-table th {
