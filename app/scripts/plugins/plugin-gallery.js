@@ -66,10 +66,12 @@ const PluginGallery = {
     getCachedGallery() {
         const ts = this.logger.ts();
         return SettingsStore.load('plugin-gallery').then(data => {
-            return this.verifySignature(data).then(gallery => {
-                this.logger.debug(`Loaded cached plugin gallery`, this.logger.ts(ts));
-                return gallery;
-            });
+            if (data) {
+                return this.verifySignature(data).then(gallery => {
+                    this.logger.debug(`Loaded cached plugin gallery`, this.logger.ts(ts));
+                    return gallery;
+                });
+            }
         });
     },
 
