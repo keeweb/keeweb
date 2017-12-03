@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.6.0 (2017-12-03)
+`-` fixed white screen on startup  
+`+` `--devtools` command line argument
+
 ##### v1.6.0 (2017-12-02)
 `+` desktop apps integrity protection  
 `+` auto-lock on computer lock  
