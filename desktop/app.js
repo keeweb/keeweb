@@ -147,11 +147,9 @@ function createMainWindow() {
         mainWindow.openDevTools();
     }
     mainWindow.once('ready-to-show', () => {
-        setTimeout(() => {
-            mainWindow.show();
-            ready = true;
-            notifyOpenFile();
-        }, 50);
+        mainWindow.show();
+        ready = true;
+        notifyOpenFile();
     });
     mainWindow.webContents.on('context-menu', onContextMenu);
     mainWindow.on('resize', delaySaveMainWindowPosition);
