@@ -3,7 +3,7 @@
 This webapp is a browser and desktop password manager compatible with KeePass databases. It doesn't require any server or additional resources.
 The app can run either in browser, or as a desktop app.
 
-![screenshot](https://habrastorage.org/files/ec9/108/3de/ec91083de3e64574a504bc438d038dec.png)
+![screenshot](img/screenshot.png)
 
 # Quick Links
 
@@ -64,7 +64,7 @@ Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your 
 
 KeeWeb is not free to develop. It takes time, requires paid code signing certificates and domains.  
 You can help the project or say "thank you" with this button:  
-[![Donate with PayPal](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.me/dvitkovsky)  
+[![Donate with PayPal](img/paypal-donate.png =100x30)](https://www.paypal.me/dvitkovsky)  
 
 Please note: donation does not imply any type of service contract.  
 
