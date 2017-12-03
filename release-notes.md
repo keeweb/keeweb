@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.7.0 (WIP)
+`-` fixed color flash on startup  
+
 ##### v1.6.3 (2017-12-11)
 `-` fixed Windows installer upgrade issue  
 
