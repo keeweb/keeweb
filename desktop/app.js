@@ -88,18 +88,24 @@ app.openWindow = function (opts) {
     return new electron.BrowserWindow(opts);
 };
 app.minimizeApp = function () {
-    if (process.platform !== 'darwin') {
-        mainWindow.minimize();
-        mainWindow.setSkipTaskbar(true);
-        appIcon = new electron.Tray(path.join(__dirname, 'icon.png'));
-        appIcon.on('click', restoreMainWindow);
-        const contextMenu = electron.Menu.buildFromTemplate([
-            {label: 'Open KeeWeb', click: restoreMainWindow},
-            {label: 'Quit KeeWeb', click: closeMainWindow}
-        ]);
-        appIcon.setContextMenu(contextMenu);
-        appIcon.setToolTip('KeeWeb');
+    let imagePath;
+    if (process.platform === 'darwin') {
+        mainWindow.hide();
+        app.dock.hide();
+        imagePath = 'mac-menubar-icon.png';
+    } else {
+        imagePath = 'icon.png';
     }
+    mainWindow.setSkipTaskbar(true);
+    const image = electron.nativeImage.createFromPath(path.join(__dirname, imagePath));
+    appIcon = new electron.Tray(image);
+    appIcon.on('click', restoreMainWindow);
+    const contextMenu = electron.Menu.buildFromTemplate([
+        {label: 'Open KeeWeb', click: restoreMainWindow},
+        {label: 'Quit KeeWeb', click: closeMainWindow}
+    ]);
+    appIcon.setContextMenu(contextMenu);
+    appIcon.setToolTip('KeeWeb');
 };
 app.getMainWindow = function () {
     return mainWindow;
@@ -176,6 +182,10 @@ function createMainWindow() {
 }
 
 function restoreMainWindow() {
+    // if (process.platform === 'darwin') {
+    //     app.dock.show();
+    //     mainWindow.show();
+    // }
     if (mainWindow.isMinimized()) {
         mainWindow.restore();
     }
