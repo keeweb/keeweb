@@ -1,4 +1,5 @@
 const StorageBase = require('./storage-base');
+const Locale = require('../util/locale');
 
 const GDriveClientId = '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com';
 const NewFileIdPrefix = 'NewFile:';
@@ -131,10 +132,12 @@ const StorageGDrive = StorageBase.extend({
         this._oauthAuthorize((err) => {
             if (err) { return callback && callback(err); }
             this.logger.debug('List');
-            const parents = dir || 'root';
+            let query = dir === 'shared' ? 'sharedWithMe=true'
+                : dir ? `parents="${dir}"` : 'parents="root"';
+            query += 'and trashed=false';
             const url = this._baseUrl + '/files?fields={fields}&q={q}'
                 .replace('{fields}', encodeURIComponent('files(id,name,mimeType,headRevisionId)'))
-                .replace('{q}', encodeURIComponent(`parents="${parents}" and trashed=false`));
+                .replace('{q}', encodeURIComponent(query));
             const ts = this.logger.ts();
             this._xhr({
                 url: url,
@@ -151,6 +154,14 @@ const StorageGDrive = StorageBase.extend({
                         rev: f.headRevisionId,
                         dir: f.mimeType === 'application/vnd.google-apps.folder'
                     }));
+                    if (!dir) {
+                        fileList.unshift({
+                            name: Locale.gdriveSharedWithMe,
+                            path: 'shared',
+                            rev: undefined,
+                            dir: true
+                        });
+                    }
                     return callback && callback(null, fileList);
                 },
                 error: (err) => {

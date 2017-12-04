@@ -519,6 +519,8 @@
   "dropboxLinkFull": "Full Dropbox or any folder",
   "dropboxLinkCustom": "Own Dropbox app",
 
+  "gdriveSharedWithMe": "Shared with me",
+
   "webdavSaveMethod": "Save method",
   "webdavSaveMove": "Upload a temporary file and move",
   "webdavSavePut": "Overwrite kdbx file with PUT",
