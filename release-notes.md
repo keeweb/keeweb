@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.7.0 (WIP)
+`+` support shared files in Google Drive  
 `-` fixed color flash on startup  
 `+` downgrading desktop app  
 `-` fixed calendar colors  
