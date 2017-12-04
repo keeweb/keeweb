@@ -339,8 +339,6 @@ function notifyOpenFile() {
     }
 }
 
-
-
 function setGlobalShortcuts() {
     const shortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
     const shortcuts = {
