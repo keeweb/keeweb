@@ -19,15 +19,14 @@ const StorageFileListView = Backbone.View.extend({
             this.allStorageFiles[file.path] = file;
             return {
                 path: file.path,
-                name: UrlUtil.getDataFileName(file.name),
+                name: file.name.replace(/\.kdbx$/i, ''),
                 kdbx: UrlUtil.isKdbx(file.name),
                 dir: file.dir
             };
         });
-        let hasHiddenFiles = this.showHiddenFiles;
+        const visibleFiles = files.filter(f => !f.dir && f.kdbx);
+        const canShowHiddenFiles = visibleFiles.length && files.length > visibleFiles.length;
         if (!this.showHiddenFiles) {
-            const visibleFiles = files.filter(f => !f.dir && f.kdbx);
-            hasHiddenFiles = files.length > visibleFiles.length;
             if (visibleFiles.length > 0) {
                 files = visibleFiles;
             } else {
@@ -39,7 +38,7 @@ const StorageFileListView = Backbone.View.extend({
             files,
             density,
             showHiddenFiles: this.showHiddenFiles,
-            hasHiddenFiles: hasHiddenFiles
+            canShowHiddenFiles: canShowHiddenFiles
         });
         return this;
     },
