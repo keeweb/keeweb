@@ -23,7 +23,7 @@
             </div>
         </div>
     </div>
-    {{#if hasHiddenFiles}}
+    {{#if canShowHiddenFiles}}
     <div class="open-list__check-wrap">
         <input type="checkbox" id="open-list__check" {{#if showHiddenFiles}}checked{{/if}}
         /><label class="open-list__check-label" for="open-list__check">{{res 'openShowAllFiles'}}</label>
