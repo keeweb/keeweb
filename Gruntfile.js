@@ -435,11 +435,13 @@ module.exports = function(grunt) {
             },
             'linux-x64': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
-                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true }]
+                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true },
+                    { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }]
             },
             'linux-ia32': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.ia32.zip` },
-                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-ia32', src: '**', expand: true }]
+                files: [{ cwd: 'tmp/desktop/KeeWeb-linux-ia32', src: '**', expand: true },
+                    { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }]
             }
         },
         appdmg: {
