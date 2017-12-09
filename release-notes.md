@@ -1,7 +1,9 @@
 Release notes
 -------------
-##### v1.7.0 (WIP)
-`-` fixed color flash on startup  
+##### v1.6.2 (2017-12-09)
+`+` Google Drive shared files support  
+`-` fixed Google Drive authentication issues  
+`-` fixed a color flash on startup  
 
 ##### v1.6.1 (2017-12-03)
 `-` fixed white screen on startup  
