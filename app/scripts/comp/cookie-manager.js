@@ -32,8 +32,10 @@ const CookieManager = {
                         httpOnly: cookie.httpOnly,
                         expirationDate: cookie.expirationDate
                     }));
-                    if (JSON.stringify(cookies) !== this.cookiesStr) {
+                    const cookiesStr = JSON.stringify(cookies);
+                    if (cookiesStr !== this.cookiesStr) {
                         this.cookies = cookies;
+                        this.cookiesStr = cookiesStr;
                         RuntimeDataModel.instance.set('cookies', cookies);
                     }
                 }
