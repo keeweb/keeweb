@@ -14,10 +14,6 @@ const StorageGDrive = StorageBase.extend({
 
     _baseUrl: 'https://www.googleapis.com/drive/v3',
     _baseUrlUpload: 'https://www.googleapis.com/upload/drive/v3',
-    _folderMimeTypes: [
-        'application/vnd.google-apps.folder',
-        'application/vnd.google-apps.site'
-    ],
 
     getPathForName: function(fileName) {
         return NewFileIdPrefix + fileName;
@@ -156,7 +152,7 @@ const StorageGDrive = StorageBase.extend({
                         name: f.name,
                         path: f.id,
                         rev: f.headRevisionId,
-                        dir: this._folderMimeTypes.indexOf(f.mimeType) >= 0
+                        dir: f.mimeType === 'application/vnd.google-apps.folder'
                     }));
                     if (!dir) {
                         fileList.unshift({
