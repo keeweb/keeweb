@@ -36,7 +36,7 @@ _.extend(StorageBase.prototype, {
         this.logger = new Logger('storage-' + this.name);
         if (this._oauthReturnMessage) {
             this.logger.debug('OAuth return message', this._oauthReturnMessage);
-            this._oauthProcessReturn(this._oauthReturnMessage, _.noop);
+            this._oauthProcessReturn(this._oauthReturnMessage);
             delete this._oauthReturnMessage;
             delete sessionStorage.authStorage;
         }
@@ -159,34 +159,42 @@ _.extend(StorageBase.prototype, {
             if (!e.data) {
                 return;
             }
-            Backbone.off('popup-closed', popupClosed);
-            window.removeEventListener('message', windowMessage);
-            this._oauthProcessReturn(e.data, callback);
+            const token = this._oauthProcessReturn(e.data);
+            if (token) {
+                Backbone.off('popup-closed', popupClosed);
+                window.removeEventListener('message', windowMessage);
+                if (token.error) {
+                    this.logger.error('OAuth error', token.error, token.errorDescription);
+                    callback('OAuth: ' + token.error);
+                } else {
+                    callback();
+                }
+            } else {
+                this.logger.debug('Skipped OAuth message', e.data);
+            }
         };
         Backbone.on('popup-closed', popupClosed);
         window.addEventListener('message', windowMessage);
     },
 
-    _oauthProcessReturn: function(message, callback) {
+    _oauthProcessReturn: function(message) {
         const token = this._oauthMsgToToken(message);
-        if (token.error) {
-            this.logger.error('OAuth error', token.error, token.errorDescription);
-            callback('OAuth: ' + token.error);
-        } else {
+        if (token && !token.error) {
             this._oauthToken = token;
             this.runtimeData.set(this.name + 'OAuthToken', token);
             this.logger.debug('OAuth token received');
             CookieManager.saveCookies();
-            callback();
         }
+        return token;
     },
 
     _oauthMsgToToken: function(data) {
-        if (data.error || !data.token_type) {
-            if (!data.error) {
-                this.logger.debug('Strange OAuth token', data);
+        if (!data.token_type) {
+            if (data.error) {
+                return {error: data.error, errorDescription: data.error_description};
+            } else {
+                return undefined;
             }
-            return { error: data.error || 'no token', errorDescription: data.error_description };
         }
         return {
             dt: Date.now() - 60 * 1000,
