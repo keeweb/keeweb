@@ -4,7 +4,6 @@ const AppSettingsModel = require('../models/app-settings-model');
 const RuntimeDataModel = require('../models/runtime-data-model');
 const Links = require('../const/links');
 const FeatureDetector = require('../util/feature-detector');
-const CookieManager = require('../comp/cookie-manager');
 
 const MaxRequestRetries = 3;
 
@@ -36,7 +35,7 @@ _.extend(StorageBase.prototype, {
         this.logger = new Logger('storage-' + this.name);
         if (this._oauthReturnMessage) {
             this.logger.debug('OAuth return message', this._oauthReturnMessage);
-            this._oauthProcessReturn(this._oauthReturnMessage);
+            this._oauthProcessReturn(this._oauthReturnMessage, _.noop);
             delete this._oauthReturnMessage;
             delete sessionStorage.authStorage;
         }
@@ -159,42 +158,31 @@ _.extend(StorageBase.prototype, {
             if (!e.data) {
                 return;
             }
-            const token = this._oauthProcessReturn(e.data);
-            if (token) {
-                Backbone.off('popup-closed', popupClosed);
-                window.removeEventListener('message', windowMessage);
-                if (token.error) {
-                    this.logger.error('OAuth error', token.error, token.errorDescription);
-                    callback('OAuth: ' + token.error);
-                } else {
-                    callback();
-                }
-            } else {
-                this.logger.debug('Skipped OAuth message', e.data);
-            }
+            Backbone.off('popup-closed', popupClosed);
+            window.removeEventListener('message', windowMessage);
+            this._oauthProcessReturn(e.data, callback);
         };
         Backbone.on('popup-closed', popupClosed);
         window.addEventListener('message', windowMessage);
     },
 
-    _oauthProcessReturn: function(message) {
+    _oauthProcessReturn: function(message, callback) {
         const token = this._oauthMsgToToken(message);
-        if (token && !token.error) {
+        if (token.error) {
+            this.logger.error('OAuth error', token.error, token.errorDescription);
+            callback('OAuth: ' + token.error);
+        } else {
             this._oauthToken = token;
             this.runtimeData.set(this.name + 'OAuthToken', token);
             this.logger.debug('OAuth token received');
             CookieManager.saveCookies();
+            callback();
         }
-        return token;
     },
 
     _oauthMsgToToken: function(data) {
-        if (!data.token_type) {
-            if (data.error) {
-                return {error: data.error, errorDescription: data.error_description};
-            } else {
-                return undefined;
-            }
+        if (data.error || !data.token_type) {
+            return { error: data.error || 'no token', errorDescription: data.error_description };
         }
         return {
             dt: Date.now() - 60 * 1000,

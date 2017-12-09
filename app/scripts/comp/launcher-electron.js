@@ -253,6 +253,17 @@ const Launcher = {
         }
         return ps;
     },
+    getCookies(callback) {
+        this.electron().remote.session.defaultSession.cookies.get({}, callback);
+    },
+    setCookies(cookies) {
+        if (cookies && cookies.length) {
+            const session = this.electron().remote.session.defaultSession;
+            for (const cookie of cookies) {
+                session.cookies.set(cookie, () => {});
+            }
+        }
+    },
     checkOpenFiles() {
         this.readyToOpenFiles = true;
         if (this.pendingFileToOpen) {
