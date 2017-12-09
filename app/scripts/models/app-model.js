@@ -500,6 +500,8 @@ const AppModel = Backbone.Model.extend({
                     needLoadKeyFile = true;
                 }
             }
+        } else if (params.keyFilePath && !params.keyFileData && !fileInfo) {
+            needLoadKeyFile = true;
         }
         const file = new FileModel({
             id: fileInfo ? fileInfo.id : IdGenerator.uuid(),

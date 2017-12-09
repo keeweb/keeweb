@@ -32,7 +32,7 @@ Logger.prototype.debug = function() {
     arguments[0] = this.getPrefix() + arguments[0];
     if (this.level > Level.Debug) {
         Logger.saveLast('debug', arguments);
-        console.debug.apply(console, arguments); // eslint-disable-line no-console
+        console.log.apply(console, arguments); // eslint-disable-line no-console
     }
 };
 
@@ -40,7 +40,7 @@ Logger.prototype.info = function() {
     arguments[0] = this.getPrefix() + arguments[0];
     if (this.level > Level.Info) {
         Logger.saveLast('info', arguments);
-        console.log.apply(console, arguments); // eslint-disable-line no-console
+        console.info.apply(console, arguments); // eslint-disable-line no-console
     }
 };
 
