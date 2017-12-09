@@ -182,6 +182,9 @@ _.extend(StorageBase.prototype, {
 
     _oauthMsgToToken: function(data) {
         if (data.error || !data.token_type) {
+            if (!data.error) {
+                this.logger.debug('Strange OAuth token', data);
+            }
             return { error: data.error || 'no token', errorDescription: data.error_description };
         }
         return {
