@@ -65,6 +65,8 @@ Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite on
   File /r "tmp\desktop\KeeWeb-win32-${arch}\*"
+  Delete "$INSTDIR\resources\app\*.*"
+  RMDir /r "$INSTDIR\resources\app"
   CreateDirectory "$SMPROGRAMS\KeeWeb"
   CreateShortCut "$SMPROGRAMS\KeeWeb\KeeWeb.lnk" "$INSTDIR\${PRODUCT_EXE}"
   CreateShortCut "$DESKTOP\KeeWeb.lnk" "$INSTDIR\${PRODUCT_EXE}"

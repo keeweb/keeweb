@@ -5,6 +5,9 @@ Release notes
 `-` fixed calendar colors  
 `+` option to open a keyfile from command line  
 
+##### v1.6.3 (2017-12-11)
+`-` fixed Windows installer upgrade issue  
+
 ##### v1.6.2 (2017-12-09)
 `+` Google Drive shared files support  
 `-` fixed Google Drive authentication issues  
