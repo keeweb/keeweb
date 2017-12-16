@@ -85,7 +85,10 @@ module.exports = function(grunt) {
                     replacement: function() { return '\n'; }
                 }]})},
                 { test: /runtime-info\.js$/, loader: StringReplacePlugin.replace({ replacements: [
-                    { pattern: /@@VERSION/g, replacement: function() { return pkg.version; } },
+                            {
+                                pattern: /@@VERSION/g,
+                                replacement: function () { return pkg.version + (grunt.option('beta') ? '-beta' : '') }
+                            },
                     { pattern: /@@DATE/g, replacement: function() { return dt; } },
                     { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
                 ]})},
