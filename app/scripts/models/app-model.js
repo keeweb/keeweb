@@ -17,7 +17,7 @@ const Format = require('../util/format');
 const UrlUtil = require('../util/url-util');
 const AutoType = require('../auto-type');
 const Launcher = require('../comp/launcher');
-const RuntimeInfo = require('../comp/runtime-info')
+const RuntimeInfo = require('../comp/runtime-info');
 const PluginManager = require('../plugins/plugin-manager');
 
 require('../mixins/protected-value-ex');
