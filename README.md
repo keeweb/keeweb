@@ -37,8 +37,6 @@ To make Dropbox work in your self-hosted app, [go to this Wiki page](https://git
 
 The easiest way to clone all KeeWeb repos is:
 ```bash
-$ mkdir keeweb
-$ cd keeweb
 $ curl https://raw.githubusercontent.com/keeweb/keeweb/develop/dev-env.sh | bash -
 ```
 
