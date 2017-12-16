@@ -1,1 +1,1 @@
-Moved here: [keeweb.info](http://keeweb.info)
+Moved here: [keeweb.info](https://keeweb.info)
