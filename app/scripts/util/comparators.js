@@ -1,6 +1,6 @@
 const LastChar = String.fromCharCode(0xffffffff);
 
-const ciCompare = (window.Intl && window.Intl.Collator)
+const ciCompare = (window.Intl && window.Intl.Collator && !/Edge/.test(navigator.userAgent)) // bugged in Edge: #808
     ? new Intl.Collator(undefined, { sensitivity: 'base' }).compare
     : (x, y) => x.toLocaleLowerCase().localeCompare(y.toLocaleLowerCase());
 
