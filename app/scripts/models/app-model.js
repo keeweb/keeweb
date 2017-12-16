@@ -17,6 +17,7 @@ const Format = require('../util/format');
 const UrlUtil = require('../util/url-util');
 const AutoType = require('../auto-type');
 const Launcher = require('../comp/launcher');
+const RuntimeInfo = require('../comp/runtime-info')
 const PluginManager = require('../plugins/plugin-manager');
 
 require('../mixins/protected-value-ex');
@@ -33,7 +34,7 @@ const AppModel = Backbone.Model.extend({
         this.sort = 'title';
         this.settings = AppSettingsModel.instance;
         this.activeEntryId = null;
-        this.isBeta = FeatureDetector.isBeta;
+        this.isBeta = RuntimeInfo.beta
 
         this.listenTo(Backbone, 'refresh', this.refresh);
         this.listenTo(Backbone, 'set-filter', this.setFilter);

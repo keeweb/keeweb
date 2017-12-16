@@ -89,6 +89,7 @@ module.exports = function(grunt) {
                                 pattern: /@@VERSION/g,
                                 replacement: function () { return pkg.version + (grunt.option('beta') ? '-beta' : '') }
                             },
+                            {pattern: /@@BETA/g, replacement: function () { return grunt.option('beta') ? '1' : '' }},
                     { pattern: /@@DATE/g, replacement: function() { return dt; } },
                     { pattern: /@@COMMIT/g, replacement: function() { return grunt.config.get('gitinfo.local.branch.current.shortSHA'); } }
                 ]})},
