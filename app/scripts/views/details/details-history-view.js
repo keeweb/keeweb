@@ -203,7 +203,7 @@ const DetailsHistoryView = Backbone.View.extend({
     discardClick: function() {
         Alerts.yesno({
             header: 'Discard changed made to entry?',
-            body: 'Unsaved changed will by lost, there will be no way back.',
+            body: 'Unsaved changed will be lost, there will be no way back.',
             success: () => {
                 this.model.discardUnsaved();
                 this.closeHistory(true);
