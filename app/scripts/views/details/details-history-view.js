@@ -180,8 +180,8 @@ const DetailsHistoryView = Backbone.View.extend({
 
     revertClick: function() {
         Alerts.yesno({
-            header: 'Revert to this history state?',
-            body: 'Your current state will be saved to history.',
+            header: Locale.detHistoryRevertAlert,
+            body: Locale.detHistoryRevertAlertBody,
             success: () => {
                 this.model.revertToHistoryState(this.record.entry);
                 this.closeHistory(true);
@@ -191,8 +191,8 @@ const DetailsHistoryView = Backbone.View.extend({
 
     deleteClick: function() {
         Alerts.yesno({
-            header: 'Delete this history state?',
-            body: 'You will not be able to restore it.',
+            header: Locale.detHistoryDeleteAlert,
+            body: Locale.detHistoryDeleteAlertBody,
             success: () => {
                 this.model.deleteHistory(this.record.entry);
                 this.render(this.activeIx);
@@ -202,8 +202,8 @@ const DetailsHistoryView = Backbone.View.extend({
 
     discardClick: function() {
         Alerts.yesno({
-            header: 'Discard changed made to entry?',
-            body: 'Unsaved changed will be lost, there will be no way back.',
+            header: Locale.detHistoryDiscardChangesAlert,
+            body: Locale.detHistoryDiscardChangesAlertBody,
             success: () => {
                 this.model.discardUnsaved();
                 this.closeHistory(true);
