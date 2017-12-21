@@ -50,6 +50,11 @@
             <i class="fa fa-warning"></i> {{res 'setFilePassChanged'}}
         </span>
     </label>
+    <div class="hide">
+        {{!-- we need these inputs to screw browsers passwords autocompletion --}}
+        <input type="text" style="display:none" name="username">
+        <input type="password" style="display:none" name="password">
+    </div>
     <input type="password" class="settings__input input-base" id="settings__file-master-pass" value="{{password}}" autocomplete="new-password" />
     <label for="settings__file-key-file">{{res 'setFileKeyFile'}}:</label>
     <select class="settings__select settings__select-no-margin input-base" id="settings__file-key-file"></select>
