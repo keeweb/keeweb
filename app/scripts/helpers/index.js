@@ -1,3 +1,4 @@
+require('./add');
 require('./cmp');
 require('./ifeq');
 require('./ifneq');

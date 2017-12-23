@@ -24,20 +24,30 @@ const OpenView = Backbone.View.extend({
     events: {
         'change .open__file-ctrl': 'fileSelected',
         'click .open__icon-open': 'openFile',
+        'keydown .open__icon-open': 'labelOnKeydown',
         'click .open__icon-new': 'createNew',
+        'keydown .open__icon-new': 'labelOnKeydown',
         'click .open__icon-import-xml': 'importFromXml',
+        'keydown .open__icon-import-xml': 'labelOnKeydown',
         'click .open__icon-demo': 'createDemo',
+        'keydown .open__icon-demo': 'labelOnKeydown',
         'click .open__icon-more': 'toggleMore',
+        'keydown .open__icon-more': 'labelOnKeydown',
         'click .open__icon-storage': 'openStorage',
+        'keydown .open__icon-storage': 'labelOnKeydown',
         'click .open__icon-settings': 'openSettings',
+        'keydown .open__icon-settings': 'labelOnKeydown',
         'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
         'keydown .open__pass-input': 'inputKeydown',
         'keyup .open__pass-input': 'inputKeyup',
         'keypress .open__pass-input': 'inputKeypress',
         'click .open__pass-enter-btn': 'openDb',
+        'keydown .open__pass-enter-btn': 'labelOnKeydown',
         'click .open__settings-key-file': 'openKeyFile',
+        'keydown .open__settings-key-file': 'labelOnKeydown',
         'click .open__last-item': 'openLast',
+        'keydown .open__last-item': 'labelOnKeydown',
         'dragover': 'dragover',
         'dragleave': 'dragleave',
         'drop': 'drop'
@@ -284,6 +294,37 @@ const OpenView = Backbone.View.extend({
         if (!this.busy) {
             this.closeConfig();
             this.openAny('fileData');
+        }
+    },
+
+    labelOnKeydown: function(e) {
+        const code = e.keyCode || e.which;
+        if (code === Keys.DOM_VK_RETURN) {
+            this.labelOnEnter(e);
+        }
+    },
+
+    labelOnEnter: function(e) {
+        if ($(e.target).hasClass('open__icon-open')) {
+            this.openFile();
+        } else if (($(e.target).hasClass('open__icon-new'))) {
+            this.createNew();
+        } else if (($(e.target).hasClass('open__icon-demo'))) {
+            this.createDemo();
+        } else if (($(e.target).hasClass('open__icon-more'))) {
+            this.toggleMore();
+        } else if (($(e.target).hasClass('open__icon-storage'))) {
+            this.openStorage(e);
+        } else if (($(e.target).hasClass('open__icon-settings'))) {
+            this.openSettings();
+        } else if (($(e.target).hasClass('open__icon-import-xml'))) {
+            this.importFromXml();
+        } else if (($(e.target).hasClass('open__pass-enter-btn'))) {
+            this.openDb();
+        } else if (($(e.target).hasClass('open__settings-key-file'))) {
+            this.openKeyFile(e);
+        } else if (($(e.target).hasClass('open__last-item'))) {
+            this.openLast(e);
         }
     },
 
