@@ -36,6 +36,7 @@ $titlebar-padding-large: 40px;
 @function selected-border() { @return selected-border-width() solid th(action-color); }
 @function selected-hover-border() { @return 1px solid th(action-color); }
 @function selected-transparent-border() { @return 1px solid transparent; }
+@function focused-outline() { @return 1px solid th(action-color); }
 
 // Forms
 @function form-box-shadow() { @return inset 0 1px 3px rgba(0, 0, 0, 0.06); }

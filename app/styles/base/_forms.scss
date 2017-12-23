@@ -1,3 +1,7 @@
+:focus {
+  outline: none;
+}
+
 fieldset {
   @include th {
     background-color: th(secondary-background-color);
