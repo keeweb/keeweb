@@ -23,6 +23,7 @@
     margin: 20px;
     transition: color $base-duration $base-timing;
     &:hover { @include th { color: th(medium-color); } }
+    &:focus { outline: 1px solid th(action-color); }
     &-i, &-svg { font-size: 4em; }
     &-text {
       @include th { color: th(muted-color); }
@@ -72,6 +73,7 @@
       @include mobile { display: none; }
       @include th { color: th(muted-color); }
       >i { font-size: 3em; }
+      &:focus { outline: 1px solid th(action-color); }
     }
     &-enter-btn {
       .open--file & {
@@ -155,6 +157,7 @@
       &:hover .open__settings-key-file-dropbox {
         .open--file & { visibility: visible; }
       }
+      &:focus { outline: 1px solid th(action-color); }
     }
 
     &-key-file, &-key-file-dropbox {
@@ -186,6 +189,7 @@
       }
       @include th { color: th(muted-color); }
       padding: $base-padding;
+      &:focus { outline: 1px solid th(action-color); }
       &-icon {
         width: 2em;
         &--svg>svg {
