@@ -1,6 +1,6 @@
 {
   "name": "keeweb-plugin",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "KeeWeb plugin utils",
   "main": "keeweb-plugin.js",
   "scripts": {

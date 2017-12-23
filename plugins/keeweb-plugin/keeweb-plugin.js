@@ -163,7 +163,7 @@ function servePlugin(packageName) {
                 res.end(data);
             }
         });
-    }).listen(serverPort);
+    }).listen(port);
     console.log(`This is your plugin URL for keeweb: https://127.0.0.1:${port}`);
     console.log('But first, open it in browser and click Proceed on unsafe website warning screen');
 }
