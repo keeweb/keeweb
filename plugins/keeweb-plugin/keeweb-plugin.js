@@ -141,6 +141,40 @@ function servePlugin(packageName) {
         cert: fs.readFileSync(path.join(__dirname, 'self-signed-cert.pem'))
     };
     const port = serverPort || 8089;
+    let keeWebHtmlCached;
+    const serveKeeWebHtml = res => {
+        if (keeWebHtmlCached) {
+            res.writeHead(200);
+            res.end(keeWebHtmlCached);
+        } else {
+            https.get('https://app.keeweb.info', kwRes => {
+                if (kwRes.statusCode !== 200) {
+                    console.error('Error loading https://app.keeweb.info: HTTP status ' + kwRes.statusCode);
+                    res.writeHead(500);
+                    return res.end('Error loading https://app.keeweb.info: HTTP status ' + kwRes.statusCode);
+                }
+                const data = [];
+                kwRes.on('data', chunk => data.push(chunk));
+                kwRes.on('end', () => {
+                    keeWebHtmlCached = Buffer.concat(data).toString('utf8').replace('(no-config)', 'config.json');
+                    serveKeeWebHtml(res);
+                });
+                kwRes.on('error', e => {
+                    console.error('Error loading https://app.keeweb.info', e);
+                    res.writeHead(500);
+                    res.end('Error loading https://app.keeweb.info');
+                });
+            });
+        }
+    };
+    const serveManifestAppCache = res => {
+        res.writeHead(200);
+        res.end('CACHE MANIFEST\nNETWORK:\n*\n');
+    };
+    const serveConfig = res => {
+        res.writeHead(200);
+        res.end(`{"settings":{},"plugins":[{"url":"/"}]}`);
+    };
     https.createServer(options, (req, res) => {
         console.log('GET', req.connection.remoteAddress, req.url);
         const filePath = path.resolve(packageName, '.' + req.url.replace(/\.\./g, '').replace(/\?.*/, ''));
@@ -149,6 +183,13 @@ function servePlugin(packageName) {
             res.writeHead(404);
             res.end('Not found');
             return;
+        }
+        if (req.url === '/') {
+            return serveKeeWebHtml(res);
+        } else if (req.url === '/manifest.appcache') {
+            return serveManifestAppCache(res);
+        } else if (req.url === '/config.json') {
+            return serveConfig(res);
         }
         fs.readFile(filePath, (err, data) => {
             if (err) {
@@ -164,8 +205,8 @@ function servePlugin(packageName) {
             }
         });
     }).listen(port);
-    console.log(`This is your plugin URL for keeweb: https://127.0.0.1:${port}`);
-    console.log('But first, open it in browser and click Proceed on unsafe website warning screen');
+    console.log(`Open this URL in your browser or add it to KeeWeb: https://127.0.0.1:${port}`);
+    console.log('If you see a browser warning about an unsafe website, click Proceed, it\'s safe.');
 }
 
 function getPackageArg() {
