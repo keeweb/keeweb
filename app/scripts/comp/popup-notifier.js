@@ -46,10 +46,10 @@ const PopupNotifier = {
                 const parts = part.split('=');
                 settingsObj[parts[0].trim()] = parts[1].trim();
             });
-            if (settings.width) { opts.width = settings.width; }
-            if (settings.height) { opts.height = settings.height; }
-            if (settings.top) { opts.y = settings.top; }
-            if (settings.left) { opts.x = settings.left; }
+            if (settingsObj.width) { opts.width = +settingsObj.width; }
+            if (settingsObj.height) { opts.height = +settingsObj.height; }
+            if (settingsObj.top) { opts.y = +settingsObj.top; }
+            if (settingsObj.left) { opts.x = +settingsObj.left; }
         }
         let win = Launcher.openWindow(opts);
         win.webContents.on('did-get-redirect-request', (e, fromUrl, toUrl) => {
