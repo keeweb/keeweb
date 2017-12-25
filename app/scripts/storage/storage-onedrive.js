@@ -251,7 +251,7 @@ const StorageOneDrive = StorageBase.extend({
                     const script =
 `const selector = '[role="button"][aria-describedby="tileError loginHeader"]';
 if (document.querySelectorAll(selector).length === 1) document.querySelector(selector).click()`;
-                    webContents.executeJavaScript(script);
+                    webContents.executeJavaScript(script).catch(() => {});
                 }
             });
         }
