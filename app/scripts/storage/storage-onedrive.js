@@ -239,6 +239,22 @@ const StorageOneDrive = StorageBase.extend({
             width: 600,
             height: 500
         };
+    },
+
+    _popupOpened(popupWindow) {
+        if (popupWindow.webContents) {
+            popupWindow.webContents.on('did-finish-load', (e) => {
+                const webContents = e.sender.webContents;
+                const url = webContents.getURL();
+                if (url && url.startsWith('https://login.microsoftonline.com/common/oauth2/v2.0/authorize')) {
+                    // click the login button mentioned in #821
+                    const script =
+`const selector = '[role="button"][aria-describedby="tileError loginHeader"]';
+if (document.querySelectorAll(selector).length === 1) document.querySelector(selector).click()`;
+                    webContents.executeJavaScript(script);
+                }
+            });
+        }
     }
 });
 

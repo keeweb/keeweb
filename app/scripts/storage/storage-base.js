@@ -146,9 +146,11 @@ _.extend(StorageBase.prototype, {
             .replace('{scope}', encodeURIComponent(opts.scope))
             .replace('{url}', encodeURIComponent(this._getOauthRedirectUrl()));
         this.logger.debug('OAuth: popup opened');
-        if (!this._openPopup(url, 'OAuth', opts.width, opts.height)) {
+        const popupWindow = this._openPopup(url, 'OAuth', opts.width, opts.height);
+        if (!popupWindow) {
             return callback('OAuth: cannot open popup');
         }
+        this._popupOpened(popupWindow);
         const popupClosed = () => {
             Backbone.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
@@ -175,6 +177,9 @@ _.extend(StorageBase.prototype, {
         };
         Backbone.on('popup-closed', popupClosed);
         window.addEventListener('message', windowMessage);
+    },
+
+    _popupOpened(popupWindow) {
     },
 
     _oauthProcessReturn: function(message) {
