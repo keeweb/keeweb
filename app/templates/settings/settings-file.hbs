@@ -103,14 +103,14 @@
         <label for="settings__file-trash">{{res 'setFileEnableTrash'}}</label>
     </div>
     <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
-    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" />
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" maxlength="6" />
     <label for="settings__file-hist-size">{{res 'setFileHistSize'}}:</label>
-    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" />
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" maxlength="3" />
 
     <h2>{{res 'advanced'}}</h2>
     {{#if keyEncryptionRounds}}
     <label for="settings__file-key-rounds">{{res 'setFileRounds'}}:</label>
-    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="{{keyEncryptionRounds}}" />
+    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="{{keyEncryptionRounds}}" maxlength="10" />
     {{else if kdfParameters}}
     <label>{{res 'setFileKdfParams'}}: Argon2</label>
     <div class="settings__row">
@@ -133,5 +133,5 @@
     {{/if}}
 
     <label for="settings__file-key-change-force">{{res 'setFileKeyChangeForce'}}:</label>
-    <input type="text" pattern="\d*" class="settings__input input-base" id="settings__file-key-change-force" value="{{keyChangeForce}}" />
+    <input type="text" pattern="\d*" class="settings__input input-base" id="settings__file-key-change-force" value="{{keyChangeForce}}" maxlength="6" />
 </div>

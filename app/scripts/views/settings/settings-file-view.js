@@ -494,6 +494,9 @@ const SettingsFileView = Backbone.View.extend({
     },
 
     changeHistoryLength: function(e) {
+        if (!e.target.validity.valid) {
+            return;
+        }
         const value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('historyMaxItems');
@@ -503,6 +506,9 @@ const SettingsFileView = Backbone.View.extend({
     },
 
     changeHistorySize: function(e) {
+        if (!e.target.validity.valid) {
+            return;
+        }
         const value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('historyMaxSize') / 1024 / 1024;
@@ -512,6 +518,9 @@ const SettingsFileView = Backbone.View.extend({
     },
 
     changeKeyRounds: function(e) {
+        if (!e.target.validity.valid) {
+            return;
+        }
         const value = +e.target.value;
         if (isNaN(value)) {
             e.target.value = this.model.get('keyEncryptionRounds');
@@ -521,6 +530,9 @@ const SettingsFileView = Backbone.View.extend({
     },
 
     changeKeyChangeForce: function(e) {
+        if (!e.target.validity.valid) {
+            return;
+        }
         let value = Math.round(e.target.value);
         if (isNaN(value) || value <= 0) {
             value = -1;
@@ -529,6 +541,9 @@ const SettingsFileView = Backbone.View.extend({
     },
 
     changeKdfParameter: function(e) {
+        if (!e.target.validity.valid) {
+            return;
+        }
         const field = $(e.target).data('field');
         const mul = $(e.target).data('mul') || 1;
         const value = e.target.value * mul;
