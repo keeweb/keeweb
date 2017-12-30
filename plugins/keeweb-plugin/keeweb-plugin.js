@@ -93,6 +93,8 @@ function signPlugin(packageName) {
         } else {
             console.log('No changes');
         }
+    }).catch(e => {
+        console.error('Error', e);
     });
 }
 
