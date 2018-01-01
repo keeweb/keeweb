@@ -13,6 +13,7 @@ const SettingsView = Backbone.View.extend({
     },
 
     initialize: function () {
+        this.initScroll();
         this.listenTo(Backbone, 'set-page', this.setPage);
         this.views = { };
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.returnToApp, this);

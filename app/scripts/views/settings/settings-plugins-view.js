@@ -38,7 +38,7 @@ const SettingsPluginsView = Backbone.View.extend({
 
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
-        this.listenTo(Backbone, 'plugin-gallery-load-complete', this.render.bind(this));
+        this.listenTo(Backbone, 'plugin-gallery-load-complete', this.pluginGalleryLoadComplete.bind(this));
     },
 
     render() {
@@ -70,6 +70,11 @@ const SettingsPluginsView = Backbone.View.extend({
             this.showFilterResults();
         }
         return this;
+    },
+
+    pluginGalleryLoadComplete() {
+        this.render();
+        Backbone.trigger('page-geometry', { source: 'view' });
     },
 
     getGalleryPlugins() {
