@@ -269,7 +269,7 @@ const SettingsFileView = Backbone.View.extend({
                 }
                 const expName = this.model.get('name').toLowerCase();
                 const existingFile = _.find(files, file => {
-                    return UrlUtil.getDataFileName(file.name).toLowerCase() === expName;
+                    return !file.dir && UrlUtil.getDataFileName(file.name).toLowerCase() === expName;
                 });
                 if (existingFile) {
                     Alerts.yesno({
