@@ -137,16 +137,19 @@ function readAppSettings() {
 
 function createMainWindow() {
     const appSettings = readAppSettings();
-    mainWindow = new electron.BrowserWindow({
+    const windowOptions = {
         show: false,
         width: 1000, height: 700, minWidth: 700, minHeight: 400,
-        icon: path.join(__dirname, 'icon.png'),
         titleBarStyle: appSettings ? appSettings.titlebarStyle : undefined,
         backgroundColor: '#282C34',
         webPreferences: {
             backgroundThrottling: false
         }
-    });
+    };
+    if (process.platform !== 'win32') {
+        windowOptions.icon = path.join(__dirname, 'icon.png');
+    }
+    mainWindow = new electron.BrowserWindow(windowOptions);
     setMenu();
     mainWindow.loadURL(htmlPath);
     if (showDevToolsOnStart) {
