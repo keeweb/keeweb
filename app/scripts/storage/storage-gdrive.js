@@ -138,7 +138,7 @@ const StorageGDrive = StorageBase.extend({
             let query = dir === 'shared' ? 'sharedWithMe=true'
                 : dir ? `"${dir}" in parents` : '"root" in parents';
             query += ' and trashed=false';
-            const url = this._baseUrl + '/files?fields={fields}&q={q}'
+            const url = this._baseUrl + '/files?fields={fields}&q={q}&pageSize=1000'
                 .replace('{fields}', encodeURIComponent('files(id,name,mimeType,headRevisionId)'))
                 .replace('{q}', encodeURIComponent(query));
             const ts = this.logger.ts();
