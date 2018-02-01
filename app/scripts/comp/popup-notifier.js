@@ -5,11 +5,16 @@ const AuthReceiver = require('./auth-receiver');
 const Links = require('../const/links');
 const Timeouts = require('../const/timeouts');
 const Locale = require('../util/locale');
+const Logger = require('../util/logger');
 
 const PopupNotifier = {
+    logger: null,
+
     init: function() {
+        this.logger = new Logger('PopupNotifier');
+
         if (Launcher) {
-            window.open = this._openLauncherWindow;
+            window.open = this._openLauncherWindow.bind(this);
         } else {
             const windowOpen = window.open;
             window.open = function() {
@@ -66,7 +71,16 @@ const PopupNotifier = {
                 PopupNotifier.processReturnToApp(toUrl);
             }
         });
-        win.loadURL(url);
+        win.webContents.on('crashed', (e, killed) => {
+            this.logger.debug('crashed', e, killed);
+            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            win = null;
+        });
+        win.webContents.on('did-fail-load', (e, errorCode, errorDescription, validatedUrl, isMainFrame) => {
+            this.logger.debug('did-fail-load', e, errorCode, errorDescription, validatedUrl, isMainFrame);
+            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            win = null;
+        });
         win.once('page-title-updated', () => {
             setTimeout(() => {
                 if (win) {
@@ -79,6 +93,7 @@ const PopupNotifier = {
             setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
             win = null;
         });
+        win.loadURL(url);
         Backbone.trigger('popup-opened', win);
         return win;
     },
