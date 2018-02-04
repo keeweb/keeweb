@@ -179,6 +179,20 @@ module.exports = function(grunt) {
                 expand: true,
                 nonull: true
             },
+            manifest: {
+                cwd: 'app/manifest/',
+                src: ['*.json', '*.xml'],
+                dest: 'tmp/',
+                expand: true,
+                nonull: true
+            },
+            'dist-manifest': {
+                cwd: 'app/manifest/',
+                src: ['*.json', '*.xml'],
+                dest: 'dist/',
+                expand: true,
+                nonull: true
+            },
             fonts: {
                 src: 'bower_components/font-awesome/fonts/fontawesome-webfont.*',
                 dest: 'tmp/fonts/',
@@ -679,6 +693,7 @@ module.exports = function(grunt) {
         'copy:html',
         'copy:favicon',
         'copy:icons',
+        'copy:manifest',
         'copy:fonts',
         'webpack',
         'uglify',
@@ -689,6 +704,7 @@ module.exports = function(grunt) {
         'string-replace:manifest-html',
         'string-replace:manifest',
         'copy:dist-icons',
+        'copy:dist-manifest',
         'sign-html'
     ]);
 
