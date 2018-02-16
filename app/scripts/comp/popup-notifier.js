@@ -11,7 +11,7 @@ const PopupNotifier = {
     logger: null,
 
     init: function() {
-        this.logger = new Logger('PopupNotifier');
+        this.logger = new Logger('popup-notifier');
 
         if (Launcher) {
             window.open = this._openLauncherWindow.bind(this);
@@ -73,12 +73,14 @@ const PopupNotifier = {
         });
         win.webContents.on('crashed', (e, killed) => {
             this.logger.debug('crashed', e, killed);
-            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            this.deferCheckClosed(win);
+            win.close();
             win = null;
         });
         win.webContents.on('did-fail-load', (e, errorCode, errorDescription, validatedUrl, isMainFrame) => {
             this.logger.debug('did-fail-load', e, errorCode, errorDescription, validatedUrl, isMainFrame);
-            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            this.deferCheckClosed(win);
+            win.close();
             win = null;
         });
         win.once('page-title-updated', () => {
