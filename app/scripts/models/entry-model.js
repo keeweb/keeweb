@@ -12,7 +12,7 @@ const EntryModel = Backbone.Model.extend({
     urlRegex: /^https?:\/\//i,
     fieldRefRegex: /^\{REF:([TNPAU])@I:(\w{32})}$/,
 
-    builtInFields: ['Title', 'Password', 'UserName', 'URL', 'Notes', 'TOTP Seed', 'TOTP Settings'],
+    builtInFields: ['Title', 'Password', 'UserName', 'URL', 'Notes', 'TOTP Seed', 'TOTP Settings', '_etm_template_uuid'],
     fieldRefFields: ['title', 'password', 'user', 'url', 'notes'],
     fieldRefIds: { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' },
 
