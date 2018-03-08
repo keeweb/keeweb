@@ -128,6 +128,7 @@ _.extend(StorageBase.prototype, {
         if (redirectUrl.lastIndexOf('file:', 0) === 0) {
             redirectUrl = Links.WebApp;
         }
+        redirectUrl = redirectUrl.split('?')[0];
         return redirectUrl;
     },
 
