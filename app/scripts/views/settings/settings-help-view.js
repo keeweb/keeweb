@@ -10,7 +10,7 @@ const SettingsHelpView = Backbone.View.extend({
             'Environment: ' + (RuntimeInfo.launcher ? RuntimeInfo.launcher : 'web') + '\n' +
             'User-Agent: ' + RuntimeInfo.userAgent;
         this.renderTemplate({
-            issueLink: Links.Repo + '/issues/new?body=' + encodeURIComponent('!please, describe your issue here!\n\n' + appInfo),
+            issueLink: Links.Repo + '/issues/new?body=' + encodeURIComponent('!please describe your issue here!\n\n' + appInfo),
             desktopLink: Links.Desktop,
             webAppLink: Links.WebApp,
             appInfo: _.escape(appInfo)

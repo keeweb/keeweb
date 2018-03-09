@@ -56,7 +56,7 @@ For debug build:
 
 # Contributing
 
-Please, read contribution guidelines: [for issues](.github/ISSUE_TEMPLATE.md) and [for pull requests](.github/PULL_REQUEST_TEMPLATE.md).  
+Please read contribution guidelines: [for issues](.github/ISSUE_TEMPLATE.md) and [for pull requests](.github/PULL_REQUEST_TEMPLATE.md).  
 For pull requests: branch is important! `master` is only for hotfixes, `develop` is for new features.  
 Here's a [list of issues](https://github.com/keeweb/keeweb/labels/help%20wanted) which need help.
 Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your language.  
