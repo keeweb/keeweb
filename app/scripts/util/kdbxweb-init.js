@@ -24,7 +24,7 @@ const KdbxwebInit = {
             return Promise.resolve(this.runtimeModule);
         }
         if (!global.WebAssembly) {
-            return this.loadAsmJsFallbackRuntime();
+            return Promise.reject('WebAssembly is not supported');
         }
         return new Promise((resolve, reject) => {
             const loadTimeout = setTimeout(() => reject('timeout'), 1000);
@@ -113,21 +113,6 @@ const KdbxwebInit = {
                 self.postMessage({ error: e.toString() });
             }
         };
-    },
-
-    loadAsmJsFallbackRuntime() {
-        logger.debug('Loading asm.js fallback runtime');
-        return new Promise(resolve => {
-            const ts = logger.ts();
-            global.Module = undefined;
-            const argon2Code = require('argon2-asm');
-            global.eval(argon2Code); // eslint-disable-line
-            this.runtimeModule = {
-                hash: args => Promise.resolve().then(() => this.calcHash(global.Module, args))
-            };
-            logger.debug('Fallback runtime loaded', logger.ts(ts));
-            resolve(this.runtimeModule);
-        });
     },
 
     calcHash(Module, args) {

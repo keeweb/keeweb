@@ -46,7 +46,7 @@ module.exports = function(grunt) {
         entry: {
             app: 'app',
             vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'pikaday', 'filesaver', 'qrcode',
-                'argon2-asm', 'argon2-wasm', 'argon2']
+                'argon2-wasm', 'argon2']
         },
         output: {
             path: path.resolve('.', 'tmp/js'),
@@ -72,7 +72,6 @@ module.exports = function(grunt) {
                 pikaday: 'pikaday/pikaday.js',
                 filesaver: 'FileSaver.js/FileSaver.min.js',
                 qrcode: 'jsqrcode/dist/qrcode.min.js',
-                'argon2-asm': 'argon2-browser/docs/dist/argon2-asm.min.js',
                 'argon2-wasm': 'argon2-browser/docs/dist/argon2.wasm',
                 'argon2': 'argon2-browser/docs/dist/argon2.min.js',
                 templates: path.join(__dirname, 'app/templates')
@@ -100,7 +99,6 @@ module.exports = function(grunt) {
                     query: { presets: ['es2015'], cacheDirectory: true }
                 },
                 { test: /\.json$/, loader: 'json-loader' },
-                { test: /argon2-asm\.min\.js$/, loader: 'raw-loader' },
                 { test: /argon2\.wasm$/, loader: 'base64-loader' },
                 { test: /argon2\.min\.js/, loader: 'raw-loader' },
                 { test: /\.scss$/, loader: 'raw-loader' }
