@@ -21,7 +21,7 @@ const StorageOneDrive = StorageBase.extend({
         '6.28c-17.7-17.7-46.59-21.53-71.15-9.42-9.81 4.84-17.7 11.78-23.65 20.83-4.25 6.45-9.66 18.48-9.66 21.47 0 2.12-1.72 3.18-9.05 5.58-22.69 7.44-' +
         '35.94 24.63-35.93 46.62 0 8 2.06 17.8 4.93 23.41 1.08 2.11 1.68 4.13 1.34 4.47-0.88 0.88-29.11 0.58-33.01-0.35z" /></g></g></g></svg>',
 
-    _baseUrl: 'https://graph.microsoft.com/v1.0',
+    _baseUrl: 'https://graph.microsoft.com/v1.0/me',
 
     getPathForName: function(fileName) {
         return '/drive/root:/' + fileName + '.kdbx';
@@ -140,7 +140,7 @@ const StorageOneDrive = StorageBase.extend({
             if (err) { return callback && callback(err); }
             this.logger.debug('List');
             const ts = this.logger.ts();
-            const url = this._baseUrl + (dir ? `/me${dir}:/children` : '/me/drive/root/children');
+            const url = this._baseUrl + (dir ? `${dir}:/children` : '/drive/root/children');
             this._xhr({
                 url: url,
                 responseType: 'json',
