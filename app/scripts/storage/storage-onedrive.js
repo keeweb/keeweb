@@ -48,6 +48,7 @@ const StorageOneDrive = StorageBase.extend({
                     this._xhr({
                         url: downloadUrl,
                         responseType: 'arraybuffer',
+                        skipAuth: true,
                         success: (response, xhr) => {
                             rev = xhr.getResponseHeader('ETag') || rev;
                             this.logger.debug('Loaded', path, rev, this.logger.ts(ts));

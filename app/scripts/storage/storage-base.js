@@ -86,7 +86,7 @@ _.extend(StorageBase.prototype, {
             return config.error && config.error('timeout', xhr);
         });
         xhr.open(config.method || 'GET', config.url);
-        if (this._oauthToken) {
+        if (this._oauthToken && !config.skipAuth) {
             xhr.setRequestHeader('Authorization', 'Bearer ' + this._oauthToken.accessToken);
         }
         _.forEach(config.headers, (value, key) => {
