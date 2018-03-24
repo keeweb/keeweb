@@ -30,7 +30,7 @@ Logger.prototype.getPrefix = function() {
 
 Logger.prototype.debug = function() {
     arguments[0] = this.getPrefix() + arguments[0];
-    if (this.level > Level.Debug) {
+    if (this.level >= Level.Debug) {
         Logger.saveLast('debug', arguments);
         console.log.apply(console, arguments); // eslint-disable-line no-console
     }
@@ -38,7 +38,7 @@ Logger.prototype.debug = function() {
 
 Logger.prototype.info = function() {
     arguments[0] = this.getPrefix() + arguments[0];
-    if (this.level > Level.Info) {
+    if (this.level >= Level.Info) {
         Logger.saveLast('info', arguments);
         console.info.apply(console, arguments); // eslint-disable-line no-console
     }
@@ -46,7 +46,7 @@ Logger.prototype.info = function() {
 
 Logger.prototype.warn = function() {
     arguments[0] = this.getPrefix() + arguments[0];
-    if (this.level > Level.Warn) {
+    if (this.level >= Level.Warn) {
         Logger.saveLast('warn', arguments);
         console.warn.apply(console, arguments); // eslint-disable-line no-console
     }
@@ -54,7 +54,7 @@ Logger.prototype.warn = function() {
 
 Logger.prototype.error = function() {
     arguments[0] = this.getPrefix() + arguments[0];
-    if (this.level > Level.Error) {
+    if (this.level >= Level.Error) {
         Logger.saveLast('error', arguments);
         console.error.apply(console, arguments); // eslint-disable-line no-console
     }
