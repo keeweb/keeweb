@@ -27,7 +27,7 @@ const KdbxwebInit = {
             return Promise.reject('WebAssembly is not supported');
         }
         return new Promise((resolve, reject) => {
-            const loadTimeout = setTimeout(() => reject('timeout'), 1000);
+            const loadTimeout = setTimeout(() => reject('timeout'), 5000);
             try {
                 const ts = logger.ts();
                 const argon2LoaderCode = require('argon2');
