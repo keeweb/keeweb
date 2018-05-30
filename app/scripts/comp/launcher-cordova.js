@@ -40,6 +40,12 @@ const Launcher = {
         return [...parts].join('/');
     },
     writeFile: function(path, data, callback) {
+        const createFile = filePath => {
+            window.resolveLocalFileSystemURL(filePath.dir, dir => {
+                dir.getFile(filePath.file, {create: true}, writeFile);
+            }, callback, callback);
+        };
+
         const writeFile = fileEntry => {
             fileEntry.createWriter(fileWriter => {
                 fileWriter.onerror = callback;
@@ -52,9 +58,9 @@ const Launcher = {
             window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
         } else { // create file on sd card
             const filePath = this.parsePath(path);
-            window.resolveLocalFileSystemURL(filePath.dir, dir => {
-                dir.getFile(filePath.file, {create: true}, writeFile);
-            }, callback, callback);
+            this.mkdir(filePath.dir, () => {
+                createFile(filePath);
+            });
         }
     },
     readFile: function(path, encoding, callback) {
@@ -137,18 +143,30 @@ const Launcher = {
     },
     cancelRestart: function() { /* skip in cordova */ },
     setClipboardText: function(text) {
-        // TODO
+        const detachedInput = document.createElement('textarea');
+        detachedInput.style.height = 0;
+        detachedInput.style.width = 0;
+        detachedInput.value = text;
+
+        document.body.appendChild(detachedInput);
+        detachedInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(detachedInput);
     },
     getClipboardText: function() {
-        // TODO
+        /* Used for clipboard cleaning
+           would not work in cordova */
     },
     clearClipboardText: function() {
-        // TODO
+        this.setClipboardText('');
     },
     minimizeApp: function() {
         this.hideApp();
     },
     canMinimize: function() {
+        return false;
+    },
+    canDetectOsSleep: function() {
         return false;
     },
     updaterEnabled: function() {
@@ -175,6 +193,12 @@ const Launcher = {
         };
 
         window.cordova.exec(onFileSelected, callback, 'FileChooser', 'choose');
+    },
+    getCookies(callback) {
+        // TODO
+    },
+    setCookies(cookies) {
+        // TODO
     },
 
     fingerprints: {
