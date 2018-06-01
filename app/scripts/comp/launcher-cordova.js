@@ -5,8 +5,12 @@ const Launcher = {
     version: '6.0.0',
     autoTypeSupported: false,
     thirdPartyStoragesSupported: false,
+    clipboardSupported: false,
     ready: function(callback) {
-        document.addEventListener('deviceready', callback, false);
+        document.addEventListener('deviceready', () => {
+            navigator.splashscreen && navigator.splashscreen.hide();
+            callback();
+        }, false);
     },
     platform: function() {
         return 'cordova';
@@ -130,6 +134,7 @@ const Launcher = {
         return null; // not in android with content provider
     },
     // ensureRunnable: function(path) { },
+
     preventExit: function(e) {
         e.returnValue = false;
         return false;
@@ -137,29 +142,17 @@ const Launcher = {
     exit: function() {
         this.hideApp();
     },
+
     requestExit: function() { /* skip in cordova */ },
     requestRestart: function() {
         window.location.reload();
     },
     cancelRestart: function() { /* skip in cordova */ },
-    setClipboardText: function(text) {
-        const detachedInput = document.createElement('textarea');
-        detachedInput.style.height = 0;
-        detachedInput.style.width = 0;
-        detachedInput.value = text;
 
-        document.body.appendChild(detachedInput);
-        detachedInput.select();
-        document.execCommand('copy');
-        document.body.removeChild(detachedInput);
-    },
-    getClipboardText: function() {
-        /* Used for clipboard cleaning
-           would not work in cordova */
-    },
-    clearClipboardText: function() {
-        this.setClipboardText('');
-    },
+    setClipboardText: function(text) {},
+    getClipboardText: function() {},
+    clearClipboardText: function() {},
+
     minimizeApp: function() {
         this.hideApp();
     },
@@ -172,6 +165,7 @@ const Launcher = {
     updaterEnabled: function() {
         return false;
     },
+
     // getMainWindow: function() { },
     resolveProxy: function(url, callback) { /* skip in cordova */ },
     openWindow: function(opts) { /* skip in cordova */ },
