@@ -1,5 +1,7 @@
 /* global FingerprintAuth */
 
+const Backbone = require('backbone');
+
 const Launcher = {
     name: 'cordova',
     version: '6.0.0',
@@ -7,9 +9,9 @@ const Launcher = {
     thirdPartyStoragesSupported: false,
     clipboardSupported: false,
     ready: function(callback) {
-        document.addEventListener('deviceready', () => {
-            navigator.splashscreen && navigator.splashscreen.hide();
-            callback();
+        document.addEventListener('deviceready', callback, false);
+        document.addEventListener('pause', () => {
+            Backbone.trigger('app-minimized');
         }, false);
     },
     platform: function() {
