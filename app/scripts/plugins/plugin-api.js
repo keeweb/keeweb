@@ -7,8 +7,8 @@ const Libs = {
     kdbxweb: require('kdbxweb'),
     hbs: require('hbs'),
     pikaday: require('pikaday'),
-    filesaver: require('filesaver'),
-    qrcode: require('qrcode')
+    filesaver: require('file-saver'),
+    qrcode: require('jsqrcode')
 };
 
 const PluginApi = {
