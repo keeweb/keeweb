@@ -23,6 +23,8 @@ const FeatureDetector = require('./util/feature-detector');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
 
+require('../styles/main.scss');
+
 const ready = Launcher && Launcher.ready || $;
 
 ready(() => {

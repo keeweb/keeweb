@@ -70,7 +70,7 @@ function validateSignature(appPath) {
 function validateDataSignature(data, signature, name) {
     const crypto = require('crypto');
     const verify = crypto.createVerify('RSA-SHA256');
-    let publicKey = '@@PUBLIC_KEY_CONTENT';
+    let publicKey = `@@PUBLIC_KEY_CONTENT`;
     if (publicKey.startsWith('@@')) {
         publicKey = fs.readFileSync('app/resources/public-key.pem', {encoding: 'utf8'}).trim();
     }

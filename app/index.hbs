@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html{{#if web}} manifest="manifest.appcache"{{/if}}>
 <head lang="en">
     <meta charset="UTF-8">
     <title>KeeWeb</title>
@@ -16,14 +16,12 @@
     <meta name="msapplication-config" content="browserconfig.xml">
     <meta name="msapplication-TileColor" content="#6386ec">
     <meta name="theme-color" content="#6386ec">
-    <link rel="stylesheet" href="css/main.css?__inline=true" />
-    <script src="js/vendor.js?__inline=true"></script>
-    <script src="js/app.js?__inline=true"></script>
 </head>
 <body class="th-d">
     <noscript>
         <h1>KeeWeb</h1>
         <p>KeeWeb is a password manager written in JavaScript. Please enable JavaScript to run it.</p>
     </noscript>
+    {{#if cordova}}<script src="cordova.js"></script>{{/if}}
 </body>
 </html>
