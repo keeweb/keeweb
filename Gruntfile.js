@@ -62,6 +62,16 @@ module.exports = function(grunt) {
         resolve: {
             modules: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'node_modules')],
             alias: {
+                backbone: 'backbone/backbone-min.js',
+                underscore: 'underscore/underscore-min.js',
+                _: 'underscore/underscore-min.js',
+                jquery: 'jquery/dist/jquery.min.js',
+                kdbxweb: 'kdbxweb/dist/kdbxweb.js',
+                baron: 'baron/baron.min.js',
+                pikaday: 'pikaday/pikaday.js',
+                filesaver: 'FileSaver.js/FileSaver.min.js',
+                qrcode: 'jsqrcode/dist/qrcode.min.js',
+                'argon2': 'argon2-browser/docs/dist/argon2.min.js',
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
                 templates: path.join(__dirname, 'app/templates')
