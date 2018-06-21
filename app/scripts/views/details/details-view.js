@@ -29,7 +29,7 @@ const Format = require('../../util/format');
 const Locale = require('../../util/locale');
 const Tip = require('../../util/tip');
 const Timeouts = require('../../const/timeouts');
-const FileSaver = require('filesaver');
+const FileSaver = require('file-saver');
 
 const DetailsView = Backbone.View.extend({
     template: require('templates/details/details.hbs'),

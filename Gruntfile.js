@@ -45,8 +45,8 @@ module.exports = function(grunt) {
     const webpackConfig = {
         entry: {
             app: 'app',
-            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'pikaday', 'filesaver', 'qrcode',
-                'argon2-wasm', 'argon2']
+            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'pikaday', 'file-saver', 'jsqrcode',
+                'argon2-wasm', 'argon2-browser']
         },
         output: {
             path: path.resolve('.', 'tmp/js'),
@@ -60,20 +60,10 @@ module.exports = function(grunt) {
         progress: false,
         failOnError: true,
         resolve: {
-            modules: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'bower_components')],
+            modules: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'node_modules')],
             alias: {
-                backbone: 'backbone/backbone-min.js',
-                underscore: 'underscore/underscore-min.js',
-                _: 'underscore/underscore-min.js',
-                jquery: 'jquery/dist/jquery.min.js',
-                hbs: path.resolve(__dirname, 'node_modules', 'handlebars/runtime.js'),
-                kdbxweb: 'kdbxweb/dist/kdbxweb.js',
-                baron: 'baron/baron.min.js',
-                pikaday: 'pikaday/pikaday.js',
-                filesaver: 'FileSaver.js/FileSaver.min.js',
-                qrcode: 'jsqrcode/dist/qrcode.min.js',
-                'argon2-wasm': 'argon2-browser/docs/dist/argon2.wasm',
-                'argon2': 'argon2-browser/docs/dist/argon2.min.js',
+                hbs: 'handlebars/runtime.js',
+                'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
                 templates: path.join(__dirname, 'app/templates')
             }
         },
@@ -95,7 +85,7 @@ module.exports = function(grunt) {
                 { test: /baron(\.min)?\.js$/, loader: 'exports-loader?baron; delete window.baron;' },
                 { test: /pikaday\.js$/, loader: 'uglify-loader' },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
-                { test: /\.js$/, exclude: /(node_modules|bower_components)/, loader: 'babel-loader',
+                { test: /\.js$/, exclude: /(node_modules)/, loader: 'babel-loader',
                     query: { presets: ['es2015'], cacheDirectory: true }
                 },
                 { test: /\.json$/, loader: 'json-loader' },
@@ -143,10 +133,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-        'bower-install-simple': {
-            install: {
-            }
-        },
         clean: {
             dist: ['dist', 'tmp'],
             desktop: ['tmp/desktop', 'dist/desktop'],
@@ -192,7 +178,7 @@ module.exports = function(grunt) {
                 nonull: true
             },
             fonts: {
-                src: 'bower_components/font-awesome/fonts/fontawesome-webfont.*',
+                src: 'node_modules/font-awesome/fonts/fontawesome-webfont.*',
                 dest: 'tmp/fonts/',
                 nonull: true,
                 expand: true,
@@ -260,7 +246,7 @@ module.exports = function(grunt) {
         sass: {
             options: {
                 sourceMap: false,
-                includePaths: ['./bower_components']
+                includePaths: ['./node_modules']
             },
             dist: {
                 files: {
@@ -685,7 +671,6 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-web-app', [
         'gitinfo',
-        'bower-install-simple',
         'clean',
         'eslint',
         'copy:html',

@@ -4,7 +4,7 @@ const Locale = require('../util/locale');
 const Logger = require('../util/logger');
 const FeatureDetector = require('../util/feature-detector');
 const Otp = require('../util/otp');
-const QrCode = require('qrcode');
+const QrCode = require('jsqrcode');
 
 const logger = new Logger('otp-qr-reader');
 
