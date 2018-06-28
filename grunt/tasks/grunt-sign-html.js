@@ -26,6 +26,7 @@ module.exports = function (grunt) {
             } else {
                 grunt.warn('Sign error: ' + e);
             }
+            done(false);
         });
     });
 };
