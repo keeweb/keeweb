@@ -564,6 +564,12 @@ const DetailsView = Backbone.View.extend({
 
     dragover: function(e) {
         e.preventDefault();
+        const dt = e.originalEvent.dataTransfer;
+        if (!dt.types || (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))) {
+            dt.dropEffect = 'none';
+            return;
+        }
+        dt.dropEffect = 'copy';
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
