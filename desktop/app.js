@@ -93,10 +93,11 @@ app.minimizeApp = function () {
         mainWindow.hide();
         app.dock.hide();
         imagePath = 'mac-menubar-icon.png';
+        mainWindow.setSkipTaskbar(true);
     } else {
+        mainWindow.hide();
         imagePath = 'icon.png';
     }
-    mainWindow.setSkipTaskbar(true);
     const image = electron.nativeImage.createFromPath(path.join(__dirname, imagePath));
     appIcon = new electron.Tray(image);
     appIcon.on('click', restoreMainWindow);
@@ -193,7 +194,7 @@ function restoreMainWindow() {
         mainWindow.restore();
     }
     mainWindow.setSkipTaskbar(false);
-    mainWindow.focus();
+    mainWindow.show();
     setTimeout(destroyAppIcon, 0);
 }
 
