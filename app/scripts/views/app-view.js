@@ -31,6 +31,7 @@ const AppView = Backbone.View.extend({
     events: {
         'contextmenu': 'contextMenu',
         'drop': 'drop',
+        'dragenter': 'dragover',
         'dragover': 'dragover',
         'click a[target=_blank]': 'extLinkClick',
         'mousedown': 'bodyClick'
@@ -678,6 +679,7 @@ const AppView = Backbone.View.extend({
 
     dragover: function(e) {
         e.preventDefault();
+        e.originalEvent.dataTransfer.dropEffect = 'none';
     },
 
     drop: function(e) {
