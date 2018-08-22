@@ -165,7 +165,6 @@
 
     &-label {
       @include th { color: th(muted-color); }
-      @include user-select(text);
       width: 7em;
       text-align: right;
       cursor: pointer;
