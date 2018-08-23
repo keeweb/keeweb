@@ -313,7 +313,11 @@ const GroupModel = MenuItemModel.extend({
                 return;
             }
         }
-        const atIndex = this.parentGroup.group.groups.indexOf(this.group);
+        let atIndex = this.parentGroup.group.groups.indexOf(this.group);
+        const selfIndex = this.parentGroup.group.groups.indexOf(object.group);
+        if (selfIndex < atIndex) {
+            atIndex--;
+        }
         if (atIndex >= 0) {
             this.file.db.move(object.group, this.parentGroup.group, atIndex);
         }
