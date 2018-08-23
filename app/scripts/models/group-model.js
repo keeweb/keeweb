@@ -315,7 +315,7 @@ const GroupModel = MenuItemModel.extend({
         }
         let atIndex = this.parentGroup.group.groups.indexOf(this.group);
         const selfIndex = this.parentGroup.group.groups.indexOf(object.group);
-        if (selfIndex < atIndex) {
+        if (selfIndex >= 0 && selfIndex < atIndex) {
             atIndex--;
         }
         if (atIndex >= 0) {
