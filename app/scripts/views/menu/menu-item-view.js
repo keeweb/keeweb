@@ -8,8 +8,6 @@ const Locale = require('../../util/locale');
 const MenuItemView = Backbone.View.extend({
     template: require('templates/menu/menu-item.hbs'),
 
-    isDropNotWorkingProperly: navigator.userAgent.indexOf('Vivaldi') > 0,
-
     events: {
         'mouseover': 'mouseover',
         'mouseout': 'mouseout',
@@ -22,7 +20,6 @@ const MenuItemView = Backbone.View.extend({
         'dragover': 'dragover',
         'dragleave': 'dragleave',
         'drop': 'drop',
-        'mouseup': 'mouseup',
         'dragover .menu__item-drag-top': 'dragoverTop',
         'dragleave .menu__item-drag-top': 'dragleaveTop'
     },
@@ -197,7 +194,6 @@ const MenuItemView = Backbone.View.extend({
         if (this.model.get('drag')) {
             e.originalEvent.dataTransfer.setData('text/group', this.model.id);
             e.originalEvent.dataTransfer.effectAllowed = 'move';
-            DragDropInfo.dragType = 'text/group';
             DragDropInfo.dragObject = this.model;
         }
     },
@@ -208,9 +204,6 @@ const MenuItemView = Backbone.View.extend({
             e.preventDefault();
             this.$el.addClass('menu__item--drag');
         }
-        if (this.isDropNotWorkingProperly) {
-            this.canDrop = true;
-        }
     },
 
     dragleave(e) {
@@ -218,16 +211,11 @@ const MenuItemView = Backbone.View.extend({
         if (this.model.get('drop') && this.dropAllowed(e)) {
             this.$el.removeClass('menu__item--drag menu__item--drag-top');
         }
-        if (this.isDropNotWorkingProperly) {
-            setTimeout(() => {
-                this.canDrop = false;
-            }, 100);
-        }
     },
 
     drop(e) {
         e.stopPropagation();
-        if (DragDropInfo.dragObject && this.model.get('drop') && this.dropAllowed(e)) {
+        if (this.model.get('drop') && this.dropAllowed(e)) {
             const isTop = this.$el.hasClass('menu__item--drag-top');
             this.$el.removeClass('menu__item--drag menu__item--drag-top');
             if (isTop) {
@@ -239,17 +227,7 @@ const MenuItemView = Backbone.View.extend({
                     this.model.moveHere(DragDropInfo.dragObject);
                 }
             }
-            DragDropInfo.dragType = null;
-            DragDropInfo.dragObject = null;
             Backbone.trigger('refresh');
-        }
-    },
-
-    mouseup(e) {
-        // fix #432: drag-drop in vivaldi. Why drop is not firing?
-        if (this.isDropNotWorkingProperly && this.canDrop) {
-            e.originalEvent.dataTransfer = { types: [DragDropInfo.dragType] };
-            this.drop(e);
         }
     },
 

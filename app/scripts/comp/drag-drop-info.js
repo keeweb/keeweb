@@ -1,5 +1,4 @@
 const DragDropInfo = {
-    dragType: null,
     dragObject: null
 };
 
