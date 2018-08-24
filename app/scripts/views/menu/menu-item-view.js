@@ -199,8 +199,8 @@ const MenuItemView = Backbone.View.extend({
     },
 
     dragover(e) {
-        e.stopPropagation();
         if (this.model.get('drop') && this.dropAllowed(e)) {
+            e.stopPropagation();
             e.preventDefault();
             this.$el.addClass('menu__item--drag');
         }

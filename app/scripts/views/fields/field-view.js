@@ -7,7 +7,8 @@ const FieldView = Backbone.View.extend({
 
     events: {
         'click .details__field-label': 'fieldLabelClick',
-        'click .details__field-value': 'fieldValueClick'
+        'click .details__field-value': 'fieldValueClick',
+        'dragstart .details__field-label': 'fieldLabelDrag'
     },
 
     render: function() {
@@ -90,6 +91,20 @@ const FieldView = Backbone.View.extend({
         }
     },
 
+    fieldLabelDrag: function(e) {
+        e.stopPropagation();
+        if (!this.value) {
+            return;
+        }
+        const dt = e.originalEvent.dataTransfer;
+        const txtval = this.value.isProtected ? this.value.getText() : this.value;
+        if (this.valueEl[0].tagName.toLowerCase() === 'a') {
+            dt.setData('text/uri-list', txtval);
+        }
+        dt.setData('text/plain', txtval);
+        dt.effectAllowed = 'copy';
+    },
+
     edit: function() {
         if (this.readonly || this.editing) {
             return;
@@ -98,6 +113,7 @@ const FieldView = Backbone.View.extend({
         this.startEdit();
         this.editing = true;
         this.preventCopy = true;
+        this.labelEl[0].setAttribute('draggable', 'false');
     },
 
     endEdit: function(newVal, extra) {
@@ -130,6 +146,7 @@ const FieldView = Backbone.View.extend({
         }
         this.valueEl.html(this.renderValue(this.value));
         this.$el.removeClass('details__field--edit');
+        this.labelEl[0].setAttribute('draggable', 'true');
     },
 
     triggerChange: function(arg) {
