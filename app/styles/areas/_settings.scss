@@ -91,11 +91,11 @@
     margin-bottom: $base-padding-v;
   }
 
-  #settings__file-master-pass {
+  #settings__file-master-pass, #settings__file-confirm-master-pass {
     font-family: $monospace-font-family;
   }
 
-  &__file-master-pass-warning {
+  &__file-master-pass-warning, &__file-confirm-master-pass-warning {
     font-weight: normal;
     float: right;
     display: none;
