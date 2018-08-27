@@ -15,6 +15,7 @@ const FileModel = Backbone.Model.extend({
         name: '',
         keyFileName: '',
         passwordLength: 0,
+        confirmPasswordLength: 0,
         path: '',
         opts: null,
         storage: null,
@@ -27,6 +28,8 @@ const FileModel = Backbone.Model.extend({
         oldPasswordLength: 0,
         oldKeyFileName: '',
         passwordChanged: false,
+        passwordMatched: false,
+        newPassword: '',
         keyFileChanged: false,
         keyChangeForce: -1,
         syncing: false,
@@ -418,7 +421,8 @@ const FileModel = Backbone.Model.extend({
             modified: modified,
             dirty: dirty,
             syncing: false,
-            syncError: error
+            syncError: error,
+            newPassword: ''
         });
         if (!this.get('open')) {
             return;
@@ -428,10 +432,18 @@ const FileModel = Backbone.Model.extend({
     },
 
     setPassword: function(password) {
-        this.db.credentials.setPassword(password);
-        this.db.meta.keyChanged = new Date();
-        this.set({ passwordLength: password.textLength, passwordChanged: true });
+        this.set({ newPassword: password, passwordLength: password.length, passwordChanged: true });
         this.setModified();
+    },
+
+    setConfirmPassword: function(password) {
+        if (password === this.get('newPassword')) {
+            this.db.credentials.setPassword(kdbxweb.ProtectedValue.fromString(password));
+            this.db.meta.keyChanged = new Date();
+            this.set({ passwordMatched: true, confirmPasswordLength: password.length });
+        } else {
+            this.set({ passwordMatched: false, confirmPasswordLength: password.length });
+        }
     },
 
     resetPassword: function() {
@@ -439,7 +451,7 @@ const FileModel = Backbone.Model.extend({
         if (this.db.credentials.keyFileHash === this._oldKeyFileHash) {
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
-        this.set({ passwordLength: this.get('oldPasswordLength'), passwordChanged: false });
+        this.set({ newPassword: '', passwordLength: this.get('oldPasswordLength'), passwordChanged: false });
     },
 
     setKeyFile: function(keyFile, keyFileName) {
