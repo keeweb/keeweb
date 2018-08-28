@@ -60,6 +60,7 @@ app.on('ready', () => {
         setGlobalShortcuts();
         subscribePowerEvents();
         deleteOldTempFiles();
+        hookRequestHeaders();
     }
 });
 app.on('open-file', (e, path) => {
@@ -420,4 +421,15 @@ function deleteRecursive(dir) {
         }
     }
     fs.rmdirSync(dir);
+}
+
+// When sending a PUT XMLHttpRequest Chromium includes the header "Origin: file://".
+// This confuses some WebDAV clients, notably OwnCloud.
+// The header is invalid, so removing it everywhere it occurs should do no harm.
+
+function hookRequestHeaders() {
+    electron.session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+        delete details.requestHeaders['Origin'];
+        callback({cancel: false, requestHeaders: details.requestHeaders});
+    });
 }
