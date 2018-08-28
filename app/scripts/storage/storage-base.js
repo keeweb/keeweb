@@ -58,6 +58,7 @@ _.extend(StorageBase.prototype, {
         }
         const statuses = config.statuses || [200];
         xhr.addEventListener('load', () => {
+            CookieManager.saveCookies();
             if (statuses.indexOf(xhr.status) >= 0) {
                 return config.success && config.success(xhr.response, xhr);
             }
@@ -80,6 +81,7 @@ _.extend(StorageBase.prototype, {
             }
         });
         xhr.addEventListener('error', () => {
+            CookieManager.saveCookies();
             return config.error && config.error('network error', xhr);
         });
         xhr.addEventListener('timeout', () => {
