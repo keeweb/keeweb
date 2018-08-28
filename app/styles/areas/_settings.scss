@@ -95,6 +95,10 @@
     font-family: $monospace-font-family;
   }
 
+  #settings__file-confirm-master-pass-group {
+    display: none;
+  }
+
   &__file-master-pass-warning, &__file-confirm-master-pass-warning {
     font-weight: normal;
     float: right;
