@@ -285,6 +285,8 @@
   "appSecWarnBody1": "You have loaded this app with an insecure connection. Someone may be watching you and stealing your passwords. We strongly advise you to stop, unless you clearly understand what you're doing.",
   "appSecWarnBody2": "Yes, your database is encrypted but no one can guarantee that the app has not been modified on the way to you.",
   "appSecWarnBtn": "I understand the risks, continue",
+  "appFeatureTestFailed": "Not supported",
+  "appFeatureTestFailedBody": "Your browser doesn't support some important features we're using.",
   "appUnsavedWarn": "Unsaved changes!",
   "appUnsavedWarnBody": "You have unsaved files, if you close the app, changes will be lost.",
   "appDontExitBtn": "Don't exit",

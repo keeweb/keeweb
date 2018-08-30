@@ -18,6 +18,7 @@ const ExportApi = require('./comp/export-api');
 const SettingsManager = require('./comp/settings-manager');
 const PluginManager = require('./plugins/plugin-manager');
 const Launcher = require('./comp/launcher');
+const FeatureTester = require('./comp/feature-tester');
 const Timeouts = require('./const/timeouts');
 const FeatureDetector = require('./util/feature-detector');
 const KdbxwebInit = require('./util/kdbxweb-init');
@@ -108,28 +109,37 @@ ready(() => {
     }
 
     function showApp() {
-        return Promise.resolve().then(() => {
-            const skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
-            const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
-            const hostIsInsecure = location.hostname !== 'localhost';
-            if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
-                return new Promise(resolve => {
-                    Alerts.error({
-                        header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
-                        body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
-                        buttons: [
-                            {result: '', title: Locale.appSecWarnBtn, error: true}
-                        ],
-                        complete: () => {
-                            showView();
-                            resolve();
-                        }
-                    });
+        return FeatureTester.test()
+            .catch(e => {
+                Alerts.error({
+                    header: Locale.appFeatureTestFailed, esc: false, enter: false, click: false,
+                    body: Locale.appFeatureTestFailedBody + '<br/><br/>' + e,
+                    buttons: []
                 });
-            } else {
-                showView();
-            }
-        });
+                throw 'Feature testing failed: ' + e;
+            })
+            .then(() => {
+                const skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
+                const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
+                const hostIsInsecure = location.hostname !== 'localhost';
+                if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
+                    return new Promise(resolve => {
+                        Alerts.error({
+                            header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
+                            body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
+                            buttons: [
+                                {result: '', title: Locale.appSecWarnBtn, error: true}
+                            ],
+                            complete: () => {
+                                showView();
+                                resolve();
+                            }
+                        });
+                    });
+                } else {
+                    showView();
+                }
+            });
     }
 
     function postInit() {
