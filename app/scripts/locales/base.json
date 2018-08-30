@@ -397,7 +397,7 @@
   "setFileConfirmPass": "Confirm Master password",
   "setFilePassChange": "to change your password, please type it in the Confirm field",
   "setFilePassChanged": "your password was changed; leave it blank to use the current one",
-  "setFilePassNotMatch": "confirmed password does not match the master password; your password will not be updated",
+  "setFilePassNotMatch": "hey, that's not it",
   "setFileKeyFile": "Key file",
   "setFileSelKeyFile": "Select a key file",
   "setFileNames": "Names",
