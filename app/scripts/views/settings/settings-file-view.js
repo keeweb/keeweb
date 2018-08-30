@@ -31,6 +31,8 @@ const SettingsFileView = Backbone.View.extend({
         'focus #settings__file-master-pass': 'focusMasterPass',
         'input #settings__file-master-pass': 'changeMasterPass',
         'blur #settings__file-master-pass': 'blurMasterPass',
+        'focus #settings__file-confirm-master-pass': 'focusConfirmMasterPass',
+        'blur #settings__file-confirm-master-pass': 'blurConfirmMasterPass',
         'input #settings__file-name': 'changeName',
         'input #settings__file-def-user': 'changeDefUser',
         'change #settings__file-backup-enabled': 'changeBackupEnabled',
@@ -96,6 +98,7 @@ const SettingsFileView = Backbone.View.extend({
         });
         if (!this.model.get('created')) {
             this.$el.find('.settings__file-master-pass-warning').toggle(this.model.get('passwordChanged'));
+            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChanged);
         }
         this.renderKeyFileSelect();
     },
@@ -365,6 +368,7 @@ const SettingsFileView = Backbone.View.extend({
     focusMasterPass: function(e) {
         e.target.value = '';
         e.target.setAttribute('type', 'text');
+        this.model.set('passwordChanged', false);
     },
 
     changeMasterPass: function(e) {
@@ -372,7 +376,8 @@ const SettingsFileView = Backbone.View.extend({
             this.model.resetPassword();
             this.$el.find('.settings__file-master-pass-warning').hide();
         } else {
-            this.model.setPassword(kdbxweb.ProtectedValue.fromString(e.target.value));
+            this.$el.find('#settings__file-confirm-master-pass-group').show();
+            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
             if (!this.model.get('created')) {
                 this.$el.find('.settings__file-master-pass-warning').show();
             }
@@ -382,10 +387,37 @@ const SettingsFileView = Backbone.View.extend({
     blurMasterPass: function(e) {
         if (!e.target.value) {
             this.model.resetPassword();
+            this.resetConfirmMasterPass();
             e.target.value = PasswordGenerator.present(this.model.get('passwordLength'));
             this.$el.find('.settings__file-master-pass-warning').hide();
         }
         e.target.setAttribute('type', 'password');
+    },
+
+    resetConfirmMasterPass: function() {
+        this.$el.find('#settings__file-confirm-master-pass').val('');
+        this.$el.find('#settings__file-confirm-master-pass-group').hide();
+        this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
+    },
+
+    focusConfirmMasterPass: function(e) {
+        e.target.value = '';
+        e.target.setAttribute('type', 'text');
+    },
+
+    blurConfirmMasterPass: function(e) {
+        e.target.setAttribute('type', 'password');
+        const masterPassword = this.$el.find('#settings__file-master-pass').val();
+        const confirmPassword = e.target.value;
+        if (masterPassword === confirmPassword) {
+            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChanged);
+            this.$el.find('.settings__file-confirm-master-pass-warning').hide();
+            this.model.setPassword(kdbxweb.ProtectedValue.fromString(confirmPassword));
+        } else {
+            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
+            this.$el.find('.settings__file-confirm-master-pass-warning').show();
+            this.model.resetPassword();
+        }
     },
 
     changeName: function(e) {

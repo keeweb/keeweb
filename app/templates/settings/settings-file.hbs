@@ -47,7 +47,7 @@
     <h2>{{res 'settings'}}</h2>
     <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFilePass'}}:
         <span class="settings__file-master-pass-warning">
-            <i class="fa fa-warning"></i> {{res 'setFilePassChanged'}}
+            <i class="fa fa-warning"></i> <span id="settings__file-master-pass-warning-text">{{res 'setFilePassChange'}}</span>
         </span>
     </label>
     <div class="hide">
@@ -56,6 +56,14 @@
         <input type="password" style="display:none" name="password">
     </div>
     <input type="password" class="settings__input input-base" id="settings__file-master-pass" value="{{password}}" autocomplete="new-password" />
+    <div id="settings__file-confirm-master-pass-group">
+        <label for="settings__file-confirm-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFileConfirmPass'}}:
+            <span class="settings__file-confirm-master-pass-warning">
+                <i class="fa fa-warning"></i> {{res 'setFilePassNotMatch'}}
+            </span>
+        </label>
+        <input type="password" class="settings__input input-base" id="settings__file-confirm-master-pass" autocomplete="confirm-password" />
+    </div>
     <label for="settings__file-key-file">{{res 'setFileKeyFile'}}:</label>
     <select class="settings__select settings__select-no-margin input-base" id="settings__file-key-file"></select>
     <a id="settings__file-file-select-link">{{res 'setFileSelKeyFile'}}</a>
