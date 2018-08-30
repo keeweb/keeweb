@@ -395,7 +395,7 @@
   "setFileSyncError": "Sync error",
   "setFilePass": "Master password",
   "setFileConfirmPass": "Confirm Master password",
-  "setFilePassChange": "to change your password, please type in the confirm field",
+  "setFilePassChange": "to change your password, please type it in the Confirm field",
   "setFilePassChanged": "your password was changed; leave it blank to use the current one",
   "setFilePassNotMatch": "confirmed password does not match the master password; your password will not be updated",
   "setFileKeyFile": "Key file",
