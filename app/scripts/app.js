@@ -51,16 +51,15 @@ ready(() => {
     }
 
     function ensureCanRun() {
-        return Promise.resolve()
-            .then(() => FeatureDetector.ensureCanRun())
+        return FeatureTester.test()
             .catch(e => {
                 Alerts.error({
                     header: Locale.appSettingsError,
-                    body: Locale.appNotSupportedError,
+                    body: Locale.appNotSupportedError + '<br/><br/>' + e,
                     buttons: [],
                     esc: false, enter: false, click: false
                 });
-                throw e;
+                throw 'Feature testing failed: ' + e;
             });
     }
 
@@ -109,15 +108,7 @@ ready(() => {
     }
 
     function showApp() {
-        return FeatureTester.test()
-            .catch(e => {
-                Alerts.error({
-                    header: Locale.appFeatureTestFailed, esc: false, enter: false, click: false,
-                    body: Locale.appFeatureTestFailedBody + '<br/><br/>' + e,
-                    buttons: []
-                });
-                throw 'Feature testing failed: ' + e;
-            })
+        return Promise.resolve()
             .then(() => {
                 const skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
                 const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;

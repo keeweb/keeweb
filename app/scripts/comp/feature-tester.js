@@ -1,4 +1,5 @@
 const kdbxweb = require('kdbxweb');
+const FeatureDetector = require('../util/feature-detector');
 
 const FeatureTester = {
     test() {
@@ -38,6 +39,9 @@ const FeatureTester = {
     },
 
     checkLocalStorage() {
+        if (FeatureDetector.isDesktop) {
+            return;
+        }
         try {
             localStorage.setItem('_test', '1');
             localStorage.removeItem('_test');

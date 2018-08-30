@@ -40,18 +40,6 @@ const FeatureDetector = {
     hasUnicodeFlags: function() {
         return this.isMac;
     },
-    ensureCanRun: function() {
-        if (!window.crypto) {
-            throw 'WebCrypto not available';
-        }
-        if (!localStorage.length && !isDesktop) {
-            try {
-                localStorage.appSettings = '';
-            } catch (e) {
-                throw 'localStorage not available';
-            }
-        }
-    },
     getBrowserCssClass: function() {
         if (window.chrome && window.chrome.webstore) {
             return 'chrome';
