@@ -111,20 +111,15 @@ ready(() => {
         return Promise.resolve().then(() => {
             const skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
             const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
-            const hostIsInsecure = location.hostname !== 'localhost';
+            const hostIsInsecure = location.hostname !== 'localhost2';
             if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
-                return new Promise(resolve => {
-                    Alerts.error({
-                        header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
-                        body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
-                        buttons: [
-                            {result: '', title: Locale.appSecWarnBtn, error: true}
-                        ],
-                        complete: () => {
-                            showView();
-                            resolve();
-                        }
-                    });
+                Alerts.error({
+                    header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
+                    body: Locale.appSecWarnBody1,
+                    buttons: [],
+                    complete: () => {
+                        showView();
+                    }
                 });
             } else {
                 showView();
