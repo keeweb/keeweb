@@ -4,6 +4,7 @@ Release notes
 `+` downgrading desktop apps  
 `-` fixed calendar colors  
 `+` option to open a keyfile from command line  
+`+` master password confirmation  
 
 ##### v1.6.3 (2017-12-11)
 `-` fixed Windows installer upgrade issue  
