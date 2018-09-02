@@ -1,5 +1,8 @@
 const electron = require('electron');
 const app = electron.app;
+
+if (app.makeSingleInstance(restoreMainWindow)) app.quit();
+
 const path = require('path');
 const fs = require('fs');
 
@@ -53,15 +56,13 @@ app.on('window-all-closed', () => {
     }
 });
 app.on('ready', () => {
-    if (!checkSingleInstance()) {
-        appReady = true;
-        setAppOptions();
-        createMainWindow();
-        setGlobalShortcuts();
-        subscribePowerEvents();
-        deleteOldTempFiles();
-        hookRequestHeaders();
-    }
+    appReady = true;
+    setAppOptions();
+    createMainWindow();
+    setGlobalShortcuts();
+    subscribePowerEvents();
+    deleteOldTempFiles();
+    hookRequestHeaders();
 });
 app.on('open-file', (e, path) => {
     e.preventDefault();
@@ -113,17 +114,6 @@ app.getMainWindow = function () {
     return mainWindow;
 };
 app.emitBackboneEvent = emitBackboneEvent;
-
-function checkSingleInstance() {
-    const shouldQuit = app.makeSingleInstance((/* commandLine, workingDirectory */) => {
-        restoreMainWindow();
-    });
-
-    if (shouldQuit) {
-        app.quit();
-    }
-    return shouldQuit;
-}
 
 function setAppOptions() {
     app.commandLine.appendSwitch('disable-background-timer-throttling');
