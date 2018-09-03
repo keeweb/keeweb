@@ -264,6 +264,12 @@
         font-weight: normal;
         @include user-select(none);
       }
+      >a {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       .details__body-aside & {
         @include th { color: th(muted-color); }
         a { @include th { color: th(muted-color); } }
@@ -402,7 +408,6 @@
       position: absolute;
       bottom: $base-padding-v;
       right: $base-padding-h;
-      white-space: nowrap;
       opacity: .15;
       display: none;
       @include nomobile { display: block; }
@@ -461,12 +466,15 @@
     align-items: stretch;
     flex-direction: column;
     justify-content: flex-start;
-    margin-right: $base-padding-h;
+    max-width: 100%;
     &-top {
+      flex: 0 0 auto;
       display: flex;
       align-items: stretch;
       flex-direction: row;
       justify-content: flex-start;
+      padding-right: $base-padding-h;
+      margin-right: 20px;
     }
     &-desc {
       @include user-select(none);
@@ -529,6 +537,8 @@
       @include user-select(none);
       align-self: flex-end;
       margin-bottom: $base-padding-v;
+      padding-right: $base-padding-h;
+      margin-right: 20px;
     }
   }
 
