@@ -91,24 +91,31 @@ app.openWindow = function (opts) {
 };
 app.minimizeApp = function () {
     let imagePath;
+    mainWindow.hide();
     if (process.platform === 'darwin') {
-        mainWindow.hide();
         app.dock.hide();
         imagePath = 'mac-menubar-icon.png';
-        mainWindow.setSkipTaskbar(true);
     } else {
-        mainWindow.hide();
         imagePath = 'icon.png';
     }
-    const image = electron.nativeImage.createFromPath(path.join(__dirname, imagePath));
-    appIcon = new electron.Tray(image);
-    appIcon.on('click', restoreMainWindow);
-    const contextMenu = electron.Menu.buildFromTemplate([
-        {label: 'Open KeeWeb', click: restoreMainWindow},
-        {label: 'Quit KeeWeb', click: closeMainWindow}
-    ]);
-    appIcon.setContextMenu(contextMenu);
-    appIcon.setToolTip('KeeWeb');
+    mainWindow.setSkipTaskbar(true);
+    if (!appIcon) {
+        const image = electron.nativeImage.createFromPath(path.join(__dirname, imagePath));
+        appIcon = new electron.Tray(image);
+        appIcon.on('click', restoreMainWindow);
+        const contextMenu = electron.Menu.buildFromTemplate([
+            {label: 'Open KeeWeb', click: restoreMainWindow},
+            {label: 'Quit KeeWeb', click: closeMainWindow}
+        ]);
+        appIcon.setContextMenu(contextMenu);
+        appIcon.setToolTip('KeeWeb');
+    }
+};
+app.minimizeThenHideIfInTray = function () {
+    // This function is called when auto-type has displayed a selection list and a selection was made.
+    // To ensure focus returns to the previous window we must minimize first even if we're going to hide.
+    mainWindow.minimize();
+    if (appIcon) mainWindow.hide();
 };
 app.getMainWindow = function () {
     return mainWindow;

@@ -200,7 +200,7 @@ const Launcher = {
     hideApp: function() {
         const app = this.remoteApp();
         if (this.canMinimize()) {
-            app.getMainWindow().minimize();
+            app.minimizeThenHideIfInTray();
         } else {
             app.hide();
         }
