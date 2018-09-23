@@ -162,6 +162,7 @@ function createMainWindow() {
     mainWindow.webContents.on('context-menu', onContextMenu);
     mainWindow.on('resize', delaySaveMainWindowPosition);
     mainWindow.on('move', delaySaveMainWindowPosition);
+    mainWindow.on('restore', coerceMainWindowPositionToConnectedDisplay);
     mainWindow.on('close', updateMainWindowPositionIfPending);
     mainWindow.on('blur', mainWindowBlur);
     mainWindow.on('closed', () => {
@@ -193,6 +194,7 @@ function restoreMainWindow() {
     }
     mainWindow.setSkipTaskbar(false);
     mainWindow.show();
+    coerceMainWindowPositionToConnectedDisplay();
     setTimeout(destroyAppIcon, 0);
 }
 
@@ -236,7 +238,6 @@ function updateMainWindowPosition() {
     }
     mainWindowPosition.maximized = mainWindow.isMaximized();
     mainWindowPosition.fullScreen = mainWindow.isFullScreen();
-    mainWindowPosition.displayBounds = require('electron').screen.getDisplayMatching(bounds).bounds;
     mainWindowPosition.changed = true;
 }
 
@@ -256,12 +257,8 @@ function restoreMainWindowPosition() {
             mainWindowPosition = JSON.parse(data);
             if (mainWindow && mainWindowPosition) {
                 if (mainWindowPosition.width && mainWindowPosition.height) {
-                    const displayBounds = require('electron').screen.getDisplayMatching(mainWindowPosition).bounds;
-                    const db = mainWindowPosition.displayBounds;
-                    if (displayBounds.x === db.x && displayBounds.y === db.y &&
-                        displayBounds.width === db.width && displayBounds.height === db.height) {
-                        mainWindow.setBounds(mainWindowPosition);
-                    }
+                    mainWindow.setBounds(mainWindowPosition);
+                    coerceMainWindowPositionToConnectedDisplay();
                 }
                 if (mainWindowPosition.maximized) { mainWindow.maximize(); }
                 if (mainWindowPosition.fullScreen) { mainWindow.setFullScreen(true); }
@@ -429,4 +426,43 @@ function hookRequestHeaders() {
         delete details.requestHeaders['Origin'];
         callback({cancel: false, requestHeaders: details.requestHeaders});
     });
+}
+
+// If a display is disconnected while KeeWeb is minimized, Electron does not
+// ensure that the restored window appears on a display that is still connected.
+// This checks to be sure the title bar is somewhere the user can grab it,
+// without making it impossible to minimize and restore a window keeping it
+// partially off-screen or straddling two displays if the user desires that.
+
+function coerceMainWindowPositionToConnectedDisplay() {
+    const eScreen = require('electron').screen;
+    const displays = eScreen.getAllDisplays();
+    if (!displays || !displays.length) return;
+    const windowBounds = mainWindow.getBounds();
+    const contentBounds = mainWindow.getContentBounds();
+    const tbLeft = windowBounds.x;
+    const tbRight = windowBounds.x + windowBounds.width;
+    const tbTop = windowBounds.y;
+    const tbBottom = contentBounds.y;
+    // 160px width and 2/3s the title bar height should be enough that the user can grab it
+    for (let i = 0; i < displays.length; ++i) {
+        const workArea = displays[i].workArea;
+        const overlapWidth = Math.min(tbRight, workArea.x + workArea.width) - Math.max(tbLeft, workArea.x);
+        const overlapHeight = Math.min(tbBottom, workArea.y + workArea.height) - Math.max(tbTop, workArea.y);
+        if (overlapWidth >= 160 && 3 * overlapHeight >= 2 * (tbBottom - tbTop)) return;
+    }
+    // If we get here, no display contains a big enough strip of the title bar
+    // that we can be confident the user can drag it into visibility.  Rather than
+    // attempt to guess what the user wants, just center it on the primary display.
+    // Try to keep the previous height and width, but clamp each to 90% of the workarea.
+    const workArea = eScreen.getPrimaryDisplay().workArea;
+    const newWidth = Math.min(windowBounds.width, Math.floor(0.9 * workArea.width));
+    const newHeight = Math.min(windowBounds.height, Math.floor(0.9 * workArea.height));
+    mainWindow.setBounds({
+        'x': workArea.x + Math.floor((workArea.width - newWidth) / 2),
+        'y': workArea.y + Math.floor((workArea.height - newHeight) / 2),
+        'width': newWidth,
+        'height': newHeight
+    });
+    updateMainWindowPosition();
 }
