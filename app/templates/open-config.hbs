@@ -6,7 +6,7 @@
         <label for="open__config-field-{{id}}">{{res title}}:</label>
         {{#if desc}}<div class="open__config-field-desc muted-color">{{res desc}}</div>{{/if}}
         <input type="{{type}}" class="open__config-field input-base" id="open__config-field-{{id}}"
-            autocomplete="off"
+            autocomplete="off" autocapitalize="off"
             {{#if placeholder}}placeholder="{{res placeholder}}"{{/if}}
             {{#if required}}required{{/if}}
             {{#if pattern}}pattern="{{{pattern}}}"{{/if}}
