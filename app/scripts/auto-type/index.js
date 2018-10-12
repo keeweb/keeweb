@@ -70,7 +70,14 @@ const AutoType = {
 
     run(entry, callback) {
         this.running = true;
-        const sequence = entry.getEffectiveAutoTypeSeq();
+        var sequence;
+        if (entry.autoTypeOption === 'password') {
+            sequence = '{PASSWORD}';
+        } else if (entry.autoTypeOption === 'username') {
+            sequence = '{USERNAME}';
+        } else {
+            sequence = entry.getEffectiveAutoTypeSeq();
+        }
         logger.debug('Start', sequence);
         const ts = logger.ts();
         try {

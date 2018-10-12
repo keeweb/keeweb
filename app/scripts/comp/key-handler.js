@@ -12,7 +12,7 @@ const KeyHandler = {
     modal: false,
 
     init: function() {
-        $(document).bind('keypress', this.keypress.bind(this));
+        $(document).bind('keyxpress', this.keypress.bind(this));
         $(document).bind('keydown', this.keydown.bind(this));
 
         this.shortcuts[Keys.DOM_VK_A] = [{ handler: this.handleAKey, thisArg: this, shortcut: this.SHORTCUT_ACTION,

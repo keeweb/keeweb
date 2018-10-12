@@ -26,6 +26,8 @@ const AutoTypePopupView = Backbone.View.extend({
         this.listenTo(Backbone, 'main-window-will-close', this.mainWindowWillClose);
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.actionEnterPressed, this, KeyHandler.SHORTCUT_ACTION, true);
+        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.optEnterPressed, this, KeyHandler.SHORTCUT_OPT, true);
         KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this, false, true);
@@ -94,6 +96,16 @@ const AutoTypePopupView = Backbone.View.extend({
     },
 
     enterPressed() {
+        this.closeWithResult();
+    },
+
+    actionEnterPressed() {
+        this.result.autoTypeOption = 'password';
+        this.closeWithResult();
+    },
+
+    optEnterPressed() {
+        this.result.autoTypeOption = 'username';
         this.closeWithResult();
     },
 
