@@ -1,7 +1,9 @@
 .at-select {
   @include position(absolute, 0 null null 0);
   @include size(100%);
-  @include th { background-color: th(background-color); }
+  @include th {
+    background-color: th(background-color);
+  }
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -52,13 +54,26 @@
       margin-right: $base-padding-h;
     }
   }
+  &__hint {
+    flex: 0.5 0;
+    margin-bottom: $base-padding-v * 2;
+    text-align: right;
+    &-text {
+      flex: 1 1;
+      font-size: .8em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: $base-padding-h;
+    }
+  }
   &__items {
     flex: 1;
     @include scrollbar-on-hover;
     margin-bottom: $base-padding-v;
     position: relative;
     overflow: hidden;
-    >.scroller {
+    > .scroller {
       display: flex;
       flex-direction: row;
       justify-content: center;
@@ -78,10 +93,19 @@
       overflow: hidden;
       text-overflow: ellipsis;
       word-wrap: break-word;
-      &:first-of-type { width: 1em; text-align: center; }
-      &:nth-of-type(2) { width: 50%; }
-      &:nth-of-type(3) { width: 25%; }
-      &:nth-of-type(4) { width: 25%; }
+      &:first-of-type {
+        width: 1em;
+        text-align: center;
+      }
+      &:nth-of-type(2) {
+        width: 50%;
+      }
+      &:nth-of-type(3) {
+        width: 25%;
+      }
+      &:nth-of-type(4) {
+        width: 25%;
+      }
     }
   }
   &__item {

@@ -6,6 +6,7 @@ const AppSettingsModel = require('../../models/app-settings-model');
 const EntryPresenter = require('../../presenters/entry-presenter');
 const Scrollable = require('../../mixins/scrollable');
 const AutoTypeSequenceType = require('../../const/autotype-sequencetype');
+const FeatureDetector = require('../../util/feature-detector');
 
 const AutoTypePopupView = Backbone.View.extend({
     el: 'body',
@@ -57,7 +58,13 @@ const AutoTypePopupView = Backbone.View.extend({
         this.renderTemplate({
             filterText: this.model.filter.text,
             topMessage: topMessage,
-            itemsHtml: itemsHtml
+            selectionHintDefault: Locale.autoTypeSelectionHint,
+            selectionHintAction: Locale.autoTypeSelectionHintAction,
+            selectionHintOpt: Locale.autoTypeSelectionHintOpt,
+            itemsHtml: itemsHtml,
+            actionSymbol: FeatureDetector.actionShortcutSymbol(true),
+            altSymbol: FeatureDetector.altShortcutSymbol(true),
+            keyEnter: Locale.keyEnter
         });
         document.activeElement.blur();
         this.createScroll({
