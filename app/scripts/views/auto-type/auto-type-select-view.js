@@ -5,6 +5,7 @@ const Locale = require('../../util/locale');
 const AppSettingsModel = require('../../models/app-settings-model');
 const EntryPresenter = require('../../presenters/entry-presenter');
 const Scrollable = require('../../mixins/scrollable');
+const AutoTypeSequenceType = require('../../const/autotype-sequencetype');
 
 const AutoTypePopupView = Backbone.View.extend({
     el: 'body',
@@ -83,8 +84,14 @@ const AutoTypePopupView = Backbone.View.extend({
         this.trigger('result', this.result);
     },
 
-    closeWithResult() {
-        this.trigger('result', this.result);
+    closeWithResult(sequenceType) {
+        if (!sequenceType) {
+            sequenceType = AutoTypeSequenceType.DEFAULT;
+        }
+        this.trigger('result', {
+            entry: this.result,
+            sequenceType: sequenceType
+        });
     },
 
     escPressed() {
@@ -100,13 +107,11 @@ const AutoTypePopupView = Backbone.View.extend({
     },
 
     actionEnterPressed() {
-        this.result.autoTypeOption = 'password';
-        this.closeWithResult();
+        this.closeWithResult(AutoTypeSequenceType.PASSWORD);
     },
 
     optEnterPressed() {
-        this.result.autoTypeOption = 'username';
-        this.closeWithResult();
+        this.closeWithResult(AutoTypeSequenceType.USERNAME);
     },
 
     upPressed(e) {

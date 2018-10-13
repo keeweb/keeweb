@@ -9,6 +9,7 @@ const Logger = require('../util/logger');
 const Locale = require('../util/locale');
 const Timeouts = require('../const/timeouts');
 const AppSettingsModel = require('../models/app-settings-model');
+const AutoTypeSequenceType = require('../const/autotype-sequencetype');
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = localStorage.autoTypeDebug;
@@ -53,8 +54,8 @@ const AutoType = {
         }
     },
 
-    runAndHandleResult(entry) {
-        this.run(entry, err => {
+    runAndHandleResult(result) {
+        this.run(result, err => {
             if (err) {
                 Alerts.error({
                     header: Locale.autoTypeError,
@@ -68,15 +69,15 @@ const AutoType = {
         }
     },
 
-    run(entry, callback) {
+    run(result, callback) {
         this.running = true;
-        var sequence;
-        if (entry.autoTypeOption === 'password') {
+        let sequence;
+        if (result.sequenceType === AutoTypeSequenceType.PASSWORD) {
             sequence = '{PASSWORD}';
-        } else if (entry.autoTypeOption === 'username') {
+        } else if (result.sequenceType === AutoTypeSequenceType.USERNAME) {
             sequence = '{USERNAME}';
         } else {
-            sequence = entry.getEffectiveAutoTypeSeq();
+            sequence = result.entry.getEffectiveAutoTypeSeq();
         }
         logger.debug('Start', sequence);
         const ts = logger.ts();
@@ -84,14 +85,14 @@ const AutoType = {
             const parser = new AutoTypeParser(sequence);
             const runner = parser.parse();
             logger.debug('Parsed', this.printOps(runner.ops));
-            runner.resolve(entry, err => {
+            runner.resolve(result.entry, err => {
                 if (err) {
                     this.running = false;
                     logger.error('Resolve error', err);
                     return callback && callback(err);
                 }
                 logger.debug('Resolved', this.printOps(runner.ops));
-                if (entry.autoTypeObfuscation) {
+                if (result.entry.autoTypeObfuscation) {
                     try {
                         runner.obfuscate();
                     } catch (e) {
