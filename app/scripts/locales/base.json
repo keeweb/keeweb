@@ -114,6 +114,7 @@
   "keyChangeTitleExpired": "Master Key Expired",
   "keyChangeMessageExpired": "Master key for this database is expired. Please enter a new key",
   "keyChangeRepeatPassword": "Password, once again",
+  "keyEnter": "Enter",
 
   "iconFavTitle": "Download and use website favicon",
   "iconSelCustom": "Select custom icon",
@@ -280,6 +281,9 @@
   "autoTypeMsgNoWindow": "We were unable to get active window title, start typing to search",
   "autoTypeMsgMatchedByWindow": "Select a password for {}",
   "autoTypeNoMatches": "no matches",
+  "autoTypeSelectionHint": "Type the autotype sequence",
+  "autoTypeSelectionHintAction": "Only type the password",
+  "autoTypeSelectionHintOpt": "Only type the username",
 
   "appSecWarn": "Not Secure!",
   "appSecWarnBody1": "You have loaded this app with an insecure connection. Someone may be watching you and stealing your passwords. We strongly advise you to stop, unless you clearly understand what you're doing.",

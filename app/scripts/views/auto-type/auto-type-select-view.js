@@ -5,6 +5,8 @@ const Locale = require('../../util/locale');
 const AppSettingsModel = require('../../models/app-settings-model');
 const EntryPresenter = require('../../presenters/entry-presenter');
 const Scrollable = require('../../mixins/scrollable');
+const AutoTypeSequenceType = require('../../const/autotype-sequencetype');
+const FeatureDetector = require('../../util/feature-detector');
 
 const AutoTypePopupView = Backbone.View.extend({
     el: 'body',
@@ -26,6 +28,8 @@ const AutoTypePopupView = Backbone.View.extend({
         this.listenTo(Backbone, 'main-window-will-close', this.mainWindowWillClose);
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.actionEnterPressed, this, KeyHandler.SHORTCUT_ACTION, true);
+        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.optEnterPressed, this, KeyHandler.SHORTCUT_OPT, true);
         KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this, false, true);
@@ -54,7 +58,13 @@ const AutoTypePopupView = Backbone.View.extend({
         this.renderTemplate({
             filterText: this.model.filter.text,
             topMessage: topMessage,
-            itemsHtml: itemsHtml
+            selectionHintDefault: Locale.autoTypeSelectionHint,
+            selectionHintAction: Locale.autoTypeSelectionHintAction,
+            selectionHintOpt: Locale.autoTypeSelectionHintOpt,
+            itemsHtml: itemsHtml,
+            actionSymbol: FeatureDetector.actionShortcutSymbol(true),
+            altSymbol: FeatureDetector.altShortcutSymbol(true),
+            keyEnter: Locale.keyEnter
         });
         document.activeElement.blur();
         this.createScroll({
@@ -81,8 +91,14 @@ const AutoTypePopupView = Backbone.View.extend({
         this.trigger('result', this.result);
     },
 
-    closeWithResult() {
-        this.trigger('result', this.result);
+    closeWithResult(sequenceType) {
+        if (!sequenceType) {
+            sequenceType = AutoTypeSequenceType.DEFAULT;
+        }
+        this.trigger('result', {
+            entry: this.result,
+            sequenceType: sequenceType
+        });
     },
 
     escPressed() {
@@ -95,6 +111,14 @@ const AutoTypePopupView = Backbone.View.extend({
 
     enterPressed() {
         this.closeWithResult();
+    },
+
+    actionEnterPressed() {
+        this.closeWithResult(AutoTypeSequenceType.PASSWORD);
+    },
+
+    optEnterPressed() {
+        this.closeWithResult(AutoTypeSequenceType.USERNAME);
     },
 
     upPressed(e) {
