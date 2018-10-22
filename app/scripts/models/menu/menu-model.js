@@ -82,62 +82,56 @@ const MenuModel = Backbone.Model.extend({
     },
 
     _selectPrevious: function() {
-        const _this = this;
         let previousItem = null;
 
-        function processSection(section){
-            if(section.has('visible') && !section.get('visible')) {
+        const processSection = section => {
+            if (section.has('visible') && !section.get('visible')) {
                 return true;
             }
-            if(section.has('active')) {
+            if (section.has('active')) {
                 previousItem = section;
             }
             const items = section.get('items');
             if (items) {
-                items.forEach(function(it) {
+                items.forEach(it => {
                     if (it.get('active') && previousItem) {
-                        _this.select({item: previousItem});
+                        this.select({item: previousItem});
                         return false;
                     }
                     return processSection(it);
-                }, this);
+                });
             }
-        }
+        };
 
         const sections = this.get('sections');
-        sections.forEach(function(section) { 
-            return processSection(section);
-        }, this);
+        sections.forEach(section => processSection(section));
     },
 
     _selectNext: function() {
-        const _this = this;
         let activeItem = null;
 
-        function processSection(section){
-            if(section.has('visible') && !section.get('visible')) {
+        const processSection = section => {
+            if (section.has('visible') && !section.get('visible')) {
                 return true;
             }
-            if(section.has('active') && activeItem && (section !== activeItem)) {
-                _this.select({item: section});
+            if (section.has('active') && activeItem && (section !== activeItem)) {
+                this.select({item: section});
                 activeItem = null;
                 return false;
             }
             const items = section.get('items');
             if (items) {
-                items.forEach(function(it) {
+                items.forEach(it => {
                     if (it.get('active')) {
                         activeItem = it;
                     }
                     return processSection(it);
-                }, this);
+                });
             }
-        }
+        };
 
         const sections = this.get('sections');
-        sections.forEach(function(section) { 
-            return processSection(section);
-        }, this);
+        sections.forEach(section => processSection(section));
     },
 
     _select: function(item, selectedItem) {
