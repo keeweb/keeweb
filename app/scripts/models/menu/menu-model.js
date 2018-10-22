@@ -59,6 +59,8 @@ const MenuModel = Backbone.Model.extend({
         this.set('sections', this.menus.app);
 
         this.listenTo(Backbone, 'set-locale', this._setLocale);
+        this.listenTo(Backbone, 'select-next-menu-item', this._selectNext);
+        this.listenTo(Backbone, 'select-previous-menu-item', this._selectPrevious);
         this._setLocale();
     },
 
@@ -77,6 +79,65 @@ const MenuModel = Backbone.Model.extend({
         } else if (sections === this.menus.settings) {
             Backbone.trigger('set-page', { page: sel.item.get('page'), file: sel.item.get('file') });
         }
+    },
+
+    _selectPrevious: function() {
+        const _this = this;
+        let previousItem = null;
+
+        function processSection(section){
+            if(section.has('visible') && !section.get('visible')) {
+                return true;
+            }
+            if(section.has('active')) {
+                previousItem = section;
+            }
+            const items = section.get('items');
+            if (items) {
+                items.forEach(function(it) {
+                    if (it.get('active') && previousItem) {
+                        _this.select({item: previousItem});
+                        return false;
+                    }
+                    return processSection(it);
+                }, this);
+            }
+        }
+
+        const sections = this.get('sections');
+        sections.forEach(function(section) { 
+            return processSection(section);
+        }, this);
+    },
+
+    _selectNext: function() {
+        const _this = this;
+        let activeItem = null;
+
+        function processSection(section){
+            if(section.has('visible') && !section.get('visible')) {
+                return true;
+            }
+            if(section.has('active') && activeItem && (section !== activeItem)) {
+                _this.select({item: section});
+                activeItem = null;
+                return false;
+            }
+            const items = section.get('items');
+            if (items) {
+                items.forEach(function(it) {
+                    if (it.get('active')) {
+                        activeItem = it;
+                    }
+                    return processSection(it);
+                }, this);
+            }
+        }
+
+        const sections = this.get('sections');
+        sections.forEach(function(section) { 
+            return processSection(section);
+        }, this);
     },
 
     _select: function(item, selectedItem) {
