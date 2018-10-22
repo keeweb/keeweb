@@ -1,4 +1,6 @@
 const Backbone = require('backbone');
+const Keys = require('../../const/keys');
+const KeyHandler = require('../../comp/key-handler');
 const Resizable = require('../../mixins/resizable');
 const MenuSectionView = require('./menu-section-view');
 const DragView = require('../drag-view');
@@ -17,6 +19,8 @@ const MenuView = Backbone.View.extend({
     initialize: function () {
         this.listenTo(this.model, 'change:sections', this.menuChanged);
         this.listenTo(this, 'view-resize', this.viewResized);
+        KeyHandler.onKey(Keys.DOM_VK_UP, this.selectPreviousSection, this, KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT);
+        KeyHandler.onKey(Keys.DOM_VK_DOWN, this.selectNextSection, this, KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT);
     },
 
     remove: function() {
@@ -56,6 +60,14 @@ const MenuView = Backbone.View.extend({
 
     switchVisibility: function(visible) {
         this.$el.toggleClass('menu-visible', visible);
+    },
+
+    selectPreviousSection: function() {
+        Backbone.trigger('select-previous-menu-item');
+    },
+
+    selectNextSection: function() {
+        Backbone.trigger('select-next-menu-item');
     }
 });
 

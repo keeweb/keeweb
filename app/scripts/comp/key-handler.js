@@ -56,6 +56,9 @@ const KeyHandler = {
                     case this.SHORTCUT_OPT:
                         if (!e.altKey) { continue; }
                         break;
+                    case this.SHORTCUT_ACTION + this.SHORTCUT_OPT:
+                        if (!e.altKey || !isActionKey) { continue; }
+                        break;
                     default:
                         if (e.metaKey || e.ctrlKey || e.altKey) { continue; }
                         break;
