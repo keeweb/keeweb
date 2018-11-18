@@ -13,6 +13,16 @@
     "email": "antelle.net@gmail.com",
     "url": "http://antelle.net"
   },
+  "build": {
+    "appId": "com.electron.keeweb",
+    "productName": "KeeWeb",
+    "linux": {
+      "target": [
+        "snap"
+      ],
+      "icon": "icon.png"
+    }
+  },
   "license": "MIT",
   "readme": "../README.md",
   "dependencies": {
