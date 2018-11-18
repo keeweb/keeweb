@@ -39,6 +39,7 @@ The app can be built with grunt: `grunt` (html file will be in `dist/`).
 Desktop apps are built with `grunt desktop`. This works only in mac osx as it builds dmg; requires wine.  
 To run Electron app without building installer, build the app with `grunt` and start in this way:
 ```bash
+$ sudo apt-get install libsecret-1-dev
 $ grunt dev
 $ npm run-script electron
 ```
