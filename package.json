@@ -78,7 +78,6 @@
   },
   "scripts": {
     "start": "grunt",
-    "test": "grunt test",
     "postinstall": "cd desktop && npm install",
     "build-beta": "grunt --skip-sign --beta && sed 's/<html manifest=\"manifest.appcache\">//' dist/index.html > ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
     "electron": "electron desktop --htmlpath=http://localhost:8085/tmp/",
