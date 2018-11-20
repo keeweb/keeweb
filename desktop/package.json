@@ -20,7 +20,8 @@
       "target": [
         "snap"
       ],
-      "icon": "icon.png"
+      "icon": "icon.png",
+      "artifactName": "${productName}-${version}.${os}.${arch}.${ext}"
     }
   },
   "license": "MIT",
