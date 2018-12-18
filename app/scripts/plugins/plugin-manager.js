@@ -173,13 +173,14 @@ const PluginManager = Backbone.Model.extend({
         const plugin = new Plugin({
             manifest: desc.manifest,
             url: desc.url,
-            autoUpdate: desc.autoUpdate
+            autoUpdate: desc.autoUpdate,
+            skipSignatureValidation: desc.skipSignatureValidation
         });
         let enabled = desc.enabled;
         if (enabled) {
             const galleryPlugin = gallery ? gallery.plugins.find(pl => pl.manifest.name === desc.manifest.name) : null;
             const expectedPublicKey = galleryPlugin ? galleryPlugin.manifest.publicKey : SignatureVerifier.getPublicKey();
-            enabled = desc.manifest.publicKey === expectedPublicKey;
+            enabled = (desc.manifest.publicKey === expectedPublicKey) || desc.skipSignatureValidation;
         }
         return plugin.install(enabled, true)
             .then(() => plugin)
@@ -194,7 +195,8 @@ const PluginManager = Backbone.Model.extend({
                 manifest: plugin.get('manifest'),
                 url: plugin.get('url'),
                 enabled: plugin.get('status') === 'active',
-                autoUpdate: plugin.get('autoUpdate')
+                autoUpdate: plugin.get('autoUpdate'),
+                skipSignatureValidation: plugin.get('skipSignatureValidation')
             }))
         });
     },
