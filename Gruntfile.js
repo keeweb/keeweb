@@ -771,28 +771,29 @@ module.exports = function(grunt) {
      * executing bash command in node - https://stackoverflow.com/questions/1880198/how-to-execute-shell-command-in-javascript
      * tutorial about building snap - https://docs.snapcraft.io/electron-apps/6748
      */
-    grunt.registerTask('build-desktop-dist-snap', 'Build snap images. https://snapcraft.io/', function() {
-        const RED = '\x1b[31m%s\x1b[0m'; const GREEN = '\x1b[32m%s\x1b[0m'; // colors for linux console
+    grunt.registerTask('build-desktop-dist-snap', 'Build snap images. https://snapcraft.io/', () => {
+        // const RED = '\x1b[31m%s\x1b[0m'; const GREEN = '\x1b[32m%s\x1b[0m'; // colors for linux console
         const exec = require('child_process').execSync; // https://nodejs.org/api/child_process.html#child_process_child_process_execsync_command_options
 
-        console.log('Snap building, it can take about 25 seconds');
+        // console.log('Snap building, it can take about 25 seconds');
 
-        let out;
+        // let out;
         try {
-            out = exec('./node_modules/.bin/build --linux snap --project desktop', { encoding: 'utf-8' })
+            // out =
+            exec('./node_modules/.bin/build --linux snap --project desktop', { encoding: 'utf-8' });
         } catch (e) {
-            console.log(RED, e);
-            process.exit()
+            // console.log(RED, e);
+            process.exit();
         }
 
-        console.log(GREEN, out);
+        // console.log(GREEN, out);
     });
 
     grunt.registerTask('build-desktop-dist', [
         'build-desktop-dist-darwin',
         'build-desktop-dist-win32',
         'build-desktop-dist-linux',
-        'build-desktop-dist-snap',
+        'build-desktop-dist-snap'
     ]);
 
     grunt.registerTask('build-desktop', [
@@ -840,7 +841,4 @@ module.exports = function(grunt) {
         'default',
         'build-cordova'
     ]);
-
-
 };
-
