@@ -29,5 +29,7 @@
   "dependencies": {
     "node-stream-zip": "^1.4.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "electron": "^4.0.0"
+  }
 }
