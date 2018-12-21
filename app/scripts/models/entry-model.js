@@ -431,6 +431,7 @@ const EntryModel = Backbone.Model.extend({
         const ix = this.entry.history.indexOf(historyEntry);
         if (ix >= 0) {
             this.entry.removeHistory(ix);
+            this.file.setModified();
         }
         this._fillByEntry();
     },
