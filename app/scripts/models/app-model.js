@@ -893,13 +893,13 @@ const AppModel = Backbone.Model.extend({
     },
 
     unsetKeyFile: function (fileId) {
-        const fileInfo = this.fileInfos.get(fileId)
+        const fileInfo = this.fileInfos.get(fileId);
         fileInfo.set({
             keyFileName: null,
             keyFilePath: null,
             keyFileHash: null
         });
-        this.fileInfos.save()
+        this.fileInfos.save();
     },
 
     setFileBackup: function(fileId, backup) {
