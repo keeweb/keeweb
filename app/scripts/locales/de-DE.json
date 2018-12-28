@@ -426,6 +426,8 @@
   "setFileBackupNowWorking": "Sichern...",
   "setFileBackupError": "Sicherungsfehler",
   "setFileBackupErrorDescription": "Fehler beim Schreiben der Sicherungsdatei",
+  "setFileBackupErrorIsDir": "Sicherungspfad ungültig",
+  "setFileBackupErrorIsDirDescription": "Der Sicherungspfad scheint ein Verzeichnis zu sein. Bitte geben Sie stattdessen eine Datei in einem Verzeichnis an.",
   "setFileBackupOnSave": "Immer, wenn die Datei gespeichert wird",
   "setFileBackupDaily": "Täglich",
   "setFileBackupWeekly": "Wöchentlich",

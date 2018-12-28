@@ -417,6 +417,8 @@
   "setFileBackupNowWorking": "Working...",
   "setFileBackupError": "Backup error",
   "setFileBackupErrorDescription": "Error writing backup file",
+  "setFileBackupErrorIsDir": "Backup path invalid",
+  "setFileBackupErrorIsDirDescription": "The backup path seems to point to a directory. Please specify a filename inside a directory instead.",
   "setFileBackupOnSave": "Every time I save the file",
   "setFileBackupDaily": "Daily",
   "setFileBackupWeekly": "Weekly",
