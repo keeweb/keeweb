@@ -6,6 +6,8 @@ const Locale = require('../../util/locale');
 const Alerts = require('../../comp/alerts');
 const FieldViewReadOnly = require('../fields/field-view-read-only');
 const FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
+const Tip = require('../../util/tip');
+const Timeouts = require('../../const/timeouts');
 
 const DetailsHistoryView = Backbone.View.extend({
     template: require('templates/details/details-history.hbs'),
@@ -106,6 +108,7 @@ const DetailsHistoryView = Backbone.View.extend({
         }
         this.fieldViews.forEach(function(fieldView) {
             fieldView.setElement(this.bodyEl).render();
+            fieldView.on('copy', this.fieldCopied.bind(this));
         }, this);
         const buttons = this.$el.find('.details__history-buttons');
         buttons.find('.details__history-button-revert').toggle(ix < this.history.length - 1);
@@ -209,7 +212,39 @@ const DetailsHistoryView = Backbone.View.extend({
                 this.closeHistory(true);
             }
         });
-    }
+    },
+
+    hideFieldCopyTip: function() {
+        if (this.fieldCopyTip) {
+            this.fieldCopyTip.hide();
+            this.fieldCopyTip = null;
+        }
+    },
+
+    fieldCopied: function(e) {
+        this.hideFieldCopyTip();
+        const fieldLabel = e.source.labelEl;
+        const clipboardTime = e.copyRes.seconds;
+        const msg = clipboardTime ? Locale.detFieldCopiedTime.replace('{}', clipboardTime)
+            : Locale.detFieldCopied;
+        let tip;
+        if (!this.isHidden()) {
+            tip = Tip.createTip(fieldLabel[0], {title: msg, placement: 'right', fast: true, force: true, noInit: true});
+            this.fieldCopyTip = tip;
+            tip.show();
+        }
+        setTimeout(() => {
+            if (tip) {
+                tip.hide();
+            }
+            this.fieldCopyTip = null;
+            if (e.source.model.name === '$Password' && AppSettingsModel.instance.get('lockOnCopy')) {
+                setTimeout(() => {
+                    Backbone.trigger('lock-workspace');
+                }, Timeouts.BeforeAutoLock);
+            }
+        }, Timeouts.CopyTip);
+    },
 });
 
 module.exports = DetailsHistoryView;
