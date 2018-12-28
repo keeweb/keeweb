@@ -132,6 +132,23 @@ module.exports = function(grunt) {
         }
     };
 
+    let webpackDevConfig = webpackConfig
+    webpackDevConfig.resolve.alias = {
+        backbone: 'backbone/backbone.js',
+        underscore: 'underscore/underscore.js',
+        _: 'underscore/underscore.js',
+        jquery: 'jquery/dist/jquery.js',
+        kdbxweb: 'kdbxweb/dist/kdbxweb.js',
+        baron: 'baron/baron.js',
+        pikaday: 'pikaday/pikaday.js',
+        filesaver: 'FileSaver.js/FileSaver.js',
+        qrcode: 'jsqrcode/dist/qrcode.js',
+        'argon2': 'argon2-browser/docs/dist/argon2.js',
+        hbs: 'handlebars/runtime.js',
+        'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
+        templates: path.join(__dirname, 'app/templates')
+    };
+
     grunt.initConfig({
         gitinfo: {
             branch: {
@@ -326,7 +343,7 @@ module.exports = function(grunt) {
         },
         'webpack-dev-server': {
             options: {
-                webpack: webpackConfig,
+                webpack: webpackDevConfig,
                 publicPath: '/tmp/js',
                 progress: false
             },
