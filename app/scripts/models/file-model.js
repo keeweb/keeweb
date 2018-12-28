@@ -471,7 +471,7 @@ const FileModel = Backbone.Model.extend({
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
         this.set({ keyFileName: '', keyFilePath: '', keyFileChanged: changed });
-        Backbone.trigger('unset-keyfile', this.id)
+        Backbone.trigger('unset-keyfile', this.id);
         this.setModified();
     },
 

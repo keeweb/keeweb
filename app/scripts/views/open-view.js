@@ -819,7 +819,7 @@ const OpenView = Backbone.View.extend({
     },
 
     moveOpenFileSelection: function(steps) {
-        let lastOpenFiles = this.getLastOpenFiles();
+        const lastOpenFiles = this.getLastOpenFiles();
         if (this.currentSelectedIndex + steps >= 0 &&
             this.currentSelectedIndex + steps <= lastOpenFiles.length - 1) {
             this.currentSelectedIndex = this.currentSelectedIndex + steps;
@@ -839,7 +839,7 @@ const OpenView = Backbone.View.extend({
 
     moveOpenFileSelectionUp: function() {
         this.moveOpenFileSelection(-1);
-    },
+    }
 });
 
 module.exports = OpenView;
