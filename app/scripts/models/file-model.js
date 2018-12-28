@@ -470,7 +470,8 @@ const FileModel = Backbone.Model.extend({
         if (!changed && this.db.credentials.passwordHash === this._oldPasswordHash) {
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
-        this.set({ keyFileName: '', keyFileChanged: changed });
+        this.set({ keyFileName: '', keyFilePath: '', keyFileChanged: changed });
+        Backbone.trigger('unset-keyfile', this.id)
         this.setModified();
     },
 

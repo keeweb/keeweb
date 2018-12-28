@@ -42,6 +42,7 @@ const AppModel = Backbone.Model.extend({
         this.listenTo(Backbone, 'set-sort', this.setSort);
         this.listenTo(Backbone, 'empty-trash', this.emptyTrash);
         this.listenTo(Backbone, 'select-entry', this.selectEntry);
+        this.listenTo(Backbone, 'unset-keyfile', this.unsetKeyFile);
 
         this.appLogger = new Logger('app');
 
@@ -889,6 +890,16 @@ const AppModel = Backbone.Model.extend({
             });
         });
         this.fileInfos.save();
+    },
+
+    unsetKeyFile: function (fileId) {
+        const fileInfo = this.fileInfos.get(fileId)
+        fileInfo.set({
+            keyFileName: null,
+            keyFilePath: null,
+            keyFileHash: null
+        });
+        this.fileInfos.save()
     },
 
     setFileBackup: function(fileId, backup) {
