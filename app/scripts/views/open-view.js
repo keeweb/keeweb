@@ -47,6 +47,7 @@ const OpenView = Backbone.View.extend({
     params: null,
     passwordInput: null,
     busy: false,
+    currentSelectedIndex: -1,
 
     initialize: function () {
         this.views = {};
@@ -66,6 +67,8 @@ const OpenView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_TAB, this.tabKeyPress, this);
         KeyHandler.onKey(Keys.DOM_VK_ENTER, this.enterKeyPress, this);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterKeyPress, this);
+        KeyHandler.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, this);
+        KeyHandler.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, this);
     },
 
     render: function () {
@@ -813,7 +816,30 @@ const OpenView = Backbone.View.extend({
             this.params.fileData = null;
             this.displayOpenFile();
         }
-    }
+    },
+
+    moveOpenFileSelection: function(steps) {
+        let lastOpenFiles = this.getLastOpenFiles();
+        if (this.currentSelectedIndex + steps >= 0 &&
+            this.currentSelectedIndex + steps <= lastOpenFiles.length - 1) {
+            this.currentSelectedIndex = this.currentSelectedIndex + steps;
+        }
+
+        const fileInfo = this.model.fileInfos.get(lastOpenFiles[this.currentSelectedIndex].id);
+        this.showOpenFileInfo(fileInfo);
+
+        if (fileInfo && Launcher && Launcher.fingerprints) {
+            this.openFileWithFingerprint(fileInfo);
+        }
+    },
+
+    moveOpenFileSelectionDown: function() {
+        this.moveOpenFileSelection(1);
+    },
+
+    moveOpenFileSelectionUp: function() {
+        this.moveOpenFileSelection(-1);
+    },
 });
 
 module.exports = OpenView;

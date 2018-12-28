@@ -164,6 +164,7 @@ const AppView = Backbone.View.extend({
         this.showOpenFile();
         const lastOpenFile = this.model.fileInfos.getLast();
         if (lastOpenFile) {
+            this.views.open.currentSelectedIndex = 0;
             this.views.open.showOpenFileInfo(lastOpenFile);
         }
     },
