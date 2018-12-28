@@ -426,6 +426,8 @@
   "setFileBackupNowWorking": "En cours...",
   "setFileBackupError": "Erreur sauvegarde",
   "setFileBackupErrorDescription": "Erreur à l'écriture du fichier",
+  "setFileBackupErrorIsDir": "Chemin de sauvegarde invalide",
+  "setFileBackupErrorIsDirDescription": "Le chemin de sauvegarde semble pointer vers un répertoire. Au lieu de cela, spécifiez un nom de fichier dans un répertoire.",
   "setFileBackupOnSave": "A chaque fois que je sauvegarde",
   "setFileBackupDaily": "Quotidien",
   "setFileBackupWeekly": "Chaque semaine",
