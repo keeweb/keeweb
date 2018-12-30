@@ -57,6 +57,9 @@ const ListSearchView = Backbone.View.extend({
             cs: false, regex: false,
             history: false, title: true
         };
+        if (this.model.advancedSearch) {
+            this.advancedSearch = _.extend({}, this.model.advancedSearch);
+        }
         this.setLocale();
         KeyHandler.onKey(Keys.DOM_VK_F, this.findKeyPress, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_N, this.newKeyPress, this, KeyHandler.SHORTCUT_OPT);
@@ -199,7 +202,10 @@ const ListSearchView = Backbone.View.extend({
         }
         const sortIconCls = this.sortIcons[filter.sort] || 'sort';
         this.$el.find('.list__search-btn-sort>i').attr('class', 'fa fa-' + sortIconCls);
-        const adv = !!filter.filter.advanced;
+        let adv = !!filter.filter.advanced;
+        if (this.model.advancedSearch) {
+            adv = filter.filter.advanced !== this.model.advancedSearch;
+        }
         if (this.advancedSearchEnabled !== adv) {
             this.advancedSearchEnabled = adv;
             this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
@@ -224,7 +230,13 @@ const ListSearchView = Backbone.View.extend({
     advancedSearchClick: function() {
         this.advancedSearchEnabled = !this.advancedSearchEnabled;
         this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
-        Backbone.trigger('add-filter', { advanced: this.advancedSearchEnabled ? this.advancedSearch : false });
+        let advanced = false;
+        if (this.advancedSearchEnabled) {
+            advanced = this.advancedSearch;
+        } else if (this.model.advancedSearch) {
+            advanced = this.model.advancedSearch;
+        }
+        Backbone.trigger('add-filter', { advanced });
     },
 
     toggleMenu: function() {
