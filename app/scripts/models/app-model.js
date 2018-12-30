@@ -35,6 +35,7 @@ const AppModel = Backbone.Model.extend({
         this.settings = AppSettingsModel.instance;
         this.activeEntryId = null;
         this.isBeta = RuntimeInfo.beta;
+        this.advancedSearch = null;
 
         this.listenTo(Backbone, 'refresh', this.refresh);
         this.listenTo(Backbone, 'set-filter', this.setFilter);
@@ -131,6 +132,10 @@ const AppModel = Backbone.Model.extend({
             return Promise.all(pluginsPromises).then(() => {
                 this.settings.set(config.settings);
             });
+        }
+        if (config.advancedSearch) {
+            this.advancedSearch = config.advancedSearch;
+            this.addFilter({advanced: this.advancedSearch});
         }
     },
 
