@@ -242,6 +242,9 @@ const AppModel = Backbone.Model.extend({
     setFilter: function(filter) {
         this.filter = filter;
         this.filter.subGroups = this.settings.get('expandGroups');
+        if (!this.filter.advanced && this.advancedSearch) {
+            this.filter.advanced = this.advancedSearch;
+        }
         const entries = this.getEntries();
         if (!this.activeEntryId || !entries.get(this.activeEntryId)) {
             const firstEntry = entries.first();
