@@ -23,7 +23,7 @@ const Keys = require('../../const/keys');
 const KeyHandler = require('../../comp/key-handler');
 const Alerts = require('../../comp/alerts');
 const CopyPaste = require('../../comp/copy-paste');
-const OtpQrReqder = require('../../comp/otp-qr-reader');
+const OtpQrReader = require('../../comp/otp-qr-reader');
 const AutoType = require('../../auto-type');
 const Format = require('../../util/format');
 const Locale = require('../../util/locale');
@@ -71,8 +71,8 @@ const DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'toggle-settings', this.settingsToggled);
         this.listenTo(Backbone, 'context-menu-select', this.contextMenuSelect);
         this.listenTo(Backbone, 'set-locale', this.render);
-        this.listenTo(OtpQrReqder, 'qr-read', this.otpCodeRead);
-        this.listenTo(OtpQrReqder, 'enter-manually', this.otpEnterManually);
+        this.listenTo(OtpQrReader, 'qr-read', this.otpCodeRead);
+        this.listenTo(OtpQrReader, 'enter-manually', this.otpEnterManually);
         KeyHandler.onKey(Keys.DOM_VK_C, this.copyPassword, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserName, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrl, this, KeyHandler.SHORTCUT_ACTION, false, true);
@@ -807,7 +807,7 @@ const DetailsView = Backbone.View.extend({
     },
 
     setupOtp: function() {
-        OtpQrReqder.read();
+        OtpQrReader.read();
     },
 
     otpCodeRead: function(otp) {
