@@ -80,7 +80,7 @@ const SettingsGeneralView = Backbone.View.extend({
             minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: Updater.enabled,
-            canAutoSaveOnClose: Launcher,
+            canAutoSaveOnClose: !!Launcher,
             canMinimize: Launcher && Launcher.canMinimize(),
             canDetectMinimize: !!Launcher,
             canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
