@@ -90,10 +90,29 @@
     </div>
 
     <h2>{{res 'setGenFunction'}}</h2>
+    {{#if canAutoSaveOnClose}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
             {{#if autoSave}}checked{{/if}} />
-        <label for="settings__general-auto-save">{{res 'setGenAutoSync'}}</label>
+        <label for="settings__general-auto-save">{{res 'setGenAutoSyncOnClose'}}</label>
+    </div>
+    {{/if}}
+    <div>
+        <label for="settings__general-auto-save-interval">{{res 'setGenAutoSyncTimer'}}</label>
+        <select class="settings__select input-base settings__general-auto-save-interval"
+                id="settings__general-auto-save-interval">
+            <option value="0" {{#ifeq autoSaveInterval 0}}selected{{/ifeq}}>{{res 'setGenAutoSyncTimerOff'}}</option>
+            <option value="1" {{#ifeq autoSaveInterval 1}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}
+                1{{/res}}</option>
+            <option value="5" {{#ifeq autoSaveInterval 5}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}
+                5{{/res}}</option>
+            <option value="15" {{#ifeq autoSaveInterval 15}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}
+                15{{/res}}</option>
+            <option value="30" {{#ifeq autoSaveInterval 30}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}
+                30{{/res}}</option>
+            <option value="60" {{#ifeq autoSaveInterval 60}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}
+                60{{/res}}</option>
+        </select>
     </div>
     <div>
         <label for="settings__general-remember-key-files">{{res 'setGenRememberKeyFiles'}}:</label>
