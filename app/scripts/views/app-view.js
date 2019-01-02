@@ -84,6 +84,7 @@ const AppView = Backbone.View.extend({
         this.listenTo(Backbone, 'app-minimized', this.appMinimized);
         this.listenTo(Backbone, 'show-context-menu', this.showContextMenu);
         this.listenTo(Backbone, 'second-instance', this.showSingleInstanceAlert);
+        this.listenTo(Backbone, 'file-modified', this.handleAutoSaveTimer);
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
@@ -473,6 +474,19 @@ const AppView = Backbone.View.extend({
             }
         } else {
             this.closeAllFilesAndShowFirst();
+        }
+    },
+
+    handleAutoSaveTimer: function () {
+        if (this.model.settings.get('autoSaveInterval') !== 0) {
+            // trigger periodical auto save
+            if (this.autoSaveTimeoutId) {
+                clearTimeout(this.autoSaveTimeoutId);
+            }
+            this.autoSaveTimeoutId = setTimeout(
+                this.saveAll.bind(this),
+                this.model.settings.get('autoSaveInterval') * 1000 * 60
+            );
         }
     },
 
