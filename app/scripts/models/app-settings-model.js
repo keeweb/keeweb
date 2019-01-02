@@ -12,6 +12,7 @@ const AppSettingsModel = Backbone.Model.extend({
         autoUpdate: 'install',
         clipboardSeconds: 0,
         autoSave: true,
+        autoSaveInterval: 0,
         rememberKeyFiles: false,
         idleMinutes: 15,
         minimizeOnClose: false,

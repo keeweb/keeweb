@@ -28,6 +28,7 @@ const SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-idle-minutes': 'changeIdleMinutes',
         'change .settings__general-clipboard': 'changeClipboard',
         'change .settings__general-auto-save': 'changeAutoSave',
+        'change .settings__general-auto-save-interval': 'changeAutoSaveInterval',
         'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
         'change .settings__general-lock-on-minimize': 'changeLockOnMinimize',
@@ -74,10 +75,12 @@ const SettingsGeneralView = Backbone.View.extend({
             rememberKeyFiles: AppSettingsModel.instance.get('rememberKeyFiles'),
             supportFiles: !!Launcher,
             autoSave: AppSettingsModel.instance.get('autoSave'),
+            autoSaveInterval: AppSettingsModel.instance.get('autoSaveInterval'),
             idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
             minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: Updater.enabled,
+            canAutoSaveOnClose: Launcher,
             canMinimize: Launcher && Launcher.canMinimize(),
             canDetectMinimize: !!Launcher,
             canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
@@ -222,6 +225,11 @@ const SettingsGeneralView = Backbone.View.extend({
     changeAutoSave: function(e) {
         const autoSave = e.target.checked || false;
         AppSettingsModel.instance.set('autoSave', autoSave);
+    },
+
+    changeAutoSaveInterval: function(e) {
+        const autoSaveInterval = Number(e.target.value) || 0;
+        AppSettingsModel.instance.set('autoSaveInterval', autoSaveInterval);
     },
 
     changeRememberKeyFiles: function(e) {
