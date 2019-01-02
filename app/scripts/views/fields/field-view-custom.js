@@ -68,6 +68,11 @@ const FieldViewCustom = FieldViewText.extend({
         if (newTitle && newTitle !== this.model.title) {
             this.model.title = newTitle;
             this.model.titleChanged = true;
+        } else if (newTitle === '') {
+            this.trigger('change', {
+                field: '$' + this.model.title,
+                val: ''
+            });
         }
         this.$el.find('.details__field-label').text(this.model.title);
         delete this.labelInput;
