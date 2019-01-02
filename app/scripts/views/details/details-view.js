@@ -30,6 +30,7 @@ const Locale = require('../../util/locale');
 const Tip = require('../../util/tip');
 const Timeouts = require('../../const/timeouts');
 const FileSaver = require('file-saver');
+const Copyable = require('../../mixins/copyable');
 
 const DetailsView = Backbone.View.extend({
     template: require('templates/details/details.hbs'),
@@ -451,13 +452,6 @@ const DetailsView = Backbone.View.extend({
         setTimeout(() => { tip.hide(); }, Timeouts.AutoHideHint);
     },
 
-    hideFieldCopyTip: function() {
-        if (this.fieldCopyTip) {
-            this.fieldCopyTip.hide();
-            this.fieldCopyTip = null;
-        }
-    },
-
     settingsToggled: function() {
         this.hideFieldCopyTip();
     },
@@ -537,31 +531,6 @@ const DetailsView = Backbone.View.extend({
         }
         this.model.setOtpUrl(value);
         return true;
-    },
-
-    fieldCopied: function(e) {
-        this.hideFieldCopyTip();
-        const fieldLabel = e.source.labelEl;
-        const clipboardTime = e.copyRes.seconds;
-        const msg = clipboardTime ? Locale.detFieldCopiedTime.replace('{}', clipboardTime)
-            : Locale.detFieldCopied;
-        let tip;
-        if (!this.isHidden()) {
-            tip = Tip.createTip(fieldLabel[0], {title: msg, placement: 'right', fast: true, force: true, noInit: true});
-            this.fieldCopyTip = tip;
-            tip.show();
-        }
-        setTimeout(() => {
-            if (tip) {
-                tip.hide();
-            }
-            this.fieldCopyTip = null;
-            if (e.source.model.name === '$Password' && AppSettingsModel.instance.get('lockOnCopy')) {
-                setTimeout(() => {
-                    Backbone.trigger('lock-workspace');
-                }, Timeouts.BeforeAutoLock);
-            }
-        }, Timeouts.CopyTip);
     },
 
     dragover: function(e) {
@@ -853,5 +822,6 @@ const DetailsView = Backbone.View.extend({
 });
 
 _.extend(DetailsView.prototype, Scrollable);
+_.extend(DetailsView.prototype, Copyable);
 
 module.exports = DetailsView;

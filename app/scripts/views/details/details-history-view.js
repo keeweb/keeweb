@@ -6,6 +6,7 @@ const Locale = require('../../util/locale');
 const Alerts = require('../../comp/alerts');
 const FieldViewReadOnly = require('../fields/field-view-read-only');
 const FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
+const Copyable = require('../../mixins/copyable');
 
 const DetailsHistoryView = Backbone.View.extend({
     template: require('templates/details/details-history.hbs'),
@@ -106,6 +107,7 @@ const DetailsHistoryView = Backbone.View.extend({
         }
         this.fieldViews.forEach(function(fieldView) {
             fieldView.setElement(this.bodyEl).render();
+            fieldView.on('copy', this.fieldCopied.bind(this));
         }, this);
         const buttons = this.$el.find('.details__history-buttons');
         buttons.find('.details__history-button-revert').toggle(ix < this.history.length - 1);
@@ -211,5 +213,7 @@ const DetailsHistoryView = Backbone.View.extend({
         });
     }
 });
+
+_.extend(DetailsHistoryView.prototype, Copyable);
 
 module.exports = DetailsHistoryView;
