@@ -132,9 +132,9 @@ module.exports = function(grunt) {
         }
     };
 
-    let webpackDevConfig = Object.assign({}, webpackConfig, {
-        resolve:
-            alias = {
+    const webpackDevConfig = Object.assign({}, webpackConfig, {
+        resolve: {
+            alias: {
                 backbone: 'backbone/backbone.js',
                 underscore: 'underscore/underscore.js',
                 _: 'underscore/underscore.js',
@@ -149,7 +149,8 @@ module.exports = function(grunt) {
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
                 templates: path.join(__dirname, 'app/templates')
             }
-    })
+        }
+    });
 
     grunt.initConfig({
         gitinfo: {
