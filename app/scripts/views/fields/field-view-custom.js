@@ -3,6 +3,8 @@ const FieldViewText = require('./field-view-text');
 const FieldView = require('./field-view');
 const Keys = require('../../const/keys');
 const kdbxweb = require('kdbxweb');
+const Tip = require('../../util/tip');
+const Locale = require('../../util/locale');
 
 const FieldViewCustom = FieldViewText.extend({
     events: {
@@ -23,6 +25,14 @@ const FieldViewCustom = FieldViewText.extend({
         $('<div/>').addClass('details__field-value-btn details__field-value-btn-protect')
             .appendTo(this.valueEl)
             .mousedown(this.protectBtnClick.bind(this));
+        let securityTipTitle = Locale.detLockField;
+        if (this.isProtected) {
+            securityTipTitle = Locale.detUnlockField;
+        }
+        const securityTip = new Tip($(this.valueEl).find('.details__field-value-btn'), {
+            title: securityTipTitle
+        });
+        securityTip.init();
     },
 
     endEdit: function(newVal, extra) {
