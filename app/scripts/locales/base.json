@@ -268,6 +268,8 @@
   "detOtpQrErrorBody": "Sorry, we could not read the QR code, please try once again or contact the app authors with error details.",
   "detOtpQrWrong": "Wrong QR code",
   "detOtpQrWrongBody": "Your QR code was successfully scanned but it doesn't contain one-time password data.",
+  "detLockField": "Lock this field, so its content isn't searchable and visible. Displaying the content requires explicitly clicking it.",
+  "detUnlockField": "Unlock this field, making its content searchable and visible immediately",
 
   "autoTypeEntryFields": "Entry fields",
   "autoTypeModifiers": "Modifier keys",
