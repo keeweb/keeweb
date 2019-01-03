@@ -512,9 +512,21 @@ const SettingsFileView = Backbone.View.extend({
                 this.backupInProgress = false;
                 backupButton.text(Locale.setFileBackupNow);
                 if (err) {
+                    let title = '';
+                    let description = '';
+                    if (err.isDir) {
+                        title = Locale.setFileBackupErrorIsDir;
+                        description = Locale.setFileBackupErrorIsDirDescription;
+                    } else {
+                        title = Locale.setFileBackupError;
+                        description = Locale.setFileBackupErrorDescription;
+                    }
                     Alerts.error({
-                        title: Locale.setFileBackupError,
-                        body: Locale.setFileBackupErrorDescription + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                        title: title,
+                        body: description +
+                            '<pre class="modal__pre">' +
+                            _.escape(err.toString()) +
+                            '</pre>'
                     });
                 }
             });
