@@ -514,7 +514,7 @@ const SettingsFileView = Backbone.View.extend({
                 if (err) {
                     let title = '';
                     let description = '';
-                    if (err.hasOwnProperty('code') && err.code === 'EISDIR') {
+                    if (err.isDir) {
                         title = Locale.setFileBackupErrorIsDir;
                         description = Locale.setFileBackupErrorIsDirDescription;
                     } else {
