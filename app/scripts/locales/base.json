@@ -392,6 +392,7 @@
   "setFileSaveTo": "Save to ...",
   "setFileClose": "Close",
   "setFileSync": "Sync",
+  "setFileSyncVerb": "Sync",
   "setFileSaveToXml": "XML",
   "setFileLastSync": "Last sync",
   "setFileLastSyncUnknown": "unknown",
