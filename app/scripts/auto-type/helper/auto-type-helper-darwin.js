@@ -42,13 +42,7 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
             // special cases are not available. this method may ask the user about assistive access
             AutoTypeHelper.exec(OtherAppsScript.replace(/\{}/g, appName), (err, out) => {
                 if (err) { return callback(err); }
-                // try to find a URL in the title
-                const urlMatcher = new RegExp(
-                    'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'
-                );
-                const urlMatches = urlMatcher.exec(out);
-                const url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
-                return callback(null, out.trim(), url);
+                return callback(null, out.trim());
             });
         }
     });
