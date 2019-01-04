@@ -134,6 +134,7 @@ module.exports = function(grunt) {
 
     const webpackDevConfig = Object.assign({}, webpackConfig, {
         resolve: {
+            modules: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'node_modules')],
             alias: {
                 backbone: 'backbone/backbone.js',
                 underscore: 'underscore/underscore.js',
