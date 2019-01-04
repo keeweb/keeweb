@@ -13,6 +13,14 @@ const Comparators = {
         }
     },
 
+    rankComparator: function(asc) {
+        if (asc) {
+            return function (x, y) { return x.get('rank') - y.get('rank'); };
+        } else {
+            return function (x, y) { return y.get('rank') - x.get('rank'); };
+        }
+    },
+
     dateComparator: function(field, asc) {
         if (asc) {
             return function (x, y) { return x[field] - y[field]; };

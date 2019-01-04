@@ -5,6 +5,7 @@ const Color = require('../util/color');
 const IconUrl = require('../util/icon-url');
 const Otp = require('../util/otp');
 const kdbxweb = require('kdbxweb');
+const Ranking = require('../mixins/ranking');
 
 const EntryModel = Backbone.Model.extend({
     defaults: {},
@@ -17,6 +18,7 @@ const EntryModel = Backbone.Model.extend({
     fieldRefIds: { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' },
 
     initialize: function() {
+        this.set({rank: 0});
     },
 
     setEntry: function(entry, group, file) {
@@ -185,6 +187,10 @@ const EntryModel = Backbone.Model.extend({
     },
 
     matches: function(filter) {
+        if (filter && filter.textLower && (!filter.advanced || filter.advanced.rank)) {
+            // update rank, when rank calculation is enabled
+            this.updateRank(filter.textLower);
+        }
         return !filter ||
             (!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
             (!filter.textLower || (filter.advanced ? this.matchesAdv(filter) : this.searchText.indexOf(filter.textLower) >= 0)) &&
@@ -635,6 +641,51 @@ const EntryModel = Backbone.Model.extend({
         this.entry.times.creationTime = this.entry.times.lastModTime;
         this.entry.fields.Title = '';
         this._fillByEntry();
+    },
+
+    updateRank: function(searchString) {
+        let rank = 0;
+
+        const ranking = [
+            {
+                field: 'Title',
+                multiplicator: 10
+            },
+            {
+                field: 'URL',
+                multiplicator: 8
+            },
+            {
+                field: 'UserName',
+                multiplicator: 5
+            },
+            {
+                field: 'Notes',
+                multiplicator: 2
+            }
+        ];
+
+        const fieldNames = Object.keys(this.fields);
+        _.forEach(fieldNames, field => {
+            ranking.push(
+                {
+                    field: field,
+                    multiplicator: 2
+                }
+            );
+        });
+
+        _.forEach(ranking, rankingEntry => {
+            if (this._getFieldString(rankingEntry.field).toLowerCase() !== '') {
+                const calculatedRank = this.getStringRank(
+                    searchString,
+                    this._getFieldString(rankingEntry.field).toLowerCase()
+                ) * rankingEntry.multiplicator;
+                rank += calculatedRank;
+            }
+        });
+
+        this.set({rank: rank});
     }
 });
 
@@ -656,5 +707,7 @@ EntryModel.newEntry = function(group, file) {
     file.setModified();
     return model;
 };
+
+_.extend(EntryModel.prototype, Ranking);
 
 module.exports = EntryModel;
