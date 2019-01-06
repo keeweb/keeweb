@@ -3,6 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const sass = require('node-sass');
+
 const StringReplacePlugin = require('string-replace-webpack-plugin');
 const StatsPlugin = require('stats-webpack-plugin');
 
@@ -46,7 +48,7 @@ module.exports = function(grunt) {
         entry: {
             app: 'app',
             vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron', 'pikaday', 'file-saver', 'jsqrcode',
-                'argon2-wasm', 'argon2-browser']
+                'argon2-wasm', 'argon2']
         },
         output: {
             path: path.resolve('.', 'tmp/js'),
@@ -71,7 +73,7 @@ module.exports = function(grunt) {
                 pikaday: 'pikaday/pikaday.js',
                 filesaver: 'FileSaver.js/FileSaver.min.js',
                 qrcode: 'jsqrcode/dist/qrcode.min.js',
-                'argon2': 'argon2-browser/docs/dist/argon2.min.js',
+                argon2: 'argon2-browser/dist/argon2.min.js',
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
                 templates: path.join(__dirname, 'app/templates')
@@ -100,7 +102,7 @@ module.exports = function(grunt) {
                 },
                 { test: /\.json$/, loader: 'json-loader' },
                 { test: /argon2\.wasm$/, loader: 'base64-loader' },
-                { test: /argon2\.min\.js/, loader: 'raw-loader' },
+                { test: /argon2(\.min)?\.js/, loader: 'raw-loader' },
                 { test: /\.scss$/, loader: 'raw-loader' }
             ]
         },
@@ -142,7 +144,7 @@ module.exports = function(grunt) {
                 baron: 'baron/baron.js',
                 filesaver: 'FileSaver.js/FileSaver.js',
                 qrcode: 'jsqrcode/dist/qrcode.js',
-                'argon2': 'argon2-browser/docs/dist/argon2.js'
+                argon2: 'argon2-browser/dist/argon2.js'
             })
         })
     });
@@ -271,7 +273,8 @@ module.exports = function(grunt) {
         sass: {
             options: {
                 sourceMap: false,
-                includePaths: ['./node_modules']
+                includePaths: ['./node_modules'],
+                implementation: sass
             },
             dist: {
                 files: {

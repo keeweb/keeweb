@@ -20,7 +20,8 @@
         "no-mixed-operators": "off",
         "prefer-promise-reject-errors": "off",
         "standard/no-callback-literal": "off",
-        "import/no-webpack-loader-syntax": "off"
+        "import/no-webpack-loader-syntax": "off",
+        "object-curly-spacing": "off"
     },
     "parserOptions": {
         "sourceType": "module",

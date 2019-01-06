@@ -132,8 +132,7 @@ const GroupModel = MenuItemModel.extend({
         return (filter && filter.includeDisabled ||
                 this.group.enableSearching !== false &&
                 !this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup)
-            ) &&
-            (!filter || !filter.autoType || this.group.enableAutoType !== false);
+        ) && (!filter || !filter.autoType || this.group.enableAutoType !== false);
     },
 
     getOwnSubGroups: function() {

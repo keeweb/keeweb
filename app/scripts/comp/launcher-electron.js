@@ -66,7 +66,7 @@ const Launcher = {
         return this.req('path').join(...parts);
     },
     writeFile: function(path, data, callback) {
-        this.req('fs').writeFile(path, new window.Buffer(data), callback);
+        this.req('fs').writeFile(path, window.Buffer.from(data), callback);
     },
     readFile: function(path, encoding, callback) {
         this.req('fs').readFile(path, encoding, (err, contents) => {
