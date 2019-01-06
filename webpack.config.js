@@ -3,7 +3,6 @@ const path = require('path');
 const webpack = require('webpack');
 
 const StringReplacePlugin = require('string-replace-webpack-plugin');
-const StatsPlugin = require('stats-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -112,7 +111,6 @@ function config(grunt, date) {
             new webpack.ProvidePlugin({_: 'underscore', $: 'jquery'}),
             new webpack.IgnorePlugin(/^(moment)$/),
             new StringReplacePlugin()
-            // new StatsPlugin('stats.json', {chunkModules: true})
         ],
         node: {
             console: false,
