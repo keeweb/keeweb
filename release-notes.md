@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.7.0 (WIP)
+##### v1.7.0 (2019-01-06)
 `+` downgrading desktop apps  
 `-` fixed calendar colors  
 `+` option to open a keyfile from command line  
