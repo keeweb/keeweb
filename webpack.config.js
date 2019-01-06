@@ -8,7 +8,8 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 const pkg = require('./package.json');
 
-function config(grunt, date) {
+function config(grunt) {
+    const date = grunt.config.get('date');
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
     return {
@@ -132,8 +133,8 @@ function config(grunt, date) {
     };
 }
 
-function devServerConfig(grunt, date) {
-    const devServerConfig = config(grunt, date);
+function devServerConfig(grunt) {
+    const devServerConfig = config(grunt);
     Object.assign(devServerConfig, {
         mode: 'development'
     });
