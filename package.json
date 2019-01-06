@@ -19,7 +19,7 @@
     "base64-loader": "1.0.0",
     "bourbon": "4.2.7",
     "cssnano": "4.1.8",
-    "electron": "^1.7.9",
+    "electron": "^4.0.1",
     "eslint": "^5.12.0",
     "eslint-config-standard": "12.0.0",
     "eslint-plugin-import": "^2.14.0",

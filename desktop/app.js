@@ -1,19 +1,23 @@
 const electron = require('electron');
 const app = electron.app;
-
-if (app.makeSingleInstance(restoreMainWindow)) app.quit();
-
 const path = require('path');
 const fs = require('fs');
 
 let mainWindow = null;
 let appIcon = null;
-let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
 let ready = false;
 let appReady = false;
 let restartPending = false;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
+
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+    restoreMainWindow();
+    app.quit();
+}
+
+let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
 const userDataDir = app.getPath('userData').replace(/[\\/]temp[\\/]\d+\.\d+[\\/]?$/, '');
 const windowPositionFileName = path.join(userDataDir, 'window-position.json');
 const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
