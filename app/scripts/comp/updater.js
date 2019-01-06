@@ -208,7 +208,7 @@ const Updater = {
                 if (err) {
                     return cb(err);
                 }
-                Launcher.req('fs').unlink(updateFile);
+                Launcher.deleteFile(updateFile);
                 cb();
             });
         });
