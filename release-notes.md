@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.7.1 (2019-01-07)
+`-` fix #1077: broken auto-type  
+
 ##### v1.7.0 (2019-01-06)
 `+` downgrading desktop apps  
 `-` fixed calendar colors  

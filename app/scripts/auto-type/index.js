@@ -38,7 +38,7 @@ const AutoType = {
             return;
         }
         if (entry) {
-            this.hideWindow(() => { this.runAndHandleResult(entry); });
+            this.hideWindow(() => { this.runAndHandleResult({ entry }); });
         } else {
             if (this.selectEntryView) {
                 return;
@@ -201,7 +201,7 @@ const AutoType = {
         const entries = evt.filter.getEntries();
         if (entries.length === 1) {
             this.hideWindow(() => {
-                this.runAndHandleResult(entries.at(0));
+                this.runAndHandleResult({ entry: entries.at(0) });
             });
             return;
         }
