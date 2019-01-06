@@ -497,7 +497,7 @@ module.exports = function(grunt) {
         'sign-exe': {
             options: {
                 spc: 'keys/keeweb.spc',
-                key: '02',
+                key: '01',
                 algo: 'sha256',
                 url: pkg.homepage
             },
