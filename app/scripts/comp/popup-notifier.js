@@ -57,18 +57,18 @@ const PopupNotifier = {
             if (settingsObj.left) { opts.x = +settingsObj.left; }
         }
         let win = Launcher.openWindow(opts);
-        win.webContents.on('did-get-redirect-request', (e, fromUrl, toUrl) => {
-            if (PopupNotifier.isOwnUrl(toUrl)) {
+        win.webContents.on('will-redirect', (e, url) => {
+            if (PopupNotifier.isOwnUrl(url)) {
                 win.webContents.stop();
                 win.close();
-                PopupNotifier.processReturnToApp(toUrl);
+                PopupNotifier.processReturnToApp(url);
             }
         });
-        win.webContents.on('will-navigate', (e, toUrl) => {
-            if (PopupNotifier.isOwnUrl(toUrl)) {
+        win.webContents.on('will-navigate', (e, url) => {
+            if (PopupNotifier.isOwnUrl(url)) {
                 e.preventDefault();
                 win.close();
-                PopupNotifier.processReturnToApp(toUrl);
+                PopupNotifier.processReturnToApp(url);
             }
         });
         win.webContents.on('crashed', (e, killed) => {
