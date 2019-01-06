@@ -13,6 +13,7 @@ console.log('Change version to ' + version);
 
 // processFile('README.md', /\/download\/v[^\/]+/g);
 processFile('package.json', /"version": "\d+\.\d+\.\d+"+/g);
+processFile('package-lock.json', /"version": "\d+\.\d+\.\d+"+/);
 processFile('desktop/package.json', /"version": "\d+\.\d+\.\d+"+/g);
 
 console.log('Done');
