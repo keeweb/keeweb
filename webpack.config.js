@@ -44,7 +44,6 @@ function config(grunt) {
                 kdbxweb: 'kdbxweb/dist/kdbxweb.js',
                 baron: 'baron/baron.min.js',
                 pikaday: 'pikaday/pikaday.js',
-                filesaver: 'FileSaver.js/FileSaver.min.js',
                 qrcode: 'jsqrcode/dist/qrcode.min.js',
                 argon2: 'argon2-browser/dist/argon2.min.js',
                 hbs: 'handlebars/runtime.js',
@@ -144,7 +143,6 @@ function devServerConfig(grunt) {
         _: 'underscore/underscore.js',
         jquery: 'jquery/dist/jquery.js',
         baron: 'baron/baron.js',
-        filesaver: 'FileSaver.js/FileSaver.js',
         qrcode: 'jsqrcode/dist/qrcode.js',
         argon2: 'argon2-browser/dist/argon2.js'
     });
