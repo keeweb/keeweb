@@ -57,7 +57,7 @@
     "node-sass": "^4.11.0",
     "node-stream-zip": "1.7.0",
     "normalize.css": "5.0.0",
-    "pikaday": "1.5.1",
+    "pikaday": "1.8.0",
     "pkcs15-smartcard-sign": "^1.0.0",
     "raw-loader": "1.0.0",
     "stats-webpack-plugin": "0.7.0",
