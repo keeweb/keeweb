@@ -14,6 +14,9 @@ module.exports = function(grunt) {
 
     grunt.loadTasks('build/tasks');
 
+    require('./grunt.tasks')(grunt);
+    require('./grunt.entrypoints')(grunt);
+
     const date = new Date();
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
