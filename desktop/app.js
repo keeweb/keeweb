@@ -13,7 +13,6 @@ let updateMainWindowPositionTimeout = null;
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
-    restoreMainWindow();
     app.quit();
 }
 
