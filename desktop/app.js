@@ -33,6 +33,7 @@ const showDevToolsOnStart = process.argv.some(arg => arg.startsWith('--devtools'
 app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
 
 setEnv();
+restorePreferences();
 
 app.on('window-all-closed', () => {
     if (restartPending) {
@@ -389,6 +390,28 @@ function setEnv() {
     if (process.platform === 'linux' && ['Pantheon', 'Unity:Unity7'].indexOf(process.env.XDG_CURRENT_DESKTOP) !== -1) {
         // https://github.com/electron/electron/issues/9046
         process.env.XDG_CURRENT_DESKTOP = 'Unity';
+    }
+}
+
+function restorePreferences() {
+    const profileConfigPath = path.join(userDataDir, 'profile.json');
+
+    const newProfile = { dir: tempUserDataPathRand };
+    let oldProfile;
+    try {
+        oldProfile = JSON.parse(fs.readFileSync(profileConfigPath, 'utf8'));
+    } catch (e) { }
+
+    fs.writeFileSync(profileConfigPath, JSON.stringify(newProfile));
+
+    if (oldProfile && oldProfile.dir && /^[\d.]+$/.test(oldProfile.dir)) {
+        const oldProfilePath = path.join(tempUserDataPath, oldProfile.dir);
+        const newProfilePath = path.join(tempUserDataPath, newProfile.dir);
+        if (fs.existsSync(path.join(oldProfilePath, 'Cookies'))) {
+            const oldCookies = fs.readFileSync(path.join(oldProfilePath, 'Cookies'));
+            fs.mkdirSync(newProfilePath);
+            fs.writeFileSync(path.join(newProfilePath, 'Cookies'), oldCookies);
+        }
     }
 }
 

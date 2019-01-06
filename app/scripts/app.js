@@ -10,7 +10,6 @@ const IdleTracker = require('./comp/idle-tracker');
 const PopupNotifier = require('./comp/popup-notifier');
 const SingleInstanceChecker = require('./comp/single-instance-checker');
 const AppRightsChecker = require('./comp/app-rights-checker');
-const CookieManager = require('./comp/cookie-manager');
 const Alerts = require('./comp/alerts');
 const Updater = require('./comp/updater');
 const AuthReceiver = require('./comp/auth-receiver');
@@ -137,7 +136,6 @@ ready(() => {
         Updater.init();
         SingleInstanceChecker.init();
         AppRightsChecker.init();
-        CookieManager.init();
         setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
     }
 
