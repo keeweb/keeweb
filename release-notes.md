@@ -5,6 +5,12 @@ Release notes
 `-` fixed calendar colors  
 `+` option to open a keyfile from command line  
 `+` master password confirmation  
+`-` json config bugfixes  
+`-` better icons  
+`+` major electron upgrade  
+`-` text improvements  
+`-` fixed large attachments issues  
+`+` usability improvements  
 
 ##### v1.6.3 (2017-12-11)
 `-` fixed Windows installer upgrade issue  
