@@ -9,8 +9,8 @@ const Links = require('../../const/links');
 const Format = require('../../util/format');
 const Locale = require('../../util/locale');
 const UrlUtil = require('../../util/url-util');
+const FileSaver = require('../../util/file-saver');
 const kdbxweb = require('kdbxweb');
-const FileSaver = require('file-saver');
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';

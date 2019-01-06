@@ -28,8 +28,8 @@ const AutoType = require('../../auto-type');
 const Format = require('../../util/format');
 const Locale = require('../../util/locale');
 const Tip = require('../../util/tip');
+const FileSaver = require('../../util/file-saver');
 const Timeouts = require('../../const/timeouts');
-const FileSaver = require('file-saver');
 const Copyable = require('../../mixins/copyable');
 
 const DetailsView = Backbone.View.extend({

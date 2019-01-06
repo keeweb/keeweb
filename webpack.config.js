@@ -17,7 +17,7 @@ function config(grunt, date) {
         entry: {
             app: 'app',
             vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron',
-                'pikaday', 'file-saver', 'jsqrcode', 'argon2-wasm', 'argon2']
+                'pikaday', 'jsqrcode', 'argon2-wasm', 'argon2']
         },
         output: {
             path: path.resolve('.', 'tmp/js'),
