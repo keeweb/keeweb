@@ -1,8 +1,10 @@
 Release notes
 -------------
 ##### v1.7.2 (2019-01-07)
+`-` fixed Google Drive cookies issues  
+`-` fixed storage providers authentication  
 `-` fix #1079: error launching another instance  
-`-` fix #1078: updater hanged on "extracting files"  
+`-` fix #1078: updater hanged on "extracting files"
 
 ##### v1.7.1 (2019-01-06)
 `-` fix #1077: broken auto-type  
