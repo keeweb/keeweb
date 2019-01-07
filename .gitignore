@@ -5,7 +5,6 @@ node_modules/
 *.log
 dist/
 tmp/
-build/
 coverage/
 keys
 *.user
