@@ -156,7 +156,7 @@ function createMainWindow() {
     setMenu();
     mainWindow.loadURL(htmlPath);
     if (showDevToolsOnStart) {
-        mainWindow.openDevTools();
+        mainWindow.openDevTools({ mode: 'bottom' });
     }
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
