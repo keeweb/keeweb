@@ -18,7 +18,7 @@ processFile('desktop/package.json');
 
 console.log('Done');
 
-function processFile(name, regex) {
+function processFile(name) {
     console.log('Replace: ' + name);
     name = path.join(__dirname, '..', name);
     const content = fs.readFileSync(name, 'utf8');
