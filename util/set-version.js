@@ -11,7 +11,6 @@ if (!/^\d+\.\d+\.\d+$/.test(version)) {
 
 console.log('Change version to ' + version);
 
-// processFile('README.md', /\/download\/v[^\/]+/g);
 processFile('package.json');
 processFile('package-lock.json');
 processFile('desktop/package.json');
