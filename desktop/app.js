@@ -408,9 +408,9 @@ function restorePreferences() {
         const oldProfilePath = path.join(tempUserDataPath, oldProfile.dir);
         const newProfilePath = path.join(tempUserDataPath, newProfile.dir);
         if (fs.existsSync(path.join(oldProfilePath, 'Cookies'))) {
-            const oldCookies = fs.readFileSync(path.join(oldProfilePath, 'Cookies'));
             fs.mkdirSync(newProfilePath);
-            fs.writeFileSync(path.join(newProfilePath, 'Cookies'), oldCookies);
+            fs.renameSync(path.join(oldProfilePath, 'Cookies'),
+                path.join(newProfilePath, 'Cookies'));
         }
     }
 }
