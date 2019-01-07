@@ -87,6 +87,9 @@
     "email": "antelle.net@gmail.com",
     "url": "http://antelle.net"
   },
+  "engines": {
+    "node": ">=10.0"
+  },
   "license": "MIT",
   "readme": "README.md"
 }
