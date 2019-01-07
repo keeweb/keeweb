@@ -135,7 +135,8 @@ function config(grunt) {
 function devServerConfig(grunt) {
     const devServerConfig = config(grunt);
     Object.assign(devServerConfig, {
-        mode: 'development'
+        mode: 'development',
+        devtool: 'source-map'
     });
     Object.assign(devServerConfig.resolve.alias, {
         backbone: 'backbone/backbone.js',

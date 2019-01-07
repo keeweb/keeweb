@@ -228,9 +228,6 @@ module.exports = function(grunt) {
             },
             js: {
                 keepalive: true,
-                webpack: {
-                    devtool: 'source-map'
-                },
                 port: 8085
             }
         },
