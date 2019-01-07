@@ -463,7 +463,7 @@ function hookRequestHeaders() {
 // partially off-screen or straddling two displays if the user desires that.
 
 function coerceMainWindowPositionToConnectedDisplay() {
-    const eScreen = require('electron').screen;
+    const eScreen = electron.screen;
     const displays = eScreen.getAllDisplays();
     if (!displays || !displays.length) return;
     const windowBounds = mainWindow.getBounds();
