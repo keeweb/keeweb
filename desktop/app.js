@@ -43,7 +43,7 @@ app.on('window-all-closed', () => {
         app.removeAllListeners('ready');
         app.removeAllListeners('open-file');
         app.removeAllListeners('activate');
-        app.removeAllListeners('single-instance');
+        app.removeAllListeners('second-instance');
         electron.globalShortcut.unregisterAll();
         electron.powerMonitor.removeAllListeners('suspend');
         electron.powerMonitor.removeAllListeners('resume');
