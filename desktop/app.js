@@ -1,7 +1,8 @@
 const electron = require('electron');
-const app = electron.app;
 const path = require('path');
 const fs = require('fs');
+
+const app = electron.app;
 
 let mainWindow = null;
 let appIcon = null;
@@ -42,6 +43,7 @@ app.on('window-all-closed', () => {
         app.removeAllListeners('ready');
         app.removeAllListeners('open-file');
         app.removeAllListeners('activate');
+        app.removeAllListeners('single-instance');
         electron.globalShortcut.unregisterAll();
         electron.powerMonitor.removeAllListeners('suspend');
         electron.powerMonitor.removeAllListeners('resume');
@@ -82,6 +84,11 @@ app.on('activate', () => {
 });
 app.on('will-quit', () => {
     electron.globalShortcut.unregisterAll();
+});
+app.on('second-instance', () => {
+    if (mainWindow) {
+        restoreMainWindow();
+    }
 });
 app.restartApp = function () {
     restartPending = true;
