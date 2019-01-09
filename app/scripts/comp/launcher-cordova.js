@@ -211,7 +211,7 @@ const Launcher = {
 
                 const encryptConfig = _.extend({}, this.config, {
                     username: fileId,
-                    password: password
+                    password: password.getText()
                 });
 
                 FingerprintAuth.encrypt(encryptConfig, result => {

@@ -164,13 +164,12 @@ const SettingsFileView = Backbone.View.extend({
             }
         }
 
-        const password = this.$el.find('#settings__file-master-pass').val();
-        const shouldUpdateFingerprint = this.model.get('passwordChanged') && this.model.get('fingerprint'); // save to suggest fingerprint auth after sync
+        // save to erase old password from fingerprint store after sync
+        const shouldUpdateFingerprint = this.model.get('passwordChanged') && this.model.get('fingerprint');
 
         this.appModel.syncFile(this.model, arg, () => {
             if (shouldUpdateFingerprint) {
-                this.model.set('fingerprint', null); // erase old fingerprint token
-                this.appModel.saveFileFingerprint(this.model, password);
+                this.model.set('fingerprint', null);
             }
         });
     },
