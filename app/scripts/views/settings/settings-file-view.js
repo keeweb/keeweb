@@ -164,14 +164,7 @@ const SettingsFileView = Backbone.View.extend({
             }
         }
 
-        // save to erase old password from fingerprint store after sync
-        const shouldUpdateFingerprint = this.model.get('passwordChanged') && this.model.get('fingerprint');
-
-        this.appModel.syncFile(this.model, arg, () => {
-            if (shouldUpdateFingerprint) {
-                this.model.set('fingerprint', null);
-            }
-        });
+        this.appModel.syncFile(this.model, arg);
     },
 
     saveDefault: function() {
