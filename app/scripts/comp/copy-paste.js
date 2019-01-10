@@ -3,10 +3,10 @@ const Launcher = require('./launcher');
 const AppSettingsModel = require('../models/app-settings-model');
 
 const CopyPaste = {
-    simpleCopy: !!Launcher,
+    simpleCopy: !!(Launcher && Launcher.clipboardSupported),
 
     copy: function(text) {
-        if (Launcher) {
+        if (this.simpleCopy) {
             Launcher.setClipboardText(text);
             const clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
             if (clipboardSeconds > 0) {

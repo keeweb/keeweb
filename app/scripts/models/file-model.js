@@ -421,6 +421,12 @@ const FileModel = Backbone.Model.extend({
             syncing: false,
             syncError: error
         });
+
+        const shouldResetFingerprint = this.get('passwordChanged') && this.has('fingerprint');
+        if (shouldResetFingerprint && !error) {
+            this.set({ fingerprint: null });
+        }
+
         if (!this.get('open')) {
             return;
         }

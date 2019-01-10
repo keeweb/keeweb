@@ -378,20 +378,6 @@ const OpenView = Backbone.View.extend({
 
         const fileInfo = this.model.fileInfos.get(id);
         this.showOpenFileInfo(fileInfo);
-
-        if (fileInfo && Launcher && Launcher.fingerprints) {
-            this.openFileWithFingerprint(fileInfo);
-        }
-    },
-
-    openFileWithFingerprint(fileInfo) {
-        if (fileInfo.get('fingerprint')) {
-            Launcher.fingerprints.auth(fileInfo.id, fileInfo.get('fingerprint'), password => {
-                this.inputEl.val(password);
-                this.inputEl.trigger('input');
-                this.openDb();
-            });
-        }
     },
 
     removeFile: function(id) {
@@ -515,6 +501,8 @@ const OpenView = Backbone.View.extend({
         this.params.keyFileData = null;
         this.displayOpenFile();
         this.displayOpenKeyFile();
+
+        this.openFileWithFingerprint(fileInfo);
     },
 
     showOpenLocalFile: function(path, keyFilePath) {
@@ -534,6 +522,20 @@ const OpenView = Backbone.View.extend({
             this.params.keyFilePath = keyFilePath;
             this.params.keyFileData = null;
             this.displayOpenKeyFile();
+        }
+    },
+
+    openFileWithFingerprint: function(fileInfo) {
+        if (!fileInfo.has('fingerprint')) {
+            return;
+        }
+
+        if (Launcher && Launcher.fingerprints) {
+            Launcher.fingerprints.auth(fileInfo.id, fileInfo.get('fingerprint'), password => {
+                this.inputEl.val(password);
+                this.inputEl.trigger('input');
+                this.openDb();
+            });
         }
     },
 

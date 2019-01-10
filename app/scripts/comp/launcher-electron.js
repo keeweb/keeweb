@@ -9,6 +9,7 @@ const Launcher = {
     version: window.process.versions.electron,
     autoTypeSupported: true,
     thirdPartyStoragesSupported: true,
+    clipboardSupported: true,
     req: window.require,
     platform: function() {
         return process.platform;
