@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.7.3 (TBD)
 `-` fixed window activation when KeeWeb is launched second time  
+`-` Windows AutoType helper is now using .NET Framework v4  
 
 ##### v1.7.2 (2019-01-07)
 `-` fixed Google Drive cookies issues  
