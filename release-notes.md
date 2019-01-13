@@ -1,5 +1,10 @@
 Release notes
 -------------
+##### v1.7.3 (2019-01-13)
+`-` fixed window activation when KeeWeb is launched second time  
+`-` fix #1087: Windows AutoType helper is now using .NET Framework v4  
+`*` fix #1085: fixed dropbox in iOS PWA, removed manifest.json  
+
 ##### v1.7.2 (2019-01-07)
 `-` fixed Google Drive cookies issues  
 `-` fixed storage providers authentication  
