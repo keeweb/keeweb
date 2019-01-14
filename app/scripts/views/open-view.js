@@ -14,7 +14,7 @@ const InputFx = require('../util/input-fx');
 const Comparators = require('../util/comparators');
 const Storage = require('../storage');
 const Launcher = require('../comp/launcher');
-const FocusDetector = require('../util/focus-detector');
+const FocusDetector = require('../comp/focus-detector');
 
 const logger = new Logger('open-view');
 
