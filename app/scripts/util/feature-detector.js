@@ -14,6 +14,7 @@ const FeatureDetector = {
     isFrame: window.top !== window,
     isSelfHosted: !isDesktop && !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
     needFixClicks: /Edge\/14/.test(navigator.appVersion),
+    isBrowser: !this.isDesktop && !this.isMobile,
 
     actionShortcutSymbol: function(formatting) {
         return this.isMac ? '⌘' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl-';
