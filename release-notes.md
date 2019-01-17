@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.7.4 (2019-01-17)
+`-` fix #423: input focus issues in desktop apps  
+
 ##### v1.7.3 (2019-01-13)
 `-` fixed window activation when KeeWeb is launched second time  
 `-` fix #1087: Windows AutoType helper is now using .NET Framework v4  

@@ -7,7 +7,6 @@ const SecureInput = require('../comp/secure-input');
 const DropboxChooser = require('../comp/dropbox-chooser');
 const KeyHandler = require('../comp/key-handler');
 const StorageFileListView = require('../views/storage-file-list-view');
-const FeatureDetector = require('../util/feature-detector');
 const Logger = require('../util/logger');
 const Locale = require('../util/locale');
 const UrlUtil = require('../util/url-util');
@@ -15,6 +14,7 @@ const InputFx = require('../util/input-fx');
 const Comparators = require('../util/comparators');
 const Storage = require('../storage');
 const Launcher = require('../comp/launcher');
+const FocusDetector = require('../comp/focus-detector');
 
 const logger = new Logger('open-view');
 
@@ -69,6 +69,7 @@ const OpenView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterKeyPress, this);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, this);
         KeyHandler.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, this);
+        this.focusDetector = new FocusDetector();
     },
 
     render: function () {
@@ -106,7 +107,7 @@ const OpenView = Backbone.View.extend({
     },
 
     focusInput: function() {
-        if (!FeatureDetector.isMobile) {
+        if (this.focusDetector.hasFocus()) {
             this.inputEl.focus();
         }
     },
