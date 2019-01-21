@@ -18,6 +18,7 @@ const SettingsManager = require('./comp/settings-manager');
 const PluginManager = require('./plugins/plugin-manager');
 const Launcher = require('./comp/launcher');
 const FeatureTester = require('./comp/feature-tester');
+const FocusDetector = require('./comp/focus-detector');
 const Timeouts = require('./const/timeouts');
 const FeatureDetector = require('./util/feature-detector');
 const KdbxwebInit = require('./util/kdbxweb-init');
@@ -76,6 +77,7 @@ ready(() => {
         IdleTracker.init();
         PopupNotifier.init();
         KdbxwebInit.init();
+        FocusDetector.init();
         window.kw = ExportApi;
         return PluginManager.init();
     }
