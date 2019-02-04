@@ -292,7 +292,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
                 const locKey = this.getThemeLocaleKey(theme.name);
                 SettingsManager.allThemes[theme.name] = locKey;
                 BaseLocale[locKey] = theme.title;
-                for (const styleSheet of document.styleSheets) {
+                for (const styleSheet of Array.from(document.styleSheets)) {
                     if (styleSheet.ownerNode.id === id) {
                         this.processThemeStyleSheet(styleSheet, theme);
                         break;
@@ -306,7 +306,7 @@ const Plugin = Backbone.Model.extend(_.extend({}, PluginStatus, {
     processThemeStyleSheet(styleSheet, theme) {
         const themeSelector = '.th-' + theme.name;
         const badSelectors = [];
-        for (const rule of styleSheet.cssRules) {
+        for (const rule of Array.from(styleSheet.cssRules)) {
             if (rule.selectorText && rule.selectorText.lastIndexOf(themeSelector, 0) !== 0) {
                 badSelectors.push(rule.selectorText);
             }

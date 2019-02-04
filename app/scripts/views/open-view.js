@@ -69,6 +69,7 @@ const OpenView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterKeyPress, this);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, this);
         KeyHandler.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, this);
+        this.listenTo(Backbone, 'focus', this.windowFocused.bind(this));
     },
 
     render: function () {
@@ -105,10 +106,12 @@ const OpenView = Backbone.View.extend({
         return this;
     },
 
+    windowFocused: function() {
+        this.inputEl.focus();
+    },
+
     focusInput: function() {
-        console.log('focus');
         if (FocusDetector.hasFocus()) {
-            console.log('hasFocus');
             this.inputEl.focus();
         }
     },
