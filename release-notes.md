@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.7.5 (2019-02-05)
+`-` fix #1096: focus issues after minimizing  
+
 ##### v1.7.4 (2019-01-17)
 `-` fix #423: input focus issues in desktop apps  
 
