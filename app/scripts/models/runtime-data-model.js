@@ -11,6 +11,10 @@ const RuntimeDataModel = Backbone.Model.extend({
     load: function() {
         return SettingsStore.load('runtime-data').then(data => {
             if (data) {
+                if (data.cookies) {
+                    // we're not using cookies here now
+                    delete data.cookies;
+                }
                 this.set(data, {silent: true});
             }
         });

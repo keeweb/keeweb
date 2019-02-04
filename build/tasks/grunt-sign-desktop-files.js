@@ -3,7 +3,7 @@ module.exports = function (grunt) {
         const done = this.async();
         const fs = require('fs');
         const path = require('path');
-        const sign = require('../lib/sign');
+        const sign = require('../util/sign');
         const appPath = this.options().path;
 
         const signatures = {};

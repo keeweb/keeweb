@@ -18,7 +18,7 @@ const Transport = {
                         fs.unlinkSync(tmpFile);
                     }
                 } catch (e) {
-                    fs.unlink(tmpFile);
+                    fs.unlink(tmpFile, _.noop);
                 }
             }
         }
@@ -74,7 +74,7 @@ const Transport = {
             }).on('error', e => {
                 logger.error('Cannot GET ' + config.url, e);
                 if (tmpFile) {
-                    fs.unlink(tmpFile);
+                    fs.unlink(tmpFile, _.noop);
                 }
                 config.error(e);
             });

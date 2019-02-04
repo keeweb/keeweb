@@ -38,7 +38,7 @@ const AutoType = {
             return;
         }
         if (entry) {
-            this.hideWindow(() => { this.runAndHandleResult(entry); });
+            this.hideWindow(() => { this.runAndHandleResult({ entry }); });
         } else {
             if (this.selectEntryView) {
                 return;
@@ -164,6 +164,14 @@ const AutoType = {
             if (err) {
                 logger.error('Error get window title', err);
             } else {
+                if (!url) {
+                    // try to find a URL in the title
+                    const urlMatcher = new RegExp(
+                        'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'
+                    );
+                    const urlMatches = urlMatcher.exec(title);
+                    url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
+                }
                 logger.debug('Window title', title, url);
             }
             return callback(err, title, url);
@@ -193,7 +201,7 @@ const AutoType = {
         const entries = evt.filter.getEntries();
         if (entries.length === 1) {
             this.hideWindow(() => {
-                this.runAndHandleResult(entries.at(0));
+                this.runAndHandleResult({ entry: entries.at(0) });
             });
             return;
         }

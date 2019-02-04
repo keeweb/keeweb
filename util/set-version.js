@@ -11,23 +11,22 @@ if (!/^\d+\.\d+\.\d+$/.test(version)) {
 
 console.log('Change version to ' + version);
 
-// processFile('README.md', /\/download\/v[^\/]+/g);
-processFile('package.json', /"version": "\d+\.\d+\.\d+"+/g);
-processFile('desktop/package.json', /"version": "\d+\.\d+\.\d+"+/g);
+processFile('package.json');
+processFile('package-lock.json');
+processFile('desktop/package.json');
+processFile('desktop/package-lock.json');
 
 console.log('Done');
 
-function processFile(name, regex) {
+function processFile(name) {
     console.log('Replace: ' + name);
     name = path.join(__dirname, '..', name);
-    let content = fs.readFileSync(name, 'utf8');
-    let replCount = 0;
-    content = content.replace(regex, match => {
-        replCount++;
-        return match.replace(/\d+\.\d+\.\d+/, version);
-    });
-    if (!replCount) {
-        throw 'No match found!';
+    const content = fs.readFileSync(name, 'utf8');
+    const data = JSON.parse(content);
+    if (!/\d+\.\d+\.\d+/.test(data.version)) {
+        throw new Error('No match found!');
     }
-    fs.writeFileSync(name, content, 'utf8');
+    data.version = version;
+    const newContent = JSON.stringify(data, null, 2) + '\n';
+    fs.writeFileSync(name, newContent, 'utf8');
 }

@@ -7,7 +7,6 @@ const Libs = {
     kdbxweb: require('kdbxweb'),
     hbs: require('hbs'),
     pikaday: require('pikaday'),
-    filesaver: require('file-saver'),
     qrcode: require('jsqrcode')
 };
 

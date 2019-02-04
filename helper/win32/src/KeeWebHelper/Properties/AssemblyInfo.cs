@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Antelle.Net")]
 [assembly: AssemblyProduct("KeeWebHelper")]
-[assembly: AssemblyCopyright("Copyright © Antelle 2017")]
+[assembly: AssemblyCopyright("Copyright © Antelle 2019")]
 [assembly: AssemblyTrademark("KeeWeb")]
 [assembly: AssemblyCulture("")]
 

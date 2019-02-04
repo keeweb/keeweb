@@ -1,12 +1,18 @@
 /* global FingerprintAuth */
 
+const Backbone = require('backbone');
+
 const Launcher = {
     name: 'cordova',
     version: '6.0.0',
     autoTypeSupported: false,
     thirdPartyStoragesSupported: false,
+    clipboardSupported: false,
     ready: function(callback) {
         document.addEventListener('deviceready', callback, false);
+        document.addEventListener('pause', () => {
+            Backbone.trigger('app-minimized');
+        }, false);
     },
     platform: function() {
         return 'cordova';
@@ -40,6 +46,12 @@ const Launcher = {
         return [...parts].join('/');
     },
     writeFile: function(path, data, callback) {
+        const createFile = filePath => {
+            window.resolveLocalFileSystemURL(filePath.dir, dir => {
+                dir.getFile(filePath.file, {create: true}, writeFile);
+            }, callback, callback);
+        };
+
         const writeFile = fileEntry => {
             fileEntry.createWriter(fileWriter => {
                 fileWriter.onerror = callback;
@@ -48,7 +60,14 @@ const Launcher = {
             }, callback);
         };
 
-        window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
+        if (path.startsWith('cdvfile://')) { // then file exists
+            window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
+        } else { // create file on sd card
+            const filePath = this.parsePath(path);
+            this.mkdir(filePath.dir, () => {
+                createFile(filePath);
+            });
+        }
     },
     readFile: function(path, encoding, callback) {
         window.resolveLocalFileSystemURL(path, fileEntry => {
@@ -109,14 +128,15 @@ const Launcher = {
 
         return {
             path: fileName,
-            dir: parts.pop(),
-            file: parts.join('/')
+            file: parts.pop(),
+            dir: parts.join('/')
         };
     },
     createFsWatcher: function(path) {
         return null; // not in android with content provider
     },
     // ensureRunnable: function(path) { },
+
     preventExit: function(e) {
         e.returnValue = false;
         return false;
@@ -124,29 +144,30 @@ const Launcher = {
     exit: function() {
         this.hideApp();
     },
+
     requestExit: function() { /* skip in cordova */ },
     requestRestart: function() {
         window.location.reload();
     },
     cancelRestart: function() { /* skip in cordova */ },
-    setClipboardText: function(text) {
-        // TODO
-    },
-    getClipboardText: function() {
-        // TODO
-    },
-    clearClipboardText: function() {
-        // TODO
-    },
+
+    setClipboardText: function(text) {},
+    getClipboardText: function() {},
+    clearClipboardText: function() {},
+
     minimizeApp: function() {
         this.hideApp();
     },
     canMinimize: function() {
         return false;
     },
+    canDetectOsSleep: function() {
+        return false;
+    },
     updaterEnabled: function() {
         return false;
     },
+
     // getMainWindow: function() { },
     resolveProxy: function(url, callback) { /* skip in cordova */ },
     openWindow: function(opts) { /* skip in cordova */ },
@@ -169,6 +190,12 @@ const Launcher = {
 
         window.cordova.exec(onFileSelected, callback, 'FileChooser', 'choose');
     },
+    getCookies(callback) {
+        // TODO
+    },
+    setCookies(cookies) {
+        // TODO
+    },
 
     fingerprints: {
         config: {
@@ -184,7 +211,7 @@ const Launcher = {
 
                 const encryptConfig = _.extend({}, this.config, {
                     username: fileId,
-                    password: password
+                    password: password.getText()
                 });
 
                 FingerprintAuth.encrypt(encryptConfig, result => {

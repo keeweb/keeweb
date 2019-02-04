@@ -66,7 +66,7 @@ const AutoTypeHintView = Backbone.View.extend({
 
     inputBlur: function() {
         if (!this.removeTimer) {
-            this.removeTimer = setTimeout(this.remove.bind(this), Timeouts.DrobDownClickWait);
+            this.removeTimer = setTimeout(this.remove.bind(this), Timeouts.DropDownClickWait);
         }
     },
 

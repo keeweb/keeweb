@@ -30,7 +30,7 @@ const KdbxwebInit = {
             const loadTimeout = setTimeout(() => reject('timeout'), 5000);
             try {
                 const ts = logger.ts();
-                const argon2LoaderCode = require('argon2-browser');
+                const argon2LoaderCode = require('argon2');
                 const wasmBinaryBase64 = require('argon2-wasm');
 
                 const KB = 1024 * 1024;

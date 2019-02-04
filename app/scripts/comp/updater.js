@@ -208,7 +208,7 @@ const Updater = {
                 if (err) {
                     return cb(err);
                 }
-                Launcher.req('fs').unlink(updateFile);
+                Launcher.deleteFile(updateFile);
                 cb();
             });
         });
@@ -226,7 +226,7 @@ const Updater = {
             const verify = Launcher.req('crypto').createVerify('RSA-SHA256');
             verify.write(zipFileData.slice(0, zip.centralDirectory.headerOffset + 22));
             verify.end();
-            const signature = new window.Buffer(zip.comment, 'hex');
+            const signature = window.Buffer.from(zip.comment, 'hex');
             if (!verify.verify(publicKey, signature)) {
                 return 'Invalid signature';
             }

@@ -9,6 +9,7 @@ const Launcher = {
     version: window.process.versions.electron,
     autoTypeSupported: true,
     thirdPartyStoragesSupported: true,
+    clipboardSupported: true,
     req: window.require,
     platform: function() {
         return process.platform;
@@ -27,7 +28,7 @@ const Launcher = {
     },
     devTools: true,
     openDevTools: function() {
-        this.electron().remote.getCurrentWindow().openDevTools();
+        this.electron().remote.getCurrentWindow().openDevTools({ mode: 'bottom' });
     },
     getSaveFileName: function(defaultPath, callback) {
         if (defaultPath) {
@@ -66,7 +67,7 @@ const Launcher = {
         return this.req('path').join(...parts);
     },
     writeFile: function(path, data, callback) {
-        this.req('fs').writeFile(path, new window.Buffer(data), callback);
+        this.req('fs').writeFile(path, window.Buffer.from(data), callback);
     },
     readFile: function(path, encoding, callback) {
         this.req('fs').readFile(path, encoding, (err, contents) => {
@@ -78,7 +79,7 @@ const Launcher = {
         this.req('fs').exists(path, callback);
     },
     deleteFile: function(path, callback) {
-        this.req('fs').unlink(path, callback);
+        this.req('fs').unlink(path, callback || _.noop);
     },
     statFile: function(path, callback) {
         this.req('fs').stat(path, (err, stats) => callback(stats, err));

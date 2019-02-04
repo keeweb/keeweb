@@ -4,7 +4,6 @@ const AppSettingsModel = require('../models/app-settings-model');
 const RuntimeDataModel = require('../models/runtime-data-model');
 const Links = require('../const/links');
 const FeatureDetector = require('../util/feature-detector');
-const CookieManager = require('../comp/cookie-manager');
 
 const MaxRequestRetries = 3;
 
@@ -58,7 +57,6 @@ _.extend(StorageBase.prototype, {
         }
         const statuses = config.statuses || [200];
         xhr.addEventListener('load', () => {
-            CookieManager.saveCookies();
             if (statuses.indexOf(xhr.status) >= 0) {
                 return config.success && config.success(xhr.response, xhr);
             }
@@ -81,7 +79,6 @@ _.extend(StorageBase.prototype, {
             }
         });
         xhr.addEventListener('error', () => {
-            CookieManager.saveCookies();
             return config.error && config.error('network error', xhr);
         });
         xhr.addEventListener('timeout', () => {
@@ -191,7 +188,6 @@ _.extend(StorageBase.prototype, {
             this._oauthToken = token;
             this.runtimeData.set(this.name + 'OAuthToken', token);
             this.logger.debug('OAuth token received');
-            CookieManager.saveCookies();
         }
         return token;
     },

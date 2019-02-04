@@ -10,7 +10,6 @@ const IdleTracker = require('./comp/idle-tracker');
 const PopupNotifier = require('./comp/popup-notifier');
 const SingleInstanceChecker = require('./comp/single-instance-checker');
 const AppRightsChecker = require('./comp/app-rights-checker');
-const CookieManager = require('./comp/cookie-manager');
 const Alerts = require('./comp/alerts');
 const Updater = require('./comp/updater');
 const AuthReceiver = require('./comp/auth-receiver');
@@ -19,6 +18,7 @@ const SettingsManager = require('./comp/settings-manager');
 const PluginManager = require('./plugins/plugin-manager');
 const Launcher = require('./comp/launcher');
 const FeatureTester = require('./comp/feature-tester');
+const FocusDetector = require('./comp/focus-detector');
 const Timeouts = require('./const/timeouts');
 const FeatureDetector = require('./util/feature-detector');
 const KdbxwebInit = require('./util/kdbxweb-init');
@@ -77,6 +77,7 @@ ready(() => {
         IdleTracker.init();
         PopupNotifier.init();
         KdbxwebInit.init();
+        FocusDetector.init();
         window.kw = ExportApi;
         return PluginManager.init();
     }
@@ -137,7 +138,6 @@ ready(() => {
         Updater.init();
         SingleInstanceChecker.init();
         AppRightsChecker.init();
-        CookieManager.init();
         setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
     }
 

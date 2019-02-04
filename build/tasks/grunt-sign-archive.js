@@ -2,7 +2,7 @@ module.exports = function (grunt) {
     grunt.registerMultiTask('sign-archive', 'Signs archive with a private key', function () {
         const done = this.async();
         const fs = require('fs');
-        const sign = require('../lib/sign');
+        const sign = require('../util/sign');
         const file = fs.readFileSync(this.options().file);
         const ix = file.toString('binary').lastIndexOf(this.options().signature);
         if (ix < 0) {

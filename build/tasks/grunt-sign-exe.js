@@ -39,7 +39,7 @@ module.exports = function (grunt) {
                 grunt.warn('Code sign error: ' + e);
             });
         } else {
-            const sign = require('../lib/sign');
+            const sign = require('../util/sign');
             const pin = await sign.getPin();
             for (const file of Object.keys(opt.files)) {
                 await signFile(file, opt.files[file], opt, pin);

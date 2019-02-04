@@ -9,8 +9,8 @@ const Links = require('../../const/links');
 const Format = require('../../util/format');
 const Locale = require('../../util/locale');
 const UrlUtil = require('../../util/url-util');
+const FileSaver = require('../../util/file-saver');
 const kdbxweb = require('kdbxweb');
-const FileSaver = require('file-saver');
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';
@@ -163,6 +163,7 @@ const SettingsFileView = Backbone.View.extend({
                 return;
             }
         }
+
         this.appModel.syncFile(this.model, arg);
     },
 
@@ -512,9 +513,21 @@ const SettingsFileView = Backbone.View.extend({
                 this.backupInProgress = false;
                 backupButton.text(Locale.setFileBackupNow);
                 if (err) {
+                    let title = '';
+                    let description = '';
+                    if (err.isDir) {
+                        title = Locale.setFileBackupErrorIsDir;
+                        description = Locale.setFileBackupErrorIsDirDescription;
+                    } else {
+                        title = Locale.setFileBackupError;
+                        description = Locale.setFileBackupErrorDescription;
+                    }
                     Alerts.error({
-                        title: Locale.setFileBackupError,
-                        body: Locale.setFileBackupErrorDescription + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                        title: title,
+                        body: description +
+                            '<pre class="modal__pre">' +
+                            _.escape(err.toString()) +
+                            '</pre>'
                     });
                 }
             });

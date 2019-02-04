@@ -1,10 +1,33 @@
 Release notes
 -------------
-##### v1.7.0 (WIP)
+##### v1.7.4 (2019-01-17)
+`-` fix #423: input focus issues in desktop apps  
+
+##### v1.7.3 (2019-01-13)
+`-` fixed window activation when KeeWeb is launched second time  
+`-` fix #1087: Windows AutoType helper is now using .NET Framework v4  
+`*` fix #1085: fixed dropbox in iOS PWA, removed manifest.json  
+
+##### v1.7.2 (2019-01-07)
+`-` fixed Google Drive cookies issues  
+`-` fixed storage providers authentication  
+`-` fix #1079: error launching another instance  
+`-` fix #1078: updater hanged on "extracting files"
+
+##### v1.7.1 (2019-01-06)
+`-` fix #1077: broken auto-type  
+
+##### v1.7.0 (2019-01-06)
 `+` downgrading desktop apps  
 `-` fixed calendar colors  
 `+` option to open a keyfile from command line  
 `+` master password confirmation  
+`-` json config bugfixes  
+`-` better icons  
+`+` major electron upgrade  
+`-` text improvements  
+`-` fixed large attachments issues  
+`+` usability improvements  
 
 ##### v1.6.3 (2017-12-11)
 `-` fixed Windows installer upgrade issue  
