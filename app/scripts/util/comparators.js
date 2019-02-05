@@ -13,6 +13,10 @@ const Comparators = {
         }
     },
 
+    rankComparator: function() {
+        return function (x, y) { return y.getRank(this.filter.text) - x.getRank(this.filter.text); };
+    },
+
     dateComparator: function(field, asc) {
         if (asc) {
             return function (x, y) { return x[field] - y[field]; };

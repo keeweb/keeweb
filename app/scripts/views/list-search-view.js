@@ -43,7 +43,8 @@ const ListSearchView = Backbone.View.extend({
             { value: '-created', icon: 'sort-numeric-desc', loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO) },
             { value: 'updated', icon: 'sort-numeric-asc', loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON) },
             { value: '-updated', icon: 'sort-numeric-desc', loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO) },
-            { value: '-attachments', icon: 'sort-amount-desc', loc: () => Locale.searchAttachments }
+            { value: '-attachments', icon: 'sort-amount-desc', loc: () => Locale.searchAttachments },
+            { value: '-rank', icon: 'sort-numeric-desc', loc: () => Locale.searchRank + ' ' + this.addArrow(Locale.searchBestWorst) }
         ];
         this.sortIcons = {};
         this.sortOptions.forEach(function(opt) {
@@ -55,7 +56,8 @@ const ListSearchView = Backbone.View.extend({
             url: true, protect: false,
             notes: true, pass: false,
             cs: false, regex: false,
-            history: false, title: true
+            history: false, title: true,
+            rank: true
         };
         if (this.model.advancedSearch) {
             this.advancedSearch = _.extend({}, this.model.advancedSearch);

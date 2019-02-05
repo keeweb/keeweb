@@ -1,4 +1,5 @@
 const EntryCollection = require('../collections/entry-collection');
+const Ranking = require('../util/ranking');
 
 const urlPartsRegex = /^(\w+:\/\/)?(?:(?:www|wwws|secure)\.)?([^\/]+)\/?(.*)/;
 
@@ -39,7 +40,10 @@ AutoTypeFilter.prototype.prepareFilter = function() {
 AutoTypeFilter.prototype.getEntryRank = function(entry) {
     let rank = 0;
     if (this.titleLower && entry.title) {
-        rank += this.getStringRank(entry.title.toLowerCase(), this.titleLower);
+        rank += Ranking.getStringRank(
+            entry.title.toLowerCase(),
+            this.titleLower
+        );
     }
     if (this.urlParts && entry.url) {
         const entryUrlParts = urlPartsRegex.exec(entry.url.toLowerCase());
@@ -76,24 +80,6 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
         }
     }
     return rank;
-};
-
-AutoTypeFilter.prototype.getStringRank = function(s1, s2) {
-    let ix = s1.indexOf(s2);
-    if (ix === 0 && s1.length === s2.length) {
-        return 10;
-    } else if (ix === 0) {
-        return 5;
-    } else if (ix > 0) {
-        return 3;
-    }
-    ix = s2.indexOf(s1);
-    if (ix === 0) {
-        return 5;
-    } else if (ix > 0) {
-        return 3;
-    }
-    return 0;
 };
 
 module.exports = AutoTypeFilter;

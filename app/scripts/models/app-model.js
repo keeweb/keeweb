@@ -274,7 +274,7 @@ const AppModel = Backbone.Model.extend({
 
     getEntries: function() {
         const entries = this.getEntriesByFilter(this.filter);
-        entries.sortEntries(this.sort);
+        entries.sortEntries(this.sort, this.filter);
         if (this.filter.trash) {
             this.addTrashGroups(entries);
         }

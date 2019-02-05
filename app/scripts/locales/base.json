@@ -27,6 +27,7 @@
   "help": "Help",
   "settings": "Settings",
   "plugins": "Plugins",
+  "rank": "Rank",
 
   "cache": "cache",
   "file": "file",
@@ -146,6 +147,9 @@
   "searchOptions": "Options",
   "searchCase": "Match case",
   "searchRegex": "RegEx",
+  "searchRank": "Rank",
+  "searchBestWorst": "Best {} Worst",
+  "searchWorstBest": "Worst {} Best",
 
   "openOpen": "Open",
   "openNew": "New",
