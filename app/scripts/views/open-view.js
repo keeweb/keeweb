@@ -106,9 +106,7 @@ const OpenView = Backbone.View.extend({
     },
 
     focusInput: function() {
-        console.log('focus');
         if (FocusDetector.hasFocus()) {
-            console.log('hasFocus');
             this.inputEl.focus();
         }
     },
