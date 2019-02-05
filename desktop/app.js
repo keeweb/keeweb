@@ -322,7 +322,8 @@ function setMenu() {
             {
                 label: 'Window',
                 submenu: [
-                    { accelerator: 'CmdOrCtrl+M', role: 'minimize' }
+                    { accelerator: 'CmdOrCtrl+M', role: 'minimize' },
+                    { accelerator: 'Command+W', role: 'close' }
                 ]
             }
         ];
