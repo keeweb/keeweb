@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.7.6 (2019-02-06)
+`-` fixed focus issues in desktop apps  
+
 ##### v1.7.5 (2019-02-04)
 `-` fix #1096: focus issues after minimizing  
 `-` fix #1094: plugin installation in MS Edge  
