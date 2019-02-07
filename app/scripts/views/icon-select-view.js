@@ -49,14 +49,16 @@ const IconSelectView = Backbone.View.extend({
         }
     },
 
-    downloadIcon: function() {
-        if (this.downloadingFavicon) {
+    downloadIcon: function(e, isSecondO) {
+        const isSecond = isSecondO || false;
+
+        if (isSecond === false && this.downloadingFavicon) {
             return;
         }
         this.downloadingFavicon = true;
         this.$el.find('.icon-select__icon-download>i').addClass('fa-spinner fa-spin');
         this.$el.find('.icon-select__icon-download').removeClass('icon-select__icon--download-error');
-        const url = this.getIconUrl(!Launcher); // inside launcher we can load images without CORS
+        const url = this.getIconUrl(isSecond ? true : !Launcher); // inside launcher we can load images without CORS
         const img = document.createElement('img');
         img.crossOrigin = 'Anonymous';
         img.src = url;
@@ -68,12 +70,17 @@ const IconSelectView = Backbone.View.extend({
             this.downloadingFavicon = false;
         };
         img.onerror = e => {
-            logger.error('Favicon download error: ' + url, e);
-            this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
-            this.$el.find('.icon-select__icon-download')
-                .removeClass('icon-select__icon--custom-selected')
-                .addClass('icon-select__icon--download-error');
-            this.downloadingFavicon = false;
+            // if not webapp, try to download using proxy
+            if (isSecond === false && Launcher) {
+                this.downloadIcon(undefined, true);
+            } else {
+                logger.error('Favicon download error: ' + url, e);
+                this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
+                this.$el.find('.icon-select__icon-download')
+                    .removeClass('icon-select__icon--custom-selected')
+                    .addClass('icon-select__icon--download-error');
+                this.downloadingFavicon = false;
+            }
         };
     },
 
