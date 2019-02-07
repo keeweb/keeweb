@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.7.6 (2019-02-06)
+##### v1.7.6 (2019-02-07)
 `-` fixed focus issues in desktop apps  
 
 ##### v1.7.5 (2019-02-04)
