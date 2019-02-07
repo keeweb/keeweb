@@ -6,14 +6,18 @@ const FocusDetector = {
     init() {
         this.isFocused = true;
         this.detectsFocusWithEvents = !FeatureDetector.isDesktop && !FeatureDetector.isMobile;
-        window.onfocus = () => {
-            this.isFocused = true;
-            Backbone.trigger('focus');
-        };
-        window.onblur = () => {
-            this.isFocused = false;
-            Backbone.trigger('blur');
-        };
+        window.addEventListener('focus', () => {
+            if (!FocusDetector.isFocused) {
+                FocusDetector.isFocused = true;
+                Backbone.trigger('focus');
+            }
+        });
+        window.addEventListener('blur', () => {
+            if (FocusDetector.isFocused) {
+                FocusDetector.isFocused = false;
+                Backbone.trigger('blur');
+            }
+        });
     },
 
     hasFocus() {
