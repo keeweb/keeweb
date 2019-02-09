@@ -56,7 +56,7 @@ const IconSelectView = Backbone.View.extend({
         this.downloadingFavicon = true;
         this.$el.find('.icon-select__icon-download>i').addClass('fa-spinner fa-spin');
         this.$el.find('.icon-select__icon-download').removeClass('icon-select__icon--download-error');
-        const url = this.getIconUrl(!Launcher); // inside launcher we can load images without CORS
+        const url = this.getIconUrl(true);
         const img = document.createElement('img');
         img.crossOrigin = 'Anonymous';
         img.src = url;
