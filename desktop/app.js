@@ -175,6 +175,7 @@ function createMainWindow() {
     mainWindow.on('move', delaySaveMainWindowPosition);
     mainWindow.on('restore', coerceMainWindowPositionToConnectedDisplay);
     mainWindow.on('close', updateMainWindowPositionIfPending);
+    mainWindow.on('focus', mainWindowFocus);
     mainWindow.on('blur', mainWindowBlur);
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -280,6 +281,10 @@ function restoreMainWindowPosition() {
 
 function mainWindowBlur() {
     emitBackboneEvent('main-window-blur');
+}
+
+function mainWindowFocus() {
+    emitBackboneEvent('main-window-focus');
 }
 
 function emitBackboneEvent(e, arg) {
