@@ -1,6 +1,5 @@
 const Backbone = require('backbone');
 const IconMap = require('../const/icon-map');
-const Launcher = require('../comp/launcher');
 const Logger = require('../util/logger');
 
 const logger = new Logger('icon-select-view');
