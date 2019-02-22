@@ -37,7 +37,7 @@ To make Dropbox work in your self-hosted app, [go to this Wiki page](https://git
 
 The easiest way to clone all KeeWeb repos is:
 ```bash
-curl https://raw.githubusercontent.com/keeweb/keeweb/develop/dev-env.sh | bash -
+curl https://raw.githubusercontent.com/keeweb/keeweb/develop/dev-env.sh | SCHEMA=http bash -
 ```
 
 The app can be built with grunt: `grunt` (html file will be in `dist/`).    
