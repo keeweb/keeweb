@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCHEMA=${SCHEMA:-git}
+SCHEMA=${SCHEMA:-http}
 
 KEEWEB_GH=git@github.com:keeweb
 
