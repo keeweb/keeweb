@@ -99,6 +99,7 @@ const ListSearchView = Backbone.View.extend({
 
     viewShown: function() {
         this.listenTo(KeyHandler, 'keypress', this.documentKeyPress);
+        this.inputEl.focus();
     },
 
     viewHidden: function() {
