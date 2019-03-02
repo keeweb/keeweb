@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.7.8 (2019-03-02)
 `-` fix #1124: keyboard navigation issues  
+`*` improved link security  
 
 ##### v1.7.7 (2019-02-09)
 `-` another attempt to fix focus issues  
