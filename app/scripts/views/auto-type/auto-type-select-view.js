@@ -26,6 +26,10 @@ const AutoTypePopupView = Backbone.View.extend({
         this.initScroll();
         this.listenTo(Backbone, 'main-window-blur', this.mainWindowBlur);
         this.listenTo(Backbone, 'main-window-will-close', this.mainWindowWillClose);
+        this.setupKeys();
+    },
+
+    setupKeys() {
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.actionEnterPressed, this, KeyHandler.SHORTCUT_ACTION, true);
@@ -33,8 +37,22 @@ const AutoTypePopupView = Backbone.View.extend({
         KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this, false, true);
+        KeyHandler.onKey(Keys.DOM_VK_O, this.openKeyPressed, this, KeyHandler.SHORTCUT_ACTION, true);
         KeyHandler.on('keypress:auto-type', this.keyPressed.bind(this));
         KeyHandler.setModal('auto-type');
+    },
+
+    removeKeys() {
+        KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.actionEnterPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.optEnterPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_UP, this.upPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_DOWN, this.downPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_O, this.openKeyPressed, this);
+        KeyHandler.off('keypress:auto-type');
+        KeyHandler.setModal(null);
     },
 
     render() {
@@ -61,6 +79,7 @@ const AutoTypePopupView = Backbone.View.extend({
             selectionHintDefault: Locale.autoTypeSelectionHint,
             selectionHintAction: Locale.autoTypeSelectionHintAction,
             selectionHintOpt: Locale.autoTypeSelectionHintOpt,
+            selectionHintOpenFile: Locale.autoTypeSelectionHintOpenFile,
             itemsHtml: itemsHtml,
             actionSymbol: FeatureDetector.actionShortcutSymbol(true),
             altSymbol: FeatureDetector.altShortcutSymbol(true),
@@ -76,13 +95,7 @@ const AutoTypePopupView = Backbone.View.extend({
     },
 
     remove() {
-        KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_UP, this.upPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_DOWN, this.downPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this);
-        KeyHandler.off('keypress:auto-type');
-        KeyHandler.setModal(null);
+        this.removeKeys();
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
@@ -119,6 +132,11 @@ const AutoTypePopupView = Backbone.View.extend({
 
     optEnterPressed() {
         this.closeWithResult(AutoTypeSequenceType.USERNAME);
+    },
+
+    openKeyPressed() {
+        this.removeKeys();
+        this.trigger('openFiles');
     },
 
     upPressed(e) {

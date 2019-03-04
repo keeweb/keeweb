@@ -158,6 +158,9 @@ const AppView = Backbone.View.extend({
         this.hideKeyChange();
         this.views.open = new OpenView({ model: this.model });
         this.views.open.setElement(this.$el.find('.app__body')).render();
+        this.views.open.on('close', () => {
+            Backbone.trigger('closed-open-view')
+        }, this);
         this.views.open.on('close', this.showEntries, this);
     },
 
