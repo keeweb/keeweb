@@ -37,6 +37,7 @@ const SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-lock-on-os-lock': 'changeLockOnOsLock',
         'change .settings__general-table-view': 'changeTableView',
         'change .settings__general-colorful-icons': 'changeColorfulIcons',
+        'change .settings__general-direct-autotype': 'changeDirectAutotype',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
@@ -101,6 +102,7 @@ const SettingsGeneralView = Backbone.View.extend({
             updateManual: updateManual,
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
+            directAutotype: AppSettingsModel.instance.get('directAutotype'),
             supportsTitleBarStyles: Launcher && FeatureDetector.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.instance.get('titlebarStyle'),
             storageProviders: storageProviders
@@ -272,6 +274,12 @@ const SettingsGeneralView = Backbone.View.extend({
     changeColorfulIcons: function(e) {
         const colorfulIcons = e.target.checked || false;
         AppSettingsModel.instance.set('colorfulIcons', colorfulIcons);
+        Backbone.trigger('refresh');
+    },
+
+    changeDirectAutotype: function(e) {
+        const directAutotype = e.target.checked || false;
+        AppSettingsModel.instance.set('directAutotype', directAutotype);
         Backbone.trigger('refresh');
     },
 

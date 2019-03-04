@@ -18,6 +18,7 @@ const AppSettingsModel = Backbone.Model.extend({
         minimizeOnClose: false,
         tableView: false,
         colorfulIcons: false,
+        directAutotype: true,
         titlebarStyle: 'default',
         lockOnMinimize: true,
         lockOnCopy: false,

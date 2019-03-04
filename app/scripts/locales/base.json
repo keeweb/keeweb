@@ -358,6 +358,7 @@
   "setGenShowSubgroups": "Show entries from all subgroups",
   "setGenTableView": "Entries list table view",
   "setGenColorfulIcons": "Colorful custom icons in list",
+  "setGenDirectAutotype": "If only one matching entry is found, select that one automatically for Autotype",
   "setGenFunction": "Function",
   "setGenAutoSyncOnClose": "Automatically save and sync on close",
   "setGenAutoSyncTimer": "Automatically save and sync periodically",

@@ -199,7 +199,7 @@ const AutoType = {
 
     processEventWithFilter(evt) {
         const entries = evt.filter.getEntries();
-        if (entries.length === 1) {
+        if (entries.length === 1 && AppSettingsModel.instance.get('directAutotype')) {
             this.hideWindow(() => {
                 this.runAndHandleResult({ entry: entries.at(0) });
             });
