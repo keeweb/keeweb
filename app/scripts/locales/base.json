@@ -148,7 +148,6 @@
   "searchCase": "Match case",
   "searchRegex": "RegEx",
   "searchRank": "Rank",
-  "searchBestWorst": "Best {} Worst",
 
   "openOpen": "Open",
   "openNew": "New",
