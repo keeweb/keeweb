@@ -150,6 +150,8 @@ const OpenView = Backbone.View.extend({
         KeyHandler.offKey(Keys.DOM_VK_TAB, this.tabKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_ENTER, this.enterKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterKeyPress, this);
+        KeyHandler.offKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, this);
+        KeyHandler.offKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, this);
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
@@ -832,6 +834,10 @@ const OpenView = Backbone.View.extend({
             this.currentSelectedIndex = this.currentSelectedIndex + steps;
         }
 
+        const lastOpenFile = lastOpenFiles[this.currentSelectedIndex];
+        if (!lastOpenFile) {
+            return;
+        }
         const fileInfo = this.model.fileInfos.get(lastOpenFiles[this.currentSelectedIndex].id);
         this.showOpenFileInfo(fileInfo);
 
