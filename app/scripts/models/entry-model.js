@@ -670,7 +670,7 @@ const EntryModel = Backbone.Model.extend({
         _.forEach(ranking, rankingEntry => {
             if (this._getFieldString(rankingEntry.field).toLowerCase() !== '') {
                 const calculatedRank = Ranking.getStringRank(
-                    searchString,
+                    searchString.toLowerCase(),
                     this._getFieldString(rankingEntry.field).toLowerCase()
                 ) * rankingEntry.multiplicator;
                 rank += calculatedRank;
