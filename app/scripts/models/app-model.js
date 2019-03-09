@@ -240,7 +240,7 @@ const AppModel = Backbone.Model.extend({
     },
 
     setFilter: function(filter) {
-        this.filter = filter;
+        this.filter = this.prepareFilter(filter);
         this.filter.subGroups = this.settings.get('expandGroups');
         if (!this.filter.advanced && this.advancedSearch) {
             this.filter.advanced = this.advancedSearch;
@@ -282,7 +282,6 @@ const AppModel = Backbone.Model.extend({
     },
 
     getEntriesByFilter: function(filter) {
-        filter = this.prepareFilter(filter);
         const entries = new EntryCollection();
         this.files.forEach(file => {
             file.forEachEntry(filter, entry => entries.push(entry));

@@ -14,7 +14,7 @@ const Comparators = {
     },
 
     rankComparator: function() {
-        return function (x, y) { return y.getRank(this.filter.text) - x.getRank(this.filter.text); };
+        return function (x, y) { return y.getRank(this.filter.textLower) - x.getRank(this.filter.textLower); };
     },
 
     dateComparator: function(field, asc) {
