@@ -636,9 +636,8 @@ const EntryModel = Backbone.Model.extend({
     },
 
     getRank: function(searchString) {
-
         if (!searchString) {
-            // no search string give, so rank all items the same
+            // no search string given, so rank all items the same
             return 0;
         }
 
