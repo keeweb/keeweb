@@ -111,8 +111,8 @@ const OpenView = Backbone.View.extend({
         this.inputEl.focus();
     },
 
-    focusInput: function() {
-        if (FocusDetector.hasFocus() && !FeatureDetector.isMobile) {
+    focusInput: function(focusOnMobile) {
+        if (FocusDetector.hasFocus() && (focusOnMobile || !FeatureDetector.isMobile)) {
             this.inputEl.focus();
         }
     },
@@ -385,7 +385,7 @@ const OpenView = Backbone.View.extend({
         }
 
         const fileInfo = this.model.fileInfos.get(id);
-        this.showOpenFileInfo(fileInfo);
+        this.showOpenFileInfo(fileInfo, true);
     },
 
     removeFile: function(id) {
@@ -494,7 +494,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    showOpenFileInfo: function(fileInfo) {
+    showOpenFileInfo: function(fileInfo, fileWasClicked) {
         if (this.busy || !fileInfo) {
             return;
         }
@@ -511,6 +511,10 @@ const OpenView = Backbone.View.extend({
         this.displayOpenKeyFile();
 
         this.openFileWithFingerprint(fileInfo);
+
+        if (fileWasClicked) {
+            this.focusInput(true);
+        }
     },
 
     showOpenLocalFile: function(path, keyFilePath) {
@@ -586,7 +590,7 @@ const OpenView = Backbone.View.extend({
         this.inputEl.removeAttr('disabled').toggleClass('input--error', !!err);
         if (err) {
             logger.error('Error opening file', err);
-            this.focusInput();
+            this.focusInput(true);
             this.inputEl[0].selectionStart = 0;
             this.inputEl[0].selectionEnd = this.inputEl.val().length;
             if (err.code === 'InvalidKey') {

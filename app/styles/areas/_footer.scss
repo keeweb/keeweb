@@ -63,6 +63,10 @@
     flex: 0 0 auto;
     @include area-selectable(top);
     padding: $base-padding;
+    .standalone & {
+      padding-top: $base-padding-v;
+      padding-bottom: 1.2em;
+    }
     font-size: 1.4em;
     text-align: center;
     width: 1em;
