@@ -38,6 +38,9 @@
       flex-direction: row;
       justify-content: flex-start;
       flex-wrap: wrap;
+      @include mobile {
+        font-size: 1.2em;
+      }
     }
     &-field-wrap {
       flex: 1;
@@ -45,6 +48,9 @@
     }
     &-field {
       width: 100%;
+      @include mobile {
+        font-size: 1.05em !important;
+      }
     }
     &-icon-search {
       @include th { color: th(muted-color); }
