@@ -38,6 +38,12 @@ _.extend(StorageBase.prototype, {
             this._oauthProcessReturn(this._oauthReturnMessage);
             delete this._oauthReturnMessage;
             delete sessionStorage.authStorage;
+            if (FeatureDetector.isStandalone) {
+                const [url, urlParams] = location.href.split(/[?#]/);
+                if (urlParams) {
+                    location.href = url;
+                }
+            }
         }
         return this;
     },

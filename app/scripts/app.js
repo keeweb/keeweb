@@ -27,7 +27,7 @@ const Locale = require('./util/locale');
 const ready = Launcher && Launcher.ready || $;
 
 ready(() => {
-    if (FeatureDetector.isPopup && AuthReceiver.receive() || FeatureDetector.isFrame) {
+    if (AuthReceiver.receive() || FeatureDetector.isFrame) {
         return;
     }
     loadMixins();

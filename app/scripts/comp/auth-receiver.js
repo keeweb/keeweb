@@ -3,6 +3,9 @@ const Storage = require('../storage');
 
 const AuthReceiver = {
     receive: function() {
+        if (!FeatureDetector.isPopup && !FeatureDetector.isStandalone) {
+            return false;
+        }
         const opener = window.opener || window.parent;
         const message = this.urlArgsToMessage(window.location.href);
         const hasKeys = Object.keys(message).filter(key => key !== 'config').length > 0;
@@ -10,7 +13,9 @@ const AuthReceiver = {
             return false;
         }
         if (FeatureDetector.isStandalone) {
-            Storage[sessionStorage.authStorage].handleOAuthReturnMessage(message);
+            if (sessionStorage.authStorage) {
+                Storage[sessionStorage.authStorage].handleOAuthReturnMessage(message);
+            }
             return false;
         } else {
             opener.postMessage(message, window.location.origin);

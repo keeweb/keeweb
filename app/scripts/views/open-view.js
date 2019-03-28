@@ -15,6 +15,7 @@ const Comparators = require('../util/comparators');
 const Storage = require('../storage');
 const Launcher = require('../comp/launcher');
 const FocusDetector = require('../comp/focus-detector');
+const FeatureDetector = require('../util/feature-detector');
 
 const logger = new Logger('open-view');
 
@@ -111,7 +112,7 @@ const OpenView = Backbone.View.extend({
     },
 
     focusInput: function() {
-        if (FocusDetector.hasFocus()) {
+        if (FocusDetector.hasFocus() && !FeatureDetector.isMobile) {
             this.inputEl.focus();
         }
     },
