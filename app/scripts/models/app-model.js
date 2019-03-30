@@ -302,12 +302,8 @@ const AppModel = Backbone.Model.extend({
 
     prepareFilter: function(filter) {
         filter = _.clone(filter);
-        if (filter.text) {
-            filter.textLower = filter.text.toLowerCase();
-        }
-        if (filter.tag) {
-            filter.tagLower = filter.tag.toLowerCase();
-        }
+        filter.textLower = filter.text ? filter.text.toLowerCase() : '';
+        filter.tagLower = filter.tag ? filter.tag.toLowerCase() : '';
         return filter;
     },
 
