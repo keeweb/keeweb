@@ -575,10 +575,11 @@ const FileModel = Backbone.Model.extend({
                 this.db.move(group, null);
                 modified = true;
             }, this);
-            trashGroup.group.entries.forEach(function(entry) {
+            trashGroup.group.entries.slice().forEach(function(entry) {
                 this.db.move(entry, null);
                 modified = true;
             }, this);
+            trashGroup.get('items').reset();
             trashGroup.get('entries').reset();
             if (modified) {
                 this.setModified();
