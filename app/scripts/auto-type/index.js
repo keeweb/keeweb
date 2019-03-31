@@ -221,6 +221,14 @@ const AutoType = {
                 }
             });
         });
+        this.selectEntryView.on('show-open-files', () => {
+            this.selectEntryView.hide();
+            Backbone.trigger('open-file');
+            Backbone.once('closed-open-view', () => {
+                this.selectEntryView.show();
+                this.selectEntryView.setupKeys();
+            }, this);
+        });
     },
 
     resetPendingEvent() {
