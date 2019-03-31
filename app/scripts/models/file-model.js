@@ -431,7 +431,7 @@ const FileModel = Backbone.Model.extend({
             return;
         }
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
-        this.forEachEntry({}, entry => entry.setSaved());
+        this.forEachEntry({ includeDisabled: true }, entry => entry.setSaved());
     },
 
     setPassword: function(password) {
