@@ -1,9 +1,9 @@
 Release notes
 -------------
-##### v1.8.0 (TBD)
+##### v1.8.0 (2019-03-31)
 `+` iOS PWA improvements  
 `+` auto-type improvements  
-`*` website icons are be downloaded using favicon.keeweb.info  
+`*` website icons are downloaded using favicon.keeweb.info  
 
 ##### v1.7.8 (2019-03-02)
 `-` fix #1124: keyboard navigation issues  
