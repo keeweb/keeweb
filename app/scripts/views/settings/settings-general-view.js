@@ -47,7 +47,8 @@ const SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-show-advanced': 'showAdvancedSettings',
         'click .settings__general-dev-tools-link': 'openDevTools',
         'click .settings__general-try-beta-link': 'tryBeta',
-        'click .settings__general-show-logs-link': 'showLogs'
+        'click .settings__general-show-logs-link': 'showLogs',
+        'click .settings__general-reload-app-link': 'reloadApp'
     },
 
     views: null,
@@ -105,7 +106,8 @@ const SettingsGeneralView = Backbone.View.extend({
             directAutotype: AppSettingsModel.instance.get('directAutotype'),
             supportsTitleBarStyles: Launcher && FeatureDetector.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.instance.get('titlebarStyle'),
-            storageProviders: storageProviders
+            storageProviders: storageProviders,
+            showReloadApp: FeatureDetector.isStandalone
         });
         this.renderProviderViews(storageProviders);
     },
@@ -344,6 +346,10 @@ const SettingsGeneralView = Backbone.View.extend({
         }
         this.views.logView = new SettingsLogsView({ el: this.$el.find('.settings__general-advanced') }).render();
         this.scrollToBottom();
+    },
+
+    reloadApp: function() {
+        location.reload();
     },
 
     scrollToBottom: function() {

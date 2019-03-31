@@ -14,7 +14,12 @@
       cursor: pointer;
       line-height: $mobile-back-button-height;
       height: $mobile-back-button-height;
-      >i { margin-right: $base-padding-h; }
+      font-size: 1.2em;
+      >i {
+        margin-right: .3em;
+        font-size: 1.2em;
+        vertical-align: text-bottom;
+      }
     }
   }
 
@@ -92,7 +97,9 @@
     left: 6px;
     font-size: $large-header-font-size;
     &:hover, .details__header-color:hover & {
-      display: block;
+      @include nomobile {
+        display: block;
+      }
     }
     &-item {
       padding: 8px 12px;

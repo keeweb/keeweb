@@ -3,6 +3,9 @@
   align-items: stretch;
   flex-direction: row;
   justify-content: flex-start;
+  @include mobile {
+    @include th { background: th(intermediate-background-color); }
+  }
 
   &__db {
     flex: 0 0 auto;

@@ -50,6 +50,11 @@
       width: 100%;
       @include mobile {
         font-size: 1.05em !important;
+        box-shadow: none !important;
+        border-radius: .6em !important;
+        border: none !important;
+        padding-left: 0.4em;
+        @include th { background-color: th(secondary-background-color) !important; }
       }
     }
     &-icon-search {
@@ -60,6 +65,9 @@
       cursor: pointer;
       &:hover {
         @include th { color: th(medium-color); }
+      }
+      @include mobile {
+        top: .5em;
       }
     }
     &-btn-new {
@@ -148,6 +156,9 @@
       margin-right: 2px;
       width: 14px;
       height: 14px;
+      @include mobile {
+        margin-right: 4px;
+      }
       &--custom {
         vertical-align: text-bottom;
         &.yellow { @include filter(grayscale(1) sepia(1) hue-rotate(20deg) brightness(1.17) saturate(5.7)); }

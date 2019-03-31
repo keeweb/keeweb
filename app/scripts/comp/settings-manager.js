@@ -1,5 +1,6 @@
 const Backbone = require('backbone');
 const Locale = require('./../util/locale');
+const FeatureDetector = require('../util/feature-detector');
 
 const SettingsManager = {
     neutralLocale: null,
@@ -28,9 +29,7 @@ const SettingsManager = {
         if (settings.get('theme')) {
             this.setTheme(settings.get('theme'));
         }
-        if (settings.get('fontSize')) {
-            this.setFontSize(settings.get('fontSize'));
-        }
+        this.setFontSize(settings.get('fontSize'));
         const locale = settings.get('locale');
         try {
             if (locale) {
@@ -59,7 +58,8 @@ const SettingsManager = {
     },
 
     setFontSize: function(fontSize) {
-        document.documentElement.style.fontSize = fontSize ? (12 + fontSize * 2) + 'px' : '';
+        const defaultFontSize = FeatureDetector.isMobile ? 14 : 12;
+        document.documentElement.style.fontSize = (defaultFontSize + (fontSize || 0) * 2) + 'px';
     },
 
     setLocale(loc) {

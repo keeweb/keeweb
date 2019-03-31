@@ -390,6 +390,7 @@
   "setGenTryBetaWarning": "Unsaved files",
   "setGenTryBetaWarningBody": "Please save all files and click this button again",
   "setGenShowAppLogs": "Show app logs",
+  "setGenReloadApp": "Reload the app",
 
   "setFilePath": "File path",
   "setFileStorage": "This file is loaded from {}.",
