@@ -14,3 +14,4 @@ obj/
 xcuserdata/
 *.suo
 .idea/
+.vscode

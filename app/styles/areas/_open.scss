@@ -36,10 +36,11 @@
       }
     }
     @include mobile() {
+      &-i, &-svg { font-size: 4.6em; }
+      &-text { font-size: 1.1em; }
       .open__icons--lower & {
-        margin: 8px;
-        &-i, &-svg { font-size: 2em; }
-        &-text { font-size: .5em; }
+        margin: 14px;
+        &-i, &-svg { font-size: 4.2em; margin-bottom: .1em; }
       }
     }
   }

@@ -3,6 +3,9 @@
   align-items: stretch;
   flex-direction: row;
   justify-content: flex-start;
+  @include mobile {
+    @include th { background: th(intermediate-background-color); }
+  }
 
   &__db {
     flex: 0 0 auto;
@@ -63,6 +66,10 @@
     flex: 0 0 auto;
     @include area-selectable(top);
     padding: $base-padding;
+    .standalone & {
+      padding-top: $base-padding-v;
+      padding-bottom: 1.2em;
+    }
     font-size: 1.4em;
     text-align: center;
     width: 1em;

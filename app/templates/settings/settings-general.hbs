@@ -141,6 +141,13 @@
         <label for="settings__general-minimize">{{res 'setGenMinInstead'}}</label>
     </div>
     {{/if}}
+    {{#if canAutoType}}
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-direct-autotype"
+            id="settings__general-direct-autotype" {{#if directAutotype}}checked{{/if}} />
+        <label for="settings__general-direct-autotype">{{res 'setGenDirectAutotype'}}</label>
+    </div>
+    {{/if}}
 
     <h2>{{res 'setGenLock'}}</h2>
     <div>
@@ -194,8 +201,11 @@
     <a class="settings__general-show-advanced">{{res 'setGenShowAdvanced'}}</a>
     <div class="settings__general-advanced hide">
         {{#if devTools}}
-        <button class="btn-silent settings__general-dev-tools-link">{{res 'setGenDevTools'}}</button>
-        <button class="btn-silent settings__general-try-beta-link">{{res 'setGenTryBeta'}}</button>
+            <button class="btn-silent settings__general-dev-tools-link">{{res 'setGenDevTools'}}</button>
+            <button class="btn-silent settings__general-try-beta-link">{{res 'setGenTryBeta'}}</button>
+        {{/if}}
+        {{#if showReloadApp}}
+            <button class="btn-silent settings__general-reload-app-link">{{res 'setGenReloadApp'}}</button>
         {{/if}}
         <button class="btn-silent settings__general-show-logs-link">{{res 'setGenShowAppLogs'}}</button>
     </div>

@@ -38,6 +38,9 @@
       flex-direction: row;
       justify-content: flex-start;
       flex-wrap: wrap;
+      @include mobile {
+        font-size: 1.2em;
+      }
     }
     &-field-wrap {
       flex: 1;
@@ -45,6 +48,14 @@
     }
     &-field {
       width: 100%;
+      @include mobile {
+        font-size: 1.05em !important;
+        box-shadow: none !important;
+        border-radius: .6em !important;
+        border: none !important;
+        padding-left: 0.4em;
+        @include th { background-color: th(secondary-background-color) !important; }
+      }
     }
     &-icon-search {
       @include th { color: th(muted-color); }
@@ -54,6 +65,9 @@
       cursor: pointer;
       &:hover {
         @include th { color: th(medium-color); }
+      }
+      @include mobile {
+        top: .5em;
       }
     }
     &-btn-new {
@@ -122,6 +136,13 @@
         @include area-selected(right);
       }
     }
+    @include mobile {
+      margin: 0 $base-padding-h;
+      @include th { border-bottom: light-border(); }
+      &:last-of-type {
+        border-bottom: none;
+      }
+    }
 
     &:not(.list__item--table) {
       height: 3rem;
@@ -135,6 +156,9 @@
       margin-right: 2px;
       width: 14px;
       height: 14px;
+      @include mobile {
+        margin-right: 4px;
+      }
       &--custom {
         vertical-align: text-bottom;
         &.yellow { @include filter(grayscale(1) sepia(1) hue-rotate(20deg) brightness(1.17) saturate(5.7)); }

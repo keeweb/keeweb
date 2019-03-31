@@ -5,6 +5,7 @@ const Color = require('../util/color');
 const IconUrl = require('../util/icon-url');
 const Otp = require('../util/otp');
 const kdbxweb = require('kdbxweb');
+const Ranking = require('../util/ranking');
 
 const EntryModel = Backbone.Model.extend({
     defaults: {},
@@ -15,9 +16,6 @@ const EntryModel = Backbone.Model.extend({
     builtInFields: ['Title', 'Password', 'UserName', 'URL', 'Notes', 'TOTP Seed', 'TOTP Settings', '_etm_template_uuid'],
     fieldRefFields: ['title', 'password', 'user', 'url', 'notes'],
     fieldRefIds: { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' },
-
-    initialize: function() {
-    },
 
     setEntry: function(entry, group, file) {
         this.entry = entry;
@@ -392,12 +390,22 @@ const EntryModel = Backbone.Model.extend({
         const hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
         if (hasValue || allowEmpty || this.builtInFields.indexOf(field) >= 0) {
             this._entryModified();
+            val = this.sanitizeFieldValue(val);
             this.entry.fields[field] = val;
         } else if (this.entry.fields.hasOwnProperty(field)) {
             this._entryModified();
             delete this.entry.fields[field];
         }
         this._fillByEntry();
+    },
+
+    sanitizeFieldValue: function(val) {
+        if (val && !val.isProtected && val.indexOf('\x1A') >= 0) {
+            // https://github.com/keeweb/keeweb/issues/910
+            // eslint-disable-next-line no-control-regex
+            val = val.replace(/\x1A/g, '');
+        }
+        return val;
     },
 
     hasField: function(field) {
@@ -635,6 +643,56 @@ const EntryModel = Backbone.Model.extend({
         this.entry.times.creationTime = this.entry.times.lastModTime;
         this.entry.fields.Title = '';
         this._fillByEntry();
+    },
+
+    getRank: function(searchString) {
+        if (!searchString) {
+            // no search string given, so rank all items the same
+            return 0;
+        }
+
+        let rank = 0;
+
+        const ranking = [
+            {
+                field: 'Title',
+                multiplicator: 10
+            },
+            {
+                field: 'URL',
+                multiplicator: 8
+            },
+            {
+                field: 'UserName',
+                multiplicator: 5
+            },
+            {
+                field: 'Notes',
+                multiplicator: 2
+            }
+        ];
+
+        const fieldNames = Object.keys(this.fields);
+        _.forEach(fieldNames, field => {
+            ranking.push(
+                {
+                    field: field,
+                    multiplicator: 2
+                }
+            );
+        });
+
+        _.forEach(ranking, rankingEntry => {
+            if (this._getFieldString(rankingEntry.field).toLowerCase() !== '') {
+                const calculatedRank = Ranking.getStringRank(
+                    searchString,
+                    this._getFieldString(rankingEntry.field).toLowerCase()
+                ) * rankingEntry.multiplicator;
+                rank += calculatedRank;
+            }
+        });
+
+        return rank;
     }
 });
 

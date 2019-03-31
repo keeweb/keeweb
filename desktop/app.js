@@ -163,7 +163,7 @@ function createMainWindow() {
     setMenu();
     mainWindow.loadURL(htmlPath);
     if (showDevToolsOnStart) {
-        mainWindow.openDevTools();
+        mainWindow.openDevTools({ mode: 'bottom' });
     }
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
@@ -327,7 +327,8 @@ function setMenu() {
             {
                 label: 'Window',
                 submenu: [
-                    { accelerator: 'CmdOrCtrl+M', role: 'minimize' }
+                    { accelerator: 'CmdOrCtrl+M', role: 'minimize' },
+                    { accelerator: 'Command+W', role: 'close' }
                 ]
             }
         ];
@@ -475,7 +476,7 @@ function hookRequestHeaders() {
 // partially off-screen or straddling two displays if the user desires that.
 
 function coerceMainWindowPositionToConnectedDisplay() {
-    const eScreen = require('electron').screen;
+    const eScreen = electron.screen;
     const displays = eScreen.getAllDisplays();
     if (!displays || !displays.length) return;
     const windowBounds = mainWindow.getBounds();

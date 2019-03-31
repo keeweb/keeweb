@@ -421,11 +421,17 @@ const FileModel = Backbone.Model.extend({
             syncing: false,
             syncError: error
         });
+
+        const shouldResetFingerprint = this.get('passwordChanged') && this.has('fingerprint');
+        if (shouldResetFingerprint && !error) {
+            this.set({ fingerprint: null });
+        }
+
         if (!this.get('open')) {
             return;
         }
         this.setOpenFile({ passwordLength: this.get('passwordLength') });
-        this.forEachEntry({}, entry => entry.setSaved());
+        this.forEachEntry({ includeDisabled: true }, entry => entry.setSaved());
     },
 
     setPassword: function(password) {
@@ -569,10 +575,11 @@ const FileModel = Backbone.Model.extend({
                 this.db.move(group, null);
                 modified = true;
             }, this);
-            trashGroup.group.entries.forEach(function(entry) {
+            trashGroup.group.entries.slice().forEach(function(entry) {
                 this.db.move(entry, null);
                 modified = true;
             }, this);
+            trashGroup.get('items').reset();
             trashGroup.get('entries').reset();
             if (modified) {
                 this.setModified();

@@ -9,6 +9,7 @@ const Launcher = {
     version: window.process.versions.electron,
     autoTypeSupported: true,
     thirdPartyStoragesSupported: true,
+    clipboardSupported: true,
     req: window.require,
     platform: function() {
         return process.platform;
@@ -27,7 +28,7 @@ const Launcher = {
     },
     devTools: true,
     openDevTools: function() {
-        this.electron().remote.getCurrentWindow().openDevTools();
+        this.electron().remote.getCurrentWindow().openDevTools({ mode: 'bottom' });
     },
     getSaveFileName: function(defaultPath, callback) {
         if (defaultPath) {
@@ -211,6 +212,7 @@ const Launcher = {
     showMainWindow: function() {
         const win = this.getMainWindow();
         win.show();
+        win.focus();
         win.restore();
     },
     spawn: function(config) {

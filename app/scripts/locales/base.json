@@ -27,6 +27,7 @@
   "help": "Help",
   "settings": "Settings",
   "plugins": "Plugins",
+  "rank": "rank",
 
   "cache": "cache",
   "file": "file",
@@ -146,6 +147,7 @@
   "searchOptions": "Options",
   "searchCase": "Match case",
   "searchRegex": "RegEx",
+  "searchRank": "Rank",
 
   "openOpen": "Open",
   "openNew": "New",
@@ -355,6 +357,7 @@
   "setGenShowSubgroups": "Show entries from all subgroups",
   "setGenTableView": "Entries list table view",
   "setGenColorfulIcons": "Colorful custom icons in list",
+  "setGenDirectAutotype": "If only one matching entry is found, select that one automatically for Autotype",
   "setGenFunction": "Function",
   "setGenAutoSyncOnClose": "Automatically save and sync on close",
   "setGenAutoSyncTimer": "Automatically save and sync periodically",
@@ -387,6 +390,7 @@
   "setGenTryBetaWarning": "Unsaved files",
   "setGenTryBetaWarningBody": "Please save all files and click this button again",
   "setGenShowAppLogs": "Show app logs",
+  "setGenReloadApp": "Reload the app",
 
   "setFilePath": "File path",
   "setFileStorage": "This file is loaded from {}.",

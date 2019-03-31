@@ -19,17 +19,21 @@ const EntryCollection = Backbone.Collection.extend({
         '-created': Comparators.dateComparator('created', false),
         'updated': Comparators.dateComparator('updated', true),
         '-updated': Comparators.dateComparator('updated', false),
-        '-attachments': function(x, y) { return this.attachmentSortVal(x).localeCompare(this.attachmentSortVal(y)); }
+        '-attachments': function(x, y) { return this.attachmentSortVal(x).localeCompare(this.attachmentSortVal(y)); },
+        '-rank': Comparators.rankComparator()
     },
 
     defaultComparator: 'title',
+
+    filter: null,
 
     initialize: function(models, options) {
         const comparatorName = options && options.comparator || this.defaultComparator;
         this.comparator = this.comparators[comparatorName];
     },
 
-    sortEntries: function(comparator) {
+    sortEntries: function(comparator, filter) {
+        this.filter = filter;
         this.comparator = this.comparators[comparator] || this.comparators[this.defaultComparator];
         this.sort();
     },

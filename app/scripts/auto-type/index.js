@@ -199,7 +199,7 @@ const AutoType = {
 
     processEventWithFilter(evt) {
         const entries = evt.filter.getEntries();
-        if (entries.length === 1) {
+        if (entries.length === 1 && AppSettingsModel.instance.get('directAutotype')) {
             this.hideWindow(() => {
                 this.runAndHandleResult({ entry: entries.at(0) });
             });
@@ -220,6 +220,14 @@ const AutoType = {
                     this.runAndHandleResult(result);
                 }
             });
+        });
+        this.selectEntryView.on('show-open-files', () => {
+            this.selectEntryView.hide();
+            Backbone.trigger('open-file');
+            Backbone.once('closed-open-view', () => {
+                this.selectEntryView.show();
+                this.selectEntryView.setupKeys();
+            }, this);
         });
     },
 

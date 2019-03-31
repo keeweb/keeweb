@@ -14,7 +14,12 @@
       cursor: pointer;
       line-height: $mobile-back-button-height;
       height: $mobile-back-button-height;
-      >i { margin-right: $base-padding-h; }
+      font-size: 1.2em;
+      >i {
+        margin-right: .3em;
+        font-size: 1.2em;
+        vertical-align: text-bottom;
+      }
     }
   }
 
@@ -41,6 +46,9 @@
         @include th {
           border: 1px solid th(light-border-color);
         }
+        @include mobile {
+          border-color: transparent;
+        }
       }
     }
     input.details__header-title-input {
@@ -52,6 +60,9 @@
       font-weight: bold;
       position: relative;
       top: -2px;
+      @include mobile {
+        width: 100%;
+      }
     }
     &-color, &-icon {
       @include user-select(none);
@@ -86,7 +97,9 @@
     left: 6px;
     font-size: $large-header-font-size;
     &:hover, .details__header-color:hover & {
-      display: block;
+      @include nomobile {
+        display: block;
+      }
     }
     &-item {
       padding: 8px 12px;
@@ -147,6 +160,9 @@
       align-items: stretch;
       flex-direction: column;
       justify-content: flex-start;
+      @include mobile {
+        width: 100%;
+      }
     }
 
     &-after {
@@ -208,15 +224,19 @@
       .details__field--editable & {
         border-radius: $base-border-radius;
         &:hover {
-          transition: border-color $base-duration $base-timing;
-          border: 1px solid;
-          @include th {
-            border-color: th(light-border-color);
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.06);
-          }
-          .details__field-value-add-label {
-            @include th { color: th(muted-color); }
-            transition: color $base-duration $base-timing;
+          @include nomobile {
+            transition: border-color $base-duration $base-timing;
+            border: 1px solid;
+            @include th {
+              border-color: th(light-border-color);
+              box-shadow: 0 0 3px rgba(0, 0, 0, 0.06);
+            }
+            .details__field-value-add-label {
+              @include th {
+                color: th(muted-color);
+              }
+              transition: color $base-duration $base-timing;
+            }
           }
         }
       }
@@ -249,6 +269,9 @@
         }
         .details__field--edit[active-mobile-action=cancel] & {
           @include th { background: th(error-color); border-color: th(error-color); }
+        }
+        @include mobile {
+          border-color: transparent !important;
         }
       }
       >input {
@@ -332,6 +355,11 @@
       .details__field-label, .details__field-value {
         @include user-select(none);
       }
+    }
+
+    @include mobile {
+      @include th { border-bottom: light-border(); }
+      padding-bottom: .5em;
     }
   }
 

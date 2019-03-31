@@ -1,4 +1,4 @@
-const LastChar = String.fromCharCode(0xffffffff);
+const LastChar = String.fromCharCode(0xfffd);
 
 const ciCompare = (window.Intl && window.Intl.Collator && !/Edge/.test(navigator.userAgent)) // bugged in Edge: #808
     ? new Intl.Collator(undefined, { sensitivity: 'base' }).compare
@@ -11,6 +11,10 @@ const Comparators = {
         } else {
             return function (x, y) { return ciCompare(y[field], x[field]); };
         }
+    },
+
+    rankComparator: function() {
+        return function (x, y) { return y.getRank(this.filter.textLower) - x.getRank(this.filter.textLower); };
     },
 
     dateComparator: function(field, asc) {

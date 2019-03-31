@@ -163,6 +163,7 @@ const SettingsFileView = Backbone.View.extend({
                 return;
             }
         }
+
         this.appModel.syncFile(this.model, arg);
     },
 

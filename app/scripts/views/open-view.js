@@ -15,6 +15,7 @@ const Comparators = require('../util/comparators');
 const Storage = require('../storage');
 const Launcher = require('../comp/launcher');
 const FocusDetector = require('../comp/focus-detector');
+const FeatureDetector = require('../util/feature-detector');
 
 const logger = new Logger('open-view');
 
@@ -110,8 +111,8 @@ const OpenView = Backbone.View.extend({
         this.inputEl.focus();
     },
 
-    focusInput: function() {
-        if (FocusDetector.hasFocus()) {
+    focusInput: function(focusOnMobile) {
+        if (FocusDetector.hasFocus() && (focusOnMobile || !FeatureDetector.isMobile)) {
             this.inputEl.focus();
         }
     },
@@ -384,21 +385,7 @@ const OpenView = Backbone.View.extend({
         }
 
         const fileInfo = this.model.fileInfos.get(id);
-        this.showOpenFileInfo(fileInfo);
-
-        if (fileInfo && Launcher && Launcher.fingerprints) {
-            this.openFileWithFingerprint(fileInfo);
-        }
-    },
-
-    openFileWithFingerprint(fileInfo) {
-        if (fileInfo.get('fingerprint')) {
-            Launcher.fingerprints.auth(fileInfo.id, fileInfo.get('fingerprint'), password => {
-                this.inputEl.val(password);
-                this.inputEl.trigger('input');
-                this.openDb();
-            });
-        }
+        this.showOpenFileInfo(fileInfo, true);
     },
 
     removeFile: function(id) {
@@ -507,7 +494,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    showOpenFileInfo: function(fileInfo) {
+    showOpenFileInfo: function(fileInfo, fileWasClicked) {
         if (this.busy || !fileInfo) {
             return;
         }
@@ -522,6 +509,12 @@ const OpenView = Backbone.View.extend({
         this.params.keyFileData = null;
         this.displayOpenFile();
         this.displayOpenKeyFile();
+
+        this.openFileWithFingerprint(fileInfo);
+
+        if (fileWasClicked) {
+            this.focusInput(true);
+        }
     },
 
     showOpenLocalFile: function(path, keyFilePath) {
@@ -541,6 +534,20 @@ const OpenView = Backbone.View.extend({
             this.params.keyFilePath = keyFilePath;
             this.params.keyFileData = null;
             this.displayOpenKeyFile();
+        }
+    },
+
+    openFileWithFingerprint: function(fileInfo) {
+        if (!fileInfo.has('fingerprint')) {
+            return;
+        }
+
+        if (Launcher && Launcher.fingerprints) {
+            Launcher.fingerprints.auth(fileInfo.id, fileInfo.get('fingerprint'), password => {
+                this.inputEl.val(password);
+                this.inputEl.trigger('input');
+                this.openDb();
+            });
         }
     },
 
@@ -583,7 +590,7 @@ const OpenView = Backbone.View.extend({
         this.inputEl.removeAttr('disabled').toggleClass('input--error', !!err);
         if (err) {
             logger.error('Error opening file', err);
-            this.focusInput();
+            this.focusInput(true);
             this.inputEl[0].selectionStart = 0;
             this.inputEl[0].selectionEnd = this.inputEl.val().length;
             if (err.code === 'InvalidKey') {

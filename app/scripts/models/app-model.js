@@ -240,7 +240,7 @@ const AppModel = Backbone.Model.extend({
     },
 
     setFilter: function(filter) {
-        this.filter = filter;
+        this.filter = this.prepareFilter(filter);
         this.filter.subGroups = this.settings.get('expandGroups');
         if (!this.filter.advanced && this.advancedSearch) {
             this.filter.advanced = this.advancedSearch;
@@ -274,7 +274,7 @@ const AppModel = Backbone.Model.extend({
 
     getEntries: function() {
         const entries = this.getEntriesByFilter(this.filter);
-        entries.sortEntries(this.sort);
+        entries.sortEntries(this.sort, this.filter);
         if (this.filter.trash) {
             this.addTrashGroups(entries);
         }
@@ -282,7 +282,6 @@ const AppModel = Backbone.Model.extend({
     },
 
     getEntriesByFilter: function(filter) {
-        filter = this.prepareFilter(filter);
         const entries = new EntryCollection();
         this.files.forEach(file => {
             file.forEachEntry(filter, entry => entries.push(entry));
@@ -303,12 +302,8 @@ const AppModel = Backbone.Model.extend({
 
     prepareFilter: function(filter) {
         filter = _.clone(filter);
-        if (filter.text) {
-            filter.textLower = filter.text.toLowerCase();
-        }
-        if (filter.tag) {
-            filter.tagLower = filter.tag.toLowerCase();
-        }
+        filter.textLower = filter.text ? filter.text.toLowerCase() : '';
+        filter.tagLower = filter.tag ? filter.tag.toLowerCase() : '';
         return filter;
     },
 
@@ -1021,12 +1016,12 @@ const AppModel = Backbone.Model.extend({
     },
 
     saveFileFingerprint: function(file, password) {
-        if (Launcher && Launcher.fingerprints && password) {
+        if (Launcher && Launcher.fingerprints && !file.has('fingerprint')) {
             const fileInfo = this.fileInfos.get(file.id);
-            Launcher.fingerprints.register(file.id, this.params.password, token => {
+            Launcher.fingerprints.register(file.id, password, token => {
                 if (token) {
-                    fileInfo.set('fingerprint', token);
-                    this.model.fileInfos.save();
+                    fileInfo.set({ fingerprint: token });
+                    this.fileInfos.save();
                 }
             });
         }

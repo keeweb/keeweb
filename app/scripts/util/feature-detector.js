@@ -47,6 +47,9 @@ const FeatureDetector = {
         if (window.navigator.userAgent.indexOf('Edge/') > -1) {
             return 'edge';
         }
+        if (navigator.standalone) {
+            return 'standalone';
+        }
         return '';
     }
 };

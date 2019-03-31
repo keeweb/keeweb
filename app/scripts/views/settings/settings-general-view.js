@@ -37,6 +37,7 @@ const SettingsGeneralView = Backbone.View.extend({
         'change .settings__general-lock-on-os-lock': 'changeLockOnOsLock',
         'change .settings__general-table-view': 'changeTableView',
         'change .settings__general-colorful-icons': 'changeColorfulIcons',
+        'change .settings__general-direct-autotype': 'changeDirectAutotype',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
@@ -46,7 +47,8 @@ const SettingsGeneralView = Backbone.View.extend({
         'click .settings__general-show-advanced': 'showAdvancedSettings',
         'click .settings__general-dev-tools-link': 'openDevTools',
         'click .settings__general-try-beta-link': 'tryBeta',
-        'click .settings__general-show-logs-link': 'showLogs'
+        'click .settings__general-show-logs-link': 'showLogs',
+        'click .settings__general-reload-app-link': 'reloadApp'
     },
 
     views: null,
@@ -101,9 +103,11 @@ const SettingsGeneralView = Backbone.View.extend({
             updateManual: updateManual,
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
+            directAutotype: AppSettingsModel.instance.get('directAutotype'),
             supportsTitleBarStyles: Launcher && FeatureDetector.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.instance.get('titlebarStyle'),
-            storageProviders: storageProviders
+            storageProviders: storageProviders,
+            showReloadApp: FeatureDetector.isStandalone
         });
         this.renderProviderViews(storageProviders);
     },
@@ -275,6 +279,12 @@ const SettingsGeneralView = Backbone.View.extend({
         Backbone.trigger('refresh');
     },
 
+    changeDirectAutotype: function(e) {
+        const directAutotype = e.target.checked || false;
+        AppSettingsModel.instance.set('directAutotype', directAutotype);
+        Backbone.trigger('refresh');
+    },
+
     restartApp: function() {
         if (Launcher) {
             Launcher.requestRestart();
@@ -336,6 +346,10 @@ const SettingsGeneralView = Backbone.View.extend({
         }
         this.views.logView = new SettingsLogsView({ el: this.$el.find('.settings__general-advanced') }).render();
         this.scrollToBottom();
+    },
+
+    reloadApp: function() {
+        location.reload();
     },
 
     scrollToBottom: function() {

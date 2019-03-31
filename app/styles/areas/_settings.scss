@@ -41,7 +41,12 @@
       line-height: $mobile-back-button-height;
       height: $mobile-back-button-height;
       padding-bottom: $base-padding-v;
-      >i { margin-right: $base-padding-h; }
+      font-size: 1.2em;
+      >i {
+        margin-right: .3em;
+        font-size: 1.2em;
+        vertical-align: text-bottom;
+      }
       &-pre { display: inline; }
     }
     @include nomobile {
