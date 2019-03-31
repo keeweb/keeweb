@@ -562,6 +562,6 @@
   "webdavSavePut": "Ecraser le fichier kdbx avec PUT",
   "launcherSave": "Sauvegarder base des mots de passe",
   "launcherFileFilter": "Fichiers Keepass",
-  "authPopupRequired": "Les pop-up sont blockés",
+  "authPopupRequired": "Les pop-up sont bloquées",
   "authPopupRequiredBody": "Merci d'autoriser les popups pour cette appli dans votre navigateur ou essayez à nouveau."
 }
