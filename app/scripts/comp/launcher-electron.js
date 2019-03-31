@@ -211,7 +211,7 @@ const Launcher = {
     },
     showMainWindow: function() {
         const win = this.getMainWindow();
-        win.show();
+        win.focus();
         win.restore();
     },
     spawn: function(config) {
