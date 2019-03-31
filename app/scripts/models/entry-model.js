@@ -390,12 +390,22 @@ const EntryModel = Backbone.Model.extend({
         const hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
         if (hasValue || allowEmpty || this.builtInFields.indexOf(field) >= 0) {
             this._entryModified();
+            val = this.sanitizeFieldValue(val);
             this.entry.fields[field] = val;
         } else if (this.entry.fields.hasOwnProperty(field)) {
             this._entryModified();
             delete this.entry.fields[field];
         }
         this._fillByEntry();
+    },
+
+    sanitizeFieldValue: function(val) {
+        if (val && !val.isProtected && val.indexOf('\x1A') >= 0) {
+            // https://github.com/keeweb/keeweb/issues/910
+            // eslint-disable-next-line no-control-regex
+            val = val.replace(/\x1A/g, '');
+        }
+        return val;
     },
 
     hasField: function(field) {
