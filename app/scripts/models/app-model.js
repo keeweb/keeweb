@@ -282,7 +282,7 @@ const AppModel = Backbone.Model.extend({
     },
 
     getEntriesByFilter: function(filter) {
-        let preparedFilter = this.prepareFilter(filter);
+        const preparedFilter = this.prepareFilter(filter);
         const entries = new EntryCollection();
         this.files.forEach(file => {
             file.forEachEntry(preparedFilter, entry => entries.push(entry));
