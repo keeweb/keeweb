@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.8.1 (2019-04-05)
+`-` fix #1152: broken filtering after auto-type  
+
 ##### v1.8.0 (2019-03-31)
 `+` iOS PWA improvements  
 `+` auto-type improvements  
