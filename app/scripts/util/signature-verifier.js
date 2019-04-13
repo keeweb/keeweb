@@ -15,16 +15,9 @@ const SignatureVerifier = {
                     pk = this.getPublicKey();
                 }
                 signature = kdbxweb.ByteUtils.base64ToBytes(signature);
-                let subtle = window.crypto.subtle;
-                let keyFormat = 'spki';
-                if (subtle) {
-                    pk = kdbxweb.ByteUtils.base64ToBytes(pk);
-                } else {
-                    // TODO: remove this shit after Safari 10.2 with spki support goes live
-                    subtle = window.crypto.webkitSubtle;
-                    keyFormat = 'jwk';
-                    pk = this.spkiToJwk(pk);
-                }
+                const subtle = window.crypto.subtle;
+                const keyFormat = 'spki';
+                pk = kdbxweb.ByteUtils.base64ToBytes(pk);
                 subtle.importKey(
                     keyFormat, pk,
                     algo,
@@ -53,22 +46,6 @@ const SignatureVerifier = {
                 reject();
             }
         });
-    },
-
-    spkiToJwk(key) {
-        // This is terribly wrong but we don't want to handle complete ASN1 format here
-        const n = key
-            .replace('MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA', '')
-            .replace('IDAQAB', '')
-            .replace(/\+/g, '-')
-            .replace(/\//g, '_');
-        return kdbxweb.ByteUtils.stringToBytes(JSON.stringify({
-            kty: 'RSA',
-            alg: 'RS256',
-            e: 'AQAB',
-            n: n,
-            ext: true
-        }));
     },
 
     getPublicKey() {
