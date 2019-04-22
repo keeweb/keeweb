@@ -422,7 +422,7 @@ module.exports = function(grunt) {
                         pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
                         targetDir: 'dist/desktop',
                         appName: 'KeeWeb',
-                        depends: 'libappindicator1, libgconf2-4',
+                        depends: 'libappindicator1, libgconf-2-4',
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
                         }
@@ -441,7 +441,7 @@ module.exports = function(grunt) {
                         pkgName: `KeeWeb-${pkg.version}.linux.ia32.deb`,
                         targetDir: 'dist/desktop',
                         appName: 'KeeWeb',
-                        depends: 'libappindicator1, libgconf2-4',
+                        depends: 'libappindicator1, libgconf-2-4',
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
                         }
