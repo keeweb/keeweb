@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.8.2 (2019-04-22)
+`-` fix #1163: fixed libgconf-2-4 dependency  
+
 ##### v1.8.1 (2019-04-05)
 `-` fix #1152: broken filtering after auto-type  
 
