@@ -212,7 +212,7 @@
   "detHistoryRevertAlertBody": "Your current state will be saved to history.",
   "detHistoryDeleteAlert": "Delete this history state?",
   "detHistoryDeleteAlertBody": "You will not be able to restore it.",
-  "detHistoryDiscardChangesAlert": "Discard changed made to entry?",
+  "detHistoryDiscardChangesAlert": "Discard changes made to entry?",
   "detHistoryDiscardChangesAlertBody": "Unsaved changed will be lost, there will be no way back.",
   "detBackToList": "back to list",
   "detSetIconColor": "Change color",
