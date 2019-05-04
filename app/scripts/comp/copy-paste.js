@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Backbone from 'backbone';
 import Launcher from './launcher';
 import AppSettingsModel from '../models/app-settings-model';

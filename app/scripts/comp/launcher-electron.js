@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import Locale from '../util/locale';
 import Logger from '../util/logger';

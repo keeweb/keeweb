@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import StorageBase from './storage-base';
 
 const StorageWebDav = StorageBase.extend({
@@ -107,9 +108,9 @@ const StorageWebDav = StorageBase.extend({
                         let movePath = path;
                         if (movePath.indexOf('://') < 0) {
                             if (movePath.indexOf('/') === 0) {
-                                movePath = location.protocol + '//' + location.host + movePath;
+                                movePath = window.location.protocol + '//' + window.location.host + movePath;
                             } else {
-                                movePath = location.href.replace(/\?(.*)/, '').replace(/[^/]*$/, movePath);
+                                movePath = window.location.href.replace(/\?(.*)/, '').replace(/[^/]*$/, movePath);
                             }
                         }
                         that._request(_.defaults({

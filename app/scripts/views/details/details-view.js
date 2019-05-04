@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import _ from 'underscore';
 import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
 import GroupModel from '../../models/group-model';

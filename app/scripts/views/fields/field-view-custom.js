@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import _ from 'underscore';
 import Backbone from 'backbone';
 import FieldViewText from './field-view-text';
 import FieldView from './field-view';

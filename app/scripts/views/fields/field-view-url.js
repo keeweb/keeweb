@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import FieldViewText from './field-view-text';
 
 const FieldViewUrl = FieldViewText.extend({

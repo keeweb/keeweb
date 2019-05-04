@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import MenuItemModel from './menu/menu-item-model';
 import EntryModel from '../models/entry-model';
 import IconMap from '../const/icon-map';

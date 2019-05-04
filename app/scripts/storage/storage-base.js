@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import Logger from '../util/logger';
 import AppSettingsModel from '../models/app-settings-model';
@@ -39,9 +40,9 @@ _.extend(StorageBase.prototype, {
             delete this._oauthReturnMessage;
             delete sessionStorage.authStorage;
             if (FeatureDetector.isStandalone) {
-                const [url, urlParams] = location.href.split(/[?#]/);
+                const [url, urlParams] = window.location.href.split(/[?#]/);
                 if (urlParams) {
-                    location.href = url;
+                    window.location.href = url;
                 }
             }
         }
@@ -101,11 +102,11 @@ _.extend(StorageBase.prototype, {
     },
 
     _openPopup: function(url, title, width, height) {
-        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
-        const dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
+        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screen.left;
+        const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screen.top;
 
-        const winWidth = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-        const winHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+        const winWidth = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : window.screen.width;
+        const winHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : window.screen.height;
 
         const left = ((winWidth / 2) - (width / 2)) + dualScreenLeft;
         const top = ((winHeight / 2) - (height / 2)) + dualScreenTop;

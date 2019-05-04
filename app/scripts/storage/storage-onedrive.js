@@ -226,7 +226,7 @@ const StorageOneDrive = StorageBase.extend({
     _getClientId: function() {
         let clientId = this.appSettings.get('onedriveClientId');
         if (!clientId) {
-            clientId = location.origin.indexOf('localhost') >= 0 ? OneDriveClientId.Local : OneDriveClientId.Production;
+            clientId = window.location.origin.indexOf('localhost') >= 0 ? OneDriveClientId.Local : OneDriveClientId.Production;
         }
         return clientId;
     },

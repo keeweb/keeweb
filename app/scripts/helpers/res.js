@@ -1,4 +1,4 @@
-import Handlebars from 'hbs';
+import Handlebars from 'handlebars/runtime';
 import Locale from '../util/locale';
 
 Handlebars.registerHelper('res', function(key, options) {

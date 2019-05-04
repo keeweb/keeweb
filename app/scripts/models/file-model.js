@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import GroupCollection from '../collections/group-collection';
 import GroupModel from './group-model';

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import AttachmentModel from './attachment-model';
 import IconMap from '../const/icon-map';

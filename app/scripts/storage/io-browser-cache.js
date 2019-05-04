@@ -1,3 +1,4 @@
+import _ from 'underscore';
 const idb = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
 const IoBrowserCache = function(config) {

@@ -1,4 +1,5 @@
 
+import $ from 'jquery';
 import Backbone from 'backbone';
 import AutoTypeHintView from '../auto-type-hint-view';
 import Locale from '../../util/locale';

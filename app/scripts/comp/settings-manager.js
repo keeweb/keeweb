@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import Locale from './../util/locale';
 import FeatureDetector from '../util/feature-detector';

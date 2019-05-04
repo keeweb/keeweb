@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import Alerts from './alerts';
 import Locale from '../util/locale';

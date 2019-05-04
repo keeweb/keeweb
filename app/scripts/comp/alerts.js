@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import ModalView from '../views/modal-view';
 import Locale from '../util/locale';
 

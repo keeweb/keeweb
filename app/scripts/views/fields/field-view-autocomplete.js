@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import _ from 'underscore';
 import FieldViewText from './field-view-text';
 import Keys from '../../const/keys';
 

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import AppSettingsModel from './app-settings-model';
 import MenuModel from './menu/menu-model';
@@ -101,7 +102,7 @@ const AppModel = Backbone.Model.extend({
         }
         const link = document.createElement('a');
         link.href = url;
-        const isExternal = link.host && link.host !== location.host;
+        const isExternal = link.host && link.host !== window.location.host;
         if (isExternal) {
             throw 'Loading config from this location is not allowed';
         }

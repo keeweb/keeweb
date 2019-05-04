@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Launcher from './launcher';
 import Logger from '../util/logger';
 

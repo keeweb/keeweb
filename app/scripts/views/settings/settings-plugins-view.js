@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Backbone from 'backbone';
 import Locale from '../../util/locale';
 import PluginManager from '../../plugins/plugin-manager';

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import RuntimeInfo from '../../comp/runtime-info';
 import Links from '../../const/links';

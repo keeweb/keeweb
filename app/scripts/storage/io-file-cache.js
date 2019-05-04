@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Launcher from '../comp/launcher';
 
 const IoFileCache = function(config) {

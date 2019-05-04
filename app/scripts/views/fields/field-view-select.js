@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import FieldView from './field-view';
 
 const FieldViewSelect = FieldView.extend({

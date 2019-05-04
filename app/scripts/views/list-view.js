@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import _ from 'underscore';
 import Backbone from 'backbone';
 import EntryCollection from '../collections/entry-collection';
 import Resizable from '../mixins/resizable';

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import MenuItemView from './menu-item-view';
 import Resizable from '../../mixins/resizable';

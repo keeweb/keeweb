@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import kdbxweb from 'kdbxweb';
 import phonetic from './phonetic';
 

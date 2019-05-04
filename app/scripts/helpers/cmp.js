@@ -1,4 +1,4 @@
-import Handlebars from 'hbs';
+import Handlebars from 'handlebars/runtime';
 
 Handlebars.registerHelper('cmp', function(lvalue, rvalue, op, options) {
     let cond;

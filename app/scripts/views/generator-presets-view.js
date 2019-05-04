@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import _ from 'underscore';
 import Backbone from 'backbone';
 import Scrollable from '../mixins/scrollable';
 import Locale from '../util/locale';

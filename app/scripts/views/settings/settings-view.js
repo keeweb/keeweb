@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import Scrollable from '../../mixins/scrollable';
 import Keys from '../../const/keys';

@@ -205,7 +205,7 @@ const StorageGDrive = StorageBase.extend({
     _getOAuthConfig: function() {
         let clientId = this.appSettings.get('gdriveClientId');
         if (!clientId) {
-            clientId = location.origin.indexOf('localhost') >= 0 ? GDriveClientId.Local : GDriveClientId.Production;
+            clientId = window.location.origin.indexOf('localhost') >= 0 ? GDriveClientId.Local : GDriveClientId.Production;
         }
         return {
             scope: 'https://www.googleapis.com/auth/drive',

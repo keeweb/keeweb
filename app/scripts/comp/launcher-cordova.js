@@ -1,5 +1,6 @@
 /* global FingerprintAuth */
 
+import _ from 'underscore';
 import Backbone from 'backbone';
 
 const Launcher = {

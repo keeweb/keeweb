@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Backbone from 'backbone';
 import IconMap from '../const/icon-map';
 import Logger from '../util/logger';

@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import _ from 'underscore';
 import Backbone from 'backbone';
 import OpenConfigView from '../open-config-view';
 import FeatureDetector from '../../util/feature-detector';

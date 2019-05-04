@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import MenuSectionModel from './menu-section-model';
 import GroupCollection from '../../collections/group-collection';
 

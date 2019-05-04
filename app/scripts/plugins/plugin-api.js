@@ -5,7 +5,7 @@ const Libs = {
     $: require('jquery'),
     jquery: require('jquery'),
     kdbxweb: require('kdbxweb'),
-    hbs: require('hbs'),
+    hbs: require('handlebars/runtime'),
     pikaday: require('pikaday'),
     qrcode: require('jsqrcode')
 };

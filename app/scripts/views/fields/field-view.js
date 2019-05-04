@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import CopyPaste from '../../comp/copy-paste';
 import Tip from '../../util/tip';

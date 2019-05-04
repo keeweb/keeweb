@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Backbone from 'backbone';
 import Keys from '../const/keys';
 import KeyHandler from '../comp/key-handler';

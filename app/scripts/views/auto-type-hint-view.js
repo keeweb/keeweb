@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Backbone from 'backbone';
 import FeatureDetector from '../util/feature-detector';
 import Links from '../const/links';

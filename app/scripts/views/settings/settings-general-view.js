@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import _ from 'underscore';
 import Backbone from 'backbone';
 import SettingsPrvView from './settings-prv-view';
 import SettingsLogsView from './settings-logs-view';
@@ -336,7 +338,7 @@ const SettingsGeneralView = Backbone.View.extend({
                 body: Locale.setGenTryBetaWarningBody
             });
         } else {
-            location.href = Links.BetaWebApp;
+            window.location.href = Links.BetaWebApp;
         }
     },
 
@@ -349,7 +351,7 @@ const SettingsGeneralView = Backbone.View.extend({
     },
 
     reloadApp: function() {
-        location.reload();
+        window.location.reload();
     },
 
     scrollToBottom: function() {

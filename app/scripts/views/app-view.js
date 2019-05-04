@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Backbone from 'backbone';
 import DragView from '../views/drag-view';
 import MenuView from '../views/menu/menu-view';

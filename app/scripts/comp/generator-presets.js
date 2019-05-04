@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import AppSettingsModel from '../models/app-settings-model';
 import Locale from '../util/locale';
 

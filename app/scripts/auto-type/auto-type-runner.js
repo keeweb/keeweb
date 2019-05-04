@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import AutoTypeObfuscator from './auto-type-obfuscator';
 import AutoTypeEmitterFactory from './auto-type-emitter-factory';
 import Format from '../util/format';

@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import _ from 'underscore';
 import Backbone from 'backbone';
 import PasswordGenerator from '../util/password-generator';
 import CopyPaste from '../comp/copy-paste';
