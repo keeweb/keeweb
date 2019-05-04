@@ -1,16 +1,16 @@
-const Backbone = require('backbone');
-const OpenConfigView = require('../open-config-view');
-const FeatureDetector = require('../../util/feature-detector');
-const PasswordGenerator = require('../../util/password-generator');
-const Alerts = require('../../comp/alerts');
-const Launcher = require('../../comp/launcher');
-const Storage = require('../../storage');
-const Links = require('../../const/links');
-const Format = require('../../util/format');
-const Locale = require('../../util/locale');
-const UrlUtil = require('../../util/url-util');
-const FileSaver = require('../../util/file-saver');
-const kdbxweb = require('kdbxweb');
+import Backbone from 'backbone';
+import OpenConfigView from '../open-config-view';
+import FeatureDetector from '../../util/feature-detector';
+import PasswordGenerator from '../../util/password-generator';
+import Alerts from '../../comp/alerts';
+import Launcher from '../../comp/launcher';
+import Storage from '../../storage';
+import Links from '../../const/links';
+import Format from '../../util/format';
+import Locale from '../../util/locale';
+import UrlUtil from '../../util/url-util';
+import FileSaver from '../../util/file-saver';
+import kdbxweb from 'kdbxweb';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';
@@ -602,4 +602,4 @@ const SettingsFileView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsFileView;
+export default SettingsFileView;

@@ -18,4 +18,4 @@ const Ranking = {
     }
 };
 
-module.exports = Ranking;
+export default Ranking;

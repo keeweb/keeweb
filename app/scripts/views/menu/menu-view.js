@@ -1,10 +1,10 @@
-const Backbone = require('backbone');
-const Keys = require('../../const/keys');
-const KeyHandler = require('../../comp/key-handler');
-const Resizable = require('../../mixins/resizable');
-const MenuSectionView = require('./menu-section-view');
-const DragView = require('../drag-view');
-const AppSettingsModel = require('../../models/app-settings-model');
+import Backbone from 'backbone';
+import Keys from '../../const/keys';
+import KeyHandler from '../../comp/key-handler';
+import Resizable from '../../mixins/resizable';
+import MenuSectionView from './menu-section-view';
+import DragView from '../drag-view';
+import AppSettingsModel from '../../models/app-settings-model';
 
 const MenuView = Backbone.View.extend({
     template: require('templates/menu/menu.hbs'),
@@ -73,4 +73,4 @@ const MenuView = Backbone.View.extend({
 
 _.extend(MenuView.prototype, Resizable);
 
-module.exports = MenuView;
+export default MenuView;

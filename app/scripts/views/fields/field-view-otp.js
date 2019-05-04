@@ -1,5 +1,5 @@
-const FieldViewText = require('./field-view-text');
-const Timeouts = require('../../const/timeouts');
+import FieldViewText from './field-view-text';
+import Timeouts from '../../const/timeouts';
 
 const MinOpacity = 0.1;
 
@@ -100,4 +100,4 @@ const FieldViewOtp = FieldViewText.extend({
     }
 });
 
-module.exports = FieldViewOtp;
+export default FieldViewOtp;

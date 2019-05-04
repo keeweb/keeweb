@@ -1,4 +1,4 @@
-const Launcher = require('../../comp/launcher');
+import Launcher from '../../comp/launcher';
 
 const ForeMostAppScript = 'tell application "System Events" to set frontApp to name of first process whose frontmost is true';
 const ChromeScript = 'tell application "{}" to set appUrl to URL of active tab of front window\n' +
@@ -56,4 +56,4 @@ AutoTypeHelper.exec = function(script, callback) {
     });
 };
 
-module.exports = AutoTypeHelper;
+export default AutoTypeHelper;

@@ -1,9 +1,9 @@
-const Backbone = require('backbone');
-const SecureInput = require('../comp/secure-input');
-const Alerts = require('../comp/alerts');
-const Locale = require('../util/locale');
-const InputFx = require('../util/input-fx');
-const Keys = require('../const/keys');
+import Backbone from 'backbone';
+import SecureInput from '../comp/secure-input';
+import Alerts from '../comp/alerts';
+import Locale from '../util/locale';
+import InputFx from '../util/input-fx';
+import Keys from '../const/keys';
 
 const KeyChangeView = Backbone.View.extend({
     template: require('templates/key-change.hbs'),
@@ -119,4 +119,4 @@ const KeyChangeView = Backbone.View.extend({
     }
 });
 
-module.exports = KeyChangeView;
+export default KeyChangeView;

@@ -1,11 +1,11 @@
-const Backbone = require('backbone');
-const AttachmentModel = require('./attachment-model');
-const IconMap = require('../const/icon-map');
-const Color = require('../util/color');
-const IconUrl = require('../util/icon-url');
-const Otp = require('../util/otp');
-const kdbxweb = require('kdbxweb');
-const Ranking = require('../util/ranking');
+import Backbone from 'backbone';
+import AttachmentModel from './attachment-model';
+import IconMap from '../const/icon-map';
+import Color from '../util/color';
+import IconUrl from '../util/icon-url';
+import Otp from '../util/otp';
+import kdbxweb from 'kdbxweb';
+import Ranking from '../util/ranking';
 
 const EntryModel = Backbone.Model.extend({
     defaults: {},
@@ -715,4 +715,4 @@ EntryModel.newEntry = function(group, file) {
     return model;
 };
 
-module.exports = EntryModel;
+export default EntryModel;

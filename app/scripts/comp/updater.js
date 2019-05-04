@@ -1,13 +1,13 @@
-const Backbone = require('backbone');
-const RuntimeInfo = require('./runtime-info');
-const Links = require('../const/links');
-const Launcher = require('../comp/launcher');
-const AppSettingsModel = require('../models/app-settings-model');
-const UpdateModel = require('../models/update-model');
-const Transport = require('../comp/transport');
-const Logger = require('../util/logger');
-const SemVer = require('../util/semver');
-const publicKey = require('raw-loader!../../resources/public-key.pem');
+import Backbone from 'backbone';
+import RuntimeInfo from './runtime-info';
+import Links from '../const/links';
+import Launcher from '../comp/launcher';
+import AppSettingsModel from '../models/app-settings-model';
+import UpdateModel from '../models/update-model';
+import Transport from '../comp/transport';
+import Logger from '../util/logger';
+import SemVer from '../util/semver';
+import publicKey from 'raw-loader!../../resources/public-key.pem';
 
 const logger = new Logger('updater');
 
@@ -244,4 +244,4 @@ const Updater = {
     }
 };
 
-module.exports = Updater;
+export default Updater;

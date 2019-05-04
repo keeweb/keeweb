@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const Tip = require('../util/tip');
+import Backbone from 'backbone';
+import Tip from '../util/tip';
 
 _.extend(Backbone.View.prototype, {
     hide: function() {
@@ -101,4 +101,4 @@ _.extend(Backbone.View.prototype, {
     }
 });
 
-module.exports = Backbone.View;
+export default Backbone.View;

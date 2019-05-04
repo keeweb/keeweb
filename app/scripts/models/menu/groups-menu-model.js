@@ -1,5 +1,5 @@
-const MenuSectionModel = require('./menu-section-model');
-const GroupCollection = require('../../collections/group-collection');
+import MenuSectionModel from './menu-section-model';
+import GroupCollection from '../../collections/group-collection';
 
 const GroupsMenuModel = MenuSectionModel.extend({
     defaults: _.extend({}, MenuSectionModel.prototype.defaults, {
@@ -12,8 +12,8 @@ const GroupsMenuModel = MenuSectionModel.extend({
     },
 
     _loadItemCollectionType: function() {
-        return require('../../collections/group-collection');
+        return require('../../collections/group-collection').default;
     }
 });
 
-module.exports = GroupsMenuModel;
+export default GroupsMenuModel;

@@ -1,4 +1,4 @@
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const DropdownView = Backbone.View.extend({
     template: require('templates/dropdown.hbs'),
@@ -51,4 +51,4 @@ const DropdownView = Backbone.View.extend({
     }
 });
 
-module.exports = DropdownView;
+export default DropdownView;

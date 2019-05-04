@@ -104,4 +104,4 @@ _.extend(IoBrowserCache.prototype, {
     }
 });
 
-module.exports = IoBrowserCache;
+export default IoBrowserCache;

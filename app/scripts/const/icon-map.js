@@ -15,4 +15,4 @@ const IconMap = [
     'wikipedia-w', 'usd', 'calendar', 'mobile'
 ];
 
-module.exports = IconMap;
+export default IconMap;

@@ -1,4 +1,4 @@
-const AutoTypeRunner = require('./auto-type-runner');
+import AutoTypeRunner from './auto-type-runner';
 
 const AutoTypeParser = function(sequence) {
     this.sequence = sequence;
@@ -124,4 +124,4 @@ AutoTypeParser.prototype.addOp = function(op, sep, arg) {
     });
 };
 
-module.exports = AutoTypeParser;
+export default AutoTypeParser;

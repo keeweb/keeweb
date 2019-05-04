@@ -1,4 +1,4 @@
-const kdbxweb = require('kdbxweb');
+import kdbxweb from 'kdbxweb';
 
 const ExpectedFieldRefChars = '{REF:0@I:00000000000000000000000000000000}'.split('');
 const ExpectedFieldRefByteLength = ExpectedFieldRefChars.length;
@@ -129,4 +129,4 @@ kdbxweb.ProtectedValue.prototype.isFieldReference = function() {
     return true;
 };
 
-module.exports = kdbxweb.ProtectedValue;
+export default kdbxweb.ProtectedValue;

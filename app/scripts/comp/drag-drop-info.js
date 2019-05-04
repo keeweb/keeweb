@@ -2,4 +2,4 @@ const DragDropInfo = {
     dragObject: null
 };
 
-module.exports = DragDropInfo;
+export default DragDropInfo;

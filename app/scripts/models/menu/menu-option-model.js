@@ -1,4 +1,4 @@
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const MenuOptionModel = Backbone.Model.extend({
     defaults: {
@@ -10,4 +10,4 @@ const MenuOptionModel = Backbone.Model.extend({
     }
 });
 
-module.exports = MenuOptionModel;
+export default MenuOptionModel;

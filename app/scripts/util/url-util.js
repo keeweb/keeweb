@@ -25,4 +25,4 @@ const UrlUtil = {
     }
 };
 
-module.exports = UrlUtil;
+export default UrlUtil;

@@ -1,15 +1,15 @@
-const Backbone = require('backbone');
-const Locale = require('../../util/locale');
-const PluginManager = require('../../plugins/plugin-manager');
-const PluginGallery = require('../../plugins/plugin-gallery');
-const AppSettingsModel = require('../../models/app-settings-model');
-const Comparators = require('../../util/comparators');
-const Format = require('../../util/format');
-const SettingsManager = require('../../comp/settings-manager');
-const FeatureDetector = require('../../util/feature-detector');
-const SemVer = require('../../util/semver');
-const RuntimeInfo = require('../../comp/runtime-info');
-const Links = require('../../const/links');
+import Backbone from 'backbone';
+import Locale from '../../util/locale';
+import PluginManager from '../../plugins/plugin-manager';
+import PluginGallery from '../../plugins/plugin-gallery';
+import AppSettingsModel from '../../models/app-settings-model';
+import Comparators from '../../util/comparators';
+import Format from '../../util/format';
+import SettingsManager from '../../comp/settings-manager';
+import FeatureDetector from '../../util/feature-detector';
+import SemVer from '../../util/semver';
+import RuntimeInfo from '../../comp/runtime-info';
+import Links from '../../const/links';
 
 const SettingsPluginsView = Backbone.View.extend({
     template: require('templates/settings/settings-plugins.hbs'),
@@ -246,4 +246,4 @@ const SettingsPluginsView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsPluginsView;
+export default SettingsPluginsView;

@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Keys = require('../const/keys');
-const KeyHandler = require('../comp/key-handler');
+import Backbone from 'backbone';
+import Keys from '../const/keys';
+import KeyHandler from '../comp/key-handler';
 
 const ModalView = Backbone.View.extend({
     el: 'body',
@@ -91,4 +91,4 @@ const ModalView = Backbone.View.extend({
     }
 });
 
-module.exports = ModalView;
+export default ModalView;

@@ -81,4 +81,4 @@ Logger.getLast = function() {
 
 Logger.Level = Level;
 
-module.exports = Logger;
+export default Logger;

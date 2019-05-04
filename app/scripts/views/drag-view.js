@@ -1,4 +1,4 @@
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const DragView = Backbone.View.extend({
     events: {
@@ -58,4 +58,4 @@ const DragView = Backbone.View.extend({
     }
 });
 
-module.exports = DragView;
+export default DragView;

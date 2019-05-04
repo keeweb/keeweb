@@ -1,27 +1,27 @@
-const Backbone = require('backbone');
-const DragView = require('../views/drag-view');
-const MenuView = require('../views/menu/menu-view');
-const FooterView = require('../views/footer-view');
-const ListView = require('../views/list-view');
-const ListWrapView = require('../views/list-wrap-view');
-const DetailsView = require('../views/details/details-view');
-const GrpView = require('../views/grp-view');
-const TagView = require('../views/tag-view');
-const GeneratorPresetsView = require('../views/generator-presets-view');
-const OpenView = require('../views/open-view');
-const SettingsView = require('../views/settings/settings-view');
-const KeyChangeView = require('../views/key-change-view');
-const DropdownView = require('../views/dropdown-view');
-const Alerts = require('../comp/alerts');
-const Keys = require('../const/keys');
-const Timeouts = require('../const/timeouts');
-const KeyHandler = require('../comp/key-handler');
-const IdleTracker = require('../comp/idle-tracker');
-const Launcher = require('../comp/launcher');
-const SettingsManager = require('../comp/settings-manager');
-const Locale = require('../util/locale');
-const FeatureDetector = require('../util/feature-detector');
-const UpdateModel = require('../models/update-model');
+import Backbone from 'backbone';
+import DragView from '../views/drag-view';
+import MenuView from '../views/menu/menu-view';
+import FooterView from '../views/footer-view';
+import ListView from '../views/list-view';
+import ListWrapView from '../views/list-wrap-view';
+import DetailsView from '../views/details/details-view';
+import GrpView from '../views/grp-view';
+import TagView from '../views/tag-view';
+import GeneratorPresetsView from '../views/generator-presets-view';
+import OpenView from '../views/open-view';
+import SettingsView from '../views/settings/settings-view';
+import KeyChangeView from '../views/key-change-view';
+import DropdownView from '../views/dropdown-view';
+import Alerts from '../comp/alerts';
+import Keys from '../const/keys';
+import Timeouts from '../const/timeouts';
+import KeyHandler from '../comp/key-handler';
+import IdleTracker from '../comp/idle-tracker';
+import Launcher from '../comp/launcher';
+import SettingsManager from '../comp/settings-manager';
+import Locale from '../util/locale';
+import FeatureDetector from '../util/feature-detector';
+import UpdateModel from '../models/update-model';
 
 const AppView = Backbone.View.extend({
     el: 'body',
@@ -734,4 +734,4 @@ const AppView = Backbone.View.extend({
     }
 });
 
-module.exports = AppView;
+export default AppView;

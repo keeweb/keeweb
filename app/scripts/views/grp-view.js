@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const Scrollable = require('../mixins/scrollable');
-const IconSelectView = require('./icon-select-view');
-const AutoTypeHintView = require('./auto-type-hint-view');
-const AutoType = require('../auto-type');
+import Backbone from 'backbone';
+import Scrollable from '../mixins/scrollable';
+import IconSelectView from './icon-select-view';
+import AutoTypeHintView from './auto-type-hint-view';
+import AutoType from '../auto-type';
 
 const GrpView = Backbone.View.extend({
     template: require('templates/grp.hbs'),
@@ -144,4 +144,4 @@ const GrpView = Backbone.View.extend({
 
 _.extend(GrpView.prototype, Scrollable);
 
-module.exports = GrpView;
+export default GrpView;

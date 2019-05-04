@@ -1,11 +1,11 @@
-const Backbone = require('backbone');
-const Keys = require('../const/keys');
-const KeyHandler = require('../comp/key-handler');
-const DropdownView = require('./dropdown-view');
-const FeatureDetector = require('../util/feature-detector');
-const Format = require('../util/format');
-const Locale = require('../util/locale');
-const Comparators = require('../util/comparators');
+import Backbone from 'backbone';
+import Keys from '../const/keys';
+import KeyHandler from '../comp/key-handler';
+import DropdownView from './dropdown-view';
+import FeatureDetector from '../util/feature-detector';
+import Format from '../util/format';
+import Locale from '../util/locale';
+import Comparators from '../util/comparators';
 
 const ListSearchView = Backbone.View.extend({
     template: require('templates/list-search.hbs'),
@@ -353,4 +353,4 @@ const ListSearchView = Backbone.View.extend({
     }
 });
 
-module.exports = ListSearchView;
+export default ListSearchView;

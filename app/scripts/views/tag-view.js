@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Locale = require('../util/locale');
-const Alerts = require('../comp/alerts');
+import Backbone from 'backbone';
+import Locale from '../util/locale';
+import Alerts from '../comp/alerts';
 
 const TagView = Backbone.View.extend({
     template: require('templates/tag.hbs'),
@@ -63,4 +63,4 @@ const TagView = Backbone.View.extend({
     }
 });
 
-module.exports = TagView;
+export default TagView;

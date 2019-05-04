@@ -1,8 +1,8 @@
-const FeatureDetector = require('../util/feature-detector');
-const Alerts = require('../comp/alerts');
-const AppSettingsModel = require('../models/app-settings-model');
-const Launcher = require('./launcher');
-const Locale = require('../util/locale');
+import FeatureDetector from '../util/feature-detector';
+import Alerts from '../comp/alerts';
+import AppSettingsModel from '../models/app-settings-model';
+import Launcher from './launcher';
+import Locale from '../util/locale';
 
 const AppRightsChecker = {
     AppPath: '/Applications/KeeWeb.app',
@@ -74,4 +74,4 @@ const AppRightsChecker = {
     }
 };
 
-module.exports = AppRightsChecker;
+export default AppRightsChecker;

@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const SettingsStore = require('../comp/settings-store');
+import Backbone from 'backbone';
+import SettingsStore from '../comp/settings-store';
 
 const AppSettingsModel = Backbone.Model.extend({
     defaults: {
@@ -77,4 +77,4 @@ const AppSettingsModel = Backbone.Model.extend({
 
 AppSettingsModel.instance = new AppSettingsModel();
 
-module.exports = AppSettingsModel;
+export default AppSettingsModel;

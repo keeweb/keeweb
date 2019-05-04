@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const Keys = require('../const/keys');
-const KeyHandler = require('../comp/key-handler');
-const GeneratorView = require('./generator-view');
-const UpdateModel = require('../models/update-model');
+import Backbone from 'backbone';
+import Keys from '../const/keys';
+import KeyHandler from '../comp/key-handler';
+import GeneratorView from './generator-view';
+import UpdateModel from '../models/update-model';
 
 const FooterView = Backbone.View.extend({
     template: require('templates/footer.hbs'),
@@ -93,4 +93,4 @@ const FooterView = Backbone.View.extend({
     }
 });
 
-module.exports = FooterView;
+export default FooterView;

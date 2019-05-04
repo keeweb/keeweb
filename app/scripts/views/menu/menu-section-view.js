@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const MenuItemView = require('./menu-item-view');
-const Resizable = require('../../mixins/resizable');
-const Scrollable = require('../../mixins/scrollable');
-const AppSettingsModel = require('../../models/app-settings-model');
+import Backbone from 'backbone';
+import MenuItemView from './menu-item-view';
+import Resizable from '../../mixins/resizable';
+import Scrollable from '../../mixins/scrollable';
+import AppSettingsModel from '../../models/app-settings-model';
 
 const MenuSectionView = Backbone.View.extend({
     template: require('templates/menu/menu-section.hbs'),
@@ -81,4 +81,4 @@ const MenuSectionView = Backbone.View.extend({
 _.extend(MenuSectionView.prototype, Resizable);
 _.extend(MenuSectionView.prototype, Scrollable);
 
-module.exports = MenuSectionView;
+export default MenuSectionView;

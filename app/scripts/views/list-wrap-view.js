@@ -1,4 +1,4 @@
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const ListWrapView = Backbone.View.extend({
     events: {
@@ -18,4 +18,4 @@ const ListWrapView = Backbone.View.extend({
     }
 });
 
-module.exports = ListWrapView;
+export default ListWrapView;

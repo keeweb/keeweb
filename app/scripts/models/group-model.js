@@ -1,8 +1,8 @@
-const MenuItemModel = require('./menu/menu-item-model');
-const EntryModel = require('../models/entry-model');
-const IconMap = require('../const/icon-map');
-const IconUrl = require('../util/icon-url');
-const kdbxweb = require('kdbxweb');
+import MenuItemModel from './menu/menu-item-model';
+import EntryModel from '../models/entry-model';
+import IconMap from '../const/icon-map';
+import IconUrl from '../util/icon-url';
+import kdbxweb from 'kdbxweb';
 const KdbxIcons = kdbxweb.Consts.Icons;
 let GroupCollection;
 let EntryCollection;
@@ -24,8 +24,8 @@ const GroupModel = MenuItemModel.extend({
     }),
 
     initialize: function() {
-        if (!GroupCollection) { GroupCollection = require('../collections/group-collection'); }
-        if (!EntryCollection) { EntryCollection = require('../collections/entry-collection'); }
+        if (!GroupCollection) { GroupCollection = require('../collections/group-collection').default; }
+        if (!EntryCollection) { EntryCollection = require('../collections/entry-collection').default; }
     },
 
     setGroup: function(group, file, parentGroup) {
@@ -342,4 +342,4 @@ GroupModel.newGroup = function(group, file) {
     return model;
 };
 
-module.exports = GroupModel;
+export default GroupModel;

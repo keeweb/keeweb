@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const FileInfoModel = require('../models/file-info-model');
-const SettingsStore = require('../comp/settings-store');
+import Backbone from 'backbone';
+import FileInfoModel from '../models/file-info-model';
+import SettingsStore from '../comp/settings-store';
 
 const FileInfoCollection = Backbone.Collection.extend({
     model: FileInfoModel,
@@ -39,4 +39,4 @@ const FileInfoCollection = Backbone.Collection.extend({
 
 FileInfoCollection.instance = new FileInfoCollection();
 
-module.exports = FileInfoCollection;
+export default FileInfoCollection;

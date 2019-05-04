@@ -1,5 +1,5 @@
-const Launcher = require('../../comp/launcher');
-const AutoTypeNativeHelper = require('./auto-type-native-helper');
+import Launcher from '../../comp/launcher';
+import AutoTypeNativeHelper from './auto-type-native-helper';
 
 const AutoTypeHelper = function() {
 };
@@ -17,4 +17,4 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
     });
 };
 
-module.exports = AutoTypeHelper;
+export default AutoTypeHelper;

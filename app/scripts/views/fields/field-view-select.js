@@ -1,4 +1,4 @@
-const FieldView = require('./field-view');
+import FieldView from './field-view';
 
 const FieldViewSelect = FieldView.extend({
     readonly: true,
@@ -38,4 +38,4 @@ const FieldViewSelect = FieldView.extend({
     }
 });
 
-module.exports = FieldViewSelect;
+export default FieldViewSelect;

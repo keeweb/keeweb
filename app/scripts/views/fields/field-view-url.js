@@ -1,4 +1,4 @@
-const FieldViewText = require('./field-view-text');
+import FieldViewText from './field-view-text';
 
 const FieldViewUrl = FieldViewText.extend({
     displayUrlRegex: /^http:\/\//i,
@@ -16,4 +16,4 @@ const FieldViewUrl = FieldViewText.extend({
     }
 });
 
-module.exports = FieldViewUrl;
+export default FieldViewUrl;

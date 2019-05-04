@@ -1,4 +1,4 @@
-const FieldView = require('./field-view');
+import FieldView from './field-view';
 
 const FieldViewReadOnlyRaw = FieldView.extend({
     renderValue: function(value) {
@@ -8,4 +8,4 @@ const FieldViewReadOnlyRaw = FieldView.extend({
     readonly: true
 });
 
-module.exports = FieldViewReadOnlyRaw;
+export default FieldViewReadOnlyRaw;

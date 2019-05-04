@@ -1,15 +1,15 @@
-const Backbone = require('backbone');
-const EntryCollection = require('../collections/entry-collection');
-const Resizable = require('../mixins/resizable');
-const Scrollable = require('../mixins/scrollable');
-const ListSearchView = require('./list-search-view');
-const DropdownView = require('./dropdown-view');
-const EntryPresenter = require('../presenters/entry-presenter');
-const DragDropInfo = require('../comp/drag-drop-info');
-const AppSettingsModel = require('../models/app-settings-model');
-const Locale = require('../util/locale');
-const Format = require('../util/format');
-const Alerts = require('../comp/alerts');
+import Backbone from 'backbone';
+import EntryCollection from '../collections/entry-collection';
+import Resizable from '../mixins/resizable';
+import Scrollable from '../mixins/scrollable';
+import ListSearchView from './list-search-view';
+import DropdownView from './dropdown-view';
+import EntryPresenter from '../presenters/entry-presenter';
+import DragDropInfo from '../comp/drag-drop-info';
+import AppSettingsModel from '../models/app-settings-model';
+import Locale from '../util/locale';
+import Format from '../util/format';
+import Alerts from '../comp/alerts';
 
 const ListView = Backbone.View.extend({
     template: require('templates/list.hbs'),
@@ -312,4 +312,4 @@ const ListView = Backbone.View.extend({
 _.extend(ListView.prototype, Resizable);
 _.extend(ListView.prototype, Scrollable);
 
-module.exports = ListView;
+export default ListView;

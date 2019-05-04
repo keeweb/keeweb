@@ -1,6 +1,6 @@
-const Launcher = require('./launcher');
-const StringUtil = require('../util/string-util');
-const Logger = require('../util/logger');
+import Launcher from './launcher';
+import StringUtil from '../util/string-util';
+import Logger from '../util/logger';
 
 const logger = new Logger('settings');
 
@@ -61,4 +61,4 @@ const SettingsStore = {
     }
 };
 
-module.exports = SettingsStore;
+export default SettingsStore;

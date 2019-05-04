@@ -1,12 +1,12 @@
-const Backbone = require('backbone');
-const Keys = require('../../const/keys');
-const KeyHandler = require('../../comp/key-handler');
-const Locale = require('../../util/locale');
-const AppSettingsModel = require('../../models/app-settings-model');
-const EntryPresenter = require('../../presenters/entry-presenter');
-const Scrollable = require('../../mixins/scrollable');
-const AutoTypeSequenceType = require('../../const/autotype-sequencetype');
-const FeatureDetector = require('../../util/feature-detector');
+import Backbone from 'backbone';
+import Keys from '../../const/keys';
+import KeyHandler from '../../comp/key-handler';
+import Locale from '../../util/locale';
+import AppSettingsModel from '../../models/app-settings-model';
+import EntryPresenter from '../../presenters/entry-presenter';
+import Scrollable from '../../mixins/scrollable';
+import AutoTypeSequenceType from '../../const/autotype-sequencetype';
+import FeatureDetector from '../../util/feature-detector';
 
 const AutoTypePopupView = Backbone.View.extend({
     el: 'body',
@@ -207,4 +207,4 @@ const AutoTypePopupView = Backbone.View.extend({
 
 _.extend(AutoTypePopupView.prototype, Scrollable);
 
-module.exports = AutoTypePopupView;
+export default AutoTypePopupView;

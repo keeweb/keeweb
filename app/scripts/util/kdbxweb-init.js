@@ -1,5 +1,5 @@
-const kdbxweb = require('kdbxweb');
-const Logger = require('../util/logger');
+import kdbxweb from 'kdbxweb';
+import Logger from '../util/logger';
 
 const logger = new Logger('argon2');
 
@@ -144,4 +144,4 @@ const KdbxwebInit = {
     }
 };
 
-module.exports = KdbxwebInit;
+export default KdbxwebInit;

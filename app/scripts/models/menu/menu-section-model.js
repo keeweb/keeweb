@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const MenuItemCollection = require('../../collections/menu/menu-item-collection');
+import Backbone from 'backbone';
+import MenuItemCollection from '../../collections/menu/menu-item-collection';
 
 const MenuItemModel = Backbone.Model.extend({
     defaults: {
@@ -54,4 +54,4 @@ const MenuItemModel = Backbone.Model.extend({
     }
 });
 
-module.exports = MenuItemModel;
+export default MenuItemModel;

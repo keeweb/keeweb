@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const FeatureDetector = require('./feature-detector');
+import Backbone from 'backbone';
+import FeatureDetector from './feature-detector';
 
 const Tip = function(el, config) {
     this.el = el;
@@ -168,4 +168,4 @@ Tip.hideTip = function(el) {
     }
 };
 
-module.exports = Tip;
+export default Tip;

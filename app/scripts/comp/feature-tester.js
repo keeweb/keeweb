@@ -1,5 +1,5 @@
-const kdbxweb = require('kdbxweb');
-const FeatureDetector = require('../util/feature-detector');
+import kdbxweb from 'kdbxweb';
+import FeatureDetector from '../util/feature-detector';
 
 const FeatureTester = {
     test() {
@@ -51,4 +51,4 @@ const FeatureTester = {
     }
 };
 
-module.exports = FeatureTester;
+export default FeatureTester;

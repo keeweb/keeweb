@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const RuntimeInfo = require('../../comp/runtime-info');
-const Links = require('../../const/links');
+import Backbone from 'backbone';
+import RuntimeInfo from '../../comp/runtime-info';
+import Links from '../../const/links';
 
 const SettingsAboutView = Backbone.View.extend({
     template: require('templates/settings/settings-about.hbs'),
@@ -16,4 +16,4 @@ const SettingsAboutView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsAboutView;
+export default SettingsAboutView;

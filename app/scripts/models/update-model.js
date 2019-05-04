@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const SettingsStore = require('../comp/settings-store');
+import Backbone from 'backbone';
+import SettingsStore from '../comp/settings-store';
 
 const UpdateModel = Backbone.Model.extend({
     defaults: {
@@ -47,4 +47,4 @@ const UpdateModel = Backbone.Model.extend({
 
 UpdateModel.instance = new UpdateModel();
 
-module.exports = UpdateModel;
+export default UpdateModel;

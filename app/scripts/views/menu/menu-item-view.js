@@ -1,9 +1,9 @@
-const Backbone = require('backbone');
-const KeyHandler = require('../../comp/key-handler');
-const Keys = require('../../const/keys');
-const Alerts = require('../../comp/alerts');
-const DragDropInfo = require('../../comp/drag-drop-info');
-const Locale = require('../../util/locale');
+import Backbone from 'backbone';
+import KeyHandler from '../../comp/key-handler';
+import Keys from '../../const/keys';
+import Alerts from '../../comp/alerts';
+import DragDropInfo from '../../comp/drag-drop-info';
+import Locale from '../../util/locale';
 
 const MenuItemView = Backbone.View.extend({
     template: require('templates/menu/menu-item.hbs'),
@@ -254,4 +254,4 @@ const MenuItemView = Backbone.View.extend({
     }
 });
 
-module.exports = MenuItemView;
+export default MenuItemView;

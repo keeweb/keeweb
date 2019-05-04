@@ -1,5 +1,5 @@
-const Launcher = require('../comp/launcher');
+import Launcher from '../comp/launcher';
 
-const IoCache = Launcher ? require('./io-file-cache') : require('./io-browser-cache');
+const IoCache = Launcher ? require('./io-file-cache').default : require('./io-browser-cache').default;
 
-module.exports = IoCache;
+export default IoCache;

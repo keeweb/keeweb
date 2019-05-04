@@ -1,5 +1,5 @@
-const FeatureDetector = require('../util/feature-detector');
-const Storage = require('../storage');
+import FeatureDetector from '../util/feature-detector';
+import Storage from '../storage';
 
 const AuthReceiver = {
     receive: function() {
@@ -36,4 +36,4 @@ const AuthReceiver = {
     }
 };
 
-module.exports = AuthReceiver;
+export default AuthReceiver;

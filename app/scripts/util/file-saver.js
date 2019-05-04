@@ -1,4 +1,4 @@
-const timeouts = require('../const/timeouts');
+import timeouts from '../const/timeouts';
 
 const FileSaver = {
     saveAs(blob, name) {
@@ -19,4 +19,4 @@ const FileSaver = {
     }
 };
 
-module.exports = FileSaver;
+export default FileSaver;

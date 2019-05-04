@@ -1,10 +1,10 @@
-const Backbone = require('backbone');
-const Alerts = require('./alerts');
-const Locale = require('../util/locale');
-const Logger = require('../util/logger');
-const FeatureDetector = require('../util/feature-detector');
-const Otp = require('../util/otp');
-const QrCode = require('jsqrcode');
+import Backbone from 'backbone';
+import Alerts from './alerts';
+import Locale from '../util/locale';
+import Logger from '../util/logger';
+import FeatureDetector from '../util/feature-detector';
+import Otp from '../util/otp';
+import QrCode from 'jsqrcode';
 
 const logger = new Logger('otp-qr-reader');
 
@@ -53,7 +53,7 @@ const OtpQrReader = {
             }
         });
         // transparent window with QR scanner - is it better? check usability of this
-        // var BrowserWindow = require('../../comp/launcher').remReq('browser-window');
+        // var BrowserWindow = require('../../comp/launcher').default.remReq('browser-window');
         // new BrowserWindow({ width: 800, height: 600, show: false, alwaysOnTop: true, backgroundColor: '#80FFFFFF',
         //     transparent: true }).show();
     },
@@ -163,4 +163,4 @@ const OtpQrReader = {
 
 _.extend(OtpQrReader, Backbone.Events);
 
-module.exports = OtpQrReader;
+export default OtpQrReader;

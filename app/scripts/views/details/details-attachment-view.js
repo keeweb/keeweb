@@ -1,6 +1,6 @@
 
-const Backbone = require('backbone');
-const FeatureDetector = require('../../util/feature-detector');
+import Backbone from 'backbone';
+import FeatureDetector from '../../util/feature-detector';
 
 const DetailsAttachmentView = Backbone.View.extend({
     template: require('templates/details/details-attachment.hbs'),
@@ -35,4 +35,4 @@ const DetailsAttachmentView = Backbone.View.extend({
     }
 });
 
-module.exports = DetailsAttachmentView;
+export default DetailsAttachmentView;

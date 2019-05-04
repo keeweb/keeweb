@@ -1,6 +1,6 @@
-const ThemeVarsScss = require('../../styles/base/_theme-vars.scss');
-const ThemeDefaults = require('../../styles/themes/_theme-defaults.scss');
-const Color = require('../util/color');
+import ThemeVarsScss from '../../styles/base/_theme-vars.scss';
+import ThemeDefaults from '../../styles/themes/_theme-defaults.scss';
+import Color from '../util/color';
 
 const ThemeVars = {
     themeDefaults: null,
@@ -114,4 +114,4 @@ const ThemeVars = {
     }
 };
 
-module.exports = ThemeVars;
+export default ThemeVars;

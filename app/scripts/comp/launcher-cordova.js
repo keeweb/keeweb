@@ -1,6 +1,6 @@
 /* global FingerprintAuth */
 
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const Launcher = {
     name: 'cordova',
@@ -237,4 +237,4 @@ const Launcher = {
     }
 };
 
-module.exports = Launcher;
+export default Launcher;

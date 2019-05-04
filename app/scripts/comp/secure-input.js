@@ -1,4 +1,4 @@
-const kdbxweb = require('kdbxweb');
+import kdbxweb from 'kdbxweb';
 
 const SecureInput = function() {
     this.el = null;
@@ -94,4 +94,4 @@ Object.defineProperty(SecureInput.prototype, 'value', {
     }
 });
 
-module.exports = SecureInput;
+export default SecureInput;

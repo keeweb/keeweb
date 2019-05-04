@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Logger = require('../../util/logger');
-const Format = require('../../util/format');
+import Backbone from 'backbone';
+import Logger from '../../util/logger';
+import Format from '../../util/format';
 
 const SettingsLogView = Backbone.View.extend({
     template: require('templates/settings/settings-logs-view.hbs'),
@@ -47,4 +47,4 @@ const SettingsLogView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsLogView;
+export default SettingsLogView;

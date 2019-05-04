@@ -1,12 +1,12 @@
-const Backbone = require('backbone');
-const FieldView = require('./field-view');
-const GeneratorView = require('../generator-view');
-const KeyHandler = require('../../comp/key-handler');
-const Keys = require('../../const/keys');
-const PasswordGenerator = require('../../util/password-generator');
-const FeatureDetector = require('../../util/feature-detector');
-const kdbxweb = require('kdbxweb');
-const Tip = require('../../util/tip');
+import Backbone from 'backbone';
+import FieldView from './field-view';
+import GeneratorView from '../generator-view';
+import KeyHandler from '../../comp/key-handler';
+import Keys from '../../const/keys';
+import PasswordGenerator from '../../util/password-generator';
+import FeatureDetector from '../../util/feature-detector';
+import kdbxweb from 'kdbxweb';
+import Tip from '../../util/tip';
 
 const FieldViewText = FieldView.extend({
     renderValue: function(value) {
@@ -245,4 +245,4 @@ const FieldViewText = FieldView.extend({
     }
 });
 
-module.exports = FieldViewText;
+export default FieldViewText;

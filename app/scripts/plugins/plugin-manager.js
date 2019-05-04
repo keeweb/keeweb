@@ -1,11 +1,11 @@
-const Backbone = require('backbone');
-const Plugin = require('./plugin');
-const PluginCollection = require('./plugin-collection');
-const PluginGallery = require('./plugin-gallery');
-const SettingsStore = require('../comp/settings-store');
-const RuntimeInfo = require('../comp/runtime-info');
-const SignatureVerifier = require('../util/signature-verifier');
-const Logger = require('../util/logger');
+import Backbone from 'backbone';
+import Plugin from './plugin';
+import PluginCollection from './plugin-collection';
+import PluginGallery from './plugin-gallery';
+import SettingsStore from '../comp/settings-store';
+import RuntimeInfo from '../comp/runtime-info';
+import SignatureVerifier from '../util/signature-verifier';
+import Logger from '../util/logger';
 
 const PluginManager = Backbone.Model.extend({
     UpdateInterval: 1000 * 60 * 60 * 24 * 7,
@@ -209,4 +209,4 @@ const PluginManager = Backbone.Model.extend({
     }
 });
 
-module.exports = new PluginManager();
+export default new PluginManager();

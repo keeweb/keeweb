@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Locale = require('../util/locale');
-const Logger = require('../util/logger');
+import Backbone from 'backbone';
+import Locale from '../util/locale';
+import Logger from '../util/logger';
 
 const logger = new Logger('launcher');
 
@@ -294,4 +294,4 @@ if (window.launcherOpenedFile) {
 }
 Backbone.on('app-ready', () => setTimeout(() => Launcher.checkOpenFiles(), 0));
 
-module.exports = Launcher;
+export default Launcher;

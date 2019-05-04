@@ -1,5 +1,5 @@
-const Launcher = require('../../comp/launcher');
-const Locale = require('../../util/locale');
+import Launcher from '../../comp/launcher';
+import Locale from '../../util/locale';
 
 // https://cgit.freedesktop.org/xorg/proto/x11proto/plain/keysymdef.h
 const KeyMap = {
@@ -106,4 +106,4 @@ AutoTypeEmitter.prototype.runScript = function(script, callback) {
     });
 };
 
-module.exports = AutoTypeEmitter;
+export default AutoTypeEmitter;

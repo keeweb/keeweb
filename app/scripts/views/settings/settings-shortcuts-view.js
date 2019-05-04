@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Launcher = require('../../comp/launcher');
-const FeatureDetector = require('../../util/feature-detector');
+import Backbone from 'backbone';
+import Launcher from '../../comp/launcher';
+import FeatureDetector from '../../util/feature-detector';
 
 const SettingsShortcutsView = Backbone.View.extend({
     template: require('templates/settings/settings-shortcuts.hbs'),
@@ -17,4 +17,4 @@ const SettingsShortcutsView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsShortcutsView;
+export default SettingsShortcutsView;

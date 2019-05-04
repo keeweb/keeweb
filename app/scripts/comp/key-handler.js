@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Keys = require('../const/keys');
-const IdleTracker = require('../comp/idle-tracker');
+import Backbone from 'backbone';
+import Keys from '../const/keys';
+import IdleTracker from '../comp/idle-tracker';
 
 const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
 
@@ -98,4 +98,4 @@ const KeyHandler = {
 
 _.extend(KeyHandler, Backbone.Events);
 
-module.exports = KeyHandler;
+export default KeyHandler;

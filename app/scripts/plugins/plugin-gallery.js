@@ -1,9 +1,9 @@
-const Backbone = require('backbone');
-const kdbxweb = require('kdbxweb');
-const Links = require('../const/links');
-const SignatureVerifier = require('../util/signature-verifier');
-const Logger = require('../util/logger');
-const SettingsStore = require('../comp/settings-store');
+import Backbone from 'backbone';
+import kdbxweb from 'kdbxweb';
+import Links from '../const/links';
+import SignatureVerifier from '../util/signature-verifier';
+import Logger from '../util/logger';
+import SettingsStore from '../comp/settings-store';
 
 const PluginGallery = {
     logger: new Logger('plugin-gallery'),
@@ -80,4 +80,4 @@ const PluginGallery = {
     }
 };
 
-module.exports = PluginGallery;
+export default PluginGallery;

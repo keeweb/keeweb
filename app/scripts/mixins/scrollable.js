@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const FeatureDetector = require('../util/feature-detector');
-const baron = require('baron');
+import Backbone from 'backbone';
+import FeatureDetector from '../util/feature-detector';
+import baron from 'baron';
 
 const isEnabled = !FeatureDetector.isMobile;
 
@@ -51,4 +51,4 @@ const Scrollable = {
     }
 };
 
-module.exports = Scrollable;
+export default Scrollable;

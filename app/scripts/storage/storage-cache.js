@@ -1,5 +1,5 @@
-const StorageBase = require('./storage-base');
-const IoBrowserCache = require('./io-browser-cache');
+import StorageBase from './storage-base';
+import IoBrowserCache from './io-browser-cache';
 
 const StorageCache = StorageBase.extend({
     name: 'cache',
@@ -29,4 +29,4 @@ const StorageCache = StorageBase.extend({
     }
 });
 
-module.exports = new StorageCache();
+export default new StorageCache();

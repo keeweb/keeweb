@@ -1,5 +1,5 @@
-const AppSettingsModel = require('../models/app-settings-model');
-const Locale = require('../util/locale');
+import AppSettingsModel from '../models/app-settings-model';
+import Locale from '../util/locale';
 
 const GeneratorPresets = {
     get defaultPreset() {
@@ -122,4 +122,4 @@ const GeneratorPresets = {
     }
 };
 
-module.exports = GeneratorPresets;
+export default GeneratorPresets;

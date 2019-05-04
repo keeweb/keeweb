@@ -1,7 +1,7 @@
-const AutoTypeObfuscator = require('./auto-type-obfuscator');
-const AutoTypeEmitterFactory = require('./auto-type-emitter-factory');
-const Format = require('../util/format');
-const Logger = require('../util/logger');
+import AutoTypeObfuscator from './auto-type-obfuscator';
+import AutoTypeEmitterFactory from './auto-type-emitter-factory';
+import Format from '../util/format';
+import Logger from '../util/logger';
 
 const emitterLogger = new Logger('auto-type-emitter');
 emitterLogger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);
@@ -426,4 +426,4 @@ AutoTypeRunner.prototype.resetEmitterMod = function(targetState) {
     }, this);
 };
 
-module.exports = AutoTypeRunner;
+export default AutoTypeRunner;

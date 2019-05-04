@@ -54,4 +54,4 @@ const FeatureDetector = {
     }
 };
 
-module.exports = FeatureDetector;
+export default FeatureDetector;

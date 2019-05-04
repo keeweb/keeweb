@@ -1,6 +1,6 @@
-const StorageBase = require('./storage-base');
-const UrlUtil = require('../util/url-util');
-const FeatureDetector = require('../util/feature-detector');
+import StorageBase from './storage-base';
+import UrlUtil from '../util/url-util';
+import FeatureDetector from '../util/feature-detector';
 
 const DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
@@ -335,4 +335,4 @@ const StorageDropbox = StorageBase.extend({
     }
 });
 
-module.exports = new StorageDropbox();
+export default new StorageDropbox();

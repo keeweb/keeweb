@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const IconMap = require('../const/icon-map');
-const Logger = require('../util/logger');
+import Backbone from 'backbone';
+import IconMap from '../const/icon-map';
+import Logger from '../util/logger';
 
 const logger = new Logger('icon-select-view');
 
@@ -126,4 +126,4 @@ const IconSelectView = Backbone.View.extend({
     }
 });
 
-module.exports = IconSelectView;
+export default IconSelectView;

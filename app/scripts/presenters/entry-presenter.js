@@ -1,5 +1,5 @@
-const Format = require('../util/format');
-const Locale = require('../util/locale');
+import Format from '../util/format';
+import Locale from '../util/locale';
 
 const EntryPresenter = function(descField, noColor, activeEntryId) {
     this.entry = null;
@@ -53,4 +53,4 @@ EntryPresenter.prototype = {
     }
 };
 
-module.exports = EntryPresenter;
+export default EntryPresenter;

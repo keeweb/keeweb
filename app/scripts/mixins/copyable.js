@@ -1,10 +1,10 @@
-const AppSettingsModel = require('../models/app-settings-model');
-const Backbone = require('backbone');
+import AppSettingsModel from '../models/app-settings-model';
+import Backbone from 'backbone';
 
-const Locale = require('../util/locale');
+import Locale from '../util/locale';
 
-const Tip = require('../util/tip');
-const Timeouts = require('../const/timeouts');
+import Tip from '../util/tip';
+import Timeouts from '../const/timeouts';
 
 const Copyable = {
     hideFieldCopyTip: function() {
@@ -40,4 +40,4 @@ const Copyable = {
     }
 };
 
-module.exports = Copyable;
+export default Copyable;

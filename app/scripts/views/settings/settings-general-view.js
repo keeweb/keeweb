@@ -1,20 +1,20 @@
-const Backbone = require('backbone');
-const SettingsPrvView = require('./settings-prv-view');
-const SettingsLogsView = require('./settings-logs-view');
-const Launcher = require('../../comp/launcher');
-const Updater = require('../../comp/updater');
-const Format = require('../../util/format');
-const AppSettingsModel = require('../../models/app-settings-model');
-const UpdateModel = require('../../models/update-model');
-const RuntimeInfo = require('../../comp/runtime-info');
-const Alerts = require('../../comp/alerts');
-const SettingsManager = require('../../comp/settings-manager');
-const Storage = require('../../storage');
-const FeatureDetector = require('../../util/feature-detector');
-const Locale = require('../../util/locale');
-const SemVer = require('../../util/semver');
-const Links = require('../../const/links');
-const AutoType = require('../../auto-type');
+import Backbone from 'backbone';
+import SettingsPrvView from './settings-prv-view';
+import SettingsLogsView from './settings-logs-view';
+import Launcher from '../../comp/launcher';
+import Updater from '../../comp/updater';
+import Format from '../../util/format';
+import AppSettingsModel from '../../models/app-settings-model';
+import UpdateModel from '../../models/update-model';
+import RuntimeInfo from '../../comp/runtime-info';
+import Alerts from '../../comp/alerts';
+import SettingsManager from '../../comp/settings-manager';
+import Storage from '../../storage';
+import FeatureDetector from '../../util/feature-detector';
+import Locale from '../../util/locale';
+import SemVer from '../../util/semver';
+import Links from '../../const/links';
+import AutoType from '../../auto-type';
 
 const SettingsGeneralView = Backbone.View.extend({
     template: require('templates/settings/settings-general.hbs'),
@@ -357,4 +357,4 @@ const SettingsGeneralView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsGeneralView;
+export default SettingsGeneralView;

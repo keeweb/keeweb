@@ -1,24 +1,24 @@
-const Backbone = require('backbone');
-const AppSettingsModel = require('./app-settings-model');
-const MenuModel = require('./menu/menu-model');
-const EntryModel = require('./entry-model');
-const GroupModel = require('./group-model');
-const FileCollection = require('../collections/file-collection');
-const EntryCollection = require('../collections/entry-collection');
-const FileInfoCollection = require('../collections/file-info-collection');
-const FileModel = require('./file-model');
-const FileInfoModel = require('./file-info-model');
-const Storage = require('../storage');
-const Timeouts = require('../const/timeouts');
-const IdGenerator = require('../util/id-generator');
-const Logger = require('../util/logger');
-const FeatureDetector = require('../util/feature-detector');
-const Format = require('../util/format');
-const UrlUtil = require('../util/url-util');
-const AutoType = require('../auto-type');
-const Launcher = require('../comp/launcher');
-const RuntimeInfo = require('../comp/runtime-info');
-const PluginManager = require('../plugins/plugin-manager');
+import Backbone from 'backbone';
+import AppSettingsModel from './app-settings-model';
+import MenuModel from './menu/menu-model';
+import EntryModel from './entry-model';
+import GroupModel from './group-model';
+import FileCollection from '../collections/file-collection';
+import EntryCollection from '../collections/entry-collection';
+import FileInfoCollection from '../collections/file-info-collection';
+import FileModel from './file-model';
+import FileInfoModel from './file-info-model';
+import Storage from '../storage';
+import Timeouts from '../const/timeouts';
+import IdGenerator from '../util/id-generator';
+import Logger from '../util/logger';
+import FeatureDetector from '../util/feature-detector';
+import Format from '../util/format';
+import UrlUtil from '../util/url-util';
+import AutoType from '../auto-type';
+import Launcher from '../comp/launcher';
+import RuntimeInfo from '../comp/runtime-info';
+import PluginManager from '../plugins/plugin-manager';
 
 require('../mixins/protected-value-ex');
 
@@ -1029,4 +1029,4 @@ const AppModel = Backbone.Model.extend({
     }
 });
 
-module.exports = AppModel;
+export default AppModel;

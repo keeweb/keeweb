@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Locale = require('./../util/locale');
-const FeatureDetector = require('../util/feature-detector');
+import Backbone from 'backbone';
+import Locale from './../util/locale';
+import FeatureDetector from '../util/feature-detector';
 
 const SettingsManager = {
     neutralLocale: null,
@@ -91,4 +91,4 @@ const SettingsManager = {
     }
 };
 
-module.exports = SettingsManager;
+export default SettingsManager;

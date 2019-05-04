@@ -16,4 +16,4 @@ const SemVer = {
     }
 };
 
-module.exports = SemVer;
+export default SemVer;

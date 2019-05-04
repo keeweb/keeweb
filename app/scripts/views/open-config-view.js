@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Locale = require('../util/locale');
-const Keys = require('../const/keys');
+import Backbone from 'backbone';
+import Locale from '../util/locale';
+import Keys from '../const/keys';
 
 const OpenConfigView = Backbone.View.extend({
     template: require('templates/open-config.hbs'),
@@ -75,4 +75,4 @@ const OpenConfigView = Backbone.View.extend({
     }
 });
 
-module.exports = OpenConfigView;
+export default OpenConfigView;

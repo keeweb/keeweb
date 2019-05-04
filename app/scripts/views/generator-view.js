@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const PasswordGenerator = require('../util/password-generator');
-const CopyPaste = require('../comp/copy-paste');
-const GeneratorPresets = require('../comp/generator-presets');
-const Locale = require('../util/locale');
+import Backbone from 'backbone';
+import PasswordGenerator from '../util/password-generator';
+import CopyPaste from '../comp/copy-paste';
+import GeneratorPresets from '../comp/generator-presets';
+import Locale from '../util/locale';
 
 const GeneratorView = Backbone.View.extend({
     el: 'body',
@@ -137,4 +137,4 @@ const GeneratorView = Backbone.View.extend({
     }
 });
 
-module.exports = GeneratorView;
+export default GeneratorView;

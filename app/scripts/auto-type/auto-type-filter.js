@@ -1,5 +1,5 @@
-const EntryCollection = require('../collections/entry-collection');
-const Ranking = require('../util/ranking');
+import EntryCollection from '../collections/entry-collection';
+import Ranking from '../util/ranking';
 
 const urlPartsRegex = /^(\w+:\/\/)?(?:(?:www|wwws|secure)\.)?([^\/]+)\/?(.*)/;
 
@@ -82,4 +82,4 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
     return rank;
 };
 
-module.exports = AutoTypeFilter;
+export default AutoTypeFilter;

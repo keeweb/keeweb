@@ -1,5 +1,5 @@
-const Launcher = require('../../comp/launcher');
-const AutoTypeNativeHelper = require('../helper/auto-type-native-helper');
+import Launcher from '../../comp/launcher';
+import AutoTypeNativeHelper from '../helper/auto-type-native-helper';
 
 // http://eastmanreference.com/complete-list-of-applescript-key-codes/
 const KeyMap = {
@@ -88,4 +88,4 @@ AutoTypeEmitter.prototype.runScript = function(script) {
     });
 };
 
-module.exports = AutoTypeEmitter;
+export default AutoTypeEmitter;

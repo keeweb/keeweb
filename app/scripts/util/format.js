@@ -1,4 +1,4 @@
-const Locale = require('./locale');
+import Locale from './locale';
 
 const Format = {
     pad: function(num, digits) {
@@ -43,4 +43,4 @@ const Format = {
     }
 };
 
-module.exports = Format;
+export default Format;

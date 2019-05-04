@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const FileModel = require('../models/file-model');
+import Backbone from 'backbone';
+import FileModel from '../models/file-model';
 
 const FileCollection = Backbone.Collection.extend({
     model: FileModel,
@@ -21,4 +21,4 @@ const FileCollection = Backbone.Collection.extend({
     }
 });
 
-module.exports = FileCollection;
+export default FileCollection;
