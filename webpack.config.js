@@ -35,7 +35,7 @@ function config(grunt) {
         progress: false,
         failOnError: true,
         resolve: {
-            modules: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'node_modules')],
+            modules: [path.join(__dirname, 'src/scripts'), path.join(__dirname, 'node_modules')],
             alias: {
                 backbone: 'backbone/backbone-min.js',
                 underscore: 'underscore/underscore-min.js',
@@ -48,7 +48,7 @@ function config(grunt) {
                 argon2: 'argon2-browser/dist/argon2.min.js',
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
-                templates: path.join(__dirname, 'app/templates')
+                templates: path.join(__dirname, 'src/templates')
             }
         },
         module: {

@@ -45,38 +45,38 @@ module.exports = function(grunt) {
         },
         copy: {
             html: {
-                src: 'app/index.html',
+                src: 'public/index.html',
                 dest: 'tmp/index.html',
                 nonull: true
             },
             favicon: {
-                src: 'app/favicon.png',
+                src: 'public/favicon.png',
                 dest: 'tmp/favicon.png',
                 nonull: true
             },
             icons: {
-                cwd: 'app/icons/',
+                cwd: 'public/icons/',
                 src: ['*.png', '*.svg'],
                 dest: 'tmp/icons/',
                 expand: true,
                 nonull: true
             },
             'dist-icons': {
-                cwd: 'app/icons/',
+                cwd: 'public/icons/',
                 src: ['*.png', '*.svg'],
                 dest: 'dist/icons/',
                 expand: true,
                 nonull: true
             },
             manifest: {
-                cwd: 'app/manifest/',
+                cwd: 'public/manifest/',
                 src: ['*.json', '*.xml'],
                 dest: 'tmp/',
                 expand: true,
                 nonull: true
             },
             'dist-manifest': {
-                cwd: 'app/manifest/',
+                cwd: 'public/manifest/',
                 src: ['*.json', '*.xml'],
                 dest: 'dist/',
                 expand: true,
@@ -144,7 +144,7 @@ module.exports = function(grunt) {
             }
         },
         eslint: {
-            app: ['app/scripts/**/*.js'],
+            app: ['src/scripts/**/*.js'],
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
             grunt: ['Gruntfile.js', 'grunt/**/*.js']
         },
@@ -156,7 +156,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    'tmp/css/main.css': 'app/styles/main.scss'
+                    'tmp/css/main.css': 'src/styles/main.scss'
                 }
             }
         },
@@ -197,7 +197,7 @@ module.exports = function(grunt) {
                         { pattern: '# updmin:v0.0.0', replacement: '# updmin:v' + minElectronVersionForUpdate }
                     ]
                 },
-                files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
+                files: { 'dist/manifest.appcache': 'public/manifest.appcache' }
             },
             'manifest-html': {
                 options: { replacements: [{ pattern: '<html', replacement: '<html manifest="manifest.appcache"' }] },
@@ -209,7 +209,7 @@ module.exports = function(grunt) {
             },
             'desktop-public-key': {
                 options: { replacements: [{ pattern: '\'@@PUBLIC_KEY_CONTENT\'', replacement:
-                    '`' + fs.readFileSync('app/resources/public-key.pem', {encoding: 'utf8'}).trim() + '`' }] },
+                    '`' + fs.readFileSync('src/resources/public-key.pem', {encoding: 'utf8'}).trim() + '`' }] },
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
             },
             'cordova-html': {
@@ -252,11 +252,11 @@ module.exports = function(grunt) {
                 debounceDelay: 500
             },
             styles: {
-                files: 'app/styles/**/*.scss',
+                files: 'src/styles/**/*.scss',
                 tasks: ['sass']
             },
             indexhtml: {
-                files: 'app/index.html',
+                files: 'public/index.html',
                 tasks: ['copy:html']
             }
         },
@@ -479,7 +479,7 @@ module.exports = function(grunt) {
                         'helper/win32/KeeWebHelper.exe'
                     ],
                     expectedCount: 7,
-                    publicKey: 'app/resources/public-key.pem'
+                    publicKey: 'src/resources/public-key.pem'
                 }
             }
         },
