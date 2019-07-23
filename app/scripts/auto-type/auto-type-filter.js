@@ -1,6 +1,9 @@
 const EntryCollection = require('../collections/entry-collection');
 const Ranking = require('../util/ranking');
 
+const URL_FIELD_BONUS = 100;
+const NO_BONUS = 0;
+
 const urlPartsRegex = /^(\w+:\/\/)?(?:(?:www|wwws|secure)\.)?([^\/]+)\/?(.*)/;
 
 const AutoTypeFilter = function(windowInfo, appModel) {
@@ -45,40 +48,60 @@ AutoTypeFilter.prototype.getEntryRank = function(entry) {
             this.titleLower
         );
     }
-    if (this.urlParts && entry.url) {
-        const entryUrlParts = urlPartsRegex.exec(entry.url.toLowerCase());
-        if (entryUrlParts) {
-            const [, scheme, domain, path] = entryUrlParts;
-            const [, thisScheme, thisDomain, thisPath] = this.urlParts;
-            if (domain === thisDomain || thisDomain.indexOf('.' + domain) > 0) {
-                if (domain === thisDomain) {
-                    rank += 20;
-                } else {
-                    rank += 10;
-                }
-                if (path === thisPath) {
-                    rank += 10;
-                } else if (path && thisPath) {
-                    if (path.lastIndexOf(thisPath, 0) === 0) {
-                        rank += 5;
-                    } else if (thisPath.lastIndexOf(path, 0) === 0) {
-                        rank += 3;
-                    }
-                }
-                if (scheme === thisScheme) {
-                    rank += 1;
-                }
-            } else {
-                if (entry.searchText.indexOf(this.urlLower) >= 0) {
-                    // the url is in some field; include it
-                    rank += 5;
-                } else {
-                    // another domain; don't show this record at all, ignore title match
-                    return 0;
-                }
+    if (this.urlParts) {
+        const urlRank = this.getEntryRankForUrl(entry.url, URL_FIELD_BONUS);
+        if (urlRank !== 0) {
+            return rank + urlRank;
+        }
+
+        const fieldValues = Object.values(entry.fields);
+        for (const fieldValue of fieldValues) {
+            const fieldRank = this.getEntryRankForUrl(fieldValue, NO_BONUS);
+            if (fieldRank !== 0) {
+                return fieldRank;
             }
         }
     }
+
+    return rank;
+};
+
+AutoTypeFilter.prototype.getEntryRankForUrl = function(url, bonus) {
+    if (typeof url !== 'string') {
+        return 0;
+    }
+
+    let rank = 0;
+
+    const entryUrlParts = urlPartsRegex.exec(url.toLowerCase());
+    if (entryUrlParts) {
+        const [, scheme, domain, path] = entryUrlParts;
+        const [, thisScheme, thisDomain, thisPath] = this.urlParts;
+        if (domain === thisDomain || thisDomain.indexOf('.' + domain) > 0) {
+            if (domain === thisDomain) {
+                rank += 20;
+            } else {
+                rank += 10;
+            }
+            if (path === thisPath) {
+                rank += 10;
+            } else if (path && thisPath) {
+                if (path.lastIndexOf(thisPath, 0) === 0) {
+                    rank += 5;
+                } else if (thisPath.lastIndexOf(path, 0) === 0) {
+                    rank += 3;
+                }
+            }
+            if (scheme === thisScheme) {
+                rank += 1;
+            }
+        }
+    }
+
+    if (rank !== 0) {
+        rank += bonus;
+    }
+
     return rank;
 };
 
