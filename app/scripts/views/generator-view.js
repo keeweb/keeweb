@@ -1,6 +1,7 @@
 const Backbone = require('backbone');
 const PasswordGenerator = require('../util/password-generator');
 const CopyPaste = require('../comp/copy-paste');
+const AppSettingsModel = require('../models/app-settings-model');
 const GeneratorPresets = require('../comp/generator-presets');
 const Locale = require('../util/locale');
 
@@ -16,6 +17,7 @@ const GeneratorView = Backbone.View.extend({
         'input .gen__length-range': 'lengthChange',
         'change .gen__length-range': 'lengthChange',
         'change .gen__check input[type=checkbox]': 'checkChange',
+        'change #gen__check-hide': 'hideChange',
         'click .gen__btn-ok': 'btnOkClick',
         'change .gen__sel-tpl': 'presetChange',
         'click .gen__btn-refresh': 'newPass'
@@ -30,6 +32,7 @@ const GeneratorView = Backbone.View.extend({
         this.createPresets();
         const preset = this.preset;
         this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
+        this.hide = AppSettingsModel.instance.get('generatorHide');
         $('body').one('click', this.remove.bind(this));
         this.listenTo(Backbone, 'lock-workspace', this.remove.bind(this));
     },
@@ -37,7 +40,7 @@ const GeneratorView = Backbone.View.extend({
     render: function() {
         const canCopy = document.queryCommandSupported('copy');
         const btnTitle = this.model.copy ? canCopy ? Locale.alertCopy : Locale.alertClose : Locale.alertOk;
-        this.renderTemplate({ btnTitle: btnTitle, opt: this.gen, presets: this.presets, preset: this.preset });
+        this.renderTemplate({ btnTitle: btnTitle, opt: this.gen, hide: this.hide, presets: this.presets, preset: this.preset });
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
         this.generate();
@@ -67,6 +70,15 @@ const GeneratorView = Backbone.View.extend({
             }
         }
         return this.valuesMap.length - 1;
+    },
+
+    showPassword: function() {
+        if (this.hide) {
+            const dots = '•'.repeat(this.password.length);
+            this.resultEl.text(dots);
+        } else {
+            this.resultEl.text(this.password);
+        }
     },
 
     click: function(e) {
@@ -103,9 +115,16 @@ const GeneratorView = Backbone.View.extend({
 
     generate: function() {
         this.password = PasswordGenerator.generate(this.gen);
-        this.resultEl.text(this.password);
+        this.showPassword();
         const isLong = this.password.length > 32;
         this.resultEl.toggleClass('gen__result--long-pass', isLong);
+    },
+
+    hideChange: function(e) {
+        this.hide = e.target.checked;
+        AppSettingsModel.instance.unset('generatorHide', { silent: true });
+        AppSettingsModel.instance.set('generatorHide', this.hide);
+        this.showPassword();
     },
 
     btnOkClick: function() {

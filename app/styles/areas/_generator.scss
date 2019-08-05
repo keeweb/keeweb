@@ -27,6 +27,11 @@
       margin-left: 15%;
     }
   }
+  &__result-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
   &__result {
     @include user-select(text);
     font-family: $monospace-font-family;
@@ -39,6 +44,22 @@
     overflow: hidden;
     &--long-pass {
       font-size: .75em;
+    }
+  }
+  #gen__check-hide {
+    $width: 1.3em;
+    & + label {
+      width: $width;
+      margin-right: -$width;
+      margin-top: 1.3ex;
+      margin-left: $small-spacing;
+    }
+    & + label:before {
+      @include fa-icon;
+      content: $fa-var-eye;
+    }
+    &:checked + label:before {
+      content: $fa-var-eye-slash;
     }
   }
   &__btn-wrap {

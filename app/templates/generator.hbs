@@ -25,6 +25,10 @@
         <div class="gen__check"><input type="checkbox" id="gen__check-ambiguous"
             data-id="ambiguous" {{#if opt.ambiguous}}checked{{/if}}><label for="gen__check-ambiguous">0Oo</label></div>
     </div>
-    <div class="gen__result"></div>
+    <div class="gen__result-wrap">
+        <div class="gen__result"></div>
+        <input type="checkbox" id="gen__check-hide" {{#if hide}}checked{{/if}}>
+        <label for="gen__check-hide"></label>
+    </div>
     <div class="gen__btn-wrap"><button class="gen__btn-ok">{{btnTitle}}</button></div>
 </div>
