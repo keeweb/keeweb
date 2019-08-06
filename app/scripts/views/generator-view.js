@@ -4,6 +4,7 @@ const CopyPaste = require('../comp/copy-paste');
 const AppSettingsModel = require('../models/app-settings-model');
 const GeneratorPresets = require('../comp/generator-presets');
 const Locale = require('../util/locale');
+const Tip = require('../util/tip');
 
 const GeneratorView = Backbone.View.extend({
     el: 'body',
@@ -124,6 +125,8 @@ const GeneratorView = Backbone.View.extend({
         this.hide = e.target.checked;
         AppSettingsModel.instance.unset('generatorHide', { silent: true });
         AppSettingsModel.instance.set('generatorHide', this.hide);
+        const label = this.$el.find('#gen__check-hide + label');
+        Tip.createTip(label[0], {title: this.hide ? Locale.genShowPass : Locale.genHidePass});
         this.showPassword();
     },
 

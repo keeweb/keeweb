@@ -28,7 +28,13 @@
     <div class="gen__result-wrap">
         <div class="gen__result"></div>
         <input type="checkbox" id="gen__check-hide" {{#if hide}}checked{{/if}}>
-        <label for="gen__check-hide"></label>
+        <label for="gen__check-hide"
+            {{#if hide}}
+                title="{{res 'genShowPass'}}"
+            {{else}}
+                title="{{res 'genHidePass'}}"
+            {{/if}}
+        ></label>
     </div>
     <div class="gen__btn-wrap"><button class="gen__btn-ok">{{btnTitle}}</button></div>
 </div>
