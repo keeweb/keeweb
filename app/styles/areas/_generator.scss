@@ -5,11 +5,12 @@
   width: 11em;
   &__length-range {
   }
-  &__btn-refresh {
+  &__top-btn {
     float: right;
     cursor: pointer;
     position: relative;
     top: 2px;
+    margin-left: 0.35em;
     @include th {
       color: th(muted-color);
       &:hover { color: th(text-color); }
@@ -27,11 +28,6 @@
       margin-left: 15%;
     }
   }
-  &__result-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
   &__result {
     @include user-select(text);
     font-family: $monospace-font-family;
@@ -47,19 +43,14 @@
     }
   }
   #gen__check-hide {
-    $width: 1.3em;
-    & + label {
-      width: $width;
-      margin-right: -$width;
-      margin-top: 1.3ex;
-      margin-left: $small-spacing;
-    }
     & + label:before {
       @include fa-icon;
       content: $fa-var-eye;
+      color: inherit;
     }
     &:checked + label:before {
       content: $fa-var-eye-slash;
+      color: inherit;
     }
   }
   &__btn-wrap {
