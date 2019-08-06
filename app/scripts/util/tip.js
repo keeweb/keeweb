@@ -11,6 +11,8 @@ const Tip = function(el, config) {
     this.hideTimeout = null;
     this.force = config && config.force || false;
     this.hide = this.hide.bind(this);
+    this.mouseenterHandler = null;
+    this.mouseleaveHandler = null;
 };
 
 Tip.enabled = !FeatureDetector.isMobile;
@@ -21,8 +23,10 @@ Tip.prototype.init = function() {
     }
     this.el.removeAttr('title');
     this.el.attr('data-title', this.title);
-    this.el.mouseenter(this.mouseenter.bind(this)).mouseleave(this.mouseleave.bind(this));
-    this.el.click(this.mouseleave.bind(this));
+    this.mouseenterHandler = this.mouseenter.bind(this);
+    this.mouseleaveHandler = this.mouseleave.bind(this);
+    this.el.mouseenter(this.mouseenterHandler).mouseleave(this.mouseleaveHandler);
+    this.el.click(this.mouseleaveHandler);
 };
 
 Tip.prototype.show = function() {
@@ -132,7 +136,7 @@ Tip.prototype.getAutoPlacement = function(rect, tipRect) {
     }
 };
 
-Tip.createTips = function(container) {
+Tip.createTips = function(container, options) {
     if (!Tip.enabled) {
         return;
     }
@@ -144,6 +148,12 @@ Tip.createTips = function(container) {
 Tip.createTip = function(el, options) {
     if (!Tip.enabled && (!options || !options.force)) {
         return;
+    }
+    if (el._tip) {
+        el._tip.el
+            .off('mouseenter', el._tip.mouseenterHandler)
+            .off('mouseleave', el._tip.mouseleaveHandler)
+            .off('click', el._tip.mouseleaveHandler);
     }
     const tip = new Tip($(el), options);
     if (!options || !options.noInit) {
