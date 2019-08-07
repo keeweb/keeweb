@@ -41,7 +41,14 @@ const GeneratorView = Backbone.View.extend({
     render: function() {
         const canCopy = document.queryCommandSupported('copy');
         const btnTitle = this.model.copy ? canCopy ? Locale.alertCopy : Locale.alertClose : Locale.alertOk;
-        this.renderTemplate({ btnTitle: btnTitle, opt: this.gen, hide: this.hide, presets: this.presets, preset: this.preset });
+        this.renderTemplate({
+            btnTitle: btnTitle,
+            copy: this.model.copy,
+            opt: this.gen,
+            hide: this.hide,
+            presets: this.presets,
+            preset: this.preset
+        });
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
         this.generate();
@@ -74,7 +81,7 @@ const GeneratorView = Backbone.View.extend({
     },
 
     showPassword: function() {
-        if (this.hide) {
+        if (this.hide && !this.model.copy) {
             const dots = '•'.repeat(this.password.length);
             this.resultEl.text(dots);
         } else {
