@@ -131,11 +131,7 @@ const GeneratorView = Backbone.View.extend({
     },
 
     btnOkClick: function() {
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(this.resultEl[0]);
-        selection.removeAllRanges();
-        selection.addRange(range);
+        CopyPaste.createHiddenInput(this.password);
         CopyPaste.copy(this.password);
         this.trigger('result', this.password);
         this.remove();
