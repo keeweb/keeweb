@@ -136,7 +136,7 @@ Tip.prototype.getAutoPlacement = function(rect, tipRect) {
     }
 };
 
-Tip.createTips = function(container, options) {
+Tip.createTips = function(container) {
     if (!Tip.enabled) {
         return;
     }

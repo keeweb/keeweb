@@ -1,14 +1,14 @@
 <div class="gen">
     <div>{{res 'genLen'}}: <span class="gen__length-range-val">{{opt.length}}</span>
-        <i class="fa fa-refresh gen__btn-refresh gen__top-btn" title="{{res 'genNewPass'}}"></i>
+        <i class="fa fa-refresh gen__top-btn" title="{{res 'genNewPass'}}"></i>
         <input type="checkbox" id="gen__check-hide" {{#if hide}}checked{{/if}}>
-	    <label for="gen__check-hide" class="fa gen__top-btn"
-	        {{#if hide}}
-	            title="{{res 'genShowPass'}}"
-	        {{else}}
-	            title="{{res 'genHidePass'}}"
-	        {{/if}}
-	    ></label>
+        <label for="gen__check-hide" class="fa gen__top-btn"
+            {{#if hide}}
+                title="{{res 'genShowPass'}}"
+            {{else}}
+                title="{{res 'genHidePass'}}"
+            {{/if}}
+        ></label>
     </div>
     <select class="gen__sel-tpl input-base">
         {{#each presets as |ps|}}
