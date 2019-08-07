@@ -200,6 +200,7 @@ input[type=range] {
   width: 100%;
   margin: 12px 0;
   padding: 0;
+  background: transparent;
   &:focus { outline: none; }
   &::-webkit-slider-runnable-track {
     @include th { background: th(text-color); }
