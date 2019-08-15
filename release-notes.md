@@ -3,6 +3,7 @@ Release notes
 ##### v1.8.3 (TBD)
 `-` fix #1221: added '30 min' lock option
 `-` fixed generator style issues in Firefox
+`+` option to hide password in the generator
 
 ##### v1.8.2 (2019-04-22)
 `-` fix #1163: fixed libgconf-2-4 dependency  

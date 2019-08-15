@@ -5,11 +5,14 @@
   width: 11em;
   &__length-range {
   }
-  &__btn-refresh {
+  &__top-btn {
     float: right;
     cursor: pointer;
     position: relative;
     top: 2px;
+    & ~ .gen__top-btn {
+      margin-right: 0.5em;
+    }
     @include th {
       color: th(muted-color);
       &:hover { color: th(text-color); }
@@ -39,6 +42,17 @@
     overflow: hidden;
     &--long-pass {
       font-size: .75em;
+    }
+  }
+  &__check-hide {
+    & + label.gen__check-hide-label:before {
+      @include fa-icon;
+      content: $fa-var-eye;
+      color: inherit;
+    }
+    &:checked + label.gen__check-hide-label:before {
+      content: $fa-var-eye-slash;
+      color: inherit;
     }
   }
   &__btn-wrap {
