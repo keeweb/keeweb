@@ -58,9 +58,6 @@ const FieldView = Backbone.View.extend({
                 if (!text) {
                     return;
                 }
-                if (!CopyPaste.simpleCopy) {
-                    CopyPaste.createHiddenInput(text);
-                }
                 copyRes = CopyPaste.copy(text);
                 this.trigger('copy', { source: this, copyRes: copyRes });
                 return;

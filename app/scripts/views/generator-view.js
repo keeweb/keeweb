@@ -137,7 +137,6 @@ const GeneratorView = Backbone.View.extend({
     },
 
     btnOkClick: function() {
-        CopyPaste.createHiddenInput(this.password);
         CopyPaste.copy(this.password);
         this.trigger('result', this.password);
         this.remove();

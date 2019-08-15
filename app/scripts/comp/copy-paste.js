@@ -23,6 +23,7 @@ const CopyPaste = {
             }
             return {success: true, seconds: clipboardSeconds};
         } else {
+            this.createHiddenInput(text);
             try {
                 if (document.execCommand('copy')) {
                     return {success: true};

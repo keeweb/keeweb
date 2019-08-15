@@ -415,9 +415,6 @@ const DetailsView = Backbone.View.extend({
             if (!fieldText) {
                 return;
             }
-            if (!CopyPaste.simpleCopy) {
-                CopyPaste.createHiddenInput(fieldText);
-            }
             const copyRes = CopyPaste.copy(fieldText);
             this.fieldCopied({ source: editView, copyRes: copyRes });
         }
