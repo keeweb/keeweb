@@ -33,7 +33,7 @@ const GeneratorView = Backbone.View.extend({
         this.createPresets();
         const preset = this.preset;
         this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
-        this.hide = AppSettingsModel.instance.get('generatorHide');
+        this.hide = AppSettingsModel.instance.get('generatorHidePassword');
         $('body').one('click', this.remove.bind(this));
         this.listenTo(Backbone, 'lock-workspace', this.remove.bind(this));
     },
@@ -43,7 +43,7 @@ const GeneratorView = Backbone.View.extend({
         const btnTitle = this.model.copy ? canCopy ? Locale.alertCopy : Locale.alertClose : Locale.alertOk;
         this.renderTemplate({
             btnTitle: btnTitle,
-            copy: this.model.copy,
+            showToggleButton: this.model.copy,
             opt: this.gen,
             hide: this.hide,
             presets: this.presets,
@@ -82,8 +82,7 @@ const GeneratorView = Backbone.View.extend({
 
     showPassword: function() {
         if (this.hide && !this.model.copy) {
-            const dots = '•'.repeat(this.password.length);
-            this.resultEl.text(dots);
+            this.resultEl.text(PasswordGenerator.present(this.password.length));
         } else {
             this.resultEl.text(this.password);
         }
@@ -130,8 +129,8 @@ const GeneratorView = Backbone.View.extend({
 
     hideChange: function(e) {
         this.hide = e.target.checked;
-        AppSettingsModel.instance.unset('generatorHide', { silent: true });
-        AppSettingsModel.instance.set('generatorHide', this.hide);
+        AppSettingsModel.instance.unset('generatorHidePassword', { silent: true });
+        AppSettingsModel.instance.set('generatorHidePassword', this.hide);
         const label = this.$el.find('#gen__check-hide + label');
         Tip.createTip(label[0], {title: this.hide ? Locale.genShowPass : Locale.genHidePass});
         this.showPassword();

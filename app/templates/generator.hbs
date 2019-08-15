@@ -1,7 +1,7 @@
 <div class="gen">
     <div>{{res 'genLen'}}: <span class="gen__length-range-val">{{opt.length}}</span>
         <i class="fa fa-refresh gen__btn-refresh gen__top-btn" title="{{res 'genNewPass'}}"></i>
-        {{#unless copy}}
+        {{#unless showToggleButton}}
             <input type="checkbox" id="gen__check-hide" {{#if hide}}checked{{/if}}>
             <label for="gen__check-hide" class="fa gen__top-btn"
                 {{#if hide}}

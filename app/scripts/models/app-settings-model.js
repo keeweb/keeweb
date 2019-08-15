@@ -33,7 +33,7 @@ const AppSettingsModel = Backbone.Model.extend({
         fontSize: 0,
         tableViewColumns: null,
         generatorPresets: null,
-        generatorHide: false,
+        generatorHidePassword: false,
         cacheConfigSettings: false,
 
         canOpen: true,
