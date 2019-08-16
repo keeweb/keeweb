@@ -11,20 +11,52 @@
  */
 const PHONETIC_PRE = [
     // Simple phonetics
-    'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p',
-    'qu', 'r', 's', 't',
+    'b',
+    'c',
+    'd',
+    'f',
+    'g',
+    'h',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'p',
+    'qu',
+    'r',
+    's',
+    't',
     // Complex phonetics
     'bl',
-    'ch', 'cl', 'cr',
+    'ch',
+    'cl',
+    'cr',
     'dr',
-    'fl', 'fr',
-    'gl', 'gr',
-    'kl', 'kr',
-    'ph', 'pr', 'pl',
-    'sc', 'sh', 'sl', 'sn', 'sr', 'st', 'str', 'sw',
-    'th', 'tr',
+    'fl',
+    'fr',
+    'gl',
+    'gr',
+    'kl',
+    'kr',
+    'ph',
+    'pr',
+    'pl',
+    'sc',
+    'sh',
+    'sl',
+    'sn',
+    'sr',
+    'st',
+    'str',
+    'sw',
+    'th',
+    'tr',
     'br',
-    'v', 'w', 'y', 'z'
+    'v',
+    'w',
+    'y',
+    'z'
 ];
 
 /**
@@ -39,9 +71,17 @@ const PHONETIC_PRE_SIMPLE_LENGTH = 16;
  */
 const PHONETIC_MID = [
     // Simple phonetics
-    'a', 'e', 'i', 'o', 'u',
+    'a',
+    'e',
+    'i',
+    'o',
+    'u',
     // Complex phonetics
-    'ee', 'ie', 'oo', 'ou', 'ue'
+    'ee',
+    'ie',
+    'oo',
+    'ou',
+    'ue'
 ];
 
 /**
@@ -56,15 +96,32 @@ const PHONETIC_MID_SIMPLE_LENGTH = 5;
  */
 const PHONETIC_POST = [
     // Simple phonetics
-    'b', 'd', 'f', 'g', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'y',
+    'b',
+    'd',
+    'f',
+    'g',
+    'k',
+    'l',
+    'm',
+    'n',
+    'p',
+    'r',
+    's',
+    't',
+    'y',
     // Complex phonetics
-    'ch', 'ck',
+    'ch',
+    'ck',
     'ln',
-    'nk', 'ng',
+    'nk',
+    'ng',
     'rn',
-    'sh', 'sk', 'st',
+    'sh',
+    'sk',
+    'st',
     'th',
-    'x', 'z'
+    'x',
+    'z'
 ];
 
 /**
@@ -107,17 +164,14 @@ function addSyllable(wordObj) {
     const first = wordObj.word === '';
     const preOnFirst = deriv % 6 > 0;
     if ((first && preOnFirst) || wordObj.lastSkippedPost || compound) {
-        wordObj.word += getNextPhonetic(PHONETIC_PRE,
-            PHONETIC_PRE_SIMPLE_LENGTH, wordObj);
+        wordObj.word += getNextPhonetic(PHONETIC_PRE, PHONETIC_PRE_SIMPLE_LENGTH, wordObj);
         wordObj.lastSkippedPre = false;
     } else {
         wordObj.lastSkippedPre = true;
     }
-    wordObj.word += getNextPhonetic(PHONETIC_MID, PHONETIC_MID_SIMPLE_LENGTH,
-        wordObj, first && wordObj.lastSkippedPre);
+    wordObj.word += getNextPhonetic(PHONETIC_MID, PHONETIC_MID_SIMPLE_LENGTH, wordObj, first && wordObj.lastSkippedPre);
     if (wordObj.lastSkippedPre || compound) {
-        wordObj.word += getNextPhonetic(PHONETIC_POST,
-            PHONETIC_POST_SIMPLE_LENGTH, wordObj);
+        wordObj.word += getNextPhonetic(PHONETIC_POST, PHONETIC_POST_SIMPLE_LENGTH, wordObj);
         wordObj.lastSkippedPost = false;
     } else {
         wordObj.lastSkippedPost = true;
@@ -206,7 +260,7 @@ function getNumericHash(data) {
     data += '-Phonetic';
     for (let i = 0, len = data.length; i < len; i++) {
         const chr = data.charCodeAt(i);
-        numeric = ((numeric << 5) - numeric) + chr;
+        numeric = (numeric << 5) - numeric + chr;
         numeric >>>= 0;
     }
     return numeric;

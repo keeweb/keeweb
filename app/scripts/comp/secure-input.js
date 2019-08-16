@@ -90,7 +90,10 @@ Object.defineProperty(SecureInput.prototype, 'value', {
                 byteLength++;
             }
         }
-        return new kdbxweb.ProtectedValue(valueBytes.buffer.slice(0, byteLength), saltBytes.buffer.slice(0, byteLength));
+        return new kdbxweb.ProtectedValue(
+            valueBytes.buffer.slice(0, byteLength),
+            saltBytes.buffer.slice(0, byteLength)
+        );
     }
 });
 

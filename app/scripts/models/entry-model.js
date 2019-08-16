@@ -13,7 +13,16 @@ const EntryModel = Backbone.Model.extend({
     urlRegex: /^https?:\/\//i,
     fieldRefRegex: /^\{REF:([TNPAU])@I:(\w{32})}$/,
 
-    builtInFields: ['Title', 'Password', 'UserName', 'URL', 'Notes', 'TOTP Seed', 'TOTP Settings', '_etm_template_uuid'],
+    builtInFields: [
+        'Title',
+        'Password',
+        'UserName',
+        'URL',
+        'Notes',
+        'TOTP Seed',
+        'TOTP Settings',
+        '_etm_template_uuid'
+    ],
     fieldRefFields: ['title', 'password', 'user', 'url', 'notes'],
     fieldRefIds: { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' },
 
@@ -32,7 +41,7 @@ const EntryModel = Backbone.Model.extend({
 
     _fillByEntry: function() {
         const entry = this.entry;
-        this.set({id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id}, {silent: true});
+        this.set({ id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id }, { silent: true });
         this.fileName = this.file.get('name');
         this.groupName = this.group.get('title');
         this.title = this._getFieldString('Title');
@@ -120,7 +129,8 @@ const EntryModel = Backbone.Model.extend({
 
     _buildAutoType: function() {
         this.autoTypeEnabled = this.entry.autoType.enabled;
-        this.autoTypeObfuscation = this.entry.autoType.obfuscation === kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard;
+        this.autoTypeObfuscation =
+            this.entry.autoType.obfuscation === kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard;
         this.autoTypeSequence = this.entry.autoType.defaultSequence;
         this.autoTypeWindows = this.entry.autoType.items.map(this._convertAutoTypeItem);
     },
@@ -150,14 +160,18 @@ const EntryModel = Backbone.Model.extend({
 
     _attachmentsToModel: function(binaries) {
         const att = [];
-        _.forEach(binaries, (data, title) => {
-            if (data && data.ref) {
-                data = data.value;
-            }
-            if (data) {
-                att.push(AttachmentModel.fromAttachment({data: data, title: title}));
-            }
-        }, this);
+        _.forEach(
+            binaries,
+            (data, title) => {
+                if (data && data.ref) {
+                    data = data.value;
+                }
+                if (data) {
+                    att.push(AttachmentModel.fromAttachment({ data: data, title: title }));
+                }
+            },
+            this
+        );
         return att;
     },
 
@@ -183,21 +197,25 @@ const EntryModel = Backbone.Model.extend({
     },
 
     matches: function(filter) {
-        return !filter ||
-            (!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
-            (!filter.textLower || (filter.advanced ? this.matchesAdv(filter) : this.searchText.indexOf(filter.textLower) >= 0)) &&
-            (!filter.color || filter.color === true && this.searchColor || this.searchColor === filter.color) &&
-            (!filter.autoType || this.autoTypeEnabled);
+        return (
+            !filter ||
+            ((!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
+                (!filter.textLower ||
+                    (filter.advanced ? this.matchesAdv(filter) : this.searchText.indexOf(filter.textLower) >= 0)) &&
+                (!filter.color || (filter.color === true && this.searchColor) || this.searchColor === filter.color) &&
+                (!filter.autoType || this.autoTypeEnabled))
+        );
     },
 
     matchesAdv: function(filter) {
         const adv = filter.advanced;
-        let search,
-            match;
+        let search, match;
         if (adv.regex) {
             try {
                 search = new RegExp(filter.text, adv.cs ? '' : 'i');
-            } catch (e) { return false; }
+            } catch (e) {
+                return false;
+            }
             match = this.matchRegex;
         } else if (adv.cs) {
             search = filter.text;
@@ -387,7 +405,7 @@ const EntryModel = Backbone.Model.extend({
     },
 
     setField: function(field, val, allowEmpty) {
-        const hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
+        const hasValue = val && (typeof val === 'string' || (val.isProtected && val.byteLength));
         if (hasValue || allowEmpty || this.builtInFields.indexOf(field) >= 0) {
             this._entryModified();
             val = this.sanitizeFieldValue(val);
@@ -542,8 +560,7 @@ const EntryModel = Backbone.Model.extend({
                 if (settings && settings.isProtected) {
                     settings = settings.getText();
                 }
-                let period,
-                    digits;
+                let period, digits;
                 if (settings) {
                     settings = settings.split(';');
                     if (settings.length > 0 && settings[0] > 0) {
@@ -601,8 +618,9 @@ const EntryModel = Backbone.Model.extend({
 
     setAutoTypeObfuscation: function(enabled) {
         this._entryModified();
-        this.entry.autoType.obfuscation =
-            enabled ? kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard : kdbxweb.Consts.AutoTypeObfuscationOptions.None;
+        this.entry.autoType.obfuscation = enabled
+            ? kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard
+            : kdbxweb.Consts.AutoTypeObfuscationOptions.None;
         this._buildAutoType();
     },
 
@@ -674,20 +692,17 @@ const EntryModel = Backbone.Model.extend({
 
         const fieldNames = Object.keys(this.fields);
         _.forEach(fieldNames, field => {
-            ranking.push(
-                {
-                    field: field,
-                    multiplicator: 2
-                }
-            );
+            ranking.push({
+                field: field,
+                multiplicator: 2
+            });
         });
 
         _.forEach(ranking, rankingEntry => {
             if (this._getFieldString(rankingEntry.field).toLowerCase() !== '') {
-                const calculatedRank = Ranking.getStringRank(
-                    searchString,
-                    this._getFieldString(rankingEntry.field).toLowerCase()
-                ) * rankingEntry.multiplicator;
+                const calculatedRank =
+                    Ranking.getStringRank(searchString, this._getFieldString(rankingEntry.field).toLowerCase()) *
+                    rankingEntry.multiplicator;
                 rank += calculatedRank;
             }
         });

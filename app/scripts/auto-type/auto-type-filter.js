@@ -17,14 +17,13 @@ AutoTypeFilter.prototype.getEntries = function() {
         autoType: true
     };
     this.prepareFilter();
-    let entries = this.appModel.getEntriesByFilter(filter)
-        .map(e => [e, this.getEntryRank(e)]);
+    let entries = this.appModel.getEntriesByFilter(filter).map(e => [e, this.getEntryRank(e)]);
     if (!this.ignoreWindowInfo) {
         entries = entries.filter(e => e[1]);
     }
-    entries = entries.sort((x, y) => x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1]);
+    entries = entries.sort((x, y) => (x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1]));
     entries = entries.map(p => p[0]);
-    return new EntryCollection(entries, {comparator: 'none'});
+    return new EntryCollection(entries, { comparator: 'none' });
 };
 
 AutoTypeFilter.prototype.hasWindowInfo = function() {
@@ -40,10 +39,7 @@ AutoTypeFilter.prototype.prepareFilter = function() {
 AutoTypeFilter.prototype.getEntryRank = function(entry) {
     let rank = 0;
     if (this.titleLower && entry.title) {
-        rank += Ranking.getStringRank(
-            entry.title.toLowerCase(),
-            this.titleLower
-        );
+        rank += Ranking.getStringRank(entry.title.toLowerCase(), this.titleLower);
     }
     if (this.urlParts && entry.url) {
         const entryUrlParts = urlPartsRegex.exec(entry.url.toLowerCase());

@@ -25,17 +25,20 @@ const GrpView = Backbone.View.extend({
     render: function() {
         this.removeSubView();
         if (this.model) {
-            this.renderTemplate({
-                title: this.model.get('title'),
-                icon: this.model.get('icon') || 'folder',
-                customIcon: this.model.get('customIcon'),
-                enableSearching: this.model.getEffectiveEnableSearching(),
-                readonly: this.model.get('top'),
-                canAutoType: AutoType.enabled,
-                autoTypeSeq: this.model.get('autoTypeSeq'),
-                autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
-                defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
-            }, true);
+            this.renderTemplate(
+                {
+                    title: this.model.get('title'),
+                    icon: this.model.get('icon') || 'folder',
+                    customIcon: this.model.get('customIcon'),
+                    enableSearching: this.model.getEffectiveEnableSearching(),
+                    readonly: this.model.get('top'),
+                    canAutoType: AutoType.enabled,
+                    autoTypeSeq: this.model.get('autoTypeSeq'),
+                    autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
+                    defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
+                },
+                true
+            );
             if (!this.model.get('title')) {
                 this.$el.find('#grp__field-title').focus();
             }
@@ -88,8 +91,10 @@ const GrpView = Backbone.View.extend({
 
     focusAutoTypeSeq: function(e) {
         if (!this.views.hint) {
-            this.views.hint = new AutoTypeHintView({input: e.target}).render();
-            this.views.hint.on('remove', () => { delete this.views.hint; });
+            this.views.hint = new AutoTypeHintView({ input: e.target }).render();
+            this.views.hint.on('remove', () => {
+                delete this.views.hint;
+            });
         }
     },
 

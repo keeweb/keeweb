@@ -1,7 +1,6 @@
 const Launcher = require('../../comp/launcher');
 
-const AutoTypeHelper = function() {
-};
+const AutoTypeHelper = function() {};
 
 AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
     Launcher.spawn({

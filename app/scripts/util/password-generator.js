@@ -28,7 +28,9 @@ const PasswordGenerator = {
         }
         const ranges = Object.keys(this.charRanges)
             .filter(r => opts[r])
-            .map(function(r) { return this.charRanges[r]; }, this);
+            .map(function(r) {
+                return this.charRanges[r];
+            }, this);
         if (opts.include && opts.include.length) {
             ranges.push(opts.include);
         }

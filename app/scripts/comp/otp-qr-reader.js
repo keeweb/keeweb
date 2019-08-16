@@ -18,21 +18,28 @@ const OtpQrReader = {
         if (screenshotKey) {
             screenshotKey = Locale.detSetupOtpAlertBodyWith.replace('{}', '<code>' + screenshotKey + '</code>');
         }
-        const pasteKey = FeatureDetector.isMobile ? ''
-            : Locale.detSetupOtpAlertBodyWith.replace('{}',
-                '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>');
+        const pasteKey = FeatureDetector.isMobile
+            ? ''
+            : Locale.detSetupOtpAlertBodyWith.replace(
+                  '{}',
+                  '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>'
+              );
         OtpQrReader.startListenClipoard();
-        const buttons = [{result: 'manually', title: Locale.detSetupOtpManualButton, silent: true},
-            Alerts.buttons.cancel];
+        const buttons = [
+            { result: 'manually', title: Locale.detSetupOtpManualButton, silent: true },
+            Alerts.buttons.cancel
+        ];
         if (FeatureDetector.isMobile) {
-            buttons.unshift({result: 'select', title: Locale.detSetupOtpScanButton});
+            buttons.unshift({ result: 'select', title: Locale.detSetupOtpScanButton });
         }
-        const line3 = FeatureDetector.isMobile ? Locale.detSetupOtpAlertBody3Mobile
+        const line3 = FeatureDetector.isMobile
+            ? Locale.detSetupOtpAlertBody3Mobile
             : Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
         OtpQrReader.alert = Alerts.alert({
             icon: 'qrcode',
             header: Locale.detSetupOtpAlert,
-            body: [Locale.detSetupOtpAlertBody,
+            body: [
+                Locale.detSetupOtpAlertBody,
                 Locale.detSetupOtpAlertBody1,
                 Locale.detSetupOtpAlertBody2.replace('{}', screenshotKey || ''),
                 line3,
@@ -127,7 +134,8 @@ const OtpQrReader = {
                     logger.error('Error parsing QR code', err);
                     Alerts.error({
                         header: Locale.detOtpQrWrong,
-                        body: Locale.detOtpQrWrongBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                        body:
+                            Locale.detOtpQrWrongBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
                     });
                 }
             } catch (e) {

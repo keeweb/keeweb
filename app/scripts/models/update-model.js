@@ -15,8 +15,7 @@ const UpdateModel = Backbone.Model.extend({
         updateManual: false
     },
 
-    initialize: function() {
-    },
+    initialize: function() {},
 
     load: function() {
         return SettingsStore.load('update-info').then(data => {
@@ -27,8 +26,9 @@ const UpdateModel = Backbone.Model.extend({
                             data[key] = val ? new Date(val) : null;
                         }
                     });
-                    this.set(data, {silent: true});
-                } catch (e) { /* failed to load model */
+                    this.set(data, { silent: true });
+                } catch (e) {
+                    /* failed to load model */
                 }
             }
         });

@@ -61,7 +61,8 @@ const FieldViewAutocomplete = FieldViewText.extend({
     moveAutocomplete: function(next) {
         const completions = this.model.getCompletions(this.input.val());
         if (typeof this.selectedCopmletionIx === 'number') {
-            this.selectedCopmletionIx = (completions.length + this.selectedCopmletionIx + (next ? 1 : -1)) % completions.length;
+            this.selectedCopmletionIx =
+                (completions.length + this.selectedCopmletionIx + (next ? 1 : -1)) % completions.length;
         } else {
             this.selectedCopmletionIx = next ? 0 : completions.length - 1;
         }
@@ -70,10 +71,12 @@ const FieldViewAutocomplete = FieldViewText.extend({
 
     updateAutocomplete: function() {
         const completions = this.model.getCompletions(this.input.val());
-        const completionsHtml = completions.map((item, ix) => {
-            const sel = ix === this.selectedCopmletionIx ? 'details__field-autocomplete-item--selected' : '';
-            return '<div class="details__field-autocomplete-item ' + sel + '">' + _.escape(item) + '</div>';
-        }).join('');
+        const completionsHtml = completions
+            .map((item, ix) => {
+                const sel = ix === this.selectedCopmletionIx ? 'details__field-autocomplete-item--selected' : '';
+                return '<div class="details__field-autocomplete-item ' + sel + '">' + _.escape(item) + '</div>';
+            })
+            .join('');
         this.autocomplete.html(completionsHtml);
         this.autocomplete.toggle(!!completionsHtml);
     },
@@ -85,7 +88,9 @@ const FieldViewAutocomplete = FieldViewText.extend({
             this.input.val(selectedItem);
             this.endEdit(selectedItem);
         } else {
-            this.afterPaint(function () { this.input.focus(); });
+            this.afterPaint(function() {
+                this.input.focus();
+            });
         }
     }
 });

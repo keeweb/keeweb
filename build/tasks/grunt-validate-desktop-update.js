@@ -1,5 +1,5 @@
-module.exports = function (grunt) {
-    grunt.registerMultiTask('validate-desktop-update', 'Validates desktop update package', function () {
+module.exports = function(grunt) {
+    grunt.registerMultiTask('validate-desktop-update', 'Validates desktop update package', function() {
         const path = require('path');
         const crypto = require('crypto');
         const fs = require('fs');

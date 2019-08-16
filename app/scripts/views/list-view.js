@@ -40,7 +40,7 @@ const ListView = Backbone.View.extend({
         { val: 'fileName', name: 'file', enabled: false }
     ],
 
-    initialize: function () {
+    initialize: function() {
         this.initScroll();
         this.views = {};
         this.views.search = new ListSearchView({ model: this.model });
@@ -64,7 +64,7 @@ const ListView = Backbone.View.extend({
         this.items = new EntryCollection();
     },
 
-    render: function () {
+    render: function() {
         if (!this.itemsEl) {
             this.$el.html(this.template());
             this.itemsEl = this.$el.find('.list__items>.scroller');
@@ -128,7 +128,9 @@ const ListView = Backbone.View.extend({
     },
 
     itemClick: function(e) {
-        const id = $(e.target).closest('.list__item').attr('id');
+        const id = $(e.target)
+            .closest('.list__item')
+            .attr('id');
         const item = this.items.get(id);
         if (!item.active) {
             this.selectItem(item);
@@ -167,7 +169,9 @@ const ListView = Backbone.View.extend({
             Alerts.yesno({
                 icon: 'sticky-note-o',
                 header: Locale.listAddTemplateHeader,
-                body: Locale.listAddTemplateBody1.replace('{}', '<i class="fa fa-plus"></i>') + '<br/>' +
+                body:
+                    Locale.listAddTemplateBody1.replace('{}', '<i class="fa fa-plus"></i>') +
+                    '<br/>' +
                     Locale.listAddTemplateBody2.replace('{}', 'Templates'),
                 buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                 success: () => {
@@ -248,7 +252,9 @@ const ListView = Backbone.View.extend({
 
     itemDragStart: function(e) {
         e.stopPropagation();
-        const id = $(e.target).closest('.list__item').attr('id');
+        const id = $(e.target)
+            .closest('.list__item')
+            .attr('id');
         e.originalEvent.dataTransfer.setData('text/entry', id);
         e.originalEvent.dataTransfer.effectAllowed = 'move';
         DragDropInfo.dragObject = this.items.get(id);

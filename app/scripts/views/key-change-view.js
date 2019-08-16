@@ -65,7 +65,10 @@ const KeyChangeView = Backbone.View.extend({
             this.keyFile = null;
             this.$el.find('.key-change__keyfile-name').html('');
         }
-        this.$el.find('.key-change__file').val(null).click();
+        this.$el
+            .find('.key-change__file')
+            .val(null)
+            .click();
         this.inputEl.focus();
     },
 

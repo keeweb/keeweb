@@ -28,18 +28,23 @@ const Launcher = {
     },
     devTools: true,
     openDevTools: function() {
-        this.electron().remote.getCurrentWindow().openDevTools({ mode: 'bottom' });
+        this.electron()
+            .remote.getCurrentWindow()
+            .openDevTools({ mode: 'bottom' });
     },
     getSaveFileName: function(defaultPath, callback) {
         if (defaultPath) {
             const homePath = this.remReq('electron').app.getPath('userDesktop');
             defaultPath = this.joinPath(homePath, defaultPath);
         }
-        this.remReq('electron').dialog.showSaveDialog({
-            title: Locale.launcherSave,
-            defaultPath: defaultPath,
-            filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
-        }, callback);
+        this.remReq('electron').dialog.showSaveDialog(
+            {
+                title: Locale.launcherSave,
+                defaultPath: defaultPath,
+                filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
+            },
+            callback
+        );
     },
     getUserDataPath: function(fileName) {
         if (!this.userDataPath) {
@@ -110,9 +115,7 @@ const Launcher = {
                 return callback();
             }
 
-            fs.mkdir(stack.shift(), err =>
-                err ? callback(err) : create(stack, callback)
-            );
+            fs.mkdir(stack.shift(), err => (err ? callback(err) : create(stack, callback)));
         };
 
         collect(dir, stack, () => create(stack, callback));
@@ -222,8 +225,12 @@ const Launcher = {
         [ps.stdin, ps.stdout, ps.stderr].forEach(s => s.setEncoding('utf-8'));
         let stderr = '';
         let stdout = '';
-        ps.stderr.on('data', d => { stderr += d.toString('utf-8'); });
-        ps.stdout.on('data', d => { stdout += d.toString('utf-8'); });
+        ps.stderr.on('data', d => {
+            stderr += d.toString('utf-8');
+        });
+        ps.stdout.on('data', d => {
+            stdout += d.toString('utf-8');
+        });
         ps.on('close', code => {
             stdout = stdout.trim();
             stderr = stderr.trim();

@@ -14,9 +14,14 @@ const FieldViewTags = FieldViewText.extend({
         this.model.tags.forEach(tag => {
             allTags[tag.toLowerCase()] = tag;
         });
-        return _.unique(val.split(/\s*[;,:]\s*/).filter(_.identity).map(tag => {
-            return allTags[tag.toLowerCase()] || tag;
-        }));
+        return _.unique(
+            val
+                .split(/\s*[;,:]\s*/)
+                .filter(_.identity)
+                .map(tag => {
+                    return allTags[tag.toLowerCase()] || tag;
+                })
+        );
     },
 
     endEdit: function(newVal, extra) {
@@ -60,9 +65,11 @@ const FieldViewTags = FieldViewText.extend({
 
     setTags: function() {
         const availableTags = this.getAvailableTags();
-        const tagsHtml = availableTags.map(tag => {
-            return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
-        }).join('');
+        const tagsHtml = availableTags
+            .map(tag => {
+                return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
+            })
+            .join('');
         this.tagsAutocomplete.html(tagsHtml);
         this.tagsAutocomplete.toggle(!!tagsHtml);
     },
@@ -88,7 +95,9 @@ const FieldViewTags = FieldViewText.extend({
             this.input.focus();
             this.setTags();
         }
-        this.afterPaint(function() { this.input.focus(); });
+        this.afterPaint(function() {
+            this.input.focus();
+        });
     }
 });
 

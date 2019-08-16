@@ -15,7 +15,7 @@ const RuntimeDataModel = Backbone.Model.extend({
                     // we're not using cookies here now
                     delete data.cookies;
                 }
-                this.set(data, {silent: true});
+                this.set(data, { silent: true });
             }
         });
     },

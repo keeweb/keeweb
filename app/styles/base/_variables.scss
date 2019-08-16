@@ -1,7 +1,8 @@
 // Typography
-$base-font-family: -apple-system, "BlinkMacSystemFont", "Helvetica Neue", "Helvetica", "Roboto", "Arial", "Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB", "STXihei", "华文细黑", sans-serif;
+$base-font-family: -apple-system, 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial',
+    'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', 'STXihei', '华文细黑', sans-serif;
 $heading-font-family: $base-font-family;
-$monospace-font-family: "SFMono-Regular",Monaco,Consolas,"Lucida Console",monospace;
+$monospace-font-family: 'SFMono-Regular', Monaco, Consolas, 'Lucida Console', monospace;
 
 // Font Sizes
 $base-font-size: 12px;
@@ -16,7 +17,7 @@ $base-border-radius: 1px;
 $base-spacing: $base-line-height * 1em;
 $small-spacing: $base-spacing / 2;
 $base-z-index: 0;
-$base-padding-v: .5em;
+$base-padding-v: 0.5em;
 $base-padding-h: 1em;
 $mobile-back-button-height: 3em;
 $base-padding: $base-padding-v $base-padding-h;
@@ -30,26 +31,48 @@ $titlebar-padding-small: 24px;
 $titlebar-padding-large: 40px;
 
 // Borders
-@function base-border() { @return 1px solid th(base-border-color); };
-@function light-border() { @return 1px solid th(light-border-color); };
-@function selected-border-width() { @return 3px; }
-@function selected-border() { @return selected-border-width() solid th(action-color); }
-@function selected-hover-border() { @return 1px solid th(action-color); }
-@function selected-transparent-border() { @return 1px solid transparent; }
-@function focused-outline() { @return 1px solid th(action-color); }
+@function base-border() {
+    @return 1px solid th(base-border-color);
+}
+@function light-border() {
+    @return 1px solid th(light-border-color);
+}
+@function selected-border-width() {
+    @return 3px;
+}
+@function selected-border() {
+    @return selected-border-width() solid th(action-color);
+}
+@function selected-hover-border() {
+    @return 1px solid th(action-color);
+}
+@function selected-transparent-border() {
+    @return 1px solid transparent;
+}
+@function focused-outline() {
+    @return 1px solid th(action-color);
+}
 
 // Forms
-@function form-box-shadow() { @return inset 0 1px 3px rgba(0, 0, 0, 0.06); }
-@function form-box-shadow-focus() { @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus); }
-@function form-box-shadow-focus-error() { @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus-error); }
+@function form-box-shadow() {
+    @return inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+@function form-box-shadow-focus() {
+    @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus);
+}
+@function form-box-shadow-focus-error() {
+    @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus-error);
+}
 
 // Shadows
-@function dropdown-box-shadow() { @return 0 0 50px th(dropdown-box-shadow-color); }
+@function dropdown-box-shadow() {
+    @return 0 0 50px th(dropdown-box-shadow-color);
+}
 
 // Animations
 $base-duration: 150ms;
 $base-timing: ease;
-$slow-transition-in: $base-duration*2 ease-in;
+$slow-transition-in: $base-duration * 2 ease-in;
 $slow-transition-out: $base-duration ease-out;
 $tip-transition-in: 500ms $ease-in-expo;
 $tip-transition-out: $slow-transition-out;
@@ -57,8 +80,8 @@ $tip-transition-out: $slow-transition-out;
 // Math
 $sqrt2: 1.41;
 
-$z-index-no-modal:  10000;
-$z-index-modal:     100000;
+$z-index-no-modal: 10000;
+$z-index-modal: 100000;
 
 // Screen sizes
 $tablet-width: 736px;

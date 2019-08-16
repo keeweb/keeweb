@@ -61,7 +61,7 @@ const DetailsView = Backbone.View.extend({
         'contextmenu .details': 'contextMenu'
     },
 
-    initialize: function () {
+    initialize: function() {
         this.fieldViews = [];
         this.views = {};
         this.initScroll();
@@ -100,7 +100,7 @@ const DetailsView = Backbone.View.extend({
         this.hideFieldCopyTip();
     },
 
-    render: function () {
+    render: function() {
         this.removeScroll();
         this.removeFieldViews();
         this.removeInnerViews();
@@ -140,45 +140,175 @@ const DetailsView = Backbone.View.extend({
             const fileNames = this.appModel.files.map(function(file) {
                 return { id: file.id, value: file.get('name'), selected: file === this.model.file };
             }, this);
-            this.fileEditView = new FieldViewSelect({ model: { name: '$File', title: Format.capFirst(Locale.file),
-                value: function() { return fileNames; } } });
+            this.fileEditView = new FieldViewSelect({
+                model: {
+                    name: '$File',
+                    title: Format.capFirst(Locale.file),
+                    value: function() {
+                        return fileNames;
+                    }
+                }
+            });
             this.fieldViews.push(this.fileEditView);
         } else {
-            this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'File', title: Format.capFirst(Locale.file),
-                value: function() { return model.fileName; } } }));
+            this.fieldViews.push(
+                new FieldViewReadOnly({
+                    model: {
+                        name: 'File',
+                        title: Format.capFirst(Locale.file),
+                        value: function() {
+                            return model.fileName;
+                        }
+                    }
+                })
+            );
         }
-        this.userEditView = new FieldViewAutocomplete({ model: { name: '$UserName', title: Format.capFirst(Locale.user),
-            value: function() { return model.user; }, getCompletions: this.getUserNameCompletions.bind(this) } });
-        this.fieldViews.push(this.userEditView);
-        this.passEditView = new FieldViewText({ model: { name: '$Password', title: Format.capFirst(Locale.password), canGen: true,
-            value: function() { return model.password; } } });
-        this.fieldViews.push(this.passEditView);
-        this.urlEditView = new FieldViewUrl({ model: { name: '$URL', title: Format.capFirst(Locale.website),
-            value: function() { return model.url; } } });
-        this.fieldViews.push(this.urlEditView);
-        this.fieldViews.push(new FieldViewText({ model: { name: '$Notes', title: Format.capFirst(Locale.notes), multiline: 'true',
-            value: function() { return model.notes; } } }));
-        this.fieldViews.push(new FieldViewTags({ model: { name: 'Tags', title: Format.capFirst(Locale.tags), tags: this.appModel.tags,
-            value: function() { return model.tags; } } }));
-        this.fieldViews.push(new FieldViewDate({ model: { name: 'Expires', title: Locale.detExpires, lessThanNow: '(' + Locale.detExpired + ')',
-            value: function() { return model.expires; } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Group', title: Locale.detGroup,
-            value: function() { return model.groupName; }, tip: function() { return model.getGroupPath().join(' / '); } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Created', title: Locale.detCreated,
-            value: function() { return Format.dtStr(model.created); } } }));
-        this.fieldViews.push(new FieldViewReadOnly({ model: { name: 'Updated', title: Locale.detUpdated,
-            value: function() { return Format.dtStr(model.updated); } } }));
-        this.fieldViews.push(new FieldViewHistory({ model: { name: 'History', title: Format.capFirst(Locale.history),
-            value: function() { return { length: model.historyLength, unsaved: model.unsaved }; } } }));
-        _.forEach(model.fields, function(value, field) {
-            if (field === 'otp' && this.model.otpGenerator) {
-                this.fieldViews.push(new FieldViewOtp({ model: { name: '$' + field, title: field,
-                    value: function() { return model.otpGenerator; } } }));
-            } else {
-                this.fieldViews.push(new FieldViewCustom({ model: { name: '$' + field, title: field,
-                    value: function() { return model.fields[field]; } } }));
+        this.userEditView = new FieldViewAutocomplete({
+            model: {
+                name: '$UserName',
+                title: Format.capFirst(Locale.user),
+                value: function() {
+                    return model.user;
+                },
+                getCompletions: this.getUserNameCompletions.bind(this)
             }
-        }, this);
+        });
+        this.fieldViews.push(this.userEditView);
+        this.passEditView = new FieldViewText({
+            model: {
+                name: '$Password',
+                title: Format.capFirst(Locale.password),
+                canGen: true,
+                value: function() {
+                    return model.password;
+                }
+            }
+        });
+        this.fieldViews.push(this.passEditView);
+        this.urlEditView = new FieldViewUrl({
+            model: {
+                name: '$URL',
+                title: Format.capFirst(Locale.website),
+                value: function() {
+                    return model.url;
+                }
+            }
+        });
+        this.fieldViews.push(this.urlEditView);
+        this.fieldViews.push(
+            new FieldViewText({
+                model: {
+                    name: '$Notes',
+                    title: Format.capFirst(Locale.notes),
+                    multiline: 'true',
+                    value: function() {
+                        return model.notes;
+                    }
+                }
+            })
+        );
+        this.fieldViews.push(
+            new FieldViewTags({
+                model: {
+                    name: 'Tags',
+                    title: Format.capFirst(Locale.tags),
+                    tags: this.appModel.tags,
+                    value: function() {
+                        return model.tags;
+                    }
+                }
+            })
+        );
+        this.fieldViews.push(
+            new FieldViewDate({
+                model: {
+                    name: 'Expires',
+                    title: Locale.detExpires,
+                    lessThanNow: '(' + Locale.detExpired + ')',
+                    value: function() {
+                        return model.expires;
+                    }
+                }
+            })
+        );
+        this.fieldViews.push(
+            new FieldViewReadOnly({
+                model: {
+                    name: 'Group',
+                    title: Locale.detGroup,
+                    value: function() {
+                        return model.groupName;
+                    },
+                    tip: function() {
+                        return model.getGroupPath().join(' / ');
+                    }
+                }
+            })
+        );
+        this.fieldViews.push(
+            new FieldViewReadOnly({
+                model: {
+                    name: 'Created',
+                    title: Locale.detCreated,
+                    value: function() {
+                        return Format.dtStr(model.created);
+                    }
+                }
+            })
+        );
+        this.fieldViews.push(
+            new FieldViewReadOnly({
+                model: {
+                    name: 'Updated',
+                    title: Locale.detUpdated,
+                    value: function() {
+                        return Format.dtStr(model.updated);
+                    }
+                }
+            })
+        );
+        this.fieldViews.push(
+            new FieldViewHistory({
+                model: {
+                    name: 'History',
+                    title: Format.capFirst(Locale.history),
+                    value: function() {
+                        return { length: model.historyLength, unsaved: model.unsaved };
+                    }
+                }
+            })
+        );
+        _.forEach(
+            model.fields,
+            function(value, field) {
+                if (field === 'otp' && this.model.otpGenerator) {
+                    this.fieldViews.push(
+                        new FieldViewOtp({
+                            model: {
+                                name: '$' + field,
+                                title: field,
+                                value: function() {
+                                    return model.otpGenerator;
+                                }
+                            }
+                        })
+                    );
+                } else {
+                    this.fieldViews.push(
+                        new FieldViewCustom({
+                            model: {
+                                name: '$' + field,
+                                title: field,
+                                value: function() {
+                                    return model.fields[field];
+                                }
+                            }
+                        })
+                    );
+                }
+            },
+            this
+        );
 
         const hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
 
@@ -218,8 +348,16 @@ const DetailsView = Backbone.View.extend({
                 }
             }
         }
-        const fieldView = new FieldViewCustom({ model: { name: '$' + newFieldTitle, title: newFieldTitle, newField: newFieldTitle,
-            value: function() { return ''; } } });
+        const fieldView = new FieldViewCustom({
+            model: {
+                name: '$' + newFieldTitle,
+                title: newFieldTitle,
+                newField: newFieldTitle,
+                value: function() {
+                    return '';
+                }
+            }
+        });
         fieldView.on('change', this.fieldChanged.bind(this));
         fieldView.setElement(this.$el.find('.details__body-fields')).render();
         fieldView.edit();
@@ -240,24 +378,27 @@ const DetailsView = Backbone.View.extend({
                 if (hideEmptyFields) {
                     this.fieldViews.forEach(fieldView => {
                         if (fieldView.isHidden()) {
-                            moreOptions.push({value: 'add:' + fieldView.model.name, icon: 'pencil',
-                                text: Locale.detMenuAddField.replace('{}', fieldView.model.title)});
+                            moreOptions.push({
+                                value: 'add:' + fieldView.model.name,
+                                icon: 'pencil',
+                                text: Locale.detMenuAddField.replace('{}', fieldView.model.title)
+                            });
                         }
                     }, this);
-                    moreOptions.push({value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField});
-                    moreOptions.push({value: 'toggle-empty', icon: 'eye', text: Locale.detMenuShowEmpty});
+                    moreOptions.push({ value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField });
+                    moreOptions.push({ value: 'toggle-empty', icon: 'eye', text: Locale.detMenuShowEmpty });
                 } else {
-                    moreOptions.push({value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField});
-                    moreOptions.push({value: 'toggle-empty', icon: 'eye-slash', text: Locale.detMenuHideEmpty});
+                    moreOptions.push({ value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField });
+                    moreOptions.push({ value: 'toggle-empty', icon: 'eye-slash', text: Locale.detMenuHideEmpty });
                 }
-                moreOptions.push({value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp});
+                moreOptions.push({ value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp });
                 if (AutoType.enabled) {
-                    moreOptions.push({value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoTypeSettings});
+                    moreOptions.push({ value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoTypeSettings });
                 }
-                moreOptions.push({value: 'clone', icon: 'clone', text: Locale.detClone});
+                moreOptions.push({ value: 'clone', icon: 'clone', text: Locale.detClone });
                 const rect = this.moreView.labelEl[0].getBoundingClientRect();
                 dropdownView.render({
-                    position: {top: rect.bottom, left: rect.left},
+                    position: { top: rect.bottom, left: rect.left },
                     options: moreOptions
                 });
                 this.views.dropdownView = dropdownView;
@@ -301,7 +442,9 @@ const DetailsView = Backbone.View.extend({
     },
 
     setSelectedColor: function(color) {
-        this.$el.find('.details__colors-popup > .details__colors-popup-item').removeClass('details__colors-popup-item--active');
+        this.$el
+            .find('.details__colors-popup > .details__colors-popup-item')
+            .removeClass('details__colors-popup-item--active');
         const colorEl = this.$el.find('.details__header-color')[0];
         _.forEach(colorEl.classList, cls => {
             if (cls.indexOf('color') > 0 && cls.lastIndexOf('details', 0) !== 0) {
@@ -309,13 +452,17 @@ const DetailsView = Backbone.View.extend({
             }
         });
         if (color) {
-            this.$el.find('.details__colors-popup > .' + color + '-color').addClass('details__colors-popup-item--active');
+            this.$el
+                .find('.details__colors-popup > .' + color + '-color')
+                .addClass('details__colors-popup-item--active');
             colorEl.classList.add(color + '-color');
         }
     },
 
     selectColor: function(e) {
-        let color = $(e.target).closest('.details__colors-popup-item').data('color');
+        let color = $(e.target)
+            .closest('.details__colors-popup-item')
+            .data('color');
         if (!color) {
             return;
         }
@@ -336,7 +483,8 @@ const DetailsView = Backbone.View.extend({
             el: this.scroller,
             model: {
                 iconId: this.model.customIconId || this.model.iconId,
-                url: this.model.url, file: this.model.file
+                url: this.model.url,
+                file: this.model.file
             }
         });
         this.listenTo(subView, 'select', this.iconSelected);
@@ -379,7 +527,7 @@ const DetailsView = Backbone.View.extend({
             return;
         }
         const mimeType = attachment.mimeType || 'application/octet-stream';
-        const blob = new Blob([data], {type: mimeType});
+        const blob = new Blob([data], { type: mimeType });
         FileSaver.saveAs(blob, attachment.title);
     },
 
@@ -408,7 +556,9 @@ const DetailsView = Backbone.View.extend({
     },
 
     copyKeyPress: function(editView) {
-        if (this.isHidden()) { return; }
+        if (this.isHidden()) {
+            return;
+        }
         if (!window.getSelection().toString()) {
             const fieldValue = editView.value;
             const fieldText = fieldValue && fieldValue.isProtected ? fieldValue.getText() : fieldValue;
@@ -449,7 +599,9 @@ const DetailsView = Backbone.View.extend({
         const tip = new Tip(label, { title: Locale.detCopyHint, placement: 'right' });
         tip.show();
         this.fieldCopyTip = tip;
-        setTimeout(() => { tip.hide(); }, Timeouts.AutoHideHint);
+        setTimeout(() => {
+            tip.hide();
+        }, Timeouts.AutoHideHint);
     },
 
     settingsToggled: function() {
@@ -500,8 +652,11 @@ const DetailsView = Backbone.View.extend({
             }
             this.entryUpdated(true);
             this.fieldViews.forEach(function(fieldView, ix) {
-                if (fieldView instanceof FieldViewCustom && !fieldView.model.newField &&
-                    !this.model.hasField(fieldView.model.title)) {
+                if (
+                    fieldView instanceof FieldViewCustom &&
+                    !fieldView.model.newField &&
+                    !this.model.hasField(fieldView.model.title)
+                ) {
                     fieldView.remove();
                     this.fieldViews.splice(ix, 1);
                 } else {
@@ -584,13 +739,17 @@ const DetailsView = Backbone.View.extend({
     },
 
     addAttachedFiles: function(files) {
-        _.forEach(files, function(file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                this.addAttachment(file.name, reader.result);
-            };
-            reader.readAsArrayBuffer(file);
-        }, this);
+        _.forEach(
+            files,
+            function(file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    this.addAttachment(file.name, reader.result);
+                };
+                reader.readAsArrayBuffer(file);
+            },
+            this
+        );
     },
 
     addAttachment: function(name, data) {
@@ -676,7 +835,8 @@ const DetailsView = Backbone.View.extend({
     },
 
     focusNextField: function(config) {
-        let found = false, nextFieldView;
+        let found = false,
+            nextFieldView;
         if (config.field === '$Title' && !config.prev) {
             found = true;
         }
@@ -793,10 +953,14 @@ const DetailsView = Backbone.View.extend({
         } else {
             this.moreView.remove();
             this.moreView = null;
-            const fieldView = new FieldViewCustom({ model: {
-                name: '$otp', title: 'otp', newField: 'otp',
-                value: kdbxweb.ProtectedValue.fromString('')
-            }});
+            const fieldView = new FieldViewCustom({
+                model: {
+                    name: '$otp',
+                    title: 'otp',
+                    newField: 'otp',
+                    value: kdbxweb.ProtectedValue.fromString('')
+                }
+            });
             fieldView.on('change', this.fieldChanged.bind(this));
             fieldView.setElement(this.$el.find('.details__body-fields')).render();
             fieldView.edit();

@@ -9,7 +9,7 @@ const SettingsPrvView = Backbone.View.extend({
         'input .settings__general-prv-field-txt': 'changeField'
     },
 
-    render: function () {
+    render: function() {
         const storage = Storage[this.model.name];
         if (storage && storage.getSettingsConfig) {
             this.renderTemplate(storage.getSettingsConfig());

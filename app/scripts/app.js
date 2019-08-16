@@ -24,7 +24,7 @@ const FeatureDetector = require('./util/feature-detector');
 const KdbxwebInit = require('./util/kdbxweb-init');
 const Locale = require('./util/locale');
 
-const ready = Launcher && Launcher.ready || $;
+const ready = (Launcher && Launcher.ready) || $;
 
 ready(() => {
     if (AuthReceiver.receive() || FeatureDetector.isFrame) {
@@ -51,16 +51,17 @@ ready(() => {
     }
 
     function ensureCanRun() {
-        return FeatureTester.test()
-            .catch(e => {
-                Alerts.error({
-                    header: Locale.appSettingsError,
-                    body: Locale.appNotSupportedError + '<br/><br/>' + e,
-                    buttons: [],
-                    esc: false, enter: false, click: false
-                });
-                throw 'Feature testing failed: ' + e;
+        return FeatureTester.test().catch(e => {
+            Alerts.error({
+                header: Locale.appSettingsError,
+                body: Locale.appNotSupportedError + '<br/><br/>' + e,
+                buttons: [],
+                esc: false,
+                enter: false,
+                click: false
             });
+            throw 'Feature testing failed: ' + e;
+        });
     }
 
     function loadConfigs() {
@@ -87,7 +88,9 @@ ready(() => {
             header: Locale.appSettingsError,
             body: Locale.appSettingsErrorBody,
             buttons: [],
-            esc: false, enter: false, click: false
+            esc: false,
+            enter: false,
+            click: false
         });
     }
 
@@ -96,42 +99,46 @@ ready(() => {
             SettingsManager.setBySettings(appModel.settings);
             const configParam = getConfigParam();
             if (configParam) {
-                return appModel.loadConfig(configParam).then(() => {
-                    SettingsManager.setBySettings(appModel.settings);
-                }).catch(e => {
-                    if (!appModel.settings.get('cacheConfigSettings')) {
-                        showSettingsLoadError();
-                        throw e;
-                    }
-                });
+                return appModel
+                    .loadConfig(configParam)
+                    .then(() => {
+                        SettingsManager.setBySettings(appModel.settings);
+                    })
+                    .catch(e => {
+                        if (!appModel.settings.get('cacheConfigSettings')) {
+                            showSettingsLoadError();
+                            throw e;
+                        }
+                    });
             }
         });
     }
 
     function showApp() {
-        return Promise.resolve()
-            .then(() => {
-                const skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
-                const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
-                const hostIsInsecure = location.hostname !== 'localhost';
-                if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
-                    return new Promise(resolve => {
-                        Alerts.error({
-                            header: Locale.appSecWarn, icon: 'user-secret', esc: false, enter: false, click: false,
-                            body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
-                            buttons: [
-                                {result: '', title: Locale.appSecWarnBtn, error: true}
-                            ],
-                            complete: () => {
-                                showView();
-                                resolve();
-                            }
-                        });
+        return Promise.resolve().then(() => {
+            const skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
+            const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
+            const hostIsInsecure = location.hostname !== 'localhost';
+            if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
+                return new Promise(resolve => {
+                    Alerts.error({
+                        header: Locale.appSecWarn,
+                        icon: 'user-secret',
+                        esc: false,
+                        enter: false,
+                        click: false,
+                        body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
+                        buttons: [{ result: '', title: Locale.appSecWarnBtn, error: true }],
+                        complete: () => {
+                            showView();
+                            resolve();
+                        }
                     });
-                } else {
-                    showView();
-                }
-            });
+                });
+            } else {
+                showView();
+            }
+        });
     }
 
     function postInit() {

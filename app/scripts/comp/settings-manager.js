@@ -22,8 +22,7 @@ const SettingsManager = {
         hc: 'setGenThemeHc'
     },
 
-    customLocales: {
-    },
+    customLocales: {},
 
     setBySettings: function(settings) {
         if (settings.get('theme')) {
@@ -59,7 +58,7 @@ const SettingsManager = {
 
     setFontSize: function(fontSize) {
         const defaultFontSize = FeatureDetector.isMobile ? 14 : 12;
-        document.documentElement.style.fontSize = (defaultFontSize + (fontSize || 0) * 2) + 'px';
+        document.documentElement.style.fontSize = defaultFontSize + (fontSize || 0) * 2 + 'px';
     },
 
     setLocale(loc) {
@@ -83,7 +82,7 @@ const SettingsManager = {
     },
 
     getBrowserLocale: function() {
-        const language = navigator.languages && navigator.languages[0] || navigator.language;
+        const language = (navigator.languages && navigator.languages[0]) || navigator.language;
         if (language && language.lastIndexOf('en', 0) === 0) {
             return 'en';
         }

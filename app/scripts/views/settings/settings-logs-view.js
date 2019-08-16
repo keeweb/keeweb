@@ -8,7 +8,11 @@ const SettingsLogView = Backbone.View.extend({
     render() {
         const logs = Logger.getLast().map(item => ({
             level: item.level,
-            msg: '[' + Format.padStr(item.level.toUpperCase(), 5) + '] ' + item.args.map(arg => this.mapArg(arg)).join(' ')
+            msg:
+                '[' +
+                Format.padStr(item.level.toUpperCase(), 5) +
+                '] ' +
+                item.args.map(arg => this.mapArg(arg)).join(' ')
         }));
         this.renderTemplate({ logs: logs });
         return this;

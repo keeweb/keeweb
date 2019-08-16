@@ -32,8 +32,10 @@ const Updater = {
     },
 
     updateInProgress: function() {
-        return UpdateModel.instance.get('status') === 'checking' ||
-            ['downloading', 'extracting'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0;
+        return (
+            UpdateModel.instance.get('status') === 'checking' ||
+            ['downloading', 'extracting'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
+        );
     },
 
     init: function() {
@@ -55,7 +57,10 @@ const Updater = {
         let timeDiff = this.MinUpdateTimeout;
         const lastCheckDate = UpdateModel.instance.get('lastCheckDate');
         if (lastCheckDate) {
-            timeDiff = Math.min(Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout), this.UpdateInterval);
+            timeDiff = Math.min(
+                Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout),
+                this.UpdateInterval
+            );
         }
         this.nextCheckTimeout = setTimeout(this.check.bind(this), timeDiff);
         logger.info('Next update check will happen in ' + Math.round(timeDiff / 1000) + 's');
@@ -107,8 +112,10 @@ const Updater = {
                 if (!this.canAutoUpdate()) {
                     return;
                 }
-                if (prevLastVersion === UpdateModel.instance.get('lastVersion') &&
-                    UpdateModel.instance.get('updateStatus') === 'ready') {
+                if (
+                    prevLastVersion === UpdateModel.instance.get('lastVersion') &&
+                    UpdateModel.instance.get('updateStatus') === 'ready'
+                ) {
                     logger.info('Waiting for the user to apply downloaded update');
                     return;
                 }
@@ -238,7 +245,9 @@ const Updater = {
 
     checkAppCacheUpdateReady: function() {
         if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-            try { window.applicationCache.swapCache(); } catch (e) { }
+            try {
+                window.applicationCache.swapCache();
+            } catch (e) {}
             UpdateModel.instance.set('updateStatus', 'ready');
         }
     }

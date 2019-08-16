@@ -16,11 +16,21 @@ const MenuView = Backbone.View.extend({
     minWidth: 130,
     maxWidth: 300,
 
-    initialize: function () {
+    initialize: function() {
         this.listenTo(this.model, 'change:sections', this.menuChanged);
         this.listenTo(this, 'view-resize', this.viewResized);
-        KeyHandler.onKey(Keys.DOM_VK_UP, this.selectPreviousSection, this, KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT);
-        KeyHandler.onKey(Keys.DOM_VK_DOWN, this.selectNextSection, this, KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT);
+        KeyHandler.onKey(
+            Keys.DOM_VK_UP,
+            this.selectPreviousSection,
+            this,
+            KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
+        );
+        KeyHandler.onKey(
+            Keys.DOM_VK_DOWN,
+            this.selectNextSection,
+            this,
+            KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
+        );
     },
 
     remove: function() {
@@ -29,7 +39,7 @@ const MenuView = Backbone.View.extend({
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
-    render: function () {
+    render: function() {
         this.$el.html(this.template());
         const sectionsEl = this.$el.find('.menu');
         this.model.get('sections').forEach(function(section) {
@@ -37,7 +47,9 @@ const MenuView = Backbone.View.extend({
             sectionView.render();
             if (section.get('drag')) {
                 const dragView = new DragView('y');
-                const dragEl = $('<div/>').addClass('menu__drag-section').appendTo(sectionsEl);
+                const dragEl = $('<div/>')
+                    .addClass('menu__drag-section')
+                    .appendTo(sectionsEl);
                 sectionView.listenDrag(dragView);
                 dragView.setElement(dragEl).render();
                 this.sectionViews.push(dragView);

@@ -1,98 +1,105 @@
 #{$all-buttons} {
-  appearance: none;
-  border-radius: $base-border-radius;
-  cursor: pointer;
-  display: inline-block;
-  font-family: $base-font-family;
-  font-size: 1rem;
-  -webkit-font-smoothing: antialiased;
-  font-weight: 600;
-  line-height: 1;
-  padding: $small-spacing $base-spacing;
-  text-decoration: none;
-  transition: background-color border-color $base-duration $base-timing;
-  user-select: none;
-  vertical-align: middle;
-  white-space: nowrap;
-  outline: none;
-  min-width: 80px;
+    appearance: none;
+    border-radius: $base-border-radius;
+    cursor: pointer;
+    display: inline-block;
+    font-family: $base-font-family;
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 600;
+    line-height: 1;
+    padding: $small-spacing $base-spacing;
+    text-decoration: none;
+    transition: background-color border-color $base-duration $base-timing;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    outline: none;
+    min-width: 80px;
 
-  @include th {
-    border: 1px solid th(action-color);
-    background-color: th(action-color);
-    color: th(text-contrast-action-color);
-
-    &.btn-error, &.btn-silent {
-      border-color: th(base-border-color);
-      background-color: transparent;
-      color: th(text-color);
-    }
-
-    &:hover {
-      border-color: th(action-background-color-focus);
-      background-color: th(action-background-color-focus);
-      &.btn-error {
-        border-color: th(error-background-color-focus);
-        background-color: th(error-background-color-focus-tr);
-      }
-      &.btn-silent {
-        border-color: th(action-background-color-focus);
-        background-color: th(action-background-color-focus-tr);
-      }
-    }
-
-    &:active {
-      border-color: th(action-background-color-active);
-      background-color: th(action-background-color-active);
-      &.btn-error {
-        border-color: th(error-background-color-active);
-        background-color: th(error-background-color-active-tr);
-      }
-      &.btn-silent {
-        border-color: th(action-background-color-active);
-        background-color: th(action-background-color-active-tr);
-      }
-    }
-
-    &:disabled {
-      cursor: default;
-      opacity: 0.5;
-      &:hover {
-        border-color: th(action-color);
+    @include th {
+        border: 1px solid th(action-color);
         background-color: th(action-color);
-        &.btn-error {
-          border-color: th(error-color);
-          background-color: transparent;
-        }
+        color: th(text-contrast-action-color);
+
+        &.btn-error,
         &.btn-silent {
-          border-color: th(action-color);
-          background-color: transparent;
+            border-color: th(base-border-color);
+            background-color: transparent;
+            color: th(text-color);
         }
-      }
+
+        &:hover {
+            border-color: th(action-background-color-focus);
+            background-color: th(action-background-color-focus);
+            &.btn-error {
+                border-color: th(error-background-color-focus);
+                background-color: th(error-background-color-focus-tr);
+            }
+            &.btn-silent {
+                border-color: th(action-background-color-focus);
+                background-color: th(action-background-color-focus-tr);
+            }
+        }
+
+        &:active {
+            border-color: th(action-background-color-active);
+            background-color: th(action-background-color-active);
+            &.btn-error {
+                border-color: th(error-background-color-active);
+                background-color: th(error-background-color-active-tr);
+            }
+            &.btn-silent {
+                border-color: th(action-background-color-active);
+                background-color: th(action-background-color-active-tr);
+            }
+        }
+
+        &:disabled {
+            cursor: default;
+            opacity: 0.5;
+            &:hover {
+                border-color: th(action-color);
+                background-color: th(action-color);
+                &.btn-error {
+                    border-color: th(error-color);
+                    background-color: transparent;
+                }
+                &.btn-silent {
+                    border-color: th(action-color);
+                    background-color: transparent;
+                }
+            }
+        }
     }
-  }
 }
 
 @mixin icon-btn($error: false) {
-  @include area-selectable(bottom);
-  padding: .7em .6em 0;
-  height: 1.6em;
-  >i {
-    display: block;
-  }
-  @if $error {
-    &:hover {
-      @include th { border-color: th(error-color); }
+    @include area-selectable(bottom);
+    padding: 0.7em 0.6em 0;
+    height: 1.6em;
+    > i {
+        display: block;
     }
-  }
+    @if $error {
+        &:hover {
+            @include th {
+                border-color: th(error-color);
+            }
+        }
+    }
 }
 
 .svg-btn {
-  svg path {
-    transition: fill $base-duration $base-timing;
-    @include th { fill: th(text-color); }
-  }
-  &:hover svg path {
-    @include th { fill: th(medium-color); }
-  }
+    svg path {
+        transition: fill $base-duration $base-timing;
+        @include th {
+            fill: th(text-color);
+        }
+    }
+    &:hover svg path {
+        @include th {
+            fill: th(medium-color);
+        }
+    }
 }

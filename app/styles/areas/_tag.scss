@@ -1,23 +1,23 @@
 .tag {
-  flex: 1;
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  justify-content: flex-start;
-  width: 100%;
-  user-select: none;
-
-  &__space {
     flex: 1;
-  }
-
-  &__buttons {
     display: flex;
-    flex-direction: row;
-    margin-top: $base-padding-v;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+    user-select: none;
 
-    &-trash {
-      @include icon-btn($error:true);
+    &__space {
+        flex: 1;
     }
-  }
+
+    &__buttons {
+        display: flex;
+        flex-direction: row;
+        margin-top: $base-padding-v;
+
+        &-trash {
+            @include icon-btn($error: true);
+        }
+    }
 }

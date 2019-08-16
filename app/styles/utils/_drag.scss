@@ -1,29 +1,34 @@
 .drag-mask {
-  @include size(100%);
-  @include position(absolute, 0 null null 0);
-  -webkit-app-region: no-drag;
+    @include size(100%);
+    @include position(absolute, 0 null null 0);
+    -webkit-app-region: no-drag;
 }
 
 @mixin drag-handle {
-  position: relative;
-  -webkit-app-region: no-drag;
-  transition: background-color $slow-transition-out;
-  @include th { background: th(light-border-color); }
-  &:hover, &.dragging {
-    @include nomobile {
-      transition: background-color $slow-transition-in;
-      @include th {
-        background: th(accent-border-color);
-      }
+    position: relative;
+    -webkit-app-region: no-drag;
+    transition: background-color $slow-transition-out;
+    @include th {
+        background: th(light-border-color);
     }
-  }
+    &:hover,
+    &.dragging {
+        @include nomobile {
+            transition: background-color $slow-transition-in;
+            @include th {
+                background: th(accent-border-color);
+            }
+        }
+    }
 }
 
 .drag-handle__inner {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  width: calc(100% + 5px);
-  height: calc(100% + 5px);
-  @include mobile { display: none; }
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: calc(100% + 5px);
+    height: calc(100% + 5px);
+    @include mobile {
+        display: none;
+    }
 }

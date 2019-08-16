@@ -9,7 +9,7 @@ const FeatureDetector = {
     isWindows: navigator.platform.indexOf('Win') >= 0,
     isiOS: /iPad|iPhone|iPod/i.test(navigator.userAgent),
     isMobile: MobileRegex.test(navigator.userAgent) || screen.width < MinDesktopScreenWidth,
-    isPopup: !!((window.parent !== window.top) || window.opener),
+    isPopup: !!(window.parent !== window.top || window.opener),
     isStandalone: !!navigator.standalone,
     isFrame: window.top !== window,
     isSelfHosted: !isDesktop && !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
@@ -28,10 +28,18 @@ const FeatureDetector = {
         return !this.isMac;
     },
     screenshotToClipboardShortcut: function() {
-        if (this.isiOS) { return 'Sleep+Home'; }
-        if (this.isMobile) { return ''; }
-        if (this.isMac) { return 'Command-Shift-Control-4'; }
-        if (this.isWindows) { return 'Alt+PrintScreen'; }
+        if (this.isiOS) {
+            return 'Sleep+Home';
+        }
+        if (this.isMobile) {
+            return '';
+        }
+        if (this.isMac) {
+            return 'Command-Shift-Control-4';
+        }
+        if (this.isWindows) {
+            return 'Alt+PrintScreen';
+        }
         return '';
     },
     supportsTitleBarStyles: function() {

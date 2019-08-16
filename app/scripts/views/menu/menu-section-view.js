@@ -12,10 +12,12 @@ const MenuSectionView = Backbone.View.extend({
     itemViews: null,
 
     minHeight: 55,
-    maxHeight: function() { return this.$el.parent().height() - 116; },
+    maxHeight: function() {
+        return this.$el.parent().height() - 116;
+    },
     autoHeight: 'auto',
 
-    initialize: function () {
+    initialize: function() {
         this.itemViews = [];
         this.listenTo(this.model, 'change-items', this.itemsChanged);
         this.listenTo(this, 'view-resize', this.viewResized);

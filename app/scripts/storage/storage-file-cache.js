@@ -19,7 +19,7 @@ const StorageFileCache = StorageBase.extend({
 
         const path = Launcher.getUserDataPath('OfflineFiles');
 
-        const setPath = (err) => {
+        const setPath = err => {
             this.path = err ? null : path;
             if (err) {
                 this.logger.error('Error opening local offline storage', err);
@@ -49,7 +49,9 @@ const StorageFileCache = StorageBase.extend({
                     return callback && callback(err);
                 }
                 this.logger.debug('Saved', id, this.logger.ts(ts));
-                if (callback) { callback(); }
+                if (callback) {
+                    callback();
+                }
             });
         });
     },

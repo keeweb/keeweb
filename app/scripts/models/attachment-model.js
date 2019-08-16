@@ -3,8 +3,7 @@ const Backbone = require('backbone');
 const AttachmentModel = Backbone.Model.extend({
     defaults: {},
 
-    initialize: function() {
-    },
+    initialize: function() {},
 
     setAttachment: function(att) {
         this.title = att.title;
@@ -21,28 +20,83 @@ const AttachmentModel = Backbone.Model.extend({
 
     _getIcon: function(ext) {
         switch (ext) {
-            case 'txt': case 'log': case 'rtf': case 'pem':
+            case 'txt':
+            case 'log':
+            case 'rtf':
+            case 'pem':
                 return 'file-text-o';
-            case 'html': case 'htm': case 'js': case 'css': case 'xml': case 'config': case 'json': case 'yaml':
-            case 'cpp': case 'c': case 'h': case 'cc': case 'hpp': case 'mm': case 'cs': case 'php': case 'sh':
-            case 'py': case 'java': case 'rb': case 'cfg': case 'properties': case 'yml': case 'asm': case 'bat':
+            case 'html':
+            case 'htm':
+            case 'js':
+            case 'css':
+            case 'xml':
+            case 'config':
+            case 'json':
+            case 'yaml':
+            case 'cpp':
+            case 'c':
+            case 'h':
+            case 'cc':
+            case 'hpp':
+            case 'mm':
+            case 'cs':
+            case 'php':
+            case 'sh':
+            case 'py':
+            case 'java':
+            case 'rb':
+            case 'cfg':
+            case 'properties':
+            case 'yml':
+            case 'asm':
+            case 'bat':
                 return 'file-code-o';
             case 'pdf':
                 return 'file-pdf-o';
-            case 'zip': case 'rar': case 'bz': case 'bz2': case '7z': case 'gzip': case 'gz': case 'tar':
-            case 'cab': case 'ace': case 'dmg': case 'jar':
+            case 'zip':
+            case 'rar':
+            case 'bz':
+            case 'bz2':
+            case '7z':
+            case 'gzip':
+            case 'gz':
+            case 'tar':
+            case 'cab':
+            case 'ace':
+            case 'dmg':
+            case 'jar':
                 return 'file-archive-o';
-            case 'doc': case 'docx':
+            case 'doc':
+            case 'docx':
                 return 'file-word-o';
-            case 'xls': case 'xlsx':
+            case 'xls':
+            case 'xlsx':
                 return 'file-excel-o';
-            case 'ppt': case 'pptx':
+            case 'ppt':
+            case 'pptx':
                 return 'file-powerpoint-o';
-            case 'jpeg': case 'jpg': case 'png': case 'gif': case 'bmp': case 'tiff': case 'svg': case 'ico': case 'psd':
+            case 'jpeg':
+            case 'jpg':
+            case 'png':
+            case 'gif':
+            case 'bmp':
+            case 'tiff':
+            case 'svg':
+            case 'ico':
+            case 'psd':
                 return 'file-image-o';
-            case 'avi': case 'mp4': case '3gp': case 'm4v': case 'mov': case 'mpeg': case 'mpg': case 'mpe':
+            case 'avi':
+            case 'mp4':
+            case '3gp':
+            case 'm4v':
+            case 'mov':
+            case 'mpeg':
+            case 'mpg':
+            case 'mpe':
                 return 'file-video-o';
-            case 'mp3': case 'wav': case 'flac':
+            case 'mp3':
+            case 'wav':
+            case 'flac':
                 return 'file-audio-o';
         }
         return 'file-o';
@@ -50,14 +104,43 @@ const AttachmentModel = Backbone.Model.extend({
 
     _getMimeType: function(ext) {
         switch (ext) {
-            case 'txt': case 'log':
-            case 'html': case 'htm': case 'js': case 'css': case 'xml': case 'config': case 'json': case 'yaml':
-            case 'cpp': case 'c': case 'h': case 'cc': case 'hpp': case 'mm': case 'cs': case 'php': case 'sh':
-            case 'py': case 'java': case 'rb': case 'cfg': case 'properties': case 'yml': case 'asm': case 'pem':
+            case 'txt':
+            case 'log':
+            case 'html':
+            case 'htm':
+            case 'js':
+            case 'css':
+            case 'xml':
+            case 'config':
+            case 'json':
+            case 'yaml':
+            case 'cpp':
+            case 'c':
+            case 'h':
+            case 'cc':
+            case 'hpp':
+            case 'mm':
+            case 'cs':
+            case 'php':
+            case 'sh':
+            case 'py':
+            case 'java':
+            case 'rb':
+            case 'cfg':
+            case 'properties':
+            case 'yml':
+            case 'asm':
+            case 'pem':
                 return 'text/plain';
             case 'pdf':
                 return 'application/pdf';
-            case 'jpeg': case 'jpg': case 'png': case 'gif': case 'bmp': case 'tiff': case 'svg':
+            case 'jpeg':
+            case 'jpg':
+            case 'png':
+            case 'gif':
+            case 'bmp':
+            case 'tiff':
+            case 'svg':
                 return 'image/' + ext;
         }
     },

@@ -1,185 +1,212 @@
 .list {
-  flex: 1;
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  justify-content: flex-start;
-  overflow: hidden;
-
-  &__header {
-  }
-
-  &__items {
     flex: 1;
     display: flex;
     align-items: stretch;
     flex-direction: column;
-    @include scrollbar-on-hover;
+    justify-content: flex-start;
     overflow: hidden;
-    position: relative;
-    >.scroller {
-      flex: 1;
-      align-self: stretch;
-      position: relative;
-      overflow-x: hidden;
-      @include mobile {
-        width: 100% !important;
-        max-width: 100% !important;
-      }
-    }
-  }
 
-  &__search {
-    padding: $small-spacing;
+    &__header {
+    }
 
-    &-header {
-      display: flex;
-      align-items: stretch;
-      flex-direction: row;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-      @include mobile {
-        font-size: 1.2em;
-      }
-    }
-    &-field-wrap {
-      flex: 1;
-      position: relative;
-    }
-    &-field {
-      width: 100%;
-      @include mobile {
-        font-size: 1.05em !important;
-        box-shadow: none !important;
-        border-radius: .6em !important;
-        border: none !important;
-        padding-left: 0.4em;
-        @include th { background-color: th(secondary-background-color) !important; }
-      }
-    }
-    &-icon-search {
-      @include th { color: th(muted-color); }
-      position: absolute;
-      top: .5em;
-      right: .5em;
-      cursor: pointer;
-      &:hover {
-        @include th { color: th(medium-color); }
-      }
-      @include mobile {
-        top: .5em;
-      }
-    }
-    &-btn-new {
-      @include icon-btn;
-      margin-left: $small-spacing;
-    }
-    &-btn-sort {
-      @include icon-btn;
-    }
-    &-btn-menu {
-      display: none;
-      @include mobile {
-        display: block;
-        @include area-selectable;
-        padding: .7em .6em 0;
-        height: 1.6em;
-        margin-right: $base-padding-h;
-        >i {
-          display: block;
+    &__items {
+        flex: 1;
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        @include scrollbar-on-hover;
+        overflow: hidden;
+        position: relative;
+        > .scroller {
+            flex: 1;
+            align-self: stretch;
+            position: relative;
+            overflow-x: hidden;
+            @include mobile {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
         }
-      }
-    }
-    &-adv {
-      flex: 100%;
-      display: flex;
-      align-items: stretch;
-      flex-direction: row;
-      flex-wrap: wrap;
-      &-text {
-        flex: 100%;
-      }
-    }
-    &-check {
-      flex: 50%;
-    }
-  }
-
-  &__table {
-    border-collapse: collapse;
-    width: calc(100% - 2px);
-    td, th {
-      padding: $base-padding;
-      text-align: left;
-      &:first-child {
-        text-align: center;
-      }
-    }
-    th:first-child {
-      padding: 0;
-      width: 3em;
-    }
-    &-options {
-      @include icon-btn();
-      cursor: pointer;
-    }
-  }
-
-  &__item {
-    padding: 6px 10px 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    @include nomobile {
-      @include area-selectable(right);
-      &--active, &--active:hover {
-        @include area-selected(right);
-      }
-    }
-    @include mobile {
-      margin: 0 $base-padding-h;
-      @include th { border-bottom: light-border(); }
-      &:last-of-type {
-        border-bottom: none;
-      }
     }
 
-    &:not(.list__item--table) {
-      height: 3rem;
+    &__search {
+        padding: $small-spacing;
+
+        &-header {
+            display: flex;
+            align-items: stretch;
+            flex-direction: row;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            @include mobile {
+                font-size: 1.2em;
+            }
+        }
+        &-field-wrap {
+            flex: 1;
+            position: relative;
+        }
+        &-field {
+            width: 100%;
+            @include mobile {
+                font-size: 1.05em !important;
+                box-shadow: none !important;
+                border-radius: 0.6em !important;
+                border: none !important;
+                padding-left: 0.4em;
+                @include th {
+                    background-color: th(secondary-background-color) !important;
+                }
+            }
+        }
+        &-icon-search {
+            @include th {
+                color: th(muted-color);
+            }
+            position: absolute;
+            top: 0.5em;
+            right: 0.5em;
+            cursor: pointer;
+            &:hover {
+                @include th {
+                    color: th(medium-color);
+                }
+            }
+            @include mobile {
+                top: 0.5em;
+            }
+        }
+        &-btn-new {
+            @include icon-btn;
+            margin-left: $small-spacing;
+        }
+        &-btn-sort {
+            @include icon-btn;
+        }
+        &-btn-menu {
+            display: none;
+            @include mobile {
+                display: block;
+                @include area-selectable;
+                padding: 0.7em 0.6em 0;
+                height: 1.6em;
+                margin-right: $base-padding-h;
+                > i {
+                    display: block;
+                }
+            }
+        }
+        &-adv {
+            flex: 100%;
+            display: flex;
+            align-items: stretch;
+            flex-direction: row;
+            flex-wrap: wrap;
+            &-text {
+                flex: 100%;
+            }
+        }
+        &-check {
+            flex: 50%;
+        }
     }
 
-    &--expired {
-      .list__item-title, .list__item-descr { text-decoration: line-through; }
+    &__table {
+        border-collapse: collapse;
+        width: calc(100% - 2px);
+        td,
+        th {
+            padding: $base-padding;
+            text-align: left;
+            &:first-child {
+                text-align: center;
+            }
+        }
+        th:first-child {
+            padding: 0;
+            width: 3em;
+        }
+        &-options {
+            @include icon-btn();
+            cursor: pointer;
+        }
     }
 
-    &-icon {
-      margin-right: 2px;
-      width: 14px;
-      height: 14px;
-      @include mobile {
-        margin-right: 4px;
-      }
-      &--custom {
-        vertical-align: text-bottom;
-        &.yellow { @include filter(grayscale(1) sepia(1) hue-rotate(20deg) brightness(1.17) saturate(5.7)); }
-        &.green { @include filter(grayscale(1) sepia(1) hue-rotate(55deg) brightness(1.01) saturate(4.9)); }
-        &.red { @include filter(grayscale(1) sepia(1) hue-rotate(316deg) brightness(1.1) saturate(6)); }
-        &.orange { @include filter(grayscale(1) sepia(1) hue-rotate(355deg) brightness(0.92) saturate(5)); }
-        &.blue { @include filter(grayscale(1) sepia(1) hue-rotate(180deg) brightness(0.9) saturate(5)); }
-        &.violet { @include filter(grayscale(1) sepia(1) hue-rotate(238deg) brightness(1) saturate(6.2)); }
-      }
-    }
+    &__item {
+        padding: 6px 10px 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        @include nomobile {
+            @include area-selectable(right);
+            &--active,
+            &--active:hover {
+                @include area-selected(right);
+            }
+        }
+        @include mobile {
+            margin: 0 $base-padding-h;
+            @include th {
+                border-bottom: light-border();
+            }
+            &:last-of-type {
+                border-bottom: none;
+            }
+        }
 
-    &-title {
-      margin-left: 2px;
-    }
+        &:not(.list__item--table) {
+            height: 3rem;
+        }
 
-    &-descr {
-      font-size: .8em;
-      @include th { color: th(muted-color); }
-      display: block;
-      text-overflow: ellipsis;
-      overflow: hidden;
+        &--expired {
+            .list__item-title,
+            .list__item-descr {
+                text-decoration: line-through;
+            }
+        }
+
+        &-icon {
+            margin-right: 2px;
+            width: 14px;
+            height: 14px;
+            @include mobile {
+                margin-right: 4px;
+            }
+            &--custom {
+                vertical-align: text-bottom;
+                &.yellow {
+                    @include filter(grayscale(1) sepia(1) hue-rotate(20deg) brightness(1.17) saturate(5.7));
+                }
+                &.green {
+                    @include filter(grayscale(1) sepia(1) hue-rotate(55deg) brightness(1.01) saturate(4.9));
+                }
+                &.red {
+                    @include filter(grayscale(1) sepia(1) hue-rotate(316deg) brightness(1.1) saturate(6));
+                }
+                &.orange {
+                    @include filter(grayscale(1) sepia(1) hue-rotate(355deg) brightness(0.92) saturate(5));
+                }
+                &.blue {
+                    @include filter(grayscale(1) sepia(1) hue-rotate(180deg) brightness(0.9) saturate(5));
+                }
+                &.violet {
+                    @include filter(grayscale(1) sepia(1) hue-rotate(238deg) brightness(1) saturate(6.2));
+                }
+            }
+        }
+
+        &-title {
+            margin-left: 2px;
+        }
+
+        &-descr {
+            font-size: 0.8em;
+            @include th {
+                color: th(muted-color);
+            }
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
     }
-  }
 }

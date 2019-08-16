@@ -5,7 +5,7 @@ const DragView = Backbone.View.extend({
         'mousedown': 'mousedown'
     },
 
-    initialize: function (coord) {
+    initialize: function(coord) {
         this.setCoord(coord);
         this.mouseDownTime = -1;
         this.mouseDownCount = 0;
@@ -17,7 +17,9 @@ const DragView = Backbone.View.extend({
     },
 
     render: function() {
-        $('<div/>').addClass('drag-handle__inner').appendTo(this.$el);
+        $('<div/>')
+            .addClass('drag-handle__inner')
+            .appendTo(this.$el);
     },
 
     mousedown: function(e) {
@@ -35,7 +37,9 @@ const DragView = Backbone.View.extend({
             }
             this.initialOffset = e[this.offsetProp];
             const cursor = this.$el.css('cursor');
-            this.dragMask = $('<div/>', {'class': 'drag-mask'}).css('cursor', cursor).appendTo('body');
+            this.dragMask = $('<div/>', { 'class': 'drag-mask' })
+                .css('cursor', cursor)
+                .appendTo('body');
             this.dragMask.on('mousemove', this.mousemove.bind(this));
             this.dragMask.on('mouseup', this.mouseup.bind(this));
             this.trigger('dragstart', { offset: this.initialOffset, coord: this.coord });

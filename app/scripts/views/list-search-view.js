@@ -31,18 +31,58 @@ const ListSearchView = Backbone.View.extend({
     advancedSearchEnabled: false,
     advancedSearch: null,
 
-    initialize: function () {
+    initialize: function() {
         this.sortOptions = [
-            { value: 'title', icon: 'sort-alpha-asc', loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-title', icon: 'sort-alpha-desc', loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA) },
-            { value: 'website', icon: 'sort-alpha-asc', loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-website', icon: 'sort-alpha-desc', loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA) },
-            { value: 'user', icon: 'sort-alpha-asc', loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-user', icon: 'sort-alpha-desc', loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA) },
-            { value: 'created', icon: 'sort-numeric-asc', loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchON) },
-            { value: '-created', icon: 'sort-numeric-desc', loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO) },
-            { value: 'updated', icon: 'sort-numeric-asc', loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON) },
-            { value: '-updated', icon: 'sort-numeric-desc', loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO) },
+            {
+                value: 'title',
+                icon: 'sort-alpha-asc',
+                loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ)
+            },
+            {
+                value: '-title',
+                icon: 'sort-alpha-desc',
+                loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA)
+            },
+            {
+                value: 'website',
+                icon: 'sort-alpha-asc',
+                loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ)
+            },
+            {
+                value: '-website',
+                icon: 'sort-alpha-desc',
+                loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA)
+            },
+            {
+                value: 'user',
+                icon: 'sort-alpha-asc',
+                loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ)
+            },
+            {
+                value: '-user',
+                icon: 'sort-alpha-desc',
+                loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA)
+            },
+            {
+                value: 'created',
+                icon: 'sort-numeric-asc',
+                loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchON)
+            },
+            {
+                value: '-created',
+                icon: 'sort-numeric-desc',
+                loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO)
+            },
+            {
+                value: 'updated',
+                icon: 'sort-numeric-asc',
+                loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON)
+            },
+            {
+                value: '-updated',
+                icon: 'sort-numeric-desc',
+                loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO)
+            },
             { value: '-attachments', icon: 'sort-amount-desc', loc: () => Locale.searchAttachments },
             { value: '-rank', icon: 'sort-numeric-desc', loc: () => Locale.searchRank }
         ];
@@ -52,11 +92,16 @@ const ListSearchView = Backbone.View.extend({
         }, this);
         this.views = {};
         this.advancedSearch = {
-            user: true, other: true,
-            url: true, protect: false,
-            notes: true, pass: false,
-            cs: false, regex: false,
-            history: false, title: true,
+            user: true,
+            other: true,
+            url: true,
+            protect: false,
+            notes: true,
+            pass: false,
+            cs: false,
+            regex: false,
+            history: false,
+            title: true,
             rank: true
         };
         if (this.model.advancedSearch) {
@@ -83,9 +128,16 @@ const ListSearchView = Backbone.View.extend({
     },
 
     setLocale: function() {
-        this.sortOptions.forEach(opt => { opt.text = opt.loc(); });
-        const entryDesc = FeatureDetector.isMobile ? '' : (' <span class="muted-color">(' + Locale.searchShiftClickOr + ' ' +
-        FeatureDetector.altShortcutSymbol(true) + 'N)</span>');
+        this.sortOptions.forEach(opt => {
+            opt.text = opt.loc();
+        });
+        const entryDesc = FeatureDetector.isMobile
+            ? ''
+            : ' <span class="muted-color">(' +
+              Locale.searchShiftClickOr +
+              ' ' +
+              FeatureDetector.altShortcutSymbol(true) +
+              'N)</span>';
         this.createOptions = [
             { value: 'entry', icon: 'key', text: Format.capFirst(Locale.entry) + entryDesc },
             { value: 'group', icon: 'folder', text: Format.capFirst(Locale.group) }
@@ -105,7 +157,7 @@ const ListSearchView = Backbone.View.extend({
         this.stopListening(KeyHandler, 'keypress', this.documentKeyPress);
     },
 
-    render: function () {
+    render: function() {
         let searchVal;
         if (this.inputEl) {
             searchVal = this.inputEl.val();

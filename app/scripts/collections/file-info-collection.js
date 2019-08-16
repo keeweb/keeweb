@@ -5,30 +5,31 @@ const SettingsStore = require('../comp/settings-store');
 const FileInfoCollection = Backbone.Collection.extend({
     model: FileInfoModel,
 
-    initialize: function () {
-    },
+    initialize: function() {},
 
-    load: function () {
+    load: function() {
         return SettingsStore.load('file-info').then(data => {
             if (data) {
-                this.reset(data, {silent: true});
+                this.reset(data, { silent: true });
             }
         });
     },
 
-    save: function () {
+    save: function() {
         SettingsStore.save('file-info', this.toJSON());
     },
 
-    getLast: function () {
+    getLast: function() {
         return this.first();
     },
 
-    getMatch: function (storage, name, path) {
+    getMatch: function(storage, name, path) {
         return this.find(fi => {
-            return (fi.get('storage') || '') === (storage || '') &&
+            return (
+                (fi.get('storage') || '') === (storage || '') &&
                 (fi.get('name') || '') === (name || '') &&
-                (fi.get('path') || '') === (path || '');
+                (fi.get('path') || '') === (path || '')
+            );
         });
     },
 

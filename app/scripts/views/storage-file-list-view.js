@@ -44,7 +44,9 @@ const StorageFileListView = Backbone.View.extend({
     },
 
     fileClick(e) {
-        const result = $(e.target).closest('.open-list__file').data('path');
+        const result = $(e.target)
+            .closest('.open-list__file')
+            .data('path');
         const file = this.allStorageFiles[result];
         this.trigger('selected', file);
     },

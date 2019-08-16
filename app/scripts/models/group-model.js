@@ -24,28 +24,35 @@ const GroupModel = MenuItemModel.extend({
     }),
 
     initialize: function() {
-        if (!GroupCollection) { GroupCollection = require('../collections/group-collection'); }
-        if (!EntryCollection) { EntryCollection = require('../collections/entry-collection'); }
+        if (!GroupCollection) {
+            GroupCollection = require('../collections/group-collection');
+        }
+        if (!EntryCollection) {
+            EntryCollection = require('../collections/entry-collection');
+        }
     },
 
     setGroup: function(group, file, parentGroup) {
         const isRecycleBin = group.uuid.equals(file.db.meta.recycleBinUuid);
         const id = file.subId(group.uuid.id);
-        this.set({
-            id: id,
-            uuid: group.uuid.id,
-            expanded: group.expanded,
-            visible: !isRecycleBin,
-            items: new GroupCollection(),
-            entries: new EntryCollection(),
-            filterValue: id,
-            enableSearching: group.enableSearching,
-            enableAutoType: group.enableAutoType,
-            autoTypeSeq: group.defaultAutoTypeSeq,
-            top: !parentGroup,
-            drag: !!parentGroup,
-            collapsible: !!parentGroup
-        }, { silent: true });
+        this.set(
+            {
+                id: id,
+                uuid: group.uuid.id,
+                expanded: group.expanded,
+                visible: !isRecycleBin,
+                items: new GroupCollection(),
+                entries: new EntryCollection(),
+                filterValue: id,
+                enableSearching: group.enableSearching,
+                enableAutoType: group.enableAutoType,
+                autoTypeSeq: group.defaultAutoTypeSeq,
+                top: !parentGroup,
+                drag: !!parentGroup,
+                collapsible: !!parentGroup
+            },
+            { silent: true }
+        );
         this.group = group;
         this.file = file;
         this.parentGroup = parentGroup;
@@ -77,14 +84,17 @@ const GroupModel = MenuItemModel.extend({
     },
 
     _fillByGroup: function(silent) {
-        this.set({
-            title: this.parentGroup ? this.group.name : this.file.get('name'),
-            iconId: this.group.icon,
-            icon: this._iconFromId(this.group.icon),
-            customIcon: this._buildCustomIcon(),
-            customIconId: this.group.customIcon ? this.group.customIcon.toString() : null,
-            expanded: this.group.expanded !== false
-        }, { silent: silent });
+        this.set(
+            {
+                title: this.parentGroup ? this.group.name : this.file.get('name'),
+                iconId: this.group.icon,
+                icon: this._iconFromId(this.group.icon),
+                customIcon: this._buildCustomIcon(),
+                customIconId: this.group.customIcon ? this.group.customIcon.toString() : null,
+                expanded: this.group.expanded !== false
+            },
+            { silent: silent }
+        );
     },
 
     _iconFromId: function(id) {
@@ -129,10 +139,12 @@ const GroupModel = MenuItemModel.extend({
     },
 
     matches: function(filter) {
-        return (filter && filter.includeDisabled ||
-                this.group.enableSearching !== false &&
-                !this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup)
-        ) && (!filter || !filter.autoType || this.group.enableAutoType !== false);
+        return (
+            ((filter && filter.includeDisabled) ||
+                (this.group.enableSearching !== false &&
+                    !this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup))) &&
+            (!filter || !filter.autoType || this.group.enableAutoType !== false)
+        );
     },
 
     getOwnSubGroups: function() {

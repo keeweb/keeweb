@@ -1,187 +1,215 @@
 .menu {
-  width: 100%;
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  justify-content: flex-start;
-  overflow: hidden;
-
-  &__section {
-    flex: 0 0 auto;
-    @include th { border-bottom: light-border(); }
-    @include scrollbar-on-hover;
-    position: relative;
-    overflow: hidden;
-
-    &--grow {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      >.scroller {
-        flex: 1;
-      }
-    }
-
-    &--drag {
-      flex: 0 0 auto;
-      max-height: calc(100vh - 200px);
-      >.scroller { max-height: calc(100vh - 200px); }
-    }
-
-    &--drag.menu__section {
-      border-bottom: none;
-    }
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  &__drag-section {
-    @include drag-handle;
-    flex: 0 0 auto;
-    height: 1px;
-    cursor: row-resize;
-  }
-
-  &__item {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    position: relative;
+    width: 100%;
     display: flex;
     align-items: stretch;
     flex-direction: column;
     justify-content: flex-start;
+    overflow: hidden;
 
-    .menu__item--collapsed>& {
-      display: none;
-    }
-
-    &-collapse {
-      display: none;
-      .menu__item--collapsed>& {
-        display: block;
-        position: absolute;
-        cursor: pointer;
-        @include position(absolute, 50% null null 1em);
-        @include transform(translateY(-50%));
-      }
-    }
-
-    &-body {
-      @include area-selectable();
-      padding: $base-padding;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      @include th { border-right: selected-transparent-border(); }
-      .menu__item--hover>& {
-        @include th { border-right: selected-hover-border(); }
-      }
-
-      .menu__item--active>&, .menu__item--active.menu__item--hover>& {
-        @include area-selected(right);
-      }
-
-      .menu__item>.menu__item>& { padding-left: $base-padding-h * 2; };
-      .menu__item>.menu__item>.menu__item>& { padding-left: $base-padding-h * 3; };
-      .menu__item>.menu__item>.menu__item>.menu__item>& { padding-left: $base-padding-h * 4; };
-      .menu__item>.menu__item>.menu__item>.menu__item>.menu__item>& { padding-left: $base-padding-h * 5; };
-      .menu__item>.menu__item>.menu__item>.menu__item>.menu__item>.menu__item>& { padding-left: $base-padding-h * 6; };
-    }
-
-    &-options {
-      display: none;
-      .menu__item--with-options:hover & {
-        display: block;
-      }
-    }
-
-    &-option {
-      cursor: pointer;
-      display: inline-block;
-      .menu__item-colors & {
-        &:before {
-          content: $fa-var-bookmark-o;
+    &__section {
+        flex: 0 0 auto;
+        @include th {
+            border-bottom: light-border();
         }
-        &:hover {
-          &:before {
-            content: $fa-var-bookmark;
-          }
-        }
-      }
-    }
-
-    &-icon {
-      width: .8em;
-      &--image {
-        width: 12px;
-        height: 12px;
+        @include scrollbar-on-hover;
         position: relative;
-        top: 1px;
-      }
-      &--no-icon:before {
-        content: $fa-var-folder-open;
-        .menu__item--collapsed>.menu__item-body>& {
-          content: $fa-var-folder;
+        overflow: hidden;
+
+        &--grow {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            > .scroller {
+                flex: 1;
+            }
         }
-      }
-      .menu__item--with-options:hover & {
-        display: none;
-      }
+
+        &--drag {
+            flex: 0 0 auto;
+            max-height: calc(100vh - 200px);
+            > .scroller {
+                max-height: calc(100vh - 200px);
+            }
+        }
+
+        &--drag.menu__section {
+            border-bottom: none;
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
     }
 
-    &-title {
-      padding-left: .4em;
-      .menu__item-colors & {
-        display: inline-block;
-        @include th { color: th(text-color); }
-      }
-      .menu__item--with-options:hover & {
-        display: none;
-      }
+    &__drag-section {
+        @include drag-handle;
+        flex: 0 0 auto;
+        height: 1px;
+        cursor: row-resize;
     }
 
-    &-edit, &-empty-trash {
-      display: none;
-      opacity: 0;
-      position: absolute;
-      right: 1.1em;
-      top: .75em;
-      cursor: pointer;
-      transition: opacity $base-duration $base-timing, color $base-duration $base-timing;
-      @include th {
-        color: th(muted-color);
-        &:hover { color: th(medium-color); }
-      }
-      .menu__item--active>.menu__item-body>& {
-        display: block;
-      }
-      .menu__item--active>.menu__item-body:hover>& {
-        opacity: .5;
-      }
-    }
+    &__item {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        justify-content: flex-start;
 
-    .fa {
-      margin-right: $base-padding-h / 2;
-    }
+        .menu__item--collapsed > & {
+            display: none;
+        }
 
-    &-drag-top {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-    }
+        &-collapse {
+            display: none;
+            .menu__item--collapsed > & {
+                display: block;
+                position: absolute;
+                cursor: pointer;
+                @include position(absolute, 50% null null 1em);
+                @include transform(translateY(-50%));
+            }
+        }
 
-    &--drag-top > .menu__item-body > .menu__item-drag-top {
-      @include th { background-color: th(action-color); }
-    }
+        &-body {
+            @include area-selectable();
+            padding: $base-padding;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            @include th {
+                border-right: selected-transparent-border();
+            }
+            .menu__item--hover > & {
+                @include th {
+                    border-right: selected-hover-border();
+                }
+            }
 
-    &--drag:not(.menu__item--drag-top) {
-      >.menu__item-body {
-        @include th { color: th(action-color); }
-      }
+            .menu__item--active > &,
+            .menu__item--active.menu__item--hover > & {
+                @include area-selected(right);
+            }
+
+            .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 2;
+            }
+            .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 3;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 4;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 5;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 6;
+            }
+        }
+
+        &-options {
+            display: none;
+            .menu__item--with-options:hover & {
+                display: block;
+            }
+        }
+
+        &-option {
+            cursor: pointer;
+            display: inline-block;
+            .menu__item-colors & {
+                &:before {
+                    content: $fa-var-bookmark-o;
+                }
+                &:hover {
+                    &:before {
+                        content: $fa-var-bookmark;
+                    }
+                }
+            }
+        }
+
+        &-icon {
+            width: 0.8em;
+            &--image {
+                width: 12px;
+                height: 12px;
+                position: relative;
+                top: 1px;
+            }
+            &--no-icon:before {
+                content: $fa-var-folder-open;
+                .menu__item--collapsed > .menu__item-body > & {
+                    content: $fa-var-folder;
+                }
+            }
+            .menu__item--with-options:hover & {
+                display: none;
+            }
+        }
+
+        &-title {
+            padding-left: 0.4em;
+            .menu__item-colors & {
+                display: inline-block;
+                @include th {
+                    color: th(text-color);
+                }
+            }
+            .menu__item--with-options:hover & {
+                display: none;
+            }
+        }
+
+        &-edit,
+        &-empty-trash {
+            display: none;
+            opacity: 0;
+            position: absolute;
+            right: 1.1em;
+            top: 0.75em;
+            cursor: pointer;
+            transition: opacity $base-duration $base-timing, color $base-duration $base-timing;
+            @include th {
+                color: th(muted-color);
+                &:hover {
+                    color: th(medium-color);
+                }
+            }
+            .menu__item--active > .menu__item-body > & {
+                display: block;
+            }
+            .menu__item--active > .menu__item-body:hover > & {
+                opacity: 0.5;
+            }
+        }
+
+        .fa {
+            margin-right: $base-padding-h / 2;
+        }
+
+        &-drag-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        &--drag-top > .menu__item-body > .menu__item-drag-top {
+            @include th {
+                background-color: th(action-color);
+            }
+        }
+
+        &--drag:not(.menu__item--drag-top) {
+            > .menu__item-body {
+                @include th {
+                    color: th(action-color);
+                }
+            }
+        }
     }
-  }
 }

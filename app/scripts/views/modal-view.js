@@ -12,7 +12,7 @@ const ModalView = Backbone.View.extend({
         'click': 'bodyClick'
     },
 
-    initialize: function () {
+    initialize: function() {
         if (typeof this.model.esc === 'string') {
             KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         }
@@ -32,7 +32,7 @@ const ModalView = Backbone.View.extend({
         Backbone.View.prototype.remove.apply(this, arguments);
     },
 
-    render: function () {
+    render: function() {
         const parent = this.$el;
         this.setElement($(this.template(this.model)));
         parent.append(this.$el);

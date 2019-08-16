@@ -16,39 +16,127 @@ const AutoTypeRunner = function(ops) {
 AutoTypeRunner.PendingResolve = { pending: true };
 
 AutoTypeRunner.Keys = {
-    tab: 'tab', enter: 'enter', space: 'space',
-    up: 'up', down: 'down', left: 'left', right: 'right', home: 'home', end: 'end', pgup: 'pgup', pgdn: 'pgdn',
-    insert: 'ins', ins: 'ins', delete: 'del', del: 'del', backspace: 'bs', bs: 'bs', bksp: 'bs', esc: 'esc',
-    win: 'win', lwin: 'win', rwin: 'rwin', f1: 'f1', f2: 'f2', f3: 'f3', f4: 'f4', f5: 'f5', f6: 'f6',
-    f7: 'f7', f8: 'f8', f9: 'f9', f10: 'f10', f11: 'f11', f12: 'f12', f13: 'f13', f14: 'f14', f15: 'f15', f16: 'f16',
-    add: 'add', subtract: 'subtract', multiply: 'multiply', divide: 'divide',
-    numpad0: 'n0', numpad1: 'n1', numpad2: 'n2', numpad3: 'n3', numpad4: 'n4',
-    numpad5: 'n5', numpad6: 'n6', numpad7: 'n7', numpad8: 'n8', numpad9: 'n9'
+    tab: 'tab',
+    enter: 'enter',
+    space: 'space',
+    up: 'up',
+    down: 'down',
+    left: 'left',
+    right: 'right',
+    home: 'home',
+    end: 'end',
+    pgup: 'pgup',
+    pgdn: 'pgdn',
+    insert: 'ins',
+    ins: 'ins',
+    delete: 'del',
+    del: 'del',
+    backspace: 'bs',
+    bs: 'bs',
+    bksp: 'bs',
+    esc: 'esc',
+    win: 'win',
+    lwin: 'win',
+    rwin: 'rwin',
+    f1: 'f1',
+    f2: 'f2',
+    f3: 'f3',
+    f4: 'f4',
+    f5: 'f5',
+    f6: 'f6',
+    f7: 'f7',
+    f8: 'f8',
+    f9: 'f9',
+    f10: 'f10',
+    f11: 'f11',
+    f12: 'f12',
+    f13: 'f13',
+    f14: 'f14',
+    f15: 'f15',
+    f16: 'f16',
+    add: 'add',
+    subtract: 'subtract',
+    multiply: 'multiply',
+    divide: 'divide',
+    numpad0: 'n0',
+    numpad1: 'n1',
+    numpad2: 'n2',
+    numpad3: 'n3',
+    numpad4: 'n4',
+    numpad5: 'n5',
+    numpad6: 'n6',
+    numpad7: 'n7',
+    numpad8: 'n8',
+    numpad9: 'n9'
 };
 
 AutoTypeRunner.Substitutions = {
-    title: function(runner, op) { return runner.getEntryFieldKeys('Title', op); },
-    username: function(runner, op) { return runner.getEntryFieldKeys('UserName', op); },
-    url: function(runner, op) { return runner.getEntryFieldKeys('URL', op); },
-    password: function(runner, op) { return runner.getEntryFieldKeys('Password', op); },
-    notes: function(runner, op) { return runner.getEntryFieldKeys('Notes', op); },
-    group: function(runner) { return runner.getEntryGroupName(); },
-    totp: function(runner, op) { return runner.getOtp(op); },
-    s: function(runner, op) { return runner.getEntryFieldKeys(op.arg, op); },
-    'dt_simple': function(runner) { return runner.dt('simple'); },
-    'dt_year': function(runner) { return runner.dt('Y'); },
-    'dt_month': function(runner) { return runner.dt('M'); },
-    'dt_day': function(runner) { return runner.dt('D'); },
-    'dt_hour': function(runner) { return runner.dt('h'); },
-    'dt_minute': function(runner) { return runner.dt('m'); },
-    'dt_second': function(runner) { return runner.dt('s'); },
-    'dt_utc_simple': function(runner) { return runner.udt('simple'); },
-    'dt_utc_year': function(runner) { return runner.udt('Y'); },
-    'dt_utc_month': function(runner) { return runner.udt('M'); },
-    'dt_utc_day': function(runner) { return runner.udt('D'); },
-    'dt_utc_hour': function(runner) { return runner.udt('h'); },
-    'dt_utc_minute': function(runner) { return runner.udt('m'); },
-    'dt_utc_second': function(runner) { return runner.udt('s'); }
+    title: function(runner, op) {
+        return runner.getEntryFieldKeys('Title', op);
+    },
+    username: function(runner, op) {
+        return runner.getEntryFieldKeys('UserName', op);
+    },
+    url: function(runner, op) {
+        return runner.getEntryFieldKeys('URL', op);
+    },
+    password: function(runner, op) {
+        return runner.getEntryFieldKeys('Password', op);
+    },
+    notes: function(runner, op) {
+        return runner.getEntryFieldKeys('Notes', op);
+    },
+    group: function(runner) {
+        return runner.getEntryGroupName();
+    },
+    totp: function(runner, op) {
+        return runner.getOtp(op);
+    },
+    s: function(runner, op) {
+        return runner.getEntryFieldKeys(op.arg, op);
+    },
+    'dt_simple': function(runner) {
+        return runner.dt('simple');
+    },
+    'dt_year': function(runner) {
+        return runner.dt('Y');
+    },
+    'dt_month': function(runner) {
+        return runner.dt('M');
+    },
+    'dt_day': function(runner) {
+        return runner.dt('D');
+    },
+    'dt_hour': function(runner) {
+        return runner.dt('h');
+    },
+    'dt_minute': function(runner) {
+        return runner.dt('m');
+    },
+    'dt_second': function(runner) {
+        return runner.dt('s');
+    },
+    'dt_utc_simple': function(runner) {
+        return runner.udt('simple');
+    },
+    'dt_utc_year': function(runner) {
+        return runner.udt('Y');
+    },
+    'dt_utc_month': function(runner) {
+        return runner.udt('M');
+    },
+    'dt_utc_day': function(runner) {
+        return runner.udt('D');
+    },
+    'dt_utc_hour': function(runner) {
+        return runner.udt('h');
+    },
+    'dt_utc_minute': function(runner) {
+        return runner.udt('m');
+    },
+    'dt_utc_second': function(runner) {
+        return runner.udt('s');
+    }
 };
 
 AutoTypeRunner.prototype.resolve = function(entry, callback) {
@@ -103,7 +191,7 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
             op.value = [];
             const count = +op.arg;
             for (let i = 0; i < count; i++) {
-                op.value.push({type: 'key', value: key});
+                op.value.push({ type: 'key', value: key });
             }
         } else {
             // {TAB}
@@ -179,9 +267,9 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
         const ops = [];
         value.forEachChar(ch => {
             if (ch === 10 || ch === 13) {
-                ops.push({type: 'key', value: 'enter'});
+                ops.push({ type: 'key', value: 'enter' });
             } else {
-                ops.push({type: 'text', value: String.fromCharCode(ch)});
+                ops.push({ type: 'text', value: String.fromCharCode(ch) });
             }
         });
         return ops;
@@ -194,10 +282,10 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
         const partsOps = [];
         parts.forEach(part => {
             if (partsOps.length) {
-                partsOps.push({type: 'key', value: 'enter'});
+                partsOps.push({ type: 'key', value: 'enter' });
             }
             if (part) {
-                partsOps.push({type: 'text', value: part});
+                partsOps.push({ type: 'text', value: part });
             }
         });
         return partsOps;

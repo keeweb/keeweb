@@ -25,16 +25,23 @@ const FeatureTester = {
             const data = 'e567554429098a38d5f819115edffd39';
             const iv = '4db46dff4add42cb813b98de98e627c4';
             const exp = '46ab4c37d9ec594e5742971f76f7c1620bc29f2e0736b27832d6bcc5c1c39dc1';
-            return aesCbc.importKey(kdbxweb.ByteUtils.hexToBytes(key)).then(() => {
-                return aesCbc.encrypt(kdbxweb.ByteUtils.hexToBytes(data), kdbxweb.ByteUtils.hexToBytes(iv)).then(res => {
-                    if (kdbxweb.ByteUtils.bytesToHex(res) !== exp) {
-                        throw 'AES is not working properly';
-                    }
-                    if (kdbxweb.CryptoEngine.random(1).length !== 1) {
-                        throw 'Random is not working';
-                    }
+            return aesCbc
+                .importKey(kdbxweb.ByteUtils.hexToBytes(key))
+                .then(() => {
+                    return aesCbc
+                        .encrypt(kdbxweb.ByteUtils.hexToBytes(data), kdbxweb.ByteUtils.hexToBytes(iv))
+                        .then(res => {
+                            if (kdbxweb.ByteUtils.bytesToHex(res) !== exp) {
+                                throw 'AES is not working properly';
+                            }
+                            if (kdbxweb.CryptoEngine.random(1).length !== 1) {
+                                throw 'Random is not working';
+                            }
+                        });
+                })
+                .catch(e => {
+                    throw 'WebCrypto is not supported: ' + e;
                 });
-            }).catch(e => { throw 'WebCrypto is not supported: ' + e; });
         });
     },
 

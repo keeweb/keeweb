@@ -136,8 +136,14 @@ const SettingsGeneralView = Backbone.View.extend({
                     errMsg += ': ' + UpdateModel.instance.get('lastError');
                 }
                 if (UpdateModel.instance.get('lastSuccessCheckDate')) {
-                    errMsg += '. ' + Locale.setGenLastCheckSuccess.replace('{}', Format.dtStr(UpdateModel.instance.get('lastSuccessCheckDate'))) +
-                        ': ' + Locale.setGenLastCheckVer.replace('{}', UpdateModel.instance.get('lastVersion'));
+                    errMsg +=
+                        '. ' +
+                        Locale.setGenLastCheckSuccess.replace(
+                            '{}',
+                            Format.dtStr(UpdateModel.instance.get('lastSuccessCheckDate'))
+                        ) +
+                        ': ' +
+                        Locale.setGenLastCheckVer.replace('{}', UpdateModel.instance.get('lastVersion'));
                 }
                 return errMsg;
             case 'ok':
@@ -146,7 +152,9 @@ const SettingsGeneralView = Backbone.View.extend({
                 if (cmp >= 0) {
                     msg += Locale.setGenLatestVer;
                 } else {
-                    msg += Locale.setGenNewVer.replace('{}', UpdateModel.instance.get('lastVersion')) + ' ' +
+                    msg +=
+                        Locale.setGenNewVer.replace('{}', UpdateModel.instance.get('lastVersion')) +
+                        ' ' +
                         Format.dStr(UpdateModel.instance.get('lastVersionReleaseDate'));
                 }
                 switch (UpdateModel.instance.get('updateStatus')) {

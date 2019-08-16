@@ -17,9 +17,12 @@ const TagView = Backbone.View.extend({
 
     render: function() {
         if (this.model) {
-            this.renderTemplate({
-                title: this.model.get('title')
-            }, true);
+            this.renderTemplate(
+                {
+                    title: this.model.get('title')
+                },
+                true
+            );
         }
         return this;
     },

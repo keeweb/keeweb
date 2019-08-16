@@ -22,7 +22,8 @@ const FieldViewCustom = FieldViewText.extend({
             this.isProtected = this.value instanceof kdbxweb.ProtectedValue;
         }
         this.$el.toggleClass('details__field--protected', this.isProtected);
-        $('<div/>').addClass('details__field-value-btn details__field-value-btn-protect')
+        $('<div/>')
+            .addClass('details__field-value-btn details__field-value-btn-protect')
             .appendTo(this.valueEl)
             .mousedown(this.protectBtnClick.bind(this));
         let securityTipTitle = Locale.detLockField;
@@ -63,8 +64,11 @@ const FieldViewCustom = FieldViewText.extend({
         const text = emptyTitle ? '' : this.model.title || '';
         this.labelInput = $('<input/>');
         this.labelEl.html('').append(this.labelInput);
-        this.labelInput.attr({ autocomplete: 'off', spellcheck: 'false' })
-            .val(text).focus()[0].setSelectionRange(text.length, text.length);
+        this.labelInput
+            .attr({ autocomplete: 'off', spellcheck: 'false' })
+            .val(text)
+            .focus()[0]
+            .setSelectionRange(text.length, text.length);
         this.labelInput.bind({
             input: this.fieldLabelInput.bind(this),
             keydown: this.fieldLabelKeydown.bind(this),
@@ -152,7 +156,9 @@ const FieldViewCustom = FieldViewText.extend({
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
-        this.setTimeout(function() { this.input.focus(); });
+        this.setTimeout(function() {
+            this.input.focus();
+        });
     }
 });
 

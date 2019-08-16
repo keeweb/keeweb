@@ -16,22 +16,40 @@ const MenuModel = Backbone.Model.extend({
 
     initialize: function() {
         this.menus = {};
-        this.allItemsSection = new MenuSectionModel([{ locTitle: 'menuAllItems', icon: 'th-large', active: true,
-            shortcut: Keys.DOM_VK_A, filterKey: '*' }]);
+        this.allItemsSection = new MenuSectionModel([
+            { locTitle: 'menuAllItems', icon: 'th-large', active: true, shortcut: Keys.DOM_VK_A, filterKey: '*' }
+        ]);
         this.allItemsItem = this.allItemsSection.get('items').models[0];
         this.groupsSection = new GroupsMenuModel();
-        this.colorsSection = new MenuSectionModel([{ locTitle: 'menuColors', icon: 'bookmark', shortcut: Keys.DOM_VK_C,
-            cls: 'menu__item-colors', filterKey: 'color', filterValue: true }]);
+        this.colorsSection = new MenuSectionModel([
+            {
+                locTitle: 'menuColors',
+                icon: 'bookmark',
+                shortcut: Keys.DOM_VK_C,
+                cls: 'menu__item-colors',
+                filterKey: 'color',
+                filterValue: true
+            }
+        ]);
         this.colorsItem = this.colorsSection.get('items').models[0];
         const defTags = [this._getDefaultTagItem()];
         this.tagsSection = new MenuSectionModel(defTags);
         this.tagsSection.set({ scrollable: true, drag: true });
         this.tagsSection.defaultItems = defTags;
-        this.trashSection = new MenuSectionModel([{ locTitle: 'menuTrash', icon: 'trash', shortcut: Keys.DOM_VK_D,
-            filterKey: 'trash', filterValue: true, drop: true }]);
+        this.trashSection = new MenuSectionModel([
+            {
+                locTitle: 'menuTrash',
+                icon: 'trash',
+                shortcut: Keys.DOM_VK_D,
+                filterKey: 'trash',
+                filterValue: true,
+                drop: true
+            }
+        ]);
         Colors.AllColors.forEach(color => {
-            this.colorsSection.get('items').models[0]
-                .addOption({ cls: 'fa ' + color + '-color', value: color, filterValue: color });
+            this.colorsSection
+                .get('items')
+                .models[0].addOption({ cls: 'fa ' + color + '-color', value: color, filterValue: color });
         });
         this.menus.app = new MenuSectionCollection([
             this.allItemsSection,
@@ -41,8 +59,12 @@ const MenuModel = Backbone.Model.extend({
             this.trashSection
         ]);
 
-        this.generalSection = new MenuSectionModel([{ locTitle: 'menuSetGeneral', icon: 'cog', page: 'general', active: true }]);
-        this.shortcutsSection = new MenuSectionModel([{ locTitle: 'shortcuts', icon: 'keyboard-o', page: 'shortcuts' }]);
+        this.generalSection = new MenuSectionModel([
+            { locTitle: 'menuSetGeneral', icon: 'cog', page: 'general', active: true }
+        ]);
+        this.shortcutsSection = new MenuSectionModel([
+            { locTitle: 'shortcuts', icon: 'keyboard-o', page: 'shortcuts' }
+        ]);
         this.pluginsSection = new MenuSectionModel([{ locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }]);
         this.aboutSection = new MenuSectionModel([{ locTitle: 'menuSetAbout', icon: 'info', page: 'about' }]);
         this.helpSection = new MenuSectionModel([{ locTitle: 'help', icon: 'question', page: 'help' }]);
@@ -66,7 +88,9 @@ const MenuModel = Backbone.Model.extend({
 
     select: function(sel) {
         const sections = this.get('sections');
-        sections.forEach(function(section) { this._select(section, sel.item); }, this);
+        sections.forEach(function(section) {
+            this._select(section, sel.item);
+        }, this);
         if (sections === this.menus.app) {
             this.colorsItem.get('options').forEach(opt => opt.set('active', opt === sel.option));
             const selColor = sel.item === this.colorsItem && sel.option ? sel.option.get('value') + '-color' : '';
@@ -95,7 +119,7 @@ const MenuModel = Backbone.Model.extend({
             if (items) {
                 items.forEach(it => {
                     if (it.get('active') && previousItem) {
-                        this.select({item: previousItem});
+                        this.select({ item: previousItem });
                         return false;
                     }
                     return processSection(it);
@@ -114,8 +138,8 @@ const MenuModel = Backbone.Model.extend({
             if (section.has('visible') && !section.get('visible')) {
                 return true;
             }
-            if (section.has('active') && activeItem && (section !== activeItem)) {
-                this.select({item: section});
+            if (section.has('active') && activeItem && section !== activeItem) {
+                this.select({ item: section });
                 activeItem = null;
                 return false;
             }
@@ -146,18 +170,24 @@ const MenuModel = Backbone.Model.extend({
 
     _setLocale: function() {
         [this.menus.app, this.menus.settings].forEach(menu => {
-            menu.each(section => section.get('items').each(item => {
-                if (item.get('locTitle')) {
-                    item.set('title', Format.capFirst(Locale[item.get('locTitle')]));
-                }
-            }));
+            menu.each(section =>
+                section.get('items').each(item => {
+                    if (item.get('locTitle')) {
+                        item.set('title', Format.capFirst(Locale[item.get('locTitle')]));
+                    }
+                })
+            );
         });
         this.tagsSection.defaultItems[0] = this._getDefaultTagItem();
     },
 
     _getDefaultTagItem: function() {
-        return { title: Format.capFirst(Locale.tags), icon: 'tags', defaultItem: true,
-            disabled: { header: Locale.menuAlertNoTags, body: Locale.menuAlertNoTagsBody, icon: 'tags' } };
+        return {
+            title: Format.capFirst(Locale.tags),
+            icon: 'tags',
+            defaultItem: true,
+            disabled: { header: Locale.menuAlertNoTags, body: Locale.menuAlertNoTagsBody, icon: 'tags' }
+        };
     },
 
     setMenu: function(type) {

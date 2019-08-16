@@ -10,9 +10,13 @@ const Launcher = {
     clipboardSupported: false,
     ready: function(callback) {
         document.addEventListener('deviceready', callback, false);
-        document.addEventListener('pause', () => {
-            Backbone.trigger('app-minimized');
-        }, false);
+        document.addEventListener(
+            'pause',
+            () => {
+                Backbone.trigger('app-minimized');
+            },
+            false
+        );
     },
     platform: function() {
         return 'cordova';
@@ -22,7 +26,9 @@ const Launcher = {
     },
     devTools: false,
     // openDevTools: function() { },
-    getSaveFileName: function(defaultPath, callback) { /* skip in cordova */ },
+    getSaveFileName: function(defaultPath, callback) {
+        /* skip in cordova */
+    },
     getDataPath: function() {
         const storagePath = window.cordova.file.externalDataDirectory;
         return [storagePath].concat(Array.from(arguments)).filter(s => !!s);
@@ -47,9 +53,14 @@ const Launcher = {
     },
     writeFile: function(path, data, callback) {
         const createFile = filePath => {
-            window.resolveLocalFileSystemURL(filePath.dir, dir => {
-                dir.getFile(filePath.file, {create: true}, writeFile);
-            }, callback, callback);
+            window.resolveLocalFileSystemURL(
+                filePath.dir,
+                dir => {
+                    dir.getFile(filePath.file, { create: true }, writeFile);
+                },
+                callback,
+                callback
+            );
         };
 
         const writeFile = fileEntry => {
@@ -60,9 +71,11 @@ const Launcher = {
             }, callback);
         };
 
-        if (path.startsWith('cdvfile://')) { // then file exists
+        if (path.startsWith('cdvfile://')) {
+            // then file exists
             window.resolveLocalFileSystemURL(path, writeFile, callback, callback);
-        } else { // create file on sd card
+        } else {
+            // create file on sd card
             const filePath = this.parsePath(path);
             this.mkdir(filePath.dir, () => {
                 createFile(filePath);
@@ -70,55 +83,86 @@ const Launcher = {
         }
     },
     readFile: function(path, encoding, callback) {
-        window.resolveLocalFileSystemURL(path, fileEntry => {
-            fileEntry.file(file => {
-                const reader = new FileReader();
-                reader.onerror = callback;
-                reader.onloadend = () => {
-                    const contents = new Uint8Array(reader.result);
-                    callback(encoding ? String.fromCharCode.apply(null, contents) : contents);
-                };
-                reader.readAsArrayBuffer(file);
-            }, err => callback(undefined, err));
-        }, err => callback(undefined, err));
+        window.resolveLocalFileSystemURL(
+            path,
+            fileEntry => {
+                fileEntry.file(
+                    file => {
+                        const reader = new FileReader();
+                        reader.onerror = callback;
+                        reader.onloadend = () => {
+                            const contents = new Uint8Array(reader.result);
+                            callback(encoding ? String.fromCharCode.apply(null, contents) : contents);
+                        };
+                        reader.readAsArrayBuffer(file);
+                    },
+                    err => callback(undefined, err)
+                );
+            },
+            err => callback(undefined, err)
+        );
     },
     fileExists: function(path, callback) {
         window.resolveLocalFileSystemURL(path, fileEntry => callback(true), () => callback(false));
     },
     deleteFile: function(path, callback) {
-        window.resolveLocalFileSystemURL(path, fileEntry => {
-            fileEntry.remove(callback, callback, callback);
-        }, callback);
+        window.resolveLocalFileSystemURL(
+            path,
+            fileEntry => {
+                fileEntry.remove(callback, callback, callback);
+            },
+            callback
+        );
     },
     statFile: function(path, callback) {
-        window.resolveLocalFileSystemURL(path, fileEntry => {
-            fileEntry.file(file => {
-                callback({
-                    ctime: new Date(file.lastModified),
-                    mtime: new Date(file.lastModified)
-                });
-            }, err => callback(undefined, err));
-        }, err => callback(undefined, err));
+        window.resolveLocalFileSystemURL(
+            path,
+            fileEntry => {
+                fileEntry.file(
+                    file => {
+                        callback({
+                            ctime: new Date(file.lastModified),
+                            mtime: new Date(file.lastModified)
+                        });
+                    },
+                    err => callback(undefined, err)
+                );
+            },
+            err => callback(undefined, err)
+        );
     },
     mkdir: function(dir, callback) {
         const basePath = this.getDataPath().join('/');
         const createDir = (dirEntry, path, callback) => {
             const name = path.shift();
-            dirEntry.getDirectory(name, { create: true }, dirEntry => {
-                if (path.length) { // there is more to create
-                    createDir(dirEntry, path, callback);
-                } else {
-                    callback();
-                }
-            }, callback);
+            dirEntry.getDirectory(
+                name,
+                { create: true },
+                dirEntry => {
+                    if (path.length) {
+                        // there is more to create
+                        createDir(dirEntry, path, callback);
+                    } else {
+                        callback();
+                    }
+                },
+                callback
+            );
         };
 
-        const localPath = dir.replace(basePath, '').split('/').filter(s => !!s);
+        const localPath = dir
+            .replace(basePath, '')
+            .split('/')
+            .filter(s => !!s);
 
         if (localPath.length) {
-            window.resolveLocalFileSystemURL(basePath, dirEntry => {
-                createDir(dirEntry, localPath, callback);
-            }, callback);
+            window.resolveLocalFileSystemURL(
+                basePath,
+                dirEntry => {
+                    createDir(dirEntry, localPath, callback);
+                },
+                callback
+            );
         } else {
             callback();
         }
@@ -145,11 +189,15 @@ const Launcher = {
         this.hideApp();
     },
 
-    requestExit: function() { /* skip in cordova */ },
+    requestExit: function() {
+        /* skip in cordova */
+    },
     requestRestart: function() {
         window.location.reload();
     },
-    cancelRestart: function() { /* skip in cordova */ },
+    cancelRestart: function() {
+        /* skip in cordova */
+    },
 
     setClipboardText: function(text) {},
     getClipboardText: function() {},
@@ -169,13 +217,21 @@ const Launcher = {
     },
 
     // getMainWindow: function() { },
-    resolveProxy: function(url, callback) { /* skip in cordova */ },
-    openWindow: function(opts) { /* skip in cordova */ },
-    hideApp: function() { /* skip in cordova */ },
+    resolveProxy: function(url, callback) {
+        /* skip in cordova */
+    },
+    openWindow: function(opts) {
+        /* skip in cordova */
+    },
+    hideApp: function() {
+        /* skip in cordova */
+    },
     isAppFocused: function() {
         return false; /* skip in cordova */
     },
-    showMainWindow: function() { /* skip in cordova */ },
+    showMainWindow: function() {
+        /* skip in cordova */
+    },
     // spawn: function(config) { },
     openFileChooser: function(callback) {
         const onFileSelected = function(selected) {

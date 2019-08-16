@@ -8,10 +8,7 @@ kdbxweb.ProtectedValue.prototype.isProtected = true;
 kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
     const value = this._value;
     const salt = this._salt;
-    let b,
-        b1,
-        b2,
-        b3;
+    let b, b1, b2, b3;
     for (let i = 0, len = value.length; i < len; i++) {
         b = value[i] ^ salt[i];
         if (b < 128) {
@@ -20,23 +17,32 @@ kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
             }
             continue;
         }
-        i++; b1 = value[i] ^ salt[i];
-        if (i === len) { break; }
+        i++;
+        b1 = value[i] ^ salt[i];
+        if (i === len) {
+            break;
+        }
         if (b >= 192 && b < 224) {
             if (fn(((b & 0x1f) << 6) | (b1 & 0x3f)) === false) {
                 return;
             }
             continue;
         }
-        i++; b2 = value[i] ^ salt[i];
-        if (i === len) { break; }
+        i++;
+        b2 = value[i] ^ salt[i];
+        if (i === len) {
+            break;
+        }
         if (b >= 224 && b < 240) {
             if (fn(((b & 0xf) << 12) | ((b1 & 0x3f) << 6) | (b2 & 0x3f)) === false) {
                 return;
             }
         }
-        i++; b3 = value[i] ^ salt[i];
-        if (i === len) { break; }
+        i++;
+        b3 = value[i] ^ salt[i];
+        if (i === len) {
+            break;
+        }
         if (b >= 240 && b < 248) {
             let c = ((b & 7) << 18) | ((b1 & 0x3f) << 12) | ((b2 & 0x3f) << 6) | (b3 & 0x3f);
             if (c <= 0xffff) {
@@ -60,7 +66,9 @@ kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
 Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
     get: function() {
         let textLength = 0;
-        this.forEachChar(() => { textLength++; });
+        this.forEachChar(() => {
+            textLength++;
+        });
         return textLength;
     }
 });

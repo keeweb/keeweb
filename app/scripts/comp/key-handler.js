@@ -15,15 +15,22 @@ const KeyHandler = {
         $(document).bind('keypress', this.keypress.bind(this));
         $(document).bind('keydown', this.keydown.bind(this));
 
-        this.shortcuts[Keys.DOM_VK_A] = [{ handler: this.handleAKey, thisArg: this, shortcut: this.SHORTCUT_ACTION,
-            modal: true, noPrevent: true }];
+        this.shortcuts[Keys.DOM_VK_A] = [
+            { handler: this.handleAKey, thisArg: this, shortcut: this.SHORTCUT_ACTION, modal: true, noPrevent: true }
+        ];
     },
     onKey: function(key, handler, thisArg, shortcut, modal, noPrevent) {
         let keyShortcuts = this.shortcuts[key];
         if (!keyShortcuts) {
             this.shortcuts[key] = keyShortcuts = [];
         }
-        keyShortcuts.push({ handler: handler, thisArg: thisArg, shortcut: shortcut, modal: modal, noPrevent: noPrevent });
+        keyShortcuts.push({
+            handler: handler,
+            thisArg: thisArg,
+            shortcut: shortcut,
+            modal: modal,
+            noPrevent: noPrevent
+        });
     },
     offKey: function(key, handler, thisArg) {
         if (this.shortcuts[key]) {
@@ -51,16 +58,24 @@ const KeyHandler = {
                 const isActionKey = this.isActionKey(e);
                 switch (sh.shortcut) {
                     case this.SHORTCUT_ACTION:
-                        if (!isActionKey) { continue; }
+                        if (!isActionKey) {
+                            continue;
+                        }
                         break;
                     case this.SHORTCUT_OPT:
-                        if (!e.altKey) { continue; }
+                        if (!e.altKey) {
+                            continue;
+                        }
                         break;
                     case this.SHORTCUT_ACTION + this.SHORTCUT_OPT:
-                        if (!e.altKey || !isActionKey) { continue; }
+                        if (!e.altKey || !isActionKey) {
+                            continue;
+                        }
                         break;
                     default:
-                        if (e.metaKey || e.ctrlKey || e.altKey) { continue; }
+                        if (e.metaKey || e.ctrlKey || e.altKey) {
+                            continue;
+                        }
                         break;
                 }
                 sh.handler.call(sh.thisArg, e, code);
@@ -74,11 +89,15 @@ const KeyHandler = {
         }
     },
     keypress: function(e) {
-        if (!this.modal &&
+        if (
+            !this.modal &&
             e.charCode !== Keys.DOM_VK_RETURN &&
             e.charCode !== Keys.DOM_VK_ESCAPE &&
             e.charCode !== Keys.DOM_VK_TAB &&
-            !e.altKey && !e.ctrlKey && !e.metaKey) {
+            !e.altKey &&
+            !e.ctrlKey &&
+            !e.metaKey
+        ) {
             this.trigger('keypress', e);
         } else if (this.modal) {
             this.trigger('keypress:' + this.modal, e);

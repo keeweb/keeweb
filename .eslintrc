@@ -1,7 +1,6 @@
 {
-    "extends": "standard",
+    "extends": ["standard", "plugin:prettier/recommended"],
     "rules": {
-        "indent": ["error", 4, { "SwitchCase": 1 }],
         "semi": ["error", "always"],
         "one-var": "off",
         "space-before-function-paren": "off",

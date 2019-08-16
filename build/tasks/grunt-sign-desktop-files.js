@@ -1,5 +1,5 @@
-module.exports = function (grunt) {
-    grunt.registerMultiTask('sign-desktop-files', 'Signs desktop files', async function () {
+module.exports = function(grunt) {
+    grunt.registerMultiTask('sign-desktop-files', 'Signs desktop files', async function() {
         const done = this.async();
         const fs = require('fs');
         const path = require('path');

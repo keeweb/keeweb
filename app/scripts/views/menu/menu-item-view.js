@@ -27,7 +27,7 @@ const MenuItemView = Backbone.View.extend({
     iconEl: null,
     itemViews: null,
 
-    initialize: function () {
+    initialize: function() {
         this.itemViews = [];
         this.listenTo(this.model, 'change:title', this.changeTitle);
         this.listenTo(this.model, 'change:icon', this.changeIcon);
@@ -52,7 +52,7 @@ const MenuItemView = Backbone.View.extend({
         this.iconEl = this.$el.find('i.menu__item-icon');
         const items = this.model.get('items');
         if (items) {
-            items.forEach(function (item) {
+            items.forEach(function(item) {
                 if (item.get('visible')) {
                     this.insertItem(item);
                 }
@@ -63,7 +63,7 @@ const MenuItemView = Backbone.View.extend({
     },
 
     insertItem: function(item) {
-        this.itemViews.push(new MenuItemView({el: this.$el, model: item}).render());
+        this.itemViews.push(new MenuItemView({ el: this.$el, model: item }).render());
     },
 
     remove: function() {
@@ -84,7 +84,10 @@ const MenuItemView = Backbone.View.extend({
     },
 
     changeTitle: function(model, title) {
-        this.$el.find('.menu__item-title').first().text(title || '(no title)');
+        this.$el
+            .find('.menu__item-title')
+            .first()
+            .text(title || '(no title)');
     },
 
     changeIcon: function(model, icon) {

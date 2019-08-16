@@ -43,18 +43,20 @@ const SettingsPluginsView = Backbone.View.extend({
 
     render() {
         this.renderTemplate({
-            plugins: PluginManager.get('plugins').map(plugin => ({
-                id: plugin.id,
-                manifest: plugin.get('manifest'),
-                status: plugin.get('status'),
-                installTime: Math.round(plugin.get('installTime')),
-                updateError: plugin.get('updateError'),
-                updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
-                installError: plugin.get('installError'),
-                official: plugin.get('official'),
-                autoUpdate: plugin.get('autoUpdate'),
-                settings: plugin.getSettings()
-            })).sort(Comparators.stringComparator('id', true)),
+            plugins: PluginManager.get('plugins')
+                .map(plugin => ({
+                    id: plugin.id,
+                    manifest: plugin.get('manifest'),
+                    status: plugin.get('status'),
+                    installTime: Math.round(plugin.get('installTime')),
+                    updateError: plugin.get('updateError'),
+                    updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
+                    installError: plugin.get('installError'),
+                    official: plugin.get('official'),
+                    autoUpdate: plugin.get('autoUpdate'),
+                    settings: plugin.getSettings()
+                }))
+                .sort(Comparators.stringComparator('id', true)),
             installingFromUrl: this.installFromUrl && !this.installFromUrl.error,
             installUrl: this.installFromUrl ? this.installFromUrl.url : null,
             installUrlError: this.installFromUrl ? this.installFromUrl.error : null,
@@ -221,12 +223,14 @@ const SettingsPluginsView = Backbone.View.extend({
     pluginMatchesFilter(plugin) {
         const searchStr = this.searchStr;
         const manifest = plugin.manifest;
-        return !searchStr ||
+        return (
+            !searchStr ||
             manifest.name.toLowerCase().indexOf(searchStr) >= 0 ||
-            manifest.description && manifest.description.toLowerCase().indexOf(searchStr) >= 0 ||
-            manifest.locale &&
+            (manifest.description && manifest.description.toLowerCase().indexOf(searchStr) >= 0) ||
+            (manifest.locale &&
                 (manifest.locale.name.toLowerCase().indexOf(searchStr) >= 0 ||
-                manifest.locale.title.toLowerCase().indexOf(searchStr) >= 0);
+                    manifest.locale.title.toLowerCase().indexOf(searchStr) >= 0))
+        );
     },
 
     pluginSettingChange(e) {

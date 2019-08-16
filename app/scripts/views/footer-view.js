@@ -16,7 +16,7 @@ const FooterView = Backbone.View.extend({
         'click .footer__btn-lock': 'lockWorkspace'
     },
 
-    initialize: function () {
+    initialize: function() {
         this.views = {};
 
         KeyHandler.onKey(Keys.DOM_VK_L, this.lockWorkspace, this, KeyHandler.SHORTCUT_ACTION, false, true);
@@ -31,11 +31,14 @@ const FooterView = Backbone.View.extend({
         this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render);
     },
 
-    render: function () {
-        this.renderTemplate({
-            files: this.model.files,
-            updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
-        }, { plain: true });
+    render: function() {
+        this.renderTemplate(
+            {
+                files: this.model.files,
+                updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
+            },
+            { plain: true }
+        );
         return this;
     },
 
@@ -65,12 +68,16 @@ const FooterView = Backbone.View.extend({
         const right = bodyRect.right - rect.right;
         const bottom = bodyRect.bottom - rect.top;
         const generator = new GeneratorView({ model: { copy: true, pos: { right: right, bottom: bottom } } }).render();
-        generator.once('remove', () => { delete this.views.gen; });
+        generator.once('remove', () => {
+            delete this.views.gen;
+        });
         this.views.gen = generator;
     },
 
     showFile: function(e) {
-        const fileId = $(e.target).closest('.footer__db-item').data('file-id');
+        const fileId = $(e.target)
+            .closest('.footer__db-item')
+            .data('file-id');
         if (fileId) {
             Backbone.trigger('show-file', { fileId: fileId });
         }

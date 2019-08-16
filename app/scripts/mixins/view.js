@@ -75,7 +75,7 @@ _.extend(Backbone.View.prototype, {
         if (this.scroll) {
             try {
                 this.scroll.dispose();
-            } catch (e) { }
+            } catch (e) {}
         }
         Tip.hideTips(this.$el);
         this._parentRemove(arguments);

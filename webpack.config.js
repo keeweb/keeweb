@@ -21,8 +21,17 @@ function config(grunt, mode = 'production') {
         mode,
         entry: {
             app: ['app', 'main.scss'],
-            vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron',
-                'pikaday', 'jsqrcode', 'argon2-wasm', 'argon2']
+            vendor: [
+                'jquery',
+                'underscore',
+                'backbone',
+                'kdbxweb',
+                'baron',
+                'pikaday',
+                'jsqrcode',
+                'argon2-wasm',
+                'argon2'
+            ]
         },
         output: {
             path: path.resolve('.', 'tmp'),
@@ -62,29 +71,39 @@ function config(grunt, mode = 'production') {
         module: {
             rules: [
                 {
-                    test: /\.hbs$/, loader: StringReplacePlugin.replace('handlebars-loader', {
+                    test: /\.hbs$/,
+                    loader: StringReplacePlugin.replace('handlebars-loader', {
                         replacements: [{ pattern: /\r?\n\s*/g, replacement: () => '\n' }]
                     })
                 },
                 {
-                    test: /runtime-info\.js$/, loader: StringReplacePlugin.replace({
+                    test: /runtime-info\.js$/,
+                    loader: StringReplacePlugin.replace({
                         replacements: [
-                            { pattern: /@@VERSION/g, replacement: () => pkg.version + (grunt.option('beta') ? '-beta' : '') },
-                            { pattern: /@@BETA/g, replacement: () => grunt.option('beta') ? '1' : '' },
+                            {
+                                pattern: /@@VERSION/g,
+                                replacement: () => pkg.version + (grunt.option('beta') ? '-beta' : '')
+                            },
+                            { pattern: /@@BETA/g, replacement: () => (grunt.option('beta') ? '1' : '') },
                             { pattern: /@@DATE/g, replacement: () => dt },
-                            { pattern: /@@COMMIT/g, replacement: () => grunt.config.get('gitinfo.local.branch.current.shortSHA') }
+                            {
+                                pattern: /@@COMMIT/g,
+                                replacement: () => grunt.config.get('gitinfo.local.branch.current.shortSHA')
+                            }
                         ]
                     })
                 },
-                {test: /baron(\.min)?\.js$/, loader: 'exports-loader?baron; delete window.baron;'},
-                {test: /pikaday\.js$/, loader: 'uglify-loader'},
-                {test: /handlebars/, loader: 'strip-sourcemap-loader'},
+                { test: /baron(\.min)?\.js$/, loader: 'exports-loader?baron; delete window.baron;' },
+                { test: /pikaday\.js$/, loader: 'uglify-loader' },
+                { test: /handlebars/, loader: 'strip-sourcemap-loader' },
                 {
-                    test: /\.js$/, exclude: /(node_modules)/, loader: 'babel-loader',
-                    query: {presets: ['@babel/preset-env'], cacheDirectory: true}
+                    test: /\.js$/,
+                    exclude: /(node_modules)/,
+                    loader: 'babel-loader',
+                    query: { presets: ['@babel/preset-env'], cacheDirectory: true }
                 },
-                {test: /argon2\.wasm/, type: 'javascript/auto', loader: 'base64-loader'},
-                {test: /argon2(\.min)?\.js/, loader: 'raw-loader'},
+                { test: /argon2\.wasm/, type: 'javascript/auto', loader: 'base64-loader' },
+                { test: /argon2(\.min)?\.js/, loader: 'raw-loader' },
                 {
                     test: /\.s?css$/,
                     use: [
@@ -131,9 +150,17 @@ function config(grunt, mode = 'production') {
             ]
         },
         plugins: [
-            new webpack.BannerPlugin('keeweb v' + pkg.version + ', (c) ' + year + ' ' + pkg.author.name +
-                ', opensource.org/licenses/' + pkg.license),
-            new webpack.ProvidePlugin({_: 'underscore', $: 'jquery'}),
+            new webpack.BannerPlugin(
+                'keeweb v' +
+                    pkg.version +
+                    ', (c) ' +
+                    year +
+                    ' ' +
+                    pkg.author.name +
+                    ', opensource.org/licenses/' +
+                    pkg.license
+            ),
+            new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
             new webpack.IgnorePlugin(/^(moment)$/),
             new StringReplacePlugin(),
             new MiniCssExtractPlugin({

@@ -44,21 +44,23 @@ const PluginManager = Backbone.Model.extend({
 
     install(url, expectedManifest, skipSignatureValidation) {
         this.trigger('change');
-        return Plugin.loadFromUrl(url, expectedManifest).then(plugin => {
-            return this.uninstall(plugin.id).then(() => {
-                if (skipSignatureValidation) {
-                    plugin.set('skipSignatureValidation', true);
-                }
-                return plugin.install(true, false).then(() => {
-                    this.get('plugins').push(plugin);
-                    this.trigger('change');
-                    this.saveState();
+        return Plugin.loadFromUrl(url, expectedManifest)
+            .then(plugin => {
+                return this.uninstall(plugin.id).then(() => {
+                    if (skipSignatureValidation) {
+                        plugin.set('skipSignatureValidation', true);
+                    }
+                    return plugin.install(true, false).then(() => {
+                        this.get('plugins').push(plugin);
+                        this.trigger('change');
+                        this.saveState();
+                    });
                 });
+            })
+            .catch(e => {
+                this.trigger('change');
+                throw e;
             });
-        }).catch(e => {
-            this.trigger('change');
-            throw e;
-        });
     },
 
     installIfNew(url, expectedManifest, skipSignatureValidation) {
@@ -112,24 +114,35 @@ const PluginManager = Backbone.Model.extend({
     update(id) {
         const plugins = this.get('plugins');
         const oldPlugin = plugins.get(id);
-        const validStatuses = [Plugin.STATUS_ACTIVE, Plugin.STATUS_INACTIVE, Plugin.STATUS_NONE, Plugin.STATUS_ERROR, Plugin.STATUS_INVALID];
+        const validStatuses = [
+            Plugin.STATUS_ACTIVE,
+            Plugin.STATUS_INACTIVE,
+            Plugin.STATUS_NONE,
+            Plugin.STATUS_ERROR,
+            Plugin.STATUS_INVALID
+        ];
         if (!oldPlugin || validStatuses.indexOf(oldPlugin.get('status')) < 0) {
             return Promise.reject();
         }
         const url = oldPlugin.get('url');
         this.trigger('change');
-        return Plugin.loadFromUrl(url).then(newPlugin => {
-            return oldPlugin.update(newPlugin).then(() => {
-                this.trigger('change');
-                this.saveState();
-            }).catch(e => {
+        return Plugin.loadFromUrl(url)
+            .then(newPlugin => {
+                return oldPlugin
+                    .update(newPlugin)
+                    .then(() => {
+                        this.trigger('change');
+                        this.saveState();
+                    })
+                    .catch(e => {
+                        this.trigger('change');
+                        throw e;
+                    });
+            })
+            .catch(e => {
                 this.trigger('change');
                 throw e;
             });
-        }).catch(e => {
-            this.trigger('change');
-            throw e;
-        });
     },
 
     setAutoUpdate(id, enabled) {
@@ -144,7 +157,9 @@ const PluginManager = Backbone.Model.extend({
     },
 
     runAutoUpdate() {
-        const queue = this.get('plugins').filter(p => p.get('autoUpdate')).map(p => p.id);
+        const queue = this.get('plugins')
+            .filter(p => p.get('autoUpdate'))
+            .map(p => p.id);
         if (!queue.length) {
             return Promise.resolve();
         }
@@ -163,7 +178,9 @@ const PluginManager = Backbone.Model.extend({
         const updateNext = () => {
             const pluginId = queue.shift();
             if (pluginId) {
-                return this.update(pluginId).catch(() => {}).then(updateNext);
+                return this.update(pluginId)
+                    .catch(() => {})
+                    .then(updateNext);
             }
         };
         return updateNext();
@@ -178,10 +195,13 @@ const PluginManager = Backbone.Model.extend({
         let enabled = desc.enabled;
         if (enabled) {
             const galleryPlugin = gallery ? gallery.plugins.find(pl => pl.manifest.name === desc.manifest.name) : null;
-            const expectedPublicKey = galleryPlugin ? galleryPlugin.manifest.publicKey : SignatureVerifier.getPublicKey();
+            const expectedPublicKey = galleryPlugin
+                ? galleryPlugin.manifest.publicKey
+                : SignatureVerifier.getPublicKey();
             enabled = desc.manifest.publicKey === expectedPublicKey;
         }
-        return plugin.install(enabled, true)
+        return plugin
+            .install(enabled, true)
             .then(() => plugin)
             .catch(() => plugin);
     },

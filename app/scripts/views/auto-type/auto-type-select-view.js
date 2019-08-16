@@ -58,8 +58,10 @@ const AutoTypePopupView = Backbone.View.extend({
     render() {
         let topMessage;
         if (this.model.filter.title || this.model.filter.url) {
-            topMessage = Locale.autoTypeMsgMatchedByWindow.replace('{}',
-                this.model.filter.title || this.model.filter.url);
+            topMessage = Locale.autoTypeMsgMatchedByWindow.replace(
+                '{}',
+                this.model.filter.title || this.model.filter.url
+            );
         } else {
             topMessage = Locale.autoTypeMsgNoWindow;
         }

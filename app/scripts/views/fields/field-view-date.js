@@ -44,7 +44,9 @@ const FieldViewDate = FieldViewText.extend({
 
     endEdit: function(newVal, extra) {
         if (this.picker) {
-            try { this.picker.destroy(); } catch (e) {}
+            try {
+                this.picker.destroy();
+            } catch (e) {}
             this.picker = null;
         }
         newVal = new Date(newVal);

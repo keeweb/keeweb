@@ -1,10 +1,17 @@
-$themes: map-merge($themes, (
-  sl: map-merge($theme-defaults, (
-    background-color: #FDF6E3,
-    medium-color: #586E75,
-    text-color: #657B83,
-    action-color: #859900,
-    error-color: #DC322F,
-    mute-percent: 60%,
-  ))
-));
+$themes: map-merge(
+    $themes,
+    (
+        sl:
+            map-merge(
+                $theme-defaults,
+                (
+                    background-color: #fdf6e3,
+                    medium-color: #586e75,
+                    text-color: #657b83,
+                    action-color: #859900,
+                    error-color: #dc322f,
+                    mute-percent: 60%
+                )
+            )
+    )
+);

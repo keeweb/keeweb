@@ -51,10 +51,7 @@ module.exports = function(grunt) {
         'compress:linux-ia32'
     ]);
 
-    grunt.registerTask('build-desktop-dist-darwin', [
-        'appdmg',
-        'codesign:dmg'
-    ]);
+    grunt.registerTask('build-desktop-dist-darwin', ['appdmg', 'codesign:dmg']);
 
     grunt.registerTask('build-desktop-dist-win32', [
         'nsis:win32-un-x64',
@@ -69,10 +66,7 @@ module.exports = function(grunt) {
         'copy:desktop-win32-dist-ia32'
     ]);
 
-    grunt.registerTask('build-desktop-dist-linux', [
-        'deb:linux-x64',
-        'deb:linux-ia32'
-    ]);
+    grunt.registerTask('build-desktop-dist-linux', ['deb:linux-x64', 'deb:linux-ia32']);
 
     grunt.registerTask('build-desktop-dist', [
         'build-desktop-dist-darwin',
@@ -91,13 +85,7 @@ module.exports = function(grunt) {
         'sign-dist'
     ]);
 
-    grunt.registerTask('build-cordova-app-content', [
-        'string-replace:cordova-html'
-    ]);
+    grunt.registerTask('build-cordova-app-content', ['string-replace:cordova-html']);
 
-    grunt.registerTask('build-cordova', [
-        'gitinfo',
-        'clean:cordova',
-        'build-cordova-app-content'
-    ]);
+    grunt.registerTask('build-cordova', ['gitinfo', 'clean:cordova', 'build-cordova-app-content']);
 };

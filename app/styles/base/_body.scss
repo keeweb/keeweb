@@ -1,15 +1,15 @@
 html {
-  @include size(100%);
-  overflow: hidden;
-  position: fixed;
+    @include size(100%);
+    overflow: hidden;
+    position: fixed;
 }
 
 body {
-  overflow: hidden;
-  cursor: default;
-  position: fixed;
-  -webkit-overflow-scrolling: touch;
-  -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+    cursor: default;
+    position: fixed;
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: transparent;
 }
 
 noscript {

@@ -11,7 +11,8 @@ const StorageGDrive = StorageBase.extend({
     name: 'gdrive',
     enabled: true,
     uipos: 30,
-    iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><path d="M86.657536,76.246208 L47.768064,9 L89.111168,' +
+    iconSvg:
+        '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><path d="M86.657536,76.246208 L47.768064,9 L89.111168,' +
         '9 L128,76.246208 L86.657536,76.246208 Z M25.010048,119.08 L102.690048,119.08 L123.36256,83.24 L45.68064,83.24 L25.010048,119.08 L25.010048,' +
         '119.08 Z M38.793088,9.003712 L0,76.30496 L20.671872,112.110016 L59.464704,44.808128 L38.793088,9.003712 Z"></path></svg>',
 
@@ -24,20 +25,22 @@ const StorageGDrive = StorageBase.extend({
 
     load: function(path, opts, callback) {
         this.stat(path, opts, (err, stat) => {
-            if (err) { return callback && callback(err); }
+            if (err) {
+                return callback && callback(err);
+            }
             this.logger.debug('Load', path);
             const ts = this.logger.ts();
-            const url = this._baseUrl + '/files/{id}/revisions/{rev}?alt=media'
-                .replace('{id}', path)
-                .replace('{rev}', stat.rev);
+            const url =
+                this._baseUrl +
+                '/files/{id}/revisions/{rev}?alt=media'.replace('{id}', path).replace('{rev}', stat.rev);
             this._xhr({
                 url: url,
                 responseType: 'arraybuffer',
-                success: (response) => {
+                success: response => {
                     this.logger.debug('Loaded', path, stat.rev, this.logger.ts(ts));
                     return callback && callback(null, response, { rev: stat.rev });
                 },
-                error: (err) => {
+                error: err => {
                     this.logger.error('Load error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
@@ -55,17 +58,16 @@ const StorageGDrive = StorageBase.extend({
             }
             this.logger.debug('Stat', path);
             const ts = this.logger.ts();
-            const url = this._baseUrl + '/files/{id}?fields=headRevisionId'
-                .replace('{id}', path);
+            const url = this._baseUrl + '/files/{id}?fields=headRevisionId'.replace('{id}', path);
             this._xhr({
                 url: url,
                 responseType: 'json',
-                success: (response) => {
+                success: response => {
                     const rev = response.headRevisionId;
                     this.logger.debug('Stated', path, rev, this.logger.ts(ts));
                     return callback && callback(null, { rev: rev });
                 },
-                error: (err) => {
+                error: err => {
                     this.logger.error('Stat error', this.logger.ts(ts), err);
                     return callback && callback(err);
                 }
@@ -95,18 +97,33 @@ const StorageGDrive = StorageBase.extend({
                     url = this._baseUrlUpload + '/files?uploadType=multipart&fields=id,headRevisionId';
                     const fileName = path.replace(NewFileIdPrefix, '') + '.kdbx';
                     const boundry = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
-                    data = new Blob([
-                        '--', boundry, '\r\n',
-                        'Content-Type: application/json; charset=UTF-8', '\r\n\r\n',
-                        JSON.stringify({ name: fileName }), '\r\n',
-                        '--', boundry, '\r\n',
-                        'Content-Type: application/octet-stream', '\r\n\r\n',
-                        data, '\r\n',
-                        '--', boundry, '--', '\r\n'
-                    ], { type: 'multipart/related; boundary="' + boundry + '"' });
+                    data = new Blob(
+                        [
+                            '--',
+                            boundry,
+                            '\r\n',
+                            'Content-Type: application/json; charset=UTF-8',
+                            '\r\n\r\n',
+                            JSON.stringify({ name: fileName }),
+                            '\r\n',
+                            '--',
+                            boundry,
+                            '\r\n',
+                            'Content-Type: application/octet-stream',
+                            '\r\n\r\n',
+                            data,
+                            '\r\n',
+                            '--',
+                            boundry,
+                            '--',
+                            '\r\n'
+                        ],
+                        { type: 'multipart/related; boundary="' + boundry + '"' }
+                    );
                 } else {
-                    url = this._baseUrlUpload + '/files/{id}?uploadType=media&fields=headRevisionId'
-                        .replace('{id}', path);
+                    url =
+                        this._baseUrlUpload +
+                        '/files/{id}?uploadType=media&fields=headRevisionId'.replace('{id}', path);
                     data = new Blob([data], { type: 'application/octet-stream' });
                 }
                 this._xhr({
@@ -114,7 +131,7 @@ const StorageGDrive = StorageBase.extend({
                     method: isNew ? 'POST' : 'PATCH',
                     responseType: 'json',
                     data: data,
-                    success: (response) => {
+                    success: response => {
                         this.logger.debug('Saved', path, this.logger.ts(ts));
                         const newRev = response.headRevisionId;
                         if (!newRev) {
@@ -122,7 +139,7 @@ const StorageGDrive = StorageBase.extend({
                         }
                         return callback && callback(null, { rev: newRev, path: isNew ? response.id : null });
                     },
-                    error: (err) => {
+                    error: err => {
                         this.logger.error('Save error', path, err, this.logger.ts(ts));
                         return callback && callback(err);
                     }
@@ -132,20 +149,23 @@ const StorageGDrive = StorageBase.extend({
     },
 
     list: function(dir, callback) {
-        this._oauthAuthorize((err) => {
-            if (err) { return callback && callback(err); }
+        this._oauthAuthorize(err => {
+            if (err) {
+                return callback && callback(err);
+            }
             this.logger.debug('List');
-            let query = dir === 'shared' ? 'sharedWithMe=true'
-                : dir ? `"${dir}" in parents` : '"root" in parents';
+            let query = dir === 'shared' ? 'sharedWithMe=true' : dir ? `"${dir}" in parents` : '"root" in parents';
             query += ' and trashed=false';
-            const url = this._baseUrl + '/files?fields={fields}&q={q}&pageSize=1000'
-                .replace('{fields}', encodeURIComponent('files(id,name,mimeType,headRevisionId)'))
-                .replace('{q}', encodeURIComponent(query));
+            const url =
+                this._baseUrl +
+                '/files?fields={fields}&q={q}&pageSize=1000'
+                    .replace('{fields}', encodeURIComponent('files(id,name,mimeType,headRevisionId)'))
+                    .replace('{q}', encodeURIComponent(query));
             const ts = this.logger.ts();
             this._xhr({
                 url: url,
                 responseType: 'json',
-                success: (response) => {
+                success: response => {
                     if (!response) {
                         this.logger.error('List error', this.logger.ts(ts));
                         return callback && callback('list error');
@@ -167,7 +187,7 @@ const StorageGDrive = StorageBase.extend({
                     }
                     return callback && callback(null, fileList);
                 },
-                error: (err) => {
+                error: err => {
                     this.logger.error('List error', this.logger.ts(ts), err);
                     return callback && callback(err);
                 }
@@ -188,7 +208,7 @@ const StorageGDrive = StorageBase.extend({
                 this.logger.debug('Removed', path, this.logger.ts(ts));
                 return callback && callback();
             },
-            error: (err) => {
+            error: err => {
                 this.logger.error('Remove error', path, err, this.logger.ts(ts));
                 return callback && callback(err);
             }

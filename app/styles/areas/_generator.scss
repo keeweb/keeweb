@@ -1,68 +1,70 @@
 .gen {
-  position: absolute;
-  @include common-dropdown;
-  padding: $base-spacing;
-  width: 11em;
-  &__length-range {
-  }
-  &__top-btn {
-    float: right;
-    cursor: pointer;
-    position: relative;
-    top: 2px;
-    & ~ .gen__top-btn {
-      margin-right: 0.5em;
+    position: absolute;
+    @include common-dropdown;
+    padding: $base-spacing;
+    width: 11em;
+    &__length-range {
     }
-    @include th {
-      color: th(muted-color);
-      &:hover { color: th(text-color); }
+    &__top-btn {
+        float: right;
+        cursor: pointer;
+        position: relative;
+        top: 2px;
+        & ~ .gen__top-btn {
+            margin-right: 0.5em;
+        }
+        @include th {
+            color: th(muted-color);
+            &:hover {
+                color: th(text-color);
+            }
+        }
     }
-  }
-  &__sel-tpl {
-    width: 100%;
-    height: 2em;
-    margin-top: $base-padding-v;
-  }
-  &__check {
-    width: 40%;
-    display: inline-block;
-    &:nth-child(even) {
-      margin-left: 15%;
+    &__sel-tpl {
+        width: 100%;
+        height: 2em;
+        margin-top: $base-padding-v;
     }
-  }
-  &__result {
-    @include user-select(text);
-    font-family: $monospace-font-family;
-    margin-top: 6px;
-    margin-bottom: 3px;
-    height: 50px;
-    text-align: center;
-    white-space: pre-wrap;
-    word-break: break-all;
-    overflow: hidden;
-    &--long-pass {
-      font-size: .75em;
+    &__check {
+        width: 40%;
+        display: inline-block;
+        &:nth-child(even) {
+            margin-left: 15%;
+        }
     }
-  }
-  &__check-hide {
-    & + label.gen__check-hide-label:before {
-      @include fa-icon;
-      content: $fa-var-eye;
-      color: inherit;
+    &__result {
+        @include user-select(text);
+        font-family: $monospace-font-family;
+        margin-top: 6px;
+        margin-bottom: 3px;
+        height: 50px;
+        text-align: center;
+        white-space: pre-wrap;
+        word-break: break-all;
+        overflow: hidden;
+        &--long-pass {
+            font-size: 0.75em;
+        }
     }
-    &:checked + label.gen__check-hide-label:before {
-      content: $fa-var-eye-slash;
-      color: inherit;
+    &__check-hide {
+        & + label.gen__check-hide-label:before {
+            @include fa-icon;
+            content: $fa-var-eye;
+            color: inherit;
+        }
+        &:checked + label.gen__check-hide-label:before {
+            content: $fa-var-eye-slash;
+            color: inherit;
+        }
     }
-  }
-  &__btn-wrap {
-    text-align: center;
-  }
+    &__btn-wrap {
+        text-align: center;
+    }
 }
 
 @-moz-document url-prefix() {
-  .gen__result {
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
+    .gen__result {
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
 }

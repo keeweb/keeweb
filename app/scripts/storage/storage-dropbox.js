@@ -80,8 +80,21 @@ const StorageDropbox = StorageBase.extend({
         return {
             desc: 'dropboxSetupDesc',
             fields: [
-                {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w+'},
-                {id: 'folder', title: 'dropboxFolder', desc: 'dropboxFolderDesc', type: 'text', placeholder: 'dropboxFolderPlaceholder'}
+                {
+                    id: 'key',
+                    title: 'dropboxAppKey',
+                    desc: 'dropboxAppKeyDesc',
+                    type: 'text',
+                    required: true,
+                    pattern: '\\w+'
+                },
+                {
+                    id: 'folder',
+                    title: 'dropboxFolder',
+                    desc: 'dropboxFolderDesc',
+                    type: 'text',
+                    placeholder: 'dropboxFolderPlaceholder'
+                }
             ]
         };
     },
@@ -89,12 +102,29 @@ const StorageDropbox = StorageBase.extend({
     getSettingsConfig: function() {
         const fields = [];
         const appKey = this._getKey();
-        const linkField = {id: 'link', title: 'dropboxLink', type: 'select', value: 'custom',
-            options: { app: 'dropboxLinkApp', full: 'dropboxLinkFull', custom: 'dropboxLinkCustom' } };
-        const keyField = {id: 'key', title: 'dropboxAppKey', desc: 'dropboxAppKeyDesc', type: 'text', required: true, pattern: '\\w+',
-            value: appKey};
-        const folderField = {id: 'folder', title: 'dropboxFolder', desc: 'dropboxFolderSettingsDesc', type: 'text',
-            value: this.appSettings.get('dropboxFolder') || ''};
+        const linkField = {
+            id: 'link',
+            title: 'dropboxLink',
+            type: 'select',
+            value: 'custom',
+            options: { app: 'dropboxLinkApp', full: 'dropboxLinkFull', custom: 'dropboxLinkCustom' }
+        };
+        const keyField = {
+            id: 'key',
+            title: 'dropboxAppKey',
+            desc: 'dropboxAppKeyDesc',
+            type: 'text',
+            required: true,
+            pattern: '\\w+',
+            value: appKey
+        };
+        const folderField = {
+            id: 'folder',
+            title: 'dropboxFolder',
+            desc: 'dropboxFolderSettingsDesc',
+            type: 'text',
+            value: this.appSettings.get('dropboxFolder') || ''
+        };
         const canUseBuiltInKeys = this._canUseBuiltInKeys();
         if (canUseBuiltInKeys) {
             fields.push(linkField);
@@ -198,7 +228,7 @@ const StorageDropbox = StorageBase.extend({
                 statuses: args.statuses || undefined,
                 success: args.success,
                 error: (e, xhr) => {
-                    let err = xhr.response && xhr.response.error || new Error('Network error');
+                    let err = (xhr.response && xhr.response.error) || new Error('Network error');
                     if (err && err.path && err.path['.tag'] === 'not_found') {
                         err = new Error('File removed');
                         err.notFound = true;
@@ -245,7 +275,9 @@ const StorageDropbox = StorageBase.extend({
                     stat = { folder: true };
                 }
                 this.logger.debug('Stated', path, stat.folder ? 'folder' : stat.rev, this.logger.ts(ts));
-                if (callback) { callback(null, stat); }
+                if (callback) {
+                    callback(null, stat);
+                }
             },
             error: callback
         });
@@ -284,13 +316,12 @@ const StorageDropbox = StorageBase.extend({
             },
             success: data => {
                 this.logger.debug('Listed', this.logger.ts(ts));
-                const fileList = data.entries
-                    .map(f => ({
-                        name: f.name,
-                        path: this._toRelPath(f['path_display']),
-                        rev: f.rev,
-                        dir: f['.tag'] !== 'file'
-                    }));
+                const fileList = data.entries.map(f => ({
+                    name: f.name,
+                    path: this._toRelPath(f['path_display']),
+                    rev: f.rev,
+                    dir: f['.tag'] !== 'file'
+                }));
                 callback(null, fileList);
             },
             error: callback

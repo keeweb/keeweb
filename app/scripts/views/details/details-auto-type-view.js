@@ -1,4 +1,3 @@
-
 const Backbone = require('backbone');
 const AutoTypeHintView = require('../auto-type-hint-view');
 const Locale = require('../../util/locale');
@@ -57,8 +56,10 @@ const DetailsAutoTypeView = Backbone.View.extend({
 
     seqFocus: function(e) {
         if (!this.views.hint) {
-            this.views.hint = new AutoTypeHintView({input: e.target}).render();
-            this.views.hint.on('remove', () => { delete this.views.hint; });
+            this.views.hint = new AutoTypeHintView({ input: e.target }).render();
+            this.views.hint.on('remove', () => {
+                delete this.views.hint;
+            });
         }
     },
 

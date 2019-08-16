@@ -8,19 +8,33 @@ $blue: #4e6af8;
 $violet: #d946db;
 
 $all-colors: (
-  "white": $white,
-  "black": $black,
-  "red": $red,
-  "orange": $orange,
-  "yellow": $yellow,
-  "green": $green,
-  "blue": $blue,
-  "violet": $violet,
+    'white': $white,
+    'black': $black,
+    'red': $red,
+    'orange': $orange,
+    'yellow': $yellow,
+    'green': $green,
+    'blue': $blue,
+    'violet': $violet
 );
 
 @each $col, $val in $all-colors {
-  .#{$col}-color { color: #{$val}; }
+    .#{$col}-color {
+        color: #{$val};
+    }
 }
-.muted-color { @include th { color: th(muted-color); }; }
-.action-color { @include th { color: th(action-color); }; }
-.error-color { @include th { color: th(error-color); }; }
+.muted-color {
+    @include th {
+        color: th(muted-color);
+    }
+}
+.action-color {
+    @include th {
+        color: th(action-color);
+    }
+}
+.error-color {
+    @include th {
+        color: th(error-color);
+    }
+}

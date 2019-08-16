@@ -29,7 +29,7 @@ const GeneratorView = Backbone.View.extend({
     presets: null,
     preset: null,
 
-    initialize: function () {
+    initialize: function() {
         this.createPresets();
         const preset = this.preset;
         this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
@@ -40,7 +40,7 @@ const GeneratorView = Backbone.View.extend({
 
     render: function() {
         const canCopy = document.queryCommandSupported('copy');
-        const btnTitle = this.model.copy ? canCopy ? Locale.alertCopy : Locale.alertClose : Locale.alertOk;
+        const btnTitle = this.model.copy ? (canCopy ? Locale.alertCopy : Locale.alertClose) : Locale.alertOk;
         this.renderTemplate({
             btnTitle: btnTitle,
             showToggleButton: this.model.copy,
@@ -112,8 +112,10 @@ const GeneratorView = Backbone.View.extend({
     },
 
     optionChanged: function(option) {
-        if (this.preset === 'Custom' ||
-            this.preset === 'Pronounceable' && ['length', 'lower', 'upper'].indexOf(option) >= 0) {
+        if (
+            this.preset === 'Custom' ||
+            (this.preset === 'Pronounceable' && ['length', 'lower', 'upper'].indexOf(option) >= 0)
+        ) {
             return;
         }
         this.preset = this.gen.name = 'Custom';
@@ -132,7 +134,7 @@ const GeneratorView = Backbone.View.extend({
         // AppSettingsModel.instance.unset('generatorHidePassword', { silent: true });
         AppSettingsModel.instance.set('generatorHidePassword', this.hide);
         const label = this.$el.find('.gen__check-hide-label');
-        Tip.updateTip(label[0], {title: this.hide ? Locale.genShowPass : Locale.genHidePass});
+        Tip.updateTip(label[0], { title: this.hide ? Locale.genShowPass : Locale.genHidePass });
         this.showPassword();
     },
 

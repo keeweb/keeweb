@@ -1,5 +1,5 @@
-module.exports = function (grunt) {
-    grunt.registerMultiTask('sign-archive', 'Signs archive with a private key', function () {
+module.exports = function(grunt) {
+    grunt.registerMultiTask('sign-archive', 'Signs archive with a private key', function() {
         const done = this.async();
         const fs = require('fs');
         const sign = require('../util/sign');

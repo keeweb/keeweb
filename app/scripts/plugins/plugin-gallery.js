@@ -50,17 +50,16 @@ const PluginGallery = {
 
     verifySignature(gallery) {
         const dataToVerify = JSON.stringify(gallery, null, 2).replace(gallery.signature, '');
-        return SignatureVerifier.verify(
-            kdbxweb.ByteUtils.stringToBytes(dataToVerify),
-            gallery.signature
-        ).then(isValid => {
-            if (isValid) {
-                return gallery;
-            }
-            this.logger.error('JSON signature invalid');
-        }).catch(e => {
-            this.logger.error('Error verifying plugins signature', e);
-        });
+        return SignatureVerifier.verify(kdbxweb.ByteUtils.stringToBytes(dataToVerify), gallery.signature)
+            .then(isValid => {
+                if (isValid) {
+                    return gallery;
+                }
+                this.logger.error('JSON signature invalid');
+            })
+            .catch(e => {
+                this.logger.error('Error verifying plugins signature', e);
+            });
     },
 
     getCachedGallery() {

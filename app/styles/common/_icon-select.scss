@@ -1,38 +1,42 @@
 .icon-select {
-  &__items {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: row;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    @include user-select(none);
-    padding-bottom: $base-padding-h;
-    &--custom {
-      padding-top: $base-padding-h;
-      @include th { border-top: 1px solid th(light-border-color); }
+    &__items {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        @include user-select(none);
+        padding-bottom: $base-padding-h;
+        &--custom {
+            padding-top: $base-padding-h;
+            @include th {
+                border-top: 1px solid th(light-border-color);
+            }
+        }
     }
-  }
-  &__icon {
-    @include area-selectable(bottom);
-    width: 26px;
-    text-align: center;
-    font-size: 20px;
-    padding: 10px;
-    &.icon-select__icon--active {
-      @include area-selected(bottom);
+    &__icon {
+        @include area-selectable(bottom);
+        width: 26px;
+        text-align: center;
+        font-size: 20px;
+        padding: 10px;
+        &.icon-select__icon--active {
+            @include area-selected(bottom);
+        }
+        &-btn {
+            padding: 5px 10px;
+            > img {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        &--custom-selected {
+            > i {
+                display: none;
+            }
+        }
+        &--download-error > i:before {
+            content: $fa-var-ban;
+        }
     }
-    &-btn {
-      padding: 5px 10px;
-      >img {
-        width: 16px;
-        height: 16px;
-      }
-    }
-    &--custom-selected {
-      >i { display: none; }
-    }
-    &--download-error>i:before {
-      content: $fa-var-ban;
-    }
-  }
 }

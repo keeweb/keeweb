@@ -33,8 +33,12 @@ AutoTypeObfuscator.prototype.obfuscate = function() {
 };
 
 AutoTypeObfuscator.prototype.finished = function() {
-    return this.chars.length === this.inputChars.length &&
-        this.chars.every(function(ch, ix) { return this.inputChars[ix].ch === ch; }, this);
+    return (
+        this.chars.length === this.inputChars.length &&
+        this.chars.every(function(ch, ix) {
+            return this.inputChars[ix].ch === ch;
+        }, this)
+    );
 };
 
 AutoTypeObfuscator.prototype.step = function() {
@@ -161,7 +165,7 @@ AutoTypeObfuscator.prototype.inputChar = function(ch) {
 
 AutoTypeObfuscator.prototype.copyPaste = function(ch) {
     logger.debug('copyPaste', ch);
-    this.ops.push({type: 'cmd', value: 'copyPaste', arg: ch});
+    this.ops.push({ type: 'cmd', value: 'copyPaste', arg: ch });
     this.inputChars.splice(this.inputCursor, this.inputSel, { ch: ch });
     this.inputCursor++;
     this.inputSel = 0;
@@ -174,10 +178,10 @@ AutoTypeObfuscator.prototype.selectText = function(backward, count) {
         ops.push({ type: 'key', value: backward ? 'left' : 'right' });
     }
     if (ops.length === 1) {
-        ops[0].mod = {'+': true};
+        ops[0].mod = { '+': true };
         this.ops.push(ops[0]);
     } else {
-        this.ops.push({type: 'group', value: ops, mod: {'+': true}});
+        this.ops.push({ type: 'group', value: ops, mod: { '+': true } });
     }
     if (backward) {
         this.inputCursor -= count;

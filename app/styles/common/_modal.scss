@@ -1,66 +1,73 @@
 .modal {
-  @include position(absolute, 0 null null 0);
-  @include size(100%);
-  @include th { background-color: th(modal-background-color); }
-  z-index: $z-index-modal;
-
-  transition: background-color $base-duration $base-timing;
-  &.modal--hidden {
-    @include th { background-color: th(modal-background-color-tr); }
-  }
-
-  &.modal--opaque {
-    @include th { background-color: th(background-color); }
-  }
-
-  &__content {
+    @include position(absolute, 0 null null 0);
     @include size(100%);
-    display: flex;
-    align-items: stretch;
-    flex-direction: column;
-    justify-content: center;
+    @include th {
+        background-color: th(modal-background-color);
+    }
+    z-index: $z-index-modal;
 
-    transition: all $base-duration $base-timing;
-    .modal--hidden & {
-      transform: scale(0.01);
-      opacity: 0;
+    transition: background-color $base-duration $base-timing;
+    &.modal--hidden {
+        @include th {
+            background-color: th(modal-background-color-tr);
+        }
     }
-  }
 
-  &__icon {
-    font-size: $modal-icon-size;
-    text-align: center;
-  }
-  &__header {
-    @include user-select(text);
-    text-align: center;
-    font-size: $small-header-font-size;
-  }
-  &__body {
-    @include user-select(text);
-    text-align: left;
-    margin: $base-spacing;
-  }
-  &__buttons {
-    text-align: right;
-    button ~ button {
-      margin-left: $small-spacing;
+    &.modal--opaque {
+        @include th {
+            background-color: th(background-color);
+        }
     }
-    >button {
-      margin-bottom: $small-spacing;
+
+    &__content {
+        @include size(100%);
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        justify-content: center;
+
+        transition: all $base-duration $base-timing;
+        .modal--hidden & {
+            transform: scale(0.01);
+            opacity: 0;
+        }
     }
-  }
-  &__body, &__buttons {
-    align-self: center;
-    width: 40%;
-    @include tablet {
-      width: 90%;
+
+    &__icon {
+        font-size: $modal-icon-size;
+        text-align: center;
     }
-  }
-  &__check-wrap {
-    margin-top: $base-spacing;
-  }
-  &__pre {
-    white-space: pre-wrap;
-  }
+    &__header {
+        @include user-select(text);
+        text-align: center;
+        font-size: $small-header-font-size;
+    }
+    &__body {
+        @include user-select(text);
+        text-align: left;
+        margin: $base-spacing;
+    }
+    &__buttons {
+        text-align: right;
+        button ~ button {
+            margin-left: $small-spacing;
+        }
+        > button {
+            margin-bottom: $small-spacing;
+        }
+    }
+    &__body,
+    &__buttons {
+        align-self: center;
+        width: 40%;
+        @include tablet {
+            width: 90%;
+        }
+    }
+    &__check-wrap {
+        margin-top: $base-spacing;
+    }
+    &__pre {
+        white-space: pre-wrap;
+    }
 }

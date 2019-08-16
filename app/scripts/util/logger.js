@@ -12,7 +12,7 @@ const MaxLogsToSave = 100;
 const lastLogs = [];
 
 const Logger = function(name, id) {
-    this.prefix = (name ? name + (id ? ':' + id : '') : 'default');
+    this.prefix = name ? name + (id ? ':' + id : '') : 'default';
     this.level = Level.All;
 };
 

@@ -19,11 +19,15 @@ const FileInfoModel = Backbone.Model.extend({
     },
 
     initialize: function(data, options) {
-        _.each(data, function(val, key) {
-            if (/Date$/.test(key)) {
-                this.set(key, val ? new Date(val) : null, options);
-            }
-        }, this);
+        _.each(
+            data,
+            function(val, key) {
+                if (/Date$/.test(key)) {
+                    this.set(key, val ? new Date(val) : null, options);
+                }
+            },
+            this
+        );
     }
 });
 

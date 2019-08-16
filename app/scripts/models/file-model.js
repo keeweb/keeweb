@@ -57,8 +57,17 @@ const FileModel = Backbone.Model.extend({
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                     }
-                    logger.info('Opened file ' + this.get('name') + ': ' + logger.ts(ts) + ', ' +
-                        this.kdfArgsToString(db.header) + ', ' + Math.round(fileData.byteLength / 1024) + ' kB');
+                    logger.info(
+                        'Opened file ' +
+                            this.get('name') +
+                            ': ' +
+                            logger.ts(ts) +
+                            ', ' +
+                            this.kdfArgsToString(db.header) +
+                            ', ' +
+                            Math.round(fileData.byteLength / 1024) +
+                            ' kB'
+                    );
                     callback();
                 })
                 .catch(err => {
@@ -77,13 +86,17 @@ const FileModel = Backbone.Model.extend({
 
     kdfArgsToString: function(header) {
         if (header.kdfParameters) {
-            return header.kdfParameters.keys().map(key => {
-                const val = header.kdfParameters.get(key);
-                if (val instanceof ArrayBuffer) {
-                    return;
-                }
-                return key + '=' + val;
-            }).filter(p => p).join('&');
+            return header.kdfParameters
+                .keys()
+                .map(key => {
+                    const val = header.kdfParameters.get(key);
+                    if (val instanceof ArrayBuffer) {
+                        return;
+                    }
+                    return key + '=' + val;
+                })
+                .filter(p => p)
+                .join('&');
         } else if (header.keyEncryptionRounds) {
             return header.keyEncryptionRounds + ' rounds';
         } else {
@@ -127,14 +140,13 @@ const FileModel = Backbone.Model.extend({
         const password = kdbxweb.ProtectedValue.fromString('demo');
         const credentials = new kdbxweb.Credentials(password);
         const demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
-        kdbxweb.Kdbx.load(demoFile, credentials)
-            .then(db => {
-                this.db = db;
-                this.set('name', 'Demo');
-                this.readModel();
-                this.setOpenFile({passwordLength: 4, demo: true});
-                callback();
-            });
+        kdbxweb.Kdbx.load(demoFile, credentials).then(db => {
+            this.db = db;
+            this.set('name', 'Demo');
+            this.readModel();
+            this.setOpenFile({ passwordLength: 4, demo: true });
+            callback();
+        });
     },
 
     setOpenFile: function(props) {
@@ -153,17 +165,20 @@ const FileModel = Backbone.Model.extend({
 
     readModel: function() {
         const groups = new GroupCollection();
-        this.set({
-            uuid: this.db.getDefaultGroup().uuid.toString(),
-            groups: groups,
-            defaultUser: this.db.meta.defaultUser,
-            recycleBinEnabled: this.db.meta.recycleBinEnabled,
-            historyMaxItems: this.db.meta.historyMaxItems,
-            historyMaxSize: this.db.meta.historyMaxSize,
-            keyEncryptionRounds: this.db.header.keyEncryptionRounds,
-            keyChangeForce: this.db.meta.keyChangeForce,
-            kdfParameters: this.readKdfParams()
-        }, { silent: true });
+        this.set(
+            {
+                uuid: this.db.getDefaultGroup().uuid.toString(),
+                groups: groups,
+                defaultUser: this.db.meta.defaultUser,
+                recycleBinEnabled: this.db.meta.recycleBinEnabled,
+                historyMaxItems: this.db.meta.historyMaxItems,
+                historyMaxSize: this.db.meta.historyMaxSize,
+                keyEncryptionRounds: this.db.header.keyEncryptionRounds,
+                keyChangeForce: this.db.meta.keyChangeForce,
+                kdfParameters: this.readKdfParams()
+            },
+            { silent: true }
+        );
         this.db.groups.forEach(function(group) {
             let groupModel = this.getGroup(this.subId(group.uuid.id));
             if (groupModel) {
@@ -204,12 +219,15 @@ const FileModel = Backbone.Model.extend({
     buildObjectMap: function() {
         const entryMap = {};
         const groupMap = {};
-        this.forEachGroup(group => {
-            groupMap[group.id] = group;
-            group.forEachOwnEntry(null, entry => {
-                entryMap[entry.id] = entry;
-            });
-        }, { includeDisabled: true });
+        this.forEachGroup(
+            group => {
+                groupMap[group.id] = group;
+                group.forEachOwnEntry(null, entry => {
+                    entryMap[entry.id] = entry;
+                });
+            },
+            { includeDisabled: true }
+        );
         this.entryMap = entryMap;
         this.groupMap = groupMap;
     },
@@ -371,7 +389,8 @@ const FileModel = Backbone.Model.extend({
             binaries: true
         });
         this.db.cleanup({ binaries: true });
-        this.db.save()
+        this.db
+            .save()
             .then(data => {
                 cb(data);
             })
@@ -382,8 +401,9 @@ const FileModel = Backbone.Model.extend({
     },
 
     getXml: function(cb) {
-        this.db.saveXml()
-            .then(xml => { cb(xml); });
+        this.db.saveXml().then(xml => {
+            cb(xml);
+        });
     },
 
     getKeyFileHash: function() {
@@ -508,7 +528,9 @@ const FileModel = Backbone.Model.extend({
         this.db.meta.name = name;
         this.db.meta.nameChanged = new Date();
         this.set('name', name);
-        this.get('groups').first().setName(name);
+        this.get('groups')
+            .first()
+            .setName(name);
         this.setModified();
         this.reload();
     },
@@ -571,10 +593,13 @@ const FileModel = Backbone.Model.extend({
         const trashGroup = this.getTrashGroup();
         if (trashGroup) {
             let modified = false;
-            trashGroup.getOwnSubGroups().slice().forEach(function(group) {
-                this.db.move(group, null);
-                modified = true;
-            }, this);
+            trashGroup
+                .getOwnSubGroups()
+                .slice()
+                .forEach(function(group) {
+                    this.db.move(group, null);
+                    modified = true;
+                }, this);
             trashGroup.group.entries.slice().forEach(function(entry) {
                 this.db.move(entry, null);
                 modified = true;

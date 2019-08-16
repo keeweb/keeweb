@@ -114,10 +114,14 @@ const StorageFile = StorageBase.extend({
         Launcher.mkdir(path, err => {
             if (err) {
                 this.logger.error('Error making local dir', path, err);
-                if (callback) { callback('Error making local dir'); }
+                if (callback) {
+                    callback('Error making local dir');
+                }
             } else {
                 this.logger.debug('Made dir', path, this.logger.ts(ts));
-                if (callback) { callback(); }
+                if (callback) {
+                    callback();
+                }
             }
         });
     },

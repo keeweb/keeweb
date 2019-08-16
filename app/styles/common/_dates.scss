@@ -1,80 +1,91 @@
 .pika-single {
-  @include common-dropdown;
+    @include common-dropdown;
 }
 
 .pika-label {
-  @include th {
-    background: th(background-color);
-    color: th(muted-color);
-  }
+    @include th {
+        background: th(background-color);
+        color: th(muted-color);
+    }
 }
 
-button.pika-prev, button.pika-next {
-  min-width: 0;
-  background: none;
-  border: none;
-  border-radius: $base-border-radius;
-  position: relative;
+button.pika-prev,
+button.pika-next {
+    min-width: 0;
+    background: none;
+    border: none;
+    border-radius: $base-border-radius;
+    position: relative;
 }
 
-button.pika-prev:after, button.pika-next:after {
-  display: block;
-  content: " ";
-  position: absolute;
-  top: 8px;
-  left: 6px
+button.pika-prev:after,
+button.pika-next:after {
+    display: block;
+    content: ' ';
+    position: absolute;
+    top: 8px;
+    left: 6px;
 }
 
 button.pika-prev:after {
-  @include th { @include triangle(14px 7px, th(text-color), left); }
+    @include th {
+        @include triangle(14px 7px, th(text-color), left);
+    }
 }
 
 button.pika-next:after {
-  @include th { @include triangle(14px 7px, th(text-color), right); }
+    @include th {
+        @include triangle(14px 7px, th(text-color), right);
+    }
 }
 
 .pika-table th {
-  @include th { color: th(medium-color); };
+    @include th {
+        color: th(medium-color);
+    }
 }
 
-.pika-button, button.pika-button {
-  min-width: 0;
-  border: none;
-  @include th {
-    color: th(text-color);
-    background-color: th(background-color);
-    border-radius: $base-border-radius;
-  }
+.pika-button,
+button.pika-button {
+    min-width: 0;
+    border: none;
+    @include th {
+        color: th(text-color);
+        background-color: th(background-color);
+        border-radius: $base-border-radius;
+    }
 }
 
 .pika-week {
-  @include th {
-    color: th(medium-color);
-  }
+    @include th {
+        color: th(medium-color);
+    }
 }
 
 .is-today .pika-button {
-  @include th {
-    color: th(action-color);
-  }
+    @include th {
+        color: th(action-color);
+    }
 }
 
 .is-selected .pika-button {
-  @include th {
-    color: th(text-color);
-    background: th(action-color);
-    box-shadow: inset 0 1px 3px th(action-color); // make darker?
-  }
+    @include th {
+        color: th(text-color);
+        background: th(action-color);
+        box-shadow: inset 0 1px 3px th(action-color); // make darker?
+    }
 }
 
 .is-disabled .pika-button {
-  @include th { color: th(muted-color); }
-  opacity: .3;
+    @include th {
+        color: th(muted-color);
+    }
+    opacity: 0.3;
 }
 
 .pika-button:hover {
-  @include th {
-    color: th(text-color) !important;
-    background: th(action-color) !important;
-  }
+    @include th {
+        color: th(text-color) !important;
+        background: th(action-color) !important;
+    }
 }

@@ -33,11 +33,14 @@ const GeneratorPresetsView = Backbone.View.extend({
         if (!this.selected || !this.presets.some(p => p.name === this.selected)) {
             this.selected = (this.presets.filter(p => p.default)[0] || this.presets[0]).name;
         }
-        this.renderTemplate({
-            presets: this.presets,
-            selected: this.getPreset(this.selected),
-            ranges: this.getSelectedRanges()
-        }, true);
+        this.renderTemplate(
+            {
+                presets: this.presets,
+                selected: this.getPreset(this.selected),
+                ranges: this.getSelectedRanges()
+            },
+            true
+        );
         this.createScroll({
             root: this.$el.find('.gen-ps')[0],
             scroller: this.$el.find('.scroller')[0],
@@ -97,10 +100,15 @@ const GeneratorPresetsView = Backbone.View.extend({
         }
         const selected = this.getPreset(this.selected);
         const preset = {
-            name, title,
+            name,
+            title,
             length: selected.length,
-            upper: selected.upper, lower: selected.lower, digits: selected.digits,
-            special: selected.special, brackets: selected.brackets, ambiguous: selected.ambiguous,
+            upper: selected.upper,
+            lower: selected.lower,
+            digits: selected.digits,
+            special: selected.special,
+            brackets: selected.brackets,
+            ambiguous: selected.ambiguous,
             include: selected.include
         };
         GeneratorPresets.add(preset);

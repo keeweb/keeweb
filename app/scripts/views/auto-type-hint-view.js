@@ -16,7 +16,7 @@ const AutoTypeHintView = Backbone.View.extend({
         this.input.addEventListener('blur', this.inputBlur);
     },
 
-    render: function () {
+    render: function() {
         this.renderTemplate({
             cmd: FeatureDetector.isMac ? 'command' : 'ctrl',
             hasCtrl: FeatureDetector.isMac,
@@ -24,7 +24,9 @@ const AutoTypeHintView = Backbone.View.extend({
         });
         const rect = this.input.getBoundingClientRect();
         this.$el.appendTo(document.body).css({
-            left: rect.left, top: rect.bottom + 1, width: rect.width
+            left: rect.left,
+            top: rect.bottom + 1,
+            width: rect.width
         });
         const selfRect = this.$el[0].getBoundingClientRect();
         const bodyRect = document.body.getBoundingClientRect();

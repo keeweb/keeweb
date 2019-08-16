@@ -1,5 +1,5 @@
-module.exports = function (grunt) {
-    grunt.registerMultiTask('sign-dist', 'Creates files signatures', async function () {
+module.exports = function(grunt) {
+    grunt.registerMultiTask('sign-dist', 'Creates files signatures', async function() {
         const path = require('path');
         const crypto = require('crypto');
         const sign = require('../util/sign');

@@ -7,8 +7,7 @@ const FeatureDetector = require('../util/feature-detector');
 
 const MaxRequestRetries = 3;
 
-const StorageBase = function() {
-};
+const StorageBase = function() {};
 
 _.extend(StorageBase.prototype, {
     name: null,
@@ -104,11 +103,19 @@ _.extend(StorageBase.prototype, {
         const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
         const dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
 
-        const winWidth = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-        const winHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+        const winWidth = window.innerWidth
+            ? window.innerWidth
+            : document.documentElement.clientWidth
+            ? document.documentElement.clientWidth
+            : screen.width;
+        const winHeight = window.innerHeight
+            ? window.innerHeight
+            : document.documentElement.clientHeight
+            ? document.documentElement.clientHeight
+            : screen.height;
 
-        const left = ((winWidth / 2) - (width / 2)) + dualScreenLeft;
-        const top = ((winHeight / 2) - (height / 2)) + dualScreenTop;
+        const left = winWidth / 2 - width / 2 + dualScreenLeft;
+        const top = winHeight / 2 - height / 2 + dualScreenTop;
 
         let settings = {
             width: width,
@@ -120,7 +127,9 @@ _.extend(StorageBase.prototype, {
             scrollbars: 'yes',
             location: 'yes'
         };
-        settings = Object.keys(settings).map(key => key + '=' + settings[key]).join(',');
+        settings = Object.keys(settings)
+            .map(key => key + '=' + settings[key])
+            .join(',');
         if (FeatureDetector.isStandalone) {
             sessionStorage.authStorage = this.name;
         }
@@ -147,10 +156,12 @@ _.extend(StorageBase.prototype, {
             this._oauthToken = oldToken;
             return callback();
         }
-        const url = opts.url + '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
-            .replace('{cid}', encodeURIComponent(opts.clientId))
-            .replace('{scope}', encodeURIComponent(opts.scope))
-            .replace('{url}', encodeURIComponent(this._getOauthRedirectUrl()));
+        const url =
+            opts.url +
+            '?client_id={cid}&scope={scope}&response_type=token&redirect_uri={url}'
+                .replace('{cid}', encodeURIComponent(opts.clientId))
+                .replace('{scope}', encodeURIComponent(opts.scope))
+                .replace('{url}', encodeURIComponent(this._getOauthRedirectUrl()));
         this.logger.debug('OAuth: popup opened');
         const popupWindow = this._openPopup(url, 'OAuth', opts.width, opts.height);
         if (!popupWindow) {
@@ -185,8 +196,7 @@ _.extend(StorageBase.prototype, {
         window.addEventListener('message', windowMessage);
     },
 
-    _popupOpened(popupWindow) {
-    },
+    _popupOpened(popupWindow) {},
 
     _oauthProcessReturn: function(message) {
         const token = this._oauthMsgToToken(message);
@@ -201,7 +211,7 @@ _.extend(StorageBase.prototype, {
     _oauthMsgToToken: function(data) {
         if (!data.token_type) {
             if (data.error) {
-                return {error: data.error, errorDescription: data.error_description};
+                return { error: data.error, errorDescription: data.error_description };
             } else {
                 return undefined;
             }
