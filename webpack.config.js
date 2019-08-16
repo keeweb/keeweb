@@ -95,7 +95,7 @@ function config(grunt, mode = 'production') {
                 },
                 {
                     test: /fonts\/.*\.(woff2|ttf|eot|svg)/,
-                    use: ['raw-loader', 'ignore-loader']
+                    use: ['url-loader', 'ignore-loader']
                 },
                 { test: /\.woff$/, loader: 'url-loader' }
             ]
