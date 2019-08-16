@@ -5,23 +5,28 @@ const webpack = require('webpack');
 const StringReplacePlugin = require('string-replace-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const pkg = require('./package.json');
 
-function config(grunt) {
+process.noDeprecation = true; // for css loaders
+
+function config(grunt, mode = 'production') {
+    const devMode = mode === 'development';
     const date = grunt.config.get('date');
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
     return {
-        mode: 'production',
+        mode,
         entry: {
-            app: 'app',
+            app: ['app', 'main.scss'],
             vendor: ['jquery', 'underscore', 'backbone', 'kdbxweb', 'baron',
                 'pikaday', 'jsqrcode', 'argon2-wasm', 'argon2']
         },
         output: {
-            path: path.resolve('.', 'tmp/js'),
-            filename: '[name].js'
+            path: path.resolve('.', 'tmp'),
+            filename: 'js/[name].js'
         },
         target: 'web',
         performance: {
@@ -35,16 +40,19 @@ function config(grunt) {
         progress: false,
         failOnError: true,
         resolve: {
-            modules: [path.join(__dirname, 'app/scripts'), path.join(__dirname, 'node_modules')],
+            modules: [
+                path.join(__dirname, 'app/scripts'),
+                path.join(__dirname, 'app/styles'),
+                path.join(__dirname, 'node_modules')
+            ],
             alias: {
-                backbone: 'backbone/backbone-min.js',
-                underscore: 'underscore/underscore-min.js',
-                _: 'underscore/underscore-min.js',
-                jquery: 'jquery/dist/jquery.min.js',
+                backbone: `backbone/backbone${devMode ? '-min' : ''}.js`,
+                underscore: `underscore/underscore${devMode ? '-min' : ''}.js`,
+                _: `underscore/underscore${devMode ? '-min' : ''}.js`,
+                jquery: `jquery/dist/jquery${devMode ? '.min' : ''}.js`,
                 kdbxweb: 'kdbxweb/dist/kdbxweb.js',
-                baron: 'baron/baron.min.js',
-                pikaday: 'pikaday/pikaday.js',
-                qrcode: 'jsqrcode/dist/qrcode.min.js',
+                baron: `baron/baron${devMode ? '.min' : ''}.js`,
+                qrcode: `jsqrcode/dist/qrcode${devMode ? '.min' : ''}.js`,
                 argon2: 'argon2-browser/dist/argon2.min.js',
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
@@ -77,7 +85,19 @@ function config(grunt) {
                 },
                 {test: /argon2\.wasm/, type: 'javascript/auto', loader: 'base64-loader'},
                 {test: /argon2(\.min)?\.js/, loader: 'raw-loader'},
-                {test: /\.scss$/, loader: 'raw-loader'}
+                {
+                    test: /\.s?css$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        { loader: 'css-loader', options: { sourceMap: devMode } },
+                        { loader: 'sass-loader', options: { sourceMap: devMode } }
+                    ]
+                },
+                {
+                    test: /fonts\/.*\.(woff2|ttf|eot|svg)/,
+                    use: ['raw-loader', 'ignore-loader']
+                },
+                { test: /\.woff$/, loader: 'url-loader' }
             ]
         },
         optimization: {
@@ -96,12 +116,17 @@ function config(grunt) {
                     cache: true,
                     parallel: true
                 }),
+                new OptimizeCSSAssetsPlugin({
+                    cssProcessorPluginOptions: {
+                        preset: ['default', { discardComments: { removeAll: true } }]
+                    }
+                }),
                 new BundleAnalyzerPlugin({
                     openAnalyzer: false,
                     analyzerMode: 'static',
-                    reportFilename: '../stats/analyzer_report.html',
+                    reportFilename: 'stats/analyzer_report.html',
                     generateStatsFile: true,
-                    statsFilename: '../stats/stats.json'
+                    statsFilename: 'stats/stats.json'
                 })
             ]
         },
@@ -110,7 +135,10 @@ function config(grunt) {
                 ', opensource.org/licenses/' + pkg.license),
             new webpack.ProvidePlugin({_: 'underscore', $: 'jquery'}),
             new webpack.IgnorePlugin(/^(moment)$/),
-            new StringReplacePlugin()
+            new StringReplacePlugin(),
+            new MiniCssExtractPlugin({
+                filename: 'css/[name].css'
+            })
         ],
         node: {
             console: false,
@@ -128,27 +156,9 @@ function config(grunt) {
             crypto: 'null',
             fs: 'null',
             path: 'null'
-        }
+        },
+        devtool: devMode ? 'source-map' : undefined
     };
 }
 
-function devServerConfig(grunt) {
-    const devServerConfig = config(grunt);
-    Object.assign(devServerConfig, {
-        mode: 'development',
-        devtool: 'source-map'
-    });
-    Object.assign(devServerConfig.resolve.alias, {
-        backbone: 'backbone/backbone.js',
-        underscore: 'underscore/underscore.js',
-        _: 'underscore/underscore.js',
-        jquery: 'jquery/dist/jquery.js',
-        baron: 'baron/baron.js',
-        qrcode: 'jsqrcode/dist/qrcode.js',
-        argon2: 'argon2-browser/dist/argon2.js'
-    });
-    return devServerConfig;
-}
-
 module.exports.config = config;
-module.exports.devServerConfig = devServerConfig;

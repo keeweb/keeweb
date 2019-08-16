@@ -10,8 +10,6 @@ module.exports = function(grunt) {
         'copy:fonts',
         'webpack',
         'uglify',
-        'sass',
-        'postcss',
         'inline',
         'htmlmin',
         'string-replace:manifest-html',
