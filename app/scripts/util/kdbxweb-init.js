@@ -30,7 +30,7 @@ const KdbxwebInit = {
             const loadTimeout = setTimeout(() => reject('timeout'), 5000);
             try {
                 const ts = logger.ts();
-                const argon2LoaderCode = require('argon2');
+                const argon2LoaderCode = require('argon2').default;
                 const wasmBinaryBase64 = require('argon2-wasm');
 
                 const KB = 1024 * 1024;
@@ -52,7 +52,7 @@ const KdbxwebInit = {
                     'buffer:wasmMemory.buffer,' +
                     'TOTAL_MEMORY:' + initialMemory * WASM_PAGE_SIZE +
                     '}';
-                const script = argon2LoaderCode.replace('var Module', memoryDecl + moduleDecl);
+                const script = argon2LoaderCode.replace(/^var Module.*?}/, memoryDecl + moduleDecl);
                 const blob = new Blob([script], {type: 'application/javascript'});
                 const objectUrl = URL.createObjectURL(blob);
                 const worker = new Worker(objectUrl);
@@ -99,7 +99,7 @@ const KdbxwebInit = {
             }
         }).catch(err => {
             logger.warn('WebAssembly error', err);
-            return this.loadAsmJsFallbackRuntime();
+            throw new Error('WebAssembly error');
         });
     },
 
