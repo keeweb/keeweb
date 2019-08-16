@@ -52,7 +52,7 @@ npm run-script electron
 For debug build:
 
 1. run `grunt dev`
-2. open `http://localhost:8085/tmp`
+2. open `http://localhost:8085`
 
 # Contributing
 
