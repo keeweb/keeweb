@@ -225,7 +225,7 @@ function getNumericHash(data) {
 function postProcess(wordObj) {
     let regex;
     for (const i in REPLACEMENTS) {
-        if (REPLACEMENTS.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(REPLACEMENTS, i)) {
             regex = new RegExp(i);
             wordObj.word = wordObj.word.replace(regex, REPLACEMENTS[i]);
         }

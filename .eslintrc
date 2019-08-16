@@ -21,7 +21,8 @@
         "prefer-promise-reject-errors": "off",
         "standard/no-callback-literal": "off",
         "import/no-webpack-loader-syntax": "off",
-        "object-curly-spacing": "off"
+        "object-curly-spacing": "off",
+        "quote-props": "off"
     },
     "parserOptions": {
         "sourceType": "module",

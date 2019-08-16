@@ -63,7 +63,7 @@ const StorageFile = StorageBase.extend({
         const ts = this.logger.ts();
 
         const onError = e => {
-            if (e.hasOwnProperty('code') && e.code === 'EISDIR') {
+            if (Object.prototype.hasOwnProperty.call(e, 'code') && e.code === 'EISDIR') {
                 e.isDir = true;
             }
             this.logger.error('Error writing local file', path, e);

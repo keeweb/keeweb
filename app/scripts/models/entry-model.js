@@ -392,7 +392,7 @@ const EntryModel = Backbone.Model.extend({
             this._entryModified();
             val = this.sanitizeFieldValue(val);
             this.entry.fields[field] = val;
-        } else if (this.entry.fields.hasOwnProperty(field)) {
+        } else if (Object.prototype.hasOwnProperty.call(this.entry.fields, field)) {
             this._entryModified();
             delete this.entry.fields[field];
         }
@@ -409,7 +409,7 @@ const EntryModel = Backbone.Model.extend({
     },
 
     hasField: function(field) {
-        return this.entry.fields.hasOwnProperty(field);
+        return Object.prototype.hasOwnProperty.call(this.entry.fields, field);
     },
 
     addAttachment: function(name, data) {
