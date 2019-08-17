@@ -101,8 +101,7 @@ const ListSearchView = Backbone.View.extend({
             cs: false,
             regex: false,
             history: false,
-            title: true,
-            rank: true
+            title: true
         };
         if (this.model.advancedSearch) {
             this.advancedSearch = _.extend({}, this.model.advancedSearch);
