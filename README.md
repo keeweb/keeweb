@@ -17,7 +17,7 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 #### Usage
 
-The app is quite stable now. Basic stuff, as well as more advanced operations should be rather reliable.
+The app is quite stable now. Basic stuff, as well as more advanced operations, should be rather reliable.
 
 #### Features
 
