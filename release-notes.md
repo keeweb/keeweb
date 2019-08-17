@@ -5,6 +5,7 @@ Release notes
 `-` fixed generator style issues in Firefox  
 `+` option to hide password in the generator  
 `-` fix #1209: copying app information to clipboard  
+`-` fix #1215: url matching when there's no website field  
 
 ##### v1.8.2 (2019-04-22)
 `-` fix #1163: fixed libgconf-2-4 dependency  
