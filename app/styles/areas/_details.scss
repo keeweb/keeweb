@@ -3,7 +3,7 @@
     align-items: stretch;
     flex-direction: column;
     justify-content: flex-start;
-    @include user-select(text);
+    user-select: text;
     width: 100%;
 
     &__back-button {
@@ -29,7 +29,7 @@
         overflow: visible;
         min-height: 40px;
         &-title {
-            @include user-select(text);
+            user-select: text;
             flex: 1;
             align-self: flex-start;
             cursor: text;
@@ -52,7 +52,7 @@
             }
         }
         input.details__header-title-input {
-            @include user-select(text);
+            user-select: text;
             flex: 1;
             margin: 0 6px;
             padding: 0 6px;
@@ -66,7 +66,7 @@
         }
         &-color,
         &-icon {
-            @include user-select(none);
+            user-select: none;
             @include area-selectable();
             display: inline;
             font-size: $large-header-font-size;
@@ -85,7 +85,7 @@
     }
 
     &__colors-popup {
-        @include user-select(none);
+        user-select: none;
         display: none;
         position: absolute;
         z-index: $z-index-no-modal;
@@ -220,7 +220,7 @@
         }
         &-value {
             flex: 1;
-            @include user-select(text);
+            user-select: text;
             align-self: flex-start;
             position: relative;
             cursor: text;
@@ -255,7 +255,7 @@
                 }
             }
             .details__field--protect & {
-                @include user-select(none);
+                user-select: none;
             }
             .details__field--multiline & {
                 width: 0;
@@ -309,7 +309,7 @@
             }
             > label {
                 font-weight: normal;
-                @include user-select(none);
+                user-select: none;
             }
             > a {
                 max-width: 100%;
@@ -369,7 +369,7 @@
                     width: 50%;
                     position: absolute;
                     top: 0;
-                    @include user-select(none);
+                    user-select: none;
                     &:before {
                         padding: 0.2em 1.5em;
                     }
@@ -407,7 +407,7 @@
         &--no-select {
             .details__field-label,
             .details__field-value {
-                @include user-select(none);
+                user-select: none;
             }
         }
 
@@ -426,7 +426,7 @@
         flex-direction: row;
         justify-content: flex-end;
         flex-wrap: nowrap;
-        @include user-select(none);
+        user-select: none;
         overflow: hidden;
         white-space: nowrap;
         .details--drag & {
@@ -435,7 +435,7 @@
     }
 
     &__attachment {
-        @include user-select(none);
+        user-select: none;
         @include area-selectable();
         align-self: flex-end;
         flex: 0 1 auto;
@@ -458,7 +458,7 @@
     }
 
     &__attachment-add {
-        @include user-select(none);
+        user-select: none;
         align-self: flex-end;
         flex: 0 0 auto;
         @include th {
@@ -502,7 +502,7 @@
             }
         }
         &-download-text {
-            @include user-select(none);
+            user-select: none;
             position: absolute;
             bottom: $base-padding-v;
             right: $base-padding-h;
@@ -582,7 +582,7 @@
             margin-right: 20px;
         }
         &-desc {
-            @include user-select(none);
+            user-select: none;
         }
         &-timeline {
             flex: 1 0 auto;
@@ -653,7 +653,7 @@
             flex: 1 1 auto;
         }
         &-buttons {
-            @include user-select(none);
+            user-select: none;
             align-self: flex-end;
             margin-bottom: $base-padding-v;
             padding-right: $base-padding-h;

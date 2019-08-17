@@ -33,7 +33,7 @@
         }
     }
     &__result {
-        @include user-select(text);
+        user-select: text;
         font-family: $monospace-font-family;
         margin-top: 6px;
         margin-bottom: 3px;

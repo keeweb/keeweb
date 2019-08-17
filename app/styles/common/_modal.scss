@@ -38,12 +38,12 @@
         text-align: center;
     }
     &__header {
-        @include user-select(text);
+        user-select: text;
         text-align: center;
         font-size: $small-header-font-size;
     }
     &__body {
-        @include user-select(text);
+        user-select: text;
         text-align: left;
         margin: $base-spacing;
     }

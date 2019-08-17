@@ -4,7 +4,7 @@ html {
 
 body {
     @include size(100%);
-    @include user-select(none);
+    user-select: none;
     @include th {
         color: th(text-color);
         background-color: th(background-color);

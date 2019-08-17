@@ -74,7 +74,7 @@ const DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'set-locale', this.render);
         this.listenTo(OtpQrReader, 'qr-read', this.otpCodeRead);
         this.listenTo(OtpQrReader, 'enter-manually', this.otpEnterManually);
-        KeyHandler.onKey(Keys.DOM_VK_C, this.copyPassword, this, KeyHandler.SHORTCUT_ACTION);
+        KeyHandler.onKey(Keys.DOM_VK_C, this.copyPasswordFromShortcut, this, KeyHandler.SHORTCUT_ACTION, false, true);
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserName, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrl, this, KeyHandler.SHORTCUT_ACTION);
         if (AutoType.enabled) {
@@ -557,7 +557,7 @@ const DetailsView = Backbone.View.extend({
 
     copyKeyPress: function(editView) {
         if (this.isHidden()) {
-            return;
+            return false;
         }
         if (!window.getSelection().toString()) {
             const fieldValue = editView.value;
@@ -570,6 +570,15 @@ const DetailsView = Backbone.View.extend({
             }
             const copyRes = CopyPaste.copy(fieldText);
             this.fieldCopied({ source: editView, copyRes: copyRes });
+            return true;
+        }
+        return false;
+    },
+
+    copyPasswordFromShortcut: function(e) {
+        const copied = this.copyKeyPress(this.passEditView);
+        if (copied) {
+            e.preventDefault();
         }
     },
 

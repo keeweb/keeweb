@@ -5,7 +5,7 @@
         flex-direction: row;
         justify-content: flex-start;
         flex-wrap: wrap;
-        @include user-select(none);
+        user-select: none;
         padding-bottom: $base-padding-h;
         &--custom {
             padding-top: $base-padding-h;

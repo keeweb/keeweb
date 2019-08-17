@@ -99,7 +99,7 @@
     }
 
     &__pre {
-        @include user-select(text);
+        user-select: text;
         white-space: pre-wrap;
     }
 
@@ -160,7 +160,7 @@
         margin-bottom: $base-padding-v;
     }
     &__logs {
-        @include user-select(text);
+        user-select: text;
         margin-top: $base-padding-v;
         word-break: break-all;
         &-log {
