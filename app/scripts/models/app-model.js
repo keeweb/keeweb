@@ -19,6 +19,7 @@ const AutoType = require('../auto-type');
 const Launcher = require('../comp/launcher');
 const RuntimeInfo = require('../comp/runtime-info');
 const PluginManager = require('../plugins/plugin-manager');
+const Locale = require('../util/locale');
 
 require('../mixins/protected-value-ex');
 
@@ -514,6 +515,9 @@ const AppModel = Backbone.Model.extend({
 
     openFileFromCache: function(params, callback, fileInfo) {
         Storage.cache.load(fileInfo.id, null, (err, data) => {
+            if (!data) {
+                err = Locale.openFileNoCacheError;
+            }
             new Logger('open', params.name).info('Loaded file from cache', err);
             if (err) {
                 callback(err);
