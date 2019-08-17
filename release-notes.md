@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.8.3 (TBD)
+##### v1.9.0 (TBD)
 `-` fix #1221: added '30 min' lock option
 `-` fixed generator style issues in Firefox
 `+` option to hide password in the generator

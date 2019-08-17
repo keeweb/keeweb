@@ -15,8 +15,20 @@ Twitter: [kee_web](https://twitter.com/kee_web)
 
 # Status
 
-The app is already rather stable, so basic stuff should work.  
-Project roadmap with planned features and approximate schedule is on [TODO](https://github.com/keeweb/keeweb/wiki/TODO) page.
+#### Usage
+
+The app is quite stable now. Basic stuff, as well as more advanced operations should be rather reliable.
+
+#### Features
+
+Currently the project has reached the stage where the author is satisfied with the feature set.
+New features are not being actively developed, however issues are fixed 
+and the app is constantly updated to support new platforms. Contributions are very welcome.
+
+#### Development
+
+There's an ongoing effort to migrate the app to react however it takes time and I don't know if it will happen.
+Currently we have a modern build system, however the framework (Backbone/jQuery) is somewhat ancient.
 
 # Self-hosting
 
