@@ -28,7 +28,7 @@ and the app is constantly updated to support new platforms. Contributions are ve
 #### Development
 
 There's an ongoing effort to migrate the app to react however it takes time and I don't know if it will happen.
-Currently we have a modern build system, but the framework (Backbone/jQuery) is somewhat ancient.
+Currently we have a modern build system, but the framework (Backbone/jQuery) is ancient.
 
 # Self-hosting
 
