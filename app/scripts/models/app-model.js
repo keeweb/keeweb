@@ -730,7 +730,12 @@ const AppModel = Backbone.Model.extend({
         if (storage && Storage[storage].getPathForName && (!path || storage !== file.get('storage'))) {
             path = Storage[storage].getPathForName(file.get('name'));
         }
-        logger.info('Sync started', storage, path, options);
+        const optionsForLogging = _.clone(options);
+        if (optionsForLogging && optionsForLogging.opts && optionsForLogging.opts.password) {
+            optionsForLogging.opts = _.clone(optionsForLogging.opts);
+            optionsForLogging.opts.password = '***';
+        }
+        logger.info('Sync started', storage, path, optionsForLogging);
         let fileInfo = this.getFileInfo(file);
         if (!fileInfo) {
             logger.info('Create new file info');
