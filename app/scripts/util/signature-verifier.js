@@ -1,5 +1,5 @@
 const Logger = require('./logger');
-const publicKey = require('raw-loader!../../resources/public-key.pem');
+const publicKey = require('raw-loader!../../resources/public-key.pem').default;
 const kdbxweb = require('kdbxweb');
 
 const SignatureVerifier = {

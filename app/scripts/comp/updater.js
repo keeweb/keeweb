@@ -7,7 +7,7 @@ const UpdateModel = require('../models/update-model');
 const Transport = require('../comp/transport');
 const Logger = require('../util/logger');
 const SemVer = require('../util/semver');
-const publicKey = require('raw-loader!../../resources/public-key.pem');
+const publicKey = require('raw-loader!../../resources/public-key.pem').default;
 
 const logger = new Logger('updater');
 

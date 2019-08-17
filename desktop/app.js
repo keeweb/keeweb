@@ -156,7 +156,9 @@ function createMainWindow() {
         titleBarStyle: appSettings ? appSettings.titlebarStyle : undefined,
         backgroundColor: '#282C34',
         webPreferences: {
-            backgroundThrottling: false
+            backgroundThrottling: false,
+            nodeIntegration: true,
+            nodeIntegrationInWorker: true
         }
     };
     if (process.platform !== 'win32') {
