@@ -85,12 +85,22 @@ const PopupNotifier = {
             win.close();
             win = null;
         });
-        win.webContents.on('did-fail-load', (e, errorCode, errorDescription, validatedUrl, isMainFrame) => {
-            this.logger.debug('did-fail-load', e, errorCode, errorDescription, validatedUrl, isMainFrame);
-            this.deferCheckClosed(win);
-            win.close();
-            win = null;
-        });
+        win.webContents.on(
+            'did-fail-load',
+            (e, errorCode, errorDescription, validatedUrl, isMainFrame) => {
+                this.logger.debug(
+                    'did-fail-load',
+                    e,
+                    errorCode,
+                    errorDescription,
+                    validatedUrl,
+                    isMainFrame
+                );
+                this.deferCheckClosed(win);
+                win.close();
+                win = null;
+            }
+        );
         win.once('page-title-updated', () => {
             setTimeout(() => {
                 if (win) {
@@ -100,7 +110,10 @@ const PopupNotifier = {
             }, Timeouts.PopupWaitTime);
         });
         win.on('closed', () => {
-            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            setTimeout(
+                PopupNotifier.triggerClosed.bind(PopupNotifier, win),
+                Timeouts.CheckWindowClosed
+            );
             win = null;
         });
         win.loadURL(url);
@@ -109,7 +122,10 @@ const PopupNotifier = {
     },
 
     isOwnUrl(url) {
-        return url.lastIndexOf(Links.WebApp, 0) === 0 || url.lastIndexOf(location.origin + location.pathname, 0) === 0;
+        return (
+            url.lastIndexOf(Links.WebApp, 0) === 0 ||
+            url.lastIndexOf(location.origin + location.pathname, 0) === 0
+        );
     },
 
     processReturnToApp: function(url) {
@@ -127,7 +143,10 @@ const PopupNotifier = {
 
     checkClosed: function(win) {
         if (win.closed) {
-            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            setTimeout(
+                PopupNotifier.triggerClosed.bind(PopupNotifier, win),
+                Timeouts.CheckWindowClosed
+            );
         } else {
             PopupNotifier.deferCheckClosed(win);
         }

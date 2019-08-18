@@ -22,7 +22,8 @@ module.exports = function(grunt) {
     const year = date.getFullYear();
     const minElectronVersionForUpdate = '4.0.1';
     const zipCommentPlaceholderPart = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
-    const zipCommentPlaceholder = zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
+    const zipCommentPlaceholder =
+        zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
 
     grunt.initConfig({
@@ -124,7 +125,8 @@ module.exports = function(grunt) {
             },
             'desktop-darwin-installer': {
                 cwd: 'package/osx/KeeWeb Installer.app',
-                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                dest:
+                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 src: '**',
                 expand: true,
                 nonull: true,
@@ -167,18 +169,30 @@ module.exports = function(grunt) {
             manifest: {
                 options: {
                     replacements: [
-                        { pattern: '# YYYY-MM-DD:v0.0.0', replacement: '# ' + dt + ':v' + pkg.version },
-                        { pattern: '# updmin:v0.0.0', replacement: '# updmin:v' + minElectronVersionForUpdate }
+                        {
+                            pattern: '# YYYY-MM-DD:v0.0.0',
+                            replacement: '# ' + dt + ':v' + pkg.version
+                        },
+                        {
+                            pattern: '# updmin:v0.0.0',
+                            replacement: '# updmin:v' + minElectronVersionForUpdate
+                        }
                     ]
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
             },
             'manifest-html': {
-                options: { replacements: [{ pattern: '<html', replacement: '<html manifest="manifest.appcache"' }] },
+                options: {
+                    replacements: [
+                        { pattern: '<html', replacement: '<html manifest="manifest.appcache"' }
+                    ]
+                },
                 files: { 'dist/index.html': 'dist/index.html' }
             },
             'desktop-html': {
-                options: { replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }] },
+                options: {
+                    replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }]
+                },
                 files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
             },
             'desktop-public-key': {
@@ -187,7 +201,13 @@ module.exports = function(grunt) {
                         {
                             pattern: "'@@PUBLIC_KEY_CONTENT'",
                             replacement:
-                                '`' + fs.readFileSync('app/resources/public-key.pem', { encoding: 'utf8' }).trim() + '`'
+                                '`' +
+                                fs
+                                    .readFileSync('app/resources/public-key.pem', {
+                                        encoding: 'utf8'
+                                    })
+                                    .trim() +
+                                '`'
                         }
                     ]
                 },
@@ -195,7 +215,12 @@ module.exports = function(grunt) {
             },
             'cordova-html': {
                 options: {
-                    replacements: [{ pattern: '<script', replacement: '<script src="cordova.js"></script><script' }]
+                    replacements: [
+                        {
+                            pattern: '<script',
+                            replacement: '<script src="cordova.js"></script><script'
+                        }
+                    ]
                 },
                 files: { 'tmp/cordova/app/index.html': 'dist/index.html' }
             }
@@ -305,7 +330,10 @@ module.exports = function(grunt) {
                 level: 6
             },
             'desktop-update': {
-                options: { archive: 'dist/desktop/UpdateDesktop.zip', comment: zipCommentPlaceholder },
+                options: {
+                    archive: 'dist/desktop/UpdateDesktop.zip',
+                    comment: zipCommentPlaceholder
+                },
                 files: [{ cwd: 'tmp/desktop/update', src: '**', expand: true, nonull: true }]
             },
             'win32-x64': {
@@ -341,7 +369,12 @@ module.exports = function(grunt) {
                 window: { size: { width: 658, height: 498 } },
                 contents: [
                     { x: 438, y: 344, type: 'link', path: '/Applications' },
-                    { x: 192, y: 344, type: 'file', path: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app' }
+                    {
+                        x: 192,
+                        y: 344,
+                        type: 'file',
+                        path: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
+                    }
                 ]
             },
             app: {
@@ -479,7 +512,11 @@ module.exports = function(grunt) {
             desktop: {
                 options: {
                     file: 'dist/desktop/UpdateDesktop.zip',
-                    expected: ['app.asar', 'helper/darwin/KeeWebHelper', 'helper/win32/KeeWebHelper.exe'],
+                    expected: [
+                        'app.asar',
+                        'helper/darwin/KeeWebHelper',
+                        'helper/win32/KeeWebHelper.exe'
+                    ],
                     expectedCount: 7,
                     publicKey: 'app/resources/public-key.pem'
                 }
@@ -505,8 +542,10 @@ module.exports = function(grunt) {
                     files: {
                         'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe': 'KeeWeb',
                         'tmp/desktop/KeeWeb-win32-x64/ffmpeg.dll': '',
-                        'tmp/desktop/KeeWeb-win32-x64/libEGL.dll': 'ANGLE libEGL Dynamic Link Library',
-                        'tmp/desktop/KeeWeb-win32-x64/libGLESv2.dll': 'ANGLE libGLESv2 Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-x64/libEGL.dll':
+                            'ANGLE libEGL Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-x64/libGLESv2.dll':
+                            'ANGLE libGLESv2 Dynamic Link Library',
                         'tmp/desktop/KeeWeb-win32-x64/osmesa.dll': ''
                     }
                 }
@@ -516,8 +555,10 @@ module.exports = function(grunt) {
                     files: {
                         'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe': 'KeeWeb',
                         'tmp/desktop/KeeWeb-win32-ia32/ffmpeg.dll': '',
-                        'tmp/desktop/KeeWeb-win32-ia32/libEGL.dll': 'ANGLE libEGL Dynamic Link Library',
-                        'tmp/desktop/KeeWeb-win32-ia32/libGLESv2.dll': 'ANGLE libGLESv2 Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-ia32/libEGL.dll':
+                            'ANGLE libEGL Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-ia32/libGLESv2.dll':
+                            'ANGLE libGLESv2 Dynamic Link Library',
                         'tmp/desktop/KeeWeb-win32-ia32/osmesa.dll': ''
                     }
                 }
@@ -557,7 +598,10 @@ module.exports = function(grunt) {
                     sign: 'dist/desktop/Verify.sign.sha256'
                 },
                 files: {
-                    'dist/desktop/Verify.sha256': ['dist/desktop/KeeWeb-*', 'dist/desktop/UpdateDesktop.zip']
+                    'dist/desktop/Verify.sha256': [
+                        'dist/desktop/KeeWeb-*',
+                        'dist/desktop/UpdateDesktop.zip'
+                    ]
                 }
             }
         }

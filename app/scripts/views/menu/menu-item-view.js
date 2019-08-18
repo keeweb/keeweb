@@ -91,7 +91,8 @@ const MenuItemView = Backbone.View.extend({
     },
 
     changeIcon: function(model, icon) {
-        this.iconEl[0].className = 'menu__item-icon fa ' + (icon ? 'fa-' + icon : 'menu__item-icon--no-icon');
+        this.iconEl[0].className =
+            'menu__item-icon fa ' + (icon ? 'fa-' + icon : 'menu__item-icon--no-icon');
     },
 
     changeActive: function(model, active) {

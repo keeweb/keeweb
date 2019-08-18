@@ -11,7 +11,9 @@ const FeatureTester = {
 
     checkWebAssembly() {
         try {
-            const module = new global.WebAssembly.Module(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+            const module = new global.WebAssembly.Module(
+                Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00)
+            );
             return new global.WebAssembly.Instance(module) instanceof global.WebAssembly.Instance;
         } catch (e) {
             throw 'WebAssembly is not supported';
@@ -29,7 +31,10 @@ const FeatureTester = {
                 .importKey(kdbxweb.ByteUtils.hexToBytes(key))
                 .then(() => {
                     return aesCbc
-                        .encrypt(kdbxweb.ByteUtils.hexToBytes(data), kdbxweb.ByteUtils.hexToBytes(iv))
+                        .encrypt(
+                            kdbxweb.ByteUtils.hexToBytes(data),
+                            kdbxweb.ByteUtils.hexToBytes(iv)
+                        )
                         .then(res => {
                             if (kdbxweb.ByteUtils.bytesToHex(res) !== exp) {
                                 throw 'AES is not working properly';

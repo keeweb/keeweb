@@ -383,7 +383,10 @@ const OpenView = Backbone.View.extend({
                     body: fileInfo.get('modified')
                         ? Locale.openRemoveLastQuestionModBody
                         : Locale.openRemoveLastQuestionBody,
-                    buttons: [{ result: 'yes', title: Locale.alertYes }, { result: '', title: Locale.alertNo }],
+                    buttons: [
+                        { result: 'yes', title: Locale.alertYes },
+                        { result: '', title: Locale.alertNo }
+                    ],
                     success: () => {
                         this.removeFile(id);
                     }
@@ -442,7 +445,10 @@ const OpenView = Backbone.View.extend({
         e.preventDefault();
         e.stopPropagation();
         const dt = e.originalEvent.dataTransfer;
-        if (!dt.types || (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))) {
+        if (
+            !dt.types ||
+            (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))
+        ) {
             dt.dropEffect = 'none';
             return;
         }
@@ -498,7 +504,11 @@ const OpenView = Backbone.View.extend({
                     .toLowerCase() === 'key'
         );
         if (dataFile) {
-            this.setFile(dataFile, keyFile, dataFile.path ? null : this.showLocalFileAlert.bind(this));
+            this.setFile(
+                dataFile,
+                keyFile,
+                dataFile.path ? null : this.showLocalFileAlert.bind(this)
+            );
         }
     },
 
@@ -604,7 +614,9 @@ const OpenView = Backbone.View.extend({
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
         this.params.password = this.passwordInput.value;
-        this.afterPaint(this.model.openFile.bind(this.model, this.params, this.openDbComplete.bind(this)));
+        this.afterPaint(
+            this.model.openFile.bind(this.model, this.params, this.openDbComplete.bind(this))
+        );
     },
 
     openDbComplete: function(err) {
@@ -624,7 +636,11 @@ const OpenView = Backbone.View.extend({
                 }
                 Alerts.error({
                     header: Locale.openError,
-                    body: Locale.openErrorDescription + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                    body:
+                        Locale.openErrorDescription +
+                        '<pre class="modal__pre">' +
+                        _.escape(err.toString()) +
+                        '</pre>'
                 });
             }
         } else {
@@ -701,7 +717,10 @@ const OpenView = Backbone.View.extend({
                     Alerts.error({
                         header: Locale.openError,
                         body:
-                            Locale.openListErrorBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                            Locale.openListErrorBody +
+                            '<pre class="modal__pre">' +
+                            _.escape(err.toString()) +
+                            '</pre>'
                     });
                 }
                 return;
@@ -786,7 +805,10 @@ const OpenView = Backbone.View.extend({
             },
             storage.getOpenConfig()
         );
-        this.views.openConfig = new OpenConfigView({ el: this.$el.find('.open__config-wrap'), model: config }).render();
+        this.views.openConfig = new OpenConfigView({
+            el: this.$el.find('.open__config-wrap'),
+            model: config
+        }).render();
         this.views.openConfig.on('cancel', this.closeConfig.bind(this));
         this.views.openConfig.on('apply', this.applyConfig.bind(this));
         this.$el.find('.open__pass-area').addClass('hide');
@@ -868,7 +890,10 @@ const OpenView = Backbone.View.extend({
 
     moveOpenFileSelection: function(steps) {
         const lastOpenFiles = this.getLastOpenFiles();
-        if (this.currentSelectedIndex + steps >= 0 && this.currentSelectedIndex + steps <= lastOpenFiles.length - 1) {
+        if (
+            this.currentSelectedIndex + steps >= 0 &&
+            this.currentSelectedIndex + steps <= lastOpenFiles.length - 1
+        ) {
             this.currentSelectedIndex = this.currentSelectedIndex + steps;
         }
 

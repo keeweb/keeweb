@@ -12,7 +12,9 @@ module.exports = function(grunt) {
         const data = file.slice(0, ix);
         sign(grunt, data).then(signature => {
             signature = Buffer.from(signature.toString('hex'), 'binary');
-            if (signature.byteLength !== Buffer.from(this.options().signature, 'binary').byteLength) {
+            if (
+                signature.byteLength !== Buffer.from(this.options().signature, 'binary').byteLength
+            ) {
                 grunt.warn('Bad signature length');
                 return;
             }

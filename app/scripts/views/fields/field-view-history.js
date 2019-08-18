@@ -6,7 +6,10 @@ const FieldViewHistory = FieldView.extend({
         if (!value.length) {
             return Locale.detHistoryEmpty;
         }
-        let text = value.length + ' ' + (value.length % 10 === 1 ? Locale.detHistoryRec : Locale.detHistoryRecs);
+        let text =
+            value.length +
+            ' ' +
+            (value.length % 10 === 1 ? Locale.detHistoryRec : Locale.detHistoryRecs);
         if (value.unsaved) {
             text += ' (' + Locale.detHistoryModified + ')';
         }

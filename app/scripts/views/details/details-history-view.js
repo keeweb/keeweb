@@ -121,7 +121,9 @@ const DetailsHistoryView = Backbone.View.extend({
     showRecord: function(ix) {
         this.activeIx = ix;
         this.record = this.timeline[ix].rec;
-        this.timelineEl.find('.details__history-timeline-item').removeClass('details__history-timeline-item--active');
+        this.timelineEl
+            .find('.details__history-timeline-item')
+            .removeClass('details__history-timeline-item--active');
         this.timelineEl
             .find('.details__history-timeline-item[data-id="' + ix + '"]')
             .addClass('details__history-timeline-item--active');
@@ -129,7 +131,9 @@ const DetailsHistoryView = Backbone.View.extend({
         this.bodyEl.html('');
         const colorCls = this.record.color ? this.record.color + '-color' : '';
         this.fieldViews.push(
-            new FieldViewReadOnly({ model: { name: 'Rev', title: Locale.detHistoryVersion, value: ix + 1 } })
+            new FieldViewReadOnly({
+                model: { name: 'Rev', title: Locale.detHistoryVersion, value: ix + 1 }
+            })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
@@ -162,27 +166,47 @@ const DetailsHistoryView = Backbone.View.extend({
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: { name: '$UserName', title: Format.capFirst(Locale.user), value: this.record.user }
+                model: {
+                    name: '$UserName',
+                    title: Format.capFirst(Locale.user),
+                    value: this.record.user
+                }
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: { name: '$Password', title: Format.capFirst(Locale.password), value: this.record.password }
+                model: {
+                    name: '$Password',
+                    title: Format.capFirst(Locale.password),
+                    value: this.record.password
+                }
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: { name: '$URL', title: Format.capFirst(Locale.website), value: this.record.url }
+                model: {
+                    name: '$URL',
+                    title: Format.capFirst(Locale.website),
+                    value: this.record.url
+                }
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: { name: '$Notes', title: Format.capFirst(Locale.notes), value: this.record.notes }
+                model: {
+                    name: '$Notes',
+                    title: Format.capFirst(Locale.notes),
+                    value: this.record.notes
+                }
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: { name: 'Tags', title: Format.capFirst(Locale.tags), value: this.record.tags.join(', ') }
+                model: {
+                    name: 'Tags',
+                    title: Format.capFirst(Locale.tags),
+                    value: this.record.tags.join(', ')
+                }
             })
         );
         this.fieldViews.push(
@@ -198,7 +222,9 @@ const DetailsHistoryView = Backbone.View.extend({
             this.record.fields,
             function(value, field) {
                 this.fieldViews.push(
-                    new FieldViewReadOnly({ model: { name: '$' + field, title: field, value: value } })
+                    new FieldViewReadOnly({
+                        model: { name: '$' + field, title: field, value: value }
+                    })
                 );
             },
             this
@@ -223,7 +249,12 @@ const DetailsHistoryView = Backbone.View.extend({
         buttons.find('.details__history-button-delete').toggle(ix < this.history.length - 1);
         buttons
             .find('.details__history-button-discard')
-            .toggle((this.record.unsaved && ix === this.history.length - 1 && this.history.length > 1) || false);
+            .toggle(
+                (this.record.unsaved &&
+                    ix === this.history.length - 1 &&
+                    this.history.length > 1) ||
+                    false
+            );
     },
 
     timelineItemClick: function(e) {
@@ -254,13 +285,15 @@ const DetailsHistoryView = Backbone.View.extend({
         }));
         const period = lastRec.updated - firstRec.updated;
         const format = this.getDateFormat(period);
-        this.labels = this.getLabels(firstRec.updated.getTime(), lastRec.updated.getTime(), format.round).map(
-            label => ({
-                pos: (label - firstRec.updated) / (lastRec.updated - firstRec.updated),
-                val: label,
-                text: format.format(new Date(label))
-            })
-        );
+        this.labels = this.getLabels(
+            firstRec.updated.getTime(),
+            lastRec.updated.getTime(),
+            format.round
+        ).map(label => ({
+            pos: (label - firstRec.updated) / (lastRec.updated - firstRec.updated),
+            val: label,
+            text: format.format(new Date(label))
+        }));
     },
 
     getDateFormat: function(period) {

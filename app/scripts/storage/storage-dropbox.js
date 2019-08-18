@@ -197,7 +197,10 @@ const StorageDropbox = StorageBase.extend({
     },
 
     _encodeJsonHttpHeader(json) {
-        return json.replace(/[\u007f-\uffff]/g, c => '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4));
+        return json.replace(
+            /[\u007f-\uffff]/g,
+            c => '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
+        );
     },
 
     _apiCall: function(args) {
@@ -209,7 +212,9 @@ const StorageDropbox = StorageBase.extend({
             let headers;
             let data = args.data;
             if (args.apiArg) {
-                headers = { 'Dropbox-API-Arg': this._encodeJsonHttpHeader(JSON.stringify(args.apiArg)) };
+                headers = {
+                    'Dropbox-API-Arg': this._encodeJsonHttpHeader(JSON.stringify(args.apiArg))
+                };
                 if (args.data) {
                     headers['Content-Type'] = 'application/octet-stream';
                 }
@@ -274,7 +279,12 @@ const StorageDropbox = StorageBase.extend({
                 } else if (stat['.tag'] === 'folder') {
                     stat = { folder: true };
                 }
-                this.logger.debug('Stated', path, stat.folder ? 'folder' : stat.rev, this.logger.ts(ts));
+                this.logger.debug(
+                    'Stated',
+                    path,
+                    stat.folder ? 'folder' : stat.rev,
+                    this.logger.ts(ts)
+                );
                 if (callback) {
                     callback(null, stat);
                 }

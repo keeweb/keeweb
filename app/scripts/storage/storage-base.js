@@ -72,7 +72,10 @@ _.extend(StorageBase.prototype, {
                     } else {
                         config.tryNum = (config.tryNum || 0) + 1;
                         if (config.tryNum >= MaxRequestRetries) {
-                            this.logger.info('Too many authorize attempts, fail request', config.url);
+                            this.logger.info(
+                                'Too many authorize attempts, fail request',
+                                config.url
+                            );
                             return config.error && config.error('unauthorized', xhr);
                         }
                         this.logger.info('Repeat request, try #' + config.tryNum, config.url);

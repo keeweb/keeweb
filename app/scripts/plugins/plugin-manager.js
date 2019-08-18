@@ -164,7 +164,9 @@ const PluginManager = Backbone.Model.extend({
             return Promise.resolve();
         }
         const anotherVersion = this.get('autoUpdateAppVersion') !== RuntimeInfo.version;
-        const wasLongAgo = !this.get('autoUpdateDate') || Date.now() - this.get('autoUpdateDate') > this.UpdateInterval;
+        const wasLongAgo =
+            !this.get('autoUpdateDate') ||
+            Date.now() - this.get('autoUpdateDate') > this.UpdateInterval;
         const autoUpdateRequired = anotherVersion || wasLongAgo;
         if (!autoUpdateRequired) {
             return;
@@ -194,7 +196,9 @@ const PluginManager = Backbone.Model.extend({
         });
         let enabled = desc.enabled;
         if (enabled) {
-            const galleryPlugin = gallery ? gallery.plugins.find(pl => pl.manifest.name === desc.manifest.name) : null;
+            const galleryPlugin = gallery
+                ? gallery.plugins.find(pl => pl.manifest.name === desc.manifest.name)
+                : null;
             const expectedPublicKey = galleryPlugin
                 ? galleryPlugin.manifest.publicKey
                 : SignatureVerifier.getPublicKey();

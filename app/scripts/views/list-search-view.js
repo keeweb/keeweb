@@ -83,7 +83,11 @@ const ListSearchView = Backbone.View.extend({
                 icon: 'sort-numeric-desc',
                 loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO)
             },
-            { value: '-attachments', icon: 'sort-amount-desc', loc: () => Locale.searchAttachments },
+            {
+                value: '-attachments',
+                icon: 'sort-amount-desc',
+                loc: () => Locale.searchAttachments
+            },
             { value: '-rank', icon: 'sort-numeric-desc', loc: () => Locale.searchRank }
         ];
         this.sortIcons = {};
@@ -306,7 +310,9 @@ const ListSearchView = Backbone.View.extend({
         if (this.views.searchDropdown) {
             this.views.searchDropdown.remove();
             this.views.searchDropdown = null;
-            this.$el.find('.list__search-btn-sort,.list__search-btn-new').removeClass('sel--active');
+            this.$el
+                .find('.list__search-btn-sort,.list__search-btn-new')
+                .removeClass('sel--active');
         }
     },
 
@@ -366,12 +372,18 @@ const ListSearchView = Backbone.View.extend({
             options.push({
                 value: id,
                 icon: tmpl.entry.icon,
-                text: hasMultipleFiles ? tmpl.file.get('name') + ' / ' + tmpl.entry.title : tmpl.entry.title
+                text: hasMultipleFiles
+                    ? tmpl.file.get('name') + ' / ' + tmpl.entry.title
+                    : tmpl.entry.title
             });
             this.entryTemplates[id] = tmpl;
         });
         options.sort(Comparators.stringComparator('text', true));
-        options.push({ value: 'tmpl', icon: 'sticky-note-o', text: Format.capFirst(Locale.template) });
+        options.push({
+            value: 'tmpl',
+            icon: 'sticky-note-o',
+            text: Format.capFirst(Locale.template)
+        });
         return options;
     },
 

@@ -54,7 +54,9 @@ const SignatureVerifier = {
 
     getPublicKey() {
         if (!this.publicKey) {
-            this.publicKey = publicKey.match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1].replace(/\s+/g, '');
+            this.publicKey = publicKey
+                .match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1]
+                .replace(/\s+/g, '');
         }
         return this.publicKey;
     }

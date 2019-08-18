@@ -279,7 +279,8 @@
                 }
                 transition: background-color $slow-transition-out, border-color $slow-transition-out;
                 .details__field--edit[active-mobile-action] & {
-                    transition: background-color $slow-transition-in, border-color $slow-transition-in;
+                    transition: background-color $slow-transition-in,
+                        border-color $slow-transition-in;
                 }
                 .details__field--edit[active-mobile-action='apply'] & {
                     @include th {

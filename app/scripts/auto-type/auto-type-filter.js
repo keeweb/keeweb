@@ -21,7 +21,9 @@ AutoTypeFilter.prototype.getEntries = function() {
     if (!this.ignoreWindowInfo) {
         entries = entries.filter(e => e[1]);
     }
-    entries = entries.sort((x, y) => (x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1]));
+    entries = entries.sort((x, y) =>
+        x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1]
+    );
     entries = entries.map(p => p[0]);
     return new EntryCollection(entries, { comparator: 'none' });
 };

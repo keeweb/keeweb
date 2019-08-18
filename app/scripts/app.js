@@ -116,7 +116,8 @@ ready(() => {
 
     function showApp() {
         return Promise.resolve().then(() => {
-            const skipHttpsWarning = localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
+            const skipHttpsWarning =
+                localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
             const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
             const hostIsInsecure = location.hostname !== 'localhost';
             if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {

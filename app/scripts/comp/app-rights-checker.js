@@ -42,7 +42,10 @@ const AppRightsChecker = {
                 '<br/>' +
                 Locale.appRightsAlertBody2 +
                 `: <pre>${command}</pre>`,
-            buttons: [{ result: 'skip', title: Locale.alertDoNotAsk, error: true }, Alerts.buttons.ok],
+            buttons: [
+                { result: 'skip', title: Locale.alertDoNotAsk, error: true },
+                Alerts.buttons.ok
+            ],
             success: result => {
                 if (result === 'skip') {
                     this.dontAskAnymore();

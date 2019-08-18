@@ -84,7 +84,11 @@ const AppModel = Backbone.Model.extend({
                     this.appLogger.error('Invalid app config, no settings section', response);
                     return reject('Invalid app config, no settings section');
                 }
-                this.appLogger.info('Loaded app config from', configLocation, this.appLogger.ts(ts));
+                this.appLogger.info(
+                    'Loaded app config from',
+                    configLocation,
+                    this.appLogger.ts(ts)
+                );
                 resolve(response);
             });
             xhr.addEventListener('error', () => {
@@ -197,7 +201,13 @@ const AppModel = Backbone.Model.extend({
             this.menu.tagsSection.set('scrollable', true);
             this.menu.tagsSection.setItems(
                 this.tags.map(tag => {
-                    return { title: tag, icon: 'tag', filterKey: 'tag', filterValue: tag, editable: true };
+                    return {
+                        title: tag,
+                        icon: 'tag',
+                        filterKey: 'tag',
+                        filterValue: tag,
+                        editable: true
+                    };
                 })
             );
         } else {
@@ -341,12 +351,15 @@ const AppModel = Backbone.Model.extend({
     completeUserNames: function(part) {
         const userNames = {};
         this.files.forEach(file => {
-            file.forEachEntry({ text: part, textLower: part.toLowerCase(), advanced: { user: true } }, entry => {
-                const userName = entry.user;
-                if (userName) {
-                    userNames[userName] = (userNames[userName] || 0) + 1;
+            file.forEachEntry(
+                { text: part, textLower: part.toLowerCase(), advanced: { user: true } },
+                entry => {
+                    const userName = entry.user;
+                    if (userName) {
+                        userNames[userName] = (userNames[userName] || 0) + 1;
+                    }
                 }
-            });
+            );
         });
         const matches = _.pairs(userNames);
         matches.sort((x, y) => y[1] - x[1]);
@@ -483,11 +496,20 @@ const AppModel = Backbone.Model.extend({
             if (cacheRev && storage.stat) {
                 logger.info('Stat file');
                 storage.stat(params.path, params.opts, (err, stat) => {
-                    if (fileInfo && storage.name !== 'file' && (err || (stat && stat.rev === cacheRev))) {
-                        logger.info('Open file from cache because ' + (err ? 'stat error' : 'it is latest'), err);
+                    if (
+                        fileInfo &&
+                        storage.name !== 'file' &&
+                        (err || (stat && stat.rev === cacheRev))
+                    ) {
+                        logger.info(
+                            'Open file from cache because ' + (err ? 'stat error' : 'it is latest'),
+                            err
+                        );
                         this.openFileFromCache(params, callback, fileInfo);
                     } else if (stat) {
-                        logger.info('Open file from storage (' + stat.rev + ', local ' + cacheRev + ')');
+                        logger.info(
+                            'Open file from storage (' + stat.rev + ', local ' + cacheRev + ')'
+                        );
                         storageLoad();
                     } else {
                         logger.info('Stat error', err);
@@ -534,7 +556,10 @@ const AppModel = Backbone.Model.extend({
             params.keyFileName = fileInfo.get('keyFileName');
             if (this.settings.get('rememberKeyFiles') === 'data') {
                 params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
-            } else if (this.settings.get('rememberKeyFiles') === 'path' && fileInfo.get('keyFilePath')) {
+            } else if (
+                this.settings.get('rememberKeyFiles') === 'path' &&
+                fileInfo.get('keyFilePath')
+            ) {
                 params.keyFilePath = fileInfo.get('keyFilePath');
                 if (Storage.file.enabled) {
                     needLoadKeyFile = true;
@@ -731,7 +756,11 @@ const AppModel = Backbone.Model.extend({
         const storage = options.storage || file.get('storage');
         let path = options.path || file.get('path');
         const opts = options.opts || file.get('opts');
-        if (storage && Storage[storage].getPathForName && (!path || storage !== file.get('storage'))) {
+        if (
+            storage &&
+            Storage[storage].getPathForName &&
+            (!path || storage !== file.get('storage'))
+        ) {
             path = Storage[storage].getPathForName(file.get('name'));
         }
         const optionsForLogging = _.clone(options);
@@ -856,7 +885,8 @@ const AppModel = Backbone.Model.extend({
             };
             const saveToStorage = data => {
                 logger.info('Save data to storage');
-                const storageRev = fileInfo.get('storage') === storage ? fileInfo.get('rev') : undefined;
+                const storageRev =
+                    fileInfo.get('storage') === storage ? fileInfo.get('rev') : undefined;
                 Storage[storage].save(
                     path,
                     opts,
@@ -927,7 +957,10 @@ const AppModel = Backbone.Model.extend({
                                     if (!e) {
                                         file.set('dirty', false);
                                     }
-                                    logger.info('Saved to cache, exit with error', err || 'no error');
+                                    logger.info(
+                                        'Saved to cache, exit with error',
+                                        err || 'no error'
+                                    );
                                     complete(err);
                                 });
                             }

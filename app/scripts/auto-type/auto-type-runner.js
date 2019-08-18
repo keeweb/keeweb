@@ -299,7 +299,14 @@ AutoTypeRunner.prototype.getEntryGroupName = function() {
 AutoTypeRunner.prototype.dt = function(part) {
     switch (part) {
         case 'simple':
-            return this.dt('Y') + this.dt('M') + this.dt('D') + this.dt('h') + this.dt('m') + this.dt('s');
+            return (
+                this.dt('Y') +
+                this.dt('M') +
+                this.dt('D') +
+                this.dt('h') +
+                this.dt('m') +
+                this.dt('s')
+            );
         case 'Y':
             return this.now.getFullYear().toString();
         case 'M':
@@ -320,7 +327,14 @@ AutoTypeRunner.prototype.dt = function(part) {
 AutoTypeRunner.prototype.udt = function(part) {
     switch (part) {
         case 'simple':
-            return this.udt('Y') + this.udt('M') + this.udt('D') + this.udt('h') + this.udt('m') + this.udt('s');
+            return (
+                this.udt('Y') +
+                this.udt('M') +
+                this.udt('D') +
+                this.udt('h') +
+                this.udt('m') +
+                this.udt('s')
+            );
         case 'Y':
             return this.now.getUTCFullYear().toString();
         case 'M':

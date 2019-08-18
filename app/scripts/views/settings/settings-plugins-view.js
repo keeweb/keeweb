@@ -38,7 +38,11 @@ const SettingsPluginsView = Backbone.View.extend({
 
     initialize() {
         this.listenTo(PluginManager, 'change', this.render.bind(this));
-        this.listenTo(Backbone, 'plugin-gallery-load-complete', this.pluginGalleryLoadComplete.bind(this));
+        this.listenTo(
+            Backbone,
+            'plugin-gallery-load-complete',
+            this.pluginGalleryLoadComplete.bind(this)
+        );
     },
 
     render() {
@@ -103,10 +107,16 @@ const SettingsPluginsView = Backbone.View.extend({
         if (plugin.manifest.desktop && !RuntimeInfo.launcher) {
             return false;
         }
-        if (plugin.manifest.versionMin && SemVer.compareVersions(plugin.manifest.versionMin, RuntimeInfo.version) > 0) {
+        if (
+            plugin.manifest.versionMin &&
+            SemVer.compareVersions(plugin.manifest.versionMin, RuntimeInfo.version) > 0
+        ) {
             return false;
         }
-        if (plugin.manifest.versionMax && SemVer.compareVersions(plugin.manifest.versionMax, RuntimeInfo.version) > 0) {
+        if (
+            plugin.manifest.versionMax &&
+            SemVer.compareVersions(plugin.manifest.versionMax, RuntimeInfo.version) > 0
+        ) {
             return false;
         }
         return true;

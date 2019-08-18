@@ -38,7 +38,9 @@ const FieldViewTags = FieldViewText.extend({
     startEdit: function() {
         FieldViewText.prototype.startEdit.call(this);
         const fieldRect = this.input[0].getBoundingClientRect();
-        this.tagsAutocomplete = $('<div class="details__field-autocomplete"></div>').appendTo('body');
+        this.tagsAutocomplete = $('<div class="details__field-autocomplete"></div>').appendTo(
+            'body'
+        );
         this.tagsAutocomplete.css({
             top: fieldRect.bottom,
             left: fieldRect.left,
@@ -59,7 +61,10 @@ const FieldViewTags = FieldViewText.extend({
         const last = tags[tags.length - 1];
         const isLastPart = last && this.model.tags.indexOf(last) < 0;
         return this.model.tags.filter(tag => {
-            return tags.indexOf(tag) < 0 && (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0);
+            return (
+                tags.indexOf(tag) < 0 &&
+                (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0)
+            );
         });
     },
 

@@ -32,7 +32,9 @@ const Format = {
         if (typeof dt === 'number') {
             dt = new Date(dt);
         }
-        return dt ? dt.getDate() + ' ' + Locale.monthsShort[dt.getMonth()] + ' ' + dt.getFullYear() : '';
+        return dt
+            ? dt.getDate() + ' ' + Locale.monthsShort[dt.getMonth()] + ' ' + dt.getFullYear()
+            : '';
     },
     capFirst: function(str) {
         if (!str) {

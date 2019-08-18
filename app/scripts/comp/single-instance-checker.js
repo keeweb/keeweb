@@ -20,7 +20,10 @@ const SingleInstanceChecker = {
             return;
         }
         if (e.key === LocalStorageKeyName && e.newValue !== instanceKey) {
-            SingleInstanceChecker.setKey(LocalStorageResponseKeyName, instanceKey + Math.random().toString());
+            SingleInstanceChecker.setKey(
+                LocalStorageResponseKeyName,
+                instanceKey + Math.random().toString()
+            );
         } else if (e.key === LocalStorageResponseKeyName && e.newValue.indexOf(instanceKey) < 0) {
             window.removeEventListener('storage', SingleInstanceChecker.storageChanged);
             Backbone.trigger('second-instance');

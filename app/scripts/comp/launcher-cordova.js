@@ -92,7 +92,9 @@ const Launcher = {
                         reader.onerror = callback;
                         reader.onloadend = () => {
                             const contents = new Uint8Array(reader.result);
-                            callback(encoding ? String.fromCharCode.apply(null, contents) : contents);
+                            callback(
+                                encoding ? String.fromCharCode.apply(null, contents) : contents
+                            );
                         };
                         reader.readAsArrayBuffer(file);
                     },

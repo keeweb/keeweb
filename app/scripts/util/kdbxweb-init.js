@@ -86,7 +86,8 @@ const KdbxwebInit = {
                                             worker.terminate();
                                             KdbxwebInit.runtimeModule = null;
                                             if (!e.data || e.data.error || !e.data.hash) {
-                                                const ex = (e.data && e.data.error) || 'unexpected error';
+                                                const ex =
+                                                    (e.data && e.data.error) || 'unexpected error';
                                                 logger.error('Worker error', ex);
                                                 reject(ex);
                                             }

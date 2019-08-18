@@ -46,7 +46,9 @@ const FieldViewAutocomplete = FieldViewText.extend({
                 e.preventDefault();
                 break;
             case Keys.DOM_VK_RETURN:
-                const selectedItem = this.autocomplete.find('.details__field-autocomplete-item--selected').text();
+                const selectedItem = this.autocomplete
+                    .find('.details__field-autocomplete-item--selected')
+                    .text();
                 if (selectedItem) {
                     this.input.val(selectedItem);
                     this.endEdit(selectedItem);
@@ -62,7 +64,8 @@ const FieldViewAutocomplete = FieldViewText.extend({
         const completions = this.model.getCompletions(this.input.val());
         if (typeof this.selectedCopmletionIx === 'number') {
             this.selectedCopmletionIx =
-                (completions.length + this.selectedCopmletionIx + (next ? 1 : -1)) % completions.length;
+                (completions.length + this.selectedCopmletionIx + (next ? 1 : -1)) %
+                completions.length;
         } else {
             this.selectedCopmletionIx = next ? 0 : completions.length - 1;
         }
@@ -73,8 +76,17 @@ const FieldViewAutocomplete = FieldViewText.extend({
         const completions = this.model.getCompletions(this.input.val());
         const completionsHtml = completions
             .map((item, ix) => {
-                const sel = ix === this.selectedCopmletionIx ? 'details__field-autocomplete-item--selected' : '';
-                return '<div class="details__field-autocomplete-item ' + sel + '">' + _.escape(item) + '</div>';
+                const sel =
+                    ix === this.selectedCopmletionIx
+                        ? 'details__field-autocomplete-item--selected'
+                        : '';
+                return (
+                    '<div class="details__field-autocomplete-item ' +
+                    sel +
+                    '">' +
+                    _.escape(item) +
+                    '</div>'
+                );
             })
             .join('');
         this.autocomplete.html(completionsHtml);

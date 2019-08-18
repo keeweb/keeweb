@@ -24,32 +24,38 @@
 const fs = require('fs');
 
 module.exports = function(grunt) {
-    grunt.registerMultiTask('sign-exe', 'Signs exe file with authenticode certificate', async function() {
-        const opt = this.options();
-        const done = this.async();
-        if (opt.pvk) {
-            const keytar = require('keytar');
-            keytar
-                .getPassword(opt.keytarPasswordService, opt.keytarPasswordAccount)
-                .then(password => {
-                    if (!password) {
-                        return grunt.warn('Code sign password not found');
-                    }
-                    const promises = Object.keys(opt.files).map(file => signFile(file, opt.files[file], opt, password));
-                    Promise.all(promises).then(done);
-                })
-                .catch(e => {
-                    grunt.warn('Code sign error: ' + e);
-                });
-        } else {
-            const sign = require('../util/sign');
-            const pin = await sign.getPin();
-            for (const file of Object.keys(opt.files)) {
-                await signFile(file, opt.files[file], opt, pin);
+    grunt.registerMultiTask(
+        'sign-exe',
+        'Signs exe file with authenticode certificate',
+        async function() {
+            const opt = this.options();
+            const done = this.async();
+            if (opt.pvk) {
+                const keytar = require('keytar');
+                keytar
+                    .getPassword(opt.keytarPasswordService, opt.keytarPasswordAccount)
+                    .then(password => {
+                        if (!password) {
+                            return grunt.warn('Code sign password not found');
+                        }
+                        const promises = Object.keys(opt.files).map(file =>
+                            signFile(file, opt.files[file], opt, password)
+                        );
+                        Promise.all(promises).then(done);
+                    })
+                    .catch(e => {
+                        grunt.warn('Code sign error: ' + e);
+                    });
+            } else {
+                const sign = require('../util/sign');
+                const pin = await sign.getPin();
+                for (const file of Object.keys(opt.files)) {
+                    await signFile(file, opt.files[file], opt, pin);
+                }
+                done();
             }
-            done();
         }
-    });
+    );
 
     function signFile(file, name, opt, password) {
         const signedFile = file + '.sign';

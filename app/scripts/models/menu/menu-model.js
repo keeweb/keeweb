@@ -17,7 +17,13 @@ const MenuModel = Backbone.Model.extend({
     initialize: function() {
         this.menus = {};
         this.allItemsSection = new MenuSectionModel([
-            { locTitle: 'menuAllItems', icon: 'th-large', active: true, shortcut: Keys.DOM_VK_A, filterKey: '*' }
+            {
+                locTitle: 'menuAllItems',
+                icon: 'th-large',
+                active: true,
+                shortcut: Keys.DOM_VK_A,
+                filterKey: '*'
+            }
         ]);
         this.allItemsItem = this.allItemsSection.get('items').models[0];
         this.groupsSection = new GroupsMenuModel();
@@ -49,7 +55,11 @@ const MenuModel = Backbone.Model.extend({
         Colors.AllColors.forEach(color => {
             this.colorsSection
                 .get('items')
-                .models[0].addOption({ cls: 'fa ' + color + '-color', value: color, filterValue: color });
+                .models[0].addOption({
+                    cls: 'fa ' + color + '-color',
+                    value: color,
+                    filterValue: color
+                });
         });
         this.menus.app = new MenuSectionCollection([
             this.allItemsSection,
@@ -65,9 +75,15 @@ const MenuModel = Backbone.Model.extend({
         this.shortcutsSection = new MenuSectionModel([
             { locTitle: 'shortcuts', icon: 'keyboard-o', page: 'shortcuts' }
         ]);
-        this.pluginsSection = new MenuSectionModel([{ locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }]);
-        this.aboutSection = new MenuSectionModel([{ locTitle: 'menuSetAbout', icon: 'info', page: 'about' }]);
-        this.helpSection = new MenuSectionModel([{ locTitle: 'help', icon: 'question', page: 'help' }]);
+        this.pluginsSection = new MenuSectionModel([
+            { locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }
+        ]);
+        this.aboutSection = new MenuSectionModel([
+            { locTitle: 'menuSetAbout', icon: 'info', page: 'about' }
+        ]);
+        this.helpSection = new MenuSectionModel([
+            { locTitle: 'help', icon: 'question', page: 'help' }
+        ]);
         this.filesSection = new MenuSectionModel();
         this.filesSection.set({ scrollable: true, grow: true });
         this.menus.settings = new MenuSectionCollection([
@@ -93,7 +109,10 @@ const MenuModel = Backbone.Model.extend({
         }, this);
         if (sections === this.menus.app) {
             this.colorsItem.get('options').forEach(opt => opt.set('active', opt === sel.option));
-            const selColor = sel.item === this.colorsItem && sel.option ? sel.option.get('value') + '-color' : '';
+            const selColor =
+                sel.item === this.colorsItem && sel.option
+                    ? sel.option.get('value') + '-color'
+                    : '';
             this.colorsItem.set('cls', 'menu__item-colors ' + selColor);
             const filterKey = sel.item.get('filterKey');
             const filterValue = (sel.option || sel.item).get('filterValue');
@@ -101,7 +120,10 @@ const MenuModel = Backbone.Model.extend({
             filter[filterKey] = filterValue;
             Backbone.trigger('set-filter', filter);
         } else if (sections === this.menus.settings) {
-            Backbone.trigger('set-page', { page: sel.item.get('page'), file: sel.item.get('file') });
+            Backbone.trigger('set-page', {
+                page: sel.item.get('page'),
+                file: sel.item.get('file')
+            });
         }
     },
 
@@ -186,7 +208,11 @@ const MenuModel = Backbone.Model.extend({
             title: Format.capFirst(Locale.tags),
             icon: 'tags',
             defaultItem: true,
-            disabled: { header: Locale.menuAlertNoTags, body: Locale.menuAlertNoTagsBody, icon: 'tags' }
+            disabled: {
+                header: Locale.menuAlertNoTags,
+                body: Locale.menuAlertNoTagsBody,
+                icon: 'tags'
+            }
         };
     },
 

@@ -41,7 +41,10 @@ const Updater = {
     init: function() {
         this.scheduleNextCheck();
         if (!Launcher && window.applicationCache) {
-            window.applicationCache.addEventListener('updateready', this.checkAppCacheUpdateReady.bind(this));
+            window.applicationCache.addEventListener(
+                'updateready',
+                this.checkAppCacheUpdateReady.bind(this)
+            );
             this.checkAppCacheUpdateReady();
         }
     },
@@ -75,7 +78,9 @@ const Updater = {
             // additional protection from broken program logic, to ensure that auto-checks are not performed more than once an hour
             const diffMs = new Date() - this.updateCheckDate;
             if (isNaN(diffMs) || diffMs < 1000 * 60 * 60) {
-                logger.error('Prevented update check; last check was performed at ' + this.updateCheckDate);
+                logger.error(
+                    'Prevented update check; last check was performed at ' + this.updateCheckDate
+                );
                 this.scheduleNextCheck();
                 return;
             }
@@ -91,7 +96,11 @@ const Updater = {
                 logger.info('Update check: ' + (match ? match[0] : 'unknown'));
                 if (!match) {
                     const errMsg = 'No version info found';
-                    UpdateModel.instance.set({ status: 'error', lastCheckDate: dt, lastCheckError: errMsg });
+                    UpdateModel.instance.set({
+                        status: 'error',
+                        lastCheckDate: dt,
+                        lastCheckError: errMsg
+                    });
                     UpdateModel.instance.save();
                     this.scheduleNextCheck();
                     return;
@@ -121,7 +130,12 @@ const Updater = {
                 }
                 if (!startedByUser && this.getAutoUpdateType() === 'install') {
                     this.update(startedByUser);
-                } else if (SemVer.compareVersions(UpdateModel.instance.get('lastVersion'), RuntimeInfo.version) > 0) {
+                } else if (
+                    SemVer.compareVersions(
+                        UpdateModel.instance.get('lastVersion'),
+                        RuntimeInfo.version
+                    ) > 0
+                ) {
                     UpdateModel.instance.set('updateStatus', 'found');
                 }
             },
@@ -172,7 +186,10 @@ const Updater = {
                 this.extractAppUpdate(filePath, err => {
                     if (err) {
                         logger.error('Error extracting update', err);
-                        UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error extracting update' });
+                        UpdateModel.instance.set({
+                            updateStatus: 'error',
+                            updateError: 'Error extracting update'
+                        });
                     } else {
                         UpdateModel.instance.set({ updateStatus: 'ready', updateError: null });
                         if (!startedByUser) {
@@ -186,7 +203,10 @@ const Updater = {
             },
             error: function(e) {
                 logger.error('Error downloading update', e);
-                UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error downloading update' });
+                UpdateModel.instance.set({
+                    updateStatus: 'error',
+                    updateError: 'Error downloading update'
+                });
             }
         });
     },

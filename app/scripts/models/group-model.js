@@ -124,7 +124,8 @@ const GroupModel = MenuItemModel.extend({
         let result = true;
         this.get('items').forEach(group => {
             if (group.matches(filter)) {
-                result = callback(group) !== false && group.forEachGroup(callback, filter) !== false;
+                result =
+                    callback(group) !== false && group.forEachGroup(callback, filter) !== false;
             }
         });
         return result;
@@ -260,7 +261,9 @@ const GroupModel = MenuItemModel.extend({
     },
 
     getParentEffectiveAutoTypeSeq: function() {
-        return this.parentGroup ? this.parentGroup.getEffectiveAutoTypeSeq() : DefaultAutoTypeSequence;
+        return this.parentGroup
+            ? this.parentGroup.getEffectiveAutoTypeSeq()
+            : DefaultAutoTypeSequence;
     },
 
     isEntryTemplatesGroup: function() {
@@ -315,7 +318,12 @@ const GroupModel = MenuItemModel.extend({
     },
 
     moveToTop: function(object) {
-        if (!object || object.id === this.id || object.file !== this.file || !(object instanceof GroupModel)) {
+        if (
+            !object ||
+            object.id === this.id ||
+            object.file !== this.file ||
+            !(object instanceof GroupModel)
+        ) {
             return;
         }
         this.file.setModified();

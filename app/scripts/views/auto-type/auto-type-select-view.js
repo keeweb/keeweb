@@ -32,12 +32,30 @@ const AutoTypePopupView = Backbone.View.extend({
     setupKeys() {
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.actionEnterPressed, this, KeyHandler.SHORTCUT_ACTION, true);
-        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.optEnterPressed, this, KeyHandler.SHORTCUT_OPT, true);
+        KeyHandler.onKey(
+            Keys.DOM_VK_RETURN,
+            this.actionEnterPressed,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            true
+        );
+        KeyHandler.onKey(
+            Keys.DOM_VK_RETURN,
+            this.optEnterPressed,
+            this,
+            KeyHandler.SHORTCUT_OPT,
+            true
+        );
         KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_O, this.openKeyPressed, this, KeyHandler.SHORTCUT_ACTION, true);
+        KeyHandler.onKey(
+            Keys.DOM_VK_O,
+            this.openKeyPressed,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            true
+        );
         KeyHandler.on('keypress:auto-type', this.keyPressed.bind(this));
         KeyHandler.setModal('auto-type');
     },
@@ -180,7 +198,10 @@ const AutoTypePopupView = Backbone.View.extend({
 
     backSpacePressed() {
         if (this.model.filter.text) {
-            this.model.filter.text = this.model.filter.text.substr(0, this.model.filter.text.length - 1);
+            this.model.filter.text = this.model.filter.text.substr(
+                0,
+                this.model.filter.text.length - 1
+            );
             this.render();
         }
     },

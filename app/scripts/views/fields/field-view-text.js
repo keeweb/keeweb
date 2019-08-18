@@ -85,7 +85,10 @@ const FieldViewText = FieldView.extend({
         } else {
             const fieldRect = this.input[0].getBoundingClientRect();
             this.gen = new GeneratorView({
-                model: { pos: { left: fieldRect.left, top: fieldRect.bottom }, password: this.value }
+                model: {
+                    pos: { left: fieldRect.left, top: fieldRect.bottom },
+                    password: this.value
+                }
             }).render();
             this.gen.once('remove', this.generatorClosed.bind(this));
             this.gen.once('result', this.generatorResult.bind(this));

@@ -32,7 +32,9 @@ const StorageGDrive = StorageBase.extend({
             const ts = this.logger.ts();
             const url =
                 this._baseUrl +
-                '/files/{id}/revisions/{rev}?alt=media'.replace('{id}', path).replace('{rev}', stat.rev);
+                '/files/{id}/revisions/{rev}?alt=media'
+                    .replace('{id}', path)
+                    .replace('{rev}', stat.rev);
             this._xhr({
                 url: url,
                 responseType: 'arraybuffer',
@@ -94,7 +96,9 @@ const StorageGDrive = StorageBase.extend({
                 const isNew = path.lastIndexOf(NewFileIdPrefix, 0) === 0;
                 let url;
                 if (isNew) {
-                    url = this._baseUrlUpload + '/files?uploadType=multipart&fields=id,headRevisionId';
+                    url =
+                        this._baseUrlUpload +
+                        '/files?uploadType=multipart&fields=id,headRevisionId';
                     const fileName = path.replace(NewFileIdPrefix, '') + '.kdbx';
                     const boundry = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
                     data = new Blob(
@@ -137,7 +141,10 @@ const StorageGDrive = StorageBase.extend({
                         if (!newRev) {
                             return callback && callback('save error: no rev');
                         }
-                        return callback && callback(null, { rev: newRev, path: isNew ? response.id : null });
+                        return (
+                            callback &&
+                            callback(null, { rev: newRev, path: isNew ? response.id : null })
+                        );
                     },
                     error: err => {
                         this.logger.error('Save error', path, err, this.logger.ts(ts));
@@ -154,12 +161,20 @@ const StorageGDrive = StorageBase.extend({
                 return callback && callback(err);
             }
             this.logger.debug('List');
-            let query = dir === 'shared' ? 'sharedWithMe=true' : dir ? `"${dir}" in parents` : '"root" in parents';
+            let query =
+                dir === 'shared'
+                    ? 'sharedWithMe=true'
+                    : dir
+                    ? `"${dir}" in parents`
+                    : '"root" in parents';
             query += ' and trashed=false';
             const url =
                 this._baseUrl +
                 '/files?fields={fields}&q={q}&pageSize=1000'
-                    .replace('{fields}', encodeURIComponent('files(id,name,mimeType,headRevisionId)'))
+                    .replace(
+                        '{fields}',
+                        encodeURIComponent('files(id,name,mimeType,headRevisionId)')
+                    )
                     .replace('{q}', encodeURIComponent(query));
             const ts = this.logger.ts();
             this._xhr({
@@ -225,7 +240,10 @@ const StorageGDrive = StorageBase.extend({
     _getOAuthConfig: function() {
         let clientId = this.appSettings.get('gdriveClientId');
         if (!clientId) {
-            clientId = location.origin.indexOf('localhost') >= 0 ? GDriveClientId.Local : GDriveClientId.Production;
+            clientId =
+                location.origin.indexOf('localhost') >= 0
+                    ? GDriveClientId.Local
+                    : GDriveClientId.Production;
         }
         return {
             scope: 'https://www.googleapis.com/auth/drive',

@@ -173,7 +173,10 @@ Tip.hideTip = function(el) {
 Tip.updateTip = function(el, props) {
     if (el._tip) {
         el._tip.hide();
-        _.extend(el._tip, _.pick(props, ['title', 'placement', 'fast', 'showTimeout', 'hideTimeout']));
+        _.extend(
+            el._tip,
+            _.pick(props, ['title', 'placement', 'fast', 'showTimeout', 'hideTimeout'])
+        );
     }
 };
 

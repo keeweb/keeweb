@@ -146,23 +146,46 @@ const StorageWebDav = StorageBase.extend({
                                 (err, xhr, stat) => {
                                     if (err) {
                                         that._request(
-                                            _.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts)
+                                            _.defaults(
+                                                {
+                                                    op: 'Save:delete',
+                                                    method: 'DELETE',
+                                                    path: tmpPath
+                                                },
+                                                saveOpts
+                                            )
                                         );
                                         return cb(err, xhr, stat);
                                     }
                                     if (stat.rev !== rev) {
-                                        that.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
+                                        that.logger.debug(
+                                            'Save error',
+                                            path,
+                                            'rev conflict',
+                                            stat.rev,
+                                            rev
+                                        );
                                         that._request(
-                                            _.defaults({ op: 'Save:delete', method: 'DELETE', path: tmpPath }, saveOpts)
+                                            _.defaults(
+                                                {
+                                                    op: 'Save:delete',
+                                                    method: 'DELETE',
+                                                    path: tmpPath
+                                                },
+                                                saveOpts
+                                            )
                                         );
                                         return cb({ revConflict: true }, xhr, stat);
                                     }
                                     let movePath = path;
                                     if (movePath.indexOf('://') < 0) {
                                         if (movePath.indexOf('/') === 0) {
-                                            movePath = location.protocol + '//' + location.host + movePath;
+                                            movePath =
+                                                location.protocol + '//' + location.host + movePath;
                                         } else {
-                                            movePath = location.href.replace(/\?(.*)/, '').replace(/[^/]*$/, movePath);
+                                            movePath = location.href
+                                                .replace(/\?(.*)/, '')
+                                                .replace(/[^/]*$/, movePath);
                                         }
                                     }
                                     that._request(
@@ -239,7 +262,9 @@ const StorageWebDav = StorageBase.extend({
             const password = opts.password;
             let encpass = '';
             for (let i = 0; i < password.length; i++) {
-                encpass += String.fromCharCode(password.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length));
+                encpass += String.fromCharCode(
+                    password.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length)
+                );
             }
             result.encpass = btoa(encpass);
         }
@@ -253,7 +278,9 @@ const StorageWebDav = StorageBase.extend({
             const encpass = atob(opts.encpass);
             let password = '';
             for (let i = 0; i < encpass.length; i++) {
-                password += String.fromCharCode(encpass.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length));
+                password += String.fromCharCode(
+                    encpass.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length)
+                );
             }
             result.password = password;
         }
@@ -271,7 +298,12 @@ const StorageWebDav = StorageBase.extend({
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
             if ([200, 201, 204].indexOf(xhr.status) < 0) {
-                that.logger.debug(config.op + ' error', config.path, xhr.status, that.logger.ts(ts));
+                that.logger.debug(
+                    config.op + ' error',
+                    config.path,
+                    xhr.status,
+                    that.logger.ts(ts)
+                );
                 let err;
                 switch (xhr.status) {
                     case 404:
@@ -292,14 +324,20 @@ const StorageWebDav = StorageBase.extend({
             }
             const rev = xhr.getResponseHeader('Last-Modified');
             if (!rev && !config.nostat) {
-                that.logger.debug(config.op + ' error', config.path, 'no headers', that.logger.ts(ts));
+                that.logger.debug(
+                    config.op + ' error',
+                    config.path,
+                    'no headers',
+                    that.logger.ts(ts)
+                );
                 if (callback) {
                     callback('No Last-Modified header', xhr);
                     callback = null;
                 }
                 return;
             }
-            const completedOpName = config.op + (config.op.charAt(config.op.length - 1) === 'e' ? 'd' : 'ed');
+            const completedOpName =
+                config.op + (config.op.charAt(config.op.length - 1) === 'e' ? 'd' : 'ed');
             that.logger.debug(completedOpName, config.path, rev, that.logger.ts(ts));
             if (callback) {
                 callback(null, xhr, rev ? { rev: rev } : null);
@@ -323,7 +361,10 @@ const StorageWebDav = StorageBase.extend({
         xhr.open(config.method, config.path);
         xhr.responseType = 'arraybuffer';
         if (config.user) {
-            xhr.setRequestHeader('Authorization', 'Basic ' + btoa(config.user + ':' + config.password));
+            xhr.setRequestHeader(
+                'Authorization',
+                'Basic ' + btoa(config.user + ':' + config.password)
+            );
         }
         if (config.headers) {
             _.forEach(config.headers, (value, header) => {

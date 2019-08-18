@@ -27,8 +27,14 @@ module.exports = function(grunt) {
                 grunt.log.writeln(basename);
             }
 
-            grunt.file.write(file.dest, results.map(line => `${line.digest} *${line.basename}`).join('\n'));
-            grunt.file.write(opt.sign, results.map(line => `${line.signature} *${line.basename}`).join('\n'));
+            grunt.file.write(
+                file.dest,
+                results.map(line => `${line.digest} *${line.basename}`).join('\n')
+            );
+            grunt.file.write(
+                opt.sign,
+                results.map(line => `${line.signature} *${line.basename}`).join('\n')
+            );
         }
 
         done();

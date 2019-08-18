@@ -27,7 +27,9 @@ EntryPresenter.prototype = {
         return this.entry ? this.entry.customIcon : undefined;
     },
     get color() {
-        return this.entry ? this.entry.color || (this.entry.customIcon ? this.noColor : undefined) : undefined;
+        return this.entry
+            ? this.entry.color || (this.entry.customIcon ? this.noColor : undefined)
+            : undefined;
     },
     get title() {
         return this.entry ? this.entry.title : this.group.get('title');
@@ -76,7 +78,10 @@ EntryPresenter.prototype = {
             case 'updated':
                 return this.updated;
             case 'attachments':
-                return this.entry.attachments.map(a => a.title).join(', ') || '(' + Locale.listNoAttachments + ')';
+                return (
+                    this.entry.attachments.map(a => a.title).join(', ') ||
+                    '(' + Locale.listNoAttachments + ')'
+                );
             default:
                 return this.user || this.notes || this.url;
         }

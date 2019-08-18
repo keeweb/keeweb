@@ -38,7 +38,10 @@ const PluginGallery = {
                 this.loading = false;
                 this.loadError = !gallery;
                 if (gallery) {
-                    this.logger.debug(`Loaded ${gallery.plugins.length} plugins`, this.logger.ts(ts));
+                    this.logger.debug(
+                        `Loaded ${gallery.plugins.length} plugins`,
+                        this.logger.ts(ts)
+                    );
                     this.gallery = gallery;
                     this.saveGallery(gallery);
                 }
@@ -50,7 +53,10 @@ const PluginGallery = {
 
     verifySignature(gallery) {
         const dataToVerify = JSON.stringify(gallery, null, 2).replace(gallery.signature, '');
-        return SignatureVerifier.verify(kdbxweb.ByteUtils.stringToBytes(dataToVerify), gallery.signature)
+        return SignatureVerifier.verify(
+            kdbxweb.ByteUtils.stringToBytes(dataToVerify),
+            gallery.signature
+        )
             .then(isValid => {
                 if (isValid) {
                     return gallery;

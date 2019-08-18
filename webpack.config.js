@@ -83,18 +83,26 @@ function config(grunt, mode = 'production') {
                         replacements: [
                             {
                                 pattern: /@@VERSION/g,
-                                replacement: () => pkg.version + (grunt.option('beta') ? '-beta' : '')
+                                replacement: () =>
+                                    pkg.version + (grunt.option('beta') ? '-beta' : '')
                             },
-                            { pattern: /@@BETA/g, replacement: () => (grunt.option('beta') ? '1' : '') },
+                            {
+                                pattern: /@@BETA/g,
+                                replacement: () => (grunt.option('beta') ? '1' : '')
+                            },
                             { pattern: /@@DATE/g, replacement: () => dt },
                             {
                                 pattern: /@@COMMIT/g,
-                                replacement: () => grunt.config.get('gitinfo.local.branch.current.shortSHA')
+                                replacement: () =>
+                                    grunt.config.get('gitinfo.local.branch.current.shortSHA')
                             }
                         ]
                     })
                 },
-                { test: /baron(\.min)?\.js$/, loader: 'exports-loader?baron; delete window.baron;' },
+                {
+                    test: /baron(\.min)?\.js$/,
+                    loader: 'exports-loader?baron; delete window.baron;'
+                },
                 { test: /pikaday\.js$/, loader: 'uglify-loader' },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
                 {

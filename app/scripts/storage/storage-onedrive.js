@@ -43,7 +43,13 @@ const StorageOneDrive = StorageBase.extend({
                     const downloadUrl = response['@microsoft.graph.downloadUrl'];
                     let rev = response.eTag;
                     if (!downloadUrl || !response.eTag) {
-                        this.logger.debug('Load error', path, 'no download url', response, this.logger.ts(ts));
+                        this.logger.debug(
+                            'Load error',
+                            path,
+                            'no download url',
+                            response,
+                            this.logger.ts(ts)
+                        );
                         return callback && callback('no download url');
                     }
                     this._xhr({
@@ -233,7 +239,10 @@ const StorageOneDrive = StorageBase.extend({
     _getClientId: function() {
         let clientId = this.appSettings.get('onedriveClientId');
         if (!clientId) {
-            clientId = location.origin.indexOf('localhost') >= 0 ? OneDriveClientId.Local : OneDriveClientId.Production;
+            clientId =
+                location.origin.indexOf('localhost') >= 0
+                    ? OneDriveClientId.Local
+                    : OneDriveClientId.Production;
         }
         return clientId;
     },
@@ -254,7 +263,10 @@ const StorageOneDrive = StorageBase.extend({
             popupWindow.webContents.on('did-finish-load', e => {
                 const webContents = e.sender.webContents;
                 const url = webContents.getURL();
-                if (url && url.startsWith('https://login.microsoftonline.com/common/oauth2/v2.0/authorize')) {
+                if (
+                    url &&
+                    url.startsWith('https://login.microsoftonline.com/common/oauth2/v2.0/authorize')
+                ) {
                     // click the login button mentioned in #821
                     const script = `const selector = '[role="button"][aria-describedby="tileError loginHeader"]';
 if (document.querySelectorAll(selector).length === 1) document.querySelector(selector).click()`;

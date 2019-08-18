@@ -38,7 +38,10 @@ const TagView = Backbone.View.extend({
             return;
         }
         if (/[;,:]/.test(title)) {
-            Alerts.error({ header: Locale.tagBadName, body: Locale.tagBadNameBody.replace('{}', '`,`, `;`, `:`') });
+            Alerts.error({
+                header: Locale.tagBadName,
+                body: Locale.tagBadNameBody.replace('{}', '`,`, `;`, `:`')
+            });
             return;
         }
         if (this.appModel.tags.some(t => t.toLowerCase() === title.toLowerCase())) {

@@ -51,7 +51,11 @@ const SettingsFileView = Backbone.View.extend({
     appModel: null,
 
     initialize: function() {
-        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', this.deferRender);
+        this.listenTo(
+            this.model,
+            'change:syncing change:syncError change:syncDate',
+            this.deferRender
+        );
     },
 
     render: function() {
@@ -90,25 +94,34 @@ const SettingsFileView = Backbone.View.extend({
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
             backupEnabled: backup && backup.enabled,
             backupStorage: backup && backup.storage,
-            backupPath: (backup && backup.path) || DefaultBackupPath.replace('{name}', this.model.get('name')),
+            backupPath:
+                (backup && backup.path) ||
+                DefaultBackupPath.replace('{name}', this.model.get('name')),
             backupSchedule: backup ? backup.schedule : DefaultBackupSchedule,
             historyMaxItems: this.model.get('historyMaxItems'),
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
-            keyChangeForce: this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
+            keyChangeForce:
+                this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
             kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
             storageProviders: storageProviders,
             canBackup: canBackup
         });
         if (!this.model.get('created')) {
-            this.$el.find('.settings__file-master-pass-warning').toggle(this.model.get('passwordChanged'));
-            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChanged);
+            this.$el
+                .find('.settings__file-master-pass-warning')
+                .toggle(this.model.get('passwordChanged'));
+            this.$el
+                .find('#settings__file-master-pass-warning-text')
+                .text(Locale.setFilePassChanged);
         }
         this.renderKeyFileSelect();
     },
 
     kdfParametersToUi: function(kdfParameters) {
-        return kdfParameters ? _.extend({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) }) : null;
+        return kdfParameters
+            ? _.extend({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) })
+            : null;
     },
 
     renderKeyFileSelect: function() {
@@ -219,7 +232,8 @@ const SettingsFileView = Backbone.View.extend({
                                 if (err) {
                                     Alerts.error({
                                         header: Locale.setFileSaveError,
-                                        body: Locale.setFileSaveErrorBody + ' ' + path + ': \n' + err
+                                        body:
+                                            Locale.setFileSaveErrorBody + ' ' + path + ': \n' + err
                                     });
                                 }
                             });
@@ -299,12 +313,17 @@ const SettingsFileView = Backbone.View.extend({
                 }
                 const expName = this.model.get('name').toLowerCase();
                 const existingFile = _.find(files, file => {
-                    return !file.dir && UrlUtil.getDataFileName(file.name).toLowerCase() === expName;
+                    return (
+                        !file.dir && UrlUtil.getDataFileName(file.name).toLowerCase() === expName
+                    );
                 });
                 if (existingFile) {
                     Alerts.yesno({
                         header: Locale.setFileAlreadyExists,
-                        body: Locale.setFileAlreadyExistsBody.replace('{}', this.model.escape('name')),
+                        body: Locale.setFileAlreadyExistsBody.replace(
+                            '{}',
+                            this.model.escape('name')
+                        ),
                         success: () => {
                             this.model.set('syncing', true);
                             storage.remove(existingFile.path, err => {
@@ -404,7 +423,9 @@ const SettingsFileView = Backbone.View.extend({
             this.$el.find('.settings__file-master-pass-warning').hide();
         } else {
             this.$el.find('#settings__file-confirm-master-pass-group').show();
-            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
+            this.$el
+                .find('#settings__file-master-pass-warning-text')
+                .text(Locale.setFilePassChange);
             if (!this.model.get('created')) {
                 this.$el.find('.settings__file-master-pass-warning').show();
             }
@@ -437,11 +458,15 @@ const SettingsFileView = Backbone.View.extend({
         const masterPassword = this.$el.find('#settings__file-master-pass').val();
         const confirmPassword = e.target.value;
         if (masterPassword === confirmPassword) {
-            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChanged);
+            this.$el
+                .find('#settings__file-master-pass-warning-text')
+                .text(Locale.setFilePassChanged);
             this.$el.find('.settings__file-confirm-master-pass-warning').hide();
             this.model.setPassword(kdbxweb.ProtectedValue.fromString(confirmPassword));
         } else {
-            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
+            this.$el
+                .find('#settings__file-master-pass-warning-text')
+                .text(Locale.setFilePassChange);
             this.$el.find('.settings__file-confirm-master-pass-warning').show();
             this.model.resetPassword();
         }
@@ -550,7 +575,11 @@ const SettingsFileView = Backbone.View.extend({
                     }
                     Alerts.error({
                         title: title,
-                        body: description + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                        body:
+                            description +
+                            '<pre class="modal__pre">' +
+                            _.escape(err.toString()) +
+                            '</pre>'
                     });
                 }
             });

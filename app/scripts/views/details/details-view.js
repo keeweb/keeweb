@@ -74,22 +74,53 @@ const DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'set-locale', this.render);
         this.listenTo(OtpQrReader, 'qr-read', this.otpCodeRead);
         this.listenTo(OtpQrReader, 'enter-manually', this.otpEnterManually);
-        KeyHandler.onKey(Keys.DOM_VK_C, this.copyPasswordFromShortcut, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(
+            Keys.DOM_VK_C,
+            this.copyPasswordFromShortcut,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            false,
+            true
+        );
         KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserName, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrl, this, KeyHandler.SHORTCUT_ACTION);
         if (AutoType.enabled) {
             KeyHandler.onKey(Keys.DOM_VK_T, this.autoType, this, KeyHandler.SHORTCUT_ACTION);
         }
-        KeyHandler.onKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(
+            Keys.DOM_VK_DELETE,
+            this.deleteKeyPress,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            false,
+            true
+        );
+        KeyHandler.onKey(
+            Keys.DOM_VK_BACK_SPACE,
+            this.deleteKeyPress,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            false,
+            true
+        );
     },
 
     remove: function() {
         KeyHandler.offKey(Keys.DOM_VK_C, this.copyPassword, this);
         KeyHandler.offKey(Keys.DOM_VK_B, this.copyUserName, this);
         KeyHandler.offKey(Keys.DOM_VK_U, this.copyUrl, this);
-        KeyHandler.offKey(Keys.DOM_VK_DELETE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
-        KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.deleteKeyPress, this, KeyHandler.SHORTCUT_ACTION);
+        KeyHandler.offKey(
+            Keys.DOM_VK_DELETE,
+            this.deleteKeyPress,
+            this,
+            KeyHandler.SHORTCUT_ACTION
+        );
+        KeyHandler.offKey(
+            Keys.DOM_VK_BACK_SPACE,
+            this.deleteKeyPress,
+            this,
+            KeyHandler.SHORTCUT_ACTION
+        );
         this.removeFieldViews();
         Backbone.View.prototype.remove.call(this);
     },
@@ -321,7 +352,10 @@ const DetailsView = Backbone.View.extend({
             if (hideEmptyFields) {
                 const value = fieldView.model.value();
                 if (!value || value.length === 0 || value.byteLength === 0) {
-                    if (this.model.isJustCreated && ['$UserName', '$Password'].indexOf(fieldView.model.name) >= 0) {
+                    if (
+                        this.model.isJustCreated &&
+                        ['$UserName', '$Password'].indexOf(fieldView.model.name) >= 0
+                    ) {
                         return; // don't hide user for new records
                     }
                     fieldView.hide();
@@ -385,15 +419,35 @@ const DetailsView = Backbone.View.extend({
                             });
                         }
                     }, this);
-                    moreOptions.push({ value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField });
-                    moreOptions.push({ value: 'toggle-empty', icon: 'eye', text: Locale.detMenuShowEmpty });
+                    moreOptions.push({
+                        value: 'add-new',
+                        icon: 'plus',
+                        text: Locale.detMenuAddNewField
+                    });
+                    moreOptions.push({
+                        value: 'toggle-empty',
+                        icon: 'eye',
+                        text: Locale.detMenuShowEmpty
+                    });
                 } else {
-                    moreOptions.push({ value: 'add-new', icon: 'plus', text: Locale.detMenuAddNewField });
-                    moreOptions.push({ value: 'toggle-empty', icon: 'eye-slash', text: Locale.detMenuHideEmpty });
+                    moreOptions.push({
+                        value: 'add-new',
+                        icon: 'plus',
+                        text: Locale.detMenuAddNewField
+                    });
+                    moreOptions.push({
+                        value: 'toggle-empty',
+                        icon: 'eye-slash',
+                        text: Locale.detMenuHideEmpty
+                    });
                 }
                 moreOptions.push({ value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp });
                 if (AutoType.enabled) {
-                    moreOptions.push({ value: 'auto-type', icon: 'keyboard-o', text: Locale.detAutoTypeSettings });
+                    moreOptions.push({
+                        value: 'auto-type',
+                        icon: 'keyboard-o',
+                        text: Locale.detAutoTypeSettings
+                    });
                 }
                 moreOptions.push({ value: 'clone', icon: 'clone', text: Locale.detClone });
                 const rect = this.moreView.labelEl[0].getBoundingClientRect();
@@ -561,7 +615,8 @@ const DetailsView = Backbone.View.extend({
         }
         if (!window.getSelection().toString()) {
             const fieldValue = editView.value;
-            const fieldText = fieldValue && fieldValue.isProtected ? fieldValue.getText() : fieldValue;
+            const fieldText =
+                fieldValue && fieldValue.isProtected ? fieldValue.getText() : fieldValue;
             if (!fieldText) {
                 return;
             }
@@ -701,7 +756,10 @@ const DetailsView = Backbone.View.extend({
         e.preventDefault();
         e.stopPropagation();
         const dt = e.originalEvent.dataTransfer;
-        if (!dt.types || (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))) {
+        if (
+            !dt.types ||
+            (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))
+        ) {
             dt.dropEffect = 'none';
             return;
         }
@@ -896,7 +954,11 @@ const DetailsView = Backbone.View.extend({
     deleteFromTrash: function() {
         Alerts.yesno({
             header: Locale.detDelFromTrash,
-            body: Locale.detDelFromTrashBody + ' <p class="muted-color">' + Locale.detDelFromTrashBodyHint + '</p>',
+            body:
+                Locale.detDelFromTrashBody +
+                ' <p class="muted-color">' +
+                Locale.detDelFromTrashBodyHint +
+                '</p>',
             icon: 'minus-circle',
             success: () => {
                 this.model.deleteFromTrash();
@@ -913,8 +975,16 @@ const DetailsView = Backbone.View.extend({
         const canCopy = document.queryCommandSupported('copy');
         const options = [];
         if (canCopy) {
-            options.push({ value: 'det-copy-password', icon: 'clipboard', text: Locale.detMenuCopyPassword });
-            options.push({ value: 'det-copy-user', icon: 'clipboard', text: Locale.detMenuCopyUser });
+            options.push({
+                value: 'det-copy-password',
+                icon: 'clipboard',
+                text: Locale.detMenuCopyPassword
+            });
+            options.push({
+                value: 'det-copy-user',
+                icon: 'clipboard',
+                text: Locale.detMenuCopyUser
+            });
         }
         options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
         options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });

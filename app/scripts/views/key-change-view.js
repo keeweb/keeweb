@@ -33,10 +33,14 @@ const KeyChangeView = Backbone.View.extend({
             fileName: this.model.file.get('name'),
             keyFileName: this.model.file.get('keyFileName'),
             title: this.model.expired ? Locale.keyChangeTitleExpired : Locale.keyChangeTitleRemote,
-            message: this.model.expired ? Locale.keyChangeMessageExpired : Locale.keyChangeMessageRemote,
+            message: this.model.expired
+                ? Locale.keyChangeMessageExpired
+                : Locale.keyChangeMessageRemote,
             repeat: repeat
         });
-        this.$el.find('.key-change__keyfile-name').text(this.keyFileName ? ': ' + this.keyFileName : '');
+        this.$el
+            .find('.key-change__keyfile-name')
+            .text(this.keyFileName ? ': ' + this.keyFileName : '');
         this.inputEl = this.$el.find('.key-change__pass');
         this.passwordInput.reset();
         this.passwordInput.setElement(this.inputEl);

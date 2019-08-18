@@ -169,7 +169,12 @@ function addSyllable(wordObj) {
     } else {
         wordObj.lastSkippedPre = true;
     }
-    wordObj.word += getNextPhonetic(PHONETIC_MID, PHONETIC_MID_SIMPLE_LENGTH, wordObj, first && wordObj.lastSkippedPre);
+    wordObj.word += getNextPhonetic(
+        PHONETIC_MID,
+        PHONETIC_MID_SIMPLE_LENGTH,
+        wordObj,
+        first && wordObj.lastSkippedPre
+    );
     if (wordObj.lastSkippedPre || compound) {
         wordObj.word += getNextPhonetic(PHONETIC_POST, PHONETIC_POST_SIMPLE_LENGTH, wordObj);
         wordObj.lastSkippedPost = false;
@@ -219,8 +224,12 @@ function getOptions(overrides) {
     overrides = overrides || {};
     options.length = overrides.length || 16;
     options.seed = overrides.seed || Math.random();
-    options.phoneticSimplicity = overrides.phoneticSimplicity ? Math.max(overrides.phoneticSimplicity, 1) : 5;
-    options.compoundSimplicity = overrides.compoundSimplicity ? Math.max(overrides.compoundSimplicity, 1) : 5;
+    options.phoneticSimplicity = overrides.phoneticSimplicity
+        ? Math.max(overrides.phoneticSimplicity, 1)
+        : 5;
+    options.compoundSimplicity = overrides.compoundSimplicity
+        ? Math.max(overrides.compoundSimplicity, 1)
+        : 5;
     return options;
 }
 

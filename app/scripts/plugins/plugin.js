@@ -99,7 +99,12 @@ const Plugin = Backbone.Model.extend(
             if (manifest.manifestVersion !== '0.1.0') {
                 return 'Invalid manifest version ' + manifest.manifestVersion;
             }
-            if (!manifest.author || !manifest.author.email || !manifest.author.name || !manifest.author.url) {
+            if (
+                !manifest.author ||
+                !manifest.author.email ||
+                !manifest.author.name ||
+                !manifest.author.url
+            ) {
                 return 'Invalid plugin author';
             }
             if (!manifest.url) {
@@ -108,7 +113,10 @@ const Plugin = Backbone.Model.extend(
             if (!manifest.publicKey) {
                 return 'No plugin public key';
             }
-            if (!this.get('skipSignatureValidation') && manifest.publicKey !== SignatureVerifier.getPublicKey()) {
+            if (
+                !this.get('skipSignatureValidation') &&
+                manifest.publicKey !== SignatureVerifier.getPublicKey()
+            ) {
                 return 'Public key mismatch';
             }
             if (!manifest.resources || !Object.keys(manifest.resources).length) {
@@ -116,7 +124,9 @@ const Plugin = Backbone.Model.extend(
             }
             if (
                 manifest.resources.loc &&
-                (!manifest.locale || !manifest.locale.title || !/^[a-z]{2}(-[A-Z]{2})?$/.test(manifest.locale.name))
+                (!manifest.locale ||
+                    !manifest.locale.title ||
+                    !/^[a-z]{2}(-[A-Z]{2})?$/.test(manifest.locale.name))
             ) {
                 return 'Bad plugin locale';
             }
@@ -160,7 +170,9 @@ const Plugin = Backbone.Model.extend(
             );
             this.resources = {};
             const ts = this.logger.ts();
-            const results = Object.keys(manifest.resources).map(res => this.loadResource(res, local));
+            const results = Object.keys(manifest.resources).map(res =>
+                this.loadResource(res, local)
+            );
             return Promise.all(results)
                 .catch(() => {
                     throw 'Error loading plugin resources';
@@ -328,7 +340,10 @@ const Plugin = Backbone.Model.extend(
                 }
             }
             if (badSelectors.length) {
-                this.logger.error('Themes must not add rules outside theme namespace. Bad selectors:', badSelectors);
+                this.logger.error(
+                    'Themes must not add rules outside theme namespace. Bad selectors:',
+                    badSelectors
+                );
                 throw 'Invalid theme';
             }
         },
@@ -425,7 +440,8 @@ const Plugin = Backbone.Model.extend(
                     if (!settings) {
                         settings = {};
                     }
-                    settings[key.replace(settingPrefix, '')] = AppSettingsModel.instance.attributes[key];
+                    settings[key.replace(settingPrefix, '')] =
+                        AppSettingsModel.instance.attributes[key];
                 }
             }
             if (settings) {
@@ -461,7 +477,10 @@ const Plugin = Backbone.Model.extend(
 
         disable() {
             const manifest = this.get('manifest');
-            this.logger.info('Disabling plugin with resources', Object.keys(manifest.resources).join(', '));
+            this.logger.info(
+                'Disabling plugin with resources',
+                Object.keys(manifest.resources).join(', ')
+            );
             this.set('status', this.STATUS_UNINSTALLING);
             const ts = this.logger.ts();
             return Promise.resolve().then(() => {
@@ -491,15 +510,26 @@ const Plugin = Backbone.Model.extend(
                 const manifest = this.get('manifest');
                 const newManifest = newPlugin.get('manifest');
                 if (manifest.version === newManifest.version) {
-                    this.set({ status: prevStatus, updateCheckDate: Date.now(), updateError: null });
+                    this.set({
+                        status: prevStatus,
+                        updateCheckDate: Date.now(),
+                        updateError: null
+                    });
                     this.logger.info(`v${manifest.version} is the latest plugin version`);
                     return;
                 }
-                this.logger.info(`Updating plugin from v${manifest.version} to v${newManifest.version}`);
-                const error = newPlugin.validateManifest() || this.validateUpdatedManifest(newManifest);
+                this.logger.info(
+                    `Updating plugin from v${manifest.version} to v${newManifest.version}`
+                );
+                const error =
+                    newPlugin.validateManifest() || this.validateUpdatedManifest(newManifest);
                 if (error) {
                     this.logger.error('Manifest validation error', error);
-                    this.set({ status: prevStatus, updateCheckDate: Date.now(), updateError: error });
+                    this.set({
+                        status: prevStatus,
+                        updateCheckDate: Date.now(),
+                        updateError: error
+                    });
                     throw 'Plugin validation error: ' + error;
                 }
                 this.uninstallPluginCode();
@@ -527,7 +557,11 @@ const Plugin = Backbone.Model.extend(
                                 throw err;
                             });
                         } else {
-                            this.set({ status: prevStatus, updateCheckDate: Date.now(), updateError: err });
+                            this.set({
+                                status: prevStatus,
+                                updateCheckDate: Date.now(),
+                                updateError: err
+                            });
                             throw err;
                         }
                     });
@@ -555,7 +589,9 @@ const Plugin = Backbone.Model.extend(
                     if (settings instanceof Array) {
                         return settings.map(setting => {
                             setting = _.clone(setting);
-                            const value = AppSettingsModel.instance.get(settingsPrefix + setting.name);
+                            const value = AppSettingsModel.instance.get(
+                                settingsPrefix + setting.name
+                            );
                             if (value !== undefined) {
                                 setting.value = value;
                             }

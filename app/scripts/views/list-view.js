@@ -81,7 +81,11 @@ const ListView = Backbone.View.extend({
             const itemTemplate = this.getItemTemplate();
             const itemsTemplate = this.getItemsTemplate();
             const noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
-            const presenter = new EntryPresenter(this.getDescField(), noColor, this.model.activeEntryId);
+            const presenter = new EntryPresenter(
+                this.getDescField(),
+                noColor,
+                this.model.activeEntryId
+            );
             const columns = {};
             this.tableColumns.forEach(col => {
                 if (col.enabled) {
@@ -310,7 +314,9 @@ const ListView = Backbone.View.extend({
     },
 
     saveTableColumnsEnabled() {
-        const tableViewColumns = this.tableColumns.filter(column => column.enabled).map(column => column.name);
+        const tableViewColumns = this.tableColumns
+            .filter(column => column.enabled)
+            .map(column => column.name);
         AppSettingsModel.instance.set('tableViewColumns', tableViewColumns);
     }
 });

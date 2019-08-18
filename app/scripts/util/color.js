@@ -79,7 +79,9 @@ Color.prototype.toRgba = function() {
 };
 
 Color.prototype.toHsla = function() {
-    return `hsla(${Math.round(this.h * 100)},${Math.round(this.s * 100)}%,${Math.round(this.l * 100)}%,${this.a})`;
+    return `hsla(${Math.round(this.h * 100)},${Math.round(this.s * 100)}%,${Math.round(
+        this.l * 100
+    )}%,${this.a})`;
 };
 
 Color.prototype.distanceTo = function(color) {

@@ -24,7 +24,9 @@ module.exports = function(grunt) {
             })
             .catch(e => {
                 if (e === 'Cannot find PIN') {
-                    grunt.warn('Error signing app html. To build without sign, please launch grunt with --skip-sign.');
+                    grunt.warn(
+                        'Error signing app html. To build without sign, please launch grunt with --skip-sign.'
+                    );
                 } else {
                     grunt.warn('Sign error: ' + e);
                 }

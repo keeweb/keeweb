@@ -62,15 +62,17 @@ const GeneratorPresetsView = Backbone.View.extend({
         const rangeOverride = {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
         };
-        return ['Upper', 'Lower', 'Digits', 'Special', 'Brackets', 'High', 'Ambiguous'].map(name => {
-            const nameLower = name.toLowerCase();
-            return {
-                name: nameLower,
-                title: Locale['genPs' + name],
-                enabled: sel[nameLower],
-                sample: rangeOverride[nameLower] || PasswordGenerator.charRanges[nameLower]
-            };
-        });
+        return ['Upper', 'Lower', 'Digits', 'Special', 'Brackets', 'High', 'Ambiguous'].map(
+            name => {
+                const nameLower = name.toLowerCase();
+                return {
+                    name: nameLower,
+                    title: Locale['genPs' + name],
+                    enabled: sel[nameLower],
+                    sample: rangeOverride[nameLower] || PasswordGenerator.charRanges[nameLower]
+                };
+            }
+        );
     },
 
     getPreset: function(name) {

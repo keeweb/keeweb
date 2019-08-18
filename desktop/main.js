@@ -22,11 +22,15 @@ try {
     } catch (e) {}
     if (userPackageStat) {
         const packageStat = fs.statSync(appFilePath);
-        const userPackageStatTime = Math.max(userPackageStat.mtime.getTime(), userPackageStat.ctime.getTime());
+        const userPackageStatTime = Math.max(
+            userPackageStat.mtime.getTime(),
+            userPackageStat.ctime.getTime()
+        );
         const packageStatTime = Math.max(packageStat.mtime.getTime(), packageStat.ctime.getTime());
         if (userPackageStatTime > packageStatTime) {
             let versionLocal = require('./package.json').version;
-            let versionUserData = require(path.join(userDataAppArchivePath, 'package.json')).version;
+            let versionUserData = require(path.join(userDataAppArchivePath, 'package.json'))
+                .version;
             versionLocal = versionLocal.split('.');
             versionUserData = versionUserData.split('.');
             for (let i = 0; i < versionLocal.length; i++) {

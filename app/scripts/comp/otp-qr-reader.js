@@ -16,7 +16,10 @@ const OtpQrReader = {
     read: function() {
         let screenshotKey = FeatureDetector.screenshotToClipboardShortcut();
         if (screenshotKey) {
-            screenshotKey = Locale.detSetupOtpAlertBodyWith.replace('{}', '<code>' + screenshotKey + '</code>');
+            screenshotKey = Locale.detSetupOtpAlertBodyWith.replace(
+                '{}',
+                '<code>' + screenshotKey + '</code>'
+            );
         }
         const pasteKey = FeatureDetector.isMobile
             ? ''
@@ -95,7 +98,10 @@ const OtpQrReader = {
     },
 
     pasteEvent: function(e) {
-        const item = _.find(e.clipboardData.items, item => item.kind === 'file' && item.type.indexOf('image') !== -1);
+        const item = _.find(
+            e.clipboardData.items,
+            item => item.kind === 'file' && item.type.indexOf('image') !== -1
+        );
         if (!item) {
             logger.debug('Paste without file');
             return;
@@ -135,7 +141,10 @@ const OtpQrReader = {
                     Alerts.error({
                         header: Locale.detOtpQrWrong,
                         body:
-                            Locale.detOtpQrWrongBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                            Locale.detOtpQrWrongBody +
+                            '<pre class="modal__pre">' +
+                            _.escape(err.toString()) +
+                            '</pre>'
                     });
                 }
             } catch (e) {

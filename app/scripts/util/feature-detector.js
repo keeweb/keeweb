@@ -12,7 +12,9 @@ const FeatureDetector = {
     isPopup: !!(window.parent !== window.top || window.opener),
     isStandalone: !!navigator.standalone,
     isFrame: window.top !== window,
-    isSelfHosted: !isDesktop && !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
+    isSelfHosted:
+        !isDesktop &&
+        !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
     needFixClicks: /Edge\/14/.test(navigator.appVersion),
 
     actionShortcutSymbol: function(formatting) {
@@ -22,7 +24,11 @@ const FeatureDetector = {
         return this.isMac ? '⌥' : formatting ? '<span class="thin">alt + </span>' : 'alt-';
     },
     globalShortcutSymbol: function(formatting) {
-        return this.isMac ? '⌃⌥' : formatting ? '<span class="thin">shift+alt+</span>' : 'shift-alt-';
+        return this.isMac
+            ? '⌃⌥'
+            : formatting
+            ? '<span class="thin">shift+alt+</span>'
+            : 'shift-alt-';
     },
     globalShortcutIsLarge: function() {
         return !this.isMac;

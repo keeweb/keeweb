@@ -71,8 +71,14 @@ const FileModel = Backbone.Model.extend({
                     callback();
                 })
                 .catch(err => {
-                    if (err.code === kdbxweb.Consts.ErrorCodes.InvalidKey && password && !password.byteLength) {
-                        logger.info('Error opening file with empty password, try to open with null password');
+                    if (
+                        err.code === kdbxweb.Consts.ErrorCodes.InvalidKey &&
+                        password &&
+                        !password.byteLength
+                    ) {
+                        logger.info(
+                            'Error opening file with empty password, try to open with null password'
+                        );
                         return this.open(null, fileData, keyFileData, callback);
                     }
                     logger.error('Error opening file', err.code, err.message, err);
@@ -139,7 +145,9 @@ const FileModel = Backbone.Model.extend({
     openDemo: function(callback) {
         const password = kdbxweb.ProtectedValue.fromString('demo');
         const credentials = new kdbxweb.Credentials(password);
-        const demoFile = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(demoFileData));
+        const demoFile = kdbxweb.ByteUtils.arrayToBuffer(
+            kdbxweb.ByteUtils.base64ToBytes(demoFileData)
+        );
         kdbxweb.Kdbx.load(demoFile, credentials).then(db => {
             this.db = db;
             this.set('name', 'Demo');
@@ -334,7 +342,9 @@ const FileModel = Backbone.Model.extend({
     forEachEntry: function(filter, callback) {
         let top = this;
         if (filter.trash) {
-            top = this.getGroup(this.db.meta.recycleBinUuid ? this.subId(this.db.meta.recycleBinUuid.id) : null);
+            top = this.getGroup(
+                this.db.meta.recycleBinUuid ? this.subId(this.db.meta.recycleBinUuid.id) : null
+            );
         } else if (filter.group) {
             top = this.getGroup(filter.group);
         }
@@ -359,11 +369,15 @@ const FileModel = Backbone.Model.extend({
     },
 
     getTrashGroup: function() {
-        return this.db.meta.recycleBinEnabled ? this.getGroup(this.subId(this.db.meta.recycleBinUuid.id)) : null;
+        return this.db.meta.recycleBinEnabled
+            ? this.getGroup(this.subId(this.db.meta.recycleBinUuid.id))
+            : null;
     },
 
     getEntryTemplatesGroup: function() {
-        return this.db.meta.entryTemplatesGroup ? this.getGroup(this.subId(this.db.meta.entryTemplatesGroup.id)) : null;
+        return this.db.meta.entryTemplatesGroup
+            ? this.getGroup(this.subId(this.db.meta.entryTemplatesGroup.id))
+            : null;
     },
 
     createEntryTemplatesGroup: function() {
@@ -618,7 +632,9 @@ const FileModel = Backbone.Model.extend({
 
     addCustomIcon: function(iconData) {
         const uuid = kdbxweb.KdbxUuid.random();
-        this.db.meta.customIcons[uuid] = kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData));
+        this.db.meta.customIcons[uuid] = kdbxweb.ByteUtils.arrayToBuffer(
+            kdbxweb.ByteUtils.base64ToBytes(iconData)
+        );
         return uuid.toString();
     },
 

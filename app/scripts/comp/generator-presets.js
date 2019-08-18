@@ -3,13 +3,26 @@ const Locale = require('../util/locale');
 
 const GeneratorPresets = {
     get defaultPreset() {
-        return { name: 'Default', title: Locale.genPresetDefault, length: 16, upper: true, lower: true, digits: true };
+        return {
+            name: 'Default',
+            title: Locale.genPresetDefault,
+            length: 16,
+            upper: true,
+            lower: true,
+            digits: true
+        };
     },
 
     get builtIn() {
         return [
             this.defaultPreset,
-            { name: 'Pronounceable', title: Locale.genPresetPronounceable, length: 10, lower: true, upper: true },
+            {
+                name: 'Pronounceable',
+                title: Locale.genPresetPronounceable,
+                length: 10,
+                lower: true,
+                upper: true
+            },
             {
                 name: 'Med',
                 title: Locale.genPresetMed,
@@ -21,11 +34,37 @@ const GeneratorPresets = {
                 brackets: true,
                 ambiguous: true
             },
-            { name: 'Long', title: Locale.genPresetLong, length: 32, upper: true, lower: true, digits: true },
+            {
+                name: 'Long',
+                title: Locale.genPresetLong,
+                length: 32,
+                upper: true,
+                lower: true,
+                digits: true
+            },
             { name: 'Pin4', title: Locale.genPresetPin4, length: 4, digits: true },
-            { name: 'Mac', title: Locale.genPresetMac, length: 17, upper: true, digits: true, special: true },
-            { name: 'Hash128', title: Locale.genPresetHash128, length: 32, lower: true, digits: true },
-            { name: 'Hash256', title: Locale.genPresetHash256, length: 64, lower: true, digits: true }
+            {
+                name: 'Mac',
+                title: Locale.genPresetMac,
+                length: 17,
+                upper: true,
+                digits: true,
+                special: true
+            },
+            {
+                name: 'Hash128',
+                title: Locale.genPresetHash128,
+                length: 32,
+                lower: true,
+                digits: true
+            },
+            {
+                name: 'Hash256',
+                title: Locale.genPresetHash256,
+                length: 64,
+                lower: true,
+                digits: true
+            }
         ];
     },
 

@@ -140,7 +140,8 @@ const FieldView = Backbone.View.extend({
         } else {
             textEqual = _.isEqual(this.value, newVal);
         }
-        const protectedEqual = (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
+        const protectedEqual =
+            (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
         const nameChanged = extra && extra.newField;
         let arg;
         if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {

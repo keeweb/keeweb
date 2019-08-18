@@ -19,7 +19,14 @@ const FooterView = Backbone.View.extend({
     initialize: function() {
         this.views = {};
 
-        KeyHandler.onKey(Keys.DOM_VK_L, this.lockWorkspace, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(
+            Keys.DOM_VK_L,
+            this.lockWorkspace,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            false,
+            true
+        );
         KeyHandler.onKey(Keys.DOM_VK_G, this.genPass, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_O, this.openFile, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_S, this.saveAll, this, KeyHandler.SHORTCUT_ACTION);
@@ -35,7 +42,8 @@ const FooterView = Backbone.View.extend({
         this.renderTemplate(
             {
                 files: this.model.files,
-                updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
+                updateAvailable:
+                    ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
             },
             { plain: true }
         );
@@ -67,7 +75,9 @@ const FooterView = Backbone.View.extend({
         const bodyRect = document.body.getBoundingClientRect();
         const right = bodyRect.right - rect.right;
         const bottom = bodyRect.bottom - rect.top;
-        const generator = new GeneratorView({ model: { copy: true, pos: { right: right, bottom: bottom } } }).render();
+        const generator = new GeneratorView({
+            model: { copy: true, pos: { right: right, bottom: bottom } }
+        }).render();
         generator.once('remove', () => {
             delete this.views.gen;
         });
