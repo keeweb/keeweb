@@ -511,8 +511,7 @@ module.exports = function(grunt) {
                         'tmp/desktop/KeeWeb-win32-x64/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
                         'tmp/desktop/KeeWeb-win32-x64/libGLESv2.dll':
-                            'ANGLE libGLESv2 Dynamic Link Library',
-                        'tmp/desktop/KeeWeb-win32-x64/osmesa.dll': ''
+                            'ANGLE libGLESv2 Dynamic Link Library'
                     }
                 }
             },
@@ -524,8 +523,7 @@ module.exports = function(grunt) {
                         'tmp/desktop/KeeWeb-win32-ia32/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
                         'tmp/desktop/KeeWeb-win32-ia32/libGLESv2.dll':
-                            'ANGLE libGLESv2 Dynamic Link Library',
-                        'tmp/desktop/KeeWeb-win32-ia32/osmesa.dll': ''
+                            'ANGLE libGLESv2 Dynamic Link Library'
                     }
                 }
             },
