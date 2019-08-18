@@ -5,11 +5,11 @@ const Logger = require('../util/logger');
 const logger = new Logger('settings');
 
 const SettingsStore = {
-    fileName: function(key) {
+    fileName(key) {
         return `${key}.json`;
     },
 
-    load: function(key) {
+    load(key) {
         return new Promise(resolve => {
             if (Launcher) {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));
@@ -29,7 +29,7 @@ const SettingsStore = {
         });
     },
 
-    parseData: function(key, data, resolve) {
+    parseData(key, data, resolve) {
         try {
             if (data) {
                 return resolve(JSON.parse(data));
@@ -42,7 +42,7 @@ const SettingsStore = {
         }
     },
 
-    save: function(key, data) {
+    save(key, data) {
         return new Promise(resolve => {
             if (Launcher) {
                 const settingsFile = Launcher.getUserDataPath(this.fileName(key));

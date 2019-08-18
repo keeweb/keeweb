@@ -9,7 +9,7 @@ const EntryPresenter = function(descField, noColor, activeEntryId) {
 };
 
 EntryPresenter.prototype = {
-    present: function(item) {
+    present(item) {
         if (item.entry) {
             this.entry = item;
         } else {

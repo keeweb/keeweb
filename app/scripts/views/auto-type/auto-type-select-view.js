@@ -95,11 +95,11 @@ const AutoTypePopupView = Backbone.View.extend({
         });
         this.renderTemplate({
             filterText: this.model.filter.text,
-            topMessage: topMessage,
+            topMessage,
             selectionHintDefault: Locale.autoTypeSelectionHint,
             selectionHintAction: Locale.autoTypeSelectionHintAction,
             selectionHintOpt: Locale.autoTypeSelectionHintOpt,
-            itemsHtml: itemsHtml,
+            itemsHtml,
             actionSymbol: FeatureDetector.actionShortcutSymbol(true),
             altSymbol: FeatureDetector.altShortcutSymbol(true),
             keyEnter: Locale.keyEnter
@@ -115,7 +115,7 @@ const AutoTypePopupView = Backbone.View.extend({
 
     remove() {
         this.removeKeys();
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
     cancelAndClose() {
@@ -129,7 +129,7 @@ const AutoTypePopupView = Backbone.View.extend({
         }
         this.trigger('result', {
             entry: this.result,
-            sequenceType: sequenceType
+            sequenceType
         });
     },
 

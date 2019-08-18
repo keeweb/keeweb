@@ -19,11 +19,11 @@ const StorageGDrive = StorageBase.extend({
     _baseUrl: 'https://www.googleapis.com/drive/v3',
     _baseUrlUpload: 'https://www.googleapis.com/upload/drive/v3',
 
-    getPathForName: function(fileName) {
+    getPathForName(fileName) {
         return NewFileIdPrefix + fileName;
     },
 
-    load: function(path, opts, callback) {
+    load(path, opts, callback) {
         this.stat(path, opts, (err, stat) => {
             if (err) {
                 return callback && callback(err);
@@ -36,7 +36,7 @@ const StorageGDrive = StorageBase.extend({
                     .replace('{id}', path)
                     .replace('{rev}', stat.rev);
             this._xhr({
-                url: url,
+                url,
                 responseType: 'arraybuffer',
                 success: response => {
                     this.logger.debug('Loaded', path, stat.rev, this.logger.ts(ts));
@@ -50,7 +50,7 @@ const StorageGDrive = StorageBase.extend({
         });
     },
 
-    stat: function(path, opts, callback) {
+    stat(path, opts, callback) {
         if (path.lastIndexOf(NewFileIdPrefix, 0) === 0) {
             return callback && callback({ notFound: true });
         }
@@ -62,12 +62,12 @@ const StorageGDrive = StorageBase.extend({
             const ts = this.logger.ts();
             const url = this._baseUrl + '/files/{id}?fields=headRevisionId'.replace('{id}', path);
             this._xhr({
-                url: url,
+                url,
                 responseType: 'json',
                 success: response => {
                     const rev = response.headRevisionId;
                     this.logger.debug('Stated', path, rev, this.logger.ts(ts));
-                    return callback && callback(null, { rev: rev });
+                    return callback && callback(null, { rev });
                 },
                 error: err => {
                     this.logger.error('Stat error', this.logger.ts(ts), err);
@@ -77,7 +77,7 @@ const StorageGDrive = StorageBase.extend({
         });
     },
 
-    save: function(path, opts, data, callback, rev) {
+    save(path, opts, data, callback, rev) {
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
@@ -131,10 +131,10 @@ const StorageGDrive = StorageBase.extend({
                     data = new Blob([data], { type: 'application/octet-stream' });
                 }
                 this._xhr({
-                    url: url,
+                    url,
                     method: isNew ? 'POST' : 'PATCH',
                     responseType: 'json',
-                    data: data,
+                    data,
                     success: response => {
                         this.logger.debug('Saved', path, this.logger.ts(ts));
                         const newRev = response.headRevisionId;
@@ -155,7 +155,7 @@ const StorageGDrive = StorageBase.extend({
         });
     },
 
-    list: function(dir, callback) {
+    list(dir, callback) {
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
@@ -178,7 +178,7 @@ const StorageGDrive = StorageBase.extend({
                     .replace('{q}', encodeURIComponent(query));
             const ts = this.logger.ts();
             this._xhr({
-                url: url,
+                url,
                 responseType: 'json',
                 success: response => {
                     if (!response) {
@@ -210,12 +210,12 @@ const StorageGDrive = StorageBase.extend({
         });
     },
 
-    remove: function(path, callback) {
+    remove(path, callback) {
         this.logger.debug('Remove', path);
         const ts = this.logger.ts();
         const url = this._baseUrl + '/files/{id}'.replace('{id}', path);
         this._xhr({
-            url: url,
+            url,
             method: 'DELETE',
             responseType: 'json',
             statuses: [200, 204],
@@ -230,14 +230,14 @@ const StorageGDrive = StorageBase.extend({
         });
     },
 
-    setEnabled: function(enabled) {
+    setEnabled(enabled) {
         if (!enabled) {
             this._oauthRevokeToken('https://accounts.google.com/o/oauth2/revoke?token={token}');
         }
         StorageBase.prototype.setEnabled.call(this, enabled);
     },
 
-    _getOAuthConfig: function() {
+    _getOAuthConfig() {
         let clientId = this.appSettings.get('gdriveClientId');
         if (!clientId) {
             clientId =
@@ -248,7 +248,7 @@ const StorageGDrive = StorageBase.extend({
         return {
             scope: 'https://www.googleapis.com/auth/drive',
             url: 'https://accounts.google.com/o/oauth2/v2/auth',
-            clientId: clientId,
+            clientId,
             width: 600,
             height: 400
         };

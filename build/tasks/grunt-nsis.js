@@ -24,7 +24,7 @@ module.exports = function(grunt) {
         grunt.util.spawn(
             {
                 cmd: executable,
-                args: args,
+                args,
                 opts: { stdio: 'inherit' }
             },
             (error, result, code) => {

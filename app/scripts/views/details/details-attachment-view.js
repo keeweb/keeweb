@@ -6,14 +6,14 @@ const DetailsAttachmentView = Backbone.View.extend({
 
     events: {},
 
-    render: function(complete) {
+    render(complete) {
         this.renderTemplate({}, true);
         const shortcut = this.$el.find('.details__attachment-preview-download-text-shortcut');
         shortcut.html(FeatureDetector.actionShortcutSymbol(false));
         const blob = new Blob([this.model.getBinary()], { type: this.model.mimeType });
         const dataEl = this.$el.find('.details__attachment-preview-data');
         switch ((this.model.mimeType || '').split('/')[0]) {
-            case 'text':
+            case 'text': {
                 const reader = new FileReader();
                 reader.addEventListener('loadend', () => {
                     $('<pre/>')
@@ -23,6 +23,7 @@ const DetailsAttachmentView = Backbone.View.extend({
                 });
                 reader.readAsText(blob);
                 return this;
+            }
             case 'image':
                 $('<img/>')
                     .attr('src', URL.createObjectURL(blob))

@@ -21,11 +21,11 @@ const KeyChangeView = Backbone.View.extend({
     passwordRepeatInput: null,
     inputEl: null,
 
-    initialize: function() {
+    initialize() {
         this.passwordInput = new SecureInput();
     },
 
-    render: function() {
+    render() {
         this.keyFileName = this.model.file.get('keyFileName') || null;
         this.keyFileData = null;
         const repeat = this.model.expired;
@@ -36,7 +36,7 @@ const KeyChangeView = Backbone.View.extend({
             message: this.model.expired
                 ? Locale.keyChangeMessageExpired
                 : Locale.keyChangeMessageRemote,
-            repeat: repeat
+            repeat
         });
         this.$el
             .find('.key-change__keyfile-name')
@@ -52,18 +52,18 @@ const KeyChangeView = Backbone.View.extend({
         }
     },
 
-    remove: function() {
-        Backbone.View.prototype.remove.apply(this, arguments);
+    remove() {
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    inputKeydown: function(e) {
+    inputKeydown(e) {
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             this.accept();
         }
     },
 
-    keyFileClicked: function() {
+    keyFileClicked() {
         if (this.keyFileName) {
             this.keyFileName = null;
             this.keyFile = null;
@@ -76,7 +76,7 @@ const KeyChangeView = Backbone.View.extend({
         this.inputEl.focus();
     },
 
-    keyFileSelected: function(e) {
+    keyFileSelected(e) {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -95,7 +95,7 @@ const KeyChangeView = Backbone.View.extend({
         this.inputEl.focus();
     },
 
-    accept: function() {
+    accept() {
         if (!this.passwordInput.value.byteLength) {
             this.passwordInput.el.focus();
             this.passwordRepeatInput.el.addClass('input--error');
@@ -121,7 +121,7 @@ const KeyChangeView = Backbone.View.extend({
         });
     },
 
-    cancel: function() {
+    cancel() {
         this.trigger('cancel');
     }
 });

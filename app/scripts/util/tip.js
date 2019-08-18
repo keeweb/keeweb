@@ -73,7 +73,7 @@ Tip.prototype.show = function() {
             left = rect.right + offset;
             break;
     }
-    tipEl.css({ top: top, left: left });
+    tipEl.css({ top, left });
 };
 
 Tip.prototype.hide = function() {

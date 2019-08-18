@@ -15,9 +15,9 @@ const UpdateModel = Backbone.Model.extend({
         updateManual: false
     },
 
-    initialize: function() {},
+    initialize() {},
 
-    load: function() {
+    load() {
         return SettingsStore.load('update-info').then(data => {
             if (data) {
                 try {
@@ -34,7 +34,7 @@ const UpdateModel = Backbone.Model.extend({
         });
     },
 
-    save: function() {
+    save() {
         const attr = _.clone(this.attributes);
         Object.keys(attr).forEach(key => {
             if (key.lastIndexOf('update', 0) === 0) {

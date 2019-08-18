@@ -5,7 +5,7 @@ const baron = require('baron');
 const isEnabled = !FeatureDetector.isMobile;
 
 const Scrollable = {
-    createScroll: function(opts) {
+    createScroll(opts) {
         opts.$ = Backbone.$;
         // opts.cssGuru = true;
         if (isEnabled) {
@@ -19,14 +19,14 @@ const Scrollable = {
         this.scrollerBarWrapper = this.$el.find('.scroller__bar-wrapper');
     },
 
-    removeScroll: function() {
+    removeScroll() {
         if (this.scroll) {
             this.scroll.dispose();
             this.scroll = null;
         }
     },
 
-    pageResized: function() {
+    pageResized() {
         // TODO: check size on window resize
         // if (this.checkSize && (!e || e.source === 'window')) {
         //     this.checkSize();
@@ -44,7 +44,7 @@ const Scrollable = {
         }
     },
 
-    initScroll: function() {
+    initScroll() {
         if (isEnabled) {
             this.listenTo(Backbone, 'page-geometry', this.pageResized);
         }

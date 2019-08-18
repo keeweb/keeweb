@@ -12,7 +12,7 @@ const ModalView = Backbone.View.extend({
         'click': 'bodyClick'
     },
 
-    initialize: function() {
+    initialize() {
         if (typeof this.model.esc === 'string') {
             KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         }
@@ -22,17 +22,17 @@ const ModalView = Backbone.View.extend({
         KeyHandler.setModal('alert');
     },
 
-    remove: function() {
+    remove() {
         KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
         KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
         KeyHandler.setModal(null);
         if (this.model.view) {
             this.model.view.remove();
         }
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    render: function() {
+    render() {
         const parent = this.$el;
         this.setElement($(this.template(this.model)));
         parent.append(this.$el);
@@ -49,34 +49,34 @@ const ModalView = Backbone.View.extend({
         return this;
     },
 
-    change: function(config) {
+    change(config) {
         if (config.header) {
             this.$el.find('.modal__header').html(config.header);
         }
     },
 
-    buttonClick: function(e) {
+    buttonClick(e) {
         const result = $(e.target).data('result');
         this.closeWithResult(result);
     },
 
-    bodyClick: function() {
+    bodyClick() {
         if (typeof this.model.click === 'string') {
             this.closeWithResult(this.model.click);
         }
     },
 
-    escPressed: function() {
+    escPressed() {
         this.closeWithResult(this.model.esc);
     },
 
-    enterPressed: function(e) {
+    enterPressed(e) {
         e.stopImmediatePropagation();
         e.preventDefault();
         this.closeWithResult(this.model.enter);
     },
 
-    closeWithResult: function(result) {
+    closeWithResult(result) {
         const checked = this.model.checkbox
             ? this.$el.find('#modal__check').is(':checked')
             : undefined;
@@ -86,7 +86,7 @@ const ModalView = Backbone.View.extend({
         setTimeout(this.remove.bind(this), 100);
     },
 
-    closeImmediate: function() {
+    closeImmediate() {
         this.trigger('result', undefined);
         this.undelegateEvents();
         this.remove();

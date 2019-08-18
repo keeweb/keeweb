@@ -20,7 +20,7 @@ const Updater = {
     updateCheckDate: new Date(0),
     enabled: Launcher && Launcher.updaterEnabled(),
 
-    getAutoUpdateType: function() {
+    getAutoUpdateType() {
         if (!this.enabled) {
             return false;
         }
@@ -31,14 +31,14 @@ const Updater = {
         return autoUpdate;
     },
 
-    updateInProgress: function() {
+    updateInProgress() {
         return (
             UpdateModel.instance.get('status') === 'checking' ||
             ['downloading', 'extracting'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
         );
     },
 
-    init: function() {
+    init() {
         this.scheduleNextCheck();
         if (!Launcher && window.applicationCache) {
             window.applicationCache.addEventListener(
@@ -49,7 +49,7 @@ const Updater = {
         }
     },
 
-    scheduleNextCheck: function() {
+    scheduleNextCheck() {
         if (this.nextCheckTimeout) {
             clearTimeout(this.nextCheckTimeout);
             this.nextCheckTimeout = null;
@@ -69,7 +69,7 @@ const Updater = {
         logger.info('Next update check will happen in ' + Math.round(timeDiff / 1000) + 's');
     },
 
-    check: function(startedByUser) {
+    check(startedByUser) {
         if (!this.enabled || this.updateInProgress()) {
             return;
         }
@@ -152,7 +152,7 @@ const Updater = {
         });
     },
 
-    canAutoUpdate: function() {
+    canAutoUpdate() {
         const minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
         if (minLauncherVersion) {
             const cmp = SemVer.compareVersions(Launcher.version, minLauncherVersion);
@@ -164,7 +164,7 @@ const Updater = {
         return true;
     },
 
-    update: function(startedByUser, successCallback) {
+    update(startedByUser, successCallback) {
         const ver = UpdateModel.instance.get('lastVersion');
         if (!this.enabled) {
             logger.info('Updater is disabled');
@@ -201,7 +201,7 @@ const Updater = {
                     }
                 });
             },
-            error: function(e) {
+            error(e) {
                 logger.error('Error downloading update', e);
                 UpdateModel.instance.set({
                     updateStatus: 'error',
@@ -211,7 +211,7 @@ const Updater = {
         });
     },
 
-    extractAppUpdate: function(updateFile, cb) {
+    extractAppUpdate(updateFile, cb) {
         const expectedFiles = this.UpdateCheckFiles;
         const appPath = Launcher.getUserDataPath();
         const StreamZip = Launcher.req('node-stream-zip');
@@ -241,7 +241,7 @@ const Updater = {
         });
     },
 
-    validateArchiveSignature: function(archivePath, zip) {
+    validateArchiveSignature(archivePath, zip) {
         if (!zip.comment) {
             return 'No comment in ZIP';
         }
@@ -263,7 +263,7 @@ const Updater = {
         return null;
     },
 
-    checkAppCacheUpdateReady: function() {
+    checkAppCacheUpdateReady() {
         if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
             try {
                 window.applicationCache.swapCache();

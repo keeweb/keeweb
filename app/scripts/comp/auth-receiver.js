@@ -2,7 +2,7 @@ const FeatureDetector = require('../util/feature-detector');
 const Storage = require('../storage');
 
 const AuthReceiver = {
-    receive: function() {
+    receive() {
         if (!FeatureDetector.isPopup && !FeatureDetector.isStandalone) {
             return false;
         }
@@ -24,7 +24,7 @@ const AuthReceiver = {
         }
     },
 
-    urlArgsToMessage: function(url) {
+    urlArgsToMessage(url) {
         const message = {};
         url.split(/[?#&]/g).forEach(part => {
             const parts = part.split('=');

@@ -24,11 +24,11 @@ const GeneratorPresetsView = Backbone.View.extend({
 
     reservedTitles: [Locale.genPresetDerived],
 
-    initialize: function() {
+    initialize() {
         this.appModel = this.model;
     },
 
-    render: function() {
+    render() {
         this.presets = GeneratorPresets.all;
         if (!this.selected || !this.presets.some(p => p.name === this.selected)) {
             this.selected = (this.presets.filter(p => p.default)[0] || this.presets[0]).name;
@@ -50,14 +50,14 @@ const GeneratorPresetsView = Backbone.View.extend({
         return this;
     },
 
-    renderExample: function() {
+    renderExample() {
         const selectedPreset = this.getPreset(this.selected);
         const example = PasswordGenerator.generate(selectedPreset);
         this.$el.find('.gen-ps__example').text(example);
         this.pageResized();
     },
 
-    getSelectedRanges: function() {
+    getSelectedRanges() {
         const sel = this.getPreset(this.selected);
         const rangeOverride = {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
@@ -75,20 +75,20 @@ const GeneratorPresetsView = Backbone.View.extend({
         );
     },
 
-    getPreset: function(name) {
+    getPreset(name) {
         return this.presets.filter(p => p.name === name)[0];
     },
 
-    returnToApp: function() {
+    returnToApp() {
         Backbone.trigger('edit-generator-presets');
     },
 
-    changePreset: function(e) {
+    changePreset(e) {
         this.selected = e.target.value;
         this.render();
     },
 
-    createPreset: function() {
+    createPreset() {
         let name;
         let title;
         for (let i = 1; ; i++) {
@@ -118,12 +118,12 @@ const GeneratorPresetsView = Backbone.View.extend({
         this.render();
     },
 
-    deletePreset: function() {
+    deletePreset() {
         GeneratorPresets.remove(this.selected);
         this.render();
     },
 
-    changeTitle: function(e) {
+    changeTitle(e) {
         const title = $.trim(e.target.value);
         if (title && title !== this.getPreset(this.selected).title) {
             let duplicate = this.presets.some(p => p.title.toLowerCase() === title.toLowerCase());
@@ -141,17 +141,17 @@ const GeneratorPresetsView = Backbone.View.extend({
         }
     },
 
-    changeEnabled: function(e) {
+    changeEnabled(e) {
         const enabled = e.target.checked;
         GeneratorPresets.setDisabled(this.selected, !enabled);
     },
 
-    changeDefault: function(e) {
+    changeDefault(e) {
         const isDefault = e.target.checked;
         GeneratorPresets.setDefault(isDefault ? this.selected : null);
     },
 
-    changeLength: function(e) {
+    changeLength(e) {
         const length = +e.target.value;
         if (length > 0) {
             GeneratorPresets.setPreset(this.selected, { length });
@@ -163,7 +163,7 @@ const GeneratorPresetsView = Backbone.View.extend({
         this.renderExample();
     },
 
-    changeRange: function(e) {
+    changeRange(e) {
         const enabled = e.target.checked;
         const range = e.target.dataset.range;
         GeneratorPresets.setPreset(this.selected, { [range]: enabled });
@@ -171,10 +171,10 @@ const GeneratorPresetsView = Backbone.View.extend({
         this.renderExample();
     },
 
-    changeInclude: function(e) {
+    changeInclude(e) {
         const include = e.target.value;
         if (include !== this.getPreset(this.selected).include) {
-            GeneratorPresets.setPreset(this.selected, { include: include });
+            GeneratorPresets.setPreset(this.selected, { include });
         }
         this.presets = GeneratorPresets.all;
         this.renderExample();

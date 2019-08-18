@@ -119,8 +119,8 @@ AutoTypeParser.prototype.addOp = function(op, sep, arg) {
         type: 'op',
         value: op,
         mod: this.resetModifiers(),
-        sep: sep,
-        arg: arg
+        sep,
+        arg
     });
 };
 

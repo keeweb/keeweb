@@ -73,7 +73,7 @@ SecureInput.prototype._isSpecialChar = function(ch) {
 
 Object.defineProperty(SecureInput.prototype, 'value', {
     enumerable: true,
-    get: function() {
+    get() {
         const pseudoValue = this.pseudoValue;
         const salt = this.salt;
         const len = pseudoValue.length;

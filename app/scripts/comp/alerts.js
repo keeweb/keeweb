@@ -31,7 +31,7 @@ const Alerts = {
         }
     },
 
-    alert: function(config) {
+    alert(config) {
         if (config.skipIfAlertDisplayed && Alerts.alertDisplayed) {
             return null;
         }
@@ -53,7 +53,7 @@ const Alerts = {
         return view;
     },
 
-    notImplemented: function() {
+    notImplemented() {
         this.alert({
             header: Locale.notImplemented,
             body: '',
@@ -65,7 +65,7 @@ const Alerts = {
         });
     },
 
-    info: function(config) {
+    info(config) {
         this.alert(
             _.extend(
                 {
@@ -82,7 +82,7 @@ const Alerts = {
         );
     },
 
-    error: function(config) {
+    error(config) {
         this.alert(
             _.extend(
                 {
@@ -99,7 +99,7 @@ const Alerts = {
         );
     },
 
-    yesno: function(config) {
+    yesno(config) {
         this.alert(
             _.extend(
                 {

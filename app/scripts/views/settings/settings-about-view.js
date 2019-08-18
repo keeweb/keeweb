@@ -5,7 +5,7 @@ const Links = require('../../const/links');
 const SettingsAboutView = Backbone.View.extend({
     template: require('templates/settings/settings-about.hbs'),
 
-    render: function() {
+    render() {
         this.renderTemplate({
             version: RuntimeInfo.version,
             licenseLink: Links.License,

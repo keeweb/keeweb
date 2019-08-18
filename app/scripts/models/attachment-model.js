@@ -3,9 +3,9 @@ const Backbone = require('backbone');
 const AttachmentModel = Backbone.Model.extend({
     defaults: {},
 
-    initialize: function() {},
+    initialize() {},
 
-    setAttachment: function(att) {
+    setAttachment(att) {
         this.title = att.title;
         this.data = att.data;
         this.ext = this._getExtension(this.title);
@@ -13,12 +13,12 @@ const AttachmentModel = Backbone.Model.extend({
         this.mimeType = this._getMimeType(this.ext);
     },
 
-    _getExtension: function(fileName) {
+    _getExtension(fileName) {
         const ext = fileName ? fileName.split('.').pop() : undefined;
         return ext ? ext.toLowerCase() : undefined;
     },
 
-    _getIcon: function(ext) {
+    _getIcon(ext) {
         switch (ext) {
             case 'txt':
             case 'log':
@@ -102,7 +102,7 @@ const AttachmentModel = Backbone.Model.extend({
         return 'file-o';
     },
 
-    _getMimeType: function(ext) {
+    _getMimeType(ext) {
         switch (ext) {
             case 'txt':
             case 'log':
@@ -145,7 +145,7 @@ const AttachmentModel = Backbone.Model.extend({
         }
     },
 
-    getBinary: function() {
+    getBinary() {
         let data = this.data;
         if (data && data.ref) {
             data = data.value;

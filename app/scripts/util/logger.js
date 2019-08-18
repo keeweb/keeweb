@@ -28,35 +28,35 @@ Logger.prototype.getPrefix = function() {
     return new Date().toISOString() + ' [' + this.prefix + '] ';
 };
 
-Logger.prototype.debug = function() {
-    arguments[0] = this.getPrefix() + arguments[0];
+Logger.prototype.debug = function(...args) {
+    args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Debug) {
-        Logger.saveLast('debug', arguments);
-        console.log.apply(console, arguments); // eslint-disable-line no-console
+        Logger.saveLast('debug', args);
+        console.log(...args); // eslint-disable-line no-console
     }
 };
 
-Logger.prototype.info = function() {
-    arguments[0] = this.getPrefix() + arguments[0];
+Logger.prototype.info = function(...args) {
+    args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Info) {
-        Logger.saveLast('info', arguments);
-        console.info.apply(console, arguments); // eslint-disable-line no-console
+        Logger.saveLast('info', args);
+        console.info(...args); // eslint-disable-line no-console
     }
 };
 
-Logger.prototype.warn = function() {
-    arguments[0] = this.getPrefix() + arguments[0];
+Logger.prototype.warn = function(...args) {
+    args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Warn) {
-        Logger.saveLast('warn', arguments);
-        console.warn.apply(console, arguments); // eslint-disable-line no-console
+        Logger.saveLast('warn', args);
+        console.warn(...args); // eslint-disable-line no-console
     }
 };
 
-Logger.prototype.error = function() {
-    arguments[0] = this.getPrefix() + arguments[0];
+Logger.prototype.error = function(...args) {
+    args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Error) {
-        Logger.saveLast('error', arguments);
-        console.error.apply(console, arguments); // eslint-disable-line no-console
+        Logger.saveLast('error', args);
+        console.error(...args); // eslint-disable-line no-console
     }
 };
 
@@ -69,7 +69,7 @@ Logger.prototype.getLevel = function() {
 };
 
 Logger.saveLast = function(level, args) {
-    lastLogs.push({ level: level, args: Array.prototype.slice.call(args) });
+    lastLogs.push({ level, args: Array.prototype.slice.call(args) });
     if (lastLogs.length > MaxLogsToSave) {
         lastLogs.shift();
     }

@@ -4,7 +4,7 @@ const MinDesktopScreenWidth = 800;
 const isDesktop = !!(window.process && window.process.versions && window.process.versions.electron);
 
 const FeatureDetector = {
-    isDesktop: isDesktop,
+    isDesktop,
     isMac: navigator.platform.indexOf('Mac') >= 0,
     isWindows: navigator.platform.indexOf('Win') >= 0,
     isiOS: /iPad|iPhone|iPod/i.test(navigator.userAgent),
@@ -17,23 +17,23 @@ const FeatureDetector = {
         !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
     needFixClicks: /Edge\/14/.test(navigator.appVersion),
 
-    actionShortcutSymbol: function(formatting) {
+    actionShortcutSymbol(formatting) {
         return this.isMac ? '⌘' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl-';
     },
-    altShortcutSymbol: function(formatting) {
+    altShortcutSymbol(formatting) {
         return this.isMac ? '⌥' : formatting ? '<span class="thin">alt + </span>' : 'alt-';
     },
-    globalShortcutSymbol: function(formatting) {
+    globalShortcutSymbol(formatting) {
         return this.isMac
             ? '⌃⌥'
             : formatting
             ? '<span class="thin">shift+alt+</span>'
             : 'shift-alt-';
     },
-    globalShortcutIsLarge: function() {
+    globalShortcutIsLarge() {
         return !this.isMac;
     },
-    screenshotToClipboardShortcut: function() {
+    screenshotToClipboardShortcut() {
         if (this.isiOS) {
             return 'Sleep+Home';
         }
@@ -48,13 +48,13 @@ const FeatureDetector = {
         }
         return '';
     },
-    supportsTitleBarStyles: function() {
+    supportsTitleBarStyles() {
         return this.isMac;
     },
-    hasUnicodeFlags: function() {
+    hasUnicodeFlags() {
         return this.isMac;
     },
-    getBrowserCssClass: function() {
+    getBrowserCssClass() {
         if (window.chrome && window.chrome.webstore) {
             return 'chrome';
         }

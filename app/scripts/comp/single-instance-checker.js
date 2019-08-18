@@ -7,7 +7,7 @@ const LocalStorageResponseKeyName = 'instanceMaster';
 const instanceKey = Date.now().toString();
 
 const SingleInstanceChecker = {
-    init: function() {
+    init() {
         if (Launcher) {
             return;
         }
@@ -15,7 +15,7 @@ const SingleInstanceChecker = {
         SingleInstanceChecker.setKey(LocalStorageKeyName, instanceKey);
     },
 
-    storageChanged: function(e) {
+    storageChanged(e) {
         if (!e.newValue) {
             return;
         }
@@ -30,7 +30,7 @@ const SingleInstanceChecker = {
         }
     },
 
-    setKey: function(key, value) {
+    setKey(key, value) {
         try {
             localStorage.setItem(key, value);
             setTimeout(() => {

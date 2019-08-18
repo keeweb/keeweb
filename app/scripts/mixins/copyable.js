@@ -7,14 +7,14 @@ const Tip = require('../util/tip');
 const Timeouts = require('../const/timeouts');
 
 const Copyable = {
-    hideFieldCopyTip: function() {
+    hideFieldCopyTip() {
         if (this.fieldCopyTip) {
             this.fieldCopyTip.hide();
             this.fieldCopyTip = null;
         }
     },
 
-    fieldCopied: function(e) {
+    fieldCopied(e) {
         this.hideFieldCopyTip();
         const fieldLabel = e.source.labelEl;
         const clipboardTime = e.copyRes.seconds;

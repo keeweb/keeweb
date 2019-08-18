@@ -12,40 +12,40 @@ const OpenConfigView = Backbone.View.extend({
         'keyup input': 'keyup'
     },
 
-    render: function() {
+    render() {
         this.renderTemplate(this.model);
         this.$el.find(':input:first').focus();
         this.checkValidity();
         return this;
     },
 
-    cancel: function() {
+    cancel() {
         this.trigger('cancel');
     },
 
-    apply: function() {
+    apply() {
         const data = this.getData();
         if (data) {
             this.trigger('apply', data);
         }
     },
 
-    changeInput: function() {
+    changeInput() {
         this.checkValidity();
     },
 
-    keyup: function(e) {
+    keyup(e) {
         if (e.which === Keys.DOM_VK_RETURN) {
             this.apply();
         }
     },
 
-    checkValidity: function() {
+    checkValidity() {
         const isValid = this.getData();
         this.$el.find('.open__config-btn-ok').prop('disabled', !isValid);
     },
 
-    getData: function() {
+    getData() {
         let data = { storage: this.model.id };
         this.model.fields.every(function(field) {
             const input = this.$el.find('#open__config-field-' + field.id)[0];
@@ -60,7 +60,7 @@ const OpenConfigView = Backbone.View.extend({
         return data;
     },
 
-    setDisabled: function(disabled) {
+    setDisabled(disabled) {
         disabled = !!disabled;
         this.$el.find(':input:not(.open__config-btn-cancel)').prop('disabled', disabled);
         this.$el.toggleClass('open__config--disabled', disabled);
@@ -69,7 +69,7 @@ const OpenConfigView = Backbone.View.extend({
         }
     },
 
-    setError: function(err) {
+    setError(err) {
         const errText =
             err && err.notFound
                 ? Locale.openConfigErrorNotFound

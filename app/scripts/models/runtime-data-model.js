@@ -4,11 +4,11 @@ const SettingsStore = require('../comp/settings-store');
 const RuntimeDataModel = Backbone.Model.extend({
     defaults: {},
 
-    initialize: function() {
+    initialize() {
         this.listenTo(this, 'change', this.save);
     },
 
-    load: function() {
+    load() {
         return SettingsStore.load('runtime-data').then(data => {
             if (data) {
                 if (data.cookies) {
@@ -20,7 +20,7 @@ const RuntimeDataModel = Backbone.Model.extend({
         });
     },
 
-    save: function() {
+    save() {
         SettingsStore.save('runtime-data', this.attributes);
     }
 });

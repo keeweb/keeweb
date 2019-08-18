@@ -12,7 +12,7 @@ const FieldViewOtp = FieldViewText.extend({
     otpValidUntil: 0,
     fieldOpacity: null,
 
-    renderValue: function(value) {
+    renderValue(value) {
         if (!value) {
             this.resetOtp();
             return '';
@@ -24,22 +24,22 @@ const FieldViewOtp = FieldViewText.extend({
         return this.otpValue;
     },
 
-    getEditValue: function(value) {
+    getEditValue(value) {
         return value && value.url;
     },
 
-    render: function() {
+    render() {
         FieldViewText.prototype.render.call(this);
         this.fieldOpacity = null;
         this.otpTick();
     },
 
-    remove: function() {
+    remove() {
         this.resetOtp();
-        FieldViewText.prototype.remove.apply(this, arguments);
+        FieldViewText.prototype.remove.apply(this);
     },
 
-    resetOtp: function() {
+    resetOtp() {
         this.otpGenerator = null;
         this.otpValue = null;
         this.otpTimeLeft = 0;
@@ -54,13 +54,13 @@ const FieldViewOtp = FieldViewText.extend({
         }
     },
 
-    requestOtpUpdate: function() {
+    requestOtpUpdate() {
         if (this.value) {
             this.value.next(this.otpUpdated.bind(this));
         }
     },
 
-    otpUpdated: function(pass, timeLeft) {
+    otpUpdated(pass, timeLeft) {
         if (!this.value || !pass) {
             this.resetOtp();
             return;
@@ -79,7 +79,7 @@ const FieldViewOtp = FieldViewText.extend({
         }
     },
 
-    otpTick: function() {
+    otpTick() {
         if (!this.value || !this.otpValidUntil) {
             return;
         }

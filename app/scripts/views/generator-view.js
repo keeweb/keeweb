@@ -56,7 +56,7 @@ const GeneratorView = Backbone.View.extend({
     presets: null,
     preset: null,
 
-    initialize: function() {
+    initialize() {
         this.createPresets();
         const preset = this.preset;
         this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
@@ -65,7 +65,7 @@ const GeneratorView = Backbone.View.extend({
         this.listenTo(Backbone, 'lock-workspace', this.remove.bind(this));
     },
 
-    render: function() {
+    render() {
         const canCopy = document.queryCommandSupported('copy');
         const btnTitle = this.model.copy
             ? canCopy
@@ -73,7 +73,7 @@ const GeneratorView = Backbone.View.extend({
                 : Locale.alertClose
             : Locale.alertOk;
         this.renderTemplate({
-            btnTitle: btnTitle,
+            btnTitle,
             showToggleButton: this.model.copy,
             opt: this.gen,
             hide: this.hide,
@@ -86,7 +86,7 @@ const GeneratorView = Backbone.View.extend({
         return this;
     },
 
-    createPresets: function() {
+    createPresets() {
         this.presets = GeneratorPresets.enabled;
         if (
             this.model.password &&
@@ -105,7 +105,7 @@ const GeneratorView = Backbone.View.extend({
         }, this);
     },
 
-    lengthToPseudoValue: function(length) {
+    lengthToPseudoValue(length) {
         for (let ix = 0; ix < this.valuesMap.length; ix++) {
             if (this.valuesMap[ix] >= length) {
                 return ix;
@@ -114,7 +114,7 @@ const GeneratorView = Backbone.View.extend({
         return this.valuesMap.length - 1;
     },
 
-    showPassword: function() {
+    showPassword() {
         if (this.hide && !this.model.copy) {
             this.resultEl.text(PasswordGenerator.present(this.password.length));
         } else {
@@ -122,11 +122,11 @@ const GeneratorView = Backbone.View.extend({
         }
     },
 
-    click: function(e) {
+    click(e) {
         e.stopPropagation();
     },
 
-    lengthChange: function(e) {
+    lengthChange(e) {
         const val = this.valuesMap[e.target.value];
         if (val !== this.gen.length) {
             this.gen.length = val;
@@ -136,7 +136,7 @@ const GeneratorView = Backbone.View.extend({
         }
     },
 
-    checkChange: function(e) {
+    checkChange(e) {
         const id = $(e.target).data('id');
         if (id) {
             this.gen[id] = e.target.checked;
@@ -145,7 +145,7 @@ const GeneratorView = Backbone.View.extend({
         this.generate();
     },
 
-    optionChanged: function(option) {
+    optionChanged(option) {
         if (
             this.preset === 'Custom' ||
             (this.preset === 'Pronounceable' && ['length', 'lower', 'upper'].indexOf(option) >= 0)
@@ -156,14 +156,14 @@ const GeneratorView = Backbone.View.extend({
         this.$el.find('.gen__sel-tpl').val('');
     },
 
-    generate: function() {
+    generate() {
         this.password = PasswordGenerator.generate(this.gen);
         this.showPassword();
         const isLong = this.password.length > 32;
         this.resultEl.toggleClass('gen__result--long-pass', isLong);
     },
 
-    hideChange: function(e) {
+    hideChange(e) {
         this.hide = e.target.checked;
         // AppSettingsModel.instance.unset('generatorHidePassword', { silent: true });
         AppSettingsModel.instance.set('generatorHidePassword', this.hide);
@@ -172,7 +172,7 @@ const GeneratorView = Backbone.View.extend({
         this.showPassword();
     },
 
-    btnOkClick: function() {
+    btnOkClick() {
         if (!CopyPaste.simpleCopy) {
             CopyPaste.createHiddenInput(this.password);
         }
@@ -181,7 +181,7 @@ const GeneratorView = Backbone.View.extend({
         this.remove();
     },
 
-    presetChange: function(e) {
+    presetChange(e) {
         const name = e.target.value;
         if (name === '...') {
             Backbone.trigger('edit-generator-presets');
@@ -194,7 +194,7 @@ const GeneratorView = Backbone.View.extend({
         this.render();
     },
 
-    newPass: function() {
+    newPass() {
         this.generate();
     }
 });

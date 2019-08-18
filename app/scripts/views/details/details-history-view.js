@@ -25,49 +25,49 @@ const DetailsHistoryView = Backbone.View.extend({
         {
             name: 'ms',
             round: 1,
-            format: function(d) {
+            format(d) {
                 return Format.dtStr(d);
             }
         },
         {
             name: 'sec',
             round: 1000,
-            format: function(d) {
+            format(d) {
                 return Format.dtStr(d);
             }
         },
         {
             name: 'min',
             round: 1000 * 60,
-            format: function(d) {
+            format(d) {
                 return Format.dtStr(d).replace(':00 ', ' ');
             }
         },
         {
             name: 'hour',
             round: 1000 * 60 * 60,
-            format: function(d) {
+            format(d) {
                 return Format.dtStr(d).replace(':00', '');
             }
         },
         {
             name: 'day',
             round: 1000 * 60 * 60 * 24,
-            format: function(d) {
+            format(d) {
                 return Format.dStr(d);
             }
         },
         {
             name: 'month',
             round: 1000 * 60 * 60 * 24 * 31,
-            format: function(d) {
+            format(d) {
                 return Format.dStr(d);
             }
         },
         {
             name: 'year',
             round: 1000 * 60 * 60 * 24 * 365,
-            format: function(d) {
+            format(d) {
                 return d.getFullYear();
             }
         }
@@ -75,11 +75,11 @@ const DetailsHistoryView = Backbone.View.extend({
 
     fieldViews: null,
 
-    initialize: function() {
+    initialize() {
         this.fieldViews = [];
     },
 
-    render: function(visibleRecord) {
+    render(visibleRecord) {
         this.renderTemplate(null, true);
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.closeHistory, this);
         this.history = this.model.getHistory();
@@ -107,18 +107,18 @@ const DetailsHistoryView = Backbone.View.extend({
         return this;
     },
 
-    remove: function() {
+    remove() {
         this.removeFieldViews();
         KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.closeHistory, this);
         Backbone.View.prototype.remove.call(this);
     },
 
-    removeFieldViews: function() {
+    removeFieldViews() {
         this.fieldViews.forEach(fieldView => fieldView.remove());
         this.fieldViews = [];
     },
 
-    showRecord: function(ix) {
+    showRecord(ix) {
         this.activeIx = ix;
         this.record = this.timeline[ix].rec;
         this.timelineEl
@@ -223,7 +223,7 @@ const DetailsHistoryView = Backbone.View.extend({
             function(value, field) {
                 this.fieldViews.push(
                     new FieldViewReadOnly({
-                        model: { name: '$' + field, title: field, value: value }
+                        model: { name: '$' + field, title: field, value }
                     })
                 );
             },
@@ -257,31 +257,31 @@ const DetailsHistoryView = Backbone.View.extend({
             );
     },
 
-    timelineItemClick: function(e) {
+    timelineItemClick(e) {
         const id = $(e.target)
             .closest('.details__history-timeline-item')
             .data('id');
         this.showRecord(id);
     },
 
-    timelinePrevClick: function() {
+    timelinePrevClick() {
         if (this.activeIx > 0) {
             this.showRecord(this.activeIx - 1);
         }
     },
 
-    timelineNextClick: function() {
+    timelineNextClick() {
         if (this.activeIx < this.timeline.length - 1) {
             this.showRecord(this.activeIx + 1);
         }
     },
 
-    buildTimeline: function() {
+    buildTimeline() {
         const firstRec = this.history[0];
         const lastRec = this.history[this.history.length - 1];
         this.timeline = this.history.map(rec => ({
             pos: (rec.updated - firstRec.updated) / (lastRec.updated - firstRec.updated),
-            rec: rec
+            rec
         }));
         const period = lastRec.updated - firstRec.updated;
         const format = this.getDateFormat(period);
@@ -296,7 +296,7 @@ const DetailsHistoryView = Backbone.View.extend({
         }));
     },
 
-    getDateFormat: function(period) {
+    getDateFormat(period) {
         for (let i = 0; i < this.formats.length; i++) {
             if (period < this.formats[i].round * 1.2) {
                 return this.formats[i > 0 ? i - 1 : 0];
@@ -305,7 +305,7 @@ const DetailsHistoryView = Backbone.View.extend({
         return this.formats[this.formats.length - 1];
     },
 
-    getLabels: function(first, last, round) {
+    getLabels(first, last, round) {
         const count = Math.floor((last - first) / round);
         if (count > 2) {
             round *= Math.ceil(count / 2);
@@ -322,11 +322,11 @@ const DetailsHistoryView = Backbone.View.extend({
         return labels;
     },
 
-    closeHistory: function(updated) {
-        this.trigger('close', { updated: updated });
+    closeHistory(updated) {
+        this.trigger('close', { updated });
     },
 
-    revertClick: function() {
+    revertClick() {
         Alerts.yesno({
             header: Locale.detHistoryRevertAlert,
             body: Locale.detHistoryRevertAlertBody,
@@ -337,7 +337,7 @@ const DetailsHistoryView = Backbone.View.extend({
         });
     },
 
-    deleteClick: function() {
+    deleteClick() {
         Alerts.yesno({
             header: Locale.detHistoryDeleteAlert,
             body: Locale.detHistoryDeleteAlertBody,
@@ -348,7 +348,7 @@ const DetailsHistoryView = Backbone.View.extend({
         });
     },
 
-    discardClick: function() {
+    discardClick() {
         Alerts.yesno({
             header: Locale.detHistoryDiscardChangesAlert,
             body: Locale.detHistoryDiscardChangesAlertBody,

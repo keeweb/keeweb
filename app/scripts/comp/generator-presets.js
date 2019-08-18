@@ -159,7 +159,7 @@ const GeneratorPresets = {
         this.save(setting);
     },
 
-    save: function(setting) {
+    save(setting) {
         AppSettingsModel.instance.unset('generatorPresets', { silent: true });
         AppSettingsModel.instance.set('generatorPresets', setting);
     }

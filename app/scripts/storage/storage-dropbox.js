@@ -18,7 +18,7 @@ const StorageDropbox = StorageBase.extend({
     uipos: 20,
     backup: true,
 
-    _toFullPath: function(path) {
+    _toFullPath(path) {
         const rootFolder = this.appSettings.get('dropboxFolder');
         if (rootFolder) {
             path = UrlUtil.fixSlashes('/' + rootFolder + '/' + path);
@@ -26,7 +26,7 @@ const StorageDropbox = StorageBase.extend({
         return path;
     },
 
-    _toRelPath: function(path) {
+    _toRelPath(path) {
         const rootFolder = this.appSettings.get('dropboxFolder');
         if (rootFolder) {
             const ix = path.toLowerCase().indexOf(rootFolder.toLowerCase());
@@ -40,7 +40,7 @@ const StorageDropbox = StorageBase.extend({
         return path;
     },
 
-    _fixConfigFolder: function(folder) {
+    _fixConfigFolder(folder) {
         folder = folder.replace(/\\/g, '/').trim();
         if (folder[0] === '/') {
             folder = folder.substr(1);
@@ -48,21 +48,21 @@ const StorageDropbox = StorageBase.extend({
         return folder;
     },
 
-    _getKey: function() {
+    _getKey() {
         return this.appSettings.get('dropboxAppKey') || DropboxKeys.AppFolder;
     },
 
-    _isValidKey: function() {
+    _isValidKey() {
         const key = this._getKey();
         const isBuiltIn = key === DropboxKeys.AppFolder || key === DropboxKeys.FullDropbox;
         return key && key.indexOf(' ') < 0 && (!isBuiltIn || this._canUseBuiltInKeys());
     },
 
-    _canUseBuiltInKeys: function() {
+    _canUseBuiltInKeys() {
         return !FeatureDetector.isSelfHosted;
     },
 
-    _getOAuthConfig: function() {
+    _getOAuthConfig() {
         return {
             scope: '',
             url: 'https://www.dropbox.com/oauth2/authorize',
@@ -72,11 +72,11 @@ const StorageDropbox = StorageBase.extend({
         };
     },
 
-    needShowOpenConfig: function() {
+    needShowOpenConfig() {
         return !this._isValidKey();
     },
 
-    getOpenConfig: function() {
+    getOpenConfig() {
         return {
             desc: 'dropboxSetupDesc',
             fields: [
@@ -99,7 +99,7 @@ const StorageDropbox = StorageBase.extend({
         };
     },
 
-    getSettingsConfig: function() {
+    getSettingsConfig() {
         const fields = [];
         const appKey = this._getKey();
         const linkField = {
@@ -141,10 +141,10 @@ const StorageDropbox = StorageBase.extend({
             fields.push(keyField);
             fields.push(folderField);
         }
-        return { fields: fields };
+        return { fields };
     },
 
-    applyConfig: function(config, callback) {
+    applyConfig(config, callback) {
         if (config.key === DropboxKeys.AppFolder || config.key === DropboxKeys.FullDropbox) {
             return callback(DropboxCustomErrors.BadKey);
         }
@@ -159,7 +159,7 @@ const StorageDropbox = StorageBase.extend({
         callback();
     },
 
-    applySetting: function(key, value) {
+    applySetting(key, value) {
         switch (key) {
             case 'link':
                 key = 'dropboxAppKey';
@@ -192,7 +192,7 @@ const StorageDropbox = StorageBase.extend({
         this.appSettings.set(key, value);
     },
 
-    getPathForName: function(fileName) {
+    getPathForName(fileName) {
         return '/' + fileName + '.kdbx';
     },
 
@@ -203,7 +203,7 @@ const StorageDropbox = StorageBase.extend({
         );
     },
 
-    _apiCall: function(args) {
+    _apiCall(args) {
         this._oauthAuthorize(err => {
             if (err) {
                 return args.error(err);
@@ -228,8 +228,8 @@ const StorageDropbox = StorageBase.extend({
                 url: `https://${host}.dropboxapi.com/2/${args.method}`,
                 method: 'POST',
                 responseType: args.responseType || 'json',
-                headers: headers,
-                data: data,
+                headers,
+                data,
                 statuses: args.statuses || undefined,
                 success: args.success,
                 error: (e, xhr) => {
@@ -248,7 +248,7 @@ const StorageDropbox = StorageBase.extend({
         });
     },
 
-    load: function(path, opts, callback) {
+    load(path, opts, callback) {
         this.logger.debug('Load', path);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
@@ -266,7 +266,7 @@ const StorageDropbox = StorageBase.extend({
         });
     },
 
-    stat: function(path, opts, callback) {
+    stat(path, opts, callback) {
         this.logger.debug('Stat', path);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
@@ -293,7 +293,7 @@ const StorageDropbox = StorageBase.extend({
         });
     },
 
-    save: function(path, opts, data, callback, rev) {
+    save(path, opts, data, callback, rev) {
         this.logger.debug('Save', path, rev);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
@@ -305,7 +305,7 @@ const StorageDropbox = StorageBase.extend({
             method: 'files/upload',
             host: 'content',
             apiArg: arg,
-            data: data,
+            data,
             responseType: 'json',
             success: stat => {
                 this.logger.debug('Saved', path, stat.rev, this.logger.ts(ts));
@@ -315,7 +315,7 @@ const StorageDropbox = StorageBase.extend({
         });
     },
 
-    list: function(dir, callback) {
+    list(dir, callback) {
         this.logger.debug('List');
         const ts = this.logger.ts();
         this._apiCall({
@@ -338,7 +338,7 @@ const StorageDropbox = StorageBase.extend({
         });
     },
 
-    remove: function(path, callback) {
+    remove(path, callback) {
         this.logger.debug('Remove', path);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
@@ -353,7 +353,7 @@ const StorageDropbox = StorageBase.extend({
         });
     },
 
-    mkdir: function(path, callback) {
+    mkdir(path, callback) {
         this.logger.debug('Make dir', path);
         const ts = this.logger.ts();
         path = this._toFullPath(path);
@@ -368,7 +368,7 @@ const StorageDropbox = StorageBase.extend({
         });
     },
 
-    setEnabled: function(enabled) {
+    setEnabled(enabled) {
         if (!enabled) {
             this._oauthRevokeToken();
         }

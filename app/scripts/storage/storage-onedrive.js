@@ -24,11 +24,11 @@ const StorageOneDrive = StorageBase.extend({
 
     _baseUrl: 'https://graph.microsoft.com/v1.0/me',
 
-    getPathForName: function(fileName) {
+    getPathForName(fileName) {
         return '/drive/root:/' + fileName + '.kdbx';
     },
 
-    load: function(path, opts, callback) {
+    load(path, opts, callback) {
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
@@ -37,7 +37,7 @@ const StorageOneDrive = StorageBase.extend({
             const ts = this.logger.ts();
             const url = this._baseUrl + path;
             this._xhr({
-                url: url,
+                url,
                 responseType: 'json',
                 success: response => {
                     const downloadUrl = response['@microsoft.graph.downloadUrl'];
@@ -59,7 +59,7 @@ const StorageOneDrive = StorageBase.extend({
                         success: (response, xhr) => {
                             rev = xhr.getResponseHeader('ETag') || rev;
                             this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
-                            return callback && callback(null, response, { rev: rev });
+                            return callback && callback(null, response, { rev });
                         },
                         error: err => {
                             this.logger.error('Load error', path, err, this.logger.ts(ts));
@@ -75,7 +75,7 @@ const StorageOneDrive = StorageBase.extend({
         });
     },
 
-    stat: function(path, opts, callback) {
+    stat(path, opts, callback) {
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
@@ -84,7 +84,7 @@ const StorageOneDrive = StorageBase.extend({
             const ts = this.logger.ts();
             const url = this._baseUrl + path;
             this._xhr({
-                url: url,
+                url,
                 responseType: 'json',
                 success: response => {
                     const rev = response.eTag;
@@ -93,7 +93,7 @@ const StorageOneDrive = StorageBase.extend({
                         return callback && callback('no eTag');
                     }
                     this.logger.debug('Stated', path, rev, this.logger.ts(ts));
-                    return callback && callback(null, { rev: rev });
+                    return callback && callback(null, { rev });
                 },
                 error: (err, xhr) => {
                     if (xhr.status === 404) {
@@ -107,7 +107,7 @@ const StorageOneDrive = StorageBase.extend({
         });
     },
 
-    save: function(path, opts, data, callback, rev) {
+    save(path, opts, data, callback, rev) {
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
@@ -116,7 +116,7 @@ const StorageOneDrive = StorageBase.extend({
             const ts = this.logger.ts();
             const url = this._baseUrl + path + ':/content';
             this._xhr({
-                url: url,
+                url,
                 method: 'PUT',
                 responseType: 'json',
                 headers: rev ? { 'If-Match': rev } : null,
@@ -130,10 +130,10 @@ const StorageOneDrive = StorageBase.extend({
                     }
                     if (xhr.status === 412) {
                         this.logger.debug('Save conflict', path, rev, this.logger.ts(ts));
-                        return callback && callback({ revConflict: true }, { rev: rev });
+                        return callback && callback({ revConflict: true }, { rev });
                     }
                     this.logger.debug('Saved', path, rev, this.logger.ts(ts));
-                    return callback && callback(null, { rev: rev });
+                    return callback && callback(null, { rev });
                 },
                 error: err => {
                     this.logger.error('Save error', path, err, this.logger.ts(ts));
@@ -143,7 +143,7 @@ const StorageOneDrive = StorageBase.extend({
         });
     },
 
-    list: function(dir, callback) {
+    list(dir, callback) {
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
@@ -152,7 +152,7 @@ const StorageOneDrive = StorageBase.extend({
             const ts = this.logger.ts();
             const url = this._baseUrl + (dir ? `${dir}:/children` : '/drive/root/children');
             this._xhr({
-                url: url,
+                url,
                 responseType: 'json',
                 success: response => {
                     if (!response || !response.value) {
@@ -178,12 +178,12 @@ const StorageOneDrive = StorageBase.extend({
         });
     },
 
-    remove: function(path, callback) {
+    remove(path, callback) {
         this.logger.debug('Remove', path);
         const ts = this.logger.ts();
         const url = this._baseUrl + path;
         this._xhr({
-            url: url,
+            url,
             method: 'DELETE',
             responseType: 'json',
             statuses: [200, 204],
@@ -198,7 +198,7 @@ const StorageOneDrive = StorageBase.extend({
         });
     },
 
-    mkdir: function(path, callback) {
+    mkdir(path, callback) {
         this._oauthAuthorize(err => {
             if (err) {
                 return callback && callback(err);
@@ -208,7 +208,7 @@ const StorageOneDrive = StorageBase.extend({
             const url = this._baseUrl + '/drive/root/children';
             const data = JSON.stringify({ name: path.replace('/drive/root:/', ''), folder: {} });
             this._xhr({
-                url: url,
+                url,
                 method: 'POST',
                 responseType: 'json',
                 statuses: [200, 204],
@@ -225,7 +225,7 @@ const StorageOneDrive = StorageBase.extend({
         });
     },
 
-    setEnabled: function(enabled) {
+    setEnabled(enabled) {
         if (!enabled) {
             const url = 'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={url}'.replace(
                 '{url}',
@@ -236,7 +236,7 @@ const StorageOneDrive = StorageBase.extend({
         StorageBase.prototype.setEnabled.call(this, enabled);
     },
 
-    _getClientId: function() {
+    _getClientId() {
         let clientId = this.appSettings.get('onedriveClientId');
         if (!clientId) {
             clientId =
@@ -247,12 +247,12 @@ const StorageOneDrive = StorageBase.extend({
         return clientId;
     },
 
-    _getOAuthConfig: function() {
+    _getOAuthConfig() {
         const clientId = this._getClientId();
         return {
             url: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
             scope: 'files.readwrite',
-            clientId: clientId,
+            clientId,
             width: 600,
             height: 500
         };

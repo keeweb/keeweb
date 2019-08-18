@@ -13,7 +13,7 @@ const OtpQrReader = {
 
     fileInput: null,
 
-    read: function() {
+    read() {
         let screenshotKey = FeatureDetector.screenshotToClipboardShortcut();
         if (screenshotKey) {
             screenshotKey = Locale.detSetupOtpAlertBodyWith.replace(
@@ -51,8 +51,8 @@ const OtpQrReader = {
             esc: '',
             click: '',
             enter: '',
-            buttons: buttons,
-            complete: function(res) {
+            buttons,
+            complete(res) {
                 OtpQrReader.alert = null;
                 OtpQrReader.stopListenClipboard();
                 if (res === 'select') {
@@ -68,7 +68,7 @@ const OtpQrReader = {
         //     transparent: true }).show();
     },
 
-    selectFile: function() {
+    selectFile() {
         if (!OtpQrReader.fileInput) {
             const input = document.createElement('input');
             input.setAttribute('type', 'file');
@@ -81,7 +81,7 @@ const OtpQrReader = {
         OtpQrReader.fileInput.click();
     },
 
-    fileSelected: function() {
+    fileSelected() {
         const file = OtpQrReader.fileInput.files[0];
         if (!file || file.type.indexOf('image') < 0) {
             return;
@@ -89,15 +89,15 @@ const OtpQrReader = {
         OtpQrReader.readFile(file);
     },
 
-    startListenClipoard: function() {
+    startListenClipoard() {
         document.addEventListener('paste', OtpQrReader.pasteEvent);
     },
 
-    stopListenClipboard: function() {
+    stopListenClipboard() {
         document.removeEventListener('paste', OtpQrReader.pasteEvent);
     },
 
-    pasteEvent: function(e) {
+    pasteEvent(e) {
         const item = _.find(
             e.clipboardData.items,
             item => item.kind === 'file' && item.type.indexOf('image') !== -1
@@ -115,7 +115,7 @@ const OtpQrReader = {
         OtpQrReader.readFile(item.getAsFile());
     },
 
-    readFile: function(file) {
+    readFile(file) {
         const reader = new FileReader();
         reader.onload = function() {
             logger.debug('Image data loaded');
@@ -124,7 +124,7 @@ const OtpQrReader = {
         reader.readAsDataURL(file);
     },
 
-    readQr: function(imageData) {
+    readQr(imageData) {
         const image = new Image();
         image.onload = function() {
             logger.debug('Image format loaded');
@@ -167,11 +167,11 @@ const OtpQrReader = {
         image.src = imageData;
     },
 
-    enterManually: function() {
+    enterManually() {
         OtpQrReader.trigger('enter-manually');
     },
 
-    removeAlert: function() {
+    removeAlert() {
         if (OtpQrReader.alert) {
             OtpQrReader.alert.closeImmediate();
         }

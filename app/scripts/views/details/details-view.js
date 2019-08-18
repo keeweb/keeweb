@@ -61,7 +61,7 @@ const DetailsView = Backbone.View.extend({
         'contextmenu .details': 'contextMenu'
     },
 
-    initialize: function() {
+    initialize() {
         this.fieldViews = [];
         this.views = {};
         this.initScroll();
@@ -105,7 +105,7 @@ const DetailsView = Backbone.View.extend({
         );
     },
 
-    remove: function() {
+    remove() {
         KeyHandler.offKey(Keys.DOM_VK_C, this.copyPassword, this);
         KeyHandler.offKey(Keys.DOM_VK_B, this.copyUserName, this);
         KeyHandler.offKey(Keys.DOM_VK_U, this.copyUrl, this);
@@ -125,13 +125,13 @@ const DetailsView = Backbone.View.extend({
         Backbone.View.prototype.remove.call(this);
     },
 
-    removeFieldViews: function() {
+    removeFieldViews() {
         this.fieldViews.forEach(fieldView => fieldView.remove());
         this.fieldViews = [];
         this.hideFieldCopyTip();
     },
 
-    render: function() {
+    render() {
         this.removeScroll();
         this.removeFieldViews();
         this.removeInnerViews();
@@ -165,7 +165,7 @@ const DetailsView = Backbone.View.extend({
         return this;
     },
 
-    addFieldViews: function() {
+    addFieldViews() {
         const model = this.model;
         if (model.isJustCreated && this.appModel.files.length > 1) {
             const fileNames = this.appModel.files.map(function(file) {
@@ -175,7 +175,7 @@ const DetailsView = Backbone.View.extend({
                 model: {
                     name: '$File',
                     title: Format.capFirst(Locale.file),
-                    value: function() {
+                    value() {
                         return fileNames;
                     }
                 }
@@ -187,7 +187,7 @@ const DetailsView = Backbone.View.extend({
                     model: {
                         name: 'File',
                         title: Format.capFirst(Locale.file),
-                        value: function() {
+                        value() {
                             return model.fileName;
                         }
                     }
@@ -198,7 +198,7 @@ const DetailsView = Backbone.View.extend({
             model: {
                 name: '$UserName',
                 title: Format.capFirst(Locale.user),
-                value: function() {
+                value() {
                     return model.user;
                 },
                 getCompletions: this.getUserNameCompletions.bind(this)
@@ -210,7 +210,7 @@ const DetailsView = Backbone.View.extend({
                 name: '$Password',
                 title: Format.capFirst(Locale.password),
                 canGen: true,
-                value: function() {
+                value() {
                     return model.password;
                 }
             }
@@ -220,7 +220,7 @@ const DetailsView = Backbone.View.extend({
             model: {
                 name: '$URL',
                 title: Format.capFirst(Locale.website),
-                value: function() {
+                value() {
                     return model.url;
                 }
             }
@@ -232,7 +232,7 @@ const DetailsView = Backbone.View.extend({
                     name: '$Notes',
                     title: Format.capFirst(Locale.notes),
                     multiline: 'true',
-                    value: function() {
+                    value() {
                         return model.notes;
                     }
                 }
@@ -244,7 +244,7 @@ const DetailsView = Backbone.View.extend({
                     name: 'Tags',
                     title: Format.capFirst(Locale.tags),
                     tags: this.appModel.tags,
-                    value: function() {
+                    value() {
                         return model.tags;
                     }
                 }
@@ -256,7 +256,7 @@ const DetailsView = Backbone.View.extend({
                     name: 'Expires',
                     title: Locale.detExpires,
                     lessThanNow: '(' + Locale.detExpired + ')',
-                    value: function() {
+                    value() {
                         return model.expires;
                     }
                 }
@@ -267,10 +267,10 @@ const DetailsView = Backbone.View.extend({
                 model: {
                     name: 'Group',
                     title: Locale.detGroup,
-                    value: function() {
+                    value() {
                         return model.groupName;
                     },
-                    tip: function() {
+                    tip() {
                         return model.getGroupPath().join(' / ');
                     }
                 }
@@ -281,7 +281,7 @@ const DetailsView = Backbone.View.extend({
                 model: {
                     name: 'Created',
                     title: Locale.detCreated,
-                    value: function() {
+                    value() {
                         return Format.dtStr(model.created);
                     }
                 }
@@ -292,7 +292,7 @@ const DetailsView = Backbone.View.extend({
                 model: {
                     name: 'Updated',
                     title: Locale.detUpdated,
-                    value: function() {
+                    value() {
                         return Format.dtStr(model.updated);
                     }
                 }
@@ -303,7 +303,7 @@ const DetailsView = Backbone.View.extend({
                 model: {
                     name: 'History',
                     title: Format.capFirst(Locale.history),
-                    value: function() {
+                    value() {
                         return { length: model.historyLength, unsaved: model.unsaved };
                     }
                 }
@@ -318,7 +318,7 @@ const DetailsView = Backbone.View.extend({
                             model: {
                                 name: '$' + field,
                                 title: field,
-                                value: function() {
+                                value() {
                                     return model.otpGenerator;
                                 }
                             }
@@ -330,7 +330,7 @@ const DetailsView = Backbone.View.extend({
                             model: {
                                 name: '$' + field,
                                 title: field,
-                                value: function() {
+                                value() {
                                     return model.fields[field];
                                 }
                             }
@@ -369,7 +369,7 @@ const DetailsView = Backbone.View.extend({
         this.moreView.on('more-click', this.toggleMoreOptions.bind(this));
     },
 
-    addNewField: function() {
+    addNewField() {
         this.moreView.remove();
         this.moreView = null;
         let newFieldTitle = Locale.detNetField;
@@ -387,7 +387,7 @@ const DetailsView = Backbone.View.extend({
                 name: '$' + newFieldTitle,
                 title: newFieldTitle,
                 newField: newFieldTitle,
-                value: function() {
+                value() {
                     return '';
                 }
             }
@@ -398,7 +398,7 @@ const DetailsView = Backbone.View.extend({
         this.fieldViews.push(fieldView);
     },
 
-    toggleMoreOptions: function() {
+    toggleMoreOptions() {
         if (this.views.dropdownView) {
             this.views.dropdownView.remove();
             this.views.dropdownView = null;
@@ -460,18 +460,19 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    moreOptionsSelect: function(e) {
+    moreOptionsSelect(e) {
         this.views.dropdownView.remove();
         this.views.dropdownView = null;
         switch (e.item) {
             case 'add-new':
                 this.addNewField();
                 break;
-            case 'toggle-empty':
+            case 'toggle-empty': {
                 const hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
                 AppSettingsModel.instance.set('hideEmptyFields', !hideEmptyFields);
                 this.render();
                 break;
+            }
             case 'otp':
                 this.setupOtp();
                 break;
@@ -491,11 +492,11 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    getUserNameCompletions: function(part) {
+    getUserNameCompletions(part) {
         return this.appModel.completeUserNames(part);
     },
 
-    setSelectedColor: function(color) {
+    setSelectedColor(color) {
         this.$el
             .find('.details__colors-popup > .details__colors-popup-item')
             .removeClass('details__colors-popup-item--active');
@@ -513,7 +514,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    selectColor: function(e) {
+    selectColor(e) {
         let color = $(e.target)
             .closest('.details__colors-popup-item')
             .data('color');
@@ -527,7 +528,7 @@ const DetailsView = Backbone.View.extend({
         this.entryUpdated();
     },
 
-    toggleIcons: function() {
+    toggleIcons() {
         if (this.views.sub && this.views.sub instanceof IconSelectView) {
             this.render();
             return;
@@ -547,7 +548,7 @@ const DetailsView = Backbone.View.extend({
         this.views.sub = subView;
     },
 
-    toggleAttachment: function(e) {
+    toggleAttachment(e) {
         const attBtn = $(e.target).closest('.details__attachment');
         const id = attBtn.data('id');
         const attachment = this.model.attachments[id];
@@ -567,7 +568,7 @@ const DetailsView = Backbone.View.extend({
         attBtn.addClass('details__attachment--active');
     },
 
-    removeSubView: function() {
+    removeSubView() {
         this.$el.find('.details__attachment').removeClass('details__attachment--active');
         if (this.views.sub) {
             this.views.sub.remove();
@@ -575,7 +576,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    downloadAttachment: function(attachment) {
+    downloadAttachment(attachment) {
         const data = attachment.getBinary();
         if (!data) {
             return;
@@ -585,7 +586,7 @@ const DetailsView = Backbone.View.extend({
         FileSaver.saveAs(blob, attachment.title);
     },
 
-    iconSelected: function(sel) {
+    iconSelected(sel) {
         if (sel.custom) {
             if (sel.id !== this.model.customIconId) {
                 this.model.setCustomIcon(sel.id);
@@ -601,7 +602,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    showEntry: function(entry) {
+    showEntry(entry) {
         this.model = entry;
         this.render();
         if (entry && !entry.title && entry.isJustCreated) {
@@ -609,7 +610,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    copyKeyPress: function(editView) {
+    copyKeyPress(editView) {
         if (this.isHidden()) {
             return false;
         }
@@ -624,32 +625,32 @@ const DetailsView = Backbone.View.extend({
                 CopyPaste.createHiddenInput(fieldText);
             }
             const copyRes = CopyPaste.copy(fieldText);
-            this.fieldCopied({ source: editView, copyRes: copyRes });
+            this.fieldCopied({ source: editView, copyRes });
             return true;
         }
         return false;
     },
 
-    copyPasswordFromShortcut: function(e) {
+    copyPasswordFromShortcut(e) {
         const copied = this.copyKeyPress(this.passEditView);
         if (copied) {
             e.preventDefault();
         }
     },
 
-    copyPassword: function() {
+    copyPassword() {
         this.copyKeyPress(this.passEditView);
     },
 
-    copyUserName: function() {
+    copyUserName() {
         this.copyKeyPress(this.userEditView);
     },
 
-    copyUrl: function() {
+    copyUrl() {
         this.copyKeyPress(this.urlEditView);
     },
 
-    showCopyTip: function() {
+    showCopyTip() {
         if (this.helpTipCopyShown) {
             return;
         }
@@ -668,11 +669,11 @@ const DetailsView = Backbone.View.extend({
         }, Timeouts.AutoHideHint);
     },
 
-    settingsToggled: function() {
+    settingsToggled() {
         this.hideFieldCopyTip();
     },
 
-    fieldChanged: function(e) {
+    fieldChanged(e) {
         if (e.field) {
             if (e.field[0] === '$') {
                 let fieldName = e.field.substr(1);
@@ -736,7 +737,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    otpFieldChanged: function(value) {
+    otpFieldChanged(value) {
         let oldValue = this.model.fields.otp;
         if (oldValue && oldValue.isProtected) {
             oldValue = oldValue.getText();
@@ -752,7 +753,7 @@ const DetailsView = Backbone.View.extend({
         return true;
     },
 
-    dragover: function(e) {
+    dragover(e) {
         e.preventDefault();
         e.stopPropagation();
         const dt = e.originalEvent.dataTransfer;
@@ -773,7 +774,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    dragleave: function() {
+    dragleave() {
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
@@ -783,7 +784,7 @@ const DetailsView = Backbone.View.extend({
         }, 100);
     },
 
-    drop: function(e) {
+    drop(e) {
         e.preventDefault();
         if (!this.model) {
             return;
@@ -797,15 +798,15 @@ const DetailsView = Backbone.View.extend({
         this.addAttachedFiles(files);
     },
 
-    attachmentBtnClick: function() {
+    attachmentBtnClick() {
         this.$el.find('.details__attachment-input-file')[0].click();
     },
 
-    attachmentFileChange: function(e) {
+    attachmentFileChange(e) {
         this.addAttachedFiles(e.target.files);
     },
 
-    addAttachedFiles: function(files) {
+    addAttachedFiles(files) {
         _.forEach(
             files,
             function(file) {
@@ -819,13 +820,13 @@ const DetailsView = Backbone.View.extend({
         );
     },
 
-    addAttachment: function(name, data) {
+    addAttachment(name, data) {
         this.model.addAttachment(name, data).then(() => {
             this.entryUpdated();
         });
     },
 
-    deleteKeyPress: function(e) {
+    deleteKeyPress(e) {
         if (this.views.sub && this.views.sub.attId !== undefined) {
             e.preventDefault();
             const attachment = this.model.attachments[this.views.sub.attId];
@@ -834,7 +835,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    editTitle: function() {
+    editTitle() {
         const input = $('<input/>')
             .addClass('details__header-title-input')
             .attr({ autocomplete: 'off', spellcheck: 'false', placeholder: 'Title' })
@@ -849,15 +850,15 @@ const DetailsView = Backbone.View.extend({
         input.focus()[0].setSelectionRange(this.model.title.length, this.model.title.length);
     },
 
-    titleInputBlur: function(e) {
+    titleInputBlur(e) {
         this.setTitle(e.target.value);
     },
 
-    titleInputInput: function(e) {
+    titleInputInput(e) {
         e.stopPropagation();
     },
 
-    titleInputKeydown: function(e) {
+    titleInputKeydown(e) {
         KeyHandler.reg();
         e.stopPropagation();
         const code = e.keyCode || e.which;
@@ -882,7 +883,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    setTitle: function(title) {
+    setTitle(title) {
         if (this.model.title instanceof kdbxweb.ProtectedValue) {
             title = kdbxweb.ProtectedValue.fromString(title);
         }
@@ -894,14 +895,14 @@ const DetailsView = Backbone.View.extend({
         this.$el.find('.details__header-title-input').replaceWith(newTitle);
     },
 
-    entryUpdated: function(skipRender) {
+    entryUpdated(skipRender) {
         Backbone.trigger('entry-updated', { entry: this.model });
         if (!skipRender) {
             this.render();
         }
     },
 
-    focusNextField: function(config) {
+    focusNextField(config) {
         let found = false,
             nextFieldView;
         if (config.field === '$Title' && !config.prev) {
@@ -924,7 +925,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    showHistory: function() {
+    showHistory() {
         this.removeSubView();
         const subView = new DetailsHistoryView({ el: this.scroller, model: this.model });
         this.listenTo(subView, 'close', this.historyClosed.bind(this));
@@ -933,7 +934,7 @@ const DetailsView = Backbone.View.extend({
         this.views.sub = subView;
     },
 
-    historyClosed: function(e) {
+    historyClosed(e) {
         if (e.updated) {
             this.entryUpdated();
         } else {
@@ -941,17 +942,17 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    moveToTrash: function() {
+    moveToTrash() {
         this.model.moveToTrash();
         Backbone.trigger('refresh');
     },
 
-    clone: function() {
+    clone() {
         const newEntry = this.model.cloneEntry(' ' + Locale.detClonedName);
         Backbone.trigger('select-entry', newEntry);
     },
 
-    deleteFromTrash: function() {
+    deleteFromTrash() {
         Alerts.yesno({
             header: Locale.detDelFromTrash,
             body:
@@ -967,7 +968,7 @@ const DetailsView = Backbone.View.extend({
         });
     },
 
-    backClick: function() {
+    backClick() {
         Backbone.trigger('toggle-details', false);
     },
 
@@ -1014,16 +1015,16 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    setupOtp: function() {
+    setupOtp() {
         OtpQrReader.read();
     },
 
-    otpCodeRead: function(otp) {
+    otpCodeRead(otp) {
         this.model.setOtp(otp);
         this.entryUpdated();
     },
 
-    otpEnterManually: function() {
+    otpEnterManually() {
         if (this.model.fields.otp) {
             const otpField = this.fieldViews.find(f => f.model.name === '$otp');
             if (otpField) {
@@ -1047,7 +1048,7 @@ const DetailsView = Backbone.View.extend({
         }
     },
 
-    toggleAutoType: function() {
+    toggleAutoType() {
         if (this.views.autoType) {
             this.views.autoType.remove();
             delete this.views.autoType;
@@ -1059,7 +1060,7 @@ const DetailsView = Backbone.View.extend({
         }).render();
     },
 
-    autoType: function() {
+    autoType() {
         Backbone.trigger('auto-type', { entry: this.model });
     }
 });

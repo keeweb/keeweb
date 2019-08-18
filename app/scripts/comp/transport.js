@@ -4,7 +4,7 @@ const Logger = require('../util/logger');
 const logger = new Logger('transport');
 
 const Transport = {
-    httpGet: function(config) {
+    httpGet(config) {
         let tmpFile;
         const fs = Launcher.req('fs');
         if (config.file) {

@@ -92,7 +92,7 @@ module.exports = function(grunt) {
             const spawned = grunt.util.spawn(
                 {
                     cmd: 'osslsigncode',
-                    args: args
+                    args
                 },
                 (error, result, code) => {
                     if (error || code) {

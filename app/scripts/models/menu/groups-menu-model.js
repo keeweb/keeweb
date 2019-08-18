@@ -7,11 +7,11 @@ const GroupsMenuModel = MenuSectionModel.extend({
         grow: true
     }),
 
-    initialize: function() {
+    initialize() {
         this.set('items', new GroupCollection());
     },
 
-    _loadItemCollectionType: function() {
+    _loadItemCollectionType() {
         return require('../../collections/group-collection');
     }
 });

@@ -5,24 +5,24 @@ const DragView = Backbone.View.extend({
         'mousedown': 'mousedown'
     },
 
-    initialize: function(coord) {
+    initialize(coord) {
         this.setCoord(coord);
         this.mouseDownTime = -1;
         this.mouseDownCount = 0;
     },
 
-    setCoord: function(coord) {
+    setCoord(coord) {
         this.coord = coord;
         this.offsetProp = 'page' + coord.toUpperCase();
     },
 
-    render: function() {
+    render() {
         $('<div/>')
             .addClass('drag-handle__inner')
             .appendTo(this.$el);
     },
 
-    mousedown: function(e) {
+    mousedown(e) {
         if (e.which === 1) {
             const now = Date.now();
             if (now - this.mouseDownTime < 500) {
@@ -48,7 +48,7 @@ const DragView = Backbone.View.extend({
         }
     },
 
-    mousemove: function(e) {
+    mousemove(e) {
         if (e.which === 0) {
             this.mouseup();
         } else {
@@ -56,7 +56,7 @@ const DragView = Backbone.View.extend({
         }
     },
 
-    mouseup: function() {
+    mouseup() {
         this.dragMask.remove();
         this.$el.removeClass('dragging');
     }

@@ -11,8 +11,12 @@ module.exports = function(grunt) {
         await walk(appPath);
 
         const data = JSON.stringify(signatures);
-        signatures.kwResSelf = await getSignature(Buffer.from(data));
-        grunt.file.write(path.join(appPath, 'signatures.json'), JSON.stringify(signatures));
+
+        const signaturesWithSelf = {
+            ...signatures,
+            kwResSelf: await getSignature(Buffer.from(data))
+        };
+        grunt.file.write(path.join(appPath, 'signatures.json'), JSON.stringify(signaturesWithSelf));
 
         grunt.log.writeln(`\nSigned ${signedFiles.length} files: ${signedFiles.join(', ')}`);
         done();

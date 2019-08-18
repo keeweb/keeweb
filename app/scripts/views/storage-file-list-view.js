@@ -38,7 +38,7 @@ const StorageFileListView = Backbone.View.extend({
             files,
             density,
             showHiddenFiles: this.showHiddenFiles,
-            canShowHiddenFiles: canShowHiddenFiles
+            canShowHiddenFiles
         });
         return this;
     },

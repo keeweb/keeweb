@@ -6,7 +6,7 @@ const ciCompare =
         : (x, y) => x.toLocaleLowerCase().localeCompare(y.toLocaleLowerCase());
 
 const Comparators = {
-    stringComparator: function(field, asc) {
+    stringComparator(field, asc) {
         if (asc) {
             return function(x, y) {
                 return ciCompare(x[field] || LastChar, y[field] || LastChar);
@@ -18,13 +18,13 @@ const Comparators = {
         }
     },
 
-    rankComparator: function() {
+    rankComparator() {
         return function(x, y) {
             return y.getRank(this.filter.textLower) - x.getRank(this.filter.textLower);
         };
     },
 
-    dateComparator: function(field, asc) {
+    dateComparator(field, asc) {
         if (asc) {
             return function(x, y) {
                 return x[field] - y[field];

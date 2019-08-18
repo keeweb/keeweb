@@ -6,11 +6,11 @@ const StorageWebDav = StorageBase.extend({
     enabled: true,
     uipos: 10,
 
-    needShowOpenConfig: function() {
+    needShowOpenConfig() {
         return true;
     },
 
-    getOpenConfig: function() {
+    getOpenConfig() {
         return {
             fields: [
                 { id: 'path', title: 'openUrl', desc: 'openUrlDesc', type: 'text', required: true },
@@ -32,7 +32,7 @@ const StorageWebDav = StorageBase.extend({
         };
     },
 
-    getSettingsConfig: function() {
+    getSettingsConfig() {
         return {
             fields: [
                 {
@@ -46,16 +46,16 @@ const StorageWebDav = StorageBase.extend({
         };
     },
 
-    applySetting: function(key, value) {
+    applySetting(key, value) {
         this.appSettings.set(key, value);
     },
 
-    load: function(path, opts, callback) {
+    load(path, opts, callback) {
         this._request(
             {
                 op: 'Load',
                 method: 'GET',
-                path: path,
+                path,
                 user: opts ? opts.user : null,
                 password: opts ? opts.password : null
             },
@@ -67,12 +67,12 @@ const StorageWebDav = StorageBase.extend({
         );
     },
 
-    stat: function(path, opts, callback) {
+    stat(path, opts, callback) {
         this._request(
             {
                 op: 'Stat',
                 method: 'HEAD',
-                path: path,
+                path,
                 user: opts ? opts.user : null,
                 password: opts ? opts.password : null
             },
@@ -84,7 +84,7 @@ const StorageWebDav = StorageBase.extend({
         );
     },
 
-    save: function(path, opts, data, callback, rev) {
+    save(path, opts, data, callback, rev) {
         const cb = function(err, xhr, stat) {
             if (callback) {
                 callback(err, stat);
@@ -93,7 +93,7 @@ const StorageWebDav = StorageBase.extend({
         };
         const tmpPath = path.replace(/[^\/]+$/, m => '.' + m) + '.' + Date.now();
         const saveOpts = {
-            path: path,
+            path,
             user: opts ? opts.user : null,
             password: opts ? opts.password : null
         };
@@ -126,7 +126,7 @@ const StorageWebDav = StorageBase.extend({
                                 op: 'Save:put',
                                 method: 'PUT',
                                 path: tmpPath,
-                                data: data,
+                                data,
                                 nostat: true
                             },
                             saveOpts
@@ -227,7 +227,7 @@ const StorageWebDav = StorageBase.extend({
                             {
                                 op: 'Save:put',
                                 method: 'PUT',
-                                data: data,
+                                data,
                                 nostat: true
                             },
                             saveOpts
@@ -255,7 +255,7 @@ const StorageWebDav = StorageBase.extend({
         );
     },
 
-    fileOptsToStoreOpts: function(opts, file) {
+    fileOptsToStoreOpts(opts, file) {
         const result = { user: opts.user, encpass: opts.encpass };
         if (opts.password) {
             const fileId = file.get('uuid');
@@ -271,7 +271,7 @@ const StorageWebDav = StorageBase.extend({
         return result;
     },
 
-    storeOptsToFileOpts: function(opts, file) {
+    storeOptsToFileOpts(opts, file) {
         const result = { user: opts.user, password: opts.password };
         if (opts.encpass) {
             const fileId = file.get('uuid');
@@ -287,7 +287,7 @@ const StorageWebDav = StorageBase.extend({
         return result;
     },
 
-    _request: function(config, callback) {
+    _request(config, callback) {
         const that = this;
         if (config.rev) {
             that.logger.debug(config.op, config.path, config.rev);
@@ -340,7 +340,7 @@ const StorageWebDav = StorageBase.extend({
                 config.op + (config.op.charAt(config.op.length - 1) === 'e' ? 'd' : 'ed');
             that.logger.debug(completedOpName, config.path, rev, that.logger.ts(ts));
             if (callback) {
-                callback(null, xhr, rev ? { rev: rev } : null);
+                callback(null, xhr, rev ? { rev } : null);
                 callback = null;
             }
         });

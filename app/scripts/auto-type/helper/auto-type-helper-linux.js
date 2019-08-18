@@ -6,7 +6,7 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
     Launcher.spawn({
         cmd: 'xdotool',
         args: ['getactivewindow', 'getwindowname'],
-        complete: function(err, res) {
+        complete(err, res) {
             return callback(err, res ? res.trim() : undefined);
         }
     });

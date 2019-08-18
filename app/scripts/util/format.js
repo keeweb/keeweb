@@ -1,20 +1,20 @@
 const Locale = require('./locale');
 
 const Format = {
-    pad: function(num, digits) {
+    pad(num, digits) {
         let str = num.toString();
         while (str.length < digits) {
             str = '0' + str;
         }
         return str;
     },
-    padStr: function(str, len) {
+    padStr(str, len) {
         while (str.length < len) {
             str += ' ';
         }
         return str;
     },
-    dtStr: function(dt) {
+    dtStr(dt) {
         if (typeof dt === 'number') {
             dt = new Date(dt);
         }
@@ -28,7 +28,7 @@ const Format = {
                   this.pad(dt.getSeconds(), 2)
             : '';
     },
-    dStr: function(dt) {
+    dStr(dt) {
         if (typeof dt === 'number') {
             dt = new Date(dt);
         }
@@ -36,13 +36,13 @@ const Format = {
             ? dt.getDate() + ' ' + Locale.monthsShort[dt.getMonth()] + ' ' + dt.getFullYear()
             : '';
     },
-    capFirst: function(str) {
+    capFirst(str) {
         if (!str) {
             return '';
         }
         return str[0].toUpperCase() + str.substr(1);
     },
-    dtStrFs: function(dt) {
+    dtStrFs(dt) {
         if (typeof dt === 'number') {
             dt = new Date(dt);
         }

@@ -11,28 +11,28 @@ const Launcher = {
     thirdPartyStoragesSupported: true,
     clipboardSupported: true,
     req: window.require,
-    platform: function() {
+    platform() {
         return process.platform;
     },
-    electron: function() {
+    electron() {
         return this.req('electron');
     },
-    remoteApp: function() {
+    remoteApp() {
         return this.electron().remote.app;
     },
-    remReq: function(mod) {
+    remReq(mod) {
         return this.electron().remote.require(mod);
     },
-    openLink: function(href) {
+    openLink(href) {
         this.electron().shell.openExternal(href);
     },
     devTools: true,
-    openDevTools: function() {
+    openDevTools() {
         this.electron()
             .remote.getCurrentWindow()
             .openDevTools({ mode: 'bottom' });
     },
-    getSaveFileName: function(defaultPath, callback) {
+    getSaveFileName(defaultPath, callback) {
         if (defaultPath) {
             const homePath = this.remReq('electron').app.getPath('userDesktop');
             defaultPath = this.joinPath(homePath, defaultPath);
@@ -40,13 +40,13 @@ const Launcher = {
         this.remReq('electron').dialog.showSaveDialog(
             {
                 title: Locale.launcherSave,
-                defaultPath: defaultPath,
+                defaultPath,
                 filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
             },
             callback
         );
     },
-    getUserDataPath: function(fileName) {
+    getUserDataPath(fileName) {
         if (!this.userDataPath) {
             const realUserDataPath = this.remoteApp().getPath('userData');
             const suffixReplacementRegex = /[\\/]temp[\\/]\d+\.\d+[\\/]?$/;
@@ -54,42 +54,42 @@ const Launcher = {
         }
         return this.joinPath(this.userDataPath, fileName || '');
     },
-    getTempPath: function(fileName) {
+    getTempPath(fileName) {
         return this.joinPath(this.remoteApp().getPath('temp'), fileName || '');
     },
-    getDocumentsPath: function(fileName) {
+    getDocumentsPath(fileName) {
         return this.joinPath(this.remoteApp().getPath('documents'), fileName || '');
     },
-    getAppPath: function(fileName) {
+    getAppPath(fileName) {
         const dirname = this.req('path').dirname;
         const appPath = __dirname.endsWith('app.asar') ? __dirname : this.remoteApp().getAppPath();
         return this.joinPath(dirname(appPath), fileName || '');
     },
-    getWorkDirPath: function(fileName) {
+    getWorkDirPath(fileName) {
         return this.joinPath(process.cwd(), fileName || '');
     },
-    joinPath: function(...parts) {
+    joinPath(...parts) {
         return this.req('path').join(...parts);
     },
-    writeFile: function(path, data, callback) {
+    writeFile(path, data, callback) {
         this.req('fs').writeFile(path, window.Buffer.from(data), callback);
     },
-    readFile: function(path, encoding, callback) {
+    readFile(path, encoding, callback) {
         this.req('fs').readFile(path, encoding, (err, contents) => {
             const data = typeof contents === 'string' ? contents : new Uint8Array(contents);
             callback(data, err);
         });
     },
-    fileExists: function(path, callback) {
+    fileExists(path, callback) {
         this.req('fs').exists(path, callback);
     },
-    deleteFile: function(path, callback) {
+    deleteFile(path, callback) {
         this.req('fs').unlink(path, callback || _.noop);
     },
-    statFile: function(path, callback) {
+    statFile(path, callback) {
         this.req('fs').stat(path, (err, stats) => callback(stats, err));
     },
-    mkdir: function(dir, callback) {
+    mkdir(dir, callback) {
         const fs = this.req('fs');
         const path = this.req('path');
         const stack = [];
@@ -120,7 +120,7 @@ const Launcher = {
 
         collect(dir, stack, () => create(stack, callback));
     },
-    parsePath: function(fileName) {
+    parsePath(fileName) {
         const path = this.req('path');
         return {
             path: fileName,
@@ -128,10 +128,10 @@ const Launcher = {
             file: path.basename(fileName)
         };
     },
-    createFsWatcher: function(path) {
+    createFsWatcher(path) {
         return this.req('fs').watch(path, { persistent: false });
     },
-    ensureRunnable: function(path) {
+    ensureRunnable(path) {
         if (process.platform !== 'win32') {
             const fs = this.req('fs');
             const stat = fs.statSync(path);
@@ -142,15 +142,15 @@ const Launcher = {
             }
         }
     },
-    preventExit: function(e) {
+    preventExit(e) {
         e.returnValue = false;
         return false;
     },
-    exit: function() {
+    exit() {
         this.exitRequested = true;
         this.requestExit();
     },
-    requestExit: function() {
+    requestExit() {
         const app = this.remoteApp();
         if (this.restartPending) {
             app.restartApp();
@@ -158,38 +158,38 @@ const Launcher = {
             app.quit();
         }
     },
-    requestRestart: function() {
+    requestRestart() {
         this.restartPending = true;
         this.requestExit();
     },
-    cancelRestart: function() {
+    cancelRestart() {
         this.restartPending = false;
     },
-    setClipboardText: function(text) {
+    setClipboardText(text) {
         return this.electron().clipboard.writeText(text);
     },
-    getClipboardText: function() {
+    getClipboardText() {
         return this.electron().clipboard.readText();
     },
-    clearClipboardText: function() {
+    clearClipboardText() {
         return this.electron().clipboard.clear();
     },
-    minimizeApp: function() {
+    minimizeApp() {
         this.remoteApp().minimizeApp();
     },
-    canMinimize: function() {
+    canMinimize() {
         return process.platform !== 'darwin';
     },
-    canDetectOsSleep: function() {
+    canDetectOsSleep() {
         return process.platform !== 'linux';
     },
-    updaterEnabled: function() {
+    updaterEnabled() {
         return this.electron().remote.process.argv.indexOf('--disable-updater') === -1;
     },
-    getMainWindow: function() {
+    getMainWindow() {
         return this.remoteApp().getMainWindow();
     },
-    resolveProxy: function(url, callback) {
+    resolveProxy(url, callback) {
         const window = this.getMainWindow();
         const session = window.webContents.session;
         session.resolveProxy(url, proxy => {
@@ -198,10 +198,10 @@ const Launcher = {
             callback(proxy);
         });
     },
-    openWindow: function(opts) {
+    openWindow(opts) {
         return this.remoteApp().openWindow(opts);
     },
-    hideApp: function() {
+    hideApp() {
         const app = this.remoteApp();
         if (this.canMinimize()) {
             app.minimizeThenHideIfInTray();
@@ -209,16 +209,16 @@ const Launcher = {
             app.hide();
         }
     },
-    isAppFocused: function() {
+    isAppFocused() {
         return !!this.electron().remote.BrowserWindow.getFocusedWindow();
     },
-    showMainWindow: function() {
+    showMainWindow() {
         const win = this.getMainWindow();
         win.show();
         win.focus();
         win.restore();
     },
-    spawn: function(config) {
+    spawn(config) {
         const ts = logger.ts();
         let complete = config.complete;
         const ps = this.req('child_process').spawn(config.cmd, config.args);

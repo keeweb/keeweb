@@ -11,7 +11,7 @@ const KeyHandler = {
     shortcuts: {},
     modal: false,
 
-    init: function() {
+    init() {
         $(document).bind('keypress', this.keypress.bind(this));
         $(document).bind('keydown', this.keydown.bind(this));
 
@@ -25,33 +25,33 @@ const KeyHandler = {
             }
         ];
     },
-    onKey: function(key, handler, thisArg, shortcut, modal, noPrevent) {
+    onKey(key, handler, thisArg, shortcut, modal, noPrevent) {
         let keyShortcuts = this.shortcuts[key];
         if (!keyShortcuts) {
             this.shortcuts[key] = keyShortcuts = [];
         }
         keyShortcuts.push({
-            handler: handler,
-            thisArg: thisArg,
-            shortcut: shortcut,
-            modal: modal,
-            noPrevent: noPrevent
+            handler,
+            thisArg,
+            shortcut,
+            modal,
+            noPrevent
         });
     },
-    offKey: function(key, handler, thisArg) {
+    offKey(key, handler, thisArg) {
         if (this.shortcuts[key]) {
             this.shortcuts[key] = _.reject(this.shortcuts[key], sh => {
                 return sh.handler === handler && sh.thisArg === thisArg;
             });
         }
     },
-    setModal: function(modal) {
+    setModal(modal) {
         this.modal = modal;
     },
-    isActionKey: function(e) {
+    isActionKey(e) {
         return e[shortcutKeyProp];
     },
-    keydown: function(e) {
+    keydown(e) {
         IdleTracker.regUserAction();
         const code = e.keyCode || e.which;
         const keyShortcuts = this.shortcuts[code];
@@ -94,7 +94,7 @@ const KeyHandler = {
             }
         }
     },
-    keypress: function(e) {
+    keypress(e) {
         if (
             !this.modal &&
             e.charCode !== Keys.DOM_VK_RETURN &&
@@ -109,10 +109,10 @@ const KeyHandler = {
             this.trigger('keypress:' + this.modal, e);
         }
     },
-    reg: function() {
+    reg() {
         IdleTracker.regUserAction();
     },
-    handleAKey: function(e) {
+    handleAKey(e) {
         if (
             e.target.tagName.toLowerCase() === 'input' &&
             ['password', 'text'].indexOf(e.target.type) >= 0

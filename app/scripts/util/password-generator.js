@@ -13,7 +13,7 @@ const PasswordGenerator = {
         ambiguous: 'O0oIl'
     },
 
-    generate: function(opts) {
+    generate(opts) {
         if (!opts || typeof opts.length !== 'number' || opts.length < 0) {
             return '';
         }
@@ -48,7 +48,7 @@ const PasswordGenerator = {
         return _.shuffle(chars).join('');
     },
 
-    generateMac: function() {
+    generateMac() {
         const segmentsCount = 6;
         const randomBytes = kdbxweb.Random.getBytes(segmentsCount);
         let result = '';
@@ -62,7 +62,7 @@ const PasswordGenerator = {
         return result;
     },
 
-    generateHash: function(length) {
+    generateHash(length) {
         const randomBytes = kdbxweb.Random.getBytes(length);
         let result = '';
         for (let i = 0; i < length; i++) {
@@ -71,7 +71,7 @@ const PasswordGenerator = {
         return result;
     },
 
-    generatePronounceable: function(opts) {
+    generatePronounceable(opts) {
         const pass = phonetic.generate({
             length: opts.length,
             seed: this.generateHash(1024)
@@ -94,7 +94,7 @@ const PasswordGenerator = {
         return result.substr(0, opts.length);
     },
 
-    deriveOpts: function(password) {
+    deriveOpts(password) {
         const opts = {};
         let length = 0;
         if (password) {
@@ -113,7 +113,7 @@ const PasswordGenerator = {
         return opts;
     },
 
-    present: function(length) {
+    present(length) {
         return new Array(length + 1).join('•');
     }
 };

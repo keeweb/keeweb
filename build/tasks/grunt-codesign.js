@@ -13,7 +13,7 @@ module.exports = function(grunt) {
             grunt.util.spawn(
                 {
                     cmd: 'codesign',
-                    args: args,
+                    args,
                     opts: { stdio: 'inherit' }
                 },
                 (error, result, code) => {

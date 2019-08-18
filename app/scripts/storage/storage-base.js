@@ -21,7 +21,7 @@ _.extend(StorageBase.prototype, {
     appSettings: AppSettingsModel.instance,
     runtimeData: RuntimeDataModel.instance,
 
-    init: function() {
+    init() {
         if (!this.name) {
             throw 'Failed to init provider: no name';
         }
@@ -47,7 +47,7 @@ _.extend(StorageBase.prototype, {
         return this;
     },
 
-    setEnabled: function(enabled) {
+    setEnabled(enabled) {
         this.enabled = enabled;
     },
 
@@ -55,7 +55,7 @@ _.extend(StorageBase.prototype, {
         this._oauthReturnMessage = message;
     },
 
-    _xhr: function(config) {
+    _xhr(config) {
         const xhr = new XMLHttpRequest();
         if (config.responseType) {
             xhr.responseType = config.responseType;
@@ -102,7 +102,7 @@ _.extend(StorageBase.prototype, {
         xhr.send(config.data);
     },
 
-    _openPopup: function(url, title, width, height) {
+    _openPopup(url, title, width, height) {
         const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
         const dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
 
@@ -121,10 +121,10 @@ _.extend(StorageBase.prototype, {
         const top = winHeight / 2 - height / 2 + dualScreenTop;
 
         let settings = {
-            width: width,
-            height: height,
-            left: left,
-            top: top,
+            width,
+            height,
+            left,
+            top,
             dialog: 'yes',
             dependent: 'yes',
             scrollbars: 'yes',
@@ -140,7 +140,7 @@ _.extend(StorageBase.prototype, {
         return window.open(url, title, settings);
     },
 
-    _getOauthRedirectUrl: function() {
+    _getOauthRedirectUrl() {
         let redirectUrl = window.location.href;
         if (redirectUrl.lastIndexOf('file:', 0) === 0) {
             redirectUrl = Links.WebApp;
@@ -149,7 +149,7 @@ _.extend(StorageBase.prototype, {
         return redirectUrl;
     },
 
-    _oauthAuthorize: function(callback) {
+    _oauthAuthorize(callback) {
         if (this._tokenIsValid(this._oauthToken)) {
             return callback();
         }
@@ -201,7 +201,7 @@ _.extend(StorageBase.prototype, {
 
     _popupOpened(popupWindow) {},
 
-    _oauthProcessReturn: function(message) {
+    _oauthProcessReturn(message) {
         const token = this._oauthMsgToToken(message);
         if (token && !token.error) {
             this._oauthToken = token;
@@ -211,7 +211,7 @@ _.extend(StorageBase.prototype, {
         return token;
     },
 
-    _oauthMsgToToken: function(data) {
+    _oauthMsgToToken(data) {
         if (!data.token_type) {
             if (data.error) {
                 return { error: data.error, errorDescription: data.error_description };
@@ -230,13 +230,13 @@ _.extend(StorageBase.prototype, {
         };
     },
 
-    _oauthRefreshToken: function(callback) {
+    _oauthRefreshToken(callback) {
         this._oauthToken.expired = true;
         this.runtimeData.set(this.name + 'OAuthToken', this._oauthToken);
         this._oauthAuthorize(callback);
     },
 
-    _oauthRevokeToken: function(url) {
+    _oauthRevokeToken(url) {
         const token = this.runtimeData.get(this.name + 'OAuthToken');
         if (token) {
             if (url) {

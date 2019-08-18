@@ -49,11 +49,11 @@ const AppSettingsModel = Backbone.Model.extend({
         onedrive: true
     },
 
-    initialize: function() {
+    initialize() {
         this.listenTo(this, 'change', this.save);
     },
 
-    load: function() {
+    load() {
         return SettingsStore.load('app-settings').then(data => {
             if (data) {
                 this.upgrade(data);
@@ -62,7 +62,7 @@ const AppSettingsModel = Backbone.Model.extend({
         });
     },
 
-    upgrade: function(data) {
+    upgrade(data) {
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
         }
@@ -71,7 +71,7 @@ const AppSettingsModel = Backbone.Model.extend({
         }
     },
 
-    save: function() {
+    save() {
         SettingsStore.save('app-settings', this.attributes);
     }
 });

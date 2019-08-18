@@ -71,70 +71,70 @@ AutoTypeRunner.Keys = {
 };
 
 AutoTypeRunner.Substitutions = {
-    title: function(runner, op) {
+    title(runner, op) {
         return runner.getEntryFieldKeys('Title', op);
     },
-    username: function(runner, op) {
+    username(runner, op) {
         return runner.getEntryFieldKeys('UserName', op);
     },
-    url: function(runner, op) {
+    url(runner, op) {
         return runner.getEntryFieldKeys('URL', op);
     },
-    password: function(runner, op) {
+    password(runner, op) {
         return runner.getEntryFieldKeys('Password', op);
     },
-    notes: function(runner, op) {
+    notes(runner, op) {
         return runner.getEntryFieldKeys('Notes', op);
     },
-    group: function(runner) {
+    group(runner) {
         return runner.getEntryGroupName();
     },
-    totp: function(runner, op) {
+    totp(runner, op) {
         return runner.getOtp(op);
     },
-    s: function(runner, op) {
+    s(runner, op) {
         return runner.getEntryFieldKeys(op.arg, op);
     },
-    'dt_simple': function(runner) {
+    'dt_simple'(runner) {
         return runner.dt('simple');
     },
-    'dt_year': function(runner) {
+    'dt_year'(runner) {
         return runner.dt('Y');
     },
-    'dt_month': function(runner) {
+    'dt_month'(runner) {
         return runner.dt('M');
     },
-    'dt_day': function(runner) {
+    'dt_day'(runner) {
         return runner.dt('D');
     },
-    'dt_hour': function(runner) {
+    'dt_hour'(runner) {
         return runner.dt('h');
     },
-    'dt_minute': function(runner) {
+    'dt_minute'(runner) {
         return runner.dt('m');
     },
-    'dt_second': function(runner) {
+    'dt_second'(runner) {
         return runner.dt('s');
     },
-    'dt_utc_simple': function(runner) {
+    'dt_utc_simple'(runner) {
         return runner.udt('simple');
     },
-    'dt_utc_year': function(runner) {
+    'dt_utc_year'(runner) {
         return runner.udt('Y');
     },
-    'dt_utc_month': function(runner) {
+    'dt_utc_month'(runner) {
         return runner.udt('M');
     },
-    'dt_utc_day': function(runner) {
+    'dt_utc_day'(runner) {
         return runner.udt('D');
     },
-    'dt_utc_hour': function(runner) {
+    'dt_utc_hour'(runner) {
         return runner.udt('h');
     },
-    'dt_utc_minute': function(runner) {
+    'dt_utc_minute'(runner) {
         return runner.udt('m');
     },
-    'dt_utc_second': function(runner) {
+    'dt_utc_second'(runner) {
         return runner.udt('s');
     }
 };
@@ -412,7 +412,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
         }
         letters = op.value.split('');
     } else {
-        op.value.forEach(grOp => letters.push.apply(letters, grOp.value.split('')));
+        op.value.forEach(grOp => letters.push(...grOp.value.split('')));
     }
     if (letters.length <= 1) {
         return;
@@ -425,7 +425,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
 AutoTypeRunner.prototype.run = function(callback) {
     this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this));
     this.emitterState = {
-        callback: callback,
+        callback,
         stack: [],
         ops: this.ops,
         opIx: 0,
@@ -495,7 +495,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             emitterLogger.debug('key', op.value);
             this.emitter.key(op.value);
             break;
-        case 'cmd':
+        case 'cmd': {
             const method = this.emitter[op.value];
             if (!method) {
                 throw 'Bad cmd: ' + op.value;
@@ -503,6 +503,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             emitterLogger.debug(op.value, op.arg);
             method.call(this.emitter, op.arg);
             break;
+        }
         default:
             throw 'Bad op: ' + op.type;
     }

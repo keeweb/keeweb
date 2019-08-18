@@ -14,14 +14,14 @@ const IconSelectView = Backbone.View.extend({
         'change .icon-select__file-input': 'iconSelected'
     },
 
-    initialize: function() {
+    initialize() {
         this.special = {
             select: null,
             download: null
         };
     },
 
-    render: function() {
+    render() {
         this.renderTemplate(
             {
                 sel: this.model.iconId,
@@ -34,14 +34,14 @@ const IconSelectView = Backbone.View.extend({
         return this;
     },
 
-    iconClick: function(e) {
+    iconClick(e) {
         const target = $(e.target).closest('.icon-select__icon');
         const iconId = target[0].getAttribute('data-val');
         if (iconId === 'special') {
             const iconData = this.special[target.data('special')];
             if (iconData) {
                 const id = this.model.file.addCustomIcon(iconData.data);
-                this.trigger('select', { id: id, custom: true });
+                this.trigger('select', { id, custom: true });
                 e.preventDefault();
                 e.stopImmediatePropagation();
             }
@@ -51,7 +51,7 @@ const IconSelectView = Backbone.View.extend({
         }
     },
 
-    downloadIcon: function() {
+    downloadIcon() {
         if (this.downloadingFavicon) {
             return;
         }
@@ -85,7 +85,7 @@ const IconSelectView = Backbone.View.extend({
         };
     },
 
-    getIconUrl: function(useService) {
+    getIconUrl(useService) {
         if (!this.model.url) {
             return null;
         }
@@ -102,11 +102,11 @@ const IconSelectView = Backbone.View.extend({
         return url;
     },
 
-    selectIcon: function() {
+    selectIcon() {
         this.$el.find('.icon-select__file-input').click();
     },
 
-    iconSelected: function(e) {
+    iconSelected(e) {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -131,7 +131,7 @@ const IconSelectView = Backbone.View.extend({
         }
     },
 
-    setSpecialImage: function(img, name) {
+    setSpecialImage(img, name) {
         const size = Math.min(img.width, 32);
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -139,7 +139,7 @@ const IconSelectView = Backbone.View.extend({
         canvas.height = size;
         ctx.drawImage(img, 0, 0, size, size);
         const data = canvas.toDataURL().replace(/^.*,/, '');
-        this.special[name] = { width: img.width, height: img.height, data: data };
+        this.special[name] = { width: img.width, height: img.height, data };
     }
 });
 

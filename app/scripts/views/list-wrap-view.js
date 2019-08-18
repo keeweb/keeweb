@@ -3,15 +3,15 @@ const Backbone = require('backbone');
 const ListWrapView = Backbone.View.extend({
     events: {},
 
-    initialize: function() {
+    initialize() {
         this.listenTo(this.model.settings, 'change:tableView', this.setListLayout);
     },
 
-    render: function() {
+    render() {
         this.setListLayout();
     },
 
-    setListLayout: function() {
+    setListLayout() {
         const tableView = this.model.settings.get('tableView');
         this.$el.toggleClass('app__list-wrap--table', tableView);
     }

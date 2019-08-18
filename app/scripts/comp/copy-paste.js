@@ -5,7 +5,7 @@ const AppSettingsModel = require('../models/app-settings-model');
 const CopyPaste = {
     simpleCopy: !!(Launcher && Launcher.clipboardSupported),
 
-    copy: function(text) {
+    copy(text) {
         if (this.simpleCopy) {
             Launcher.setClipboardText(text);
             const clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
@@ -32,7 +32,7 @@ const CopyPaste = {
         }
     },
 
-    createHiddenInput: function(text) {
+    createHiddenInput(text) {
         const hiddenInput = $('<input/>')
             .val(text)
             .attr({ type: 'text', 'class': 'hide-by-pos' })
@@ -41,10 +41,10 @@ const CopyPaste = {
         hiddenInput[0].selectionEnd = text.length;
         hiddenInput.focus();
         hiddenInput.on({
-            'copy cut paste': function() {
+            'copy cut paste'() {
                 setTimeout(() => hiddenInput.blur(), 0);
             },
-            blur: function() {
+            blur() {
                 hiddenInput.remove();
             }
         });

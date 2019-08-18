@@ -14,7 +14,7 @@ const MenuModel = Backbone.Model.extend({
 
     menus: null,
 
-    initialize: function() {
+    initialize() {
         this.menus = {};
         this.allItemsSection = new MenuSectionModel([
             {
@@ -101,7 +101,7 @@ const MenuModel = Backbone.Model.extend({
         this._setLocale();
     },
 
-    select: function(sel) {
+    select(sel) {
         const sections = this.get('sections');
         sections.forEach(function(section) {
             this._select(section, sel.item);
@@ -126,7 +126,7 @@ const MenuModel = Backbone.Model.extend({
         }
     },
 
-    _selectPrevious: function() {
+    _selectPrevious() {
         let previousItem = null;
 
         const processSection = section => {
@@ -152,7 +152,7 @@ const MenuModel = Backbone.Model.extend({
         sections.forEach(section => processSection(section));
     },
 
-    _selectNext: function() {
+    _selectNext() {
         let activeItem = null;
 
         const processSection = section => {
@@ -179,7 +179,7 @@ const MenuModel = Backbone.Model.extend({
         sections.forEach(section => processSection(section));
     },
 
-    _select: function(item, selectedItem) {
+    _select(item, selectedItem) {
         const items = item.get('items');
         if (items) {
             items.forEach(function(it) {
@@ -189,7 +189,7 @@ const MenuModel = Backbone.Model.extend({
         }
     },
 
-    _setLocale: function() {
+    _setLocale() {
         [this.menus.app, this.menus.settings].forEach(menu => {
             menu.each(section =>
                 section.get('items').each(item => {
@@ -202,7 +202,7 @@ const MenuModel = Backbone.Model.extend({
         this.tagsSection.defaultItems[0] = this._getDefaultTagItem();
     },
 
-    _getDefaultTagItem: function() {
+    _getDefaultTagItem() {
         return {
             title: Format.capFirst(Locale.tags),
             icon: 'tags',
@@ -215,7 +215,7 @@ const MenuModel = Backbone.Model.extend({
         };
     },
 
-    setMenu: function(type) {
+    setMenu(type) {
         this.set('sections', this.menus[type]);
     }
 });

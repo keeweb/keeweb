@@ -2,16 +2,16 @@ const Backbone = require('backbone');
 const Tip = require('../util/tip');
 
 _.extend(Backbone.View.prototype, {
-    hide: function() {
+    hide() {
         Tip.hideTips(this.$el);
         return this.toggle(false);
     },
 
-    show: function() {
+    show() {
         return this.toggle(true);
     },
 
-    toggle: function(visible) {
+    toggle(visible) {
         if (visible === undefined) {
             visible = this._hidden;
         }
@@ -25,29 +25,29 @@ _.extend(Backbone.View.prototype, {
         return this;
     },
 
-    isHidden: function() {
+    isHidden() {
         return this._hidden;
     },
 
-    isVisible: function() {
+    isVisible() {
         return !this._hidden;
     },
 
-    afterPaint: function(callback) {
+    afterPaint(callback) {
         this.requestAnimationFrame(function() {
             this.requestAnimationFrame(callback);
         });
     },
 
-    setTimeout: function(callback) {
+    setTimeout(callback) {
         setTimeout(callback.bind(this), 0);
     },
 
-    requestAnimationFrame: function(callback) {
+    requestAnimationFrame(callback) {
         requestAnimationFrame(callback.bind(this));
     },
 
-    renderTemplate: function(model, replace) {
+    renderTemplate(model, replace) {
         Tip.hideTips(this.$el);
         if (replace && replace.plain) {
             this.$el.html(this.template(model));
@@ -69,7 +69,7 @@ _.extend(Backbone.View.prototype, {
 
     _parentRemove: Backbone.View.prototype.remove,
 
-    remove: function() {
+    remove() {
         this.trigger('remove');
         this.removeInnerViews();
         if (this.scroll) {
@@ -78,10 +78,10 @@ _.extend(Backbone.View.prototype, {
             } catch (e) {}
         }
         Tip.hideTips(this.$el);
-        this._parentRemove(arguments);
+        this._parentRemove();
     },
 
-    removeInnerViews: function() {
+    removeInnerViews() {
         if (this.views) {
             _.each(this.views, view => {
                 if (view) {
@@ -96,7 +96,7 @@ _.extend(Backbone.View.prototype, {
         }
     },
 
-    deferRender: function() {
+    deferRender() {
         _.defer(this.render.bind(this));
     }
 });

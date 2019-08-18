@@ -31,7 +31,7 @@ const ListSearchView = Backbone.View.extend({
     advancedSearchEnabled: false,
     advancedSearch: null,
 
-    initialize: function() {
+    initialize() {
         this.sortOptions = [
             {
                 value: 'title',
@@ -122,15 +122,15 @@ const ListSearchView = Backbone.View.extend({
         this.listenTo(Backbone, 'page-blur', this.pageBlur);
     },
 
-    remove: function() {
+    remove() {
         KeyHandler.offKey(Keys.DOM_VK_F, this.findKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_N, this.newKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_DOWN, this.downKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_UP, this.upKeyPress, this);
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    setLocale: function() {
+    setLocale() {
         this.sortOptions.forEach(opt => {
             opt.text = opt.loc();
         });
@@ -148,19 +148,19 @@ const ListSearchView = Backbone.View.extend({
         this.render();
     },
 
-    pageBlur: function() {
+    pageBlur() {
         this.inputEl.blur();
     },
 
-    viewShown: function() {
+    viewShown() {
         this.listenTo(KeyHandler, 'keypress', this.documentKeyPress);
     },
 
-    viewHidden: function() {
+    viewHidden() {
         this.stopListening(KeyHandler, 'keypress', this.documentKeyPress);
     },
 
-    render: function() {
+    render() {
         let searchVal;
         if (this.inputEl) {
             searchVal = this.inputEl.val();
@@ -176,7 +176,7 @@ const ListSearchView = Backbone.View.extend({
         return this;
     },
 
-    inputKeyDown: function(e) {
+    inputKeyDown(e) {
         switch (e.which) {
             case Keys.DOM_VK_UP:
             case Keys.DOM_VK_DOWN:
@@ -197,19 +197,19 @@ const ListSearchView = Backbone.View.extend({
         e.preventDefault();
     },
 
-    inputKeyPress: function(e) {
+    inputKeyPress(e) {
         e.stopPropagation();
     },
 
-    inputChange: function() {
+    inputChange() {
         Backbone.trigger('add-filter', { text: this.inputEl.val() });
     },
 
-    inputFocus: function(e) {
+    inputFocus(e) {
         $(e.target).select();
     },
 
-    documentKeyPress: function(e) {
+    documentKeyPress(e) {
         if (this._hidden) {
             return;
         }
@@ -224,7 +224,7 @@ const ListSearchView = Backbone.View.extend({
         e.preventDefault();
     },
 
-    findKeyPress: function(e) {
+    findKeyPress(e) {
         if (!this._hidden) {
             e.preventDefault();
             this.hideSearchOptions();
@@ -232,7 +232,7 @@ const ListSearchView = Backbone.View.extend({
         }
     },
 
-    newKeyPress: function(e) {
+    newKeyPress(e) {
         if (!this._hidden) {
             e.preventDefault();
             this.hideSearchOptions();
@@ -240,19 +240,19 @@ const ListSearchView = Backbone.View.extend({
         }
     },
 
-    downKeyPress: function(e) {
+    downKeyPress(e) {
         e.preventDefault();
         this.hideSearchOptions();
         this.trigger('select-next');
     },
 
-    upKeyPress: function(e) {
+    upKeyPress(e) {
         e.preventDefault();
         this.hideSearchOptions();
         this.trigger('select-prev');
     },
 
-    filterChanged: function(filter) {
+    filterChanged(filter) {
         this.hideSearchOptions();
         if (filter.filter.text !== this.inputEl.val()) {
             this.inputEl.val(filter.text || '');
@@ -269,7 +269,7 @@ const ListSearchView = Backbone.View.extend({
         }
     },
 
-    createOptionsClick: function(e) {
+    createOptionsClick(e) {
         e.stopImmediatePropagation();
         if (e.shiftKey) {
             this.hideSearchOptions();
@@ -279,12 +279,12 @@ const ListSearchView = Backbone.View.extend({
         this.toggleCreateOptions();
     },
 
-    sortOptionsClick: function(e) {
+    sortOptionsClick(e) {
         this.toggleSortOptions();
         e.stopImmediatePropagation();
     },
 
-    advancedSearchClick: function() {
+    advancedSearchClick() {
         this.advancedSearchEnabled = !this.advancedSearchEnabled;
         this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
         let advanced = false;
@@ -296,17 +296,17 @@ const ListSearchView = Backbone.View.extend({
         Backbone.trigger('add-filter', { advanced });
     },
 
-    toggleMenu: function() {
+    toggleMenu() {
         Backbone.trigger('toggle-menu');
     },
 
-    toggleAdvCheck: function(e) {
+    toggleAdvCheck(e) {
         const setting = $(e.target).data('id');
         this.advancedSearch[setting] = e.target.checked;
         Backbone.trigger('add-filter', { advanced: this.advancedSearch });
     },
 
-    hideSearchOptions: function() {
+    hideSearchOptions() {
         if (this.views.searchDropdown) {
             this.views.searchDropdown.remove();
             this.views.searchDropdown = null;
@@ -316,7 +316,7 @@ const ListSearchView = Backbone.View.extend({
         }
     },
 
-    toggleSortOptions: function() {
+    toggleSortOptions() {
         if (this.views.searchDropdown && this.views.searchDropdown.isSort) {
             this.hideSearchOptions();
             return;
@@ -340,7 +340,7 @@ const ListSearchView = Backbone.View.extend({
         this.views.searchDropdown = view;
     },
 
-    toggleCreateOptions: function() {
+    toggleCreateOptions() {
         if (this.views.searchDropdown && this.views.searchDropdown.isCreate) {
             this.hideSearchOptions();
             return;
@@ -362,7 +362,7 @@ const ListSearchView = Backbone.View.extend({
         this.views.searchDropdown = view;
     },
 
-    getCreateEntryTemplateOptions: function() {
+    getCreateEntryTemplateOptions() {
         const entryTemplates = this.model.getEntryTemplates();
         const hasMultipleFiles = this.model.files.length > 1;
         this.entryTemplates = {};
@@ -387,12 +387,12 @@ const ListSearchView = Backbone.View.extend({
         return options;
     },
 
-    sortDropdownSelect: function(e) {
+    sortDropdownSelect(e) {
         this.hideSearchOptions();
         Backbone.trigger('set-sort', e.item);
     },
 
-    createDropdownSelect: function(e) {
+    createDropdownSelect(e) {
         this.hideSearchOptions();
         switch (e.item) {
             case 'entry':

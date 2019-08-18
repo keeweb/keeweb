@@ -16,7 +16,7 @@ const MenuView = Backbone.View.extend({
     minWidth: 130,
     maxWidth: 300,
 
-    initialize: function() {
+    initialize() {
         this.listenTo(this.model, 'change:sections', this.menuChanged);
         this.listenTo(this, 'view-resize', this.viewResized);
         KeyHandler.onKey(
@@ -33,13 +33,13 @@ const MenuView = Backbone.View.extend({
         );
     },
 
-    remove: function() {
+    remove() {
         this.sectionViews.forEach(sectionView => sectionView.remove());
         this.sectionViews = [];
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    render: function() {
+    render() {
         this.$el.html(this.template());
         const sectionsEl = this.$el.find('.menu');
         this.model.get('sections').forEach(function(section) {
@@ -62,7 +62,7 @@ const MenuView = Backbone.View.extend({
         return this;
     },
 
-    menuChanged: function() {
+    menuChanged() {
         this.render();
     },
 
@@ -70,15 +70,15 @@ const MenuView = Backbone.View.extend({
         AppSettingsModel.instance.set('menuViewWidth', size);
     }, 1000),
 
-    switchVisibility: function(visible) {
+    switchVisibility(visible) {
         this.$el.toggleClass('menu-visible', visible);
     },
 
-    selectPreviousSection: function() {
+    selectPreviousSection() {
         Backbone.trigger('select-previous-menu-item');
     },
 
-    selectNextSection: function() {
+    selectNextSection() {
         Backbone.trigger('select-next-menu-item');
     }
 });

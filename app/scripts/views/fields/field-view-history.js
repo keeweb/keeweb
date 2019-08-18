@@ -2,7 +2,7 @@ const FieldView = require('./field-view');
 const Locale = require('../../util/locale');
 
 const FieldViewHistory = FieldView.extend({
-    renderValue: function(value) {
+    renderValue(value) {
         if (!value.length) {
             return Locale.detHistoryEmpty;
         }

@@ -64,7 +64,7 @@ kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
 };
 
 Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
-    get: function() {
+    get() {
         let textLength = 0;
         this.forEachChar(() => {
             textLength++;

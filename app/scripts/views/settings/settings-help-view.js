@@ -5,7 +5,7 @@ const Links = require('../../const/links');
 const SettingsHelpView = Backbone.View.extend({
     template: require('templates/settings/settings-help.hbs'),
 
-    render: function() {
+    render() {
         const appInfo =
             'KeeWeb v' +
             RuntimeInfo.version +

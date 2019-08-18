@@ -5,9 +5,9 @@ const SettingsStore = require('../comp/settings-store');
 const FileInfoCollection = Backbone.Collection.extend({
     model: FileInfoModel,
 
-    initialize: function() {},
+    initialize() {},
 
-    load: function() {
+    load() {
         return SettingsStore.load('file-info').then(data => {
             if (data) {
                 this.reset(data, { silent: true });
@@ -15,15 +15,15 @@ const FileInfoCollection = Backbone.Collection.extend({
         });
     },
 
-    save: function() {
+    save() {
         SettingsStore.save('file-info', this.toJSON());
     },
 
-    getLast: function() {
+    getLast() {
         return this.first();
     },
 
-    getMatch: function(storage, name, path) {
+    getMatch(storage, name, path) {
         return this.find(fi => {
             return (
                 (fi.get('storage') || '') === (storage || '') &&
@@ -33,7 +33,7 @@ const FileInfoCollection = Backbone.Collection.extend({
         });
     },
 
-    getByName: function(name) {
+    getByName(name) {
         return this.find(file => file.get('name').toLowerCase() === name.toLowerCase());
     }
 });

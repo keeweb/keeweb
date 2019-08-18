@@ -9,17 +9,17 @@ const kdbxweb = require('kdbxweb');
 const Tip = require('../../util/tip');
 
 const FieldViewText = FieldView.extend({
-    renderValue: function(value) {
+    renderValue(value) {
         return value && value.isProtected
             ? PasswordGenerator.present(value.textLength)
             : _.escape(value || '').replace(/\n/g, '<br/>');
     },
 
-    getEditValue: function(value) {
+    getEditValue(value) {
         return value && value.isProtected ? value.getText() : value || '';
     },
 
-    startEdit: function() {
+    startEdit() {
         const text = this.getEditValue(this.value);
         const isProtected = !!(this.value && this.value.isProtected);
         this.$el.toggleClass('details__field--protected', isProtected);
@@ -56,7 +56,7 @@ const FieldViewText = FieldView.extend({
         Tip.hideTip(this.labelEl[0]);
     },
 
-    createMobileControls: function() {
+    createMobileControls() {
         this.mobileControls = {};
         ['cancel', 'apply'].forEach(action => {
             this.mobileControls[action] = $('<div/>')
@@ -72,14 +72,14 @@ const FieldViewText = FieldView.extend({
         });
     },
 
-    showGeneratorClick: function(e) {
+    showGeneratorClick(e) {
         e.stopPropagation();
         if (!this.gen) {
             this.input.focus();
         }
     },
 
-    showGenerator: function() {
+    showGenerator() {
         if (this.gen) {
             this.hideGenerator();
         } else {
@@ -95,7 +95,7 @@ const FieldViewText = FieldView.extend({
         }
     },
 
-    hideGenerator: function() {
+    hideGenerator() {
         if (this.gen) {
             const gen = this.gen;
             delete this.gen;
@@ -103,21 +103,21 @@ const FieldViewText = FieldView.extend({
         }
     },
 
-    generatorClosed: function() {
+    generatorClosed() {
         if (this.gen) {
             delete this.gen;
             this.endEdit();
         }
     },
 
-    generatorResult: function(password) {
+    generatorResult(password) {
         if (this.gen) {
             delete this.gen;
             this.endEdit(password);
         }
     },
 
-    setInputHeight: function() {
+    setInputHeight() {
         const MinHeight = 18;
         this.input.height(MinHeight);
         let newHeight = this.input[0].scrollHeight;
@@ -129,30 +129,30 @@ const FieldViewText = FieldView.extend({
         this.input.height(newHeight);
     },
 
-    fieldValueBlur: function() {
+    fieldValueBlur() {
         if (!this.gen && this.input) {
             this.endEdit(this.input.val());
         }
     },
 
-    fieldValueInput: function(e) {
+    fieldValueInput(e) {
         e.stopPropagation();
         if (this.model.multiline) {
             this.setInputHeight();
         }
     },
 
-    fieldValueInputClick: function() {
+    fieldValueInputClick() {
         if (this.gen) {
             this.hideGenerator();
         }
     },
 
-    fieldValueInputMouseDown: function(e) {
+    fieldValueInputMouseDown(e) {
         e.stopPropagation();
     },
 
-    fieldValueKeydown: function(e) {
+    fieldValueKeydown(e) {
         KeyHandler.reg();
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
@@ -183,13 +183,13 @@ const FieldViewText = FieldView.extend({
         e.stopPropagation();
     },
 
-    externalEndEdit: function() {
+    externalEndEdit() {
         if (this.input) {
             this.endEdit(this.input.val());
         }
     },
 
-    endEdit: function(newVal, extra) {
+    endEdit(newVal, extra) {
         if (this.gen) {
             this.hideGenerator();
         }
@@ -212,7 +212,7 @@ const FieldViewText = FieldView.extend({
         FieldView.prototype.endEdit.call(this, newVal, extra);
     },
 
-    stopBlurListener: function() {
+    stopBlurListener() {
         this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
     },
 

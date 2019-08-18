@@ -14,7 +14,7 @@ const SettingsLogView = Backbone.View.extend({
                 '] ' +
                 item.args.map(arg => this.mapArg(arg)).join(' ')
         }));
-        this.renderTemplate({ logs: logs });
+        this.renderTemplate({ logs });
         return this;
     },
 

@@ -18,11 +18,11 @@ const GrpView = Backbone.View.extend({
         'change #grp__check-auto-type': 'setEnableAutoType'
     },
 
-    initialize: function() {
+    initialize() {
         this.views = {};
     },
 
-    render: function() {
+    render() {
         this.removeSubView();
         if (this.model) {
             this.renderTemplate(
@@ -52,19 +52,19 @@ const GrpView = Backbone.View.extend({
         return this;
     },
 
-    removeSubView: function() {
+    removeSubView() {
         if (this.views.sub) {
             this.views.sub.remove();
             delete this.views.sub;
         }
     },
 
-    showGroup: function(group) {
+    showGroup(group) {
         this.model = group;
         this.render();
     },
 
-    changeTitle: function(e) {
+    changeTitle(e) {
         const title = $.trim(e.target.value);
         if (title) {
             if (!this.model.get('top') && title !== this.model.get('title')) {
@@ -78,7 +78,7 @@ const GrpView = Backbone.View.extend({
         }
     },
 
-    changeAutoTypeSeq: function(e) {
+    changeAutoTypeSeq(e) {
         const el = e.target;
         const seq = $.trim(el.value);
         AutoType.validate(null, seq, err => {
@@ -89,7 +89,7 @@ const GrpView = Backbone.View.extend({
         });
     },
 
-    focusAutoTypeSeq: function(e) {
+    focusAutoTypeSeq(e) {
         if (!this.views.hint) {
             this.views.hint = new AutoTypeHintView({ input: e.target }).render();
             this.views.hint.on('remove', () => {
@@ -98,7 +98,7 @@ const GrpView = Backbone.View.extend({
         }
     },
 
-    showIconsSelect: function() {
+    showIconsSelect() {
         if (this.views.sub) {
             this.removeSubView();
         } else {
@@ -116,7 +116,7 @@ const GrpView = Backbone.View.extend({
         this.pageResized();
     },
 
-    iconSelected: function(sel) {
+    iconSelected(sel) {
         if (sel.custom) {
             if (sel.id !== this.model.get('customIconId')) {
                 this.model.setCustomIcon(sel.id);
@@ -127,22 +127,22 @@ const GrpView = Backbone.View.extend({
         this.render();
     },
 
-    moveToTrash: function() {
+    moveToTrash() {
         this.model.moveToTrash();
         Backbone.trigger('select-all');
     },
 
-    setEnableSearching: function(e) {
+    setEnableSearching(e) {
         const enabled = e.target.checked;
         this.model.setEnableSearching(enabled);
     },
 
-    setEnableAutoType: function(e) {
+    setEnableAutoType(e) {
         const enabled = e.target.checked;
         this.model.setEnableAutoType(enabled);
     },
 
-    returnToApp: function() {
+    returnToApp() {
         Backbone.trigger('edit-group');
     }
 });

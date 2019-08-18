@@ -50,7 +50,7 @@ const SettingsFileView = Backbone.View.extend({
 
     appModel: null,
 
-    initialize: function() {
+    initialize() {
         this.listenTo(
             this.model,
             'change:syncing change:syncError change:syncDate',
@@ -58,7 +58,7 @@ const SettingsFileView = Backbone.View.extend({
         );
     },
 
-    render: function() {
+    render() {
         const storageProviders = [];
         const fileStorage = this.model.get('storage');
         let canBackup = false;
@@ -104,8 +104,8 @@ const SettingsFileView = Backbone.View.extend({
             keyChangeForce:
                 this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
             kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
-            storageProviders: storageProviders,
-            canBackup: canBackup
+            storageProviders,
+            canBackup
         });
         if (!this.model.get('created')) {
             this.$el
@@ -118,13 +118,13 @@ const SettingsFileView = Backbone.View.extend({
         this.renderKeyFileSelect();
     },
 
-    kdfParametersToUi: function(kdfParameters) {
+    kdfParametersToUi(kdfParameters) {
         return kdfParameters
             ? _.extend({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) })
             : null;
     },
 
-    renderKeyFileSelect: function() {
+    renderKeyFileSelect() {
         const keyFileName = this.model.get('keyFileName');
         const oldKeyFileName = this.model.get('oldKeyFileName');
         const keyFileChanged = this.model.get('keyFileChanged');
@@ -166,7 +166,7 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    validatePassword: function(continueCallback) {
+    validatePassword(continueCallback) {
         if (!this.model.get('passwordLength')) {
             Alerts.yesno({
                 header: Locale.setFileEmptyPass,
@@ -183,7 +183,7 @@ const SettingsFileView = Backbone.View.extend({
         return true;
     },
 
-    save: function(arg) {
+    save(arg) {
         if (!arg) {
             arg = {};
         }
@@ -201,15 +201,15 @@ const SettingsFileView = Backbone.View.extend({
         this.appModel.syncFile(this.model, arg);
     },
 
-    saveDefault: function() {
+    saveDefault() {
         this.save();
     },
 
-    toggleChooser: function() {
+    toggleChooser() {
         this.$el.find('.settings__file-save-choose').toggleClass('hide');
     },
 
-    saveToFile: function(skipValidation) {
+    saveToFile(skipValidation) {
         if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
             return;
         }
@@ -217,7 +217,7 @@ const SettingsFileView = Backbone.View.extend({
         if (Launcher && !this.model.get('storage')) {
             Launcher.getSaveFileName(fileName, path => {
                 if (path) {
-                    this.save({ storage: 'file', path: path });
+                    this.save({ storage: 'file', path });
                 }
             });
         } else {
@@ -247,14 +247,14 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    saveToXml: function() {
+    saveToXml() {
         this.model.getXml(xml => {
             const blob = new Blob([xml], { type: 'text/xml' });
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
         });
     },
 
-    saveToStorage: function(e) {
+    saveToStorage(e) {
         if (this.model.get('syncing') || this.model.get('demo')) {
             return;
         }
@@ -341,7 +341,7 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    closeFile: function() {
+    closeFile() {
         if (this.model.get('modified')) {
             Alerts.yesno({
                 header: Locale.setFileUnsaved,
@@ -361,11 +361,11 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    closeFileNoCheck: function() {
+    closeFileNoCheck() {
         this.appModel.closeFile(this.model);
     },
 
-    keyFileChange: function(e) {
+    keyFileChange(e) {
         switch (e.target.value) {
             case 'old':
                 this.selectOldKeyFile();
@@ -379,28 +379,28 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    selectOldKeyFile: function() {
+    selectOldKeyFile() {
         this.model.resetKeyFile();
         this.renderKeyFileSelect();
     },
 
-    generateKeyFile: function() {
+    generateKeyFile() {
         const keyFile = this.model.generateAndSetKeyFile();
         const blob = new Blob([keyFile], { type: 'application/octet-stream' });
         FileSaver.saveAs(blob, this.model.get('name') + '.key');
         this.renderKeyFileSelect();
     },
 
-    clearKeyFile: function() {
+    clearKeyFile() {
         this.model.removeKeyFile();
         this.renderKeyFileSelect();
     },
 
-    triggerSelectFile: function() {
+    triggerSelectFile() {
         this.$el.find('#settings__file-file-select').click();
     },
 
-    fileSelected: function(e) {
+    fileSelected(e) {
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = e => {
@@ -411,13 +411,13 @@ const SettingsFileView = Backbone.View.extend({
         reader.readAsArrayBuffer(file);
     },
 
-    focusMasterPass: function(e) {
+    focusMasterPass(e) {
         e.target.value = '';
         e.target.setAttribute('type', 'text');
         this.model.set('passwordChanged', false);
     },
 
-    changeMasterPass: function(e) {
+    changeMasterPass(e) {
         if (!e.target.value) {
             this.model.resetPassword();
             this.$el.find('.settings__file-master-pass-warning').hide();
@@ -432,7 +432,7 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    blurMasterPass: function(e) {
+    blurMasterPass(e) {
         if (!e.target.value) {
             this.model.resetPassword();
             this.resetConfirmMasterPass();
@@ -442,18 +442,18 @@ const SettingsFileView = Backbone.View.extend({
         e.target.setAttribute('type', 'password');
     },
 
-    resetConfirmMasterPass: function() {
+    resetConfirmMasterPass() {
         this.$el.find('#settings__file-confirm-master-pass').val('');
         this.$el.find('#settings__file-confirm-master-pass-group').hide();
         this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
     },
 
-    focusConfirmMasterPass: function(e) {
+    focusConfirmMasterPass(e) {
         e.target.value = '';
         e.target.setAttribute('type', 'text');
     },
 
-    blurConfirmMasterPass: function(e) {
+    blurConfirmMasterPass(e) {
         e.target.setAttribute('type', 'password');
         const masterPassword = this.$el.find('#settings__file-master-pass').val();
         const confirmPassword = e.target.value;
@@ -472,7 +472,7 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    changeName: function(e) {
+    changeName(e) {
         const value = $.trim(e.target.value);
         if (!value) {
             return;
@@ -480,16 +480,16 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setName(value);
     },
 
-    changeDefUser: function(e) {
+    changeDefUser(e) {
         const value = $.trim(e.target.value);
         this.model.setDefaultUser(value);
     },
 
-    changeBackupEnabled: function(e) {
+    changeBackupEnabled(e) {
         const enabled = e.target.checked;
         let backup = this.model.get('backup');
         if (!backup) {
-            backup = { enabled: enabled, schedule: DefaultBackupSchedule };
+            backup = { enabled, schedule: DefaultBackupSchedule };
             const defaultPath = DefaultBackupPath.replace('{name}', this.model.get('name'));
             if (Launcher) {
                 backup.storage = 'file';
@@ -525,30 +525,30 @@ const SettingsFileView = Backbone.View.extend({
         this.setBackup(backup);
     },
 
-    changeBackupPath: function(e) {
+    changeBackupPath(e) {
         const backup = this.model.get('backup');
         backup.path = e.target.value.trim();
         this.setBackup(backup);
     },
 
-    changeBackupStorage: function(e) {
+    changeBackupStorage(e) {
         const backup = this.model.get('backup');
         backup.storage = e.target.value;
         this.setBackup(backup);
     },
 
-    changeBackupSchedule: function(e) {
+    changeBackupSchedule(e) {
         const backup = this.model.get('backup');
         backup.schedule = e.target.value;
         this.setBackup(backup);
     },
 
-    setBackup: function(backup) {
+    setBackup(backup) {
         this.model.set('backup', backup);
         this.appModel.setFileBackup(this.model.id, backup);
     },
 
-    backupFile: function() {
+    backupFile() {
         if (this.backupInProgress) {
             return;
         }
@@ -574,7 +574,7 @@ const SettingsFileView = Backbone.View.extend({
                         description = Locale.setFileBackupErrorDescription;
                     }
                     Alerts.error({
-                        title: title,
+                        title,
                         body:
                             description +
                             '<pre class="modal__pre">' +
@@ -586,11 +586,11 @@ const SettingsFileView = Backbone.View.extend({
         });
     },
 
-    changeTrash: function(e) {
+    changeTrash(e) {
         this.model.setRecycleBinEnabled(e.target.checked);
     },
 
-    changeHistoryLength: function(e) {
+    changeHistoryLength(e) {
         if (!e.target.validity.valid) {
             return;
         }
@@ -602,7 +602,7 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setHistoryMaxItems(value);
     },
 
-    changeHistorySize: function(e) {
+    changeHistorySize(e) {
         if (!e.target.validity.valid) {
             return;
         }
@@ -614,7 +614,7 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setHistoryMaxSize(value * 1024 * 1024);
     },
 
-    changeKeyRounds: function(e) {
+    changeKeyRounds(e) {
         if (!e.target.validity.valid) {
             return;
         }
@@ -626,7 +626,7 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setKeyEncryptionRounds(value);
     },
 
-    changeKeyChangeForce: function(e) {
+    changeKeyChangeForce(e) {
         if (!e.target.validity.valid) {
             return;
         }
@@ -637,7 +637,7 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setKeyChange(true, value);
     },
 
-    changeKdfParameter: function(e) {
+    changeKdfParameter(e) {
         if (!e.target.validity.valid) {
             return;
         }

@@ -18,7 +18,7 @@ const FileInfoModel = Backbone.Model.extend({
         fingerprint: null
     },
 
-    initialize: function(data, options) {
+    initialize(data, options) {
         _.each(
             data,
             function(val, key) {

@@ -11,11 +11,11 @@ const TagView = Backbone.View.extend({
         'click .tag__btn-rename': 'renameTag'
     },
 
-    initialize: function() {
+    initialize() {
         this.appModel = this.model;
     },
 
-    render: function() {
+    render() {
         if (this.model) {
             this.renderTemplate(
                 {
@@ -27,12 +27,12 @@ const TagView = Backbone.View.extend({
         return this;
     },
 
-    showTag: function(tag) {
+    showTag(tag) {
         this.model = tag;
         this.render();
     },
 
-    renameTag: function() {
+    renameTag() {
         const title = $.trim(this.$el.find('#tag__field-title').val());
         if (!title || title === this.model.get('title')) {
             return;
@@ -52,7 +52,7 @@ const TagView = Backbone.View.extend({
         Backbone.trigger('select-all');
     },
 
-    moveToTrash: function() {
+    moveToTrash() {
         this.title = null;
         Alerts.yesno({
             header: Locale.tagTrashQuestion,
@@ -64,7 +64,7 @@ const TagView = Backbone.View.extend({
         });
     },
 
-    returnToApp: function() {
+    returnToApp() {
         Backbone.trigger('edit-tag');
     }
 });

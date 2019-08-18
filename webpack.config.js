@@ -66,7 +66,8 @@ function config(grunt, mode = 'production') {
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
                 templates: path.join(__dirname, 'app/templates'),
-                'public-key.pem': path.join(__dirname, 'app/resources/public-key.pem')
+                'public-key.pem': path.join(__dirname, 'app/resources/public-key.pem'),
+                'demo.kdbx': path.join(__dirname, 'app/resources/Demo.kdbx')
             }
         },
         module: {
@@ -126,7 +127,8 @@ function config(grunt, mode = 'production') {
                     use: ['url-loader', 'ignore-loader']
                 },
                 { test: /\.woff$/, loader: 'url-loader' },
-                { test: /\.pem$/, loader: 'raw-loader' }
+                { test: /\.pem$/, loader: 'raw-loader' },
+                { test: /\.kdbx$/, loader: 'base64-loader' }
             ]
         },
         optimization: {

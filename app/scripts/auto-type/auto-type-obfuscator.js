@@ -110,7 +110,7 @@ AutoTypeObfuscator.prototype.stepReal = function() {
                     break;
                 }
             }
-            possibleActions.push({ ins: true, ch: this.chars[i], ix: i, from: from, to: to });
+            possibleActions.push({ ins: true, ch: this.chars[i], ix: i, from, to });
         }
     }
     const action = possibleActions[Math.floor(Math.random() * possibleActions.length)];
@@ -158,7 +158,7 @@ AutoTypeObfuscator.prototype.moveRight = function() {
 AutoTypeObfuscator.prototype.inputChar = function(ch) {
     logger.debug('inputChar', ch);
     this.ops.push({ type: 'text', value: ch });
-    this.inputChars.splice(this.inputCursor, this.inputSel, { ch: ch });
+    this.inputChars.splice(this.inputCursor, this.inputSel, { ch });
     this.inputCursor++;
     this.inputSel = 0;
 };
@@ -166,7 +166,7 @@ AutoTypeObfuscator.prototype.inputChar = function(ch) {
 AutoTypeObfuscator.prototype.copyPaste = function(ch) {
     logger.debug('copyPaste', ch);
     this.ops.push({ type: 'cmd', value: 'copyPaste', arg: ch });
-    this.inputChars.splice(this.inputCursor, this.inputSel, { ch: ch });
+    this.inputChars.splice(this.inputCursor, this.inputSel, { ch });
     this.inputCursor++;
     this.inputSel = 0;
 };

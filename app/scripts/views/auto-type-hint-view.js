@@ -8,7 +8,7 @@ const AutoTypeHintView = Backbone.View.extend({
 
     events: {},
 
-    initialize: function(opts) {
+    initialize(opts) {
         this.input = opts.input;
         this.bodyClick = this.bodyClick.bind(this);
         this.inputBlur = this.inputBlur.bind(this);
@@ -16,7 +16,7 @@ const AutoTypeHintView = Backbone.View.extend({
         this.input.addEventListener('blur', this.inputBlur);
     },
 
-    render: function() {
+    render() {
         this.renderTemplate({
             cmd: FeatureDetector.isMac ? 'command' : 'ctrl',
             hasCtrl: FeatureDetector.isMac,
@@ -36,13 +36,13 @@ const AutoTypeHintView = Backbone.View.extend({
         return this;
     },
 
-    remove: function() {
+    remove() {
         $('body').off('click', this.bodyClick);
         this.input.removeEventListener('blur', this.inputBlur);
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    bodyClick: function(e) {
+    bodyClick(e) {
         if (this.removeTimer) {
             clearTimeout(this.removeTimer);
             this.removeTimer = null;
@@ -66,13 +66,13 @@ const AutoTypeHintView = Backbone.View.extend({
         }
     },
 
-    inputBlur: function() {
+    inputBlur() {
         if (!this.removeTimer) {
             this.removeTimer = setTimeout(this.remove.bind(this), Timeouts.DropDownClickWait);
         }
     },
 
-    insertText: function(text) {
+    insertText(text) {
         const pos = this.input.selectionEnd || this.input.value.length;
         this.input.value = this.input.value.substr(0, pos) + text + this.input.value.substr(pos);
         this.input.selectionStart = this.input.selectionEnd = pos + text.length;

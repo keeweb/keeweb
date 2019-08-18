@@ -11,7 +11,7 @@ const FieldView = Backbone.View.extend({
         'dragstart .details__field-label': 'fieldLabelDrag'
     },
 
-    render: function() {
+    render() {
         this.value = typeof this.model.value === 'function' ? this.model.value() : this.model.value;
         this.renderTemplate({
             editable: !this.readonly,
@@ -33,14 +33,14 @@ const FieldView = Backbone.View.extend({
         return this;
     },
 
-    remove: function() {
+    remove() {
         if (this.tip) {
             Tip.hideTip(this.valueEl[0]);
         }
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    update: function() {
+    update() {
         if (typeof this.model.value === 'function') {
             const newVal = this.model.value();
             if (
@@ -52,7 +52,7 @@ const FieldView = Backbone.View.extend({
         }
     },
 
-    fieldLabelClick: function(e) {
+    fieldLabelClick(e) {
         e.stopImmediatePropagation();
         if (this.preventCopy) {
             return;
@@ -70,7 +70,7 @@ const FieldView = Backbone.View.extend({
                     CopyPaste.createHiddenInput(text);
                 }
                 copyRes = CopyPaste.copy(text);
-                this.trigger('copy', { source: this, copyRes: copyRes });
+                this.trigger('copy', { source: this, copyRes });
                 return;
             }
         }
@@ -85,11 +85,11 @@ const FieldView = Backbone.View.extend({
         copyRes = CopyPaste.copy(this.valueEl[0].innerText || this.valueEl.text());
         if (copyRes) {
             selection.removeAllRanges();
-            this.trigger('copy', { source: this, copyRes: copyRes });
+            this.trigger('copy', { source: this, copyRes });
         }
     },
 
-    fieldValueClick: function(e) {
+    fieldValueClick(e) {
         if (['a', 'input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) >= 0) {
             return;
         }
@@ -99,7 +99,7 @@ const FieldView = Backbone.View.extend({
         }
     },
 
-    fieldLabelDrag: function(e) {
+    fieldLabelDrag(e) {
         e.stopPropagation();
         if (!this.value) {
             return;
@@ -113,7 +113,7 @@ const FieldView = Backbone.View.extend({
         dt.effectAllowed = 'copy';
     },
 
-    edit: function() {
+    edit() {
         if (this.readonly || this.editing) {
             return;
         }
@@ -124,7 +124,7 @@ const FieldView = Backbone.View.extend({
         this.labelEl[0].setAttribute('draggable', 'false');
     },
 
-    endEdit: function(newVal, extra) {
+    endEdit(newVal, extra) {
         if (!this.editing) {
             return;
         }
@@ -160,7 +160,7 @@ const FieldView = Backbone.View.extend({
         this.labelEl[0].setAttribute('draggable', 'true');
     },
 
-    triggerChange: function(arg) {
+    triggerChange(arg) {
         arg.sender = this;
         this.trigger('change', arg);
     }

@@ -1,7 +1,7 @@
 const FieldView = require('./field-view');
 
 const FieldViewReadOnlyRaw = FieldView.extend({
-    renderValue: function(value) {
+    renderValue(value) {
         return value;
     },
 
