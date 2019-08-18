@@ -47,8 +47,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build-desktop-archives', [
         'compress:win32-x64',
         'compress:win32-ia32',
-        'compress:linux-x64',
-        'compress:linux-ia32'
+        'compress:linux-x64'
     ]);
 
     grunt.registerTask('build-desktop-dist-darwin', ['appdmg', 'codesign:dmg']);
@@ -66,7 +65,7 @@ module.exports = function(grunt) {
         'copy:desktop-win32-dist-ia32'
     ]);
 
-    grunt.registerTask('build-desktop-dist-linux', ['deb:linux-x64', 'deb:linux-ia32']);
+    grunt.registerTask('build-desktop-dist-linux', ['deb:linux-x64']);
 
     grunt.registerTask('build-desktop-dist', [
         'build-desktop-dist-darwin',
