@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.9.0 (TBD)
+##### v1.9.0 (2019-08-18)
 `-` fix #1221: added '30 min' lock option  
 `-` fixed generator style issues in Firefox  
 `+` option to hide password in the generator  
@@ -9,6 +9,7 @@ Release notes
 `-` fix #1171: enabled updater on linux  
 `*` upgraded build system  
 `*` upgraded electron to v6  
+`-` removed support for linux/ia32: https://electronjs.org/blog/linux-32bit-support 
 
 ##### v1.8.2 (2019-04-22)
 `-` fix #1163: fixed libgconf-2-4 dependency  
