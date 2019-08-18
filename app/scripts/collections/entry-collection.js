@@ -19,7 +19,9 @@ const EntryCollection = Backbone.Collection.extend({
         '-created': Comparators.dateComparator('created', false),
         'updated': Comparators.dateComparator('updated', true),
         '-updated': Comparators.dateComparator('updated', false),
-        '-attachments': function(x, y) { return this.attachmentSortVal(x).localeCompare(this.attachmentSortVal(y)); },
+        '-attachments'(x, y) {
+            return this.attachmentSortVal(x).localeCompare(this.attachmentSortVal(y));
+        },
         '-rank': Comparators.rankComparator()
     },
 
@@ -27,18 +29,18 @@ const EntryCollection = Backbone.Collection.extend({
 
     filter: null,
 
-    initialize: function(models, options) {
-        const comparatorName = options && options.comparator || this.defaultComparator;
+    initialize(models, options) {
+        const comparatorName = (options && options.comparator) || this.defaultComparator;
         this.comparator = this.comparators[comparatorName];
     },
 
-    sortEntries: function(comparator, filter) {
+    sortEntries(comparator, filter) {
         this.filter = filter;
         this.comparator = this.comparators[comparator] || this.comparators[this.defaultComparator];
         this.sort();
     },
 
-    attachmentSortVal: function(entry) {
+    attachmentSortVal(entry) {
         const att = entry.attachments;
         let str = att.length ? String.fromCharCode(64 + att.length) : 'Z';
         if (att[0]) {

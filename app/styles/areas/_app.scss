@@ -1,138 +1,143 @@
 .app {
-  @include size(100%);
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  justify-content: flex-start;
-
-  .titlebar-hidden-inset & {
-    -webkit-app-region: drag;
-  }
-
-  &__body {
-    flex: 1;
-    display: flex;
-    align-items: stretch;
-    flex-direction: row;
-    justify-content: flex-start;
-    overflow: hidden;
-  }
-
-  &__titlebar-drag {
-    position: absolute;
-    width: 100%;
-    height: 30px;
-    top: 0;
-    right: 0;
-    -webkit-app-region: drag;
-    pointer-events: none;
-  }
-
-  &__menu {
-    flex: 0 0 auto;
-    display: flex;
-    width: 150px;
-    @include mobile {
-      &:not(.menu-visible) {
-        display: none;
-      }
-    }
-    transition: padding-top 150ms;
-    .titlebar-hidden & {
-      padding-top: $titlebar-padding-small;
-    }
-    .titlebar-hidden-inset & {
-      padding-top: $titlebar-padding-large;
-    }
-    .fullscreen .app & {
-      padding-top: 0;
-    }
-  }
-
-  &__list-wrap {
-    flex: 1;
-    display: flex;
-    align-items: stretch;
-    flex-direction: row;
-    justify-content: flex-start;
-    overflow: hidden;
-    &.app__list-wrap--table {
-      flex-direction: column;
-    }
-  }
-
-  &__menu-drag, &__list-drag {
-    @include drag-handle;
-    flex: 0 0 auto;
-    width: 1px;
-    cursor: col-resize;
-    @include mobile { display: none; }
-  }
-
-  &__list-drag {
-    .app__list-wrap--table & {
-      width: auto;
-      height: 1px;
-      cursor: row-resize;
-    }
-  }
-
-  .menu-visible + &__menu-drag {
-    display: block;
-  }
-
-  &__list {
-    flex: 0 0 250px;
+    @include size(100%);
     display: flex;
     align-items: stretch;
     flex-direction: column;
-    overflow-y: auto;
-    @include mobile {
-      flex: 1 1;
-      .app--details-visible & {
-        display: none;
-      }
-    }
-  }
+    justify-content: flex-start;
 
-  &__details {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    padding: $base-spacing;
-    position: relative;
-    @include mobile {
-      width: 100vw;
-      padding: $base-padding;
-      display: none;
-      .app--details-visible & {
+    .titlebar-hidden-inset & {
+        -webkit-app-region: drag;
+    }
+
+    &__body {
+        flex: 1;
         display: flex;
-      }
+        align-items: stretch;
+        flex-direction: row;
+        justify-content: flex-start;
+        overflow: hidden;
     }
-  }
 
-  &__panel {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    padding: $base-spacing;
-    position: relative;
-    @include mobile {
-      padding: $base-padding;
+    &__titlebar-drag {
+        position: absolute;
+        width: 100%;
+        height: 30px;
+        top: 0;
+        right: 0;
+        -webkit-app-region: drag;
+        pointer-events: none;
     }
-  }
 
-  &__footer {
-    flex: 0 0 auto;
-    @include th { border-top: light-border(); }
-  }
-
-  &__beta {
-    padding: $base-padding;
-    text-align: center;
-    @include th {
-      background-color: th(error-color);
-      color: th(text-contrast-error-color);
+    &__menu {
+        flex: 0 0 auto;
+        display: flex;
+        width: 150px;
+        @include mobile {
+            &:not(.menu-visible) {
+                display: none;
+            }
+        }
+        transition: padding-top 150ms;
+        .titlebar-hidden & {
+            padding-top: $titlebar-padding-small;
+        }
+        .titlebar-hidden-inset & {
+            padding-top: $titlebar-padding-large;
+        }
+        .fullscreen .app & {
+            padding-top: 0;
+        }
     }
-  }
+
+    &__list-wrap {
+        flex: 1;
+        display: flex;
+        align-items: stretch;
+        flex-direction: row;
+        justify-content: flex-start;
+        overflow: hidden;
+        &.app__list-wrap--table {
+            flex-direction: column;
+        }
+    }
+
+    &__menu-drag,
+    &__list-drag {
+        @include drag-handle;
+        flex: 0 0 auto;
+        width: 1px;
+        cursor: col-resize;
+        @include mobile {
+            display: none;
+        }
+    }
+
+    &__list-drag {
+        .app__list-wrap--table & {
+            width: auto;
+            height: 1px;
+            cursor: row-resize;
+        }
+    }
+
+    .menu-visible + &__menu-drag {
+        display: block;
+    }
+
+    &__list {
+        flex: 0 0 250px;
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        overflow-y: auto;
+        @include mobile {
+            flex: 1 1;
+            .app--details-visible & {
+                display: none;
+            }
+        }
+    }
+
+    &__details {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        padding: $base-spacing;
+        position: relative;
+        @include mobile {
+            width: 100vw;
+            padding: $base-padding;
+            display: none;
+            .app--details-visible & {
+                display: flex;
+            }
+        }
+    }
+
+    &__panel {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        padding: $base-spacing;
+        position: relative;
+        @include mobile {
+            padding: $base-padding;
+        }
+    }
+
+    &__footer {
+        flex: 0 0 auto;
+        @include th {
+            border-top: light-border();
+        }
+    }
+
+    &__beta {
+        padding: $base-padding;
+        text-align: center;
+        @include th {
+            background-color: th(error-color);
+            color: th(text-contrast-error-color);
+        }
+    }
 }

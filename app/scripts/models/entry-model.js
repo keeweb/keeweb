@@ -13,11 +13,20 @@ const EntryModel = Backbone.Model.extend({
     urlRegex: /^https?:\/\//i,
     fieldRefRegex: /^\{REF:([TNPAU])@I:(\w{32})}$/,
 
-    builtInFields: ['Title', 'Password', 'UserName', 'URL', 'Notes', 'TOTP Seed', 'TOTP Settings', '_etm_template_uuid'],
+    builtInFields: [
+        'Title',
+        'Password',
+        'UserName',
+        'URL',
+        'Notes',
+        'TOTP Seed',
+        'TOTP Settings',
+        '_etm_template_uuid'
+    ],
     fieldRefFields: ['title', 'password', 'user', 'url', 'notes'],
     fieldRefIds: { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' },
 
-    setEntry: function(entry, group, file) {
+    setEntry(entry, group, file) {
         this.entry = entry;
         this.group = group;
         this.file = file;
@@ -30,9 +39,9 @@ const EntryModel = Backbone.Model.extend({
         this.hasFieldRefs = true;
     },
 
-    _fillByEntry: function() {
+    _fillByEntry() {
         const entry = this.entry;
-        this.set({id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id}, {silent: true});
+        this.set({ id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id }, { silent: true });
         this.fileName = this.file.get('name');
         this.groupName = this.group.get('title');
         this.title = this._getFieldString('Title');
@@ -62,7 +71,7 @@ const EntryModel = Backbone.Model.extend({
         }
     },
 
-    _getFieldString: function(field) {
+    _getFieldString(field) {
         const val = this.entry.fields[field];
         if (!val) {
             return '';
@@ -73,7 +82,7 @@ const EntryModel = Backbone.Model.extend({
         return val.toString();
     },
 
-    _checkUpdatedEntry: function() {
+    _checkUpdatedEntry() {
         if (this.isJustCreated) {
             this.isJustCreated = false;
         }
@@ -85,7 +94,7 @@ const EntryModel = Backbone.Model.extend({
         }
     },
 
-    _buildSearchText: function() {
+    _buildSearchText() {
         let text = '';
         _.forEach(this.entry.fields, value => {
             if (typeof value === 'string') {
@@ -101,67 +110,75 @@ const EntryModel = Backbone.Model.extend({
         this.searchText = text;
     },
 
-    _buildCustomIcon: function() {
+    _buildCustomIcon() {
         this.customIcon = null;
         this.customIconId = null;
         if (this.entry.customIcon) {
-            this.customIcon = IconUrl.toDataUrl(this.file.db.meta.customIcons[this.entry.customIcon]);
+            this.customIcon = IconUrl.toDataUrl(
+                this.file.db.meta.customIcons[this.entry.customIcon]
+            );
             this.customIconId = this.entry.customIcon.toString();
         }
     },
 
-    _buildSearchTags: function() {
+    _buildSearchTags() {
         this.searchTags = this.entry.tags.map(tag => tag.toLowerCase());
     },
 
-    _buildSearchColor: function() {
+    _buildSearchColor() {
         this.searchColor = this.color;
     },
 
-    _buildAutoType: function() {
+    _buildAutoType() {
         this.autoTypeEnabled = this.entry.autoType.enabled;
-        this.autoTypeObfuscation = this.entry.autoType.obfuscation === kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard;
+        this.autoTypeObfuscation =
+            this.entry.autoType.obfuscation ===
+            kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard;
         this.autoTypeSequence = this.entry.autoType.defaultSequence;
         this.autoTypeWindows = this.entry.autoType.items.map(this._convertAutoTypeItem);
     },
 
-    _convertAutoTypeItem: function(item) {
+    _convertAutoTypeItem(item) {
         return { window: item.window, sequence: item.keystrokeSequence };
     },
 
-    _iconFromId: function(id) {
+    _iconFromId(id) {
         return IconMap[id];
     },
 
-    _getDisplayUrl: function(url) {
+    _getDisplayUrl(url) {
         if (!url) {
             return '';
         }
         return url.replace(this.urlRegex, '');
     },
 
-    _colorToModel: function(color) {
+    _colorToModel(color) {
         return color ? Color.getNearest(color) : null;
     },
 
-    _fieldsToModel: function(fields) {
+    _fieldsToModel(fields) {
         return _.omit(fields, this.builtInFields);
     },
 
-    _attachmentsToModel: function(binaries) {
+    _attachmentsToModel(binaries) {
         const att = [];
-        _.forEach(binaries, (data, title) => {
-            if (data && data.ref) {
-                data = data.value;
-            }
-            if (data) {
-                att.push(AttachmentModel.fromAttachment({data: data, title: title}));
-            }
-        }, this);
+        _.forEach(
+            binaries,
+            (data, title) => {
+                if (data && data.ref) {
+                    data = data.value;
+                }
+                if (data) {
+                    att.push(AttachmentModel.fromAttachment({ data, title }));
+                }
+            },
+            this
+        );
         return att;
     },
 
-    _entryModified: function() {
+    _entryModified() {
         if (!this.unsaved) {
             this.unsaved = true;
             this.entry.pushHistory();
@@ -173,7 +190,7 @@ const EntryModel = Backbone.Model.extend({
         this.entry.times.update();
     },
 
-    setSaved: function() {
+    setSaved() {
         if (this.unsaved) {
             this.unsaved = false;
         }
@@ -182,22 +199,30 @@ const EntryModel = Backbone.Model.extend({
         }
     },
 
-    matches: function(filter) {
-        return !filter ||
-            (!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
-            (!filter.textLower || (filter.advanced ? this.matchesAdv(filter) : this.searchText.indexOf(filter.textLower) >= 0)) &&
-            (!filter.color || filter.color === true && this.searchColor || this.searchColor === filter.color) &&
-            (!filter.autoType || this.autoTypeEnabled);
+    matches(filter) {
+        return (
+            !filter ||
+            ((!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
+                (!filter.textLower ||
+                    (filter.advanced
+                        ? this.matchesAdv(filter)
+                        : this.searchText.indexOf(filter.textLower) >= 0)) &&
+                (!filter.color ||
+                    (filter.color === true && this.searchColor) ||
+                    this.searchColor === filter.color) &&
+                (!filter.autoType || this.autoTypeEnabled))
+        );
     },
 
-    matchesAdv: function(filter) {
+    matchesAdv(filter) {
         const adv = filter.advanced;
-        let search,
-            match;
+        let search, match;
         if (adv.regex) {
             try {
                 search = new RegExp(filter.text, adv.cs ? '' : 'i');
-            } catch (e) { return false; }
+            } catch (e) {
+                return false;
+            }
             match = this.matchRegex;
         } else if (adv.cs) {
             search = filter.text;
@@ -219,28 +244,28 @@ const EntryModel = Backbone.Model.extend({
         return false;
     },
 
-    matchString: function(str, find) {
+    matchString(str, find) {
         if (str.isProtected) {
             return str.includes(find);
         }
         return str.indexOf(find) >= 0;
     },
 
-    matchStringLower: function(str, findLower) {
+    matchStringLower(str, findLower) {
         if (str.isProtected) {
             return str.includesLower(findLower);
         }
         return str.toLowerCase().indexOf(findLower) >= 0;
     },
 
-    matchRegex: function(str, regex) {
+    matchRegex(str, regex) {
         if (str.isProtected) {
             str = str.getText();
         }
         return regex.test(str);
     },
 
-    matchEntry: function(entry, adv, compare, search) {
+    matchEntry(entry, adv, compare, search) {
         const matchField = this.matchField;
         if (adv.user && matchField(entry, 'UserName', compare, search)) {
             return true;
@@ -275,12 +300,12 @@ const EntryModel = Backbone.Model.extend({
         return matches;
     },
 
-    matchField: function(entry, field, compare, search) {
+    matchField(entry, field, compare, search) {
         const val = entry.fields[field];
         return val ? compare(val, search) : false;
     },
 
-    resolveFieldReferences: function() {
+    resolveFieldReferences() {
         this.hasFieldRefs = false;
         this.fieldRefFields.forEach(field => {
             const fieldValue = this[field];
@@ -292,7 +317,7 @@ const EntryModel = Backbone.Model.extend({
         });
     },
 
-    getFieldValue: function(field) {
+    getFieldValue(field) {
         field = field.toLowerCase();
         let resolvedField;
         Object.keys(this.entry.fields).some(entryField => {
@@ -300,6 +325,7 @@ const EntryModel = Backbone.Model.extend({
                 resolvedField = entryField;
                 return true;
             }
+            return false;
         });
         if (resolvedField) {
             let fieldValue = this.entry.fields[resolvedField];
@@ -311,7 +337,7 @@ const EntryModel = Backbone.Model.extend({
         }
     },
 
-    _resolveFieldReference: function(fieldValue) {
+    _resolveFieldReference(fieldValue) {
         if (!fieldValue) {
             return;
         }
@@ -328,7 +354,7 @@ const EntryModel = Backbone.Model.extend({
         return this._getReferenceValue(match[1], match[2]);
     },
 
-    _getReferenceValue: function(fieldRefId, idStr) {
+    _getReferenceValue(fieldRefId, idStr) {
         const id = new Uint8Array(16);
         for (let i = 0; i < 16; i++) {
             id[i] = parseInt(idStr.substr(i * 2, 2), 16);
@@ -341,39 +367,39 @@ const EntryModel = Backbone.Model.extend({
         return entry.entry.fields[this.fieldRefIds[fieldRefId]];
     },
 
-    setColor: function(color) {
+    setColor(color) {
         this._entryModified();
         this.entry.bgColor = Color.getKnownBgColor(color);
         this._fillByEntry();
     },
 
-    setIcon: function(iconId) {
+    setIcon(iconId) {
         this._entryModified();
         this.entry.icon = iconId;
         this.entry.customIcon = undefined;
         this._fillByEntry();
     },
 
-    setCustomIcon: function(customIconId) {
+    setCustomIcon(customIconId) {
         this._entryModified();
         this.entry.customIcon = new kdbxweb.KdbxUuid(customIconId);
         this._fillByEntry();
     },
 
-    setExpires: function(dt) {
+    setExpires(dt) {
         this._entryModified();
         this.entry.times.expiryTime = dt instanceof Date ? dt : undefined;
         this.entry.times.expires = !!dt;
         this._fillByEntry();
     },
 
-    setTags: function(tags) {
+    setTags(tags) {
         this._entryModified();
         this.entry.tags = tags;
         this._fillByEntry();
     },
 
-    renameTag: function(from, to) {
+    renameTag(from, to) {
         const ix = _.findIndex(this.entry.tags, tag => tag.toLowerCase() === from.toLowerCase());
         if (ix < 0) {
             return;
@@ -386,20 +412,20 @@ const EntryModel = Backbone.Model.extend({
         this._fillByEntry();
     },
 
-    setField: function(field, val, allowEmpty) {
-        const hasValue = val && (typeof val === 'string' || val.isProtected && val.byteLength);
+    setField(field, val, allowEmpty) {
+        const hasValue = val && (typeof val === 'string' || (val.isProtected && val.byteLength));
         if (hasValue || allowEmpty || this.builtInFields.indexOf(field) >= 0) {
             this._entryModified();
             val = this.sanitizeFieldValue(val);
             this.entry.fields[field] = val;
-        } else if (this.entry.fields.hasOwnProperty(field)) {
+        } else if (Object.prototype.hasOwnProperty.call(this.entry.fields, field)) {
             this._entryModified();
             delete this.entry.fields[field];
         }
         this._fillByEntry();
     },
 
-    sanitizeFieldValue: function(val) {
+    sanitizeFieldValue(val) {
         if (val && !val.isProtected && val.indexOf('\x1A') >= 0) {
             // https://github.com/keeweb/keeweb/issues/910
             // eslint-disable-next-line no-control-regex
@@ -408,11 +434,11 @@ const EntryModel = Backbone.Model.extend({
         return val;
     },
 
-    hasField: function(field) {
-        return this.entry.fields.hasOwnProperty(field);
+    hasField(field) {
+        return Object.prototype.hasOwnProperty.call(this.entry.fields, field);
     },
 
-    addAttachment: function(name, data) {
+    addAttachment(name, data) {
         this._entryModified();
         return this.file.db.createBinary(data).then(binaryRef => {
             this.entry.binaries[name] = binaryRef;
@@ -420,13 +446,13 @@ const EntryModel = Backbone.Model.extend({
         });
     },
 
-    removeAttachment: function(name) {
+    removeAttachment(name) {
         this._entryModified();
         delete this.entry.binaries[name];
         this._fillByEntry();
     },
 
-    getHistory: function() {
+    getHistory() {
         const history = this.entry.history.map(function(rec) {
             return EntryModel.fromEntry(rec, this.group, this.file);
         }, this);
@@ -435,7 +461,7 @@ const EntryModel = Backbone.Model.extend({
         return history;
     },
 
-    deleteHistory: function(historyEntry) {
+    deleteHistory(historyEntry) {
         const ix = this.entry.history.indexOf(historyEntry);
         if (ix >= 0) {
             this.entry.removeHistory(ix);
@@ -444,7 +470,7 @@ const EntryModel = Backbone.Model.extend({
         this._fillByEntry();
     },
 
-    revertToHistoryState: function(historyEntry) {
+    revertToHistoryState(historyEntry) {
         const ix = this.entry.history.indexOf(historyEntry);
         if (ix < 0) {
             return;
@@ -459,7 +485,7 @@ const EntryModel = Backbone.Model.extend({
         this._fillByEntry();
     },
 
-    discardUnsaved: function() {
+    discardUnsaved() {
         if (this.unsaved && this.entry.history.length) {
             this.unsaved = false;
             const historyEntry = this.entry.history[this.entry.history.length - 1];
@@ -471,7 +497,7 @@ const EntryModel = Backbone.Model.extend({
         }
     },
 
-    moveToTrash: function() {
+    moveToTrash() {
         this.file.setModified();
         if (this.isJustCreated) {
             this.isJustCreated = false;
@@ -480,13 +506,13 @@ const EntryModel = Backbone.Model.extend({
         this.file.reload();
     },
 
-    deleteFromTrash: function() {
+    deleteFromTrash() {
         this.file.setModified();
         this.file.db.move(this.entry, null);
         this.file.reload();
     },
 
-    removeWithoutHistory: function() {
+    removeWithoutHistory() {
         if (this.canBeDeleted) {
             const ix = this.group.group.entries.indexOf(this.entry);
             if (ix >= 0) {
@@ -496,7 +522,7 @@ const EntryModel = Backbone.Model.extend({
         }
     },
 
-    moveToFile: function(file) {
+    moveToFile(file) {
         if (this.canBeDeleted) {
             this.removeWithoutHistory();
             this.group = file.get('groups').first();
@@ -511,7 +537,7 @@ const EntryModel = Backbone.Model.extend({
         }
     },
 
-    initOtpGenerator: function() {
+    initOtpGenerator() {
         let otpUrl;
         if (this.fields.otp) {
             otpUrl = this.fields.otp;
@@ -542,8 +568,7 @@ const EntryModel = Backbone.Model.extend({
                 if (settings && settings.isProtected) {
                     settings = settings.getText();
                 }
-                let period,
-                    digits;
+                let period, digits;
                 if (settings) {
                     settings = settings.split(';');
                     if (settings.length > 0 && settings[0] > 0) {
@@ -571,48 +596,49 @@ const EntryModel = Backbone.Model.extend({
         }
     },
 
-    setOtp: function(otp) {
+    setOtp(otp) {
         this.otpGenerator = otp;
         this.setOtpUrl(otp.url);
     },
 
-    setOtpUrl: function(url) {
+    setOtpUrl(url) {
         this.setField('otp', url ? kdbxweb.ProtectedValue.fromString(url) : undefined);
         delete this.entry.fields['TOTP Seed'];
         delete this.entry.fields['TOTP Settings'];
     },
 
-    getEffectiveEnableAutoType: function() {
+    getEffectiveEnableAutoType() {
         if (typeof this.entry.autoType.enabled === 'boolean') {
             return this.entry.autoType.enabled;
         }
         return this.group.getEffectiveEnableAutoType();
     },
 
-    getEffectiveAutoTypeSeq: function() {
+    getEffectiveAutoTypeSeq() {
         return this.entry.autoType.defaultSequence || this.group.getEffectiveAutoTypeSeq();
     },
 
-    setEnableAutoType: function(enabled) {
+    setEnableAutoType(enabled) {
         this._entryModified();
         this.entry.autoType.enabled = enabled;
         this._buildAutoType();
     },
 
-    setAutoTypeObfuscation: function(enabled) {
+    setAutoTypeObfuscation(enabled) {
         this._entryModified();
-        this.entry.autoType.obfuscation =
-            enabled ? kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard : kdbxweb.Consts.AutoTypeObfuscationOptions.None;
+        this.entry.autoType.obfuscation = enabled
+            ? kdbxweb.Consts.AutoTypeObfuscationOptions.UseClipboard
+            : kdbxweb.Consts.AutoTypeObfuscationOptions.None;
         this._buildAutoType();
     },
 
-    setAutoTypeSeq: function(seq) {
+    setAutoTypeSeq(seq) {
         this._entryModified();
         this.entry.autoType.defaultSequence = seq || undefined;
         this._buildAutoType();
     },
 
-    getGroupPath: function() {
+    getGroupPath() {
         let group = this.group;
         const groupPath = [];
         while (group) {
@@ -622,7 +648,7 @@ const EntryModel = Backbone.Model.extend({
         return groupPath;
     },
 
-    cloneEntry: function(nameSuffix) {
+    cloneEntry(nameSuffix) {
         const newEntry = EntryModel.newEntry(this.group, this.file);
         const uuid = newEntry.entry.uuid;
         newEntry.entry.copyFrom(this.entry);
@@ -635,7 +661,7 @@ const EntryModel = Backbone.Model.extend({
         return newEntry;
     },
 
-    copyFromTemplate: function(templateEntry) {
+    copyFromTemplate(templateEntry) {
         const uuid = this.entry.uuid;
         this.entry.copyFrom(templateEntry.entry);
         this.entry.uuid = uuid;
@@ -645,7 +671,7 @@ const EntryModel = Backbone.Model.extend({
         this._fillByEntry();
     },
 
-    getRank: function(searchString) {
+    getRank(searchString) {
         if (!searchString) {
             // no search string given, so rank all items the same
             return 0;
@@ -674,20 +700,19 @@ const EntryModel = Backbone.Model.extend({
 
         const fieldNames = Object.keys(this.fields);
         _.forEach(fieldNames, field => {
-            ranking.push(
-                {
-                    field: field,
-                    multiplicator: 2
-                }
-            );
+            ranking.push({
+                field,
+                multiplicator: 2
+            });
         });
 
         _.forEach(ranking, rankingEntry => {
             if (this._getFieldString(rankingEntry.field).toLowerCase() !== '') {
-                const calculatedRank = Ranking.getStringRank(
-                    searchString,
-                    this._getFieldString(rankingEntry.field).toLowerCase()
-                ) * rankingEntry.multiplicator;
+                const calculatedRank =
+                    Ranking.getStringRank(
+                        searchString,
+                        this._getFieldString(rankingEntry.field).toLowerCase()
+                    ) * rankingEntry.multiplicator;
                 rank += calculatedRank;
             }
         });

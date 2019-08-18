@@ -50,11 +50,15 @@ const SettingsFileView = Backbone.View.extend({
 
     appModel: null,
 
-    initialize: function() {
-        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', this.deferRender);
+    initialize() {
+        this.listenTo(
+            this.model,
+            'change:syncing change:syncError change:syncDate',
+            this.deferRender
+        );
     },
 
-    render: function() {
+    render() {
         const storageProviders = [];
         const fileStorage = this.model.get('storage');
         let canBackup = false;
@@ -65,7 +69,11 @@ const SettingsFileView = Backbone.View.extend({
             }
             if (!prv.system && prv.enabled) {
                 storageProviders.push({
-                    name: prv.name, icon: prv.icon, iconSvg: prv.iconSvg, own: name === fileStorage, backup: prv.backup
+                    name: prv.name,
+                    icon: prv.icon,
+                    iconSvg: prv.iconSvg,
+                    own: name === fileStorage,
+                    backup: prv.backup
                 });
             }
         });
@@ -86,43 +94,69 @@ const SettingsFileView = Backbone.View.extend({
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
             backupEnabled: backup && backup.enabled,
             backupStorage: backup && backup.storage,
-            backupPath: backup && backup.path || DefaultBackupPath.replace('{name}', this.model.get('name')),
+            backupPath:
+                (backup && backup.path) ||
+                DefaultBackupPath.replace('{name}', this.model.get('name')),
             backupSchedule: backup ? backup.schedule : DefaultBackupSchedule,
             historyMaxItems: this.model.get('historyMaxItems'),
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
-            keyChangeForce: this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
+            keyChangeForce:
+                this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
             kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
-            storageProviders: storageProviders,
-            canBackup: canBackup
+            storageProviders,
+            canBackup
         });
         if (!this.model.get('created')) {
-            this.$el.find('.settings__file-master-pass-warning').toggle(this.model.get('passwordChanged'));
-            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChanged);
+            this.$el
+                .find('.settings__file-master-pass-warning')
+                .toggle(this.model.get('passwordChanged'));
+            this.$el
+                .find('#settings__file-master-pass-warning-text')
+                .text(Locale.setFilePassChanged);
         }
         this.renderKeyFileSelect();
     },
 
-    kdfParametersToUi: function(kdfParameters) {
-        return kdfParameters ? _.extend({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) }) : null;
+    kdfParametersToUi(kdfParameters) {
+        return kdfParameters
+            ? _.extend({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) })
+            : null;
     },
 
-    renderKeyFileSelect: function() {
+    renderKeyFileSelect() {
         const keyFileName = this.model.get('keyFileName');
         const oldKeyFileName = this.model.get('oldKeyFileName');
         const keyFileChanged = this.model.get('keyFileChanged');
         const sel = this.$el.find('#settings__file-key-file');
         sel.html('');
         if (keyFileName && keyFileChanged) {
-            const text = keyFileName !== 'Generated' ? Locale.setFileUseKeyFile + ' ' + keyFileName : Locale.setFileUseGenKeyFile;
-            $('<option/>').val('ex').text(text).appendTo(sel);
+            const text =
+                keyFileName !== 'Generated'
+                    ? Locale.setFileUseKeyFile + ' ' + keyFileName
+                    : Locale.setFileUseGenKeyFile;
+            $('<option/>')
+                .val('ex')
+                .text(text)
+                .appendTo(sel);
         }
         if (oldKeyFileName) {
-            const useText = keyFileChanged ? Locale.setFileUseOldKeyFile : Locale.setFileUseKeyFile + ' ' + oldKeyFileName;
-            $('<option/>').val('old').text(useText).appendTo(sel);
+            const useText = keyFileChanged
+                ? Locale.setFileUseOldKeyFile
+                : Locale.setFileUseKeyFile + ' ' + oldKeyFileName;
+            $('<option/>')
+                .val('old')
+                .text(useText)
+                .appendTo(sel);
         }
-        $('<option/>').val('gen').text(Locale.setFileGenKeyFile).appendTo(sel);
-        $('<option/>').val('none').text(Locale.setFileDontUseKeyFile).appendTo(sel);
+        $('<option/>')
+            .val('gen')
+            .text(Locale.setFileGenKeyFile)
+            .appendTo(sel);
+        $('<option/>')
+            .val('none')
+            .text(Locale.setFileDontUseKeyFile)
+            .appendTo(sel);
         if (keyFileName && keyFileChanged) {
             sel.val('ex');
         } else if (!keyFileName) {
@@ -132,7 +166,7 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    validatePassword: function(continueCallback) {
+    validatePassword(continueCallback) {
         if (!this.model.get('passwordLength')) {
             Alerts.yesno({
                 header: Locale.setFileEmptyPass,
@@ -149,7 +183,7 @@ const SettingsFileView = Backbone.View.extend({
         return true;
     },
 
-    save: function(arg) {
+    save(arg) {
         if (!arg) {
             arg = {};
         }
@@ -167,15 +201,15 @@ const SettingsFileView = Backbone.View.extend({
         this.appModel.syncFile(this.model, arg);
     },
 
-    saveDefault: function() {
+    saveDefault() {
         this.save();
     },
 
-    toggleChooser: function() {
+    toggleChooser() {
         this.$el.find('.settings__file-save-choose').toggleClass('hide');
     },
 
-    saveToFile: function(skipValidation) {
+    saveToFile(skipValidation) {
         if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
             return;
         }
@@ -183,7 +217,7 @@ const SettingsFileView = Backbone.View.extend({
         if (Launcher && !this.model.get('storage')) {
             Launcher.getSaveFileName(fileName, path => {
                 if (path) {
-                    this.save({storage: 'file', path: path});
+                    this.save({ storage: 'file', path });
                 }
             });
         } else {
@@ -198,32 +232,35 @@ const SettingsFileView = Backbone.View.extend({
                                 if (err) {
                                     Alerts.error({
                                         header: Locale.setFileSaveError,
-                                        body: Locale.setFileSaveErrorBody + ' ' + path + ': \n' + err
+                                        body:
+                                            Locale.setFileSaveErrorBody + ' ' + path + ': \n' + err
                                     });
                                 }
                             });
                         }
                     });
                 } else {
-                    const blob = new Blob([data], {type: 'application/octet-stream'});
+                    const blob = new Blob([data], { type: 'application/octet-stream' });
                     FileSaver.saveAs(blob, fileName);
                 }
             });
         }
     },
 
-    saveToXml: function() {
+    saveToXml() {
         this.model.getXml(xml => {
-            const blob = new Blob([xml], {type: 'text/xml'});
+            const blob = new Blob([xml], { type: 'text/xml' });
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
         });
     },
 
-    saveToStorage: function(e) {
+    saveToStorage(e) {
         if (this.model.get('syncing') || this.model.get('demo')) {
             return;
         }
-        const storageName = $(e.target).closest('.settings__file-save-to-storage').data('storage');
+        const storageName = $(e.target)
+            .closest('.settings__file-save-to-storage')
+            .data('storage');
         const storage = Storage[storageName];
         if (!storage) {
             return;
@@ -233,12 +270,15 @@ const SettingsFileView = Backbone.View.extend({
         } else {
             if (!storage.list) {
                 if (storage.getOpenConfig) {
-                    const config = _.extend({
-                        id: storage.name,
-                        name: Locale[storage.name] || storage.name,
-                        icon: storage.icon,
-                        buttons: false
-                    }, storage.getOpenConfig());
+                    const config = _.extend(
+                        {
+                            id: storage.name,
+                            name: Locale[storage.name] || storage.name,
+                            icon: storage.icon,
+                            buttons: false
+                        },
+                        storage.getOpenConfig()
+                    );
                     const openConfigView = new OpenConfigView({ model: config });
                     Alerts.alert({
                         header: '',
@@ -273,37 +313,42 @@ const SettingsFileView = Backbone.View.extend({
                 }
                 const expName = this.model.get('name').toLowerCase();
                 const existingFile = _.find(files, file => {
-                    return !file.dir && UrlUtil.getDataFileName(file.name).toLowerCase() === expName;
+                    return (
+                        !file.dir && UrlUtil.getDataFileName(file.name).toLowerCase() === expName
+                    );
                 });
                 if (existingFile) {
                     Alerts.yesno({
                         header: Locale.setFileAlreadyExists,
-                        body: Locale.setFileAlreadyExistsBody.replace('{}', this.model.escape('name')),
+                        body: Locale.setFileAlreadyExistsBody.replace(
+                            '{}',
+                            this.model.escape('name')
+                        ),
                         success: () => {
                             this.model.set('syncing', true);
                             storage.remove(existingFile.path, err => {
                                 this.model.set('syncing', false);
                                 if (!err) {
-                                    this.save({storage: storageName});
+                                    this.save({ storage: storageName });
                                 }
                             });
                         }
                     });
                 } else {
-                    this.save({storage: storageName});
+                    this.save({ storage: storageName });
                 }
             });
         }
     },
 
-    closeFile: function() {
+    closeFile() {
         if (this.model.get('modified')) {
             Alerts.yesno({
                 header: Locale.setFileUnsaved,
                 body: Locale.setFileUnsavedBody,
                 buttons: [
-                    {result: 'close', title: Locale.setFileCloseNoSave, error: true},
-                    {result: '', title: Locale.setFileDontClose}
+                    { result: 'close', title: Locale.setFileCloseNoSave, error: true },
+                    { result: '', title: Locale.setFileDontClose }
                 ],
                 success: result => {
                     if (result === 'close') {
@@ -316,11 +361,11 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    closeFileNoCheck: function() {
+    closeFileNoCheck() {
         this.appModel.closeFile(this.model);
     },
 
-    keyFileChange: function(e) {
+    keyFileChange(e) {
         switch (e.target.value) {
             case 'old':
                 this.selectOldKeyFile();
@@ -334,28 +379,28 @@ const SettingsFileView = Backbone.View.extend({
         }
     },
 
-    selectOldKeyFile: function() {
+    selectOldKeyFile() {
         this.model.resetKeyFile();
         this.renderKeyFileSelect();
     },
 
-    generateKeyFile: function() {
+    generateKeyFile() {
         const keyFile = this.model.generateAndSetKeyFile();
-        const blob = new Blob([keyFile], {type: 'application/octet-stream'});
+        const blob = new Blob([keyFile], { type: 'application/octet-stream' });
         FileSaver.saveAs(blob, this.model.get('name') + '.key');
         this.renderKeyFileSelect();
     },
 
-    clearKeyFile: function() {
+    clearKeyFile() {
         this.model.removeKeyFile();
         this.renderKeyFileSelect();
     },
 
-    triggerSelectFile: function() {
+    triggerSelectFile() {
         this.$el.find('#settings__file-file-select').click();
     },
 
-    fileSelected: function(e) {
+    fileSelected(e) {
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = e => {
@@ -366,26 +411,28 @@ const SettingsFileView = Backbone.View.extend({
         reader.readAsArrayBuffer(file);
     },
 
-    focusMasterPass: function(e) {
+    focusMasterPass(e) {
         e.target.value = '';
         e.target.setAttribute('type', 'text');
         this.model.set('passwordChanged', false);
     },
 
-    changeMasterPass: function(e) {
+    changeMasterPass(e) {
         if (!e.target.value) {
             this.model.resetPassword();
             this.$el.find('.settings__file-master-pass-warning').hide();
         } else {
             this.$el.find('#settings__file-confirm-master-pass-group').show();
-            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
+            this.$el
+                .find('#settings__file-master-pass-warning-text')
+                .text(Locale.setFilePassChange);
             if (!this.model.get('created')) {
                 this.$el.find('.settings__file-master-pass-warning').show();
             }
         }
     },
 
-    blurMasterPass: function(e) {
+    blurMasterPass(e) {
         if (!e.target.value) {
             this.model.resetPassword();
             this.resetConfirmMasterPass();
@@ -395,33 +442,37 @@ const SettingsFileView = Backbone.View.extend({
         e.target.setAttribute('type', 'password');
     },
 
-    resetConfirmMasterPass: function() {
+    resetConfirmMasterPass() {
         this.$el.find('#settings__file-confirm-master-pass').val('');
         this.$el.find('#settings__file-confirm-master-pass-group').hide();
         this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
     },
 
-    focusConfirmMasterPass: function(e) {
+    focusConfirmMasterPass(e) {
         e.target.value = '';
         e.target.setAttribute('type', 'text');
     },
 
-    blurConfirmMasterPass: function(e) {
+    blurConfirmMasterPass(e) {
         e.target.setAttribute('type', 'password');
         const masterPassword = this.$el.find('#settings__file-master-pass').val();
         const confirmPassword = e.target.value;
         if (masterPassword === confirmPassword) {
-            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChanged);
+            this.$el
+                .find('#settings__file-master-pass-warning-text')
+                .text(Locale.setFilePassChanged);
             this.$el.find('.settings__file-confirm-master-pass-warning').hide();
             this.model.setPassword(kdbxweb.ProtectedValue.fromString(confirmPassword));
         } else {
-            this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
+            this.$el
+                .find('#settings__file-master-pass-warning-text')
+                .text(Locale.setFilePassChange);
             this.$el.find('.settings__file-confirm-master-pass-warning').show();
             this.model.resetPassword();
         }
     },
 
-    changeName: function(e) {
+    changeName(e) {
         const value = $.trim(e.target.value);
         if (!value) {
             return;
@@ -429,16 +480,16 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setName(value);
     },
 
-    changeDefUser: function(e) {
+    changeDefUser(e) {
         const value = $.trim(e.target.value);
         this.model.setDefaultUser(value);
     },
 
-    changeBackupEnabled: function(e) {
+    changeBackupEnabled(e) {
         const enabled = e.target.checked;
         let backup = this.model.get('backup');
         if (!backup) {
-            backup = { enabled: enabled, schedule: DefaultBackupSchedule };
+            backup = { enabled, schedule: DefaultBackupSchedule };
             const defaultPath = DefaultBackupPath.replace('{name}', this.model.get('name'));
             if (Launcher) {
                 backup.storage = 'file';
@@ -474,30 +525,30 @@ const SettingsFileView = Backbone.View.extend({
         this.setBackup(backup);
     },
 
-    changeBackupPath: function(e) {
+    changeBackupPath(e) {
         const backup = this.model.get('backup');
         backup.path = e.target.value.trim();
         this.setBackup(backup);
     },
 
-    changeBackupStorage: function(e) {
+    changeBackupStorage(e) {
         const backup = this.model.get('backup');
         backup.storage = e.target.value;
         this.setBackup(backup);
     },
 
-    changeBackupSchedule: function(e) {
+    changeBackupSchedule(e) {
         const backup = this.model.get('backup');
         backup.schedule = e.target.value;
         this.setBackup(backup);
     },
 
-    setBackup: function(backup) {
+    setBackup(backup) {
         this.model.set('backup', backup);
         this.appModel.setFileBackup(this.model.id, backup);
     },
 
-    backupFile: function() {
+    backupFile() {
         if (this.backupInProgress) {
             return;
         }
@@ -509,7 +560,7 @@ const SettingsFileView = Backbone.View.extend({
                 backupButton.text(Locale.setFileBackupNow);
                 return;
             }
-            this.appModel.backupFile(this.model, data, (err) => {
+            this.appModel.backupFile(this.model, data, err => {
                 this.backupInProgress = false;
                 backupButton.text(Locale.setFileBackupNow);
                 if (err) {
@@ -523,8 +574,9 @@ const SettingsFileView = Backbone.View.extend({
                         description = Locale.setFileBackupErrorDescription;
                     }
                     Alerts.error({
-                        title: title,
-                        body: description +
+                        title,
+                        body:
+                            description +
                             '<pre class="modal__pre">' +
                             _.escape(err.toString()) +
                             '</pre>'
@@ -534,11 +586,11 @@ const SettingsFileView = Backbone.View.extend({
         });
     },
 
-    changeTrash: function(e) {
+    changeTrash(e) {
         this.model.setRecycleBinEnabled(e.target.checked);
     },
 
-    changeHistoryLength: function(e) {
+    changeHistoryLength(e) {
         if (!e.target.validity.valid) {
             return;
         }
@@ -550,7 +602,7 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setHistoryMaxItems(value);
     },
 
-    changeHistorySize: function(e) {
+    changeHistorySize(e) {
         if (!e.target.validity.valid) {
             return;
         }
@@ -562,7 +614,7 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setHistoryMaxSize(value * 1024 * 1024);
     },
 
-    changeKeyRounds: function(e) {
+    changeKeyRounds(e) {
         if (!e.target.validity.valid) {
             return;
         }
@@ -574,7 +626,7 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setKeyEncryptionRounds(value);
     },
 
-    changeKeyChangeForce: function(e) {
+    changeKeyChangeForce(e) {
         if (!e.target.validity.valid) {
             return;
         }
@@ -585,7 +637,7 @@ const SettingsFileView = Backbone.View.extend({
         this.model.setKeyChange(true, value);
     },
 
-    changeKdfParameter: function(e) {
+    changeKdfParameter(e) {
         if (!e.target.validity.valid) {
             return;
         }

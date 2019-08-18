@@ -18,7 +18,7 @@ const Otp = function(url, params) {
     if (params.type === 'hotp' && !params.counter) {
         throw 'Bad counter: ' + params.counter;
     }
-    if (params.period && isNaN(params.period) || params.period < 1) {
+    if ((params.period && isNaN(params.period)) || params.period < 1) {
         throw 'Bad period: ' + params.period;
     }
 
@@ -70,13 +70,21 @@ Otp.prototype.next = function(callback) {
 Otp.prototype.hmac = function(data, callback) {
     const subtle = window.crypto.subtle || window.crypto.webkitSubtle;
     const algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
-    subtle.importKey('raw', this.key, algo, false, ['sign'])
+    subtle
+        .importKey('raw', this.key, algo, false, ['sign'])
         .then(key => {
-            subtle.sign(algo, key, data)
-                .then(sig => { callback(sig); })
-                .catch(err => { callback(null, err); });
+            subtle
+                .sign(algo, key, data)
+                .then(sig => {
+                    callback(sig);
+                })
+                .catch(err => {
+                    callback(null, err);
+                });
         })
-        .catch(err => { callback(null, err); });
+        .catch(err => {
+            callback(null, err);
+        });
 };
 
 Otp.fromBase32 = function(str) {
@@ -132,7 +140,12 @@ Otp.isSecret = function(str) {
 };
 
 Otp.makeUrl = function(secret, period, digits) {
-    return 'otpauth://totp/default?secret=' + secret + (period ? '&period=' + period : '') + (digits ? '&digits=' + digits : '');
+    return (
+        'otpauth://totp/default?secret=' +
+        secret +
+        (period ? '&period=' + period : '') +
+        (digits ? '&digits=' + digits : '')
+    );
 };
 
 module.exports = Otp;

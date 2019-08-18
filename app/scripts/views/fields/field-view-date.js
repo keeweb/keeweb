@@ -4,7 +4,7 @@ const Pikaday = require('pikaday');
 const Format = require('../../util/format');
 
 const FieldViewDate = FieldViewText.extend({
-    renderValue: function(value) {
+    renderValue(value) {
         let result = value ? Format.dStr(value) : '';
         if (value && this.model.lessThanNow && value < new Date()) {
             result += ' ' + this.model.lessThanNow;
@@ -12,11 +12,11 @@ const FieldViewDate = FieldViewText.extend({
         return result;
     },
 
-    getEditValue: function(value) {
+    getEditValue(value) {
         return value ? Format.dStr(value) : '';
     },
 
-    startEdit: function() {
+    startEdit() {
         FieldViewText.prototype.startEdit.call(this);
         this.picker = new Pikaday({
             field: this.input[0],
@@ -36,15 +36,17 @@ const FieldViewDate = FieldViewText.extend({
         _.defer(this.picker.show.bind(this.picker));
     },
 
-    fieldValueBlur: function(e) {
+    fieldValueBlur(e) {
         if (!this.picker) {
             FieldViewText.prototype.fieldValueBlur.call(this, e);
         }
     },
 
-    endEdit: function(newVal, extra) {
+    endEdit(newVal, extra) {
         if (this.picker) {
-            try { this.picker.destroy(); } catch (e) {}
+            try {
+                this.picker.destroy();
+            } catch (e) {}
             this.picker = null;
         }
         newVal = new Date(newVal);
@@ -54,11 +56,11 @@ const FieldViewDate = FieldViewText.extend({
         FieldViewText.prototype.endEdit.call(this, newVal, extra);
     },
 
-    pickerClose: function() {
+    pickerClose() {
         this.endEdit(this.input.val());
     },
 
-    pickerSelect: function(dt) {
+    pickerSelect(dt) {
         this.endEdit(dt);
     }
 });

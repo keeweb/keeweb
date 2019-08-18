@@ -10,7 +10,7 @@ const StorageFile = StorageBase.extend({
     system: true,
     backup: true,
 
-    load: function(path, opts, callback) {
+    load(path, opts, callback) {
         this.logger.debug('Load', path);
         const ts = this.logger.ts();
 
@@ -32,13 +32,13 @@ const StorageFile = StorageBase.extend({
                 const rev = stat.mtime.getTime().toString();
                 this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
                 if (callback) {
-                    callback(null, data.buffer, { rev: rev });
+                    callback(null, data.buffer, { rev });
                 }
             });
         });
     },
 
-    stat: function(path, opts, callback) {
+    stat(path, opts, callback) {
         this.logger.debug('Stat', path);
         const ts = this.logger.ts();
 
@@ -58,12 +58,12 @@ const StorageFile = StorageBase.extend({
         });
     },
 
-    save: function(path, opts, data, callback, rev) {
+    save(path, opts, data, callback, rev) {
         this.logger.debug('Save', path, rev);
         const ts = this.logger.ts();
 
         const onError = e => {
-            if (e.hasOwnProperty('code') && e.code === 'EISDIR') {
+            if (Object.prototype.hasOwnProperty.call(e, 'code') && e.code === 'EISDIR') {
                 e.isDir = true;
             }
             this.logger.error('Error writing local file', path, e);
@@ -107,22 +107,26 @@ const StorageFile = StorageBase.extend({
         }
     },
 
-    mkdir: function(path, callback) {
+    mkdir(path, callback) {
         this.logger.debug('Make dir', path);
         const ts = this.logger.ts();
 
         Launcher.mkdir(path, err => {
             if (err) {
                 this.logger.error('Error making local dir', path, err);
-                if (callback) { callback('Error making local dir'); }
+                if (callback) {
+                    callback('Error making local dir');
+                }
             } else {
                 this.logger.debug('Made dir', path, this.logger.ts(ts));
-                if (callback) { callback(); }
+                if (callback) {
+                    callback();
+                }
             }
         });
     },
 
-    watch: function(path, callback) {
+    watch(path, callback) {
         const names = Launcher.parsePath(path);
         if (!fileWatchers[names.dir]) {
             this.logger.debug('Watch dir', names.dir);
@@ -130,7 +134,7 @@ const StorageFile = StorageBase.extend({
             if (fsWatcher) {
                 fsWatcher.on('change', this.fsWatcherChange.bind(this, names.dir));
                 fileWatchers[names.dir] = {
-                    fsWatcher: fsWatcher,
+                    fsWatcher,
                     callbacks: []
                 };
             }
@@ -140,12 +144,12 @@ const StorageFile = StorageBase.extend({
         if (fsWatcher) {
             fsWatcher.callbacks.push({
                 file: names.file,
-                callback: callback
+                callback
             });
         }
     },
 
-    unwatch: function(path) {
+    unwatch(path) {
         const names = Launcher.parsePath(path);
         const watcher = fileWatchers[names.dir];
         if (watcher) {
@@ -161,7 +165,7 @@ const StorageFile = StorageBase.extend({
         }
     },
 
-    fsWatcherChange: function(dirname, evt, fileName) {
+    fsWatcherChange(dirname, evt, fileName) {
         const watcher = fileWatchers[dirname];
         if (watcher) {
             watcher.callbacks.forEach(cb => {

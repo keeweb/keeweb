@@ -1,5 +1,15 @@
 Release notes
 -------------
+##### v1.9.0 (TBD)
+`-` fix #1221: added '30 min' lock option  
+`-` fixed generator style issues in Firefox  
+`+` option to hide password in the generator  
+`-` fix #1209: copying app information to clipboard  
+`-` fix #1215: url matching when there's no website field  
+`-` fix #1171: enabled updater on linux  
+`*` upgraded build system  
+`*` upgraded electron to v6  
+
 ##### v1.8.2 (2019-04-22)
 `-` fix #1163: fixed libgconf-2-4 dependency  
 

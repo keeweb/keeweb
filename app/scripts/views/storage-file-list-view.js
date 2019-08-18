@@ -38,13 +38,15 @@ const StorageFileListView = Backbone.View.extend({
             files,
             density,
             showHiddenFiles: this.showHiddenFiles,
-            canShowHiddenFiles: canShowHiddenFiles
+            canShowHiddenFiles
         });
         return this;
     },
 
     fileClick(e) {
-        const result = $(e.target).closest('.open-list__file').data('path');
+        const result = $(e.target)
+            .closest('.open-list__file')
+            .data('path');
         const file = this.allStorageFiles[result];
         this.trigger('selected', file);
     },

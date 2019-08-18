@@ -25,7 +25,9 @@ const tempUserDataPath = path.join(userDataDir, 'temp');
 const tempUserDataPathRand = Date.now().toString() + Math.random().toString();
 const systemNotificationIds = [];
 
-let htmlPath = process.argv.filter(arg => arg.startsWith('--htmlpath=')).map(arg => arg.replace('--htmlpath=', ''))[0];
+let htmlPath = process.argv
+    .filter(arg => arg.startsWith('--htmlpath='))
+    .map(arg => arg.replace('--htmlpath=', ''))[0];
 if (!htmlPath) {
     htmlPath = 'file://' + path.join(__dirname, 'index.html');
 }
@@ -90,17 +92,17 @@ app.on('second-instance', () => {
         restoreMainWindow();
     }
 });
-app.restartApp = function () {
+app.restartApp = function() {
     restartPending = true;
     mainWindow.close();
     setTimeout(() => {
         restartPending = false;
     }, 1000);
 };
-app.openWindow = function (opts) {
+app.openWindow = function(opts) {
     return new electron.BrowserWindow(opts);
 };
-app.minimizeApp = function () {
+app.minimizeApp = function() {
     let imagePath;
     mainWindow.hide();
     if (process.platform === 'darwin') {
@@ -115,20 +117,20 @@ app.minimizeApp = function () {
         appIcon = new electron.Tray(image);
         appIcon.on('click', restoreMainWindow);
         const contextMenu = electron.Menu.buildFromTemplate([
-            {label: 'Open KeeWeb', click: restoreMainWindow},
-            {label: 'Quit KeeWeb', click: closeMainWindow}
+            { label: 'Open KeeWeb', click: restoreMainWindow },
+            { label: 'Quit KeeWeb', click: closeMainWindow }
         ]);
         appIcon.setContextMenu(contextMenu);
         appIcon.setToolTip('KeeWeb');
     }
 };
-app.minimizeThenHideIfInTray = function () {
+app.minimizeThenHideIfInTray = function() {
     // This function is called when auto-type has displayed a selection list and a selection was made.
     // To ensure focus returns to the previous window we must minimize first even if we're going to hide.
     mainWindow.minimize();
     if (appIcon) mainWindow.hide();
 };
-app.getMainWindow = function () {
+app.getMainWindow = function() {
     return mainWindow;
 };
 app.emitBackboneEvent = emitBackboneEvent;
@@ -149,11 +151,16 @@ function createMainWindow() {
     const appSettings = readAppSettings();
     const windowOptions = {
         show: false,
-        width: 1000, height: 700, minWidth: 700, minHeight: 400,
+        width: 1000,
+        height: 700,
+        minWidth: 700,
+        minHeight: 400,
         titleBarStyle: appSettings ? appSettings.titlebarStyle : undefined,
         backgroundColor: '#282C34',
         webPreferences: {
-            backgroundThrottling: false
+            backgroundThrottling: false,
+            nodeIntegration: true,
+            nodeIntegrationInWorker: true
         }
     };
     if (process.platform !== 'win32') {
@@ -272,8 +279,12 @@ function restoreMainWindowPosition() {
                     mainWindow.setBounds(mainWindowPosition);
                     coerceMainWindowPositionToConnectedDisplay();
                 }
-                if (mainWindowPosition.maximized) { mainWindow.maximize(); }
-                if (mainWindowPosition.fullScreen) { mainWindow.setFullScreen(true); }
+                if (mainWindowPosition.maximized) {
+                    mainWindow.maximize();
+                }
+                if (mainWindowPosition.fullScreen) {
+                    mainWindow.setFullScreen(true);
+                }
             }
         }
     });
@@ -343,24 +354,32 @@ function onContextMenu(e, props) {
     }
     const Menu = electron.Menu;
     const inputMenu = Menu.buildFromTemplate([
-        {role: 'undo'},
-        {role: 'redo'},
-        {type: 'separator'},
-        {role: 'cut'},
-        {role: 'copy'},
-        {role: 'paste'},
-        {type: 'separator'},
-        {role: 'selectall'}
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { type: 'separator' },
+        { role: 'selectall' }
     ]);
     inputMenu.popup(mainWindow);
 }
 
 function notifyOpenFile() {
     if (ready && openFile && mainWindow) {
-        const openKeyfile = process.argv.filter(arg => arg.startsWith('--keyfile=')).map(arg => arg.replace('--keyfile=', ''))[0];
+        const openKeyfile = process.argv
+            .filter(arg => arg.startsWith('--keyfile='))
+            .map(arg => arg.replace('--keyfile=', ''))[0];
         const fileInfo = JSON.stringify({ data: openFile, key: openKeyfile });
-        mainWindow.webContents.executeJavaScript('if (window.launcherOpen) { window.launcherOpen(' + fileInfo + '); } ' +
-            ' else { window.launcherOpenedFile=' + fileInfo + '; }');
+        mainWindow.webContents.executeJavaScript(
+            'if (window.launcherOpen) { window.launcherOpen(' +
+                fileInfo +
+                '); } ' +
+                ' else { window.launcherOpenedFile=' +
+                fileInfo +
+                '; }'
+        );
         openFile = null;
     }
 }
@@ -392,15 +411,21 @@ function subscribePowerEvents() {
         emitBackboneEvent('power-monitor-resume');
     });
     if (process.platform === 'darwin') {
-        const id = electron.systemPreferences.subscribeNotification('com.apple.screenIsLocked', () => {
-            emitBackboneEvent('os-lock');
-        });
+        const id = electron.systemPreferences.subscribeNotification(
+            'com.apple.screenIsLocked',
+            () => {
+                emitBackboneEvent('os-lock');
+            }
+        );
         systemNotificationIds.push(id);
     }
 }
 
 function setEnv() {
-    if (process.platform === 'linux' && ['Pantheon', 'Unity:Unity7'].indexOf(process.env.XDG_CURRENT_DESKTOP) !== -1) {
+    if (
+        process.platform === 'linux' &&
+        ['Pantheon', 'Unity:Unity7'].indexOf(process.env.XDG_CURRENT_DESKTOP) !== -1
+    ) {
         // https://github.com/electron/electron/issues/9046
         process.env.XDG_CURRENT_DESKTOP = 'Unity';
     }
@@ -413,7 +438,7 @@ function restorePreferences() {
     let oldProfile;
     try {
         oldProfile = JSON.parse(fs.readFileSync(profileConfigPath, 'utf8'));
-    } catch (e) { }
+    } catch (e) {}
 
     fs.writeFileSync(profileConfigPath, JSON.stringify(newProfile));
 
@@ -422,8 +447,15 @@ function restorePreferences() {
         const newProfilePath = path.join(tempUserDataPath, newProfile.dir);
         if (fs.existsSync(path.join(oldProfilePath, 'Cookies'))) {
             fs.mkdirSync(newProfilePath);
-            fs.renameSync(path.join(oldProfilePath, 'Cookies'),
-                path.join(newProfilePath, 'Cookies'));
+            const cookiesFileSrc = path.join(oldProfilePath, 'Cookies');
+            const cookiesFileDest = path.join(newProfilePath, 'Cookies');
+            try {
+                fs.renameSync(cookiesFileSrc, cookiesFileDest);
+            } catch (e) {
+                try {
+                    fs.copyFileSync(cookiesFileSrc, cookiesFileDest);
+                } catch (e) {}
+            }
         }
     }
 }
@@ -465,7 +497,7 @@ function hookRequestHeaders() {
         if (!details.url.startsWith('ws:')) {
             delete details.requestHeaders['Origin'];
         }
-        callback({cancel: false, requestHeaders: details.requestHeaders});
+        callback({ cancel: false, requestHeaders: details.requestHeaders });
     });
 }
 
@@ -488,8 +520,10 @@ function coerceMainWindowPositionToConnectedDisplay() {
     // 160px width and 2/3s the title bar height should be enough that the user can grab it
     for (let i = 0; i < displays.length; ++i) {
         const workArea = displays[i].workArea;
-        const overlapWidth = Math.min(tbRight, workArea.x + workArea.width) - Math.max(tbLeft, workArea.x);
-        const overlapHeight = Math.min(tbBottom, workArea.y + workArea.height) - Math.max(tbTop, workArea.y);
+        const overlapWidth =
+            Math.min(tbRight, workArea.x + workArea.width) - Math.max(tbLeft, workArea.x);
+        const overlapHeight =
+            Math.min(tbBottom, workArea.y + workArea.height) - Math.max(tbTop, workArea.y);
         if (overlapWidth >= 160 && 3 * overlapHeight >= 2 * (tbBottom - tbTop)) return;
     }
     // If we get here, no display contains a big enough strip of the title bar

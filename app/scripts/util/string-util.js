@@ -1,7 +1,7 @@
 const StringUtil = {
     camelCaseRegex: /\-./g,
 
-    camelCase: function(str) {
+    camelCase(str) {
         return str.replace(this.camelCaseRegex, match => match[1].toUpperCase());
     }
 };

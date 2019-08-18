@@ -32,12 +32,30 @@ const AutoTypePopupView = Backbone.View.extend({
     setupKeys() {
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.actionEnterPressed, this, KeyHandler.SHORTCUT_ACTION, true);
-        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.optEnterPressed, this, KeyHandler.SHORTCUT_OPT, true);
+        KeyHandler.onKey(
+            Keys.DOM_VK_RETURN,
+            this.actionEnterPressed,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            true
+        );
+        KeyHandler.onKey(
+            Keys.DOM_VK_RETURN,
+            this.optEnterPressed,
+            this,
+            KeyHandler.SHORTCUT_OPT,
+            true
+        );
         KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_O, this.openKeyPressed, this, KeyHandler.SHORTCUT_ACTION, true);
+        KeyHandler.onKey(
+            Keys.DOM_VK_O,
+            this.openKeyPressed,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            true
+        );
         KeyHandler.on('keypress:auto-type', this.keyPressed.bind(this));
         KeyHandler.setModal('auto-type');
     },
@@ -58,8 +76,10 @@ const AutoTypePopupView = Backbone.View.extend({
     render() {
         let topMessage;
         if (this.model.filter.title || this.model.filter.url) {
-            topMessage = Locale.autoTypeMsgMatchedByWindow.replace('{}',
-                this.model.filter.title || this.model.filter.url);
+            topMessage = Locale.autoTypeMsgMatchedByWindow.replace(
+                '{}',
+                this.model.filter.title || this.model.filter.url
+            );
         } else {
             topMessage = Locale.autoTypeMsgNoWindow;
         }
@@ -75,11 +95,11 @@ const AutoTypePopupView = Backbone.View.extend({
         });
         this.renderTemplate({
             filterText: this.model.filter.text,
-            topMessage: topMessage,
+            topMessage,
             selectionHintDefault: Locale.autoTypeSelectionHint,
             selectionHintAction: Locale.autoTypeSelectionHintAction,
             selectionHintOpt: Locale.autoTypeSelectionHintOpt,
-            itemsHtml: itemsHtml,
+            itemsHtml,
             actionSymbol: FeatureDetector.actionShortcutSymbol(true),
             altSymbol: FeatureDetector.altShortcutSymbol(true),
             keyEnter: Locale.keyEnter
@@ -95,7 +115,7 @@ const AutoTypePopupView = Backbone.View.extend({
 
     remove() {
         this.removeKeys();
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
     cancelAndClose() {
@@ -109,7 +129,7 @@ const AutoTypePopupView = Backbone.View.extend({
         }
         this.trigger('result', {
             entry: this.result,
-            sequenceType: sequenceType
+            sequenceType
         });
     },
 
@@ -178,7 +198,10 @@ const AutoTypePopupView = Backbone.View.extend({
 
     backSpacePressed() {
         if (this.model.filter.text) {
-            this.model.filter.text = this.model.filter.text.substr(0, this.model.filter.text.length - 1);
+            this.model.filter.text = this.model.filter.text.substr(
+                0,
+                this.model.filter.text.length - 1
+            );
             this.render();
         }
     },

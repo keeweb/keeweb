@@ -5,7 +5,7 @@ const AppSettingsModel = require('../models/app-settings-model');
 const CopyPaste = {
     simpleCopy: !!(Launcher && Launcher.clipboardSupported),
 
-    copy: function(text) {
+    copy(text) {
         if (this.simpleCopy) {
             Launcher.setClipboardText(text);
             const clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
@@ -21,18 +21,18 @@ const CopyPaste = {
                     Backbone.off('main-window-will-close', clearClipboard);
                 }, clipboardSeconds * 1000);
             }
-            return {success: true, seconds: clipboardSeconds};
+            return { success: true, seconds: clipboardSeconds };
         } else {
             try {
                 if (document.execCommand('copy')) {
-                    return {success: true};
+                    return { success: true };
                 }
-            } catch (e) { }
+            } catch (e) {}
             return false;
         }
     },
 
-    createHiddenInput: function(text) {
+    createHiddenInput(text) {
         const hiddenInput = $('<input/>')
             .val(text)
             .attr({ type: 'text', 'class': 'hide-by-pos' })
@@ -41,8 +41,12 @@ const CopyPaste = {
         hiddenInput[0].selectionEnd = text.length;
         hiddenInput.focus();
         hiddenInput.on({
-            'copy cut paste': function() { setTimeout(() => hiddenInput.blur(), 0); },
-            blur: function() { hiddenInput.remove(); }
+            'copy cut paste'() {
+                setTimeout(() => hiddenInput.blur(), 0);
+            },
+            blur() {
+                hiddenInput.remove();
+            }
         });
     }
 };

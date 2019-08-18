@@ -1,5 +1,5 @@
-module.exports = function (grunt) {
-    grunt.registerMultiTask('sign-desktop-files', 'Signs desktop files', async function () {
+module.exports = function(grunt) {
+    grunt.registerMultiTask('sign-desktop-files', 'Signs desktop files', async function() {
         const done = this.async();
         const fs = require('fs');
         const path = require('path');
@@ -11,8 +11,12 @@ module.exports = function (grunt) {
         await walk(appPath);
 
         const data = JSON.stringify(signatures);
-        signatures.kwResSelf = await getSignature(Buffer.from(data));
-        grunt.file.write(path.join(appPath, 'signatures.json'), JSON.stringify(signatures));
+
+        const signaturesWithSelf = {
+            ...signatures,
+            kwResSelf: await getSignature(Buffer.from(data))
+        };
+        grunt.file.write(path.join(appPath, 'signatures.json'), JSON.stringify(signaturesWithSelf));
 
         grunt.log.writeln(`\nSigned ${signedFiles.length} files: ${signedFiles.join(', ')}`);
         done();

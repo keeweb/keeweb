@@ -1,13 +1,12 @@
 const Launcher = require('../../comp/launcher');
 
-const AutoTypeHelper = function() {
-};
+const AutoTypeHelper = function() {};
 
 AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
     Launcher.spawn({
         cmd: 'xdotool',
         args: ['getactivewindow', 'getwindowname'],
-        complete: function(err, res) {
+        complete(err, res) {
             return callback(err, res ? res.trim() : undefined);
         }
     });

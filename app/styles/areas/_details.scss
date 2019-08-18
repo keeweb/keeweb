@@ -1,609 +1,701 @@
 .details {
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  justify-content: flex-start;
-  @include user-select(text);
-  width: 100%;
-
-  &__back-button {
-    display: none;
-    @include mobile {
-      display: block;
-      padding-bottom: $base-padding-v;
-      cursor: pointer;
-      line-height: $mobile-back-button-height;
-      height: $mobile-back-button-height;
-      font-size: 1.2em;
-      >i {
-        margin-right: .3em;
-        font-size: 1.2em;
-        vertical-align: text-bottom;
-      }
-    }
-  }
-
-  &__header {
-    display: flex;
-    padding-bottom: $small-spacing;
-    overflow: visible;
-    min-height: 40px;
-    &-title {
-      @include user-select(text);
-      flex: 1;
-      align-self: flex-start;
-      cursor: text;
-      margin: 0 6px;
-      padding: 3px 6px 1px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      border-radius: $base-border-radius;
-      border: 1px solid transparent;
-      position: relative;
-      top: -2px;
-      &:hover {
-        transition: border-color $base-duration $base-timing;
-        @include th {
-          border: 1px solid th(light-border-color);
-        }
-        @include mobile {
-          border-color: transparent;
-        }
-      }
-    }
-    input.details__header-title-input {
-      @include user-select(text);
-      flex: 1;
-      margin: 0 6px;
-      padding: 0 6px;
-      font-size: $large-header-font-size;
-      font-weight: bold;
-      position: relative;
-      top: -2px;
-      @include mobile {
-        width: 100%;
-      }
-    }
-    &-color, &-icon {
-      @include user-select(none);
-      @include area-selectable();
-      display: inline;
-      font-size: $large-header-font-size;
-      height: 1em;
-      padding-top: .1em;
-    }
-    &-icon {
-      width: 1.4em;
-      text-align: center;
-      &--icon {
-        background-position: center center;
-        background-size: 28px 28px;
-        background-repeat: no-repeat;
-      }
-    }
-  }
-
-  &__colors-popup {
-    @include user-select(none);
-    display: none;
-    position: absolute;
-    z-index: $z-index-no-modal;
-    border-radius: $base-border-radius;
-    @include th {
-      background: th(background-color);
-      box-shadow: 0 0 3px th(background-color);
-    }
-    top: 13px;
-    left: 6px;
-    font-size: $large-header-font-size;
-    &:hover, .details__header-color:hover & {
-      @include nomobile {
-        display: block;
-      }
-    }
-    &-item {
-      padding: 8px 12px;
-      cursor: pointer;
-      display: block;
-      position: relative;
-      &--active {
-        &:before {
-          content: $fa-var-bookmark;
-        }
-      }
-      &:hover {
-        &:after {
-          content: $fa-var-bookmark;
-          opacity: .3;
-          position: absolute;
-          left: 12px;
-          top: 8px;
-        }
-      }
-    }
-  }
-
-  &__body {
-    flex: 1;
     display: flex;
     align-items: stretch;
     flex-direction: column;
     justify-content: flex-start;
-    flex-wrap: wrap;
-    @include scrollbar-on-hover;
-    position: relative;
-    overflow: hidden;
+    user-select: text;
+    width: 100%;
 
-    .details--drag & { display: none; }
-
-    >.scroller {
-      flex: 1;
-      display: flex;
-      align-items: stretch;
-      align-content: flex-start;
-      flex-direction: row;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-      overflow-x: hidden;
-      padding-top: 3px;
-      @media screen and (-webkit-min-device-pixel-ratio:0) { width: 100% !important; }
-    }
-
-    &-fields {
-      flex: 1 0 50%;
-      min-width: 0;
-    }
-
-    &-aside {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: stretch;
-      flex-direction: column;
-      justify-content: flex-start;
-      @include mobile {
-        width: 100%;
-      }
-    }
-
-    &-after {
-      flex: 100% 1 0;
-    }
-  }
-
-  &__field {
-    $details-field-line-height: 18px;
-
-    display: flex;
-    align-items: stretch;
-    flex-direction: row;
-    justify-content: flex-start;
-    margin-bottom: .5em;
-
-    &-label {
-      @include th { color: th(muted-color); }
-      width: 7em;
-      text-align: right;
-      cursor: pointer;
-      padding-right: 1em;
-      border: 1px solid transparent;
-      line-height: $details-field-line-height;
-      position: relative;
-      &:hover {
-        @include th { color: th(medium-color); }
-      }
-      .details__field--can-edit-title & {
-        cursor: text;
-      }
-      >input {
-        margin: 0;
-        padding: 0 $base-padding-h;
-        line-height: $details-field-line-height;
-        height: $details-field-line-height;
-        width: 100%;
-        @include th { color: th(text-color); }
-        .chrome & { padding-bottom: 1px; } // TODO: find a better cross-browser way to do it
-      }
-    }
-    &-value {
-      flex: 1;
-      @include user-select(text);
-      align-self: flex-start;
-      position: relative;
-      cursor: text;
-      padding: 0 $base-padding-h;
-      border: 1px solid transparent;
-      min-height: $details-field-line-height;
-      box-sizing: border-box;
-      line-height: $details-field-line-height;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-right: 20px;
-      &-add-label {
-        color: transparent;
-      }
-      .details__field--editable & {
-        border-radius: $base-border-radius;
-        &:hover {
-          @include nomobile {
-            transition: border-color $base-duration $base-timing;
-            border: 1px solid;
-            @include th {
-              border-color: th(light-border-color);
-              box-shadow: 0 0 3px rgba(0, 0, 0, 0.06);
-            }
-            .details__field-value-add-label {
-              @include th {
-                color: th(muted-color);
-              }
-              transition: color $base-duration $base-timing;
-            }
-          }
-        }
-      }
-      .details__field--protect & {
-        @include user-select(none);
-      }
-      .details__field--multiline & {
-        width: 0;
-        white-space: pre-wrap;
-      }
-      .details__field--edit &,
-      .details__field--edit.details__field--editable &,
-      .details__field--edit.details__field--editable:hover & {
-        border: 0 solid transparent;
-        padding: 0;
-      }
-      >input, >textarea {
-        margin: 0;
-        padding: 0 $base-padding-h;
-        line-height: $details-field-line-height;
-        width: 100%;
-        height: 20px;
-        .details__field--protected & { font-family: $monospace-font-family; }
-        transition: background-color $slow-transition-out, border-color $slow-transition-out;
-        .details__field--edit[active-mobile-action] & {
-          transition: background-color $slow-transition-in, border-color $slow-transition-in;
-        }
-        .details__field--edit[active-mobile-action=apply] & {
-          @include th { background: th(action-color); }
-        }
-        .details__field--edit[active-mobile-action=cancel] & {
-          @include th { background: th(error-color); border-color: th(error-color); }
-        }
+    &__back-button {
+        display: none;
         @include mobile {
-          border-color: transparent !important;
+            display: block;
+            padding-bottom: $base-padding-v;
+            cursor: pointer;
+            line-height: $mobile-back-button-height;
+            height: $mobile-back-button-height;
+            font-size: 1.2em;
+            > i {
+                margin-right: 0.3em;
+                font-size: 1.2em;
+                vertical-align: text-bottom;
+            }
         }
-      }
-      >input {
-        .chrome & { padding-bottom: 1px; } // TODO: find a better cross-browser way to do it
-      }
-      >textarea {
-        display: block;
-        resize: none;
-        line-height: 1.5em;
+    }
+
+    &__header {
+        display: flex;
+        padding-bottom: $small-spacing;
+        overflow: visible;
+        min-height: 40px;
+        &-title {
+            user-select: text;
+            flex: 1;
+            align-self: flex-start;
+            cursor: text;
+            margin: 0 6px;
+            padding: 3px 6px 1px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-radius: $base-border-radius;
+            border: 1px solid transparent;
+            position: relative;
+            top: -2px;
+            &:hover {
+                transition: border-color $base-duration $base-timing;
+                @include th {
+                    border: 1px solid th(light-border-color);
+                }
+                @include mobile {
+                    border-color: transparent;
+                }
+            }
+        }
+        input.details__header-title-input {
+            user-select: text;
+            flex: 1;
+            margin: 0 6px;
+            padding: 0 6px;
+            font-size: $large-header-font-size;
+            font-weight: bold;
+            position: relative;
+            top: -2px;
+            @include mobile {
+                width: 100%;
+            }
+        }
+        &-color,
+        &-icon {
+            user-select: none;
+            @include area-selectable();
+            display: inline;
+            font-size: $large-header-font-size;
+            height: 1em;
+            padding-top: 0.1em;
+        }
+        &-icon {
+            width: 1.4em;
+            text-align: center;
+            &--icon {
+                background-position: center center;
+                background-size: 28px 28px;
+                background-repeat: no-repeat;
+            }
+        }
+    }
+
+    &__colors-popup {
+        user-select: none;
+        display: none;
+        position: absolute;
+        z-index: $z-index-no-modal;
+        border-radius: $base-border-radius;
+        @include th {
+            background: th(background-color);
+            box-shadow: 0 0 3px th(background-color);
+        }
+        top: 13px;
+        left: 6px;
+        font-size: $large-header-font-size;
+        &:hover,
+        .details__header-color:hover & {
+            @include nomobile {
+                display: block;
+            }
+        }
+        &-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: block;
+            position: relative;
+            &--active {
+                &:before {
+                    content: $fa-var-bookmark;
+                }
+            }
+            &:hover {
+                &:after {
+                    content: $fa-var-bookmark;
+                    opacity: 0.3;
+                    position: absolute;
+                    left: 12px;
+                    top: 8px;
+                }
+            }
+        }
+    }
+
+    &__body {
+        flex: 1;
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        @include scrollbar-on-hover;
+        position: relative;
         overflow: hidden;
-      }
-      >label {
-        font-weight: normal;
-        @include user-select(none);
-      }
-      >a {
-        max-width: 100%;
+
+        .details--drag & {
+            display: none;
+        }
+
+        > .scroller {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            align-content: flex-start;
+            flex-direction: row;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            overflow-x: hidden;
+            padding-top: 3px;
+            @media screen and (-webkit-min-device-pixel-ratio: 0) {
+                width: 100% !important;
+            }
+        }
+
+        &-fields {
+            flex: 1 0 50%;
+            min-width: 0;
+        }
+
+        &-aside {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: stretch;
+            flex-direction: column;
+            justify-content: flex-start;
+            @include mobile {
+                width: 100%;
+            }
+        }
+
+        &-after {
+            flex: 100% 1 0;
+        }
+    }
+
+    &__field {
+        $details-field-line-height: 18px;
+
+        display: flex;
+        align-items: stretch;
+        flex-direction: row;
+        justify-content: flex-start;
+        margin-bottom: 0.5em;
+
+        &-label {
+            @include th {
+                color: th(muted-color);
+            }
+            width: 7em;
+            text-align: right;
+            cursor: pointer;
+            padding-right: 1em;
+            border: 1px solid transparent;
+            line-height: $details-field-line-height;
+            position: relative;
+            &:hover {
+                @include th {
+                    color: th(medium-color);
+                }
+            }
+            .details__field--can-edit-title & {
+                cursor: text;
+            }
+            > input {
+                margin: 0;
+                padding: 0 $base-padding-h;
+                line-height: $details-field-line-height;
+                height: $details-field-line-height;
+                width: 100%;
+                @include th {
+                    color: th(text-color);
+                }
+                .chrome & {
+                    padding-bottom: 1px;
+                } // TODO: find a better cross-browser way to do it
+            }
+        }
+        &-value {
+            flex: 1;
+            user-select: text;
+            align-self: flex-start;
+            position: relative;
+            cursor: text;
+            padding: 0 $base-padding-h;
+            border: 1px solid transparent;
+            min-height: $details-field-line-height;
+            box-sizing: border-box;
+            line-height: $details-field-line-height;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 20px;
+            &-add-label {
+                color: transparent;
+            }
+            .details__field--editable & {
+                border-radius: $base-border-radius;
+                &:hover {
+                    @include nomobile {
+                        transition: border-color $base-duration $base-timing;
+                        border: 1px solid;
+                        @include th {
+                            border-color: th(light-border-color);
+                            box-shadow: 0 0 3px rgba(0, 0, 0, 0.06);
+                        }
+                        .details__field-value-add-label {
+                            @include th {
+                                color: th(muted-color);
+                            }
+                            transition: color $base-duration $base-timing;
+                        }
+                    }
+                }
+            }
+            .details__field--protect & {
+                user-select: none;
+            }
+            .details__field--multiline & {
+                width: 0;
+                white-space: pre-wrap;
+            }
+            .details__field--edit &,
+            .details__field--edit.details__field--editable &,
+            .details__field--edit.details__field--editable:hover & {
+                border: 0 solid transparent;
+                padding: 0;
+            }
+            > input,
+            > textarea {
+                margin: 0;
+                padding: 0 $base-padding-h;
+                line-height: $details-field-line-height;
+                width: 100%;
+                height: 20px;
+                .details__field--protected & {
+                    font-family: $monospace-font-family;
+                }
+                transition: background-color $slow-transition-out, border-color $slow-transition-out;
+                .details__field--edit[active-mobile-action] & {
+                    transition: background-color $slow-transition-in,
+                        border-color $slow-transition-in;
+                }
+                .details__field--edit[active-mobile-action='apply'] & {
+                    @include th {
+                        background: th(action-color);
+                    }
+                }
+                .details__field--edit[active-mobile-action='cancel'] & {
+                    @include th {
+                        background: th(error-color);
+                        border-color: th(error-color);
+                    }
+                }
+                @include mobile {
+                    border-color: transparent !important;
+                }
+            }
+            > input {
+                .chrome & {
+                    padding-bottom: 1px;
+                } // TODO: find a better cross-browser way to do it
+            }
+            > textarea {
+                display: block;
+                resize: none;
+                line-height: 1.5em;
+                overflow: hidden;
+            }
+            > label {
+                font-weight: normal;
+                user-select: none;
+            }
+            > a {
+                max-width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .details__body-aside & {
+                @include th {
+                    color: th(muted-color);
+                }
+                a {
+                    @include th {
+                        color: th(muted-color);
+                    }
+                }
+                width: 13em;
+                padding-right: 0;
+                margin-right: 0;
+                flex: 0 0 auto;
+            }
+            &-btn {
+                @include position(absolute, 0 0 null null);
+                @include th {
+                    color: th(muted-color);
+                }
+                cursor: pointer;
+                &:hover {
+                    @include th {
+                        color: th(medium-color);
+                    }
+                }
+                &:before {
+                    @include position(absolute, 0 0 null null);
+                    @include fa-icon();
+                    cursor: pointer;
+                    padding: 0.3em $base-padding-h;
+                }
+            }
+            &-btn-gen:before {
+                content: $fa-var-bolt;
+            }
+            &-btn-protect {
+                &:before {
+                    content: $fa-var-unlock;
+                }
+                .details__field--protected & {
+                    &:before {
+                        content: $fa-var-lock;
+                    }
+                }
+            }
+            @include mobile {
+                &-btn-apply,
+                &-btn-cancel {
+                    height: 100%;
+                    width: 50%;
+                    position: absolute;
+                    top: 0;
+                    user-select: none;
+                    &:before {
+                        padding: 0.2em 1.5em;
+                    }
+                    @include th {
+                        background: th(background-color);
+                    }
+                }
+                &-btn-apply {
+                    &:before {
+                        content: $fa-var-check;
+                    }
+                    right: 0;
+                }
+                &-btn-cancel {
+                    &:before {
+                        content: $fa-var-times;
+                    }
+                    left: 0;
+                }
+            }
+            &--select {
+                border-width: 0;
+                padding: 0;
+                .details__field--editable:hover & {
+                    border-width: 0;
+                }
+            }
+            > select {
+                margin: 0;
+                width: 100%;
+                padding: 0 $base-padding-h;
+            }
+        }
+
+        &--no-select {
+            .details__field-label,
+            .details__field-value {
+                user-select: none;
+            }
+        }
+
+        @include mobile {
+            @include th {
+                border-bottom: light-border();
+            }
+            padding-bottom: 0.5em;
+        }
+    }
+
+    &__attachments {
+        flex: 1;
+        display: flex;
+        align-items: stretch;
+        flex-direction: row;
+        justify-content: flex-end;
+        flex-wrap: nowrap;
+        user-select: none;
+        overflow: hidden;
         white-space: nowrap;
+        .details--drag & {
+            display: none;
+        }
+    }
+
+    &__attachment {
+        user-select: none;
+        @include area-selectable();
+        align-self: flex-end;
+        flex: 0 1 auto;
+        @include th {
+            border: light-border();
+        }
+        margin-right: $small-spacing;
+        padding: $base-padding;
+        text-align: center;
         overflow: hidden;
         text-overflow: ellipsis;
-      }
-      .details__body-aside & {
-        @include th { color: th(muted-color); }
-        a { @include th { color: th(muted-color); } }
-        width: 13em;
-        padding-right: 0;
-        margin-right: 0;
+        i {
+            margin-right: 0.4em;
+        }
+        &--active {
+            @include th {
+                border-bottom: 1px solid th(action-color);
+            }
+        }
+    }
+
+    &__attachment-add {
+        user-select: none;
+        align-self: flex-end;
         flex: 0 0 auto;
-      }
-      &-btn {
-        @include position(absolute, 0 0 null null);
-        @include th { color: th(muted-color); }
-        cursor: pointer;
-        &:hover {
-          @include th { color: th(medium-color); }
-        }
-        &:before {
-          @include position(absolute, 0 0 null null);
-          @include fa-icon();
-          cursor: pointer;
-          padding: .3em $base-padding-h;
-        }
-      }
-      &-btn-gen:before { content: $fa-var-bolt; }
-      &-btn-protect {
-        &:before { content: $fa-var-unlock; }
-        .details__field--protected & { &:before { content: $fa-var-lock; } }
-      }
-      @include mobile {
-        &-btn-apply, &-btn-cancel {
-          height: 100%;
-          width: 50%;
-          position: absolute;
-          top: 0;
-          @include user-select(none);
-          &:before { padding: .2em 1.5em; }
-          @include th { background: th(background-color); }
-        }
-        &-btn-apply {
-          &:before { content: $fa-var-check; }
-          right: 0;
-        }
-        &-btn-cancel {
-          &:before { content: $fa-var-times; }
-          left: 0;
-        }
-      }
-      &--select {
-        border-width: 0;
-        padding: 0;
-        .details__field--editable:hover & { border-width: 0; }
-      }
-      >select {
-        margin: 0;
-        width: 100%;
-        padding: 0 $base-padding-h;
-      }
-    }
-
-    &--no-select {
-      .details__field-label, .details__field-value {
-        @include user-select(none);
-      }
-    }
-
-    @include mobile {
-      @include th { border-bottom: light-border(); }
-      padding-bottom: .5em;
-    }
-  }
-
-  &__attachments {
-    flex: 1;
-    display: flex;
-    align-items: stretch;
-    flex-direction: row;
-    justify-content: flex-end;
-    flex-wrap: nowrap;
-    @include user-select(none);
-    overflow: hidden;
-    white-space: nowrap;
-    .details--drag & { display: none; }
-  }
-
-  &__attachment {
-    @include user-select(none);
-    @include area-selectable();
-    align-self: flex-end;
-    flex: 0 1 auto;
-    @include th { border: light-border(); }
-    margin-right: $small-spacing;
-    padding: $base-padding;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    i { margin-right: .4em; }
-    &--active {
-      @include th { border-bottom: 1px solid th(action-color); };
-    }
-  }
-
-  &__attachment-add {
-    @include user-select(none);
-    align-self: flex-end;
-    flex: 0 0 auto;
-    @include th { color: th(muted-color); }
-    border: 1px solid transparent;
-    margin-right: $small-spacing;
-    padding: $base-padding;
-    text-align: center;
-    overflow: hidden;
-    transition: color $base-duration $base-timing;
-    &:hover {
-      @include th { color: th(medium-color); }
-    }
-    &-title {
-      display: none;
-      transition: color $slow-transition-out;
-      margin-right: $base-padding-h;
-      color: transparent;
-      .details__attachment-add:hover & {
-        display: inline;
-        transition: color $slow-transition-in;
-        @include th { color: th(muted-color); }
-      }
-    }
-  }
-
-  &__attachment-preview {
-    margin-right: $base-padding-h;
-    width: 100%;
-    &-data {
-      > image {
-        width: 100%;
-      }
-      > pre {
-        white-space: pre-wrap;
-      }
-    }
-    &-download-text {
-      @include user-select(none);
-      position: absolute;
-      bottom: $base-padding-v;
-      right: $base-padding-h;
-      opacity: .15;
-      display: none;
-      @include nomobile { display: block; }
-    }
-    &-icon {
-      display: none;
-    }
-    &--empty {
-      display: flex;
-      flex-direction: column;
-      flex: 1 0 auto;
-      justify-content: center;
-      align-self: center;
-      align-items: center;
-      text-align: center;
-      .details__attachment-preview-icon {
-        display: block;
-        font-size: 10em;
-      }
-      .details__attachment-preview-download-text {
-        position: static;
-        margin-top: 2em;
-        opacity: 1;
-      }
-    }
-  }
-
-  &__buttons {
-    display: flex;
-    align-items: stretch;
-    flex-direction: row;
-    flex-shrink: 0;
-    justify-content: flex-start;
-    margin-top: $base-padding-v;
-
-    .details--drag & { display: none; }
-
-    &-trash, &-trash-del {
-      @include icon-btn($error:true);
-      align-self: flex-end;
-      margin-right: 10px;
-    }
-
-    &-trash-del {
-      @include th { color: th(muted-color); }
-    }
-
-    button ~ button {
-      margin-left: $small-spacing;
-    }
-  }
-
-  &__history {
-    flex: 1 0 auto;
-    display: flex;
-    align-items: stretch;
-    flex-direction: column;
-    justify-content: flex-start;
-    max-width: 100%;
-    &-top {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: stretch;
-      flex-direction: row;
-      justify-content: flex-start;
-      padding-right: $base-padding-h;
-      margin-right: 20px;
-    }
-    &-desc {
-      @include user-select(none);
-    }
-    &-timeline {
-      flex: 1 0 auto;
-      position: relative;
-      height: 44px;
-      margin-left: 5px;
-      &-axis {
-        width: 100%;
-        position: absolute;
-        top: 9px;
-        @include th { border-bottom: light-border(); }
-      }
-      &-item {
-        position: absolute;
-        top: 4px;
-        cursor: pointer;
-        transform: translateX(-48%);
-        &:hover {
-          @include th { color: th(text-semi-muted-color); }
-        }
-        &--active, &--active:hover {
-          z-index: $z-index-no-modal;
-          cursor: default;
-          @include th { color: th(action-color); }
-        }
-      }
-      &-label {
-        position: absolute;
-        top: 16px;
-        white-space: nowrap;
-        transform: translateX(-50%);
-        @include th { color: th(muted-color); }
-      }
-    }
-    &-arrow-prev, &-arrow-next {
-      @include transform(scaleX(2));
-      @include transform-origin(left top);
-      cursor: pointer;
-      position: absolute;
-      top: 30px;
-      font-size: 14px;
-      &:hover { @include th { color: th(text-semi-muted-color); } }
-    }
-    &-arrow-prev {
-      left: -5px;
-    }
-    &-arrow-next {
-      right: 5px;
-    }
-    &-close {
-      margin-left: 20px;
-    }
-    &-body {
-      flex: 1 1 auto;
-    }
-    &-buttons {
-      @include user-select(none);
-      align-self: flex-end;
-      margin-bottom: $base-padding-v;
-      padding-right: $base-padding-h;
-      margin-right: 20px;
-    }
-  }
-
-  &__dropzone {
-    display: none;
-    .details--drag & {
-      display: flex;
-      flex-direction: column;
-      flex: 1 0 auto;
-      justify-content: center;
-      align-self: center;
-      align-items: center;
-      text-align: center;
-    }
-    &-icon {
-      font-size: 10em;
-    }
-    &-header {
-      margin-top: 1em;
-    }
-  }
-
-  &__field-autocomplete {
-    position: absolute;
-    overflow: hidden;
-    @include common-dropdown;
-    &-item {
-      padding: $base-padding;
-      display: inline-block;
-      word-break: break-all;
-      @include area-selectable(bottom);
-      &--selected {
         @include th {
-          background-color: th(secondary-background-color);
-          border-bottom: selected-hover-border();
+            color: th(muted-color);
         }
-      }
+        border: 1px solid transparent;
+        margin-right: $small-spacing;
+        padding: $base-padding;
+        text-align: center;
+        overflow: hidden;
+        transition: color $base-duration $base-timing;
+        &:hover {
+            @include th {
+                color: th(medium-color);
+            }
+        }
+        &-title {
+            display: none;
+            transition: color $slow-transition-out;
+            margin-right: $base-padding-h;
+            color: transparent;
+            .details__attachment-add:hover & {
+                display: inline;
+                transition: color $slow-transition-in;
+                @include th {
+                    color: th(muted-color);
+                }
+            }
+        }
     }
-  }
+
+    &__attachment-preview {
+        margin-right: $base-padding-h;
+        width: 100%;
+        &-data {
+            > image {
+                width: 100%;
+            }
+            > pre {
+                white-space: pre-wrap;
+            }
+        }
+        &-download-text {
+            user-select: none;
+            position: absolute;
+            bottom: $base-padding-v;
+            right: $base-padding-h;
+            opacity: 0.15;
+            display: none;
+            @include nomobile {
+                display: block;
+            }
+        }
+        &-icon {
+            display: none;
+        }
+        &--empty {
+            display: flex;
+            flex-direction: column;
+            flex: 1 0 auto;
+            justify-content: center;
+            align-self: center;
+            align-items: center;
+            text-align: center;
+            .details__attachment-preview-icon {
+                display: block;
+                font-size: 10em;
+            }
+            .details__attachment-preview-download-text {
+                position: static;
+                margin-top: 2em;
+                opacity: 1;
+            }
+        }
+    }
+
+    &__buttons {
+        display: flex;
+        align-items: stretch;
+        flex-direction: row;
+        flex-shrink: 0;
+        justify-content: flex-start;
+        margin-top: $base-padding-v;
+
+        .details--drag & {
+            display: none;
+        }
+
+        &-trash,
+        &-trash-del {
+            @include icon-btn($error: true);
+            align-self: flex-end;
+            margin-right: 10px;
+        }
+
+        &-trash-del {
+            @include th {
+                color: th(muted-color);
+            }
+        }
+
+        button ~ button {
+            margin-left: $small-spacing;
+        }
+    }
+
+    &__history {
+        flex: 1 0 auto;
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        justify-content: flex-start;
+        max-width: 100%;
+        &-top {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: stretch;
+            flex-direction: row;
+            justify-content: flex-start;
+            padding-right: $base-padding-h;
+            margin-right: 20px;
+        }
+        &-desc {
+            user-select: none;
+        }
+        &-timeline {
+            flex: 1 0 auto;
+            position: relative;
+            height: 44px;
+            margin-left: 5px;
+            &-axis {
+                width: 100%;
+                position: absolute;
+                top: 9px;
+                @include th {
+                    border-bottom: light-border();
+                }
+            }
+            &-item {
+                position: absolute;
+                top: 4px;
+                cursor: pointer;
+                transform: translateX(-48%);
+                &:hover {
+                    @include th {
+                        color: th(text-semi-muted-color);
+                    }
+                }
+                &--active,
+                &--active:hover {
+                    z-index: $z-index-no-modal;
+                    cursor: default;
+                    @include th {
+                        color: th(action-color);
+                    }
+                }
+            }
+            &-label {
+                position: absolute;
+                top: 16px;
+                white-space: nowrap;
+                transform: translateX(-50%);
+                @include th {
+                    color: th(muted-color);
+                }
+            }
+        }
+        &-arrow-prev,
+        &-arrow-next {
+            @include transform(scaleX(2));
+            @include transform-origin(left top);
+            cursor: pointer;
+            position: absolute;
+            top: 30px;
+            font-size: 14px;
+            &:hover {
+                @include th {
+                    color: th(text-semi-muted-color);
+                }
+            }
+        }
+        &-arrow-prev {
+            left: -5px;
+        }
+        &-arrow-next {
+            right: 5px;
+        }
+        &-close {
+            margin-left: 20px;
+        }
+        &-body {
+            flex: 1 1 auto;
+        }
+        &-buttons {
+            user-select: none;
+            align-self: flex-end;
+            margin-bottom: $base-padding-v;
+            padding-right: $base-padding-h;
+            margin-right: 20px;
+        }
+    }
+
+    &__dropzone {
+        display: none;
+        .details--drag & {
+            display: flex;
+            flex-direction: column;
+            flex: 1 0 auto;
+            justify-content: center;
+            align-self: center;
+            align-items: center;
+            text-align: center;
+        }
+        &-icon {
+            font-size: 10em;
+        }
+        &-header {
+            margin-top: 1em;
+        }
+    }
+
+    &__field-autocomplete {
+        position: absolute;
+        overflow: hidden;
+        @include common-dropdown;
+        &-item {
+            padding: $base-padding;
+            display: inline-block;
+            word-break: break-all;
+            @include area-selectable(bottom);
+            &--selected {
+                @include th {
+                    background-color: th(secondary-background-color);
+                    border-bottom: selected-hover-border();
+                }
+            }
+        }
+    }
 }

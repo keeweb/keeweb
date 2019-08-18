@@ -3,13 +3,13 @@ const FeatureDetector = require('./feature-detector');
 
 const Tip = function(el, config) {
     this.el = el;
-    this.title = config && config.title || el.attr('title');
-    this.placement = config && config.placement || el.attr('tip-placement');
-    this.fast = config && config.fast || false;
+    this.title = (config && config.title) || el.attr('title');
+    this.placement = (config && config.placement) || el.attr('tip-placement');
+    this.fast = (config && config.fast) || false;
     this.tipEl = null;
     this.showTimeout = null;
     this.hideTimeout = null;
-    this.force = config && config.force || false;
+    this.force = (config && config.force) || false;
     this.hide = this.hide.bind(this);
 };
 
@@ -26,7 +26,7 @@ Tip.prototype.init = function() {
 };
 
 Tip.prototype.show = function() {
-    if (!Tip.enabled && !this.force || !this.title) {
+    if ((!Tip.enabled && !this.force) || !this.title) {
         return;
     }
     Backbone.on('page-geometry', this.hide);
@@ -37,7 +37,10 @@ Tip.prototype.show = function() {
             this.hideTimeout = null;
         }
     }
-    const tipEl = this.tipEl = $('<div></div>').addClass('tip').appendTo('body').html(this.title);
+    const tipEl = (this.tipEl = $('<div></div>')
+        .addClass('tip')
+        .appendTo('body')
+        .html(this.title));
     const rect = this.el[0].getBoundingClientRect();
     const tipRect = this.tipEl[0].getBoundingClientRect();
     const placement = this.placement || this.getAutoPlacement(rect, tipRect);
@@ -45,8 +48,7 @@ Tip.prototype.show = function() {
     if (this.fast) {
         tipEl.addClass('tip--fast');
     }
-    let top,
-        left;
+    let top, left;
     const offset = 10;
     const sideOffset = 10;
     switch (placement) {
@@ -71,7 +73,7 @@ Tip.prototype.show = function() {
             left = rect.right + offset;
             break;
     }
-    tipEl.css({ top: top, left: left });
+    tipEl.css({ top, left });
 };
 
 Tip.prototype.hide = function() {
@@ -165,6 +167,16 @@ Tip.hideTips = function(container) {
 Tip.hideTip = function(el) {
     if (el._tip) {
         el._tip.hide();
+    }
+};
+
+Tip.updateTip = function(el, props) {
+    if (el._tip) {
+        el._tip.hide();
+        _.extend(
+            el._tip,
+            _.pick(props, ['title', 'placement', 'fast', 'showTimeout', 'hideTimeout'])
+        );
     }
 };
 

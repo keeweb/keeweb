@@ -12,19 +12,19 @@ const SettingsView = Backbone.View.extend({
         'click .settings__back-button': 'returnToApp'
     },
 
-    initialize: function () {
+    initialize() {
         this.initScroll();
         this.listenTo(Backbone, 'set-page', this.setPage);
-        this.views = { };
+        this.views = {};
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.returnToApp, this);
     },
 
-    remove: function() {
+    remove() {
         KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.returnToApp, this);
         Backbone.View.prototype.remove.call(this);
     },
 
-    render: function () {
+    render() {
         this.renderTemplate();
         this.createScroll({
             root: this.$el.find('.settings')[0],
@@ -35,7 +35,7 @@ const SettingsView = Backbone.View.extend({
         return this;
     },
 
-    setPage: function (e) {
+    setPage(e) {
         const SettingsPageView = require('./settings-' + e.page + '-view');
         if (this.views.page) {
             this.views.page.remove();
@@ -48,7 +48,7 @@ const SettingsView = Backbone.View.extend({
         this.pageResized();
     },
 
-    returnToApp: function() {
+    returnToApp() {
         Backbone.trigger('toggle-settings', false);
     }
 });

@@ -11,18 +11,19 @@ const FieldViewCustom = FieldViewText.extend({
         'mousedown .details__field-label': 'fieldLabelMousedown'
     },
 
-    initialize: function() {
+    initialize() {
         _.extend(this.events, FieldViewText.prototype.events);
     },
 
-    startEdit: function() {
+    startEdit() {
         FieldViewText.prototype.startEdit.call(this);
         this.$el.addClass('details__field--can-edit-title');
         if (this.isProtected === undefined) {
             this.isProtected = this.value instanceof kdbxweb.ProtectedValue;
         }
         this.$el.toggleClass('details__field--protected', this.isProtected);
-        $('<div/>').addClass('details__field-value-btn details__field-value-btn-protect')
+        $('<div/>')
+            .addClass('details__field-value-btn details__field-value-btn-protect')
             .appendTo(this.valueEl)
             .mousedown(this.protectBtnClick.bind(this));
         let securityTipTitle = Locale.detLockField;
@@ -35,7 +36,7 @@ const FieldViewCustom = FieldViewText.extend({
         securityTip.init();
     },
 
-    endEdit: function(newVal, extra) {
+    endEdit(newVal, extra) {
         this.$el.removeClass('details__field--can-edit-title');
         extra = _.extend({}, extra);
         if (this.model.titleChanged || this.model.newField) {
@@ -59,12 +60,15 @@ const FieldViewCustom = FieldViewText.extend({
         }
     },
 
-    startEditTitle: function(emptyTitle) {
+    startEditTitle(emptyTitle) {
         const text = emptyTitle ? '' : this.model.title || '';
         this.labelInput = $('<input/>');
         this.labelEl.html('').append(this.labelInput);
-        this.labelInput.attr({ autocomplete: 'off', spellcheck: 'false' })
-            .val(text).focus()[0].setSelectionRange(text.length, text.length);
+        this.labelInput
+            .attr({ autocomplete: 'off', spellcheck: 'false' })
+            .val(text)
+            .focus()[0]
+            .setSelectionRange(text.length, text.length);
         this.labelInput.bind({
             input: this.fieldLabelInput.bind(this),
             keydown: this.fieldLabelKeydown.bind(this),
@@ -74,7 +78,7 @@ const FieldViewCustom = FieldViewText.extend({
         });
     },
 
-    endEditTitle: function(newTitle) {
+    endEditTitle(newTitle) {
         if (newTitle && newTitle !== this.model.title) {
             this.model.title = newTitle;
             this.model.titleChanged = true;
@@ -91,7 +95,7 @@ const FieldViewCustom = FieldViewText.extend({
         }
     },
 
-    fieldLabelClick: function(e) {
+    fieldLabelClick(e) {
         e.stopImmediatePropagation();
         if (this.model.newField) {
             this.startEditTitle(true);
@@ -102,13 +106,13 @@ const FieldViewCustom = FieldViewText.extend({
         }
     },
 
-    fieldLabelMousedown: function(e) {
+    fieldLabelMousedown(e) {
         if (this.editing) {
             e.stopPropagation();
         }
     },
 
-    fieldValueBlur: function() {
+    fieldValueBlur() {
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
@@ -117,15 +121,15 @@ const FieldViewCustom = FieldViewText.extend({
         }
     },
 
-    fieldLabelInput: function(e) {
+    fieldLabelInput(e) {
         e.stopPropagation();
     },
 
-    fieldLabelInputClick: function(e) {
+    fieldLabelInputClick(e) {
         e.stopPropagation();
     },
 
-    fieldLabelKeydown: function(e) {
+    fieldLabelKeydown(e) {
         e.stopPropagation();
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
@@ -138,21 +142,23 @@ const FieldViewCustom = FieldViewText.extend({
         }
     },
 
-    fieldValueInputClick: function() {
+    fieldValueInputClick() {
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
         FieldViewText.prototype.fieldValueInputClick.call(this);
     },
 
-    protectBtnClick: function(e) {
+    protectBtnClick(e) {
         e.stopPropagation();
         this.isProtected = !this.isProtected;
         this.$el.toggleClass('details__field--protected', this.isProtected);
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
-        this.setTimeout(function() { this.input.focus(); });
+        this.setTimeout(function() {
+            this.input.focus();
+        });
     }
 });
 

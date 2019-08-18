@@ -16,10 +16,17 @@ const FooterView = Backbone.View.extend({
         'click .footer__btn-lock': 'lockWorkspace'
     },
 
-    initialize: function () {
+    initialize() {
         this.views = {};
 
-        KeyHandler.onKey(Keys.DOM_VK_L, this.lockWorkspace, this, KeyHandler.SHORTCUT_ACTION, false, true);
+        KeyHandler.onKey(
+            Keys.DOM_VK_L,
+            this.lockWorkspace,
+            this,
+            KeyHandler.SHORTCUT_ACTION,
+            false,
+            true
+        );
         KeyHandler.onKey(Keys.DOM_VK_G, this.genPass, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_O, this.openFile, this, KeyHandler.SHORTCUT_ACTION);
         KeyHandler.onKey(Keys.DOM_VK_S, this.saveAll, this, KeyHandler.SHORTCUT_ACTION);
@@ -31,29 +38,33 @@ const FooterView = Backbone.View.extend({
         this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render);
     },
 
-    render: function () {
-        this.renderTemplate({
-            files: this.model.files,
-            updateAvailable: ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
-        }, { plain: true });
+    render() {
+        this.renderTemplate(
+            {
+                files: this.model.files,
+                updateAvailable:
+                    ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
+            },
+            { plain: true }
+        );
         return this;
     },
 
-    viewHidden: function() {
+    viewHidden() {
         if (this.views.gen) {
             this.views.gen.remove();
             delete this.views.gen;
         }
     },
 
-    lockWorkspace: function(e) {
+    lockWorkspace(e) {
         if (this.model.files.hasOpenFiles()) {
             e.preventDefault();
             Backbone.trigger('lock-workspace');
         }
     },
 
-    genPass: function(e) {
+    genPass(e) {
         e.stopPropagation();
         if (this.views.gen) {
             this.views.gen.remove();
@@ -64,31 +75,37 @@ const FooterView = Backbone.View.extend({
         const bodyRect = document.body.getBoundingClientRect();
         const right = bodyRect.right - rect.right;
         const bottom = bodyRect.bottom - rect.top;
-        const generator = new GeneratorView({ model: { copy: true, pos: { right: right, bottom: bottom } } }).render();
-        generator.once('remove', () => { delete this.views.gen; });
+        const generator = new GeneratorView({
+            model: { copy: true, pos: { right, bottom } }
+        }).render();
+        generator.once('remove', () => {
+            delete this.views.gen;
+        });
         this.views.gen = generator;
     },
 
-    showFile: function(e) {
-        const fileId = $(e.target).closest('.footer__db-item').data('file-id');
+    showFile(e) {
+        const fileId = $(e.target)
+            .closest('.footer__db-item')
+            .data('file-id');
         if (fileId) {
-            Backbone.trigger('show-file', { fileId: fileId });
+            Backbone.trigger('show-file', { fileId });
         }
     },
 
-    openFile: function() {
+    openFile() {
         Backbone.trigger('open-file');
     },
 
-    saveAll: function() {
+    saveAll() {
         Backbone.trigger('save-all');
     },
 
-    toggleHelp: function() {
+    toggleHelp() {
         Backbone.trigger('toggle-settings', 'help');
     },
 
-    toggleSettings: function() {
+    toggleSettings() {
         Backbone.trigger('toggle-settings', 'general');
     }
 });

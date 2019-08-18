@@ -1,4 +1,3 @@
-
 const Backbone = require('backbone');
 const AutoTypeHintView = require('../auto-type-hint-view');
 const Locale = require('../../util/locale');
@@ -17,11 +16,11 @@ const DetailsAutoTypeView = Backbone.View.extend({
         'change #details__auto-type-obfuscation': 'obfuscationChange'
     },
 
-    initialize: function() {
+    initialize() {
         this.views = {};
     },
 
-    render: function() {
+    render() {
         const detAutoTypeShortcutsDesc = Locale.detAutoTypeShortcutsDesc
             .replace('{}', FeatureDetector.actionShortcutSymbol() + 'T')
             .replace('{}', FeatureDetector.globalShortcutSymbol() + 'T');
@@ -31,12 +30,12 @@ const DetailsAutoTypeView = Backbone.View.extend({
             sequence: this.model.autoTypeSequence,
             windows: this.model.autoTypeWindows,
             defaultSequence: this.model.group.getEffectiveAutoTypeSeq(),
-            detAutoTypeShortcutsDesc: detAutoTypeShortcutsDesc
+            detAutoTypeShortcutsDesc
         });
         return this;
     },
 
-    seqInput: function(e) {
+    seqInput(e) {
         const el = e.target;
         const seq = $.trim(el.value);
         AutoType.validate(this.model, seq, err => {
@@ -47,26 +46,28 @@ const DetailsAutoTypeView = Backbone.View.extend({
         });
     },
 
-    seqKeyPress: function(e) {
+    seqKeyPress(e) {
         e.stopPropagation();
     },
 
-    seqKeyDown: function(e) {
+    seqKeyDown(e) {
         e.stopPropagation();
     },
 
-    seqFocus: function(e) {
+    seqFocus(e) {
         if (!this.views.hint) {
-            this.views.hint = new AutoTypeHintView({input: e.target}).render();
-            this.views.hint.on('remove', () => { delete this.views.hint; });
+            this.views.hint = new AutoTypeHintView({ input: e.target }).render();
+            this.views.hint.on('remove', () => {
+                delete this.views.hint;
+            });
         }
     },
 
-    enabledChange: function(e) {
+    enabledChange(e) {
         this.model.setEnableAutoType(e.target.checked);
     },
 
-    obfuscationChange: function(e) {
+    obfuscationChange(e) {
         this.model.setAutoTypeObfuscation(e.target.checked);
     }
 });

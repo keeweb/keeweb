@@ -10,15 +10,15 @@ const Logger = require('../util/logger');
 const PopupNotifier = {
     logger: null,
 
-    init: function() {
+    init() {
         this.logger = new Logger('popup-notifier');
 
         if (Launcher) {
             window.open = this._openLauncherWindow.bind(this);
         } else {
             const windowOpen = window.open;
-            window.open = function() {
-                const win = windowOpen.apply(window, arguments);
+            window.open = function(...args) {
+                const win = windowOpen.apply(window, args);
                 if (win) {
                     PopupNotifier.deferCheckClosed(win);
                     Backbone.trigger('popup-opened', win);
@@ -35,7 +35,7 @@ const PopupNotifier = {
         }
     },
 
-    _openLauncherWindow: function(url, title, settings) {
+    _openLauncherWindow(url, title, settings) {
         const opts = {
             show: false,
             webPreferences: {
@@ -51,10 +51,18 @@ const PopupNotifier = {
                 const parts = part.split('=');
                 settingsObj[parts[0].trim()] = parts[1].trim();
             });
-            if (settingsObj.width) { opts.width = +settingsObj.width; }
-            if (settingsObj.height) { opts.height = +settingsObj.height; }
-            if (settingsObj.top) { opts.y = +settingsObj.top; }
-            if (settingsObj.left) { opts.x = +settingsObj.left; }
+            if (settingsObj.width) {
+                opts.width = +settingsObj.width;
+            }
+            if (settingsObj.height) {
+                opts.height = +settingsObj.height;
+            }
+            if (settingsObj.top) {
+                opts.y = +settingsObj.top;
+            }
+            if (settingsObj.left) {
+                opts.x = +settingsObj.left;
+            }
         }
         let win = Launcher.openWindow(opts);
         win.webContents.on('will-redirect', (e, url) => {
@@ -77,12 +85,22 @@ const PopupNotifier = {
             win.close();
             win = null;
         });
-        win.webContents.on('did-fail-load', (e, errorCode, errorDescription, validatedUrl, isMainFrame) => {
-            this.logger.debug('did-fail-load', e, errorCode, errorDescription, validatedUrl, isMainFrame);
-            this.deferCheckClosed(win);
-            win.close();
-            win = null;
-        });
+        win.webContents.on(
+            'did-fail-load',
+            (e, errorCode, errorDescription, validatedUrl, isMainFrame) => {
+                this.logger.debug(
+                    'did-fail-load',
+                    e,
+                    errorCode,
+                    errorDescription,
+                    validatedUrl,
+                    isMainFrame
+                );
+                this.deferCheckClosed(win);
+                win.close();
+                win = null;
+            }
+        );
         win.once('page-title-updated', () => {
             setTimeout(() => {
                 if (win) {
@@ -92,7 +110,10 @@ const PopupNotifier = {
             }, Timeouts.PopupWaitTime);
         });
         win.on('closed', () => {
-            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            setTimeout(
+                PopupNotifier.triggerClosed.bind(PopupNotifier, win),
+                Timeouts.CheckWindowClosed
+            );
             win = null;
         });
         win.loadURL(url);
@@ -101,11 +122,13 @@ const PopupNotifier = {
     },
 
     isOwnUrl(url) {
-        return url.lastIndexOf(Links.WebApp, 0) === 0 ||
-            url.lastIndexOf(location.origin + location.pathname, 0) === 0;
+        return (
+            url.lastIndexOf(Links.WebApp, 0) === 0 ||
+            url.lastIndexOf(location.origin + location.pathname, 0) === 0
+        );
     },
 
-    processReturnToApp: function(url) {
+    processReturnToApp(url) {
         const returnMessage = AuthReceiver.urlArgsToMessage(url);
         if (Object.keys(returnMessage).length > 0) {
             const evt = new Event('message');
@@ -114,19 +137,22 @@ const PopupNotifier = {
         }
     },
 
-    deferCheckClosed: function(win) {
+    deferCheckClosed(win) {
         setTimeout(PopupNotifier.checkClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
     },
 
-    checkClosed: function(win) {
+    checkClosed(win) {
         if (win.closed) {
-            setTimeout(PopupNotifier.triggerClosed.bind(PopupNotifier, win), Timeouts.CheckWindowClosed);
+            setTimeout(
+                PopupNotifier.triggerClosed.bind(PopupNotifier, win),
+                Timeouts.CheckWindowClosed
+            );
         } else {
             PopupNotifier.deferCheckClosed(win);
         }
     },
 
-    triggerClosed: function(win) {
+    triggerClosed(win) {
         Backbone.trigger('popup-closed', win);
     }
 };

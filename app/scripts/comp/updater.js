@@ -7,7 +7,7 @@ const UpdateModel = require('../models/update-model');
 const Transport = require('../comp/transport');
 const Logger = require('../util/logger');
 const SemVer = require('../util/semver');
-const publicKey = require('raw-loader!../../resources/public-key.pem');
+const publicKey = require('public-key.pem').default;
 
 const logger = new Logger('updater');
 
@@ -20,7 +20,7 @@ const Updater = {
     updateCheckDate: new Date(0),
     enabled: Launcher && Launcher.updaterEnabled(),
 
-    getAutoUpdateType: function() {
+    getAutoUpdateType() {
         if (!this.enabled) {
             return false;
         }
@@ -31,20 +31,25 @@ const Updater = {
         return autoUpdate;
     },
 
-    updateInProgress: function() {
-        return UpdateModel.instance.get('status') === 'checking' ||
-            ['downloading', 'extracting'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0;
+    updateInProgress() {
+        return (
+            UpdateModel.instance.get('status') === 'checking' ||
+            ['downloading', 'extracting'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
+        );
     },
 
-    init: function() {
+    init() {
         this.scheduleNextCheck();
         if (!Launcher && window.applicationCache) {
-            window.applicationCache.addEventListener('updateready', this.checkAppCacheUpdateReady.bind(this));
+            window.applicationCache.addEventListener(
+                'updateready',
+                this.checkAppCacheUpdateReady.bind(this)
+            );
             this.checkAppCacheUpdateReady();
         }
     },
 
-    scheduleNextCheck: function() {
+    scheduleNextCheck() {
         if (this.nextCheckTimeout) {
             clearTimeout(this.nextCheckTimeout);
             this.nextCheckTimeout = null;
@@ -55,13 +60,16 @@ const Updater = {
         let timeDiff = this.MinUpdateTimeout;
         const lastCheckDate = UpdateModel.instance.get('lastCheckDate');
         if (lastCheckDate) {
-            timeDiff = Math.min(Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout), this.UpdateInterval);
+            timeDiff = Math.min(
+                Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout),
+                this.UpdateInterval
+            );
         }
         this.nextCheckTimeout = setTimeout(this.check.bind(this), timeDiff);
         logger.info('Next update check will happen in ' + Math.round(timeDiff / 1000) + 's');
     },
 
-    check: function(startedByUser) {
+    check(startedByUser) {
         if (!this.enabled || this.updateInProgress()) {
             return;
         }
@@ -70,7 +78,9 @@ const Updater = {
             // additional protection from broken program logic, to ensure that auto-checks are not performed more than once an hour
             const diffMs = new Date() - this.updateCheckDate;
             if (isNaN(diffMs) || diffMs < 1000 * 60 * 60) {
-                logger.error('Prevented update check; last check was performed at ' + this.updateCheckDate);
+                logger.error(
+                    'Prevented update check; last check was performed at ' + this.updateCheckDate
+                );
                 this.scheduleNextCheck();
                 return;
             }
@@ -86,7 +96,11 @@ const Updater = {
                 logger.info('Update check: ' + (match ? match[0] : 'unknown'));
                 if (!match) {
                     const errMsg = 'No version info found';
-                    UpdateModel.instance.set({ status: 'error', lastCheckDate: dt, lastCheckError: errMsg });
+                    UpdateModel.instance.set({
+                        status: 'error',
+                        lastCheckDate: dt,
+                        lastCheckError: errMsg
+                    });
                     UpdateModel.instance.save();
                     this.scheduleNextCheck();
                     return;
@@ -107,14 +121,21 @@ const Updater = {
                 if (!this.canAutoUpdate()) {
                     return;
                 }
-                if (prevLastVersion === UpdateModel.instance.get('lastVersion') &&
-                    UpdateModel.instance.get('updateStatus') === 'ready') {
+                if (
+                    prevLastVersion === UpdateModel.instance.get('lastVersion') &&
+                    UpdateModel.instance.get('updateStatus') === 'ready'
+                ) {
                     logger.info('Waiting for the user to apply downloaded update');
                     return;
                 }
                 if (!startedByUser && this.getAutoUpdateType() === 'install') {
                     this.update(startedByUser);
-                } else if (SemVer.compareVersions(UpdateModel.instance.get('lastVersion'), RuntimeInfo.version) > 0) {
+                } else if (
+                    SemVer.compareVersions(
+                        UpdateModel.instance.get('lastVersion'),
+                        RuntimeInfo.version
+                    ) > 0
+                ) {
                     UpdateModel.instance.set('updateStatus', 'found');
                 }
             },
@@ -131,7 +152,7 @@ const Updater = {
         });
     },
 
-    canAutoUpdate: function() {
+    canAutoUpdate() {
         const minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
         if (minLauncherVersion) {
             const cmp = SemVer.compareVersions(Launcher.version, minLauncherVersion);
@@ -143,7 +164,7 @@ const Updater = {
         return true;
     },
 
-    update: function(startedByUser, successCallback) {
+    update(startedByUser, successCallback) {
         const ver = UpdateModel.instance.get('lastVersion');
         if (!this.enabled) {
             logger.info('Updater is disabled');
@@ -165,7 +186,10 @@ const Updater = {
                 this.extractAppUpdate(filePath, err => {
                     if (err) {
                         logger.error('Error extracting update', err);
-                        UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error extracting update' });
+                        UpdateModel.instance.set({
+                            updateStatus: 'error',
+                            updateError: 'Error extracting update'
+                        });
                     } else {
                         UpdateModel.instance.set({ updateStatus: 'ready', updateError: null });
                         if (!startedByUser) {
@@ -177,14 +201,17 @@ const Updater = {
                     }
                 });
             },
-            error: function(e) {
+            error(e) {
                 logger.error('Error downloading update', e);
-                UpdateModel.instance.set({ updateStatus: 'error', updateError: 'Error downloading update' });
+                UpdateModel.instance.set({
+                    updateStatus: 'error',
+                    updateError: 'Error downloading update'
+                });
             }
         });
     },
 
-    extractAppUpdate: function(updateFile, cb) {
+    extractAppUpdate(updateFile, cb) {
         const expectedFiles = this.UpdateCheckFiles;
         const appPath = Launcher.getUserDataPath();
         const StreamZip = Launcher.req('node-stream-zip');
@@ -214,7 +241,7 @@ const Updater = {
         });
     },
 
-    validateArchiveSignature: function(archivePath, zip) {
+    validateArchiveSignature(archivePath, zip) {
         if (!zip.comment) {
             return 'No comment in ZIP';
         }
@@ -236,9 +263,11 @@ const Updater = {
         return null;
     },
 
-    checkAppCacheUpdateReady: function() {
+    checkAppCacheUpdateReady() {
         if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-            try { window.applicationCache.swapCache(); } catch (e) { }
+            try {
+                window.applicationCache.swapCache();
+            } catch (e) {}
             UpdateModel.instance.set('updateStatus', 'ready');
         }
     }

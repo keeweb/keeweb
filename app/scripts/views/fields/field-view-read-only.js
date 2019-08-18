@@ -1,7 +1,7 @@
 const FieldView = require('./field-view');
 
 const FieldViewReadOnly = FieldView.extend({
-    renderValue: function(value) {
+    renderValue(value) {
         return value.isProtected ? new Array(value.textLength + 1).join('•') : _.escape(value);
     },
 

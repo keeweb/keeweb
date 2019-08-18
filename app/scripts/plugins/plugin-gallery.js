@@ -38,7 +38,10 @@ const PluginGallery = {
                 this.loading = false;
                 this.loadError = !gallery;
                 if (gallery) {
-                    this.logger.debug(`Loaded ${gallery.plugins.length} plugins`, this.logger.ts(ts));
+                    this.logger.debug(
+                        `Loaded ${gallery.plugins.length} plugins`,
+                        this.logger.ts(ts)
+                    );
                     this.gallery = gallery;
                     this.saveGallery(gallery);
                 }
@@ -53,14 +56,16 @@ const PluginGallery = {
         return SignatureVerifier.verify(
             kdbxweb.ByteUtils.stringToBytes(dataToVerify),
             gallery.signature
-        ).then(isValid => {
-            if (isValid) {
-                return gallery;
-            }
-            this.logger.error('JSON signature invalid');
-        }).catch(e => {
-            this.logger.error('Error verifying plugins signature', e);
-        });
+        )
+            .then(isValid => {
+                if (isValid) {
+                    return gallery;
+                }
+                this.logger.error('JSON signature invalid');
+            })
+            .catch(e => {
+                this.logger.error('Error verifying plugins signature', e);
+            });
     },
 
     getCachedGallery() {

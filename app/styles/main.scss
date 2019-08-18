@@ -1,37 +1,39 @@
-@import "../node_modules/normalize.css/normalize";
-@import "../node_modules/font-awesome/scss/font-awesome";
-@import "../node_modules/pikaday/scss/pikaday";
-@import "../node_modules/bourbon/app/assets/stylesheets/bourbon";
+$fa-font-path: '~font-awesome/fonts';
 
-@import "themes/all-themes";
+@import '~normalize.css/normalize';
+@import '~font-awesome/scss/font-awesome';
+@import '~pikaday/scss/pikaday';
+@import '~bourbon/app/assets/stylesheets/bourbon';
 
-@import "base/base";
+@import 'themes/all-themes';
 
-@import "utils/back-button";
-@import "utils/common-dropdown";
-@import "utils/auto-type-hint";
-@import "utils/drag";
-@import "utils/selection";
+@import 'base/base';
 
-@import "common/dates";
-@import "common/dropdown";
-@import "common/empty";
-@import "common/fx";
-@import "common/icon-select";
-@import "common/modal";
-@import "common/scroll";
-@import "common/tip";
+@import 'utils/back-button';
+@import 'utils/common-dropdown';
+@import 'utils/auto-type-hint';
+@import 'utils/drag';
+@import 'utils/selection';
 
-@import "areas/app";
-@import "areas/auto-type";
-@import "areas/details";
-@import "areas/footer";
-@import "areas/grp";
-@import "areas/tag";
-@import "areas/generator";
-@import "areas/generator-presets";
-@import "areas/key-change";
-@import "areas/list";
-@import "areas/menu";
-@import "areas/open";
-@import "areas/settings";
+@import 'common/dates';
+@import 'common/dropdown';
+@import 'common/empty';
+@import 'common/fx';
+@import 'common/icon-select';
+@import 'common/modal';
+@import 'common/scroll';
+@import 'common/tip';
+
+@import 'areas/app';
+@import 'areas/auto-type';
+@import 'areas/details';
+@import 'areas/footer';
+@import 'areas/grp';
+@import 'areas/tag';
+@import 'areas/generator';
+@import 'areas/generator-presets';
+@import 'areas/key-change';
+@import 'areas/list';
+@import 'areas/menu';
+@import 'areas/open';
+@import 'areas/settings';

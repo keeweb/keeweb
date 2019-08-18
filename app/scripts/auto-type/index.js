@@ -31,14 +31,16 @@ const AutoType = {
     },
 
     handleEvent(e) {
-        const entry = e && e.entry || null;
+        const entry = (e && e.entry) || null;
         logger.debug('Auto type event', entry);
         if (this.running) {
             logger.debug('Already running, skipping event');
             return;
         }
         if (entry) {
-            this.hideWindow(() => { this.runAndHandleResult({ entry }); });
+            this.hideWindow(() => {
+                this.runAndHandleResult({ entry });
+            });
         } else {
             if (this.selectEntryView) {
                 return;
@@ -180,7 +182,7 @@ const AutoType = {
 
     selectEntryAndRun() {
         this.getActiveWindowTitle((e, title, url) => {
-            const filter = new AutoTypeFilter({title, url}, this.appModel);
+            const filter = new AutoTypeFilter({ title, url }, this.appModel);
             const evt = { filter };
             if (!this.appModel.files.hasOpenFiles()) {
                 this.pendingEvent = evt;
@@ -224,10 +226,14 @@ const AutoType = {
         this.selectEntryView.on('show-open-files', () => {
             this.selectEntryView.hide();
             Backbone.trigger('open-file');
-            Backbone.once('closed-open-view', () => {
-                this.selectEntryView.show();
-                this.selectEntryView.setupKeys();
-            }, this);
+            Backbone.once(
+                'closed-open-view',
+                () => {
+                    this.selectEntryView.show();
+                    this.selectEntryView.setupKeys();
+                },
+                this
+            );
         });
     },
 

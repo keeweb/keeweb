@@ -22,10 +22,9 @@ const SettingsManager = {
         hc: 'setGenThemeHc'
     },
 
-    customLocales: {
-    },
+    customLocales: {},
 
-    setBySettings: function(settings) {
+    setBySettings(settings) {
         if (settings.get('theme')) {
             this.setTheme(settings.get('theme'));
         }
@@ -40,7 +39,7 @@ const SettingsManager = {
         } catch (ex) {}
     },
 
-    setTheme: function(theme) {
+    setTheme(theme) {
         _.forEach(document.body.classList, cls => {
             if (/^th\-/.test(cls)) {
                 document.body.classList.remove(cls);
@@ -53,13 +52,13 @@ const SettingsManager = {
         }
     },
 
-    getThemeClass: function(theme) {
+    getThemeClass(theme) {
         return 'th-' + theme;
     },
 
-    setFontSize: function(fontSize) {
+    setFontSize(fontSize) {
         const defaultFontSize = FeatureDetector.isMobile ? 14 : 12;
-        document.documentElement.style.fontSize = (defaultFontSize + (fontSize || 0) * 2) + 'px';
+        document.documentElement.style.fontSize = defaultFontSize + (fontSize || 0) * 2 + 'px';
     },
 
     setLocale(loc) {
@@ -82,8 +81,8 @@ const SettingsManager = {
         Backbone.trigger('set-locale', loc);
     },
 
-    getBrowserLocale: function() {
-        const language = navigator.languages && navigator.languages[0] || navigator.language;
+    getBrowserLocale() {
+        const language = (navigator.languages && navigator.languages[0]) || navigator.language;
         if (language && language.lastIndexOf('en', 0) === 0) {
             return 'en';
         }

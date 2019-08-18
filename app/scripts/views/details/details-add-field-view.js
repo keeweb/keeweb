@@ -8,17 +8,17 @@ const DetailsAddFieldView = Backbone.View.extend({
         'click .details__field-value': 'fieldValueClick'
     },
 
-    render: function () {
+    render() {
         this.renderTemplate();
         this.labelEl = this.$el.find('.details__field-label');
         return this;
     },
 
-    fieldLabelClick: function() {
+    fieldLabelClick() {
         this.trigger('more-click');
     },
 
-    fieldValueClick: function() {
+    fieldValueClick() {
         this.trigger('add-field');
     }
 });

@@ -3,17 +3,28 @@ const FieldView = require('./field-view');
 const FieldViewSelect = FieldView.extend({
     readonly: true,
 
-    renderValue: function(value) {
-        return '<select>' +
-            value.map(opt => {
-                return '<option ' + 'value="' + _.escape(opt.id) + '" ' + (opt.selected ? 'selected ' : '') + '>' +
-                    _.escape(opt.value) +
-                    '</option>';
-            }).join('') +
-            '</select>';
+    renderValue(value) {
+        return (
+            '<select>' +
+            value
+                .map(opt => {
+                    return (
+                        '<option ' +
+                        'value="' +
+                        _.escape(opt.id) +
+                        '" ' +
+                        (opt.selected ? 'selected ' : '') +
+                        '>' +
+                        _.escape(opt.value) +
+                        '</option>'
+                    );
+                })
+                .join('') +
+            '</select>'
+        );
     },
 
-    render: function() {
+    render() {
         FieldView.prototype.render.call(this);
         this.valueEl.addClass('details__field-value--select');
         this.valueEl.find('select:first').change(e => {
@@ -21,15 +32,15 @@ const FieldViewSelect = FieldView.extend({
         });
     },
 
-    fieldLabelClick: function() {},
+    fieldLabelClick() {},
 
-    fieldValueClick: function() {},
+    fieldValueClick() {},
 
-    edit: function() {},
+    edit() {},
 
-    startEdit: function() {},
+    startEdit() {},
 
-    endEdit: function(newVal, extra) {
+    endEdit(newVal, extra) {
         if (!this.editing) {
             return;
         }

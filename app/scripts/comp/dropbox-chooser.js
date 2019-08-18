@@ -37,7 +37,12 @@ DropboxChooser.prototype.buildUrl = function() {
         iframe: 'false',
         version: 2
     };
-    return 'https://www.dropbox.com/chooser?' + Object.keys(urlParams).map(key => key + '=' + urlParams[key]).join('&');
+    return (
+        'https://www.dropbox.com/chooser?' +
+        Object.keys(urlParams)
+            .map(key => key + '=' + urlParams[key])
+            .join('&')
+    );
 };
 
 DropboxChooser.prototype.onMessage = function(e) {

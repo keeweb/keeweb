@@ -4,7 +4,7 @@
 // It checks whether the app is available in userData folder and if its version is higher than local, launches it
 // This script is the only part which will be updated only with the app itself, auto-update will not change it
 
-// (C) Antelle 2017, MIT license https://github.com/keeweb/keeweb
+// (C) Antelle 2019, MIT license https://github.com/keeweb/keeweb
 
 const app = require('electron').app;
 const path = require('path');
@@ -22,11 +22,15 @@ try {
     } catch (e) {}
     if (userPackageStat) {
         const packageStat = fs.statSync(appFilePath);
-        const userPackageStatTime = Math.max(userPackageStat.mtime.getTime(), userPackageStat.ctime.getTime());
+        const userPackageStatTime = Math.max(
+            userPackageStat.mtime.getTime(),
+            userPackageStat.ctime.getTime()
+        );
         const packageStatTime = Math.max(packageStat.mtime.getTime(), packageStat.ctime.getTime());
         if (userPackageStatTime > packageStatTime) {
             let versionLocal = require('./package.json').version;
-            let versionUserData = require(path.join(userDataAppArchivePath, 'package.json')).version;
+            let versionUserData = require(path.join(userDataAppArchivePath, 'package.json'))
+                .version;
             versionLocal = versionLocal.split('.');
             versionUserData = versionUserData.split('.');
             for (let i = 0; i < versionLocal.length; i++) {
@@ -72,7 +76,7 @@ function validateDataSignature(data, signature, name) {
     const verify = crypto.createVerify('RSA-SHA256');
     let publicKey = '@@PUBLIC_KEY_CONTENT';
     if (publicKey.startsWith('@@')) {
-        publicKey = fs.readFileSync('app/resources/public-key.pem', {encoding: 'utf8'}).trim();
+        publicKey = fs.readFileSync('app/resources/public-key.pem', { encoding: 'utf8' }).trim();
     }
     verify.write(data);
     verify.end();

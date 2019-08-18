@@ -27,7 +27,7 @@ const MenuItemView = Backbone.View.extend({
     iconEl: null,
     itemViews: null,
 
-    initialize: function () {
+    initialize() {
         this.itemViews = [];
         this.listenTo(this.model, 'change:title', this.changeTitle);
         this.listenTo(this.model, 'change:icon', this.changeIcon);
@@ -46,13 +46,13 @@ const MenuItemView = Backbone.View.extend({
         }
     },
 
-    render: function() {
+    render() {
         this.removeInnerViews();
         this.renderTemplate(this.model.attributes);
         this.iconEl = this.$el.find('i.menu__item-icon');
         const items = this.model.get('items');
         if (items) {
-            items.forEach(function (item) {
+            items.forEach(function(item) {
                 if (item.get('visible')) {
                     this.insertItem(item);
                 }
@@ -62,11 +62,11 @@ const MenuItemView = Backbone.View.extend({
         return this;
     },
 
-    insertItem: function(item) {
-        this.itemViews.push(new MenuItemView({el: this.$el, model: item}).render());
+    insertItem(item) {
+        this.itemViews.push(new MenuItemView({ el: this.$el, model: item }).render());
     },
 
-    remove: function() {
+    remove() {
         this.removeInnerViews();
         const shortcut = this.model.get('shortcut');
         if (shortcut) {
@@ -75,32 +75,36 @@ const MenuItemView = Backbone.View.extend({
                 KeyHandler.offKey(shortcut, this.selectItem, this, KeyHandler.SHORTCUT_ACTION);
             }
         }
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    removeInnerViews: function() {
+    removeInnerViews() {
         this.itemViews.forEach(itemView => itemView.remove());
         this.itemViews = [];
     },
 
-    changeTitle: function(model, title) {
-        this.$el.find('.menu__item-title').first().text(title || '(no title)');
+    changeTitle(model, title) {
+        this.$el
+            .find('.menu__item-title')
+            .first()
+            .text(title || '(no title)');
     },
 
-    changeIcon: function(model, icon) {
-        this.iconEl[0].className = 'menu__item-icon fa ' + (icon ? 'fa-' + icon : 'menu__item-icon--no-icon');
+    changeIcon(model, icon) {
+        this.iconEl[0].className =
+            'menu__item-icon fa ' + (icon ? 'fa-' + icon : 'menu__item-icon--no-icon');
     },
 
-    changeActive: function(model, active) {
+    changeActive(model, active) {
         this.$el.toggleClass('menu__item--active', active);
     },
 
-    changeExpanded: function(model, expanded) {
+    changeExpanded(model, expanded) {
         this.$el.toggleClass('menu__item--collapsed', !expanded);
         this.model.setExpanded(expanded);
     },
 
-    changeCls: function(model, cls) {
+    changeCls(model, cls) {
         const oldCls = model.previousAttributes().cls;
         if (oldCls) {
             this.$el.removeClass(oldCls);
@@ -108,19 +112,19 @@ const MenuItemView = Backbone.View.extend({
         this.$el.addClass(cls);
     },
 
-    mouseover: function(e) {
+    mouseover(e) {
         if (!e.button) {
             this.$el.addClass('menu__item--hover');
             e.stopPropagation();
         }
     },
 
-    mouseout: function(e) {
+    mouseout(e) {
         this.$el.removeClass('menu__item--hover');
         e.stopPropagation();
     },
 
-    selectItem: function(e) {
+    selectItem(e) {
         e.stopPropagation();
         e.preventDefault();
         if (this.model.get('active')) {
@@ -133,27 +137,27 @@ const MenuItemView = Backbone.View.extend({
         }
     },
 
-    selectOption: function(e) {
+    selectOption(e) {
         const options = this.model.get('options');
         const value = $(e.target).data('value');
         if (options && options.length) {
             const option = options.find(op => op.get('value') === value);
             if (option) {
-                Backbone.trigger('menu-select', { item: this.model, option: option });
+                Backbone.trigger('menu-select', { item: this.model, option });
             }
         }
         e.stopImmediatePropagation();
         e.preventDefault();
     },
 
-    expandItem: function(e) {
+    expandItem(e) {
         if (this.model.toggleExpanded) {
             this.model.toggleExpanded();
         }
         e.stopPropagation();
     },
 
-    editItem: function(e) {
+    editItem(e) {
         if (this.model.get('active') && this.model.get('editable')) {
             e.stopPropagation();
             switch (this.model.get('filterKey')) {
@@ -167,13 +171,13 @@ const MenuItemView = Backbone.View.extend({
         }
     },
 
-    emptyTrash: function(e) {
+    emptyTrash(e) {
         e.stopPropagation();
         Alerts.yesno({
             header: Locale.menuEmptyTrashAlert,
             body: Locale.menuEmptyTrashAlertBody,
             icon: 'minus-circle',
-            success: function() {
+            success() {
                 Backbone.trigger('empty-trash');
             }
         });

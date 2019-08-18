@@ -23,29 +23,36 @@ const GroupModel = MenuItemModel.extend({
         autoTypeSeq: null
     }),
 
-    initialize: function() {
-        if (!GroupCollection) { GroupCollection = require('../collections/group-collection'); }
-        if (!EntryCollection) { EntryCollection = require('../collections/entry-collection'); }
+    initialize() {
+        if (!GroupCollection) {
+            GroupCollection = require('../collections/group-collection');
+        }
+        if (!EntryCollection) {
+            EntryCollection = require('../collections/entry-collection');
+        }
     },
 
-    setGroup: function(group, file, parentGroup) {
+    setGroup(group, file, parentGroup) {
         const isRecycleBin = group.uuid.equals(file.db.meta.recycleBinUuid);
         const id = file.subId(group.uuid.id);
-        this.set({
-            id: id,
-            uuid: group.uuid.id,
-            expanded: group.expanded,
-            visible: !isRecycleBin,
-            items: new GroupCollection(),
-            entries: new EntryCollection(),
-            filterValue: id,
-            enableSearching: group.enableSearching,
-            enableAutoType: group.enableAutoType,
-            autoTypeSeq: group.defaultAutoTypeSeq,
-            top: !parentGroup,
-            drag: !!parentGroup,
-            collapsible: !!parentGroup
-        }, { silent: true });
+        this.set(
+            {
+                id,
+                uuid: group.uuid.id,
+                expanded: group.expanded,
+                visible: !isRecycleBin,
+                items: new GroupCollection(),
+                entries: new EntryCollection(),
+                filterValue: id,
+                enableSearching: group.enableSearching,
+                enableAutoType: group.enableAutoType,
+                autoTypeSeq: group.defaultAutoTypeSeq,
+                top: !parentGroup,
+                drag: !!parentGroup,
+                collapsible: !!parentGroup
+            },
+            { silent: true }
+        );
         this.group = group;
         this.file = file;
         this.parentGroup = parentGroup;
@@ -76,25 +83,28 @@ const GroupModel = MenuItemModel.extend({
         entries.add(entriesArray);
     },
 
-    _fillByGroup: function(silent) {
-        this.set({
-            title: this.parentGroup ? this.group.name : this.file.get('name'),
-            iconId: this.group.icon,
-            icon: this._iconFromId(this.group.icon),
-            customIcon: this._buildCustomIcon(),
-            customIconId: this.group.customIcon ? this.group.customIcon.toString() : null,
-            expanded: this.group.expanded !== false
-        }, { silent: silent });
+    _fillByGroup(silent) {
+        this.set(
+            {
+                title: this.parentGroup ? this.group.name : this.file.get('name'),
+                iconId: this.group.icon,
+                icon: this._iconFromId(this.group.icon),
+                customIcon: this._buildCustomIcon(),
+                customIconId: this.group.customIcon ? this.group.customIcon.toString() : null,
+                expanded: this.group.expanded !== false
+            },
+            { silent }
+        );
     },
 
-    _iconFromId: function(id) {
+    _iconFromId(id) {
         if (id === KdbxIcons.Folder || id === KdbxIcons.FolderOpen) {
             return undefined;
         }
         return IconMap[id];
     },
 
-    _buildCustomIcon: function() {
+    _buildCustomIcon() {
         this.customIcon = null;
         if (this.group.customIcon) {
             return IconUrl.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
@@ -102,7 +112,7 @@ const GroupModel = MenuItemModel.extend({
         return null;
     },
 
-    _groupModified: function() {
+    _groupModified() {
         if (this.isJustCreated) {
             this.isJustCreated = false;
         }
@@ -110,17 +120,18 @@ const GroupModel = MenuItemModel.extend({
         this.group.times.update();
     },
 
-    forEachGroup: function(callback, filter) {
+    forEachGroup(callback, filter) {
         let result = true;
         this.get('items').forEach(group => {
             if (group.matches(filter)) {
-                result = callback(group) !== false && group.forEachGroup(callback, filter) !== false;
+                result =
+                    callback(group) !== false && group.forEachGroup(callback, filter) !== false;
             }
         });
         return result;
     },
 
-    forEachOwnEntry: function(filter, callback) {
+    forEachOwnEntry(filter, callback) {
         this.get('entries').forEach(function(entry) {
             if (entry.matches(filter)) {
                 callback(entry, this);
@@ -128,51 +139,53 @@ const GroupModel = MenuItemModel.extend({
         });
     },
 
-    matches: function(filter) {
-        return (filter && filter.includeDisabled ||
-                this.group.enableSearching !== false &&
-                !this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup)
-        ) && (!filter || !filter.autoType || this.group.enableAutoType !== false);
+    matches(filter) {
+        return (
+            ((filter && filter.includeDisabled) ||
+                (this.group.enableSearching !== false &&
+                    !this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup))) &&
+            (!filter || !filter.autoType || this.group.enableAutoType !== false)
+        );
     },
 
-    getOwnSubGroups: function() {
+    getOwnSubGroups() {
         return this.group.groups;
     },
 
-    addEntry: function(entry) {
+    addEntry(entry) {
         this.get('entries').add(entry);
     },
 
-    addGroup: function(group) {
+    addGroup(group) {
         this.get('items').add(group);
     },
 
-    setName: function(name) {
+    setName(name) {
         this._groupModified();
         this.group.name = name;
         this._fillByGroup();
     },
 
-    setIcon: function(iconId) {
+    setIcon(iconId) {
         this._groupModified();
         this.group.icon = iconId;
         this.group.customIcon = undefined;
         this._fillByGroup();
     },
 
-    setCustomIcon: function(customIconId) {
+    setCustomIcon(customIconId) {
         this._groupModified();
         this.group.customIcon = new kdbxweb.KdbxUuid(customIconId);
         this._fillByGroup();
     },
 
-    setExpanded: function(expanded) {
+    setExpanded(expanded) {
         // this._groupModified(); // it's not good to mark the file as modified when a group is collapsed
         this.group.expanded = expanded;
         this.set('expanded', expanded);
     },
 
-    setEnableSearching: function(enabled) {
+    setEnableSearching(enabled) {
         this._groupModified();
         let parentEnableSearching = true;
         let parentGroup = this.parentGroup;
@@ -190,7 +203,7 @@ const GroupModel = MenuItemModel.extend({
         this.set('enableSearching', this.group.enableSearching);
     },
 
-    getEffectiveEnableSearching: function() {
+    getEffectiveEnableSearching() {
         let grp = this;
         while (grp) {
             if (typeof grp.get('enableSearching') === 'boolean') {
@@ -201,7 +214,7 @@ const GroupModel = MenuItemModel.extend({
         return true;
     },
 
-    setEnableAutoType: function(enabled) {
+    setEnableAutoType(enabled) {
         this._groupModified();
         let parentEnableAutoType = true;
         let parentGroup = this.parentGroup;
@@ -219,7 +232,7 @@ const GroupModel = MenuItemModel.extend({
         this.set('enableAutoType', this.group.enableAutoType);
     },
 
-    getEffectiveEnableAutoType: function() {
+    getEffectiveEnableAutoType() {
         let grp = this;
         while (grp) {
             if (typeof grp.get('enableAutoType') === 'boolean') {
@@ -230,13 +243,13 @@ const GroupModel = MenuItemModel.extend({
         return true;
     },
 
-    setAutoTypeSeq: function(seq) {
+    setAutoTypeSeq(seq) {
         this._groupModified();
         this.group.defaultAutoTypeSeq = seq || undefined;
         this.set('autoTypeSeq', this.group.defaultAutoTypeSeq);
     },
 
-    getEffectiveAutoTypeSeq: function() {
+    getEffectiveAutoTypeSeq() {
         let grp = this;
         while (grp) {
             if (grp.get('autoTypeSeq')) {
@@ -247,15 +260,17 @@ const GroupModel = MenuItemModel.extend({
         return DefaultAutoTypeSequence;
     },
 
-    getParentEffectiveAutoTypeSeq: function() {
-        return this.parentGroup ? this.parentGroup.getEffectiveAutoTypeSeq() : DefaultAutoTypeSequence;
+    getParentEffectiveAutoTypeSeq() {
+        return this.parentGroup
+            ? this.parentGroup.getEffectiveAutoTypeSeq()
+            : DefaultAutoTypeSequence;
     },
 
-    isEntryTemplatesGroup: function() {
+    isEntryTemplatesGroup() {
         return this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup);
     },
 
-    moveToTrash: function() {
+    moveToTrash() {
         this.file.setModified();
         this.file.db.remove(this.group);
         if (this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup)) {
@@ -264,12 +279,12 @@ const GroupModel = MenuItemModel.extend({
         this.file.reload();
     },
 
-    deleteFromTrash: function() {
+    deleteFromTrash() {
         this.file.db.move(this.group, null);
         this.file.reload();
     },
 
-    removeWithoutHistory: function() {
+    removeWithoutHistory() {
         const ix = this.parentGroup.group.groups.indexOf(this.group);
         if (ix >= 0) {
             this.parentGroup.group.groups.splice(ix, 1);
@@ -277,7 +292,7 @@ const GroupModel = MenuItemModel.extend({
         this.file.reload();
     },
 
-    moveHere: function(object) {
+    moveHere(object) {
         if (!object || object.id === this.id || object.file !== this.file) {
             return;
         }
@@ -302,8 +317,13 @@ const GroupModel = MenuItemModel.extend({
         }
     },
 
-    moveToTop: function(object) {
-        if (!object || object.id === this.id || object.file !== this.file || !(object instanceof GroupModel)) {
+    moveToTop(object) {
+        if (
+            !object ||
+            object.id === this.id ||
+            object.file !== this.file ||
+            !(object instanceof GroupModel)
+        ) {
             return;
         }
         this.file.setModified();

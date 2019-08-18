@@ -13,7 +13,7 @@ Perhaps, someone has already reported it?
 
 [Click here](https://github.com/keeweb/keeweb/issues/new) to create a new issue.
 When creating issues, please answer some questions asked on that page.
-They will help to understand, reproduce and fix your issue.
+They will help to understand, reproduce, and fix your issue.
 
 ## Questions, great ideas, etc...
 

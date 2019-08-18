@@ -1,52 +1,52 @@
 .scroller {
-  overflow-y: scroll;
-  height: 100%;
-  &::-webkit-scrollbar {
-    width: 0;
-  }
-  &__bar-wrapper {
-    pointer-events: none;
-    position: absolute;
-    z-index: 3;
-    top: 10px;
-    bottom: 10px;
-    right: 5px;
-    width: 8px;
-  }
-  &__bar {
-    position: absolute;
-    z-index: 1;
-    width: 8px;
-    border-radius: 3px;
-    pointer-events: auto;
-    -webkit-app-region: no-drag;
-  }
+    overflow-y: scroll;
+    height: 100%;
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+    &__bar-wrapper {
+        pointer-events: none;
+        position: absolute;
+        z-index: 3;
+        top: 10px;
+        bottom: 10px;
+        right: 5px;
+        width: 8px;
+    }
+    &__bar {
+        position: absolute;
+        z-index: 1;
+        width: 8px;
+        border-radius: 3px;
+        pointer-events: auto;
+        -webkit-app-region: no-drag;
+    }
 }
 
 @media screen and (-moz-windows-theme) {
-  .scroller {
-    @-moz-document url-prefix() {
-      margin-right: 0 !important;
-      padding-right: 0 !important;
+    .scroller {
+        @-moz-document url-prefix() {
+            margin-right: 0 !important;
+            padding-right: 0 !important;
+        }
     }
-  }
 }
 
 @mixin scrollbar-on-hover {
-  .scroller__bar-wrapper {
-    >.scroller__bar {
-      background-color: transparent;
-      transition: background-color $base-duration $base-timing;
+    .scroller__bar-wrapper {
+        > .scroller__bar {
+            background-color: transparent;
+            transition: background-color $base-duration $base-timing;
+        }
     }
-  }
-  &:hover .scroller__bar-wrapper {
-    >.scroller__bar {
-      transition: background-color $slow-transition-out;
-      background-color: rgba(136, 136, 136, .2);
-      &:hover {
-        transition: background-color $slow-transition-in;
-        background-color: rgba(136, 136, 136, .8);
-      }
+    &:hover .scroller__bar-wrapper {
+        > .scroller__bar {
+            transition: background-color $slow-transition-out;
+            background-color: rgba(136, 136, 136, 0.2);
+            &:hover {
+                transition: background-color $slow-transition-in;
+                background-color: rgba(136, 136, 136, 0.8);
+            }
+        }
     }
-  }
 }

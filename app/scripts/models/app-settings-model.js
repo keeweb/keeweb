@@ -33,6 +33,7 @@ const AppSettingsModel = Backbone.Model.extend({
         fontSize: 0,
         tableViewColumns: null,
         generatorPresets: null,
+        generatorHidePassword: false,
         cacheConfigSettings: false,
 
         canOpen: true,
@@ -48,20 +49,20 @@ const AppSettingsModel = Backbone.Model.extend({
         onedrive: true
     },
 
-    initialize: function() {
+    initialize() {
         this.listenTo(this, 'change', this.save);
     },
 
-    load: function() {
+    load() {
         return SettingsStore.load('app-settings').then(data => {
             if (data) {
                 this.upgrade(data);
-                this.set(data, {silent: true});
+                this.set(data, { silent: true });
             }
         });
     },
 
-    upgrade: function(data) {
+    upgrade(data) {
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
         }
@@ -70,7 +71,7 @@ const AppSettingsModel = Backbone.Model.extend({
         }
     },
 
-    save: function() {
+    save() {
         SettingsStore.save('app-settings', this.attributes);
     }
 });

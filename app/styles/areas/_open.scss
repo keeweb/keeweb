@@ -1,286 +1,396 @@
 .open {
-  flex: 1;
-  display: flex;
-  align-self: stretch;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-  @include th { background: th(background-color); }
-
-  &__icons {
+    flex: 1;
     display: flex;
-    align-items: stretch;
-    flex-direction: row;
-    flex-shrink: 0;
+    align-self: stretch;
+    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    flex-wrap: wrap;
-    .open--drag & { display: none; }
-  }
+    @include th {
+        background: th(background-color);
+    }
 
-  &__icon {
-    text-align: center;
-    cursor: pointer;
-    margin: 20px;
-    transition: color $base-duration $base-timing;
-    &:hover { @include th { color: th(medium-color); } }
-    &:focus { .open--show-focus & { @include th { outline: focused-outline(); } } }
-    &-i, &-svg { font-size: 4em; }
-    &-text {
-      @include th { color: th(muted-color); }
-      .open__icon:hover>& { @include th { color: th(medium-color); } }
+    &__icons {
+        display: flex;
+        align-items: stretch;
+        flex-direction: row;
+        flex-shrink: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+        .open--drag & {
+            display: none;
+        }
     }
-    &-svg {
-      line-height: 0;
-      >svg {
-        @include size(1em);
-      }
-    }
-    @include mobile() {
-      &-i, &-svg { font-size: 4.6em; }
-      &-text { font-size: 1.1em; }
-      .open__icons--lower & {
-        margin: 14px;
-        &-i, &-svg { font-size: 4.2em; margin-bottom: .1em; }
-      }
-    }
-  }
 
-  &__pass {
-    &-area {
-      display: flex;
-      align-items: stretch;
-      flex-direction: column;
-      justify-content: flex-start;
-      position: relative;
-      .open--drag & { display: none; }
-    }
-    &-warn-wrap {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-    }
-    &-field-wrap {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: stretch;
-      flex-shrink: 0;
-      margin-bottom: $base-padding-v;
-    }
-    &-enter-btn, &-opening-icon {
-      padding: .6em $base-spacing;
-      position: absolute;
-      left: 100%;
-      @include mobile { display: none; }
-      @include th { color: th(muted-color); }
-      >i { font-size: 3em; }
-    }
-    .open--show-focus & {
-      &-enter-btn:focus, &-opening-icon:focus {
-        @include th { outline: focused-outline(); }
-      }
-    }
-    &-enter-btn {
-      .open--file & {
+    &__icon {
+        text-align: center;
         cursor: pointer;
+        margin: 20px;
+        transition: color $base-duration $base-timing;
         &:hover {
-          @include th { color: th(medium-color); }
+            @include th {
+                color: th(medium-color);
+            }
         }
-      }
-      .open--opening & { display: none; }
-    }
-    &-opening-icon {
-      display: none;
-      .open--opening & { display: block; }
-    }
-  }
-
-  &__config {
-    display: flex;
-    align-items: stretch;
-    flex-direction: column;
-    justify-content: flex-start;
-    position: relative;
-    width: 30em;
-    .open--drag & {
-      display: none;
-    }
-    &-buttons {
-      align-self: flex-end;
-    }
-    &-header {
-      >i { margin-right: .3em; }
-    }
-    &-field {
-      width: 100%;
-    }
-    &-error {
-      min-height: 1.7em;
-    }
-    &:not(.open__config--disabled) {
-      .open__config-btn-ok-text { display: inline; }
-      .open__config-btn-ok-spinner { display: none; }
-    }
-    &.open__config--disabled {
-      .open__config-btn-ok-text { display: none; }
-      .open__config-btn-ok-spinner { display: block; }
-    }
-  }
-
-  input[type=password].open__pass-input {
-    font-size: $large-pass-font-size;
-    margin-bottom: 0;
-    &[readonly] { cursor: pointer; }
-    @include mobile {
-      width: calc(100vw - 20px);
-    }
-  }
-
-  &__settings {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;
-    padding-left: $base-padding-h;
-    height: 2em;
-    &-key-file {
-      .open--file:not(.open--opening) & { cursor: pointer; }
-      .open--key-file & { @include th { color: th(medium-color); } }
-      &-icon {
-        width: 2em;
-      }
-      &-dropbox {
-        visibility: hidden;
-        margin-left: .3em;
-        &:hover {
-          .open--file & { visibility: visible; }
+        &:focus {
+            .open--show-focus & {
+                @include th {
+                    outline: focused-outline();
+                }
+            }
         }
-      }
-      &-dropbox {
-        .open--key-file, .open--opening & { display: none; }
-      }
-      &:hover .open__settings-key-file-dropbox {
-        .open--file & { visibility: visible; }
-      }
-      &:focus { .open--show-focus & { @include th { outline: focused-outline(); } } }
+        &-i,
+        &-svg {
+            font-size: 4em;
+        }
+        &-text {
+            @include th {
+                color: th(muted-color);
+            }
+            .open__icon:hover > & {
+                @include th {
+                    color: th(medium-color);
+                }
+            }
+        }
+        &-svg {
+            line-height: 0;
+            > svg {
+                @include size(1em);
+            }
+        }
+        @include mobile() {
+            &-i,
+            &-svg {
+                font-size: 4.6em;
+            }
+            &-text {
+                font-size: 1.1em;
+            }
+            .open__icons--lower & {
+                margin: 14px;
+                &-i,
+                &-svg {
+                    font-size: 4.2em;
+                    margin-bottom: 0.1em;
+                }
+            }
+        }
     }
 
-    &-key-file, &-key-file-dropbox {
-      @include th {
-        color: th(muted-color);
-      }
-      &:hover {
-        .open--file:not(.open--opening) & {
-          @include th { color: th(medium-color); }
+    &__pass {
+        &-area {
+            display: flex;
+            align-items: stretch;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+            .open--drag & {
+                display: none;
+            }
         }
-      }
+        &-warn-wrap {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+        }
+        &-field-wrap {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: stretch;
+            flex-shrink: 0;
+            margin-bottom: $base-padding-v;
+        }
+        &-enter-btn,
+        &-opening-icon {
+            padding: 0.6em $base-spacing;
+            position: absolute;
+            left: 100%;
+            @include mobile {
+                display: none;
+            }
+            @include th {
+                color: th(muted-color);
+            }
+            > i {
+                font-size: 3em;
+            }
+        }
+        .open--show-focus & {
+            &-enter-btn:focus,
+            &-opening-icon:focus {
+                @include th {
+                    outline: focused-outline();
+                }
+            }
+        }
+        &-enter-btn {
+            .open--file & {
+                cursor: pointer;
+                &:hover {
+                    @include th {
+                        color: th(medium-color);
+                    }
+                }
+            }
+            .open--opening & {
+                display: none;
+            }
+        }
+        &-opening-icon {
+            display: none;
+            .open--opening & {
+                display: block;
+            }
+        }
     }
-  }
 
-  &__last {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    margin-top: $base-spacing;
-    &-item {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: baseline;
-      flex-shrink: 0;
-      .open:not(.open--opening) & {
-        @include area-selectable;
-      }
-      @include th { color: th(muted-color); }
-      padding: $base-padding;
-      &:focus { .open--show-focus & { @include th { outline: focused-outline(); } } }
-      &-icon {
-        width: 2em;
-        &--svg>svg {
-          vertical-align: middle;
-          @include size(1em);
-          path {
-            @include th { fill: th(muted-color); }
-          }
+    &__config {
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        justify-content: flex-start;
+        position: relative;
+        width: 30em;
+        .open--drag & {
+            display: none;
         }
-      }
-      &-text { flex-grow: 1; }
-      &-icon-del {
-        opacity: 0;
-        .open__last-item:hover & {
-          opacity: .3;
-          cursor: pointer;
+        &-buttons {
+            align-self: flex-end;
         }
-        @include th { color: th(muted-color); }
-        &:hover {
-          .open__last-item:hover & { opacity: 1; }
-          @include th { color: th(medium-color); }
+        &-header {
+            > i {
+                margin-right: 0.3em;
+            }
         }
-      }
+        &-field {
+            width: 100%;
+        }
+        &-error {
+            min-height: 1.7em;
+        }
+        &:not(.open__config--disabled) {
+            .open__config-btn-ok-text {
+                display: inline;
+            }
+            .open__config-btn-ok-spinner {
+                display: none;
+            }
+        }
+        &.open__config--disabled {
+            .open__config-btn-ok-text {
+                display: none;
+            }
+            .open__config-btn-ok-spinner {
+                display: block;
+            }
+        }
     }
-  }
 
-  &__dropzone {
-    display: none;
-    .open--drag & {
-      display: flex;
-      flex-direction: column;
-      flex: 1 0 auto;
-      justify-content: center;
-      align-self: center;
-      align-items: center;
-      text-align: center;
+    input[type='password'].open__pass-input {
+        font-size: $large-pass-font-size;
+        margin-bottom: 0;
+        &[readonly] {
+            cursor: pointer;
+        }
+        @include mobile {
+            width: calc(100vw - 20px);
+        }
     }
-    &-icon {
-      font-size: 10em;
+
+    &__settings {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: stretch;
+        padding-left: $base-padding-h;
+        height: 2em;
+        &-key-file {
+            .open--file:not(.open--opening) & {
+                cursor: pointer;
+            }
+            .open--key-file & {
+                @include th {
+                    color: th(medium-color);
+                }
+            }
+            &-icon {
+                width: 2em;
+            }
+            &-dropbox {
+                visibility: hidden;
+                margin-left: 0.3em;
+                &:hover {
+                    .open--file & {
+                        visibility: visible;
+                    }
+                }
+            }
+            &-dropbox {
+                .open--key-file,
+                .open--opening & {
+                    display: none;
+                }
+            }
+            &:hover .open__settings-key-file-dropbox {
+                .open--file & {
+                    visibility: visible;
+                }
+            }
+            &:focus {
+                .open--show-focus & {
+                    @include th {
+                        outline: focused-outline();
+                    }
+                }
+            }
+        }
+
+        &-key-file,
+        &-key-file-dropbox {
+            @include th {
+                color: th(muted-color);
+            }
+            &:hover {
+                .open--file:not(.open--opening) & {
+                    @include th {
+                        color: th(medium-color);
+                    }
+                }
+            }
+        }
     }
-    &-header {
-      margin-top: 1em;
+
+    &__last {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        margin-top: $base-spacing;
+        &-item {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: baseline;
+            flex-shrink: 0;
+            .open:not(.open--opening) & {
+                @include area-selectable;
+            }
+            @include th {
+                color: th(muted-color);
+            }
+            padding: $base-padding;
+            &:focus {
+                .open--show-focus & {
+                    @include th {
+                        outline: focused-outline();
+                    }
+                }
+            }
+            &-icon {
+                width: 2em;
+                &--svg > svg {
+                    vertical-align: middle;
+                    @include size(1em);
+                    path {
+                        @include th {
+                            fill: th(muted-color);
+                        }
+                    }
+                }
+            }
+            &-text {
+                flex-grow: 1;
+            }
+            &-icon-del {
+                opacity: 0;
+                .open__last-item:hover & {
+                    opacity: 0.3;
+                    cursor: pointer;
+                }
+                @include th {
+                    color: th(muted-color);
+                }
+                &:hover {
+                    .open__last-item:hover & {
+                        opacity: 1;
+                    }
+                    @include th {
+                        color: th(medium-color);
+                    }
+                }
+            }
+        }
     }
-  }
+
+    &__dropzone {
+        display: none;
+        .open--drag & {
+            display: flex;
+            flex-direction: column;
+            flex: 1 0 auto;
+            justify-content: center;
+            align-self: center;
+            align-items: center;
+            text-align: center;
+        }
+        &-icon {
+            font-size: 10em;
+        }
+        &-header {
+            margin-top: 1em;
+        }
+    }
 }
 
 .open-list {
-  &__content {
-    margin: $base-padding-v 0 $base-padding-v (-$base-padding-h);
-    max-height: calc(100vh - 22em);
-    position: relative;
-    overflow: hidden;
-  }
-  &__scrollable {
-    max-height: calc(100vh - 22em);
-    width: calc(100% + 50px);
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  &__files {
-    display: flex;
-    flex-wrap: wrap;
-    width: calc(100% - 50px);
-  }
-  &__file {
-    cursor: pointer;
-    padding: $base-padding;
-    border-radius: $base-border-radius;
-    box-sizing: border-box;
-    flex-basis: 100%;
-    @include nomobile {
-      .open-list--density2 & { flex-basis: 50%; }
-      .open-list--density3 & { flex-basis: 33.33333%; }
+    &__content {
+        margin: $base-padding-v 0 $base-padding-v (-$base-padding-h);
+        max-height: calc(100vh - 22em);
+        position: relative;
+        overflow: hidden;
     }
-    &:hover {
-      @include th { background-color: th(action-background-color-focus-tr); }
+    &__scrollable {
+        max-height: calc(100vh - 22em);
+        width: calc(100% + 50px);
+        overflow-y: auto;
+        overflow-x: hidden;
     }
-    &-icon {
-      margin-right: .3em;
+    &__files {
+        display: flex;
+        flex-wrap: wrap;
+        width: calc(100% - 50px);
     }
-    &--another {
-      @include th { color: th(medium-color); }
+    &__file {
+        cursor: pointer;
+        padding: $base-padding;
+        border-radius: $base-border-radius;
+        box-sizing: border-box;
+        flex-basis: 100%;
+        @include nomobile {
+            .open-list--density2 & {
+                flex-basis: 50%;
+            }
+            .open-list--density3 & {
+                flex-basis: 33.33333%;
+            }
+        }
+        &:hover {
+            @include th {
+                background-color: th(action-background-color-focus-tr);
+            }
+        }
+        &-icon {
+            margin-right: 0.3em;
+        }
+        &--another {
+            @include th {
+                color: th(medium-color);
+            }
+        }
     }
-  }
-  &__check-label {
-    width: 100%;
-    display: inline-block;
-  }
+    &__check-label {
+        width: 100%;
+        display: inline-block;
+    }
 }

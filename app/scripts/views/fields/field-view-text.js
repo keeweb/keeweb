@@ -9,23 +9,27 @@ const kdbxweb = require('kdbxweb');
 const Tip = require('../../util/tip');
 
 const FieldViewText = FieldView.extend({
-    renderValue: function(value) {
-        return value && value.isProtected ? PasswordGenerator.present(value.textLength)
+    renderValue(value) {
+        return value && value.isProtected
+            ? PasswordGenerator.present(value.textLength)
             : _.escape(value || '').replace(/\n/g, '<br/>');
     },
 
-    getEditValue: function(value) {
+    getEditValue(value) {
         return value && value.isProtected ? value.getText() : value || '';
     },
 
-    startEdit: function() {
+    startEdit() {
         const text = this.getEditValue(this.value);
         const isProtected = !!(this.value && this.value.isProtected);
         this.$el.toggleClass('details__field--protected', isProtected);
         this.input = $(document.createElement(this.model.multiline ? 'textarea' : 'input'));
         this.valueEl.html('').append(this.input);
-        this.input.attr({ autocomplete: 'off', spellcheck: 'false' })
-            .val(text).focus()[0].setSelectionRange(text.length, text.length);
+        this.input
+            .attr({ autocomplete: 'off', spellcheck: 'false' })
+            .val(text)
+            .focus()[0]
+            .setSelectionRange(text.length, text.length);
         this.input.bind({
             input: this.fieldValueInput.bind(this),
             keydown: this.fieldValueKeydown.bind(this),
@@ -42,7 +46,9 @@ const FieldViewText = FieldView.extend({
             this.createMobileControls();
         }
         if (this.model.canGen) {
-            $('<div/>').addClass('details__field-value-btn details__field-value-btn-gen').appendTo(this.valueEl)
+            $('<div/>')
+                .addClass('details__field-value-btn details__field-value-btn-gen')
+                .appendTo(this.valueEl)
                 .click(this.showGeneratorClick.bind(this))
                 .mousedown(this.showGenerator.bind(this));
         }
@@ -50,7 +56,7 @@ const FieldViewText = FieldView.extend({
         Tip.hideTip(this.labelEl[0]);
     },
 
-    createMobileControls: function() {
+    createMobileControls() {
         this.mobileControls = {};
         ['cancel', 'apply'].forEach(action => {
             this.mobileControls[action] = $('<div/>')
@@ -66,25 +72,30 @@ const FieldViewText = FieldView.extend({
         });
     },
 
-    showGeneratorClick: function(e) {
+    showGeneratorClick(e) {
         e.stopPropagation();
         if (!this.gen) {
             this.input.focus();
         }
     },
 
-    showGenerator: function() {
+    showGenerator() {
         if (this.gen) {
             this.hideGenerator();
         } else {
             const fieldRect = this.input[0].getBoundingClientRect();
-            this.gen = new GeneratorView({model: {pos: {left: fieldRect.left, top: fieldRect.bottom}, password: this.value}}).render();
+            this.gen = new GeneratorView({
+                model: {
+                    pos: { left: fieldRect.left, top: fieldRect.bottom },
+                    password: this.value
+                }
+            }).render();
             this.gen.once('remove', this.generatorClosed.bind(this));
             this.gen.once('result', this.generatorResult.bind(this));
         }
     },
 
-    hideGenerator: function() {
+    hideGenerator() {
         if (this.gen) {
             const gen = this.gen;
             delete this.gen;
@@ -92,21 +103,21 @@ const FieldViewText = FieldView.extend({
         }
     },
 
-    generatorClosed: function() {
+    generatorClosed() {
         if (this.gen) {
             delete this.gen;
             this.endEdit();
         }
     },
 
-    generatorResult: function(password) {
+    generatorResult(password) {
         if (this.gen) {
             delete this.gen;
             this.endEdit(password);
         }
     },
 
-    setInputHeight: function() {
+    setInputHeight() {
         const MinHeight = 18;
         this.input.height(MinHeight);
         let newHeight = this.input[0].scrollHeight;
@@ -118,30 +129,30 @@ const FieldViewText = FieldView.extend({
         this.input.height(newHeight);
     },
 
-    fieldValueBlur: function() {
+    fieldValueBlur() {
         if (!this.gen && this.input) {
             this.endEdit(this.input.val());
         }
     },
 
-    fieldValueInput: function(e) {
+    fieldValueInput(e) {
         e.stopPropagation();
         if (this.model.multiline) {
             this.setInputHeight();
         }
     },
 
-    fieldValueInputClick: function() {
+    fieldValueInputClick() {
         if (this.gen) {
             this.hideGenerator();
         }
     },
 
-    fieldValueInputMouseDown: function(e) {
+    fieldValueInputMouseDown(e) {
         e.stopPropagation();
     },
 
-    fieldValueKeydown: function(e) {
+    fieldValueKeydown(e) {
         KeyHandler.reg();
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
@@ -172,13 +183,13 @@ const FieldViewText = FieldView.extend({
         e.stopPropagation();
     },
 
-    externalEndEdit: function() {
+    externalEndEdit() {
         if (this.input) {
             this.endEdit(this.input.val());
         }
     },
 
-    endEdit: function(newVal, extra) {
+    endEdit(newVal, extra) {
         if (this.gen) {
             this.hideGenerator();
         }
@@ -201,7 +212,7 @@ const FieldViewText = FieldView.extend({
         FieldView.prototype.endEdit.call(this, newVal, extra);
     },
 
-    stopBlurListener: function() {
+    stopBlurListener() {
         this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
     },
 
@@ -231,8 +242,11 @@ const FieldViewText = FieldView.extend({
     mobileFieldControlTouchMove(e) {
         const touch = e.originalEvent.targetTouches[0];
         const rect = touch.target.getBoundingClientRect();
-        const inside = touch.clientX >= rect.left && touch.clientX <= rect.right &&
-            touch.clientY >= rect.top && touch.clientY <= rect.bottom;
+        const inside =
+            touch.clientX >= rect.left &&
+            touch.clientX <= rect.right &&
+            touch.clientY >= rect.top &&
+            touch.clientY <= rect.bottom;
         if (inside) {
             this.$el.attr('active-mobile-action', $(e.target).data('action'));
         } else {

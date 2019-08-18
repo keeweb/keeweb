@@ -1,5 +1,5 @@
 const InputFx = {
-    shake: function(el) {
+    shake(el) {
         el.addClass('input-shake');
         setTimeout(() => el.removeClass('input-shake'), 1000);
     }

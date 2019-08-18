@@ -23,74 +23,102 @@
 
 const fs = require('fs');
 
-module.exports = function (grunt) {
-    grunt.registerMultiTask('sign-exe', 'Signs exe file with authenticode certificate', async function () {
-        const opt = this.options();
-        const done = this.async();
-        if (opt.pvk) {
-            const keytar = require('keytar');
-            keytar.getPassword(opt.keytarPasswordService, opt.keytarPasswordAccount).then(password => {
-                if (!password) {
-                    return grunt.warn('Code sign password not found');
+module.exports = function(grunt) {
+    grunt.registerMultiTask(
+        'sign-exe',
+        'Signs exe file with authenticode certificate',
+        async function() {
+            const opt = this.options();
+            const done = this.async();
+            if (opt.pvk) {
+                const keytar = require('keytar');
+                keytar
+                    .getPassword(opt.keytarPasswordService, opt.keytarPasswordAccount)
+                    .then(password => {
+                        if (!password) {
+                            return grunt.warn('Code sign password not found');
+                        }
+                        const promises = Object.keys(opt.files).map(file =>
+                            signFile(file, opt.files[file], opt, password)
+                        );
+                        Promise.all(promises).then(done);
+                    })
+                    .catch(e => {
+                        grunt.warn('Code sign error: ' + e);
+                    });
+            } else {
+                const sign = require('../util/sign');
+                const pin = await sign.getPin();
+                for (const file of Object.keys(opt.files)) {
+                    await signFile(file, opt.files[file], opt, pin);
                 }
-                const promises = Object.keys(opt.files).map(file => signFile(file, opt.files[file], opt, password));
-                Promise.all(promises).then(done);
-            }).catch(e => {
-                grunt.warn('Code sign error: ' + e);
-            });
-        } else {
-            const sign = require('../util/sign');
-            const pin = await sign.getPin();
-            for (const file of Object.keys(opt.files)) {
-                await signFile(file, opt.files[file], opt, pin);
+                done();
             }
-            done();
         }
-    });
+    );
 
     function signFile(file, name, opt, password) {
         const signedFile = file + '.sign';
         return new Promise((resolve, reject) => {
-            const pkcsArgs = opt.pvk ? [] : [
-                '-pkcs11engine', '/usr/local/lib/engines/engine_pkcs11.so',
-                '-pkcs11module', '/usr/local/lib/opensc-pkcs11.so'
-            ];
+            const pkcsArgs = opt.pvk
+                ? []
+                : [
+                      '-pkcs11engine',
+                      '/usr/local/lib/engines/engine_pkcs11.so',
+                      '-pkcs11module',
+                      '/usr/local/lib/opensc-pkcs11.so'
+                  ];
             const args = [
-                '-spc', opt.spc,
-                '-key', opt.pvk ? require('path').resolve(opt.pvk) : opt.key,
-                '-pass', password,
-                '-h', opt.algo,
-                '-n', name,
-                '-i', opt.url,
-                '-t', 'http://timestamp.verisign.com/scripts/timstamp.dll',
+                '-spc',
+                opt.spc,
+                '-key',
+                opt.pvk ? require('path').resolve(opt.pvk) : opt.key,
+                '-pass',
+                password,
+                '-h',
+                opt.algo,
+                '-n',
+                name,
+                '-i',
+                opt.url,
+                '-t',
+                'http://timestamp.verisign.com/scripts/timstamp.dll',
                 ...pkcsArgs,
-                '-in', file,
-                '-out', signedFile
+                '-in',
+                file,
+                '-out',
+                signedFile
             ];
-            const spawned = grunt.util.spawn({
-                cmd: 'osslsigncode',
-                args: args
-            }, (error, result, code) => {
-                if (error || code) {
-                    spawned.kill();
-                    grunt.warn(`Cannot sign file ${file}, signtool error ${code}: ${error}`);
-                    return reject();
-                }
-                grunt.util.spawn({
+            const spawned = grunt.util.spawn(
+                {
                     cmd: 'osslsigncode',
-                    args: ['verify', signedFile]
-                }, (ex, result, code) => {
-                    if (code) {
-                        grunt.warn(`Verify error ${file}: \n${result.stdout.toString()}`);
-                        return;
+                    args
+                },
+                (error, result, code) => {
+                    if (error || code) {
+                        spawned.kill();
+                        grunt.warn(`Cannot sign file ${file}, signtool error ${code}: ${error}`);
+                        return reject();
                     }
-                    if (fs.existsSync(file)) {
-                        fs.renameSync(signedFile, file);
-                    }
-                    grunt.log.writeln(`Signed ${file}: ${name}`);
-                    resolve();
-                });
-            });
+                    grunt.util.spawn(
+                        {
+                            cmd: 'osslsigncode',
+                            args: ['verify', signedFile]
+                        },
+                        (ex, result, code) => {
+                            if (code) {
+                                grunt.warn(`Verify error ${file}: \n${result.stdout.toString()}`);
+                                return;
+                            }
+                            if (fs.existsSync(file)) {
+                                fs.renameSync(signedFile, file);
+                            }
+                            grunt.log.writeln(`Signed ${file}: ${name}`);
+                            resolve();
+                        }
+                    );
+                }
+            );
             // spawned.stdout.pipe(process.stdout);
             spawned.stderr.pipe(process.stderr);
             // spawned.stdin.setEncoding('utf-8');

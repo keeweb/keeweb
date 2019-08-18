@@ -11,32 +11,33 @@ const MenuItemModel = Backbone.Model.extend({
 
     defaultItems: undefined,
 
-    initialize: function(items) {
+    initialize(items) {
         this.set('items', new MenuItemCollection(items || this.defaultItems));
     },
 
-    addItem: function(item) {
+    addItem(item) {
         this.get('items').add(item);
         this.trigger('change-items');
     },
 
-    removeAllItems: function() {
+    removeAllItems() {
         this.get('items').reset(this.defaultItems);
         this.trigger('change-items');
     },
 
-    removeByFile: function(file) {
+    removeByFile(file) {
         const items = this.get('items');
         items.find(item => {
             if (item.file === file || item.get('file') === file) {
                 items.remove(item);
                 return true;
             }
+            return false;
         });
         this.trigger('change-items');
     },
 
-    replaceByFile: function(file, newItem) {
+    replaceByFile(file, newItem) {
         const items = this.get('items');
         items.find((item, ix) => {
             if (item.file === file || item.get('file') === file) {
@@ -44,11 +45,12 @@ const MenuItemModel = Backbone.Model.extend({
                 items.add(newItem, { at: ix });
                 return true;
             }
+            return false;
         });
         this.trigger('change-items');
     },
 
-    setItems: function(items) {
+    setItems(items) {
         this.get('items').reset(items);
         this.trigger('change-items');
     }

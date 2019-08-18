@@ -1,7 +1,7 @@
 {
-    "extends": "standard",
+    "plugins": ["prettier", "import"],
+    "extends": ["standard", "eslint:recommended", "plugin:prettier/recommended"],
     "rules": {
-        "indent": ["error", 4, { "SwitchCase": 1 }],
         "semi": ["error", "always"],
         "one-var": "off",
         "space-before-function-paren": "off",
@@ -20,8 +20,36 @@
         "no-mixed-operators": "off",
         "prefer-promise-reject-errors": "off",
         "standard/no-callback-literal": "off",
-        "import/no-webpack-loader-syntax": "off",
-        "object-curly-spacing": "off"
+        "object-curly-spacing": "off",
+        "quote-props": "off",
+        "no-new-object": "error",
+        "object-shorthand": "error",
+        "no-array-constructor": "error",
+        "array-callback-return": "error",
+        "no-eval": "error",
+        "no-new-func": "error",
+        "prefer-rest-params": "error",
+        "prefer-spread": "error",
+        "no-useless-constructor": "error",
+        "no-dupe-class-members": "error",
+        "no-duplicate-imports": "error",
+        "eqeqeq": "error",
+        "no-unneeded-ternary": "error",
+        "curly": "error",
+        "prettier/prettier": "error",
+        "no-empty": "off",
+        "no-restricted-syntax": [
+            "error",
+            {
+                "selector": "ExportDefaultDeclaration",
+                "message": "Prefer named exports"
+            }
+        ],
+        "import/no-webpack-loader-syntax": "error",
+        "import/no-relative-parent-imports": "error",
+        "import/first": "error",
+        "import/no-namespace": "error",
+        "import/no-default-export": "error"
     },
     "parserOptions": {
         "sourceType": "module",

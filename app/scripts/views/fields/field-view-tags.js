@@ -1,25 +1,30 @@
 const FieldViewText = require('./field-view-text');
 
 const FieldViewTags = FieldViewText.extend({
-    renderValue: function(value) {
+    renderValue(value) {
         return value ? _.escape(value.join(', ')) : '';
     },
 
-    getEditValue: function(value) {
+    getEditValue(value) {
         return value ? value.join(', ') : '';
     },
 
-    valueToTags: function(val) {
+    valueToTags(val) {
         const allTags = {};
         this.model.tags.forEach(tag => {
             allTags[tag.toLowerCase()] = tag;
         });
-        return _.unique(val.split(/\s*[;,:]\s*/).filter(_.identity).map(tag => {
-            return allTags[tag.toLowerCase()] || tag;
-        }));
+        return _.unique(
+            val
+                .split(/\s*[;,:]\s*/)
+                .filter(_.identity)
+                .map(tag => {
+                    return allTags[tag.toLowerCase()] || tag;
+                })
+        );
     },
 
-    endEdit: function(newVal, extra) {
+    endEdit(newVal, extra) {
         if (newVal !== undefined) {
             newVal = this.valueToTags(newVal);
         }
@@ -30,10 +35,12 @@ const FieldViewTags = FieldViewText.extend({
         FieldViewText.prototype.endEdit.call(this, newVal, extra);
     },
 
-    startEdit: function() {
+    startEdit() {
         FieldViewText.prototype.startEdit.call(this);
         const fieldRect = this.input[0].getBoundingClientRect();
-        this.tagsAutocomplete = $('<div class="details__field-autocomplete"></div>').appendTo('body');
+        this.tagsAutocomplete = $('<div class="details__field-autocomplete"></div>').appendTo(
+            'body'
+        );
         this.tagsAutocomplete.css({
             top: fieldRect.bottom,
             left: fieldRect.left,
@@ -43,31 +50,36 @@ const FieldViewTags = FieldViewText.extend({
         this.setTags();
     },
 
-    fieldValueInput: function(e) {
+    fieldValueInput(e) {
         e.stopPropagation();
         this.setTags();
         FieldViewText.prototype.fieldValueInput.call(this, e);
     },
 
-    getAvailableTags: function() {
+    getAvailableTags() {
         const tags = this.valueToTags(this.input.val());
         const last = tags[tags.length - 1];
         const isLastPart = last && this.model.tags.indexOf(last) < 0;
         return this.model.tags.filter(tag => {
-            return tags.indexOf(tag) < 0 && (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0);
+            return (
+                tags.indexOf(tag) < 0 &&
+                (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0)
+            );
         });
     },
 
-    setTags: function() {
+    setTags() {
         const availableTags = this.getAvailableTags();
-        const tagsHtml = availableTags.map(tag => {
-            return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
-        }).join('');
+        const tagsHtml = availableTags
+            .map(tag => {
+                return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
+            })
+            .join('');
         this.tagsAutocomplete.html(tagsHtml);
         this.tagsAutocomplete.toggle(!!tagsHtml);
     },
 
-    tagsAutocompleteClick: function(e) {
+    tagsAutocompleteClick(e) {
         e.stopPropagation();
         if (e.target.classList.contains('details__field-autocomplete-item')) {
             const selectedTag = $(e.target).text();
@@ -88,7 +100,9 @@ const FieldViewTags = FieldViewText.extend({
             this.input.focus();
             this.setTags();
         }
-        this.afterPaint(function() { this.input.focus(); });
+        this.afterPaint(function() {
+            this.input.focus();
+        });
     }
 });
 

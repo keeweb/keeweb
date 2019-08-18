@@ -1,43 +1,60 @@
 .hide {
-  display: none !important;
+    display: none !important;
 }
 
 .hide-by-pos {
-  position: absolute;
-  top: -10000px;
-  left: -10000px;
+    position: absolute;
+    top: -10000px;
+    left: -10000px;
 }
 
 .invisible {
-  visibility: hidden !important;
+    visibility: hidden !important;
 }
 
 .flip3d {
-  @include animation(flip3d 1s linear 0s infinite);
-  @include transform-style(perspective-3d);
+    @include animation(flip3d 1s linear 0s infinite);
+    @include transform-style(perspective-3d);
 }
 
 .grayscale {
-  @include filter(grayscale(1));
+    @include filter(grayscale(1));
 }
 
 .input-shake {
-  @include animation(shake 50s cubic-bezier(.36,.07,.19,.97) 0s);
+    @include animation(shake 50s cubic-bezier(0.36, 0.07, 0.19, 0.97) 0s);
 }
 
 @include keyframes(flip3d) {
-  from {
-    @include transform(rotateY(0));
-  }
-  to {
-    @include transform(rotateY(360deg));
-  }
+    from {
+        @include transform(rotateY(0));
+    }
+    to {
+        @include transform(rotateY(360deg));
+    }
 }
 
 @include keyframes(shake) {
-  0%, 1%, 100% { @include transform(translate3d(0, 0, 0)); }
-  .1%, .9% { @include transform(translate3d(-1px, 0, 0)); }
-  .2%, .8% { @include transform(translate3d(2px, 0, 0)); }
-  .3%, .5%, .7% { @include transform(translate3d(-3px, 0, 0)); }
-  .4%, .6% { @include transform(translate3d(3px, 0, 0)); }
+    0%,
+    1%,
+    100% {
+        @include transform(translate3d(0, 0, 0));
+    }
+    .1%,
+    .9% {
+        @include transform(translate3d(-1px, 0, 0));
+    }
+    .2%,
+    .8% {
+        @include transform(translate3d(2px, 0, 0));
+    }
+    .3%,
+    .5%,
+    .7% {
+        @include transform(translate3d(-3px, 0, 0));
+    }
+    .4%,
+    .6% {
+        @include transform(translate3d(3px, 0, 0));
+    }
 }

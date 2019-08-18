@@ -22,17 +22,17 @@ const MenuItemModel = Backbone.Model.extend({
         collapsible: false
     },
 
-    initialize: function(model) {
+    initialize(model) {
         if (model && model.file) {
             this.listenTo(model.file, 'change:name', this.changeTitle, this);
         }
     },
 
-    _loadItemCollectionType: function() {
+    _loadItemCollectionType() {
         return require('../../collections/menu/menu-item-collection');
     },
 
-    addItem: function(item) {
+    addItem(item) {
         if (!ItemCollection) {
             ItemCollection = this._loadItemCollectionType();
         }
@@ -44,7 +44,7 @@ const MenuItemModel = Backbone.Model.extend({
         items.add(item);
     },
 
-    addOption: function(option) {
+    addOption(option) {
         let options = this.get('options');
         if (!options) {
             options = new MenuOptionCollection();
@@ -53,7 +53,7 @@ const MenuItemModel = Backbone.Model.extend({
         options.add(option);
     },
 
-    toggleExpanded: function() {
+    toggleExpanded() {
         const items = this.get('items');
         let expanded = !this.get('expanded');
         if (!items || !items.length) {
@@ -62,7 +62,7 @@ const MenuItemModel = Backbone.Model.extend({
         this.set('expanded', expanded);
     },
 
-    changeTitle: function(model, newTitle) {
+    changeTitle(model, newTitle) {
         this.set('title', newTitle);
     }
 });

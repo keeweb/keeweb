@@ -7,22 +7,29 @@ const Tip = require('../util/tip');
 const Timeouts = require('../const/timeouts');
 
 const Copyable = {
-    hideFieldCopyTip: function() {
+    hideFieldCopyTip() {
         if (this.fieldCopyTip) {
             this.fieldCopyTip.hide();
             this.fieldCopyTip = null;
         }
     },
 
-    fieldCopied: function(e) {
+    fieldCopied(e) {
         this.hideFieldCopyTip();
         const fieldLabel = e.source.labelEl;
         const clipboardTime = e.copyRes.seconds;
-        const msg = clipboardTime ? Locale.detFieldCopiedTime.replace('{}', clipboardTime)
+        const msg = clipboardTime
+            ? Locale.detFieldCopiedTime.replace('{}', clipboardTime)
             : Locale.detFieldCopied;
         let tip;
         if (!this.isHidden()) {
-            tip = Tip.createTip(fieldLabel[0], {title: msg, placement: 'right', fast: true, force: true, noInit: true});
+            tip = Tip.createTip(fieldLabel[0], {
+                title: msg,
+                placement: 'right',
+                fast: true,
+                force: true,
+                noInit: true
+            });
             this.fieldCopyTip = tip;
             tip.show();
         }
@@ -31,7 +38,10 @@ const Copyable = {
                 tip.hide();
             }
             this.fieldCopyTip = null;
-            if (e.source.model.name === '$Password' && AppSettingsModel.instance.get('lockOnCopy')) {
+            if (
+                e.source.model.name === '$Password' &&
+                AppSettingsModel.instance.get('lockOnCopy')
+            ) {
                 setTimeout(() => {
                     Backbone.trigger('lock-workspace');
                 }, Timeouts.BeforeAutoLock);

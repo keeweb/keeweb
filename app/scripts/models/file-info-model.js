@@ -18,12 +18,16 @@ const FileInfoModel = Backbone.Model.extend({
         fingerprint: null
     },
 
-    initialize: function(data, options) {
-        _.each(data, function(val, key) {
-            if (/Date$/.test(key)) {
-                this.set(key, val ? new Date(val) : null, options);
-            }
-        }, this);
+    initialize(data, options) {
+        _.each(
+            data,
+            function(val, key) {
+                if (/Date$/.test(key)) {
+                    this.set(key, val ? new Date(val) : null, options);
+                }
+            },
+            this
+        );
     }
 });
 

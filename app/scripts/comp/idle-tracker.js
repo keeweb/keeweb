@@ -3,17 +3,17 @@ const AppSettingsModel = require('../models/app-settings-model');
 
 const IdleTracker = {
     actionTime: Date.now(),
-    init: function() {
+    init() {
         setInterval(this.checkIdle.bind(this), 1000 * 60);
     },
-    checkIdle: function() {
+    checkIdle() {
         const idleMinutes = (Date.now() - this.actionTime) / 1000 / 60;
         const maxIdleMinutes = AppSettingsModel.instance.get('idleMinutes');
         if (maxIdleMinutes && idleMinutes > maxIdleMinutes) {
             Backbone.trigger('user-idle');
         }
     },
-    regUserAction: function() {
+    regUserAction() {
         this.actionTime = Date.now();
     }
 };

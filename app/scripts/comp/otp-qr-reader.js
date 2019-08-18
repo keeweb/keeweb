@@ -13,26 +13,36 @@ const OtpQrReader = {
 
     fileInput: null,
 
-    read: function() {
+    read() {
         let screenshotKey = FeatureDetector.screenshotToClipboardShortcut();
         if (screenshotKey) {
-            screenshotKey = Locale.detSetupOtpAlertBodyWith.replace('{}', '<code>' + screenshotKey + '</code>');
+            screenshotKey = Locale.detSetupOtpAlertBodyWith.replace(
+                '{}',
+                '<code>' + screenshotKey + '</code>'
+            );
         }
-        const pasteKey = FeatureDetector.isMobile ? ''
-            : Locale.detSetupOtpAlertBodyWith.replace('{}',
-                '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>');
+        const pasteKey = FeatureDetector.isMobile
+            ? ''
+            : Locale.detSetupOtpAlertBodyWith.replace(
+                  '{}',
+                  '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>'
+              );
         OtpQrReader.startListenClipoard();
-        const buttons = [{result: 'manually', title: Locale.detSetupOtpManualButton, silent: true},
-            Alerts.buttons.cancel];
+        const buttons = [
+            { result: 'manually', title: Locale.detSetupOtpManualButton, silent: true },
+            Alerts.buttons.cancel
+        ];
         if (FeatureDetector.isMobile) {
-            buttons.unshift({result: 'select', title: Locale.detSetupOtpScanButton});
+            buttons.unshift({ result: 'select', title: Locale.detSetupOtpScanButton });
         }
-        const line3 = FeatureDetector.isMobile ? Locale.detSetupOtpAlertBody3Mobile
+        const line3 = FeatureDetector.isMobile
+            ? Locale.detSetupOtpAlertBody3Mobile
             : Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
         OtpQrReader.alert = Alerts.alert({
             icon: 'qrcode',
             header: Locale.detSetupOtpAlert,
-            body: [Locale.detSetupOtpAlertBody,
+            body: [
+                Locale.detSetupOtpAlertBody,
                 Locale.detSetupOtpAlertBody1,
                 Locale.detSetupOtpAlertBody2.replace('{}', screenshotKey || ''),
                 line3,
@@ -41,8 +51,8 @@ const OtpQrReader = {
             esc: '',
             click: '',
             enter: '',
-            buttons: buttons,
-            complete: function(res) {
+            buttons,
+            complete(res) {
                 OtpQrReader.alert = null;
                 OtpQrReader.stopListenClipboard();
                 if (res === 'select') {
@@ -58,7 +68,7 @@ const OtpQrReader = {
         //     transparent: true }).show();
     },
 
-    selectFile: function() {
+    selectFile() {
         if (!OtpQrReader.fileInput) {
             const input = document.createElement('input');
             input.setAttribute('type', 'file');
@@ -71,7 +81,7 @@ const OtpQrReader = {
         OtpQrReader.fileInput.click();
     },
 
-    fileSelected: function() {
+    fileSelected() {
         const file = OtpQrReader.fileInput.files[0];
         if (!file || file.type.indexOf('image') < 0) {
             return;
@@ -79,16 +89,19 @@ const OtpQrReader = {
         OtpQrReader.readFile(file);
     },
 
-    startListenClipoard: function() {
+    startListenClipoard() {
         document.addEventListener('paste', OtpQrReader.pasteEvent);
     },
 
-    stopListenClipboard: function() {
+    stopListenClipboard() {
         document.removeEventListener('paste', OtpQrReader.pasteEvent);
     },
 
-    pasteEvent: function(e) {
-        const item = _.find(e.clipboardData.items, item => item.kind === 'file' && item.type.indexOf('image') !== -1);
+    pasteEvent(e) {
+        const item = _.find(
+            e.clipboardData.items,
+            item => item.kind === 'file' && item.type.indexOf('image') !== -1
+        );
         if (!item) {
             logger.debug('Paste without file');
             return;
@@ -102,7 +115,7 @@ const OtpQrReader = {
         OtpQrReader.readFile(item.getAsFile());
     },
 
-    readFile: function(file) {
+    readFile(file) {
         const reader = new FileReader();
         reader.onload = function() {
             logger.debug('Image data loaded');
@@ -111,7 +124,7 @@ const OtpQrReader = {
         reader.readAsDataURL(file);
     },
 
-    readQr: function(imageData) {
+    readQr(imageData) {
         const image = new Image();
         image.onload = function() {
             logger.debug('Image format loaded');
@@ -127,7 +140,11 @@ const OtpQrReader = {
                     logger.error('Error parsing QR code', err);
                     Alerts.error({
                         header: Locale.detOtpQrWrong,
-                        body: Locale.detOtpQrWrongBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                        body:
+                            Locale.detOtpQrWrongBody +
+                            '<pre class="modal__pre">' +
+                            _.escape(err.toString()) +
+                            '</pre>'
                     });
                 }
             } catch (e) {
@@ -150,11 +167,11 @@ const OtpQrReader = {
         image.src = imageData;
     },
 
-    enterManually: function() {
+    enterManually() {
         OtpQrReader.trigger('enter-manually');
     },
 
-    removeAlert: function() {
+    removeAlert() {
         if (OtpQrReader.alert) {
             OtpQrReader.alert.closeImmediate();
         }

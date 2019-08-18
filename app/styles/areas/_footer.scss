@@ -1,82 +1,92 @@
 .footer {
-  display: flex;
-  align-items: stretch;
-  flex-direction: row;
-  justify-content: flex-start;
-  @include mobile {
-    @include th { background: th(intermediate-background-color); }
-  }
-
-  &__db {
-    flex: 0 0 auto;
-    @include area-selectable(top);
-    position: relative;
-    padding: $medium-padding;
-    padding-right: 1.3em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    &.footer__db--dimmed {
-      @include th {
-        color: th(muted-color);
-        &:hover {
-          color: th(medium-color);
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: flex-start;
+    @include mobile {
+        @include th {
+            background: th(intermediate-background-color);
         }
-      }
     }
 
-    &--expanded {
-      flex: 1;
-      @include mobile {
+    &__db {
         flex: 0 0 auto;
-        >.footer__db-text {
-          display: none;
-        }
-      }
-    }
-
-    &-sign {
-      font-size: 6px;
-      vertical-align: top;
-      margin-left: $base-padding-h;
-      position: absolute;
-      right: 1em;
-      top: 1em;
-      @include th { color: th(action-color); }
-      &--error { @include th { color: th(error-color); } }
-    }
-
-    &-open-title {
-      margin-left: .3em;
-    }
-
-    &-item {
-      @include mobile {
-        > .fa {
-          display: none;
-        }
-        flex: 1 1 auto;
+        @include area-selectable(top);
+        position: relative;
+        padding: $medium-padding;
+        padding-right: 1.3em;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-      }
-    }
-  }
+        &.footer__db--dimmed {
+            @include th {
+                color: th(muted-color);
+                &:hover {
+                    color: th(medium-color);
+                }
+            }
+        }
 
-  &__btn {
-    flex: 0 0 auto;
-    @include area-selectable(top);
-    padding: $base-padding;
-    .standalone & {
-      padding-top: $base-padding-v;
-      padding-bottom: 1.2em;
-    }
-    font-size: 1.4em;
-    text-align: center;
-    width: 1em;
-  }
+        &--expanded {
+            flex: 1;
+            @include mobile {
+                flex: 0 0 auto;
+                > .footer__db-text {
+                    display: none;
+                }
+            }
+        }
 
-  &__update-icon {
-    @include th { color: th(action-color); }
-    @include animation(shake 50s cubic-bezier(.36,.07,.19,.97) 0s infinite);
-  }
+        &-sign {
+            font-size: 6px;
+            vertical-align: top;
+            margin-left: $base-padding-h;
+            position: absolute;
+            right: 1em;
+            top: 1em;
+            @include th {
+                color: th(action-color);
+            }
+            &--error {
+                @include th {
+                    color: th(error-color);
+                }
+            }
+        }
+
+        &-open-title {
+            margin-left: 0.3em;
+        }
+
+        &-item {
+            @include mobile {
+                > .fa {
+                    display: none;
+                }
+                flex: 1 1 auto;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+    &__btn {
+        flex: 0 0 auto;
+        @include area-selectable(top);
+        padding: $base-padding;
+        .standalone & {
+            padding-top: $base-padding-v;
+            padding-bottom: 1.2em;
+        }
+        font-size: 1.4em;
+        text-align: center;
+        width: 1em;
+    }
+
+    &__update-icon {
+        @include th {
+            color: th(action-color);
+        }
+        @include animation(shake 50s cubic-bezier(0.36, 0.07, 0.19, 0.97) 0s infinite);
+    }
 }

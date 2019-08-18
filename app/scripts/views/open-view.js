@@ -50,7 +50,7 @@ const OpenView = Backbone.View.extend({
     busy: false,
     currentSelectedIndex: -1,
 
-    initialize: function () {
+    initialize() {
         this.views = {};
         this.params = {
             id: null,
@@ -73,7 +73,7 @@ const OpenView = Backbone.View.extend({
         this.listenTo(Backbone, 'main-window-focus', this.windowFocused.bind(this));
     },
 
-    render: function () {
+    render() {
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
@@ -86,38 +86,41 @@ const OpenView = Backbone.View.extend({
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         const showMore = storageProviders.length || this.model.settings.get('canOpenSettings');
-        const showLogo = !showMore && !this.model.settings.get('canOpen') && !this.model.settings.get('canCreate') &&
+        const showLogo =
+            !showMore &&
+            !this.model.settings.get('canOpen') &&
+            !this.model.settings.get('canCreate') &&
             !(this.model.settings.get('canOpenDemo') && !this.model.settings.get('demoOpened'));
         this.renderTemplate({
             lastOpenFiles: this.getLastOpenFiles(),
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
             demoOpened: this.model.settings.get('demoOpened'),
-            storageProviders: storageProviders,
+            storageProviders,
             canOpen: this.model.settings.get('canOpen'),
             canOpenDemo: this.model.settings.get('canOpenDemo'),
             canOpenSettings: this.model.settings.get('canOpenSettings'),
             canCreate: this.model.settings.get('canCreate'),
             canImportXml: this.model.settings.get('canImportXml'),
             canRemoveLatest: this.model.settings.get('canRemoveLatest'),
-            showMore: showMore,
-            showLogo: showLogo
+            showMore,
+            showLogo
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
         return this;
     },
 
-    windowFocused: function() {
+    windowFocused() {
         this.inputEl.focus();
     },
 
-    focusInput: function(focusOnMobile) {
+    focusInput(focusOnMobile) {
         if (FocusDetector.hasFocus() && (focusOnMobile || !FeatureDetector.isMobile)) {
             this.inputEl.focus();
         }
     },
 
-    getLastOpenFiles: function() {
+    getLastOpenFiles() {
         return this.model.fileInfos.map(f => {
             let icon = 'file-text';
             const storage = Storage[f.get('storage')];
@@ -131,13 +134,13 @@ const OpenView = Backbone.View.extend({
                 id: f.get('id'),
                 name: f.get('name'),
                 path: this.getDisplayedPath(f),
-                icon: icon,
+                icon,
                 iconSvg: storage ? storage.iconSvg : undefined
             };
         });
     },
 
-    getDisplayedPath: function(fileInfo) {
+    getDisplayedPath(fileInfo) {
         const storage = fileInfo.get('storage');
         if (storage === 'file' || storage === 'webdav') {
             return fileInfo.get('path');
@@ -145,7 +148,7 @@ const OpenView = Backbone.View.extend({
         return null;
     },
 
-    remove: function() {
+    remove() {
         this.passwordInput.reset();
         KeyHandler.offKey(Keys.DOM_VK_Z, this.undoKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_TAB, this.tabKeyPress, this);
@@ -153,10 +156,10 @@ const OpenView = Backbone.View.extend({
         KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, this);
         KeyHandler.offKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, this);
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    showLocalFileAlert: function() {
+    showLocalFileAlert() {
         if (this.model.settings.get('skipOpenLocalWarn')) {
             return;
         }
@@ -165,8 +168,8 @@ const OpenView = Backbone.View.extend({
             body: Locale.openLocalFileBody,
             icon: 'file-text',
             buttons: [
-                {result: 'skip', title: Locale.openLocalFileDontShow, error: true},
-                {result: 'ok', title: Locale.alertOk}
+                { result: 'skip', title: Locale.openLocalFileDontShow, error: true },
+                { result: 'ok', title: Locale.alertOk }
             ],
             click: '',
             esc: '',
@@ -180,7 +183,7 @@ const OpenView = Backbone.View.extend({
         });
     },
 
-    fileSelected: function(e) {
+    fileSelected(e) {
         const file = e.target.files[0];
         if (file) {
             this.processFile(file, success => {
@@ -191,7 +194,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    processFile: function(file, complete) {
+    processFile(file, complete) {
         const reader = new FileReader();
         reader.onload = e => {
             let success = false;
@@ -250,7 +253,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    checkOpenFileFormat: function(fileData) {
+    checkOpenFileFormat(fileData) {
         const fileSig = fileData.byteLength < 8 ? null : new Uint32Array(fileData, 0, 2);
         if (!fileSig || fileSig[0] !== kdbxweb.Consts.Signatures.FileMagic) {
             Alerts.error({ header: Locale.openWrongFile, body: Locale.openWrongFileBody });
@@ -267,7 +270,7 @@ const OpenView = Backbone.View.extend({
         return true;
     },
 
-    displayOpenFile: function() {
+    displayOpenFile() {
         this.$el.addClass('open--file');
         this.$el.find('.open__settings-key-file').removeClass('hide');
         this.inputEl[0].removeAttribute('readonly');
@@ -275,13 +278,15 @@ const OpenView = Backbone.View.extend({
         this.focusInput();
     },
 
-    displayOpenKeyFile: function() {
+    displayOpenKeyFile() {
         this.$el.toggleClass('open--key-file', !!this.params.keyFileName);
-        this.$el.find('.open__settings-key-file-name').text(this.params.keyFileName || this.params.keyFilePath || Locale.openKeyFile);
+        this.$el
+            .find('.open__settings-key-file-name')
+            .text(this.params.keyFileName || this.params.keyFilePath || Locale.openKeyFile);
         this.focusInput();
     },
 
-    setFile: function(file, keyFile, fileReadyCallback) {
+    setFile(file, keyFile, fileReadyCallback) {
         this.reading = 'fileData';
         this.processFile(file, success => {
             if (success && keyFile) {
@@ -294,7 +299,7 @@ const OpenView = Backbone.View.extend({
         });
     },
 
-    openFile: function() {
+    openFile() {
         if (this.model.settings.get('canOpen') === false) {
             return;
         }
@@ -304,14 +309,14 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    importFromXml: function() {
+    importFromXml() {
         if (!this.busy) {
             this.closeConfig();
             this.openAny('fileXml', 'xml');
         }
     },
 
-    openKeyFile: function(e) {
+    openKeyFile(e) {
         if ($(e.target).hasClass('open__settings-key-file-dropbox')) {
             this.openKeyFileFromDropbox();
         } else if (!this.busy && this.params.name) {
@@ -327,7 +332,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    openKeyFileFromDropbox: function() {
+    openKeyFileFromDropbox() {
         if (!this.busy) {
             new DropboxChooser((err, res) => {
                 if (err) {
@@ -340,11 +345,14 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    openAny: function(reading, ext) {
+    openAny(reading, ext) {
         this.reading = reading;
         this.params[reading] = null;
 
-        const fileInput = this.$el.find('.open__file-ctrl').attr('accept', ext || '').val(null);
+        const fileInput = this.$el
+            .find('.open__file-ctrl')
+            .attr('accept', ext || '')
+            .val(null);
 
         if (Launcher && Launcher.openFileChooser) {
             Launcher.openFileChooser((err, file) => {
@@ -359,20 +367,25 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    openLast: function(e) {
+    openLast(e) {
         if (this.busy) {
             return;
         }
-        const id = $(e.target).closest('.open__last-item').data('id').toString();
+        const id = $(e.target)
+            .closest('.open__last-item')
+            .data('id')
+            .toString();
         if ($(e.target).is('.open__last-item-icon-del')) {
             const fileInfo = this.model.fileInfos.get(id);
             if (!fileInfo.get('storage') || fileInfo.get('modified')) {
                 Alerts.yesno({
                     header: Locale.openRemoveLastQuestion,
-                    body: fileInfo.get('modified') ? Locale.openRemoveLastQuestionModBody : Locale.openRemoveLastQuestionBody,
+                    body: fileInfo.get('modified')
+                        ? Locale.openRemoveLastQuestionModBody
+                        : Locale.openRemoveLastQuestionBody,
                     buttons: [
-                        {result: 'yes', title: Locale.alertYes},
-                        {result: '', title: Locale.alertNo}
+                        { result: 'yes', title: Locale.alertYes },
+                        { result: '', title: Locale.alertNo }
                     ],
                     success: () => {
                         this.removeFile(id);
@@ -388,14 +401,14 @@ const OpenView = Backbone.View.extend({
         this.showOpenFileInfo(fileInfo, true);
     },
 
-    removeFile: function(id) {
+    removeFile(id) {
         this.model.removeFileInfo(id);
         this.$el.find('.open__last-item[data-id="' + id + '"]').remove();
         this.initialize();
         this.render();
     },
 
-    inputKeydown: function(e) {
+    inputKeydown(e) {
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
             this.openDb();
@@ -404,14 +417,14 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    inputKeyup: function(e) {
+    inputKeyup(e) {
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_CAPS_LOCK) {
             this.toggleCapsLockWarning(false);
         }
     },
 
-    inputKeypress: function(e) {
+    inputKeypress(e) {
         const charCode = e.keyCode || e.which;
         const ch = String.fromCharCode(charCode);
         const lower = ch.toLowerCase();
@@ -421,18 +434,21 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    toggleCapsLockWarning: function(on) {
+    toggleCapsLockWarning(on) {
         this.$el.find('.open__pass-warning').toggleClass('invisible', !on);
     },
 
-    dragover: function(e) {
+    dragover(e) {
         if (this.model.settings.get('canOpen') === false) {
             return;
         }
         e.preventDefault();
         e.stopPropagation();
         const dt = e.originalEvent.dataTransfer;
-        if (!dt.types || (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))) {
+        if (
+            !dt.types ||
+            (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))
+        ) {
             dt.dropEffect = 'none';
             return;
         }
@@ -445,7 +461,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    dragleave: function() {
+    dragleave() {
         if (this.model.settings.get('canOpen') === false) {
             return;
         }
@@ -457,7 +473,7 @@ const OpenView = Backbone.View.extend({
         }, 100);
     },
 
-    drop: function(e) {
+    drop(e) {
         if (this.model.settings.get('canOpen') === false) {
             return;
         }
@@ -471,11 +487,28 @@ const OpenView = Backbone.View.extend({
         this.closeConfig();
         this.$el.removeClass('open--drag');
         const files = e.target.files || e.originalEvent.dataTransfer.files;
-        const dataFile = _.find(files, file => file.name.split('.').pop().toLowerCase() === 'kdbx');
-        const keyFile = _.find(files, file => file.name.split('.').pop().toLowerCase() === 'key');
+        const dataFile = _.find(
+            files,
+            file =>
+                file.name
+                    .split('.')
+                    .pop()
+                    .toLowerCase() === 'kdbx'
+        );
+        const keyFile = _.find(
+            files,
+            file =>
+                file.name
+                    .split('.')
+                    .pop()
+                    .toLowerCase() === 'key'
+        );
         if (dataFile) {
-            this.setFile(dataFile, keyFile,
-                dataFile.path ? null : this.showLocalFileAlert.bind(this));
+            this.setFile(
+                dataFile,
+                keyFile,
+                dataFile.path ? null : this.showLocalFileAlert.bind(this)
+            );
         }
     },
 
@@ -494,7 +527,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    showOpenFileInfo: function(fileInfo, fileWasClicked) {
+    showOpenFileInfo(fileInfo, fileWasClicked) {
         if (this.busy || !fileInfo) {
             return;
         }
@@ -517,7 +550,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    showOpenLocalFile: function(path, keyFilePath) {
+    showOpenLocalFile(path, keyFilePath) {
         if (this.busy) {
             return;
         }
@@ -537,7 +570,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    openFileWithFingerprint: function(fileInfo) {
+    openFileWithFingerprint(fileInfo) {
         if (!fileInfo.has('fingerprint')) {
             return;
         }
@@ -551,7 +584,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    createDemo: function() {
+    createDemo() {
         if (!this.busy) {
             this.closeConfig();
             if (!this.model.createDemoFile()) {
@@ -563,13 +596,13 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    createNew: function() {
+    createNew() {
         if (!this.busy) {
             this.model.createNewFile();
         }
     },
 
-    openDb: function() {
+    openDb() {
         if (this.params.id && this.model.files.get(this.params.id)) {
             this.trigger('close');
             return;
@@ -581,10 +614,12 @@ const OpenView = Backbone.View.extend({
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
         this.params.password = this.passwordInput.value;
-        this.afterPaint(this.model.openFile.bind(this.model, this.params, this.openDbComplete.bind(this)));
+        this.afterPaint(
+            this.model.openFile.bind(this.model, this.params, this.openDbComplete.bind(this))
+        );
     },
 
-    openDbComplete: function(err) {
+    openDbComplete(err) {
         this.busy = false;
         this.$el.toggleClass('open--opening', false);
         this.inputEl.removeAttr('disabled').toggleClass('input--error', !!err);
@@ -601,7 +636,11 @@ const OpenView = Backbone.View.extend({
                 }
                 Alerts.error({
                     header: Locale.openError,
-                    body: Locale.openErrorDescription + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                    body:
+                        Locale.openErrorDescription +
+                        '<pre class="modal__pre">' +
+                        _.escape(err.toString()) +
+                        '</pre>'
                 });
             }
         } else {
@@ -609,23 +648,25 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    importDbWithXml: function() {
+    importDbWithXml() {
         if (this.busy || !this.params.name) {
             return;
         }
         this.$el.toggleClass('open--opening', true);
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
-        this.afterPaint(() => this.model.importFileWithXml(this.params, err => {
-            if (err) {
-                this.params.name = '';
-                this.params.fileXml = null;
-            }
-            this.openDbComplete(err);
-        }));
+        this.afterPaint(() =>
+            this.model.importFileWithXml(this.params, err => {
+                if (err) {
+                    this.params.name = '';
+                    this.params.fileXml = null;
+                }
+                this.openDbComplete(err);
+            })
+        );
     },
 
-    toggleMore: function() {
+    toggleMore() {
         if (this.busy) {
             return;
         }
@@ -633,15 +674,20 @@ const OpenView = Backbone.View.extend({
         this.$el.find('.open__icons--lower').toggleClass('hide');
     },
 
-    openSettings: function() {
+    openSettings() {
         Backbone.trigger('toggle-settings');
     },
 
-    openStorage: function(e) {
+    openStorage(e) {
         if (this.busy) {
             return;
         }
-        const storage = Storage[$(e.target).closest('.open__icon').data('storage')];
+        const storage =
+            Storage[
+                $(e.target)
+                    .closest('.open__icon')
+                    .data('storage')
+            ];
         if (!storage) {
             return;
         }
@@ -654,7 +700,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    listStorage: function(storage, config) {
+    listStorage(storage, config) {
         if (this.busy) {
             return;
         }
@@ -670,7 +716,11 @@ const OpenView = Backbone.View.extend({
                 if (err.lastIndexOf('OAuth', 0) !== 0 && !Alerts.alertDisplayed) {
                     Alerts.error({
                         header: Locale.openError,
-                        body: Locale.openListErrorBody + '<pre class="modal__pre">' + _.escape(err.toString()) + '</pre>'
+                        body:
+                            Locale.openListErrorBody +
+                            '<pre class="modal__pre">' +
+                            _.escape(err.toString()) +
+                            '</pre>'
                     });
                 }
                 return;
@@ -707,7 +757,7 @@ const OpenView = Backbone.View.extend({
                 if (file.dir) {
                     this.listStorage(storage, {
                         dir: file.path,
-                        prevDir: config && config.dir || '',
+                        prevDir: (config && config.dir) || '',
                         showHiddenFiles: true
                     });
                 } else {
@@ -718,7 +768,7 @@ const OpenView = Backbone.View.extend({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
                 icon: storage.icon || 'files-o',
-                buttons: [{result: '', title: Locale.alertCancel}],
+                buttons: [{ result: '', title: Locale.alertCancel }],
                 esc: '',
                 click: '',
                 view: listView
@@ -726,7 +776,7 @@ const OpenView = Backbone.View.extend({
         });
     },
 
-    openStorageFile: function(storage, file) {
+    openStorageFile(storage, file) {
         if (this.busy) {
             return;
         }
@@ -739,27 +789,33 @@ const OpenView = Backbone.View.extend({
         this.displayOpenFile();
     },
 
-    showConfig: function(storage) {
+    showConfig(storage) {
         if (this.busy) {
             return;
         }
         if (this.views.openConfig) {
             this.views.openConfig.remove();
         }
-        const config = _.extend({
-            id: storage.name,
-            name: Locale[storage.name] || storage.name,
-            icon: storage.icon,
-            buttons: true
-        }, storage.getOpenConfig());
-        this.views.openConfig = new OpenConfigView({ el: this.$el.find('.open__config-wrap'), model: config }).render();
+        const config = _.extend(
+            {
+                id: storage.name,
+                name: Locale[storage.name] || storage.name,
+                icon: storage.icon,
+                buttons: true
+            },
+            storage.getOpenConfig()
+        );
+        this.views.openConfig = new OpenConfigView({
+            el: this.$el.find('.open__config-wrap'),
+            model: config
+        }).render();
         this.views.openConfig.on('cancel', this.closeConfig.bind(this));
         this.views.openConfig.on('apply', this.applyConfig.bind(this));
         this.$el.find('.open__pass-area').addClass('hide');
         this.$el.find('.open__icons--lower').addClass('hide');
     },
 
-    closeConfig: function() {
+    closeConfig() {
         if (this.busy) {
             this.storageWaitId = null;
             this.busy = false;
@@ -773,7 +829,7 @@ const OpenView = Backbone.View.extend({
         this.focusInput();
     },
 
-    applyConfig: function(config) {
+    applyConfig(config) {
         if (this.busy || !config) {
             return;
         }
@@ -786,8 +842,8 @@ const OpenView = Backbone.View.extend({
         const req = {
             waitId: this.storageWaitId,
             storage: config.storage,
-            path: path,
-            opts: opts
+            path,
+            opts
         };
         if (storage.applyConfig) {
             storage.applyConfig(opts, this.storageApplyConfigComplete.bind(this, req));
@@ -796,7 +852,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    storageApplyConfigComplete: function(req, err) {
+    storageApplyConfigComplete(req, err) {
         if (this.storageWaitId !== req.waitId) {
             return;
         }
@@ -810,7 +866,7 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    storageStatComplete: function(req, err, stat) {
+    storageStatComplete(req, err, stat) {
         if (this.storageWaitId !== req.waitId) {
             return;
         }
@@ -832,10 +888,12 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    moveOpenFileSelection: function(steps) {
+    moveOpenFileSelection(steps) {
         const lastOpenFiles = this.getLastOpenFiles();
-        if (this.currentSelectedIndex + steps >= 0 &&
-            this.currentSelectedIndex + steps <= lastOpenFiles.length - 1) {
+        if (
+            this.currentSelectedIndex + steps >= 0 &&
+            this.currentSelectedIndex + steps <= lastOpenFiles.length - 1
+        ) {
             this.currentSelectedIndex = this.currentSelectedIndex + steps;
         }
 
@@ -851,11 +909,11 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    moveOpenFileSelectionDown: function() {
+    moveOpenFileSelectionDown() {
         this.moveOpenFileSelection(1);
     },
 
-    moveOpenFileSelectionUp: function() {
+    moveOpenFileSelectionUp() {
         this.moveOpenFileSelection(-1);
     }
 });

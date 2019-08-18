@@ -31,19 +31,63 @@ const ListSearchView = Backbone.View.extend({
     advancedSearchEnabled: false,
     advancedSearch: null,
 
-    initialize: function () {
+    initialize() {
         this.sortOptions = [
-            { value: 'title', icon: 'sort-alpha-asc', loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-title', icon: 'sort-alpha-desc', loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA) },
-            { value: 'website', icon: 'sort-alpha-asc', loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-website', icon: 'sort-alpha-desc', loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA) },
-            { value: 'user', icon: 'sort-alpha-asc', loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ) },
-            { value: '-user', icon: 'sort-alpha-desc', loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA) },
-            { value: 'created', icon: 'sort-numeric-asc', loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchON) },
-            { value: '-created', icon: 'sort-numeric-desc', loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO) },
-            { value: 'updated', icon: 'sort-numeric-asc', loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON) },
-            { value: '-updated', icon: 'sort-numeric-desc', loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO) },
-            { value: '-attachments', icon: 'sort-amount-desc', loc: () => Locale.searchAttachments },
+            {
+                value: 'title',
+                icon: 'sort-alpha-asc',
+                loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ)
+            },
+            {
+                value: '-title',
+                icon: 'sort-alpha-desc',
+                loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA)
+            },
+            {
+                value: 'website',
+                icon: 'sort-alpha-asc',
+                loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ)
+            },
+            {
+                value: '-website',
+                icon: 'sort-alpha-desc',
+                loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA)
+            },
+            {
+                value: 'user',
+                icon: 'sort-alpha-asc',
+                loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ)
+            },
+            {
+                value: '-user',
+                icon: 'sort-alpha-desc',
+                loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA)
+            },
+            {
+                value: 'created',
+                icon: 'sort-numeric-asc',
+                loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchON)
+            },
+            {
+                value: '-created',
+                icon: 'sort-numeric-desc',
+                loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO)
+            },
+            {
+                value: 'updated',
+                icon: 'sort-numeric-asc',
+                loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON)
+            },
+            {
+                value: '-updated',
+                icon: 'sort-numeric-desc',
+                loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO)
+            },
+            {
+                value: '-attachments',
+                icon: 'sort-amount-desc',
+                loc: () => Locale.searchAttachments
+            },
             { value: '-rank', icon: 'sort-numeric-desc', loc: () => Locale.searchRank }
         ];
         this.sortIcons = {};
@@ -52,12 +96,16 @@ const ListSearchView = Backbone.View.extend({
         }, this);
         this.views = {};
         this.advancedSearch = {
-            user: true, other: true,
-            url: true, protect: false,
-            notes: true, pass: false,
-            cs: false, regex: false,
-            history: false, title: true,
-            rank: true
+            user: true,
+            other: true,
+            url: true,
+            protect: false,
+            notes: true,
+            pass: false,
+            cs: false,
+            regex: false,
+            history: false,
+            title: true
         };
         if (this.model.advancedSearch) {
             this.advancedSearch = _.extend({}, this.model.advancedSearch);
@@ -74,18 +122,25 @@ const ListSearchView = Backbone.View.extend({
         this.listenTo(Backbone, 'page-blur', this.pageBlur);
     },
 
-    remove: function() {
+    remove() {
         KeyHandler.offKey(Keys.DOM_VK_F, this.findKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_N, this.newKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_DOWN, this.downKeyPress, this);
         KeyHandler.offKey(Keys.DOM_VK_UP, this.upKeyPress, this);
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    setLocale: function() {
-        this.sortOptions.forEach(opt => { opt.text = opt.loc(); });
-        const entryDesc = FeatureDetector.isMobile ? '' : (' <span class="muted-color">(' + Locale.searchShiftClickOr + ' ' +
-        FeatureDetector.altShortcutSymbol(true) + 'N)</span>');
+    setLocale() {
+        this.sortOptions.forEach(opt => {
+            opt.text = opt.loc();
+        });
+        const entryDesc = FeatureDetector.isMobile
+            ? ''
+            : ' <span class="muted-color">(' +
+              Locale.searchShiftClickOr +
+              ' ' +
+              FeatureDetector.altShortcutSymbol(true) +
+              'N)</span>';
         this.createOptions = [
             { value: 'entry', icon: 'key', text: Format.capFirst(Locale.entry) + entryDesc },
             { value: 'group', icon: 'folder', text: Format.capFirst(Locale.group) }
@@ -93,19 +148,19 @@ const ListSearchView = Backbone.View.extend({
         this.render();
     },
 
-    pageBlur: function() {
+    pageBlur() {
         this.inputEl.blur();
     },
 
-    viewShown: function() {
+    viewShown() {
         this.listenTo(KeyHandler, 'keypress', this.documentKeyPress);
     },
 
-    viewHidden: function() {
+    viewHidden() {
         this.stopListening(KeyHandler, 'keypress', this.documentKeyPress);
     },
 
-    render: function () {
+    render() {
         let searchVal;
         if (this.inputEl) {
             searchVal = this.inputEl.val();
@@ -121,7 +176,7 @@ const ListSearchView = Backbone.View.extend({
         return this;
     },
 
-    inputKeyDown: function(e) {
+    inputKeyDown(e) {
         switch (e.which) {
             case Keys.DOM_VK_UP:
             case Keys.DOM_VK_DOWN:
@@ -142,19 +197,19 @@ const ListSearchView = Backbone.View.extend({
         e.preventDefault();
     },
 
-    inputKeyPress: function(e) {
+    inputKeyPress(e) {
         e.stopPropagation();
     },
 
-    inputChange: function() {
+    inputChange() {
         Backbone.trigger('add-filter', { text: this.inputEl.val() });
     },
 
-    inputFocus: function(e) {
+    inputFocus(e) {
         $(e.target).select();
     },
 
-    documentKeyPress: function(e) {
+    documentKeyPress(e) {
         if (this._hidden) {
             return;
         }
@@ -169,7 +224,7 @@ const ListSearchView = Backbone.View.extend({
         e.preventDefault();
     },
 
-    findKeyPress: function(e) {
+    findKeyPress(e) {
         if (!this._hidden) {
             e.preventDefault();
             this.hideSearchOptions();
@@ -177,7 +232,7 @@ const ListSearchView = Backbone.View.extend({
         }
     },
 
-    newKeyPress: function(e) {
+    newKeyPress(e) {
         if (!this._hidden) {
             e.preventDefault();
             this.hideSearchOptions();
@@ -185,19 +240,19 @@ const ListSearchView = Backbone.View.extend({
         }
     },
 
-    downKeyPress: function(e) {
+    downKeyPress(e) {
         e.preventDefault();
         this.hideSearchOptions();
         this.trigger('select-next');
     },
 
-    upKeyPress: function(e) {
+    upKeyPress(e) {
         e.preventDefault();
         this.hideSearchOptions();
         this.trigger('select-prev');
     },
 
-    filterChanged: function(filter) {
+    filterChanged(filter) {
         this.hideSearchOptions();
         if (filter.filter.text !== this.inputEl.val()) {
             this.inputEl.val(filter.text || '');
@@ -214,7 +269,7 @@ const ListSearchView = Backbone.View.extend({
         }
     },
 
-    createOptionsClick: function(e) {
+    createOptionsClick(e) {
         e.stopImmediatePropagation();
         if (e.shiftKey) {
             this.hideSearchOptions();
@@ -224,12 +279,12 @@ const ListSearchView = Backbone.View.extend({
         this.toggleCreateOptions();
     },
 
-    sortOptionsClick: function(e) {
+    sortOptionsClick(e) {
         this.toggleSortOptions();
         e.stopImmediatePropagation();
     },
 
-    advancedSearchClick: function() {
+    advancedSearchClick() {
         this.advancedSearchEnabled = !this.advancedSearchEnabled;
         this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
         let advanced = false;
@@ -241,25 +296,27 @@ const ListSearchView = Backbone.View.extend({
         Backbone.trigger('add-filter', { advanced });
     },
 
-    toggleMenu: function() {
+    toggleMenu() {
         Backbone.trigger('toggle-menu');
     },
 
-    toggleAdvCheck: function(e) {
+    toggleAdvCheck(e) {
         const setting = $(e.target).data('id');
         this.advancedSearch[setting] = e.target.checked;
         Backbone.trigger('add-filter', { advanced: this.advancedSearch });
     },
 
-    hideSearchOptions: function() {
+    hideSearchOptions() {
         if (this.views.searchDropdown) {
             this.views.searchDropdown.remove();
             this.views.searchDropdown = null;
-            this.$el.find('.list__search-btn-sort,.list__search-btn-new').removeClass('sel--active');
+            this.$el
+                .find('.list__search-btn-sort,.list__search-btn-new')
+                .removeClass('sel--active');
         }
     },
 
-    toggleSortOptions: function() {
+    toggleSortOptions() {
         if (this.views.searchDropdown && this.views.searchDropdown.isSort) {
             this.hideSearchOptions();
             return;
@@ -283,7 +340,7 @@ const ListSearchView = Backbone.View.extend({
         this.views.searchDropdown = view;
     },
 
-    toggleCreateOptions: function() {
+    toggleCreateOptions() {
         if (this.views.searchDropdown && this.views.searchDropdown.isCreate) {
             this.hideSearchOptions();
             return;
@@ -305,7 +362,7 @@ const ListSearchView = Backbone.View.extend({
         this.views.searchDropdown = view;
     },
 
-    getCreateEntryTemplateOptions: function() {
+    getCreateEntryTemplateOptions() {
         const entryTemplates = this.model.getEntryTemplates();
         const hasMultipleFiles = this.model.files.length > 1;
         this.entryTemplates = {};
@@ -315,21 +372,27 @@ const ListSearchView = Backbone.View.extend({
             options.push({
                 value: id,
                 icon: tmpl.entry.icon,
-                text: hasMultipleFiles ? tmpl.file.get('name') + ' / ' + tmpl.entry.title : tmpl.entry.title
+                text: hasMultipleFiles
+                    ? tmpl.file.get('name') + ' / ' + tmpl.entry.title
+                    : tmpl.entry.title
             });
             this.entryTemplates[id] = tmpl;
         });
         options.sort(Comparators.stringComparator('text', true));
-        options.push({ value: 'tmpl', icon: 'sticky-note-o', text: Format.capFirst(Locale.template) });
+        options.push({
+            value: 'tmpl',
+            icon: 'sticky-note-o',
+            text: Format.capFirst(Locale.template)
+        });
         return options;
     },
 
-    sortDropdownSelect: function(e) {
+    sortDropdownSelect(e) {
         this.hideSearchOptions();
         Backbone.trigger('set-sort', e.item);
     },
 
-    createDropdownSelect: function(e) {
+    createDropdownSelect(e) {
         this.hideSearchOptions();
         switch (e.item) {
             case 'entry':

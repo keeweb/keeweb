@@ -9,7 +9,7 @@ const SettingsPrvView = Backbone.View.extend({
         'input .settings__general-prv-field-txt': 'changeField'
     },
 
-    render: function () {
+    render() {
         const storage = Storage[this.model.name];
         if (storage && storage.getSettingsConfig) {
             this.renderTemplate(storage.getSettingsConfig());
@@ -17,7 +17,7 @@ const SettingsPrvView = Backbone.View.extend({
         return this;
     },
 
-    changeField: function(e) {
+    changeField(e) {
         const id = e.target.dataset.id;
         const value = e.target.value;
         if (!e.target.checkValidity()) {

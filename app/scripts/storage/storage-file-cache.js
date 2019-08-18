@@ -8,18 +8,18 @@ const StorageFileCache = StorageBase.extend({
 
     path: null,
 
-    getPath: function(id) {
+    getPath(id) {
         return Launcher.joinPath(this.path, id);
     },
 
-    initFs: function(callback) {
+    initFs(callback) {
         if (this.path) {
             return callback && callback();
         }
 
         const path = Launcher.getUserDataPath('OfflineFiles');
 
-        const setPath = (err) => {
+        const setPath = err => {
             this.path = err ? null : path;
             if (err) {
                 this.logger.error('Error opening local offline storage', err);
@@ -36,7 +36,7 @@ const StorageFileCache = StorageBase.extend({
         });
     },
 
-    save: function(id, opts, data, callback) {
+    save(id, opts, data, callback) {
         this.logger.debug('Save', id);
         this.initFs(err => {
             if (err) {
@@ -49,12 +49,14 @@ const StorageFileCache = StorageBase.extend({
                     return callback && callback(err);
                 }
                 this.logger.debug('Saved', id, this.logger.ts(ts));
-                if (callback) { callback(); }
+                if (callback) {
+                    callback();
+                }
             });
         });
     },
 
-    load: function(id, opts, callback) {
+    load(id, opts, callback) {
         this.logger.debug('Load', id);
         this.initFs(err => {
             if (err) {
@@ -74,7 +76,7 @@ const StorageFileCache = StorageBase.extend({
         });
     },
 
-    remove: function(id, opts, callback) {
+    remove(id, opts, callback) {
         this.logger.debug('Remove', id);
         this.initFs(err => {
             if (err) {

@@ -2,7 +2,7 @@ const FieldViewText = require('./field-view-text');
 const Keys = require('../../const/keys');
 
 const FieldViewAutocomplete = FieldViewText.extend({
-    endEdit: function(newVal, extra) {
+    endEdit(newVal, extra) {
         if (this.autocomplete) {
             this.autocomplete.remove();
             this.autocomplete = null;
@@ -11,7 +11,7 @@ const FieldViewAutocomplete = FieldViewText.extend({
         FieldViewText.prototype.endEdit.call(this, newVal, extra);
     },
 
-    startEdit: function() {
+    startEdit() {
         FieldViewText.prototype.startEdit.call(this);
         const fieldRect = this.input[0].getBoundingClientRect();
         this.autocomplete = $('<div class="details__field-autocomplete"></div>').appendTo('body');
@@ -29,13 +29,13 @@ const FieldViewAutocomplete = FieldViewText.extend({
         }
     },
 
-    fieldValueInput: function(e) {
+    fieldValueInput(e) {
         e.stopPropagation();
         this.updateAutocomplete();
         FieldViewText.prototype.fieldValueInput.call(this, e);
     },
 
-    fieldValueKeydown: function(e) {
+    fieldValueKeydown(e) {
         switch (e.which) {
             case Keys.DOM_VK_UP:
                 this.moveAutocomplete(false);
@@ -45,47 +45,65 @@ const FieldViewAutocomplete = FieldViewText.extend({
                 this.moveAutocomplete(true);
                 e.preventDefault();
                 break;
-            case Keys.DOM_VK_RETURN:
-                const selectedItem = this.autocomplete.find('.details__field-autocomplete-item--selected').text();
+            case Keys.DOM_VK_RETURN: {
+                const selectedItem = this.autocomplete
+                    .find('.details__field-autocomplete-item--selected')
+                    .text();
                 if (selectedItem) {
                     this.input.val(selectedItem);
                     this.endEdit(selectedItem);
                 }
                 break;
+            }
             default:
                 delete this.selectedCopmletionIx;
         }
         FieldViewText.prototype.fieldValueKeydown.call(this, e);
     },
 
-    moveAutocomplete: function(next) {
+    moveAutocomplete(next) {
         const completions = this.model.getCompletions(this.input.val());
         if (typeof this.selectedCopmletionIx === 'number') {
-            this.selectedCopmletionIx = (completions.length + this.selectedCopmletionIx + (next ? 1 : -1)) % completions.length;
+            this.selectedCopmletionIx =
+                (completions.length + this.selectedCopmletionIx + (next ? 1 : -1)) %
+                completions.length;
         } else {
             this.selectedCopmletionIx = next ? 0 : completions.length - 1;
         }
         this.updateAutocomplete();
     },
 
-    updateAutocomplete: function() {
+    updateAutocomplete() {
         const completions = this.model.getCompletions(this.input.val());
-        const completionsHtml = completions.map((item, ix) => {
-            const sel = ix === this.selectedCopmletionIx ? 'details__field-autocomplete-item--selected' : '';
-            return '<div class="details__field-autocomplete-item ' + sel + '">' + _.escape(item) + '</div>';
-        }).join('');
+        const completionsHtml = completions
+            .map((item, ix) => {
+                const sel =
+                    ix === this.selectedCopmletionIx
+                        ? 'details__field-autocomplete-item--selected'
+                        : '';
+                return (
+                    '<div class="details__field-autocomplete-item ' +
+                    sel +
+                    '">' +
+                    _.escape(item) +
+                    '</div>'
+                );
+            })
+            .join('');
         this.autocomplete.html(completionsHtml);
         this.autocomplete.toggle(!!completionsHtml);
     },
 
-    autocompleteClick: function(e) {
+    autocompleteClick(e) {
         e.stopPropagation();
         if (e.target.classList.contains('details__field-autocomplete-item')) {
             const selectedItem = $(e.target).text();
             this.input.val(selectedItem);
             this.endEdit(selectedItem);
         } else {
-            this.afterPaint(function () { this.input.focus(); });
+            this.afterPaint(function() {
+                this.input.focus();
+            });
         }
     }
 });

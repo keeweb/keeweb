@@ -16,39 +16,127 @@ const AutoTypeRunner = function(ops) {
 AutoTypeRunner.PendingResolve = { pending: true };
 
 AutoTypeRunner.Keys = {
-    tab: 'tab', enter: 'enter', space: 'space',
-    up: 'up', down: 'down', left: 'left', right: 'right', home: 'home', end: 'end', pgup: 'pgup', pgdn: 'pgdn',
-    insert: 'ins', ins: 'ins', delete: 'del', del: 'del', backspace: 'bs', bs: 'bs', bksp: 'bs', esc: 'esc',
-    win: 'win', lwin: 'win', rwin: 'rwin', f1: 'f1', f2: 'f2', f3: 'f3', f4: 'f4', f5: 'f5', f6: 'f6',
-    f7: 'f7', f8: 'f8', f9: 'f9', f10: 'f10', f11: 'f11', f12: 'f12', f13: 'f13', f14: 'f14', f15: 'f15', f16: 'f16',
-    add: 'add', subtract: 'subtract', multiply: 'multiply', divide: 'divide',
-    numpad0: 'n0', numpad1: 'n1', numpad2: 'n2', numpad3: 'n3', numpad4: 'n4',
-    numpad5: 'n5', numpad6: 'n6', numpad7: 'n7', numpad8: 'n8', numpad9: 'n9'
+    tab: 'tab',
+    enter: 'enter',
+    space: 'space',
+    up: 'up',
+    down: 'down',
+    left: 'left',
+    right: 'right',
+    home: 'home',
+    end: 'end',
+    pgup: 'pgup',
+    pgdn: 'pgdn',
+    insert: 'ins',
+    ins: 'ins',
+    delete: 'del',
+    del: 'del',
+    backspace: 'bs',
+    bs: 'bs',
+    bksp: 'bs',
+    esc: 'esc',
+    win: 'win',
+    lwin: 'win',
+    rwin: 'rwin',
+    f1: 'f1',
+    f2: 'f2',
+    f3: 'f3',
+    f4: 'f4',
+    f5: 'f5',
+    f6: 'f6',
+    f7: 'f7',
+    f8: 'f8',
+    f9: 'f9',
+    f10: 'f10',
+    f11: 'f11',
+    f12: 'f12',
+    f13: 'f13',
+    f14: 'f14',
+    f15: 'f15',
+    f16: 'f16',
+    add: 'add',
+    subtract: 'subtract',
+    multiply: 'multiply',
+    divide: 'divide',
+    numpad0: 'n0',
+    numpad1: 'n1',
+    numpad2: 'n2',
+    numpad3: 'n3',
+    numpad4: 'n4',
+    numpad5: 'n5',
+    numpad6: 'n6',
+    numpad7: 'n7',
+    numpad8: 'n8',
+    numpad9: 'n9'
 };
 
 AutoTypeRunner.Substitutions = {
-    title: function(runner, op) { return runner.getEntryFieldKeys('Title', op); },
-    username: function(runner, op) { return runner.getEntryFieldKeys('UserName', op); },
-    url: function(runner, op) { return runner.getEntryFieldKeys('URL', op); },
-    password: function(runner, op) { return runner.getEntryFieldKeys('Password', op); },
-    notes: function(runner, op) { return runner.getEntryFieldKeys('Notes', op); },
-    group: function(runner) { return runner.getEntryGroupName(); },
-    totp: function(runner, op) { return runner.getOtp(op); },
-    s: function(runner, op) { return runner.getEntryFieldKeys(op.arg, op); },
-    'dt_simple': function(runner) { return runner.dt('simple'); },
-    'dt_year': function(runner) { return runner.dt('Y'); },
-    'dt_month': function(runner) { return runner.dt('M'); },
-    'dt_day': function(runner) { return runner.dt('D'); },
-    'dt_hour': function(runner) { return runner.dt('h'); },
-    'dt_minute': function(runner) { return runner.dt('m'); },
-    'dt_second': function(runner) { return runner.dt('s'); },
-    'dt_utc_simple': function(runner) { return runner.udt('simple'); },
-    'dt_utc_year': function(runner) { return runner.udt('Y'); },
-    'dt_utc_month': function(runner) { return runner.udt('M'); },
-    'dt_utc_day': function(runner) { return runner.udt('D'); },
-    'dt_utc_hour': function(runner) { return runner.udt('h'); },
-    'dt_utc_minute': function(runner) { return runner.udt('m'); },
-    'dt_utc_second': function(runner) { return runner.udt('s'); }
+    title(runner, op) {
+        return runner.getEntryFieldKeys('Title', op);
+    },
+    username(runner, op) {
+        return runner.getEntryFieldKeys('UserName', op);
+    },
+    url(runner, op) {
+        return runner.getEntryFieldKeys('URL', op);
+    },
+    password(runner, op) {
+        return runner.getEntryFieldKeys('Password', op);
+    },
+    notes(runner, op) {
+        return runner.getEntryFieldKeys('Notes', op);
+    },
+    group(runner) {
+        return runner.getEntryGroupName();
+    },
+    totp(runner, op) {
+        return runner.getOtp(op);
+    },
+    s(runner, op) {
+        return runner.getEntryFieldKeys(op.arg, op);
+    },
+    'dt_simple'(runner) {
+        return runner.dt('simple');
+    },
+    'dt_year'(runner) {
+        return runner.dt('Y');
+    },
+    'dt_month'(runner) {
+        return runner.dt('M');
+    },
+    'dt_day'(runner) {
+        return runner.dt('D');
+    },
+    'dt_hour'(runner) {
+        return runner.dt('h');
+    },
+    'dt_minute'(runner) {
+        return runner.dt('m');
+    },
+    'dt_second'(runner) {
+        return runner.dt('s');
+    },
+    'dt_utc_simple'(runner) {
+        return runner.udt('simple');
+    },
+    'dt_utc_year'(runner) {
+        return runner.udt('Y');
+    },
+    'dt_utc_month'(runner) {
+        return runner.udt('M');
+    },
+    'dt_utc_day'(runner) {
+        return runner.udt('D');
+    },
+    'dt_utc_hour'(runner) {
+        return runner.udt('h');
+    },
+    'dt_utc_minute'(runner) {
+        return runner.udt('m');
+    },
+    'dt_utc_second'(runner) {
+        return runner.udt('s');
+    }
 };
 
 AutoTypeRunner.prototype.resolve = function(entry, callback) {
@@ -103,7 +191,7 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
             op.value = [];
             const count = +op.arg;
             for (let i = 0; i < count; i++) {
-                op.value.push({type: 'key', value: key});
+                op.value.push({ type: 'key', value: key });
             }
         } else {
             // {TAB}
@@ -179,9 +267,9 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
         const ops = [];
         value.forEachChar(ch => {
             if (ch === 10 || ch === 13) {
-                ops.push({type: 'key', value: 'enter'});
+                ops.push({ type: 'key', value: 'enter' });
             } else {
-                ops.push({type: 'text', value: String.fromCharCode(ch)});
+                ops.push({ type: 'text', value: String.fromCharCode(ch) });
             }
         });
         return ops;
@@ -194,10 +282,10 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
         const partsOps = [];
         parts.forEach(part => {
             if (partsOps.length) {
-                partsOps.push({type: 'key', value: 'enter'});
+                partsOps.push({ type: 'key', value: 'enter' });
             }
             if (part) {
-                partsOps.push({type: 'text', value: part});
+                partsOps.push({ type: 'text', value: part });
             }
         });
         return partsOps;
@@ -211,7 +299,14 @@ AutoTypeRunner.prototype.getEntryGroupName = function() {
 AutoTypeRunner.prototype.dt = function(part) {
     switch (part) {
         case 'simple':
-            return this.dt('Y') + this.dt('M') + this.dt('D') + this.dt('h') + this.dt('m') + this.dt('s');
+            return (
+                this.dt('Y') +
+                this.dt('M') +
+                this.dt('D') +
+                this.dt('h') +
+                this.dt('m') +
+                this.dt('s')
+            );
         case 'Y':
             return this.now.getFullYear().toString();
         case 'M':
@@ -232,7 +327,14 @@ AutoTypeRunner.prototype.dt = function(part) {
 AutoTypeRunner.prototype.udt = function(part) {
     switch (part) {
         case 'simple':
-            return this.udt('Y') + this.udt('M') + this.udt('D') + this.udt('h') + this.udt('m') + this.udt('s');
+            return (
+                this.udt('Y') +
+                this.udt('M') +
+                this.udt('D') +
+                this.udt('h') +
+                this.udt('m') +
+                this.udt('s')
+            );
         case 'Y':
             return this.now.getUTCFullYear().toString();
         case 'M':
@@ -310,7 +412,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
         }
         letters = op.value.split('');
     } else {
-        op.value.forEach(grOp => letters.push.apply(letters, grOp.value.split('')));
+        op.value.forEach(grOp => letters.push(...grOp.value.split('')));
     }
     if (letters.length <= 1) {
         return;
@@ -323,7 +425,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
 AutoTypeRunner.prototype.run = function(callback) {
     this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this));
     this.emitterState = {
-        callback: callback,
+        callback,
         stack: [],
         ops: this.ops,
         opIx: 0,
@@ -393,7 +495,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             emitterLogger.debug('key', op.value);
             this.emitter.key(op.value);
             break;
-        case 'cmd':
+        case 'cmd': {
             const method = this.emitter[op.value];
             if (!method) {
                 throw 'Bad cmd: ' + op.value;
@@ -401,6 +503,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             emitterLogger.debug(op.value, op.arg);
             method.call(this.emitter, op.arg);
             break;
+        }
         default:
             throw 'Bad op: ' + op.type;
     }

@@ -3,7 +3,7 @@ const UrlUtil = {
     lastPartRegex: /\/?[^\/\\]+$/,
     kdbxEndRegex: /\.kdbx$/i,
 
-    getDataFileName: function(url) {
+    getDataFileName(url) {
         const ix = url.lastIndexOf('/');
         if (ix >= 0) {
             url = url.substr(ix + 1);
@@ -12,15 +12,15 @@ const UrlUtil = {
         return url;
     },
 
-    isKdbx: function(url) {
+    isKdbx(url) {
         return url && this.kdbxEndRegex.test(url);
     },
 
-    fixSlashes: function(url) {
+    fixSlashes(url) {
         return url.replace(this.multiSlashRegex, '/');
     },
 
-    fileToDir: function(url) {
+    fileToDir(url) {
         return url.replace(this.lastPartRegex, '') || '/';
     }
 };

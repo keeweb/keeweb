@@ -3,15 +3,21 @@ const FieldViewText = require('./field-view-text');
 const FieldViewUrl = FieldViewText.extend({
     displayUrlRegex: /^http:\/\//i,
 
-    renderValue: function(value) {
-        return value ? '<a href="' + _.escape(this.fixUrl(value)) + '" rel="noreferrer noopener" target="_blank">' + _.escape(this.displayUrl(value)) + '</a>' : '';
+    renderValue(value) {
+        return value
+            ? '<a href="' +
+                  _.escape(this.fixUrl(value)) +
+                  '" rel="noreferrer noopener" target="_blank">' +
+                  _.escape(this.displayUrl(value)) +
+                  '</a>'
+            : '';
     },
 
-    fixUrl: function(url) {
+    fixUrl(url) {
         return url.indexOf(':') < 0 ? 'http://' + url : url;
     },
 
-    displayUrl: function(url) {
+    displayUrl(url) {
         return url.replace(this.displayUrlRegex, '');
     }
 });

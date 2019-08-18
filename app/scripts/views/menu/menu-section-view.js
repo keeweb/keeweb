@@ -12,16 +12,18 @@ const MenuSectionView = Backbone.View.extend({
     itemViews: null,
 
     minHeight: 55,
-    maxHeight: function() { return this.$el.parent().height() - 116; },
+    maxHeight() {
+        return this.$el.parent().height() - 116;
+    },
     autoHeight: 'auto',
 
-    initialize: function () {
+    initialize() {
         this.itemViews = [];
         this.listenTo(this.model, 'change-items', this.itemsChanged);
         this.listenTo(this, 'view-resize', this.viewResized);
     },
 
-    render: function() {
+    render() {
         if (!this.itemsEl) {
             this.renderTemplate(this.model.attributes);
             this.itemsEl = this.model.get('scrollable') ? this.$el.find('.scroller') : this.$el;
@@ -51,24 +53,24 @@ const MenuSectionView = Backbone.View.extend({
         this.pageResized();
     },
 
-    remove: function() {
+    remove() {
         if (this.scroll) {
             this.scroll.dispose();
         }
         this.removeInnerViews();
-        Backbone.View.prototype.remove.apply(this, arguments);
+        Backbone.View.prototype.remove.apply(this);
     },
 
-    removeInnerViews: function() {
+    removeInnerViews() {
         this.itemViews.forEach(itemView => itemView.remove());
         this.itemViews = [];
     },
 
-    itemsChanged: function() {
+    itemsChanged() {
         this.render();
     },
 
-    viewResized: function(size) {
+    viewResized(size) {
         this.$el.css('flex', '0 0 ' + (size ? size + 'px' : 'auto'));
         this.saveViewHeight(size);
     },
