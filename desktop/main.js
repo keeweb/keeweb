@@ -4,7 +4,7 @@
 // It checks whether the app is available in userData folder and if its version is higher than local, launches it
 // This script is the only part which will be updated only with the app itself, auto-update will not change it
 
-// (C) Antelle 2017, MIT license https://github.com/keeweb/keeweb
+// (C) Antelle 2019, MIT license https://github.com/keeweb/keeweb
 
 const app = require('electron').app;
 const path = require('path');
