@@ -65,7 +65,8 @@ function config(grunt, mode = 'production') {
                 argon2: 'argon2-browser/dist/argon2.min.js',
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
-                templates: path.join(__dirname, 'app/templates')
+                templates: path.join(__dirname, 'app/templates'),
+                'public-key.pem': path.join(__dirname, 'app/resources/public-key.pem')
             }
         },
         module: {
@@ -116,7 +117,8 @@ function config(grunt, mode = 'production') {
                     test: /fonts\/.*\.(woff2|ttf|eot|svg)/,
                     use: ['url-loader', 'ignore-loader']
                 },
-                { test: /\.woff$/, loader: 'url-loader' }
+                { test: /\.woff$/, loader: 'url-loader' },
+                { test: /\.pem$/, loader: 'raw-loader' }
             ]
         },
         optimization: {
