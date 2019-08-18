@@ -146,7 +146,9 @@ module.exports = function(grunt) {
         eslint: {
             app: ['app/scripts/**/*.js'],
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
-            grunt: ['Gruntfile.js', 'build/**/*.js']
+            build: ['Gruntfile.js', 'grunt.*.js', 'build/**/*.js', 'webpack.config.js'],
+            plugins: ['plugins/**/*.js'],
+            util: ['util/**/*.js']
         },
         inline: {
             app: {
