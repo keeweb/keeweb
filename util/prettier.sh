@@ -1,4 +1,4 @@
-prettier --write \
+./node_modules/.bin/prettier --write \
   'app/**/*.js' \
   'app/**/*.scss' \
   'app/**/*.json' \
