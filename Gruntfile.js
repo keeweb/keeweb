@@ -282,7 +282,7 @@ module.exports = function(grunt) {
             linux: {
                 options: {
                     platform: 'linux',
-                    arch: ['x64', 'ia32'],
+                    arch: ['x64'],
                     icon: 'graphics/icon.ico'
                 }
             },
@@ -350,13 +350,6 @@ module.exports = function(grunt) {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
                 files: [
                     { cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true },
-                    { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }
-                ]
-            },
-            'linux-ia32': {
-                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.ia32.zip` },
-                files: [
-                    { cwd: 'tmp/desktop/KeeWeb-linux-ia32', src: '**', expand: true },
                     { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }
                 ]
             }
@@ -453,35 +446,6 @@ module.exports = function(grunt) {
                     { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
                     {
                         cwd: 'tmp/desktop/KeeWeb-linux-x64/',
-                        src: '**',
-                        dest: '/opt/keeweb-desktop',
-                        expand: true,
-                        nonull: true
-                    },
-                    {
-                        src: 'graphics/128x128.png',
-                        dest: '/usr/share/icons/hicolor/128x128/apps/keeweb.png',
-                        nonull: true
-                    }
-                ]
-            },
-            'linux-ia32': {
-                options: {
-                    info: {
-                        arch: 'i386',
-                        pkgName: `KeeWeb-${pkg.version}.linux.ia32.deb`,
-                        targetDir: 'dist/desktop',
-                        appName: 'KeeWeb',
-                        depends: 'libappindicator1, libgconf-2-4',
-                        scripts: {
-                            postinst: 'package/deb/scripts/postinst'
-                        }
-                    }
-                },
-                files: [
-                    { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
-                    {
-                        cwd: 'tmp/desktop/KeeWeb-linux-ia32/',
                         src: '**',
                         dest: '/opt/keeweb-desktop',
                         expand: true,
