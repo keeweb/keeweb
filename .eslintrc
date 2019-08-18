@@ -37,6 +37,7 @@
         "no-unneeded-ternary": "error",
         "curly": "error",
         "prettier/prettier": "error",
+        "no-empty": "off",
         "no-restricted-syntax": [
             "error",
             {
@@ -44,7 +45,6 @@
                 "message": "Prefer named exports"
             }
         ],
-        "no-empty": "off",
         "import/no-webpack-loader-syntax": "error",
         "import/no-relative-parent-imports": "error",
         "import/first": "error",
