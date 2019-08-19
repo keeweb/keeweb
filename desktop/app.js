@@ -346,6 +346,9 @@ function setMenu() {
         const menu = electron.Menu.buildFromTemplate(template);
         electron.Menu.setApplicationMenu(menu);
     }
+    if (['win32', 'linux'].includes(process.platform)) {
+        mainWindow.setMenuBarVisibility(false);
+    }
 }
 
 function onContextMenu(e, props) {
