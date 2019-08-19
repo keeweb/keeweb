@@ -174,7 +174,7 @@
     "searchOptions": "Options",
     "searchCase": "Match case",
     "searchRegex": "RegEx",
-    "searchRank": "Rank",
+    "searchRank": "Auto",
 
     "openOpen": "Open",
     "openNew": "New",

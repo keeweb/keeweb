@@ -671,53 +671,39 @@ const EntryModel = Backbone.Model.extend({
         this._fillByEntry();
     },
 
-    getRank(searchString) {
+    getRank(filter) {
+        const searchString = filter.textLower;
+
         if (!searchString) {
             // no search string given, so rank all items the same
             return 0;
         }
 
-        let rank = 0;
+        const checkProtectedFields = filter.advanced && filter.advanced.protect;
 
-        const ranking = [
-            {
-                field: 'Title',
-                multiplicator: 10
-            },
-            {
-                field: 'URL',
-                multiplicator: 8
-            },
-            {
-                field: 'UserName',
-                multiplicator: 5
-            },
-            {
-                field: 'Notes',
-                multiplicator: 2
+        const fieldWeights = {
+            'Title': 10,
+            'URL': 8,
+            'UserName': 5,
+            'Notes': 2
+        };
+
+        const defaultFieldWeight = 2;
+
+        const allFields = Object.keys(fieldWeights).concat(Object.keys(this.fields));
+
+        return allFields.reduce((rank, fieldName) => {
+            const val = this.entry.fields[fieldName];
+            if (!val) {
+                return rank;
             }
-        ];
-
-        const fieldNames = Object.keys(this.fields);
-        _.forEach(fieldNames, field => {
-            ranking.push({
-                field,
-                multiplicator: 2
-            });
-        });
-
-        _.forEach(ranking, rankingEntry => {
-            if (this._getFieldString(rankingEntry.field).toLowerCase() !== '') {
-                const calculatedRank =
-                    Ranking.getStringRank(
-                        searchString,
-                        this._getFieldString(rankingEntry.field).toLowerCase()
-                    ) * rankingEntry.multiplicator;
-                rank += calculatedRank;
+            if (val.isProtected && (!checkProtectedFields || !val.length)) {
+                return rank;
             }
-        });
-
-        return rank;
+            const stringRank = Ranking.getStringRank(searchString, val);
+            const fieldWeight = fieldWeights[fieldName] || defaultFieldWeight;
+            return rank + stringRank * fieldWeight;
+        }, 0);
     }
 });
 

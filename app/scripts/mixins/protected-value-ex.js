@@ -63,6 +63,12 @@ kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
     }
 };
 
+Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'length', {
+    get() {
+        return this.textLength;
+    }
+});
+
 Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
     get() {
         let textLength = 0;
@@ -74,12 +80,18 @@ Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
 });
 
 kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
-    let matches = false;
+    return this.indexOfLower(findLower) !== -1;
+};
+
+kdbxweb.ProtectedValue.prototype.indexOfLower = function(findLower) {
+    let index = -1;
     const foundSeqs = [];
     const len = findLower.length;
+    let chIndex = -1;
     this.forEachChar(ch => {
+        chIndex++;
         ch = String.fromCharCode(ch).toLowerCase();
-        if (matches) {
+        if (index !== -1) {
             return;
         }
         for (let i = 0; i < foundSeqs.length; i++) {
@@ -90,16 +102,44 @@ kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
                 continue;
             }
             if (seqIx === len - 1) {
-                matches = true;
+                index = chIndex - len + 1;
                 return;
             }
         }
         if (findLower[0] === ch) {
-            foundSeqs.push(0);
+            if (len === 1) {
+                index = chIndex - len + 1;
+            } else {
+                foundSeqs.push(0);
+            }
         }
     });
-    return matches;
+    return index;
 };
+
+kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function(targetLower) {
+    let firstCharIndex = -1;
+    let found = false;
+    do {
+        let chIndex = -1;
+        this.forEachChar(ch => {
+            chIndex++;
+            ch = String.fromCharCode(ch).toLowerCase();
+            if (chIndex === 0) {
+                firstCharIndex = targetLower.indexOf(ch, firstCharIndex + 1);
+                found = firstCharIndex !== -1;
+                return;
+            }
+            if (!found) {
+                return;
+            }
+            found = targetLower[firstCharIndex + chIndex] === ch;
+        });
+    } while (!found && firstCharIndex >= 0);
+    return firstCharIndex;
+};
+
+window.PV = kdbxweb.ProtectedValue;
 
 kdbxweb.ProtectedValue.prototype.equals = function(other) {
     if (!other) {

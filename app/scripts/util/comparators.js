@@ -20,7 +20,7 @@ const Comparators = {
 
     rankComparator() {
         return function(x, y) {
-            return y.getRank(this.filter.textLower) - x.getRank(this.filter.textLower);
+            return y.getRank(this.filter) - x.getRank(this.filter);
         };
     },
 
