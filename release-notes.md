@@ -4,6 +4,7 @@ Release notes
 `-` fix #1231: tooltip arrow positioning  
 `+` improved ranking search  
 `-` fix #1232: removed an unwanted menubar on windows and linux  
+`-` fix #1234: auto-type not working on linux  
 
 ##### v1.9.0 (2019-08-18)
 `-` fix #1221: added '30 min' lock option  

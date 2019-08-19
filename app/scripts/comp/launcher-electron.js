@@ -221,7 +221,7 @@ const Launcher = {
     spawn(config) {
         const ts = logger.ts();
         let complete = config.complete;
-        const ps = this.req('child_process').spawn(config.cmd, config.args);
+        const ps = this.remReq('child_process').spawn(config.cmd, config.args);
         [ps.stdin, ps.stdout, ps.stderr].forEach(s => s.setEncoding('utf-8'));
         let stderr = '';
         let stdout = '';
