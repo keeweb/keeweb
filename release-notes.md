@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.9.1 (TBD)
+##### v1.9.1 (2019-08-19)
 `-` fix #1231: tooltip arrow positioning  
 `+` improved ranking search  
 `-` fix #1232: removed an unwanted menubar on windows and linux  
