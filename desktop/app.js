@@ -345,6 +345,8 @@ function setMenu() {
         ];
         const menu = electron.Menu.buildFromTemplate(template);
         electron.Menu.setApplicationMenu(menu);
+    } else {
+        mainWindow.setMenuBarVisibility(false);
     }
 }
 
