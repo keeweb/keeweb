@@ -2,7 +2,7 @@
 
 /**
  * KeeWeb plugin creator
- * (C) Antelle 2017, MIT license https://github.com/keeweb/keeweb
+ * (C) Antelle 2019, MIT license https://github.com/keeweb/keeweb
  */
 
 /* eslint-disable no-console */
