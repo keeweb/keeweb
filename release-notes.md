@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.9.1 (2019-08-20)
+`-` fix #1235: custom themes loading  
+
 ##### v1.9.1 (2019-08-19)
 `-` fix #1231: tooltip arrow positioning  
 `+` improved ranking search  
