@@ -45,7 +45,7 @@
                 "message": "Prefer named exports"
             }
         ],
-        "import/no-webpack-loader-syntax": "error",
+        "import/no-webpack-loader-syntax": "off",
         "import/no-relative-parent-imports": "error",
         "import/first": "error",
         "import/no-namespace": "error",
