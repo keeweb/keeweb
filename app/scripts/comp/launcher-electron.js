@@ -221,7 +221,7 @@ const Launcher = {
     spawn(config) {
         const ts = logger.ts();
         let complete = config.complete;
-        const ps = this.remReq('child_process').spawn(config.cmd, config.args);
+        const ps = this.req('child_process').spawn(config.cmd, config.args);
         [ps.stdin, ps.stdout, ps.stderr].forEach(s => s.setEncoding('utf-8'));
         let stderr = '';
         let stdout = '';
@@ -254,12 +254,17 @@ const Launcher = {
         });
         if (config.data) {
             try {
-                ps.stdin.write(config.data);
-                ps.stdin.end();
+                ps.stdin.end(config.data);
             } catch (e) {
                 logger.error('spawn write error', e);
             }
         }
+        process.nextTick(() => {
+            // it should work without destroy, but a process doesn't get launched
+            // xubuntu-desktop 19.04 / xfce
+            // see https://github.com/keeweb/keeweb/issues/1234
+            ps.stdin.destroy();
+        });
         return ps;
     },
     getCookies(callback) {
