@@ -109,7 +109,7 @@
   "genPresetMac": "MAC-Adresse",
   "genPresetHash128": "128-Bit Hash",
   "genPresetHash256": "256-Bit Hash",
-  "genHidePass": "Password ausblenden",
+  "genHidePass": "Passwort ausblenden",
   "genShowPass": "Passwort einblenden",
   "grpTitle": "Gruppe",
   "grpSearch": "Suche für Einträge in dieser Gruppe aktivieren",
