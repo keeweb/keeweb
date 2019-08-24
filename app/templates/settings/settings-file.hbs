@@ -36,9 +36,11 @@
             </div>
             {{/unless}}
         {{/each}}
+        {{#if canExportXml}}
         <div class="settings__file-save-to settings__file-save-to-xml">
             <i class="fa fa-code"></i>{{res 'setFileSaveToXml'}}
         </div>
+        {{/if}}
     </div>
 
     {{#if storage}}

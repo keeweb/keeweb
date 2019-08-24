@@ -10,6 +10,7 @@ const Format = require('../../util/format');
 const Locale = require('../../util/locale');
 const UrlUtil = require('../../util/url-util');
 const FileSaver = require('../../util/file-saver');
+const AppSettingsModel = require('../../models/app-settings-model');
 const kdbxweb = require('kdbxweb');
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
@@ -105,7 +106,8 @@ const SettingsFileView = Backbone.View.extend({
                 this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
             kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
             storageProviders,
-            canBackup
+            canBackup,
+            canExportXml: AppSettingsModel.instance.get('canExportXml')
         });
         if (!this.model.get('created')) {
             this.$el
