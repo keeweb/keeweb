@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.9.3 (2019-08-25)
+`-` fixed group settings not being displayed  
+
 ##### v1.9.2 (2019-08-22)
 `-` fix #1235: custom themes loading  
 `-` fix #1234 auto-type issues in xubuntu/xfce  
