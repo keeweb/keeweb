@@ -3,6 +3,7 @@ Release notes
 ##### v1.10 (TBD)
 `+` config option to disable xml export (canExportXml)  
 `-` fix #1154: relative Destination header in WebDAV MOVE  
+`-` fix #1129: webdav storage error on Unicode filenames  
 
 ##### v1.9.3 (2019-08-25)
 `-` fixed group settings not being displayed  

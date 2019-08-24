@@ -190,7 +190,10 @@ const StorageWebDav = StorageBase.extend({
                                                 method: 'MOVE',
                                                 path: tmpPath,
                                                 nostat: true,
-                                                headers: { Destination: movePath, 'Overwrite': 'T' }
+                                                headers: {
+                                                    Destination: encodeURI(movePath),
+                                                    'Overwrite': 'T'
+                                                }
                                             },
                                             saveOpts
                                         ),
