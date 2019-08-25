@@ -42,12 +42,6 @@
                 <div class="open__icon-text">{{res prv.name}}</div>
             </div>
         {{/each}}
-        {{#if canImportXml}}
-            <div class="open__icon open__icon-import-xml" tabindex="10">
-                <i class="fa fa-code open__icon-i"></i>
-                <div class="open__icon-text">{{ res 'openXml' }}</div>
-            </div>
-        {{/if}}
         {{#if canOpenDemo}}
             {{#if demoOpened}}
                 <div class="open__icon open__icon-demo" tabindex="11">

@@ -26,7 +26,6 @@ const OpenView = Backbone.View.extend({
         'change .open__file-ctrl': 'fileSelected',
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
-        'click .open__icon-import-xml': 'importFromXml',
         'click .open__icon-demo': 'createDemo',
         'click .open__icon-more': 'toggleMore',
         'click .open__icon-storage': 'openStorage',
@@ -100,7 +99,6 @@ const OpenView = Backbone.View.extend({
             canOpenDemo: this.model.settings.get('canOpenDemo'),
             canOpenSettings: this.model.settings.get('canOpenSettings'),
             canCreate: this.model.settings.get('canCreate'),
-            canImportXml: this.model.settings.get('canImportXml'),
             canRemoveLatest: this.model.settings.get('canRemoveLatest'),
             showMore,
             showLogo
@@ -199,33 +197,48 @@ const OpenView = Backbone.View.extend({
         reader.onload = e => {
             let success = false;
             switch (this.reading) {
-                case 'fileData':
-                    if (!this.checkOpenFileFormat(e.target.result)) {
-                        break;
+                case 'fileData': {
+                    const format = this.getOpenFileFormat(e.target.result);
+                    switch (format) {
+                        case 'kdbx':
+                            this.params.id = null;
+                            this.params.fileData = e.target.result;
+                            this.params.name = file.name.replace(/(.+)\.\w+$/i, '$1');
+                            this.params.path = file.path || null;
+                            this.params.storage = file.path ? 'file' : null;
+                            this.params.rev = null;
+                            if (!this.params.keyFileData) {
+                                this.params.keyFileName = null;
+                            }
+                            this.displayOpenFile();
+                            this.displayOpenKeyFile();
+                            success = true;
+                            break;
+                        case 'xml':
+                            this.params.id = null;
+                            this.params.fileXml = kdbxweb.ByteUtils.bytesToString(e.target.result);
+                            this.params.name = file.name.replace(/\.\w+$/i, '');
+                            this.params.path = null;
+                            this.params.storage = null;
+                            this.params.rev = null;
+                            this.importDbWithXml();
+                            success = true;
+                            break;
+                        case 'kdb':
+                            Alerts.error({
+                                header: Locale.openWrongFile,
+                                body: Locale.openKdbFileBody
+                            });
+                            break;
+                        default:
+                            Alerts.error({
+                                header: Locale.openWrongFile,
+                                body: Locale.openWrongFileBody
+                            });
+                            break;
                     }
-                    this.params.id = null;
-                    this.params.fileData = e.target.result;
-                    this.params.name = file.name.replace(/(.+)\.\w+$/i, '$1');
-                    this.params.path = file.path || null;
-                    this.params.storage = file.path ? 'file' : null;
-                    this.params.rev = null;
-                    if (!this.params.keyFileData) {
-                        this.params.keyFileName = null;
-                    }
-                    this.displayOpenFile();
-                    this.displayOpenKeyFile();
-                    success = true;
                     break;
-                case 'fileXml':
-                    this.params.id = null;
-                    this.params.fileXml = e.target.result;
-                    this.params.name = file.name.replace(/\.\w+$/i, '');
-                    this.params.path = null;
-                    this.params.storage = null;
-                    this.params.rev = null;
-                    this.importDbWithXml();
-                    success = true;
-                    break;
+                }
                 case 'keyFileData':
                     this.params.keyFileData = e.target.result;
                     this.params.keyFileName = file.name;
@@ -253,21 +266,30 @@ const OpenView = Backbone.View.extend({
         }
     },
 
-    checkOpenFileFormat(fileData) {
-        const fileSig = fileData.byteLength < 8 ? null : new Uint32Array(fileData, 0, 2);
-        if (!fileSig || fileSig[0] !== kdbxweb.Consts.Signatures.FileMagic) {
-            Alerts.error({ header: Locale.openWrongFile, body: Locale.openWrongFileBody });
-            return false;
+    getOpenFileFormat(fileData) {
+        if (fileData.byteLength < 8) {
+            return undefined;
         }
-        if (fileSig[1] === kdbxweb.Consts.Signatures.Sig2Kdb) {
-            Alerts.error({ header: Locale.openWrongFile, body: Locale.openKdbFileBody });
-            return false;
+        const fileSig = new Uint32Array(fileData, 0, 2);
+        if (fileSig[0] === kdbxweb.Consts.Signatures.FileMagic) {
+            if (fileSig[1] === kdbxweb.Consts.Signatures.Sig2Kdb) {
+                return 'kdb';
+            } else if (fileSig[1] === kdbxweb.Consts.Signatures.Sig2Kdbx) {
+                return 'kdbx';
+            } else {
+                return undefined;
+            }
+        } else if (this.model.settings.get('canImportXml')) {
+            try {
+                const str = kdbxweb.ByteUtils.bytesToString(fileSig).trim();
+                if (str.startsWith('<?xml')) {
+                    return 'xml';
+                }
+            } catch (e) {}
+            return undefined;
+        } else {
+            return undefined;
         }
-        if (fileSig[1] !== kdbxweb.Consts.Signatures.Sig2Kdbx) {
-            Alerts.error({ header: Locale.openWrongFile, body: Locale.openWrongFileBody });
-            return false;
-        }
-        return true;
     },
 
     displayOpenFile() {
@@ -306,13 +328,6 @@ const OpenView = Backbone.View.extend({
         if (!this.busy) {
             this.closeConfig();
             this.openAny('fileData');
-        }
-    },
-
-    importFromXml() {
-        if (!this.busy) {
-            this.closeConfig();
-            this.openAny('fileXml', 'xml');
         }
     },
 
@@ -486,29 +501,20 @@ const OpenView = Backbone.View.extend({
         }
         this.closeConfig();
         this.$el.removeClass('open--drag');
-        const files = e.target.files || e.originalEvent.dataTransfer.files;
-        const dataFile = _.find(
-            files,
-            file =>
-                file.name
-                    .split('.')
-                    .pop()
-                    .toLowerCase() === 'kdbx'
-        );
-        const keyFile = _.find(
-            files,
-            file =>
-                file.name
-                    .split('.')
-                    .pop()
-                    .toLowerCase() === 'key'
-        );
+        const files = [...(e.target.files || e.originalEvent.dataTransfer.files)];
+        const dataFile = files.find(file => /\.kdbx$/i.test(file.name));
+        const keyFile = files.find(file => /\.key$/i.test(file.name));
         if (dataFile) {
             this.setFile(
                 dataFile,
                 keyFile,
                 dataFile.path ? null : this.showLocalFileAlert.bind(this)
             );
+        } else if (this.model.settings.get('canImportXml')) {
+            const xmlFile = files.find(file => /\.xml$/i.test(file.name));
+            if (xmlFile) {
+                this.setFile(xmlFile, null, this.showLocalFileAlert.bind(this));
+            }
         }
     },
 
