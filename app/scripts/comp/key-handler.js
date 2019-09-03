@@ -7,6 +7,7 @@ const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ct
 const KeyHandler = {
     SHORTCUT_ACTION: 1,
     SHORTCUT_OPT: 2,
+    SHORTCUT_CTRL: 3,
 
     shortcuts: {},
     modal: false,
@@ -70,6 +71,11 @@ const KeyHandler = {
                         break;
                     case this.SHORTCUT_OPT:
                         if (!e.altKey) {
+                            continue;
+                        }
+                        break;
+                    case this.SHORTCUT_CTRL:
+                        if (!e.ctrlKey) {
                             continue;
                         }
                         break;

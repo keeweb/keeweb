@@ -78,6 +78,8 @@ const AutoType = {
             sequence = '{PASSWORD}';
         } else if (result.sequenceType === AutoTypeSequenceType.USERNAME) {
             sequence = '{USERNAME}';
+        } else if (result.sequenceType === AutoTypeSequenceType.OTP) {
+            sequence = '{TOTP}';
         } else {
             sequence = result.entry.getEffectiveAutoTypeSeq();
         }

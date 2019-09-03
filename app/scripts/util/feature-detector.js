@@ -23,6 +23,9 @@ const FeatureDetector = {
     altShortcutSymbol(formatting) {
         return this.isMac ? '⌥' : formatting ? '<span class="thin">alt + </span>' : 'alt-';
     },
+    ctrlShortcutSymbol(formatting) {
+        return this.isMac ? '⌃' : formatting ? '<span class="thin">ctrl + </span>' : 'alt-';
+    },
     globalShortcutSymbol(formatting) {
         return this.isMac
             ? '⌃⌥'

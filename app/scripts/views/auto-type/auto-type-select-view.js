@@ -46,6 +46,13 @@ const AutoTypePopupView = Backbone.View.extend({
             KeyHandler.SHORTCUT_OPT,
             true
         );
+        KeyHandler.onKey(
+            Keys.DOM_VK_RETURN,
+            this.ctrlEnterPressed,
+            this,
+            KeyHandler.SHORTCUT_CTRL,
+            true
+        );
         KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, true);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this, false, true);
@@ -99,9 +106,11 @@ const AutoTypePopupView = Backbone.View.extend({
             selectionHintDefault: Locale.autoTypeSelectionHint,
             selectionHintAction: Locale.autoTypeSelectionHintAction,
             selectionHintOpt: Locale.autoTypeSelectionHintOpt,
+            selectionHintCtrl: Locale.autoTypeSelectionHintCtrl,
             itemsHtml,
             actionSymbol: FeatureDetector.actionShortcutSymbol(true),
             altSymbol: FeatureDetector.altShortcutSymbol(true),
+            ctrlSymbol: FeatureDetector.ctrlShortcutSymbol(true),
             keyEnter: Locale.keyEnter
         });
         document.activeElement.blur();
@@ -151,6 +160,10 @@ const AutoTypePopupView = Backbone.View.extend({
 
     optEnterPressed() {
         this.closeWithResult(AutoTypeSequenceType.USERNAME);
+    },
+
+    ctrlEnterPressed() {
+        this.closeWithResult(AutoTypeSequenceType.OTP);
     },
 
     openKeyPressed() {

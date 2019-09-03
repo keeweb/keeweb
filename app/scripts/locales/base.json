@@ -316,6 +316,7 @@
     "autoTypeSelectionHint": "Type the autotype sequence",
     "autoTypeSelectionHintAction": "Only type the password",
     "autoTypeSelectionHintOpt": "Only type the username",
+    "autoTypeSelectionHintCtrl": "Only type the OTP",
 
     "appSecWarn": "Not Secure!",
     "appSecWarnBody1": "You have loaded this app with an insecure connection. Someone may be watching you and stealing your passwords. We strongly advise you to stop, unless you clearly understand what you're doing.",
