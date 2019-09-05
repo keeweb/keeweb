@@ -77,6 +77,13 @@
             width: auto;
             height: 1px;
             cursor: row-resize;
+
+            .drag-handle__inner {
+                top: -2px;
+                left: 0;
+                width: 100%;
+                height: 5px;
+            }
         }
     }
 

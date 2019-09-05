@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.9.3 (TBD)
+`-` fixed menu padding issues in some browsers  
+
 ##### v1.9.2 (2019-08-22)
 `-` fix #1235: custom themes loading  
 `-` fix #1234 auto-type issues in xubuntu/xfce  
