@@ -5,11 +5,11 @@ Release notes
 `+` xml files can be now opened as regular files  
 `-` fix #1154: relative Destination header in WebDAV MOVE  
 `-` fix #1129: webdav storage error on Unicode filenames  
-`-` fix titlebar color on macOS dark theme  
 
-##### v1.9.3 (TBD)
+##### v1.9.3 (2019-09-07)
 `-` fixed group settings not being displayed  
 `-` fixed menu padding issues in some browsers  
+`-` fixed titlebar color on macOS dark theme  
 
 ##### v1.9.2 (2019-08-22)
 `-` fix #1235: custom themes loading  
