@@ -24,10 +24,10 @@
 
 .drag-handle__inner {
     position: absolute;
-    top: -2px;
+    top: 0;
     left: -2px;
-    width: calc(100% + 5px);
-    height: calc(100% + 5px);
+    width: 5px;
+    height: 100%;
     @include mobile {
         display: none;
     }
