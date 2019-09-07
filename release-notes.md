@@ -1,6 +1,12 @@
 Release notes
 -------------
-##### v1.9.3 (2019-08-25)
+##### v1.10 (TBD)
+`+` config option to disable xml export (canExportXml)  
+`+` xml files can be now opened as regular files  
+`-` fix #1154: relative Destination header in WebDAV MOVE  
+`-` fix #1129: webdav storage error on Unicode filenames  
+
+##### v1.9.3 (TBD)
 `-` fixed group settings not being displayed  
 
 ##### v1.9.2 (2019-08-22)
