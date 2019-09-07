@@ -81,7 +81,7 @@ Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your 
 
 KeeWeb is not free to develop. It takes time, requires paid code signing certificates and domains.  
 You can help the project or say "thank you" with this button:  
-![OpenCollective](https://opencollective.com/keeweb/tiers/backer.svg?avatarHeight=50&width=200)
+[<img src="https://opencollective.com/keeweb/tiers/backer.svg?avatarHeight=50" alt="OpenCollective">](https://opencollective.com/keeweb#support)
 
 Want to donate privately? You can do it with PayPal:  
 [<img src="img/paypal-donate.png" alt="Donate with PayPal" width="100">](https://www.paypal.me/dvitkovsky)  
