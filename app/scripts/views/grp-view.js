@@ -24,24 +24,22 @@ const GrpView = Backbone.View.extend({
 
     render() {
         this.removeSubView();
-        if (this.model) {
-            this.renderTemplate(
-                {
-                    title: this.model.get('title'),
-                    icon: this.model.get('icon') || 'folder',
-                    customIcon: this.model.get('customIcon'),
-                    enableSearching: this.model.getEffectiveEnableSearching(),
-                    readonly: this.model.get('top'),
-                    canAutoType: AutoType.enabled,
-                    autoTypeSeq: this.model.get('autoTypeSeq'),
-                    autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
-                    defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
-                },
-                true
-            );
-            if (!this.model.get('title')) {
-                this.$el.find('#grp__field-title').focus();
-            }
+        this.renderTemplate(
+            {
+                title: this.model.get('title'),
+                icon: this.model.get('icon') || 'folder',
+                customIcon: this.model.get('customIcon'),
+                enableSearching: this.model.getEffectiveEnableSearching(),
+                readonly: this.model.get('top'),
+                canAutoType: AutoType.enabled,
+                autoTypeSeq: this.model.get('autoTypeSeq'),
+                autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
+                defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
+            },
+            true
+        );
+        if (!this.model.get('title')) {
+            this.$el.find('#grp__field-title').focus();
         }
         this.createScroll({
             root: this.$el.find('.grp')[0],
@@ -57,11 +55,6 @@ const GrpView = Backbone.View.extend({
             this.views.sub.remove();
             delete this.views.sub;
         }
-    },
-
-    showGroup(group) {
-        this.model = group;
-        this.render();
     },
 
     changeTitle(e) {

@@ -66,6 +66,7 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
     appReady = true;
     setAppOptions();
+    setSystemAppearance();
     createMainWindow();
     setGlobalShortcuts();
     subscribePowerEvents();
@@ -144,6 +145,14 @@ function readAppSettings() {
         return JSON.parse(fs.readFileSync(appSettingsFileName, 'utf8'));
     } catch (e) {
         return null;
+    }
+}
+
+function setSystemAppearance() {
+    if (process.platform === 'darwin') {
+        if (electron.systemPreferences.isDarkMode()) {
+            electron.systemPreferences.setAppLevelAppearance('dark');
+        }
     }
 }
 

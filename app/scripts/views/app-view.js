@@ -272,8 +272,8 @@ const AppView = Backbone.View.extend({
         this.views.menu.switchVisibility(false);
     },
 
-    showEditGroup() {
-        this.showPanelView(new GrpView());
+    showEditGroup(group) {
+        this.showPanelView(new GrpView({ model: group }));
     },
 
     showEditTag() {
@@ -661,8 +661,7 @@ const AppView = Backbone.View.extend({
 
     editGroup(group) {
         if (group && !(this.views.panel instanceof GrpView)) {
-            this.showEditGroup();
-            this.views.panel.showGroup(group);
+            this.showEditGroup(group);
         } else {
             this.showEntries();
         }
