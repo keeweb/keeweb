@@ -83,7 +83,7 @@ KeeWeb is not free to develop. It takes time, requires paid code signing certifi
 You can help the project or say "thank you" with this button:  
 [<img src="https://opencollective.com/keeweb/tiers/backer.svg?avatarHeight=50" alt="OpenCollective">](https://opencollective.com/keeweb#support)
 
-Want to donate privately? You can do it with PayPal:  
+Don't have OpenCollective? You can donate with PayPal:  
 [<img src="img/paypal-donate.png" alt="Donate with PayPal" width="100">](https://www.paypal.me/dvitkovsky)  
 
 Please note: donation does not imply any type of service contract.  
