@@ -11,7 +11,7 @@ const Links = {
     Manifest: 'https://app.keeweb.info/manifest.appcache',
     AutoType: 'https://github.com/keeweb/keeweb/wiki/Auto-Type',
     Translation: 'https://keeweb.oneskyapp.com/',
-    Donation: 'https://www.paypal.me/dvitkovsky',
+    Donation: 'https://opencollective.com/keeweb#support',
     Plugins: 'https://plugins.keeweb.info',
     PluginDevelopStart: 'https://github.com/keeweb/keeweb/wiki/Plugins'
 };
