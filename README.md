@@ -12,6 +12,7 @@ Timeline: [Release Notes](release-notes.md), [TODO](https://github.com/keeweb/ke
 On one page: [Features](https://keeweb.info/#features), [FAQ](https://github.com/keeweb/keeweb/wiki/FAQ)  
 Website: [keeweb.info](https://keeweb.info)  
 Twitter: [kee_web](https://twitter.com/kee_web)  
+Donate: [OpenCollective](https://opencollective.com/keeweb#support)  
 
 # Status
 
