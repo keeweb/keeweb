@@ -25,12 +25,17 @@ button.pika-next:after {
     left: 6px;
 }
 
+button.pika-prev:after, button.pika-next:after  {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 button.pika-prev:after {
-    @include triangle('left', 14px, 7px, var(--text-color));
+    @include triangle('left', 7px, 14px, var(--text-color));
 }
 
 button.pika-next:after {
-    @include triangle('right', 14px, 7px, var(--text-color));
+    @include triangle('right', 7px, 14px, var(--text-color));
 }
 
 .pika-table th {
@@ -44,6 +49,7 @@ button.pika-button {
     color: var(--text-color);
     background-color: var(--background-color);
     border-radius: $base-border-radius;
+    padding: 8px 4px;
 }
 
 .pika-week {
