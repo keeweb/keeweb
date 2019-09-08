@@ -10,8 +10,8 @@ const Templates = {
 };
 
 const FieldMapping = [
-    { name: 'Password', locStr: 'password', protect: true },
     { name: 'UserName', locStr: 'user' },
+    { name: 'Password', locStr: 'password', protect: true },
     { name: 'URL', locStr: 'website' },
     { name: 'Notes', locStr: 'notes' }
 ];
