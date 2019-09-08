@@ -46,10 +46,12 @@ body.th-macdark {
     .app__footer {
         background-color: var(--secondary-background-color);
     }
-    .list__item--active, .list__item--active:hover {
-        background-color: #2457C9;
-        .list__item-descr {
-            color: #8F8F91;
+    @include nomobile {
+        .list__item--active, .list__item--active:hover {
+            background-color: #2457C9;
+            .list__item-descr {
+                color: #8F8F91;
+            }
         }
     }
 }

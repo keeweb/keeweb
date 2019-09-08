@@ -9,3 +9,13 @@ $themes: ();
 @import 'solarized-dark';
 @import 'solarized-light';
 @import 'macos-dark';
+
+@each $theme-name, $theme-vars in $themes {
+    $theme-vars: set-theme-vars($theme-vars);
+
+    .th-#{$theme-name} {
+        @each $key, $value in $theme-vars {
+            --#{$key}: #{$value};
+        }
+    }
+}
