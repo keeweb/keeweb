@@ -33,7 +33,20 @@ const FieldViewDate = FieldViewText.extend({
                 weekdaysShort: Locale.weekdaysShort
             }
         });
+        this.picker.adjustPosition = this.adjustPickerPosition.bind(this);
         _.defer(this.picker.show.bind(this.picker));
+    },
+
+    adjustPickerPosition(...args) {
+        window.Pikaday = Pikaday;
+        Pikaday.prototype.adjustPosition.apply(this.picker, args);
+        const shadowSpread = parseInt(this.input.css('--focus-shadow-spread'));
+        if (shadowSpread) {
+            const isOnTop = this.picker.el.classList.contains('top-aligned');
+            const offset = isOnTop ? -shadowSpread : shadowSpread;
+            const newTop = parseInt(this.picker.el.style.top) + offset;
+            this.picker.el.style.top = `${newTop}px`;
+        }
     },
 
     fieldValueBlur(e) {
