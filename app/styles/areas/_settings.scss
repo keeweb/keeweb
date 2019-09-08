@@ -115,6 +115,11 @@
         display: none;
     }
 
+    &__file-buttons {
+        button ~ button {
+            margin-left: $small-spacing;
+        }
+    }
     &__file-master-pass-warning,
     &__file-confirm-master-pass-warning {
         font-weight: normal;

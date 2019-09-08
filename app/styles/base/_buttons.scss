@@ -1,6 +1,6 @@
 #{$all-buttons} {
     appearance: none;
-    border-radius: $base-border-radius;
+    border-radius: var(--button-border-radius);
     cursor: pointer;
     display: inline-block;
     font-family: $base-font-family;
