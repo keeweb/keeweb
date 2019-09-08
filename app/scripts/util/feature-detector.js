@@ -55,7 +55,7 @@ const FeatureDetector = {
         return this.isMac;
     },
     getBrowserCssClass() {
-        if (window.chrome && window.chrome.webstore) {
+        if (window.chrome && window.navigator.userAgent.indexOf('Chrome/') > -1) {
             return 'chrome';
         }
         if (window.navigator.userAgent.indexOf('Edge/') > -1) {

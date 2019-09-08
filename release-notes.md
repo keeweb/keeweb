@@ -6,6 +6,7 @@ Release notes
 `-` fix #1154: relative Destination header in WebDAV MOVE  
 `-` fix #1129: webdav storage error on Unicode filenames  
 `*` donation link changed  
+`-` fixed field editing styles  
 
 ##### v1.9.3 (2019-09-07)
 `-` fixed group settings not being displayed  

@@ -2,6 +2,7 @@ const FieldViewText = require('./field-view-text');
 
 const FieldViewUrl = FieldViewText.extend({
     displayUrlRegex: /^http:\/\//i,
+    cssClass: 'url',
 
     renderValue(value) {
         return value

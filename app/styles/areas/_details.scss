@@ -261,6 +261,9 @@
                 width: 0;
                 white-space: pre-wrap;
             }
+            .details__field--url & {
+                height: $details-field-line-height + 2px;
+            }
             .details__field--edit &,
             .details__field--edit.details__field--editable &,
             .details__field--edit.details__field--editable:hover & {
