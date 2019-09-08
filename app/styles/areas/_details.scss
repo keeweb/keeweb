@@ -25,6 +25,7 @@
 
     &__header {
         display: flex;
+        align-items: flex-start;
         padding-bottom: $small-spacing;
         overflow: visible;
         min-height: 40px;
@@ -39,8 +40,11 @@
             text-overflow: ellipsis;
             border-radius: $base-border-radius;
             border: 1px solid transparent;
+            height: 36px;
+            line-height: 34px;
             position: relative;
             top: -2px;
+            white-space: nowrap;
             &:hover {
                 transition: border-color $base-duration $base-timing;
                 border: 1px solid var(--light-border-color);
@@ -50,6 +54,8 @@
             }
         }
         input.details__header-title-input {
+            height: 42px;
+            line-height: 34px;
             user-select: text;
             flex: 1;
             margin: 0 6px;
