@@ -9,7 +9,7 @@ $themes: map-merge(
                     medium-color: #b7b7b8,
                     text-color: #f7f7f7,
                     action-color: #3063d4,
-                    error-color: #ec5f5d,
+                    error-color: #EC655A,
                     focus-shadow-blur: 0,
                     focus-shadow-spread: 3px,
                     button-border-radius: 2px,
@@ -61,4 +61,10 @@ body.th-macdark {
             }
         }
     }
+    .yellow-color { color: #E0C24C; }
+    .red-color { color: #EC655A; }
+    .orange-color { color: #E78F42; }
+    .green-color { color: #71BF47; }
+    .blue-color { color: #3062D1; }
+    .violet-color { color: #E55C9C; }
 }
