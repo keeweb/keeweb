@@ -258,6 +258,8 @@
     "detDelFromTrash": "Delete from trash?",
     "detDelFromTrashBody": "You will not be able to put it back.",
     "detDelFromTrashBodyHint": "To quickly remove all items from trash, click Empty icon in Trash menu.",
+    "detDelToTrash": "Delete the entry?",
+    "detDelToTrashBody": "The entry will be moved to the trash folder.",
     "detFieldCopied": "Copied",
     "detFieldCopiedTime": "Copied for {} seconds",
     "detCopyHint": "You can copy field value with click on its title",
