@@ -26,14 +26,6 @@ body.th-macdark {
     --secondary-background-color: #2d2d2e;
     --form-box-border-focus: #6697c0;
     --form-box-shadow-color-focus: #44749d;
-    input[type='text'],
-    input[type='password'],
-    textarea,
-    input:not([type]) {
-        &:focus {
-            background-color: rgba(108, 108, 109, 0.05);
-        }
-    }
     .app__menu {
         background-color: var(--secondary-background-color);
         .menu__item.menu__item--active > .menu__item-body,
@@ -59,6 +51,12 @@ body.th-macdark {
             .list__item-descr {
                 color: #8f8f91;
             }
+        }
+        input, textarea, select {
+            background-color: rgba(108, 108, 109, 0.025);
+        }
+        input:focus, textarea:focus, select:focus {
+            background-color: rgba(108, 108, 109, 0.05);
         }
     }
     .yellow-color { color: #E0C24C; }
