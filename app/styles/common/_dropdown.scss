@@ -2,11 +2,9 @@
     position: absolute;
     z-index: $z-index-no-modal;
     border-radius: $base-border-radius;
-    @include th {
-        background: th(background-color);
-        border: light-border();
-        box-shadow: dropdown-box-shadow();
-    }
+    background: var(--background-color);
+    border: light-border();
+    box-shadow: dropdown-box-shadow();
     &__item {
         padding: 8px 12px;
         cursor: pointer;

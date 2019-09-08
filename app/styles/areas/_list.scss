@@ -54,23 +54,17 @@
                 border-radius: 0.6em !important;
                 border: none !important;
                 padding-left: 0.4em;
-                @include th {
-                    background-color: th(secondary-background-color) !important;
-                }
+                background-color: var(--secondary-background-color) !important;
             }
         }
         &-icon-search {
-            @include th {
-                color: th(muted-color);
-            }
+            color: var(--muted-color);
             position: absolute;
             top: 0.5em;
             right: 0.5em;
             cursor: pointer;
             &:hover {
-                @include th {
-                    color: th(medium-color);
-                }
+                color: var(--medium-color);
             }
             @include mobile {
                 top: 0.5em;
@@ -146,9 +140,7 @@
         }
         @include mobile {
             margin: 0 $base-padding-h;
-            @include th {
-                border-bottom: light-border();
-            }
+            border-bottom: light-border();
             &:last-of-type {
                 border-bottom: none;
             }
@@ -213,9 +205,7 @@
 
         &-descr {
             font-size: 0.8em;
-            @include th {
-                color: th(muted-color);
-            }
+            color: var(--muted-color);
             display: block;
             text-overflow: ellipsis;
             overflow: hidden;

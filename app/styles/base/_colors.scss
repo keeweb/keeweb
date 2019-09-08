@@ -24,17 +24,11 @@ $all-colors: (
     }
 }
 .muted-color {
-    @include th {
-        color: th(muted-color);
-    }
+    color: var(--muted-color);
 }
 .action-color {
-    @include th {
-        color: th(action-color);
-    }
+    color: var(--action-color);
 }
 .error-color {
-    @include th {
-        color: th(error-color);
-    }
+    color: var(--error-color);
 }

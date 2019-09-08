@@ -22,9 +22,7 @@
     &__sample {
         font-weight: normal;
         user-select: text;
-        @include th {
-            color: th(muted-color);
-        }
+        color: var(--muted-color);
     }
 
     &__example {

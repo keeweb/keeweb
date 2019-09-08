@@ -4,9 +4,7 @@
     flex-direction: row;
     justify-content: flex-start;
     @include mobile {
-        @include th {
-            background: th(intermediate-background-color);
-        }
+        background: var(--intermediate-background-color);
     }
 
     &__db {
@@ -19,11 +17,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         &.footer__db--dimmed {
-            @include th {
-                color: th(muted-color);
-                &:hover {
-                    color: th(medium-color);
-                }
+            color: var(--muted-color);
+            &:hover {
+                color: var(--medium-color);
             }
         }
 
@@ -44,13 +40,9 @@
             position: absolute;
             right: 1em;
             top: 1em;
-            @include th {
-                color: th(action-color);
-            }
+            color: var(--action-color);
             &--error {
-                @include th {
-                    color: th(error-color);
-                }
+                color: var(--error-color);
             }
         }
 
@@ -84,9 +76,7 @@
     }
 
     &__update-icon {
-        @include th {
-            color: th(action-color);
-        }
+        color: var(--action-color);
         @include animation(shake 50s cubic-bezier(0.36, 0.07, 0.19, 0.97) 0s infinite);
     }
 }

@@ -3,10 +3,8 @@
 }
 
 .pika-label {
-    @include th {
-        background: th(background-color);
-        color: th(muted-color);
-    }
+    background: var(--background-color);
+    color: var(--muted-color);
 }
 
 button.pika-prev,
@@ -28,64 +26,46 @@ button.pika-next:after {
 }
 
 button.pika-prev:after {
-    @include th {
-        @include triangle(14px 7px, th(text-color), left);
-    }
+    @include triangle(14px 7px, var(--text-color), left);
 }
 
 button.pika-next:after {
-    @include th {
-        @include triangle(14px 7px, th(text-color), right);
-    }
+    @include triangle(14px 7px, var(--text-color), right);
 }
 
 .pika-table th {
-    @include th {
-        color: th(medium-color);
-    }
+    color: var(--medium-color);
 }
 
 .pika-button,
 button.pika-button {
     min-width: 0;
     border: none;
-    @include th {
-        color: th(text-color);
-        background-color: th(background-color);
-        border-radius: $base-border-radius;
-    }
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border-radius: $base-border-radius;
 }
 
 .pika-week {
-    @include th {
-        color: th(medium-color);
-    }
+    color: var(--medium-color);
 }
 
 .is-today .pika-button {
-    @include th {
-        color: th(action-color);
-    }
+    color: var(--action-color);
 }
 
 .is-selected .pika-button {
-    @include th {
-        color: th(text-color);
-        background: th(action-color);
-        box-shadow: inset 0 1px 3px th(action-color); // make darker?
-    }
+    color: var(--text-color);
+    background: var(--action-color);
+    box-shadow: inset 0 1px 3px var(--action-color); // make darker?
 }
 
 .is-disabled .pika-button {
-    @include th {
-        color: th(muted-color);
-    }
+    color: var(--muted-color);
     opacity: 0.3;
 }
 
 .pika-button:hover {
-    @include th {
-        color: th(text-color) !important;
-        background: th(action-color) !important;
-    }
+    color: var(--text-color) !important;
+    background: var(--action-color) !important;
 }

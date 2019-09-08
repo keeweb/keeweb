@@ -2,34 +2,28 @@
     cursor: pointer;
     border-radius: 0;
     -webkit-app-region: no-drag;
-    @include th {
+    @if ($border) {
+        border-#{$border}: selected-transparent-border();
+    }
+    &:hover,
+    &.sel--active {
+        background-color: var(--intermediate-background-color);
+        color: var(--medium-color);
         @if ($border) {
-            border-#{$border}: selected-transparent-border();
+            border-#{$border}: selected-hover-border();
         }
-        &:hover,
-        &.sel--active {
-            background-color: th(intermediate-background-color);
-            color: th(medium-color);
-            @if ($border) {
-                border-#{$border}: selected-hover-border();
-            }
-        }
-        &:active {
-            background-color: th(intermediate-pressed-background-color);
-        }
+    }
+    &:active {
+        background-color: var(--intermediate-pressed-background-color);
     }
 }
 
 @mixin area-selected($border) {
     cursor: default;
     -webkit-app-region: no-drag;
-    @include th {
-        border-#{$border}: selected-border();
-        background-color: th(secondary-background-color);
-    }
+    border-#{$border}: selected-border();
+    background-color: var(--secondary-background-color);
     &:hover {
-        @include th {
-            color: th(text-color);
-        }
+        color: var(--text-color);
     }
 }

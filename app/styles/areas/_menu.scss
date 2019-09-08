@@ -8,9 +8,7 @@
 
     &__section {
         flex: 0 0 auto;
-        @include th {
-            border-bottom: light-border();
-        }
+        border-bottom: light-border();
         @include scrollbar-on-hover;
         position: relative;
         overflow: hidden;
@@ -78,13 +76,9 @@
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
-            @include th {
-                border-right: selected-transparent-border();
-            }
+            border-right: selected-transparent-border();
             .menu__item--hover > & {
-                @include th {
-                    border-right: selected-hover-border();
-                }
+                border-right: selected-hover-border();
             }
 
             .menu__item--active > &,
@@ -154,9 +148,7 @@
             padding-left: 0.4em;
             .menu__item-colors & {
                 display: inline-block;
-                @include th {
-                    color: th(text-color);
-                }
+                color: var(--text-color);
             }
             .menu__item--with-options:hover & {
                 display: none;
@@ -172,11 +164,9 @@
             top: 0.75em;
             cursor: pointer;
             transition: opacity $base-duration $base-timing, color $base-duration $base-timing;
-            @include th {
-                color: th(muted-color);
-                &:hover {
-                    color: th(medium-color);
-                }
+            color: var(--muted-color);
+            &:hover {
+                color: var(--medium-color);
             }
             .menu__item--active > .menu__item-body > & {
                 display: block;
@@ -199,16 +189,12 @@
         }
 
         &--drag-top > .menu__item-body > .menu__item-drag-top {
-            @include th {
-                background-color: th(action-color);
-            }
+            background-color: var(--action-color);
         }
 
         &--drag:not(.menu__item--drag-top) {
             > .menu__item-body {
-                @include th {
-                    color: th(action-color);
-                }
+                color: var(--action-color);
             }
         }
     }

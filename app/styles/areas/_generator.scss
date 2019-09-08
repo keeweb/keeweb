@@ -13,11 +13,9 @@
         & ~ .gen__top-btn {
             margin-right: 0.5em;
         }
-        @include th {
-            color: th(muted-color);
-            &:hover {
-                color: th(text-color);
-            }
+        color: var(--muted-color);
+        &:hover {
+            color: var(--text-color);
         }
     }
     &__sel-tpl {

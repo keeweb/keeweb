@@ -5,9 +5,7 @@
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    @include th {
-        background: th(background-color);
-    }
+    background: var(--background-color);
 
     &__icons {
         display: flex;
@@ -27,15 +25,11 @@
         margin: 20px;
         transition: color $base-duration $base-timing;
         &:hover {
-            @include th {
-                color: th(medium-color);
-            }
+            color: var(--medium-color);
         }
         &:focus {
             .open--show-focus & {
-                @include th {
-                    outline: focused-outline();
-                }
+                outline: focused-outline();
             }
         }
         &-i,
@@ -43,13 +37,9 @@
             font-size: 4em;
         }
         &-text {
-            @include th {
-                color: th(muted-color);
-            }
+            color: var(--muted-color);
             .open__icon:hover > & {
-                @include th {
-                    color: th(medium-color);
-                }
+                color: var(--medium-color);
             }
         }
         &-svg {
@@ -109,9 +99,7 @@
             @include mobile {
                 display: none;
             }
-            @include th {
-                color: th(muted-color);
-            }
+            color: var(--muted-color);
             > i {
                 font-size: 3em;
             }
@@ -119,18 +107,14 @@
         .open--show-focus & {
             &-enter-btn:focus,
             &-opening-icon:focus {
-                @include th {
-                    outline: focused-outline();
-                }
+                outline: focused-outline();
             }
         }
         &-enter-btn {
             .open--file & {
                 cursor: pointer;
                 &:hover {
-                    @include th {
-                        color: th(medium-color);
-                    }
+                    color: var(--medium-color);
                 }
             }
             .open--opening & {
@@ -210,9 +194,7 @@
                 cursor: pointer;
             }
             .open--key-file & {
-                @include th {
-                    color: th(medium-color);
-                }
+                color: var(--medium-color);
             }
             &-icon {
                 width: 2em;
@@ -239,23 +221,17 @@
             }
             &:focus {
                 .open--show-focus & {
-                    @include th {
-                        outline: focused-outline();
-                    }
+                    outline: focused-outline();
                 }
             }
         }
 
         &-key-file,
         &-key-file-dropbox {
-            @include th {
-                color: th(muted-color);
-            }
+            color: var(--muted-color);
             &:hover {
                 .open--file:not(.open--opening) & {
-                    @include th {
-                        color: th(medium-color);
-                    }
+                    color: var(--medium-color);
                 }
             }
         }
@@ -276,15 +252,11 @@
             .open:not(.open--opening) & {
                 @include area-selectable;
             }
-            @include th {
-                color: th(muted-color);
-            }
+            color: var(--muted-color);
             padding: $base-padding;
             &:focus {
                 .open--show-focus & {
-                    @include th {
-                        outline: focused-outline();
-                    }
+                    outline: focused-outline();
                 }
             }
             &-icon {
@@ -293,9 +265,7 @@
                     vertical-align: middle;
                     @include size(1em);
                     path {
-                        @include th {
-                            fill: th(muted-color);
-                        }
+                        fill: var(--muted-color);
                     }
                 }
             }
@@ -308,16 +278,12 @@
                     opacity: 0.3;
                     cursor: pointer;
                 }
-                @include th {
-                    color: th(muted-color);
-                }
+                color: var(--muted-color);
                 &:hover {
                     .open__last-item:hover & {
                         opacity: 1;
                     }
-                    @include th {
-                        color: th(medium-color);
-                    }
+                    color: var(--medium-color);
                 }
             }
         }
@@ -376,17 +342,13 @@
             }
         }
         &:hover {
-            @include th {
-                background-color: th(action-background-color-focus-tr);
-            }
+            background-color: var(--action-background-color-focus-tr);
         }
         &-icon {
             margin-right: 0.3em;
         }
         &--another {
-            @include th {
-                color: th(medium-color);
-            }
+            color: var(--medium-color);
         }
     }
     &__check-label {

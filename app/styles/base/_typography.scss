@@ -5,10 +5,8 @@ html {
 body {
     @include size(100%);
     user-select: none;
-    @include th {
-        color: th(text-color);
-        background-color: th(background-color);
-    }
+    color: var(--text-color);
+    background-color: var(--background-color);
     font-family: $base-font-family;
     font-feature-settings: 'kern', 'liga 0';
     font-size: 1rem;
@@ -59,10 +57,8 @@ p {
 }
 
 a {
-    @include th {
-        color: th(text-color);
-        border-bottom: 1px dotted;
-    }
+    color: var(--text-color);
+    border-bottom: 1px dotted;
     text-decoration: none;
     display: inline-block;
     transition: color $base-duration $base-timing;
@@ -81,9 +77,7 @@ a {
 }
 
 hr {
-    @include th {
-        border-bottom: base-border();
-    }
+    border-bottom: base-border();
     border-left: 0;
     border-right: 0;
     border-top: 0;
@@ -102,8 +96,6 @@ img {
 body:not(.edge) * {
     // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12132854/
     @include selection(true) {
-        @include th {
-            background-color: th(text-selection-bg-color);
-        }
+        background-color: var(--text-selection-bg-color);
     }
 }
