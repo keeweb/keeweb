@@ -1,4 +1,5 @@
 const Links = {
+    Homepage: 'https://keeweb.info',
     Repo: 'https://github.com/keeweb/keeweb',
     Desktop: 'https://github.com/keeweb/keeweb/releases/latest',
     WebApp: 'https://app.keeweb.info',

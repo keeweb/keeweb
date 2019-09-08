@@ -1,0 +1,52 @@
+<h2>
+    {{#if title}}{{title}}{{else}}({{Res 'noTitle'}}){{/if}}
+</h2>
+<table>
+    {{#each fields as |field|}}
+        <tr>
+            <td>{{field.title}}</td>
+            <td>
+                {{#if field.protect}}
+                    <code>{{field.value}}</code>
+                {{else}}
+                    {{field.value}}
+                {{/if}}
+            </td>
+        </tr>
+    {{/each}}
+    {{#if tags}}
+        <tr>
+            <td>{{Res 'tags'}}</td>
+            <td>{{tags}}</td>
+        </tr>
+    {{/if}}
+    <tr>
+        <td>{{Res 'group'}}</td>
+        <td>{{path}}</td>
+    </tr>
+    {{#if attachments.length}}
+        <tr>
+            <td>{{res 'detAttachments'}}</td>
+            <td>
+                {{#each attachments as |attachment|}}
+                    <a href="{{{attachment.data}}}" download="{{attachment.name}}">{{attachment.name}}</a>
+                    {{~#unless @last}},&nbsp;{{/unless}}
+                {{/each}}
+            </td>
+        </tr>
+    {{/if}}
+    <tr>
+        <td>{{res 'detCreated'}}</td>
+        <td>{{created}}</td>
+    </tr>
+    <tr>
+        <td>{{res 'detUpdated'}}</td>
+        <td>{{modified}}</td>
+    </tr>
+    {{#if expires}}
+        <tr>
+            <td>{{res 'detExpires'}}</td>
+            <td>{{expires}}</td>
+        </tr>
+    {{/if}}
+</table>

@@ -41,6 +41,11 @@
             <i class="fa fa-code"></i>{{res 'setFileSaveToXml'}}
         </div>
         {{/if}}
+        {{#if canExportHtml}}
+            <div class="settings__file-save-to settings__file-save-to-html">
+                <i class="fa fa-html5"></i>{{res 'setFileSaveToHtml'}}
+            </div>
+        {{/if}}
     </div>
 
     {{#if storage}}

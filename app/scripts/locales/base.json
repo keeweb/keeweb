@@ -434,6 +434,7 @@
     "setFileSync": "Sync",
     "setFileSyncVerb": "Sync",
     "setFileSaveToXml": "XML",
+    "setFileSaveToHtml": "HTML",
     "setFileLastSync": "Last sync",
     "setFileLastSyncUnknown": "unknown",
     "setFileSyncInProgress": "sync in progress",
@@ -585,5 +586,11 @@
     "launcherFileFilter": "KeePass files",
 
     "authPopupRequired": "Pop-ups are blocked",
-    "authPopupRequiredBody": "Please allow pop-ups in your browser or try again."
+    "authPopupRequiredBody": "Please allow pop-ups in your browser or try again.",
+
+    "exportFileInfo": "File information",
+    "exportHtmlName": "Name",
+    "exportHtmlDate": "Export date",
+    "exportGenerator": "Software",
+    "exportDescription": "This file is generated with {}."
 }

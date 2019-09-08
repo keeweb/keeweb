@@ -25,6 +25,7 @@ const SettingsFileView = Backbone.View.extend({
         'click .settings__file-button-close': 'closeFile',
         'click .settings__file-save-to-file': 'saveToFile',
         'click .settings__file-save-to-xml': 'saveToXml',
+        'click .settings__file-save-to-html': 'saveToHtml',
         'click .settings__file-save-to-storage': 'saveToStorage',
         'change #settings__file-key-file': 'keyFileChange',
         'click #settings__file-file-select-link': 'triggerSelectFile',
@@ -107,7 +108,8 @@ const SettingsFileView = Backbone.View.extend({
             kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
             storageProviders,
             canBackup,
-            canExportXml: AppSettingsModel.instance.get('canExportXml')
+            canExportXml: AppSettingsModel.instance.get('canExportXml'),
+            canExportHtml: AppSettingsModel.instance.get('canExportHtml')
         });
         if (!this.model.get('created')) {
             this.$el
@@ -253,6 +255,13 @@ const SettingsFileView = Backbone.View.extend({
         this.model.getXml(xml => {
             const blob = new Blob([xml], { type: 'text/xml' });
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
+        });
+    },
+
+    saveToHtml() {
+        this.model.getHtml(html => {
+            const blob = new Blob([html], { type: 'text/html' });
+            FileSaver.saveAs(blob, this.model.get('name') + '.html');
         });
     },
 
