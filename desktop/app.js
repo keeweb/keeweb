@@ -506,7 +506,7 @@ function deleteRecursive(dir) {
 function hookRequestHeaders() {
     electron.session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
         if (!details.url.startsWith('ws:')) {
-            delete details.requestHeaders['Origin'];
+            delete details.requestHeaders.Origin;
         }
         callback({ cancel: false, requestHeaders: details.requestHeaders });
     });
