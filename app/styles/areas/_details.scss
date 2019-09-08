@@ -267,7 +267,7 @@
             > textarea {
                 margin: 0;
                 padding: 0 $base-padding-h;
-                line-height: $details-field-line-height;
+                line-height: $details-field-line-height + 2px;
                 width: 100%;
                 height: 20px;
                 .details__field--protected & {

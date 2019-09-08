@@ -75,8 +75,8 @@
         transform: translate(0, -50%);
         @include triangle(
             'right',
-            nth($arrow-size-small, 1),
             nth($arrow-size-small, 2),
+            nth($arrow-size-small, 1),
             var(--background-color)
         );
     }
@@ -85,8 +85,8 @@
         transform: translate(0, -50%);
         @include triangle(
             'left',
-            nth($arrow-size-small, 1),
             nth($arrow-size-small, 2),
+            nth($arrow-size-small, 1),
             var(--background-color)
         );
     }
@@ -126,8 +126,8 @@
         transform: translate(0, -50%);
         @include triangle(
             'right',
-            nth($arrow-size-large, 1),
             nth($arrow-size-large, 2),
+            nth($arrow-size-large, 1),
             var(--light-border-color)
         );
     }
@@ -136,8 +136,8 @@
         transform: translate(0, -50%);
         @include triangle(
             'left',
-            nth($arrow-size-large, 1),
             nth($arrow-size-large, 2),
+            nth($arrow-size-large, 1),
             var(--light-border-color)
         );
     }
