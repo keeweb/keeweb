@@ -15,8 +15,8 @@
         overflow-x: hidden;
     }
 
-    &__buttons {
-        margin-top: $base-padding-v;
+    &__content, &__buttons {
+        margin: $base-padding;
     }
 
     &__sample {

@@ -6,9 +6,12 @@
     justify-content: flex-start;
     flex-wrap: wrap;
     @include scrollbar-on-hover;
-    margin: $base-padding;
     overflow: hidden;
     position: relative;
+
+    &__content {
+        margin: $base-padding;
+    }
 
     > .scroller {
         flex: 1 0 0;

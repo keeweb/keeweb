@@ -3,40 +3,42 @@
         {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
     </div>
     <div class="scroller">
-        <h1>{{res 'grpTitle'}}</h1>
-        <div class="grp__field">
-            <label for="grp__field-title">{{Res 'name'}}:</label>
-            <input type="text" class="input-base" id="grp__field-title" value="{{title}}" size="50" maxlength="1024"
-                   required {{#if readonly}}readonly{{/if}} />
-        </div>
-        {{#unless readonly}}
-        <div>
-            <input type="checkbox" class="input-base" id="grp__check-search" {{#if enableSearching}}checked{{/if}} />
-            <label for="grp__check-search">{{res 'grpSearch'}}</label>
-        </div>
-        {{/unless}}
-        <label>{{Res 'icon'}}:</label>
-        <div class="grp__icon-wrap">
-            {{#if customIcon}}
-            <img src="{{{customIcon}}}" class="grp__icon grp__icon--image" />
-            {{else}}
-            <i class="fa fa-{{icon}} grp__icon"></i>
+        <div class="grp__content">
+            <h1>{{res 'grpTitle'}}</h1>
+            <div class="grp__field">
+                <label for="grp__field-title">{{Res 'name'}}:</label>
+                <input type="text" class="input-base" id="grp__field-title" value="{{title}}" size="50" maxlength="1024"
+                       required {{#if readonly}}readonly{{/if}} />
+            </div>
+            {{#unless readonly}}
+            <div>
+                <input type="checkbox" class="input-base" id="grp__check-search" {{#if enableSearching}}checked{{/if}} />
+                <label for="grp__check-search">{{res 'grpSearch'}}</label>
+            </div>
+            {{/unless}}
+            <label>{{Res 'icon'}}:</label>
+            <div class="grp__icon-wrap">
+                {{#if customIcon}}
+                <img src="{{{customIcon}}}" class="grp__icon grp__icon--image" />
+                {{else}}
+                <i class="fa fa-{{icon}} grp__icon"></i>
+                {{/if}}
+            </div>
+            <div class="grp__icons"></div>
+            {{#if canAutoType}}
+            {{#unless readonly}}
+            <div>
+                <input type="checkbox" class="input-base" id="grp__check-auto-type" {{#if autoTypeEnabled}}checked{{/if}} />
+                <label for="grp__check-auto-type">{{res 'grpAutoType'}}</label>
+            </div>
+            {{/unless}}
+            <div class="grp__field">
+                <label for="grp__field-auto-type-seq">{{res 'grpAutoTypeSeq'}}:</label>
+                <input type="text" class="input-base" id="grp__field-auto-type-seq" value="{{autoTypeSeq}}"
+                       size="50" maxlength="1024" placeholder="{{res 'grpAutoTypeSeqDefault'}}: {{defaultAutoTypeSeq}}" />
+            </div>
             {{/if}}
         </div>
-        <div class="grp__icons"></div>
-        {{#if canAutoType}}
-        {{#unless readonly}}
-        <div>
-            <input type="checkbox" class="input-base" id="grp__check-auto-type" {{#if autoTypeEnabled}}checked{{/if}} />
-            <label for="grp__check-auto-type">{{res 'grpAutoType'}}</label>
-        </div>
-        {{/unless}}
-        <div class="grp__field">
-            <label for="grp__field-auto-type-seq">{{res 'grpAutoTypeSeq'}}:</label>
-            <input type="text" class="input-base" id="grp__field-auto-type-seq" value="{{autoTypeSeq}}"
-                   size="50" maxlength="1024" placeholder="{{res 'grpAutoTypeSeqDefault'}}: {{defaultAutoTypeSeq}}" />
-        </div>
-        {{/if}}
     </div>
     <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
     {{#unless readonly}}

@@ -15,6 +15,10 @@
         overflow-x: hidden;
     }
 
+    &__content, &__buttons {
+        padding: $base-padding;
+    }
+
     &__icon {
         display: block;
         font-size: $large-header-font-size;
