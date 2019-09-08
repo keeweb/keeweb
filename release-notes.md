@@ -9,6 +9,7 @@ Release notes
 `*` donation link changed  
 `-` fixed field editing styles  
 `*` dropped support for browsers without css variables  
+`*` displaying websites as HTTPS if no scheme is provided  
 
 ##### v1.9.3 (2019-09-07)
 `-` fixed group settings not being displayed  
