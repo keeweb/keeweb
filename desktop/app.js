@@ -157,15 +157,16 @@ function setSystemAppearance() {
 }
 
 function createMainWindow() {
-    const appSettings = readAppSettings();
+    const appSettings = readAppSettings() || {};
+    const isMacDarkTheme = appSettings.theme === 'macdark';
     const windowOptions = {
         show: false,
         width: 1000,
         height: 700,
         minWidth: 700,
         minHeight: 400,
-        titleBarStyle: appSettings ? appSettings.titlebarStyle : undefined,
-        backgroundColor: '#282C34',
+        titleBarStyle: appSettings.titlebarStyle,
+        backgroundColor: isMacDarkTheme ? '#1F1F20' : '#282C34',
         webPreferences: {
             backgroundThrottling: false,
             nodeIntegration: true,
