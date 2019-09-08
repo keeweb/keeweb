@@ -59,10 +59,10 @@ $titlebar-padding-large: 40px;
     @return inset 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 @function form-box-shadow-focus() {
-    @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus);
+    @return form-box-shadow(), 0 0 th(focus-shadow-blur) th(focus-shadow-spread) th(form-box-shadow-color-focus);
 }
 @function form-box-shadow-focus-error() {
-    @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus-error);
+    @return form-box-shadow(), 0 0 th(focus-shadow-blur) th(focus-shadow-spread) th(form-box-shadow-color-focus-error);
 }
 
 // Shadows

@@ -44,7 +44,6 @@ input[type='text'],
 input[type='password'],
 textarea,
 input:not([type]) {
-    border-radius: $base-border-radius;
     box-sizing: border-box;
     font-family: $base-font-family;
     font-size: 1rem;
@@ -69,6 +68,7 @@ input:not([type]) {
         background-color: th(background-color);
         border: base-border();
         box-shadow: form-box-shadow();
+        border-radius: th(input-border-radius);
 
         &:hover {
             border-color: th(accent-border-color);

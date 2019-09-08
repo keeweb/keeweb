@@ -1,0 +1,19 @@
+$themes: map-merge(
+        $themes,
+        (
+            macdark:
+            map-merge(
+                    $theme-defaults,
+                    (
+                        background-color: #303132,
+                        medium-color: #B7B7B8,
+                        text-color: #F7F7F7,
+                        action-color: #3E6FD3,
+                        error-color: #EC5F5D,
+                        focus-shadow-blur: 0,
+                        focus-shadow-spread: 3px,
+                        input-border-radius: 3px
+                    )
+            )
+        )
+);

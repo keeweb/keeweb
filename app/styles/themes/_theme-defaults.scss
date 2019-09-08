@@ -2,5 +2,8 @@ $theme-defaults: (
     mute-percent: 30%,
     light-border-percent: 10%,
     modal-opacity: 0.9,
-    color-lightness-shift: 0
+    color-lightness-shift: 0,
+    focus-shadow-blur: 3px,
+    focus-shadow-spread: 0,
+    input-border-radius: 1px
 );

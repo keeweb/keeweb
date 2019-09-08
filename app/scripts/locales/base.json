@@ -372,6 +372,7 @@
     "setGenThemeHc": "High contrast",
     "setGenThemeSd": "Solarized dark",
     "setGenThemeSl": "Solarized light",
+    "setGenThemeMacDark": "macOS Dark",
     "setGenLocale": "Language",
     "setGenLocOther": "other languages are available as plugins",
     "setGenFontSize": "Font size",

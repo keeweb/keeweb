@@ -19,7 +19,8 @@ const SettingsManager = {
         sl: 'setGenThemeSl',
         wh: 'setGenThemeWh',
         te: 'setGenThemeTe',
-        hc: 'setGenThemeHc'
+        hc: 'setGenThemeHc',
+        macdark: 'setGenThemeMacDark'
     },
 
     customLocales: {},

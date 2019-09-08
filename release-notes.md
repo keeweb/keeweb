@@ -3,6 +3,7 @@ Release notes
 ##### v1.10 (TBD)
 `+` config option to disable xml export (canExportXml)  
 `+` xml files can be now opened as regular files  
+`+` macOS Dark theme  
 `-` fix #1154: relative Destination header in WebDAV MOVE  
 `-` fix #1129: webdav storage error on Unicode filenames  
 `*` donation link changed  
