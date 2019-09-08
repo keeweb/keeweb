@@ -328,7 +328,7 @@ const StorageDropbox = StorageBase.extend({
                 this.logger.debug('Listed', this.logger.ts(ts));
                 const fileList = data.entries.map(f => ({
                     name: f.name,
-                    path: this._toRelPath(f['path_display']),
+                    path: this._toRelPath(f.path_display),
                     rev: f.rev,
                     dir: f['.tag'] !== 'file'
                 }));
