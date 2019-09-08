@@ -415,7 +415,7 @@ const FileModel = Backbone.Model.extend({
     },
 
     getXml(cb) {
-        this.db.saveXml().then(xml => {
+        this.db.saveXml(true).then(xml => {
             cb(xml);
         });
     },
