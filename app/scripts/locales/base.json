@@ -219,7 +219,7 @@
     "openShowAllFiles": "Show all files",
     "openFileNoCacheError": "File not found in the cache storage. This can happen because browser storage was cleaned up. To open the file, remove it from KeeWeb and add it again.",
 
-    "detAttDownload": "Shift-click attachment button to download or",
+    "detAttDownload": "Shift-click the attachment button to download it or",
     "detAttDelToRemove": "Delete to remove",
     "detEmpty": "Your passwords will be displayed here",
     "detGroupRestore": "To restore this group, please drag it to any group outside trash",
