@@ -39,16 +39,16 @@ $titlebar-padding-large: 40px;
     @return 1px solid var(--light-border-color);
 }
 @function selected-border-width() {
-    @return 3px;
+    @return var(--selected-border-width);
 }
 @function selected-border() {
     @return selected-border-width() solid var(--action-color);
 }
 @function selected-hover-border() {
-    @return 1px solid var(--action-color);
+    @return var(--accent-border-width) solid var(--action-color);
 }
 @function selected-transparent-border() {
-    @return 1px solid transparent;
+    @return var(--accent-border-width) solid transparent;
 }
 @function focused-outline() {
     @return 1px solid var(--action-color);

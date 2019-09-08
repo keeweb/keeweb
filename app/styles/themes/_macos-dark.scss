@@ -8,12 +8,48 @@ $themes: map-merge(
                         background-color: #1F1F20,
                         medium-color: #B7B7B8,
                         text-color: #F7F7F7,
-                        action-color: #3E6FD3,
+                        action-color: #3063D4,
                         error-color: #EC5F5D,
                         focus-shadow-blur: 0,
                         focus-shadow-spread: 3px,
-                        input-border-radius: 3px
+                        input-border-radius: 3px,
+                        selected-border-width: 0,
+                        accent-border-width: 0
                     )
             )
         )
 );
+
+body.th-macdark {
+    --light-border-color: rgb(68, 68, 69, 0.7);
+    --secondary-background-color: #2D2D2E;
+    --form-box-border-focus: #6697C0;
+    --form-box-shadow-color-focus: #44749D;
+    input[type='text'], input[type='password'], textarea, input:not([type]) {
+        &:focus {
+            background-color: rgba(108, 108, 109, 0.05);
+        }
+    }
+    .app__menu {
+        background-color: var(--secondary-background-color);
+        .menu__item.menu__item--active > .menu__item-body,
+        .menu__item.menu__item--active.menu__item--hover > .menu__item-body {
+            background-color: #515152;
+        }
+        .menu__item-edit, .menu__item-empty-trash {
+            right: .3em;
+        }
+        .menu__item-edit:not(:hover), .menu__item-empty-trash:not(:hover) {
+            color: #8F8F91;
+        }
+    }
+    .app__footer {
+        background-color: var(--secondary-background-color);
+    }
+    .list__item--active, .list__item--active:hover {
+        background-color: #2457C9;
+        .list__item-descr {
+            color: #8F8F91;
+        }
+    }
+}

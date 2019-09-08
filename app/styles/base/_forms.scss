@@ -72,7 +72,7 @@ input:not([type]) {
     }
 
     &:focus {
-        border-color: var(--action-color);
+        border-color: var(--form-box-border-focus);
         box-shadow: form-box-shadow-focus();
         outline: none;
     }
@@ -152,7 +152,7 @@ select {
         border-color: var(--accent-border-color);
     }
     &:focus {
-        border-color: var(--action-color);
+        border-color: var(--form-box-border-focus);
         box-shadow: form-box-shadow-focus();
         outline: none;
     }

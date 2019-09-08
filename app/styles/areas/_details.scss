@@ -255,6 +255,7 @@
             .details__field--edit.details__field--editable:hover & {
                 border: 0 solid transparent;
                 padding: 0;
+                overflow: visible;
             }
             > input,
             > textarea {
