@@ -583,8 +583,8 @@
         }
         &-arrow-prev,
         &-arrow-next {
-            @include transform(scaleX(2));
-            @include transform-origin(left top);
+            transform: scaleX(2);
+            transform-origin: left top;
             cursor: pointer;
             position: absolute;
             top: 30px;

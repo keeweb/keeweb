@@ -15,7 +15,8 @@
         overflow-x: hidden;
     }
 
-    &__content, &__buttons {
+    &__content,
+    &__buttons {
         padding: $base-padding;
     }
 

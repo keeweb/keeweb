@@ -1,32 +1,35 @@
 $themes: map-merge(
-        $themes,
-        (
-            macdark:
+    $themes,
+    (
+        macdark:
             map-merge(
-                    $theme-defaults,
-                    (
-                        background-color: #1F1F20,
-                        medium-color: #B7B7B8,
-                        text-color: #F7F7F7,
-                        action-color: #3063D4,
-                        error-color: #EC5F5D,
-                        focus-shadow-blur: 0,
-                        focus-shadow-spread: 3px,
-                        button-border-radius: 2px,
-                        input-border-radius: 3px,
-                        selected-border-width: 0,
-                        accent-border-width: 0
-                    )
+                $theme-defaults,
+                (
+                    background-color: #1f1f20,
+                    medium-color: #b7b7b8,
+                    text-color: #f7f7f7,
+                    action-color: #3063d4,
+                    error-color: #ec5f5d,
+                    focus-shadow-blur: 0,
+                    focus-shadow-spread: 3px,
+                    button-border-radius: 2px,
+                    input-border-radius: 3px,
+                    selected-border-width: 0,
+                    accent-border-width: 0
+                )
             )
-        )
+    )
 );
 
 body.th-macdark {
     --light-border-color: rgb(68, 68, 69, 0.7);
-    --secondary-background-color: #2D2D2E;
-    --form-box-border-focus: #6697C0;
-    --form-box-shadow-color-focus: #44749D;
-    input[type='text'], input[type='password'], textarea, input:not([type]) {
+    --secondary-background-color: #2d2d2e;
+    --form-box-border-focus: #6697c0;
+    --form-box-shadow-color-focus: #44749d;
+    input[type='text'],
+    input[type='password'],
+    textarea,
+    input:not([type]) {
         &:focus {
             background-color: rgba(108, 108, 109, 0.05);
         }
@@ -37,21 +40,24 @@ body.th-macdark {
         .menu__item.menu__item--active.menu__item--hover > .menu__item-body {
             background-color: #515152;
         }
-        .menu__item-edit, .menu__item-empty-trash {
-            right: .5em;
+        .menu__item-edit,
+        .menu__item-empty-trash {
+            right: 0.5em;
         }
-        .menu__item-edit:not(:hover), .menu__item-empty-trash:not(:hover) {
-            color: #8F8F91;
+        .menu__item-edit:not(:hover),
+        .menu__item-empty-trash:not(:hover) {
+            color: #8f8f91;
         }
     }
     .app__footer {
         background-color: var(--secondary-background-color);
     }
     @include nomobile {
-        .list__item--active, .list__item--active:hover {
-            background-color: #2457C9;
+        .list__item--active,
+        .list__item--active:hover {
+            background-color: #2457c9;
             .list__item-descr {
-                color: #8F8F91;
+                color: #8f8f91;
             }
         }
     }

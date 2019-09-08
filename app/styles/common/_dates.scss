@@ -26,11 +26,11 @@ button.pika-next:after {
 }
 
 button.pika-prev:after {
-    @include triangle(14px 7px, var(--text-color), left);
+    @include triangle('left', 14px, 7px, var(--text-color));
 }
 
 button.pika-next:after {
-    @include triangle(14px 7px, var(--text-color), right);
+    @include triangle('right', 14px, 7px, var(--text-color));
 }
 
 .pika-table th {

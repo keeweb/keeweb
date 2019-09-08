@@ -167,34 +167,22 @@
             &--custom {
                 vertical-align: text-bottom;
                 &.yellow {
-                    @include filter(
-                        grayscale(1) sepia(1) hue-rotate(20deg) brightness(1.17) saturate(5.7)
-                    );
+                    filter: grayscale(1) sepia(1) hue-rotate(20deg) brightness(1.17) saturate(5.7);
                 }
                 &.green {
-                    @include filter(
-                        grayscale(1) sepia(1) hue-rotate(55deg) brightness(1.01) saturate(4.9)
-                    );
+                    filter: grayscale(1) sepia(1) hue-rotate(55deg) brightness(1.01) saturate(4.9);
                 }
                 &.red {
-                    @include filter(
-                        grayscale(1) sepia(1) hue-rotate(316deg) brightness(1.1) saturate(6)
-                    );
+                    filter: grayscale(1) sepia(1) hue-rotate(316deg) brightness(1.1) saturate(6);
                 }
                 &.orange {
-                    @include filter(
-                        grayscale(1) sepia(1) hue-rotate(355deg) brightness(0.92) saturate(5)
-                    );
+                    filter: grayscale(1) sepia(1) hue-rotate(355deg) brightness(0.92) saturate(5);
                 }
                 &.blue {
-                    @include filter(
-                        grayscale(1) sepia(1) hue-rotate(180deg) brightness(0.9) saturate(5)
-                    );
+                    filter: grayscale(1) sepia(1) hue-rotate(180deg) brightness(0.9) saturate(5);
                 }
                 &.violet {
-                    @include filter(
-                        grayscale(1) sepia(1) hue-rotate(238deg) brightness(1) saturate(6.2)
-                    );
+                    filter: grayscale(1) sepia(1) hue-rotate(238deg) brightness(1) saturate(6.2);
                 }
             }
         }

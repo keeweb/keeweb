@@ -92,7 +92,7 @@ input:not([type]) {
     &:invalid {
         border-color: var(--error-color);
         box-shadow: form-box-shadow-focus-error();
-        @include selection(true) {
+        &::selection {
             background-color: var(--text-selection-bg-color-error);
         }
     }
@@ -101,7 +101,7 @@ input:not([type]) {
         padding-right: 1.7em;
     }
 
-    @include placeholder {
+    &::placeholder {
         color: var(--muted-color);
     }
 }
