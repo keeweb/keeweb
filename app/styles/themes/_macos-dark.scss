@@ -9,7 +9,7 @@ $themes: map-merge(
                     medium-color: #b7b7b8,
                     text-color: #f7f7f7,
                     action-color: #3063d4,
-                    error-color: #EC655A,
+                    error-color: #ec655a,
                     focus-shadow-blur: 0,
                     focus-shadow-spread: 3px,
                     button-border-radius: 2px,
@@ -52,17 +52,33 @@ body.th-macdark {
                 color: #8f8f91;
             }
         }
-        input, textarea, select {
+        input,
+        textarea,
+        select {
             background-color: rgba(108, 108, 109, 0.025);
         }
-        input:focus, textarea:focus, select:focus {
+        input:focus,
+        textarea:focus,
+        select:focus {
             background-color: rgba(108, 108, 109, 0.05);
         }
     }
-    .yellow-color { color: #E0C24C; }
-    .red-color { color: #EC655A; }
-    .orange-color { color: #E78F42; }
-    .green-color { color: #71BF47; }
-    .blue-color { color: #3062D1; }
-    .violet-color { color: #E55C9C; }
+    .yellow-color {
+        color: #e0c24c;
+    }
+    .red-color {
+        color: #ec655a;
+    }
+    .orange-color {
+        color: #e78f42;
+    }
+    .green-color {
+        color: #71bf47;
+    }
+    .blue-color {
+        color: #3062d1;
+    }
+    .violet-color {
+        color: #e55c9c;
+    }
 }

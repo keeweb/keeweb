@@ -25,7 +25,8 @@ button.pika-next:after {
     left: 6px;
 }
 
-button.pika-prev:after, button.pika-next:after  {
+button.pika-prev:after,
+button.pika-next:after {
     left: 50%;
     transform: translateX(-50%);
 }

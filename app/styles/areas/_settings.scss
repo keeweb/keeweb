@@ -246,25 +246,26 @@
     }
     &__donate-btn {
         background: #fff;
-        border: 2px solid #89ABED;
+        border: 2px solid #89abed;
         border-radius: 2.8rem;
         text-align: center;
         display: inline-block;
         text-decoration: none;
-        padding: .2rem 2.4rem .1rem;
+        padding: 0.2rem 2.4rem 0.1rem;
         line-height: 1.4;
         height: 2.8rem;
         margin-bottom: $base-padding-v;
 
-        &-top, &-bottom {
+        &-top,
+        &-bottom {
             pointer-events: none;
             display: block;
         }
         &-top {
-            color: #606A79;
+            color: #606a79;
         }
         &-bottom {
-            color: #89ABED;
+            color: #89abed;
             font-weight: bold;
         }
     }

@@ -8,4 +8,6 @@
   'plugins/**/*.js' \
   'util/**/*.js' \
   '*.js' \
-  'package.json'
+  'package.json' \
+  '!app/scripts/locales/de-DE.json' \
+  '!app/scripts/locales/fr-FR.json'
