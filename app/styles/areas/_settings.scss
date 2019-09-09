@@ -256,13 +256,15 @@
         height: 2.8rem;
         margin-bottom: $base-padding-v;
 
+        &-top, &-bottom {
+            pointer-events: none;
+            display: block;
+        }
         &-top {
             color: #606A79;
-            display: block;
         }
         &-bottom {
             color: #89ABED;
-            display: block;
             font-weight: bold;
         }
     }
