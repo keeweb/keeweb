@@ -416,7 +416,7 @@ module.exports = function(grunt) {
             }
         },
         chmod: {
-            'linux-x64': {
+            'linux-desktop-x64': {
                 options: {
                     mode: '4755'
                 },
