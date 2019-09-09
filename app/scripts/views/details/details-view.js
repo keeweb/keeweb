@@ -29,6 +29,7 @@ const Format = require('../../util/format');
 const Locale = require('../../util/locale');
 const Tip = require('../../util/tip');
 const FileSaver = require('../../util/file-saver');
+const FeatureDetector = require('../../util/feature-detector');
 const Timeouts = require('../../const/timeouts');
 const Copyable = require('../../mixins/copyable');
 
@@ -943,8 +944,20 @@ const DetailsView = Backbone.View.extend({
     },
 
     moveToTrash() {
-        this.model.moveToTrash();
-        Backbone.trigger('refresh');
+        const doMove = () => {
+            this.model.moveToTrash();
+            Backbone.trigger('refresh');
+        };
+        if (FeatureDetector.isMobile) {
+            Alerts.yesno({
+                header: Locale.detDelToTrash,
+                body: Locale.detDelToTrashBody,
+                icon: 'trash',
+                success: doMove
+            });
+        } else {
+            doMove();
+        }
     },
 
     clone() {

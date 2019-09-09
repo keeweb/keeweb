@@ -14,6 +14,7 @@ const FieldView = Backbone.View.extend({
     render() {
         this.value = typeof this.model.value === 'function' ? this.model.value() : this.model.value;
         this.renderTemplate({
+            cls: this.cssClass,
             editable: !this.readonly,
             multiline: this.model.multiline,
             title: this.model.title,

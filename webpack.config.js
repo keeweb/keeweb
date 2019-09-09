@@ -62,7 +62,7 @@ function config(grunt, mode = 'production') {
                 kdbxweb: 'kdbxweb/dist/kdbxweb.js',
                 baron: `baron/baron${devMode ? '.min' : ''}.js`,
                 qrcode: `jsqrcode/dist/qrcode${devMode ? '.min' : ''}.js`,
-                argon2: 'argon2-browser/dist/argon2.min.js',
+                argon2: 'argon2-browser/dist/argon2.js',
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
                 templates: path.join(__dirname, 'app/templates'),

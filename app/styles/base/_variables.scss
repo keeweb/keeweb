@@ -33,25 +33,25 @@ $titlebar-padding-large: 40px;
 
 // Borders
 @function base-border() {
-    @return 1px solid th(base-border-color);
+    @return 1px solid var(--base-border-color);
 }
 @function light-border() {
-    @return 1px solid th(light-border-color);
+    @return 1px solid var(--light-border-color);
 }
 @function selected-border-width() {
-    @return 3px;
+    @return var(--selected-border-width);
 }
 @function selected-border() {
-    @return selected-border-width() solid th(action-color);
+    @return selected-border-width() solid var(--action-color);
 }
 @function selected-hover-border() {
-    @return 1px solid th(action-color);
+    @return var(--accent-border-width) solid var(--action-color);
 }
 @function selected-transparent-border() {
-    @return 1px solid transparent;
+    @return var(--accent-border-width) solid transparent;
 }
 @function focused-outline() {
-    @return 1px solid th(action-color);
+    @return 1px solid var(--action-color);
 }
 
 // Forms
@@ -59,15 +59,18 @@ $titlebar-padding-large: 40px;
     @return inset 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 @function form-box-shadow-focus() {
-    @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus);
+    @return form-box-shadow(),
+        0 0 var(--focus-shadow-blur) var(--focus-shadow-spread) var(--form-box-shadow-color-focus);
 }
 @function form-box-shadow-focus-error() {
-    @return form-box-shadow(), 0 0 3px th(form-box-shadow-color-focus-error);
+    @return form-box-shadow(),
+        0 0 var(--focus-shadow-blur) var(--focus-shadow-spread)
+            var(--form-box-shadow-color-focus-error);
 }
 
 // Shadows
 @function dropdown-box-shadow() {
-    @return 0 0 50px th(dropdown-box-shadow-color);
+    @return 0 0 50px var(--dropdown-box-shadow-color);
 }
 
 // Animations

@@ -25,6 +25,7 @@
 
     &__header {
         display: flex;
+        align-items: flex-start;
         padding-bottom: $small-spacing;
         overflow: visible;
         min-height: 40px;
@@ -39,19 +40,22 @@
             text-overflow: ellipsis;
             border-radius: $base-border-radius;
             border: 1px solid transparent;
+            height: 36px;
+            line-height: 34px;
             position: relative;
             top: -2px;
+            white-space: nowrap;
             &:hover {
                 transition: border-color $base-duration $base-timing;
-                @include th {
-                    border: 1px solid th(light-border-color);
-                }
+                border: 1px solid var(--light-border-color);
                 @include mobile {
                     border-color: transparent;
                 }
             }
         }
         input.details__header-title-input {
+            height: 42px;
+            line-height: 34px;
             user-select: text;
             flex: 1;
             margin: 0 6px;
@@ -90,10 +94,8 @@
         position: absolute;
         z-index: $z-index-no-modal;
         border-radius: $base-border-radius;
-        @include th {
-            background: th(background-color);
-            box-shadow: 0 0 3px th(background-color);
-        }
+        background: var(--background-color);
+        box-shadow: 0 0 3px var(--background-color);
         top: 13px;
         left: 6px;
         font-size: $large-header-font-size;
@@ -186,9 +188,7 @@
         margin-bottom: 0.5em;
 
         &-label {
-            @include th {
-                color: th(muted-color);
-            }
+            color: var(--muted-color);
             width: 7em;
             text-align: right;
             cursor: pointer;
@@ -197,9 +197,7 @@
             line-height: $details-field-line-height;
             position: relative;
             &:hover {
-                @include th {
-                    color: th(medium-color);
-                }
+                color: var(--medium-color);
             }
             .details__field--can-edit-title & {
                 cursor: text;
@@ -210,9 +208,7 @@
                 line-height: $details-field-line-height;
                 height: $details-field-line-height;
                 width: 100%;
-                @include th {
-                    color: th(text-color);
-                }
+                color: var(--text-color);
                 .chrome & {
                     padding-bottom: 1px;
                 } // TODO: find a better cross-browser way to do it
@@ -241,14 +237,10 @@
                     @include nomobile {
                         transition: border-color $base-duration $base-timing;
                         border: 1px solid;
-                        @include th {
-                            border-color: th(light-border-color);
-                            box-shadow: 0 0 3px rgba(0, 0, 0, 0.06);
-                        }
+                        border-color: var(--light-border-color);
+                        box-shadow: 0 0 3px rgba(0, 0, 0, 0.06);
                         .details__field-value-add-label {
-                            @include th {
-                                color: th(muted-color);
-                            }
+                            color: var(--muted-color);
                             transition: color $base-duration $base-timing;
                         }
                     }
@@ -261,17 +253,21 @@
                 width: 0;
                 white-space: pre-wrap;
             }
+            .details__field--url & {
+                height: $details-field-line-height + 2px;
+            }
             .details__field--edit &,
             .details__field--edit.details__field--editable &,
             .details__field--edit.details__field--editable:hover & {
                 border: 0 solid transparent;
                 padding: 0;
+                overflow: visible;
             }
             > input,
             > textarea {
                 margin: 0;
                 padding: 0 $base-padding-h;
-                line-height: $details-field-line-height;
+                line-height: $details-field-line-height + 2px;
                 width: 100%;
                 height: 20px;
                 .details__field--protected & {
@@ -283,15 +279,11 @@
                         border-color $slow-transition-in;
                 }
                 .details__field--edit[active-mobile-action='apply'] & {
-                    @include th {
-                        background: th(action-color);
-                    }
+                    background: var(--action-color);
                 }
                 .details__field--edit[active-mobile-action='cancel'] & {
-                    @include th {
-                        background: th(error-color);
-                        border-color: th(error-color);
-                    }
+                    background: var(--error-color);
+                    border-color: var(--error-color);
                 }
                 @include mobile {
                     border-color: transparent !important;
@@ -319,13 +311,9 @@
                 text-overflow: ellipsis;
             }
             .details__body-aside & {
-                @include th {
-                    color: th(muted-color);
-                }
+                color: var(--muted-color);
                 a {
-                    @include th {
-                        color: th(muted-color);
-                    }
+                    color: var(--muted-color);
                 }
                 width: 13em;
                 padding-right: 0;
@@ -334,14 +322,10 @@
             }
             &-btn {
                 @include position(absolute, 0 0 null null);
-                @include th {
-                    color: th(muted-color);
-                }
+                color: var(--muted-color);
                 cursor: pointer;
                 &:hover {
-                    @include th {
-                        color: th(medium-color);
-                    }
+                    color: var(--medium-color);
                 }
                 &:before {
                     @include position(absolute, 0 0 null null);
@@ -374,9 +358,7 @@
                     &:before {
                         padding: 0.2em 1.5em;
                     }
-                    @include th {
-                        background: th(background-color);
-                    }
+                    background: var(--background-color);
                 }
                 &-btn-apply {
                     &:before {
@@ -413,9 +395,7 @@
         }
 
         @include mobile {
-            @include th {
-                border-bottom: light-border();
-            }
+            border-bottom: light-border();
             padding-bottom: 0.5em;
         }
     }
@@ -440,9 +420,7 @@
         @include area-selectable();
         align-self: flex-end;
         flex: 0 1 auto;
-        @include th {
-            border: light-border();
-        }
+        border: light-border();
         margin-right: $small-spacing;
         padding: $base-padding;
         text-align: center;
@@ -452,9 +430,7 @@
             margin-right: 0.4em;
         }
         &--active {
-            @include th {
-                border-bottom: 1px solid th(action-color);
-            }
+            border-bottom: 1px solid var(--action-color);
         }
     }
 
@@ -462,9 +438,7 @@
         user-select: none;
         align-self: flex-end;
         flex: 0 0 auto;
-        @include th {
-            color: th(muted-color);
-        }
+        color: var(--muted-color);
         border: 1px solid transparent;
         margin-right: $small-spacing;
         padding: $base-padding;
@@ -472,9 +446,7 @@
         overflow: hidden;
         transition: color $base-duration $base-timing;
         &:hover {
-            @include th {
-                color: th(medium-color);
-            }
+            color: var(--medium-color);
         }
         &-title {
             display: none;
@@ -484,9 +456,7 @@
             .details__attachment-add:hover & {
                 display: inline;
                 transition: color $slow-transition-in;
-                @include th {
-                    color: th(muted-color);
-                }
+                color: var(--muted-color);
             }
         }
     }
@@ -556,9 +526,7 @@
         }
 
         &-trash-del {
-            @include th {
-                color: th(muted-color);
-            }
+            color: var(--muted-color);
         }
 
         button ~ button {
@@ -594,9 +562,7 @@
                 width: 100%;
                 position: absolute;
                 top: 9px;
-                @include th {
-                    border-bottom: light-border();
-                }
+                border-bottom: light-border();
             }
             &-item {
                 position: absolute;
@@ -604,17 +570,13 @@
                 cursor: pointer;
                 transform: translateX(-48%);
                 &:hover {
-                    @include th {
-                        color: th(text-semi-muted-color);
-                    }
+                    color: var(--text-semi-muted-color);
                 }
                 &--active,
                 &--active:hover {
                     z-index: $z-index-no-modal;
                     cursor: default;
-                    @include th {
-                        color: th(action-color);
-                    }
+                    color: var(--action-color);
                 }
             }
             &-label {
@@ -622,23 +584,19 @@
                 top: 16px;
                 white-space: nowrap;
                 transform: translateX(-50%);
-                @include th {
-                    color: th(muted-color);
-                }
+                color: var(--muted-color);
             }
         }
         &-arrow-prev,
         &-arrow-next {
-            @include transform(scaleX(2));
-            @include transform-origin(left top);
+            transform: scaleX(2);
+            transform-origin: left top;
             cursor: pointer;
             position: absolute;
             top: 30px;
             font-size: 14px;
             &:hover {
-                @include th {
-                    color: th(text-semi-muted-color);
-                }
+                color: var(--text-semi-muted-color);
             }
         }
         &-arrow-prev {
@@ -691,10 +649,8 @@
             word-break: break-all;
             @include area-selectable(bottom);
             &--selected {
-                @include th {
-                    background-color: th(secondary-background-color);
-                    border-bottom: selected-hover-border();
-                }
+                background-color: var(--secondary-background-color);
+                border-bottom: selected-hover-border();
             }
         }
     }

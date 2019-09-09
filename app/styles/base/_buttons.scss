@@ -1,6 +1,6 @@
 #{$all-buttons} {
     appearance: none;
-    border-radius: $base-border-radius;
+    border-radius: var(--button-border-radius);
     cursor: pointer;
     display: inline-block;
     font-family: $base-font-family;
@@ -17,58 +17,56 @@
     outline: none;
     min-width: 80px;
 
-    @include th {
-        border: 1px solid th(action-color);
-        background-color: th(action-color);
-        color: th(text-contrast-action-color);
+    border: 1px solid var(--action-color);
+    background-color: var(--action-color);
+    color: var(--text-contrast-action-color);
 
-        &.btn-error,
+    &.btn-error,
+    &.btn-silent {
+        border-color: var(--base-border-color);
+        background-color: transparent;
+        color: var(--text-color);
+    }
+
+    &:hover {
+        border-color: var(--action-background-color-focus);
+        background-color: var(--action-background-color-focus);
+        &.btn-error {
+            border-color: var(--error-background-color-focus);
+            background-color: var(--error-background-color-focus-tr);
+        }
         &.btn-silent {
-            border-color: th(base-border-color);
-            background-color: transparent;
-            color: th(text-color);
+            border-color: var(--action-background-color-focus);
+            background-color: var(--action-background-color-focus-tr);
         }
+    }
 
+    &:active {
+        border-color: var(--action-background-color-active);
+        background-color: var(--action-background-color-active);
+        &.btn-error {
+            border-color: var(--error-background-color-active);
+            background-color: var(--error-background-color-active-tr);
+        }
+        &.btn-silent {
+            border-color: var(--action-background-color-active);
+            background-color: var(--action-background-color-active-tr);
+        }
+    }
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.5;
         &:hover {
-            border-color: th(action-background-color-focus);
-            background-color: th(action-background-color-focus);
+            border-color: var(--action-color);
+            background-color: var(--action-color);
             &.btn-error {
-                border-color: th(error-background-color-focus);
-                background-color: th(error-background-color-focus-tr);
+                border-color: var(--error-color);
+                background-color: transparent;
             }
             &.btn-silent {
-                border-color: th(action-background-color-focus);
-                background-color: th(action-background-color-focus-tr);
-            }
-        }
-
-        &:active {
-            border-color: th(action-background-color-active);
-            background-color: th(action-background-color-active);
-            &.btn-error {
-                border-color: th(error-background-color-active);
-                background-color: th(error-background-color-active-tr);
-            }
-            &.btn-silent {
-                border-color: th(action-background-color-active);
-                background-color: th(action-background-color-active-tr);
-            }
-        }
-
-        &:disabled {
-            cursor: default;
-            opacity: 0.5;
-            &:hover {
-                border-color: th(action-color);
-                background-color: th(action-color);
-                &.btn-error {
-                    border-color: th(error-color);
-                    background-color: transparent;
-                }
-                &.btn-silent {
-                    border-color: th(action-color);
-                    background-color: transparent;
-                }
+                border-color: var(--action-color);
+                background-color: transparent;
             }
         }
     }
@@ -83,9 +81,7 @@
     }
     @if $error {
         &:hover {
-            @include th {
-                border-color: th(error-color);
-            }
+            border-color: var(--error-color);
         }
     }
 }
@@ -93,13 +89,9 @@
 .svg-btn {
     svg path {
         transition: fill $base-duration $base-timing;
-        @include th {
-            fill: th(text-color);
-        }
+        fill: var(--text-color);
     }
     &:hover svg path {
-        @include th {
-            fill: th(medium-color);
-        }
+        fill: var(--medium-color);
     }
 }

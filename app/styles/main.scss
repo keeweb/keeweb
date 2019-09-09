@@ -3,11 +3,11 @@ $fa-font-path: '~font-awesome/fonts';
 @import '~normalize.css/normalize';
 @import '~font-awesome/scss/font-awesome';
 @import '~pikaday/scss/pikaday';
-@import '~bourbon/app/assets/stylesheets/bourbon';
-
-@import 'themes/all-themes';
+@import '~bourbon';
 
 @import 'base/base';
+
+@import 'themes/all-themes';
 
 @import 'utils/back-button';
 @import 'utils/common-dropdown';

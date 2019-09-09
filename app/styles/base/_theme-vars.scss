@@ -39,6 +39,7 @@
                     map-get($t, background-color),
                     map-get($t, light-border-percent)
                 ),
+            form-box-border-focus: map-get($t, action-color),
             form-box-shadow-color-focus: lightness-alpha(map-get($t, action-color), -5%, -0.3),
             form-box-shadow-color-focus-error: lightness-alpha(map-get($t, error-color), -5%, -0.3),
             dropdown-box-shadow-color: rgba(map-get($t, medium-color), 0.05),

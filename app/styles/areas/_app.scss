@@ -125,7 +125,6 @@
         flex: 1;
         display: flex;
         overflow: hidden;
-        padding: $base-spacing;
         position: relative;
         @include mobile {
             padding: $base-padding;
@@ -134,17 +133,13 @@
 
     &__footer {
         flex: 0 0 auto;
-        @include th {
-            border-top: light-border();
-        }
+        border-top: light-border();
     }
 
     &__beta {
         padding: $base-padding;
         text-align: center;
-        @include th {
-            background-color: th(error-color);
-            color: th(text-contrast-error-color);
-        }
+        background-color: var(--error-color);
+        color: var(--text-contrast-error-color);
     }
 }

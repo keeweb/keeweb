@@ -15,16 +15,15 @@
         overflow-x: hidden;
     }
 
+    &__content,
     &__buttons {
-        margin-top: $base-padding-v;
+        margin: $base-padding;
     }
 
     &__sample {
         font-weight: normal;
         user-select: text;
-        @include th {
-            color: th(muted-color);
-        }
+        color: var(--muted-color);
     }
 
     &__example {

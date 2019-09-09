@@ -1,0 +1,76 @@
+@charset "UTF-8";
+
+// Copied from bourbon/core/bourbon/library/_triangle.scss
+// Disabled is-color because it doesn't work with CSS variables
+
+/// Generates a triangle pointing in a specified direction.
+///
+/// @argument {string} $direction
+///   The direction the triangle should point. Accepts `up`, `up-right`,
+///   `right`, `down-right`, `down`, `down-left`, `left` or `up-left`.
+///
+/// @argument {number (with unit)} $width
+///   Width of the triangle.
+///
+/// @argument {number (with unit)} $height
+///   Height of the triangle.
+///
+/// @argument {color} $color
+///   Color of the triangle.
+///
+/// @example scss
+///   .element {
+///     &::before {
+///       @include triangle("up", 2rem, 1rem, #b25c9c);
+///       content: "";
+///     }
+///   }
+///
+///   // CSS Output
+///   .element::before {
+///     border-style: solid;
+///     height: 0;
+///     width: 0;
+///     border-color: transparent transparent #b25c9c;
+///     border-width: 0 1rem 1rem;
+///     content: "";
+///   }
+
+@mixin triangle($direction, $width, $height, $color) {
+    @if not
+        index('up' 'up-right' 'right' 'down-right' 'down' 'down-left' 'left' 'up-left', $direction)
+    {
+        @error "Direction must be `up`, `up-right`, `right`, `down-right`, " +
+           "`down`, `down-left`, `left` or `up-left`.";
+    } @else {
+        border-style: solid;
+        height: 0;
+        width: 0;
+
+        @if $direction == 'up' {
+            border-color: transparent transparent $color;
+            border-width: 0 ($width / 2) $height;
+        } @else if $direction == 'up-right' {
+            border-color: transparent $color transparent transparent;
+            border-width: 0 $width $width 0;
+        } @else if $direction == 'right' {
+            border-color: transparent transparent transparent $color;
+            border-width: ($height / 2) 0 ($height / 2) $width;
+        } @else if $direction == 'down-right' {
+            border-color: transparent transparent $color;
+            border-width: 0 0 $width $width;
+        } @else if $direction == 'down' {
+            border-color: $color transparent transparent;
+            border-width: $height ($width / 2) 0;
+        } @else if $direction == 'down-left' {
+            border-color: transparent transparent transparent $color;
+            border-width: $width 0 0 $width;
+        } @else if $direction == 'left' {
+            border-color: transparent $color transparent transparent;
+            border-width: ($height / 2) $width ($height / 2) 0;
+        } @else if $direction == 'up-left' {
+            border-color: $color transparent transparent;
+            border-width: $width $width 0 0;
+        }
+    }
+}

@@ -88,7 +88,7 @@ const ListSearchView = Backbone.View.extend({
                 icon: 'sort-amount-desc',
                 loc: () => Locale.searchAttachments
             },
-            { value: '-rank', icon: 'sort-numeric-desc', loc: () => Locale.searchRank }
+            { value: '-rank', icon: 'sort-amount-desc', loc: () => Locale.searchRank }
         ];
         this.sortIcons = {};
         this.sortOptions.forEach(function(opt) {

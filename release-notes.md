@@ -1,11 +1,19 @@
 Release notes
 -------------
-##### v1.10 (TBD)
-`+` config option to disable xml export (canExportXml)  
-`+` xml files can be now opened as regular files  
+##### v1.10.0 (2019-09-09)
+`+` macOS Dark theme  
+`+` HTML export  
+`+` pretty-printing exported XML files  
+`+` config option to disable XML export (canExportXml)  
+`+` XML files can be now opened as regular files  
+`*` donation link changed  
+`-` fixed field editing styles  
 `-` fix #1154: relative Destination header in WebDAV MOVE  
 `-` fix #1129: webdav storage error on Unicode filenames  
-`*` donation link changed  
+`*` dropped support for browsers without css variables  
+`*` displaying websites as HTTPS if no scheme is provided  
+`+` confirmation for deleting an entry on mobile  
+`-` fix #1244: deb file permissions issue  
 
 ##### v1.9.3 (2019-09-07)
 `-` fixed group settings not being displayed  
@@ -14,7 +22,7 @@ Release notes
 
 ##### v1.9.2 (2019-08-22)
 `-` fix #1235: custom themes loading  
-`-` fix #1234 auto-type issues in xubuntu/xfce  
+`-` fix #1234: auto-type issues in xubuntu/xfce  
 
 ##### v1.9.1 (2019-08-19)
 `-` fix #1231: tooltip arrow positioning  

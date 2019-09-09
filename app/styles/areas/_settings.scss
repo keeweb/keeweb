@@ -6,9 +6,12 @@
     justify-content: flex-start;
     flex-wrap: wrap;
     @include scrollbar-on-hover;
-    margin: $base-padding;
     overflow: hidden;
     position: relative;
+
+    &__content {
+        margin: $base-padding;
+    }
 
     > .scroller {
         flex: 1 0 0;
@@ -20,9 +23,7 @@
     }
 
     .shortcut {
-        @include th {
-            border: 1px solid th(muted-color);
-        }
+        border: 1px solid var(--muted-color);
         display: inline-block;
         border-radius: $base-border-radius;
         width: 40px;
@@ -46,7 +47,7 @@
         @include mobile {
             line-height: $mobile-back-button-height;
             height: $mobile-back-button-height;
-            padding-bottom: $base-padding-v;
+            padding: $base-padding;
             font-size: 1.2em;
             > i {
                 margin-right: 0.3em;
@@ -63,10 +64,8 @@
             right: $base-padding-h;
             padding: $base-padding-v * 2 0 1px 0;
             z-index: 1;
-            @include th {
-                background: th(background-color);
-                box-shadow: 0 0 5px 5px th(background-color);
-            }
+            background: var(--background-color);
+            box-shadow: 0 0 5px 5px var(--background-color);
             &-post {
                 display: inline;
             }
@@ -116,6 +115,11 @@
         display: none;
     }
 
+    &__file-buttons {
+        button ~ button {
+            margin-left: $small-spacing;
+        }
+    }
     &__file-master-pass-warning,
     &__file-confirm-master-pass-warning {
         font-weight: normal;
@@ -140,9 +144,7 @@
         }
         &:hover {
             transition: color $base-duration $base-timing;
-            @include th {
-                color: th(medium-color);
-            }
+            color: var(--medium-color);
         }
     }
 
@@ -210,9 +212,7 @@
             position: relative;
             width: calc(50% - 40px);
             border-radius: $base-border-radius;
-            @include th {
-                border: light-border();
-            }
+            border: light-border();
             padding: $medium-padding;
             box-sizing: border-box;
             margin: 0 $base-padding-v $base-padding-h 0;
@@ -242,6 +242,31 @@
         &-gallery-search {
             margin-top: $medium-padding-v;
             width: calc(100% - 74px);
+        }
+    }
+    &__donate-btn {
+        background: #fff;
+        border: 2px solid #89abed;
+        border-radius: 2.8rem;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        padding: 0.2rem 2.4rem 0.1rem;
+        line-height: 1.4;
+        height: 2.8rem;
+        margin-bottom: $base-padding-v;
+
+        &-top,
+        &-bottom {
+            pointer-events: none;
+            display: block;
+        }
+        &-top {
+            color: #606a79;
+        }
+        &-bottom {
+            color: #89abed;
+            font-weight: bold;
         }
     }
 }

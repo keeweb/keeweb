@@ -27,6 +27,7 @@ function processFile(name) {
         throw new Error('No match found!');
     }
     data.version = version;
-    const newContent = JSON.stringify(data, null, 2) + '\n';
+    const numSpaces = name.endsWith('package-lock.json') ? 2 : 4;
+    const newContent = JSON.stringify(data, null, numSpaces) + '\n';
     fs.writeFileSync(name, newContent, 'utf8');
 }

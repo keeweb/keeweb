@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{{name}}</title>
+        <link href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon" />
+        <style>
+            body {
+                font-family: -apple-system, "BlinkMacSystemFont", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+            table {
+                border-collapse: collapse;
+                border: 1px solid #ccc;
+                width: 100%;
+            }
+            td {
+                border: 1px solid #ccc;
+                padding: 8px 16px;
+            }
+            tr:nth-of-type(even) {
+                background: #fafafa;
+            }
+            td:first-of-type {
+                width: 30%;
+            }
+        </style>
+    </head>
+    <body>
+    <h1>{{name}}</h1>
+    <h2>{{res 'exportFileInfo'}}</h2>
+    <table>
+        <tr>
+            <td>{{res 'exportHtmlName'}}</td>
+            <td>{{name}}</td>
+        </tr>
+        <tr>
+            <td>{{res 'exportHtmlDate'}}</td>
+            <td>{{date}}</td>
+        </tr>
+        <tr>
+            <td>{{res 'exportGenerator'}}</td>
+            <td>KeeWeb v{{appVersion}}</td>
+        </tr>
+    </table>
+    <h2>{{res 'exportEntries'}}</h2>
+    <p>
+        {{{content}}}
+    </p>
+    <p>
+        {{#res 'exportDescription'}}<a href="{{appLink}}" rel="noreferrer noopener" target="_blank">KeeWeb</a>{{/res}}
+    </p>
+    </body>
+</html>

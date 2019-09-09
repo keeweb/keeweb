@@ -3,6 +3,7 @@ const GroupCollection = require('../collections/group-collection');
 const GroupModel = require('./group-model');
 const IconUrl = require('../util/icon-url');
 const Logger = require('../util/logger');
+const KdbxToHtml = require('../comp/kdbx-to-html');
 const kdbxweb = require('kdbxweb');
 const demoFileData = require('demo.kdbx');
 
@@ -415,9 +416,17 @@ const FileModel = Backbone.Model.extend({
     },
 
     getXml(cb) {
-        this.db.saveXml().then(xml => {
+        this.db.saveXml(true).then(xml => {
             cb(xml);
         });
+    },
+
+    getHtml(cb) {
+        cb(
+            KdbxToHtml.convert(this.db, {
+                name: this.get('name')
+            })
+        );
     },
 
     getKeyFileHash() {

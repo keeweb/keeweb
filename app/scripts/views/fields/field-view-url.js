@@ -1,7 +1,8 @@
 const FieldViewText = require('./field-view-text');
 
 const FieldViewUrl = FieldViewText.extend({
-    displayUrlRegex: /^http:\/\//i,
+    displayUrlRegex: /^https:\/\//i,
+    cssClass: 'url',
 
     renderValue(value) {
         return value
@@ -14,7 +15,7 @@ const FieldViewUrl = FieldViewText.extend({
     },
 
     fixUrl(url) {
-        return url.indexOf(':') < 0 ? 'http://' + url : url;
+        return url.indexOf(':') < 0 ? 'https://' + url : url;
     },
 
     displayUrl(url) {

@@ -2,6 +2,12 @@ const Backbone = require('backbone');
 const Locale = require('./../util/locale');
 const FeatureDetector = require('../util/feature-detector');
 
+const appleThemes = {
+    macdark: 'setGenThemeMacDark'
+};
+
+const extraThemes = FeatureDetector.isMac || FeatureDetector.isiOS ? appleThemes : {};
+
 const SettingsManager = {
     neutralLocale: null,
     activeLocale: 'en',
@@ -19,7 +25,8 @@ const SettingsManager = {
         sl: 'setGenThemeSl',
         wh: 'setGenThemeWh',
         te: 'setGenThemeTe',
-        hc: 'setGenThemeHc'
+        hc: 'setGenThemeHc',
+        ...extraThemes
     },
 
     customLocales: {},

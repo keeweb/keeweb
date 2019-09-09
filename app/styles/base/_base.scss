@@ -3,7 +3,7 @@
 // Copyright 2013-2015 thoughtbot, inc.
 // MIT License
 
-@import 'themes';
+@import 'override-mixins';
 @import 'colors';
 @import 'variables';
 @import 'media';
@@ -13,3 +13,5 @@
 @import 'forms';
 @import 'lists';
 @import 'typography';
+@import 'theme-vars-support';
+@import 'theme-vars';

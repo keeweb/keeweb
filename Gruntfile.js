@@ -415,6 +415,14 @@ module.exports = function(grunt) {
                 }
             }
         },
+        chmod: {
+            'linux-x64': {
+                options: {
+                    mode: '4755'
+                },
+                src: ['tmp/desktop/KeeWeb-linux-x64/chrome-sandbox']
+            }
+        },
         deb: {
             options: {
                 tmpPath: 'tmp/desktop/',

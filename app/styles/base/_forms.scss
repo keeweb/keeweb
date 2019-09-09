@@ -3,10 +3,8 @@
 }
 
 fieldset {
-    @include th {
-        background-color: th(secondary-background-color);
-        border: base-border();
-    }
+    background-color: var(--secondary-background-color);
+    border: base-border();
     margin: 0 0 $small-spacing;
     padding: $base-spacing;
 }
@@ -44,7 +42,6 @@ input[type='text'],
 input[type='password'],
 textarea,
 input:not([type]) {
-    border-radius: $base-border-radius;
     box-sizing: border-box;
     font-family: $base-font-family;
     font-size: 1rem;
@@ -64,40 +61,39 @@ input:not([type]) {
         right: 0;
     }
 
-    @include th {
-        color: th(text-color);
-        background-color: th(background-color);
-        border: base-border();
-        box-shadow: form-box-shadow();
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border: base-border();
+    box-shadow: form-box-shadow();
+    border-radius: var(--input-border-radius);
+
+    &:hover {
+        border-color: var(--accent-border-color);
+    }
+
+    &:focus {
+        border-color: var(--form-box-border-focus);
+        box-shadow: form-box-shadow-focus();
+        outline: none;
+    }
+
+    &:disabled {
+        background-color: var(--disabled-background-color);
+        cursor: not-allowed;
 
         &:hover {
-            border-color: th(accent-border-color);
+            border: base-border();
         }
+    }
 
-        &:focus {
-            border-color: th(action-color);
-            box-shadow: form-box-shadow-focus();
-            outline: none;
-        }
-
-        &:disabled {
-            background-color: th(disabled-background-color);
-            cursor: not-allowed;
-
-            &:hover {
-                border: base-border();
-            }
-        }
-
-        &.input--error,
-        &.input--error:hover,
-        &.input--error:focus,
-        &:invalid {
-            border-color: th(error-color);
-            box-shadow: form-box-shadow-focus-error();
-            @include selection(true) {
-                background-color: th(text-selection-bg-color-error);
-            }
+    &.input--error,
+    &.input--error:hover,
+    &.input--error:focus,
+    &:invalid {
+        border-color: var(--error-color);
+        box-shadow: form-box-shadow-focus-error();
+        &::selection {
+            background-color: var(--text-selection-bg-color-error);
         }
     }
 
@@ -105,10 +101,8 @@ input:not([type]) {
         padding-right: 1.7em;
     }
 
-    @include placeholder {
-        @include th {
-            color: th(muted-color);
-        }
+    &::placeholder {
+        color: var(--muted-color);
     }
 }
 
@@ -142,7 +136,7 @@ select {
     -moz-appearance: none;
     appearance: none;
     transition: border-color $base-duration $base-timing;
-    border-radius: $base-border-radius;
+    border-radius: var(--input-border-radius);
     padding-left: $base-spacing / 3;
 
     background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiDQogICAgd2lkdGg9IjMwNnB4IiBoZWlnaHQ9IjMwNnB4IiB2aWV3Qm94PSIwIDAgMzA2IDMwNiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQogICAgPHBvbHlnb24gcG9pbnRzPSIyNzAuMyw1OC42NSAxNTMsMTc1Ljk1IDM1LjcsNTguNjUgMCw5NC4zNSAxNTMsMjQ3LjM1IDMwNiw5NC4zNSIgZmlsbD0iIzk5ODQ4MyIvPg0KPC9zdmc+DQo=);
@@ -150,25 +144,23 @@ select {
     background-size: 10px;
     background-repeat: no-repeat;
 
-    @include th {
-        background-color: th(background-color);
-        border: base-border();
-        color: th(text-color);
-        box-shadow: form-box-shadow();
+    background-color: var(--background-color);
+    border: base-border();
+    color: var(--text-color);
+    box-shadow: form-box-shadow();
+    &:hover {
+        border-color: var(--accent-border-color);
+    }
+    &:focus {
+        border-color: var(--form-box-border-focus);
+        box-shadow: form-box-shadow-focus();
+        outline: none;
+    }
+    &:disabled {
+        background-color: var(--disabled-background-color);
+        cursor: not-allowed;
         &:hover {
-            border-color: th(accent-border-color);
-        }
-        &:focus {
-            border-color: th(action-color);
-            box-shadow: form-box-shadow-focus();
-            outline: none;
-        }
-        &:disabled {
-            background-color: th(disabled-background-color);
-            cursor: not-allowed;
-            &:hover {
-                border: base-border();
-            }
+            border: base-border();
         }
     }
     &::-ms-expand {
@@ -177,28 +169,22 @@ select {
 }
 
 option {
-    @include th {
-        background-color: th(background-color);
-        color: th(text-color);
-    }
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
 
 input[type='checkbox'] {
     display: none;
 
     &:not([disabled]) + label:hover:before {
-        @include th {
-            color: th(action-color);
-        }
+        color: var(--action-color);
     }
     & + label:before {
         @include fa-icon;
         content: $fa-var-square-o;
         display: inline-block;
         width: 1.3em;
-        @include th {
-            color: th(text-color);
-        }
+        color: var(--text-color);
     }
     &:checked + label:before {
         content: $fa-var-check-square-o;
@@ -217,9 +203,7 @@ input[type='range'] {
         outline: none;
     }
     &::-webkit-slider-runnable-track {
-        @include th {
-            background: th(text-color);
-        }
+        background: var(--text-color);
         width: 100%;
         height: 1px;
         cursor: pointer;
@@ -227,9 +211,7 @@ input[type='range'] {
         border: none;
     }
     &::-webkit-slider-thumb {
-        @include th {
-            background: th(text-color);
-        }
+        background: var(--text-color);
         border: none;
         height: $thumb-size;
         width: $thumb-size;
@@ -239,9 +221,7 @@ input[type='range'] {
         margin-top: -6.5px;
     }
     &::-moz-range-track {
-        @include th {
-            background: th(text-color);
-        }
+        background: var(--text-color);
         width: 100%;
         height: 1px;
         cursor: pointer;
@@ -249,9 +229,7 @@ input[type='range'] {
         border: none;
     }
     &::-moz-range-thumb {
-        @include th {
-            background: th(text-color);
-        }
+        background: var(--text-color);
         border: none;
         height: $thumb-size;
         width: $thumb-size;
@@ -278,7 +256,7 @@ input[type='range'] {
     &:focus::-ms-fill-lower,
     &:focus::-ms-fill-upper {
         background: lightgray; // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12132854/
-        //@include th { background: th(text-color); }
+        //background: var(--text-color);
     }
     &::-ms-thumb {
         border: none;
@@ -287,7 +265,7 @@ input[type='range'] {
         border-radius: $thumb-size;
         cursor: pointer;
         background: lightgray; // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12132854/
-        //@include th { background: th(text-color); }
+        //background: var(--text-color);
     }
 }
 
