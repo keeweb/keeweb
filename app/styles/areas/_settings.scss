@@ -244,4 +244,26 @@
             width: calc(100% - 74px);
         }
     }
+    &__donate-btn {
+        background: #fff;
+        border: 2px solid #89ABED;
+        border-radius: 2.8rem;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        padding: .2rem 2.4rem 0;
+        line-height: 1.4;
+        height: 2.8rem;
+        margin-bottom: $base-padding-v;
+
+        &-top {
+            color: #606A79;
+            display: block;
+        }
+        &-bottom {
+            color: #89ABED;
+            display: block;
+            font-weight: bold;
+        }
+    }
 }

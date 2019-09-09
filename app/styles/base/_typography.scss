@@ -58,18 +58,22 @@ p {
 
 a {
     color: var(--text-color);
-    border-bottom: 1px dotted;
     text-decoration: none;
     display: inline-block;
     transition: color $base-duration $base-timing;
     cursor: pointer;
     height: 1.2em;
+    &:not(.no-border) {
+        border-bottom: 1px dotted;
+    }
 
     &:active,
     &:focus,
     &:hover {
         outline: none;
-        border-bottom: 1px solid;
+        &:not(.no-border) {
+            border-bottom: 1px solid;
+        }
         &.muted-color {
             border-bottom: 1px solid;
         }
