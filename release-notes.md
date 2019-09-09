@@ -13,6 +13,7 @@ Release notes
 `*` dropped support for browsers without css variables  
 `*` displaying websites as HTTPS if no scheme is provided  
 `+` confirmation for deleting an entry on mobile  
+`-` fix #1244: deb file permissions issue  
 
 ##### v1.9.3 (2019-09-07)
 `-` fixed group settings not being displayed  

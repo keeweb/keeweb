@@ -30,6 +30,7 @@
         "exports-loader": "0.7.0",
         "font-awesome": "4.7.0",
         "grunt": "1.0.4",
+        "grunt-chmod": "^1.1.1",
         "grunt-contrib-clean": "2.0.0",
         "grunt-contrib-compress": "github:keeweb/grunt-contrib-compress#08966cd",
         "grunt-contrib-copy": "1.0.0",
