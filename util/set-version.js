@@ -27,6 +27,6 @@ function processFile(name) {
         throw new Error('No match found!');
     }
     data.version = version;
-    const newContent = JSON.stringify(data, null, 2) + '\n';
+    const newContent = JSON.stringify(data, null, 4) + '\n';
     fs.writeFileSync(name, newContent, 'utf8');
 }
