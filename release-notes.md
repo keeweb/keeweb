@@ -1,15 +1,15 @@
 Release notes
 -------------
-##### v1.10 (TBD)
+##### v1.10.0 (2019-09-09)
 `+` macOS Dark theme  
-`+` pretty-printing exported XML files  
 `+` HTML export  
-`+` config option to disable xml export (canExportXml)  
-`+` xml files can be now opened as regular files  
-`-` fix #1154: relative Destination header in WebDAV MOVE  
-`-` fix #1129: webdav storage error on Unicode filenames  
+`+` pretty-printing exported XML files  
+`+` config option to disable XML export (canExportXml)  
+`+` XML files can be now opened as regular files  
 `*` donation link changed  
 `-` fixed field editing styles  
+`-` fix #1154: relative Destination header in WebDAV MOVE  
+`-` fix #1129: webdav storage error on Unicode filenames  
 `*` dropped support for browsers without css variables  
 `*` displaying websites as HTTPS if no scheme is provided  
 `+` confirmation for deleting an entry on mobile  
