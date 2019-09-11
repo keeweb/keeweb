@@ -406,7 +406,7 @@
         align-items: stretch;
         flex-direction: row;
         justify-content: flex-end;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         user-select: none;
         overflow: hidden;
         white-space: nowrap;
@@ -422,6 +422,7 @@
         flex: 0 1 auto;
         border: light-border();
         margin-right: $small-spacing;
+        margin-top: $small-spacing;
         padding: $base-padding;
         text-align: center;
         overflow: hidden;

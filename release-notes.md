@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.0 (TBD)
+`-` fix #764: multiple attachments display  
+
 ##### v1.10.0 (2019-09-09)
 `+` macOS Dark theme  
 `+` HTML export  
