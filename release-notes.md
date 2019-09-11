@@ -3,6 +3,7 @@ Release notes
 ##### v1.11.0 (TBD)
 `+` #1226: 7-digit Authy OTP support  
 `-` fix #764: multiple attachments display  
+`-` fix multi-line fields display in history  
 
 ##### v1.10.0 (2019-09-09)
 `+` macOS Dark theme  
