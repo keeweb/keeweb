@@ -331,6 +331,7 @@ const DetailsView = Backbone.View.extend({
                             model: {
                                 name: '$' + field,
                                 title: field,
+                                multiline: true,
                                 value() {
                                     return model.fields[field];
                                 }
@@ -388,6 +389,7 @@ const DetailsView = Backbone.View.extend({
                 name: '$' + newFieldTitle,
                 title: newFieldTitle,
                 newField: newFieldTitle,
+                multiline: true,
                 value() {
                     return '';
                 }

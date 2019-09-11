@@ -11,7 +11,7 @@ const Tip = require('../../util/tip');
 const FieldViewText = FieldView.extend({
     renderValue(value) {
         return value && value.isProtected
-            ? PasswordGenerator.present(value.textLength)
+            ? PasswordGenerator.presentValueWithLineBreaks(value)
             : _.escape(value || '').replace(/\n/g, '<br/>');
     },
 
@@ -124,8 +124,6 @@ const FieldViewText = FieldView.extend({
         let newHeight = this.input[0].scrollHeight;
         if (newHeight <= MinHeight) {
             newHeight = MinHeight;
-        } else {
-            newHeight += 2;
         }
         this.input.height(newHeight);
     },

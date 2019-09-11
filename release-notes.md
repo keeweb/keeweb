@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.11.0 (TBD)
 `+` #1226: 7-digit Authy OTP support  
+`+` #107: multiline custom fields support  
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  
 

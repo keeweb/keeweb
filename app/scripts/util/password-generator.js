@@ -115,6 +115,17 @@ const PasswordGenerator = {
 
     present(length) {
         return new Array(length + 1).join('•');
+    },
+
+    presentValueWithLineBreaks(value) {
+        if (!value) {
+            return '';
+        }
+        let result = '';
+        value.forEachChar(ch => {
+            result += ch === 10 ? '\n' : '•';
+        });
+        return result;
     }
 };
 
