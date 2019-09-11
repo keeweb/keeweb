@@ -12,7 +12,7 @@ const Otp = function(url, params) {
     if (params.algorithm && ['SHA1', 'SHA256', 'SHA512'].indexOf(params.algorithm) < 0) {
         throw 'Bad algorithm: ' + params.algorithm;
     }
-    if (params.digits && ['6', '8'].indexOf(params.digits) < 0) {
+    if (params.digits && ['6', '7', '8'].indexOf(params.digits) < 0) {
         throw 'Bad digits: ' + params.digits;
     }
     if (params.type === 'hotp' && !params.counter) {
