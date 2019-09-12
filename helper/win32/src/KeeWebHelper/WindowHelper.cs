@@ -31,6 +31,9 @@ namespace KeeWebHelper
             IntPtr hwnd = GetForegroundWindow();
 
             var result = new WindowInfo();
+
+            result.Id = hwnd.ToString();
+
             if (GetWindowText(hwnd, buff, nChars) > 0)
             {
                 result.Title = buff.ToString();
