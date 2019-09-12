@@ -3,7 +3,7 @@ const AutoTypeNativeHelper = require('./auto-type-native-helper');
 
 const AutoTypeHelper = function() {};
 
-AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
+AutoTypeHelper.prototype.getActiveWindowInfo = function(callback) {
     Launcher.spawn({
         cmd: AutoTypeNativeHelper.getHelperPath(),
         args: ['--window-info'],
@@ -11,8 +11,13 @@ AutoTypeHelper.prototype.getActiveWindowTitle = function(callback) {
             if (err) {
                 return callback(err);
             }
-            const parts = out.split('\n');
-            return callback(null, (parts[0] || '').trim(), parts[1] ? parts[1].trim() : undefined);
+            const [id, title, url] = out.trim().split('\n');
+            const windowInfo = {
+                id,
+                title,
+                url
+            };
+            return callback(null, windowInfo);
         }
     });
 };

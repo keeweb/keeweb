@@ -152,30 +152,59 @@ const AutoType = {
         }
     },
 
-    getActiveWindowTitle(callback) {
-        logger.debug('Get window title');
-        return this.helper.getActiveWindowTitle((err, title, url) => {
+    getActiveWindowInfo(callback) {
+        logger.debug('Getting window info');
+        return this.helper.getActiveWindowInfo((err, windowInfo) => {
             if (err) {
-                logger.error('Error get window title', err);
+                logger.error('Error getting window info', err);
             } else {
-                if (!url) {
+                if (!windowInfo.url) {
                     // try to find a URL in the title
                     const urlMatcher = new RegExp(
                         'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'
                     );
-                    const urlMatches = urlMatcher.exec(title);
-                    url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
+                    const urlMatches = urlMatcher.exec(windowInfo.title);
+                    windowInfo.url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
                 }
-                logger.debug('Window title', title, url);
+                logger.debug('Window info', windowInfo.id, windowInfo.title, windowInfo.url);
             }
-            return callback(err, title, url);
+            return callback(err, windowInfo);
+        });
+    },
+
+    activeWindowMatches(windowInfo, callback) {
+        if (!windowInfo || !windowInfo.id) {
+            logger.debug('Skipped active window check because window id is unknown');
+            return callback(true);
+        }
+        this.getActiveWindowInfo((err, activeWindowInfo) => {
+            if (!activeWindowInfo) {
+                logger.debug('Error during active window check, something is wrong', err);
+                return callback(false);
+            }
+            if (activeWindowInfo.id !== windowInfo.id) {
+                logger.info(
+                    `Active window doesn't match: ID is different. ` +
+                        `Expected ${windowInfo.id}, got ${activeWindowInfo.id}`
+                );
+                return callback(false, activeWindowInfo);
+            }
+            if (activeWindowInfo.url !== windowInfo.url) {
+                logger.info(
+                    `Active window doesn't match: url is different. ` +
+                        `Expected "${windowInfo.url}", got "${activeWindowInfo.url}"`
+                );
+                return callback(false, activeWindowInfo);
+            }
+            logger.info('Active window matches');
+            callback(true, activeWindowInfo);
         });
     },
 
     selectEntryAndRun() {
-        this.getActiveWindowTitle((e, title, url) => {
-            const filter = new AutoTypeFilter({ title, url }, this.appModel);
-            const evt = { filter };
+        this.getActiveWindowInfo((e, windowInfo) => {
+            const filter = new AutoTypeFilter(windowInfo, this.appModel);
+            const evt = { filter, windowInfo };
             if (!this.appModel.files.hasOpenFiles()) {
                 this.pendingEvent = evt;
                 this.appModel.files.once('update', this.processPendingEvent, this);
@@ -211,7 +240,11 @@ const AutoType = {
             this.selectEntryView = null;
             this.hideWindow(() => {
                 if (result) {
-                    this.runAndHandleResult(result);
+                    this.activeWindowMatches(evt.windowInfo, (matches, activeWindowInfo) => {
+                        if (matches) {
+                            this.runAndHandleResult(result);
+                        }
+                    });
                 }
             });
         });
