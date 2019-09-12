@@ -53,7 +53,9 @@ const DropdownView = Backbone.View.extend({
         KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
         KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
 
-        KeyHandler.setModal(this.prevModal);
+        if (KeyHandler.modal === 'dropdown') {
+            KeyHandler.setModal(this.prevModal);
+        }
 
         Backbone.View.prototype.remove.apply(this);
     },
