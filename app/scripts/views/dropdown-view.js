@@ -1,4 +1,6 @@
 const Backbone = require('backbone');
+const Keys = require('../const/keys');
+const KeyHandler = require('../comp/key-handler');
 
 const DropdownView = Backbone.View.extend({
     template: require('templates/dropdown.hbs'),
@@ -8,9 +10,19 @@ const DropdownView = Backbone.View.extend({
     },
 
     initialize() {
+        Backbone.trigger('dropdown-shown');
         this.bodyClick = this.bodyClick.bind(this);
-        this.listenTo(Backbone, 'show-context-menu', this.bodyClick);
-        $('body').on('click contextmenu keyup', this.bodyClick);
+
+        this.listenTo(Backbone, 'show-context-menu dropdown-shown', this.bodyClick);
+        $('body').on('click contextmenu keydown', this.bodyClick);
+
+        KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, 'dropdown');
+        KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, 'dropdown');
+        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, 'dropdown');
+        KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, 'dropdown');
+
+        this.prevModal = KeyHandler.modal === 'dropdown' ? undefined : KeyHandler.modal;
+        KeyHandler.setModal('dropdown');
     },
 
     render(config) {
@@ -33,11 +45,27 @@ const DropdownView = Backbone.View.extend({
 
     remove() {
         this.viewRemoved = true;
-        $('body').off('click contextmenu keyup', this.bodyClick);
+
+        $('body').off('click contextmenu keydown', this.bodyClick);
+
+        KeyHandler.offKey(Keys.DOM_VK_UP, this.upPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_DOWN, this.downPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
+        KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
+
+        KeyHandler.setModal(this.prevModal);
+
         Backbone.View.prototype.remove.apply(this);
     },
 
-    bodyClick() {
+    bodyClick(e) {
+        if (
+            [Keys.DOM_VK_UP, Keys.DOM_VK_DOWN, Keys.DOM_VK_RETURN, Keys.DOM_VK_ESCAPE].includes(
+                e.which
+            )
+        ) {
+            return;
+        }
         if (!this.viewRemoved) {
             this.trigger('cancel');
         }
@@ -48,6 +76,48 @@ const DropdownView = Backbone.View.extend({
         const el = $(e.target).closest('.dropdown__item');
         const selected = el.data('value');
         this.trigger('select', { item: selected, el });
+    },
+
+    upPressed(e) {
+        e.preventDefault();
+        if (!this.selectedOption) {
+            this.selectedOption = this.options.length - 1;
+        } else {
+            this.selectedOption--;
+        }
+        this.renderSelectedOption();
+    },
+
+    downPressed(e) {
+        e.preventDefault();
+        if (this.selectedOption === undefined || this.selectedOption === this.options.length - 1) {
+            this.selectedOption = 0;
+        } else {
+            this.selectedOption++;
+        }
+        this.renderSelectedOption();
+    },
+
+    renderSelectedOption() {
+        this.$el.find('.dropdown__item').removeClass('dropdown__item--active');
+        this.$el
+            .find(`.dropdown__item:nth(${this.selectedOption})`)
+            .addClass('dropdown__item--active');
+    },
+
+    enterPressed() {
+        if (!this.viewRemoved && this.selectedOption !== undefined) {
+            const el = this.$el.find(`.dropdown__item:nth(${this.selectedOption})`);
+            const selected = el.data('value');
+            this.trigger('select', { item: selected, el });
+        }
+    },
+
+    escPressed(e) {
+        e.stopImmediatePropagation();
+        if (!this.viewRemoved) {
+            this.trigger('cancel');
+        }
     }
 });
 

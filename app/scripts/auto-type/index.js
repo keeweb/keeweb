@@ -9,7 +9,6 @@ const Logger = require('../util/logger');
 const Locale = require('../util/locale');
 const Timeouts = require('../const/timeouts');
 const AppSettingsModel = require('../models/app-settings-model');
-const AutoTypeSequenceType = require('../const/autotype-sequencetype');
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = localStorage.autoTypeDebug;
@@ -73,14 +72,7 @@ const AutoType = {
 
     run(result, callback) {
         this.running = true;
-        let sequence;
-        if (result.sequenceType === AutoTypeSequenceType.PASSWORD) {
-            sequence = '{PASSWORD}';
-        } else if (result.sequenceType === AutoTypeSequenceType.USERNAME) {
-            sequence = '{USERNAME}';
-        } else {
-            sequence = result.entry.getEffectiveAutoTypeSeq();
-        }
+        const sequence = result.sequence || result.entry.getEffectiveAutoTypeSeq();
         logger.debug('Start', sequence);
         const ts = logger.ts();
         try {

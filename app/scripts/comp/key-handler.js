@@ -7,6 +7,7 @@ const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ct
 const KeyHandler = {
     SHORTCUT_ACTION: 1,
     SHORTCUT_OPT: 2,
+    SHORTCUT_SHIFT: 3,
 
     shortcuts: {},
     modal: false,
@@ -57,7 +58,7 @@ const KeyHandler = {
         const keyShortcuts = this.shortcuts[code];
         if (keyShortcuts && keyShortcuts.length) {
             for (const sh of keyShortcuts) {
-                if (this.modal && !sh.modal) {
+                if (this.modal && sh.modal !== this.modal) {
                     e.stopPropagation();
                     continue;
                 }
@@ -73,13 +74,18 @@ const KeyHandler = {
                             continue;
                         }
                         break;
+                    case this.SHORTCUT_SHIFT:
+                        if (!e.shiftKey) {
+                            continue;
+                        }
+                        break;
                     case this.SHORTCUT_ACTION + this.SHORTCUT_OPT:
                         if (!e.altKey || !isActionKey) {
                             continue;
                         }
                         break;
                     default:
-                        if (e.metaKey || e.ctrlKey || e.altKey) {
+                        if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) {
                             continue;
                         }
                         break;

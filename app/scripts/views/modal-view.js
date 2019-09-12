@@ -14,10 +14,10 @@ const ModalView = Backbone.View.extend({
 
     initialize() {
         if (typeof this.model.esc === 'string') {
-            KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
+            KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, 'alert');
         }
         if (typeof this.model.enter === 'string') {
-            KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
+            KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, 'alert');
         }
         KeyHandler.setModal('alert');
     },
