@@ -15,6 +15,7 @@
         "@babel/plugin-proposal-class-properties": "^7.5.5",
         "@babel/preset-env": "^7.6.0",
         "argon2-browser": "1.10.2",
+        "babel-cli": "^6.26.0",
         "babel-eslint": "^10.0.3",
         "babel-loader": "8.0.6",
         "backbone": "1.4.0",
@@ -88,7 +89,8 @@
         "postinstall": "cd desktop && npm install",
         "build-beta": "grunt --skip-sign --beta && sed 's/<html manifest=\"manifest.appcache\">//' dist/index.html > ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
         "electron": "ELECTRON_DISABLE_SECURITY_WARNINGS=1 electron desktop --htmlpath=http://localhost:8085",
-        "dev": "grunt dev --skip-sign"
+        "dev": "grunt dev --skip-sign",
+        "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js"
     },
     "author": {
         "name": "Antelle",

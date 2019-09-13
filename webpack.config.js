@@ -20,7 +20,7 @@ function config(grunt, mode = 'production') {
     return {
         mode,
         entry: {
-            app: ['app', 'main.scss'],
+            app: ['babel-helpers', 'app', 'main.scss'],
             vendor: [
                 'jquery',
                 'underscore',
@@ -55,6 +55,7 @@ function config(grunt, mode = 'production') {
                 path.join(__dirname, 'node_modules')
             ],
             alias: {
+                'babel-helpers': path.join(__dirname, 'app/lib/babel-helpers.js'),
                 backbone: `backbone/backbone${devMode ? '-min' : ''}.js`,
                 underscore: `underscore/underscore${devMode ? '-min' : ''}.js`,
                 _: `underscore/underscore${devMode ? '-min' : ''}.js`,
@@ -104,11 +105,15 @@ function config(grunt, mode = 'production') {
                     test: /baron(\.min)?\.js$/,
                     loader: 'exports-loader?baron; delete window.baron;'
                 },
+                {
+                    test: /babel-helpers\.js$/,
+                    loader: 'exports-loader?global.babelHelpers; delete global.babelHelpers'
+                },
                 { test: /pikaday\.js$/, loader: 'uglify-loader' },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
                 {
                     test: /\.js$/,
-                    exclude: /(node_modules)/,
+                    exclude: /(node_modules|babel-helpers\.js)/,
                     loader: 'babel-loader',
                     query: { cacheDirectory: true }
                 },
@@ -172,7 +177,11 @@ function config(grunt, mode = 'production') {
                     ', opensource.org/licenses/' +
                     pkg.license
             ),
-            new webpack.ProvidePlugin({ _: 'underscore', $: 'jquery' }),
+            new webpack.ProvidePlugin({
+                _: 'underscore',
+                $: 'jquery',
+                babelHelpers: 'babel-helpers'
+            }),
             new webpack.IgnorePlugin(/^(moment)$/),
             new StringReplacePlugin(),
             new MiniCssExtractPlugin({
