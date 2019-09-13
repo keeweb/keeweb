@@ -110,7 +110,7 @@ function config(grunt, mode = 'production') {
                     test: /\.js$/,
                     exclude: /(node_modules)/,
                     loader: 'babel-loader',
-                    query: { presets: ['@babel/preset-env'], cacheDirectory: true }
+                    query: { cacheDirectory: true }
                 },
                 { test: /argon2\.wasm/, type: 'javascript/auto', loader: 'base64-loader' },
                 { test: /argon2(\.min)?\.js/, loader: 'raw-loader' },

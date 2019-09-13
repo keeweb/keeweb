@@ -57,6 +57,7 @@
             "impliedStrict": true
         }
     },
+    "parser": "babel-eslint",
     "globals": {
         "_": true,
         "$": true
