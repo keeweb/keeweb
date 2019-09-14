@@ -489,6 +489,7 @@
     "setFileUnsavedBody": "There are unsaved changes in this file",
     "setFileCloseNoSave": "Close and lose changes",
     "setFileDontClose": "Don't close",
+    "setFileFormatVersion": "File format",
 
     "setShTitle": "Shortcuts",
     "setShShowAll": "show all items",

@@ -45,6 +45,8 @@ const SettingsFileView = Backbone.View.extend({
         'change #settings__file-trash': 'changeTrash',
         'input #settings__file-hist-len': 'changeHistoryLength',
         'input #settings__file-hist-size': 'changeHistorySize',
+        'change #settings__file-format-version': 'changeFormatVersion',
+        'change #settings__file-kdf': 'changeKdf',
         'input #settings__file-key-rounds': 'changeKeyRounds',
         'input #settings__file-key-change-force': 'changeKeyChangeForce',
         'input .settings__input-kdf': 'changeKdfParameter'
@@ -102,6 +104,8 @@ const SettingsFileView = Backbone.View.extend({
             backupSchedule: backup ? backup.schedule : DefaultBackupSchedule,
             historyMaxItems: this.model.get('historyMaxItems'),
             historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
+            formatVersion: this.model.get('formatVersion'),
+            kdfName: this.model.get('kdfName'),
             keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
             keyChangeForce:
                 this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
@@ -623,6 +627,17 @@ const SettingsFileView = Backbone.View.extend({
             return;
         }
         this.model.setHistoryMaxSize(value * 1024 * 1024);
+    },
+
+    changeFormatVersion(e) {
+        const version = +e.target.value;
+        this.model.setFormatVersion(version);
+        this.render();
+    },
+
+    changeKdf(e) {
+        this.model.setKdf(e.target.value);
+        this.render();
     },
 
     changeKeyRounds(e) {

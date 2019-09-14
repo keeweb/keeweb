@@ -4,6 +4,7 @@ Release notes
 `+` #1226: 7-digit Authy OTP support  
 `+` #107: multiline custom fields support  
 `+` #1243: auto-type any field  
+`+` #1255: file format version and kdf selection in settings  
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  
 `-` fix #554: checking active window id during auto-type  

@@ -178,12 +178,14 @@ const FileModel = Backbone.Model.extend({
             {
                 uuid: this.db.getDefaultGroup().uuid.toString(),
                 groups,
+                formatVersion: this.db.header.versionMajor,
                 defaultUser: this.db.meta.defaultUser,
                 recycleBinEnabled: this.db.meta.recycleBinEnabled,
                 historyMaxItems: this.db.meta.historyMaxItems,
                 historyMaxSize: this.db.meta.historyMaxSize,
                 keyEncryptionRounds: this.db.header.keyEncryptionRounds,
                 keyChangeForce: this.db.meta.keyChangeForce,
+                kdfName: this.readKdfName(),
                 kdfParameters: this.readKdfParams()
             },
             { silent: true }
@@ -201,6 +203,25 @@ const FileModel = Backbone.Model.extend({
         this.resolveFieldReferences();
     },
 
+    readKdfName() {
+        if (this.db.header.versionMajor === 4 && this.db.header.kdfParameters) {
+            const kdfParameters = this.db.header.kdfParameters;
+            let uuid = kdfParameters.get('$UUID');
+            if (uuid) {
+                uuid = kdbxweb.ByteUtils.bytesToBase64(uuid);
+                switch (uuid) {
+                    case kdbxweb.Consts.KdfId.Argon2:
+                        return 'Argon2';
+                    case kdbxweb.Consts.KdfId.Aes:
+                        return 'Aes';
+                }
+            }
+            return 'Unknown';
+        } else {
+            return 'Aes';
+        }
+    },
+
     readKdfParams() {
         const kdfParameters = this.db.header.kdfParameters;
         if (!kdfParameters) {
@@ -211,14 +232,20 @@ const FileModel = Backbone.Model.extend({
             return undefined;
         }
         uuid = kdbxweb.ByteUtils.bytesToBase64(uuid);
-        if (uuid !== kdbxweb.Consts.KdfId.Argon2) {
-            return undefined;
+        switch (uuid) {
+            case kdbxweb.Consts.KdfId.Argon2:
+                return {
+                    parallelism: kdfParameters.get('P').valueOf(),
+                    iterations: kdfParameters.get('I').valueOf(),
+                    memory: kdfParameters.get('M').valueOf()
+                };
+            case kdbxweb.Consts.KdfId.Aes:
+                return {
+                    rounds: kdfParameters.get('R').valueOf()
+                };
+            default:
+                return undefined;
         }
-        return {
-            parallelism: kdfParameters.get('P').valueOf(),
-            iterations: kdfParameters.get('I').valueOf(),
-            memory: kdfParameters.get('M').valueOf()
-        };
     },
 
     subId(id) {
@@ -605,6 +632,9 @@ const FileModel = Backbone.Model.extend({
             case 'parallelism':
                 this.db.header.kdfParameters.set('P', ValueType.UInt32, value);
                 break;
+            case 'rounds':
+                this.db.header.kdfParameters.set('R', ValueType.UInt32, value);
+                break;
             default:
                 return;
         }
@@ -649,6 +679,31 @@ const FileModel = Backbone.Model.extend({
 
     renameTag(from, to) {
         this.forEachEntry({}, entry => entry.renameTag(from, to));
+    },
+
+    setFormatVersion(version) {
+        this.db.setVersion(version);
+        this.setModified();
+        this.readModel();
+    },
+
+    setKdf(kdfName) {
+        const kdfParameters = this.db.header.kdfParameters;
+        if (!kdfParameters) {
+            throw new Error('Cannot set KDF on this version');
+        }
+        switch (kdfName) {
+            case 'Aes':
+                this.db.setKdf(kdbxweb.Consts.KdfId.Aes);
+                break;
+            case 'Argon2':
+                this.db.setKdf(kdbxweb.Consts.KdfId.Argon2);
+                break;
+            default:
+                throw new Error('Bad KDF name');
+        }
+        this.setModified();
+        this.readModel();
     }
 });
 
