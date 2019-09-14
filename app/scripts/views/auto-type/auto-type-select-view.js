@@ -5,7 +5,7 @@ const Locale = require('../../util/locale');
 const AppSettingsModel = require('../../models/app-settings-model');
 const EntryPresenter = require('../../presenters/entry-presenter');
 const Scrollable = require('../../mixins/scrollable');
-const FeatureDetector = require('../../util/feature-detector');
+const Shortcuts = require('../../comp/shortcuts');
 const DropdownView = require('../dropdown-view');
 const Format = require('../../util/format');
 
@@ -108,9 +108,9 @@ const AutoTypePopupView = Backbone.View.extend({
             filterText: this.model.filter.text,
             topMessage,
             itemsHtml,
-            actionSymbol: FeatureDetector.actionShortcutSymbol(true),
-            altSymbol: FeatureDetector.altShortcutSymbol(true),
-            shiftSymbol: FeatureDetector.shiftShortcutSymbol(true),
+            actionSymbol: Shortcuts.actionShortcutSymbol(true),
+            altSymbol: Shortcuts.altShortcutSymbol(true),
+            shiftSymbol: Shortcuts.shiftShortcutSymbol(true),
             keyEnter: Locale.keyEnter
         });
         document.activeElement.blur();

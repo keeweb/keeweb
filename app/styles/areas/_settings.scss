@@ -26,15 +26,30 @@
         border: 1px solid var(--muted-color);
         display: inline-block;
         border-radius: $base-border-radius;
-        width: 40px;
+        width: 8em;
         text-align: center;
         padding: $base-padding;
         margin: 0 $base-padding-h $base-padding-v $base-padding-h;
+        line-height: 1.5em;
+        min-width: unset;
+        box-sizing: border-box;
+        vertical-align: baseline;
         &-large {
-            width: 80px;
+            width: 12em;
         }
         &:first-of-type {
             margin-left: 0;
+        }
+        &__editor {
+            margin-bottom: $base-padding-v;
+            &-input {
+                text-align: center;
+                margin: $base-padding-v 0 $medium-padding-v;
+                width: 15em;
+                &--large {
+                    width: 30em;
+                }
+            }
         }
     }
 

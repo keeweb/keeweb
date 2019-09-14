@@ -291,6 +291,9 @@ const Launcher = {
         } else {
             this.pendingFileToOpen = file;
         }
+    },
+    setGlobalShortcuts(appSettings) {
+        this.remoteApp().setGlobalShortcuts(appSettings);
     }
 };
 

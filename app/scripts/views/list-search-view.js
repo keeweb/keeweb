@@ -3,6 +3,7 @@ const Keys = require('../const/keys');
 const KeyHandler = require('../comp/key-handler');
 const DropdownView = require('./dropdown-view');
 const FeatureDetector = require('../util/feature-detector');
+const Shortcuts = require('../comp/shortcuts');
 const Format = require('../util/format');
 const Locale = require('../util/locale');
 const Comparators = require('../util/comparators');
@@ -139,7 +140,7 @@ const ListSearchView = Backbone.View.extend({
             : ' <span class="muted-color">(' +
               Locale.searchShiftClickOr +
               ' ' +
-              FeatureDetector.altShortcutSymbol(true) +
+              Shortcuts.altShortcutSymbol(true) +
               'N)</span>';
         this.createOptions = [
             { value: 'entry', icon: 'key', text: Format.capFirst(Locale.entry) + entryDesc },

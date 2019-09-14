@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const OpenConfigView = require('../open-config-view');
-const FeatureDetector = require('../../util/feature-detector');
+const Shortcuts = require('../../comp/shortcuts');
 const PasswordGenerator = require('../../util/password-generator');
 const Alerts = require('../../comp/alerts');
 const Launcher = require('../../comp/launcher');
@@ -84,7 +84,7 @@ const SettingsFileView = Backbone.View.extend({
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         const backup = this.model.get('backup');
         this.renderTemplate({
-            cmd: FeatureDetector.actionShortcutSymbol(true),
+            cmd: Shortcuts.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
             desktopLink: Links.Desktop,
             name: this.model.get('name'),

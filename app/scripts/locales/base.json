@@ -513,6 +513,7 @@
     "setShCopyUrlGlobal": "copy website (when the app is in background)",
     "setShAutoTypeGlobal": "auto-type (when the app is in background)",
     "setShLock": "lock database",
+    "setShEdit": "Press a new key combination to set it as shortcut",
 
     "setPlInstallTitle": "Install new plugins",
     "setPlInstallDesc": "KeeWeb plugins add features, themes, and languages to KeeWeb. Plugins run with the same privileges as KeeWeb, they can access and manage all your passwords. Never install plugins you don't trust.",

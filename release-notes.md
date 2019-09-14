@@ -6,6 +6,7 @@ Release notes
 `+` #1243: auto-type any field  
 `+` #1255: file format version and kdf selection in settings  
 `*` #502: increased the default value of encryption rounds  
+`+` #348: configurable system-wide shortcuts  
 `*` devtools are now opened with alt-cmd-I  
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  

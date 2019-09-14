@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 const AutoTypeHintView = require('../auto-type-hint-view');
 const Locale = require('../../util/locale');
-const FeatureDetector = require('../../util/feature-detector');
+const Shortcuts = require('../../comp/shortcuts');
 const AutoType = require('../../auto-type');
 
 const DetailsAutoTypeView = Backbone.View.extend({
@@ -22,8 +22,8 @@ const DetailsAutoTypeView = Backbone.View.extend({
 
     render() {
         const detAutoTypeShortcutsDesc = Locale.detAutoTypeShortcutsDesc
-            .replace('{}', FeatureDetector.actionShortcutSymbol() + 'T')
-            .replace('{}', FeatureDetector.globalShortcutSymbol() + 'T');
+            .replace('{}', Shortcuts.actionShortcutSymbol() + 'T')
+            .replace('{}', Shortcuts.globalShortcutText('autoType'));
         this.renderTemplate({
             enabled: this.model.getEffectiveEnableAutoType(),
             obfuscation: this.model.autoTypeObfuscation,

@@ -3,6 +3,7 @@ const Alerts = require('./alerts');
 const Locale = require('../util/locale');
 const Logger = require('../util/logger');
 const FeatureDetector = require('../util/feature-detector');
+const Shortcuts = require('../comp/shortcuts');
 const Otp = require('../util/otp');
 const QrCode = require('jsqrcode');
 
@@ -14,7 +15,7 @@ const OtpQrReader = {
     fileInput: null,
 
     read() {
-        let screenshotKey = FeatureDetector.screenshotToClipboardShortcut();
+        let screenshotKey = Shortcuts.screenshotToClipboardShortcut();
         if (screenshotKey) {
             screenshotKey = Locale.detSetupOtpAlertBodyWith.replace(
                 '{}',
@@ -25,7 +26,7 @@ const OtpQrReader = {
             ? ''
             : Locale.detSetupOtpAlertBodyWith.replace(
                   '{}',
-                  '<code>' + FeatureDetector.actionShortcutSymbol() + 'V</code>'
+                  '<code>' + Shortcuts.actionShortcutSymbol() + 'V</code>'
               );
         OtpQrReader.startListenClipoard();
         const buttons = [

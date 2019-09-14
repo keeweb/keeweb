@@ -65,10 +65,11 @@ app.on('window-all-closed', () => {
 });
 app.on('ready', () => {
     appReady = true;
+    const appSettings = readAppSettings() || {};
     setAppOptions();
     setSystemAppearance();
-    createMainWindow();
-    setGlobalShortcuts();
+    createMainWindow(appSettings);
+    setGlobalShortcuts(appSettings);
     subscribePowerEvents();
     deleteOldTempFiles();
     hookRequestHeaders();
@@ -135,6 +136,7 @@ app.getMainWindow = function() {
     return mainWindow;
 };
 app.emitBackboneEvent = emitBackboneEvent;
+app.setGlobalShortcuts = setGlobalShortcuts;
 
 function setAppOptions() {
     app.commandLine.appendSwitch('disable-background-timer-throttling');
@@ -156,8 +158,7 @@ function setSystemAppearance() {
     }
 }
 
-function createMainWindow() {
-    const appSettings = readAppSettings() || {};
+function createMainWindow(appSettings) {
     const isMacDarkTheme = appSettings.theme === 'macdark';
     const windowOptions = {
         show: false,
@@ -396,23 +397,25 @@ function notifyOpenFile() {
     }
 }
 
-function setGlobalShortcuts() {
-    const shortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
-    const shortcuts = {
-        C: 'copy-password',
-        B: 'copy-user',
-        U: 'copy-url',
-        T: 'auto-type'
+function setGlobalShortcuts(appSettings) {
+    const defaultShortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
+    const defaultShortcuts = {
+        CopyPassword: { shortcut: defaultShortcutModifiers + 'C', event: 'copy-password' },
+        CopyUser: { shortcut: defaultShortcutModifiers + 'B', event: 'copy-user' },
+        CopyUrl: { shortcut: defaultShortcutModifiers + 'U', event: 'copy-url' },
+        AutoType: { shortcut: defaultShortcutModifiers + 'T', event: 'auto-type' }
     };
-    Object.keys(shortcuts).forEach(key => {
-        const shortcut = shortcutModifiers + key;
-        const eventName = shortcuts[key];
+    electron.globalShortcut.unregisterAll();
+    for (const [key, shortcutDef] of Object.entries(defaultShortcuts)) {
+        const fromSettings = appSettings[`globalShortcut${key}`];
+        const shortcut = fromSettings || shortcutDef.shortcut;
+        const eventName = shortcutDef.event;
         try {
             electron.globalShortcut.register(shortcut, () => {
                 emitBackboneEvent(eventName);
             });
         } catch (e) {}
-    });
+    }
 }
 
 function subscribePowerEvents() {

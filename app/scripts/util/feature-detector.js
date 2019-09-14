@@ -17,40 +17,6 @@ const FeatureDetector = {
         !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
     needFixClicks: /Edge\/14/.test(navigator.appVersion),
 
-    actionShortcutSymbol(formatting) {
-        return this.isMac ? '⌘' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl-';
-    },
-    altShortcutSymbol(formatting) {
-        return this.isMac ? '⌥' : formatting ? '<span class="thin">alt + </span>' : 'alt-';
-    },
-    shiftShortcutSymbol(formatting) {
-        return this.isMac ? '⇧' : formatting ? '<span class="thin">shift + </span>' : 'shift-';
-    },
-    globalShortcutSymbol(formatting) {
-        return this.isMac
-            ? '⌃⌥'
-            : formatting
-            ? '<span class="thin">shift+alt+</span>'
-            : 'shift-alt-';
-    },
-    globalShortcutIsLarge() {
-        return !this.isMac;
-    },
-    screenshotToClipboardShortcut() {
-        if (this.isiOS) {
-            return 'Sleep+Home';
-        }
-        if (this.isMobile) {
-            return '';
-        }
-        if (this.isMac) {
-            return 'Command-Shift-Control-4';
-        }
-        if (this.isWindows) {
-            return 'Alt+PrintScreen';
-        }
-        return '';
-    },
     supportsTitleBarStyles() {
         return this.isMac;
     },
