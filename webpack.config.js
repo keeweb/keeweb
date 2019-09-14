@@ -65,7 +65,7 @@ function config(grunt, mode = 'production') {
                 baron: `baron/baron${devMode ? '.min' : ''}.js`,
                 qrcode: `jsqrcode/dist/qrcode${devMode ? '.min' : ''}.js`,
                 argon2: 'argon2-browser/dist/argon2.js',
-                marked: devMode ? 'marked/lib/marked.js' : 'marked/dist/marked.min.js',
+                marked: devMode ? 'marked/lib/marked.js' : 'marked/marked.min.js',
                 dompurify: `dompurify/dist/purify${devMode ? '.min' : ''}.js`,
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
