@@ -99,7 +99,11 @@ _.extend(StorageBase.prototype, {
         _.forEach(config.headers, (value, key) => {
             xhr.setRequestHeader(key, value);
         });
-        xhr.send(config.data);
+        let data = config.data;
+        if (data instanceof ArrayBuffer) {
+            data = new Uint8Array(data);
+        }
+        xhr.send(data);
     },
 
     _openPopup(url, title, width, height) {
