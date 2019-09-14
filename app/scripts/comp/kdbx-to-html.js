@@ -1,8 +1,9 @@
+const kdbxweb = require('kdbxweb');
 const Format = require('../util/format');
 const Locale = require('../util/locale');
+const MdToHtml = require('../util/md-to-html');
 const Links = require('../const/links');
 const RuntimeInfo = require('./runtime-info');
-const kdbxweb = require('kdbxweb');
 
 const Templates = {
     db: require('templates/export/db.hbs'),
@@ -13,7 +14,7 @@ const FieldMapping = [
     { name: 'UserName', locStr: 'user' },
     { name: 'Password', locStr: 'password', protect: true },
     { name: 'URL', locStr: 'website' },
-    { name: 'Notes', locStr: 'notes' }
+    { name: 'Notes', locStr: 'notes', markdown: true }
 ];
 
 const KnownFields = { 'Title': true };
@@ -38,12 +39,21 @@ function walkEntry(db, entry, parents) {
     const path = parents.map(group => group.name).join(' / ');
     const fields = [];
     for (const field of FieldMapping) {
-        const value = entryField(entry, field.name);
+        let value = entryField(entry, field.name);
         if (value) {
+            let html = false;
+            if (field.markdown) {
+                const converted = MdToHtml.convert(value);
+                if (converted !== value) {
+                    value = converted;
+                    html = true;
+                }
+            }
             fields.push({
                 title: Format.capFirst(Locale[field.locStr]),
                 value,
-                protect: field.protect
+                protect: field.protect,
+                html
             });
         }
     }

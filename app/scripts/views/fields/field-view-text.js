@@ -1,15 +1,22 @@
 const Backbone = require('backbone');
+const kdbxweb = require('kdbxweb');
 const FieldView = require('./field-view');
 const GeneratorView = require('../generator-view');
 const KeyHandler = require('../../comp/key-handler');
 const Keys = require('../../const/keys');
 const PasswordGenerator = require('../../util/password-generator');
 const FeatureDetector = require('../../util/feature-detector');
-const kdbxweb = require('kdbxweb');
 const Tip = require('../../util/tip');
+const MdToHtml = require('../../util/md-to-html');
 
 const FieldViewText = FieldView.extend({
     renderValue(value) {
+        if (this.model.markdown) {
+            if (value && value.isProtected) {
+                value = value.getText();
+            }
+            return MdToHtml.convert(value);
+        }
         return value && value.isProtected
             ? PasswordGenerator.presentValueWithLineBreaks(value)
             : _.escape(value || '').replace(/\n/g, '<br/>');

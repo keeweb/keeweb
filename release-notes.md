@@ -8,6 +8,7 @@ Release notes
 `*` #502: increased the default value of encryption rounds  
 `+` #348: configurable system-wide shortcuts  
 `+` #743: copying entry fields to clipboard  
+`+` #713: markdown notes  
 `*` devtools are now opened with alt-cmd-I  
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  

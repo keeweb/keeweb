@@ -233,6 +233,7 @@ const DetailsView = Backbone.View.extend({
                     name: '$Notes',
                     title: Format.capFirst(Locale.notes),
                     multiline: 'true',
+                    markdown: true,
                     value() {
                         return model.notes;
                     }
@@ -1016,6 +1017,13 @@ const DetailsView = Backbone.View.extend({
         }
         options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
         options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });
+        if (canCopy) {
+            options.push({
+                value: 'copy-to-clipboard',
+                icon: 'copy',
+                text: Locale.detCopyEntryToClipboard
+            });
+        }
         if (AutoType.enabled) {
             options.push({ value: 'det-auto-type', icon: 'keyboard-o', text: Locale.detAutoType });
         }
@@ -1038,6 +1046,9 @@ const DetailsView = Backbone.View.extend({
                 break;
             case 'det-auto-type':
                 this.autoType();
+                break;
+            case 'copy-to-clipboard':
+                this.copyToClipboard();
                 break;
         }
     },

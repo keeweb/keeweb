@@ -385,6 +385,19 @@
                 width: 100%;
                 padding: 0 $base-padding-h;
             }
+            .markdown {
+                white-space: normal;
+                h6 { font-size: 1rem; }
+                h5 { font-size: modular-scale(1, 1rem, 1.05); }
+                h4 { font-size: modular-scale(2, 1rem, 1.05); }
+                h3 { font-size: modular-scale(3, 1rem, 1.05); }
+                h2 { font-size: modular-scale(4, 1rem, 1.05); }
+                h1 { font-size: $small-header-font-size; }
+                ul, ol { margin-bottom: 1em; }
+                ul { list-style-type: initial; }
+                ol { list-style-type: decimal; }
+                li { margin-left: 2em; }
+            }
         }
 
         &--no-select {

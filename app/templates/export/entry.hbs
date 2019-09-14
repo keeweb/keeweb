@@ -9,7 +9,11 @@
                 {{#if field.protect}}
                     <code>{{field.value}}</code>
                 {{else}}
-                    {{field.value}}
+                    {{#if field.html}}
+                        {{{field.value}}}
+                    {{else}}
+                        {{field.value}}
+                    {{/if}}
                 {{/if}}
             </td>
         </tr>
