@@ -13,6 +13,7 @@ Release notes
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  
 `-` fix #554: checking active window id during auto-type  
+`-` fix plugin gallery layout on mobile  
 
 ##### v1.10.0 (2019-09-09)
 `+` macOS Dark theme  

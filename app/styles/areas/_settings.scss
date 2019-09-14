@@ -227,6 +227,10 @@
             box-sizing: border-box;
             margin: 0 $base-padding-v $base-padding-h 0;
             vertical-align: top;
+            @include mobile {
+                width: 100%;
+                margin-right: 0;
+            }
             &-install-btn {
                 position: absolute;
                 right: 0;
@@ -251,7 +255,12 @@
         }
         &-gallery-search {
             margin-top: $medium-padding-v;
-            width: calc(100% - 74px);
+            @include nomobile {
+                width: calc(100% - 74px);
+            }
+            @include mobile {
+                width: 100%;
+            }
         }
     }
     &__donate-btn {
