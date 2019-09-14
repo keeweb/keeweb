@@ -7,7 +7,7 @@ const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ct
 const KeyHandler = {
     SHORTCUT_ACTION: 1,
     SHORTCUT_OPT: 2,
-    SHORTCUT_SHIFT: 3,
+    SHORTCUT_SHIFT: 4,
 
     shortcuts: {},
     modal: false,

@@ -5,7 +5,8 @@ Release notes
 `+` #107: multiline custom fields support  
 `+` #1243: auto-type any field  
 `+` #1255: file format version and kdf selection in settings  
-`-` #502: increased the default value of encryption rounds  
+`*` #502: increased the default value of encryption rounds  
+`*` devtools are now opened with alt-cmd-I  
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  
 `-` fix #554: checking active window id during auto-type  
