@@ -453,6 +453,11 @@ const DetailsView = Backbone.View.extend({
                     });
                 }
                 moreOptions.push({ value: 'clone', icon: 'clone', text: Locale.detClone });
+                moreOptions.push({
+                    value: 'copy-to-clipboard',
+                    icon: 'copy',
+                    text: Locale.detCopyEntryToClipboard
+                });
                 const rect = this.moreView.labelEl[0].getBoundingClientRect();
                 dropdownView.render({
                     position: { top: rect.bottom, left: rect.left },
@@ -484,6 +489,9 @@ const DetailsView = Backbone.View.extend({
                 break;
             case 'clone':
                 this.clone();
+                break;
+            case 'copy-to-clipboard':
+                this.copyToClipboard();
                 break;
             default:
                 if (e.item.lastIndexOf('add:', 0) === 0) {
@@ -965,6 +973,10 @@ const DetailsView = Backbone.View.extend({
     clone() {
         const newEntry = this.model.cloneEntry(' ' + Locale.detClonedName);
         Backbone.trigger('select-entry', newEntry);
+    },
+
+    copyToClipboard() {
+        CopyPaste.copyHtml(this.model.getHtml());
     },
 
     deleteFromTrash() {

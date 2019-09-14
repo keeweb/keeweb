@@ -273,6 +273,7 @@
     "detMenuCopyUser": "Copy user",
     "detSetupOtp": "One-time passwords",
     "detClone": "Make a copy",
+    "detCopyEntryToClipboard": "Copy values to clipboard",
     "detClonedName": "Copy",
     "detAutoType": "Auto-type",
     "detAutoTypeSettings": "Auto-type settings",

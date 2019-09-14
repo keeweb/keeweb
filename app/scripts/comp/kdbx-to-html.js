@@ -105,6 +105,10 @@ const KdbxToHtml = {
             appVersion: RuntimeInfo.version,
             content
         });
+    },
+
+    entryToHtml(db, entry) {
+        return walkEntry(db, entry, []);
     }
 };
 

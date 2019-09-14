@@ -48,6 +48,23 @@ const CopyPaste = {
                 hiddenInput.remove();
             }
         });
+    },
+
+    copyHtml(html) {
+        const el = document.createElement('div');
+        el.innerHTML = html;
+        document.body.appendChild(el);
+
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        const result = document.execCommand('copy');
+
+        el.remove();
+        return result;
     }
 };
 

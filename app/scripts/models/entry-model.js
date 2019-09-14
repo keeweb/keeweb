@@ -6,6 +6,7 @@ const IconUrl = require('../util/icon-url');
 const Otp = require('../util/otp');
 const kdbxweb = require('kdbxweb');
 const Ranking = require('../util/ranking');
+const KdbxToHtml = require('../comp/kdbx-to-html');
 
 const EntryModel = Backbone.Model.extend({
     defaults: {},
@@ -704,6 +705,10 @@ const EntryModel = Backbone.Model.extend({
             const fieldWeight = fieldWeights[fieldName] || defaultFieldWeight;
             return rank + stringRank * fieldWeight;
         }, 0);
+    },
+
+    getHtml() {
+        return KdbxToHtml.entryToHtml(this.file.db, this.entry);
     }
 });
 
