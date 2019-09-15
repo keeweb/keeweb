@@ -46,7 +46,7 @@ const AppView = Backbone.View.extend({
         this.views.menu = new MenuView({ model: this.model.menu });
         this.views.menuDrag = new DragView('x', { parent: '.app__menu-drag' });
         this.views.footer = new FooterView(this.model);
-        this.views.listWrap = new ListWrapView({ model: this.model });
+        this.views.listWrap = new ListWrapView(this.model);
         this.views.list = new ListView({ model: this.model });
         this.views.listDrag = new DragView('x', { parent: '.app__list-drag' });
         this.views.list.dragView = this.views.listDrag;
@@ -143,7 +143,7 @@ const AppView = Backbone.View.extend({
             })
         );
         this.panelEl = this.$el.find('.app__panel:first');
-        this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
+        this.views.listWrap.render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
         this.views.menuDrag.render();
         this.views.footer.render();
