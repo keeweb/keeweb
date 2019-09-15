@@ -44,11 +44,11 @@ const AppView = Backbone.View.extend({
     initialize() {
         this.views = {};
         this.views.menu = new MenuView({ model: this.model.menu });
-        this.views.menuDrag = new DragView('x');
+        this.views.menuDrag = new DragView('x', { parent: '.app__menu-drag' });
         this.views.footer = new FooterView(this.model);
         this.views.listWrap = new ListWrapView({ model: this.model });
         this.views.list = new ListView({ model: this.model });
-        this.views.listDrag = new DragView('x');
+        this.views.listDrag = new DragView('x', { parent: '.app__list-drag' });
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView();
         this.views.details.appModel = this.model;
@@ -145,10 +145,10 @@ const AppView = Backbone.View.extend({
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
-        this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
+        this.views.menuDrag.render();
         this.views.footer.render();
         this.views.list.setElement(this.$el.find('.app__list')).render();
-        this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
+        this.views.listDrag.render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
         this.showLastOpenFile();
         return this;

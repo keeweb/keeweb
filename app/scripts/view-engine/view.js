@@ -159,14 +159,15 @@ class View extends EventEmitter {
         if (visible === undefined) {
             visible = this.hidden;
         }
-        this.el.classList.toggle('show', !!visible);
-        this.el.classList.toggle('hide', !visible);
         this.hidden = !visible;
         this.emit(visible ? 'show' : 'hide');
-        if (!visible) {
-            Tip.hideTips(this.el);
+        if (this.el) {
+            this.el.classList.toggle('show', !!visible);
+            this.el.classList.toggle('hide', !visible);
+            if (!visible) {
+                Tip.hideTips(this.el);
+            }
         }
-        return this;
     }
 
     isHidden() {

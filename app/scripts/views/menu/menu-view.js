@@ -46,12 +46,12 @@ const MenuView = Backbone.View.extend({
             const sectionView = new MenuSectionView({ el: sectionsEl, model: section });
             sectionView.render();
             if (section.get('drag')) {
-                const dragView = new DragView('y');
                 const dragEl = $('<div/>')
                     .addClass('menu__drag-section')
                     .appendTo(sectionsEl);
+                const dragView = new DragView('y', { parent: dragEl[0] });
                 sectionView.listenDrag(dragView);
-                dragView.setElement(dragEl).render();
+                dragView.render();
                 this.sectionViews.push(dragView);
             }
             this.sectionViews.push(sectionView);
