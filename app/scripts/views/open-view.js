@@ -754,10 +754,8 @@ const OpenView = Backbone.View.extend({
                 });
             }
             const listView = new StorageFileListView({
-                model: {
-                    files,
-                    showHiddenFiles: config && config.showHiddenFiles
-                }
+                files,
+                showHiddenFiles: config && config.showHiddenFiles
             });
             listView.on('selected', file => {
                 if (file.dir) {

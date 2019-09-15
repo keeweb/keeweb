@@ -1,18 +1,20 @@
-import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { UrlFormat } from 'util/formatting/url-format';
+import template from 'templates/storage-file-list.hbs';
 
-const StorageFileListView = Backbone.View.extend({
-    template: require('templates/storage-file-list.hbs'),
+class StorageFileListView extends View {
+    template = template;
 
-    events: {
+    events = {
         'click .open-list__file': 'fileClick',
         'click .open-list__check-wrap': 'showAllCheckClick'
-    },
+    };
 
-    initialize() {
+    constructor(model) {
+        super(model);
         this.allStorageFiles = {};
         this.showHiddenFiles = !!this.model.showHiddenFiles;
-    },
+    }
 
     render() {
         let files = this.model.files.map(file => {
@@ -34,28 +36,27 @@ const StorageFileListView = Backbone.View.extend({
             }
         }
         const density = files.length > 14 ? 3 : files.length > 7 ? 2 : 1;
-        this.renderTemplate({
+        super.render({
             files,
             density,
             showHiddenFiles: this.showHiddenFiles,
             canShowHiddenFiles
         });
-        return this;
-    },
+    }
 
     fileClick(e) {
         const result = $(e.target)
             .closest('.open-list__file')
             .data('path');
         const file = this.allStorageFiles[result];
-        this.trigger('selected', file);
-    },
+        this.emit('selected', file);
+    }
 
     showAllCheckClick(e) {
         e.stopPropagation();
         this.showHiddenFiles = !this.showHiddenFiles;
         this.render();
     }
-});
+}
 
 export { StorageFileListView };
