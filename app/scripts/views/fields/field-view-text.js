@@ -93,10 +93,8 @@ const FieldViewText = FieldView.extend({
             const fieldRect = this.input[0].getBoundingClientRect();
             const shadowSpread = parseInt(this.input.css('--focus-shadow-spread'));
             this.gen = new GeneratorView({
-                model: {
-                    pos: { left: fieldRect.left, top: fieldRect.bottom + shadowSpread },
-                    password: this.value
-                }
+                pos: { left: fieldRect.left, top: fieldRect.bottom + shadowSpread },
+                password: this.value
             }).render();
             this.gen.once('remove', this.generatorClosed.bind(this));
             this.gen.once('result', this.generatorResult.bind(this));

@@ -1,13 +1,17 @@
 import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { GeneratorPresets } from 'comp/app/generator-presets';
 import { PasswordGenerator } from 'util/generators/password-generator';
 import { Locale } from 'util/locale';
 import { Scrollable } from 'view-engine/scrollable';
+import template from 'templates/generator-presets.hbs';
 
-const GeneratorPresetsView = Backbone.View.extend({
-    template: require('templates/generator-presets.hbs'),
+class GeneratorPresetsView extends View {
+    parent = '.app__panel';
 
-    events: {
+    template = template;
+
+    events = {
         'click .back-button': 'returnToApp',
         'change .gen-ps__list': 'changePreset',
         'click .gen-ps__btn-create': 'createPreset',
@@ -18,44 +22,36 @@ const GeneratorPresetsView = Backbone.View.extend({
         'input #gen-ps__field-length': 'changeLength',
         'change .gen-ps__check-range': 'changeRange',
         'input #gen-ps__field-include': 'changeInclude'
-    },
+    };
 
-    selected: null,
+    selected = null;
 
-    reservedTitles: [Locale.genPresetDerived],
-
-    initialize() {
-        this.appModel = this.model;
-    },
+    reservedTitles = [Locale.genPresetDerived];
 
     render() {
         this.presets = GeneratorPresets.all;
         if (!this.selected || !this.presets.some(p => p.name === this.selected)) {
             this.selected = (this.presets.filter(p => p.default)[0] || this.presets[0]).name;
         }
-        this.renderTemplate(
-            {
-                presets: this.presets,
-                selected: this.getPreset(this.selected),
-                ranges: this.getSelectedRanges()
-            },
-            true
-        );
+        super.render({
+            presets: this.presets,
+            selected: this.getPreset(this.selected),
+            ranges: this.getSelectedRanges()
+        });
         this.createScroll({
             root: this.$el.find('.gen-ps')[0],
             scroller: this.$el.find('.scroller')[0],
             bar: this.$el.find('.scroller__bar')[0]
         });
         this.renderExample();
-        return this;
-    },
+    }
 
     renderExample() {
         const selectedPreset = this.getPreset(this.selected);
         const example = PasswordGenerator.generate(selectedPreset);
         this.$el.find('.gen-ps__example').text(example);
         this.pageResized();
-    },
+    }
 
     getSelectedRanges() {
         const sel = this.getPreset(this.selected);
@@ -73,20 +69,20 @@ const GeneratorPresetsView = Backbone.View.extend({
                 };
             }
         );
-    },
+    }
 
     getPreset(name) {
         return this.presets.filter(p => p.name === name)[0];
-    },
+    }
 
     returnToApp() {
         Backbone.trigger('edit-generator-presets');
-    },
+    }
 
     changePreset(e) {
         this.selected = e.target.value;
         this.render();
-    },
+    }
 
     createPreset() {
         let name;
@@ -116,12 +112,12 @@ const GeneratorPresetsView = Backbone.View.extend({
         GeneratorPresets.add(preset);
         this.selected = name;
         this.render();
-    },
+    }
 
     deletePreset() {
         GeneratorPresets.remove(this.selected);
         this.render();
-    },
+    }
 
     changeTitle(e) {
         const title = $.trim(e.target.value);
@@ -139,17 +135,17 @@ const GeneratorPresetsView = Backbone.View.extend({
             GeneratorPresets.setPreset(this.selected, { title });
             this.$el.find('.gen-ps__list option[selected]').text(title);
         }
-    },
+    }
 
     changeEnabled(e) {
         const enabled = e.target.checked;
         GeneratorPresets.setDisabled(this.selected, !enabled);
-    },
+    }
 
     changeDefault(e) {
         const isDefault = e.target.checked;
         GeneratorPresets.setDefault(isDefault ? this.selected : null);
-    },
+    }
 
     changeLength(e) {
         const length = +e.target.value;
@@ -161,7 +157,7 @@ const GeneratorPresetsView = Backbone.View.extend({
         }
         this.presets = GeneratorPresets.all;
         this.renderExample();
-    },
+    }
 
     changeRange(e) {
         const enabled = e.target.checked;
@@ -169,7 +165,7 @@ const GeneratorPresetsView = Backbone.View.extend({
         GeneratorPresets.setPreset(this.selected, { [range]: enabled });
         this.presets = GeneratorPresets.all;
         this.renderExample();
-    },
+    }
 
     changeInclude(e) {
         const include = e.target.value;
@@ -179,8 +175,8 @@ const GeneratorPresetsView = Backbone.View.extend({
         this.presets = GeneratorPresets.all;
         this.renderExample();
     }
-});
+}
 
-_.extend(GeneratorPresetsView.prototype, Scrollable);
+Object.assign(GeneratorPresetsView.prototype, Scrollable);
 
 export { GeneratorPresetsView };

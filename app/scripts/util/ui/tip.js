@@ -11,6 +11,9 @@ const Tip = function(el, config) {
     this.hideTimeout = null;
     this.force = (config && config.force) || false;
     this.hide = this.hide.bind(this);
+    this.destroy = this.destroy.bind(this);
+    this.mouseenter = this.mouseenter.bind(this);
+    this.mouseleave = this.mouseleave.bind(this);
 };
 
 Tip.enabled = !Features.isMobile;
@@ -21,8 +24,8 @@ Tip.prototype.init = function() {
     }
     this.el.removeAttr('title');
     this.el.attr('data-title', this.title);
-    this.el.mouseenter(this.mouseenter.bind(this)).mouseleave(this.mouseleave.bind(this));
-    this.el.click(this.mouseleave.bind(this));
+    this.el.mouseenter(this.mouseenter).mouseleave(this.mouseleave);
+    this.el.click(this.mouseleave);
 };
 
 Tip.prototype.show = function() {
@@ -80,8 +83,15 @@ Tip.prototype.hide = function() {
     if (this.tipEl) {
         this.tipEl.remove();
         this.tipEl = null;
+        Backbone.off('page-geometry', this.hide);
     }
-    Backbone.off('page-geometry', this.hide);
+};
+
+Tip.prototype.destroy = function() {
+    this.hide();
+    this.el.off('mouseenter', this.mouseenter);
+    this.el.off('mouseleave', this.mouseleave);
+    this.el.off('click', this.mouseleave);
 };
 
 Tip.prototype.mouseenter = function() {
@@ -138,7 +148,7 @@ Tip.createTips = function(container) {
     if (!Tip.enabled) {
         return;
     }
-    container.find('[title]').each((ix, el) => {
+    $('[title]', container).each((ix, el) => {
         Tip.createTip(el);
     });
 };
@@ -156,10 +166,10 @@ Tip.createTip = function(el, options) {
 };
 
 Tip.hideTips = function(container) {
-    if (!Tip.enabled) {
+    if (!Tip.enabled || !container) {
         return;
     }
-    container.find('[data-title]').each((ix, el) => {
+    $('[data-title]', container).each((ix, el) => {
         Tip.hideTip(el);
     });
 };
@@ -178,6 +188,15 @@ Tip.updateTip = function(el, props) {
             _.pick(props, ['title', 'placement', 'fast', 'showTimeout', 'hideTimeout'])
         );
     }
+};
+
+Tip.destroyTips = function(container) {
+    $('[data-title]', container).each((ix, el) => {
+        if (el._tip) {
+            el._tip.destroy();
+            el._tip = undefined;
+        }
+    });
 };
 
 export { Tip };

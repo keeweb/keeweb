@@ -45,7 +45,7 @@ const AppView = Backbone.View.extend({
         this.views = {};
         this.views.menu = new MenuView({ model: this.model.menu });
         this.views.menuDrag = new DragView('x');
-        this.views.footer = new FooterView({ model: this.model });
+        this.views.footer = new FooterView(this.model);
         this.views.listWrap = new ListWrapView({ model: this.model });
         this.views.list = new ListView({ model: this.model });
         this.views.listDrag = new DragView('x');
@@ -146,7 +146,7 @@ const AppView = Backbone.View.extend({
         this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
         this.views.menu.setElement(this.$el.find('.app__menu')).render();
         this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
-        this.views.footer.setElement(this.$el.find('.app__footer')).render();
+        this.views.footer.render();
         this.views.list.setElement(this.$el.find('.app__list')).render();
         this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
@@ -240,7 +240,8 @@ const AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.hidePanelView();
-        this.views.panel = view.setElement(this.panelEl).render();
+        view.render();
+        this.views.panel = view;
         this.panelEl.removeClass('hide');
     },
 
@@ -280,11 +281,11 @@ const AppView = Backbone.View.extend({
     },
 
     showEditGroup(group) {
-        this.showPanelView(new GrpView({ model: group }));
+        this.showPanelView(new GrpView(group));
     },
 
     showEditTag() {
-        this.showPanelView(new TagView({ model: this.model }));
+        this.showPanelView(new TagView(this.model));
     },
 
     showKeyChange(file, viewConfig) {
@@ -688,7 +689,7 @@ const AppView = Backbone.View.extend({
             if (this.views.settings) {
                 this.showEntries();
             }
-            this.showPanelView(new GeneratorPresetsView({ model: this.model }));
+            this.showPanelView(new GeneratorPresetsView(this.model));
         } else {
             this.showEntries();
         }
