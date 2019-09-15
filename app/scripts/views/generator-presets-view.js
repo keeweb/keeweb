@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const Scrollable = require('../mixins/scrollable');
+const Scrollable = require('../view-engine/scrollable');
 const Locale = require('../util/locale');
 const GeneratorPresets = require('../comp/app/generator-presets');
 const PasswordGenerator = require('../util/generators/password-generator');

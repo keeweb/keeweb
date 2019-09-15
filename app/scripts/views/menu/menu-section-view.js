@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 const MenuItemView = require('./menu-item-view');
-const Resizable = require('../../mixins/resizable');
-const Scrollable = require('../../mixins/scrollable');
+const Resizable = require('../../view-engine/resizable');
+const Scrollable = require('../../view-engine/scrollable');
 const AppSettingsModel = require('../../models/app-settings-model');
 
 const MenuSectionView = Backbone.View.extend({

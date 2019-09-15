@@ -7,7 +7,7 @@ const Locale = require('../../util/locale');
 const Alerts = require('../../comp/ui/alerts');
 const FieldViewReadOnly = require('../fields/field-view-read-only');
 const FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
-const Copyable = require('../../mixins/copyable');
+const Copyable = require('../../view-engine/copyable');
 
 const DetailsHistoryView = Backbone.View.extend({
     template: require('templates/details/details-history.hbs'),

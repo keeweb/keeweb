@@ -2,7 +2,7 @@ const Backbone = require('backbone');
 const kdbxweb = require('kdbxweb');
 const GroupModel = require('../../models/group-model');
 const AppSettingsModel = require('../../models/app-settings-model');
-const Scrollable = require('../../mixins/scrollable');
+const Scrollable = require('../../view-engine/scrollable');
 const FieldViewText = require('../fields/field-view-text');
 const FieldViewSelect = require('../fields/field-view-select');
 const FieldViewAutocomplete = require('../fields/field-view-autocomplete');
@@ -32,7 +32,7 @@ const Tip = require('../../util/ui/tip');
 const FileSaver = require('../../util/ui/file-saver');
 const Features = require('../../util/features');
 const Timeouts = require('../../const/timeouts');
-const Copyable = require('../../mixins/copyable');
+const Copyable = require('../../view-engine/copyable');
 
 const DetailsView = Backbone.View.extend({
     template: require('templates/details/details.hbs'),

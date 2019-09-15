@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const Scrollable = require('../mixins/scrollable');
+const Scrollable = require('../view-engine/scrollable');
 const IconSelectView = require('./icon-select-view');
 const AutoTypeHintView = require('./auto-type-hint-view');
 const AutoType = require('../auto-type');

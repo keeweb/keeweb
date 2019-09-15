@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const Scrollable = require('../../mixins/scrollable');
+const Scrollable = require('../../view-engine/scrollable');
 const Keys = require('../../const/keys');
 const KeyHandler = require('../../comp/browser/key-handler');
 
