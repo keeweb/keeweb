@@ -303,7 +303,7 @@ function postProcess(wordObj) {
  * @param {*} [options] A collection of options to control the word generator.
  * @returns {string} A generated word.
  */
-module.exports.generate = function(options) {
+function generate(options) {
     options = getOptions(options);
     const length = options.length;
     const wordObj = {
@@ -316,4 +316,8 @@ module.exports.generate = function(options) {
         addSyllable(wordObj);
     }
     return postProcess(wordObj).substr(0, length);
-};
+}
+
+const phonetic = { generate };
+
+module.exports = phonetic;
