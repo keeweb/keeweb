@@ -46,7 +46,7 @@ ready(() => {
         });
 
     function loadMixins() {
-        require('./view-engine/view');
+        require('./view-engine/backbone-view-ext');
         require('./hbs-helpers');
     }
 
