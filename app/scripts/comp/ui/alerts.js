@@ -36,7 +36,7 @@ const Alerts = {
             return null;
         }
         Alerts.alertDisplayed = true;
-        const view = new ModalView({ model: config });
+        const view = new ModalView(config);
         view.render();
         view.on('result', (res, check) => {
             Alerts.alertDisplayed = false;

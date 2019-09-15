@@ -55,13 +55,7 @@ class AutoTypeSelectView extends View {
         this.onKey(Keys.DOM_VK_UP, this.upPressed, false, 'auto-type');
         this.onKey(Keys.DOM_VK_DOWN, this.downPressed, false, 'auto-type');
         this.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, false, 'auto-type');
-        this.onKey(
-            Keys.DOM_VK_O,
-            this.openKeyPressed,
-            this,
-            KeyHandler.SHORTCUT_ACTION,
-            'auto-type'
-        );
+        this.onKey(Keys.DOM_VK_O, this.openKeyPressed, KeyHandler.SHORTCUT_ACTION, 'auto-type');
         KeyHandler.on('keypress:auto-type', this.keyPressed.bind(this));
         KeyHandler.setModal('auto-type');
         this.once('remove', () => {
@@ -140,7 +134,6 @@ class AutoTypeSelectView extends View {
     }
 
     openKeyPressed() {
-        this.removeKeys();
         this.emit('show-open-files');
     }
 
