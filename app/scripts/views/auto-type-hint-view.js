@@ -1,23 +1,27 @@
-import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { Links } from 'const/links';
 import { Timeouts } from 'const/timeouts';
 import { Features } from 'util/features';
+import template from 'templates/auto-type-hint.hbs';
 
-const AutoTypeHintView = Backbone.View.extend({
-    template: require('templates/auto-type-hint.hbs'),
+class AutoTypeHintView extends View {
+    parent = 'body';
 
-    events: {},
+    template = template;
 
-    initialize(opts) {
-        this.input = opts.input;
+    events = {};
+
+    constructor(model) {
+        super(model);
+        this.input = model.input;
         this.bodyClick = this.bodyClick.bind(this);
         this.inputBlur = this.inputBlur.bind(this);
         $('body').on('click', this.bodyClick);
         this.input.addEventListener('blur', this.inputBlur);
-    },
+    }
 
     render() {
-        this.renderTemplate({
+        super.render({
             cmd: Features.isMac ? 'command' : 'ctrl',
             hasCtrl: Features.isMac,
             link: Links.AutoType
@@ -34,13 +38,13 @@ const AutoTypeHintView = Backbone.View.extend({
             this.$el.css('height', selfRect.height + bodyRect.bottom - selfRect.bottom - 1);
         }
         return this;
-    },
+    }
 
     remove() {
         $('body').off('click', this.bodyClick);
         this.input.removeEventListener('blur', this.inputBlur);
-        Backbone.View.prototype.remove.apply(this);
-    },
+        super.remove(this);
+    }
 
     bodyClick(e) {
         if (this.removeTimer) {
@@ -64,13 +68,13 @@ const AutoTypeHintView = Backbone.View.extend({
         } else {
             this.remove();
         }
-    },
+    }
 
     inputBlur() {
         if (!this.removeTimer) {
             this.removeTimer = setTimeout(this.remove.bind(this), Timeouts.DropDownClickWait);
         }
-    },
+    }
 
     insertText(text) {
         const pos = this.input.selectionEnd || this.input.value.length;
@@ -78,6 +82,6 @@ const AutoTypeHintView = Backbone.View.extend({
         this.input.selectionStart = this.input.selectionEnd = pos + text.length;
         $(this.input).trigger('input');
     }
-});
+}
 
 export { AutoTypeHintView };
