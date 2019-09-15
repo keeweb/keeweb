@@ -176,5 +176,3 @@ kdbxweb.ProtectedValue.prototype.isFieldReference = function() {
     });
     return true;
 };
-
-module.exports = kdbxweb.ProtectedValue;

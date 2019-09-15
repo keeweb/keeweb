@@ -86,5 +86,3 @@ _.extend(Backbone.View.prototype, {
         }
     }
 });
-
-module.exports = Backbone.View;
