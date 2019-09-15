@@ -435,12 +435,15 @@ const AppModel = Backbone.Model.extend({
     openFile(params, callback) {
         const logger = new Logger('open', params.name);
         logger.info('File open request');
+
         const fileInfo = params.id
             ? this.fileInfos.get(params.id)
             : this.fileInfos.getMatch(params.storage, params.name, params.path);
+
         if (!params.opts && fileInfo && fileInfo.get('opts')) {
             params.opts = fileInfo.get('opts');
         }
+
         if (fileInfo && fileInfo.get('modified')) {
             logger.info('Open file from cache because it is modified');
             this.openFileFromCache(
@@ -468,57 +471,23 @@ const AppModel = Backbone.Model.extend({
             fileInfo.get('storage') !== 'file'
         ) {
             logger.info('Open file from cache because it is latest');
-            this.openFileFromCache(params, callback, fileInfo);
-        } else if (!fileInfo || !fileInfo.get('openDate') || params.storage === 'file') {
-            logger.info('Open file from storage', params.storage);
-            const storage = Storage[params.storage];
-            const storageLoad = () => {
-                logger.info('Load from storage');
-                storage.load(params.path, params.opts, (err, data, stat) => {
+            this.openFileFromCache(
+                params,
+                (err, file) => {
                     if (err) {
-                        if (fileInfo && fileInfo.get('openDate')) {
-                            logger.info('Open file from cache because of storage load error', err);
-                            this.openFileFromCache(params, callback, fileInfo);
-                        } else {
-                            logger.info('Storage load error', err);
-                            callback(err);
-                        }
-                    } else {
-                        logger.info('Open file from content loaded from storage');
-                        params.fileData = data;
-                        params.rev = (stat && stat.rev) || null;
-                        const needSaveToCache = storage.name !== 'file';
-                        this.openFileWithData(params, callback, fileInfo, data, needSaveToCache);
-                    }
-                });
-            };
-            const cacheRev = (fileInfo && fileInfo.get('rev')) || null;
-            if (cacheRev && storage.stat) {
-                logger.info('Stat file');
-                storage.stat(params.path, params.opts, (err, stat) => {
-                    if (
-                        fileInfo &&
-                        storage.name !== 'file' &&
-                        (err || (stat && stat.rev === cacheRev))
-                    ) {
                         logger.info(
-                            'Open file from cache because ' + (err ? 'stat error' : 'it is latest'),
+                            'Error loading file from cache, trying to open from storage',
                             err
                         );
-                        this.openFileFromCache(params, callback, fileInfo);
-                    } else if (stat) {
-                        logger.info(
-                            'Open file from storage (' + stat.rev + ', local ' + cacheRev + ')'
-                        );
-                        storageLoad();
+                        this.openFileFromStorage(params, callback, fileInfo, logger, true);
                     } else {
-                        logger.info('Stat error', err);
-                        callback(err);
+                        callback(err, file);
                     }
-                });
-            } else {
-                storageLoad();
-            }
+                },
+                fileInfo
+            );
+        } else if (!fileInfo || !fileInfo.get('openDate') || params.storage === 'file') {
+            this.openFileFromStorage(params, callback, fileInfo, logger);
         } else {
             logger.info('Open file from cache, will sync after load', params.storage);
             this.openFileFromCache(
@@ -527,8 +496,14 @@ const AppModel = Backbone.Model.extend({
                     if (!err && file) {
                         logger.info('Sync just opened file');
                         _.defer(() => this.syncFile(file));
+                        callback(err);
+                    } else {
+                        logger.info(
+                            'Error loading file from cache, trying to open from storage',
+                            err
+                        );
+                        this.openFileFromStorage(params, callback, fileInfo, logger, true);
                     }
-                    callback(err);
                 },
                 fileInfo
             );
@@ -547,6 +522,59 @@ const AppModel = Backbone.Model.extend({
                 this.openFileWithData(params, callback, fileInfo, data);
             }
         });
+    },
+
+    openFileFromStorage(params, callback, fileInfo, logger, noCache) {
+        logger.info('Open file from storage', params.storage);
+        const storage = Storage[params.storage];
+        const storageLoad = () => {
+            logger.info('Load from storage');
+            storage.load(params.path, params.opts, (err, data, stat) => {
+                if (err) {
+                    if (fileInfo && fileInfo.get('openDate')) {
+                        logger.info('Open file from cache because of storage load error', err);
+                        this.openFileFromCache(params, callback, fileInfo);
+                    } else {
+                        logger.info('Storage load error', err);
+                        callback(err);
+                    }
+                } else {
+                    logger.info('Open file from content loaded from storage');
+                    params.fileData = data;
+                    params.rev = (stat && stat.rev) || null;
+                    const needSaveToCache = storage.name !== 'file';
+                    this.openFileWithData(params, callback, fileInfo, data, needSaveToCache);
+                }
+            });
+        };
+        const cacheRev = (fileInfo && fileInfo.get('rev')) || null;
+        if (cacheRev && storage.stat) {
+            logger.info('Stat file');
+            storage.stat(params.path, params.opts, (err, stat) => {
+                if (
+                    !noCache &&
+                    fileInfo &&
+                    storage.name !== 'file' &&
+                    (err || (stat && stat.rev === cacheRev))
+                ) {
+                    logger.info(
+                        'Open file from cache because ' + (err ? 'stat error' : 'it is latest'),
+                        err
+                    );
+                    this.openFileFromCache(params, callback, fileInfo);
+                } else if (stat) {
+                    logger.info(
+                        'Open file from storage (' + stat.rev + ', local ' + cacheRev + ')'
+                    );
+                    storageLoad();
+                } else {
+                    logger.info('Stat error', err);
+                    callback(err);
+                }
+            });
+        } else {
+            storageLoad();
+        }
     },
 
     openFileWithData(params, callback, fileInfo, data, updateCacheOnSuccess) {
