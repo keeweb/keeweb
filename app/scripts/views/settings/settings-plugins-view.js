@@ -47,7 +47,7 @@ const SettingsPluginsView = Backbone.View.extend({
 
     render() {
         this.renderTemplate({
-            plugins: PluginManager.get('plugins')
+            plugins: PluginManager.instance.get('plugins')
                 .map(plugin => ({
                     id: plugin.id,
                     manifest: plugin.get('manifest'),
@@ -87,7 +87,7 @@ const SettingsPluginsView = Backbone.View.extend({
         if (!PluginGallery.gallery) {
             return null;
         }
-        const plugins = PluginManager.get('plugins');
+        const plugins = PluginManager.instance.get('plugins');
         return PluginGallery.gallery.plugins
             .map(pl => ({
                 url: pl.url,
@@ -142,7 +142,7 @@ const SettingsPluginsView = Backbone.View.extend({
         urlTextBox.prop('disabled', true);
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installFromUrl = { url };
-        PluginManager.install(url, undefined, true)
+        PluginManager.instance.install(url, undefined, true)
             .then(() => {
                 this.installFinished();
                 this.installFromUrl = null;
@@ -166,22 +166,22 @@ const SettingsPluginsView = Backbone.View.extend({
 
     uninstallClick(e) {
         const pluginId = $(e.target).data('plugin');
-        PluginManager.uninstall(pluginId);
+        PluginManager.instance.uninstall(pluginId);
     },
 
     disableClick(e) {
         const pluginId = $(e.target).data('plugin');
-        PluginManager.disable(pluginId);
+        PluginManager.instance.disable(pluginId);
     },
 
     enableClick(e) {
         const pluginId = $(e.target).data('plugin');
-        PluginManager.activate(pluginId);
+        PluginManager.instance.activate(pluginId);
     },
 
     updateClick(e) {
         const pluginId = $(e.target).data('plugin');
-        PluginManager.update(pluginId);
+        PluginManager.instance.update(pluginId);
     },
 
     useLocaleClick(e) {
@@ -201,7 +201,7 @@ const SettingsPluginsView = Backbone.View.extend({
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installing[plugin.url] = true;
         delete this.installErrors[plugin.url];
-        PluginManager.install(plugin.url, plugin.manifest)
+        PluginManager.instance.install(plugin.url, plugin.manifest)
             .catch(e => {
                 this.installErrors[plugin.url] = e;
                 delete this.installing[plugin.url];
@@ -249,14 +249,14 @@ const SettingsPluginsView = Backbone.View.extend({
         const setting = settingEl.data('setting');
         const pluginId = settingEl.data('plugin');
         const val = el.type === 'checkbox' ? el.checked : el.value;
-        const plugin = PluginManager.getPlugin(pluginId);
+        const plugin = PluginManager.instance.getPlugin(pluginId);
         plugin.setSettings({ [setting]: val });
     },
 
     autoUpdateChange(e) {
         const pluginId = $(e.target).data('plugin');
         const enabled = e.target.checked;
-        PluginManager.setAutoUpdate(pluginId, enabled);
+        PluginManager.instance.setAutoUpdate(pluginId, enabled);
     }
 });
 
