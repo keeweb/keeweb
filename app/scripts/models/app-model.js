@@ -21,7 +21,7 @@ const RuntimeInfo = require('../comp/app/runtime-info');
 const PluginManager = require('../plugins/plugin-manager');
 const Locale = require('../util/locale');
 
-require('../mixins/protected-value-ex');
+require('../util/kdbxweb/protected-value-ex');
 
 const AppModel = Backbone.Model.extend({
     defaults: {},
