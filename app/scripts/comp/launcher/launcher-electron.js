@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
-const Locale = require('../util/locale');
-const Logger = require('../util/logger');
+const Locale = require('../../util/locale');
+const Logger = require('../../util/logger');
 
 const logger = new Logger('launcher');
 

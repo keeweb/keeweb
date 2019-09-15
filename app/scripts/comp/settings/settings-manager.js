@@ -77,7 +77,7 @@ const SettingsManager = {
             if (this.customLocales[loc]) {
                 localeValues = this.customLocales[loc];
             } else {
-                localeValues = require('../locales/' + loc + '.json');
+                localeValues = require('../../locales/' + loc + '.json');
             }
         }
         if (!this.neutralLocale) {
