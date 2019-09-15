@@ -1,12 +1,12 @@
 const Backbone = require('backbone');
-const RuntimeInfo = require('./runtime-info');
-const Links = require('../const/links');
-const Launcher = require('../comp/launcher');
-const AppSettingsModel = require('../models/app-settings-model');
-const UpdateModel = require('../models/update-model');
-const Transport = require('../comp/transport');
-const Logger = require('../util/logger');
-const SemVer = require('../util/data/semver');
+const RuntimeInfo = require('../app/runtime-info');
+const Links = require('../../const/links');
+const Launcher = require('../launcher');
+const AppSettingsModel = require('../../models/app-settings-model');
+const UpdateModel = require('../../models/update-model');
+const Transport = require('../browser/transport');
+const Logger = require('../../util/logger');
+const SemVer = require('../../util/data/semver');
 const publicKey = require('public-key.pem').default;
 
 const logger = new Logger('updater');

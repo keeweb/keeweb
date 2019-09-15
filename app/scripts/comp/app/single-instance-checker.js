@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const Launcher = require('./launcher');
+const Launcher = require('../launcher');
 
 const LocalStorageKeyName = 'instanceCheck';
 const LocalStorageResponseKeyName = 'instanceMaster';

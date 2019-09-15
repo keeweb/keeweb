@@ -1,5 +1,5 @@
 const kdbxweb = require('kdbxweb');
-const Features = require('../util/features');
+const Features = require('../../util/features');
 
 const FeatureTester = {
     test() {

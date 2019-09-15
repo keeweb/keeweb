@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 const Scrollable = require('../../mixins/scrollable');
 const Keys = require('../../const/keys');
-const KeyHandler = require('../../comp/key-handler');
+const KeyHandler = require('../../comp/browser/key-handler');
 
 const SettingsView = Backbone.View.extend({
     template: require('templates/settings/settings.hbs'),

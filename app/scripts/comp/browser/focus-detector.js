@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
-const Features = require('../util/features');
-const Launcher = require('../comp/launcher');
+const Features = require('../../util/features');
+const Launcher = require('../launcher');
 
 const FocusDetector = {
     init() {

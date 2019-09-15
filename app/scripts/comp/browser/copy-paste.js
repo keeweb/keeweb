@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
-const Launcher = require('./launcher');
-const AppSettingsModel = require('../models/app-settings-model');
+const Launcher = require('../launcher');
+const AppSettingsModel = require('../../models/app-settings-model');
 
 const CopyPaste = {
     simpleCopy: !!(Launcher && Launcher.clipboardSupported),

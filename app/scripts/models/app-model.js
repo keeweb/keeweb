@@ -17,7 +17,7 @@ const DateFormat = require('../util/formatting/date-format');
 const UrlFormat = require('../util/formatting/url-format');
 const AutoType = require('../auto-type');
 const Launcher = require('../comp/launcher');
-const RuntimeInfo = require('../comp/runtime-info');
+const RuntimeInfo = require('../comp/app/runtime-info');
 const PluginManager = require('../plugins/plugin-manager');
 const Locale = require('../util/locale');
 

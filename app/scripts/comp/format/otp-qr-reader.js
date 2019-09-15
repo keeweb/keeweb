@@ -1,10 +1,10 @@
 const Backbone = require('backbone');
-const Alerts = require('./alerts');
-const Locale = require('../util/locale');
-const Logger = require('../util/logger');
-const Features = require('../util/features');
-const Shortcuts = require('../comp/shortcuts');
-const Otp = require('../util/data/otp');
+const Alerts = require('../ui/alerts');
+const Locale = require('../../util/locale');
+const Logger = require('../../util/logger');
+const Features = require('../../util/features');
+const Shortcuts = require('../../comp/app/shortcuts');
+const Otp = require('../../util/data/otp');
 const QrCode = require('jsqrcode');
 
 const logger = new Logger('otp-qr-reader');

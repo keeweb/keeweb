@@ -2,7 +2,7 @@ const Backbone = require('backbone');
 const Locale = require('../../util/locale');
 const Keys = require('../../const/keys');
 const Launcher = require('../../comp/launcher');
-const Shortcuts = require('../../comp/shortcuts');
+const Shortcuts = require('../../comp/app/shortcuts');
 const Features = require('../../util/features');
 
 const SettingsShortcutsView = Backbone.View.extend({

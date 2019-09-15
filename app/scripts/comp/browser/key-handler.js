@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
-const Keys = require('../const/keys');
-const IdleTracker = require('../comp/idle-tracker');
+const Keys = require('../../const/keys');
+const IdleTracker = require('./idle-tracker');
 
 const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
 

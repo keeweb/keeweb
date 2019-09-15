@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 const AutoTypeHintView = require('../auto-type-hint-view');
 const Locale = require('../../util/locale');
-const Shortcuts = require('../../comp/shortcuts');
+const Shortcuts = require('../../comp/app/shortcuts');
 const AutoType = require('../../auto-type');
 
 const DetailsAutoTypeView = Backbone.View.extend({

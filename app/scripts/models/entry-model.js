@@ -6,7 +6,7 @@ const IconUrlFormat = require('../util/formatting/icon-url-format');
 const Otp = require('../util/data/otp');
 const kdbxweb = require('kdbxweb');
 const Ranking = require('../util/data/ranking');
-const KdbxToHtml = require('../comp/kdbx-to-html');
+const KdbxToHtml = require('../comp/format/kdbx-to-html');
 
 const EntryModel = Backbone.Model.extend({
     defaults: {},

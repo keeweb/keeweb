@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const Locale = require('../util/locale');
-const Alerts = require('../comp/alerts');
+const Alerts = require('../comp/ui/alerts');
 
 const TagView = Backbone.View.extend({
     template: require('templates/tag.hbs'),

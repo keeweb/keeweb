@@ -1,6 +1,6 @@
-const Launcher = require('./launcher');
-const StringFormat = require('../util/formatting/string-format');
-const Logger = require('../util/logger');
+const Launcher = require('../launcher');
+const StringFormat = require('../../util/formatting/string-format');
+const Logger = require('../../util/logger');
 
 const logger = new Logger('settings');
 

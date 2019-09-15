@@ -1,5 +1,5 @@
-const Features = require('../util/features');
-const Storage = require('../storage');
+const Features = require('../../util/features');
+const Storage = require('../../storage');
 
 const AuthReceiver = {
     receive() {

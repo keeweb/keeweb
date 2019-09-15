@@ -1,5 +1,5 @@
-const AppSettingsModel = require('../models/app-settings-model');
-const Locale = require('../util/locale');
+const AppSettingsModel = require('../../models/app-settings-model');
+const Locale = require('../../util/locale');
 
 const GeneratorPresets = {
     get defaultPreset() {

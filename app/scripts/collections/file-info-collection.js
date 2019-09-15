@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const FileInfoModel = require('../models/file-info-model');
-const SettingsStore = require('../comp/settings-store');
+const SettingsStore = require('../comp/settings/settings-store');
 
 const FileInfoCollection = Backbone.Collection.extend({
     model: FileInfoModel,

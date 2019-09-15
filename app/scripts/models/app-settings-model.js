@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const SettingsStore = require('../comp/settings-store');
+const SettingsStore = require('../comp/settings/settings-store');
 
 const AppSettingsModel = Backbone.Model.extend({
     defaults: {

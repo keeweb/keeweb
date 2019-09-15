@@ -3,13 +3,13 @@ const Backbone = require('backbone');
 const PluginApi = require('./plugin-api');
 const ThemeVars = require('./theme-vars');
 const Logger = require('../util/logger');
-const SettingsManager = require('../comp/settings-manager');
+const SettingsManager = require('../comp/settings/settings-manager');
 const IoCache = require('../storage/io-cache');
 const AppSettingsModel = require('../models/app-settings-model');
 const BaseLocale = require('../locales/base.json');
 const SignatureVerifier = require('../util/data/signature-verifier');
 const SemVer = require('../util/data/semver');
-const RuntimeInfo = require('../comp/runtime-info');
+const RuntimeInfo = require('../comp/app/runtime-info');
 
 const commonLogger = new Logger('plugin');
 const io = new IoCache({

@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 const Scrollable = require('../mixins/scrollable');
 const Locale = require('../util/locale');
-const GeneratorPresets = require('../comp/generator-presets');
+const GeneratorPresets = require('../comp/app/generator-presets');
 const PasswordGenerator = require('../util/generators/password-generator');
 
 const GeneratorPresetsView = Backbone.View.extend({

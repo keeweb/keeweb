@@ -3,7 +3,7 @@ const GroupCollection = require('../collections/group-collection');
 const GroupModel = require('./group-model');
 const IconUrlFormat = require('../util/formatting/icon-url-format');
 const Logger = require('../util/logger');
-const KdbxToHtml = require('../comp/kdbx-to-html');
+const KdbxToHtml = require('../comp/format/kdbx-to-html');
 const kdbxweb = require('kdbxweb');
 const demoFileData = require('demo.kdbx');
 

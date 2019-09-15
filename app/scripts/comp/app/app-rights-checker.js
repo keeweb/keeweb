@@ -1,8 +1,8 @@
-const Features = require('../util/features');
-const Alerts = require('../comp/alerts');
-const AppSettingsModel = require('../models/app-settings-model');
-const Launcher = require('./launcher');
-const Locale = require('../util/locale');
+const Features = require('../../util/features');
+const Alerts = require('../ui/alerts');
+const AppSettingsModel = require('../../models/app-settings-model');
+const Launcher = require('../launcher');
+const Locale = require('../../util/locale');
 
 const AppRightsChecker = {
     AppPath: '/Applications/KeeWeb.app',

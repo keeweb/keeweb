@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const RuntimeInfo = require('../../comp/runtime-info');
+const RuntimeInfo = require('../../comp/app/runtime-info');
 const Links = require('../../const/links');
 
 const SettingsAboutView = Backbone.View.extend({

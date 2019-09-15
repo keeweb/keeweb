@@ -1,4 +1,4 @@
-const Launcher = require('../comp/launcher');
+const Launcher = require('../launcher');
 
 const RuntimeInfo = {
     version: '@@VERSION',

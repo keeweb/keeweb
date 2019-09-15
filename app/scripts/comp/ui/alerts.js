@@ -1,5 +1,5 @@
-const ModalView = require('../views/modal-view');
-const Locale = require('../util/locale');
+const ModalView = require('../../views/modal-view');
+const Locale = require('../../util/locale');
 
 const Alerts = {
     alertDisplayed: false,

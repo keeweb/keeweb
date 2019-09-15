@@ -1,8 +1,8 @@
-const Features = require('../util/features');
-const Keys = require('../const/keys');
-const StringFormat = require('../util/formatting/string-format');
-const AppSettingsModel = require('../models/app-settings-model');
-const Launcher = require('./launcher');
+const Features = require('../../util/features');
+const Keys = require('../../const/keys');
+const StringFormat = require('../../util/formatting/string-format');
+const AppSettingsModel = require('../../models/app-settings-model');
+const Launcher = require('../launcher');
 
 let allowedKeys;
 

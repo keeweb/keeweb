@@ -1,5 +1,5 @@
-const Launcher = require('./launcher');
-const Logger = require('../util/logger');
+const Launcher = require('../launcher');
+const Logger = require('../../util/logger');
 
 const logger = new Logger('transport');
 

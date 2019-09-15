@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
-const Locale = require('./../util/locale');
-const Features = require('../util/features');
+const Locale = require('../../util/locale');
+const Features = require('../../util/features');
 
 const appleThemes = {
     macdark: 'setGenThemeMacDark'

@@ -1,11 +1,11 @@
 const Backbone = require('backbone');
 const Keys = require('../../const/keys');
-const KeyHandler = require('../../comp/key-handler');
+const KeyHandler = require('../../comp/browser/key-handler');
 const Locale = require('../../util/locale');
 const AppSettingsModel = require('../../models/app-settings-model');
 const EntryPresenter = require('../../presenters/entry-presenter');
 const Scrollable = require('../../mixins/scrollable');
-const Shortcuts = require('../../comp/shortcuts');
+const Shortcuts = require('../../comp/app/shortcuts');
 const DropdownView = require('../dropdown-view');
 const StringFormat = require('../../util/formatting/string-format');
 

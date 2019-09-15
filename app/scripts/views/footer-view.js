@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const Keys = require('../const/keys');
-const KeyHandler = require('../comp/key-handler');
+const KeyHandler = require('../comp/browser/key-handler');
 const GeneratorView = require('./generator-view');
 const UpdateModel = require('../models/update-model');
 

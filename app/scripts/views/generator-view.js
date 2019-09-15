@@ -1,8 +1,8 @@
 const Backbone = require('backbone');
 const PasswordGenerator = require('../util/generators/password-generator');
-const CopyPaste = require('../comp/copy-paste');
+const CopyPaste = require('../comp/browser/copy-paste');
 const AppSettingsModel = require('../models/app-settings-model');
-const GeneratorPresets = require('../comp/generator-presets');
+const GeneratorPresets = require('../comp/app/generator-presets');
 const Locale = require('../util/locale');
 const Tip = require('../util/ui/tip');
 

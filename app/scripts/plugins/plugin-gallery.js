@@ -3,7 +3,7 @@ const kdbxweb = require('kdbxweb');
 const Links = require('../const/links');
 const SignatureVerifier = require('../util/data/signature-verifier');
 const Logger = require('../util/logger');
-const SettingsStore = require('../comp/settings-store');
+const SettingsStore = require('../comp/settings/settings-store');
 
 const PluginGallery = {
     logger: new Logger('plugin-gallery'),

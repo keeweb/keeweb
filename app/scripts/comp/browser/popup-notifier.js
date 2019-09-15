@@ -1,11 +1,11 @@
 const Backbone = require('backbone');
-const Alerts = require('./alerts');
-const Launcher = require('./launcher');
+const Alerts = require('../ui/alerts');
+const Launcher = require('../launcher');
 const AuthReceiver = require('./auth-receiver');
-const Links = require('../const/links');
-const Timeouts = require('../const/timeouts');
-const Locale = require('../util/locale');
-const Logger = require('../util/logger');
+const Links = require('../../const/links');
+const Timeouts = require('../../const/timeouts');
+const Locale = require('../../util/locale');
+const Logger = require('../../util/logger');
 
 const PopupNotifier = {
     logger: null,

@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const CopyPaste = require('../../comp/copy-paste');
+const CopyPaste = require('../../comp/browser/copy-paste');
 const Tip = require('../../util/ui/tip');
 
 const FieldView = Backbone.View.extend({

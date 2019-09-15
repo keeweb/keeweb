@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const Keys = require('../../const/keys');
-const KeyHandler = require('../../comp/key-handler');
+const KeyHandler = require('../../comp/browser/key-handler');
 const Resizable = require('../../mixins/resizable');
 const MenuSectionView = require('./menu-section-view');
 const DragView = require('../drag-view');

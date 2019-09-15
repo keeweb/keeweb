@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const AppSettingsModel = require('../models/app-settings-model');
+const AppSettingsModel = require('../../models/app-settings-model');
 
 const IdleTracker = {
     actionTime: Date.now(),

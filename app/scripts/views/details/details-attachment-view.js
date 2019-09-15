@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const Shortcuts = require('../../comp/shortcuts');
+const Shortcuts = require('../../comp/app/shortcuts');
 
 const DetailsAttachmentView = Backbone.View.extend({
     template: require('templates/details/details-attachment.hbs'),

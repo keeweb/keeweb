@@ -1,4 +1,4 @@
-const AppSettingsModel = require('../models/app-settings-model');
+const AppSettingsModel = require('../../models/app-settings-model');
 
 const ChooserAppKey = 'qp7ctun6qt5n9d6';
 

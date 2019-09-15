@@ -5,10 +5,10 @@ const PluginGallery = require('../../plugins/plugin-gallery');
 const AppSettingsModel = require('../../models/app-settings-model');
 const Comparators = require('../../util/data/comparators');
 const DateFormat = require('../../util/formatting/date-format');
-const SettingsManager = require('../../comp/settings-manager');
+const SettingsManager = require('../../comp/settings/settings-manager');
 const Features = require('../../util/features');
 const SemVer = require('../../util/data/semver');
-const RuntimeInfo = require('../../comp/runtime-info');
+const RuntimeInfo = require('../../comp/app/runtime-info');
 const Links = require('../../const/links');
 
 const SettingsPluginsView = Backbone.View.extend({

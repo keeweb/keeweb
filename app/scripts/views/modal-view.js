@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const Keys = require('../const/keys');
-const KeyHandler = require('../comp/key-handler');
+const KeyHandler = require('../comp/browser/key-handler');
 
 const ModalView = Backbone.View.extend({
     el: 'body',

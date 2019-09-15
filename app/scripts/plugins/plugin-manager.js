@@ -2,8 +2,8 @@ const Backbone = require('backbone');
 const Plugin = require('./plugin');
 const PluginCollection = require('./plugin-collection');
 const PluginGallery = require('./plugin-gallery');
-const SettingsStore = require('../comp/settings-store');
-const RuntimeInfo = require('../comp/runtime-info');
+const SettingsStore = require('../comp/settings/settings-store');
+const RuntimeInfo = require('../comp/app/runtime-info');
 const SignatureVerifier = require('../util/data/signature-verifier');
 const Logger = require('../util/logger');
 
