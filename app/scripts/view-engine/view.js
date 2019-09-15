@@ -26,6 +26,8 @@ class View extends EventEmitter {
         if (options.replace) {
             this.replace = options.replace;
         }
+
+        this.setMaxListeners(100);
     }
 
     render(templateData) {
@@ -185,6 +187,14 @@ class View extends EventEmitter {
     onKey(key, handler, shortcut, modal, noPrevent) {
         KeyHandler.onKey(key, handler, this, shortcut, modal, noPrevent);
         this.once('remove', () => KeyHandler.offKey(key, handler, this));
+    }
+
+    off(event, listener) {
+        if (listener === undefined) {
+            return super.removeAllListeners(event);
+        } else {
+            return super.off(event, listener);
+        }
     }
 }
 
