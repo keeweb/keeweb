@@ -33,7 +33,7 @@ const Scrollable = {
         // }
         if (this.scroll) {
             this.scroll.update();
-            this.requestAnimationFrame(function() {
+            requestAnimationFrame(() => {
                 if (this.scroll) {
                     this.scroll.update();
                     const barHeight = this.scrollerBar.height();

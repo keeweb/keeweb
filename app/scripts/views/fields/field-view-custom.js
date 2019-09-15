@@ -156,9 +156,7 @@ const FieldViewCustom = FieldViewText.extend({
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
-        this.setTimeout(function() {
-            this.input.focus();
-        });
+        setTimeout(() => this.input.focus());
     }
 });
 

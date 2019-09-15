@@ -55,11 +55,9 @@ const SettingsFileView = Backbone.View.extend({
     appModel: null,
 
     initialize() {
-        this.listenTo(
-            this.model,
-            'change:syncing change:syncError change:syncDate',
-            this.deferRender
-        );
+        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', () => {
+            setTimeout(() => this.render(), 0);
+        });
     },
 
     render() {

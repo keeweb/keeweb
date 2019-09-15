@@ -408,7 +408,7 @@ const DetailsView = Backbone.View.extend({
             this.views.dropdownView.remove();
             this.views.dropdownView = null;
         } else {
-            this.setTimeout(function() {
+            setTimeout(() => {
                 const dropdownView = new DropdownView();
                 this.listenTo(dropdownView, 'cancel', this.toggleMoreOptions);
                 this.listenTo(dropdownView, 'select', this.moreOptionsSelect);

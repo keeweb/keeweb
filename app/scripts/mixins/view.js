@@ -34,17 +34,7 @@ _.extend(Backbone.View.prototype, {
     },
 
     afterPaint(callback) {
-        this.requestAnimationFrame(function() {
-            this.requestAnimationFrame(callback);
-        });
-    },
-
-    setTimeout(callback) {
-        setTimeout(callback.bind(this), 0);
-    },
-
-    requestAnimationFrame(callback) {
-        requestAnimationFrame(callback.bind(this));
+        requestAnimationFrame(() => requestAnimationFrame(callback));
     },
 
     renderTemplate(model, replace) {
@@ -94,10 +84,6 @@ _.extend(Backbone.View.prototype, {
             });
             this.views = {};
         }
-    },
-
-    deferRender() {
-        _.defer(this.render.bind(this));
     }
 });
 
