@@ -1,5 +1,5 @@
-const StorageBase = require('./storage-base');
-const Launcher = require('../comp/launcher');
+const StorageBase = require('../storage-base');
+const Launcher = require('../../comp/launcher');
 
 const fileWatchers = {};
 
@@ -178,4 +178,4 @@ const StorageFile = StorageBase.extend({
     }
 });
 
-module.exports = new StorageFile();
+module.exports = StorageFile;

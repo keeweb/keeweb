@@ -1,4 +1,4 @@
-const StorageBase = require('./storage-base');
+const StorageBase = require('../storage-base');
 
 const OneDriveClientId = {
     Production: '000000004818ED3A',
@@ -277,4 +277,4 @@ if (document.querySelectorAll(selector).length === 1) document.querySelector(sel
     }
 });
 
-module.exports = new StorageOneDrive();
+module.exports = StorageOneDrive;

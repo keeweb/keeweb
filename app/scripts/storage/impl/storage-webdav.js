@@ -1,4 +1,4 @@
-const StorageBase = require('./storage-base');
+const StorageBase = require('../storage-base');
 
 const StorageWebDav = StorageBase.extend({
     name: 'webdav',
@@ -386,4 +386,4 @@ const StorageWebDav = StorageBase.extend({
     }
 });
 
-module.exports = new StorageWebDav();
+module.exports = StorageWebDav;

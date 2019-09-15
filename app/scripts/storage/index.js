@@ -1,15 +1,22 @@
 const Launcher = require('../comp/launcher');
+const StorageFile = require('./impl/storage-file');
+const StorageFileCache = require('./impl/storage-file-cache');
+const StorageCache = require('./impl/storage-cache');
+const StorageDropbox = require('./impl/storage-dropbox');
+const StorageGDrive = require('./impl/storage-gdrive');
+const StorageOneDrive = require('./impl/storage-onedrive');
+const StorageWebDav = require('./impl/storage-webdav');
 
 const BuiltInStorage = {
-    file: require('./storage-file'),
-    cache: Launcher ? require('./storage-file-cache') : require('./storage-cache')
+    file: new StorageFile(),
+    cache: Launcher ? new StorageFileCache() : new StorageCache()
 };
 
 const ThirdPartyStorage = {
-    dropbox: require('./storage-dropbox'),
-    webdav: require('./storage-webdav'),
-    gdrive: require('./storage-gdrive'),
-    onedrive: require('./storage-onedrive')
+    dropbox: new StorageDropbox(),
+    gdrive: new StorageGDrive(),
+    onedrive: new StorageOneDrive(),
+    webdav: new StorageWebDav()
 };
 
 const storage = BuiltInStorage;

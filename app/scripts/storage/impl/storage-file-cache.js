@@ -1,5 +1,5 @@
-const StorageBase = require('./storage-base');
-const Launcher = require('../comp/launcher');
+const StorageBase = require('../storage-base');
+const Launcher = require('../../comp/launcher');
 
 const StorageFileCache = StorageBase.extend({
     name: 'cache',
@@ -104,4 +104,4 @@ const StorageFileCache = StorageBase.extend({
     }
 });
 
-module.exports = new StorageFileCache();
+module.exports = StorageFileCache;

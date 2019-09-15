@@ -1,5 +1,5 @@
-const StorageBase = require('./storage-base');
-const Locale = require('../util/locale');
+const StorageBase = require('../storage-base');
+const Locale = require('../../util/locale');
 
 const GDriveClientId = {
     Local: '783608538594-36tkdh8iscrq8t8dq87gghubnhivhjp5.apps.googleusercontent.com',
@@ -255,4 +255,4 @@ const StorageGDrive = StorageBase.extend({
     }
 });
 
-module.exports = new StorageGDrive();
+module.exports = StorageGDrive;
