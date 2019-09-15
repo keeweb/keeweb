@@ -91,13 +91,15 @@ class GrpView extends View {
         if (this.views.sub) {
             this.removeSubView();
         } else {
-            const subView = new IconSelectView({
-                el: this.$el.find('.grp__icons'),
-                model: {
+            const subView = new IconSelectView(
+                {
                     iconId: this.model.get('customIconId') || this.model.get('iconId'),
                     file: this.model.file
+                },
+                {
+                    parent: this.$el.find('.grp__icons')[0]
                 }
-            });
+            );
             this.listenTo(subView, 'select', this.iconSelected);
             subView.render();
             this.views.sub = subView;

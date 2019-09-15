@@ -1,6 +1,8 @@
 import Backbone from 'backbone';
 import { Tip } from 'util/ui/tip';
 
+const backboneListenTo = Backbone.View.prototype.listenTo;
+
 _.extend(Backbone.View.prototype, {
     hide() {
         Tip.hideTips(this.$el);
@@ -38,7 +40,7 @@ _.extend(Backbone.View.prototype, {
     },
 
     renderTemplate(model, replace) {
-        Tip.hideTips(this.$el);
+        Tip.destroyTips(this.$el);
         if (replace && replace.plain) {
             this.$el.html(this.template(model));
         } else {
@@ -67,7 +69,7 @@ _.extend(Backbone.View.prototype, {
                 this.scroll.dispose();
             } catch (e) {}
         }
-        Tip.hideTips(this.$el);
+        Tip.destroyTips(this.$el);
         this._parentRemove();
     },
 
@@ -84,5 +86,9 @@ _.extend(Backbone.View.prototype, {
             });
             this.views = {};
         }
+    },
+
+    listenTo(obj, name, callback) {
+        return backboneListenTo.call(this, obj, name, callback.bind(this));
     }
 });

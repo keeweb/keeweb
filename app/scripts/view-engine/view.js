@@ -6,6 +6,7 @@ import { Logger } from 'util/logger';
 
 class View extends EventEmitter {
     parent = undefined;
+    replace = false;
     template = undefined;
     events = {};
     views = {};
@@ -14,10 +15,17 @@ class View extends EventEmitter {
     boundEvents = [];
     debugLogger = localStorage.debugViews ? new Logger('view', this.constructor.name) : undefined;
 
-    constructor(model) {
+    constructor(model, options = {}) {
         super();
 
         this.model = model;
+
+        if (options.parent) {
+            this.parent = options.parent;
+        }
+        if (options.replace) {
+            this.replace = options.replace;
+        }
     }
 
     render(templateData) {
@@ -47,16 +55,21 @@ class View extends EventEmitter {
         if (this.el) {
             morphdom(this.el, html);
         } else {
-            const el = document.createElement('div');
-            el.innerHTML = html;
-            this.el = el.firstChild;
             if (this.parent) {
-                const parent = document.querySelector(this.parent);
-                if (!parent) {
-                    throw new Error(
-                        `Error rendering ${this.constructor.name}: parent not found: ${parent}`
-                    );
+                let parent = this.parent;
+                if (typeof parent === 'string') {
+                    parent = document.querySelector(this.parent);
                 }
+                if (!parent) {
+                    throw new Error(`Error rendering ${this.constructor.name}: parent not found`);
+                }
+                if (this.replace) {
+                    Tip.destroyTips(parent);
+                    parent.innerHTML = '';
+                }
+                const el = document.createElement('div');
+                el.innerHTML = html;
+                this.el = el.firstChild;
                 parent.appendChild(this.el);
             } else {
                 throw new Error(

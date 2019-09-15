@@ -134,6 +134,7 @@ const DetailsView = Backbone.View.extend({
     },
 
     render() {
+        Tip.destroyTips(this.$el);
         this.removeScroll();
         this.removeFieldViews();
         this.removeInnerViews();
@@ -547,14 +548,17 @@ const DetailsView = Backbone.View.extend({
             return;
         }
         this.removeSubView();
-        const subView = new IconSelectView({
-            el: this.scroller,
-            model: {
+        const subView = new IconSelectView(
+            {
                 iconId: this.model.customIconId || this.model.iconId,
                 url: this.model.url,
                 file: this.model.file
+            },
+            {
+                parent: this.scroller[0],
+                replace: true
             }
-        });
+        );
         this.listenTo(subView, 'select', this.iconSelected);
         subView.render();
         this.pageResized();
