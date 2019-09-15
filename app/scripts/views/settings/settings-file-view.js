@@ -292,7 +292,7 @@ const SettingsFileView = Backbone.View.extend({
                         },
                         storage.getOpenConfig()
                     );
-                    const openConfigView = new OpenConfigView({ model: config });
+                    const openConfigView = new OpenConfigView(config);
                     Alerts.alert({
                         header: '',
                         body: '',

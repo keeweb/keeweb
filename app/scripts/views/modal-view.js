@@ -38,7 +38,7 @@ class ModalView extends View {
             document.activeElement.blur();
         }, 20);
         if (this.model.view) {
-            this.model.view.setElement(this.$el.find('.modal__body'));
+            this.model.view.parent = '.modal__body';
             this.model.view.render();
         }
         return this;

@@ -811,12 +811,12 @@ const OpenView = Backbone.View.extend({
             },
             storage.getOpenConfig()
         );
-        this.views.openConfig = new OpenConfigView({
-            el: this.$el.find('.open__config-wrap'),
-            model: config
-        }).render();
+        this.views.openConfig = new OpenConfigView(config, {
+            parent: '.open__config-wrap'
+        });
         this.views.openConfig.on('cancel', this.closeConfig.bind(this));
         this.views.openConfig.on('apply', this.applyConfig.bind(this));
+        this.views.openConfig.render();
         this.$el.find('.open__pass-area').addClass('hide');
         this.$el.find('.open__icons--lower').addClass('hide');
     },

@@ -1,49 +1,49 @@
-import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { Keys } from 'const/keys';
 import { Locale } from 'util/locale';
+import template from 'templates/open-config.hbs';
 
-const OpenConfigView = Backbone.View.extend({
-    template: require('templates/open-config.hbs'),
+class OpenConfigView extends View {
+    template = template;
 
-    events: {
+    events = {
         'click .open__config-btn-cancel': 'cancel',
         'click .open__config-btn-ok': 'apply',
         'input input': 'changeInput',
         'keyup input': 'keyup'
-    },
+    };
 
     render() {
-        this.renderTemplate(this.model);
+        super.render(this.model);
         this.$el.find(':input:first').focus();
         this.checkValidity();
-        return this;
-    },
+    }
 
     cancel() {
-        this.trigger('cancel');
-    },
+        this.emit('cancel');
+    }
 
     apply() {
         const data = this.getData();
         if (data) {
-            this.trigger('apply', data);
+            this.emit('apply', data);
         }
-    },
+    }
 
     changeInput() {
         this.checkValidity();
-    },
+    }
 
     keyup(e) {
         if (e.which === Keys.DOM_VK_RETURN) {
             this.apply();
         }
-    },
+    }
 
     checkValidity() {
         const isValid = this.getData();
         this.$el.find('.open__config-btn-ok').prop('disabled', !isValid);
-    },
+    }
 
     getData() {
         let data = { storage: this.model.id };
@@ -58,7 +58,7 @@ const OpenConfigView = Backbone.View.extend({
             return true;
         }, this);
         return data;
-    },
+    }
 
     setDisabled(disabled) {
         disabled = !!disabled;
@@ -67,7 +67,7 @@ const OpenConfigView = Backbone.View.extend({
         if (disabled) {
             this.$el.find('.open__config-error').text('');
         }
-    },
+    }
 
     setError(err) {
         const errText =
@@ -76,6 +76,6 @@ const OpenConfigView = Backbone.View.extend({
                 : Locale.openConfigError.replace('{}', err);
         this.$el.find('.open__config-error').text(errText);
     }
-});
+}
 
 export { OpenConfigView };
