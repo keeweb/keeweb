@@ -58,7 +58,7 @@ const FeatureTester = {
             localStorage.setItem('_test', '1');
             localStorage.removeItem('_test');
         } catch (e) {
-            throw 'WebCrypto is not supported';
+            throw 'LocalStorage is not supported';
         }
     }
 };
