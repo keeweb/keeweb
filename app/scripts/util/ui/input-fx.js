@@ -5,4 +5,4 @@ const InputFx = {
     }
 };
 
-module.exports = InputFx;
+export { InputFx };

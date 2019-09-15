@@ -1,4 +1,4 @@
-const FieldViewText = require('./field-view-text');
+import { FieldViewText } from 'views/fields/field-view-text';
 
 const FieldViewUrl = FieldViewText.extend({
     displayUrlRegex: /^https:\/\//i,
@@ -23,4 +23,4 @@ const FieldViewUrl = FieldViewText.extend({
     }
 });
 
-module.exports = FieldViewUrl;
+export { FieldViewUrl };

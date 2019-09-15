@@ -1,27 +1,27 @@
-const Backbone = require('backbone');
-const DragView = require('../views/drag-view');
-const MenuView = require('../views/menu/menu-view');
-const FooterView = require('../views/footer-view');
-const ListView = require('../views/list-view');
-const ListWrapView = require('../views/list-wrap-view');
-const DetailsView = require('../views/details/details-view');
-const GrpView = require('../views/grp-view');
-const TagView = require('../views/tag-view');
-const GeneratorPresetsView = require('../views/generator-presets-view');
-const OpenView = require('../views/open-view');
-const SettingsView = require('../views/settings/settings-view');
-const KeyChangeView = require('../views/key-change-view');
-const DropdownView = require('../views/dropdown-view');
-const Alerts = require('../comp/ui/alerts');
-const Keys = require('../const/keys');
-const Timeouts = require('../const/timeouts');
-const KeyHandler = require('../comp/browser/key-handler');
-const IdleTracker = require('../comp/browser/idle-tracker');
-const Launcher = require('../comp/launcher');
-const SettingsManager = require('../comp/settings/settings-manager');
-const Locale = require('../util/locale');
-const Features = require('../util/features');
-const UpdateModel = require('../models/update-model');
+import Backbone from 'backbone';
+import { IdleTracker } from 'comp/browser/idle-tracker';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { Launcher } from 'comp/launcher';
+import { SettingsManager } from 'comp/settings/settings-manager';
+import { Alerts } from 'comp/ui/alerts';
+import { Keys } from 'const/keys';
+import { Timeouts } from 'const/timeouts';
+import { UpdateModel } from 'models/update-model';
+import { Features } from 'util/features';
+import { Locale } from 'util/locale';
+import { DetailsView } from 'views/details/details-view';
+import { DragView } from 'views/drag-view';
+import { DropdownView } from 'views/dropdown-view';
+import { FooterView } from 'views/footer-view';
+import { GeneratorPresetsView } from 'views/generator-presets-view';
+import { GrpView } from 'views/grp-view';
+import { KeyChangeView } from 'views/key-change-view';
+import { ListView } from 'views/list-view';
+import { ListWrapView } from 'views/list-wrap-view';
+import { MenuView } from 'views/menu/menu-view';
+import { OpenView } from 'views/open-view';
+import { SettingsView } from 'views/settings/settings-view';
+import { TagView } from 'views/tag-view';
 
 const AppView = Backbone.View.extend({
     el: 'body',
@@ -785,4 +785,4 @@ const AppView = Backbone.View.extend({
     }
 });
 
-module.exports = AppView;
+export { AppView };

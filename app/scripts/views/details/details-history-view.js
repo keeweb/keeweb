@@ -1,13 +1,13 @@
-const Backbone = require('backbone');
-const KeyHandler = require('../../comp/browser/key-handler');
-const Keys = require('../../const/keys');
-const DateFormat = require('../../util/formatting/date-format');
-const StringFormat = require('../../util/formatting/string-format');
-const Locale = require('../../util/locale');
-const Alerts = require('../../comp/ui/alerts');
-const FieldViewReadOnly = require('../fields/field-view-read-only');
-const FieldViewReadOnlyRaw = require('../fields/field-view-read-only-raw');
-const Copyable = require('../../view-engine/copyable');
+import Backbone from 'backbone';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { Alerts } from 'comp/ui/alerts';
+import { Keys } from 'const/keys';
+import { DateFormat } from 'util/formatting/date-format';
+import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
+import { Copyable } from 'view-engine/copyable';
+import { FieldViewReadOnly } from 'views/fields/field-view-read-only';
+import { FieldViewReadOnlyRaw } from 'views/fields/field-view-read-only-raw';
 
 const DetailsHistoryView = Backbone.View.extend({
     template: require('templates/details/details-history.hbs'),
@@ -363,4 +363,4 @@ const DetailsHistoryView = Backbone.View.extend({
 
 _.extend(DetailsHistoryView.prototype, Copyable);
 
-module.exports = DetailsHistoryView;
+export { DetailsHistoryView };

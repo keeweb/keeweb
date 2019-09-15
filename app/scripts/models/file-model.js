@@ -1,11 +1,11 @@
-const Backbone = require('backbone');
-const GroupCollection = require('../collections/group-collection');
-const GroupModel = require('./group-model');
-const IconUrlFormat = require('../util/formatting/icon-url-format');
-const Logger = require('../util/logger');
-const KdbxToHtml = require('../comp/format/kdbx-to-html');
-const kdbxweb = require('kdbxweb');
-const demoFileData = require('demo.kdbx');
+import Backbone from 'backbone';
+import kdbxweb from 'kdbxweb';
+import demoFileData from 'demo.kdbx';
+import { GroupCollection } from 'collections/group-collection';
+import { KdbxToHtml } from 'comp/format/kdbx-to-html';
+import { GroupModel } from 'models/group-model';
+import { IconUrlFormat } from 'util/formatting/icon-url-format';
+import { Logger } from 'util/logger';
 
 const logger = new Logger('file');
 
@@ -713,4 +713,4 @@ FileModel.createKeyFileWithHash = function(hash) {
     return kdbxweb.Credentials.createKeyFileWithHash(hash);
 };
 
-module.exports = FileModel;
+export { FileModel };

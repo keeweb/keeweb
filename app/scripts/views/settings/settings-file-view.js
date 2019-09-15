@@ -1,17 +1,17 @@
-const Backbone = require('backbone');
-const OpenConfigView = require('../open-config-view');
-const Shortcuts = require('../../comp/app/shortcuts');
-const PasswordGenerator = require('../../util/generators/password-generator');
-const Alerts = require('../../comp/ui/alerts');
-const Launcher = require('../../comp/launcher');
-const Storage = require('../../storage');
-const Links = require('../../const/links');
-const DateFormat = require('../../util/formatting/date-format');
-const Locale = require('../../util/locale');
-const UrlFormat = require('../../util/formatting/url-format');
-const FileSaver = require('../../util/ui/file-saver');
-const AppSettingsModel = require('../../models/app-settings-model');
-const kdbxweb = require('kdbxweb');
+import Backbone from 'backbone';
+import kdbxweb from 'kdbxweb';
+import { Storage } from 'storage';
+import { Shortcuts } from 'comp/app/shortcuts';
+import { Launcher } from 'comp/launcher';
+import { Alerts } from 'comp/ui/alerts';
+import { Links } from 'const/links';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { DateFormat } from 'util/formatting/date-format';
+import { UrlFormat } from 'util/formatting/url-format';
+import { PasswordGenerator } from 'util/generators/password-generator';
+import { Locale } from 'util/locale';
+import { FileSaver } from 'util/ui/file-saver';
+import { OpenConfigView } from 'views/open-config-view';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';
@@ -678,4 +678,4 @@ const SettingsFileView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsFileView;
+export { SettingsFileView };

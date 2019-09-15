@@ -1,11 +1,12 @@
-const MenuItemModel = require('./menu/menu-item-model');
-const EntryModel = require('../models/entry-model');
-const IconMap = require('../const/icon-map');
-const IconUrlFormat = require('../util/formatting/icon-url-format');
-const kdbxweb = require('kdbxweb');
+import kdbxweb from 'kdbxweb';
+import { IconMap } from 'const/icon-map';
+import { EntryModel } from 'models/entry-model';
+import { MenuItemModel } from 'models/menu/menu-item-model';
+import { IconUrlFormat } from 'util/formatting/icon-url-format';
+import { GroupCollection } from 'collections/group-collection';
+import { EntryCollection } from 'collections/entry-collection';
+
 const KdbxIcons = kdbxweb.Consts.Icons;
-let GroupCollection;
-let EntryCollection;
 
 const DefaultAutoTypeSequence = '{USERNAME}{TAB}{PASSWORD}{ENTER}';
 
@@ -22,15 +23,6 @@ const GroupModel = MenuItemModel.extend({
         enableAutoType: null,
         autoTypeSeq: null
     }),
-
-    initialize() {
-        if (!GroupCollection) {
-            GroupCollection = require('../collections/group-collection');
-        }
-        if (!EntryCollection) {
-            EntryCollection = require('../collections/entry-collection');
-        }
-    },
 
     setGroup(group, file, parentGroup) {
         const isRecycleBin = group.uuid.equals(file.db.meta.recycleBinUuid);
@@ -362,4 +354,4 @@ GroupModel.newGroup = function(group, file) {
     return model;
 };
 
-module.exports = GroupModel;
+export { GroupModel };

@@ -1,4 +1,4 @@
-const Launcher = require('../../comp/launcher');
+import { Launcher } from 'comp/launcher';
 
 const ForeMostAppScript =
     'tell application "System Events"\n' +
@@ -89,4 +89,4 @@ AutoTypeHelper.exec = function(script, callback) {
     });
 };
 
-module.exports = AutoTypeHelper;
+export { AutoTypeHelper };

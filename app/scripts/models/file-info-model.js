@@ -1,4 +1,4 @@
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const FileInfoModel = Backbone.Model.extend({
     defaults: {
@@ -31,4 +31,4 @@ const FileInfoModel = Backbone.Model.extend({
     }
 });
 
-module.exports = FileInfoModel;
+export { FileInfoModel };

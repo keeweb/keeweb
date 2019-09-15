@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const Storage = require('../../storage');
+import Backbone from 'backbone';
+import { Storage } from 'storage';
 
 const SettingsPrvView = Backbone.View.extend({
     template: require('templates/settings/settings-prv.hbs'),
@@ -31,4 +31,4 @@ const SettingsPrvView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsPrvView;
+export { SettingsPrvView };

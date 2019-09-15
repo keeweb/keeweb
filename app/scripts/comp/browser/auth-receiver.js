@@ -1,5 +1,5 @@
-const Features = require('../../util/features');
-const Storage = require('../../storage');
+import { Storage } from 'storage';
+import { Features } from 'util/features';
 
 const AuthReceiver = {
     receive() {
@@ -36,4 +36,4 @@ const AuthReceiver = {
     }
 };
 
-module.exports = AuthReceiver;
+export { AuthReceiver };

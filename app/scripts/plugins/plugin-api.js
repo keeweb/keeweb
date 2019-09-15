@@ -16,4 +16,4 @@ const PluginApi = {
     }
 };
 
-module.exports = PluginApi;
+export { PluginApi };

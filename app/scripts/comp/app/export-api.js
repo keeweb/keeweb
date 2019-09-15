@@ -1,4 +1,4 @@
-const AppSettingsModel = require('../../models/app-settings-model');
+import { AppSettingsModel } from 'models/app-settings-model';
 
 const ExportApi = {
     settings: {
@@ -14,4 +14,4 @@ const ExportApi = {
     }
 };
 
-module.exports = ExportApi;
+export { ExportApi };

@@ -1,5 +1,5 @@
-const marked = require('marked');
-const dompurify = require('dompurify');
+import dompurify from 'dompurify';
+import marked from 'marked';
 
 const whiteSpaceRegex = /<\/?p>|<br>|\r|\n/g;
 
@@ -20,4 +20,4 @@ const MdToHtml = {
     }
 };
 
-module.exports = MdToHtml;
+export { MdToHtml };

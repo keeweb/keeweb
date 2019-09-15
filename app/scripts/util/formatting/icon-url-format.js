@@ -1,4 +1,4 @@
-const kdbxweb = require('kdbxweb');
+import kdbxweb from 'kdbxweb';
 
 const IconUrlFormat = {
     toDataUrl(iconData) {
@@ -8,4 +8,4 @@ const IconUrlFormat = {
     }
 };
 
-module.exports = IconUrlFormat;
+export { IconUrlFormat };

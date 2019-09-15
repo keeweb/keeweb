@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const Shortcuts = require('../../comp/app/shortcuts');
+import Backbone from 'backbone';
+import { Shortcuts } from 'comp/app/shortcuts';
 
 const DetailsAttachmentView = Backbone.View.extend({
     template: require('templates/details/details-attachment.hbs'),
@@ -38,4 +38,4 @@ const DetailsAttachmentView = Backbone.View.extend({
     }
 });
 
-module.exports = DetailsAttachmentView;
+export { DetailsAttachmentView };

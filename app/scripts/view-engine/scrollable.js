@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Features = require('../util/features');
-const baron = require('baron');
+import Backbone from 'backbone';
+import baron from 'baron';
+import { Features } from 'util/features';
 
 const isEnabled = !Features.isMobile;
 
@@ -51,4 +51,4 @@ const Scrollable = {
     }
 };
 
-module.exports = Scrollable;
+export { Scrollable };

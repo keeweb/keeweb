@@ -1,5 +1,5 @@
-const ModalView = require('../../views/modal-view');
-const Locale = require('../../util/locale');
+import { Locale } from 'util/locale';
+import { ModalView } from 'views/modal-view';
 
 const Alerts = {
     alertDisplayed: false,
@@ -117,4 +117,4 @@ const Alerts = {
     }
 };
 
-module.exports = Alerts;
+export { Alerts };

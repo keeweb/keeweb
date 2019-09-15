@@ -1,27 +1,26 @@
-const Backbone = require('backbone');
-const AppSettingsModel = require('./app-settings-model');
-const MenuModel = require('./menu/menu-model');
-const EntryModel = require('./entry-model');
-const GroupModel = require('./group-model');
-const FileCollection = require('../collections/file-collection');
-const EntryCollection = require('../collections/entry-collection');
-const FileInfoCollection = require('../collections/file-info-collection');
-const FileModel = require('./file-model');
-const FileInfoModel = require('./file-info-model');
-const Storage = require('../storage');
-const Timeouts = require('../const/timeouts');
-const IdGenerator = require('../util/generators/id-generator');
-const Logger = require('../util/logger');
-const Features = require('../util/features');
-const DateFormat = require('../util/formatting/date-format');
-const UrlFormat = require('../util/formatting/url-format');
-const AutoType = require('../auto-type');
-const Launcher = require('../comp/launcher');
-const RuntimeInfo = require('../comp/app/runtime-info');
-const PluginManager = require('../plugins/plugin-manager');
-const Locale = require('../util/locale');
-
-require('../util/kdbxweb/protected-value-ex');
+import { AutoType } from 'auto-type';
+import Backbone from 'backbone';
+import { Storage } from 'storage';
+import { EntryCollection } from 'collections/entry-collection';
+import { FileCollection } from 'collections/file-collection';
+import { FileInfoCollection } from 'collections/file-info-collection';
+import { RuntimeInfo } from 'comp/app/runtime-info';
+import { Launcher } from 'comp/launcher';
+import { Timeouts } from 'const/timeouts';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { EntryModel } from 'models/entry-model';
+import { FileInfoModel } from 'models/file-info-model';
+import { FileModel } from 'models/file-model';
+import { GroupModel } from 'models/group-model';
+import { MenuModel } from 'models/menu/menu-model';
+import { PluginManager } from 'plugins/plugin-manager';
+import { Features } from 'util/features';
+import { DateFormat } from 'util/formatting/date-format';
+import { UrlFormat } from 'util/formatting/url-format';
+import { IdGenerator } from 'util/generators/id-generator';
+import { Locale } from 'util/locale';
+import { Logger } from 'util/logger';
+import 'util/kdbxweb/protected-value-ex';
 
 const AppModel = Backbone.Model.extend({
     defaults: {},
@@ -1163,4 +1162,4 @@ const AppModel = Backbone.Model.extend({
     }
 });
 
-module.exports = AppModel;
+export { AppModel };

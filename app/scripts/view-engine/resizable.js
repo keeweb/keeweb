@@ -1,4 +1,4 @@
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const Resizable = {
     listenDrag(dragView) {
@@ -66,4 +66,4 @@ const Resizable = {
     }
 };
 
-module.exports = Resizable;
+export { Resizable };

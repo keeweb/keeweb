@@ -1,4 +1,4 @@
-const Logger = require('../logger');
+import { Logger } from 'util/logger';
 
 const logger = new Logger('otp');
 
@@ -148,4 +148,4 @@ Otp.makeUrl = function(secret, period, digits) {
     );
 };
 
-module.exports = Otp;
+export { Otp };

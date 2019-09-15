@@ -1,9 +1,9 @@
-const Backbone = require('backbone');
-const Logger = require('../util/logger');
-const AppSettingsModel = require('../models/app-settings-model');
-const RuntimeDataModel = require('../models/runtime-data-model');
-const Links = require('../const/links');
-const Features = require('../util/features');
+import Backbone from 'backbone';
+import { Links } from 'const/links';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { RuntimeDataModel } from 'models/runtime-data-model';
+import { Features } from 'util/features';
+import { Logger } from 'util/logger';
 
 const MaxRequestRetries = 3;
 
@@ -267,4 +267,4 @@ _.extend(StorageBase.prototype, {
 
 StorageBase.extend = Backbone.Model.extend;
 
-module.exports = StorageBase;
+export { StorageBase };

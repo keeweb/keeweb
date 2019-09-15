@@ -1,5 +1,5 @@
-const Launcher = require('../launcher');
-const Logger = require('../../util/logger');
+import { Launcher } from 'comp/launcher';
+import { Logger } from 'util/logger';
 
 const logger = new Logger('transport');
 
@@ -89,4 +89,4 @@ const Transport = {
     }
 };
 
-module.exports = Transport;
+export { Transport };

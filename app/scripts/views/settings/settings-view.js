@@ -1,7 +1,8 @@
-const Backbone = require('backbone');
-const Scrollable = require('../../view-engine/scrollable');
-const Keys = require('../../const/keys');
-const KeyHandler = require('../../comp/browser/key-handler');
+import Backbone from 'backbone';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { Keys } from 'const/keys';
+import { Scrollable } from 'view-engine/scrollable';
+import { StringFormat } from 'util/formatting/string-format';
 
 const SettingsView = Backbone.View.extend({
     template: require('templates/settings/settings.hbs'),
@@ -36,7 +37,9 @@ const SettingsView = Backbone.View.extend({
     },
 
     setPage(e) {
-        const SettingsPageView = require('./settings-' + e.page + '-view');
+        const module = require('./settings-' + e.page + '-view');
+        const viewName = StringFormat.capFirst(e.page);
+        const SettingsPageView = module[`Settings${viewName}View`];
         if (this.views.page) {
             this.views.page.remove();
         }
@@ -55,4 +58,4 @@ const SettingsView = Backbone.View.extend({
 
 _.extend(SettingsView.prototype, Scrollable);
 
-module.exports = SettingsView;
+export { SettingsView };

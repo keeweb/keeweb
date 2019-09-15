@@ -1,15 +1,15 @@
-const Backbone = require('backbone');
-const Locale = require('../../util/locale');
-const PluginManager = require('../../plugins/plugin-manager');
-const PluginGallery = require('../../plugins/plugin-gallery');
-const AppSettingsModel = require('../../models/app-settings-model');
-const Comparators = require('../../util/data/comparators');
-const DateFormat = require('../../util/formatting/date-format');
-const SettingsManager = require('../../comp/settings/settings-manager');
-const Features = require('../../util/features');
-const SemVer = require('../../util/data/semver');
-const RuntimeInfo = require('../../comp/app/runtime-info');
-const Links = require('../../const/links');
+import Backbone from 'backbone';
+import { RuntimeInfo } from 'comp/app/runtime-info';
+import { SettingsManager } from 'comp/settings/settings-manager';
+import { Links } from 'const/links';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { PluginGallery } from 'plugins/plugin-gallery';
+import { PluginManager } from 'plugins/plugin-manager';
+import { Comparators } from 'util/data/comparators';
+import { SemVer } from 'util/data/semver';
+import { Features } from 'util/features';
+import { DateFormat } from 'util/formatting/date-format';
+import { Locale } from 'util/locale';
 
 const SettingsPluginsView = Backbone.View.extend({
     template: require('templates/settings/settings-plugins.hbs'),
@@ -37,7 +37,7 @@ const SettingsPluginsView = Backbone.View.extend({
     installErrors: {},
 
     initialize() {
-        this.listenTo(PluginManager, 'change', this.render.bind(this));
+        this.listenTo(PluginManager.instance, 'change', this.render.bind(this));
         this.listenTo(
             Backbone,
             'plugin-gallery-load-complete',
@@ -47,7 +47,8 @@ const SettingsPluginsView = Backbone.View.extend({
 
     render() {
         this.renderTemplate({
-            plugins: PluginManager.instance.get('plugins')
+            plugins: PluginManager.instance
+                .get('plugins')
                 .map(plugin => ({
                     id: plugin.id,
                     manifest: plugin.get('manifest'),
@@ -142,7 +143,8 @@ const SettingsPluginsView = Backbone.View.extend({
         urlTextBox.prop('disabled', true);
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installFromUrl = { url };
-        PluginManager.instance.install(url, undefined, true)
+        PluginManager.instance
+            .install(url, undefined, true)
             .then(() => {
                 this.installFinished();
                 this.installFromUrl = null;
@@ -201,7 +203,8 @@ const SettingsPluginsView = Backbone.View.extend({
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installing[plugin.url] = true;
         delete this.installErrors[plugin.url];
-        PluginManager.instance.install(plugin.url, plugin.manifest)
+        PluginManager.instance
+            .install(plugin.url, plugin.manifest)
             .catch(e => {
                 this.installErrors[plugin.url] = e;
                 delete this.installing[plugin.url];
@@ -260,4 +263,4 @@ const SettingsPluginsView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsPluginsView;
+export { SettingsPluginsView };

@@ -1,4 +1,4 @@
-const Launcher = require('../launcher');
+import { Launcher } from 'comp/launcher';
 
 const RuntimeInfo = {
     version: '@@VERSION',
@@ -9,4 +9,4 @@ const RuntimeInfo = {
     launcher: Launcher ? Launcher.name + ' v' + Launcher.version : ''
 };
 
-module.exports = RuntimeInfo;
+export { RuntimeInfo };

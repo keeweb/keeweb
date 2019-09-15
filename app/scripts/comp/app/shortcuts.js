@@ -1,8 +1,8 @@
-const Features = require('../../util/features');
-const Keys = require('../../const/keys');
-const StringFormat = require('../../util/formatting/string-format');
-const AppSettingsModel = require('../../models/app-settings-model');
-const Launcher = require('../launcher');
+import { Launcher } from 'comp/launcher';
+import { Keys } from 'const/keys';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Features } from 'util/features';
+import { StringFormat } from 'util/formatting/string-format';
 
 let allowedKeys;
 
@@ -128,4 +128,4 @@ const Shortcuts = {
     }
 };
 
-module.exports = Shortcuts;
+export { Shortcuts };

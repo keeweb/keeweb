@@ -1,15 +1,15 @@
-const Backbone = require('backbone');
-const Keys = require('../../const/keys');
-const KeyHandler = require('../../comp/browser/key-handler');
-const Locale = require('../../util/locale');
-const AppSettingsModel = require('../../models/app-settings-model');
-const EntryPresenter = require('../../presenters/entry-presenter');
-const Scrollable = require('../../view-engine/scrollable');
-const Shortcuts = require('../../comp/app/shortcuts');
-const DropdownView = require('../dropdown-view');
-const StringFormat = require('../../util/formatting/string-format');
+import Backbone from 'backbone';
+import { Shortcuts } from 'comp/app/shortcuts';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { Keys } from 'const/keys';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { EntryPresenter } from 'presenters/entry-presenter';
+import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
+import { Scrollable } from 'view-engine/scrollable';
+import { DropdownView } from 'views/dropdown-view';
 
-const AutoTypePopupView = Backbone.View.extend({
+const AutoTypeSelectView = Backbone.View.extend({
     el: 'body',
 
     template: require('templates/auto-type/auto-type-select.hbs'),
@@ -343,6 +343,6 @@ const AutoTypePopupView = Backbone.View.extend({
     }
 });
 
-_.extend(AutoTypePopupView.prototype, Scrollable);
+_.extend(AutoTypeSelectView.prototype, Scrollable);
 
-module.exports = AutoTypePopupView;
+export { AutoTypeSelectView };

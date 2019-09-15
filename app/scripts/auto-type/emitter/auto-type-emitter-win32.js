@@ -1,5 +1,5 @@
-const Launcher = require('../../comp/launcher');
-const AutoTypeNativeHelper = require('../helper/auto-type-native-helper');
+import { AutoTypeNativeHelper } from 'auto-type/helper/auto-type-native-helper';
+import { Launcher } from 'comp/launcher';
 
 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 const KeyMap = {
@@ -128,4 +128,4 @@ AutoTypeEmitter.prototype.runScript = function(script) {
     });
 };
 
-module.exports = AutoTypeEmitter;
+export { AutoTypeEmitter };

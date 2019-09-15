@@ -1,11 +1,11 @@
-const Backbone = require('backbone');
-const MenuSectionCollection = require('../../collections/menu/menu-section-collection');
-const MenuSectionModel = require('./menu-section-model');
-const GroupsMenuModel = require('./groups-menu-model');
-const Locale = require('../../util/locale');
-const StringFormat = require('../../util/formatting/string-format');
-const Keys = require('../../const/keys');
-const Colors = require('../../const/colors');
+import Backbone from 'backbone';
+import { MenuSectionCollection } from 'collections/menu/menu-section-collection';
+import { Colors } from 'const/colors';
+import { Keys } from 'const/keys';
+import { GroupsMenuModel } from 'models/menu/groups-menu-model';
+import { MenuSectionModel } from 'models/menu/menu-section-model';
+import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
 
 const MenuModel = Backbone.Model.extend({
     defaults: {
@@ -220,4 +220,4 @@ const MenuModel = Backbone.Model.extend({
     }
 });
 
-module.exports = MenuModel;
+export { MenuModel };

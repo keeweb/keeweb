@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Features = require('../../util/features');
-const Launcher = require('../launcher');
+import Backbone from 'backbone';
+import { Launcher } from 'comp/launcher';
+import { Features } from 'util/features';
 
 const FocusDetector = {
     init() {
@@ -33,4 +33,4 @@ const FocusDetector = {
     }
 };
 
-module.exports = FocusDetector;
+export { FocusDetector };

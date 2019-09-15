@@ -1,15 +1,15 @@
-const Backbone = require('backbone');
-const EntryCollection = require('../collections/entry-collection');
-const Resizable = require('../view-engine/resizable');
-const Scrollable = require('../view-engine/scrollable');
-const ListSearchView = require('./list-search-view');
-const DropdownView = require('./dropdown-view');
-const EntryPresenter = require('../presenters/entry-presenter');
-const DragDropInfo = require('../comp/app/drag-drop-info');
-const AppSettingsModel = require('../models/app-settings-model');
-const Locale = require('../util/locale');
-const StringFormat = require('../util/formatting/string-format');
-const Alerts = require('../comp/ui/alerts');
+import Backbone from 'backbone';
+import { EntryCollection } from 'collections/entry-collection';
+import { DragDropInfo } from 'comp/app/drag-drop-info';
+import { Alerts } from 'comp/ui/alerts';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { EntryPresenter } from 'presenters/entry-presenter';
+import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
+import { Resizable } from 'view-engine/resizable';
+import { Scrollable } from 'view-engine/scrollable';
+import { DropdownView } from 'views/dropdown-view';
+import { ListSearchView } from 'views/list-search-view';
 
 const ListView = Backbone.View.extend({
     template: require('templates/list.hbs'),
@@ -324,4 +324,4 @@ const ListView = Backbone.View.extend({
 _.extend(ListView.prototype, Resizable);
 _.extend(ListView.prototype, Scrollable);
 
-module.exports = ListView;
+export { ListView };

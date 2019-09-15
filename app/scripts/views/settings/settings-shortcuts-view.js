@@ -1,9 +1,9 @@
-const Backbone = require('backbone');
-const Locale = require('../../util/locale');
-const Keys = require('../../const/keys');
-const Launcher = require('../../comp/launcher');
-const Shortcuts = require('../../comp/app/shortcuts');
-const Features = require('../../util/features');
+import Backbone from 'backbone';
+import { Shortcuts } from 'comp/app/shortcuts';
+import { Launcher } from 'comp/launcher';
+import { Keys } from 'const/keys';
+import { Features } from 'util/features';
+import { Locale } from 'util/locale';
 
 const SettingsShortcutsView = Backbone.View.extend({
     template: require('templates/settings/settings-shortcuts.hbs'),
@@ -97,4 +97,4 @@ const SettingsShortcutsView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsShortcutsView;
+export { SettingsShortcutsView };

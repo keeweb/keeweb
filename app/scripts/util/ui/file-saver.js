@@ -1,4 +1,4 @@
-const timeouts = require('../../const/timeouts');
+import { Timeouts } from 'const/timeouts';
 
 const FileSaver = {
     saveAs(blob, name) {
@@ -15,8 +15,8 @@ const FileSaver = {
 
         setTimeout(() => {
             URL.revokeObjectURL(link.href);
-        }, timeouts.LinkDownloadRevoke);
+        }, Timeouts.LinkDownloadRevoke);
     }
 };
 
-module.exports = FileSaver;
+export { FileSaver };

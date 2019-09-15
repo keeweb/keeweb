@@ -25,4 +25,4 @@ const UrlFormat = {
     }
 };
 
-module.exports = UrlFormat;
+export { UrlFormat };

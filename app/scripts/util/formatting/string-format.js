@@ -28,4 +28,4 @@ const StringFormat = {
     }
 };
 
-module.exports = StringFormat;
+export { StringFormat };

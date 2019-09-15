@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const Features = require('../features');
+import Backbone from 'backbone';
+import { Features } from 'util/features';
 
 const Tip = function(el, config) {
     this.el = el;
@@ -180,4 +180,4 @@ Tip.updateTip = function(el, props) {
     }
 };
 
-module.exports = Tip;
+export { Tip };

@@ -1,4 +1,4 @@
-const FieldView = require('./field-view');
+import { FieldView } from 'views/fields/field-view';
 
 const FieldViewReadOnly = FieldView.extend({
     renderValue(value) {
@@ -10,4 +10,4 @@ const FieldViewReadOnly = FieldView.extend({
     readonly: true
 });
 
-module.exports = FieldViewReadOnly;
+export { FieldViewReadOnly };

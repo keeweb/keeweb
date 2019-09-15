@@ -1,10 +1,10 @@
-const Backbone = require('backbone');
-const FieldViewText = require('./field-view-text');
-const FieldView = require('./field-view');
-const Keys = require('../../const/keys');
-const kdbxweb = require('kdbxweb');
-const Tip = require('../../util/ui/tip');
-const Locale = require('../../util/locale');
+import Backbone from 'backbone';
+import kdbxweb from 'kdbxweb';
+import { Keys } from 'const/keys';
+import { Locale } from 'util/locale';
+import { Tip } from 'util/ui/tip';
+import { FieldView } from 'views/fields/field-view';
+import { FieldViewText } from 'views/fields/field-view-text';
 
 const FieldViewCustom = FieldViewText.extend({
     events: {
@@ -160,4 +160,4 @@ const FieldViewCustom = FieldViewText.extend({
     }
 });
 
-module.exports = FieldViewCustom;
+export { FieldViewCustom };

@@ -1,4 +1,4 @@
-const AppSettingsModel = require('../../models/app-settings-model');
+import { AppSettingsModel } from 'models/app-settings-model';
 
 const ChooserAppKey = 'qp7ctun6qt5n9d6';
 
@@ -104,4 +104,4 @@ DropboxChooser.prototype.readFile = function(url) {
     xhr.send();
 };
 
-module.exports = DropboxChooser;
+export { DropboxChooser };

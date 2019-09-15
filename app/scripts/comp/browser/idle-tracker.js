@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const AppSettingsModel = require('../../models/app-settings-model');
+import Backbone from 'backbone';
+import { AppSettingsModel } from 'models/app-settings-model';
 
 const IdleTracker = {
     actionTime: Date.now(),
@@ -20,4 +20,4 @@ const IdleTracker = {
 
 Backbone.on('power-monitor-resume', IdleTracker.checkIdle, IdleTracker);
 
-module.exports = IdleTracker;
+export { IdleTracker };

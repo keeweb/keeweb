@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const Launcher = require('../launcher');
+import Backbone from 'backbone';
+import { Launcher } from 'comp/launcher';
 
 const LocalStorageKeyName = 'instanceCheck';
 const LocalStorageResponseKeyName = 'instanceMaster';
@@ -40,4 +40,4 @@ const SingleInstanceChecker = {
     }
 };
 
-module.exports = SingleInstanceChecker;
+export { SingleInstanceChecker };

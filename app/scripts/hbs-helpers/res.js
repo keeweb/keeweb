@@ -1,5 +1,5 @@
-const Handlebars = require('hbs');
-const Locale = require('../util/locale');
+import Handlebars from 'hbs';
+import { Locale } from 'util/locale';
 
 Handlebars.registerHelper('res', function(key, options) {
     let value = Locale[key];

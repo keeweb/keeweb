@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const MenuOptionCollection = require('../../collections/menu/menu-option-collection');
+import Backbone from 'backbone';
+import { MenuOptionCollection } from 'collections/menu/menu-option-collection';
 let ItemCollection;
 
 const MenuItemModel = Backbone.Model.extend({
@@ -29,7 +29,7 @@ const MenuItemModel = Backbone.Model.extend({
     },
 
     _loadItemCollectionType() {
-        return require('../../collections/menu/menu-item-collection');
+        return require('collections/menu/menu-item-collection').MenuItemCollection;
     },
 
     addItem(item) {
@@ -67,4 +67,4 @@ const MenuItemModel = Backbone.Model.extend({
     }
 });
 
-module.exports = MenuItemModel;
+export { MenuItemModel };

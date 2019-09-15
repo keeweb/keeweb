@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Keys = require('../const/keys');
-const KeyHandler = require('../comp/browser/key-handler');
+import Backbone from 'backbone';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { Keys } from 'const/keys';
 
 const DropdownView = Backbone.View.extend({
     template: require('templates/dropdown.hbs'),
@@ -123,4 +123,4 @@ const DropdownView = Backbone.View.extend({
     }
 });
 
-module.exports = DropdownView;
+export { DropdownView };

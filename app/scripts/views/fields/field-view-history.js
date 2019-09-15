@@ -1,5 +1,5 @@
-const FieldView = require('./field-view');
-const Locale = require('../../util/locale');
+import { Locale } from 'util/locale';
+import { FieldView } from 'views/fields/field-view';
 
 const FieldViewHistory = FieldView.extend({
     renderValue(value) {
@@ -19,4 +19,4 @@ const FieldViewHistory = FieldView.extend({
     readonly: true
 });
 
-module.exports = FieldViewHistory;
+export { FieldViewHistory };

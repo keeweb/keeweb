@@ -1,11 +1,11 @@
-const Backbone = require('backbone');
-const Alerts = require('../ui/alerts');
-const Launcher = require('../launcher');
-const AuthReceiver = require('./auth-receiver');
-const Links = require('../../const/links');
-const Timeouts = require('../../const/timeouts');
-const Locale = require('../../util/locale');
-const Logger = require('../../util/logger');
+import Backbone from 'backbone';
+import { AuthReceiver } from 'comp/browser/auth-receiver';
+import { Launcher } from 'comp/launcher';
+import { Alerts } from 'comp/ui/alerts';
+import { Links } from 'const/links';
+import { Timeouts } from 'const/timeouts';
+import { Locale } from 'util/locale';
+import { Logger } from 'util/logger';
 
 const PopupNotifier = {
     logger: null,
@@ -157,4 +157,4 @@ const PopupNotifier = {
     }
 };
 
-module.exports = PopupNotifier;
+export { PopupNotifier };

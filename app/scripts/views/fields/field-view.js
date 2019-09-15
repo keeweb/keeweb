@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const CopyPaste = require('../../comp/browser/copy-paste');
-const Tip = require('../../util/ui/tip');
+import Backbone from 'backbone';
+import { CopyPaste } from 'comp/browser/copy-paste';
+import { Tip } from 'util/ui/tip';
 
 const FieldView = Backbone.View.extend({
     template: require('templates/details/field.hbs'),
@@ -167,4 +167,4 @@ const FieldView = Backbone.View.extend({
     }
 });
 
-module.exports = FieldView;
+export { FieldView };

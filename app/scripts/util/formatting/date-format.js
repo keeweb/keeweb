@@ -1,5 +1,5 @@
-const Locale = require('../locale');
-const StringFormat = require('./string-format');
+import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
 
 const DateFormat = {
     dtStr(dt) {
@@ -46,4 +46,4 @@ const DateFormat = {
     }
 };
 
-module.exports = DateFormat;
+export { DateFormat };

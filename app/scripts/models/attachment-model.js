@@ -1,4 +1,4 @@
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const AttachmentModel = Backbone.Model.extend({
     defaults: {},
@@ -168,4 +168,4 @@ AttachmentModel.fromAttachment = function(att) {
     return model;
 };
 
-module.exports = AttachmentModel;
+export { AttachmentModel };

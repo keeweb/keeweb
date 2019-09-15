@@ -1,5 +1,5 @@
-const kdbxweb = require('kdbxweb');
-const phonetic = require('./phonetic');
+import kdbxweb from 'kdbxweb';
+import { phonetic } from 'util/generators/phonetic';
 
 const PasswordGenerator = {
     charRanges: {
@@ -129,4 +129,4 @@ const PasswordGenerator = {
     }
 };
 
-module.exports = PasswordGenerator;
+export { PasswordGenerator };

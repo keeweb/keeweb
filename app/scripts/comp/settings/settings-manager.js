@@ -1,6 +1,6 @@
-const Backbone = require('backbone');
-const Locale = require('../../util/locale');
-const Features = require('../../util/features');
+import Backbone from 'backbone';
+import { Features } from 'util/features';
+import { Locale } from 'util/locale';
 
 const appleThemes = {
     macdark: 'setGenThemeMacDark'
@@ -97,4 +97,4 @@ const SettingsManager = {
     }
 };
 
-module.exports = SettingsManager;
+export { SettingsManager };

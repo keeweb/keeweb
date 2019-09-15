@@ -1,4 +1,4 @@
-const Handlebars = require('hbs');
+import Handlebars from 'hbs';
 
 Handlebars.registerHelper('cmp', function(lvalue, rvalue, op, options) {
     let cond;

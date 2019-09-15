@@ -1,4 +1,4 @@
-const Logger = require('../util/logger');
+import { Logger } from 'util/logger';
 
 const logger = new Logger('auto-type-obfuscator');
 logger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);
@@ -203,4 +203,4 @@ AutoTypeObfuscator.prototype.deleteText = function(backward) {
     }
 };
 
-module.exports = AutoTypeObfuscator;
+export { AutoTypeObfuscator };

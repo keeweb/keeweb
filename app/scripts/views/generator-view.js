@@ -1,10 +1,10 @@
-const Backbone = require('backbone');
-const PasswordGenerator = require('../util/generators/password-generator');
-const CopyPaste = require('../comp/browser/copy-paste');
-const AppSettingsModel = require('../models/app-settings-model');
-const GeneratorPresets = require('../comp/app/generator-presets');
-const Locale = require('../util/locale');
-const Tip = require('../util/ui/tip');
+import Backbone from 'backbone';
+import { GeneratorPresets } from 'comp/app/generator-presets';
+import { CopyPaste } from 'comp/browser/copy-paste';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { PasswordGenerator } from 'util/generators/password-generator';
+import { Locale } from 'util/locale';
+import { Tip } from 'util/ui/tip';
 
 const GeneratorView = Backbone.View.extend({
     el: 'body',
@@ -199,4 +199,4 @@ const GeneratorView = Backbone.View.extend({
     }
 });
 
-module.exports = GeneratorView;
+export { GeneratorView };

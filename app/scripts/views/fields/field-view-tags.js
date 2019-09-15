@@ -1,4 +1,4 @@
-const FieldViewText = require('./field-view-text');
+import { FieldViewText } from 'views/fields/field-view-text';
 
 const FieldViewTags = FieldViewText.extend({
     renderValue(value) {
@@ -107,4 +107,4 @@ const FieldViewTags = FieldViewText.extend({
     }
 });
 
-module.exports = FieldViewTags;
+export { FieldViewTags };

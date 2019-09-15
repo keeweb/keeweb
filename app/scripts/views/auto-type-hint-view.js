@@ -1,7 +1,7 @@
-const Backbone = require('backbone');
-const Features = require('../util/features');
-const Links = require('../const/links');
-const Timeouts = require('../const/timeouts');
+import Backbone from 'backbone';
+import { Links } from 'const/links';
+import { Timeouts } from 'const/timeouts';
+import { Features } from 'util/features';
 
 const AutoTypeHintView = Backbone.View.extend({
     template: require('templates/auto-type-hint.hbs'),
@@ -80,4 +80,4 @@ const AutoTypeHintView = Backbone.View.extend({
     }
 });
 
-module.exports = AutoTypeHintView;
+export { AutoTypeHintView };

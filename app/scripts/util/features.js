@@ -37,4 +37,4 @@ const Features = {
     }
 };
 
-module.exports = Features;
+export { Features };

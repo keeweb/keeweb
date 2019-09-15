@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const UrlFormat = require('../util/formatting/url-format');
+import Backbone from 'backbone';
+import { UrlFormat } from 'util/formatting/url-format';
 
 const StorageFileListView = Backbone.View.extend({
     template: require('templates/storage-file-list.hbs'),
@@ -58,4 +58,4 @@ const StorageFileListView = Backbone.View.extend({
     }
 });
 
-module.exports = StorageFileListView;
+export { StorageFileListView };

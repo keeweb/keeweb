@@ -37,4 +37,4 @@ const Comparators = {
     }
 };
 
-module.exports = Comparators;
+export { Comparators };

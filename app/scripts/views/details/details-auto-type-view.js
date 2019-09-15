@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const AutoTypeHintView = require('../auto-type-hint-view');
-const Locale = require('../../util/locale');
-const Shortcuts = require('../../comp/app/shortcuts');
-const AutoType = require('../../auto-type');
+import { AutoType } from 'auto-type';
+import Backbone from 'backbone';
+import { Shortcuts } from 'comp/app/shortcuts';
+import { Locale } from 'util/locale';
+import { AutoTypeHintView } from 'views/auto-type-hint-view';
 
 const DetailsAutoTypeView = Backbone.View.extend({
     template: require('templates/details/details-auto-type.hbs'),
@@ -72,4 +72,4 @@ const DetailsAutoTypeView = Backbone.View.extend({
     }
 });
 
-module.exports = DetailsAutoTypeView;
+export { DetailsAutoTypeView };

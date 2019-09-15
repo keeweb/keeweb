@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const Logger = require('../../util/logger');
-const StringFormat = require('../../util/formatting/string-format');
+import Backbone from 'backbone';
+import { StringFormat } from 'util/formatting/string-format';
+import { Logger } from 'util/logger';
 
-const SettingsLogView = Backbone.View.extend({
+const SettingsLogsView = Backbone.View.extend({
     template: require('templates/settings/settings-logs-view.hbs'),
 
     render() {
@@ -51,4 +51,4 @@ const SettingsLogView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsLogView;
+export { SettingsLogsView };

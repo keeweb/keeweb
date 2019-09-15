@@ -1,4 +1,4 @@
-const Colors = require('../../const/colors');
+import { Colors } from 'const/colors';
 
 const KnownColors = {};
 
@@ -130,4 +130,4 @@ function hex(num) {
     return str.length < 2 ? '0' + str : str;
 }
 
-module.exports = Color;
+export { Color };

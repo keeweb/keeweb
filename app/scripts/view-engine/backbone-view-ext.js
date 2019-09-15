@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const Tip = require('../util/ui/tip');
+import Backbone from 'backbone';
+import { Tip } from 'util/ui/tip';
 
 _.extend(Backbone.View.prototype, {
     hide() {

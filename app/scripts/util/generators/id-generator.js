@@ -10,4 +10,4 @@ const IdGenerator = {
     }
 };
 
-module.exports = IdGenerator;
+export { IdGenerator };

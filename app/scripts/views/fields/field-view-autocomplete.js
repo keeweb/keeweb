@@ -1,5 +1,5 @@
-const FieldViewText = require('./field-view-text');
-const Keys = require('../../const/keys');
+import { Keys } from 'const/keys';
+import { FieldViewText } from 'views/fields/field-view-text';
 
 const FieldViewAutocomplete = FieldViewText.extend({
     endEdit(newVal, extra) {
@@ -109,4 +109,4 @@ const FieldViewAutocomplete = FieldViewText.extend({
     }
 });
 
-module.exports = FieldViewAutocomplete;
+export { FieldViewAutocomplete };

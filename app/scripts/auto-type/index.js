@@ -1,14 +1,14 @@
-const Backbone = require('backbone');
-const AutoTypeParser = require('./auto-type-parser');
-const AutoTypeFilter = require('./auto-type-filter');
-const AutoTypeHelperFactory = require('./auto-type-helper-factory');
-const Launcher = require('../comp/launcher');
-const Alerts = require('../comp/ui/alerts');
-const AutoTypeSelectView = require('../views/auto-type/auto-type-select-view');
-const Logger = require('../util/logger');
-const Locale = require('../util/locale');
-const Timeouts = require('../const/timeouts');
-const AppSettingsModel = require('../models/app-settings-model');
+import Backbone from 'backbone';
+import { AutoTypeFilter } from 'auto-type/auto-type-filter';
+import { AutoTypeHelperFactory } from 'auto-type/auto-type-helper-factory';
+import { AutoTypeParser } from 'auto-type/auto-type-parser';
+import { Launcher } from 'comp/launcher';
+import { Alerts } from 'comp/ui/alerts';
+import { Timeouts } from 'const/timeouts';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Locale } from 'util/locale';
+import { Logger } from 'util/logger';
+import { AutoTypeSelectView } from 'views/auto-type/auto-type-select-view';
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = localStorage.autoTypeDebug;
@@ -282,4 +282,4 @@ const AutoType = {
     }
 };
 
-module.exports = AutoType;
+export { AutoType };

@@ -33,4 +33,4 @@ function indexOf(target, search) {
 
 window.Ranking = Ranking;
 
-module.exports = Ranking;
+export { Ranking };

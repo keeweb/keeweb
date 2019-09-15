@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const Scrollable = require('../view-engine/scrollable');
-const Locale = require('../util/locale');
-const GeneratorPresets = require('../comp/app/generator-presets');
-const PasswordGenerator = require('../util/generators/password-generator');
+import Backbone from 'backbone';
+import { GeneratorPresets } from 'comp/app/generator-presets';
+import { PasswordGenerator } from 'util/generators/password-generator';
+import { Locale } from 'util/locale';
+import { Scrollable } from 'view-engine/scrollable';
 
 const GeneratorPresetsView = Backbone.View.extend({
     template: require('templates/generator-presets.hbs'),
@@ -183,4 +183,4 @@ const GeneratorPresetsView = Backbone.View.extend({
 
 _.extend(GeneratorPresetsView.prototype, Scrollable);
 
-module.exports = GeneratorPresetsView;
+export { GeneratorPresetsView };

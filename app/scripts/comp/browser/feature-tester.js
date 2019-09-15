@@ -1,5 +1,5 @@
-const kdbxweb = require('kdbxweb');
-const Features = require('../../util/features');
+import kdbxweb from 'kdbxweb';
+import { Features } from 'util/features';
 
 const FeatureTester = {
     test() {
@@ -63,4 +63,4 @@ const FeatureTester = {
     }
 };
 
-module.exports = FeatureTester;
+export { FeatureTester };

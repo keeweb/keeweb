@@ -1,21 +1,21 @@
-const Backbone = require('backbone');
-const kdbxweb = require('kdbxweb');
-const OpenConfigView = require('./open-config-view');
-const Keys = require('../const/keys');
-const Alerts = require('../comp/ui/alerts');
-const SecureInput = require('../comp/browser/secure-input');
-const DropboxChooser = require('../comp/app/dropbox-chooser');
-const KeyHandler = require('../comp/browser/key-handler');
-const StorageFileListView = require('../views/storage-file-list-view');
-const Logger = require('../util/logger');
-const Locale = require('../util/locale');
-const UrlFormat = require('../util/formatting/url-format');
-const InputFx = require('../util/ui/input-fx');
-const Comparators = require('../util/data/comparators');
-const Storage = require('../storage');
-const Launcher = require('../comp/launcher');
-const FocusDetector = require('../comp/browser/focus-detector');
-const Features = require('../util/features');
+import Backbone from 'backbone';
+import kdbxweb from 'kdbxweb';
+import { Storage } from 'storage';
+import { DropboxChooser } from 'comp/app/dropbox-chooser';
+import { FocusDetector } from 'comp/browser/focus-detector';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { SecureInput } from 'comp/browser/secure-input';
+import { Launcher } from 'comp/launcher';
+import { Alerts } from 'comp/ui/alerts';
+import { Keys } from 'const/keys';
+import { Comparators } from 'util/data/comparators';
+import { Features } from 'util/features';
+import { UrlFormat } from 'util/formatting/url-format';
+import { Locale } from 'util/locale';
+import { Logger } from 'util/logger';
+import { InputFx } from 'util/ui/input-fx';
+import { OpenConfigView } from 'views/open-config-view';
+import { StorageFileListView } from 'views/storage-file-list-view';
 
 const logger = new Logger('open-view');
 
@@ -924,4 +924,4 @@ const OpenView = Backbone.View.extend({
     }
 });
 
-module.exports = OpenView;
+export { OpenView };

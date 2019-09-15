@@ -1,15 +1,15 @@
-const kdbxweb = require('kdbxweb');
-const Backbone = require('backbone');
-const PluginApi = require('./plugin-api');
-const ThemeVars = require('./theme-vars');
-const Logger = require('../util/logger');
-const SettingsManager = require('../comp/settings/settings-manager');
-const IoCache = require('../storage/io-cache');
-const AppSettingsModel = require('../models/app-settings-model');
-const BaseLocale = require('../locales/base.json');
-const SignatureVerifier = require('../util/data/signature-verifier');
-const SemVer = require('../util/data/semver');
-const RuntimeInfo = require('../comp/app/runtime-info');
+import Backbone from 'backbone';
+import kdbxweb from 'kdbxweb';
+import BaseLocale from 'locales/base.json';
+import { RuntimeInfo } from 'comp/app/runtime-info';
+import { SettingsManager } from 'comp/settings/settings-manager';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { PluginApi } from 'plugins/plugin-api';
+import { ThemeVars } from 'plugins/theme-vars';
+import { IoCache } from 'storage/io-cache';
+import { SemVer } from 'util/data/semver';
+import { SignatureVerifier } from 'util/data/signature-verifier';
+import { Logger } from 'util/logger';
 
 const commonLogger = new Logger('plugin');
 const io = new IoCache({
@@ -692,4 +692,4 @@ function httpGet(url, binary) {
     });
 }
 
-module.exports = Plugin;
+export { Plugin };

@@ -1,4 +1,4 @@
-const Backbone = require('backbone');
+import Backbone from 'backbone';
 
 const DetailsAddFieldView = Backbone.View.extend({
     template: require('templates/details/details-add-field.hbs'),
@@ -23,4 +23,4 @@ const DetailsAddFieldView = Backbone.View.extend({
     }
 });
 
-module.exports = DetailsAddFieldView;
+export { DetailsAddFieldView };

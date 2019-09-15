@@ -1,6 +1,6 @@
-const StorageBase = require('../storage-base');
-const UrlFormat = require('../../util/formatting/url-format');
-const Features = require('../../util/features');
+import { StorageBase } from 'storage/storage-base';
+import { Features } from 'util/features';
+import { UrlFormat } from 'util/formatting/url-format';
 
 const DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
@@ -376,4 +376,4 @@ const StorageDropbox = StorageBase.extend({
     }
 });
 
-module.exports = StorageDropbox;
+export { StorageDropbox };

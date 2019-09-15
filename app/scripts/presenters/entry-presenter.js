@@ -1,5 +1,5 @@
-const DateFormat = require('../util/formatting/date-format');
-const Locale = require('../util/locale');
+import { DateFormat } from 'util/formatting/date-format';
+import { Locale } from 'util/locale';
 
 const EntryPresenter = function(descField, noColor, activeEntryId) {
     this.entry = null;
@@ -88,4 +88,4 @@ EntryPresenter.prototype = {
     }
 };
 
-module.exports = EntryPresenter;
+export { EntryPresenter };

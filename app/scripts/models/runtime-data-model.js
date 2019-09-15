@@ -1,5 +1,5 @@
-const Backbone = require('backbone');
-const SettingsStore = require('../comp/settings/settings-store');
+import Backbone from 'backbone';
+import { SettingsStore } from 'comp/settings/settings-store';
 
 const RuntimeDataModel = Backbone.Model.extend({
     defaults: {},
@@ -27,4 +27,4 @@ const RuntimeDataModel = Backbone.Model.extend({
 
 RuntimeDataModel.instance = new RuntimeDataModel();
 
-module.exports = RuntimeDataModel;
+export { RuntimeDataModel };

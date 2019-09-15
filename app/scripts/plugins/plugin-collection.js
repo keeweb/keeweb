@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const Plugin = require('./plugin');
+import Backbone from 'backbone';
+import { Plugin } from 'plugins/plugin';
 
 const PluginCollection = Backbone.Collection.extend({
     model: Plugin
 });
 
-module.exports = PluginCollection;
+export { PluginCollection };

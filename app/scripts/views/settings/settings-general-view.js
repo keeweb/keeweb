@@ -1,20 +1,20 @@
-const Backbone = require('backbone');
-const SettingsPrvView = require('./settings-prv-view');
-const SettingsLogsView = require('./settings-logs-view');
-const Launcher = require('../../comp/launcher');
-const Updater = require('../../comp/app/updater');
-const DateFormat = require('../../util/formatting/date-format');
-const AppSettingsModel = require('../../models/app-settings-model');
-const UpdateModel = require('../../models/update-model');
-const RuntimeInfo = require('../../comp/app/runtime-info');
-const Alerts = require('../../comp/ui/alerts');
-const SettingsManager = require('../../comp/settings/settings-manager');
-const Storage = require('../../storage');
-const Features = require('../../util/features');
-const Locale = require('../../util/locale');
-const SemVer = require('../../util/data/semver');
-const Links = require('../../const/links');
-const AutoType = require('../../auto-type');
+import { AutoType } from 'auto-type';
+import Backbone from 'backbone';
+import { Storage } from 'storage';
+import { RuntimeInfo } from 'comp/app/runtime-info';
+import { Updater } from 'comp/app/updater';
+import { Launcher } from 'comp/launcher';
+import { SettingsManager } from 'comp/settings/settings-manager';
+import { Alerts } from 'comp/ui/alerts';
+import { Links } from 'const/links';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { UpdateModel } from 'models/update-model';
+import { SemVer } from 'util/data/semver';
+import { Features } from 'util/features';
+import { DateFormat } from 'util/formatting/date-format';
+import { Locale } from 'util/locale';
+import { SettingsLogsView } from 'views/settings/settings-logs-view';
+import { SettingsPrvView } from 'views/settings/settings-prv-view';
 
 const SettingsGeneralView = Backbone.View.extend({
     template: require('templates/settings/settings-general.hbs'),
@@ -385,4 +385,4 @@ const SettingsGeneralView = Backbone.View.extend({
     }
 });
 
-module.exports = SettingsGeneralView;
+export { SettingsGeneralView };

@@ -320,4 +320,4 @@ function generate(options) {
 
 const phonetic = { generate };
 
-module.exports = phonetic;
+export { phonetic };

@@ -1,7 +1,7 @@
-const FieldViewText = require('./field-view-text');
-const Locale = require('../../util/locale');
-const Pikaday = require('pikaday');
-const DateFormat = require('../../util/formatting/date-format');
+import { Pikaday } from 'pikaday';
+import { DateFormat } from 'util/formatting/date-format';
+import { Locale } from 'util/locale';
+import { FieldViewText } from 'views/fields/field-view-text';
 
 const FieldViewDate = FieldViewText.extend({
     renderValue(value) {
@@ -78,4 +78,4 @@ const FieldViewDate = FieldViewText.extend({
     }
 });
 
-module.exports = FieldViewDate;
+export { FieldViewDate };

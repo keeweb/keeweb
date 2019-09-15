@@ -1,6 +1,7 @@
+import { Color } from 'util/data/color';
+
 const ThemeVarsScss = require('raw-loader!../../styles/base/_theme-vars.scss').default;
 const ThemeDefaults = require('../../styles/themes/_theme-defaults.scss');
-const Color = require('../util/data/color');
 
 const ThemeVars = {
     themeDefaults: null,
@@ -118,4 +119,4 @@ const ThemeVars = {
     }
 };
 
-module.exports = ThemeVars;
+export { ThemeVars };

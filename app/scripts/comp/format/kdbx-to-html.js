@@ -1,10 +1,10 @@
-const kdbxweb = require('kdbxweb');
-const StringFormat = require('../../util/formatting/string-format');
-const DateFormat = require('../../util/formatting/date-format');
-const Locale = require('../../util/locale');
-const MdToHtml = require('../../util/formatting/md-to-html');
-const Links = require('../../const/links');
-const RuntimeInfo = require('../app/runtime-info');
+import kdbxweb from 'kdbxweb';
+import { RuntimeInfo } from 'comp/app/runtime-info';
+import { Links } from 'const/links';
+import { DateFormat } from 'util/formatting/date-format';
+import { MdToHtml } from 'util/formatting/md-to-html';
+import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
 
 const Templates = {
     db: require('templates/export/db.hbs'),
@@ -123,4 +123,4 @@ const KdbxToHtml = {
     }
 };
 
-module.exports = KdbxToHtml;
+export { KdbxToHtml };

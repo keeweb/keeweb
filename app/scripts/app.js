@@ -1,28 +1,30 @@
-const Backbone = require('backbone');
-const AppModel = require('./models/app-model');
-const AppView = require('./views/app-view');
-const AppSettingsModel = require('./models/app-settings-model');
-const UpdateModel = require('./models/update-model');
-const RuntimeDataModel = require('./models/runtime-data-model');
-const FileInfoCollection = require('./collections/file-info-collection');
-const KeyHandler = require('./comp/browser/key-handler');
-const IdleTracker = require('./comp/browser/idle-tracker');
-const PopupNotifier = require('./comp/browser/popup-notifier');
-const SingleInstanceChecker = require('./comp/app/single-instance-checker');
-const AppRightsChecker = require('./comp/app/app-rights-checker');
-const Alerts = require('./comp/ui/alerts');
-const Updater = require('./comp/app/updater');
-const AuthReceiver = require('./comp/browser/auth-receiver');
-const ExportApi = require('./comp/app/export-api');
-const SettingsManager = require('./comp/settings/settings-manager');
-const PluginManager = require('./plugins/plugin-manager');
-const Launcher = require('./comp/launcher');
-const FeatureTester = require('./comp/browser/feature-tester');
-const FocusDetector = require('./comp/browser/focus-detector');
-const Timeouts = require('./const/timeouts');
-const Features = require('./util/features');
-const KdbxwebInit = require('./util/kdbxweb/kdbxweb-init');
-const Locale = require('./util/locale');
+import Backbone from 'backbone';
+import { FileInfoCollection } from 'collections/file-info-collection';
+import { AppRightsChecker } from 'comp/app/app-rights-checker';
+import { ExportApi } from 'comp/app/export-api';
+import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
+import { Updater } from 'comp/app/updater';
+import { AuthReceiver } from 'comp/browser/auth-receiver';
+import { FeatureTester } from 'comp/browser/feature-tester';
+import { FocusDetector } from 'comp/browser/focus-detector';
+import { IdleTracker } from 'comp/browser/idle-tracker';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { PopupNotifier } from 'comp/browser/popup-notifier';
+import { Launcher } from 'comp/launcher';
+import { SettingsManager } from 'comp/settings/settings-manager';
+import { Alerts } from 'comp/ui/alerts';
+import { Timeouts } from 'const/timeouts';
+import { AppModel } from 'models/app-model';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { RuntimeDataModel } from 'models/runtime-data-model';
+import { UpdateModel } from 'models/update-model';
+import { PluginManager } from 'plugins/plugin-manager';
+import { Features } from 'util/features';
+import { KdbxwebInit } from 'util/kdbxweb/kdbxweb-init';
+import { Locale } from 'util/locale';
+import { AppView } from 'views/app-view';
+import 'view-engine/backbone-view-ext';
+import 'hbs-helpers';
 
 const ready = (Launcher && Launcher.ready) || $;
 
@@ -30,7 +32,6 @@ ready(() => {
     if (AuthReceiver.receive() || Features.isFrame) {
         return;
     }
-    loadMixins();
 
     const appModel = new AppModel();
 
@@ -44,11 +45,6 @@ ready(() => {
         .catch(e => {
             appModel.appLogger.error('Error starting app', e);
         });
-
-    function loadMixins() {
-        require('./view-engine/backbone-view-ext');
-        require('./hbs-helpers');
-    }
 
     function ensureCanRun() {
         return FeatureTester.test().catch(e => {
@@ -146,7 +142,10 @@ ready(() => {
         Updater.init();
         SingleInstanceChecker.init();
         AppRightsChecker.init();
-        setTimeout(() => PluginManager.instance.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
+        setTimeout(
+            () => PluginManager.instance.runAutoUpdate(),
+            Timeouts.AutoUpdatePluginsAfterStart
+        );
     }
 
     function showView() {
