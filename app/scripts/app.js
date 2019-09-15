@@ -47,7 +47,7 @@ ready(() => {
 
     function loadMixins() {
         require('./mixins/view');
-        require('./helpers');
+        require('./hbs-helpers');
     }
 
     function ensureCanRun() {
