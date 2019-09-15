@@ -1,4 +1,4 @@
-const UrlUtil = {
+const UrlFormat = {
     multiSlashRegex: /\/{2,}/g,
     lastPartRegex: /\/?[^\/\\]+$/,
     kdbxEndRegex: /\.kdbx$/i,
@@ -25,4 +25,4 @@ const UrlUtil = {
     }
 };
 
-module.exports = UrlUtil;
+module.exports = UrlFormat;

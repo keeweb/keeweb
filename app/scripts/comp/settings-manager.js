@@ -1,12 +1,12 @@
 const Backbone = require('backbone');
 const Locale = require('./../util/locale');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 
 const appleThemes = {
     macdark: 'setGenThemeMacDark'
 };
 
-const extraThemes = FeatureDetector.isMac || FeatureDetector.isiOS ? appleThemes : {};
+const extraThemes = Features.isMac || Features.isiOS ? appleThemes : {};
 
 const SettingsManager = {
     neutralLocale: null,
@@ -64,7 +64,7 @@ const SettingsManager = {
     },
 
     setFontSize(fontSize) {
-        const defaultFontSize = FeatureDetector.isMobile ? 14 : 12;
+        const defaultFontSize = Features.isMobile ? 14 : 12;
         document.documentElement.style.fontSize = defaultFontSize + (fontSize || 0) * 2 + 'px';
     },
 

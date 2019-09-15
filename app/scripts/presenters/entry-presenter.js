@@ -1,4 +1,4 @@
-const Format = require('../util/format');
+const DateFormat = require('../util/formatting/date-format');
 const Locale = require('../util/locale');
 
 const EntryPresenter = function(descField, noColor, activeEntryId) {
@@ -47,10 +47,10 @@ EntryPresenter.prototype = {
         return this.entry ? this.entry.id === this.activeEntryId : this.group.active;
     },
     get created() {
-        return this.entry ? Format.dtStr(this.entry.created) : undefined;
+        return this.entry ? DateFormat.dtStr(this.entry.created) : undefined;
     },
     get updated() {
-        return this.entry ? Format.dtStr(this.entry.updated) : undefined;
+        return this.entry ? DateFormat.dtStr(this.entry.updated) : undefined;
     },
     get expired() {
         return this.entry ? this.entry.expired : false;

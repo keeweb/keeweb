@@ -1,7 +1,7 @@
 const MenuItemModel = require('./menu/menu-item-model');
 const EntryModel = require('../models/entry-model');
 const IconMap = require('../const/icon-map');
-const IconUrl = require('../util/icon-url');
+const IconUrlFormat = require('../util/formatting/icon-url-format');
 const kdbxweb = require('kdbxweb');
 const KdbxIcons = kdbxweb.Consts.Icons;
 let GroupCollection;
@@ -107,7 +107,7 @@ const GroupModel = MenuItemModel.extend({
     _buildCustomIcon() {
         this.customIcon = null;
         if (this.group.customIcon) {
-            return IconUrl.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
+            return IconUrlFormat.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
         }
         return null;
     },

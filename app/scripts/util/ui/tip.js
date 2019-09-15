@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const FeatureDetector = require('./feature-detector');
+const Features = require('../features');
 
 const Tip = function(el, config) {
     this.el = el;
@@ -13,7 +13,7 @@ const Tip = function(el, config) {
     this.hide = this.hide.bind(this);
 };
 
-Tip.enabled = !FeatureDetector.isMobile;
+Tip.enabled = !Features.isMobile;
 
 Tip.prototype.init = function() {
     if (!Tip.enabled) {

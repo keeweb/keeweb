@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const Logger = require('../../util/logger');
-const Format = require('../../util/format');
+const StringFormat = require('../../util/formatting/string-format');
 
 const SettingsLogView = Backbone.View.extend({
     template: require('templates/settings/settings-logs-view.hbs'),
@@ -10,7 +10,7 @@ const SettingsLogView = Backbone.View.extend({
             level: item.level,
             msg:
                 '[' +
-                Format.padStr(item.level.toUpperCase(), 5) +
+                StringFormat.padStr(item.level.toUpperCase(), 5) +
                 '] ' +
                 item.args.map(arg => this.mapArg(arg)).join(' ')
         }));

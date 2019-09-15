@@ -3,11 +3,11 @@ const Locale = require('../../util/locale');
 const PluginManager = require('../../plugins/plugin-manager');
 const PluginGallery = require('../../plugins/plugin-gallery');
 const AppSettingsModel = require('../../models/app-settings-model');
-const Comparators = require('../../util/comparators');
-const Format = require('../../util/format');
+const Comparators = require('../../util/data/comparators');
+const DateFormat = require('../../util/formatting/date-format');
 const SettingsManager = require('../../comp/settings-manager');
-const FeatureDetector = require('../../util/feature-detector');
-const SemVer = require('../../util/semver');
+const Features = require('../../util/features');
+const SemVer = require('../../util/data/semver');
 const RuntimeInfo = require('../../comp/runtime-info');
 const Links = require('../../const/links');
 
@@ -54,7 +54,7 @@ const SettingsPluginsView = Backbone.View.extend({
                     status: plugin.get('status'),
                     installTime: Math.round(plugin.get('installTime')),
                     updateError: plugin.get('updateError'),
-                    updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
+                    updateCheckDate: DateFormat.dtStr(plugin.get('updateCheckDate')),
                     installError: plugin.get('installError'),
                     official: plugin.get('official'),
                     autoUpdate: plugin.get('autoUpdate'),
@@ -68,7 +68,7 @@ const SettingsPluginsView = Backbone.View.extend({
             galleryLoadError: PluginGallery.loadError,
             galleryPlugins: this.getGalleryPlugins(),
             searchStr: this.searchStr,
-            hasUnicodeFlags: FeatureDetector.hasUnicodeFlags(),
+            hasUnicodeFlags: Features.hasUnicodeFlags(),
             pluginDevLink: Links.PluginDevelopStart,
             translateLink: Links.Translation
         });

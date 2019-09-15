@@ -1,8 +1,8 @@
 const Backbone = require('backbone');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const baron = require('baron');
 
-const isEnabled = !FeatureDetector.isMobile;
+const isEnabled = !Features.isMobile;
 
 const Scrollable = {
     createScroll(opts) {

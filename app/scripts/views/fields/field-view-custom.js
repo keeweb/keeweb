@@ -3,7 +3,7 @@ const FieldViewText = require('./field-view-text');
 const FieldView = require('./field-view');
 const Keys = require('../../const/keys');
 const kdbxweb = require('kdbxweb');
-const Tip = require('../../util/tip');
+const Tip = require('../../util/ui/tip');
 const Locale = require('../../util/locale');
 
 const FieldViewCustom = FieldViewText.extend({

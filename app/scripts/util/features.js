@@ -3,7 +3,7 @@ const MinDesktopScreenWidth = 800;
 
 const isDesktop = !!(window.process && window.process.versions && window.process.versions.electron);
 
-const FeatureDetector = {
+const Features = {
     isDesktop,
     isMac: navigator.platform.indexOf('Mac') >= 0,
     isWindows: navigator.platform.indexOf('Win') >= 0,
@@ -37,4 +37,4 @@ const FeatureDetector = {
     }
 };
 
-module.exports = FeatureDetector;
+module.exports = Features;

@@ -25,11 +25,12 @@ const Alerts = require('../../comp/alerts');
 const CopyPaste = require('../../comp/copy-paste');
 const OtpQrReader = require('../../comp/otp-qr-reader');
 const AutoType = require('../../auto-type');
-const Format = require('../../util/format');
+const StringFormat = require('../../util/formatting/string-format');
+const DateFormat = require('../../util/formatting/date-format');
 const Locale = require('../../util/locale');
-const Tip = require('../../util/tip');
-const FileSaver = require('../../util/file-saver');
-const FeatureDetector = require('../../util/feature-detector');
+const Tip = require('../../util/ui/tip');
+const FileSaver = require('../../util/ui/file-saver');
+const Features = require('../../util/features');
 const Timeouts = require('../../const/timeouts');
 const Copyable = require('../../mixins/copyable');
 
@@ -175,7 +176,7 @@ const DetailsView = Backbone.View.extend({
             this.fileEditView = new FieldViewSelect({
                 model: {
                     name: '$File',
-                    title: Format.capFirst(Locale.file),
+                    title: StringFormat.capFirst(Locale.file),
                     value() {
                         return fileNames;
                     }
@@ -187,7 +188,7 @@ const DetailsView = Backbone.View.extend({
                 new FieldViewReadOnly({
                     model: {
                         name: 'File',
-                        title: Format.capFirst(Locale.file),
+                        title: StringFormat.capFirst(Locale.file),
                         value() {
                             return model.fileName;
                         }
@@ -198,7 +199,7 @@ const DetailsView = Backbone.View.extend({
         this.userEditView = new FieldViewAutocomplete({
             model: {
                 name: '$UserName',
-                title: Format.capFirst(Locale.user),
+                title: StringFormat.capFirst(Locale.user),
                 value() {
                     return model.user;
                 },
@@ -209,7 +210,7 @@ const DetailsView = Backbone.View.extend({
         this.passEditView = new FieldViewText({
             model: {
                 name: '$Password',
-                title: Format.capFirst(Locale.password),
+                title: StringFormat.capFirst(Locale.password),
                 canGen: true,
                 value() {
                     return model.password;
@@ -220,7 +221,7 @@ const DetailsView = Backbone.View.extend({
         this.urlEditView = new FieldViewUrl({
             model: {
                 name: '$URL',
-                title: Format.capFirst(Locale.website),
+                title: StringFormat.capFirst(Locale.website),
                 value() {
                     return model.url;
                 }
@@ -231,7 +232,7 @@ const DetailsView = Backbone.View.extend({
             new FieldViewText({
                 model: {
                     name: '$Notes',
-                    title: Format.capFirst(Locale.notes),
+                    title: StringFormat.capFirst(Locale.notes),
                     multiline: 'true',
                     markdown: true,
                     value() {
@@ -244,7 +245,7 @@ const DetailsView = Backbone.View.extend({
             new FieldViewTags({
                 model: {
                     name: 'Tags',
-                    title: Format.capFirst(Locale.tags),
+                    title: StringFormat.capFirst(Locale.tags),
                     tags: this.appModel.tags,
                     value() {
                         return model.tags;
@@ -284,7 +285,7 @@ const DetailsView = Backbone.View.extend({
                     name: 'Created',
                     title: Locale.detCreated,
                     value() {
-                        return Format.dtStr(model.created);
+                        return DateFormat.dtStr(model.created);
                     }
                 }
             })
@@ -295,7 +296,7 @@ const DetailsView = Backbone.View.extend({
                     name: 'Updated',
                     title: Locale.detUpdated,
                     value() {
-                        return Format.dtStr(model.updated);
+                        return DateFormat.dtStr(model.updated);
                     }
                 }
             })
@@ -304,7 +305,7 @@ const DetailsView = Backbone.View.extend({
             new FieldViewHistory({
                 model: {
                     name: 'History',
-                    title: Format.capFirst(Locale.history),
+                    title: StringFormat.capFirst(Locale.history),
                     value() {
                         return { length: model.historyLength, unsaved: model.unsaved };
                     }
@@ -959,7 +960,7 @@ const DetailsView = Backbone.View.extend({
             this.model.moveToTrash();
             Backbone.trigger('refresh');
         };
-        if (FeatureDetector.isMobile) {
+        if (Features.isMobile) {
             Alerts.yesno({
                 header: Locale.detDelToTrash,
                 body: Locale.detDelToTrashBody,

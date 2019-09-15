@@ -4,10 +4,10 @@ const FieldView = require('./field-view');
 const GeneratorView = require('../generator-view');
 const KeyHandler = require('../../comp/key-handler');
 const Keys = require('../../const/keys');
-const PasswordGenerator = require('../../util/password-generator');
-const FeatureDetector = require('../../util/feature-detector');
-const Tip = require('../../util/tip');
-const MdToHtml = require('../../util/md-to-html');
+const PasswordGenerator = require('../../util/generators/password-generator');
+const Features = require('../../util/features');
+const Tip = require('../../util/ui/tip');
+const MdToHtml = require('../../util/formatting/md-to-html');
 
 const FieldViewText = FieldView.extend({
     renderValue(value) {
@@ -49,7 +49,7 @@ const FieldViewText = FieldView.extend({
         if (this.model.multiline) {
             this.setInputHeight();
         }
-        if (FeatureDetector.isMobile) {
+        if (Features.isMobile) {
             this.createMobileControls();
         }
         if (this.model.canGen) {

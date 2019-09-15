@@ -1,10 +1,10 @@
 const Backbone = require('backbone');
-const PasswordGenerator = require('../util/password-generator');
+const PasswordGenerator = require('../util/generators/password-generator');
 const CopyPaste = require('../comp/copy-paste');
 const AppSettingsModel = require('../models/app-settings-model');
 const GeneratorPresets = require('../comp/generator-presets');
 const Locale = require('../util/locale');
-const Tip = require('../util/tip');
+const Tip = require('../util/ui/tip');
 
 const GeneratorView = Backbone.View.extend({
     el: 'body',

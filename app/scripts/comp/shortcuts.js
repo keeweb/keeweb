@@ -1,6 +1,6 @@
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const Keys = require('../const/keys');
-const Format = require('../util/format');
+const StringFormat = require('../util/formatting/string-format');
 const AppSettingsModel = require('../models/app-settings-model');
 const Launcher = require('./launcher');
 
@@ -38,7 +38,7 @@ const Shortcuts = {
         if (event.shiftKey) {
             modifiers.push('Shift');
         }
-        if (FeatureDetector.isMac && event.metaKey) {
+        if (Features.isMac && event.metaKey) {
             modifiers.push('Meta');
         }
         const keyName = getAllowedKeys()[event.which];
@@ -67,32 +67,16 @@ const Shortcuts = {
             .join('');
     },
     actionShortcutSymbol(formatting) {
-        return FeatureDetector.isMac
-            ? '⌘'
-            : formatting
-            ? '<span class="thin">ctrl + </span>'
-            : 'ctrl+';
+        return Features.isMac ? '⌘' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl+';
     },
     altShortcutSymbol(formatting) {
-        return FeatureDetector.isMac
-            ? '⌥'
-            : formatting
-            ? '<span class="thin">alt + </span>'
-            : 'alt+';
+        return Features.isMac ? '⌥' : formatting ? '<span class="thin">alt + </span>' : 'alt+';
     },
     shiftShortcutSymbol(formatting) {
-        return FeatureDetector.isMac
-            ? '⇧'
-            : formatting
-            ? '<span class="thin">shift + </span>'
-            : 'shift+';
+        return Features.isMac ? '⇧' : formatting ? '<span class="thin">shift + </span>' : 'shift+';
     },
     ctrlShortcutSymbol(formatting) {
-        return FeatureDetector.isMac
-            ? '⌃'
-            : formatting
-            ? '<span class="thin">ctrl + </span>'
-            : 'ctrl+';
+        return Features.isMac ? '⌃' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl+';
     },
     globalShortcutText(type, formatting) {
         return this.presentShortcut(this.globalShortcut(type), formatting);
@@ -106,7 +90,7 @@ const Shortcuts = {
         }
         const globalShortcut = globalShortcuts[type];
         if (globalShortcut) {
-            if (FeatureDetector.isMac && globalShortcut.mac) {
+            if (Features.isMac && globalShortcut.mac) {
                 return globalShortcut.mac;
             }
             return globalShortcut.all;
@@ -125,19 +109,19 @@ const Shortcuts = {
         Launcher.setGlobalShortcuts(AppSettingsModel.instance.attributes);
     },
     globalShortcutAppSettingsKey(type) {
-        return 'globalShortcut' + Format.capFirst(type);
+        return 'globalShortcut' + StringFormat.capFirst(type);
     },
     screenshotToClipboardShortcut() {
-        if (FeatureDetector.isiOS) {
+        if (Features.isiOS) {
             return 'Sleep+Home';
         }
-        if (FeatureDetector.isMobile) {
+        if (Features.isMobile) {
             return '';
         }
-        if (FeatureDetector.isMac) {
+        if (Features.isMac) {
             return 'Command-Shift-Control-4';
         }
-        if (FeatureDetector.isWindows) {
+        if (Features.isWindows) {
             return 'Alt+PrintScreen';
         }
         return '';

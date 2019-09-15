@@ -2,9 +2,9 @@ const Backbone = require('backbone');
 const Alerts = require('./alerts');
 const Locale = require('../util/locale');
 const Logger = require('../util/logger');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const Shortcuts = require('../comp/shortcuts');
-const Otp = require('../util/otp');
+const Otp = require('../util/data/otp');
 const QrCode = require('jsqrcode');
 
 const logger = new Logger('otp-qr-reader');
@@ -22,7 +22,7 @@ const OtpQrReader = {
                 '<code>' + screenshotKey + '</code>'
             );
         }
-        const pasteKey = FeatureDetector.isMobile
+        const pasteKey = Features.isMobile
             ? ''
             : Locale.detSetupOtpAlertBodyWith.replace(
                   '{}',
@@ -33,10 +33,10 @@ const OtpQrReader = {
             { result: 'manually', title: Locale.detSetupOtpManualButton, silent: true },
             Alerts.buttons.cancel
         ];
-        if (FeatureDetector.isMobile) {
+        if (Features.isMobile) {
             buttons.unshift({ result: 'select', title: Locale.detSetupOtpScanButton });
         }
-        const line3 = FeatureDetector.isMobile
+        const line3 = Features.isMobile
             ? Locale.detSetupOtpAlertBody3Mobile
             : Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
         OtpQrReader.alert = Alerts.alert({

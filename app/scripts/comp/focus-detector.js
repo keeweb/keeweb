@@ -1,11 +1,11 @@
 const Backbone = require('backbone');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const Launcher = require('../comp/launcher');
 
 const FocusDetector = {
     init() {
         this.isFocused = true;
-        this.detectsFocusWithEvents = !FeatureDetector.isDesktop && !FeatureDetector.isMobile;
+        this.detectsFocusWithEvents = !Features.isDesktop && !Features.isMobile;
         if (this.detectsFocusWithEvents) {
             window.addEventListener('focus', () => {
                 if (!FocusDetector.isFocused) {

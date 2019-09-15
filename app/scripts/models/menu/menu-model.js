@@ -3,7 +3,7 @@ const MenuSectionCollection = require('../../collections/menu/menu-section-colle
 const MenuSectionModel = require('./menu-section-model');
 const GroupsMenuModel = require('./groups-menu-model');
 const Locale = require('../../util/locale');
-const Format = require('../../util/format');
+const StringFormat = require('../../util/formatting/string-format');
 const Keys = require('../../const/keys');
 const Colors = require('../../const/colors');
 
@@ -194,7 +194,7 @@ const MenuModel = Backbone.Model.extend({
             menu.each(section =>
                 section.get('items').each(item => {
                     if (item.get('locTitle')) {
-                        item.set('title', Format.capFirst(Locale[item.get('locTitle')]));
+                        item.set('title', StringFormat.capFirst(Locale[item.get('locTitle')]));
                     }
                 })
             );
@@ -204,7 +204,7 @@ const MenuModel = Backbone.Model.extend({
 
     _getDefaultTagItem() {
         return {
-            title: Format.capFirst(Locale.tags),
+            title: StringFormat.capFirst(Locale.tags),
             icon: 'tags',
             defaultItem: true,
             disabled: {

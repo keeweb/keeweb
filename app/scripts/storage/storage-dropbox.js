@@ -1,6 +1,6 @@
 const StorageBase = require('./storage-base');
-const UrlUtil = require('../util/url-util');
-const FeatureDetector = require('../util/feature-detector');
+const UrlFormat = require('../util/formatting/url-format');
+const Features = require('../util/features');
 
 const DropboxKeys = {
     AppFolder: 'qp7ctun6qt5n9d6',
@@ -21,7 +21,7 @@ const StorageDropbox = StorageBase.extend({
     _toFullPath(path) {
         const rootFolder = this.appSettings.get('dropboxFolder');
         if (rootFolder) {
-            path = UrlUtil.fixSlashes('/' + rootFolder + '/' + path);
+            path = UrlFormat.fixSlashes('/' + rootFolder + '/' + path);
         }
         return path;
     },
@@ -35,7 +35,7 @@ const StorageDropbox = StorageBase.extend({
             } else if (ix === 1) {
                 path = path.substr(rootFolder.length + 1);
             }
-            path = UrlUtil.fixSlashes('/' + path);
+            path = UrlFormat.fixSlashes('/' + path);
         }
         return path;
     },
@@ -59,7 +59,7 @@ const StorageDropbox = StorageBase.extend({
     },
 
     _canUseBuiltInKeys() {
-        return !FeatureDetector.isSelfHosted;
+        return !Features.isSelfHosted;
     },
 
     _getOAuthConfig() {

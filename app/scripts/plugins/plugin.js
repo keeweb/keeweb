@@ -7,8 +7,8 @@ const SettingsManager = require('../comp/settings-manager');
 const IoCache = require('../storage/io-cache');
 const AppSettingsModel = require('../models/app-settings-model');
 const BaseLocale = require('../locales/base.json');
-const SignatureVerifier = require('../util/signature-verifier');
-const SemVer = require('../util/semver');
+const SignatureVerifier = require('../util/data/signature-verifier');
+const SemVer = require('../util/data/semver');
 const RuntimeInfo = require('../comp/runtime-info');
 
 const commonLogger = new Logger('plugin');

@@ -1,4 +1,4 @@
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const Alerts = require('../comp/alerts');
 const AppSettingsModel = require('../models/app-settings-model');
 const Launcher = require('./launcher');
@@ -8,7 +8,7 @@ const AppRightsChecker = {
     AppPath: '/Applications/KeeWeb.app',
 
     init() {
-        if (!FeatureDetector.isDesktop || !FeatureDetector.isMac) {
+        if (!Features.isDesktop || !Features.isMac) {
             return;
         }
         if (AppSettingsModel.instance.get('skipFolderRightsWarning')) {

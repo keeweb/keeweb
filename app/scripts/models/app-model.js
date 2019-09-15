@@ -10,11 +10,11 @@ const FileModel = require('./file-model');
 const FileInfoModel = require('./file-info-model');
 const Storage = require('../storage');
 const Timeouts = require('../const/timeouts');
-const IdGenerator = require('../util/id-generator');
+const IdGenerator = require('../util/generators/id-generator');
 const Logger = require('../util/logger');
-const FeatureDetector = require('../util/feature-detector');
-const Format = require('../util/format');
-const UrlUtil = require('../util/url-util');
+const Features = require('../util/features');
+const DateFormat = require('../util/formatting/date-format');
+const UrlFormat = require('../util/formatting/url-format');
 const AutoType = require('../auto-type');
 const Launcher = require('../comp/launcher');
 const RuntimeInfo = require('../comp/runtime-info');
@@ -101,7 +101,7 @@ const AppModel = Backbone.Model.extend({
     },
 
     ensureCanLoadConfig(url) {
-        if (!FeatureDetector.isSelfHosted) {
+        if (!Features.isSelfHosted) {
             throw 'Configs are supported only in self-hosted installations';
         }
         const link = document.createElement('a');
@@ -1049,7 +1049,7 @@ const AppModel = Backbone.Model.extend({
         if (!backup || !backup.storage || !backup.path) {
             return callback('Invalid backup settings');
         }
-        let path = backup.path.replace('{date}', Format.dtStrFs(new Date()));
+        let path = backup.path.replace('{date}', DateFormat.dtStrFs(new Date()));
         logger.info('Backup file to', backup.storage, path);
         const saveToFolder = () => {
             if (Storage[backup.storage].getPathForName) {
@@ -1069,7 +1069,7 @@ const AppModel = Backbone.Model.extend({
                 callback(err);
             });
         };
-        let folderPath = UrlUtil.fileToDir(path);
+        let folderPath = UrlFormat.fileToDir(path);
         if (Storage[backup.storage].getPathForName) {
             folderPath = Storage[backup.storage].getPathForName(folderPath).replace('.kdbx', '');
         }

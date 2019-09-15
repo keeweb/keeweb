@@ -6,7 +6,7 @@ const AppSettingsModel = require('../models/app-settings-model');
 const UpdateModel = require('../models/update-model');
 const Transport = require('../comp/transport');
 const Logger = require('../util/logger');
-const SemVer = require('../util/semver');
+const SemVer = require('../util/data/semver');
 const publicKey = require('public-key.pem').default;
 
 const logger = new Logger('updater');

@@ -2,7 +2,7 @@ const Backbone = require('backbone');
 const SecureInput = require('../comp/secure-input');
 const Alerts = require('../comp/alerts');
 const Locale = require('../util/locale');
-const InputFx = require('../util/input-fx');
+const InputFx = require('../util/ui/input-fx');
 const Keys = require('../const/keys');
 
 const KeyChangeView = Backbone.View.extend({

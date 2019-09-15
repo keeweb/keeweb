@@ -1,5 +1,5 @@
 const kdbxweb = require('kdbxweb');
-const Logger = require('../util/logger');
+const Logger = require('../logger');
 
 const logger = new Logger('argon2');
 

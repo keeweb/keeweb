@@ -1,7 +1,8 @@
 const Backbone = require('backbone');
 const KeyHandler = require('../../comp/key-handler');
 const Keys = require('../../const/keys');
-const Format = require('../../util/format');
+const DateFormat = require('../../util/formatting/date-format');
+const StringFormat = require('../../util/formatting/string-format');
 const Locale = require('../../util/locale');
 const Alerts = require('../../comp/alerts');
 const FieldViewReadOnly = require('../fields/field-view-read-only');
@@ -26,42 +27,42 @@ const DetailsHistoryView = Backbone.View.extend({
             name: 'ms',
             round: 1,
             format(d) {
-                return Format.dtStr(d);
+                return DateFormat.dtStr(d);
             }
         },
         {
             name: 'sec',
             round: 1000,
             format(d) {
-                return Format.dtStr(d);
+                return DateFormat.dtStr(d);
             }
         },
         {
             name: 'min',
             round: 1000 * 60,
             format(d) {
-                return Format.dtStr(d).replace(':00 ', ' ');
+                return DateFormat.dtStr(d).replace(':00 ', ' ');
             }
         },
         {
             name: 'hour',
             round: 1000 * 60 * 60,
             format(d) {
-                return Format.dtStr(d).replace(':00', '');
+                return DateFormat.dtStr(d).replace(':00', '');
             }
         },
         {
             name: 'day',
             round: 1000 * 60 * 60 * 24,
             format(d) {
-                return Format.dStr(d);
+                return DateFormat.dStr(d);
             }
         },
         {
             name: 'month',
             round: 1000 * 60 * 60 * 24 * 31,
             format(d) {
-                return Format.dStr(d);
+                return DateFormat.dStr(d);
             }
         },
         {
@@ -141,7 +142,7 @@ const DetailsHistoryView = Backbone.View.extend({
                     name: 'Updated',
                     title: Locale.detHistorySaved,
                     value:
-                        Format.dtStr(this.record.updated) +
+                        DateFormat.dtStr(this.record.updated) +
                         (this.record.unsaved ? ' (' + Locale.detHistoryCurUnsavedState + ')' : '') +
                         (ix === this.history.length - 1 && !this.record.unsaved
                             ? ' (' + Locale.detHistoryCurState + ')'
@@ -153,7 +154,7 @@ const DetailsHistoryView = Backbone.View.extend({
             new FieldViewReadOnlyRaw({
                 model: {
                     name: '$Title',
-                    title: Format.capFirst(Locale.title),
+                    title: StringFormat.capFirst(Locale.title),
                     value:
                         '<i class="fa fa-' +
                             this.record.icon +
@@ -168,7 +169,7 @@ const DetailsHistoryView = Backbone.View.extend({
             new FieldViewReadOnly({
                 model: {
                     name: '$UserName',
-                    title: Format.capFirst(Locale.user),
+                    title: StringFormat.capFirst(Locale.user),
                     value: this.record.user
                 }
             })
@@ -177,7 +178,7 @@ const DetailsHistoryView = Backbone.View.extend({
             new FieldViewReadOnly({
                 model: {
                     name: '$Password',
-                    title: Format.capFirst(Locale.password),
+                    title: StringFormat.capFirst(Locale.password),
                     value: this.record.password
                 }
             })
@@ -186,7 +187,7 @@ const DetailsHistoryView = Backbone.View.extend({
             new FieldViewReadOnly({
                 model: {
                     name: '$URL',
-                    title: Format.capFirst(Locale.website),
+                    title: StringFormat.capFirst(Locale.website),
                     value: this.record.url
                 }
             })
@@ -195,7 +196,7 @@ const DetailsHistoryView = Backbone.View.extend({
             new FieldViewReadOnly({
                 model: {
                     name: '$Notes',
-                    title: Format.capFirst(Locale.notes),
+                    title: StringFormat.capFirst(Locale.notes),
                     value: this.record.notes
                 }
             })
@@ -204,7 +205,7 @@ const DetailsHistoryView = Backbone.View.extend({
             new FieldViewReadOnly({
                 model: {
                     name: 'Tags',
-                    title: Format.capFirst(Locale.tags),
+                    title: StringFormat.capFirst(Locale.tags),
                     value: this.record.tags.join(', ')
                 }
             })
@@ -214,7 +215,7 @@ const DetailsHistoryView = Backbone.View.extend({
                 model: {
                     name: 'Expires',
                     title: Locale.detExpires,
-                    value: this.record.expires ? Format.dtStr(this.record.expires) : ''
+                    value: this.record.expires ? DateFormat.dtStr(this.record.expires) : ''
                 }
             })
         );

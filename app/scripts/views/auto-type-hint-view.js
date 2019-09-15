@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const Links = require('../const/links');
 const Timeouts = require('../const/timeouts');
 
@@ -18,8 +18,8 @@ const AutoTypeHintView = Backbone.View.extend({
 
     render() {
         this.renderTemplate({
-            cmd: FeatureDetector.isMac ? 'command' : 'ctrl',
-            hasCtrl: FeatureDetector.isMac,
+            cmd: Features.isMac ? 'command' : 'ctrl',
+            hasCtrl: Features.isMac,
             link: Links.AutoType
         });
         const rect = this.input.getBoundingClientRect();

@@ -1,6 +1,6 @@
 const ThemeVarsScss = require('raw-loader!../../styles/base/_theme-vars.scss').default;
 const ThemeDefaults = require('../../styles/themes/_theme-defaults.scss');
-const Color = require('../util/color');
+const Color = require('../util/data/color');
 
 const ThemeVars = {
     themeDefaults: null,

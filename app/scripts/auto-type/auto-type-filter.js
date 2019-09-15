@@ -1,5 +1,5 @@
 const EntryCollection = require('../collections/entry-collection');
-const Ranking = require('../util/ranking');
+const Ranking = require('../util/data/ranking');
 
 const urlPartsRegex = /^(\w+:\/\/)?(?:(?:www|wwws|secure)\.)?([^\/]+)\/?(.*)/;
 

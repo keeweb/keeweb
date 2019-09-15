@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const UrlUtil = require('../util/url-util');
+const UrlFormat = require('../util/formatting/url-format');
 
 const StorageFileListView = Backbone.View.extend({
     template: require('templates/storage-file-list.hbs'),
@@ -20,7 +20,7 @@ const StorageFileListView = Backbone.View.extend({
             return {
                 path: file.path,
                 name: file.name.replace(/\.kdbx$/i, ''),
-                kdbx: UrlUtil.isKdbx(file.name),
+                kdbx: UrlFormat.isKdbx(file.name),
                 dir: file.dir
             };
         });

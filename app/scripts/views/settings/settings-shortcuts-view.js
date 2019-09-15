@@ -3,7 +3,7 @@ const Locale = require('../../util/locale');
 const Keys = require('../../const/keys');
 const Launcher = require('../../comp/launcher');
 const Shortcuts = require('../../comp/shortcuts');
-const FeatureDetector = require('../../util/feature-detector');
+const Features = require('../../util/features');
 
 const SettingsShortcutsView = Backbone.View.extend({
     template: require('templates/settings/settings-shortcuts.hbs'),
@@ -34,7 +34,7 @@ const SettingsShortcutsView = Backbone.View.extend({
         this.renderTemplate({
             cmd: Shortcuts.actionShortcutSymbol(true),
             alt: Shortcuts.altShortcutSymbol(true),
-            globalIsLarge: !FeatureDetector.isMac,
+            globalIsLarge: !Features.isMac,
             autoTypeSupported: !!Launcher,
             globalShortcuts: Launcher
                 ? {
@@ -58,7 +58,7 @@ const SettingsShortcutsView = Backbone.View.extend({
             .addClass('shortcut__editor-input')
             .val(Shortcuts.globalShortcutText(globalShortcutType))
             .appendTo(shortcutEditor);
-        if (!FeatureDetector.isMac) {
+        if (!Features.isMac) {
             shortcutEditorInput.addClass('shortcut__editor-input--large');
         }
 

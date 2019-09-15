@@ -1,4 +1,4 @@
-const Colors = require('../const/colors');
+const Colors = require('../../const/colors');
 
 const KnownColors = {};
 

@@ -1,6 +1,6 @@
 const AutoTypeObfuscator = require('./auto-type-obfuscator');
 const AutoTypeEmitterFactory = require('./auto-type-emitter-factory');
-const Format = require('../util/format');
+const StringFormat = require('../util/formatting/string-format');
 const Logger = require('../util/logger');
 
 const emitterLogger = new Logger('auto-type-emitter');
@@ -310,15 +310,15 @@ AutoTypeRunner.prototype.dt = function(part) {
         case 'Y':
             return this.now.getFullYear().toString();
         case 'M':
-            return Format.pad(this.now.getMonth() + 1, 2);
+            return StringFormat.pad(this.now.getMonth() + 1, 2);
         case 'D':
-            return Format.pad(this.now.getDate(), 2);
+            return StringFormat.pad(this.now.getDate(), 2);
         case 'h':
-            return Format.pad(this.now.getHours(), 2);
+            return StringFormat.pad(this.now.getHours(), 2);
         case 'm':
-            return Format.pad(this.now.getMinutes(), 2);
+            return StringFormat.pad(this.now.getMinutes(), 2);
         case 's':
-            return Format.pad(this.now.getSeconds(), 2);
+            return StringFormat.pad(this.now.getSeconds(), 2);
         default:
             throw 'Bad part: ' + part;
     }
@@ -338,15 +338,15 @@ AutoTypeRunner.prototype.udt = function(part) {
         case 'Y':
             return this.now.getUTCFullYear().toString();
         case 'M':
-            return Format.pad(this.now.getUTCMonth() + 1, 2);
+            return StringFormat.pad(this.now.getUTCMonth() + 1, 2);
         case 'D':
-            return Format.pad(this.now.getUTCDate(), 2);
+            return StringFormat.pad(this.now.getUTCDate(), 2);
         case 'h':
-            return Format.pad(this.now.getUTCHours(), 2);
+            return StringFormat.pad(this.now.getUTCHours(), 2);
         case 'm':
-            return Format.pad(this.now.getUTCMinutes(), 2);
+            return StringFormat.pad(this.now.getUTCMinutes(), 2);
         case 's':
-            return Format.pad(this.now.getUTCSeconds(), 2);
+            return StringFormat.pad(this.now.getUTCSeconds(), 2);
         default:
             throw 'Bad part: ' + part;
     }

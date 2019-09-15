@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const EntryModel = require('../models/entry-model');
-const Comparators = require('../util/comparators');
+const Comparators = require('../util/data/comparators');
 
 const EntryCollection = Backbone.Collection.extend({
     model: EntryModel,

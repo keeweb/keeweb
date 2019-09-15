@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 const CopyPaste = require('../../comp/copy-paste');
-const Tip = require('../../util/tip');
+const Tip = require('../../util/ui/tip');
 
 const FieldView = Backbone.View.extend({
     template: require('templates/details/field.hbs'),

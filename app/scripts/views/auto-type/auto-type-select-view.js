@@ -7,7 +7,7 @@ const EntryPresenter = require('../../presenters/entry-presenter');
 const Scrollable = require('../../mixins/scrollable');
 const Shortcuts = require('../../comp/shortcuts');
 const DropdownView = require('../dropdown-view');
-const Format = require('../../util/format');
+const StringFormat = require('../../util/formatting/string-format');
 
 const AutoTypePopupView = Backbone.View.extend({
     el: 'body',
@@ -286,14 +286,14 @@ const AutoTypePopupView = Backbone.View.extend({
             options.push({
                 value: '{USERNAME}',
                 icon: 'user',
-                text: Format.capFirst(Locale.user)
+                text: StringFormat.capFirst(Locale.user)
             });
         }
         if (entry.password) {
             options.push({
                 value: '{PASSWORD}',
                 icon: 'key',
-                text: Format.capFirst(Locale.password)
+                text: StringFormat.capFirst(Locale.password)
             });
         }
 

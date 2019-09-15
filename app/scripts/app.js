@@ -20,14 +20,14 @@ const Launcher = require('./comp/launcher');
 const FeatureTester = require('./comp/feature-tester');
 const FocusDetector = require('./comp/focus-detector');
 const Timeouts = require('./const/timeouts');
-const FeatureDetector = require('./util/feature-detector');
-const KdbxwebInit = require('./util/kdbxweb-init');
+const Features = require('./util/features');
+const KdbxwebInit = require('./util/kdbxweb/kdbxweb-init');
 const Locale = require('./util/locale');
 
 const ready = (Launcher && Launcher.ready) || $;
 
 ready(() => {
-    if (AuthReceiver.receive() || FeatureDetector.isFrame) {
+    if (AuthReceiver.receive() || Features.isFrame) {
         return;
     }
     loadMixins();

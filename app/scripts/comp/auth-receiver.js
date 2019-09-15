@@ -1,9 +1,9 @@
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const Storage = require('../storage');
 
 const AuthReceiver = {
     receive() {
-        if (!FeatureDetector.isPopup && !FeatureDetector.isStandalone) {
+        if (!Features.isPopup && !Features.isStandalone) {
             return false;
         }
         const opener = window.opener || window.parent;
@@ -12,7 +12,7 @@ const AuthReceiver = {
         if (!hasKeys) {
             return false;
         }
-        if (FeatureDetector.isStandalone) {
+        if (Features.isStandalone) {
             if (sessionStorage.authStorage) {
                 Storage[sessionStorage.authStorage].handleOAuthReturnMessage(message);
             }

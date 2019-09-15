@@ -3,16 +3,16 @@ const SettingsPrvView = require('./settings-prv-view');
 const SettingsLogsView = require('./settings-logs-view');
 const Launcher = require('../../comp/launcher');
 const Updater = require('../../comp/updater');
-const Format = require('../../util/format');
+const DateFormat = require('../../util/formatting/date-format');
 const AppSettingsModel = require('../../models/app-settings-model');
 const UpdateModel = require('../../models/update-model');
 const RuntimeInfo = require('../../comp/runtime-info');
 const Alerts = require('../../comp/alerts');
 const SettingsManager = require('../../comp/settings-manager');
 const Storage = require('../../storage');
-const FeatureDetector = require('../../util/feature-detector');
+const Features = require('../../util/features');
 const Locale = require('../../util/locale');
-const SemVer = require('../../util/semver');
+const SemVer = require('../../util/data/semver');
 const Links = require('../../const/links');
 const AutoType = require('../../auto-type');
 
@@ -92,7 +92,7 @@ const SettingsGeneralView = Backbone.View.extend({
             lockOnAutoType: AppSettingsModel.instance.get('lockOnAutoType'),
             lockOnOsLock: AppSettingsModel.instance.get('lockOnOsLock'),
             tableView: AppSettingsModel.instance.get('tableView'),
-            canSetTableView: !FeatureDetector.isMobile,
+            canSetTableView: !Features.isMobile,
             autoUpdate: Updater.getAutoUpdateType(),
             updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
@@ -104,10 +104,10 @@ const SettingsGeneralView = Backbone.View.extend({
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
             directAutotype: AppSettingsModel.instance.get('directAutotype'),
-            supportsTitleBarStyles: Launcher && FeatureDetector.supportsTitleBarStyles(),
+            supportsTitleBarStyles: Launcher && Features.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.instance.get('titlebarStyle'),
             storageProviders,
-            showReloadApp: FeatureDetector.isStandalone
+            showReloadApp: Features.isStandalone
         });
         this.renderProviderViews(storageProviders);
     },
@@ -140,7 +140,7 @@ const SettingsGeneralView = Backbone.View.extend({
                         '. ' +
                         Locale.setGenLastCheckSuccess.replace(
                             '{}',
-                            Format.dtStr(UpdateModel.instance.get('lastSuccessCheckDate'))
+                            DateFormat.dtStr(UpdateModel.instance.get('lastSuccessCheckDate'))
                         ) +
                         ': ' +
                         Locale.setGenLastCheckVer.replace(
@@ -154,7 +154,7 @@ const SettingsGeneralView = Backbone.View.extend({
                 let msg =
                     Locale.setGenCheckedAt +
                     ' ' +
-                    Format.dtStr(UpdateModel.instance.get('lastCheckDate')) +
+                    DateFormat.dtStr(UpdateModel.instance.get('lastCheckDate')) +
                     ': ';
                 const cmp = SemVer.compareVersions(
                     RuntimeInfo.version,
@@ -166,7 +166,7 @@ const SettingsGeneralView = Backbone.View.extend({
                     msg +=
                         Locale.setGenNewVer.replace('{}', UpdateModel.instance.get('lastVersion')) +
                         ' ' +
-                        Format.dStr(UpdateModel.instance.get('lastVersionReleaseDate'));
+                        DateFormat.dStr(UpdateModel.instance.get('lastVersionReleaseDate'));
                 }
                 switch (UpdateModel.instance.get('updateStatus')) {
                     case 'downloading':

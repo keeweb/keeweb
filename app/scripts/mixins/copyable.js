@@ -3,7 +3,7 @@ const Backbone = require('backbone');
 
 const Locale = require('../util/locale');
 
-const Tip = require('../util/tip');
+const Tip = require('../util/ui/tip');
 const Timeouts = require('../const/timeouts');
 
 const Copyable = {

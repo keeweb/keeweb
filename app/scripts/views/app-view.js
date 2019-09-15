@@ -20,7 +20,7 @@ const IdleTracker = require('../comp/idle-tracker');
 const Launcher = require('../comp/launcher');
 const SettingsManager = require('../comp/settings-manager');
 const Locale = require('../util/locale');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const UpdateModel = require('../models/update-model');
 
 const AppView = Backbone.View.extend({
@@ -113,7 +113,7 @@ const AppView = Backbone.View.extend({
     },
 
     setWindowClass() {
-        const getBrowserCssClass = FeatureDetector.getBrowserCssClass();
+        const getBrowserCssClass = Features.getBrowserCssClass();
         if (getBrowserCssClass) {
             this.$el.addClass(getBrowserCssClass);
         }
@@ -127,7 +127,7 @@ const AppView = Backbone.View.extend({
         // TODO: remove once Edge 14 share drops enough
         // https://github.com/keeweb/keeweb/issues/636#issuecomment-304225634
         // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5782378/
-        if (FeatureDetector.needFixClicks) {
+        if (Features.needFixClicks) {
             const msEdgeScrewer = $('<input/>')
                 .appendTo(this.$el)
                 .focus();

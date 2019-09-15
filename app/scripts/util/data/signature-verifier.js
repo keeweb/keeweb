@@ -1,4 +1,4 @@
-const Logger = require('./logger');
+const Logger = require('../logger');
 const publicKey = require('public-key.pem').default;
 const kdbxweb = require('kdbxweb');
 

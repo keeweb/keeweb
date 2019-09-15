@@ -9,13 +9,13 @@ const KeyHandler = require('../comp/key-handler');
 const StorageFileListView = require('../views/storage-file-list-view');
 const Logger = require('../util/logger');
 const Locale = require('../util/locale');
-const UrlUtil = require('../util/url-util');
-const InputFx = require('../util/input-fx');
-const Comparators = require('../util/comparators');
+const UrlFormat = require('../util/formatting/url-format');
+const InputFx = require('../util/ui/input-fx');
+const Comparators = require('../util/data/comparators');
 const Storage = require('../storage');
 const Launcher = require('../comp/launcher');
 const FocusDetector = require('../comp/focus-detector');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 
 const logger = new Logger('open-view');
 
@@ -113,7 +113,7 @@ const OpenView = Backbone.View.extend({
     },
 
     focusInput(focusOnMobile) {
-        if (FocusDetector.hasFocus() && (focusOnMobile || !FeatureDetector.isMobile)) {
+        if (FocusDetector.hasFocus() && (focusOnMobile || !Features.isMobile)) {
             this.inputEl.focus();
         }
     },
@@ -789,7 +789,7 @@ const OpenView = Backbone.View.extend({
         this.params.id = null;
         this.params.storage = storage.name;
         this.params.path = file.path;
-        this.params.name = UrlUtil.getDataFileName(file.name);
+        this.params.name = UrlFormat.getDataFileName(file.name);
         this.params.rev = file.rev;
         this.params.fileData = null;
         this.displayOpenFile();
@@ -887,7 +887,7 @@ const OpenView = Backbone.View.extend({
             this.params.storage = req.storage;
             this.params.path = req.path;
             this.params.opts = req.opts;
-            this.params.name = UrlUtil.getDataFileName(req.path);
+            this.params.name = UrlFormat.getDataFileName(req.path);
             this.params.rev = stat.rev;
             this.params.fileData = null;
             this.displayOpenFile();

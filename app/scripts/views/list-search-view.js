@@ -2,11 +2,11 @@ const Backbone = require('backbone');
 const Keys = require('../const/keys');
 const KeyHandler = require('../comp/key-handler');
 const DropdownView = require('./dropdown-view');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 const Shortcuts = require('../comp/shortcuts');
-const Format = require('../util/format');
+const StringFormat = require('../util/formatting/string-format');
 const Locale = require('../util/locale');
-const Comparators = require('../util/comparators');
+const Comparators = require('../util/data/comparators');
 
 const ListSearchView = Backbone.View.extend({
     template: require('templates/list-search.hbs'),
@@ -37,32 +37,36 @@ const ListSearchView = Backbone.View.extend({
             {
                 value: 'title',
                 icon: 'sort-alpha-asc',
-                loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ)
+                loc: () =>
+                    StringFormat.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-title',
                 icon: 'sort-alpha-desc',
-                loc: () => Format.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA)
+                loc: () =>
+                    StringFormat.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'website',
                 icon: 'sort-alpha-asc',
-                loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ)
+                loc: () =>
+                    StringFormat.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-website',
                 icon: 'sort-alpha-desc',
-                loc: () => Format.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA)
+                loc: () =>
+                    StringFormat.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'user',
                 icon: 'sort-alpha-asc',
-                loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ)
+                loc: () => StringFormat.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-user',
                 icon: 'sort-alpha-desc',
-                loc: () => Format.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA)
+                loc: () => StringFormat.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'created',
@@ -135,7 +139,7 @@ const ListSearchView = Backbone.View.extend({
         this.sortOptions.forEach(opt => {
             opt.text = opt.loc();
         });
-        const entryDesc = FeatureDetector.isMobile
+        const entryDesc = Features.isMobile
             ? ''
             : ' <span class="muted-color">(' +
               Locale.searchShiftClickOr +
@@ -143,8 +147,8 @@ const ListSearchView = Backbone.View.extend({
               Shortcuts.altShortcutSymbol(true) +
               'N)</span>';
         this.createOptions = [
-            { value: 'entry', icon: 'key', text: Format.capFirst(Locale.entry) + entryDesc },
-            { value: 'group', icon: 'folder', text: Format.capFirst(Locale.group) }
+            { value: 'entry', icon: 'key', text: StringFormat.capFirst(Locale.entry) + entryDesc },
+            { value: 'group', icon: 'folder', text: StringFormat.capFirst(Locale.group) }
         ];
         this.render();
     },
@@ -383,7 +387,7 @@ const ListSearchView = Backbone.View.extend({
         options.push({
             value: 'tmpl',
             icon: 'sticky-note-o',
-            text: Format.capFirst(Locale.template)
+            text: StringFormat.capFirst(Locale.template)
         });
         return options;
     },

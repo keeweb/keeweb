@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 const kdbxweb = require('kdbxweb');
 const Links = require('../const/links');
-const SignatureVerifier = require('../util/signature-verifier');
+const SignatureVerifier = require('../util/data/signature-verifier');
 const Logger = require('../util/logger');
 const SettingsStore = require('../comp/settings-store');
 

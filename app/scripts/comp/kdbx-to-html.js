@@ -1,7 +1,8 @@
 const kdbxweb = require('kdbxweb');
-const Format = require('../util/format');
+const StringFormat = require('../util/formatting/string-format');
+const DateFormat = require('../util/formatting/date-format');
 const Locale = require('../util/locale');
-const MdToHtml = require('../util/md-to-html');
+const MdToHtml = require('../util/formatting/md-to-html');
 const Links = require('../const/links');
 const RuntimeInfo = require('./runtime-info');
 
@@ -50,7 +51,7 @@ function walkEntry(db, entry, parents) {
                 }
             }
             fields.push({
-                title: Format.capFirst(Locale[field.locStr]),
+                title: StringFormat.capFirst(Locale[field.locStr]),
                 value,
                 protect: field.protect,
                 html
@@ -72,7 +73,7 @@ function walkEntry(db, entry, parents) {
     const title = entryField(entry, 'Title');
     let expires;
     if (entry.times.expires && entry.times.expiryTime) {
-        expires = Format.dtStr(entry.times.expiryTime);
+        expires = DateFormat.dtStr(entry.times.expiryTime);
     }
 
     const attachments = Object.entries(entry.binaries)
@@ -93,8 +94,8 @@ function walkEntry(db, entry, parents) {
         title,
         fields,
         tags: entry.tags.join(', '),
-        created: Format.dtStr(entry.times.creationTime),
-        modified: Format.dtStr(entry.times.lastModTime),
+        created: DateFormat.dtStr(entry.times.creationTime),
+        modified: DateFormat.dtStr(entry.times.lastModTime),
         expires,
         attachments
     });
@@ -110,7 +111,7 @@ const KdbxToHtml = {
         const content = db.groups.map(group => walkGroup(db, group, [])).join('\n');
         return Templates.db({
             name: options.name,
-            date: Format.dtStr(Date.now()),
+            date: DateFormat.dtStr(Date.now()),
             appLink: Links.Homepage,
             appVersion: RuntimeInfo.version,
             content

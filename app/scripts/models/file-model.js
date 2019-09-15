@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 const GroupCollection = require('../collections/group-collection');
 const GroupModel = require('./group-model');
-const IconUrl = require('../util/icon-url');
+const IconUrlFormat = require('../util/formatting/icon-url-format');
 const Logger = require('../util/logger');
 const KdbxToHtml = require('../comp/kdbx-to-html');
 const kdbxweb = require('kdbxweb');
@@ -666,7 +666,9 @@ const FileModel = Backbone.Model.extend({
     },
 
     getCustomIcons() {
-        return _.mapObject(this.db.meta.customIcons, customIcon => IconUrl.toDataUrl(customIcon));
+        return _.mapObject(this.db.meta.customIcons, customIcon =>
+            IconUrlFormat.toDataUrl(customIcon)
+        );
     },
 
     addCustomIcon(iconData) {

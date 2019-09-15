@@ -1,11 +1,11 @@
 const FieldViewText = require('./field-view-text');
 const Locale = require('../../util/locale');
 const Pikaday = require('pikaday');
-const Format = require('../../util/format');
+const DateFormat = require('../../util/formatting/date-format');
 
 const FieldViewDate = FieldViewText.extend({
     renderValue(value) {
-        let result = value ? Format.dStr(value) : '';
+        let result = value ? DateFormat.dStr(value) : '';
         if (value && this.model.lessThanNow && value < new Date()) {
             result += ' ' + this.model.lessThanNow;
         }
@@ -13,7 +13,7 @@ const FieldViewDate = FieldViewText.extend({
     },
 
     getEditValue(value) {
-        return value ? Format.dStr(value) : '';
+        return value ? DateFormat.dStr(value) : '';
     },
 
     startEdit() {

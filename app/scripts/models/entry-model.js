@@ -1,11 +1,11 @@
 const Backbone = require('backbone');
 const AttachmentModel = require('./attachment-model');
 const IconMap = require('../const/icon-map');
-const Color = require('../util/color');
-const IconUrl = require('../util/icon-url');
-const Otp = require('../util/otp');
+const Color = require('../util/data/color');
+const IconUrlFormat = require('../util/formatting/icon-url-format');
+const Otp = require('../util/data/otp');
 const kdbxweb = require('kdbxweb');
-const Ranking = require('../util/ranking');
+const Ranking = require('../util/data/ranking');
 const KdbxToHtml = require('../comp/kdbx-to-html');
 
 const EntryModel = Backbone.Model.extend({
@@ -115,7 +115,7 @@ const EntryModel = Backbone.Model.extend({
         this.customIcon = null;
         this.customIconId = null;
         if (this.entry.customIcon) {
-            this.customIcon = IconUrl.toDataUrl(
+            this.customIcon = IconUrlFormat.toDataUrl(
                 this.file.db.meta.customIcons[this.entry.customIcon]
             );
             this.customIconId = this.entry.customIcon.toString();

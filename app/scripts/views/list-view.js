@@ -8,7 +8,7 @@ const EntryPresenter = require('../presenters/entry-presenter');
 const DragDropInfo = require('../comp/drag-drop-info');
 const AppSettingsModel = require('../models/app-settings-model');
 const Locale = require('../util/locale');
-const Format = require('../util/format');
+const StringFormat = require('../util/formatting/string-format');
 const Alerts = require('../comp/alerts');
 
 const ListView = Backbone.View.extend({
@@ -277,7 +277,7 @@ const ListView = Backbone.View.extend({
         const options = this.tableColumns.map(col => ({
             value: col.val,
             icon: col.enabled ? 'check-square-o' : 'square-o',
-            text: Format.capFirst(Locale[col.name])
+            text: StringFormat.capFirst(Locale[col.name])
         }));
         view.render({
             position: {

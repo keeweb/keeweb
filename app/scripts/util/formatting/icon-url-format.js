@@ -1,6 +1,6 @@
 const kdbxweb = require('kdbxweb');
 
-const IconUrl = {
+const IconUrlFormat = {
     toDataUrl(iconData) {
         return iconData
             ? 'data:image/png;base64,' + kdbxweb.ByteUtils.bytesToBase64(iconData)
@@ -8,4 +8,4 @@ const IconUrl = {
     }
 };
 
-module.exports = IconUrl;
+module.exports = IconUrlFormat;

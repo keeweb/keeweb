@@ -3,7 +3,7 @@ const Logger = require('../util/logger');
 const AppSettingsModel = require('../models/app-settings-model');
 const RuntimeDataModel = require('../models/runtime-data-model');
 const Links = require('../const/links');
-const FeatureDetector = require('../util/feature-detector');
+const Features = require('../util/features');
 
 const MaxRequestRetries = 3;
 
@@ -37,7 +37,7 @@ _.extend(StorageBase.prototype, {
             this._oauthProcessReturn(this._oauthReturnMessage);
             delete this._oauthReturnMessage;
             delete sessionStorage.authStorage;
-            if (FeatureDetector.isStandalone) {
+            if (Features.isStandalone) {
                 const [url, urlParams] = location.href.split(/[?#]/);
                 if (urlParams) {
                     location.href = url;
@@ -137,7 +137,7 @@ _.extend(StorageBase.prototype, {
         settings = Object.keys(settings)
             .map(key => key + '=' + settings[key])
             .join(',');
-        if (FeatureDetector.isStandalone) {
+        if (Features.isStandalone) {
             sessionStorage.authStorage = this.name;
         }
 

@@ -1,4 +1,4 @@
-const timeouts = require('../const/timeouts');
+const timeouts = require('../../const/timeouts');
 
 const FileSaver = {
     saveAs(blob, name) {

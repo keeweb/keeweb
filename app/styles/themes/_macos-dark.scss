@@ -54,7 +54,8 @@ body.th-macdark {
     .at-select__item--active .at-select__item-options:hover {
         background: var(--secondary-background-color);
     }
-    .dropdown__item--active, .dropdown__item--active:hover {
+    .dropdown__item--active,
+    .dropdown__item--active:hover {
         background-color: var(--selected-item-color);
     }
     @include nomobile {

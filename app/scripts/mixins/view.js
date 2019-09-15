@@ -1,5 +1,5 @@
 const Backbone = require('backbone');
-const Tip = require('../util/tip');
+const Tip = require('../util/ui/tip');
 
 _.extend(Backbone.View.prototype, {
     hide() {

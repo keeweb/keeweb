@@ -1,15 +1,15 @@
 const Backbone = require('backbone');
 const OpenConfigView = require('../open-config-view');
 const Shortcuts = require('../../comp/shortcuts');
-const PasswordGenerator = require('../../util/password-generator');
+const PasswordGenerator = require('../../util/generators/password-generator');
 const Alerts = require('../../comp/alerts');
 const Launcher = require('../../comp/launcher');
 const Storage = require('../../storage');
 const Links = require('../../const/links');
-const Format = require('../../util/format');
+const DateFormat = require('../../util/formatting/date-format');
 const Locale = require('../../util/locale');
-const UrlUtil = require('../../util/url-util');
-const FileSaver = require('../../util/file-saver');
+const UrlFormat = require('../../util/formatting/url-format');
+const FileSaver = require('../../util/ui/file-saver');
 const AppSettingsModel = require('../../models/app-settings-model');
 const kdbxweb = require('kdbxweb');
 
@@ -92,7 +92,7 @@ const SettingsFileView = Backbone.View.extend({
             storage: this.model.get('storage'),
             syncing: this.model.get('syncing'),
             syncError: this.model.get('syncError'),
-            syncDate: Format.dtStr(this.model.get('syncDate')),
+            syncDate: DateFormat.dtStr(this.model.get('syncDate')),
             password: PasswordGenerator.present(this.model.get('passwordLength')),
             defaultUser: this.model.get('defaultUser'),
             recycleBinEnabled: this.model.get('recycleBinEnabled'),
@@ -329,7 +329,7 @@ const SettingsFileView = Backbone.View.extend({
                 const expName = this.model.get('name').toLowerCase();
                 const existingFile = _.find(files, file => {
                     return (
-                        !file.dir && UrlUtil.getDataFileName(file.name).toLowerCase() === expName
+                        !file.dir && UrlFormat.getDataFileName(file.name).toLowerCase() === expName
                     );
                 });
                 if (existingFile) {
