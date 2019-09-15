@@ -97,12 +97,14 @@ const AppView = Backbone.View.extend({
 
         KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
         KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed, this);
-        KeyHandler.onKey(
-            Keys.DOM_VK_I,
-            this.openDevTools,
-            this,
-            KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
-        );
+        if (Launcher && Launcher.devTools) {
+            KeyHandler.onKey(
+                Keys.DOM_VK_I,
+                this.openDevTools,
+                this,
+                KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
+            );
+        }
 
         setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
 
