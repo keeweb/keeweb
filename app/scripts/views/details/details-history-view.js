@@ -1,6 +1,4 @@
-import Backbone from 'backbone';
 import { View } from 'view-engine/view';
-import { KeyHandler } from 'comp/browser/key-handler';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
 import { DateFormat } from 'util/formatting/date-format';
