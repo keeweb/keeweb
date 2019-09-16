@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { GeneratorPresets } from 'comp/app/generator-presets';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { AppSettingsModel } from 'models/app-settings-model';
@@ -64,7 +64,7 @@ class GeneratorView extends View {
         this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
         this.hide = AppSettingsModel.instance.get('generatorHidePassword');
         $('body').one('click', this.remove.bind(this));
-        this.listenTo(Backbone, 'lock-workspace', this.remove.bind(this));
+        this.listenTo(Events, 'lock-workspace', this.remove.bind(this));
     }
 
     render() {
@@ -184,7 +184,7 @@ class GeneratorView extends View {
     presetChange(e) {
         const name = e.target.value;
         if (name === '...') {
-            Backbone.trigger('edit-generator-presets');
+            Events.emit('edit-generator-presets');
             this.remove();
             return;
         }

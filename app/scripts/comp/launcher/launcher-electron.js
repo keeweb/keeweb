@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
 
@@ -287,7 +287,7 @@ const Launcher = {
     },
     openFile(file) {
         if (this.readyToOpenFiles) {
-            Backbone.trigger('launcher-open-file', file);
+            Events.emit('launcher-open-file', file);
         } else {
             this.pendingFileToOpen = file;
         }
@@ -297,16 +297,16 @@ const Launcher = {
     }
 };
 
-Backbone.on('launcher-exit-request', () => {
+Events.on('launcher-exit-request', () => {
     setTimeout(() => Launcher.exit(), 0);
 });
-Backbone.on('launcher-minimize', () => setTimeout(() => Backbone.trigger('app-minimized'), 0));
+Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
 window.launcherOpen = file => Launcher.openFile(file);
 if (window.launcherOpenedFile) {
     logger.info('Open file request', window.launcherOpenedFile);
     Launcher.openFile(window.launcherOpenedFile);
     delete window.launcherOpenedFile;
 }
-Backbone.on('app-ready', () => setTimeout(() => Launcher.checkOpenFiles(), 0));
+Events.on('app-ready', () => setTimeout(() => Launcher.checkOpenFiles(), 0));
 
 export { Launcher };

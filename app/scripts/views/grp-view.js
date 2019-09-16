@@ -1,6 +1,6 @@
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { AutoType } from 'auto-type';
-import Backbone from 'backbone';
 import { Scrollable } from 'framework/views/scrollable';
 import { AutoTypeHintView } from 'views/auto-type/auto-type-hint-view';
 import { IconSelectView } from 'views/icon-select-view';
@@ -62,7 +62,7 @@ class GrpView extends View {
         } else {
             if (this.model.isJustCreated) {
                 this.model.removeWithoutHistory();
-                Backbone.trigger('edit-group');
+                Events.emit('edit-group');
             }
         }
     }
@@ -121,7 +121,7 @@ class GrpView extends View {
 
     moveToTrash() {
         this.model.moveToTrash();
-        Backbone.trigger('select-all');
+        Events.emit('select-all');
     }
 
     setEnableSearching(e) {
@@ -135,7 +135,7 @@ class GrpView extends View {
     }
 
     returnToApp() {
-        Backbone.trigger('edit-group');
+        Events.emit('edit-group');
     }
 }
 

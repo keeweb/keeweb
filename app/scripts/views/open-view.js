@@ -1,6 +1,6 @@
-import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { Storage } from 'storage';
 import { DropboxChooser } from 'comp/app/dropbox-chooser';
 import { FocusDetector } from 'comp/browser/focus-detector';
@@ -65,7 +65,7 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_RETURN, this.enterKeyPress);
         this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown);
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp);
-        this.listenTo(Backbone, 'main-window-focus', this.windowFocused.bind(this));
+        this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
         this.once('reset', () => {
             this.passwordInput.reset();
         });
@@ -682,7 +682,7 @@ class OpenView extends View {
     }
 
     openSettings() {
-        Backbone.trigger('toggle-settings');
+        Events.emit('toggle-settings');
     }
 
     openStorage(e) {

@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { RuntimeDataModel } from 'models/runtime-data-model';
@@ -176,7 +177,7 @@ _.extend(StorageBase.prototype, {
         }
         this._popupOpened(popupWindow);
         const popupClosed = () => {
-            Backbone.off('popup-closed', popupClosed);
+            Events.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
             this.logger.error('OAuth error', 'popup closed');
             callback('OAuth: popup closed');
@@ -187,7 +188,7 @@ _.extend(StorageBase.prototype, {
             }
             const token = this._oauthProcessReturn(e.data);
             if (token) {
-                Backbone.off('popup-closed', popupClosed);
+                Events.off('popup-closed', popupClosed);
                 window.removeEventListener('message', windowMessage);
                 if (token.error) {
                     this.logger.error('OAuth error', token.error, token.errorDescription);
@@ -199,7 +200,7 @@ _.extend(StorageBase.prototype, {
                 this.logger.debug('Skipped OAuth message', e.data);
             }
         };
-        Backbone.on('popup-closed', popupClosed);
+        Events.on('popup-closed', popupClosed);
         window.addEventListener('message', windowMessage);
     },
 

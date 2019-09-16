@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
+import { Events } from 'framework/events';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
 import { Features } from 'util/features';
@@ -44,8 +44,9 @@ class FieldViewText extends FieldView {
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        Backbone.on('click', this._fieldValueBlur);
-        this.listenTo(Backbone, 'main-window-will-close user-idle', this.externalEndEdit);
+        Events.on('click', this.fieldValueBlur);
+        this.listenTo(Events, 'main-window-will-close', this.externalEndEdit);
+        this.listenTo(Events, 'user-idle', this.externalEndEdit);
         if (this.model.multiline) {
             this.setInputHeight();
         }
@@ -215,6 +216,11 @@ class FieldViewText extends FieldView {
             newVal = $.trim(newVal);
         }
         super.endEdit(newVal, extra);
+    }
+
+    stopBlurListener() {
+        // TODO
+        // this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
     }
 
     mobileFieldControlMouseDown(e) {

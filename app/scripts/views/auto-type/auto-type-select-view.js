@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
@@ -31,8 +31,8 @@ class AutoTypeSelectView extends View {
     constructor(model) {
         super(model);
         this.initScroll();
-        this.listenTo(Backbone, 'main-window-blur', this.mainWindowBlur);
-        this.listenTo(Backbone, 'main-window-will-close', this.mainWindowWillClose);
+        this.listenTo(Events, 'main-window-blur', this.mainWindowBlur);
+        this.listenTo(Events, 'main-window-will-close', this.mainWindowWillClose);
         this.setupKeys();
     }
 

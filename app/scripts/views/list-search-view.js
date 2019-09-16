@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
@@ -124,9 +124,9 @@ class ListSearchView extends View {
         this.onKey(Keys.DOM_VK_UP, this.upKeyPress);
         this.listenTo(this, 'show', this.viewShown);
         this.listenTo(this, 'hide', this.viewHidden);
-        this.listenTo(Backbone, 'filter', this.filterChanged);
-        this.listenTo(Backbone, 'set-locale', this.setLocale);
-        this.listenTo(Backbone, 'page-blur', this.pageBlur);
+        this.listenTo(Events, 'filter', this.filterChanged);
+        this.listenTo(Events, 'set-locale', this.setLocale);
+        this.listenTo(Events, 'page-blur', this.pageBlur);
 
         this.once('remove', () => {
             this.removeKeypressHandler();
@@ -210,7 +210,7 @@ class ListSearchView extends View {
     }
 
     inputChange() {
-        Backbone.trigger('add-filter', { text: this.inputEl.val() });
+        Events.emit('add-filter', { text: this.inputEl.val() });
     }
 
     inputFocus(e) {
@@ -301,17 +301,17 @@ class ListSearchView extends View {
         } else if (this.model.advancedSearch) {
             advanced = this.model.advancedSearch;
         }
-        Backbone.trigger('add-filter', { advanced });
+        Events.emit('add-filter', { advanced });
     }
 
     toggleMenu() {
-        Backbone.trigger('toggle-menu');
+        Events.emit('toggle-menu');
     }
 
     toggleAdvCheck(e) {
         const setting = $(e.target).data('id');
         this.advancedSearch[setting] = e.target.checked;
-        Backbone.trigger('add-filter', { advanced: this.advancedSearch });
+        Events.emit('add-filter', { advanced: this.advancedSearch });
     }
 
     hideSearchOptions() {
@@ -397,7 +397,7 @@ class ListSearchView extends View {
 
     sortDropdownSelect(e) {
         this.hideSearchOptions();
-        Backbone.trigger('set-sort', e.item);
+        Events.emit('set-sort', e.item);
     }
 
     createDropdownSelect(e) {

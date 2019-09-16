@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { Alerts } from 'comp/ui/alerts';
 import { Locale } from 'util/locale';
@@ -45,7 +45,7 @@ class TagView extends View {
             return;
         }
         this.model.renameTag(this.tag.get('title'), title);
-        Backbone.trigger('select-all');
+        Events.emit('select-all');
     }
 
     moveToTrash() {
@@ -55,13 +55,13 @@ class TagView extends View {
             body: Locale.tagTrashQuestionBody,
             success: () => {
                 this.model.renameTag(this.tag.get('title'), undefined);
-                Backbone.trigger('select-all');
+                Events.emit('select-all');
             }
         });
     }
 
     returnToApp() {
-        Backbone.trigger('edit-tag');
+        Events.emit('edit-tag');
     }
 }
 

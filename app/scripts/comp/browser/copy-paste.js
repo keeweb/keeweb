@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
 
@@ -15,10 +15,10 @@ const CopyPaste = {
                         Launcher.clearClipboardText();
                     }
                 };
-                Backbone.on('main-window-will-close', clearClipboard);
+                Events.on('main-window-will-close', clearClipboard);
                 setTimeout(() => {
                     clearClipboard();
-                    Backbone.off('main-window-will-close', clearClipboard);
+                    Events.off('main-window-will-close', clearClipboard);
                 }, clipboardSeconds * 1000);
             }
             return { success: true, seconds: clipboardSeconds };

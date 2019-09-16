@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { GeneratorPresets } from 'comp/app/generator-presets';
 import { PasswordGenerator } from 'util/generators/password-generator';
@@ -76,7 +76,7 @@ class GeneratorPresetsView extends View {
     }
 
     returnToApp() {
-        Backbone.trigger('edit-generator-presets');
+        Events.emit('edit-generator-presets');
     }
 
     changePreset(e) {

@@ -1,5 +1,6 @@
-import { AutoType } from 'auto-type';
 import Backbone from 'backbone';
+import { Events } from 'framework/events';
+import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
 import { EntryCollection } from 'collections/entry-collection';
 import { FileCollection } from 'collections/file-collection';
@@ -37,13 +38,13 @@ const AppModel = Backbone.Model.extend({
         this.isBeta = RuntimeInfo.beta;
         this.advancedSearch = null;
 
-        this.listenTo(Backbone, 'refresh', this.refresh);
-        this.listenTo(Backbone, 'set-filter', this.setFilter);
-        this.listenTo(Backbone, 'add-filter', this.addFilter);
-        this.listenTo(Backbone, 'set-sort', this.setSort);
-        this.listenTo(Backbone, 'empty-trash', this.emptyTrash);
-        this.listenTo(Backbone, 'select-entry', this.selectEntry);
-        this.listenTo(Backbone, 'unset-keyfile', this.unsetKeyFile);
+        this.listenTo(Events, 'refresh', this.refresh);
+        this.listenTo(Events, 'set-filter', this.setFilter);
+        this.listenTo(Events, 'add-filter', this.addFilter);
+        this.listenTo(Events, 'set-sort', this.setSort);
+        this.listenTo(Events, 'empty-trash', this.emptyTrash);
+        this.listenTo(Events, 'select-entry', this.selectEntry);
+        this.listenTo(Events, 'unset-keyfile', this.unsetKeyFile);
 
         this.appLogger = new Logger('app');
 
@@ -272,8 +273,8 @@ const AppModel = Backbone.Model.extend({
             const firstEntry = entries.first();
             this.activeEntryId = firstEntry ? firstEntry.id : null;
         }
-        Backbone.trigger('filter', { filter: this.filter, sort: this.sort, entries });
-        Backbone.trigger('entry-selected', entries.get(this.activeEntryId));
+        Events.emit('filter', { filter: this.filter, sort: this.sort, entries });
+        Events.emit('entry-selected', entries.get(this.activeEntryId));
     },
 
     refresh() {
@@ -739,7 +740,7 @@ const AppModel = Backbone.Model.extend({
             );
         }
         if (file.isKeyChangePending(true)) {
-            Backbone.trigger('key-change-pending', { file });
+            Events.emit('key-change-pending', { file });
         }
         const backup = file.get('backup');
         if (data && backup && backup.enabled && backup.pending) {
@@ -881,7 +882,7 @@ const AppModel = Backbone.Model.extend({
                         if (err) {
                             if (err.code === 'InvalidKey') {
                                 logger.info('Remote key changed, request to enter new key');
-                                Backbone.trigger('remote-key-changed', { file });
+                                Events.emit('remote-key-changed', { file });
                             }
                             return complete(err);
                         }

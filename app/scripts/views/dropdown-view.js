@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
@@ -16,10 +16,11 @@ class DropdownView extends View {
     constructor(model) {
         super(model);
 
-        Backbone.trigger('dropdown-shown');
+        Events.emit('dropdown-shown');
         this.bodyClick = this.bodyClick.bind(this);
 
-        this.listenTo(Backbone, 'show-context-menu dropdown-shown', this.bodyClick);
+        this.listenTo(Events, 'show-context-menu', this.bodyClick);
+        this.listenTo(Events, 'dropdown-shown', this.bodyClick);
         $('body').on('click contextmenu keydown', this.bodyClick);
 
         this.onKey(Keys.DOM_VK_UP, this.upPressed, false, 'dropdown');

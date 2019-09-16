@@ -1,6 +1,6 @@
-import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { AutoType } from 'auto-type';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { KeyHandler } from 'comp/browser/key-handler';
@@ -66,13 +66,13 @@ class DetailsView extends View {
     constructor(model, options) {
         super(model, options);
         this.initScroll();
-        this.listenTo(Backbone, 'entry-selected', this.showEntry);
-        this.listenTo(Backbone, 'copy-password', this.copyPassword);
-        this.listenTo(Backbone, 'copy-user', this.copyUserName);
-        this.listenTo(Backbone, 'copy-url', this.copyUrl);
-        this.listenTo(Backbone, 'toggle-settings', this.settingsToggled);
-        this.listenTo(Backbone, 'context-menu-select', this.contextMenuSelect);
-        this.listenTo(Backbone, 'set-locale', this.render);
+        this.listenTo(Events, 'entry-selected', this.showEntry);
+        this.listenTo(Events, 'copy-password', this.copyPassword);
+        this.listenTo(Events, 'copy-user', this.copyUserName);
+        this.listenTo(Events, 'copy-url', this.copyUrl);
+        this.listenTo(Events, 'toggle-settings', this.settingsToggled);
+        this.listenTo(Events, 'context-menu-select', this.contextMenuSelect);
+        this.listenTo(Events, 'set-locale', this.render);
         this.listenTo(OtpQrReader, 'qr-read', this.otpCodeRead);
         this.listenTo(OtpQrReader, 'enter-manually', this.otpEnterManually);
         this.onKey(
@@ -672,7 +672,7 @@ class DetailsView extends View {
                     this.model.moveToFile(newFile);
                     this.appModel.activeEntryId = this.model.id;
                     this.entryUpdated();
-                    Backbone.trigger('entry-selected', this.model);
+                    Events.emit('entry-selected', this.model);
                     return;
                 } else if (fieldName) {
                     this.model.setField(fieldName, e.val);
@@ -840,7 +840,7 @@ class DetailsView extends View {
             $(e.target).unbind('blur');
             if (this.model.isJustCreated) {
                 this.model.removeWithoutHistory();
-                Backbone.trigger('refresh');
+                Events.emit('refresh');
                 return;
             }
             this.render();
@@ -867,7 +867,7 @@ class DetailsView extends View {
     }
 
     entryUpdated(skipRender) {
-        Backbone.trigger('entry-updated', { entry: this.model });
+        Events.emit('entry-updated', { entry: this.model });
         if (!skipRender) {
             this.render();
         }
@@ -919,7 +919,7 @@ class DetailsView extends View {
     moveToTrash() {
         const doMove = () => {
             this.model.moveToTrash();
-            Backbone.trigger('refresh');
+            Events.emit('refresh');
         };
         if (Features.isMobile) {
             Alerts.yesno({
@@ -935,7 +935,7 @@ class DetailsView extends View {
 
     clone() {
         const newEntry = this.model.cloneEntry(' ' + Locale.detClonedName);
-        Backbone.trigger('select-entry', newEntry);
+        Events.emit('select-entry', newEntry);
     }
 
     copyToClipboard() {
@@ -953,13 +953,13 @@ class DetailsView extends View {
             icon: 'minus-circle',
             success: () => {
                 this.model.deleteFromTrash();
-                Backbone.trigger('refresh');
+                Events.emit('refresh');
             }
         });
     }
 
     backClick() {
-        Backbone.trigger('toggle-details', false);
+        Events.emit('toggle-details', false);
     }
 
     contextMenu(e) {
@@ -989,7 +989,7 @@ class DetailsView extends View {
         if (AutoType.enabled) {
             options.push({ value: 'det-auto-type', icon: 'keyboard-o', text: Locale.detAutoType });
         }
-        Backbone.trigger('show-context-menu', _.extend(e, { options }));
+        Events.emit('show-context-menu', _.extend(e, { options }));
     }
 
     contextMenuSelect(e) {
@@ -1062,7 +1062,7 @@ class DetailsView extends View {
     }
 
     autoType() {
-        Backbone.trigger('auto-type', { entry: this.model });
+        Events.emit('auto-type', { entry: this.model });
     }
 }
 

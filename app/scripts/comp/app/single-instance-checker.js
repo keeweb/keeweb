@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
 
 const LocalStorageKeyName = 'instanceCheck';
@@ -26,7 +26,7 @@ const SingleInstanceChecker = {
             );
         } else if (e.key === LocalStorageResponseKeyName && e.newValue.indexOf(instanceKey) < 0) {
             window.removeEventListener('storage', SingleInstanceChecker.storageChanged);
-            Backbone.trigger('second-instance');
+            Events.emit('second-instance');
         }
     },
 

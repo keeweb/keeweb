@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
 import demoFileData from 'demo.kdbx';
+import { Events } from 'framework/events';
 import { GroupCollection } from 'collections/group-collection';
 import { KdbxToHtml } from 'comp/format/kdbx-to-html';
 import { GroupModel } from 'models/group-model';
@@ -420,7 +421,7 @@ const FileModel = Backbone.Model.extend({
     setModified() {
         if (!this.get('demo')) {
             this.set({ modified: true, dirty: true });
-            Backbone.trigger('file-modified');
+            Events.emit('file-modified');
         }
     },
 
@@ -548,7 +549,7 @@ const FileModel = Backbone.Model.extend({
             this.db.meta.keyChanged = this._oldKeyChangeDate;
         }
         this.set({ keyFileName: '', keyFilePath: '', keyFileChanged: changed });
-        Backbone.trigger('unset-keyfile', this.id);
+        Events.emit('unset-keyfile', this.id);
         this.setModified();
     },
 

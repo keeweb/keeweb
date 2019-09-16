@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { FileInfoCollection } from 'collections/file-info-collection';
 import { AppRightsChecker } from 'comp/app/app-rights-checker';
 import { ExportApi } from 'comp/app/export-api';
@@ -147,7 +147,7 @@ ready(() => {
     function showView() {
         appModel.prepare();
         new AppView(appModel).render();
-        Backbone.trigger('app-ready');
+        Events.emit('app-ready');
         logStartupTime();
     }
 

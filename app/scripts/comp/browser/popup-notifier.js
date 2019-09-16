@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { AuthReceiver } from 'comp/browser/auth-receiver';
 import { Launcher } from 'comp/launcher';
 import { Alerts } from 'comp/ui/alerts';
@@ -21,7 +21,7 @@ const PopupNotifier = {
                 const win = windowOpen.apply(window, args);
                 if (win) {
                     PopupNotifier.deferCheckClosed(win);
-                    Backbone.trigger('popup-opened', win);
+                    Events.emit('popup-opened', win);
                 } else {
                     if (!Alerts.alertDisplayed) {
                         Alerts.error({
@@ -117,7 +117,7 @@ const PopupNotifier = {
             win = null;
         });
         win.loadURL(url);
-        Backbone.trigger('popup-opened', win);
+        Events.emit('popup-opened', win);
         return win;
     },
 
@@ -153,7 +153,7 @@ const PopupNotifier = {
     },
 
     triggerClosed(win) {
-        Backbone.trigger('popup-closed', win);
+        Events.emit('popup-closed', win);
     }
 };
 

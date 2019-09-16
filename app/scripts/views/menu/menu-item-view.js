@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { DragDropInfo } from 'comp/app/drag-drop-info';
 import { KeyHandler } from 'comp/browser/key-handler';
@@ -127,7 +127,7 @@ class MenuItemView extends View {
         if (this.model.get('disabled')) {
             Alerts.info(this.model.get('disabled'));
         } else {
-            Backbone.trigger('menu-select', { item: this.model });
+            Events.emit('menu-select', { item: this.model });
         }
     }
 
@@ -137,7 +137,7 @@ class MenuItemView extends View {
         if (options && options.length) {
             const option = options.find(op => op.get('value') === value);
             if (option) {
-                Backbone.trigger('menu-select', { item: this.model, option });
+                Events.emit('menu-select', { item: this.model, option });
             }
         }
         e.stopImmediatePropagation();
@@ -156,10 +156,10 @@ class MenuItemView extends View {
             e.stopPropagation();
             switch (this.model.get('filterKey')) {
                 case 'tag':
-                    Backbone.trigger('edit-tag', this.model);
+                    Events.emit('edit-tag', this.model);
                     break;
                 case 'group':
-                    Backbone.trigger('edit-group', this.model);
+                    Events.emit('edit-group', this.model);
                     break;
             }
         }
@@ -172,7 +172,7 @@ class MenuItemView extends View {
             body: Locale.menuEmptyTrashAlertBody,
             icon: 'minus-circle',
             success() {
-                Backbone.trigger('empty-trash');
+                Events.emit('empty-trash');
             }
         });
     }
@@ -225,7 +225,7 @@ class MenuItemView extends View {
                     this.model.moveHere(DragDropInfo.dragObject);
                 }
             }
-            Backbone.trigger('refresh');
+            Events.emit('refresh');
         }
     }
 

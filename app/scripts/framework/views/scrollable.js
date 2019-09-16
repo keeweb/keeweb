@@ -1,5 +1,6 @@
 import Backbone from 'backbone';
 import baron from 'baron';
+import { Events } from 'framework/events';
 import { Features } from 'util/features';
 
 const isEnabled = !Features.isMobile;
@@ -49,7 +50,7 @@ const Scrollable = {
 
     initScroll() {
         if (isEnabled) {
-            this.listenTo(Backbone, 'page-geometry', this.pageResized);
+            this.listenTo(Events, 'page-geometry', this.pageResized);
         }
     }
 };

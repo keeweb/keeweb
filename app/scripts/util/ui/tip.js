@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { Features } from 'util/features';
 
 const Tip = function(el, config) {
@@ -32,7 +32,7 @@ Tip.prototype.show = function() {
     if ((!Tip.enabled && !this.force) || !this.title) {
         return;
     }
-    Backbone.on('page-geometry', this.hide);
+    Events.on('page-geometry', this.hide);
     if (this.tipEl) {
         this.tipEl.remove();
         if (this.hideTimeout) {
@@ -83,7 +83,7 @@ Tip.prototype.hide = function() {
     if (this.tipEl) {
         this.tipEl.remove();
         this.tipEl = null;
-        Backbone.off('page-geometry', this.hide);
+        Events.off('page-geometry', this.hide);
     }
 };
 

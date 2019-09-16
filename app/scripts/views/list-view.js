@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { EntryCollection } from 'collections/entry-collection';
 import { DragDropInfo } from 'comp/app/drag-drop-info';
 import { Alerts } from 'comp/ui/alerts';
@@ -58,9 +58,9 @@ class ListView extends View {
         this.listenTo(this, 'show', this.viewShown);
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(this, 'view-resize', this.viewResized);
-        this.listenTo(Backbone, 'filter', this.filterChanged);
-        this.listenTo(Backbone, 'entry-updated', this.entryUpdated);
-        this.listenTo(Backbone, 'set-locale', this.render);
+        this.listenTo(Events, 'filter', this.filterChanged);
+        this.listenTo(Events, 'entry-updated', this.entryUpdated);
+        this.listenTo(Events, 'set-locale', this.render);
 
         this.listenTo(this.model.settings, 'change:tableView', this.setTableView);
 
@@ -145,7 +145,7 @@ class ListView extends View {
         if (!item.active) {
             this.selectItem(item);
         }
-        Backbone.trigger('toggle-details', true);
+        Events.emit('toggle-details', true);
     }
 
     selectPrev() {
@@ -171,7 +171,7 @@ class ListView extends View {
 
     createGroup() {
         const newGroup = this.model.createNewGroup();
-        Backbone.trigger('edit-group', newGroup);
+        Events.emit('edit-group', newGroup);
     }
 
     createTemplate() {
@@ -199,7 +199,7 @@ class ListView extends View {
 
     selectItem(item) {
         this.model.activeEntryId = item.id;
-        Backbone.trigger('entry-selected', item);
+        Events.emit('entry-selected', item);
         this.itemsEl.find('.list__item--active').removeClass('list__item--active');
         const itemEl = document.getElementById(item.id);
         itemEl.classList.add('list__item--active');

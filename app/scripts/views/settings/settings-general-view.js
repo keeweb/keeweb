@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
@@ -293,19 +293,19 @@ class SettingsGeneralView extends View {
     changeTableView(e) {
         const tableView = e.target.checked || false;
         AppSettingsModel.instance.set('tableView', tableView);
-        Backbone.trigger('refresh');
+        Events.emit('refresh');
     }
 
     changeColorfulIcons(e) {
         const colorfulIcons = e.target.checked || false;
         AppSettingsModel.instance.set('colorfulIcons', colorfulIcons);
-        Backbone.trigger('refresh');
+        Events.emit('refresh');
     }
 
     changeDirectAutotype(e) {
         const directAutotype = e.target.checked || false;
         AppSettingsModel.instance.set('directAutotype', directAutotype);
-        Backbone.trigger('refresh');
+        Events.emit('refresh');
     }
 
     restartApp() {
@@ -329,7 +329,7 @@ class SettingsGeneralView extends View {
     changeExpandGroups(e) {
         const expand = e.target.checked;
         AppSettingsModel.instance.set('expandGroups', expand);
-        Backbone.trigger('refresh');
+        Events.emit('refresh');
     }
 
     changeStorageEnabled(e) {

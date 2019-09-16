@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
 import { UpdateModel } from 'models/update-model';
@@ -31,7 +31,7 @@ class FooterView extends View {
 
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(this.model.files, 'update reset change', this.render);
-        this.listenTo(Backbone, 'set-locale', this.render);
+        this.listenTo(Events, 'set-locale', this.render);
         this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render);
     }
 
@@ -53,7 +53,7 @@ class FooterView extends View {
     lockWorkspace(e) {
         if (this.model.files.hasOpenFiles()) {
             e.preventDefault();
-            Backbone.trigger('lock-workspace');
+            Events.emit('lock-workspace');
         }
     }
 
@@ -81,24 +81,24 @@ class FooterView extends View {
             .closest('.footer__db-item')
             .data('file-id');
         if (fileId) {
-            Backbone.trigger('show-file', { fileId });
+            Events.emit('show-file', { fileId });
         }
     }
 
     openFile() {
-        Backbone.trigger('open-file');
+        Events.emit('open-file');
     }
 
     saveAll() {
-        Backbone.trigger('save-all');
+        Events.emit('save-all');
     }
 
     toggleHelp() {
-        Backbone.trigger('toggle-settings', 'help');
+        Events.emit('toggle-settings', 'help');
     }
 
     toggleSettings() {
-        Backbone.trigger('toggle-settings', 'general');
+        Events.emit('toggle-settings', 'general');
     }
 }
 

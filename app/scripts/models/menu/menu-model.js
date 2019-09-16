@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { MenuSectionCollection } from 'collections/menu/menu-section-collection';
 import { Colors } from 'const/colors';
 import { Keys } from 'const/keys';
@@ -95,9 +96,9 @@ const MenuModel = Backbone.Model.extend({
         ]);
         this.set('sections', this.menus.app);
 
-        this.listenTo(Backbone, 'set-locale', this._setLocale);
-        this.listenTo(Backbone, 'select-next-menu-item', this._selectNext);
-        this.listenTo(Backbone, 'select-previous-menu-item', this._selectPrevious);
+        this.listenTo(Events, 'set-locale', this._setLocale);
+        this.listenTo(Events, 'select-next-menu-item', this._selectNext);
+        this.listenTo(Events, 'select-previous-menu-item', this._selectPrevious);
         this._setLocale();
     },
 
@@ -117,9 +118,9 @@ const MenuModel = Backbone.Model.extend({
             const filterValue = (sel.option || sel.item).get('filterValue');
             const filter = {};
             filter[filterKey] = filterValue;
-            Backbone.trigger('set-filter', filter);
+            Events.emit('set-filter', filter);
         } else if (sections === this.menus.settings) {
-            Backbone.trigger('set-page', {
+            Events.emit('set-page', {
                 page: sel.item.get('page'),
                 file: sel.item.get('file')
             });

@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 
@@ -85,7 +85,7 @@ const SettingsManager = {
         }
         _.extend(Locale, this.neutralLocale, localeValues);
         this.activeLocale = loc;
-        Backbone.trigger('set-locale', loc);
+        Events.emit('set-locale', loc);
     },
 
     getBrowserLocale() {

@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
 import { Features } from 'util/features';
 
@@ -10,13 +10,13 @@ const FocusDetector = {
             window.addEventListener('focus', () => {
                 if (!FocusDetector.isFocused) {
                     FocusDetector.isFocused = true;
-                    Backbone.trigger('main-window-focus');
+                    Events.emit('main-window-focus');
                 }
             });
             window.addEventListener('blur', () => {
                 if (FocusDetector.isFocused) {
                     FocusDetector.isFocused = false;
-                    Backbone.trigger('main-window-blur');
+                    Events.emit('main-window-blur');
                 }
             });
         }

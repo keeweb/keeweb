@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
@@ -75,11 +75,11 @@ class MenuView extends View {
     }
 
     selectPreviousSection() {
-        Backbone.trigger('select-previous-menu-item');
+        Events.emit('select-previous-menu-item');
     }
 
     selectNextSection() {
-        Backbone.trigger('select-next-menu-item');
+        Events.emit('select-next-menu-item');
     }
 }
 

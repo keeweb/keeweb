@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 
 const Resizable = {
     listenDrag(dragView) {
@@ -17,7 +17,7 @@ const Resizable = {
         size = Math.max(dragInfo.min, Math.min(dragInfo.max, size));
         this.$el[dragInfo.prop](size);
         this.emit('view-resize', size);
-        Backbone.trigger('page-geometry', { source: 'resizable' });
+        Events.emit('page-geometry', { source: 'resizable' });
     },
 
     autoSize(e) {
@@ -29,7 +29,7 @@ const Resizable = {
         }
         this.fixSize(dragInfo);
         this.emit('view-resize', null);
-        Backbone.trigger('page-geometry', { source: 'resizable' });
+        Events.emit('page-geometry', { source: 'resizable' });
     },
 
     fixSize(cfg) {

@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { AutoTypeFilter } from 'auto-type/auto-type-filter';
 import { AutoTypeHelperFactory } from 'auto-type/auto-type-helper-factory';
 import { AutoTypeParser } from 'auto-type/auto-type-parser';
@@ -25,8 +25,8 @@ const AutoType = {
             return;
         }
         this.appModel = appModel;
-        Backbone.on('auto-type', this.handleEvent, this);
-        Backbone.on('main-window-blur main-window-will-close', this.resetPendingEvent, this);
+        Events.on('auto-type', e => this.handleEvent(e));
+        Events.on('main-window-blur main-window-will-close', e => this.resetPendingEvent(e));
     },
 
     handleEvent(e) {
@@ -66,7 +66,7 @@ const AutoType = {
         });
 
         if (AppSettingsModel.instance.get('lockOnAutoType')) {
-            Backbone.trigger('lock-workspace');
+            Events.emit('lock-workspace');
         }
     },
 
@@ -249,15 +249,11 @@ const AutoType = {
         this.selectEntryView.render();
         this.selectEntryView.on('show-open-files', () => {
             this.selectEntryView.hide();
-            Backbone.trigger('open-file');
-            Backbone.once(
-                'closed-open-view',
-                () => {
-                    this.selectEntryView.show();
-                    this.selectEntryView.setupKeys();
-                },
-                this
-            );
+            Events.emit('open-file');
+            Events.once('closed-open-view', () => {
+                this.selectEntryView.show();
+                this.selectEntryView.setupKeys();
+            });
         });
     },
 

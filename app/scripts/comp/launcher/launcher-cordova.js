@@ -1,6 +1,6 @@
 /* global FingerprintAuth */
 
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 
 const Launcher = {
     name: 'cordova',
@@ -13,7 +13,7 @@ const Launcher = {
         document.addEventListener(
             'pause',
             () => {
-                Backbone.trigger('app-minimized');
+                Events.emit('app-minimized');
             },
             false
         );

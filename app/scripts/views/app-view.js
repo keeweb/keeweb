@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { IdleTracker } from 'comp/browser/idle-tracker';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Launcher } from 'comp/launcher';
@@ -63,33 +63,33 @@ class AppView extends View {
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
         this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
 
-        this.listenTo(Backbone, 'select-all', this.selectAll);
-        this.listenTo(Backbone, 'menu-select', this.menuSelect);
-        this.listenTo(Backbone, 'lock-workspace', this.lockWorkspace);
-        this.listenTo(Backbone, 'show-file', this.showFileSettings);
-        this.listenTo(Backbone, 'open-file', this.toggleOpenFile);
-        this.listenTo(Backbone, 'save-all', this.saveAll);
-        this.listenTo(Backbone, 'remote-key-changed', this.remoteKeyChanged);
-        this.listenTo(Backbone, 'key-change-pending', this.keyChangePending);
-        this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
-        this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
-        this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
-        this.listenTo(Backbone, 'edit-group', this.editGroup);
-        this.listenTo(Backbone, 'edit-tag', this.editTag);
-        this.listenTo(Backbone, 'edit-generator-presets', this.editGeneratorPresets);
-        this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
-        this.listenTo(Backbone, 'user-idle', this.userIdle);
-        this.listenTo(Backbone, 'os-lock', this.osLocked);
-        this.listenTo(Backbone, 'power-monitor-suspend', this.osLocked);
-        this.listenTo(Backbone, 'app-minimized', this.appMinimized);
-        this.listenTo(Backbone, 'show-context-menu', this.showContextMenu);
-        this.listenTo(Backbone, 'second-instance', this.showSingleInstanceAlert);
-        this.listenTo(Backbone, 'file-modified', this.handleAutoSaveTimer);
+        this.listenTo(Events, 'select-all', this.selectAll);
+        this.listenTo(Events, 'menu-select', this.menuSelect);
+        this.listenTo(Events, 'lock-workspace', this.lockWorkspace);
+        this.listenTo(Events, 'show-file', this.showFileSettings);
+        this.listenTo(Events, 'open-file', this.toggleOpenFile);
+        this.listenTo(Events, 'save-all', this.saveAll);
+        this.listenTo(Events, 'remote-key-changed', this.remoteKeyChanged);
+        this.listenTo(Events, 'key-change-pending', this.keyChangePending);
+        this.listenTo(Events, 'toggle-settings', this.toggleSettings);
+        this.listenTo(Events, 'toggle-menu', this.toggleMenu);
+        this.listenTo(Events, 'toggle-details', this.toggleDetails);
+        this.listenTo(Events, 'edit-group', this.editGroup);
+        this.listenTo(Events, 'edit-tag', this.editTag);
+        this.listenTo(Events, 'edit-generator-presets', this.editGeneratorPresets);
+        this.listenTo(Events, 'launcher-open-file', this.launcherOpenFile);
+        this.listenTo(Events, 'user-idle', this.userIdle);
+        this.listenTo(Events, 'os-lock', this.osLocked);
+        this.listenTo(Events, 'power-monitor-suspend', this.osLocked);
+        this.listenTo(Events, 'app-minimized', this.appMinimized);
+        this.listenTo(Events, 'show-context-menu', this.showContextMenu);
+        this.listenTo(Events, 'second-instance', this.showSingleInstanceAlert);
+        this.listenTo(Events, 'file-modified', this.handleAutoSaveTimer);
 
         this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
 
-        this.listenTo(Backbone, 'enter-full-screen', this.enterFullScreen);
-        this.listenTo(Backbone, 'leave-full-screen', this.leaveFullScreen);
+        this.listenTo(Events, 'enter-full-screen', this.enterFullScreen);
+        this.listenTo(Events, 'leave-full-screen', this.leaveFullScreen);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
@@ -166,7 +166,7 @@ class AppView extends View {
         this.views.open = new OpenView(this.model);
         this.views.open.render();
         this.views.open.on('close', () => {
-            Backbone.trigger('closed-open-view');
+            Events.emit('closed-open-view');
         });
         this.views.open.on('close', () => this.showEntries());
     }
@@ -344,7 +344,7 @@ class AppView extends View {
                 this.prevented = true;
             }
         };
-        Backbone.trigger('main-window-will-close', exitEvent);
+        Events.emit('main-window-will-close', exitEvent);
         if (exitEvent.prevented) {
             Launcher.preventExit(e);
             return;
@@ -414,12 +414,12 @@ class AppView extends View {
     }
 
     windowResize() {
-        Backbone.trigger('page-geometry', { source: 'window' });
+        Events.emit('page-geometry', { source: 'window' });
     }
 
     windowBlur(e) {
         if (e.target === window) {
-            Backbone.trigger('page-blur');
+            Events.emit('page-blur');
         }
     }
 
@@ -726,7 +726,7 @@ class AppView extends View {
 
     contextMenuSelect(e) {
         this.hideContextMenu();
-        Backbone.trigger('context-menu-select', e);
+        Events.emit('context-menu-select', e);
     }
 
     showSingleInstanceAlert() {
@@ -776,7 +776,7 @@ class AppView extends View {
 
     bodyClick(e) {
         IdleTracker.regUserAction();
-        Backbone.trigger('click', e);
+        Events.emit('click', e);
     }
 }
 

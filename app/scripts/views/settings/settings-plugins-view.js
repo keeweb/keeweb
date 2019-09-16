@@ -1,5 +1,6 @@
 import Backbone from 'backbone';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { RuntimeInfo } from 'comp/app/runtime-info';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Links } from 'const/links';
@@ -82,7 +83,7 @@ class SettingsPluginsView extends View {
 
     pluginGalleryLoadComplete() {
         this.render();
-        Backbone.trigger('page-geometry', { source: 'view' });
+        Events.emit('page-geometry', { source: 'view' });
     }
 
     getGalleryPlugins() {

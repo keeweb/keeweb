@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { AppSettingsModel } from 'models/app-settings-model';
 
 const IdleTracker = {
@@ -10,7 +10,7 @@ const IdleTracker = {
         const idleMinutes = (Date.now() - this.actionTime) / 1000 / 60;
         const maxIdleMinutes = AppSettingsModel.instance.get('idleMinutes');
         if (maxIdleMinutes && idleMinutes > maxIdleMinutes) {
-            Backbone.trigger('user-idle');
+            Events.emit('user-idle');
         }
     },
     regUserAction() {
@@ -18,6 +18,6 @@ const IdleTracker = {
     }
 };
 
-Backbone.on('power-monitor-resume', IdleTracker.checkIdle, IdleTracker);
+Events.on('power-monitor-resume', () => IdleTracker.checkIdle);
 
 export { IdleTracker };

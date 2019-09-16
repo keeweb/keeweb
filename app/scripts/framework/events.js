@@ -1,12 +1,12 @@
 import EventEmitter from 'events';
 
-class EventBus extends EventEmitter {
+class Events extends EventEmitter {
     constructor() {
         super();
         this.setMaxListeners(100);
     }
 }
 
-const instance = new EventBus();
+const instance = new Events();
 
-export { instance as EventBus };
+export { instance as Events };

@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Locale } from 'util/locale';
 import { Tip } from 'util/ui/tip';
@@ -41,7 +41,7 @@ const Copyable = {
                 AppSettingsModel.instance.get('lockOnCopy')
             ) {
                 setTimeout(() => {
-                    Backbone.trigger('lock-workspace');
+                    Events.emit('lock-workspace');
                 }, Timeouts.BeforeAutoLock);
             }
         }, Timeouts.CopyTip);

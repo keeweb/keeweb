@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { Keys } from 'const/keys';
 import { Scrollable } from 'framework/views/scrollable';
 import { StringFormat } from 'util/formatting/string-format';
@@ -17,7 +17,7 @@ class SettingsView extends View {
     constructor(model, options) {
         super(model, options);
         this.initScroll();
-        this.listenTo(Backbone, 'set-page', this.setPage);
+        this.listenTo(Events, 'set-page', this.setPage);
         this.onKey(Keys.DOM_VK_ESCAPE, this.returnToApp);
     }
 
@@ -47,7 +47,7 @@ class SettingsView extends View {
     }
 
     returnToApp() {
-        Backbone.trigger('toggle-settings', false);
+        Events.emit('toggle-settings', false);
     }
 }
 

@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import { Events } from 'framework/events';
 import { RuntimeInfo } from 'comp/app/runtime-info';
 import { Transport } from 'comp/browser/transport';
 import { Launcher } from 'comp/launcher';
@@ -193,7 +193,7 @@ const Updater = {
                     } else {
                         UpdateModel.instance.set({ updateStatus: 'ready', updateError: null });
                         if (!startedByUser) {
-                            Backbone.trigger('update-app');
+                            Events.emit('update-app');
                         }
                         if (typeof successCallback === 'function') {
                             successCallback();
