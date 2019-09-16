@@ -178,7 +178,7 @@ class MenuItemView extends View {
     }
 
     dropAllowed(e) {
-        const types = e.originalEvent.dataTransfer.types;
+        const types = e.dataTransfer.types;
         for (let i = 0; i < types.length; i++) {
             if (types[i] === 'text/group' || types[i] === 'text/entry') {
                 return true;
@@ -190,8 +190,8 @@ class MenuItemView extends View {
     dragstart(e) {
         e.stopPropagation();
         if (this.model.get('drag')) {
-            e.originalEvent.dataTransfer.setData('text/group', this.model.id);
-            e.originalEvent.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/group', this.model.id);
+            e.dataTransfer.effectAllowed = 'move';
             DragDropInfo.dragObject = this.model;
         }
     }
@@ -230,7 +230,7 @@ class MenuItemView extends View {
     }
 
     dropTopAllowed(e) {
-        const types = e.originalEvent.dataTransfer.types;
+        const types = e.dataTransfer.types;
         for (let i = 0; i < types.length; i++) {
             if (types[i] === 'text/group') {
                 return true;

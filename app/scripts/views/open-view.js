@@ -34,7 +34,7 @@ class OpenView extends View {
         'click .open__icon-more': 'toggleMore',
         'click .open__icon-storage': 'openStorage',
         'click .open__icon-settings': 'openSettings',
-        'click .open__pass-input': 'passInputClick',
+        'click .open__pass-input[readonly]': 'openFile',
         'input .open__pass-input': 'inputInput',
         'keydown .open__pass-input': 'inputKeydown',
         'keyup .open__pass-input': 'inputKeyup',
@@ -322,12 +322,6 @@ class OpenView extends View {
         });
     }
 
-    passInputClick(e) {
-        if (e.target.readOnly) {
-            this.openFile();
-        }
-    }
-
     openFile() {
         if (this.model.settings.get('canOpen') === false) {
             return;
@@ -466,7 +460,7 @@ class OpenView extends View {
         }
         e.preventDefault();
         e.stopPropagation();
-        const dt = e.originalEvent.dataTransfer;
+        const dt = e.dataTransfer;
         if (
             !dt.types ||
             (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))
@@ -508,7 +502,7 @@ class OpenView extends View {
         }
         this.closeConfig();
         this.$el.removeClass('open--drag');
-        const files = [...(e.target.files || e.originalEvent.dataTransfer.files)];
+        const files = [...(e.target.files || e.dataTransfer.files)];
         const dataFile = files.find(file => /\.kdbx$/i.test(file.name));
         const keyFile = files.find(file => /\.key$/i.test(file.name));
         if (dataFile) {

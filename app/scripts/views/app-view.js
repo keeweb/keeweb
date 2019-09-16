@@ -743,7 +743,7 @@ class AppView extends View {
 
     dragover(e) {
         e.preventDefault();
-        e.originalEvent.dataTransfer.dropEffect = 'none';
+        e.dataTransfer.dropEffect = 'none';
     }
 
     drop(e) {

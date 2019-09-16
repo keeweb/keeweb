@@ -265,8 +265,8 @@ class ListView extends View {
         const id = $(e.target)
             .closest('.list__item')
             .attr('id');
-        e.originalEvent.dataTransfer.setData('text/entry', id);
-        e.originalEvent.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/entry', id);
+        e.dataTransfer.effectAllowed = 'move';
         DragDropInfo.dragObject = this.items.get(id);
     }
 

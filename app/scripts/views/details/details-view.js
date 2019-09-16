@@ -727,7 +727,7 @@ class DetailsView extends View {
     dragover(e) {
         e.preventDefault();
         e.stopPropagation();
-        const dt = e.originalEvent.dataTransfer;
+        const dt = e.dataTransfer;
         if (
             !dt.types ||
             (dt.types.indexOf ? dt.types.indexOf('Files') === -1 : !dt.types.contains('Files'))
@@ -765,7 +765,7 @@ class DetailsView extends View {
         }
         this.$el.find('.details').removeClass('details--drag');
         this.dragging = false;
-        const files = e.target.files || e.originalEvent.dataTransfer.files;
+        const files = e.target.files || e.dataTransfer.files;
         this.addAttachedFiles(files);
     }
 

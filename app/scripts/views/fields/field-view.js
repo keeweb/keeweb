@@ -107,7 +107,7 @@ class FieldView extends View {
         if (!this.value) {
             return;
         }
-        const dt = e.originalEvent.dataTransfer;
+        const dt = e.dataTransfer;
         const txtval = this.value.isProtected ? this.value.getText() : this.value;
         if (this.valueEl[0].tagName.toLowerCase() === 'a') {
             dt.setData('text/uri-list', txtval);

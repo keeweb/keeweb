@@ -4,6 +4,11 @@ import { Tip } from 'util/ui/tip';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Logger } from 'util/logger';
 
+const OnlyDirectEvents = {
+    mouseenter: true,
+    mouseleave: true
+};
+
 class View extends EventEmitter {
     parent = undefined;
     template = undefined;
@@ -13,7 +18,7 @@ class View extends EventEmitter {
     views = {};
     hidden = false;
     removed = false;
-    boundEvents = [];
+    eventListeners = {};
     debugLogger = localStorage.debugViews ? new Logger('view', this.constructor.name) : undefined;
 
     constructor(model = undefined, options = {}) {
@@ -40,9 +45,7 @@ class View extends EventEmitter {
             Tip.destroyTips(this.el);
         }
 
-        this.unbindEvents();
         this.renderElement(templateData);
-        this.bindEvents();
 
         Tip.createTips(this.el);
 
@@ -81,6 +84,7 @@ class View extends EventEmitter {
                     this.el = root;
                     parent.appendChild(this.el);
                 }
+                this.bindEvents();
             } else {
                 throw new Error(
                     `Error rendering ${this.constructor.name}: I don't know how to insert the view`
@@ -91,32 +95,56 @@ class View extends EventEmitter {
     }
 
     bindEvents() {
+        const eventsMap = {};
         for (const [eventDef, method] of Object.entries(this.events)) {
             const spaceIx = eventDef.indexOf(' ');
-            let event, targets;
+            let event, selector;
             if (spaceIx > 0) {
                 event = eventDef.substr(0, spaceIx);
-                const selector = eventDef.substr(spaceIx + 1);
-                targets = this.el.querySelectorAll(selector);
+                selector = eventDef.substr(spaceIx + 1);
+                if (OnlyDirectEvents[event]) {
+                    throw new Error(
+                        `Event listener ${eventDef} defined in ${this.constructor.name} ` +
+                            `can be installed only on the view itself`
+                    );
+                }
             } else {
                 event = eventDef;
-                targets = [this.el];
             }
-            for (const target of targets) {
-                const listener = e => {
-                    this.debugLogger && this.debugLogger.debug('Listener', method);
-                    this[method](e);
-                };
-                target.addEventListener(event, listener);
-                this.boundEvents.push({ target, event, listener });
+            if (!eventsMap[event]) {
+                eventsMap[event] = [];
             }
+            eventsMap[event].push({ selector, method });
+        }
+        for (const [event, handlers] of Object.entries(eventsMap)) {
+            this.debugLogger && this.debugLogger.debug('Bind', event, handlers);
+            const listener = e => this.eventListener(e, handlers);
+            this.eventListeners[event] = listener;
+            this.el.addEventListener(event, listener);
         }
     }
 
     unbindEvents() {
-        for (const boundEvent of this.boundEvents) {
-            const { target, event, listener } = boundEvent;
-            target.removeEventListener(event, listener);
+        for (const [event, listener] of Object.values(this.eventListeners)) {
+            this.el.removeEventListener(event, listener);
+        }
+    }
+
+    eventListener(e, handlers) {
+        this.debugLogger && this.debugLogger.debug('Listener fired', e.type);
+        for (const { selector, method } of handlers) {
+            if (selector) {
+                const closest = e.target.closest(selector);
+                if (!closest || !this.el.contains(closest)) {
+                    continue;
+                }
+            }
+            if (!this[method]) {
+                this.debugLogger && this.debugLogger.debug('Method not defined', method);
+                continue;
+            }
+            this.debugLogger && this.debugLogger.debug('Handling event', e.type, method);
+            this[method](e);
         }
     }
 
