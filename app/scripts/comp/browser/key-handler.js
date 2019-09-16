@@ -1,16 +1,21 @@
-import Backbone from 'backbone';
+import EventEmitter from 'events';
 import { IdleTracker } from 'comp/browser/idle-tracker';
 import { Keys } from 'const/keys';
 
 const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
 
-const KeyHandler = {
-    SHORTCUT_ACTION: 1,
-    SHORTCUT_OPT: 2,
-    SHORTCUT_SHIFT: 4,
+class KeyHandler extends EventEmitter {
+    SHORTCUT_ACTION = 1;
+    SHORTCUT_OPT = 2;
+    SHORTCUT_SHIFT = 4;
 
-    shortcuts: {},
-    modal: false,
+    shortcuts = {};
+    modal = false;
+
+    constructor() {
+        super();
+        this.setMaxListeners(100);
+    }
 
     init() {
         $(document).bind('keypress', this.keypress.bind(this));
@@ -25,7 +30,8 @@ const KeyHandler = {
                 noPrevent: true
             }
         ];
-    },
+    }
+
     onKey(key, handler, thisArg, shortcut, modal, noPrevent) {
         let keyShortcuts = this.shortcuts[key];
         if (!keyShortcuts) {
@@ -38,20 +44,24 @@ const KeyHandler = {
             modal,
             noPrevent
         });
-    },
+    }
+
     offKey(key, handler, thisArg) {
         if (this.shortcuts[key]) {
             this.shortcuts[key] = _.reject(this.shortcuts[key], sh => {
                 return sh.handler === handler && sh.thisArg === thisArg;
             });
         }
-    },
+    }
+
     setModal(modal) {
         this.modal = modal;
-    },
+    }
+
     isActionKey(e) {
         return e[shortcutKeyProp];
-    },
+    }
+
     keydown(e) {
         IdleTracker.regUserAction();
         const code = e.keyCode || e.which;
@@ -99,25 +109,28 @@ const KeyHandler = {
                 }
             }
         }
-    },
+    }
+
     keypress(e) {
         if (
             !this.modal &&
-            e.charCode !== Keys.DOM_VK_RETURN &&
-            e.charCode !== Keys.DOM_VK_ESCAPE &&
-            e.charCode !== Keys.DOM_VK_TAB &&
+            e.which !== Keys.DOM_VK_RETURN &&
+            e.which !== Keys.DOM_VK_ESCAPE &&
+            e.which !== Keys.DOM_VK_TAB &&
             !e.altKey &&
             !e.ctrlKey &&
             !e.metaKey
         ) {
-            this.trigger('keypress', e);
+            this.emit('keypress', e);
         } else if (this.modal) {
-            this.trigger('keypress:' + this.modal, e);
+            this.emit('keypress:' + this.modal, e);
         }
-    },
+    }
+
     reg() {
         IdleTracker.regUserAction();
-    },
+    }
+
     handleAKey(e) {
         if (
             e.target.tagName.toLowerCase() === 'input' &&
@@ -128,8 +141,8 @@ const KeyHandler = {
             e.preventDefault();
         }
     }
-};
+}
 
-_.extend(KeyHandler, Backbone.Events);
+const instance = new KeyHandler();
 
-export { KeyHandler };
+export { instance as KeyHandler };

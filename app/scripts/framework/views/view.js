@@ -125,7 +125,7 @@ class View extends EventEmitter {
     }
 
     unbindEvents() {
-        for (const [event, listener] of Object.values(this.eventListeners)) {
+        for (const [event, listener] of Object.entries(this.eventListeners)) {
             this.el.removeEventListener(event, listener);
         }
     }
