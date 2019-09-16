@@ -16,8 +16,6 @@ Donate: [OpenCollective](https://opencollective.com/keeweb#support)
 
 # Status
 
-#### Usage
-
 The app is quite stable now. Basic stuff, as well as more advanced operations, should be rather reliable.
 
 # Self-hosting
