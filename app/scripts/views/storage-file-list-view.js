@@ -7,7 +7,8 @@ class StorageFileListView extends View {
 
     events = {
         'click .open-list__file': 'fileClick',
-        'click .open-list__check-wrap': 'showAllCheckClick'
+        'click .open-list__check-wrap': 'showAllCheckClick',
+        'change #open-list__check': 'showAllCheckChange'
     };
 
     constructor(model) {
@@ -54,7 +55,10 @@ class StorageFileListView extends View {
 
     showAllCheckClick(e) {
         e.stopPropagation();
-        this.showHiddenFiles = !this.showHiddenFiles;
+    }
+
+    showAllCheckChange(e) {
+        this.showHiddenFiles = e.target.checked;
         this.render();
     }
 }
