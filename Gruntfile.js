@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const webpackConfig = require('./webpack.config');
+const webpackConfig = require('./build/webpack.config');
 const pkg = require('./package.json');
 
 module.exports = function(grunt) {
