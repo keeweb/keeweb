@@ -22,7 +22,7 @@ class ListView extends View {
     emptyTemplate = emptyTemplate;
 
     events = {
-        'click .list__item': 'itemClick',
+        'click': 'click',
         'click .list__table-options': 'tableOptionsClick',
         'dragstart .list__item': 'itemDragStart'
     };
@@ -136,10 +136,12 @@ class ListView extends View {
         return this.model.sort.replace('-', '');
     }
 
-    itemClick(e) {
-        const id = $(e.target)
-            .closest('.list__item')
-            .attr('id');
+    click(e) {
+        const listItemEl = e.target.closest('.list__item');
+        if (!listItemEl) {
+            return;
+        }
+        const id = listItemEl.id;
         const item = this.items.get(id);
         if (!item.active) {
             this.selectItem(item);
