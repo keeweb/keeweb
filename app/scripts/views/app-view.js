@@ -303,9 +303,11 @@ const AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.keyChange = new KeyChangeView({
-            model: { file, expired: viewConfig.expired, remote: viewConfig.remote }
+            file,
+            expired: viewConfig.expired,
+            remote: viewConfig.remote
         });
-        this.views.keyChange.setElement(this.$el.find('.app__body')).render();
+        this.views.keyChange.render();
         this.views.keyChange.on('accept', this.keyChangeAccept.bind(this));
         this.views.keyChange.on('cancel', this.showEntries.bind(this));
     },
