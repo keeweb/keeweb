@@ -1,4 +1,4 @@
-import Backbone from 'backbone';
+import EventEmitter from 'events';
 import QrCode from 'jsqrcode';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Alerts } from 'comp/ui/alerts';
@@ -9,10 +9,15 @@ import { Logger } from 'util/logger';
 
 const logger = new Logger('otp-qr-reader');
 
-const OtpQrReader = {
-    alert: null,
+class OtpQrReader extends EventEmitter {
+    alert = null;
 
-    fileInput: null,
+    fileInput = null;
+
+    constructor() {
+        super();
+        this.pasteEvent = this.pasteEvent.bind(this);
+    }
 
     read() {
         let screenshotKey = Shortcuts.screenshotToClipboardShortcut();
@@ -28,7 +33,7 @@ const OtpQrReader = {
                   '{}',
                   '<code>' + Shortcuts.actionShortcutSymbol() + 'V</code>'
               );
-        OtpQrReader.startListenClipoard();
+        this.startListenClipoard();
         const buttons = [
             { result: 'manually', title: Locale.detSetupOtpManualButton, silent: true },
             Alerts.buttons.cancel
@@ -39,7 +44,7 @@ const OtpQrReader = {
         const line3 = Features.isMobile
             ? Locale.detSetupOtpAlertBody3Mobile
             : Locale.detSetupOtpAlertBody3.replace('{}', pasteKey || '');
-        OtpQrReader.alert = Alerts.alert({
+        this.alert = Alerts.alert({
             icon: 'qrcode',
             header: Locale.detSetupOtpAlert,
             body: [
@@ -53,46 +58,46 @@ const OtpQrReader = {
             click: '',
             enter: '',
             buttons,
-            complete(res) {
-                OtpQrReader.alert = null;
-                OtpQrReader.stopListenClipboard();
+            complete: res => {
+                this.alert = null;
+                this.stopListenClipboard();
                 if (res === 'select') {
-                    OtpQrReader.selectFile();
+                    this.selectFile();
                 } else if (res === 'manually') {
-                    OtpQrReader.enterManually();
+                    this.enterManually();
                 }
             }
         });
-    },
+    }
 
     selectFile() {
-        if (!OtpQrReader.fileInput) {
+        if (!this.fileInput) {
             const input = document.createElement('input');
             input.setAttribute('type', 'file');
             input.setAttribute('capture', 'camera');
             input.setAttribute('accept', 'image/*');
             input.setAttribute('class', 'hide-by-pos');
-            OtpQrReader.fileInput = input;
-            OtpQrReader.fileInput.onchange = OtpQrReader.fileSelected;
+            this.fileInput = input;
+            this.fileInput.onchange = this.fileSelected;
         }
-        OtpQrReader.fileInput.click();
-    },
+        this.fileInput.click();
+    }
 
     fileSelected() {
-        const file = OtpQrReader.fileInput.files[0];
+        const file = this.fileInput.files[0];
         if (!file || file.type.indexOf('image') < 0) {
             return;
         }
-        OtpQrReader.readFile(file);
-    },
+        this.readFile(file);
+    }
 
     startListenClipoard() {
-        document.addEventListener('paste', OtpQrReader.pasteEvent);
-    },
+        document.addEventListener('paste', this.pasteEvent);
+    }
 
     stopListenClipboard() {
-        document.removeEventListener('paste', OtpQrReader.pasteEvent);
-    },
+        document.removeEventListener('paste', this.pasteEvent);
+    }
 
     pasteEvent(e) {
         const item = _.find(
@@ -104,35 +109,35 @@ const OtpQrReader = {
             return;
         }
         logger.info('Reading pasted image', item.type);
-        if (OtpQrReader.alert) {
-            OtpQrReader.alert.change({
+        if (this.alert) {
+            this.alert.change({
                 header: Locale.detOtpImageReading
             });
         }
-        OtpQrReader.readFile(item.getAsFile());
-    },
+        this.readFile(item.getAsFile());
+    }
 
     readFile(file) {
         const reader = new FileReader();
-        reader.onload = function() {
+        reader.onload = () => {
             logger.debug('Image data loaded');
-            OtpQrReader.readQr(reader.result);
+            this.readQr(reader.result);
         };
         reader.readAsDataURL(file);
-    },
+    }
 
     readQr(imageData) {
         const image = new Image();
-        image.onload = function() {
+        image.onload = () => {
             logger.debug('Image format loaded');
             try {
                 const ts = logger.ts();
                 const url = new QrCode(image).decode();
                 logger.info('QR code read', logger.ts(ts));
-                OtpQrReader.removeAlert();
+                this.removeAlert();
                 try {
                     const otp = Otp.parseUrl(url);
-                    OtpQrReader.trigger('qr-read', otp);
+                    this.emit('qr-read', otp);
                 } catch (err) {
                     logger.error('Error parsing QR code', err);
                     Alerts.error({
@@ -146,35 +151,35 @@ const OtpQrReader = {
                 }
             } catch (e) {
                 logger.error('Error reading QR code', e);
-                OtpQrReader.removeAlert();
+                this.removeAlert();
                 Alerts.error({
                     header: Locale.detOtpQrError,
                     body: Locale.detOtpQrErrorBody
                 });
             }
         };
-        image.onerror = function() {
+        image.onerror = () => {
             logger.debug('Image load error');
-            OtpQrReader.removeAlert();
+            this.removeAlert();
             Alerts.error({
                 header: Locale.detOtpImageError,
                 body: Locale.detOtpImageErrorBody
             });
         };
         image.src = imageData;
-    },
+    }
 
     enterManually() {
-        OtpQrReader.trigger('enter-manually');
-    },
+        this.emit('enter-manually');
+    }
 
     removeAlert() {
-        if (OtpQrReader.alert) {
-            OtpQrReader.alert.closeImmediate();
+        if (this.alert) {
+            this.alert.closeImmediate();
         }
     }
-};
+}
 
-_.extend(OtpQrReader, Backbone.Events);
+const instance = new OtpQrReader();
 
-export { OtpQrReader };
+export { instance as OtpQrReader };
