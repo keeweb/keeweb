@@ -68,7 +68,8 @@ class FooterView extends View {
         const bodyRect = document.body.getBoundingClientRect();
         const right = bodyRect.right - rect.right;
         const bottom = bodyRect.bottom - rect.top;
-        const generator = new GeneratorView({ copy: true, pos: { right, bottom } }).render();
+        const generator = new GeneratorView({ copy: true, pos: { right, bottom } });
+        generator.render();
         generator.once('remove', () => {
             delete this.views.gen;
         });

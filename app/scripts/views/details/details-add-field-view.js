@@ -14,7 +14,6 @@ class DetailsAddFieldView extends View {
     render() {
         super.render();
         this.labelEl = this.$el.find('.details__field-label');
-        return this;
     }
 
     fieldLabelClick() {

@@ -18,6 +18,10 @@ class AutoTypeHintView extends View {
         this.inputBlur = this.inputBlur.bind(this);
         $('body').on('click', this.bodyClick);
         this.input.addEventListener('blur', this.inputBlur);
+        this.once('remove', () => {
+            $('body').off('click', this.bodyClick);
+            this.input.removeEventListener('blur', this.inputBlur);
+        });
     }
 
     render() {
@@ -37,13 +41,6 @@ class AutoTypeHintView extends View {
         if (selfRect.bottom > bodyRect.bottom) {
             this.$el.css('height', selfRect.height + bodyRect.bottom - selfRect.bottom - 1);
         }
-        return this;
-    }
-
-    remove() {
-        $('body').off('click', this.bodyClick);
-        this.input.removeEventListener('blur', this.inputBlur);
-        super.remove(this);
     }
 
     bodyClick(e) {

@@ -40,7 +40,7 @@ import groupTemplate from 'templates/details/details-group.hbs';
 
 class DetailsView extends View {
     parent = '.app__details';
-    fieldViews = null;
+    fieldViews = [];
     passEditView = null;
     userEditView = null;
     urlEditView = null;
@@ -65,7 +65,6 @@ class DetailsView extends View {
 
     constructor(model, options) {
         super(model, options);
-        this.fieldViews = [];
         this.initScroll();
         this.listenTo(Backbone, 'entry-selected', this.showEntry);
         this.listenTo(Backbone, 'copy-password', this.copyPassword);
@@ -146,7 +145,6 @@ class DetailsView extends View {
         }
         this.pageResized();
         this.showCopyTip();
-        return this;
     }
 
     addFieldViews() {

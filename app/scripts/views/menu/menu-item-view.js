@@ -27,11 +27,10 @@ class MenuItemView extends View {
     };
 
     iconEl = null;
-    itemViews = null;
+    itemViews = [];
 
     constructor(model, options) {
         super(model, options);
-        this.itemViews = [];
         this.listenTo(this.model, 'change:title', this.changeTitle);
         this.listenTo(this.model, 'change:icon', this.changeIcon);
         this.listenTo(this.model, 'change:customIconId', this.render);

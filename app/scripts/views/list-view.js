@@ -109,7 +109,6 @@ class ListView extends View {
             this.itemsEl.html(this.emptyTemplate());
         }
         this.pageResized();
-        return this;
     }
 
     getItemsTemplate() {

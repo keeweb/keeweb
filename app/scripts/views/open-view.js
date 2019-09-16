@@ -104,7 +104,6 @@ class OpenView extends View {
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
-        return this;
     }
 
     resetParams() {

@@ -10,14 +10,13 @@ class MenuSectionView extends View {
 
     events = {};
 
-    itemViews = null;
+    itemViews = [];
 
     minHeight = 55;
     autoHeigh = 'auto';
 
     constructor(model, options) {
         super(model, options);
-        this.itemViews = [];
         this.listenTo(this.model, 'change-items', this.itemsChanged);
         this.listenTo(this, 'view-resize', this.viewResized);
         this.once('remove', () => {

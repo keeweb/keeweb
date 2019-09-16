@@ -54,7 +54,8 @@ class DetailsAutoTypeView extends View {
 
     seqFocus(e) {
         if (!this.views.hint) {
-            this.views.hint = new AutoTypeHintView({ input: e.target }).render();
+            this.views.hint = new AutoTypeHintView({ input: e.target });
+            this.views.hint.render();
             this.views.hint.on('remove', () => {
                 delete this.views.hint;
             });

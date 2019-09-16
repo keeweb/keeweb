@@ -41,7 +41,6 @@ class ModalView extends View {
             this.model.view.parent = '.modal__body';
             this.model.view.render();
         }
-        return this;
     }
 
     change(config) {

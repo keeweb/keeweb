@@ -102,7 +102,6 @@ class ListSearchView extends View {
         this.sortOptions.forEach(function(opt) {
             this.sortIcons[opt.value] = opt.icon;
         }, this);
-        this.views = {};
         this.advancedSearch = {
             user: true,
             other: true,
@@ -175,7 +174,6 @@ class ListSearchView extends View {
         if (searchVal) {
             this.inputEl.val(searchVal);
         }
-        return this;
     }
 
     inputKeyDown(e) {

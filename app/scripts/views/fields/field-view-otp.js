@@ -12,6 +12,11 @@ class FieldViewOtp extends FieldViewText {
     otpValidUntil = 0;
     fieldOpacity = null;
 
+    constructor(model, options) {
+        super(model, options);
+        this.once('remove', () => this.resetOtp());
+    }
+
     renderValue(value) {
         if (!value) {
             this.resetOtp();
@@ -32,11 +37,6 @@ class FieldViewOtp extends FieldViewText {
         super.render();
         this.fieldOpacity = null;
         this.otpTick();
-    }
-
-    remove() {
-        this.resetOtp();
-        super.remove();
     }
 
     resetOtp() {

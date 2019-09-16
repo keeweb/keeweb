@@ -60,7 +60,6 @@ class MenuView extends View {
         if (typeof AppSettingsModel.instance.get('menuViewWidth') === 'number') {
             this.$el.width(AppSettingsModel.instance.get('menuViewWidth'));
         }
-        return this;
     }
 
     menuChanged() {

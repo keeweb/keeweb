@@ -85,7 +85,6 @@ class GeneratorView extends View {
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
         this.generate();
-        return this;
     }
 
     createPresets() {

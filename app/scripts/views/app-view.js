@@ -148,7 +148,6 @@ class AppView extends View {
         this.views.listDrag.render();
         this.views.details.render();
         this.showLastOpenFile();
-        return this;
     }
 
     showOpenFile() {

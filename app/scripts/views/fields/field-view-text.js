@@ -95,7 +95,8 @@ class FieldViewText extends FieldView {
             this.gen = new GeneratorView({
                 pos: { left: fieldRect.left, top: fieldRect.bottom + shadowSpread },
                 password: this.value
-            }).render();
+            });
+            this.gen.render();
             this.gen.once('remove', this.generatorClosed.bind(this));
             this.gen.once('result', this.generatorResult.bind(this));
         }
