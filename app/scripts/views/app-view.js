@@ -50,7 +50,7 @@ class AppView extends View {
         this.views.list = new ListView(this.model, { ownParent: true });
         this.views.listDrag = new DragView('x', { parent: '.app__list-drag' });
         this.views.list.dragView = this.views.listDrag;
-        this.views.details = new DetailsView();
+        this.views.details = new DetailsView(undefined, { ownParent: true });
         this.views.details.appModel = this.model;
 
         this.views.menu.listenDrag(this.views.menuDrag);
@@ -146,7 +146,7 @@ class AppView extends View {
         this.views.footer.render();
         this.views.list.render();
         this.views.listDrag.render();
-        this.views.details.setElement(this.$el.find('.app__details')).render();
+        this.views.details.render();
         this.showLastOpenFile();
         return this;
     }

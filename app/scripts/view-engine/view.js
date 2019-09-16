@@ -16,7 +16,7 @@ class View extends EventEmitter {
     boundEvents = [];
     debugLogger = localStorage.debugViews ? new Logger('view', this.constructor.name) : undefined;
 
-    constructor(model, options = {}) {
+    constructor(model = undefined, options = {}) {
         super();
 
         this.model = model;

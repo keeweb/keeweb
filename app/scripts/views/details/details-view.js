@@ -1,6 +1,7 @@
-import { AutoType } from 'auto-type';
 import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
+import { View } from 'view-engine/view';
+import { AutoType } from 'auto-type';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { OtpQrReader } from 'comp/format/otp-qr-reader';
@@ -33,20 +34,19 @@ import { FieldViewTags } from 'views/fields/field-view-tags';
 import { FieldViewText } from 'views/fields/field-view-text';
 import { FieldViewUrl } from 'views/fields/field-view-url';
 import { IconSelectView } from 'views/icon-select-view';
+import template from 'templates/details/details.hbs';
+import emptyTemplate from 'templates/details/details-empty.hbs';
+import groupTemplate from 'templates/details/details-group.hbs';
 
-const DetailsView = Backbone.View.extend({
-    template: require('templates/details/details.hbs'),
-    emptyTemplate: require('templates/details/details-empty.hbs'),
-    groupTemplate: require('templates/details/details-group.hbs'),
+class DetailsView extends View {
+    parent = '.app__details';
+    fieldViews = null;
+    passEditView = null;
+    userEditView = null;
+    urlEditView = null;
+    fieldCopyTip = null;
 
-    fieldViews: null,
-    views: null,
-    passEditView: null,
-    userEditView: null,
-    urlEditView: null,
-    fieldCopyTip: null,
-
-    events: {
+    events = {
         'click .details__colors-popup-item': 'selectColor',
         'click .details__header-icon': 'toggleIcons',
         'click .details__attachment': 'toggleAttachment',
@@ -61,11 +61,11 @@ const DetailsView = Backbone.View.extend({
         'dragleave .details': 'dragleave',
         'drop .details': 'drop',
         'contextmenu .details': 'contextMenu'
-    },
+    };
 
-    initialize() {
+    constructor(model, options) {
+        super(model, options);
         this.fieldViews = [];
-        this.views = {};
         this.initScroll();
         this.listenTo(Backbone, 'entry-selected', this.showEntry);
         this.listenTo(Backbone, 'copy-password', this.copyPassword);
@@ -76,62 +76,42 @@ const DetailsView = Backbone.View.extend({
         this.listenTo(Backbone, 'set-locale', this.render);
         this.listenTo(OtpQrReader, 'qr-read', this.otpCodeRead);
         this.listenTo(OtpQrReader, 'enter-manually', this.otpEnterManually);
-        KeyHandler.onKey(
+        this.onKey(
             Keys.DOM_VK_C,
             this.copyPasswordFromShortcut,
-            this,
             KeyHandler.SHORTCUT_ACTION,
             false,
             true
         );
-        KeyHandler.onKey(Keys.DOM_VK_B, this.copyUserName, this, KeyHandler.SHORTCUT_ACTION);
-        KeyHandler.onKey(Keys.DOM_VK_U, this.copyUrl, this, KeyHandler.SHORTCUT_ACTION);
+        this.onKey(Keys.DOM_VK_B, this.copyUserName, KeyHandler.SHORTCUT_ACTION);
+        this.onKey(Keys.DOM_VK_U, this.copyUrl, KeyHandler.SHORTCUT_ACTION);
         if (AutoType.enabled) {
-            KeyHandler.onKey(Keys.DOM_VK_T, this.autoType, this, KeyHandler.SHORTCUT_ACTION);
+            this.onKey(Keys.DOM_VK_T, this.autoType, KeyHandler.SHORTCUT_ACTION);
         }
-        KeyHandler.onKey(
+        this.onKey(
             Keys.DOM_VK_DELETE,
             this.deleteKeyPress,
-            this,
             KeyHandler.SHORTCUT_ACTION,
             false,
             true
         );
-        KeyHandler.onKey(
+        this.onKey(
             Keys.DOM_VK_BACK_SPACE,
             this.deleteKeyPress,
-            this,
             KeyHandler.SHORTCUT_ACTION,
             false,
             true
         );
-    },
-
-    remove() {
-        KeyHandler.offKey(Keys.DOM_VK_C, this.copyPassword, this);
-        KeyHandler.offKey(Keys.DOM_VK_B, this.copyUserName, this);
-        KeyHandler.offKey(Keys.DOM_VK_U, this.copyUrl, this);
-        KeyHandler.offKey(
-            Keys.DOM_VK_DELETE,
-            this.deleteKeyPress,
-            this,
-            KeyHandler.SHORTCUT_ACTION
-        );
-        KeyHandler.offKey(
-            Keys.DOM_VK_BACK_SPACE,
-            this.deleteKeyPress,
-            this,
-            KeyHandler.SHORTCUT_ACTION
-        );
-        this.removeFieldViews();
-        Backbone.View.prototype.remove.call(this);
-    },
+        this.once('remove', () => {
+            this.removeFieldViews();
+        });
+    }
 
     removeFieldViews() {
         this.fieldViews.forEach(fieldView => fieldView.remove());
         this.fieldViews = [];
         this.hideFieldCopyTip();
-    },
+    }
 
     render() {
         Tip.destroyTips(this.$el);
@@ -139,17 +119,18 @@ const DetailsView = Backbone.View.extend({
         this.removeFieldViews();
         this.removeInnerViews();
         if (!this.model) {
-            this.$el.html(this.emptyTemplate());
+            this.template = emptyTemplate;
+            super.render();
             return;
         }
         if (this.model instanceof GroupModel) {
-            this.$el.html(this.groupTemplate());
-            Tip.createTips(this.$el);
+            this.template = groupTemplate;
+            super.render();
             return;
         }
-        const model = $.extend({ deleted: this.appModel.filter.trash }, this.model);
-        this.$el.html(this.template(model));
-        Tip.createTips(this.$el);
+        const model = Object.assign({ deleted: this.appModel.filter.trash }, this.model);
+        this.template = template;
+        super.render(model);
         this.setSelectedColor(this.model.color);
         this.model.initOtpGenerator();
         this.addFieldViews();
@@ -166,7 +147,7 @@ const DetailsView = Backbone.View.extend({
         this.pageResized();
         this.showCopyTip();
         return this;
-    },
+    }
 
     addFieldViews() {
         const model = this.model;
@@ -313,44 +294,40 @@ const DetailsView = Backbone.View.extend({
                 }
             })
         );
-        _.forEach(
-            model.fields,
-            function(value, field) {
-                if (field === 'otp' && this.model.otpGenerator) {
-                    this.fieldViews.push(
-                        new FieldViewOtp({
-                            model: {
-                                name: '$' + field,
-                                title: field,
-                                value() {
-                                    return model.otpGenerator;
-                                }
+        _.forEach(model.fields, (value, field) => {
+            if (field === 'otp' && this.model.otpGenerator) {
+                this.fieldViews.push(
+                    new FieldViewOtp({
+                        model: {
+                            name: '$' + field,
+                            title: field,
+                            value() {
+                                return model.otpGenerator;
                             }
-                        })
-                    );
-                } else {
-                    this.fieldViews.push(
-                        new FieldViewCustom({
-                            model: {
-                                name: '$' + field,
-                                title: field,
-                                multiline: true,
-                                value() {
-                                    return model.fields[field];
-                                }
+                        }
+                    })
+                );
+            } else {
+                this.fieldViews.push(
+                    new FieldViewCustom({
+                        model: {
+                            name: '$' + field,
+                            title: field,
+                            multiline: true,
+                            value() {
+                                return model.fields[field];
                             }
-                        })
-                    );
-                }
-            },
-            this
-        );
+                        }
+                    })
+                );
+            }
+        });
 
         const hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
 
         const fieldsMainEl = this.$el.find('.details__body-fields');
         const fieldsAsideEl = this.$el.find('.details__body-aside');
-        this.fieldViews.forEach(function(fieldView) {
+        this.fieldViews.forEach(fieldView => {
             fieldView.setElement(fieldView.readonly ? fieldsAsideEl : fieldsMainEl).render();
             fieldView.on('change', this.fieldChanged.bind(this));
             fieldView.on('copy', this.fieldCopied.bind(this));
@@ -366,13 +343,13 @@ const DetailsView = Backbone.View.extend({
                     fieldView.hide();
                 }
             }
-        }, this);
+        });
 
         this.moreView = new DetailsAddFieldView();
         this.moreView.render();
         this.moreView.on('add-field', this.addNewField.bind(this));
         this.moreView.on('more-click', this.toggleMoreOptions.bind(this));
-    },
+    }
 
     addNewField() {
         this.moreView.remove();
@@ -402,7 +379,7 @@ const DetailsView = Backbone.View.extend({
         fieldView.setElement(this.$el.find('.details__body-fields')).render();
         fieldView.edit();
         this.fieldViews.push(fieldView);
-    },
+    }
 
     toggleMoreOptions() {
         if (this.views.dropdownView) {
@@ -469,7 +446,7 @@ const DetailsView = Backbone.View.extend({
                 this.views.dropdownView = dropdownView;
             });
         }
-    },
+    }
 
     moreOptionsSelect(e) {
         this.views.dropdownView.remove();
@@ -504,11 +481,11 @@ const DetailsView = Backbone.View.extend({
                     fieldView.edit();
                 }
         }
-    },
+    }
 
     getUserNameCompletions(part) {
         return this.appModel.completeUserNames(part);
-    },
+    }
 
     setSelectedColor(color) {
         this.$el
@@ -526,7 +503,7 @@ const DetailsView = Backbone.View.extend({
                 .addClass('details__colors-popup-item--active');
             colorEl.classList.add(color + '-color');
         }
-    },
+    }
 
     selectColor(e) {
         let color = $(e.target)
@@ -540,7 +517,7 @@ const DetailsView = Backbone.View.extend({
         }
         this.model.setColor(color);
         this.entryUpdated();
-    },
+    }
 
     toggleIcons() {
         if (this.views.sub && this.views.sub instanceof IconSelectView) {
@@ -563,7 +540,7 @@ const DetailsView = Backbone.View.extend({
         subView.render();
         this.pageResized();
         this.views.sub = subView;
-    },
+    }
 
     toggleAttachment(e) {
         const attBtn = $(e.target).closest('.details__attachment');
@@ -586,7 +563,7 @@ const DetailsView = Backbone.View.extend({
         subView.render(this.pageResized.bind(this));
         this.views.sub = subView;
         attBtn.addClass('details__attachment--active');
-    },
+    }
 
     removeSubView() {
         this.$el.find('.details__attachment').removeClass('details__attachment--active');
@@ -594,7 +571,7 @@ const DetailsView = Backbone.View.extend({
             this.views.sub.remove();
             delete this.views.sub;
         }
-    },
+    }
 
     downloadAttachment(attachment) {
         const data = attachment.getBinary();
@@ -604,7 +581,7 @@ const DetailsView = Backbone.View.extend({
         const mimeType = attachment.mimeType || 'application/octet-stream';
         const blob = new Blob([data], { type: mimeType });
         FileSaver.saveAs(blob, attachment.title);
-    },
+    }
 
     iconSelected(sel) {
         if (sel.custom) {
@@ -620,7 +597,7 @@ const DetailsView = Backbone.View.extend({
         } else {
             this.render();
         }
-    },
+    }
 
     showEntry(entry) {
         this.model = entry;
@@ -628,7 +605,7 @@ const DetailsView = Backbone.View.extend({
         if (entry && !entry.title && entry.isJustCreated) {
             this.editTitle();
         }
-    },
+    }
 
     copyKeyPress(editView) {
         if (this.isHidden()) {
@@ -649,26 +626,26 @@ const DetailsView = Backbone.View.extend({
             return true;
         }
         return false;
-    },
+    }
 
     copyPasswordFromShortcut(e) {
         const copied = this.copyKeyPress(this.passEditView);
         if (copied) {
             e.preventDefault();
         }
-    },
+    }
 
     copyPassword() {
         this.copyKeyPress(this.passEditView);
-    },
+    }
 
     copyUserName() {
         this.copyKeyPress(this.userEditView);
-    },
+    }
 
     copyUrl() {
         this.copyKeyPress(this.urlEditView);
-    },
+    }
 
     showCopyTip() {
         if (this.helpTipCopyShown) {
@@ -687,11 +664,11 @@ const DetailsView = Backbone.View.extend({
         setTimeout(() => {
             tip.hide();
         }, Timeouts.AutoHideHint);
-    },
+    }
 
     settingsToggled() {
         this.hideFieldCopyTip();
-    },
+    }
 
     fieldChanged(e) {
         if (e.field) {
@@ -755,7 +732,7 @@ const DetailsView = Backbone.View.extend({
         if (e.tab) {
             this.focusNextField(e.tab);
         }
-    },
+    }
 
     otpFieldChanged(value) {
         let oldValue = this.model.fields.otp;
@@ -771,7 +748,7 @@ const DetailsView = Backbone.View.extend({
         }
         this.model.setOtpUrl(value);
         return true;
-    },
+    }
 
     dragover(e) {
         e.preventDefault();
@@ -792,7 +769,7 @@ const DetailsView = Backbone.View.extend({
             this.dragging = true;
             this.$el.find('.details').addClass('details--drag');
         }
-    },
+    }
 
     dragleave() {
         if (this.dragTimeout) {
@@ -802,7 +779,7 @@ const DetailsView = Backbone.View.extend({
             this.$el.find('.details').removeClass('details--drag');
             this.dragging = false;
         }, 100);
-    },
+    }
 
     drop(e) {
         e.preventDefault();
@@ -816,15 +793,15 @@ const DetailsView = Backbone.View.extend({
         this.dragging = false;
         const files = e.target.files || e.originalEvent.dataTransfer.files;
         this.addAttachedFiles(files);
-    },
+    }
 
     attachmentBtnClick() {
         this.$el.find('.details__attachment-input-file')[0].click();
-    },
+    }
 
     attachmentFileChange(e) {
         this.addAttachedFiles(e.target.files);
-    },
+    }
 
     addAttachedFiles(files) {
         _.forEach(
@@ -838,13 +815,13 @@ const DetailsView = Backbone.View.extend({
             },
             this
         );
-    },
+    }
 
     addAttachment(name, data) {
         this.model.addAttachment(name, data).then(() => {
             this.entryUpdated();
         });
-    },
+    }
 
     deleteKeyPress(e) {
         if (this.views.sub && this.views.sub.attId !== undefined) {
@@ -853,7 +830,7 @@ const DetailsView = Backbone.View.extend({
             this.model.removeAttachment(attachment.title);
             this.render();
         }
-    },
+    }
 
     editTitle() {
         const input = $('<input/>')
@@ -868,15 +845,15 @@ const DetailsView = Backbone.View.extend({
         });
         $('.details__header-title').replaceWith(input);
         input.focus()[0].setSelectionRange(this.model.title.length, this.model.title.length);
-    },
+    }
 
     titleInputBlur(e) {
         this.setTitle(e.target.value);
-    },
+    }
 
     titleInputInput(e) {
         e.stopPropagation();
-    },
+    }
 
     titleInputKeydown(e) {
         KeyHandler.reg();
@@ -901,7 +878,7 @@ const DetailsView = Backbone.View.extend({
                 this.focusNextField({ field: '$Title' });
             }
         }
-    },
+    }
 
     setTitle(title) {
         if (this.model.title instanceof kdbxweb.ProtectedValue) {
@@ -913,14 +890,14 @@ const DetailsView = Backbone.View.extend({
         }
         const newTitle = $('<h1 class="details__header-title"></h1>').text(title || '(no title)');
         this.$el.find('.details__header-title-input').replaceWith(newTitle);
-    },
+    }
 
     entryUpdated(skipRender) {
         Backbone.trigger('entry-updated', { entry: this.model });
         if (!skipRender) {
             this.render();
         }
-    },
+    }
 
     focusNextField(config) {
         let found = false,
@@ -943,7 +920,7 @@ const DetailsView = Backbone.View.extend({
         if (nextFieldView) {
             nextFieldView.edit();
         }
-    },
+    }
 
     showHistory() {
         this.removeSubView();
@@ -955,7 +932,7 @@ const DetailsView = Backbone.View.extend({
         subView.render();
         this.pageResized();
         this.views.sub = subView;
-    },
+    }
 
     historyClosed(e) {
         if (e.updated) {
@@ -963,7 +940,7 @@ const DetailsView = Backbone.View.extend({
         } else {
             this.render();
         }
-    },
+    }
 
     moveToTrash() {
         const doMove = () => {
@@ -980,16 +957,16 @@ const DetailsView = Backbone.View.extend({
         } else {
             doMove();
         }
-    },
+    }
 
     clone() {
         const newEntry = this.model.cloneEntry(' ' + Locale.detClonedName);
         Backbone.trigger('select-entry', newEntry);
-    },
+    }
 
     copyToClipboard() {
         CopyPaste.copyHtml(this.model.getHtml());
-    },
+    }
 
     deleteFromTrash() {
         Alerts.yesno({
@@ -1005,11 +982,11 @@ const DetailsView = Backbone.View.extend({
                 Backbone.trigger('refresh');
             }
         });
-    },
+    }
 
     backClick() {
         Backbone.trigger('toggle-details', false);
-    },
+    }
 
     contextMenu(e) {
         const canCopy = document.queryCommandSupported('copy');
@@ -1039,7 +1016,7 @@ const DetailsView = Backbone.View.extend({
             options.push({ value: 'det-auto-type', icon: 'keyboard-o', text: Locale.detAutoType });
         }
         Backbone.trigger('show-context-menu', _.extend(e, { options }));
-    },
+    }
 
     contextMenuSelect(e) {
         switch (e.item) {
@@ -1062,16 +1039,16 @@ const DetailsView = Backbone.View.extend({
                 this.copyToClipboard();
                 break;
         }
-    },
+    }
 
     setupOtp() {
         OtpQrReader.read();
-    },
+    }
 
     otpCodeRead(otp) {
         this.model.setOtp(otp);
         this.entryUpdated();
-    },
+    }
 
     otpEnterManually() {
         if (this.model.fields.otp) {
@@ -1095,7 +1072,7 @@ const DetailsView = Backbone.View.extend({
             fieldView.edit();
             this.fieldViews.push(fieldView);
         }
-    },
+    }
 
     toggleAutoType() {
         if (this.views.autoType) {
@@ -1105,14 +1082,14 @@ const DetailsView = Backbone.View.extend({
         }
         this.views.autoType = new DetailsAutoTypeView(this.model);
         this.views.autoType.render();
-    },
+    }
 
     autoType() {
         Backbone.trigger('auto-type', { entry: this.model });
     }
-});
+}
 
-_.extend(DetailsView.prototype, Scrollable);
-_.extend(DetailsView.prototype, Copyable);
+Object.assign(DetailsView.prototype, Scrollable);
+Object.assign(DetailsView.prototype, Copyable);
 
 export { DetailsView };
