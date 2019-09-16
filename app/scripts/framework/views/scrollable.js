@@ -1,4 +1,3 @@
-import Backbone from 'backbone';
 import baron from 'baron';
 import { Events } from 'framework/events';
 import { Features } from 'util/features';
@@ -7,7 +6,6 @@ const isEnabled = !Features.isMobile;
 
 const Scrollable = {
     createScroll(opts) {
-        opts.$ = Backbone.$;
         // opts.cssGuru = true;
         if (isEnabled) {
             if (this.scroll) {

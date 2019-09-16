@@ -220,7 +220,7 @@ class FieldViewText extends FieldView {
 
     stopBlurListener() {
         // TODO
-        // this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
+        // this.stopListening(Events, 'click main-window-will-close', this.fieldValueBlur);
     }
 
     mobileFieldControlMouseDown(e) {

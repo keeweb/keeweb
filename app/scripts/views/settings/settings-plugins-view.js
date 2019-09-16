@@ -1,4 +1,3 @@
-import Backbone from 'backbone';
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { RuntimeInfo } from 'comp/app/runtime-info';
@@ -43,7 +42,7 @@ class SettingsPluginsView extends View {
         super(model, options);
         this.listenTo(PluginManager, 'change', this.render.bind(this));
         this.listenTo(
-            Backbone,
+            Events,
             'plugin-gallery-load-complete',
             this.pluginGalleryLoadComplete.bind(this)
         );
