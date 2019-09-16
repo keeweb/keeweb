@@ -1,5 +1,5 @@
-import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
+import { View } from 'view-engine/view';
 import { Storage } from 'storage';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Launcher } from 'comp/launcher';
@@ -12,14 +12,15 @@ import { PasswordGenerator } from 'util/generators/password-generator';
 import { Locale } from 'util/locale';
 import { FileSaver } from 'util/ui/file-saver';
 import { OpenConfigView } from 'views/open-config-view';
+import template from 'templates/settings/settings-file.hbs';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';
 
-const SettingsFileView = Backbone.View.extend({
-    template: require('templates/settings/settings-file.hbs'),
+class SettingsFileView extends View {
+    template = template;
 
-    events: {
+    events = {
         'click .settings__file-button-save-default': 'saveDefault',
         'click .settings__file-button-save-choose': 'toggleChooser',
         'click .settings__file-button-close': 'closeFile',
@@ -50,15 +51,16 @@ const SettingsFileView = Backbone.View.extend({
         'input #settings__file-key-rounds': 'changeKeyRounds',
         'input #settings__file-key-change-force': 'changeKeyChangeForce',
         'input .settings__input-kdf': 'changeKdfParameter'
-    },
+    };
 
-    appModel: null,
+    appModel = null;
 
-    initialize() {
+    constructor(model, options) {
+        super(model, options);
         this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', () => {
             setTimeout(() => this.render(), 0);
         });
-    },
+    }
 
     render() {
         const storageProviders = [];
@@ -81,7 +83,7 @@ const SettingsFileView = Backbone.View.extend({
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         const backup = this.model.get('backup');
-        this.renderTemplate({
+        super.render({
             cmd: Shortcuts.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
             desktopLink: Links.Desktop,
@@ -122,13 +124,13 @@ const SettingsFileView = Backbone.View.extend({
                 .text(Locale.setFilePassChanged);
         }
         this.renderKeyFileSelect();
-    },
+    }
 
     kdfParametersToUi(kdfParameters) {
         return kdfParameters
             ? _.extend({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) })
             : null;
-    },
+    }
 
     renderKeyFileSelect() {
         const keyFileName = this.model.get('keyFileName');
@@ -170,7 +172,7 @@ const SettingsFileView = Backbone.View.extend({
         } else if (oldKeyFileName && keyFileName === oldKeyFileName && !keyFileChanged) {
             sel.val('old');
         }
-    },
+    }
 
     validatePassword(continueCallback) {
         if (!this.model.get('passwordLength')) {
@@ -187,7 +189,7 @@ const SettingsFileView = Backbone.View.extend({
             return false;
         }
         return true;
-    },
+    }
 
     save(arg) {
         if (!arg) {
@@ -205,15 +207,15 @@ const SettingsFileView = Backbone.View.extend({
         }
 
         this.appModel.syncFile(this.model, arg);
-    },
+    }
 
     saveDefault() {
         this.save();
-    },
+    }
 
     toggleChooser() {
         this.$el.find('.settings__file-save-choose').toggleClass('hide');
-    },
+    }
 
     saveToFile(skipValidation) {
         if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
@@ -251,21 +253,21 @@ const SettingsFileView = Backbone.View.extend({
                 }
             });
         }
-    },
+    }
 
     saveToXml() {
         this.model.getXml(xml => {
             const blob = new Blob([xml], { type: 'text/xml' });
             FileSaver.saveAs(blob, this.model.get('name') + '.xml');
         });
-    },
+    }
 
     saveToHtml() {
         this.model.getHtml(html => {
             const blob = new Blob([html], { type: 'text/html' });
             FileSaver.saveAs(blob, this.model.get('name') + '.html');
         });
-    },
+    }
 
     saveToStorage(e) {
         if (this.model.get('syncing') || this.model.get('demo')) {
@@ -352,7 +354,7 @@ const SettingsFileView = Backbone.View.extend({
                 }
             });
         }
-    },
+    }
 
     closeFile() {
         if (this.model.get('modified')) {
@@ -372,11 +374,11 @@ const SettingsFileView = Backbone.View.extend({
         } else {
             this.closeFileNoCheck();
         }
-    },
+    }
 
     closeFileNoCheck() {
         this.appModel.closeFile(this.model);
-    },
+    }
 
     keyFileChange(e) {
         switch (e.target.value) {
@@ -390,28 +392,28 @@ const SettingsFileView = Backbone.View.extend({
                 this.clearKeyFile();
                 break;
         }
-    },
+    }
 
     selectOldKeyFile() {
         this.model.resetKeyFile();
         this.renderKeyFileSelect();
-    },
+    }
 
     generateKeyFile() {
         const keyFile = this.model.generateAndSetKeyFile();
         const blob = new Blob([keyFile], { type: 'application/octet-stream' });
         FileSaver.saveAs(blob, this.model.get('name') + '.key');
         this.renderKeyFileSelect();
-    },
+    }
 
     clearKeyFile() {
         this.model.removeKeyFile();
         this.renderKeyFileSelect();
-    },
+    }
 
     triggerSelectFile() {
         this.$el.find('#settings__file-file-select').click();
-    },
+    }
 
     fileSelected(e) {
         const file = e.target.files[0];
@@ -422,13 +424,13 @@ const SettingsFileView = Backbone.View.extend({
             this.renderKeyFileSelect();
         };
         reader.readAsArrayBuffer(file);
-    },
+    }
 
     focusMasterPass(e) {
         e.target.value = '';
         e.target.setAttribute('type', 'text');
         this.model.set('passwordChanged', false);
-    },
+    }
 
     changeMasterPass(e) {
         if (!e.target.value) {
@@ -443,7 +445,7 @@ const SettingsFileView = Backbone.View.extend({
                 this.$el.find('.settings__file-master-pass-warning').show();
             }
         }
-    },
+    }
 
     blurMasterPass(e) {
         if (!e.target.value) {
@@ -453,18 +455,18 @@ const SettingsFileView = Backbone.View.extend({
             this.$el.find('.settings__file-master-pass-warning').hide();
         }
         e.target.setAttribute('type', 'password');
-    },
+    }
 
     resetConfirmMasterPass() {
         this.$el.find('#settings__file-confirm-master-pass').val('');
         this.$el.find('#settings__file-confirm-master-pass-group').hide();
         this.$el.find('#settings__file-master-pass-warning-text').text(Locale.setFilePassChange);
-    },
+    }
 
     focusConfirmMasterPass(e) {
         e.target.value = '';
         e.target.setAttribute('type', 'text');
-    },
+    }
 
     blurConfirmMasterPass(e) {
         e.target.setAttribute('type', 'password');
@@ -483,7 +485,7 @@ const SettingsFileView = Backbone.View.extend({
             this.$el.find('.settings__file-confirm-master-pass-warning').show();
             this.model.resetPassword();
         }
-    },
+    }
 
     changeName(e) {
         const value = $.trim(e.target.value);
@@ -491,12 +493,12 @@ const SettingsFileView = Backbone.View.extend({
             return;
         }
         this.model.setName(value);
-    },
+    }
 
     changeDefUser(e) {
         const value = $.trim(e.target.value);
         this.model.setDefaultUser(value);
-    },
+    }
 
     changeBackupEnabled(e) {
         const enabled = e.target.checked;
@@ -536,30 +538,30 @@ const SettingsFileView = Backbone.View.extend({
         this.$el.find('.settings__file-backups').toggleClass('hide', !enabled);
         backup.enabled = enabled;
         this.setBackup(backup);
-    },
+    }
 
     changeBackupPath(e) {
         const backup = this.model.get('backup');
         backup.path = e.target.value.trim();
         this.setBackup(backup);
-    },
+    }
 
     changeBackupStorage(e) {
         const backup = this.model.get('backup');
         backup.storage = e.target.value;
         this.setBackup(backup);
-    },
+    }
 
     changeBackupSchedule(e) {
         const backup = this.model.get('backup');
         backup.schedule = e.target.value;
         this.setBackup(backup);
-    },
+    }
 
     setBackup(backup) {
         this.model.set('backup', backup);
         this.appModel.setFileBackup(this.model.id, backup);
-    },
+    }
 
     backupFile() {
         if (this.backupInProgress) {
@@ -597,11 +599,11 @@ const SettingsFileView = Backbone.View.extend({
                 }
             });
         });
-    },
+    }
 
     changeTrash(e) {
         this.model.setRecycleBinEnabled(e.target.checked);
-    },
+    }
 
     changeHistoryLength(e) {
         if (!e.target.validity.valid) {
@@ -613,7 +615,7 @@ const SettingsFileView = Backbone.View.extend({
             return;
         }
         this.model.setHistoryMaxItems(value);
-    },
+    }
 
     changeHistorySize(e) {
         if (!e.target.validity.valid) {
@@ -625,18 +627,18 @@ const SettingsFileView = Backbone.View.extend({
             return;
         }
         this.model.setHistoryMaxSize(value * 1024 * 1024);
-    },
+    }
 
     changeFormatVersion(e) {
         const version = +e.target.value;
         this.model.setFormatVersion(version);
         this.render();
-    },
+    }
 
     changeKdf(e) {
         this.model.setKdf(e.target.value);
         this.render();
-    },
+    }
 
     changeKeyRounds(e) {
         if (!e.target.validity.valid) {
@@ -648,7 +650,7 @@ const SettingsFileView = Backbone.View.extend({
             return;
         }
         this.model.setKeyEncryptionRounds(value);
-    },
+    }
 
     changeKeyChangeForce(e) {
         if (!e.target.validity.valid) {
@@ -659,7 +661,7 @@ const SettingsFileView = Backbone.View.extend({
             value = -1;
         }
         this.model.setKeyChange(true, value);
-    },
+    }
 
     changeKdfParameter(e) {
         if (!e.target.validity.valid) {
@@ -676,6 +678,6 @@ const SettingsFileView = Backbone.View.extend({
             this.model.setKdfParameter(field, value);
         }
     }
-});
+}
 
 export { SettingsFileView };

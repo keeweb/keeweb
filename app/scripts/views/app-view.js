@@ -264,8 +264,8 @@ class AppView extends View {
         this.hidePanelView();
         this.hideOpenFile();
         this.hideKeyChange();
-        this.views.settings = new SettingsView({ model: this.model });
-        this.views.settings.setElement(this.$el.find('.app__body')).render();
+        this.views.settings = new SettingsView(this.mode);
+        this.views.settings.render();
         if (!selectedMenuItem) {
             selectedMenuItem = this.model.menu.generalSection.get('items').first();
         }

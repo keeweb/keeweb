@@ -1,21 +1,21 @@
-import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { Storage } from 'storage';
+import template from 'templates/settings/settings-prv.hbs';
 
-const SettingsPrvView = Backbone.View.extend({
-    template: require('templates/settings/settings-prv.hbs'),
+class SettingsPrvView extends View {
+    template = template;
 
-    events: {
+    events = {
         'change .settings__general-prv-field-sel': 'changeField',
         'input .settings__general-prv-field-txt': 'changeField'
-    },
+    };
 
     render() {
         const storage = Storage[this.model.name];
         if (storage && storage.getSettingsConfig) {
-            this.renderTemplate(storage.getSettingsConfig());
+            super.render(storage.getSettingsConfig());
         }
-        return this;
-    },
+    }
 
     changeField(e) {
         const id = e.target.dataset.id;
@@ -29,6 +29,6 @@ const SettingsPrvView = Backbone.View.extend({
             this.render();
         }
     }
-});
+}
 
 export { SettingsPrvView };
