@@ -9,7 +9,7 @@ import { Tip } from 'util/ui/tip';
 import { FieldView } from 'views/fields/field-view';
 import { GeneratorView } from 'views/generator-view';
 
-const FieldViewText = FieldView.extend({
+class FieldViewText extends FieldView {
     renderValue(value) {
         if (this.model.markdown) {
             if (value && value.isProtected) {
@@ -20,11 +20,11 @@ const FieldViewText = FieldView.extend({
         return value && value.isProtected
             ? PasswordGenerator.presentValueWithLineBreaks(value)
             : _.escape(value || '').replace(/\n/g, '<br/>');
-    },
+    }
 
     getEditValue(value) {
         return value && value.isProtected ? value.getText() : value || '';
-    },
+    }
 
     startEdit() {
         const text = this.getEditValue(this.value);
@@ -61,7 +61,7 @@ const FieldViewText = FieldView.extend({
         }
         Tip.hideTip(this.valueEl[0]);
         Tip.hideTip(this.labelEl[0]);
-    },
+    }
 
     createMobileControls() {
         this.mobileControls = {};
@@ -77,14 +77,14 @@ const FieldViewText = FieldView.extend({
                     touchmove: this.mobileFieldControlTouchMove.bind(this)
                 });
         });
-    },
+    }
 
     showGeneratorClick(e) {
         e.stopPropagation();
         if (!this.gen) {
             this.input.focus();
         }
-    },
+    }
 
     showGenerator() {
         if (this.gen) {
@@ -99,7 +99,7 @@ const FieldViewText = FieldView.extend({
             this.gen.once('remove', this.generatorClosed.bind(this));
             this.gen.once('result', this.generatorResult.bind(this));
         }
-    },
+    }
 
     hideGenerator() {
         if (this.gen) {
@@ -107,21 +107,21 @@ const FieldViewText = FieldView.extend({
             delete this.gen;
             gen.remove();
         }
-    },
+    }
 
     generatorClosed() {
         if (this.gen) {
             delete this.gen;
             this.endEdit();
         }
-    },
+    }
 
     generatorResult(password) {
         if (this.gen) {
             delete this.gen;
             this.endEdit(password);
         }
-    },
+    }
 
     setInputHeight() {
         const MinHeight = 18;
@@ -131,30 +131,30 @@ const FieldViewText = FieldView.extend({
             newHeight = MinHeight;
         }
         this.input.height(newHeight);
-    },
+    }
 
     fieldValueBlur() {
         if (!this.gen && this.input) {
             this.endEdit(this.input.val());
         }
-    },
+    }
 
     fieldValueInput(e) {
         e.stopPropagation();
         if (this.model.multiline) {
             this.setInputHeight();
         }
-    },
+    }
 
     fieldValueInputClick() {
         if (this.gen) {
             this.hideGenerator();
         }
-    },
+    }
 
     fieldValueInputMouseDown(e) {
         e.stopPropagation();
-    },
+    }
 
     fieldValueKeydown(e) {
         KeyHandler.reg();
@@ -185,13 +185,13 @@ const FieldViewText = FieldView.extend({
             return;
         }
         e.stopPropagation();
-    },
+    }
 
     externalEndEdit() {
         if (this.input) {
             this.endEdit(this.input.val());
         }
-    },
+    }
 
     endEdit(newVal, extra) {
         if (this.gen) {
@@ -213,12 +213,12 @@ const FieldViewText = FieldView.extend({
         if (typeof newVal === 'string') {
             newVal = $.trim(newVal);
         }
-        FieldView.prototype.endEdit.call(this, newVal, extra);
-    },
+        super.endEdit(newVal, extra);
+    }
 
     stopBlurListener() {
         this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
-    },
+    }
 
     mobileFieldControlMouseDown(e) {
         e.stopPropagation();
@@ -229,11 +229,11 @@ const FieldViewText = FieldView.extend({
         } else {
             this.endEdit();
         }
-    },
+    }
 
     mobileFieldControlTouchStart(e) {
         this.$el.attr('active-mobile-action', $(e.target).data('action'));
-    },
+    }
 
     mobileFieldControlTouchEnd(e) {
         const shouldExecute = this.$el.attr('active-mobile-action') === $(e.target).data('action');
@@ -241,7 +241,7 @@ const FieldViewText = FieldView.extend({
         if (shouldExecute) {
             this.mobileFieldControlMouseDown(e);
         }
-    },
+    }
 
     mobileFieldControlTouchMove(e) {
         const touch = e.originalEvent.targetTouches[0];
@@ -256,11 +256,7 @@ const FieldViewText = FieldView.extend({
         } else {
             this.$el.removeAttr('active-mobile-action');
         }
-    },
-
-    render() {
-        FieldView.prototype.render.call(this);
     }
-});
+}
 
 export { FieldViewText };

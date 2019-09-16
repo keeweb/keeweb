@@ -1,13 +1,13 @@
 import { FieldViewText } from 'views/fields/field-view-text';
 
-const FieldViewTags = FieldViewText.extend({
+class FieldViewTags extends FieldViewText {
     renderValue(value) {
         return value ? _.escape(value.join(', ')) : '';
-    },
+    }
 
     getEditValue(value) {
         return value ? value.join(', ') : '';
-    },
+    }
 
     valueToTags(val) {
         const allTags = {};
@@ -22,7 +22,7 @@ const FieldViewTags = FieldViewText.extend({
                     return allTags[tag.toLowerCase()] || tag;
                 })
         );
-    },
+    }
 
     endEdit(newVal, extra) {
         if (newVal !== undefined) {
@@ -32,11 +32,11 @@ const FieldViewTags = FieldViewText.extend({
             this.tagsAutocomplete.remove();
             this.tagsAutocomplete = null;
         }
-        FieldViewText.prototype.endEdit.call(this, newVal, extra);
-    },
+        super.endEdit(newVal, extra);
+    }
 
     startEdit() {
-        FieldViewText.prototype.startEdit.call(this);
+        super.startEdit();
         const fieldRect = this.input[0].getBoundingClientRect();
         const shadowSpread = parseInt(this.input.css('--focus-shadow-spread'));
         this.tagsAutocomplete = $('<div class="details__field-autocomplete"></div>').appendTo(
@@ -49,13 +49,13 @@ const FieldViewTags = FieldViewText.extend({
         });
         this.tagsAutocomplete.mousedown(this.tagsAutocompleteClick.bind(this));
         this.setTags();
-    },
+    }
 
     fieldValueInput(e) {
         e.stopPropagation();
         this.setTags();
-        FieldViewText.prototype.fieldValueInput.call(this, e);
-    },
+        super.fieldValueInput(e);
+    }
 
     getAvailableTags() {
         const tags = this.valueToTags(this.input.val());
@@ -67,7 +67,7 @@ const FieldViewTags = FieldViewText.extend({
                 (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0)
             );
         });
-    },
+    }
 
     setTags() {
         const availableTags = this.getAvailableTags();
@@ -78,7 +78,7 @@ const FieldViewTags = FieldViewText.extend({
             .join('');
         this.tagsAutocomplete.html(tagsHtml);
         this.tagsAutocomplete.toggle(!!tagsHtml);
-    },
+    }
 
     tagsAutocompleteClick(e) {
         e.stopPropagation();
@@ -105,6 +105,6 @@ const FieldViewTags = FieldViewText.extend({
             this.input.focus();
         });
     }
-});
+}
 
 export { FieldViewTags };

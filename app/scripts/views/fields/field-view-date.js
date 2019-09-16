@@ -1,23 +1,23 @@
-import { Pikaday } from 'pikaday';
+import Pikaday from 'pikaday';
 import { DateFormat } from 'util/formatting/date-format';
 import { Locale } from 'util/locale';
 import { FieldViewText } from 'views/fields/field-view-text';
 
-const FieldViewDate = FieldViewText.extend({
+class FieldViewDate extends FieldViewText {
     renderValue(value) {
         let result = value ? DateFormat.dStr(value) : '';
         if (value && this.model.lessThanNow && value < new Date()) {
             result += ' ' + this.model.lessThanNow;
         }
         return result;
-    },
+    }
 
     getEditValue(value) {
         return value ? DateFormat.dStr(value) : '';
-    },
+    }
 
     startEdit() {
-        FieldViewText.prototype.startEdit.call(this);
+        super.startEdit();
         this.picker = new Pikaday({
             field: this.input[0],
             onSelect: this.pickerSelect.bind(this),
@@ -35,7 +35,7 @@ const FieldViewDate = FieldViewText.extend({
         });
         this.picker.adjustPosition = this.adjustPickerPosition.bind(this);
         _.defer(this.picker.show.bind(this.picker));
-    },
+    }
 
     adjustPickerPosition(...args) {
         window.Pikaday = Pikaday;
@@ -47,13 +47,13 @@ const FieldViewDate = FieldViewText.extend({
             const newTop = parseInt(this.picker.el.style.top) + offset;
             this.picker.el.style.top = `${newTop}px`;
         }
-    },
+    }
 
     fieldValueBlur(e) {
         if (!this.picker) {
-            FieldViewText.prototype.fieldValueBlur.call(this, e);
+            super.fieldValueBlur(e);
         }
-    },
+    }
 
     endEdit(newVal, extra) {
         if (this.picker) {
@@ -66,16 +66,16 @@ const FieldViewDate = FieldViewText.extend({
         if (!newVal || isNaN(newVal.getTime())) {
             newVal = null;
         }
-        FieldViewText.prototype.endEdit.call(this, newVal, extra);
-    },
+        super.endEdit(newVal, extra);
+    }
 
     pickerClose() {
         this.endEdit(this.input.val());
-    },
+    }
 
     pickerSelect(dt) {
         this.endEdit(dt);
     }
-});
+}
 
 export { FieldViewDate };

@@ -131,100 +131,80 @@ class DetailsHistoryView extends View {
         this.bodyEl.html('');
         const colorCls = this.record.color ? this.record.color + '-color' : '';
         this.fieldViews.push(
-            new FieldViewReadOnly({
-                model: { name: 'Rev', title: Locale.detHistoryVersion, value: ix + 1 }
-            })
+            new FieldViewReadOnly({ name: 'Rev', title: Locale.detHistoryVersion, value: ix + 1 })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: {
-                    name: 'Updated',
-                    title: Locale.detHistorySaved,
-                    value:
-                        DateFormat.dtStr(this.record.updated) +
-                        (this.record.unsaved ? ' (' + Locale.detHistoryCurUnsavedState + ')' : '') +
-                        (ix === this.history.length - 1 && !this.record.unsaved
-                            ? ' (' + Locale.detHistoryCurState + ')'
-                            : '')
-                }
+                name: 'Updated',
+                title: Locale.detHistorySaved,
+                value:
+                    DateFormat.dtStr(this.record.updated) +
+                    (this.record.unsaved ? ' (' + Locale.detHistoryCurUnsavedState + ')' : '') +
+                    (ix === this.history.length - 1 && !this.record.unsaved
+                        ? ' (' + Locale.detHistoryCurState + ')'
+                        : '')
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnlyRaw({
-                model: {
-                    name: '$Title',
-                    title: StringFormat.capFirst(Locale.title),
-                    value:
-                        '<i class="fa fa-' +
-                            this.record.icon +
-                            ' ' +
-                            colorCls +
-                            '"></i> ' +
-                            _.escape(this.record.title) || '(' + Locale.detHistoryNoTitle + ')'
-                }
+                name: '$Title',
+                title: StringFormat.capFirst(Locale.title),
+                value:
+                    '<i class="fa fa-' +
+                        this.record.icon +
+                        ' ' +
+                        colorCls +
+                        '"></i> ' +
+                        _.escape(this.record.title) || '(' + Locale.detHistoryNoTitle + ')'
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: {
-                    name: '$UserName',
-                    title: StringFormat.capFirst(Locale.user),
-                    value: this.record.user
-                }
+                name: '$UserName',
+                title: StringFormat.capFirst(Locale.user),
+                value: this.record.user
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: {
-                    name: '$Password',
-                    title: StringFormat.capFirst(Locale.password),
-                    value: this.record.password
-                }
+                name: '$Password',
+                title: StringFormat.capFirst(Locale.password),
+                value: this.record.password
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: {
-                    name: '$URL',
-                    title: StringFormat.capFirst(Locale.website),
-                    value: this.record.url
-                }
+                name: '$URL',
+                title: StringFormat.capFirst(Locale.website),
+                value: this.record.url
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: {
-                    name: '$Notes',
-                    title: StringFormat.capFirst(Locale.notes),
-                    value: this.record.notes
-                }
+                name: '$Notes',
+                title: StringFormat.capFirst(Locale.notes),
+                value: this.record.notes
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: {
-                    name: 'Tags',
-                    title: StringFormat.capFirst(Locale.tags),
-                    value: this.record.tags.join(', ')
-                }
+                name: 'Tags',
+                title: StringFormat.capFirst(Locale.tags),
+                value: this.record.tags.join(', ')
             })
         );
         this.fieldViews.push(
             new FieldViewReadOnly({
-                model: {
-                    name: 'Expires',
-                    title: Locale.detExpires,
-                    value: this.record.expires ? DateFormat.dtStr(this.record.expires) : ''
-                }
+                name: 'Expires',
+                title: Locale.detExpires,
+                value: this.record.expires ? DateFormat.dtStr(this.record.expires) : ''
             })
         );
         _.forEach(
             this.record.fields,
-            function(value, field) {
+            (value, field) => {
                 this.fieldViews.push(
-                    new FieldViewReadOnly({
-                        model: { name: '$' + field, title: field, value }
-                    })
+                    new FieldViewReadOnly({ name: '$' + field, title: field, value })
                 );
             },
             this
@@ -232,18 +212,17 @@ class DetailsHistoryView extends View {
         if (this.record.attachments.length) {
             this.fieldViews.push(
                 new FieldViewReadOnly({
-                    model: {
-                        name: 'Attachments',
-                        title: Locale.detAttachments,
-                        value: this.record.attachments.map(att => att.title).join(', ')
-                    }
+                    name: 'Attachments',
+                    title: Locale.detAttachments,
+                    value: this.record.attachments.map(att => att.title).join(', ')
                 })
             );
         }
-        this.fieldViews.forEach(function(fieldView) {
-            fieldView.setElement(this.bodyEl).render();
+        this.fieldViews.forEach(fieldView => {
+            fieldView.parent = this.bodyEl[0];
+            fieldView.render();
             fieldView.on('copy', this.fieldCopied.bind(this));
-        }, this);
+        });
         const buttons = this.$el.find('.details__history-buttons');
         buttons.find('.details__history-button-revert').toggle(ix < this.history.length - 1);
         buttons.find('.details__history-button-delete').toggle(ix < this.history.length - 1);

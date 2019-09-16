@@ -1,19 +1,30 @@
 import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { Tip } from 'util/ui/tip';
+import template from 'templates/details/field.hbs';
 
-const FieldView = Backbone.View.extend({
-    template: require('templates/details/field.hbs'),
+class FieldView extends View {
+    template = template;
 
-    events: {
+    events = {
         'click .details__field-label': 'fieldLabelClick',
         'click .details__field-value': 'fieldValueClick',
         'dragstart .details__field-label': 'fieldLabelDrag'
-    },
+    };
+
+    constructor(model, options) {
+        super(model, options);
+        this.once('remove', () => {
+            if (this.tip) {
+                Tip.hideTip(this.valueEl[0]);
+            }
+        });
+    }
 
     render() {
         this.value = typeof this.model.value === 'function' ? this.model.value() : this.model.value;
-        this.renderTemplate({
+        super.render({
             cls: this.cssClass,
             editable: !this.readonly,
             multiline: this.model.multiline,
@@ -31,15 +42,7 @@ const FieldView = Backbone.View.extend({
                 Tip.createTip(this.valueEl);
             }
         }
-        return this;
-    },
-
-    remove() {
-        if (this.tip) {
-            Tip.hideTip(this.valueEl[0]);
-        }
-        Backbone.View.prototype.remove.apply(this);
-    },
+    }
 
     update() {
         if (typeof this.model.value === 'function') {
@@ -51,7 +54,7 @@ const FieldView = Backbone.View.extend({
                 this.render();
             }
         }
-    },
+    }
 
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
@@ -71,7 +74,7 @@ const FieldView = Backbone.View.extend({
                     CopyPaste.createHiddenInput(text);
                 }
                 copyRes = CopyPaste.copy(text);
-                this.trigger('copy', { source: this, copyRes });
+                this.emit('copy', { source: this, copyRes });
                 return;
             }
         }
@@ -86,9 +89,9 @@ const FieldView = Backbone.View.extend({
         copyRes = CopyPaste.copy(this.valueEl[0].innerText || this.valueEl.text());
         if (copyRes) {
             selection.removeAllRanges();
-            this.trigger('copy', { source: this, copyRes });
+            this.emit('copy', { source: this, copyRes });
         }
-    },
+    }
 
     fieldValueClick(e) {
         if (['a', 'input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) >= 0) {
@@ -98,7 +101,7 @@ const FieldView = Backbone.View.extend({
         if (!sel) {
             this.edit();
         }
-    },
+    }
 
     fieldLabelDrag(e) {
         e.stopPropagation();
@@ -112,7 +115,7 @@ const FieldView = Backbone.View.extend({
         }
         dt.setData('text/plain', txtval);
         dt.effectAllowed = 'copy';
-    },
+    }
 
     edit() {
         if (this.readonly || this.editing) {
@@ -123,7 +126,7 @@ const FieldView = Backbone.View.extend({
         this.editing = true;
         this.preventCopy = true;
         this.labelEl[0].setAttribute('draggable', 'false');
-    },
+    }
 
     endEdit(newVal, extra) {
         if (!this.editing) {
@@ -159,12 +162,12 @@ const FieldView = Backbone.View.extend({
         this.valueEl.html(this.renderValue(this.value));
         this.$el.removeClass('details__field--edit');
         this.labelEl[0].setAttribute('draggable', 'true');
-    },
+    }
 
     triggerChange(arg) {
         arg.sender = this;
-        this.trigger('change', arg);
+        this.emit('change', arg);
     }
-});
+}
 
 export { FieldView };

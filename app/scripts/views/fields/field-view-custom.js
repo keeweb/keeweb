@@ -6,17 +6,16 @@ import { Tip } from 'util/ui/tip';
 import { FieldView } from 'views/fields/field-view';
 import { FieldViewText } from 'views/fields/field-view-text';
 
-const FieldViewCustom = FieldViewText.extend({
-    events: {
-        'mousedown .details__field-label': 'fieldLabelMousedown'
-    },
-
-    initialize() {
-        _.extend(this.events, FieldViewText.prototype.events);
-    },
+class FieldViewCustom extends FieldViewText {
+    events = Object.assign(
+        {
+            'mousedown .details__field-label': 'fieldLabelMousedown'
+        },
+        FieldViewText.prototype.events
+    );
 
     startEdit() {
-        FieldViewText.prototype.startEdit.call(this);
+        super.startEdit();
         this.$el.addClass('details__field--can-edit-title');
         if (this.isProtected === undefined) {
             this.isProtected = this.value instanceof kdbxweb.ProtectedValue;
@@ -34,7 +33,7 @@ const FieldViewCustom = FieldViewText.extend({
             title: securityTipTitle
         });
         securityTip.init();
-    },
+    }
 
     endEdit(newVal, extra) {
         this.$el.removeClass('details__field--can-edit-title');
@@ -58,7 +57,7 @@ const FieldViewCustom = FieldViewText.extend({
         if (this.model.titleChanged) {
             delete this.model.titleChanged;
         }
-    },
+    }
 
     startEditTitle(emptyTitle) {
         const text = emptyTitle ? '' : this.model.title || '';
@@ -76,14 +75,14 @@ const FieldViewCustom = FieldViewText.extend({
             mousedown: this.fieldLabelInputClick.bind(this),
             click: this.fieldLabelInputClick.bind(this)
         });
-    },
+    }
 
     endEditTitle(newTitle) {
         if (newTitle && newTitle !== this.model.title) {
             this.model.title = newTitle;
             this.model.titleChanged = true;
         } else if (newTitle === '') {
-            this.trigger('change', {
+            this.emit('change', {
                 field: '$' + this.model.title,
                 val: ''
             });
@@ -93,7 +92,7 @@ const FieldViewCustom = FieldViewText.extend({
         if (this.editing && this.input) {
             this.input.focus();
         }
-    },
+    }
 
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
@@ -102,15 +101,15 @@ const FieldViewCustom = FieldViewText.extend({
         } else if (this.editing) {
             this.startEditTitle();
         } else {
-            FieldViewText.prototype.fieldLabelClick.call(this, e);
+            super.fieldLabelClick.call(this, e);
         }
-    },
+    }
 
     fieldLabelMousedown(e) {
         if (this.editing) {
             e.stopPropagation();
         }
-    },
+    }
 
     fieldValueBlur() {
         if (this.labelInput) {
@@ -119,15 +118,15 @@ const FieldViewCustom = FieldViewText.extend({
         if (this.input) {
             this.endEdit(this.input.val());
         }
-    },
+    }
 
     fieldLabelInput(e) {
         e.stopPropagation();
-    },
+    }
 
     fieldLabelInputClick(e) {
         e.stopPropagation();
-    },
+    }
 
     fieldLabelKeydown(e) {
         e.stopPropagation();
@@ -140,14 +139,14 @@ const FieldViewCustom = FieldViewText.extend({
             e.preventDefault();
             this.endEditTitle(e.target.value);
         }
-    },
+    }
 
     fieldValueInputClick() {
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
-        FieldViewText.prototype.fieldValueInputClick.call(this);
-    },
+        super.fieldValueInputClick.call(this);
+    }
 
     protectBtnClick(e) {
         e.stopPropagation();
@@ -158,6 +157,6 @@ const FieldViewCustom = FieldViewText.extend({
         }
         setTimeout(() => this.input.focus());
     }
-});
+}
 
 export { FieldViewCustom };

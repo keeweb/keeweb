@@ -1,18 +1,18 @@
 import { Keys } from 'const/keys';
 import { FieldViewText } from 'views/fields/field-view-text';
 
-const FieldViewAutocomplete = FieldViewText.extend({
+class FieldViewAutocomplete extends FieldViewText {
     endEdit(newVal, extra) {
         if (this.autocomplete) {
             this.autocomplete.remove();
             this.autocomplete = null;
         }
         delete this.selectedCopmletionIx;
-        FieldViewText.prototype.endEdit.call(this, newVal, extra);
-    },
+        super.endEdit(newVal, extra);
+    }
 
     startEdit() {
-        FieldViewText.prototype.startEdit.call(this);
+        super.startEdit();
         const fieldRect = this.input[0].getBoundingClientRect();
         const shadowSpread = parseInt(this.input.css('--focus-shadow-spread'));
         this.autocomplete = $('<div class="details__field-autocomplete"></div>').appendTo('body');
@@ -28,13 +28,13 @@ const FieldViewAutocomplete = FieldViewText.extend({
         } else {
             this.updateAutocomplete();
         }
-    },
+    }
 
     fieldValueInput(e) {
         e.stopPropagation();
         this.updateAutocomplete();
-        FieldViewText.prototype.fieldValueInput.call(this, e);
-    },
+        super.fieldValueInput.call(this, e);
+    }
 
     fieldValueKeydown(e) {
         switch (e.which) {
@@ -59,8 +59,8 @@ const FieldViewAutocomplete = FieldViewText.extend({
             default:
                 delete this.selectedCopmletionIx;
         }
-        FieldViewText.prototype.fieldValueKeydown.call(this, e);
-    },
+        super.fieldValueKeydown(e);
+    }
 
     moveAutocomplete(next) {
         const completions = this.model.getCompletions(this.input.val());
@@ -72,7 +72,7 @@ const FieldViewAutocomplete = FieldViewText.extend({
             this.selectedCopmletionIx = next ? 0 : completions.length - 1;
         }
         this.updateAutocomplete();
-    },
+    }
 
     updateAutocomplete() {
         const completions = this.model.getCompletions(this.input.val());
@@ -93,7 +93,7 @@ const FieldViewAutocomplete = FieldViewText.extend({
             .join('');
         this.autocomplete.html(completionsHtml);
         this.autocomplete.toggle(!!completionsHtml);
-    },
+    }
 
     autocompleteClick(e) {
         e.stopPropagation();
@@ -107,6 +107,6 @@ const FieldViewAutocomplete = FieldViewText.extend({
             });
         }
     }
-});
+}
 
 export { FieldViewAutocomplete };
