@@ -80,7 +80,7 @@ class AutoTypeHintView extends View {
         const pos = this.input.selectionEnd || this.input.value.length;
         this.input.value = this.input.value.substr(0, pos) + text + this.input.value.substr(pos);
         this.input.selectionStart = this.input.selectionEnd = pos + text.length;
-        $(this.input).trigger('input');
+        this.input.dispatchEvent(new Event('input'));
     }
 }
 

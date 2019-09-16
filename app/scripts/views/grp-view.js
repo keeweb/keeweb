@@ -2,7 +2,7 @@ import { View } from 'view-engine/view';
 import { AutoType } from 'auto-type';
 import Backbone from 'backbone';
 import { Scrollable } from 'view-engine/scrollable';
-import { AutoTypeHintView } from 'views/auto-type-hint-view';
+import { AutoTypeHintView } from 'views/auto-type/auto-type-hint-view';
 import { IconSelectView } from 'views/icon-select-view';
 import template from 'templates/grp.hbs';
 

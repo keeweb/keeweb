@@ -98,7 +98,7 @@ class AppView extends View {
         this.onKey(Keys.DOM_VK_ESCAPE, this.escPressed);
         this.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed);
         if (Launcher && Launcher.devTools) {
-            KeyHandler.onKey(
+            this.onKey(
                 Keys.DOM_VK_I,
                 this.openDevTools,
                 KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
@@ -114,10 +114,10 @@ class AppView extends View {
     setWindowClass() {
         const getBrowserCssClass = Features.getBrowserCssClass();
         if (getBrowserCssClass) {
-            this.$el.addClass(getBrowserCssClass);
+            document.body.classList.add(getBrowserCssClass);
         }
         if (this.titlebarStyle !== 'default') {
-            this.$el.addClass('titlebar-' + this.titlebarStyle);
+            document.body.classList.add('titlebar-' + this.titlebarStyle);
         }
     }
 

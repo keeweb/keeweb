@@ -1,30 +1,29 @@
+import { View } from 'view-engine/view';
 import { AutoType } from 'auto-type';
-import Backbone from 'backbone';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Locale } from 'util/locale';
-import { AutoTypeHintView } from 'views/auto-type-hint-view';
+import { AutoTypeHintView } from 'views/auto-type/auto-type-hint-view';
+import template from 'templates/details/details-auto-type.hbs';
 
-const DetailsAutoTypeView = Backbone.View.extend({
-    template: require('templates/details/details-auto-type.hbs'),
+class DetailsAutoTypeView extends View {
+    parent = '.details__body-after';
 
-    events: {
+    template = template;
+
+    events = {
         'focus #details__auto-type-sequence': 'seqFocus',
         'input #details__auto-type-sequence': 'seqInput',
         'keypress #details__auto-type-sequence': 'seqKeyPress',
         'keydown #details__auto-type-sequence': 'seqKeyDown',
         'change #details__auto-type-enabled': 'enabledChange',
         'change #details__auto-type-obfuscation': 'obfuscationChange'
-    },
-
-    initialize() {
-        this.views = {};
-    },
+    };
 
     render() {
         const detAutoTypeShortcutsDesc = Locale.detAutoTypeShortcutsDesc
             .replace('{}', Shortcuts.actionShortcutSymbol() + 'T')
             .replace('{}', Shortcuts.globalShortcutText('autoType'));
-        this.renderTemplate({
+        super.render({
             enabled: this.model.getEffectiveEnableAutoType(),
             obfuscation: this.model.autoTypeObfuscation,
             sequence: this.model.autoTypeSequence,
@@ -32,27 +31,26 @@ const DetailsAutoTypeView = Backbone.View.extend({
             defaultSequence: this.model.group.getEffectiveAutoTypeSeq(),
             detAutoTypeShortcutsDesc
         });
-        return this;
-    },
+    }
 
     seqInput(e) {
         const el = e.target;
-        const seq = $.trim(el.value);
+        const seq = el.value.trim();
         AutoType.validate(this.model, seq, err => {
             $(el).toggleClass('input--error', !!err);
             if (!err) {
                 this.model.setAutoTypeSeq(seq);
             }
         });
-    },
+    }
 
     seqKeyPress(e) {
         e.stopPropagation();
-    },
+    }
 
     seqKeyDown(e) {
         e.stopPropagation();
-    },
+    }
 
     seqFocus(e) {
         if (!this.views.hint) {
@@ -61,15 +59,15 @@ const DetailsAutoTypeView = Backbone.View.extend({
                 delete this.views.hint;
             });
         }
-    },
+    }
 
     enabledChange(e) {
         this.model.setEnableAutoType(e.target.checked);
-    },
+    }
 
     obfuscationChange(e) {
         this.model.setAutoTypeObfuscation(e.target.checked);
     }
-});
+}
 
 export { DetailsAutoTypeView };

@@ -947,7 +947,10 @@ const DetailsView = Backbone.View.extend({
 
     showHistory() {
         this.removeSubView();
-        const subView = new DetailsHistoryView({ el: this.scroller, model: this.model });
+        const subView = new DetailsHistoryView(this.model, {
+            parent: this.scroller[0],
+            replace: true
+        });
         this.listenTo(subView, 'close', this.historyClosed.bind(this));
         subView.render();
         this.pageResized();
@@ -1100,10 +1103,8 @@ const DetailsView = Backbone.View.extend({
             delete this.views.autoType;
             return;
         }
-        this.views.autoType = new DetailsAutoTypeView({
-            el: this.$el.find('.details__body-after'),
-            model: this.model
-        }).render();
+        this.views.autoType = new DetailsAutoTypeView(this.model);
+        this.views.autoType.render();
     },
 
     autoType() {

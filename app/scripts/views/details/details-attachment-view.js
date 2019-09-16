@@ -23,19 +23,18 @@ class DetailsAttachmentView extends View {
                     complete();
                 });
                 reader.readAsText(blob);
-                return this;
+                return;
             }
             case 'image':
                 $('<img/>')
                     .attr('src', URL.createObjectURL(blob))
                     .appendTo(dataEl);
                 complete();
-                return this;
+                return;
         }
         this.$el.addClass('details__attachment-preview--empty');
         this.$el.find('.details__attachment-preview-icon').addClass('fa-' + this.model.icon);
         complete();
-        return this;
     }
 }
 

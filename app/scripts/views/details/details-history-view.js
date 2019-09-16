@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
@@ -8,11 +9,12 @@ import { Locale } from 'util/locale';
 import { Copyable } from 'view-engine/copyable';
 import { FieldViewReadOnly } from 'views/fields/field-view-read-only';
 import { FieldViewReadOnlyRaw } from 'views/fields/field-view-read-only-raw';
+import template from 'templates/details/details-history.hbs';
 
-const DetailsHistoryView = Backbone.View.extend({
-    template: require('templates/details/details-history.hbs'),
+class DetailsHistoryView extends View {
+    template = template;
 
-    events: {
+    events = {
         'click .details__history-close': 'closeHistory',
         'click .details__history-timeline-item': 'timelineItemClick',
         'click .details__history-arrow-prev': 'timelinePrevClick',
@@ -20,9 +22,9 @@ const DetailsHistoryView = Backbone.View.extend({
         'click .details__history-button-revert': 'revertClick',
         'click .details__history-button-delete': 'deleteClick',
         'click .details__history-button-discard': 'discardClick'
-    },
+    };
 
-    formats: [
+    formats = [
         {
             name: 'ms',
             round: 1,
@@ -72,17 +74,22 @@ const DetailsHistoryView = Backbone.View.extend({
                 return d.getFullYear();
             }
         }
-    ],
+    ];
 
-    fieldViews: null,
+    fieldViews = [];
 
-    initialize() {
-        this.fieldViews = [];
-    },
+    visibleRecord = undefined;
 
-    render(visibleRecord) {
-        this.renderTemplate(null, true);
-        KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.closeHistory, this);
+    constructor(model, options) {
+        super(model, options);
+        this.onKey(Keys.DOM_VK_ESCAPE, this.closeHistory);
+        this.once('remove', () => {
+            this.removeFieldViews();
+        });
+    }
+
+    render() {
+        super.render();
         this.history = this.model.getHistory();
         this.buildTimeline();
         this.timelineEl = this.$el.find('.details__history-timeline');
@@ -101,23 +108,17 @@ const DetailsHistoryView = Backbone.View.extend({
                 .text(label.text)
                 .appendTo(this.timelineEl);
         }, this);
+        let visibleRecord = this.visibleRecord;
         if (visibleRecord === undefined) {
             visibleRecord = this.history.length - 1;
         }
         this.showRecord(visibleRecord);
-        return this;
-    },
-
-    remove() {
-        this.removeFieldViews();
-        KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.closeHistory, this);
-        Backbone.View.prototype.remove.call(this);
-    },
+    }
 
     removeFieldViews() {
         this.fieldViews.forEach(fieldView => fieldView.remove());
         this.fieldViews = [];
-    },
+    }
 
     showRecord(ix) {
         this.activeIx = ix;
@@ -256,26 +257,26 @@ const DetailsHistoryView = Backbone.View.extend({
                     this.history.length > 1) ||
                     false
             );
-    },
+    }
 
     timelineItemClick(e) {
         const id = $(e.target)
             .closest('.details__history-timeline-item')
             .data('id');
         this.showRecord(id);
-    },
+    }
 
     timelinePrevClick() {
         if (this.activeIx > 0) {
             this.showRecord(this.activeIx - 1);
         }
-    },
+    }
 
     timelineNextClick() {
         if (this.activeIx < this.timeline.length - 1) {
             this.showRecord(this.activeIx + 1);
         }
-    },
+    }
 
     buildTimeline() {
         const firstRec = this.history[0];
@@ -295,7 +296,7 @@ const DetailsHistoryView = Backbone.View.extend({
             val: label,
             text: format.format(new Date(label))
         }));
-    },
+    }
 
     getDateFormat(period) {
         for (let i = 0; i < this.formats.length; i++) {
@@ -304,7 +305,7 @@ const DetailsHistoryView = Backbone.View.extend({
             }
         }
         return this.formats[this.formats.length - 1];
-    },
+    }
 
     getLabels(first, last, round) {
         const count = Math.floor((last - first) / round);
@@ -321,11 +322,11 @@ const DetailsHistoryView = Backbone.View.extend({
             labels.shift();
         }
         return labels;
-    },
+    }
 
     closeHistory(updated) {
-        this.trigger('close', { updated });
-    },
+        this.emit('close', { updated });
+    }
 
     revertClick() {
         Alerts.yesno({
@@ -336,7 +337,7 @@ const DetailsHistoryView = Backbone.View.extend({
                 this.closeHistory(true);
             }
         });
-    },
+    }
 
     deleteClick() {
         Alerts.yesno({
@@ -344,10 +345,11 @@ const DetailsHistoryView = Backbone.View.extend({
             body: Locale.detHistoryDeleteAlertBody,
             success: () => {
                 this.model.deleteHistory(this.record.entry);
-                this.render(this.activeIx);
+                this.visibleRecord = this.activeIx;
+                this.render();
             }
         });
-    },
+    }
 
     discardClick() {
         Alerts.yesno({
@@ -359,8 +361,8 @@ const DetailsHistoryView = Backbone.View.extend({
             }
         });
     }
-});
+}
 
-_.extend(DetailsHistoryView.prototype, Copyable);
+Object.assign(DetailsHistoryView.prototype, Copyable);
 
 export { DetailsHistoryView };
