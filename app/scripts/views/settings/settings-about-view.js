@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { RuntimeInfo } from 'comp/app/runtime-info';
 import { Links } from 'const/links';
 import template from 'templates/settings/settings-about.hbs';

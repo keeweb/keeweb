@@ -1,7 +1,7 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Keys } from 'const/keys';
-import { Scrollable } from 'view-engine/scrollable';
+import { Scrollable } from 'framework/views/scrollable';
 import { StringFormat } from 'util/formatting/string-format';
 import template from 'templates/settings/settings.hbs';
 

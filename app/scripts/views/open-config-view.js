@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Keys } from 'const/keys';
 import { Locale } from 'util/locale';
 import template from 'templates/open-config.hbs';

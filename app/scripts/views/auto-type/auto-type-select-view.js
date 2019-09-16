@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
@@ -7,7 +7,7 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { EntryPresenter } from 'presenters/entry-presenter';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
-import { Scrollable } from 'view-engine/scrollable';
+import { Scrollable } from 'framework/views/scrollable';
 import { DropdownView } from 'views/dropdown-view';
 import template from 'templates/auto-type/auto-type-select.hbs';
 import itemTemplate from 'templates/auto-type/auto-type-select-item.hbs';

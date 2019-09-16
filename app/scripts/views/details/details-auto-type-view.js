@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { AutoType } from 'auto-type';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Locale } from 'util/locale';

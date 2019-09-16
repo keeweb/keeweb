@@ -23,7 +23,6 @@ import { Features } from 'util/features';
 import { KdbxwebInit } from 'util/kdbxweb/kdbxweb-init';
 import { Locale } from 'util/locale';
 import { AppView } from 'views/app-view';
-import 'view-engine/backbone-view-ext';
 import 'hbs-helpers';
 
 const ready = (Launcher && Launcher.ready) || $;

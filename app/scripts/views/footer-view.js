@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
 import { UpdateModel } from 'models/update-model';

@@ -1,9 +1,9 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
 import { AppSettingsModel } from 'models/app-settings-model';
-import { Resizable } from 'view-engine/resizable';
+import { Resizable } from 'framework/views/resizable';
 import { DragView } from 'views/drag-view';
 import { MenuSectionView } from 'views/menu/menu-section-view';
 import template from 'templates/menu/menu.hbs';

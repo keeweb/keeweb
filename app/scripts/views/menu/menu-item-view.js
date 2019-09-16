@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { DragDropInfo } from 'comp/app/drag-drop-info';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Alerts } from 'comp/ui/alerts';

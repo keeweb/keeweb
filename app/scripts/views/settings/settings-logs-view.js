@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { StringFormat } from 'util/formatting/string-format';
 import { Logger } from 'util/logger';
 import template from 'templates/settings/settings-logs-view.hbs';

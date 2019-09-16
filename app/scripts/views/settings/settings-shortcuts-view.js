@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Launcher } from 'comp/launcher';
 import { Keys } from 'const/keys';

@@ -1,9 +1,9 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { GeneratorPresets } from 'comp/app/generator-presets';
 import { PasswordGenerator } from 'util/generators/password-generator';
 import { Locale } from 'util/locale';
-import { Scrollable } from 'view-engine/scrollable';
+import { Scrollable } from 'framework/views/scrollable';
 import template from 'templates/generator-presets.hbs';
 
 class GeneratorPresetsView extends View {

@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import template from 'templates/details/details-add-field.hbs';
 
 class DetailsAddFieldView extends View {

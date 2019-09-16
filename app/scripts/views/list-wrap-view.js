@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 
 class ListWrapView extends View {
     parent = '.app__list-wrap';

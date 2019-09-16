@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { AutoType } from 'auto-type';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { KeyHandler } from 'comp/browser/key-handler';
@@ -16,8 +16,8 @@ import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
 import { FileSaver } from 'util/ui/file-saver';
 import { Tip } from 'util/ui/tip';
-import { Copyable } from 'view-engine/copyable';
-import { Scrollable } from 'view-engine/scrollable';
+import { Copyable } from 'framework/views/copyable';
+import { Scrollable } from 'framework/views/scrollable';
 import { DetailsAddFieldView } from 'views/details/details-add-field-view';
 import { DetailsAttachmentView } from 'views/details/details-attachment-view';
 import { DetailsAutoTypeView } from 'views/details/details-auto-type-view';

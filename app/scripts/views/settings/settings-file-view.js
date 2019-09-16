@@ -1,5 +1,5 @@
 import kdbxweb from 'kdbxweb';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Storage } from 'storage';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Launcher } from 'comp/launcher';

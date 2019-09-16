@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import template from 'templates/drag.hbs';
 
 class DragView extends View {

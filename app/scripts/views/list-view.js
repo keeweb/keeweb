@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { EntryCollection } from 'collections/entry-collection';
 import { DragDropInfo } from 'comp/app/drag-drop-info';
 import { Alerts } from 'comp/ui/alerts';
@@ -7,8 +7,8 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { EntryPresenter } from 'presenters/entry-presenter';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
-import { Resizable } from 'view-engine/resizable';
-import { Scrollable } from 'view-engine/scrollable';
+import { Resizable } from 'framework/views/resizable';
+import { Scrollable } from 'framework/views/scrollable';
 import { DropdownView } from 'views/dropdown-view';
 import { ListSearchView } from 'views/list-search-view';
 import template from 'templates/list.hbs';

@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Shortcuts } from 'comp/app/shortcuts';
 import template from 'templates/details/details-attachment.hbs';
 

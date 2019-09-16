@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { RuntimeInfo } from 'comp/app/runtime-info';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Links } from 'const/links';

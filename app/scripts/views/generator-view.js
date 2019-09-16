@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { GeneratorPresets } from 'comp/app/generator-presets';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { AppSettingsModel } from 'models/app-settings-model';

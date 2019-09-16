@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { IdleTracker } from 'comp/browser/idle-tracker';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Launcher } from 'comp/launcher';

@@ -1,7 +1,7 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { AppSettingsModel } from 'models/app-settings-model';
-import { Resizable } from 'view-engine/resizable';
-import { Scrollable } from 'view-engine/scrollable';
+import { Resizable } from 'framework/views/resizable';
+import { Scrollable } from 'framework/views/scrollable';
 import { MenuItemView } from 'views/menu/menu-item-view';
 import template from 'templates/menu/menu-section.hbs';
 

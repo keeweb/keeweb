@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { IconMap } from 'const/icon-map';
 import { Logger } from 'util/logger';
 import template from 'templates/icon-select.hbs';

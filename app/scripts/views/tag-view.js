@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Alerts } from 'comp/ui/alerts';
 import { Locale } from 'util/locale';
 import template from 'templates/tag.hbs';

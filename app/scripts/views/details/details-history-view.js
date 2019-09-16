@@ -1,10 +1,10 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
 import { DateFormat } from 'util/formatting/date-format';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
-import { Copyable } from 'view-engine/copyable';
+import { Copyable } from 'framework/views/copyable';
 import { FieldViewReadOnly } from 'views/fields/field-view-read-only';
 import { FieldViewReadOnlyRaw } from 'views/fields/field-view-read-only-raw';
 import template from 'templates/details/details-history.hbs';

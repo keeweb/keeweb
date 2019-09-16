@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { SecureInput } from 'comp/browser/secure-input';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';

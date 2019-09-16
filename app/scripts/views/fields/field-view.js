@@ -1,5 +1,4 @@
-import Backbone from 'backbone';
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { Tip } from 'util/ui/tip';
 import template from 'templates/details/field.hbs';

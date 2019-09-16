@@ -1,4 +1,4 @@
-import { View } from 'view-engine/view';
+import { View } from 'framework/views/view';
 import { Links } from 'const/links';
 import { Timeouts } from 'const/timeouts';
 import { Features } from 'util/features';
