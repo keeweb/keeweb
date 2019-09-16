@@ -150,7 +150,7 @@ ready(() => {
 
     function showView() {
         appModel.prepare();
-        new AppView({ model: appModel }).render();
+        new AppView(appModel).render();
         Backbone.trigger('app-ready');
         logStartupTime();
     }

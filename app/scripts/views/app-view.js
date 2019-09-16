@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { IdleTracker } from 'comp/browser/idle-tracker';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Launcher } from 'comp/launcher';
@@ -22,32 +23,31 @@ import { MenuView } from 'views/menu/menu-view';
 import { OpenView } from 'views/open-view';
 import { SettingsView } from 'views/settings/settings-view';
 import { TagView } from 'views/tag-view';
+import template from 'templates/app.hbs';
 
-const AppView = Backbone.View.extend({
-    el: 'body',
+class AppView extends View {
+    parent = 'body';
 
-    template: require('templates/app.hbs'),
+    template = template;
 
-    events: {
-        'contextmenu': 'contextMenu',
-        'drop': 'drop',
-        'dragenter': 'dragover',
-        'dragover': 'dragover',
+    events = {
+        contextmenu: 'contextMenu',
+        drop: 'drop',
+        dragenter: 'dragover',
+        dragover: 'dragover',
         'click a[target=_blank]': 'extLinkClick',
-        'mousedown': 'bodyClick'
-    },
+        mousedown: 'bodyClick'
+    };
 
-    views: null,
+    titlebarStyle = 'default';
 
-    titlebarStyle: 'default',
-
-    initialize() {
-        this.views = {};
-        this.views.menu = new MenuView({ model: this.model.menu });
+    constructor(model) {
+        super(model);
+        this.views.menu = new MenuView(this.model.menu, { ownParent: true });
         this.views.menuDrag = new DragView('x', { parent: '.app__menu-drag' });
         this.views.footer = new FooterView(this.model);
         this.views.listWrap = new ListWrapView(this.model);
-        this.views.list = new ListView({ model: this.model });
+        this.views.list = new ListView(this.model);
         this.views.listDrag = new DragView('x', { parent: '.app__list-drag' });
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView();
@@ -95,13 +95,12 @@ const AppView = Backbone.View.extend({
         window.onresize = this.windowResize.bind(this);
         window.onblur = this.windowBlur.bind(this);
 
-        KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
-        KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed, this);
+        this.onKey(Keys.DOM_VK_ESCAPE, this.escPressed);
+        this.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed);
         if (Launcher && Launcher.devTools) {
             KeyHandler.onKey(
                 Keys.DOM_VK_I,
                 this.openDevTools,
-                this,
                 KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
             );
         }
@@ -110,7 +109,7 @@ const AppView = Backbone.View.extend({
 
         this.setWindowClass();
         this.fixClicksInEdge();
-    },
+    }
 
     setWindowClass() {
         const getBrowserCssClass = Features.getBrowserCssClass();
@@ -120,7 +119,7 @@ const AppView = Backbone.View.extend({
         if (this.titlebarStyle !== 'default') {
             this.$el.addClass('titlebar-' + this.titlebarStyle);
         }
-    },
+    }
 
     fixClicksInEdge() {
         // MS Edge doesn't want to handle clicks by default
@@ -133,26 +132,24 @@ const AppView = Backbone.View.extend({
                 .focus();
             setTimeout(() => msEdgeScrewer.remove(), 0);
         }
-    },
+    }
 
     render() {
-        this.$el.html(
-            this.template({
-                beta: this.model.isBeta,
-                titlebarStyle: this.titlebarStyle
-            })
-        );
+        super.render({
+            beta: this.model.isBeta,
+            titlebarStyle: this.titlebarStyle
+        });
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.render();
-        this.views.menu.setElement(this.$el.find('.app__menu')).render();
+        this.views.menu.render();
         this.views.menuDrag.render();
         this.views.footer.render();
-        this.views.list.setElement(this.$el.find('.app__list')).render();
+        this.views.list.render();
         this.views.listDrag.render();
         this.views.details.setElement(this.$el.find('.app__details')).render();
         this.showLastOpenFile();
         return this;
-    },
+    }
 
     showOpenFile() {
         this.hideContextMenu();
@@ -167,17 +164,13 @@ const AppView = Backbone.View.extend({
         this.hideSettings();
         this.hideOpenFile();
         this.hideKeyChange();
-        this.views.open = new OpenView({ model: this.model });
-        this.views.open.setElement(this.$el.find('.app__body')).render();
-        this.views.open.on(
-            'close',
-            () => {
-                Backbone.trigger('closed-open-view');
-            },
-            this
-        );
-        this.views.open.on('close', this.showEntries, this);
-    },
+        this.views.open = new OpenView(this.model);
+        this.views.open.render();
+        this.views.open.on('close', () => {
+            Backbone.trigger('closed-open-view');
+        });
+        this.views.open.on('close', () => this.showEntries());
+    }
 
     showLastOpenFile() {
         this.showOpenFile();
@@ -186,14 +179,14 @@ const AppView = Backbone.View.extend({
             this.views.open.currentSelectedIndex = 0;
             this.views.open.showOpenFileInfo(lastOpenFile);
         }
-    },
+    }
 
     launcherOpenFile(file) {
         if (file && file.data && /\.kdbx$/i.test(file.data)) {
             this.showOpenFile();
             this.views.open.showOpenLocalFile(file.data, file.key);
         }
-    },
+    }
 
     updateApp() {
         if (
@@ -203,7 +196,7 @@ const AppView = Backbone.View.extend({
         ) {
             window.location.reload();
         }
-    },
+    }
 
     showEntries() {
         this.views.menu.show();
@@ -217,14 +210,14 @@ const AppView = Backbone.View.extend({
         this.hideOpenFile();
         this.hideSettings();
         this.hideKeyChange();
-    },
+    }
 
     hideOpenFile() {
         if (this.views.open) {
             this.views.open.remove();
             this.views.open = null;
         }
-    },
+    }
 
     hidePanelView() {
         if (this.views.panel) {
@@ -232,7 +225,7 @@ const AppView = Backbone.View.extend({
             this.views.panel = null;
             this.panelEl.addClass('hide');
         }
-    },
+    }
 
     showPanelView(view) {
         this.views.listWrap.hide();
@@ -243,7 +236,7 @@ const AppView = Backbone.View.extend({
         view.render();
         this.views.panel = view;
         this.panelEl.removeClass('hide');
-    },
+    }
 
     hideSettings() {
         if (this.views.settings) {
@@ -251,14 +244,14 @@ const AppView = Backbone.View.extend({
             this.views.settings.remove();
             this.views.settings = null;
         }
-    },
+    }
 
     hideKeyChange() {
         if (this.views.keyChange) {
             this.views.keyChange.hide();
             this.views.keyChange = null;
         }
-    },
+    }
 
     showSettings(selectedMenuItem) {
         this.model.menu.setMenu('settings');
@@ -278,15 +271,15 @@ const AppView = Backbone.View.extend({
         }
         this.model.menu.select({ item: selectedMenuItem });
         this.views.menu.switchVisibility(false);
-    },
+    }
 
     showEditGroup(group) {
         this.showPanelView(new GrpView(group));
-    },
+    }
 
     showEditTag() {
         this.showPanelView(new TagView(this.model));
-    },
+    }
 
     showKeyChange(file, viewConfig) {
         if (Alerts.alertDisplayed) {
@@ -310,7 +303,7 @@ const AppView = Backbone.View.extend({
         this.views.keyChange.render();
         this.views.keyChange.on('accept', this.keyChangeAccept.bind(this));
         this.views.keyChange.on('cancel', this.showEntries.bind(this));
-    },
+    }
 
     fileListUpdated() {
         if (this.model.files.hasOpenFiles()) {
@@ -319,7 +312,7 @@ const AppView = Backbone.View.extend({
             this.showOpenFile();
         }
         this.fixClicksInEdge();
-    },
+    }
 
     showFileSettings(e) {
         const menuItem = this.model.menu.filesSection
@@ -334,7 +327,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.showSettings(menuItem);
         }
-    },
+    }
 
     toggleOpenFile() {
         if (this.views.open) {
@@ -344,7 +337,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.showOpenFile();
         }
-    },
+    }
 
     beforeUnload(e) {
         const exitEvent = {
@@ -419,70 +412,70 @@ const AppView = Backbone.View.extend({
             Launcher.minimizeApp();
             return Launcher.preventExit(e);
         }
-    },
+    }
 
     windowResize() {
         Backbone.trigger('page-geometry', { source: 'window' });
-    },
+    }
 
     windowBlur(e) {
         if (e.target === window) {
             Backbone.trigger('page-blur');
         }
-    },
+    }
 
     enterFullScreen() {
         this.$el.addClass('fullscreen');
-    },
+    }
 
     leaveFullScreen() {
         this.$el.removeClass('fullscreen');
-    },
+    }
 
     escPressed() {
         if (this.views.open && this.model.files.hasOpenFiles()) {
             this.showEntries();
         }
-    },
+    }
 
     backspacePressed(e) {
         if (e.target === document.body) {
             e.preventDefault();
         }
-    },
+    }
 
     openDevTools() {
         if (Launcher && Launcher.devTools) {
             Launcher.openDevTools();
         }
-    },
+    }
 
     selectAll() {
         this.menuSelect({ item: this.model.menu.allItemsSection.get('items').first() });
-    },
+    }
 
     menuSelect(opt) {
         this.model.menu.select(opt);
         if (this.views.panel && !this.views.panel.isHidden()) {
             this.showEntries();
         }
-    },
+    }
 
     userIdle() {
         this.lockWorkspace(true);
-    },
+    }
 
     osLocked() {
         if (this.model.settings.get('lockOnOsLock')) {
             this.lockWorkspace(true);
         }
-    },
+    }
 
     appMinimized() {
         if (this.model.settings.get('lockOnMinimize')) {
             this.lockWorkspace(true);
         }
-    },
+    }
 
     lockWorkspace(autoInit) {
         if (Alerts.alertDisplayed) {
@@ -518,7 +511,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.closeAllFilesAndShowFirst();
         }
-    },
+    }
 
     handleAutoSaveTimer() {
         if (this.model.settings.get('autoSaveInterval') !== 0) {
@@ -531,7 +524,7 @@ const AppView = Backbone.View.extend({
                 this.model.settings.get('autoSaveInterval') * 1000 * 60
             );
         }
-    },
+    }
 
     saveAndLock(complete) {
         let pendingCallbacks = 0;
@@ -574,7 +567,7 @@ const AppView = Backbone.View.extend({
                 }
             }
         }
-    },
+    }
 
     closeAllFilesAndShowFirst() {
         let fileToShow = this.model.files.find(file => !file.get('demo') && !file.get('created'));
@@ -592,27 +585,27 @@ const AppView = Backbone.View.extend({
                 this.views.open.showOpenFileInfo(fileInfo);
             }
         }
-    },
+    }
 
     saveAll() {
         this.model.files.forEach(function(file) {
             this.model.syncFile(file);
         }, this);
-    },
+    }
 
     syncAllByTimer() {
         if (this.model.settings.get('autoSave')) {
             this.saveAll();
         }
-    },
+    }
 
     remoteKeyChanged(e) {
         this.showKeyChange(e.file, { remote: true });
-    },
+    }
 
     keyChangePending(e) {
         this.showKeyChange(e.file, { expired: true });
-    },
+    }
 
     keyChangeAccept(e) {
         this.showEntries();
@@ -632,7 +625,7 @@ const AppView = Backbone.View.extend({
                 }
             });
         }
-    },
+    }
 
     toggleSettings(page) {
         let menuItem = page ? this.model.menu[page + 'Section'] : null;
@@ -658,16 +651,16 @@ const AppView = Backbone.View.extend({
                 this.model.menu.select({ item: menuItem });
             }
         }
-    },
+    }
 
     toggleMenu() {
         this.views.menu.switchVisibility();
-    },
+    }
 
     toggleDetails(visible) {
         this.$el.find('.app').toggleClass('app--details-visible', visible);
         this.views.menu.switchVisibility(false);
-    },
+    }
 
     editGroup(group) {
         if (group && !(this.views.panel instanceof GrpView)) {
@@ -675,7 +668,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.showEntries();
         }
-    },
+    }
 
     editTag(tag) {
         if (tag && !(this.views.panel instanceof TagView)) {
@@ -684,7 +677,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.showEntries();
         }
-    },
+    }
 
     editGeneratorPresets() {
         if (!(this.views.panel instanceof GeneratorPresetsView)) {
@@ -695,17 +688,17 @@ const AppView = Backbone.View.extend({
         } else {
             this.showEntries();
         }
-    },
+    }
 
     isContextMenuAllowed(e) {
         return ['input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) < 0;
-    },
+    }
 
     contextMenu(e) {
         if (this.isContextMenuAllowed(e)) {
             e.preventDefault();
         }
-    },
+    }
 
     showContextMenu(e) {
         if (e.options && this.isContextMenuAllowed(e)) {
@@ -723,19 +716,19 @@ const AppView = Backbone.View.extend({
             menu.on('select', e => this.contextMenuSelect(e));
             this.views.contextMenu = menu;
         }
-    },
+    }
 
     hideContextMenu() {
         if (this.views.contextMenu) {
             this.views.contextMenu.remove();
             delete this.views.contextMenu;
         }
-    },
+    }
 
     contextMenuSelect(e) {
         this.hideContextMenu();
         Backbone.trigger('context-menu-select', e);
-    },
+    }
 
     showSingleInstanceAlert() {
         this.hideOpenFile();
@@ -747,24 +740,24 @@ const AppView = Backbone.View.extend({
             click: false,
             buttons: []
         });
-    },
+    }
 
     dragover(e) {
         e.preventDefault();
         e.originalEvent.dataTransfer.dropEffect = 'none';
-    },
+    }
 
     drop(e) {
         e.preventDefault();
-    },
+    }
 
     setTheme() {
         SettingsManager.setTheme(this.model.settings.get('theme'));
-    },
+    }
 
     setFontSize() {
         SettingsManager.setFontSize(this.model.settings.get('fontSize'));
-    },
+    }
 
     setLocale() {
         SettingsManager.setLocale(this.model.settings.get('locale'));
@@ -773,19 +766,19 @@ const AppView = Backbone.View.extend({
             this.showSettings();
         }
         this.$el.find('.app__beta:first').text(Locale.appBeta);
-    },
+    }
 
     extLinkClick(e) {
         if (Launcher) {
             e.preventDefault();
             Launcher.openLink(e.target.href);
         }
-    },
+    }
 
     bodyClick(e) {
         IdleTracker.regUserAction();
         Backbone.trigger('click', e);
     }
-});
+}
 
 export { AppView };

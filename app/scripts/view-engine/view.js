@@ -6,9 +6,10 @@ import { Logger } from 'util/logger';
 
 class View extends EventEmitter {
     parent = undefined;
-    replace = false;
     template = undefined;
     events = {};
+    model = undefined;
+    options = {};
     views = {};
     hidden = false;
     removed = false;
@@ -19,13 +20,7 @@ class View extends EventEmitter {
         super();
 
         this.model = model;
-
-        if (options.parent) {
-            this.parent = options.parent;
-        }
-        if (options.replace) {
-            this.replace = options.replace;
-        }
+        this.options = options;
 
         this.setMaxListeners(100);
     }
@@ -55,24 +50,31 @@ class View extends EventEmitter {
     renderElement(templateData) {
         const html = this.template(templateData);
         if (this.el) {
-            morphdom(this.el, html);
+            const mountRoot = this.options.ownParent ? this.el.firstChild : this.el;
+            morphdom(mountRoot, html);
         } else {
-            if (this.parent) {
-                let parent = this.parent;
+            let parent = this.options.parent || this.parent;
+            if (parent) {
                 if (typeof parent === 'string') {
-                    parent = document.querySelector(this.parent);
+                    parent = document.querySelector(parent);
                 }
                 if (!parent) {
                     throw new Error(`Error rendering ${this.constructor.name}: parent not found`);
                 }
-                if (this.replace) {
+                if (this.options.replace) {
                     Tip.destroyTips(parent);
                     parent.innerHTML = '';
                 }
                 const el = document.createElement('div');
                 el.innerHTML = html;
-                this.el = el.firstChild;
-                parent.appendChild(this.el);
+                const root = el.firstChild;
+                if (this.options.ownParent) {
+                    parent.appendChild(root);
+                    this.el = parent;
+                } else {
+                    this.el = root;
+                    parent.appendChild(this.el);
+                }
             } else {
                 throw new Error(
                     `Error rendering ${this.constructor.name}: I don't know how to insert the view`
@@ -145,6 +147,7 @@ class View extends EventEmitter {
     }
 
     stopListening(model, event, callback) {
+        // TODO: remove a pending callback
         model.off(event, callback);
     }
 

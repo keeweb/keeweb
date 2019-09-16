@@ -1,31 +1,36 @@
-import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Resizable } from 'view-engine/resizable';
 import { Scrollable } from 'view-engine/scrollable';
 import { MenuItemView } from 'views/menu/menu-item-view';
+import template from 'templates/menu/menu-section.hbs';
 
-const MenuSectionView = Backbone.View.extend({
-    template: require('templates/menu/menu-section.hbs'),
+class MenuSectionView extends View {
+    template = template;
 
-    events: {},
+    events = {};
 
-    itemViews: null,
+    itemViews = null;
 
-    minHeight: 55,
-    maxHeight() {
-        return this.$el.parent().height() - 116;
-    },
-    autoHeight: 'auto',
+    minHeight = 55;
+    autoHeigh = 'auto';
 
-    initialize() {
+    constructor(model, options) {
+        super(model, options);
         this.itemViews = [];
         this.listenTo(this.model, 'change-items', this.itemsChanged);
         this.listenTo(this, 'view-resize', this.viewResized);
-    },
+        this.once('remove', () => {
+            if (this.scroll) {
+                this.scroll.dispose();
+            }
+            this.removeInnerViews();
+        });
+    }
 
     render() {
         if (!this.itemsEl) {
-            this.renderTemplate(this.model.attributes);
+            super.render(this.model.attributes);
             this.itemsEl = this.model.get('scrollable') ? this.$el.find('.scroller') : this.$el;
             if (this.model.get('scrollable')) {
                 this.initScroll();
@@ -38,11 +43,11 @@ const MenuSectionView = Backbone.View.extend({
         } else {
             this.removeInnerViews();
         }
-        this.model.get('items').forEach(function(item) {
-            const itemView = new MenuItemView({ el: this.itemsEl, model: item });
+        this.model.get('items').forEach(item => {
+            const itemView = new MenuItemView(item, { parent: this.itemsEl[0] });
             itemView.render();
             this.itemViews.push(itemView);
-        }, this);
+        });
         if (this.model.get('drag')) {
             const height = AppSettingsModel.instance.get('tagsViewHeight');
             if (typeof height === 'number') {
@@ -51,36 +56,32 @@ const MenuSectionView = Backbone.View.extend({
             }
         }
         this.pageResized();
-    },
+    }
 
-    remove() {
-        if (this.scroll) {
-            this.scroll.dispose();
-        }
-        this.removeInnerViews();
-        Backbone.View.prototype.remove.apply(this);
-    },
+    maxHeight() {
+        return this.$el.parent().height() - 116;
+    }
 
     removeInnerViews() {
         this.itemViews.forEach(itemView => itemView.remove());
         this.itemViews = [];
-    },
+    }
 
     itemsChanged() {
         this.render();
-    },
+    }
 
     viewResized(size) {
         this.$el.css('flex', '0 0 ' + (size ? size + 'px' : 'auto'));
         this.saveViewHeight(size);
-    },
+    }
 
-    saveViewHeight: _.throttle(size => {
+    saveViewHeight = _.throttle(size => {
         AppSettingsModel.instance.set('tagsViewHeight', size);
-    }, 1000)
-});
+    }, 1000);
+}
 
-_.extend(MenuSectionView.prototype, Resizable);
-_.extend(MenuSectionView.prototype, Scrollable);
+Object.assign(MenuSectionView.prototype, Resizable);
+Object.assign(MenuSectionView.prototype, Scrollable);
 
 export { MenuSectionView };
