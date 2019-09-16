@@ -712,7 +712,7 @@ const AppView = Backbone.View.extend({
             if (this.views.contextMenu) {
                 this.views.contextMenu.remove();
             }
-            const menu = new DropdownView({ model: e });
+            const menu = new DropdownView(e);
             menu.render({
                 position: { left: e.pageX, top: e.pageY },
                 options: e.options
