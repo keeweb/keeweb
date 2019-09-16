@@ -230,9 +230,7 @@ const AutoType = {
         }
         this.focusMainWindow();
         evt.filter.ignoreWindowInfo = true;
-        this.selectEntryView = new AutoTypeSelectView({
-            model: { filter: evt.filter }
-        }).render();
+        this.selectEntryView = new AutoTypeSelectView({ filter: evt.filter });
         this.selectEntryView.on('result', result => {
             logger.debug('Entry selected', result);
             this.selectEntryView.off('result');
@@ -248,6 +246,7 @@ const AutoType = {
                 }
             });
         });
+        this.selectEntryView.render();
         this.selectEntryView.on('show-open-files', () => {
             this.selectEntryView.hide();
             Backbone.trigger('open-file');

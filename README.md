@@ -20,17 +20,6 @@ Donate: [OpenCollective](https://opencollective.com/keeweb#support)
 
 The app is quite stable now. Basic stuff, as well as more advanced operations, should be rather reliable.
 
-#### Features
-
-Currently the project has reached the stage where the author is satisfied with the feature set.
-New features are not being actively developed, however issues are fixed 
-and the app is constantly updated to support new platforms. Contributions are very welcome.
-
-#### Development
-
-There's an ongoing effort to migrate the app to react however it takes time and I don't know if it will happen.
-Currently we have a modern build system, but the framework (Backbone/jQuery) is ancient.
-
 # Self-hosting
 
 Everything you need to host this app on your server is any static file server. The app is a single HTML file + cache manifest (optionally; for offline access).

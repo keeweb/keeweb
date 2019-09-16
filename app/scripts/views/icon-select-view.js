@@ -1,38 +1,33 @@
-import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { IconMap } from 'const/icon-map';
 import { Logger } from 'util/logger';
+import template from 'templates/icon-select.hbs';
 
 const logger = new Logger('icon-select-view');
 
-const IconSelectView = Backbone.View.extend({
-    template: require('templates/icon-select.hbs'),
+class IconSelectView extends View {
+    template = template;
 
-    events: {
+    events = {
         'click .icon-select__icon': 'iconClick',
         'click .icon-select__icon-download': 'downloadIcon',
         'click .icon-select__icon-select': 'selectIcon',
         'change .icon-select__file-input': 'iconSelected'
-    },
+    };
 
-    initialize() {
-        this.special = {
-            select: null,
-            download: null
-        };
-    },
+    special = {
+        select: null,
+        download: null
+    };
 
     render() {
-        this.renderTemplate(
-            {
-                sel: this.model.iconId,
-                icons: IconMap,
-                canDownloadFavicon: !!this.model.url,
-                customIcons: this.model.file.getCustomIcons()
-            },
-            true
-        );
-        return this;
-    },
+        super.render({
+            sel: this.model.iconId,
+            icons: IconMap,
+            canDownloadFavicon: !!this.model.url,
+            customIcons: this.model.file.getCustomIcons()
+        });
+    }
 
     iconClick(e) {
         const target = $(e.target).closest('.icon-select__icon');
@@ -41,15 +36,15 @@ const IconSelectView = Backbone.View.extend({
             const iconData = this.special[target.data('special')];
             if (iconData) {
                 const id = this.model.file.addCustomIcon(iconData.data);
-                this.trigger('select', { id, custom: true });
+                this.emit('select', { id, custom: true });
                 e.preventDefault();
                 e.stopImmediatePropagation();
             }
         } else if (iconId) {
             const isCustomIcon = target.hasClass('icon-select__icon-custom');
-            this.trigger('select', { id: iconId, custom: isCustomIcon });
+            this.emit('select', { id: iconId, custom: isCustomIcon });
         }
-    },
+    }
 
     downloadIcon() {
         if (this.downloadingFavicon) {
@@ -83,7 +78,7 @@ const IconSelectView = Backbone.View.extend({
                 .addClass('icon-select__icon--download-error');
             this.downloadingFavicon = false;
         };
-    },
+    }
 
     getIconUrl(useService) {
         if (!this.model.url) {
@@ -100,11 +95,11 @@ const IconSelectView = Backbone.View.extend({
             return 'https://favicon.keeweb.info/' + url.replace(/^.*:\/+/, '').replace(/\/.*/, '');
         }
         return url;
-    },
+    }
 
     selectIcon() {
         this.$el.find('.icon-select__file-input').click();
-    },
+    }
 
     iconSelected(e) {
         const file = e.target.files[0];
@@ -129,7 +124,7 @@ const IconSelectView = Backbone.View.extend({
                 .find('.icon-select__icon-select')
                 .removeClass('icon-select__icon--custom-selected');
         }
-    },
+    }
 
     setSpecialImage(img, name) {
         const size = Math.min(img.width, 32);
@@ -141,6 +136,6 @@ const IconSelectView = Backbone.View.extend({
         const data = canvas.toDataURL().replace(/^.*,/, '');
         this.special[name] = { width: img.width, height: img.height, data };
     }
-});
+}
 
 export { IconSelectView };

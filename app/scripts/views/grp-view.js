@@ -1,13 +1,17 @@
+import { View } from 'framework/views/view';
 import { AutoType } from 'auto-type';
 import Backbone from 'backbone';
-import { Scrollable } from 'view-engine/scrollable';
-import { AutoTypeHintView } from 'views/auto-type-hint-view';
+import { Scrollable } from 'framework/views/scrollable';
+import { AutoTypeHintView } from 'views/auto-type/auto-type-hint-view';
 import { IconSelectView } from 'views/icon-select-view';
+import template from 'templates/grp.hbs';
 
-const GrpView = Backbone.View.extend({
-    template: require('templates/grp.hbs'),
+class GrpView extends View {
+    parent = '.app__panel';
 
-    events: {
+    template = template;
+
+    events = {
         'click .grp__icon': 'showIconsSelect',
         'click .grp__buttons-trash': 'moveToTrash',
         'click .back-button': 'returnToApp',
@@ -16,28 +20,21 @@ const GrpView = Backbone.View.extend({
         'input #grp__field-auto-type-seq': 'changeAutoTypeSeq',
         'change #grp__check-search': 'setEnableSearching',
         'change #grp__check-auto-type': 'setEnableAutoType'
-    },
-
-    initialize() {
-        this.views = {};
-    },
+    };
 
     render() {
         this.removeSubView();
-        this.renderTemplate(
-            {
-                title: this.model.get('title'),
-                icon: this.model.get('icon') || 'folder',
-                customIcon: this.model.get('customIcon'),
-                enableSearching: this.model.getEffectiveEnableSearching(),
-                readonly: this.model.get('top'),
-                canAutoType: AutoType.enabled,
-                autoTypeSeq: this.model.get('autoTypeSeq'),
-                autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
-                defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
-            },
-            true
-        );
+        super.render({
+            title: this.model.get('title'),
+            icon: this.model.get('icon') || 'folder',
+            customIcon: this.model.get('customIcon'),
+            enableSearching: this.model.getEffectiveEnableSearching(),
+            readonly: this.model.get('top'),
+            canAutoType: AutoType.enabled,
+            autoTypeSeq: this.model.get('autoTypeSeq'),
+            autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
+            defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
+        });
         if (!this.model.get('title')) {
             this.$el.find('#grp__field-title').focus();
         }
@@ -47,15 +44,14 @@ const GrpView = Backbone.View.extend({
             bar: this.$el.find('.scroller__bar')[0]
         });
         this.pageResized();
-        return this;
-    },
+    }
 
     removeSubView() {
         if (this.views.sub) {
             this.views.sub.remove();
             delete this.views.sub;
         }
-    },
+    }
 
     changeTitle(e) {
         const title = $.trim(e.target.value);
@@ -69,7 +65,7 @@ const GrpView = Backbone.View.extend({
                 Backbone.trigger('edit-group');
             }
         }
-    },
+    }
 
     changeAutoTypeSeq(e) {
         const el = e.target;
@@ -80,34 +76,37 @@ const GrpView = Backbone.View.extend({
                 this.model.setAutoTypeSeq(seq);
             }
         });
-    },
+    }
 
     focusAutoTypeSeq(e) {
         if (!this.views.hint) {
-            this.views.hint = new AutoTypeHintView({ input: e.target }).render();
+            this.views.hint = new AutoTypeHintView({ input: e.target });
+            this.views.hint.render();
             this.views.hint.on('remove', () => {
                 delete this.views.hint;
             });
         }
-    },
+    }
 
     showIconsSelect() {
         if (this.views.sub) {
             this.removeSubView();
         } else {
-            const subView = new IconSelectView({
-                el: this.$el.find('.grp__icons'),
-                model: {
+            const subView = new IconSelectView(
+                {
                     iconId: this.model.get('customIconId') || this.model.get('iconId'),
                     file: this.model.file
+                },
+                {
+                    parent: this.$el.find('.grp__icons')[0]
                 }
-            });
+            );
             this.listenTo(subView, 'select', this.iconSelected);
             subView.render();
             this.views.sub = subView;
         }
         this.pageResized();
-    },
+    }
 
     iconSelected(sel) {
         if (sel.custom) {
@@ -118,28 +117,28 @@ const GrpView = Backbone.View.extend({
             this.model.setIcon(+sel.id);
         }
         this.render();
-    },
+    }
 
     moveToTrash() {
         this.model.moveToTrash();
         Backbone.trigger('select-all');
-    },
+    }
 
     setEnableSearching(e) {
         const enabled = e.target.checked;
         this.model.setEnableSearching(enabled);
-    },
+    }
 
     setEnableAutoType(e) {
         const enabled = e.target.checked;
         this.model.setEnableAutoType(enabled);
-    },
+    }
 
     returnToApp() {
         Backbone.trigger('edit-group');
     }
-});
+}
 
-_.extend(GrpView.prototype, Scrollable);
+Object.assign(GrpView.prototype, Scrollable);
 
 export { GrpView };

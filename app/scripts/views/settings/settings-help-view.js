@@ -1,9 +1,10 @@
-import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { RuntimeInfo } from 'comp/app/runtime-info';
 import { Links } from 'const/links';
+import template from 'templates/settings/settings-help.hbs';
 
-const SettingsHelpView = Backbone.View.extend({
-    template: require('templates/settings/settings-help.hbs'),
+class SettingsHelpView extends View {
+    template = template;
 
     render() {
         const appInfo =
@@ -19,7 +20,8 @@ const SettingsHelpView = Backbone.View.extend({
             '\n' +
             'User-Agent: ' +
             RuntimeInfo.userAgent;
-        this.renderTemplate({
+
+        super.render({
             issueLink:
                 Links.Repo +
                 '/issues/new?body=' +
@@ -29,6 +31,6 @@ const SettingsHelpView = Backbone.View.extend({
             appInfo: _.escape(appInfo)
         });
     }
-});
+}
 
 export { SettingsHelpView };

@@ -1,40 +1,36 @@
 import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { Alerts } from 'comp/ui/alerts';
 import { Locale } from 'util/locale';
+import template from 'templates/tag.hbs';
 
-const TagView = Backbone.View.extend({
-    template: require('templates/tag.hbs'),
+class TagView extends View {
+    parent = '.app__panel';
 
-    events: {
+    template = template;
+
+    events = {
         'click .tag__buttons-trash': 'moveToTrash',
         'click .back-button': 'returnToApp',
         'click .tag__btn-rename': 'renameTag'
-    },
-
-    initialize() {
-        this.appModel = this.model;
-    },
+    };
 
     render() {
-        if (this.model) {
-            this.renderTemplate(
-                {
-                    title: this.model.get('title')
-                },
-                true
-            );
+        if (this.tag) {
+            super.render({
+                title: this.tag.get('title')
+            });
         }
-        return this;
-    },
+    }
 
     showTag(tag) {
-        this.model = tag;
+        this.tag = tag;
         this.render();
-    },
+    }
 
     renameTag() {
         const title = $.trim(this.$el.find('#tag__field-title').val());
-        if (!title || title === this.model.get('title')) {
+        if (!title || title === this.tag.get('title')) {
             return;
         }
         if (/[;,:]/.test(title)) {
@@ -44,13 +40,13 @@ const TagView = Backbone.View.extend({
             });
             return;
         }
-        if (this.appModel.tags.some(t => t.toLowerCase() === title.toLowerCase())) {
+        if (this.model.tags.some(t => t.toLowerCase() === title.toLowerCase())) {
             Alerts.error({ header: Locale.tagExists, body: Locale.tagExistsBody });
             return;
         }
-        this.appModel.renameTag(this.model.get('title'), title);
+        this.model.renameTag(this.tag.get('title'), title);
         Backbone.trigger('select-all');
-    },
+    }
 
     moveToTrash() {
         this.title = null;
@@ -58,15 +54,15 @@ const TagView = Backbone.View.extend({
             header: Locale.tagTrashQuestion,
             body: Locale.tagTrashQuestionBody,
             success: () => {
-                this.appModel.renameTag(this.model.get('title'), undefined);
+                this.model.renameTag(this.tag.get('title'), undefined);
                 Backbone.trigger('select-all');
             }
         });
-    },
+    }
 
     returnToApp() {
         Backbone.trigger('edit-tag');
     }
-});
+}
 
 export { TagView };

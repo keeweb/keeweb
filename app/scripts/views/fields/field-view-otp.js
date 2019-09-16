@@ -3,14 +3,19 @@ import { FieldViewText } from 'views/fields/field-view-text';
 
 const MinOpacity = 0.1;
 
-const FieldViewOtp = FieldViewText.extend({
-    otpTimeout: null,
-    otpTickInterval: null,
-    otpValue: null,
-    otpGenerator: null,
-    otpTimeLeft: 0,
-    otpValidUntil: 0,
-    fieldOpacity: null,
+class FieldViewOtp extends FieldViewText {
+    otpTimeout = null;
+    otpTickInterval = null;
+    otpValue = null;
+    otpGenerator = null;
+    otpTimeLeft = 0;
+    otpValidUntil = 0;
+    fieldOpacity = null;
+
+    constructor(model, options) {
+        super(model, options);
+        this.once('remove', () => this.resetOtp());
+    }
 
     renderValue(value) {
         if (!value) {
@@ -22,22 +27,17 @@ const FieldViewOtp = FieldViewText.extend({
             this.requestOtpUpdate();
         }
         return this.otpValue;
-    },
+    }
 
     getEditValue(value) {
         return value && value.url;
-    },
+    }
 
     render() {
-        FieldViewText.prototype.render.call(this);
+        super.render();
         this.fieldOpacity = null;
         this.otpTick();
-    },
-
-    remove() {
-        this.resetOtp();
-        FieldViewText.prototype.remove.apply(this);
-    },
+    }
 
     resetOtp() {
         this.otpGenerator = null;
@@ -52,13 +52,13 @@ const FieldViewOtp = FieldViewText.extend({
             clearInterval(this.otpTickInterval);
             this.otpTickInterval = null;
         }
-    },
+    }
 
     requestOtpUpdate() {
         if (this.value) {
             this.value.next(this.otpUpdated.bind(this));
         }
-    },
+    }
 
     otpUpdated(pass, timeLeft) {
         if (!this.value || !pass) {
@@ -77,7 +77,7 @@ const FieldViewOtp = FieldViewText.extend({
                 this.otpTickInterval = setInterval(this.otpTick.bind(this), 300);
             }
         }
-    },
+    }
 
     otpTick() {
         if (!this.value || !this.otpValidUntil) {
@@ -98,6 +98,6 @@ const FieldViewOtp = FieldViewText.extend({
         this.fieldOpacity = opacity;
         this.valueEl.css('opacity', opacity);
     }
-});
+}
 
 export { FieldViewOtp };

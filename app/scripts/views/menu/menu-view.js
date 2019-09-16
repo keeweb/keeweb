@@ -1,57 +1,58 @@
 import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
 import { AppSettingsModel } from 'models/app-settings-model';
-import { Resizable } from 'view-engine/resizable';
+import { Resizable } from 'framework/views/resizable';
 import { DragView } from 'views/drag-view';
 import { MenuSectionView } from 'views/menu/menu-section-view';
+import template from 'templates/menu/menu.hbs';
 
-const MenuView = Backbone.View.extend({
-    template: require('templates/menu/menu.hbs'),
+class MenuView extends View {
+    parent = '.app__menu';
 
-    events: {},
+    template = template;
 
-    sectionViews: [],
+    events = {};
 
-    minWidth: 130,
-    maxWidth: 300,
+    sectionViews = [];
 
-    initialize() {
+    minWidth = 130;
+    maxWidth = 300;
+
+    constructor(model, options) {
+        super(model, options);
         this.listenTo(this.model, 'change:sections', this.menuChanged);
         this.listenTo(this, 'view-resize', this.viewResized);
-        KeyHandler.onKey(
+        this.onKey(
             Keys.DOM_VK_UP,
             this.selectPreviousSection,
-            this,
             KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
         );
-        KeyHandler.onKey(
+        this.onKey(
             Keys.DOM_VK_DOWN,
             this.selectNextSection,
-            this,
             KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
         );
-    },
-
-    remove() {
-        this.sectionViews.forEach(sectionView => sectionView.remove());
-        this.sectionViews = [];
-        Backbone.View.prototype.remove.apply(this);
-    },
+        this.once('remove', () => {
+            this.sectionViews.forEach(sectionView => sectionView.remove());
+            this.sectionViews = [];
+        });
+    }
 
     render() {
-        this.$el.html(this.template());
+        super.render();
         const sectionsEl = this.$el.find('.menu');
         this.model.get('sections').forEach(function(section) {
-            const sectionView = new MenuSectionView({ el: sectionsEl, model: section });
+            const sectionView = new MenuSectionView(section, { parent: sectionsEl[0] });
             sectionView.render();
             if (section.get('drag')) {
-                const dragView = new DragView('y');
                 const dragEl = $('<div/>')
                     .addClass('menu__drag-section')
                     .appendTo(sectionsEl);
+                const dragView = new DragView('y', { parent: dragEl[0] });
                 sectionView.listenDrag(dragView);
-                dragView.setElement(dragEl).render();
+                dragView.render();
                 this.sectionViews.push(dragView);
             }
             this.sectionViews.push(sectionView);
@@ -59,30 +60,29 @@ const MenuView = Backbone.View.extend({
         if (typeof AppSettingsModel.instance.get('menuViewWidth') === 'number') {
             this.$el.width(AppSettingsModel.instance.get('menuViewWidth'));
         }
-        return this;
-    },
+    }
 
     menuChanged() {
         this.render();
-    },
+    }
 
-    viewResized: _.throttle(size => {
+    viewResized = _.throttle(size => {
         AppSettingsModel.instance.set('menuViewWidth', size);
-    }, 1000),
+    }, 1000);
 
     switchVisibility(visible) {
         this.$el.toggleClass('menu-visible', visible);
-    },
+    }
 
     selectPreviousSection() {
         Backbone.trigger('select-previous-menu-item');
-    },
+    }
 
     selectNextSection() {
         Backbone.trigger('select-next-menu-item');
     }
-});
+}
 
-_.extend(MenuView.prototype, Resizable);
+Object.assign(MenuView.prototype, Resizable);
 
 export { MenuView };

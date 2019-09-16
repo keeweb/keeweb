@@ -1,14 +1,15 @@
-import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Launcher } from 'comp/launcher';
 import { Keys } from 'const/keys';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
+import template from 'templates/settings/settings-shortcuts.hbs';
 
-const SettingsShortcutsView = Backbone.View.extend({
-    template: require('templates/settings/settings-shortcuts.hbs'),
+class SettingsShortcutsView extends View {
+    template = template;
 
-    systemShortcuts: [
+    systemShortcuts = [
         'Meta+A',
         'Alt+A',
         'Alt+C',
@@ -24,14 +25,14 @@ const SettingsShortcutsView = Backbone.View.extend({
         'Meta+G',
         'Meta+,',
         'Meta+L'
-    ],
+    ];
 
-    events: {
+    events = {
         'click button.shortcut': 'shortcutClick'
-    },
+    };
 
     render() {
-        this.renderTemplate({
+        super.render({
             cmd: Shortcuts.actionShortcutSymbol(true),
             alt: Shortcuts.altShortcutSymbol(true),
             globalIsLarge: !Features.isMac,
@@ -45,7 +46,7 @@ const SettingsShortcutsView = Backbone.View.extend({
                   }
                 : undefined
         });
-    },
+    }
 
     shortcutClick(e) {
         const globalShortcutType = e.target.dataset.shortcut;
@@ -95,6 +96,6 @@ const SettingsShortcutsView = Backbone.View.extend({
             }
         });
     }
-});
+}
 
 export { SettingsShortcutsView };

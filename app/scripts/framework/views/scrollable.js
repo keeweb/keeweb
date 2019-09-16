@@ -13,6 +13,7 @@ const Scrollable = {
                 this.removeScroll();
             }
             this.scroll = baron(opts);
+            this.once('remove', () => this.removeScroll);
         }
         this.scroller = this.$el.find('.scroller');
         this.scrollerBar = this.$el.find('.scroller__bar');
@@ -21,7 +22,9 @@ const Scrollable = {
 
     removeScroll() {
         if (this.scroll) {
-            this.scroll.dispose();
+            try {
+                this.scroll.dispose();
+            } catch {}
             this.scroll = null;
         }
     },

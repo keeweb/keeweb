@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { EntryCollection } from 'collections/entry-collection';
 import { DragDropInfo } from 'comp/app/drag-drop-info';
 import { Alerts } from 'comp/ui/alerts';
@@ -6,31 +7,34 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { EntryPresenter } from 'presenters/entry-presenter';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
-import { Resizable } from 'view-engine/resizable';
-import { Scrollable } from 'view-engine/scrollable';
+import { Resizable } from 'framework/views/resizable';
+import { Scrollable } from 'framework/views/scrollable';
 import { DropdownView } from 'views/dropdown-view';
 import { ListSearchView } from 'views/list-search-view';
+import template from 'templates/list.hbs';
+import emptyTemplate from 'templates/list-empty.hbs';
 
-const ListView = Backbone.View.extend({
-    template: require('templates/list.hbs'),
-    emptyTemplate: require('templates/list-empty.hbs'),
+class ListView extends View {
+    parent = '.app__list';
 
-    events: {
-        'click .list__item': 'itemClick',
+    template = template;
+
+    emptyTemplate = emptyTemplate;
+
+    events = {
+        'click': 'click',
         'click .list__table-options': 'tableOptionsClick',
         'dragstart .list__item': 'itemDragStart'
-    },
+    };
 
-    views: null,
+    minWidth = 200;
+    minHeight = 200;
+    maxWidth = 500;
+    maxHeight = 500;
 
-    minWidth: 200,
-    minHeight: 200,
-    maxWidth: 500,
-    maxHeight: 500,
+    itemsEl = null;
 
-    itemsEl: null,
-
-    tableColumns: [
+    tableColumns = [
         { val: 'title', name: 'title', enabled: true },
         { val: 'user', name: 'user', enabled: true },
         { val: 'url', name: 'website', enabled: true },
@@ -38,12 +42,13 @@ const ListView = Backbone.View.extend({
         { val: 'notes', name: 'notes', enabled: true },
         { val: 'groupName', name: 'group', enabled: false },
         { val: 'fileName', name: 'file', enabled: false }
-    ],
+    ];
 
-    initialize() {
+    constructor(model, options) {
+        super(model, options);
+
         this.initScroll();
-        this.views = {};
-        this.views.search = new ListSearchView({ model: this.model });
+        this.views.search = new ListSearchView(this.model);
 
         this.listenTo(this.views.search, 'select-prev', this.selectPrev);
         this.listenTo(this.views.search, 'select-next', this.selectNext);
@@ -62,13 +67,13 @@ const ListView = Backbone.View.extend({
         this.readTableColumnsEnabled();
 
         this.items = new EntryCollection();
-    },
+    }
 
     render() {
         if (!this.itemsEl) {
-            this.$el.html(this.template());
+            super.render();
             this.itemsEl = this.$el.find('.list__items>.scroller');
-            this.views.search.setElement(this.$el.find('.list__header')).render();
+            this.views.search.render();
             this.setTableView();
 
             this.createScroll({
@@ -104,8 +109,7 @@ const ListView = Backbone.View.extend({
             this.itemsEl.html(this.emptyTemplate());
         }
         this.pageResized();
-        return this;
-    },
+    }
 
     getItemsTemplate() {
         if (this.model.settings.get('tableView')) {
@@ -113,11 +117,11 @@ const ListView = Backbone.View.extend({
         } else {
             return this.renderPlainItems;
         }
-    },
+    }
 
     renderPlainItems(itemsHtml) {
         return itemsHtml.items;
-    },
+    }
 
     getItemTemplate() {
         if (this.model.settings.get('tableView')) {
@@ -125,48 +129,50 @@ const ListView = Backbone.View.extend({
         } else {
             return require('templates/list-item-short.hbs');
         }
-    },
+    }
 
     getDescField() {
         return this.model.sort.replace('-', '');
-    },
+    }
 
-    itemClick(e) {
-        const id = $(e.target)
-            .closest('.list__item')
-            .attr('id');
+    click(e) {
+        const listItemEl = e.target.closest('.list__item');
+        if (!listItemEl) {
+            return;
+        }
+        const id = listItemEl.id;
         const item = this.items.get(id);
         if (!item.active) {
             this.selectItem(item);
         }
         Backbone.trigger('toggle-details', true);
-    },
+    }
 
     selectPrev() {
         const ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix > 0) {
             this.selectItem(this.items.at(ix - 1));
         }
-    },
+    }
 
     selectNext() {
         const ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix < this.items.length - 1) {
             this.selectItem(this.items.at(ix + 1));
         }
-    },
+    }
 
     createEntry(arg) {
         const newEntry = this.model.createNewEntry(arg);
         this.items.unshift(newEntry);
         this.render();
         this.selectItem(newEntry);
-    },
+    }
 
     createGroup() {
         const newGroup = this.model.createNewGroup();
         Backbone.trigger('edit-group', newGroup);
-    },
+    }
 
     createTemplate() {
         if (!this.model.settings.get('templateHelpShown')) {
@@ -189,7 +195,7 @@ const ListView = Backbone.View.extend({
         this.items.unshift(templateEntry);
         this.render();
         this.selectItem(templateEntry);
-    },
+    }
 
     selectItem(item) {
         this.model.activeEntryId = item.id;
@@ -205,25 +211,25 @@ const ListView = Backbone.View.extend({
         } else if (itemRect.bottom > listRect.bottom) {
             listEl.scrollTop += itemRect.bottom - listRect.bottom;
         }
-    },
+    }
 
     viewShown() {
         this.views.search.show();
-    },
+    }
 
     viewHidden() {
         this.views.search.hide();
-    },
+    }
 
     setTableView() {
         const isTable = this.model.settings.get('tableView');
         this.dragView.setCoord(isTable ? 'y' : 'x');
         this.setDefaultSize();
-    },
+    }
 
     setDefaultSize() {
         this.setSize(this.model.settings.get('listViewWidth'));
-    },
+    }
 
     setSize(size) {
         this.$el.css({ width: 'auto', height: 'auto' });
@@ -232,27 +238,27 @@ const ListView = Backbone.View.extend({
         } else {
             this.$el.css('flex', null);
         }
-    },
+    }
 
     viewResized(size) {
         this.setSize(size);
         this.throttleSetViewSizeSetting(size);
-    },
+    }
 
-    throttleSetViewSizeSetting: _.throttle(size => {
+    throttleSetViewSizeSetting = _.throttle(size => {
         AppSettingsModel.instance.set('listViewWidth', size);
-    }, 1000),
+    }, 1000);
 
     filterChanged(filter) {
         this.items = filter.entries;
         this.render();
-    },
+    }
 
     entryUpdated() {
         const scrollTop = this.itemsEl[0].scrollTop;
         this.render();
         this.itemsEl[0].scrollTop = scrollTop;
-    },
+    }
 
     itemDragStart(e) {
         e.stopPropagation();
@@ -262,7 +268,7 @@ const ListView = Backbone.View.extend({
         e.originalEvent.dataTransfer.setData('text/entry', id);
         e.originalEvent.dataTransfer.effectAllowed = 'move';
         DragDropInfo.dragObject = this.items.get(id);
-    },
+    }
 
     tableOptionsClick(e) {
         e.stopImmediatePropagation();
@@ -287,14 +293,14 @@ const ListView = Backbone.View.extend({
             options
         });
         this.views.optionsDropdown = view;
-    },
+    }
 
     hideOptionsDropdown() {
         if (this.views.optionsDropdown) {
             this.views.optionsDropdown.remove();
             delete this.views.optionsDropdown;
         }
-    },
+    }
 
     optionsDropdownSelect(e) {
         const col = _.find(this.tableColumns, c => c.val === e.item);
@@ -302,7 +308,7 @@ const ListView = Backbone.View.extend({
         e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
         this.render();
         this.saveTableColumnsEnabled();
-    },
+    }
 
     readTableColumnsEnabled() {
         const tableViewColumns = AppSettingsModel.instance.get('tableViewColumns');
@@ -311,7 +317,7 @@ const ListView = Backbone.View.extend({
                 col.enabled = tableViewColumns.indexOf(col.name) >= 0;
             });
         }
-    },
+    }
 
     saveTableColumnsEnabled() {
         const tableViewColumns = this.tableColumns
@@ -319,9 +325,9 @@ const ListView = Backbone.View.extend({
             .map(column => column.name);
         AppSettingsModel.instance.set('tableViewColumns', tableViewColumns);
     }
-});
+}
 
-_.extend(ListView.prototype, Resizable);
-_.extend(ListView.prototype, Scrollable);
+Object.assign(ListView.prototype, Resizable);
+Object.assign(ListView.prototype, Scrollable);
 
 export { ListView };

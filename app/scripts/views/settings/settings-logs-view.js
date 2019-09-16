@@ -1,9 +1,11 @@
-import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { StringFormat } from 'util/formatting/string-format';
 import { Logger } from 'util/logger';
+import template from 'templates/settings/settings-logs-view.hbs';
 
-const SettingsLogsView = Backbone.View.extend({
-    template: require('templates/settings/settings-logs-view.hbs'),
+class SettingsLogsView extends View {
+    parent = '.settings__general-advanced';
+    template = template;
 
     render() {
         const logs = Logger.getLast().map(item => ({
@@ -14,9 +16,8 @@ const SettingsLogsView = Backbone.View.extend({
                 '] ' +
                 item.args.map(arg => this.mapArg(arg)).join(' ')
         }));
-        this.renderTemplate({ logs });
-        return this;
-    },
+        super.render({ logs });
+    }
 
     mapArg(arg) {
         if (arg === null) {
@@ -49,6 +50,6 @@ const SettingsLogsView = Backbone.View.extend({
         }
         return str;
     }
-});
+}
 
 export { SettingsLogsView };

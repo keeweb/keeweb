@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "baseUrl": "app",
+        "paths": {
+            "templates/*": [
+                "templates/*"
+            ],
+            "*": [
+                "scripts",
+                "styles",
+                "resources"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

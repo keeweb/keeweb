@@ -1,96 +1,90 @@
-import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
+import template from 'templates/modal.hbs';
 
-const ModalView = Backbone.View.extend({
-    el: 'body',
+class ModalView extends View {
+    parent = 'body';
 
-    template: require('templates/modal.hbs'),
+    template = template;
 
-    events: {
+    events = {
         'click .modal__buttons button': 'buttonClick',
         'click': 'bodyClick'
-    },
+    };
 
-    initialize() {
+    constructor(model) {
+        super(model);
         if (typeof this.model.esc === 'string') {
-            KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, 'alert');
+            this.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, false, 'alert');
         }
         if (typeof this.model.enter === 'string') {
-            KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, 'alert');
+            this.onKey(Keys.DOM_VK_RETURN, this.enterPressed, false, 'alert');
         }
         KeyHandler.setModal('alert');
-    },
-
-    remove() {
-        KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
-        KeyHandler.setModal(null);
-        if (this.model.view) {
-            this.model.view.remove();
-        }
-        Backbone.View.prototype.remove.apply(this);
-    },
+        this.once('remove', () => {
+            KeyHandler.setModal(null);
+            if (this.model.view) {
+                this.model.view.remove();
+            }
+        });
+    }
 
     render() {
-        const parent = this.$el;
-        this.setElement($(this.template(this.model)));
-        parent.append(this.$el);
-        const el = this.$el;
-        el.addClass('modal--hidden');
+        super.render(this.model);
+        this.$el.addClass('modal--hidden');
         setTimeout(() => {
-            el.removeClass('modal--hidden');
+            this.$el.removeClass('modal--hidden');
             document.activeElement.blur();
         }, 20);
         if (this.model.view) {
-            this.model.view.setElement(this.$el.find('.modal__body'));
+            this.model.view.parent = '.modal__body';
             this.model.view.render();
         }
-        return this;
-    },
+    }
 
     change(config) {
         if (config.header) {
             this.$el.find('.modal__header').html(config.header);
         }
-    },
+    }
 
     buttonClick(e) {
         const result = $(e.target).data('result');
         this.closeWithResult(result);
-    },
+    }
 
     bodyClick() {
         if (typeof this.model.click === 'string') {
             this.closeWithResult(this.model.click);
         }
-    },
+    }
 
     escPressed() {
         this.closeWithResult(this.model.esc);
-    },
+    }
 
     enterPressed(e) {
         e.stopImmediatePropagation();
         e.preventDefault();
         this.closeWithResult(this.model.enter);
-    },
+    }
 
     closeWithResult(result) {
         const checked = this.model.checkbox
             ? this.$el.find('#modal__check').is(':checked')
             : undefined;
-        this.trigger('result', result, checked);
+        this.emit('result', result, checked);
         this.$el.addClass('modal--hidden');
-        this.undelegateEvents();
-        setTimeout(this.remove.bind(this), 100);
-    },
+        this.unbindEvents();
+        setTimeout(() => this.remove(), 100);
+    }
 
     closeImmediate() {
-        this.trigger('result', undefined);
-        this.undelegateEvents();
+        this.emit('result', undefined);
+        this.unbindEvents();
         this.remove();
     }
-});
+}
 
 export { ModalView };

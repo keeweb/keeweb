@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { RuntimeInfo } from 'comp/app/runtime-info';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Links } from 'const/links';
@@ -10,11 +11,12 @@ import { SemVer } from 'util/data/semver';
 import { Features } from 'util/features';
 import { DateFormat } from 'util/formatting/date-format';
 import { Locale } from 'util/locale';
+import template from 'templates/settings/settings-plugins.hbs';
 
-const SettingsPluginsView = Backbone.View.extend({
-    template: require('templates/settings/settings-plugins.hbs'),
+class SettingsPluginsView extends View {
+    template = template;
 
-    events: {
+    events = {
         'click .settings_plugins-install-btn': 'installClick',
         'click .settings_plugins-uninstall-btn': 'uninstallClick',
         'click .settings_plugins-disable-btn': 'disableClick',
@@ -29,24 +31,25 @@ const SettingsPluginsView = Backbone.View.extend({
         'input input[type=text].settings__plugins-plugin-input': 'pluginSettingChange',
         'change .settings__plugins-plugin-updates': 'autoUpdateChange',
         'click .settings__plugins-gallery-load-btn': 'loadPluginGalleryClick'
-    },
+    };
 
-    searchStr: null,
-    installFromUrl: null,
-    installing: {},
-    installErrors: {},
+    searchStr = null;
+    installFromUrl = null;
+    installing = {};
+    installErrors = {};
 
-    initialize() {
+    constructor(model, options) {
+        super(model, options);
         this.listenTo(PluginManager.instance, 'change', this.render.bind(this));
         this.listenTo(
             Backbone,
             'plugin-gallery-load-complete',
             this.pluginGalleryLoadComplete.bind(this)
         );
-    },
+    }
 
     render() {
-        this.renderTemplate({
+        super.render({
             plugins: PluginManager.instance
                 .get('plugins')
                 .map(plugin => ({
@@ -76,13 +79,12 @@ const SettingsPluginsView = Backbone.View.extend({
         if (this.searchStr) {
             this.showFilterResults();
         }
-        return this;
-    },
+    }
 
     pluginGalleryLoadComplete() {
         this.render();
         Backbone.trigger('page-geometry', { source: 'view' });
-    },
+    }
 
     getGalleryPlugins() {
         if (!PluginGallery.gallery) {
@@ -99,7 +101,7 @@ const SettingsPluginsView = Backbone.View.extend({
             }))
             .filter(pl => !plugins.get(pl.manifest.name) && this.canInstallPlugin(pl))
             .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
-    },
+    }
 
     canInstallPlugin(plugin) {
         if (plugin.manifest.locale && SettingsManager.allLocales[plugin.manifest.locale.name]) {
@@ -121,7 +123,7 @@ const SettingsPluginsView = Backbone.View.extend({
             return false;
         }
         return true;
-    },
+    }
 
     loadPluginGalleryClick() {
         if (PluginGallery.loading) {
@@ -129,7 +131,7 @@ const SettingsPluginsView = Backbone.View.extend({
         }
         PluginGallery.loadPlugins();
         this.render();
-    },
+    }
 
     installClick() {
         const installBtn = this.$el.find('.settings_plugins-install-btn');
@@ -157,44 +159,44 @@ const SettingsPluginsView = Backbone.View.extend({
                 this.$el.find('.settings__plugins-install-error').text(e.toString());
                 this.$el.closest('.scroller').scrollTop(this.$el.height());
             });
-    },
+    }
 
     installFinished() {
         const installBtn = this.$el.find('.settings_plugins-install-btn');
         const urlTextBox = this.$el.find('#settings__plugins-install-url');
         urlTextBox.prop('disabled', false);
         installBtn.text(Locale.setPlInstallBtn).prop('disabled', false);
-    },
+    }
 
     uninstallClick(e) {
         const pluginId = $(e.target).data('plugin');
         PluginManager.instance.uninstall(pluginId);
-    },
+    }
 
     disableClick(e) {
         const pluginId = $(e.target).data('plugin');
         PluginManager.instance.disable(pluginId);
-    },
+    }
 
     enableClick(e) {
         const pluginId = $(e.target).data('plugin');
         PluginManager.instance.activate(pluginId);
-    },
+    }
 
     updateClick(e) {
         const pluginId = $(e.target).data('plugin');
         PluginManager.instance.update(pluginId);
-    },
+    }
 
     useLocaleClick(e) {
         const locale = $(e.target).data('locale');
         AppSettingsModel.instance.set('locale', locale);
-    },
+    }
 
     useThemeClick(e) {
         const theme = $(e.target).data('theme');
         AppSettingsModel.instance.set('theme', theme);
-    },
+    }
 
     galleryInstallClick(e) {
         const installBtn = $(e.target);
@@ -214,12 +216,12 @@ const SettingsPluginsView = Backbone.View.extend({
                 installBtn.prop('disabled', true);
                 delete this.installing[plugin.url];
             });
-    },
+    }
 
     gallerySearchInput(e) {
         this.searchStr = e.target.value.toLowerCase();
         this.showFilterResults();
-    },
+    }
 
     showFilterResults() {
         const pluginsById = {};
@@ -231,7 +233,7 @@ const SettingsPluginsView = Backbone.View.extend({
             const visible = this.pluginMatchesFilter(pluginsById[pluginId]);
             $(pluginEl).toggle(visible);
         }
-    },
+    }
 
     pluginMatchesFilter(plugin) {
         const searchStr = this.searchStr;
@@ -244,7 +246,7 @@ const SettingsPluginsView = Backbone.View.extend({
                 (manifest.locale.name.toLowerCase().indexOf(searchStr) >= 0 ||
                     manifest.locale.title.toLowerCase().indexOf(searchStr) >= 0))
         );
-    },
+    }
 
     pluginSettingChange(e) {
         const el = e.target;
@@ -254,13 +256,13 @@ const SettingsPluginsView = Backbone.View.extend({
         const val = el.type === 'checkbox' ? el.checked : el.value;
         const plugin = PluginManager.instance.getPlugin(pluginId);
         plugin.setSettings({ [setting]: val });
-    },
+    }
 
     autoUpdateChange(e) {
         const pluginId = $(e.target).data('plugin');
         const enabled = e.target.checked;
         PluginManager.instance.setAutoUpdate(pluginId, enabled);
     }
-});
+}
 
 export { SettingsPluginsView };

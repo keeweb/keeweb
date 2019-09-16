@@ -23,7 +23,6 @@ import { Features } from 'util/features';
 import { KdbxwebInit } from 'util/kdbxweb/kdbxweb-init';
 import { Locale } from 'util/locale';
 import { AppView } from 'views/app-view';
-import 'view-engine/backbone-view-ext';
 import 'hbs-helpers';
 
 const ready = (Launcher && Launcher.ready) || $;
@@ -150,7 +149,7 @@ ready(() => {
 
     function showView() {
         appModel.prepare();
-        new AppView({ model: appModel }).render();
+        new AppView(appModel).render();
         Backbone.trigger('app-ready');
         logStartupTime();
     }

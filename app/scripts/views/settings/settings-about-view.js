@@ -1,12 +1,13 @@
-import Backbone from 'backbone';
+import { View } from 'framework/views/view';
 import { RuntimeInfo } from 'comp/app/runtime-info';
 import { Links } from 'const/links';
+import template from 'templates/settings/settings-about.hbs';
 
-const SettingsAboutView = Backbone.View.extend({
-    template: require('templates/settings/settings-about.hbs'),
+class SettingsAboutView extends View {
+    template = template;
 
     render() {
-        this.renderTemplate({
+        super.render({
             version: RuntimeInfo.version,
             licenseLink: Links.License,
             licenseLinkApache: Links.LicenseApache,
@@ -14,6 +15,6 @@ const SettingsAboutView = Backbone.View.extend({
             donationLink: Links.Donation
         });
     }
-});
+}
 
 export { SettingsAboutView };
