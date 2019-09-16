@@ -263,7 +263,7 @@ class AppView extends View {
         this.hidePanelView();
         this.hideOpenFile();
         this.hideKeyChange();
-        this.views.settings = new SettingsView(this.mode);
+        this.views.settings = new SettingsView(this.model);
         this.views.settings.render();
         if (!selectedMenuItem) {
             selectedMenuItem = this.model.menu.generalSection.get('items').first();

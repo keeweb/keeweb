@@ -38,13 +38,13 @@ const AppModel = Backbone.Model.extend({
         this.isBeta = RuntimeInfo.beta;
         this.advancedSearch = null;
 
-        this.listenTo(Events, 'refresh', this.refresh);
-        this.listenTo(Events, 'set-filter', this.setFilter);
-        this.listenTo(Events, 'add-filter', this.addFilter);
-        this.listenTo(Events, 'set-sort', this.setSort);
-        this.listenTo(Events, 'empty-trash', this.emptyTrash);
-        this.listenTo(Events, 'select-entry', this.selectEntry);
-        this.listenTo(Events, 'unset-keyfile', this.unsetKeyFile);
+        this.listenTo(Events, 'refresh', this.refresh.bind(this));
+        this.listenTo(Events, 'set-filter', this.setFilter.bind(this));
+        this.listenTo(Events, 'add-filter', this.addFilter.bind(this));
+        this.listenTo(Events, 'set-sort', this.setSort.bind(this));
+        this.listenTo(Events, 'empty-trash', this.emptyTrash.bind(this));
+        this.listenTo(Events, 'select-entry', this.selectEntry.bind(this));
+        this.listenTo(Events, 'unset-keyfile', this.unsetKeyFile.bind(this));
 
         this.appLogger = new Logger('app');
 

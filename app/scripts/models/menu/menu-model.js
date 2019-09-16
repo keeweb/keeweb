@@ -96,9 +96,9 @@ const MenuModel = Backbone.Model.extend({
         ]);
         this.set('sections', this.menus.app);
 
-        this.listenTo(Events, 'set-locale', this._setLocale);
-        this.listenTo(Events, 'select-next-menu-item', this._selectNext);
-        this.listenTo(Events, 'select-previous-menu-item', this._selectPrevious);
+        this.listenTo(Events, 'set-locale', this._setLocale.bind(this));
+        this.listenTo(Events, 'select-next-menu-item', this._selectNext.bind(this));
+        this.listenTo(Events, 'select-previous-menu-item', this._selectPrevious.bind(this));
         this._setLocale();
     },
 

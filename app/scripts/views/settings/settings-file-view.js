@@ -53,8 +53,6 @@ class SettingsFileView extends View {
         'input .settings__input-kdf': 'changeKdfParameter'
     };
 
-    appModel = null;
-
     constructor(model, options) {
         super(model, options);
         this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', () => {
