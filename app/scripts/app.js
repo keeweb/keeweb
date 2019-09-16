@@ -75,7 +75,7 @@ ready(() => {
         KdbxwebInit.init();
         FocusDetector.init();
         window.kw = ExportApi;
-        return PluginManager.instance.init();
+        return PluginManager.init();
     }
 
     function showSettingsLoadError() {
@@ -141,10 +141,7 @@ ready(() => {
         Updater.init();
         SingleInstanceChecker.init();
         AppRightsChecker.init();
-        setTimeout(
-            () => PluginManager.instance.runAutoUpdate(),
-            Timeouts.AutoUpdatePluginsAfterStart
-        );
+        setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
     }
 
     function showView() {

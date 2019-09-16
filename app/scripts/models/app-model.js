@@ -141,7 +141,7 @@ const AppModel = Backbone.Model.extend({
         }
         if (config.plugins) {
             const pluginsPromises = config.plugins.map(plugin =>
-                PluginManager.instance.installIfNew(plugin.url, plugin.manifest, true)
+                PluginManager.installIfNew(plugin.url, plugin.manifest, true)
             );
             return Promise.all(pluginsPromises).then(() => {
                 this.settings.set(config.settings);

@@ -233,6 +233,6 @@ const PluginManager = Backbone.Model.extend({
     }
 });
 
-PluginManager.instance = new PluginManager();
+const instance = new PluginManager();
 
-export { PluginManager };
+export { instance as PluginManager };

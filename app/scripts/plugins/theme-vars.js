@@ -1,6 +1,7 @@
 import { Color } from 'util/data/color';
 
 const ThemeVarsScss = require('raw-loader!../../styles/base/_theme-vars.scss').default;
+// eslint-disable-next-line import/no-commonjs
 const ThemeDefaults = require('../../styles/themes/_theme-defaults.scss');
 
 const ThemeVars = {

@@ -40,7 +40,7 @@ class SettingsPluginsView extends View {
 
     constructor(model, options) {
         super(model, options);
-        this.listenTo(PluginManager.instance, 'change', this.render.bind(this));
+        this.listenTo(PluginManager, 'change', this.render.bind(this));
         this.listenTo(
             Backbone,
             'plugin-gallery-load-complete',
@@ -50,8 +50,7 @@ class SettingsPluginsView extends View {
 
     render() {
         super.render({
-            plugins: PluginManager.instance
-                .get('plugins')
+            plugins: PluginManager.get('plugins')
                 .map(plugin => ({
                     id: plugin.id,
                     manifest: plugin.get('manifest'),
@@ -90,7 +89,7 @@ class SettingsPluginsView extends View {
         if (!PluginGallery.gallery) {
             return null;
         }
-        const plugins = PluginManager.instance.get('plugins');
+        const plugins = PluginManager.get('plugins');
         return PluginGallery.gallery.plugins
             .map(pl => ({
                 url: pl.url,
@@ -145,8 +144,7 @@ class SettingsPluginsView extends View {
         urlTextBox.prop('disabled', true);
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installFromUrl = { url };
-        PluginManager.instance
-            .install(url, undefined, true)
+        PluginManager.install(url, undefined, true)
             .then(() => {
                 this.installFinished();
                 this.installFromUrl = null;
@@ -170,22 +168,22 @@ class SettingsPluginsView extends View {
 
     uninstallClick(e) {
         const pluginId = $(e.target).data('plugin');
-        PluginManager.instance.uninstall(pluginId);
+        PluginManager.uninstall(pluginId);
     }
 
     disableClick(e) {
         const pluginId = $(e.target).data('plugin');
-        PluginManager.instance.disable(pluginId);
+        PluginManager.disable(pluginId);
     }
 
     enableClick(e) {
         const pluginId = $(e.target).data('plugin');
-        PluginManager.instance.activate(pluginId);
+        PluginManager.activate(pluginId);
     }
 
     updateClick(e) {
         const pluginId = $(e.target).data('plugin');
-        PluginManager.instance.update(pluginId);
+        PluginManager.update(pluginId);
     }
 
     useLocaleClick(e) {
@@ -205,8 +203,7 @@ class SettingsPluginsView extends View {
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installing[plugin.url] = true;
         delete this.installErrors[plugin.url];
-        PluginManager.instance
-            .install(plugin.url, plugin.manifest)
+        PluginManager.install(plugin.url, plugin.manifest)
             .catch(e => {
                 this.installErrors[plugin.url] = e;
                 delete this.installing[plugin.url];
@@ -254,14 +251,14 @@ class SettingsPluginsView extends View {
         const setting = settingEl.data('setting');
         const pluginId = settingEl.data('plugin');
         const val = el.type === 'checkbox' ? el.checked : el.value;
-        const plugin = PluginManager.instance.getPlugin(pluginId);
+        const plugin = PluginManager.getPlugin(pluginId);
         plugin.setSettings({ [setting]: val });
     }
 
     autoUpdateChange(e) {
         const pluginId = $(e.target).data('plugin');
         const enabled = e.target.checked;
-        PluginManager.instance.setAutoUpdate(pluginId, enabled);
+        PluginManager.setAutoUpdate(pluginId, enabled);
     }
 }
 

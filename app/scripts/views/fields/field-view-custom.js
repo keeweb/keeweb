@@ -1,4 +1,3 @@
-import Backbone from 'backbone';
 import kdbxweb from 'kdbxweb';
 import { Keys } from 'const/keys';
 import { Locale } from 'util/locale';
