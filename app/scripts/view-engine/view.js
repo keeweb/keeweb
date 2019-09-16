@@ -30,7 +30,11 @@ class View extends EventEmitter {
             return;
         }
 
-        this.debugLogger && this.debugLogger.debug('Render start');
+        let ts;
+        if (this.debugLogger) {
+            this.debugLogger.debug('Render start');
+            ts = this.debugLogger.ts();
+        }
 
         if (this.el) {
             Tip.destroyTips(this.el);
@@ -42,7 +46,7 @@ class View extends EventEmitter {
 
         Tip.createTips(this.el);
 
-        this.debugLogger && this.debugLogger.debug('Render finished');
+        this.debugLogger && this.debugLogger.debug('Render finished', this.debugLogger.ts(ts));
 
         return this;
     }
@@ -69,7 +73,9 @@ class View extends EventEmitter {
                 el.innerHTML = html;
                 const root = el.firstChild;
                 if (this.options.ownParent) {
-                    parent.appendChild(root);
+                    if (root) {
+                        parent.appendChild(root);
+                    }
                     this.el = parent;
                 } else {
                     this.el = root;
@@ -161,6 +167,7 @@ class View extends EventEmitter {
     }
 
     toggle(visible) {
+        this.debugLogger && this.debugLogger.debug(visible ? 'Show' : 'Hide');
         if (visible === undefined) {
             visible = this.hidden;
         }

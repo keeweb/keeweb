@@ -3,15 +3,17 @@ import { View } from 'view-engine/view';
 class ListWrapView extends View {
     parent = '.app__list-wrap';
 
+    template = () => '';
+
     events = {};
 
-    constructor(model) {
-        super(model);
+    constructor(model, options) {
+        super(model, options);
         this.listenTo(this.model.settings, 'change:tableView', this.setListLayout);
     }
 
     render() {
-        this.el = document.querySelector(this.parent);
+        super.render();
         this.setListLayout();
     }
 

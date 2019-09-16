@@ -44,8 +44,8 @@ class ListView extends View {
         { val: 'fileName', name: 'file', enabled: false }
     ];
 
-    constructor(model) {
-        super(model);
+    constructor(model, options) {
+        super(model, options);
 
         this.initScroll();
         this.views.search = new ListSearchView(this.model);

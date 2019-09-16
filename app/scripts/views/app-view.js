@@ -45,9 +45,9 @@ class AppView extends View {
         super(model);
         this.views.menu = new MenuView(this.model.menu, { ownParent: true });
         this.views.menuDrag = new DragView('x', { parent: '.app__menu-drag' });
-        this.views.footer = new FooterView(this.model);
-        this.views.listWrap = new ListWrapView(this.model);
-        this.views.list = new ListView(this.model);
+        this.views.footer = new FooterView(this.model, { ownParent: true });
+        this.views.listWrap = new ListWrapView(this.model, { ownParent: true });
+        this.views.list = new ListView(this.model, { ownParent: true });
         this.views.listDrag = new DragView('x', { parent: '.app__list-drag' });
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView();

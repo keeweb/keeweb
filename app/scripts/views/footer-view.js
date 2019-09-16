@@ -20,8 +20,8 @@ class FooterView extends View {
         'click .footer__btn-lock': 'lockWorkspace'
     };
 
-    constructor(model) {
-        super(model);
+    constructor(model, options) {
+        super(model, options);
 
         this.onKey(Keys.DOM_VK_L, this.lockWorkspace, KeyHandler.SHORTCUT_ACTION, false, true);
         this.onKey(Keys.DOM_VK_G, this.genPass, KeyHandler.SHORTCUT_ACTION);
