@@ -99,9 +99,9 @@ class ListSearchView extends View {
             { value: '-rank', icon: 'sort-amount-desc', loc: () => Locale.searchRank }
         ];
         this.sortIcons = {};
-        this.sortOptions.forEach(function(opt) {
+        this.sortOptions.forEach(opt => {
             this.sortIcons[opt.value] = opt.icon;
-        }, this);
+        });
         this.advancedSearch = {
             user: true,
             other: true,
@@ -127,6 +127,10 @@ class ListSearchView extends View {
         this.listenTo(Backbone, 'filter', this.filterChanged);
         this.listenTo(Backbone, 'set-locale', this.setLocale);
         this.listenTo(Backbone, 'page-blur', this.pageBlur);
+
+        this.once('remove', () => {
+            this.removeKeypressHandler();
+        });
     }
 
     setLocale() {
@@ -153,12 +157,16 @@ class ListSearchView extends View {
         this.inputEl.blur();
     }
 
+    removeKeypressHandler() {}
+
     viewShown() {
-        this.listenTo(KeyHandler, 'keypress', this.documentKeyPress);
+        const keypressHandler = e => this.documentKeyPress(e);
+        KeyHandler.on('keypress', keypressHandler);
+        this.removeKeypressHandler = () => KeyHandler.off('keypress', keypressHandler);
     }
 
     viewHidden() {
-        this.stopListening(KeyHandler, 'keypress', this.documentKeyPress);
+        this.removeKeypressHandler();
     }
 
     render() {

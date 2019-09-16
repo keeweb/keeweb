@@ -45,7 +45,6 @@ class FieldViewCustom extends FieldViewText {
             return;
         }
         delete this.input;
-        this.stopListening(Backbone, 'click', this.fieldValueBlur);
         if (typeof newVal === 'string') {
             if (this.isProtected) {
                 newVal = kdbxweb.ProtectedValue.fromString(newVal);

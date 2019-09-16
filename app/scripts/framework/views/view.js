@@ -152,11 +152,6 @@ class View extends EventEmitter {
         this.once('remove', () => model.off(event, boundCallback));
     }
 
-    stopListening(model, event, callback) {
-        // TODO: remove a pending callback
-        model.off(event, callback);
-    }
-
     hide() {
         Tip.hideTips(this.el);
         return this.toggle(false);

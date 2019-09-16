@@ -44,7 +44,7 @@ class FieldViewText extends FieldView {
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        this.listenTo(Backbone, 'click', this.fieldValueBlur);
+        Backbone.on('click', this._fieldValueBlur);
         this.listenTo(Backbone, 'main-window-will-close user-idle', this.externalEndEdit);
         if (this.model.multiline) {
             this.setInputHeight();
@@ -215,10 +215,6 @@ class FieldViewText extends FieldView {
             newVal = $.trim(newVal);
         }
         super.endEdit(newVal, extra);
-    }
-
-    stopBlurListener() {
-        this.stopListening(Backbone, 'click main-window-will-close', this.fieldValueBlur);
     }
 
     mobileFieldControlMouseDown(e) {
