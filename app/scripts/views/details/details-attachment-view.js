@@ -1,13 +1,14 @@
-import Backbone from 'backbone';
+import { View } from 'view-engine/view';
 import { Shortcuts } from 'comp/app/shortcuts';
+import template from 'templates/details/details-attachment.hbs';
 
-const DetailsAttachmentView = Backbone.View.extend({
-    template: require('templates/details/details-attachment.hbs'),
+class DetailsAttachmentView extends View {
+    template = template;
 
-    events: {},
+    events = {};
 
     render(complete) {
-        this.renderTemplate({}, true);
+        super.render();
         const shortcut = this.$el.find('.details__attachment-preview-download-text-shortcut');
         shortcut.html(Shortcuts.actionShortcutSymbol(false));
         const blob = new Blob([this.model.getBinary()], { type: this.model.mimeType });
@@ -36,6 +37,6 @@ const DetailsAttachmentView = Backbone.View.extend({
         complete();
         return this;
     }
-});
+}
 
 export { DetailsAttachmentView };

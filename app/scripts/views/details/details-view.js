@@ -369,7 +369,7 @@ const DetailsView = Backbone.View.extend({
         }, this);
 
         this.moreView = new DetailsAddFieldView();
-        this.moreView.setElement(fieldsMainEl).render();
+        this.moreView.render();
         this.moreView.on('add-field', this.addNewField.bind(this));
         this.moreView.on('more-click', this.toggleMoreOptions.bind(this));
     },
@@ -578,7 +578,10 @@ const DetailsView = Backbone.View.extend({
             return;
         }
         this.removeSubView();
-        const subView = new DetailsAttachmentView({ el: this.scroller, model: attachment });
+        const subView = new DetailsAttachmentView(attachment, {
+            parent: this.scroller[0],
+            replace: true
+        });
         subView.attId = id;
         subView.render(this.pageResized.bind(this));
         this.views.sub = subView;
