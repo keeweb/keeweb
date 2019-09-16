@@ -10,6 +10,11 @@ import { FieldView } from 'views/fields/field-view';
 import { GeneratorView } from 'views/generator-view';
 
 class FieldViewText extends FieldView {
+    constructor(model, options) {
+        super(model, options);
+        this.once('remove', () => this.stopBlurListener());
+    }
+
     renderValue(value) {
         if (this.model.markdown) {
             if (value && value.isProtected) {
@@ -44,7 +49,9 @@ class FieldViewText extends FieldView {
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        Events.on('click', this.fieldValueBlur);
+        const fieldValueBlurBound = e => this.fieldValueBlur(e);
+        Events.on('click', fieldValueBlurBound);
+        this.stopBlurListener = () => Events.off('click', fieldValueBlurBound);
         this.listenTo(Events, 'main-window-will-close', this.externalEndEdit);
         this.listenTo(Events, 'user-idle', this.externalEndEdit);
         if (this.model.multiline) {
@@ -218,10 +225,7 @@ class FieldViewText extends FieldView {
         super.endEdit(newVal, extra);
     }
 
-    stopBlurListener() {
-        // TODO
-        // this.stopListening(Events, 'click main-window-will-close', this.fieldValueBlur);
-    }
+    stopBlurListener() {}
 
     mobileFieldControlMouseDown(e) {
         e.stopPropagation();
