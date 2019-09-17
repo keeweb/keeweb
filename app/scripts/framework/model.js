@@ -3,6 +3,7 @@ import { Logger } from 'util/logger';
 
 const SymbolEvents = Symbol('events');
 const SymbolDefaults = Symbol('defaults');
+const SymbolExtensions = Symbol('extensions');
 
 function emitPropChange(target, property, value, receiver) {
     const emitter = target[SymbolEvents];
@@ -17,17 +18,22 @@ function emitPropChange(target, property, value, receiver) {
 const ProxyDef = {
     deleteProperty(target, property, receiver) {
         if (Object.prototype.hasOwnProperty.call(target, property)) {
-            const value = target[SymbolDefaults][property];
+            const defaults = target[SymbolDefaults];
+            const value = defaults[property];
             if (target[property] !== value) {
-                target[property] = value;
+                if (Object.prototype.hasOwnProperty.call(defaults, property)) {
+                    target[property] = value;
+                } else {
+                    delete target[property];
+                }
                 emitPropChange(target, property, value, receiver);
             }
-            return false;
+            return true;
         }
         return false;
     },
     set(target, property, value, receiver) {
-        if (Object.prototype.hasOwnProperty.call(target, property)) {
+        if (Object.prototype.hasOwnProperty.call(target, property) || target[SymbolExtensions]) {
             if (target[property] !== value) {
                 target[property] = value;
                 emitPropChange(target, property, value, receiver);
@@ -95,7 +101,14 @@ class Model {
         this[SymbolEvents].off(eventName, listener);
     }
 
-    static defineModelProperties(properties) {
+    static defineModelProperties(properties, options) {
+        this.prototype[SymbolDefaults] = properties;
+        if (options && options.extensions) {
+            this.prototype[SymbolExtensions] = true;
+        }
+    }
+
+    static set(properties) {
         this.prototype[SymbolDefaults] = properties;
     }
 }

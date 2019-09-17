@@ -20,7 +20,7 @@ _.extend(StorageBase.prototype, {
 
     logger: null,
     appSettings: AppSettingsModel,
-    runtimeData: RuntimeDataModel.instance,
+    runtimeData: RuntimeDataModel,
 
     init() {
         if (!this.name) {
@@ -159,7 +159,7 @@ _.extend(StorageBase.prototype, {
             return callback();
         }
         const opts = this._getOAuthConfig();
-        const oldToken = this.runtimeData.get(this.name + 'OAuthToken');
+        const oldToken = this.runtimeData[this.name + 'OAuthToken'];
         if (this._tokenIsValid(oldToken)) {
             this._oauthToken = oldToken;
             return callback();
@@ -210,7 +210,7 @@ _.extend(StorageBase.prototype, {
         const token = this._oauthMsgToToken(message);
         if (token && !token.error) {
             this._oauthToken = token;
-            this.runtimeData.set(this.name + 'OAuthToken', token);
+            this.runtimeData[this.name + 'OAuthToken'] = token;
             this.logger.debug('OAuth token received');
         }
         return token;
@@ -237,12 +237,12 @@ _.extend(StorageBase.prototype, {
 
     _oauthRefreshToken(callback) {
         this._oauthToken.expired = true;
-        this.runtimeData.set(this.name + 'OAuthToken', this._oauthToken);
+        this.runtimeData[this.name + 'OAuthToken'] = this._oauthToken;
         this._oauthAuthorize(callback);
     },
 
     _oauthRevokeToken(url) {
-        const token = this.runtimeData.get(this.name + 'OAuthToken');
+        const token = this.runtimeData[this.name + 'OAuthToken'];
         if (token) {
             if (url) {
                 this._xhr({
@@ -250,7 +250,7 @@ _.extend(StorageBase.prototype, {
                     statuses: [200, 401]
                 });
             }
-            this.runtimeData.unset(this.name + 'OAuthToken');
+            delete this.runtimeData[this.name + 'OAuthToken'];
             this._oauthToken = null;
         }
     },
