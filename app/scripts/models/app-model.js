@@ -1,4 +1,3 @@
-import Backbone from 'backbone';
 import { Events } from 'framework/events';
 import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
@@ -23,38 +22,34 @@ import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
 import 'util/kdbxweb/protected-value-ex';
 
-const AppModel = Backbone.Model.extend({
-    defaults: {},
+class AppModel {
+    tags = [];
+    files = new FileCollection();
+    fileInfos = FileInfoCollection.instance;
+    menu = new MenuModel();
+    filter = {};
+    sort = 'title';
+    settings = AppSettingsModel;
+    activeEntryId = null;
+    isBeta = RuntimeInfo.beta;
+    advancedSearch = null;
 
-    initialize() {
-        this.tags = [];
-        this.files = new FileCollection();
-        this.fileInfos = FileInfoCollection.instance;
-        this.menu = new MenuModel();
-        this.filter = {};
-        this.sort = 'title';
-        this.settings = AppSettingsModel;
-        this.activeEntryId = null;
-        this.isBeta = RuntimeInfo.beta;
-        this.advancedSearch = null;
-
-        this.listenTo(Events, 'refresh', this.refresh.bind(this));
-        this.listenTo(Events, 'set-filter', this.setFilter.bind(this));
-        this.listenTo(Events, 'add-filter', this.addFilter.bind(this));
-        this.listenTo(Events, 'set-sort', this.setSort.bind(this));
-        this.listenTo(Events, 'empty-trash', this.emptyTrash.bind(this));
-        this.listenTo(Events, 'select-entry', this.selectEntry.bind(this));
-        this.listenTo(Events, 'unset-keyfile', this.unsetKeyFile.bind(this));
+    constructor() {
+        Events.on('refresh', this.refresh.bind(this));
+        Events.on('set-filter', this.setFilter.bind(this));
+        Events.on('add-filter', this.addFilter.bind(this));
+        Events.on('set-sort', this.setSort.bind(this));
+        Events.on('empty-trash', this.emptyTrash.bind(this));
+        Events.on('select-entry', this.selectEntry.bind(this));
+        Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
 
         this.appLogger = new Logger('app');
-
-        AppModel.instance = this;
-    },
+    }
 
     prepare() {
         AutoType.init(this);
         _.forEach(Storage, prv => prv.init());
-    },
+    }
 
     loadConfig(configLocation) {
         return new Promise((resolve, reject) => {
@@ -98,7 +93,7 @@ const AppModel = Backbone.Model.extend({
         }).then(config => {
             return this.applyUserConfig(config);
         });
-    },
+    }
 
     ensureCanLoadConfig(url) {
         if (!Features.isSelfHosted) {
@@ -110,7 +105,7 @@ const AppModel = Backbone.Model.extend({
         if (isExternal) {
             throw 'Loading config from this location is not allowed';
         }
-    },
+    }
 
     applyUserConfig(config) {
         this.settings.set(config.settings);
@@ -152,7 +147,7 @@ const AppModel = Backbone.Model.extend({
             this.advancedSearch = config.advancedSearch;
             this.addFilter({ advanced: this.advancedSearch });
         }
-    },
+    }
 
     addFile(file) {
         if (this.files.get(file.id)) {
@@ -171,14 +166,14 @@ const AppModel = Backbone.Model.extend({
             file
         });
         this.refresh();
-        this.listenTo(file, 'reload', this.reloadFile);
+        file.on('reload', this.reloadFile.bind(this));
         return true;
-    },
+    }
 
     reloadFile(file) {
         this.menu.groupsSection.replaceByFile(file, file.get('groups').first());
         this.updateTags();
-    },
+    }
 
     _addTags(file) {
         const tagsHash = {};
@@ -194,7 +189,7 @@ const AppModel = Backbone.Model.extend({
             });
         });
         this.tags.sort();
-    },
+    }
 
     _tagsChanged() {
         if (this.tags.length) {
@@ -214,7 +209,7 @@ const AppModel = Backbone.Model.extend({
             this.menu.tagsSection.set('scrollable', false);
             this.menu.tagsSection.removeAllItems();
         }
-    },
+    }
 
     updateTags() {
         const oldTags = this.tags.slice();
@@ -225,12 +220,12 @@ const AppModel = Backbone.Model.extend({
         if (!_.isEqual(oldTags, this.tags)) {
             this._tagsChanged();
         }
-    },
+    }
 
     renameTag(from, to) {
         this.files.forEach(file => file.renameTag(from, to));
         this.updateTags();
-    },
+    }
 
     closeAllFiles() {
         this.files.each(file => {
@@ -245,7 +240,7 @@ const AppModel = Backbone.Model.extend({
         this.tags.splice(0, this.tags.length);
         this.filter = {};
         this.menu.select({ item: this.menu.allItemsItem });
-    },
+    }
 
     closeFile(file) {
         file.close();
@@ -255,12 +250,12 @@ const AppModel = Backbone.Model.extend({
         this.menu.groupsSection.removeByFile(file);
         this.menu.filesSection.removeByFile(file);
         this.menu.select({ item: this.menu.allItemsSection.get('items').first() });
-    },
+    }
 
     emptyTrash() {
         this.files.forEach(file => file.emptyTrash());
         this.refresh();
-    },
+    }
 
     setFilter(filter) {
         this.filter = this.prepareFilter(filter);
@@ -275,25 +270,25 @@ const AppModel = Backbone.Model.extend({
         }
         Events.emit('filter', { filter: this.filter, sort: this.sort, entries });
         Events.emit('entry-selected', entries.get(this.activeEntryId));
-    },
+    }
 
     refresh() {
         this.setFilter(this.filter);
-    },
+    }
 
     selectEntry(entry) {
         this.activeEntryId = entry.id;
         this.refresh();
-    },
+    }
 
     addFilter(filter) {
         this.setFilter(_.extend(this.filter, filter));
-    },
+    }
 
     setSort(sort) {
         this.sort = sort;
         this.setFilter(this.filter);
-    },
+    }
 
     getEntries() {
         const entries = this.getEntriesByFilter(this.filter);
@@ -302,7 +297,7 @@ const AppModel = Backbone.Model.extend({
             this.addTrashGroups(entries);
         }
         return entries;
-    },
+    }
 
     getEntriesByFilter(filter) {
         const preparedFilter = this.prepareFilter(filter);
@@ -311,7 +306,7 @@ const AppModel = Backbone.Model.extend({
             file.forEachEntry(preparedFilter, entry => entries.push(entry));
         });
         return entries;
-    },
+    }
 
     addTrashGroups(collection) {
         this.files.forEach(file => {
@@ -322,14 +317,14 @@ const AppModel = Backbone.Model.extend({
                 });
             }
         });
-    },
+    }
 
     prepareFilter(filter) {
         filter = _.clone(filter);
         filter.textLower = filter.text ? filter.text.toLowerCase() : '';
         filter.tagLower = filter.tag ? filter.tag.toLowerCase() : '';
         return filter;
-    },
+    }
 
     getFirstSelectedGroup() {
         const selGroupId = this.filter.group;
@@ -346,7 +341,7 @@ const AppModel = Backbone.Model.extend({
             group = file.get('groups').first();
         }
         return { group, file };
-    },
+    }
 
     completeUserNames(part) {
         const userNames = {};
@@ -368,7 +363,7 @@ const AppModel = Backbone.Model.extend({
             matches.length = maxResults;
         }
         return matches.map(m => m[0]);
-    },
+    }
 
     getEntryTemplates() {
         const entryTemplates = [];
@@ -378,7 +373,7 @@ const AppModel = Backbone.Model.extend({
             });
         });
         return entryTemplates;
-    },
+    }
 
     createNewEntry(args) {
         const sel = this.getFirstSelectedGroup();
@@ -394,18 +389,18 @@ const AppModel = Backbone.Model.extend({
         } else {
             return EntryModel.newEntry(sel.group, sel.file);
         }
-    },
+    }
 
     createNewGroup() {
         const sel = this.getFirstSelectedGroup();
         return GroupModel.newGroup(sel.group, sel.file);
-    },
+    }
 
     createNewTemplateEntry() {
         const file = this.getFirstSelectedGroup().file;
         const group = file.getEntryTemplatesGroup() || file.createEntryTemplatesGroup();
         return EntryModel.newEntry(group, file);
-    },
+    }
 
     createDemoFile() {
         if (!this.files.getByName('Demo')) {
@@ -417,7 +412,7 @@ const AppModel = Backbone.Model.extend({
         } else {
             return false;
         }
-    },
+    }
 
     createNewFile() {
         let name;
@@ -430,7 +425,7 @@ const AppModel = Backbone.Model.extend({
         const newFile = new FileModel({ id: IdGenerator.uuid() });
         newFile.create(name);
         this.addFile(newFile);
-    },
+    }
 
     openFile(params, callback) {
         const logger = new Logger('open', params.name);
@@ -508,7 +503,7 @@ const AppModel = Backbone.Model.extend({
                 fileInfo
             );
         }
-    },
+    }
 
     openFileFromCache(params, callback, fileInfo) {
         Storage.cache.load(fileInfo.id, null, (err, data) => {
@@ -522,7 +517,7 @@ const AppModel = Backbone.Model.extend({
                 this.openFileWithData(params, callback, fileInfo, data);
             }
         });
-    },
+    }
 
     openFileFromStorage(params, callback, fileInfo, logger, noCache) {
         logger.info('Open file from storage', params.storage);
@@ -575,7 +570,7 @@ const AppModel = Backbone.Model.extend({
         } else {
             storageLoad();
         }
-    },
+    }
 
     openFileWithData(params, callback, fileInfo, data, updateCacheOnSuccess) {
         const logger = new Logger('open', params.name);
@@ -648,7 +643,7 @@ const AppModel = Backbone.Model.extend({
         } else {
             open();
         }
-    },
+    }
 
     importFileWithXml(params, callback) {
         const logger = new Logger('import', params.name);
@@ -667,7 +662,7 @@ const AppModel = Backbone.Model.extend({
             this.addFile(file);
             this.fileOpened(file);
         });
-    },
+    }
 
     addToLastOpenFiles(file, rev) {
         this.appLogger.debug(
@@ -709,7 +704,7 @@ const AppModel = Backbone.Model.extend({
         this.fileInfos.remove(file.id);
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
-    },
+    }
 
     getStoreOpts(file) {
         const opts = file.get('opts');
@@ -718,14 +713,14 @@ const AppModel = Backbone.Model.extend({
             return Storage[storage].fileOptsToStoreOpts(opts, file);
         }
         return null;
-    },
+    }
 
     setFileOpts(file, opts) {
         const storage = file.get('storage');
         if (Storage[storage] && Storage[storage].storeOptsToFileOpts && opts) {
             file.set('opts', Storage[storage].storeOptsToFileOpts(opts, file));
         }
-    },
+    }
 
     fileOpened(file, data, params) {
         if (file.get('storage') === 'file') {
@@ -746,26 +741,26 @@ const AppModel = Backbone.Model.extend({
         if (params) {
             this.saveFileFingerprint(file, params.password);
         }
-    },
+    }
 
     fileClosed(file) {
         if (file.get('storage') === 'file') {
             Storage.file.unwatch(file.get('path'));
         }
-    },
+    }
 
     removeFileInfo(id) {
         Storage.cache.remove(id);
         this.fileInfos.remove(id);
         this.fileInfos.save();
-    },
+    }
 
     getFileInfo(file) {
         return (
             this.fileInfos.get(file.id) ||
             this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'))
         );
-    },
+    }
 
     syncFile(file, options, callback) {
         if (file.get('demo')) {
@@ -1008,7 +1003,7 @@ const AppModel = Backbone.Model.extend({
                 }
             });
         }
-    },
+    }
 
     clearStoredKeyFiles() {
         this.fileInfos.each(fileInfo => {
@@ -1019,7 +1014,7 @@ const AppModel = Backbone.Model.extend({
             });
         });
         this.fileInfos.save();
-    },
+    }
 
     unsetKeyFile(fileId) {
         const fileInfo = this.fileInfos.get(fileId);
@@ -1029,7 +1024,7 @@ const AppModel = Backbone.Model.extend({
             keyFileHash: null
         });
         this.fileInfos.save();
-    },
+    }
 
     setFileBackup(fileId, backup) {
         const fileInfo = this.fileInfos.get(fileId);
@@ -1037,7 +1032,7 @@ const AppModel = Backbone.Model.extend({
             fileInfo.set('backup', backup);
         }
         this.fileInfos.save();
-    },
+    }
 
     backupFile(file, data, callback) {
         const opts = file.get('opts');
@@ -1095,7 +1090,7 @@ const AppModel = Backbone.Model.extend({
                 saveToFolder();
             }
         });
-    },
+    }
 
     scheduleBackupFile(file, data) {
         const backup = file.get('backup');
@@ -1145,7 +1140,7 @@ const AppModel = Backbone.Model.extend({
         if (needBackup) {
             this.backupFile(file, data, _.noop);
         }
-    },
+    }
 
     saveFileFingerprint(file, password) {
         if (Launcher && Launcher.fingerprints && !file.has('fingerprint')) {
@@ -1158,6 +1153,6 @@ const AppModel = Backbone.Model.extend({
             });
         }
     }
-});
+}
 
 export { AppModel };
