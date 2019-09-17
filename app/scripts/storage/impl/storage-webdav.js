@@ -370,9 +370,9 @@ const StorageWebDav = StorageBase.extend({
             );
         }
         if (config.headers) {
-            _.forEach(config.headers, (value, header) => {
+            for (const [header, value] of Object.entries(config.headers)) {
                 xhr.setRequestHeader(header, value);
-            });
+            }
         }
         if (['GET', 'HEAD'].indexOf(config.method) >= 0) {
             xhr.setRequestHeader('Cache-Control', 'no-cache');

@@ -21,7 +21,7 @@ const ThirdPartyStorage = {
 
 const Storage = BuiltInStorage;
 if (!Launcher || Launcher.thirdPartyStoragesSupported) {
-    _.extend(Storage, ThirdPartyStorage);
+    Object.assign(Storage, ThirdPartyStorage);
 }
 
 export { Storage };

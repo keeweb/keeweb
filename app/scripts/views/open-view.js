@@ -801,7 +801,7 @@ class OpenView extends View {
         if (this.views.openConfig) {
             this.views.openConfig.remove();
         }
-        const config = _.extend(
+        const config = Object.assign(
             {
                 id: storage.name,
                 name: Locale[storage.name] || storage.name,

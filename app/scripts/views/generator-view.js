@@ -94,7 +94,7 @@ class GeneratorView extends View {
             (!this.model.password.isProtected || this.model.password.byteLength)
         ) {
             const derivedPreset = { name: 'Derived', title: Locale.genPresetDerived };
-            _.extend(derivedPreset, PasswordGenerator.deriveOpts(this.model.password));
+            Object.assign(derivedPreset, PasswordGenerator.deriveOpts(this.model.password));
             this.presets.splice(0, 0, derivedPreset);
             this.preset = 'Derived';
         } else {

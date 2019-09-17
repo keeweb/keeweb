@@ -102,11 +102,11 @@ const PasswordGenerator = {
             password.forEachChar(ch => {
                 length++;
                 ch = String.fromCharCode(ch);
-                _.forEach(charRanges, (chars, range) => {
+                for (const [range, chars] of Object.entries(charRanges)) {
                     if (chars.indexOf(ch) >= 0) {
                         opts[range] = true;
                     }
-                });
+                }
             });
         }
         opts.length = length;

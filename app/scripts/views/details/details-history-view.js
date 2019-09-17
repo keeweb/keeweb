@@ -200,15 +200,9 @@ class DetailsHistoryView extends View {
                 value: this.record.expires ? DateFormat.dtStr(this.record.expires) : ''
             })
         );
-        _.forEach(
-            this.record.fields,
-            (value, field) => {
-                this.fieldViews.push(
-                    new FieldViewReadOnly({ name: '$' + field, title: field, value })
-                );
-            },
-            this
-        );
+        for (const [field, value] of Object.entries(this.record.fields)) {
+            this.fieldViews.push(new FieldViewReadOnly({ name: '$' + field, title: field, value }));
+        }
         if (this.record.attachments.length) {
             this.fieldViews.push(
                 new FieldViewReadOnly({

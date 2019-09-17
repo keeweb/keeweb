@@ -10,7 +10,7 @@ const MaxRequestRetries = 3;
 
 const StorageBase = function() {};
 
-_.extend(StorageBase.prototype, {
+Object.assign(StorageBase.prototype, {
     name: null,
     icon: null,
     iconSvg: null,
@@ -97,9 +97,9 @@ _.extend(StorageBase.prototype, {
         if (this._oauthToken && !config.skipAuth) {
             xhr.setRequestHeader('Authorization', 'Bearer ' + this._oauthToken.accessToken);
         }
-        _.forEach(config.headers, (value, key) => {
+        for (const [key, value] of Object.entries(config.headers)) {
             xhr.setRequestHeader(key, value);
-        });
+        }
         let data = config.data;
         if (data instanceof ArrayBuffer) {
             data = new Uint8Array(data);

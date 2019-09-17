@@ -30,7 +30,7 @@ const PluginStatus = {
 };
 
 const Plugin = Backbone.Model.extend(
-    _.extend({}, PluginStatus, {
+    Object.assign({}, PluginStatus, {
         idAttribute: 'name',
 
         defaults: {
@@ -617,7 +617,7 @@ const Plugin = Backbone.Model.extend(
     })
 );
 
-_.extend(Plugin, PluginStatus);
+Object.assign(Plugin, PluginStatus);
 
 Plugin.loadFromUrl = function(url, expectedManifest) {
     if (url[url.length - 1] !== '/') {

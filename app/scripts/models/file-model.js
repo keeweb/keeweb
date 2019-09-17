@@ -137,7 +137,7 @@ class FileModel extends Model {
     }
 
     setOpenFile(props) {
-        _.extend(props, {
+        Object.assign(props, {
             active: true,
             oldKeyFileName: this.keyFileName,
             oldPasswordLength: props.passwordLength,

@@ -150,7 +150,7 @@ class FieldView extends View {
         if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {
             arg = { val: newVal, field: this.model.name };
             if (extra) {
-                _.extend(arg, extra);
+                Object.assign(arg, extra);
             }
         } else if (extra) {
             arg = extra;

@@ -105,13 +105,13 @@ Color.getNearest = function(colorStr) {
     }
     let selected = null,
         minDistance = Number.MAX_VALUE;
-    _.forEach(KnownColors, (col, name) => {
+    for (const [name, col] of Object.entries(KnownColors)) {
         const distance = color.distanceTo(col);
         if (distance < minDistance) {
             minDistance = distance;
             selected = name;
         }
-    });
+    }
     return selected;
 };
 
@@ -119,9 +119,9 @@ Color.getKnownBgColor = function(knownColor) {
     return Colors.BgColors[knownColor] ? '#' + Colors.BgColors[knownColor] : undefined;
 };
 
-_.forEach(Colors.ColorsValues, (val, name) => {
+for (const [name, val] of Object.entries(Colors.ColorsValues)) {
     KnownColors[name] = new Color(val);
-});
+}
 
 Color.black = new Color('#000');
 

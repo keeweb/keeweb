@@ -47,11 +47,11 @@ const SettingsManager = {
     },
 
     setTheme(theme) {
-        _.forEach(document.body.classList, cls => {
-            if (/^th\-/.test(cls)) {
+        for (const cls of document.body.classList) {
+            if (/^th-/.test(cls)) {
                 document.body.classList.remove(cls);
             }
-        });
+        }
         document.body.classList.add(this.getThemeClass(theme));
         const metaThemeColor = document.head.querySelector('meta[name=theme-color]');
         if (metaThemeColor) {
@@ -83,7 +83,7 @@ const SettingsManager = {
         if (!this.neutralLocale) {
             this.neutralLocale = _.clone(Locale);
         }
-        _.extend(Locale, this.neutralLocale, localeValues);
+        Object.assign(Locale, this.neutralLocale, localeValues);
         this.activeLocale = loc;
         Events.emit('set-locale', loc);
     },

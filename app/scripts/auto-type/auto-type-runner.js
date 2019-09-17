@@ -450,7 +450,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
     if (this.emitterState.opIx >= this.emitterState.ops.length) {
         const state = this.emitterState.stack.pop();
         if (state) {
-            _.extend(this.emitterState, { ops: state.ops, opIx: state.opIx, mod: state.mod });
+            Object.assign(this.emitterState, { ops: state.ops, opIx: state.opIx, mod: state.mod });
             this.emitNext();
         } else {
             this.resetEmitterMod({});
@@ -470,7 +470,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
             opIx: this.emitterState.opIx + 1,
             mod: _.clone(this.emitterState.mod)
         });
-        _.extend(this.emitterState, {
+        Object.assign(this.emitterState, {
             ops: op.value,
             opIx: 0,
             mod: _.clone(this.emitterState.activeMod)

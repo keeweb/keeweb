@@ -129,7 +129,7 @@ const GeneratorPresets = {
         const setting = this.getOrCreateSetting();
         const preset = setting.user.filter(p => p.name === name)[0];
         if (preset) {
-            _.extend(preset, props);
+            Object.assign(preset, props);
             this.save(setting);
         }
     },

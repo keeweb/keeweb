@@ -268,7 +268,7 @@ class DetailsView extends View {
                 }
             })
         );
-        _.forEach(model.fields, (value, field) => {
+        for (const field of Object.keys(model.fields)) {
             if (field === 'otp' && this.model.otpGenerator) {
                 this.fieldViews.push(
                     new FieldViewOtp({
@@ -291,7 +291,7 @@ class DetailsView extends View {
                     })
                 );
             }
-        });
+        }
 
         const hideEmptyFields = AppSettingsModel.hideEmptyFields;
 
@@ -466,11 +466,11 @@ class DetailsView extends View {
             .find('.details__colors-popup > .details__colors-popup-item')
             .removeClass('details__colors-popup-item--active');
         const colorEl = this.$el.find('.details__header-color')[0];
-        _.forEach(colorEl.classList, cls => {
+        for (const cls of colorEl.classList) {
             if (cls.indexOf('color') > 0 && cls.lastIndexOf('details', 0) !== 0) {
                 colorEl.classList.remove(cls);
             }
-        });
+        }
         if (color) {
             this.$el
                 .find('.details__colors-popup > .' + color + '-color')
@@ -778,17 +778,13 @@ class DetailsView extends View {
     }
 
     addAttachedFiles(files) {
-        _.forEach(
-            files,
-            function(file) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    this.addAttachment(file.name, reader.result);
-                };
-                reader.readAsArrayBuffer(file);
-            },
-            this
-        );
+        for (const file of files) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.addAttachment(file.name, reader.result);
+            };
+            reader.readAsArrayBuffer(file);
+        }
     }
 
     addAttachment(name, data) {
@@ -989,7 +985,7 @@ class DetailsView extends View {
         if (AutoType.enabled) {
             options.push({ value: 'det-auto-type', icon: 'keyboard-o', text: Locale.detAutoType });
         }
-        Events.emit('show-context-menu', _.extend(e, { options }));
+        Events.emit('show-context-menu', Object.assign(e, { options }));
     }
 
     contextMenuSelect(e) {

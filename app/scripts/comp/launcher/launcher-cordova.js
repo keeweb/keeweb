@@ -267,7 +267,7 @@ const Launcher = {
                     return;
                 }
 
-                const encryptConfig = _.extend({}, this.config, {
+                const encryptConfig = Object.assign({}, this.config, {
                     username: fileId,
                     password: password.getText()
                 });
@@ -283,7 +283,7 @@ const Launcher = {
                 return callback();
             }
 
-            const decryptConfig = _.extend({}, this.config, {
+            const decryptConfig = Object.assign({}, this.config, {
                 username: fileId,
                 token
             });

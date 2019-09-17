@@ -67,7 +67,7 @@ const Alerts = {
 
     info(config) {
         this.alert(
-            _.extend(
+            Object.assign(
                 {
                     header: '',
                     body: '',
@@ -84,7 +84,7 @@ const Alerts = {
 
     error(config) {
         this.alert(
-            _.extend(
+            Object.assign(
                 {
                     header: '',
                     body: '',
@@ -101,7 +101,7 @@ const Alerts = {
 
     yesno(config) {
         this.alert(
-            _.extend(
+            Object.assign(
                 {
                     header: '',
                     body: '',

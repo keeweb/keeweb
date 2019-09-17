@@ -48,7 +48,9 @@ class AppModel {
 
     prepare() {
         AutoType.init(this);
-        _.forEach(Storage, prv => prv.init());
+        for (const prv of Object.values(Storage)) {
+            prv.init();
+        }
     }
 
     loadConfig(configLocation) {
@@ -181,12 +183,12 @@ class AppModel {
             tagsHash[tag.toLowerCase()] = true;
         });
         file.forEachEntry({}, entry => {
-            _.forEach(entry.tags, tag => {
+            for (const tag of entry.tags) {
                 if (!tagsHash[tag.toLowerCase()]) {
                     tagsHash[tag.toLowerCase()] = true;
                     this.tags.push(tag);
                 }
-            });
+            }
         });
         this.tags.sort();
     }
@@ -282,7 +284,7 @@ class AppModel {
     }
 
     addFilter(filter) {
-        this.setFilter(_.extend(this.filter, filter));
+        this.setFilter(Object.assign(this.filter, filter));
     }
 
     setSort(sort) {
@@ -1133,7 +1135,7 @@ class AppModel {
             this.setFileBackup(file.id, backup);
         }
         if (needBackup) {
-            this.backupFile(file, data, _.noop);
+            this.backupFile(file, data, () => {});
         }
     }
 

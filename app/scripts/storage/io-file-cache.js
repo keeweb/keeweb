@@ -6,7 +6,7 @@ const IoFileCache = function(config) {
     this.logger = config.logger;
 };
 
-_.extend(IoFileCache.prototype, {
+Object.assign(IoFileCache.prototype, {
     initFs(callback) {
         if (this.basePath) {
             return callback();

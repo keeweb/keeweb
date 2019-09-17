@@ -11,7 +11,7 @@ const KdbxIcons = kdbxweb.Consts.Icons;
 const DefaultAutoTypeSequence = '{USERNAME}{TAB}{PASSWORD}{ENTER}';
 
 const GroupModel = MenuItemModel.extend({
-    defaults: _.extend({}, MenuItemModel.prototype.defaults, {
+    defaults: Object.assign({}, MenuItemModel.prototype.defaults, {
         iconId: 0,
         entries: null,
         filterKey: 'group',

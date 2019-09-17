@@ -84,7 +84,7 @@ const Launcher = {
         this.req('fs').exists(path, callback);
     },
     deleteFile(path, callback) {
-        this.req('fs').unlink(path, callback || _.noop);
+        this.req('fs').unlink(path, callback || (() => {}));
     },
     statFile(path, callback) {
         this.req('fs').stat(path, (err, stats) => callback(stats, err));

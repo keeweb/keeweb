@@ -36,7 +36,7 @@ class FieldViewCustom extends FieldViewText {
 
     endEdit(newVal, extra) {
         this.$el.removeClass('details__field--can-edit-title');
-        extra = _.extend({}, extra);
+        extra = Object.assign({}, extra);
         if (this.model.titleChanged || this.model.newField) {
             extra.newField = this.model.title;
         }

@@ -97,11 +97,11 @@ const EntryModel = Backbone.Model.extend({
 
     _buildSearchText() {
         let text = '';
-        _.forEach(this.entry.fields, value => {
+        for (const value of Object.values(this.entry.fields)) {
             if (typeof value === 'string') {
                 text += value.toLowerCase() + '\n';
             }
-        });
+        }
         this.entry.tags.forEach(tag => {
             text += tag.toLowerCase() + '\n';
         });
@@ -164,18 +164,14 @@ const EntryModel = Backbone.Model.extend({
 
     _attachmentsToModel(binaries) {
         const att = [];
-        _.forEach(
-            binaries,
-            (data, title) => {
-                if (data && data.ref) {
-                    data = data.value;
-                }
-                if (data) {
-                    att.push(AttachmentModel.fromAttachment({ data, title }));
-                }
-            },
-            this
-        );
+        for (let [title, data] of Object.entries(binaries)) {
+            if (data && data.ref) {
+                data = data.value;
+            }
+            if (data) {
+                att.push(AttachmentModel.fromAttachment({ data, title }));
+            }
+        }
         return att;
     },
 

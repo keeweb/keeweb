@@ -115,7 +115,7 @@ class ListSearchView extends View {
             title: true
         };
         if (this.model.advancedSearch) {
-            this.advancedSearch = _.extend({}, this.model.advancedSearch);
+            this.advancedSearch = Object.assign({}, this.model.advancedSearch);
         }
         this.setLocale();
         this.onKey(Keys.DOM_VK_F, this.findKeyPress, KeyHandler.SHORTCUT_ACTION);

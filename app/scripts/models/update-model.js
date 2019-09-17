@@ -6,11 +6,11 @@ class UpdateModel extends Model {
         return SettingsStore.load('update-info').then(data => {
             if (data) {
                 try {
-                    _.each(data, (val, key) => {
+                    for (const [key, val] of Object.entries(data)) {
                         if (/Date$/.test(key)) {
                             data[key] = val ? new Date(val) : null;
                         }
-                    });
+                    }
                     this.set(data, { silent: true });
                 } catch (e) {
                     /* failed to load model */
