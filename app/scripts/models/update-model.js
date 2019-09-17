@@ -20,12 +20,12 @@ class UpdateModel extends Model {
     }
 
     save() {
-        const attr = _.clone(this);
-        Object.keys(attr).forEach(key => {
+        const attr = { ...this };
+        for (const key of Object.keys(attr)) {
             if (key.lastIndexOf('update', 0) === 0) {
                 delete attr[key];
             }
-        });
+        }
         SettingsStore.save('update-info', attr);
     }
 }

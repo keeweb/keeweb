@@ -81,7 +81,7 @@ const SettingsManager = {
             }
         }
         if (!this.neutralLocale) {
-            this.neutralLocale = _.clone(Locale);
+            this.neutralLocale = { ...Locale };
         }
         Object.assign(Locale, this.neutralLocale, localeValues);
         this.activeLocale = loc;

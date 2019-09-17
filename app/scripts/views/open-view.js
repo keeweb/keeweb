@@ -801,15 +801,13 @@ class OpenView extends View {
         if (this.views.openConfig) {
             this.views.openConfig.remove();
         }
-        const config = Object.assign(
-            {
-                id: storage.name,
-                name: Locale[storage.name] || storage.name,
-                icon: storage.icon,
-                buttons: true
-            },
-            storage.getOpenConfig()
-        );
+        const config = {
+            id: storage.name,
+            name: Locale[storage.name] || storage.name,
+            icon: storage.icon,
+            buttons: true,
+            ...storage.getOpenConfig()
+        };
         this.views.openConfig = new OpenConfigView(config, {
             parent: '.open__config-wrap'
         });

@@ -322,7 +322,7 @@ class AppModel {
     }
 
     prepareFilter(filter) {
-        filter = _.clone(filter);
+        filter = { ...filter };
         filter.textLower = filter.text ? filter.text.toLowerCase() : '';
         filter.tagLower = filter.tag ? filter.tag.toLowerCase() : '';
         return filter;
@@ -448,7 +448,7 @@ class AppModel {
                 (err, file) => {
                     if (!err && file) {
                         logger.info('Sync just opened modified file');
-                        _.defer(() => this.syncFile(file));
+                        setTimeout(() => this.syncFile(file), 0);
                     }
                     callback(err);
                 },
@@ -492,7 +492,7 @@ class AppModel {
                 (err, file) => {
                     if (!err && file) {
                         logger.info('Sync just opened file');
-                        _.defer(() => this.syncFile(file));
+                        setTimeout(() => this.syncFile(file), 0);
                         callback(err);
                     } else {
                         logger.info(
@@ -781,9 +781,9 @@ class AppModel {
         if (storage && Storage[storage].getPathForName && (!path || storage !== file.storage)) {
             path = Storage[storage].getPathForName(file.name);
         }
-        const optionsForLogging = _.clone(options);
+        const optionsForLogging = { ...options };
         if (optionsForLogging && optionsForLogging.opts && optionsForLogging.opts.password) {
-            optionsForLogging.opts = _.clone(optionsForLogging.opts);
+            optionsForLogging.opts = { ...optionsForLogging.opts };
             optionsForLogging.opts.password = '***';
         }
         logger.info('Sync started', storage, path, optionsForLogging);

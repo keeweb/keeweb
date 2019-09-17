@@ -267,10 +267,11 @@ const Launcher = {
                     return;
                 }
 
-                const encryptConfig = Object.assign({}, this.config, {
+                const encryptConfig = {
+                    ...this.config,
                     username: fileId,
                     password: password.getText()
-                });
+                };
 
                 FingerprintAuth.encrypt(encryptConfig, result => {
                     callback(result.token);
@@ -283,10 +284,7 @@ const Launcher = {
                 return callback();
             }
 
-            const decryptConfig = Object.assign({}, this.config, {
-                username: fileId,
-                token
-            });
+            const decryptConfig = { ...this.config, username: fileId, token };
 
             FingerprintAuth.decrypt(decryptConfig, result => {
                 callback(result.password);

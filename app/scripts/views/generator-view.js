@@ -61,7 +61,7 @@ class GeneratorView extends View {
         super(model);
         this.createPresets();
         const preset = this.preset;
-        this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
+        this.gen = { ...this.presets.find(pr => pr.name === preset) };
         this.hide = AppSettingsModel.generatorHidePassword;
         $('body').one('click', this.remove.bind(this));
         this.listenTo(Events, 'lock-workspace', this.remove.bind(this));
@@ -189,8 +189,8 @@ class GeneratorView extends View {
             return;
         }
         this.preset = name;
-        const preset = _.find(this.presets, t => t.name === name);
-        this.gen = _.clone(preset);
+        const preset = this.presets.find(t => t.name === name);
+        this.gen = { ...preset };
         this.render();
     }
 

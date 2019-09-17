@@ -76,7 +76,7 @@ const GeneratorPresets = {
         const setting = AppSettingsModel.generatorPresets;
         if (setting) {
             if (setting.user) {
-                presets = presets.concat(setting.user.map(_.clone));
+                presets = presets.concat(setting.user.map(item => ({ ...item })));
             }
             let hasDefault = false;
             presets.forEach(preset => {

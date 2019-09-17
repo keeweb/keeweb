@@ -127,7 +127,7 @@ class DetailsView extends View {
             super.render();
             return;
         }
-        const model = Object.assign({ deleted: this.appModel.filter.trash }, this.model);
+        const model = { deleted: this.appModel.filter.trash, ...this.model };
         this.template = template;
         super.render(model);
         this.setSelectedColor(this.model.color);
@@ -450,7 +450,7 @@ class DetailsView extends View {
             default:
                 if (e.item.lastIndexOf('add:', 0) === 0) {
                     const fieldName = e.item.substr(4);
-                    const fieldView = _.find(this.fieldViews, f => f.model.name === fieldName);
+                    const fieldView = this.fieldViews.find(f => f.model.name === fieldName);
                     fieldView.show();
                     fieldView.edit();
                 }

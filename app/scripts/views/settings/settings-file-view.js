@@ -125,7 +125,7 @@ class SettingsFileView extends View {
 
     kdfParametersToUi(kdfParameters) {
         return kdfParameters
-            ? Object.assign({}, kdfParameters, { memory: Math.round(kdfParameters.memory / 1024) })
+            ? { ...kdfParameters, memory: Math.round(kdfParameters.memory / 1024) }
             : null;
     }
 
@@ -282,15 +282,13 @@ class SettingsFileView extends View {
         } else {
             if (!storage.list) {
                 if (storage.getOpenConfig) {
-                    const config = Object.assign(
-                        {
-                            id: storage.name,
-                            name: Locale[storage.name] || storage.name,
-                            icon: storage.icon,
-                            buttons: false
-                        },
-                        storage.getOpenConfig()
-                    );
+                    const config = {
+                        id: storage.name,
+                        name: Locale[storage.name] || storage.name,
+                        icon: storage.icon,
+                        buttons: false,
+                        ...storage.getOpenConfig()
+                    };
                     const openConfigView = new OpenConfigView(config);
                     Alerts.alert({
                         header: '',

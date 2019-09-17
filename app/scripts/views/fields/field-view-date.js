@@ -34,7 +34,7 @@ class FieldViewDate extends FieldViewText {
             }
         });
         this.picker.adjustPosition = this.adjustPickerPosition.bind(this);
-        _.defer(this.picker.show.bind(this.picker));
+        setTimeout(() => this.picker.show(), 0);
     }
 
     adjustPickerPosition(...args) {

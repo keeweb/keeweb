@@ -17,7 +17,7 @@ class FieldViewTags extends FieldViewText {
         return _.unique(
             val
                 .split(/\s*[;,:]\s*/)
-                .filter(_.identity)
+                .filter(tag => tag)
                 .map(tag => {
                     return allTags[tag.toLowerCase()] || tag;
                 })

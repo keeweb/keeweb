@@ -6,12 +6,10 @@ import { FieldView } from 'views/fields/field-view';
 import { FieldViewText } from 'views/fields/field-view-text';
 
 class FieldViewCustom extends FieldViewText {
-    events = Object.assign(
-        {
-            'mousedown .details__field-label': 'fieldLabelMousedown'
-        },
-        FieldViewText.prototype.events
-    );
+    events = {
+        'mousedown .details__field-label': 'fieldLabelMousedown',
+        ...FieldViewText.prototype.events
+    };
 
     startEdit() {
         super.startEdit();
@@ -36,7 +34,7 @@ class FieldViewCustom extends FieldViewText {
 
     endEdit(newVal, extra) {
         this.$el.removeClass('details__field--can-edit-title');
-        extra = Object.assign({}, extra);
+        extra = { ...extra };
         if (this.model.titleChanged || this.model.newField) {
             extra.newField = this.model.title;
         }

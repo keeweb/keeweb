@@ -468,12 +468,12 @@ AutoTypeRunner.prototype.emitNext = function(err) {
         this.emitterState.stack.push({
             ops: this.emitterState.ops,
             opIx: this.emitterState.opIx + 1,
-            mod: _.clone(this.emitterState.mod)
+            mod: { ...this.emitterState.mod }
         });
         Object.assign(this.emitterState, {
             ops: op.value,
             opIx: 0,
-            mod: _.clone(this.emitterState.activeMod)
+            mod: { ...this.emitterState.activeMod }
         });
         this.emitNext();
         return;

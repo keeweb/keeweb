@@ -303,7 +303,7 @@ class ListView extends View {
     }
 
     optionsDropdownSelect(e) {
-        const col = _.find(this.tableColumns, c => c.val === e.item);
+        const col = this.tableColumns.find(c => c.val === e.item);
         col.enabled = !col.enabled;
         e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
         this.render();

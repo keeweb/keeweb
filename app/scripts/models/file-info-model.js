@@ -2,7 +2,7 @@ import { Model } from 'framework/model';
 
 class FileInfoModel extends Model {
     constructor(data) {
-        data = Object.assign({}, data);
+        data = { ...data };
         for (const [key, val] of Object.entries(data)) {
             if (/Date$/.test(key)) {
                 data[key] = val ? new Date(val) : null;

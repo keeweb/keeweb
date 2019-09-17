@@ -99,13 +99,11 @@ const StorageWebDav = StorageBase.extend({
         };
         const that = this;
         this._request(
-            _.defaults(
-                {
-                    op: 'Save:stat',
-                    method: 'HEAD'
-                },
-                saveOpts
-            ),
+            {
+                op: 'Save:stat',
+                method: 'HEAD',
+                ...saveOpts
+            },
             (err, xhr, stat) => {
                 let useTmpPath = this.appSettings.webdavSaveMethod !== 'put';
                 if (err) {
@@ -121,40 +119,32 @@ const StorageWebDav = StorageBase.extend({
                 }
                 if (useTmpPath) {
                     that._request(
-                        _.defaults(
-                            {
-                                op: 'Save:put',
-                                method: 'PUT',
-                                path: tmpPath,
-                                data,
-                                nostat: true
-                            },
-                            saveOpts
-                        ),
+                        {
+                            op: 'Save:put',
+                            method: 'PUT',
+                            path: tmpPath,
+                            data,
+                            nostat: true,
+                            ...saveOpts
+                        },
                         err => {
                             if (err) {
                                 return cb(err);
                             }
                             that._request(
-                                _.defaults(
-                                    {
-                                        op: 'Save:stat',
-                                        method: 'HEAD'
-                                    },
-                                    saveOpts
-                                ),
+                                {
+                                    op: 'Save:stat',
+                                    method: 'HEAD',
+                                    ...saveOpts
+                                },
                                 (err, xhr, stat) => {
                                     if (err) {
-                                        that._request(
-                                            _.defaults(
-                                                {
-                                                    op: 'Save:delete',
-                                                    method: 'DELETE',
-                                                    path: tmpPath
-                                                },
-                                                saveOpts
-                                            )
-                                        );
+                                        that._request({
+                                            op: 'Save:delete',
+                                            method: 'DELETE',
+                                            path: tmpPath,
+                                            ...saveOpts
+                                        });
                                         return cb(err, xhr, stat);
                                     }
                                     if (stat.rev !== rev) {
@@ -165,16 +155,12 @@ const StorageWebDav = StorageBase.extend({
                                             stat.rev,
                                             rev
                                         );
-                                        that._request(
-                                            _.defaults(
-                                                {
-                                                    op: 'Save:delete',
-                                                    method: 'DELETE',
-                                                    path: tmpPath
-                                                },
-                                                saveOpts
-                                            )
-                                        );
+                                        that._request({
+                                            op: 'Save:delete',
+                                            method: 'DELETE',
+                                            path: tmpPath,
+                                            ...saveOpts
+                                        });
                                         return cb({ revConflict: true }, xhr, stat);
                                     }
                                     let movePath = path;
@@ -189,31 +175,27 @@ const StorageWebDav = StorageBase.extend({
                                         }
                                     }
                                     that._request(
-                                        _.defaults(
-                                            {
-                                                op: 'Save:move',
-                                                method: 'MOVE',
-                                                path: tmpPath,
-                                                nostat: true,
-                                                headers: {
-                                                    Destination: encodeURI(movePath),
-                                                    'Overwrite': 'T'
-                                                }
+                                        {
+                                            op: 'Save:move',
+                                            method: 'MOVE',
+                                            path: tmpPath,
+                                            nostat: true,
+                                            headers: {
+                                                Destination: encodeURI(movePath),
+                                                'Overwrite': 'T'
                                             },
-                                            saveOpts
-                                        ),
+                                            ...saveOpts
+                                        },
                                         err => {
                                             if (err) {
                                                 return cb(err);
                                             }
                                             that._request(
-                                                _.defaults(
-                                                    {
-                                                        op: 'Save:stat',
-                                                        method: 'HEAD'
-                                                    },
-                                                    saveOpts
-                                                ),
+                                                {
+                                                    op: 'Save:stat',
+                                                    method: 'HEAD',
+                                                    ...saveOpts
+                                                },
                                                 (err, xhr, stat) => {
                                                     cb(err, xhr, stat);
                                                 }
@@ -226,27 +208,23 @@ const StorageWebDav = StorageBase.extend({
                     );
                 } else {
                     that._request(
-                        _.defaults(
-                            {
-                                op: 'Save:put',
-                                method: 'PUT',
-                                data,
-                                nostat: true
-                            },
-                            saveOpts
-                        ),
+                        {
+                            op: 'Save:put',
+                            method: 'PUT',
+                            data,
+                            nostat: true,
+                            ...saveOpts
+                        },
                         err => {
                             if (err) {
                                 return cb(err);
                             }
                             that._request(
-                                _.defaults(
-                                    {
-                                        op: 'Save:stat',
-                                        method: 'HEAD'
-                                    },
-                                    saveOpts
-                                ),
+                                {
+                                    op: 'Save:stat',
+                                    method: 'HEAD',
+                                    ...saveOpts
+                                },
                                 (err, xhr, stat) => {
                                     cb(err, xhr, stat);
                                 }

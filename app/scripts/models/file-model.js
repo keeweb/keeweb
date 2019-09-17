@@ -12,15 +12,11 @@ const logger = new Logger('file');
 
 class FileModel extends Model {
     constructor(data) {
-        super(
-            Object.assign(
-                {
-                    entryMap: {},
-                    groupMap: {}
-                },
-                data
-            )
-        );
+        super({
+            entryMap: {},
+            groupMap: {},
+            ...data
+        });
     }
 
     open(password, fileData, keyFileData, callback) {
@@ -137,14 +133,14 @@ class FileModel extends Model {
     }
 
     setOpenFile(props) {
-        Object.assign(props, {
+        this.set({
+            ...props,
             active: true,
             oldKeyFileName: this.keyFileName,
             oldPasswordLength: props.passwordLength,
             passwordChanged: false,
             keyFileChanged: false
         });
-        this.set(props);
         this.oldPasswordHash = this.db.credentials.passwordHash;
         this.oldKeyFileHash = this.db.credentials.keyFileHash;
         this.oldKeyChangeDate = this.db.meta.keyChanged;

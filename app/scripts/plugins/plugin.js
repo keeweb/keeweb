@@ -587,7 +587,7 @@ const Plugin = Backbone.Model.extend(
                     const settingsPrefix = this.getSettingPrefix();
                     if (settings instanceof Array) {
                         return settings.map(setting => {
-                            setting = _.clone(setting);
+                            setting = { ...setting };
                             const value = AppSettingsModel[settingsPrefix + setting.name];
                             if (value !== undefined) {
                                 setting.value = value;

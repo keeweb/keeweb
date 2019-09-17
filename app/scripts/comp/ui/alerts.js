@@ -66,54 +66,42 @@ const Alerts = {
     },
 
     info(config) {
-        this.alert(
-            Object.assign(
-                {
-                    header: '',
-                    body: '',
-                    icon: 'info',
-                    buttons: [this.buttons.ok],
-                    esc: '',
-                    click: '',
-                    enter: ''
-                },
-                config
-            )
-        );
+        this.alert({
+            header: '',
+            body: '',
+            icon: 'info',
+            buttons: [this.buttons.ok],
+            esc: '',
+            click: '',
+            enter: '',
+            ...config
+        });
     },
 
     error(config) {
-        this.alert(
-            Object.assign(
-                {
-                    header: '',
-                    body: '',
-                    icon: 'exclamation-circle',
-                    buttons: [this.buttons.ok],
-                    esc: '',
-                    click: '',
-                    enter: ''
-                },
-                config
-            )
-        );
+        this.alert({
+            header: '',
+            body: '',
+            icon: 'exclamation-circle',
+            buttons: [this.buttons.ok],
+            esc: '',
+            click: '',
+            enter: '',
+            ...config
+        });
     },
 
     yesno(config) {
-        this.alert(
-            Object.assign(
-                {
-                    header: '',
-                    body: '',
-                    icon: 'question',
-                    buttons: [this.buttons.yes, this.buttons.no],
-                    esc: '',
-                    click: '',
-                    enter: 'yes'
-                },
-                config
-            )
-        );
+        this.alert({
+            header: '',
+            body: '',
+            icon: 'question',
+            buttons: [this.buttons.yes, this.buttons.no],
+            esc: '',
+            click: '',
+            enter: 'yes',
+            ...config
+        });
     }
 };
 
