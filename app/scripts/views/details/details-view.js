@@ -151,7 +151,7 @@ class DetailsView extends View {
         const model = this.model;
         if (model.isJustCreated && this.appModel.files.length > 1) {
             const fileNames = this.appModel.files.map(function(file) {
-                return { id: file.id, value: file.get('name'), selected: file === this.model.file };
+                return { id: file.id, value: file.name, selected: file === this.model.file };
             }, this);
             this.fileEditView = new FieldViewSelect({
                 name: '$File',

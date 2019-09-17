@@ -64,7 +64,7 @@ ready(() => {
             AppSettingsModel.load(),
             UpdateModel.instance.load(),
             RuntimeDataModel.instance.load(),
-            FileInfoCollection.instance.load()
+            FileInfoCollection.load()
         ]);
     }
 

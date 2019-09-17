@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+import { Logger } from 'util/logger';
 
 const SymbolEvents = Symbol('events');
 const SymbolDefaults = Symbol('defaults');
@@ -32,13 +33,15 @@ const ProxyDef = {
                 emitPropChange(target, property, value, receiver);
             }
             return true;
+        } else {
+            new Logger(receiver.constructor.name).warn(`Unknown property: ${property}`);
         }
         return false;
     }
 };
 
 class Model {
-    constructor() {
+    constructor(data) {
         const emitter = new EventEmitter();
         emitter.setMaxListeners(100);
 
@@ -54,7 +57,13 @@ class Model {
         }
         Object.defineProperties(this, properties);
 
-        return new Proxy(this, ProxyDef);
+        const object = new Proxy(this, ProxyDef);
+
+        if (data) {
+            object.set(data, { silent: true });
+        }
+
+        return object;
     }
 
     set(props, { silent } = {}) {

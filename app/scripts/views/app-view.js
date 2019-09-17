@@ -61,7 +61,7 @@ class AppView extends View {
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
-        this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
+        this.listenTo(this.model.files, 'change', this.fileListUpdated);
 
         this.listenTo(Events, 'select-all', this.selectAll);
         this.listenTo(Events, 'menu-select', this.menuSelect);
@@ -173,7 +173,7 @@ class AppView extends View {
 
     showLastOpenFile() {
         this.showOpenFile();
-        const lastOpenFile = this.model.fileInfos.getLast();
+        const lastOpenFile = this.model.fileInfos[0];
         if (lastOpenFile) {
             this.views.open.currentSelectedIndex = 0;
             this.views.open.showOpenFileInfo(lastOpenFile);
@@ -316,7 +316,7 @@ class AppView extends View {
     showFileSettings(e) {
         const menuItem = this.model.menu.filesSection
             .get('items')
-            .find(item => item.get('file').cid === e.fileId);
+            .find(item => item.get('file').id === e.fileId);
         if (this.views.settings) {
             if (this.views.settings.file === menuItem.get('file')) {
                 this.showEntries();
@@ -530,7 +530,7 @@ class AppView extends View {
         const errorFiles = [];
         const that = this;
         this.model.files.forEach(function(file) {
-            if (!file.get('dirty')) {
+            if (!file.dirty) {
                 return;
             }
             this.model.syncFile(file, null, fileSaved.bind(this, file));
@@ -541,7 +541,7 @@ class AppView extends View {
         }
         function fileSaved(file, err) {
             if (err) {
-                errorFiles.push(file.get('name'));
+                errorFiles.push(file.name);
             }
             if (--pendingCallbacks === 0) {
                 if (errorFiles.length && that.model.files.hasDirtyFiles()) {
@@ -569,16 +569,16 @@ class AppView extends View {
     }
 
     closeAllFilesAndShowFirst() {
-        let fileToShow = this.model.files.find(file => !file.get('demo') && !file.get('created'));
+        let fileToShow = this.model.files.find(file => !file.demo && !file.created);
         this.model.closeAllFiles();
         if (!fileToShow) {
-            fileToShow = this.model.fileInfos.getLast();
+            fileToShow = this.model.fileInfos[0];
         }
         if (fileToShow) {
             const fileInfo = this.model.fileInfos.getMatch(
-                fileToShow.get('storage'),
-                fileToShow.get('name'),
-                fileToShow.get('path')
+                fileToShow.storage,
+                fileToShow.name,
+                fileToShow.path
             );
             if (fileInfo) {
                 this.views.open.showOpenFileInfo(fileInfo);

@@ -381,7 +381,7 @@ class ListSearchView extends View {
                 value: id,
                 icon: tmpl.entry.icon,
                 text: hasMultipleFiles
-                    ? tmpl.file.get('name') + ' / ' + tmpl.entry.title
+                    ? tmpl.file.name + ' / ' + tmpl.entry.title
                     : tmpl.entry.title
             });
             this.entryTemplates[id] = tmpl;

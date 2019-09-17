@@ -435,12 +435,12 @@ const Plugin = Backbone.Model.extend(
             const ts = this.logger.ts();
             const settingPrefix = this.getSettingPrefix();
             let settings = null;
-            for (const key of Object.keys(AppSettingsModel.attributes)) {
+            for (const key of Object.keys(AppSettingsModel)) {
                 if (key.lastIndexOf(settingPrefix, 0) === 0) {
                     if (!settings) {
                         settings = {};
                     }
-                    settings[key.replace(settingPrefix, '')] = AppSettingsModel.attributes[key];
+                    settings[key.replace(settingPrefix, '')] = AppSettingsModel[key];
                 }
             }
             if (settings) {

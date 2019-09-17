@@ -16,6 +16,17 @@ class AttachmentModel extends Model {
             return data;
         }
     }
+
+    static fromAttachment(att) {
+        const ext = getExtension(att.title);
+        return new AttachmentModel({
+            title: att.title,
+            data: att.data,
+            ext,
+            icon: getIcon(ext),
+            mimeType: getMimeType(ext)
+        });
+    }
 }
 
 AttachmentModel.defineModelProperties({
@@ -25,22 +36,6 @@ AttachmentModel.defineModelProperties({
     icon: undefined,
     mimeType: undefined
 });
-
-AttachmentModel.fromAttachment = function(att) {
-    const model = new AttachmentModel();
-    const ext = getExtension(att.title);
-    model.set(
-        {
-            title: att.title,
-            data: att.data,
-            ext,
-            icon: getIcon(ext),
-            mimeType: getMimeType(ext)
-        },
-        { slient: true }
-    );
-    return model;
-};
 
 function getExtension(fileName) {
     const ext = fileName ? fileName.split('.').pop() : undefined;

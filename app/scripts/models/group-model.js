@@ -78,7 +78,7 @@ const GroupModel = MenuItemModel.extend({
     _fillByGroup(silent) {
         this.set(
             {
-                title: this.parentGroup ? this.group.name : this.file.get('name'),
+                title: this.parentGroup ? this.group.name : this.file.name,
                 iconId: this.group.icon,
                 icon: this._iconFromId(this.group.icon),
                 customIcon: this._buildCustomIcon(),

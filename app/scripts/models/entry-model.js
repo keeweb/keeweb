@@ -43,7 +43,7 @@ const EntryModel = Backbone.Model.extend({
     _fillByEntry() {
         const entry = this.entry;
         this.set({ id: this.file.subId(entry.uuid.id), uuid: entry.uuid.id }, { silent: true });
-        this.fileName = this.file.get('name');
+        this.fileName = this.file.name;
         this.groupName = this.group.get('title');
         this.title = this._getFieldString('Title');
         this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
@@ -526,7 +526,7 @@ const EntryModel = Backbone.Model.extend({
     moveToFile(file) {
         if (this.canBeDeleted) {
             this.removeWithoutHistory();
-            this.group = file.get('groups').first();
+            this.group = file.groups.first();
             this.file = file;
             this._fillByEntry();
             this.entry.times.update();

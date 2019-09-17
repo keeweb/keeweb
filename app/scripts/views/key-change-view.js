@@ -30,12 +30,12 @@ class KeyChangeView extends View {
     }
 
     render() {
-        this.keyFileName = this.model.file.get('keyFileName') || null;
+        this.keyFileName = this.model.file.keyFileName || null;
         this.keyFileData = null;
         const repeat = this.model.expired;
         super.render({
-            fileName: this.model.file.get('name'),
-            keyFileName: this.model.file.get('keyFileName'),
+            fileName: this.model.file.name,
+            keyFileName: this.model.file.keyFileName,
             title: this.model.expired ? Locale.keyChangeTitleExpired : Locale.keyChangeTitleRemote,
             message: this.model.expired
                 ? Locale.keyChangeMessageExpired

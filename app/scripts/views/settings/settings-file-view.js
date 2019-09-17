@@ -55,14 +55,17 @@ class SettingsFileView extends View {
 
     constructor(model, options) {
         super(model, options);
-        this.listenTo(this.model, 'change:syncing change:syncError change:syncDate', () => {
-            setTimeout(() => this.render(), 0);
-        });
+        const watchedProps = ['syncing', 'syncError', 'syncDate'];
+        for (const prop of watchedProps) {
+            this.listenTo(this.model, 'change:' + prop, () => {
+                setTimeout(() => this.render(), 0);
+            });
+        }
     }
 
     render() {
         const storageProviders = [];
-        const fileStorage = this.model.get('storage');
+        const fileStorage = this.model.storage;
         let canBackup = false;
         Object.keys(Storage).forEach(name => {
             const prv = Storage[name];
@@ -80,43 +83,39 @@ class SettingsFileView extends View {
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
-        const backup = this.model.get('backup');
+        const backup = this.model.backup;
         super.render({
             cmd: Shortcuts.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
             desktopLink: Links.Desktop,
-            name: this.model.get('name'),
-            path: this.model.get('path'),
-            storage: this.model.get('storage'),
-            syncing: this.model.get('syncing'),
-            syncError: this.model.get('syncError'),
-            syncDate: DateFormat.dtStr(this.model.get('syncDate')),
-            password: PasswordGenerator.present(this.model.get('passwordLength')),
-            defaultUser: this.model.get('defaultUser'),
-            recycleBinEnabled: this.model.get('recycleBinEnabled'),
+            name: this.model.name,
+            path: this.model.path,
+            storage: this.model.storage,
+            syncing: this.model.syncing,
+            syncError: this.model.syncError,
+            syncDate: DateFormat.dtStr(this.model.syncDate),
+            password: PasswordGenerator.present(this.model.passwordLength),
+            defaultUser: this.model.defaultUser,
+            recycleBinEnabled: this.model.recycleBinEnabled,
             backupEnabled: backup && backup.enabled,
             backupStorage: backup && backup.storage,
             backupPath:
-                (backup && backup.path) ||
-                DefaultBackupPath.replace('{name}', this.model.get('name')),
+                (backup && backup.path) || DefaultBackupPath.replace('{name}', this.model.name),
             backupSchedule: backup ? backup.schedule : DefaultBackupSchedule,
-            historyMaxItems: this.model.get('historyMaxItems'),
-            historyMaxSize: Math.round(this.model.get('historyMaxSize') / 1024 / 1024),
-            formatVersion: this.model.get('formatVersion'),
-            kdfName: this.model.get('kdfName'),
-            keyEncryptionRounds: this.model.get('keyEncryptionRounds'),
-            keyChangeForce:
-                this.model.get('keyChangeForce') > 0 ? this.model.get('keyChangeForce') : null,
-            kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
+            historyMaxItems: this.model.historyMaxItems,
+            historyMaxSize: Math.round(this.model.historyMaxSize / 1024 / 1024),
+            formatVersion: this.model.formatVersion,
+            kdfName: this.model.kdfName,
+            keyEncryptionRounds: this.model.keyEncryptionRounds,
+            keyChangeForce: this.model.keyChangeForce > 0 ? this.model.keyChangeForce : null,
+            kdfParameters: this.kdfParametersToUi(this.model.kdfParameters),
             storageProviders,
             canBackup,
             canExportXml: AppSettingsModel.canExportXml,
             canExportHtml: AppSettingsModel.canExportHtml
         });
-        if (!this.model.get('created')) {
-            this.$el
-                .find('.settings__file-master-pass-warning')
-                .toggle(this.model.get('passwordChanged'));
+        if (!this.model.created) {
+            this.$el.find('.settings__file-master-pass-warning').toggle(this.model.passwordChanged);
             this.$el
                 .find('#settings__file-master-pass-warning-text')
                 .text(Locale.setFilePassChanged);
@@ -131,9 +130,9 @@ class SettingsFileView extends View {
     }
 
     renderKeyFileSelect() {
-        const keyFileName = this.model.get('keyFileName');
-        const oldKeyFileName = this.model.get('oldKeyFileName');
-        const keyFileChanged = this.model.get('keyFileChanged');
+        const keyFileName = this.model.keyFileName;
+        const oldKeyFileName = this.model.oldKeyFileName;
+        const keyFileChanged = this.model.keyFileChanged;
         const sel = this.$el.find('#settings__file-key-file');
         sel.html('');
         if (keyFileName && keyFileChanged) {
@@ -173,7 +172,7 @@ class SettingsFileView extends View {
     }
 
     validatePassword(continueCallback) {
-        if (!this.model.get('passwordLength')) {
+        if (!this.model.passwordLength) {
             Alerts.yesno({
                 header: Locale.setFileEmptyPass,
                 body: Locale.setFileEmptyPassBody,
@@ -219,8 +218,8 @@ class SettingsFileView extends View {
         if (skipValidation !== true && !this.validatePassword(this.saveToFile.bind(this, true))) {
             return;
         }
-        const fileName = this.model.get('name') + '.kdbx';
-        if (Launcher && !this.model.get('storage')) {
+        const fileName = this.model.name + '.kdbx';
+        if (Launcher && !this.model.storage) {
             Launcher.getSaveFileName(fileName, path => {
                 if (path) {
                     this.save({ storage: 'file', path });
@@ -256,19 +255,19 @@ class SettingsFileView extends View {
     saveToXml() {
         this.model.getXml(xml => {
             const blob = new Blob([xml], { type: 'text/xml' });
-            FileSaver.saveAs(blob, this.model.get('name') + '.xml');
+            FileSaver.saveAs(blob, this.model.name + '.xml');
         });
     }
 
     saveToHtml() {
         this.model.getHtml(html => {
             const blob = new Blob([html], { type: 'text/html' });
-            FileSaver.saveAs(blob, this.model.get('name') + '.html');
+            FileSaver.saveAs(blob, this.model.name + '.html');
         });
     }
 
     saveToStorage(e) {
-        if (this.model.get('syncing') || this.model.get('demo')) {
+        if (this.model.syncing || this.model.demo) {
             return;
         }
         const storageName = $(e.target)
@@ -278,7 +277,7 @@ class SettingsFileView extends View {
         if (!storage) {
             return;
         }
-        if (this.model.get('storage') === storageName) {
+        if (this.model.storage === storageName) {
             this.save();
         } else {
             if (!storage.list) {
@@ -308,7 +307,7 @@ class SettingsFileView extends View {
                             }
                             const opts = _.omit(storageConfig, ['path', 'storage']);
                             if (opts && Object.keys(opts).length) {
-                                this.model.set('opts', opts);
+                                this.model.opts = opts;
                             }
                             this.save({ storage: storageName, path: storageConfig.path, opts });
                         }
@@ -318,13 +317,13 @@ class SettingsFileView extends View {
                 }
                 return;
             }
-            this.model.set('syncing', true);
+            this.model.syncing = true;
             storage.list('', (err, files) => {
-                this.model.set('syncing', false);
+                this.model.syncing = false;
                 if (err) {
                     return;
                 }
-                const expName = this.model.get('name').toLowerCase();
+                const expName = this.model.name.toLowerCase();
                 const existingFile = _.find(files, file => {
                     return (
                         !file.dir && UrlFormat.getDataFileName(file.name).toLowerCase() === expName
@@ -338,9 +337,9 @@ class SettingsFileView extends View {
                             this.model.escape('name')
                         ),
                         success: () => {
-                            this.model.set('syncing', true);
+                            this.model.syncing = true;
                             storage.remove(existingFile.path, err => {
-                                this.model.set('syncing', false);
+                                this.model.syncing = false;
                                 if (!err) {
                                     this.save({ storage: storageName });
                                 }
@@ -355,7 +354,7 @@ class SettingsFileView extends View {
     }
 
     closeFile() {
-        if (this.model.get('modified')) {
+        if (this.model.modified) {
             Alerts.yesno({
                 header: Locale.setFileUnsaved,
                 body: Locale.setFileUnsavedBody,
@@ -400,7 +399,7 @@ class SettingsFileView extends View {
     generateKeyFile() {
         const keyFile = this.model.generateAndSetKeyFile();
         const blob = new Blob([keyFile], { type: 'application/octet-stream' });
-        FileSaver.saveAs(blob, this.model.get('name') + '.key');
+        FileSaver.saveAs(blob, this.model.name + '.key');
         this.renderKeyFileSelect();
     }
 
@@ -427,7 +426,7 @@ class SettingsFileView extends View {
     focusMasterPass(e) {
         e.target.value = '';
         e.target.setAttribute('type', 'text');
-        this.model.set('passwordChanged', false);
+        this.model.passwordChanged = false;
     }
 
     changeMasterPass(e) {
@@ -439,7 +438,7 @@ class SettingsFileView extends View {
             this.$el
                 .find('#settings__file-master-pass-warning-text')
                 .text(Locale.setFilePassChange);
-            if (!this.model.get('created')) {
+            if (!this.model.created) {
                 this.$el.find('.settings__file-master-pass-warning').show();
             }
         }
@@ -449,7 +448,7 @@ class SettingsFileView extends View {
         if (!e.target.value) {
             this.model.resetPassword();
             this.resetConfirmMasterPass();
-            e.target.value = PasswordGenerator.present(this.model.get('passwordLength'));
+            e.target.value = PasswordGenerator.present(this.model.passwordLength);
             this.$el.find('.settings__file-master-pass-warning').hide();
         }
         e.target.setAttribute('type', 'password');
@@ -500,10 +499,10 @@ class SettingsFileView extends View {
 
     changeBackupEnabled(e) {
         const enabled = e.target.checked;
-        let backup = this.model.get('backup');
+        let backup = this.model.backup;
         if (!backup) {
             backup = { enabled, schedule: DefaultBackupSchedule };
-            const defaultPath = DefaultBackupPath.replace('{name}', this.model.get('name'));
+            const defaultPath = DefaultBackupPath.replace('{name}', this.model.name);
             if (Launcher) {
                 backup.storage = 'file';
                 backup.path = Launcher.getDocumentsPath(defaultPath);
@@ -511,12 +510,12 @@ class SettingsFileView extends View {
                 backup.storage = 'dropbox';
                 backup.path = defaultPath;
             }
-            // } else if (this.model.get('storage') === 'webdav') {
+            // } else if (this.model.storage === 'webdav') {
             //     backup.storage = 'webdav';
-            //     backup.path = this.model.get('path') + '.{date}.bak';
-            // } else if (this.model.get('storage')) {
-            //     backup.storage = this.model.get('storage');
-            //     backup.path = DefaultBackupPath.replace('{name}', this.model.get('name'));
+            //     backup.path = this.model.path + '.{date}.bak';
+            // } else if (this.model.storage) {
+            //     backup.storage = this.model.storage;
+            //     backup.path = DefaultBackupPath.replace('{name}', this.model.name);
             // } else {
             //     Object.keys(Storage).forEach(name => {
             //         var prv = Storage[name];
@@ -528,7 +527,7 @@ class SettingsFileView extends View {
             //         e.target.checked = false;
             //         return;
             //     }
-            //     backup.path = DefaultBackupPath.replace('{name}', this.model.get('name'));
+            //     backup.path = DefaultBackupPath.replace('{name}', this.model.name);
             // }
             this.$el.find('#settings__file-backup-storage').val(backup.storage);
             this.$el.find('#settings__file-backup-path').val(backup.path);
@@ -539,25 +538,25 @@ class SettingsFileView extends View {
     }
 
     changeBackupPath(e) {
-        const backup = this.model.get('backup');
+        const backup = this.model.backup;
         backup.path = e.target.value.trim();
         this.setBackup(backup);
     }
 
     changeBackupStorage(e) {
-        const backup = this.model.get('backup');
+        const backup = this.model.backup;
         backup.storage = e.target.value;
         this.setBackup(backup);
     }
 
     changeBackupSchedule(e) {
-        const backup = this.model.get('backup');
+        const backup = this.model.backup;
         backup.schedule = e.target.value;
         this.setBackup(backup);
     }
 
     setBackup(backup) {
-        this.model.set('backup', backup);
+        this.model.backup = backup;
         this.appModel.setFileBackup(this.model.id, backup);
     }
 
@@ -609,7 +608,7 @@ class SettingsFileView extends View {
         }
         const value = +e.target.value;
         if (isNaN(value)) {
-            e.target.value = this.model.get('historyMaxItems');
+            e.target.value = this.model.historyMaxItems;
             return;
         }
         this.model.setHistoryMaxItems(value);
@@ -621,7 +620,7 @@ class SettingsFileView extends View {
         }
         const value = +e.target.value;
         if (isNaN(value)) {
-            e.target.value = this.model.get('historyMaxSize') / 1024 / 1024;
+            e.target.value = this.model.historyMaxSize / 1024 / 1024;
             return;
         }
         this.model.setHistoryMaxSize(value * 1024 * 1024);
@@ -644,7 +643,7 @@ class SettingsFileView extends View {
         }
         const value = +e.target.value;
         if (isNaN(value)) {
-            e.target.value = this.model.get('keyEncryptionRounds');
+            e.target.value = this.model.keyEncryptionRounds;
             return;
         }
         this.model.setKeyEncryptionRounds(value);
@@ -669,7 +668,7 @@ class SettingsFileView extends View {
         const mul = $(e.target).data('mul') || 1;
         const value = e.target.value * mul;
         if (isNaN(value)) {
-            e.target.value = Math.round(this.model.get('kdfParameters')[field] / mul);
+            e.target.value = Math.round(this.model.kdfParameters[field] / mul);
             return;
         }
         if (value > 0) {

@@ -131,9 +131,9 @@ class OpenView extends View {
     }
 
     getLastOpenFiles() {
-        return this.model.fileInfos.map(f => {
+        return this.model.fileInfos.map(fileInfo => {
             let icon = 'file-text';
-            const storage = Storage[f.get('storage')];
+            const storage = Storage[fileInfo.storage];
             if (storage && storage.icon) {
                 icon = storage.icon;
             }
@@ -141,9 +141,9 @@ class OpenView extends View {
                 icon = null;
             }
             return {
-                id: f.get('id'),
-                name: f.get('name'),
-                path: this.getDisplayedPath(f),
+                id: fileInfo.id,
+                name: fileInfo.name,
+                path: this.getDisplayedPath(fileInfo),
                 icon,
                 iconSvg: storage ? storage.iconSvg : undefined
             };
@@ -151,9 +151,9 @@ class OpenView extends View {
     }
 
     getDisplayedPath(fileInfo) {
-        const storage = fileInfo.get('storage');
+        const storage = fileInfo.storage;
         if (storage === 'file' || storage === 'webdav') {
-            return fileInfo.get('path');
+            return fileInfo.path;
         }
         return null;
     }
@@ -393,10 +393,10 @@ class OpenView extends View {
             .toString();
         if ($(e.target).is('.open__last-item-icon-del')) {
             const fileInfo = this.model.fileInfos.get(id);
-            if (!fileInfo.get('storage') || fileInfo.get('modified')) {
+            if (!fileInfo.storage || fileInfo.modified) {
                 Alerts.yesno({
                     header: Locale.openRemoveLastQuestion,
-                    body: fileInfo.get('modified')
+                    body: fileInfo.modified
                         ? Locale.openRemoveLastQuestionModBody
                         : Locale.openRemoveLastQuestionBody,
                     buttons: [
@@ -539,13 +539,13 @@ class OpenView extends View {
             return;
         }
         this.params.id = fileInfo.id;
-        this.params.storage = fileInfo.get('storage');
-        this.params.path = fileInfo.get('path');
-        this.params.name = fileInfo.get('name');
+        this.params.storage = fileInfo.storage;
+        this.params.path = fileInfo.path;
+        this.params.name = fileInfo.name;
         this.params.fileData = null;
         this.params.rev = null;
-        this.params.keyFileName = fileInfo.get('keyFileName');
-        this.params.keyFilePath = fileInfo.get('keyFilePath');
+        this.params.keyFileName = fileInfo.keyFileName;
+        this.params.keyFilePath = fileInfo.keyFilePath;
         this.params.keyFileData = null;
         this.displayOpenFile();
         this.displayOpenKeyFile();
@@ -578,12 +578,12 @@ class OpenView extends View {
     }
 
     openFileWithFingerprint(fileInfo) {
-        if (!fileInfo.has('fingerprint')) {
+        if (!fileInfo.fingerprint) {
             return;
         }
 
         if (Launcher && Launcher.fingerprints) {
-            Launcher.fingerprints.auth(fileInfo.id, fileInfo.get('fingerprint'), password => {
+            Launcher.fingerprints.auth(fileInfo.id, fileInfo.fingerprint, password => {
                 this.inputEl.val(password);
                 this.inputEl.trigger('input');
                 this.openDb();

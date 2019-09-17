@@ -25,7 +25,7 @@ import 'util/kdbxweb/protected-value-ex';
 class AppModel {
     tags = [];
     files = new FileCollection();
-    fileInfos = FileInfoCollection.instance;
+    fileInfos = FileInfoCollection;
     menu = new MenuModel();
     filter = {};
     sort = 'title';
@@ -111,7 +111,7 @@ class AppModel {
         this.settings.set(config.settings);
         if (config.files) {
             if (config.showOnlyFilesFromConfig) {
-                this.fileInfos.reset();
+                this.fileInfos.length = 0;
             }
             config.files
                 .filter(
@@ -153,15 +153,15 @@ class AppModel {
         if (this.files.get(file.id)) {
             return false;
         }
-        this.files.add(file);
-        file.get('groups').forEach(function(group) {
+        this.files.push(file);
+        file.groups.forEach(function(group) {
             this.menu.groupsSection.addItem(group);
         }, this);
         this._addTags(file);
         this._tagsChanged();
         this.menu.filesSection.addItem({
             icon: 'lock',
-            title: file.get('name'),
+            title: file.name,
             page: 'file',
             file
         });
@@ -171,7 +171,7 @@ class AppModel {
     }
 
     reloadFile(file) {
-        this.menu.groupsSection.replaceByFile(file, file.get('groups').first());
+        this.menu.groupsSection.replaceByFile(file, file.groups.first());
         this.updateTags();
     }
 
@@ -228,11 +228,11 @@ class AppModel {
     }
 
     closeAllFiles() {
-        this.files.each(file => {
+        for (const file of this.files) {
             file.close();
             this.fileClosed(file);
-        });
-        this.files.reset();
+        }
+        this.files.length = 0;
         this.menu.groupsSection.removeAllItems();
         this.menu.tagsSection.set('scrollable', false);
         this.menu.tagsSection.removeAllItems();
@@ -338,7 +338,7 @@ class AppModel {
         }
         if (!group) {
             file = this.files.first();
-            group = file.get('groups').first();
+            group = file.groups.first();
         }
         return { group, file };
     }
@@ -380,7 +380,7 @@ class AppModel {
         if (args && args.template) {
             if (sel.file !== args.template.file) {
                 sel.file = args.template.file;
-                sel.group = args.template.file.get('groups').first();
+                sel.group = args.template.file.groups.first();
             }
             const templateEntry = args.template.entry;
             const newEntry = EntryModel.newEntry(sel.group, sel.file);
@@ -435,11 +435,11 @@ class AppModel {
             ? this.fileInfos.get(params.id)
             : this.fileInfos.getMatch(params.storage, params.name, params.path);
 
-        if (!params.opts && fileInfo && fileInfo.get('opts')) {
-            params.opts = fileInfo.get('opts');
+        if (!params.opts && fileInfo && fileInfo.opts) {
+            params.opts = fileInfo.opts;
         }
 
-        if (fileInfo && fileInfo.get('modified')) {
+        if (fileInfo && fileInfo.modified) {
             logger.info('Open file from cache because it is modified');
             this.openFileFromCache(
                 params,
@@ -461,9 +461,9 @@ class AppModel {
             this.openFileFromCache(params, callback, fileInfo);
         } else if (
             fileInfo &&
-            fileInfo.get('openDate') &&
-            fileInfo.get('rev') === params.rev &&
-            fileInfo.get('storage') !== 'file'
+            fileInfo.openDate &&
+            fileInfo.rev === params.rev &&
+            fileInfo.storage !== 'file'
         ) {
             logger.info('Open file from cache because it is latest');
             this.openFileFromCache(
@@ -481,7 +481,7 @@ class AppModel {
                 },
                 fileInfo
             );
-        } else if (!fileInfo || !fileInfo.get('openDate') || params.storage === 'file') {
+        } else if (!fileInfo || !fileInfo.openDate || params.storage === 'file') {
             this.openFileFromStorage(params, callback, fileInfo, logger);
         } else {
             logger.info('Open file from cache, will sync after load', params.storage);
@@ -526,7 +526,7 @@ class AppModel {
             logger.info('Load from storage');
             storage.load(params.path, params.opts, (err, data, stat) => {
                 if (err) {
-                    if (fileInfo && fileInfo.get('openDate')) {
+                    if (fileInfo && fileInfo.openDate) {
                         logger.info('Open file from cache because of storage load error', err);
                         this.openFileFromCache(params, callback, fileInfo);
                     } else {
@@ -542,7 +542,7 @@ class AppModel {
                 }
             });
         };
-        const cacheRev = (fileInfo && fileInfo.get('rev')) || null;
+        const cacheRev = (fileInfo && fileInfo.rev) || null;
         if (cacheRev && storage.stat) {
             logger.info('Stat file');
             storage.stat(params.path, params.opts, (err, stat) => {
@@ -575,12 +575,12 @@ class AppModel {
     openFileWithData(params, callback, fileInfo, data, updateCacheOnSuccess) {
         const logger = new Logger('open', params.name);
         let needLoadKeyFile = false;
-        if (!params.keyFileData && fileInfo && fileInfo.get('keyFileName')) {
-            params.keyFileName = fileInfo.get('keyFileName');
+        if (!params.keyFileData && fileInfo && fileInfo.keyFileName) {
+            params.keyFileName = fileInfo.keyFileName;
             if (this.settings.rememberKeyFiles === 'data') {
-                params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
-            } else if (this.settings.rememberKeyFiles === 'path' && fileInfo.get('keyFilePath')) {
-                params.keyFilePath = fileInfo.get('keyFilePath');
+                params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.keyFileHash);
+            } else if (this.settings.rememberKeyFiles === 'path' && fileInfo.keyFilePath) {
+                params.keyFilePath = fileInfo.keyFilePath;
                 if (Storage.file.enabled) {
                     needLoadKeyFile = true;
                 }
@@ -595,8 +595,8 @@ class AppModel {
             path: params.path,
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
-            backup: (fileInfo && fileInfo.get('backup')) || null,
-            fingerprint: (fileInfo && fileInfo.get('fingerprint')) || null
+            backup: (fileInfo && fileInfo.backup) || null,
+            fingerprint: (fileInfo && fileInfo.fingerprint) || null
         });
         const openComplete = err => {
             if (err) {
@@ -605,22 +605,22 @@ class AppModel {
             if (this.files.get(file.id)) {
                 return callback('Duplicate file id');
             }
-            if (fileInfo && fileInfo.get('modified')) {
-                if (fileInfo.get('editState')) {
+            if (fileInfo && fileInfo.modified) {
+                if (fileInfo.editState) {
                     logger.info('Loaded local edit state');
-                    file.setLocalEditState(fileInfo.get('editState'));
+                    file.setLocalEditState(fileInfo.editState);
                 }
                 logger.info('Mark file as modified');
-                file.set('modified', true);
+                file.modified = true;
             }
             if (fileInfo) {
-                file.set('syncDate', fileInfo.get('syncDate'));
+                file.syncDate = fileInfo.syncDate;
             }
             if (updateCacheOnSuccess) {
                 logger.info('Save loaded file to cache');
                 Storage.cache.save(file.id, null, params.fileData);
             }
-            const rev = params.rev || (fileInfo && fileInfo.get('rev'));
+            const rev = params.rev || (fileInfo && fileInfo.rev);
             this.setFileOpts(file, params.opts);
             this.addToLastOpenFiles(file, rev);
             this.addFile(file);
@@ -668,37 +668,37 @@ class AppModel {
         this.appLogger.debug(
             'Add last open file',
             file.id,
-            file.get('name'),
-            file.get('storage'),
-            file.get('path'),
+            file.name,
+            file.storage,
+            file.path,
             rev
         );
         const dt = new Date();
         const fileInfo = new FileInfoModel({
             id: file.id,
-            name: file.get('name'),
-            storage: file.get('storage'),
-            path: file.get('path'),
+            name: file.name,
+            storage: file.storage,
+            path: file.path,
             opts: this.getStoreOpts(file),
-            modified: file.get('modified'),
+            modified: file.modified,
             editState: file.getLocalEditState(),
             rev,
-            syncDate: file.get('syncDate') || dt,
+            syncDate: file.syncDate || dt,
             openDate: dt,
-            backup: file.get('backup'),
-            fingerprint: file.get('fingerprint')
+            backup: file.backup,
+            fingerprint: file.fingerprint
         });
         switch (this.settings.rememberKeyFiles) {
             case 'data':
                 fileInfo.set({
-                    keyFileName: file.get('keyFileName') || null,
+                    keyFileName: file.keyFileName || null,
                     keyFileHash: file.getKeyFileHash()
                 });
                 break;
             case 'path':
                 fileInfo.set({
-                    keyFileName: file.get('keyFileName') || null,
-                    keyFilePath: file.get('keyFilePath') || null
+                    keyFileName: file.keyFileName || null,
+                    keyFilePath: file.keyFilePath || null
                 });
         }
         this.fileInfos.remove(file.id);
@@ -707,8 +707,8 @@ class AppModel {
     }
 
     getStoreOpts(file) {
-        const opts = file.get('opts');
-        const storage = file.get('storage');
+        const opts = file.opts;
+        const storage = file.storage;
         if (Storage[storage] && Storage[storage].fileOptsToStoreOpts && opts) {
             return Storage[storage].fileOptsToStoreOpts(opts, file);
         }
@@ -716,16 +716,16 @@ class AppModel {
     }
 
     setFileOpts(file, opts) {
-        const storage = file.get('storage');
+        const storage = file.storage;
         if (Storage[storage] && Storage[storage].storeOptsToFileOpts && opts) {
-            file.set('opts', Storage[storage].storeOptsToFileOpts(opts, file));
+            file.opts = Storage[storage].storeOptsToFileOpts(opts, file);
         }
     }
 
     fileOpened(file, data, params) {
-        if (file.get('storage') === 'file') {
+        if (file.storage === 'file') {
             Storage.file.watch(
-                file.get('path'),
+                file.path,
                 _.debounce(() => {
                     this.syncFile(file);
                 }, Timeouts.FileChangeSync)
@@ -734,7 +734,7 @@ class AppModel {
         if (file.isKeyChangePending(true)) {
             Events.emit('key-change-pending', { file });
         }
-        const backup = file.get('backup');
+        const backup = file.backup;
         if (data && backup && backup.enabled && backup.pending) {
             this.scheduleBackupFile(file, data);
         }
@@ -744,8 +744,8 @@ class AppModel {
     }
 
     fileClosed(file) {
-        if (file.get('storage') === 'file') {
-            Storage.file.unwatch(file.get('path'));
+        if (file.storage === 'file') {
+            Storage.file.unwatch(file.path);
         }
     }
 
@@ -758,30 +758,26 @@ class AppModel {
     getFileInfo(file) {
         return (
             this.fileInfos.get(file.id) ||
-            this.fileInfos.getMatch(file.get('storage'), file.get('name'), file.get('path'))
+            this.fileInfos.getMatch(file.storage, file.name, file.path)
         );
     }
 
     syncFile(file, options, callback) {
-        if (file.get('demo')) {
+        if (file.demo) {
             return callback && callback();
         }
-        if (file.get('syncing')) {
+        if (file.syncing) {
             return callback && callback('Sync in progress');
         }
         if (!options) {
             options = {};
         }
-        const logger = new Logger('sync', file.get('name'));
-        const storage = options.storage || file.get('storage');
-        let path = options.path || file.get('path');
-        const opts = options.opts || file.get('opts');
-        if (
-            storage &&
-            Storage[storage].getPathForName &&
-            (!path || storage !== file.get('storage'))
-        ) {
-            path = Storage[storage].getPathForName(file.get('name'));
+        const logger = new Logger('sync', file.name);
+        const storage = options.storage || file.storage;
+        let path = options.path || file.path;
+        const opts = options.opts || file.opts;
+        if (storage && Storage[storage].getPathForName && (!path || storage !== file.storage)) {
+            path = Storage[storage].getPathForName(file.name);
         }
         const optionsForLogging = _.clone(options);
         if (optionsForLogging && optionsForLogging.opts && optionsForLogging.opts.password) {
@@ -795,16 +791,16 @@ class AppModel {
             const dt = new Date();
             fileInfo = new FileInfoModel({
                 id: IdGenerator.uuid(),
-                name: file.get('name'),
-                storage: file.get('storage'),
-                path: file.get('path'),
+                name: file.name,
+                storage: file.storage,
+                path: file.path,
                 opts: this.getStoreOpts(file),
-                modified: file.get('modified'),
+                modified: file.modified,
                 editState: null,
                 rev: null,
                 syncDate: dt,
                 openDate: dt,
-                backup: file.get('backup')
+                backup: file.backup
             });
         }
         file.setSyncProgress();
@@ -815,17 +811,17 @@ class AppModel {
             logger.info('Sync finished', err || 'no error');
             file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
             fileInfo.set({
-                name: file.get('name'),
+                name: file.name,
                 storage,
                 path,
                 opts: this.getStoreOpts(file),
-                modified: file.get('modified'),
+                modified: file.modified,
                 editState: file.getLocalEditState(),
-                syncDate: file.get('syncDate')
+                syncDate: file.syncDate
             });
             if (this.settings.rememberKeyFiles === 'data') {
                 fileInfo.set({
-                    keyFileName: file.get('keyFileName') || null,
+                    keyFileName: file.keyFileName || null,
                     keyFileHash: file.getKeyFileHash()
                 });
             }
@@ -838,7 +834,7 @@ class AppModel {
             }
         };
         if (!storage) {
-            if (!file.get('modified') && fileInfo.id === file.id) {
+            if (!file.modified && fileInfo.id === file.id) {
                 logger.info('Local, not modified');
                 return complete();
             }
@@ -880,19 +876,19 @@ class AppModel {
                         }
                         if (stat && stat.rev) {
                             logger.info('Update rev in file info');
-                            fileInfo.set('rev', stat.rev);
+                            fileInfo.rev = stat.rev;
                         }
-                        file.set('syncDate', new Date());
-                        if (file.get('modified')) {
+                        file.syncDate = new Date();
+                        if (file.modified) {
                             logger.info('Updated sync date, saving modified file');
                             saveToCacheAndStorage();
-                        } else if (file.get('dirty')) {
+                        } else if (file.dirty) {
                             logger.info('Saving not modified dirty file to cache');
                             Storage.cache.save(fileInfo.id, null, data, err => {
                                 if (err) {
                                     return complete(err);
                                 }
-                                file.set('dirty', false);
+                                file.dirty = false;
                                 logger.info('Complete, remove dirty flag');
                                 complete();
                             });
@@ -905,8 +901,7 @@ class AppModel {
             };
             const saveToStorage = data => {
                 logger.info('Save data to storage');
-                const storageRev =
-                    fileInfo.get('storage') === storage ? fileInfo.get('rev') : undefined;
+                const storageRev = fileInfo.storage === storage ? fileInfo.rev : undefined;
                 Storage[storage].save(
                     path,
                     opts,
@@ -921,15 +916,15 @@ class AppModel {
                         } else {
                             if (stat && stat.rev) {
                                 logger.info('Update rev in file info');
-                                fileInfo.set('rev', stat.rev);
+                                fileInfo.rev = stat.rev;
                             }
                             if (stat && stat.path) {
                                 logger.info('Update path in file info', stat.path);
-                                file.set('path', stat.path);
-                                fileInfo.set('path', stat.path);
+                                file.path = stat.path;
+                                fileInfo.path = stat.path;
                                 path = stat.path;
                             }
-                            file.set('syncDate', new Date());
+                            file.syncDate = new Date();
                             logger.info('Save to storage complete, update sync date');
                             this.scheduleBackupFile(file, data);
                             complete();
@@ -947,7 +942,7 @@ class AppModel {
                     if (storage === 'file') {
                         logger.info('Saving to file storage');
                         saveToStorage(data);
-                    } else if (!file.get('dirty')) {
+                    } else if (!file.dirty) {
                         logger.info('Saving to storage, skip cache because not dirty');
                         saveToStorage(data);
                     } else {
@@ -956,7 +951,7 @@ class AppModel {
                             if (err) {
                                 return complete(err);
                             }
-                            file.set('dirty', false);
+                            file.dirty = false;
                             logger.info('Saved to cache, saving to storage');
                             saveToStorage(data);
                         });
@@ -969,13 +964,13 @@ class AppModel {
                     if (err.notFound) {
                         logger.info('File does not exist in storage, creating');
                         saveToCacheAndStorage();
-                    } else if (file.get('dirty')) {
+                    } else if (file.dirty) {
                         logger.info('Stat error, dirty, save to cache', err || 'no error');
                         file.getData(data => {
                             if (data) {
                                 Storage.cache.save(fileInfo.id, null, data, e => {
                                     if (!e) {
-                                        file.set('dirty', false);
+                                        file.dirty = false;
                                     }
                                     logger.info(
                                         'Saved to cache, exit with error',
@@ -989,8 +984,8 @@ class AppModel {
                         logger.info('Stat error, not dirty', err || 'no error');
                         complete(err);
                     }
-                } else if (stat.rev === fileInfo.get('rev')) {
-                    if (file.get('modified')) {
+                } else if (stat.rev === fileInfo.rev) {
+                    if (file.modified) {
                         logger.info('Stat found same version, modified, saving');
                         saveToCacheAndStorage();
                     } else {
@@ -1006,13 +1001,13 @@ class AppModel {
     }
 
     clearStoredKeyFiles() {
-        this.fileInfos.each(fileInfo => {
+        for (const fileInfo of this.fileInfos) {
             fileInfo.set({
                 keyFileName: null,
                 keyFilePath: null,
                 keyFileHash: null
             });
-        });
+        }
         this.fileInfos.save();
     }
 
@@ -1029,15 +1024,15 @@ class AppModel {
     setFileBackup(fileId, backup) {
         const fileInfo = this.fileInfos.get(fileId);
         if (fileInfo) {
-            fileInfo.set('backup', backup);
+            fileInfo.backup = backup;
         }
         this.fileInfos.save();
     }
 
     backupFile(file, data, callback) {
-        const opts = file.get('opts');
-        let backup = file.get('backup');
-        const logger = new Logger('backup', file.get('name'));
+        const opts = file.opts;
+        let backup = file.backup;
+        const logger = new Logger('backup', file.name);
         if (!backup || !backup.storage || !backup.path) {
             return callback('Invalid backup settings');
         }
@@ -1052,10 +1047,10 @@ class AppModel {
                     logger.error('Backup error', err);
                 } else {
                     logger.info('Backup complete');
-                    backup = file.get('backup');
+                    backup = file.backup;
                     backup.lastTime = Date.now();
                     delete backup.pending;
-                    file.set('backup', backup);
+                    file.backup = backup;
                     this.setFileBackup(file.id, backup);
                 }
                 callback(err);
@@ -1093,11 +1088,11 @@ class AppModel {
     }
 
     scheduleBackupFile(file, data) {
-        const backup = file.get('backup');
+        const backup = file.backup;
         if (!backup || !backup.enabled) {
             return;
         }
-        const logger = new Logger('backup', file.get('name'));
+        const logger = new Logger('backup', file.name);
         let needBackup = false;
         if (!backup.lastTime) {
             needBackup = true;
@@ -1143,11 +1138,11 @@ class AppModel {
     }
 
     saveFileFingerprint(file, password) {
-        if (Launcher && Launcher.fingerprints && !file.has('fingerprint')) {
+        if (Launcher && Launcher.fingerprints && !file.fingerprint) {
             const fileInfo = this.fileInfos.get(file.id);
             Launcher.fingerprints.register(file.id, password, token => {
                 if (token) {
-                    fileInfo.set({ fingerprint: token });
+                    fileInfo.fingerprint = token;
                     this.fileInfos.save();
                 }
             });

@@ -42,6 +42,15 @@ const ProxyDef = {
         if (isNaN(numProp)) {
             return false;
         }
+        const modelClass = target.constructor.model;
+        if (!modelClass) {
+            throw new Error(`Model type not defined for ${receiver.constructor.name}`);
+        }
+        if (value && !(value instanceof modelClass)) {
+            throw new Error(
+                `Attempt to write ${value.constructor.name} into ${receiver.constructor.name}`
+            );
+        }
         const prevValue = target[property];
         if (prevValue !== value) {
             target[property] = value;
@@ -136,6 +145,18 @@ class Collection extends Array {
 
     off(eventName, listener) {
         this[SymbolEvents].off(eventName, listener);
+    }
+
+    get(id) {
+        return this.find(model => model.id === id);
+    }
+
+    remove(idOrModel) {
+        for (let i = 0; i < this.length; i++) {
+            while (i < this.length && (this[i].id === idOrModel || this[i] === idOrModel)) {
+                this.splice(i, 1);
+            }
+        }
     }
 }
 

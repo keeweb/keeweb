@@ -207,7 +207,7 @@ const AutoType = {
             const evt = { filter, windowInfo };
             if (!this.appModel.files.hasOpenFiles()) {
                 this.pendingEvent = evt;
-                this.appModel.files.once('update', this.processPendingEvent, this);
+                this.appModel.files.once('change', this.processPendingEvent, this);
                 logger.debug('auto-type event delayed');
                 this.focusMainWindow();
             } else {
@@ -260,7 +260,7 @@ const AutoType = {
     resetPendingEvent() {
         if (this.pendingEvent) {
             this.pendingEvent = null;
-            this.appModel.files.off('update', this.processPendingEvent, this);
+            this.appModel.files.off('change', this.processPendingEvent, this);
             logger.debug('auto-type event cancelled');
         }
     },
@@ -271,7 +271,7 @@ const AutoType = {
         }
         logger.debug('processing pending auto-type event');
         const evt = this.pendingEvent;
-        this.appModel.files.off('update', this.processPendingEvent, this);
+        this.appModel.files.off('change', this.processPendingEvent, this);
         this.pendingEvent = null;
         this.processEventWithFilter(evt);
     }

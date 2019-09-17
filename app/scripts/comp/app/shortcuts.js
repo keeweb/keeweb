@@ -104,7 +104,7 @@ const Shortcuts = {
         } else {
             delete AppSettingsModel[this.globalShortcutAppSettingsKey(type)];
         }
-        Launcher.setGlobalShortcuts(AppSettingsModel.attributes);
+        Launcher.setGlobalShortcuts(AppSettingsModel);
     },
     globalShortcutAppSettingsKey(type) {
         return 'globalShortcut' + StringFormat.capFirst(type);

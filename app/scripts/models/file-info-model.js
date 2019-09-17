@@ -1,34 +1,32 @@
-import Backbone from 'backbone';
+import { Model } from 'framework/model';
 
-const FileInfoModel = Backbone.Model.extend({
-    defaults: {
-        id: '',
-        name: '',
-        storage: null,
-        path: null,
-        modified: false,
-        editState: null,
-        rev: null,
-        syncDate: null,
-        openDate: null,
-        keyFileName: null,
-        keyFileHash: null,
-        opts: null,
-        backup: null,
-        fingerprint: null
-    },
-
-    initialize(data, options) {
-        _.each(
-            data,
-            function(val, key) {
-                if (/Date$/.test(key)) {
-                    this.set(key, val ? new Date(val) : null, options);
-                }
-            },
-            this
-        );
+class FileInfoModel extends Model {
+    constructor(data) {
+        data = Object.assign({}, data);
+        for (const [key, val] of Object.entries(data)) {
+            if (/Date$/.test(key)) {
+                data[key] = val ? new Date(val) : null;
+            }
+        }
+        super(data);
     }
+}
+
+FileInfoModel.defineModelProperties({
+    id: '',
+    name: '',
+    storage: null,
+    path: null,
+    modified: false,
+    editState: null,
+    rev: null,
+    syncDate: null,
+    openDate: null,
+    keyFileName: null,
+    keyFileHash: null,
+    opts: null,
+    backup: null,
+    fingerprint: null
 });
 
 export { FileInfoModel };
