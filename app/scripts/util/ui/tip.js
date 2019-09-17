@@ -183,10 +183,8 @@ Tip.hideTip = function(el) {
 Tip.updateTip = function(el, props) {
     if (el._tip) {
         el._tip.hide();
-        Object.assign(
-            el._tip,
-            _.pick(props, ['title', 'placement', 'fast', 'showTimeout', 'hideTimeout'])
-        );
+        const { title, placement, fast, showTimeout, hideTimeout } = props;
+        Object.assign(el._tip, { title, placement, fast, showTimeout, hideTimeout });
     }
 };
 

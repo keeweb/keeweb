@@ -43,9 +43,9 @@ class KeyHandler {
 
     offKey(key, handler, thisArg) {
         if (this.shortcuts[key]) {
-            this.shortcuts[key] = _.reject(this.shortcuts[key], sh => {
-                return sh.handler === handler && sh.thisArg === thisArg;
-            });
+            this.shortcuts[key] = this.shortcuts[key].filter(
+                sh => sh.handler !== handler || sh.thisArg !== thisArg
+            );
         }
     }
 
