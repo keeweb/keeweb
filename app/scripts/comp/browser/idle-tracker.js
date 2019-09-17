@@ -8,7 +8,7 @@ const IdleTracker = {
     },
     checkIdle() {
         const idleMinutes = (Date.now() - this.actionTime) / 1000 / 60;
-        const maxIdleMinutes = AppSettingsModel.instance.get('idleMinutes');
+        const maxIdleMinutes = AppSettingsModel.idleMinutes;
         if (maxIdleMinutes && idleMinutes > maxIdleMinutes) {
             Events.emit('user-idle');
         }

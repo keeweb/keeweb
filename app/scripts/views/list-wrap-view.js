@@ -18,7 +18,7 @@ class ListWrapView extends View {
     }
 
     setListLayout() {
-        const tableView = !!this.model.settings.get('tableView');
+        const tableView = !!this.model.settings.tableView;
         this.el.classList.toggle('app__list-wrap--table', tableView);
     }
 }

@@ -188,12 +188,12 @@ class SettingsPluginsView extends View {
 
     useLocaleClick(e) {
         const locale = $(e.target).data('locale');
-        AppSettingsModel.instance.set('locale', locale);
+        AppSettingsModel.locale = locale;
     }
 
     useThemeClick(e) {
         const theme = $(e.target).data('theme');
-        AppSettingsModel.instance.set('theme', theme);
+        AppSettingsModel.theme = theme;
     }
 
     galleryInstallClick(e) {

@@ -61,7 +61,7 @@ ready(() => {
 
     function loadConfigs() {
         return Promise.all([
-            AppSettingsModel.instance.load(),
+            AppSettingsModel.load(),
             UpdateModel.instance.load(),
             RuntimeDataModel.instance.load(),
             FileInfoCollection.instance.load()
@@ -100,7 +100,7 @@ ready(() => {
                         SettingsManager.setBySettings(appModel.settings);
                     })
                     .catch(e => {
-                        if (!appModel.settings.get('cacheConfigSettings')) {
+                        if (!appModel.settings.cacheConfigSettings) {
                             showSettingsLoadError();
                             throw e;
                         }
@@ -112,7 +112,7 @@ ready(() => {
     function showApp() {
         return Promise.resolve().then(() => {
             const skipHttpsWarning =
-                localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
+                localStorage.skipHttpsWarning || appModel.settings.skipHttpsWarning;
             const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
             const hostIsInsecure = location.hostname !== 'localhost';
             if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {

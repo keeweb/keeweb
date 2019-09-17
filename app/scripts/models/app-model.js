@@ -33,7 +33,7 @@ const AppModel = Backbone.Model.extend({
         this.menu = new MenuModel();
         this.filter = {};
         this.sort = 'title';
-        this.settings = AppSettingsModel.instance;
+        this.settings = AppSettingsModel;
         this.activeEntryId = null;
         this.isBeta = RuntimeInfo.beta;
         this.advancedSearch = null;
@@ -264,7 +264,7 @@ const AppModel = Backbone.Model.extend({
 
     setFilter(filter) {
         this.filter = this.prepareFilter(filter);
-        this.filter.subGroups = this.settings.get('expandGroups');
+        this.filter.subGroups = this.settings.expandGroups;
         if (!this.filter.advanced && this.advancedSearch) {
             this.filter.advanced = this.advancedSearch;
         }
@@ -582,12 +582,9 @@ const AppModel = Backbone.Model.extend({
         let needLoadKeyFile = false;
         if (!params.keyFileData && fileInfo && fileInfo.get('keyFileName')) {
             params.keyFileName = fileInfo.get('keyFileName');
-            if (this.settings.get('rememberKeyFiles') === 'data') {
+            if (this.settings.rememberKeyFiles === 'data') {
                 params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.get('keyFileHash'));
-            } else if (
-                this.settings.get('rememberKeyFiles') === 'path' &&
-                fileInfo.get('keyFilePath')
-            ) {
+            } else if (this.settings.rememberKeyFiles === 'path' && fileInfo.get('keyFilePath')) {
                 params.keyFilePath = fileInfo.get('keyFilePath');
                 if (Storage.file.enabled) {
                     needLoadKeyFile = true;
@@ -696,7 +693,7 @@ const AppModel = Backbone.Model.extend({
             backup: file.get('backup'),
             fingerprint: file.get('fingerprint')
         });
-        switch (this.settings.get('rememberKeyFiles')) {
+        switch (this.settings.rememberKeyFiles) {
             case 'data':
                 fileInfo.set({
                     keyFileName: file.get('keyFileName') || null,
@@ -831,7 +828,7 @@ const AppModel = Backbone.Model.extend({
                 editState: file.getLocalEditState(),
                 syncDate: file.get('syncDate')
             });
-            if (this.settings.get('rememberKeyFiles') === 'data') {
+            if (this.settings.rememberKeyFiles === 'data') {
                 fileInfo.set({
                     keyFileName: file.get('keyFileName') || null,
                     keyFileHash: file.getKeyFileHash()

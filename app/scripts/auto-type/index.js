@@ -65,7 +65,7 @@ const AutoType = {
             }
         });
 
-        if (AppSettingsModel.instance.get('lockOnAutoType')) {
+        if (AppSettingsModel.lockOnAutoType) {
             Events.emit('lock-workspace');
         }
     },
@@ -222,7 +222,7 @@ const AutoType = {
 
     processEventWithFilter(evt) {
         const entries = evt.filter.getEntries();
-        if (entries.length === 1 && AppSettingsModel.instance.get('directAutotype')) {
+        if (entries.length === 1 && AppSettingsModel.directAutotype) {
             this.hideWindow(() => {
                 this.runAndHandleResult({ entry: entries.at(0) });
             });

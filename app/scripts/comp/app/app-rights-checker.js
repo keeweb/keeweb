@@ -11,7 +11,7 @@ const AppRightsChecker = {
         if (!Features.isDesktop || !Features.isMac) {
             return;
         }
-        if (AppSettingsModel.instance.get('skipFolderRightsWarning')) {
+        if (AppSettingsModel.skipFolderRightsWarning) {
             return;
         }
         if (!Launcher.getAppPath().startsWith(this.AppPath)) {
@@ -71,7 +71,7 @@ const AppRightsChecker = {
     dontAskAnymore() {
         this.needRunInstaller(needRun => {
             if (needRun) {
-                AppSettingsModel.instance.set('skipFolderRightsWarning', true);
+                AppSettingsModel.skipFolderRightsWarning = true;
             }
         });
     }

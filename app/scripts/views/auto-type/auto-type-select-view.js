@@ -73,7 +73,7 @@ class AutoTypeSelectView extends View {
         } else {
             topMessage = Locale.autoTypeMsgNoWindow;
         }
-        const noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
+        const noColor = AppSettingsModel.colorfulIcons ? '' : 'grayscale';
         this.entries = this.model.filter.getEntries();
         this.result = this.entries.first();
         const presenter = new EntryPresenter(null, noColor, this.result && this.result.id);

@@ -48,7 +48,7 @@ class MenuSectionView extends View {
             this.itemViews.push(itemView);
         });
         if (this.model.get('drag')) {
-            const height = AppSettingsModel.instance.get('tagsViewHeight');
+            const height = AppSettingsModel.tagsViewHeight;
             if (typeof height === 'number') {
                 this.$el.height();
                 this.$el.css('flex', '0 0 ' + height + 'px');
@@ -76,7 +76,7 @@ class MenuSectionView extends View {
     }
 
     saveViewHeight = _.throttle(size => {
-        AppSettingsModel.instance.set('tagsViewHeight', size);
+        AppSettingsModel.tagsViewHeight = size;
     }, 1000);
 }
 

@@ -62,7 +62,7 @@ class GeneratorView extends View {
         this.createPresets();
         const preset = this.preset;
         this.gen = _.clone(_.find(this.presets, pr => pr.name === preset));
-        this.hide = AppSettingsModel.instance.get('generatorHidePassword');
+        this.hide = AppSettingsModel.generatorHidePassword;
         $('body').one('click', this.remove.bind(this));
         this.listenTo(Events, 'lock-workspace', this.remove.bind(this));
     }
@@ -166,7 +166,7 @@ class GeneratorView extends View {
 
     hideChange(e) {
         this.hide = e.target.checked;
-        AppSettingsModel.instance.set('generatorHidePassword', this.hide);
+        AppSettingsModel.generatorHidePassword = this.hide;
         const label = this.$el.find('.gen__check-hide-label');
         Tip.updateTip(label[0], { title: this.hide ? Locale.genShowPass : Locale.genHidePass });
         this.showPassword();

@@ -83,22 +83,22 @@ class OpenView extends View {
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
-        const showMore = storageProviders.length || this.model.settings.get('canOpenSettings');
+        const showMore = storageProviders.length || this.model.settings.canOpenSettings;
         const showLogo =
             !showMore &&
-            !this.model.settings.get('canOpen') &&
-            !this.model.settings.get('canCreate') &&
-            !(this.model.settings.get('canOpenDemo') && !this.model.settings.get('demoOpened'));
+            !this.model.settings.canOpen &&
+            !this.model.settings.canCreate &&
+            !(this.model.settings.canOpenDemo && !this.model.settings.demoOpened);
         super.render({
             lastOpenFiles: this.getLastOpenFiles(),
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
-            demoOpened: this.model.settings.get('demoOpened'),
+            demoOpened: this.model.settings.demoOpened,
             storageProviders,
-            canOpen: this.model.settings.get('canOpen'),
-            canOpenDemo: this.model.settings.get('canOpenDemo'),
-            canOpenSettings: this.model.settings.get('canOpenSettings'),
-            canCreate: this.model.settings.get('canCreate'),
-            canRemoveLatest: this.model.settings.get('canRemoveLatest'),
+            canOpen: this.model.settings.canOpen,
+            canOpenDemo: this.model.settings.canOpenDemo,
+            canOpenSettings: this.model.settings.canOpenSettings,
+            canCreate: this.model.settings.canCreate,
+            canRemoveLatest: this.model.settings.canRemoveLatest,
             showMore,
             showLogo
         });
@@ -159,7 +159,7 @@ class OpenView extends View {
     }
 
     showLocalFileAlert() {
-        if (this.model.settings.get('skipOpenLocalWarn')) {
+        if (this.model.settings.skipOpenLocalWarn) {
             return;
         }
         Alerts.alert({
@@ -176,7 +176,7 @@ class OpenView extends View {
             success: res => {
                 this.focusInput();
                 if (res === 'skip') {
-                    this.model.settings.set('skipOpenLocalWarn', true);
+                    this.model.settings.skipOpenLocalWarn = true;
                 }
             }
         });
@@ -243,7 +243,7 @@ class OpenView extends View {
                 case 'keyFileData':
                     this.params.keyFileData = e.target.result;
                     this.params.keyFileName = file.name;
-                    if (this.model.settings.get('rememberKeyFiles') === 'path') {
+                    if (this.model.settings.rememberKeyFiles === 'path') {
                         this.params.keyFilePath = file.path;
                     }
                     this.displayOpenKeyFile();
@@ -280,7 +280,7 @@ class OpenView extends View {
             } else {
                 return undefined;
             }
-        } else if (this.model.settings.get('canImportXml')) {
+        } else if (this.model.settings.canImportXml) {
             try {
                 const str = kdbxweb.ByteUtils.bytesToString(fileSig).trim();
                 if (str.startsWith('<?xml')) {
@@ -323,7 +323,7 @@ class OpenView extends View {
     }
 
     openFile() {
-        if (this.model.settings.get('canOpen') === false) {
+        if (this.model.settings.canOpen === false) {
             return;
         }
         if (!this.busy) {
@@ -455,7 +455,7 @@ class OpenView extends View {
     }
 
     dragover(e) {
-        if (this.model.settings.get('canOpen') === false) {
+        if (this.model.settings.canOpen === false) {
             return;
         }
         e.preventDefault();
@@ -478,7 +478,7 @@ class OpenView extends View {
     }
 
     dragleave() {
-        if (this.model.settings.get('canOpen') === false) {
+        if (this.model.settings.canOpen === false) {
             return;
         }
         if (this.dragTimeout) {
@@ -490,7 +490,7 @@ class OpenView extends View {
     }
 
     drop(e) {
-        if (this.model.settings.get('canOpen') === false) {
+        if (this.model.settings.canOpen === false) {
             return;
         }
         e.preventDefault();
@@ -511,7 +511,7 @@ class OpenView extends View {
                 keyFile,
                 dataFile.path ? null : this.showLocalFileAlert.bind(this)
             );
-        } else if (this.model.settings.get('canImportXml')) {
+        } else if (this.model.settings.canImportXml) {
             const xmlFile = files.find(file => /\.xml$/i.test(file.name));
             if (xmlFile) {
                 this.setFile(xmlFile, null, this.showLocalFileAlert.bind(this));
@@ -597,8 +597,8 @@ class OpenView extends View {
             if (!this.model.createDemoFile()) {
                 this.emit('close');
             }
-            if (!this.model.settings.get('demoOpened')) {
-                this.model.settings.set('demoOpened', true);
+            if (!this.model.settings.demoOpened) {
+                this.model.settings.demoOpened = true;
             }
         }
     }

@@ -85,7 +85,7 @@ class ListView extends View {
         if (this.items.length) {
             const itemTemplate = this.getItemTemplate();
             const itemsTemplate = this.getItemsTemplate();
-            const noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
+            const noColor = AppSettingsModel.colorfulIcons ? '' : 'grayscale';
             const presenter = new EntryPresenter(
                 this.getDescField(),
                 noColor,
@@ -112,7 +112,7 @@ class ListView extends View {
     }
 
     getItemsTemplate() {
-        if (this.model.settings.get('tableView')) {
+        if (this.model.settings.tableView) {
             return require('templates/list-table.hbs');
         } else {
             return this.renderPlainItems;
@@ -124,7 +124,7 @@ class ListView extends View {
     }
 
     getItemTemplate() {
-        if (this.model.settings.get('tableView')) {
+        if (this.model.settings.tableView) {
             return require('templates/list-item-table.hbs');
         } else {
             return require('templates/list-item-short.hbs');
@@ -175,7 +175,7 @@ class ListView extends View {
     }
 
     createTemplate() {
-        if (!this.model.settings.get('templateHelpShown')) {
+        if (!this.model.settings.templateHelpShown) {
             Alerts.yesno({
                 icon: 'sticky-note-o',
                 header: Locale.listAddTemplateHeader,
@@ -185,7 +185,7 @@ class ListView extends View {
                     Locale.listAddTemplateBody2.replace('{}', 'Templates'),
                 buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                 success: () => {
-                    this.model.settings.set('templateHelpShown', true);
+                    this.model.settings.templateHelpShown = true;
                     this.createTemplate();
                 }
             });
@@ -222,13 +222,13 @@ class ListView extends View {
     }
 
     setTableView() {
-        const isTable = this.model.settings.get('tableView');
+        const isTable = this.model.settings.tableView;
         this.dragView.setCoord(isTable ? 'y' : 'x');
         this.setDefaultSize();
     }
 
     setDefaultSize() {
-        this.setSize(this.model.settings.get('listViewWidth'));
+        this.setSize(this.model.settings.listViewWidth);
     }
 
     setSize(size) {
@@ -246,7 +246,7 @@ class ListView extends View {
     }
 
     throttleSetViewSizeSetting = _.throttle(size => {
-        AppSettingsModel.instance.set('listViewWidth', size);
+        AppSettingsModel.listViewWidth = size;
     }, 1000);
 
     filterChanged(filter) {
@@ -311,7 +311,7 @@ class ListView extends View {
     }
 
     readTableColumnsEnabled() {
-        const tableViewColumns = AppSettingsModel.instance.get('tableViewColumns');
+        const tableViewColumns = AppSettingsModel.tableViewColumns;
         if (tableViewColumns && tableViewColumns.length) {
             this.tableColumns.forEach(col => {
                 col.enabled = tableViewColumns.indexOf(col.name) >= 0;
@@ -323,7 +323,7 @@ class ListView extends View {
         const tableViewColumns = this.tableColumns
             .filter(column => column.enabled)
             .map(column => column.name);
-        AppSettingsModel.instance.set('tableViewColumns', tableViewColumns);
+        AppSettingsModel.tableViewColumns = tableViewColumns;
     }
 }
 

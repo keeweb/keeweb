@@ -238,7 +238,7 @@ const StorageGDrive = StorageBase.extend({
     },
 
     _getOAuthConfig() {
-        let clientId = this.appSettings.get('gdriveClientId');
+        let clientId = this.appSettings.gdriveClientId;
         if (!clientId) {
             clientId =
                 location.origin.indexOf('localhost') >= 0

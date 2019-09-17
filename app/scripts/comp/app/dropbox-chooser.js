@@ -28,7 +28,7 @@ DropboxChooser.prototype.choose = function() {
 DropboxChooser.prototype.buildUrl = function() {
     const urlParams = {
         origin: encodeURIComponent(window.location.protocol + '//' + window.location.host),
-        'app_key': AppSettingsModel.instance.get('dropboxAppKey') || ChooserAppKey,
+        'app_key': AppSettingsModel.dropboxAppKey || ChooserAppKey,
         'link_type': 'direct',
         trigger: 'js',
         multiselect: 'false',

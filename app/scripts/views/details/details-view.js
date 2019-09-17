@@ -293,7 +293,7 @@ class DetailsView extends View {
             }
         });
 
-        const hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
+        const hideEmptyFields = AppSettingsModel.hideEmptyFields;
 
         const fieldsMainEl = this.$el.find('.details__body-fields');
         const fieldsAsideEl = this.$el.find('.details__body-aside');
@@ -364,7 +364,7 @@ class DetailsView extends View {
                 const dropdownView = new DropdownView();
                 this.listenTo(dropdownView, 'cancel', this.toggleMoreOptions);
                 this.listenTo(dropdownView, 'select', this.moreOptionsSelect);
-                const hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
+                const hideEmptyFields = AppSettingsModel.hideEmptyFields;
                 const moreOptions = [];
                 if (hideEmptyFields) {
                     this.fieldViews.forEach(fieldView => {
@@ -430,8 +430,8 @@ class DetailsView extends View {
                 this.addNewField();
                 break;
             case 'toggle-empty': {
-                const hideEmptyFields = AppSettingsModel.instance.get('hideEmptyFields');
-                AppSettingsModel.instance.set('hideEmptyFields', !hideEmptyFields);
+                const hideEmptyFields = AppSettingsModel.hideEmptyFields;
+                AppSettingsModel.hideEmptyFields = !hideEmptyFields;
                 this.render();
                 break;
             }
@@ -625,11 +625,11 @@ class DetailsView extends View {
         if (this.helpTipCopyShown) {
             return;
         }
-        this.helpTipCopyShown = AppSettingsModel.instance.get('helpTipCopyShown');
+        this.helpTipCopyShown = AppSettingsModel.helpTipCopyShown;
         if (this.helpTipCopyShown) {
             return;
         }
-        AppSettingsModel.instance.set('helpTipCopyShown', true);
+        AppSettingsModel.helpTipCopyShown = true;
         this.helpTipCopyShown = true;
         const label = this.moreView.labelEl;
         const tip = new Tip(label, { title: Locale.detCopyHint, placement: 'right' });

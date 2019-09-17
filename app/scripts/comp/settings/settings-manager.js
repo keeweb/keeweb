@@ -32,14 +32,14 @@ const SettingsManager = {
     customLocales: {},
 
     setBySettings(settings) {
-        if (settings.get('theme')) {
-            this.setTheme(settings.get('theme'));
+        if (settings.theme) {
+            this.setTheme(settings.theme);
         }
-        this.setFontSize(settings.get('fontSize'));
-        const locale = settings.get('locale');
+        this.setFontSize(settings.fontSize);
+        const locale = settings.locale;
         try {
             if (locale) {
-                this.setLocale(settings.get('locale'));
+                this.setLocale(settings.locale);
             } else {
                 this.setLocale(this.getBrowserLocale());
             }

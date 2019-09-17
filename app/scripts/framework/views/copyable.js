@@ -36,10 +36,7 @@ const Copyable = {
                 tip.hide();
             }
             this.fieldCopyTip = null;
-            if (
-                e.source.model.name === '$Password' &&
-                AppSettingsModel.instance.get('lockOnCopy')
-            ) {
+            if (e.source.model.name === '$Password' && AppSettingsModel.lockOnCopy) {
                 setTimeout(() => {
                     Events.emit('lock-workspace');
                 }, Timeouts.BeforeAutoLock);

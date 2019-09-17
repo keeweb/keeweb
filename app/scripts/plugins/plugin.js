@@ -412,7 +412,7 @@ const Plugin = Backbone.Model.extend(
             delete SettingsManager.allLocales[locale.name];
             delete SettingsManager.customLocales[locale.name];
             if (SettingsManager.activeLocale === locale.name) {
-                AppSettingsModel.instance.set('locale', 'en');
+                AppSettingsModel.locale = 'en';
             }
         },
 
@@ -422,8 +422,8 @@ const Plugin = Backbone.Model.extend(
 
         removeTheme(theme) {
             delete SettingsManager.allThemes[theme.name];
-            if (AppSettingsModel.instance.get('theme') === theme.name) {
-                AppSettingsModel.instance.set('theme', 'fb');
+            if (AppSettingsModel.theme === theme.name) {
+                AppSettingsModel.theme = 'fb';
             }
             delete BaseLocale[this.getThemeLocaleKey(theme.name)];
         },
@@ -435,13 +435,12 @@ const Plugin = Backbone.Model.extend(
             const ts = this.logger.ts();
             const settingPrefix = this.getSettingPrefix();
             let settings = null;
-            for (const key of Object.keys(AppSettingsModel.instance.attributes)) {
+            for (const key of Object.keys(AppSettingsModel.attributes)) {
                 if (key.lastIndexOf(settingPrefix, 0) === 0) {
                     if (!settings) {
                         settings = {};
                     }
-                    settings[key.replace(settingPrefix, '')] =
-                        AppSettingsModel.instance.attributes[key];
+                    settings[key.replace(settingPrefix, '')] = AppSettingsModel.attributes[key];
                 }
             }
             if (settings) {
@@ -589,9 +588,7 @@ const Plugin = Backbone.Model.extend(
                     if (settings instanceof Array) {
                         return settings.map(setting => {
                             setting = _.clone(setting);
-                            const value = AppSettingsModel.instance.get(
-                                settingsPrefix + setting.name
-                            );
+                            const value = AppSettingsModel[settingsPrefix + setting.name];
                             if (value !== undefined) {
                                 setting.value = value;
                             }
@@ -607,8 +604,7 @@ const Plugin = Backbone.Model.extend(
 
         setSettings(settings) {
             for (const key of Object.keys(settings)) {
-                const value = settings[key];
-                AppSettingsModel.instance.set(this.getSettingPrefix() + key, value);
+                AppSettingsModel[this.getSettingPrefix() + key] = settings[key];
             }
             if (this.module.exports.setSettings) {
                 try {

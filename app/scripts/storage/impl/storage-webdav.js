@@ -39,7 +39,7 @@ const StorageWebDav = StorageBase.extend({
                     id: 'webdavSaveMethod',
                     title: 'webdavSaveMethod',
                     type: 'select',
-                    value: this.appSettings.get('webdavSaveMethod') || 'default',
+                    value: this.appSettings.webdavSaveMethod || 'default',
                     options: { default: 'webdavSaveMove', put: 'webdavSavePut' }
                 }
             ]
@@ -47,7 +47,7 @@ const StorageWebDav = StorageBase.extend({
     },
 
     applySetting(key, value) {
-        this.appSettings.set(key, value);
+        this.appSettings[key] = value;
     },
 
     load(path, opts, callback) {
@@ -107,7 +107,7 @@ const StorageWebDav = StorageBase.extend({
                 saveOpts
             ),
             (err, xhr, stat) => {
-                let useTmpPath = this.appSettings.get('webdavSaveMethod') !== 'put';
+                let useTmpPath = this.appSettings.webdavSaveMethod !== 'put';
                 if (err) {
                     if (!err.notFound) {
                         return cb(err);

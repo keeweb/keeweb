@@ -82,9 +82,7 @@ const Shortcuts = {
         return this.presentShortcut(this.globalShortcut(type), formatting);
     },
     globalShortcut(type) {
-        const appSettingsShortcut = AppSettingsModel.instance.get(
-            this.globalShortcutAppSettingsKey(type)
-        );
+        const appSettingsShortcut = AppSettingsModel[this.globalShortcutAppSettingsKey(type)];
         if (appSettingsShortcut) {
             return appSettingsShortcut;
         }
@@ -102,11 +100,11 @@ const Shortcuts = {
             throw new Error('Bad shortcut: ' + type);
         }
         if (value) {
-            AppSettingsModel.instance.set(this.globalShortcutAppSettingsKey(type), value);
+            AppSettingsModel[this.globalShortcutAppSettingsKey(type)] = value;
         } else {
-            AppSettingsModel.instance.unset(this.globalShortcutAppSettingsKey(type));
+            delete AppSettingsModel[this.globalShortcutAppSettingsKey(type)];
         }
-        Launcher.setGlobalShortcuts(AppSettingsModel.instance.attributes);
+        Launcher.setGlobalShortcuts(AppSettingsModel.attributes);
     },
     globalShortcutAppSettingsKey(type) {
         return 'globalShortcut' + StringFormat.capFirst(type);

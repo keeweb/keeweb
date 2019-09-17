@@ -19,7 +19,7 @@ const StorageDropbox = StorageBase.extend({
     backup: true,
 
     _toFullPath(path) {
-        const rootFolder = this.appSettings.get('dropboxFolder');
+        const rootFolder = this.appSettings.dropboxFolder;
         if (rootFolder) {
             path = UrlFormat.fixSlashes('/' + rootFolder + '/' + path);
         }
@@ -27,7 +27,7 @@ const StorageDropbox = StorageBase.extend({
     },
 
     _toRelPath(path) {
-        const rootFolder = this.appSettings.get('dropboxFolder');
+        const rootFolder = this.appSettings.dropboxFolder;
         if (rootFolder) {
             const ix = path.toLowerCase().indexOf(rootFolder.toLowerCase());
             if (ix === 0) {
@@ -49,7 +49,7 @@ const StorageDropbox = StorageBase.extend({
     },
 
     _getKey() {
-        return this.appSettings.get('dropboxAppKey') || DropboxKeys.AppFolder;
+        return this.appSettings.dropboxAppKey || DropboxKeys.AppFolder;
     },
 
     _isValidKey() {
@@ -123,7 +123,7 @@ const StorageDropbox = StorageBase.extend({
             title: 'dropboxFolder',
             desc: 'dropboxFolderSettingsDesc',
             type: 'text',
-            value: this.appSettings.get('dropboxFolder') || ''
+            value: this.appSettings.dropboxFolder || ''
         };
         const canUseBuiltInKeys = this._canUseBuiltInKeys();
         if (canUseBuiltInKeys) {
@@ -189,7 +189,7 @@ const StorageDropbox = StorageBase.extend({
             default:
                 return;
         }
-        this.appSettings.set(key, value);
+        this.appSettings[key] = value;
     },
 
     getPathForName(fileName) {

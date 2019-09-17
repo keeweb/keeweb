@@ -24,7 +24,7 @@ const Updater = {
         if (!this.enabled) {
             return false;
         }
-        let autoUpdate = AppSettingsModel.instance.get('autoUpdate');
+        let autoUpdate = AppSettingsModel.autoUpdate;
         if (autoUpdate && autoUpdate === true) {
             autoUpdate = 'install';
         }

@@ -8,7 +8,7 @@ const CopyPaste = {
     copy(text) {
         if (this.simpleCopy) {
             Launcher.setClipboardText(text);
-            const clipboardSeconds = AppSettingsModel.instance.get('clipboardSeconds');
+            const clipboardSeconds = AppSettingsModel.clipboardSeconds;
             if (clipboardSeconds > 0) {
                 const clearClipboard = () => {
                     if (Launcher.getClipboardText() === text) {

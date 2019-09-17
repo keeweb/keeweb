@@ -56,7 +56,7 @@ class AppView extends View {
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
 
-        this.titlebarStyle = this.model.settings.get('titlebarStyle');
+        this.titlebarStyle = this.model.settings.titlebarStyle;
 
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
@@ -351,7 +351,7 @@ class AppView extends View {
         }
         if (this.model.files.hasDirtyFiles()) {
             const exit = () => {
-                if (Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
+                if (Launcher.canMinimize() && this.model.settings.minimizeOnClose) {
                     Launcher.minimizeApp();
                 } else {
                     Launcher.exit();
@@ -362,7 +362,7 @@ class AppView extends View {
             }
             if (Launcher) {
                 if (!this.exitAlertShown) {
-                    if (this.model.settings.get('autoSave')) {
+                    if (this.model.settings.autoSave) {
                         this.saveAndLock(result => {
                             if (result) {
                                 exit();
@@ -406,7 +406,7 @@ class AppView extends View {
             !Launcher.exitRequested &&
             !Launcher.restartPending &&
             Launcher.canMinimize() &&
-            this.model.settings.get('minimizeOnClose')
+            this.model.settings.minimizeOnClose
         ) {
             Launcher.minimizeApp();
             return Launcher.preventExit(e);
@@ -465,13 +465,13 @@ class AppView extends View {
     }
 
     osLocked() {
-        if (this.model.settings.get('lockOnOsLock')) {
+        if (this.model.settings.lockOnOsLock) {
             this.lockWorkspace(true);
         }
     }
 
     appMinimized() {
-        if (this.model.settings.get('lockOnMinimize')) {
+        if (this.model.settings.lockOnMinimize) {
             this.lockWorkspace(true);
         }
     }
@@ -481,7 +481,7 @@ class AppView extends View {
             return;
         }
         if (this.model.files.hasUnsavedFiles()) {
-            if (this.model.settings.get('autoSave')) {
+            if (this.model.settings.autoSave) {
                 this.saveAndLock();
             } else {
                 const message = autoInit ? Locale.appCannotLockAutoInit : Locale.appCannotLock;
@@ -498,7 +498,7 @@ class AppView extends View {
                     success: (result, autoSaveChecked) => {
                         if (result === 'save') {
                             if (autoSaveChecked) {
-                                this.model.settings.set('autoSave', autoSaveChecked);
+                                this.model.settings.autoSave = autoSaveChecked;
                             }
                             this.saveAndLock();
                         } else if (result === 'discard') {
@@ -513,14 +513,14 @@ class AppView extends View {
     }
 
     handleAutoSaveTimer() {
-        if (this.model.settings.get('autoSaveInterval') !== 0) {
+        if (this.model.settings.autoSaveInterval !== 0) {
             // trigger periodical auto save
             if (this.autoSaveTimeoutId) {
                 clearTimeout(this.autoSaveTimeoutId);
             }
             this.autoSaveTimeoutId = setTimeout(
                 this.saveAll.bind(this),
-                this.model.settings.get('autoSaveInterval') * 1000 * 60
+                this.model.settings.autoSaveInterval * 1000 * 60
             );
         }
     }
@@ -593,7 +593,7 @@ class AppView extends View {
     }
 
     syncAllByTimer() {
-        if (this.model.settings.get('autoSave')) {
+        if (this.model.settings.autoSave) {
             this.saveAll();
         }
     }
@@ -751,15 +751,15 @@ class AppView extends View {
     }
 
     setTheme() {
-        SettingsManager.setTheme(this.model.settings.get('theme'));
+        SettingsManager.setTheme(this.model.settings.theme);
     }
 
     setFontSize() {
-        SettingsManager.setFontSize(this.model.settings.get('fontSize'));
+        SettingsManager.setFontSize(this.model.settings.fontSize);
     }
 
     setLocale() {
-        SettingsManager.setLocale(this.model.settings.get('locale'));
+        SettingsManager.setLocale(this.model.settings.locale);
         if (this.views.settings.isVisible()) {
             this.hideSettings();
             this.showSettings();

@@ -110,8 +110,8 @@ class SettingsFileView extends View {
             kdfParameters: this.kdfParametersToUi(this.model.get('kdfParameters')),
             storageProviders,
             canBackup,
-            canExportXml: AppSettingsModel.instance.get('canExportXml'),
-            canExportHtml: AppSettingsModel.instance.get('canExportHtml')
+            canExportXml: AppSettingsModel.canExportXml,
+            canExportHtml: AppSettingsModel.canExportHtml
         });
         if (!this.model.get('created')) {
             this.$el

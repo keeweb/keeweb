@@ -57,8 +57,8 @@ class MenuView extends View {
             }
             this.sectionViews.push(sectionView);
         }, this);
-        if (typeof AppSettingsModel.instance.get('menuViewWidth') === 'number') {
-            this.$el.width(AppSettingsModel.instance.get('menuViewWidth'));
+        if (typeof AppSettingsModel.menuViewWidth === 'number') {
+            this.$el.width(AppSettingsModel.menuViewWidth);
         }
     }
 
@@ -67,7 +67,7 @@ class MenuView extends View {
     }
 
     viewResized = _.throttle(size => {
-        AppSettingsModel.instance.set('menuViewWidth', size);
+        AppSettingsModel.menuViewWidth = size;
     }, 1000);
 
     switchVisibility(visible) {

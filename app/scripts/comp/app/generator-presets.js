@@ -73,7 +73,7 @@ const GeneratorPresets = {
         presets.forEach(preset => {
             preset.builtIn = true;
         });
-        const setting = AppSettingsModel.instance.get('generatorPresets');
+        const setting = AppSettingsModel.generatorPresets;
         if (setting) {
             if (setting.user) {
                 presets = presets.concat(setting.user.map(_.clone));
@@ -104,7 +104,7 @@ const GeneratorPresets = {
     },
 
     getOrCreateSetting() {
-        let setting = AppSettingsModel.instance.get('generatorPresets');
+        let setting = AppSettingsModel.generatorPresets;
         if (!setting) {
             setting = { user: [] };
         }
@@ -160,8 +160,8 @@ const GeneratorPresets = {
     },
 
     save(setting) {
-        AppSettingsModel.instance.unset('generatorPresets', { silent: true });
-        AppSettingsModel.instance.set('generatorPresets', setting);
+        AppSettingsModel.set({ generatorPresets: undefined }, { silent: true });
+        AppSettingsModel.generatorPresets = setting;
     }
 };
 

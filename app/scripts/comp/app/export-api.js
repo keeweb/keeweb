@@ -3,13 +3,13 @@ import { AppSettingsModel } from 'models/app-settings-model';
 const ExportApi = {
     settings: {
         get(key) {
-            return key ? AppSettingsModel.instance.get(key) : AppSettingsModel.instance.toJSON();
+            return key ? AppSettingsModel[key] : Object.assign({}, AppSettingsModel);
         },
         set(key, value) {
-            AppSettingsModel.instance.set(key, value);
+            AppSettingsModel[key] = value;
         },
         del(key) {
-            AppSettingsModel.instance.unset(key);
+            delete AppSettingsModel[key];
         }
     }
 };

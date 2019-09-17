@@ -19,7 +19,7 @@ _.extend(StorageBase.prototype, {
     uipos: null,
 
     logger: null,
-    appSettings: AppSettingsModel.instance,
+    appSettings: AppSettingsModel,
     runtimeData: RuntimeDataModel.instance,
 
     init() {
@@ -27,7 +27,7 @@ _.extend(StorageBase.prototype, {
             throw 'Failed to init provider: no name';
         }
         if (!this.system) {
-            const enabled = this.appSettings.get(this.name);
+            const enabled = this.appSettings[this.name];
             if (typeof enabled === 'boolean') {
                 this.enabled = enabled;
             }

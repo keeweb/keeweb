@@ -67,19 +67,19 @@ class SettingsGeneralView extends View {
 
         super.render({
             themes: _.mapObject(SettingsManager.allThemes, theme => Locale[theme]),
-            activeTheme: AppSettingsModel.instance.get('theme'),
+            activeTheme: AppSettingsModel.theme,
             locales: SettingsManager.allLocales,
             activeLocale: SettingsManager.activeLocale,
-            fontSize: AppSettingsModel.instance.get('fontSize'),
-            expandGroups: AppSettingsModel.instance.get('expandGroups'),
+            fontSize: AppSettingsModel.fontSize,
+            expandGroups: AppSettingsModel.expandGroups,
             canClearClipboard: !!Launcher,
-            clipboardSeconds: AppSettingsModel.instance.get('clipboardSeconds'),
-            rememberKeyFiles: AppSettingsModel.instance.get('rememberKeyFiles'),
+            clipboardSeconds: AppSettingsModel.clipboardSeconds,
+            rememberKeyFiles: AppSettingsModel.rememberKeyFiles,
             supportFiles: !!Launcher,
-            autoSave: AppSettingsModel.instance.get('autoSave'),
-            autoSaveInterval: AppSettingsModel.instance.get('autoSaveInterval'),
-            idleMinutes: AppSettingsModel.instance.get('idleMinutes'),
-            minimizeOnClose: AppSettingsModel.instance.get('minimizeOnClose'),
+            autoSave: AppSettingsModel.autoSave,
+            autoSaveInterval: AppSettingsModel.autoSaveInterval,
+            idleMinutes: AppSettingsModel.idleMinutes,
+            minimizeOnClose: AppSettingsModel.minimizeOnClose,
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: Updater.enabled,
             canAutoSaveOnClose: !!Launcher,
@@ -87,11 +87,11 @@ class SettingsGeneralView extends View {
             canDetectMinimize: !!Launcher,
             canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
             canAutoType: AutoType.enabled,
-            lockOnMinimize: Launcher && AppSettingsModel.instance.get('lockOnMinimize'),
-            lockOnCopy: AppSettingsModel.instance.get('lockOnCopy'),
-            lockOnAutoType: AppSettingsModel.instance.get('lockOnAutoType'),
-            lockOnOsLock: AppSettingsModel.instance.get('lockOnOsLock'),
-            tableView: AppSettingsModel.instance.get('tableView'),
+            lockOnMinimize: Launcher && AppSettingsModel.lockOnMinimize,
+            lockOnCopy: AppSettingsModel.lockOnCopy,
+            lockOnAutoType: AppSettingsModel.lockOnAutoType,
+            lockOnOsLock: AppSettingsModel.lockOnOsLock,
+            tableView: AppSettingsModel.tableView,
             canSetTableView: !Features.isMobile,
             autoUpdate: Updater.getAutoUpdateType(),
             updateInProgress: Updater.updateInProgress(),
@@ -102,10 +102,10 @@ class SettingsGeneralView extends View {
             updateFound,
             updateManual,
             releaseNotesLink: Links.ReleaseNotes,
-            colorfulIcons: AppSettingsModel.instance.get('colorfulIcons'),
-            directAutotype: AppSettingsModel.instance.get('directAutotype'),
+            colorfulIcons: AppSettingsModel.colorfulIcons,
+            directAutotype: AppSettingsModel.directAutotype,
             supportsTitleBarStyles: Launcher && Features.supportsTitleBarStyles(),
-            titlebarStyle: AppSettingsModel.instance.get('titlebarStyle'),
+            titlebarStyle: AppSettingsModel.titlebarStyle,
             storageProviders,
             showReloadApp: Features.isStandalone
         });
@@ -202,44 +202,44 @@ class SettingsGeneralView extends View {
 
     changeTheme(e) {
         const theme = e.target.value;
-        AppSettingsModel.instance.set('theme', theme);
+        AppSettingsModel.theme = theme;
     }
 
     changeLocale(e) {
         const locale = e.target.value;
         if (locale === '...') {
-            e.target.value = AppSettingsModel.instance.get('locale') || 'en';
+            e.target.value = AppSettingsModel.locale || 'en';
             this.appModel.menu.select({
                 item: this.appModel.menu.pluginsSection.get('items').first()
             });
             return;
         }
-        AppSettingsModel.instance.set('locale', locale);
+        AppSettingsModel.locale = locale;
     }
 
     changeFontSize(e) {
         const fontSize = +e.target.value;
-        AppSettingsModel.instance.set('fontSize', fontSize);
+        AppSettingsModel.fontSize = fontSize;
     }
 
     changeTitlebarStyle(e) {
         const titlebarStyle = e.target.value;
-        AppSettingsModel.instance.set('titlebarStyle', titlebarStyle);
+        AppSettingsModel.titlebarStyle = titlebarStyle;
     }
 
     changeClipboard(e) {
         const clipboardSeconds = +e.target.value;
-        AppSettingsModel.instance.set('clipboardSeconds', clipboardSeconds);
+        AppSettingsModel.clipboardSeconds = clipboardSeconds;
     }
 
     changeIdleMinutes(e) {
         const idleMinutes = +e.target.value;
-        AppSettingsModel.instance.set('idleMinutes', idleMinutes);
+        AppSettingsModel.idleMinutes = idleMinutes;
     }
 
     changeAutoUpdate(e) {
         const autoUpdate = e.target.value || false;
-        AppSettingsModel.instance.set('autoUpdate', autoUpdate);
+        AppSettingsModel.autoUpdate = autoUpdate;
         if (autoUpdate) {
             Updater.scheduleNextCheck();
         }
@@ -251,60 +251,60 @@ class SettingsGeneralView extends View {
 
     changeAutoSave(e) {
         const autoSave = e.target.checked || false;
-        AppSettingsModel.instance.set('autoSave', autoSave);
+        AppSettingsModel.autoSave = autoSave;
     }
 
     changeAutoSaveInterval(e) {
         const autoSaveInterval = Number(e.target.value) || 0;
-        AppSettingsModel.instance.set('autoSaveInterval', autoSaveInterval);
+        AppSettingsModel.autoSaveInterval = autoSaveInterval;
     }
 
     changeRememberKeyFiles(e) {
         const rememberKeyFiles = e.target.value || false;
-        AppSettingsModel.instance.set('rememberKeyFiles', rememberKeyFiles);
+        AppSettingsModel.rememberKeyFiles = rememberKeyFiles;
         this.appModel.clearStoredKeyFiles();
     }
 
     changeMinimize(e) {
         const minimizeOnClose = e.target.checked || false;
-        AppSettingsModel.instance.set('minimizeOnClose', minimizeOnClose);
+        AppSettingsModel.minimizeOnClose = minimizeOnClose;
     }
 
     changeLockOnMinimize(e) {
         const lockOnMinimize = e.target.checked || false;
-        AppSettingsModel.instance.set('lockOnMinimize', lockOnMinimize);
+        AppSettingsModel.lockOnMinimize = lockOnMinimize;
     }
 
     changeLockOnCopy(e) {
         const lockOnCopy = e.target.checked || false;
-        AppSettingsModel.instance.set('lockOnCopy', lockOnCopy);
+        AppSettingsModel.lockOnCopy = lockOnCopy;
     }
 
     changeLockOnAutoType(e) {
         const lockOnAutoType = e.target.checked || false;
-        AppSettingsModel.instance.set('lockOnAutoType', lockOnAutoType);
+        AppSettingsModel.lockOnAutoType = lockOnAutoType;
     }
 
     changeLockOnOsLock(e) {
         const lockOnOsLock = e.target.checked || false;
-        AppSettingsModel.instance.set('lockOnOsLock', lockOnOsLock);
+        AppSettingsModel.lockOnOsLock = lockOnOsLock;
     }
 
     changeTableView(e) {
         const tableView = e.target.checked || false;
-        AppSettingsModel.instance.set('tableView', tableView);
+        AppSettingsModel.tableView = tableView;
         Events.emit('refresh');
     }
 
     changeColorfulIcons(e) {
         const colorfulIcons = e.target.checked || false;
-        AppSettingsModel.instance.set('colorfulIcons', colorfulIcons);
+        AppSettingsModel.colorfulIcons = colorfulIcons;
         Events.emit('refresh');
     }
 
     changeDirectAutotype(e) {
         const directAutotype = e.target.checked || false;
-        AppSettingsModel.instance.set('directAutotype', directAutotype);
+        AppSettingsModel.directAutotype = directAutotype;
         Events.emit('refresh');
     }
 
@@ -328,7 +328,7 @@ class SettingsGeneralView extends View {
 
     changeExpandGroups(e) {
         const expand = e.target.checked;
-        AppSettingsModel.instance.set('expandGroups', expand);
+        AppSettingsModel.expandGroups = expand;
         Events.emit('refresh');
     }
 
@@ -336,7 +336,7 @@ class SettingsGeneralView extends View {
         const storage = Storage[$(e.target).data('storage')];
         if (storage) {
             storage.setEnabled(e.target.checked);
-            AppSettingsModel.instance.set(storage.name, storage.enabled);
+            AppSettingsModel.storage.name = storage.enabled;
             this.$el
                 .find('.settings__general-' + storage.name)
                 .toggleClass('hide', !e.target.checked);
