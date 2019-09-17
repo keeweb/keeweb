@@ -33,6 +33,7 @@ class AutoTypeSelectView extends View {
         this.initScroll();
         this.listenTo(Events, 'main-window-blur', this.mainWindowBlur);
         this.listenTo(Events, 'main-window-will-close', this.mainWindowWillClose);
+        this.listenTo(Events, 'keypress:auto-type', this.keyPressed);
         this.setupKeys();
     }
 
@@ -56,10 +57,8 @@ class AutoTypeSelectView extends View {
         this.onKey(Keys.DOM_VK_DOWN, this.downPressed, false, 'auto-type');
         this.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, false, 'auto-type');
         this.onKey(Keys.DOM_VK_O, this.openKeyPressed, KeyHandler.SHORTCUT_ACTION, 'auto-type');
-        KeyHandler.on('keypress:auto-type', this.keyPressed.bind(this));
         KeyHandler.setModal('auto-type');
         this.once('remove', () => {
-            KeyHandler.off('keypress:auto-type');
             KeyHandler.setModal(null);
         });
     }

@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 class Events extends EventEmitter {
     constructor() {
         super();
-        this.setMaxListeners(100);
+        this.setMaxListeners(1000);
     }
 }
 

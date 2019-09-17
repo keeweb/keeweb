@@ -1,21 +1,16 @@
-import EventEmitter from 'events';
+import { Events } from 'framework/events';
 import { IdleTracker } from 'comp/browser/idle-tracker';
 import { Keys } from 'const/keys';
 
 const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
 
-class KeyHandler extends EventEmitter {
+class KeyHandler {
     SHORTCUT_ACTION = 1;
     SHORTCUT_OPT = 2;
     SHORTCUT_SHIFT = 4;
 
     shortcuts = {};
     modal = false;
-
-    constructor() {
-        super();
-        this.setMaxListeners(100);
-    }
 
     init() {
         $(document).bind('keypress', this.keypress.bind(this));
@@ -121,9 +116,9 @@ class KeyHandler extends EventEmitter {
             !e.ctrlKey &&
             !e.metaKey
         ) {
-            this.emit('keypress', e);
+            Events.emit('keypress', e);
         } else if (this.modal) {
-            this.emit('keypress:' + this.modal, e);
+            Events.emit('keypress:' + this.modal, e);
         }
     }
 

@@ -73,8 +73,8 @@ class DetailsView extends View {
         this.listenTo(Events, 'toggle-settings', this.settingsToggled);
         this.listenTo(Events, 'context-menu-select', this.contextMenuSelect);
         this.listenTo(Events, 'set-locale', this.render);
-        this.listenTo(OtpQrReader, 'qr-read', this.otpCodeRead);
-        this.listenTo(OtpQrReader, 'enter-manually', this.otpEnterManually);
+        this.listenTo(Events, 'qr-read', this.otpCodeRead);
+        this.listenTo(Events, 'qr-enter-manually', this.otpEnterManually);
         this.onKey(
             Keys.DOM_VK_C,
             this.copyPasswordFromShortcut,

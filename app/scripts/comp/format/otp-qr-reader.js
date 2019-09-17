@@ -1,5 +1,5 @@
-import EventEmitter from 'events';
 import QrCode from 'jsqrcode';
+import { Events } from 'framework/events';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Alerts } from 'comp/ui/alerts';
 import { Otp } from 'util/data/otp';
@@ -9,13 +9,12 @@ import { Logger } from 'util/logger';
 
 const logger = new Logger('otp-qr-reader');
 
-class OtpQrReader extends EventEmitter {
+class OtpQrReader {
     alert = null;
 
     fileInput = null;
 
     constructor() {
-        super();
         this.pasteEvent = this.pasteEvent.bind(this);
     }
 
@@ -137,7 +136,7 @@ class OtpQrReader extends EventEmitter {
                 this.removeAlert();
                 try {
                     const otp = Otp.parseUrl(url);
-                    this.emit('qr-read', otp);
+                    Events.emit('qr-read', otp);
                 } catch (err) {
                     logger.error('Error parsing QR code', err);
                     Alerts.error({
@@ -170,7 +169,7 @@ class OtpQrReader extends EventEmitter {
     }
 
     enterManually() {
-        this.emit('enter-manually');
+        Events.emit('qe-enter-manually');
     }
 
     removeAlert() {

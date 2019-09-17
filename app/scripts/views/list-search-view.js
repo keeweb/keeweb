@@ -161,8 +161,8 @@ class ListSearchView extends View {
 
     viewShown() {
         const keypressHandler = e => this.documentKeyPress(e);
-        KeyHandler.on('keypress', keypressHandler);
-        this.removeKeypressHandler = () => KeyHandler.off('keypress', keypressHandler);
+        Events.on('keypress', keypressHandler);
+        this.removeKeypressHandler = () => Events.off('keypress', keypressHandler);
     }
 
     viewHidden() {
