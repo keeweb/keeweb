@@ -55,14 +55,14 @@ class SettingsGeneralView extends View {
 
     constructor(model, options) {
         super(model, options);
-        this.listenTo(UpdateModel.instance, 'change:status', this.render);
-        this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render);
+        this.listenTo(UpdateModel, 'change:status', this.render);
+        this.listenTo(UpdateModel, 'change:updateStatus', this.render);
     }
 
     render() {
-        const updateReady = UpdateModel.instance.get('updateStatus') === 'ready';
-        const updateFound = UpdateModel.instance.get('updateStatus') === 'found';
-        const updateManual = UpdateModel.instance.get('updateManual');
+        const updateReady = UpdateModel.updateStatus === 'ready';
+        const updateFound = UpdateModel.updateStatus === 'found';
+        const updateManual = UpdateModel.updateManual;
         const storageProviders = this.getStorageProviders();
 
         super.render({
@@ -128,25 +128,25 @@ class SettingsGeneralView extends View {
     }
 
     getUpdateInfo() {
-        switch (UpdateModel.instance.get('status')) {
+        switch (UpdateModel.status) {
             case 'checking':
                 return Locale.setGenUpdateChecking + '...';
             case 'error': {
                 let errMsg = Locale.setGenErrorChecking;
-                if (UpdateModel.instance.get('lastError')) {
-                    errMsg += ': ' + UpdateModel.instance.get('lastError');
+                if (UpdateModel.lastError) {
+                    errMsg += ': ' + UpdateModel.lastError;
                 }
-                if (UpdateModel.instance.get('lastSuccessCheckDate')) {
+                if (UpdateModel.lastSuccessCheckDate) {
                     errMsg +=
                         '. ' +
                         Locale.setGenLastCheckSuccess.replace(
                             '{}',
-                            DateFormat.dtStr(UpdateModel.instance.get('lastSuccessCheckDate'))
+                            DateFormat.dtStr(UpdateModel.lastSuccessCheckDate)
                         ) +
                         ': ' +
                         Locale.setGenLastCheckVer.replace(
                             '{}',
-                            UpdateModel.instance.get('lastVersion')
+                            UpdateModel.lastVersion
                         );
                 }
                 return errMsg;
@@ -155,21 +155,21 @@ class SettingsGeneralView extends View {
                 let msg =
                     Locale.setGenCheckedAt +
                     ' ' +
-                    DateFormat.dtStr(UpdateModel.instance.get('lastCheckDate')) +
+                    DateFormat.dtStr(UpdateModel.lastCheckDate) +
                     ': ';
                 const cmp = SemVer.compareVersions(
                     RuntimeInfo.version,
-                    UpdateModel.instance.get('lastVersion')
+                    UpdateModel.lastVersion
                 );
                 if (cmp >= 0) {
                     msg += Locale.setGenLatestVer;
                 } else {
                     msg +=
-                        Locale.setGenNewVer.replace('{}', UpdateModel.instance.get('lastVersion')) +
+                        Locale.setGenNewVer.replace('{}', UpdateModel.lastVersion) +
                         ' ' +
-                        DateFormat.dStr(UpdateModel.instance.get('lastVersionReleaseDate'));
+                        DateFormat.dStr(UpdateModel.lastVersionReleaseDate);
                 }
-                switch (UpdateModel.instance.get('updateStatus')) {
+                switch (UpdateModel.updateStatus) {
                     case 'downloading':
                         return msg + '. ' + Locale.setGenDownloadingUpdate;
                     case 'extracting':

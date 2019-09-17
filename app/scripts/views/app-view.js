@@ -86,7 +86,7 @@ class AppView extends View {
         this.listenTo(Events, 'second-instance', this.showSingleInstanceAlert);
         this.listenTo(Events, 'file-modified', this.handleAutoSaveTimer);
 
-        this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
+        this.listenTo(UpdateModel, 'change:updateReady', this.updateApp);
 
         this.listenTo(Events, 'enter-full-screen', this.enterFullScreen);
         this.listenTo(Events, 'leave-full-screen', this.leaveFullScreen);
@@ -189,7 +189,7 @@ class AppView extends View {
 
     updateApp() {
         if (
-            UpdateModel.instance.get('updateStatus') === 'ready' &&
+            UpdateModel.updateStatus === 'ready' &&
             !Launcher &&
             !this.model.files.hasOpenFiles()
         ) {

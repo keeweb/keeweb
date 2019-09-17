@@ -62,7 +62,7 @@ ready(() => {
     function loadConfigs() {
         return Promise.all([
             AppSettingsModel.load(),
-            UpdateModel.instance.load(),
+            UpdateModel.load(),
             RuntimeDataModel.load(),
             FileInfoCollection.load()
         ]);

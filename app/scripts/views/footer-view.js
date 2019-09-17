@@ -32,14 +32,14 @@ class FooterView extends View {
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(this.model.files, 'change', this.render);
         this.listenTo(Events, 'set-locale', this.render);
-        this.listenTo(UpdateModel.instance, 'change:updateStatus', this.render);
+        this.listenTo(UpdateModel, 'change:updateStatus', this.render);
     }
 
     render() {
         super.render({
             files: this.model.files,
             updateAvailable:
-                ['ready', 'found'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
+                ['ready', 'found'].indexOf(UpdateModel.updateStatus) >= 0
         });
     }
 

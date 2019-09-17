@@ -20,8 +20,7 @@ class RuntimeDataModel extends Model {
     }
 
     save() {
-        console.log('save', this);
-        // SettingsStore.save('runtime-data', this);
+        SettingsStore.save('runtime-data', this);
     }
 }
 

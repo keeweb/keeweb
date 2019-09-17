@@ -33,8 +33,8 @@ const Updater = {
 
     updateInProgress() {
         return (
-            UpdateModel.instance.get('status') === 'checking' ||
-            ['downloading', 'extracting'].indexOf(UpdateModel.instance.get('updateStatus')) >= 0
+            UpdateModel.status === 'checking' ||
+            ['downloading', 'extracting'].indexOf(UpdateModel.updateStatus) >= 0
         );
     },
 
@@ -58,7 +58,7 @@ const Updater = {
             return;
         }
         let timeDiff = this.MinUpdateTimeout;
-        const lastCheckDate = UpdateModel.instance.get('lastCheckDate');
+        const lastCheckDate = UpdateModel.lastCheckDate;
         if (lastCheckDate) {
             timeDiff = Math.min(
                 Math.max(this.UpdateInterval + (lastCheckDate - new Date()), this.MinUpdateTimeout),
@@ -73,7 +73,7 @@ const Updater = {
         if (!this.enabled || this.updateInProgress()) {
             return;
         }
-        UpdateModel.instance.set('status', 'checking');
+        UpdateModel.set({ status: 'checking' });
         if (!startedByUser) {
             // additional protection from broken program logic, to ensure that auto-checks are not performed more than once an hour
             const diffMs = new Date() - this.updateCheckDate;
@@ -96,18 +96,18 @@ const Updater = {
                 logger.info('Update check: ' + (match ? match[0] : 'unknown'));
                 if (!match) {
                     const errMsg = 'No version info found';
-                    UpdateModel.instance.set({
+                    UpdateModel.set({
                         status: 'error',
                         lastCheckDate: dt,
                         lastCheckError: errMsg
                     });
-                    UpdateModel.instance.save();
+                    UpdateModel.save();
                     this.scheduleNextCheck();
                     return;
                 }
                 const updateMinVersionMatch = data.match(/#\s*updmin:v([\d+\.\w]+)/);
-                const prevLastVersion = UpdateModel.instance.get('lastVersion');
-                UpdateModel.instance.set({
+                const prevLastVersion = UpdateModel.lastVersion;
+                UpdateModel.set({
                     status: 'ok',
                     lastCheckDate: dt,
                     lastSuccessCheckDate: dt,
@@ -116,14 +116,14 @@ const Updater = {
                     lastCheckError: null,
                     lastCheckUpdMin: updateMinVersionMatch ? updateMinVersionMatch[1] : null
                 });
-                UpdateModel.instance.save();
+                UpdateModel.save();
                 this.scheduleNextCheck();
                 if (!this.canAutoUpdate()) {
                     return;
                 }
                 if (
-                    prevLastVersion === UpdateModel.instance.get('lastVersion') &&
-                    UpdateModel.instance.get('updateStatus') === 'ready'
+                    prevLastVersion === UpdateModel.lastVersion &&
+                    UpdateModel.updateStatus === 'ready'
                 ) {
                     logger.info('Waiting for the user to apply downloaded update');
                     return;
@@ -131,33 +131,30 @@ const Updater = {
                 if (!startedByUser && this.getAutoUpdateType() === 'install') {
                     this.update(startedByUser);
                 } else if (
-                    SemVer.compareVersions(
-                        UpdateModel.instance.get('lastVersion'),
-                        RuntimeInfo.version
-                    ) > 0
+                    SemVer.compareVersions(UpdateModel.lastVersion, RuntimeInfo.version) > 0
                 ) {
-                    UpdateModel.instance.set('updateStatus', 'found');
+                    UpdateModel.set({ updateStatus: 'found' });
                 }
             },
             error: e => {
                 logger.error('Update check error', e);
-                UpdateModel.instance.set({
+                UpdateModel.set({
                     status: 'error',
                     lastCheckDate: new Date(),
                     lastCheckError: 'Error checking last version'
                 });
-                UpdateModel.instance.save();
+                UpdateModel.save();
                 this.scheduleNextCheck();
             }
         });
     },
 
     canAutoUpdate() {
-        const minLauncherVersion = UpdateModel.instance.get('lastCheckUpdMin');
+        const minLauncherVersion = UpdateModel.lastCheckUpdMin;
         if (minLauncherVersion) {
             const cmp = SemVer.compareVersions(Launcher.version, minLauncherVersion);
             if (cmp < 0) {
-                UpdateModel.instance.set({ updateStatus: 'ready', updateManual: true });
+                UpdateModel.set({ updateStatus: 'ready', updateManual: true });
                 return false;
             }
         }
@@ -165,7 +162,7 @@ const Updater = {
     },
 
     update(startedByUser, successCallback) {
-        const ver = UpdateModel.instance.get('lastVersion');
+        const ver = UpdateModel.lastVersion;
         if (!this.enabled) {
             logger.info('Updater is disabled');
             return;
@@ -174,24 +171,24 @@ const Updater = {
             logger.info('You are using the latest version');
             return;
         }
-        UpdateModel.instance.set({ updateStatus: 'downloading', updateError: null });
+        UpdateModel.set({ updateStatus: 'downloading', updateError: null });
         logger.info('Downloading update', ver);
         Transport.httpGet({
             url: Links.UpdateDesktop.replace('{ver}', ver),
             file: 'KeeWeb-' + ver + '.zip',
             cache: !startedByUser,
             success: filePath => {
-                UpdateModel.instance.set('updateStatus', 'extracting');
+                UpdateModel.set({ updateStatus: 'extracting' });
                 logger.info('Extracting update file', this.UpdateCheckFiles, filePath);
                 this.extractAppUpdate(filePath, err => {
                     if (err) {
                         logger.error('Error extracting update', err);
-                        UpdateModel.instance.set({
+                        UpdateModel.set({
                             updateStatus: 'error',
                             updateError: 'Error extracting update'
                         });
                     } else {
-                        UpdateModel.instance.set({ updateStatus: 'ready', updateError: null });
+                        UpdateModel.set({ updateStatus: 'ready', updateError: null });
                         if (!startedByUser) {
                             Events.emit('update-app');
                         }
@@ -203,7 +200,7 @@ const Updater = {
             },
             error(e) {
                 logger.error('Error downloading update', e);
-                UpdateModel.instance.set({
+                UpdateModel.set({
                     updateStatus: 'error',
                     updateError: 'Error downloading update'
                 });
@@ -268,7 +265,7 @@ const Updater = {
             try {
                 window.applicationCache.swapCache();
             } catch (e) {}
-            UpdateModel.instance.set('updateStatus', 'ready');
+            UpdateModel.set({ updateStatus: 'ready' });
         }
     }
 };
