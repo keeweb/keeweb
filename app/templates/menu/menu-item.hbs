@@ -15,9 +15,9 @@
         <span class="menu__item-title">{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</span>
         {{#if options}}
         <div class="menu__item-options">
-            {{#each options.models as |opt|}}
-            <div class="menu__item-option {{#if opt.attributes.cls}}{{opt.attributes.cls}}{{/if}}"
-                    data-value="{{opt.attributes.value}}">{{opt.attributes.title}}</div>
+            {{#each options as |opt|}}
+            <div class="menu__item-option {{#if opt.cls}}{{opt.cls}}{{/if}}"
+                    data-value="{{opt.value}}">{{opt.title}}</div>
             {{/each}}
         </div>
         {{/if}}

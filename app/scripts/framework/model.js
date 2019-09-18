@@ -40,7 +40,10 @@ const ProxyDef = {
             }
             return true;
         } else {
-            new Logger(receiver.constructor.name).warn(`Unknown property: ${property}`);
+            new Logger(receiver.constructor.name).warn(
+                `Unknown property: ${property}`,
+                new Error().stack
+            );
         }
         return false;
     }
@@ -106,7 +109,7 @@ class Model {
     }
 
     static defineModelProperties(properties, options) {
-        this.prototype[SymbolDefaults] = properties;
+        this.prototype[SymbolDefaults] = { ...this.prototype[SymbolDefaults], ...properties };
         if (options && options.extensions) {
             this.prototype[SymbolExtensions] = true;
         }

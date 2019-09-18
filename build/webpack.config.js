@@ -25,7 +25,6 @@ function config(grunt, mode = 'production') {
             app: ['babel-helpers', 'app', 'main.scss'],
             vendor: [
                 'jquery',
-                'backbone',
                 'morphdom',
                 'kdbxweb',
                 'baron',
@@ -59,7 +58,6 @@ function config(grunt, mode = 'production') {
             ],
             alias: {
                 'babel-helpers': path.join(rootDir, 'app/lib/babel-helpers.js'),
-                backbone: `backbone/backbone${devMode ? '-min' : ''}.js`,
                 jquery: `jquery/dist/jquery${devMode ? '.min' : ''}.js`,
                 morphdom: `morphdom/dist/morphdom-umd${devMode ? '.min' : ''}.js`,
                 kdbxweb: 'kdbxweb/dist/kdbxweb.js',

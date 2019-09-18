@@ -158,9 +158,9 @@ class AppModel {
             return false;
         }
         this.files.push(file);
-        file.groups.forEach(function(group) {
+        for (const group of file.groups) {
             this.menu.groupsSection.addItem(group);
-        }, this);
+        }
         this._addTags(file);
         this._tagsChanged();
         this.menu.filesSection.addItem({
@@ -175,7 +175,7 @@ class AppModel {
     }
 
     reloadFile(file) {
-        this.menu.groupsSection.replaceByFile(file, file.groups.first());
+        this.menu.groupsSection.replaceByFile(file, file.groups[0]);
         this.updateTags();
     }
 
@@ -197,7 +197,7 @@ class AppModel {
 
     _tagsChanged() {
         if (this.tags.length) {
-            this.menu.tagsSection.set('scrollable', true);
+            this.menu.tagsSection.scrollable = true;
             this.menu.tagsSection.setItems(
                 this.tags.map(tag => {
                     return {
@@ -210,7 +210,7 @@ class AppModel {
                 })
             );
         } else {
-            this.menu.tagsSection.set('scrollable', false);
+            this.menu.tagsSection.scrollable = false;
             this.menu.tagsSection.removeAllItems();
         }
     }
@@ -238,7 +238,7 @@ class AppModel {
         }
         this.files.length = 0;
         this.menu.groupsSection.removeAllItems();
-        this.menu.tagsSection.set('scrollable', false);
+        this.menu.tagsSection.scrollable = false;
         this.menu.tagsSection.removeAllItems();
         this.menu.filesSection.removeAllItems();
         this.tags.splice(0, this.tags.length);
@@ -253,7 +253,7 @@ class AppModel {
         this.updateTags();
         this.menu.groupsSection.removeByFile(file);
         this.menu.filesSection.removeByFile(file);
-        this.menu.select({ item: this.menu.allItemsSection.get('items').first() });
+        this.menu.select({ item: this.menu.allItemsSection.items[0] });
     }
 
     emptyTrash() {
@@ -269,7 +269,7 @@ class AppModel {
         }
         const entries = this.getEntries();
         if (!this.activeEntryId || !entries.get(this.activeEntryId)) {
-            const firstEntry = entries.first();
+            const firstEntry = entries[0];
             this.activeEntryId = firstEntry ? firstEntry.id : null;
         }
         Events.emit('filter', { filter: this.filter, sort: this.sort, entries });
@@ -341,8 +341,8 @@ class AppModel {
             });
         }
         if (!group) {
-            file = this.files.first();
-            group = file.groups.first();
+            file = this.files[0];
+            group = file.groups[0];
         }
         return { group, file };
     }
@@ -384,7 +384,7 @@ class AppModel {
         if (args && args.template) {
             if (sel.file !== args.template.file) {
                 sel.file = args.template.file;
-                sel.group = args.template.file.groups.first();
+                sel.group = args.template.file.groups[0];
             }
             const templateEntry = args.template.entry;
             const newEntry = EntryModel.newEntry(sel.group, sel.file);

@@ -39,7 +39,7 @@ class MenuItemView extends View {
         this.listenTo(this.model, 'change:cls', this.changeCls);
         this.listenTo(this.model, 'delete', this.remove);
         this.listenTo(this.model, 'insert', this.insertItem);
-        const shortcut = this.model.get('shortcut');
+        const shortcut = this.model.shortcut;
         if (shortcut) {
             this.onKey(shortcut, this.selectItem, KeyHandler.SHORTCUT_OPT);
             if (shortcut !== Keys.DOM_VK_C) {
@@ -53,17 +53,17 @@ class MenuItemView extends View {
 
     render() {
         this.removeInnerViews();
-        super.render(this.model.attributes);
+        super.render(this.model);
         this.iconEl = this.$el.find('.menu__item-icon');
-        const items = this.model.get('items');
+        const items = this.model.items;
         if (items) {
             items.forEach(item => {
-                if (item.get('visible')) {
+                if (item.visible) {
                     this.insertItem(item);
                 }
             });
         }
-        this.$el.toggleClass('menu__item--collapsed', !this.model.get('expanded'));
+        this.$el.toggleClass('menu__item--collapsed', !this.model.expanded);
     }
 
     insertItem(item) {
@@ -121,21 +121,21 @@ class MenuItemView extends View {
     selectItem(e) {
         e.stopPropagation();
         e.preventDefault();
-        if (this.model.get('active')) {
+        if (this.model.active) {
             return;
         }
-        if (this.model.get('disabled')) {
-            Alerts.info(this.model.get('disabled'));
+        if (this.model.disabled) {
+            Alerts.info(this.model.disabled);
         } else {
             Events.emit('menu-select', { item: this.model });
         }
     }
 
     selectOption(e) {
-        const options = this.model.get('options');
+        const options = this.model.options;
         const value = $(e.target).data('value');
         if (options && options.length) {
-            const option = options.find(op => op.get('value') === value);
+            const option = options.find(op => op.value === value);
             if (option) {
                 Events.emit('menu-select', { item: this.model, option });
             }
@@ -152,9 +152,9 @@ class MenuItemView extends View {
     }
 
     editItem(e) {
-        if (this.model.get('active') && this.model.get('editable')) {
+        if (this.model.active && this.model.editable) {
             e.stopPropagation();
-            switch (this.model.get('filterKey')) {
+            switch (this.model.filterKey) {
                 case 'tag':
                     Events.emit('edit-tag', this.model);
                     break;
@@ -189,7 +189,7 @@ class MenuItemView extends View {
 
     dragstart(e) {
         e.stopPropagation();
-        if (this.model.get('drag')) {
+        if (this.model.drag) {
             e.dataTransfer.setData('text/group', this.model.id);
             e.dataTransfer.effectAllowed = 'move';
             DragDropInfo.dragObject = this.model;
@@ -197,7 +197,7 @@ class MenuItemView extends View {
     }
 
     dragover(e) {
-        if (this.model.get('drop') && this.dropAllowed(e)) {
+        if (this.model.drop && this.dropAllowed(e)) {
             e.stopPropagation();
             e.preventDefault();
             this.$el.addClass('menu__item--drag');
@@ -206,20 +206,20 @@ class MenuItemView extends View {
 
     dragleave(e) {
         e.stopPropagation();
-        if (this.model.get('drop') && this.dropAllowed(e)) {
+        if (this.model.drop && this.dropAllowed(e)) {
             this.$el.removeClass('menu__item--drag menu__item--drag-top');
         }
     }
 
     drop(e) {
         e.stopPropagation();
-        if (this.model.get('drop') && this.dropAllowed(e)) {
+        if (this.model.drop && this.dropAllowed(e)) {
             const isTop = this.$el.hasClass('menu__item--drag-top');
             this.$el.removeClass('menu__item--drag menu__item--drag-top');
             if (isTop) {
                 this.model.moveToTop(DragDropInfo.dragObject);
             } else {
-                if (this.model.get('filterKey') === 'trash') {
+                if (this.model.filterKey === 'trash') {
                     DragDropInfo.dragObject.moveToTrash();
                 } else {
                     this.model.moveHere(DragDropInfo.dragObject);

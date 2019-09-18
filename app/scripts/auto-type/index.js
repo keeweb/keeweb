@@ -26,7 +26,8 @@ const AutoType = {
         }
         this.appModel = appModel;
         Events.on('auto-type', e => this.handleEvent(e));
-        Events.on('main-window-blur main-window-will-close', e => this.resetPendingEvent(e));
+        Events.on('main-window-blur', e => this.resetPendingEvent(e));
+        Events.on('main-window-will-close', e => this.resetPendingEvent(e));
     },
 
     handleEvent(e) {

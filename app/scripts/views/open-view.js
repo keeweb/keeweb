@@ -67,7 +67,7 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown);
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp);
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
-        this.once('reset', () => {
+        this.once('remove', () => {
             this.passwordInput.reset();
         });
     }

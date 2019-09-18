@@ -30,9 +30,9 @@ class MenuSectionView extends View {
 
     render() {
         if (!this.itemsEl) {
-            super.render(this.model.attributes);
-            this.itemsEl = this.model.get('scrollable') ? this.$el.find('.scroller') : this.$el;
-            if (this.model.get('scrollable')) {
+            super.render(this.model);
+            this.itemsEl = this.model.scrollable ? this.$el.find('.scroller') : this.$el;
+            if (this.model.scrollable) {
                 this.initScroll();
                 this.createScroll({
                     root: this.$el[0],
@@ -43,12 +43,12 @@ class MenuSectionView extends View {
         } else {
             this.removeInnerViews();
         }
-        this.model.get('items').forEach(item => {
+        this.model.items.forEach(item => {
             const itemView = new MenuItemView(item, { parent: this.itemsEl[0] });
             itemView.render();
             this.itemViews.push(itemView);
         });
-        if (this.model.get('drag')) {
+        if (this.model.drag) {
             const height = AppSettingsModel.tagsViewHeight;
             if (typeof height === 'number') {
                 this.$el.height();

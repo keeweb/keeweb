@@ -44,10 +44,10 @@ class MenuView extends View {
     render() {
         super.render();
         const sectionsEl = this.$el.find('.menu');
-        this.model.get('sections').forEach(function(section) {
+        this.model.sections.forEach(function(section) {
             const sectionView = new MenuSectionView(section, { parent: sectionsEl[0] });
             sectionView.render();
-            if (section.get('drag')) {
+            if (section.drag) {
                 const dragEl = $('<div/>')
                     .addClass('menu__drag-section')
                     .appendTo(sectionsEl);

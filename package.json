@@ -18,7 +18,6 @@
         "babel-cli": "^6.26.0",
         "babel-eslint": "^10.0.3",
         "babel-loader": "8.0.6",
-        "backbone": "1.4.0",
         "baron": "3.0.3",
         "base64-loader": "1.0.0",
         "bourbon": "^6.0.0",

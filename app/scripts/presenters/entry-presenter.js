@@ -21,7 +21,7 @@ EntryPresenter.prototype = {
         return this.entry ? this.entry.id : this.group.id;
     },
     get icon() {
-        return this.entry ? this.entry.icon : this.group.get('icon') || 'folder';
+        return this.entry ? this.entry.icon : this.group.icon || 'folder';
     },
     get customIcon() {
         return this.entry ? this.entry.customIcon : undefined;
@@ -32,7 +32,7 @@ EntryPresenter.prototype = {
             : undefined;
     },
     get title() {
-        return this.entry ? this.entry.title : this.group.get('title');
+        return this.entry ? this.entry.title : this.group.title;
     },
     get notes() {
         return this.entry ? this.entry.notes : undefined;

@@ -1,8 +1,8 @@
-import Backbone from 'backbone';
+import { Collection } from 'framework/collection';
 import { MenuItemModel } from 'models/menu/menu-item-model';
 
-const MenuItemCollection = Backbone.Collection.extend({
-    model: MenuItemModel
-});
+class MenuItemCollection extends Collection {
+    static model = MenuItemModel;
+}
 
 export { MenuItemCollection };

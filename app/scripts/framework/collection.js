@@ -40,7 +40,8 @@ const ProxyDef = {
         }
         const numProp = parseInt(property);
         if (isNaN(numProp)) {
-            return false;
+            target[property] = value;
+            return true;
         }
         const modelClass = target.constructor.model;
         if (!modelClass) {
@@ -61,8 +62,8 @@ const ProxyDef = {
 };
 
 class Collection extends Array {
-    constructor(...args) {
-        super(...args);
+    constructor(items) {
+        super();
 
         const emitter = new EventEmitter();
         emitter.setMaxListeners(100);
@@ -73,7 +74,13 @@ class Collection extends Array {
 
         Object.defineProperties(this, properties);
 
-        return new Proxy(this, ProxyDef);
+        const object = new Proxy(this, ProxyDef);
+
+        if (items) {
+            object.push(...items);
+        }
+
+        return object;
     }
 
     push(...items) {

@@ -75,7 +75,7 @@ class AutoTypeSelectView extends View {
         }
         const noColor = AppSettingsModel.colorfulIcons ? '' : 'grayscale';
         this.entries = this.model.filter.getEntries();
-        this.result = this.entries.first();
+        this.result = this.entries[0];
         const presenter = new EntryPresenter(null, noColor, this.result && this.result.id);
         let itemsHtml = '';
         const itemTemplate = this.itemTemplate;

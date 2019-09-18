@@ -293,7 +293,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
 };
 
 AutoTypeRunner.prototype.getEntryGroupName = function() {
-    return this.entry && this.entry.group.get('title');
+    return this.entry && this.entry.group.title;
 };
 
 AutoTypeRunner.prototype.dt = function(part) {

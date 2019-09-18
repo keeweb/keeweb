@@ -205,7 +205,7 @@ class SettingsGeneralView extends View {
         if (locale === '...') {
             e.target.value = AppSettingsModel.locale || 'en';
             this.appModel.menu.select({
-                item: this.appModel.menu.pluginsSection.get('items').first()
+                item: this.appModel.menu.pluginsSection.items[0]
             });
             return;
         }

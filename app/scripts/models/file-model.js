@@ -172,7 +172,7 @@ class FileModel extends Model {
             } else {
                 groupModel = GroupModel.fromGroup(group, this);
             }
-            groups.add(groupModel);
+            groups.push(groupModel);
         }, this);
         this.buildObjectMap();
         this.resolveFieldReferences();
@@ -384,7 +384,7 @@ class FileModel extends Model {
     }
 
     createEntryTemplatesGroup() {
-        const rootGroup = this.groups.first();
+        const rootGroup = this.groups[0];
         const templatesGroup = GroupModel.newGroup(rootGroup, this);
         templatesGroup.setName('Templates');
         this.db.meta.entryTemplatesGroup = templatesGroup.group.uuid;
@@ -553,7 +553,7 @@ class FileModel extends Model {
         this.db.meta.name = name;
         this.db.meta.nameChanged = new Date();
         this.name = name;
-        this.groups.first().setName(name);
+        this.groups[0].setName(name);
         this.setModified();
         this.reload();
     }
@@ -630,8 +630,8 @@ class FileModel extends Model {
                 this.db.move(entry, null);
                 modified = true;
             }, this);
-            trashGroup.get('items').reset();
-            trashGroup.get('entries').reset();
+            trashGroup.items.length = 0;
+            trashGroup.entries.length = 0;
             if (modified) {
                 this.setModified();
             }

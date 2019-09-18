@@ -25,17 +25,17 @@ class GrpView extends View {
     render() {
         this.removeSubView();
         super.render({
-            title: this.model.get('title'),
-            icon: this.model.get('icon') || 'folder',
-            customIcon: this.model.get('customIcon'),
+            title: this.model.title,
+            icon: this.model.icon || 'folder',
+            customIcon: this.model.customIcon,
             enableSearching: this.model.getEffectiveEnableSearching(),
-            readonly: this.model.get('top'),
+            readonly: this.model.top,
             canAutoType: AutoType.enabled,
-            autoTypeSeq: this.model.get('autoTypeSeq'),
+            autoTypeSeq: this.model.autoTypeSeq,
             autoTypeEnabled: this.model.getEffectiveEnableAutoType(),
             defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
         });
-        if (!this.model.get('title')) {
+        if (!this.model.title) {
             this.$el.find('#grp__field-title').focus();
         }
         this.createScroll({
@@ -56,7 +56,7 @@ class GrpView extends View {
     changeTitle(e) {
         const title = $.trim(e.target.value);
         if (title) {
-            if (!this.model.get('top') && title !== this.model.get('title')) {
+            if (!this.model.top && title !== this.model.title) {
                 this.model.setName(title);
             }
         } else {
@@ -94,7 +94,7 @@ class GrpView extends View {
         } else {
             const subView = new IconSelectView(
                 {
-                    iconId: this.model.get('customIconId') || this.model.get('iconId'),
+                    iconId: this.model.customIconId || this.model.iconId,
                     file: this.model.file
                 },
                 {
@@ -110,10 +110,10 @@ class GrpView extends View {
 
     iconSelected(sel) {
         if (sel.custom) {
-            if (sel.id !== this.model.get('customIconId')) {
+            if (sel.id !== this.model.customIconId) {
                 this.model.setCustomIcon(sel.id);
             }
-        } else if (sel.id !== this.model.get('iconId')) {
+        } else if (sel.id !== this.model.iconId) {
             this.model.setIcon(+sel.id);
         }
         this.render();

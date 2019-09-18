@@ -1,8 +1,8 @@
-import Backbone from 'backbone';
+import { Collection } from 'framework/collection';
 import { GroupModel } from 'models/group-model';
 
-const GroupCollection = Backbone.Collection.extend({
-    model: GroupModel
-});
+class GroupCollection extends Collection {
+    static model = GroupModel;
+}
 
 export { GroupCollection };

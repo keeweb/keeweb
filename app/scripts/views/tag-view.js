@@ -18,7 +18,7 @@ class TagView extends View {
     render() {
         if (this.tag) {
             super.render({
-                title: this.tag.get('title')
+                title: this.tag.title
             });
         }
     }
@@ -30,7 +30,7 @@ class TagView extends View {
 
     renameTag() {
         const title = $.trim(this.$el.find('#tag__field-title').val());
-        if (!title || title === this.tag.get('title')) {
+        if (!title || title === this.tag.title) {
             return;
         }
         if (/[;,:]/.test(title)) {
@@ -44,7 +44,7 @@ class TagView extends View {
             Alerts.error({ header: Locale.tagExists, body: Locale.tagExistsBody });
             return;
         }
-        this.model.renameTag(this.tag.get('title'), title);
+        this.model.renameTag(this.tag.title, title);
         Events.emit('select-all');
     }
 
@@ -54,7 +54,7 @@ class TagView extends View {
             header: Locale.tagTrashQuestion,
             body: Locale.tagTrashQuestionBody,
             success: () => {
-                this.model.renameTag(this.tag.get('title'), undefined);
+                this.model.renameTag(this.tag.title, undefined);
                 Events.emit('select-all');
             }
         });

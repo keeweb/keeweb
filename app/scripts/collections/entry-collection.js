@@ -1,13 +1,11 @@
-import Backbone from 'backbone';
+import { Collection } from 'framework/collection';
 import { EntryModel } from 'models/entry-model';
 import { Comparators } from 'util/data/comparators';
 
-const EntryCollection = Backbone.Collection.extend({
-    model: EntryModel,
+class EntryCollection extends Collection {
+    static model = EntryModel;
 
-    comparator: null,
-
-    comparators: {
+    comparators = {
         'none': null,
         'title': Comparators.stringComparator('title', true),
         '-title': Comparators.stringComparator('title', false),
@@ -23,22 +21,23 @@ const EntryCollection = Backbone.Collection.extend({
             return this.attachmentSortVal(x).localeCompare(this.attachmentSortVal(y));
         },
         '-rank': Comparators.rankComparator()
-    },
+    };
 
-    defaultComparator: 'title',
+    defaultComparator = 'title';
 
-    filter: null,
+    filter = null;
 
-    initialize(models, options) {
+    constructor(models, options) {
+        super(models);
         const comparatorName = (options && options.comparator) || this.defaultComparator;
         this.comparator = this.comparators[comparatorName];
-    },
+    }
 
     sortEntries(comparator, filter) {
         this.filter = filter;
         this.comparator = this.comparators[comparator] || this.comparators[this.defaultComparator];
         this.sort();
-    },
+    }
 
     attachmentSortVal(entry) {
         const att = entry.attachments;
@@ -48,6 +47,6 @@ const EntryCollection = Backbone.Collection.extend({
         }
         return str;
     }
-});
+}
 
 export { EntryCollection };

@@ -262,7 +262,7 @@ class AppView extends View {
         this.views.settings = new SettingsView(this.model);
         this.views.settings.render();
         if (!selectedMenuItem) {
-            selectedMenuItem = this.model.menu.generalSection.get('items').first();
+            selectedMenuItem = this.model.menu.generalSection.items[0];
         }
         this.model.menu.select({ item: selectedMenuItem });
         this.views.menu.switchVisibility(false);
@@ -311,10 +311,10 @@ class AppView extends View {
 
     showFileSettings(e) {
         const menuItem = this.model.menu.filesSection
-            .get('items')
-            .find(item => item.get('file').id === e.fileId);
+            .items
+            .find(item => item.file.id === e.fileId);
         if (this.views.settings) {
-            if (this.views.settings.file === menuItem.get('file')) {
+            if (this.views.settings.file === menuItem.file) {
                 this.showEntries();
             } else {
                 this.model.menu.select({ item: menuItem });
@@ -446,7 +446,7 @@ class AppView extends View {
     }
 
     selectAll() {
-        this.menuSelect({ item: this.model.menu.allItemsSection.get('items').first() });
+        this.menuSelect({ item: this.model.menu.allItemsSection.items[0] });
     }
 
     menuSelect(opt) {
@@ -625,7 +625,7 @@ class AppView extends View {
     toggleSettings(page) {
         let menuItem = page ? this.model.menu[page + 'Section'] : null;
         if (menuItem) {
-            menuItem = menuItem.get('items').first();
+            menuItem = menuItem.items[0];
         }
         if (this.views.settings) {
             if (this.views.settings.page === page || !menuItem) {
