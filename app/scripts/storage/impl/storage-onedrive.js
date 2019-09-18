@@ -6,11 +6,11 @@ const OneDriveClientId = {
     Local: '0000000044183D18'
 };
 
-const StorageOneDrive = StorageBase.extend({
-    name: 'onedrive',
-    enabled: true,
-    uipos: 40,
-    iconSvg:
+class StorageOneDrive extends StorageBase {
+    name = 'onedrive';
+    enabled = true;
+    uipos = 40;
+    iconSvg =
         '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="256" height="256" version="1.1" viewBox="0 0 256 256">' +
         '<g transform="translate(296.64282,-100.61434)"><g transform="translate(222.85714,-11.428576)"><g transform="matrix(0.83394139,0,0,0.83394139,' +
         '-86.101383,10.950635)"><path d="m-419.5 365.94c-18.48-4.62-28.77-19.31-28.81-41.1-0.01-6.97 0.49-10.31 2.23-14.79 4.26-10.99 15.55-19.27 ' +
@@ -21,13 +21,13 @@ const StorageOneDrive = StorageBase.extend({
         '0.81-4 0.95-7.5 0.85-21.78 15.15-40.97 35.1-47.14 10.78-3.33 24.33-2.51 36.05 2.18 3.72 1.49 3.3 1.81 11.16-8.5 4.65-6.1 14.05-13.68 21.74-17.55 ' +
         '8.3-4.17 16.94-6.09 27.26-6.07 28.86 0.07 53.73 18.12 62.92 45.67 2.94 8.8 2.79 11.27-0.67 11.34-1.51 0.03-5.85 0.86-9.63 1.85l-6.88 1.79-6.28-' +
         '6.28c-17.7-17.7-46.59-21.53-71.15-9.42-9.81 4.84-17.7 11.78-23.65 20.83-4.25 6.45-9.66 18.48-9.66 21.47 0 2.12-1.72 3.18-9.05 5.58-22.69 7.44-' +
-        '35.94 24.63-35.93 46.62 0 8 2.06 17.8 4.93 23.41 1.08 2.11 1.68 4.13 1.34 4.47-0.88 0.88-29.11 0.58-33.01-0.35z" /></g></g></g></svg>',
+        '35.94 24.63-35.93 46.62 0 8 2.06 17.8 4.93 23.41 1.08 2.11 1.68 4.13 1.34 4.47-0.88 0.88-29.11 0.58-33.01-0.35z" /></g></g></g></svg>';
 
-    _baseUrl: 'https://graph.microsoft.com/v1.0/me',
+    _baseUrl = 'https://graph.microsoft.com/v1.0/me';
 
     getPathForName(fileName) {
         return '/drive/root:/' + fileName + '.kdbx';
-    },
+    }
 
     load(path, opts, callback) {
         this._oauthAuthorize(err => {
@@ -74,7 +74,7 @@ const StorageOneDrive = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     stat(path, opts, callback) {
         this._oauthAuthorize(err => {
@@ -106,7 +106,7 @@ const StorageOneDrive = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     save(path, opts, data, callback, rev) {
         this._oauthAuthorize(err => {
@@ -142,7 +142,7 @@ const StorageOneDrive = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     list(dir, callback) {
         this._oauthAuthorize(err => {
@@ -177,7 +177,7 @@ const StorageOneDrive = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     remove(path, callback) {
         this.logger.debug('Remove', path);
@@ -197,7 +197,7 @@ const StorageOneDrive = StorageBase.extend({
                 return callback && callback(err);
             }
         });
-    },
+    }
 
     mkdir(path, callback) {
         this._oauthAuthorize(err => {
@@ -224,7 +224,7 @@ const StorageOneDrive = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     setEnabled(enabled) {
         if (!enabled) {
@@ -234,8 +234,8 @@ const StorageOneDrive = StorageBase.extend({
             );
             this._oauthRevokeToken(url);
         }
-        StorageBase.prototype.setEnabled.call(this, enabled);
-    },
+        super.setEnabled(enabled);
+    }
 
     _getClientId() {
         let clientId = this.appSettings.onedriveClientId;
@@ -246,7 +246,7 @@ const StorageOneDrive = StorageBase.extend({
                     : OneDriveClientId.Production;
         }
         return clientId;
-    },
+    }
 
     _getOAuthConfig() {
         const clientId = this._getClientId();
@@ -257,7 +257,7 @@ const StorageOneDrive = StorageBase.extend({
             width: 600,
             height: 500
         };
-    },
+    }
 
     _popupOpened(popupWindow) {
         if (popupWindow.webContents) {
@@ -276,6 +276,6 @@ if (document.querySelectorAll(selector).length === 1) document.querySelector(sel
             });
         }
     }
-});
+}
 
 export { StorageOneDrive };

@@ -1,16 +1,16 @@
 import { Launcher } from 'comp/launcher';
 import { StorageBase } from 'storage/storage-base';
 
-const StorageFileCache = StorageBase.extend({
-    name: 'cache',
-    enabled: !!Launcher,
-    system: true,
+class StorageFileCache extends StorageBase {
+    name = 'cache';
+    enabled = !!Launcher;
+    system = true;
 
-    path: null,
+    path = null;
 
     getPath(id) {
         return Launcher.joinPath(this.path, id);
-    },
+    }
 
     initFs(callback) {
         if (this.path) {
@@ -34,7 +34,7 @@ const StorageFileCache = StorageBase.extend({
                 Launcher.mkdir(path, setPath);
             }
         });
-    },
+    }
 
     save(id, opts, data, callback) {
         this.logger.debug('Save', id);
@@ -54,7 +54,7 @@ const StorageFileCache = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     load(id, opts, callback) {
         this.logger.debug('Load', id);
@@ -74,7 +74,7 @@ const StorageFileCache = StorageBase.extend({
                 return callback && callback(null, data.buffer);
             });
         });
-    },
+    }
 
     remove(id, opts, callback) {
         this.logger.debug('Remove', id);
@@ -102,6 +102,6 @@ const StorageFileCache = StorageBase.extend({
             });
         });
     }
-});
+}
 
 export { StorageFileCache };

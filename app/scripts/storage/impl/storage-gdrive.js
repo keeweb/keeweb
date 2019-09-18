@@ -7,21 +7,21 @@ const GDriveClientId = {
 };
 const NewFileIdPrefix = 'NewFile:';
 
-const StorageGDrive = StorageBase.extend({
-    name: 'gdrive',
-    enabled: true,
-    uipos: 30,
-    iconSvg:
+class StorageGDrive extends StorageBase {
+    name = 'gdrive';
+    enabled = true;
+    uipos = 30;
+    iconSvg =
         '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><path d="M86.657536,76.246208 L47.768064,9 L89.111168,' +
         '9 L128,76.246208 L86.657536,76.246208 Z M25.010048,119.08 L102.690048,119.08 L123.36256,83.24 L45.68064,83.24 L25.010048,119.08 L25.010048,' +
-        '119.08 Z M38.793088,9.003712 L0,76.30496 L20.671872,112.110016 L59.464704,44.808128 L38.793088,9.003712 Z"></path></svg>',
+        '119.08 Z M38.793088,9.003712 L0,76.30496 L20.671872,112.110016 L59.464704,44.808128 L38.793088,9.003712 Z"></path></svg>';
 
-    _baseUrl: 'https://www.googleapis.com/drive/v3',
-    _baseUrlUpload: 'https://www.googleapis.com/upload/drive/v3',
+    _baseUrl = 'https://www.googleapis.com/drive/v3';
+    _baseUrlUpload = 'https://www.googleapis.com/upload/drive/v3';
 
     getPathForName(fileName) {
         return NewFileIdPrefix + fileName;
-    },
+    }
 
     load(path, opts, callback) {
         this.stat(path, opts, (err, stat) => {
@@ -48,7 +48,7 @@ const StorageGDrive = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     stat(path, opts, callback) {
         if (path.lastIndexOf(NewFileIdPrefix, 0) === 0) {
@@ -75,7 +75,7 @@ const StorageGDrive = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     save(path, opts, data, callback, rev) {
         this._oauthAuthorize(err => {
@@ -153,7 +153,7 @@ const StorageGDrive = StorageBase.extend({
                 });
             });
         });
-    },
+    }
 
     list(dir, callback) {
         this._oauthAuthorize(err => {
@@ -208,7 +208,7 @@ const StorageGDrive = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     remove(path, callback) {
         this.logger.debug('Remove', path);
@@ -228,14 +228,14 @@ const StorageGDrive = StorageBase.extend({
                 return callback && callback(err);
             }
         });
-    },
+    }
 
     setEnabled(enabled) {
         if (!enabled) {
             this._oauthRevokeToken('https://accounts.google.com/o/oauth2/revoke?token={token}');
         }
-        StorageBase.prototype.setEnabled.call(this, enabled);
-    },
+        super.setEnabled(enabled);
+    }
 
     _getOAuthConfig() {
         let clientId = this.appSettings.gdriveClientId;
@@ -253,6 +253,6 @@ const StorageGDrive = StorageBase.extend({
             height: 400
         };
     }
-});
+}
 
 export { StorageGDrive };

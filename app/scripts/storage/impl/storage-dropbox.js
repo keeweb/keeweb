@@ -11,12 +11,12 @@ const DropboxCustomErrors = {
     BadKey: 'bad-key'
 };
 
-const StorageDropbox = StorageBase.extend({
-    name: 'dropbox',
-    icon: 'dropbox',
-    enabled: true,
-    uipos: 20,
-    backup: true,
+class StorageDropbox extends StorageBase {
+    name = 'dropbox';
+    icon = 'dropbox';
+    enabled = true;
+    uipos = 20;
+    backup = true;
 
     _toFullPath(path) {
         const rootFolder = this.appSettings.dropboxFolder;
@@ -24,7 +24,7 @@ const StorageDropbox = StorageBase.extend({
             path = UrlFormat.fixSlashes('/' + rootFolder + '/' + path);
         }
         return path;
-    },
+    }
 
     _toRelPath(path) {
         const rootFolder = this.appSettings.dropboxFolder;
@@ -38,7 +38,7 @@ const StorageDropbox = StorageBase.extend({
             path = UrlFormat.fixSlashes('/' + path);
         }
         return path;
-    },
+    }
 
     _fixConfigFolder(folder) {
         folder = folder.replace(/\\/g, '/').trim();
@@ -46,21 +46,21 @@ const StorageDropbox = StorageBase.extend({
             folder = folder.substr(1);
         }
         return folder;
-    },
+    }
 
     _getKey() {
         return this.appSettings.dropboxAppKey || DropboxKeys.AppFolder;
-    },
+    }
 
     _isValidKey() {
         const key = this._getKey();
         const isBuiltIn = key === DropboxKeys.AppFolder || key === DropboxKeys.FullDropbox;
         return key && key.indexOf(' ') < 0 && (!isBuiltIn || this._canUseBuiltInKeys());
-    },
+    }
 
     _canUseBuiltInKeys() {
         return !Features.isSelfHosted;
-    },
+    }
 
     _getOAuthConfig() {
         return {
@@ -70,11 +70,11 @@ const StorageDropbox = StorageBase.extend({
             width: 600,
             height: 400
         };
-    },
+    }
 
     needShowOpenConfig() {
         return !this._isValidKey();
-    },
+    }
 
     getOpenConfig() {
         return {
@@ -97,7 +97,7 @@ const StorageDropbox = StorageBase.extend({
                 }
             ]
         };
-    },
+    }
 
     getSettingsConfig() {
         const fields = [];
@@ -142,7 +142,7 @@ const StorageDropbox = StorageBase.extend({
             fields.push(folderField);
         }
         return { fields };
-    },
+    }
 
     applyConfig(config, callback) {
         if (config.key === DropboxKeys.AppFolder || config.key === DropboxKeys.FullDropbox) {
@@ -157,7 +157,7 @@ const StorageDropbox = StorageBase.extend({
             dropboxFolder: config.folder
         });
         callback();
-    },
+    }
 
     applySetting(key, value) {
         switch (key) {
@@ -190,18 +190,18 @@ const StorageDropbox = StorageBase.extend({
                 return;
         }
         this.appSettings[key] = value;
-    },
+    }
 
     getPathForName(fileName) {
         return '/' + fileName + '.kdbx';
-    },
+    }
 
     _encodeJsonHttpHeader(json) {
         return json.replace(
             /[\u007f-\uffff]/g,
             c => '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
         );
-    },
+    }
 
     _apiCall(args) {
         this._oauthAuthorize(err => {
@@ -246,7 +246,7 @@ const StorageDropbox = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     load(path, opts, callback) {
         this.logger.debug('Load', path);
@@ -264,7 +264,7 @@ const StorageDropbox = StorageBase.extend({
             },
             error: callback
         });
-    },
+    }
 
     stat(path, opts, callback) {
         this.logger.debug('Stat', path);
@@ -291,7 +291,7 @@ const StorageDropbox = StorageBase.extend({
             },
             error: callback
         });
-    },
+    }
 
     save(path, opts, data, callback, rev) {
         this.logger.debug('Save', path, rev);
@@ -313,7 +313,7 @@ const StorageDropbox = StorageBase.extend({
             },
             error: callback
         });
-    },
+    }
 
     list(dir, callback) {
         this.logger.debug('List');
@@ -336,7 +336,7 @@ const StorageDropbox = StorageBase.extend({
             },
             error: callback
         });
-    },
+    }
 
     remove(path, callback) {
         this.logger.debug('Remove', path);
@@ -351,7 +351,7 @@ const StorageDropbox = StorageBase.extend({
             },
             error: callback
         });
-    },
+    }
 
     mkdir(path, callback) {
         this.logger.debug('Make dir', path);
@@ -366,14 +366,14 @@ const StorageDropbox = StorageBase.extend({
             },
             error: callback
         });
-    },
+    }
 
     setEnabled(enabled) {
         if (!enabled) {
             this._oauthRevokeToken();
         }
-        StorageBase.prototype.setEnabled.call(this, enabled);
+        super.setEnabled(enabled);
     }
-});
+}
 
 export { StorageDropbox };

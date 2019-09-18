@@ -3,12 +3,12 @@ import { StorageBase } from 'storage/storage-base';
 
 const fileWatchers = {};
 
-const StorageFile = StorageBase.extend({
-    name: 'file',
-    icon: 'hdd-o',
-    enabled: !!Launcher,
-    system: true,
-    backup: true,
+class StorageFile extends StorageBase {
+    name = 'file';
+    icon = 'hdd-o';
+    enabled = !!Launcher;
+    system = true;
+    backup = true;
 
     load(path, opts, callback) {
         this.logger.debug('Load', path);
@@ -36,7 +36,7 @@ const StorageFile = StorageBase.extend({
                 }
             });
         });
-    },
+    }
 
     stat(path, opts, callback) {
         this.logger.debug('Stat', path);
@@ -56,7 +56,7 @@ const StorageFile = StorageBase.extend({
                 callback(null, { rev: fileRev });
             }
         });
-    },
+    }
 
     save(path, opts, data, callback, rev) {
         this.logger.debug('Save', path, rev);
@@ -105,7 +105,7 @@ const StorageFile = StorageBase.extend({
         } else {
             write();
         }
-    },
+    }
 
     mkdir(path, callback) {
         this.logger.debug('Make dir', path);
@@ -124,7 +124,7 @@ const StorageFile = StorageBase.extend({
                 }
             }
         });
-    },
+    }
 
     watch(path, callback) {
         const names = Launcher.parsePath(path);
@@ -147,7 +147,7 @@ const StorageFile = StorageBase.extend({
                 callback
             });
         }
-    },
+    }
 
     unwatch(path) {
         const names = Launcher.parsePath(path);
@@ -163,7 +163,7 @@ const StorageFile = StorageBase.extend({
                 delete fileWatchers[names.dir];
             }
         }
-    },
+    }
 
     fsWatcherChange(dirname, evt, fileName) {
         const watcher = fileWatchers[dirname];
@@ -176,6 +176,6 @@ const StorageFile = StorageBase.extend({
             });
         }
     }
-});
+}
 
 export { StorageFile };

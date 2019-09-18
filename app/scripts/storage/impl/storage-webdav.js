@@ -1,14 +1,14 @@
 import { StorageBase } from 'storage/storage-base';
 
-const StorageWebDav = StorageBase.extend({
-    name: 'webdav',
-    icon: 'server',
-    enabled: true,
-    uipos: 10,
+class StorageWebDav extends StorageBase {
+    name = 'webdav';
+    icon = 'server';
+    enabled = true;
+    uipos = 10;
 
     needShowOpenConfig() {
         return true;
-    },
+    }
 
     getOpenConfig() {
         return {
@@ -30,7 +30,7 @@ const StorageWebDav = StorageBase.extend({
                 }
             ]
         };
-    },
+    }
 
     getSettingsConfig() {
         return {
@@ -44,11 +44,11 @@ const StorageWebDav = StorageBase.extend({
                 }
             ]
         };
-    },
+    }
 
     applySetting(key, value) {
         this.appSettings[key] = value;
-    },
+    }
 
     load(path, opts, callback) {
         this._request(
@@ -65,7 +65,7 @@ const StorageWebDav = StorageBase.extend({
                   }
                 : null
         );
-    },
+    }
 
     stat(path, opts, callback) {
         this._request(
@@ -82,7 +82,7 @@ const StorageWebDav = StorageBase.extend({
                   }
                 : null
         );
-    },
+    }
 
     save(path, opts, data, callback, rev) {
         const cb = function(err, xhr, stat) {
@@ -234,7 +234,7 @@ const StorageWebDav = StorageBase.extend({
                 }
             }
         );
-    },
+    }
 
     fileOptsToStoreOpts(opts, file) {
         const result = { user: opts.user, encpass: opts.encpass };
@@ -250,7 +250,7 @@ const StorageWebDav = StorageBase.extend({
             result.encpass = btoa(encpass);
         }
         return result;
-    },
+    }
 
     storeOptsToFileOpts(opts, file) {
         const result = { user: opts.user, password: opts.password };
@@ -266,7 +266,7 @@ const StorageWebDav = StorageBase.extend({
             result.password = password;
         }
         return result;
-    },
+    }
 
     _request(config, callback) {
         const that = this;
@@ -362,6 +362,6 @@ const StorageWebDav = StorageBase.extend({
             xhr.send();
         }
     }
-});
+}
 
 export { StorageWebDav };

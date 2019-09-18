@@ -1,4 +1,3 @@
-import Backbone from 'backbone';
 import { Events } from 'framework/events';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
@@ -8,19 +7,17 @@ import { Logger } from 'util/logger';
 
 const MaxRequestRetries = 3;
 
-const StorageBase = function() {};
+class StorageBase {
+    name = null;
+    icon = null;
+    iconSvg = null;
+    enabled = false;
+    system = false;
+    uipos = null;
 
-Object.assign(StorageBase.prototype, {
-    name: null,
-    icon: null,
-    iconSvg: null,
-    enabled: false,
-    system: false,
-    uipos: null,
-
-    logger: null,
-    appSettings: AppSettingsModel,
-    runtimeData: RuntimeDataModel,
+    logger = null;
+    appSettings = AppSettingsModel;
+    runtimeData = RuntimeDataModel;
 
     init() {
         if (!this.name) {
@@ -46,15 +43,15 @@ Object.assign(StorageBase.prototype, {
             }
         }
         return this;
-    },
+    }
 
     setEnabled(enabled) {
         this.enabled = enabled;
-    },
+    }
 
     handleOAuthReturnMessage(message) {
         this._oauthReturnMessage = message;
-    },
+    }
 
     _xhr(config) {
         const xhr = new XMLHttpRequest();
@@ -105,7 +102,7 @@ Object.assign(StorageBase.prototype, {
             data = new Uint8Array(data);
         }
         xhr.send(data);
-    },
+    }
 
     _openPopup(url, title, width, height) {
         const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
@@ -143,7 +140,7 @@ Object.assign(StorageBase.prototype, {
         }
 
         return window.open(url, title, settings);
-    },
+    }
 
     _getOauthRedirectUrl() {
         let redirectUrl = window.location.href;
@@ -152,7 +149,7 @@ Object.assign(StorageBase.prototype, {
         }
         redirectUrl = redirectUrl.split('?')[0];
         return redirectUrl;
-    },
+    }
 
     _oauthAuthorize(callback) {
         if (this._tokenIsValid(this._oauthToken)) {
@@ -202,9 +199,9 @@ Object.assign(StorageBase.prototype, {
         };
         Events.on('popup-closed', popupClosed);
         window.addEventListener('message', windowMessage);
-    },
+    }
 
-    _popupOpened(popupWindow) {},
+    _popupOpened(popupWindow) {}
 
     _oauthProcessReturn(message) {
         const token = this._oauthMsgToToken(message);
@@ -214,7 +211,7 @@ Object.assign(StorageBase.prototype, {
             this.logger.debug('OAuth token received');
         }
         return token;
-    },
+    }
 
     _oauthMsgToToken(data) {
         if (!data.token_type) {
@@ -233,13 +230,13 @@ Object.assign(StorageBase.prototype, {
             scope: data.scope,
             userId: data.user_id
         };
-    },
+    }
 
     _oauthRefreshToken(callback) {
         this._oauthToken.expired = true;
         this.runtimeData[this.name + 'OAuthToken'] = this._oauthToken;
         this._oauthAuthorize(callback);
-    },
+    }
 
     _oauthRevokeToken(url) {
         const token = this.runtimeData[this.name + 'OAuthToken'];
@@ -253,7 +250,7 @@ Object.assign(StorageBase.prototype, {
             delete this.runtimeData[this.name + 'OAuthToken'];
             this._oauthToken = null;
         }
-    },
+    }
 
     _tokenIsValid(token) {
         if (!token || token.expired) {
@@ -264,8 +261,6 @@ Object.assign(StorageBase.prototype, {
         }
         return true;
     }
-});
-
-StorageBase.extend = Backbone.Model.extend;
+}
 
 export { StorageBase };
