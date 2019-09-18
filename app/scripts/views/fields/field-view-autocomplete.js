@@ -1,5 +1,6 @@
 import { Keys } from 'const/keys';
 import { FieldViewText } from 'views/fields/field-view-text';
+import { escape } from 'util/fn';
 
 class FieldViewAutocomplete extends FieldViewText {
     endEdit(newVal, extra) {
@@ -86,7 +87,7 @@ class FieldViewAutocomplete extends FieldViewText {
                     '<div class="details__field-autocomplete-item ' +
                     sel +
                     '">' +
-                    _.escape(item) +
+                    escape(item) +
                     '</div>'
                 );
             })

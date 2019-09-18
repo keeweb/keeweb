@@ -20,6 +20,7 @@ import { UrlFormat } from 'util/formatting/url-format';
 import { IdGenerator } from 'util/generators/id-generator';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
+import { noop } from 'util/fn';
 import 'util/kdbxweb/protected-value-ex';
 
 class AppModel {
@@ -1135,7 +1136,7 @@ class AppModel {
             this.setFileBackup(file.id, backup);
         }
         if (needBackup) {
-            this.backupFile(file, data, () => {});
+            this.backupFile(file, data, noop);
         }
     }
 

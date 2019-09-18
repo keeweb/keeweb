@@ -6,6 +6,7 @@ import { Otp } from 'util/data/otp';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
+import { escape } from 'util/fn';
 
 const logger = new Logger('otp-qr-reader');
 
@@ -144,7 +145,7 @@ class OtpQrReader {
                         body:
                             Locale.detOtpQrWrongBody +
                             '<pre class="modal__pre">' +
-                            _.escape(err.toString()) +
+                            escape(err.toString()) +
                             '</pre>'
                     });
                 }

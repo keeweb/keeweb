@@ -12,6 +12,7 @@ import { PasswordGenerator } from 'util/generators/password-generator';
 import { Locale } from 'util/locale';
 import { FileSaver } from 'util/ui/file-saver';
 import { OpenConfigView } from 'views/open-config-view';
+import { escape } from 'util/fn';
 import template from 'templates/settings/settings-file.hbs';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
@@ -588,7 +589,7 @@ class SettingsFileView extends View {
                         body:
                             description +
                             '<pre class="modal__pre">' +
-                            _.escape(err.toString()) +
+                            escape(err.toString()) +
                             '</pre>'
                     });
                 }

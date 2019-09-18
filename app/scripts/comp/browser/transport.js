@@ -1,5 +1,6 @@
 import { Launcher } from 'comp/launcher';
 import { Logger } from 'util/logger';
+import { noop } from 'util/fn';
 
 const logger = new Logger('transport');
 
@@ -18,7 +19,7 @@ const Transport = {
                         fs.unlinkSync(tmpFile);
                     }
                 } catch (e) {
-                    fs.unlink(tmpFile, () => {});
+                    fs.unlink(tmpFile, noop);
                 }
             }
         }
@@ -81,7 +82,7 @@ const Transport = {
                 .on('error', e => {
                     logger.error('Cannot GET ' + config.url, e);
                     if (tmpFile) {
-                        fs.unlink(tmpFile, () => {});
+                        fs.unlink(tmpFile, noop);
                     }
                     config.error(e);
                 });

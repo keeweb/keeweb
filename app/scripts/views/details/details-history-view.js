@@ -7,6 +7,7 @@ import { Locale } from 'util/locale';
 import { Copyable } from 'framework/views/copyable';
 import { FieldViewReadOnly } from 'views/fields/field-view-read-only';
 import { FieldViewReadOnlyRaw } from 'views/fields/field-view-read-only-raw';
+import { escape } from 'util/fn';
 import template from 'templates/details/details-history.hbs';
 
 class DetailsHistoryView extends View {
@@ -155,7 +156,7 @@ class DetailsHistoryView extends View {
                         ' ' +
                         colorCls +
                         '"></i> ' +
-                        _.escape(this.record.title) || '(' + Locale.detHistoryNoTitle + ')'
+                        escape(this.record.title) || '(' + Locale.detHistoryNoTitle + ')'
             })
         );
         this.fieldViews.push(

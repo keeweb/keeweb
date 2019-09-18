@@ -1,8 +1,9 @@
 import { FieldViewText } from 'views/fields/field-view-text';
+import { escape } from 'util/fn';
 
 class FieldViewTags extends FieldViewText {
     renderValue(value) {
-        return value ? _.escape(value.join(', ')) : '';
+        return value ? escape(value.join(', ')) : '';
     }
 
     getEditValue(value) {
@@ -73,7 +74,7 @@ class FieldViewTags extends FieldViewText {
         const availableTags = this.getAvailableTags();
         const tagsHtml = availableTags
             .map(tag => {
-                return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
+                return '<div class="details__field-autocomplete-item">' + escape(tag) + '</div>';
             })
             .join('');
         this.tagsAutocomplete.html(tagsHtml);

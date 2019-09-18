@@ -1,4 +1,5 @@
 import { StorageBase } from 'storage/storage-base';
+import { noop } from 'util/fn';
 
 const OneDriveClientId = {
     Production: '000000004818ED3A',
@@ -270,7 +271,7 @@ const StorageOneDrive = StorageBase.extend({
                     // click the login button mentioned in #821
                     const script = `const selector = '[role="button"][aria-describedby="tileError loginHeader"]';
 if (document.querySelectorAll(selector).length === 1) document.querySelector(selector).click()`;
-                    webContents.executeJavaScript(script).catch(() => {});
+                    webContents.executeJavaScript(script).catch(noop);
                 }
             });
         }

@@ -1,4 +1,5 @@
 import { FieldView } from 'views/fields/field-view';
+import { escape } from 'util/fn';
 
 class FieldViewSelect extends FieldView {
     readonly = true;
@@ -11,11 +12,11 @@ class FieldViewSelect extends FieldView {
                     return (
                         '<option ' +
                         'value="' +
-                        _.escape(opt.id) +
+                        escape(opt.id) +
                         '" ' +
                         (opt.selected ? 'selected ' : '') +
                         '>' +
-                        _.escape(opt.value) +
+                        escape(opt.value) +
                         '</option>'
                     );
                 })

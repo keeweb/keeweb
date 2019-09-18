@@ -8,6 +8,7 @@ import { PasswordGenerator } from 'util/generators/password-generator';
 import { Tip } from 'util/ui/tip';
 import { FieldView } from 'views/fields/field-view';
 import { GeneratorView } from 'views/generator-view';
+import { escape } from 'util/fn';
 
 class FieldViewText extends FieldView {
     constructor(model, options) {
@@ -24,7 +25,7 @@ class FieldViewText extends FieldView {
         }
         return value && value.isProtected
             ? PasswordGenerator.presentValueWithLineBreaks(value)
-            : _.escape(value || '').replace(/\n/g, '<br/>');
+            : escape(value || '').replace(/\n/g, '<br/>');
     }
 
     getEditValue(value) {

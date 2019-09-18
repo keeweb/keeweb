@@ -1,6 +1,7 @@
 import { Events } from 'framework/events';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
+import { noop } from 'util/fn';
 
 const logger = new Logger('launcher');
 
@@ -84,7 +85,7 @@ const Launcher = {
         this.req('fs').exists(path, callback);
     },
     deleteFile(path, callback) {
-        this.req('fs').unlink(path, callback || (() => {}));
+        this.req('fs').unlink(path, callback || noop);
     },
     statFile(path, callback) {
         this.req('fs').stat(path, (err, stats) => callback(stats, err));
@@ -274,7 +275,7 @@ const Launcher = {
         if (cookies && cookies.length) {
             const session = this.electron().remote.session.defaultSession;
             for (const cookie of cookies) {
-                session.cookies.set(cookie, () => {});
+                session.cookies.set(cookie, noop);
             }
         }
     },

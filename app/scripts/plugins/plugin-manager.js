@@ -6,6 +6,7 @@ import { PluginCollection } from 'plugins/plugin-collection';
 import { PluginGallery } from 'plugins/plugin-gallery';
 import { SignatureVerifier } from 'util/data/signature-verifier';
 import { Logger } from 'util/logger';
+import { noop } from 'util/fn';
 
 const PluginManager = Backbone.Model.extend({
     UpdateInterval: 1000 * 60 * 60 * 24 * 7,
@@ -181,7 +182,7 @@ const PluginManager = Backbone.Model.extend({
             const pluginId = queue.shift();
             if (pluginId) {
                 return this.update(pluginId)
-                    .catch(() => {})
+                    .catch(noop)
                     .then(updateNext);
             }
         };

@@ -17,6 +17,7 @@ import { Logger } from 'util/logger';
 import { InputFx } from 'util/ui/input-fx';
 import { OpenConfigView } from 'views/open-config-view';
 import { StorageFileListView } from 'views/storage-file-list-view';
+import { escape } from 'util/fn';
 import template from 'templates/open.hbs';
 
 const logger = new Logger('open-view');
@@ -646,7 +647,7 @@ class OpenView extends View {
                     body:
                         Locale.openErrorDescription +
                         '<pre class="modal__pre">' +
-                        _.escape(err.toString()) +
+                        escape(err.toString()) +
                         '</pre>'
                 });
             }
@@ -726,7 +727,7 @@ class OpenView extends View {
                         body:
                             Locale.openListErrorBody +
                             '<pre class="modal__pre">' +
-                            _.escape(err.toString()) +
+                            escape(err.toString()) +
                             '</pre>'
                     });
                 }

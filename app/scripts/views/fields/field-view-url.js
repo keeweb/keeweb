@@ -1,4 +1,5 @@
 import { FieldViewText } from 'views/fields/field-view-text';
+import { escape } from 'util/fn';
 
 class FieldViewUrl extends FieldViewText {
     displayUrlRegex = /^https:\/\//i;
@@ -7,9 +8,9 @@ class FieldViewUrl extends FieldViewText {
     renderValue(value) {
         return value
             ? '<a href="' +
-                  _.escape(this.fixUrl(value)) +
+                  escape(this.fixUrl(value)) +
                   '" rel="noreferrer noopener" target="_blank">' +
-                  _.escape(this.displayUrl(value)) +
+                  escape(this.displayUrl(value)) +
                   '</a>'
             : '';
     }
