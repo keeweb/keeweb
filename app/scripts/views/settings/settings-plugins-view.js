@@ -50,17 +50,17 @@ class SettingsPluginsView extends View {
 
     render() {
         super.render({
-            plugins: PluginManager.get('plugins')
+            plugins: PluginManager.plugins
                 .map(plugin => ({
                     id: plugin.id,
-                    manifest: plugin.get('manifest'),
-                    status: plugin.get('status'),
-                    installTime: Math.round(plugin.get('installTime')),
-                    updateError: plugin.get('updateError'),
-                    updateCheckDate: DateFormat.dtStr(plugin.get('updateCheckDate')),
-                    installError: plugin.get('installError'),
-                    official: plugin.get('official'),
-                    autoUpdate: plugin.get('autoUpdate'),
+                    manifest: plugin.manifest,
+                    status: plugin.status,
+                    installTime: Math.round(plugin.installTime),
+                    updateError: plugin.updateError,
+                    updateCheckDate: DateFormat.dtStr(plugin.updateCheckDate),
+                    installError: plugin.installError,
+                    official: plugin.official,
+                    autoUpdate: plugin.autoUpdate,
                     settings: plugin.getSettings()
                 }))
                 .sort(Comparators.stringComparator('id', true)),
@@ -89,7 +89,7 @@ class SettingsPluginsView extends View {
         if (!PluginGallery.gallery) {
             return null;
         }
-        const plugins = PluginManager.get('plugins');
+        const plugins = PluginManager.plugins;
         return PluginGallery.gallery.plugins
             .map(pl => ({
                 url: pl.url,

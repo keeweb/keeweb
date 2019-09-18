@@ -1,8 +1,8 @@
-import Backbone from 'backbone';
+import { Collection } from 'framework/collection';
 import { Plugin } from 'plugins/plugin';
 
-const PluginCollection = Backbone.Collection.extend({
-    model: Plugin
-});
+class PluginCollection extends Collection {
+    static model = Plugin;
+}
 
 export { PluginCollection };

@@ -101,6 +101,10 @@ class Model {
         this[SymbolEvents].off(eventName, listener);
     }
 
+    emit(eventName, ...args) {
+        this[SymbolEvents].emit(eventName, ...args);
+    }
+
     static defineModelProperties(properties, options) {
         this.prototype[SymbolDefaults] = properties;
         if (options && options.extensions) {
