@@ -3,10 +3,10 @@ const path = require('path');
 const webpack = require('webpack');
 
 const StringReplacePlugin = require('string-replace-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -116,7 +116,6 @@ function config(grunt, mode = 'production') {
                     test: /babel-helpers\.js$/,
                     loader: 'exports-loader?global.babelHelpers; delete global.babelHelpers'
                 },
-                { test: /pikaday\.js$/, loader: 'uglify-loader' },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
                 {
                     test: /\.js$/,
@@ -145,6 +144,7 @@ function config(grunt, mode = 'production') {
         },
         optimization: {
             runtimeChunk: 'single',
+            minimize: !devMode,
             splitChunks: {
                 cacheGroups: {
                     vendor: {
@@ -155,9 +155,11 @@ function config(grunt, mode = 'production') {
                 }
             },
             minimizer: [
-                new UglifyJsPlugin({
-                    cache: true,
-                    parallel: true
+                new TerserPlugin({
+                    extractComments: false,
+                    terserOptions: {
+                        ecma: 6
+                    }
                 }),
                 new OptimizeCSSAssetsPlugin({
                     cssProcessorPluginOptions: {

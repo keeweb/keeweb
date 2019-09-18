@@ -242,21 +242,6 @@ module.exports = function(grunt) {
                 port: 8085
             }
         },
-        uglify: {
-            options: {
-                preserveComments: false
-            },
-            app: {
-                files: { 'tmp/js/app.js': ['tmp/js/app.js'] }
-            },
-            vendor: {
-                options: {
-                    mangle: false,
-                    compress: false
-                },
-                files: { 'tmp/js/vendor.js': ['tmp/js/vendor.js'] }
-            }
-        },
         watch: {
             options: {
                 interrupt: true,
