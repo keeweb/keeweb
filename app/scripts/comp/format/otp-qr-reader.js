@@ -100,8 +100,7 @@ class OtpQrReader {
     }
 
     pasteEvent(e) {
-        const item = _.find(
-            e.clipboardData.items,
+        const item = [...e.clipboardData.items].find(
             item => item.kind === 'file' && item.type.indexOf('image') !== -1
         );
         if (!item) {

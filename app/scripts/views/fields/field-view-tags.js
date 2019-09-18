@@ -15,14 +15,14 @@ class FieldViewTags extends FieldViewText {
         this.model.tags.forEach(tag => {
             allTags[tag.toLowerCase()] = tag;
         });
-        return _.unique(
-            val
-                .split(/\s*[;,:]\s*/)
-                .filter(tag => tag)
-                .map(tag => {
-                    return allTags[tag.toLowerCase()] || tag;
-                })
-        );
+        const valueTags = {};
+        val.split(/\s*[;,:]\s*/)
+            .filter(tag => tag)
+            .map(tag => allTags[tag.toLowerCase()] || tag)
+            .forEach(tag => {
+                valueTags[tag] = tag;
+            });
+        return Object.keys(valueTags);
     }
 
     endEdit(newVal, extra) {

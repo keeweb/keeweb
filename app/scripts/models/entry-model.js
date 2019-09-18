@@ -398,7 +398,7 @@ const EntryModel = Backbone.Model.extend({
     },
 
     renameTag(from, to) {
-        const ix = _.findIndex(this.entry.tags, tag => tag.toLowerCase() === from.toLowerCase());
+        const ix = this.entry.tags.findIndex(tag => tag.toLowerCase() === from.toLowerCase());
         if (ix < 0) {
             return;
         }

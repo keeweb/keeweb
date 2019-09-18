@@ -1,6 +1,7 @@
 import { View } from 'framework/views/view';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { Tip } from 'util/ui/tip';
+import { isEqual } from 'util/fn';
 import template from 'templates/details/field.hbs';
 
 class FieldView extends View {
@@ -47,7 +48,7 @@ class FieldView extends View {
         if (typeof this.model.value === 'function') {
             const newVal = this.model.value();
             if (
-                !_.isEqual(newVal, this.value) ||
+                !isEqual(newVal, this.value) ||
                 (this.value && newVal && this.value.toString() !== newVal.toString())
             ) {
                 this.render();
@@ -141,7 +142,7 @@ class FieldView extends View {
         } else if (newVal && newVal.isProtected) {
             textEqual = newVal.equals(this.value);
         } else {
-            textEqual = _.isEqual(this.value, newVal);
+            textEqual = isEqual(this.value, newVal);
         }
         const protectedEqual =
             (newVal && newVal.isProtected) === (this.value && this.value.isProtected);

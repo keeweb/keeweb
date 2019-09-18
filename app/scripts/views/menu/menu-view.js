@@ -6,6 +6,7 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { Resizable } from 'framework/views/resizable';
 import { DragView } from 'views/drag-view';
 import { MenuSectionView } from 'views/menu/menu-section-view';
+import throttle from 'lodash/throttle';
 import template from 'templates/menu/menu.hbs';
 
 class MenuView extends View {
@@ -66,7 +67,7 @@ class MenuView extends View {
         this.render();
     }
 
-    viewResized = _.throttle(size => {
+    viewResized = throttle(size => {
         AppSettingsModel.menuViewWidth = size;
     }, 1000);
 

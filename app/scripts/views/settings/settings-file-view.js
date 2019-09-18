@@ -323,11 +323,10 @@ class SettingsFileView extends View {
                     return;
                 }
                 const expName = this.model.name.toLowerCase();
-                const existingFile = _.find(files, file => {
-                    return (
+                const existingFile = [...files].find(
+                    file =>
                         !file.dir && UrlFormat.getDataFileName(file.name).toLowerCase() === expName
-                    );
-                });
+                );
                 if (existingFile) {
                     Alerts.yesno({
                         header: Locale.setFileAlreadyExists,

@@ -25,7 +25,6 @@ function config(grunt, mode = 'production') {
             app: ['babel-helpers', 'app', 'main.scss'],
             vendor: [
                 'jquery',
-                'underscore',
                 'backbone',
                 'morphdom',
                 'kdbxweb',
@@ -61,8 +60,6 @@ function config(grunt, mode = 'production') {
             alias: {
                 'babel-helpers': path.join(rootDir, 'app/lib/babel-helpers.js'),
                 backbone: `backbone/backbone${devMode ? '-min' : ''}.js`,
-                underscore: `underscore/underscore${devMode ? '-min' : ''}.js`,
-                _: `underscore/underscore${devMode ? '-min' : ''}.js`,
                 jquery: `jquery/dist/jquery${devMode ? '.min' : ''}.js`,
                 morphdom: `morphdom/dist/morphdom-umd${devMode ? '.min' : ''}.js`,
                 kdbxweb: 'kdbxweb/dist/kdbxweb.js',
@@ -187,7 +184,6 @@ function config(grunt, mode = 'production') {
                     pkg.license
             ),
             new webpack.ProvidePlugin({
-                _: 'underscore',
                 $: 'jquery',
                 babelHelpers: 'babel-helpers'
             }),

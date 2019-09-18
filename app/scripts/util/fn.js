@@ -1,5 +1,10 @@
 import Handlebars from 'hbs';
 
+/**
+ * Replacements for methods that are bloated in lodash
+ * Because we don't want to load extra 20kb of code for simple pick, shuffle, or escape
+ */
+
 const escape = Handlebars.escapeExpression;
 
 export { escape };
@@ -36,4 +41,21 @@ export function omit(obj, props) {
         delete result[prop];
     }
     return result;
+}
+
+export function mapObject(obj, fn) {
+    return Object.entries(obj).reduce((result, [key, value]) => {
+        result[key] = fn(value);
+        return result;
+    }, {});
+}
+
+export function isEqual(a, b) {
+    if (a === b) {
+        return true;
+    }
+    if (a instanceof Date) {
+        return +a === +b;
+    }
+    return false;
 }

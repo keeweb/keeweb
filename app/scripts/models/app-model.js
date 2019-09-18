@@ -21,6 +21,7 @@ import { IdGenerator } from 'util/generators/id-generator';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
 import { noop } from 'util/fn';
+import debounce from 'lodash/debounce';
 import 'util/kdbxweb/protected-value-ex';
 
 class AppModel {
@@ -217,10 +218,10 @@ class AppModel {
     updateTags() {
         const oldTags = this.tags.slice();
         this.tags.splice(0, this.tags.length);
-        this.files.forEach(function(file) {
+        for (const file of this.files) {
             this._addTags(file);
-        }, this);
-        if (!_.isEqual(oldTags, this.tags)) {
+        }
+        if (oldTags.join(',') !== this.tags.join(',')) {
             this._tagsChanged();
         }
     }
@@ -359,7 +360,7 @@ class AppModel {
                 }
             );
         });
-        const matches = _.pairs(userNames);
+        const matches = Object.entries(userNames);
         matches.sort((x, y) => y[1] - x[1]);
         const maxResults = 5;
         if (matches.length > maxResults) {
@@ -729,7 +730,7 @@ class AppModel {
         if (file.storage === 'file') {
             Storage.file.watch(
                 file.path,
-                _.debounce(() => {
+                debounce(() => {
                     this.syncFile(file);
                 }, Timeouts.FileChangeSync)
             );

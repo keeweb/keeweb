@@ -7,6 +7,7 @@ import { KdbxToHtml } from 'comp/format/kdbx-to-html';
 import { GroupModel } from 'models/group-model';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { Logger } from 'util/logger';
+import { mapObject } from 'util/fn';
 
 const logger = new Logger('file');
 
@@ -638,7 +639,7 @@ class FileModel extends Model {
     }
 
     getCustomIcons() {
-        return _.mapObject(this.db.meta.customIcons, customIcon =>
+        return mapObject(this.db.meta.customIcons, customIcon =>
             IconUrlFormat.toDataUrl(customIcon)
         );
     }

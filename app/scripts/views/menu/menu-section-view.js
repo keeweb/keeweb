@@ -3,6 +3,7 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { Resizable } from 'framework/views/resizable';
 import { Scrollable } from 'framework/views/scrollable';
 import { MenuItemView } from 'views/menu/menu-item-view';
+import throttle from 'lodash/throttle';
 import template from 'templates/menu/menu-section.hbs';
 
 class MenuSectionView extends View {
@@ -75,7 +76,7 @@ class MenuSectionView extends View {
         this.saveViewHeight(size);
     }
 
-    saveViewHeight = _.throttle(size => {
+    saveViewHeight = throttle(size => {
         AppSettingsModel.tagsViewHeight = size;
     }, 1000);
 }

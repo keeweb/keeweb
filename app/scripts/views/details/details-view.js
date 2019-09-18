@@ -34,6 +34,7 @@ import { FieldViewTags } from 'views/fields/field-view-tags';
 import { FieldViewText } from 'views/fields/field-view-text';
 import { FieldViewUrl } from 'views/fields/field-view-url';
 import { IconSelectView } from 'views/icon-select-view';
+import { isEqual } from 'util/fn';
 import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
@@ -682,7 +683,7 @@ class DetailsView extends View {
                 this.appModel.updateTags();
             } else if (e.field === 'Expires') {
                 const dt = e.val || undefined;
-                if (!_.isEqual(dt, this.model.expires)) {
+                if (!isEqual(dt, this.model.expires)) {
                     this.model.setExpires(dt);
                 }
             }

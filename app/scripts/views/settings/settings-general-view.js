@@ -16,6 +16,7 @@ import { DateFormat } from 'util/formatting/date-format';
 import { Locale } from 'util/locale';
 import { SettingsLogsView } from 'views/settings/settings-logs-view';
 import { SettingsPrvView } from 'views/settings/settings-prv-view';
+import { mapObject } from 'util/fn';
 import template from 'templates/settings/settings-general.hbs';
 
 class SettingsGeneralView extends View {
@@ -66,7 +67,7 @@ class SettingsGeneralView extends View {
         const storageProviders = this.getStorageProviders();
 
         super.render({
-            themes: _.mapObject(SettingsManager.allThemes, theme => Locale[theme]),
+            themes: mapObject(SettingsManager.allThemes, theme => Locale[theme]),
             activeTheme: AppSettingsModel.theme,
             locales: SettingsManager.allLocales,
             activeLocale: SettingsManager.activeLocale,
