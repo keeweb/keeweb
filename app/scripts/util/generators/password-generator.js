@@ -1,5 +1,6 @@
 import kdbxweb from 'kdbxweb';
 import { phonetic } from 'util/generators/phonetic';
+import { shuffle } from 'util/fn';
 
 const PasswordGenerator = {
     charRanges: {
@@ -45,7 +46,7 @@ const PasswordGenerator = {
             const rand = Math.round(Math.random() * 1000) + randomBytes[i];
             chars.push(range[rand % range.length]);
         }
-        return _.shuffle(chars).join('');
+        return shuffle(chars).join('');
     },
 
     generateMac() {

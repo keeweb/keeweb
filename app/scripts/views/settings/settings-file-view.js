@@ -12,7 +12,7 @@ import { PasswordGenerator } from 'util/generators/password-generator';
 import { Locale } from 'util/locale';
 import { FileSaver } from 'util/ui/file-saver';
 import { OpenConfigView } from 'views/open-config-view';
-import { escape } from 'util/fn';
+import { escape, omit } from 'util/fn';
 import template from 'templates/settings/settings-file.hbs';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
@@ -304,7 +304,7 @@ class SettingsFileView extends View {
                             if (!storageConfig) {
                                 return;
                             }
-                            const opts = _.omit(storageConfig, ['path', 'storage']);
+                            const opts = omit(storageConfig, ['path', 'storage']);
                             if (opts && Object.keys(opts).length) {
                                 this.model.opts = opts;
                             }

@@ -7,6 +7,7 @@ import { Color } from 'util/data/color';
 import { Otp } from 'util/data/otp';
 import { Ranking } from 'util/data/ranking';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
+import { omit } from 'util/fn';
 
 const EntryModel = Backbone.Model.extend({
     defaults: {},
@@ -159,7 +160,7 @@ const EntryModel = Backbone.Model.extend({
     },
 
     _fieldsToModel(fields) {
-        return _.omit(fields, this.builtInFields);
+        return omit(fields, this.builtInFields);
     },
 
     _attachmentsToModel(binaries) {

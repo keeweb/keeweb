@@ -188,11 +188,7 @@ class AppView extends View {
     }
 
     updateApp() {
-        if (
-            UpdateModel.updateStatus === 'ready' &&
-            !Launcher &&
-            !this.model.files.hasOpenFiles()
-        ) {
+        if (UpdateModel.updateStatus === 'ready' && !Launcher && !this.model.files.hasOpenFiles()) {
             window.location.reload();
         }
     }

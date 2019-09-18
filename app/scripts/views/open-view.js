@@ -17,7 +17,7 @@ import { Logger } from 'util/logger';
 import { InputFx } from 'util/ui/input-fx';
 import { OpenConfigView } from 'views/open-config-view';
 import { StorageFileListView } from 'views/storage-file-list-view';
-import { escape } from 'util/fn';
+import { escape, omit } from 'util/fn';
 import template from 'templates/open.hbs';
 
 const logger = new Logger('open-view');
@@ -842,7 +842,7 @@ class OpenView extends View {
         const storage = Storage[config.storage];
         this.storageWaitId = Math.random();
         const path = config.path;
-        const opts = _.omit(config, ['path', 'storage']);
+        const opts = omit(config, ['path', 'storage']);
         const req = {
             waitId: this.storageWaitId,
             storage: config.storage,

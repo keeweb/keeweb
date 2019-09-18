@@ -144,10 +144,7 @@ class SettingsGeneralView extends View {
                             DateFormat.dtStr(UpdateModel.lastSuccessCheckDate)
                         ) +
                         ': ' +
-                        Locale.setGenLastCheckVer.replace(
-                            '{}',
-                            UpdateModel.lastVersion
-                        );
+                        Locale.setGenLastCheckVer.replace('{}', UpdateModel.lastVersion);
                 }
                 return errMsg;
             }
@@ -157,10 +154,7 @@ class SettingsGeneralView extends View {
                     ' ' +
                     DateFormat.dtStr(UpdateModel.lastCheckDate) +
                     ': ';
-                const cmp = SemVer.compareVersions(
-                    RuntimeInfo.version,
-                    UpdateModel.lastVersion
-                );
+                const cmp = SemVer.compareVersions(RuntimeInfo.version, UpdateModel.lastVersion);
                 if (cmp >= 0) {
                     msg += Locale.setGenLatestVer;
                 } else {

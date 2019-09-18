@@ -38,8 +38,7 @@ class FooterView extends View {
     render() {
         super.render({
             files: this.model.files,
-            updateAvailable:
-                ['ready', 'found'].indexOf(UpdateModel.updateStatus) >= 0
+            updateAvailable: ['ready', 'found'].indexOf(UpdateModel.updateStatus) >= 0
         });
     }
 

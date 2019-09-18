@@ -1,5 +1,6 @@
 import { Events } from 'framework/events';
 import { Features } from 'util/features';
+import { pick } from 'util/fn';
 
 const Tip = function(el, config) {
     this.el = el;
@@ -183,8 +184,10 @@ Tip.hideTip = function(el) {
 Tip.updateTip = function(el, props) {
     if (el._tip) {
         el._tip.hide();
-        const { title, placement, fast, showTimeout, hideTimeout } = props;
-        Object.assign(el._tip, { title, placement, fast, showTimeout, hideTimeout });
+        Object.assign(
+            el._tip,
+            pick(props, ['title', 'placement', 'fast', 'showTimeout', 'hideTimeout'])
+        );
     }
 };
 
