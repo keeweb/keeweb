@@ -225,7 +225,7 @@ const AutoType = {
         const entries = evt.filter.getEntries();
         if (entries.length === 1 && AppSettingsModel.directAutotype) {
             this.hideWindow(() => {
-                this.runAndHandleResult({ entry: entries.at(0) });
+                this.runAndHandleResult({ entry: entries[0] });
             });
             return;
         }

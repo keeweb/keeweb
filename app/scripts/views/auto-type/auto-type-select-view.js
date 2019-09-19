@@ -145,7 +145,7 @@ class AutoTypeSelectView extends View {
         e.preventDefault();
         const activeIndex = this.entries.indexOf(this.result) - 1;
         if (activeIndex >= 0) {
-            this.result = this.entries.at(activeIndex);
+            this.result = this.entries[activeIndex];
             this.highlightActive();
         }
     }
@@ -154,7 +154,7 @@ class AutoTypeSelectView extends View {
         e.preventDefault();
         const activeIndex = this.entries.indexOf(this.result) + 1;
         if (activeIndex < this.entries.length) {
-            this.result = this.entries.at(activeIndex);
+            this.result = this.entries[activeIndex];
             this.highlightActive();
         }
     }

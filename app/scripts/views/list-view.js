@@ -152,14 +152,14 @@ class ListView extends View {
     selectPrev() {
         const ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix > 0) {
-            this.selectItem(this.items.at(ix - 1));
+            this.selectItem(this.items[ix - 1]);
         }
     }
 
     selectNext() {
         const ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix < this.items.length - 1) {
-            this.selectItem(this.items.at(ix + 1));
+            this.selectItem(this.items[ix + 1]);
         }
     }
 
