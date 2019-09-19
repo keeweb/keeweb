@@ -12,7 +12,7 @@
     "dependencies": {
         "@babel/core": "^7.6.0",
         "@babel/preset-env": "^7.6.0",
-        "argon2-browser": "1.11.0",
+        "argon2-browser": "1.11.1",
         "babel-loader": "8.0.6",
         "backbone": "1.4.0",
         "baron": "3.0.3",
