@@ -178,10 +178,15 @@ const StorageWebDav = StorageBase.extend({
                                         return cb({ revConflict: true }, xhr, stat);
                                     }
                                     let movePath = path;
-                                    if (movePath.includes('://')) {
-                                        movePath = movePath.replace(/^\w+:\/\/[^\/]+/, '');
-                                    } else if (!movePath.startsWith('/')) {
-                                        movePath = location.pathname.replace(/[^/]*$/, movePath);
+                                    if (movePath.indexOf('://') < 0) {
+                                        if (movePath.indexOf('/') === 0) {
+                                            movePath =
+                                                location.protocol + '//' + location.host + movePath;
+                                        } else {
+                                            movePath = location.href
+                                                .replace(/\?(.*)/, '')
+                                                .replace(/[^/]*$/, movePath);
+                                        }
                                     }
                                     that._request(
                                         _.defaults(

@@ -1,4 +1,13 @@
 {
+  "detDelToTrash": "Diesen Eintrag löschen?",
+  "detDelToTrashBody": "Der Eintrag wird in den Papierkorb verschoben.",
+  "setGenThemeMacDark": "macOS Dunkel",
+  "setFileSaveToHtml": "HTML",
+  "exportFileInfo": "Dateiinformationen",
+  "exportHtmlName": "Name",
+  "exportHtmlDate": "Exportdatum",
+  "exportGenerator": "Software",
+  "exportDescription": "Diese Datei wurde mit {} erstellt.",
   "months": [
     "Januar",
     "Februar",
