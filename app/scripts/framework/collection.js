@@ -1,93 +1,148 @@
 import EventEmitter from 'events';
 
 const SymbolEvents = Symbol('events');
+const SymbolArray = Symbol('array');
 
-function emitSet(target, property, value, receiver, prevValue) {
+function emitSet(target, value, prevValue) {
     const emitter = target[SymbolEvents];
     if (!emitter.paused) {
         const updates = { added: [], removed: [] };
         if (prevValue) {
-            emitter.emit('remove', prevValue, receiver);
+            emitter.emit('remove', prevValue, target);
             updates.removed.push(prevValue);
         }
         if (value) {
-            emitter.emit('add', value, receiver);
+            emitter.emit('add', value, target);
             updates.added.push(value);
         }
         emitter.emit('change', updates, this);
     }
 }
 
-function emitRemoved(target, removed, receiver) {
+function emitRemoved(target, removed) {
     const emitter = target[SymbolEvents];
     if (!emitter.paused) {
         for (const item of removed) {
-            emitter.emit('remove', item, receiver);
+            emitter.emit('remove', item, target);
         }
         emitter.emit('change', { added: [], removed }, this);
     }
 }
 
-const ProxyDef = {
-    set(target, property, value, receiver) {
-        if (property === 'length') {
-            if (value < target.length) {
-                const removed = target.slice(value);
-                emitRemoved(target, removed, receiver);
-            }
-            target.length = value;
-            return true;
+function checkType(target, value) {
+    const modelClass = target.constructor.model;
+    if (!modelClass) {
+        throw new Error(`Model type not defined for ${target.constructor.name}`);
+    }
+    if (!(value instanceof modelClass)) {
+        const valueType = value && value.constructor ? value.constructor.name : typeof value;
+        throw new Error(`Attempt to write ${valueType} into ${target.constructor.name}`);
+    }
+}
+
+function makeArrayProp(i) {
+    return {
+        configurable: true,
+        enumerable: true,
+        get() {
+            return this[SymbolArray][i];
         }
+    };
+}
+
+function setArrayProperties(object) {
+    if (!object.constructor.wantsArrayProperties) {
+        return;
+    }
+    const length = object[SymbolArray].length;
+    for (let i = length; i >= 0; i--) {
+        if (!Object.prototype.hasOwnProperty.call(object, i)) {
+            Object.defineProperty(object, i, makeArrayProp(i));
+        }
+    }
+    for (let i = length; ; i++) {
+        if (Object.prototype.hasOwnProperty.call(object, i)) {
+            delete object[i];
+        } else {
+            break;
+        }
+    }
+}
+
+const ProxyDef = {
+    set(target, property, value) {
         const numProp = parseInt(property);
         if (isNaN(numProp)) {
             target[property] = value;
             return true;
         }
-        const modelClass = target.constructor.model;
-        if (!modelClass) {
-            throw new Error(`Model type not defined for ${receiver.constructor.name}`);
-        }
-        if (value && !(value instanceof modelClass)) {
-            throw new Error(
-                `Attempt to write ${value.constructor.name} into ${receiver.constructor.name}`
-            );
-        }
-        const prevValue = target[property];
+        checkType(target, value);
+        const array = target[SymbolArray];
+        const prevValue = array[property];
         if (prevValue !== value) {
-            target[property] = value;
-            emitSet(target, property, value, receiver, prevValue);
+            array[property] = value;
+            emitSet(target, value, prevValue);
         }
         return true;
+    },
+
+    get(target, property) {
+        if (typeof property !== 'string') {
+            return target[property];
+        }
+        const numProp = parseInt(property);
+        if (isNaN(numProp)) {
+            return target[property];
+        }
+        return target[SymbolArray][property];
     }
 };
 
-class Collection extends Array {
+class Collection {
     constructor(items) {
-        super();
-
         const emitter = new EventEmitter();
         emitter.setMaxListeners(100);
 
         const properties = {
-            [SymbolEvents]: { value: emitter }
+            [SymbolEvents]: { value: emitter },
+            [SymbolArray]: { value: [] }
         };
 
         Object.defineProperties(this, properties);
 
-        const object = new Proxy(this, ProxyDef);
-
         if (items) {
-            object.push(...items);
+            this.push(...items);
         }
 
-        return object;
+        return new Proxy(this, ProxyDef);
+    }
+
+    get length() {
+        return this[SymbolArray].length;
+    }
+
+    set length(value) {
+        const array = this[SymbolArray];
+        let removed;
+        if (value < array.length) {
+            removed = array.slice(value);
+        }
+        array.length = value;
+        setArrayProperties(this, array.length);
+        if (removed) {
+            emitRemoved(this, removed);
+        }
     }
 
     push(...items) {
         if (items.length) {
+            for (const item of items) {
+                checkType(this, item);
+            }
             this[SymbolEvents].paused = true;
-            super.push(...items);
+            this[SymbolArray].push(...items);
             this[SymbolEvents].paused = false;
+            setArrayProperties(this);
             for (const item of items) {
                 this[SymbolEvents].emit('add', item, this);
             }
@@ -97,9 +152,10 @@ class Collection extends Array {
 
     pop() {
         this[SymbolEvents].paused = true;
-        const item = super.pop();
+        const item = this[SymbolArray].pop();
         this[SymbolEvents].paused = false;
         if (item) {
+            setArrayProperties(this);
             this[SymbolEvents].emit('remove', item, this);
             this[SymbolEvents].emit('change', { added: [], removed: [item] }, this);
         }
@@ -107,9 +163,10 @@ class Collection extends Array {
 
     shift() {
         this[SymbolEvents].paused = true;
-        const item = super.shift();
+        const item = this[SymbolArray].shift();
         this[SymbolEvents].paused = false;
         if (item) {
+            setArrayProperties(this);
             this[SymbolEvents].emit('remove', item, this);
             this[SymbolEvents].emit('change', { added: [], removed: [item] }, this);
         }
@@ -117,9 +174,13 @@ class Collection extends Array {
 
     unshift(...items) {
         if (items.length) {
+            for (const item of items) {
+                checkType(this, item);
+            }
             this[SymbolEvents].paused = true;
-            super.unshift(...items);
+            this[SymbolArray].unshift(...items);
             this[SymbolEvents].paused = false;
+            setArrayProperties(this);
             for (const item of items) {
                 this[SymbolEvents].emit('add', item, this);
             }
@@ -128,9 +189,13 @@ class Collection extends Array {
     }
 
     splice(start, deleteCount, ...items) {
+        for (const item of items) {
+            checkType(this, item);
+        }
         this[SymbolEvents].paused = true;
-        const removed = super.splice(start, deleteCount, ...items);
+        const removed = this[SymbolArray].splice(start, deleteCount, ...items);
         this[SymbolEvents].paused = false;
+        setArrayProperties(this);
         for (const item of removed) {
             this[SymbolEvents].emit('remove', item, this);
         }
@@ -165,6 +230,48 @@ class Collection extends Array {
             }
         }
     }
+
+    fill() {
+        throw new Error('Not implemented');
+    }
+
+    copyWithin() {
+        throw new Error('Not implemented');
+    }
+}
+
+const ProxiedArrayMethods = [
+    Symbol.iterator,
+    'concat',
+    'entries',
+    'every',
+    'filter',
+    'find',
+    'findIndex',
+    'flat',
+    'flatMap',
+    'forEach',
+    'includes',
+    'indexOf',
+    'join',
+    'keys',
+    'lastIndexOf',
+    'map',
+    'reduce',
+    'reduceRight',
+    'reverse',
+    'slice',
+    'some',
+    'sort',
+    'values'
+];
+
+for (const method of ProxiedArrayMethods) {
+    Object.defineProperty(Collection.prototype, method, {
+        value: function proxyMethod(...args) {
+            return this[SymbolArray][method](...args);
+        }
+    });
 }
 
 export { Collection };

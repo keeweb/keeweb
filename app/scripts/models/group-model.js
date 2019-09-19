@@ -342,6 +342,8 @@ class GroupModel extends MenuItemModel {
 }
 
 GroupModel.defineModelProperties({
+    id: '',
+    uuid: '',
     iconId: 0,
     entries: null,
     filterKey: 'group',
@@ -351,7 +353,11 @@ GroupModel.defineModelProperties({
     drop: true,
     enableSearching: true,
     enableAutoType: null,
-    autoTypeSeq: null
+    autoTypeSeq: null,
+    group: null,
+    file: null,
+    parentGroup: null,
+    customIconId: null
 });
 
 export { GroupModel };

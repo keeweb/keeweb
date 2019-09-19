@@ -54,6 +54,9 @@ class MenuItemView extends View {
     render() {
         this.removeInnerViews();
         super.render(this.model);
+        if (this.model.options) {
+            window.model = this.model;
+        }
         this.iconEl = this.$el.find('.menu__item-icon');
         const items = this.model.items;
         if (items) {
@@ -98,8 +101,7 @@ class MenuItemView extends View {
         this.model.setExpanded(expanded);
     }
 
-    changeCls(model, cls) {
-        const oldCls = model.previousAttributes().cls;
+    changeCls(model, cls, oldCls) {
         if (oldCls) {
             this.$el.removeClass(oldCls);
         }

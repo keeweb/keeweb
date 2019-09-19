@@ -2,15 +2,17 @@ import { Model } from 'framework/model';
 import { MenuItemCollection } from 'collections/menu/menu-item-collection';
 import { MenuItemModel } from './menu-item-model';
 
+function convertItem(item) {
+    return item instanceof MenuItemModel ? item : new MenuItemModel(item);
+}
+
 class MenuSectionModel extends Model {
     constructor(items = []) {
-        super({
-            items: new MenuItemCollection(items.map(item => new MenuItemModel(item)))
-        });
+        super({ items: new MenuItemCollection(items.map(convertItem)) });
     }
 
     addItem(item) {
-        this.items.push(item);
+        this.items.push(convertItem(item));
         this.emit('change-items');
     }
 
@@ -48,7 +50,7 @@ class MenuSectionModel extends Model {
 
     setItems(items) {
         this.items.length = 0;
-        this.items.push(...items);
+        this.items.push(...items.map(convertItem));
         this.emit('change-items');
     }
 }

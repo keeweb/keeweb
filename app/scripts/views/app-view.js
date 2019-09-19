@@ -310,9 +310,7 @@ class AppView extends View {
     }
 
     showFileSettings(e) {
-        const menuItem = this.model.menu.filesSection
-            .items
-            .find(item => item.file.id === e.fileId);
+        const menuItem = this.model.menu.filesSection.items.find(item => item.file.id === e.fileId);
         if (this.views.settings) {
             if (this.views.settings.file === menuItem.file) {
                 this.showEntries();

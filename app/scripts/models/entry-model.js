@@ -157,7 +157,7 @@ class EntryModel extends Model {
     }
 
     _fieldsToModel(fields) {
-        return omit(fields, this.builtInFields);
+        return omit(fields, BuiltInFields);
     }
 
     _attachmentsToModel(binaries) {

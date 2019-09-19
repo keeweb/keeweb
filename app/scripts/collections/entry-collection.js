@@ -25,7 +25,7 @@ class EntryCollection extends Collection {
 
     defaultComparator = 'title';
 
-    filter = null;
+    entryFilter = null;
 
     constructor(models, options) {
         super(models);
@@ -34,7 +34,7 @@ class EntryCollection extends Collection {
     }
 
     sortEntries(comparator, filter) {
-        this.filter = filter;
+        this.entryFilter = filter;
         this.comparator = this.comparators[comparator] || this.comparators[this.defaultComparator];
         this.sort();
     }

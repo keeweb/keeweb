@@ -5,10 +5,10 @@ const SymbolEvents = Symbol('events');
 const SymbolDefaults = Symbol('defaults');
 const SymbolExtensions = Symbol('extensions');
 
-function emitPropChange(target, property, value, receiver) {
+function emitPropChange(target, property, value, prevValue, receiver) {
     const emitter = target[SymbolEvents];
     if (!emitter.paused) {
-        emitter.emit('change:' + property, receiver, value);
+        emitter.emit('change:' + property, receiver, value, prevValue);
         if (!emitter.noChange) {
             emitter.emit('change', receiver, { [property]: value });
         }
@@ -20,13 +20,14 @@ const ProxyDef = {
         if (Object.prototype.hasOwnProperty.call(target, property)) {
             const defaults = target[SymbolDefaults];
             const value = defaults[property];
-            if (target[property] !== value) {
+            const prevValue = target[property];
+            if (prevValue !== value) {
                 if (Object.prototype.hasOwnProperty.call(defaults, property)) {
                     target[property] = value;
                 } else {
                     delete target[property];
                 }
-                emitPropChange(target, property, value, receiver);
+                emitPropChange(target, property, value, prevValue, receiver);
             }
             return true;
         }

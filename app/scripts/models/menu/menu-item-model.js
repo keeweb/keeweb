@@ -4,7 +4,7 @@ import { MenuOptionModel } from 'models/menu/menu-option-model';
 
 class MenuItemModel extends Model {
     constructor(model) {
-        super();
+        super(model);
         if (model && model.file) {
             model.file.on('change:name', this.changeTitle.bind(this));
         }
@@ -36,7 +36,9 @@ class MenuItemModel extends Model {
 }
 
 MenuItemModel.defineModelProperties({
+    id: '',
     title: '',
+    locTitle: '',
     icon: '',
     customIcon: null,
     active: false,
@@ -51,7 +53,11 @@ MenuItemModel.defineModelProperties({
     drop: false,
     filterKey: null,
     filterValue: null,
-    collapsible: false
+    collapsible: false,
+    defaultItem: false,
+    page: null,
+    editable: false,
+    file: null
 });
 
 export { MenuItemModel };
