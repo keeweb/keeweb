@@ -238,6 +238,10 @@ class Collection {
     copyWithin() {
         throw new Error('Not implemented');
     }
+
+    toJSON() {
+        return this[SymbolArray].concat();
+    }
 }
 
 const ProxiedArrayMethods = [
