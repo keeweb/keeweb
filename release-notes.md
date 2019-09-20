@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.10.1 (2019-09-19)
+##### v1.10.1 (2019-09-20)
 `-` fixed Argon2 issues in Safari 13  
 `-` fix #1259: using absolute paths in webdav  
 
