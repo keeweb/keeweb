@@ -135,7 +135,6 @@ app.minimizeThenHideIfInTray = function() {
 app.getMainWindow = function() {
     return mainWindow;
 };
-app.emitBackboneEvent = emitBackboneEvent;
 app.setGlobalShortcuts = setGlobalShortcuts;
 
 function setAppOptions() {
@@ -200,16 +199,16 @@ function createMainWindow(appSettings) {
         saveMainWindowPosition();
     });
     mainWindow.on('minimize', () => {
-        emitBackboneEvent('launcher-minimize');
+        emitRemoteEvent('launcher-minimize');
     });
     mainWindow.on('leave-full-screen', () => {
-        emitBackboneEvent('leave-full-screen');
+        emitRemoteEvent('leave-full-screen');
     });
     mainWindow.on('enter-full-screen', () => {
-        emitBackboneEvent('enter-full-screen');
+        emitRemoteEvent('enter-full-screen');
     });
     mainWindow.on('session-end', () => {
-        emitBackboneEvent('os-lock');
+        emitRemoteEvent('os-lock');
     });
     restoreMainWindowPosition();
 }
@@ -229,7 +228,7 @@ function restoreMainWindow() {
 }
 
 function closeMainWindow() {
-    emitBackboneEvent('launcher-exit-request');
+    emitRemoteEvent('launcher-exit-request');
     setTimeout(destroyAppIcon, 0);
 }
 
@@ -302,17 +301,17 @@ function restoreMainWindowPosition() {
 }
 
 function mainWindowBlur() {
-    emitBackboneEvent('main-window-blur');
+    emitRemoteEvent('main-window-blur');
 }
 
 function mainWindowFocus() {
-    emitBackboneEvent('main-window-focus');
+    emitRemoteEvent('main-window-focus');
 }
 
-function emitBackboneEvent(e, arg) {
+function emitRemoteEvent(e, arg) {
     if (mainWindow && mainWindow.webContents) {
         arg = JSON.stringify(arg);
-        mainWindow.webContents.executeJavaScript(`Backbone.trigger('${e}', ${arg}); void 0;`);
+        mainWindow.webContents.executeJavaScript(`Events.emit('${e}', ${arg}); void 0;`);
     }
 }
 
@@ -412,7 +411,7 @@ function setGlobalShortcuts(appSettings) {
         const eventName = shortcutDef.event;
         try {
             electron.globalShortcut.register(shortcut, () => {
-                emitBackboneEvent(eventName);
+                emitRemoteEvent(eventName);
             });
         } catch (e) {}
     }
@@ -420,16 +419,16 @@ function setGlobalShortcuts(appSettings) {
 
 function subscribePowerEvents() {
     electron.powerMonitor.on('suspend', () => {
-        emitBackboneEvent('power-monitor-suspend');
+        emitRemoteEvent('power-monitor-suspend');
     });
     electron.powerMonitor.on('resume', () => {
-        emitBackboneEvent('power-monitor-resume');
+        emitRemoteEvent('power-monitor-resume');
     });
     if (process.platform === 'darwin') {
         const id = electron.systemPreferences.subscribeNotification(
             'com.apple.screenIsLocked',
             () => {
-                emitBackboneEvent('os-lock');
+                emitRemoteEvent('os-lock');
             }
         );
         systemNotificationIds.push(id);

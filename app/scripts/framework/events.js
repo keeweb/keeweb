@@ -9,4 +9,6 @@ class Events extends EventEmitter {
 
 const instance = new Events();
 
+global.Events = instance;
+
 export { instance as Events };
