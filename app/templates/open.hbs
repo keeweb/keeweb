@@ -2,33 +2,33 @@
     <input type="file" class="open__file-ctrl hide-by-pos" />
     <div class="open__icons">
         {{#if canOpen}}
-            <div class="open__icon open__icon-open" tabindex="1">
+            <div class="open__icon open__icon-open" tabindex="1" id="open__icon-open">
                 <i class="fa fa-lock open__icon-i"></i>
                 <div class="open__icon-text">{{res 'openOpen'}}</div>
             </div>
         {{/if}}
         {{#if canCreate}}
-            <div class="open__icon open__icon-new" tabindex="2">
+            <div class="open__icon open__icon-new" tabindex="2" id="open__icon-new">
                 <i class="fa fa-plus open__icon-i"></i>
                 <div class="open__icon-text">{{res 'openNew'}}</div>
             </div>
         {{/if}}
         {{#if canOpenDemo}}
             {{#ifeq demoOpened false}}
-                <div class="open__icon open__icon-demo" tabindex="3">
+                <div class="open__icon open__icon-demo" tabindex="3" id="open__icon-demo">
                     <i class="fa fa-magic open__icon-i"></i>
                     <div class="open__icon-text">{{res 'openDemo'}}</div>
                 </div>
             {{/ifeq}}
         {{/if}}
         {{#if showMore}}
-            <div class="open__icon open__icon-more" tabindex="4">
+            <div class="open__icon open__icon-more" tabindex="4" id="open__icon-more">
                 <i class="fa fa-ellipsis-h open__icon-i"></i>
                 <div class="open__icon-text">{{res 'openMore'}}</div>
             </div>
         {{/if}}
         {{#if showLogo}}
-            <div class="open__icon open__icon-more">
+            <div class="open__icon open__icon-more id=open__icon-more">
                 <i class="fa fa-key open__icon-i"></i>
                 <div class="open__icon-text">KeeWeb</div>
             </div>
@@ -36,7 +36,8 @@
     </div>
     <div class="open__icons open__icons--lower hide">
         {{#each storageProviders as |prv|}}
-            <div class="open__icon open__icon-storage svg-btn" data-storage="{{prv.name}}" tabindex="{{add @index 5}}">
+            <div class="open__icon open__icon-storage svg-btn" data-storage="{{prv.name}}" tabindex="{{add @index 5}}"
+                 id="open__icon-storage--{{prv.name}}">
                 {{#if prv.icon}}<i class="fa fa-{{prv.icon}} open__icon-i"></i>{{/if}}
                 {{#if prv.iconSvg}}<div class="open__icon-svg">{{{prv.iconSvg}}}</div>{{/if}}
                 <div class="open__icon-text">{{res prv.name}}</div>
@@ -44,14 +45,14 @@
         {{/each}}
         {{#if canOpenDemo}}
             {{#if demoOpened}}
-                <div class="open__icon open__icon-demo" tabindex="11">
+                <div class="open__icon open__icon-demo" tabindex="11" id="open__icon-demo">
                     <i class="fa fa-magic open__icon-i"></i>
                     <div class="open__icon-text">{{res 'openDemo'}}</div>
                 </div>
             {{/if}}
         {{/if}}
         {{#if canOpenSettings}}
-            <div class="open__icon open__icon-settings" tabindex="12">
+            <div class="open__icon open__icon-settings" tabindex="12" id="open__icon-settings">
                 <i class="fa fa-cog open__icon-i"></i>
                 <div class="open__icon-text">{{res 'settings'}}</div>
             </div>
@@ -81,7 +82,8 @@
         </div>
         <div class="open__last">
             {{#each lastOpenFiles as |file|}}
-                <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 16}}">
+                <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 16}}"
+                     id="open__last-item--{{file.id}}">
                     {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
                     {{#if file.iconSvg}}<div class="open__last-item-icon open__last-item-icon--svg">{{{file.iconSvg}}}</div>{{/if}}
                     <span class="open__last-item-text">{{file.name}}</span>
