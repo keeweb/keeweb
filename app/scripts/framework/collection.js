@@ -40,35 +40,6 @@ function checkType(target, value) {
     }
 }
 
-function makeArrayProp(i) {
-    return {
-        configurable: true,
-        enumerable: true,
-        get() {
-            return this[SymbolArray][i];
-        }
-    };
-}
-
-function setArrayProperties(object) {
-    if (!object.constructor.wantsArrayProperties) {
-        return;
-    }
-    const length = object[SymbolArray].length;
-    for (let i = length; i >= 0; i--) {
-        if (!Object.prototype.hasOwnProperty.call(object, i)) {
-            Object.defineProperty(object, i, makeArrayProp(i));
-        }
-    }
-    for (let i = length; ; i++) {
-        if (Object.prototype.hasOwnProperty.call(object, i)) {
-            delete object[i];
-        } else {
-            break;
-        }
-    }
-}
-
 const ProxyDef = {
     set(target, property, value) {
         const numProp = parseInt(property);
@@ -128,7 +99,6 @@ class Collection {
             removed = array.slice(value);
         }
         array.length = value;
-        setArrayProperties(this, array.length);
         if (removed) {
             emitRemoved(this, removed);
         }
@@ -142,7 +112,6 @@ class Collection {
             this[SymbolEvents].paused = true;
             this[SymbolArray].push(...items);
             this[SymbolEvents].paused = false;
-            setArrayProperties(this);
             for (const item of items) {
                 this[SymbolEvents].emit('add', item, this);
             }
@@ -155,7 +124,6 @@ class Collection {
         const item = this[SymbolArray].pop();
         this[SymbolEvents].paused = false;
         if (item) {
-            setArrayProperties(this);
             this[SymbolEvents].emit('remove', item, this);
             this[SymbolEvents].emit('change', { added: [], removed: [item] }, this);
         }
@@ -166,7 +134,6 @@ class Collection {
         const item = this[SymbolArray].shift();
         this[SymbolEvents].paused = false;
         if (item) {
-            setArrayProperties(this);
             this[SymbolEvents].emit('remove', item, this);
             this[SymbolEvents].emit('change', { added: [], removed: [item] }, this);
         }
@@ -180,7 +147,6 @@ class Collection {
             this[SymbolEvents].paused = true;
             this[SymbolArray].unshift(...items);
             this[SymbolEvents].paused = false;
-            setArrayProperties(this);
             for (const item of items) {
                 this[SymbolEvents].emit('add', item, this);
             }
@@ -195,7 +161,6 @@ class Collection {
         this[SymbolEvents].paused = true;
         const removed = this[SymbolArray].splice(start, deleteCount, ...items);
         this[SymbolEvents].paused = false;
-        setArrayProperties(this);
         for (const item of removed) {
             this[SymbolEvents].emit('remove', item, this);
         }

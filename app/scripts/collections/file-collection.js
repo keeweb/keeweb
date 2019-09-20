@@ -3,7 +3,6 @@ import { FileModel } from 'models/file-model';
 
 class FileCollection extends Collection {
     static model = FileModel;
-    static wantsArrayProperties = true;
 
     hasOpenFiles() {
         return this.some(file => file.active);
