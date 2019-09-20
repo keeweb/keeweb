@@ -119,7 +119,8 @@ const KdbxwebInit = {
         self.postMessage({ op: 'postRun' });
         self.onmessage = e => {
             try {
-                const hash = self.Module.calcHash(self.Module, e.data);
+                /* eslint-disable-next-line no-undef */
+                const hash = Module.calcHash(Module, e.data);
                 self.postMessage({ hash });
             } catch (e) {
                 self.postMessage({ error: e.toString() });
