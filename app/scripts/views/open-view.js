@@ -622,9 +622,9 @@ class OpenView extends View {
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
         this.params.password = this.passwordInput.value;
-        this.afterPaint(
-            this.model.openFile.bind(this.model, this.params, this.openDbComplete.bind(this))
-        );
+        this.afterPaint(() => {
+            this.model.openFile(this.params, err => this.openDbComplete(err));
+        });
     }
 
     openDbComplete(err) {

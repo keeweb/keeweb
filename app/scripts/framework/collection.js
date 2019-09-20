@@ -196,6 +196,10 @@ class Collection {
         }
     }
 
+    sort() {
+        this[SymbolArray].sort(this.comparator);
+    }
+
     fill() {
         throw new Error('Not implemented');
     }
@@ -231,7 +235,6 @@ const ProxiedArrayMethods = [
     'reverse',
     'slice',
     'some',
-    'sort',
     'values'
 ];
 
