@@ -1,6 +1,6 @@
 {
     "name": "keeweb",
-    "version": "1.10.0",
+    "version": "1.10.1",
     "description": "Free cross-platform password manager compatible with KeePass",
     "main": "Gruntfile.js",
     "private": true,
@@ -14,7 +14,7 @@
         "@babel/plugin-external-helpers": "^7.2.0",
         "@babel/plugin-proposal-class-properties": "^7.5.5",
         "@babel/preset-env": "^7.6.0",
-        "argon2-browser": "1.10.2",
+        "argon2-browser": "1.11.1",
         "babel-cli": "^6.26.0",
         "babel-eslint": "^10.0.3",
         "babel-loader": "8.0.6",
