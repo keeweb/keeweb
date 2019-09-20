@@ -357,7 +357,8 @@ GroupModel.defineModelProperties({
     group: null,
     file: null,
     parentGroup: null,
-    customIconId: null
+    customIconId: null,
+    isJustCreated: false
 });
 
 export { GroupModel };

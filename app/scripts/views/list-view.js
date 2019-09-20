@@ -237,7 +237,7 @@ class ListView extends View {
         if (size) {
             this.$el.css('flex', '0 0 ' + size + 'px');
         } else {
-            this.$el.css('flex', null);
+            this.$el.css('flex', '');
         }
     }
 
