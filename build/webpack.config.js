@@ -129,10 +129,10 @@ function config(grunt, mode = 'production') {
                     ]
                 },
                 {
-                    test: /fonts\/.*\.(woff2|ttf|eot|svg)/,
+                    test: /fonts\/.*\.(woff|ttf|eot|svg)$/,
                     use: ['url-loader', 'ignore-loader']
                 },
-                { test: /\.woff$/, loader: 'url-loader' },
+                { test: /\.woff2$/, loader: 'url-loader' },
                 { test: /\.pem$/, loader: 'raw-loader' },
                 { test: /\.kdbx$/, loader: 'base64-loader' }
             ]
