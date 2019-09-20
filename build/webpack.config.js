@@ -125,6 +125,7 @@ function config(grunt, mode = 'production') {
                     use: [
                         MiniCssExtractPlugin.loader,
                         { loader: 'css-loader', options: { sourceMap: devMode } },
+                        { loader: 'postcss-loader', options: { sourceMap: devMode } },
                         { loader: 'sass-loader', options: { sourceMap: devMode } }
                     ]
                 },

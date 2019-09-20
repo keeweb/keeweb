@@ -15,6 +15,7 @@
         "@babel/plugin-proposal-class-properties": "^7.5.5",
         "@babel/preset-env": "^7.6.0",
         "argon2-browser": "1.11.1",
+        "autoprefixer": "^9.6.1",
         "babel-cli": "^6.26.0",
         "babel-eslint": "^10.0.3",
         "babel-loader": "8.0.6",
@@ -66,6 +67,7 @@
         "optimize-css-assets-webpack-plugin": "^5.0.3",
         "pikaday": "1.8.0",
         "pkcs15-smartcard-sign": "^1.0.0",
+        "postcss-loader": "^3.0.0",
         "prettier": "^1.18.2",
         "raw-loader": "^3.1.0",
         "sass-loader": "^8.0.0",
@@ -102,5 +104,15 @@
         "node": ">=10.0"
     },
     "license": "MIT",
-    "readme": "README.md"
+    "readme": "README.md",
+    "browserslist": [
+        "last 2 Firefox versions",
+        "last 2 Chrome versions",
+        "last 2 Safari version",
+        "last 2 iOS versions",
+        "last 2 Edge versions",
+        "last 1 Opera version",
+        "last 1 ChromeAndroid version",
+        "Electron > 6.0.1"
+    ]
 }
