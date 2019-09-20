@@ -253,7 +253,7 @@ class FileModel extends Model {
     reload() {
         this.buildObjectMap();
         this.readModel();
-        this.trigger('reload', this);
+        this.emit('reload', this);
     }
 
     mergeOrUpdate(fileData, remoteKey, callback) {
