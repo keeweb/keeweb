@@ -40,23 +40,8 @@ restorePreferences();
 
 app.on('window-all-closed', () => {
     if (restartPending) {
-        // unbind all handlers, load new app.js module and pass control to it
-        app.removeAllListeners('window-all-closed');
-        app.removeAllListeners('ready');
-        app.removeAllListeners('open-file');
-        app.removeAllListeners('activate');
-        app.removeAllListeners('second-instance');
-        electron.globalShortcut.unregisterAll();
-        electron.powerMonitor.removeAllListeners('suspend');
-        electron.powerMonitor.removeAllListeners('resume');
-        for (const id of systemNotificationIds) {
-            electron.systemPreferences.unsubscribeNotification(id);
-        }
-        systemNotificationIds.length = 0;
-        const userDataAppFile = path.join(userDataDir, 'app.asar/app.js');
-        delete require.cache[require.resolve('./app.js')];
-        require(userDataAppFile);
-        app.emit('ready');
+        app.relaunch();
+        app.exit(0);
     } else {
         if (process.platform !== 'darwin') {
             app.quit();
