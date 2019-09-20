@@ -6,10 +6,13 @@ import { FieldView } from 'views/fields/field-view';
 import { FieldViewText } from 'views/fields/field-view-text';
 
 class FieldViewCustom extends FieldViewText {
-    events = {
-        'mousedown .details__field-label': 'fieldLabelMousedown',
-        ...FieldViewText.prototype.events
-    };
+    constructor(model, options) {
+        super(model, options);
+        this.events = {
+            ...this.events,
+            'mousedown .details__field-label': 'fieldLabelMousedown'
+        };
+    }
 
     startEdit() {
         super.startEdit();

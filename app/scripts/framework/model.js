@@ -36,8 +36,9 @@ const ProxyDef = {
     set(target, property, value, receiver) {
         if (Object.prototype.hasOwnProperty.call(target, property) || target[SymbolExtensions]) {
             if (target[property] !== value) {
+                const prevValue = target[property];
                 target[property] = value;
-                emitPropChange(target, property, value, receiver);
+                emitPropChange(target, property, value, prevValue, receiver);
             }
             return true;
         } else {
