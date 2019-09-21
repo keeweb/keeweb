@@ -310,4 +310,6 @@ if (window.launcherOpenedFile) {
 }
 Events.on('app-ready', () => setTimeout(() => Launcher.checkOpenFiles(), 0));
 
+global.Events = Events;
+
 export { Launcher };
