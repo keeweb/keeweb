@@ -272,27 +272,38 @@ class GroupModel extends MenuItemModel {
     }
 
     moveHere(object) {
-        if (!object || object.id === this.id || object.file !== this.file) {
+        if (!object || object.id === this.id) {
             return;
         }
-        this.file.setModified();
-        if (object instanceof GroupModel) {
-            for (let parent = this; parent; parent = parent.parentGroup) {
-                if (object === parent) {
+        if (object.file === this.file) {
+            this.file.setModified();
+            if (object instanceof GroupModel) {
+                for (let parent = this; parent; parent = parent.parentGroup) {
+                    if (object === parent) {
+                        return;
+                    }
+                }
+                if (this.group.groups.indexOf(object.group) >= 0) {
                     return;
                 }
+                this.file.db.move(object.group, this.group);
+                this.file.reload();
+            } else if (object instanceof EntryModel) {
+                if (this.group.entries.indexOf(object.entry) >= 0) {
+                    return;
+                }
+                this.file.db.move(object.entry, this.group);
+                this.file.reload();
             }
-            if (this.group.groups.indexOf(object.group) >= 0) {
-                return;
+        } else {
+            if (object instanceof EntryModel) {
+                this.file.setModified();
+                const detachedEntry = object.detach();
+                this.file.db.importEntry(detachedEntry, this.group, object.file.db);
+                this.file.reload();
+            } else {
+                // moving groups between files is not supported for now
             }
-            this.file.db.move(object.group, this.group);
-            this.file.reload();
-        } else if (object instanceof EntryModel) {
-            if (this.group.entries.indexOf(object.entry) >= 0) {
-                return;
-            }
-            this.file.db.move(object.entry, this.group);
-            this.file.reload();
         }
     }
 

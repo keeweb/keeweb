@@ -516,6 +516,13 @@ class EntryModel extends Model {
         }
     }
 
+    detach() {
+        this.file.setModified();
+        this.file.db.move(this.entry, null);
+        this.file.reload();
+        return this.entry;
+    }
+
     moveToFile(file) {
         if (this.canBeDeleted) {
             this.removeWithoutHistory();
