@@ -14,7 +14,7 @@ class MenuSectionView extends View {
     itemViews = [];
 
     minHeight = 55;
-    autoHeigh = 'auto';
+    autoHeight = 'auto';
 
     constructor(model, options) {
         super(model, options);
