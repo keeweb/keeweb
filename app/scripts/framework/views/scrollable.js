@@ -4,6 +4,8 @@ import { Features } from 'util/features';
 
 const isEnabled = !Features.isMobile;
 
+const SymbolRemoveScrollListenerAdded = Symbol('remove-scroll-added');
+
 const Scrollable = {
     createScroll(opts) {
         // opts.cssGuru = true;
@@ -12,7 +14,10 @@ const Scrollable = {
                 this.removeScroll();
             }
             this.scroll = baron(opts);
-            this.once('remove', () => this.removeScroll);
+            if (!this[SymbolRemoveScrollListenerAdded]) {
+                this.once('remove', () => this.removeScroll);
+                this[SymbolRemoveScrollListenerAdded] = true;
+            }
         }
         this.scroller = this.$el.find('.scroller');
         this.scrollerBar = this.$el.find('.scroller__bar');
