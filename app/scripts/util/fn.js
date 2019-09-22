@@ -57,5 +57,8 @@ export function isEqual(a, b) {
     if (a instanceof Date) {
         return +a === +b;
     }
+    if (a instanceof Array && b instanceof Array) {
+        return a.join(',') === b.join(',');
+    }
     return false;
 }
