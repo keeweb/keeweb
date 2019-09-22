@@ -4,7 +4,7 @@ import { Features } from 'util/features';
 
 const isEnabled = !Features.isMobile;
 
-const SymbolRemoveScrollListenerAdded = Symbol('remove-scroll-added');
+const SymbolRemoveScrollListenerAdded = Symbol('removeScrollAdded');
 
 const Scrollable = {
     createScroll(opts) {
