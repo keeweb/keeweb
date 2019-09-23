@@ -183,19 +183,9 @@ module.exports = function(grunt) {
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
             },
-            'manifest-html': {
-                options: {
-                    replacements: [
-                        { pattern: '<html', replacement: '<html manifest="manifest.appcache"' }
-                    ]
-                },
-                files: { 'dist/index.html': 'dist/index.html' }
-            },
-            'desktop-html': {
-                options: {
-                    replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }]
-                },
-                files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
+            'service-worker': {
+                options: { replacements: [{ pattern: '0.0.0', replacement: pkg.version }] },
+                files: { 'dist/service-worker.js': 'app/service-worker.js' }
             },
             'desktop-public-key': {
                 options: {
@@ -478,14 +468,6 @@ module.exports = function(grunt) {
                     ],
                     expectedCount: 7,
                     publicKey: 'app/resources/public-key.pem'
-                }
-            }
-        },
-        'sign-html': {
-            app: {
-                options: {
-                    file: 'dist/index.html',
-                    skip: grunt.option('skip-sign')
                 }
             }
         },

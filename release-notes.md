@@ -10,6 +10,7 @@ Release notes
 `+` #743: copying entry fields to clipboard  
 `+` #713: markdown notes  
 `+` #336: moving entries across files  
+`*` #156: using ServiceWorker instead of AppCache  
 `*` devtools are now opened with alt-cmd-I  
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  

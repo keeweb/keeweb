@@ -40,12 +40,21 @@ const Updater = {
 
     init() {
         this.scheduleNextCheck();
-        if (!Launcher && window.applicationCache) {
-            window.applicationCache.addEventListener(
-                'updateready',
-                this.checkAppCacheUpdateReady.bind(this)
-            );
-            this.checkAppCacheUpdateReady();
+        if (!Launcher && navigator.serviceWorker && !RuntimeInfo.beta && !RuntimeInfo.devMode) {
+            navigator.serviceWorker
+                .register('service-worker.js')
+                .then(reg => {
+                    logger.info('Service worker registered');
+                    reg.addEventListener('updatefound', () => {
+                        if (reg.active) {
+                            logger.info('Service worker found an update');
+                            UpdateModel.set({ updateStatus: 'ready' });
+                        }
+                    });
+                })
+                .catch(e => {
+                    logger.error('Failed to register a service worker', e);
+                });
         }
     },
 
@@ -258,15 +267,6 @@ const Updater = {
             return err.toString();
         }
         return null;
-    },
-
-    checkAppCacheUpdateReady() {
-        if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-            try {
-                window.applicationCache.swapCache();
-            } catch (e) {}
-            UpdateModel.set({ updateStatus: 'ready' });
-        }
     }
 };
 

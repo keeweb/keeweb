@@ -99,7 +99,8 @@ function config(grunt, mode = 'production') {
                                 pattern: /@@COMMIT/g,
                                 replacement: () =>
                                     grunt.config.get('gitinfo.local.branch.current.shortSHA')
-                            }
+                            },
+                            { pattern: /@@DEVMODE/g, replacement: () => (devMode ? '1' : '') }
                         ]
                     })
                 },

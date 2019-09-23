@@ -5,6 +5,7 @@ const RuntimeInfo = {
     beta: !!'@@BETA',
     buildDate: '@@DATE',
     commit: '@@COMMIT',
+    devMode: '@@DEVMODE',
     userAgent: navigator.userAgent,
     launcher: Launcher ? Launcher.name + ' v' + Launcher.version : ''
 };
