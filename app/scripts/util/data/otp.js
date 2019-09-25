@@ -61,8 +61,12 @@ Otp.prototype.next = function(callback) {
         }
         sig = new DataView(sig);
         const offset = sig.getInt8(sig.byteLength - 1) & 0xf;
-        let pass = (sig.getUint32(offset) & 0x7fffffff).toString();
-        pass = Otp.leftPad(pass.substr(pass.length - this.digits), this.digits);
+        const hmac = sig.getUint32(offset) & 0x7fffffff;
+        let pass;
+        if (this.issuer === 'Steam')
+          pass = Otp.HmacToSteamCode(hmac);
+        else
+          pass = Otp.HmacToDigits(hmac, this.digits);
         callback(pass, timeLeft);
     });
 };
@@ -86,6 +90,22 @@ Otp.prototype.hmac = function(data, callback) {
             callback(null, err);
         });
 };
+
+Otp.HmacToDigits = function (hmac, length) {
+  let code = hmac.toString();
+  code = Otp.leftPad(code.substr(code.length - length), length);
+  return code;
+}
+
+Otp.HmacToSteamCode = function(hmac) {
+  const steamChars = '23456789BCDFGHJKMNPQRTVWXY';
+  let code = '';
+  for (let i = 0; i < 5; ++i) {
+    code += steamChars.charAt(hmac % steamChars.length);
+    hmac /= steamChars.length;
+  }
+  return code;
+}
 
 Otp.fromBase32 = function(str) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
