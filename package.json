@@ -90,7 +90,7 @@
         "start": "grunt",
         "test": "grunt test",
         "postinstall": "cd desktop && npm install",
-        "build-beta": "grunt --beta && sed 's/<html manifest=\"manifest.appcache\">//' dist/index.html > ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
+        "build-beta": "grunt --beta && cp dist/index.html ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
         "electron": "ELECTRON_DISABLE_SECURITY_WARNINGS=1 electron desktop --htmlpath=http://localhost:8085",
         "dev": "grunt dev",
         "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js"
