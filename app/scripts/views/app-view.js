@@ -10,6 +10,8 @@ import { Timeouts } from 'const/timeouts';
 import { UpdateModel } from 'models/update-model';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
+import { Logger } from 'util/logger';
+import { CsvParser } from 'util/data/csv-parser';
 import { DetailsView } from 'views/details/details-view';
 import { DragView } from 'views/drag-view';
 import { DropdownView } from 'views/dropdown-view';
@@ -23,6 +25,7 @@ import { MenuView } from 'views/menu/menu-view';
 import { OpenView } from 'views/open-view';
 import { SettingsView } from 'views/settings/settings-view';
 import { TagView } from 'views/tag-view';
+import { ImportCsvView } from 'views/import-csv-view';
 import template from 'templates/app.hbs';
 
 class AppView extends View {
@@ -85,11 +88,10 @@ class AppView extends View {
         this.listenTo(Events, 'show-context-menu', this.showContextMenu);
         this.listenTo(Events, 'second-instance', this.showSingleInstanceAlert);
         this.listenTo(Events, 'file-modified', this.handleAutoSaveTimer);
-
-        this.listenTo(UpdateModel, 'change:updateReady', this.updateApp);
-
         this.listenTo(Events, 'enter-full-screen', this.enterFullScreen);
         this.listenTo(Events, 'leave-full-screen', this.leaveFullScreen);
+        this.listenTo(Events, 'import-csv-requested', this.showImportCsv);
+        this.listenTo(UpdateModel, 'change:updateReady', this.updateApp);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
@@ -163,6 +165,7 @@ class AppView extends View {
         this.hideSettings();
         this.hideOpenFile();
         this.hideKeyChange();
+        this.hideImportCsv();
         this.views.open = new OpenView(this.model);
         this.views.open.render();
         this.views.open.on('close', () => {
@@ -205,6 +208,7 @@ class AppView extends View {
         this.hideOpenFile();
         this.hideSettings();
         this.hideKeyChange();
+        this.hideImportCsv();
     }
 
     hideOpenFile() {
@@ -248,6 +252,13 @@ class AppView extends View {
         }
     }
 
+    hideImportCsv() {
+        if (this.views.importCsv) {
+            this.views.importCsv.remove();
+            this.views.importCsv = null;
+        }
+    }
+
     showSettings(selectedMenuItem) {
         this.model.menu.setMenu('settings');
         this.views.menu.show();
@@ -259,6 +270,7 @@ class AppView extends View {
         this.hidePanelView();
         this.hideOpenFile();
         this.hideKeyChange();
+        this.hideImportCsv();
         this.views.settings = new SettingsView(this.model);
         this.views.settings.render();
         if (!selectedMenuItem) {
@@ -771,6 +783,58 @@ class AppView extends View {
     bodyClick(e) {
         IdleTracker.regUserAction();
         Events.emit('click', e);
+    }
+
+    showImportCsv(file) {
+        const reader = new FileReader();
+        const logger = new Logger('import-csv');
+        logger.info('Reading CSV...');
+        reader.onload = e => {
+            logger.info('Parsing CSV...');
+            const ts = logger.ts();
+            const parser = new CsvParser();
+            let data;
+            try {
+                data = parser.parse(e.target.result);
+            } catch (e) {
+                logger.error('Error parsing CSV', e);
+                Alerts.error({ header: Locale.openFailedRead, body: e.toString() });
+                return;
+            }
+            logger.info(`Parsed CSV: ${data.rows.length} records, ${logger.ts(ts)}`);
+
+            // TODO: refactor this
+            this.hideSettings();
+            this.hidePanelView();
+            this.hideOpenFile();
+            this.hideKeyChange();
+            this.views.menu.hide();
+            this.views.listWrap.hide();
+            this.views.list.hide();
+            this.views.listDrag.hide();
+            this.views.details.hide();
+
+            this.views.importCsv = new ImportCsvView(data, {
+                appModel: this.model,
+                fileName: file.name
+            });
+            this.views.importCsv.render();
+            this.views.importCsv.on('cancel', () => {
+                if (this.model.files.hasOpenFiles()) {
+                    this.showEntries();
+                } else {
+                    this.showOpenFile();
+                }
+            });
+            this.views.importCsv.on('done', () => {
+                this.model.refresh();
+                this.showEntries();
+            });
+        };
+        reader.onerror = () => {
+            Alerts.error({ header: Locale.openFailedRead });
+        };
+        reader.readAsText(file);
     }
 }
 

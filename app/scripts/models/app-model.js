@@ -418,17 +418,19 @@ class AppModel {
         }
     }
 
-    createNewFile() {
-        let name;
-        for (let i = 0; ; i++) {
-            name = 'New' + (i || '');
-            if (!this.files.getByName(name) && !this.fileInfos.getByName(name)) {
-                break;
+    createNewFile(name) {
+        if (!name) {
+            for (let i = 0; ; i++) {
+                name = 'New' + (i || '');
+                if (!this.files.getByName(name) && !this.fileInfos.getByName(name)) {
+                    break;
+                }
             }
         }
         const newFile = new FileModel({ id: IdGenerator.uuid() });
         newFile.create(name);
         this.addFile(newFile);
+        return newFile;
     }
 
     openFile(params, callback) {

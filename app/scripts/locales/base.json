@@ -597,5 +597,9 @@
     "exportHtmlName": "Name",
     "exportHtmlDate": "Export date",
     "exportGenerator": "Software",
-    "exportDescription": "This file is generated with {}."
+    "exportDescription": "This file is generated with {}.",
+
+    "importCsvTitle": "Import from CSV",
+    "importCsvRun": "Import",
+    "importIgnoreField": "Ignore"
 }

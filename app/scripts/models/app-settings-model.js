@@ -67,6 +67,7 @@ AppSettingsModel.defineModelProperties(
         canOpenSettings: true,
         canCreate: true,
         canImportXml: true,
+        canImportCsv: true,
         canRemoveLatest: true,
         canExportXml: true,
         canExportHtml: true,

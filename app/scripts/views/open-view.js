@@ -512,10 +512,19 @@ class OpenView extends View {
                 keyFile,
                 dataFile.path ? null : this.showLocalFileAlert.bind(this)
             );
-        } else if (this.model.settings.canImportXml) {
+            return;
+        }
+        if (this.model.settings.canImportXml) {
             const xmlFile = files.find(file => /\.xml$/i.test(file.name));
             if (xmlFile) {
                 this.setFile(xmlFile, null, this.showLocalFileAlert.bind(this));
+                return;
+            }
+        }
+        if (this.model.settings.canImportCsv) {
+            const csvFile = files.find(file => /\.csv$/i.test(file.name));
+            if (csvFile) {
+                Events.emit('import-csv-requested', csvFile);
             }
         }
     }

@@ -15,7 +15,10 @@ class CsvParser {
         while (this.next && this.index < this.csv.length) {
             this.next = this.next(this);
         }
-        return this.buildResult();
+        if (this.lines.length <= 1) {
+            throw new Error('Empty CSV');
+        }
+        return { headers: this.lines[0], rows: this.lines.slice(1) };
     }
 
     handleBeforeValue() {
@@ -99,23 +102,6 @@ class CsvParser {
 
     handleError() {
         throw new Error(this.error);
-    }
-
-    buildResult() {
-        const result = [];
-        const firstLine = this.lines[0];
-        for (let i = 1; i < this.lines.length; i++) {
-            const line = this.lines[i];
-            const lineObj = {};
-            for (let col = 0; col < line.length; col++) {
-                const fieldName = firstLine[col];
-                if (fieldName) {
-                    lineObj[fieldName] = line[col];
-                }
-            }
-            result.push(lineObj);
-        }
-        return result;
     }
 }
 
