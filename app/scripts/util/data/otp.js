@@ -25,7 +25,6 @@ const Otp = function(url, params) {
     this.url = url;
 
     this.type = params.type;
-    this.issuer = params.issuer;
     this.account = params.account;
     this.secret = params.secret;
     this.issuer = params.issuer;
