@@ -90,7 +90,7 @@ Otp.prototype.hmac = function(data, callback) {
         });
 };
 
-Otp.HmacToDigits = function (hmac, length) {
+Otp.HmacToDigits = function(hmac, length) {
   let code = hmac.toString();
   code = Otp.leftPad(code.substr(code.length - length), length);
   return code;
