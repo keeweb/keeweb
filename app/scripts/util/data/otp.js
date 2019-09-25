@@ -62,10 +62,11 @@ Otp.prototype.next = function(callback) {
         const offset = sig.getInt8(sig.byteLength - 1) & 0xf;
         const hmac = sig.getUint32(offset) & 0x7fffffff;
         let pass;
-        if (this.issuer === 'Steam')
-          pass = Otp.HmacToSteamCode(hmac);
-        else
-          pass = Otp.HmacToDigits(hmac, this.digits);
+        if (this.issuer === 'Steam') {
+            pass = Otp.HmacToSteamCode(hmac);
+        } else {
+            pass = Otp.HmacToDigits(hmac, this.digits);
+        }
         callback(pass, timeLeft);
     });
 };
@@ -91,20 +92,20 @@ Otp.prototype.hmac = function(data, callback) {
 };
 
 Otp.HmacToDigits = function(hmac, length) {
-  let code = hmac.toString();
-  code = Otp.leftPad(code.substr(code.length - length), length);
-  return code;
-}
+    let code = hmac.toString();
+    code = Otp.leftPad(code.substr(code.length - length), length);
+    return code;
+};
 
 Otp.HmacToSteamCode = function(hmac) {
-  const steamChars = '23456789BCDFGHJKMNPQRTVWXY';
-  let code = '';
-  for (let i = 0; i < 5; ++i) {
-    code += steamChars.charAt(hmac % steamChars.length);
-    hmac /= steamChars.length;
-  }
-  return code;
-}
+    const steamChars = '23456789BCDFGHJKMNPQRTVWXY';
+    let code = '';
+    for (let i = 0; i < 5; ++i) {
+        code += steamChars.charAt(hmac % steamChars.length);
+        hmac /= steamChars.length;
+    }
+    return code;
+};
 
 Otp.fromBase32 = function(str) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
