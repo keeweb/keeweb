@@ -3,6 +3,7 @@ import { View } from 'framework/views/view';
 import { Scrollable } from 'framework/views/scrollable';
 import template from 'templates/import-csv.hbs';
 import { EntryModel } from 'models/entry-model';
+import { escape } from 'util/fn';
 
 class ImportCsvView extends View {
     parent = '.app__body';
@@ -13,7 +14,8 @@ class ImportCsvView extends View {
         'click .back-button': 'returnToApp',
         'click .import-csv__button-cancel': 'returnToApp',
         'click .import-csv__button-run': 'runImport',
-        'change .import-csv__field-select': 'changeMapping'
+        'change .import-csv__field-select': 'changeMapping',
+        'change .import-csv__target-select': 'changeGroup'
     };
 
     knownFields = [
@@ -25,20 +27,23 @@ class ImportCsvView extends View {
     ];
 
     fieldMapping = [];
+    targetGroup = undefined;
 
     constructor(model, options) {
         super(model, options);
         this.appModel = options.appModel;
         this.fileName = options.fileName;
         this.initScroll();
-        this.guessfieldMapping();
+        this.guessFieldMapping();
+        this.fillGroups();
     }
 
     render() {
         super.render({
             headers: this.model.headers,
             rows: this.model.rows,
-            fieldMapping: this.fieldMapping
+            fieldMapping: this.fieldMapping,
+            groups: this.groups
         });
         this.createScroll({
             root: this.$el.find('.import-csv__body')[0],
@@ -80,7 +85,7 @@ class ImportCsvView extends View {
         }
     }
 
-    guessfieldMapping() {
+    guessFieldMapping() {
         const usedFields = {};
 
         for (const fieldName of this.model.headers.map(f => f.trim())) {
@@ -105,10 +110,38 @@ class ImportCsvView extends View {
         }
     }
 
+    fillGroups() {
+        this.groups = [];
+        for (const file of this.appModel.files) {
+            file.forEachGroup(group => {
+                let title = escape(group.title);
+                for (let parent = group; parent.parentGroup; parent = parent.parentGroup) {
+                    title = '&nbsp;&nbsp;' + title;
+                }
+                this.groups.push({ id: group.id, fileId: file.id, title });
+            });
+        }
+    }
+
+    changeGroup(e) {
+        const groupId = e.target.value;
+        if (!groupId) {
+            this.targetGroup = undefined;
+            return;
+        }
+        const fileId = e.target.querySelector(`option[value="${groupId}"]`).dataset.file;
+        const file = this.appModel.files.get(fileId);
+        this.targetGroup = file.getGroup(groupId);
+    }
+
     runImport() {
-        const fileName = this.fileName.replace(/\.csv$/i, '');
-        const file = this.appModel.createNewFile(fileName);
-        const group = file.groups[0];
+        let group = this.targetGroup;
+        let file = group ? group.file : undefined;
+        if (!group) {
+            const fileName = this.fileName.replace(/\.csv$/i, '');
+            file = this.appModel.createNewFile(fileName);
+            group = file.groups[0];
+        }
         for (const row of this.model.rows) {
             const newEntry = EntryModel.newEntry(group, file);
             for (let ix = 0; ix < row.length; ix++) {

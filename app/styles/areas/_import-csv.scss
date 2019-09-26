@@ -57,9 +57,22 @@
     &__bottom {
         padding: $medium-padding-v $base-padding-h;
         display: flex;
-        justify-content: flex-end;
+        align-items: baseline;
         button ~ button {
             margin-left: $small-spacing;
+        }
+    }
+
+    &__target {
+        flex: 1 1 0;
+        display: flex;
+        align-items: baseline;
+
+        &-select {
+            width: 30%;
+            height: 2em;
+            margin-left: $base-padding-h;
+            padding-right: $large-padding;
         }
     }
 }

@@ -601,5 +601,7 @@
 
     "importCsvTitle": "Import from CSV",
     "importCsvRun": "Import",
-    "importIgnoreField": "Ignore"
+    "importIgnoreField": "Ignore",
+    "importTo": "Entries will be imported to",
+    "importNewFile": "New file"
 }

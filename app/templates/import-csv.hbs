@@ -46,6 +46,17 @@
         <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
     </div>
     <div class="import-csv__bottom">
+        <div class="import-csv__target">
+            <label for="import-csv__target-select">
+                {{res 'importTo'}}
+            </label>
+            <select class="import-csv__target-select" id="import-csv__target-select">
+                <option value="" selected>{{res 'importNewFile'}}</option>
+                {{#each groups as |group|}}
+                    <option value="{{group.id}}" data-file="{{group.fileId}}">{{{group.title}}}</option>
+                {{/each}}
+            </select>
+        </div>
         <div class="import-csv__bottom-buttons">
             <button class="import-csv__button-cancel btn-silent">{{res 'alertCancel'}}</button>
             <button class="import-csv__button-run">{{res 'importCsvRun'}}</button>
