@@ -1,7 +1,12 @@
+import kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { Tip } from 'util/ui/tip';
 import { isEqual } from 'util/fn';
+import { Features } from 'util/features';
+import { Locale } from 'util/locale';
+import { AutoType } from 'auto-type';
+import { DropdownView } from 'views/dropdown-view';
 import template from 'templates/details/field.hbs';
 
 class FieldView extends View {
@@ -10,7 +15,8 @@ class FieldView extends View {
     events = {
         'click .details__field-label': 'fieldLabelClick',
         'click .details__field-value': 'fieldValueClick',
-        'dragstart .details__field-label': 'fieldLabelDrag'
+        'dragstart .details__field-label': 'fieldLabelDrag',
+        'click .details__field-options': 'fieldOptionsClick'
     };
 
     constructor(model, options) {
@@ -30,7 +36,8 @@ class FieldView extends View {
             multiline: this.model.multiline,
             title: this.model.title,
             canEditTitle: this.model.newField,
-            protect: this.value && this.value.isProtected
+            protect: this.value && this.value.isProtected,
+            hasOptions: !Features.isMobile && this.hasOptions
         });
         this.valueEl = this.$el.find('.details__field-value');
         this.valueEl.html(this.renderValue(this.value));
@@ -58,9 +65,14 @@ class FieldView extends View {
 
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
+        this.hideOptionsDropdown();
         if (this.preventCopy) {
             return;
         }
+        this.copyValue();
+    }
+
+    copyValue() {
         const field = this.model.name;
         let copyRes;
         if (field) {
@@ -94,6 +106,7 @@ class FieldView extends View {
     }
 
     fieldValueClick(e) {
+        this.hideOptionsDropdown();
         if (['a', 'input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) >= 0) {
             return;
         }
@@ -105,6 +118,7 @@ class FieldView extends View {
 
     fieldLabelDrag(e) {
         e.stopPropagation();
+        this.hideOptionsDropdown();
         if (!this.value) {
             return;
         }
@@ -167,6 +181,85 @@ class FieldView extends View {
     triggerChange(arg) {
         arg.sender = this;
         this.emit('change', arg);
+    }
+
+    fieldOptionsClick(e) {
+        if (this.views.optionsDropdown) {
+            this.hideOptionsDropdown();
+            return;
+        }
+
+        e.stopPropagation();
+
+        const dropdownView = new DropdownView();
+
+        this.listenTo(dropdownView, 'cancel', this.hideOptionsDropdown);
+        this.listenTo(dropdownView, 'select', this.optionsDropdownSelect);
+
+        const options = [];
+
+        options.push({ value: 'copy', icon: 'copy', text: Locale.alertCopy });
+
+        if (this.value instanceof kdbxweb.ProtectedValue) {
+            if (this.valueEl.hasClass('details__field-value--revealed')) {
+                options.push({ value: 'hide', icon: 'eye-slash', text: Locale.detHideField });
+            } else {
+                options.push({ value: 'reveal', icon: 'eye', text: Locale.detRevealField });
+            }
+        }
+
+        if (AutoType.enabled && this.model.sequence) {
+            options.push({ value: 'autotype', icon: 'keyboard-o', text: Locale.detAutoTypeField });
+        }
+
+        const rect = this.$el[0].getBoundingClientRect();
+        const position = {
+            top: rect.bottom,
+            right: rect.right
+        };
+
+        dropdownView.render({
+            position,
+            options
+        });
+
+        this.views.optionsDropdown = dropdownView;
+    }
+
+    hideOptionsDropdown() {
+        if (this.views.optionsDropdown) {
+            this.views.optionsDropdown.remove();
+            delete this.views.optionsDropdown;
+        }
+    }
+
+    optionsDropdownSelect(e) {
+        this.hideOptionsDropdown();
+        switch (e.item) {
+            case 'copy':
+                this.copyValue();
+                break;
+            case 'reveal':
+                this.revealValue();
+                break;
+            case 'hide':
+                this.hideValue();
+                break;
+            case 'autotype':
+                this.emit('autotype', { source: this });
+                break;
+        }
+    }
+
+    revealValue() {
+        const valueHtml = this.value.getText();
+        this.valueEl.addClass('details__field-value--revealed').html(valueHtml);
+    }
+
+    hideValue() {
+        this.valueEl
+            .removeClass('details__field-value--revealed')
+            .html(this.renderValue(this.value));
     }
 }
 

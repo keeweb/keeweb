@@ -160,6 +160,7 @@
         &-fields {
             flex: 1 0 50%;
             min-width: 0;
+            margin-right: $base-padding-h;
         }
 
         &-aside {
@@ -227,7 +228,7 @@
             line-height: $details-field-line-height;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-right: 20px;
+            margin-right: 2em;
             &-add-label {
                 color: transparent;
             }
@@ -380,6 +381,9 @@
                     border-width: 0;
                 }
             }
+            &--revealed {
+                font-family: $monospace-font-family;
+            }
             > select {
                 margin: 0;
                 width: 100%;
@@ -419,6 +423,9 @@
                     margin-left: 2em;
                 }
             }
+            .details__field--options & {
+                margin-right: 0;
+            }
         }
 
         &--no-select {
@@ -431,6 +438,24 @@
         @include mobile {
             border-bottom: light-border();
             padding-bottom: 0.5em;
+        }
+
+        &-options {
+            color: var(--muted-color);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity $slow-transition-out, color $base-duration $base-timing;
+            align-self: flex-start;
+            width: 2em;
+            text-align: center;
+            padding-top: .25em;
+            .details__field:hover & {
+                opacity: 1;
+                transition: opacity $slow-transition-in;
+            }
+            &:hover {
+                color: var(--medium-color);
+            }
         }
     }
 

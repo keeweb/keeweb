@@ -3,6 +3,8 @@ import { FieldViewText } from 'views/fields/field-view-text';
 import { escape } from 'util/fn';
 
 class FieldViewAutocomplete extends FieldViewText {
+    hasOptions = true;
+
     endEdit(newVal, extra) {
         if (this.autocomplete) {
             this.autocomplete.remove();

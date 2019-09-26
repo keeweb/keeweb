@@ -11,6 +11,8 @@ import { GeneratorView } from 'views/generator-view';
 import { escape } from 'util/fn';
 
 class FieldViewText extends FieldView {
+    hasOptions = true;
+
     constructor(model, options) {
         super(model, options);
         this.once('remove', () => this.stopBlurListener());

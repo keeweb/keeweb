@@ -32,6 +32,7 @@ const AutoType = {
 
     handleEvent(e) {
         const entry = (e && e.entry) || null;
+        const sequence = (e && e.sequence) || null;
         logger.debug('Auto type event', entry);
         if (this.running) {
             logger.debug('Already running, skipping event');
@@ -39,7 +40,7 @@ const AutoType = {
         }
         if (entry) {
             this.hideWindow(() => {
-                this.runAndHandleResult({ entry });
+                this.runAndHandleResult({ entry, sequence });
             });
         } else {
             if (this.selectEntryView) {

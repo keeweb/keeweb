@@ -2,6 +2,8 @@ import { FieldViewText } from 'views/fields/field-view-text';
 import { escape } from 'util/fn';
 
 class FieldViewTags extends FieldViewText {
+    hasOptions = false;
+
     renderValue(value) {
         return value ? escape(value.join(', ')) : '';
     }

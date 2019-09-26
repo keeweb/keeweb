@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.11.0 (TBD)
+`+` #1125: field actions: copy, reveal, auto-type  
 `+` #1226: 7-digit Authy OTP support  
 `+` #107: multiline custom fields support  
 `+` #1243: auto-type any field  

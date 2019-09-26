@@ -179,7 +179,8 @@ class DetailsView extends View {
             value() {
                 return model.user;
             },
-            getCompletions: this.getUserNameCompletions.bind(this)
+            getCompletions: this.getUserNameCompletions.bind(this),
+            sequence: '{USERNAME}'
         });
         this.fieldViews.push(this.userEditView);
         this.passEditView = new FieldViewText({
@@ -188,7 +189,8 @@ class DetailsView extends View {
             canGen: true,
             value() {
                 return model.password;
-            }
+            },
+            sequence: '{PASSWORD}'
         });
         this.fieldViews.push(this.passEditView);
         this.urlEditView = new FieldViewUrl({
@@ -196,7 +198,8 @@ class DetailsView extends View {
             title: StringFormat.capFirst(Locale.website),
             value() {
                 return model.url;
-            }
+            },
+            sequence: '{URL}'
         });
         this.fieldViews.push(this.urlEditView);
         this.fieldViews.push(
@@ -207,7 +210,8 @@ class DetailsView extends View {
                 markdown: true,
                 value() {
                     return model.notes;
-                }
+                },
+                sequence: '{NOTES}'
             })
         );
         this.fieldViews.push(
@@ -277,7 +281,8 @@ class DetailsView extends View {
                         title: field,
                         value() {
                             return model.otpGenerator;
-                        }
+                        },
+                        sequence: '{TOTP}'
                     })
                 );
             } else {
@@ -288,7 +293,8 @@ class DetailsView extends View {
                         multiline: true,
                         value() {
                             return model.fields[field];
-                        }
+                        },
+                        sequence: `{S:${field}}`
                     })
                 );
             }
@@ -303,6 +309,7 @@ class DetailsView extends View {
             fieldView.render();
             fieldView.on('change', this.fieldChanged.bind(this));
             fieldView.on('copy', this.fieldCopied.bind(this));
+            fieldView.on('autotype', this.fieldAutoType.bind(this));
             if (hideEmptyFields) {
                 const value = fieldView.model.value();
                 if (!value || value.length === 0 || value.byteLength === 0) {
@@ -1060,6 +1067,13 @@ class DetailsView extends View {
 
     autoType() {
         Events.emit('auto-type', { entry: this.model });
+    }
+
+    fieldAutoType(e) {
+        Events.emit('auto-type', {
+            entry: this.model,
+            sequence: e.source.model.sequence
+        });
     }
 }
 

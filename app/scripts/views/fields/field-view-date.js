@@ -4,6 +4,8 @@ import { Locale } from 'util/locale';
 import { FieldViewText } from 'views/fields/field-view-text';
 
 class FieldViewDate extends FieldViewText {
+    hasOptions = false;
+
     renderValue(value) {
         let result = value ? DateFormat.dStr(value) : '';
         if (value && this.model.lessThanNow && value < new Date()) {

@@ -4,8 +4,10 @@
     {{~#if multiline}} details__field--multiline{{/if~}}
     {{~#if canEditTitle}} details__field--can-edit-title{{/if~}}
     {{~#if protect}} details__field--protect{{/if~}}
+    {{~#if hasOptions}} details__field--options{{/if~}}
     ">
     <div class="details__field-label" draggable="true">{{title}}</div>
     <div class="details__field-value">
     </div>
+    {{#if hasOptions}}<i class="details__field-options fa fa-chevron-down"></i>{{/if}}
 </div>
