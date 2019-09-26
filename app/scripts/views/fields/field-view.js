@@ -10,8 +10,13 @@ class FieldView extends View {
     events = {
         'click .details__field-label': 'fieldLabelClick',
         'click .details__field-value': 'fieldValueClick',
-        'dragstart .details__field-label': 'fieldLabelDrag'
+        'dragstart .details__field-label': 'fieldLabelDrag',
+        'mouseover .details__field-value': 'fieldValueMouseOver',
+        'mouseout .details__field-value': 'fieldValueMouseOut'
     };
+
+    unsafeMode = false;
+    unsafeTimeout = null;
 
     constructor(model, options) {
         super(model, options);
@@ -30,7 +35,7 @@ class FieldView extends View {
             multiline: this.model.multiline,
             title: this.model.title,
             canEditTitle: this.model.newField,
-            protect: this.value && this.value.isProtected
+            protect: !this.unsafeMode && this.value && this.value.isProtected
         });
         this.valueEl = this.$el.find('.details__field-value');
         this.valueEl.html(this.renderValue(this.value));
@@ -99,7 +104,30 @@ class FieldView extends View {
         }
         const sel = window.getSelection().toString();
         if (!sel) {
+            this.unsafeMode = false;
             this.edit();
+        }
+    }
+
+    fieldValueMouseOver(e) {
+        if (!this.editing) {
+            if (!this.unsafeTimeout) {
+                this.unsafeTimeout = window.setTimeout(() => {
+                    this.unsafeMode = e.altKey;
+                    this.render();
+                }, 1000);
+            }
+        }
+    }
+
+    fieldValueMouseOut(e) {
+        if (this.unsafeTimeout) {
+            window.clearTimeout(this.unsafeTimeout);
+            this.unsafeTimeout = null;
+        }
+        if (this.unsafeMode) {
+            this.unsafeMode = false;
+            this.render();
         }
     }
 
