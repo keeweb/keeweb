@@ -17,7 +17,7 @@ class FieldViewText extends FieldView {
     }
 
     renderValue(value) {
-        if (this.unsafeMode) {
+        if (value.isProtected && this.unsafeMode) {
             return value.getText();
         }
         if (this.model.markdown) {

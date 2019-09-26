@@ -5,10 +5,10 @@ class FieldViewReadOnly extends FieldView {
     readonly = true;
 
     renderValue(value) {
-        value =
-            value.isProtected && !this.unsafeMode
-                ? new Array(value.textLength + 1).join('•')
-                : escape(value);
+        if (value.isProtected && this.unsafeMode) {
+            return value.getText();
+        }
+        value = value.isProtected ? new Array(value.textLength + 1).join('•') : escape(value);
         value = value.replace(/\n/g, '<br/>');
         return value;
     }
