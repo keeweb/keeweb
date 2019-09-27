@@ -8,7 +8,7 @@ import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { DateFormat } from 'util/formatting/date-format';
 import { UrlFormat } from 'util/formatting/url-format';
-import { PasswordGenerator } from 'util/generators/password-generator';
+import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { Locale } from 'util/locale';
 import { FileSaver } from 'util/ui/file-saver';
 import { OpenConfigView } from 'views/open-config-view';
@@ -95,7 +95,7 @@ class SettingsFileView extends View {
             syncing: this.model.syncing,
             syncError: this.model.syncError,
             syncDate: DateFormat.dtStr(this.model.syncDate),
-            password: PasswordGenerator.present(this.model.passwordLength),
+            password: PasswordPresenter.present(this.model.passwordLength),
             defaultUser: this.model.defaultUser,
             recycleBinEnabled: this.model.recycleBinEnabled,
             backupEnabled: backup && backup.enabled,
@@ -446,7 +446,7 @@ class SettingsFileView extends View {
         if (!e.target.value) {
             this.model.resetPassword();
             this.resetConfirmMasterPass();
-            e.target.value = PasswordGenerator.present(this.model.passwordLength);
+            e.target.value = PasswordPresenter.present(this.model.passwordLength);
             this.$el.find('.settings__file-master-pass-warning').hide();
         }
         e.target.setAttribute('type', 'password');

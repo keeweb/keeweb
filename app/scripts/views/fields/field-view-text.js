@@ -4,7 +4,7 @@ import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
 import { Features } from 'util/features';
 import { MdToHtml } from 'util/formatting/md-to-html';
-import { PasswordGenerator } from 'util/generators/password-generator';
+import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { Tip } from 'util/ui/tip';
 import { FieldView } from 'views/fields/field-view';
 import { GeneratorView } from 'views/generator-view';
@@ -26,7 +26,7 @@ class FieldViewText extends FieldView {
             return MdToHtml.convert(value);
         }
         return value && value.isProtected
-            ? PasswordGenerator.presentValueWithLineBreaks(value)
+            ? PasswordPresenter.presentValueWithLineBreaks(value)
             : escape(value || '').replace(/\n/g, '<br/>');
     }
 

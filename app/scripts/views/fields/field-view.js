@@ -6,6 +6,7 @@ import { isEqual } from 'util/fn';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 import { AutoType } from 'auto-type';
+import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { DropdownView } from 'views/dropdown-view';
 import template from 'templates/details/field.hbs';
 
@@ -135,6 +136,7 @@ class FieldView extends View {
         if (this.readonly || this.editing) {
             return;
         }
+        this.valueEl.removeClass('details__field-value--revealed');
         this.$el.addClass('details__field--edit');
         this.startEdit();
         this.editing = true;
@@ -173,7 +175,9 @@ class FieldView extends View {
         if (arg) {
             this.triggerChange(arg);
         }
-        this.valueEl.html(this.renderValue(this.value));
+        this.valueEl
+            .removeClass('details__field-value--revealed')
+            .html(this.renderValue(this.value));
         this.$el.removeClass('details__field--edit');
         this.labelEl[0].setAttribute('draggable', 'true');
     }
@@ -252,7 +256,7 @@ class FieldView extends View {
     }
 
     revealValue() {
-        const valueHtml = this.value.getText();
+        const valueHtml = PasswordPresenter.asHtml(this.value);
         this.valueEl.addClass('details__field-value--revealed').html(valueHtml);
     }
 

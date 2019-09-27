@@ -4,6 +4,7 @@ import { GeneratorPresets } from 'comp/app/generator-presets';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { PasswordGenerator } from 'util/generators/password-generator';
+import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { Locale } from 'util/locale';
 import { Tip } from 'util/ui/tip';
 import template from 'templates/generator.hbs';
@@ -117,7 +118,7 @@ class GeneratorView extends View {
 
     showPassword() {
         if (this.hide && !this.model.copy) {
-            this.resultEl.text(PasswordGenerator.present(this.password.length));
+            this.resultEl.text(PasswordPresenter.present(this.password.length));
         } else {
             this.resultEl.text(this.password);
         }
