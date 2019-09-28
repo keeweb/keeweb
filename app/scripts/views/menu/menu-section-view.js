@@ -1,33 +1,38 @@
-const Backbone = require('backbone');
-const MenuItemView = require('./menu-item-view');
-const Resizable = require('../../mixins/resizable');
-const Scrollable = require('../../mixins/scrollable');
-const AppSettingsModel = require('../../models/app-settings-model');
+import { View } from 'framework/views/view';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Resizable } from 'framework/views/resizable';
+import { Scrollable } from 'framework/views/scrollable';
+import { MenuItemView } from 'views/menu/menu-item-view';
+import throttle from 'lodash/throttle';
+import template from 'templates/menu/menu-section.hbs';
 
-const MenuSectionView = Backbone.View.extend({
-    template: require('templates/menu/menu-section.hbs'),
+class MenuSectionView extends View {
+    template = template;
 
-    events: {},
+    events = {};
 
-    itemViews: null,
+    itemViews = [];
 
-    minHeight: 55,
-    maxHeight() {
-        return this.$el.parent().height() - 116;
-    },
-    autoHeight: 'auto',
+    minHeight = 55;
+    autoHeight = 'auto';
 
-    initialize() {
-        this.itemViews = [];
+    constructor(model, options) {
+        super(model, options);
         this.listenTo(this.model, 'change-items', this.itemsChanged);
         this.listenTo(this, 'view-resize', this.viewResized);
-    },
+        this.once('remove', () => {
+            if (this.scroll) {
+                this.scroll.dispose();
+            }
+            this.removeInnerViews();
+        });
+    }
 
     render() {
         if (!this.itemsEl) {
-            this.renderTemplate(this.model.attributes);
-            this.itemsEl = this.model.get('scrollable') ? this.$el.find('.scroller') : this.$el;
-            if (this.model.get('scrollable')) {
+            super.render(this.model);
+            this.itemsEl = this.model.scrollable ? this.$el.find('.scroller') : this.$el;
+            if (this.model.scrollable) {
                 this.initScroll();
                 this.createScroll({
                     root: this.$el[0],
@@ -38,49 +43,45 @@ const MenuSectionView = Backbone.View.extend({
         } else {
             this.removeInnerViews();
         }
-        this.model.get('items').forEach(function(item) {
-            const itemView = new MenuItemView({ el: this.itemsEl, model: item });
+        this.model.items.forEach(item => {
+            const itemView = new MenuItemView(item, { parent: this.itemsEl[0] });
             itemView.render();
             this.itemViews.push(itemView);
-        }, this);
-        if (this.model.get('drag')) {
-            const height = AppSettingsModel.instance.get('tagsViewHeight');
+        });
+        if (this.model.drag) {
+            const height = AppSettingsModel.tagsViewHeight;
             if (typeof height === 'number') {
                 this.$el.height();
                 this.$el.css('flex', '0 0 ' + height + 'px');
             }
         }
         this.pageResized();
-    },
+    }
 
-    remove() {
-        if (this.scroll) {
-            this.scroll.dispose();
-        }
-        this.removeInnerViews();
-        Backbone.View.prototype.remove.apply(this);
-    },
+    maxHeight() {
+        return this.$el.parent().height() - 116;
+    }
 
     removeInnerViews() {
         this.itemViews.forEach(itemView => itemView.remove());
         this.itemViews = [];
-    },
+    }
 
     itemsChanged() {
         this.render();
-    },
+    }
 
     viewResized(size) {
         this.$el.css('flex', '0 0 ' + (size ? size + 'px' : 'auto'));
         this.saveViewHeight(size);
-    },
+    }
 
-    saveViewHeight: _.throttle(size => {
-        AppSettingsModel.instance.set('tagsViewHeight', size);
-    }, 1000)
-});
+    saveViewHeight = throttle(size => {
+        AppSettingsModel.tagsViewHeight = size;
+    }, 1000);
+}
 
-_.extend(MenuSectionView.prototype, Resizable);
-_.extend(MenuSectionView.prototype, Scrollable);
+Object.assign(MenuSectionView.prototype, Resizable);
+Object.assign(MenuSectionView.prototype, Scrollable);
 
-module.exports = MenuSectionView;
+export { MenuSectionView };

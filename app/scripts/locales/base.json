@@ -273,6 +273,7 @@
     "detMenuCopyUser": "Copy user",
     "detSetupOtp": "One-time passwords",
     "detClone": "Make a copy",
+    "detCopyEntryToClipboard": "Copy all fields",
     "detClonedName": "Copy",
     "detAutoType": "Auto-type",
     "detAutoTypeSettings": "Auto-type settings",
@@ -302,6 +303,9 @@
     "detOtpQrWrongBody": "Your QR code was successfully scanned but it doesn't contain one-time password data.",
     "detLockField": "Lock this field, so its content isn't searchable and visible. Displaying the content requires explicitly clicking it.",
     "detUnlockField": "Unlock this field, making its content searchable and visible immediately",
+    "detRevealField": "Reveal",
+    "detHideField": "Hide",
+    "detAutoTypeField": "Auto type",
 
     "autoTypeEntryFields": "Entry fields",
     "autoTypeModifiers": "Modifier keys",
@@ -309,7 +313,7 @@
     "autoTypeLink": "more...",
     "autoTypeError": "Auto-type error",
     "autoTypeErrorGeneric": "There was an error performing auto-type: {}",
-    "autoTypeErrorGlobal": "To use system-wide shortcut, please focus the app where you want to type your password",
+    "autoTypeErrorGlobal": "To use a system-wide shortcut, please focus the app where you want to type your password",
     "autoTypeErrorNotInstalled": "{} is not installed",
     "autoTypeHeader": "Auto-Type: Select",
     "autoTypeMsgNoWindow": "We were unable to get active window title, start typing to search",
@@ -318,6 +322,8 @@
     "autoTypeSelectionHint": "Type the autotype sequence",
     "autoTypeSelectionHintAction": "Only type the password",
     "autoTypeSelectionHintOpt": "Only type the username",
+    "autoTypeSelectionHintShift": "Other fields",
+    "autoTypeSelectionOtp": "One-time password",
 
     "appSecWarn": "Not Secure!",
     "appSecWarnBody1": "You have loaded this app with an insecure connection. Someone may be watching you and stealing your passwords. We strongly advise you to stop, unless you clearly understand what you're doing.",
@@ -487,6 +493,7 @@
     "setFileUnsavedBody": "There are unsaved changes in this file",
     "setFileCloseNoSave": "Close and lose changes",
     "setFileDontClose": "Don't close",
+    "setFileFormatVersion": "File format",
 
     "setShTitle": "Shortcuts",
     "setShShowAll": "show all items",
@@ -510,6 +517,7 @@
     "setShCopyUrlGlobal": "copy website (when the app is in background)",
     "setShAutoTypeGlobal": "auto-type (when the app is in background)",
     "setShLock": "lock database",
+    "setShEdit": "Press a new key combination to set it as shortcut",
 
     "setPlInstallTitle": "Install new plugins",
     "setPlInstallDesc": "KeeWeb plugins add features, themes, and languages to KeeWeb. Plugins run with the same privileges as KeeWeb, they can access and manage all your passwords. Never install plugins you don't trust.",
@@ -592,5 +600,11 @@
     "exportHtmlName": "Name",
     "exportHtmlDate": "Export date",
     "exportGenerator": "Software",
-    "exportDescription": "This file is generated with {}."
+    "exportDescription": "This file is generated with {}.",
+
+    "importCsvTitle": "Import from CSV",
+    "importCsvRun": "Import",
+    "importIgnoreField": "Ignore",
+    "importTo": "Entries will be imported to",
+    "importNewFile": "New file"
 }

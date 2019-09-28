@@ -1,24 +1,24 @@
-const Backbone = require('backbone');
-const FileModel = require('../models/file-model');
+import { Collection } from 'framework/collection';
+import { FileModel } from 'models/file-model';
 
-const FileCollection = Backbone.Collection.extend({
-    model: FileModel,
+class FileCollection extends Collection {
+    static model = FileModel;
 
     hasOpenFiles() {
-        return this.some(file => file.get('open'));
-    },
+        return this.some(file => file.active);
+    }
 
     hasUnsavedFiles() {
-        return this.some(file => file.get('modified'));
-    },
+        return this.some(file => file.modified);
+    }
 
     hasDirtyFiles() {
-        return this.some(file => file.get('dirty'));
-    },
+        return this.some(file => file.dirty);
+    }
 
     getByName(name) {
-        return this.find(file => file.get('name').toLowerCase() === name.toLowerCase());
+        return this.find(file => file.name.toLowerCase() === name.toLowerCase());
     }
-});
+}
 
-module.exports = FileCollection;
+export { FileCollection };

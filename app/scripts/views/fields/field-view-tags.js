@@ -1,28 +1,31 @@
-const FieldViewText = require('./field-view-text');
+import { FieldViewText } from 'views/fields/field-view-text';
+import { escape } from 'util/fn';
 
-const FieldViewTags = FieldViewText.extend({
+class FieldViewTags extends FieldViewText {
+    hasOptions = false;
+
     renderValue(value) {
-        return value ? _.escape(value.join(', ')) : '';
-    },
+        return value ? escape(value.join(', ')) : '';
+    }
 
     getEditValue(value) {
         return value ? value.join(', ') : '';
-    },
+    }
 
     valueToTags(val) {
         const allTags = {};
         this.model.tags.forEach(tag => {
             allTags[tag.toLowerCase()] = tag;
         });
-        return _.unique(
-            val
-                .split(/\s*[;,:]\s*/)
-                .filter(_.identity)
-                .map(tag => {
-                    return allTags[tag.toLowerCase()] || tag;
-                })
-        );
-    },
+        const valueTags = {};
+        val.split(/\s*[;,:]\s*/)
+            .filter(tag => tag)
+            .map(tag => allTags[tag.toLowerCase()] || tag)
+            .forEach(tag => {
+                valueTags[tag] = tag;
+            });
+        return Object.keys(valueTags);
+    }
 
     endEdit(newVal, extra) {
         if (newVal !== undefined) {
@@ -32,11 +35,11 @@ const FieldViewTags = FieldViewText.extend({
             this.tagsAutocomplete.remove();
             this.tagsAutocomplete = null;
         }
-        FieldViewText.prototype.endEdit.call(this, newVal, extra);
-    },
+        super.endEdit(newVal, extra);
+    }
 
     startEdit() {
-        FieldViewText.prototype.startEdit.call(this);
+        super.startEdit();
         const fieldRect = this.input[0].getBoundingClientRect();
         const shadowSpread = parseInt(this.input.css('--focus-shadow-spread'));
         this.tagsAutocomplete = $('<div class="details__field-autocomplete"></div>').appendTo(
@@ -49,13 +52,13 @@ const FieldViewTags = FieldViewText.extend({
         });
         this.tagsAutocomplete.mousedown(this.tagsAutocompleteClick.bind(this));
         this.setTags();
-    },
+    }
 
     fieldValueInput(e) {
         e.stopPropagation();
         this.setTags();
-        FieldViewText.prototype.fieldValueInput.call(this, e);
-    },
+        super.fieldValueInput(e);
+    }
 
     getAvailableTags() {
         const tags = this.valueToTags(this.input.val());
@@ -67,18 +70,18 @@ const FieldViewTags = FieldViewText.extend({
                 (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0)
             );
         });
-    },
+    }
 
     setTags() {
         const availableTags = this.getAvailableTags();
         const tagsHtml = availableTags
             .map(tag => {
-                return '<div class="details__field-autocomplete-item">' + _.escape(tag) + '</div>';
+                return '<div class="details__field-autocomplete-item">' + escape(tag) + '</div>';
             })
             .join('');
         this.tagsAutocomplete.html(tagsHtml);
         this.tagsAutocomplete.toggle(!!tagsHtml);
-    },
+    }
 
     tagsAutocompleteClick(e) {
         e.stopPropagation();
@@ -101,10 +104,10 @@ const FieldViewTags = FieldViewText.extend({
             this.input.focus();
             this.setTags();
         }
-        this.afterPaint(function() {
+        this.afterPaint(() => {
             this.input.focus();
         });
     }
-});
+}
 
-module.exports = FieldViewTags;
+export { FieldViewTags };

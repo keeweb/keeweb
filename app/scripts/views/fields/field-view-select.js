@@ -1,7 +1,8 @@
-const FieldView = require('./field-view');
+import { FieldView } from 'views/fields/field-view';
+import { escape } from 'util/fn';
 
-const FieldViewSelect = FieldView.extend({
-    readonly: true,
+class FieldViewSelect extends FieldView {
+    readonly = true;
 
     renderValue(value) {
         return (
@@ -11,42 +12,42 @@ const FieldViewSelect = FieldView.extend({
                     return (
                         '<option ' +
                         'value="' +
-                        _.escape(opt.id) +
+                        escape(opt.id) +
                         '" ' +
                         (opt.selected ? 'selected ' : '') +
                         '>' +
-                        _.escape(opt.value) +
+                        escape(opt.value) +
                         '</option>'
                     );
                 })
                 .join('') +
             '</select>'
         );
-    },
+    }
 
     render() {
-        FieldView.prototype.render.call(this);
+        super.render();
         this.valueEl.addClass('details__field-value--select');
         this.valueEl.find('select:first').change(e => {
             this.triggerChange({ val: e.target.value, field: this.model.name });
         });
-    },
+    }
 
-    fieldLabelClick() {},
+    fieldLabelClick() {}
 
-    fieldValueClick() {},
+    fieldValueClick() {}
 
-    edit() {},
+    edit() {}
 
-    startEdit() {},
+    startEdit() {}
 
     endEdit(newVal, extra) {
         if (!this.editing) {
             return;
         }
         delete this.input;
-        FieldView.prototype.endEdit.call(this, newVal, extra);
+        super.endEdit(newVal, extra);
     }
-});
+}
 
-module.exports = FieldViewSelect;
+export { FieldViewSelect };

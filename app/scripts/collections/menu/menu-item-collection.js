@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const MenuItemModel = require('../../models/menu/menu-item-model');
+import { Collection } from 'framework/collection';
+import { MenuItemModel } from 'models/menu/menu-item-model';
 
-const MenuItemCollection = Backbone.Collection.extend({
-    model: MenuItemModel
-});
+class MenuItemCollection extends Collection {
+    static model = MenuItemModel;
+}
 
-module.exports = MenuItemCollection;
+export { MenuItemCollection };

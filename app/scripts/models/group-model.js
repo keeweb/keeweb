@@ -1,37 +1,16 @@
-const MenuItemModel = require('./menu/menu-item-model');
-const EntryModel = require('../models/entry-model');
-const IconMap = require('../const/icon-map');
-const IconUrl = require('../util/icon-url');
-const kdbxweb = require('kdbxweb');
+import kdbxweb from 'kdbxweb';
+import { IconMap } from 'const/icon-map';
+import { EntryModel } from 'models/entry-model';
+import { MenuItemModel } from 'models/menu/menu-item-model';
+import { IconUrlFormat } from 'util/formatting/icon-url-format';
+import { GroupCollection } from 'collections/group-collection';
+import { EntryCollection } from 'collections/entry-collection';
+
 const KdbxIcons = kdbxweb.Consts.Icons;
-let GroupCollection;
-let EntryCollection;
 
 const DefaultAutoTypeSequence = '{USERNAME}{TAB}{PASSWORD}{ENTER}';
 
-const GroupModel = MenuItemModel.extend({
-    defaults: _.extend({}, MenuItemModel.prototype.defaults, {
-        iconId: 0,
-        entries: null,
-        filterKey: 'group',
-        editable: true,
-        top: false,
-        drag: true,
-        drop: true,
-        enableSearching: true,
-        enableAutoType: null,
-        autoTypeSeq: null
-    }),
-
-    initialize() {
-        if (!GroupCollection) {
-            GroupCollection = require('../collections/group-collection');
-        }
-        if (!EntryCollection) {
-            EntryCollection = require('../collections/entry-collection');
-        }
-    },
-
+class GroupModel extends MenuItemModel {
     setGroup(group, file, parentGroup) {
         const isRecycleBin = group.uuid.equals(file.db.meta.recycleBinUuid);
         const id = file.subId(group.uuid.id);
@@ -57,8 +36,8 @@ const GroupModel = MenuItemModel.extend({
         this.file = file;
         this.parentGroup = parentGroup;
         this._fillByGroup(true);
-        const items = this.get('items');
-        const entries = this.get('entries');
+        const items = this.items;
+        const entries = this.entries;
 
         const itemsArray = group.groups.map(subGroup => {
             let g = file.getGroup(file.subId(subGroup.uuid.id));
@@ -69,7 +48,7 @@ const GroupModel = MenuItemModel.extend({
             }
             return g;
         }, this);
-        items.add(itemsArray);
+        items.push(...itemsArray);
 
         const entriesArray = group.entries.map(entry => {
             let e = file.getEntry(file.subId(entry.uuid.id));
@@ -80,13 +59,13 @@ const GroupModel = MenuItemModel.extend({
             }
             return e;
         }, this);
-        entries.add(entriesArray);
-    },
+        entries.push(...entriesArray);
+    }
 
     _fillByGroup(silent) {
         this.set(
             {
-                title: this.parentGroup ? this.group.name : this.file.get('name'),
+                title: this.parentGroup ? this.group.name : this.file.name,
                 iconId: this.group.icon,
                 icon: this._iconFromId(this.group.icon),
                 customIcon: this._buildCustomIcon(),
@@ -95,22 +74,22 @@ const GroupModel = MenuItemModel.extend({
             },
             { silent }
         );
-    },
+    }
 
     _iconFromId(id) {
         if (id === KdbxIcons.Folder || id === KdbxIcons.FolderOpen) {
             return undefined;
         }
         return IconMap[id];
-    },
+    }
 
     _buildCustomIcon() {
         this.customIcon = null;
         if (this.group.customIcon) {
-            return IconUrl.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
+            return IconUrlFormat.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
         }
         return null;
-    },
+    }
 
     _groupModified() {
         if (this.isJustCreated) {
@@ -118,26 +97,26 @@ const GroupModel = MenuItemModel.extend({
         }
         this.file.setModified();
         this.group.times.update();
-    },
+    }
 
     forEachGroup(callback, filter) {
         let result = true;
-        this.get('items').forEach(group => {
+        this.items.forEach(group => {
             if (group.matches(filter)) {
                 result =
                     callback(group) !== false && group.forEachGroup(callback, filter) !== false;
             }
         });
         return result;
-    },
+    }
 
     forEachOwnEntry(filter, callback) {
-        this.get('entries').forEach(function(entry) {
+        this.entries.forEach(function(entry) {
             if (entry.matches(filter)) {
                 callback(entry, this);
             }
         });
-    },
+    }
 
     matches(filter) {
         return (
@@ -146,52 +125,52 @@ const GroupModel = MenuItemModel.extend({
                     !this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup))) &&
             (!filter || !filter.autoType || this.group.enableAutoType !== false)
         );
-    },
+    }
 
     getOwnSubGroups() {
         return this.group.groups;
-    },
+    }
 
     addEntry(entry) {
-        this.get('entries').add(entry);
-    },
+        this.entries.push(entry);
+    }
 
     addGroup(group) {
-        this.get('items').add(group);
-    },
+        this.items.push(group);
+    }
 
     setName(name) {
         this._groupModified();
         this.group.name = name;
         this._fillByGroup();
-    },
+    }
 
     setIcon(iconId) {
         this._groupModified();
         this.group.icon = iconId;
         this.group.customIcon = undefined;
         this._fillByGroup();
-    },
+    }
 
     setCustomIcon(customIconId) {
         this._groupModified();
         this.group.customIcon = new kdbxweb.KdbxUuid(customIconId);
         this._fillByGroup();
-    },
+    }
 
     setExpanded(expanded) {
         // this._groupModified(); // it's not good to mark the file as modified when a group is collapsed
         this.group.expanded = expanded;
-        this.set('expanded', expanded);
-    },
+        this.expanded = expanded;
+    }
 
     setEnableSearching(enabled) {
         this._groupModified();
         let parentEnableSearching = true;
         let parentGroup = this.parentGroup;
         while (parentGroup) {
-            if (typeof parentGroup.get('enableSearching') === 'boolean') {
-                parentEnableSearching = parentGroup.get('enableSearching');
+            if (typeof parentGroup.enableSearching === 'boolean') {
+                parentEnableSearching = parentGroup.enableSearching;
                 break;
             }
             parentGroup = parentGroup.parentGroup;
@@ -200,27 +179,27 @@ const GroupModel = MenuItemModel.extend({
             enabled = null;
         }
         this.group.enableSearching = enabled;
-        this.set('enableSearching', this.group.enableSearching);
-    },
+        this.enableSearching = this.group.enableSearching;
+    }
 
     getEffectiveEnableSearching() {
         let grp = this;
         while (grp) {
-            if (typeof grp.get('enableSearching') === 'boolean') {
-                return grp.get('enableSearching');
+            if (typeof grp.enableSearching === 'boolean') {
+                return grp.enableSearching;
             }
             grp = grp.parentGroup;
         }
         return true;
-    },
+    }
 
     setEnableAutoType(enabled) {
         this._groupModified();
         let parentEnableAutoType = true;
         let parentGroup = this.parentGroup;
         while (parentGroup) {
-            if (typeof parentGroup.get('enableAutoType') === 'boolean') {
-                parentEnableAutoType = parentGroup.get('enableAutoType');
+            if (typeof parentGroup.enableAutoType === 'boolean') {
+                parentEnableAutoType = parentGroup.enableAutoType;
                 break;
             }
             parentGroup = parentGroup.parentGroup;
@@ -229,46 +208,46 @@ const GroupModel = MenuItemModel.extend({
             enabled = null;
         }
         this.group.enableAutoType = enabled;
-        this.set('enableAutoType', this.group.enableAutoType);
-    },
+        this.enableAutoType = this.group.enableAutoType;
+    }
 
     getEffectiveEnableAutoType() {
         let grp = this;
         while (grp) {
-            if (typeof grp.get('enableAutoType') === 'boolean') {
-                return grp.get('enableAutoType');
+            if (typeof grp.enableAutoType === 'boolean') {
+                return grp.enableAutoType;
             }
             grp = grp.parentGroup;
         }
         return true;
-    },
+    }
 
     setAutoTypeSeq(seq) {
         this._groupModified();
         this.group.defaultAutoTypeSeq = seq || undefined;
-        this.set('autoTypeSeq', this.group.defaultAutoTypeSeq);
-    },
+        this.autoTypeSeq = this.group.defaultAutoTypeSeq;
+    }
 
     getEffectiveAutoTypeSeq() {
         let grp = this;
         while (grp) {
-            if (grp.get('autoTypeSeq')) {
-                return grp.get('autoTypeSeq');
+            if (grp.autoTypeSeq) {
+                return grp.autoTypeSeq;
             }
             grp = grp.parentGroup;
         }
         return DefaultAutoTypeSequence;
-    },
+    }
 
     getParentEffectiveAutoTypeSeq() {
         return this.parentGroup
             ? this.parentGroup.getEffectiveAutoTypeSeq()
             : DefaultAutoTypeSequence;
-    },
+    }
 
     isEntryTemplatesGroup() {
         return this.group.uuid.equals(this.file.db.meta.entryTemplatesGroup);
-    },
+    }
 
     moveToTrash() {
         this.file.setModified();
@@ -277,12 +256,12 @@ const GroupModel = MenuItemModel.extend({
             this.file.db.meta.entryTemplatesGroup = undefined;
         }
         this.file.reload();
-    },
+    }
 
     deleteFromTrash() {
         this.file.db.move(this.group, null);
         this.file.reload();
-    },
+    }
 
     removeWithoutHistory() {
         const ix = this.parentGroup.group.groups.indexOf(this.group);
@@ -290,32 +269,43 @@ const GroupModel = MenuItemModel.extend({
             this.parentGroup.group.groups.splice(ix, 1);
         }
         this.file.reload();
-    },
+    }
 
     moveHere(object) {
-        if (!object || object.id === this.id || object.file !== this.file) {
+        if (!object || object.id === this.id) {
             return;
         }
-        this.file.setModified();
-        if (object instanceof GroupModel) {
-            for (let parent = this; parent; parent = parent.parentGroup) {
-                if (object === parent) {
+        if (object.file === this.file) {
+            this.file.setModified();
+            if (object instanceof GroupModel) {
+                for (let parent = this; parent; parent = parent.parentGroup) {
+                    if (object === parent) {
+                        return;
+                    }
+                }
+                if (this.group.groups.indexOf(object.group) >= 0) {
                     return;
                 }
+                this.file.db.move(object.group, this.group);
+                this.file.reload();
+            } else if (object instanceof EntryModel) {
+                if (this.group.entries.indexOf(object.entry) >= 0) {
+                    return;
+                }
+                this.file.db.move(object.entry, this.group);
+                this.file.reload();
             }
-            if (this.group.groups.indexOf(object.group) >= 0) {
-                return;
+        } else {
+            if (object instanceof EntryModel) {
+                this.file.setModified();
+                const detachedEntry = object.detach();
+                this.file.db.importEntry(detachedEntry, this.group, object.file.db);
+                this.file.reload();
+            } else {
+                // moving groups between files is not supported for now
             }
-            this.file.db.move(object.group, this.group);
-            this.file.reload();
-        } else if (object instanceof EntryModel) {
-            if (this.group.entries.indexOf(object.entry) >= 0) {
-                return;
-            }
-            this.file.db.move(object.entry, this.group);
-            this.file.reload();
         }
-    },
+    }
 
     moveToTop(object) {
         if (
@@ -342,24 +332,44 @@ const GroupModel = MenuItemModel.extend({
         }
         this.file.reload();
     }
+
+    static fromGroup(group, file, parentGroup) {
+        const model = new GroupModel();
+        model.setGroup(group, file, parentGroup);
+        return model;
+    }
+
+    static newGroup(group, file) {
+        const model = new GroupModel();
+        const grp = file.db.createGroup(group.group);
+        model.setGroup(grp, file, group);
+        model.group.times.update();
+        model.isJustCreated = true;
+        group.addGroup(model);
+        file.setModified();
+        file.reload();
+        return model;
+    }
+}
+
+GroupModel.defineModelProperties({
+    id: '',
+    uuid: '',
+    iconId: 0,
+    entries: null,
+    filterKey: 'group',
+    editable: true,
+    top: false,
+    drag: true,
+    drop: true,
+    enableSearching: true,
+    enableAutoType: null,
+    autoTypeSeq: null,
+    group: null,
+    file: null,
+    parentGroup: null,
+    customIconId: null,
+    isJustCreated: false
 });
 
-GroupModel.fromGroup = function(group, file, parentGroup) {
-    const model = new GroupModel();
-    model.setGroup(group, file, parentGroup);
-    return model;
-};
-
-GroupModel.newGroup = function(group, file) {
-    const model = new GroupModel();
-    const grp = file.db.createGroup(group.group);
-    model.setGroup(grp, file, group);
-    model.group.times.update();
-    model.isJustCreated = true;
-    group.addGroup(model);
-    file.setModified();
-    file.reload();
-    return model;
-};
-
-module.exports = GroupModel;
+export { GroupModel };

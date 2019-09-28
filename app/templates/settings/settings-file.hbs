@@ -126,28 +126,46 @@
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" maxlength="3" />
 
     <h2>{{res 'advanced'}}</h2>
+    <label for="settings__file-format-version">{{res 'setFileFormatVersion'}}</label>
+    <select class="settings__select input-base" id="settings__file-format-version">
+        <option value="3" {{#ifeq formatVersion 3}}selected{{/ifeq}}>KDBX 3</option>
+        <option value="4" {{#ifeq formatVersion 4}}selected{{/ifeq}}>KDBX 4</option>
+    </select>
+    <label for="settings__file-kdf">{{res 'setFileKdfParams'}}</label>
+    <select class="settings__select input-base" id="settings__file-kdf" {{#ifneq formatVersion 4}}disabled{{/ifneq}}>
+        <option value="Aes" {{#ifeq kdfName 'AES'}}selected{{/ifeq}}>AES</option>
+        {{#ifeq formatVersion 4}}<option value="Argon2" {{#ifeq kdfName 'Argon2'}}selected{{/ifeq}}>Argon2</option>{{/ifeq}}
+    </select>
     {{#if keyEncryptionRounds}}
     <label for="settings__file-key-rounds">{{res 'setFileRounds'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-key-rounds" value="{{keyEncryptionRounds}}" maxlength="10" />
     {{else if kdfParameters}}
-    <label>{{res 'setFileKdfParams'}}: Argon2</label>
-    <div class="settings__row">
-        <div class="settings__col-small">
-            <label class="settings__col-small-label" for="settings__file-kdf-iter">{{res 'setFileKdfParamsIter'}}:</label>
-            <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
-                   data-field="iterations" id="settings__file-kdf-iter" value="{{kdfParameters.iterations}}" maxlength="10" />
-        </div>
-        <div class="settings__col-small">
-            <label class="settings__col-small-label" for="settings__file-kdf-mem">{{res 'setFileKdfParamsMem'}}:</label>
-            <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
-                   data-field="memory" data-mul="1024" id="settings__file-kdf-mem" value="{{kdfParameters.memory}}" maxlength="10" />
-        </div>
-        <div class="settings__col-small">
-            <label class="settings__col-small-label" for="settings__file-kdf-par">{{res 'setFileKdfParamsPar'}}:</label>
-            <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
-                   data-field="parallelism" id="settings__file-kdf-par" value="{{kdfParameters.parallelism}}" maxlength="2" />
-        </div>
-    </div>
+        {{#ifeq kdfName 'Aes'}}
+            <div>
+                <label for="settings__file-kdf-rounds">{{res 'setFileRounds'}}:</label>
+                <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
+                       id="settings__file-kdf-rounds" data-field="rounds" value="{{kdfParameters.rounds}}" maxlength="10" />
+            </div>
+        {{/ifeq}}
+        {{#ifeq kdfName 'Argon2'}}
+            <div class="settings__row">
+                <div class="settings__col-small">
+                    <label class="settings__col-small-label" for="settings__file-kdf-iter">{{res 'setFileKdfParamsIter'}}:</label>
+                    <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
+                           data-field="iterations" id="settings__file-kdf-iter" value="{{kdfParameters.iterations}}" maxlength="10" />
+                </div>
+                <div class="settings__col-small">
+                    <label class="settings__col-small-label" for="settings__file-kdf-mem">{{res 'setFileKdfParamsMem'}}:</label>
+                    <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
+                           data-field="memory" data-mul="1024" id="settings__file-kdf-mem" value="{{kdfParameters.memory}}" maxlength="10" />
+                </div>
+                <div class="settings__col-small">
+                    <label class="settings__col-small-label" for="settings__file-kdf-par">{{res 'setFileKdfParamsPar'}}:</label>
+                    <input type="text" pattern="\d+" required class="settings__input input-base settings__input-kdf"
+                           data-field="parallelism" id="settings__file-kdf-par" value="{{kdfParameters.parallelism}}" maxlength="2" />
+                </div>
+            </div>
+        {{/ifeq}}
     {{/if}}
 
     <label for="settings__file-key-change-force">{{res 'setFileKeyChangeForce'}}:</label>

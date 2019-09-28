@@ -116,4 +116,4 @@ const Keys = {
     DOM_VK_META: 224
 };
 
-module.exports = Keys;
+export { Keys };

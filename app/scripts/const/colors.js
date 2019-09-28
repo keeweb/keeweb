@@ -20,4 +20,4 @@ const Colors = {
     }
 };
 
-module.exports = Colors;
+export { Colors };

@@ -6,7 +6,7 @@
     </div>
     <div class="settings__plugins-list">
         {{#each plugins as |plugin|}}
-        <div class="settings__plugins-plugin">
+        <div class="settings__plugins-plugin" id="settings__plugins-plugin--{{plugin.id}}">
             <h2>{{plugin.id}}</h2>
             <div>{{plugin.manifest.description}}</div>
             <div>

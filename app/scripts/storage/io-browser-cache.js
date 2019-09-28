@@ -6,7 +6,7 @@ const IoBrowserCache = function(config) {
     this.logger = config.logger;
 };
 
-_.extend(IoBrowserCache.prototype, {
+Object.assign(IoBrowserCache.prototype, {
     initDb(callback) {
         if (this.db) {
             return callback && callback();
@@ -137,4 +137,4 @@ _.extend(IoBrowserCache.prototype, {
     }
 });
 
-module.exports = IoBrowserCache;
+export { IoBrowserCache };

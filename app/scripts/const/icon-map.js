@@ -70,4 +70,4 @@ const IconMap = [
     'mobile'
 ];
 
-module.exports = IconMap;
+export { IconMap };

@@ -1,4 +1,4 @@
-const Launcher = require('../comp/launcher');
+import { Launcher } from 'comp/launcher';
 
 const IoFileCache = function(config) {
     this.basePath = null;
@@ -6,7 +6,7 @@ const IoFileCache = function(config) {
     this.logger = config.logger;
 };
 
-_.extend(IoFileCache.prototype, {
+Object.assign(IoFileCache.prototype, {
     initFs(callback) {
         if (this.basePath) {
             return callback();
@@ -99,4 +99,4 @@ _.extend(IoFileCache.prototype, {
     }
 });
 
-module.exports = IoFileCache;
+export { IoFileCache };

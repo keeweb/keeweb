@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const webpackConfig = require('./webpack.config');
+const webpackConfig = require('./build/webpack.config');
 const pkg = require('./package.json');
 
 module.exports = function(grunt) {
@@ -183,19 +183,9 @@ module.exports = function(grunt) {
                 },
                 files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
             },
-            'manifest-html': {
-                options: {
-                    replacements: [
-                        { pattern: '<html', replacement: '<html manifest="manifest.appcache"' }
-                    ]
-                },
-                files: { 'dist/index.html': 'dist/index.html' }
-            },
-            'desktop-html': {
-                options: {
-                    replacements: [{ pattern: ' manifest="manifest.appcache"', replacement: '' }]
-                },
-                files: { 'tmp/desktop/app/index.html': 'dist/index.html' }
+            'service-worker': {
+                options: { replacements: [{ pattern: '0.0.0', replacement: pkg.version }] },
+                files: { 'dist/service-worker.js': 'app/service-worker.js' }
             },
             'desktop-public-key': {
                 options: {
@@ -240,21 +230,6 @@ module.exports = function(grunt) {
             js: {
                 keepalive: true,
                 port: 8085
-            }
-        },
-        uglify: {
-            options: {
-                preserveComments: false
-            },
-            app: {
-                files: { 'tmp/js/app.js': ['tmp/js/app.js'] }
-            },
-            vendor: {
-                options: {
-                    mangle: false,
-                    compress: false
-                },
-                files: { 'tmp/js/vendor.js': ['tmp/js/vendor.js'] }
             }
         },
         watch: {
@@ -493,14 +468,6 @@ module.exports = function(grunt) {
                     ],
                     expectedCount: 7,
                     publicKey: 'app/resources/public-key.pem'
-                }
-            }
-        },
-        'sign-html': {
-            app: {
-                options: {
-                    file: 'dist/index.html',
-                    skip: grunt.option('skip-sign')
                 }
             }
         },

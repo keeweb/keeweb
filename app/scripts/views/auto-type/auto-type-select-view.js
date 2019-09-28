@@ -1,77 +1,67 @@
-const Backbone = require('backbone');
-const Keys = require('../../const/keys');
-const KeyHandler = require('../../comp/key-handler');
-const Locale = require('../../util/locale');
-const AppSettingsModel = require('../../models/app-settings-model');
-const EntryPresenter = require('../../presenters/entry-presenter');
-const Scrollable = require('../../mixins/scrollable');
-const AutoTypeSequenceType = require('../../const/autotype-sequencetype');
-const FeatureDetector = require('../../util/feature-detector');
+import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
+import { Shortcuts } from 'comp/app/shortcuts';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { Keys } from 'const/keys';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { EntryPresenter } from 'presenters/entry-presenter';
+import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
+import { Scrollable } from 'framework/views/scrollable';
+import { DropdownView } from 'views/dropdown-view';
+import template from 'templates/auto-type/auto-type-select.hbs';
+import itemTemplate from 'templates/auto-type/auto-type-select-item.hbs';
 
-const AutoTypePopupView = Backbone.View.extend({
-    el: 'body',
+class AutoTypeSelectView extends View {
+    parent = 'body';
 
-    template: require('templates/auto-type/auto-type-select.hbs'),
-    itemTemplate: require('templates/auto-type/auto-type-select-item.hbs'),
+    template = template;
 
-    events: {
+    itemTemplate = itemTemplate;
+
+    events = {
         'click .at-select__header-filter-clear': 'clearFilterText',
-        'click .at-select__item': 'itemClicked'
-    },
+        'click .at-select__item': 'itemClicked',
+        'contextmenu .at-select__item': 'itemRightClicked'
+    };
 
-    result: null,
-    entries: null,
+    result = null;
+    entries = null;
 
-    initialize() {
+    constructor(model) {
+        super(model);
         this.initScroll();
-        this.listenTo(Backbone, 'main-window-blur', this.mainWindowBlur);
-        this.listenTo(Backbone, 'main-window-will-close', this.mainWindowWillClose);
+        this.listenTo(Events, 'main-window-blur', this.mainWindowBlur);
+        this.listenTo(Events, 'main-window-will-close', this.mainWindowWillClose);
+        this.listenTo(Events, 'keypress:auto-type', this.keyPressed);
         this.setupKeys();
-    },
+    }
 
     setupKeys() {
-        KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_RETURN, this.enterPressed, this, false, true);
-        KeyHandler.onKey(
+        this.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, false, 'auto-type');
+        this.onKey(Keys.DOM_VK_RETURN, this.enterPressed, false, 'auto-type');
+        this.onKey(
             Keys.DOM_VK_RETURN,
             this.actionEnterPressed,
-            this,
             KeyHandler.SHORTCUT_ACTION,
-            true
+            'auto-type'
         );
-        KeyHandler.onKey(
+        this.onKey(Keys.DOM_VK_RETURN, this.optEnterPressed, KeyHandler.SHORTCUT_OPT, 'auto-type');
+        this.onKey(
             Keys.DOM_VK_RETURN,
-            this.optEnterPressed,
-            this,
-            KeyHandler.SHORTCUT_OPT,
-            true
+            this.shiftEnterPressed,
+            KeyHandler.SHORTCUT_SHIFT,
+            'auto-type'
         );
-        KeyHandler.onKey(Keys.DOM_VK_UP, this.upPressed, this, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_DOWN, this.downPressed, this, false, true);
-        KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this, false, true);
-        KeyHandler.onKey(
-            Keys.DOM_VK_O,
-            this.openKeyPressed,
-            this,
-            KeyHandler.SHORTCUT_ACTION,
-            true
-        );
-        KeyHandler.on('keypress:auto-type', this.keyPressed.bind(this));
+        this.onKey(Keys.DOM_VK_UP, this.upPressed, false, 'auto-type');
+        this.onKey(Keys.DOM_VK_DOWN, this.downPressed, false, 'auto-type');
+        this.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, false, 'auto-type');
+        this.onKey(Keys.DOM_VK_O, this.openKeyPressed, KeyHandler.SHORTCUT_ACTION, 'auto-type');
         KeyHandler.setModal('auto-type');
-    },
-
-    removeKeys() {
-        KeyHandler.offKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.enterPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.actionEnterPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_RETURN, this.optEnterPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_UP, this.upPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_DOWN, this.downPressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, this);
-        KeyHandler.offKey(Keys.DOM_VK_O, this.openKeyPressed, this);
-        KeyHandler.off('keypress:auto-type');
-        KeyHandler.setModal(null);
-    },
+        this.once('remove', () => {
+            KeyHandler.setModal(null);
+        });
+    }
 
     render() {
         let topMessage;
@@ -83,9 +73,9 @@ const AutoTypePopupView = Backbone.View.extend({
         } else {
             topMessage = Locale.autoTypeMsgNoWindow;
         }
-        const noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
+        const noColor = AppSettingsModel.colorfulIcons ? '' : 'grayscale';
         this.entries = this.model.filter.getEntries();
-        this.result = this.entries.first();
+        this.result = this.entries[0];
         const presenter = new EntryPresenter(null, noColor, this.result && this.result.id);
         let itemsHtml = '';
         const itemTemplate = this.itemTemplate;
@@ -93,15 +83,13 @@ const AutoTypePopupView = Backbone.View.extend({
             presenter.present(entry);
             itemsHtml += itemTemplate(presenter);
         });
-        this.renderTemplate({
+        super.render({
             filterText: this.model.filter.text,
             topMessage,
-            selectionHintDefault: Locale.autoTypeSelectionHint,
-            selectionHintAction: Locale.autoTypeSelectionHintAction,
-            selectionHintOpt: Locale.autoTypeSelectionHintOpt,
             itemsHtml,
-            actionSymbol: FeatureDetector.actionShortcutSymbol(true),
-            altSymbol: FeatureDetector.altShortcutSymbol(true),
+            actionSymbol: Shortcuts.actionShortcutSymbol(true),
+            altSymbol: Shortcuts.altShortcutSymbol(true),
+            shiftSymbol: Shortcuts.shiftShortcutSymbol(true),
             keyEnter: Locale.keyEnter
         });
         document.activeElement.blur();
@@ -110,28 +98,19 @@ const AutoTypePopupView = Backbone.View.extend({
             scroller: this.$el.find('.scroller')[0],
             bar: this.$el.find('.scroller__bar')[0]
         });
-        return this;
-    },
-
-    remove() {
-        this.removeKeys();
-        Backbone.View.prototype.remove.apply(this);
-    },
+    }
 
     cancelAndClose() {
         this.result = null;
-        this.trigger('result', this.result);
-    },
+        this.emit('result', this.result);
+    }
 
-    closeWithResult(sequenceType) {
-        if (!sequenceType) {
-            sequenceType = AutoTypeSequenceType.DEFAULT;
-        }
-        this.trigger('result', {
+    closeWithResult(sequence) {
+        this.emit('result', {
             entry: this.result,
-            sequenceType
+            sequence
         });
-    },
+    }
 
     escPressed() {
         if (this.model.filter.text) {
@@ -139,42 +118,46 @@ const AutoTypePopupView = Backbone.View.extend({
         } else {
             this.cancelAndClose();
         }
-    },
+    }
 
     enterPressed() {
         this.closeWithResult();
-    },
+    }
 
     actionEnterPressed() {
-        this.closeWithResult(AutoTypeSequenceType.PASSWORD);
-    },
+        this.closeWithResult('{PASSWORD}');
+    }
 
     optEnterPressed() {
-        this.closeWithResult(AutoTypeSequenceType.USERNAME);
-    },
+        this.closeWithResult('{USERNAME}');
+    }
 
     openKeyPressed() {
-        this.removeKeys();
-        this.trigger('show-open-files');
-    },
+        this.emit('show-open-files');
+    }
+
+    shiftEnterPressed(e) {
+        const activeItem = this.$el.find('.at-select__item[data-id="' + this.result.id + '"]');
+        this.showItemOptions(activeItem, e);
+    }
 
     upPressed(e) {
         e.preventDefault();
         const activeIndex = this.entries.indexOf(this.result) - 1;
         if (activeIndex >= 0) {
-            this.result = this.entries.at(activeIndex);
+            this.result = this.entries[activeIndex];
             this.highlightActive();
         }
-    },
+    }
 
     downPressed(e) {
         e.preventDefault();
         const activeIndex = this.entries.indexOf(this.result) + 1;
         if (activeIndex < this.entries.length) {
-            this.result = this.entries.at(activeIndex);
+            this.result = this.entries[activeIndex];
             this.highlightActive();
         }
-    },
+    }
 
     highlightActive() {
         this.$el.find('.at-select__item').removeClass('at-select__item--active');
@@ -187,14 +170,14 @@ const AutoTypePopupView = Backbone.View.extend({
         } else if (itemRect.bottom > listRect.bottom) {
             this.scroller[0].scrollTop += itemRect.bottom - listRect.bottom;
         }
-    },
+    }
 
     keyPressed(e) {
-        if (e.which) {
+        if (e.which && e.which !== Keys.DOM_VK_RETURN) {
             this.model.filter.text += String.fromCharCode(e.which);
             this.render();
         }
-    },
+    }
 
     backSpacePressed() {
         if (this.model.filter.text) {
@@ -204,30 +187,134 @@ const AutoTypePopupView = Backbone.View.extend({
             );
             this.render();
         }
-    },
+    }
 
     clearFilterText() {
         this.model.filter.text = '';
         this.render();
-    },
+    }
 
     itemClicked(e) {
         const itemEl = $(e.target).closest('.at-select__item');
-        const id = itemEl.data('id');
-        this.result = this.entries.get(id);
-        this.closeWithResult();
-    },
+        const optionsClicked = $(e.target).closest('.at-select__item-options');
+
+        if (optionsClicked) {
+            this.showItemOptions(itemEl, e);
+        } else {
+            const id = itemEl.data('id');
+            this.result = this.entries.get(id);
+            this.closeWithResult();
+        }
+    }
+
+    itemRightClicked(e) {
+        const itemEl = $(e.target).closest('.at-select__item');
+        this.showItemOptions(itemEl, e);
+    }
 
     mainWindowBlur() {
         this.cancelAndClose();
-    },
+    }
 
     mainWindowWillClose(e) {
         e.preventDefault();
         this.cancelAndClose();
     }
-});
 
-_.extend(AutoTypePopupView.prototype, Scrollable);
+    showItemOptions(itemEl, event) {
+        if (event) {
+            event.stopImmediatePropagation();
+        }
 
-module.exports = AutoTypePopupView;
+        const id = itemEl.data('id');
+        const entry = this.entries.get(id);
+
+        if (this.views.optionsDropdown) {
+            this.hideItemOptionsDropdown();
+            if (this.result && this.result.id === entry.id) {
+                return;
+            }
+        }
+
+        this.result = entry;
+        if (!itemEl.hasClass('at-select__item--active')) {
+            this.highlightActive();
+        }
+
+        const view = new DropdownView();
+        this.listenTo(view, 'cancel', this.hideItemOptionsDropdown);
+        this.listenTo(view, 'select', this.itemOptionsDropdownSelect);
+
+        const options = [];
+
+        if (entry.fields.otp) {
+            options.push({
+                value: '{TOTP}',
+                icon: 'clock-o',
+                text: Locale.autoTypeSelectionOtp
+            });
+        }
+        if (entry.user) {
+            options.push({
+                value: '{USERNAME}',
+                icon: 'user',
+                text: StringFormat.capFirst(Locale.user)
+            });
+        }
+        if (entry.password) {
+            options.push({
+                value: '{PASSWORD}',
+                icon: 'key',
+                text: StringFormat.capFirst(Locale.password)
+            });
+        }
+
+        for (const field of Object.keys(entry.fields)) {
+            if (field !== 'otp') {
+                options.push({
+                    value: `{S:${field}}`,
+                    icon: 'th-list',
+                    text: field
+                });
+            }
+        }
+
+        let position;
+        if (event && event.button === 2) {
+            position = {
+                top: event.pageY,
+                left: event.pageX
+            };
+        } else {
+            const targetElRect = itemEl[0].getBoundingClientRect();
+            position = {
+                top: targetElRect.bottom,
+                right: targetElRect.right
+            };
+        }
+
+        view.render({
+            position,
+            options
+        });
+
+        this.views.optionsDropdown = view;
+    }
+
+    hideItemOptionsDropdown() {
+        if (this.views.optionsDropdown) {
+            this.views.optionsDropdown.remove();
+            delete this.views.optionsDropdown;
+        }
+    }
+
+    itemOptionsDropdownSelect(e) {
+        this.hideItemOptionsDropdown();
+        const sequence = e.item;
+        this.closeWithResult(sequence);
+    }
+}
+
+Object.assign(AutoTypeSelectView.prototype, Scrollable);
+
+export { AutoTypeSelectView };

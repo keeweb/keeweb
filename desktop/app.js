@@ -33,6 +33,18 @@ if (!htmlPath) {
 }
 const showDevToolsOnStart = process.argv.some(arg => arg.startsWith('--devtools'));
 
+const themeBgColors = {
+    db: '#342f2e',
+    fb: '#282c34',
+    wh: '#fafafa',
+    te: '#222',
+    hc: '#fafafa',
+    sd: '#002b36',
+    sl: '#fdf6e3',
+    macdark: '#1f1f20'
+};
+const defaultBgColor = '#282C34';
+
 app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
 
 setEnv();
@@ -40,23 +52,8 @@ restorePreferences();
 
 app.on('window-all-closed', () => {
     if (restartPending) {
-        // unbind all handlers, load new app.js module and pass control to it
-        app.removeAllListeners('window-all-closed');
-        app.removeAllListeners('ready');
-        app.removeAllListeners('open-file');
-        app.removeAllListeners('activate');
-        app.removeAllListeners('second-instance');
-        electron.globalShortcut.unregisterAll();
-        electron.powerMonitor.removeAllListeners('suspend');
-        electron.powerMonitor.removeAllListeners('resume');
-        for (const id of systemNotificationIds) {
-            electron.systemPreferences.unsubscribeNotification(id);
-        }
-        systemNotificationIds.length = 0;
-        const userDataAppFile = path.join(userDataDir, 'app.asar/app.js');
-        delete require.cache[require.resolve('./app.js')];
-        require(userDataAppFile);
-        app.emit('ready');
+        app.relaunch();
+        app.exit(0);
     } else {
         if (process.platform !== 'darwin') {
             app.quit();
@@ -65,10 +62,11 @@ app.on('window-all-closed', () => {
 });
 app.on('ready', () => {
     appReady = true;
+    const appSettings = readAppSettings() || {};
     setAppOptions();
     setSystemAppearance();
-    createMainWindow();
-    setGlobalShortcuts();
+    createMainWindow(appSettings);
+    setGlobalShortcuts(appSettings);
     subscribePowerEvents();
     deleteOldTempFiles();
     hookRequestHeaders();
@@ -134,7 +132,7 @@ app.minimizeThenHideIfInTray = function() {
 app.getMainWindow = function() {
     return mainWindow;
 };
-app.emitBackboneEvent = emitBackboneEvent;
+app.setGlobalShortcuts = setGlobalShortcuts;
 
 function setAppOptions() {
     app.commandLine.appendSwitch('disable-background-timer-throttling');
@@ -156,9 +154,7 @@ function setSystemAppearance() {
     }
 }
 
-function createMainWindow() {
-    const appSettings = readAppSettings() || {};
-    const isMacDarkTheme = appSettings.theme === 'macdark';
+function createMainWindow(appSettings) {
     const windowOptions = {
         show: false,
         width: 1000,
@@ -166,7 +162,7 @@ function createMainWindow() {
         minWidth: 700,
         minHeight: 400,
         titleBarStyle: appSettings.titlebarStyle,
-        backgroundColor: isMacDarkTheme ? '#1F1F20' : '#282C34',
+        backgroundColor: themeBgColors[appSettings.theme] || defaultBgColor,
         webPreferences: {
             backgroundThrottling: false,
             nodeIntegration: true,
@@ -199,16 +195,16 @@ function createMainWindow() {
         saveMainWindowPosition();
     });
     mainWindow.on('minimize', () => {
-        emitBackboneEvent('launcher-minimize');
+        emitRemoteEvent('launcher-minimize');
     });
     mainWindow.on('leave-full-screen', () => {
-        emitBackboneEvent('leave-full-screen');
+        emitRemoteEvent('leave-full-screen');
     });
     mainWindow.on('enter-full-screen', () => {
-        emitBackboneEvent('enter-full-screen');
+        emitRemoteEvent('enter-full-screen');
     });
     mainWindow.on('session-end', () => {
-        emitBackboneEvent('os-lock');
+        emitRemoteEvent('os-lock');
     });
     restoreMainWindowPosition();
 }
@@ -228,7 +224,7 @@ function restoreMainWindow() {
 }
 
 function closeMainWindow() {
-    emitBackboneEvent('launcher-exit-request');
+    emitRemoteEvent('launcher-exit-request');
     setTimeout(destroyAppIcon, 0);
 }
 
@@ -301,17 +297,17 @@ function restoreMainWindowPosition() {
 }
 
 function mainWindowBlur() {
-    emitBackboneEvent('main-window-blur');
+    emitRemoteEvent('main-window-blur');
 }
 
 function mainWindowFocus() {
-    emitBackboneEvent('main-window-focus');
+    emitRemoteEvent('main-window-focus');
 }
 
-function emitBackboneEvent(e, arg) {
+function emitRemoteEvent(e, arg) {
     if (mainWindow && mainWindow.webContents) {
         arg = JSON.stringify(arg);
-        mainWindow.webContents.executeJavaScript(`Backbone.trigger('${e}', ${arg}); void 0;`);
+        mainWindow.webContents.executeJavaScript(`Events.emit('${e}', ${arg}); void 0;`);
     }
 }
 
@@ -396,37 +392,39 @@ function notifyOpenFile() {
     }
 }
 
-function setGlobalShortcuts() {
-    const shortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
-    const shortcuts = {
-        C: 'copy-password',
-        B: 'copy-user',
-        U: 'copy-url',
-        T: 'auto-type'
+function setGlobalShortcuts(appSettings) {
+    const defaultShortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
+    const defaultShortcuts = {
+        CopyPassword: { shortcut: defaultShortcutModifiers + 'C', event: 'copy-password' },
+        CopyUser: { shortcut: defaultShortcutModifiers + 'B', event: 'copy-user' },
+        CopyUrl: { shortcut: defaultShortcutModifiers + 'U', event: 'copy-url' },
+        AutoType: { shortcut: defaultShortcutModifiers + 'T', event: 'auto-type' }
     };
-    Object.keys(shortcuts).forEach(key => {
-        const shortcut = shortcutModifiers + key;
-        const eventName = shortcuts[key];
+    electron.globalShortcut.unregisterAll();
+    for (const [key, shortcutDef] of Object.entries(defaultShortcuts)) {
+        const fromSettings = appSettings[`globalShortcut${key}`];
+        const shortcut = fromSettings || shortcutDef.shortcut;
+        const eventName = shortcutDef.event;
         try {
             electron.globalShortcut.register(shortcut, () => {
-                emitBackboneEvent(eventName);
+                emitRemoteEvent(eventName);
             });
         } catch (e) {}
-    });
+    }
 }
 
 function subscribePowerEvents() {
     electron.powerMonitor.on('suspend', () => {
-        emitBackboneEvent('power-monitor-suspend');
+        emitRemoteEvent('power-monitor-suspend');
     });
     electron.powerMonitor.on('resume', () => {
-        emitBackboneEvent('power-monitor-resume');
+        emitRemoteEvent('power-monitor-resume');
     });
     if (process.platform === 'darwin') {
         const id = electron.systemPreferences.subscribeNotification(
             'com.apple.screenIsLocked',
             () => {
-                emitBackboneEvent('os-lock');
+                emitRemoteEvent('os-lock');
             }
         );
         systemNotificationIds.push(id);

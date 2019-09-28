@@ -1,26 +1,28 @@
-const Backbone = require('backbone');
+import { View } from 'framework/views/view';
+import template from 'templates/details/details-add-field.hbs';
 
-const DetailsAddFieldView = Backbone.View.extend({
-    template: require('templates/details/details-add-field.hbs'),
+class DetailsAddFieldView extends View {
+    parent = '.details__body-fields';
 
-    events: {
+    template = template;
+
+    events = {
         'click .details__field-label': 'fieldLabelClick',
         'click .details__field-value': 'fieldValueClick'
-    },
+    };
 
     render() {
-        this.renderTemplate();
+        super.render();
         this.labelEl = this.$el.find('.details__field-label');
-        return this;
-    },
+    }
 
     fieldLabelClick() {
-        this.trigger('more-click');
-    },
+        this.emit('more-click');
+    }
 
     fieldValueClick() {
-        this.trigger('add-field');
+        this.emit('add-field');
     }
-});
+}
 
-module.exports = DetailsAddFieldView;
+export { DetailsAddFieldView };

@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const GroupModel = require('../models/group-model');
+import { Collection } from 'framework/collection';
+import { GroupModel } from 'models/group-model';
 
-const GroupCollection = Backbone.Collection.extend({
-    model: GroupModel
-});
+class GroupCollection extends Collection {
+    static model = GroupModel;
+}
 
-module.exports = GroupCollection;
+export { GroupCollection };

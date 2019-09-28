@@ -1,5 +1,5 @@
-const Launcher = require('../../comp/launcher');
-const Logger = require('../../util/logger');
+import { Launcher } from 'comp/launcher';
+import { Logger } from 'util/logger';
 
 const logger = new Logger('auto-type');
 
@@ -18,4 +18,4 @@ const AutoTypeNativeHelper = {
     }
 };
 
-module.exports = AutoTypeNativeHelper;
+export { AutoTypeNativeHelper };

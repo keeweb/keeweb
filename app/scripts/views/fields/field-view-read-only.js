@@ -1,11 +1,14 @@
-const FieldView = require('./field-view');
+import { FieldView } from 'views/fields/field-view';
+import { escape } from 'util/fn';
 
-const FieldViewReadOnly = FieldView.extend({
+class FieldViewReadOnly extends FieldView {
+    readonly = true;
+
     renderValue(value) {
-        return value.isProtected ? new Array(value.textLength + 1).join('•') : _.escape(value);
-    },
+        value = value.isProtected ? new Array(value.textLength + 1).join('•') : escape(value);
+        value = value.replace(/\n/g, '<br/>');
+        return value;
+    }
+}
 
-    readonly: true
-});
-
-module.exports = FieldViewReadOnly;
+export { FieldViewReadOnly };

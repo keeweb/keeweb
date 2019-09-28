@@ -26,6 +26,7 @@ body.th-macdark {
     --secondary-background-color: #2d2d2e;
     --form-box-border-focus: #6697c0;
     --form-box-shadow-color-focus: #44749d;
+    --selected-item-color: #2457c9;
     .app__menu {
         background-color: var(--secondary-background-color);
         .menu__item.menu__item--active > .menu__item-body,
@@ -44,10 +45,23 @@ body.th-macdark {
     .app__footer {
         background-color: var(--secondary-background-color);
     }
+    .at-select__table .at-select__item {
+        border-right-width: 0;
+    }
+    .at-select__table .at-select__item.at-select__item--active {
+        background-color: var(--selected-item-color);
+    }
+    .at-select__item--active .at-select__item-options:hover {
+        background: var(--secondary-background-color);
+    }
+    .dropdown__item--active,
+    .dropdown__item--active:hover {
+        background-color: var(--selected-item-color);
+    }
     @include nomobile {
         .list__item--active,
         .list__item--active:hover {
-            background-color: #2457c9;
+            background-color: var(--selected-item-color);
             .list__item-descr {
                 color: #8f8f91;
             }

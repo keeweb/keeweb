@@ -1,151 +1,156 @@
-const Backbone = require('backbone');
-const DragView = require('../views/drag-view');
-const MenuView = require('../views/menu/menu-view');
-const FooterView = require('../views/footer-view');
-const ListView = require('../views/list-view');
-const ListWrapView = require('../views/list-wrap-view');
-const DetailsView = require('../views/details/details-view');
-const GrpView = require('../views/grp-view');
-const TagView = require('../views/tag-view');
-const GeneratorPresetsView = require('../views/generator-presets-view');
-const OpenView = require('../views/open-view');
-const SettingsView = require('../views/settings/settings-view');
-const KeyChangeView = require('../views/key-change-view');
-const DropdownView = require('../views/dropdown-view');
-const Alerts = require('../comp/alerts');
-const Keys = require('../const/keys');
-const Timeouts = require('../const/timeouts');
-const KeyHandler = require('../comp/key-handler');
-const IdleTracker = require('../comp/idle-tracker');
-const Launcher = require('../comp/launcher');
-const SettingsManager = require('../comp/settings-manager');
-const Locale = require('../util/locale');
-const FeatureDetector = require('../util/feature-detector');
-const UpdateModel = require('../models/update-model');
+import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
+import { IdleTracker } from 'comp/browser/idle-tracker';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { Launcher } from 'comp/launcher';
+import { SettingsManager } from 'comp/settings/settings-manager';
+import { Alerts } from 'comp/ui/alerts';
+import { Keys } from 'const/keys';
+import { Timeouts } from 'const/timeouts';
+import { UpdateModel } from 'models/update-model';
+import { Features } from 'util/features';
+import { Locale } from 'util/locale';
+import { Logger } from 'util/logger';
+import { CsvParser } from 'util/data/csv-parser';
+import { DetailsView } from 'views/details/details-view';
+import { DragView } from 'views/drag-view';
+import { DropdownView } from 'views/dropdown-view';
+import { FooterView } from 'views/footer-view';
+import { GeneratorPresetsView } from 'views/generator-presets-view';
+import { GrpView } from 'views/grp-view';
+import { KeyChangeView } from 'views/key-change-view';
+import { ListView } from 'views/list-view';
+import { ListWrapView } from 'views/list-wrap-view';
+import { MenuView } from 'views/menu/menu-view';
+import { OpenView } from 'views/open-view';
+import { SettingsView } from 'views/settings/settings-view';
+import { TagView } from 'views/tag-view';
+import { ImportCsvView } from 'views/import-csv-view';
+import template from 'templates/app.hbs';
 
-const AppView = Backbone.View.extend({
-    el: 'body',
+class AppView extends View {
+    parent = 'body';
 
-    template: require('templates/app.hbs'),
+    template = template;
 
-    events: {
-        'contextmenu': 'contextMenu',
-        'drop': 'drop',
-        'dragenter': 'dragover',
-        'dragover': 'dragover',
+    events = {
+        contextmenu: 'contextMenu',
+        drop: 'drop',
+        dragenter: 'dragover',
+        dragover: 'dragover',
         'click a[target=_blank]': 'extLinkClick',
-        'mousedown': 'bodyClick'
-    },
+        mousedown: 'bodyClick'
+    };
 
-    views: null,
+    titlebarStyle = 'default';
 
-    titlebarStyle: 'default',
-
-    initialize() {
-        this.views = {};
-        this.views.menu = new MenuView({ model: this.model.menu });
-        this.views.menuDrag = new DragView('x');
-        this.views.footer = new FooterView({ model: this.model });
-        this.views.listWrap = new ListWrapView({ model: this.model });
-        this.views.list = new ListView({ model: this.model });
-        this.views.listDrag = new DragView('x');
+    constructor(model) {
+        super(model);
+        this.views.menu = new MenuView(this.model.menu, { ownParent: true });
+        this.views.menuDrag = new DragView('x', { parent: '.app__menu-drag' });
+        this.views.footer = new FooterView(this.model, { ownParent: true });
+        this.views.listWrap = new ListWrapView(this.model, { ownParent: true });
+        this.views.list = new ListView(this.model, { ownParent: true });
+        this.views.listDrag = new DragView('x', { parent: '.app__list-drag' });
         this.views.list.dragView = this.views.listDrag;
-        this.views.details = new DetailsView();
+        this.views.details = new DetailsView(undefined, { ownParent: true });
         this.views.details.appModel = this.model;
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
 
-        this.titlebarStyle = this.model.settings.get('titlebarStyle');
+        this.titlebarStyle = this.model.settings.titlebarStyle;
 
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
-        this.listenTo(this.model.files, 'update reset', this.fileListUpdated);
+        this.listenTo(this.model.files, 'change', this.fileListUpdated);
 
-        this.listenTo(Backbone, 'select-all', this.selectAll);
-        this.listenTo(Backbone, 'menu-select', this.menuSelect);
-        this.listenTo(Backbone, 'lock-workspace', this.lockWorkspace);
-        this.listenTo(Backbone, 'show-file', this.showFileSettings);
-        this.listenTo(Backbone, 'open-file', this.toggleOpenFile);
-        this.listenTo(Backbone, 'save-all', this.saveAll);
-        this.listenTo(Backbone, 'remote-key-changed', this.remoteKeyChanged);
-        this.listenTo(Backbone, 'key-change-pending', this.keyChangePending);
-        this.listenTo(Backbone, 'toggle-settings', this.toggleSettings);
-        this.listenTo(Backbone, 'toggle-menu', this.toggleMenu);
-        this.listenTo(Backbone, 'toggle-details', this.toggleDetails);
-        this.listenTo(Backbone, 'edit-group', this.editGroup);
-        this.listenTo(Backbone, 'edit-tag', this.editTag);
-        this.listenTo(Backbone, 'edit-generator-presets', this.editGeneratorPresets);
-        this.listenTo(Backbone, 'launcher-open-file', this.launcherOpenFile);
-        this.listenTo(Backbone, 'user-idle', this.userIdle);
-        this.listenTo(Backbone, 'os-lock', this.osLocked);
-        this.listenTo(Backbone, 'power-monitor-suspend', this.osLocked);
-        this.listenTo(Backbone, 'app-minimized', this.appMinimized);
-        this.listenTo(Backbone, 'show-context-menu', this.showContextMenu);
-        this.listenTo(Backbone, 'second-instance', this.showSingleInstanceAlert);
-        this.listenTo(Backbone, 'file-modified', this.handleAutoSaveTimer);
-
-        this.listenTo(UpdateModel.instance, 'change:updateReady', this.updateApp);
-
-        this.listenTo(Backbone, 'enter-full-screen', this.enterFullScreen);
-        this.listenTo(Backbone, 'leave-full-screen', this.leaveFullScreen);
+        this.listenTo(Events, 'select-all', this.selectAll);
+        this.listenTo(Events, 'menu-select', this.menuSelect);
+        this.listenTo(Events, 'lock-workspace', this.lockWorkspace);
+        this.listenTo(Events, 'show-file', this.showFileSettings);
+        this.listenTo(Events, 'open-file', this.toggleOpenFile);
+        this.listenTo(Events, 'save-all', this.saveAll);
+        this.listenTo(Events, 'remote-key-changed', this.remoteKeyChanged);
+        this.listenTo(Events, 'key-change-pending', this.keyChangePending);
+        this.listenTo(Events, 'toggle-settings', this.toggleSettings);
+        this.listenTo(Events, 'toggle-menu', this.toggleMenu);
+        this.listenTo(Events, 'toggle-details', this.toggleDetails);
+        this.listenTo(Events, 'edit-group', this.editGroup);
+        this.listenTo(Events, 'edit-tag', this.editTag);
+        this.listenTo(Events, 'edit-generator-presets', this.editGeneratorPresets);
+        this.listenTo(Events, 'launcher-open-file', this.launcherOpenFile);
+        this.listenTo(Events, 'user-idle', this.userIdle);
+        this.listenTo(Events, 'os-lock', this.osLocked);
+        this.listenTo(Events, 'power-monitor-suspend', this.osLocked);
+        this.listenTo(Events, 'app-minimized', this.appMinimized);
+        this.listenTo(Events, 'show-context-menu', this.showContextMenu);
+        this.listenTo(Events, 'second-instance', this.showSingleInstanceAlert);
+        this.listenTo(Events, 'file-modified', this.handleAutoSaveTimer);
+        this.listenTo(Events, 'enter-full-screen', this.enterFullScreen);
+        this.listenTo(Events, 'leave-full-screen', this.leaveFullScreen);
+        this.listenTo(Events, 'import-csv-requested', this.showImportCsv);
+        this.listenTo(UpdateModel, 'change:updateReady', this.updateApp);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
         window.onresize = this.windowResize.bind(this);
         window.onblur = this.windowBlur.bind(this);
 
-        KeyHandler.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, this);
-        KeyHandler.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed, this);
-        KeyHandler.onKey(Keys.DOM_VK_F12, this.openDevTools, this, KeyHandler.SHORTCUT_ACTION);
+        this.onKey(Keys.DOM_VK_ESCAPE, this.escPressed);
+        this.onKey(Keys.DOM_VK_BACK_SPACE, this.backspacePressed);
+        if (Launcher && Launcher.devTools) {
+            this.onKey(
+                Keys.DOM_VK_I,
+                this.openDevTools,
+                KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
+            );
+        }
 
         setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
 
         this.setWindowClass();
         this.fixClicksInEdge();
-    },
+    }
 
     setWindowClass() {
-        const getBrowserCssClass = FeatureDetector.getBrowserCssClass();
+        const getBrowserCssClass = Features.getBrowserCssClass();
         if (getBrowserCssClass) {
-            this.$el.addClass(getBrowserCssClass);
+            document.body.classList.add(getBrowserCssClass);
         }
         if (this.titlebarStyle !== 'default') {
-            this.$el.addClass('titlebar-' + this.titlebarStyle);
+            document.body.classList.add('titlebar-' + this.titlebarStyle);
         }
-    },
+    }
 
     fixClicksInEdge() {
         // MS Edge doesn't want to handle clicks by default
         // TODO: remove once Edge 14 share drops enough
         // https://github.com/keeweb/keeweb/issues/636#issuecomment-304225634
         // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5782378/
-        if (FeatureDetector.needFixClicks) {
+        if (Features.needFixClicks) {
             const msEdgeScrewer = $('<input/>')
                 .appendTo(this.$el)
                 .focus();
             setTimeout(() => msEdgeScrewer.remove(), 0);
         }
-    },
+    }
 
     render() {
-        this.$el.html(
-            this.template({
-                beta: this.model.isBeta,
-                titlebarStyle: this.titlebarStyle
-            })
-        );
+        super.render({
+            beta: this.model.isBeta,
+            titlebarStyle: this.titlebarStyle
+        });
         this.panelEl = this.$el.find('.app__panel:first');
-        this.views.listWrap.setElement(this.$el.find('.app__list-wrap')).render();
-        this.views.menu.setElement(this.$el.find('.app__menu')).render();
-        this.views.menuDrag.setElement(this.$el.find('.app__menu-drag')).render();
-        this.views.footer.setElement(this.$el.find('.app__footer')).render();
-        this.views.list.setElement(this.$el.find('.app__list')).render();
-        this.views.listDrag.setElement(this.$el.find('.app__list-drag')).render();
-        this.views.details.setElement(this.$el.find('.app__details')).render();
+        this.views.listWrap.render();
+        this.views.menu.render();
+        this.views.menuDrag.render();
+        this.views.footer.render();
+        this.views.list.render();
+        this.views.listDrag.render();
+        this.views.details.render();
         this.showLastOpenFile();
-        return this;
-    },
+    }
 
     showOpenFile() {
         this.hideContextMenu();
@@ -160,43 +165,36 @@ const AppView = Backbone.View.extend({
         this.hideSettings();
         this.hideOpenFile();
         this.hideKeyChange();
-        this.views.open = new OpenView({ model: this.model });
-        this.views.open.setElement(this.$el.find('.app__body')).render();
-        this.views.open.on(
-            'close',
-            () => {
-                Backbone.trigger('closed-open-view');
-            },
-            this
-        );
-        this.views.open.on('close', this.showEntries, this);
-    },
+        this.hideImportCsv();
+        this.views.open = new OpenView(this.model);
+        this.views.open.render();
+        this.views.open.on('close', () => {
+            Events.emit('closed-open-view');
+        });
+        this.views.open.on('close', () => this.showEntries());
+    }
 
     showLastOpenFile() {
         this.showOpenFile();
-        const lastOpenFile = this.model.fileInfos.getLast();
+        const lastOpenFile = this.model.fileInfos[0];
         if (lastOpenFile) {
             this.views.open.currentSelectedIndex = 0;
             this.views.open.showOpenFileInfo(lastOpenFile);
         }
-    },
+    }
 
     launcherOpenFile(file) {
         if (file && file.data && /\.kdbx$/i.test(file.data)) {
             this.showOpenFile();
             this.views.open.showOpenLocalFile(file.data, file.key);
         }
-    },
+    }
 
     updateApp() {
-        if (
-            UpdateModel.instance.get('updateStatus') === 'ready' &&
-            !Launcher &&
-            !this.model.files.hasOpenFiles()
-        ) {
+        if (UpdateModel.updateStatus === 'ready' && !Launcher && !this.model.files.hasOpenFiles()) {
             window.location.reload();
         }
-    },
+    }
 
     showEntries() {
         this.views.menu.show();
@@ -210,14 +208,15 @@ const AppView = Backbone.View.extend({
         this.hideOpenFile();
         this.hideSettings();
         this.hideKeyChange();
-    },
+        this.hideImportCsv();
+    }
 
     hideOpenFile() {
         if (this.views.open) {
             this.views.open.remove();
             this.views.open = null;
         }
-    },
+    }
 
     hidePanelView() {
         if (this.views.panel) {
@@ -225,7 +224,7 @@ const AppView = Backbone.View.extend({
             this.views.panel = null;
             this.panelEl.addClass('hide');
         }
-    },
+    }
 
     showPanelView(view) {
         this.views.listWrap.hide();
@@ -233,9 +232,10 @@ const AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.hidePanelView();
-        this.views.panel = view.setElement(this.panelEl).render();
+        view.render();
+        this.views.panel = view;
         this.panelEl.removeClass('hide');
-    },
+    }
 
     hideSettings() {
         if (this.views.settings) {
@@ -243,14 +243,21 @@ const AppView = Backbone.View.extend({
             this.views.settings.remove();
             this.views.settings = null;
         }
-    },
+    }
 
     hideKeyChange() {
         if (this.views.keyChange) {
             this.views.keyChange.hide();
             this.views.keyChange = null;
         }
-    },
+    }
+
+    hideImportCsv() {
+        if (this.views.importCsv) {
+            this.views.importCsv.remove();
+            this.views.importCsv = null;
+        }
+    }
 
     showSettings(selectedMenuItem) {
         this.model.menu.setMenu('settings');
@@ -263,22 +270,23 @@ const AppView = Backbone.View.extend({
         this.hidePanelView();
         this.hideOpenFile();
         this.hideKeyChange();
-        this.views.settings = new SettingsView({ model: this.model });
-        this.views.settings.setElement(this.$el.find('.app__body')).render();
+        this.hideImportCsv();
+        this.views.settings = new SettingsView(this.model);
+        this.views.settings.render();
         if (!selectedMenuItem) {
-            selectedMenuItem = this.model.menu.generalSection.get('items').first();
+            selectedMenuItem = this.model.menu.generalSection.items[0];
         }
         this.model.menu.select({ item: selectedMenuItem });
         this.views.menu.switchVisibility(false);
-    },
+    }
 
     showEditGroup(group) {
-        this.showPanelView(new GrpView({ model: group }));
-    },
+        this.showPanelView(new GrpView(group));
+    }
 
     showEditTag() {
-        this.showPanelView(new TagView({ model: this.model }));
-    },
+        this.showPanelView(new TagView(this.model));
+    }
 
     showKeyChange(file, viewConfig) {
         if (Alerts.alertDisplayed) {
@@ -295,12 +303,14 @@ const AppView = Backbone.View.extend({
         this.views.listDrag.hide();
         this.views.details.hide();
         this.views.keyChange = new KeyChangeView({
-            model: { file, expired: viewConfig.expired, remote: viewConfig.remote }
+            file,
+            expired: viewConfig.expired,
+            remote: viewConfig.remote
         });
-        this.views.keyChange.setElement(this.$el.find('.app__body')).render();
+        this.views.keyChange.render();
         this.views.keyChange.on('accept', this.keyChangeAccept.bind(this));
         this.views.keyChange.on('cancel', this.showEntries.bind(this));
-    },
+    }
 
     fileListUpdated() {
         if (this.model.files.hasOpenFiles()) {
@@ -309,14 +319,12 @@ const AppView = Backbone.View.extend({
             this.showOpenFile();
         }
         this.fixClicksInEdge();
-    },
+    }
 
     showFileSettings(e) {
-        const menuItem = this.model.menu.filesSection
-            .get('items')
-            .find(item => item.get('file').cid === e.fileId);
+        const menuItem = this.model.menu.filesSection.items.find(item => item.file.id === e.fileId);
         if (this.views.settings) {
-            if (this.views.settings.file === menuItem.get('file')) {
+            if (this.views.settings.file === menuItem.file) {
                 this.showEntries();
             } else {
                 this.model.menu.select({ item: menuItem });
@@ -324,7 +332,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.showSettings(menuItem);
         }
-    },
+    }
 
     toggleOpenFile() {
         if (this.views.open) {
@@ -334,7 +342,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.showOpenFile();
         }
-    },
+    }
 
     beforeUnload(e) {
         const exitEvent = {
@@ -342,14 +350,14 @@ const AppView = Backbone.View.extend({
                 this.prevented = true;
             }
         };
-        Backbone.trigger('main-window-will-close', exitEvent);
+        Events.emit('main-window-will-close', exitEvent);
         if (exitEvent.prevented) {
             Launcher.preventExit(e);
             return;
         }
         if (this.model.files.hasDirtyFiles()) {
             const exit = () => {
-                if (Launcher.canMinimize() && this.model.settings.get('minimizeOnClose')) {
+                if (Launcher.canMinimize() && this.model.settings.minimizeOnClose) {
                     Launcher.minimizeApp();
                 } else {
                     Launcher.exit();
@@ -360,7 +368,7 @@ const AppView = Backbone.View.extend({
             }
             if (Launcher) {
                 if (!this.exitAlertShown) {
-                    if (this.model.settings.get('autoSave')) {
+                    if (this.model.settings.autoSave) {
                         this.saveAndLock(result => {
                             if (result) {
                                 exit();
@@ -404,82 +412,82 @@ const AppView = Backbone.View.extend({
             !Launcher.exitRequested &&
             !Launcher.restartPending &&
             Launcher.canMinimize() &&
-            this.model.settings.get('minimizeOnClose')
+            this.model.settings.minimizeOnClose
         ) {
             Launcher.minimizeApp();
             return Launcher.preventExit(e);
         }
-    },
+    }
 
     windowResize() {
-        Backbone.trigger('page-geometry', { source: 'window' });
-    },
+        Events.emit('page-geometry', { source: 'window' });
+    }
 
     windowBlur(e) {
         if (e.target === window) {
-            Backbone.trigger('page-blur');
+            Events.emit('page-blur');
         }
-    },
+    }
 
     enterFullScreen() {
         this.$el.addClass('fullscreen');
-    },
+    }
 
     leaveFullScreen() {
         this.$el.removeClass('fullscreen');
-    },
+    }
 
     escPressed() {
         if (this.views.open && this.model.files.hasOpenFiles()) {
             this.showEntries();
         }
-    },
+    }
 
     backspacePressed(e) {
         if (e.target === document.body) {
             e.preventDefault();
         }
-    },
+    }
 
     openDevTools() {
         if (Launcher && Launcher.devTools) {
             Launcher.openDevTools();
         }
-    },
+    }
 
     selectAll() {
-        this.menuSelect({ item: this.model.menu.allItemsSection.get('items').first() });
-    },
+        this.menuSelect({ item: this.model.menu.allItemsSection.items[0] });
+    }
 
     menuSelect(opt) {
         this.model.menu.select(opt);
         if (this.views.panel && !this.views.panel.isHidden()) {
             this.showEntries();
         }
-    },
+    }
 
     userIdle() {
         this.lockWorkspace(true);
-    },
+    }
 
     osLocked() {
-        if (this.model.settings.get('lockOnOsLock')) {
+        if (this.model.settings.lockOnOsLock) {
             this.lockWorkspace(true);
         }
-    },
+    }
 
     appMinimized() {
-        if (this.model.settings.get('lockOnMinimize')) {
+        if (this.model.settings.lockOnMinimize) {
             this.lockWorkspace(true);
         }
-    },
+    }
 
     lockWorkspace(autoInit) {
         if (Alerts.alertDisplayed) {
             return;
         }
         if (this.model.files.hasUnsavedFiles()) {
-            if (this.model.settings.get('autoSave')) {
+            if (this.model.settings.autoSave) {
                 this.saveAndLock();
             } else {
                 const message = autoInit ? Locale.appCannotLockAutoInit : Locale.appCannotLock;
@@ -496,7 +504,7 @@ const AppView = Backbone.View.extend({
                     success: (result, autoSaveChecked) => {
                         if (result === 'save') {
                             if (autoSaveChecked) {
-                                this.model.settings.set('autoSave', autoSaveChecked);
+                                this.model.settings.autoSave = autoSaveChecked;
                             }
                             this.saveAndLock();
                         } else if (result === 'discard') {
@@ -508,27 +516,27 @@ const AppView = Backbone.View.extend({
         } else {
             this.closeAllFilesAndShowFirst();
         }
-    },
+    }
 
     handleAutoSaveTimer() {
-        if (this.model.settings.get('autoSaveInterval') !== 0) {
+        if (this.model.settings.autoSaveInterval !== 0) {
             // trigger periodical auto save
             if (this.autoSaveTimeoutId) {
                 clearTimeout(this.autoSaveTimeoutId);
             }
             this.autoSaveTimeoutId = setTimeout(
                 this.saveAll.bind(this),
-                this.model.settings.get('autoSaveInterval') * 1000 * 60
+                this.model.settings.autoSaveInterval * 1000 * 60
             );
         }
-    },
+    }
 
     saveAndLock(complete) {
         let pendingCallbacks = 0;
         const errorFiles = [];
         const that = this;
         this.model.files.forEach(function(file) {
-            if (!file.get('dirty')) {
+            if (!file.dirty) {
                 return;
             }
             this.model.syncFile(file, null, fileSaved.bind(this, file));
@@ -539,7 +547,7 @@ const AppView = Backbone.View.extend({
         }
         function fileSaved(file, err) {
             if (err) {
-                errorFiles.push(file.get('name'));
+                errorFiles.push(file.name);
             }
             if (--pendingCallbacks === 0) {
                 if (errorFiles.length && that.model.files.hasDirtyFiles()) {
@@ -564,45 +572,45 @@ const AppView = Backbone.View.extend({
                 }
             }
         }
-    },
+    }
 
     closeAllFilesAndShowFirst() {
-        let fileToShow = this.model.files.find(file => !file.get('demo') && !file.get('created'));
+        let fileToShow = this.model.files.find(file => !file.demo && !file.created);
         this.model.closeAllFiles();
         if (!fileToShow) {
-            fileToShow = this.model.fileInfos.getLast();
+            fileToShow = this.model.fileInfos[0];
         }
         if (fileToShow) {
             const fileInfo = this.model.fileInfos.getMatch(
-                fileToShow.get('storage'),
-                fileToShow.get('name'),
-                fileToShow.get('path')
+                fileToShow.storage,
+                fileToShow.name,
+                fileToShow.path
             );
             if (fileInfo) {
                 this.views.open.showOpenFileInfo(fileInfo);
             }
         }
-    },
+    }
 
     saveAll() {
         this.model.files.forEach(function(file) {
             this.model.syncFile(file);
         }, this);
-    },
+    }
 
     syncAllByTimer() {
-        if (this.model.settings.get('autoSave')) {
+        if (this.model.settings.autoSave) {
             this.saveAll();
         }
-    },
+    }
 
     remoteKeyChanged(e) {
         this.showKeyChange(e.file, { remote: true });
-    },
+    }
 
     keyChangePending(e) {
         this.showKeyChange(e.file, { expired: true });
-    },
+    }
 
     keyChangeAccept(e) {
         this.showEntries();
@@ -622,12 +630,12 @@ const AppView = Backbone.View.extend({
                 }
             });
         }
-    },
+    }
 
     toggleSettings(page) {
         let menuItem = page ? this.model.menu[page + 'Section'] : null;
         if (menuItem) {
-            menuItem = menuItem.get('items').first();
+            menuItem = menuItem.items[0];
         }
         if (this.views.settings) {
             if (this.views.settings.page === page || !menuItem) {
@@ -648,16 +656,16 @@ const AppView = Backbone.View.extend({
                 this.model.menu.select({ item: menuItem });
             }
         }
-    },
+    }
 
     toggleMenu() {
         this.views.menu.switchVisibility();
-    },
+    }
 
     toggleDetails(visible) {
-        this.$el.find('.app').toggleClass('app--details-visible', visible);
+        this.$el.toggleClass('app--details-visible', visible);
         this.views.menu.switchVisibility(false);
-    },
+    }
 
     editGroup(group) {
         if (group && !(this.views.panel instanceof GrpView)) {
@@ -665,7 +673,7 @@ const AppView = Backbone.View.extend({
         } else {
             this.showEntries();
         }
-    },
+    }
 
     editTag(tag) {
         if (tag && !(this.views.panel instanceof TagView)) {
@@ -674,28 +682,28 @@ const AppView = Backbone.View.extend({
         } else {
             this.showEntries();
         }
-    },
+    }
 
     editGeneratorPresets() {
         if (!(this.views.panel instanceof GeneratorPresetsView)) {
             if (this.views.settings) {
                 this.showEntries();
             }
-            this.showPanelView(new GeneratorPresetsView({ model: this.model }));
+            this.showPanelView(new GeneratorPresetsView(this.model));
         } else {
             this.showEntries();
         }
-    },
+    }
 
     isContextMenuAllowed(e) {
         return ['input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) < 0;
-    },
+    }
 
     contextMenu(e) {
         if (this.isContextMenuAllowed(e)) {
             e.preventDefault();
         }
-    },
+    }
 
     showContextMenu(e) {
         if (e.options && this.isContextMenuAllowed(e)) {
@@ -704,7 +712,7 @@ const AppView = Backbone.View.extend({
             if (this.views.contextMenu) {
                 this.views.contextMenu.remove();
             }
-            const menu = new DropdownView({ model: e });
+            const menu = new DropdownView(e);
             menu.render({
                 position: { left: e.pageX, top: e.pageY },
                 options: e.options
@@ -713,19 +721,19 @@ const AppView = Backbone.View.extend({
             menu.on('select', e => this.contextMenuSelect(e));
             this.views.contextMenu = menu;
         }
-    },
+    }
 
     hideContextMenu() {
         if (this.views.contextMenu) {
             this.views.contextMenu.remove();
             delete this.views.contextMenu;
         }
-    },
+    }
 
     contextMenuSelect(e) {
         this.hideContextMenu();
-        Backbone.trigger('context-menu-select', e);
-    },
+        Events.emit('context-menu-select', e);
+    }
 
     showSingleInstanceAlert() {
         this.hideOpenFile();
@@ -737,45 +745,97 @@ const AppView = Backbone.View.extend({
             click: false,
             buttons: []
         });
-    },
+    }
 
     dragover(e) {
         e.preventDefault();
-        e.originalEvent.dataTransfer.dropEffect = 'none';
-    },
+        e.dataTransfer.dropEffect = 'none';
+    }
 
     drop(e) {
         e.preventDefault();
-    },
+    }
 
     setTheme() {
-        SettingsManager.setTheme(this.model.settings.get('theme'));
-    },
+        SettingsManager.setTheme(this.model.settings.theme);
+    }
 
     setFontSize() {
-        SettingsManager.setFontSize(this.model.settings.get('fontSize'));
-    },
+        SettingsManager.setFontSize(this.model.settings.fontSize);
+    }
 
     setLocale() {
-        SettingsManager.setLocale(this.model.settings.get('locale'));
+        SettingsManager.setLocale(this.model.settings.locale);
         if (this.views.settings.isVisible()) {
             this.hideSettings();
             this.showSettings();
         }
         this.$el.find('.app__beta:first').text(Locale.appBeta);
-    },
+    }
 
     extLinkClick(e) {
         if (Launcher) {
             e.preventDefault();
             Launcher.openLink(e.target.href);
         }
-    },
+    }
 
     bodyClick(e) {
         IdleTracker.regUserAction();
-        Backbone.trigger('click', e);
+        Events.emit('click', e);
     }
-});
 
-module.exports = AppView;
+    showImportCsv(file) {
+        const reader = new FileReader();
+        const logger = new Logger('import-csv');
+        logger.info('Reading CSV...');
+        reader.onload = e => {
+            logger.info('Parsing CSV...');
+            const ts = logger.ts();
+            const parser = new CsvParser();
+            let data;
+            try {
+                data = parser.parse(e.target.result);
+            } catch (e) {
+                logger.error('Error parsing CSV', e);
+                Alerts.error({ header: Locale.openFailedRead, body: e.toString() });
+                return;
+            }
+            logger.info(`Parsed CSV: ${data.rows.length} records, ${logger.ts(ts)}`);
+
+            // TODO: refactor this
+            this.hideSettings();
+            this.hidePanelView();
+            this.hideOpenFile();
+            this.hideKeyChange();
+            this.views.menu.hide();
+            this.views.listWrap.hide();
+            this.views.list.hide();
+            this.views.listDrag.hide();
+            this.views.details.hide();
+
+            this.views.importCsv = new ImportCsvView(data, {
+                appModel: this.model,
+                fileName: file.name
+            });
+            this.views.importCsv.render();
+            this.views.importCsv.on('cancel', () => {
+                if (this.model.files.hasOpenFiles()) {
+                    this.showEntries();
+                } else {
+                    this.showOpenFile();
+                }
+            });
+            this.views.importCsv.on('done', () => {
+                this.model.refresh();
+                this.showEntries();
+            });
+        };
+        reader.onerror = () => {
+            Alerts.error({ header: Locale.openFailedRead });
+        };
+        reader.readAsText(file);
+    }
+}
+
+export { AppView };

@@ -1,0 +1,69 @@
+<div class="import-csv">
+    <div class="import-csv__top">
+        <div class="back-button">
+            {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
+        </div>
+        <h1>{{res 'importCsvTitle'}}</h1>
+    </div>
+    <div class="import-csv__body">
+        <div class="scroller">
+            <div class="import-csv__table-wrap">
+                <div class="scroller">
+                    <table class="import-csv__table">
+                        <thead>
+                            <tr>
+                                {{#each headers as |header|}}
+                                    <th>{{header}}</th>
+                                {{/each}}
+                            </tr>
+                            <tr>
+                                {{#each fieldMapping as |mapped|}}
+                                    <th>
+                                        <select data-col="{{@index}}" class="import-csv__field-select">
+                                            <option value="" {{#ifeq mapped.type 'ignore'}}selected{{/ifeq}}>({{res 'importIgnoreField'}})</option>
+                                            <option value="Title" {{#ifeq mapped.field 'Title'}}selected{{/ifeq}}>{{Res 'title'}}</option>
+                                            <option value="UserName" {{#ifeq mapped.field 'UserName'}}selected{{/ifeq}}>{{Res 'user'}}</option>
+                                            <option value="Password" {{#ifeq mapped.field 'Password'}}selected{{/ifeq}}>{{Res 'password'}}</option>
+                                            <option value="URL" {{#ifeq mapped.field 'URL'}}selected{{/ifeq}}>{{Res 'website'}}</option>
+                                            <option value="Notes" {{#ifeq mapped.field 'Notes'}}selected{{/ifeq}}>{{Res 'notes'}}</option>
+                                            {{#ifeq mapped.type 'custom'}}
+                                                <option value="{{mapped.field}}" selected>{{mapped.field}}</option>
+                                            {{/ifeq}}
+                                        </select>
+                                    </th>
+                                {{/each}}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each rows as |row|}}
+                                <tr>
+                                    {{#each row as |field|}}
+                                        <td>{{field}}</td>
+                                    {{/each}}
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
+    </div>
+    <div class="import-csv__bottom">
+        <div class="import-csv__target">
+            <label for="import-csv__target-select">
+                {{res 'importTo'}}
+            </label>
+            <select class="import-csv__target-select" id="import-csv__target-select">
+                <option value="" selected>{{res 'importNewFile'}}</option>
+                {{#each groups as |group|}}
+                    <option value="{{group.id}}" data-file="{{group.fileId}}">{{{group.title}}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="import-csv__bottom-buttons">
+            <button class="import-csv__button-cancel btn-silent">{{res 'alertCancel'}}</button>
+            <button class="import-csv__button-run">{{res 'importCsvRun'}}</button>
+        </div>
+    </div>
+</div>

@@ -1,28 +1,29 @@
 <div class="footer">
-    {{#each files.models as |file|}}
-    <div class="footer__db footer__db-item {{#unless file.attributes.open}}footer__db--dimmed{{/unless}}" data-file-id="{{file.cid}}">
-        <i class="fa fa-{{#if file.attributes.open}}unlock{{else}}lock{{/if}}"></i> {{file.attributes.name}}
-        {{#if file.attributes.syncing~}}
+    {{#each files as |file|}}
+    <div class="footer__db footer__db-item {{#unless file.active}}footer__db--dimmed{{/unless}}"
+         data-file-id="{{file.id}}" id="footer__db--{{file.id}}">
+        <i class="fa fa-{{#if file.active}}unlock{{else}}lock{{/if}}"></i> {{file.name}}
+        {{#if file.syncing~}}
             <i class="fa fa-refresh fa-spin footer__db-sign"></i>
-        {{~else if file.attributes.syncError~}}
-            <i class="fa {{#if file.attributes.modified}}fa-circle{{else}}fa-circle-thin{{/if}} footer__db-sign footer__db-sign--error"
-               title="{{res 'footerSyncError'}}: {{file.attributes.syncError}}"></i>
-        {{~else if file.attributes.modified~}}
+        {{~else if file.syncError~}}
+            <i class="fa {{#if file.modified}}fa-circle{{else}}fa-circle-thin{{/if}} footer__db-sign footer__db-sign--error"
+               title="{{res 'footerSyncError'}}: {{file.syncError}}"></i>
+        {{~else if file.modified~}}
            <i class="fa fa-circle footer__db-sign"></i>
         {{~/if}}
     </div>
     {{/each}}
-    <div class="footer__db footer__db--dimmed footer__db--expanded footer__db-open">
+    <div class="footer__db footer__db--dimmed footer__db--expanded footer__db-open" id="footer__db-open">
         <i class="fa fa-plus"></i><span class="footer__db-text">&nbsp;{{res 'footerOpen'}}</span>
     </div>
-    <div class="footer__btn footer__btn-help" title="{{res 'help'}}" tip-placement="top"><i class="fa fa-question"></i></div>
-    <div class="footer__btn footer__btn-settings" title="{{res 'settings'}}" tip-placement="top">
+    <div class="footer__btn footer__btn-help" title="{{res 'help'}}" tip-placement="top" id="footer__btn-help"><i class="fa fa-question"></i></div>
+    <div class="footer__btn footer__btn-settings" title="{{res 'settings'}}" tip-placement="top" id="footer__btn-settings">
         {{#if updateAvailable}}
         <i class="fa fa-bell footer__update-icon"></i>
         {{else}}
         <i class="fa fa-cog"></i>
         {{/if}}
     </div>
-    <div class="footer__btn footer__btn-generate" title="{{res 'footerTitleGen'}}" tip-placement="top"><i class="fa fa-bolt"></i></div>
-    <div class="footer__btn footer__btn-lock" title="{{res 'footerTitleLock'}}" tip-placement="top-left"><i class="fa fa-sign-out"></i></div>
+    <div class="footer__btn footer__btn-generate" title="{{res 'footerTitleGen'}}" tip-placement="top" id="footer__btn-generate"><i class="fa fa-bolt"></i></div>
+    <div class="footer__btn footer__btn-lock" title="{{res 'footerTitleLock'}}" tip-placement="top-left" id="footer__btn-lock"><i class="fa fa-sign-out"></i></div>
 </div>

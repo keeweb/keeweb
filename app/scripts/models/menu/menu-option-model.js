@@ -1,13 +1,13 @@
-const Backbone = require('backbone');
+import { Model } from 'framework/model';
 
-const MenuOptionModel = Backbone.Model.extend({
-    defaults: {
-        title: '',
-        cls: '',
-        value: '',
-        active: false,
-        filterValue: null
-    }
+class MenuOptionModel extends Model {}
+
+MenuOptionModel.defineModelProperties({
+    title: '',
+    cls: '',
+    value: '',
+    active: false,
+    filterValue: null
 });
 
-module.exports = MenuOptionModel;
+export { MenuOptionModel };

@@ -1,59 +1,68 @@
-const Backbone = require('backbone');
-const MenuItemCollection = require('../../collections/menu/menu-item-collection');
+import { Model } from 'framework/model';
+import { MenuItemCollection } from 'collections/menu/menu-item-collection';
+import { MenuItemModel } from './menu-item-model';
 
-const MenuItemModel = Backbone.Model.extend({
-    defaults: {
-        items: null,
-        scrollable: false,
-        grow: false,
-        drag: false
-    },
+function convertItem(item) {
+    return item instanceof MenuItemModel ? item : new MenuItemModel(item);
+}
 
-    defaultItems: undefined,
-
-    initialize(items) {
-        this.set('items', new MenuItemCollection(items || this.defaultItems));
-    },
+class MenuSectionModel extends Model {
+    constructor(items = []) {
+        super({ items: new MenuItemCollection(items.map(convertItem)) });
+    }
 
     addItem(item) {
-        this.get('items').add(item);
-        this.trigger('change-items');
-    },
+        this.items.push(convertItem(item));
+        this.emit('change-items');
+    }
 
     removeAllItems() {
-        this.get('items').reset(this.defaultItems);
-        this.trigger('change-items');
-    },
+        this.items.length = 0;
+        if (this.defaultItems) {
+            this.items.push(...this.defaultItems.map(item => new MenuItemModel(item)));
+        }
+        this.emit('change-items');
+    }
 
     removeByFile(file) {
-        const items = this.get('items');
+        const items = this.items;
         items.find(item => {
-            if (item.file === file || item.get('file') === file) {
+            if (item.file === file || item.file === file) {
                 items.remove(item);
                 return true;
             }
             return false;
         });
-        this.trigger('change-items');
-    },
+        this.emit('change-items');
+    }
 
     replaceByFile(file, newItem) {
-        const items = this.get('items');
+        const items = this.items;
         items.find((item, ix) => {
-            if (item.file === file || item.get('file') === file) {
-                items.remove(item);
-                items.add(newItem, { at: ix });
+            if (item.file === file || item.file === file) {
+                items[ix] = newItem;
                 return true;
             }
             return false;
         });
-        this.trigger('change-items');
-    },
+        this.emit('change-items');
+    }
 
     setItems(items) {
-        this.get('items').reset(items);
-        this.trigger('change-items');
+        this.items.length = 0;
+        this.items.push(...items.map(convertItem));
+        this.emit('change-items');
     }
+}
+
+MenuSectionModel.defineModelProperties({
+    defaultItems: null,
+    items: null,
+    scrollable: false,
+    grow: false,
+    drag: false,
+    visible: undefined,
+    active: false
 });
 
-module.exports = MenuItemModel;
+export { MenuSectionModel };

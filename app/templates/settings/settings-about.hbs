@@ -9,11 +9,14 @@
     <p>{{res 'setAboutBuilt'}}:</p>
     <h3>Libraries</h3>
     <ul>
-        <li><a href="https://electron.atom.io/" target="_blank">electron</a><span class="muted-color">, cross-platform desktop apps framework</span></li>
-        <li><a href="https://backbonejs.org/" target="_blank">backbone</a><span class="muted-color">, JavaScript framework</span></li>
-        <li><a href="https://underscorejs.org/" target="_blank">underscore</a><span class="muted-color">, utility-belt library for JavaScript</span></li>
-        <li><a href="https://jquery.com/" target="_blank">jQuery</a><span class="muted-color">, fast, small, and feature-rich JavaScript library</span></li>
+        {{#if isDesktop}}<li><a href="https://electron.atom.io/" target="_blank">electron</a><span class="muted-color">, cross-platform desktop apps framework</span></li>{{/if}}
         <li><a href="https://handlebarsjs.com/" target="_blank">handlebars</a><span class="muted-color">, semantic templates</span></li>
+        <li><a href="https://github.com/patrick-steele-idem/morphdom" target="_blank">morphdom</a><span class="muted-color">, fast and lightweight DOM diffing/patching</span></li>
+        <li><a href="https://lodash.com/" target="_blank">lodash</a><span class="muted-color">, a modern JavaScript utility library delivering modularity, performance & extras</span></li>
+        <li><a href="https://jquery.com/" target="_blank">jQuery</a><span class="muted-color">, fast, small, and feature-rich JavaScript library</span></li>
+        <li><a href="https://marked.js.org/" target="_blank">marked</a><span class="muted-color">, a markdown parser and compiler</span></li>
+        <li><a href="https://github.com/cure53/DOMPurify" target="_blank">dompurify</a><span class="muted-color">, a DOM-only, super-fast, uber-tolerant XSS sanitizer</span></li>
+        <li><a href="https://github.com/TomFrost/node-phonetic" target="_blank">node-phonetic</a><span class="muted-color">, generates unique, pronounceable names</span></li>
     </ul>
 
     <h3>Core components</h3>
@@ -28,7 +31,6 @@
     <ul>
         <li><a href="https://github.com/Diokuz/baron" target="_blank">baron</a><span class="muted-color">, native scroll with custom scrollbar</span></li>
         <li><a href="https://dbushell.github.io/Pikaday/" target="_blank">pikaday</a><span class="muted-color">, a refreshing JavaScript datepicker</span></li>
-        <li><a href="https://github.com/TomFrost/node-phonetic" target="_blank">node-phonetic</a><span class="muted-color">, generates unique, pronounceable names</span></li>
     </ul>
 
     <h3>Desktop modules</h3>

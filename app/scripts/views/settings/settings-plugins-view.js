@@ -1,20 +1,22 @@
-const Backbone = require('backbone');
-const Locale = require('../../util/locale');
-const PluginManager = require('../../plugins/plugin-manager');
-const PluginGallery = require('../../plugins/plugin-gallery');
-const AppSettingsModel = require('../../models/app-settings-model');
-const Comparators = require('../../util/comparators');
-const Format = require('../../util/format');
-const SettingsManager = require('../../comp/settings-manager');
-const FeatureDetector = require('../../util/feature-detector');
-const SemVer = require('../../util/semver');
-const RuntimeInfo = require('../../comp/runtime-info');
-const Links = require('../../const/links');
+import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
+import { RuntimeInfo } from 'comp/app/runtime-info';
+import { SettingsManager } from 'comp/settings/settings-manager';
+import { Links } from 'const/links';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { PluginGallery } from 'plugins/plugin-gallery';
+import { PluginManager } from 'plugins/plugin-manager';
+import { Comparators } from 'util/data/comparators';
+import { SemVer } from 'util/data/semver';
+import { Features } from 'util/features';
+import { DateFormat } from 'util/formatting/date-format';
+import { Locale } from 'util/locale';
+import template from 'templates/settings/settings-plugins.hbs';
 
-const SettingsPluginsView = Backbone.View.extend({
-    template: require('templates/settings/settings-plugins.hbs'),
+class SettingsPluginsView extends View {
+    template = template;
 
-    events: {
+    events = {
         'click .settings_plugins-install-btn': 'installClick',
         'click .settings_plugins-uninstall-btn': 'uninstallClick',
         'click .settings_plugins-disable-btn': 'disableClick',
@@ -29,35 +31,36 @@ const SettingsPluginsView = Backbone.View.extend({
         'input input[type=text].settings__plugins-plugin-input': 'pluginSettingChange',
         'change .settings__plugins-plugin-updates': 'autoUpdateChange',
         'click .settings__plugins-gallery-load-btn': 'loadPluginGalleryClick'
-    },
+    };
 
-    searchStr: null,
-    installFromUrl: null,
-    installing: {},
-    installErrors: {},
+    searchStr = null;
+    installFromUrl = null;
+    installing = {};
+    installErrors = {};
 
-    initialize() {
+    constructor(model, options) {
+        super(model, options);
         this.listenTo(PluginManager, 'change', this.render.bind(this));
         this.listenTo(
-            Backbone,
+            Events,
             'plugin-gallery-load-complete',
             this.pluginGalleryLoadComplete.bind(this)
         );
-    },
+    }
 
     render() {
-        this.renderTemplate({
-            plugins: PluginManager.get('plugins')
+        super.render({
+            plugins: PluginManager.plugins
                 .map(plugin => ({
                     id: plugin.id,
-                    manifest: plugin.get('manifest'),
-                    status: plugin.get('status'),
-                    installTime: Math.round(plugin.get('installTime')),
-                    updateError: plugin.get('updateError'),
-                    updateCheckDate: Format.dtStr(plugin.get('updateCheckDate')),
-                    installError: plugin.get('installError'),
-                    official: plugin.get('official'),
-                    autoUpdate: plugin.get('autoUpdate'),
+                    manifest: plugin.manifest,
+                    status: plugin.status,
+                    installTime: Math.round(plugin.installTime),
+                    updateError: plugin.updateError,
+                    updateCheckDate: DateFormat.dtStr(plugin.updateCheckDate),
+                    installError: plugin.installError,
+                    official: plugin.official,
+                    autoUpdate: plugin.autoUpdate,
                     settings: plugin.getSettings()
                 }))
                 .sort(Comparators.stringComparator('id', true)),
@@ -68,26 +71,25 @@ const SettingsPluginsView = Backbone.View.extend({
             galleryLoadError: PluginGallery.loadError,
             galleryPlugins: this.getGalleryPlugins(),
             searchStr: this.searchStr,
-            hasUnicodeFlags: FeatureDetector.hasUnicodeFlags(),
+            hasUnicodeFlags: Features.hasUnicodeFlags(),
             pluginDevLink: Links.PluginDevelopStart,
             translateLink: Links.Translation
         });
         if (this.searchStr) {
             this.showFilterResults();
         }
-        return this;
-    },
+    }
 
     pluginGalleryLoadComplete() {
         this.render();
-        Backbone.trigger('page-geometry', { source: 'view' });
-    },
+        Events.emit('page-geometry', { source: 'view' });
+    }
 
     getGalleryPlugins() {
         if (!PluginGallery.gallery) {
             return null;
         }
-        const plugins = PluginManager.get('plugins');
+        const plugins = PluginManager.plugins;
         return PluginGallery.gallery.plugins
             .map(pl => ({
                 url: pl.url,
@@ -98,7 +100,7 @@ const SettingsPluginsView = Backbone.View.extend({
             }))
             .filter(pl => !plugins.get(pl.manifest.name) && this.canInstallPlugin(pl))
             .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
-    },
+    }
 
     canInstallPlugin(plugin) {
         if (plugin.manifest.locale && SettingsManager.allLocales[plugin.manifest.locale.name]) {
@@ -120,7 +122,7 @@ const SettingsPluginsView = Backbone.View.extend({
             return false;
         }
         return true;
-    },
+    }
 
     loadPluginGalleryClick() {
         if (PluginGallery.loading) {
@@ -128,7 +130,7 @@ const SettingsPluginsView = Backbone.View.extend({
         }
         PluginGallery.loadPlugins();
         this.render();
-    },
+    }
 
     installClick() {
         const installBtn = this.$el.find('.settings_plugins-install-btn');
@@ -155,44 +157,44 @@ const SettingsPluginsView = Backbone.View.extend({
                 this.$el.find('.settings__plugins-install-error').text(e.toString());
                 this.$el.closest('.scroller').scrollTop(this.$el.height());
             });
-    },
+    }
 
     installFinished() {
         const installBtn = this.$el.find('.settings_plugins-install-btn');
         const urlTextBox = this.$el.find('#settings__plugins-install-url');
         urlTextBox.prop('disabled', false);
         installBtn.text(Locale.setPlInstallBtn).prop('disabled', false);
-    },
+    }
 
     uninstallClick(e) {
         const pluginId = $(e.target).data('plugin');
         PluginManager.uninstall(pluginId);
-    },
+    }
 
     disableClick(e) {
         const pluginId = $(e.target).data('plugin');
         PluginManager.disable(pluginId);
-    },
+    }
 
     enableClick(e) {
         const pluginId = $(e.target).data('plugin');
         PluginManager.activate(pluginId);
-    },
+    }
 
     updateClick(e) {
         const pluginId = $(e.target).data('plugin');
         PluginManager.update(pluginId);
-    },
+    }
 
     useLocaleClick(e) {
         const locale = $(e.target).data('locale');
-        AppSettingsModel.instance.set('locale', locale);
-    },
+        AppSettingsModel.locale = locale;
+    }
 
     useThemeClick(e) {
         const theme = $(e.target).data('theme');
-        AppSettingsModel.instance.set('theme', theme);
-    },
+        AppSettingsModel.theme = theme;
+    }
 
     galleryInstallClick(e) {
         const installBtn = $(e.target);
@@ -211,12 +213,12 @@ const SettingsPluginsView = Backbone.View.extend({
                 installBtn.prop('disabled', true);
                 delete this.installing[plugin.url];
             });
-    },
+    }
 
     gallerySearchInput(e) {
         this.searchStr = e.target.value.toLowerCase();
         this.showFilterResults();
-    },
+    }
 
     showFilterResults() {
         const pluginsById = {};
@@ -228,7 +230,7 @@ const SettingsPluginsView = Backbone.View.extend({
             const visible = this.pluginMatchesFilter(pluginsById[pluginId]);
             $(pluginEl).toggle(visible);
         }
-    },
+    }
 
     pluginMatchesFilter(plugin) {
         const searchStr = this.searchStr;
@@ -241,7 +243,7 @@ const SettingsPluginsView = Backbone.View.extend({
                 (manifest.locale.name.toLowerCase().indexOf(searchStr) >= 0 ||
                     manifest.locale.title.toLowerCase().indexOf(searchStr) >= 0))
         );
-    },
+    }
 
     pluginSettingChange(e) {
         const el = e.target;
@@ -251,13 +253,13 @@ const SettingsPluginsView = Backbone.View.extend({
         const val = el.type === 'checkbox' ? el.checked : el.value;
         const plugin = PluginManager.getPlugin(pluginId);
         plugin.setSettings({ [setting]: val });
-    },
+    }
 
     autoUpdateChange(e) {
         const pluginId = $(e.target).data('plugin');
         const enabled = e.target.checked;
         PluginManager.setAutoUpdate(pluginId, enabled);
     }
-});
+}
 
-module.exports = SettingsPluginsView;
+export { SettingsPluginsView };

@@ -1,3 +1,3 @@
-const Locale = require('../locales/base.json');
+import Locale from 'locales/base.json';
 
-module.exports = Locale;
+export { Locale };

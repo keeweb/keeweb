@@ -160,6 +160,7 @@
         &-fields {
             flex: 1 0 50%;
             min-width: 0;
+            margin-right: $base-padding-h;
         }
 
         &-aside {
@@ -203,7 +204,7 @@
                 cursor: text;
             }
             > input {
-                margin: 0;
+                margin: 0 0 0 2px;
                 padding: 0 $base-padding-h;
                 line-height: $details-field-line-height;
                 height: $details-field-line-height;
@@ -227,7 +228,7 @@
             line-height: $details-field-line-height;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-right: 20px;
+            margin-right: 2em;
             &-add-label {
                 color: transparent;
             }
@@ -380,10 +381,50 @@
                     border-width: 0;
                 }
             }
+            &--revealed {
+                font-family: $monospace-font-family;
+            }
             > select {
                 margin: 0;
                 width: 100%;
                 padding: 0 $base-padding-h;
+            }
+            .markdown {
+                white-space: normal;
+                h6 {
+                    font-size: 1rem;
+                }
+                h5 {
+                    font-size: modular-scale(1, 1rem, 1.05);
+                }
+                h4 {
+                    font-size: modular-scale(2, 1rem, 1.05);
+                }
+                h3 {
+                    font-size: modular-scale(3, 1rem, 1.05);
+                }
+                h2 {
+                    font-size: modular-scale(4, 1rem, 1.05);
+                }
+                h1 {
+                    font-size: $small-header-font-size;
+                }
+                ul,
+                ol {
+                    margin-bottom: 1em;
+                }
+                ul {
+                    list-style-type: initial;
+                }
+                ol {
+                    list-style-type: decimal;
+                }
+                li {
+                    margin-left: 2em;
+                }
+            }
+            .details__field--options & {
+                margin-right: 0;
             }
         }
 
@@ -398,6 +439,24 @@
             border-bottom: light-border();
             padding-bottom: 0.5em;
         }
+
+        &-options {
+            color: var(--muted-color);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity $slow-transition-out, color $base-duration $base-timing;
+            align-self: flex-start;
+            width: 2em;
+            text-align: center;
+            padding-top: 0.25em;
+            .details__field:hover & {
+                opacity: 1;
+                transition: opacity $slow-transition-in;
+            }
+            &:hover {
+                color: var(--medium-color);
+            }
+        }
     }
 
     &__attachments {
@@ -406,7 +465,7 @@
         align-items: stretch;
         flex-direction: row;
         justify-content: flex-end;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         user-select: none;
         overflow: hidden;
         white-space: nowrap;
@@ -422,6 +481,7 @@
         flex: 0 1 auto;
         border: light-border();
         margin-right: $small-spacing;
+        margin-top: $small-spacing;
         padding: $base-padding;
         text-align: center;
         overflow: hidden;

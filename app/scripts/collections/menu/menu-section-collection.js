@@ -1,8 +1,8 @@
-const Backbone = require('backbone');
-const MenuSectionModel = require('../../models/menu/menu-section-model');
+import { Collection } from 'framework/collection';
+import { MenuSectionModel } from 'models/menu/menu-section-model';
 
-const MenuSectionCollection = Backbone.Collection.extend({
-    model: MenuSectionModel
-});
+class MenuSectionCollection extends Collection {
+    static model = MenuSectionModel;
+}
 
-module.exports = MenuSectionCollection;
+export { MenuSectionCollection };

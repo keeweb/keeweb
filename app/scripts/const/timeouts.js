@@ -14,4 +14,4 @@ const Timeouts = {
     LinkDownloadRevoke: 10 * 1000 * 60
 };
 
-module.exports = Timeouts;
+export { Timeouts };

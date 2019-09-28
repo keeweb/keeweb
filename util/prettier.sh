@@ -9,5 +9,6 @@
   'util/**/*.js' \
   '*.js' \
   'package.json' \
+  '!app/lib/*.js' \
   '!app/scripts/locales/de-DE.json' \
   '!app/scripts/locales/fr-FR.json'

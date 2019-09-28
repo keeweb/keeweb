@@ -1,5 +1,5 @@
-const Format = require('../util/format');
-const Locale = require('../util/locale');
+import { DateFormat } from 'util/formatting/date-format';
+import { Locale } from 'util/locale';
 
 const EntryPresenter = function(descField, noColor, activeEntryId) {
     this.entry = null;
@@ -21,7 +21,7 @@ EntryPresenter.prototype = {
         return this.entry ? this.entry.id : this.group.id;
     },
     get icon() {
-        return this.entry ? this.entry.icon : this.group.get('icon') || 'folder';
+        return this.entry ? this.entry.icon : this.group.icon || 'folder';
     },
     get customIcon() {
         return this.entry ? this.entry.customIcon : undefined;
@@ -32,7 +32,7 @@ EntryPresenter.prototype = {
             : undefined;
     },
     get title() {
-        return this.entry ? this.entry.title : this.group.get('title');
+        return this.entry ? this.entry.title : this.group.title;
     },
     get notes() {
         return this.entry ? this.entry.notes : undefined;
@@ -47,10 +47,10 @@ EntryPresenter.prototype = {
         return this.entry ? this.entry.id === this.activeEntryId : this.group.active;
     },
     get created() {
-        return this.entry ? Format.dtStr(this.entry.created) : undefined;
+        return this.entry ? DateFormat.dtStr(this.entry.created) : undefined;
     },
     get updated() {
-        return this.entry ? Format.dtStr(this.entry.updated) : undefined;
+        return this.entry ? DateFormat.dtStr(this.entry.updated) : undefined;
     },
     get expired() {
         return this.entry ? this.entry.expired : false;
@@ -88,4 +88,4 @@ EntryPresenter.prototype = {
     }
 };
 
-module.exports = EntryPresenter;
+export { EntryPresenter };

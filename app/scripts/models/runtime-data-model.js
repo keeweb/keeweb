@@ -1,12 +1,11 @@
-const Backbone = require('backbone');
-const SettingsStore = require('../comp/settings-store');
+import { Model } from 'framework/model';
+import { SettingsStore } from 'comp/settings/settings-store';
 
-const RuntimeDataModel = Backbone.Model.extend({
-    defaults: {},
-
-    initialize() {
-        this.listenTo(this, 'change', this.save);
-    },
+class RuntimeDataModel extends Model {
+    constructor() {
+        super();
+        this.on('change', () => this.save());
+    }
 
     load() {
         return SettingsStore.load('runtime-data').then(data => {
@@ -18,13 +17,16 @@ const RuntimeDataModel = Backbone.Model.extend({
                 this.set(data, { silent: true });
             }
         });
-    },
+    }
 
     save() {
-        SettingsStore.save('runtime-data', this.attributes);
+        SettingsStore.save('runtime-data', this);
     }
-});
+}
 
-RuntimeDataModel.instance = new RuntimeDataModel();
+RuntimeDataModel.defineModelProperties({}, { extensions: true });
 
-module.exports = RuntimeDataModel;
+const instance = new RuntimeDataModel();
+window.RuntimeDataModel = instance;
+
+export { instance as RuntimeDataModel };

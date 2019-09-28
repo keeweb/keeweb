@@ -1,15 +1,14 @@
-const Backbone = require('backbone');
-const AutoTypeParser = require('./auto-type-parser');
-const AutoTypeFilter = require('./auto-type-filter');
-const AutoTypeHelperFactory = require('./auto-type-helper-factory');
-const Launcher = require('../comp/launcher');
-const Alerts = require('../comp/alerts');
-const AutoTypeSelectView = require('../views/auto-type/auto-type-select-view');
-const Logger = require('../util/logger');
-const Locale = require('../util/locale');
-const Timeouts = require('../const/timeouts');
-const AppSettingsModel = require('../models/app-settings-model');
-const AutoTypeSequenceType = require('../const/autotype-sequencetype');
+import { Events } from 'framework/events';
+import { AutoTypeFilter } from 'auto-type/auto-type-filter';
+import { AutoTypeHelperFactory } from 'auto-type/auto-type-helper-factory';
+import { AutoTypeParser } from 'auto-type/auto-type-parser';
+import { Launcher } from 'comp/launcher';
+import { Alerts } from 'comp/ui/alerts';
+import { Timeouts } from 'const/timeouts';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Locale } from 'util/locale';
+import { Logger } from 'util/logger';
+import { AutoTypeSelectView } from 'views/auto-type/auto-type-select-view';
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = localStorage.autoTypeDebug;
@@ -26,12 +25,14 @@ const AutoType = {
             return;
         }
         this.appModel = appModel;
-        Backbone.on('auto-type', this.handleEvent, this);
-        Backbone.on('main-window-blur main-window-will-close', this.resetPendingEvent, this);
+        Events.on('auto-type', e => this.handleEvent(e));
+        Events.on('main-window-blur', e => this.resetPendingEvent(e));
+        Events.on('main-window-will-close', e => this.resetPendingEvent(e));
     },
 
     handleEvent(e) {
         const entry = (e && e.entry) || null;
+        const sequence = (e && e.sequence) || null;
         logger.debug('Auto type event', entry);
         if (this.running) {
             logger.debug('Already running, skipping event');
@@ -39,7 +40,7 @@ const AutoType = {
         }
         if (entry) {
             this.hideWindow(() => {
-                this.runAndHandleResult({ entry });
+                this.runAndHandleResult({ entry, sequence });
             });
         } else {
             if (this.selectEntryView) {
@@ -66,21 +67,14 @@ const AutoType = {
             }
         });
 
-        if (AppSettingsModel.instance.get('lockOnAutoType')) {
-            Backbone.trigger('lock-workspace');
+        if (AppSettingsModel.lockOnAutoType) {
+            Events.emit('lock-workspace');
         }
     },
 
     run(result, callback) {
         this.running = true;
-        let sequence;
-        if (result.sequenceType === AutoTypeSequenceType.PASSWORD) {
-            sequence = '{PASSWORD}';
-        } else if (result.sequenceType === AutoTypeSequenceType.USERNAME) {
-            sequence = '{USERNAME}';
-        } else {
-            sequence = result.entry.getEffectiveAutoTypeSeq();
-        }
+        const sequence = result.sequence || result.entry.getEffectiveAutoTypeSeq();
         logger.debug('Start', sequence);
         const ts = logger.ts();
         try {
@@ -160,33 +154,62 @@ const AutoType = {
         }
     },
 
-    getActiveWindowTitle(callback) {
-        logger.debug('Get window title');
-        return this.helper.getActiveWindowTitle((err, title, url) => {
+    getActiveWindowInfo(callback) {
+        logger.debug('Getting window info');
+        return this.helper.getActiveWindowInfo((err, windowInfo) => {
             if (err) {
-                logger.error('Error get window title', err);
+                logger.error('Error getting window info', err);
             } else {
-                if (!url) {
+                if (!windowInfo.url) {
                     // try to find a URL in the title
                     const urlMatcher = new RegExp(
                         'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'
                     );
-                    const urlMatches = urlMatcher.exec(title);
-                    url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
+                    const urlMatches = urlMatcher.exec(windowInfo.title);
+                    windowInfo.url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
                 }
-                logger.debug('Window title', title, url);
+                logger.debug('Window info', windowInfo.id, windowInfo.title, windowInfo.url);
             }
-            return callback(err, title, url);
+            return callback(err, windowInfo);
+        });
+    },
+
+    activeWindowMatches(windowInfo, callback) {
+        if (!windowInfo || !windowInfo.id) {
+            logger.debug('Skipped active window check because window id is unknown');
+            return callback(true);
+        }
+        this.getActiveWindowInfo((err, activeWindowInfo) => {
+            if (!activeWindowInfo) {
+                logger.debug('Error during active window check, something is wrong', err);
+                return callback(false);
+            }
+            if (activeWindowInfo.id !== windowInfo.id) {
+                logger.info(
+                    `Active window doesn't match: ID is different. ` +
+                        `Expected ${windowInfo.id}, got ${activeWindowInfo.id}`
+                );
+                return callback(false, activeWindowInfo);
+            }
+            if (activeWindowInfo.url !== windowInfo.url) {
+                logger.info(
+                    `Active window doesn't match: url is different. ` +
+                        `Expected "${windowInfo.url}", got "${activeWindowInfo.url}"`
+                );
+                return callback(false, activeWindowInfo);
+            }
+            logger.info('Active window matches');
+            callback(true, activeWindowInfo);
         });
     },
 
     selectEntryAndRun() {
-        this.getActiveWindowTitle((e, title, url) => {
-            const filter = new AutoTypeFilter({ title, url }, this.appModel);
-            const evt = { filter };
+        this.getActiveWindowInfo((e, windowInfo) => {
+            const filter = new AutoTypeFilter(windowInfo, this.appModel);
+            const evt = { filter, windowInfo };
             if (!this.appModel.files.hasOpenFiles()) {
                 this.pendingEvent = evt;
-                this.appModel.files.once('update', this.processPendingEvent, this);
+                this.appModel.files.once('change', this.processPendingEvent, this);
                 logger.debug('auto-type event delayed');
                 this.focusMainWindow();
             } else {
@@ -201,17 +224,15 @@ const AutoType = {
 
     processEventWithFilter(evt) {
         const entries = evt.filter.getEntries();
-        if (entries.length === 1 && AppSettingsModel.instance.get('directAutotype')) {
+        if (entries.length === 1 && AppSettingsModel.directAutotype) {
             this.hideWindow(() => {
-                this.runAndHandleResult({ entry: entries.at(0) });
+                this.runAndHandleResult({ entry: entries[0] });
             });
             return;
         }
         this.focusMainWindow();
         evt.filter.ignoreWindowInfo = true;
-        this.selectEntryView = new AutoTypeSelectView({
-            model: { filter: evt.filter }
-        }).render();
+        this.selectEntryView = new AutoTypeSelectView({ filter: evt.filter });
         this.selectEntryView.on('result', result => {
             logger.debug('Entry selected', result);
             this.selectEntryView.off('result');
@@ -219,28 +240,29 @@ const AutoType = {
             this.selectEntryView = null;
             this.hideWindow(() => {
                 if (result) {
-                    this.runAndHandleResult(result);
+                    this.activeWindowMatches(evt.windowInfo, (matches, activeWindowInfo) => {
+                        if (matches) {
+                            this.runAndHandleResult(result);
+                        }
+                    });
                 }
             });
         });
+        this.selectEntryView.render();
         this.selectEntryView.on('show-open-files', () => {
             this.selectEntryView.hide();
-            Backbone.trigger('open-file');
-            Backbone.once(
-                'closed-open-view',
-                () => {
-                    this.selectEntryView.show();
-                    this.selectEntryView.setupKeys();
-                },
-                this
-            );
+            Events.emit('open-file');
+            Events.once('closed-open-view', () => {
+                this.selectEntryView.show();
+                this.selectEntryView.setupKeys();
+            });
         });
     },
 
     resetPendingEvent() {
         if (this.pendingEvent) {
             this.pendingEvent = null;
-            this.appModel.files.off('update', this.processPendingEvent, this);
+            this.appModel.files.off('change', this.processPendingEvent, this);
             logger.debug('auto-type event cancelled');
         }
     },
@@ -251,10 +273,10 @@ const AutoType = {
         }
         logger.debug('processing pending auto-type event');
         const evt = this.pendingEvent;
-        this.appModel.files.off('update', this.processPendingEvent, this);
+        this.appModel.files.off('change', this.processPendingEvent, this);
         this.pendingEvent = null;
         this.processEventWithFilter(evt);
     }
 };
 
-module.exports = AutoType;
+export { AutoType };

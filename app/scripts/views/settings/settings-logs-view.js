@@ -1,22 +1,23 @@
-const Backbone = require('backbone');
-const Logger = require('../../util/logger');
-const Format = require('../../util/format');
+import { View } from 'framework/views/view';
+import { StringFormat } from 'util/formatting/string-format';
+import { Logger } from 'util/logger';
+import template from 'templates/settings/settings-logs-view.hbs';
 
-const SettingsLogView = Backbone.View.extend({
-    template: require('templates/settings/settings-logs-view.hbs'),
+class SettingsLogsView extends View {
+    parent = '.settings__general-advanced';
+    template = template;
 
     render() {
         const logs = Logger.getLast().map(item => ({
             level: item.level,
             msg:
                 '[' +
-                Format.padStr(item.level.toUpperCase(), 5) +
+                StringFormat.padStr(item.level.toUpperCase(), 5) +
                 '] ' +
                 item.args.map(arg => this.mapArg(arg)).join(' ')
         }));
-        this.renderTemplate({ logs });
-        return this;
-    },
+        super.render({ logs });
+    }
 
     mapArg(arg) {
         if (arg === null) {
@@ -49,6 +50,6 @@ const SettingsLogView = Backbone.View.extend({
         }
         return str;
     }
-});
+}
 
-module.exports = SettingsLogView;
+export { SettingsLogsView };

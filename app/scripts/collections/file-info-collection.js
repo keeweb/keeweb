@@ -1,43 +1,39 @@
-const Backbone = require('backbone');
-const FileInfoModel = require('../models/file-info-model');
-const SettingsStore = require('../comp/settings-store');
+import { Collection } from 'framework/collection';
+import { SettingsStore } from 'comp/settings/settings-store';
+import { FileInfoModel } from 'models/file-info-model';
 
-const FileInfoCollection = Backbone.Collection.extend({
-    model: FileInfoModel,
-
-    initialize() {},
+class FileInfoCollection extends Collection {
+    static model = FileInfoModel;
 
     load() {
         return SettingsStore.load('file-info').then(data => {
             if (data) {
-                this.reset(data, { silent: true });
+                for (const item of data) {
+                    this.push(new FileInfoModel(item));
+                }
             }
         });
-    },
+    }
 
     save() {
-        SettingsStore.save('file-info', this.toJSON());
-    },
-
-    getLast() {
-        return this.first();
-    },
+        SettingsStore.save('file-info', this);
+    }
 
     getMatch(storage, name, path) {
         return this.find(fi => {
             return (
-                (fi.get('storage') || '') === (storage || '') &&
-                (fi.get('name') || '') === (name || '') &&
-                (fi.get('path') || '') === (path || '')
+                (fi.storage || '') === (storage || '') &&
+                (fi.name || '') === (name || '') &&
+                (fi.path || '') === (path || '')
             );
         });
-    },
+    }
 
     getByName(name) {
-        return this.find(file => file.get('name').toLowerCase() === name.toLowerCase());
+        return this.find(file => file.name.toLowerCase() === name.toLowerCase());
     }
-});
+}
 
-FileInfoCollection.instance = new FileInfoCollection();
+const instance = new FileInfoCollection();
 
-module.exports = FileInfoCollection;
+export { instance as FileInfoCollection };

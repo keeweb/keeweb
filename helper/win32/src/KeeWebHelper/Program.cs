@@ -35,7 +35,7 @@ namespace KeeWebHelper
         static void GetWindowInfo()
         {
             var windowInfo = WindowHelper.GetActiveWindowInfo();
-            Console.WriteLine("{0}\n{1}", windowInfo.Title, windowInfo.Url);
+            Console.WriteLine("{0}\n{1}\n{2}", windowInfo.Id, windowInfo.Title, windowInfo.Url);
         }
     }
 }

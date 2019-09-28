@@ -1,19 +1,22 @@
-const Backbone = require('backbone');
-const RuntimeInfo = require('../../comp/runtime-info');
-const Links = require('../../const/links');
+import { View } from 'framework/views/view';
+import { RuntimeInfo } from 'comp/app/runtime-info';
+import { Links } from 'const/links';
+import { Features } from 'util/features';
+import template from 'templates/settings/settings-about.hbs';
 
-const SettingsAboutView = Backbone.View.extend({
-    template: require('templates/settings/settings-about.hbs'),
+class SettingsAboutView extends View {
+    template = template;
 
     render() {
-        this.renderTemplate({
+        super.render({
             version: RuntimeInfo.version,
             licenseLink: Links.License,
             licenseLinkApache: Links.LicenseApache,
             repoLink: Links.Repo,
-            donationLink: Links.Donation
+            donationLink: Links.Donation,
+            isDesktop: Features.isDesktop
         });
     }
-});
+}
 
-module.exports = SettingsAboutView;
+export { SettingsAboutView };

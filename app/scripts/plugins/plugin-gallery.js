@@ -1,9 +1,9 @@
-const Backbone = require('backbone');
-const kdbxweb = require('kdbxweb');
-const Links = require('../const/links');
-const SignatureVerifier = require('../util/signature-verifier');
-const Logger = require('../util/logger');
-const SettingsStore = require('../comp/settings-store');
+import kdbxweb from 'kdbxweb';
+import { Events } from 'framework/events';
+import { SettingsStore } from 'comp/settings/settings-store';
+import { Links } from 'const/links';
+import { SignatureVerifier } from 'util/data/signature-verifier';
+import { Logger } from 'util/logger';
 
 const PluginGallery = {
     logger: new Logger('plugin-gallery'),
@@ -45,7 +45,7 @@ const PluginGallery = {
                     this.gallery = gallery;
                     this.saveGallery(gallery);
                 }
-                Backbone.trigger('plugin-gallery-load-complete');
+                Events.emit('plugin-gallery-load-complete');
                 return gallery;
             });
         });
@@ -85,4 +85,4 @@ const PluginGallery = {
     }
 };
 
-module.exports = PluginGallery;
+export { PluginGallery };

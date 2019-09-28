@@ -9,10 +9,9 @@ module.exports = function(grunt) {
         'copy:manifest',
         'copy:fonts',
         'webpack',
-        'uglify',
         'inline',
         'htmlmin',
-        'string-replace:manifest-html',
+        'string-replace:service-worker',
         'string-replace:manifest',
         'copy:dist-icons',
         'copy:dist-manifest'
@@ -20,8 +19,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-app-content', [
         'copy:desktop-app-content',
-        'string-replace:desktop-public-key',
-        'string-replace:desktop-html'
+        'string-replace:desktop-public-key'
     ]);
 
     grunt.registerTask('build-desktop-update', [

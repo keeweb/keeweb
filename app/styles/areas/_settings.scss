@@ -26,15 +26,30 @@
         border: 1px solid var(--muted-color);
         display: inline-block;
         border-radius: $base-border-radius;
-        width: 40px;
+        width: 8em;
         text-align: center;
         padding: $base-padding;
         margin: 0 $base-padding-h $base-padding-v $base-padding-h;
+        line-height: 1.5em;
+        min-width: unset;
+        box-sizing: border-box;
+        vertical-align: baseline;
         &-large {
-            width: 80px;
+            width: 12em;
         }
         &:first-of-type {
             margin-left: 0;
+        }
+        &__editor {
+            margin-bottom: $base-padding-v;
+            &-input {
+                text-align: center;
+                margin: $base-padding-v 0 $medium-padding-v;
+                width: 15em;
+                &--large {
+                    width: 30em;
+                }
+            }
         }
     }
 
@@ -115,11 +130,6 @@
         display: none;
     }
 
-    &__file-buttons {
-        button ~ button {
-            margin-left: $small-spacing;
-        }
-    }
     &__file-master-pass-warning,
     &__file-confirm-master-pass-warning {
         font-weight: normal;
@@ -217,6 +227,10 @@
             box-sizing: border-box;
             margin: 0 $base-padding-v $base-padding-h 0;
             vertical-align: top;
+            @include mobile {
+                width: 100%;
+                margin-right: 0;
+            }
             &-install-btn {
                 position: absolute;
                 right: 0;
@@ -241,7 +255,12 @@
         }
         &-gallery-search {
             margin-top: $medium-padding-v;
-            width: calc(100% - 74px);
+            @include nomobile {
+                width: calc(100% - 74px);
+            }
+            @include mobile {
+                width: 100%;
+            }
         }
     }
     &__donate-btn {
@@ -254,7 +273,7 @@
         padding: 0.2rem 2.4rem 0.1rem;
         line-height: 1.4;
         height: 2.8rem;
-        margin-bottom: $base-padding-v;
+        margin-bottom: $base-padding-v * 2;
 
         &-top,
         &-bottom {

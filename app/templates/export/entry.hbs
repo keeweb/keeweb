@@ -9,7 +9,11 @@
                 {{#if field.protect}}
                     <code>{{field.value}}</code>
                 {{else}}
-                    {{field.value}}
+                    {{#if field.html}}
+                        {{{field.value}}}
+                    {{else}}
+                        {{field.value}}
+                    {{/if}}
                 {{/if}}
             </td>
         </tr>
@@ -20,20 +24,24 @@
             <td>{{tags}}</td>
         </tr>
     {{/if}}
-    <tr>
-        <td>{{Res 'group'}}</td>
-        <td>{{path}}</td>
-    </tr>
-    {{#if attachments.length}}
+    {{#if path}}
         <tr>
-            <td>{{res 'detAttachments'}}</td>
-            <td>
-                {{#each attachments as |attachment|}}
-                    <a href="{{{attachment.data}}}" download="{{attachment.name}}">{{attachment.name}}</a>
-                    {{~#unless @last}},&nbsp;{{/unless}}
-                {{/each}}
-            </td>
+            <td>{{Res 'group'}}</td>
+            <td>{{path}}</td>
         </tr>
+    {{/if}}
+    {{#if attachments}}
+        {{#if attachments.length}}
+            <tr>
+                <td>{{res 'detAttachments'}}</td>
+                <td>
+                    {{#each attachments as |attachment|}}
+                        <a href="{{{attachment.data}}}" download="{{attachment.name}}">{{attachment.name}}</a>
+                        {{~#unless @last}},&nbsp;{{/unless}}
+                    {{/each}}
+                </td>
+            </tr>
+        {{/if}}
     {{/if}}
     <tr>
         <td>{{res 'detCreated'}}</td>

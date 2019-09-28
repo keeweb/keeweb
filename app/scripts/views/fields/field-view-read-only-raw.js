@@ -1,11 +1,11 @@
-const FieldView = require('./field-view');
+import { FieldView } from 'views/fields/field-view';
 
-const FieldViewReadOnlyRaw = FieldView.extend({
+class FieldViewReadOnlyRaw extends FieldView {
+    readonly = true;
+
     renderValue(value) {
         return value;
-    },
+    }
+}
 
-    readonly: true
-});
-
-module.exports = FieldViewReadOnlyRaw;
+export { FieldViewReadOnlyRaw };

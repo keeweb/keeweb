@@ -1,7 +1,7 @@
-const AutoTypeObfuscator = require('./auto-type-obfuscator');
-const AutoTypeEmitterFactory = require('./auto-type-emitter-factory');
-const Format = require('../util/format');
-const Logger = require('../util/logger');
+import { AutoTypeEmitterFactory } from 'auto-type/auto-type-emitter-factory';
+import { AutoTypeObfuscator } from 'auto-type/auto-type-obfuscator';
+import { StringFormat } from 'util/formatting/string-format';
+import { Logger } from 'util/logger';
 
 const emitterLogger = new Logger('auto-type-emitter');
 emitterLogger.setLevel(localStorage.autoTypeDebug ? Logger.Level.All : Logger.Level.Warn);
@@ -293,7 +293,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
 };
 
 AutoTypeRunner.prototype.getEntryGroupName = function() {
-    return this.entry && this.entry.group.get('title');
+    return this.entry && this.entry.group.title;
 };
 
 AutoTypeRunner.prototype.dt = function(part) {
@@ -310,15 +310,15 @@ AutoTypeRunner.prototype.dt = function(part) {
         case 'Y':
             return this.now.getFullYear().toString();
         case 'M':
-            return Format.pad(this.now.getMonth() + 1, 2);
+            return StringFormat.pad(this.now.getMonth() + 1, 2);
         case 'D':
-            return Format.pad(this.now.getDate(), 2);
+            return StringFormat.pad(this.now.getDate(), 2);
         case 'h':
-            return Format.pad(this.now.getHours(), 2);
+            return StringFormat.pad(this.now.getHours(), 2);
         case 'm':
-            return Format.pad(this.now.getMinutes(), 2);
+            return StringFormat.pad(this.now.getMinutes(), 2);
         case 's':
-            return Format.pad(this.now.getSeconds(), 2);
+            return StringFormat.pad(this.now.getSeconds(), 2);
         default:
             throw 'Bad part: ' + part;
     }
@@ -338,15 +338,15 @@ AutoTypeRunner.prototype.udt = function(part) {
         case 'Y':
             return this.now.getUTCFullYear().toString();
         case 'M':
-            return Format.pad(this.now.getUTCMonth() + 1, 2);
+            return StringFormat.pad(this.now.getUTCMonth() + 1, 2);
         case 'D':
-            return Format.pad(this.now.getUTCDate(), 2);
+            return StringFormat.pad(this.now.getUTCDate(), 2);
         case 'h':
-            return Format.pad(this.now.getUTCHours(), 2);
+            return StringFormat.pad(this.now.getUTCHours(), 2);
         case 'm':
-            return Format.pad(this.now.getUTCMinutes(), 2);
+            return StringFormat.pad(this.now.getUTCMinutes(), 2);
         case 's':
-            return Format.pad(this.now.getUTCSeconds(), 2);
+            return StringFormat.pad(this.now.getUTCSeconds(), 2);
         default:
             throw 'Bad part: ' + part;
     }
@@ -450,7 +450,7 @@ AutoTypeRunner.prototype.emitNext = function(err) {
     if (this.emitterState.opIx >= this.emitterState.ops.length) {
         const state = this.emitterState.stack.pop();
         if (state) {
-            _.extend(this.emitterState, { ops: state.ops, opIx: state.opIx, mod: state.mod });
+            Object.assign(this.emitterState, { ops: state.ops, opIx: state.opIx, mod: state.mod });
             this.emitNext();
         } else {
             this.resetEmitterMod({});
@@ -468,12 +468,12 @@ AutoTypeRunner.prototype.emitNext = function(err) {
         this.emitterState.stack.push({
             ops: this.emitterState.ops,
             opIx: this.emitterState.opIx + 1,
-            mod: _.clone(this.emitterState.mod)
+            mod: { ...this.emitterState.mod }
         });
-        _.extend(this.emitterState, {
+        Object.assign(this.emitterState, {
             ops: op.value,
             opIx: 0,
-            mod: _.clone(this.emitterState.activeMod)
+            mod: { ...this.emitterState.activeMod }
         });
         this.emitNext();
         return;
@@ -529,4 +529,4 @@ AutoTypeRunner.prototype.resetEmitterMod = function(targetState) {
     }, this);
 };
 
-module.exports = AutoTypeRunner;
+export { AutoTypeRunner };

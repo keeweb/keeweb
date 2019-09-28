@@ -1,0 +1,83 @@
+.import-csv {
+    padding: $base-padding;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    &__body {
+        @include scrollbar-on-hover;
+        overflow: hidden;
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        > .scroller {
+            flex: 1 0 0;
+            overflow-x: scroll;
+            position: relative;
+        }
+    }
+
+    &__table-wrap {
+        overflow-x: auto;
+        width: calc(100vw - #{$base-padding-h * 3});
+        max-width: calc(100vw - #{$base-padding-h * 3});
+        @include scrollbar-on-hover;
+    }
+
+    &__table {
+        border-collapse: collapse;
+        td,
+        th {
+            text-align: left;
+            padding: $base-padding;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: top;
+        }
+        td {
+            user-select: text;
+        }
+        @include nomobile {
+            tbody tr:hover {
+                background-color: var(--intermediate-background-color);
+            }
+        }
+    }
+
+    &__field-select {
+        width: 100%;
+        height: 2em;
+        padding-right: $large-padding;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__top {
+        padding: 0 $base-padding-h;
+    }
+
+    &__bottom {
+        padding: $medium-padding-v $base-padding-h;
+        display: flex;
+        align-items: baseline;
+        button ~ button {
+            margin-left: $small-spacing;
+        }
+    }
+
+    &__target {
+        flex: 1 1 0;
+        display: flex;
+        align-items: baseline;
+
+        &-select {
+            width: 30%;
+            height: 2em;
+            margin-left: $base-padding-h;
+            padding-right: $large-padding;
+        }
+    }
+}

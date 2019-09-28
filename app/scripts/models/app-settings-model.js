@@ -1,8 +1,34 @@
-const Backbone = require('backbone');
-const SettingsStore = require('../comp/settings-store');
+import { Model } from 'framework/model';
+import { SettingsStore } from 'comp/settings/settings-store';
 
-const AppSettingsModel = Backbone.Model.extend({
-    defaults: {
+class AppSettingsModel extends Model {
+    constructor() {
+        super();
+        this.on('change', () => this.save());
+    }
+
+    load() {
+        return SettingsStore.load('app-settings').then(data => {
+            if (data) {
+                this.upgrade(data);
+                this.set(data, { silent: true });
+            }
+        });
+    }
+
+    upgrade(data) {
+        if (data.rememberKeyFiles === true) {
+            data.rememberKeyFiles = 'data';
+        }
+    }
+
+    save() {
+        SettingsStore.save('app-settings', this);
+    }
+}
+
+AppSettingsModel.defineModelProperties(
+    {
         theme: 'fb',
         locale: null,
         expandGroups: true,
@@ -41,6 +67,7 @@ const AppSettingsModel = Backbone.Model.extend({
         canOpenSettings: true,
         canCreate: true,
         canImportXml: true,
+        canImportCsv: true,
         canRemoveLatest: true,
         canExportXml: true,
         canExportHtml: true,
@@ -50,34 +77,9 @@ const AppSettingsModel = Backbone.Model.extend({
         gdrive: true,
         onedrive: true
     },
+    { extensions: true }
+);
 
-    initialize() {
-        this.listenTo(this, 'change', this.save);
-    },
+const instance = new AppSettingsModel();
 
-    load() {
-        return SettingsStore.load('app-settings').then(data => {
-            if (data) {
-                this.upgrade(data);
-                this.set(data, { silent: true });
-            }
-        });
-    },
-
-    upgrade(data) {
-        if (data.rememberKeyFiles === true) {
-            data.rememberKeyFiles = 'data';
-        }
-        if (data.versionWarningShown) {
-            delete data.versionWarningShown;
-        }
-    },
-
-    save() {
-        SettingsStore.save('app-settings', this.attributes);
-    }
-});
-
-AppSettingsModel.instance = new AppSettingsModel();
-
-module.exports = AppSettingsModel;
+export { instance as AppSettingsModel };

@@ -1,36 +1,41 @@
-const Backbone = require('backbone');
-const EntryCollection = require('../collections/entry-collection');
-const Resizable = require('../mixins/resizable');
-const Scrollable = require('../mixins/scrollable');
-const ListSearchView = require('./list-search-view');
-const DropdownView = require('./dropdown-view');
-const EntryPresenter = require('../presenters/entry-presenter');
-const DragDropInfo = require('../comp/drag-drop-info');
-const AppSettingsModel = require('../models/app-settings-model');
-const Locale = require('../util/locale');
-const Format = require('../util/format');
-const Alerts = require('../comp/alerts');
+import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
+import { EntryCollection } from 'collections/entry-collection';
+import { DragDropInfo } from 'comp/app/drag-drop-info';
+import { Alerts } from 'comp/ui/alerts';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { EntryPresenter } from 'presenters/entry-presenter';
+import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
+import { Resizable } from 'framework/views/resizable';
+import { Scrollable } from 'framework/views/scrollable';
+import { DropdownView } from 'views/dropdown-view';
+import { ListSearchView } from 'views/list-search-view';
+import throttle from 'lodash/throttle';
+import template from 'templates/list.hbs';
+import emptyTemplate from 'templates/list-empty.hbs';
 
-const ListView = Backbone.View.extend({
-    template: require('templates/list.hbs'),
-    emptyTemplate: require('templates/list-empty.hbs'),
+class ListView extends View {
+    parent = '.app__list';
 
-    events: {
-        'click .list__item': 'itemClick',
+    template = template;
+
+    emptyTemplate = emptyTemplate;
+
+    events = {
+        'click': 'click',
         'click .list__table-options': 'tableOptionsClick',
         'dragstart .list__item': 'itemDragStart'
-    },
+    };
 
-    views: null,
+    minWidth = 200;
+    minHeight = 200;
+    maxWidth = 500;
+    maxHeight = 500;
 
-    minWidth: 200,
-    minHeight: 200,
-    maxWidth: 500,
-    maxHeight: 500,
+    itemsEl = null;
 
-    itemsEl: null,
-
-    tableColumns: [
+    tableColumns = [
         { val: 'title', name: 'title', enabled: true },
         { val: 'user', name: 'user', enabled: true },
         { val: 'url', name: 'website', enabled: true },
@@ -38,12 +43,13 @@ const ListView = Backbone.View.extend({
         { val: 'notes', name: 'notes', enabled: true },
         { val: 'groupName', name: 'group', enabled: false },
         { val: 'fileName', name: 'file', enabled: false }
-    ],
+    ];
 
-    initialize() {
+    constructor(model, options) {
+        super(model, options);
+
         this.initScroll();
-        this.views = {};
-        this.views.search = new ListSearchView({ model: this.model });
+        this.views.search = new ListSearchView(this.model);
 
         this.listenTo(this.views.search, 'select-prev', this.selectPrev);
         this.listenTo(this.views.search, 'select-next', this.selectNext);
@@ -53,22 +59,22 @@ const ListView = Backbone.View.extend({
         this.listenTo(this, 'show', this.viewShown);
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(this, 'view-resize', this.viewResized);
-        this.listenTo(Backbone, 'filter', this.filterChanged);
-        this.listenTo(Backbone, 'entry-updated', this.entryUpdated);
-        this.listenTo(Backbone, 'set-locale', this.render);
+        this.listenTo(Events, 'filter', this.filterChanged);
+        this.listenTo(Events, 'entry-updated', this.entryUpdated);
+        this.listenTo(Events, 'set-locale', this.render);
 
         this.listenTo(this.model.settings, 'change:tableView', this.setTableView);
 
         this.readTableColumnsEnabled();
 
         this.items = new EntryCollection();
-    },
+    }
 
     render() {
         if (!this.itemsEl) {
-            this.$el.html(this.template());
+            super.render();
             this.itemsEl = this.$el.find('.list__items>.scroller');
-            this.views.search.setElement(this.$el.find('.list__header')).render();
+            this.views.search.render();
             this.setTableView();
 
             this.createScroll({
@@ -80,7 +86,7 @@ const ListView = Backbone.View.extend({
         if (this.items.length) {
             const itemTemplate = this.getItemTemplate();
             const itemsTemplate = this.getItemsTemplate();
-            const noColor = AppSettingsModel.instance.get('colorfulIcons') ? '' : 'grayscale';
+            const noColor = AppSettingsModel.colorfulIcons ? '' : 'grayscale';
             const presenter = new EntryPresenter(
                 this.getDescField(),
                 noColor,
@@ -104,72 +110,73 @@ const ListView = Backbone.View.extend({
             this.itemsEl.html(this.emptyTemplate());
         }
         this.pageResized();
-        return this;
-    },
+    }
 
     getItemsTemplate() {
-        if (this.model.settings.get('tableView')) {
+        if (this.model.settings.tableView) {
             return require('templates/list-table.hbs');
         } else {
             return this.renderPlainItems;
         }
-    },
+    }
 
     renderPlainItems(itemsHtml) {
         return itemsHtml.items;
-    },
+    }
 
     getItemTemplate() {
-        if (this.model.settings.get('tableView')) {
+        if (this.model.settings.tableView) {
             return require('templates/list-item-table.hbs');
         } else {
             return require('templates/list-item-short.hbs');
         }
-    },
+    }
 
     getDescField() {
         return this.model.sort.replace('-', '');
-    },
+    }
 
-    itemClick(e) {
-        const id = $(e.target)
-            .closest('.list__item')
-            .attr('id');
+    click(e) {
+        const listItemEl = e.target.closest('.list__item');
+        if (!listItemEl) {
+            return;
+        }
+        const id = listItemEl.id;
         const item = this.items.get(id);
         if (!item.active) {
             this.selectItem(item);
         }
-        Backbone.trigger('toggle-details', true);
-    },
+        Events.emit('toggle-details', true);
+    }
 
     selectPrev() {
         const ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix > 0) {
-            this.selectItem(this.items.at(ix - 1));
+            this.selectItem(this.items[ix - 1]);
         }
-    },
+    }
 
     selectNext() {
         const ix = this.items.indexOf(this.items.get(this.model.activeEntryId));
         if (ix < this.items.length - 1) {
-            this.selectItem(this.items.at(ix + 1));
+            this.selectItem(this.items[ix + 1]);
         }
-    },
+    }
 
     createEntry(arg) {
         const newEntry = this.model.createNewEntry(arg);
         this.items.unshift(newEntry);
         this.render();
         this.selectItem(newEntry);
-    },
+    }
 
     createGroup() {
         const newGroup = this.model.createNewGroup();
-        Backbone.trigger('edit-group', newGroup);
-    },
+        Events.emit('edit-group', newGroup);
+    }
 
     createTemplate() {
-        if (!this.model.settings.get('templateHelpShown')) {
+        if (!this.model.settings.templateHelpShown) {
             Alerts.yesno({
                 icon: 'sticky-note-o',
                 header: Locale.listAddTemplateHeader,
@@ -179,7 +186,7 @@ const ListView = Backbone.View.extend({
                     Locale.listAddTemplateBody2.replace('{}', 'Templates'),
                 buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                 success: () => {
-                    this.model.settings.set('templateHelpShown', true);
+                    this.model.settings.templateHelpShown = true;
                     this.createTemplate();
                 }
             });
@@ -189,11 +196,11 @@ const ListView = Backbone.View.extend({
         this.items.unshift(templateEntry);
         this.render();
         this.selectItem(templateEntry);
-    },
+    }
 
     selectItem(item) {
         this.model.activeEntryId = item.id;
-        Backbone.trigger('entry-selected', item);
+        Events.emit('entry-selected', item);
         this.itemsEl.find('.list__item--active').removeClass('list__item--active');
         const itemEl = document.getElementById(item.id);
         itemEl.classList.add('list__item--active');
@@ -205,64 +212,64 @@ const ListView = Backbone.View.extend({
         } else if (itemRect.bottom > listRect.bottom) {
             listEl.scrollTop += itemRect.bottom - listRect.bottom;
         }
-    },
+    }
 
     viewShown() {
         this.views.search.show();
-    },
+    }
 
     viewHidden() {
         this.views.search.hide();
-    },
+    }
 
     setTableView() {
-        const isTable = this.model.settings.get('tableView');
+        const isTable = this.model.settings.tableView;
         this.dragView.setCoord(isTable ? 'y' : 'x');
         this.setDefaultSize();
-    },
+    }
 
     setDefaultSize() {
-        this.setSize(this.model.settings.get('listViewWidth'));
-    },
+        this.setSize(this.model.settings.listViewWidth);
+    }
 
     setSize(size) {
         this.$el.css({ width: 'auto', height: 'auto' });
         if (size) {
             this.$el.css('flex', '0 0 ' + size + 'px');
         } else {
-            this.$el.css('flex', null);
+            this.$el.css('flex', '');
         }
-    },
+    }
 
     viewResized(size) {
         this.setSize(size);
         this.throttleSetViewSizeSetting(size);
-    },
+    }
 
-    throttleSetViewSizeSetting: _.throttle(size => {
-        AppSettingsModel.instance.set('listViewWidth', size);
-    }, 1000),
+    throttleSetViewSizeSetting = throttle(size => {
+        AppSettingsModel.listViewWidth = size;
+    }, 1000);
 
     filterChanged(filter) {
         this.items = filter.entries;
         this.render();
-    },
+    }
 
     entryUpdated() {
         const scrollTop = this.itemsEl[0].scrollTop;
         this.render();
         this.itemsEl[0].scrollTop = scrollTop;
-    },
+    }
 
     itemDragStart(e) {
         e.stopPropagation();
         const id = $(e.target)
             .closest('.list__item')
             .attr('id');
-        e.originalEvent.dataTransfer.setData('text/entry', id);
-        e.originalEvent.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/entry', id);
+        e.dataTransfer.effectAllowed = 'move';
         DragDropInfo.dragObject = this.items.get(id);
-    },
+    }
 
     tableOptionsClick(e) {
         e.stopImmediatePropagation();
@@ -277,7 +284,7 @@ const ListView = Backbone.View.extend({
         const options = this.tableColumns.map(col => ({
             value: col.val,
             icon: col.enabled ? 'check-square-o' : 'square-o',
-            text: Format.capFirst(Locale[col.name])
+            text: StringFormat.capFirst(Locale[col.name])
         }));
         view.render({
             position: {
@@ -287,41 +294,41 @@ const ListView = Backbone.View.extend({
             options
         });
         this.views.optionsDropdown = view;
-    },
+    }
 
     hideOptionsDropdown() {
         if (this.views.optionsDropdown) {
             this.views.optionsDropdown.remove();
             delete this.views.optionsDropdown;
         }
-    },
+    }
 
     optionsDropdownSelect(e) {
-        const col = _.find(this.tableColumns, c => c.val === e.item);
+        const col = this.tableColumns.find(c => c.val === e.item);
         col.enabled = !col.enabled;
         e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
         this.render();
         this.saveTableColumnsEnabled();
-    },
+    }
 
     readTableColumnsEnabled() {
-        const tableViewColumns = AppSettingsModel.instance.get('tableViewColumns');
+        const tableViewColumns = AppSettingsModel.tableViewColumns;
         if (tableViewColumns && tableViewColumns.length) {
             this.tableColumns.forEach(col => {
                 col.enabled = tableViewColumns.indexOf(col.name) >= 0;
             });
         }
-    },
+    }
 
     saveTableColumnsEnabled() {
         const tableViewColumns = this.tableColumns
             .filter(column => column.enabled)
             .map(column => column.name);
-        AppSettingsModel.instance.set('tableViewColumns', tableViewColumns);
+        AppSettingsModel.tableViewColumns = tableViewColumns;
     }
-});
+}
 
-_.extend(ListView.prototype, Resizable);
-_.extend(ListView.prototype, Scrollable);
+Object.assign(ListView.prototype, Resizable);
+Object.assign(ListView.prototype, Scrollable);
 
-module.exports = ListView;
+export { ListView };

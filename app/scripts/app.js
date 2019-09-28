@@ -1,36 +1,36 @@
-const Backbone = require('backbone');
-const AppModel = require('./models/app-model');
-const AppView = require('./views/app-view');
-const AppSettingsModel = require('./models/app-settings-model');
-const UpdateModel = require('./models/update-model');
-const RuntimeDataModel = require('./models/runtime-data-model');
-const FileInfoCollection = require('./collections/file-info-collection');
-const KeyHandler = require('./comp/key-handler');
-const IdleTracker = require('./comp/idle-tracker');
-const PopupNotifier = require('./comp/popup-notifier');
-const SingleInstanceChecker = require('./comp/single-instance-checker');
-const AppRightsChecker = require('./comp/app-rights-checker');
-const Alerts = require('./comp/alerts');
-const Updater = require('./comp/updater');
-const AuthReceiver = require('./comp/auth-receiver');
-const ExportApi = require('./comp/export-api');
-const SettingsManager = require('./comp/settings-manager');
-const PluginManager = require('./plugins/plugin-manager');
-const Launcher = require('./comp/launcher');
-const FeatureTester = require('./comp/feature-tester');
-const FocusDetector = require('./comp/focus-detector');
-const Timeouts = require('./const/timeouts');
-const FeatureDetector = require('./util/feature-detector');
-const KdbxwebInit = require('./util/kdbxweb-init');
-const Locale = require('./util/locale');
+import { Events } from 'framework/events';
+import { FileInfoCollection } from 'collections/file-info-collection';
+import { AppRightsChecker } from 'comp/app/app-rights-checker';
+import { ExportApi } from 'comp/app/export-api';
+import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
+import { Updater } from 'comp/app/updater';
+import { AuthReceiver } from 'comp/browser/auth-receiver';
+import { FeatureTester } from 'comp/browser/feature-tester';
+import { FocusDetector } from 'comp/browser/focus-detector';
+import { IdleTracker } from 'comp/browser/idle-tracker';
+import { KeyHandler } from 'comp/browser/key-handler';
+import { PopupNotifier } from 'comp/browser/popup-notifier';
+import { Launcher } from 'comp/launcher';
+import { SettingsManager } from 'comp/settings/settings-manager';
+import { Alerts } from 'comp/ui/alerts';
+import { Timeouts } from 'const/timeouts';
+import { AppModel } from 'models/app-model';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { RuntimeDataModel } from 'models/runtime-data-model';
+import { UpdateModel } from 'models/update-model';
+import { PluginManager } from 'plugins/plugin-manager';
+import { Features } from 'util/features';
+import { KdbxwebInit } from 'util/kdbxweb/kdbxweb-init';
+import { Locale } from 'util/locale';
+import { AppView } from 'views/app-view';
+import 'hbs-helpers';
 
 const ready = (Launcher && Launcher.ready) || $;
 
 ready(() => {
-    if (AuthReceiver.receive() || FeatureDetector.isFrame) {
+    if (AuthReceiver.receive() || Features.isFrame) {
         return;
     }
-    loadMixins();
 
     const appModel = new AppModel();
 
@@ -44,11 +44,6 @@ ready(() => {
         .catch(e => {
             appModel.appLogger.error('Error starting app', e);
         });
-
-    function loadMixins() {
-        require('./mixins/view');
-        require('./helpers');
-    }
 
     function ensureCanRun() {
         return FeatureTester.test().catch(e => {
@@ -66,10 +61,10 @@ ready(() => {
 
     function loadConfigs() {
         return Promise.all([
-            AppSettingsModel.instance.load(),
-            UpdateModel.instance.load(),
-            RuntimeDataModel.instance.load(),
-            FileInfoCollection.instance.load()
+            AppSettingsModel.load(),
+            UpdateModel.load(),
+            RuntimeDataModel.load(),
+            FileInfoCollection.load()
         ]);
     }
 
@@ -105,7 +100,7 @@ ready(() => {
                         SettingsManager.setBySettings(appModel.settings);
                     })
                     .catch(e => {
-                        if (!appModel.settings.get('cacheConfigSettings')) {
+                        if (!appModel.settings.cacheConfigSettings) {
                             showSettingsLoadError();
                             throw e;
                         }
@@ -117,7 +112,7 @@ ready(() => {
     function showApp() {
         return Promise.resolve().then(() => {
             const skipHttpsWarning =
-                localStorage.skipHttpsWarning || appModel.settings.get('skipHttpsWarning');
+                localStorage.skipHttpsWarning || appModel.settings.skipHttpsWarning;
             const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
             const hostIsInsecure = location.hostname !== 'localhost';
             if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
@@ -151,8 +146,8 @@ ready(() => {
 
     function showView() {
         appModel.prepare();
-        new AppView({ model: appModel }).render();
-        Backbone.trigger('app-ready');
+        new AppView(appModel).render();
+        Events.emit('app-ready');
         logStartupTime();
     }
 
