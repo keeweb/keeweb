@@ -106,7 +106,7 @@ class Plugin extends Model {
         }
         if (
             !this.skipSignatureValidation &&
-            manifest.publicKey !== SignatureVerifier.getPublicKey()
+            !SignatureVerifier.getPublicKeys().includes(manifest.publicKey)
         ) {
             return 'Public key mismatch';
         }

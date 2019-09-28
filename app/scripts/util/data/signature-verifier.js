@@ -1,19 +1,26 @@
 import kdbxweb from 'kdbxweb';
 import { Logger } from 'util/logger';
-import publicKey from 'public-key.pem';
+import publicKeyData from 'public-key.pem';
+import publicKeyDataNew from 'public-key-new.pem';
 
 const SignatureVerifier = {
     logger: new Logger('signature-verifier'),
 
-    publicKey: null,
+    publicKeys: null,
 
     verify(data, signature, pk) {
+        if (!pk) {
+            const pks = this.getPublicKeys();
+            return this.verify(data, signature, pks[0]).then(isValid => {
+                if (isValid || !pks[1]) {
+                    return isValid;
+                }
+                return this.verify(data, signature, pks[1]);
+            });
+        }
         return new Promise((resolve, reject) => {
             const algo = { name: 'RSASSA-PKCS1-v1_5', hash: { name: 'SHA-256' } };
             try {
-                if (!pk) {
-                    pk = this.getPublicKey();
-                }
                 if (typeof signature === 'string') {
                     signature = kdbxweb.ByteUtils.base64ToBytes(signature);
                 }
@@ -54,13 +61,13 @@ const SignatureVerifier = {
         });
     },
 
-    getPublicKey() {
-        if (!this.publicKey) {
-            this.publicKey = publicKey
-                .match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1]
-                .replace(/\s+/g, '');
+    getPublicKeys() {
+        if (!this.publicKeys) {
+            this.publicKeys = [publicKeyData, publicKeyDataNew].map(pk =>
+                pk.match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1].replace(/\s+/g, '')
+            );
         }
-        return this.publicKey;
+        return this.publicKeys;
     }
 };
 

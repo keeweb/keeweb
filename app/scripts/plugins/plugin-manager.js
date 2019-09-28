@@ -191,10 +191,10 @@ class PluginManager extends Model {
             const galleryPlugin = gallery
                 ? gallery.plugins.find(pl => pl.manifest.name === desc.manifest.name)
                 : null;
-            const expectedPublicKey = galleryPlugin
-                ? galleryPlugin.manifest.publicKey
-                : SignatureVerifier.getPublicKey();
-            enabled = desc.manifest.publicKey === expectedPublicKey;
+            const expectedPublicKeys = galleryPlugin
+                ? [galleryPlugin.manifest.publicKey]
+                : SignatureVerifier.getPublicKeys();
+            enabled = expectedPublicKeys.includes(desc.manifest.publicKey);
         }
         return plugin
             .install(enabled, true)

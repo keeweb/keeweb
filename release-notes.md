@@ -14,6 +14,7 @@ Release notes
 `+` #498: CSV import  
 `*` #156: using ServiceWorker instead of AppCache  
 `+` #564: Steam OTP support  
+`+` #1252: public key rotation  
 `*` devtools are now opened with alt-cmd-I  
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  
