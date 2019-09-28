@@ -571,7 +571,7 @@ class FileModel extends Model {
         if (enabled) {
             this.db.createRecycleBin();
         }
-        this.setRecycleBinEnabled = enabled;
+        this.recycleBinEnabled = enabled;
         this.setModified();
     }
 
