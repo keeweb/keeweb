@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.11.1 (2019-09-28)
 `-` fix #1270: password change control focus  
+`-` fix #1271: loading custom plugins from config  
 
 ##### v1.11.0 (2019-09-28)
 `+` #1125: field actions: copy, reveal, auto-type  
