@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.1 (2019-09-28)
+`-` fix #1270: password change control focus  
+
 ##### v1.11.0 (2019-09-28)
 `+` #1125: field actions: copy, reveal, auto-type  
 `+` #107: multiline custom fields support  
