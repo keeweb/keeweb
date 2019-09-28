@@ -2,26 +2,26 @@ Release notes
 -------------
 ##### v1.11.0 (TBD)
 `+` #1125: field actions: copy, reveal, auto-type  
-`+` #1226: 7-digit Authy OTP support  
 `+` #107: multiline custom fields support  
-`+` #1243: auto-type any field  
-`+` #1255: file format version and kdf selection in settings  
-`*` #502: increased the default value of encryption rounds  
-`+` #348: configurable system-wide shortcuts  
-`+` #743: copying entry fields to clipboard  
 `+` #713: markdown notes  
+`+` #1243: auto-type any field  
 `+` #336: moving entries across files  
+`+` #348: configurable system-wide shortcuts  
+`+` #1255: file format version and kdf selection in settings  
+`+` #743: copying entry fields to clipboard  
 `+` #498: CSV import  
-`*` #156: using ServiceWorker instead of AppCache  
 `+` #564: Steam OTP support  
+`+` #1226: 7-digit Authy OTP support  
+`*` #502: increased the default value of encryption rounds  
 `+` #1252: public key rotation  
+`*` #156: using ServiceWorker instead of AppCache  
 `*` devtools are now opened with alt-cmd-I  
 `-` fix #764: multiple attachments display  
 `-` fix multi-line fields display in history  
 `-` fix #554: checking active window id during auto-type  
 `-` fix plugin gallery layout on mobile  
 `-` fix #1141: opening file from storage if cache is not available  
-`-` fix a color flash on start  
+`-` fixed a color flash on start  
 
 ##### v1.10.1 (2019-09-20)
 `-` fixed Argon2 issues in Safari 13  
