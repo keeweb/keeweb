@@ -88,6 +88,11 @@ module.exports = function(grunt) {
                 expand: true,
                 flatten: true
             },
+            'desktop-html': {
+                src: 'dist/index.html',
+                dest: 'tmp/desktop/app/index.html',
+                nonull: true
+            },
             'desktop-app-content': {
                 cwd: 'desktop/',
                 src: ['**', '!package-lock.json'],

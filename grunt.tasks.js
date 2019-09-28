@@ -18,6 +18,7 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('build-desktop-app-content', [
+        'copy:desktop-html',
         'copy:desktop-app-content',
         'string-replace:desktop-public-key'
     ]);
