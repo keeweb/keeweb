@@ -1,8 +1,9 @@
 import Handlebars from 'hbs';
 
 /**
- * Replacements for methods that are bloated in lodash
- * Because we don't want to load extra 20kb of code for simple pick, shuffle, or escape
+ * Replacements for methods that are bloated in lodash, as well as other useful helpers.
+ * Lodash contains some very well written functions like throttle and debounce.
+ * However we don't want to load extra 20kb of code for simple pick, shuffle, or escape.
  */
 
 const escape = Handlebars.escapeExpression;
