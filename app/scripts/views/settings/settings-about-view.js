@@ -1,6 +1,7 @@
 import { View } from 'framework/views/view';
 import { RuntimeInfo } from 'comp/app/runtime-info';
 import { Links } from 'const/links';
+import { Features } from 'util/features';
 import template from 'templates/settings/settings-about.hbs';
 
 class SettingsAboutView extends View {
@@ -12,7 +13,8 @@ class SettingsAboutView extends View {
             licenseLink: Links.License,
             licenseLinkApache: Links.LicenseApache,
             repoLink: Links.Repo,
-            donationLink: Links.Donation
+            donationLink: Links.Donation,
+            isDesktop: Features.isDesktop
         });
     }
 }
