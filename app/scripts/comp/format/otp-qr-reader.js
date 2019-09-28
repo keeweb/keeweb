@@ -169,7 +169,7 @@ class OtpQrReader {
     }
 
     enterManually() {
-        Events.emit('qe-enter-manually');
+        Events.emit('qr-enter-manually');
     }
 
     removeAlert() {
