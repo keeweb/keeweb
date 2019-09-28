@@ -7,7 +7,7 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { UpdateModel } from 'models/update-model';
 import { SemVer } from 'util/data/semver';
 import { Logger } from 'util/logger';
-import publicKey from 'public-key.pem';
+import { SignatureVerifier } from 'util/data/signature-verifier';
 
 const logger = new Logger('updater');
 
@@ -232,41 +232,46 @@ const Updater = {
             if (!containsAll) {
                 return cb('Bad archive');
             }
-            const validationError = this.validateArchiveSignature(updateFile, zip);
-            if (validationError) {
-                return cb('Invalid archive: ' + validationError);
-            }
-            zip.extract(null, appPath, err => {
-                zip.close();
-                if (err) {
-                    return cb(err);
-                }
-                Launcher.deleteFile(updateFile);
-                cb();
-            });
+            this.validateArchiveSignature(updateFile, zip)
+                .then(() => {
+                    zip.extract(null, appPath, err => {
+                        zip.close();
+                        if (err) {
+                            return cb(err);
+                        }
+                        Launcher.deleteFile(updateFile);
+                        cb();
+                    });
+                })
+                .catch(e => {
+                    return cb('Invalid archive: ' + e);
+                });
         });
     },
 
     validateArchiveSignature(archivePath, zip) {
         if (!zip.comment) {
-            return 'No comment in ZIP';
+            return Promise.reject('No comment in ZIP');
         }
         if (zip.comment.length !== 512) {
-            return 'Bad comment length in ZIP: ' + zip.comment.length;
+            return Promise.reject('Bad comment length in ZIP: ' + zip.comment.length);
         }
         try {
             const zipFileData = Launcher.req('fs').readFileSync(archivePath);
-            const verify = Launcher.req('crypto').createVerify('RSA-SHA256');
-            verify.write(zipFileData.slice(0, zip.centralDirectory.headerOffset + 22));
-            verify.end();
+            const dataToVerify = zipFileData.slice(0, zip.centralDirectory.headerOffset + 22);
             const signature = window.Buffer.from(zip.comment, 'hex');
-            if (!verify.verify(publicKey, signature)) {
-                return 'Invalid signature';
-            }
+            return SignatureVerifier.verify(dataToVerify, signature)
+                .catch(() => {
+                    throw new Error('Error verifying signature');
+                })
+                .then(isValid => {
+                    if (!isValid) {
+                        throw new Error('Invalid signature');
+                    }
+                });
         } catch (err) {
-            return err.toString();
+            return Promise.reject(err.toString());
         }
-        return null;
     }
 };
 

@@ -14,7 +14,9 @@ const SignatureVerifier = {
                 if (!pk) {
                     pk = this.getPublicKey();
                 }
-                signature = kdbxweb.ByteUtils.base64ToBytes(signature);
+                if (typeof signature === 'string') {
+                    signature = kdbxweb.ByteUtils.base64ToBytes(signature);
+                }
                 const subtle = window.crypto.subtle;
                 const keyFormat = 'spki';
                 pk = kdbxweb.ByteUtils.base64ToBytes(pk);
@@ -34,20 +36,20 @@ const SignatureVerifier = {
                                 })
                                 .catch(e => {
                                     this.logger.error('Verify error', e);
-                                    reject();
+                                    reject(e);
                                 });
                         } catch (e) {
                             this.logger.error('Signature verification error', e);
-                            reject();
+                            reject(e);
                         }
                     })
                     .catch(e => {
                         this.logger.error('ImportKey error', e);
-                        reject();
+                        reject(e);
                     });
             } catch (e) {
                 this.logger.error('Signature key verification error', e);
-                reject();
+                reject(e);
             }
         });
     },
