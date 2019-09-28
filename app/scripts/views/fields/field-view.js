@@ -31,6 +31,7 @@ class FieldView extends View {
 
     render() {
         this.value = typeof this.model.value === 'function' ? this.model.value() : this.model.value;
+        const renderedValue = this.renderValue(this.value);
         super.render({
             cls: this.cssClass,
             editable: !this.readonly,
@@ -38,10 +39,10 @@ class FieldView extends View {
             title: this.model.title,
             canEditTitle: this.model.newField,
             protect: this.value && this.value.isProtected,
-            hasOptions: !Features.isMobile && this.hasOptions
+            hasOptions: !Features.isMobile && renderedValue && this.hasOptions
         });
         this.valueEl = this.$el.find('.details__field-value');
-        this.valueEl.html(this.renderValue(this.value));
+        this.valueEl.html(renderedValue);
         this.labelEl = this.$el.find('.details__field-label');
         if (this.model.tip) {
             this.tip = typeof this.model.tip === 'function' ? this.model.tip() : this.model.tip;
