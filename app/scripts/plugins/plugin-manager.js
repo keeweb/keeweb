@@ -64,7 +64,7 @@ class PluginManager extends Model {
     }
 
     installIfNew(url, expectedManifest, skipSignatureValidation) {
-        const plugin = this.plugins.find({ url });
+        const plugin = this.plugins.find(p => p.url === url);
         if (plugin && plugin.status !== 'invalid') {
             return Promise.resolve();
         }
