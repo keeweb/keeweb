@@ -43,8 +43,8 @@ const Scrollable = {
             requestAnimationFrame(() => {
                 if (this.scroll) {
                     this.scroll.update();
-                    const barHeight = this.scrollerBar.height();
-                    const wrapperHeight = this.scrollerBarWrapper.height();
+                    const barHeight = Math.round(this.scrollerBar.height());
+                    const wrapperHeight = Math.round(this.scrollerBarWrapper.height());
                     this.scrollerBarWrapper.toggleClass('invisible', barHeight >= wrapperHeight);
                 }
             });

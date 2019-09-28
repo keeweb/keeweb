@@ -33,9 +33,9 @@ class ImportCsvView extends View {
         super(model, options);
         this.appModel = options.appModel;
         this.fileName = options.fileName;
-        this.initScroll();
         this.guessFieldMapping();
         this.fillGroups();
+        this.initScroll();
     }
 
     render() {
@@ -47,10 +47,19 @@ class ImportCsvView extends View {
         });
         this.createScroll({
             root: this.$el.find('.import-csv__body')[0],
-            scroller: this.$el.find('.scroller')[0],
-            bar: this.$el.find('.scroller__bar')[0]
+            scroller: this.$el.find('.import-csv__body > .scroller')[0],
+            bar: this.$el.find('.import-csv__body > .scroller__bar-wrapper > .scroller__bar')[0]
         });
         this.pageResized();
+        if (!this.scroll._update) {
+            this.scroll._update = this.scroll.update;
+            this.scroll.update = this.scrollUpdate.bind(this);
+        }
+    }
+
+    scrollUpdate() {
+        this.scroller.css({ width: 'auto', minWidth: 'auto', maxWidth: 'auto' });
+        this.scroll._update();
     }
 
     returnToApp() {

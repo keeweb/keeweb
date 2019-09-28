@@ -20,11 +20,15 @@
         }
     }
 
+    &__table-wrap {
+        overflow-x: auto;
+        width: calc(100vw - #{$base-padding-h * 3});
+        max-width: calc(100vw - #{$base-padding-h * 3});
+        @include scrollbar-on-hover;
+    }
+
     &__table {
         border-collapse: collapse;
-        width: calc(100vw - #{$base-padding-h * 2});
-        max-width: calc(100vw - #{$base-padding-h * 2});
-        overflow: hidden;
         td, th {
             text-align: left;
             padding: $base-padding;
