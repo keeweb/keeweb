@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.11.0 (TBD)
+##### v1.11.0 (2019-09-28)
 `+` #1125: field actions: copy, reveal, auto-type  
 `+` #107: multiline custom fields support  
 `+` #713: markdown notes  
