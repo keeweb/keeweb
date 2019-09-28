@@ -663,7 +663,7 @@ class AppView extends View {
     }
 
     toggleDetails(visible) {
-        this.$el.find('.app').toggleClass('app--details-visible', visible);
+        this.$el.toggleClass('app--details-visible', visible);
         this.views.menu.switchVisibility(false);
     }
 
