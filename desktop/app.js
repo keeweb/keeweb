@@ -33,6 +33,18 @@ if (!htmlPath) {
 }
 const showDevToolsOnStart = process.argv.some(arg => arg.startsWith('--devtools'));
 
+const themeBgColors = {
+    db: '#342f2e',
+    fb: '#282c34',
+    wh: '#fafafa',
+    te: '#222',
+    hc: '#fafafa',
+    sd: '#002b36',
+    sl: '#fdf6e3',
+    macdark: '#1f1f20'
+};
+const defaultBgColor = '#282C34';
+
 app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
 
 setEnv();
@@ -143,7 +155,6 @@ function setSystemAppearance() {
 }
 
 function createMainWindow(appSettings) {
-    const isMacDarkTheme = appSettings.theme === 'macdark';
     const windowOptions = {
         show: false,
         width: 1000,
@@ -151,7 +162,7 @@ function createMainWindow(appSettings) {
         minWidth: 700,
         minHeight: 400,
         titleBarStyle: appSettings.titlebarStyle,
-        backgroundColor: isMacDarkTheme ? '#1F1F20' : '#282C34',
+        backgroundColor: themeBgColors[appSettings.theme] || defaultBgColor,
         webPreferences: {
             backgroundThrottling: false,
             nodeIntegration: true,
