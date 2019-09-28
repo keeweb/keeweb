@@ -52,6 +52,9 @@ const CopyPaste = {
 
     copyHtml(html) {
         const el = document.createElement('div');
+        el.style.userSelect = 'auto';
+        el.style.webkitUserSelect = 'auto';
+        el.style.mozUserSelect = 'auto';
         el.innerHTML = html;
         document.body.appendChild(el);
 
