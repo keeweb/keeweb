@@ -115,6 +115,7 @@ const KdbxwebInit = {
         });
     },
 
+    // eslint-disable-next-line object-shorthand
     workerPostRun: function() {
         self.postMessage({ op: 'postRun' });
         self.onmessage = e => {
@@ -128,6 +129,7 @@ const KdbxwebInit = {
         };
     },
 
+    // eslint-disable-next-line object-shorthand
     calcHash: function(Module, args) {
         let { password, salt } = args;
         const { memory, iterations, length, parallelism, type, version } = args;
