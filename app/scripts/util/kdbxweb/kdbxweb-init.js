@@ -115,7 +115,7 @@ const KdbxwebInit = {
         });
     },
 
-    workerPostRun() {
+    workerPostRun: function() {
         self.postMessage({ op: 'postRun' });
         self.onmessage = e => {
             try {
@@ -128,7 +128,7 @@ const KdbxwebInit = {
         };
     },
 
-    calcHash(Module, args) {
+    calcHash: function(Module, args) {
         let { password, salt } = args;
         const { memory, iterations, length, parallelism, type, version } = args;
         const passwordLen = password.byteLength;
