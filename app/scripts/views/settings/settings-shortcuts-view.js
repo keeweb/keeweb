@@ -65,7 +65,6 @@ class SettingsShortcutsView extends View {
 
         shortcutEditor.insertAfter($(e.target).parent());
         shortcutEditorInput.focus();
-        shortcutEditorInput.on('blur', () => shortcutEditor.remove());
         shortcutEditorInput.on('keypress', e => e.preventDefault());
         shortcutEditorInput.on('keydown', e => {
             e.preventDefault();
