@@ -172,6 +172,7 @@ class AppModel {
         });
         this.refresh();
         file.on('reload', this.reloadFile.bind(this));
+        file.on('change', () => Events.emit('file-changed', file));
         return true;
     }
 
