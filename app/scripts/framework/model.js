@@ -31,7 +31,7 @@ const ProxyDef = {
             }
             return true;
         }
-        return false;
+        return true;
     },
     set(target, property, value, receiver) {
         if (Object.prototype.hasOwnProperty.call(target, property) || target[SymbolExtensions]) {
