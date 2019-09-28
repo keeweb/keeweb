@@ -29,7 +29,8 @@
 
     &__table {
         border-collapse: collapse;
-        td, th {
+        td,
+        th {
             text-align: left;
             padding: $base-padding;
             overflow: hidden;
