@@ -154,7 +154,7 @@ function config(grunt, mode = 'production') {
             },
             minimizer: [
                 new TerserPlugin({
-                    extractComments: false,
+                    extractComments: 'never-extract-comments',
                     terserOptions: {
                         ecma: 6
                     }
