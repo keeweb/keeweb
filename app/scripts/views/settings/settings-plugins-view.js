@@ -235,7 +235,7 @@ class SettingsPluginsView extends View {
     pluginMatchesFilter(plugin) {
         const searchStr = this.searchStr;
         const manifest = plugin.manifest;
-        return (
+        return !!(
             !searchStr ||
             manifest.name.toLowerCase().indexOf(searchStr) >= 0 ||
             (manifest.description && manifest.description.toLowerCase().indexOf(searchStr) >= 0) ||

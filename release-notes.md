@@ -3,6 +3,7 @@ Release notes
 ##### v1.11.2 (2019-09-29)
 `-` fix #1272: Argon2 error  
 `-` fixed Dropbox connection on iOS 13 homescreen  
+`-` fixed plugin search filtering  
 
 ##### v1.11.1 (2019-09-28)
 `-` fix #1270: password change control focus  
