@@ -50,6 +50,8 @@ app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
 setEnv();
 restorePreferences();
 
+const appSettings = readAppSettings() || {};
+
 app.on('window-all-closed', () => {
     if (restartPending) {
         app.relaunch();
@@ -62,11 +64,10 @@ app.on('window-all-closed', () => {
 });
 app.on('ready', () => {
     appReady = true;
-    const appSettings = readAppSettings() || {};
     setAppOptions();
     setSystemAppearance();
-    createMainWindow(appSettings);
-    setGlobalShortcuts(appSettings);
+    createMainWindow();
+    setGlobalShortcuts();
     subscribePowerEvents();
     deleteOldTempFiles();
     hookRequestHeaders();
@@ -154,7 +155,7 @@ function setSystemAppearance() {
     }
 }
 
-function createMainWindow(appSettings) {
+function createMainWindow() {
     const windowOptions = {
         show: false,
         width: 1000,
@@ -394,7 +395,7 @@ function notifyOpenFile() {
     }
 }
 
-function setGlobalShortcuts(appSettings) {
+function setGlobalShortcuts() {
     const defaultShortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
     const defaultShortcuts = {
         CopyPassword: { shortcut: defaultShortcutModifiers + 'C', event: 'copy-password' },
