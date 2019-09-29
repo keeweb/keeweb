@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.11.3 (2019-09-29)
+`-` fix #1275: starting the app after closing on macOS  
+`-` fix #1276 GDrive connection issues  
+
 ##### v1.11.2 (2019-09-29)
 `-` fix #1272: Argon2 error  
 `-` fixed Dropbox connection on iOS 13 homescreen  

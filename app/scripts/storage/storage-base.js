@@ -77,8 +77,10 @@ class StorageBase {
         if (this._oauthToken && !config.skipAuth) {
             xhr.setRequestHeader('Authorization', 'Bearer ' + this._oauthToken.accessToken);
         }
-        for (const [key, value] of Object.entries(config.headers)) {
-            xhr.setRequestHeader(key, value);
+        if (config.headers) {
+            for (const [key, value] of Object.entries(config.headers)) {
+                xhr.setRequestHeader(key, value);
+            }
         }
         let data = config.data;
         if (data instanceof ArrayBuffer) {
