@@ -1,9 +1,8 @@
-import { Storage } from 'storage';
 import { Features } from 'util/features';
 
 const AuthReceiver = {
     receive() {
-        if (!Features.isPopup && !Features.isStandalone) {
+        if (!Features.isPopup) {
             return false;
         }
         const opener = window.opener || window.parent;
@@ -12,16 +11,9 @@ const AuthReceiver = {
         if (!hasKeys) {
             return false;
         }
-        if (Features.isStandalone) {
-            if (sessionStorage.authStorage) {
-                Storage[sessionStorage.authStorage].handleOAuthReturnMessage(message);
-            }
-            return false;
-        } else {
-            opener.postMessage(message, window.location.origin);
-            window.close();
-            return true;
-        }
+        opener.postMessage(message, window.location.origin);
+        window.close();
+        return true;
     },
 
     urlArgsToMessage(url) {

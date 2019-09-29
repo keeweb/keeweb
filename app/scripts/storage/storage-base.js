@@ -2,7 +2,6 @@ import { Events } from 'framework/events';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { RuntimeDataModel } from 'models/runtime-data-model';
-import { Features } from 'util/features';
 import { Logger } from 'util/logger';
 
 const MaxRequestRetries = 3;
@@ -30,27 +29,11 @@ class StorageBase {
             }
         }
         this.logger = new Logger('storage-' + this.name);
-        if (this._oauthReturnMessage) {
-            this.logger.debug('OAuth return message', this._oauthReturnMessage);
-            this._oauthProcessReturn(this._oauthReturnMessage);
-            delete this._oauthReturnMessage;
-            delete sessionStorage.authStorage;
-            if (Features.isStandalone) {
-                const [url, urlParams] = location.href.split(/[?#]/);
-                if (urlParams) {
-                    location.href = url;
-                }
-            }
-        }
         return this;
     }
 
     setEnabled(enabled) {
         this.enabled = enabled;
-    }
-
-    handleOAuthReturnMessage(message) {
-        this._oauthReturnMessage = message;
     }
 
     _xhr(config) {
@@ -135,9 +118,6 @@ class StorageBase {
         settings = Object.keys(settings)
             .map(key => key + '=' + settings[key])
             .join(',');
-        if (Features.isStandalone) {
-            sessionStorage.authStorage = this.name;
-        }
 
         return window.open(url, title, settings);
     }
