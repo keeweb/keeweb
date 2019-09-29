@@ -33,22 +33,33 @@ const PluginGallery = {
                 this.logger.error('Network error loading plugins');
                 resolve();
             });
-        }).then(data => {
-            return this.verifySignature(data).then(gallery => {
+        })
+            .then(data => {
                 this.loading = false;
-                this.loadError = !gallery;
-                if (gallery) {
-                    this.logger.debug(
-                        `Loaded ${gallery.plugins.length} plugins`,
-                        this.logger.ts(ts)
-                    );
-                    this.gallery = gallery;
-                    this.saveGallery(gallery);
+                if (!data) {
+                    this.loadError = true;
+                    Events.emit('plugin-gallery-load-complete');
+                    return;
                 }
+                return this.verifySignature(data).then(gallery => {
+                    this.loadError = !gallery;
+                    if (gallery) {
+                        this.logger.debug(
+                            `Loaded ${gallery.plugins.length} plugins`,
+                            this.logger.ts(ts)
+                        );
+                        this.gallery = gallery;
+                        this.saveGallery(gallery);
+                    }
+                    Events.emit('plugin-gallery-load-complete');
+                    return gallery;
+                });
+            })
+            .catch(e => {
+                this.loadError = true;
+                this.logger.error('Error loading plugin gallery', e);
                 Events.emit('plugin-gallery-load-complete');
-                return gallery;
             });
-        });
     },
 
     verifySignature(gallery) {
