@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.4 (TBD)
+`-` fixed displaying errors on the plugins page  
+
 ##### v1.11.3 (2019-09-29)
 `-` fix #1275: starting the app after closing on macOS  
 `-` fix #1276 GDrive connection issues  
