@@ -159,6 +159,7 @@ class View extends EventEmitter {
             for (const el of cfg.els) {
                 el.removeEventListener(cfg.event, cfg.listener);
             }
+            cfg.els = [];
         }
     }
 
