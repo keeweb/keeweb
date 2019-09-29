@@ -1,6 +1,7 @@
 Release notes
 -------------
-##### v1.11.4 (TBD)
+##### v1.11.4 (2019-09-29)
+`-` fix #1277: auto-type window matching on Linux  
 `-` fixed displaying errors on the plugins page  
 
 ##### v1.11.3 (2019-09-29)
