@@ -24,6 +24,7 @@ FileInfoModel.defineModelProperties({
     openDate: null,
     keyFileName: null,
     keyFileHash: null,
+    keyFilePath: null,
     opts: null,
     backup: null,
     fingerprint: null

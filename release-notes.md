@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.5 (2019-09-29)
+`-` fix #1279: error opening files with saved keyfiles  
+
 ##### v1.11.4 (2019-09-29)
 `-` fix #1277: auto-type window matching on Linux  
 `-` fix #1278: entry selection auto-type window issues  
