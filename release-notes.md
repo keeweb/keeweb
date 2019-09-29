@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.11.3 (2019-09-29)
 `-` fix #1275: starting the app after closing on macOS  
+`-` fixed GDrive connection issues  
 
 ##### v1.11.2 (2019-09-29)
 `-` fix #1272: Argon2 error  
