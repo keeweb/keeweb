@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.12.0 (TBD)
+`-` #1022: fuzzy search  
+
 ##### v1.11.5 (2019-09-29)
 `-` fix #1279: error opening files with saved keyfiles  
 

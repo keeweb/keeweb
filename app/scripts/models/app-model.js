@@ -327,8 +327,22 @@ class AppModel {
 
     prepareFilter(filter) {
         filter = { ...filter };
+
         filter.textLower = filter.text ? filter.text.toLowerCase() : '';
+        filter.textParts = null;
+        filter.textLowerParts = null;
+
+        const exact = filter.advanced && filter.advanced.exact;
+        if (!exact && filter.text) {
+            const textParts = filter.text.split(/\s+/).filter(s => s);
+            if (textParts.length) {
+                filter.textParts = textParts;
+                filter.textLowerParts = filter.textLower.split(/\s+/).filter(s => s);
+            }
+        }
+
         filter.tagLower = filter.tag ? filter.tag.toLowerCase() : '';
+
         return filter;
     }
 

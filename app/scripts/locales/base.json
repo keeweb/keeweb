@@ -175,6 +175,7 @@
     "searchCase": "Match case",
     "searchRegex": "RegEx",
     "searchRank": "Auto",
+    "searchExact": "Exact",
 
     "openOpen": "Open",
     "openNew": "New",

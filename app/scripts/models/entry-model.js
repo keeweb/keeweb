@@ -195,18 +195,49 @@ class EntryModel extends Model {
     }
 
     matches(filter) {
-        return (
-            !filter ||
-            ((!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
-                (!filter.textLower ||
-                    (filter.advanced
-                        ? this.matchesAdv(filter)
-                        : this.searchText.indexOf(filter.textLower) >= 0)) &&
-                (!filter.color ||
-                    (filter.color === true && this.searchColor) ||
-                    this.searchColor === filter.color) &&
-                (!filter.autoType || this.autoTypeEnabled))
-        );
+        if (!filter) {
+            return true;
+        }
+        if (filter.tagLower) {
+            if (this.searchTags.indexOf(filter.tagLower) < 0) {
+                return false;
+            }
+        }
+        if (filter.textLower) {
+            if (filter.advanced) {
+                if (!this.matchesAdv(filter)) {
+                    return false;
+                }
+            } else if (filter.textLowerParts) {
+                const parts = filter.textLowerParts;
+                for (let i = 0; i < parts.length; i++) {
+                    if (this.searchText.indexOf(parts[i]) < 0) {
+                        return false;
+                    }
+                }
+            } else {
+                if (this.searchText.indexOf(filter.textLower) < 0) {
+                    return false;
+                }
+            }
+        }
+        if (filter.color) {
+            if (filter.color === true) {
+                if (!this.searchColor) {
+                    return false;
+                }
+            } else {
+                if (this.searchColor !== filter.color) {
+                    return false;
+                }
+            }
+        }
+        if (filter.autoType) {
+            if (!this.autoTypeEnabled) {
+                return false;
+            }
+        }
+        return true;
     }
 
     matchesAdv(filter) {
@@ -220,11 +251,21 @@ class EntryModel extends Model {
             }
             match = this.matchRegex;
         } else if (adv.cs) {
-            search = filter.text;
-            match = this.matchString;
+            if (filter.textParts) {
+                search = filter.textParts;
+                match = this.matchStringMulti;
+            } else {
+                search = filter.text;
+                match = this.matchString;
+            }
         } else {
-            search = filter.textLower;
-            match = this.matchStringLower;
+            if (filter.textLowerParts) {
+                search = filter.textLowerParts;
+                match = this.matchStringLowerMulti;
+            } else {
+                search = filter.textLower;
+                match = this.matchStringLower;
+            }
         }
         if (this.matchEntry(this.entry, adv, match, search)) {
             return true;
@@ -246,11 +287,44 @@ class EntryModel extends Model {
         return str.indexOf(find) >= 0;
     }
 
+    matchStringMulti(str, find) {
+        for (let i = 0; i < find.length; i++) {
+            const item = find[i];
+            if (str.isProtected) {
+                if (!str.includes(item)) {
+                    return false;
+                }
+            } else {
+                if (str.indexOf(item) < 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     matchStringLower(str, findLower) {
         if (str.isProtected) {
             return str.includesLower(findLower);
         }
         return str.toLowerCase().indexOf(findLower) >= 0;
+    }
+
+    matchStringLowerMulti(str, findLower) {
+        str = str.toLowerCase();
+        for (let i = 0; i < findLower.length; i++) {
+            const item = findLower[i];
+            if (str.isProtected) {
+                if (!str.includesLower(item)) {
+                    return false;
+                }
+            } else {
+                if (str.indexOf(item) < 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     matchRegex(str, regex) {
