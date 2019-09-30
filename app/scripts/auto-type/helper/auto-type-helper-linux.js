@@ -9,7 +9,7 @@ AutoTypeHelper.prototype.getActiveWindowInfo = function(callback) {
         complete(err, out) {
             let windowInfo;
             if (out) {
-                const [id, title] = out.trim().split('\n');
+                const [title, id] = out.trim().split('\n');
                 windowInfo = {
                     id,
                     title

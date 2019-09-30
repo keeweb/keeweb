@@ -20,7 +20,7 @@ The app is quite stable now. Basic stuff, as well as more advanced operations, s
 
 # Self-hosting
 
-Everything you need to host this app on your server is any static file server. The app is a single HTML file + cache manifest (optionally; for offline access).
+Everything you need to host this app on your server is any static file server. The app is a single HTML file + a service worker (optionally; for offline access).
 You can download the latest distribution files from [gh-pages](https://github.com/keeweb/keeweb/archive/gh-pages.zip) branch.  
 
 If you are using Docker:

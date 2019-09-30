@@ -1,5 +1,26 @@
 Release notes
 -------------
+##### v1.11.5 (2019-09-29)
+`-` fix #1279: error opening files with saved keyfiles  
+
+##### v1.11.4 (2019-09-29)
+`-` fix #1277: auto-type window matching on Linux  
+`-` fix #1278: entry selection auto-type window issues  
+`-` fixed displaying errors on the plugins page  
+
+##### v1.11.3 (2019-09-29)
+`-` fix #1275: starting the app after closing on macOS  
+`-` fix #1276 GDrive connection issues  
+
+##### v1.11.2 (2019-09-29)
+`-` fix #1272: Argon2 error  
+`-` fixed Dropbox connection on iOS 13 homescreen  
+`-` fixed plugin search filtering  
+
+##### v1.11.1 (2019-09-28)
+`-` fix #1270: password change control focus  
+`-` fix #1271: loading custom plugins from config  
+
 ##### v1.11.0 (2019-09-28)
 `+` #1125: field actions: copy, reveal, auto-type  
 `+` #107: multiline custom fields support  

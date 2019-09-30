@@ -4,9 +4,11 @@ import { Tip } from 'util/ui/tip';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Logger } from 'util/logger';
 
-const OnlyDirectEvents = {
+const DoesNotBubble = {
     mouseenter: true,
-    mouseleave: true
+    mouseleave: true,
+    blur: true,
+    focus: true
 };
 
 class View extends EventEmitter {
@@ -19,6 +21,7 @@ class View extends EventEmitter {
     hidden = false;
     removed = false;
     eventListeners = {};
+    elementEventListeners = [];
     debugLogger = localStorage.debugViews ? new Logger('view', this.constructor.name) : undefined;
 
     constructor(model = undefined, options = {}) {
@@ -59,6 +62,7 @@ class View extends EventEmitter {
         if (this.el) {
             const mountRoot = this.options.ownParent ? this.el.firstChild : this.el;
             morphdom(mountRoot, html);
+            this.bindElementEvents();
         } else {
             let parent = this.options.parent || this.parent;
             if (parent) {
@@ -102,11 +106,9 @@ class View extends EventEmitter {
             if (spaceIx > 0) {
                 event = eventDef.substr(0, spaceIx);
                 selector = eventDef.substr(spaceIx + 1);
-                if (OnlyDirectEvents[event]) {
-                    throw new Error(
-                        `Event listener ${eventDef} defined in ${this.constructor.name} ` +
-                            `can be installed only on the view itself`
-                    );
+                if (DoesNotBubble[event]) {
+                    this.elementEventListeners.push({ event, selector, method, els: [] });
+                    continue;
                 }
             } else {
                 event = eventDef;
@@ -117,16 +119,47 @@ class View extends EventEmitter {
             eventsMap[event].push({ selector, method });
         }
         for (const [event, handlers] of Object.entries(eventsMap)) {
-            this.debugLogger && this.debugLogger.debug('Bind', event, handlers);
+            this.debugLogger && this.debugLogger.debug('Bind', 'view', event, handlers);
             const listener = e => this.eventListener(e, handlers);
             this.eventListeners[event] = listener;
             this.el.addEventListener(event, listener);
         }
+        this.bindElementEvents();
     }
 
     unbindEvents() {
         for (const [event, listener] of Object.entries(this.eventListeners)) {
             this.el.removeEventListener(event, listener);
+        }
+        this.unbindElementEvents();
+    }
+
+    bindElementEvents() {
+        if (!this.elementEventListeners.length) {
+            return;
+        }
+        this.unbindElementEvents();
+        for (const cfg of this.elementEventListeners) {
+            const els = this.el.querySelectorAll(cfg.selector);
+            this.debugLogger &&
+                this.debugLogger.debug('Bind', 'element', cfg.event, cfg.selector, els.length);
+            cfg.listener = e => this.eventListener(e, [cfg]);
+            for (const el of els) {
+                el.addEventListener(cfg.event, cfg.listener);
+                cfg.els.push(el);
+            }
+        }
+    }
+
+    unbindElementEvents() {
+        if (!this.elementEventListeners.length) {
+            return;
+        }
+        for (const cfg of this.elementEventListeners) {
+            for (const el of cfg.els) {
+                el.removeEventListener(cfg.event, cfg.listener);
+            }
+            cfg.els = [];
         }
     }
 
