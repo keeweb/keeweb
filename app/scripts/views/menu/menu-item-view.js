@@ -53,10 +53,7 @@ class MenuItemView extends View {
 
     render() {
         this.removeInnerViews();
-        super.render({
-            ...this.model,
-            options: this.model.options ? this.model.options.toJSON() : undefined
-        });
+        super.render(this.model);
         if (this.model.options) {
             window.model = this.model;
         }
