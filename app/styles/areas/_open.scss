@@ -77,6 +77,11 @@
             .open--drag & {
                 display: none;
             }
+            @include mobile {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 010px;
+            }
         }
         &-warn-wrap {
             display: flex;
@@ -97,7 +102,8 @@
             position: absolute;
             left: 100%;
             @include mobile {
-                display: none;
+                position: relative;
+                left: auto;
             }
             color: var(--muted-color);
             > i {
@@ -178,7 +184,7 @@
             cursor: pointer;
         }
         @include mobile {
-            width: calc(100vw - 20px);
+            width: calc(100vw - 20px - 66px);
         }
     }
 
