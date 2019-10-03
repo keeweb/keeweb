@@ -253,7 +253,7 @@ class EntryModel extends Model {
         } else if (adv.cs) {
             if (filter.textParts) {
                 search = filter.textParts;
-                match = this.matchStringMulti;
+                match = this.matchStringMulti.bind(this, false);
             } else {
                 search = filter.text;
                 match = this.matchString;
@@ -261,7 +261,7 @@ class EntryModel extends Model {
         } else {
             if (filter.textLowerParts) {
                 search = filter.textLowerParts;
-                match = this.matchStringLowerMulti;
+                match = this.matchStringMulti.bind(this, true);
             } else {
                 search = filter.textLower;
                 match = this.matchStringLower;
@@ -287,22 +287,6 @@ class EntryModel extends Model {
         return str.indexOf(find) >= 0;
     }
 
-    matchStringMulti(str, find) {
-        for (let i = 0; i < find.length; i++) {
-            const item = find[i];
-            if (str.isProtected) {
-                if (!str.includes(item)) {
-                    return false;
-                }
-            } else {
-                if (str.indexOf(item) < 0) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     matchStringLower(str, findLower) {
         if (str.isProtected) {
             return str.includesLower(findLower);
@@ -310,21 +294,29 @@ class EntryModel extends Model {
         return str.toLowerCase().indexOf(findLower) >= 0;
     }
 
-    matchStringLowerMulti(str, findLower) {
-        str = str.toLowerCase();
-        for (let i = 0; i < findLower.length; i++) {
-            const item = findLower[i];
-            if (str.isProtected) {
-                if (!str.includesLower(item)) {
-                    return false;
-                }
+    matchStringMulti(lower, str, find, context) {
+        if (lower) {
+            str = str.toLowerCase();
+        }
+        for (let i = 0; i < find.length; i++) {
+            const item = find[i];
+            let strMatches;
+            if (lower) {
+                strMatches = str.isProtected ? str.includesLower(item) : str.includes(item);
             } else {
-                if (str.indexOf(item) < 0) {
-                    return false;
+                strMatches = str.isProtected ? str.includes(item) : str.includes(item);
+            }
+            if (strMatches) {
+                if (context.matches) {
+                    if (!context.matches.includes(item)) {
+                        context.matches.push(item);
+                    }
+                } else {
+                    context.matches = [item];
                 }
             }
         }
-        return true;
+        return context.matches && context.matches.length === find.length;
     }
 
     matchRegex(str, regex) {
@@ -336,19 +328,20 @@ class EntryModel extends Model {
 
     matchEntry(entry, adv, compare, search) {
         const matchField = this.matchField;
-        if (adv.user && matchField(entry, 'UserName', compare, search)) {
+        const context = {};
+        if (adv.user && matchField(entry, 'UserName', compare, search, context)) {
             return true;
         }
-        if (adv.url && matchField(entry, 'URL', compare, search)) {
+        if (adv.url && matchField(entry, 'URL', compare, search, context)) {
             return true;
         }
-        if (adv.notes && matchField(entry, 'Notes', compare, search)) {
+        if (adv.notes && matchField(entry, 'Notes', compare, search, context)) {
             return true;
         }
-        if (adv.pass && matchField(entry, 'Password', compare, search)) {
+        if (adv.pass && matchField(entry, 'Password', compare, search, context)) {
             return true;
         }
-        if (adv.title && matchField(entry, 'Title', compare, search)) {
+        if (adv.title && matchField(entry, 'Title', compare, search, context)) {
             return true;
         }
         let matches = false;
@@ -359,18 +352,18 @@ class EntryModel extends Model {
                     return false;
                 }
                 if (typeof entry.fields[field] === 'string') {
-                    return adv.other && matchField(entry, field, compare, search);
+                    return adv.other && matchField(entry, field, compare, search, context);
                 } else {
-                    return adv.protect && matchField(entry, field, compare, search);
+                    return adv.protect && matchField(entry, field, compare, search, context);
                 }
             });
         }
         return matches;
     }
 
-    matchField(entry, field, compare, search) {
+    matchField(entry, field, compare, search, context) {
         const val = entry.fields[field];
-        return val ? compare(val, search) : false;
+        return val ? compare(val, search, context) : false;
     }
 
     resolveFieldReferences() {
