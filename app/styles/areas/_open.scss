@@ -80,7 +80,6 @@
             @include mobile {
                 width: 100%;
                 box-sizing: border-box;
-                padding: 010px;
             }
         }
         &-warn-wrap {
@@ -121,6 +120,12 @@
                 cursor: pointer;
                 &:hover {
                     color: var(--medium-color);
+                }
+                @include mobile {
+                    width: 28px;
+                    text-align: center;
+                    padding: 0.6em 10px;
+                    margin-left: 1px;
                 }
             }
             .open--opening & {
@@ -184,7 +189,8 @@
             cursor: pointer;
         }
         @include mobile {
-            width: calc(100vw - 20px - 66px);
+            width: calc(100vw - 10px - 48px);
+            margin-left: 10px;
         }
     }
 
