@@ -79,7 +79,6 @@
             }
             @include mobile {
                 width: 100%;
-                box-sizing: border-box;
             }
         }
         &-warn-wrap {
