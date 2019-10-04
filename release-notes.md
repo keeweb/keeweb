@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.11.6 (2019-10-05)
+##### v1.11.6 (2019-10-04)
 `-` fix #1285: issues in moving entries across files  
 
 ##### v1.11.5 (2019-09-29)
