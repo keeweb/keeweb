@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.6 (2019-10-05)
+`-` fix #1285: issues in moving entries across files  
+
 ##### v1.11.5 (2019-09-29)
 `-` fix #1279: error opening files with saved keyfiles  
 
