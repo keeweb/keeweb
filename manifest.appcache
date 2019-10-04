@@ -1,4 +1,7 @@
 CACHE MANIFEST
 
-# 2019-09-29:v1.11.5
+# 2019-10-04:v1.11.6
 # updmin:v6.0.2
+
+NETWORK:
+*
