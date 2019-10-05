@@ -1,7 +1,8 @@
 Release notes
 -------------
 ##### v1.12.0 (TBD)
-`-` #1022: fuzzy search    
+`-` #1022: fuzzy search  
+`-` fix #1273: untranslated menu items  
 
 ##### v1.11.6 (2019-10-04)
 `-` fix #1285: issues in moving entries across files  

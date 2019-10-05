@@ -72,6 +72,8 @@
     "menuEmptyTrashAlert": "Empty Trash?",
     "menuEmptyTrashAlertBody": "You will not be able to put items back",
     "menuItemCollapsed": "Double-click to expand",
+    "menuRestoreApp": "Open {}",
+    "menuQuitApp": "Quit {}",
 
     "alertYes": "Yes",
     "alertNo": "No",
@@ -415,7 +417,7 @@
     "setGenNoClear": "Don't clear",
     "setGenClearSeconds": "In {} seconds",
     "setGenClearMinute": "In a minute",
-    "setGenMinInstead": "Minimize app instead of close",
+    "setGenMinInstead": "Minimize the app instead of close",
     "setGenLock": "Auto lock",
     "setGenLockMinimize": "When the app is minimized",
     "setGenLockCopy": "On password copy",

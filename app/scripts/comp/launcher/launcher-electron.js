@@ -176,7 +176,10 @@ const Launcher = {
         return this.electron().clipboard.clear();
     },
     minimizeApp() {
-        this.remoteApp().minimizeApp();
+        this.remoteApp().minimizeApp({
+            restore: Locale.menuRestoreApp.replace('{}', 'KeeWeb'),
+            quit: Locale.menuQuitApp.replace('{}', 'KeeWeb')
+        });
     },
     canMinimize() {
         return process.platform !== 'darwin';

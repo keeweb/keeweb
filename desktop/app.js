@@ -102,7 +102,7 @@ app.restartApp = function() {
 app.openWindow = function(opts) {
     return new electron.BrowserWindow(opts);
 };
-app.minimizeApp = function() {
+app.minimizeApp = function(menuItemLabels) {
     let imagePath;
     mainWindow.hide();
     if (process.platform === 'darwin') {
@@ -117,8 +117,8 @@ app.minimizeApp = function() {
         appIcon = new electron.Tray(image);
         appIcon.on('click', restoreMainWindow);
         const contextMenu = electron.Menu.buildFromTemplate([
-            { label: 'Open KeeWeb', click: restoreMainWindow },
-            { label: 'Quit KeeWeb', click: closeMainWindow }
+            { label: menuItemLabels.restore, click: restoreMainWindow },
+            { label: menuItemLabels.quit, click: closeMainWindow }
         ]);
         appIcon.setContextMenu(contextMenu);
         appIcon.setToolTip('KeeWeb');
