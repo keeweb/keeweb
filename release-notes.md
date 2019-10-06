@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.12.0 (TBD)
 `-` #1022: fuzzy search  
+`+` #1108: setting for running in an iframe  
 `-` fix #1273: untranslated menu items  
 
 ##### v1.11.6 (2019-10-04)
