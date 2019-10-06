@@ -31,7 +31,10 @@ let htmlPath = process.argv
 if (!htmlPath) {
     htmlPath = 'file://' + path.join(__dirname, 'index.html');
 }
+
 const showDevToolsOnStart = process.argv.some(arg => arg.startsWith('--devtools'));
+
+const startMinimized = process.argv.some(arg => arg.startsWith('--minimized'));
 
 const themeBgColors = {
     db: '#342f2e',
@@ -180,7 +183,11 @@ function createMainWindow() {
         mainWindow.openDevTools({ mode: 'bottom' });
     }
     mainWindow.once('ready-to-show', () => {
-        mainWindow.show();
+        if (startMinimized) {
+            emitRemoteEvent('launcher-started-minimized');
+        } else {
+            mainWindow.show();
+        }
         ready = true;
         notifyOpenFile();
     });

@@ -6,6 +6,7 @@ Release notes
 `+` #963: keyboard shortcut to copy OTP in background  
 `+` #565: global shortcut to open KeeWeb  
 `+` #862: downloading attachments on mobile  
+`+` #480: option to launch the app minimized  
 `-` fix #1273: untranslated menu items  
 
 ##### v1.11.6 (2019-10-04)
