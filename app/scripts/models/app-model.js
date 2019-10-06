@@ -437,7 +437,7 @@ class AppModel {
     createNewFile(name) {
         if (!name) {
             for (let i = 0; ; i++) {
-                name = 'New' + (i || '');
+                name = Locale.openNewFile + (i || '');
                 if (!this.files.getByName(name) && !this.fileInfos.getByName(name)) {
                     break;
                 }
