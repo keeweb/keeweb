@@ -23,6 +23,7 @@ const globalShortcuts = {
     copyPassword: { mac: 'Ctrl+Alt+C', all: 'Shift+Alt+C' },
     copyUser: { mac: 'Ctrl+Alt+B', all: 'Shift+Alt+B' },
     copyUrl: { mac: 'Ctrl+Alt+U', all: 'Shift+Alt+U' },
+    copyOtp: {},
     autoType: { mac: 'Ctrl+Alt+T', all: 'Shift+Alt+T' }
 };
 
@@ -48,6 +49,9 @@ const Shortcuts = {
         };
     },
     presentShortcut(shortcutValue, formatting) {
+        if (!shortcutValue) {
+            return '-';
+        }
         return shortcutValue
             .split(/\+/g)
             .map(part => {
