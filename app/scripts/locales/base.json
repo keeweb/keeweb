@@ -519,6 +519,7 @@
     "setShCopyOtp": "copy OTP",
     "setShAutoTypeGlobal": "auto-type",
     "setShCopyPassOnly": "copy password",
+    "setShRestoreApp": "open {}",
     "setShGlobal": "These system-wide shortcuts work when the app is running in background. You can click them to select your own shortcut.",
     "setShLock": "lock database",
     "setShEdit": "Press a new key combination to set it as shortcut",
