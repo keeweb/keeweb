@@ -24,7 +24,8 @@ const globalShortcuts = {
     copyUser: { mac: 'Ctrl+Alt+B', all: 'Shift+Alt+B' },
     copyUrl: { mac: 'Ctrl+Alt+U', all: 'Shift+Alt+U' },
     copyOtp: {},
-    autoType: { mac: 'Ctrl+Alt+T', all: 'Shift+Alt+T' }
+    autoType: { mac: 'Ctrl+Alt+T', all: 'Shift+Alt+T' },
+    restoreApp: {}
 };
 
 const Shortcuts = {

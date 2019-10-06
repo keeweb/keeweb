@@ -402,17 +402,22 @@ function setGlobalShortcuts(appSettings) {
         CopyPassword: { shortcut: defaultShortcutModifiers + 'C', event: 'copy-password' },
         CopyUser: { shortcut: defaultShortcutModifiers + 'B', event: 'copy-user' },
         CopyUrl: { shortcut: defaultShortcutModifiers + 'U', event: 'copy-url' },
-        CopyOtp: { event: 'copy-otp' }
+        CopyOtp: { event: 'copy-otp' },
+        RestoreApp: { action: restoreMainWindow }
     };
     electron.globalShortcut.unregisterAll();
     for (const [key, shortcutDef] of Object.entries(defaultShortcuts)) {
         const fromSettings = appSettings[`globalShortcut${key}`];
         const shortcut = fromSettings || shortcutDef.shortcut;
-        const eventName = shortcutDef.event;
         if (shortcut) {
             try {
                 electron.globalShortcut.register(shortcut, () => {
-                    emitRemoteEvent(eventName);
+                    if (shortcutDef.event) {
+                        emitRemoteEvent(shortcutDef.event);
+                    }
+                    if (shortcutDef.action) {
+                        shortcutDef.action();
+                    }
                 });
             } catch (e) {}
         }

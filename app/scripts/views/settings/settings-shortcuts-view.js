@@ -43,7 +43,8 @@ class SettingsShortcutsView extends View {
                       copyPassword: Shortcuts.globalShortcutText('copyPassword', true),
                       copyUser: Shortcuts.globalShortcutText('copyUser', true),
                       copyUrl: Shortcuts.globalShortcutText('copyUrl', true),
-                      copyOtp: Shortcuts.globalShortcutText('copyOtp', true)
+                      copyOtp: Shortcuts.globalShortcutText('copyOtp', true),
+                      restoreApp: Shortcuts.globalShortcutText('restoreApp', true)
                   }
                 : undefined
         });
