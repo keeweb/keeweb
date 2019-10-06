@@ -1,6 +1,12 @@
 <div class="details__attachment-preview">
     <div class="details__attachment-preview-data"></div>
     <i class="fa details__attachment-preview-icon"></i>
-    <div class="details__attachment-preview-download-text">{{res 'detAttDownload'}}&nbsp;
-        <span class="details__attachment-preview-download-text-shortcut"></span>{{res 'detAttDelToRemove'}}</div>
+    {{#if isMobile}}
+        <div class="details__attachment-preview-buttons">
+            <button class="btn-silent details__attachment-preview-download-btn">{{res 'detAttSave'}}</button>
+        </div>
+    {{else}}
+        <div class="details__attachment-preview-download-text">{{res 'detAttDownload'}}
+            &nbsp;<span class="details__attachment-preview-download-text-shortcut"></span>{{res 'detAttDelToRemove'}}</div>
+    {{/if}}
 </div>

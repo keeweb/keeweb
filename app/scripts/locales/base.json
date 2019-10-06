@@ -224,6 +224,7 @@
 
     "detAttDownload": "Shift-click the attachment button to download it or",
     "detAttDelToRemove": "Delete to remove",
+    "detAttSave": "Save as …",
     "detEmpty": "Your passwords will be displayed here",
     "detGroupRestore": "To restore this group, please drag it to any group outside trash",
     "detHistoryClickPoint": "Click entry history timeline point to view state",
@@ -438,7 +439,7 @@
     "setFileLocalHint": "Want to work seamlessly with local files?",
     "setFileDownloadApp": "Download a desktop app",
     "setFileSave": "Save",
-    "setFileSaveTo": "Save to ...",
+    "setFileSaveTo": "Save to …",
     "setFileClose": "Close",
     "setFileSync": "Sync",
     "setFileSyncVerb": "Sync",

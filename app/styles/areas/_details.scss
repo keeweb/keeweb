@@ -560,8 +560,11 @@
             }
             .details__attachment-preview-download-text {
                 position: static;
-                margin-top: 2em;
+                margin-top: $large-padding;
                 opacity: 1;
+            }
+            .details__attachment-preview-buttons {
+                margin-top: $large-padding;
             }
         }
     }

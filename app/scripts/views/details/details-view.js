@@ -545,6 +545,7 @@ class DetailsView extends View {
         });
         subView.attId = id;
         subView.render(this.pageResized.bind(this));
+        subView.on('download', () => this.downloadAttachment(attachment));
         this.views.sub = subView;
         attBtn.addClass('details__attachment--active');
     }

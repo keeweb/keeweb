@@ -5,6 +5,7 @@ Release notes
 `+` #1108: setting for running in an iframe  
 `+` #963: keyboard shortcut to copy OTP in background  
 `+` #565: global shortcut to open KeeWeb  
+`+` #862: downloading attachments on mobile  
 `-` fix #1273: untranslated menu items  
 
 ##### v1.11.6 (2019-10-04)
