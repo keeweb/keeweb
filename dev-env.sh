@@ -24,6 +24,7 @@ git clone $KEEWEB_GH/kdbxweb.git kdbxweb
 git clone $KEEWEB_GH/beta.keeweb.info.git keeweb-beta
 git clone $KEEWEB_GH/keeweb-site.git -b gh-pages keeweb-site
 git clone $KEEWEB_GH/keeweb-plugins.git keeweb-plugins
+git clone $KEEWEB_GH/keeweb-tools.git keeweb-tools
 popd > /dev/null
 
 mkdir keeweb/keys
