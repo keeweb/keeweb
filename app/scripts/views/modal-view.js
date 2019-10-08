@@ -21,9 +21,10 @@ class ModalView extends View {
         if (typeof this.model.enter === 'string') {
             this.onKey(Keys.DOM_VK_RETURN, this.enterPressed, false, 'alert');
         }
+        const prevModal = KeyHandler.modal;
         KeyHandler.setModal('alert');
         this.once('remove', () => {
-            KeyHandler.setModal(null);
+            KeyHandler.setModal(prevModal);
             if (this.model.view) {
                 this.model.view.remove();
             }
