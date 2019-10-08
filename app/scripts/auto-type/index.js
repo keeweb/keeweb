@@ -254,7 +254,6 @@ const AutoType = {
             Events.emit('open-file');
             Events.once('closed-open-view', () => {
                 this.selectEntryView.show();
-                this.selectEntryView.setupKeys();
             });
         });
     },

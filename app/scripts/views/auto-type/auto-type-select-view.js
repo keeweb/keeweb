@@ -61,6 +61,12 @@ class AutoTypeSelectView extends View {
         this.once('remove', () => {
             KeyHandler.setModal(null);
         });
+        this.on('show', () => {
+            KeyHandler.setModal('auto-type');
+        });
+        this.on('hide', () => {
+            KeyHandler.setModal(null);
+        });
     }
 
     render() {

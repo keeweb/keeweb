@@ -103,7 +103,8 @@ class AppView extends View {
             this.onKey(
                 Keys.DOM_VK_I,
                 this.openDevTools,
-                KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
+                KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT,
+                '*'
             );
         }
 
