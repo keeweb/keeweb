@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.7 (2019-10-08)
+`-` fix #1289: crash on Auto sorting mode  
+
 ##### v1.11.6 (2019-10-04)
 `-` fix #1285: issues in moving entries across files  
 
