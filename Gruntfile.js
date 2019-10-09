@@ -5,6 +5,9 @@ const path = require('path');
 
 const webpackConfig = require('./build/webpack.config');
 const pkg = require('./package.json');
+const hookRcedit = require('./build/util/hook-rcedit');
+
+hookRcedit.setup();
 
 module.exports = function(grunt) {
     require('time-grunt')(grunt);
