@@ -60,15 +60,17 @@ class OpenView extends View {
         super(model);
         this.resetParams();
         this.passwordInput = new SecureInput();
-        this.onKey(Keys.DOM_VK_Z, this.undoKeyPress, KeyHandler.SHORTCUT_ACTION);
-        this.onKey(Keys.DOM_VK_TAB, this.tabKeyPress);
-        this.onKey(Keys.DOM_VK_ENTER, this.enterKeyPress);
-        this.onKey(Keys.DOM_VK_RETURN, this.enterKeyPress);
-        this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown);
-        this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp);
+        this.onKey(Keys.DOM_VK_Z, this.undoKeyPress, KeyHandler.SHORTCUT_ACTION, 'open');
+        this.onKey(Keys.DOM_VK_TAB, this.tabKeyPress, null, 'open');
+        this.onKey(Keys.DOM_VK_ENTER, this.enterKeyPress, null, 'open');
+        this.onKey(Keys.DOM_VK_RETURN, this.enterKeyPress, null, 'open');
+        this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, null, 'open');
+        this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, null, 'open');
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
+        KeyHandler.setModal('open');
         this.once('remove', () => {
             this.passwordInput.reset();
+            KeyHandler.setModal(null);
         });
     }
 

@@ -17,10 +17,10 @@ class EntryCollection extends Collection {
         '-created': Comparators.dateComparator('created', false),
         'updated': Comparators.dateComparator('updated', true),
         '-updated': Comparators.dateComparator('updated', false),
-        '-attachments'(x, y) {
+        '-attachments': (x, y) => {
             return this.attachmentSortVal(x).localeCompare(this.attachmentSortVal(y));
         },
-        '-rank': Comparators.rankComparator()
+        '-rank': Comparators.rankComparator().bind(this)
     };
 
     defaultComparator = 'title';
