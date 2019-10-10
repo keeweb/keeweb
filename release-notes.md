@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.8 (2019-10-10)
+`-` fix #1292: macOS app notarization  
+
 ##### v1.11.7 (2019-10-08)
 `-` fix #1289: crash on Auto sorting mode  
 `-` fix #1288: issues when opening a file during in auto-type mode  
