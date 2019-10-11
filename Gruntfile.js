@@ -1,13 +1,16 @@
 /* eslint-env node */
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
+const debug = require('debug');
 
 const webpackConfig = require('./build/webpack.config');
 const pkg = require('./package.json');
 const hookRcedit = require('./build/util/hook-rcedit');
+const codeSignConfig = require('../keys/codesign');
 
 hookRcedit.setup();
+debug.enable('electron-notarize');
 
 module.exports = function(grunt) {
     require('time-grunt')(grunt);
@@ -124,21 +127,6 @@ module.exports = function(grunt) {
                 src: 'helper/win32/KeeWebHelper.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
                 nonull: true
-            },
-            'desktop-darwin-helper-x64': {
-                src: 'helper/darwin/KeeWebHelper',
-                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
-                nonull: true,
-                options: { mode: '0755' }
-            },
-            'desktop-darwin-installer': {
-                cwd: 'package/osx/KeeWeb Installer.app',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
-                src: '**',
-                expand: true,
-                nonull: true,
-                options: { mode: true }
             },
             'desktop-win32-dist-x64': {
                 src: 'tmp/desktop/KeeWeb.win.x64.exe',
@@ -276,7 +264,55 @@ module.exports = function(grunt) {
                     icon: 'graphics/icon.icns',
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
-                    extendInfo: 'package/osx/extend.plist'
+                    extendInfo: 'package/osx/extend.plist',
+                    osxSign: {
+                        identity: codeSignConfig.identities.app,
+                        hardenedRuntime: true,
+                        entitlements: 'package/osx/entitlements.mac.plist',
+                        'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                        'gatekeeper-assess': false
+                    },
+                    osxNotarize: {
+                        appleId: codeSignConfig.appleId,
+                        appleIdPassword: '@keychain:AC_PASSWORD',
+                        ascProvider: codeSignConfig.teamId
+                    },
+                    afterCopy: [
+                        (buildPath, electronVersion, platform, arch, callback) => {
+                            if (path.basename(buildPath) !== 'app') {
+                                throw new Error('Bad build path: ' + buildPath);
+                            }
+                            const resPath = path.dirname(buildPath);
+                            if (path.basename(resPath) !== 'Resources') {
+                                throw new Error('Bad Resources path: ' + resPath);
+                            }
+                            const helperTargetPath = path.join(
+                                resPath,
+                                'helper/darwin/KeeWebHelper'
+                            );
+                            const helperSourcePath = path.join(
+                                __dirname,
+                                'helper/darwin/KeeWebHelper'
+                            );
+                            fs.copySync(helperSourcePath, helperTargetPath);
+
+                            const contentsPath = path.dirname(resPath);
+                            if (path.basename(contentsPath) !== 'Contents') {
+                                throw new Error('Bad Contents path: ' + contentsPath);
+                            }
+                            const installerSourcePath = path.join(
+                                __dirname,
+                                'package/osx/KeeWeb Installer.app'
+                            );
+                            const installerTargetPath = path.join(
+                                contentsPath,
+                                'Installer/KeeWeb Installer.app'
+                            );
+                            fs.copySync(installerSourcePath, installerTargetPath);
+
+                            callback();
+                        }
+                    ]
                 }
             },
             win32: {
@@ -296,13 +332,6 @@ module.exports = function(grunt) {
             }
         },
         codesign: {
-            app: {
-                options: {
-                    identity: 'app',
-                    deep: true
-                },
-                src: ['tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app']
-            },
             dmg: {
                 options: {
                     identity: 'app'

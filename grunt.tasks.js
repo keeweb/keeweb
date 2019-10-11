@@ -36,12 +36,9 @@ module.exports = function(grunt) {
         'electron',
         'sign-exe:win32-build-x64',
         'sign-exe:win32-build-ia32',
-        'copy:desktop-darwin-helper-x64',
-        'copy:desktop-darwin-installer',
         'copy:desktop-windows-helper-ia32',
         'copy:desktop-windows-helper-x64',
-        'chmod:linux-desktop-x64',
-        'codesign:app'
+        'chmod:linux-desktop-x64'
     ]);
 
     grunt.registerTask('build-desktop-archives', [
