@@ -3,6 +3,7 @@ Release notes
 ##### v1.11.8 (2019-10-10)
 `-` fix #1292: macOS app notarization  
 `-` fix #1296: search in auto-type  
+`-` fixed issues with some theme plugins  
 
 ##### v1.11.7 (2019-10-08)
 `-` fix #1289: crash on Auto sorting mode  
