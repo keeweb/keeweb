@@ -33,7 +33,7 @@ fi
 
 if [ ${KEEWEB_CONFIG_URL} ]
 then
-  sed -i "s,(no-config),${KEEWEB_CONFIG_URL}," keeweb/index.html
+  sed -i "s,(no-config),${KEEWEB_CONFIG_URL}," /keeweb/index.html
 fi
 
 # exec CMD
