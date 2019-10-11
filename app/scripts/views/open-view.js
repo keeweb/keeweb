@@ -70,7 +70,10 @@ class OpenView extends View {
         KeyHandler.setModal('open');
         this.once('remove', () => {
             this.passwordInput.reset();
-            KeyHandler.setModal(null);
+            if (KeyHandler.modal !== 'auto-type') {
+                // TODO: refactor this
+                KeyHandler.setModal(null);
+            }
         });
     }
 

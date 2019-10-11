@@ -6,6 +6,7 @@ const path = require('path');
 const webpackConfig = require('./build/webpack.config');
 const pkg = require('./package.json');
 const hookRcedit = require('./build/util/hook-rcedit');
+const codeSignConfig = require('../keys/codesign');
 
 hookRcedit.setup();
 
@@ -276,7 +277,19 @@ module.exports = function(grunt) {
                     icon: 'graphics/icon.icns',
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
-                    extendInfo: 'package/osx/extend.plist'
+                    extendInfo: 'package/osx/extend.plist',
+                    osxSign: {
+                        identity: codeSignConfig.identities.app,
+                        hardenedRuntime: true,
+                        entitlements: 'package/osx/entitlements.mac.plist',
+                        'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                        'gatekeeper-assess': false
+                    },
+                    osxNotarize: {
+                        appleId: codeSignConfig.appleId,
+                        appleIdPassword: '@keychain:AC_PASSWORD',
+                        ascProvider: codeSignConfig.teamId
+                    }
                 }
             },
             win32: {
@@ -296,13 +309,6 @@ module.exports = function(grunt) {
             }
         },
         codesign: {
-            app: {
-                options: {
-                    identity: 'app',
-                    deep: true
-                },
-                src: ['tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app']
-            },
             dmg: {
                 options: {
                     identity: 'app'

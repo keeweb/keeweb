@@ -63,7 +63,7 @@ class KeyHandler {
         const keyShortcuts = this.shortcuts[code];
         if (keyShortcuts && keyShortcuts.length) {
             for (const sh of keyShortcuts) {
-                if (this.modal && (sh.modal !== this.modal || sh.modal === '*')) {
+                if (this.modal && (sh.modal !== this.modal && sh.modal !== '*')) {
                     e.stopPropagation();
                     continue;
                 }

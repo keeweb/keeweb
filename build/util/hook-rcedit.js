@@ -4,7 +4,7 @@ const childProcess = require('child_process');
 
 const childProcessSpawn = childProcess.spawn;
 
-function hookedSpawn(command, options) {
+function hookedSpawn(command, options, ...args) {
     if (command === 'wine') {
         options = options.map(option => {
             if (option.includes(' ')) {
@@ -13,7 +13,7 @@ function hookedSpawn(command, options) {
             return option;
         });
     }
-    return childProcessSpawn.call(childProcess, command, options);
+    return childProcessSpawn.call(childProcess, command, options, ...args);
 }
 
 module.exports.setup = function() {

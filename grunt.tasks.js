@@ -40,8 +40,7 @@ module.exports = function(grunt) {
         'copy:desktop-darwin-installer',
         'copy:desktop-windows-helper-ia32',
         'copy:desktop-windows-helper-x64',
-        'chmod:linux-desktop-x64',
-        'codesign:app'
+        'chmod:linux-desktop-x64'
     ]);
 
     grunt.registerTask('build-desktop-archives', [
