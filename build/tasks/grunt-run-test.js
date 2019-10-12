@@ -32,6 +32,7 @@ module.exports = function(grunt) {
                     console[out.method](...out.args);
                 }
                 if (result.done) {
+                    await browser.close();
                     const { failures } = result.done;
                     if (failures) {
                         grunt.warn(`Failed ${failures} test${failures > 1 ? 's' : ''}.`);
