@@ -580,6 +580,12 @@ module.exports = function(grunt) {
                     ]
                 }
             }
+        },
+        'run-test': {
+            options: {
+                headless: true
+            },
+            default: 'test/runner.html'
         }
     });
 };

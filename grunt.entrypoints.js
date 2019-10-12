@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
     // prettier-ignore
     grunt.registerTask('default', 'Default: build web app', [
+        'test',
         'build-web-app'
     ]);
 
@@ -17,6 +18,7 @@ module.exports = function(grunt) {
 
     // prettier-ignore
     grunt.registerTask('desktop', 'Build web and desktop apps for all platforms', [
+        'test',
         'default',
         'build-desktop'
     ]);
@@ -29,6 +31,7 @@ module.exports = function(grunt) {
 
     // prettier-ignore
     grunt.registerTask('test', 'Build and run tests', [
-        'build-test'
+        'build-test',
+        'run-test'
     ]);
 };
