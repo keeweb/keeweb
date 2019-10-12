@@ -1,8 +1,14 @@
 import { Events } from 'framework/events';
 import { IdleTracker } from 'comp/browser/idle-tracker';
 import { Keys } from 'const/keys';
+import { Logger } from 'util/logger';
 
 const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
+const logger = new Logger(
+    'key-handler',
+    undefined,
+    localStorage.debugKeyHandler ? Logger.Level.Debug : Logger.Level.Info
+);
 
 class KeyHandler {
     SHORTCUT_ACTION = 1;
@@ -51,6 +57,7 @@ class KeyHandler {
 
     setModal(modal) {
         this.modal = modal;
+        logger.debug('Set modal', modal);
     }
 
     isActionKey(e) {

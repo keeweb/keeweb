@@ -11,7 +11,7 @@ import { Logger } from 'util/logger';
 import { AutoTypeSelectView } from 'views/auto-type/auto-type-select-view';
 
 const logger = new Logger('auto-type');
-const clearTextAutoTypeLog = localStorage.autoTypeDebug;
+const clearTextAutoTypeLog = !!localStorage.debugAutoType;
 
 const AutoType = {
     helper: AutoTypeHelperFactory.create(),
@@ -28,7 +28,7 @@ const AutoType = {
         Events.on('auto-type', e => this.handleEvent(e));
         Events.on('main-window-blur', e => this.resetPendingEvent(e));
         Events.on('main-window-will-close', e => this.resetPendingEvent(e));
-        appModel.files.on('change', () => this.processPendingEvent());
+        Events.on('closed-open-view', e => this.processPendingEvent(e));
     },
 
     handleEvent(e) {
@@ -252,9 +252,6 @@ const AutoType = {
         this.selectEntryView.on('show-open-files', () => {
             this.selectEntryView.hide();
             Events.emit('open-file');
-            Events.once('closed-open-view', () => {
-                this.selectEntryView.show();
-            });
         });
     },
 
@@ -266,6 +263,9 @@ const AutoType = {
     },
 
     processPendingEvent() {
+        if (this.selectEntryView) {
+            this.selectEntryView.show();
+        }
         if (!this.pendingEvent) {
             return;
         }

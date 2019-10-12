@@ -24,6 +24,7 @@ const logger = new Logger('open-view');
 
 class OpenView extends View {
     parent = '.app__body';
+    modal = 'open';
 
     template = template;
 
@@ -67,13 +68,8 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, null, 'open');
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, null, 'open');
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
-        KeyHandler.setModal('open');
         this.once('remove', () => {
             this.passwordInput.reset();
-            if (KeyHandler.modal !== 'auto-type') {
-                // TODO: refactor this
-                KeyHandler.setModal(null);
-            }
         });
     }
 

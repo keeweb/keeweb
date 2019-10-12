@@ -20,9 +20,10 @@ class View extends EventEmitter {
     views = {};
     hidden = false;
     removed = false;
+    modal = undefined;
     eventListeners = {};
     elementEventListeners = [];
-    debugLogger = localStorage.debugViews ? new Logger('view', this.constructor.name) : undefined;
+    debugLogger = localStorage.debugView ? new Logger('view', this.constructor.name) : undefined;
 
     constructor(model = undefined, options = {}) {
         super();
@@ -87,6 +88,9 @@ class View extends EventEmitter {
                 } else {
                     this.el = root;
                     parent.appendChild(this.el);
+                }
+                if (this.modal) {
+                    KeyHandler.setModal(this.modal);
                 }
                 this.bindEvents();
             } else {
@@ -182,6 +186,9 @@ class View extends EventEmitter {
     }
 
     remove() {
+        if (this.modal && KeyHandler.modal === this.modal) {
+            KeyHandler.setModal(null);
+        }
         this.emit('remove');
 
         this.removeInnerViews();
@@ -228,6 +235,13 @@ class View extends EventEmitter {
             visible = this.hidden;
         }
         this.hidden = !visible;
+        if (this.modal) {
+            if (visible) {
+                KeyHandler.setModal(this.modal);
+            } else if (KeyHandler.modal === this.modal) {
+                KeyHandler.setModal(null);
+            }
+        }
         this.emit(visible ? 'show' : 'hide');
         if (this.el) {
             this.el.classList.toggle('show', !!visible);

@@ -14,6 +14,7 @@ import itemTemplate from 'templates/auto-type/auto-type-select-item.hbs';
 
 class AutoTypeSelectView extends View {
     parent = 'body';
+    modal = 'auto-type';
 
     template = template;
 
@@ -57,16 +58,6 @@ class AutoTypeSelectView extends View {
         this.onKey(Keys.DOM_VK_DOWN, this.downPressed, false, 'auto-type');
         this.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, false, 'auto-type');
         this.onKey(Keys.DOM_VK_O, this.openKeyPressed, KeyHandler.SHORTCUT_ACTION, 'auto-type');
-        KeyHandler.setModal('auto-type');
-        this.once('remove', () => {
-            KeyHandler.setModal(null);
-        });
-        this.on('show', () => {
-            KeyHandler.setModal('auto-type');
-        });
-        this.on('hide', () => {
-            KeyHandler.setModal(null);
-        });
     }
 
     render() {
