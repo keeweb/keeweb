@@ -5,18 +5,18 @@ const SymbolEvents = Symbol('events');
 const SymbolDefaults = Symbol('defaults');
 const SymbolExtensions = Symbol('extensions');
 
-function emitPropChange(target, property, value, prevValue, receiver) {
+function emitPropChange(target, property, value, prevValue) {
     const emitter = target[SymbolEvents];
     if (!emitter.paused) {
-        emitter.emit('change:' + property, receiver, value, prevValue);
+        emitter.emit('change:' + property, target, value, prevValue);
         if (!emitter.noChange) {
-            emitter.emit('change', receiver, { [property]: value });
+            emitter.emit('change', target, { [property]: value });
         }
     }
 }
 
 const ProxyDef = {
-    deleteProperty(target, property, receiver) {
+    deleteProperty(target, property) {
         if (Object.prototype.hasOwnProperty.call(target, property)) {
             const defaults = target[SymbolDefaults];
             const value = defaults[property];
@@ -27,7 +27,7 @@ const ProxyDef = {
                 } else {
                     delete target[property];
                 }
-                emitPropChange(target, property, value, prevValue, receiver);
+                emitPropChange(target, property, value, prevValue);
             }
             return true;
         }
@@ -38,7 +38,7 @@ const ProxyDef = {
             if (target[property] !== value) {
                 const prevValue = target[property];
                 target[property] = value;
-                emitPropChange(target, property, value, prevValue, receiver);
+                emitPropChange(target, property, value, prevValue);
             }
             return true;
         } else {
@@ -61,6 +61,7 @@ class Model {
         };
         for (const [propName, defaultValue] of Object.entries(this[SymbolDefaults])) {
             properties[propName] = {
+                configurable: true,
                 enumerable: true,
                 writable: true,
                 value: defaultValue
