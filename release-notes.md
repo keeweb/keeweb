@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.9 (TBD)
+`-` fix #1300: selecting auto-type sequence items issues  
+
 ##### v1.11.8 (2019-10-11)
 `-` fix #1292: macOS app notarization  
 `-` fix #1296: search in auto-type  
