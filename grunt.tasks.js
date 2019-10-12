@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         'copy:icons',
         'copy:manifest',
         'copy:fonts',
-        'webpack',
+        'webpack:app',
         'inline',
         'htmlmin',
         'string-replace:service-worker',
@@ -84,4 +84,6 @@ module.exports = function(grunt) {
     grunt.registerTask('build-cordova-app-content', ['string-replace:cordova-html']);
 
     grunt.registerTask('build-cordova', ['gitinfo', 'clean:cordova', 'build-cordova-app-content']);
+
+    grunt.registerTask('build-test', ['webpack:test']);
 };

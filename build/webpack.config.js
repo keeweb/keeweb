@@ -14,9 +14,10 @@ const pkg = require('../package.json');
 
 process.noDeprecation = true; // for css loaders
 
-function config(grunt, mode = 'production') {
+function config(options) {
+    const mode = options.mode || 'production';
     const devMode = mode === 'development';
-    const date = grunt.config.get('date');
+    const date = options.date;
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
     return {
@@ -88,18 +89,16 @@ function config(grunt, mode = 'production') {
                         replacements: [
                             {
                                 pattern: /@@VERSION/g,
-                                replacement: () =>
-                                    pkg.version + (grunt.option('beta') ? '-beta' : '')
+                                replacement: () => pkg.version + (options.beta ? '-beta' : '')
                             },
                             {
                                 pattern: /@@BETA/g,
-                                replacement: () => (grunt.option('beta') ? '1' : '')
+                                replacement: () => (options.beta ? '1' : '')
                             },
                             { pattern: /@@DATE/g, replacement: () => dt },
                             {
                                 pattern: /@@COMMIT/g,
-                                replacement: () =>
-                                    grunt.config.get('gitinfo.local.branch.current.shortSHA')
+                                replacement: () => options.sha
                             },
                             { pattern: /@@DEVMODE/g, replacement: () => (devMode ? '1' : '') }
                         ]

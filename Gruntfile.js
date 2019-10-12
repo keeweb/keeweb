@@ -5,6 +5,7 @@ const path = require('path');
 const debug = require('debug');
 
 const webpackConfig = require('./build/webpack.config');
+const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
 const hookRcedit = require('./build/util/hook-rcedit');
 const codeSignConfig = require('../keys/codesign');
@@ -31,6 +32,14 @@ module.exports = function(grunt) {
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
+
+    const webpackOptions = {
+        date,
+        beta: !!grunt.option('beta'),
+        get sha() {
+            return grunt.config.get('gitinfo.local.branch.current.shortSHA');
+        }
+    };
 
     grunt.initConfig({
         gitinfo: {
@@ -214,11 +223,12 @@ module.exports = function(grunt) {
             }
         },
         webpack: {
-            js: webpackConfig.config(grunt)
+            app: webpackConfig.config(webpackOptions),
+            test: webpackConfigTest
         },
         'webpack-dev-server': {
             options: {
-                webpack: webpackConfig.config(grunt, 'development'),
+                webpack: webpackConfig.config({ ...webpackOptions, mode: 'development' }),
                 publicPath: '/',
                 contentBase: path.resolve(__dirname, 'tmp'),
                 progress: false

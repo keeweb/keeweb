@@ -26,4 +26,9 @@ module.exports = function(grunt) {
         'default',
         'build-cordova'
     ]);
+
+    // prettier-ignore
+    grunt.registerTask('test', 'Build and run tests', [
+        'build-test'
+    ]);
 };

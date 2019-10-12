@@ -12,7 +12,8 @@ module.exports = {
             path.join(__dirname, 'node_modules')
         ],
         alias: {
-            templates: path.join(__dirname, 'app/templates')
+            templates: path.join(__dirname, 'app/templates'),
+            tests: path.join(__dirname, 'tests')
         }
     }
 };
