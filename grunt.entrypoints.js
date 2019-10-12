@@ -1,7 +1,6 @@
 module.exports = function(grunt) {
     // prettier-ignore
     grunt.registerTask('default', 'Default: build web app', [
-        'test',
         'build-web-app'
     ]);
 
