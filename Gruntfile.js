@@ -228,16 +228,6 @@ module.exports = function(grunt) {
                 port: 8085
             }
         },
-        watch: {
-            options: {
-                interrupt: true,
-                debounceDelay: 500
-            },
-            indexhtml: {
-                files: 'app/index.html',
-                tasks: ['copy:html']
-            }
-        },
         electron: {
             options: {
                 name: 'KeeWeb',
