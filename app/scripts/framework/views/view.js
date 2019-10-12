@@ -2,6 +2,7 @@ import morphdom from 'morphdom';
 import EventEmitter from 'events';
 import { Tip } from 'util/ui/tip';
 import { KeyHandler } from 'comp/browser/key-handler';
+import { FocusManager } from 'comp/app/focus-manager';
 import { Logger } from 'util/logger';
 
 const DoesNotBubble = {
@@ -90,7 +91,7 @@ class View extends EventEmitter {
                     parent.appendChild(this.el);
                 }
                 if (this.modal) {
-                    KeyHandler.setModal(this.modal);
+                    FocusManager.setModal(this.modal);
                 }
                 this.bindEvents();
             } else {
@@ -186,8 +187,8 @@ class View extends EventEmitter {
     }
 
     remove() {
-        if (this.modal && KeyHandler.modal === this.modal) {
-            KeyHandler.setModal(null);
+        if (this.modal && FocusManager.modal === this.modal) {
+            FocusManager.setModal(null);
         }
         this.emit('remove');
 
@@ -237,9 +238,9 @@ class View extends EventEmitter {
         this.hidden = !visible;
         if (this.modal) {
             if (visible) {
-                KeyHandler.setModal(this.modal);
-            } else if (KeyHandler.modal === this.modal) {
-                KeyHandler.setModal(null);
+                FocusManager.setModal(this.modal);
+            } else if (FocusManager.modal === this.modal) {
+                FocusManager.setModal(null);
             }
         }
         this.emit(visible ? 'show' : 'hide');
