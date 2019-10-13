@@ -42,7 +42,7 @@ class FieldViewDate extends FieldViewText {
     adjustPickerPosition(...args) {
         window.Pikaday = Pikaday;
         Pikaday.prototype.adjustPosition.apply(this.picker, args);
-        const shadowSpread = parseInt(this.input.css('--focus-shadow-spread'));
+        const shadowSpread = parseInt(this.input.css('--focus-shadow-spread')) || 0;
         if (shadowSpread) {
             const isOnTop = this.picker.el.classList.contains('top-aligned');
             const offset = isOnTop ? -shadowSpread : shadowSpread;

@@ -102,7 +102,7 @@ class FieldViewText extends FieldView {
             this.hideGenerator();
         } else {
             const fieldRect = this.input[0].getBoundingClientRect();
-            const shadowSpread = parseInt(this.input.css('--focus-shadow-spread'));
+            const shadowSpread = parseInt(this.input.css('--focus-shadow-spread')) || 0;
             this.gen = new GeneratorView({
                 pos: { left: fieldRect.left, top: fieldRect.bottom + shadowSpread },
                 password: this.value
