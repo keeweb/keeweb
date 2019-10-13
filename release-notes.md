@@ -9,8 +9,9 @@ Release notes
 `+` #480: option to launch the app minimized  
 `-` fix #1273: untranslated menu items  
 
-##### v1.11.9 (TBD)
+##### v1.11.9 (2019-10-13)
 `-` fix #1300: selecting auto-type sequence items issues  
+`-` fix #1290: generator popup positioning in custom themes  
 
 ##### v1.11.8 (2019-10-11)
 `-` fix #1292: macOS app notarization  
