@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.11.9 (TBD)
+##### v1.11.9 (2019-10-13)
 `-` fix #1300: selecting auto-type sequence items issues  
 `-` fix #1290: generator popup positioning in custom themes  
 
