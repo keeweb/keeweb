@@ -22,6 +22,7 @@
         "baron": "3.0.3",
         "base64-loader": "1.0.0",
         "bourbon": "^6.0.0",
+        "cucumber-pretty": "^1.5.2",
         "dompurify": "^2.0.3",
         "electron": "^6.0.10",
         "eslint": "^6.4.0",
@@ -82,6 +83,12 @@
         "webpack-bundle-analyzer": "^3.5.2",
         "webpack-dev-server": "^3.8.1"
     },
+    "devDependencies": {
+        "chromedriver": "^77.0.0",
+        "cucumber": "^6.0.2",
+        "nightwatch": "^1.2.4",
+        "nightwatch-api": "^2.3.0"
+    },
     "optionalDependencies": {
         "grunt-appdmg": "github:keeweb/grunt-appdmg#874ad83",
         "keytar": "^5.0.0-beta.0"
@@ -93,7 +100,8 @@
         "build-beta": "grunt --beta && cp dist/index.html ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
         "electron": "ELECTRON_DISABLE_SECURITY_WARNINGS=1 electron desktop --htmlpath=http://localhost:8085",
         "dev": "grunt dev",
-        "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js"
+        "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js",
+        "acceptance-tests": "node_modules/cucumber/bin/cucumber-js --require tests/acceptance/stepDefinitions --require tests/acceptance/index.js tests/acceptance/features/"
     },
     "author": {
         "name": "Antelle",

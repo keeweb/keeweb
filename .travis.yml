@@ -1,0 +1,13 @@
+dist: bionic
+language: node_js
+node_js:
+    - 10.16.3
+services:
+    - docker
+before_install:
+    - docker run -d -p 4445:4444 -p 5900:5900 -v /dev/shm:/dev/shm --name selenium selenium/standalone-chrome-debug
+before_script:
+    - yarn
+    - yarn dev &
+    - sleep 30
+script: yarn acceptance-tests tests/acceptance/features
