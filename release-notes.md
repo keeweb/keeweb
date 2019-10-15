@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.11.10 (2019-10-15)
+`-` fix #1305: WebDAV issues  
+
 ##### v1.11.9 (2019-10-13)
 `-` fix #1300: selecting auto-type sequence items issues  
 `-` fix #1290: generator popup positioning in custom themes  
