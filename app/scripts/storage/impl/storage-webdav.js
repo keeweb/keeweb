@@ -100,9 +100,9 @@ class StorageWebDav extends StorageBase {
         const that = this;
         this._request(
             {
+                ...saveOpts,
                 op: 'Save:stat',
-                method: 'HEAD',
-                ...saveOpts
+                method: 'HEAD'
             },
             (err, xhr, stat) => {
                 let useTmpPath = this.appSettings.webdavSaveMethod !== 'put';
@@ -120,12 +120,12 @@ class StorageWebDav extends StorageBase {
                 if (useTmpPath) {
                     that._request(
                         {
+                            ...saveOpts,
                             op: 'Save:put',
                             method: 'PUT',
                             path: tmpPath,
                             data,
-                            nostat: true,
-                            ...saveOpts
+                            nostat: true
                         },
                         err => {
                             if (err) {
@@ -133,17 +133,17 @@ class StorageWebDav extends StorageBase {
                             }
                             that._request(
                                 {
+                                    ...saveOpts,
                                     op: 'Save:stat',
-                                    method: 'HEAD',
-                                    ...saveOpts
+                                    method: 'HEAD'
                                 },
                                 (err, xhr, stat) => {
                                     if (err) {
                                         that._request({
+                                            ...saveOpts,
                                             op: 'Save:delete',
                                             method: 'DELETE',
-                                            path: tmpPath,
-                                            ...saveOpts
+                                            path: tmpPath
                                         });
                                         return cb(err, xhr, stat);
                                     }
@@ -156,10 +156,10 @@ class StorageWebDav extends StorageBase {
                                             rev
                                         );
                                         that._request({
+                                            ...saveOpts,
                                             op: 'Save:delete',
                                             method: 'DELETE',
-                                            path: tmpPath,
-                                            ...saveOpts
+                                            path: tmpPath
                                         });
                                         return cb({ revConflict: true }, xhr, stat);
                                     }
@@ -176,6 +176,7 @@ class StorageWebDav extends StorageBase {
                                     }
                                     that._request(
                                         {
+                                            ...saveOpts,
                                             op: 'Save:move',
                                             method: 'MOVE',
                                             path: tmpPath,
@@ -183,8 +184,7 @@ class StorageWebDav extends StorageBase {
                                             headers: {
                                                 Destination: encodeURI(movePath),
                                                 'Overwrite': 'T'
-                                            },
-                                            ...saveOpts
+                                            }
                                         },
                                         err => {
                                             if (err) {
@@ -192,9 +192,9 @@ class StorageWebDav extends StorageBase {
                                             }
                                             that._request(
                                                 {
+                                                    ...saveOpts,
                                                     op: 'Save:stat',
-                                                    method: 'HEAD',
-                                                    ...saveOpts
+                                                    method: 'HEAD'
                                                 },
                                                 (err, xhr, stat) => {
                                                     cb(err, xhr, stat);
@@ -209,11 +209,11 @@ class StorageWebDav extends StorageBase {
                 } else {
                     that._request(
                         {
+                            ...saveOpts,
                             op: 'Save:put',
                             method: 'PUT',
                             data,
-                            nostat: true,
-                            ...saveOpts
+                            nostat: true
                         },
                         err => {
                             if (err) {
@@ -221,9 +221,9 @@ class StorageWebDav extends StorageBase {
                             }
                             that._request(
                                 {
+                                    ...saveOpts,
                                     op: 'Save:stat',
-                                    method: 'HEAD',
-                                    ...saveOpts
+                                    method: 'HEAD'
                                 },
                                 (err, xhr, stat) => {
                                     cb(err, xhr, stat);
