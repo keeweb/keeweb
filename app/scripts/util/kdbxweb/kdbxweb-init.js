@@ -1,5 +1,6 @@
 import kdbxweb from 'kdbxweb';
 import { Logger } from 'util/logger';
+import { Features } from 'util/features';
 
 const logger = new Logger('argon2');
 
@@ -43,69 +44,116 @@ const KdbxwebInit = {
                     totalMemory
                 );
 
-                const memoryDecl = `var wasmMemory=new WebAssembly.Memory({initial:${initialMemory},maximum:${totalMemory}});`;
-                const moduleDecl =
-                    'var Module={' +
-                    'wasmJSMethod: "native-wasm",' +
-                    'wasmBinary: Uint8Array.from(atob("' +
-                    wasmBinaryBase64 +
-                    '"), c => c.charCodeAt(0)),' +
-                    'print(...args) { postMessage({op:"log",args}) },' +
-                    'printErr(...args) { postMessage({op:"log",args}) },' +
-                    'postRun:' +
-                    this.workerPostRun.toString() +
-                    ',' +
-                    'calcHash:' +
-                    this.calcHash.toString() +
-                    ',' +
-                    'wasmMemory:wasmMemory,' +
-                    'buffer:wasmMemory.buffer,' +
-                    'TOTAL_MEMORY:' +
-                    initialMemory * WASM_PAGE_SIZE +
-                    '}';
-                const script = argon2LoaderCode.replace(/^var Module.*?}/, memoryDecl + moduleDecl);
-                const blob = new Blob([script], { type: 'application/javascript' });
-                const objectUrl = URL.createObjectURL(blob);
-                const worker = new Worker(objectUrl);
-                const onMessage = e => {
-                    switch (e.data.op) {
-                        case 'log':
-                            logger.debug(...e.data.args);
-                            break;
-                        case 'postRun':
-                            logger.debug('WebAssembly runtime loaded', logger.ts(ts));
-                            URL.revokeObjectURL(objectUrl);
+                if (Features.canUseWasmInWebWorker) {
+                    const memoryDecl = `var wasmMemory=new WebAssembly.Memory({initial:${initialMemory},maximum:${totalMemory}});`;
+                    const moduleDecl =
+                        'var Module={' +
+                        'wasmJSMethod: "native-wasm",' +
+                        'wasmBinary: Uint8Array.from(atob("' +
+                        wasmBinaryBase64 +
+                        '"), c => c.charCodeAt(0)),' +
+                        'print(...args) { postMessage({op:"log",args}) },' +
+                        'printErr(...args) { postMessage({op:"log",args}) },' +
+                        'postRun:' +
+                        this.workerPostRun.toString() +
+                        ',' +
+                        'calcHash:' +
+                        this.calcHash.toString() +
+                        ',' +
+                        'wasmMemory:wasmMemory,' +
+                        'buffer:wasmMemory.buffer,' +
+                        'TOTAL_MEMORY:' +
+                        initialMemory * WASM_PAGE_SIZE +
+                        '}';
+                    const script = argon2LoaderCode.replace(
+                        /^var Module.*?}/,
+                        memoryDecl + moduleDecl
+                    );
+                    const blob = new Blob([script], { type: 'application/javascript' });
+                    const objectUrl = URL.createObjectURL(blob);
+                    const worker = new Worker(objectUrl);
+                    const onMessage = e => {
+                        switch (e.data.op) {
+                            case 'log':
+                                logger.debug(...e.data.args);
+                                break;
+                            case 'postRun':
+                                logger.debug(
+                                    'WebAssembly runtime loaded (web worker)',
+                                    logger.ts(ts)
+                                );
+                                URL.revokeObjectURL(objectUrl);
+                                clearTimeout(loadTimeout);
+                                worker.removeEventListener('message', onMessage);
+                                this.runtimeModule = {
+                                    hash(args) {
+                                        return new Promise((resolve, reject) => {
+                                            worker.postMessage(args);
+                                            const onHashMessage = e => {
+                                                worker.removeEventListener(
+                                                    'message',
+                                                    onHashMessage
+                                                );
+                                                worker.terminate();
+                                                KdbxwebInit.runtimeModule = null;
+                                                if (!e.data || e.data.error || !e.data.hash) {
+                                                    const ex =
+                                                        (e.data && e.data.error) ||
+                                                        'unexpected error';
+                                                    logger.error('Worker error', ex);
+                                                    reject(ex);
+                                                } else {
+                                                    resolve(e.data.hash);
+                                                }
+                                            };
+                                            worker.addEventListener('message', onHashMessage);
+                                        });
+                                    }
+                                };
+                                resolve(this.runtimeModule);
+                                break;
+                            default:
+                                logger.error('Unknown message', e.data);
+                                URL.revokeObjectURL(objectUrl);
+                                reject('Load error');
+                        }
+                    };
+                    worker.addEventListener('message', onMessage);
+                } else {
+                    // Chrome and Electron crash if we use WASM in WebWorker
+                    // see https://github.com/keeweb/keeweb/issues/1263
+                    const wasmMemory = new WebAssembly.Memory({
+                        initial: initialMemory,
+                        maximum: totalMemory
+                    });
+                    global.Module = {
+                        wasmJSMethod: 'native-wasm',
+                        wasmBinary: Uint8Array.from(atob(wasmBinaryBase64), c => c.charCodeAt(0)),
+                        print(...args) {
+                            logger.debug(...args);
+                        },
+                        printErr(...args) {
+                            logger.debug(...args);
+                        },
+                        postRun: () => {
+                            logger.debug('WebAssembly runtime loaded (main thread)', logger.ts(ts));
                             clearTimeout(loadTimeout);
-                            worker.removeEventListener('message', onMessage);
-                            this.runtimeModule = {
-                                hash(args) {
-                                    return new Promise((resolve, reject) => {
-                                        worker.postMessage(args);
-                                        const onHashMessage = e => {
-                                            worker.removeEventListener('message', onHashMessage);
-                                            worker.terminate();
-                                            KdbxwebInit.runtimeModule = null;
-                                            if (!e.data || e.data.error || !e.data.hash) {
-                                                const ex =
-                                                    (e.data && e.data.error) || 'unexpected error';
-                                                logger.error('Worker error', ex);
-                                                reject(ex);
-                                            }
-                                            resolve(e.data.hash);
-                                        };
-                                        worker.addEventListener('message', onHashMessage);
-                                    });
+                            resolve({
+                                hash: args => {
+                                    const hash = this.calcHash(global.Module, args);
+                                    global.Module.unloadRuntime();
+                                    global.Module = undefined;
+                                    return Promise.resolve(hash);
                                 }
-                            };
-                            resolve(this.runtimeModule);
-                            break;
-                        default:
-                            logger.error('Unknown message', e.data);
-                            URL.revokeObjectURL(objectUrl);
-                            reject('Load error');
-                    }
-                };
-                worker.addEventListener('message', onMessage);
+                            });
+                        },
+                        wasmMemory,
+                        buffer: wasmMemory.buffer,
+                        TOTAL_MEMORY: initialMemory * WASM_PAGE_SIZE
+                    };
+                    // eslint-disable-next-line no-eval
+                    eval(argon2LoaderCode);
+                }
             } catch (err) {
                 reject(err);
             }
