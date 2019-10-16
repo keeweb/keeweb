@@ -16,6 +16,7 @@ const Features = {
         !isDesktop &&
         !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
     needFixClicks: /Edge\/14/.test(navigator.appVersion),
+    canUseWasmInWebWorker: !isDesktop && !/Chrome/.test(navigator.appVersion),
 
     supportsTitleBarStyles() {
         return this.isMac;

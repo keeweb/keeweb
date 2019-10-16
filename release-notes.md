@@ -9,6 +9,10 @@ Release notes
 `+` #480: option to launch the app minimized  
 `-` fix #1273: untranslated menu items  
 
+##### v1.11.10 (2019-10-16)
+`-` fix #1305: WebDAV issues  
+`-` fix #1263: desktop apps crashes when argon2 is used  
+
 ##### v1.11.9 (2019-10-13)
 `-` fix #1300: selecting auto-type sequence items issues  
 `-` fix #1290: generator popup positioning in custom themes  
