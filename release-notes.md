@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.11.10 (2019-10-15)
+##### v1.11.10 (2019-10-16)
 `-` fix #1305: WebDAV issues  
 `-` fix #1263: desktop apps crashes when argon2 is used  
 
