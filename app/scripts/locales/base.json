@@ -400,7 +400,7 @@
     "setGenShowSubgroups": "Show entries from all subgroups",
     "setGenTableView": "Entries list table view",
     "setGenColorfulIcons": "Colorful custom icons in the list",
-    "setGenUseMarkdown": "Markdown in Notes",
+    "setGenUseMarkdown": "Markdown in notes",
     "setGenDirectAutotype": "If only one matching entry is found, select that one automatically for Autotype",
     "setGenFunction": "Function",
     "setGenAutoSyncOnClose": "Automatically save and sync on close",
