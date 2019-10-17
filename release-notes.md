@@ -8,6 +8,7 @@ Release notes
 `+` #862: downloading attachments on mobile  
 `+` #480: option to launch the app minimized  
 `-` fix #1273: untranslated menu items  
+`-` fix #1311: better monospace fonts  
 
 ##### v1.11.10 (2019-10-16)
 `-` fix #1305: WebDAV issues  
