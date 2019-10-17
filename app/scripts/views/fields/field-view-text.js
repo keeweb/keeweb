@@ -9,6 +9,7 @@ import { Tip } from 'util/ui/tip';
 import { FieldView } from 'views/fields/field-view';
 import { GeneratorView } from 'views/generator-view';
 import { escape } from 'util/fn';
+import { AppSettingsModel } from 'models/app-settings-model';
 
 class FieldViewText extends FieldView {
     hasOptions = true;
@@ -19,7 +20,7 @@ class FieldViewText extends FieldView {
     }
 
     renderValue(value) {
-        if (this.model.markdown) {
+        if (this.model.markdown && AppSettingsModel.useMarkdown) {
             if (value && value.isProtected) {
                 value = value.getText();
             }

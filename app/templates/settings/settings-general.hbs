@@ -88,6 +88,10 @@
         <input type="checkbox" class="settings__input input-base settings__general-colorful-icons" id="settings__general-colorful-icons" {{#if colorfulIcons}}checked{{/if}} />
         <label for="settings__general-colorful-icons">{{res 'setGenColorfulIcons'}}</label>
     </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-use-markdown" id="settings__general-use-markdown" {{#if useMarkdown}}checked{{/if}} />
+        <label for="settings__general-use-markdown">{{res 'setGenUseMarkdown'}}</label>
+    </div>
 
     <h2>{{res 'setGenFunction'}}</h2>
     {{#if canAutoSaveOnClose}}

@@ -5,6 +5,7 @@ import { DateFormat } from 'util/formatting/date-format';
 import { MdToHtml } from 'util/formatting/md-to-html';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
+import { AppSettingsModel } from 'models/app-settings-model';
 
 const Templates = {
     db: require('templates/export/db.hbs'),
@@ -43,7 +44,7 @@ function walkEntry(db, entry, parents) {
         let value = entryField(entry, field.name);
         if (value) {
             let html = false;
-            if (field.markdown) {
+            if (field.markdown && AppSettingsModel.useMarkdown) {
                 const converted = MdToHtml.convert(value);
                 if (converted !== value) {
                     value = converted;

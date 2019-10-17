@@ -44,6 +44,7 @@ AppSettingsModel.defineModelProperties(
         minimizeOnClose: false,
         tableView: false,
         colorfulIcons: false,
+        useMarkdown: true,
         directAutotype: true,
         titlebarStyle: 'default',
         lockOnMinimize: true,
