@@ -8,6 +8,7 @@ Release notes
 `+` #862: downloading attachments on mobile  
 `+` #480: option to launch the app minimized  
 `+` #1307: option to disable Markdown support  
+`+` #1310: password generator on the start screen  
 `-` fix #1273: untranslated menu items  
 `-` fix #1311: better monospace fonts  
 

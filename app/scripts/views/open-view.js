@@ -18,6 +18,7 @@ import { InputFx } from 'util/ui/input-fx';
 import { OpenConfigView } from 'views/open-config-view';
 import { StorageFileListView } from 'views/storage-file-list-view';
 import { escape, omit } from 'util/fn';
+import { GeneratorView } from 'views/generator-view';
 import template from 'templates/open.hbs';
 
 const logger = new Logger('open-view');
@@ -44,6 +45,7 @@ class OpenView extends View {
         'click .open__pass-enter-btn': 'openDb',
         'click .open__settings-key-file': 'openKeyFile',
         'click .open__last-item': 'openLast',
+        'click .open__icon-generate': 'toggleGenerator',
         dragover: 'dragover',
         dragleave: 'dragleave',
         drop: 'drop'
@@ -929,6 +931,27 @@ class OpenView extends View {
 
     moveOpenFileSelectionUp() {
         this.moveOpenFileSelection(-1);
+    }
+
+    toggleGenerator(e) {
+        e.stopPropagation();
+        if (this.views.gen) {
+            this.views.gen.remove();
+            return;
+        }
+        const el = this.$el.find('.open__icon-generate');
+        const rect = el[0].getBoundingClientRect();
+        const { left, top } = rect;
+        const generator = new GeneratorView({
+            copy: true,
+            noTemplateEditor: true,
+            pos: { top, left }
+        });
+        generator.render();
+        generator.once('remove', () => {
+            delete this.views.gen;
+        });
+        this.views.gen = generator;
     }
 }
 
