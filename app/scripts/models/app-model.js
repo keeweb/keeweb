@@ -492,6 +492,9 @@ class AppModel {
                 params,
                 (err, file) => {
                     if (err) {
+                        if (err.name === 'KdbxError') {
+                            return callback(err);
+                        }
                         logger.info(
                             'Error loading file from cache, trying to open from storage',
                             err
@@ -515,6 +518,9 @@ class AppModel {
                         setTimeout(() => this.syncFile(file), 0);
                         callback(err);
                     } else {
+                        if (err.name === 'KdbxError') {
+                            return callback(err);
+                        }
                         logger.info(
                             'Error loading file from cache, trying to open from storage',
                             err

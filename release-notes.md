@@ -11,6 +11,7 @@ Release notes
 `+` #1310: password generator on the start screen  
 `-` fix #1273: untranslated menu items  
 `-` fix #1311: better monospace fonts  
+`-` fix #1319: removed a storage request for invalid passwords  
 
 ##### v1.11.10 (2019-10-16)
 `-` fix #1305: WebDAV issues  
