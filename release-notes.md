@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.13.0 (TBD)
+`-` fix #1323: version in the About dialog  
+
 ##### v1.12.0 (2019-10-26)
 `-` #1022: fuzzy search  
 `+` #1108: setting for running in an iframe  

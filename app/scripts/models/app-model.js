@@ -4,7 +4,7 @@ import { Storage } from 'storage';
 import { EntryCollection } from 'collections/entry-collection';
 import { FileCollection } from 'collections/file-collection';
 import { FileInfoCollection } from 'collections/file-info-collection';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
 import { Launcher } from 'comp/launcher';
 import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';

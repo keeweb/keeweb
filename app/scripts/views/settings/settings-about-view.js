@@ -1,5 +1,5 @@
 import { View } from 'framework/views/view';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
 import { Links } from 'const/links';
 import { Features } from 'util/features';
 import template from 'templates/settings/settings-about.hbs';

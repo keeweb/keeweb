@@ -1,4 +1,5 @@
 import { Events } from 'framework/events';
+import { RuntimeInfo } from 'const/runtime-info';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
 import { noop } from 'util/fn';
@@ -313,7 +314,15 @@ if (window.launcherOpenedFile) {
     Launcher.openFile(window.launcherOpenedFile);
     delete window.launcherOpenedFile;
 }
-Events.on('app-ready', () => setTimeout(() => Launcher.checkOpenFiles(), 0));
+Events.on('app-ready', () =>
+    setTimeout(() => {
+        Launcher.checkOpenFiles();
+        Launcher.remoteApp().setAboutPanelOptions({
+            applicationVersion: RuntimeInfo.version,
+            version: RuntimeInfo.commit
+        });
+    }, 0)
+);
 
 global.Events = Events;
 

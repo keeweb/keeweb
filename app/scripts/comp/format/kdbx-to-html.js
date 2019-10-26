@@ -1,5 +1,5 @@
 import kdbxweb from 'kdbxweb';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
 import { Links } from 'const/links';
 import { DateFormat } from 'util/formatting/date-format';
 import { MdToHtml } from 'util/formatting/md-to-html';

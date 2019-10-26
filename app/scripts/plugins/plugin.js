@@ -1,7 +1,8 @@
 import kdbxweb from 'kdbxweb';
 import BaseLocale from 'locales/base.json';
 import { Model } from 'framework/model';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
+import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { PluginApi } from 'plugins/plugin-api';
@@ -121,7 +122,7 @@ class Plugin extends Model {
         ) {
             return 'Bad plugin locale';
         }
-        if (manifest.desktop && !RuntimeInfo.launcher) {
+        if (manifest.desktop && !Launcher) {
             return 'Desktop plugin';
         }
         if (manifest.versionMin) {

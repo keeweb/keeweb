@@ -1,5 +1,5 @@
 import { Events } from 'framework/events';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
 import { Transport } from 'comp/browser/transport';
 import { Launcher } from 'comp/launcher';
 import { Links } from 'const/links';

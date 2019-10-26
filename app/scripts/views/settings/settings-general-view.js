@@ -2,7 +2,7 @@ import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
 import { Updater } from 'comp/app/updater';
 import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
