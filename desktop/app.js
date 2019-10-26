@@ -152,8 +152,8 @@ function readAppSettings() {
 
 function setSystemAppearance() {
     if (process.platform === 'darwin') {
-        if (electron.systemPreferences.isDarkMode()) {
-            electron.systemPreferences.setAppLevelAppearance('dark');
+        if (electron.nativeTheme.shouldUseDarkColors) {
+            electron.systemPreferences.appLevelAppearance = 'dark';
         }
     }
 }
@@ -323,7 +323,7 @@ function emitRemoteEvent(e, arg) {
 
 function setMenu() {
     if (process.platform === 'darwin') {
-        const name = require('electron').app.getName();
+        const name = require('electron').app.name;
         const template = [
             {
                 label: name,
