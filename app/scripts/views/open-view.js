@@ -941,11 +941,19 @@ class OpenView extends View {
         }
         const el = this.$el.find('.open__icon-generate');
         const rect = el[0].getBoundingClientRect();
-        const { left, top } = rect;
+        const pos = {
+            left: rect.left,
+            top: rect.top
+        };
+        if (Features.isMobile) {
+            pos.left = '50vw';
+            pos.top = '50vh';
+            pos.transform = 'translate(-50%, -50%)';
+        }
         const generator = new GeneratorView({
             copy: true,
             noTemplateEditor: true,
-            pos: { top, left }
+            pos
         });
         generator.render();
         generator.once('remove', () => {
