@@ -2,6 +2,7 @@ import morphdom from 'morphdom';
 import EventEmitter from 'events';
 import { Tip } from 'util/ui/tip';
 import { KeyHandler } from 'comp/browser/key-handler';
+import { FocusManager } from 'comp/app/focus-manager';
 import { Logger } from 'util/logger';
 
 const DoesNotBubble = {
@@ -20,9 +21,10 @@ class View extends EventEmitter {
     views = {};
     hidden = false;
     removed = false;
+    modal = undefined;
     eventListeners = {};
     elementEventListeners = [];
-    debugLogger = localStorage.debugViews ? new Logger('view', this.constructor.name) : undefined;
+    debugLogger = localStorage.debugView ? new Logger('view', this.constructor.name) : undefined;
 
     constructor(model = undefined, options = {}) {
         super();
@@ -87,6 +89,9 @@ class View extends EventEmitter {
                 } else {
                     this.el = root;
                     parent.appendChild(this.el);
+                }
+                if (this.modal) {
+                    FocusManager.setModal(this.modal);
                 }
                 this.bindEvents();
             } else {
@@ -182,6 +187,9 @@ class View extends EventEmitter {
     }
 
     remove() {
+        if (this.modal && FocusManager.modal === this.modal) {
+            FocusManager.setModal(null);
+        }
         this.emit('remove');
 
         this.removeInnerViews();
@@ -228,6 +236,13 @@ class View extends EventEmitter {
             visible = this.hidden;
         }
         this.hidden = !visible;
+        if (this.modal) {
+            if (visible) {
+                FocusManager.setModal(this.modal);
+            } else if (FocusManager.modal === this.modal) {
+                FocusManager.setModal(null);
+            }
+        }
         this.emit(visible ? 'show' : 'hide');
         if (this.el) {
             this.el.classList.toggle('show', !!visible);

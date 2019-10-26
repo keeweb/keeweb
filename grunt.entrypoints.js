@@ -17,6 +17,7 @@ module.exports = function(grunt) {
 
     // prettier-ignore
     grunt.registerTask('desktop', 'Build web and desktop apps for all platforms', [
+        'test',
         'default',
         'build-desktop'
     ]);
@@ -25,5 +26,11 @@ module.exports = function(grunt) {
     grunt.registerTask('cordova', 'Build cordova app', [
         'default',
         'build-cordova'
+    ]);
+
+    // prettier-ignore
+    grunt.registerTask('test', 'Build and run tests', [
+        'build-test',
+        'run-test'
     ]);
 };

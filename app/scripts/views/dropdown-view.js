@@ -1,11 +1,11 @@
 import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
-import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
 import template from 'templates/dropdown.hbs';
 
 class DropdownView extends View {
     parent = 'body';
+    modal = 'dropdown';
 
     template = template;
 
@@ -28,14 +28,8 @@ class DropdownView extends View {
         this.onKey(Keys.DOM_VK_RETURN, this.enterPressed, false, 'dropdown');
         this.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, false, 'dropdown');
 
-        this.prevModal = KeyHandler.modal === 'dropdown' ? undefined : KeyHandler.modal;
-        KeyHandler.setModal('dropdown');
-
         this.once('remove', () => {
             $('body').off('click contextmenu keydown', this.bodyClick);
-            if (KeyHandler.modal === 'dropdown') {
-                KeyHandler.setModal(this.prevModal);
-            }
         });
     }
 

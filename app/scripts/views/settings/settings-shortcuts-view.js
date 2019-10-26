@@ -39,10 +39,12 @@ class SettingsShortcutsView extends View {
             autoTypeSupported: !!Launcher,
             globalShortcuts: Launcher
                 ? {
+                      autoType: Shortcuts.globalShortcutText('autoType', true),
                       copyPassword: Shortcuts.globalShortcutText('copyPassword', true),
                       copyUser: Shortcuts.globalShortcutText('copyUser', true),
                       copyUrl: Shortcuts.globalShortcutText('copyUrl', true),
-                      autoType: Shortcuts.globalShortcutText('autoType', true)
+                      copyOtp: Shortcuts.globalShortcutText('copyOtp', true),
+                      restoreApp: Shortcuts.globalShortcutText('restoreApp', true)
                   }
                 : undefined
         });

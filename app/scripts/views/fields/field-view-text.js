@@ -9,6 +9,7 @@ import { Tip } from 'util/ui/tip';
 import { FieldView } from 'views/fields/field-view';
 import { GeneratorView } from 'views/generator-view';
 import { escape } from 'util/fn';
+import { AppSettingsModel } from 'models/app-settings-model';
 
 class FieldViewText extends FieldView {
     hasOptions = true;
@@ -19,7 +20,7 @@ class FieldViewText extends FieldView {
     }
 
     renderValue(value) {
-        if (this.model.markdown) {
+        if (this.model.markdown && AppSettingsModel.useMarkdown) {
             if (value && value.isProtected) {
                 value = value.getText();
             }
@@ -62,13 +63,14 @@ class FieldViewText extends FieldView {
         }
         if (Features.isMobile) {
             this.createMobileControls();
-        }
-        if (this.model.canGen) {
-            $('<div/>')
-                .addClass('details__field-value-btn details__field-value-btn-gen')
-                .appendTo(this.valueEl)
-                .click(this.showGeneratorClick.bind(this))
-                .mousedown(this.showGenerator.bind(this));
+        } else {
+            if (this.model.canGen) {
+                $('<div/>')
+                    .addClass('details__field-value-btn details__field-value-btn-gen')
+                    .appendTo(this.valueEl)
+                    .click(this.showGeneratorClick.bind(this))
+                    .mousedown(this.showGenerator.bind(this));
+            }
         }
         Tip.hideTip(this.valueEl[0]);
         Tip.hideTip(this.labelEl[0]);

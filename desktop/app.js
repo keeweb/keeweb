@@ -31,7 +31,10 @@ let htmlPath = process.argv
 if (!htmlPath) {
     htmlPath = 'file://' + path.join(__dirname, 'index.html');
 }
+
 const showDevToolsOnStart = process.argv.some(arg => arg.startsWith('--devtools'));
+
+const startMinimized = process.argv.some(arg => arg.startsWith('--minimized'));
 
 const themeBgColors = {
     db: '#342f2e',
@@ -67,7 +70,7 @@ app.on('ready', () => {
     setAppOptions();
     setSystemAppearance();
     createMainWindow();
-    setGlobalShortcuts();
+    setGlobalShortcuts(appSettings);
     subscribePowerEvents();
     deleteOldTempFiles();
     hookRequestHeaders();
@@ -102,7 +105,7 @@ app.restartApp = function() {
 app.openWindow = function(opts) {
     return new electron.BrowserWindow(opts);
 };
-app.minimizeApp = function() {
+app.minimizeApp = function(menuItemLabels) {
     let imagePath;
     mainWindow.hide();
     if (process.platform === 'darwin') {
@@ -117,8 +120,8 @@ app.minimizeApp = function() {
         appIcon = new electron.Tray(image);
         appIcon.on('click', restoreMainWindow);
         const contextMenu = electron.Menu.buildFromTemplate([
-            { label: 'Open KeeWeb', click: restoreMainWindow },
-            { label: 'Quit KeeWeb', click: closeMainWindow }
+            { label: menuItemLabels.restore, click: restoreMainWindow },
+            { label: menuItemLabels.quit, click: closeMainWindow }
         ]);
         appIcon.setContextMenu(contextMenu);
         appIcon.setToolTip('KeeWeb');
@@ -180,7 +183,11 @@ function createMainWindow() {
         mainWindow.openDevTools({ mode: 'bottom' });
     }
     mainWindow.once('ready-to-show', () => {
-        mainWindow.show();
+        if (startMinimized) {
+            emitRemoteEvent('launcher-started-minimized');
+        } else {
+            mainWindow.show();
+        }
         ready = true;
         notifyOpenFile();
     });
@@ -395,24 +402,32 @@ function notifyOpenFile() {
     }
 }
 
-function setGlobalShortcuts() {
+function setGlobalShortcuts(appSettings) {
     const defaultShortcutModifiers = process.platform === 'darwin' ? 'Ctrl+Alt+' : 'Shift+Alt+';
     const defaultShortcuts = {
+        AutoType: { shortcut: defaultShortcutModifiers + 'T', event: 'auto-type' },
         CopyPassword: { shortcut: defaultShortcutModifiers + 'C', event: 'copy-password' },
         CopyUser: { shortcut: defaultShortcutModifiers + 'B', event: 'copy-user' },
         CopyUrl: { shortcut: defaultShortcutModifiers + 'U', event: 'copy-url' },
-        AutoType: { shortcut: defaultShortcutModifiers + 'T', event: 'auto-type' }
+        CopyOtp: { event: 'copy-otp' },
+        RestoreApp: { action: restoreMainWindow }
     };
     electron.globalShortcut.unregisterAll();
     for (const [key, shortcutDef] of Object.entries(defaultShortcuts)) {
         const fromSettings = appSettings[`globalShortcut${key}`];
         const shortcut = fromSettings || shortcutDef.shortcut;
-        const eventName = shortcutDef.event;
-        try {
-            electron.globalShortcut.register(shortcut, () => {
-                emitRemoteEvent(eventName);
-            });
-        } catch (e) {}
+        if (shortcut) {
+            try {
+                electron.globalShortcut.register(shortcut, () => {
+                    if (shortcutDef.event) {
+                        emitRemoteEvent(shortcutDef.event);
+                    }
+                    if (shortcutDef.action) {
+                        shortcutDef.action();
+                    }
+                });
+            } catch (e) {}
+        }
     }
 }
 

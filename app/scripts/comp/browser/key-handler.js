@@ -1,6 +1,7 @@
 import { Events } from 'framework/events';
 import { IdleTracker } from 'comp/browser/idle-tracker';
 import { Keys } from 'const/keys';
+import { FocusManager } from 'comp/app/focus-manager';
 
 const shortcutKeyProp = navigator.platform.indexOf('Mac') >= 0 ? 'metaKey' : 'ctrlKey';
 
@@ -10,7 +11,6 @@ class KeyHandler {
     SHORTCUT_SHIFT = 4;
 
     shortcuts = {};
-    modal = false;
 
     init() {
         $(document).bind('keypress', this.keypress.bind(this));
@@ -49,10 +49,6 @@ class KeyHandler {
         }
     }
 
-    setModal(modal) {
-        this.modal = modal;
-    }
-
     isActionKey(e) {
         return e[shortcutKeyProp];
     }
@@ -63,7 +59,7 @@ class KeyHandler {
         const keyShortcuts = this.shortcuts[code];
         if (keyShortcuts && keyShortcuts.length) {
             for (const sh of keyShortcuts) {
-                if (this.modal && (sh.modal !== this.modal && sh.modal !== '*')) {
+                if (FocusManager.modal && (sh.modal !== FocusManager.modal && sh.modal !== '*')) {
                     e.stopPropagation();
                     continue;
                 }
@@ -108,7 +104,7 @@ class KeyHandler {
 
     keypress(e) {
         if (
-            !this.modal &&
+            !FocusManager.modal &&
             e.which !== Keys.DOM_VK_RETURN &&
             e.which !== Keys.DOM_VK_ESCAPE &&
             e.which !== Keys.DOM_VK_TAB &&
@@ -117,8 +113,8 @@ class KeyHandler {
             !e.metaKey
         ) {
             Events.emit('keypress', e);
-        } else if (this.modal) {
-            Events.emit('keypress:' + this.modal, e);
+        } else if (FocusManager.modal) {
+            Events.emit('keypress:' + FocusManager.modal, e);
         }
     }
 

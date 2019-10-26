@@ -14,9 +14,11 @@
     </div>
     <select class="gen__sel-tpl input-base">
         {{#each presets as |ps|}}
-        <option value="{{ps.name}}" {{#ifeq ps.name ../preset}}selected{{/ifeq}}>{{ps.title}}</option>
+            <option value="{{ps.name}}" {{#ifeq ps.name ../preset}}selected{{/ifeq}}>{{ps.title}}</option>
         {{/each}}
-        <option value="...">...</option>
+        {{#if showTemplateEditor}}
+            <option value="...">...</option>
+        {{/if}}
     </select>
     <input type="range" class="gen__length-range" value="{{opt.pseudoLength}}" min="0" max="25" />
     <div>

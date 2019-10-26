@@ -103,3 +103,7 @@ body:not(.edge) * {
         background-color: var(--text-selection-bg-color);
     }
 }
+
+code {
+    font-family: $monospace-font-family;
+}

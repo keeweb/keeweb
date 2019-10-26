@@ -18,12 +18,14 @@ import { InputFx } from 'util/ui/input-fx';
 import { OpenConfigView } from 'views/open-config-view';
 import { StorageFileListView } from 'views/storage-file-list-view';
 import { escape, omit } from 'util/fn';
+import { GeneratorView } from 'views/generator-view';
 import template from 'templates/open.hbs';
 
 const logger = new Logger('open-view');
 
 class OpenView extends View {
     parent = '.app__body';
+    modal = 'open';
 
     template = template;
 
@@ -43,6 +45,7 @@ class OpenView extends View {
         'click .open__pass-enter-btn': 'openDb',
         'click .open__settings-key-file': 'openKeyFile',
         'click .open__last-item': 'openLast',
+        'click .open__icon-generate': 'toggleGenerator',
         dragover: 'dragover',
         dragleave: 'dragleave',
         drop: 'drop'
@@ -67,13 +70,8 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, null, 'open');
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, null, 'open');
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
-        KeyHandler.setModal('open');
         this.once('remove', () => {
             this.passwordInput.reset();
-            if (KeyHandler.modal !== 'auto-type') {
-                // TODO: refactor this
-                KeyHandler.setModal(null);
-            }
         });
     }
 
@@ -933,6 +931,35 @@ class OpenView extends View {
 
     moveOpenFileSelectionUp() {
         this.moveOpenFileSelection(-1);
+    }
+
+    toggleGenerator(e) {
+        e.stopPropagation();
+        if (this.views.gen) {
+            this.views.gen.remove();
+            return;
+        }
+        const el = this.$el.find('.open__icon-generate');
+        const rect = el[0].getBoundingClientRect();
+        const pos = {
+            left: rect.left,
+            top: rect.top
+        };
+        if (Features.isMobile) {
+            pos.left = '50vw';
+            pos.top = '50vh';
+            pos.transform = 'translate(-50%, -50%)';
+        }
+        const generator = new GeneratorView({
+            copy: true,
+            noTemplateEditor: true,
+            pos
+        });
+        generator.render();
+        generator.once('remove', () => {
+            delete this.views.gen;
+        });
+        this.views.gen = generator;
     }
 }
 

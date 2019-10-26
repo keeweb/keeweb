@@ -40,6 +40,7 @@ class SettingsGeneralView extends View {
         'change .settings__general-lock-on-os-lock': 'changeLockOnOsLock',
         'change .settings__general-table-view': 'changeTableView',
         'change .settings__general-colorful-icons': 'changeColorfulIcons',
+        'change .settings__general-use-markdown': 'changeUseMarkdown',
         'change .settings__general-direct-autotype': 'changeDirectAutotype',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
@@ -104,6 +105,7 @@ class SettingsGeneralView extends View {
             updateManual,
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.colorfulIcons,
+            useMarkdown: AppSettingsModel.useMarkdown,
             directAutotype: AppSettingsModel.directAutotype,
             supportsTitleBarStyles: Launcher && Features.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.titlebarStyle,
@@ -294,6 +296,12 @@ class SettingsGeneralView extends View {
     changeColorfulIcons(e) {
         const colorfulIcons = e.target.checked || false;
         AppSettingsModel.colorfulIcons = colorfulIcons;
+        Events.emit('refresh');
+    }
+
+    changeUseMarkdown(e) {
+        const useMarkdown = e.target.checked || false;
+        AppSettingsModel.useMarkdown = useMarkdown;
         Events.emit('refresh');
     }
 

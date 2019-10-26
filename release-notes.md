@@ -1,5 +1,19 @@
 Release notes
 -------------
+##### v1.12.0 (2019-10-26)
+`-` #1022: fuzzy search  
+`+` #1108: setting for running in an iframe  
+`+` #963: keyboard shortcut to copy OTP in background  
+`+` #565: global shortcut to open KeeWeb  
+`+` #862: downloading attachments on mobile  
+`+` #480: option to launch the app minimized  
+`+` #1307: option to disable Markdown support  
+`+` #1310: password generator on the start screen  
+`+` #197: mobile actions panel  
+`-` fix #1273: untranslated menu items  
+`-` fix #1311: better monospace fonts  
+`-` fix #1319: removed a storage request for invalid passwords  
+
 ##### v1.11.10 (2019-10-16)
 `-` fix #1305: WebDAV issues  
 `-` fix #1263: desktop apps crashes when argon2 is used  

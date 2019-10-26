@@ -16,3 +16,4 @@ xcuserdata/
 .idea/
 .vscode
 *.iml
+test/dist/

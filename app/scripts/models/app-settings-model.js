@@ -44,6 +44,7 @@ AppSettingsModel.defineModelProperties(
         minimizeOnClose: false,
         tableView: false,
         colorfulIcons: false,
+        useMarkdown: true,
         directAutotype: true,
         titlebarStyle: 'default',
         lockOnMinimize: true,
@@ -61,6 +62,7 @@ AppSettingsModel.defineModelProperties(
         generatorPresets: null,
         generatorHidePassword: false,
         cacheConfigSettings: false,
+        allowIframes: false,
 
         canOpen: true,
         canOpenDemo: true,

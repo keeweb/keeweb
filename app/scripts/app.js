@@ -28,7 +28,7 @@ import 'hbs-helpers';
 const ready = (Launcher && Launcher.ready) || $;
 
 ready(() => {
-    if (AuthReceiver.receive() || Features.isFrame) {
+    if (AuthReceiver.receive()) {
         return;
     }
 
@@ -46,6 +46,11 @@ ready(() => {
         });
 
     function ensureCanRun() {
+        if (Features.isFrame && !appModel.settings.allowIframes) {
+            return Promise.reject(
+                'Running in iframe is not allowed (this can be changed in the app config).'
+            );
+        }
         return FeatureTester.test().catch(e => {
             Alerts.error({
                 header: Locale.appSettingsError,

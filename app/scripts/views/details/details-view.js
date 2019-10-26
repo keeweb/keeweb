@@ -45,6 +45,7 @@ class DetailsView extends View {
     passEditView = null;
     userEditView = null;
     urlEditView = null;
+    otpEditView = null;
     fieldCopyTip = null;
 
     events = {
@@ -71,6 +72,7 @@ class DetailsView extends View {
         this.listenTo(Events, 'copy-password', this.copyPassword);
         this.listenTo(Events, 'copy-user', this.copyUserName);
         this.listenTo(Events, 'copy-url', this.copyUrl);
+        this.listenTo(Events, 'copy-otp', this.copyOtp);
         this.listenTo(Events, 'toggle-settings', this.settingsToggled);
         this.listenTo(Events, 'context-menu-select', this.contextMenuSelect);
         this.listenTo(Events, 'set-locale', this.render);
@@ -273,18 +275,18 @@ class DetailsView extends View {
                 }
             })
         );
+        this.otpEditView = null;
         for (const field of Object.keys(model.fields)) {
             if (field === 'otp' && this.model.otpGenerator) {
-                this.fieldViews.push(
-                    new FieldViewOtp({
-                        name: '$' + field,
-                        title: field,
-                        value() {
-                            return model.otpGenerator;
-                        },
-                        sequence: '{TOTP}'
-                    })
-                );
+                this.otpEditView = new FieldViewOtp({
+                    name: '$' + field,
+                    title: field,
+                    value() {
+                        return model.otpGenerator;
+                    },
+                    sequence: '{TOTP}'
+                });
+                this.fieldViews.push(this.otpEditView);
             } else {
                 this.fieldViews.push(
                     new FieldViewCustom({
@@ -543,6 +545,7 @@ class DetailsView extends View {
         });
         subView.attId = id;
         subView.render(this.pageResized.bind(this));
+        subView.on('download', () => this.downloadAttachment(attachment));
         this.views.sub = subView;
         attBtn.addClass('details__attachment--active');
     }
@@ -594,7 +597,7 @@ class DetailsView extends View {
             return false;
         }
         if (!window.getSelection().toString()) {
-            const fieldValue = editView.value;
+            const fieldValue = editView.otpValue || editView.value;
             const fieldText =
                 fieldValue && fieldValue.isProtected ? fieldValue.getText() : fieldValue;
             if (!fieldText) {
@@ -627,6 +630,12 @@ class DetailsView extends View {
 
     copyUrl() {
         this.copyKeyPress(this.urlEditView);
+    }
+
+    copyOtp() {
+        if (this.otpEditView) {
+            this.copyKeyPress(this.otpEditView);
+        }
     }
 
     showCopyTip() {

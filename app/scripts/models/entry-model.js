@@ -195,18 +195,49 @@ class EntryModel extends Model {
     }
 
     matches(filter) {
-        return (
-            !filter ||
-            ((!filter.tagLower || this.searchTags.indexOf(filter.tagLower) >= 0) &&
-                (!filter.textLower ||
-                    (filter.advanced
-                        ? this.matchesAdv(filter)
-                        : this.searchText.indexOf(filter.textLower) >= 0)) &&
-                (!filter.color ||
-                    (filter.color === true && this.searchColor) ||
-                    this.searchColor === filter.color) &&
-                (!filter.autoType || this.autoTypeEnabled))
-        );
+        if (!filter) {
+            return true;
+        }
+        if (filter.tagLower) {
+            if (this.searchTags.indexOf(filter.tagLower) < 0) {
+                return false;
+            }
+        }
+        if (filter.textLower) {
+            if (filter.advanced) {
+                if (!this.matchesAdv(filter)) {
+                    return false;
+                }
+            } else if (filter.textLowerParts) {
+                const parts = filter.textLowerParts;
+                for (let i = 0; i < parts.length; i++) {
+                    if (this.searchText.indexOf(parts[i]) < 0) {
+                        return false;
+                    }
+                }
+            } else {
+                if (this.searchText.indexOf(filter.textLower) < 0) {
+                    return false;
+                }
+            }
+        }
+        if (filter.color) {
+            if (filter.color === true) {
+                if (!this.searchColor) {
+                    return false;
+                }
+            } else {
+                if (this.searchColor !== filter.color) {
+                    return false;
+                }
+            }
+        }
+        if (filter.autoType) {
+            if (!this.autoTypeEnabled) {
+                return false;
+            }
+        }
+        return true;
     }
 
     matchesAdv(filter) {
@@ -220,11 +251,21 @@ class EntryModel extends Model {
             }
             match = this.matchRegex;
         } else if (adv.cs) {
-            search = filter.text;
-            match = this.matchString;
+            if (filter.textParts) {
+                search = filter.textParts;
+                match = this.matchStringMulti.bind(this, false);
+            } else {
+                search = filter.text;
+                match = this.matchString;
+            }
         } else {
-            search = filter.textLower;
-            match = this.matchStringLower;
+            if (filter.textLowerParts) {
+                search = filter.textLowerParts;
+                match = this.matchStringMulti.bind(this, true);
+            } else {
+                search = filter.textLower;
+                match = this.matchStringLower;
+            }
         }
         if (this.matchEntry(this.entry, adv, match, search)) {
             return true;
@@ -253,6 +294,31 @@ class EntryModel extends Model {
         return str.toLowerCase().indexOf(findLower) >= 0;
     }
 
+    matchStringMulti(lower, str, find, context) {
+        if (lower) {
+            str = str.toLowerCase();
+        }
+        for (let i = 0; i < find.length; i++) {
+            const item = find[i];
+            let strMatches;
+            if (lower) {
+                strMatches = str.isProtected ? str.includesLower(item) : str.includes(item);
+            } else {
+                strMatches = str.isProtected ? str.includes(item) : str.includes(item);
+            }
+            if (strMatches) {
+                if (context.matches) {
+                    if (!context.matches.includes(item)) {
+                        context.matches.push(item);
+                    }
+                } else {
+                    context.matches = [item];
+                }
+            }
+        }
+        return context.matches && context.matches.length === find.length;
+    }
+
     matchRegex(str, regex) {
         if (str.isProtected) {
             str = str.getText();
@@ -262,19 +328,20 @@ class EntryModel extends Model {
 
     matchEntry(entry, adv, compare, search) {
         const matchField = this.matchField;
-        if (adv.user && matchField(entry, 'UserName', compare, search)) {
+        const context = {};
+        if (adv.user && matchField(entry, 'UserName', compare, search, context)) {
             return true;
         }
-        if (adv.url && matchField(entry, 'URL', compare, search)) {
+        if (adv.url && matchField(entry, 'URL', compare, search, context)) {
             return true;
         }
-        if (adv.notes && matchField(entry, 'Notes', compare, search)) {
+        if (adv.notes && matchField(entry, 'Notes', compare, search, context)) {
             return true;
         }
-        if (adv.pass && matchField(entry, 'Password', compare, search)) {
+        if (adv.pass && matchField(entry, 'Password', compare, search, context)) {
             return true;
         }
-        if (adv.title && matchField(entry, 'Title', compare, search)) {
+        if (adv.title && matchField(entry, 'Title', compare, search, context)) {
             return true;
         }
         let matches = false;
@@ -285,18 +352,18 @@ class EntryModel extends Model {
                     return false;
                 }
                 if (typeof entry.fields[field] === 'string') {
-                    return adv.other && matchField(entry, field, compare, search);
+                    return adv.other && matchField(entry, field, compare, search, context);
                 } else {
-                    return adv.protect && matchField(entry, field, compare, search);
+                    return adv.protect && matchField(entry, field, compare, search, context);
                 }
             });
         }
         return matches;
     }
 
-    matchField(entry, field, compare, search) {
+    matchField(entry, field, compare, search, context) {
         const val = entry.fields[field];
-        return val ? compare(val, search) : false;
+        return val ? compare(val, search, context) : false;
     }
 
     resolveFieldReferences() {

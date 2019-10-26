@@ -1,10 +1,10 @@
 import { View } from 'framework/views/view';
-import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
 import template from 'templates/modal.hbs';
 
 class ModalView extends View {
     parent = 'body';
+    modal = 'alert';
 
     template = template;
 
@@ -21,10 +21,7 @@ class ModalView extends View {
         if (typeof this.model.enter === 'string') {
             this.onKey(Keys.DOM_VK_RETURN, this.enterPressed, false, 'alert');
         }
-        const prevModal = KeyHandler.modal;
-        KeyHandler.setModal('alert');
         this.once('remove', () => {
-            KeyHandler.setModal(prevModal);
             if (this.model.view) {
                 this.model.view.remove();
             }

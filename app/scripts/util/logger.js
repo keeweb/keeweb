@@ -11,9 +11,9 @@ const MaxLogsToSave = 100;
 
 const lastLogs = [];
 
-const Logger = function(name, id) {
+const Logger = function(name, id, level = Level.All) {
     this.prefix = name ? name + (id ? ':' + id : '') : 'default';
-    this.level = Level.All;
+    this.level = level;
 };
 
 Logger.prototype.ts = function(ts) {

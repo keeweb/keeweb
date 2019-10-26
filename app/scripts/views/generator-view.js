@@ -81,7 +81,8 @@ class GeneratorView extends View {
             opt: this.gen,
             hide: this.hide,
             presets: this.presets,
-            preset: this.preset
+            preset: this.preset,
+            showTemplateEditor: !this.model.noTemplateEditor
         });
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);

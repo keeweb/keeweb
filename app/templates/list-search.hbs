@@ -4,7 +4,7 @@
             <i class="fa fa-bars"></i>
         </div>
         <div class="list__search-field-wrap">
-            <input type="text" class="list__search-field input-padding-right" autocomplete="off">
+            <input type="text" class="list__search-field input-padding-right" autocomplete="off" spellcheck="false">
             <div class="list__search-icon-search" title="{{res 'searchAdvTitle'}}">
                 <i class="fa fa-search"></i>
                 <i class="fa fa-caret-down"></i>
@@ -18,8 +18,8 @@
         </div>
         <div class="list__search-adv {{#unless advEnabled}}hide{{/unless}}">
             <div class="list__search-adv-text">{{res 'searchSearchIn'}}:</div>
-            <div class="list__search-check"><input type="checkbox" id="list__searcn-adv-check-user" data-id="user"
-               {{#if adv.user}}checked{{/if}}><label for="list__searcn-adv-check-user">{{Res 'user'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-user" data-id="user"
+               {{#if adv.user}}checked{{/if}}><label for="list__search-adv-check-user">{{Res 'user'}}</label></div>
             <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-other" data-id="other"
                 {{#if adv.other}}checked{{/if}}><label for="list__search-adv-check-other">{{res 'searchOther'}}</label></div>
             <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-website" data-id="url"
@@ -39,6 +39,8 @@
                 {{#if adv.regex}}checked{{/if}}><label for="list__search-adv-check-regex">{{res 'searchRegex'}}</label></div>
             <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-history" data-id="history"
                 {{#if adv.history}}checked{{/if}}><label for="list__search-adv-check-history">{{Res 'history'}}</label></div>
+            <div class="list__search-check"><input type="checkbox" id="list__search-adv-check-exact" data-id="exact"
+                {{#if adv.exact}}checked{{/if}}><label for="list__search-adv-check-exact">{{res 'searchExact'}}</label></div>
         </div>
     </div>
 </div>

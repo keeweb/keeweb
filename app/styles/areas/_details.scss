@@ -187,6 +187,7 @@
         flex-direction: row;
         justify-content: flex-start;
         margin-bottom: 0.5em;
+        position: relative;
 
         &-label {
             color: var(--muted-color);
@@ -457,6 +458,17 @@
                 color: var(--medium-color);
             }
         }
+
+        &-mobile-actions {
+            position: absolute;
+            background: var(--background-color);
+            z-index: $z-index-no-modal;
+        }
+
+        &-mobile-action {
+            padding: $medium-padding;
+            cursor: pointer;
+        }
     }
 
     &__attachments {
@@ -560,8 +572,11 @@
             }
             .details__attachment-preview-download-text {
                 position: static;
-                margin-top: 2em;
+                margin-top: $large-padding;
                 opacity: 1;
+            }
+            .details__attachment-preview-buttons {
+                margin-top: $large-padding;
             }
         }
     }

@@ -176,7 +176,10 @@ const Launcher = {
         return this.electron().clipboard.clear();
     },
     minimizeApp() {
-        this.remoteApp().minimizeApp();
+        this.remoteApp().minimizeApp({
+            restore: Locale.menuRestoreApp.replace('{}', 'KeeWeb'),
+            quit: Locale.menuQuitApp.replace('{}', 'KeeWeb')
+        });
     },
     canMinimize() {
         return process.platform !== 'darwin';
@@ -302,6 +305,8 @@ Events.on('launcher-exit-request', () => {
     setTimeout(() => Launcher.exit(), 0);
 });
 Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
+Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
+
 window.launcherOpen = file => Launcher.openFile(file);
 if (window.launcherOpenedFile) {
     logger.info('Open file request', window.launcherOpenedFile);
