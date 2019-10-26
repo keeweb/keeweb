@@ -1,5 +1,6 @@
 import kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import { CopyPaste } from 'comp/browser/copy-paste';
 import { Tip } from 'util/ui/tip';
 import { isEqual } from 'util/fn';
@@ -27,6 +28,9 @@ class FieldView extends View {
                 Tip.hideTip(this.valueEl[0]);
             }
         });
+        if (Features.isMobile) {
+            this.listenTo(Events, 'click', this.bodyClick);
+        }
     }
 
     render() {
@@ -114,7 +118,12 @@ class FieldView extends View {
         }
         const sel = window.getSelection().toString();
         if (!sel) {
-            this.edit();
+            if (Features.isMobile) {
+                e.stopPropagation();
+                this.showMobileActions();
+            } else {
+                this.edit();
+            }
         }
     }
 
@@ -265,6 +274,76 @@ class FieldView extends View {
         this.valueEl
             .removeClass('details__field-value--revealed')
             .html(this.renderValue(this.value));
+    }
+
+    bodyClick(e) {
+        if (!this.mobileActionsEl) {
+            return;
+        }
+        if (this.valueEl[0].contains(e.target) || this.mobileActionsEl[0].contains(e.target)) {
+            return;
+        }
+        this.mobileActionsEl.remove();
+        delete this.mobileActionsEl;
+    }
+
+    showMobileActions() {
+        if (this.readonly) {
+            return;
+        }
+        if (this.mobileActionsEl) {
+            this.mobileActionsEl.remove();
+            delete this.mobileActionsEl;
+            return;
+        }
+        const left = this.valueEl.position().left;
+        const width = this.$el.width() - left;
+        const top = this.valueEl.height();
+
+        const mobileActionsEl = $('<div></div>')
+            .addClass('details__field-mobile-actions')
+            .appendTo(this.$el)
+            .css({ left, top, width });
+
+        const actions = [];
+        if (this.value) {
+            actions.push({ name: 'copy', icon: 'clipboard' });
+        }
+        actions.push({ name: 'edit', icon: 'pencil' });
+        if (this.value instanceof kdbxweb.ProtectedValue) {
+            actions.push({ name: 'reveal', icon: 'eye' });
+        }
+        if (this.model.canGen) {
+            actions.push({ name: 'generate', icon: 'bolt' });
+        }
+        for (const action of actions) {
+            $('<div></div>')
+                .addClass(`details__field-mobile-action fa fa-${action.icon}`)
+                .appendTo(mobileActionsEl)
+                .click(() => this.doMobileAction(action.name));
+        }
+
+        this.mobileActionsEl = mobileActionsEl;
+    }
+
+    doMobileAction(name) {
+        this.mobileActionsEl.remove();
+        delete this.mobileActionsEl;
+        switch (name) {
+            case 'copy':
+                this.copyValue();
+                break;
+            case 'edit':
+                this.edit();
+                break;
+            case 'reveal':
+                this.revealValue();
+                break;
+            case 'generate':
+                this.edit();
+                setTimeout(() => this.showGenerator(), 0);
+                break;
+        }
     }
 }
 

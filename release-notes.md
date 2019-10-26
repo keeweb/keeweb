@@ -9,6 +9,7 @@ Release notes
 `+` #480: option to launch the app minimized  
 `+` #1307: option to disable Markdown support  
 `+` #1310: password generator on the start screen  
+`+` #197: mobile actions panel  
 `-` fix #1273: untranslated menu items  
 `-` fix #1311: better monospace fonts  
 `-` fix #1319: removed a storage request for invalid passwords  
