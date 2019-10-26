@@ -7,10 +7,8 @@ const debug = require('debug');
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
-const hookRcedit = require('./build/util/hook-rcedit');
 const codeSignConfig = require('../keys/codesign');
 
-hookRcedit.setup();
 debug.enable('electron-notarize');
 
 module.exports = function(grunt) {
