@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.12.0 (TBD)
+##### v1.12.0 (2019-10-26)
 `-` #1022: fuzzy search  
 `+` #1108: setting for running in an iframe  
 `+` #963: keyboard shortcut to copy OTP in background  
