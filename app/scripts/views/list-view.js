@@ -168,6 +168,7 @@ class ListView extends View {
         this.items.unshift(newEntry);
         this.render();
         this.selectItem(newEntry);
+        Events.emit('toggle-details', true);
     }
 
     createGroup() {
