@@ -11,6 +11,7 @@ const rootDir = path.join(__dirname, '..');
 
 module.exports = {
     mode: 'development',
+    devtool: 'source-map',
     entry: path.resolve(__dirname, 'index.js'),
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -22,5 +23,8 @@ module.exports = {
             ...appConfig.resolve.alias,
             test: path.resolve(rootDir, 'test')
         }
+    },
+    module: {
+        rules: appConfig.module.rules
     }
 };
