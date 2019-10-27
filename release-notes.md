@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.12.1 (2019-10-27)
 `-` fix #1324: duplicated shortcut editor in settings  
+`-` fix #1313: disabled code signing for macOS dmg  
 
 ##### v1.12.0 (2019-10-26)
 `-` #1022: fuzzy search  
