@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.13.0 (TBD)
 `-` fix #1323: version in the About dialog  
+`-` fix #734: OTP secrets with spaces  
 
 ##### v1.12.1 (2019-10-27)
 `-` fix #1324: duplicated shortcut editor in settings  
