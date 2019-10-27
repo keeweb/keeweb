@@ -196,7 +196,7 @@ const Launcher = {
     resolveProxy(url, callback) {
         const window = this.getMainWindow();
         const session = window.webContents.session;
-        session.resolveProxy(url, proxy => {
+        session.resolveProxy(url).then(proxy => {
             const match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
             proxy = match && match[1] ? { host: match[1], port: +match[2] } : null;
             callback(proxy);

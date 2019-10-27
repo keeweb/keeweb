@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.12.2 (TBD)
+`-` fixed non-working updater  
+
 ##### v1.12.1 (2019-10-27)
 `-` fix #1324: duplicated shortcut editor in settings  
 `-` fix #1313: disabled code signing for macOS dmg  
