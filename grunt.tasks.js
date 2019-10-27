@@ -47,7 +47,7 @@ module.exports = function(grunt) {
         'compress:linux-x64'
     ]);
 
-    grunt.registerTask('build-desktop-dist-darwin', ['appdmg', 'codesign:dmg']);
+    grunt.registerTask('build-desktop-dist-darwin', ['appdmg']);
 
     grunt.registerTask('build-desktop-dist-win32', [
         'nsis:win32-un-x64',

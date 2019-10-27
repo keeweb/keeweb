@@ -3,6 +3,10 @@ Release notes
 ##### v1.13.0 (TBD)
 `-` fix #1323: version in the About dialog  
 
+##### v1.12.1 (2019-10-27)
+`-` fix #1324: duplicated shortcut editor in settings  
+`-` fix #1313: disabled code signing for macOS dmg  
+
 ##### v1.12.0 (2019-10-26)
 `-` #1022: fuzzy search  
 `+` #1108: setting for running in an iframe  

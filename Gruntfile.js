@@ -333,14 +333,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-        codesign: {
-            dmg: {
-                options: {
-                    identity: 'app'
-                },
-                src: [`dist/desktop/KeeWeb-${pkg.version}.mac.dmg`]
-            }
-        },
         compress: {
             options: {
                 level: 6

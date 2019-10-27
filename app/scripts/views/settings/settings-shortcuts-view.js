@@ -53,7 +53,15 @@ class SettingsShortcutsView extends View {
     shortcutClick(e) {
         const globalShortcutType = e.target.dataset.shortcut;
 
-        const shortcutEditor = $('<div/>').addClass('shortcut__editor');
+        const existing = $(`.shortcut__editor[data-shortcut=${globalShortcutType}]`);
+        if (existing.length) {
+            existing.remove();
+            return;
+        }
+
+        const shortcutEditor = $('<div/>')
+            .addClass('shortcut__editor')
+            .attr('data-shortcut', globalShortcutType);
         $('<div/>')
             .text(Locale.setShEdit)
             .appendTo(shortcutEditor);

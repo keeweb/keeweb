@@ -15,7 +15,7 @@ function emitSet(target, value, prevValue) {
             emitter.emit('add', value, target);
             updates.added.push(value);
         }
-        emitter.emit('change', updates, this);
+        emitter.emit('change', updates, target);
     }
 }
 
@@ -25,7 +25,7 @@ function emitRemoved(target, removed) {
         for (const item of removed) {
             emitter.emit('remove', item, target);
         }
-        emitter.emit('change', { added: [], removed }, this);
+        emitter.emit('change', { added: [], removed }, target);
     }
 }
 
@@ -127,6 +127,7 @@ class Collection {
             this[SymbolEvents].emit('remove', item, this);
             this[SymbolEvents].emit('change', { added: [], removed: [item] }, this);
         }
+        return item;
     }
 
     shift() {
@@ -137,6 +138,7 @@ class Collection {
             this[SymbolEvents].emit('remove', item, this);
             this[SymbolEvents].emit('change', { added: [], removed: [item] }, this);
         }
+        return item;
     }
 
     unshift(...items) {
@@ -197,7 +199,7 @@ class Collection {
     }
 
     sort() {
-        this[SymbolArray].sort(this.comparator);
+        return this[SymbolArray].sort(this.comparator);
     }
 
     fill() {
