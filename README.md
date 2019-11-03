@@ -12,7 +12,7 @@ Timeline: [Release Notes](release-notes.md), [TODO](https://github.com/keeweb/ke
 On one page: [Features](https://keeweb.info/#features), [FAQ](https://github.com/keeweb/keeweb/wiki/FAQ)  
 Website: [keeweb.info](https://keeweb.info)  
 Twitter: [kee_web](https://twitter.com/kee_web)  
-Donate: [OpenCollective](https://opencollective.com/keeweb#support)  
+Donate: [OpenCollective](https://opencollective.com/keeweb#support), [GitHub](https://github.com/sponsors/antelle)  
 
 # Status
 
@@ -70,6 +70,8 @@ Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your 
 KeeWeb is not free to develop. It takes time, requires paid code signing certificates and domains.  
 You can help the project or say "thank you" with this button:  
 [<img src="https://opencollective.com/keeweb/tiers/backer.svg?avatarHeight=42&width=880" alt="OpenCollective">](https://opencollective.com/keeweb#support)
+
+You can also sponsor the developer directly [on GitHub](https://github.com/sponsors/antelle).  
 
 Please note: donation does not imply any type of service contract.  
 
