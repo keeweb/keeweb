@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.12.2 (TBD)
+##### v1.12.2 (2019-11-03)
 `-` fixed non-working updater  
 `-` fix #1336: saving disabled storage option  
 `-` fix #1333: item selection in the auto-type pop-up  
