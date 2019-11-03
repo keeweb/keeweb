@@ -1,6 +1,6 @@
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
-import { EntryCollection } from 'collections/entry-collection';
+import { SearchResultCollection } from 'collections/search-result-collection';
 import { DragDropInfo } from 'comp/app/drag-drop-info';
 import { Alerts } from 'comp/ui/alerts';
 import { AppSettingsModel } from 'models/app-settings-model';
@@ -67,7 +67,7 @@ class ListView extends View {
 
         this.readTableColumnsEnabled();
 
-        this.items = new EntryCollection();
+        this.items = new SearchResultCollection();
     }
 
     render() {
