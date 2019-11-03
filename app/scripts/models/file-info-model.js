@@ -21,8 +21,7 @@ const DefaultProperties = {
 
 class FileInfoModel extends Model {
     constructor(data) {
-        data = { ...data };
-        data = pick(data, Object.keys(DefaultProperties));
+        data = pick({ ...data }, Object.keys(DefaultProperties));
         for (const [key, val] of Object.entries(data)) {
             if (/Date$/.test(key)) {
                 data[key] = val ? new Date(val) : null;
