@@ -1,4 +1,4 @@
-import { EntryCollection } from 'collections/entry-collection';
+import { SearchResultCollection } from 'collections/search-result-collection';
 import { Ranking } from 'util/data/ranking';
 
 const urlPartsRegex = /^(\w+:\/\/)?(?:(?:www|wwws|secure)\.)?([^\/]+)\/?(.*)/;
@@ -25,7 +25,7 @@ AutoTypeFilter.prototype.getEntries = function() {
         x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1]
     );
     entries = entries.map(p => p[0]);
-    return new EntryCollection(entries, { comparator: 'none' });
+    return new SearchResultCollection(entries, { comparator: 'none' });
 };
 
 AutoTypeFilter.prototype.hasWindowInfo = function() {

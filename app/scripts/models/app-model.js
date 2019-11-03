@@ -1,7 +1,7 @@
 import { Events } from 'framework/events';
 import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
-import { EntryCollection } from 'collections/entry-collection';
+import { SearchResultCollection } from 'collections/search-result-collection';
 import { FileCollection } from 'collections/file-collection';
 import { FileInfoCollection } from 'collections/file-info-collection';
 import { RuntimeInfo } from 'const/runtime-info';
@@ -307,7 +307,7 @@ class AppModel {
 
     getEntriesByFilter(filter) {
         const preparedFilter = this.prepareFilter(filter);
-        const entries = new EntryCollection();
+        const entries = new SearchResultCollection();
         this.files.forEach(file => {
             file.forEachEntry(preparedFilter, entry => entries.push(entry));
         });

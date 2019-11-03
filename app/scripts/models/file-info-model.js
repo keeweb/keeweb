@@ -1,18 +1,7 @@
 import { Model } from 'framework/model';
+import { pick } from 'util/fn';
 
-class FileInfoModel extends Model {
-    constructor(data) {
-        data = { ...data };
-        for (const [key, val] of Object.entries(data)) {
-            if (/Date$/.test(key)) {
-                data[key] = val ? new Date(val) : null;
-            }
-        }
-        super(data);
-    }
-}
-
-FileInfoModel.defineModelProperties({
+const DefaultProperties = {
     id: '',
     name: '',
     storage: null,
@@ -28,6 +17,20 @@ FileInfoModel.defineModelProperties({
     opts: null,
     backup: null,
     fingerprint: null
-});
+};
+
+class FileInfoModel extends Model {
+    constructor(data) {
+        data = pick({ ...data }, Object.keys(DefaultProperties));
+        for (const [key, val] of Object.entries(data)) {
+            if (/Date$/.test(key)) {
+                data[key] = val ? new Date(val) : null;
+            }
+        }
+        super(data);
+    }
+}
+
+FileInfoModel.defineModelProperties(DefaultProperties);
 
 export { FileInfoModel };

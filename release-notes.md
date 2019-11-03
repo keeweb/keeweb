@@ -4,6 +4,12 @@ Release notes
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  
 
+##### v1.12.2 (2019-11-03)
+`-` fixed non-working updater  
+`-` fix #1336: saving disabled storage option  
+`-` fix #1333: item selection in the auto-type pop-up  
+`-` fix #1337: displaying groups in trash  
+
 ##### v1.12.1 (2019-10-27)
 `-` fix #1324: duplicated shortcut editor in settings  
 `-` fix #1313: disabled code signing for macOS dmg  

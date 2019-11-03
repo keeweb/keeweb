@@ -339,7 +339,7 @@ class SettingsGeneralView extends View {
         const storage = Storage[$(e.target).data('storage')];
         if (storage) {
             storage.setEnabled(e.target.checked);
-            AppSettingsModel.storage.name = storage.enabled;
+            AppSettingsModel[storage.name] = storage.enabled;
             this.$el
                 .find('.settings__general-' + storage.name)
                 .toggleClass('hide', !e.target.checked);
