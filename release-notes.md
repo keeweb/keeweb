@@ -3,6 +3,7 @@ Release notes
 ##### v1.12.2 (TBD)
 `-` fixed non-working updater  
 `-` fix #1336: saving disabled storage option  
+`-` fix #1333: item selection in the auto-type pop-up  
 
 ##### v1.12.1 (2019-10-27)
 `-` fix #1324: duplicated shortcut editor in settings  

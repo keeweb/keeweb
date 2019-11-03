@@ -193,7 +193,7 @@ class AutoTypeSelectView extends View {
 
     itemClicked(e) {
         const itemEl = $(e.target).closest('.at-select__item');
-        const optionsClicked = $(e.target).closest('.at-select__item-options');
+        const optionsClicked = $(e.target).closest('.at-select__item-options').length;
 
         if (optionsClicked) {
             this.showItemOptions(itemEl, e);
