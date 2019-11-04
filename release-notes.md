@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.12.3 (TBD)
+`-` fix #1335: removed the menubar on Windows and Linux  
+
 ##### v1.12.2 (2019-11-03)
 `-` fixed non-working updater  
 `-` fix #1336: saving disabled storage option  
