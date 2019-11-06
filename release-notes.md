@@ -4,6 +4,11 @@ Release notes
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  
 
+##### v1.12.3 (2019-11-06)
+`-` fix #1335: removed the menubar on Windows and Linux  
+`-` fix #1334: saving new files not working  
+`-` fixed entry title input size  
+
 ##### v1.12.2 (2019-11-03)
 `-` fixed non-working updater  
 `-` fix #1336: saving disabled storage option  

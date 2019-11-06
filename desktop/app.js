@@ -363,6 +363,8 @@ function setMenu() {
         electron.Menu.setApplicationMenu(menu);
     } else {
         mainWindow.setMenuBarVisibility(false);
+        mainWindow.setMenu(null);
+        electron.Menu.setApplicationMenu(null);
     }
 }
 
