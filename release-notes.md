@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.12.3 (TBD)
+##### v1.12.3 (2019-11-06)
 `-` fix #1335: removed the menubar on Windows and Linux  
 `-` fix #1334: saving new files not working  
 
