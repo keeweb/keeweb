@@ -64,6 +64,7 @@
             font-weight: bold;
             position: relative;
             top: -2px;
+            min-width: 0;
             @include mobile {
                 width: 100%;
             }
