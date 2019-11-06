@@ -248,12 +248,6 @@ const Launcher = {
 
         window.cordova.exec(onFileSelected, callback, 'FileChooser', 'choose');
     },
-    getCookies(callback) {
-        // TODO
-    },
-    setCookies(cookies) {
-        // TODO
-    },
 
     fingerprints: {
         config: {

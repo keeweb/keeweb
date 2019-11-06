@@ -38,14 +38,13 @@ const Launcher = {
             const homePath = this.remReq('electron').app.getPath('userDesktop');
             defaultPath = this.joinPath(homePath, defaultPath);
         }
-        this.remReq('electron').dialog.showSaveDialog(
-            {
+        this.remReq('electron')
+            .dialog.showSaveDialog({
                 title: Locale.launcherSave,
                 defaultPath,
                 filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
-            },
-            callback
-        );
+            })
+            .then(res => callback(res.filePath));
     },
     getUserDataPath(fileName) {
         if (!this.userDataPath) {
@@ -270,17 +269,6 @@ const Launcher = {
             ps.stdin.destroy();
         });
         return ps;
-    },
-    getCookies(callback) {
-        this.electron().remote.session.defaultSession.cookies.get({}, callback);
-    },
-    setCookies(cookies) {
-        if (cookies && cookies.length) {
-            const session = this.electron().remote.session.defaultSession;
-            for (const cookie of cookies) {
-                session.cookies.set(cookie, noop);
-            }
-        }
     },
     checkOpenFiles() {
         this.readyToOpenFiles = true;
