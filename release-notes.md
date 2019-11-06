@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.13.0 (TBD)
 `+` #1341: auto-lock the app on screen lock on Windows  
+`+` #1065: PORTABLE_EXECUTABLE_DIR environment variable  
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  
 
