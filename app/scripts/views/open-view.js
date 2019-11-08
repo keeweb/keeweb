@@ -120,7 +120,8 @@ class OpenView extends View {
             keyFileData: null,
             keyFilePath: null,
             fileData: null,
-            rev: null
+            rev: null,
+            opts: null
         };
     }
 
@@ -560,6 +561,7 @@ class OpenView extends View {
         this.params.keyFileName = fileInfo.keyFileName;
         this.params.keyFilePath = fileInfo.keyFilePath;
         this.params.keyFileData = null;
+        this.params.opts = fileInfo.opts;
         this.displayOpenFile();
         this.displayOpenKeyFile();
 

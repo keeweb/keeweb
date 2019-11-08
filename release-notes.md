@@ -5,6 +5,7 @@ Release notes
 `+` #1065: PORTABLE_EXECUTABLE_DIR environment variable  
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  
+`-` fix #1208: webdav credentials corruption  
 
 ##### v1.12.3 (2019-11-06)
 `-` fix #1335: removed the menubar on Windows and Linux  
