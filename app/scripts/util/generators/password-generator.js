@@ -38,10 +38,7 @@ const PasswordGenerator = {
         if (!ranges.length) {
             return '';
         }
-        const pool = [];
-        for (let i = 0; i < ranges.length; i++) {
-            pool.push(...ranges[i]);
-        }
+        const pool = ranges.join('');
         const randomBytes = kdbxweb.Random.getBytes(opts.length);
         const chars = [];
         for (let i = 0; i < opts.length; i++) {
