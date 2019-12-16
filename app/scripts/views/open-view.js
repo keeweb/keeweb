@@ -921,10 +921,6 @@ class OpenView extends View {
         }
         const fileInfo = this.model.fileInfos.get(lastOpenFiles[this.currentSelectedIndex].id);
         this.showOpenFileInfo(fileInfo);
-
-        if (fileInfo && Launcher && Launcher.fingerprints) {
-            this.openFileWithFingerprint(fileInfo);
-        }
     }
 
     moveOpenFileSelectionDown() {
