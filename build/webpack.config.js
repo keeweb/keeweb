@@ -131,7 +131,7 @@ function config(options) {
                     ]
                 },
                 {
-                    test: /fonts\/.*\.(woff|ttf|eot|svg)$/,
+                    test: /fonts[\\/].*\.(woff|ttf|eot|svg)$/,
                     use: ['url-loader', 'ignore-loader']
                 },
                 { test: /\.woff2$/, loader: 'url-loader' },
