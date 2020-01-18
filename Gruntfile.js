@@ -3,11 +3,21 @@
 const fs = require('fs-extra');
 const path = require('path');
 const debug = require('debug');
+const os = require('os');
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
-const codeSignConfig = require('../keys/codesign');
+
+let codeSignConfig;
+if (os.platform() === 'darwin') {
+    try {
+        codeSignConfig = require('../keys/codesign');
+    } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn('Code signing config missing - signing the macOS build will be skipped.');
+    }
+}
 
 debug.enable('electron-notarize');
 
@@ -267,18 +277,22 @@ module.exports = function(grunt) {
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
                     extendInfo: 'package/osx/extend.plist',
-                    osxSign: {
-                        identity: codeSignConfig.identities.app,
-                        hardenedRuntime: true,
-                        entitlements: 'package/osx/entitlements.mac.plist',
-                        'entitlements-inherit': 'package/osx/entitlements.mac.plist',
-                        'gatekeeper-assess': false
-                    },
-                    osxNotarize: {
-                        appleId: codeSignConfig.appleId,
-                        appleIdPassword: '@keychain:AC_PASSWORD',
-                        ascProvider: codeSignConfig.teamId
-                    },
+                    ...(codeSignConfig
+                        ? {
+                              osxSign: {
+                                  identity: codeSignConfig.identities.app,
+                                  hardenedRuntime: true,
+                                  entitlements: 'package/osx/entitlements.mac.plist',
+                                  'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                                  'gatekeeper-assess': false
+                              },
+                              osxNotarize: {
+                                  appleId: codeSignConfig.appleId,
+                                  appleIdPassword: '@keychain:AC_PASSWORD',
+                                  ascProvider: codeSignConfig.teamId
+                              }
+                          }
+                        : {}),
                     afterCopy: [
                         (buildPath, electronVersion, platform, arch, callback) => {
                             if (path.basename(buildPath) !== 'app') {
