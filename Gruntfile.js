@@ -3,19 +3,24 @@
 const fs = require('fs-extra');
 const path = require('path');
 const debug = require('debug');
-const os = require('os');
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
 
+const skipCodeSigning = process.argv.some(arg => arg.startsWith('--no-sign'));
 let codeSignConfig;
-if (os.platform() === 'darwin') {
+
+if (!skipCodeSigning) {
     try {
         codeSignConfig = require('../keys/codesign');
     } catch (err) {
-        // eslint-disable-next-line no-console
-        console.warn('Code signing config missing - signing the macOS build will be skipped.');
+        throw new Error(
+            'Unable to load code signing config from ../keys/codesign.\n' +
+                'This is needed for production builds targeting macOS.\n' +
+                'For development builds, run with the `--no-sign` arg to skip code signing,\n' +
+                'e.g. `npm start -- --no-sign`'
+        );
     }
 }
 
