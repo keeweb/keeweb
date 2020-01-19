@@ -3,12 +3,13 @@
 const fs = require('fs-extra');
 const path = require('path');
 const debug = require('debug');
+const grunt = require('grunt');
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
 
-const skipCodeSigning = process.argv.some(arg => arg.startsWith('--no-sign'));
+const skipCodeSigning = grunt.option('no-sign');
 let codeSignConfig;
 
 if (!skipCodeSigning) {
