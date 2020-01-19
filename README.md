@@ -45,13 +45,13 @@ Desktop apps are built with `grunt desktop`. This works only in macOS as it buil
 Also, a hardware token is required.  
 To run Electron app without building an installer, build the app with `grunt` and start it this way:
 ```bash
-grunt dev
-npm run-script electron
+npm run dev
+npm run electron
 ```
 
 For debug build:
 
-1. run `grunt dev`
+1. run `npm run dev`
 2. open `http://localhost:8085`
 
 # Contributing
