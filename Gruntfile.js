@@ -11,22 +11,6 @@ const pkg = require('./package.json');
 debug.enable('electron-notarize');
 
 module.exports = function(grunt) {
-    const skipCodeSigning = grunt.option('no-sign');
-    let codeSignConfig;
-
-    if (!skipCodeSigning) {
-        try {
-            codeSignConfig = require('../keys/codesign');
-        } catch (err) {
-            throw new Error(
-                'Unable to load code signing config from ../keys/codesign.\n' +
-                    'This is needed for production builds targeting macOS.\n' +
-                    'For development builds, run with the `--no-sign` arg to skip code signing,\n' +
-                    'e.g. `npm start -- --no-sign`'
-            );
-        }
-    }
-
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
 
@@ -45,6 +29,22 @@ module.exports = function(grunt) {
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
+
+    const skipCodeSigning = grunt.option('no-sign');
+    let codeSignConfig;
+
+    if (!skipCodeSigning) {
+        try {
+            codeSignConfig = require('../keys/codesign');
+        } catch (err) {
+            throw new Error(
+                'Unable to load code signing config from ../keys/codesign.\n' +
+                    'This is needed for production builds targeting macOS.\n' +
+                    'For development builds, run with the `--no-sign` arg to skip code signing,\n' +
+                    'e.g. `npm start -- --no-sign`'
+            );
+        }
+    }
 
     const webpackOptions = {
         date,
