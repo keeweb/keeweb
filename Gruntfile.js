@@ -7,11 +7,26 @@ const debug = require('debug');
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
-const codeSignConfig = require('../keys/codesign');
 
 debug.enable('electron-notarize');
 
 module.exports = function(grunt) {
+    const skipCodeSigning = grunt.option('no-sign');
+    let codeSignConfig;
+
+    if (!skipCodeSigning) {
+        try {
+            codeSignConfig = require('../keys/codesign');
+        } catch (err) {
+            throw new Error(
+                'Unable to load code signing config from ../keys/codesign.\n' +
+                    'This is needed for production builds targeting macOS.\n' +
+                    'For development builds, run with the `--no-sign` arg to skip code signing,\n' +
+                    'e.g. `npm start -- --no-sign`'
+            );
+        }
+    }
+
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
 
@@ -267,18 +282,22 @@ module.exports = function(grunt) {
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
                     extendInfo: 'package/osx/extend.plist',
-                    osxSign: {
-                        identity: codeSignConfig.identities.app,
-                        hardenedRuntime: true,
-                        entitlements: 'package/osx/entitlements.mac.plist',
-                        'entitlements-inherit': 'package/osx/entitlements.mac.plist',
-                        'gatekeeper-assess': false
-                    },
-                    osxNotarize: {
-                        appleId: codeSignConfig.appleId,
-                        appleIdPassword: '@keychain:AC_PASSWORD',
-                        ascProvider: codeSignConfig.teamId
-                    },
+                    ...(codeSignConfig
+                        ? {
+                              osxSign: {
+                                  identity: codeSignConfig.identities.app,
+                                  hardenedRuntime: true,
+                                  entitlements: 'package/osx/entitlements.mac.plist',
+                                  'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                                  'gatekeeper-assess': false
+                              },
+                              osxNotarize: {
+                                  appleId: codeSignConfig.appleId,
+                                  appleIdPassword: '@keychain:AC_PASSWORD',
+                                  ascProvider: codeSignConfig.teamId
+                              }
+                          }
+                        : {}),
                     afterCopy: [
                         (buildPath, electronVersion, platform, arch, callback) => {
                             if (path.basename(buildPath) !== 'app') {
