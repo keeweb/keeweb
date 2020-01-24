@@ -3,11 +3,14 @@
 const fs = require('fs-extra');
 const path = require('path');
 const debug = require('debug');
+const Agent = require('agentkeepalive');
+require('dotenv').config();
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
-const servicemanagerDir = `../ServiceManager/Products/ServiceManager/IdentityStream.ServiceManager.Web/wwwroot/PasswordBank/`;
+const servicemanagerDir = process.env.SERVICEMANAGERDIR;
+const servicemanagerHost = process.env.SERVICEMANAGERHOST;
 debug.enable('electron-notarize');
 
 module.exports = function(grunt) {
@@ -32,6 +35,15 @@ module.exports = function(grunt) {
 
     const skipCodeSigning = grunt.option('no-sign');
     let codeSignConfig;
+
+    const keepaliveAgent = new Agent({
+        maxSockets: 1000,
+        keepAlive: true,
+        maxFreeSockets: 100,
+        keepAliveMsecs: 10000,
+        timeout: 600000,
+        freeSocketTimeout: 30000 // free socket keepalive for 3000 seconds
+    });
 
     if (!skipCodeSigning) {
         try {
@@ -254,7 +266,22 @@ module.exports = function(grunt) {
                 }),
                 publicPath: '/',
                 contentBase: path.resolve(__dirname, 'tmp'),
-                progress: false
+                progress: false,
+                proxy: [
+                    {
+                        context: ['/passwordbank/settings.json', '/api'],
+                        target: servicemanagerHost,
+                        secure: false,
+                        changeOrigin: true,
+                        onProxyRes: proxyRes => {
+                            const key = 'www-authenticate';
+                            proxyRes.headers[key] =
+                                proxyRes.headers[key] && proxyRes.headers[key].split(',');
+                        },
+                        agent: keepaliveAgent,
+                        proxyTimeout: 5000
+                    }
+                ]
             },
             js: {
                 keepalive: true,

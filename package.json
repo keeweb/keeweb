@@ -119,5 +119,9 @@
         "last 1 Opera version",
         "last 1 ChromeAndroid version",
         "Electron > 6.0.1"
-    ]
+    ],
+    "devDependencies": {
+        "agentkeepalive": "^4.1.0",
+        "dotenv": "^8.2.0"
+    }
 }

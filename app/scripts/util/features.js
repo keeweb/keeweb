@@ -12,9 +12,7 @@ const Features = {
     isPopup: !!(window.parent !== window.top || window.opener),
     isStandalone: !!navigator.standalone,
     isFrame: window.top !== window,
-    isSelfHosted:
-        !isDesktop &&
-        !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
+    isSelfHosted: !isDesktop && !/^http(s?):\/\/(((app|beta)\.keeweb\.info))/.test(location.href),
     needFixClicks: /Edge\/14/.test(navigator.appVersion),
     canUseWasmInWebWorker: !isDesktop && !/Chrome/.test(navigator.appVersion),
 
