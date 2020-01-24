@@ -7,7 +7,7 @@ const debug = require('debug');
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
-
+const servicemanagerDir = `../ServiceManager/Products/ServiceManager/IdentityStream.ServiceManager.Web/wwwroot/PasswordBank/`;
 debug.enable('electron-notarize');
 
 module.exports = function(grunt) {
@@ -108,6 +108,12 @@ module.exports = function(grunt) {
                 dest: 'dist/',
                 expand: true,
                 nonull: true
+            },
+            'dist-servicemanager': {
+                cwd: 'dist/',
+                src: ['**'],
+                dest: servicemanagerDir,
+                expand: true
             },
             fonts: {
                 src: 'node_modules/font-awesome/fonts/fontawesome-webfont.*',

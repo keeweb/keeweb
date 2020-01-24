@@ -14,7 +14,8 @@ module.exports = function(grunt) {
         'string-replace:service-worker',
         'string-replace:manifest',
         'copy:dist-icons',
-        'copy:dist-manifest'
+        'copy:dist-manifest',
+        'copy:dist-servicemanager'
     ]);
 
     grunt.registerTask('build-desktop-app-content', [
