@@ -619,7 +619,7 @@ class OpenView extends View {
         }
     }
 
-    openDb() {
+    async openDb() {
         if (this.params.id && this.model.files.get(this.params.id)) {
             this.emit('close');
             return;
@@ -630,10 +630,20 @@ class OpenView extends View {
         this.$el.toggleClass('open--opening', true);
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
-        this.params.password = this.passwordInput.value;
-        this.afterPaint(() => {
-            this.model.openFile(this.params, err => this.openDbComplete(err));
-        });
+        const subPath = this.params.path.substring(
+            this.params.path.lastIndexOf('passwordbank/') + 13
+        );
+        try {
+            const response = await fetch(`/api/passwordbank/password/${subPath}`, {
+                redirect: 'error'
+            });
+            this.params.password = kdbxweb.ProtectedValue.fromString(await response.text());
+            this.afterPaint(() => {
+                this.model.openFile(this.params, err => this.openDbComplete(err));
+            });
+        } catch (error) {
+            window.location = `/onetimecode?redirectUri=${encodeURIComponent('/passwordbank/')}`;
+        }
     }
 
     openDbComplete(err) {

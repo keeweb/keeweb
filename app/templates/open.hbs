@@ -51,10 +51,6 @@
                 </div>
             {{/if}}
         {{/if}}
-        <div class="open__icon open__icon-generate" tabindex="12" id="open__icon-generate">
-            <i class="fa fa-bolt open__icon-i"></i>
-            <div class="open__icon-text">{{res 'openGenerate'}}</div>
-        </div>
         {{#if canOpenSettings}}
             <div class="open__icon open__icon-settings" tabindex="12" id="open__icon-settings">
                 <i class="fa fa-cog open__icon-i"></i>
@@ -91,7 +87,6 @@
                     {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
                     {{#if file.iconSvg}}<div class="open__last-item-icon open__last-item-icon--svg">{{{file.iconSvg}}}</div>{{/if}}
                     <span class="open__last-item-text">{{file.name}}</span>
-                    {{#if ../canRemoveLatest}}<i class="fa fa-times open__last-item-icon-del"></i>{{/if}}
                 </div>
             {{/each}}
         </div>

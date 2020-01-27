@@ -13,11 +13,12 @@ class FooterView extends View {
 
     events = {
         'click .footer__db-item': 'showFile',
-        'click .footer__db-open': 'openFile',
+        'click .footer__db-open': 'closeAll',
         'click .footer__btn-help': 'toggleHelp',
         'click .footer__btn-settings': 'toggleSettings',
         'click .footer__btn-generate': 'genPass',
-        'click .footer__btn-lock': 'lockWorkspace'
+        'click .footer__btn-lock': 'lockWorkspace',
+        'click .footer__btn-back': 'lockAndExitWorkspace'
     };
 
     constructor(model, options) {
@@ -25,7 +26,7 @@ class FooterView extends View {
 
         this.onKey(Keys.DOM_VK_L, this.lockWorkspace, KeyHandler.SHORTCUT_ACTION, false, true);
         this.onKey(Keys.DOM_VK_G, this.genPass, KeyHandler.SHORTCUT_ACTION);
-        this.onKey(Keys.DOM_VK_O, this.openFile, KeyHandler.SHORTCUT_ACTION);
+        this.onKey(Keys.DOM_VK_O, this.closeAll, KeyHandler.SHORTCUT_ACTION);
         this.onKey(Keys.DOM_VK_S, this.saveAll, KeyHandler.SHORTCUT_ACTION);
         this.onKey(Keys.DOM_VK_COMMA, this.toggleSettings, KeyHandler.SHORTCUT_ACTION);
 
@@ -57,6 +58,13 @@ class FooterView extends View {
         }
     }
 
+    lockAndExitWorkspace(e) {
+        this.lockWorkspace(e);
+        window.setTimeout(() => {
+            window.location = '/';
+        }, 300);
+    }
+
     genPass(e) {
         e.stopPropagation();
         if (this.views.gen) {
@@ -85,8 +93,8 @@ class FooterView extends View {
         }
     }
 
-    openFile() {
-        Events.emit('open-file');
+    closeAll() {
+        Events.emit('close-all');
     }
 
     saveAll() {

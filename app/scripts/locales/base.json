@@ -90,6 +90,7 @@
     "footerSyncError": "Sync error",
     "footerTitleGen": "Generate",
     "footerTitleLock": "Lock",
+    "footerTitleBack": "Close password bank",
 
     "genLen": "Length",
     "genNewPass": "New password",
@@ -348,7 +349,7 @@
     "appSettingsErrorBody": "There was an error loading app settings. Please double check the app URL or contact your administrator.",
     "appNotSupportedError": "Your browser doesn't support some important features we're using.",
     "appTabWarn": "Too many tabs",
-    "appTabWarnBody": "KeeWeb cannot be used in two browser tabs simultaneously, please close this tab.",
+    "appTabWarnBody": "The password bank cannot be used in two browser tabs simultaneously, please close this tab.",
     "appRightsAlert": "Locking KeeWeb app",
     "appRightsAlertBody1": "Your KeeWeb app is currently not guarded against unauthorized changes. We're asking you for permissions to make the app writable only for administrators.",
     "appRightsAlertBody2": "Don't want to give permissions? You can do it yourself in Terminal",
