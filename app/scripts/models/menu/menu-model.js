@@ -82,11 +82,8 @@ class MenuModel extends Model {
         this.filesSection = new MenuSectionModel();
         this.filesSection.set({ scrollable: true, grow: true });
         this.menus.settings = new MenuSectionCollection([
-            this.generalSection,
             this.shortcutsSection,
-            this.pluginsSection,
             this.aboutSection,
-            this.helpSection,
             this.filesSection
         ]);
         this.sections = this.menus.app;
