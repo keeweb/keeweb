@@ -562,13 +562,8 @@ class OpenView extends View {
         this.params.keyFilePath = fileInfo.keyFilePath;
         this.params.keyFileData = null;
         this.params.opts = fileInfo.opts;
-        this.displayOpenFile();
-        this.displayOpenKeyFile();
-
-        this.openFileWithFingerprint(fileInfo);
-
         if (fileWasClicked) {
-            this.focusInput(true);
+            this.openDb();
         }
     }
 

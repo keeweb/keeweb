@@ -3,7 +3,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const debug = require('debug');
-const Agent = require('agentkeepalive');
+const Agent = require('agentkeepalive-ntlm');
 require('dotenv').config();
 
 const webpackConfig = require('./build/webpack.config');
@@ -37,12 +37,12 @@ module.exports = function(grunt) {
     let codeSignConfig;
 
     const keepaliveAgent = new Agent({
-        maxSockets: 1000,
-        keepAlive: true,
-        maxFreeSockets: 100,
+        maxSockets: 100,
+        maxFreeSockets: 10,
         keepAliveMsecs: 10000,
-        timeout: 600000,
-        freeSocketTimeout: 30000 // free socket keepalive for 3000 seconds
+        timeout: 60000,
+        freeSocketKeepAliveTimeout: 30000, // free socket keepalive for 3000 seconds
+        cookieName: 'ASP.NET_SessionId'
     });
 
     if (!skipCodeSigning) {
