@@ -486,13 +486,13 @@ class AppView extends View {
         }
     }
 
-    lockWorkspace(autoInit) {
+    async lockWorkspace(autoInit) {
         if (Alerts.alertDisplayed) {
             return;
         }
         if (this.model.files.hasUnsavedFiles()) {
             if (this.model.settings.autoSave) {
-                this.saveAndLock();
+                this.saveAndLock(this.lockout);
             } else {
                 const message = autoInit ? Locale.appCannotLockAutoInit : Locale.appCannotLock;
                 Alerts.alert({
@@ -510,7 +510,7 @@ class AppView extends View {
                             if (autoSaveChecked) {
                                 this.model.settings.autoSave = autoSaveChecked;
                             }
-                            this.saveAndLock();
+                            this.saveAndLock(this.lockout);
                         } else if (result === 'discard') {
                             this.model.closeAllFiles();
                         }
@@ -518,8 +518,15 @@ class AppView extends View {
                 });
             }
         } else {
+            await this.lockout();
             this.closeAllFilesAndShowFirst();
         }
+    }
+
+    async lockout() {
+        await fetch('/api/passwordbank/lockout', {
+            method: 'POST' // todo: add csrf-header from settings.json
+        });
     }
 
     handleAutoSaveTimer() {
@@ -578,7 +585,7 @@ class AppView extends View {
         }
     }
 
-    closeAllFilesAndShowFirst() {
+    async closeAllFilesAndShowFirst() {
         let fileToShow = this.model.files.find(file => !file.demo && !file.created);
         this.model.closeAllFiles();
         if (!fileToShow) {
