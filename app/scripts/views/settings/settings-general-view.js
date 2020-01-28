@@ -3,7 +3,6 @@ import { View } from 'framework/views/view';
 import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
 import { RuntimeInfo } from 'const/runtime-info';
-import { Updater } from 'comp/app/updater';
 import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Alerts } from 'comp/ui/alerts';
@@ -83,7 +82,6 @@ class SettingsGeneralView extends View {
             idleMinutes: AppSettingsModel.idleMinutes,
             minimizeOnClose: AppSettingsModel.minimizeOnClose,
             devTools: Launcher && Launcher.devTools,
-            canAutoUpdate: Updater.enabled,
             canAutoSaveOnClose: !!Launcher,
             canMinimize: Launcher && Launcher.canMinimize(),
             canDetectMinimize: !!Launcher,
@@ -95,11 +93,8 @@ class SettingsGeneralView extends View {
             lockOnOsLock: AppSettingsModel.lockOnOsLock,
             tableView: AppSettingsModel.tableView,
             canSetTableView: !Features.isMobile,
-            autoUpdate: Updater.getAutoUpdateType(),
-            updateInProgress: Updater.updateInProgress(),
             updateInfo: this.getUpdateInfo(),
             updateWaitingReload: updateReady && !Launcher,
-            showUpdateBlock: Updater.enabled && !updateManual,
             updateReady,
             updateFound,
             updateManual,
@@ -234,18 +229,6 @@ class SettingsGeneralView extends View {
         AppSettingsModel.idleMinutes = idleMinutes;
     }
 
-    changeAutoUpdate(e) {
-        const autoUpdate = e.target.value || false;
-        AppSettingsModel.autoUpdate = autoUpdate;
-        if (autoUpdate) {
-            Updater.scheduleNextCheck();
-        }
-    }
-
-    checkUpdate() {
-        Updater.check(true);
-    }
-
     changeAutoSave(e) {
         const autoSave = e.target.checked || false;
         AppSettingsModel.autoSave = autoSave;
@@ -321,12 +304,6 @@ class SettingsGeneralView extends View {
 
     downloadUpdate() {
         Launcher.openLink(Links.Desktop);
-    }
-
-    installFoundUpdate() {
-        Updater.update(true, () => {
-            Launcher.requestRestart();
-        });
     }
 
     changeExpandGroups(e) {
