@@ -3,7 +3,6 @@ import { FileInfoCollection } from 'collections/file-info-collection';
 import { AppRightsChecker } from 'comp/app/app-rights-checker';
 import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
-import { Updater } from 'comp/app/updater';
 import { AuthReceiver } from 'comp/browser/auth-receiver';
 import { FeatureTester } from 'comp/browser/feature-tester';
 import { FocusDetector } from 'comp/browser/focus-detector';
@@ -145,7 +144,6 @@ ready(() => {
     }
 
     function postInit() {
-        Updater.init();
         SingleInstanceChecker.init();
         AppRightsChecker.init();
         setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
