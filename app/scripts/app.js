@@ -34,6 +34,8 @@ ready(() => {
 
     const appModel = new AppModel();
 
+    let appView = null;
+
     Promise.resolve()
         .then(loadConfigs)
         .then(initModules)
@@ -147,11 +149,23 @@ ready(() => {
         SingleInstanceChecker.init();
         AppRightsChecker.init();
         setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
+        openBankFromQueryParam();
+    }
+
+    function openBankFromQueryParam() {
+        const bank = getBankParam();
+        if (bank) {
+            const fileInfo = appModel.fileInfos.getByName(bank);
+            if (fileInfo) {
+                appView.views.open.showOpenFileInfo(fileInfo, true);
+            }
+        }
     }
 
     function showView() {
         appModel.prepare();
-        new AppView(appModel).render();
+        appView = new AppView(appModel);
+        appView.render();
         Events.emit('app-ready');
         logStartupTime();
     }
@@ -167,6 +181,13 @@ ready(() => {
             return metaConfig.content;
         }
         const match = location.search.match(/[?&]config=([^&]+)/i);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+
+    function getBankParam() {
+        const match = location.search.match(/[?&]bank=([^&]+)/i);
         if (match && match[1]) {
             return match[1];
         }

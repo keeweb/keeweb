@@ -642,7 +642,9 @@ class OpenView extends View {
                 this.model.openFile(this.params, err => this.openDbComplete(err));
             });
         } catch (error) {
-            window.location = `/onetimecode?redirectUri=${encodeURIComponent('/passwordbank/')}`;
+            window.location = `/onetimecode?redirectUri=${encodeURIComponent(
+                `/passwordbank/?bank=${this.params.name}`
+            )}`;
         }
     }
 
