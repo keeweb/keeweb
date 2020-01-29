@@ -524,9 +524,19 @@ class AppView extends View {
     }
 
     async lockout() {
-        await fetch('/api/passwordbank/lockout', {
-            method: 'POST' // todo: add csrf-header from settings.json
-        });
+        try {
+            await fetch('/api/passwordbank/lockout', {
+                method: 'POST' // todo: add csrf-header from settings.json
+            });
+        } catch (error) {
+            Alerts.error({
+                header: Locale.lockErrorHeader,
+                body: Locale.lockErrorBody + '<br/><br/>' + error,
+                esc: false,
+                enter: false,
+                click: false
+            });
+        }
     }
 
     handleAutoSaveTimer() {

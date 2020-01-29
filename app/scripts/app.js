@@ -187,7 +187,7 @@ ready(() => {
     function getBankParam() {
         const match = location.search.match(/[?&]bank=([^&]+)/i);
         if (match && match[1]) {
-            return match[1];
+            return decodeURIComponent(match[1]);
         }
     }
 });

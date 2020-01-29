@@ -134,7 +134,8 @@ class AppModel {
                             name: file.name,
                             storage: file.storage,
                             path: file.path,
-                            opts: file.options
+                            opts: file.options,
+                            icon: file.icon
                         })
                 )
                 .reverse()

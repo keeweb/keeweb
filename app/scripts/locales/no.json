@@ -579,5 +579,7 @@
   "importCsvRun": "Importer",
   "importIgnoreField": "Ignorer",
   "importTo": "Oppføringene vil bli importert til",
-  "importNewFile": "Ny fil"
+  "importNewFile": "Ny fil",
+  "lockErrorHeader": "Kunne ikke låse passordbanken",
+  "lockErrorBody": "Vennligst lukk nettleservinduet for å beskytte passordene. Feilen var:"
 }

@@ -145,6 +145,9 @@ class OpenView extends View {
             if (storage && storage.iconSvg) {
                 icon = null;
             }
+            if (fileInfo.icon) {
+                icon = fileInfo.icon;
+            }
             return {
                 id: fileInfo.id,
                 name: fileInfo.name,

@@ -616,5 +616,7 @@
     "importCsvRun": "Import",
     "importIgnoreField": "Ignore",
     "importTo": "Entries will be imported to",
-    "importNewFile": "New file"
+    "importNewFile": "New file",
+    "lockErrorHeader": "Unable to lock the password bank",
+    "lockErrorBody": "Please close the browser window to protect the password. The error was:"
 }

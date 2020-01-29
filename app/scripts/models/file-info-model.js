@@ -16,7 +16,8 @@ const DefaultProperties = {
     keyFilePath: null,
     opts: null,
     backup: null,
-    fingerprint: null
+    fingerprint: null,
+    icon: null
 };
 
 class FileInfoModel extends Model {

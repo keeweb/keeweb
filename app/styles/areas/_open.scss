@@ -21,7 +21,6 @@
 
     &__icon {
         text-align: center;
-        cursor: pointer;
         margin: 20px;
         transition: color $base-duration $base-timing;
         &:hover {
@@ -37,7 +36,7 @@
             font-size: 4em;
         }
         &-text {
-            color: var(--muted-color);
+            color: var(--text-color);
             .open__icon:hover > & {
                 color: var(--medium-color);
             }
@@ -252,7 +251,7 @@
             .open:not(.open--opening) & {
                 @include area-selectable;
             }
-            color: var(--muted-color);
+            color: var(--text-color);
             padding: $base-padding;
             &:focus {
                 .open--show-focus & {
