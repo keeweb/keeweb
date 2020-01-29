@@ -57,13 +57,22 @@
         />
         <link rel="manifest" href="manifest.json" />
         <link rel="stylesheet" href="css/app.css?__inline=true" />
-        <script src="js/vendor.js?__inline=true"></script>
-        <script src="js/app.js?__inline=true"></script>
-        <script src="js/runtime.js?__inline=true"></script>
+        <script type="text/javascript">
+            if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
+                document.addEventListener("DOMContentLoaded", function (){
+                    document.body.style.maxWidth = "600px";
+                    document.body.style.margin = "40px auto";
+                    document.body.style.position = "static";
+                    document.body.innerHTML += "<p>IDS password bank does not support Internet Explorer. Please use Google Chrome instead.</p>";
+                });
+            }
+        </script>
+        <script src='js/vendor.js?__inline=true'></script>
+        <script src='js/app.js?__inline=true'></script>
+        <script src='js/runtime.js?__inline=true'></script>
     </head>
     <body class="th-d">
         <noscript>
-            <h1>KeeWeb</h1>
             <p>
                 KeeWeb is a password manager written in JavaScript. Please enable JavaScript to run
                 it.
