@@ -529,6 +529,7 @@ class AppView extends View {
                 method: 'POST' // todo: add csrf-header from settings.json
             });
         } catch (error) {
+            this.closeAllFilesAndShowFirst();
             Alerts.error({
                 header: Locale.lockErrorHeader,
                 body: Locale.lockErrorBody + '<br/><br/>' + error,
