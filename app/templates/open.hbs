@@ -84,7 +84,7 @@
         </div>
         <div class="open__last">
             {{#each lastOpenFiles as |file|}}
-                <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 16}}"
+                <div class="open__last-item" data-id="{{file.id}}" tabindex="{{add @index 16}}"
                      id="open__last-item--{{file.id}}">
                     {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
                     {{#if file.iconSvg}}<div class="open__last-item-icon open__last-item-icon--svg">{{{file.iconSvg}}}</div>{{/if}}
