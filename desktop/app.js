@@ -471,7 +471,9 @@ function restorePreferences() {
         const oldProfilePath = path.join(tempUserDataPath, oldProfile.dir);
         const newProfilePath = path.join(tempUserDataPath, newProfile.dir);
         if (fs.existsSync(path.join(oldProfilePath, 'Cookies'))) {
-            fs.mkdirSync(newProfilePath);
+            if (!fs.existsSync(newProfilePath)) {
+                fs.mkdirSync(newProfilePath);
+            }
             const cookiesFileSrc = path.join(oldProfilePath, 'Cookies');
             const cookiesFileDest = path.join(newProfilePath, 'Cookies');
             try {
