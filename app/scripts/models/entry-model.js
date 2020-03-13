@@ -296,7 +296,7 @@ class EntryModel extends Model {
 
     matchStringMulti(lower, str, find, context) {
         if (lower) {
-            str = str.toLowerCase();
+            str = str.isProtected ? str.getText().toLowerCase() : str.toLowerCase();
         }
         for (let i = 0; i < find.length; i++) {
             const item = find[i];
