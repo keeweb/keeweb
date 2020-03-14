@@ -83,18 +83,30 @@ class FieldView extends View {
         let copyRes;
         if (field) {
             const value = this.value || '';
-            if (value && value.isProtected) {
-                const text = value.getText();
-                if (!text) {
+            if (value) {
+                if(value.isProtected){
+                    const text = value.getText();
+                    if (!text) {
+                        return;
+                    }
+                    if (!CopyPaste.simpleCopy) {
+                        CopyPaste.createHiddenInput(text);
+                    }
+                    copyRes = CopyPaste.copy(text);
+                    this.emit('copy', { source: this, copyRes });
                     return;
                 }
-                if (!CopyPaste.simpleCopy) {
-                    CopyPaste.createHiddenInput(text);
+            
+                if(field == "$URL"){
+                    if (!CopyPaste.simpleCopy) {
+                        CopyPaste.createHiddenInput(value);
+                    }
+                    copyRes = CopyPaste.copy(value);
+                    this.emit('copy', { source: this, copyRes });
+                    return;
+                
                 }
-                copyRes = CopyPaste.copy(text);
-                this.emit('copy', { source: this, copyRes });
-                return;
-            }
+            } 
         }
         if (!this.value) {
             return;
