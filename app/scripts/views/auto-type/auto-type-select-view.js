@@ -1,4 +1,4 @@
-import { View } from 'framework/views/view';
+import { View, DefaultTemplateOptions } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { KeyHandler } from 'comp/browser/key-handler';
@@ -78,7 +78,7 @@ class AutoTypeSelectView extends View {
         const itemTemplate = this.itemTemplate;
         this.entries.forEach(entry => {
             presenter.present(entry);
-            itemsHtml += itemTemplate(presenter);
+            itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
         });
         super.render({
             filterText: this.model.filter.text,

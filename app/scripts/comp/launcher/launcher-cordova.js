@@ -105,7 +105,11 @@ const Launcher = {
         );
     },
     fileExists(path, callback) {
-        window.resolveLocalFileSystemURL(path, fileEntry => callback(true), () => callback(false));
+        window.resolveLocalFileSystemURL(
+            path,
+            fileEntry => callback(true),
+            () => callback(false)
+        );
     },
     deleteFile(path, callback) {
         window.resolveLocalFileSystemURL(

@@ -132,9 +132,9 @@ function config(options) {
                 },
                 {
                     test: /fonts[\\/].*\.(woff|ttf|eot|svg)$/,
-                    use: ['url-loader', 'ignore-loader']
+                    use: ['base64-inline-loader', 'ignore-loader']
                 },
-                { test: /\.woff2$/, loader: 'url-loader' },
+                { test: /\.woff2$/, loader: 'base64-inline-loader' },
                 { test: /\.pem$/, loader: 'raw-loader' },
                 { test: /\.kdbx$/, loader: 'base64-loader' }
             ]

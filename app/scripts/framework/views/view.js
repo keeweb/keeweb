@@ -12,6 +12,11 @@ const DoesNotBubble = {
     focus: true
 };
 
+const DefaultTemplateOptions = {
+    allowProtoPropertiesByDefault: true,
+    allowedProtoProperties: { length: true, active: true }
+};
+
 class View extends EventEmitter {
     parent = undefined;
     template = undefined;
@@ -60,7 +65,7 @@ class View extends EventEmitter {
     }
 
     renderElement(templateData) {
-        const html = this.template(templateData);
+        const html = this.template(templateData, DefaultTemplateOptions);
         if (this.el) {
             const mountRoot = this.options.ownParent ? this.el.firstChild : this.el;
             morphdom(mountRoot, html);
@@ -279,4 +284,4 @@ class View extends EventEmitter {
     }
 }
 
-export { View };
+export { View, DefaultTemplateOptions };
