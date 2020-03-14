@@ -22,6 +22,10 @@ class FieldViewUrl extends FieldViewText {
     displayUrl(url) {
         return url.replace(this.displayUrlRegex, '');
     }
+
+    getTextValue() {
+        return this.fixUrl(this.value);
+    }
 }
 
 export { FieldViewUrl };

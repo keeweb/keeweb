@@ -597,9 +597,7 @@ class DetailsView extends View {
             return false;
         }
         if (!window.getSelection().toString()) {
-            const fieldValue = editView.otpValue || editView.value;
-            const fieldText =
-                fieldValue && fieldValue.isProtected ? fieldValue.getText() : fieldValue;
+            const fieldText = editView.getTextValue();
             if (!fieldText) {
                 return;
             }

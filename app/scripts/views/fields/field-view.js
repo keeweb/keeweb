@@ -82,19 +82,16 @@ class FieldView extends View {
         const field = this.model.name;
         let copyRes;
         if (field) {
-            const value = this.value || '';
-            if (value && value.isProtected) {
-                const text = value.getText();
-                if (!text) {
-                    return;
-                }
-                if (!CopyPaste.simpleCopy) {
-                    CopyPaste.createHiddenInput(text);
-                }
-                copyRes = CopyPaste.copy(text);
-                this.emit('copy', { source: this, copyRes });
+            const text = this.getTextValue();
+            if (!text) {
                 return;
             }
+            if (!CopyPaste.simpleCopy) {
+                CopyPaste.createHiddenInput(text);
+            }
+            copyRes = CopyPaste.copy(text);
+            this.emit('copy', { source: this, copyRes });
+            return;
         }
         if (!this.value) {
             return;
@@ -347,6 +344,9 @@ class FieldView extends View {
     }
 
     getTextValue() {
+        if (!this.value) {
+            return '';
+        }
         return this.value.isProtected ? this.value.getText() : this.value;
     }
 }
