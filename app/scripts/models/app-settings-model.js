@@ -73,6 +73,7 @@ AppSettingsModel.defineModelProperties(
         canRemoveLatest: true,
         canExportXml: true,
         canExportHtml: true,
+        canSaveTo: true,
 
         dropbox: true,
         webdav: true,

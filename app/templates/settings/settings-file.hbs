@@ -15,8 +15,10 @@
             {{#ifeq storage 'file'}}{{res 'setFileSave'}}{{/ifeq}}
             {{#ifneq storage 'file'}}{{res 'setFileSyncVerb'}}{{/ifneq}}
         </button>
-        <button class="settings__file-button-save-choose btn-silent"
-            {{#if syncing}}disabled{{/if}}>{{res 'setFileSaveTo'}}</button>
+        {{#if canSaveTo}}
+            <button class="settings__file-button-save-choose btn-silent"
+                {{#if syncing}}disabled{{/if}}>{{res 'setFileSaveTo'}}</button>
+        {{/if}}
         <button class="settings__file-button-close btn-silent">{{res 'setFileClose'}}</button>
     </div>
 

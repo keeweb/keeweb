@@ -4,6 +4,7 @@ Release notes
 `+` #1341: auto-lock the app on screen lock on Windows  
 `+` #1065: PORTABLE_EXECUTABLE_DIR environment variable  
 `*` #1397: Segoe UI font on Windows  
+`+` #1393: option to disable saving and exporting (canSaveTo)  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  

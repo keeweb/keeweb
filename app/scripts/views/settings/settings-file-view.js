@@ -112,6 +112,7 @@ class SettingsFileView extends View {
             kdfParameters: this.kdfParametersToUi(this.model.kdfParameters),
             storageProviders,
             canBackup,
+            canSaveTo: AppSettingsModel.canSaveTo,
             canExportXml: AppSettingsModel.canExportXml,
             canExportHtml: AppSettingsModel.canExportHtml
         });
