@@ -12,6 +12,7 @@ Release notes
 `*` fix #1348: fixed password generation entropy  
 `-` fix #1385: fixed a file watcher error on network locations  
 `-` fix #1391: passwords imported from CSV were not hidden  
+`-` fix #1387: fixed drag-drop for otp fields  
 
 ##### v1.12.3 (2019-11-06)
 `-` fix #1335: removed the menubar on Windows and Linux  

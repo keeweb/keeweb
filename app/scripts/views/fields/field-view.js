@@ -134,7 +134,7 @@ class FieldView extends View {
             return;
         }
         const dt = e.dataTransfer;
-        const txtval = this.value.isProtected ? this.value.getText() : this.value;
+        const txtval = this.getTextValue();
         if (this.valueEl[0].tagName.toLowerCase() === 'a') {
             dt.setData('text/uri-list', txtval);
         }
@@ -344,6 +344,10 @@ class FieldView extends View {
                 setTimeout(() => this.showGenerator(), 0);
                 break;
         }
+    }
+
+    getTextValue() {
+        return this.value.isProtected ? this.value.getText() : this.value;
     }
 }
 

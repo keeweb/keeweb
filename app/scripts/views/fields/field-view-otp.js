@@ -33,6 +33,10 @@ class FieldViewOtp extends FieldViewText {
         return value && value.url;
     }
 
+    getTextValue() {
+        return this.otpValue;
+    }
+
     render() {
         super.render();
         this.fieldOpacity = null;
