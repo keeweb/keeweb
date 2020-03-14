@@ -162,7 +162,7 @@ class ImportCsvView extends View {
                 if (mapping.type === 'ignore' || !mapping.field) {
                     continue;
                 }
-                if (mapping.field === 'password') {
+                if (mapping.field === 'Password') {
                     value = kdbxweb.ProtectedValue.fromString(value);
                 }
                 newEntry.setField(mapping.field, value);
