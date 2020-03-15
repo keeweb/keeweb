@@ -1,80 +1,65 @@
 import kdbxweb from 'kdbxweb';
 import { phonetic } from 'util/generators/phonetic';
 
-const PasswordGenerator = {
-    charRanges: {
-        upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
-        lower: 'abcdefghijkmnpqrstuvwxyz',
-        digits: '123456789',
-        special: '!@#$%^&*_+-=,./?;:`"~\'\\',
-        brackets: '(){}[]<>',
-        high:
-            '¡¢£¤¥¦§©ª«¬®¯°±²³´µ¶¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþ',
-        ambiguous: 'O0oIl'
-    },
+const CharRanges = {
+    upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
+    lower: 'abcdefghijkmnpqrstuvwxyz',
+    digits: '123456789',
+    special: '!@#$%^&*_+-=,./?;:`"~\'\\',
+    brackets: '(){}[]<>',
+    high:
+        '¡¢£¤¥¦§©ª«¬®¯°±²³´µ¶¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþ',
+    ambiguous: 'O0oIl'
+};
 
+const DefaultCharRangesByPattern = {
+    'A': CharRanges.upper,
+    'a': CharRanges.lower,
+    '1': CharRanges.digits,
+    '*': CharRanges.special,
+    '[': CharRanges.brackets,
+    'Ä': CharRanges.high,
+    '0': CharRanges.ambiguous
+};
+
+const PasswordGenerator = {
     generate(opts) {
         if (!opts || typeof opts.length !== 'number' || opts.length < 0) {
             return '';
         }
-        switch (opts.name) {
-            case 'Pronounceable':
-                return this.generatePronounceable(opts);
-            case 'Hash128':
-                return this.generateHash(32);
-            case 'Hash256':
-                return this.generateHash(64);
-            case 'Mac':
-                return this.generateMac();
+        if (opts.name === 'Pronounceable') {
+            return this.generatePronounceable(opts);
         }
-        const ranges = Object.keys(this.charRanges)
+        const ranges = Object.keys(CharRanges)
             .filter(r => opts[r])
-            .map(function(r) {
-                return this.charRanges[r];
-            }, this);
+            .map(r => CharRanges[r]);
         if (opts.include && opts.include.length) {
             ranges.push(opts.include);
         }
         if (!ranges.length) {
             return '';
         }
-        const pool = ranges.join('');
+        const rangesByPatternChar = {
+            ...DefaultCharRangesByPattern,
+            'X': ranges.join(''),
+            'I': opts.include || ''
+        };
+        const pattern = opts.pattern || 'X';
         const randomBytes = kdbxweb.Random.getBytes(opts.length);
         const chars = [];
         for (let i = 0; i < opts.length; i++) {
             const rand = Math.round(Math.random() * 1000) + randomBytes[i];
-            chars.push(pool[rand % pool.length]);
+            const patternChar = pattern[i % pattern.length];
+            const range = rangesByPatternChar[patternChar];
+            const char = range ? range[rand % range.length] : patternChar;
+            chars.push(char);
         }
         return chars.join('');
     },
 
-    generateMac() {
-        const segmentsCount = 6;
-        const randomBytes = kdbxweb.Random.getBytes(segmentsCount);
-        let result = '';
-        for (let i = 0; i < segmentsCount; i++) {
-            let segment = randomBytes[i].toString(16).toUpperCase();
-            if (segment.length < 2) {
-                segment = '0' + segment;
-            }
-            result += (result ? '-' : '') + segment;
-        }
-        return result;
-    },
-
-    generateHash(length) {
-        const randomBytes = kdbxweb.Random.getBytes(length);
-        let result = '';
-        for (let i = 0; i < length; i++) {
-            result += randomBytes[i].toString(16)[0];
-        }
-        return result;
-    },
-
     generatePronounceable(opts) {
         const pass = phonetic.generate({
-            length: opts.length,
-            seed: this.generateHash(1024)
+            length: opts.length
         });
         let result = '';
         const upper = [];
@@ -98,7 +83,7 @@ const PasswordGenerator = {
         const opts = {};
         let length = 0;
         if (password) {
-            const charRanges = this.charRanges;
+            const charRanges = CharRanges;
             password.forEachChar(ch => {
                 length++;
                 ch = String.fromCharCode(ch);
@@ -114,4 +99,4 @@ const PasswordGenerator = {
     }
 };
 
-export { PasswordGenerator };
+export { PasswordGenerator, CharRanges };

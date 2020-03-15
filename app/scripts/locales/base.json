@@ -138,6 +138,10 @@
     "genPsAmbiguous": "Ambiguous symbols",
     "genPsInclude": "Additional symbols to include",
     "genPsExample": "Example of generated password",
+    "genPsPattern": "Pattern",
+    "genPsPatternHelp": "Patterns can be used to specify custom rules for selecting characters. For example, 1-AA will generate passwords starting with a digit, followed by a dash and two letters. You can use these symbols:",
+    "genPsAllRanges": "All symbols",
+    "genPsIncluded": "Additional symbols added above",
 
     "keyChangeTitleRemote": "Master Key Changed",
     "keyChangeMessageRemote": "Master key was changed for this database. Please enter a new key",
