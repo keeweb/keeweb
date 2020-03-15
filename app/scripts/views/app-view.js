@@ -6,7 +6,6 @@ import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
-import { Timeouts } from 'const/timeouts';
 import { UpdateModel } from 'models/update-model';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
