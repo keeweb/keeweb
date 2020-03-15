@@ -15,6 +15,7 @@ Release notes
 `-` fix #1387: fixed drag-drop for otp fields  
 `-` fix #1293: copying full urls  
 `-` fix #1378: screen orientation issues on Android PWA  
+`-` fix #1338: minimized option not working on linux  
 
 ##### v1.12.3 (2019-11-06)
 `-` fix #1335: removed the menubar on Windows and Linux  

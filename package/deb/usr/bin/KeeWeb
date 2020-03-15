@@ -1,2 +1,2 @@
 #!/bin/bash
-/opt/keeweb-desktop/KeeWeb
+/opt/keeweb-desktop/KeeWeb "$@"
