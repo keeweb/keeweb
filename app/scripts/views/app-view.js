@@ -64,7 +64,6 @@ class AppView extends View {
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
         this.listenTo(this.model.settings, 'change:autoSaveInterval', this.setupAutoSave);
-        this.listenTo(this.model.settings, 'change:autoSave', this.setupAutoSave);
         this.listenTo(this.model.files, 'change', this.fileListUpdated);
 
         this.listenTo(Events, 'select-all', this.selectAll);
@@ -590,19 +589,13 @@ class AppView extends View {
         }, this);
     }
 
-    syncAllByTimer() {
-        if (this.model.settings.autoSave) {
-            this.saveAll();
-        }
-    }
-
     setupAutoSave() {
         if (this.autoSaveTimer) {
             clearInterval(this.autoSaveTimer);
         }
-        if (this.model.settings.autoSave && this.model.settings.autoSaveInterval) {
+        if (this.model.settings.autoSaveInterval) {
             this.autoSaveTimer = setInterval(
-                this.syncAllByTimer.bind(this),
+                this.saveAll.bind(this),
                 this.model.settings.autoSaveInterval * 1000 * 60
             );
         }
