@@ -21,6 +21,7 @@ Release notes
 `-` fix #1378: screen orientation issues on Android PWA  
 `-` fix #1338: minimized option not working on linux  
 `-` fix #895: generator positioning in list view  
+`-` fix #516: scrolling on the open screen on mobile  
 
 ##### v1.12.3 (2019-11-06)
 `-` fix #1335: removed the menubar on Windows and Linux  

@@ -122,6 +122,9 @@ class AppView extends View {
         if (this.titlebarStyle !== 'default') {
             document.body.classList.add('titlebar-' + this.titlebarStyle);
         }
+        if (Features.isMobile) {
+            document.body.classList.add('mobile');
+        }
     }
 
     fixClicksInEdge() {
