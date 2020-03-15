@@ -70,6 +70,7 @@ class FieldViewCustom extends FieldViewText {
         this.labelInput.bind({
             input: this.fieldLabelInput.bind(this),
             keydown: this.fieldLabelKeydown.bind(this),
+            keyup: this.fieldLabelKeyup.bind(this),
             keypress: this.fieldLabelInput.bind(this),
             mousedown: this.fieldLabelInputClick.bind(this),
             click: this.fieldLabelInputClick.bind(this)
@@ -130,12 +131,17 @@ class FieldViewCustom extends FieldViewText {
     fieldLabelKeydown(e) {
         e.stopPropagation();
         const code = e.keyCode || e.which;
-        if (code === Keys.DOM_VK_RETURN) {
-            this.endEditTitle(e.target.value);
-        } else if (code === Keys.DOM_VK_ESCAPE) {
+        if (code === Keys.DOM_VK_ESCAPE) {
             this.endEditTitle();
         } else if (code === Keys.DOM_VK_TAB) {
             e.preventDefault();
+            this.endEditTitle(e.target.value);
+        }
+    }
+
+    fieldLabelKeyup(e) {
+        const code = e.keyCode || e.which;
+        if (code === Keys.DOM_VK_RETURN) {
             this.endEditTitle(e.target.value);
         }
     }
