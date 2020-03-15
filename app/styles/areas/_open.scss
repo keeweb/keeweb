@@ -97,11 +97,15 @@
             position: absolute;
             left: 100%;
             @include mobile {
-                display: none;
+                left: auto;
+                right: 0;
             }
             color: var(--muted-color);
             > i {
                 font-size: 3em;
+                @include mobile {
+                    line-height: .8;
+                }
             }
         }
         .open--show-focus & {

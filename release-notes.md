@@ -7,6 +7,7 @@ Release notes
 `+` #1393: option to disable saving and exporting (canSaveTo)  
 `+` #1006: password generator patterns  
 `+` #1309: back button in attachment preview  
+`+` #1142: submit button on mobile password input   
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  
