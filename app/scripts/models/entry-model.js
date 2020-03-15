@@ -1,5 +1,6 @@
 import kdbxweb from 'kdbxweb';
 import { Model } from 'framework/model';
+import { AppSettingsModel } from 'models/app-settings-model';
 import { KdbxToHtml } from 'comp/format/kdbx-to-html';
 import { IconMap } from 'const/icon-map';
 import { AttachmentModel } from 'models/attachment-model';
@@ -786,6 +787,9 @@ class EntryModel extends Model {
     static newEntry(group, file) {
         const model = new EntryModel();
         const entry = file.db.createEntry(group.group);
+        if (AppSettingsModel.useGroupIconForEntries && group.icon && group.iconId) {
+            entry.icon = group.iconId;
+        }
         model.setEntry(entry, group, file);
         model.entry.times.update();
         model.unsaved = true;

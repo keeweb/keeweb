@@ -405,6 +405,7 @@
     "setGenTableView": "Entries list table view",
     "setGenColorfulIcons": "Colorful custom icons in the list",
     "setGenUseMarkdown": "Markdown in notes",
+    "setGenUseGroupIconForEntries": "Automatically use group icon for new entries",
     "setGenDirectAutotype": "If only one matching entry is found, select that one automatically for Autotype",
     "setGenFunction": "Function",
     "setGenAutoSyncOnClose": "Automatically save and sync on close",
