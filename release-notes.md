@@ -11,6 +11,7 @@ Release notes
 `+` #766: setting for no/unlimited history  
 `+` #411: option to automatically use group icon for new entries  
 `+` #615: translated shortcut modifier keys  
+`*` #1029: fixed syncing files by timeout when there are no changes  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  
