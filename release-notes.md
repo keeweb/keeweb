@@ -10,6 +10,7 @@ Release notes
 `+` #1142: submit button on mobile password input  
 `+` #766: setting for no/unlimited history  
 `+` #411: option to automatically use group icon for new entries  
+`+` #615: translated shortcut modifier keys  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  

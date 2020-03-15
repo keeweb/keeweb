@@ -53,6 +53,9 @@
     "help": "Help",
     "settings": "Settings",
     "plugins": "Plugins",
+    "ctrlKey": "ctrl",
+    "shiftKey": "shift",
+    "altKey": "alt",
 
     "cache": "cache",
     "file": "file",
