@@ -176,7 +176,9 @@ class EntryModel extends Model {
     _entryModified() {
         if (!this.unsaved) {
             this.unsaved = true;
-            this.entry.pushHistory();
+            if (this.file.historyMaxItems !== 0) {
+                this.entry.pushHistory();
+            }
             this.file.setModified();
         }
         if (this.isJustCreated) {

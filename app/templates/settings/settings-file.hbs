@@ -122,8 +122,16 @@
         <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}} />
         <label for="settings__file-trash">{{res 'setFileEnableTrash'}}</label>
     </div>
-    <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
-    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" maxlength="6" />
+    <label for="settings__file-hist-type">{{res 'setFileHistMode'}}</label>
+    <select class="settings__select input-base" id="settings__file-hist-type">
+        <option value="1" {{#cmp historyMaxItems 0 '>'}}selected{{/cmp}}>{{res 'setFileHistLimited'}}</option>
+        <option value="0" {{#ifeq historyMaxItems 0}}selected{{/ifeq}}>{{res 'setFileHistDisabled'}}</option>
+        <option value="-1" {{#ifeq historyMaxItems -1}}selected{{/ifeq}}>{{res 'setFileHistUnlimited'}}</option>
+    </select>
+    {{#cmp historyMaxItems 0 '>'}}
+        <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
+        <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" maxlength="6" />
+    {{/cmp}}
     <label for="settings__file-hist-size">{{res 'setFileHistSize'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" maxlength="3" />
 
