@@ -6,6 +6,7 @@ Release notes
 `*` #1397: Segoe UI font on Windows  
 `+` #1393: option to disable saving and exporting (canSaveTo)  
 `+` #1006: password generator patterns  
+`+` #1309: back button in attachment preview  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  
