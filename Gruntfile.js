@@ -520,7 +520,7 @@ module.exports = function(grunt) {
                     {
                         cwd: 'tmp/desktop/KeeWeb-linux-x64/',
                         src: '**',
-                        dest: '/opt/keeweb-desktop',
+                        dest: '/usr/share/keeweb-desktop',
                         expand: true,
                         nonull: true
                     },

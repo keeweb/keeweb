@@ -17,6 +17,7 @@ Release notes
 `+` #572: RPM distributable  
 `+` #450: Snap distributable  
 `+` #855: appdata file in deb packages  
+`*` fix #890: deb will no longer install to /opt  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  
 `-` fix #734: OTP secrets with spaces  
