@@ -359,6 +359,7 @@
     "appRightsAlert": "Locking KeeWeb app",
     "appRightsAlertBody1": "Your KeeWeb app is currently not guarded against unauthorized changes. We're asking you for permissions to make the app writable only for administrators.",
     "appRightsAlertBody2": "Don't want to give permissions? You can do it yourself in Terminal",
+    "appBrowserAuthComplete": "Authentication is complete, you may close this page now.",
 
     "setGenTitle": "General Settings",
     "setGenUpdate": "Update",

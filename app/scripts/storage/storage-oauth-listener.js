@@ -1,6 +1,7 @@
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
 import { noop } from 'util/fn';
+import { Locale } from 'util/locale';
 
 const DefaultPort = 48149;
 const logger = new Logger('storage-oauth-listener');
@@ -21,8 +22,10 @@ const StorageOAuthListener = {
 
             const http = Launcher.req('http');
             const server = http.createServer((req, resp) => {
-                resp.writeHead(204);
-                resp.end();
+                resp.writeHead(200, 'OK', {
+                    'Content-Type': 'text/plain; charset=UTF-8'
+                });
+                resp.end(Locale.appBrowserAuthComplete);
                 this.handleResult(req.url, listener);
             });
 
