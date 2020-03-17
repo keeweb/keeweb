@@ -1,7 +1,7 @@
 ​<?xml version="1.0" encoding="UTF-8"?>
 ​<!-- Copyright 2020 Antelle <antelle.net@email.com> -->
 ​<component type="desktop-application">
-​  <id>keeweb</id>
+​  <id>keeweb.desktop</id>
 ​  <metadata_license>MIT</metadata_license>
 ​  <project_license>MIT</project_license>
 ​  <name>KeeWeb</name>
