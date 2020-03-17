@@ -33,7 +33,9 @@ if (!htmlPath) {
     htmlPath = 'file://' + path.join(__dirname, 'index.html');
 }
 
-const showDevToolsOnStart = process.argv.some(arg => arg.startsWith('--devtools'));
+const showDevToolsOnStart =
+    process.argv.some(arg => arg.startsWith('--devtools')) ||
+    process.env.KEEWEB_OPEN_DEVTOOLS === '1';
 
 const startMinimized = process.argv.some(arg => arg.startsWith('--minimized'));
 
@@ -524,7 +526,7 @@ function hookRequestHeaders() {
         if (!details.url.startsWith('ws:')) {
             delete details.requestHeaders.Origin;
         }
-        callback({ cancel: false, requestHeaders: details.requestHeaders });
+        callback({ requestHeaders: details.requestHeaders });
     });
 }
 
