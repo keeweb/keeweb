@@ -22,6 +22,13 @@ const UrlFormat = {
 
     fileToDir(url) {
         return url.replace(this.lastPartRegex, '') || '/';
+    },
+
+    makeUrl(base, args) {
+        const queryString = Object.entries(args)
+            .map(([key, value]) => key + '=' + encodeURIComponent(value))
+            .join('&');
+        return base + '?' + queryString;
     }
 };
 

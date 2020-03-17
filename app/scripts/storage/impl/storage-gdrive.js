@@ -1,9 +1,19 @@
 import { StorageBase } from 'storage/storage-base';
 import { Locale } from 'util/locale';
+import { Features } from 'util/features';
 
 const GDriveClientId = {
     Local: '783608538594-36tkdh8iscrq8t8dq87gghubnhivhjp5.apps.googleusercontent.com',
-    Production: '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com'
+    Production: '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com',
+    Desktop: '847548101761-h2pcl2p6m1tssnlqm0vrm33crlveccbr.apps.googleusercontent.com'
+};
+const GDriveClientSecret = {
+    // They are not really secrets and are supposed to be embedded in the app code according to
+    //  the official guide: https://developers.google.com/identity/protocols/oauth2#installed
+    // The process results in a client ID and, in some cases, a client secret,
+    //  which you embed in the source code of your application.
+    //  (In this context, the client secret is obviously not treated as a secret.)
+    Desktop: 'nTSCiqXtUNmURIIdASaC1TJK'
 };
 const NewFileIdPrefix = 'NewFile:';
 
@@ -95,46 +105,48 @@ class StorageGDrive extends StorageBase {
                 const ts = this.logger.ts();
                 const isNew = path.lastIndexOf(NewFileIdPrefix, 0) === 0;
                 let url;
+                let dataType;
+                let dataIsMultipart = false;
                 if (isNew) {
                     url =
                         this._baseUrlUpload +
                         '/files?uploadType=multipart&fields=id,headRevisionId';
                     const fileName = path.replace(NewFileIdPrefix, '') + '.kdbx';
-                    const boundry = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
-                    data = new Blob(
-                        [
-                            '--',
-                            boundry,
-                            '\r\n',
-                            'Content-Type: application/json; charset=UTF-8',
-                            '\r\n\r\n',
-                            JSON.stringify({ name: fileName }),
-                            '\r\n',
-                            '--',
-                            boundry,
-                            '\r\n',
-                            'Content-Type: application/octet-stream',
-                            '\r\n\r\n',
-                            data,
-                            '\r\n',
-                            '--',
-                            boundry,
-                            '--',
-                            '\r\n'
-                        ],
-                        { type: 'multipart/related; boundary="' + boundry + '"' }
-                    );
+                    const boundary = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
+                    data = [
+                        '--',
+                        boundary,
+                        '\r\n',
+                        'Content-Type: application/json; charset=UTF-8',
+                        '\r\n\r\n',
+                        JSON.stringify({ name: fileName }),
+                        '\r\n',
+                        '--',
+                        boundary,
+                        '\r\n',
+                        'Content-Type: application/octet-stream',
+                        '\r\n\r\n',
+                        data,
+                        '\r\n',
+                        '--',
+                        boundary,
+                        '--',
+                        '\r\n'
+                    ];
+                    dataType = 'multipart/related; boundary="' + boundary + '"';
+                    dataIsMultipart = true;
                 } else {
                     url =
                         this._baseUrlUpload +
                         '/files/{id}?uploadType=media&fields=headRevisionId'.replace('{id}', path);
-                    data = new Blob([data], { type: 'application/octet-stream' });
                 }
                 this._xhr({
                     url,
                     method: isNew ? 'POST' : 'PATCH',
                     responseType: 'json',
                     data,
+                    dataType,
+                    dataIsMultipart,
                     success: response => {
                         this.logger.debug('Saved', path, this.logger.ts(ts));
                         const newRev = response.headRevisionId;
@@ -239,19 +251,31 @@ class StorageGDrive extends StorageBase {
 
     _getOAuthConfig() {
         let clientId = this.appSettings.gdriveClientId;
+        let clientSecret;
         if (!clientId) {
-            clientId =
-                location.origin.indexOf('localhost') >= 0
-                    ? GDriveClientId.Local
-                    : GDriveClientId.Production;
+            if (Features.isDesktop) {
+                clientId = GDriveClientId.Desktop;
+                clientSecret = GDriveClientSecret.Desktop;
+            } else {
+                clientId =
+                    location.origin.indexOf('localhost') >= 0
+                        ? GDriveClientId.Local
+                        : GDriveClientId.Production;
+            }
         }
         return {
             scope: 'https://www.googleapis.com/auth/drive',
             url: 'https://accounts.google.com/o/oauth2/v2/auth',
+            tokenUrl: 'https://oauth2.googleapis.com/token',
             clientId,
+            clientSecret,
             width: 600,
             height: 400
         };
+    }
+
+    _useLocalOAuthRedirectListener() {
+        return Features.isDesktop;
     }
 }
 

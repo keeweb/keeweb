@@ -735,6 +735,9 @@ class OpenView extends View {
             this.busy = false;
             if (err || !files) {
                 err = err ? err.toString() : '';
+                if (err === 'browser-auth-started') {
+                    return;
+                }
                 if (err.lastIndexOf('OAuth', 0) !== 0 && !Alerts.alertDisplayed) {
                     Alerts.error({
                         header: Locale.openError,

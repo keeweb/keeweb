@@ -121,7 +121,7 @@ class StorageOneDrive extends StorageBase {
                 method: 'PUT',
                 responseType: 'json',
                 headers: rev ? { 'If-Match': rev } : null,
-                data: new Blob([data], { type: 'application/octet-stream' }),
+                data,
                 statuses: [200, 201, 412],
                 success: (response, xhr) => {
                     rev = response.eTag;
@@ -213,7 +213,8 @@ class StorageOneDrive extends StorageBase {
                 method: 'POST',
                 responseType: 'json',
                 statuses: [200, 204],
-                data: new Blob([data], { type: 'application/json' }),
+                data,
+                dataType: 'application/json',
                 success: () => {
                     this.logger.debug('Made dir', path, this.logger.ts(ts));
                     return callback && callback();

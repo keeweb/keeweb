@@ -1,4 +1,5 @@
 import { AppSettingsModel } from 'models/app-settings-model';
+import { UrlFormat } from 'util/formatting/url-format';
 
 const ChooserAppKey = 'qp7ctun6qt5n9d6';
 
@@ -26,8 +27,8 @@ DropboxChooser.prototype.choose = function() {
 };
 
 DropboxChooser.prototype.buildUrl = function() {
-    const urlParams = {
-        origin: encodeURIComponent(window.location.protocol + '//' + window.location.host),
+    return UrlFormat.makeUrl('https://www.dropbox.com/chooser', {
+        origin: window.location.protocol + '//' + window.location.host,
         'app_key': AppSettingsModel.dropboxAppKey || ChooserAppKey,
         'link_type': 'direct',
         trigger: 'js',
@@ -36,13 +37,7 @@ DropboxChooser.prototype.buildUrl = function() {
         folderselect: 'false',
         iframe: 'false',
         version: 2
-    };
-    return (
-        'https://www.dropbox.com/chooser?' +
-        Object.keys(urlParams)
-            .map(key => key + '=' + urlParams[key])
-            .join('&')
-    );
+    });
 };
 
 DropboxChooser.prototype.onMessage = function(e) {
