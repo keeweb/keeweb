@@ -62,7 +62,13 @@ module.exports = function(grunt) {
         'copy:desktop-win32-dist-ia32'
     ]);
 
-    grunt.registerTask('build-desktop-dist-linux', ['deb:linux-x64']);
+    grunt.registerTask('build-desktop-dist-linux', [
+        'deb:linux-x64',
+        'electron-builder:linux',
+        'copy:electron-builder-dist-linux-rpm',
+        'copy:electron-builder-dist-linux-snap',
+        'copy:electron-builder-dist-linux-appimage'
+    ]);
 
     grunt.registerTask('build-desktop-dist', [
         'build-desktop-dist-darwin',

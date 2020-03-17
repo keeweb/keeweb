@@ -159,6 +159,21 @@ module.exports = function(grunt) {
                 src: 'tmp/desktop/KeeWeb.win.ia32.exe',
                 dest: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.exe`,
                 nonull: true
+            },
+            'electron-builder-dist-linux-rpm': {
+                src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.x86_64.rpm`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.x86_64.rpm`,
+                nonull: true
+            },
+            'electron-builder-dist-linux-snap': {
+                src: `tmp/desktop/electron-builder/KeeWeb_${pkg.version}_amd64.snap`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.amd64.snap`,
+                nonull: true
+            },
+            'electron-builder-dist-linux-appimage': {
+                src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.AppImage`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.AppImage`,
+                nonull: true
             }
         },
         eslint: {
@@ -348,6 +363,31 @@ module.exports = function(grunt) {
                         OriginalFilename: 'KeeWeb.exe',
                         ProductName: 'KeeWeb',
                         InternalName: 'KeeWeb'
+                    }
+                }
+            }
+        },
+        'electron-builder': {
+            linux: {
+                options: {
+                    targets: 'linux',
+                    prepackaged: 'tmp/desktop/KeeWeb-linux-x64',
+                    config: {
+                        appId: 'net.antelle.keeweb',
+                        productName: 'KeeWeb',
+                        copyright: `Copyright © ${year} Antelle`,
+                        directories: {
+                            output: 'tmp/desktop/electron-builder',
+                            app: 'desktop',
+                            buildResources: 'graphics'
+                        },
+                        linux: {
+                            target: ['AppImage', 'snap', 'rpm'],
+                            category: 'Utility'
+                        },
+                        rpm: {
+                            depends: ['libappindicator1', 'libgconf-2-4']
+                        }
                     }
                 }
             }
