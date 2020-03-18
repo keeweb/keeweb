@@ -381,12 +381,20 @@ module.exports = function(grunt) {
                             app: 'desktop',
                             buildResources: 'graphics'
                         },
+                        fileAssociations: {
+                            ext: 'kdbx',
+                            name: 'KeePass 2 database',
+                            mimeType: 'application/x-keepass2'
+                        },
                         linux: {
                             target: ['AppImage', 'snap', 'rpm'],
                             category: 'Utility'
                         },
                         rpm: {
-                            depends: ['libappindicator1', 'libgconf-2-4']
+                            // depends: ['libappindicator1', 'libgconf-2-4']
+                        },
+                        snap: {
+                            stagePackages: ['libappindicator1', 'libgconf-2-4']
                         }
                     }
                 }
