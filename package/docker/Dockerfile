@@ -14,7 +14,7 @@
 # docker run --name keeweb -d -p 443:443 -p 80:80 -e 'DH_SIZE=512' antelle/keeweb
 
 FROM nginx:stable
-MAINTAINER Antelle "antelle.net@gmail.com"
+LABEL maintainer="antelle.net@gmail.com"
 
 # install
 RUN apt-get -y update && apt-get -y install openssl wget unzip
