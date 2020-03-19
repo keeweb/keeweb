@@ -72,7 +72,7 @@
         "normalize.css": "8.0.1",
         "optimize-css-assets-webpack-plugin": "^5.0.3",
         "pikaday": "1.8.0",
-        "pkcs15-smartcard-sign": "^1.0.0",
+        "pkcs11-smartcard-sign": "^1.0.0",
         "postcss-loader": "^3.0.0",
         "prettier": "^1.19.1",
         "puppeteer": "^2.1.1",
