@@ -108,7 +108,7 @@
             > i {
                 font-size: 3em;
                 @include mobile {
-                    line-height: 1;
+                    line-height: .8;
                 }
             }
         }
