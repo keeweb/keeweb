@@ -275,7 +275,7 @@
     "detDelToTrashBody": "The entry will be moved to the trash folder.",
     "detFieldCopied": "Copied",
     "detFieldCopiedTime": "Copied for {} seconds",
-    "detCopyHint": "You can copy field value with click on its title",
+    "detCopyHint": "You can copy field value by clicking its title",
     "detMore": "more",
     "detClickToAddField": "click to add a new field",
     "detMenuAddNewField": "Add new field",
