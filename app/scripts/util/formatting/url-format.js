@@ -1,6 +1,6 @@
 const UrlFormat = {
     multiSlashRegex: /\/{2,}/g,
-    lastPartRegex: /\/?[^\/\\]+$/,
+    lastPartRegex: /[\/\\]?[^\/\\]+$/,
     kdbxEndRegex: /\.kdbx$/i,
 
     getDataFileName(url) {
