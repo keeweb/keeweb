@@ -1,3 +1,4 @@
+import 'util/kdbxweb/protected-value-ex';
 import { shuffle } from 'util/fn';
 
 class RandomNameGenerator {
