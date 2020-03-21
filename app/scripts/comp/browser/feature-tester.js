@@ -1,4 +1,3 @@
-import kdbxweb from 'kdbxweb';
 import { Features } from 'util/features';
 
 const FeatureTester = {
