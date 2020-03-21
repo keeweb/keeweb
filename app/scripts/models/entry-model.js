@@ -45,7 +45,7 @@ class EntryModel extends Model {
         this.fileName = this.file.name;
         this.groupName = this.group.title;
         this.title = this._getFieldString('Title');
-        this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
+        this.password = this._getPassword();
         this.notes = this._getFieldString('Notes');
         this.url = this._getFieldString('URL');
         this.displayUrl = this._getDisplayUrl(this._getFieldString('URL'));
@@ -69,6 +69,14 @@ class EntryModel extends Model {
         if (this.hasFieldRefs) {
             this.resolveFieldReferences();
         }
+    }
+
+    _getPassword() {
+        const password = this.entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
+        if (!password.isProtected) {
+            return kdbxweb.ProtectedValue.fromString(password);
+        }
+        return password;
     }
 
     _getFieldString(field) {
