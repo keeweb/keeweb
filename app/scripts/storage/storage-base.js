@@ -42,6 +42,7 @@ class StorageBase {
     }
 
     _xhr(config) {
+        this.logger.info('HTTP request', config.method || 'GET', config.url);
         if (config.data) {
             if (!config.dataType) {
                 config.dataType = 'application/octet-stream';
@@ -58,6 +59,7 @@ class StorageBase {
             };
         }
         this._httpRequest(config, response => {
+            this.logger.info('HTTP response', response.status);
             const statuses = config.statuses || [200];
             if (statuses.indexOf(response.status) >= 0) {
                 return config.success && config.success(response.response, response);
