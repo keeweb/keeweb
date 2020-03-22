@@ -18,7 +18,7 @@ Release notes
 `+` #450: Snap distributable  
 `+` #855: appdata file in deb packages  
 `*` signature key rotated  
-`*` Windows code signing certificate from Comodo  
+`*` new Windows code signing certificate  
 `*` fix #890: deb will no longer install to /opt  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  
