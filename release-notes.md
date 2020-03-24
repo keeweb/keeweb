@@ -3,7 +3,7 @@ Release notes
 ##### v1.13.0 (TBD)
 `-` #1359: fixed Google Drive login issues in desktop apps  
 `+` #1341: auto-lock the app on screen lock on Windows  
-`+` #1065: PORTABLE_EXECUTABLE_DIR environment variable  
+`+` #1065: KEEWEB_PORTABLE_EXECUTABLE_DIR environment variable  
 `*` #1397: Segoe UI font on Windows  
 `+` #1393: option to disable saving and exporting (canSaveTo)  
 `+` #1006: password generator patterns  

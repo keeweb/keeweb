@@ -19,7 +19,7 @@ if (!gotTheLock) {
 
 let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
 const userDataDir =
-    process.env.PORTABLE_EXECUTABLE_DIR ||
+    process.env.KEEWEB_PORTABLE_EXECUTABLE_DIR ||
     app.getPath('userData').replace(/[\\/]temp[\\/]\d+\.\d+[\\/]?$/, '');
 const windowPositionFileName = path.join(userDataDir, 'window-position.json');
 const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
