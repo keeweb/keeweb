@@ -92,7 +92,10 @@ class IconSelectView extends View {
             url = 'http://' + url;
         }
         if (useService) {
-            return 'https://favicon.keeweb.info/' + url.replace(/^.*:\/+/, '').replace(/\/.*/, '');
+            return (
+                'https://services.keeweb.info/favicon/' +
+                url.replace(/^.*:\/+/, '').replace(/\/.*/, '')
+            );
         }
         return url;
     }
