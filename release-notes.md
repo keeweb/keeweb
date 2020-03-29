@@ -19,6 +19,7 @@ Release notes
 `+` #855: appdata file in deb packages  
 `*` signature key rotated  
 `*` new Windows code signing certificate  
+`+` startup time profiling  
 `*` fix #890: deb will no longer install to /opt  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  

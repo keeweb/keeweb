@@ -20,8 +20,22 @@ const StartProfiler = {
 
     report() {
         const time = Math.round(performance.now());
-        const details = operations.map(op => `${op.name}: ${Math.round(op.elapsed)}ms`).join(', ');
-        logger.info(`Started in ${time}ms. Details: ${details}`);
+        const details = operations.map(op => `${op.name}=${Math.round(op.elapsed)}ms`).join(', ');
+        let message = `Started in ${time}ms: ${details}.`;
+
+        if (this.appProfile) {
+            message += ` Electron app started in ${this.appProfile.totalTime}ms: `;
+            message +=
+                this.appProfile.timings
+                    .map(op => `${op.name}=${Math.round(op.elapsed)}ms`)
+                    .join(', ') + '.';
+        }
+
+        logger.info(message);
+    },
+
+    reportAppProfile(data) {
+        this.appProfile = data;
     }
 };
 

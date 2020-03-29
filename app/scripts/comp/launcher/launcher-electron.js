@@ -1,4 +1,5 @@
 import { Events } from 'framework/events';
+import { StartProfiler } from 'comp/app/start-profiler';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
@@ -295,6 +296,7 @@ Events.on('launcher-exit-request', () => {
 });
 Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
 Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
+Events.on('start-profile', data => StartProfiler.reportAppProfile(data));
 
 window.launcherOpen = file => Launcher.openFile(file);
 if (window.launcherOpenedFile) {

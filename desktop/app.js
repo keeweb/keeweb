@@ -2,6 +2,9 @@ const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
 
+let perfTimestamps = global.perfTimestamps;
+perfTimestamps.push({ name: 'loading app requires', ts: process.hrtime() });
+
 const app = electron.app;
 
 let mainWindow = null;
@@ -16,6 +19,8 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
     app.quit();
 }
+
+perfTimestamps && perfTimestamps.push({ name: 'single instance lock', ts: process.hrtime() });
 
 let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
 const userDataDir =
@@ -51,7 +56,7 @@ const themeBgColors = {
 };
 const defaultBgColor = '#282C34';
 
-app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
+perfTimestamps && perfTimestamps.push({ name: 'defining args', ts: process.hrtime() });
 
 setEnv();
 restorePreferences();
@@ -69,6 +74,7 @@ app.on('window-all-closed', () => {
     }
 });
 app.on('ready', () => {
+    perfTimestamps && perfTimestamps.push({ name: 'app on ready', ts: process.hrtime() });
     appReady = true;
     setAppOptions();
     setSystemAppearance();
@@ -143,6 +149,7 @@ app.setGlobalShortcuts = setGlobalShortcuts;
 
 function setAppOptions() {
     app.commandLine.appendSwitch('disable-background-timer-throttling');
+    perfTimestamps && perfTimestamps.push({ name: 'setting app options', ts: process.hrtime() });
 }
 
 function readAppSettings() {
@@ -150,6 +157,9 @@ function readAppSettings() {
         return JSON.parse(fs.readFileSync(appSettingsFileName, 'utf8'));
     } catch (e) {
         return null;
+    } finally {
+        perfTimestamps &&
+            perfTimestamps.push({ name: 'reading app settings', ts: process.hrtime() });
     }
 }
 
@@ -159,6 +169,8 @@ function setSystemAppearance() {
             electron.systemPreferences.appLevelAppearance = 'dark';
         }
     }
+    perfTimestamps &&
+        perfTimestamps.push({ name: 'setting system appearance', ts: process.hrtime() });
 }
 
 function createMainWindow() {
@@ -180,12 +192,17 @@ function createMainWindow() {
         windowOptions.icon = path.join(__dirname, 'icon.png');
     }
     mainWindow = new electron.BrowserWindow(windowOptions);
+    perfTimestamps && perfTimestamps.push({ name: 'creating main window', ts: process.hrtime() });
+
     setMenu();
+    perfTimestamps && perfTimestamps.push({ name: 'setting menu', ts: process.hrtime() });
+
     mainWindow.loadURL(htmlPath);
     if (showDevToolsOnStart) {
         mainWindow.openDevTools({ mode: 'bottom' });
     }
     mainWindow.once('ready-to-show', () => {
+        perfTimestamps && perfTimestamps.push({ name: 'main window ready', ts: process.hrtime() });
         if (startMinimized) {
             emitRemoteEvent('launcher-started-minimized');
         } else {
@@ -193,6 +210,8 @@ function createMainWindow() {
         }
         ready = true;
         notifyOpenFile();
+        perfTimestamps && perfTimestamps.push({ name: 'main window shown', ts: process.hrtime() });
+        reportStartProfile();
     });
     mainWindow.webContents.on('context-menu', onContextMenu);
     mainWindow.on('resize', delaySaveMainWindowPosition);
@@ -217,7 +236,12 @@ function createMainWindow() {
     mainWindow.on('session-end', () => {
         emitRemoteEvent('os-lock');
     });
+    perfTimestamps &&
+        perfTimestamps.push({ name: 'configuring main window', ts: process.hrtime() });
+
     restoreMainWindowPosition();
+    perfTimestamps &&
+        perfTimestamps.push({ name: 'restoring main window position', ts: process.hrtime() });
 }
 
 function restoreMainWindow() {
@@ -434,6 +458,8 @@ function setGlobalShortcuts(appSettings) {
             } catch (e) {}
         }
     }
+    perfTimestamps &&
+        perfTimestamps.push({ name: 'setting global shortcuts', ts: process.hrtime() });
 }
 
 function subscribePowerEvents() {
@@ -446,9 +472,12 @@ function subscribePowerEvents() {
     electron.powerMonitor.on('lock-screen', () => {
         emitRemoteEvent('os-lock');
     });
+    perfTimestamps &&
+        perfTimestamps.push({ name: 'subscribing to power events', ts: process.hrtime() });
 }
 
 function setEnv() {
+    app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
     if (
         process.platform === 'linux' &&
         ['Pantheon', 'Unity:Unity7'].indexOf(process.env.XDG_CURRENT_DESKTOP) !== -1
@@ -456,6 +485,7 @@ function setEnv() {
         // https://github.com/electron/electron/issues/9046
         process.env.XDG_CURRENT_DESKTOP = 'Unity';
     }
+    perfTimestamps && perfTimestamps.push({ name: 'setting env', ts: process.hrtime() });
 }
 
 function restorePreferences() {
@@ -487,6 +517,8 @@ function restorePreferences() {
             }
         }
     }
+
+    perfTimestamps && perfTimestamps.push({ name: 'restoring preferences', ts: process.hrtime() });
 }
 
 function deleteOldTempFiles() {
@@ -503,6 +535,8 @@ function deleteOldTempFiles() {
         }
         app.oldTempFilesDeleted = true; // this is added to prevent file deletion on restart
     }, 1000);
+    perfTimestamps &&
+        perfTimestamps.push({ name: 'deleting old temp files', ts: process.hrtime() });
 }
 
 function deleteRecursive(dir) {
@@ -528,6 +562,8 @@ function hookRequestHeaders() {
         }
         callback({ requestHeaders: details.requestHeaders });
     });
+    perfTimestamps &&
+        perfTimestamps.push({ name: 'setting request handlers', ts: process.hrtime() });
 }
 
 // If a display is disconnected while KeeWeb is minimized, Electron does not
@@ -569,4 +605,28 @@ function coerceMainWindowPositionToConnectedDisplay() {
         'height': newHeight
     });
     updateMainWindowPosition();
+}
+
+function reportStartProfile() {
+    const processCreationTime = process.getCreationTime();
+    const totalTime = Math.round(Date.now() - processCreationTime);
+    let lastTs = 0;
+    const timings = perfTimestamps
+        .map(milestone => {
+            const ts = milestone.ts;
+            const elapsed = lastTs
+                ? Math.round((ts[0] - lastTs[0]) * 1e3 + (ts[1] - lastTs[1]) / 1e6)
+                : 0;
+            lastTs = ts;
+            return {
+                name: milestone.name,
+                elapsed
+            };
+        })
+        .slice(1);
+
+    perfTimestamps = global.perfTimestamps = undefined;
+
+    const startProfile = { totalTime, timings };
+    emitRemoteEvent('start-profile', startProfile);
 }
