@@ -2,7 +2,7 @@ import { Logger } from 'util/logger';
 
 const logger = new Logger('start-profiler');
 
-let lastTs = window.htmlLoadTime;
+let lastTs = 0;
 
 const operations = [];
 
@@ -16,10 +16,7 @@ const StartProfiler = {
 
     report() {
         const networkTime = this.getNetworkTime();
-        operations.unshift(
-            { name: 'fetching', elapsed: networkTime },
-            { name: 'parsing', elapsed: window.htmlLoadTime - networkTime }
-        );
+        operations.unshift({ name: 'fetching', elapsed: networkTime });
 
         const time = Math.round(performance.now());
         const details = operations.map(op => `${op.name}=${Math.round(op.elapsed)}ms`).join(', ');
