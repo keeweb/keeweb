@@ -2,13 +2,9 @@ import { Logger } from 'util/logger';
 
 const logger = new Logger('start-profiler');
 
-const networkTime = getNetworkTime();
 let lastTs = window.htmlLoadTime;
 
-const operations = [
-    { name: 'fetching', elapsed: networkTime },
-    { name: 'parsing', elapsed: lastTs - networkTime }
-];
+const operations = [];
 
 const StartProfiler = {
     milestone(name) {
@@ -19,6 +15,12 @@ const StartProfiler = {
     },
 
     report() {
+        const networkTime = this.getNetworkTime();
+        operations.unshift(
+            { name: 'fetching', elapsed: networkTime },
+            { name: 'parsing', elapsed: window.htmlLoadTime - networkTime }
+        );
+
         const time = Math.round(performance.now());
         const details = operations.map(op => `${op.name}=${Math.round(op.elapsed)}ms`).join(', ');
         let message = `Started in ${time}ms: ${details}.`;
@@ -36,21 +38,21 @@ const StartProfiler = {
 
     reportAppProfile(data) {
         this.appProfile = data;
+    },
+
+    getNetworkTime() {
+        let perfEntry;
+
+        if (performance.getEntriesByType) {
+            [perfEntry] = performance.getEntriesByType('navigation');
+        }
+        if (!perfEntry || !perfEntry.responseEnd || !perfEntry.fetchStart) {
+            perfEntry = performance.timing;
+        }
+
+        return perfEntry.responseEnd - perfEntry.fetchStart;
     }
 };
-
-function getNetworkTime() {
-    let perfEntry;
-
-    if (performance.getEntriesByType) {
-        [perfEntry] = performance.getEntriesByType('navigation');
-    }
-    if (!perfEntry || !perfEntry.responseEnd || !perfEntry.fetchStart) {
-        perfEntry = performance.timing;
-    }
-
-    return perfEntry.responseEnd - perfEntry.fetchStart;
-}
 
 StartProfiler.milestone('pre-init');
 
