@@ -1,4 +1,5 @@
 import { Events } from 'framework/events';
+import { StartProfiler } from 'comp/app/start-profiler';
 import { FileInfoCollection } from 'collections/file-info-collection';
 import { AppRightsChecker } from 'comp/app/app-rights-checker';
 import { ExportApi } from 'comp/app/export-api';
@@ -25,14 +26,20 @@ import { Locale } from 'util/locale';
 import { AppView } from 'views/app-view';
 import 'hbs-helpers';
 
+StartProfiler.milestone('loading modules');
+
 const ready = (Launcher && Launcher.ready) || $;
 
 ready(() => {
+    StartProfiler.milestone('document ready');
+
     if (AuthReceiver.receive()) {
         return;
     }
+    StartProfiler.milestone('checking auth');
 
     const appModel = new AppModel();
+    StartProfiler.milestone('creating app model');
 
     Promise.resolve()
         .then(loadConfigs)
@@ -51,17 +58,21 @@ ready(() => {
                 'Running in iframe is not allowed (this can be changed in the app config).'
             );
         }
-        return FeatureTester.test().catch(e => {
-            Alerts.error({
-                header: Locale.appSettingsError,
-                body: Locale.appNotSupportedError + '<br/><br/>' + e,
-                buttons: [],
-                esc: false,
-                enter: false,
-                click: false
+        return FeatureTester.test()
+            .catch(e => {
+                Alerts.error({
+                    header: Locale.appSettingsError,
+                    body: Locale.appNotSupportedError + '<br/><br/>' + e,
+                    buttons: [],
+                    esc: false,
+                    enter: false,
+                    click: false
+                });
+                throw 'Feature testing failed: ' + e;
+            })
+            .then(() => {
+                StartProfiler.milestone('checking features');
             });
-            throw 'Feature testing failed: ' + e;
-        });
     }
 
     function loadConfigs() {
@@ -70,7 +81,9 @@ ready(() => {
             UpdateModel.load(),
             RuntimeDataModel.load(),
             FileInfoCollection.load()
-        ]);
+        ]).then(() => {
+            StartProfiler.milestone('loading configs');
+        });
     }
 
     function initModules() {
@@ -80,7 +93,9 @@ ready(() => {
         KdbxwebInit.init();
         FocusDetector.init();
         window.kw = ExportApi;
-        return PluginManager.init();
+        return PluginManager.init().then(() => {
+            StartProfiler.milestone('initializing modules');
+        });
     }
 
     function showSettingsLoadError() {
@@ -95,23 +110,27 @@ ready(() => {
     }
 
     function loadRemoteConfig() {
-        return Promise.resolve().then(() => {
-            SettingsManager.setBySettings(appModel.settings);
-            const configParam = getConfigParam();
-            if (configParam) {
-                return appModel
-                    .loadConfig(configParam)
-                    .then(() => {
-                        SettingsManager.setBySettings(appModel.settings);
-                    })
-                    .catch(e => {
-                        if (!appModel.settings.cacheConfigSettings) {
-                            showSettingsLoadError();
-                            throw e;
-                        }
-                    });
-            }
-        });
+        return Promise.resolve()
+            .then(() => {
+                SettingsManager.setBySettings(appModel.settings);
+                const configParam = getConfigParam();
+                if (configParam) {
+                    return appModel
+                        .loadConfig(configParam)
+                        .then(() => {
+                            SettingsManager.setBySettings(appModel.settings);
+                        })
+                        .catch(e => {
+                            if (!appModel.settings.cacheConfigSettings) {
+                                showSettingsLoadError();
+                                throw e;
+                            }
+                        });
+                }
+            })
+            .then(() => {
+                StartProfiler.milestone('loading remote config');
+            });
     }
 
     function showApp() {
@@ -151,14 +170,15 @@ ready(() => {
 
     function showView() {
         appModel.prepare();
-        new AppView(appModel).render();
-        Events.emit('app-ready');
-        logStartupTime();
-    }
+        StartProfiler.milestone('preparing app model');
 
-    function logStartupTime() {
-        const time = Math.round(performance.now());
-        appModel.appLogger.info(`Started in ${time}ms ¯\\_(ツ)_/¯`);
+        new AppView(appModel).render();
+        StartProfiler.milestone('first view rendering');
+
+        Events.emit('app-ready');
+        StartProfiler.milestone('app ready event');
+
+        StartProfiler.report();
     }
 
     function getConfigParam() {
