@@ -33,7 +33,7 @@
             {{#unless prv.own}}
             <div class="settings__file-save-to settings__file-save-to-storage svg-btn" data-storage="{{prv.name}}">
                 {{#if prv.icon}}<i class="fa fa-{{prv.icon}}"></i>{{/if}}
-                {{#if prv.iconSvg}}{{{prv.iconSvg}}}{{/if}}
+                {{#if prv.iconSvg}}{{{svg prv.iconSvg}}}{{/if}}
                 <span>{{res prv.name}}</span>
             </div>
             {{/unless}}

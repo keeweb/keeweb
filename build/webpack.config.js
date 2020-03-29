@@ -72,7 +72,8 @@ function config(options) {
                 templates: path.join(rootDir, 'app/templates'),
                 'public-key.pem': path.join(rootDir, 'app/resources/public-key.pem'),
                 'public-key-new.pem': path.join(rootDir, 'app/resources/public-key-new.pem'),
-                'demo.kdbx': path.join(rootDir, 'app/resources/Demo.kdbx')
+                'demo.kdbx': path.join(rootDir, 'app/resources/Demo.kdbx'),
+                svg: path.join(rootDir, 'app/resources/svg')
             }
         },
         module: {
@@ -136,7 +137,8 @@ function config(options) {
                 },
                 { test: /\.woff2$/, loader: 'base64-inline-loader' },
                 { test: /\.pem$/, loader: 'raw-loader' },
-                { test: /\.kdbx$/, loader: 'base64-loader' }
+                { test: /\.kdbx$/, loader: 'base64-loader' },
+                { test: /\.svg$/, loader: 'raw-loader' }
             ]
         },
         optimization: {
