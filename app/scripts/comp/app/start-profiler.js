@@ -2,9 +2,13 @@ import { Logger } from 'util/logger';
 
 const logger = new Logger('start-profiler');
 
-let lastTs = 0;
+const networkTime = getNetworkTime();
+let lastTs = window.htmlLoadTime;
 
-const operations = [];
+const operations = [
+    { name: 'fetching', elapsed: networkTime },
+    { name: 'parsing', elapsed: lastTs - networkTime }
+];
 
 const StartProfiler = {
     milestone(name) {
@@ -20,6 +24,19 @@ const StartProfiler = {
         logger.info(`Started in ${time}ms. Details: ${details}`);
     }
 };
+
+function getNetworkTime() {
+    let perfEntry;
+
+    if (performance.getEntriesByType) {
+        [perfEntry] = performance.getEntriesByType('navigation');
+    }
+    if (!perfEntry || !perfEntry.responseEnd || !perfEntry.fetchStart) {
+        perfEntry = performance.timing;
+    }
+
+    return perfEntry.responseEnd - perfEntry.fetchStart;
+}
 
 StartProfiler.milestone('pre-init');
 
