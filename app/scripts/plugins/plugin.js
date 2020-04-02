@@ -149,7 +149,11 @@ class Plugin extends Model {
             return 'Plugin name mismatch';
         }
         if (manifest.publicKey !== newManifest.publicKey) {
-            return 'Public key mismatch';
+            const wasOfficial = SignatureVerifier.getPublicKeys().includes(manifest.publicKey);
+            const isOfficial = SignatureVerifier.getPublicKeys().includes(newManifest.publicKey);
+            if (!wasOfficial || !isOfficial) {
+                return 'Public key mismatch';
+            }
         }
     }
 
