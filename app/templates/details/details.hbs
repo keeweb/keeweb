@@ -15,7 +15,9 @@
         </i>
         <h1 class="details__header-title">{{#if title}}{{title}}{{else}}(no title){{/if}}</h1>
         {{#if customIcon}}
-        <div class="details__header-icon details__header-icon--icon" style="background-image: url({{{customIcon}}})" title="{{res 'detSetIcon'}}"></div>
+        <div class="details__header-icon details__header-icon--icon" title="{{res 'detSetIcon'}}">
+            <img class="details__header-icon-img" src="{{{customIcon}}}" />
+        </div>
         {{else}}
         <i class="details__header-icon fa fa-{{icon}}" title="{{res 'detSetIcon'}}"></i>
         {{/if}}

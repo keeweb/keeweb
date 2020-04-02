@@ -300,9 +300,14 @@ class Plugin extends Model {
 
     applyCss(name, data, theme) {
         return Promise.resolve().then(() => {
-            const text = kdbxweb.ByteUtils.bytesToString(data);
+            const blob = new Blob([data], { type: 'text/css' });
+            const objectUrl = URL.createObjectURL(blob);
             const id = 'plugin-css-' + name;
-            this.createElementInHead('style', id, 'text/css', text);
+            const el = this.createElementInHead('link', id, {
+                rel: 'stylesheet',
+                href: objectUrl
+            });
+            el.addEventListener('load', () => URL.revokeObjectURL(objectUrl));
             if (theme) {
                 const locKey = this.getThemeLocaleKey(theme.name);
                 SettingsManager.allThemes[theme.name] = locKey;
@@ -353,7 +358,8 @@ class Plugin extends Model {
             };
             text = `(function(require, module){${text}})(window["${id}"].require,window["${id}"].module);`;
             const ts = this.logger.ts();
-            this.createElementInHead('script', 'plugin-js-' + name, 'text/javascript', text);
+            // eslint-disable-next-line no-eval
+            eval(text);
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     delete global[id];
@@ -369,16 +375,18 @@ class Plugin extends Model {
         });
     }
 
-    createElementInHead(tagName, id, type, text) {
+    createElementInHead(tagName, id, attrs) {
         let el = document.getElementById(id);
         if (el) {
             el.parentNode.removeChild(el);
         }
         el = document.createElement(tagName);
-        el.appendChild(document.createTextNode(text));
         el.setAttribute('id', id);
-        el.setAttribute('type', type);
+        for (const [name, value] of Object.entries(attrs)) {
+            el.setAttribute(name, value);
+        }
         document.head.appendChild(el);
+        return el;
     }
 
     removeElement(id) {
@@ -478,7 +486,6 @@ class Plugin extends Model {
             }
             if (manifest.resources.js) {
                 this.uninstallPluginCode();
-                this.removeElement('plugin-js-' + this.name);
             }
             if (manifest.resources.loc) {
                 this.removeLoc(this.manifest.locale);

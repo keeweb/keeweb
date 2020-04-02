@@ -11,6 +11,8 @@ module.exports = function(grunt) {
         'webpack:app',
         'inline',
         'htmlmin',
+        'csp-hashes',
+        'copy:html-dist',
         'string-replace:service-worker',
         'string-replace:manifest',
         'copy:dist-icons',

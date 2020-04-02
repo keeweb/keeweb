@@ -76,6 +76,11 @@ module.exports = function(grunt) {
                 dest: 'tmp/index.html',
                 nonull: true
             },
+            'html-dist': {
+                src: 'tmp/app.html',
+                dest: 'dist/index.html',
+                nonull: true
+            },
             favicon: {
                 src: 'app/favicon.png',
                 dest: 'tmp/favicon.png',
@@ -189,6 +194,19 @@ module.exports = function(grunt) {
                 dest: 'tmp/app.html'
             }
         },
+        'csp-hashes': {
+            options: {
+                algo: 'sha512',
+                expected: {
+                    style: 1,
+                    script: 3
+                }
+            },
+            app: {
+                src: 'tmp/app.html',
+                dest: 'tmp/app.html'
+            }
+        },
         htmlmin: {
             options: {
                 removeComments: true,
@@ -196,7 +214,7 @@ module.exports = function(grunt) {
             },
             app: {
                 files: {
-                    'dist/index.html': 'tmp/app.html'
+                    'tmp/app.html': 'tmp/app.html'
                 }
             }
         },

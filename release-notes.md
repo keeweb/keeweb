@@ -20,6 +20,7 @@ Release notes
 `*` signature key rotated  
 `*` new Windows code signing certificate  
 `+` startup time profiling  
+`+` #1438: content security policy  
 `*` fix #890: deb will no longer install to /opt  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  

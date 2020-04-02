@@ -263,8 +263,9 @@ class FieldView extends View {
     }
 
     revealValue() {
-        const valueHtml = PasswordPresenter.asHtml(this.value);
-        this.valueEl.addClass('details__field-value--revealed').html(valueHtml);
+        const revealedEl = PasswordPresenter.asDOM(this.value);
+        this.valueEl.addClass('details__field-value--revealed').html('');
+        this.valueEl.append(revealedEl);
     }
 
     hideValue() {
