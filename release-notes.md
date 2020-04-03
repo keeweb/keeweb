@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.13.1 (2020-04-04)
+`-` fix #1444: fixed website favicons and attached images  
+
 ##### v1.13.0 (2020-04-03)
 `-` #1359: fixed Google Drive login issues in desktop apps  
 `+` #1341: auto-lock the app on screen lock on Windows  
