@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.13.1 (2020-04-04)
 `-` fix #1444: fixed website favicons and attached images  
+`-` fix #1445: fixed offline mode in Chrome and Firefox  
 
 ##### v1.13.0 (2020-04-03)
 `-` #1359: fixed Google Drive login issues in desktop apps  
