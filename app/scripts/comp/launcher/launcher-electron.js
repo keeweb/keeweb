@@ -27,7 +27,9 @@ const Launcher = {
         return this.electron().remote.require(mod);
     },
     openLink(href) {
-        this.electron().shell.openExternal(href);
+        if (/^(http|https|ftp|sftp|mailto):/i.test(href)) {
+            this.electron().shell.openExternal(href);
+        }
     },
     devTools: true,
     openDevTools() {
