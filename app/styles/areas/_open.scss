@@ -7,6 +7,10 @@
     justify-content: center;
     background: var(--background-color);
 
+    .mobile & {
+        overflow-y: auto;
+    }
+
     &__icons {
         display: flex;
         align-items: stretch;
@@ -97,11 +101,15 @@
             position: absolute;
             left: 100%;
             @include mobile {
-                display: none;
+                left: auto;
+                right: 0;
             }
             color: var(--muted-color);
             > i {
                 font-size: 3em;
+                @include mobile {
+                    line-height: .8;
+                }
             }
         }
         .open--show-focus & {
@@ -135,7 +143,9 @@
         flex-direction: column;
         justify-content: flex-start;
         position: relative;
-        width: 30em;
+        @include nomobile {
+            width: 30em;
+        }
         .open--drag & {
             display: none;
         }
@@ -174,12 +184,10 @@
     input[type='password'].open__pass-input {
         font-size: $large-pass-font-size;
         margin-bottom: 0;
-        &[readonly] {
-            cursor: pointer;
-        }
-        @include mobile {
-            width: calc(100vw - 20px);
-        }
+        &[readonly] { cursor: pointer; }
+        width: 38vw;
+        @media (max-width: 1000px) { width: 16em; }
+        @include mobile { width: calc(100vw - 20px); }
     }
 
     &__settings {

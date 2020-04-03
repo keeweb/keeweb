@@ -211,18 +211,14 @@ class StorageDropbox extends StorageBase {
             const host = args.host || 'api';
             let headers;
             let data = args.data;
+            let dataType;
             if (args.apiArg) {
                 headers = {
                     'Dropbox-API-Arg': this._encodeJsonHttpHeader(JSON.stringify(args.apiArg))
                 };
-                if (args.data) {
-                    headers['Content-Type'] = 'application/octet-stream';
-                }
             } else if (args.data) {
                 data = JSON.stringify(data);
-                headers = {
-                    'Content-Type': 'application/json'
-                };
+                dataType = 'application/json';
             }
             this._xhr({
                 url: `https://${host}.dropboxapi.com/2/${args.method}`,
@@ -230,6 +226,7 @@ class StorageDropbox extends StorageBase {
                 responseType: args.responseType || 'json',
                 headers,
                 data,
+                dataType,
                 statuses: args.statuses || undefined,
                 success: args.success,
                 error: (e, xhr) => {

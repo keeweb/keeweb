@@ -7,7 +7,6 @@ const debug = require('debug');
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
-const codeSignConfig = require('../keys/codesign');
 
 debug.enable('electron-notarize');
 
@@ -25,11 +24,27 @@ module.exports = function(grunt) {
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
-    const minElectronVersionForUpdate = '6.0.2';
+    const minElectronVersionForUpdate = '8.0.0';
     const zipCommentPlaceholderPart = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
+
+    const skipCodeSigning = grunt.option('no-sign');
+    let codeSignConfig;
+
+    if (!skipCodeSigning) {
+        try {
+            codeSignConfig = require('../keys/codesign');
+        } catch (err) {
+            throw new Error(
+                'Unable to load code signing config from ../keys/codesign.\n' +
+                    'This is needed for production builds targeting macOS.\n' +
+                    'For development builds, run with the `--no-sign` arg to skip code signing,\n' +
+                    'e.g. `npm start -- --no-sign`'
+            );
+        }
+    }
 
     const webpackOptions = {
         date,
@@ -59,6 +74,11 @@ module.exports = function(grunt) {
             html: {
                 src: 'app/index.html',
                 dest: 'tmp/index.html',
+                nonull: true
+            },
+            'html-dist': {
+                src: 'tmp/app.html',
+                dest: 'dist/index.html',
                 nonull: true
             },
             favicon: {
@@ -144,6 +164,21 @@ module.exports = function(grunt) {
                 src: 'tmp/desktop/KeeWeb.win.ia32.exe',
                 dest: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.exe`,
                 nonull: true
+            },
+            'electron-builder-dist-linux-rpm': {
+                src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.x86_64.rpm`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.x86_64.rpm`,
+                nonull: true
+            },
+            'electron-builder-dist-linux-snap': {
+                src: `tmp/desktop/electron-builder/keeweb_${pkg.version}_amd64.snap`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.snap`,
+                nonull: true
+            },
+            'electron-builder-dist-linux-appimage': {
+                src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.AppImage`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.AppImage`,
+                nonull: true
             }
         },
         eslint: {
@@ -159,6 +194,19 @@ module.exports = function(grunt) {
                 dest: 'tmp/app.html'
             }
         },
+        'csp-hashes': {
+            options: {
+                algo: 'sha512',
+                expected: {
+                    style: 1,
+                    script: 3
+                }
+            },
+            app: {
+                src: 'tmp/app.html',
+                dest: 'tmp/app.html'
+            }
+        },
         htmlmin: {
             options: {
                 removeComments: true,
@@ -166,7 +214,7 @@ module.exports = function(grunt) {
             },
             app: {
                 files: {
-                    'dist/index.html': 'tmp/app.html'
+                    'tmp/app.html': 'tmp/app.html'
                 }
             }
         },
@@ -226,7 +274,11 @@ module.exports = function(grunt) {
         },
         'webpack-dev-server': {
             options: {
-                webpack: webpackConfig.config({ ...webpackOptions, mode: 'development' }),
+                webpack: webpackConfig.config({
+                    ...webpackOptions,
+                    mode: 'development',
+                    sha: 'dev'
+                }),
                 publicPath: '/',
                 contentBase: path.resolve(__dirname, 'tmp'),
                 progress: false
@@ -250,6 +302,7 @@ module.exports = function(grunt) {
             },
             linux: {
                 options: {
+                    name: 'keeweb',
                     platform: 'linux',
                     arch: ['x64'],
                     icon: 'graphics/icon.ico'
@@ -263,18 +316,22 @@ module.exports = function(grunt) {
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
                     extendInfo: 'package/osx/extend.plist',
-                    osxSign: {
-                        identity: codeSignConfig.identities.app,
-                        hardenedRuntime: true,
-                        entitlements: 'package/osx/entitlements.mac.plist',
-                        'entitlements-inherit': 'package/osx/entitlements.mac.plist',
-                        'gatekeeper-assess': false
-                    },
-                    osxNotarize: {
-                        appleId: codeSignConfig.appleId,
-                        appleIdPassword: '@keychain:AC_PASSWORD',
-                        ascProvider: codeSignConfig.teamId
-                    },
+                    ...(codeSignConfig
+                        ? {
+                              osxSign: {
+                                  identity: codeSignConfig.identities.app,
+                                  hardenedRuntime: true,
+                                  entitlements: 'package/osx/entitlements.mac.plist',
+                                  'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                                  'gatekeeper-assess': false
+                              },
+                              osxNotarize: {
+                                  appleId: codeSignConfig.appleId,
+                                  appleIdPassword: '@keychain:AC_PASSWORD',
+                                  ascProvider: codeSignConfig.teamId
+                              }
+                          }
+                        : {}),
                     afterCopy: [
                         (buildPath, electronVersion, platform, arch, callback) => {
                             if (path.basename(buildPath) !== 'app') {
@@ -329,6 +386,39 @@ module.exports = function(grunt) {
                 }
             }
         },
+        'electron-builder': {
+            linux: {
+                options: {
+                    targets: 'linux',
+                    prepackaged: 'tmp/desktop/keeweb-linux-x64',
+                    config: {
+                        appId: 'net.antelle.keeweb',
+                        productName: 'keeweb',
+                        copyright: `Copyright © ${year} Antelle`,
+                        directories: {
+                            output: 'tmp/desktop/electron-builder',
+                            app: 'desktop',
+                            buildResources: 'graphics'
+                        },
+                        fileAssociations: {
+                            ext: 'kdbx',
+                            name: 'KeePass 2 database',
+                            mimeType: 'application/x-keepass2'
+                        },
+                        linux: {
+                            target: ['AppImage', 'snap', 'rpm'],
+                            category: 'Utility'
+                        },
+                        rpm: {
+                            // depends: ['libappindicator1', 'libgconf-2-4']
+                        },
+                        snap: {
+                            stagePackages: ['libappindicator1', 'libgconf-2-4']
+                        }
+                    }
+                }
+            }
+        },
         compress: {
             options: {
                 level: 6
@@ -351,7 +441,7 @@ module.exports = function(grunt) {
             'linux-x64': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
                 files: [
-                    { cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true },
+                    { cwd: 'tmp/desktop/keeweb-linux-x64', src: '**', expand: true },
                     { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }
                 ]
             }
@@ -422,7 +512,7 @@ module.exports = function(grunt) {
                 options: {
                     mode: '4755'
                 },
-                src: ['tmp/desktop/KeeWeb-linux-x64/chrome-sandbox']
+                src: ['tmp/desktop/keeweb-linux-x64/chrome-sandbox']
             }
         },
         deb: {
@@ -455,9 +545,9 @@ module.exports = function(grunt) {
                 files: [
                     { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
                     {
-                        cwd: 'tmp/desktop/KeeWeb-linux-x64/',
+                        cwd: 'tmp/desktop/keeweb-linux-x64/',
                         src: '**',
-                        dest: '/opt/keeweb-desktop',
+                        dest: '/usr/share/keeweb-desktop',
                         expand: true,
                         nonull: true
                     },
@@ -500,10 +590,9 @@ module.exports = function(grunt) {
         },
         'sign-exe': {
             options: {
-                spc: 'keys/keeweb.spc',
-                key: '01',
-                algo: 'sha256',
-                url: pkg.homepage
+                // algo: 'SHA256',
+                url: pkg.homepage,
+                ...codeSignConfig.windows
             },
             'win32-build-x64': {
                 options: {

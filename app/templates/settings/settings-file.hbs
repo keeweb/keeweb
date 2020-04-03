@@ -15,8 +15,10 @@
             {{#ifeq storage 'file'}}{{res 'setFileSave'}}{{/ifeq}}
             {{#ifneq storage 'file'}}{{res 'setFileSyncVerb'}}{{/ifneq}}
         </button>
-        <button class="settings__file-button-save-choose btn-silent"
-            {{#if syncing}}disabled{{/if}}>{{res 'setFileSaveTo'}}</button>
+        {{#if canSaveTo}}
+            <button class="settings__file-button-save-choose btn-silent"
+                {{#if syncing}}disabled{{/if}}>{{res 'setFileSaveTo'}}</button>
+        {{/if}}
         <button class="settings__file-button-close btn-silent">{{res 'setFileClose'}}</button>
     </div>
 
@@ -31,7 +33,7 @@
             {{#unless prv.own}}
             <div class="settings__file-save-to settings__file-save-to-storage svg-btn" data-storage="{{prv.name}}">
                 {{#if prv.icon}}<i class="fa fa-{{prv.icon}}"></i>{{/if}}
-                {{#if prv.iconSvg}}{{{prv.iconSvg}}}{{/if}}
+                {{#if prv.iconSvg}}{{{svg prv.iconSvg}}}{{/if}}
                 <span>{{res prv.name}}</span>
             </div>
             {{/unless}}
@@ -62,8 +64,8 @@
     </label>
     <div class="hide">
         {{!-- we need these inputs to screw browsers passwords autocompletion --}}
-        <input type="text" style="display:none" name="username">
-        <input type="password" style="display:none" name="password">
+        <input type="text" name="username">
+        <input type="password" name="password">
     </div>
     <input type="password" class="settings__input input-base" id="settings__file-master-pass" value="{{password}}" autocomplete="new-password" />
     <div id="settings__file-confirm-master-pass-group">
@@ -120,8 +122,16 @@
         <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}} />
         <label for="settings__file-trash">{{res 'setFileEnableTrash'}}</label>
     </div>
-    <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
-    <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" maxlength="6" />
+    <label for="settings__file-hist-type">{{res 'setFileHistMode'}}</label>
+    <select class="settings__select input-base" id="settings__file-hist-type">
+        <option value="1" {{#cmp historyMaxItems 0 '>'}}selected{{/cmp}}>{{res 'setFileHistLimited'}}</option>
+        <option value="0" {{#ifeq historyMaxItems 0}}selected{{/ifeq}}>{{res 'setFileHistDisabled'}}</option>
+        <option value="-1" {{#ifeq historyMaxItems -1}}selected{{/ifeq}}>{{res 'setFileHistUnlimited'}}</option>
+    </select>
+    {{#cmp historyMaxItems 0 '>'}}
+        <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
+        <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" maxlength="6" />
+    {{/cmp}}
     <label for="settings__file-hist-size">{{res 'setFileHistSize'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" maxlength="3" />
 

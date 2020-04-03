@@ -1,5 +1,6 @@
 import kdbxweb from 'kdbxweb';
 import { Model } from 'framework/model';
+import { AppSettingsModel } from 'models/app-settings-model';
 import { KdbxToHtml } from 'comp/format/kdbx-to-html';
 import { IconMap } from 'const/icon-map';
 import { AttachmentModel } from 'models/attachment-model';
@@ -44,7 +45,7 @@ class EntryModel extends Model {
         this.fileName = this.file.name;
         this.groupName = this.group.title;
         this.title = this._getFieldString('Title');
-        this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
+        this.password = this._getPassword();
         this.notes = this._getFieldString('Notes');
         this.url = this._getFieldString('URL');
         this.displayUrl = this._getDisplayUrl(this._getFieldString('URL'));
@@ -68,6 +69,14 @@ class EntryModel extends Model {
         if (this.hasFieldRefs) {
             this.resolveFieldReferences();
         }
+    }
+
+    _getPassword() {
+        const password = this.entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
+        if (!password.isProtected) {
+            return kdbxweb.ProtectedValue.fromString(password);
+        }
+        return password;
     }
 
     _getFieldString(field) {
@@ -176,7 +185,9 @@ class EntryModel extends Model {
     _entryModified() {
         if (!this.unsaved) {
             this.unsaved = true;
-            this.entry.pushHistory();
+            if (this.file.historyMaxItems !== 0) {
+                this.entry.pushHistory();
+            }
             this.file.setModified();
         }
         if (this.isJustCreated) {
@@ -295,9 +306,6 @@ class EntryModel extends Model {
     }
 
     matchStringMulti(lower, str, find, context) {
-        if (lower) {
-            str = str.toLowerCase();
-        }
         for (let i = 0; i < find.length; i++) {
             const item = find[i];
             let strMatches;
@@ -787,6 +795,9 @@ class EntryModel extends Model {
     static newEntry(group, file) {
         const model = new EntryModel();
         const entry = file.db.createEntry(group.group);
+        if (AppSettingsModel.useGroupIconForEntries && group.icon && group.iconId) {
+            entry.icon = group.iconId;
+        }
         model.setEntry(entry, group, file);
         model.entry.times.update();
         model.unsaved = true;

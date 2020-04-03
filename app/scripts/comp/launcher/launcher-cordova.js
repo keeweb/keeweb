@@ -4,7 +4,7 @@ import { Events } from 'framework/events';
 
 const Launcher = {
     name: 'cordova',
-    version: '6.0.0',
+    version: window.cordova.platformVersion,
     autoTypeSupported: false,
     thirdPartyStoragesSupported: false,
     clipboardSupported: false,
@@ -25,7 +25,7 @@ const Launcher = {
         window.open(href, '_system');
     },
     devTools: false,
-    // openDevTools: function() { },
+    openDevTools() {},
     getSaveFileName(defaultPath, callback) {
         /* skip in cordova */
     },
@@ -105,7 +105,11 @@ const Launcher = {
         );
     },
     fileExists(path, callback) {
-        window.resolveLocalFileSystemURL(path, fileEntry => callback(true), () => callback(false));
+        window.resolveLocalFileSystemURL(
+            path,
+            fileEntry => callback(true),
+            () => callback(false)
+        );
     },
     deleteFile(path, callback) {
         window.resolveLocalFileSystemURL(
@@ -181,8 +185,7 @@ const Launcher = {
     createFsWatcher(path) {
         return null; // not in android with content provider
     },
-    // ensureRunnable: function(path) { },
-
+    ensureRunnable(path) {},
     preventExit(e) {
         e.returnValue = false;
         return false;
@@ -190,7 +193,6 @@ const Launcher = {
     exit() {
         this.hideApp();
     },
-
     requestExit() {
         /* skip in cordova */
     },
@@ -200,11 +202,9 @@ const Launcher = {
     cancelRestart() {
         /* skip in cordova */
     },
-
     setClipboardText(text) {},
     getClipboardText() {},
     clearClipboardText() {},
-
     minimizeApp() {
         this.hideApp();
     },
@@ -217,8 +217,7 @@ const Launcher = {
     updaterEnabled() {
         return false;
     },
-
-    // getMainWindow: function() { },
+    // getMainWindow() {},
     resolveProxy(url, callback) {
         /* skip in cordova */
     },
@@ -234,7 +233,7 @@ const Launcher = {
     showMainWindow() {
         /* skip in cordova */
     },
-    // spawn: function(config) { },
+    // spawn(config) {},
     openFileChooser(callback) {
         const onFileSelected = function(selected) {
             window.resolveLocalFileSystemURL(selected.uri, fileEntry => {
@@ -248,7 +247,7 @@ const Launcher = {
 
         window.cordova.exec(onFileSelected, callback, 'FileChooser', 'choose');
     },
-
+    setGlobalShortcuts(appSettings) {},
     fingerprints: {
         config: {
             disableBackup: true,

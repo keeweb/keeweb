@@ -1,5 +1,43 @@
 Release notes
 -------------
+##### v1.13.0 (2020-04-03)
+`-` #1359: fixed Google Drive login issues in desktop apps  
+`+` #1341: auto-lock the app on screen lock on Windows  
+`+` #1065: KEEWEB_PORTABLE_EXECUTABLE_DIR environment variable  
+`*` #1397: Segoe UI font on Windows  
+`+` #1393: option to disable saving and exporting (canSaveTo)  
+`+` #1006: password generator patterns  
+`+` #1309: back button in attachment preview  
+`+` #1142: submit button on mobile password input  
+`+` #766: setting for no/unlimited history  
+`+` #411: option to automatically use group icon for new entries  
+`+` #615: translated shortcut modifier keys  
+`*` #1029: fixed syncing files by timeout when there are no changes  
+`+` #784: AppImage distributable  
+`+` #572: RPM distributable  
+`+` #450: Snap distributable  
+`+` #855: appdata file in deb packages  
+`*` signature key rotated  
+`*` new Windows code signing certificate  
+`+` startup time profiling  
+`+` #1438: content security policy  
+`+` some desktop security improvements from #1437  
+`*` fix #890: deb will no longer install to /opt  
+`-` fix #1396: fixed hyperlinks in notes  
+`-` fix #1323: version in the About dialog  
+`-` fix #734: OTP secrets with spaces  
+`-` fix #1208: webdav credentials corruption  
+`*` fix #1348: fixed password generation entropy  
+`-` fix #1385: fixed a file watcher error on network locations  
+`-` fix #1391: passwords imported from CSV were not hidden  
+`-` fix #1387: fixed drag-drop for otp fields  
+`-` fix #1293: copying full urls  
+`-` fix #1378: screen orientation issues on Android PWA  
+`-` fix #1338: minimized option not working on linux  
+`-` fix #895: generator positioning in list view  
+`-` fix #516: scrolling on the open screen on mobile  
+`-` fix #1295, #1353: displaying passwords as protected fields regardless of settings in the file
+
 ##### v1.12.3 (2019-11-06)
 `-` fix #1335: removed the menubar on Windows and Linux  
 `-` fix #1334: saving new files not working  

@@ -108,6 +108,7 @@ Otp.hmacToSteamCode = function(hmac) {
 };
 
 Otp.fromBase32 = function(str) {
+    str = str.replace(/\s/g, '');
     const alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
     let bin = '';
     let i;

@@ -82,19 +82,16 @@ class FieldView extends View {
         const field = this.model.name;
         let copyRes;
         if (field) {
-            const value = this.value || '';
-            if (value && value.isProtected) {
-                const text = value.getText();
-                if (!text) {
-                    return;
-                }
-                if (!CopyPaste.simpleCopy) {
-                    CopyPaste.createHiddenInput(text);
-                }
-                copyRes = CopyPaste.copy(text);
-                this.emit('copy', { source: this, copyRes });
+            const text = this.getTextValue();
+            if (!text) {
                 return;
             }
+            if (!CopyPaste.simpleCopy) {
+                CopyPaste.createHiddenInput(text);
+            }
+            copyRes = CopyPaste.copy(text);
+            this.emit('copy', { source: this, copyRes });
+            return;
         }
         if (!this.value) {
             return;
@@ -134,7 +131,7 @@ class FieldView extends View {
             return;
         }
         const dt = e.dataTransfer;
-        const txtval = this.value.isProtected ? this.value.getText() : this.value;
+        const txtval = this.getTextValue();
         if (this.valueEl[0].tagName.toLowerCase() === 'a') {
             dt.setData('text/uri-list', txtval);
         }
@@ -266,8 +263,9 @@ class FieldView extends View {
     }
 
     revealValue() {
-        const valueHtml = PasswordPresenter.asHtml(this.value);
-        this.valueEl.addClass('details__field-value--revealed').html(valueHtml);
+        const revealedEl = PasswordPresenter.asDOM(this.value);
+        this.valueEl.addClass('details__field-value--revealed').html('');
+        this.valueEl.append(revealedEl);
     }
 
     hideValue() {
@@ -344,6 +342,13 @@ class FieldView extends View {
                 setTimeout(() => this.showGenerator(), 0);
                 break;
         }
+    }
+
+    getTextValue() {
+        if (!this.value) {
+            return '';
+        }
+        return this.value.isProtected ? this.value.getText() : this.value;
     }
 }
 

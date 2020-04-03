@@ -63,6 +63,7 @@ AppSettingsModel.defineModelProperties(
         generatorHidePassword: false,
         cacheConfigSettings: false,
         allowIframes: false,
+        useGroupIconForEntries: false,
 
         canOpen: true,
         canOpenDemo: true,
@@ -73,6 +74,7 @@ AppSettingsModel.defineModelProperties(
         canRemoveLatest: true,
         canExportXml: true,
         canExportHtml: true,
+        canSaveTo: true,
 
         dropbox: true,
         webdav: true,

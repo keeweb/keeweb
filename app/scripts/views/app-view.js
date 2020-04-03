@@ -6,7 +6,6 @@ import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
-import { Timeouts } from 'const/timeouts';
 import { UpdateModel } from 'models/update-model';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
@@ -64,6 +63,7 @@ class AppView extends View {
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
+        this.listenTo(this.model.settings, 'change:autoSaveInterval', this.setupAutoSave);
         this.listenTo(this.model.files, 'change', this.fileListUpdated);
 
         this.listenTo(Events, 'select-all', this.selectAll);
@@ -87,7 +87,6 @@ class AppView extends View {
         this.listenTo(Events, 'app-minimized', this.appMinimized);
         this.listenTo(Events, 'show-context-menu', this.showContextMenu);
         this.listenTo(Events, 'second-instance', this.showSingleInstanceAlert);
-        this.listenTo(Events, 'file-modified', this.handleAutoSaveTimer);
         this.listenTo(Events, 'enter-full-screen', this.enterFullScreen);
         this.listenTo(Events, 'leave-full-screen', this.leaveFullScreen);
         this.listenTo(Events, 'import-csv-requested', this.showImportCsv);
@@ -108,10 +107,9 @@ class AppView extends View {
             );
         }
 
-        setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
-
         this.setWindowClass();
         this.fixClicksInEdge();
+        this.setupAutoSave();
     }
 
     setWindowClass() {
@@ -121,6 +119,9 @@ class AppView extends View {
         }
         if (this.titlebarStyle !== 'default') {
             document.body.classList.add('titlebar-' + this.titlebarStyle);
+        }
+        if (Features.isMobile) {
+            document.body.classList.add('mobile');
         }
     }
 
@@ -521,19 +522,6 @@ class AppView extends View {
         }
     }
 
-    handleAutoSaveTimer() {
-        if (this.model.settings.autoSaveInterval !== 0) {
-            // trigger periodical auto save
-            if (this.autoSaveTimeoutId) {
-                clearTimeout(this.autoSaveTimeoutId);
-            }
-            this.autoSaveTimeoutId = setTimeout(
-                this.saveAll.bind(this),
-                this.model.settings.autoSaveInterval * 1000 * 60
-            );
-        }
-    }
-
     saveAndLock(complete) {
         let pendingCallbacks = 0;
         const errorFiles = [];
@@ -601,9 +589,15 @@ class AppView extends View {
         }, this);
     }
 
-    syncAllByTimer() {
-        if (this.model.settings.autoSave) {
-            this.saveAll();
+    setupAutoSave() {
+        if (this.autoSaveTimer) {
+            clearInterval(this.autoSaveTimer);
+        }
+        if (this.model.settings.autoSaveInterval) {
+            this.autoSaveTimer = setInterval(
+                this.saveAll.bind(this),
+                this.model.settings.autoSaveInterval * 1000 * 60
+            );
         }
     }
 

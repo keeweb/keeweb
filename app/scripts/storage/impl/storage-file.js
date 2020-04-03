@@ -128,9 +128,14 @@ class StorageFile extends StorageBase {
 
     watch(path, callback) {
         const names = Launcher.parsePath(path);
-        if (!fileWatchers[names.dir]) {
+        if (!fileWatchers[names.dir] && !names.dir.startsWith('\\')) {
             this.logger.debug('Watch dir', names.dir);
-            const fsWatcher = Launcher.createFsWatcher(names.dir);
+            let fsWatcher;
+            try {
+                fsWatcher = Launcher.createFsWatcher(names.dir);
+            } catch (e) {
+                this.logger.warn('Error watching dir', e);
+            }
             if (fsWatcher) {
                 fsWatcher.on('change', this.fsWatcherChange.bind(this, names.dir));
                 fileWatchers[names.dir] = {

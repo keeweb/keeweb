@@ -1,6 +1,7 @@
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
+import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
@@ -106,7 +107,7 @@ class SettingsPluginsView extends View {
         if (plugin.manifest.locale && SettingsManager.allLocales[plugin.manifest.locale.name]) {
             return false;
         }
-        if (plugin.manifest.desktop && !RuntimeInfo.launcher) {
+        if (plugin.manifest.desktop && !Launcher) {
             return false;
         }
         if (

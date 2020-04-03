@@ -1,4 +1,6 @@
 import { Events } from 'framework/events';
+import { StartProfiler } from 'comp/app/start-profiler';
+import { RuntimeInfo } from 'const/runtime-info';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
 import { noop } from 'util/fn';
@@ -25,7 +27,9 @@ const Launcher = {
         return this.electron().remote.require(mod);
     },
     openLink(href) {
-        this.electron().shell.openExternal(href);
+        if (/^(http|https|ftp|sftp|mailto):/i.test(href)) {
+            this.electron().shell.openExternal(href);
+        }
     },
     devTools: true,
     openDevTools() {
@@ -294,6 +298,8 @@ Events.on('launcher-exit-request', () => {
 });
 Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
 Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
+Events.on('start-profile', data => StartProfiler.reportAppProfile(data));
+Events.on('log', e => new Logger(e.category || 'remote-app')[e.method || 'info'](e.message));
 
 window.launcherOpen = file => Launcher.openFile(file);
 if (window.launcherOpenedFile) {
@@ -301,7 +307,15 @@ if (window.launcherOpenedFile) {
     Launcher.openFile(window.launcherOpenedFile);
     delete window.launcherOpenedFile;
 }
-Events.on('app-ready', () => setTimeout(() => Launcher.checkOpenFiles(), 0));
+Events.on('app-ready', () =>
+    setTimeout(() => {
+        Launcher.checkOpenFiles();
+        Launcher.remoteApp().setAboutPanelOptions({
+            applicationVersion: RuntimeInfo.version,
+            version: RuntimeInfo.commit
+        });
+    }, 0)
+);
 
 global.Events = Events;
 

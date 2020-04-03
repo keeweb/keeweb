@@ -1,5 +1,4 @@
 const Timeouts = {
-    AutoSync: 30 * 1000 * 60,
     CopyTip: 1500,
     AutoHideHint: 3000,
     FileChangeSync: 3000,
@@ -11,7 +10,8 @@ const Timeouts = {
     RedrawInactiveWindow: 50,
     PopupWaitTime: 1000,
     AutoUpdatePluginsAfterStart: 500,
-    LinkDownloadRevoke: 10 * 1000 * 60
+    LinkDownloadRevoke: 10 * 1000 * 60,
+    DefaultHttpRequest: 60000
 };
 
 export { Timeouts };

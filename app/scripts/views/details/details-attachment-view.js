@@ -7,6 +7,7 @@ class DetailsAttachmentView extends View {
     template = template;
 
     events = {
+        'click .details__subview-close': 'closeAttachment',
         'click .details__attachment-preview-download-btn': 'downloadAttachment'
     };
 
@@ -44,6 +45,10 @@ class DetailsAttachmentView extends View {
 
     downloadAttachment() {
         this.emit('download');
+    }
+
+    closeAttachment() {
+        this.emit('close');
     }
 }
 

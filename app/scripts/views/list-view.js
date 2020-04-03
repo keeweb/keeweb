@@ -1,4 +1,4 @@
-import { View } from 'framework/views/view';
+import { View, DefaultTemplateOptions } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { SearchResultCollection } from 'collections/search-result-collection';
 import { DragDropInfo } from 'comp/app/drag-drop-info';
@@ -102,12 +102,15 @@ class ListView extends View {
             let itemsHtml = '';
             this.items.forEach(item => {
                 presenter.present(item);
-                itemsHtml += itemTemplate(presenter);
+                itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
             }, this);
-            const html = itemsTemplate({ items: itemsHtml, columns: this.tableColumns });
+            const html = itemsTemplate(
+                { items: itemsHtml, columns: this.tableColumns },
+                DefaultTemplateOptions
+            );
             this.itemsEl.html(html);
         } else {
-            this.itemsEl.html(this.emptyTemplate());
+            this.itemsEl.html(this.emptyTemplate({}, DefaultTemplateOptions));
         }
         this.pageResized();
     }

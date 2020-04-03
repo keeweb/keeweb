@@ -2,7 +2,7 @@ import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
 import { Updater } from 'comp/app/updater';
 import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
@@ -41,6 +41,7 @@ class SettingsGeneralView extends View {
         'change .settings__general-table-view': 'changeTableView',
         'change .settings__general-colorful-icons': 'changeColorfulIcons',
         'change .settings__general-use-markdown': 'changeUseMarkdown',
+        'change .settings__general-use-group-icon-for-entries': 'changeUseGroupIconForEntries',
         'change .settings__general-direct-autotype': 'changeDirectAutotype',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
@@ -106,6 +107,7 @@ class SettingsGeneralView extends View {
             releaseNotesLink: Links.ReleaseNotes,
             colorfulIcons: AppSettingsModel.colorfulIcons,
             useMarkdown: AppSettingsModel.useMarkdown,
+            useGroupIconForEntries: AppSettingsModel.useGroupIconForEntries,
             directAutotype: AppSettingsModel.directAutotype,
             supportsTitleBarStyles: Launcher && Features.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.titlebarStyle,
@@ -302,6 +304,12 @@ class SettingsGeneralView extends View {
     changeUseMarkdown(e) {
         const useMarkdown = e.target.checked || false;
         AppSettingsModel.useMarkdown = useMarkdown;
+        Events.emit('refresh');
+    }
+
+    changeUseGroupIconForEntries(e) {
+        const useGroupIconForEntries = e.target.checked || false;
+        AppSettingsModel.useGroupIconForEntries = useGroupIconForEntries;
         Events.emit('refresh');
     }
 

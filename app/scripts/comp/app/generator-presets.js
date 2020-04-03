@@ -47,23 +47,20 @@ const GeneratorPresets = {
                 name: 'Mac',
                 title: Locale.genPresetMac,
                 length: 17,
-                upper: true,
-                digits: true,
-                special: true
+                include: '0123456789ABCDEF',
+                pattern: 'XX-'
             },
             {
                 name: 'Hash128',
                 title: Locale.genPresetHash128,
                 length: 32,
-                lower: true,
-                digits: true
+                include: '0123456789abcdef'
             },
             {
                 name: 'Hash256',
                 title: Locale.genPresetHash256,
                 length: 64,
-                lower: true,
-                digits: true
+                include: '0123456789abcdef'
             }
         ];
     },

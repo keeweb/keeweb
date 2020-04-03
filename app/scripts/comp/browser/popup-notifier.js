@@ -36,15 +36,7 @@ const PopupNotifier = {
     },
 
     _openLauncherWindow(url, title, settings) {
-        const opts = {
-            show: false,
-            webPreferences: {
-                nodeIntegration: false,
-                webSecurity: false,
-                allowDisplayingInsecureContent: true,
-                allowRunningInsecureContent: true
-            }
-        };
+        const opts = { show: false };
         if (settings) {
             const settingsObj = {};
             settings.split(',').forEach(part => {

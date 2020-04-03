@@ -105,8 +105,16 @@ class FieldViewText extends FieldView {
         } else {
             const fieldRect = this.input[0].getBoundingClientRect();
             const shadowSpread = parseInt(this.input.css('--focus-shadow-spread')) || 0;
+            const pos = { left: fieldRect.left };
+            const top = fieldRect.bottom + shadowSpread;
+            const windowHeight = document.documentElement.clientHeight;
+            if (top > windowHeight / 2 && top > 200) {
+                pos.bottom = windowHeight - fieldRect.top + shadowSpread;
+            } else {
+                pos.top = top;
+            }
             this.gen = new GeneratorView({
-                pos: { left: fieldRect.left, top: fieldRect.bottom + shadowSpread },
+                pos,
                 password: this.value
             });
             this.gen.render();

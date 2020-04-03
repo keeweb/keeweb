@@ -22,108 +22,53 @@
  */
 
 const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
 
 module.exports = function(grunt) {
-    grunt.registerMultiTask(
-        'sign-exe',
-        'Signs exe file with authenticode certificate',
-        async function() {
-            const opt = this.options();
-            const done = this.async();
-            if (opt.pvk) {
-                const keytar = require('keytar');
-                keytar
-                    .getPassword(opt.keytarPasswordService, opt.keytarPasswordAccount)
-                    .then(password => {
-                        if (!password) {
-                            return grunt.warn('Code sign password not found');
-                        }
-                        const promises = Object.keys(opt.files).map(file =>
-                            signFile(file, opt.files[file], opt, password)
-                        );
-                        Promise.all(promises).then(done);
-                    })
-                    .catch(e => {
-                        grunt.warn('Code sign error: ' + e);
-                    });
-            } else {
-                const sign = require('../util/sign');
-                const pin = await sign.getPin();
-                for (const file of Object.keys(opt.files)) {
-                    await signFile(file, opt.files[file], opt, pin);
-                }
-                done();
+    grunt.registerMultiTask('sign-exe', 'Signs exe file with authenticode certificate', function() {
+        const opt = this.options();
+        for (const [file, name] of Object.entries(opt.files)) {
+            signFile(file, name, opt);
+        }
+    });
+
+    function signFile(file, name, opt) {
+        const fileNameWithoutFolder = path.basename(file);
+        const sharePath = `${process.env.HOME}/VMShare/${fileNameWithoutFolder}`;
+        fs.copyFileSync(file, sharePath);
+
+        const timeServer = 'http://timestamp.verisign.com/scripts/timstamp.dll';
+
+        const cmd = 'VBoxManage';
+        const args = [
+            'guestcontrol',
+            opt.vmName,
+            '--username',
+            opt.vmUser,
+            '--password',
+            opt.vmPass,
+            'run',
+            opt.vmExec,
+            `sign /t ${timeServer} /d "${name}" /du ${opt.url} ${opt.vmShare}${fileNameWithoutFolder}`
+        ];
+        // the algo is not working: "/fd ${opt.algo}"
+        let res = spawnSync(cmd, args);
+        if (res.status) {
+            args[5] = '*';
+            const cmdStr = cmd + ' ' + args.join(' ');
+            grunt.warn(`Sign error ${file}: exit code ${res.status}.\nCommand: ${cmdStr}`);
+        }
+        res = spawnSync('osslsigncode', ['verify', sharePath]);
+        if (res.status) {
+            const hasCertHash = res.stdout.includes(`Serial : ${opt.certHash}`);
+            if (!hasCertHash) {
+                grunt.warn(
+                    `Verify error ${file}: exit code ${res.status}.\n${res.stdout.toString()}`
+                );
             }
         }
-    );
-
-    function signFile(file, name, opt, password) {
-        const signedFile = file + '.sign';
-        return new Promise((resolve, reject) => {
-            const pkcsArgs = opt.pvk
-                ? []
-                : [
-                      '-pkcs11engine',
-                      '/usr/local/lib/engines/engine_pkcs11.so',
-                      '-pkcs11module',
-                      '/usr/local/lib/opensc-pkcs11.so'
-                  ];
-            const args = [
-                '-spc',
-                opt.spc,
-                '-key',
-                opt.pvk ? require('path').resolve(opt.pvk) : opt.key,
-                '-pass',
-                password,
-                '-h',
-                opt.algo,
-                '-n',
-                name,
-                '-i',
-                opt.url,
-                '-t',
-                'http://timestamp.verisign.com/scripts/timstamp.dll',
-                ...pkcsArgs,
-                '-in',
-                file,
-                '-out',
-                signedFile
-            ];
-            const spawned = grunt.util.spawn(
-                {
-                    cmd: 'osslsigncode',
-                    args
-                },
-                (error, result, code) => {
-                    if (error || code) {
-                        spawned.kill();
-                        grunt.warn(`Cannot sign file ${file}, signtool error ${code}: ${error}`);
-                        return reject();
-                    }
-                    grunt.util.spawn(
-                        {
-                            cmd: 'osslsigncode',
-                            args: ['verify', signedFile]
-                        },
-                        (ex, result, code) => {
-                            if (code) {
-                                grunt.warn(`Verify error ${file}: \n${result.stdout.toString()}`);
-                                return;
-                            }
-                            if (fs.existsSync(file)) {
-                                fs.renameSync(signedFile, file);
-                            }
-                            grunt.log.writeln(`Signed ${file}: ${name}`);
-                            resolve();
-                        }
-                    );
-                }
-            );
-            // spawned.stdout.pipe(process.stdout);
-            spawned.stderr.pipe(process.stderr);
-            // spawned.stdin.setEncoding('utf-8');
-            // spawned.stdin.write(password);
-            // spawned.stdin.write('\n');
-        });
+        fs.renameSync(sharePath, file);
+        grunt.log.writeln(`Signed ${file}: ${name}`);
     }
 };

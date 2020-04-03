@@ -45,6 +45,7 @@ class SettingsFileView extends View {
         'change #settings__file-backup-schedule': 'changeBackupSchedule',
         'click .settings__file-button-backup': 'backupFile',
         'change #settings__file-trash': 'changeTrash',
+        'change #settings__file-hist-type': 'changeHistoryMode',
         'input #settings__file-hist-len': 'changeHistoryLength',
         'input #settings__file-hist-size': 'changeHistorySize',
         'change #settings__file-format-version': 'changeFormatVersion',
@@ -112,6 +113,7 @@ class SettingsFileView extends View {
             kdfParameters: this.kdfParametersToUi(this.model.kdfParameters),
             storageProviders,
             canBackup,
+            canSaveTo: AppSettingsModel.canSaveTo,
             canExportXml: AppSettingsModel.canExportXml,
             canExportHtml: AppSettingsModel.canExportHtml
         });
@@ -610,6 +612,15 @@ class SettingsFileView extends View {
             return;
         }
         this.model.setHistoryMaxItems(value);
+    }
+
+    changeHistoryMode(e) {
+        let value = +e.target.value;
+        if (value > 0) {
+            value = 10;
+        }
+        this.model.setHistoryMaxItems(value);
+        this.render();
     }
 
     changeHistorySize(e) {

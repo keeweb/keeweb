@@ -14,7 +14,7 @@ class DetailsHistoryView extends View {
     template = template;
 
     events = {
-        'click .details__history-close': 'closeHistory',
+        'click .details__subview-close': 'closeHistory',
         'click .details__history-timeline-item': 'timelineItemClick',
         'click .details__history-arrow-prev': 'timelinePrevClick',
         'click .details__history-arrow-next': 'timelineNextClick',

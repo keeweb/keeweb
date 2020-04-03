@@ -1,5 +1,5 @@
 import { Model } from 'framework/model';
-import { RuntimeInfo } from 'comp/app/runtime-info';
+import { RuntimeInfo } from 'const/runtime-info';
 import { SettingsStore } from 'comp/settings/settings-store';
 import { Plugin, PluginStatus } from 'plugins/plugin';
 import { PluginCollection } from 'plugins/plugin-collection';

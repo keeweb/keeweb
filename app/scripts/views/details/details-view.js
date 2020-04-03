@@ -546,6 +546,7 @@ class DetailsView extends View {
         subView.attId = id;
         subView.render(this.pageResized.bind(this));
         subView.on('download', () => this.downloadAttachment(attachment));
+        this.listenTo(subView, 'close', this.render.bind(this));
         this.views.sub = subView;
         attBtn.addClass('details__attachment--active');
     }
@@ -597,9 +598,7 @@ class DetailsView extends View {
             return false;
         }
         if (!window.getSelection().toString()) {
-            const fieldValue = editView.otpValue || editView.value;
-            const fieldText =
-                fieldValue && fieldValue.isProtected ? fieldValue.getText() : fieldValue;
+            const fieldText = editView.getTextValue();
             if (!fieldText) {
                 return;
             }

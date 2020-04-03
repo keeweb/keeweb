@@ -16,6 +16,20 @@
         <meta name="theme-color" content="#6386ec" />
         <meta name="msapplication-config" content="browserconfig.xml" />
         <meta name="msapplication-TileColor" content="#6386ec" />
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="
+                            default-src 'self';
+                            font-src data:;
+                            script-src 'self' 'unsafe-eval';
+                            style-src 'self' blob:;
+                            connect-src 'self' ws: https:;
+                            child-src blob:;
+                            img-src 'self' data:;
+                            object-src 'none';
+                            form-action 'none';
+            "
+        />
         <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />

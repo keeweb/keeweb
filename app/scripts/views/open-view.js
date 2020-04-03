@@ -120,7 +120,8 @@ class OpenView extends View {
             keyFileData: null,
             keyFilePath: null,
             fileData: null,
-            rev: null
+            rev: null,
+            opts: null
         };
     }
 
@@ -560,6 +561,7 @@ class OpenView extends View {
         this.params.keyFileName = fileInfo.keyFileName;
         this.params.keyFilePath = fileInfo.keyFilePath;
         this.params.keyFileData = null;
+        this.params.opts = fileInfo.opts;
         this.displayOpenFile();
         this.displayOpenKeyFile();
 
@@ -733,6 +735,9 @@ class OpenView extends View {
             this.busy = false;
             if (err || !files) {
                 err = err ? err.toString() : '';
+                if (err === 'browser-auth-started') {
+                    return;
+                }
                 if (err.lastIndexOf('OAuth', 0) !== 0 && !Alerts.alertDisplayed) {
                     Alerts.error({
                         header: Locale.openError,
@@ -919,10 +924,6 @@ class OpenView extends View {
         }
         const fileInfo = this.model.fileInfos.get(lastOpenFiles[this.currentSelectedIndex].id);
         this.showOpenFileInfo(fileInfo);
-
-        if (fileInfo && Launcher && Launcher.fingerprints) {
-            this.openFileWithFingerprint(fileInfo);
-        }
     }
 
     moveOpenFileSelectionDown() {

@@ -1,7 +1,7 @@
 import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { GeneratorPresets } from 'comp/app/generator-presets';
-import { PasswordGenerator } from 'util/generators/password-generator';
+import { PasswordGenerator, CharRanges } from 'util/generators/password-generator';
 import { Locale } from 'util/locale';
 import { Scrollable } from 'framework/views/scrollable';
 import template from 'templates/generator-presets.hbs';
@@ -16,12 +16,14 @@ class GeneratorPresetsView extends View {
         'change .gen-ps__list': 'changePreset',
         'click .gen-ps__btn-create': 'createPreset',
         'click .gen-ps__btn-delete': 'deletePreset',
+        'click .info-btn--pattern': 'togglePatternHelp',
         'input #gen-ps__field-title': 'changeTitle',
         'change #gen-ps__check-enabled': 'changeEnabled',
         'change #gen-ps__check-default': 'changeDefault',
         'input #gen-ps__field-length': 'changeLength',
         'change .gen-ps__check-range': 'changeRange',
-        'input #gen-ps__field-include': 'changeInclude'
+        'input #gen-ps__field-include': 'changeInclude',
+        'input #gen-ps__field-pattern': 'changePattern'
     };
 
     selected = null;
@@ -65,7 +67,7 @@ class GeneratorPresetsView extends View {
                     name: nameLower,
                     title: Locale['genPs' + name],
                     enabled: sel[nameLower],
-                    sample: rangeOverride[nameLower] || PasswordGenerator.charRanges[nameLower]
+                    sample: rangeOverride[nameLower] || CharRanges[nameLower]
                 };
             }
         );
@@ -117,6 +119,10 @@ class GeneratorPresetsView extends View {
     deletePreset() {
         GeneratorPresets.remove(this.selected);
         this.render();
+    }
+
+    togglePatternHelp() {
+        this.$el.find('.gen-ps__pattern-help').toggleClass('hide');
     }
 
     changeTitle(e) {
@@ -171,6 +177,15 @@ class GeneratorPresetsView extends View {
         const include = e.target.value;
         if (include !== this.getPreset(this.selected).include) {
             GeneratorPresets.setPreset(this.selected, { include });
+        }
+        this.presets = GeneratorPresets.all;
+        this.renderExample();
+    }
+
+    changePattern(e) {
+        const pattern = e.target.value;
+        if (pattern !== this.getPreset(this.selected).pattern) {
+            GeneratorPresets.setPreset(this.selected, { pattern });
         }
         this.presets = GeneratorPresets.all;
         this.renderExample();
