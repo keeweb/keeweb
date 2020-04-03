@@ -25,6 +25,6 @@
 ​  <url type="homepage">https://keeweb.info</url>
 ​
 ​  <provides>
-​    <binary>KeeWeb</binary>
+​    <binary>keeweb</binary>
 ​  </provides>
 ​</component>

@@ -166,17 +166,17 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'electron-builder-dist-linux-rpm': {
-                src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.x86_64.rpm`,
+                src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.x86_64.rpm`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.x86_64.rpm`,
                 nonull: true
             },
             'electron-builder-dist-linux-snap': {
-                src: `tmp/desktop/electron-builder/KeeWeb_${pkg.version}_amd64.snap`,
-                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.amd64.snap`,
+                src: `tmp/desktop/electron-builder/keeweb_${pkg.version}_amd64.snap`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.snap`,
                 nonull: true
             },
             'electron-builder-dist-linux-appimage': {
-                src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.AppImage`,
+                src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.AppImage`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.AppImage`,
                 nonull: true
             }
@@ -302,6 +302,7 @@ module.exports = function(grunt) {
             },
             linux: {
                 options: {
+                    name: 'keeweb',
                     platform: 'linux',
                     arch: ['x64'],
                     icon: 'graphics/icon.ico'
@@ -389,10 +390,10 @@ module.exports = function(grunt) {
             linux: {
                 options: {
                     targets: 'linux',
-                    prepackaged: 'tmp/desktop/KeeWeb-linux-x64',
+                    prepackaged: 'tmp/desktop/keeweb-linux-x64',
                     config: {
                         appId: 'net.antelle.keeweb',
-                        productName: 'KeeWeb',
+                        productName: 'keeweb',
                         copyright: `Copyright © ${year} Antelle`,
                         directories: {
                             output: 'tmp/desktop/electron-builder',
@@ -440,7 +441,7 @@ module.exports = function(grunt) {
             'linux-x64': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
                 files: [
-                    { cwd: 'tmp/desktop/KeeWeb-linux-x64', src: '**', expand: true },
+                    { cwd: 'tmp/desktop/keeweb-linux-x64', src: '**', expand: true },
                     { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }
                 ]
             }
@@ -511,7 +512,7 @@ module.exports = function(grunt) {
                 options: {
                     mode: '4755'
                 },
-                src: ['tmp/desktop/KeeWeb-linux-x64/chrome-sandbox']
+                src: ['tmp/desktop/keeweb-linux-x64/chrome-sandbox']
             }
         },
         deb: {
@@ -544,7 +545,7 @@ module.exports = function(grunt) {
                 files: [
                     { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
                     {
-                        cwd: 'tmp/desktop/KeeWeb-linux-x64/',
+                        cwd: 'tmp/desktop/keeweb-linux-x64/',
                         src: '**',
                         dest: '/usr/share/keeweb-desktop',
                         expand: true,
