@@ -297,6 +297,7 @@ Events.on('launcher-exit-request', () => {
 Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
 Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
 Events.on('start-profile', data => StartProfiler.reportAppProfile(data));
+Events.on('log', e => new Logger(e.category || 'remote-app')[e.method || 'info'](e.message));
 
 window.launcherOpen = file => Launcher.openFile(file);
 if (window.launcherOpenedFile) {

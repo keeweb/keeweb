@@ -236,6 +236,12 @@ function createMainWindow() {
     mainWindow.on('session-end', () => {
         emitRemoteEvent('os-lock');
     });
+    mainWindow.webContents.on('will-navigate', (e, url) => {
+        if (!url.startsWith('https://beta.keeweb.info/')) {
+            emitRemoteEvent('log', { message: `Prevented navigation: ${url}` });
+            e.preventDefault();
+        }
+    });
     perfTimestamps &&
         perfTimestamps.push({ name: 'configuring main window', ts: process.hrtime() });
 
