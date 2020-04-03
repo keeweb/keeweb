@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.13.0 (TBD)
+##### v1.13.0 (2020-04-03)
 `-` #1359: fixed Google Drive login issues in desktop apps  
 `+` #1341: auto-lock the app on screen lock on Windows  
 `+` #1065: KEEWEB_PORTABLE_EXECUTABLE_DIR environment variable  
@@ -21,6 +21,7 @@ Release notes
 `*` new Windows code signing certificate  
 `+` startup time profiling  
 `+` #1438: content security policy  
+`+` some desktop security improvements from #1437  
 `*` fix #890: deb will no longer install to /opt  
 `-` fix #1396: fixed hyperlinks in notes  
 `-` fix #1323: version in the About dialog  
