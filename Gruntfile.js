@@ -590,10 +590,9 @@ module.exports = function(grunt) {
         },
         'sign-exe': {
             options: {
-                spc: 'keys/keeweb.spc',
-                key: '01',
-                algo: 'sha256',
-                url: pkg.homepage
+                // algo: 'SHA256',
+                url: pkg.homepage,
+                ...codeSignConfig.windows
             },
             'win32-build-x64': {
                 options: {
