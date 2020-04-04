@@ -119,7 +119,7 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'desktop-update': {
-                cwd: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
+                cwd: 'tmp/desktop/keeweb-linux-x64/resources/',
                 src: 'app.asar',
                 dest: 'tmp/desktop/update/',
                 expand: true,

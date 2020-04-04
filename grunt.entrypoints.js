@@ -28,6 +28,7 @@ module.exports = function(grunt) {
         'clean:desktop',
         'build-desktop-app-content',
         'build-desktop-executables-linux',
+        'build-desktop-update',
         'build-desktop-archives-linux',
         'build-desktop-dist-linux'
     ]);
