@@ -1,26 +1,3 @@
-/**
- * This will require the latest (unreleased) version of `osslsigncode` with pkcs11 patch
- * Build it like this:
- *
- * curl -L http://sourceforge.net/projects/osslsigncode/files/osslsigncode/osslsigncode-1.7.1.tar.gz/download -o osslsigncode.tar.gz
- * tar -zxvf osslsigncode.tar.gz
- * git clone https://git.code.sf.net/p/osslsigncode/osslsigncode osslsigncode-master
- * cp osslsigncode-master/osslsigncode.c osslsigncode-1.7.1/osslsigncode.c
- * rm osslsigncode.tar.gz
- * rm -rf osslsigncode-master
- * cd osslsigncode-1.7.1/
- * export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
- * ./configure
- * make
- * sudo cp osslsigncode /usr/local/bin/osslsigncode
- *
- * Install this:
- *  brew install opensc
- *  brew install engine_pkcs11
- *
- * https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Build_Instructions/Signing_an_executable_with_Authenticode
- */
-
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
