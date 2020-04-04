@@ -30,21 +30,23 @@ function getPrivateKey(path) {
 
 module.exports = function sign(grunt, data) {
     if (signerOptions.privateKey) {
-        const algo = signerOptions.algo || 'sha256';
+        return Promise.resolve().then(() => {
+            const algo = signerOptions.algo || 'sha256';
 
-        const sign = crypto.createSign(algo);
-        sign.update(data);
-        const signature = sign.sign(getPrivateKey(signerOptions.privateKey));
+            const sign = crypto.createSign(algo);
+            sign.update(data);
+            const signature = sign.sign(getPrivateKey(signerOptions.privateKey));
 
-        const verify = crypto.createVerify(algo);
-        verify.write(data);
-        verify.end();
+            const verify = crypto.createVerify(algo);
+            verify.write(data);
+            verify.end();
 
-        if (verify.verify(verifyKey, signature)) {
-            return signature;
-        } else {
-            throw 'Validation error';
-        }
+            if (verify.verify(verifyKey, signature)) {
+                return signature;
+            } else {
+                throw 'Validation error';
+            }
+        });
     }
     return getPin()
         .then(pin => signer.sign({ data, verifyKey, pin, ...signerOptions }))
