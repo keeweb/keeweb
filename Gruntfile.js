@@ -382,7 +382,7 @@ module.exports = function(grunt) {
                         appId: 'net.antelle.keeweb',
                         productName: 'keeweb',
                         copyright: `Copyright © ${year} Antelle`,
-                        publish: 'never',
+                        publish: [],
                         directories: {
                             output: 'tmp/desktop/electron-builder',
                             app: 'desktop',
