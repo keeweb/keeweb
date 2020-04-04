@@ -23,6 +23,16 @@ module.exports = function(grunt) {
     ]);
 
     // prettier-ignore
+    grunt.registerTask('desktop-linux', 'Build desktop apps on linux', [
+        'gitinfo',
+        'clean:desktop',
+        'build-desktop-app-content',
+        'build-desktop-executables-linux',
+        'build-desktop-archives-linux',
+        'build-desktop-dist-linux'
+    ]);
+
+    // prettier-ignore
     grunt.registerTask('cordova', 'Build cordova app', [
         'default',
         'build-cordova'

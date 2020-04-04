@@ -34,19 +34,37 @@ module.exports = function(grunt) {
         'validate-desktop-update'
     ]);
 
-    grunt.registerTask('build-desktop-executables', [
-        'electron',
-        'sign-exe:win32-build-x64',
-        'sign-exe:win32-build-ia32',
-        'copy:desktop-windows-helper-ia32',
-        'copy:desktop-windows-helper-x64',
+    grunt.registerTask('build-desktop-executables-linux', [
+        'electron:linux',
         'chmod:linux-desktop-x64'
     ]);
 
-    grunt.registerTask('build-desktop-archives', [
+    grunt.registerTask('build-desktop-executables-darwin', ['electron:darwin']);
+
+    grunt.registerTask('build-desktop-executables-win32', [
+        'electron:win32',
+        'sign-exe:win32-build-x64',
+        'sign-exe:win32-build-ia32',
+        'copy:desktop-windows-helper-ia32',
+        'copy:desktop-windows-helper-x64'
+    ]);
+
+    grunt.registerTask('build-desktop-executables', [
+        'build-desktop-executables-linux',
+        'build-desktop-executables-darwin',
+        'build-desktop-executables-win32'
+    ]);
+
+    grunt.registerTask('build-desktop-archives-linux', ['compress:linux-x64']);
+
+    grunt.registerTask('build-desktop-archives-win32', [
         'compress:win32-x64',
-        'compress:win32-ia32',
-        'compress:linux-x64'
+        'compress:win32-ia32'
+    ]);
+
+    grunt.registerTask('build-desktop-archives', [
+        'build-desktop-archives-linux',
+        'build-desktop-archives-win32'
     ]);
 
     grunt.registerTask('build-desktop-dist-darwin', ['appdmg']);
