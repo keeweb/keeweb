@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
-cd /github/workspace/keeweb
+cd /github/workspace
 npm ci
 grunt desktop-linux
