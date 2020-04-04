@@ -34,6 +34,15 @@ module.exports = function(grunt) {
     ]);
 
     // prettier-ignore
+    grunt.registerTask('desktop-darwin', 'Build desktop apps on macos', [
+        'gitinfo',
+        'clean:desktop',
+        'build-desktop-app-content',
+        'build-desktop-executables-darwin',
+        'build-desktop-dist-darwin'
+    ]);
+
+    // prettier-ignore
     grunt.registerTask('cordova', 'Build cordova app', [
         'default',
         'build-cordova'
