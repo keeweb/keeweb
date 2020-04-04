@@ -151,12 +151,12 @@ module.exports = function(grunt) {
                 nonull: true
             },
             'electron-builder-dist-linux-rpm': {
-                src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.x86_64.rpm`,
+                src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.x86_64.rpm`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.x86_64.rpm`,
                 nonull: true
             },
             'electron-builder-dist-linux-snap': {
-                src: `tmp/desktop/electron-builder/keeweb_${pkg.version}_amd64.snap`,
+                src: `tmp/desktop/electron-builder/KeeWeb_${pkg.version}_amd64.snap`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.snap`,
                 nonull: true
             },
