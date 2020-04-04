@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
-    const getCodeSingConfig = () => require('../keys/codesign');
+    const getCodeSingConfig = () => require('./keys/codesign.json');
 
     const webpackOptions = {
         date,
