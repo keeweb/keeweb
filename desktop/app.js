@@ -614,6 +614,10 @@ function coerceMainWindowPositionToConnectedDisplay() {
 }
 
 function reportStartProfile() {
+    if (!perfTimestamps) {
+        return;
+    }
+
     const processCreationTime = process.getCreationTime();
     const totalTime = Math.round(Date.now() - processCreationTime);
     let lastTs = 0;
