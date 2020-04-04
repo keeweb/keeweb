@@ -592,7 +592,7 @@ module.exports = function(grunt) {
             options: {
                 // algo: 'SHA256',
                 url: pkg.homepage,
-                ...codeSignConfig.windows
+                ...(codeSignConfig ? codeSignConfig.windows : {})
             },
             'win32-build-x64': {
                 options: {
