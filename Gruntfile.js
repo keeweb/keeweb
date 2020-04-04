@@ -376,13 +376,13 @@ module.exports = function(grunt) {
         'electron-builder': {
             linux: {
                 options: {
+                    publish: 'never',
                     targets: 'linux',
                     prepackaged: 'tmp/desktop/keeweb-linux-x64',
                     config: {
                         appId: 'net.antelle.keeweb',
                         productName: 'keeweb',
                         copyright: `Copyright © ${year} Antelle`,
-                        publish: [],
                         directories: {
                             output: 'tmp/desktop/electron-builder',
                             app: 'desktop',
