@@ -43,14 +43,14 @@ module.exports = function(grunt) {
         const cmd = 'VBoxManage';
         const args = [
             'guestcontrol',
-            opt.vmName,
+            opt.vm.name,
             '--username',
-            opt.vmUser,
+            opt.vm.user,
             '--password',
-            opt.vmPass,
+            opt.vm.pass,
             'run',
-            opt.vmExec,
-            `sign /t ${timeServer} /d "${name}" /du ${opt.url} ${opt.vmShare}${fileNameWithoutFolder}`
+            opt.vm.exec,
+            `sign /t ${timeServer} /d "${name}" /du ${opt.url} ${opt.vm.share}${fileNameWithoutFolder}`
         ];
         // the algo is not working: "/fd ${opt.algo}"
         let res = spawnSync(cmd, args);
