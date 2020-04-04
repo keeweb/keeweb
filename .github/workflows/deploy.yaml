@@ -1,7 +1,7 @@
 name: Deploy
 on:
   push:
-    branches: [ gh-pages ]
+    branches: [ 'gh-pages' ]
 jobs:
   publish:
     runs-on: ubuntu-latest
