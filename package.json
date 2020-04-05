@@ -78,7 +78,7 @@
         "prettier": "^1.19.1",
         "puppeteer": "^2.1.1",
         "raw-loader": "^4.0.0",
-        "run-remote-task": "^0.1.0",
+        "run-remote-task": "^0.3.0",
         "sass-loader": "^8.0.2",
         "stats-webpack-plugin": "0.7.0",
         "string-replace-webpack-plugin": "0.1.3",

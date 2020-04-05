@@ -42,16 +42,26 @@ module.exports = function(grunt) {
             const taskResult = await runRemoteTask(opt.windows, zipContents);
             const signedFile = taskResult.file;
 
-            const res = spawnSync('osslsigncode', ['verify', signedFile]);
-            if (res.status) {
-                const hasCertHash = res.stdout.includes(`Serial : ${opt.certHash}`);
-                if (!hasCertHash) {
-                    grunt.warn(
-                        `Verify error ${file}: exit code ${res.status}.\n${res.stdout.toString()}`
-                    );
-                }
+            const res = spawnSync('signtool', ['verify', '/pa', '/sha1', opt.certHash, signedFile]);
+            console.log('res.status', res.status);
+
+            const res2 = spawnSync('signtool', [
+                'verify',
+                '/pa',
+                '/sha1',
+                opt.certHash.replace('1', '2'),
+                signedFile
+            ]);
+            console.log('res.status', res2.status);
+
+            if (!res.stdout.includes('Successfully verified')) {
+                grunt.warn(
+                    `Verify error ${file}: exit code ${res.status}.\n${res.stdout.toString()}`
+                );
             }
-            fs.renameSync(signedFile, file);
+
+            fs.unlinkSync(signedFile, file);
+            fs.writeFileSync(file, taskResult.data);
             grunt.log.writeln(`Signed ${file}: ${name}`);
         } catch (e) {
             grunt.warn(`Sign error ${file}: ${e}`);
