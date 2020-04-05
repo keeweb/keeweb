@@ -579,8 +579,8 @@ module.exports = function(grunt) {
         'sign-exe': {
             options: {
                 url: pkg.homepage,
-                get vm() {
-                    return getCodeSingConfig().windowsVM;
+                get windows() {
+                    return getCodeSingConfig().windows;
                 },
                 get certHash() {
                     return getCodeSingConfig().microsoftCertHash;
