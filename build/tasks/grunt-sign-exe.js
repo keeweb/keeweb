@@ -42,7 +42,9 @@ module.exports = function(grunt) {
             const taskResult = await runRemoteTask(opt.windows, zipContents);
             const signedFile = taskResult.file;
 
+            // C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe
             const res = spawnSync('signtool', ['verify', '/pa', '/sha1', opt.certHash, signedFile]);
+            // eslint-disable-next-line no-console
             console.log('res.status', res.status);
 
             const res2 = spawnSync('signtool', [
@@ -52,6 +54,7 @@ module.exports = function(grunt) {
                 opt.certHash.replace('1', '2'),
                 signedFile
             ]);
+            // eslint-disable-next-line no-console
             console.log('res.status', res2.status);
 
             if (!res.stdout.includes('Successfully verified')) {
