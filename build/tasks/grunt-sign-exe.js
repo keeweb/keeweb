@@ -44,28 +44,20 @@ module.exports = function(grunt) {
 
             const signtool =
                 'C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\signtool.exe';
-            const res = spawnSync(signtool, ['verify', '/pa', '/sha1', opt.certHash, signedFile]);
-            // eslint-disable-next-line no-console
-            console.log('res.status', res.status, res.stdout.toString('utf8'), res);
+            const res = spawnSync(signtool, ['verify', '/pa', '/v', signedFile]);
 
-            const res2 = spawnSync(signtool, [
-                'verify',
-                '/pa',
-                '/sha1',
-                opt.certHash.replace('1', '2'),
-                signedFile
-            ]);
-            // eslint-disable-next-line no-console
-            console.log('res.status', res2.status, res2.stdout.toString('utf8'), res2);
-
-            const res3 = spawnSync(signtool, ['verify', '/pa', '/v', signedFile]);
-            // eslint-disable-next-line no-console
-            console.log('res.status', res3.status, res3.stdout.toString('utf8'), res3);
-
-            if (!res.stdout.includes('Successfully verified')) {
+            if (res.status) {
                 grunt.warn(
                     `Verify error ${file}: exit code ${res.status}.\n${res.stdout.toString()}`
                 );
+            }
+
+            if (!res.stdout.includes('Successfully verified')) {
+                grunt.warn(`Verify error ${file}:\n${res.stdout.toString()}`);
+            }
+
+            if (!res.stdout.includes(opt.certHash)) {
+                grunt.warn(`Verify error ${file}: expected hash was not found`);
             }
 
             fs.unlinkSync(signedFile, file);
