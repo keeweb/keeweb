@@ -46,7 +46,7 @@ module.exports = function(grunt) {
                 'C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\signtool.exe';
             const res = spawnSync(signtool, ['verify', '/pa', '/sha1', opt.certHash, signedFile]);
             // eslint-disable-next-line no-console
-            console.log('res.status', res.status, res.stdout, res);
+            console.log('res.status', res.status, res.stdout.toString('utf8'), res);
 
             const res2 = spawnSync(signtool, [
                 'verify',
@@ -56,7 +56,11 @@ module.exports = function(grunt) {
                 signedFile
             ]);
             // eslint-disable-next-line no-console
-            console.log('res.status', res2.status, res2.stdout, res);
+            console.log('res.status', res2.status, res2.stdout.toString('utf8'), res2);
+
+            const res3 = spawnSync(signtool, ['verify', '/pa', '/v', signedFile]);
+            // eslint-disable-next-line no-console
+            console.log('res.status', res3.status, res3.stdout.toString('utf8'), res3);
 
             if (!res.stdout.includes('Successfully verified')) {
                 grunt.warn(
