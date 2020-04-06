@@ -414,6 +414,8 @@ async function run() {
             .trim()
             .replace(/\s*\n/g, '\n');
 
+        console.log(`Updating release with notes:\n${body}`);
+
         await github.repos.updateRelease({
             owner,
             repo,
