@@ -389,7 +389,7 @@ module.exports._enoent = enoent;
 /***/ }),
 
 /***/ 31:
-/***/ (function(module, __unusedexports, __webpack_require__) {
+/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
 const fs = __webpack_require__(747);
 const core = __webpack_require__(470);
@@ -428,7 +428,7 @@ async function run() {
     }
 }
 
-module.exports = run;
+run();
 
 
 /***/ }),
