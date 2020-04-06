@@ -1,0 +1,19 @@
+{
+  "name": "publish-release",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ncc build src/main.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.3",
+    "@actions/exec": "^1.0.3",
+    "@actions/github": "^2.1.1"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.22.1"
+  }
+}
