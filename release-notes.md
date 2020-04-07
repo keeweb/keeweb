@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.13.2 (TBD)
 `+` files previously created as v4.1 will be written as v4.0  
+`+` fixed Docker build  
 
 ##### v1.13.1 (2020-04-04)
 `-` fix #1444: fixed website favicons and attached images  

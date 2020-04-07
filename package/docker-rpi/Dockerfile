@@ -38,7 +38,6 @@ RUN wget https://github.com/keeweb/keeweb/archive/gh-pages.zip; \
     unzip gh-pages.zip; \
     rm gh-pages.zip; \
     mv keeweb-gh-pages keeweb; \
-    rm keeweb/CNAME
 
 # clone keeweb plugins
 RUN wget https://github.com/keeweb/keeweb-plugins/archive/master.zip; \
