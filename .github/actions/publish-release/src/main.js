@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const core = require('@actions/core');
 const { GitHub, context } = require('@actions/github');
 
@@ -12,7 +13,8 @@ async function run() {
         const draft = false;
         const release_id = core.getInput('release_id', { required: false });
 
-        const releaseNotes = fs.readFileSync('release-notes.md', 'utf8');
+        const releaseNotesPath = path.join(__dirname, '../../../../release-notes.md');
+        const releaseNotes = fs.readFileSync(releaseNotesPath, 'utf8');
         const regex = new RegExp(
             `#####\\s+v${version.replace(/\./g, '\\.')}.*?\n([\\s\\S]*?)\n#####`
         );
