@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.13.2 (TBD)
+##### v1.13.2 (2020-04-09)
 `+` files previously created as v4.1 will be written as v4.0  
 `+` fixed Docker build  
 `*` builds are now run on CI  
