@@ -53,6 +53,11 @@ module.exports = function(grunt) {
     ]);
 
     // prettier-ignore
+    grunt.registerTask('finish-release', 'Complete the release started with desktop-*', [
+        'sign-dist'
+    ]);
+
+    // prettier-ignore
     grunt.registerTask('cordova', 'Build cordova app', [
         'default',
         'build-cordova'
