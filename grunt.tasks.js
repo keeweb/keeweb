@@ -13,6 +13,7 @@ module.exports = function(grunt) {
         'htmlmin',
         'csp-hashes',
         'copy:html-dist',
+        'copy:404-dist',
         'string-replace:service-worker',
         'string-replace:manifest',
         'copy:dist-icons',
