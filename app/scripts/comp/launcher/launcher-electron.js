@@ -317,6 +317,8 @@ Events.on('app-ready', () =>
     }, 0)
 );
 
-global.Events = Events;
+Launcher.remoteApp().on('remote-app-event', e => {
+    Events.emit(e.name, e.data);
+});
 
 export { Launcher };
