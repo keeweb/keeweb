@@ -347,10 +347,10 @@ function mainWindowFocus() {
 
 function emitRemoteEvent(e, arg) {
     if (mainWindow && mainWindow.webContents) {
-        arg = JSON.stringify(arg);
-        mainWindow.webContents.executeJavaScript(
-            `window.Events && Events.emit('${e}', ${arg}); void 0;`
-        );
+        app.emit('remote-app-event', {
+            name: e,
+            data: arg
+        });
     }
 }
 

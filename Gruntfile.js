@@ -66,6 +66,11 @@ module.exports = function(grunt) {
                 dest: 'dist/index.html',
                 nonull: true
             },
+            '404-dist': {
+                src: 'app/404.html',
+                dest: 'dist/404.html',
+                nonull: true
+            },
             favicon: {
                 src: 'app/favicon.png',
                 dest: 'tmp/favicon.png',
