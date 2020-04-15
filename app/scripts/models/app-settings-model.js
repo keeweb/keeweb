@@ -76,6 +76,8 @@ AppSettingsModel.defineModelProperties(
         canExportXml: true,
         canExportHtml: true,
         canSaveTo: true,
+        canOpenWebdav: true,
+        canOpenGenerator: true,
         canOpenOtpDevice: true,
 
         dropbox: true,
