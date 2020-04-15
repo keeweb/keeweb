@@ -32,7 +32,9 @@ const tempUserDataPath = path.join(userDataDir, 'temp');
 const tempUserDataPathRand = Date.now().toString() + Math.random().toString();
 
 const htmlPath = process.env.KEEWEB_HTML_PATH || 'file://' + path.join(__dirname, 'index.html');
-const showDevToolsOnStart = process.env.KEEWEB_OPEN_DEVTOOLS === '1';
+const showDevToolsOnStart =
+    process.argv.some(arg => arg.startsWith('--devtools')) ||
+    process.env.KEEWEB_OPEN_DEVTOOLS === '1';
 
 const startMinimized = process.argv.some(arg => arg.startsWith('--minimized'));
 
