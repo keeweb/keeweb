@@ -31,16 +31,8 @@ const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
 const tempUserDataPath = path.join(userDataDir, 'temp');
 const tempUserDataPathRand = Date.now().toString() + Math.random().toString();
 
-let htmlPath = process.argv
-    .filter(arg => arg.startsWith('--htmlpath='))
-    .map(arg => arg.replace('--htmlpath=', ''))[0];
-if (!htmlPath) {
-    htmlPath = 'file://' + path.join(__dirname, 'index.html');
-}
-
-const showDevToolsOnStart =
-    process.argv.some(arg => arg.startsWith('--devtools')) ||
-    process.env.KEEWEB_OPEN_DEVTOOLS === '1';
+const htmlPath = process.env.KEEWEB_HTML_PATH || 'file://' + path.join(__dirname, 'index.html');
+const showDevToolsOnStart = process.env.KEEWEB_OPEN_DEVTOOLS === '1';
 
 const startMinimized = process.argv.some(arg => arg.startsWith('--minimized'));
 
@@ -237,7 +229,7 @@ function createMainWindow() {
         emitRemoteEvent('os-lock');
     });
     mainWindow.webContents.on('will-navigate', (e, url) => {
-        if (!url.startsWith('https://beta.keeweb.info/')) {
+        if (!url.startsWith('https://beta.keeweb.info/') && !url.startsWith(htmlPath)) {
             emitRemoteEvent('log', { message: `Prevented navigation: ${url}` });
             e.preventDefault();
         }

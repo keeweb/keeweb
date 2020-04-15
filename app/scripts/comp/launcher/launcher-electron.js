@@ -242,13 +242,13 @@ const Launcher = {
             stdout = stdout.trim();
             stderr = stderr.trim();
             const msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
-            if (code) {
+            if (code !== 0) {
                 logger.error(msg + '\n' + stdout + '\n' + stderr);
             } else {
-                logger.info(msg + (stdout ? '\n' + stdout : ''));
+                logger.info(msg + (stdout && !config.noStdOutLogging ? '\n' + stdout : ''));
             }
             if (complete) {
-                complete(code ? 'Exit code ' + code : null, stdout, code);
+                complete(code !== 0 ? 'Exit code ' + code : null, stdout, code);
                 complete = null;
             }
         });

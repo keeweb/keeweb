@@ -56,7 +56,7 @@ Otp.prototype.next = function(callback) {
     this.hmac(data, (sig, err) => {
         if (!sig) {
             logger.error('OTP calculation error', err);
-            return callback();
+            return callback(err);
         }
         sig = new DataView(sig);
         const offset = sig.getInt8(sig.byteLength - 1) & 0xf;
@@ -67,7 +67,7 @@ Otp.prototype.next = function(callback) {
         } else {
             pass = Otp.hmacToDigits(hmac, this.digits);
         }
-        callback(pass, timeLeft);
+        callback(null, pass, timeLeft);
     });
 };
 

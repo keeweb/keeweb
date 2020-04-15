@@ -8,6 +8,7 @@ import { KeyHandler } from 'comp/browser/key-handler';
 import { SecureInput } from 'comp/browser/secure-input';
 import { Launcher } from 'comp/launcher';
 import { Alerts } from 'comp/ui/alerts';
+import { UsbListener } from 'comp/app/usb-listener';
 import { Keys } from 'const/keys';
 import { Comparators } from 'util/data/comparators';
 import { Features } from 'util/features';
@@ -34,6 +35,7 @@ class OpenView extends View {
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
         'click .open__icon-demo': 'createDemo',
+        'click .open__icon-otp-device': 'openOtpDevice',
         'click .open__icon-more': 'toggleMore',
         'click .open__icon-storage': 'openStorage',
         'click .open__icon-settings': 'openSettings',
@@ -70,6 +72,7 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, null, 'open');
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, null, 'open');
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
+        this.listenTo(Events, 'usb-devices-changed', this.usbDevicesChanged.bind(this));
         this.once('remove', () => {
             this.passwordInput.reset();
         });
@@ -103,6 +106,8 @@ class OpenView extends View {
             canOpenSettings: this.model.settings.canOpenSettings,
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
+            canOpenOtpDevice:
+                this.model.settings.canOpenOtpDevice && !!UsbListener.attachedYubiKeys.length,
             showMore,
             showLogo
         });
@@ -961,6 +966,40 @@ class OpenView extends View {
             delete this.views.gen;
         });
         this.views.gen = generator;
+    }
+
+    usbDevicesChanged() {
+        const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
+        this.$el.find('.open__icon-otp-device').toggleClass('hide', !hasYubiKeys);
+    }
+
+    openOtpDevice() {
+        return Events.emit('toggle-settings', 'devices');
+        if (this.busy && this.otpDevice) {
+            this.otpDevice.cancelOpen();
+        }
+        if (!this.busy) {
+            this.busy = true;
+            this.inputEl.attr('disabled', 'disabled');
+            const icon = this.$el.find('.open__icon-otp-device');
+            icon.toggleClass('flip3d', true);
+            this.otpDevice = this.model.openOtpDevice(err => {
+                if (err && !this.otpDevice.openAborted) {
+                    Alerts.error({
+                        header: Locale.openError,
+                        body:
+                            Locale.openErrorDescription +
+                            '<pre class="modal__pre">' +
+                            escape(err.toString()) +
+                            '</pre>'
+                    });
+                }
+                this.otpDevice = null;
+                icon.toggleClass('flip3d', false);
+                this.inputEl.removeAttr('disabled');
+                this.busy = false;
+            });
+        }
     }
 }
 

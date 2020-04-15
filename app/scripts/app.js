@@ -5,6 +5,7 @@ import { AppRightsChecker } from 'comp/app/app-rights-checker';
 import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
 import { Updater } from 'comp/app/updater';
+import { UsbListener } from 'comp/app/usb-listener';
 import { AuthReceiver } from 'comp/browser/auth-receiver';
 import { FeatureTester } from 'comp/browser/feature-tester';
 import { FocusDetector } from 'comp/browser/focus-detector';
@@ -88,7 +89,6 @@ ready(() => {
 
     function initModules() {
         KeyHandler.init();
-        IdleTracker.init();
         PopupNotifier.init();
         KdbxwebInit.init();
         FocusDetector.init();
@@ -157,6 +157,7 @@ ready(() => {
                 });
             } else {
                 showView();
+                return new Promise(resolve => requestAnimationFrame(resolve));
             }
         });
     }
@@ -165,7 +166,11 @@ ready(() => {
         Updater.init();
         SingleInstanceChecker.init();
         AppRightsChecker.init();
-        setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
+        IdleTracker.init();
+        UsbListener.init();
+        setTimeout(() => {
+            PluginManager.runAutoUpdate();
+        }, Timeouts.AutoUpdatePluginsAfterStart);
     }
 
     function showView() {

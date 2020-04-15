@@ -152,153 +152,189 @@ class DetailsView extends View {
 
     addFieldViews() {
         const model = this.model;
-        if (model.isJustCreated && this.appModel.files.length > 1) {
-            const fileNames = this.appModel.files.map(function(file) {
-                return { id: file.id, value: file.name, selected: file === this.model.file };
-            }, this);
-            this.fileEditView = new FieldViewSelect({
-                name: '$File',
-                title: StringFormat.capFirst(Locale.file),
-                value() {
-                    return fileNames;
-                }
-            });
-            this.fieldViews.push(this.fileEditView);
-        } else {
-            this.fieldViews.push(
+        const fieldViews = [];
+        const fieldViewsAside = [];
+        if (this.model.external) {
+            fieldViewsAside.push(
                 new FieldViewReadOnly({
-                    name: 'File',
-                    title: StringFormat.capFirst(Locale.file),
+                    name: 'Device',
+                    title: StringFormat.capFirst(Locale.device),
                     value() {
-                        return model.fileName;
+                        return model.device.name;
                     }
                 })
             );
-        }
-        this.userEditView = new FieldViewAutocomplete({
-            name: '$UserName',
-            title: StringFormat.capFirst(Locale.user),
-            value() {
-                return model.user;
-            },
-            getCompletions: this.getUserNameCompletions.bind(this),
-            sequence: '{USERNAME}'
-        });
-        this.fieldViews.push(this.userEditView);
-        this.passEditView = new FieldViewText({
-            name: '$Password',
-            title: StringFormat.capFirst(Locale.password),
-            canGen: true,
-            value() {
-                return model.password;
-            },
-            sequence: '{PASSWORD}'
-        });
-        this.fieldViews.push(this.passEditView);
-        this.urlEditView = new FieldViewUrl({
-            name: '$URL',
-            title: StringFormat.capFirst(Locale.website),
-            value() {
-                return model.url;
-            },
-            sequence: '{URL}'
-        });
-        this.fieldViews.push(this.urlEditView);
-        this.fieldViews.push(
-            new FieldViewText({
-                name: '$Notes',
-                title: StringFormat.capFirst(Locale.notes),
-                multiline: 'true',
-                markdown: true,
-                value() {
-                    return model.notes;
-                },
-                sequence: '{NOTES}'
-            })
-        );
-        this.fieldViews.push(
-            new FieldViewTags({
-                name: 'Tags',
-                title: StringFormat.capFirst(Locale.tags),
-                tags: this.appModel.tags,
-                value() {
-                    return model.tags;
-                }
-            })
-        );
-        this.fieldViews.push(
-            new FieldViewDate({
-                name: 'Expires',
-                title: Locale.detExpires,
-                lessThanNow: '(' + Locale.detExpired + ')',
-                value() {
-                    return model.expires;
-                }
-            })
-        );
-        this.fieldViews.push(
-            new FieldViewReadOnly({
-                name: 'Group',
-                title: Locale.detGroup,
-                value() {
-                    return model.groupName;
-                },
-                tip() {
-                    return model.getGroupPath().join(' / ');
-                }
-            })
-        );
-        this.fieldViews.push(
-            new FieldViewReadOnly({
-                name: 'Created',
-                title: Locale.detCreated,
-                value() {
-                    return DateFormat.dtStr(model.created);
-                }
-            })
-        );
-        this.fieldViews.push(
-            new FieldViewReadOnly({
-                name: 'Updated',
-                title: Locale.detUpdated,
-                value() {
-                    return DateFormat.dtStr(model.updated);
-                }
-            })
-        );
-        this.fieldViews.push(
-            new FieldViewHistory({
-                name: 'History',
-                title: StringFormat.capFirst(Locale.history),
-                value() {
-                    return { length: model.historyLength, unsaved: model.unsaved };
-                }
-            })
-        );
-        this.otpEditView = null;
-        for (const field of Object.keys(model.fields)) {
-            if (field === 'otp' && this.model.otpGenerator) {
-                this.otpEditView = new FieldViewOtp({
-                    name: '$' + field,
-                    title: field,
+            fieldViews.push(
+                new FieldViewReadOnly({
+                    name: '$UserName',
+                    title: StringFormat.capFirst(Locale.user),
+                    aside: false,
                     value() {
-                        return model.otpGenerator;
-                    },
-                    sequence: '{TOTP}'
+                        return model.user;
+                    }
+                })
+            );
+            this.otpEditView = new FieldViewOtp({
+                name: '$otp',
+                title: Locale.detOtpField,
+                value() {
+                    return model.otpGenerator;
+                },
+                sequence: '{TOTP}',
+                readonly: true,
+                needsTouch: this.model.needsTouch,
+                deviceShortName: this.model.device.shortName
+            });
+            fieldViews.push(this.otpEditView);
+        } else {
+            if (model.isJustCreated && this.appModel.files.length > 1) {
+                const fileNames = this.appModel.files.map(function(file) {
+                    return { id: file.id, value: file.name, selected: file === this.model.file };
+                }, this);
+                this.fileEditView = new FieldViewSelect({
+                    name: '$File',
+                    title: StringFormat.capFirst(Locale.file),
+                    value() {
+                        return fileNames;
+                    }
                 });
-                this.fieldViews.push(this.otpEditView);
+                fieldViews.push(this.fileEditView);
             } else {
-                this.fieldViews.push(
-                    new FieldViewCustom({
-                        name: '$' + field,
-                        title: field,
-                        multiline: true,
+                fieldViewsAside.push(
+                    new FieldViewReadOnly({
+                        name: 'File',
+                        title: StringFormat.capFirst(Locale.file),
                         value() {
-                            return model.fields[field];
-                        },
-                        sequence: `{S:${field}}`
+                            return model.fileName;
+                        }
                     })
                 );
+            }
+            this.userEditView = new FieldViewAutocomplete({
+                name: '$UserName',
+                title: StringFormat.capFirst(Locale.user),
+                value() {
+                    return model.user;
+                },
+                getCompletions: this.getUserNameCompletions.bind(this),
+                sequence: '{USERNAME}'
+            });
+            fieldViews.push(this.userEditView);
+            this.passEditView = new FieldViewText({
+                name: '$Password',
+                title: StringFormat.capFirst(Locale.password),
+                canGen: true,
+                value() {
+                    return model.password;
+                },
+                sequence: '{PASSWORD}'
+            });
+            fieldViews.push(this.passEditView);
+            this.urlEditView = new FieldViewUrl({
+                name: '$URL',
+                title: StringFormat.capFirst(Locale.website),
+                value() {
+                    return model.url;
+                },
+                sequence: '{URL}'
+            });
+            fieldViews.push(this.urlEditView);
+            fieldViews.push(
+                new FieldViewText({
+                    name: '$Notes',
+                    title: StringFormat.capFirst(Locale.notes),
+                    multiline: 'true',
+                    markdown: true,
+                    value() {
+                        return model.notes;
+                    },
+                    sequence: '{NOTES}'
+                })
+            );
+            fieldViews.push(
+                new FieldViewTags({
+                    name: 'Tags',
+                    title: StringFormat.capFirst(Locale.tags),
+                    tags: this.appModel.tags,
+                    value() {
+                        return model.tags;
+                    }
+                })
+            );
+            fieldViews.push(
+                new FieldViewDate({
+                    name: 'Expires',
+                    title: Locale.detExpires,
+                    lessThanNow: '(' + Locale.detExpired + ')',
+                    value() {
+                        return model.expires;
+                    }
+                })
+            );
+            fieldViewsAside.push(
+                new FieldViewReadOnly({
+                    name: 'Group',
+                    title: Locale.detGroup,
+                    value() {
+                        return model.groupName;
+                    },
+                    tip() {
+                        return model.getGroupPath().join(' / ');
+                    }
+                })
+            );
+            fieldViewsAside.push(
+                new FieldViewReadOnly({
+                    name: 'Created',
+                    title: Locale.detCreated,
+                    value() {
+                        return DateFormat.dtStr(model.created);
+                    }
+                })
+            );
+            fieldViewsAside.push(
+                new FieldViewReadOnly({
+                    name: 'Updated',
+                    title: Locale.detUpdated,
+                    value() {
+                        return DateFormat.dtStr(model.updated);
+                    }
+                })
+            );
+            fieldViewsAside.push(
+                new FieldViewHistory({
+                    name: 'History',
+                    title: StringFormat.capFirst(Locale.history),
+                    value() {
+                        return { length: model.historyLength, unsaved: model.unsaved };
+                    }
+                })
+            );
+            this.otpEditView = null;
+            for (const field of Object.keys(model.fields)) {
+                if (field === 'otp' && this.model.otpGenerator) {
+                    this.otpEditView = new FieldViewOtp({
+                        name: '$' + field,
+                        title: field,
+                        value() {
+                            return model.otpGenerator;
+                        },
+                        sequence: '{TOTP}'
+                    });
+                    fieldViews.push(this.otpEditView);
+                } else {
+                    fieldViews.push(
+                        new FieldViewCustom({
+                            name: '$' + field,
+                            title: field,
+                            multiline: true,
+                            value() {
+                                return model.fields[field];
+                            },
+                            sequence: `{S:${field}}`
+                        })
+                    );
+                }
             }
         }
 
@@ -306,30 +342,35 @@ class DetailsView extends View {
 
         const fieldsMainEl = this.$el.find('.details__body-fields');
         const fieldsAsideEl = this.$el.find('.details__body-aside');
-        this.fieldViews.forEach(fieldView => {
-            fieldView.parent = fieldView.readonly ? fieldsAsideEl[0] : fieldsMainEl[0];
-            fieldView.render();
-            fieldView.on('change', this.fieldChanged.bind(this));
-            fieldView.on('copy', this.fieldCopied.bind(this));
-            fieldView.on('autotype', this.fieldAutoType.bind(this));
-            if (hideEmptyFields) {
-                const value = fieldView.model.value();
-                if (!value || value.length === 0 || value.byteLength === 0) {
-                    if (
-                        this.model.isJustCreated &&
-                        ['$UserName', '$Password'].indexOf(fieldView.model.name) >= 0
-                    ) {
-                        return; // don't hide user for new records
+        for (const views of [fieldViews, fieldViewsAside]) {
+            for (const fieldView of views) {
+                fieldView.parent = views === fieldViews ? fieldsMainEl[0] : fieldsAsideEl[0];
+                fieldView.render();
+                fieldView.on('change', this.fieldChanged.bind(this));
+                fieldView.on('copy', this.fieldCopied.bind(this));
+                fieldView.on('autotype', this.fieldAutoType.bind(this));
+                if (hideEmptyFields) {
+                    const value = fieldView.model.value();
+                    if (!value || value.length === 0 || value.byteLength === 0) {
+                        if (
+                            this.model.isJustCreated &&
+                            ['$UserName', '$Password'].indexOf(fieldView.model.name) >= 0
+                        ) {
+                            return; // don't hide user for new records
+                        }
+                        fieldView.hide();
                     }
-                    fieldView.hide();
                 }
             }
-        });
+        }
+        this.fieldViews = fieldViews.concat(fieldViewsAside);
 
-        this.moreView = new DetailsAddFieldView();
-        this.moreView.render();
-        this.moreView.on('add-field', this.addNewField.bind(this));
-        this.moreView.on('more-click', this.toggleMoreOptions.bind(this));
+        if (!this.model.external) {
+            this.moreView = new DetailsAddFieldView();
+            this.moreView.render();
+            this.moreView.on('add-field', this.addNewField.bind(this));
+            this.moreView.on('more-click', this.toggleMoreOptions.bind(this));
+        }
     }
 
     addNewField() {
@@ -504,6 +545,9 @@ class DetailsView extends View {
     }
 
     toggleIcons() {
+        if (this.model.external) {
+            return;
+        }
         if (this.views.sub && this.views.sub instanceof IconSelectView) {
             this.render();
             return;
@@ -819,6 +863,9 @@ class DetailsView extends View {
     }
 
     editTitle() {
+        if (this.model.external) {
+            return;
+        }
         const input = $('<input/>')
             .addClass('details__header-title-input')
             .attr({ autocomplete: 'off', spellcheck: 'false', placeholder: 'Title' })

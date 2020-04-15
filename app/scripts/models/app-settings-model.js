@@ -64,6 +64,7 @@ AppSettingsModel.defineModelProperties(
         cacheConfigSettings: false,
         allowIframes: false,
         useGroupIconForEntries: false,
+        enableUsb: true,
 
         canOpen: true,
         canOpenDemo: true,
@@ -75,6 +76,7 @@ AppSettingsModel.defineModelProperties(
         canExportXml: true,
         canExportHtml: true,
         canSaveTo: true,
+        canOpenOtpDevice: true,
 
         dropbox: true,
         webdav: true,
