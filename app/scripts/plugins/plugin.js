@@ -303,27 +303,35 @@ class Plugin extends Model {
     }
 
     applyCss(name, data, theme) {
-        return Promise.resolve().then(() => {
-            const blob = new Blob([data], { type: 'text/css' });
-            const objectUrl = URL.createObjectURL(blob);
-            const id = 'plugin-css-' + name;
-            const el = this.createElementInHead('link', id, {
-                rel: 'stylesheet',
-                href: objectUrl
-            });
-            el.addEventListener('load', () => URL.revokeObjectURL(objectUrl));
-            if (theme) {
-                const locKey = this.getThemeLocaleKey(theme.name);
-                SettingsManager.allThemes[theme.name] = locKey;
-                BaseLocale[locKey] = theme.title;
-                for (const styleSheet of Array.from(document.styleSheets)) {
-                    if (styleSheet.ownerNode.id === id) {
-                        this.processThemeStyleSheet(styleSheet, theme);
-                        break;
+        return new Promise((resolve, reject) => {
+            try {
+                const blob = new Blob([data], { type: 'text/css' });
+                const objectUrl = URL.createObjectURL(blob);
+                const id = 'plugin-css-' + name;
+                const el = this.createElementInHead('link', id, {
+                    rel: 'stylesheet',
+                    href: objectUrl
+                });
+                el.addEventListener('load', () => {
+                    URL.revokeObjectURL(objectUrl);
+                    if (theme) {
+                        const locKey = this.getThemeLocaleKey(theme.name);
+                        SettingsManager.allThemes[theme.name] = locKey;
+                        BaseLocale[locKey] = theme.title;
+                        for (const styleSheet of Array.from(document.styleSheets)) {
+                            if (styleSheet.ownerNode.id === id) {
+                                this.processThemeStyleSheet(styleSheet, theme);
+                                break;
+                            }
+                        }
                     }
-                }
+                    this.logger.debug('Plugin style installed');
+                    resolve();
+                });
+            } catch (e) {
+                this.logger.error('Error installing plugin style', e);
+                reject(e);
             }
-            this.logger.debug('Plugin style installed');
         });
     }
 
