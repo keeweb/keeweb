@@ -83,11 +83,17 @@ class OpenView extends View {
         Object.keys(Storage).forEach(name => {
             const prv = Storage[name];
             if (!prv.system && prv.enabled) {
+                if (name === 'webdav' && !this.model.settings.canOpenWebdav) {
+                    return;
+                }
                 storageProviders.push(prv);
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
-        const showMore = storageProviders.length || this.model.settings.canOpenSettings;
+        const showMore =
+            storageProviders.length ||
+            this.model.settings.canOpenSettings ||
+            this.model.settings.canOpenGenerator;
         const showLogo =
             !showMore &&
             !this.model.settings.canOpen &&
@@ -101,6 +107,7 @@ class OpenView extends View {
             canOpen: this.model.settings.canOpen,
             canOpenDemo: this.model.settings.canOpenDemo,
             canOpenSettings: this.model.settings.canOpenSettings,
+            canOpenGenerator: this.model.settings.canOpenGenerator,
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
             showMore,

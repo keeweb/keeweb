@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.13.4 (2020-04-15)
 `-` fix #1457: fixed styles in theme plugins  
+`+` #1456: options to hide webdav and password generator  
 
 ##### v1.13.3 (2020-04-11)
 `-` fix #1451: fixed slow global auto-type on desktop  
