@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.14.0 (TBD)
 `+` using OAuth authorization code grant for all storage providers  
+`-` fixed a number of vulnerabilities in opening untrusted kdbx files  
 
 ##### v1.13.4 (2020-04-15)
 `-` fix #1457: fixed styles in theme plugins  
