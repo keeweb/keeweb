@@ -104,6 +104,12 @@ app.on('second-instance', () => {
         restoreMainWindow();
     }
 });
+app.on('web-contents-created', (event, contents) => {
+    contents.on('new-window', async (e, url) => {
+        e.preventDefault();
+        emitRemoteEvent('log', { message: `Prevented new window: ${url}` });
+    });
+});
 app.restartApp = function() {
     restartPending = true;
     mainWindow.close();
@@ -235,8 +241,8 @@ function createMainWindow() {
     });
     mainWindow.webContents.on('will-navigate', (e, url) => {
         if (!url.startsWith('https://beta.keeweb.info/') && !url.startsWith(htmlPath)) {
-            emitRemoteEvent('log', { message: `Prevented navigation: ${url}` });
             e.preventDefault();
+            emitRemoteEvent('log', { message: `Prevented navigation: ${url}` });
         }
     });
     perfTimestamps &&
