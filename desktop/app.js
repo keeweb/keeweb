@@ -109,6 +109,12 @@ app.on('web-contents-created', (event, contents) => {
         e.preventDefault();
         emitRemoteEvent('log', { message: `Prevented new window: ${url}` });
     });
+    contents.on('will-navigate', (e, url) => {
+        if (!url.startsWith('https://beta.keeweb.info/') && !url.startsWith(htmlPath)) {
+            e.preventDefault();
+            emitRemoteEvent('log', { message: `Prevented navigation: ${url}` });
+        }
+    });
 });
 app.restartApp = function() {
     restartPending = true;
@@ -238,12 +244,6 @@ function createMainWindow() {
     });
     mainWindow.on('session-end', () => {
         emitRemoteEvent('os-lock');
-    });
-    mainWindow.webContents.on('will-navigate', (e, url) => {
-        if (!url.startsWith('https://beta.keeweb.info/') && !url.startsWith(htmlPath)) {
-            e.preventDefault();
-            emitRemoteEvent('log', { message: `Prevented navigation: ${url}` });
-        }
     });
     perfTimestamps &&
         perfTimestamps.push({ name: 'configuring main window', ts: process.hrtime() });
