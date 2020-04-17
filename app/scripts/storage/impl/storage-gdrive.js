@@ -229,11 +229,8 @@ class StorageGDrive extends StorageBase {
         });
     }
 
-    setEnabled(enabled) {
-        if (!enabled) {
-            this._oauthRevokeToken('https://accounts.google.com/o/oauth2/revoke?token={token}');
-        }
-        super.setEnabled(enabled);
+    logout() {
+        this._oauthRevokeToken('https://accounts.google.com/o/oauth2/revoke?token={token}');
     }
 
     _getOAuthConfig() {

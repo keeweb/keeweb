@@ -214,15 +214,8 @@ class StorageOneDrive extends StorageBase {
         });
     }
 
-    setEnabled(enabled) {
-        if (!enabled) {
-            const url = 'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={url}'.replace(
-                '{url}',
-                this._getOauthRedirectUrl()
-            );
-            this._oauthRevokeToken(url);
-        }
-        super.setEnabled(enabled);
+    logout(enabled) {
+        this._oauthRevokeToken();
     }
 
     _getOAuthConfig() {

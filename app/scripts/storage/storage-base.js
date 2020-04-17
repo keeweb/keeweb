@@ -40,8 +40,17 @@ class StorageBase {
     }
 
     setEnabled(enabled) {
+        if (!enabled) {
+            this.logout();
+        }
         this.enabled = enabled;
     }
+
+    get loggedIn() {
+        return !!this.runtimeData[this.name + 'OAuthToken'];
+    }
+
+    logout() {}
 
     _xhr(config) {
         this.logger.info('HTTP request', config.method || 'GET', config.url);
@@ -374,13 +383,14 @@ class StorageBase {
         }
     }
 
-    _oauthRevokeToken(url) {
+    _oauthRevokeToken(url, requestOptions) {
         const token = this.runtimeData[this.name + 'OAuthToken'];
         if (token) {
             if (url) {
                 this._xhr({
                     url: url.replace('{token}', token.accessToken),
-                    statuses: [200, 401]
+                    statuses: [200, 401],
+                    ...requestOptions
                 });
             }
             delete this.runtimeData[this.name + 'OAuthToken'];

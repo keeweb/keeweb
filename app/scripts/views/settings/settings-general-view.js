@@ -49,6 +49,7 @@ class SettingsGeneralView extends View {
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
         'change .settings__general-prv-check': 'changeStorageEnabled',
+        'click .settings__general-prv-logout': 'logoutFromStorage',
         'click .settings__general-show-advanced': 'showAdvancedSettings',
         'click .settings__general-dev-tools-link': 'openDevTools',
         'click .settings__general-try-beta-link': 'tryBeta',
@@ -195,7 +196,8 @@ class SettingsGeneralView extends View {
         return storageProviders.map(sp => ({
             name: sp.name,
             enabled: sp.enabled,
-            hasConfig: !!sp.getSettingsConfig
+            hasConfig: !!sp.getSettingsConfig,
+            loggedIn: sp.loggedIn
         }));
     }
 
@@ -351,6 +353,14 @@ class SettingsGeneralView extends View {
             this.$el
                 .find('.settings__general-' + storage.name)
                 .toggleClass('hide', !e.target.checked);
+        }
+    }
+
+    logoutFromStorage(e) {
+        const storage = Storage[$(e.target).data('storage')];
+        if (storage) {
+            storage.logout();
+            $(e.target).remove();
         }
     }
 

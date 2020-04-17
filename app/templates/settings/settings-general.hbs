@@ -205,6 +205,8 @@
             data-storage="{{prv.name}}" {{#if prv.enabled}}checked{{/if}}
     /><label for="settings__general-prv-check-{{prv.name}}">{{res prv.name}}</label></h4>
     <div class="settings__general-prv-wrap settings__general-{{prv.name}} {{#ifeq prv.enabled false}}hide{{/ifeq}}"></div>
+    {{#if prv.loggedIn}}<button class="btn-silent settings__general-prv-logout"
+                                data-storage="{{prv.name}}">{{res 'setGenStorageLogout'}}</button>{{/if}}
     {{/each}}
 
     <h2>{{res 'advanced'}}</h2>

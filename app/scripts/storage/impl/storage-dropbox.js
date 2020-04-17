@@ -208,15 +208,15 @@ class StorageDropbox extends StorageBase {
                     default:
                         return;
                 }
-                this._oauthRevokeToken();
+                this.logout();
                 break;
             case 'key':
                 key = 'dropboxAppKey';
-                this._oauthRevokeToken();
+                this.logout();
                 break;
             case 'secret':
                 key = 'dropboxSecret';
-                this._oauthRevokeToken();
+                this.logout();
                 break;
             case 'folder':
                 key = 'dropboxFolder';
@@ -401,11 +401,10 @@ class StorageDropbox extends StorageBase {
         });
     }
 
-    setEnabled(enabled) {
-        if (!enabled) {
-            this._oauthRevokeToken();
-        }
-        super.setEnabled(enabled);
+    logout() {
+        this._oauthRevokeToken('https://api.dropboxapi.com/2/auth/token/revoke', {
+            method: 'POST'
+        });
     }
 }
 

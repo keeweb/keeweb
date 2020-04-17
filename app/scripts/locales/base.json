@@ -437,6 +437,7 @@
     "setGenLockAutoType": "On auto-type",
     "setGenLockOrSleep": "When the computer is locked or put to sleep",
     "setGenStorage": "Storage",
+    "setGenStorageLogout": "Log out",
     "setGenShowAdvanced": "Show advanced settings",
     "setGenDevTools": "Show dev tools",
     "setGenTryBeta": "Try beta version until restart",
