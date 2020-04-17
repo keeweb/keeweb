@@ -316,6 +316,9 @@ class StorageBase {
         };
 
         const windowMessage = e => {
+            if (e.origin !== location.origin) {
+                return;
+            }
             if (e.data && e.data.error) {
                 this.logger.error('OAuth error', e.data.error, e.data.error_description);
                 callback('OAuth: ' + e.data.error);
