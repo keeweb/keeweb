@@ -1,15 +1,13 @@
 import { StorageBase } from 'storage/storage-base';
 import { Features } from 'util/features';
 import { UrlFormat } from 'util/formatting/url-format';
-
-const DropboxKeys = {
-    AppFolder: 'qp7ctun6qt5n9d6',
-    FullDropbox: 'eor7hvv6u6oslq9'
-};
+import { DropboxApps } from 'const/cloud-storage-apps';
 
 const DropboxCustomErrors = {
     BadKey: 'bad-key'
 };
+
+// https://www.dropbox.com/developers/documentation/http/documentation#oauth2-authorize
 
 class StorageDropbox extends StorageBase {
     name = 'dropbox';
@@ -49,12 +47,23 @@ class StorageDropbox extends StorageBase {
     }
 
     _getKey() {
-        return this.appSettings.dropboxAppKey || DropboxKeys.AppFolder;
+        return this.appSettings.dropboxAppKey || DropboxApps.AppFolder.id;
+    }
+
+    _getSecret() {
+        const key = this._getKey();
+        if (key === DropboxApps.AppFolder.id) {
+            return DropboxApps.AppFolder.secret;
+        }
+        if (key === DropboxApps.FullDropbox.id) {
+            return DropboxApps.FullDropbox.secret;
+        }
+        return this.appSettings.dropboxSecret;
     }
 
     _isValidKey() {
         const key = this._getKey();
-        const isBuiltIn = key === DropboxKeys.AppFolder || key === DropboxKeys.FullDropbox;
+        const isBuiltIn = key === DropboxApps.AppFolder.id || key === DropboxApps.FullDropbox.id;
         return key && key.indexOf(' ') < 0 && (!isBuiltIn || this._canUseBuiltInKeys());
     }
 
@@ -66,14 +75,17 @@ class StorageDropbox extends StorageBase {
         return {
             scope: '',
             url: 'https://www.dropbox.com/oauth2/authorize',
+            tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
             clientId: this._getKey(),
+            clientSecret: this._getSecret(),
+            pkce: false,
             width: 600,
             height: 400
         };
     }
 
     needShowOpenConfig() {
-        return !this._isValidKey();
+        return !this._isValidKey() || !this._getSecret();
     }
 
     getOpenConfig() {
@@ -84,6 +96,14 @@ class StorageDropbox extends StorageBase {
                     id: 'key',
                     title: 'dropboxAppKey',
                     desc: 'dropboxAppKeyDesc',
+                    type: 'text',
+                    required: true,
+                    pattern: '\\w+'
+                },
+                {
+                    id: 'secret',
+                    title: 'dropboxAppSecret',
+                    desc: 'dropboxAppSecretDesc',
                     type: 'text',
                     required: true,
                     pattern: '\\w+'
@@ -118,6 +138,15 @@ class StorageDropbox extends StorageBase {
             pattern: '\\w+',
             value: appKey
         };
+        const secretField = {
+            id: 'secret',
+            title: 'dropboxAppSecret',
+            desc: 'dropboxAppSecretDesc',
+            type: 'text',
+            required: true,
+            pattern: '\\w+',
+            value: this.appSettings.dropboxSecret || ''
+        };
         const folderField = {
             id: 'folder',
             title: 'dropboxFolder',
@@ -128,24 +157,26 @@ class StorageDropbox extends StorageBase {
         const canUseBuiltInKeys = this._canUseBuiltInKeys();
         if (canUseBuiltInKeys) {
             fields.push(linkField);
-            if (appKey === DropboxKeys.AppFolder) {
+            if (appKey === DropboxApps.AppFolder.id) {
                 linkField.value = 'app';
-            } else if (appKey === DropboxKeys.FullDropbox) {
+            } else if (appKey === DropboxApps.FullDropbox.id) {
                 linkField.value = 'full';
                 fields.push(folderField);
             } else {
                 fields.push(keyField);
+                fields.push(secretField);
                 fields.push(folderField);
             }
         } else {
             fields.push(keyField);
+            fields.push(secretField);
             fields.push(folderField);
         }
         return { fields };
     }
 
     applyConfig(config, callback) {
-        if (config.key === DropboxKeys.AppFolder || config.key === DropboxKeys.FullDropbox) {
+        if (config.key === DropboxApps.AppFolder.id || config.key === DropboxApps.FullDropbox.id) {
             return callback(DropboxCustomErrors.BadKey);
         }
         // TODO: try to connect using new key
@@ -154,6 +185,7 @@ class StorageDropbox extends StorageBase {
         }
         this.appSettings.set({
             dropboxAppKey: config.key,
+            dropboxSecret: config.secret,
             dropboxFolder: config.folder
         });
         callback();
@@ -165,10 +197,10 @@ class StorageDropbox extends StorageBase {
                 key = 'dropboxAppKey';
                 switch (value) {
                     case 'app':
-                        value = DropboxKeys.AppFolder;
+                        value = DropboxApps.AppFolder.id;
                         break;
                     case 'full':
-                        value = DropboxKeys.FullDropbox;
+                        value = DropboxApps.FullDropbox.id;
                         break;
                     case 'custom':
                         value = '(your app key)';
@@ -180,6 +212,10 @@ class StorageDropbox extends StorageBase {
                 break;
             case 'key':
                 key = 'dropboxAppKey';
+                this._oauthRevokeToken();
+                break;
+            case 'secret':
+                key = 'dropboxSecret';
                 this._oauthRevokeToken();
                 break;
             case 'folder':

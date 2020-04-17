@@ -21,7 +21,7 @@ const AuthReceiver = {
         url.split(/[?#&]/g).forEach(part => {
             const parts = part.split('=');
             if (parts.length === 2) {
-                message[parts[0]] = parts[1];
+                message[parts[0]] = decodeURIComponent(parts[1]);
             }
         });
         return message;

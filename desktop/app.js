@@ -111,9 +111,6 @@ app.restartApp = function() {
         restartPending = false;
     }, 1000);
 };
-app.openWindow = function(opts) {
-    return new electron.BrowserWindow(opts);
-};
 app.minimizeApp = function(menuItemLabels) {
     let imagePath;
     mainWindow.hide();
@@ -237,7 +234,7 @@ function createMainWindow() {
         emitRemoteEvent('os-lock');
     });
     mainWindow.webContents.on('will-navigate', (e, url) => {
-        if (!url.startsWith('https://beta.keeweb.info/')) {
+        if (!url.startsWith('https://beta.keeweb.info/') && !url.startsWith(htmlPath)) {
             emitRemoteEvent('log', { message: `Prevented navigation: ${url}` });
             e.preventDefault();
         }

@@ -8,6 +8,8 @@ import { UrlFormat } from 'util/formatting/url-format';
 import { Launcher } from 'comp/launcher';
 import { omitEmpty } from 'util/fn';
 import { Timeouts } from 'const/timeouts';
+import { Features } from 'util/features';
+import { createOAuthSession } from 'storage/pkce';
 
 const MaxRequestRetries = 3;
 
@@ -88,8 +90,8 @@ class StorageBase {
     }
 
     _httpRequest(config, onLoad) {
-        const httpRequest = Launcher ? this._httpRequestLauncher : this._httpRequestWeb;
-        httpRequest(config, onLoad);
+        const httpRequest = Features.isDesktop ? this._httpRequestLauncher : this._httpRequestWeb;
+        httpRequest.call(this, config, onLoad);
     }
 
     _httpRequestWeb(config, onLoad) {
@@ -127,49 +129,81 @@ class StorageBase {
     }
 
     _httpRequestLauncher(config, onLoad) {
-        const https = Launcher.req('https');
-        const req = https.request(config.url, {
-            method: config.method || 'GET',
-            headers: config.headers,
-            timeout: Timeouts.DefaultHttpRequest
-        });
-        req.on('response', res => {
-            const chunks = [];
-            res.on('data', chunk => chunks.push(chunk));
-            res.on('end', () => {
-                let response = Buffer.concat(chunks);
-                if (config.responseType === 'json') {
-                    response = JSON.parse(response.toString('utf8'));
+        Launcher.resolveProxy(config.url, proxy => {
+            const https = Launcher.req('https');
+
+            const opts = Launcher.req('url').parse(config.url);
+
+            opts.method = config.method || 'GET';
+            opts.headers = {
+                'User-Agent': navigator.userAgent,
+                ...config.headers
+            };
+            opts.timeout = Timeouts.DefaultHttpRequest;
+
+            let data;
+            if (config.data) {
+                if (config.dataIsMultipart) {
+                    data = Buffer.concat(config.data.map(chunk => Buffer.from(chunk)));
                 } else {
-                    response = response.buffer.slice(
-                        response.byteOffset,
-                        response.byteOffset + response.length
-                    );
+                    data = Buffer.from(config.data);
                 }
-                onLoad({
-                    status: res.statusCode,
-                    response,
-                    getResponseHeader: name => res.headers[name.toLowerCase()]
+                opts.headers['Content-Length'] = data.byteLength;
+            }
+
+            if (proxy) {
+                opts.headers.Host = opts.host;
+                opts.host = proxy.host;
+                opts.port = proxy.port;
+                opts.path = config.url;
+            }
+
+            const req = https.request(opts);
+
+            req.on('response', res => {
+                const chunks = [];
+                res.on('data', chunk => chunks.push(chunk));
+                res.on('end', () => {
+                    this.logger.debug(
+                        'HTTP response',
+                        opts.method,
+                        config.url,
+                        res.statusCode,
+                        res.headers
+                    );
+
+                    let response = Buffer.concat(chunks);
+                    if (config.responseType === 'json') {
+                        try {
+                            response = JSON.parse(response.toString('utf8'));
+                        } catch (e) {
+                            return config.error && config.error('json parse error');
+                        }
+                    } else {
+                        response = response.buffer.slice(
+                            response.byteOffset,
+                            response.byteOffset + response.length
+                        );
+                    }
+                    onLoad({
+                        status: res.statusCode,
+                        response,
+                        getResponseHeader: name => res.headers[name.toLowerCase()]
+                    });
                 });
             });
-        });
-        req.on('error', () => {
-            return config.error && config.error('network error', {});
-        });
-        req.on('timeout', () => {
-            req.abort();
-            return config.error && config.error('timeout', {});
-        });
-        if (config.data) {
-            let data;
-            if (config.dataIsMultipart) {
-                data = Buffer.concat(config.data.map(chunk => Buffer.from(chunk)));
-            } else {
-                data = Buffer.from(config.data);
+            req.on('error', () => {
+                return config.error && config.error('network error', {});
+            });
+            req.on('timeout', () => {
+                req.abort();
+                return config.error && config.error('timeout', {});
+            });
+            if (data) {
+                req.write(data);
             }
-            req.write(data);
-        }
-        req.end();
+            req.end();
+        });
     }
 
     _openPopup(url, title, width, height, extras) {
@@ -231,58 +265,64 @@ class StorageBase {
             return this._oauthExchangeRefreshToken(callback);
         }
 
-        if (this._useLocalOAuthRedirectListener()) {
-            return StorageOAuthListener.listen()
-                .then(listener => {
-                    const url = UrlFormat.makeUrl(opts.url, {
-                        'client_id': opts.clientId,
-                        'scope': opts.scope,
-                        'state': listener.state,
-                        'redirect_uri': listener.redirectUri,
-                        'response_type': 'code',
-                        'code_challenge': listener.codeChallenge,
-                        'code_challenge_method': 'S256'
-                    });
-                    Launcher.openLink(url);
-                    callback('browser-auth-started');
-                    listener.callback = code => this._oauthCodeReceived(code, listener);
-                })
-                .catch(err => callback(err));
+        const session = createOAuthSession();
+
+        let listener;
+        if (Features.isDesktop) {
+            listener = StorageOAuthListener.listen();
+            session.redirectUri = listener.redirectUri;
+        } else {
+            session.redirectUri = this._getOauthRedirectUrl();
         }
+
+        const pkceParams = opts.pkce
+            ? {
+                  'code_challenge': session.codeChallenge,
+                  'code_challenge_method': 'S256'
+              }
+            : undefined;
 
         const url = UrlFormat.makeUrl(opts.url, {
             'client_id': opts.clientId,
             'scope': opts.scope,
-            'response_type': 'token',
-            'redirect_uri': this._getOauthRedirectUrl()
+            'state': session.state,
+            'redirect_uri': session.redirectUri,
+            'response_type': 'code',
+            ...pkceParams
         });
 
-        this.logger.debug('OAuth: popup opened');
+        if (listener) {
+            listener.on('ready', () => {
+                Launcher.openLink(url);
+                callback('browser-auth-started');
+            });
+            listener.on('error', err => callback(err));
+            listener.on('result', result => this._oauthCodeReceived(result, session));
+            return;
+        }
+
         const popupWindow = this._openPopup(url, 'OAuth', opts.width, opts.height);
         if (!popupWindow) {
             return callback('OAuth: cannot open popup');
         }
-        this._popupOpened(popupWindow);
+
+        this.logger.debug('OAuth: popup opened');
+
         const popupClosed = () => {
             Events.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
             this.logger.error('OAuth error', 'popup closed');
             callback('OAuth: popup closed');
         };
+
         const windowMessage = e => {
-            if (!e.data) {
-                return;
-            }
-            const token = this._oauthProcessReturn(e.data);
-            if (token) {
+            if (e.data && e.data.error) {
+                this.logger.error('OAuth error', e.data.error, e.data.error_description);
+                callback('OAuth: ' + e.data.error);
+            } else if (e.data && e.data.code) {
                 Events.off('popup-closed', popupClosed);
                 window.removeEventListener('message', windowMessage);
-                if (token.error) {
-                    this.logger.error('OAuth error', token.error, token.errorDescription);
-                    callback('OAuth: ' + token.error);
-                } else {
-                    callback();
-                }
+                this._oauthCodeReceived(e.data, session, callback);
             } else {
                 this.logger.debug('Skipped OAuth message', e.data);
             }
@@ -290,8 +330,6 @@ class StorageBase {
         Events.on('popup-closed', popupClosed);
         window.addEventListener('message', windowMessage);
     }
-
-    _popupOpened(popupWindow) {}
 
     _oauthProcessReturn(message) {
         const token = this._oauthMsgToToken(message);
@@ -357,34 +395,54 @@ class StorageBase {
         return true;
     }
 
-    _useLocalOAuthRedirectListener() {
-        return false;
-    }
+    _oauthCodeReceived(result, session, callback) {
+        if (!result.state) {
+            this.logger.info('OAuth result has no state');
+            return callback && callback('OAuth result has no state');
+        }
+        if (result.state !== session.state) {
+            this.logger.info('OAuth result has bad state');
+            return callback && callback('OAuth result has bad state');
+        }
 
-    _oauthCodeReceived(code, listener) {
+        if (!result.code) {
+            this.logger.info('OAuth result has no code');
+            return callback && callback('OAuth result has no code');
+        }
+
         this.logger.debug('OAuth code received');
-        Launcher.showMainWindow();
+
+        if (Features.isDesktop) {
+            Launcher.showMainWindow();
+        }
         const config = this._getOAuthConfig();
+        const pkceParams = config.pkce ? { 'code_verifier': session.codeVerifier } : undefined;
+
         this._xhr({
             url: config.tokenUrl,
             method: 'POST',
             responseType: 'json',
             skipAuth: true,
-            data: JSON.stringify({
+            data: UrlFormat.buildFormData({
                 'client_id': config.clientId,
                 'client_secret': config.clientSecret,
                 'grant_type': 'authorization_code',
-                code,
-                'code_verifier': listener.codeVerifier,
-                'redirect_uri': listener.redirectUri
+                'code': result.code,
+                'redirect_uri': session.redirectUri,
+                ...pkceParams
             }),
-            dataType: 'application/json',
+            dataType: 'application/x-www-form-urlencoded',
             success: response => {
-                this.logger.debug('OAuth code exchanged');
-                this._oauthProcessReturn(response);
+                this.logger.debug('OAuth code exchanged', response);
+                const token = this._oauthProcessReturn(response);
+                if (token && token.error) {
+                    return callback && callback('OAuth code exchange error: ' + token.error);
+                }
+                callback && callback();
             },
             error: err => {
                 this.logger.error('Error exchanging OAuth code', err);
+                callback && callback('OAuth code exchange error: ' + err);
             }
         });
     }
@@ -398,13 +456,13 @@ class StorageBase {
             method: 'POST',
             responseType: 'json',
             skipAuth: true,
-            data: JSON.stringify({
+            data: UrlFormat.buildFormData({
                 'client_id': config.clientId,
                 'client_secret': config.clientSecret,
                 'grant_type': 'refresh_token',
                 'refresh_token': refreshToken
             }),
-            dataType: 'application/json',
+            dataType: 'application/x-www-form-urlencoded',
             success: response => {
                 this.logger.debug('Refresh token exchanged');
                 this._oauthProcessReturn({

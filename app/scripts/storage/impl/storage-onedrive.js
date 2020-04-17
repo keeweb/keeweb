@@ -1,10 +1,8 @@
 import { StorageBase } from 'storage/storage-base';
-import { noop } from 'util/fn';
+import { OneDriveApps } from 'const/cloud-storage-apps';
+import { Features } from 'util/features';
 
-const OneDriveClientId = {
-    Production: '000000004818ED3A',
-    Local: '0000000044183D18'
-};
+// https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
 
 class StorageOneDrive extends StorageBase {
     name = 'onedrive';
@@ -227,44 +225,26 @@ class StorageOneDrive extends StorageBase {
         super.setEnabled(enabled);
     }
 
-    _getClientId() {
-        let clientId = this.appSettings.onedriveClientId;
-        if (!clientId) {
-            clientId =
-                location.origin.indexOf('localhost') >= 0
-                    ? OneDriveClientId.Local
-                    : OneDriveClientId.Production;
-        }
-        return clientId;
-    }
-
     _getOAuthConfig() {
-        const clientId = this._getClientId();
+        let clientId = this.appSettings.onedriveClientId;
+        let clientSecret = this.appSettings.onedriveClientSecret;
+        if (!clientId || !clientSecret) {
+            if (Features.isLocal) {
+                ({ id: clientId, secret: clientSecret } = OneDriveApps.Local);
+            } else {
+                ({ id: clientId, secret: clientSecret } = OneDriveApps.Production);
+            }
+        }
         return {
             url: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-            scope: 'files.readwrite',
+            tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+            scope: 'files.readwrite offline_access',
             clientId,
+            clientSecret,
+            pkce: true,
             width: 600,
             height: 500
         };
-    }
-
-    _popupOpened(popupWindow) {
-        if (popupWindow.webContents) {
-            popupWindow.webContents.on('did-finish-load', e => {
-                const webContents = e.sender.webContents;
-                const url = webContents.getURL();
-                if (
-                    url &&
-                    url.startsWith('https://login.microsoftonline.com/common/oauth2/v2.0/authorize')
-                ) {
-                    // click the login button mentioned in #821
-                    const script = `const selector = '[role="button"][aria-describedby="tileError loginHeader"]';
-if (document.querySelectorAll(selector).length === 1) document.querySelector(selector).click()`;
-                    webContents.executeJavaScript(script).catch(noop);
-                }
-            });
-        }
     }
 }
 
