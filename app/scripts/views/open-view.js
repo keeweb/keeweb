@@ -80,15 +80,14 @@ class OpenView extends View {
             clearTimeout(this.dragTimeout);
         }
         const storageProviders = [];
-        Object.keys(Storage).forEach(name => {
-            const prv = Storage[name];
-            if (!prv.system && prv.enabled) {
-                if (name === 'webdav' && !this.model.settings.canOpenWebdav) {
-                    return;
+        if (this.model.settings.canOpenStorage) {
+            Object.keys(Storage).forEach(name => {
+                const prv = Storage[name];
+                if (!prv.system && prv.enabled) {
+                    storageProviders.push(prv);
                 }
-                storageProviders.push(prv);
-            }
-        });
+            });
+        }
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         const showMore =
             storageProviders.length ||
