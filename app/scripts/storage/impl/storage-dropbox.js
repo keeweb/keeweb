@@ -2,6 +2,7 @@ import { StorageBase } from 'storage/storage-base';
 import { Features } from 'util/features';
 import { UrlFormat } from 'util/formatting/url-format';
 import { DropboxApps } from 'const/cloud-storage-apps';
+import { Locale } from 'util/locale';
 
 const DropboxCustomErrors = {
     BadKey: 'bad-key'
@@ -203,7 +204,7 @@ class StorageDropbox extends StorageBase {
                         value = DropboxApps.FullDropbox.id;
                         break;
                     case 'custom':
-                        value = '(your app key)';
+                        value = `(${Locale.dropboxAppKeyHint})`;
                         break;
                     default:
                         return;
