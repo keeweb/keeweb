@@ -1,8 +1,9 @@
 Release notes
 -------------
-##### v1.14.0 (TBD)
+##### v1.14.0 (2020-04-18)
 `+` using OAuth authorization code grant for all storage providers  
 `-` fixed a number of vulnerabilities in opening untrusted kdbx files  
+`+` applied recommendations from the electron security checklist  
 `*` canOpenWebdav is now canOpenStorage  
 `+` option to log out from storages  
 
