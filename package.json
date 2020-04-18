@@ -76,7 +76,7 @@
         "pkcs11-smartcard-sign": "^1.0.1",
         "postcss-loader": "^3.0.0",
         "prettier": "^1.19.1",
-        "puppeteer": "^3.0.0",
+        "puppeteer": "^2.1.1",
         "raw-loader": "^4.0.1",
         "run-remote-task": "^0.3.0",
         "sass-loader": "^8.0.2",
