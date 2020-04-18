@@ -21,10 +21,10 @@ const MdToHtml = {
         const htmlWithoutLineBreaks = html.replace(whiteSpaceRegex, '');
         const mdWithoutLineBreaks = md.replace(whiteSpaceRegex, '');
         if (htmlWithoutLineBreaks === mdWithoutLineBreaks) {
-            return md;
+            return { text: md };
         } else {
             const sanitized = dompurify.sanitize(html, { ADD_ATTR: ['target'] });
-            return `<div class="markdown">${sanitized}</div>`;
+            return { html: `<div class="markdown">${sanitized}</div>` };
         }
     }
 };

@@ -24,7 +24,11 @@ class FieldViewText extends FieldView {
             if (value && value.isProtected) {
                 value = value.getText();
             }
-            return MdToHtml.convert(value);
+            const converted = MdToHtml.convert(value);
+            if (converted.html) {
+                return converted.html;
+            }
+            value = converted.text;
         }
         return value && value.isProtected
             ? PasswordPresenter.presentValueWithLineBreaks(value)

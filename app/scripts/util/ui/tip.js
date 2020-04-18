@@ -44,7 +44,7 @@ Tip.prototype.show = function() {
     const tipEl = (this.tipEl = $('<div></div>')
         .addClass('tip')
         .appendTo('body')
-        .html(this.title));
+        .text(this.title));
     const rect = this.el[0].getBoundingClientRect();
     const tipRect = this.tipEl[0].getBoundingClientRect();
     const placement = this.placement || this.getAutoPlacement(rect, tipRect);

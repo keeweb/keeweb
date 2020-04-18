@@ -135,7 +135,7 @@ class ListSearchView extends View {
 
     setLocale() {
         this.sortOptions.forEach(opt => {
-            opt.text = opt.loc();
+            opt.html = opt.loc();
         });
         const entryDesc = Features.isMobile
             ? ''
@@ -145,7 +145,7 @@ class ListSearchView extends View {
               Shortcuts.altShortcutSymbol(true) +
               'N)</span>';
         this.createOptions = [
-            { value: 'entry', icon: 'key', text: StringFormat.capFirst(Locale.entry) + entryDesc },
+            { value: 'entry', icon: 'key', html: StringFormat.capFirst(Locale.entry) + entryDesc },
             { value: 'group', icon: 'folder', text: StringFormat.capFirst(Locale.group) }
         ];
         if (this.el) {

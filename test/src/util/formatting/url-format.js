@@ -32,4 +32,13 @@ describe('UrlFormat', () => {
             })
         ).to.eql('/path?hello=world&data=%3D%20%26');
     });
+
+    it('should make form-data params', () => {
+        expect(
+            UrlFormat.buildFormData({
+                hello: 'world',
+                data: '= &'
+            })
+        ).to.eql('hello=world&data=%3D%20%26');
+    });
 });

@@ -47,8 +47,8 @@ function walkEntry(db, entry, parents) {
             let html = false;
             if (field.markdown && AppSettingsModel.useMarkdown) {
                 const converted = MdToHtml.convert(value);
-                if (converted !== value) {
-                    value = converted;
+                if (converted.html) {
+                    value = converted.html;
                     html = true;
                 }
             }

@@ -1,5 +1,13 @@
 Release notes
 -------------
+##### v1.14.0 (2020-04-18)
+`+` using OAuth authorization code grant for all storage providers  
+`-` fixed a number of vulnerabilities in opening untrusted kdbx files  
+`+` applied recommendations from the electron security checklist  
+`*` canOpenWebdav is now canOpenStorage  
+`+` option to log out from storages  
+`*` saving only modified settings instead of everything  
+
 ##### v1.13.4 (2020-04-15)
 `-` fix #1457: fixed styles in theme plugins  
 `+` #1456: options to hide webdav and password generator  

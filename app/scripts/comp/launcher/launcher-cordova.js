@@ -221,9 +221,6 @@ const Launcher = {
     resolveProxy(url, callback) {
         /* skip in cordova */
     },
-    openWindow(opts) {
-        /* skip in cordova */
-    },
     hideApp() {
         /* skip in cordova */
     },
