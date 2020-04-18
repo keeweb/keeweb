@@ -30,7 +30,7 @@ Indeed, questions on that page are not applicable in this case.
 
 ## Development
 
-We don't accept (and in foreseeable future, we won't) anyone as a project collaborator directly. 
+We don't accept (and in foreseeable future, we won't accept) anyone as a project collaborator directly. 
 Instead, the code should be contributed via pull requests. To get started with development, take a look at these pages:
 - [Architecture](https://github.com/keeweb/keeweb/wiki/Architecture)
 - [Engineering](https://github.com/keeweb/keeweb/wiki/Engineering)
