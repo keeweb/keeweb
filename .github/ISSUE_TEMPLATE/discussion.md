@@ -6,5 +6,3 @@ labels: ''
 assignees: ''
 
 ---
-
-Please describe your thoughts here.
