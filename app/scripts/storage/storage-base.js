@@ -201,7 +201,8 @@ class StorageBase {
                     });
                 });
             });
-            req.on('error', () => {
+            req.on('error', e => {
+                this.logger.error('HTTP error', opts.method, config.url, e);
                 return config.error && config.error('network error', {});
             });
             req.on('timeout', () => {
