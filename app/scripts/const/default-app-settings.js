@@ -34,6 +34,7 @@ const DefaultAppSettings = {
     cacheConfigSettings: false, // cache config settings and use them if the config can't be loaded
     allowIframes: false, // allow displaying the app in IFrames
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
+    enableUsb: true, // enable interaction with USB devices
 
     canOpen: true, // can select and open new files
     canOpenDemo: true, // can open a demo file
@@ -47,6 +48,7 @@ const DefaultAppSettings = {
     canSaveTo: true, // can save existing files to filesystem
     canOpenStorage: true, // can open files from cloud storage providers
     canOpenGenerator: true, // can open password generator
+    canOpenOtpDevice: true, // can open OTP codes from USB tokens
 
     dropbox: true, // enable Dropbox integration
     dropboxFolder: null, // default folder path
