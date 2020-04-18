@@ -1,21 +1,11 @@
 import { StorageBase } from 'storage/storage-base';
 import { Locale } from 'util/locale';
 import { Features } from 'util/features';
+import { GDriveApps } from 'const/cloud-storage-apps';
 
-const GDriveClientId = {
-    Local: '783608538594-36tkdh8iscrq8t8dq87gghubnhivhjp5.apps.googleusercontent.com',
-    Production: '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com',
-    Desktop: '847548101761-h2pcl2p6m1tssnlqm0vrm33crlveccbr.apps.googleusercontent.com'
-};
-const GDriveClientSecret = {
-    // They are not really secrets and are supposed to be embedded in the app code according to
-    //  the official guide: https://developers.google.com/identity/protocols/oauth2#installed
-    // The process results in a client ID and, in some cases, a client secret,
-    //  which you embed in the source code of your application.
-    //  (In this context, the client secret is obviously not treated as a secret.)
-    Desktop: 'nTSCiqXtUNmURIIdASaC1TJK'
-};
 const NewFileIdPrefix = 'NewFile:';
+
+// https://developers.google.com/identity/protocols/oauth2/web-server
 
 class StorageGDrive extends StorageBase {
     name = 'gdrive';
@@ -239,25 +229,20 @@ class StorageGDrive extends StorageBase {
         });
     }
 
-    setEnabled(enabled) {
-        if (!enabled) {
-            this._oauthRevokeToken('https://accounts.google.com/o/oauth2/revoke?token={token}');
-        }
-        super.setEnabled(enabled);
+    logout() {
+        this._oauthRevokeToken('https://accounts.google.com/o/oauth2/revoke?token={token}');
     }
 
     _getOAuthConfig() {
         let clientId = this.appSettings.gdriveClientId;
-        let clientSecret;
-        if (!clientId) {
+        let clientSecret = this.appSettings.gdriveClientSecret;
+        if (!clientId || !clientSecret) {
             if (Features.isDesktop) {
-                clientId = GDriveClientId.Desktop;
-                clientSecret = GDriveClientSecret.Desktop;
+                ({ id: clientId, secret: clientSecret } = GDriveApps.Desktop);
+            } else if (Features.isLocal) {
+                ({ id: clientId, secret: clientSecret } = GDriveApps.Local);
             } else {
-                clientId =
-                    location.origin.indexOf('localhost') >= 0
-                        ? GDriveClientId.Local
-                        : GDriveClientId.Production;
+                ({ id: clientId, secret: clientSecret } = GDriveApps.Production);
             }
         }
         return {
@@ -267,12 +252,12 @@ class StorageGDrive extends StorageBase {
             clientId,
             clientSecret,
             width: 600,
-            height: 400
+            height: 400,
+            pkce: true,
+            redirectUrlParams: {
+                'access_type': 'offline'
+            }
         };
-    }
-
-    _useLocalOAuthRedirectListener() {
-        return Features.isDesktop;
     }
 }
 

@@ -205,9 +205,6 @@ const Launcher = {
             callback(proxy);
         });
     },
-    openWindow(opts) {
-        return this.remoteApp().openWindow(opts);
-    },
     hideApp() {
         const app = this.remoteApp();
         if (this.canMinimize()) {

@@ -6,6 +6,7 @@ import { StorageFileCache } from 'storage/impl/storage-file-cache';
 import { StorageGDrive } from 'storage/impl/storage-gdrive';
 import { StorageOneDrive } from 'storage/impl/storage-onedrive';
 import { StorageWebDav } from 'storage/impl/storage-webdav';
+import { createOAuthSession } from 'storage/pkce';
 
 const BuiltInStorage = {
     file: new StorageFile(),
@@ -23,5 +24,7 @@ const Storage = BuiltInStorage;
 if (!Launcher || Launcher.thirdPartyStoragesSupported) {
     Object.assign(Storage, ThirdPartyStorage);
 }
+
+requestAnimationFrame(createOAuthSession);
 
 export { Storage };

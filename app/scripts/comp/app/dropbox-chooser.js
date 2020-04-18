@@ -41,7 +41,7 @@ DropboxChooser.prototype.buildUrl = function() {
 };
 
 DropboxChooser.prototype.onMessage = function(e) {
-    if (e.source !== this.popup) {
+    if (e.source !== this.popup || e.origin !== 'https://www.dropbox.com') {
         return;
     }
     const data = JSON.parse(e.data);

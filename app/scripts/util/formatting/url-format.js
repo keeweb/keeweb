@@ -29,6 +29,12 @@ const UrlFormat = {
             .map(([key, value]) => key + '=' + encodeURIComponent(value))
             .join('&');
         return base + '?' + queryString;
+    },
+
+    buildFormData(params) {
+        return Object.entries(params)
+            .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+            .join('&');
     }
 };
 
