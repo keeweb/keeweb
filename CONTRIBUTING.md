@@ -30,7 +30,7 @@ Indeed, questions on that page are not applicable in this case.
 
 ## Development
 
-We don't accept (and in forseeable future, we won't) anyone as a project collaborator directly. 
+We don't accept (and in foreseeable future, we won't) anyone as a project collaborator directly. 
 Instead, the code should be contributed via pull requests. To get started with development, take a look at these pages:
 - [Architecture](https://github.com/keeweb/keeweb/wiki/Architecture)
 - [Engineering](https://github.com/keeweb/keeweb/wiki/Engineering)
@@ -58,3 +58,9 @@ Please note: donation does not imply any type of service contract.
 
 All of KeeWeb translations are contributed by community. To improve a translation or add a missing one,
 join our project on [OneSky](https://keeweb.oneskyapp.com).
+
+## PR
+
+We would be happy to support you if you decide to post, blog, or review the project, 
+or provide any other king of PR. Please [contact the developer](mailto:antelle.net@gmail.com) 
+if you have anything to share. You can also poke us on [Twitter](https://twitter.com/kee_web).
