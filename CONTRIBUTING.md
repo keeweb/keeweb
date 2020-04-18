@@ -18,7 +18,7 @@ Perhaps, someone has already reported it?
 When creating issues, please answer some questions asked on that page.
 They will help to understand, reproduce, and fix your issue.
 
-## Reporting vulnerabilities
+## Vulnerabilities
 
 We would appreciate [responsible disclosure](https://en.wikipedia.org/wiki/Responsible_disclosure).
 If you would like to report a vulnerability, the preferred way to do so is [contacting the developer directly](antelle.net@gmail.com).
