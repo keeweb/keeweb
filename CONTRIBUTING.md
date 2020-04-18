@@ -56,7 +56,7 @@ Please note: donation does not imply any type of service contract.
 
 ## Translations
 
-All of KeeWeb translations are contributed by community. To improve a translation or add a missing one,
+All KeeWeb translations are contributed by the community. To improve a translation or add a missing one,
 join our project on [OneSky](https://keeweb.oneskyapp.com).
 
 ## PR
