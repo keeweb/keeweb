@@ -598,6 +598,7 @@
     "dropboxSetupDesc": "Some configuration is required to use Dropbox in a self-hosted app. Please create your own Dropbox app and fill in its key below.",
     "dropboxAppKey": "Dropbox app key",
     "dropboxAppKeyDesc": "Copy the key from your Dropbox app (Developer settings)",
+    "dropboxAppKeyHint": "your app key",
     "dropboxAppSecret": "Dropbox app secret",
     "dropboxAppSecretDesc": "The secret can be found next to the app key",
     "dropboxFolder": "App folder",
