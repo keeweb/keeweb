@@ -34,7 +34,7 @@ We don't accept (and in forseeable future, we won't) anyone as a project collabo
 Instead, the code should be contributed via pull requests. To get started with development, take a look at these pages:
 - [Architecture](https://github.com/keeweb/keeweb/wiki/Architecture)
 - [Engineering](https://github.com/keeweb/keeweb/wiki/Engineering)
-- [Unsupported Features](hhttps://github.com/keeweb/keeweb/wiki/Unsupported%20Features)
+- [Unsupported Features](https://github.com/keeweb/keeweb/wiki/Unsupported%20Features)
 - [Pull Request Guidelines](https://github.com/keeweb/keeweb/blob/master/.github/PULL_REQUEST_TEMPLATE.md#readme)
 
 ## Pull requests
