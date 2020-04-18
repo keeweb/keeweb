@@ -62,5 +62,5 @@ join our project on [OneSky](https://keeweb.oneskyapp.com).
 ## PR
 
 We would be happy to support you if you decide to post, blog, or review the project, 
-or provide any other king of PR. Please [contact the developer](mailto:antelle.net@gmail.com) 
+or provide any other kind of PR. Please [contact the developer](mailto:antelle.net@gmail.com) 
 if you have anything to share. You can also poke us on [Twitter](https://twitter.com/kee_web).
