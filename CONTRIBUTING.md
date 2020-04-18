@@ -28,6 +28,15 @@ If you would like to report a vulnerability, the preferred way to do so is [cont
 You can [create an issue](https://github.com/keeweb/keeweb/issues/new/choose) to discuss any topic.
 Indeed, questions on that page are not applicable in this case.
 
+## Development
+
+We don't accept (and in forseeable future, we won't) anyone as a project collaborator directly. 
+Instead, the code should be contributed via pull requests. To get started with development, take a look at these pages:
+- [Architecture](https://github.com/keeweb/keeweb/wiki/Architecture)
+- [Engineering](https://github.com/keeweb/keeweb/wiki/Engineering)
+- [Unsupported Features](hhttps://github.com/keeweb/keeweb/wiki/Unsupported%20Features)
+- [Pull Request Guidelines](https://github.com/keeweb/keeweb/blob/master/.github/PULL_REQUEST_TEMPLATE.md#readme)
+
 ## Pull requests
 
 Please follow [this guide](https://github.com/keeweb/keeweb/blob/master/.github/PULL_REQUEST_TEMPLATE.md#readme).
