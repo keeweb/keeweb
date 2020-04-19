@@ -60,6 +60,8 @@ Please read contribution guidelines [for pull requests](.github/PULL_REQUEST_TEM
 Here's a [list of issues](https://github.com/keeweb/keeweb/labels/help%20wanted) where your help would be very welcome.
 Also you can help by [translating KeeWeb](https://keeweb.oneskyapp.com) to your language.  
 
+Other ways of contribution can be found [on this page](CONTRIBUTING.md).
+
 ### Important notes for pull requests
 
 - please branch from `develop`, not `master`
