@@ -8,5 +8,30 @@
 
     {{#if enableUsb}}
         <h2>YubiKey</h2>
+        <p>{{#res 'setDevicesYubiKeyIntro'}}<a href="{{yubiKeyManualLink}}" target="_blank">{{res 'setDevicesYubiKeyIntroLink'}}</a>{{/res}}</p>
+        <h3>{{res 'setDevicesYubiKeyOtpTitle'}}</h3>
+        <p>{{res 'setDevicesYubiKeyOtpDesc'}}</p>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-show-icon" id="settings__yubikey-show-icon"
+                   {{#if yubiKeyShowIcon}}checked{{/if}} />
+            <label for="settings__yubikey-show-icon">{{res 'setDevicesYubiKeyOtpShowIcon'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-auto-open" id="settings__yubikey-auto-open"
+                   {{#if yubiKeyAutoOpen}}checked{{/if}} />
+            <label for="settings__yubikey-auto-open">{{res 'setDevicesYubiKeyOtpAutoOpen'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-match-entries" id="settings__yubikey-match-entries"
+                   {{#if yubiKeyMatchEntries}}checked{{/if}} />
+            <label for="settings__yubikey-match-entries">{{res 'setDevicesYubiKeyOtpMatchEntries'}}</label>
+        </div>
+        <h3>{{res 'setDevicesYubiKeyChalRespTitle'}}</h3>
+        <p>{{res 'setDevicesYubiKeyChalRespDesc'}}</p>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-chalresp-show" id="settings__yubikey-chalresp-show"
+                   {{#if yubiKeyShowChalResp}}checked{{/if}} />
+            <label for="settings__yubikey-chalresp-show">{{res 'setDevicesYubiKeyChalRespShow'}}</label>
+        </div>
     {{/if}}
 </div>

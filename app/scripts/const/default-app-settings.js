@@ -36,6 +36,11 @@ const DefaultAppSettings = {
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
     enableUsb: true, // enable interaction with USB devices
 
+    yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
+    yubiKeyAutoOpen: true, // auto-load one-time codes when there are open files
+    yubiKeyMatchEntries: true, // show matching one-time codes in entries
+    yubiKeyShowChalResp: true, // show YubiKey challenge-response option
+
     canOpen: true, // can select and open new files
     canOpenDemo: true, // can open a demo file
     canOpenSettings: true, // can go to settings

@@ -35,7 +35,7 @@ class OpenView extends View {
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
         'click .open__icon-demo': 'createDemo',
-        'click .open__icon-otp-device': 'openOtpDevice',
+        'click .open__icon-yubikey': 'openYubiKey',
         'click .open__icon-more': 'toggleMore',
         'click .open__icon-storage': 'openStorage',
         'click .open__icon-settings': 'openSettings',
@@ -101,6 +101,11 @@ class OpenView extends View {
             !this.model.settings.canOpen &&
             !this.model.settings.canCreate &&
             !(this.model.settings.canOpenDemo && !this.model.settings.demoOpened);
+        const canOpenYubiKey =
+            this.model.settings.canOpenOtpDevice &&
+            this.model.settings.yubiKeyShowIcon &&
+            !!UsbListener.attachedYubiKeys.length;
+
         super.render({
             lastOpenFiles: this.getLastOpenFiles(),
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
@@ -112,8 +117,7 @@ class OpenView extends View {
             canOpenGenerator: this.model.settings.canOpenGenerator,
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
-            canOpenOtpDevice:
-                this.model.settings.canOpenOtpDevice && !!UsbListener.attachedYubiKeys.length,
+            canOpenYubiKey,
             showMore,
             showLogo
         });
@@ -975,11 +979,13 @@ class OpenView extends View {
     }
 
     usbDevicesChanged() {
-        const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
-        this.$el.find('.open__icon-otp-device').toggleClass('hide', !hasYubiKeys);
+        if (this.model.settings.canOpenOtpDevice && this.model.settings.yubiKeyShowIcon) {
+            const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
+            this.$el.find('.open__icon-yubikey').toggleClass('hide', !hasYubiKeys);
+        }
     }
 
-    openOtpDevice() {
+    openYubiKey() {
         return Events.emit('toggle-settings', 'devices');
         if (this.busy && this.otpDevice) {
             this.otpDevice.cancelOpen();

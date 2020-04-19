@@ -13,8 +13,8 @@
                 <div class="open__icon-text">{{res 'openNew'}}</div>
             </div>
         {{/if}}
-        <div class="open__icon open__icon-otp-device svg-btn {{#unless canOpenOtpDevice}}hide{{/unless}}"
-             tabindex="3" id="open__icon-otp-device">
+        <div class="open__icon open__icon-yubikey svg-btn {{#unless canOpenYubiKey}}hide{{/unless}}"
+             tabindex="3" id="open__icon-yubikey">
             <div class="open__icon-svg">{{{svg 'usb-token'}}}</div>
             <div class="open__icon-text">YubiKey</div>
         </div>

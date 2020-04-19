@@ -582,6 +582,16 @@
 
     "setDevicesTitle": "Devices",
     "setDevicesEnableUsb": "Enable interaction with USB devices",
+    "setDevicesYubiKeyIntro": "It's recommended to read {} before using YubiKey.",
+    "setDevicesYubiKeyIntroLink": "this document",
+    "setDevicesYubiKeyOtpTitle": "One-time codes",
+    "setDevicesYubiKeyOtpDesc": "YubiKey can be used to generate one-time codes for different services.",
+    "setDevicesYubiKeyOtpShowIcon": "Show the icon on the start screen",
+    "setDevicesYubiKeyOtpAutoOpen": "Automatically load one-time codes when there are open files",
+    "setDevicesYubiKeyOtpMatchEntries": "Show matching one-time codes in entries",
+    "setDevicesYubiKeyChalRespTitle": "Challenge-Response",
+    "setDevicesYubiKeyChalRespDesc": "It's also possible to use YubiKey in challenge-response mode, so that a piece of private key used to encrypt files resides on a YubiKey.",
+    "setDevicesYubiKeyChalRespShow": "Show an option to use YubiKey when opening files",
 
     "setAboutTitle": "About",
     "setAboutBuilt": "This app is built with these awesome tools",
