@@ -9,6 +9,7 @@ import { SecureInput } from 'comp/browser/secure-input';
 import { Launcher } from 'comp/launcher';
 import { Alerts } from 'comp/ui/alerts';
 import { UsbListener } from 'comp/app/usb-listener';
+import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
 import { Keys } from 'const/keys';
 import { Comparators } from 'util/data/comparators';
 import { Features } from 'util/features';
@@ -986,30 +987,38 @@ class OpenView extends View {
     }
 
     openYubiKey() {
-        return Events.emit('toggle-settings', 'devices');
         if (this.busy && this.otpDevice) {
             this.otpDevice.cancelOpen();
         }
         if (!this.busy) {
             this.busy = true;
             this.inputEl.attr('disabled', 'disabled');
-            const icon = this.$el.find('.open__icon-otp-device');
+            const icon = this.$el.find('.open__icon-yubikey');
             icon.toggleClass('flip3d', true);
-            this.otpDevice = this.model.openOtpDevice(err => {
-                if (err && !this.otpDevice.openAborted) {
-                    Alerts.error({
-                        header: Locale.openError,
-                        body:
-                            Locale.openErrorDescription +
-                            '<pre class="modal__pre">' +
-                            escape(err.toString()) +
-                            '</pre>'
-                    });
+
+            YubiKeyOtpModel.checkToolStatus().then(() => {
+                if (YubiKeyOtpModel.ykmanStatus !== 'ok') {
+                    icon.toggleClass('flip3d', false);
+                    this.inputEl.removeAttr('disabled');
+                    this.busy = false;
+                    return Events.emit('toggle-settings', 'devices');
                 }
-                this.otpDevice = null;
-                icon.toggleClass('flip3d', false);
-                this.inputEl.removeAttr('disabled');
-                this.busy = false;
+                this.otpDevice = this.model.openOtpDevice(err => {
+                    if (err && !this.otpDevice.openAborted) {
+                        Alerts.error({
+                            header: Locale.openError,
+                            body:
+                                Locale.openErrorDescription +
+                                '<pre class="modal__pre">' +
+                                escape(err.toString()) +
+                                '</pre>'
+                        });
+                    }
+                    this.otpDevice = null;
+                    icon.toggleClass('flip3d', false);
+                    this.inputEl.removeAttr('disabled');
+                    this.busy = false;
+                });
             });
         }
     }
