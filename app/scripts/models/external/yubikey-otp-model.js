@@ -3,6 +3,8 @@ import { ExternalOtpEntryModel } from 'models/external/external-otp-entry-model'
 import { Launcher } from 'comp/launcher';
 
 class YubiKeyOtpModel extends ExternalOtpDeviceModel {
+    ykmanStatus = null;
+
     constructor(props) {
         super({
             shortName: 'YubiKey',
@@ -72,6 +74,25 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
         if (ps) {
             ps.kill();
         }
+    }
+
+    static checkToolStatus() {
+        return new Promise(resolve => {
+            YubiKeyOtpModel.ykmanStatus = 'checking';
+            Launcher.spawn({
+                cmd: 'ykman',
+                args: ['-v'],
+                noStdOutLogging: true,
+                complete: (err, stdout, code) => {
+                    if (err || code !== 0) {
+                        YubiKeyOtpModel.ykmanStatus = 'error';
+                    } else {
+                        YubiKeyOtpModel.ykmanStatus = 'ok';
+                    }
+                    resolve();
+                }
+            });
+        });
     }
 }
 

@@ -1,5 +1,6 @@
 import { View } from 'framework/views/view';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
 import template from 'templates/settings/settings-devices.hbs';
 import { Links } from 'const/links';
 
@@ -14,14 +15,27 @@ class SettingsDevicesView extends View {
         'change .settings__yubikey-chalresp-show': 'changeYubiKeyShowChalResp'
     };
 
+    constructor(...args) {
+        super(...args);
+        if (!['ok', 'checking'].includes(YubiKeyOtpModel.ykmanStatus)) {
+            this.toolCheckPromise = YubiKeyOtpModel.checkToolStatus();
+        }
+    }
+
     render() {
+        if (this.toolCheckPromise) {
+            this.toolCheckPromise.then(() => this.render());
+            this.toolCheckPromise = undefined;
+        }
         super.render({
             enableUsb: AppSettingsModel.enableUsb,
+            ykmanStatus: YubiKeyOtpModel.ykmanStatus,
             yubiKeyShowIcon: AppSettingsModel.yubiKeyShowIcon,
             yubiKeyAutoOpen: AppSettingsModel.yubiKeyAutoOpen,
             yubiKeyMatchEntries: AppSettingsModel.yubiKeyMatchEntries,
             yubiKeyShowChalResp: AppSettingsModel.yubiKeyShowChalResp,
-            yubiKeyManualLink: Links.YubiKeyManual
+            yubiKeyManualLink: Links.YubiKeyManual,
+            ykmanInstallLink: Links.YubiKeyManagerInstall
         });
     }
 
