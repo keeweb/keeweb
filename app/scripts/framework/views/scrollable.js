@@ -28,7 +28,7 @@ const Scrollable = {
         if (this.scroll) {
             try {
                 this.scroll.dispose();
-            } catch {}
+            } catch (error) {}
             this.scroll = null;
         }
     },
