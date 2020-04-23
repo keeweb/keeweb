@@ -1,5 +1,13 @@
 Release notes
 -------------
+##### v1.15.0 (WIP)
+`+` #557: Argon2 speed improvements in desktop apps  
+`+` #1400: auto-apply tag when creating new entry in tag view  
+`+` #1342: hint that the data will be stored in unencrypted form after exporting  
+`*` #1471: WebDAV url validation, only HTTPS is allowed  
+`+` #1350: clearing master password after auto lock period  
+`-` fix #1463: copying the original url instead of adding https:  
+
 ##### v1.14.0 (2020-04-18)
 `+` using OAuth authorization code grant for all storage providers  
 `-` fixed a number of vulnerabilities in opening untrusted kdbx files  

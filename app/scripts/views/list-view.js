@@ -105,7 +105,7 @@ class ListView extends View {
                 itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
             }, this);
             const html = itemsTemplate(
-                { items: itemsHtml, columns: this.tableColumns },
+                { itemsHtml, columns: this.tableColumns },
                 DefaultTemplateOptions
             );
             this.itemsEl.html(html);
@@ -123,8 +123,8 @@ class ListView extends View {
         }
     }
 
-    renderPlainItems(itemsHtml) {
-        return itemsHtml.items;
+    renderPlainItems(data) {
+        return data.itemsHtml;
     }
 
     getItemTemplate() {
@@ -180,13 +180,13 @@ class ListView extends View {
     }
 
     createTemplate() {
-        if (!this.model.settings.templateHelpShown) {
+        if (!this.model.settings.templateHelpShown_) {
             Alerts.yesno({
                 icon: 'sticky-note-o',
                 header: Locale.listAddTemplateHeader,
                 body:
-                    Locale.listAddTemplateBody1.replace('{}', '<i class="fa fa-plus"></i>') +
-                    '<br/>' +
+                    Locale.listAddTemplateBody1.replace('{}', '"+"') +
+                    '\n' +
                     Locale.listAddTemplateBody2.replace('{}', 'Templates'),
                 buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                 success: () => {

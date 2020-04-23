@@ -6,7 +6,6 @@ import { Otp } from 'util/data/otp';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
-import { escape } from 'util/fn';
 
 const logger = new Logger('otp-qr-reader');
 
@@ -53,7 +52,7 @@ class OtpQrReader {
                 Locale.detSetupOtpAlertBody2.replace('{}', screenshotKey || ''),
                 line3,
                 Locale.detSetupOtpAlertBody4
-            ].join('<br/>'),
+            ].join('\n'),
             esc: '',
             click: '',
             enter: '',
@@ -141,11 +140,8 @@ class OtpQrReader {
                     logger.error('Error parsing QR code', err);
                     Alerts.error({
                         header: Locale.detOtpQrWrong,
-                        body:
-                            Locale.detOtpQrWrongBody +
-                            '<pre class="modal__pre">' +
-                            escape(err.toString()) +
-                            '</pre>'
+                        body: Locale.detOtpQrWrongBody,
+                        pre: err.toString()
                     });
                 }
             } catch (e) {

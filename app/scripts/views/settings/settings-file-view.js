@@ -12,7 +12,7 @@ import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { Locale } from 'util/locale';
 import { FileSaver } from 'util/ui/file-saver';
 import { OpenConfigView } from 'views/open-config-view';
-import { escape, omit } from 'util/fn';
+import { omit } from 'util/fn';
 import template from 'templates/settings/settings-file.hbs';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
@@ -240,8 +240,8 @@ class SettingsFileView extends View {
                                 if (err) {
                                     Alerts.error({
                                         header: Locale.setFileSaveError,
-                                        body:
-                                            Locale.setFileSaveErrorBody + ' ' + path + ': \n' + err
+                                        body: Locale.setFileSaveErrorBody + ' ' + path + ':',
+                                        pre: err
                                     });
                                 }
                             });
@@ -256,16 +256,28 @@ class SettingsFileView extends View {
     }
 
     saveToXml() {
-        this.model.getXml(xml => {
-            const blob = new Blob([xml], { type: 'text/xml' });
-            FileSaver.saveAs(blob, this.model.name + '.xml');
+        Alerts.yesno({
+            header: Locale.saveFileExportRaw,
+            body: Locale.saveFileExportRawBody,
+            success: () => {
+                this.model.getXml(xml => {
+                    const blob = new Blob([xml], { type: 'text/xml' });
+                    FileSaver.saveAs(blob, this.model.name + '.xml');
+                });
+            }
         });
     }
 
     saveToHtml() {
-        this.model.getHtml(html => {
-            const blob = new Blob([html], { type: 'text/html' });
-            FileSaver.saveAs(blob, this.model.name + '.html');
+        Alerts.yesno({
+            header: Locale.saveFileExportRaw,
+            body: Locale.saveFileExportRawBody,
+            success: () => {
+                this.model.getHtml(html => {
+                    const blob = new Blob([html], { type: 'text/html' });
+                    FileSaver.saveAs(blob, this.model.name + '.html');
+                });
+            }
         });
     }
 
@@ -332,10 +344,7 @@ class SettingsFileView extends View {
                 if (existingFile) {
                     Alerts.yesno({
                         header: Locale.setFileAlreadyExists,
-                        body: Locale.setFileAlreadyExistsBody.replace(
-                            '{}',
-                            this.model.escape('name')
-                        ),
+                        body: Locale.setFileAlreadyExistsBody.replace('{}', this.model.name),
                         success: () => {
                             this.model.syncing = true;
                             storage.remove(existingFile.path, err => {
@@ -587,11 +596,8 @@ class SettingsFileView extends View {
                     }
                     Alerts.error({
                         title,
-                        body:
-                            description +
-                            '<pre class="modal__pre">' +
-                            escape(err.toString()) +
-                            '</pre>'
+                        body: description,
+                        pre: err.toString()
                     });
                 }
             });

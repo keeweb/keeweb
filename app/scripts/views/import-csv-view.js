@@ -123,11 +123,12 @@ class ImportCsvView extends View {
         this.groups = [];
         for (const file of this.appModel.files) {
             file.forEachGroup(group => {
-                let title = escape(group.title);
+                const title = group.title;
+                const spaces = [];
                 for (let parent = group; parent.parentGroup; parent = parent.parentGroup) {
-                    title = '&nbsp;&nbsp;' + title;
+                    spaces.push(' ', ' ');
                 }
-                this.groups.push({ id: group.id, fileId: file.id, title });
+                this.groups.push({ id: group.id, fileId: file.id, spaces, title });
             });
         }
     }

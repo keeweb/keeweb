@@ -14,6 +14,9 @@ const Launcher = {
     thirdPartyStoragesSupported: true,
     clipboardSupported: true,
     req: window.require,
+    reqNative(module) {
+        return this.req(`@keeweb/keeweb-native-modules/${module}.${process.platform}.node`);
+    },
     platform() {
         return process.platform;
     },

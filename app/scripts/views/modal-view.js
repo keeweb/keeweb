@@ -29,7 +29,10 @@ class ModalView extends View {
     }
 
     render() {
-        super.render(this.model);
+        super.render({
+            ...this.model,
+            body: this.model.body ? this.model.body.toString().split('\n') : ''
+        });
         this.$el.addClass('modal--hidden');
         setTimeout(() => {
             this.$el.removeClass('modal--hidden');
@@ -43,7 +46,7 @@ class ModalView extends View {
 
     change(config) {
         if (config.header) {
-            this.$el.find('.modal__header').html(config.header);
+            this.$el.find('.modal__header').text(config.header);
         }
     }
 

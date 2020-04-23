@@ -137,15 +137,15 @@ class ListSearchView extends View {
         this.sortOptions.forEach(opt => {
             opt.html = opt.loc();
         });
-        const entryDesc = Features.isMobile
-            ? ''
-            : ' <span class="muted-color">(' +
-              Locale.searchShiftClickOr +
-              ' ' +
-              Shortcuts.altShortcutSymbol(true) +
-              'N)</span>';
         this.createOptions = [
-            { value: 'entry', icon: 'key', html: StringFormat.capFirst(Locale.entry) + entryDesc },
+            {
+                value: 'entry',
+                icon: 'key',
+                text: StringFormat.capFirst(Locale.entry),
+                hint: Features.isMobile
+                    ? null
+                    : `(${Locale.searchShiftClickOr} ${Shortcuts.altShortcutSymbol(true)})`
+            },
             { value: 'group', icon: 'folder', text: StringFormat.capFirst(Locale.group) }
         ];
         if (this.el) {

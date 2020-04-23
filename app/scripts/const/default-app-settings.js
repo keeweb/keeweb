@@ -35,6 +35,7 @@ const DefaultAppSettings = {
     allowIframes: false, // allow displaying the app in IFrames
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
     enableUsb: true, // enable interaction with USB devices
+    nativeArgon2: true, // use native argon2 module
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
     yubiKeyAutoOpen: true, // auto-load one-time codes when there are open files

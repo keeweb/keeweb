@@ -1,6 +1,8 @@
 import kdbxweb from 'kdbxweb';
 import { Logger } from 'util/logger';
 import { Features } from 'util/features';
+import { Launcher } from 'comp/launcher';
+import { AppSettingsModel } from 'models/app-settings-model';
 
 const logger = new Logger('argon2');
 
@@ -26,6 +28,40 @@ const KdbxwebInit = {
         }
         if (!global.WebAssembly) {
             return Promise.reject('WebAssembly is not supported');
+        }
+        if (Launcher && Launcher.reqNative && AppSettingsModel.nativeArgon2) {
+            const ts = logger.ts();
+            const argon2 = Launcher.reqNative('argon2');
+            logger.debug('Native argon2 runtime loaded (main thread)', logger.ts(ts));
+            this.runtimeModule = {
+                hash(args) {
+                    return new Promise((resolve, reject) => {
+                        const ts = logger.ts();
+                        argon2.hash(
+                            Buffer.from(args.password),
+                            Buffer.from(args.salt),
+                            {
+                                type: args.type,
+                                version: args.version,
+                                hashLength: args.length,
+                                saltLength: args.salt.length,
+                                timeCost: args.iterations,
+                                parallelism: args.parallelism,
+                                memoryCost: args.memory
+                            },
+                            (err, res) => {
+                                if (err) {
+                                    logger.error('Argon2 error', err);
+                                    return reject(err);
+                                }
+                                logger.debug('Argon2 hash calculated', logger.ts(ts));
+                                resolve(res);
+                            }
+                        );
+                    });
+                }
+            };
+            return Promise.resolve(this.runtimeModule);
         }
         return new Promise((resolve, reject) => {
             const loadTimeout = setTimeout(() => reject('timeout'), 5000);

@@ -522,6 +522,8 @@
     "setFileCloseNoSave": "Close and lose changes",
     "setFileDontClose": "Don't close",
     "setFileFormatVersion": "File format",
+    "saveFileExportRaw": "Exporting your passwords",
+    "saveFileExportRawBody": "The exported file will contain your passwords, they will not be encrypted there. Would you like to proceed?",
 
     "setShTitle": "Shortcuts",
     "setShShowAll": "show all items",
