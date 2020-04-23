@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.15.0 (WIP)
+`+` #557: Argon2 speed improvements in desktop apps
+
 ##### v1.14.0 (2020-04-18)
 `+` using OAuth authorization code grant for all storage providers  
 `-` fixed a number of vulnerabilities in opening untrusted kdbx files  

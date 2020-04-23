@@ -34,6 +34,7 @@ const DefaultAppSettings = {
     cacheConfigSettings: false, // cache config settings and use them if the config can't be loaded
     allowIframes: false, // allow displaying the app in IFrames
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
+    nativeArgon2: true, // use native argon2 module
 
     canOpen: true, // can select and open new files
     canOpenDemo: true, // can open a demo file
