@@ -46,7 +46,7 @@ class ModalView extends View {
 
     change(config) {
         if (config.header) {
-            this.$el.find('.modal__header').html(config.header);
+            this.$el.find('.modal__header').text(config.header);
         }
     }
 
