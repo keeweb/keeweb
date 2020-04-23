@@ -1007,11 +1007,8 @@ class OpenView extends View {
                     if (err && !this.otpDevice.openAborted) {
                         Alerts.error({
                             header: Locale.openError,
-                            body:
-                                Locale.openErrorDescription +
-                                '<pre class="modal__pre">' +
-                                escape(err.toString()) +
-                                '</pre>'
+                            body: Locale.openErrorDescription,
+                            pre: err.toString()
                         });
                     }
                     this.otpDevice = null;
