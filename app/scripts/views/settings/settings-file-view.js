@@ -256,16 +256,28 @@ class SettingsFileView extends View {
     }
 
     saveToXml() {
-        this.model.getXml(xml => {
-            const blob = new Blob([xml], { type: 'text/xml' });
-            FileSaver.saveAs(blob, this.model.name + '.xml');
+        Alerts.yesno({
+            header: Locale.saveFileExportRaw,
+            body: Locale.saveFileExportRawBody,
+            success: () => {
+                this.model.getXml(xml => {
+                    const blob = new Blob([xml], { type: 'text/xml' });
+                    FileSaver.saveAs(blob, this.model.name + '.xml');
+                });
+            }
         });
     }
 
     saveToHtml() {
-        this.model.getHtml(html => {
-            const blob = new Blob([html], { type: 'text/html' });
-            FileSaver.saveAs(blob, this.model.name + '.html');
+        Alerts.yesno({
+            header: Locale.saveFileExportRaw,
+            body: Locale.saveFileExportRawBody,
+            success: () => {
+                this.model.getHtml(html => {
+                    const blob = new Blob([html], { type: 'text/html' });
+                    FileSaver.saveAs(blob, this.model.name + '.html');
+                });
+            }
         });
     }
 
