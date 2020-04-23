@@ -57,7 +57,10 @@
             <select class="import-csv__target-select" id="import-csv__target-select">
                 <option value="" selected>{{res 'importNewFile'}}</option>
                 {{#each groups as |group|}}
-                    <option value="{{group.id}}" data-file="{{group.fileId}}">{{{group.title}}}</option>
+                    <option value="{{group.id}}" data-file="{{group.fileId}}">
+                        {{#if spaces}}{{#each spaces}}&nbsp;{{/each}}{{/if}}
+                        {{group.title}}
+                    </option>
                 {{/each}}
             </select>
         </div>

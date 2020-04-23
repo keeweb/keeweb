@@ -1,7 +1,6 @@
 import { View } from 'framework/views/view';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Links } from 'const/links';
-import { escape } from 'util/fn';
 import { Launcher } from 'comp/launcher';
 import template from 'templates/settings/settings-help.hbs';
 
@@ -30,7 +29,7 @@ class SettingsHelpView extends View {
                 encodeURIComponent('!please describe your issue here!\n\n' + appInfo),
             desktopLink: Links.Desktop,
             webAppLink: Links.WebApp,
-            appInfo: escape(appInfo)
+            appInfo
         });
     }
 }
