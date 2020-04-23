@@ -22,8 +22,8 @@ class FieldViewUrl extends FieldViewText {
     }
 
     fixUrl(url) {
-        const proto = new URL(url, 'dummy://').protocol;
-        if (proto === 'dummy:') {
+        const proto = new URL(url, 'ws://x').protocol;
+        if (proto === 'ws:') {
             return 'https://' + url;
         }
         if (!AllowedProtocols.includes(proto)) {
@@ -37,7 +37,7 @@ class FieldViewUrl extends FieldViewText {
     }
 
     getTextValue() {
-        return this.fixUrl(this.value);
+        return this.value;
     }
 }
 
