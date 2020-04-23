@@ -105,7 +105,7 @@ class ListView extends View {
                 itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
             }, this);
             const html = itemsTemplate(
-                { items: itemsHtml, columns: this.tableColumns },
+                { itemsHtml, columns: this.tableColumns },
                 DefaultTemplateOptions
             );
             this.itemsEl.html(html);
@@ -123,8 +123,8 @@ class ListView extends View {
         }
     }
 
-    renderPlainItems(itemsHtml) {
-        return itemsHtml.items;
+    renderPlainItems(data) {
+        return data.itemsHtml;
     }
 
     getItemTemplate() {
