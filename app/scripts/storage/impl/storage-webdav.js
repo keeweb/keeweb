@@ -13,7 +13,14 @@ class StorageWebDav extends StorageBase {
     getOpenConfig() {
         return {
             fields: [
-                { id: 'path', title: 'openUrl', desc: 'openUrlDesc', type: 'text', required: true },
+                {
+                    id: 'path',
+                    title: 'openUrl',
+                    desc: 'openUrlDesc',
+                    type: 'text',
+                    required: true,
+                    pattern: '^https:'
+                },
                 {
                     id: 'user',
                     title: 'openUser',
