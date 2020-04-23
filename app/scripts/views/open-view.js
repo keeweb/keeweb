@@ -17,7 +17,7 @@ import { Logger } from 'util/logger';
 import { InputFx } from 'util/ui/input-fx';
 import { OpenConfigView } from 'views/open-config-view';
 import { StorageFileListView } from 'views/storage-file-list-view';
-import { escape, omit } from 'util/fn';
+import { omit } from 'util/fn';
 import { GeneratorView } from 'views/generator-view';
 import template from 'templates/open.hbs';
 
@@ -665,11 +665,8 @@ class OpenView extends View {
                 }
                 Alerts.error({
                     header: Locale.openError,
-                    body:
-                        Locale.openErrorDescription +
-                        '<pre class="modal__pre">' +
-                        escape(err.toString()) +
-                        '</pre>'
+                    body: Locale.openErrorDescription,
+                    pre: err.toString()
                 });
             }
         } else {
@@ -748,11 +745,8 @@ class OpenView extends View {
                 if (err.lastIndexOf('OAuth', 0) !== 0 && !Alerts.alertDisplayed) {
                     Alerts.error({
                         header: Locale.openError,
-                        body:
-                            Locale.openListErrorBody +
-                            '<pre class="modal__pre">' +
-                            escape(err.toString()) +
-                            '</pre>'
+                        body: Locale.openListErrorBody,
+                        pre: err.toString()
                     });
                 }
                 return;

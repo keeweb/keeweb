@@ -62,7 +62,8 @@ ready(() => {
             .catch(e => {
                 Alerts.error({
                     header: Locale.appSettingsError,
-                    body: Locale.appNotSupportedError + '<br/><br/>' + e,
+                    body: Locale.appNotSupportedError,
+                    pre: e,
                     buttons: [],
                     esc: false,
                     enter: false,
@@ -147,7 +148,7 @@ ready(() => {
                         esc: false,
                         enter: false,
                         click: false,
-                        body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
+                        body: Locale.appSecWarnBody1 + '\n\n' + Locale.appSecWarnBody2,
                         buttons: [{ result: '', title: Locale.appSecWarnBtn, error: true }],
                         complete: () => {
                             showView();

@@ -38,10 +38,10 @@ const AppRightsChecker = {
             icon: 'lock',
             header: Locale.appRightsAlert,
             body:
-                Locale.appRightsAlertBody1.replace('{}', `<code>${this.AppPath}</code>`) +
-                '<br/>' +
-                Locale.appRightsAlertBody2 +
-                `: <pre>${command}</pre>`,
+                Locale.appRightsAlertBody1.replace('{}', this.AppPath) +
+                '\n' +
+                Locale.appRightsAlertBody2,
+            pre: command,
             buttons: [
                 { result: 'skip', title: Locale.alertDoNotAsk, error: true },
                 Alerts.buttons.ok

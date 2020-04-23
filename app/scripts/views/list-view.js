@@ -180,13 +180,13 @@ class ListView extends View {
     }
 
     createTemplate() {
-        if (!this.model.settings.templateHelpShown) {
+        if (!this.model.settings.templateHelpShown_) {
             Alerts.yesno({
                 icon: 'sticky-note-o',
                 header: Locale.listAddTemplateHeader,
                 body:
-                    Locale.listAddTemplateBody1.replace('{}', '<i class="fa fa-plus"></i>') +
-                    '<br/>' +
+                    Locale.listAddTemplateBody1.replace('{}', '"+"') +
+                    '\n' +
                     Locale.listAddTemplateBody2.replace('{}', 'Templates'),
                 buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                 success: () => {

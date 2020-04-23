@@ -957,11 +957,8 @@ class DetailsView extends View {
     deleteFromTrash() {
         Alerts.yesno({
             header: Locale.detDelFromTrash,
-            body:
-                Locale.detDelFromTrashBody +
-                ' <p class="muted-color">' +
-                Locale.detDelFromTrashBodyHint +
-                '</p>',
+            body: Locale.detDelFromTrashBody,
+            hint: Locale.detDelFromTrashBodyHint,
             icon: 'minus-circle',
             success: () => {
                 this.model.deleteFromTrash();

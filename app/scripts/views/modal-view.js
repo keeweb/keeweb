@@ -29,7 +29,10 @@ class ModalView extends View {
     }
 
     render() {
-        super.render(this.model);
+        super.render({
+            ...this.model,
+            body: this.model.body ? this.model.body.toString().split('\n') : ''
+        });
         this.$el.addClass('modal--hidden');
         setTimeout(() => {
             this.$el.removeClass('modal--hidden');
