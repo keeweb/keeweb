@@ -792,11 +792,14 @@ class EntryModel extends Model {
         return model;
     }
 
-    static newEntry(group, file) {
+    static newEntry(group, file, opts) {
         const model = new EntryModel();
         const entry = file.db.createEntry(group.group);
         if (AppSettingsModel.useGroupIconForEntries && group.icon && group.iconId) {
             entry.icon = group.iconId;
+        }
+        if (opts && opts.tag) {
+            entry.tags = [opts.tag];
         }
         model.setEntry(entry, group, file);
         model.entry.times.update();

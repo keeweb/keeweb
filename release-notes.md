@@ -1,7 +1,8 @@
 Release notes
 -------------
 ##### v1.15.0 (WIP)
-`+` #557: Argon2 speed improvements in desktop apps
+`+` #557: Argon2 speed improvements in desktop apps  
+`+` #1400: auto-apply tag when creating new entry in tag view  
 
 ##### v1.14.0 (2020-04-18)
 `+` using OAuth authorization code grant for all storage providers  
