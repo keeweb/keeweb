@@ -73,6 +73,7 @@ class OpenView extends View {
         this.once('remove', () => {
             this.passwordInput.reset();
         });
+        this.listenTo(Events, 'user-idle', this.userIdle);
     }
 
     render() {
@@ -967,6 +968,11 @@ class OpenView extends View {
             delete this.views.gen;
         });
         this.views.gen = generator;
+    }
+
+    userIdle() {
+        this.inputEl.val('');
+        this.passwordInput.reset();
     }
 }
 
