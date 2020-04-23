@@ -19,7 +19,7 @@ class StorageWebDav extends StorageBase {
                     desc: 'openUrlDesc',
                     type: 'text',
                     required: true,
-                    pattern: '^https:'
+                    pattern: '^https://.+'
                 },
                 {
                     id: 'user',
