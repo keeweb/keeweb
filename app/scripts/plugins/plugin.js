@@ -364,22 +364,23 @@ class Plugin extends Model {
             try {
                 let text = kdbxweb.ByteUtils.bytesToString(data);
                 this.module = { exports: {} };
-                const id = 'plugin-' + Date.now().toString() + Math.random().toString();
-                global[id] = {
+                const jsVar = 'plugin-' + Date.now().toString() + Math.random().toString();
+                global[jsVar] = {
                     require: PluginApi.require,
                     module: this.module
                 };
-                text = `(function(require, module){${text}})(window["${id}"].require,window["${id}"].module);`;
+                text = `(function(require, module){${text}})(window["${jsVar}"].require,window["${jsVar}"].module);`;
                 const ts = this.logger.ts();
                 const blob = new Blob([text], { type: 'text/javascript' });
                 const objectUrl = URL.createObjectURL(blob);
-                const el = this.createElementInHead('script', id, {
+                const elId = 'plugin-js-' + name;
+                const el = this.createElementInHead('script', elId, {
                     src: objectUrl
                 });
                 el.addEventListener('load', () => {
                     URL.revokeObjectURL(objectUrl);
                     setTimeout(() => {
-                        delete global[id];
+                        delete global[jsVar];
                         if (this.module.exports.uninstall) {
                             this.logger.debug('Plugin script installed', this.logger.ts(ts));
                             this.loadPluginSettings();
