@@ -360,30 +360,40 @@ class Plugin extends Model {
     }
 
     applyJs(name, data) {
-        return Promise.resolve().then(() => {
-            let text = kdbxweb.ByteUtils.bytesToString(data);
-            this.module = { exports: {} };
-            const id = 'plugin-' + Date.now().toString() + Math.random().toString();
-            global[id] = {
-                require: PluginApi.require,
-                module: this.module
-            };
-            text = `(function(require, module){${text}})(window["${id}"].require,window["${id}"].module);`;
-            const ts = this.logger.ts();
-            // eslint-disable-next-line no-eval
-            eval(text);
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    delete global[id];
-                    if (this.module.exports.uninstall) {
-                        this.logger.debug('Plugin script installed', this.logger.ts(ts));
-                        this.loadPluginSettings();
-                        resolve();
-                    } else {
-                        reject('Plugin script installation failed');
-                    }
-                }, 0);
-            });
+        return new Promise((resolve, reject) => {
+            try {
+                let text = kdbxweb.ByteUtils.bytesToString(data);
+                this.module = { exports: {} };
+                const jsVar = 'plugin-' + Date.now().toString() + Math.random().toString();
+                global[jsVar] = {
+                    require: PluginApi.require,
+                    module: this.module
+                };
+                text = `(function(require, module){${text}})(window["${jsVar}"].require,window["${jsVar}"].module);`;
+                const ts = this.logger.ts();
+                const blob = new Blob([text], { type: 'text/javascript' });
+                const objectUrl = URL.createObjectURL(blob);
+                const elId = 'plugin-js-' + name;
+                const el = this.createElementInHead('script', elId, {
+                    src: objectUrl
+                });
+                el.addEventListener('load', () => {
+                    URL.revokeObjectURL(objectUrl);
+                    setTimeout(() => {
+                        delete global[jsVar];
+                        if (this.module.exports.uninstall) {
+                            this.logger.debug('Plugin script installed', this.logger.ts(ts));
+                            this.loadPluginSettings();
+                            resolve();
+                        } else {
+                            reject('Plugin script installation failed');
+                        }
+                    }, 0);
+                });
+            } catch (e) {
+                this.logger.error('Error installing plugin script', e);
+                reject(e);
+            }
         });
     }
 
