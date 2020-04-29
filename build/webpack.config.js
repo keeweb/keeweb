@@ -107,7 +107,14 @@ function config(options) {
                 },
                 {
                     test: /baron(\.min)?\.js$/,
-                    loader: 'exports-loader?baron; delete window.baron;'
+                    use: [
+                        StringReplacePlugin.replace({
+                            replacements: [
+                                { pattern: /\(1,\s*eval\)\('this'\)/g, replacement: () => 'window' }
+                            ]
+                        }),
+                        { loader: 'exports-loader?baron; delete window.baron;' }
+                    ]
                 },
                 {
                     test: /babel-helpers\.js$/,
