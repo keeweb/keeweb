@@ -982,7 +982,11 @@ class OpenView extends View {
     usbDevicesChanged() {
         if (this.model.settings.canOpenOtpDevice && this.model.settings.yubiKeyShowIcon) {
             const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
-            this.$el.find('.open__icon-yubikey').toggleClass('hide', !hasYubiKeys);
+            const icon = this.$el.find('.open__icon-yubikey');
+            icon.toggleClass('hide', !hasYubiKeys);
+            if (!hasYubiKeys && this.busy && this.otpDevice) {
+                this.otpDevice.cancelOpen();
+            }
         }
     }
 
