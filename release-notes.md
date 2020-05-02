@@ -8,6 +8,9 @@ Release notes
 `+` #1350: clearing master password after auto lock period  
 `-` fix #1463: copying the original url instead of adding https:  
 
+##### v1.14.1 (2020-05-02)
+`-` fix #1478: fixed proxy issues with storage providers  
+
 ##### v1.14.0 (2020-04-18)
 `+` using OAuth authorization code grant for all storage providers  
 `-` fixed a number of vulnerabilities in opening untrusted kdbx files  

@@ -138,82 +138,87 @@ class StorageBase {
     }
 
     _httpRequestLauncher(config, onLoad) {
-        Launcher.resolveProxy(config.url, proxy => {
-            const https = Launcher.req('https');
+        const net = Launcher.remReq('electron').net;
 
-            const opts = Launcher.req('url').parse(config.url);
+        const opts = Launcher.req('url').parse(config.url);
 
-            opts.method = config.method || 'GET';
-            opts.headers = {
-                'User-Agent': navigator.userAgent,
-                ...config.headers
-            };
-            opts.timeout = Timeouts.DefaultHttpRequest;
+        opts.method = config.method || 'GET';
+        opts.headers = {
+            'User-Agent': navigator.userAgent,
+            ...config.headers
+        };
+        opts.timeout = Timeouts.DefaultHttpRequest;
 
-            let data;
-            if (config.data) {
-                if (config.dataIsMultipart) {
-                    data = Buffer.concat(config.data.map(chunk => Buffer.from(chunk)));
-                } else {
-                    data = Buffer.from(config.data);
-                }
-                opts.headers['Content-Length'] = data.byteLength;
+        let data;
+        if (config.data) {
+            if (config.dataIsMultipart) {
+                data = Buffer.concat(config.data.map(chunk => Buffer.from(chunk)));
+            } else {
+                data = Buffer.from(config.data);
             }
+            // Electron's API doesn't like that, while node.js needs it
+            // opts.headers['Content-Length'] = data.byteLength;
+        }
 
-            if (proxy) {
-                opts.headers.Host = opts.host;
-                opts.host = proxy.host;
-                opts.port = proxy.port;
-                opts.path = config.url;
-            }
+        const req = net.request(opts);
 
-            const req = https.request(opts);
-
-            req.on('response', res => {
-                const chunks = [];
-                res.on('data', chunk => chunks.push(chunk));
-                res.on('end', () => {
-                    this.logger.debug(
-                        'HTTP response',
-                        opts.method,
-                        config.url,
-                        res.statusCode,
-                        res.headers
-                    );
-
-                    let response = Buffer.concat(chunks);
-                    if (config.responseType === 'json') {
-                        try {
-                            response = JSON.parse(response.toString('utf8'));
-                        } catch (e) {
-                            return config.error && config.error('json parse error');
-                        }
-                    } else {
-                        response = response.buffer.slice(
-                            response.byteOffset,
-                            response.byteOffset + response.length
-                        );
-                    }
-                    onLoad({
-                        status: res.statusCode,
-                        response,
-                        getResponseHeader: name => res.headers[name.toLowerCase()]
-                    });
-                });
-            });
-            req.on('error', e => {
-                this.logger.error('HTTP error', opts.method, config.url, e);
-                return config.error && config.error('network error', {});
-            });
-            req.on('timeout', () => {
-                req.abort();
-                return config.error && config.error('timeout', {});
-            });
-            if (data) {
-                req.write(data);
-            }
-            req.end();
+        let closed = false;
+        req.on('close', () => {
+            closed = true;
         });
+
+        req.on('response', res => {
+            const chunks = [];
+            const onClose = () => {
+                this.logger.debug(
+                    'HTTP response',
+                    opts.method,
+                    config.url,
+                    res.statusCode,
+                    res.headers
+                );
+
+                let response = Buffer.concat(chunks);
+                if (config.responseType === 'json') {
+                    try {
+                        response = JSON.parse(response.toString('utf8'));
+                    } catch (e) {
+                        return config.error && config.error('json parse error');
+                    }
+                } else {
+                    response = response.buffer.slice(
+                        response.byteOffset,
+                        response.byteOffset + response.length
+                    );
+                }
+                onLoad({
+                    status: res.statusCode,
+                    response,
+                    getResponseHeader: name => res.headers[name.toLowerCase()]
+                });
+            };
+            res.on('data', chunk => {
+                chunks.push(chunk);
+                if (closed && !res.readable) {
+                    // sometimes 'close' event arrives faster in Electron
+                    onClose();
+                }
+            });
+            // in Electron it's not res.on('end'), like in node.js, which is a bit weird
+            req.on('close', onClose);
+        });
+        req.on('error', e => {
+            this.logger.error('HTTP error', opts.method, config.url, e);
+            return config.error && config.error('network error', {});
+        });
+        req.on('timeout', () => {
+            req.abort();
+            return config.error && config.error('timeout', {});
+        });
+        if (data) {
+            req.write(data);
+        }
+        req.end();
     }
 
     _openPopup(url, title, width, height, extras) {
