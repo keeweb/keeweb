@@ -1,5 +1,4 @@
 {
-  "appBrowserAuthComplete": "Die Authentifizierung ist abgeschlossen, Sie können diesen Tab jetzt schließen.",
   "months": [
     "Januar",
     "Februar",
@@ -358,6 +357,7 @@
   "appRightsAlert": "Schreibschutz für KeeWeb wird eingerichtet",
   "appRightsAlertBody1": "Ihre KeeWeb-Anwendung ist nicht gegen Änderungen von außen gesichert. Um diesen Schreibschutz einzurichten, benötigt die App Administratorrechte.",
   "appRightsAlertBody2": "Sie möchten der App keine Administratorrechte erteilen? Mit folgendem Befehl können Sie den Schreibschutz auch von Hand im Terminal aktivieren",
+  "appBrowserAuthComplete": "Die Authentifizierung ist abgeschlossen, Sie können diesen Tab jetzt schließen.",
   "setGenTitle": "Allgemeine Einstellungen",
   "setGenUpdate": "Update",
   "setGenNewVersion": "Eine neue Version der App ist verfügbar und wurde heruntergeladen",
@@ -434,6 +434,7 @@
   "setGenLockAutoType": "Bei Auto-Type",
   "setGenLockOrSleep": "Bei Aktivierung von Bildschirmsperre oder Ruhezustand",
   "setGenStorage": "Synchronisierung",
+  "setGenStorageLogout": "Abmelden",
   "setGenShowAdvanced": "Erweiterte Einstellungen anzeigen",
   "setGenDevTools": "Entwicklerwerkzeuge anzeigen",
   "setGenTryBeta": "Beta-Version bis zum Schließen der App ausprobieren",
@@ -588,6 +589,8 @@
   "dropboxSetupDesc": "Etwas Konfiguration ist notwendig, um Dropbox in einer selbst gehosteten Web-App zu verwenden. Bitte erstellen Sie eine eigene Dropbox-App und tragen Sie ihren App-Schlüssel unten ein.",
   "dropboxAppKey": "Dropbox App-Schlüssel",
   "dropboxAppKeyDesc": "Kopieren Sie den Schlüssel aus Ihrer Dropbox-App (Entwicklereinstellungen)",
+  "dropboxAppSecret": "Dropbox App Secret",
+  "dropboxAppSecretDesc": "Das App Secret ist neben dem App Key zu finden",
   "dropboxFolder": "App-Ordner",
   "dropboxFolderDesc": "Wenn Ihre App mit der gesamten Dropbox verlinkt ist (anstatt mit einem bestimmten Ordner), geben Sie hier den Pfad zum Ordner mit Ihren KDBX-Dateien an.",
   "dropboxFolderSettingsDesc": "Wählen Sie einen Ordner in Ihrer Dropbox, in dem die Dateien gespeichert werden (standardmäßig das Stammverzeichnis)",
