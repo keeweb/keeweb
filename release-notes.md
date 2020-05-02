@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.14.1 (WIP)
+##### v1.14.1 (2020-05-02)
 `-` fix #1478: fixed proxy issues with storage providers  
 
 ##### v1.14.0 (2020-04-18)
