@@ -6,7 +6,6 @@ import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
 import { Updater } from 'comp/app/updater';
 import { UsbListener } from 'comp/app/usb-listener';
-import { AuthReceiver } from 'comp/browser/auth-receiver';
 import { FeatureTester } from 'comp/browser/feature-tester';
 import { FocusDetector } from 'comp/browser/focus-detector';
 import { IdleTracker } from 'comp/browser/idle-tracker';
@@ -33,11 +32,6 @@ const ready = (Launcher && Launcher.ready) || $;
 
 ready(() => {
     StartProfiler.milestone('document ready');
-
-    if (AuthReceiver.receive()) {
-        return;
-    }
-    StartProfiler.milestone('checking auth');
 
     const appModel = new AppModel();
     StartProfiler.milestone('creating app model');

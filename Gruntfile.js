@@ -61,14 +61,11 @@ module.exports = function(grunt) {
                 dest: 'tmp/index.html',
                 nonull: true
             },
-            'html-dist': {
-                src: 'tmp/app.html',
-                dest: 'dist/index.html',
-                nonull: true
-            },
-            '404-dist': {
-                src: 'app/404.html',
-                dest: 'dist/404.html',
+            'content-dist': {
+                cwd: 'app/content/',
+                src: '**',
+                dest: 'dist/',
+                expand: true,
                 nonull: true
             },
             favicon: {
@@ -194,7 +191,7 @@ module.exports = function(grunt) {
             },
             app: {
                 src: 'tmp/app.html',
-                dest: 'tmp/app.html'
+                dest: 'dist/index.html'
             }
         },
         htmlmin: {
@@ -270,7 +267,10 @@ module.exports = function(grunt) {
                     sha: 'dev'
                 }),
                 publicPath: '/',
-                contentBase: path.resolve(__dirname, 'tmp'),
+                contentBase: [
+                    path.resolve(__dirname, 'tmp'),
+                    path.resolve(__dirname, 'app/content')
+                ],
                 progress: false
             },
             js: {
