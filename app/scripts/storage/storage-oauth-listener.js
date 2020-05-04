@@ -9,7 +9,7 @@ const logger = new Logger('storage-oauth-listener');
 const StorageOAuthListener = {
     server: null,
 
-    listen() {
+    listen(storageName) {
         if (this.server) {
             this.stop();
         }
@@ -20,12 +20,17 @@ const StorageOAuthListener = {
         });
 
         const http = Launcher.req('http');
+        let resultHandled = false;
         const server = http.createServer((req, resp) => {
             resp.writeHead(200, 'OK', {
                 'Content-Type': 'text/plain; charset=UTF-8'
             });
             resp.end(Locale.appBrowserAuthComplete);
-            this.handleResult(req.url, listener);
+            if (!resultHandled) {
+                this.stop();
+                this.handleResult(req.url, listener);
+                resultHandled = true;
+            }
         });
 
         const port = DefaultPort;
@@ -43,7 +48,7 @@ const StorageOAuthListener = {
             listener.emit('ready');
         });
 
-        listener.redirectUri = `http://localhost:${port}/oauth-result`;
+        listener.redirectUri = `http://localhost:${port}/oauth-result/${storageName}.html`;
         return listener;
     },
 
@@ -55,9 +60,12 @@ const StorageOAuthListener = {
     },
 
     handleResult(url, listener) {
+        url = new URL(url, listener.redirectUri);
+        if (url.origin + url.pathname !== listener.redirectUri) {
+            logger.info('Skipped result', url, listener.redirectUri);
+            return;
+        }
         logger.info('OAuth result with code received');
-        this.stop();
-        url = new URL(url, 'http://localhost');
         const state = url.searchParams.get('state');
         const code = url.searchParams.get('code');
         listener.emit('result', { state, code });
