@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.14.2 (2020-05-04)
+`-` distinct redirect URIs for storage providers  
+
 ##### v1.14.1 (2020-05-02)
 `-` fix #1478: fixed proxy issues with storage providers  
 
