@@ -261,8 +261,7 @@ class StorageBase {
         if (redirectUrl.lastIndexOf('file:', 0) === 0) {
             redirectUrl = Links.WebApp;
         }
-        redirectUrl = redirectUrl.split('?')[0];
-        return redirectUrl;
+        return new URL(`oauth-result/${this.name}.html`, redirectUrl).href;
     }
 
     _oauthAuthorize(callback) {
@@ -284,7 +283,7 @@ class StorageBase {
 
         let listener;
         if (Features.isDesktop) {
-            listener = StorageOAuthListener.listen();
+            listener = StorageOAuthListener.listen(this.name);
             session.redirectUri = listener.redirectUri;
         } else {
             session.redirectUri = this._getOauthRedirectUrl();
@@ -334,15 +333,27 @@ class StorageBase {
             if (e.origin !== location.origin) {
                 return;
             }
-            if (e.data && e.data.error) {
-                this.logger.error('OAuth error', e.data.error, e.data.error_description);
-                callback('OAuth: ' + e.data.error);
-            } else if (e.data && e.data.code) {
+            if (!e.data || !e.data.storage || !e.data.search) {
+                this.logger.debug('Skipped empty OAuth message', e.data);
+                return;
+            }
+            if (e.data.storage !== this.name) {
+                this.logger.debug('Skipped OAuth message for another storage', e.data.storage);
+                return;
+            }
+            const data = {};
+            for (const [key, value] of new URLSearchParams(e.data.search).entries()) {
+                data[key] = value;
+            }
+            if (data.error) {
+                this.logger.error('OAuth error', data.error, data.error_description);
+                callback('OAuth: ' + data.error);
+            } else if (data.code) {
                 Events.off('popup-closed', popupClosed);
                 window.removeEventListener('message', windowMessage);
-                this._oauthCodeReceived(e.data, session, callback);
+                this._oauthCodeReceived(data, session, callback);
             } else {
-                this.logger.debug('Skipped OAuth message', e.data);
+                this.logger.debug('Skipped OAuth message', data);
             }
         };
         Events.on('popup-closed', popupClosed);
