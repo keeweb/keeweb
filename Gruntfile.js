@@ -191,7 +191,7 @@ module.exports = function(grunt) {
             },
             app: {
                 src: 'tmp/app.html',
-                dest: 'dist/app.html'
+                dest: 'dist/index.html'
             }
         },
         htmlmin: {
