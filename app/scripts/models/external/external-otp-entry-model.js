@@ -9,6 +9,9 @@ class ExternalOtpEntryModel extends ExternalEntryModel {
     }
 
     initOtpGenerator() {
+        if (this.otpGenerator) {
+            return;
+        }
         this.otpGenerator = {
             next: callback => {
                 this.otpState = this.device.getOtp(this, callback);

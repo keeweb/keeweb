@@ -177,7 +177,7 @@ class FieldViewOtp extends FieldViewText {
     }
 
     stopOtpUpdater() {
-        if (this.otpState === 'awaiting-touch' || this.otpState === 'generating') {
+        if (this.otpState === 'awaiting-touch') {
             if (this.value && this.value.cancel) {
                 this.value.cancel();
             }
