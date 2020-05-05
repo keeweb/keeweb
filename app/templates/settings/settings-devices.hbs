@@ -2,7 +2,7 @@
     <h1><i class="fa fa-usb settings__head-icon"></i> {{res 'setDevicesTitle'}}</h1>
     <div>
         <input type="checkbox" class="settings__input input-base settings__devices-enable-usb" id="settings__devices-enable-usb"
-               {{#if enableUsb}}checked{{/if}} />
+               {{#if enableUsb}}checked{{/if}} {{#unless supported}}disabled{{/unless}} />
         <label for="settings__devices-enable-usb">{{res 'setDevicesEnableUsb'}}</label>
     </div>
 

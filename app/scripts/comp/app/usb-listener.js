@@ -3,13 +3,12 @@ import { Events } from 'framework/events';
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { YubiKeyVendorId } from 'const/hardware';
 
 const logger = new Logger('usb-listener');
 
-// https://support.yubico.com/support/solutions/articles/15000028104-yubikey-usb-id-values
-const YubiKeyVendorId = 0x1050;
-
 const UsbListener = {
+    supported: Launcher && !(process.platform === 'win32' && !process.arch.includes('64')),
     attachedYubiKeys: 0,
 
     init() {

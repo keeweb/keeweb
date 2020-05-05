@@ -3,6 +3,7 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
 import template from 'templates/settings/settings-devices.hbs';
 import { Links } from 'const/links';
+import { UsbListener } from '../../comp/app/usb-listener';
 
 class SettingsDevicesView extends View {
     template = template;
@@ -28,7 +29,8 @@ class SettingsDevicesView extends View {
             this.toolCheckPromise = undefined;
         }
         super.render({
-            enableUsb: AppSettingsModel.enableUsb,
+            supported: UsbListener.supported,
+            enableUsb: UsbListener.supported && AppSettingsModel.enableUsb,
             ykmanStatus: YubiKeyOtpModel.ykmanStatus,
             yubiKeyShowIcon: AppSettingsModel.yubiKeyShowIcon,
             yubiKeyAutoOpen: AppSettingsModel.yubiKeyAutoOpen,
