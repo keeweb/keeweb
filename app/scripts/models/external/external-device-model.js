@@ -26,7 +26,8 @@ ExternalDeviceModel.defineModelProperties({
     entries: undefined,
     groups: undefined,
     name: undefined,
-    shortName: undefined
+    shortName: undefined,
+    deviceClassName: undefined
 });
 
 export { ExternalDeviceModel };

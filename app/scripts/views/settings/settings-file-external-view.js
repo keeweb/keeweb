@@ -12,7 +12,8 @@ class SettingsFileExternalView extends View {
 
     render() {
         super.render({
-            name: this.model.name
+            name: this.model.name,
+            deviceClassName: this.model.deviceClassName
         });
     }
 

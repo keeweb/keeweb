@@ -10,6 +10,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
             id: 'yubikey',
             name: 'YubiKey',
             shortName: 'YubiKey',
+            deviceClassName: 'YubiKey',
             ...props
         });
     }
