@@ -12,10 +12,6 @@ class ExternalEntryModel extends Model {
         this._search = new EntrySearch(this);
     }
 
-    get external() {
-        return true;
-    }
-
     matches(filter) {
         return this._search.matches(filter);
     }
@@ -42,6 +38,8 @@ class ExternalEntryModel extends Model {
 
 ExternalEntryModel.defineModelProperties({
     id: '',
+    external: true,
+    readOnly: true,
     device: undefined,
     title: undefined,
     description: undefined,
