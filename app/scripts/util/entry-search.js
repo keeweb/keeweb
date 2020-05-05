@@ -22,12 +22,12 @@ class EntrySearch {
             } else if (filter.textLowerParts) {
                 const parts = filter.textLowerParts;
                 for (let i = 0; i < parts.length; i++) {
-                    if (this.model.searchText && this.model.searchText.indexOf(parts[i]) < 0) {
+                    if (this.model.searchText.indexOf(parts[i]) < 0) {
                         return false;
                     }
                 }
             } else {
-                if (this.model.searchText && this.model.searchText.indexOf(filter.textLower) < 0) {
+                if (this.model.searchText.indexOf(filter.textLower) < 0) {
                     return false;
                 }
             }
