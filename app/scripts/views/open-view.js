@@ -8,6 +8,8 @@ import { KeyHandler } from 'comp/browser/key-handler';
 import { SecureInput } from 'comp/browser/secure-input';
 import { Launcher } from 'comp/launcher';
 import { Alerts } from 'comp/ui/alerts';
+import { UsbListener } from 'comp/app/usb-listener';
+import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
 import { Keys } from 'const/keys';
 import { Comparators } from 'util/data/comparators';
 import { Features } from 'util/features';
@@ -34,6 +36,7 @@ class OpenView extends View {
         'click .open__icon-open': 'openFile',
         'click .open__icon-new': 'createNew',
         'click .open__icon-demo': 'createDemo',
+        'click .open__icon-yubikey': 'openYubiKey',
         'click .open__icon-more': 'toggleMore',
         'click .open__icon-storage': 'openStorage',
         'click .open__icon-settings': 'openSettings',
@@ -70,6 +73,7 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_DOWN, this.moveOpenFileSelectionDown, null, 'open');
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, null, 'open');
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
+        this.listenTo(Events, 'usb-devices-changed', this.usbDevicesChanged.bind(this));
         this.once('remove', () => {
             this.passwordInput.reset();
         });
@@ -99,6 +103,11 @@ class OpenView extends View {
             !this.model.settings.canOpen &&
             !this.model.settings.canCreate &&
             !(this.model.settings.canOpenDemo && !this.model.settings.demoOpened);
+        const canOpenYubiKey =
+            this.model.settings.canOpenOtpDevice &&
+            this.model.settings.yubiKeyShowIcon &&
+            !!UsbListener.attachedYubiKeys.length;
+
         super.render({
             lastOpenFiles: this.getLastOpenFiles(),
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
@@ -110,6 +119,7 @@ class OpenView extends View {
             canOpenGenerator: this.model.settings.canOpenGenerator,
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
+            canOpenYubiKey,
             showMore,
             showLogo
         });
@@ -967,6 +977,51 @@ class OpenView extends View {
     userIdle() {
         this.inputEl.val('');
         this.passwordInput.reset();
+    }
+
+    usbDevicesChanged() {
+        if (this.model.settings.canOpenOtpDevice && this.model.settings.yubiKeyShowIcon) {
+            const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
+            const icon = this.$el.find('.open__icon-yubikey');
+            icon.toggleClass('hide', !hasYubiKeys);
+            if (!hasYubiKeys && this.busy && this.otpDevice) {
+                this.otpDevice.cancelOpen();
+            }
+        }
+    }
+
+    openYubiKey() {
+        if (this.busy && this.otpDevice) {
+            this.otpDevice.cancelOpen();
+        }
+        if (!this.busy) {
+            this.busy = true;
+            this.inputEl.attr('disabled', 'disabled');
+            const icon = this.$el.find('.open__icon-yubikey');
+            icon.toggleClass('flip3d', true);
+
+            YubiKeyOtpModel.checkToolStatus().then(() => {
+                if (YubiKeyOtpModel.ykmanStatus !== 'ok') {
+                    icon.toggleClass('flip3d', false);
+                    this.inputEl.removeAttr('disabled');
+                    this.busy = false;
+                    return Events.emit('toggle-settings', 'devices');
+                }
+                this.otpDevice = this.model.openOtpDevice(err => {
+                    if (err && !this.otpDevice.openAborted) {
+                        Alerts.error({
+                            header: Locale.openError,
+                            body: Locale.openErrorDescription,
+                            pre: err.toString()
+                        });
+                    }
+                    this.otpDevice = null;
+                    icon.toggleClass('flip3d', false);
+                    this.inputEl.removeAttr('disabled');
+                    this.busy = false;
+                });
+            });
+        }
     }
 }
 

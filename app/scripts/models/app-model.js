@@ -1,5 +1,4 @@
 import { Events } from 'framework/events';
-import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
 import { SearchResultCollection } from 'collections/search-result-collection';
 import { FileCollection } from 'collections/file-collection';
@@ -12,6 +11,7 @@ import { EntryModel } from 'models/entry-model';
 import { FileInfoModel } from 'models/file-info-model';
 import { FileModel } from 'models/file-model';
 import { GroupModel } from 'models/group-model';
+import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
 import { MenuModel } from 'models/menu/menu-model';
 import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
@@ -46,14 +46,7 @@ class AppModel {
         Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
 
         this.appLogger = new Logger('app');
-        AppModel.instance = this; // For KeeWebHttp. TODO: kill this
-    }
-
-    prepare() {
-        AutoType.init(this);
-        for (const prv of Object.values(Storage)) {
-            prv.init();
-        }
+        AppModel.instance = this;
     }
 
     loadConfig(configLocation) {
@@ -229,7 +222,7 @@ class AppModel {
     }
 
     renameTag(from, to) {
-        this.files.forEach(file => file.renameTag(from, to));
+        this.files.forEach(file => file.renameTag && file.renameTag(from, to));
         this.updateTags();
     }
 
@@ -259,7 +252,7 @@ class AppModel {
     }
 
     emptyTrash() {
-        this.files.forEach(file => file.emptyTrash());
+        this.files.forEach(file => file.emptyTrash && file.emptyTrash());
         this.refresh();
     }
 
@@ -316,7 +309,7 @@ class AppModel {
 
     addTrashGroups(collection) {
         this.files.forEach(file => {
-            const trashGroup = file.getTrashGroup();
+            const trashGroup = file.getTrashGroup && file.getTrashGroup();
             if (trashGroup) {
                 trashGroup.getOwnSubGroups().forEach(group => {
                     collection.unshift(GroupModel.fromGroup(group, file, trashGroup));
@@ -388,9 +381,10 @@ class AppModel {
     getEntryTemplates() {
         const entryTemplates = [];
         this.files.forEach(file => {
-            file.forEachEntryTemplate(entry => {
-                entryTemplates.push({ file, entry });
-            });
+            file.forEachEntryTemplate &&
+                file.forEachEntryTemplate(entry => {
+                    entryTemplates.push({ file, entry });
+                });
         });
         return entryTemplates;
     }
@@ -1177,6 +1171,17 @@ class AppModel {
                 }
             });
         }
+    }
+
+    openOtpDevice(callback) {
+        const device = new YubiKeyOtpModel();
+        device.open(err => {
+            if (!err) {
+                this.addFile(device);
+            }
+            callback(err);
+        });
+        return device;
     }
 }
 

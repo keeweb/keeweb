@@ -12,8 +12,11 @@ EntryPresenter.prototype = {
     present(item) {
         if (item.entry) {
             this.entry = item;
-        } else {
+        } else if (item.group) {
             this.group = item;
+        } else if (item.external) {
+            this.entry = item;
+            this.external = true;
         }
         return this;
     },
@@ -67,6 +70,9 @@ EntryPresenter.prototype = {
     get description() {
         if (!this.entry) {
             return '[' + Locale.listGroup + ']';
+        }
+        if (this.external) {
+            return this.entry.description;
         }
         switch (this.descField) {
             case 'website':

@@ -7,6 +7,7 @@ import { GroupsMenuModel } from 'models/menu/groups-menu-model';
 import { MenuSectionModel } from 'models/menu/menu-section-model';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
+import { Launcher } from 'comp/launcher';
 
 class MenuModel extends Model {
     constructor() {
@@ -73,6 +74,11 @@ class MenuModel extends Model {
         this.pluginsSection = new MenuSectionModel([
             { locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }
         ]);
+        if (Launcher) {
+            this.devicesSection = new MenuSectionModel([
+                { locTitle: 'menuSetDevices', icon: 'usb', page: 'devices' }
+            ]);
+        }
         this.aboutSection = new MenuSectionModel([
             { locTitle: 'menuSetAbout', icon: 'info', page: 'about' }
         ]);
@@ -81,14 +87,17 @@ class MenuModel extends Model {
         ]);
         this.filesSection = new MenuSectionModel();
         this.filesSection.set({ scrollable: true, grow: true });
-        this.menus.settings = new MenuSectionCollection([
-            this.generalSection,
-            this.shortcutsSection,
-            this.pluginsSection,
-            this.aboutSection,
-            this.helpSection,
-            this.filesSection
-        ]);
+        this.menus.settings = new MenuSectionCollection(
+            [
+                this.generalSection,
+                this.shortcutsSection,
+                this.pluginsSection,
+                this.devicesSection,
+                this.aboutSection,
+                this.helpSection,
+                this.filesSection
+            ].filter(s => s)
+        );
         this.sections = this.menus.app;
 
         Events.on('set-locale', this._setLocale.bind(this));

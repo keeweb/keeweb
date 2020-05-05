@@ -1,8 +1,8 @@
 import { Collection } from 'framework/collection';
-import { FileModel } from 'models/file-model';
+import { Model } from 'framework/model';
 
 class FileCollection extends Collection {
-    static model = FileModel;
+    static model = Model;
 
     hasOpenFiles() {
         return this.some(file => file.active);
