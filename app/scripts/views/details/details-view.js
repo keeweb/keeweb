@@ -11,8 +11,6 @@ import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { GroupModel } from 'models/group-model';
 import { Features } from 'util/features';
-import { DateFormat } from 'util/formatting/date-format';
-import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
 import { FileSaver } from 'util/ui/file-saver';
 import { Tip } from 'util/ui/tip';
@@ -23,16 +21,8 @@ import { DetailsAttachmentView } from 'views/details/details-attachment-view';
 import { DetailsAutoTypeView } from 'views/details/details-auto-type-view';
 import { DetailsHistoryView } from 'views/details/details-history-view';
 import { DropdownView } from 'views/dropdown-view';
-import { FieldViewAutocomplete } from 'views/fields/field-view-autocomplete';
+import { createDetailsFields } from 'views/details/details-fields';
 import { FieldViewCustom } from 'views/fields/field-view-custom';
-import { FieldViewDate } from 'views/fields/field-view-date';
-import { FieldViewHistory } from 'views/fields/field-view-history';
-import { FieldViewOtp } from 'views/fields/field-view-otp';
-import { FieldViewReadOnly } from 'views/fields/field-view-read-only';
-import { FieldViewSelect } from 'views/fields/field-view-select';
-import { FieldViewTags } from 'views/fields/field-view-tags';
-import { FieldViewText } from 'views/fields/field-view-text';
-import { FieldViewUrl } from 'views/fields/field-view-url';
 import { IconSelectView } from 'views/icon-select-view';
 import { isEqual } from 'util/fn';
 import template from 'templates/details/details.hbs';
@@ -42,10 +32,6 @@ import groupTemplate from 'templates/details/details-group.hbs';
 class DetailsView extends View {
     parent = '.app__details';
     fieldViews = [];
-    passEditView = null;
-    userEditView = null;
-    urlEditView = null;
-    otpEditView = null;
     fieldCopyTip = null;
 
     events = {
@@ -150,193 +136,12 @@ class DetailsView extends View {
         this.showCopyTip();
     }
 
+    getFieldView(name) {
+        return this.fieldViews.find(fv => fv.model.name === name);
+    }
+
     addFieldViews() {
-        const model = this.model;
-        const fieldViews = [];
-        const fieldViewsAside = [];
-        if (this.model.external) {
-            fieldViewsAside.push(
-                new FieldViewReadOnly({
-                    name: 'Device',
-                    title: StringFormat.capFirst(Locale.device),
-                    value() {
-                        return model.device.name;
-                    }
-                })
-            );
-            fieldViews.push(
-                new FieldViewReadOnly({
-                    name: '$UserName',
-                    title: StringFormat.capFirst(Locale.user),
-                    aside: false,
-                    value() {
-                        return model.user;
-                    }
-                })
-            );
-            this.otpEditView = new FieldViewOtp({
-                name: '$otp',
-                title: Locale.detOtpField,
-                value() {
-                    return model.otpGenerator;
-                },
-                sequence: '{TOTP}',
-                readonly: true,
-                needsTouch: this.model.needsTouch,
-                deviceShortName: this.model.device.shortName
-            });
-            fieldViews.push(this.otpEditView);
-        } else {
-            if (model.isJustCreated && this.appModel.files.length > 1) {
-                const fileNames = this.appModel.files.map(function(file) {
-                    return { id: file.id, value: file.name, selected: file === this.model.file };
-                }, this);
-                this.fileEditView = new FieldViewSelect({
-                    name: '$File',
-                    title: StringFormat.capFirst(Locale.file),
-                    value() {
-                        return fileNames;
-                    }
-                });
-                fieldViews.push(this.fileEditView);
-            } else {
-                fieldViewsAside.push(
-                    new FieldViewReadOnly({
-                        name: 'File',
-                        title: StringFormat.capFirst(Locale.file),
-                        value() {
-                            return model.fileName;
-                        }
-                    })
-                );
-            }
-            this.userEditView = new FieldViewAutocomplete({
-                name: '$UserName',
-                title: StringFormat.capFirst(Locale.user),
-                value() {
-                    return model.user;
-                },
-                getCompletions: this.getUserNameCompletions.bind(this),
-                sequence: '{USERNAME}'
-            });
-            fieldViews.push(this.userEditView);
-            this.passEditView = new FieldViewText({
-                name: '$Password',
-                title: StringFormat.capFirst(Locale.password),
-                canGen: true,
-                value() {
-                    return model.password;
-                },
-                sequence: '{PASSWORD}'
-            });
-            fieldViews.push(this.passEditView);
-            this.urlEditView = new FieldViewUrl({
-                name: '$URL',
-                title: StringFormat.capFirst(Locale.website),
-                value() {
-                    return model.url;
-                },
-                sequence: '{URL}'
-            });
-            fieldViews.push(this.urlEditView);
-            fieldViews.push(
-                new FieldViewText({
-                    name: '$Notes',
-                    title: StringFormat.capFirst(Locale.notes),
-                    multiline: 'true',
-                    markdown: true,
-                    value() {
-                        return model.notes;
-                    },
-                    sequence: '{NOTES}'
-                })
-            );
-            fieldViews.push(
-                new FieldViewTags({
-                    name: 'Tags',
-                    title: StringFormat.capFirst(Locale.tags),
-                    tags: this.appModel.tags,
-                    value() {
-                        return model.tags;
-                    }
-                })
-            );
-            fieldViews.push(
-                new FieldViewDate({
-                    name: 'Expires',
-                    title: Locale.detExpires,
-                    lessThanNow: '(' + Locale.detExpired + ')',
-                    value() {
-                        return model.expires;
-                    }
-                })
-            );
-            fieldViewsAside.push(
-                new FieldViewReadOnly({
-                    name: 'Group',
-                    title: Locale.detGroup,
-                    value() {
-                        return model.groupName;
-                    },
-                    tip() {
-                        return model.getGroupPath().join(' / ');
-                    }
-                })
-            );
-            fieldViewsAside.push(
-                new FieldViewReadOnly({
-                    name: 'Created',
-                    title: Locale.detCreated,
-                    value() {
-                        return DateFormat.dtStr(model.created);
-                    }
-                })
-            );
-            fieldViewsAside.push(
-                new FieldViewReadOnly({
-                    name: 'Updated',
-                    title: Locale.detUpdated,
-                    value() {
-                        return DateFormat.dtStr(model.updated);
-                    }
-                })
-            );
-            fieldViewsAside.push(
-                new FieldViewHistory({
-                    name: 'History',
-                    title: StringFormat.capFirst(Locale.history),
-                    value() {
-                        return { length: model.historyLength, unsaved: model.unsaved };
-                    }
-                })
-            );
-            this.otpEditView = null;
-            for (const field of Object.keys(model.fields)) {
-                if (field === 'otp' && this.model.otpGenerator) {
-                    this.otpEditView = new FieldViewOtp({
-                        name: '$' + field,
-                        title: field,
-                        value() {
-                            return model.otpGenerator;
-                        },
-                        sequence: '{TOTP}'
-                    });
-                    fieldViews.push(this.otpEditView);
-                } else {
-                    fieldViews.push(
-                        new FieldViewCustom({
-                            name: '$' + field,
-                            title: field,
-                            multiline: true,
-                            value() {
-                                return model.fields[field];
-                            },
-                            sequence: `{S:${field}}`
-                        })
-                    );
-                }
-            }
-        }
+        const { fieldViews, fieldViewsAside } = createDetailsFields(this);
 
         const hideEmptyFields = AppSettingsModel.hideEmptyFields;
 
@@ -363,6 +168,7 @@ class DetailsView extends View {
                 }
             }
         }
+
         this.fieldViews = fieldViews.concat(fieldViewsAside);
 
         if (!this.model.external) {
@@ -638,7 +444,7 @@ class DetailsView extends View {
     }
 
     copyKeyPress(editView) {
-        if (this.isHidden()) {
+        if (!editView || this.isHidden()) {
             return false;
         }
         if (!window.getSelection().toString()) {
@@ -657,28 +463,26 @@ class DetailsView extends View {
     }
 
     copyPasswordFromShortcut(e) {
-        const copied = this.copyKeyPress(this.passEditView);
+        const copied = this.copyKeyPress(this.getFieldView('$Password'));
         if (copied) {
             e.preventDefault();
         }
     }
 
     copyPassword() {
-        this.copyKeyPress(this.passEditView);
+        this.copyKeyPress(this.getFieldView('$Password'));
     }
 
     copyUserName() {
-        this.copyKeyPress(this.userEditView);
+        this.copyKeyPress(this.getFieldView('$UserName'));
     }
 
     copyUrl() {
-        this.copyKeyPress(this.urlEditView);
+        this.copyKeyPress(this.getFieldView('$URL'));
     }
 
     copyOtp() {
-        if (this.otpEditView) {
-            this.copyKeyPress(this.otpEditView);
-        }
+        this.copyKeyPress(this.getFieldView('$otp'));
     }
 
     showCopyTip() {
