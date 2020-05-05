@@ -106,7 +106,8 @@ class OpenView extends View {
         const canOpenYubiKey =
             this.model.settings.canOpenOtpDevice &&
             this.model.settings.yubiKeyShowIcon &&
-            !!UsbListener.attachedYubiKeys.length;
+            !!UsbListener.attachedYubiKeys.length &&
+            !this.model.files.get('yubikey');
 
         super.render({
             lastOpenFiles: this.getLastOpenFiles(),

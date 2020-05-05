@@ -1,6 +1,8 @@
+import { Events } from 'framework/events';
 import { ExternalOtpDeviceModel } from 'models/external/external-otp-device-model';
 import { ExternalOtpEntryModel } from 'models/external/external-otp-entry-model';
 import { Launcher } from 'comp/launcher';
+import { UsbListener } from 'comp/app/usb-listener';
 
 let ykmanStatus;
 
@@ -19,6 +21,12 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
         return ykmanStatus;
     }
 
+    onUsbDevicesChanged = () => {
+        if (UsbListener.attachedYubiKeys.length === 0) {
+            this.emit('ejected');
+        }
+    };
+
     open(callback) {
         this.openProcess = Launcher.spawn({
             cmd: 'ykman',
@@ -26,6 +34,9 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
             noStdOutLogging: true,
             complete: (err, stdout, code) => {
                 this.openProcess = null;
+                if (this.openAborted) {
+                    err = 'Open aborted';
+                }
                 if (err) {
                     return callback(err);
                 }
@@ -49,12 +60,14 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                     );
                 }
                 this.active = true;
+                Events.on('usb-devices-changed', this.onUsbDevicesChanged);
                 callback();
             }
         });
     }
 
     cancelOpen() {
+        Events.off('usb-devices-changed', this.onUsbDevicesChanged);
         this.openAborted = true;
         if (this.openProcess) {
             this.openProcess.kill();
@@ -85,6 +98,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     }
 
     close(callback) {
+        Events.off('usb-devices-changed', this.onUsbDevicesChanged);
         this.set({
             active: false
         });
@@ -114,6 +128,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
 }
 
 YubiKeyOtpModel.defineModelProperties({
+    onUsbDevicesChanged: null,
     openProcess: null,
     openAborted: false
 });
