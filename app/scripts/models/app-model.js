@@ -1,5 +1,4 @@
 import { Events } from 'framework/events';
-import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
 import { SearchResultCollection } from 'collections/search-result-collection';
 import { FileCollection } from 'collections/file-collection';
