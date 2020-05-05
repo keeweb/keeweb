@@ -28,14 +28,34 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     };
 
     open(callback) {
+        this._open(callback, true);
+    }
+
+    _open(callback, canRetry) {
         this.openProcess = Launcher.spawn({
             cmd: 'ykman',
             args: ['oath', 'code'],
             noStdOutLogging: true,
-            complete: (err, stdout, code) => {
+            complete: (err, stdout, code, stderr) => {
                 this.openProcess = null;
                 if (this.openAborted) {
-                    err = 'Open aborted';
+                    return callback('Open aborted');
+                }
+                const isStuck =
+                    code === 2 && stderr && stderr.includes('Make sure the application');
+                if (isStuck && canRetry) {
+                    this.openProcess = Launcher.spawn({
+                        cmd: 'ykman',
+                        args: ['config', 'usb', '-e', 'oath', '-f'],
+                        noStdOutLogging: true,
+                        complete: err => {
+                            if (err) {
+                                return callback(err);
+                            }
+                            this._open(callback, false);
+                        }
+                    });
+                    return;
                 }
                 if (err) {
                     return callback(err);

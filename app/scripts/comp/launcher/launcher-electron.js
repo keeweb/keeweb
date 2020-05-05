@@ -248,7 +248,7 @@ const Launcher = {
                 logger.info(msg + (stdout && !config.noStdOutLogging ? '\n' + stdout : ''));
             }
             if (complete) {
-                complete(code !== 0 ? 'Exit code ' + code : null, stdout, code);
+                complete(code !== 0 ? 'Exit code ' + code : null, stdout, code, stderr);
                 complete = null;
             }
         });
