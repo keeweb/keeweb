@@ -2,8 +2,10 @@ import { ExternalEntryModel } from 'models/external/external-entry-model';
 
 class ExternalOtpEntryModel extends ExternalEntryModel {
     constructor(props) {
-        super(props);
-        this.description = props.user;
+        super({
+            ...props,
+            description: props.user
+        });
     }
 
     initOtpGenerator() {
@@ -15,6 +17,11 @@ class ExternalOtpEntryModel extends ExternalEntryModel {
                 this.device.cancelGetOtp(this, this.otpState);
             }
         };
+    }
+
+    _buildFields() {
+        super._buildFields();
+        this.fields.UserName = this.user;
     }
 }
 

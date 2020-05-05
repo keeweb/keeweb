@@ -12,10 +12,10 @@ class ExternalDeviceModel extends Model {
     close() {}
 
     forEachEntry(filter, callback) {
-        for (const entry of this.entries.filter(entry =>
-            entry.title.toLowerCase().includes(filter.textLower)
-        )) {
-            callback(entry);
+        for (const entry of this.entries) {
+            if (entry.matches(filter)) {
+                callback(entry);
+            }
         }
     }
 }
