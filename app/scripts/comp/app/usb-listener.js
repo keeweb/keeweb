@@ -4,15 +4,16 @@ import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { YubiKeyVendorId } from 'const/hardware';
+import { Features } from 'util/features';
 
 const logger = new Logger('usb-listener');
 
 const UsbListener = {
-    supported: Launcher && !(process.platform === 'win32' && !process.arch.includes('64')),
+    supported: Launcher && Features.canUseNativeModules,
     attachedYubiKeys: 0,
 
     init() {
-        if (!Launcher) {
+        if (!this.supported) {
             return;
         }
 

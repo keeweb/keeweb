@@ -18,6 +18,8 @@ const Features = {
     isLocal: location.origin.indexOf('localhost') >= 0,
     needFixClicks: /Edge\/14/.test(navigator.appVersion),
     canUseWasmInWebWorker: !isDesktop && !/Chrome/.test(navigator.appVersion),
+    canUseNativeModules:
+        isDesktop && !(process.platform === 'win32' && !process.arch.includes('64')),
 
     supportsTitleBarStyles() {
         return this.isMac;
