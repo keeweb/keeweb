@@ -83,6 +83,12 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
         }
     }
 
+    close(callback) {
+        this.set({
+            active: false
+        });
+    }
+
     static checkToolStatus() {
         if (ykmanStatus === 'ok') {
             return Promise.resolve();

@@ -5,10 +5,6 @@ class ExternalDeviceModel extends Model {
     entries = new ExternalEntryCollection();
     groups = [];
 
-    get external() {
-        return true;
-    }
-
     close() {}
 
     forEachEntry(filter, callback) {
@@ -25,6 +21,7 @@ class ExternalDeviceModel extends Model {
 
 ExternalDeviceModel.defineModelProperties({
     id: '',
+    external: true,
     active: false,
     entries: undefined,
     groups: undefined,

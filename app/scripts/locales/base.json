@@ -524,6 +524,8 @@
     "setFileFormatVersion": "File format",
     "saveFileExportRaw": "Exporting your passwords",
     "saveFileExportRawBody": "The exported file will contain your passwords, they will not be encrypted there. Would you like to proceed?",
+    "setFileYubiKeyIntro": "One-time passwords from this YubiKey will be displayed in the app.",
+    "setFileYubiKeySettings": "Settings",
 
     "setShTitle": "Shortcuts",
     "setShShowAll": "show all items",

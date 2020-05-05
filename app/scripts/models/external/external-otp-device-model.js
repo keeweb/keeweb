@@ -9,6 +9,10 @@ class ExternalOtpDeviceModel extends ExternalDeviceModel {
         throw 'Not implemented';
     }
 
+    close(callback) {
+        throw 'Not implemented';
+    }
+
     getOtp(callback) {
         throw 'Not implemented';
     }

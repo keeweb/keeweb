@@ -25,6 +25,10 @@ const StringFormat = {
 
     camelCase(str) {
         return str.replace(this.camelCaseRegex, match => match[1].toUpperCase());
+    },
+
+    pascalCase(str) {
+        return this.capFirst(str.replace(this.camelCaseRegex, match => match[1].toUpperCase()));
     }
 };
 
