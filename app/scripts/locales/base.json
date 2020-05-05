@@ -584,7 +584,7 @@
 
     "setDevicesTitle": "Devices",
     "setDevicesEnableUsb": "Enable interaction with USB devices",
-    "setDevicesYubiKeyIntro": "It's recommended to read {} before using YubiKey.",
+    "setDevicesYubiKeyIntro": "It's recommended to read {} before using a YubiKey.",
     "setDevicesYubiKeyIntroLink": "this document",
     "setDevicesYubiKeyToolsTitle": "Tools",
     "setDevicesYubiKeyToolsDesc": "To be able to use YubiKey integration, you need to install a tool called {}.",
@@ -599,8 +599,8 @@
     "setDevicesYubiKeyOtpAutoOpen": "Automatically load one-time codes when there are open files",
     "setDevicesYubiKeyOtpMatchEntries": "Show matching one-time codes in entries",
     "setDevicesYubiKeyChalRespTitle": "Challenge-Response",
-    "setDevicesYubiKeyChalRespDesc": "It's also possible to use YubiKey in challenge-response mode, so that a piece of private key used to encrypt files resides on a YubiKey.",
-    "setDevicesYubiKeyChalRespShow": "Show an option to use YubiKey when opening files",
+    "setDevicesYubiKeyChalRespDesc": "It's also possible to use a YubiKey in challenge-response mode, so that a piece of private key used to encrypt files resides on a YubiKey.",
+    "setDevicesYubiKeyChalRespShow": "Show an option to use a YubiKey when opening files",
 
     "setAboutTitle": "About",
     "setAboutBuilt": "This app is built with these awesome tools",
