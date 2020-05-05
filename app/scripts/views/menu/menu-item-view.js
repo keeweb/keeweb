@@ -183,7 +183,7 @@ class MenuItemView extends View {
         const types = e.dataTransfer.types;
         for (let i = 0; i < types.length; i++) {
             if (types[i] === 'text/group' || types[i] === 'text/entry') {
-                return true;
+                return DragDropInfo.dragObject && !DragDropInfo.dragObject.readOnly;
             }
         }
         return false;
