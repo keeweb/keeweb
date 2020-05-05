@@ -25,6 +25,8 @@ import { KdbxwebInit } from 'util/kdbxweb/kdbxweb-init';
 import { Locale } from 'util/locale';
 import { AppView } from 'views/app-view';
 import 'hbs-helpers';
+import { AutoType } from './auto-type';
+import { Storage } from './storage';
 
 StartProfiler.milestone('loading modules');
 
@@ -41,6 +43,7 @@ ready(() => {
         .then(initModules)
         .then(loadRemoteConfig)
         .then(ensureCanRun)
+        .then(initStorage)
         .then(showApp)
         .then(postInit)
         .catch(e => {
@@ -87,6 +90,7 @@ ready(() => {
         PopupNotifier.init();
         KdbxwebInit.init();
         FocusDetector.init();
+        AutoType.init();
         window.kw = ExportApi;
         return PluginManager.init().then(() => {
             StartProfiler.milestone('initializing modules');
@@ -126,6 +130,13 @@ ready(() => {
             .then(() => {
                 StartProfiler.milestone('loading remote config');
             });
+    }
+
+    function initStorage() {
+        for (const prv of Object.values(Storage)) {
+            prv.init();
+        }
+        StartProfiler.milestone('initializing storage');
     }
 
     function showApp() {
@@ -169,9 +180,6 @@ ready(() => {
     }
 
     function showView() {
-        appModel.prepare();
-        StartProfiler.milestone('preparing app model');
-
         new AppView(appModel).render();
         StartProfiler.milestone('first view rendering');
 

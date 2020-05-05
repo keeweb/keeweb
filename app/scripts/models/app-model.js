@@ -47,14 +47,7 @@ class AppModel {
         Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
 
         this.appLogger = new Logger('app');
-        AppModel.instance = this; // For KeeWebHttp. TODO: kill this
-    }
-
-    prepare() {
-        AutoType.init(this);
-        for (const prv of Object.values(Storage)) {
-            prv.init();
-        }
+        AppModel.instance = this;
     }
 
     loadConfig(configLocation) {

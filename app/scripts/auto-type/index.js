@@ -6,6 +6,7 @@ import { Launcher } from 'comp/launcher';
 import { Alerts } from 'comp/ui/alerts';
 import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { AppModel } from 'models/app-model';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
 import { AutoTypeSelectView } from 'views/auto-type/auto-type-select-view';
@@ -20,11 +21,10 @@ const AutoType = {
     pendingEvent: null,
     running: false,
 
-    init(appModel) {
+    init() {
         if (!this.enabled) {
             return;
         }
-        this.appModel = appModel;
         Events.on('auto-type', e => this.handleEvent(e));
         Events.on('main-window-blur', e => this.resetPendingEvent(e));
         Events.on('main-window-will-close', e => this.resetPendingEvent(e));
@@ -206,9 +206,9 @@ const AutoType = {
 
     selectEntryAndRun() {
         this.getActiveWindowInfo((e, windowInfo) => {
-            const filter = new AutoTypeFilter(windowInfo, this.appModel);
+            const filter = new AutoTypeFilter(windowInfo, AppModel.instance);
             const evt = { filter, windowInfo };
-            if (!this.appModel.files.hasOpenFiles()) {
+            if (!AppModel.instance.files.hasOpenFiles()) {
                 this.pendingEvent = evt;
                 logger.debug('auto-type event delayed');
                 this.focusMainWindow();
