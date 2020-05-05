@@ -7,6 +7,8 @@ let ykmanStatus;
 class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     constructor(props) {
         super({
+            id: 'yubikey',
+            name: 'YubiKey',
             shortName: 'YubiKey',
             ...props
         });
@@ -45,6 +47,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                         })
                     );
                 }
+                this.active = true;
                 callback();
             }
         });

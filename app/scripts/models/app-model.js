@@ -1174,11 +1174,7 @@ class AppModel {
     }
 
     openOtpDevice(callback) {
-        const device = new YubiKeyOtpModel({
-            id: 'yubikey',
-            name: 'YubiKey 5',
-            active: true
-        });
+        const device = new YubiKeyOtpModel();
         device.open(err => {
             if (!err) {
                 this.addFile(device);
