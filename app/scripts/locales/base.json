@@ -524,7 +524,7 @@
     "setFileFormatVersion": "File format",
     "saveFileExportRaw": "Exporting your passwords",
     "saveFileExportRawBody": "The exported file will contain your passwords, they will not be encrypted there. Would you like to proceed?",
-    "setFileDeviceIntro": "One-time passwords from this {} will be displayed in the app.",
+    "setFileDeviceIntro": "One-time codes from this {} will be displayed in the app.",
     "setFileDeviceSettings": "Settings",
 
     "setShTitle": "Shortcuts",
