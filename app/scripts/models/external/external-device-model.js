@@ -12,6 +12,9 @@ class ExternalDeviceModel extends Model {
     close() {}
 
     forEachEntry(filter, callback) {
+        if (filter.trash || filter.group) {
+            return;
+        }
         for (const entry of this.entries) {
             if (entry.matches(filter)) {
                 callback(entry);
