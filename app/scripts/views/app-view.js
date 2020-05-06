@@ -321,6 +321,7 @@ class AppView extends View {
             this.showEntries();
         } else {
             this.showOpenFile();
+            this.selectLastOpenFile();
         }
         this.fixClicksInEdge();
     }
@@ -582,6 +583,13 @@ class AppView extends View {
             if (fileInfo) {
                 this.views.open.showOpenFileInfo(fileInfo);
             }
+        }
+    }
+
+    selectLastOpenFile() {
+        const fileToShow = this.model.fileInfos[0];
+        if (fileToShow) {
+            this.views.open.showOpenFileInfo(fileToShow);
         }
     }
 
