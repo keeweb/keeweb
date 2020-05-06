@@ -108,7 +108,6 @@ class AppView extends View {
         }
 
         this.setWindowClass();
-        this.fixClicksInEdge();
         this.setupAutoSave();
     }
 
@@ -122,19 +121,6 @@ class AppView extends View {
         }
         if (Features.isMobile) {
             document.body.classList.add('mobile');
-        }
-    }
-
-    fixClicksInEdge() {
-        // MS Edge doesn't want to handle clicks by default
-        // TODO: remove once Edge 14 share drops enough
-        // https://github.com/keeweb/keeweb/issues/636#issuecomment-304225634
-        // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5782378/
-        if (Features.needFixClicks) {
-            const msEdgeScrewer = $('<input/>')
-                .appendTo(this.$el)
-                .focus();
-            setTimeout(() => msEdgeScrewer.remove(), 0);
         }
     }
 
@@ -323,7 +309,6 @@ class AppView extends View {
             this.showOpenFile();
             this.selectLastOpenFile();
         }
-        this.fixClicksInEdge();
     }
 
     showFileSettings(e) {
