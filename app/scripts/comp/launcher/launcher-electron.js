@@ -234,6 +234,11 @@ const Launcher = {
         let stdout = '';
         ps.stderr.on('data', d => {
             stderr += d.toString('utf-8');
+            if (config.throwOnStdErr) {
+                try {
+                    ps.kill();
+                } catch {}
+            }
         });
         ps.stdout.on('data', d => {
             stdout += d.toString('utf-8');

@@ -41,6 +41,7 @@ ExternalEntryModel.defineModelProperties({
     external: true,
     readOnly: true,
     device: undefined,
+    deviceSubId: null,
     title: undefined,
     description: undefined,
     fields: undefined,

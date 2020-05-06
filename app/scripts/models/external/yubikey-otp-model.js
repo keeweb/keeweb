@@ -37,13 +37,60 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     }
 
     _open(callback, canRetry) {
-        logger.info('Opening');
+        logger.info('Listing YubiKeys');
+        if (UsbListener.attachedYubiKeys.length === 0) {
+            return callback('No YubiKeys');
+        }
         this.openProcess = Launcher.spawn({
             cmd: 'ykman',
-            args: ['oath', 'code'],
+            args: ['list', '-s'],
             noStdOutLogging: true,
+            complete: (err, stdout) => {
+                if (this.openAborted) {
+                    return callback('Open aborted');
+                }
+                if (err) {
+                    return callback(err);
+                }
+                const yubiKeys = stdout.match(/\d+/gi);
+                if (yubiKeys.length < 0) {
+                    return callback('No YubiKeys returned by "ykman list"');
+                }
+
+                let openSuccess = 0;
+                const openErrors = [];
+                const openNextYubiKey = () => {
+                    const yubiKey = yubiKeys.shift();
+                    this._addYubiKey(yubiKey, err => {
+                        if (this.openAborted) {
+                            return callback('Open aborted');
+                        }
+                        if (err) {
+                            openErrors.push(err);
+                        } else {
+                            openSuccess++;
+                        }
+                        if (yubiKeys.length > 0) {
+                            openNextYubiKey();
+                        } else {
+                            callback(openSuccess ? null : openErrors[0]);
+                        }
+                    });
+                };
+                openNextYubiKey();
+            }
+        });
+    }
+
+    _addYubiKey(serial, callback, canRetry) {
+        logger.info('Add YubiKey', serial);
+        this.openProcess = Launcher.spawn({
+            cmd: 'ykman',
+            args: ['-d', serial, 'oath', 'code'],
+            noStdOutLogging: true,
+            throwOnStdErr: true,
             complete: (err, stdout, code, stderr) => {
-                logger.info('Open complete with code', code);
+                logger.info('ykman complete with code', code);
                 this.openProcess = null;
                 if (this.openAborted) {
                     return callback('Open aborted');
@@ -64,7 +111,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                             Events.off('usb-devices-changed', onDevicesChangedDuringRepair);
                             clearTimeout(openTimeout);
                             this.openAborted = false;
-                            this._open(callback, false);
+                            this._addYubiKey(serial, callback, false);
                         }
                     };
                     Events.on('usb-devices-changed', onDevicesChangedDuringRepair);
@@ -101,6 +148,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                         new ExternalOtpEntryModel({
                             id: title + ':' + user,
                             device: this,
+                            deviceSubId: serial,
                             icon: 'clock-o',
                             title,
                             user,
@@ -120,8 +168,10 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
         Events.off('usb-devices-changed', this.onUsbDevicesChanged);
         this.openAborted = true;
         if (this.openProcess) {
-            this.openProcess.kill();
-            logger.info('Killed the process');
+            logger.info('Killing the process');
+            try {
+                this.openProcess.kill();
+            } catch {}
         }
     }
 
@@ -130,7 +180,14 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
         const timeLeft = msPeriod - (Date.now() % msPeriod) + 500;
         return Launcher.spawn({
             cmd: 'ykman',
-            args: ['oath', 'code', '--single', `${entry.title}:${entry.user}`],
+            args: [
+                '-d',
+                entry.deviceSubId,
+                'oath',
+                'code',
+                '--single',
+                `${entry.title}:${entry.user}`
+            ],
             noStdOutLogging: true,
             complete: (err, stdout) => {
                 if (err) {
