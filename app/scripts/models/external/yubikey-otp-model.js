@@ -118,7 +118,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
 
                     Launcher.spawn({
                         cmd: 'ykman',
-                        args: ['config', 'usb', '-e', 'oath', '-f'],
+                        args: ['-d', serial, 'config', 'usb', '-e', 'oath', '-f'],
                         noStdOutLogging: true,
                         complete: err => {
                             logger.info('Repair complete', err ? 'with error' : 'OK');
