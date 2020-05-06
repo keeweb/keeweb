@@ -52,7 +52,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                 if (err) {
                     return callback(err);
                 }
-                const yubiKeys = stdout.match(/\d+/gi);
+                const yubiKeys = stdout.match(/\d{3,}/gi);
                 if (yubiKeys.length < 0) {
                     return callback('No YubiKeys returned by "ykman list"');
                 }
