@@ -38,7 +38,7 @@ const DefaultAppSettings = {
     nativeArgon2: true, // use native argon2 module
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
-    yubiKeyAutoOpen: true, // auto-load one-time codes when there are open files
+    yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files
     yubiKeyMatchEntries: true, // show matching one-time codes in entries
     yubiKeyShowChalResp: true, // show YubiKey challenge-response option
     yubiKeyOathWorkaround: false, // enable the workaround for YubiKey OATH issues
