@@ -11,7 +11,8 @@ const Timeouts = {
     PopupWaitTime: 1000,
     AutoUpdatePluginsAfterStart: 500,
     LinkDownloadRevoke: 10 * 1000 * 60,
-    DefaultHttpRequest: 60000
+    DefaultHttpRequest: 60000,
+    ExternalDeviceReconnect: 3000
 };
 
 export { Timeouts };

@@ -522,8 +522,8 @@
     "setFileCloseNoSave": "Close and lose changes",
     "setFileDontClose": "Don't close",
     "setFileFormatVersion": "File format",
-    "saveFileExportRaw": "Exporting your passwords",
-    "saveFileExportRawBody": "The exported file will contain your passwords, they will not be encrypted there. Would you like to proceed?",
+    "setFileExportRaw": "Exporting your passwords",
+    "setFileExportRawBody": "The exported file will contain your passwords, they will not be encrypted there. Would you like to proceed?",
     "setFileDeviceIntro": "One-time codes from this {} will be displayed in the app.",
     "setFileDeviceSettings": "Settings",
 
@@ -603,6 +603,7 @@
     "setDevicesYubiKeyChalRespTitle": "Challenge-Response",
     "setDevicesYubiKeyChalRespDesc": "It's also possible to use a YubiKey in challenge-response mode, so that a piece of private key used to encrypt files resides on a YubiKey.",
     "setDevicesYubiKeyChalRespShow": "Show an option to use a YubiKey when opening files",
+    "setDevicesYubiKeyOathWorkaround": "Reconnect the YubiKey if it hangs when loading one-time codes",
 
     "setAboutTitle": "About",
     "setAboutBuilt": "This app is built with these awesome tools",

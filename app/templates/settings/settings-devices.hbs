@@ -36,6 +36,11 @@
                    {{#if yubiKeyMatchEntries}}checked{{/if}} />
             <label for="settings__yubikey-match-entries">{{res 'setDevicesYubiKeyOtpMatchEntries'}}</label>
         </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-oath-workaround" id="settings__yubikey-oath-workaround"
+                   {{#if yubiKeyOathWorkaround}}checked{{/if}} />
+            <label for="settings__yubikey-oath-workaround">{{res 'setDevicesYubiKeyOathWorkaround'}}</label>
+        </div>
         <h3>{{res 'setDevicesYubiKeyChalRespTitle'}}</h3>
         <p>{{res 'setDevicesYubiKeyChalRespDesc'}}</p>
         <div>

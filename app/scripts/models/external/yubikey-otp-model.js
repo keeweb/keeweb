@@ -2,9 +2,14 @@ import { Events } from 'framework/events';
 import { ExternalOtpDeviceModel } from 'models/external/external-otp-device-model';
 import { ExternalOtpEntryModel } from 'models/external/external-otp-entry-model';
 import { Launcher } from 'comp/launcher';
+import { Logger } from 'util/logger';
 import { UsbListener } from 'comp/app/usb-listener';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Timeouts } from 'const/timeouts';
 
 let ykmanStatus;
+
+const logger = new Logger('yubikey');
 
 class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     constructor(props) {
@@ -32,27 +37,51 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     }
 
     _open(callback, canRetry) {
+        logger.info('Opening');
         this.openProcess = Launcher.spawn({
             cmd: 'ykman',
             args: ['oath', 'code'],
             noStdOutLogging: true,
             complete: (err, stdout, code, stderr) => {
+                logger.info('Open complete with code', code);
                 this.openProcess = null;
                 if (this.openAborted) {
                     return callback('Open aborted');
                 }
                 const isStuck =
                     code === 2 && stderr && stderr.includes('Make sure the application');
-                if (isStuck && canRetry) {
-                    this.openProcess = Launcher.spawn({
+                if (isStuck) {
+                    logger.info('The YubiKey is probably stuck');
+                }
+                if (isStuck && canRetry && AppSettingsModel.yubiKeyOathWorkaround) {
+                    logger.info('Repairing a stuck YubiKey');
+
+                    let openTimeout;
+                    const countYubiKeys = UsbListener.attachedYubiKeys.length;
+                    const onDevicesChangedDuringRepair = () => {
+                        if (UsbListener.attachedYubiKeys.length === countYubiKeys) {
+                            logger.info('YubiKey was reconnected');
+                            Events.off('usb-devices-changed', onDevicesChangedDuringRepair);
+                            clearTimeout(openTimeout);
+                            this.openAborted = false;
+                            this._open(callback, false);
+                        }
+                    };
+                    Events.on('usb-devices-changed', onDevicesChangedDuringRepair);
+
+                    Launcher.spawn({
                         cmd: 'ykman',
                         args: ['config', 'usb', '-e', 'oath', '-f'],
                         noStdOutLogging: true,
                         complete: err => {
+                            logger.info('Repair complete', err ? 'with error' : 'OK');
                             if (err) {
+                                Events.off('usb-devices-changed', onDevicesChangedDuringRepair);
                                 return callback(err);
                             }
-                            this._open(callback, false);
+                            openTimeout = setTimeout(() => {
+                                Events.off('usb-devices-changed', onDevicesChangedDuringRepair);
+                            }, Timeouts.ExternalDeviceReconnect);
                         }
                     });
                     return;
@@ -87,10 +116,12 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     }
 
     cancelOpen() {
+        logger.info('Cancel open');
         Events.off('usb-devices-changed', this.onUsbDevicesChanged);
         this.openAborted = true;
         if (this.openProcess) {
             this.openProcess.kill();
+            logger.info('Killed the process');
         }
     }
 

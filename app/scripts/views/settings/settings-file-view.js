@@ -257,8 +257,8 @@ class SettingsFileView extends View {
 
     saveToXml() {
         Alerts.yesno({
-            header: Locale.saveFileExportRaw,
-            body: Locale.saveFileExportRawBody,
+            header: Locale.setFileExportRaw,
+            body: Locale.setFileExportRawBody,
             success: () => {
                 this.model.getXml(xml => {
                     const blob = new Blob([xml], { type: 'text/xml' });
@@ -270,8 +270,8 @@ class SettingsFileView extends View {
 
     saveToHtml() {
         Alerts.yesno({
-            header: Locale.saveFileExportRaw,
-            body: Locale.saveFileExportRawBody,
+            header: Locale.setFileExportRaw,
+            body: Locale.setFileExportRawBody,
             success: () => {
                 this.model.getHtml(html => {
                     const blob = new Blob([html], { type: 'text/html' });
