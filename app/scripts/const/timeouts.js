@@ -12,7 +12,8 @@ const Timeouts = {
     AutoUpdatePluginsAfterStart: 500,
     LinkDownloadRevoke: 10 * 1000 * 60,
     DefaultHttpRequest: 60000,
-    ExternalDeviceReconnect: 3000
+    ExternalDeviceReconnect: 3000,
+    ExternalDeviceAfterReconnect: 100
 };
 
 export { Timeouts };

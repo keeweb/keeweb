@@ -57,7 +57,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                 const yubiKeysIncludingEmpty = stdout
                     .trim()
                     .split(/\n/g)
-                    .map(line => String(line.match(/\d{5,}$/g)));
+                    .map(line => (line.match(/\d{5,}$/g) || [])[0]);
 
                 const yubiKeys = yubiKeysIncludingEmpty.filter(s => s);
 
@@ -158,7 +158,9 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                 Events.off('usb-devices-changed', onDevicesChangedDuringRepair);
                 clearTimeout(openTimeout);
                 this.openAborted = false;
-                this._open(callback, false);
+                setTimeout(() => {
+                    this._open(callback, false);
+                }, Timeouts.ExternalDeviceAfterReconnect);
             }
         };
         Events.on('usb-devices-changed', onDevicesChangedDuringRepair);
