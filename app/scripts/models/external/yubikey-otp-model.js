@@ -48,6 +48,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
             args: ['list'],
             noStdOutLogging: true,
             complete: (err, stdout) => {
+                this.openProcess = null;
                 if (this.openAborted) {
                     return callback('Open aborted');
                 }
