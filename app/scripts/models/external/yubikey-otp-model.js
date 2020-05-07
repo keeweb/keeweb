@@ -6,6 +6,7 @@ import { Logger } from 'util/logger';
 import { UsbListener } from 'comp/app/usb-listener';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Timeouts } from 'const/timeouts';
+import { Locale } from 'util/locale';
 
 let ykmanStatus;
 
@@ -69,7 +70,10 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                     !stdout.includes('Serial')
                 ) {
                     logger.info('The YubiKey is probably stuck');
-                    if (AppSettingsModel.yubiKeyOathWorkaround && canRetry) {
+                    if (!AppSettingsModel.yubiKeyOathWorkaround) {
+                        return callback(Locale.yubiKeyStuckError);
+                    }
+                    if (canRetry) {
                         this._repairStuckYubiKey(callback);
                         return;
                     }

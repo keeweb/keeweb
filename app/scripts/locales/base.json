@@ -664,5 +664,7 @@
     "importCsvRun": "Import",
     "importIgnoreField": "Ignore",
     "importTo": "Entries will be imported to",
-    "importNewFile": "New file"
+    "importNewFile": "New file",
+
+    "yubiKeyStuckError": "The YubiKey seems to be stuck, auto-repair can be enabled in app settings."
 }
