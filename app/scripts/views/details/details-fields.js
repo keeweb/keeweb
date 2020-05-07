@@ -84,7 +84,7 @@ function createDetailsFields(detailsView) {
                 value() {
                     return model.user;
                 },
-                getCompletions: detailsView.getUserNameCompletions.bind(this),
+                getCompletions: detailsView.getUserNameCompletions.bind(detailsView),
                 sequence: '{USERNAME}'
             })
         );
