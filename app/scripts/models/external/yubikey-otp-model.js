@@ -33,13 +33,18 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     };
 
     open(callback) {
+        this._open(callback, true);
+    }
+
+    _open(callback, canRetry) {
         logger.info('Listing YubiKeys');
+
         if (UsbListener.attachedYubiKeys.length === 0) {
             return callback('No YubiKeys');
         }
         this.openProcess = Launcher.spawn({
             cmd: 'ykman',
-            args: ['list', '-s'],
+            args: ['list'],
             noStdOutLogging: true,
             complete: (err, stdout) => {
                 if (this.openAborted) {
@@ -48,8 +53,29 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                 if (err) {
                     return callback(err);
                 }
-                const yubiKeys = stdout.match(/\d{3,}/gi);
-                if (yubiKeys.length < 0) {
+
+                const yubiKeysIncludingEmpty = stdout
+                    .trim()
+                    .split(/\n/g)
+                    .map(line => String(line.match(/\d{5,}$/g)));
+
+                const yubiKeys = yubiKeysIncludingEmpty.filter(s => s);
+
+                if (
+                    yubiKeysIncludingEmpty.length === 1 &&
+                    yubiKeys.length === 0 &&
+                    stdout.startsWith('YubiKey') &&
+                    stdout.includes('CCID') &&
+                    !stdout.includes('Serial')
+                ) {
+                    logger.info('The YubiKey is probably stuck');
+                    if (AppSettingsModel.yubiKeyOathWorkaround && canRetry) {
+                        this._repairStuckYubiKey(callback);
+                        return;
+                    }
+                }
+
+                if (!yubiKeys || !yubiKeys.length) {
                     return callback('No YubiKeys returned by "ykman list"');
                 }
 
@@ -66,7 +92,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                         } else {
                             openSuccess++;
                         }
-                        if (yubiKeys.length > 0) {
+                        if (yubiKeys && yubiKeys.length) {
                             openNextYubiKey();
                         } else {
                             callback(openSuccess ? null : openErrors[0]);
@@ -78,8 +104,9 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
         });
     }
 
-    _addYubiKey(serial, callback, canRetry) {
-        logger.info('Add YubiKey', serial);
+    _addYubiKey(serial, callback) {
+        logger.info('Adding YubiKey', serial);
+
         this.openProcess = Launcher.spawn({
             cmd: 'ykman',
             args: ['-d', serial, 'oath', 'code'],
@@ -90,15 +117,6 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                 this.openProcess = null;
                 if (this.openAborted) {
                     return callback('Open aborted');
-                }
-                const isStuck =
-                    code === 2 && stderr && stderr.includes('Make sure the application');
-                if (isStuck) {
-                    logger.info('The YubiKey is probably stuck');
-                }
-                if (isStuck && canRetry && AppSettingsModel.yubiKeyOathWorkaround) {
-                    this._applyYubiKeyWorkaround(serial, callback);
-                    return;
                 }
                 if (err) {
                     return callback(err);
@@ -130,7 +148,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
         });
     }
 
-    _applyYubiKeyWorkaround(serial, callback) {
+    _repairStuckYubiKey(callback) {
         logger.info('Repairing a stuck YubiKey');
 
         let openTimeout;
@@ -141,14 +159,14 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                 Events.off('usb-devices-changed', onDevicesChangedDuringRepair);
                 clearTimeout(openTimeout);
                 this.openAborted = false;
-                this._addYubiKey(serial, callback, false);
+                this._open(callback, false);
             }
         };
         Events.on('usb-devices-changed', onDevicesChangedDuringRepair);
 
         Launcher.spawn({
             cmd: 'ykman',
-            args: ['-d', serial, 'config', 'usb', '-e', 'oath', '-f'],
+            args: ['config', 'usb', '-e', 'oath', '-f'],
             noStdOutLogging: true,
             complete: err => {
                 logger.info('Repair complete', err ? 'with error' : 'OK');
