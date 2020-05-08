@@ -463,6 +463,10 @@ class DetailsView extends View {
     }
 
     copyPasswordFromShortcut(e) {
+        if (this.model.external) {
+            this.copyOtp();
+            e.preventDefault();
+        }
         const copied = this.copyKeyPress(this.getFieldView('$Password'));
         if (copied) {
             e.preventDefault();
@@ -826,25 +830,35 @@ class DetailsView extends View {
         const canCopy = document.queryCommandSupported('copy');
         const options = [];
         if (canCopy) {
-            options.push({
-                value: 'det-copy-password',
-                icon: 'clipboard',
-                text: Locale.detMenuCopyPassword
-            });
+            if (this.model.external) {
+                options.push({
+                    value: 'det-copy-otp',
+                    icon: 'clipboard',
+                    text: Locale.detMenuCopyOtp
+                });
+            } else {
+                options.push({
+                    value: 'det-copy-password',
+                    icon: 'clipboard',
+                    text: Locale.detMenuCopyPassword
+                });
+            }
             options.push({
                 value: 'det-copy-user',
                 icon: 'clipboard',
                 text: Locale.detMenuCopyUser
             });
         }
-        options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
-        options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });
-        if (canCopy) {
-            options.push({
-                value: 'copy-to-clipboard',
-                icon: 'copy',
-                text: Locale.detCopyEntryToClipboard
-            });
+        if (!this.model.external) {
+            options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
+            options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });
+            if (canCopy) {
+                options.push({
+                    value: 'copy-to-clipboard',
+                    icon: 'copy',
+                    text: Locale.detCopyEntryToClipboard
+                });
+            }
         }
         if (AutoType.enabled) {
             options.push({ value: 'det-auto-type', icon: 'keyboard-o', text: Locale.detAutoType });
@@ -859,6 +873,9 @@ class DetailsView extends View {
                 break;
             case 'det-copy-user':
                 this.copyUserName();
+                break;
+            case 'det-copy-otp':
+                this.copyOtp();
                 break;
             case 'det-add-new':
                 this.addNewField();

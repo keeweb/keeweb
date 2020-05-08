@@ -12,6 +12,7 @@ import { FieldViewTags } from 'views/fields/field-view-tags';
 import { FieldViewDate } from 'views/fields/field-view-date';
 import { FieldViewHistory } from 'views/fields/field-view-history';
 import { FieldViewCustom } from 'views/fields/field-view-custom';
+import { FieldViewReadOnlyWithOptions } from 'views/fields/field-view-read-only-with-options';
 
 function createDetailsFields(detailsView) {
     const model = detailsView.model;
@@ -30,13 +31,14 @@ function createDetailsFields(detailsView) {
             })
         );
         fieldViews.push(
-            new FieldViewReadOnly({
+            new FieldViewReadOnlyWithOptions({
                 name: '$UserName',
                 title: StringFormat.capFirst(Locale.user),
                 aside: false,
                 value() {
                     return model.user;
-                }
+                },
+                sequence: '{USERNAME}'
             })
         );
         fieldViews.push(
