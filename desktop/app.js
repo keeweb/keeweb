@@ -31,7 +31,9 @@ const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
 const tempUserDataPath = path.join(userDataDir, 'temp');
 const tempUserDataPathRand = Date.now().toString() + Math.random().toString();
 
-const htmlPath = process.env.KEEWEB_HTML_PATH || 'file://' + path.join(__dirname, 'index.html');
+const isDev = !__dirname.endsWith('.asar');
+const htmlPath =
+    (isDev && process.env.KEEWEB_HTML_PATH) || 'file://' + path.join(__dirname, 'index.html');
 const showDevToolsOnStart =
     process.argv.some(arg => arg.startsWith('--devtools')) ||
     process.env.KEEWEB_OPEN_DEVTOOLS === '1';
