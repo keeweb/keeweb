@@ -486,7 +486,15 @@ class DetailsView extends View {
     }
 
     copyOtp() {
-        this.copyKeyPress(this.getFieldView('$otp'));
+        const otpFieldView = this.getFieldView('$otp');
+        if (this.model.external) {
+            if (!otpFieldView) {
+                return false;
+            }
+            otpFieldView.copyValue();
+            return true;
+        }
+        this.copyKeyPress(otpFieldView);
     }
 
     showCopyTip() {
