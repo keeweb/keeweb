@@ -135,7 +135,7 @@ class ListSearchView extends View {
 
     setLocale() {
         this.sortOptions.forEach(opt => {
-            opt.html = opt.loc();
+            opt.text = opt.loc();
         });
         this.createOptions = [
             {
@@ -420,7 +420,7 @@ class ListSearchView extends View {
     }
 
     addArrow(str) {
-        return str.replace('{}', '&rarr;');
+        return str.replace('{}', '→');
     }
 }
 
