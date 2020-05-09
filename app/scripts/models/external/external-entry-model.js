@@ -34,6 +34,14 @@ class ExternalEntryModel extends Model {
     getAllFields() {
         return this.fields;
     }
+
+    getFieldValue(field) {
+        return this.fields[field];
+    }
+
+    getEffectiveAutoTypeSeq() {
+        return '{TOTP}';
+    }
 }
 
 ExternalEntryModel.defineModelProperties({
