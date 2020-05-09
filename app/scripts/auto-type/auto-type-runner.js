@@ -204,7 +204,7 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
         }
         return;
     }
-    if (this.context && this.context.resolved && this.context.resolved[lowerValue]) {
+    if (this.context?.resolved?.[lowerValue]) {
         op.type = 'text';
         op.value = this.context.resolved[lowerValue];
         return;
