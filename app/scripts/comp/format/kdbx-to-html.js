@@ -107,7 +107,7 @@ const KdbxToHtml = {
             date: DateFormat.dtStr(Date.now()),
             appLink: Links.Homepage,
             appVersion: RuntimeInfo.version,
-            content
+            contentHtml: content
         });
     },
 
