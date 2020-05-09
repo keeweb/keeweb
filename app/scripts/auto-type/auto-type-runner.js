@@ -142,8 +142,9 @@ AutoTypeRunner.Substitutions = {
     }
 };
 
-AutoTypeRunner.prototype.resolve = function(entry, callback) {
+AutoTypeRunner.prototype.resolve = function(entry, context, callback) {
     this.entry = entry;
+    this.context = context;
     try {
         this.resolveOps(this.ops);
         if (!this.pendingResolvesCount) {
@@ -201,6 +202,11 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
             op.type = 'key';
             op.value = key;
         }
+        return;
+    }
+    if (this.context && this.context.resolved && this.context.resolved[lowerValue]) {
+        op.type = 'text';
+        op.value = this.context.resolved[lowerValue];
         return;
     }
     const substitution = AutoTypeRunner.Substitutions[lowerValue];
@@ -363,8 +369,8 @@ AutoTypeRunner.prototype.getOtp = function(op) {
     if (!this.entry.otpGenerator) {
         return '';
     }
-    this.entry.otpGenerator.next(otp => {
-        this.pendingResolved(op, otp, otp ? undefined : 'OTP error');
+    this.entry.otpGenerator.next((err, otp) => {
+        this.pendingResolved(op, otp, err);
     });
     return AutoTypeRunner.PendingResolve;
 };

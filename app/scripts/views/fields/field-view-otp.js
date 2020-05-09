@@ -153,17 +153,22 @@ class FieldViewOtp extends FieldViewText {
     }
 
     copyValue() {
+        this.refreshOtp(err => {
+            if (!err) {
+                super.copyValue();
+            }
+        });
+    }
+
+    refreshOtp(callback) {
         if (this.model.needsTouch) {
             if (this.otpValue) {
-                return super.copyValue();
+                callback();
+            } else {
+                this.requestTouch(callback);
             }
-            this.requestTouch(err => {
-                if (!err) {
-                    super.copyValue();
-                }
-            });
         } else {
-            super.copyValue();
+            callback();
         }
     }
 

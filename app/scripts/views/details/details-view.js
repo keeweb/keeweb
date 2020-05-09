@@ -74,7 +74,7 @@ class DetailsView extends View {
         this.onKey(Keys.DOM_VK_B, this.copyUserName, KeyHandler.SHORTCUT_ACTION);
         this.onKey(Keys.DOM_VK_U, this.copyUrl, KeyHandler.SHORTCUT_ACTION);
         if (AutoType.enabled) {
-            this.onKey(Keys.DOM_VK_T, this.autoType, KeyHandler.SHORTCUT_ACTION);
+            this.onKey(Keys.DOM_VK_T, () => this.autoType(), KeyHandler.SHORTCUT_ACTION);
         }
         this.onKey(
             Keys.DOM_VK_DELETE,
@@ -153,7 +153,7 @@ class DetailsView extends View {
                 fieldView.render();
                 fieldView.on('change', this.fieldChanged.bind(this));
                 fieldView.on('copy', this.fieldCopied.bind(this));
-                fieldView.on('autotype', this.fieldAutoType.bind(this));
+                fieldView.on('autotype', e => this.autoType(e.source.model.sequence));
                 if (hideEmptyFields) {
                     const value = fieldView.model.value();
                     if (!value || value.length === 0 || value.byteLength === 0) {
@@ -486,15 +486,15 @@ class DetailsView extends View {
     }
 
     copyOtp() {
-        const otpFieldView = this.getFieldView('$otp');
+        const otpField = this.getFieldView('$otp');
         if (this.model.external) {
-            if (!otpFieldView) {
+            if (!otpField) {
                 return false;
             }
-            otpFieldView.copyValue();
+            otpField.copyValue();
             return true;
         }
-        this.copyKeyPress(otpFieldView);
+        this.copyKeyPress(otpField);
     }
 
     showCopyTip() {
@@ -946,15 +946,22 @@ class DetailsView extends View {
         this.views.autoType.render();
     }
 
-    autoType() {
-        Events.emit('auto-type', { entry: this.model });
-    }
-
-    fieldAutoType(e) {
-        Events.emit('auto-type', {
-            entry: this.model,
-            sequence: e.source.model.sequence
-        });
+    autoType(sequence) {
+        const entry = this.model;
+        if (entry.external && (!sequence || sequence.includes('{TOTP}'))) {
+            const otpField = this.getFieldView('$otp');
+            otpField.refreshOtp(err => {
+                if (!err) {
+                    Events.emit('auto-type', {
+                        entry,
+                        sequence,
+                        context: { resolved: { totp: otpField.otpValue } }
+                    });
+                }
+            });
+        } else {
+            Events.emit('auto-type', { entry, sequence });
+        }
     }
 }
 

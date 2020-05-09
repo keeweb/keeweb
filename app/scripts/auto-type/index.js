@@ -34,6 +34,7 @@ const AutoType = {
     handleEvent(e) {
         const entry = (e && e.entry) || null;
         const sequence = (e && e.sequence) || null;
+        const context = (e && e.context) || null;
         logger.debug('Auto type event', entry);
         if (this.running) {
             logger.debug('Already running, skipping event');
@@ -41,7 +42,7 @@ const AutoType = {
         }
         if (entry) {
             this.hideWindow(() => {
-                this.runAndHandleResult({ entry, sequence });
+                this.runAndHandleResult({ entry, sequence, context });
             });
         } else {
             if (this.selectEntryView) {
@@ -76,13 +77,14 @@ const AutoType = {
     run(result, callback) {
         this.running = true;
         const sequence = result.sequence || result.entry.getEffectiveAutoTypeSeq();
+        const context = result.context;
         logger.debug('Start', sequence);
         const ts = logger.ts();
         try {
             const parser = new AutoTypeParser(sequence);
             const runner = parser.parse();
             logger.debug('Parsed', this.printOps(runner.ops));
-            runner.resolve(result.entry, err => {
+            runner.resolve(result.entry, context, err => {
                 if (err) {
                     this.running = false;
                     logger.error('Resolve error', err);
@@ -120,7 +122,7 @@ const AutoType = {
         try {
             const parser = new AutoTypeParser(sequence);
             const runner = parser.parse();
-            runner.resolve(entry, callback);
+            runner.resolve(entry, null, callback);
         } catch (ex) {
             return callback(ex);
         }
