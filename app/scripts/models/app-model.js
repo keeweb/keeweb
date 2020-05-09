@@ -340,7 +340,7 @@ class AppModel {
         return filter;
     }
 
-    getFirstSelectedGroup() {
+    getFirstSelectedGroupForCreation() {
         const selGroupId = this.filter.group;
         let file, group;
         if (selGroupId) {
@@ -351,7 +351,7 @@ class AppModel {
             });
         }
         if (!group) {
-            file = this.files[0];
+            file = this.files.find(f => f.active && !f.readOnly);
             group = file.groups[0];
         }
         return { group, file };
@@ -391,7 +391,7 @@ class AppModel {
     }
 
     createNewEntry(args) {
-        const sel = this.getFirstSelectedGroup();
+        const sel = this.getFirstSelectedGroupForCreation();
         if (args && args.template) {
             if (sel.file !== args.template.file) {
                 sel.file = args.template.file;
@@ -409,12 +409,12 @@ class AppModel {
     }
 
     createNewGroup() {
-        const sel = this.getFirstSelectedGroup();
+        const sel = this.getFirstSelectedGroupForCreation();
         return GroupModel.newGroup(sel.group, sel.file);
     }
 
     createNewTemplateEntry() {
-        const file = this.getFirstSelectedGroup().file;
+        const file = this.getFirstSelectedGroupForCreation().file;
         const group = file.getEntryTemplatesGroup() || file.createEntryTemplatesGroup();
         return EntryModel.newEntry(group, file);
     }
@@ -1183,6 +1183,10 @@ class AppModel {
             callback(err);
         });
         return device;
+    }
+
+    canCreateEntries() {
+        return this.files.some(f => f.active && !f.readOnly);
     }
 }
 

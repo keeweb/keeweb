@@ -22,6 +22,7 @@ class ExternalDeviceModel extends Model {
 ExternalDeviceModel.defineModelProperties({
     id: '',
     external: true,
+    readOnly: true,
     active: false,
     entries: undefined,
     groups: undefined,

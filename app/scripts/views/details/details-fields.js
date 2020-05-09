@@ -55,8 +55,11 @@ function createDetailsFields(detailsView) {
             })
         );
     } else {
-        if (model.isJustCreated && AppModel.instance.files.length > 1) {
-            const fileNames = AppModel.instance.files.map(file => {
+        const writeableFiles = AppModel.instance.files.filter(
+            file => file.active && !file.readOnly
+        );
+        if (model.isJustCreated && writeableFiles.length > 1) {
+            const fileNames = writeableFiles.map(file => {
                 return { id: file.id, value: file.name, selected: file === model.file };
             });
             fieldViews.push(

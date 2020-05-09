@@ -127,6 +127,7 @@ class ListSearchView extends View {
         this.listenTo(Events, 'filter', this.filterChanged);
         this.listenTo(Events, 'set-locale', this.setLocale);
         this.listenTo(Events, 'page-blur', this.pageBlur);
+        this.listenTo(this.model.files, 'change', this.fileListUpdated);
 
         this.once('remove', () => {
             this.removeKeypressHandler();
@@ -176,7 +177,8 @@ class ListSearchView extends View {
         }
         super.render({
             adv: this.advancedSearch,
-            advEnabled: this.advancedSearchEnabled
+            advEnabled: this.advancedSearchEnabled,
+            canCreate: this.model.canCreateEntries()
         });
         this.inputEl = this.$el.find('.list__search-field');
         if (searchVal) {
@@ -421,6 +423,10 @@ class ListSearchView extends View {
 
     addArrow(str) {
         return str.replace('{}', '→');
+    }
+
+    fileListUpdated() {
+        this.render();
     }
 }
 
