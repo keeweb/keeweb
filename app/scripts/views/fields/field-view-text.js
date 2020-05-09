@@ -44,7 +44,7 @@ class FieldViewText extends FieldView {
         const isProtected = !!(this.value && this.value.isProtected);
         this.$el.toggleClass('details__field--protected', isProtected);
         this.input = $(document.createElement(this.model.multiline ? 'textarea' : 'input'));
-        this.valueEl.html('').append(this.input);
+        this.valueEl.empty().append(this.input);
         this.input
             .attr({ autocomplete: 'off', spellcheck: 'false' })
             .val(text)

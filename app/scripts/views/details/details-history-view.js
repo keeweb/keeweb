@@ -129,7 +129,7 @@ class DetailsHistoryView extends View {
             .find('.details__history-timeline-item[data-id="' + ix + '"]')
             .addClass('details__history-timeline-item--active');
         this.removeFieldViews();
-        this.bodyEl.html('');
+        this.bodyEl.empty();
         const colorCls = this.record.color ? this.record.color + '-color' : '';
         this.fieldViews.push(
             new FieldViewReadOnly({ name: 'Rev', title: Locale.detHistoryVersion, value: ix + 1 })

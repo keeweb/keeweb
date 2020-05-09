@@ -137,7 +137,7 @@ class SettingsPluginsView extends View {
         const installBtn = this.$el.find('.settings_plugins-install-btn');
         const urlTextBox = this.$el.find('#settings__plugins-install-url');
         const errorBox = this.$el.find('.settings__plugins-install-error');
-        errorBox.html('');
+        errorBox.empty();
         const url = urlTextBox.val().trim();
         if (!url) {
             return;

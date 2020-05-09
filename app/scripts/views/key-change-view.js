@@ -66,7 +66,7 @@ class KeyChangeView extends View {
         if (this.keyFileName) {
             this.keyFileName = null;
             this.keyFile = null;
-            this.$el.find('.key-change__keyfile-name').html('');
+            this.$el.find('.key-change__keyfile-name').empty();
         }
         this.$el
             .find('.key-change__file')
@@ -89,7 +89,7 @@ class KeyChangeView extends View {
             };
             reader.readAsArrayBuffer(file);
         } else {
-            this.$el.find('.key-change__keyfile-name').html('');
+            this.$el.find('.key-change__keyfile-name').empty();
         }
         this.inputEl.focus();
     }

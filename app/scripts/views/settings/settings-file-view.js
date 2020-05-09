@@ -137,7 +137,7 @@ class SettingsFileView extends View {
         const oldKeyFileName = this.model.oldKeyFileName;
         const keyFileChanged = this.model.keyFileChanged;
         const sel = this.$el.find('#settings__file-key-file');
-        sel.html('');
+        sel.empty();
         if (keyFileName && keyFileChanged) {
             const text =
                 keyFileName !== 'Generated'

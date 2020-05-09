@@ -64,6 +64,7 @@ class OpenView extends View {
 
     constructor(model) {
         super(model);
+        window.$ = $;
         this.resetParams();
         this.passwordInput = new SecureInput();
         this.onKey(Keys.DOM_VK_Z, this.undoKeyPress, KeyHandler.SHORTCUT_ACTION, 'open');
