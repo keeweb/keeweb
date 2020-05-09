@@ -21,17 +21,11 @@ class OtpQrReader {
     read() {
         let screenshotKey = Shortcuts.screenshotToClipboardShortcut();
         if (screenshotKey) {
-            screenshotKey = Locale.detSetupOtpAlertBodyWith.replace(
-                '{}',
-                '<code>' + screenshotKey + '</code>'
-            );
+            screenshotKey = Locale.detSetupOtpAlertBodyWith.replace('{}', screenshotKey);
         }
         const pasteKey = Features.isMobile
             ? ''
-            : Locale.detSetupOtpAlertBodyWith.replace(
-                  '{}',
-                  '<code>' + Shortcuts.actionShortcutSymbol() + 'V</code>'
-              );
+            : Locale.detSetupOtpAlertBodyWith.replace('{}', Shortcuts.actionShortcutSymbol() + 'V');
         this.startListenClipoard();
         const buttons = [
             { result: 'manually', title: Locale.detSetupOtpManualButton, silent: true },

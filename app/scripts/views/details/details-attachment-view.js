@@ -16,7 +16,7 @@ class DetailsAttachmentView extends View {
             isMobile: Features.isMobile
         });
         const shortcut = this.$el.find('.details__attachment-preview-download-text-shortcut');
-        shortcut.html(Shortcuts.actionShortcutSymbol(false));
+        shortcut.text(Shortcuts.actionShortcutSymbol());
         const blob = new Blob([this.model.getBinary()], { type: this.model.mimeType });
         const dataEl = this.$el.find('.details__attachment-preview-data');
         switch ((this.model.mimeType || '').split('/')[0]) {

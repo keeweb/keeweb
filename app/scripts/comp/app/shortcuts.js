@@ -85,7 +85,7 @@ const Shortcuts = {
         return Features.isMac ? '⌃' : this.formatShortcut(Locale.ctrlKey, formatting);
     },
     formatShortcut(shortcut, formatting) {
-        return formatting ? `<span class="thin">${shortcut} + </span>` : `${shortcut}+`;
+        return formatting ? `${shortcut} + ` : `${shortcut}+`;
     },
     globalShortcutText(type, formatting) {
         return this.presentShortcut(this.globalShortcut(type), formatting);

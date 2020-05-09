@@ -93,10 +93,6 @@ img {
     max-width: 100%;
 }
 
-.thin {
-    font-weight: 200;
-}
-
 body:not(.edge) * {
     // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12132854/
     &::selection {
