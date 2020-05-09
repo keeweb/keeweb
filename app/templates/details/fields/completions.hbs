@@ -1,0 +1,5 @@
+{{#each completions as |completion|}}
+    <div class="details__field-autocomplete-item {{#ifeq @index ../selectedIx}}details__field-autocomplete-item--selected{{/ifeq}}">
+        {{completion}}
+    </div>
+{{/each}}

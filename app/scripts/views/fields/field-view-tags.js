@@ -1,5 +1,6 @@
 import { FieldViewText } from 'views/fields/field-view-text';
 import { escape } from 'util/fn';
+import tagsTemplate from 'templates/details/fields/tags.hbs';
 
 class FieldViewTags extends FieldViewText {
     hasOptions = false;
@@ -10,6 +11,10 @@ class FieldViewTags extends FieldViewText {
 
     getEditValue(value) {
         return value ? value.join(', ') : '';
+    }
+
+    getTextValue() {
+        return this.value ? this.value.join(', ') : '';
     }
 
     valueToTags(val) {
@@ -74,11 +79,7 @@ class FieldViewTags extends FieldViewText {
 
     setTags() {
         const availableTags = this.getAvailableTags();
-        const tagsHtml = availableTags
-            .map(tag => {
-                return '<div class="details__field-autocomplete-item">' + escape(tag) + '</div>';
-            })
-            .join('');
+        const tagsHtml = tagsTemplate({ tags: availableTags });
         this.tagsAutocomplete.html(tagsHtml);
         this.tagsAutocomplete.toggle(!!tagsHtml);
     }

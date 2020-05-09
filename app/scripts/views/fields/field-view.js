@@ -9,7 +9,7 @@ import { Locale } from 'util/locale';
 import { AutoType } from 'auto-type';
 import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { DropdownView } from 'views/dropdown-view';
-import template from 'templates/details/field.hbs';
+import template from 'templates/details/fields/field.hbs';
 
 class FieldView extends View {
     template = template;
