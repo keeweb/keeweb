@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
-    const getCodeSingConfig = () => require('./keys/codesign.json');
+    const getCodeSignConfig = () => require('./keys/codesign.json');
 
     const webpackOptions = {
         date,
@@ -308,7 +308,7 @@ module.exports = function(grunt) {
                     extendInfo: 'package/osx/extend.plist',
                     osxSign: {
                         get identity() {
-                            return getCodeSingConfig().identities.app;
+                            return getCodeSignConfig().identities.app;
                         },
                         hardenedRuntime: true,
                         entitlements: 'package/osx/entitlements.mac.plist',
@@ -317,11 +317,11 @@ module.exports = function(grunt) {
                     },
                     osxNotarize: {
                         get appleId() {
-                            return getCodeSingConfig().appleId;
+                            return getCodeSignConfig().appleId;
                         },
                         appleIdPassword: '@keychain:AC_PASSWORD',
                         get ascProvider() {
-                            return getCodeSingConfig().teamId;
+                            return getCodeSignConfig().teamId;
                         }
                     },
                     afterCopy: [
@@ -585,10 +585,10 @@ module.exports = function(grunt) {
             options: {
                 url: pkg.homepage,
                 get windows() {
-                    return getCodeSingConfig().windows;
+                    return getCodeSignConfig().windows;
                 },
                 get certHash() {
-                    return getCodeSingConfig().microsoftCertHash;
+                    return getCodeSignConfig().microsoftCertHash;
                 }
             },
             'win32-build-x64': {
