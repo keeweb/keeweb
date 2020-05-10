@@ -979,6 +979,7 @@ class OpenView extends View {
     userIdle() {
         this.inputEl.val('');
         this.passwordInput.reset();
+        this.passwordInput.setElement(this.inputEl);
     }
 
     usbDevicesChanged() {
