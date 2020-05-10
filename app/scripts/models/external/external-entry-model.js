@@ -40,7 +40,7 @@ class ExternalEntryModel extends Model {
     }
 
     getEffectiveAutoTypeSeq() {
-        return '{TOTP}';
+        return '{TOTP}{ENTER}';
     }
 }
 
