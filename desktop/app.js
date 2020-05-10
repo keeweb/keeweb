@@ -54,6 +54,7 @@ const defaultBgColor = '#282C34';
 
 perfTimestamps && perfTimestamps.push({ name: 'defining args', ts: process.hrtime() });
 
+setDevAppIcon();
 setEnv();
 restorePreferences();
 
@@ -554,6 +555,15 @@ function deleteRecursive(dir) {
         }
     }
     fs.rmdirSync(dir);
+}
+
+function setDevAppIcon() {
+    if (isDev && htmlPath) {
+        const icon = electron.nativeImage.createFromPath(
+            path.join(__dirname, '../graphics/512x512.png')
+        );
+        app.dock.setIcon(icon);
+    }
 }
 
 // When sending a PUT XMLHttpRequest Chromium includes the header "Origin: file://".
