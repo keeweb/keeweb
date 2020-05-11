@@ -12,14 +12,45 @@ class ExternalOtpEntryModel extends ExternalEntryModel {
         if (this.otpGenerator) {
             return;
         }
-        this.otpGenerator = {
+        const gen = {
             next: callback => {
-                this.otpState = this.device.getOtp(this, callback);
+                if (gen.otp && gen.expires) {
+                    const timeLeft = gen.expires - Date.now();
+                    if (timeLeft > 0) {
+                        return callback(null, gen.otp, timeLeft);
+                    }
+                }
+                if (gen.promise) {
+                    gen.promise.then(({ err, otp, timeLeft }) => {
+                        callback(err, otp, timeLeft);
+                    });
+                    return;
+                }
+                gen.promise = new Promise(resolve => {
+                    gen.otpState = this.device.getOtp(this, (err, otp, timeLeft) => {
+                        gen.otpState = null;
+                        gen.promise = null;
+
+                        if (otp && timeLeft > 0) {
+                            gen.otp = otp;
+                            gen.expires = Date.now() + timeLeft;
+                        } else {
+                            gen.otp = null;
+                            gen.expires = null;
+                        }
+
+                        callback(err, otp, timeLeft);
+                        resolve({ err, otp, timeLeft });
+                    });
+                });
             },
             cancel: () => {
-                this.device.cancelGetOtp(this, this.otpState);
+                if (this.otpState) {
+                    this.device.cancelGetOtp(this, this.otpState);
+                }
             }
         };
+        this.otpGenerator = gen;
     }
 
     _buildFields() {
@@ -31,8 +62,7 @@ class ExternalOtpEntryModel extends ExternalEntryModel {
 ExternalOtpEntryModel.defineModelProperties({
     user: undefined,
     otpGenerator: undefined,
-    needsTouch: false,
-    otpState: null
+    needsTouch: false
 });
 
 export { ExternalOtpEntryModel };

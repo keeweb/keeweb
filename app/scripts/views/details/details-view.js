@@ -445,13 +445,17 @@ class DetailsView extends View {
 
     initOtp() {
         this.matchingOtpEntry = null;
-        if (!this.model || this.model.external) {
+
+        if (!this.model) {
+            return;
+        }
+
+        if (this.model.external) {
+            this.model.initOtpGenerator();
             return;
         }
 
         this.matchingOtpEntry = this.appModel.getMatchingOtpEntry(this.model);
-
-        this.model.initOtpGenerator();
         this.matchingOtpEntry?.initOtpGenerator();
     }
 
