@@ -5,6 +5,7 @@ import { FileCollection } from 'collections/file-collection';
 import { FileInfoCollection } from 'collections/file-info-collection';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Launcher } from 'comp/launcher';
+import { UsbListener } from 'comp/app/usb-listener';
 import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { EntryModel } from 'models/entry-model';
@@ -35,6 +36,7 @@ class AppModel {
     activeEntryId = null;
     isBeta = RuntimeInfo.beta;
     advancedSearch = null;
+    attachedYubiKeysCount = 0;
 
     constructor() {
         Events.on('refresh', this.refresh.bind(this));
@@ -44,6 +46,7 @@ class AppModel {
         Events.on('empty-trash', this.emptyTrash.bind(this));
         Events.on('select-entry', this.selectEntry.bind(this));
         Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
+        Events.on('usb-devices-changed', this.usbDevicesChanged.bind(this));
 
         this.appLogger = new Logger('app');
         AppModel.instance = this;
@@ -1205,9 +1208,31 @@ class AppModel {
         }
     }
 
+    usbDevicesChanged() {
+        const attachedYubiKeysCount = this.attachedYubiKeysCount;
+
+        this.attachedYubiKeysCount = UsbListener.attachedYubiKeys.length;
+
+        if (!this.settings.yubiKeyAutoOpen) {
+            return;
+        }
+
+        const isNewYubiKey = UsbListener.attachedYubiKeys.length > attachedYubiKeysCount;
+        const hasOpenFiles = this.files.some(file => file.active && !file.external);
+
+        if (isNewYubiKey && hasOpenFiles && !this.openingOtpDevice) {
+            this.appLogger.debug('Auto-opening a YubiKey');
+            this.openOtpDevice(err => {
+                this.appLogger.debug('YubiKey auto-open complete', err);
+            });
+        }
+    }
+
     openOtpDevice(callback) {
+        this.openingOtpDevice = true;
         const device = new YubiKeyOtpModel();
         device.open(err => {
+            this.openingOtpDevice = false;
             if (!err) {
                 this.addFile(device);
             }
