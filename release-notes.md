@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.15.0 (WIP)
+`+` YubiKey integration in two modes: OATH and Challenge-Response  
 `+` #557: Argon2 speed improvements in desktop apps  
 `+` #1400: auto-apply tag when creating new entry in tag view  
 `+` #1342: hint that the data will be stored in unencrypted form after exporting  
