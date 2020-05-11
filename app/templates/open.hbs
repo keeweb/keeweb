@@ -90,10 +90,13 @@
                 </i><span class="open__settings-key-file-name">{{res 'openKeyFile'}}</span>
                 {{#if canOpenKeyFromDropbox}}<span class="open__settings-key-file-dropbox"> {{res 'openKeyFileDropbox'}}</span>{{/if}}
             </div>
+            <div class="open__settings-yubikey hide" tabindex="26" title="YubiKey">
+                {{{svg 'usb-token' 'open__settings-yubikey-img'}}}
+            </div>
         </div>
         <div class="open__last">
             {{#each lastOpenFiles as |file|}}
-                <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 26}}"
+                <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 30}}"
                      id="open__last-item--{{file.id}}">
                     {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
                     {{#if file.iconSvg}}<div class="open__last-item-icon open__last-item-icon--svg">{{{svg file.iconSvg}}}</div>{{/if}}

@@ -47,6 +47,7 @@ class OpenView extends View {
         'keypress .open__pass-input': 'inputKeypress',
         'click .open__pass-enter-btn': 'openDb',
         'click .open__settings-key-file': 'openKeyFile',
+        'click .open__settings-yubikey': 'selectYubiKey',
         'click .open__last-item': 'openLast',
         'click .open__icon-generate': 'toggleGenerator',
         dragover: 'dragover',
@@ -439,6 +440,10 @@ class OpenView extends View {
 
         const fileInfo = this.model.fileInfos.get(id);
         this.showOpenFileInfo(fileInfo, true);
+    }
+
+    selectYubiKey() {
+        Alerts.notImplemented();
     }
 
     removeFile(id) {
@@ -985,8 +990,10 @@ class OpenView extends View {
     usbDevicesChanged() {
         if (this.model.settings.canOpenOtpDevice && this.model.settings.yubiKeyShowIcon) {
             const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
-            const icon = this.$el.find('.open__icon-yubikey');
-            icon.toggleClass('hide', !hasYubiKeys);
+
+            const icons = this.$el.find('.open__icon-yubikey, .open__settings-yubikey');
+            icons.toggleClass('hide', !hasYubiKeys);
+
             if (!hasYubiKeys && this.busy && this.otpDevice) {
                 this.otpDevice.cancelOpen();
             }
