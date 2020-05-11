@@ -1,9 +1,10 @@
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
-import template from 'templates/settings/settings-devices.hbs';
 import { Links } from 'const/links';
 import { UsbListener } from 'comp/app/usb-listener';
+import template from 'templates/settings/settings-devices.hbs';
 
 class SettingsDevicesView extends View {
     template = template;
@@ -61,6 +62,7 @@ class SettingsDevicesView extends View {
     changeYubiKeyMatchEntries(e) {
         AppSettingsModel.yubiKeyMatchEntries = e.target.checked;
         this.render();
+        Events.emit('refresh');
     }
 
     changeYubiKeyShowChalResp(e) {

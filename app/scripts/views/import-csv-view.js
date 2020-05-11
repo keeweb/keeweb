@@ -3,7 +3,6 @@ import { View } from 'framework/views/view';
 import { Scrollable } from 'framework/views/scrollable';
 import template from 'templates/import-csv.hbs';
 import { EntryModel } from 'models/entry-model';
-import { escape } from 'util/fn';
 
 class ImportCsvView extends View {
     parent = '.app__body';

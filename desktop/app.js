@@ -20,7 +20,7 @@ if (!gotTheLock) {
     app.quit();
 }
 
-perfTimestamps && perfTimestamps.push({ name: 'single instance lock', ts: process.hrtime() });
+perfTimestamps?.push({ name: 'single instance lock', ts: process.hrtime() });
 
 let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
 const userDataDir =
@@ -52,7 +52,7 @@ const themeBgColors = {
 };
 const defaultBgColor = '#282C34';
 
-perfTimestamps && perfTimestamps.push({ name: 'defining args', ts: process.hrtime() });
+perfTimestamps?.push({ name: 'defining args', ts: process.hrtime() });
 
 setDevAppIcon();
 setEnv();
@@ -71,7 +71,7 @@ app.on('window-all-closed', () => {
     }
 });
 app.on('ready', () => {
-    perfTimestamps && perfTimestamps.push({ name: 'app on ready', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'app on ready', ts: process.hrtime() });
     appReady = true;
     setAppOptions();
     setSystemAppearance();
@@ -155,7 +155,7 @@ app.setGlobalShortcuts = setGlobalShortcuts;
 
 function setAppOptions() {
     app.commandLine.appendSwitch('disable-background-timer-throttling');
-    perfTimestamps && perfTimestamps.push({ name: 'setting app options', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'setting app options', ts: process.hrtime() });
 }
 
 function readAppSettings() {
@@ -164,8 +164,7 @@ function readAppSettings() {
     } catch (e) {
         return null;
     } finally {
-        perfTimestamps &&
-            perfTimestamps.push({ name: 'reading app settings', ts: process.hrtime() });
+        perfTimestamps?.push({ name: 'reading app settings', ts: process.hrtime() });
     }
 }
 
@@ -175,8 +174,7 @@ function setSystemAppearance() {
             electron.systemPreferences.appLevelAppearance = 'dark';
         }
     }
-    perfTimestamps &&
-        perfTimestamps.push({ name: 'setting system appearance', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'setting system appearance', ts: process.hrtime() });
 }
 
 function createMainWindow() {
@@ -198,17 +196,17 @@ function createMainWindow() {
         windowOptions.icon = path.join(__dirname, 'icon.png');
     }
     mainWindow = new electron.BrowserWindow(windowOptions);
-    perfTimestamps && perfTimestamps.push({ name: 'creating main window', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'creating main window', ts: process.hrtime() });
 
     setMenu();
-    perfTimestamps && perfTimestamps.push({ name: 'setting menu', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'setting menu', ts: process.hrtime() });
 
     mainWindow.loadURL(htmlPath);
     if (showDevToolsOnStart) {
         mainWindow.openDevTools({ mode: 'bottom' });
     }
     mainWindow.once('ready-to-show', () => {
-        perfTimestamps && perfTimestamps.push({ name: 'main window ready', ts: process.hrtime() });
+        perfTimestamps?.push({ name: 'main window ready', ts: process.hrtime() });
         if (startMinimized) {
             emitRemoteEvent('launcher-started-minimized');
         } else {
@@ -216,7 +214,7 @@ function createMainWindow() {
         }
         ready = true;
         notifyOpenFile();
-        perfTimestamps && perfTimestamps.push({ name: 'main window shown', ts: process.hrtime() });
+        perfTimestamps?.push({ name: 'main window shown', ts: process.hrtime() });
         reportStartProfile();
     });
     mainWindow.webContents.on('context-menu', onContextMenu);
@@ -242,12 +240,10 @@ function createMainWindow() {
     mainWindow.on('session-end', () => {
         emitRemoteEvent('os-lock');
     });
-    perfTimestamps &&
-        perfTimestamps.push({ name: 'configuring main window', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'configuring main window', ts: process.hrtime() });
 
     restoreMainWindowPosition();
-    perfTimestamps &&
-        perfTimestamps.push({ name: 'restoring main window position', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'restoring main window position', ts: process.hrtime() });
 }
 
 function restoreMainWindow() {
@@ -464,8 +460,7 @@ function setGlobalShortcuts(appSettings) {
             } catch (e) {}
         }
     }
-    perfTimestamps &&
-        perfTimestamps.push({ name: 'setting global shortcuts', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'setting global shortcuts', ts: process.hrtime() });
 }
 
 function subscribePowerEvents() {
@@ -478,8 +473,7 @@ function subscribePowerEvents() {
     electron.powerMonitor.on('lock-screen', () => {
         emitRemoteEvent('os-lock');
     });
-    perfTimestamps &&
-        perfTimestamps.push({ name: 'subscribing to power events', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'subscribing to power events', ts: process.hrtime() });
 }
 
 function setEnv() {
@@ -491,7 +485,7 @@ function setEnv() {
         // https://github.com/electron/electron/issues/9046
         process.env.XDG_CURRENT_DESKTOP = 'Unity';
     }
-    perfTimestamps && perfTimestamps.push({ name: 'setting env', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'setting env', ts: process.hrtime() });
 }
 
 function restorePreferences() {
@@ -524,7 +518,7 @@ function restorePreferences() {
         }
     }
 
-    perfTimestamps && perfTimestamps.push({ name: 'restoring preferences', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'restoring preferences', ts: process.hrtime() });
 }
 
 function deleteOldTempFiles() {
@@ -541,8 +535,7 @@ function deleteOldTempFiles() {
         }
         app.oldTempFilesDeleted = true; // this is added to prevent file deletion on restart
     }, 1000);
-    perfTimestamps &&
-        perfTimestamps.push({ name: 'deleting old temp files', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'deleting old temp files', ts: process.hrtime() });
 }
 
 function deleteRecursive(dir) {
@@ -577,8 +570,7 @@ function hookRequestHeaders() {
         }
         callback({ requestHeaders: details.requestHeaders });
     });
-    perfTimestamps &&
-        perfTimestamps.push({ name: 'setting request handlers', ts: process.hrtime() });
+    perfTimestamps?.push({ name: 'setting request handlers', ts: process.hrtime() });
 }
 
 // If a display is disconnected while KeeWeb is minimized, Electron does not

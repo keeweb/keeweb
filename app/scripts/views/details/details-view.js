@@ -120,7 +120,6 @@ class DetailsView extends View {
         this.template = template;
         super.render(model);
         this.setSelectedColor(this.model.color);
-        this.model.initOtpGenerator();
         this.addFieldViews();
         this.createScroll({
             root: this.$el.find('.details__body')[0],
@@ -437,10 +436,23 @@ class DetailsView extends View {
 
     showEntry(entry) {
         this.model = entry;
+        this.initOtp();
         this.render();
         if (entry && !entry.title && entry.isJustCreated) {
             this.editTitle();
         }
+    }
+
+    initOtp() {
+        this.matchingOtpEntry = null;
+        if (!this.model || this.model.external) {
+            return;
+        }
+
+        this.matchingOtpEntry = this.appModel.getMatchingOtpEntry(this.model);
+
+        this.model.initOtpGenerator();
+        this.matchingOtpEntry?.initOtpGenerator();
     }
 
     copyKeyPress(editView) {
@@ -948,7 +960,8 @@ class DetailsView extends View {
 
     autoType(sequence) {
         const entry = this.model;
-        if (entry.external && (!sequence || sequence.includes('{TOTP}'))) {
+        const hasOtp = sequence?.includes('{TOTP}') || (entry.external && !sequence);
+        if (hasOtp) {
             const otpField = this.getFieldView('$otp');
             otpField.refreshOtp(err => {
                 if (!err) {

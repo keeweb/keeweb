@@ -59,7 +59,7 @@ class View extends EventEmitter {
 
         Tip.createTips(this.el);
 
-        this.debugLogger && this.debugLogger.debug('Render finished', this.debugLogger.ts(ts));
+        this.debugLogger?.debug('Render finished', this.debugLogger.ts(ts));
 
         return this;
     }
@@ -129,7 +129,7 @@ class View extends EventEmitter {
             eventsMap[event].push({ selector, method });
         }
         for (const [event, handlers] of Object.entries(eventsMap)) {
-            this.debugLogger && this.debugLogger.debug('Bind', 'view', event, handlers);
+            this.debugLogger?.debug('Bind', 'view', event, handlers);
             const listener = e => this.eventListener(e, handlers);
             this.eventListeners[event] = listener;
             this.el.addEventListener(event, listener);
@@ -151,8 +151,7 @@ class View extends EventEmitter {
         this.unbindElementEvents();
         for (const cfg of this.elementEventListeners) {
             const els = this.el.querySelectorAll(cfg.selector);
-            this.debugLogger &&
-                this.debugLogger.debug('Bind', 'element', cfg.event, cfg.selector, els.length);
+            this.debugLogger?.debug('Bind', 'element', cfg.event, cfg.selector, els.length);
             cfg.listener = e => this.eventListener(e, [cfg]);
             for (const el of els) {
                 el.addEventListener(cfg.event, cfg.listener);
@@ -174,7 +173,7 @@ class View extends EventEmitter {
     }
 
     eventListener(e, handlers) {
-        this.debugLogger && this.debugLogger.debug('Listener fired', e.type);
+        this.debugLogger?.debug('Listener fired', e.type);
         for (const { selector, method } of handlers) {
             if (selector) {
                 const closest = e.target.closest(selector);
@@ -183,10 +182,10 @@ class View extends EventEmitter {
                 }
             }
             if (!this[method]) {
-                this.debugLogger && this.debugLogger.debug('Method not defined', method);
+                this.debugLogger?.debug('Method not defined', method);
                 continue;
             }
-            this.debugLogger && this.debugLogger.debug('Handling event', e.type, method);
+            this.debugLogger?.debug('Handling event', e.type, method);
             this[method](e);
         }
     }
@@ -202,7 +201,7 @@ class View extends EventEmitter {
         this.el.remove();
         this.removed = true;
 
-        this.debugLogger && this.debugLogger.debug('Remove');
+        this.debugLogger?.debug('Remove');
     }
 
     removeInnerViews() {
@@ -236,7 +235,7 @@ class View extends EventEmitter {
     }
 
     toggle(visible) {
-        this.debugLogger && this.debugLogger.debug(visible ? 'Show' : 'Hide');
+        this.debugLogger?.debug(visible ? 'Show' : 'Hide');
         if (visible === undefined) {
             visible = this.hidden;
         }

@@ -58,6 +58,7 @@ class EntryModel extends Model {
         this.expires = entry.times.expires ? entry.times.expiryTime : undefined;
         this.expired = entry.times.expires && entry.times.expiryTime <= new Date();
         this.historyLength = entry.history.length;
+        this.titleUserLower = `${this.title}:${this.user}`.toLowerCase();
         this._buildCustomIcon();
         this._buildSearchText();
         this._buildSearchTags();

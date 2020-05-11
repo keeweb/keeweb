@@ -16,6 +16,7 @@ import { FieldViewReadOnlyWithOptions } from 'views/fields/field-view-read-only-
 
 function createDetailsFields(detailsView) {
     const model = detailsView.model;
+    const otpEntry = detailsView.matchingOtpEntry;
 
     const fieldViews = [];
     const fieldViewsAside = [];
@@ -185,18 +186,35 @@ function createDetailsFields(detailsView) {
                 }
             })
         );
+        if (otpEntry) {
+            fieldViews.push(
+                new FieldViewOtp({
+                    name: '$otp',
+                    title: Locale.detOtpField,
+                    value() {
+                        return otpEntry.otpGenerator;
+                    },
+                    sequence: '{TOTP}',
+                    readonly: true,
+                    needsTouch: otpEntry.needsTouch,
+                    deviceShortName: otpEntry.device.shortName
+                })
+            );
+        }
         for (const field of Object.keys(model.fields)) {
             if (field === 'otp' && model.otpGenerator) {
-                fieldViews.push(
-                    FieldViewOtp({
-                        name: '$' + field,
-                        title: field,
-                        value() {
-                            return model.otpGenerator;
-                        },
-                        sequence: '{TOTP}'
-                    })
-                );
+                if (!otpEntry) {
+                    fieldViews.push(
+                        FieldViewOtp({
+                            name: '$' + field,
+                            title: field,
+                            value() {
+                                return model.otpGenerator;
+                            },
+                            sequence: '{TOTP}'
+                        })
+                    );
+                }
             } else {
                 fieldViews.push(
                     new FieldViewCustom({

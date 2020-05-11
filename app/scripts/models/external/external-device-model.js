@@ -4,6 +4,7 @@ import { ExternalEntryCollection } from 'collections/external-entry-collection';
 class ExternalDeviceModel extends Model {
     entries = new ExternalEntryCollection();
     groups = [];
+    entryMap = {};
 
     close() {}
 
@@ -17,6 +18,20 @@ class ExternalDeviceModel extends Model {
             }
         }
     }
+
+    entryId(title, user) {
+        return `${title}:${user}`.toLowerCase();
+    }
+
+    getMatchingEntry(entry) {
+        return this.entryMap[this.entryId(entry.title, entry.user)];
+    }
+
+    _buildEntryMap() {
+        for (const entry of this.entries) {
+            this.entryMap[entry.id.toLowerCase()] = entry;
+        }
+    }
 }
 
 ExternalDeviceModel.defineModelProperties({
@@ -28,7 +43,8 @@ ExternalDeviceModel.defineModelProperties({
     groups: undefined,
     name: undefined,
     shortName: undefined,
-    deviceClassName: undefined
+    deviceClassName: undefined,
+    entryMap: undefined
 });
 
 export { ExternalDeviceModel };

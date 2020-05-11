@@ -302,9 +302,37 @@ class AppModel {
     getEntriesByFilter(filter) {
         const preparedFilter = this.prepareFilter(filter);
         const entries = new SearchResultCollection();
-        this.files.forEach(file => {
-            file.forEachEntry(preparedFilter, entry => entries.push(entry));
-        });
+
+        const devicesToMatchOtpEntries = this.files.filter(file => file.external);
+
+        const matchedOtpEntrySet = this.settings.yubiKeyMatchEntries ? new Set() : undefined;
+
+        this.files
+            .filter(file => !file.external)
+            .forEach(file => {
+                file.forEachEntry(preparedFilter, entry => {
+                    if (matchedOtpEntrySet) {
+                        for (const device of devicesToMatchOtpEntries) {
+                            const matchingEntry = device.getMatchingEntry(entry);
+                            if (matchingEntry) {
+                                matchedOtpEntrySet.add(matchingEntry);
+                            }
+                        }
+                    }
+                    entries.push(entry);
+                });
+            });
+
+        if (devicesToMatchOtpEntries.length) {
+            for (const device of devicesToMatchOtpEntries) {
+                device.forEachEntry(preparedFilter, entry => {
+                    if (!matchedOtpEntrySet || !matchedOtpEntrySet.has(entry)) {
+                        entries.push(entry);
+                    }
+                });
+            }
+        }
+
         return entries;
     }
 
@@ -382,12 +410,15 @@ class AppModel {
     getEntryTemplates() {
         const entryTemplates = [];
         this.files.forEach(file => {
-            file.forEachEntryTemplate &&
-                file.forEachEntryTemplate(entry => {
-                    entryTemplates.push({ file, entry });
-                });
+            file.forEachEntryTemplate?.(entry => {
+                entryTemplates.push({ file, entry });
+            });
         });
         return entryTemplates;
+    }
+
+    canCreateEntries() {
+        return this.files.some(f => f.active && !f.readOnly);
     }
 
     createNewEntry(args) {
@@ -1185,8 +1216,18 @@ class AppModel {
         return device;
     }
 
-    canCreateEntries() {
-        return this.files.some(f => f.active && !f.readOnly);
+    getMatchingOtpEntry(entry) {
+        if (!this.settings.yubiKeyMatchEntries) {
+            return null;
+        }
+        for (const file of this.files) {
+            if (file.external) {
+                const matchingEntry = file.getMatchingEntry(entry);
+                if (matchingEntry) {
+                    return matchingEntry;
+                }
+            }
+        }
     }
 }
 

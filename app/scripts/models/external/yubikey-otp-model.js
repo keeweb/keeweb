@@ -100,6 +100,9 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                         if (yubiKeys && yubiKeys.length) {
                             openNextYubiKey();
                         } else {
+                            if (openSuccess) {
+                                this._openComplete();
+                            }
                             callback(openSuccess ? null : openErrors[0]);
                         }
                     });
@@ -135,7 +138,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
 
                     this.entries.push(
                         new ExternalOtpEntryModel({
-                            id: title + ':' + user,
+                            id: this.entryId(title, user),
                             device: this,
                             deviceSubId: serial,
                             icon: 'clock-o',
@@ -145,8 +148,6 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                         })
                     );
                 }
-                this.active = true;
-                Events.on('usb-devices-changed', this.onUsbDevicesChanged);
                 callback();
             }
         });
@@ -185,6 +186,12 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                 }, Timeouts.ExternalDeviceReconnect);
             }
         });
+    }
+
+    _openComplete() {
+        this.active = true;
+        this._buildEntryMap();
+        Events.on('usb-devices-changed', this.onUsbDevicesChanged);
     }
 
     cancelOpen() {

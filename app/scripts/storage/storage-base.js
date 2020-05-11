@@ -468,11 +468,11 @@ class StorageBase {
                 if (token && token.error) {
                     return callback && callback('OAuth code exchange error: ' + token.error);
                 }
-                callback && callback();
+                callback?.();
             },
             error: err => {
                 this.logger.error('Error exchanging OAuth code', err);
-                callback && callback('OAuth code exchange error: ' + err);
+                callback?.('OAuth code exchange error: ' + err);
             }
         });
     }
@@ -507,7 +507,7 @@ class StorageBase {
                     this._oauthToken = null;
                 }
                 this.logger.error('Error exchanging refresh token', err);
-                callback && callback('Error exchanging refresh token');
+                callback?.('Error exchanging refresh token');
             }
         });
     }
