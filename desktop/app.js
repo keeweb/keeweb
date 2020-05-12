@@ -485,6 +485,11 @@ function setEnv() {
         // https://github.com/electron/electron/issues/9046
         process.env.XDG_CURRENT_DESKTOP = 'Unity';
     }
+
+    // disable all caching, since we're not using old profile data anyway
+    app.commandLine.appendSwitch('disable-http-cache');
+    app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
+
     perfTimestamps?.push({ name: 'setting env', ts: process.hrtime() });
 }
 
