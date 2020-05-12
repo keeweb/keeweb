@@ -73,7 +73,6 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
     perfTimestamps?.push({ name: 'app on ready', ts: process.hrtime() });
     appReady = true;
-    setAppOptions();
     setSystemAppearance();
     createMainWindow();
     setGlobalShortcuts(appSettings);
@@ -152,11 +151,6 @@ app.getMainWindow = function() {
     return mainWindow;
 };
 app.setGlobalShortcuts = setGlobalShortcuts;
-
-function setAppOptions() {
-    app.commandLine.appendSwitch('disable-background-timer-throttling');
-    perfTimestamps?.push({ name: 'setting app options', ts: process.hrtime() });
-}
 
 function readAppSettings() {
     try {
@@ -485,6 +479,8 @@ function setEnv() {
         // https://github.com/electron/electron/issues/9046
         process.env.XDG_CURRENT_DESKTOP = 'Unity';
     }
+
+    app.commandLine.appendSwitch('disable-background-timer-throttling');
 
     // disable all caching, since we're not using old profile data anyway
     app.commandLine.appendSwitch('disable-http-cache');
