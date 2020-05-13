@@ -67,11 +67,11 @@ const DefaultAppSettings = {
 
     gdrive: true, // enable Google Drive integration
     gdriveClientId: null, // custom Google Drive client id
-    gdriveSecret: null, // custom Google Drive client secret
+    gdriveClientSecret: null, // custom Google Drive client secret
 
     onedrive: true, // enable OneDrive integration
     onedriveClientId: null, // custom OneDrive client id
-    onedriveSecret: null // custom OneDrive client secret
+    onedriveClientSecret: null // custom OneDrive client secret
 };
 
 export { DefaultAppSettings };
