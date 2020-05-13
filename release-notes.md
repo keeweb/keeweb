@@ -10,6 +10,7 @@ Release notes
 `+` #1350: clearing master password after auto lock period  
 `-` fix #1463: copying the original url instead of adding https:  
 `*` disabled markdown in export  
+`-` fix #620: clearing middle-click clipboard in Linux  
 
 ##### v1.14.2 (2020-05-04)
 `-` distinct redirect URIs for storage providers  

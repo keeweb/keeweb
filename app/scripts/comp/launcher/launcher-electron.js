@@ -177,7 +177,11 @@ const Launcher = {
         return this.electron().clipboard.readText();
     },
     clearClipboardText() {
-        return this.electron().clipboard.clear();
+        const { clipboard } = this.electron();
+        clipboard.clear();
+        if (process.platform === 'linux') {
+            clipboard.clear('selection');
+        }
     },
     minimizeApp() {
         this.remoteApp().minimizeApp({
