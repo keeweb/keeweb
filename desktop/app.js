@@ -23,13 +23,9 @@ if (!gotTheLock) {
 perfTimestamps?.push({ name: 'single instance lock', ts: process.hrtime() });
 
 let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
-const userDataDir =
-    process.env.KEEWEB_PORTABLE_EXECUTABLE_DIR ||
-    app.getPath('userData').replace(/[\\/]temp[\\/]\d+\.\d+[\\/]?$/, '');
+const userDataDir = process.env.KEEWEB_PORTABLE_EXECUTABLE_DIR || app.getPath('userData');
 const windowPositionFileName = path.join(userDataDir, 'window-position.json');
 const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
-const tempUserDataPath = path.join(userDataDir, 'temp');
-const tempUserDataPathRand = Date.now().toString() + Math.random().toString();
 
 const isDev = !__dirname.endsWith('.asar');
 const htmlPath =
@@ -470,7 +466,6 @@ function subscribePowerEvents() {
 }
 
 function setEnv() {
-    app.setPath('userData', path.join(tempUserDataPath, tempUserDataPathRand));
     if (
         process.platform === 'linux' &&
         ['Pantheon', 'Unity:Unity7'].indexOf(process.env.XDG_CURRENT_DESKTOP) !== -1
@@ -488,21 +483,18 @@ function setEnv() {
     perfTimestamps?.push({ name: 'setting env', ts: process.hrtime() });
 }
 
+// TODO: delete after v1.15
 function deleteOldTempFiles() {
     if (app.oldTempFilesDeleted) {
         return;
     }
     setTimeout(() => {
-        for (const dir of fs.readdirSync(tempUserDataPath)) {
-            if (dir !== tempUserDataPathRand) {
-                try {
-                    deleteRecursive(path.join(tempUserDataPath, dir));
-                } catch (e) {}
-            }
+        const tempPath = path.join(userDataDir, 'temp');
+        if (fs.existsSync(tempPath)) {
+            deleteRecursive(tempPath);
         }
         app.oldTempFilesDeleted = true; // this is added to prevent file deletion on restart
     }, 1000);
-    perfTimestamps?.push({ name: 'deleting old temp files', ts: process.hrtime() });
 }
 
 function deleteRecursive(dir) {

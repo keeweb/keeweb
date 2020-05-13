@@ -55,9 +55,7 @@ const Launcher = {
     },
     getUserDataPath(fileName) {
         if (!this.userDataPath) {
-            const realUserDataPath = this.remoteApp().getPath('userData');
-            const suffixReplacementRegex = /[\\/]temp[\\/]\d+\.\d+[\\/]?$/;
-            this.userDataPath = realUserDataPath.replace(suffixReplacementRegex, '');
+            this.userDataPath = this.remoteApp().getPath('userData');
         }
         return this.joinPath(this.userDataPath, fileName || '');
     },
