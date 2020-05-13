@@ -14,9 +14,6 @@ const Launcher = {
     thirdPartyStoragesSupported: true,
     clipboardSupported: true,
     req: window.require,
-    reqNative(module) {
-        return this.req(`@keeweb/keeweb-native-modules/${module}.${process.platform}.node`);
-    },
     platform() {
         return process.platform;
     },
@@ -28,6 +25,9 @@ const Launcher = {
     },
     remReq(mod) {
         return this.electron().remote.require(mod);
+    },
+    reqNative(mod) {
+        return this.electron().remote.app.reqNative(mod);
     },
     openLink(href) {
         if (/^(http|https|ftp|sftp|mailto):/i.test(href)) {

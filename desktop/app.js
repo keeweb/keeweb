@@ -1,6 +1,7 @@
 const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { EventEmitter } = require('events');
 
 let perfTimestamps = global.perfTimestamps;
 perfTimestamps.push({ name: 'loading app requires', ts: process.hrtime() });
@@ -146,6 +147,15 @@ app.getMainWindow = function() {
     return mainWindow;
 };
 app.setGlobalShortcuts = setGlobalShortcuts;
+app.reqNative = function(mod) {
+    const binding = require(`@keeweb/keeweb-native-modules/${mod}.${process.platform}.node`);
+    if (mod === 'usb') {
+        Object.keys(EventEmitter.prototype).forEach(key => {
+            binding[key] = EventEmitter.prototype[key];
+        });
+    }
+    return binding;
+};
 
 function readAppSettings() {
     try {
@@ -479,6 +489,8 @@ function setEnv() {
     // disable all caching, since we're not using old profile data anyway
     app.commandLine.appendSwitch('disable-http-cache');
     app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
+
+    app.allowRendererProcessReuse = true;
 
     perfTimestamps?.push({ name: 'setting env', ts: process.hrtime() });
 }

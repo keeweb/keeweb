@@ -40,17 +40,11 @@ const UsbListener = {
         try {
             const ts = logger.ts();
 
-            const usb = Launcher.req(`@keeweb/keeweb-native-modules/usb.${process.platform}.node`);
-
-            Object.keys(EventEmitter.prototype).forEach(key => {
-                usb[key] = EventEmitter.prototype[key];
-            });
-
-            this.usb = usb;
+            this.usb = Launcher.reqNative('usb');
 
             this.listen();
 
-            this.attachedYubiKeys = usb
+            this.attachedYubiKeys = this.usb
                 .getDeviceList()
                 .filter(this.isYubiKey)
                 .map(device => ({ device }));
