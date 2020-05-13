@@ -15,7 +15,7 @@
         "@babel/plugin-proposal-class-properties": "^7.8.3",
         "@babel/plugin-proposal-optional-chaining": "^7.9.0",
         "@babel/preset-env": "^7.9.6",
-        "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.1.8/keeweb-native-modules.tgz",
+        "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.2.0/keeweb-native-modules.tgz",
         "adm-zip": "^0.4.14",
         "argon2-browser": "1.13.0",
         "autoprefixer": "^9.7.6",

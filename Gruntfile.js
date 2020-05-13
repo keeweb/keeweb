@@ -365,7 +365,7 @@ module.exports = function(grunt) {
             win32: {
                 options: {
                     platform: 'win32',
-                    arch: ['ia32', 'x64'],
+                    arch: ['ia32', 'x64', 'arm64'],
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
                     'version-string': {
