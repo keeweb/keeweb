@@ -13,7 +13,7 @@ const Timeouts = {
     LinkDownloadRevoke: 10 * 1000 * 60,
     DefaultHttpRequest: 60000,
     ExternalDeviceReconnect: 3000,
-    ExternalDeviceAfterReconnect: 100
+    ExternalDeviceAfterReconnect: 500
 };
 
 export { Timeouts };
