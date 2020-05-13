@@ -29,7 +29,7 @@ const KdbxwebInit = {
         if (!global.WebAssembly) {
             return Promise.reject('WebAssembly is not supported');
         }
-        if (Features.canUseNativeModules && AppSettingsModel.nativeArgon2) {
+        if (AppSettingsModel.nativeArgon2) {
             const ts = logger.ts();
             const argon2 = Launcher.reqNative('argon2');
             logger.debug('Native argon2 runtime loaded (main thread)', logger.ts(ts));
