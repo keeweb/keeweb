@@ -17,8 +17,6 @@ const Features = {
         !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
     isLocal: location.origin.indexOf('localhost') >= 0,
     canUseWasmInWebWorker: !isDesktop && !/Chrome/.test(navigator.appVersion),
-    canUseNativeModules:
-        isDesktop && !(process.platform === 'win32' && !process.arch.includes('64')),
 
     supportsTitleBarStyles() {
         return this.isMac;

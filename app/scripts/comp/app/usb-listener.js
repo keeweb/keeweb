@@ -1,4 +1,3 @@
-import EventEmitter from 'events';
 import { Events } from 'framework/events';
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
@@ -9,7 +8,7 @@ import { Features } from 'util/features';
 const logger = new Logger('usb-listener');
 
 const UsbListener = {
-    supported: Launcher && Features.canUseNativeModules,
+    supported: Features.isDesktop,
     attachedYubiKeys: 0,
 
     init() {

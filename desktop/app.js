@@ -148,7 +148,8 @@ app.getMainWindow = function() {
 };
 app.setGlobalShortcuts = setGlobalShortcuts;
 app.reqNative = function(mod) {
-    const binding = require(`@keeweb/keeweb-native-modules/${mod}.${process.platform}.node`);
+    const fileName = `${mod}-${process.platform}-${process.arch}.node`;
+    const binding = require(`@keeweb/keeweb-native-modules/${fileName}`);
     if (mod === 'usb') {
         Object.keys(EventEmitter.prototype).forEach(key => {
             binding[key] = EventEmitter.prototype[key];
