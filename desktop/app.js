@@ -56,7 +56,6 @@ perfTimestamps?.push({ name: 'defining args', ts: process.hrtime() });
 
 setDevAppIcon();
 setEnv();
-restorePreferences();
 
 const appSettings = readAppSettings() || {};
 
@@ -487,39 +486,6 @@ function setEnv() {
     app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
 
     perfTimestamps?.push({ name: 'setting env', ts: process.hrtime() });
-}
-
-function restorePreferences() {
-    const profileConfigPath = path.join(userDataDir, 'profile.json');
-
-    const newProfile = { dir: tempUserDataPathRand };
-    let oldProfile;
-    try {
-        oldProfile = JSON.parse(fs.readFileSync(profileConfigPath, 'utf8'));
-    } catch (e) {}
-
-    fs.writeFileSync(profileConfigPath, JSON.stringify(newProfile));
-
-    if (oldProfile && oldProfile.dir && /^[\d.]+$/.test(oldProfile.dir)) {
-        const oldProfilePath = path.join(tempUserDataPath, oldProfile.dir);
-        const newProfilePath = path.join(tempUserDataPath, newProfile.dir);
-        if (fs.existsSync(path.join(oldProfilePath, 'Cookies'))) {
-            if (!fs.existsSync(newProfilePath)) {
-                fs.mkdirSync(newProfilePath);
-            }
-            const cookiesFileSrc = path.join(oldProfilePath, 'Cookies');
-            const cookiesFileDest = path.join(newProfilePath, 'Cookies');
-            try {
-                fs.renameSync(cookiesFileSrc, cookiesFileDest);
-            } catch (e) {
-                try {
-                    fs.copyFileSync(cookiesFileSrc, cookiesFileDest);
-                } catch (e) {}
-            }
-        }
-    }
-
-    perfTimestamps?.push({ name: 'restoring preferences', ts: process.hrtime() });
 }
 
 function deleteOldTempFiles() {
