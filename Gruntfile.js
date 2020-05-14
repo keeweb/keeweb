@@ -305,7 +305,7 @@ module.exports = function(grunt) {
                     platform: 'linux',
                     arch: ['x64'],
                     icon: 'graphics/icon.ico',
-                    ignore: [/(darwin|win32)-\w+\.node$/, /pcsclite.*\.node$/]
+                    ignore: [/(darwin|win32)-\w+\.node$/]
                 }
             },
             darwin: {
@@ -316,7 +316,7 @@ module.exports = function(grunt) {
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
                     extendInfo: 'package/osx/extend.plist',
-                    ignore: [/(linux|win32)-\w+\.node$/, /pcsclite.*\.node$/],
+                    ignore: [/(linux|win32)-\w+\.node$/],
                     osxSign: skipSign
                         ? undefined
                         : {
@@ -383,7 +383,7 @@ module.exports = function(grunt) {
                     arch: 'ia32',
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
-                    ignore: [/(linux|darwin)-\w+\.node$/, /pcsclite.*\.node$/, /(x64|arm64)\.node/],
+                    ignore: [/(linux|darwin)-\w+\.node$/, /(x64|arm64)\.node/],
                     'version-string': windowsAppVersionString
                 }
             },
@@ -393,11 +393,7 @@ module.exports = function(grunt) {
                     arch: 'x64',
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
-                    ignore: [
-                        /(linux|darwin)-\w+\.node$/,
-                        /pcsclite.*\.node$/,
-                        /(ia32|arm64)\.node/
-                    ],
+                    ignore: [/(linux|darwin)-\w+\.node$/, /(ia32|arm64)\.node/],
                     'version-string': windowsAppVersionString
                 }
             },
@@ -407,7 +403,7 @@ module.exports = function(grunt) {
                     arch: 'arm64',
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
-                    ignore: [/(linux|darwin)-\w+\.node$/, /pcsclite.*\.node$/, /(ia32|x64)\.node/],
+                    ignore: [/(linux|darwin)-\w+\.node$/, /(ia32|x64)\.node/],
                     'version-string': windowsAppVersionString
                 }
             }
