@@ -29,7 +29,8 @@ module.exports = function(grunt) {
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
-    const getCodeSignConfig = () => require('./keys/codesign.json');
+    const skipSign = grunt.option('skip-sign');
+    const getCodeSignConfig = () => (skipSign ? undefined : require('./keys/codesign.json'));
 
     const webpackOptions = {
         date,
@@ -306,24 +307,28 @@ module.exports = function(grunt) {
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
                     extendInfo: 'package/osx/extend.plist',
-                    osxSign: {
-                        get identity() {
-                            return getCodeSignConfig().identities.app;
-                        },
-                        hardenedRuntime: true,
-                        entitlements: 'package/osx/entitlements.mac.plist',
-                        'entitlements-inherit': 'package/osx/entitlements.mac.plist',
-                        'gatekeeper-assess': false
-                    },
-                    osxNotarize: {
-                        get appleId() {
-                            return getCodeSignConfig().appleId;
-                        },
-                        appleIdPassword: '@keychain:AC_PASSWORD',
-                        get ascProvider() {
-                            return getCodeSignConfig().teamId;
-                        }
-                    },
+                    osxSign: skipSign
+                        ? undefined
+                        : {
+                              get identity() {
+                                  return getCodeSignConfig().identities.app;
+                              },
+                              hardenedRuntime: true,
+                              entitlements: 'package/osx/entitlements.mac.plist',
+                              'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                              'gatekeeper-assess': false
+                          },
+                    osxNotarize: skipSign
+                        ? undefined
+                        : {
+                              get appleId() {
+                                  return getCodeSignConfig().appleId;
+                              },
+                              appleIdPassword: '@keychain:AC_PASSWORD',
+                              get ascProvider() {
+                                  return getCodeSignConfig().teamId;
+                              }
+                          },
                     afterCopy: [
                         (buildPath, electronVersion, platform, arch, callback) => {
                             if (path.basename(buildPath) !== 'app') {

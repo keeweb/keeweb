@@ -4,6 +4,7 @@ Release notes
 `+` YubiKey integration in two modes: OATH and Challenge-Response  
 `+` #557: Argon2 speed improvements in desktop apps  
 `+` #1503: ARM64 Windows support  
+`+` #1480: option to create a portable installation  
 `+` #1400: auto-apply tag when creating new entry in tag view  
 `+` #1342: hint that the data will be stored in unencrypted form after exporting  
 `*` #1471: WebDAV url validation, only HTTPS is allowed  

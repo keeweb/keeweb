@@ -16,6 +16,10 @@ let restartPending = false;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
 
+const windowPositionFileName = 'window-position.json';
+const appSettingsFileName = 'app-settings.json';
+const portableConfigFileName = 'keeweb-portable.json';
+
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
     app.quit();
@@ -23,11 +27,9 @@ if (!gotTheLock) {
 
 perfTimestamps?.push({ name: 'single instance lock', ts: process.hrtime() });
 
+initUserDataDir();
+
 let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
-const overrideUserDataDir = process.env.KEEWEB_PORTABLE_EXECUTABLE_DIR;
-const userDataDir = overrideUserDataDir || app.getPath('userData');
-const windowPositionFileName = path.join(userDataDir, 'window-position.json');
-const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
 
 const isDev = !__dirname.endsWith('.asar');
 const htmlPath =
@@ -160,8 +162,10 @@ app.reqNative = function(mod) {
 };
 
 function readAppSettings() {
+    const appSettingsFilePath = path.join(app.getPath('userData'), appSettingsFileName);
+
     try {
-        return JSON.parse(fs.readFileSync(appSettingsFileName, 'utf8'));
+        return JSON.parse(fs.readFileSync(appSettingsFilePath, 'utf8'));
     } catch (e) {
         return null;
     } finally {
@@ -310,12 +314,17 @@ function saveMainWindowPosition() {
     }
     delete mainWindowPosition.changed;
     try {
-        fs.writeFileSync(windowPositionFileName, JSON.stringify(mainWindowPosition), 'utf8');
+        fs.writeFileSync(
+            path.join(app.getPath('userData'), windowPositionFileName),
+            JSON.stringify(mainWindowPosition),
+            'utf8'
+        );
     } catch (e) {}
 }
 
 function restoreMainWindowPosition() {
-    fs.readFile(windowPositionFileName, 'utf8', (e, data) => {
+    const fileName = path.join(app.getPath('userData'), windowPositionFileName);
+    fs.readFile(fileName, 'utf8', (e, data) => {
         if (data) {
             mainWindowPosition = JSON.parse(data);
             if (mainWindow && mainWindowPosition) {
@@ -477,11 +486,44 @@ function subscribePowerEvents() {
     perfTimestamps?.push({ name: 'subscribing to power events', ts: process.hrtime() });
 }
 
-function setEnv() {
-    if (overrideUserDataDir) {
-        app.setPath('userData', overrideUserDataDir);
+function initUserDataDir() {
+    let execPath = process.execPath;
+    let isPortable;
+    switch (process.platform) {
+        case 'darwin':
+            isPortable = !execPath.startsWith('/Applications/');
+            if (isPortable) {
+                execPath = execPath.substring(0, execPath.indexOf('.app'));
+            }
+            break;
+        case 'win32':
+            isPortable = !execPath.includes('Program Files');
+            break;
+        case 'linux':
+            isPortable = !execPath.startsWith('/usr/') && !execPath.startsWith('/opt/');
+            break;
     }
 
+    if (isPortable) {
+        const portableConfigDir = path.dirname(execPath);
+        const portableConfigPath = path.join(portableConfigDir, portableConfigFileName);
+
+        if (fs.existsSync(portableConfigPath)) {
+            const portableConfig = JSON.parse(fs.readFileSync(portableConfigPath, 'utf8'));
+            const portableUserDataDir = path.resolve(portableConfigDir, portableConfig.userDataDir);
+
+            if (!fs.existsSync(portableUserDataDir)) {
+                fs.mkdirSync(portableUserDataDir);
+            }
+
+            app.setPath('userData', portableUserDataDir);
+        }
+    }
+
+    perfTimestamps?.push({ name: 'userdata dir', ts: process.hrtime() });
+}
+
+function setEnv() {
     if (
         process.platform === 'linux' &&
         ['Pantheon', 'Unity:Unity7'].indexOf(process.env.XDG_CURRENT_DESKTOP) !== -1
@@ -507,7 +549,7 @@ function deleteOldTempFiles() {
         return;
     }
     setTimeout(() => {
-        const tempPath = path.join(userDataDir, 'temp');
+        const tempPath = path.join(app.getPath('userData'), 'temp');
         if (fs.existsSync(tempPath)) {
             deleteRecursive(tempPath);
         }

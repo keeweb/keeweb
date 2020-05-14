@@ -51,6 +51,12 @@ module.exports = function(grunt) {
         'sign-dist'
     ]);
 
+    grunt.registerTask('dev-desktop-darwin', 'Build a macOS app in dev environment', [
+        'default',
+        'build-desktop-app-content',
+        'build-desktop-executables-darwin'
+    ]);
+
     grunt.registerTask('cordova', 'Build cordova app', [
         'default',
         'build-cordova'
