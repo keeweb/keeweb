@@ -24,7 +24,8 @@ if (!gotTheLock) {
 perfTimestamps?.push({ name: 'single instance lock', ts: process.hrtime() });
 
 let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
-const userDataDir = process.env.KEEWEB_PORTABLE_EXECUTABLE_DIR || app.getPath('userData');
+const overrideUserDataDir = process.env.KEEWEB_PORTABLE_EXECUTABLE_DIR;
+const userDataDir = overrideUserDataDir || app.getPath('userData');
 const windowPositionFileName = path.join(userDataDir, 'window-position.json');
 const appSettingsFileName = path.join(userDataDir, 'app-settings.json');
 
@@ -51,8 +52,8 @@ const defaultBgColor = '#282C34';
 
 perfTimestamps?.push({ name: 'defining args', ts: process.hrtime() });
 
-setDevAppIcon();
 setEnv();
+setDevAppIcon();
 
 const appSettings = readAppSettings() || {};
 
@@ -477,6 +478,10 @@ function subscribePowerEvents() {
 }
 
 function setEnv() {
+    if (overrideUserDataDir) {
+        app.setPath('userData', overrideUserDataDir);
+    }
+
     if (
         process.platform === 'linux' &&
         ['Pantheon', 'Unity:Unity7'].indexOf(process.env.XDG_CURRENT_DESKTOP) !== -1
