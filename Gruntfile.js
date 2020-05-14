@@ -40,6 +40,14 @@ module.exports = function(grunt) {
         }
     };
 
+    const windowsAppVersionString = {
+        CompanyName: 'KeeWeb',
+        FileDescription: pkg.description,
+        OriginalFilename: 'KeeWeb.exe',
+        ProductName: 'KeeWeb',
+        InternalName: 'KeeWeb'
+    };
+
     grunt.initConfig({
         gitinfo: {
             branch: {
@@ -296,7 +304,8 @@ module.exports = function(grunt) {
                     name: 'keeweb',
                     platform: 'linux',
                     arch: ['x64'],
-                    icon: 'graphics/icon.ico'
+                    icon: 'graphics/icon.ico',
+                    ignore: [/(darwin|win32)-\w+\.node$/, /pcsclite.*\.node$/]
                 }
             },
             darwin: {
@@ -307,6 +316,7 @@ module.exports = function(grunt) {
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
                     extendInfo: 'package/osx/extend.plist',
+                    ignore: [/(linux|win32)-\w+\.node$/, /pcsclite.*\.node$/],
                     osxSign: skipSign
                         ? undefined
                         : {
@@ -367,19 +377,38 @@ module.exports = function(grunt) {
                     ]
                 }
             },
-            win32: {
+            'win32-ia32': {
                 options: {
                     platform: 'win32',
-                    arch: ['ia32', 'x64', 'arm64'],
+                    arch: 'ia32',
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
-                    'version-string': {
-                        CompanyName: 'KeeWeb',
-                        FileDescription: pkg.description,
-                        OriginalFilename: 'KeeWeb.exe',
-                        ProductName: 'KeeWeb',
-                        InternalName: 'KeeWeb'
-                    }
+                    ignore: [/(linux|darwin)-\w+\.node$/, /pcsclite.*\.node$/, /(x64|arm64)\.node/],
+                    'version-string': windowsAppVersionString
+                }
+            },
+            'win32-x64': {
+                options: {
+                    platform: 'win32',
+                    arch: 'x64',
+                    icon: 'graphics/icon.ico',
+                    buildVersion: pkg.version,
+                    ignore: [
+                        /(linux|darwin)-\w+\.node$/,
+                        /pcsclite.*\.node$/,
+                        /(ia32|arm64)\.node/
+                    ],
+                    'version-string': windowsAppVersionString
+                }
+            },
+            'win32-arm64': {
+                options: {
+                    platform: 'win32',
+                    arch: 'arm64',
+                    icon: 'graphics/icon.ico',
+                    buildVersion: pkg.version,
+                    ignore: [/(linux|darwin)-\w+\.node$/, /pcsclite.*\.node$/, /(ia32|x64)\.node/],
+                    'version-string': windowsAppVersionString
                 }
             }
         },
