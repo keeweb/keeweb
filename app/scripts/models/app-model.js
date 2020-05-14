@@ -800,6 +800,11 @@ class AppModel {
         if (params) {
             this.saveFileFingerprint(file, params.password);
         }
+        if (this.settings.yubiKeyAutoOpen) {
+            if (this.attachedYubiKeysCount > 0 && !this.files.some(f => f.external)) {
+                this.tryOpenOtpDeviceInBackground();
+            }
+        }
     }
 
     fileClosed(file) {
@@ -1221,11 +1226,15 @@ class AppModel {
         const hasOpenFiles = this.files.some(file => file.active && !file.external);
 
         if (isNewYubiKey && hasOpenFiles && !this.openingOtpDevice) {
-            this.appLogger.debug('Auto-opening a YubiKey');
-            this.openOtpDevice(err => {
-                this.appLogger.debug('YubiKey auto-open complete', err);
-            });
+            this.tryOpenOtpDeviceInBackground();
         }
+    }
+
+    tryOpenOtpDeviceInBackground() {
+        this.appLogger.debug('Auto-opening a YubiKey');
+        this.openOtpDevice(err => {
+            this.appLogger.debug('YubiKey auto-open complete', err);
+        });
     }
 
     openOtpDevice(callback) {
