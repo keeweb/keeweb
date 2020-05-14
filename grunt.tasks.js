@@ -42,11 +42,15 @@ module.exports = function(grunt) {
     grunt.registerTask('build-desktop-executables-darwin', ['electron:darwin']);
 
     grunt.registerTask('build-desktop-executables-win32', [
-        'electron:win32',
+        'electron:win32-x64',
+        'electron:win32-ia32',
+        'electron:win32-arm64',
         'sign-exe:win32-build-x64',
         'sign-exe:win32-build-ia32',
+        'sign-exe:win32-build-arm64',
+        'copy:desktop-windows-helper-x64',
         'copy:desktop-windows-helper-ia32',
-        'copy:desktop-windows-helper-x64'
+        'copy:desktop-windows-helper-arm64'
     ]);
 
     grunt.registerTask('build-desktop-executables', [
@@ -59,7 +63,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-archives-win32', [
         'compress:win32-x64',
-        'compress:win32-ia32'
+        'compress:win32-ia32',
+        'compress:win32-arm64'
     ]);
 
     grunt.registerTask('build-desktop-archives', [

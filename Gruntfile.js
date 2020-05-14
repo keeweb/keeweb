@@ -141,14 +141,19 @@ module.exports = function(grunt) {
                 dest: 'tmp/desktop/update/',
                 nonull: true
             },
+            'desktop-windows-helper-x64': {
+                src: 'helper/win32/KeeWebHelper.exe',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
+                nonull: true
+            },
             'desktop-windows-helper-ia32': {
                 src: 'helper/win32/KeeWebHelper.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/Resources/',
                 nonull: true
             },
-            'desktop-windows-helper-x64': {
+            'desktop-windows-helper-arm64': {
                 src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
+                dest: 'tmp/desktop/KeeWeb-win32-arm64/Resources/',
                 nonull: true
             },
             'desktop-win32-dist-x64': {
@@ -377,16 +382,6 @@ module.exports = function(grunt) {
                     ]
                 }
             },
-            'win32-ia32': {
-                options: {
-                    platform: 'win32',
-                    arch: 'ia32',
-                    icon: 'graphics/icon.ico',
-                    buildVersion: pkg.version,
-                    ignore: [/(linux|darwin)-\w+\.node$/, /(x64|arm64)\.node/],
-                    'version-string': windowsAppVersionString
-                }
-            },
             'win32-x64': {
                 options: {
                     platform: 'win32',
@@ -394,6 +389,16 @@ module.exports = function(grunt) {
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
                     ignore: [/(linux|darwin)-\w+\.node$/, /(ia32|arm64)\.node/],
+                    'version-string': windowsAppVersionString
+                }
+            },
+            'win32-ia32': {
+                options: {
+                    platform: 'win32',
+                    arch: 'ia32',
+                    icon: 'graphics/icon.ico',
+                    buildVersion: pkg.version,
+                    ignore: [/(linux|darwin)-\w+\.node$/, /(x64|arm64)\.node/],
                     'version-string': windowsAppVersionString
                 }
             },
@@ -460,6 +465,10 @@ module.exports = function(grunt) {
             'win32-ia32': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.zip` },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-win32-ia32', src: '**', expand: true }]
+            },
+            'win32-arm64': {
+                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.arm64.zip` },
+                files: [{ cwd: 'tmp/desktop/KeeWeb-win32-arm64', src: '**', expand: true }]
             },
             'linux-x64': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
@@ -641,6 +650,18 @@ module.exports = function(grunt) {
                         'tmp/desktop/KeeWeb-win32-ia32/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
                         'tmp/desktop/KeeWeb-win32-ia32/libGLESv2.dll':
+                            'ANGLE libGLESv2 Dynamic Link Library'
+                    }
+                }
+            },
+            'win32-build-arm64': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-arm64/ffmpeg.dll': '',
+                        'tmp/desktop/KeeWeb-win32-arm64/libEGL.dll':
+                            'ANGLE libEGL Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-arm64/libGLESv2.dll':
                             'ANGLE libGLESv2 Dynamic Link Library'
                     }
                 }
