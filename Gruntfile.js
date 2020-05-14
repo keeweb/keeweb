@@ -166,6 +166,11 @@ module.exports = function(grunt) {
                 dest: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.exe`,
                 nonull: true
             },
+            'desktop-win32-dist-arm64': {
+                src: 'tmp/desktop/KeeWeb.win.arm64.exe',
+                dest: `dist/desktop/KeeWeb-${pkg.version}.win.arm64.exe`,
+                nonull: true
+            },
             'electron-builder-dist-linux-rpm': {
                 src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.x86_64.rpm`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.x86_64.rpm`,
@@ -537,6 +542,20 @@ module.exports = function(grunt) {
                     arch: 'ia32',
                     output: 'tmp/desktop/KeeWeb-win32-ia32/uninst.exe'
                 }
+            },
+            'win32-arm64': {
+                options: {
+                    installScript: 'package/nsis/main.nsi',
+                    arch: 'arm64',
+                    output: 'tmp/desktop/KeeWeb.win.arm64.exe'
+                }
+            },
+            'win32-un-arm64': {
+                options: {
+                    installScript: 'package/nsis/main-un.nsi',
+                    arch: 'arm64',
+                    output: 'tmp/desktop/KeeWeb-win32-arm64/uninst.exe'
+                }
             }
         },
         chmod: {
@@ -680,6 +699,13 @@ module.exports = function(grunt) {
                     }
                 }
             },
+            'win32-uninst-arm64': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb-win32-arm64/uninst.exe': 'KeeWeb Uninstaller'
+                    }
+                }
+            },
             'win32-installer-x64': {
                 options: {
                     files: {
@@ -691,6 +717,13 @@ module.exports = function(grunt) {
                 options: {
                     files: {
                         'tmp/desktop/KeeWeb.win.ia32.exe': 'KeeWeb Setup'
+                    }
+                }
+            },
+            'win32-installer-arm64': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb.win.arm64.exe': 'KeeWeb Setup'
                     }
                 }
             }

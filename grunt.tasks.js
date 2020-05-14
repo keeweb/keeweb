@@ -77,14 +77,19 @@ module.exports = function(grunt) {
     grunt.registerTask('build-desktop-dist-win32', [
         'nsis:win32-un-x64',
         'nsis:win32-un-ia32',
+        'nsis:win32-un-arm64',
         'sign-exe:win32-uninst-x64',
         'sign-exe:win32-uninst-ia32',
+        'sign-exe:win32-uninst-arm64',
         'nsis:win32-x64',
         'nsis:win32-ia32',
+        'nsis:win32-arm64',
         'sign-exe:win32-installer-x64',
         'sign-exe:win32-installer-ia32',
+        'sign-exe:win32-installer-arm64',
         'copy:desktop-win32-dist-x64',
-        'copy:desktop-win32-dist-ia32'
+        'copy:desktop-win32-dist-ia32',
+        'copy:desktop-win32-dist-arm64'
     ]);
 
     grunt.registerTask('build-desktop-dist-linux', [

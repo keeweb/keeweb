@@ -7,8 +7,12 @@
 !insertmacro MUI_LANGUAGE "English"
 
 Function .onInit
-  ${If} ${RunningX64}
+  ${If} ${IsNativeAMD64}
     SetRegView 64
+    StrCpy $InstDir "$PROGRAMFILES64\${PRODUCT_NAME}"
+  ${EndIf}
+
+  ${If} ${IsNativeARM64}
     StrCpy $InstDir "$PROGRAMFILES64\${PRODUCT_NAME}"
   ${EndIf}
 
