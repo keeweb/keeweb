@@ -54,6 +54,14 @@ For debug build:
 1. run `npm run dev`
 2. open `http://localhost:8085`
 
+To build desktop apps, use these goals:
+
+```
+npm run dev-desktop-macos
+npm run dev-desktop-windows
+npm run dev-desktop-linux
+```
+
 ## Contributing
 
 Please read contribution guidelines [for pull requests](.github/PULL_REQUEST_TEMPLATE.md).  
