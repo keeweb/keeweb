@@ -38,7 +38,7 @@ const Launcher = {
     openDevTools() {
         this.electron()
             .remote.getCurrentWindow()
-            .openDevTools({ mode: 'bottom' });
+            .webContents.openDevTools({ mode: 'bottom' });
     },
     getSaveFileName(defaultPath, callback) {
         if (defaultPath) {

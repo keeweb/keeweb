@@ -207,9 +207,6 @@ function createMainWindow() {
     perfTimestamps?.push({ name: 'setting menu', ts: process.hrtime() });
 
     mainWindow.loadURL(htmlPath);
-    if (showDevToolsOnStart) {
-        mainWindow.openDevTools({ mode: 'bottom' });
-    }
     mainWindow.once('ready-to-show', () => {
         perfTimestamps?.push({ name: 'main window ready', ts: process.hrtime() });
         if (startMinimized) {
@@ -221,6 +218,10 @@ function createMainWindow() {
         notifyOpenFile();
         perfTimestamps?.push({ name: 'main window shown', ts: process.hrtime() });
         reportStartProfile();
+
+        if (showDevToolsOnStart) {
+            mainWindow.webContents.openDevTools({ mode: 'bottom' });
+        }
     });
     mainWindow.webContents.on('context-menu', onContextMenu);
     mainWindow.on('resize', delaySaveMainWindowPosition);
