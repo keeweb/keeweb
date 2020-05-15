@@ -222,10 +222,7 @@ const Launcher = {
         return !!this.electron().remote.BrowserWindow.getFocusedWindow();
     },
     showMainWindow() {
-        const win = this.getMainWindow();
-        win.show();
-        win.focus();
-        win.restore();
+        this.remoteApp().showAndFocusMainWindow();
     },
     spawn(config) {
         const ts = logger.ts();

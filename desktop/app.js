@@ -15,6 +15,7 @@ let appReady = false;
 let restartPending = false;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
+let mainWindowMaximized = false;
 
 const windowPositionFileName = 'window-position.json';
 const appSettingsFileName = 'app-settings.json';
@@ -160,6 +161,7 @@ app.reqNative = function(mod) {
     }
     return binding;
 };
+app.showAndFocusMainWindow = showAndFocusMainWindow;
 
 function readAppSettings() {
     const appSettingsFilePath = path.join(app.getPath('userData'), appSettingsFileName);
@@ -237,6 +239,12 @@ function createMainWindow() {
     mainWindow.on('minimize', () => {
         emitRemoteEvent('launcher-minimize');
     });
+    mainWindow.on('maximize', () => {
+        mainWindowMaximized = true;
+    });
+    mainWindow.on('unmaximize', () => {
+        mainWindowMaximized = false;
+    });
     mainWindow.on('leave-full-screen', () => {
         emitRemoteEvent('leave-full-screen');
     });
@@ -264,6 +272,15 @@ function restoreMainWindow() {
     mainWindow.show();
     coerceMainWindowPositionToConnectedDisplay();
     setTimeout(destroyAppIcon, 0);
+}
+
+function showAndFocusMainWindow() {
+    if (mainWindowMaximized) {
+        mainWindow.maximize();
+    } else {
+        mainWindow.show();
+    }
+    mainWindow.focus();
 }
 
 function closeMainWindow() {
@@ -335,6 +352,7 @@ function restoreMainWindowPosition() {
                 }
                 if (mainWindowPosition.maximized) {
                     mainWindow.maximize();
+                    mainWindowMaximized = true;
                 }
                 if (mainWindowPosition.fullScreen) {
                     mainWindow.setFullScreen(true);

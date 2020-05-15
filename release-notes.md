@@ -11,6 +11,7 @@ Release notes
 `+` #1350: clearing master password after auto lock period  
 `-` fix #1463: copying the original url instead of adding https:  
 `-` fix #620: clearing middle-click clipboard in Linux  
+`-` fix #1440: fixed auto-type for maximized windows  
 
 ##### v1.14.3 (2020-05-15)
 `*` improved exporting files with markdown notes  
