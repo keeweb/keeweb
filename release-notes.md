@@ -1,7 +1,7 @@
 Release notes
 -------------
 ##### v1.14.3 (2020-05-15)
-`*` disabled markdown in export  
+`*` improved exporting files with markdown notes  
 
 ##### v1.14.2 (2020-05-04)
 `-` distinct redirect URIs for storage providers  
