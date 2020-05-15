@@ -17,7 +17,7 @@ const FieldMapping = [
     { name: 'UserName', locStr: 'user' },
     { name: 'Password', locStr: 'password', protect: true },
     { name: 'URL', locStr: 'website' },
-    { name: 'Notes', locStr: 'notes', markdown: true }
+    { name: 'Notes', locStr: 'notes' }
 ];
 
 const KnownFields = { 'Title': true };
@@ -42,21 +42,12 @@ function walkEntry(db, entry, parents) {
     const path = parents.map(group => group.name).join(' / ');
     const fields = [];
     for (const field of FieldMapping) {
-        let value = entryField(entry, field.name);
+        const value = entryField(entry, field.name);
         if (value) {
-            let html = false;
-            if (field.markdown && AppSettingsModel.useMarkdown) {
-                const converted = MdToHtml.convert(value);
-                if (converted.html) {
-                    value = converted.html;
-                    html = true;
-                }
-            }
             fields.push({
                 title: StringFormat.capFirst(Locale[field.locStr]),
                 value,
-                protect: field.protect,
-                html
+                protect: field.protect
             });
         }
     }
