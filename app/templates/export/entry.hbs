@@ -5,12 +5,12 @@
     {{#each fields as |field|}}
         <tr>
             <td>{{field.title}}</td>
-            <td>
-                {{#if field.protect}}
+            <td class="field">
+                {{~#if field.protect~}}
                     <code>{{field.value}}</code>
-                {{else}}
+                {{~else~}}
                     {{field.value}}
-                {{/if}}
+                {{~/if~}}
             </td>
         </tr>
     {{/each}}
