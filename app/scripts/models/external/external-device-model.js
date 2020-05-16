@@ -9,7 +9,7 @@ class ExternalDeviceModel extends Model {
     close() {}
 
     forEachEntry(filter, callback) {
-        if (filter.trash || filter.group) {
+        if (filter.trash || filter.group || filter.tag) {
             return;
         }
         for (const entry of this.entries) {
