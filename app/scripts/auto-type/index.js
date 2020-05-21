@@ -58,8 +58,8 @@ const AutoType = {
         }
     },
 
-    runAndHandleResult(result) {
-        this.run(result, err => {
+    runAndHandleResult(result, windowId) {
+        this.run(result, windowId, err => {
             if (err) {
                 Alerts.error({
                     header: Locale.autoTypeError,
@@ -73,7 +73,7 @@ const AutoType = {
         }
     },
 
-    run(result, callback) {
+    run(result, windowId, callback) {
         this.running = true;
         const sequence = result.sequence || result.entry.getEffectiveAutoTypeSeq();
         logger.debug('Start', sequence);
@@ -107,7 +107,7 @@ const AutoType = {
                     }
                     logger.debug('Complete', logger.ts(ts));
                     return callback && callback();
-                }, this.windowId);
+                }, windowId);
             });
         } catch (ex) {
             this.running = false;
@@ -185,7 +185,6 @@ const AutoType = {
                 logger.debug('Error during active window check, something is wrong', err);
                 return callback(false);
             }
-            this.windowId = windowInfo.id;
             if (activeWindowInfo.id !== windowInfo.id && Launcher.platform() !== 'linux') {
                 logger.info(
                     `Active window doesn't match: ID is different. ` +
@@ -227,7 +226,7 @@ const AutoType = {
         const entries = evt.filter.getEntries();
         if (entries.length === 1 && AppSettingsModel.directAutotype) {
             this.hideWindow(() => {
-                this.runAndHandleResult({ entry: entries[0] });
+                this.runAndHandleResult({ entry: entries[0] }, evt.windowInfo.id);
             });
             return;
         }
@@ -243,7 +242,7 @@ const AutoType = {
                 if (result) {
                     this.activeWindowMatches(evt.windowInfo, (matches, activeWindowInfo) => {
                         if (matches) {
-                            this.runAndHandleResult(result);
+                            this.runAndHandleResult(result, evt.windowInfo.id);
                         }
                     });
                 }
