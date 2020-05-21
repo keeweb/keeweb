@@ -59,8 +59,9 @@ const ModMap = {
     '^^': 'ctrl'
 };
 
-const AutoTypeEmitter = function(callback) {
+const AutoTypeEmitter = function(callback, windowID) {
     this.callback = callback;
+    this.windowID = windowID;
     this.mod = {};
     this.pendingScript = [];
 };
@@ -76,13 +77,15 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 AutoTypeEmitter.prototype.text = function(text) {
     this.pendingScript.push('keyup ctrl alt shift t');
     Object.keys(this.mod).forEach(mod => {
-        this.pendingScript.push('keydown ' + ModMap[mod]);
+        this.pendingScript.push('keydown --window  ' + this.windowID + ' ' + ModMap[mod]);
     });
     text.split('').forEach(char => {
-        this.pendingScript.push('key U' + char.charCodeAt(0).toString(16));
+        this.pendingScript.push(
+            'key --window ' + this.windowID + ' U' + char.charCodeAt(0).toString(16)
+        );
     });
     Object.keys(this.mod).forEach(mod => {
-        this.pendingScript.push('keyup ' + ModMap[mod]);
+        this.pendingScript.push('keyup --window ' + this.windowID + ' ' + ModMap[mod]);
     });
     this.waitComplete();
 };
@@ -94,14 +97,16 @@ AutoTypeEmitter.prototype.key = function(key) {
         }
         key = KeyMap[key].toString(16);
     }
-    this.pendingScript.push('key --clearmodifiers ' + this.modString() + key);
+    this.pendingScript.push(
+        'key --clearmodifiers --window ' + this.windowID + ' ' + this.modString() + key
+    );
     this.callback();
 };
 
 AutoTypeEmitter.prototype.copyPaste = function(text) {
     this.pendingScript.push('sleep 0.5');
     Launcher.setClipboardText(text);
-    this.pendingScript.push('key --clearmodifiers shift+Insert');
+    this.pendingScript.push('key --clearmodifiers --window ' + this.windowID + ' shift+Insert');
     this.pendingScript.push('sleep 0.5');
     this.waitComplete();
 };

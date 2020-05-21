@@ -9,8 +9,9 @@ const emitterLogger = new Logger(
     localStorage.debugAutoType ? Logger.Level.All : Logger.Level.Warn
 );
 
-const AutoTypeRunner = function(ops) {
+const AutoTypeRunner = function(ops, windowID) {
     this.ops = ops;
+    this.windowID = windowID;
     this.pendingResolvesCount = 0;
     this.entry = null;
     this.now = new Date();
@@ -426,7 +427,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
 };
 
 AutoTypeRunner.prototype.run = function(callback) {
-    this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this));
+    this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this), this.windowID);
     this.emitterState = {
         callback,
         stack: [],
