@@ -79,7 +79,7 @@ const AutoType = {
         logger.debug('Start', sequence);
         const ts = logger.ts();
         try {
-            const parser = new AutoTypeParser(sequence, this.windowID);
+            const parser = new AutoTypeParser(sequence);
             const runner = parser.parse();
             logger.debug('Parsed', this.printOps(runner.ops));
             runner.resolve(result.entry, err => {
@@ -107,7 +107,7 @@ const AutoType = {
                     }
                     logger.debug('Complete', logger.ts(ts));
                     return callback && callback();
-                });
+                }, this.windowId);
             });
         } catch (ex) {
             this.running = false;
@@ -169,7 +169,6 @@ const AutoType = {
                     const urlMatches = urlMatcher.exec(windowInfo.title);
                     windowInfo.url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
                 }
-                this.windowID = windowInfo.id;
                 logger.debug('Window info', windowInfo.id, windowInfo.title, windowInfo.url);
             }
             return callback(err, windowInfo);
@@ -186,13 +185,14 @@ const AutoType = {
                 logger.debug('Error during active window check, something is wrong', err);
                 return callback(false);
             }
-            // if (activeWindowInfo.id !== windowInfo.id) {
-            //     logger.info(
-            //         `Active window doesn't match: ID is different. ` +
-            //             `Expected ${windowInfo.id}, got ${activeWindowInfo.id}`
-            //     );
-            //     return callback(false, activeWindowInfo);
-            // }
+            this.windowId = windowInfo.id;
+            if (activeWindowInfo.id !== windowInfo.id && Launcher.platform() !== 'linux') {
+                logger.info(
+                    `Active window doesn't match: ID is different. ` +
+                        `Expected ${windowInfo.id}, got ${activeWindowInfo.id}`
+                );
+                return callback(false, activeWindowInfo);
+            }
             if (activeWindowInfo.url !== windowInfo.url) {
                 logger.info(
                     `Active window doesn't match: url is different. ` +
@@ -200,7 +200,6 @@ const AutoType = {
                 );
                 return callback(false, activeWindowInfo);
             }
-            this.windowID = windowInfo.id;
             logger.info('Active window matches');
             callback(true, activeWindowInfo);
         });

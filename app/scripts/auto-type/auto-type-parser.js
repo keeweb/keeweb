@@ -1,8 +1,7 @@
 import { AutoTypeRunner } from 'auto-type/auto-type-runner';
 
-const AutoTypeParser = function(sequence, windowID) {
+const AutoTypeParser = function(sequence) {
     this.sequence = sequence;
-    this.windowID = windowID;
     this.ix = 0;
     this.states = [];
 };
@@ -43,7 +42,7 @@ AutoTypeParser.prototype.parse = function() {
     if (this.states.length !== 1) {
         throw 'Groups count mismatch';
     }
-    return new AutoTypeRunner(this.state().ops, this.windowID);
+    return new AutoTypeRunner(this.state().ops);
 };
 
 AutoTypeParser.prototype.pushState = function() {
