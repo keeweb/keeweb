@@ -431,8 +431,8 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
     op.type = 'group';
 };
 
-AutoTypeRunner.prototype.run = function(callback) {
-    this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this));
+AutoTypeRunner.prototype.run = function(callback, windowId) {
+    this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this), windowId);
     this.emitterState = {
         callback,
         stack: [],
