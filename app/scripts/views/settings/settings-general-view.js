@@ -71,7 +71,7 @@ class SettingsGeneralView extends View {
 
         super.render({
             themes: mapObject(SettingsManager.allThemes, theme => Locale[theme]),
-            activeTheme: AppSettingsModel.theme,
+            activeTheme: SettingsManager.activeTheme,
             locales: SettingsManager.allLocales,
             activeLocale: SettingsManager.activeLocale,
             fontSize: AppSettingsModel.fontSize,

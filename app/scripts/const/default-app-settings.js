@@ -1,5 +1,5 @@
 const DefaultAppSettings = {
-    theme: 'fb', // UI theme
+    theme: null, // UI theme
     locale: null, // user interface language
     expandGroups: true, // show entries from all subgroups
     listViewWidth: null, // width of the entry list representation

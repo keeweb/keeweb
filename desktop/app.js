@@ -188,7 +188,13 @@ function setSystemAppearance() {
     perfTimestamps?.push({ name: 'setting system appearance', ts: process.hrtime() });
 }
 
+function getDefaultTheme() {
+    return process.platform === 'darwin' ? 'macdark' : 'fb';
+}
+
 function createMainWindow() {
+    const theme = appSettings.theme || getDefaultTheme();
+    const bgColor = themeBgColors[theme] || defaultBgColor;
     const windowOptions = {
         show: false,
         width: 1000,
@@ -196,7 +202,7 @@ function createMainWindow() {
         minWidth: 700,
         minHeight: 400,
         titleBarStyle: appSettings.titlebarStyle,
-        backgroundColor: themeBgColors[appSettings.theme] || defaultBgColor,
+        backgroundColor: bgColor,
         webPreferences: {
             backgroundThrottling: false,
             nodeIntegration: true,

@@ -6,6 +6,7 @@ Release notes
 `+` #1503: ARM64 Windows support  
 `+` #1480: option to create a portable installation  
 `+` #1400: auto-apply tag when creating new entry in tag view  
+`*` default theme on macOS is now macOS-Dark   
 `+` #1342: hint that the data will be stored in unencrypted form after exporting  
 `*` #1471: WebDAV url validation, only HTTPS is allowed  
 `+` #1350: clearing master password after auto lock period  

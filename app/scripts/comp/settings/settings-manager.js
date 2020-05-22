@@ -11,6 +11,7 @@ const extraThemes = Features.isMac || Features.isiOS ? appleThemes : {};
 const SettingsManager = {
     neutralLocale: null,
     activeLocale: 'en',
+    activeTheme: null,
 
     allLocales: {
         'en': 'English',
@@ -32,9 +33,7 @@ const SettingsManager = {
     customLocales: {},
 
     setBySettings(settings) {
-        if (settings.theme) {
-            this.setTheme(settings.theme);
-        }
+        this.setTheme(settings.theme);
         this.setFontSize(settings.fontSize);
         const locale = settings.locale;
         try {
@@ -46,7 +45,17 @@ const SettingsManager = {
         } catch (ex) {}
     },
 
+    getDefaultTheme() {
+        return Features.isMac ? 'macdark' : 'fb';
+    },
+
     setTheme(theme) {
+        if (!theme) {
+            if (this.activeTheme) {
+                return;
+            }
+            theme = this.getDefaultTheme();
+        }
         for (const cls of document.body.classList) {
             if (/^th-/.test(cls)) {
                 document.body.classList.remove(cls);
@@ -57,6 +66,7 @@ const SettingsManager = {
         if (metaThemeColor) {
             metaThemeColor.content = window.getComputedStyle(document.body).backgroundColor;
         }
+        this.activeTheme = theme;
     },
 
     getThemeClass(theme) {
