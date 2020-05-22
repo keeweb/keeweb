@@ -20,7 +20,7 @@ class SettingsPrvView extends View {
     changeField(e) {
         const id = e.target.dataset.id;
         const value = e.target.value;
-        if (!e.target.checkValidity()) {
+        if (value && !e.target.checkValidity()) {
             return;
         }
         const storage = Storage[this.model.name];
