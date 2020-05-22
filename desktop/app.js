@@ -609,7 +609,7 @@ function deleteRecursive(dir) {
 }
 
 function setDevAppIcon() {
-    if (isDev && htmlPath) {
+    if (isDev && htmlPath && process.platform === 'darwin') {
         const icon = electron.nativeImage.createFromPath(
             path.join(__dirname, '../graphics/512x512.png')
         );
