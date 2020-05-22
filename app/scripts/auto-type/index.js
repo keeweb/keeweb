@@ -188,7 +188,6 @@ const AutoType = {
                 logger.debug('Error during active window check, something is wrong', err);
                 return callback(false);
             }
-            logger.info(this.supportsEventsWithWindowId);
             if (activeWindowInfo.id !== windowInfo.id && !this.supportsEventsWithWindowId) {
                 logger.info(
                     `Active window doesn't match: ID is different. ` +
