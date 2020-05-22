@@ -823,7 +823,7 @@ function saveConfig(name, data, key) {
 
             data = Buffer.from(data);
 
-            if (configEncryptionKey) {
+            if (key) {
                 const crypto = require('crypto');
                 const cipher = crypto.createCipheriv(
                     'aes-256-cbc',
