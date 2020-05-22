@@ -29,6 +29,10 @@ if (!gotTheLock) {
 
 perfTimestamps?.push({ name: 'single instance lock', ts: process.hrtime() });
 
+let isPortable;
+let execPath;
+
+setPortableAndExecPath();
 initUserDataDir();
 
 let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
@@ -161,6 +165,7 @@ app.reqNative = function(mod) {
     return binding;
 };
 app.showAndFocusMainWindow = showAndFocusMainWindow;
+app.isPortable = isPortable;
 
 function readAppSettings() {
     const appSettingsFilePath = path.join(app.getPath('userData'), appSettingsFileName);
@@ -510,9 +515,9 @@ function subscribePowerEvents() {
     perfTimestamps?.push({ name: 'subscribing to power events', ts: process.hrtime() });
 }
 
-function initUserDataDir() {
-    let execPath = process.execPath;
-    let isPortable;
+function setPortableAndExecPath() {
+    execPath = process.execPath;
+
     switch (process.platform) {
         case 'darwin':
             isPortable = !execPath.startsWith('/Applications/');
@@ -528,6 +533,10 @@ function initUserDataDir() {
             break;
     }
 
+    perfTimestamps?.push({ name: 'portable check', ts: process.hrtime() });
+}
+
+function initUserDataDir() {
     if (isPortable) {
         const portableConfigDir = path.dirname(execPath);
         const portableConfigPath = path.join(portableConfigDir, portableConfigFileName);
