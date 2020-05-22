@@ -52,7 +52,7 @@ class FieldView extends View {
             this.tip = typeof this.model.tip === 'function' ? this.model.tip() : this.model.tip;
             if (this.tip) {
                 this.valueEl.attr('title', this.tip);
-                Tip.createTip(this.valueEl);
+                Tip.createTip(this.valueEl[0]);
             }
         }
     }
