@@ -823,14 +823,16 @@ function saveConfig(name, data, key) {
 
             data = Buffer.from(data);
 
-            const crypto = require('crypto');
-            const cipher = crypto.createCipheriv(
-                'aes-256-cbc',
-                key.slice(0, 32),
-                key.slice(32, 48)
-            );
+            if (configEncryptionKey) {
+                const crypto = require('crypto');
+                const cipher = crypto.createCipheriv(
+                    'aes-256-cbc',
+                    key.slice(0, 32),
+                    key.slice(32, 48)
+                );
 
-            data = Buffer.concat([cipher.update(data), cipher.final()]);
+                data = Buffer.concat([cipher.update(data), cipher.final()]);
+            }
         } catch (err) {
             return reject(`Error writing config data ${name}: ${err}`);
         }
