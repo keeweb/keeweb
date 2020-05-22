@@ -6,30 +6,19 @@ const logger = new Logger('settings');
 
 const SettingsStore = {
     load(key) {
+        let loadPromise;
         if (Launcher) {
-            return Launcher.loadConfig(key)
-                .then(JSON.parse)
-                .catch(err => {
-                    logger.error(`Error loading ${key}`, err);
-                });
+            loadPromise = Launcher.loadConfig(key);
+        } else {
+            loadPromise = Promise.resolve().then(() => {
+                return localStorage[StringFormat.camelCase(key)];
+            });
         }
-        return new Promise(resolve => {
-            const data = localStorage[StringFormat.camelCase(key)];
-            return this.parseData(key, data, resolve);
-        });
-    },
-
-    parseData(key, data, resolve) {
-        try {
-            if (data) {
-                return resolve(JSON.parse(data));
-            } else {
-                resolve();
-            }
-        } catch (e) {
-            logger.error(`Error loading ${key}`, e);
-            resolve();
-        }
+        return loadPromise
+            .then(data => (data ? JSON.parse(data) : null))
+            .catch(err => {
+                logger.error(`Error loading ${key}`, err);
+            });
     },
 
     save(key, data) {
