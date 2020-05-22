@@ -7,9 +7,11 @@ const logger = new Logger('settings');
 const SettingsStore = {
     load(key) {
         if (Launcher) {
-            return Launcher.loadConfig(key).catch(err => {
-                logger.error(`Error loading ${key}`, err);
-            });
+            return Launcher.loadConfig(key)
+                .then(JSON.parse)
+                .catch(err => {
+                    logger.error(`Error loading ${key}`, err);
+                });
         }
         return new Promise(resolve => {
             const data = localStorage[StringFormat.camelCase(key)];

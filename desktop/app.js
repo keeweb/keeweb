@@ -71,7 +71,7 @@ const settingsPromise = loadSettingsEncryptionKey().then(key => {
     perfTimestamps?.push({ name: 'loading settings key', ts: process.hrtime() });
 
     return loadConfig('app-settings').then(settings => {
-        appSettings = settings || {};
+        appSettings = settings ? JSON.parse(settings) : {};
         perfTimestamps?.push({ name: 'reading app settings', ts: process.hrtime() });
     });
 });
@@ -795,14 +795,10 @@ function loadConfig(name) {
                     const crypto = require('crypto');
                     const cipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
 
-                    data = Buffer.concat([cipher.update(data), cipher.final()]).toString('utf8');
-                } else {
-                    data = data.toString('utf8');
+                    data = Buffer.concat([cipher.update(data), cipher.final()]);
                 }
 
-                data = JSON.parse(data);
-
-                resolve(data);
+                resolve(data.toString('utf8'));
             } catch (err) {
                 reject(`Error reading config data ${name}: ${err}`);
             }
@@ -817,10 +813,6 @@ function saveConfig(name, data, key) {
 
     return new Promise((resolve, reject) => {
         try {
-            if (typeof data !== 'string') {
-                data = JSON.stringify(data);
-            }
-
             data = Buffer.from(data);
 
             if (key) {
