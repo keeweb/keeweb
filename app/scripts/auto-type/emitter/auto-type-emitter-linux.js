@@ -61,7 +61,11 @@ const ModMap = {
 
 const AutoTypeEmitter = function(callback, windowId) {
     this.callback = callback;
-    this.windowId = windowId;
+    if (typeof windowId !== 'undefined' && windowId) {
+        this.windowParameter = '--window ' + windowId + ' ';
+    } else {
+        this.windowParameter = '';
+    }
     this.mod = {};
     this.pendingScript = [];
 };
@@ -77,15 +81,15 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
 AutoTypeEmitter.prototype.text = function(text) {
     this.pendingScript.push('keyup ctrl alt shift t');
     Object.keys(this.mod).forEach(mod => {
-        this.pendingScript.push('keydown --window  ' + this.windowId + ' ' + ModMap[mod]);
+        this.pendingScript.push('keydown ' + this.windowParameter + ModMap[mod]);
     });
     text.split('').forEach(char => {
         this.pendingScript.push(
-            'key --window ' + this.windowId + ' U' + char.charCodeAt(0).toString(16)
+            'key ' + this.windowParameter + 'U' + char.charCodeAt(0).toString(16)
         );
     });
     Object.keys(this.mod).forEach(mod => {
-        this.pendingScript.push('keyup --window ' + this.windowId + ' ' + ModMap[mod]);
+        this.pendingScript.push('keyup ' + this.windowParameter + ModMap[mod]);
     });
     this.waitComplete();
 };
@@ -98,7 +102,7 @@ AutoTypeEmitter.prototype.key = function(key) {
         key = KeyMap[key].toString(16);
     }
     this.pendingScript.push(
-        'key --clearmodifiers --window ' + this.windowId + ' ' + this.modString() + key
+        'key --clearmodifiers ' + this.windowParameter + this.modString() + key
     );
     this.callback();
 };
@@ -106,7 +110,7 @@ AutoTypeEmitter.prototype.key = function(key) {
 AutoTypeEmitter.prototype.copyPaste = function(text) {
     this.pendingScript.push('sleep 0.5');
     Launcher.setClipboardText(text);
-    this.pendingScript.push('key --clearmodifiers --window ' + this.windowId + ' shift+Insert');
+    this.pendingScript.push('key --clearmodifiers ' + this.windowParameter + 'shift+Insert');
     this.pendingScript.push('sleep 0.5');
     this.waitComplete();
 };
