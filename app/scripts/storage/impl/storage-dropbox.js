@@ -105,7 +105,7 @@ class StorageDropbox extends StorageBase {
                     id: 'secret',
                     title: 'dropboxAppSecret',
                     desc: 'dropboxAppSecretDesc',
-                    type: 'text',
+                    type: 'password',
                     required: true,
                     pattern: '\\w+'
                 },
@@ -143,7 +143,7 @@ class StorageDropbox extends StorageBase {
             id: 'secret',
             title: 'dropboxAppSecret',
             desc: 'dropboxAppSecretDesc',
-            type: 'text',
+            type: 'password',
             required: true,
             pattern: '\\w+',
             value: this.appSettings.dropboxSecret || ''
