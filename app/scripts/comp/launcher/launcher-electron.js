@@ -136,6 +136,12 @@ const Launcher = {
     createFsWatcher(path) {
         return this.req('fs').watch(path, { persistent: false });
     },
+    loadConfig(name) {
+        return this.remoteApp().loadConfig(name);
+    },
+    saveConfig(name, data) {
+        return this.remoteApp().saveConfig(name, data);
+    },
     ensureRunnable(path) {
         if (process.platform !== 'win32') {
             const fs = this.req('fs');

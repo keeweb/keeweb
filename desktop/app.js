@@ -19,8 +19,9 @@ let mainWindowMaximized = false;
 let usbBinding = null;
 
 const windowPositionFileName = 'window-position.json';
-const appSettingsFileName = 'app-settings.json';
 const portableConfigFileName = 'keeweb-portable.json';
+
+const isDev = !__dirname.endsWith('.asar');
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -37,7 +38,6 @@ initUserDataDir();
 
 let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
 
-const isDev = !__dirname.endsWith('.asar');
 const htmlPath =
     (isDev && process.env.KEEWEB_HTML_PATH) || 'file://' + path.join(__dirname, 'index.html');
 const showDevToolsOnStart =
@@ -63,7 +63,18 @@ perfTimestamps?.push({ name: 'defining args', ts: process.hrtime() });
 setEnv();
 setDevAppIcon();
 
-const appSettings = readAppSettings() || {};
+let configEncryptionKey;
+let appSettings;
+
+const settingsPromise = loadSettingsEncryptionKey().then(key => {
+    configEncryptionKey = key;
+    perfTimestamps?.push({ name: 'loading settings key', ts: process.hrtime() });
+
+    return loadConfig('app-settings').then(settings => {
+        appSettings = settings || {};
+        perfTimestamps?.push({ name: 'reading app settings', ts: process.hrtime() });
+    });
+});
 
 app.on('window-all-closed', () => {
     if (restartPending) {
@@ -78,12 +89,20 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
     perfTimestamps?.push({ name: 'app on ready', ts: process.hrtime() });
     appReady = true;
-    setSystemAppearance();
-    createMainWindow();
-    setGlobalShortcuts(appSettings);
-    subscribePowerEvents();
-    deleteOldTempFiles();
-    hookRequestHeaders();
+
+    settingsPromise
+        .then(() => {
+            setSystemAppearance();
+            createMainWindow();
+            setGlobalShortcuts(appSettings);
+            subscribePowerEvents();
+            deleteOldTempFiles();
+            hookRequestHeaders();
+        })
+        .catch(e => {
+            electron.dialog.showErrorBox('KeeWeb', 'Error loading app: ' + e);
+            process.exit(2);
+        });
 });
 app.on('open-file', (e, path) => {
     e.preventDefault();
@@ -156,28 +175,10 @@ app.getMainWindow = function() {
     return mainWindow;
 };
 app.setGlobalShortcuts = setGlobalShortcuts;
-app.reqNative = function(mod) {
-    const fileName = `${mod}-${process.platform}-${process.arch}.node`;
-    const binding = require(`@keeweb/keeweb-native-modules/${fileName}`);
-    if (mod === 'usb') {
-        usbBinding = initUsb(binding);
-    }
-    return binding;
-};
+app.reqNative = reqNative;
 app.showAndFocusMainWindow = showAndFocusMainWindow;
-app.isPortable = isPortable;
-
-function readAppSettings() {
-    const appSettingsFilePath = path.join(app.getPath('userData'), appSettingsFileName);
-
-    try {
-        return JSON.parse(fs.readFileSync(appSettingsFilePath, 'utf8'));
-    } catch (e) {
-        return null;
-    } finally {
-        perfTimestamps?.push({ name: 'reading app settings', ts: process.hrtime() });
-    }
-}
+app.loadConfig = loadConfig;
+app.saveConfig = saveConfig;
 
 function setSystemAppearance() {
     if (process.platform === 'darwin') {
@@ -539,6 +540,10 @@ function setPortableAndExecPath() {
             break;
     }
 
+    if (isDev && process.env.KEEWEB_IS_PORTABLE) {
+        isPortable = !!JSON.parse(process.env.KEEWEB_IS_PORTABLE);
+    }
+
     perfTimestamps?.push({ name: 'portable check', ts: process.hrtime() });
 }
 
@@ -623,7 +628,10 @@ function setDevAppIcon() {
 
 function hookRequestHeaders() {
     electron.session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
-        if (!details.url.startsWith('ws:')) {
+        if (
+            !details.url.startsWith('ws:') &&
+            !details.url.startsWith('https://plugins.keeweb.info/')
+        ) {
             delete details.requestHeaders.Origin;
         }
         callback({ requestHeaders: details.requestHeaders });
@@ -672,26 +680,6 @@ function coerceMainWindowPositionToConnectedDisplay() {
     updateMainWindowPosition();
 }
 
-function initUsb(binding) {
-    Object.keys(EventEmitter.prototype).forEach(key => {
-        binding[key] = EventEmitter.prototype[key];
-    });
-
-    binding.on('newListener', () => {
-        if (binding.listenerCount('attach') === 0 && binding.listenerCount('detach') === 0) {
-            binding._enableHotplugEvents();
-        }
-    });
-
-    binding.on('removeListener', () => {
-        if (binding.listenerCount('attach') === 0 && binding.listenerCount('detach') === 0) {
-            binding._disableHotplugEvents();
-        }
-    });
-
-    return binding;
-}
-
 function reportStartProfile() {
     if (!perfTimestamps) {
         return;
@@ -718,4 +706,170 @@ function reportStartProfile() {
 
     const startProfile = { totalTime, timings };
     emitRemoteEvent('start-profile', startProfile);
+}
+
+function reqNative(mod) {
+    const fileName = `${mod}-${process.platform}-${process.arch}.node`;
+    const binding = require(`@keeweb/keeweb-native-modules/${fileName}`);
+    if (mod === 'usb') {
+        usbBinding = initUsb(binding);
+    }
+    return binding;
+}
+
+function initUsb(binding) {
+    Object.keys(EventEmitter.prototype).forEach(key => {
+        binding[key] = EventEmitter.prototype[key];
+    });
+
+    binding.on('newListener', () => {
+        if (binding.listenerCount('attach') === 0 && binding.listenerCount('detach') === 0) {
+            binding._enableHotplugEvents();
+        }
+    });
+
+    binding.on('removeListener', () => {
+        if (binding.listenerCount('attach') === 0 && binding.listenerCount('detach') === 0) {
+            binding._disableHotplugEvents();
+        }
+    });
+
+    return binding;
+}
+
+function loadSettingsEncryptionKey() {
+    return Promise.resolve().then(() => {
+        if (isPortable) {
+            return null;
+        }
+
+        const explicitlyDisabledFile = path.join(app.getPath('userData'), 'disable-keytar');
+        if (fs.existsSync(explicitlyDisabledFile)) {
+            // TODO: remove this fallback if everything goes well on v1.15
+            // This is a protective measure if everything goes terrible with native modules
+            // For example, the app can crash and it won't be possible to use it at all
+            return null;
+        }
+
+        const keytar = reqNative('keytar');
+        return new Promise((resolve, reject) => {
+            keytar.getPassword('KeeWeb', 'settings-key', (err, key) => {
+                if (err) {
+                    return reject('Error loading settings key from keytar');
+                }
+                if (key) {
+                    return resolve(Buffer.from(key, 'hex'));
+                }
+                key = require('crypto').randomBytes(48);
+                keytar.setPassword('KeeWeb', 'settings-key', key.toString('hex'), err => {
+                    if (err) {
+                        return reject('Error saving settings key in keytar');
+                    }
+                    migrateOldConfigs(key).then(() => resolve(key));
+                });
+            });
+        });
+    });
+}
+
+function loadConfig(name) {
+    const ext = configEncryptionKey ? 'dat' : 'json';
+    const configFilePath = path.join(app.getPath('userData'), `${name}.${ext}`);
+
+    return new Promise((resolve, reject) => {
+        fs.readFile(configFilePath, (err, data) => {
+            if (err) {
+                if (err.code === 'ENOENT') {
+                    resolve(null);
+                } else {
+                    reject(`Error reading config ${name}: ${err}`);
+                }
+                return;
+            }
+
+            try {
+                if (configEncryptionKey) {
+                    const key = configEncryptionKey.slice(0, 32);
+                    const iv = configEncryptionKey.slice(32, 48);
+
+                    const crypto = require('crypto');
+                    const cipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+
+                    data = Buffer.concat([cipher.update(data), cipher.final()]).toString('utf8');
+                } else {
+                    data = data.toString('utf8');
+                }
+
+                data = JSON.parse(data);
+
+                resolve(data);
+            } catch (err) {
+                reject(`Error reading config data ${name}: ${err}`);
+            }
+        });
+    });
+}
+
+function saveConfig(name, data, key) {
+    if (!key) {
+        key = configEncryptionKey;
+    }
+
+    return new Promise((resolve, reject) => {
+        try {
+            if (typeof data !== 'string') {
+                data = JSON.stringify(data);
+            }
+
+            data = Buffer.from(data);
+
+            const crypto = require('crypto');
+            const cipher = crypto.createCipheriv(
+                'aes-256-cbc',
+                key.slice(0, 32),
+                key.slice(32, 48)
+            );
+
+            data = Buffer.concat([cipher.update(data), cipher.final()]);
+        } catch (err) {
+            return reject(`Error writing config data ${name}: ${err}`);
+        }
+
+        const configFilePath = path.join(app.getPath('userData'), `${name}.dat`);
+        fs.writeFile(configFilePath, data, err => {
+            if (err) {
+                reject(`Error writing config ${name}: ${err}`);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+// TODO: delete in 2021
+function migrateOldConfigs(key) {
+    const knownConfigs = [
+        'file-info',
+        'app-settings',
+        'runtime-data',
+        'update-info',
+        'plugin-gallery',
+        'plugins'
+    ];
+
+    const promises = [];
+
+    for (const configName of knownConfigs) {
+        promises.push(
+            loadConfig(configName).then(data => {
+                if (data) {
+                    return saveConfig(configName, data, key).then(() => {
+                        fs.unlinkSync(path.join(app.getPath('userData'), `${configName}.json`));
+                    });
+                }
+            })
+        );
+    }
+
+    return Promise.all(promises);
 }

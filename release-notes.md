@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.15.0 (WIP)
 `+` YubiKey integration in two modes: OATH and Challenge-Response  
+`+` configs are now encrypted with a key stored in keychain  
 `+` #557: Argon2 speed improvements in desktop apps  
 `+` #1503: ARM64 Windows support  
 `+` #1480: option to create a portable installation  
