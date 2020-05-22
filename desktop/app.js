@@ -16,6 +16,7 @@ let restartPending = false;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
 let mainWindowMaximized = false;
+let usbBinding = null;
 
 const windowPositionFileName = 'window-position.json';
 const appSettingsFileName = 'app-settings.json';
@@ -155,9 +156,7 @@ app.reqNative = function(mod) {
     const fileName = `${mod}-${process.platform}-${process.arch}.node`;
     const binding = require(`@keeweb/keeweb-native-modules/${fileName}`);
     if (mod === 'usb') {
-        Object.keys(EventEmitter.prototype).forEach(key => {
-            binding[key] = EventEmitter.prototype[key];
-        });
+        usbBinding = initUsb(binding);
     }
     return binding;
 };
@@ -229,7 +228,7 @@ function createMainWindow() {
     mainWindow.on('resize', delaySaveMainWindowPosition);
     mainWindow.on('move', delaySaveMainWindowPosition);
     mainWindow.on('restore', coerceMainWindowPositionToConnectedDisplay);
-    mainWindow.on('close', updateMainWindowPositionIfPending);
+    mainWindow.on('close', mainWindowClosed);
     mainWindow.on('focus', mainWindowFocus);
     mainWindow.on('blur', mainWindowBlur);
     mainWindow.on('closed', () => {
@@ -368,6 +367,12 @@ function mainWindowBlur() {
 
 function mainWindowFocus() {
     emitRemoteEvent('main-window-focus');
+}
+
+function mainWindowClosed() {
+    updateMainWindowPositionIfPending();
+    usbBinding?.removeAllListeners();
+    app.removeAllListeners('remote-app-event');
 }
 
 function emitRemoteEvent(e, arg) {
@@ -650,6 +655,26 @@ function coerceMainWindowPositionToConnectedDisplay() {
         'height': newHeight
     });
     updateMainWindowPosition();
+}
+
+function initUsb(binding) {
+    Object.keys(EventEmitter.prototype).forEach(key => {
+        binding[key] = EventEmitter.prototype[key];
+    });
+
+    binding.on('newListener', () => {
+        if (binding.listenerCount('attach') === 0 && binding.listenerCount('detach') === 0) {
+            binding._enableHotplugEvents();
+        }
+    });
+
+    binding.on('removeListener', () => {
+        if (binding.listenerCount('attach') === 0 && binding.listenerCount('detach') === 0) {
+            binding._disableHotplugEvents();
+        }
+    });
+
+    return binding;
 }
 
 function reportStartProfile() {

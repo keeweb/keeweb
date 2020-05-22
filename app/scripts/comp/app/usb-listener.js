@@ -61,40 +61,45 @@ const UsbListener = {
         logger.info('Stopping USB listener');
 
         if (this.usb) {
-            this.usb._disableHotplugEvents();
-
             if (this.attachedYubiKeys.length) {
                 this.attachedYubiKeys = [];
                 Events.emit('usb-devices-changed');
             }
+
+            this.usb.off('attach', UsbListener.deviceAttached);
+            this.usb.off('detach', UsbListener.deviceDetached);
 
             this.usb = null;
         }
     },
 
     listen() {
-        this.usb.on('attach', device => {
-            if (this.isYubiKey(device)) {
-                this.attachedYubiKeys.push({ device });
-                logger.info(`YubiKey attached, total: ${this.attachedYubiKeys.length}`, device);
+        this.usb.on('attach', UsbListener.deviceAttached);
+        this.usb.on('detach', UsbListener.deviceDetached);
+    },
+
+    deviceAttached(device) {
+        if (UsbListener.isYubiKey(device)) {
+            UsbListener.attachedYubiKeys.push({ device });
+            logger.info(`YubiKey attached, total: ${UsbListener.attachedYubiKeys.length}`, device);
+            Events.emit('usb-devices-changed');
+        }
+    },
+
+    deviceDetached(device) {
+        if (UsbListener.isYubiKey(device)) {
+            const index = UsbListener.attachedYubiKeys.findIndex(
+                yk => yk.device.deviceAddress === device.deviceAddress
+            );
+            if (index >= 0) {
+                UsbListener.attachedYubiKeys.splice(index, 1);
+                logger.info(
+                    `YubiKey detached, total: ${UsbListener.attachedYubiKeys.length}`,
+                    device
+                );
                 Events.emit('usb-devices-changed');
             }
-        });
-
-        this.usb.on('detach', device => {
-            if (this.isYubiKey(device)) {
-                const index = this.attachedYubiKeys.findIndex(
-                    yk => yk.device.deviceAddress === device.deviceAddress
-                );
-                if (index >= 0) {
-                    this.attachedYubiKeys.splice(index, 1);
-                    logger.info(`YubiKey detached, total: ${this.attachedYubiKeys.length}`, device);
-                    Events.emit('usb-devices-changed');
-                }
-            }
-        });
-
-        this.usb._enableHotplugEvents();
+        }
     },
 
     isYubiKey(device) {
