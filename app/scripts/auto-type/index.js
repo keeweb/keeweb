@@ -17,6 +17,7 @@ const clearTextAutoTypeLog = !!localStorage.debugAutoType;
 const AutoType = {
     helper: AutoTypeHelperFactory.create(),
     enabled: !!(Launcher && Launcher.autoTypeSupported),
+    supportsEventsWithWindowId: !!(Launcher && Launcher.platform() === 'linux'),
     selectEntryView: false,
     pendingEvent: null,
     running: false,
@@ -187,7 +188,7 @@ const AutoType = {
                 logger.debug('Error during active window check, something is wrong', err);
                 return callback(false);
             }
-            if (activeWindowInfo.id !== windowInfo.id && Launcher.platform() !== 'linux') {
+            if (activeWindowInfo.id !== windowInfo.id && !this.supportsEventsWithWindowId) {
                 logger.info(
                     `Active window doesn't match: ID is different. ` +
                         `Expected ${windowInfo.id}, got ${activeWindowInfo.id}`
