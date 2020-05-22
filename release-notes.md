@@ -13,6 +13,7 @@ Release notes
 `-` fix #1463: copying the original url instead of adding https:  
 `-` fix #620: clearing middle-click clipboard in Linux  
 `-` fix #1440: fixed auto-type for maximized windows  
+`-` fix #1509: fixed auto-type for tiling mode in Linux  
 
 ##### v1.14.3 (2020-05-15)
 `*` improved exporting files with markdown notes  
