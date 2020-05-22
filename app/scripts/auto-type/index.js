@@ -195,7 +195,7 @@ const AutoType = {
                 );
                 return callback(false, activeWindowInfo);
             }
-            if (activeWindowInfo.url !== windowInfo.url) {
+            if (activeWindowInfo.url !== windowInfo.url && !this.supportsEventsWithWindowId) {
                 logger.info(
                     `Active window doesn't match: url is different. ` +
                         `Expected "${windowInfo.url}", got "${activeWindowInfo.url}"`
