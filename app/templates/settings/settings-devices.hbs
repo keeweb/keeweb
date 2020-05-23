@@ -27,14 +27,14 @@
             <label for="settings__yubikey-show-icon">{{res 'setDevicesYubiKeyOtpShowIcon'}}</label>
         </div>
         <div>
-            <input type="checkbox" class="settings__input input-base settings__yubikey-auto-open" id="settings__yubikey-auto-open"
-                   {{#if yubiKeyAutoOpen}}checked{{/if}} />
-            <label for="settings__yubikey-auto-open">{{res 'setDevicesYubiKeyOtpAutoOpen'}}</label>
-        </div>
-        <div>
             <input type="checkbox" class="settings__input input-base settings__yubikey-match-entries" id="settings__yubikey-match-entries"
                    {{#if yubiKeyMatchEntries}}checked{{/if}} />
             <label for="settings__yubikey-match-entries">{{res 'setDevicesYubiKeyOtpMatchEntries'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-auto-open" id="settings__yubikey-auto-open"
+                   {{#if yubiKeyAutoOpen}}checked{{/if}} />
+            <label for="settings__yubikey-auto-open">{{res 'setDevicesYubiKeyOtpAutoOpen'}}</label>
         </div>
         <div>
             <input type="checkbox" class="settings__input input-base settings__yubikey-oath-workaround" id="settings__yubikey-oath-workaround"

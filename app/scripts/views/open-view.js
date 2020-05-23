@@ -111,6 +111,7 @@ class OpenView extends View {
             this.model.settings.canOpenOtpDevice &&
             this.model.settings.yubiKeyShowIcon &&
             !this.model.files.get('yubikey');
+        const canUseChalRespYubiKey = hasYubiKeys && this.model.settings.yubiKeyShowChalResp;
 
         super.render({
             lastOpenFiles: this.getLastOpenFiles(),
@@ -124,7 +125,7 @@ class OpenView extends View {
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
             canOpenYubiKey,
-            hasYubiKeys,
+            canUseChalRespYubiKey,
             showMore,
             showLogo
         });
@@ -990,13 +991,17 @@ class OpenView extends View {
     }
 
     usbDevicesChanged() {
-        if (this.model.settings.canOpenOtpDevice && this.model.settings.yubiKeyShowIcon) {
+        if (this.model.settings.canOpenOtpDevice) {
             const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
 
-            this.$el.find('.open__icon-yubikey').toggleClass('hide', !hasYubiKeys);
+            const showOpenIcon = hasYubiKeys && this.model.settings.yubiKeyShowIcon;
+            this.$el.find('.open__icon-yubikey').toggleClass('hide', !showOpenIcon);
+
+            const showChallengeResponseIcon =
+                hasYubiKeys && this.model.settings.yubiKeyShowChalResp;
             this.$el
                 .find('.open__settings-yubikey')
-                .toggleClass('open__settings-yubikey--present', hasYubiKeys);
+                .toggleClass('open__settings-yubikey--present', !!showChallengeResponseIcon);
 
             if (!hasYubiKeys && this.busy && this.otpDevice) {
                 this.otpDevice.cancelOpen();
