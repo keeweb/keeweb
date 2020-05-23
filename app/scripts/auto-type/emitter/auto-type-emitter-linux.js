@@ -95,16 +95,21 @@ AutoTypeEmitter.prototype.text = function(text) {
 };
 
 AutoTypeEmitter.prototype.key = function(key) {
-    if (typeof key !== 'number') {
+    const isSpecialKey = typeof key !== 'number';
+    if (isSpecialKey) {
         if (!KeyMap[key]) {
             return this.callback('Bad key: ' + key);
         }
-        key = KeyMap[key].toString(16);
+        key = KeyMap[key].toString();
     }
     this.pendingScript.push(
         'key --clearmodifiers ' + this.windowParameter + this.modString() + key
     );
-    this.callback();
+    if (isSpecialKey) {
+        this.waitComplete();
+    } else {
+        this.callback();
+    }
 };
 
 AutoTypeEmitter.prototype.copyPaste = function(text) {

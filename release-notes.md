@@ -15,6 +15,7 @@ Release notes
 `-` fix #620: clearing middle-click clipboard in Linux  
 `-` fix #1440: fixed auto-type for maximized windows  
 `-` fix #1509: fixed auto-type for tiling mode in Linux  
+`-` fix #1409: fixed auto-typing Tab character on Debian  
 
 ##### v1.14.3 (2020-05-15)
 `*` improved exporting files with markdown notes  
