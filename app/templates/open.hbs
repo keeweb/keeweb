@@ -90,7 +90,7 @@
                 </i><span class="open__settings-key-file-name">{{res 'openKeyFile'}}</span>
                 {{#if canOpenKeyFromDropbox}}<span class="open__settings-key-file-dropbox"> {{res 'openKeyFileDropbox'}}</span>{{/if}}
             </div>
-            <div class="open__settings-yubikey hide" tabindex="26" title="YubiKey">
+            <div class="open__settings-yubikey {{#if hasYubiKeys}}open__settings-yubikey--present{{/if}} hide" tabindex="26" title="YubiKey">
                 {{{svg 'usb-token' 'open__settings-yubikey-img'}}}
             </div>
         </div>

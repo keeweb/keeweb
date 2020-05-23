@@ -105,10 +105,11 @@ class OpenView extends View {
             !this.model.settings.canOpen &&
             !this.model.settings.canCreate &&
             !(this.model.settings.canOpenDemo && !this.model.settings.demoOpened);
+        const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
         const canOpenYubiKey =
+            hasYubiKeys &&
             this.model.settings.canOpenOtpDevice &&
             this.model.settings.yubiKeyShowIcon &&
-            !!UsbListener.attachedYubiKeys.length &&
             !this.model.files.get('yubikey');
 
         super.render({
@@ -123,6 +124,7 @@ class OpenView extends View {
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
             canOpenYubiKey,
+            hasYubiKeys,
             showMore,
             showLogo
         });
@@ -320,7 +322,7 @@ class OpenView extends View {
 
     displayOpenFile() {
         this.$el.addClass('open--file');
-        this.$el.find('.open__settings-key-file').removeClass('hide');
+        this.$el.find('.open__settings-key-file,.open__settings-yubikey').removeClass('hide');
         this.inputEl[0].removeAttribute('readonly');
         this.inputEl[0].setAttribute('placeholder', Locale.openPassFor + ' ' + this.params.name);
         this.focusInput();
@@ -991,8 +993,10 @@ class OpenView extends View {
         if (this.model.settings.canOpenOtpDevice && this.model.settings.yubiKeyShowIcon) {
             const hasYubiKeys = !!UsbListener.attachedYubiKeys.length;
 
-            const icons = this.$el.find('.open__icon-yubikey, .open__settings-yubikey');
-            icons.toggleClass('hide', !hasYubiKeys);
+            this.$el.find('.open__icon-yubikey').toggleClass('hide', !hasYubiKeys);
+            this.$el
+                .find('.open__settings-yubikey')
+                .toggleClass('open__settings-yubikey--present', hasYubiKeys);
 
             if (!hasYubiKeys && this.busy && this.otpDevice) {
                 this.otpDevice.cancelOpen();
