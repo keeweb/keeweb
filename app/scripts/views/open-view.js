@@ -19,6 +19,7 @@ import { Logger } from 'util/logger';
 import { InputFx } from 'util/ui/input-fx';
 import { OpenConfigView } from 'views/open-config-view';
 import { StorageFileListView } from 'views/storage-file-list-view';
+import { OpenChalRespView } from 'views/open-chal-resp-view';
 import { omit } from 'util/fn';
 import { GeneratorView } from 'views/generator-view';
 import template from 'templates/open.hbs';
@@ -1043,16 +1044,19 @@ class OpenView extends View {
         if (this.busy) {
             return;
         }
-        this.busy = true;
-        YubiKey.checkToolStatus().then(status => {
-            if (status !== 'ok') {
-                this.busy = false;
-                return Events.emit('toggle-settings', 'devices');
-            }
 
-            this.busy = false;
+        const chalRespView = new OpenChalRespView();
+        chalRespView.on('select', e => {
+            // console.log('e', e.serial, e.slot);
+        });
 
-            Alerts.notImplemented();
+        Alerts.alert({
+            header: Locale.openChalRespHeader,
+            icon: 'exchange',
+            buttons: [{ result: '', title: Locale.alertCancel }],
+            esc: '',
+            click: '',
+            view: chalRespView
         });
     }
 }

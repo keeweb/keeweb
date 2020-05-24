@@ -1,0 +1,20 @@
+<div class="open-chal-resp">
+    {{#if loading}}
+        <div class="open-chal-resp__head">
+            <i class="open-chal-resp__icon fa fa-spinner fa-spin"></i> {{res 'openChalRespLoading'}}
+        </div>
+    {{else if error}}
+        <div class="open-chal-resp__head">
+            <i class="open-chal-resp__icon fa fa-ban"></i> {{error}}
+        </div>
+    {{else}}
+        <div class="open-chal-resp__head">{{res 'openChalRespSelectYubiKey'}}:</div>
+        <div>
+            {{#each yubiKeys as |yk|}}
+                <div class="open-chal-resp__item" data-serial="{{yk.serial}}" data-slot="{{yk.slot}}">
+                    {{yk.fullName}}, {{res 'openChalRespSlot'}} {{yk.slot}}
+                </div>
+            {{/each}}
+        </div>
+    {{/if}}
+</div>

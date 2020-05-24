@@ -35,7 +35,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
             const openErrors = [];
             const openNextYubiKey = () => {
                 const yubiKey = yubiKeys.shift();
-                this._addYubiKey(yubiKey, err => {
+                this._addYubiKey(yubiKey.serial, err => {
                     if (YubiKey.aborted) {
                         return callback('Aborted');
                     }

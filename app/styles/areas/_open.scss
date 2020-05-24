@@ -388,3 +388,19 @@
         display: inline-block;
     }
 }
+
+.open-chal-resp {
+    &__head {
+        padding: $base-padding;
+    }
+    &__icon {
+        margin-right: $small-spacing;
+    }
+    &__item {
+        padding: $base-padding;
+        cursor: pointer;
+        &:hover {
+            background-color: var(--action-background-color-focus-tr);
+        }
+    }
+}

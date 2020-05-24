@@ -233,6 +233,12 @@
     "openListErrorBody": "There was an error loading file list",
     "openShowAllFiles": "Show all files",
     "openFileNoCacheError": "File not found in the cache storage. This can happen because browser storage was cleaned up. To open the file, remove it from KeeWeb and add it again.",
+    "openChalRespHeader": "Challenge-Response",
+    "openChalRespLoading": "Loading the list of YubiKeys",
+    "openChalRespSelectYubiKey": "Select a YubiKey that you would like to use",
+    "openChalRespErrorNotInstalled": "YubiKey integration is not configured, please go to settings to set it up",
+    "openChalRespErrorEmpty": "No YubiKeys found",
+    "openChalRespSlot": "slot",
 
     "detAttDownload": "Shift-click the attachment button to download it or",
     "detAttDelToRemove": "Delete to remove",

@@ -80,9 +80,13 @@ const YubiKey = {
                 const yubiKeysIncludingEmpty = stdout
                     .trim()
                     .split(/\n/g)
-                    .map(line => (line.match(/\d{5,}$/g) || [])[0]);
+                    .map(line => {
+                        const fullName = line;
+                        const serial = (line.match(/\d{5,}$/g) || [])[0];
+                        return { fullName, serial };
+                    });
 
-                const yubiKeys = yubiKeysIncludingEmpty.filter(s => s);
+                const yubiKeys = yubiKeysIncludingEmpty.filter(s => s.serial);
 
                 if (
                     yubiKeysIncludingEmpty.length === 1 &&
