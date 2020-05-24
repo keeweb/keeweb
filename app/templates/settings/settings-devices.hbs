@@ -14,10 +14,15 @@
             {{#res 'setDevicesYubiKeyToolsDesc'}}<code>ykman</code>{{/res}}
             {{#res 'setDevicesYubiKeyToolsDesc2'}}<a href="{{ykmanInstallLink}}" target="_blank">{{res 'setDevicesYubiKeyToolsDescLink'}}</a>{{/res}}
         </p>
-        <div>
+        <p>
             {{#ifeq ykmanStatus 'checking'}}{{#res 'setDevicesYubiKeyToolsStatusChecking'}}<code>ykman</code>{{/res}}...{{/ifeq}}
             {{#ifeq ykmanStatus 'ok'}}{{#res 'setDevicesYubiKeyToolsStatusOk'}}<code>ykman</code>{{/res}}{{/ifeq}}
             {{#ifeq ykmanStatus 'error'}}{{#res 'setDevicesYubiKeyToolsStatusError'}}<code>ykman</code>{{/res}}{{/ifeq}}
+        </p>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-stuck-workaround" id="settings__yubikey-stuck-workaround"
+                   {{#if yubiKeyStuckWorkaround}}checked{{/if}} />
+            <label for="settings__yubikey-stuck-workaround">{{res 'setDevicesYubiKeyStuckWorkaround'}}</label>
         </div>
         <h3>{{res 'setDevicesYubiKeyOtpTitle'}}</h3>
         <p>{{res 'setDevicesYubiKeyOtpDesc'}}</p>
@@ -35,11 +40,6 @@
             <input type="checkbox" class="settings__input input-base settings__yubikey-auto-open" id="settings__yubikey-auto-open"
                    {{#if yubiKeyAutoOpen}}checked{{/if}} />
             <label for="settings__yubikey-auto-open">{{res 'setDevicesYubiKeyOtpAutoOpen'}}</label>
-        </div>
-        <div>
-            <input type="checkbox" class="settings__input input-base settings__yubikey-oath-workaround" id="settings__yubikey-oath-workaround"
-                   {{#if yubiKeyOathWorkaround}}checked{{/if}} />
-            <label for="settings__yubikey-oath-workaround">{{res 'setDevicesYubiKeyOathWorkaround'}}</label>
         </div>
         <h3>{{res 'setDevicesYubiKeyChalRespTitle'}}</h3>
         <p>{{res 'setDevicesYubiKeyChalRespDesc'}}</p>

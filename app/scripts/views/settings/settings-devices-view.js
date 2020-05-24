@@ -1,7 +1,7 @@
 import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { AppSettingsModel } from 'models/app-settings-model';
-import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
+import { YubiKey } from 'comp/app/yubikey';
 import { Links } from 'const/links';
 import { UsbListener } from 'comp/app/usb-listener';
 import template from 'templates/settings/settings-devices.hbs';
@@ -15,13 +15,13 @@ class SettingsDevicesView extends View {
         'change .settings__yubikey-auto-open': 'changeYubiKeyAutoOpen',
         'change .settings__yubikey-match-entries': 'changeYubiKeyMatchEntries',
         'change .settings__yubikey-chalresp-show': 'changeYubiKeyShowChalResp',
-        'change .settings__yubikey-oath-workaround': 'changeYubiKeyOathWorkaround'
+        'change .settings__yubikey-stuck-workaround': 'changeYubiKeyStuckWorkaround'
     };
 
     constructor(...args) {
         super(...args);
-        if (!['ok', 'checking'].includes(YubiKeyOtpModel.ykmanStatus)) {
-            this.toolCheckPromise = YubiKeyOtpModel.checkToolStatus();
+        if (!['ok', 'checking'].includes(YubiKey.ykmanStatus)) {
+            this.toolCheckPromise = YubiKey.checkToolStatus();
         }
     }
 
@@ -33,12 +33,12 @@ class SettingsDevicesView extends View {
         super.render({
             supported: UsbListener.supported,
             enableUsb: UsbListener.supported && AppSettingsModel.enableUsb,
-            ykmanStatus: YubiKeyOtpModel.ykmanStatus,
+            ykmanStatus: YubiKey.ykmanStatus,
             yubiKeyShowIcon: AppSettingsModel.yubiKeyShowIcon,
             yubiKeyAutoOpen: AppSettingsModel.yubiKeyAutoOpen,
             yubiKeyMatchEntries: AppSettingsModel.yubiKeyMatchEntries,
             yubiKeyShowChalResp: AppSettingsModel.yubiKeyShowChalResp,
-            yubiKeyOathWorkaround: AppSettingsModel.yubiKeyOathWorkaround,
+            yubiKeyStuckWorkaround: AppSettingsModel.yubiKeyStuckWorkaround,
             yubiKeyManualLink: Links.YubiKeyManual,
             ykmanInstallLink: Links.YubiKeyManagerInstall
         });
@@ -70,8 +70,8 @@ class SettingsDevicesView extends View {
         this.render();
     }
 
-    changeYubiKeyOathWorkaround(e) {
-        AppSettingsModel.yubiKeyOathWorkaround = e.target.checked;
+    changeYubiKeyStuckWorkaround(e) {
+        AppSettingsModel.yubiKeyStuckWorkaround = e.target.checked;
         this.render();
     }
 }

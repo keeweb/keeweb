@@ -9,7 +9,7 @@ import { SecureInput } from 'comp/browser/secure-input';
 import { Launcher } from 'comp/launcher';
 import { Alerts } from 'comp/ui/alerts';
 import { UsbListener } from 'comp/app/usb-listener';
-import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
+import { YubiKey } from 'comp/app/yubikey';
 import { Keys } from 'const/keys';
 import { Comparators } from 'util/data/comparators';
 import { Features } from 'util/features';
@@ -47,7 +47,7 @@ class OpenView extends View {
         'keypress .open__pass-input': 'inputKeypress',
         'click .open__pass-enter-btn': 'openDb',
         'click .open__settings-key-file': 'openKeyFile',
-        'click .open__settings-yubikey': 'selectYubiKey',
+        'click .open__settings-yubikey': 'selectYubiKeyChalResp',
         'click .open__last-item': 'openLast',
         'click .open__icon-generate': 'toggleGenerator',
         dragover: 'dragover',
@@ -443,10 +443,6 @@ class OpenView extends View {
 
         const fileInfo = this.model.fileInfos.get(id);
         this.showOpenFileInfo(fileInfo, true);
-    }
-
-    selectYubiKey() {
-        Alerts.notImplemented();
     }
 
     removeFile(id) {
@@ -1019,15 +1015,15 @@ class OpenView extends View {
             const icon = this.$el.find('.open__icon-yubikey');
             icon.toggleClass('flip3d', true);
 
-            YubiKeyOtpModel.checkToolStatus().then(() => {
-                if (YubiKeyOtpModel.ykmanStatus !== 'ok') {
+            YubiKey.checkToolStatus().then(status => {
+                if (status !== 'ok') {
                     icon.toggleClass('flip3d', false);
                     this.inputEl.removeAttr('disabled');
                     this.busy = false;
                     return Events.emit('toggle-settings', 'devices');
                 }
                 this.otpDevice = this.model.openOtpDevice(err => {
-                    if (err && !this.otpDevice.openAborted) {
+                    if (err && !YubiKey.aborted) {
                         Alerts.error({
                             header: Locale.openError,
                             body: Locale.openErrorDescription,
@@ -1041,6 +1037,23 @@ class OpenView extends View {
                 });
             });
         }
+    }
+
+    selectYubiKeyChalResp() {
+        if (this.busy) {
+            return;
+        }
+        this.busy = true;
+        YubiKey.checkToolStatus().then(status => {
+            if (status !== 'ok') {
+                this.busy = false;
+                return Events.emit('toggle-settings', 'devices');
+            }
+
+            this.busy = false;
+
+            Alerts.notImplemented();
+        });
     }
 }
 

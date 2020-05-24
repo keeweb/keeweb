@@ -41,7 +41,7 @@ const DefaultAppSettings = {
     yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files
     yubiKeyMatchEntries: true, // show matching one-time codes in entries
     yubiKeyShowChalResp: true, // show YubiKey challenge-response option
-    yubiKeyOathWorkaround: false, // enable the workaround for YubiKey OATH issues
+    yubiKeyStuckWorkaround: false, // enable the workaround for stuck YubiKeys
 
     canOpen: true, // can select and open new files
     canOpenDemo: true, // can open a demo file

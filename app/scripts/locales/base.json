@@ -604,7 +604,7 @@
     "setDevicesYubiKeyChalRespTitle": "Challenge-Response",
     "setDevicesYubiKeyChalRespDesc": "It's also possible to use a YubiKey in challenge-response mode, so that a piece of private key used to encrypt files resides on a YubiKey.",
     "setDevicesYubiKeyChalRespShow": "Show the option to use a YubiKey when opening files",
-    "setDevicesYubiKeyOathWorkaround": "Reconnect the YubiKey if it hangs when loading one-time codes",
+    "setDevicesYubiKeyStuckWorkaround": "Reconnect the YubiKey if it seems to be stuck during loading",
 
     "setAboutTitle": "About",
     "setAboutBuilt": "This app is built with these awesome tools",
