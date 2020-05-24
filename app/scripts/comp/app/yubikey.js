@@ -188,11 +188,17 @@ const YubiKey = {
     },
 
     getOtp(serial, entry, callback) {
+        if (this.process) {
+            return callback('Already in progress');
+        }
+        this.aborted = false;
+
         return Launcher.spawn({
             cmd: 'ykman',
             args: ['-d', serial, 'oath', 'code', '--single', entry],
             noStdOutLogging: true,
             complete: (err, stdout) => {
+                this.process = null;
                 if (err) {
                     return callback(err);
                 }
