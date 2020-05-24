@@ -253,16 +253,26 @@
         &-yubikey {
             display: none;
             &--present {
-                display: block;
+                display: flex;
+            }
+            &__text {
+                margin-right: 0.4em;
+                display: none;
+                .open__settings-yubikey--active & {
+                    display: block;
+                }
             }
             &-img {
                 fill: var(--muted-color);
                 width: 2em;
                 position: relative;
-                top: -0.4em;
+                top: -0.25em;
                 margin-right: $base-padding-h;
                 cursor: pointer;
                 &:hover {
+                    fill: var(--text-color);
+                }
+                .open__settings-yubikey--active & {
                     fill: var(--text-color);
                 }
             }

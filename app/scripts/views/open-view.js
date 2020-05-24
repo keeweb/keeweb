@@ -145,7 +145,8 @@ class OpenView extends View {
             keyFilePath: null,
             fileData: null,
             rev: null,
-            opts: null
+            opts: null,
+            chalResp: null
         };
     }
 
@@ -1045,9 +1046,20 @@ class OpenView extends View {
             return;
         }
 
+        if (this.params.chalResp) {
+            this.params.chalResp = null;
+            this.el
+                .querySelector('.open__settings-yubikey')
+                .classList.remove('open__settings-yubikey--active');
+            return;
+        }
+
         const chalRespView = new OpenChalRespView();
         chalRespView.on('select', e => {
-            // console.log('e', e.serial, e.slot);
+            this.params.chalResp = { serial: e.serial, slot: e.slot };
+            this.el
+                .querySelector('.open__settings-yubikey')
+                .classList.add('open__settings-yubikey--active');
         });
 
         Alerts.alert({
