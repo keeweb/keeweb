@@ -829,7 +829,8 @@ function saveConfig(name, data, key) {
             return reject(`Error writing config data ${name}: ${err}`);
         }
 
-        const configFilePath = path.join(app.getPath('userData'), `${name}.dat`);
+        const ext = key ? 'dat' : 'json';
+        const configFilePath = path.join(app.getPath('userData'), `${name}.${ext}`);
         fs.writeFile(configFilePath, data, err => {
             if (err) {
                 reject(`Error writing config ${name}: ${err}`);
