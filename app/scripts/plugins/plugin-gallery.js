@@ -22,7 +22,7 @@ const PluginGallery = {
         return new Promise(resolve => {
             this.logger.debug('Loading plugins...');
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', Links.Plugins + '/plugins.json?_=' + Date.now());
+            xhr.open('GET', Links.Plugins + '/plugins.json');
             xhr.responseType = 'json';
             xhr.send();
             xhr.addEventListener('load', () => {

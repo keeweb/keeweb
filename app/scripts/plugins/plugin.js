@@ -166,7 +166,9 @@ class Plugin extends Model {
         );
         this.resources = {};
         const ts = this.logger.ts();
-        const results = Object.keys(manifest.resources).map(res => this.loadResource(res, local));
+        const results = Object.keys(manifest.resources).map(res =>
+            this.loadResource(res, local, manifest)
+        );
         return Promise.all(results)
             .catch(() => {
                 throw 'Error loading plugin resources';
@@ -195,7 +197,7 @@ class Plugin extends Model {
         return this.id + '_' + this.getResourcePath(res);
     }
 
-    loadResource(type, local) {
+    loadResource(type, local, manifest) {
         const ts = this.logger.ts();
         let res;
         if (local) {
@@ -204,8 +206,8 @@ class Plugin extends Model {
                 io.load(storageKey, (err, data) => (err ? reject(err) : resolve(data)));
             });
         } else {
-            const url = this.url;
-            res = httpGet(url + this.getResourcePath(type), true);
+            const url = this.url + this.getResourcePath(type) + '?v=' + manifest.version;
+            res = httpGet(url, true);
         }
         return res.then(data => {
             this.logger.debug('Resource data loaded', type, this.logger.ts(ts));
@@ -688,7 +690,6 @@ Plugin.defineModelProperties({
 Object.assign(Plugin, PluginStatus);
 
 function httpGet(url, binary) {
-    url += '?ts=' + Date.now();
     commonLogger.debug('GET', url);
     const ts = commonLogger.ts();
     return new Promise((resolve, reject) => {
