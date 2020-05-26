@@ -21,13 +21,15 @@ class OpenChalRespView extends View {
                 YubiKey.list((err, yubiKeys) => {
                     this.error = err;
                     this.yubiKeys = [];
-                    for (const { fullName, serial } of yubiKeys) {
-                        for (const slot of [1, 2]) {
-                            this.yubiKeys.push({
-                                fullName,
-                                serial,
-                                slot
-                            });
+                    if (yubiKeys) {
+                        for (const { fullName, serial } of yubiKeys) {
+                            for (const slot of [1, 2]) {
+                                this.yubiKeys.push({
+                                    fullName,
+                                    serial,
+                                    slot
+                                });
+                            }
                         }
                     }
                     this.render();
