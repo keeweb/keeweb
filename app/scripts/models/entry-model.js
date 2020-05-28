@@ -339,7 +339,7 @@ class EntryModel extends Model {
         if (val && !val.isProtected && val.indexOf('\x1A') >= 0) {
             // https://github.com/keeweb/keeweb/issues/910
             // eslint-disable-next-line no-control-regex
-            val = val.replace(/\x1A/g, '');
+            val = val.replace(/[\x00-\x1F]/g, '');
         }
         return val;
     }
