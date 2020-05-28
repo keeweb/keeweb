@@ -14,7 +14,6 @@ const Launcher = {
     thirdPartyStoragesSupported: true,
     clipboardSupported: true,
     req: window.require,
-    mainProcessModules: ['usb'],
     platform() {
         return process.platform;
     },
@@ -28,12 +27,7 @@ const Launcher = {
         return this.electron().remote.require(mod);
     },
     reqNative(mod) {
-        if (this.mainProcessModules.includes(mod)) {
-            return this.electron().remote.app.reqNative(mod);
-        } else {
-            const fileName = `${mod}-${process.platform}-${process.arch}.node`;
-            return this.req(`@keeweb/keeweb-native-modules/${fileName}`);
-        }
+        return this.electron().remote.app.reqNative(mod);
     },
     openLink(href) {
         if (/^(http|https|ftp|sftp|mailto):/i.test(href)) {
