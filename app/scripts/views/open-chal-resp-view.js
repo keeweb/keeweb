@@ -1,6 +1,8 @@
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { YubiKey } from 'comp/app/yubikey';
 import { Locale } from 'util/locale';
+import { Timeouts } from 'const/timeouts';
 import template from 'templates/open-chal-resp.hbs';
 
 class OpenChalRespView extends View {
@@ -13,7 +15,38 @@ class OpenChalRespView extends View {
     constructor() {
         super();
 
+        this.listenTo(Events, 'usb-devices-changed', this.usbDevicesChanged);
+
+        this.checkDevices();
+    }
+
+    render() {
+        let error = this.error;
+
+        if (this.yubiKeys && !this.yubiKeys.length) {
+            error = Locale.openChalRespErrorEmpty;
+        }
+
+        super.render({
+            error,
+            yubiKeys: this.yubiKeys,
+            loading: !this.yubiKeys && !this.error
+        });
+    }
+
+    usbDevicesChanged() {
+        setTimeout(() => {
+            if (!this.removed) {
+                this.checkDevices();
+            }
+        }, Timeouts.ExternalDeviceAfterReconnect);
+    }
+
+    checkDevices() {
         YubiKey.list((err, yubiKeys) => {
+            if (this.removed) {
+                return;
+            }
             this.error = err;
             this.yubiKeys = [];
             if (yubiKeys) {
@@ -28,20 +61,6 @@ class OpenChalRespView extends View {
                 }
             }
             this.render();
-        });
-    }
-
-    render() {
-        let error = this.error;
-
-        if (this.yubiKeys && !this.yubiKeys.length) {
-            error = Locale.openChalRespErrorEmpty;
-        }
-
-        super.render({
-            error,
-            yubiKeys: this.yubiKeys,
-            loading: !this.yubiKeys && !this.error
         });
     }
 
