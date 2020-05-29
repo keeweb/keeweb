@@ -9,7 +9,8 @@
     {{#if enableUsb}}
         <h2>YubiKey</h2>
         <p>{{#res 'setDevicesYubiKeyIntro'}}<a href="{{yubiKeyManualLink}}" target="_blank">{{res 'setDevicesYubiKeyIntroLink'}}</a>{{/res}}</p>
-        <h3>{{res 'setDevicesYubiKeyToolsTitle'}}</h3>
+        <h3>{{res 'setDevicesYubiKeyOtpTitle'}}</h3>
+        <p>{{res 'setDevicesYubiKeyOtpDesc'}}</p>
         <p>
             {{#res 'setDevicesYubiKeyToolsDesc'}}<code>ykman</code>{{/res}}
             {{#res 'setDevicesYubiKeyToolsDesc2'}}<a href="{{ykmanInstallLink}}" target="_blank">{{res 'setDevicesYubiKeyToolsDescLink'}}</a>{{/res}}
@@ -19,8 +20,6 @@
             {{#ifeq ykmanStatus 'ok'}}{{#res 'setDevicesYubiKeyToolsStatusOk'}}<code>ykman</code>{{/res}}{{/ifeq}}
             {{#ifeq ykmanStatus 'error'}}{{#res 'setDevicesYubiKeyToolsStatusError'}}<code>ykman</code>{{/res}}{{/ifeq}}
         </p>
-        <h3>{{res 'setDevicesYubiKeyOtpTitle'}}</h3>
-        <p>{{res 'setDevicesYubiKeyOtpDesc'}}</p>
         <div>
             <input type="checkbox" class="settings__input input-base settings__yubikey-show-icon" id="settings__yubikey-show-icon"
                    {{#if yubiKeyShowIcon}}checked{{/if}} />

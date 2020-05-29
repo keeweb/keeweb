@@ -236,7 +236,6 @@
     "openChalRespHeader": "Challenge-Response",
     "openChalRespLoading": "Loading the list of YubiKeys",
     "openChalRespSelectYubiKey": "Select a YubiKey that you would like to use",
-    "openChalRespErrorNotInstalled": "YubiKey integration is not configured, please go to settings to set it up",
     "openChalRespErrorEmpty": "No YubiKeys found",
     "openChalRespSlot": "slot",
 
@@ -595,8 +594,7 @@
     "setDevicesEnableUsb": "Enable interaction with USB devices",
     "setDevicesYubiKeyIntro": "It's recommended to read {} before using a YubiKey.",
     "setDevicesYubiKeyIntroLink": "this document",
-    "setDevicesYubiKeyToolsTitle": "Tools",
-    "setDevicesYubiKeyToolsDesc": "To be able to use YubiKey integration, you need to install a tool called {}.",
+    "setDevicesYubiKeyToolsDesc": "To be able to use YubiKey in this mode, you need to install a tool called {}.",
     "setDevicesYubiKeyToolsDesc2": "{} to get more information about this tool.",
     "setDevicesYubiKeyToolsDescLink": "Click here",
     "setDevicesYubiKeyToolsStatusChecking": "Checking if {} is installed",

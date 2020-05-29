@@ -13,39 +13,27 @@ class OpenChalRespView extends View {
     constructor() {
         super();
 
-        YubiKey.checkToolStatus().then(status => {
-            if (this.removed) {
-                return;
-            }
-            if (status === 'ok') {
-                YubiKey.list((err, yubiKeys) => {
-                    this.error = err;
-                    this.yubiKeys = [];
-                    if (yubiKeys) {
-                        for (const { fullName, serial } of yubiKeys) {
-                            for (const slot of [1, 2]) {
-                                this.yubiKeys.push({
-                                    fullName,
-                                    serial,
-                                    slot
-                                });
-                            }
-                        }
+        YubiKey.list((err, yubiKeys) => {
+            this.error = err;
+            this.yubiKeys = [];
+            if (yubiKeys) {
+                for (const { fullName, serial, slot1, slot2 } of yubiKeys) {
+                    for (const slot of [slot1 ? 1 : 0, slot2 ? 2 : 0].filter(s => s)) {
+                        this.yubiKeys.push({
+                            fullName,
+                            serial,
+                            slot
+                        });
                     }
-                    this.render();
-                });
-            } else {
-                this.render();
+                }
             }
+            this.render();
         });
     }
 
     render() {
         let error = this.error;
 
-        if (YubiKey.ykmanStatus === 'error') {
-            error = Locale.openChalRespErrorNotInstalled.replace('{}', 'ykman');
-        }
         if (this.yubiKeys && !this.yubiKeys.length) {
             error = Locale.openChalRespErrorEmpty;
         }
@@ -53,7 +41,7 @@ class OpenChalRespView extends View {
         super.render({
             error,
             yubiKeys: this.yubiKeys,
-            loading: !YubiKey.ykmanStatus || YubiKey.ykmanStatus === 'checking'
+            loading: !this.yubiKeys && !this.error
         });
     }
 

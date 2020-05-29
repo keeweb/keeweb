@@ -4,6 +4,7 @@ import { Logger } from 'util/logger';
 import { UsbListener } from 'comp/app/usb-listener';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Timeouts } from 'const/timeouts';
+import { YubiKeyProductIds } from 'const/hardware';
 import { Locale } from 'util/locale';
 
 const logger = new Logger('yubikey');
@@ -12,6 +13,13 @@ const YubiKey = {
     ykmanStatus: undefined,
     process: null,
     aborted: false,
+
+    get ykChalResp() {
+        if (!this._ykChalResp) {
+            this._ykChalResp = Launcher.reqNative('yubikey-chalresp');
+        }
+        return this._ykChalResp;
+    },
 
     checkToolStatus() {
         if (this.ykmanStatus === 'ok') {
@@ -48,10 +56,41 @@ const YubiKey = {
     },
 
     list(callback) {
-        this._list(callback, true);
+        this.ykChalResp.getYubiKeys((err, yubiKeys) => {
+            if (err) {
+                return callback(err);
+            }
+            yubiKeys = yubiKeys.map(({ serial, pid, version, slot1, slot2 }) => {
+                return {
+                    fullName: this.getKeyFullName(pid, version, serial),
+                    serial,
+                    slot1,
+                    slot2
+                };
+            });
+            callback(null, yubiKeys);
+        });
     },
 
-    _list(callback, canRetry) {
+    getKeyFullName(pid, version, serial) {
+        let name = 'YubiKey';
+        if (YubiKeyProductIds.Gen1.includes(pid)) {
+            name += ' Gen 1';
+        } else if (YubiKeyProductIds.NEO.includes(pid)) {
+            name += ' NEO';
+        } else if (YubiKeyProductIds.YK4.includes(pid)) {
+            if (version >= '5.1.0') {
+                name += ' 5';
+            }
+        }
+        return `${name} ${serial}`;
+    },
+
+    listWithYkman(callback) {
+        this._listWithYkman(callback, true);
+    },
+
+    _listWithYkman(callback, canRetry) {
         if (this.process) {
             return callback('Already in progress');
         }
@@ -125,7 +164,7 @@ const YubiKey = {
                 clearTimeout(openTimeout);
                 this.aborted = false;
                 setTimeout(() => {
-                    this._list(callback, false);
+                    this._listWithYkman(callback, false);
                 }, Timeouts.ExternalDeviceAfterReconnect);
             }
         };
@@ -206,18 +245,14 @@ const YubiKey = {
         });
     },
 
-    calculateChalResp(serial, slot, challenge, callback) {
-        return Launcher.spawn({
-            cmd: 'ykman',
-            args: ['-d', serial, 'otp', 'calculate', slot, challenge],
-            noStdOutLogging: true,
-            complete: (err, stdout) => {
-                if (err) {
-                    return callback(err);
-                }
-                const otp = stdout.trim();
-                callback(null, otp);
+    calculateChalResp(serial, vid, pid, slot, challenge, callback) {
+        const yubiKey = { serial, vid, pid };
+        this.ykChalResp.challengeResponse(yubiKey, challenge, slot, (err, response) => {
+            if (err) {
+                // TODO: handle touch and missing YubiKeys
+                return callback(err);
             }
+            callback(null, response);
         });
     }
 };

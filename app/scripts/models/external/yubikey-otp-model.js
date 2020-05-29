@@ -25,7 +25,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     };
 
     open(callback) {
-        YubiKey.list((err, yubiKeys) => {
+        YubiKey.listWithYkman((err, yubiKeys) => {
             if (err) {
                 return callback(err);
             }
