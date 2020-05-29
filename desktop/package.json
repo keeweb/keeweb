@@ -16,7 +16,7 @@
     "license": "MIT",
     "readme": "../README.md",
     "dependencies": {
-        "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.2.2/keeweb-native-modules.tgz",
+        "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.3.2/keeweb-native-modules.tgz",
         "node-stream-zip": "^1.4.2"
     },
     "devDependencies": {}
