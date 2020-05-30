@@ -17,19 +17,35 @@ const ChalRespCalculator = {
                 challenge = Buffer.from(challenge);
                 const hexChallenge = challenge.toString('hex');
 
-                const key = `${params.vid}:${params.pid}:${params.serial}:${hexChallenge}`;
-                if (this.cache[key]) {
+                const deviceCacheKey = `${params.vid}:${params.pid}:${params.serial}`;
+                const respFromCache = this.cache[deviceCacheKey]?.[hexChallenge];
+                if (respFromCache) {
                     logger.debug('Found ChalResp in cache');
-                    return resolve(Buffer.from(this.cache[key], 'hex'));
+                    return resolve(Buffer.from(respFromCache, 'hex'));
                 }
 
-                logger.debug('Calculating ChalResp using a YubiKey');
+                logger.debug('Calculating ChalResp using a YubiKey', params);
 
                 YubiKey.calculateChalResp(params, challenge, (err, response) => {
                     if (err) {
+                        if (err.noKey) {
+                            logger.debug('No YubiKey');
+                            // TODO
+                            return;
+                        }
+                        if (err.touchRequested) {
+                            logger.debug('YubiKey touch requested');
+                            // TODO
+                            return;
+                        }
                         return reject(err);
                     }
-                    this.cache[key] = response.toString('hex');
+
+                    if (!this.cache[deviceCacheKey]) {
+                        this.cache[deviceCacheKey] = {};
+                    }
+                    this.cache[deviceCacheKey][hexChallenge] = response.toString('hex');
+
                     logger.info('Calculated ChalResp', logger.ts(ts));
                     resolve(response);
                 });

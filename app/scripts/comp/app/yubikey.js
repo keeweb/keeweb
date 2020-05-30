@@ -252,10 +252,9 @@ const YubiKey = {
         const yubiKey = { vid, pid, serial };
         this.ykChalResp.challengeResponse(yubiKey, challenge, slot, (err, response) => {
             if (err) {
-                if (err.touchRequested) {
-                    return;
+                if (err.code === this.ykChalResp.YK_ENOKEY) {
+                    err.noKey = true;
                 }
-                // TODO: handle touch and missing YubiKeys
                 return callback(err);
             }
             callback(null, response);
