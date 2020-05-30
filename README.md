@@ -40,10 +40,11 @@ The easiest way to clone all KeeWeb repos is:
 curl https://raw.githubusercontent.com/keeweb/keeweb/develop/dev-env.sh | bash -
 ```
 
-The app can be built with grunt: `grunt` (html files will be in `dist/`).    
-Desktop apps are built with `grunt desktop`. This works only in macOS as it builds dmg; requires wine.  
-Also, a hardware token is required.  
-To run Electron app without building an installer, build the app with `grunt` and start it this way:
+The app can be built with grunt: `grunt` (html files will be in `dist/`).  
+Desktop apps are built with `grunt desktop`. This requires some magic and currently works only on CI, 
+you can find more details in [the GitHub Actions workflow](.github/workflows/build.yaml).  
+
+To run the desktop (electron) app without building an installer, build the app with `grunt` and start it this way:
 ```bash
 npm run dev
 npm run electron
@@ -54,7 +55,7 @@ For debug build:
 1. run `npm run dev`
 2. open `http://localhost:8085`
 
-To build desktop apps, use these goals:
+To build desktop apps, use these goals, the result can be found in `tmp`:
 
 ```
 npm run dev-desktop-macos
