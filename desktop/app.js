@@ -240,7 +240,8 @@ function createMainWindow() {
     mainWindow.on('resize', delaySaveMainWindowPosition);
     mainWindow.on('move', delaySaveMainWindowPosition);
     mainWindow.on('restore', coerceMainWindowPositionToConnectedDisplay);
-    mainWindow.on('close', mainWindowClosed);
+    mainWindow.on('close', mainWindowClosing);
+    mainWindow.on('closed', mainWindowClosed);
     mainWindow.on('focus', mainWindowFocus);
     mainWindow.on('blur', mainWindowBlur);
     mainWindow.on('closed', () => {
@@ -381,8 +382,11 @@ function mainWindowFocus() {
     emitRemoteEvent('main-window-focus');
 }
 
-function mainWindowClosed() {
+function mainWindowClosing() {
     updateMainWindowPositionIfPending();
+}
+
+function mainWindowClosed() {
     usbBinding?.removeAllListeners();
     app.removeAllListeners('remote-app-event');
 }
