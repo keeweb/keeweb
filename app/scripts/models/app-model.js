@@ -507,8 +507,17 @@ class AppModel {
             );
         } else if (params.fileData) {
             logger.info('Open file from supplied content');
-            const needSaveToCache = params.storage !== 'file';
-            this.openFileWithData(params, callback, fileInfo, params.fileData, needSaveToCache);
+            if (params.storage === 'file') {
+                Storage.file.stat(params.path, null, (err, stat) => {
+                    if (err) {
+                        return callback(err);
+                    }
+                    params.rev = stat.rev;
+                    this.openFileWithData(params, callback, fileInfo, params.fileData);
+                });
+            } else {
+                this.openFileWithData(params, callback, fileInfo, params.fileData, true);
+            }
         } else if (!params.storage) {
             logger.info('Open file from cache as main storage');
             this.openFileFromCache(params, callback, fileInfo);
@@ -873,22 +882,19 @@ class AppModel {
             });
         }
         file.setSyncProgress();
-        const complete = (err, savedToCache) => {
-            if (!err) {
-                savedToCache = true;
-            }
+        const complete = err => {
             if (!file.active) {
                 return callback && callback('File is closed');
             }
             logger.info('Sync finished', err || 'no error');
-            file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
+            file.setSyncComplete(path, storage, err ? err.toString() : null);
             fileInfo.set({
                 name: file.name,
                 storage,
                 path,
                 opts: this.getStoreOpts(file),
-                modified: file.modified,
-                editState: file.getLocalEditState(),
+                modified: file.dirty ? fileInfo.modified : file.modified,
+                editState: file.dirty ? fileInfo.editState : file.getLocalEditState(),
                 syncDate: file.syncDate
             });
             if (this.settings.rememberKeyFiles === 'data') {
@@ -1044,19 +1050,21 @@ class AppModel {
                         saveToCacheAndStorage();
                     } else if (file.dirty) {
                         logger.info('Stat error, dirty, save to cache', err || 'no error');
-                        file.getData(data => {
-                            if (data) {
-                                Storage.cache.save(fileInfo.id, null, data, e => {
-                                    if (!e) {
-                                        file.dirty = false;
-                                    }
-                                    logger.info(
-                                        'Saved to cache, exit with error',
-                                        err || 'no error'
-                                    );
-                                    complete(err);
-                                });
+                        file.getData((data, e) => {
+                            if (e) {
+                                logger.error('Error getting file data', e);
+                                return complete(err);
                             }
+                            Storage.cache.save(fileInfo.id, null, data, e => {
+                                if (e) {
+                                    logger.error('Error saving to cache', e);
+                                }
+                                if (!e) {
+                                    file.dirty = false;
+                                }
+                                logger.info('Saved to cache, exit with error', err || 'no error');
+                                complete(err);
+                            });
                         });
                     } else {
                         logger.info('Stat error, not dirty', err || 'no error');

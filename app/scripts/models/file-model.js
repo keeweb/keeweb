@@ -468,18 +468,17 @@ class FileModel extends Model {
         this.set({ syncing: true });
     }
 
-    setSyncComplete(path, storage, error, savedToCache) {
+    setSyncComplete(path, storage, error) {
         if (!error) {
             this.db.removeLocalEditState();
         }
         const modified = this.modified && !!error;
-        const dirty = this.dirty && !savedToCache;
         this.set({
             created: false,
             path: path || this.path,
             storage: storage || this.storage,
             modified,
-            dirty,
+            dirty: error ? this.dirty : false,
             syncing: false,
             syncError: error
         });
