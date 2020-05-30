@@ -6,6 +6,10 @@ const logger = new Logger('chal-resp');
 const ChalRespCalculator = {
     cache: {},
 
+    getCacheKey(params) {
+        return `${params.vid}:${params.pid}:${params.serial}`;
+    },
+
     build(params) {
         if (!params) {
             return null;
@@ -17,8 +21,8 @@ const ChalRespCalculator = {
                 challenge = Buffer.from(challenge);
                 const hexChallenge = challenge.toString('hex');
 
-                const deviceCacheKey = `${params.vid}:${params.pid}:${params.serial}`;
-                const respFromCache = this.cache[deviceCacheKey]?.[hexChallenge];
+                const cacheKey = this.getCacheKey(params);
+                const respFromCache = this.cache[cacheKey]?.[hexChallenge];
                 if (respFromCache) {
                     logger.debug('Found ChalResp in cache');
                     return resolve(Buffer.from(respFromCache, 'hex'));
@@ -41,16 +45,20 @@ const ChalRespCalculator = {
                         return reject(err);
                     }
 
-                    if (!this.cache[deviceCacheKey]) {
-                        this.cache[deviceCacheKey] = {};
+                    if (!this.cache[cacheKey]) {
+                        this.cache[cacheKey] = {};
                     }
-                    this.cache[deviceCacheKey][hexChallenge] = response.toString('hex');
+                    this.cache[cacheKey][hexChallenge] = response.toString('hex');
 
                     logger.info('Calculated ChalResp', logger.ts(ts));
                     resolve(response);
                 });
             });
         };
+    },
+
+    clearCache(params) {
+        delete this.cache[this.getCacheKey(params)];
     }
 };
 

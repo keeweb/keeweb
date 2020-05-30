@@ -21,9 +21,9 @@ class FileModel extends Model {
         });
     }
 
-    open(password, fileData, keyFileData, chalResp, callback) {
+    open(password, fileData, keyFileData, callback) {
         try {
-            const challengeResponse = ChalRespCalculator.build(chalResp);
+            const challengeResponse = ChalRespCalculator.build(this.chalResp);
             const credentials = new kdbxweb.Credentials(password, keyFileData, challengeResponse);
             const ts = logger.ts();
 
@@ -58,7 +58,7 @@ class FileModel extends Model {
                         logger.info(
                             'Error opening file with empty password, try to open with null password'
                         );
-                        return this.open(null, fileData, keyFileData, chalResp, callback);
+                        return this.open(null, fileData, keyFileData, this.chalResp, callback);
                     }
                     logger.error('Error opening file', err.code, err.message, err);
                     callback(err);
@@ -346,6 +346,9 @@ class FileModel extends Model {
             keyFileChanged: false,
             syncing: false
         });
+        if (this.chalResp) {
+            ChalRespCalculator.clearCache(this.chalResp);
+        }
     }
 
     getEntry(id) {

@@ -688,7 +688,7 @@ class AppModel {
             this.fileOpened(file, data, params);
         };
         const open = () => {
-            file.open(params.password, data, params.keyFileData, params.chalResp, openComplete);
+            file.open(params.password, data, params.keyFileData, openComplete);
         };
         if (needLoadKeyFile) {
             Storage.file.load(params.keyFilePath, {}, (err, data) => {
