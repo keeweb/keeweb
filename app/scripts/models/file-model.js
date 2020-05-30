@@ -58,7 +58,7 @@ class FileModel extends Model {
                         logger.info(
                             'Error opening file with empty password, try to open with null password'
                         );
-                        return this.open(null, fileData, keyFileData, this.chalResp, callback);
+                        return this.open(null, fileData, keyFileData, callback);
                     }
                     logger.error('Error opening file', err.code, err.message, err);
                     callback(err);

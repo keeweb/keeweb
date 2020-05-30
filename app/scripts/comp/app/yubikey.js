@@ -253,7 +253,10 @@ const YubiKey = {
         this.ykChalResp.challengeResponse(yubiKey, challenge, slot, (err, response) => {
             if (err) {
                 if (err.code === this.ykChalResp.YK_ENOKEY) {
-                    err.noKey = true;
+                    err.ykNoKey = true;
+                }
+                if (err.code === this.ykChalResp.YK_ETIMEOUT) {
+                    err.ykTimeout = true;
                 }
                 return callback(err);
             }
