@@ -75,13 +75,24 @@ class ModalView extends View {
         const checked = this.model.checkbox
             ? this.$el.find('#modal__check').is(':checked')
             : undefined;
+        this.emit('will-close');
         this.emit('result', result, checked);
+        this.removeView();
+    }
+
+    closeWithoutResult() {
+        this.emit('will-close');
+        this.removeView();
+    }
+
+    removeView() {
         this.$el.addClass('modal--hidden');
         this.unbindEvents();
         setTimeout(() => this.remove(), 100);
     }
 
     closeImmediate() {
+        this.emit('will-close');
         this.emit('result', undefined);
         this.unbindEvents();
         this.remove();

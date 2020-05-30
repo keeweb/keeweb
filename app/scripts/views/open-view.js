@@ -685,6 +685,8 @@ class OpenView extends View {
             this.inputEl[0].selectionEnd = this.inputEl.val().length;
             if (err.code === 'InvalidKey') {
                 InputFx.shake(this.inputEl);
+            } else if (err.userCanceled) {
+                // nothing to do
             } else {
                 if (err.notFound) {
                     err = Locale.openErrorFileNotFound;
@@ -1074,7 +1076,7 @@ class OpenView extends View {
 
         Alerts.alert({
             header: Locale.openChalRespHeader,
-            icon: 'exchange',
+            iconSvg: 'usb-token',
             buttons: [{ result: '', title: Locale.alertCancel }],
             esc: '',
             click: '',

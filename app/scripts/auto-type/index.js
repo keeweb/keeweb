@@ -261,7 +261,7 @@ const AutoType = {
     resetPendingEvent() {
         if (this.pendingEvent) {
             this.pendingEvent = null;
-            logger.debug('auto-type event cancelled');
+            logger.debug('auto-type event canceled');
         }
     },
 

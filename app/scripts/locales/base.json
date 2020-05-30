@@ -671,5 +671,9 @@
     "importTo": "Entries will be imported to",
     "importNewFile": "New file",
 
-    "yubiKeyStuckError": "The YubiKey seems to be stuck, auto-repair can be enabled in app settings."
+    "yubiKeyStuckError": "The YubiKey seems to be stuck, auto-repair can be enabled in app settings.",
+    "yubiKeyNoKeyHeader": "YubiKey required",
+    "yubiKeyNoKeyBody": "Please insert your YubiKey with serial number {}",
+    "yubiTouchRequestedHeader": "Touch your YubiKey",
+    "yubiTouchRequestedBody": "Please touch your YubiKey with serial number {}"
 }

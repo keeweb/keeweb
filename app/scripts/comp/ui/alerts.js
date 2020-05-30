@@ -39,7 +39,6 @@ const Alerts = {
         const view = new ModalView(config);
         view.render();
         view.on('result', (res, check) => {
-            Alerts.alertDisplayed = false;
             if (res && config.success) {
                 config.success(res, check);
             }
@@ -49,6 +48,9 @@ const Alerts = {
             if (config.complete) {
                 config.complete(res, check);
             }
+        });
+        view.on('will-close', () => {
+            Alerts.alertDisplayed = false;
         });
         return view;
     },

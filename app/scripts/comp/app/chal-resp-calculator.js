@@ -1,5 +1,10 @@
+import { Events } from 'framework/events';
 import { Logger } from 'util/logger';
 import { YubiKey } from 'comp/app/yubikey';
+import { Alerts } from 'comp/ui/alerts';
+import { Locale } from 'util/locale';
+import { Timeouts } from 'const/timeouts';
+import { UsbListener } from './usb-listener';
 
 const logger = new Logger('chal-resp');
 
@@ -16,8 +21,6 @@ const ChalRespCalculator = {
         }
         return challenge => {
             return new Promise((resolve, reject) => {
-                const ts = logger.ts();
-
                 challenge = Buffer.from(challenge);
                 const hexChallenge = challenge.toString('hex');
 
@@ -30,31 +33,129 @@ const ChalRespCalculator = {
 
                 logger.debug('Calculating ChalResp using a YubiKey', params);
 
-                YubiKey.calculateChalResp(params, challenge, (err, response) => {
+                this._calc(params, challenge, (err, response) => {
                     if (err) {
-                        if (err.noKey) {
-                            logger.debug('No YubiKey');
-                            // TODO
-                            return;
-                        }
-                        if (err.touchRequested) {
-                            logger.debug('YubiKey touch requested');
-                            // TODO
-                            return;
-                        }
                         return reject(err);
                     }
-
-                    if (!this.cache[cacheKey]) {
-                        this.cache[cacheKey] = {};
-                    }
-                    this.cache[cacheKey][hexChallenge] = response.toString('hex');
-
-                    logger.info('Calculated ChalResp', logger.ts(ts));
                     resolve(response);
                 });
             });
         };
+    },
+
+    _calc(params, challenge, callback) {
+        let touchAlert = null;
+        let userCanceled = false;
+
+        YubiKey.calculateChalResp(params, challenge, (err, response) => {
+            if (userCanceled) {
+                userCanceled = false;
+                return;
+            }
+            if (touchAlert) {
+                touchAlert.closeWithoutResult();
+                touchAlert = null;
+            }
+            if (err) {
+                if (err.noKey) {
+                    logger.info('YubiKey ChalResp: no key');
+                    this._showNoKeyAlert(params.serial, err => {
+                        if (err) {
+                            return callback(err);
+                        }
+                        this._calc(params, challenge, callback);
+                    });
+                    return;
+                } else if (err.touchRequested) {
+                    logger.info('YubiKey ChalResp: touch requested');
+                    touchAlert = this._showTouchAlert(params.serial, err => {
+                        touchAlert = null;
+                        userCanceled = true;
+                        callback(err);
+                    });
+                    return;
+                } else {
+                    logger.error('YubiKey ChalResp error', err);
+                }
+                return callback(err);
+            }
+
+            const cacheKey = this.getCacheKey(params);
+            if (!this.cache[cacheKey]) {
+                this.cache[cacheKey] = {};
+            }
+
+            const hexChallenge = challenge.toString('hex');
+            this.cache[cacheKey][hexChallenge] = response.toString('hex');
+
+            logger.info('Calculated YubiKey ChalResp');
+            callback(null, response);
+        });
+    },
+
+    _showNoKeyAlert(serial, callback) {
+        let noKeyAlert = null;
+        let deviceEnumerationTimer;
+
+        const onUsbDevicesChanged = () => {
+            if (UsbListener.attachedYubiKeys === 0) {
+                return;
+            }
+            deviceEnumerationTimer = setTimeout(() => {
+                YubiKey.list((err, list) => {
+                    if (err) {
+                        logger.error('YubiKey list error', err);
+                        return;
+                    }
+                    const isAttached = list.some(yk => yk.serial === serial);
+                    logger.info(isAttached ? 'YubiKey found' : 'YubiKey not found');
+                    if (isAttached) {
+                        Events.off('usb-devices-changed', onUsbDevicesChanged);
+                        if (noKeyAlert) {
+                            noKeyAlert.closeWithoutResult();
+                        }
+                        callback();
+                    }
+                });
+            }, Timeouts.ExternalDeviceAfterReconnect);
+        };
+
+        Events.on('usb-devices-changed', onUsbDevicesChanged);
+
+        noKeyAlert = Alerts.alert({
+            header: Locale.yubiKeyNoKeyHeader,
+            body: Locale.yubiKeyNoKeyBody.replace('{}', serial),
+            buttons: [Alerts.buttons.cancel],
+            iconSvg: 'usb-token',
+            cancel: () => {
+                logger.info('No key alert closed');
+
+                clearTimeout(deviceEnumerationTimer);
+                Events.off('usb-devices-changed', onUsbDevicesChanged);
+
+                const err = new Error('User canceled the YubiKey no key prompt');
+                err.userCanceled = true;
+
+                return callback(err);
+            }
+        });
+    },
+
+    _showTouchAlert(serial, callback) {
+        return Alerts.alert({
+            header: Locale.yubiTouchRequestedHeader,
+            body: Locale.yubiTouchRequestedBody.replace('{}', serial),
+            buttons: [Alerts.buttons.cancel],
+            iconSvg: 'usb-token',
+            cancel: () => {
+                logger.info('Touch alert closed');
+
+                const err = new Error('User canceled the YubiKey touch prompt');
+                err.userCanceled = true;
+
+                return callback(err);
+            }
+        });
     },
 
     clearCache(params) {
