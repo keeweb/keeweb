@@ -833,6 +833,9 @@ class AppModel {
         if (file.syncing) {
             return callback && callback('Sync in progress');
         }
+        if (!file.active) {
+            return callback && callback('File is closed');
+        }
         if (!options) {
             options = {};
         }
@@ -871,6 +874,9 @@ class AppModel {
         const complete = (err, savedToCache) => {
             if (!err) {
                 savedToCache = true;
+            }
+            if (!file.active) {
+                return callback && callback('File is closed');
             }
             logger.info('Sync finished', err || 'no error');
             file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
@@ -925,6 +931,9 @@ class AppModel {
                 logger.info('Load from storage, attempt ' + loadLoops);
                 Storage[storage].load(path, opts, (err, data, stat) => {
                     logger.info('Load from storage', stat, err || 'no error');
+                    if (!file.active) {
+                        return complete('File is closed');
+                    }
                     if (err) {
                         return complete(err);
                     }
@@ -1024,6 +1033,9 @@ class AppModel {
             };
             logger.info('Stat file');
             Storage[storage].stat(path, opts, (err, stat) => {
+                if (!file.active) {
+                    return complete('File is closed');
+                }
                 if (err) {
                     if (err.notFound) {
                         logger.info('File does not exist in storage, creating');
