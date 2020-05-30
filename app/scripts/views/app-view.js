@@ -539,7 +539,7 @@ class AppView extends View {
                         });
                     }
                     if (complete) {
-                        complete(true);
+                        complete(false);
                     }
                 } else {
                     that.closeAllFilesAndShowFirst();
