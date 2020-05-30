@@ -8,7 +8,7 @@ import { GroupModel } from 'models/group-model';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { Logger } from 'util/logger';
 import { mapObject } from 'util/fn';
-import { YubiKey } from 'comp/app/yubikey';
+import { ChalRespCalculator } from 'comp/app/chal-resp-calculator';
 
 const logger = new Logger('file');
 
@@ -23,7 +23,7 @@ class FileModel extends Model {
 
     open(password, fileData, keyFileData, chalResp, callback) {
         try {
-            const challengeResponse = this.makeChallengeResponse(chalResp);
+            const challengeResponse = ChalRespCalculator.build(chalResp);
             const credentials = new kdbxweb.Credentials(password, keyFileData, challengeResponse);
             const ts = logger.ts();
 
@@ -67,26 +67,6 @@ class FileModel extends Model {
             logger.error('Error opening file', e, e.code, e.message, e);
             callback(e);
         }
-    }
-
-    makeChallengeResponse(params) {
-        if (!params) {
-            return null;
-        }
-        return challenge => {
-            return new Promise((resolve, reject) => {
-                logger.debug('Calculating ChalResp using a YubiKey');
-                const ts = logger.ts();
-                challenge = Buffer.from(challenge);
-                YubiKey.calculateChalResp(params, challenge, (err, response) => {
-                    if (err) {
-                        return reject(err);
-                    }
-                    logger.info('Calculated ChalResp', logger.ts(ts));
-                    resolve(response);
-                });
-            });
-        };
     }
 
     kdfArgsToString(header) {
