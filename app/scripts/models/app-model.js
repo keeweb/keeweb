@@ -655,7 +655,8 @@ class AppModel {
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
             backup: (fileInfo && fileInfo.backup) || null,
-            fingerprint: (fileInfo && fileInfo.fingerprint) || null
+            fingerprint: (fileInfo && fileInfo.fingerprint) || null,
+            chalResp: params.chalResp
         });
         const openComplete = err => {
             if (err) {
@@ -687,7 +688,7 @@ class AppModel {
             this.fileOpened(file, data, params);
         };
         const open = () => {
-            file.open(params.password, data, params.keyFileData, openComplete);
+            file.open(params.password, data, params.keyFileData, params.chalResp, openComplete);
         };
         if (needLoadKeyFile) {
             Storage.file.load(params.keyFilePath, {}, (err, data) => {
@@ -745,7 +746,8 @@ class AppModel {
             syncDate: file.syncDate || dt,
             openDate: dt,
             backup: file.backup,
-            fingerprint: file.fingerprint
+            fingerprint: file.fingerprint,
+            chalResp: file.chalResp
         });
         switch (this.settings.rememberKeyFiles) {
             case 'data':

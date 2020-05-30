@@ -11,7 +11,12 @@
         <div class="open-chal-resp__head">{{res 'openChalRespSelectYubiKey'}}:</div>
         <div>
             {{#each yubiKeys as |yk|}}
-                <div class="open-chal-resp__item" data-serial="{{yk.serial}}" data-slot="{{yk.slot}}">
+                <div class="open-chal-resp__item"
+                     data-vid="{{yk.vid}}"
+                     data-pid="{{yk.pid}}"
+                     data-serial="{{yk.serial}}"
+                     data-slot="{{yk.slot}}"
+                >
                     {{yk.fullName}}, {{res 'openChalRespSlot'}} {{yk.slot}}
                 </div>
             {{/each}}

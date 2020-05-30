@@ -8,6 +8,7 @@ import { GroupModel } from 'models/group-model';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { Logger } from 'util/logger';
 import { mapObject } from 'util/fn';
+import { YubiKey } from 'comp/app/yubikey';
 
 const logger = new Logger('file');
 
@@ -20,9 +21,10 @@ class FileModel extends Model {
         });
     }
 
-    open(password, fileData, keyFileData, callback) {
+    open(password, fileData, keyFileData, chalResp, callback) {
         try {
-            const credentials = new kdbxweb.Credentials(password, keyFileData);
+            const challengeResponse = this.makeChallengeResponse(chalResp);
+            const credentials = new kdbxweb.Credentials(password, keyFileData, challengeResponse);
             const ts = logger.ts();
 
             kdbxweb.Kdbx.load(fileData, credentials)
@@ -56,7 +58,7 @@ class FileModel extends Model {
                         logger.info(
                             'Error opening file with empty password, try to open with null password'
                         );
-                        return this.open(null, fileData, keyFileData, callback);
+                        return this.open(null, fileData, keyFileData, chalResp, callback);
                     }
                     logger.error('Error opening file', err.code, err.message, err);
                     callback(err);
@@ -65,6 +67,26 @@ class FileModel extends Model {
             logger.error('Error opening file', e, e.code, e.message, e);
             callback(e);
         }
+    }
+
+    makeChallengeResponse(params) {
+        if (!params) {
+            return null;
+        }
+        return challenge => {
+            return new Promise((resolve, reject) => {
+                logger.debug('Calculating ChalResp using a YubiKey');
+                const ts = logger.ts();
+                challenge = Buffer.from(challenge);
+                YubiKey.calculateChalResp(params, challenge, (err, response) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    logger.info('Calculated ChalResp', logger.ts(ts));
+                    resolve(response);
+                });
+            });
+        };
     }
 
     kdfArgsToString(header) {
@@ -707,6 +729,7 @@ FileModel.defineModelProperties({
     groupMap: null,
     keyFileName: '',
     keyFilePath: null,
+    chalResp: null,
     passwordLength: 0,
     path: '',
     opts: null,

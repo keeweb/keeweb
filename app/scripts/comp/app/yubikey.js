@@ -60,12 +60,14 @@ const YubiKey = {
             if (err) {
                 return callback(err);
             }
-            yubiKeys = yubiKeys.map(({ serial, pid, version, slot1, slot2 }) => {
+            yubiKeys = yubiKeys.map(({ serial, vid, pid, version, slot1, slot2 }) => {
                 return {
-                    fullName: this.getKeyFullName(pid, version, serial),
+                    vid,
+                    pid,
                     serial,
                     slot1,
-                    slot2
+                    slot2,
+                    fullName: this.getKeyFullName(pid, version, serial)
                 };
             });
             callback(null, yubiKeys);
@@ -245,10 +247,14 @@ const YubiKey = {
         });
     },
 
-    calculateChalResp(serial, vid, pid, slot, challenge, callback) {
-        const yubiKey = { serial, vid, pid };
+    calculateChalResp(chalResp, challenge, callback) {
+        const { vid, pid, serial, slot } = chalResp;
+        const yubiKey = { vid, pid, serial };
         this.ykChalResp.challengeResponse(yubiKey, challenge, slot, (err, response) => {
             if (err) {
+                if (err.touchRequested) {
+                    return;
+                }
                 // TODO: handle touch and missing YubiKeys
                 return callback(err);
             }

@@ -339,6 +339,12 @@ class OpenView extends View {
         this.focusInput();
     }
 
+    displayOpenChalResp() {
+        this.$el
+            .find('.open__settings-yubikey')
+            .toggleClass('open__settings-yubikey--active', !!this.params.chalResp);
+    }
+
     setFile(file, keyFile, fileReadyCallback) {
         this.reading = 'fileData';
         this.processFile(file, success => {
@@ -587,8 +593,10 @@ class OpenView extends View {
         this.params.keyFilePath = fileInfo.keyFilePath;
         this.params.keyFileData = null;
         this.params.opts = fileInfo.opts;
+        this.params.chalResp = fileInfo.chalResp;
         this.displayOpenFile();
         this.displayOpenKeyFile();
+        this.displayOpenChalResp();
 
         this.openFileWithFingerprint(fileInfo);
 
@@ -1051,15 +1059,17 @@ class OpenView extends View {
             this.el
                 .querySelector('.open__settings-yubikey')
                 .classList.remove('open__settings-yubikey--active');
+            this.focusInput();
             return;
         }
 
         const chalRespView = new OpenChalRespView();
-        chalRespView.on('select', e => {
-            this.params.chalResp = { serial: e.serial, slot: e.slot };
+        chalRespView.on('select', ({ vid, pid, serial, slot }) => {
+            this.params.chalResp = { vid, pid, serial, slot };
             this.el
                 .querySelector('.open__settings-yubikey')
                 .classList.add('open__settings-yubikey--active');
+            this.focusInput();
         });
 
         Alerts.alert({

@@ -50,10 +50,12 @@ class OpenChalRespView extends View {
             this.error = err;
             this.yubiKeys = [];
             if (yubiKeys) {
-                for (const { fullName, serial, slot1, slot2 } of yubiKeys) {
+                for (const { fullName, vid, pid, serial, slot1, slot2 } of yubiKeys) {
                     for (const slot of [slot1 ? 1 : 0, slot2 ? 2 : 0].filter(s => s)) {
                         this.yubiKeys.push({
                             fullName,
+                            vid,
+                            pid,
                             serial,
                             slot
                         });
@@ -66,8 +68,11 @@ class OpenChalRespView extends View {
 
     itemClick(e) {
         const el = e.target.closest('[data-serial]');
-        const { serial, slot } = el.dataset;
-        this.emit('select', { serial, slot });
+        const vid = +el.dataset.vid;
+        const pid = +el.dataset.pid;
+        const serial = +el.dataset.serial;
+        const slot = +el.dataset.slot;
+        this.emit('select', { vid, pid, serial, slot });
     }
 }
 
