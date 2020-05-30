@@ -1,10 +1,11 @@
 import { Events } from 'framework/events';
 import { Logger } from 'util/logger';
 import { YubiKey } from 'comp/app/yubikey';
+import { UsbListener } from 'comp/app/usb-listener';
 import { Alerts } from 'comp/ui/alerts';
 import { Locale } from 'util/locale';
 import { Timeouts } from 'const/timeouts';
-import { UsbListener } from './usb-listener';
+import { Launcher } from 'comp/launcher';
 
 const logger = new Logger('chal-resp');
 
@@ -94,6 +95,8 @@ const ChalRespCalculator = {
     },
 
     _showNoKeyAlert(serial, callback) {
+        Launcher.showMainWindow();
+
         let noKeyAlert = null;
         let deviceEnumerationTimer;
 
@@ -142,6 +145,8 @@ const ChalRespCalculator = {
     },
 
     _showTouchAlert(serial, callback) {
+        Launcher.showMainWindow();
+
         return Alerts.alert({
             header: Locale.yubiTouchRequestedHeader,
             body: Locale.yubiTouchRequestedBody.replace('{}', serial),
