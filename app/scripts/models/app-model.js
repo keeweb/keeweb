@@ -532,7 +532,7 @@ class AppModel {
                 params,
                 (err, file) => {
                     if (err) {
-                        if (err.name === 'KdbxError') {
+                        if (err.name === 'KdbxError' || err.userCanceled) {
                             return callback(err);
                         }
                         logger.info(
@@ -558,7 +558,7 @@ class AppModel {
                         setTimeout(() => this.syncFile(file), 0);
                         callback(err);
                     } else {
-                        if (err.name === 'KdbxError') {
+                        if (err.name === 'KdbxError' || err.userCanceled) {
                             return callback(err);
                         }
                         logger.info(
