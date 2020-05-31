@@ -262,6 +262,10 @@ const YubiKey = {
             }
             callback(null, response);
         });
+    },
+
+    cancelChalResp() {
+        this.ykChalResp.cancelChallengeResponse();
     }
 };
 

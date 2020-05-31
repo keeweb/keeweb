@@ -72,6 +72,10 @@ const ChalRespCalculator = {
                     touchAlert = this._showTouchAlert(params.serial, err => {
                         touchAlert = null;
                         userCanceled = true;
+
+                        logger.info('YubiKey ChalResp canceled');
+                        YubiKey.cancelChalResp();
+
                         callback(err);
                     });
                     return;
