@@ -207,7 +207,8 @@ function createMainWindow() {
         webPreferences: {
             backgroundThrottling: false,
             nodeIntegration: true,
-            nodeIntegrationInWorker: true
+            nodeIntegrationInWorker: true,
+            enableRemoteModule: true
         }
     };
     if (process.platform !== 'win32') {
