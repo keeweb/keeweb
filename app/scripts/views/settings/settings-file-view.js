@@ -755,6 +755,11 @@ class SettingsFileView extends View {
     changeYubiKey(e) {
         let chalResp = null;
         const value = e.target.value;
+        if (value === 'refresh') {
+            this.render();
+            this.refreshYubiKeys();
+            return;
+        }
         if (value) {
             const option = e.target.selectedOptions[0];
             const vid = +option.dataset.vid;
