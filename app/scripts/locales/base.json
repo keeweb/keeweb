@@ -237,7 +237,6 @@
     "openChalRespLoading": "Loading the list of YubiKeys",
     "openChalRespSelectYubiKey": "Select a YubiKey that you would like to use",
     "openChalRespErrorEmpty": "No YubiKeys found",
-    "openChalRespSlot": "slot",
 
     "detAttDownload": "Shift-click the attachment button to download it or",
     "detAttDelToRemove": "Delete to remove",
@@ -532,6 +531,10 @@
     "setFileExportRawBody": "The exported file will contain your passwords, they will not be encrypted there. Would you like to proceed?",
     "setFileDeviceIntro": "One-time codes from this {} will be displayed in the app.",
     "setFileDeviceSettings": "Settings",
+    "setFileYubiKey": "YubiKey",
+    "setFileDontUseYubiKey": "Don't use a YubiKey",
+    "setFileYubiKeyHeader": "YubiKey",
+    "setFileYubiKeyBody": "Using YubiKey as a part of master key is dangerous and you may lose access to your passwords if something goes wrong. Have you made a backup of your file before changing this setting?",
 
     "setShTitle": "Shortcuts",
     "setShShowAll": "show all items",
@@ -675,6 +678,7 @@
     "yubiKeyStuckError": "The YubiKey seems to be stuck, auto-repair can be enabled in app settings.",
     "yubiKeyNoKeyHeader": "YubiKey required",
     "yubiKeyNoKeyBody": "Please insert your YubiKey with serial number {}",
-    "yubiTouchRequestedHeader": "Touch your YubiKey",
-    "yubiTouchRequestedBody": "Please touch your YubiKey with serial number {}"
+    "yubiKeySlot": "slot",
+    "yubiKeyTouchRequestedHeader": "Touch your YubiKey",
+    "yubiKeyTouchRequestedBody": "Please touch your YubiKey with serial number {}"
 }

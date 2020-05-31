@@ -895,7 +895,8 @@ class AppModel {
                 opts: this.getStoreOpts(file),
                 modified: file.dirty ? fileInfo.modified : file.modified,
                 editState: file.dirty ? fileInfo.editState : file.getLocalEditState(),
-                syncDate: file.syncDate
+                syncDate: file.syncDate,
+                chalResp: file.chalResp
             });
             if (this.settings.rememberKeyFiles === 'data') {
                 fileInfo.set({

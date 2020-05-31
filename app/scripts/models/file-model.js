@@ -556,6 +556,16 @@ class FileModel extends Model {
         return daysDiff > expiryDays;
     }
 
+    setChallengeResponse(chalResp) {
+        if (this.chalResp && !AppSettingsModel.yubiKeyRememberChalResp) {
+            ChalRespCalculator.clearCache(this.chalResp);
+        }
+        this.db.credentials.setChallengeResponse(ChalRespCalculator.build(chalResp));
+        this.db.meta.keyChanged = new Date();
+        this.chalResp = chalResp;
+        this.setModified();
+    }
+
     setKeyChange(force, days) {
         if (isNaN(days) || !days || days < 0) {
             days = -1;

@@ -13,7 +13,7 @@ const ChalRespCalculator = {
     cache: {},
 
     getCacheKey(params) {
-        return `${params.vid}:${params.pid}:${params.serial}`;
+        return `${params.vid}:${params.pid}:${params.serial}:${params.slot}`;
     },
 
     build(params) {
@@ -152,8 +152,8 @@ const ChalRespCalculator = {
         Launcher.showMainWindow();
 
         return Alerts.alert({
-            header: Locale.yubiTouchRequestedHeader,
-            body: Locale.yubiTouchRequestedBody.replace('{}', serial),
+            header: Locale.yubiKeyTouchRequestedHeader,
+            body: Locale.yubiKeyTouchRequestedBody.replace('{}', serial),
             buttons: [Alerts.buttons.cancel],
             iconSvg: 'usb-token',
             cancel: () => {

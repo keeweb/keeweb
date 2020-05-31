@@ -4,6 +4,8 @@ import { Storage } from 'storage';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { Launcher } from 'comp/launcher';
 import { Alerts } from 'comp/ui/alerts';
+import { YubiKey } from 'comp/app/yubikey';
+import { UsbListener } from 'comp/app/usb-listener';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { DateFormat } from 'util/formatting/date-format';
@@ -20,6 +22,7 @@ const DefaultBackupSchedule = '1w';
 
 class SettingsFileView extends View {
     template = template;
+    yubiKeys = [];
 
     events = {
         'click .settings__file-button-save-default': 'saveDefault',
@@ -52,7 +55,8 @@ class SettingsFileView extends View {
         'change #settings__file-kdf': 'changeKdf',
         'input #settings__file-key-rounds': 'changeKeyRounds',
         'input #settings__file-key-change-force': 'changeKeyChangeForce',
-        'input .settings__input-kdf': 'changeKdfParameter'
+        'input .settings__input-kdf': 'changeKdfParameter',
+        'change #settings__file-yubikey': 'changeYubiKey'
     };
 
     constructor(model, options) {
@@ -63,6 +67,8 @@ class SettingsFileView extends View {
                 setTimeout(() => this.render(), 0);
             });
         }
+
+        this.refreshYubiKeys();
     }
 
     render() {
@@ -86,6 +92,39 @@ class SettingsFileView extends View {
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         const backup = this.model.backup;
+
+        const selectedYubiKey = this.model.chalResp
+            ? `${this.model.chalResp.serial}:${this.model.chalResp.slot}`
+            : '';
+        const showYubiKeyBlock =
+            !!this.model.chalResp ||
+            (AppSettingsModel.enableUsb && AppSettingsModel.yubiKeyShowChalResp);
+        const yubiKeys = [];
+        if (showYubiKeyBlock) {
+            for (const yk of this.yubiKeys) {
+                for (const slot of [yk.slot1 ? 1 : 0, yk.slot2 ? 2 : 0].filter(s => s)) {
+                    yubiKeys.push({
+                        value: `${yk.serial}:${slot}`,
+                        fullName: yk.fullName,
+                        vid: yk.vid,
+                        pid: yk.pid,
+                        serial: yk.serial,
+                        slot
+                    });
+                }
+            }
+            if (selectedYubiKey && !yubiKeys.some(yk => yk.value === selectedYubiKey)) {
+                yubiKeys.push({
+                    value: selectedYubiKey,
+                    fullName: `YubiKey ${this.model.chalResp.serial}`,
+                    vid: this.model.chalResp.vid,
+                    pid: this.model.chalResp.pid,
+                    serial: this.model.chalResp.serial,
+                    slot: this.model.chalResp.slot
+                });
+            }
+        }
+
         super.render({
             cmd: Shortcuts.actionShortcutSymbol(true),
             supportFiles: !!Launcher,
@@ -115,7 +154,10 @@ class SettingsFileView extends View {
             canBackup,
             canSaveTo: AppSettingsModel.canSaveTo,
             canExportXml: AppSettingsModel.canExportXml,
-            canExportHtml: AppSettingsModel.canExportHtml
+            canExportHtml: AppSettingsModel.canExportHtml,
+            showYubiKeyBlock,
+            selectedYubiKey,
+            yubiKeys
         });
         if (!this.model.created) {
             this.$el.find('.settings__file-master-pass-warning').toggle(this.model.passwordChanged);
@@ -689,6 +731,48 @@ class SettingsFileView extends View {
         if (value > 0) {
             this.model.setKdfParameter(field, value);
         }
+    }
+
+    refreshYubiKeys() {
+        if (!AppSettingsModel.enableUsb || !AppSettingsModel.yubiKeyShowChalResp) {
+            return;
+        }
+        if (!UsbListener.attachedYubiKeys) {
+            if (this.yubiKeys.length) {
+                this.yubiKeys = [];
+                this.render();
+            }
+        }
+        YubiKey.list((err, yubiKeys) => {
+            if (err) {
+                return;
+            }
+            this.yubiKeys = yubiKeys;
+            this.render();
+        });
+    }
+
+    changeYubiKey(e) {
+        let chalResp = null;
+        const value = e.target.value;
+        if (value) {
+            const option = e.target.selectedOptions[0];
+            const vid = +option.dataset.vid;
+            const pid = +option.dataset.pid;
+            const serial = +option.dataset.serial;
+            const slot = +option.dataset.slot;
+            chalResp = { vid, pid, serial, slot };
+        }
+        Alerts.yesno({
+            header: Locale.setFileYubiKeyHeader,
+            body: Locale.setFileYubiKeyBody,
+            success: () => {
+                this.model.setChallengeResponse(chalResp);
+            },
+            cancel: () => {
+                this.render();
+            }
+        });
     }
 }
 
