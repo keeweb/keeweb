@@ -756,21 +756,14 @@ function loadSettingsEncryptionKey() {
         }
 
         const keytar = reqNative('keytar');
-        return new Promise((resolve, reject) => {
-            keytar.getPassword('KeeWeb', 'settings-key', (err, key) => {
-                if (err) {
-                    return reject('Error loading settings key from keytar');
-                }
-                if (key) {
-                    return resolve(Buffer.from(key, 'hex'));
-                }
-                key = require('crypto').randomBytes(48);
-                keytar.setPassword('KeeWeb', 'settings-key', key.toString('hex'), err => {
-                    if (err) {
-                        return reject('Error saving settings key in keytar');
-                    }
-                    migrateOldConfigs(key).then(() => resolve(key));
-                });
+
+        return keytar.getPassword('KeeWeb', 'settings-key').then(key => {
+            if (key) {
+                return Buffer.from(key, 'hex');
+            }
+            key = require('crypto').randomBytes(48);
+            return keytar.setPassword('KeeWeb', 'settings-key', key.toString('hex')).then(() => {
+                return migrateOldConfigs(key).then(() => key);
             });
         });
     });
