@@ -90,9 +90,19 @@ Tip.prototype.hide = function() {
 
 Tip.prototype.destroy = function() {
     this.hide();
+
     this.el.off('mouseenter', this.mouseenter);
     this.el.off('mouseleave', this.mouseleave);
     this.el.off('click', this.mouseleave);
+
+    if (this.showTimeout) {
+        clearTimeout(this.showTimeout);
+        this.showTimeout = null;
+    }
+    if (this.hideTimeout) {
+        clearTimeout(this.hideTimeout);
+        this.hideTimeout = null;
+    }
 };
 
 Tip.prototype.mouseenter = function() {
