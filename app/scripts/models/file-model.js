@@ -5,6 +5,7 @@ import { Events } from 'framework/events';
 import { GroupCollection } from 'collections/group-collection';
 import { KdbxToHtml } from 'comp/format/kdbx-to-html';
 import { GroupModel } from 'models/group-model';
+import { AppSettingsModel } from 'models/app-settings-model';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { Logger } from 'util/logger';
 import { mapObject } from 'util/fn';
@@ -346,7 +347,7 @@ class FileModel extends Model {
             keyFileChanged: false,
             syncing: false
         });
-        if (this.chalResp) {
+        if (this.chalResp && !AppSettingsModel.yubiKeyRememberChalResp) {
             ChalRespCalculator.clearCache(this.chalResp);
         }
     }

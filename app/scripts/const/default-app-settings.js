@@ -41,6 +41,7 @@ const DefaultAppSettings = {
     yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files
     yubiKeyMatchEntries: true, // show matching one-time codes in entries
     yubiKeyShowChalResp: true, // show YubiKey challenge-response option
+    yubiKeyRememberChalResp: false, // remember YubiKey challenge-response codes while the app is open
     yubiKeyStuckWorkaround: false, // enable the workaround for stuck YubiKeys
 
     canOpen: true, // can select and open new files

@@ -15,6 +15,7 @@ class SettingsDevicesView extends View {
         'change .settings__yubikey-auto-open': 'changeYubiKeyAutoOpen',
         'change .settings__yubikey-match-entries': 'changeYubiKeyMatchEntries',
         'change .settings__yubikey-chalresp-show': 'changeYubiKeyShowChalResp',
+        'change .settings__yubikey-remember-chalresp': 'changeYubiKeyRememberChalResp',
         'change .settings__yubikey-stuck-workaround': 'changeYubiKeyStuckWorkaround'
     };
 
@@ -38,6 +39,7 @@ class SettingsDevicesView extends View {
             yubiKeyAutoOpen: AppSettingsModel.yubiKeyAutoOpen,
             yubiKeyMatchEntries: AppSettingsModel.yubiKeyMatchEntries,
             yubiKeyShowChalResp: AppSettingsModel.yubiKeyShowChalResp,
+            yubiKeyRememberChalResp: AppSettingsModel.yubiKeyRememberChalResp,
             yubiKeyStuckWorkaround: AppSettingsModel.yubiKeyStuckWorkaround,
             yubiKeyManualLink: Links.YubiKeyManual,
             ykmanInstallLink: Links.YubiKeyManagerInstall
@@ -67,6 +69,11 @@ class SettingsDevicesView extends View {
 
     changeYubiKeyShowChalResp(e) {
         AppSettingsModel.yubiKeyShowChalResp = e.target.checked;
+        this.render();
+    }
+
+    changeYubiKeyRememberChalResp(e) {
+        AppSettingsModel.yubiKeyRememberChalResp = e.target.checked;
         this.render();
     }
 

@@ -47,5 +47,10 @@
                    {{#if yubiKeyShowChalResp}}checked{{/if}} />
             <label for="settings__yubikey-chalresp-show">{{res 'setDevicesYubiKeyChalRespShow'}}</label>
         </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-remember-chalresp" id="settings__yubikey-remember-chalresp"
+                   {{#if yubiKeyRememberChalResp}}checked{{/if}} />
+            <label for="settings__yubikey-remember-chalresp">{{res 'setDevicesYubiKeyRememberChalResp'}}</label>
+        </div>
     {{/if}}
 </div>
