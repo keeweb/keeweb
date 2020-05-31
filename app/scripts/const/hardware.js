@@ -9,4 +9,6 @@ const YubiKeyProductIds = {
     YK4: [0x0401, 0x0402, 0x0403, 0x0404, 0x0405, 0x0406, 0x0407]
 };
 
-export { YubiKeyVendorId, YubiKeyProductIds };
+const YubiKeyChallengeSize = 64;
+
+export { YubiKeyVendorId, YubiKeyProductIds, YubiKeyChallengeSize };

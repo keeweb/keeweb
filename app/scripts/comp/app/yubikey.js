@@ -4,7 +4,7 @@ import { Logger } from 'util/logger';
 import { UsbListener } from 'comp/app/usb-listener';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Timeouts } from 'const/timeouts';
-import { YubiKeyProductIds } from 'const/hardware';
+import { YubiKeyProductIds, YubiKeyChallengeSize } from 'const/hardware';
 import { Locale } from 'util/locale';
 
 const logger = new Logger('yubikey');
@@ -250,7 +250,18 @@ const YubiKey = {
     calculateChalResp(chalResp, challenge, callback) {
         const { vid, pid, serial, slot } = chalResp;
         const yubiKey = { vid, pid, serial };
-        this.ykChalResp.challengeResponse(yubiKey, challenge, slot, (err, response) => {
+
+        challenge = Buffer.from(challenge);
+
+        // https://github.com/Yubico/yubikey-personalization-gui/issues/86
+        // https://github.com/keepassxreboot/keepassxc/blob/develop/src/keys/drivers/YubiKey.cpp#L318
+
+        const padLen = YubiKeyChallengeSize - challenge.byteLength;
+
+        const paddedChallenge = Buffer.alloc(YubiKeyChallengeSize, padLen);
+        challenge.copy(paddedChallenge);
+
+        this.ykChalResp.challengeResponse(yubiKey, paddedChallenge, slot, (err, response) => {
             if (err) {
                 if (err.code === this.ykChalResp.YK_ENOKEY) {
                     err.noKey = true;
