@@ -534,7 +534,7 @@
     "setFileYubiKey": "YubiKey",
     "setFileDontUseYubiKey": "Don't use a YubiKey",
     "setFileYubiKeyHeader": "YubiKey",
-    "setFileYubiKeyBody": "Using YubiKey as a part of master key is dangerous and you may lose access to your passwords if something goes wrong. Have you made a backup of your file before changing this setting?",
+    "setFileYubiKeyBody": "Using a YubiKey as a part of master key is dangerous and you may lose access to your passwords if something goes wrong. Have you made a backup of your file before changing this setting?",
 
     "setShTitle": "Shortcuts",
     "setShShowAll": "show all items",
