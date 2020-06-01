@@ -16,7 +16,7 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   repository: keeweb/keeweb
-#                  ref: develop
+                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
             - name: Install npm modules
               run: npm ci
             - name: Test
@@ -43,7 +43,7 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   repository: keeweb/keeweb
-#                  ref: develop
+                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
             - name: Download artifact
               uses: actions/download-artifact@v1
               with:
@@ -104,7 +104,7 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   repository: keeweb/keeweb
-#                  ref: develop
+                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
             - name: Download artifact
               uses: actions/download-artifact@v1
               with:
@@ -151,8 +151,8 @@ jobs:
                   tagRegexGroup: 1
             - uses: actions/checkout@v2
               with:
-                  repository: 'keeweb/keeweb'
-#                  ref: 'develop'
+                  repository: keeweb/keeweb
+                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
             - name: Download artifact
               uses: actions/download-artifact@v1
               with:
@@ -223,7 +223,7 @@ jobs:
               with:
                   repository: keeweb/keeweb
                   path: keeweb
-#                  ref: develop
+                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
             - name: Install npm modules
               working-directory: keeweb
               run: npm ci
@@ -321,6 +321,7 @@ jobs:
             - name: Tag the Docker image
               run: docker tag antelle/keeweb:latest antelle/keeweb:${{ steps.get_tag.outputs.tag }}
             - name: Push the Docker image to the registry
+              if: ${{ github.repository == 'keeweb/keeweb' }}
               run: docker push antelle/keeweb
             - name: Create a GitHub release
               id: create_release
@@ -493,4 +494,5 @@ jobs:
               working-directory: gh-pages
               run: python3 ../keeweb/.github/actions/scripts/git-restore-mtime.py
             - name: Sync the website
+              if: ${{ github.repository == 'keeweb/keeweb' }}
               run: gsutil -m rsync -r -d -x "^\." gh-pages gs://app.keeweb.info/
