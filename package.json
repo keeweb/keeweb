@@ -31,6 +31,8 @@
         "dompurify": "^2.0.11",
         "electron": "^9.0.0",
         "electron-builder": "^22.7.0",
+        "electron-notarize": "^0.3.0",
+        "electron-osx-sign": "^0.4.16",
         "eslint": "^7.1.0",
         "eslint-config-prettier": "^6.11.0",
         "eslint-config-standard": "^14.1.1",

@@ -39,7 +39,13 @@ module.exports = function (grunt) {
         'chmod:linux-desktop-x64'
     ]);
 
-    grunt.registerTask('build-desktop-executables-darwin', ['electron:darwin']);
+    grunt.registerTask('build-desktop-executables-darwin', [
+        'electron:darwin',
+        'copy:desktop-darwin-helper',
+        'copy:desktop-darwin-installer-helper',
+        'osx-sign:desktop',
+        'notarize:desktop'
+    ]);
 
     grunt.registerTask('build-desktop-executables-win32', [
         'electron:win32-x64',

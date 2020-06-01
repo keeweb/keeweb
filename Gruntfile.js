@@ -141,6 +141,21 @@ module.exports = function (grunt) {
                 dest: 'tmp/desktop/update/',
                 nonull: true
             },
+            'desktop-darwin-helper': {
+                src: 'helper/darwin/KeeWebHelper',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
+                nonull: true,
+                options: { mode: '0755' }
+            },
+            'desktop-darwin-installer-helper': {
+                cwd: 'package/osx/KeeWeb Installer.app',
+                src: '**',
+                dest:
+                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                expand: true,
+                nonull: true,
+                options: { mode: true }
+            },
             'desktop-windows-helper-x64': {
                 src: 'helper/win32/KeeWebHelper.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
@@ -326,65 +341,7 @@ module.exports = function (grunt) {
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
                     extendInfo: 'package/osx/extend.plist',
-                    ignore: [/(linux|win32)-\w+\.node$/],
-                    osxSign: skipSign
-                        ? undefined
-                        : {
-                              get identity() {
-                                  return getCodeSignConfig().identities.app;
-                              },
-                              hardenedRuntime: true,
-                              entitlements: 'package/osx/entitlements.mac.plist',
-                              'entitlements-inherit': 'package/osx/entitlements.mac.plist',
-                              'gatekeeper-assess': false
-                          },
-                    osxNotarize: skipSign
-                        ? undefined
-                        : {
-                              get appleId() {
-                                  return getCodeSignConfig().appleId;
-                              },
-                              appleIdPassword: '@keychain:AC_PASSWORD',
-                              get ascProvider() {
-                                  return getCodeSignConfig().teamId;
-                              }
-                          },
-                    afterCopy: [
-                        (buildPath, electronVersion, platform, arch, callback) => {
-                            if (path.basename(buildPath) !== 'app') {
-                                throw new Error('Bad build path: ' + buildPath);
-                            }
-                            const resPath = path.dirname(buildPath);
-                            if (path.basename(resPath) !== 'Resources') {
-                                throw new Error('Bad Resources path: ' + resPath);
-                            }
-                            const helperTargetPath = path.join(
-                                resPath,
-                                'helper/darwin/KeeWebHelper'
-                            );
-                            const helperSourcePath = path.join(
-                                __dirname,
-                                'helper/darwin/KeeWebHelper'
-                            );
-                            fs.copySync(helperSourcePath, helperTargetPath);
-
-                            const contentsPath = path.dirname(resPath);
-                            if (path.basename(contentsPath) !== 'Contents') {
-                                throw new Error('Bad Contents path: ' + contentsPath);
-                            }
-                            const installerSourcePath = path.join(
-                                __dirname,
-                                'package/osx/KeeWeb Installer.app'
-                            );
-                            const installerTargetPath = path.join(
-                                contentsPath,
-                                'Installer/KeeWeb Installer.app'
-                            );
-                            fs.copySync(installerSourcePath, installerTargetPath);
-
-                            callback();
-                        }
-                    ]
+                    ignore: [/(linux|win32)-\w+\.node$/]
                 }
             },
             'win32-x64': {
@@ -637,6 +594,35 @@ module.exports = function (grunt) {
                     expectedCount: 7,
                     publicKey: 'app/resources/public-key.pem'
                 }
+            }
+        },
+        'osx-sign': {
+            options: {
+                get identity() {
+                    return getCodeSignConfig().identities.app;
+                },
+                hardenedRuntime: true,
+                entitlements: 'package/osx/entitlements.mac.plist',
+                'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                'gatekeeper-assess': false
+            },
+            desktop: {
+                src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
+            }
+        },
+        notarize: {
+            options: {
+                appBundleId: 'net.antelle.keeweb',
+                get appleId() {
+                    return getCodeSignConfig().appleId;
+                },
+                appleIdPassword: '@keychain:AC_PASSWORD',
+                get ascProvider() {
+                    return getCodeSignConfig().teamId;
+                }
+            },
+            desktop: {
+                src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
             }
         },
         'sign-exe': {
