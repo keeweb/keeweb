@@ -27,8 +27,9 @@ const AutoType = {
             return;
         }
         Events.on('auto-type', e => this.handleEvent(e));
-        Events.on('main-window-blur', e => this.resetPendingEvent(e));
-        Events.on('main-window-will-close', e => this.resetPendingEvent(e));
+        Events.on('main-window-blur', e => this.mainWindowBlur(e));
+        Events.on('main-window-focus', e => this.mainWindowFocus(e));
+        Events.on('main-window-will-close', e => this.mainWindowWillClose(e));
         Events.on('closed-open-view', e => this.processPendingEvent(e));
     },
 
@@ -256,6 +257,31 @@ const AutoType = {
             this.selectEntryView.hide();
             Events.emit('open-file');
         });
+    },
+
+    mainWindowBlur() {
+        this.mainWindowBlurTimer = setTimeout(() => {
+            // macOS emits focus-blur-focus event in a row when triggering auto-type from minimized state
+            delete this.mainWindowBlurTimer;
+            this.resetPendingEvent();
+            if (this.selectEntryView) {
+                this.selectEntryView.emit('result', undefined);
+            }
+        }, Timeouts.AutoTypeWindowFocusAfterBlur);
+    },
+
+    mainWindowFocus() {
+        if (this.mainWindowBlurTimer) {
+            clearTimeout(this.mainWindowBlurTimer);
+            this.mainWindowBlurTimer = null;
+        }
+    },
+
+    mainWindowWillClose() {
+        this.resetPendingEvent();
+        if (this.selectEntryView) {
+            this.selectEntryView.emit('result', undefined);
+        }
     },
 
     resetPendingEvent() {

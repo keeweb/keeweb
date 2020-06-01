@@ -32,7 +32,6 @@ class AutoTypeSelectView extends View {
     constructor(model) {
         super(model);
         this.initScroll();
-        this.listenTo(Events, 'main-window-blur', this.mainWindowBlur);
         this.listenTo(Events, 'main-window-will-close', this.mainWindowWillClose);
         this.listenTo(Events, 'keypress:auto-type', this.keyPressed);
         this.setupKeys();
@@ -209,13 +208,8 @@ class AutoTypeSelectView extends View {
         this.showItemOptions(itemEl, e);
     }
 
-    mainWindowBlur() {
-        this.cancelAndClose();
-    }
-
     mainWindowWillClose(e) {
         e.preventDefault();
-        this.cancelAndClose();
     }
 
     showItemOptions(itemEl, event) {

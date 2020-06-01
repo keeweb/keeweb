@@ -208,9 +208,6 @@ const Launcher = {
     minimizeApp() {
         this.hideApp();
     },
-    canMinimize() {
-        return false;
-    },
     canDetectOsSleep() {
         return false;
     },

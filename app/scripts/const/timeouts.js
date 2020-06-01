@@ -6,6 +6,7 @@ const Timeouts = {
     CheckWindowClosed: 300,
     OtpFadeDuration: 10000,
     AutoTypeAfterHide: 100,
+    AutoTypeWindowFocusAfterBlur: 500,
     DropDownClickWait: 500,
     RedrawInactiveWindow: 50,
     PopupWaitTime: 1000,

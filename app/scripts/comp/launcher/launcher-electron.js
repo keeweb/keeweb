@@ -163,6 +163,7 @@ const Launcher = {
     },
     requestExit() {
         const app = this.remoteApp();
+        app.setSkipBeforeQuitEvent();
         if (this.restartPending) {
             app.restartApp();
         } else {
@@ -189,14 +190,14 @@ const Launcher = {
             clipboard.clear('selection');
         }
     },
+    quitOnRealQuitEventIfMinimizeOnQuitIsEnabled() {
+        return this.platform() === 'darwin';
+    },
     minimizeApp() {
         this.remoteApp().minimizeApp({
             restore: Locale.menuRestoreApp.replace('{}', 'KeeWeb'),
             quit: Locale.menuQuitApp.replace('{}', 'KeeWeb')
         });
-    },
-    canMinimize() {
-        return process.platform !== 'darwin';
     },
     canDetectOsSleep() {
         return process.platform !== 'linux';
@@ -218,10 +219,10 @@ const Launcher = {
     },
     hideApp() {
         const app = this.remoteApp();
-        if (this.canMinimize()) {
-            app.minimizeThenHideIfInTray();
-        } else {
+        if (this.platform() === 'darwin') {
             app.hide();
+        } else {
+            app.minimizeThenHideIfInTray();
         }
     },
     isAppFocused() {
@@ -328,6 +329,9 @@ Events.on('app-ready', () =>
 );
 
 Launcher.remoteApp().on('remote-app-event', e => {
+    if (window.debugRemoteAppEvents) {
+        logger.debug('remote-app-event', e.name);
+    }
     Events.emit(e.name, e.data);
 });
 

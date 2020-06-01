@@ -90,6 +90,8 @@ class AppView extends View {
         this.listenTo(Events, 'enter-full-screen', this.enterFullScreen);
         this.listenTo(Events, 'leave-full-screen', this.leaveFullScreen);
         this.listenTo(Events, 'import-csv-requested', this.showImportCsv);
+        this.listenTo(Events, 'launcher-before-quit', this.launcherBeforeQuit);
+
         this.listenTo(UpdateModel, 'change:updateReady', this.updateApp);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
@@ -334,6 +336,18 @@ class AppView extends View {
         }
     }
 
+    launcherBeforeQuit() {
+        // this is currently called only on macos
+        const event = {
+            fromBeforeQuit: true,
+            preventDefault() {}
+        };
+        const result = this.beforeUnload(event);
+        if (result !== false) {
+            Launcher.exit();
+        }
+    }
+
     beforeUnload(e) {
         const exitEvent = {
             preventDefault() {
@@ -342,12 +356,19 @@ class AppView extends View {
         };
         Events.emit('main-window-will-close', exitEvent);
         if (exitEvent.prevented) {
-            Launcher.preventExit(e);
-            return;
+            return Launcher ? Launcher.preventExit(e) : false;
         }
+
+        let minimizeInsteadOfClose = this.model.settings.minimizeOnClose;
+        if (e.fromBeforeQuit) {
+            if (Launcher.quitOnRealQuitEventIfMinimizeOnQuitIsEnabled()) {
+                minimizeInsteadOfClose = false;
+            }
+        }
+
         if (this.model.files.hasDirtyFiles()) {
             const exit = () => {
-                if (Launcher.canMinimize() && this.model.settings.minimizeOnClose) {
+                if (minimizeInsteadOfClose) {
                     Launcher.minimizeApp();
                 } else {
                     Launcher.exit();
@@ -401,8 +422,7 @@ class AppView extends View {
             Launcher &&
             !Launcher.exitRequested &&
             !Launcher.restartPending &&
-            Launcher.canMinimize() &&
-            this.model.settings.minimizeOnClose
+            minimizeInsteadOfClose
         ) {
             Launcher.minimizeApp();
             return Launcher.preventExit(e);

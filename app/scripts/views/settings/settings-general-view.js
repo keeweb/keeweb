@@ -89,7 +89,7 @@ class SettingsGeneralView extends View {
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: Updater.enabled,
             canAutoSaveOnClose: !!Launcher,
-            canMinimize: Launcher && Launcher.canMinimize(),
+            canMinimize: !!Launcher,
             canDetectMinimize: !!Launcher,
             canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
             canAutoType: AutoType.enabled,

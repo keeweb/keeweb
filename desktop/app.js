@@ -116,6 +116,14 @@ app.on('activate', () => {
         }
     }
 });
+app.on('before-quit', e => {
+    if (process.platform === 'darwin') {
+        if (!app.skipBeforeQuitEvent) {
+            e.preventDefault();
+            emitRemoteEvent('launcher-before-quit');
+        }
+    }
+});
 app.on('will-quit', () => {
     electron.globalShortcut.unregisterAll();
 });
@@ -173,6 +181,9 @@ app.minimizeThenHideIfInTray = function() {
 };
 app.getMainWindow = function() {
     return mainWindow;
+};
+app.setSkipBeforeQuitEvent = () => {
+    app.skipBeforeQuitEvent = true;
 };
 app.setGlobalShortcuts = setGlobalShortcuts;
 app.reqNative = reqNative;
@@ -274,10 +285,9 @@ function createMainWindow() {
 }
 
 function restoreMainWindow() {
-    // if (process.platform === 'darwin') {
-    //     app.dock.show();
-    //     mainWindow.show();
-    // }
+    if (process.platform === 'darwin' && !app.dock.isVisible()) {
+        app.dock.show();
+    }
     if (mainWindow.isMinimized()) {
         mainWindow.restore();
     }
@@ -294,6 +304,9 @@ function showAndFocusMainWindow() {
         mainWindow.show();
     }
     mainWindow.focus();
+    if (process.platform === 'darwin' && !app.dock.isVisible()) {
+        app.dock.show();
+    }
 }
 
 function closeMainWindow() {
