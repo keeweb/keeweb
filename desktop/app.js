@@ -44,7 +44,10 @@ const showDevToolsOnStart =
     process.argv.some(arg => arg.startsWith('--devtools')) ||
     process.env.KEEWEB_OPEN_DEVTOOLS === '1';
 
-const startMinimized = process.argv.some(arg => arg.startsWith('--minimized'));
+const loginItemSettings = process.platform === 'darwin' ? app.getLoginItemSettings() : {};
+
+const startMinimized =
+    loginItemSettings.wasOpenedAsHidden || process.argv.some(arg => arg.startsWith('--minimized'));
 
 const themeBgColors = {
     db: '#342f2e',

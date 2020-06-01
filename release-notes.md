@@ -4,7 +4,6 @@ Release notes
 `+` YubiKey integration in two modes: OATH and Challenge-Response  
 `+` configs are now encrypted with a key stored in keychain  
 `+` #1460: auto-type on double-clicking field labels  
-`+` #830: minimize instead of close option on macOS  
 `+` #557: Argon2 speed improvements in desktop apps  
 `+` #1503: ARM64 Windows support  
 `+` #1480: option to create a portable installation  
@@ -13,6 +12,8 @@ Release notes
 `+` #1342: hint that the data will be stored in unencrypted form after exporting  
 `*` #1471: WebDAV url validation, only HTTPS is allowed  
 `+` #1350: clearing master password after auto lock period  
+`+` #830: minimize instead of close option on macOS  
+`+` #448: minimized login option support on macOS  
 `-` fix #1463: copying the original url instead of adding https:  
 `-` fix #620: clearing middle-click clipboard in Linux  
 `-` fix #1440: fixed auto-type for maximized windows  
