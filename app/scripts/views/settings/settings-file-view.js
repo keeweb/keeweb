@@ -12,6 +12,7 @@ import { DateFormat } from 'util/formatting/date-format';
 import { UrlFormat } from 'util/formatting/url-format';
 import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { Locale } from 'util/locale';
+import { Features } from 'util/features';
 import { FileSaver } from 'util/ui/file-saver';
 import { OpenConfigView } from 'views/open-config-view';
 import { omit } from 'util/fn';
@@ -68,7 +69,7 @@ class SettingsFileView extends View {
             });
         }
 
-        this.refreshYubiKeys();
+        this.refreshYubiKeys(false);
     }
 
     render() {
@@ -98,7 +99,7 @@ class SettingsFileView extends View {
             : '';
         const showYubiKeyBlock =
             !!this.model.chalResp ||
-            (AppSettingsModel.enableUsb && AppSettingsModel.yubiKeyShowChalResp);
+            (Launcher && AppSettingsModel.enableUsb && AppSettingsModel.yubiKeyShowChalResp);
         const yubiKeys = [];
         if (showYubiKeyBlock) {
             for (const yk of this.yubiKeys) {
@@ -733,22 +734,32 @@ class SettingsFileView extends View {
         }
     }
 
-    refreshYubiKeys() {
-        if (!AppSettingsModel.enableUsb || !AppSettingsModel.yubiKeyShowChalResp) {
+    refreshYubiKeys(userInitiated) {
+        if (!Launcher || !AppSettingsModel.enableUsb || !AppSettingsModel.yubiKeyShowChalResp) {
             return;
         }
-        if (!UsbListener.attachedYubiKeys) {
+        if (!UsbListener.attachedYubiKeys.length) {
             if (this.yubiKeys.length) {
                 this.yubiKeys = [];
                 this.render();
             }
         }
         YubiKey.list((err, yubiKeys) => {
-            if (err) {
+            if (err || this.removed) {
                 return;
             }
             this.yubiKeys = yubiKeys;
             this.render();
+            if (
+                userInitiated &&
+                UsbListener.attachedYubiKeys.length &&
+                !yubiKeys.length &&
+                Features.isMac
+            ) {
+                Alerts.error({
+                    body: Locale.setFileYubiKeyErrorEmptyMac
+                });
+            }
         });
     }
 
@@ -757,7 +768,7 @@ class SettingsFileView extends View {
         const value = e.target.value;
         if (value === 'refresh') {
             this.render();
-            this.refreshYubiKeys();
+            this.refreshYubiKeys(true);
             return;
         }
         if (value) {

@@ -9,7 +9,7 @@ const logger = new Logger('usb-listener');
 
 const UsbListener = {
     supported: Features.isDesktop,
-    attachedYubiKeys: 0,
+    attachedYubiKeys: [],
 
     init() {
         if (!this.supported) {

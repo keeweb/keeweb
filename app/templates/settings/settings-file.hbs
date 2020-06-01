@@ -82,24 +82,26 @@
         <a id="settings__file-file-select-link">{{res 'setFileSelKeyFile'}}</a>
         <input type="file" id="settings__file-file-select" class="hide-by-pos" />
     </p>
-    <p>
-        <label for="settings__file-yubikey">{{res 'setFileYubiKey'}}:</label>
-        <select class="settings__select settings__select-no-margin input-base" id="settings__file-yubikey">
-            <option value="" {{#unless selectedYubiKey}}selected{{/unless}}>{{res 'setFileDontUseYubiKey'}}</option>
-            {{#each yubiKeys as |yk|}}
-                <option value="{{yk.value}}"
-                        {{#ifeq ../selectedYubiKey yk.value}}selected{{/ifeq}}
-                        data-vid="{{yk.vid}}"
-                        data-pid="{{yk.pid}}"
-                        data-serial="{{yk.serial}}"
-                        data-slot="{{yk.slot}}"
-                >
-                    {{yk.fullName}}, {{res 'yubiKeySlot'}} {{yk.slot}}
-                </option>
-            {{/each}}
-            <option value="refresh">{{res 'setFileRefreshYubiKeyList'}}</option>
-        </select>
-    </p>
+    {{#if showYubiKeyBlock}}
+        <p>
+            <label for="settings__file-yubikey">{{res 'setFileYubiKey'}}:</label>
+            <select class="settings__select settings__select-no-margin input-base" id="settings__file-yubikey">
+                <option value="" {{#unless selectedYubiKey}}selected{{/unless}}>{{res 'setFileDontUseYubiKey'}}</option>
+                {{#each yubiKeys as |yk|}}
+                    <option value="{{yk.value}}"
+                            {{#ifeq ../selectedYubiKey yk.value}}selected{{/ifeq}}
+                            data-vid="{{yk.vid}}"
+                            data-pid="{{yk.pid}}"
+                            data-serial="{{yk.serial}}"
+                            data-slot="{{yk.slot}}"
+                    >
+                        {{yk.fullName}}, {{res 'yubiKeySlot'}} {{yk.slot}}
+                    </option>
+                {{/each}}
+                <option value="refresh">{{res 'setFileRefreshYubiKeyList'}}</option>
+            </select>
+        </p>
+    {{/if}}
 
     <h2>{{res 'setFileNames'}}</h2>
     <label for="settings__file-name">{{Res 'name'}}:</label>

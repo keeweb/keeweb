@@ -105,7 +105,7 @@ const ChalRespCalculator = {
         let deviceEnumerationTimer;
 
         const onUsbDevicesChanged = () => {
-            if (UsbListener.attachedYubiKeys === 0) {
+            if (UsbListener.attachedYubiKeys.length === 0) {
                 return;
             }
             deviceEnumerationTimer = setTimeout(() => {

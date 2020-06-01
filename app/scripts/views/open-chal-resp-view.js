@@ -1,6 +1,7 @@
 import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { YubiKey } from 'comp/app/yubikey';
+import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 import { Timeouts } from 'const/timeouts';
 import template from 'templates/open-chal-resp.hbs';
@@ -23,12 +24,14 @@ class OpenChalRespView extends View {
     render() {
         let error = this.error;
 
-        if (this.yubiKeys && !this.yubiKeys.length) {
+        const isEmpty = this.yubiKeys && !this.yubiKeys.length;
+        if (isEmpty) {
             error = Locale.openChalRespErrorEmpty;
         }
 
         super.render({
             error,
+            showEmptyMacWarning: isEmpty && Features.isMac,
             yubiKeys: this.yubiKeys,
             loading: !this.yubiKeys && !this.error
         });

@@ -236,7 +236,8 @@
     "openChalRespHeader": "Challenge-Response",
     "openChalRespLoading": "Loading the list of YubiKeys",
     "openChalRespSelectYubiKey": "Select a YubiKey that you would like to use",
-    "openChalRespErrorEmpty": "No YubiKeys found",
+    "openChalRespErrorEmpty": "No YubiKeys found.",
+    "openChalRespErrorEmptyMac": "First time using this feature on macOS? KeeWeb must be added to the Input Monitoring section of security settings.",
 
     "detAttDownload": "Shift-click the attachment button to download it or",
     "detAttDelToRemove": "Delete to remove",
@@ -536,6 +537,7 @@
     "setFileRefreshYubiKeyList": "Refresh the list",
     "setFileYubiKeyHeader": "YubiKey",
     "setFileYubiKeyBody": "Using a YubiKey as a part of master key is dangerous and you may lose access to your passwords if something goes wrong. Have you made a backup of your file before changing this setting?",
+    "setFileYubiKeyErrorEmptyMac": "Looks like there's a YubiKey plugged in, but it's not visible. KeeWeb must be added to the Input Monitoring section of security settings to access YubiKeys.",
 
     "setShTitle": "Shortcuts",
     "setShShowAll": "show all items",
