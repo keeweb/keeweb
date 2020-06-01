@@ -458,6 +458,7 @@
     "setGenTryBetaWarningBody": "Please save all files and click this button again",
     "setGenShowAppLogs": "Show app logs",
     "setGenReloadApp": "Reload the app",
+    "setGenFieldLabelDblClickAutoType": "Auto-type on double-clicking field labels",
 
     "setFilePath": "File path",
     "setFileStorage": "This file is loaded from {}.",

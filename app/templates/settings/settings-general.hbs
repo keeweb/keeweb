@@ -147,6 +147,11 @@
             id="settings__general-direct-autotype" {{#if directAutotype}}checked{{/if}} />
         <label for="settings__general-direct-autotype">{{res 'setGenDirectAutotype'}}</label>
     </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-field-label-dblclick-autotype"
+               id="settings__general-field-label-dblclick-autotype" {{#if fieldLabelDblClickAutoType}}checked{{/if}} />
+        <label for="settings__general-field-label-dblclick-autotype">{{res 'setGenFieldLabelDblClickAutoType'}}</label>
+    </div>
     {{/if}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-use-markdown" id="settings__general-use-markdown" {{#if useMarkdown}}checked{{/if}} />

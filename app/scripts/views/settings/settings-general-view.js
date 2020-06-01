@@ -43,6 +43,8 @@ class SettingsGeneralView extends View {
         'change .settings__general-use-markdown': 'changeUseMarkdown',
         'change .settings__general-use-group-icon-for-entries': 'changeUseGroupIconForEntries',
         'change .settings__general-direct-autotype': 'changeDirectAutotype',
+        'change .settings__general-field-label-dblclick-autotype':
+            'changeFieldLabelDblClickAutoType',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
@@ -110,6 +112,7 @@ class SettingsGeneralView extends View {
             useMarkdown: AppSettingsModel.useMarkdown,
             useGroupIconForEntries: AppSettingsModel.useGroupIconForEntries,
             directAutotype: AppSettingsModel.directAutotype,
+            fieldLabelDblClickAutoType: AppSettingsModel.fieldLabelDblClickAutoType,
             supportsTitleBarStyles: Launcher && Features.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.titlebarStyle,
             storageProviders,
@@ -318,6 +321,12 @@ class SettingsGeneralView extends View {
     changeDirectAutotype(e) {
         const directAutotype = e.target.checked || false;
         AppSettingsModel.directAutotype = directAutotype;
+        Events.emit('refresh');
+    }
+
+    changeFieldLabelDblClickAutoType(e) {
+        const fieldLabelDblClickAutoType = e.target.checked || false;
+        AppSettingsModel.fieldLabelDblClickAutoType = fieldLabelDblClickAutoType;
         Events.emit('refresh');
     }
 
