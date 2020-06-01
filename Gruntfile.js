@@ -598,7 +598,7 @@ module.exports = function (grunt) {
         },
         'osx-sign': {
             options: {
-                identity: codeSignConfig ? codeSignConfig.identities?.app : undefined,
+                identity: codeSignConfig.identities ? codeSignConfig.identities.app : undefined,
                 hardenedRuntime: true,
                 entitlements: 'package/osx/entitlements.mac.plist',
                 'entitlements-inherit': 'package/osx/entitlements.mac.plist',
