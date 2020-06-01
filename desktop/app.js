@@ -731,10 +731,22 @@ function reportStartProfile() {
 
 function reqNative(mod) {
     const fileName = `${mod}-${process.platform}-${process.arch}.node`;
-    const binding = require(`@keeweb/keeweb-native-modules/${fileName}`);
+
+    const mainAsarPath = process.mainModule.path;
+    const latestAsarPath = __dirname;
+    const pathInsideAsar = `node_modules/@keeweb/keeweb-native-modules/${fileName}`;
+
+    let fullPath = path.join(latestAsarPath, pathInsideAsar);
+    if (!fs.existsSync(fullPath)) {
+        fullPath = path.join(mainAsarPath, pathInsideAsar);
+    }
+
+    const binding = require(fullPath);
+
     if (mod === 'usb') {
         usbBinding = initUsb(binding);
     }
+
     return binding;
 }
 
