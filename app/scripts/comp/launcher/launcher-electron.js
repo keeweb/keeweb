@@ -161,7 +161,7 @@ const Launcher = {
     },
     requestExit() {
         const app = this.remoteApp();
-        app.setSkipBeforeQuitEvent();
+        app.setHookBeforeQuitEvent(false);
         if (this.restartPending) {
             app.restartApp();
         } else {
@@ -325,6 +325,10 @@ Events.on('app-ready', () =>
         });
     }, 0)
 );
+
+if (process.platform === 'darwin') {
+    Launcher.remoteApp().setHookBeforeQuitEvent(true);
+}
 
 Launcher.remoteApp().on('remote-app-event', (e) => {
     if (window.debugRemoteAppEvents) {

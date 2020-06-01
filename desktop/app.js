@@ -121,11 +121,9 @@ app.on('activate', () => {
     }
 });
 app.on('before-quit', (e) => {
-    if (process.platform === 'darwin') {
-        if (!app.skipBeforeQuitEvent) {
-            e.preventDefault();
-            emitRemoteEvent('launcher-before-quit');
-        }
+    if (app.hookBeforeQuitEvent) {
+        e.preventDefault();
+        emitRemoteEvent('launcher-before-quit');
     }
 });
 app.on('will-quit', () => {
@@ -186,8 +184,8 @@ app.minimizeThenHideIfInTray = function () {
 app.getMainWindow = function () {
     return mainWindow;
 };
-app.setSkipBeforeQuitEvent = () => {
-    app.skipBeforeQuitEvent = true;
+app.setHookBeforeQuitEvent = (hooked) => {
+    app.hookBeforeQuitEvent = !!hooked;
 };
 app.setGlobalShortcuts = setGlobalShortcuts;
 app.reqNative = reqNative;
