@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
-    const minElectronVersionForUpdate = '8.0.0';
+    const minElectronVersionForUpdate = '9.0.0';
     const zipCommentPlaceholderPart = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
