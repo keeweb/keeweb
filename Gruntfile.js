@@ -30,7 +30,7 @@ module.exports = function (grunt) {
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
     const skipSign = grunt.option('skip-sign');
-    const getCodeSignConfig = () => (skipSign ? undefined : require('./keys/codesign.json'));
+    const codeSignConfig = skipSign ? {} : require('./keys/codesign.json');
 
     const webpackOptions = {
         date,
@@ -598,9 +598,7 @@ module.exports = function (grunt) {
         },
         'osx-sign': {
             options: {
-                get identity() {
-                    return getCodeSignConfig().identities.app;
-                },
+                identity: codeSignConfig.identities?.app,
                 hardenedRuntime: true,
                 entitlements: 'package/osx/entitlements.mac.plist',
                 'entitlements-inherit': 'package/osx/entitlements.mac.plist',
@@ -613,13 +611,9 @@ module.exports = function (grunt) {
         notarize: {
             options: {
                 appBundleId: 'net.antelle.keeweb',
-                get appleId() {
-                    return getCodeSignConfig().appleId;
-                },
+                appleId: codeSignConfig.appleId,
                 appleIdPassword: '@keychain:AC_PASSWORD',
-                get ascProvider() {
-                    return getCodeSignConfig().teamId;
-                }
+                ascProvider: codeSignConfig.teamId
             },
             desktop: {
                 src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
@@ -628,12 +622,8 @@ module.exports = function (grunt) {
         'sign-exe': {
             options: {
                 url: pkg.homepage,
-                get windows() {
-                    return getCodeSignConfig().windows;
-                },
-                get certHash() {
-                    return getCodeSignConfig().microsoftCertHash;
-                }
+                windows: codeSignConfig.windows,
+                certHash: codeSignConfig.microsoftCertHash
             },
             'win32-build-x64': {
                 options: {
