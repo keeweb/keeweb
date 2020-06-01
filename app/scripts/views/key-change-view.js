@@ -68,10 +68,7 @@ class KeyChangeView extends View {
             this.keyFile = null;
             this.$el.find('.key-change__keyfile-name').empty();
         }
-        this.$el
-            .find('.key-change__file')
-            .val(null)
-            .click();
+        this.$el.find('.key-change__file').val(null).click();
         this.inputEl.focus();
     }
 
@@ -79,7 +76,7 @@ class KeyChangeView extends View {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = e => {
+            reader.onload = (e) => {
                 this.keyFileName = file.name;
                 this.keyFileData = e.target.result;
                 this.$el.find('.key-change__keyfile-name').text(': ' + this.keyFileName);

@@ -64,7 +64,7 @@ class Plugin extends Model {
                 .then(() => {
                     this.installTime = this.logger.ts() - ts;
                 })
-                .catch(err => {
+                .catch((err) => {
                     this.logger.error('Error installing plugin', err);
                     this.set({
                         status: PluginStatus.STATUS_ERROR,
@@ -166,7 +166,7 @@ class Plugin extends Model {
         );
         this.resources = {};
         const ts = this.logger.ts();
-        const results = Object.keys(manifest.resources).map(res =>
+        const results = Object.keys(manifest.resources).map((res) =>
             this.loadResource(res, local, manifest)
         );
         return Promise.all(results)
@@ -209,9 +209,9 @@ class Plugin extends Model {
             const url = this.url + this.getResourcePath(type) + '?v=' + manifest.version;
             res = httpGet(url, true);
         }
-        return res.then(data => {
+        return res.then((data) => {
             this.logger.debug('Resource data loaded', type, this.logger.ts(ts));
-            return this.verifyResource(data, type).then(data => {
+            return this.verifyResource(data, type).then((data) => {
                 this.resources[type] = data;
             });
         });
@@ -222,7 +222,7 @@ class Plugin extends Model {
         const manifest = this.manifest;
         const signature = manifest.resources[type];
         return SignatureVerifier.verify(data, signature, manifest.publicKey)
-            .then(valid => {
+            .then((valid) => {
                 if (valid) {
                     this.logger.debug('Resource signature validated', type, this.logger.ts(ts));
                     return data;
@@ -254,7 +254,7 @@ class Plugin extends Model {
             .then(() => {
                 this.status = PluginStatus.STATUS_ACTIVE;
             })
-            .catch(e => {
+            .catch((e) => {
                 this.logger.info('Install error', e);
                 this.status = PluginStatus.STATUS_ERROR;
                 return this.disable().then(() => {
@@ -268,7 +268,7 @@ class Plugin extends Model {
         for (const key of Object.keys(this.resources)) {
             resourceSavePromises.push(this.saveResource(key, this.resources[key]));
         }
-        return Promise.all(resourceSavePromises).catch(e => {
+        return Promise.all(resourceSavePromises).catch((e) => {
             this.logger.debug('Error saving plugin resources', e);
             return this.uninstall().then(() => {
                 throw 'Error saving plugin resources';
@@ -279,7 +279,7 @@ class Plugin extends Model {
     saveResource(key, value) {
         return new Promise((resolve, reject) => {
             const storageKey = this.getStorageResourcePath(key);
-            io.save(storageKey, value, e => {
+            io.save(storageKey, value, (e) => {
                 if (e) {
                     reject(e);
                 } else {
@@ -298,7 +298,7 @@ class Plugin extends Model {
     }
 
     deleteResource(key) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             const storageKey = this.getStorageResourcePath(key);
             io.remove(storageKey, () => resolve());
         });
@@ -567,7 +567,7 @@ class Plugin extends Model {
                     });
                     this.logger.info('Update complete', this.logger.ts(ts));
                 })
-                .catch(err => {
+                .catch((err) => {
                     this.logger.error('Error updating plugin', err);
                     if (prevStatus === PluginStatus.STATUS_ACTIVE) {
                         this.logger.info('Activating previous version');
@@ -606,7 +606,7 @@ class Plugin extends Model {
                 const settings = this.module.exports.getSettings();
                 const settingsPrefix = this.getSettingPrefix();
                 if (settings instanceof Array) {
-                    return settings.map(setting => {
+                    return settings.map((setting) => {
                         setting = { ...setting };
                         const value = AppSettingsModel[settingsPrefix + setting.name];
                         if (value !== undefined) {
@@ -642,11 +642,11 @@ class Plugin extends Model {
         commonLogger.info('Installing plugin from url', url);
         const manifestUrl = url + 'manifest.json';
         return httpGet(manifestUrl)
-            .catch(e => {
+            .catch((e) => {
                 commonLogger.error('Error loading plugin manifest', e);
                 throw 'Error loading plugin manifest';
             })
-            .then(manifest => {
+            .then((manifest) => {
                 try {
                     manifest = JSON.parse(manifest);
                 } catch (e) {

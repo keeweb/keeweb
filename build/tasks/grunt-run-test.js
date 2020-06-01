@@ -1,5 +1,5 @@
-module.exports = function(grunt) {
-    grunt.registerMultiTask('run-test', 'Runs KeeWeb browser-tests', function() {
+module.exports = function (grunt) {
+    grunt.registerMultiTask('run-test', 'Runs KeeWeb browser-tests', function () {
         const done = this.async();
         const opt = this.options();
         const file = this.files[0].src[0];
@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         const path = require('path');
         const puppeteer = require('puppeteer');
 
-        (async function() {
+        (async function () {
             grunt.log.writeln('Running tests...');
 
             const fullPath = 'file://' + path.resolve(file);

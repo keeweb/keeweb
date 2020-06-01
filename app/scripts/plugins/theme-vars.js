@@ -41,14 +41,14 @@ const ThemeVars = {
             const locals = [];
             while (replaced) {
                 replaced = false;
-                result = result.replace(/([\w\-]+)\([^()]+\)/, fnText => {
+                result = result.replace(/([\w\-]+)\([^()]+\)/, (fnText) => {
                     replaced = true;
                     const [, name, argsStr] = fnText.match(/([\w\-]+)\((.*)\)/);
                     const args = argsStr
                         .trim()
                         .split(/\s*,\s*/)
-                        .filter(arg => arg)
-                        .map(arg => this.resolveArg(arg, cssStyle, locals));
+                        .filter((arg) => arg)
+                        .map((arg) => this.resolveArg(arg, cssStyle, locals));
                     locals.push(this.fn[name](...args));
                     return 'L' + (locals.length - 1);
                 });

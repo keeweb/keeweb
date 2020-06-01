@@ -57,7 +57,7 @@ class FieldViewText extends FieldView {
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        const fieldValueBlurBound = e => this.fieldValueBlur(e);
+        const fieldValueBlurBound = (e) => this.fieldValueBlur(e);
         Events.on('click', fieldValueBlurBound);
         this.stopBlurListener = () => Events.off('click', fieldValueBlurBound);
         this.listenTo(Events, 'main-window-will-close', this.externalEndEdit);
@@ -82,7 +82,7 @@ class FieldViewText extends FieldView {
 
     createMobileControls() {
         this.mobileControls = {};
-        ['cancel', 'apply'].forEach(action => {
+        ['cancel', 'apply'].forEach((action) => {
             this.mobileControls[action] = $('<div/>')
                 .addClass('details__field-value-btn details__field-value-btn-' + action)
                 .appendTo(this.labelEl)

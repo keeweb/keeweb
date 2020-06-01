@@ -11,7 +11,7 @@ function getPin() {
     }
     return require('keytar')
         .getPassword('keeweb.pin', 'keeweb')
-        .then(pass => {
+        .then((pass) => {
             if (pass) {
                 getPin.pin = pass;
                 return pass;
@@ -49,8 +49,8 @@ module.exports = function sign(grunt, data) {
         });
     }
     return getPin()
-        .then(pin => signer.sign({ data, verifyKey, pin, ...signerOptions }))
-        .catch(err => {
+        .then((pin) => signer.sign({ data, verifyKey, pin, ...signerOptions }))
+        .catch((err) => {
             if (grunt) {
                 grunt.warn(`Error signing data: ${err}`);
             }

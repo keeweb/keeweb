@@ -54,7 +54,7 @@ class OpenChalRespView extends View {
             this.yubiKeys = [];
             if (yubiKeys) {
                 for (const { fullName, vid, pid, serial, slot1, slot2 } of yubiKeys) {
-                    for (const slot of [slot1 ? 1 : 0, slot2 ? 2 : 0].filter(s => s)) {
+                    for (const slot of [slot1 ? 1 : 0, slot2 ? 2 : 0].filter((s) => s)) {
                         this.yubiKeys.push({
                             fullName,
                             vid,

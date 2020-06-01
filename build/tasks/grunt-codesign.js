@@ -1,5 +1,5 @@
-module.exports = function(grunt) {
-    grunt.registerMultiTask('codesign', 'Launches Apple codesign', function() {
+module.exports = function (grunt) {
+    grunt.registerMultiTask('codesign', 'Launches Apple codesign', function () {
         const done = this.async();
         const opt = this.options();
         const config = require('../../keys/codesign.json');

@@ -10,7 +10,7 @@ const pkg = require('./package.json');
 
 debug.enable('electron-notarize');
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
 

@@ -25,7 +25,7 @@ const YubiKey = {
         if (this.ykmanStatus === 'ok') {
             return Promise.resolve(this.ykmanStatus);
         }
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this.ykmanStatus = 'checking';
             Launcher.spawn({
                 cmd: 'ykman',
@@ -121,13 +121,13 @@ const YubiKey = {
                 const yubiKeysIncludingEmpty = stdout
                     .trim()
                     .split(/\n/g)
-                    .map(line => {
+                    .map((line) => {
                         const fullName = line;
                         const serial = (line.match(/\d{5,}$/g) || [])[0];
                         return { fullName, serial };
                     });
 
-                const yubiKeys = yubiKeysIncludingEmpty.filter(s => s.serial);
+                const yubiKeys = yubiKeysIncludingEmpty.filter((s) => s.serial);
 
                 if (
                     yubiKeysIncludingEmpty.length === 1 &&
@@ -176,7 +176,7 @@ const YubiKey = {
             cmd: 'ykman',
             args: ['config', 'usb', '-e', 'oath', '-f'],
             noStdOutLogging: true,
-            complete: err => {
+            complete: (err) => {
                 logger.info('Repair complete', err ? 'with error' : 'OK');
                 if (err) {
                     Events.off('usb-devices-changed', onDevicesChangedDuringRepair);

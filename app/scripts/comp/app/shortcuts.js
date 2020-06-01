@@ -56,7 +56,7 @@ const Shortcuts = {
         }
         return shortcutValue
             .split(/\+/g)
-            .map(part => {
+            .map((part) => {
                 switch (part) {
                     case 'Ctrl':
                         return this.ctrlShortcutSymbol(formatting);

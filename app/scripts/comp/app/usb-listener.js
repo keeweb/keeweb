@@ -46,7 +46,7 @@ const UsbListener = {
             this.attachedYubiKeys = this.usb
                 .getDeviceList()
                 .filter(this.isYubiKey)
-                .map(device => ({ device }));
+                .map((device) => ({ device }));
 
             if (this.attachedYubiKeys.length > 0) {
                 logger.info(`${this.attachedYubiKeys.length} YubiKey(s) found`, logger.ts(ts));
@@ -89,7 +89,7 @@ const UsbListener = {
     deviceDetached(device) {
         if (UsbListener.isYubiKey(device)) {
             const index = UsbListener.attachedYubiKeys.findIndex(
-                yk => yk.device.deviceAddress === device.deviceAddress
+                (yk) => yk.device.deviceAddress === device.deviceAddress
             );
             if (index >= 0) {
                 UsbListener.attachedYubiKeys.splice(index, 1);

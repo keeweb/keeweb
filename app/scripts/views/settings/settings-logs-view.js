@@ -8,13 +8,13 @@ class SettingsLogsView extends View {
     template = template;
 
     render() {
-        const logs = Logger.getLast().map(item => ({
+        const logs = Logger.getLast().map((item) => ({
             level: item.level,
             msg:
                 '[' +
                 StringFormat.padStr(item.level.toUpperCase(), 5) +
                 '] ' +
-                item.args.map(arg => this.mapArg(arg)).join(' ')
+                item.args.map((arg) => this.mapArg(arg)).join(' ')
         }));
         super.render({ logs });
     }
@@ -33,7 +33,7 @@ class SettingsLogsView extends View {
             return arg ? arg.toString() : arg;
         }
         if (arg instanceof Array) {
-            return '[' + arg.map(item => this.mapArg(item)).join(', ') + ']';
+            return '[' + arg.map((item) => this.mapArg(item)).join(', ') + ']';
         }
         let str = arg.toString();
         if (str === '[object Object]') {

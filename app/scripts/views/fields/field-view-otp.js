@@ -153,7 +153,7 @@ class FieldViewOtp extends FieldViewText {
     }
 
     copyValue() {
-        this.refreshOtp(err => {
+        this.refreshOtp((err) => {
             if (!err) {
                 super.copyValue();
             }

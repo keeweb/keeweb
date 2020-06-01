@@ -15,15 +15,15 @@ const SettingsStore = {
             });
         }
         return loadPromise
-            .then(data => (data ? JSON.parse(data) : null))
-            .catch(err => {
+            .then((data) => (data ? JSON.parse(data) : null))
+            .catch((err) => {
                 logger.error(`Error loading ${key}`, err);
             });
     },
 
     save(key, data) {
         if (Launcher) {
-            return Launcher.saveConfig(key, JSON.stringify(data)).catch(err => {
+            return Launcher.saveConfig(key, JSON.stringify(data)).catch((err) => {
                 logger.error(`Error saving ${key}`, err);
             });
         }

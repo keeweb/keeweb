@@ -2,7 +2,7 @@ import { Colors } from 'const/colors';
 
 const KnownColors = {};
 
-const Color = function(arg) {
+const Color = function (arg) {
     const rgbaMatch = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*([\d.]+))?\)$/.exec(arg);
     if (rgbaMatch) {
         this.r = +rgbaMatch[1];
@@ -35,7 +35,7 @@ const Color = function(arg) {
     }
 };
 
-Color.prototype.setHsl = function() {
+Color.prototype.setHsl = function () {
     const r = this.r / 255;
     const g = this.g / 255;
     const b = this.b / 255;
@@ -70,25 +70,25 @@ Color.prototype.setHsl = function() {
     this.l = l;
 };
 
-Color.prototype.toHex = function() {
+Color.prototype.toHex = function () {
     return '#' + hex(this.r) + hex(this.g) + hex(this.b);
 };
 
-Color.prototype.toRgba = function() {
+Color.prototype.toRgba = function () {
     return `rgba(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)},${this.a})`;
 };
 
-Color.prototype.toHsla = function() {
+Color.prototype.toHsla = function () {
     return `hsla(${Math.round(this.h * 100)},${Math.round(this.s * 100)}%,${Math.round(
         this.l * 100
     )}%,${this.a})`;
 };
 
-Color.prototype.distanceTo = function(color) {
+Color.prototype.distanceTo = function (color) {
     return Math.abs(this.h - color.h);
 };
 
-Color.prototype.mix = function(another, weight) {
+Color.prototype.mix = function (another, weight) {
     const res = new Color(this);
     const anotherWeight = 1 - weight;
     res.r = this.r * weight + another.r * anotherWeight;
@@ -98,7 +98,7 @@ Color.prototype.mix = function(another, weight) {
     return res;
 };
 
-Color.getNearest = function(colorStr) {
+Color.getNearest = function (colorStr) {
     const color = new Color(colorStr);
     if (!color.s) {
         return null;
@@ -115,7 +115,7 @@ Color.getNearest = function(colorStr) {
     return selected;
 };
 
-Color.getKnownBgColor = function(knownColor) {
+Color.getKnownBgColor = function (knownColor) {
     return Colors.BgColors[knownColor] ? '#' + Colors.BgColors[knownColor] : undefined;
 };
 

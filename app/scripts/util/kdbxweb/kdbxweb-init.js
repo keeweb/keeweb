@@ -13,9 +13,9 @@ const KdbxwebInit = {
 
     argon2(password, salt, memory, iterations, length, parallelism, type, version) {
         const args = { password, salt, memory, iterations, length, parallelism, type, version };
-        return this.loadRuntime(memory).then(runtime => {
+        return this.loadRuntime(memory).then((runtime) => {
             const ts = logger.ts();
-            return runtime.hash(args).then(hash => {
+            return runtime.hash(args).then((hash) => {
                 logger.debug('Hash computed', logger.ts(ts));
                 return hash;
             });
@@ -108,7 +108,7 @@ const KdbxwebInit = {
                     const blob = new Blob([script], { type: 'application/javascript' });
                     const objectUrl = URL.createObjectURL(blob);
                     const worker = new Worker(objectUrl);
-                    const onMessage = e => {
+                    const onMessage = (e) => {
                         switch (e.data.op) {
                             case 'log':
                                 logger.debug(...e.data.args);
@@ -125,7 +125,7 @@ const KdbxwebInit = {
                                     hash(args) {
                                         return new Promise((resolve, reject) => {
                                             worker.postMessage(args);
-                                            const onHashMessage = e => {
+                                            const onHashMessage = (e) => {
                                                 worker.removeEventListener(
                                                     'message',
                                                     onHashMessage
@@ -164,7 +164,7 @@ const KdbxwebInit = {
                     });
                     global.Module = {
                         wasmJSMethod: 'native-wasm',
-                        wasmBinary: Uint8Array.from(atob(wasmBinaryBase64), c => c.charCodeAt(0)),
+                        wasmBinary: Uint8Array.from(atob(wasmBinaryBase64), (c) => c.charCodeAt(0)),
                         print(...args) {
                             logger.debug(...args);
                         },
@@ -175,7 +175,7 @@ const KdbxwebInit = {
                             logger.debug('WebAssembly runtime loaded (main thread)', logger.ts(ts));
                             clearTimeout(loadTimeout);
                             resolve({
-                                hash: args => {
+                                hash: (args) => {
                                     const hash = this.calcHash(global.Module, args);
                                     global.Module.unloadRuntime();
                                     global.Module = undefined;
@@ -193,16 +193,16 @@ const KdbxwebInit = {
             } catch (err) {
                 reject(err);
             }
-        }).catch(err => {
+        }).catch((err) => {
             logger.warn('WebAssembly error', err);
             throw new Error('WebAssembly error');
         });
     },
 
     // eslint-disable-next-line object-shorthand
-    workerPostRun: function() {
+    workerPostRun: function () {
         self.postMessage({ op: 'postRun' });
-        self.onmessage = e => {
+        self.onmessage = (e) => {
             try {
                 /* eslint-disable-next-line no-undef */
                 const hash = Module.calcHash(Module, e.data);
@@ -214,7 +214,7 @@ const KdbxwebInit = {
     },
 
     // eslint-disable-next-line object-shorthand
-    calcHash: function(Module, args) {
+    calcHash: function (Module, args) {
         let { password, salt } = args;
         const { memory, iterations, length, parallelism, type, version } = args;
         const passwordLen = password.byteLength;

@@ -9,7 +9,7 @@ const emitterLogger = new Logger(
     localStorage.debugAutoType ? Logger.Level.All : Logger.Level.Warn
 );
 
-const AutoTypeRunner = function(ops) {
+const AutoTypeRunner = function (ops) {
     this.ops = ops;
     this.pendingResolvesCount = 0;
     this.entry = null;
@@ -142,7 +142,7 @@ AutoTypeRunner.Substitutions = {
     }
 };
 
-AutoTypeRunner.prototype.resolve = function(entry, context, callback) {
+AutoTypeRunner.prototype.resolve = function (entry, context, callback) {
     this.entry = entry;
     this.context = context;
     try {
@@ -157,7 +157,7 @@ AutoTypeRunner.prototype.resolve = function(entry, context, callback) {
     }
 };
 
-AutoTypeRunner.prototype.resolveOps = function(ops) {
+AutoTypeRunner.prototype.resolveOps = function (ops) {
     for (let i = 0, len = ops.length; i < len; i++) {
         const op = ops[i];
         if (op.type === 'group') {
@@ -168,7 +168,7 @@ AutoTypeRunner.prototype.resolveOps = function(ops) {
     }
 };
 
-AutoTypeRunner.prototype.resolveOp = function(op) {
+AutoTypeRunner.prototype.resolveOp = function (op) {
     if (op.value.length === 1 && !op.sep) {
         // {x}
         op.type = 'text';
@@ -224,7 +224,7 @@ AutoTypeRunner.prototype.resolveOp = function(op) {
     }
 };
 
-AutoTypeRunner.prototype.tryParseCommand = function(op) {
+AutoTypeRunner.prototype.tryParseCommand = function (op) {
     switch (op.value.toLowerCase()) {
         case 'clearfield':
             // {CLEARFIELD}
@@ -263,7 +263,7 @@ AutoTypeRunner.prototype.tryParseCommand = function(op) {
     }
 };
 
-AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
+AutoTypeRunner.prototype.getEntryFieldKeys = function (field, op) {
     if (!field || !this.entry) {
         return '';
     }
@@ -274,7 +274,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
     if (value.isProtected) {
         op.type = 'group';
         const ops = [];
-        value.forEachChar(ch => {
+        value.forEachChar((ch) => {
             if (ch === 10 || ch === 13) {
                 ops.push({ type: 'key', value: 'enter' });
             } else {
@@ -289,7 +289,7 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
         }
         op.type = 'group';
         const partsOps = [];
-        parts.forEach(part => {
+        parts.forEach((part) => {
             if (partsOps.length) {
                 partsOps.push({ type: 'key', value: 'enter' });
             }
@@ -301,11 +301,11 @@ AutoTypeRunner.prototype.getEntryFieldKeys = function(field, op) {
     }
 };
 
-AutoTypeRunner.prototype.getEntryGroupName = function() {
+AutoTypeRunner.prototype.getEntryGroupName = function () {
     return this.entry && this.entry.group.title;
 };
 
-AutoTypeRunner.prototype.dt = function(part) {
+AutoTypeRunner.prototype.dt = function (part) {
     switch (part) {
         case 'simple':
             return (
@@ -333,7 +333,7 @@ AutoTypeRunner.prototype.dt = function(part) {
     }
 };
 
-AutoTypeRunner.prototype.udt = function(part) {
+AutoTypeRunner.prototype.udt = function (part) {
     switch (part) {
         case 'simple':
             return (
@@ -361,7 +361,7 @@ AutoTypeRunner.prototype.udt = function(part) {
     }
 };
 
-AutoTypeRunner.prototype.getOtp = function(op) {
+AutoTypeRunner.prototype.getOtp = function (op) {
     if (!this.entry) {
         return '';
     }
@@ -375,7 +375,7 @@ AutoTypeRunner.prototype.getOtp = function(op) {
     return AutoTypeRunner.PendingResolve;
 };
 
-AutoTypeRunner.prototype.pendingResolved = function(op, value, error) {
+AutoTypeRunner.prototype.pendingResolved = function (op, value, error) {
     const wasPending = op.value === AutoTypeRunner.PendingResolve;
     if (value) {
         op.value = value;
@@ -390,11 +390,11 @@ AutoTypeRunner.prototype.pendingResolved = function(op, value, error) {
     }
 };
 
-AutoTypeRunner.prototype.obfuscate = function() {
+AutoTypeRunner.prototype.obfuscate = function () {
     this.obfuscateOps(this.ops);
 };
 
-AutoTypeRunner.prototype.obfuscateOps = function(ops) {
+AutoTypeRunner.prototype.obfuscateOps = function (ops) {
     for (let i = 0, len = ops.length; i < len; i++) {
         const op = ops[i];
         if (op.mod) {
@@ -403,7 +403,7 @@ AutoTypeRunner.prototype.obfuscateOps = function(ops) {
         if (op.type === 'text') {
             this.obfuscateOp(op);
         } else if (op.type === 'group') {
-            const onlyText = op.value.every(grOp => grOp.type === 'text' && !grOp.mod);
+            const onlyText = op.value.every((grOp) => grOp.type === 'text' && !grOp.mod);
             if (onlyText) {
                 this.obfuscateOp(op);
             } else {
@@ -413,7 +413,7 @@ AutoTypeRunner.prototype.obfuscateOps = function(ops) {
     }
 };
 
-AutoTypeRunner.prototype.obfuscateOp = function(op) {
+AutoTypeRunner.prototype.obfuscateOp = function (op) {
     let letters = [];
     if (op.type === 'text') {
         if (!op.value || op.value.length <= 1) {
@@ -421,7 +421,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
         }
         letters = op.value.split('');
     } else {
-        op.value.forEach(grOp => letters.push(...grOp.value.split('')));
+        op.value.forEach((grOp) => letters.push(...grOp.value.split('')));
     }
     if (letters.length <= 1) {
         return;
@@ -431,7 +431,7 @@ AutoTypeRunner.prototype.obfuscateOp = function(op) {
     op.type = 'group';
 };
 
-AutoTypeRunner.prototype.run = function(callback, windowId) {
+AutoTypeRunner.prototype.run = function (callback, windowId) {
     this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this), windowId);
     this.emitterState = {
         callback,
@@ -445,7 +445,7 @@ AutoTypeRunner.prototype.run = function(callback, windowId) {
     this.emitNext();
 };
 
-AutoTypeRunner.prototype.emitNext = function(err) {
+AutoTypeRunner.prototype.emitNext = function (err) {
     if (err) {
         this.emitterState.finished = true;
         this.emitterState.callback(err);
@@ -518,8 +518,8 @@ AutoTypeRunner.prototype.emitNext = function(err) {
     }
 };
 
-AutoTypeRunner.prototype.setEmitterMod = function(addedMod) {
-    Object.keys(addedMod).forEach(function(mod) {
+AutoTypeRunner.prototype.setEmitterMod = function (addedMod) {
+    Object.keys(addedMod).forEach(function (mod) {
         if (addedMod[mod] && !this.emitterState.activeMod[mod]) {
             emitterLogger.debug('mod', mod, true);
             this.emitter.setMod(mod, true);
@@ -528,8 +528,8 @@ AutoTypeRunner.prototype.setEmitterMod = function(addedMod) {
     }, this);
 };
 
-AutoTypeRunner.prototype.resetEmitterMod = function(targetState) {
-    Object.keys(this.emitterState.activeMod).forEach(function(mod) {
+AutoTypeRunner.prototype.resetEmitterMod = function (targetState) {
+    Object.keys(this.emitterState.activeMod).forEach(function (mod) {
         if (this.emitterState.activeMod[mod] && !targetState[mod]) {
             emitterLogger.debug('mod', mod, false);
             this.emitter.setMod(mod, false);

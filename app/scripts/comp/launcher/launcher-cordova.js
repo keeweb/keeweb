@@ -31,7 +31,7 @@ const Launcher = {
     },
     getDataPath(...args) {
         const storagePath = window.cordova.file.externalDataDirectory;
-        return [storagePath].concat(Array.from(args)).filter(s => !!s);
+        return [storagePath].concat(Array.from(args)).filter((s) => !!s);
     },
     getUserDataPath(fileName) {
         return this.getDataPath('userdata', fileName).join('/');
@@ -52,10 +52,10 @@ const Launcher = {
         return [...parts].join('/');
     },
     writeFile(path, data, callback) {
-        const createFile = filePath => {
+        const createFile = (filePath) => {
             window.resolveLocalFileSystemURL(
                 filePath.dir,
-                dir => {
+                (dir) => {
                     dir.getFile(filePath.file, { create: true }, writeFile);
                 },
                 callback,
@@ -63,8 +63,8 @@ const Launcher = {
             );
         };
 
-        const writeFile = fileEntry => {
-            fileEntry.createWriter(fileWriter => {
+        const writeFile = (fileEntry) => {
+            fileEntry.createWriter((fileWriter) => {
                 fileWriter.onerror = callback;
                 fileWriter.onwriteend = () => callback();
                 fileWriter.write(data);
@@ -85,9 +85,9 @@ const Launcher = {
     readFile(path, encoding, callback) {
         window.resolveLocalFileSystemURL(
             path,
-            fileEntry => {
+            (fileEntry) => {
                 fileEntry.file(
-                    file => {
+                    (file) => {
                         const reader = new FileReader();
                         reader.onerror = callback;
                         reader.onloadend = () => {
@@ -98,23 +98,23 @@ const Launcher = {
                         };
                         reader.readAsArrayBuffer(file);
                     },
-                    err => callback(undefined, err)
+                    (err) => callback(undefined, err)
                 );
             },
-            err => callback(undefined, err)
+            (err) => callback(undefined, err)
         );
     },
     fileExists(path, callback) {
         window.resolveLocalFileSystemURL(
             path,
-            fileEntry => callback(true),
+            (fileEntry) => callback(true),
             () => callback(false)
         );
     },
     deleteFile(path, callback) {
         window.resolveLocalFileSystemURL(
             path,
-            fileEntry => {
+            (fileEntry) => {
                 fileEntry.remove(callback, callback, callback);
             },
             callback
@@ -123,18 +123,18 @@ const Launcher = {
     statFile(path, callback) {
         window.resolveLocalFileSystemURL(
             path,
-            fileEntry => {
+            (fileEntry) => {
                 fileEntry.file(
-                    file => {
+                    (file) => {
                         callback({
                             ctime: new Date(file.lastModified),
                             mtime: new Date(file.lastModified)
                         });
                     },
-                    err => callback(undefined, err)
+                    (err) => callback(undefined, err)
                 );
             },
-            err => callback(undefined, err)
+            (err) => callback(undefined, err)
         );
     },
     mkdir(dir, callback) {
@@ -144,7 +144,7 @@ const Launcher = {
             dirEntry.getDirectory(
                 name,
                 { create: true },
-                dirEntry => {
+                (dirEntry) => {
                     if (path.length) {
                         // there is more to create
                         createDir(dirEntry, path, callback);
@@ -159,12 +159,12 @@ const Launcher = {
         const localPath = dir
             .replace(basePath, '')
             .split('/')
-            .filter(s => !!s);
+            .filter((s) => !!s);
 
         if (localPath.length) {
             window.resolveLocalFileSystemURL(
                 basePath,
-                dirEntry => {
+                (dirEntry) => {
                     createDir(dirEntry, localPath, callback);
                 },
                 callback
@@ -229,9 +229,9 @@ const Launcher = {
     },
     // spawn(config) {},
     openFileChooser(callback) {
-        const onFileSelected = function(selected) {
-            window.resolveLocalFileSystemURL(selected.uri, fileEntry => {
-                fileEntry.file(file => {
+        const onFileSelected = function (selected) {
+            window.resolveLocalFileSystemURL(selected.uri, (fileEntry) => {
+                fileEntry.file((file) => {
                     file.path = file.localURL;
                     file.name = selected.name;
                     callback(null, file);
@@ -249,7 +249,7 @@ const Launcher = {
         },
 
         register(fileId, password, callback) {
-            FingerprintAuth.isAvailable(result => {
+            FingerprintAuth.isAvailable((result) => {
                 if (!result.isAvailable) {
                     return;
                 }
@@ -260,7 +260,7 @@ const Launcher = {
                     password: password.getText()
                 };
 
-                FingerprintAuth.encrypt(encryptConfig, result => {
+                FingerprintAuth.encrypt(encryptConfig, (result) => {
                     callback(result.token);
                 });
             });
@@ -273,7 +273,7 @@ const Launcher = {
 
             const decryptConfig = { ...this.config, username: fileId, token };
 
-            FingerprintAuth.decrypt(decryptConfig, result => {
+            FingerprintAuth.decrypt(decryptConfig, (result) => {
                 callback(result.password);
             });
         }

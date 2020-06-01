@@ -92,13 +92,13 @@ class StorageWebDav extends StorageBase {
     }
 
     save(path, opts, data, callback, rev) {
-        const cb = function(err, xhr, stat) {
+        const cb = function (err, xhr, stat) {
             if (callback) {
                 callback(err, stat);
                 callback = null;
             }
         };
-        const tmpPath = path.replace(/[^\/]+$/, m => '.' + m) + '.' + Date.now();
+        const tmpPath = path.replace(/[^\/]+$/, (m) => '.' + m) + '.' + Date.now();
         const saveOpts = {
             path,
             user: opts ? opts.user : null,
@@ -134,7 +134,7 @@ class StorageWebDav extends StorageBase {
                             data,
                             nostat: true
                         },
-                        err => {
+                        (err) => {
                             if (err) {
                                 return cb(err);
                             }
@@ -193,7 +193,7 @@ class StorageWebDav extends StorageBase {
                                                 'Overwrite': 'T'
                                             }
                                         },
-                                        err => {
+                                        (err) => {
                                             if (err) {
                                                 return cb(err);
                                             }
@@ -222,7 +222,7 @@ class StorageWebDav extends StorageBase {
                             data,
                             nostat: true
                         },
-                        err => {
+                        (err) => {
                             if (err) {
                                 return cb(err);
                             }

@@ -43,7 +43,7 @@ const Updater = {
         if (!Launcher && navigator.serviceWorker && !RuntimeInfo.beta && !RuntimeInfo.devMode) {
             navigator.serviceWorker
                 .register('service-worker.js')
-                .then(reg => {
+                .then((reg) => {
                     logger.info('Service worker registered');
                     reg.addEventListener('updatefound', () => {
                         if (reg.active) {
@@ -52,7 +52,7 @@ const Updater = {
                         }
                     });
                 })
-                .catch(e => {
+                .catch((e) => {
                     logger.error('Failed to register a service worker', e);
                 });
         }
@@ -99,7 +99,7 @@ const Updater = {
         Transport.httpGet({
             url: Links.Manifest,
             utf8: true,
-            success: data => {
+            success: (data) => {
                 const dt = new Date();
                 const match = data.match(/#\s*(\d+\-\d+\-\d+):v([\d+\.\w]+)/);
                 logger.info('Update check: ' + (match ? match[0] : 'unknown'));
@@ -145,7 +145,7 @@ const Updater = {
                     UpdateModel.set({ updateStatus: 'found' });
                 }
             },
-            error: e => {
+            error: (e) => {
                 logger.error('Update check error', e);
                 UpdateModel.set({
                     status: 'error',
@@ -186,10 +186,10 @@ const Updater = {
             url: Links.UpdateDesktop.replace('{ver}', ver),
             file: 'KeeWeb-' + ver + '.zip',
             cache: !startedByUser,
-            success: filePath => {
+            success: (filePath) => {
                 UpdateModel.set({ updateStatus: 'extracting' });
                 logger.info('Extracting update file', this.UpdateCheckFiles, filePath);
-                this.extractAppUpdate(filePath, err => {
+                this.extractAppUpdate(filePath, (err) => {
                     if (err) {
                         logger.error('Error extracting update', err);
                         UpdateModel.set({
@@ -225,7 +225,7 @@ const Updater = {
         const zip = new StreamZip({ file: updateFile, storeEntries: true });
         zip.on('error', cb);
         zip.on('ready', () => {
-            const containsAll = expectedFiles.every(expFile => {
+            const containsAll = expectedFiles.every((expFile) => {
                 const entry = zip.entry(expFile);
                 return entry && entry.isFile;
             });
@@ -234,7 +234,7 @@ const Updater = {
             }
             this.validateArchiveSignature(updateFile, zip)
                 .then(() => {
-                    zip.extract(null, appPath, err => {
+                    zip.extract(null, appPath, (err) => {
                         zip.close();
                         if (err) {
                             return cb(err);
@@ -243,7 +243,7 @@ const Updater = {
                         cb();
                     });
                 })
-                .catch(e => {
+                .catch((e) => {
                     return cb('Invalid archive: ' + e);
                 });
         });
@@ -264,7 +264,7 @@ const Updater = {
                 .catch(() => {
                     throw new Error('Error verifying signature');
                 })
-                .then(isValid => {
+                .then((isValid) => {
                     if (!isValid) {
                         throw new Error('Invalid signature');
                     }

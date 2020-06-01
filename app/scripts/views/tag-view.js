@@ -40,7 +40,7 @@ class TagView extends View {
             });
             return;
         }
-        if (this.model.tags.some(t => t.toLowerCase() === title.toLowerCase())) {
+        if (this.model.tags.some((t) => t.toLowerCase() === title.toLowerCase())) {
             Alerts.error({ header: Locale.tagExists, body: Locale.tagExistsBody });
             return;
         }

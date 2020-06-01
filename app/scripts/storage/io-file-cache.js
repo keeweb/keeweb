@@ -1,6 +1,6 @@
 import { Launcher } from 'comp/launcher';
 
-const IoFileCache = function(config) {
+const IoFileCache = function (config) {
     this.basePath = null;
     this.cacheName = config.cacheName;
     this.logger = config.logger;
@@ -12,7 +12,7 @@ Object.assign(IoFileCache.prototype, {
             return callback();
         }
         const basePath = Launcher.getUserDataPath(this.cacheName);
-        Launcher.mkdir(basePath, err => {
+        Launcher.mkdir(basePath, (err) => {
             if (err) {
                 this.logger.error('Error creating plugin folder');
             } else {
@@ -27,14 +27,14 @@ Object.assign(IoFileCache.prototype, {
     },
 
     save(id, data, callback) {
-        this.initFs(err => {
+        this.initFs((err) => {
             if (err) {
                 return callback && callback(err, null);
             }
             this.logger.debug('Save', id);
             const ts = this.logger.ts();
             const path = this.resolvePath(id);
-            Launcher.writeFile(path, data, err => {
+            Launcher.writeFile(path, data, (err) => {
                 if (err) {
                     this.logger.error('Error saving file', id, err);
                     if (callback) {
@@ -51,7 +51,7 @@ Object.assign(IoFileCache.prototype, {
     },
 
     load(id, callback) {
-        this.initFs(err => {
+        this.initFs((err) => {
             if (err) {
                 return callback && callback(err, null);
             }
@@ -75,14 +75,14 @@ Object.assign(IoFileCache.prototype, {
     },
 
     remove(id, callback) {
-        this.initFs(err => {
+        this.initFs((err) => {
             if (err) {
                 return callback && callback(err, null);
             }
             this.logger.debug('Remove', id);
             const ts = this.logger.ts();
             const path = this.resolvePath(id);
-            Launcher.deleteFile(path, err => {
+            Launcher.deleteFile(path, (err) => {
                 if (err) {
                     this.logger.error('Error removing file', id, err);
                     if (callback) {

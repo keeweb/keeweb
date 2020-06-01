@@ -1,8 +1,8 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     grunt.registerMultiTask(
         'validate-desktop-update',
         'Validates desktop update package',
-        function() {
+        function () {
             const path = require('path');
             const crypto = require('crypto');
             const fs = require('fs');
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
             const expFilesCount = this.options().expectedCount;
             const publicKey = fs.readFileSync(this.options().publicKey, 'binary');
             const zipFileData = fs.readFileSync(this.options().file);
-            zip.on('error', err => {
+            zip.on('error', (err) => {
                 grunt.warn(err);
             });
             zip.on('ready', () => {
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
                     );
                     valid = false;
                 }
-                expFiles.forEach(entry => {
+                expFiles.forEach((entry) => {
                     try {
                         if (!zip.entryDataSync(entry)) {
                             grunt.warn('Corrupted entry in desktop update archive: ' + entry);

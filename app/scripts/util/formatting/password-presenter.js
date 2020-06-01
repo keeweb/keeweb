@@ -21,7 +21,7 @@ const PasswordPresenter = {
             return '';
         }
         let result = '';
-        value.forEachChar(ch => {
+        value.forEachChar((ch) => {
             result += ch === 10 ? '\n' : '•';
         });
         return result;
@@ -33,7 +33,7 @@ const PasswordPresenter = {
         const gen = new RandomNameGenerator();
 
         let ix = 0;
-        value.forEachChar(char => {
+        value.forEachChar((char) => {
             const charHtml = charCodeToHtml(char);
             items.push({ html: charHtml, order: ix });
 

@@ -91,7 +91,7 @@ class AppModel {
                 this.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
                 reject('Error loading app config');
             });
-        }).then(config => {
+        }).then((config) => {
             return this.applyUserConfig(config);
         });
     }
@@ -116,7 +116,7 @@ class AppModel {
             }
             config.files
                 .filter(
-                    file =>
+                    (file) =>
                         file &&
                         file.storage &&
                         file.name &&
@@ -124,7 +124,7 @@ class AppModel {
                         !this.fileInfos.getMatch(file.storage, file.name, file.path)
                 )
                 .map(
-                    file =>
+                    (file) =>
                         new FileInfoModel({
                             id: IdGenerator.uuid(),
                             name: file.name,
@@ -134,10 +134,10 @@ class AppModel {
                         })
                 )
                 .reverse()
-                .forEach(fi => this.fileInfos.unshift(fi));
+                .forEach((fi) => this.fileInfos.unshift(fi));
         }
         if (config.plugins) {
-            const pluginsPromises = config.plugins.map(plugin =>
+            const pluginsPromises = config.plugins.map((plugin) =>
                 PluginManager.installIfNew(plugin.url, plugin.manifest, true)
             );
             return Promise.all(pluginsPromises).then(() => {
@@ -180,10 +180,10 @@ class AppModel {
 
     _addTags(file) {
         const tagsHash = {};
-        this.tags.forEach(tag => {
+        this.tags.forEach((tag) => {
             tagsHash[tag.toLowerCase()] = true;
         });
-        file.forEachEntry({}, entry => {
+        file.forEachEntry({}, (entry) => {
             for (const tag of entry.tags) {
                 if (!tagsHash[tag.toLowerCase()]) {
                     tagsHash[tag.toLowerCase()] = true;
@@ -198,7 +198,7 @@ class AppModel {
         if (this.tags.length) {
             this.menu.tagsSection.scrollable = true;
             this.menu.tagsSection.setItems(
-                this.tags.map(tag => {
+                this.tags.map((tag) => {
                     return {
                         title: tag,
                         icon: 'tag',
@@ -226,7 +226,7 @@ class AppModel {
     }
 
     renameTag(from, to) {
-        this.files.forEach(file => file.renameTag && file.renameTag(from, to));
+        this.files.forEach((file) => file.renameTag && file.renameTag(from, to));
         this.updateTags();
     }
 
@@ -256,7 +256,7 @@ class AppModel {
     }
 
     emptyTrash() {
-        this.files.forEach(file => file.emptyTrash && file.emptyTrash());
+        this.files.forEach((file) => file.emptyTrash && file.emptyTrash());
         this.refresh();
     }
 
@@ -306,14 +306,14 @@ class AppModel {
         const preparedFilter = this.prepareFilter(filter);
         const entries = new SearchResultCollection();
 
-        const devicesToMatchOtpEntries = this.files.filter(file => file.external);
+        const devicesToMatchOtpEntries = this.files.filter((file) => file.external);
 
         const matchedOtpEntrySet = this.settings.yubiKeyMatchEntries ? new Set() : undefined;
 
         this.files
-            .filter(file => !file.external)
-            .forEach(file => {
-                file.forEachEntry(preparedFilter, entry => {
+            .filter((file) => !file.external)
+            .forEach((file) => {
+                file.forEachEntry(preparedFilter, (entry) => {
                     if (matchedOtpEntrySet) {
                         for (const device of devicesToMatchOtpEntries) {
                             const matchingEntry = device.getMatchingEntry(entry);
@@ -328,7 +328,7 @@ class AppModel {
 
         if (devicesToMatchOtpEntries.length) {
             for (const device of devicesToMatchOtpEntries) {
-                device.forEachEntry(preparedFilter, entry => {
+                device.forEachEntry(preparedFilter, (entry) => {
                     if (!matchedOtpEntrySet || !matchedOtpEntrySet.has(entry)) {
                         entries.push(entry);
                     }
@@ -340,10 +340,10 @@ class AppModel {
     }
 
     addTrashGroups(collection) {
-        this.files.forEach(file => {
+        this.files.forEach((file) => {
             const trashGroup = file.getTrashGroup && file.getTrashGroup();
             if (trashGroup) {
-                trashGroup.getOwnSubGroups().forEach(group => {
+                trashGroup.getOwnSubGroups().forEach((group) => {
                     collection.unshift(GroupModel.fromGroup(group, file, trashGroup));
                 });
             }
@@ -359,10 +359,10 @@ class AppModel {
 
         const exact = filter.advanced && filter.advanced.exact;
         if (!exact && filter.text) {
-            const textParts = filter.text.split(/\s+/).filter(s => s);
+            const textParts = filter.text.split(/\s+/).filter((s) => s);
             if (textParts.length) {
                 filter.textParts = textParts;
-                filter.textLowerParts = filter.textLower.split(/\s+/).filter(s => s);
+                filter.textLowerParts = filter.textLower.split(/\s+/).filter((s) => s);
             }
         }
 
@@ -375,14 +375,14 @@ class AppModel {
         const selGroupId = this.filter.group;
         let file, group;
         if (selGroupId) {
-            this.files.some(f => {
+            this.files.some((f) => {
                 file = f;
                 group = f.getGroup(selGroupId);
                 return group;
             });
         }
         if (!group) {
-            file = this.files.find(f => f.active && !f.readOnly);
+            file = this.files.find((f) => f.active && !f.readOnly);
             group = file.groups[0];
         }
         return { group, file };
@@ -390,10 +390,10 @@ class AppModel {
 
     completeUserNames(part) {
         const userNames = {};
-        this.files.forEach(file => {
+        this.files.forEach((file) => {
             file.forEachEntry(
                 { text: part, textLower: part.toLowerCase(), advanced: { user: true } },
-                entry => {
+                (entry) => {
                     const userName = entry.user;
                     if (userName) {
                         userNames[userName] = (userNames[userName] || 0) + 1;
@@ -407,13 +407,13 @@ class AppModel {
         if (matches.length > maxResults) {
             matches.length = maxResults;
         }
-        return matches.map(m => m[0]);
+        return matches.map((m) => m[0]);
     }
 
     getEntryTemplates() {
         const entryTemplates = [];
-        this.files.forEach(file => {
-            file.forEachEntryTemplate?.(entry => {
+        this.files.forEach((file) => {
+            file.forEachEntryTemplate?.((entry) => {
                 entryTemplates.push({ file, entry });
             });
         });
@@ -421,7 +421,7 @@ class AppModel {
     }
 
     canCreateEntries() {
-        return this.files.some(f => f.active && !f.readOnly);
+        return this.files.some((f) => f.active && !f.readOnly);
     }
 
     createNewEntry(args) {
@@ -667,7 +667,7 @@ class AppModel {
             fingerprint: (fileInfo && fileInfo.fingerprint) || null,
             chalResp: params.chalResp
         });
-        const openComplete = err => {
+        const openComplete = (err) => {
             if (err) {
                 return callback(err);
             }
@@ -723,7 +723,7 @@ class AppModel {
             storage: params.storage,
             path: params.path
         });
-        file.importWithXml(params.fileXml, err => {
+        file.importWithXml(params.fileXml, (err) => {
             logger.info('Import xml complete ' + (err ? 'with error' : ''), err);
             if (err) {
                 return callback(err);
@@ -812,7 +812,7 @@ class AppModel {
             this.saveFileFingerprint(file, params.password);
         }
         if (this.settings.yubiKeyAutoOpen) {
-            if (this.attachedYubiKeysCount > 0 && !this.files.some(f => f.external)) {
+            if (this.attachedYubiKeysCount > 0 && !this.files.some((f) => f.external)) {
                 this.tryOpenOtpDeviceInBackground();
             }
         }
@@ -882,7 +882,7 @@ class AppModel {
             });
         }
         file.setSyncProgress();
-        const complete = err => {
+        const complete = (err) => {
             if (!file.active) {
                 return callback && callback('File is closed');
             }
@@ -922,7 +922,7 @@ class AppModel {
                 if (err) {
                     return complete(err);
                 }
-                Storage.cache.save(fileInfo.id, null, data, err => {
+                Storage.cache.save(fileInfo.id, null, data, (err) => {
                     logger.info('Saved to cache', err || 'no error');
                     complete(err);
                     if (!err) {
@@ -946,7 +946,7 @@ class AppModel {
                     if (err) {
                         return complete(err);
                     }
-                    file.mergeOrUpdate(data, options.remoteKey, err => {
+                    file.mergeOrUpdate(data, options.remoteKey, (err) => {
                         logger.info('Merge complete', err || 'no error');
                         this.refresh();
                         if (err) {
@@ -966,7 +966,7 @@ class AppModel {
                             saveToCacheAndStorage();
                         } else if (file.dirty) {
                             logger.info('Saving not modified dirty file to cache');
-                            Storage.cache.save(fileInfo.id, null, data, err => {
+                            Storage.cache.save(fileInfo.id, null, data, (err) => {
                                 if (err) {
                                     return complete(err);
                                 }
@@ -981,7 +981,7 @@ class AppModel {
                     });
                 });
             };
-            const saveToStorage = data => {
+            const saveToStorage = (data) => {
                 logger.info('Save data to storage');
                 const storageRev = fileInfo.storage === storage ? fileInfo.rev : undefined;
                 Storage[storage].save(
@@ -1029,7 +1029,7 @@ class AppModel {
                         saveToStorage(data);
                     } else {
                         logger.info('Saving to cache');
-                        Storage.cache.save(fileInfo.id, null, data, err => {
+                        Storage.cache.save(fileInfo.id, null, data, (err) => {
                             if (err) {
                                 return complete(err);
                             }
@@ -1056,7 +1056,7 @@ class AppModel {
                                 logger.error('Error getting file data', e);
                                 return complete(err);
                             }
-                            Storage.cache.save(fileInfo.id, null, data, e => {
+                            Storage.cache.save(fileInfo.id, null, data, (e) => {
                                 if (e) {
                                     logger.error('Error saving to cache', e);
                                 }
@@ -1129,7 +1129,7 @@ class AppModel {
             if (Storage[backup.storage].getPathForName) {
                 path = Storage[backup.storage].getPathForName(path);
             }
-            Storage[backup.storage].save(path, opts, data, err => {
+            Storage[backup.storage].save(path, opts, data, (err) => {
                 if (err) {
                     logger.error('Backup error', err);
                 } else {
@@ -1147,14 +1147,14 @@ class AppModel {
         if (Storage[backup.storage].getPathForName) {
             folderPath = Storage[backup.storage].getPathForName(folderPath).replace('.kdbx', '');
         }
-        Storage[backup.storage].stat(folderPath, opts, err => {
+        Storage[backup.storage].stat(folderPath, opts, (err) => {
             if (err) {
                 if (err.notFound) {
                     logger.info('Backup folder does not exist');
                     if (!Storage[backup.storage].mkdir) {
                         return callback('Mkdir not supported by ' + backup.storage);
                     }
-                    Storage[backup.storage].mkdir(folderPath, err => {
+                    Storage[backup.storage].mkdir(folderPath, (err) => {
                         if (err) {
                             logger.error('Error creating backup folder', err);
                             callback('Error creating backup folder');
@@ -1227,7 +1227,7 @@ class AppModel {
     saveFileFingerprint(file, password) {
         if (Launcher && Launcher.fingerprints && !file.fingerprint) {
             const fileInfo = this.fileInfos.get(file.id);
-            Launcher.fingerprints.register(file.id, password, token => {
+            Launcher.fingerprints.register(file.id, password, (token) => {
                 if (token) {
                     fileInfo.fingerprint = token;
                     this.fileInfos.save();
@@ -1246,7 +1246,7 @@ class AppModel {
         }
 
         const isNewYubiKey = UsbListener.attachedYubiKeys.length > attachedYubiKeysCount;
-        const hasOpenFiles = this.files.some(file => file.active && !file.external);
+        const hasOpenFiles = this.files.some((file) => file.active && !file.external);
 
         if (isNewYubiKey && hasOpenFiles && !this.openingOtpDevice) {
             this.tryOpenOtpDeviceInBackground();
@@ -1255,7 +1255,7 @@ class AppModel {
 
     tryOpenOtpDeviceInBackground() {
         this.appLogger.debug('Auto-opening a YubiKey');
-        this.openOtpDevice(err => {
+        this.openOtpDevice((err) => {
             this.appLogger.debug('YubiKey auto-open complete', err);
         });
     }
@@ -1263,7 +1263,7 @@ class AppModel {
     openOtpDevice(callback) {
         this.openingOtpDevice = true;
         const device = new YubiKeyOtpModel();
-        device.open(err => {
+        device.open((err) => {
             this.openingOtpDevice = false;
             if (!err) {
                 this.addFile(device);

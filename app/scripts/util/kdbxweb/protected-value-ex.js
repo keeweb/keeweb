@@ -5,7 +5,7 @@ const ExpectedFieldRefByteLength = ExpectedFieldRefChars.length;
 
 kdbxweb.ProtectedValue.prototype.isProtected = true;
 
-kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
+kdbxweb.ProtectedValue.prototype.forEachChar = function (fn) {
     const value = this._value;
     const salt = this._salt;
     let b, b1, b2, b3;
@@ -79,16 +79,16 @@ Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
     }
 });
 
-kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
+kdbxweb.ProtectedValue.prototype.includesLower = function (findLower) {
     return this.indexOfLower(findLower) !== -1;
 };
 
-kdbxweb.ProtectedValue.prototype.indexOfLower = function(findLower) {
+kdbxweb.ProtectedValue.prototype.indexOfLower = function (findLower) {
     let index = -1;
     const foundSeqs = [];
     const len = findLower.length;
     let chIndex = -1;
-    this.forEachChar(ch => {
+    this.forEachChar((ch) => {
         chIndex++;
         ch = String.fromCharCode(ch).toLowerCase();
         if (index !== -1) {
@@ -117,12 +117,12 @@ kdbxweb.ProtectedValue.prototype.indexOfLower = function(findLower) {
     return index;
 };
 
-kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function(targetLower) {
+kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function (targetLower) {
     let firstCharIndex = -1;
     let found = false;
     do {
         let chIndex = -1;
-        this.forEachChar(ch => {
+        this.forEachChar((ch) => {
             chIndex++;
             ch = String.fromCharCode(ch).toLowerCase();
             if (chIndex === 0) {
@@ -141,7 +141,7 @@ kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function(targetLower) {
 
 window.PV = kdbxweb.ProtectedValue;
 
-kdbxweb.ProtectedValue.prototype.equals = function(other) {
+kdbxweb.ProtectedValue.prototype.equals = function (other) {
     if (!other) {
         return false;
     }
@@ -163,12 +163,12 @@ kdbxweb.ProtectedValue.prototype.equals = function(other) {
     return true;
 };
 
-kdbxweb.ProtectedValue.prototype.isFieldReference = function() {
+kdbxweb.ProtectedValue.prototype.isFieldReference = function () {
     if (this.byteLength !== ExpectedFieldRefByteLength) {
         return false;
     }
     let ix = 0;
-    this.forEachChar(ch => {
+    this.forEachChar((ch) => {
         const expected = ExpectedFieldRefChars[ix++];
         if (expected !== '0' && ch !== expected) {
             return false;

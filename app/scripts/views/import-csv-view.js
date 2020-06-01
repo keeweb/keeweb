@@ -69,7 +69,7 @@ class ImportCsvView extends View {
         const col = +e.target.dataset.col;
         const field = e.target.value;
 
-        const isBuiltIn = this.knownFields.some(f => f.field === field);
+        const isBuiltIn = this.knownFields.some((f) => f.field === field);
         const mapping = field ? (isBuiltIn ? 'builtin' : 'custom') : 'ignore';
 
         this.fieldMapping[col] = {
@@ -96,7 +96,7 @@ class ImportCsvView extends View {
     guessFieldMapping() {
         const usedFields = {};
 
-        for (const fieldName of this.model.headers.map(f => f.trim())) {
+        for (const fieldName of this.model.headers.map((f) => f.trim())) {
             if (!fieldName || /^(group|grouping)$/i.test(fieldName)) {
                 this.fieldMapping.push({ type: 'ignore' });
                 continue;
@@ -121,7 +121,7 @@ class ImportCsvView extends View {
     fillGroups() {
         this.groups = [];
         for (const file of this.appModel.files) {
-            file.forEachGroup(group => {
+            file.forEachGroup((group) => {
                 const title = group.title;
                 const spaces = [];
                 for (let parent = group; parent.parentGroup; parent = parent.parentGroup) {

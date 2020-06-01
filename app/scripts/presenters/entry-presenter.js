@@ -1,7 +1,7 @@
 import { DateFormat } from 'util/formatting/date-format';
 import { Locale } from 'util/locale';
 
-const EntryPresenter = function(descField, noColor, activeEntryId) {
+const EntryPresenter = function (descField, noColor, activeEntryId) {
     this.entry = null;
     this.descField = descField;
     this.noColor = noColor || '';
@@ -85,7 +85,7 @@ EntryPresenter.prototype = {
                 return this.updated;
             case 'attachments':
                 return (
-                    this.entry.attachments.map(a => a.title).join(', ') ||
+                    this.entry.attachments.map((a) => a.title).join(', ') ||
                     '(' + Locale.listNoAttachments + ')'
                 );
             default:

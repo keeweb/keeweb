@@ -36,7 +36,7 @@ class DetailsAutoTypeView extends View {
     seqInput(e) {
         const el = e.target;
         const seq = el.value.trim();
-        AutoType.validate(this.model, seq, err => {
+        AutoType.validate(this.model, seq, (err) => {
             $(el).toggleClass('input--error', !!err);
             if (!err) {
                 this.model.setAutoTypeSeq(seq);

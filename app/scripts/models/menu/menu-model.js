@@ -49,7 +49,7 @@ class MenuModel extends Model {
                 drop: true
             }
         ]);
-        Colors.AllColors.forEach(color => {
+        Colors.AllColors.forEach((color) => {
             const option = {
                 cls: 'fa ' + color + '-color',
                 value: color,
@@ -96,7 +96,7 @@ class MenuModel extends Model {
                 this.aboutSection,
                 this.helpSection,
                 this.filesSection
-            ].filter(s => s)
+            ].filter((s) => s)
         );
         this.sections = this.menus.app;
 
@@ -113,7 +113,7 @@ class MenuModel extends Model {
             this._select(section, sel.item);
         }
         if (sections === this.menus.app) {
-            this.colorsItem.options.forEach(opt => {
+            this.colorsItem.options.forEach((opt) => {
                 opt.active = opt === sel.option;
             });
             const selColor =
@@ -135,7 +135,7 @@ class MenuModel extends Model {
     _selectPrevious() {
         let previousItem = null;
 
-        const processSection = section => {
+        const processSection = (section) => {
             if (section.visible === false) {
                 return true;
             }
@@ -144,7 +144,7 @@ class MenuModel extends Model {
             }
             const items = section.items;
             if (items) {
-                items.forEach(it => {
+                items.forEach((it) => {
                     if (it.active && previousItem) {
                         this.select({ item: previousItem });
                         return false;
@@ -155,13 +155,13 @@ class MenuModel extends Model {
         };
 
         const sections = this.sections;
-        sections.forEach(section => processSection(section));
+        sections.forEach((section) => processSection(section));
     }
 
     _selectNext() {
         let activeItem = null;
 
-        const processSection = section => {
+        const processSection = (section) => {
             if (section.visible === false) {
                 return true;
             }
@@ -172,7 +172,7 @@ class MenuModel extends Model {
             }
             const items = section.items;
             if (items) {
-                items.forEach(it => {
+                items.forEach((it) => {
                     if (it.active) {
                         activeItem = it;
                     }
@@ -182,7 +182,7 @@ class MenuModel extends Model {
         };
 
         const sections = this.sections;
-        sections.forEach(section => processSection(section));
+        sections.forEach((section) => processSection(section));
     }
 
     _select(item, selectedItem) {

@@ -13,7 +13,7 @@ class ExternalOtpEntryModel extends ExternalEntryModel {
             return;
         }
         const gen = {
-            next: callback => {
+            next: (callback) => {
                 if (gen.otp && gen.expires) {
                     const timeLeft = gen.expires - Date.now();
                     if (timeLeft > 0) {
@@ -26,7 +26,7 @@ class ExternalOtpEntryModel extends ExternalEntryModel {
                     });
                     return;
                 }
-                gen.promise = new Promise(resolve => {
+                gen.promise = new Promise((resolve) => {
                     gen.otpState = this.device.getOtp(this, (err, otp, timeLeft) => {
                         gen.otpState = null;
                         gen.promise = null;

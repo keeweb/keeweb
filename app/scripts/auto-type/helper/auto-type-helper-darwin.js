@@ -23,9 +23,9 @@ const OtherAppsScript =
     '   end tell\n' +
     'end tell';
 
-const AutoTypeHelper = function() {};
+const AutoTypeHelper = function () {};
 
-AutoTypeHelper.prototype.getActiveWindowInfo = function(callback) {
+AutoTypeHelper.prototype.getActiveWindowInfo = function (callback) {
     AutoTypeHelper.exec(ForeMostAppScript, (err, out) => {
         if (err) {
             return callback(err);
@@ -81,7 +81,7 @@ AutoTypeHelper.prototype.getActiveWindowInfo = function(callback) {
     });
 };
 
-AutoTypeHelper.exec = function(script, callback) {
+AutoTypeHelper.exec = function (script, callback) {
     Launcher.spawn({
         cmd: 'osascript',
         args: ['-e', script],

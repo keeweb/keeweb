@@ -20,7 +20,7 @@ const ChalRespCalculator = {
         if (!params) {
             return null;
         }
-        return challenge => {
+        return (challenge) => {
             return new Promise((resolve, reject) => {
                 challenge = Buffer.from(challenge);
                 const hexChallenge = challenge.toString('hex');
@@ -60,7 +60,7 @@ const ChalRespCalculator = {
             if (err) {
                 if (err.noKey) {
                     logger.info('YubiKey ChalResp: no key');
-                    this._showNoKeyAlert(params.serial, err => {
+                    this._showNoKeyAlert(params.serial, (err) => {
                         if (err) {
                             return callback(err);
                         }
@@ -69,7 +69,7 @@ const ChalRespCalculator = {
                     return;
                 } else if (err.touchRequested) {
                     logger.info('YubiKey ChalResp: touch requested');
-                    touchAlert = this._showTouchAlert(params.serial, err => {
+                    touchAlert = this._showTouchAlert(params.serial, (err) => {
                         touchAlert = null;
                         userCanceled = true;
 
@@ -114,7 +114,7 @@ const ChalRespCalculator = {
                         logger.error('YubiKey list error', err);
                         return;
                     }
-                    const isAttached = list.some(yk => yk.serial === serial);
+                    const isAttached = list.some((yk) => yk.serial === serial);
                     logger.info(isAttached ? 'YubiKey found' : 'YubiKey not found');
                     if (isAttached) {
                         Events.off('usb-devices-changed', onUsbDevicesChanged);

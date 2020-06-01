@@ -51,7 +51,7 @@ class OtpQrReader {
             click: '',
             enter: '',
             buttons,
-            complete: res => {
+            complete: (res) => {
                 this.alert = null;
                 this.stopListenClipboard();
                 if (res === 'select') {
@@ -94,7 +94,7 @@ class OtpQrReader {
 
     pasteEvent(e) {
         const item = [...e.clipboardData.items].find(
-            item => item.kind === 'file' && item.type.indexOf('image') !== -1
+            (item) => item.kind === 'file' && item.type.indexOf('image') !== -1
         );
         if (!item) {
             logger.debug('Paste without file');

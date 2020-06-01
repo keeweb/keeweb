@@ -62,9 +62,7 @@ class SettingsShortcutsView extends View {
         const shortcutEditor = $('<div/>')
             .addClass('shortcut__editor')
             .attr('data-shortcut', globalShortcutType);
-        $('<div/>')
-            .text(Locale.setShEdit)
-            .appendTo(shortcutEditor);
+        $('<div/>').text(Locale.setShEdit).appendTo(shortcutEditor);
         const shortcutEditorInput = $('<input/>')
             .addClass('shortcut__editor-input')
             .val(Shortcuts.globalShortcutText(globalShortcutType))
@@ -75,8 +73,8 @@ class SettingsShortcutsView extends View {
 
         shortcutEditor.insertAfter($(e.target).parent());
         shortcutEditorInput.focus();
-        shortcutEditorInput.on('keypress', e => e.preventDefault());
-        shortcutEditorInput.on('keydown', e => {
+        shortcutEditorInput.on('keypress', (e) => e.preventDefault());
+        shortcutEditorInput.on('keydown', (e) => {
             e.preventDefault();
             e.stopImmediatePropagation();
 

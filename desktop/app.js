@@ -36,18 +36,19 @@ let execPath;
 setPortableAndExecPath();
 initUserDataDir();
 
-let openFile = process.argv.filter(arg => /\.kdbx$/i.test(arg))[0];
+let openFile = process.argv.filter((arg) => /\.kdbx$/i.test(arg))[0];
 
 const htmlPath =
     (isDev && process.env.KEEWEB_HTML_PATH) || 'file://' + path.join(__dirname, 'index.html');
 const showDevToolsOnStart =
-    process.argv.some(arg => arg.startsWith('--devtools')) ||
+    process.argv.some((arg) => arg.startsWith('--devtools')) ||
     process.env.KEEWEB_OPEN_DEVTOOLS === '1';
 
 const loginItemSettings = process.platform === 'darwin' ? app.getLoginItemSettings() : {};
 
 const startMinimized =
-    loginItemSettings.wasOpenedAsHidden || process.argv.some(arg => arg.startsWith('--minimized'));
+    loginItemSettings.wasOpenedAsHidden ||
+    process.argv.some((arg) => arg.startsWith('--minimized'));
 
 const themeBgColors = {
     db: '#342f2e',
@@ -69,11 +70,11 @@ setDevAppIcon();
 let configEncryptionKey;
 let appSettings;
 
-const settingsPromise = loadSettingsEncryptionKey().then(key => {
+const settingsPromise = loadSettingsEncryptionKey().then((key) => {
     configEncryptionKey = key;
     perfTimestamps?.push({ name: 'loading settings key', ts: process.hrtime() });
 
-    return loadConfig('app-settings').then(settings => {
+    return loadConfig('app-settings').then((settings) => {
         appSettings = settings ? JSON.parse(settings) : {};
         perfTimestamps?.push({ name: 'reading app settings', ts: process.hrtime() });
     });
@@ -102,7 +103,7 @@ app.on('ready', () => {
             deleteOldTempFiles();
             hookRequestHeaders();
         })
-        .catch(e => {
+        .catch((e) => {
             electron.dialog.showErrorBox('KeeWeb', 'Error loading app: ' + e);
             process.exit(2);
         });
@@ -119,7 +120,7 @@ app.on('activate', () => {
         }
     }
 });
-app.on('before-quit', e => {
+app.on('before-quit', (e) => {
     if (process.platform === 'darwin') {
         if (!app.skipBeforeQuitEvent) {
             e.preventDefault();
@@ -147,14 +148,14 @@ app.on('web-contents-created', (event, contents) => {
         }
     });
 });
-app.restartApp = function() {
+app.restartApp = function () {
     restartPending = true;
     mainWindow.close();
     setTimeout(() => {
         restartPending = false;
     }, 1000);
 };
-app.minimizeApp = function(menuItemLabels) {
+app.minimizeApp = function (menuItemLabels) {
     let imagePath;
     mainWindow.hide();
     if (process.platform === 'darwin') {
@@ -176,13 +177,13 @@ app.minimizeApp = function(menuItemLabels) {
         appIcon.setToolTip('KeeWeb');
     }
 };
-app.minimizeThenHideIfInTray = function() {
+app.minimizeThenHideIfInTray = function () {
     // This function is called when auto-type has displayed a selection list and a selection was made.
     // To ensure focus returns to the previous window we must minimize first even if we're going to hide.
     mainWindow.minimize();
     if (appIcon) mainWindow.hide();
 };
-app.getMainWindow = function() {
+app.getMainWindow = function () {
     return mainWindow;
 };
 app.setSkipBeforeQuitEvent = () => {
@@ -485,8 +486,8 @@ function onContextMenu(e, props) {
 function notifyOpenFile() {
     if (ready && openFile && mainWindow) {
         const openKeyfile = process.argv
-            .filter(arg => arg.startsWith('--keyfile='))
-            .map(arg => arg.replace('--keyfile=', ''))[0];
+            .filter((arg) => arg.startsWith('--keyfile='))
+            .map((arg) => arg.replace('--keyfile=', ''))[0];
         const fileInfo = JSON.stringify({ data: openFile, key: openKeyfile });
         mainWindow.webContents.executeJavaScript(
             'if (window.launcherOpen) { window.launcherOpen(' +
@@ -710,7 +711,7 @@ function reportStartProfile() {
     const totalTime = Math.round(Date.now() - processCreationTime);
     let lastTs = 0;
     const timings = perfTimestamps
-        .map(milestone => {
+        .map((milestone) => {
             const ts = milestone.ts;
             const elapsed = lastTs
                 ? Math.round((ts[0] - lastTs[0]) * 1e3 + (ts[1] - lastTs[1]) / 1e6)
@@ -751,7 +752,7 @@ function reqNative(mod) {
 }
 
 function initUsb(binding) {
-    Object.keys(EventEmitter.prototype).forEach(key => {
+    Object.keys(EventEmitter.prototype).forEach((key) => {
         binding[key] = EventEmitter.prototype[key];
     });
 
@@ -786,7 +787,7 @@ function loadSettingsEncryptionKey() {
 
         const keytar = reqNative('keytar');
 
-        return keytar.getPassword('KeeWeb', 'settings-key').then(key => {
+        return keytar.getPassword('KeeWeb', 'settings-key').then((key) => {
             if (key) {
                 return Buffer.from(key, 'hex');
             }
@@ -857,7 +858,7 @@ function saveConfig(name, data, key) {
 
         const ext = key ? 'dat' : 'json';
         const configFilePath = path.join(app.getPath('userData'), `${name}.${ext}`);
-        fs.writeFile(configFilePath, data, err => {
+        fs.writeFile(configFilePath, data, (err) => {
             if (err) {
                 reject(`Error writing config ${name}: ${err}`);
             } else {
@@ -882,7 +883,7 @@ function migrateOldConfigs(key) {
 
     for (const configName of knownConfigs) {
         promises.push(
-            loadConfig(configName).then(data => {
+            loadConfig(configName).then((data) => {
                 if (data) {
                     return saveConfig(configName, data, key).then(() => {
                         fs.unlinkSync(path.join(app.getPath('userData'), `${configName}.json`));

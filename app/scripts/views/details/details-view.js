@@ -96,7 +96,7 @@ class DetailsView extends View {
     }
 
     removeFieldViews() {
-        this.fieldViews.forEach(fieldView => fieldView.remove());
+        this.fieldViews.forEach((fieldView) => fieldView.remove());
         this.fieldViews = [];
         this.hideFieldCopyTip();
     }
@@ -136,7 +136,7 @@ class DetailsView extends View {
     }
 
     getFieldView(name) {
-        return this.fieldViews.find(fv => fv.model.name === name);
+        return this.fieldViews.find((fv) => fv.model.name === name);
     }
 
     addFieldViews() {
@@ -152,7 +152,7 @@ class DetailsView extends View {
                 fieldView.render();
                 fieldView.on('change', this.fieldChanged.bind(this));
                 fieldView.on('copy', this.fieldCopied.bind(this));
-                fieldView.on('autotype', e => this.autoType(e.source.model.sequence));
+                fieldView.on('autotype', (e) => this.autoType(e.source.model.sequence));
                 if (hideEmptyFields) {
                     const value = fieldView.model.value();
                     if (!value || value.length === 0 || value.byteLength === 0) {
@@ -223,7 +223,7 @@ class DetailsView extends View {
                 const hideEmptyFields = AppSettingsModel.hideEmptyFields;
                 const moreOptions = [];
                 if (hideEmptyFields) {
-                    this.fieldViews.forEach(fieldView => {
+                    this.fieldViews.forEach((fieldView) => {
                         if (fieldView.isHidden()) {
                             moreOptions.push({
                                 value: 'add:' + fieldView.model.name,
@@ -306,7 +306,7 @@ class DetailsView extends View {
             default:
                 if (e.item.lastIndexOf('add:', 0) === 0) {
                     const fieldName = e.item.substr(4);
-                    const fieldView = this.fieldViews.find(f => f.model.name === fieldName);
+                    const fieldView = this.fieldViews.find((f) => f.model.name === fieldName);
                     fieldView.show();
                     fieldView.edit();
                 }
@@ -336,9 +336,7 @@ class DetailsView extends View {
     }
 
     selectColor(e) {
-        let color = $(e.target)
-            .closest('.details__colors-popup-item')
-            .data('color');
+        let color = $(e.target).closest('.details__colors-popup-item').data('color');
         if (!color) {
             return;
         }
@@ -579,7 +577,7 @@ class DetailsView extends View {
                 }
             }
             this.entryUpdated(true);
-            this.fieldViews.forEach(function(fieldView, ix) {
+            this.fieldViews.forEach(function (fieldView, ix) {
                 if (
                     fieldView instanceof FieldViewCustom &&
                     !fieldView.model.newField &&
@@ -927,7 +925,7 @@ class DetailsView extends View {
 
     otpEnterManually() {
         if (this.model.fields.otp) {
-            const otpField = this.fieldViews.find(f => f.model.name === '$otp');
+            const otpField = this.fieldViews.find((f) => f.model.name === '$otp');
             if (otpField) {
                 otpField.edit();
             }
@@ -967,7 +965,7 @@ class DetailsView extends View {
         const hasOtp = sequence?.includes('{TOTP}') || (entry.external && !sequence);
         if (hasOtp) {
             const otpField = this.getFieldView('$otp');
-            otpField.refreshOtp(err => {
+            otpField.refreshOtp((err) => {
                 if (!err) {
                     Events.emit('auto-type', {
                         entry,

@@ -90,8 +90,8 @@ function config(options) {
                             query: {
                                 knownHelpers: fs
                                     .readdirSync(path.join(rootDir, 'app/scripts/hbs-helpers'))
-                                    .map(f => f.replace('.js', ''))
-                                    .filter(f => f !== 'index'),
+                                    .map((f) => f.replace('.js', ''))
+                                    .filter((f) => f !== 'index'),
                                 partialResolver(partial, callback) {
                                     const location = path.join(
                                         rootDir,

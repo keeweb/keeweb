@@ -75,7 +75,7 @@ class AutoTypeSelectView extends View {
         const presenter = new EntryPresenter(null, noColor, this.result && this.result.id);
         let itemsHtml = '';
         const itemTemplate = this.itemTemplate;
-        this.entries.forEach(entry => {
+        this.entries.forEach((entry) => {
             presenter.present(entry);
             itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
         });

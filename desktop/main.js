@@ -80,7 +80,7 @@ function validateSignature(appPath) {
     delete signatures.kwResSelf;
     const data = JSON.stringify(signatures);
     validateDataSignature(Buffer.from(data), selfSignature, 'self');
-    Object.keys(signatures).forEach(signedFilePath => {
+    Object.keys(signatures).forEach((signedFilePath) => {
         const resourcePath = path.join(appPath, signedFilePath);
         const fileData = fs.readFileSync(resourcePath);
         validateDataSignature(fileData, signatures[signedFilePath], signedFilePath);

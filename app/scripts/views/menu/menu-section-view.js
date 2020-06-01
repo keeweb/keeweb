@@ -43,7 +43,7 @@ class MenuSectionView extends View {
         } else {
             this.removeInnerViews();
         }
-        this.model.items.forEach(item => {
+        this.model.items.forEach((item) => {
             const itemView = new MenuItemView(item, { parent: this.itemsEl[0] });
             itemView.render();
             this.itemViews.push(itemView);
@@ -63,7 +63,7 @@ class MenuSectionView extends View {
     }
 
     removeInnerViews() {
-        this.itemViews.forEach(itemView => itemView.remove());
+        this.itemViews.forEach((itemView) => itemView.remove());
         this.itemViews = [];
     }
 
@@ -76,7 +76,7 @@ class MenuSectionView extends View {
         this.saveViewHeight(size);
     }
 
-    saveViewHeight = throttle(size => {
+    saveViewHeight = throttle((size) => {
         AppSettingsModel.tagsViewHeight = size;
     }, 1000);
 }

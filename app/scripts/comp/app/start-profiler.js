@@ -30,7 +30,7 @@ const StartProfiler = {
     printReport(name, operations, totalTime) {
         const message =
             `${name} started in ${totalTime}ms: ` +
-            operations.map(op => `${op.name}=${Math.round(op.elapsed)}ms`).join(', ');
+            operations.map((op) => `${op.name}=${Math.round(op.elapsed)}ms`).join(', ');
 
         logger.info(message);
     },

@@ -89,7 +89,7 @@ class OpenView extends View {
         }
         const storageProviders = [];
         if (this.model.settings.canOpenStorage) {
-            Object.keys(Storage).forEach(name => {
+            Object.keys(Storage).forEach((name) => {
                 const prv = Storage[name];
                 if (!prv.system && prv.enabled) {
                     storageProviders.push(prv);
@@ -161,7 +161,7 @@ class OpenView extends View {
     }
 
     getLastOpenFiles() {
-        return this.model.fileInfos.map(fileInfo => {
+        return this.model.fileInfos.map((fileInfo) => {
             let icon = 'file-text';
             const storage = Storage[fileInfo.storage];
             if (storage && storage.icon) {
@@ -203,7 +203,7 @@ class OpenView extends View {
             click: '',
             esc: '',
             enter: '',
-            success: res => {
+            success: (res) => {
                 this.focusInput();
                 if (res === 'skip') {
                     this.model.settings.skipOpenLocalWarn = true;
@@ -215,7 +215,7 @@ class OpenView extends View {
     fileSelected(e) {
         const file = e.target.files[0];
         if (file) {
-            this.processFile(file, success => {
+            this.processFile(file, (success) => {
                 if (success && !file.path && this.reading === 'fileData') {
                     this.showLocalFileAlert();
                 }
@@ -225,7 +225,7 @@ class OpenView extends View {
 
     processFile(file, complete) {
         const reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
             let success = false;
             switch (this.reading) {
                 case 'fileData': {
@@ -347,7 +347,7 @@ class OpenView extends View {
 
     setFile(file, keyFile, fileReadyCallback) {
         this.reading = 'fileData';
-        this.processFile(file, success => {
+        this.processFile(file, (success) => {
             if (success && keyFile) {
                 this.reading = 'keyFileData';
                 this.processFile(keyFile);
@@ -423,10 +423,7 @@ class OpenView extends View {
         if (this.busy) {
             return;
         }
-        const id = $(e.target)
-            .closest('.open__last-item')
-            .data('id')
-            .toString();
+        const id = $(e.target).closest('.open__last-item').data('id').toString();
         if ($(e.target).is('.open__last-item-icon-del')) {
             const fileInfo = this.model.fileInfos.get(id);
             if (!fileInfo.storage || fileInfo.modified) {
@@ -539,8 +536,8 @@ class OpenView extends View {
         this.closeConfig();
         this.$el.removeClass('open--drag');
         const files = [...(e.target.files || e.dataTransfer.files)];
-        const dataFile = files.find(file => /\.kdbx$/i.test(file.name));
-        const keyFile = files.find(file => /\.key$/i.test(file.name));
+        const dataFile = files.find((file) => /\.kdbx$/i.test(file.name));
+        const keyFile = files.find((file) => /\.key$/i.test(file.name));
         if (dataFile) {
             this.setFile(
                 dataFile,
@@ -550,14 +547,14 @@ class OpenView extends View {
             return;
         }
         if (this.model.settings.canImportXml) {
-            const xmlFile = files.find(file => /\.xml$/i.test(file.name));
+            const xmlFile = files.find((file) => /\.xml$/i.test(file.name));
             if (xmlFile) {
                 this.setFile(xmlFile, null, this.showLocalFileAlert.bind(this));
                 return;
             }
         }
         if (this.model.settings.canImportCsv) {
-            const csvFile = files.find(file => /\.csv$/i.test(file.name));
+            const csvFile = files.find((file) => /\.csv$/i.test(file.name));
             if (csvFile) {
                 Events.emit('import-csv-requested', csvFile);
             }
@@ -631,7 +628,7 @@ class OpenView extends View {
         }
 
         if (Launcher && Launcher.fingerprints) {
-            Launcher.fingerprints.auth(fileInfo.id, fileInfo.fingerprint, password => {
+            Launcher.fingerprints.auth(fileInfo.id, fileInfo.fingerprint, (password) => {
                 this.inputEl.val(password);
                 this.inputEl.trigger('input');
                 this.openDb();
@@ -670,7 +667,7 @@ class OpenView extends View {
         this.busy = true;
         this.params.password = this.passwordInput.value;
         this.afterPaint(() => {
-            this.model.openFile(this.params, err => this.openDbComplete(err));
+            this.model.openFile(this.params, (err) => this.openDbComplete(err));
         });
     }
 
@@ -710,7 +707,7 @@ class OpenView extends View {
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
         this.afterPaint(() =>
-            this.model.importFileWithXml(this.params, err => {
+            this.model.importFileWithXml(this.params, (err) => {
                 if (err) {
                     this.params.name = '';
                     this.params.fileXml = null;
@@ -736,12 +733,7 @@ class OpenView extends View {
         if (this.busy) {
             return;
         }
-        const storage =
-            Storage[
-                $(e.target)
-                    .closest('.open__icon')
-                    .data('storage')
-            ];
+        const storage = Storage[$(e.target).closest('.open__icon').data('storage')];
         if (!storage) {
             return;
         }
@@ -805,7 +797,7 @@ class OpenView extends View {
                 files,
                 showHiddenFiles: config && config.showHiddenFiles
             });
-            listView.on('selected', file => {
+            listView.on('selected', (file) => {
                 if (file.dir) {
                     this.listStorage(storage, {
                         dir: file.path,
@@ -1027,14 +1019,14 @@ class OpenView extends View {
             const icon = this.$el.find('.open__icon-yubikey');
             icon.toggleClass('flip3d', true);
 
-            YubiKey.checkToolStatus().then(status => {
+            YubiKey.checkToolStatus().then((status) => {
                 if (status !== 'ok') {
                     icon.toggleClass('flip3d', false);
                     this.inputEl.removeAttr('disabled');
                     this.busy = false;
                     return Events.emit('toggle-settings', 'devices');
                 }
-                this.otpDevice = this.model.openOtpDevice(err => {
+                this.otpDevice = this.model.openOtpDevice((err) => {
                     if (err && !YubiKey.aborted) {
                         Alerts.error({
                             header: Locale.openError,

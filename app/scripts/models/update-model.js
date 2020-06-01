@@ -3,7 +3,7 @@ import { SettingsStore } from 'comp/settings/settings-store';
 
 class UpdateModel extends Model {
     load() {
-        return SettingsStore.load('update-info').then(data => {
+        return SettingsStore.load('update-info').then((data) => {
             if (data) {
                 try {
                     for (const [key, val] of Object.entries(data)) {

@@ -23,18 +23,14 @@ class DetailsAttachmentView extends View {
             case 'text': {
                 const reader = new FileReader();
                 reader.addEventListener('loadend', () => {
-                    $('<pre/>')
-                        .text(reader.result)
-                        .appendTo(dataEl);
+                    $('<pre/>').text(reader.result).appendTo(dataEl);
                     complete();
                 });
                 reader.readAsText(blob);
                 return;
             }
             case 'image':
-                $('<img/>')
-                    .attr('src', URL.createObjectURL(blob))
-                    .appendTo(dataEl);
+                $('<img/>').attr('src', URL.createObjectURL(blob)).appendTo(dataEl);
                 complete();
                 return;
         }

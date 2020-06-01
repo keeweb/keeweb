@@ -1,6 +1,6 @@
 import { AutoTypeRunner } from 'auto-type/auto-type-runner';
 
-const AutoTypeParser = function(sequence) {
+const AutoTypeParser = function (sequence) {
     this.sequence = sequence;
     this.ix = 0;
     this.states = [];
@@ -8,7 +8,7 @@ const AutoTypeParser = function(sequence) {
 
 AutoTypeParser.opRegex = /^(.*?)(?:([\s:=])[\s:=]*(.*))?$/;
 
-AutoTypeParser.prototype.parse = function() {
+AutoTypeParser.prototype.parse = function () {
     const len = this.sequence.length;
     this.pushState();
     while (this.ix < len) {
@@ -45,14 +45,14 @@ AutoTypeParser.prototype.parse = function() {
     return new AutoTypeRunner(this.state().ops);
 };
 
-AutoTypeParser.prototype.pushState = function() {
+AutoTypeParser.prototype.pushState = function () {
     this.states.unshift({
         modifiers: null,
         ops: []
     });
 };
 
-AutoTypeParser.prototype.popState = function() {
+AutoTypeParser.prototype.popState = function () {
     if (this.states.length <= 1) {
         throw 'Unexpected ")" at index ' + this.ix;
     }
@@ -60,11 +60,11 @@ AutoTypeParser.prototype.popState = function() {
     this.addState(state);
 };
 
-AutoTypeParser.prototype.state = function() {
+AutoTypeParser.prototype.state = function () {
     return this.states[0];
 };
 
-AutoTypeParser.prototype.readOp = function() {
+AutoTypeParser.prototype.readOp = function () {
     const toIx = this.sequence.indexOf('}', this.ix + 2);
     if (toIx < 0) {
         throw 'Mismatched "{" at index ' + this.ix;
@@ -79,7 +79,7 @@ AutoTypeParser.prototype.readOp = function() {
     this.addOp(op, sep, arg);
 };
 
-AutoTypeParser.prototype.readModifier = function(modifier) {
+AutoTypeParser.prototype.readModifier = function (modifier) {
     const state = this.state();
     if (!state.modifiers) {
         state.modifiers = {};
@@ -91,14 +91,14 @@ AutoTypeParser.prototype.readModifier = function(modifier) {
     state.modifiers[modifier] = true;
 };
 
-AutoTypeParser.prototype.resetModifiers = function() {
+AutoTypeParser.prototype.resetModifiers = function () {
     const state = this.state();
     const modifiers = state.modifiers;
     state.modifiers = null;
     return modifiers;
 };
 
-AutoTypeParser.prototype.addState = function(state) {
+AutoTypeParser.prototype.addState = function (state) {
     this.state().ops.push({
         type: 'group',
         value: state.ops,
@@ -106,7 +106,7 @@ AutoTypeParser.prototype.addState = function(state) {
     });
 };
 
-AutoTypeParser.prototype.addChar = function(ch) {
+AutoTypeParser.prototype.addChar = function (ch) {
     this.state().ops.push({
         type: 'text',
         value: ch,
@@ -114,7 +114,7 @@ AutoTypeParser.prototype.addChar = function(ch) {
     });
 };
 
-AutoTypeParser.prototype.addOp = function(op, sep, arg) {
+AutoTypeParser.prototype.addOp = function (op, sep, arg) {
     this.state().ops.push({
         type: 'op',
         value: op,

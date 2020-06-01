@@ -36,9 +36,7 @@ const Launcher = {
     },
     devTools: true,
     openDevTools() {
-        this.electron()
-            .remote.getCurrentWindow()
-            .webContents.openDevTools({ mode: 'bottom' });
+        this.electron().remote.getCurrentWindow().webContents.openDevTools({ mode: 'bottom' });
     },
     getSaveFileName(defaultPath, callback) {
         if (defaultPath) {
@@ -51,7 +49,7 @@ const Launcher = {
                 defaultPath,
                 filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
             })
-            .then(res => callback(res.filePath));
+            .then((res) => callback(res.filePath));
     },
     getUserDataPath(fileName) {
         if (!this.userDataPath) {
@@ -99,8 +97,8 @@ const Launcher = {
         const path = this.req('path');
         const stack = [];
 
-        const collect = function(dir, stack, callback) {
-            fs.exists(dir, exists => {
+        const collect = function (dir, stack, callback) {
+            fs.exists(dir, (exists) => {
                 if (exists) {
                     return callback();
                 }
@@ -115,12 +113,12 @@ const Launcher = {
             });
         };
 
-        const create = function(stack, callback) {
+        const create = function (stack, callback) {
             if (!stack.length) {
                 return callback();
             }
 
-            fs.mkdir(stack.shift(), err => (err ? callback(err) : create(stack, callback)));
+            fs.mkdir(stack.shift(), (err) => (err ? callback(err) : create(stack, callback)));
         };
 
         collect(dir, stack, () => create(stack, callback));
@@ -211,7 +209,7 @@ const Launcher = {
     resolveProxy(url, callback) {
         const window = this.getMainWindow();
         const session = window.webContents.session;
-        session.resolveProxy(url).then(proxy => {
+        session.resolveProxy(url).then((proxy) => {
             const match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
             proxy = match && match[1] ? { host: match[1], port: +match[2] } : null;
             callback(proxy);
@@ -235,10 +233,10 @@ const Launcher = {
         const ts = logger.ts();
         let complete = config.complete;
         const ps = this.req('child_process').spawn(config.cmd, config.args);
-        [ps.stdin, ps.stdout, ps.stderr].forEach(s => s.setEncoding('utf-8'));
+        [ps.stdin, ps.stdout, ps.stderr].forEach((s) => s.setEncoding('utf-8'));
         let stderr = '';
         let stdout = '';
-        ps.stderr.on('data', d => {
+        ps.stderr.on('data', (d) => {
             stderr += d.toString('utf-8');
             if (config.throwOnStdErr) {
                 try {
@@ -246,10 +244,10 @@ const Launcher = {
                 } catch {}
             }
         });
-        ps.stdout.on('data', d => {
+        ps.stdout.on('data', (d) => {
             stdout += d.toString('utf-8');
         });
-        ps.on('close', code => {
+        ps.on('close', (code) => {
             stdout = stdout.trim();
             stderr = stderr.trim();
             const msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
@@ -263,7 +261,7 @@ const Launcher = {
                 complete = null;
             }
         });
-        ps.on('error', err => {
+        ps.on('error', (err) => {
             logger.error('spawn error: ' + config.cmd + ', ' + logger.ts(ts), err);
             if (complete) {
                 complete(err);
@@ -309,10 +307,10 @@ Events.on('launcher-exit-request', () => {
 });
 Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
 Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
-Events.on('start-profile', data => StartProfiler.reportAppProfile(data));
-Events.on('log', e => new Logger(e.category || 'remote-app')[e.method || 'info'](e.message));
+Events.on('start-profile', (data) => StartProfiler.reportAppProfile(data));
+Events.on('log', (e) => new Logger(e.category || 'remote-app')[e.method || 'info'](e.message));
 
-window.launcherOpen = file => Launcher.openFile(file);
+window.launcherOpen = (file) => Launcher.openFile(file);
 if (window.launcherOpenedFile) {
     logger.info('Open file request', window.launcherOpenedFile);
     Launcher.openFile(window.launcherOpenedFile);
@@ -328,7 +326,7 @@ Events.on('app-ready', () =>
     }, 0)
 );
 
-Launcher.remoteApp().on('remote-app-event', e => {
+Launcher.remoteApp().on('remote-app-event', (e) => {
     if (window.debugRemoteAppEvents) {
         logger.debug('remote-app-event', e.name);
     }

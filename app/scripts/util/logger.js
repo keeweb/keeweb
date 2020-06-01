@@ -11,12 +11,12 @@ const MaxLogsToSave = 100;
 
 const lastLogs = [];
 
-const Logger = function(name, id, level = Level.All) {
+const Logger = function (name, id, level = Level.All) {
     this.prefix = name ? name + (id ? ':' + id : '') : 'default';
     this.level = level;
 };
 
-Logger.prototype.ts = function(ts) {
+Logger.prototype.ts = function (ts) {
     if (ts) {
         return Math.round(performance.now() - ts) + 'ms';
     } else {
@@ -24,11 +24,11 @@ Logger.prototype.ts = function(ts) {
     }
 };
 
-Logger.prototype.getPrefix = function() {
+Logger.prototype.getPrefix = function () {
     return new Date().toISOString() + ' [' + this.prefix + '] ';
 };
 
-Logger.prototype.debug = function(...args) {
+Logger.prototype.debug = function (...args) {
     args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Debug) {
         Logger.saveLast('debug', args);
@@ -36,7 +36,7 @@ Logger.prototype.debug = function(...args) {
     }
 };
 
-Logger.prototype.info = function(...args) {
+Logger.prototype.info = function (...args) {
     args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Info) {
         Logger.saveLast('info', args);
@@ -44,7 +44,7 @@ Logger.prototype.info = function(...args) {
     }
 };
 
-Logger.prototype.warn = function(...args) {
+Logger.prototype.warn = function (...args) {
     args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Warn) {
         Logger.saveLast('warn', args);
@@ -52,7 +52,7 @@ Logger.prototype.warn = function(...args) {
     }
 };
 
-Logger.prototype.error = function(...args) {
+Logger.prototype.error = function (...args) {
     args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Error) {
         Logger.saveLast('error', args);
@@ -60,22 +60,22 @@ Logger.prototype.error = function(...args) {
     }
 };
 
-Logger.prototype.setLevel = function(level) {
+Logger.prototype.setLevel = function (level) {
     this.level = level;
 };
 
-Logger.prototype.getLevel = function() {
+Logger.prototype.getLevel = function () {
     return this.level;
 };
 
-Logger.saveLast = function(level, args) {
+Logger.saveLast = function (level, args) {
     lastLogs.push({ level, args: Array.prototype.slice.call(args) });
     if (lastLogs.length > MaxLogsToSave) {
         lastLogs.shift();
     }
 };
 
-Logger.getLast = function() {
+Logger.getLast = function () {
     return lastLogs;
 };
 

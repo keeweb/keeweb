@@ -5,19 +5,19 @@ class FileCollection extends Collection {
     static model = Model;
 
     hasOpenFiles() {
-        return this.some(file => file.active);
+        return this.some((file) => file.active);
     }
 
     hasUnsavedFiles() {
-        return this.some(file => file.modified);
+        return this.some((file) => file.modified);
     }
 
     hasDirtyFiles() {
-        return this.some(file => file.dirty);
+        return this.some((file) => file.dirty);
     }
 
     getByName(name) {
-        return this.find(file => file.name.toLowerCase() === name.toLowerCase());
+        return this.find((file) => file.name.toLowerCase() === name.toLowerCase());
     }
 }
 

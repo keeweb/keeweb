@@ -19,14 +19,14 @@ class FieldViewTags extends FieldViewText {
 
     valueToTags(val) {
         const allTags = {};
-        this.model.tags.forEach(tag => {
+        this.model.tags.forEach((tag) => {
             allTags[tag.toLowerCase()] = tag;
         });
         const valueTags = {};
         val.split(/\s*[;,:]\s*/)
-            .filter(tag => tag)
-            .map(tag => allTags[tag.toLowerCase()] || tag)
-            .forEach(tag => {
+            .filter((tag) => tag)
+            .map((tag) => allTags[tag.toLowerCase()] || tag)
+            .forEach((tag) => {
                 valueTags[tag] = tag;
             });
         return Object.keys(valueTags);
@@ -69,7 +69,7 @@ class FieldViewTags extends FieldViewText {
         const tags = this.valueToTags(this.input.val());
         const last = tags[tags.length - 1];
         const isLastPart = last && this.model.tags.indexOf(last) < 0;
-        return this.model.tags.filter(tag => {
+        return this.model.tags.filter((tag) => {
             return (
                 tags.indexOf(tag) < 0 &&
                 (!isLastPart || tag.toLowerCase().indexOf(last.toLowerCase()) >= 0)

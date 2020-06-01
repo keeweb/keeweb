@@ -107,10 +107,10 @@ class EntryModel extends Model {
                 text += value.toLowerCase() + '\n';
             }
         }
-        this.entry.tags.forEach(tag => {
+        this.entry.tags.forEach((tag) => {
             text += tag.toLowerCase() + '\n';
         });
-        this.attachments.forEach(att => {
+        this.attachments.forEach((att) => {
             text += att.title.toLowerCase() + '\n';
         });
         this.searchText = text;
@@ -128,7 +128,7 @@ class EntryModel extends Model {
     }
 
     _buildSearchTags() {
-        this.searchTags = this.entry.tags.map(tag => tag.toLowerCase());
+        this.searchTags = this.entry.tags.map((tag) => tag.toLowerCase());
     }
 
     _buildSearchColor() {
@@ -217,7 +217,7 @@ class EntryModel extends Model {
 
     resolveFieldReferences() {
         this.hasFieldRefs = false;
-        FieldRefFields.forEach(field => {
+        FieldRefFields.forEach((field) => {
             const fieldValue = this[field];
             const refValue = this._resolveFieldReference(fieldValue);
             if (refValue !== undefined) {
@@ -230,7 +230,7 @@ class EntryModel extends Model {
     getFieldValue(field) {
         field = field.toLowerCase();
         let resolvedField;
-        Object.keys(this.entry.fields).some(entryField => {
+        Object.keys(this.entry.fields).some((entryField) => {
             if (entryField.toLowerCase() === field) {
                 resolvedField = entryField;
                 return true;
@@ -310,7 +310,7 @@ class EntryModel extends Model {
     }
 
     renameTag(from, to) {
-        const ix = this.entry.tags.findIndex(tag => tag.toLowerCase() === from.toLowerCase());
+        const ix = this.entry.tags.findIndex((tag) => tag.toLowerCase() === from.toLowerCase());
         if (ix < 0) {
             return;
         }
@@ -350,7 +350,7 @@ class EntryModel extends Model {
 
     addAttachment(name, data) {
         this._entryModified();
-        return this.file.db.createBinary(data).then(binaryRef => {
+        return this.file.db.createBinary(data).then((binaryRef) => {
             this.entry.binaries[name] = binaryRef;
             this._fillByEntry();
         });
@@ -363,7 +363,7 @@ class EntryModel extends Model {
     }
 
     getHistory() {
-        const history = this.entry.history.map(function(rec) {
+        const history = this.entry.history.map(function (rec) {
             return EntryModel.fromEntry(rec, this.group, this.file);
         }, this);
         history.push(this);
@@ -466,7 +466,7 @@ class EntryModel extends Model {
             } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
                 // KeeOTP plugin format
                 const args = {};
-                otpUrl.split('&').forEach(part => {
+                otpUrl.split('&').forEach((part) => {
                     const parts = part.split('=', 2);
                     args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
                 });

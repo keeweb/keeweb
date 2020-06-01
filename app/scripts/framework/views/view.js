@@ -130,7 +130,7 @@ class View extends EventEmitter {
         }
         for (const [event, handlers] of Object.entries(eventsMap)) {
             this.debugLogger?.debug('Bind', 'view', event, handlers);
-            const listener = e => this.eventListener(e, handlers);
+            const listener = (e) => this.eventListener(e, handlers);
             this.eventListeners[event] = listener;
             this.el.addEventListener(event, listener);
         }
@@ -152,7 +152,7 @@ class View extends EventEmitter {
         for (const cfg of this.elementEventListeners) {
             const els = this.el.querySelectorAll(cfg.selector);
             this.debugLogger?.debug('Bind', 'element', cfg.event, cfg.selector, els.length);
-            cfg.listener = e => this.eventListener(e, [cfg]);
+            cfg.listener = (e) => this.eventListener(e, [cfg]);
             for (const el of els) {
                 el.addEventListener(cfg.event, cfg.listener);
                 cfg.els.push(el);
@@ -209,7 +209,7 @@ class View extends EventEmitter {
             for (const view of Object.values(this.views)) {
                 if (view) {
                     if (view instanceof Array) {
-                        view.forEach(v => v.remove());
+                        view.forEach((v) => v.remove());
                     } else {
                         view.remove();
                     }

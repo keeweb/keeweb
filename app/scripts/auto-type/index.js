@@ -26,11 +26,11 @@ const AutoType = {
         if (!this.enabled) {
             return;
         }
-        Events.on('auto-type', e => this.handleEvent(e));
-        Events.on('main-window-blur', e => this.mainWindowBlur(e));
-        Events.on('main-window-focus', e => this.mainWindowFocus(e));
-        Events.on('main-window-will-close', e => this.mainWindowWillClose(e));
-        Events.on('closed-open-view', e => this.processPendingEvent(e));
+        Events.on('auto-type', (e) => this.handleEvent(e));
+        Events.on('main-window-blur', (e) => this.mainWindowBlur(e));
+        Events.on('main-window-focus', (e) => this.mainWindowFocus(e));
+        Events.on('main-window-will-close', (e) => this.mainWindowWillClose(e));
+        Events.on('closed-open-view', (e) => this.processPendingEvent(e));
     },
 
     handleEvent(e) {
@@ -62,7 +62,7 @@ const AutoType = {
     },
 
     runAndHandleResult(result, windowId) {
-        this.run(result, windowId, err => {
+        this.run(result, windowId, (err) => {
             if (err) {
                 Alerts.error({
                     header: Locale.autoTypeError,
@@ -86,7 +86,7 @@ const AutoType = {
             const parser = new AutoTypeParser(sequence);
             const runner = parser.parse();
             logger.debug('Parsed', this.printOps(runner.ops));
-            runner.resolve(result.entry, context, err => {
+            runner.resolve(result.entry, context, (err) => {
                 if (err) {
                     this.running = false;
                     logger.error('Resolve error', err);
@@ -103,7 +103,7 @@ const AutoType = {
                     }
                     logger.debug('Obfuscated');
                 }
-                runner.run(err => {
+                runner.run((err) => {
                     this.running = false;
                     if (err) {
                         logger.error('Run error', err);
@@ -237,7 +237,7 @@ const AutoType = {
         this.focusMainWindow();
         evt.filter.ignoreWindowInfo = true;
         this.selectEntryView = new AutoTypeSelectView({ filter: evt.filter });
-        this.selectEntryView.on('result', result => {
+        this.selectEntryView.on('result', (result) => {
             logger.debug('Entry selected', result);
             this.selectEntryView.off('result');
             this.selectEntryView.remove();

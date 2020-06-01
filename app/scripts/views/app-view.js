@@ -314,7 +314,9 @@ class AppView extends View {
     }
 
     showFileSettings(e) {
-        const menuItem = this.model.menu.filesSection.items.find(item => item.file.id === e.fileId);
+        const menuItem = this.model.menu.filesSection.items.find(
+            (item) => item.file.id === e.fileId
+        );
         if (this.views.settings) {
             if (this.views.settings.file === menuItem.file) {
                 this.showEntries();
@@ -380,7 +382,7 @@ class AppView extends View {
             if (Launcher) {
                 if (!this.exitAlertShown) {
                     if (this.model.settings.autoSave) {
-                        this.saveAndLock(result => {
+                        this.saveAndLock((result) => {
                             if (result) {
                                 exit();
                             }
@@ -396,9 +398,9 @@ class AppView extends View {
                             { result: 'exit', title: Locale.discardChanges, error: true },
                             { result: '', title: Locale.appDontExitBtn }
                         ],
-                        success: result => {
+                        success: (result) => {
                             if (result === 'save') {
-                                this.saveAndLock(result => {
+                                this.saveAndLock((result) => {
                                     if (result) {
                                         exit();
                                     }
@@ -532,7 +534,7 @@ class AppView extends View {
         let pendingCallbacks = 0;
         const errorFiles = [];
         const that = this;
-        this.model.files.forEach(function(file) {
+        this.model.files.forEach(function (file) {
             if (!file.dirty) {
                 return;
             }
@@ -573,7 +575,7 @@ class AppView extends View {
 
     closeAllFilesAndShowFirst() {
         let fileToShow = this.model.files.find(
-            file => !file.demo && !file.created && !file.external
+            (file) => !file.demo && !file.created && !file.external
         );
         this.model.closeAllFiles();
         if (!fileToShow) {
@@ -599,7 +601,7 @@ class AppView extends View {
     }
 
     saveAll() {
-        this.model.files.forEach(function(file) {
+        this.model.files.forEach(function (file) {
             this.model.syncFile(file);
         }, this);
     }
@@ -729,8 +731,8 @@ class AppView extends View {
                 position: { left: e.pageX, top: e.pageY },
                 options: e.options
             });
-            menu.on('cancel', e => this.hideContextMenu());
-            menu.on('select', e => this.contextMenuSelect(e));
+            menu.on('cancel', (e) => this.hideContextMenu());
+            menu.on('select', (e) => this.contextMenuSelect(e));
             this.views.contextMenu = menu;
         }
     }
@@ -801,7 +803,7 @@ class AppView extends View {
         const reader = new FileReader();
         const logger = new Logger('import-csv');
         logger.info('Reading CSV...');
-        reader.onload = e => {
+        reader.onload = (e) => {
             logger.info('Parsing CSV...');
             const ts = logger.ts();
             const parser = new CsvParser();

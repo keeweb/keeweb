@@ -3,19 +3,19 @@ import { UrlFormat } from 'util/formatting/url-format';
 
 const ChooserAppKey = 'qp7ctun6qt5n9d6';
 
-const DropboxChooser = function(callback) {
+const DropboxChooser = function (callback) {
     this.cb = callback;
     this.onMessage = this.onMessage.bind(this);
 };
 
-DropboxChooser.prototype.callback = function(err, res) {
+DropboxChooser.prototype.callback = function (err, res) {
     if (this.cb) {
         this.cb(err, res);
     }
     this.cb = null;
 };
 
-DropboxChooser.prototype.choose = function() {
+DropboxChooser.prototype.choose = function () {
     const windowFeatures = 'width=640,height=552,left=357,top=100,resizable=yes,location=yes';
     const url = this.buildUrl();
     this.popup = window.open(url, 'dropbox', windowFeatures);
@@ -26,7 +26,7 @@ DropboxChooser.prototype.choose = function() {
     this.closeInt = setInterval(this.checkClose.bind(this), 200);
 };
 
-DropboxChooser.prototype.buildUrl = function() {
+DropboxChooser.prototype.buildUrl = function () {
     return UrlFormat.makeUrl('https://www.dropbox.com/chooser', {
         origin: window.location.protocol + '//' + window.location.host,
         'app_key': AppSettingsModel.dropboxAppKey || ChooserAppKey,
@@ -40,7 +40,7 @@ DropboxChooser.prototype.buildUrl = function() {
     });
 };
 
-DropboxChooser.prototype.onMessage = function(e) {
+DropboxChooser.prototype.onMessage = function (e) {
     if (e.source !== this.popup || e.origin !== 'https://www.dropbox.com') {
         return;
     }
@@ -69,7 +69,7 @@ DropboxChooser.prototype.onMessage = function(e) {
     }
 };
 
-DropboxChooser.prototype.checkClose = function() {
+DropboxChooser.prototype.checkClose = function () {
     if (this.popup.closed) {
         clearInterval(this.closeInt);
         window.removeEventListener('message', this.onMessage);
@@ -79,7 +79,7 @@ DropboxChooser.prototype.checkClose = function() {
     }
 };
 
-DropboxChooser.prototype.success = function(params) {
+DropboxChooser.prototype.success = function (params) {
     if (!params || !params[0] || !params[0].link || params[0].is_dir) {
         return this.callback('bad result');
     }
@@ -87,7 +87,7 @@ DropboxChooser.prototype.success = function(params) {
     this.readFile(this.result.link);
 };
 
-DropboxChooser.prototype.readFile = function(url) {
+DropboxChooser.prototype.readFile = function (url) {
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', () => {
         this.callback(null, { name: this.result.name, data: xhr.response });

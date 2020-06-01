@@ -76,7 +76,7 @@ class SettingsFileView extends View {
         const storageProviders = [];
         const fileStorage = this.model.storage;
         let canBackup = false;
-        Object.keys(Storage).forEach(name => {
+        Object.keys(Storage).forEach((name) => {
             const prv = Storage[name];
             if (!canBackup && prv.backup && prv.enabled) {
                 canBackup = true;
@@ -103,7 +103,7 @@ class SettingsFileView extends View {
         const yubiKeys = [];
         if (showYubiKeyBlock) {
             for (const yk of this.yubiKeys) {
-                for (const slot of [yk.slot1 ? 1 : 0, yk.slot2 ? 2 : 0].filter(s => s)) {
+                for (const slot of [yk.slot1 ? 1 : 0, yk.slot2 ? 2 : 0].filter((s) => s)) {
                     yubiKeys.push({
                         value: `${yk.serial}:${slot}`,
                         fullName: yk.fullName,
@@ -114,7 +114,7 @@ class SettingsFileView extends View {
                     });
                 }
             }
-            if (selectedYubiKey && !yubiKeys.some(yk => yk.value === selectedYubiKey)) {
+            if (selectedYubiKey && !yubiKeys.some((yk) => yk.value === selectedYubiKey)) {
                 yubiKeys.push({
                     value: selectedYubiKey,
                     fullName: `YubiKey ${this.model.chalResp.serial}`,
@@ -186,28 +186,16 @@ class SettingsFileView extends View {
                 keyFileName !== 'Generated'
                     ? Locale.setFileUseKeyFile + ' ' + keyFileName
                     : Locale.setFileUseGenKeyFile;
-            $('<option/>')
-                .val('ex')
-                .text(text)
-                .appendTo(sel);
+            $('<option/>').val('ex').text(text).appendTo(sel);
         }
         if (oldKeyFileName) {
             const useText = keyFileChanged
                 ? Locale.setFileUseOldKeyFile
                 : Locale.setFileUseKeyFile + ' ' + oldKeyFileName;
-            $('<option/>')
-                .val('old')
-                .text(useText)
-                .appendTo(sel);
+            $('<option/>').val('old').text(useText).appendTo(sel);
         }
-        $('<option/>')
-            .val('gen')
-            .text(Locale.setFileGenKeyFile)
-            .appendTo(sel);
-        $('<option/>')
-            .val('none')
-            .text(Locale.setFileDontUseKeyFile)
-            .appendTo(sel);
+        $('<option/>').val('gen').text(Locale.setFileGenKeyFile).appendTo(sel);
+        $('<option/>').val('none').text(Locale.setFileDontUseKeyFile).appendTo(sel);
         if (keyFileName && keyFileChanged) {
             sel.val('ex');
         } else if (!keyFileName) {
@@ -266,20 +254,20 @@ class SettingsFileView extends View {
         }
         const fileName = this.model.name + '.kdbx';
         if (Launcher && !this.model.storage) {
-            Launcher.getSaveFileName(fileName, path => {
+            Launcher.getSaveFileName(fileName, (path) => {
                 if (path) {
                     this.save({ storage: 'file', path });
                 }
             });
         } else {
-            this.model.getData(data => {
+            this.model.getData((data) => {
                 if (!data) {
                     return;
                 }
                 if (Launcher) {
-                    Launcher.getSaveFileName(fileName, path => {
+                    Launcher.getSaveFileName(fileName, (path) => {
                         if (path) {
-                            Storage.file.save(path, null, data, err => {
+                            Storage.file.save(path, null, data, (err) => {
                                 if (err) {
                                     Alerts.error({
                                         header: Locale.setFileSaveError,
@@ -303,7 +291,7 @@ class SettingsFileView extends View {
             header: Locale.setFileExportRaw,
             body: Locale.setFileExportRawBody,
             success: () => {
-                this.model.getXml(xml => {
+                this.model.getXml((xml) => {
                     const blob = new Blob([xml], { type: 'text/xml' });
                     FileSaver.saveAs(blob, this.model.name + '.xml');
                 });
@@ -316,7 +304,7 @@ class SettingsFileView extends View {
             header: Locale.setFileExportRaw,
             body: Locale.setFileExportRawBody,
             success: () => {
-                this.model.getHtml(html => {
+                this.model.getHtml((html) => {
                     const blob = new Blob([html], { type: 'text/html' });
                     FileSaver.saveAs(blob, this.model.name + '.html');
                 });
@@ -328,9 +316,7 @@ class SettingsFileView extends View {
         if (this.model.syncing || this.model.demo) {
             return;
         }
-        const storageName = $(e.target)
-            .closest('.settings__file-save-to-storage')
-            .data('storage');
+        const storageName = $(e.target).closest('.settings__file-save-to-storage').data('storage');
         const storage = Storage[storageName];
         if (!storage) {
             return;
@@ -381,7 +367,7 @@ class SettingsFileView extends View {
                 }
                 const expName = this.model.name.toLowerCase();
                 const existingFile = [...files].find(
-                    file =>
+                    (file) =>
                         !file.dir && UrlFormat.getDataFileName(file.name).toLowerCase() === expName
                 );
                 if (existingFile) {
@@ -390,7 +376,7 @@ class SettingsFileView extends View {
                         body: Locale.setFileAlreadyExistsBody.replace('{}', this.model.name),
                         success: () => {
                             this.model.syncing = true;
-                            storage.remove(existingFile.path, err => {
+                            storage.remove(existingFile.path, (err) => {
                                 this.model.syncing = false;
                                 if (!err) {
                                     this.save({ storage: storageName });
@@ -414,7 +400,7 @@ class SettingsFileView extends View {
                     { result: 'close', title: Locale.setFileCloseNoSave, error: true },
                     { result: '', title: Locale.setFileDontClose }
                 ],
-                success: result => {
+                success: (result) => {
                     if (result === 'close') {
                         this.closeFileNoCheck();
                     }
@@ -467,7 +453,7 @@ class SettingsFileView extends View {
     fileSelected(e) {
         const file = e.target.files[0];
         const reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
             const res = e.target.result;
             this.model.setKeyFile(res, file.name);
             this.renderKeyFileSelect();
@@ -618,13 +604,13 @@ class SettingsFileView extends View {
         }
         const backupButton = this.$el.find('.settings__file-button-backup');
         backupButton.text(Locale.setFileBackupNowWorking);
-        this.model.getData(data => {
+        this.model.getData((data) => {
             if (!data) {
                 this.backupInProgress = false;
                 backupButton.text(Locale.setFileBackupNow);
                 return;
             }
-            this.appModel.backupFile(this.model, data, err => {
+            this.appModel.backupFile(this.model, data, (err) => {
                 this.backupInProgress = false;
                 backupButton.text(Locale.setFileBackupNow);
                 if (err) {

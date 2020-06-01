@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     grunt.registerTask('build-web-app', [
         'gitinfo',
         'clean',

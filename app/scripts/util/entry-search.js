@@ -159,7 +159,7 @@ class EntrySearch {
         let matches = false;
         if (adv.other || adv.protect) {
             const fieldNames = Object.keys(fields);
-            matches = fieldNames.some(field => {
+            matches = fieldNames.some((field) => {
                 if (BuiltInFields.indexOf(field) >= 0) {
                     return false;
                 }

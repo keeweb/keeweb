@@ -72,7 +72,7 @@ class SettingsGeneralView extends View {
         const storageProviders = this.getStorageProviders();
 
         super.render({
-            themes: mapObject(SettingsManager.allThemes, theme => Locale[theme]),
+            themes: mapObject(SettingsManager.allThemes, (theme) => Locale[theme]),
             activeTheme: SettingsManager.activeTheme,
             locales: SettingsManager.allLocales,
             activeLocale: SettingsManager.activeLocale,
@@ -122,7 +122,7 @@ class SettingsGeneralView extends View {
     }
 
     renderProviderViews(storageProviders) {
-        storageProviders.forEach(function(prv) {
+        storageProviders.forEach(function (prv) {
             if (this.views[prv.name]) {
                 this.views[prv.name].remove();
             }
@@ -189,14 +189,14 @@ class SettingsGeneralView extends View {
 
     getStorageProviders() {
         const storageProviders = [];
-        Object.keys(Storage).forEach(name => {
+        Object.keys(Storage).forEach((name) => {
             const prv = Storage[name];
             if (!prv.system) {
                 storageProviders.push(prv);
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
-        return storageProviders.map(sp => ({
+        return storageProviders.map((sp) => ({
             name: sp.name,
             enabled: sp.enabled,
             hasConfig: !!sp.getSettingsConfig,

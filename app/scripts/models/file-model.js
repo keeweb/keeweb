@@ -29,7 +29,7 @@ class FileModel extends Model {
             const ts = logger.ts();
 
             kdbxweb.Kdbx.load(fileData, credentials)
-                .then(db => {
+                .then((db) => {
                     this.db = db;
                     this.readModel();
                     this.setOpenFile({ passwordLength: password ? password.textLength : 0 });
@@ -50,7 +50,7 @@ class FileModel extends Model {
                     );
                     callback();
                 })
-                .catch(err => {
+                .catch((err) => {
                     if (
                         err.code === kdbxweb.Consts.ErrorCodes.InvalidKey &&
                         password &&
@@ -74,14 +74,14 @@ class FileModel extends Model {
         if (header.kdfParameters) {
             return header.kdfParameters
                 .keys()
-                .map(key => {
+                .map((key) => {
                     const val = header.kdfParameters.get(key);
                     if (val instanceof ArrayBuffer) {
                         return undefined;
                     }
                     return key + '=' + val;
                 })
-                .filter(p => p)
+                .filter((p) => p)
                 .join('&');
         } else if (header.keyEncryptionRounds) {
             return header.keyEncryptionRounds + ' rounds';
@@ -105,14 +105,14 @@ class FileModel extends Model {
             const password = kdbxweb.ProtectedValue.fromString('');
             const credentials = new kdbxweb.Credentials(password);
             kdbxweb.Kdbx.loadXml(fileXml, credentials)
-                .then(db => {
+                .then((db) => {
                     this.db = db;
                     this.readModel();
                     this.set({ active: true, created: true });
                     logger.info('Imported file ' + this.name + ': ' + logger.ts(ts));
                     callback();
                 })
-                .catch(err => {
+                .catch((err) => {
                     logger.error('Error importing file', err.code, err.message, err);
                     callback(err);
                 });
@@ -128,7 +128,7 @@ class FileModel extends Model {
         const demoFile = kdbxweb.ByteUtils.arrayToBuffer(
             kdbxweb.ByteUtils.base64ToBytes(demoFileData)
         );
-        kdbxweb.Kdbx.load(demoFile, credentials).then(db => {
+        kdbxweb.Kdbx.load(demoFile, credentials).then((db) => {
             this.db = db;
             this.name = 'Demo';
             this.readModel();
@@ -169,7 +169,7 @@ class FileModel extends Model {
             },
             { silent: true }
         );
-        this.db.groups.forEach(function(group) {
+        this.db.groups.forEach(function (group) {
             let groupModel = this.getGroup(this.subId(group.uuid.id));
             if (groupModel) {
                 groupModel.setGroup(group, this);
@@ -235,9 +235,9 @@ class FileModel extends Model {
         const entryMap = {};
         const groupMap = {};
         this.forEachGroup(
-            group => {
+            (group) => {
                 groupMap[group.id] = group;
-                group.forEachOwnEntry(null, entry => {
+                group.forEachOwnEntry(null, (entry) => {
                     entryMap[entry.id] = entry;
                 });
             },
@@ -249,7 +249,7 @@ class FileModel extends Model {
 
     resolveFieldReferences() {
         const entryMap = this.entryMap;
-        Object.keys(entryMap).forEach(e => {
+        Object.keys(entryMap).forEach((e) => {
             entryMap[e].resolveFieldReferences();
         });
     }
@@ -297,7 +297,7 @@ class FileModel extends Model {
         }
         credentialsPromise.then(() => {
             kdbxweb.Kdbx.load(fileData, credentials)
-                .then(remoteDb => {
+                .then((remoteDb) => {
                     if (this.modified) {
                         try {
                             if (remoteKey && remoteDb.meta.keyChanged > this.db.meta.keyChanged) {
@@ -319,7 +319,7 @@ class FileModel extends Model {
                     this.reload();
                     callback();
                 })
-                .catch(err => {
+                .catch((err) => {
                     logger.error('Error opening file to merge', err.code, err.message, err);
                     callback(err);
                 });
@@ -374,7 +374,7 @@ class FileModel extends Model {
                 top.forEachOwnEntry(filter, callback);
             }
             if (!filter.group || filter.subGroups) {
-                top.forEachGroup(group => {
+                top.forEachGroup((group) => {
                     group.forEachOwnEntry(filter, callback);
                 }, filter);
             }
@@ -382,7 +382,7 @@ class FileModel extends Model {
     }
 
     forEachGroup(callback, filter) {
-        this.groups.forEach(group => {
+        this.groups.forEach((group) => {
             if (callback(group) !== false) {
                 group.forEachGroup(callback, filter);
             }
@@ -426,17 +426,17 @@ class FileModel extends Model {
         this.db.cleanup({ binaries: true });
         this.db
             .save()
-            .then(data => {
+            .then((data) => {
                 cb(data);
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error saving file', this.name, err);
                 cb(undefined, err);
             });
     }
 
     getXml(cb) {
-        this.db.saveXml(true).then(xml => {
+        this.db.saveXml(true).then((xml) => {
             cb(xml);
         });
     }
@@ -493,7 +493,7 @@ class FileModel extends Model {
             return;
         }
         this.setOpenFile({ passwordLength: this.passwordLength });
-        this.forEachEntry({ includeDisabled: true }, entry => entry.setSaved());
+        this.forEachEntry({ includeDisabled: true }, (entry) => entry.setSaved());
     }
 
     setPassword(password) {
@@ -649,11 +649,11 @@ class FileModel extends Model {
             trashGroup
                 .getOwnSubGroups()
                 .slice()
-                .forEach(function(group) {
+                .forEach(function (group) {
                     this.db.move(group, null);
                     modified = true;
                 }, this);
-            trashGroup.group.entries.slice().forEach(function(entry) {
+            trashGroup.group.entries.slice().forEach(function (entry) {
                 this.db.move(entry, null);
                 modified = true;
             }, this);
@@ -666,7 +666,7 @@ class FileModel extends Model {
     }
 
     getCustomIcons() {
-        return mapObject(this.db.meta.customIcons, customIcon =>
+        return mapObject(this.db.meta.customIcons, (customIcon) =>
             IconUrlFormat.toDataUrl(customIcon)
         );
     }
@@ -680,7 +680,7 @@ class FileModel extends Model {
     }
 
     renameTag(from, to) {
-        this.forEachEntry({}, entry => entry.renameTag(from, to));
+        this.forEachEntry({}, (entry) => entry.renameTag(from, to));
     }
 
     setFormatVersion(version) {

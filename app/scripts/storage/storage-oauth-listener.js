@@ -15,7 +15,7 @@ const StorageOAuthListener = {
         }
 
         const listener = {};
-        Object.keys(EventEmitter.prototype).forEach(key => {
+        Object.keys(EventEmitter.prototype).forEach((key) => {
             listener[key] = EventEmitter.prototype[key];
         });
 
@@ -38,7 +38,7 @@ const StorageOAuthListener = {
         logger.info(`Starting OAuth listener on port ${port}...`);
         server.listen(port);
 
-        server.on('error', err => {
+        server.on('error', (err) => {
             logger.error('Failed to start OAuth listener', err);
             listener.emit('error', 'Failed to start OAuth listener: ' + err);
             server.close();

@@ -14,7 +14,7 @@ class StorageFile extends StorageBase {
         this.logger.debug('Load', path);
         const ts = this.logger.ts();
 
-        const onError = e => {
+        const onError = (e) => {
             this.logger.error('Error reading local file', path, e);
             if (callback) {
                 callback(e, null);
@@ -62,7 +62,7 @@ class StorageFile extends StorageBase {
         this.logger.debug('Save', path, rev);
         const ts = this.logger.ts();
 
-        const onError = e => {
+        const onError = (e) => {
             if (Object.prototype.hasOwnProperty.call(e, 'code') && e.code === 'EISDIR') {
                 e.isDir = true;
             }
@@ -73,7 +73,7 @@ class StorageFile extends StorageBase {
         };
 
         const write = () => {
-            Launcher.writeFile(path, data, err => {
+            Launcher.writeFile(path, data, (err) => {
                 if (err) {
                     return onError(err);
                 }
@@ -111,7 +111,7 @@ class StorageFile extends StorageBase {
         this.logger.debug('Make dir', path);
         const ts = this.logger.ts();
 
-        Launcher.mkdir(path, err => {
+        Launcher.mkdir(path, (err) => {
             if (err) {
                 this.logger.error('Error making local dir', path, err);
                 if (callback) {
@@ -158,7 +158,7 @@ class StorageFile extends StorageBase {
         const names = Launcher.parsePath(path);
         const watcher = fileWatchers[names.dir];
         if (watcher) {
-            const ix = watcher.callbacks.findIndex(cb => cb.file === names.file);
+            const ix = watcher.callbacks.findIndex((cb) => cb.file === names.file);
             if (ix >= 0) {
                 watcher.callbacks.splice(ix, 1);
             }
@@ -173,7 +173,7 @@ class StorageFile extends StorageBase {
     fsWatcherChange(dirname, evt, fileName) {
         const watcher = fileWatchers[dirname];
         if (watcher) {
-            watcher.callbacks.forEach(cb => {
+            watcher.callbacks.forEach((cb) => {
                 if (cb.file === fileName && typeof cb.callback === 'function') {
                     this.logger.debug('File changed', dirname, evt, fileName);
                     cb.callback();

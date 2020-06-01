@@ -99,7 +99,7 @@ class ListSearchView extends View {
             { value: '-rank', icon: 'sort-amount-desc', loc: () => Locale.searchRank }
         ];
         this.sortIcons = {};
-        this.sortOptions.forEach(opt => {
+        this.sortOptions.forEach((opt) => {
             this.sortIcons[opt.value] = opt.icon;
         });
         this.advancedSearch = {
@@ -135,7 +135,7 @@ class ListSearchView extends View {
     }
 
     setLocale() {
-        this.sortOptions.forEach(opt => {
+        this.sortOptions.forEach((opt) => {
             opt.text = opt.loc();
         });
         this.createOptions = [
@@ -161,7 +161,7 @@ class ListSearchView extends View {
     removeKeypressHandler() {}
 
     viewShown() {
-        const keypressHandler = e => this.documentKeyPress(e);
+        const keypressHandler = (e) => this.documentKeyPress(e);
         Events.on('keypress', keypressHandler);
         this.removeKeypressHandler = () => Events.off('keypress', keypressHandler);
     }
@@ -337,7 +337,7 @@ class ListSearchView extends View {
         view.isSort = true;
         this.listenTo(view, 'cancel', this.hideSearchOptions);
         this.listenTo(view, 'select', this.sortDropdownSelect);
-        this.sortOptions.forEach(function(opt) {
+        this.sortOptions.forEach(function (opt) {
             opt.active = this.model.sort === opt.value;
         }, this);
         view.render({
@@ -377,7 +377,7 @@ class ListSearchView extends View {
         const hasMultipleFiles = this.model.files.length > 1;
         this.entryTemplates = {};
         const options = [];
-        entryTemplates.forEach(tmpl => {
+        entryTemplates.forEach((tmpl) => {
             const id = 'tmpl:' + tmpl.entry.id;
             options.push({
                 value: id,

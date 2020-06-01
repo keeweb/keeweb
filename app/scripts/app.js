@@ -46,7 +46,7 @@ ready(() => {
         .then(initStorage)
         .then(showApp)
         .then(postInit)
-        .catch(e => {
+        .catch((e) => {
             appModel.appLogger.error('Error starting app', e);
         });
 
@@ -57,7 +57,7 @@ ready(() => {
             );
         }
         return FeatureTester.test()
-            .catch(e => {
+            .catch((e) => {
                 Alerts.error({
                     header: Locale.appSettingsError,
                     body: Locale.appNotSupportedError,
@@ -119,7 +119,7 @@ ready(() => {
                         .then(() => {
                             SettingsManager.setBySettings(appModel.settings);
                         })
-                        .catch(e => {
+                        .catch((e) => {
                             if (!appModel.settings.cacheConfigSettings) {
                                 showSettingsLoadError();
                                 throw e;
@@ -146,7 +146,7 @@ ready(() => {
             const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
             const hostIsInsecure = location.hostname !== 'localhost';
             if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     Alerts.error({
                         header: Locale.appSecWarn,
                         icon: 'user-secret',
@@ -163,7 +163,7 @@ ready(() => {
                 });
             } else {
                 showView();
-                return new Promise(resolve => requestAnimationFrame(resolve));
+                return new Promise((resolve) => requestAnimationFrame(resolve));
             }
         });
     }

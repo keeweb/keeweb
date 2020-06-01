@@ -8,7 +8,7 @@ class RuntimeDataModel extends Model {
     }
 
     load() {
-        return SettingsStore.load('runtime-data').then(data => {
+        return SettingsStore.load('runtime-data').then((data) => {
             if (data) {
                 this.set(data, { silent: true });
             }

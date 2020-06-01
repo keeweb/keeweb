@@ -6,7 +6,7 @@ class FileInfoCollection extends Collection {
     static model = FileInfoModel;
 
     load() {
-        return SettingsStore.load('file-info').then(data => {
+        return SettingsStore.load('file-info').then((data) => {
             if (data) {
                 for (const item of data) {
                     this.push(new FileInfoModel(item));
@@ -20,7 +20,7 @@ class FileInfoCollection extends Collection {
     }
 
     getMatch(storage, name, path) {
-        return this.find(fi => {
+        return this.find((fi) => {
             return (
                 (fi.storage || '') === (storage || '') &&
                 (fi.name || '') === (name || '') &&
@@ -30,7 +30,7 @@ class FileInfoCollection extends Collection {
     }
 
     getByName(name) {
-        return this.find(file => file.name.toLowerCase() === name.toLowerCase());
+        return this.find((file) => file.name.toLowerCase() === name.toLowerCase());
     }
 }
 
