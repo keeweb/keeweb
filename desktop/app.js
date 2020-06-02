@@ -30,11 +30,10 @@ if (!gotTheLock) {
 
 perfTimestamps?.push({ name: 'single instance lock', ts: process.hrtime() });
 
-let isPortable;
+let usingPortableUserDataDir = false;
 let execPath;
 
-setPortableAndExecPath();
-initUserDataDir();
+setUserDataPaths();
 
 let openFile = process.argv.filter((arg) => /\.kdbx$/i.test(arg))[0];
 
@@ -542,12 +541,14 @@ function subscribePowerEvents() {
     perfTimestamps?.push({ name: 'subscribing to power events', ts: process.hrtime() });
 }
 
-function setPortableAndExecPath() {
+function setUserDataPaths() {
     execPath = process.execPath;
+
+    let isPortable = false;
 
     switch (process.platform) {
         case 'darwin':
-            isPortable = !execPath.startsWith('/Applications/');
+            isPortable = !execPath.includes('/Applications/');
             if (isPortable) {
                 execPath = execPath.substring(0, execPath.indexOf('.app'));
             }
@@ -565,9 +566,7 @@ function setPortableAndExecPath() {
     }
 
     perfTimestamps?.push({ name: 'portable check', ts: process.hrtime() });
-}
 
-function initUserDataDir() {
     if (isPortable) {
         const portableConfigDir = path.dirname(execPath);
         const portableConfigPath = path.join(portableConfigDir, portableConfigFileName);
@@ -581,6 +580,7 @@ function initUserDataDir() {
             }
 
             app.setPath('userData', portableUserDataDir);
+            usingPortableUserDataDir = true;
         }
     }
 
@@ -771,7 +771,7 @@ function initUsb(binding) {
 
 function loadSettingsEncryptionKey() {
     return Promise.resolve().then(() => {
-        if (isPortable) {
+        if (usingPortableUserDataDir) {
             return null;
         }
 
