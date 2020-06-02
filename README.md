@@ -90,7 +90,7 @@ Please note: donation does not imply any type of service contract.
 
 Notable contributions to KeeWeb:
 
-- Florian Reuschel ([@Loilo](https://github.com/Loilo)): German translation
+- Florian Reuschel ([@Loilo](https://github.com/Loilo)): [German translation](http://keeweb.oneskyapp.com/collaboration/translate/project/project/173183/language/550)
 - Dennis Ploeger ([@dploeger](https://github.com/dploeger)): [Auto-Type improvements](https://github.com/keeweb/keeweb/pulls?q=is%3Apr+is%3Aclosed+author%3Adploeger)
 - Hackmanit ([hackmanit.de](https://www.hackmanit.de)): [penetration test](https://www.hackmanit.de/en/blog-en/104-pro-bono-penetration-test-keeweb)
 
