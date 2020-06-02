@@ -16,7 +16,7 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   repository: keeweb/keeweb
-                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
+                  ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
             - name: Install npm modules
               run: npm ci
             - name: Test
@@ -43,7 +43,7 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   repository: keeweb/keeweb
-                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
+                  ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
             - name: Download artifact
               uses: actions/download-artifact@v1
               with:
@@ -104,7 +104,7 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   repository: keeweb/keeweb
-                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
+                  ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
             - name: Download artifact
               uses: actions/download-artifact@v1
               with:
@@ -152,7 +152,7 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   repository: keeweb/keeweb
-                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
+                  ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
             - name: Download artifact
               uses: actions/download-artifact@v1
               with:
@@ -200,6 +200,16 @@ jobs:
               with:
                   name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.zip
                   path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.zip
+            - name: Upload arm64 exe artifact
+              uses: actions/upload-artifact@v1
+              with:
+                  name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.exe
+                  path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.exe
+            - name: Upload arm64 zip artifact
+              uses: actions/upload-artifact@v1
+              with:
+                  name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
+                  path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
 
     publish:
         runs-on: ubuntu-latest
@@ -223,7 +233,7 @@ jobs:
               with:
                   repository: keeweb/keeweb
                   path: keeweb
-                  ref: ${{ secrets.KW_CI_DEBUG_REF || github.sha }}
+                  ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
             - name: Install npm modules
               working-directory: keeweb
               run: npm ci
@@ -281,6 +291,16 @@ jobs:
               uses: actions/download-artifact@v1
               with:
                   name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.zip
+                  path: assets
+            - name: Download win32.arm64.exe artifact
+              uses: actions/download-artifact@v1
+              with:
+                  name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.exe
+                  path: assets
+            - name: Download win32.arm64.zip artifact
+              uses: actions/download-artifact@v1
+              with:
+                  name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
                   path: assets
             - name: Download update artifact
               uses: actions/download-artifact@v1
@@ -431,6 +451,24 @@ jobs:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
                   asset_path: assets/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.zip
                   asset_name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.zip
+                  asset_content_type: application/octet-stream
+            - name: Upload win32.arm64.exe asset
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: assets/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.exe
+                  asset_name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.exe
+                  asset_content_type: application/octet-stream
+            - name: Upload win32.arm64.zip asset
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: assets/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
+                  asset_name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
                   asset_content_type: application/octet-stream
             - name: Upload update asset
               uses: actions/upload-release-asset@v1
