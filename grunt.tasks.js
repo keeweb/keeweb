@@ -36,13 +36,15 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build-desktop-executables-linux', [
         'electron:linux',
-        'chmod:linux-desktop-x64'
+        'chmod:linux-desktop-x64',
+        'copy:native-modules-linux-x64'
     ]);
 
     grunt.registerTask('build-desktop-executables-darwin', [
         'electron:darwin',
         'copy:desktop-darwin-helper',
         'copy:desktop-darwin-installer-helper',
+        'copy:native-modules-darwin',
         'osx-sign:desktop',
         'notarize:desktop'
     ]);
@@ -56,7 +58,10 @@ module.exports = function (grunt) {
         'sign-exe:win32-build-arm64',
         'copy:desktop-windows-helper-x64',
         'copy:desktop-windows-helper-ia32',
-        'copy:desktop-windows-helper-arm64'
+        'copy:desktop-windows-helper-arm64',
+        'copy:native-modules-win32-x64',
+        'copy:native-modules-win32-ia32',
+        'copy:native-modules-win32-arm64'
     ]);
 
     grunt.registerTask('build-desktop-executables', [

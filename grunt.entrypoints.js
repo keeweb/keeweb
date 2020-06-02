@@ -56,21 +56,24 @@ module.exports = function(grunt) {
         'build-desktop-app-content',
         'electron:darwin',
         'copy:desktop-darwin-helper',
-        'copy:desktop-darwin-installer-helper'
+        'copy:desktop-darwin-installer-helper',
+        'copy:native-modules-darwin'
     ]);
 
     grunt.registerTask('dev-desktop-win32', 'Build a Windows app in dev environment', [
         'default',
         'build-desktop-app-content',
         'electron:win32-x64',
-        'copy:desktop-windows-helper-x64'
+        'copy:desktop-windows-helper-x64',
+        'copy:native-modules-win32-x64'
     ]);
 
     grunt.registerTask('dev-desktop-linux', 'Build a Linux app in dev environment', [
         'default',
         'build-desktop-app-content',
         'electron:linux',
-        'chmod:linux-desktop-x64'
+        'chmod:linux-desktop-x64',
+        'copy:native-modules-linux-x64'
     ]);
 
     grunt.registerTask('cordova', 'Build cordova app', [

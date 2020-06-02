@@ -731,13 +731,23 @@ function reportStartProfile() {
 function reqNative(mod) {
     const fileName = `${mod}-${process.platform}-${process.arch}.node`;
 
-    const mainAsarPath = process.mainModule.path;
-    const latestAsarPath = __dirname;
-    const pathInsideAsar = `node_modules/@keeweb/keeweb-native-modules/${fileName}`;
+    const modulePath = `../node_modules/@keeweb/keeweb-native-modules/${fileName}`;
+    let fullPath;
 
-    let fullPath = path.join(latestAsarPath, pathInsideAsar);
-    if (!fs.existsSync(fullPath)) {
-        fullPath = path.join(mainAsarPath, pathInsideAsar);
+    if (isDev) {
+        fullPath = path.join(__dirname, modulePath);
+    } else {
+        const mainAsarPath = process.mainModule.path;
+        fullPath = path.join(mainAsarPath, modulePath);
+
+        // Currently native modules can't be updated
+        // const latestAsarPath = __dirname;
+        //
+        // fullPath = path.join(latestAsarPath, modulePath);
+        //
+        // if (!fs.existsSync(fullPath)) {
+        //     fullPath = path.join(mainAsarPath, modulePath);
+        // }
     }
 
     const binding = require(fullPath);

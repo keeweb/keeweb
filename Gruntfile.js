@@ -187,6 +187,31 @@ module.exports = function (grunt) {
                 dest: `dist/desktop/KeeWeb-${pkg.version}.win.arm64.exe`,
                 nonull: true
             },
+            'native-modules-darwin': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-darwin-x64.node',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
+                nonull: true
+            },
+            'native-modules-win32-x64': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-x64.node',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/resources/',
+                nonull: true
+            },
+            'native-modules-win32-ia32': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-ia32.node',
+                dest: 'tmp/desktop/KeeWeb-win32-ia32/resources/',
+                nonull: true
+            },
+            'native-modules-win32-arm64': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-arm64.node',
+                dest: 'tmp/desktop/KeeWeb-win32-arm64/resources/',
+                nonull: true
+            },
+            'native-modules-linux-x64': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-linux-x64.node',
+                dest: 'tmp/desktop/keeweb-linux-x64/resources/',
+                nonull: true
+            },
             'electron-builder-dist-linux-rpm': {
                 src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.x86_64.rpm`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.x86_64.rpm`,
@@ -330,8 +355,7 @@ module.exports = function (grunt) {
                     name: 'keeweb',
                     platform: 'linux',
                     arch: ['x64'],
-                    icon: 'graphics/icon.ico',
-                    ignore: [/(darwin|win32)-\w+\.node$/]
+                    icon: 'graphics/icon.ico'
                 }
             },
             darwin: {
@@ -341,8 +365,7 @@ module.exports = function (grunt) {
                     icon: 'graphics/icon.icns',
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
-                    extendInfo: 'package/osx/extend.plist',
-                    ignore: [/(linux|win32)-\w+\.node$/]
+                    extendInfo: 'package/osx/extend.plist'
                 }
             },
             'win32-x64': {
@@ -351,7 +374,6 @@ module.exports = function (grunt) {
                     arch: 'x64',
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
-                    ignore: [/(linux|darwin)-\w+\.node$/, /(ia32|arm64)\.node/],
                     'version-string': windowsAppVersionString
                 }
             },
@@ -361,7 +383,6 @@ module.exports = function (grunt) {
                     arch: 'ia32',
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
-                    ignore: [/(linux|darwin)-\w+\.node$/, /(x64|arm64)\.node/],
                     'version-string': windowsAppVersionString
                 }
             },
@@ -371,7 +392,6 @@ module.exports = function (grunt) {
                     arch: 'arm64',
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
-                    ignore: [/(linux|darwin)-\w+\.node$/, /(ia32|x64)\.node/],
                     'version-string': windowsAppVersionString
                 }
             }
