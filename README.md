@@ -86,6 +86,14 @@ You can also sponsor the developer directly [on GitHub](https://github.com/spons
 
 Please note: donation does not imply any type of service contract.  
 
+## Thank you
+
+Notable contributions to KeeWeb:
+
+- Florian Reuschel (@Loilo): German translation
+- Dennis Ploeger (@dploeger): [Auto-Type improvements](https://github.com/keeweb/keeweb/pulls?q=is%3Apr+is%3Aclosed+author%3Adploeger)
+- Hackmanit ([hackmanit.de](https://www.hackmanit.de)): [penetration test](https://www.hackmanit.de/en/blog-en/104-pro-bono-penetration-test-keeweb)
+
 ## License
 
 [MIT](https://github.com/keeweb/keeweb/blob/master/LICENSE)
