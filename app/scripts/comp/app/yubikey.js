@@ -56,17 +56,16 @@ const YubiKey = {
     },
 
     list(callback) {
-        this.ykChalResp.getYubiKeys((err, yubiKeys) => {
+        this.ykChalResp.getYubiKeys({}, (err, yubiKeys) => {
             if (err) {
                 return callback(err);
             }
-            yubiKeys = yubiKeys.map(({ serial, vid, pid, version, slot1, slot2 }) => {
+            yubiKeys = yubiKeys.map(({ serial, vid, pid, version, slots }) => {
                 return {
                     vid,
                     pid,
                     serial,
-                    slot1,
-                    slot2,
+                    slots,
                     fullName: this.getKeyFullName(pid, version, serial)
                 };
             });

@@ -103,14 +103,14 @@ class SettingsFileView extends View {
         const yubiKeys = [];
         if (showYubiKeyBlock) {
             for (const yk of this.yubiKeys) {
-                for (const slot of [yk.slot1 ? 1 : 0, yk.slot2 ? 2 : 0].filter((s) => s)) {
+                for (const slot of yk.slots.filter((s) => s.valid)) {
                     yubiKeys.push({
                         value: `${yk.serial}:${slot}`,
                         fullName: yk.fullName,
                         vid: yk.vid,
                         pid: yk.pid,
                         serial: yk.serial,
-                        slot
+                        slot: slot.number
                     });
                 }
             }
