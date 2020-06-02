@@ -13,7 +13,11 @@ module.exports = function (grunt) {
             const opt = this.options();
 
             for (const [file, name] of Object.entries(opt.files)) {
-                await signFile(file, name, opt);
+                if (!opt.windows && grunt.option('skip-sign')) {
+                    grunt.log.writeln(`Skipped code-signing: ${file}`);
+                } else {
+                    await signFile(file, name, opt);
+                }
             }
 
             done();

@@ -30,7 +30,8 @@ module.exports = function (grunt) {
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
     const skipSign = grunt.option('skip-sign');
-    const getCodeSignConfig = () => (skipSign ? undefined : require('./keys/codesign.json'));
+    const getCodeSignConfig = () =>
+        skipSign ? { identities: {} } : require('./keys/codesign.json');
 
     const webpackOptions = {
         date,
