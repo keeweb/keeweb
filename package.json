@@ -110,7 +110,8 @@
         "dev-desktop-macos": "grunt dev-desktop-darwin --skip-sign",
         "dev-desktop-windows": "grunt dev-desktop-win32 --skip-sign",
         "dev-desktop-linux": "grunt dev-desktop-linux --skip-sign",
-        "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js"
+        "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js",
+        "copy-languages": "node util/copy-languages.js"
     },
     "author": {
         "name": "Antelle",
