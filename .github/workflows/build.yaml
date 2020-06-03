@@ -179,7 +179,6 @@ jobs:
           echo $Env:MS_CODESIGN_PUBLIC_KEY_CLIENT > keys/code-signing/public-key-client.pem
           echo $Env:MS_CODESIGN_PUBLIC_KEY_SERVER > keys/code-signing/public-key-server.pem
       - name: Grunt
-        if: ${{ github.repository == 'keeweb/keeweb' }}
         run: grunt desktop-win32 ${{ github.repository != 'keeweb/keeweb' && '--skip-sign' || '' }}
       - name: Upload ia32 exe artifact
         uses: actions/upload-artifact@v1
