@@ -567,13 +567,25 @@ function setUserDataPaths() {
 
     perfTimestamps?.push({ name: 'portable check', ts: process.hrtime() });
 
+    // eslint-disable-next-line no-console
+    console.log('Is portable:', isPortable);
+
     if (isPortable) {
         const portableConfigDir = path.dirname(execPath);
         const portableConfigPath = path.join(portableConfigDir, portableConfigFileName);
 
+        // eslint-disable-next-line no-console
+        console.log('Portable config path:', portableConfigPath);
+
         if (fs.existsSync(portableConfigPath)) {
+            // eslint-disable-next-line no-console
+            console.log('Portable config path exists');
+
             const portableConfig = JSON.parse(fs.readFileSync(portableConfigPath, 'utf8'));
             const portableUserDataDir = path.resolve(portableConfigDir, portableConfig.userDataDir);
+
+            // eslint-disable-next-line no-console
+            console.log('Portable user data dir:', portableUserDataDir);
 
             if (!fs.existsSync(portableUserDataDir)) {
                 fs.mkdirSync(portableUserDataDir);
@@ -581,6 +593,9 @@ function setUserDataPaths() {
 
             app.setPath('userData', portableUserDataDir);
             usingPortableUserDataDir = true;
+        } else {
+            // eslint-disable-next-line no-console
+            console.log(`Portable config path doesn't exist`);
         }
     }
 
