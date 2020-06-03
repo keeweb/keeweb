@@ -15,6 +15,7 @@ Release notes
 `+` #1350: clearing master password after auto lock period  
 `+` #830: minimize instead of close option on macOS  
 `+` #448: minimized login option support on macOS  
+`+` #917: option to install without a desktop icon on Windows  
 `-` fix #1463: copying the original url instead of adding https:  
 `-` fix #620: clearing middle-click clipboard in Linux  
 `-` fix #1440: fixed auto-type for maximized windows  
