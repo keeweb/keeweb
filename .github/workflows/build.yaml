@@ -131,7 +131,7 @@ jobs:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE }}
           p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
       - name: Grunt
-        run: grunt desktop-darwin
+        run: grunt desktop-darwin ${{ github.repository != 'keeweb/keeweb' && '--skip-sign' || '' }}
       - name: Upload dmg artifact
         uses: actions/upload-artifact@v1
         with:

@@ -50,6 +50,7 @@ module.exports = function (grunt) {
     };
 
     grunt.initConfig({
+        noop: { noop: {} },
         gitinfo: {
             branch: {
                 current: {

@@ -1,4 +1,6 @@
 module.exports = function (grunt) {
+    const sign = !grunt.option('skip-sign');
+
     grunt.registerTask('build-web-app', [
         'gitinfo',
         'clean',
@@ -45,17 +47,17 @@ module.exports = function (grunt) {
         'copy:desktop-darwin-helper',
         'copy:desktop-darwin-installer-helper',
         'copy:native-modules-darwin',
-        'osx-sign:desktop',
-        'notarize:desktop'
+        sign ? 'osx-sign:desktop' : 'noop',
+        sign ? 'notarize:desktop' : 'noop'
     ]);
 
     grunt.registerTask('build-desktop-executables-win32', [
         'electron:win32-x64',
         'electron:win32-ia32',
         'electron:win32-arm64',
-        'sign-exe:win32-build-x64',
-        'sign-exe:win32-build-ia32',
-        'sign-exe:win32-build-arm64',
+        sign ? 'sign-exe:win32-build-x64' : 'noop',
+        sign ? 'sign-exe:win32-build-ia32' : 'noop',
+        sign ? 'sign-exe:win32-build-arm64' : 'noop',
         'copy:desktop-windows-helper-x64',
         'copy:desktop-windows-helper-ia32',
         'copy:desktop-windows-helper-arm64',
@@ -89,15 +91,15 @@ module.exports = function (grunt) {
         'nsis:win32-un-x64',
         'nsis:win32-un-ia32',
         'nsis:win32-un-arm64',
-        'sign-exe:win32-uninst-x64',
-        'sign-exe:win32-uninst-ia32',
-        'sign-exe:win32-uninst-arm64',
+        sign ? 'sign-exe:win32-uninst-x64' : 'noop',
+        sign ? 'sign-exe:win32-uninst-ia32' : 'noop',
+        sign ? 'sign-exe:win32-uninst-arm64' : 'noop',
         'nsis:win32-x64',
         'nsis:win32-ia32',
         'nsis:win32-arm64',
-        'sign-exe:win32-installer-x64',
-        'sign-exe:win32-installer-ia32',
-        'sign-exe:win32-installer-arm64',
+        sign ? 'sign-exe:win32-installer-x64' : 'noop',
+        sign ? 'sign-exe:win32-installer-ia32' : 'noop',
+        sign ? 'sign-exe:win32-installer-arm64' : 'noop',
         'copy:desktop-win32-dist-x64',
         'copy:desktop-win32-dist-ia32',
         'copy:desktop-win32-dist-arm64'
