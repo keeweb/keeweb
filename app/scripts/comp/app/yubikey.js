@@ -21,6 +21,19 @@ const YubiKey = {
         return this._ykChalResp;
     },
 
+    cmd() {
+        if (this._cmd) {
+            return this._cmd;
+        }
+        const macYkmanPath = '/usr/local/bin/ykman';
+        if (Launcher.platform() === 'darwin' && Launcher.fileExistsSync(macYkmanPath)) {
+            this._cmd = macYkmanPath;
+        } else {
+            this._cmd = 'ykman';
+        }
+        return this._cmd;
+    },
+
     checkToolStatus() {
         if (this.ykmanStatus === 'ok') {
             return Promise.resolve(this.ykmanStatus);
@@ -28,7 +41,7 @@ const YubiKey = {
         return new Promise((resolve) => {
             this.ykmanStatus = 'checking';
             Launcher.spawn({
-                cmd: 'ykman',
+                cmd: this.cmd(),
                 args: ['-v'],
                 noStdOutLogging: true,
                 complete: (err, stdout, code) => {
@@ -104,7 +117,7 @@ const YubiKey = {
         }
 
         this.process = Launcher.spawn({
-            cmd: 'ykman',
+            cmd: this.cmd(),
             args: ['list'],
             noStdOutLogging: true,
             complete: (err, stdout) => {
@@ -172,7 +185,7 @@ const YubiKey = {
         Events.on('usb-devices-changed', onDevicesChangedDuringRepair);
 
         Launcher.spawn({
-            cmd: 'ykman',
+            cmd: this.cmd(),
             args: ['config', 'usb', '-e', 'oath', '-f'],
             noStdOutLogging: true,
             complete: (err) => {
@@ -195,7 +208,7 @@ const YubiKey = {
         this.aborted = false;
 
         this.process = Launcher.spawn({
-            cmd: 'ykman',
+            cmd: this.cmd(),
             args: ['-d', serial, 'oath', 'code'],
             noStdOutLogging: true,
             throwOnStdErr: true,
@@ -233,7 +246,7 @@ const YubiKey = {
 
     getOtp(serial, entry, callback) {
         return Launcher.spawn({
-            cmd: 'ykman',
+            cmd: this.cmd(),
             args: ['-d', serial, 'oath', 'code', '--single', entry],
             noStdOutLogging: true,
             complete: (err, stdout) => {
