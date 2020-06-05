@@ -63,8 +63,7 @@ module.exports = function (grunt) {
         },
         clean: {
             dist: ['dist', 'tmp'],
-            desktop: ['tmp/desktop', 'dist/desktop'],
-            cordova: ['tmp/cordova', 'dist/cordova']
+            desktop: ['tmp/desktop', 'dist/desktop']
         },
         copy: {
             html: {
@@ -303,17 +302,6 @@ module.exports = function (grunt) {
                     ]
                 },
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
-            },
-            'cordova-html': {
-                options: {
-                    replacements: [
-                        {
-                            pattern: '<script',
-                            replacement: '<script src="cordova.js"></script><script'
-                        }
-                    ]
-                },
-                files: { 'tmp/cordova/app/index.html': 'dist/index.html' }
             }
         },
         webpack: {

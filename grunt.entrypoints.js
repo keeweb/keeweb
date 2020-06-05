@@ -75,12 +75,7 @@ module.exports = function(grunt) {
         'chmod:linux-desktop-x64',
         'copy:native-modules-linux-x64'
     ]);
-
-    grunt.registerTask('cordova', 'Build cordova app', [
-        'default',
-        'build-cordova'
-    ]);
-
+    
     grunt.registerTask('test', 'Build and run tests', [
         'build-test',
         'run-test'

@@ -130,9 +130,5 @@ module.exports = function (grunt) {
         'sign-dist'
     ]);
 
-    grunt.registerTask('build-cordova-app-content', ['string-replace:cordova-html']);
-
-    grunt.registerTask('build-cordova', ['gitinfo', 'clean:cordova', 'build-cordova-app-content']);
-
     grunt.registerTask('build-test', ['webpack:test']);
 };
