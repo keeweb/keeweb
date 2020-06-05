@@ -6,6 +6,7 @@ import { Alerts } from 'comp/ui/alerts';
 import { Locale } from 'util/locale';
 import { Timeouts } from 'const/timeouts';
 import { Launcher } from 'comp/launcher';
+import { AppSettingsModel } from 'models/app-settings-model';
 
 const logger = new Logger('chal-resp');
 
@@ -30,6 +31,21 @@ const ChalRespCalculator = {
                 if (respFromCache) {
                     logger.debug('Found ChalResp in cache');
                     return resolve(Buffer.from(respFromCache, 'hex'));
+                }
+
+                if (!AppSettingsModel.enableUsb) {
+                    logger.debug('USB is disabled');
+                    Alerts.error({
+                        header: Locale.yubiKeyDisabledErrorHeader,
+                        body: Locale.yubiKeyDisabledErrorBody,
+                        complete() {
+                            const err = new Error(Locale.yubiKeyDisabledErrorHeader);
+                            err.userCanceled = true;
+
+                            reject(err);
+                        }
+                    });
+                    return;
                 }
 
                 logger.debug('Calculating ChalResp using a YubiKey', params);
@@ -105,7 +121,7 @@ const ChalRespCalculator = {
         let deviceEnumerationTimer;
 
         const onUsbDevicesChanged = () => {
-            if (UsbListener.attachedYubiKeys.length === 0) {
+            if (!UsbListener.attachedYubiKeys) {
                 return;
             }
             deviceEnumerationTimer = setTimeout(() => {
