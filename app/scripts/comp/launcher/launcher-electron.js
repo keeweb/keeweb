@@ -84,7 +84,12 @@ const Launcher = {
         });
     },
     fileExists(path, callback) {
-        this.req('fs').exists(path, callback);
+        const fs = this.req('fs');
+        fs.access(path, fs.constants.F_OK, (err) => callback(!err));
+    },
+    fileExistsSync(path) {
+        const fs = this.req('fs');
+        return !fs.accessSync(path, fs.constants.F_OK);
     },
     deleteFile(path, callback) {
         this.req('fs').unlink(path, callback || noop);
