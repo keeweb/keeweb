@@ -40,6 +40,7 @@ const YubiKey = {
         }
         return new Promise((resolve) => {
             this.ykmanStatus = 'checking';
+            this._cmd = undefined;
             Launcher.spawn({
                 cmd: this.cmd(),
                 args: ['-v'],
