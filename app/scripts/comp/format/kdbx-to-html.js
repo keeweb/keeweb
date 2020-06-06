@@ -31,13 +31,15 @@ function walkGroup(db, group, parents) {
     ) {
         return '';
     }
-    const self = group.entries.map(entry => walkEntry(db, entry, parents)).join('\n');
-    const children = group.groups.map(childGroup => walkGroup(db, childGroup, parents)).join('\n');
+    const self = group.entries.map((entry) => walkEntry(db, entry, parents)).join('\n');
+    const children = group.groups
+        .map((childGroup) => walkGroup(db, childGroup, parents))
+        .join('\n');
     return self + children;
 }
 
 function walkEntry(db, entry, parents) {
-    const path = parents.map(group => group.name).join(' / ');
+    const path = parents.map((group) => group.name).join(' / ');
     const fields = [];
     for (const field of FieldMapping) {
         const value = entryField(entry, field.name);
@@ -78,7 +80,7 @@ function walkEntry(db, entry, parents) {
             }
             return { name, data };
         })
-        .filter(att => att.name && att.data);
+        .filter((att) => att.name && att.data);
 
     return Templates.entry({
         path,
@@ -99,13 +101,13 @@ function entryField(entry, fieldName) {
 
 const KdbxToHtml = {
     convert(db, options) {
-        const content = db.groups.map(group => walkGroup(db, group, [])).join('\n');
+        const content = db.groups.map((group) => walkGroup(db, group, [])).join('\n');
         return Templates.db({
             name: options.name,
             date: DateFormat.dtStr(Date.now()),
             appLink: Links.Homepage,
             appVersion: RuntimeInfo.version,
-            content
+            contentHtml: content
         });
     },
 

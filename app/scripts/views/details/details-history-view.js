@@ -93,14 +93,14 @@ class DetailsHistoryView extends View {
         this.buildTimeline();
         this.timelineEl = this.$el.find('.details__history-timeline');
         this.bodyEl = this.$el.find('.details__history-body');
-        this.timeline.forEach(function(item, ix) {
+        this.timeline.forEach(function (item, ix) {
             $('<i/>')
                 .addClass('fa fa-circle details__history-timeline-item')
                 .css('left', item.pos * 100 + '%')
                 .attr('data-id', ix)
                 .appendTo(this.timelineEl);
         }, this);
-        this.labels.forEach(function(label) {
+        this.labels.forEach(function (label) {
             $('<div/>')
                 .addClass('details__history-timeline-label')
                 .css('left', label.pos * 100 + '%')
@@ -115,7 +115,7 @@ class DetailsHistoryView extends View {
     }
 
     removeFieldViews() {
-        this.fieldViews.forEach(fieldView => fieldView.remove());
+        this.fieldViews.forEach((fieldView) => fieldView.remove());
         this.fieldViews = [];
     }
 
@@ -129,7 +129,7 @@ class DetailsHistoryView extends View {
             .find('.details__history-timeline-item[data-id="' + ix + '"]')
             .addClass('details__history-timeline-item--active');
         this.removeFieldViews();
-        this.bodyEl.html('');
+        this.bodyEl.empty();
         const colorCls = this.record.color ? this.record.color + '-color' : '';
         this.fieldViews.push(
             new FieldViewReadOnly({ name: 'Rev', title: Locale.detHistoryVersion, value: ix + 1 })
@@ -209,11 +209,11 @@ class DetailsHistoryView extends View {
                 new FieldViewReadOnly({
                     name: 'Attachments',
                     title: Locale.detAttachments,
-                    value: this.record.attachments.map(att => att.title).join(', ')
+                    value: this.record.attachments.map((att) => att.title).join(', ')
                 })
             );
         }
-        this.fieldViews.forEach(fieldView => {
+        this.fieldViews.forEach((fieldView) => {
             fieldView.parent = this.bodyEl[0];
             fieldView.render();
             fieldView.on('copy', this.fieldCopied.bind(this));
@@ -232,9 +232,7 @@ class DetailsHistoryView extends View {
     }
 
     timelineItemClick(e) {
-        const id = $(e.target)
-            .closest('.details__history-timeline-item')
-            .data('id');
+        const id = $(e.target).closest('.details__history-timeline-item').data('id');
         this.showRecord(id);
     }
 
@@ -253,7 +251,7 @@ class DetailsHistoryView extends View {
     buildTimeline() {
         const firstRec = this.history[0];
         const lastRec = this.history[this.history.length - 1];
-        this.timeline = this.history.map(rec => ({
+        this.timeline = this.history.map((rec) => ({
             pos: (rec.updated - firstRec.updated) / (lastRec.updated - firstRec.updated),
             rec
         }));
@@ -263,7 +261,7 @@ class DetailsHistoryView extends View {
             firstRec.updated.getTime(),
             lastRec.updated.getTime(),
             format.round
-        ).map(label => ({
+        ).map((label) => ({
             pos: (label - firstRec.updated) / (lastRec.updated - firstRec.updated),
             val: label,
             text: format.format(new Date(label))

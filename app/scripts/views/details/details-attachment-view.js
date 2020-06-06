@@ -16,25 +16,21 @@ class DetailsAttachmentView extends View {
             isMobile: Features.isMobile
         });
         const shortcut = this.$el.find('.details__attachment-preview-download-text-shortcut');
-        shortcut.html(Shortcuts.actionShortcutSymbol(false));
+        shortcut.text(Shortcuts.actionShortcutSymbol());
         const blob = new Blob([this.model.getBinary()], { type: this.model.mimeType });
         const dataEl = this.$el.find('.details__attachment-preview-data');
         switch ((this.model.mimeType || '').split('/')[0]) {
             case 'text': {
                 const reader = new FileReader();
                 reader.addEventListener('loadend', () => {
-                    $('<pre/>')
-                        .text(reader.result)
-                        .appendTo(dataEl);
+                    $('<pre/>').text(reader.result).appendTo(dataEl);
                     complete();
                 });
                 reader.readAsText(blob);
                 return;
             }
             case 'image':
-                $('<img/>')
-                    .attr('src', URL.createObjectURL(blob))
-                    .appendTo(dataEl);
+                $('<img/>').attr('src', URL.createObjectURL(blob)).appendTo(dataEl);
                 complete();
                 return;
         }

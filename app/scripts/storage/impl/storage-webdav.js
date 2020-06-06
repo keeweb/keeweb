@@ -13,7 +13,14 @@ class StorageWebDav extends StorageBase {
     getOpenConfig() {
         return {
             fields: [
-                { id: 'path', title: 'openUrl', desc: 'openUrlDesc', type: 'text', required: true },
+                {
+                    id: 'path',
+                    title: 'openUrl',
+                    desc: 'openUrlDesc',
+                    type: 'text',
+                    required: true,
+                    pattern: '^https://.+'
+                },
                 {
                     id: 'user',
                     title: 'openUser',
@@ -85,13 +92,13 @@ class StorageWebDav extends StorageBase {
     }
 
     save(path, opts, data, callback, rev) {
-        const cb = function(err, xhr, stat) {
+        const cb = function (err, xhr, stat) {
             if (callback) {
                 callback(err, stat);
                 callback = null;
             }
         };
-        const tmpPath = path.replace(/[^\/]+$/, m => '.' + m) + '.' + Date.now();
+        const tmpPath = path.replace(/[^\/]+$/, (m) => '.' + m) + '.' + Date.now();
         const saveOpts = {
             path,
             user: opts ? opts.user : null,
@@ -127,7 +134,7 @@ class StorageWebDav extends StorageBase {
                             data,
                             nostat: true
                         },
-                        err => {
+                        (err) => {
                             if (err) {
                                 return cb(err);
                             }
@@ -186,7 +193,7 @@ class StorageWebDav extends StorageBase {
                                                 'Overwrite': 'T'
                                             }
                                         },
-                                        err => {
+                                        (err) => {
                                             if (err) {
                                                 return cb(err);
                                             }
@@ -215,7 +222,7 @@ class StorageWebDav extends StorageBase {
                             data,
                             nostat: true
                         },
-                        err => {
+                        (err) => {
                             if (err) {
                                 return cb(err);
                             }

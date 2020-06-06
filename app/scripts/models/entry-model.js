@@ -3,29 +3,26 @@ import { Model } from 'framework/model';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { KdbxToHtml } from 'comp/format/kdbx-to-html';
 import { IconMap } from 'const/icon-map';
+import { BuiltInFields } from 'const/entry-fields';
 import { AttachmentModel } from 'models/attachment-model';
 import { Color } from 'util/data/color';
 import { Otp } from 'util/data/otp';
 import { Ranking } from 'util/data/ranking';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { omit } from 'util/fn';
+import { EntrySearch } from 'util/entry-search';
 
 const UrlRegex = /^https?:\/\//i;
 const FieldRefRegex = /^\{REF:([TNPAU])@I:(\w{32})}$/;
-const BuiltInFields = [
-    'Title',
-    'Password',
-    'UserName',
-    'URL',
-    'Notes',
-    'TOTP Seed',
-    'TOTP Settings',
-    '_etm_template_uuid'
-];
 const FieldRefFields = ['title', 'password', 'user', 'url', 'notes'];
 const FieldRefIds = { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' };
 
 class EntryModel extends Model {
+    constructor(props) {
+        super(props);
+        this._search = new EntrySearch(this);
+    }
+
     setEntry(entry, group, file) {
         this.entry = entry;
         this.group = group;
@@ -61,6 +58,7 @@ class EntryModel extends Model {
         this.expires = entry.times.expires ? entry.times.expiryTime : undefined;
         this.expired = entry.times.expires && entry.times.expiryTime <= new Date();
         this.historyLength = entry.history.length;
+        this.titleUserLower = `${this.title}:${this.user}`.toLowerCase();
         this._buildCustomIcon();
         this._buildSearchText();
         this._buildSearchTags();
@@ -109,10 +107,10 @@ class EntryModel extends Model {
                 text += value.toLowerCase() + '\n';
             }
         }
-        this.entry.tags.forEach(tag => {
+        this.entry.tags.forEach((tag) => {
             text += tag.toLowerCase() + '\n';
         });
-        this.attachments.forEach(att => {
+        this.attachments.forEach((att) => {
             text += att.title.toLowerCase() + '\n';
         });
         this.searchText = text;
@@ -130,7 +128,7 @@ class EntryModel extends Model {
     }
 
     _buildSearchTags() {
-        this.searchTags = this.entry.tags.map(tag => tag.toLowerCase());
+        this.searchTags = this.entry.tags.map((tag) => tag.toLowerCase());
     }
 
     _buildSearchColor() {
@@ -206,177 +204,20 @@ class EntryModel extends Model {
     }
 
     matches(filter) {
-        if (!filter) {
-            return true;
-        }
-        if (filter.tagLower) {
-            if (this.searchTags.indexOf(filter.tagLower) < 0) {
-                return false;
-            }
-        }
-        if (filter.textLower) {
-            if (filter.advanced) {
-                if (!this.matchesAdv(filter)) {
-                    return false;
-                }
-            } else if (filter.textLowerParts) {
-                const parts = filter.textLowerParts;
-                for (let i = 0; i < parts.length; i++) {
-                    if (this.searchText.indexOf(parts[i]) < 0) {
-                        return false;
-                    }
-                }
-            } else {
-                if (this.searchText.indexOf(filter.textLower) < 0) {
-                    return false;
-                }
-            }
-        }
-        if (filter.color) {
-            if (filter.color === true) {
-                if (!this.searchColor) {
-                    return false;
-                }
-            } else {
-                if (this.searchColor !== filter.color) {
-                    return false;
-                }
-            }
-        }
-        if (filter.autoType) {
-            if (!this.autoTypeEnabled) {
-                return false;
-            }
-        }
-        return true;
+        return this._search.matches(filter);
     }
 
-    matchesAdv(filter) {
-        const adv = filter.advanced;
-        let search, match;
-        if (adv.regex) {
-            try {
-                search = new RegExp(filter.text, adv.cs ? '' : 'i');
-            } catch (e) {
-                return false;
-            }
-            match = this.matchRegex;
-        } else if (adv.cs) {
-            if (filter.textParts) {
-                search = filter.textParts;
-                match = this.matchStringMulti.bind(this, false);
-            } else {
-                search = filter.text;
-                match = this.matchString;
-            }
-        } else {
-            if (filter.textLowerParts) {
-                search = filter.textLowerParts;
-                match = this.matchStringMulti.bind(this, true);
-            } else {
-                search = filter.textLower;
-                match = this.matchStringLower;
-            }
-        }
-        if (this.matchEntry(this.entry, adv, match, search)) {
-            return true;
-        }
-        if (adv.history) {
-            for (let i = 0, len = this.entry.history.length; i < len; i++) {
-                if (this.matchEntry(this.entry.history[0], adv, match, search)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    getAllFields() {
+        return this.entry.fields;
     }
 
-    matchString(str, find) {
-        if (str.isProtected) {
-            return str.includes(find);
-        }
-        return str.indexOf(find) >= 0;
-    }
-
-    matchStringLower(str, findLower) {
-        if (str.isProtected) {
-            return str.includesLower(findLower);
-        }
-        return str.toLowerCase().indexOf(findLower) >= 0;
-    }
-
-    matchStringMulti(lower, str, find, context) {
-        for (let i = 0; i < find.length; i++) {
-            const item = find[i];
-            let strMatches;
-            if (lower) {
-                strMatches = str.isProtected ? str.includesLower(item) : str.includes(item);
-            } else {
-                strMatches = str.isProtected ? str.includes(item) : str.includes(item);
-            }
-            if (strMatches) {
-                if (context.matches) {
-                    if (!context.matches.includes(item)) {
-                        context.matches.push(item);
-                    }
-                } else {
-                    context.matches = [item];
-                }
-            }
-        }
-        return context.matches && context.matches.length === find.length;
-    }
-
-    matchRegex(str, regex) {
-        if (str.isProtected) {
-            str = str.getText();
-        }
-        return regex.test(str);
-    }
-
-    matchEntry(entry, adv, compare, search) {
-        const matchField = this.matchField;
-        const context = {};
-        if (adv.user && matchField(entry, 'UserName', compare, search, context)) {
-            return true;
-        }
-        if (adv.url && matchField(entry, 'URL', compare, search, context)) {
-            return true;
-        }
-        if (adv.notes && matchField(entry, 'Notes', compare, search, context)) {
-            return true;
-        }
-        if (adv.pass && matchField(entry, 'Password', compare, search, context)) {
-            return true;
-        }
-        if (adv.title && matchField(entry, 'Title', compare, search, context)) {
-            return true;
-        }
-        let matches = false;
-        if (adv.other || adv.protect) {
-            const fieldNames = Object.keys(entry.fields);
-            matches = fieldNames.some(field => {
-                if (BuiltInFields.indexOf(field) >= 0) {
-                    return false;
-                }
-                if (typeof entry.fields[field] === 'string') {
-                    return adv.other && matchField(entry, field, compare, search, context);
-                } else {
-                    return adv.protect && matchField(entry, field, compare, search, context);
-                }
-            });
-        }
-        return matches;
-    }
-
-    matchField(entry, field, compare, search, context) {
-        const val = entry.fields[field];
-        return val ? compare(val, search, context) : false;
+    getHistoryEntriesForSearch() {
+        return this.entry.history;
     }
 
     resolveFieldReferences() {
         this.hasFieldRefs = false;
-        FieldRefFields.forEach(field => {
+        FieldRefFields.forEach((field) => {
             const fieldValue = this[field];
             const refValue = this._resolveFieldReference(fieldValue);
             if (refValue !== undefined) {
@@ -389,7 +230,7 @@ class EntryModel extends Model {
     getFieldValue(field) {
         field = field.toLowerCase();
         let resolvedField;
-        Object.keys(this.entry.fields).some(entryField => {
+        Object.keys(this.entry.fields).some((entryField) => {
             if (entryField.toLowerCase() === field) {
                 resolvedField = entryField;
                 return true;
@@ -469,7 +310,7 @@ class EntryModel extends Model {
     }
 
     renameTag(from, to) {
-        const ix = this.entry.tags.findIndex(tag => tag.toLowerCase() === from.toLowerCase());
+        const ix = this.entry.tags.findIndex((tag) => tag.toLowerCase() === from.toLowerCase());
         if (ix < 0) {
             return;
         }
@@ -498,7 +339,7 @@ class EntryModel extends Model {
         if (val && !val.isProtected && val.indexOf('\x1A') >= 0) {
             // https://github.com/keeweb/keeweb/issues/910
             // eslint-disable-next-line no-control-regex
-            val = val.replace(/\x1A/g, '');
+            val = val.replace(/[\x00-\x1F]/g, '');
         }
         return val;
     }
@@ -509,7 +350,7 @@ class EntryModel extends Model {
 
     addAttachment(name, data) {
         this._entryModified();
-        return this.file.db.createBinary(data).then(binaryRef => {
+        return this.file.db.createBinary(data).then((binaryRef) => {
             this.entry.binaries[name] = binaryRef;
             this._fillByEntry();
         });
@@ -522,7 +363,7 @@ class EntryModel extends Model {
     }
 
     getHistory() {
-        const history = this.entry.history.map(function(rec) {
+        const history = this.entry.history.map(function (rec) {
             return EntryModel.fromEntry(rec, this.group, this.file);
         }, this);
         history.push(this);
@@ -625,7 +466,7 @@ class EntryModel extends Model {
             } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
                 // KeeOTP plugin format
                 const args = {};
-                otpUrl.split('&').forEach(part => {
+                otpUrl.split('&').forEach((part) => {
                     const parts = part.split('=', 2);
                     args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
                 });
@@ -792,11 +633,14 @@ class EntryModel extends Model {
         return model;
     }
 
-    static newEntry(group, file) {
+    static newEntry(group, file, opts) {
         const model = new EntryModel();
         const entry = file.db.createEntry(group.group);
         if (AppSettingsModel.useGroupIconForEntries && group.icon && group.iconId) {
             entry.icon = group.iconId;
+        }
+        if (opts && opts.tag) {
+            entry.tags = [opts.tag];
         }
         model.setEntry(entry, group, file);
         model.entry.times.update();

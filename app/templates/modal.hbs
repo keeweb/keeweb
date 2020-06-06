@@ -1,9 +1,18 @@
 <div class="modal modal--hidden {{#if opaque}}modal--opaque{{/if}}">
     <div class="modal__content">
-        <i class="modal__icon fa fa-{{icon}}"></i>
-        <div class="modal__header">{{{header}}}</div>
+        {{#if icon}}
+            <i class="modal__icon fa fa-{{icon}}"></i>
+        {{else if iconSvg}}
+            {{{svg iconSvg 'modal__icon modal__icon--svg'}}}
+        {{/if}}
+        <div class="modal__header">{{header}}</div>
         <div class="modal__body">
-            {{{body}}}
+            {{#each body as |item|}}
+                {{item}}
+                {{#unless @last}}<br/>{{/unless}}
+            {{/each}}
+            {{#if pre}}<pre class="modal__pre">{{pre}}</pre>{{/if}}
+            {{#if hint}}<p class="muted-color">{{hint}}</p>{{/if}}
             {{#if checkbox}}
             <div class="modal__check-wrap"><input type="checkbox" id="modal__check" /><label for="modal__check">{{checkbox}}</label></div>
             {{/if}}

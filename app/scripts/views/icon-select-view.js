@@ -69,7 +69,7 @@ class IconSelectView extends View {
                 .append(img);
             this.downloadingFavicon = false;
         };
-        img.onerror = e => {
+        img.onerror = (e) => {
             logger.error('Favicon download error: ' + url, e);
             this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
             this.$el
@@ -86,7 +86,7 @@ class IconSelectView extends View {
         }
         let url = this.model.url.replace(
             /([^\/:]\/.*)?$/,
-            match => (match && match[0]) + '/favicon.ico'
+            (match) => (match && match[0]) + '/favicon.ico'
         );
         if (url.indexOf('://') < 0) {
             url = 'http://' + url;
@@ -108,7 +108,7 @@ class IconSelectView extends View {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = e => {
+            reader.onload = (e) => {
                 const img = document.createElement('img');
                 img.onload = () => {
                     this.setSpecialImage(img, 'select');

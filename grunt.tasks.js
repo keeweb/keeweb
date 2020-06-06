@@ -1,4 +1,6 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
+    const sign = !grunt.option('skip-sign');
+
     grunt.registerTask('build-web-app', [
         'gitinfo',
         'clean',
@@ -36,17 +38,32 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-executables-linux', [
         'electron:linux',
-        'chmod:linux-desktop-x64'
+        'chmod:linux-desktop-x64',
+        'copy:native-modules-linux-x64'
     ]);
 
-    grunt.registerTask('build-desktop-executables-darwin', ['electron:darwin']);
+    grunt.registerTask('build-desktop-executables-darwin', [
+        'electron:darwin',
+        'copy:desktop-darwin-helper',
+        'copy:desktop-darwin-installer-helper',
+        'copy:native-modules-darwin',
+        sign ? 'osx-sign:desktop' : 'noop',
+        sign ? 'notarize:desktop' : 'noop'
+    ]);
 
     grunt.registerTask('build-desktop-executables-win32', [
-        'electron:win32',
-        'sign-exe:win32-build-x64',
-        'sign-exe:win32-build-ia32',
+        'electron:win32-x64',
+        'electron:win32-ia32',
+        'electron:win32-arm64',
+        sign ? 'sign-exe:win32-build-x64' : 'noop',
+        sign ? 'sign-exe:win32-build-ia32' : 'noop',
+        sign ? 'sign-exe:win32-build-arm64' : 'noop',
+        'copy:desktop-windows-helper-x64',
         'copy:desktop-windows-helper-ia32',
-        'copy:desktop-windows-helper-x64'
+        'copy:desktop-windows-helper-arm64',
+        'copy:native-modules-win32-x64',
+        'copy:native-modules-win32-ia32',
+        'copy:native-modules-win32-arm64'
     ]);
 
     grunt.registerTask('build-desktop-executables', [
@@ -59,7 +76,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build-desktop-archives-win32', [
         'compress:win32-x64',
-        'compress:win32-ia32'
+        'compress:win32-ia32',
+        'compress:win32-arm64'
     ]);
 
     grunt.registerTask('build-desktop-archives', [
@@ -72,14 +90,19 @@ module.exports = function(grunt) {
     grunt.registerTask('build-desktop-dist-win32', [
         'nsis:win32-un-x64',
         'nsis:win32-un-ia32',
-        'sign-exe:win32-uninst-x64',
-        'sign-exe:win32-uninst-ia32',
+        'nsis:win32-un-arm64',
+        sign ? 'sign-exe:win32-uninst-x64' : 'noop',
+        sign ? 'sign-exe:win32-uninst-ia32' : 'noop',
+        sign ? 'sign-exe:win32-uninst-arm64' : 'noop',
         'nsis:win32-x64',
         'nsis:win32-ia32',
-        'sign-exe:win32-installer-x64',
-        'sign-exe:win32-installer-ia32',
+        'nsis:win32-arm64',
+        sign ? 'sign-exe:win32-installer-x64' : 'noop',
+        sign ? 'sign-exe:win32-installer-ia32' : 'noop',
+        sign ? 'sign-exe:win32-installer-arm64' : 'noop',
         'copy:desktop-win32-dist-x64',
-        'copy:desktop-win32-dist-ia32'
+        'copy:desktop-win32-dist-ia32',
+        'copy:desktop-win32-dist-arm64'
     ]);
 
     grunt.registerTask('build-desktop-dist-linux', [
@@ -106,10 +129,6 @@ module.exports = function(grunt) {
         'build-desktop-dist',
         'sign-dist'
     ]);
-
-    grunt.registerTask('build-cordova-app-content', ['string-replace:cordova-html']);
-
-    grunt.registerTask('build-cordova', ['gitinfo', 'clean:cordova', 'build-cordova-app-content']);
 
     grunt.registerTask('build-test', ['webpack:test']);
 };

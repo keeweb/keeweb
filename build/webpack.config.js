@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 const webpack = require('webpack');
 
@@ -80,9 +81,28 @@ function config(options) {
             rules: [
                 {
                     test: /\.hbs$/,
-                    loader: StringReplacePlugin.replace('handlebars-loader', {
-                        replacements: [{ pattern: /\r?\n\s*/g, replacement: () => '\n' }]
-                    })
+                    use: [
+                        StringReplacePlugin.replace({
+                            replacements: [{ pattern: /\r?\n\s*/g, replacement: () => '\n' }]
+                        }),
+                        {
+                            loader: 'handlebars-loader',
+                            query: {
+                                knownHelpers: fs
+                                    .readdirSync(path.join(rootDir, 'app/scripts/hbs-helpers'))
+                                    .map((f) => f.replace('.js', ''))
+                                    .filter((f) => f !== 'index'),
+                                partialResolver(partial, callback) {
+                                    const location = path.join(
+                                        rootDir,
+                                        'app/templates/partials',
+                                        `${partial}.hbs`
+                                    );
+                                    callback(null, location);
+                                }
+                            }
+                        }
+                    ]
                 },
                 {
                     test: /runtime-info\.js$/,
@@ -107,7 +127,14 @@ function config(options) {
                 },
                 {
                     test: /baron(\.min)?\.js$/,
-                    loader: 'exports-loader?baron; delete window.baron;'
+                    use: [
+                        StringReplacePlugin.replace({
+                            replacements: [
+                                { pattern: /\(1,\s*eval\)\('this'\)/g, replacement: () => 'window' }
+                            ]
+                        }),
+                        { loader: 'exports-loader?baron; delete window.baron;' }
+                    ]
                 },
                 {
                     test: /babel-helpers\.js$/,

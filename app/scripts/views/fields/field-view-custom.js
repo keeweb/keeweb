@@ -61,7 +61,7 @@ class FieldViewCustom extends FieldViewText {
     startEditTitle(emptyTitle) {
         const text = emptyTitle ? '' : this.model.title || '';
         this.labelInput = $('<input/>');
-        this.labelEl.html('').append(this.labelInput);
+        this.labelEl.empty().append(this.labelInput);
         this.labelInput
             .attr({ autocomplete: 'off', spellcheck: 'false' })
             .val(text)

@@ -19,22 +19,20 @@ const StartProfiler = {
         operations.unshift({ name: 'fetching', elapsed: networkTime });
 
         const time = Math.round(performance.now());
-        const details = operations.map(op => `${op.name}=${Math.round(op.elapsed)}ms`).join(', ');
-        let message = `Started in ${time}ms: ${details}.`;
 
-        if (this.appProfile) {
-            message += ` Electron app started in ${this.appProfile.totalTime}ms: `;
-            message +=
-                this.appProfile.timings
-                    .map(op => `${op.name}=${Math.round(op.elapsed)}ms`)
-                    .join(', ') + '.';
-        }
-
-        logger.info(message);
+        this.printReport('App', operations, time);
     },
 
     reportAppProfile(data) {
-        this.appProfile = data;
+        this.printReport('Electron app', data.timings, data.totalTime);
+    },
+
+    printReport(name, operations, totalTime) {
+        const message =
+            `${name} started in ${totalTime}ms: ` +
+            operations.map((op) => `${op.name}=${Math.round(op.elapsed)}ms`).join(', ');
+
+        logger.info(message);
     },
 
     getNetworkTime() {

@@ -11,7 +11,7 @@ const SignatureVerifier = {
     verify(data, signature, pk) {
         if (!pk) {
             const pks = this.getPublicKeys();
-            return this.verify(data, signature, pks[0]).then(isValid => {
+            return this.verify(data, signature, pks[0]).then((isValid) => {
                 if (isValid || !pks[1]) {
                     return isValid;
                 }
@@ -29,7 +29,7 @@ const SignatureVerifier = {
                 pk = kdbxweb.ByteUtils.base64ToBytes(pk);
                 subtle
                     .importKey(keyFormat, pk, algo, false, ['verify'])
-                    .then(cryptoKey => {
+                    .then((cryptoKey) => {
                         try {
                             subtle
                                 .verify(
@@ -38,10 +38,10 @@ const SignatureVerifier = {
                                     kdbxweb.ByteUtils.arrayToBuffer(signature),
                                     kdbxweb.ByteUtils.arrayToBuffer(data)
                                 )
-                                .then(isValid => {
+                                .then((isValid) => {
                                     resolve(isValid);
                                 })
-                                .catch(e => {
+                                .catch((e) => {
                                     this.logger.error('Verify error', e);
                                     reject(e);
                                 });
@@ -50,7 +50,7 @@ const SignatureVerifier = {
                             reject(e);
                         }
                     })
-                    .catch(e => {
+                    .catch((e) => {
                         this.logger.error('ImportKey error', e);
                         reject(e);
                     });
@@ -63,7 +63,7 @@ const SignatureVerifier = {
 
     getPublicKeys() {
         if (!this.publicKeys) {
-            this.publicKeys = [publicKeyData, publicKeyDataNew].map(pk =>
+            this.publicKeys = [publicKeyData, publicKeyDataNew].map((pk) =>
                 pk.match(/-+BEGIN PUBLIC KEY-+([\s\S]+?)-+END PUBLIC KEY-+/)[1].replace(/\s+/g, '')
             );
         }

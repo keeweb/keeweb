@@ -35,11 +35,11 @@ class StorageGDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'arraybuffer',
-                success: response => {
+                success: (response) => {
                     this.logger.debug('Loaded', path, stat.rev, this.logger.ts(ts));
                     return callback && callback(null, response, { rev: stat.rev });
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('Load error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
@@ -51,7 +51,7 @@ class StorageGDrive extends StorageBase {
         if (path.lastIndexOf(NewFileIdPrefix, 0) === 0) {
             return callback && callback({ notFound: true });
         }
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -61,12 +61,12 @@ class StorageGDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'json',
-                success: response => {
+                success: (response) => {
                     const rev = response.headRevisionId;
                     this.logger.debug('Stated', path, rev, this.logger.ts(ts));
                     return callback && callback(null, { rev });
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('Stat error', this.logger.ts(ts), err);
                     return callback && callback(err);
                 }
@@ -75,7 +75,7 @@ class StorageGDrive extends StorageBase {
     }
 
     save(path, opts, data, callback, rev) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -134,7 +134,7 @@ class StorageGDrive extends StorageBase {
                     data,
                     dataType,
                     dataIsMultipart,
-                    success: response => {
+                    success: (response) => {
                         this.logger.debug('Saved', path, this.logger.ts(ts));
                         const newRev = response.headRevisionId;
                         if (!newRev) {
@@ -145,7 +145,7 @@ class StorageGDrive extends StorageBase {
                             callback(null, { rev: newRev, path: isNew ? response.id : null })
                         );
                     },
-                    error: err => {
+                    error: (err) => {
                         this.logger.error('Save error', path, err, this.logger.ts(ts));
                         return callback && callback(err);
                     }
@@ -155,7 +155,7 @@ class StorageGDrive extends StorageBase {
     }
 
     list(dir, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -179,13 +179,13 @@ class StorageGDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'json',
-                success: response => {
+                success: (response) => {
                     if (!response) {
                         this.logger.error('List error', this.logger.ts(ts));
                         return callback && callback('list error');
                     }
                     this.logger.debug('Listed', this.logger.ts(ts));
-                    const fileList = response.files.map(f => ({
+                    const fileList = response.files.map((f) => ({
                         name: f.name,
                         path: f.id,
                         rev: f.headRevisionId,
@@ -201,7 +201,7 @@ class StorageGDrive extends StorageBase {
                     }
                     return callback && callback(null, fileList);
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('List error', this.logger.ts(ts), err);
                     return callback && callback(err);
                 }
@@ -222,7 +222,7 @@ class StorageGDrive extends StorageBase {
                 this.logger.debug('Removed', path, this.logger.ts(ts));
                 return callback && callback();
             },
-            error: err => {
+            error: (err) => {
                 this.logger.error('Remove error', path, err, this.logger.ts(ts));
                 return callback && callback(err);
             }

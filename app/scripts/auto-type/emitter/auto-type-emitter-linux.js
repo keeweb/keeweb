@@ -59,13 +59,18 @@ const ModMap = {
     '^^': 'ctrl'
 };
 
-const AutoTypeEmitter = function(callback) {
+const AutoTypeEmitter = function (callback, windowId) {
     this.callback = callback;
+    if (typeof windowId !== 'undefined' && windowId) {
+        this.windowParameter = '--window ' + windowId + ' ';
+    } else {
+        this.windowParameter = '';
+    }
     this.mod = {};
     this.pendingScript = [];
 };
 
-AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
+AutoTypeEmitter.prototype.setMod = function (mod, enabled) {
     if (enabled) {
         this.mod[ModMap[mod]] = true;
     } else {
@@ -73,45 +78,54 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
     }
 };
 
-AutoTypeEmitter.prototype.text = function(text) {
+AutoTypeEmitter.prototype.text = function (text) {
     this.pendingScript.push('keyup ctrl alt shift t');
-    Object.keys(this.mod).forEach(mod => {
-        this.pendingScript.push('keydown ' + ModMap[mod]);
+    Object.keys(this.mod).forEach((mod) => {
+        this.pendingScript.push('keydown ' + this.windowParameter + ModMap[mod]);
     });
-    text.split('').forEach(char => {
-        this.pendingScript.push('key U' + char.charCodeAt(0).toString(16));
+    text.split('').forEach((char) => {
+        this.pendingScript.push(
+            'key ' + this.windowParameter + 'U' + char.charCodeAt(0).toString(16)
+        );
     });
-    Object.keys(this.mod).forEach(mod => {
-        this.pendingScript.push('keyup ' + ModMap[mod]);
+    Object.keys(this.mod).forEach((mod) => {
+        this.pendingScript.push('keyup ' + this.windowParameter + ModMap[mod]);
     });
     this.waitComplete();
 };
 
-AutoTypeEmitter.prototype.key = function(key) {
-    if (typeof key !== 'number') {
+AutoTypeEmitter.prototype.key = function (key) {
+    const isSpecialKey = typeof key !== 'number';
+    if (isSpecialKey) {
         if (!KeyMap[key]) {
             return this.callback('Bad key: ' + key);
         }
-        key = KeyMap[key].toString(16);
+        key = KeyMap[key].toString();
     }
-    this.pendingScript.push('key --clearmodifiers ' + this.modString() + key);
-    this.callback();
+    this.pendingScript.push(
+        'key --clearmodifiers ' + this.windowParameter + this.modString() + key
+    );
+    if (isSpecialKey) {
+        this.waitComplete();
+    } else {
+        this.callback();
+    }
 };
 
-AutoTypeEmitter.prototype.copyPaste = function(text) {
+AutoTypeEmitter.prototype.copyPaste = function (text) {
     this.pendingScript.push('sleep 0.5');
     Launcher.setClipboardText(text);
-    this.pendingScript.push('key --clearmodifiers shift+Insert');
+    this.pendingScript.push('key --clearmodifiers ' + this.windowParameter + 'shift+Insert');
     this.pendingScript.push('sleep 0.5');
     this.waitComplete();
 };
 
-AutoTypeEmitter.prototype.wait = function(time) {
+AutoTypeEmitter.prototype.wait = function (time) {
     this.pendingScript.push('sleep ' + time / 1000);
     this.callback();
 };
 
-AutoTypeEmitter.prototype.waitComplete = function(callback) {
+AutoTypeEmitter.prototype.waitComplete = function (callback) {
     if (this.pendingScript.length) {
         const script = this.pendingScript.join(' ');
         this.pendingScript.length = 0;
@@ -121,15 +135,15 @@ AutoTypeEmitter.prototype.waitComplete = function(callback) {
     }
 };
 
-AutoTypeEmitter.prototype.modString = function() {
+AutoTypeEmitter.prototype.modString = function () {
     let mod = '';
-    Object.keys(this.mod).forEach(key => {
+    Object.keys(this.mod).forEach((key) => {
         mod += key + '+';
     });
     return mod;
 };
 
-AutoTypeEmitter.prototype.runScript = function(script, callback) {
+AutoTypeEmitter.prototype.runScript = function (script, callback) {
     Launcher.spawn({
         cmd: 'xdotool',
         args: ['-'],

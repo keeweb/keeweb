@@ -1,5 +1,5 @@
-module.exports = function(grunt) {
-    grunt.registerMultiTask('csp-hashes', 'Adds CSP hashes for inline JS and CSS', function() {
+module.exports = function (grunt) {
+    grunt.registerMultiTask('csp-hashes', 'Adds CSP hashes for inline JS and CSS', function () {
         const opt = this.options();
         for (const file of this.files) {
             const html = grunt.file.read(file.src[0], { encoding: null });
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
                 if (cspIndex < 0) {
                     grunt.warn(`Not found: ${type}-src`);
                 }
-                const digestsList = digests.map(digest => `'${algo}-${digest}'`).join(' ');
+                const digestsList = digests.map((digest) => `'${algo}-${digest}'`).join(' ');
                 htmlStr = htmlStr.replace(`${type}-src`, `${type}-src ${digestsList}`);
             }
 

@@ -1,9 +1,9 @@
 import { AutoTypeNativeHelper } from 'auto-type/helper/auto-type-native-helper';
 import { Launcher } from 'comp/launcher';
 
-const AutoTypeHelper = function() {};
+const AutoTypeHelper = function () {};
 
-AutoTypeHelper.prototype.getActiveWindowInfo = function(callback) {
+AutoTypeHelper.prototype.getActiveWindowInfo = function (callback) {
     Launcher.spawn({
         cmd: AutoTypeNativeHelper.getHelperPath(),
         args: ['--window-info'],

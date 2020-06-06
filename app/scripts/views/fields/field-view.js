@@ -9,13 +9,16 @@ import { Locale } from 'util/locale';
 import { AutoType } from 'auto-type';
 import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { DropdownView } from 'views/dropdown-view';
-import template from 'templates/details/field.hbs';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Timeouts } from 'const/timeouts';
+import template from 'templates/details/fields/field.hbs';
 
 class FieldView extends View {
     template = template;
 
     events = {
         'click .details__field-label': 'fieldLabelClick',
+        'dblclick .details__field-label': 'fieldLabelDblClick',
         'click .details__field-value': 'fieldValueClick',
         'dragstart .details__field-label': 'fieldLabelDrag',
         'click .details__field-options': 'fieldOptionsClick'
@@ -52,7 +55,7 @@ class FieldView extends View {
             this.tip = typeof this.model.tip === 'function' ? this.model.tip() : this.model.tip;
             if (this.tip) {
                 this.valueEl.attr('title', this.tip);
-                Tip.createTip(this.valueEl);
+                Tip.createTip(this.valueEl[0]);
             }
         }
     }
@@ -75,7 +78,20 @@ class FieldView extends View {
         if (this.preventCopy) {
             return;
         }
-        this.copyValue();
+        if (AutoType.enabled && AppSettingsModel.fieldLabelDblClickAutoType) {
+            if (this.fieldLabelClickTimer) {
+                clearTimeout(this.fieldLabelClickTimer);
+                this.fieldLabelClickTimer = null;
+                this.emit('autotype', { source: this });
+                return;
+            }
+            this.fieldLabelClickTimer = setTimeout(() => {
+                this.copyValue();
+                this.fieldLabelClickTimer = null;
+            }, Timeouts.FieldLabelDoubleClick);
+        } else {
+            this.copyValue();
+        }
     }
 
     copyValue() {
@@ -264,7 +280,7 @@ class FieldView extends View {
 
     revealValue() {
         const revealedEl = PasswordPresenter.asDOM(this.value);
-        this.valueEl.addClass('details__field-value--revealed').html('');
+        this.valueEl.addClass('details__field-value--revealed').empty();
         this.valueEl.append(revealedEl);
     }
 

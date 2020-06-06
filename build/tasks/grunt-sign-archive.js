@@ -1,5 +1,5 @@
-module.exports = function(grunt) {
-    grunt.registerMultiTask('sign-archive', 'Signs archive with a private key', function() {
+module.exports = function (grunt) {
+    grunt.registerMultiTask('sign-archive', 'Signs archive with a private key', function () {
         const done = this.async();
         const fs = require('fs');
         const sign = require('../util/sign');
@@ -10,7 +10,7 @@ module.exports = function(grunt) {
             return;
         }
         const data = file.slice(0, ix);
-        sign(grunt, data).then(signature => {
+        sign(grunt, data).then((signature) => {
             signature = Buffer.from(signature.toString('hex'), 'binary');
             if (
                 signature.byteLength !== Buffer.from(this.options().signature, 'binary').byteLength

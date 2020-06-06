@@ -37,7 +37,7 @@ class MenuView extends View {
             KeyHandler.SHORTCUT_ACTION + KeyHandler.SHORTCUT_OPT
         );
         this.once('remove', () => {
-            this.sectionViews.forEach(sectionView => sectionView.remove());
+            this.sectionViews.forEach((sectionView) => sectionView.remove());
             this.sectionViews = [];
         });
     }
@@ -45,13 +45,11 @@ class MenuView extends View {
     render() {
         super.render();
         const sectionsEl = this.$el.find('.menu');
-        this.model.sections.forEach(function(section) {
+        this.model.sections.forEach(function (section) {
             const sectionView = new MenuSectionView(section, { parent: sectionsEl[0] });
             sectionView.render();
             if (section.drag) {
-                const dragEl = $('<div/>')
-                    .addClass('menu__drag-section')
-                    .appendTo(sectionsEl);
+                const dragEl = $('<div/>').addClass('menu__drag-section').appendTo(sectionsEl);
                 const dragView = new DragView('y', { parent: dragEl[0] });
                 sectionView.listenDrag(dragView);
                 dragView.render();
@@ -68,7 +66,7 @@ class MenuView extends View {
         this.render();
     }
 
-    viewResized = throttle(size => {
+    viewResized = throttle((size) => {
         AppSettingsModel.menuViewWidth = size;
     }, 1000);
 

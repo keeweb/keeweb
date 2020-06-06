@@ -60,7 +60,7 @@ class MenuItemView extends View {
         this.iconEl = this.$el.find('.menu__item-icon');
         const items = this.model.items;
         if (items) {
-            items.forEach(item => {
+            items.forEach((item) => {
                 if (item.visible) {
                     this.insertItem(item);
                 }
@@ -76,7 +76,7 @@ class MenuItemView extends View {
     }
 
     removeInnerViews() {
-        this.itemViews.forEach(itemView => itemView.remove());
+        this.itemViews.forEach((itemView) => itemView.remove());
         this.itemViews = [];
     }
 
@@ -137,7 +137,7 @@ class MenuItemView extends View {
         const options = this.model.options;
         const value = $(e.target).data('value');
         if (options && options.length) {
-            const option = options.find(op => op.value === value);
+            const option = options.find((op) => op.value === value);
             if (option) {
                 Events.emit('menu-select', { item: this.model, option });
             }
@@ -183,7 +183,7 @@ class MenuItemView extends View {
         const types = e.dataTransfer.types;
         for (let i = 0; i < types.length; i++) {
             if (types[i] === 'text/group' || types[i] === 'text/entry') {
-                return true;
+                return DragDropInfo.dragObject && !DragDropInfo.dragObject.readOnly;
             }
         }
         return false;

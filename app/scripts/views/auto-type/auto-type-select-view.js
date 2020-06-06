@@ -32,7 +32,6 @@ class AutoTypeSelectView extends View {
     constructor(model) {
         super(model);
         this.initScroll();
-        this.listenTo(Events, 'main-window-blur', this.mainWindowBlur);
         this.listenTo(Events, 'main-window-will-close', this.mainWindowWillClose);
         this.listenTo(Events, 'keypress:auto-type', this.keyPressed);
         this.setupKeys();
@@ -76,7 +75,7 @@ class AutoTypeSelectView extends View {
         const presenter = new EntryPresenter(null, noColor, this.result && this.result.id);
         let itemsHtml = '';
         const itemTemplate = this.itemTemplate;
-        this.entries.forEach(entry => {
+        this.entries.forEach((entry) => {
             presenter.present(entry);
             itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
         });
@@ -209,13 +208,8 @@ class AutoTypeSelectView extends View {
         this.showItemOptions(itemEl, e);
     }
 
-    mainWindowBlur() {
-        this.cancelAndClose();
-    }
-
     mainWindowWillClose(e) {
         e.preventDefault();
-        this.cancelAndClose();
     }
 
     showItemOptions(itemEl, event) {

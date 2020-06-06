@@ -25,4 +25,8 @@ describe('StringFormat', () => {
     it('should convert kebab case to camel case', () => {
         expect(StringFormat.camelCase('aa-bbb-c')).to.eql('aaBbbC');
     });
+
+    it('should convert kebab case to pascal case', () => {
+        expect(StringFormat.pascalCase('aa-bbb-c')).to.eql('AaBbbC');
+    });
 });

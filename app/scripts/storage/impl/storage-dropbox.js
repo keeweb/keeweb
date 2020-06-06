@@ -105,7 +105,7 @@ class StorageDropbox extends StorageBase {
                     id: 'secret',
                     title: 'dropboxAppSecret',
                     desc: 'dropboxAppSecretDesc',
-                    type: 'text',
+                    type: 'password',
                     required: true,
                     pattern: '\\w+'
                 },
@@ -143,7 +143,7 @@ class StorageDropbox extends StorageBase {
             id: 'secret',
             title: 'dropboxAppSecret',
             desc: 'dropboxAppSecretDesc',
-            type: 'text',
+            type: 'password',
             required: true,
             pattern: '\\w+',
             value: this.appSettings.dropboxSecret || ''
@@ -236,12 +236,12 @@ class StorageDropbox extends StorageBase {
     _encodeJsonHttpHeader(json) {
         return json.replace(
             /[\u007f-\uffff]/g,
-            c => '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
+            (c) => '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
         );
     }
 
     _apiCall(args) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return args.error(err);
             }
@@ -307,7 +307,7 @@ class StorageDropbox extends StorageBase {
         this._apiCall({
             method: 'files/get_metadata',
             data: { path },
-            success: stat => {
+            success: (stat) => {
                 if (stat['.tag'] === 'file') {
                     stat = { rev: stat.rev };
                 } else if (stat['.tag'] === 'folder') {
@@ -341,7 +341,7 @@ class StorageDropbox extends StorageBase {
             apiArg: arg,
             data,
             responseType: 'json',
-            success: stat => {
+            success: (stat) => {
                 this.logger.debug('Saved', path, stat.rev, this.logger.ts(ts));
                 callback(null, { rev: stat.rev });
             },
@@ -358,9 +358,9 @@ class StorageDropbox extends StorageBase {
                 path: this._toFullPath(dir || ''),
                 recursive: false
             },
-            success: data => {
+            success: (data) => {
                 this.logger.debug('Listed', this.logger.ts(ts));
-                const fileList = data.entries.map(f => ({
+                const fileList = data.entries.map((f) => ({
                     name: f.name,
                     path: this._toRelPath(f.path_display),
                     rev: f.rev,

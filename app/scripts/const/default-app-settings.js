@@ -1,5 +1,5 @@
 const DefaultAppSettings = {
-    theme: 'fb', // UI theme
+    theme: null, // UI theme
     locale: null, // user interface language
     expandGroups: true, // show entries from all subgroups
     listViewWidth: null, // width of the entry list representation
@@ -34,6 +34,16 @@ const DefaultAppSettings = {
     cacheConfigSettings: false, // cache config settings and use them if the config can't be loaded
     allowIframes: false, // allow displaying the app in IFrames
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
+    enableUsb: true, // enable interaction with USB devices
+    nativeArgon2: true, // use native argon2 module
+    fieldLabelDblClickAutoType: false, // trigger auto-type by doubleclicking field label
+
+    yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
+    yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files
+    yubiKeyMatchEntries: true, // show matching one-time codes in entries
+    yubiKeyShowChalResp: true, // show YubiKey challenge-response option
+    yubiKeyRememberChalResp: false, // remember YubiKey challenge-response codes while the app is open
+    yubiKeyStuckWorkaround: false, // enable the workaround for stuck YubiKeys
 
     canOpen: true, // can select and open new files
     canOpenDemo: true, // can open a demo file
@@ -47,6 +57,7 @@ const DefaultAppSettings = {
     canSaveTo: true, // can save existing files to filesystem
     canOpenStorage: true, // can open files from cloud storage providers
     canOpenGenerator: true, // can open password generator
+    canOpenOtpDevice: true, // can open OTP codes from USB tokens
 
     dropbox: true, // enable Dropbox integration
     dropboxFolder: null, // default folder path
@@ -58,11 +69,11 @@ const DefaultAppSettings = {
 
     gdrive: true, // enable Google Drive integration
     gdriveClientId: null, // custom Google Drive client id
-    gdriveSecret: null, // custom Google Drive client secret
+    gdriveClientSecret: null, // custom Google Drive client secret
 
     onedrive: true, // enable OneDrive integration
     onedriveClientId: null, // custom OneDrive client id
-    onedriveSecret: null // custom OneDrive client secret
+    onedriveClientSecret: null // custom OneDrive client secret
 };
 
 export { DefaultAppSettings };

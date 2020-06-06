@@ -1,28 +1,25 @@
+// prettier-ignore
+
 module.exports = function(grunt) {
-    // prettier-ignore
     grunt.registerTask('default', 'Default: build web app', [
         'build-web-app'
     ]);
 
-    // prettier-ignore
     grunt.registerTask('dev', 'Build project and start web server and watcher', [
         'build-web-app',
         'devsrv'
     ]);
 
-    // prettier-ignore
     grunt.registerTask('devsrv', 'Start web server and watcher', [
         'webpack-dev-server'
     ]);
 
-    // prettier-ignore
     grunt.registerTask('desktop', 'Build web and desktop apps for all platforms', [
         'test',
         'default',
         'build-desktop'
     ]);
 
-    // prettier-ignore
     grunt.registerTask('desktop-linux', 'Build desktop apps on linux', [
         'gitinfo',
         'clean:desktop',
@@ -33,7 +30,6 @@ module.exports = function(grunt) {
         'build-desktop-dist-linux'
     ]);
 
-    // prettier-ignore
     grunt.registerTask('desktop-darwin', 'Build desktop apps on macos', [
         'gitinfo',
         'clean:desktop',
@@ -42,7 +38,6 @@ module.exports = function(grunt) {
         'build-desktop-dist-darwin'
     ]);
 
-    // prettier-ignore
     grunt.registerTask('desktop-win32', 'Build desktop apps on windows', [
         'gitinfo',
         'clean:desktop',
@@ -52,18 +47,35 @@ module.exports = function(grunt) {
         'build-desktop-dist-win32'
     ]);
 
-    // prettier-ignore
     grunt.registerTask('finish-release', 'Complete the release started with desktop-*', [
         'sign-dist'
     ]);
 
-    // prettier-ignore
-    grunt.registerTask('cordova', 'Build cordova app', [
+    grunt.registerTask('dev-desktop-darwin', 'Build a macOS app in dev environment', [
         'default',
-        'build-cordova'
+        'build-desktop-app-content',
+        'electron:darwin',
+        'copy:desktop-darwin-helper',
+        'copy:desktop-darwin-installer-helper',
+        'copy:native-modules-darwin'
     ]);
 
-    // prettier-ignore
+    grunt.registerTask('dev-desktop-win32', 'Build a Windows app in dev environment', [
+        'default',
+        'build-desktop-app-content',
+        'electron:win32-x64',
+        'copy:desktop-windows-helper-x64',
+        'copy:native-modules-win32-x64'
+    ]);
+
+    grunt.registerTask('dev-desktop-linux', 'Build a Linux app in dev environment', [
+        'default',
+        'build-desktop-app-content',
+        'electron:linux',
+        'chmod:linux-desktop-x64',
+        'copy:native-modules-linux-x64'
+    ]);
+    
     grunt.registerTask('test', 'Build and run tests', [
         'build-test',
         'run-test'

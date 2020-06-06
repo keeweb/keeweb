@@ -3,23 +3,33 @@
         <i class="fa fa-chevron-left"></i>{{res 'detBackToList'}}
     </div>
     <div class="details__header">
-        <i class="details__header-color fa fa-bookmark-o" title="{{res 'detSetIconColor'}}" tip-placement="left">
-            <span class="details__colors-popup">
-                <span class="details__colors-popup-item yellow-color fa fa-bookmark-o" data-color="yellow"></span>
-                <span class="details__colors-popup-item green-color fa fa-bookmark-o" data-color="green"></span>
-                <span class="details__colors-popup-item red-color fa fa-bookmark-o" data-color="red"></span>
-                <span class="details__colors-popup-item orange-color fa fa-bookmark-o" data-color="orange"></span>
-                <span class="details__colors-popup-item blue-color fa fa-bookmark-o" data-color="blue"></span>
-                <span class="details__colors-popup-item violet-color fa fa-bookmark-o" data-color="violet"></span>
-            </span>
+        <i class="details__header-color fa fa-bookmark-o"
+            {{#unless readOnly}}
+                title="{{res 'detSetIconColor'}}" tip-placement="left"
+            {{/unless}}
+        >
+            {{#unless readOnly}}
+                <span class="details__colors-popup">
+                    <span class="details__colors-popup-item yellow-color fa fa-bookmark-o" data-color="yellow"></span>
+                    <span class="details__colors-popup-item green-color fa fa-bookmark-o" data-color="green"></span>
+                    <span class="details__colors-popup-item red-color fa fa-bookmark-o" data-color="red"></span>
+                    <span class="details__colors-popup-item orange-color fa fa-bookmark-o" data-color="orange"></span>
+                    <span class="details__colors-popup-item blue-color fa fa-bookmark-o" data-color="blue"></span>
+                    <span class="details__colors-popup-item violet-color fa fa-bookmark-o" data-color="violet"></span>
+                </span>
+            {{/unless}}
         </i>
         <h1 class="details__header-title">{{#if title}}{{title}}{{else}}(no title){{/if}}</h1>
         {{#if customIcon}}
-        <div class="details__header-icon details__header-icon--icon" title="{{res 'detSetIcon'}}">
-            <img class="details__header-icon-img" src="{{{customIcon}}}" />
+        <div class="details__header-icon details__header-icon--icon"
+             {{#unless readOnly}}title="{{res 'detSetIcon'}}"{{/unless}}
+        >
+            <img class="details__header-icon-img" src="{{customIcon}}" />
         </div>
         {{else}}
-        <i class="details__header-icon fa fa-{{icon}}" title="{{res 'detSetIcon'}}"></i>
+        <i class="details__header-icon fa fa-{{icon}}"
+           {{#unless readOnly}}title="{{res 'detSetIcon'}}"{{/unless}}
+        ></i>
         {{/if}}
     </div>
     <div class="details__body">
@@ -32,28 +42,30 @@
         </div>
         <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
     </div>
-    <div class="details__buttons">
-        {{#if deleted~}}
-            <i class="details__buttons-trash-del fa fa-minus-circle" title="{{res 'detDelEntryPerm'}}" tip-placement="top"></i>
-        {{~else~}}
-            <i class="details__buttons-trash fa fa-trash-o" title="{{res 'detDelEntry'}}" tip-placement="top"></i>
-        {{~/if~}}
-        <div class="details__attachments">
-            <input type="file" class="details__attachment-input-file hide-by-pos" multiple />
-            {{#ifneq attachments.length 0}}
-                <div class="details__attachment-add">
-                    <i class="fa fa-paperclip"></i>
-                </div>
-            {{/ifneq}}
-            {{#each attachments as |attachment ix|}}
-                <div class="details__attachment" data-id="{{ix}}"><i class="fa fa-{{attachment.icon}}"></i> {{attachment.title}}</div>
-            {{else}}
-                <div class="details__attachment-add">
-                    <span class="details__attachment-add-title">{{res 'detDropAttachments'}}</span> <i class="fa fa-paperclip"></i>
-                </div>
-            {{/each}}
+    {{#unless readOnly}}
+        <div class="details__buttons">
+            {{#if deleted~}}
+                <i class="details__buttons-trash-del fa fa-minus-circle" title="{{res 'detDelEntryPerm'}}" tip-placement="top"></i>
+            {{~else~}}
+                <i class="details__buttons-trash fa fa-trash-o" title="{{res 'detDelEntry'}}" tip-placement="top"></i>
+            {{~/if~}}
+            <div class="details__attachments">
+                <input type="file" class="details__attachment-input-file hide-by-pos" multiple />
+                {{#ifneq attachments.length 0}}
+                    <div class="details__attachment-add">
+                        <i class="fa fa-paperclip"></i>
+                    </div>
+                {{/ifneq}}
+                {{#each attachments as |attachment ix|}}
+                    <div class="details__attachment" data-id="{{ix}}"><i class="fa fa-{{attachment.icon}}"></i> {{attachment.title}}</div>
+                {{else}}
+                    <div class="details__attachment-add">
+                        <span class="details__attachment-add-title">{{res 'detDropAttachments'}}</span> <i class="fa fa-paperclip"></i>
+                    </div>
+                {{/each}}
+            </div>
         </div>
-    </div>
+    {{/unless}}
     <div class="details__dropzone">
         <i class="fa fa-paperclip muted-color details__dropzone-icon"></i>
         <h1 class="muted-color details__dropzone-header">{{res 'detDropAttachments'}}</h1>

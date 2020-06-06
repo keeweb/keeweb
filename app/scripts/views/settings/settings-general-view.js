@@ -43,6 +43,8 @@ class SettingsGeneralView extends View {
         'change .settings__general-use-markdown': 'changeUseMarkdown',
         'change .settings__general-use-group-icon-for-entries': 'changeUseGroupIconForEntries',
         'change .settings__general-direct-autotype': 'changeDirectAutotype',
+        'change .settings__general-field-label-dblclick-autotype':
+            'changeFieldLabelDblClickAutoType',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'restartApp',
@@ -70,8 +72,8 @@ class SettingsGeneralView extends View {
         const storageProviders = this.getStorageProviders();
 
         super.render({
-            themes: mapObject(SettingsManager.allThemes, theme => Locale[theme]),
-            activeTheme: AppSettingsModel.theme,
+            themes: mapObject(SettingsManager.allThemes, (theme) => Locale[theme]),
+            activeTheme: SettingsManager.activeTheme,
             locales: SettingsManager.allLocales,
             activeLocale: SettingsManager.activeLocale,
             fontSize: AppSettingsModel.fontSize,
@@ -87,7 +89,7 @@ class SettingsGeneralView extends View {
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: Updater.enabled,
             canAutoSaveOnClose: !!Launcher,
-            canMinimize: Launcher && Launcher.canMinimize(),
+            canMinimize: !!Launcher,
             canDetectMinimize: !!Launcher,
             canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
             canAutoType: AutoType.enabled,
@@ -110,6 +112,7 @@ class SettingsGeneralView extends View {
             useMarkdown: AppSettingsModel.useMarkdown,
             useGroupIconForEntries: AppSettingsModel.useGroupIconForEntries,
             directAutotype: AppSettingsModel.directAutotype,
+            fieldLabelDblClickAutoType: AppSettingsModel.fieldLabelDblClickAutoType,
             supportsTitleBarStyles: Launcher && Features.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.titlebarStyle,
             storageProviders,
@@ -119,7 +122,7 @@ class SettingsGeneralView extends View {
     }
 
     renderProviderViews(storageProviders) {
-        storageProviders.forEach(function(prv) {
+        storageProviders.forEach(function (prv) {
             if (this.views[prv.name]) {
                 this.views[prv.name].remove();
             }
@@ -186,14 +189,14 @@ class SettingsGeneralView extends View {
 
     getStorageProviders() {
         const storageProviders = [];
-        Object.keys(Storage).forEach(name => {
+        Object.keys(Storage).forEach((name) => {
             const prv = Storage[name];
             if (!prv.system) {
                 storageProviders.push(prv);
             }
         });
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
-        return storageProviders.map(sp => ({
+        return storageProviders.map((sp) => ({
             name: sp.name,
             enabled: sp.enabled,
             hasConfig: !!sp.getSettingsConfig,
@@ -318,6 +321,12 @@ class SettingsGeneralView extends View {
     changeDirectAutotype(e) {
         const directAutotype = e.target.checked || false;
         AppSettingsModel.directAutotype = directAutotype;
+        Events.emit('refresh');
+    }
+
+    changeFieldLabelDblClickAutoType(e) {
+        const fieldLabelDblClickAutoType = e.target.checked || false;
+        AppSettingsModel.fieldLabelDblClickAutoType = fieldLabelDblClickAutoType;
         Events.emit('refresh');
     }
 

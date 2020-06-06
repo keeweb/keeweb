@@ -10,7 +10,7 @@ const pkg = require('./package.json');
 
 debug.enable('electron-notarize');
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
 
@@ -24,12 +24,14 @@ module.exports = function(grunt) {
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
-    const minElectronVersionForUpdate = '8.0.0';
+    const minElectronVersionForUpdate = '9.0.1';
     const zipCommentPlaceholderPart = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
-    const getCodeSingConfig = () => require('./keys/codesign.json');
+    const skipSign = grunt.option('skip-sign');
+    const getCodeSignConfig = () =>
+        skipSign ? { identities: {} } : require('./keys/codesign.json');
 
     const webpackOptions = {
         date,
@@ -39,7 +41,16 @@ module.exports = function(grunt) {
         }
     };
 
+    const windowsAppVersionString = {
+        CompanyName: 'KeeWeb',
+        FileDescription: pkg.description,
+        OriginalFilename: 'KeeWeb.exe',
+        ProductName: 'KeeWeb',
+        InternalName: 'KeeWeb'
+    };
+
     grunt.initConfig({
+        noop: { noop: {} },
         gitinfo: {
             branch: {
                 current: {
@@ -52,8 +63,7 @@ module.exports = function(grunt) {
         },
         clean: {
             dist: ['dist', 'tmp'],
-            desktop: ['tmp/desktop', 'dist/desktop'],
-            cordova: ['tmp/cordova', 'dist/cordova']
+            desktop: ['tmp/desktop', 'dist/desktop']
         },
         copy: {
             html: {
@@ -132,14 +142,34 @@ module.exports = function(grunt) {
                 dest: 'tmp/desktop/update/',
                 nonull: true
             },
+            'desktop-darwin-helper': {
+                src: 'helper/darwin/KeeWebHelper',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
+                nonull: true,
+                options: { mode: '0755' }
+            },
+            'desktop-darwin-installer-helper': {
+                cwd: 'package/osx/KeeWeb Installer.app',
+                src: '**',
+                dest:
+                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                expand: true,
+                nonull: true,
+                options: { mode: true }
+            },
+            'desktop-windows-helper-x64': {
+                src: 'helper/win32/KeeWebHelper.exe',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
+                nonull: true
+            },
             'desktop-windows-helper-ia32': {
                 src: 'helper/win32/KeeWebHelper.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/Resources/',
                 nonull: true
             },
-            'desktop-windows-helper-x64': {
+            'desktop-windows-helper-arm64': {
                 src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
+                dest: 'tmp/desktop/KeeWeb-win32-arm64/Resources/',
                 nonull: true
             },
             'desktop-win32-dist-x64': {
@@ -150,6 +180,36 @@ module.exports = function(grunt) {
             'desktop-win32-dist-ia32': {
                 src: 'tmp/desktop/KeeWeb.win.ia32.exe',
                 dest: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.exe`,
+                nonull: true
+            },
+            'desktop-win32-dist-arm64': {
+                src: 'tmp/desktop/KeeWeb.win.arm64.exe',
+                dest: `dist/desktop/KeeWeb-${pkg.version}.win.arm64.exe`,
+                nonull: true
+            },
+            'native-modules-darwin': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-darwin-x64.node',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
+                nonull: true
+            },
+            'native-modules-win32-x64': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-x64.node',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/resources/',
+                nonull: true
+            },
+            'native-modules-win32-ia32': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-ia32.node',
+                dest: 'tmp/desktop/KeeWeb-win32-ia32/resources/',
+                nonull: true
+            },
+            'native-modules-win32-arm64': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-arm64.node',
+                dest: 'tmp/desktop/KeeWeb-win32-arm64/resources/',
+                nonull: true
+            },
+            'native-modules-linux-x64': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-linux-x64.node',
+                dest: 'tmp/desktop/keeweb-linux-x64/resources/',
                 nonull: true
             },
             'electron-builder-dist-linux-rpm': {
@@ -242,17 +302,6 @@ module.exports = function(grunt) {
                     ]
                 },
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
-            },
-            'cordova-html': {
-                options: {
-                    replacements: [
-                        {
-                            pattern: '<script',
-                            replacement: '<script src="cordova.js"></script><script'
-                        }
-                    ]
-                },
-                files: { 'tmp/cordova/app/index.html': 'dist/index.html' }
             }
         },
         webpack: {
@@ -305,76 +354,34 @@ module.exports = function(grunt) {
                     icon: 'graphics/icon.icns',
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
-                    extendInfo: 'package/osx/extend.plist',
-                    osxSign: {
-                        get identity() {
-                            return getCodeSingConfig().identities.app;
-                        },
-                        hardenedRuntime: true,
-                        entitlements: 'package/osx/entitlements.mac.plist',
-                        'entitlements-inherit': 'package/osx/entitlements.mac.plist',
-                        'gatekeeper-assess': false
-                    },
-                    osxNotarize: {
-                        get appleId() {
-                            return getCodeSingConfig().appleId;
-                        },
-                        appleIdPassword: '@keychain:AC_PASSWORD',
-                        get ascProvider() {
-                            return getCodeSingConfig().teamId;
-                        }
-                    },
-                    afterCopy: [
-                        (buildPath, electronVersion, platform, arch, callback) => {
-                            if (path.basename(buildPath) !== 'app') {
-                                throw new Error('Bad build path: ' + buildPath);
-                            }
-                            const resPath = path.dirname(buildPath);
-                            if (path.basename(resPath) !== 'Resources') {
-                                throw new Error('Bad Resources path: ' + resPath);
-                            }
-                            const helperTargetPath = path.join(
-                                resPath,
-                                'helper/darwin/KeeWebHelper'
-                            );
-                            const helperSourcePath = path.join(
-                                __dirname,
-                                'helper/darwin/KeeWebHelper'
-                            );
-                            fs.copySync(helperSourcePath, helperTargetPath);
-
-                            const contentsPath = path.dirname(resPath);
-                            if (path.basename(contentsPath) !== 'Contents') {
-                                throw new Error('Bad Contents path: ' + contentsPath);
-                            }
-                            const installerSourcePath = path.join(
-                                __dirname,
-                                'package/osx/KeeWeb Installer.app'
-                            );
-                            const installerTargetPath = path.join(
-                                contentsPath,
-                                'Installer/KeeWeb Installer.app'
-                            );
-                            fs.copySync(installerSourcePath, installerTargetPath);
-
-                            callback();
-                        }
-                    ]
+                    extendInfo: 'package/osx/extend.plist'
                 }
             },
-            win32: {
+            'win32-x64': {
                 options: {
                     platform: 'win32',
-                    arch: ['ia32', 'x64'],
+                    arch: 'x64',
                     icon: 'graphics/icon.ico',
                     buildVersion: pkg.version,
-                    'version-string': {
-                        CompanyName: 'KeeWeb',
-                        FileDescription: pkg.description,
-                        OriginalFilename: 'KeeWeb.exe',
-                        ProductName: 'KeeWeb',
-                        InternalName: 'KeeWeb'
-                    }
+                    'version-string': windowsAppVersionString
+                }
+            },
+            'win32-ia32': {
+                options: {
+                    platform: 'win32',
+                    arch: 'ia32',
+                    icon: 'graphics/icon.ico',
+                    buildVersion: pkg.version,
+                    'version-string': windowsAppVersionString
+                }
+            },
+            'win32-arm64': {
+                options: {
+                    platform: 'win32',
+                    arch: 'arm64',
+                    icon: 'graphics/icon.ico',
+                    buildVersion: pkg.version,
+                    'version-string': windowsAppVersionString
                 }
             }
         },
@@ -430,6 +437,10 @@ module.exports = function(grunt) {
             'win32-ia32': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.ia32.zip` },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-win32-ia32', src: '**', expand: true }]
+            },
+            'win32-arm64': {
+                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.arm64.zip` },
+                files: [{ cwd: 'tmp/desktop/KeeWeb-win32-arm64', src: '**', expand: true }]
             },
             'linux-x64': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
@@ -497,6 +508,20 @@ module.exports = function(grunt) {
                     installScript: 'package/nsis/main-un.nsi',
                     arch: 'ia32',
                     output: 'tmp/desktop/KeeWeb-win32-ia32/uninst.exe'
+                }
+            },
+            'win32-arm64': {
+                options: {
+                    installScript: 'package/nsis/main.nsi',
+                    arch: 'arm64',
+                    output: 'tmp/desktop/KeeWeb.win.arm64.exe'
+                }
+            },
+            'win32-un-arm64': {
+                options: {
+                    installScript: 'package/nsis/main-un.nsi',
+                    arch: 'arm64',
+                    output: 'tmp/desktop/KeeWeb-win32-arm64/uninst.exe'
                 }
             }
         },
@@ -581,14 +606,43 @@ module.exports = function(grunt) {
                 }
             }
         },
+        'osx-sign': {
+            options: {
+                get identity() {
+                    return getCodeSignConfig().identities.app;
+                },
+                hardenedRuntime: true,
+                entitlements: 'package/osx/entitlements.mac.plist',
+                'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                'gatekeeper-assess': false
+            },
+            desktop: {
+                src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
+            }
+        },
+        notarize: {
+            options: {
+                appBundleId: 'net.antelle.keeweb',
+                get appleId() {
+                    return getCodeSignConfig().appleId;
+                },
+                appleIdPassword: '@keychain:AC_PASSWORD',
+                get ascProvider() {
+                    return getCodeSignConfig().teamId;
+                }
+            },
+            desktop: {
+                src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
+            }
+        },
         'sign-exe': {
             options: {
                 url: pkg.homepage,
                 get windows() {
-                    return getCodeSingConfig().windows;
+                    return getCodeSignConfig().windows;
                 },
                 get certHash() {
-                    return getCodeSingConfig().microsoftCertHash;
+                    return getCodeSignConfig().microsoftCertHash;
                 }
             },
             'win32-build-x64': {
@@ -615,6 +669,18 @@ module.exports = function(grunt) {
                     }
                 }
             },
+            'win32-build-arm64': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-arm64/ffmpeg.dll': '',
+                        'tmp/desktop/KeeWeb-win32-arm64/libEGL.dll':
+                            'ANGLE libEGL Dynamic Link Library',
+                        'tmp/desktop/KeeWeb-win32-arm64/libGLESv2.dll':
+                            'ANGLE libGLESv2 Dynamic Link Library'
+                    }
+                }
+            },
             'win32-uninst-x64': {
                 options: {
                     files: {
@@ -629,6 +695,13 @@ module.exports = function(grunt) {
                     }
                 }
             },
+            'win32-uninst-arm64': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb-win32-arm64/uninst.exe': 'KeeWeb Uninstaller'
+                    }
+                }
+            },
             'win32-installer-x64': {
                 options: {
                     files: {
@@ -640,6 +713,13 @@ module.exports = function(grunt) {
                 options: {
                     files: {
                         'tmp/desktop/KeeWeb.win.ia32.exe': 'KeeWeb Setup'
+                    }
+                }
+            },
+            'win32-installer-arm64': {
+                options: {
+                    files: {
+                        'tmp/desktop/KeeWeb.win.arm64.exe': 'KeeWeb Setup'
                     }
                 }
             }

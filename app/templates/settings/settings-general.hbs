@@ -1,5 +1,5 @@
 <div class="settings__content">
-    <h1><i class="fa fa-cog"></i> {{res 'setGenTitle'}}</h1>
+    <h1><i class="fa fa-cog settings__head-icon"></i> {{res 'setGenTitle'}}</h1>
 
     {{#if updateWaitingReload}}
     <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
@@ -66,12 +66,12 @@
     </div>
     {{#if supportsTitleBarStyles}}
     <div>
-      <label for="settings__general-titlebar-style">{{res 'setGenTitlebarStyle'}}:</label>
-      <select class="settings__general-titlebar-style settings__select input-base" id="settings__general-titlebar-style">
-        <option value="default" {{#ifeq titlebarStyle 'default'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleDefault'}}</option>
-        <option value="hidden" {{#ifeq titlebarStyle 'hidden'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHidden'}}</option>
-        <option value="hidden-inset" {{#ifeq titlebarStyle 'hidden-inset'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHiddenInset'}}</option>
-      </select>
+        <label for="settings__general-titlebar-style">{{res 'setGenTitlebarStyle'}}:</label>
+        <select class="settings__general-titlebar-style settings__select input-base" id="settings__general-titlebar-style">
+            <option value="default" {{#ifeq titlebarStyle 'default'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleDefault'}}</option>
+            <option value="hidden" {{#ifeq titlebarStyle 'hidden'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHidden'}}</option>
+            <option value="hidden-inset" {{#ifeq titlebarStyle 'hidden-inset'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHiddenInset'}}</option>
+        </select>
     </div>
     {{/if}}
     <div>
@@ -146,6 +146,11 @@
         <input type="checkbox" class="settings__input input-base settings__general-direct-autotype"
             id="settings__general-direct-autotype" {{#if directAutotype}}checked{{/if}} />
         <label for="settings__general-direct-autotype">{{res 'setGenDirectAutotype'}}</label>
+    </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-field-label-dblclick-autotype"
+               id="settings__general-field-label-dblclick-autotype" {{#if fieldLabelDblClickAutoType}}checked{{/if}} />
+        <label for="settings__general-field-label-dblclick-autotype">{{res 'setGenFieldLabelDblClickAutoType'}}</label>
     </div>
     {{/if}}
     <div>

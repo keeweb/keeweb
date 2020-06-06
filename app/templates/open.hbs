@@ -13,16 +13,21 @@
                 <div class="open__icon-text">{{res 'openNew'}}</div>
             </div>
         {{/if}}
+        <div class="open__icon open__icon-yubikey svg-btn {{#unless canOpenYubiKey}}hide{{/unless}}"
+             tabindex="3" id="open__icon-yubikey">
+            <div class="open__icon-svg">{{{svg 'usb-token'}}}</div>
+            <div class="open__icon-text">YubiKey</div>
+        </div>
         {{#if canOpenDemo}}
             {{#ifeq demoOpened false}}
-                <div class="open__icon open__icon-demo" tabindex="3" id="open__icon-demo">
+                <div class="open__icon open__icon-demo" tabindex="4" id="open__icon-demo">
                     <i class="fa fa-magic open__icon-i"></i>
                     <div class="open__icon-text">{{res 'openDemo'}}</div>
                 </div>
             {{/ifeq}}
         {{/if}}
         {{#if showMore}}
-            <div class="open__icon open__icon-more" tabindex="4" id="open__icon-more">
+            <div class="open__icon open__icon-more" tabindex="5" id="open__icon-more">
                 <i class="fa fa-ellipsis-h open__icon-i"></i>
                 <div class="open__icon-text">{{res 'openMore'}}</div>
             </div>
@@ -36,7 +41,7 @@
     </div>
     <div class="open__icons open__icons--lower hide">
         {{#each storageProviders as |prv|}}
-            <div class="open__icon open__icon-storage svg-btn" data-storage="{{prv.name}}" tabindex="{{add @index 5}}"
+            <div class="open__icon open__icon-storage svg-btn" data-storage="{{prv.name}}" tabindex="{{add @index 6}}"
                  id="open__icon-storage--{{prv.name}}">
                 {{#if prv.icon}}<i class="fa fa-{{prv.icon}} open__icon-i"></i>{{/if}}
                 {{#if prv.iconSvg}}<div class="open__icon-svg">{{{svg prv.iconSvg}}}</div>{{/if}}
@@ -45,20 +50,20 @@
         {{/each}}
         {{#if canOpenDemo}}
             {{#if demoOpened}}
-                <div class="open__icon open__icon-demo" tabindex="11" id="open__icon-demo">
+                <div class="open__icon open__icon-demo" tabindex="20" id="open__icon-demo">
                     <i class="fa fa-magic open__icon-i"></i>
                     <div class="open__icon-text">{{res 'openDemo'}}</div>
                 </div>
             {{/if}}
         {{/if}}
         {{#if canOpenGenerator}}
-            <div class="open__icon open__icon-generate" tabindex="12" id="open__icon-generate">
+            <div class="open__icon open__icon-generate" tabindex="21" id="open__icon-generate">
                 <i class="fa fa-bolt open__icon-i"></i>
                 <div class="open__icon-text">{{res 'openGenerate'}}</div>
             </div>
         {{/if}}
         {{#if canOpenSettings}}
-            <div class="open__icon open__icon-settings" tabindex="12" id="open__icon-settings">
+            <div class="open__icon open__icon-settings" tabindex="22" id="open__icon-settings">
                 <i class="fa fa-cog open__icon-i"></i>
                 <div class="open__icon-text">{{res 'settings'}}</div>
             </div>
@@ -75,20 +80,24 @@
         </div>
         <div class="open__pass-field-wrap">
             <input class="open__pass-input" name="password" type="password" size="30" autocomplete="new-password" maxlength="1024"
-                   placeholder="{{#if canOpen}}{{res 'openClickToOpen'}}{{/if}}" readonly tabindex="13" />
-            <div class="open__pass-enter-btn" tabindex="14"><i class="fa fa-level-down fa-rotate-90"></i></div>
+                   placeholder="{{#if canOpen}}{{res 'openClickToOpen'}}{{/if}}" readonly tabindex="23" />
+            <div class="open__pass-enter-btn" tabindex="24"><i class="fa fa-level-down fa-rotate-90"></i></div>
             <div class="open__pass-opening-icon"><i class="fa fa-spinner fa-spin"></i></div>
         </div>
         <div class="open__settings">
-            <div class="open__settings-key-file hide" tabindex="15">
+            <div class="open__settings-key-file hide" tabindex="25">
                 <i class="fa fa-key open__settings-key-file-icon">
                 </i><span class="open__settings-key-file-name">{{res 'openKeyFile'}}</span>
                 {{#if canOpenKeyFromDropbox}}<span class="open__settings-key-file-dropbox"> {{res 'openKeyFileDropbox'}}</span>{{/if}}
             </div>
+            <div class="open__settings-yubikey {{#if canUseChalRespYubiKey}}open__settings-yubikey--present{{/if}} hide"
+                 tabindex="26" title="YubiKey">
+                <div class="open__settings-yubikey__text">YK</div> {{{svg 'usb-token' 'open__settings-yubikey-img'}}}
+            </div>
         </div>
         <div class="open__last">
             {{#each lastOpenFiles as |file|}}
-                <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 16}}"
+                <div class="open__last-item" data-id="{{file.id}}" title="{{file.path}}" tabindex="{{add @index 30}}"
                      id="open__last-item--{{file.id}}">
                     {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
                     {{#if file.iconSvg}}<div class="open__last-item-icon open__last-item-icon--svg">{{{svg file.iconSvg}}}</div>{{/if}}

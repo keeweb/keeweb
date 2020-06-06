@@ -2,7 +2,7 @@ import { Logger } from 'util/logger';
 
 const logger = new Logger('otp');
 
-const Otp = function(url, params) {
+const Otp = function (url, params) {
     if (['hotp', 'totp'].indexOf(params.type) < 0) {
         throw 'Bad type: ' + params.type;
     }
@@ -39,7 +39,7 @@ const Otp = function(url, params) {
     }
 };
 
-Otp.prototype.next = function(callback) {
+Otp.prototype.next = function (callback) {
     let valueForHashing;
     let timeLeft;
     if (this.type === 'totp') {
@@ -56,7 +56,7 @@ Otp.prototype.next = function(callback) {
     this.hmac(data, (sig, err) => {
         if (!sig) {
             logger.error('OTP calculation error', err);
-            return callback();
+            return callback(err);
         }
         sig = new DataView(sig);
         const offset = sig.getInt8(sig.byteLength - 1) & 0xf;
@@ -67,37 +67,37 @@ Otp.prototype.next = function(callback) {
         } else {
             pass = Otp.hmacToDigits(hmac, this.digits);
         }
-        callback(pass, timeLeft);
+        callback(null, pass, timeLeft);
     });
 };
 
-Otp.prototype.hmac = function(data, callback) {
+Otp.prototype.hmac = function (data, callback) {
     const subtle = window.crypto.subtle || window.crypto.webkitSubtle;
     const algo = { name: 'HMAC', hash: { name: this.algorithm.replace('SHA', 'SHA-') } };
     subtle
         .importKey('raw', this.key, algo, false, ['sign'])
-        .then(key => {
+        .then((key) => {
             subtle
                 .sign(algo, key, data)
-                .then(sig => {
+                .then((sig) => {
                     callback(sig);
                 })
-                .catch(err => {
+                .catch((err) => {
                     callback(null, err);
                 });
         })
-        .catch(err => {
+        .catch((err) => {
             callback(null, err);
         });
 };
 
-Otp.hmacToDigits = function(hmac, length) {
+Otp.hmacToDigits = function (hmac, length) {
     let code = hmac.toString();
     code = Otp.leftPad(code.substr(code.length - length), length);
     return code;
 };
 
-Otp.hmacToSteamCode = function(hmac) {
+Otp.hmacToSteamCode = function (hmac) {
     const steamChars = '23456789BCDFGHJKMNPQRTVWXY';
     let code = '';
     for (let i = 0; i < 5; ++i) {
@@ -107,7 +107,7 @@ Otp.hmacToSteamCode = function(hmac) {
     return code;
 };
 
-Otp.fromBase32 = function(str) {
+Otp.fromBase32 = function (str) {
     str = str.replace(/\s/g, '');
     const alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
     let bin = '';
@@ -127,14 +127,14 @@ Otp.fromBase32 = function(str) {
     return hex.buffer;
 };
 
-Otp.leftPad = function(str, len) {
+Otp.leftPad = function (str, len) {
     while (str.length < len) {
         str = '0' + str;
     }
     return str;
 };
 
-Otp.parseUrl = function(url) {
+Otp.parseUrl = function (url) {
     const match = /^otpauth:\/\/(\w+)\/([^\?]+)\?(.*)/i.exec(url);
     if (!match) {
         throw 'Not OTP url';
@@ -149,18 +149,18 @@ Otp.parseUrl = function(url) {
         }
     }
     params.type = match[1].toLowerCase();
-    match[3].split('&').forEach(part => {
+    match[3].split('&').forEach((part) => {
         const parts = part.split('=', 2);
         params[parts[0].toLowerCase()] = decodeURIComponent(parts[1]);
     });
     return new Otp(url, params);
 };
 
-Otp.isSecret = function(str) {
+Otp.isSecret = function (str) {
     return !!Otp.fromBase32(str);
 };
 
-Otp.makeUrl = function(secret, period, digits) {
+Otp.makeUrl = function (secret, period, digits) {
     return (
         'otpauth://totp/default?secret=' +
         secret +

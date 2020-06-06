@@ -59,13 +59,13 @@ const ModMap = {
     '^^': '^'
 };
 
-const AutoTypeEmitter = function(callback) {
+const AutoTypeEmitter = function (callback) {
     this.callback = callback;
     this.mod = {};
     this.pendingScript = [];
 };
 
-AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
+AutoTypeEmitter.prototype.setMod = function (mod, enabled) {
     if (enabled) {
         this.mod[ModMap[mod]] = true;
     } else {
@@ -73,12 +73,12 @@ AutoTypeEmitter.prototype.setMod = function(mod, enabled) {
     }
 };
 
-AutoTypeEmitter.prototype.text = function(text) {
+AutoTypeEmitter.prototype.text = function (text) {
     this.pendingScript.push('text ' + this.modString() + ' ' + text);
     this.callback();
 };
 
-AutoTypeEmitter.prototype.key = function(key) {
+AutoTypeEmitter.prototype.key = function (key) {
     if (typeof key !== 'number') {
         if (!KeyMap[key]) {
             return this.callback('Bad key: ' + key);
@@ -89,17 +89,17 @@ AutoTypeEmitter.prototype.key = function(key) {
     this.callback();
 };
 
-AutoTypeEmitter.prototype.copyPaste = function(text) {
+AutoTypeEmitter.prototype.copyPaste = function (text) {
     this.pendingScript.push('copypaste ' + text);
     this.callback();
 };
 
-AutoTypeEmitter.prototype.wait = function(time) {
+AutoTypeEmitter.prototype.wait = function (time) {
     this.pendingScript.push('wait ' + time);
     this.callback();
 };
 
-AutoTypeEmitter.prototype.waitComplete = function() {
+AutoTypeEmitter.prototype.waitComplete = function () {
     if (this.pendingScript.length) {
         const script = this.pendingScript.join('\n');
         this.pendingScript.length = 0;
@@ -109,16 +109,16 @@ AutoTypeEmitter.prototype.waitComplete = function() {
     }
 };
 
-AutoTypeEmitter.prototype.setDelay = function(delay) {
+AutoTypeEmitter.prototype.setDelay = function (delay) {
     this.delay = delay || 0;
     this.callback('Not implemented');
 };
 
-AutoTypeEmitter.prototype.modString = function() {
+AutoTypeEmitter.prototype.modString = function () {
     return Object.keys(this.mod).join('');
 };
 
-AutoTypeEmitter.prototype.runScript = function(script) {
+AutoTypeEmitter.prototype.runScript = function (script) {
     Launcher.spawn({
         cmd: AutoTypeNativeHelper.getHelperPath(),
         data: script,

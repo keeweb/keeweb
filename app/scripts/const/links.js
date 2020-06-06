@@ -14,7 +14,9 @@ const Links = {
     Translation: 'https://keeweb.oneskyapp.com/',
     Donation: 'https://opencollective.com/keeweb#support',
     Plugins: 'https://plugins.keeweb.info',
-    PluginDevelopStart: 'https://github.com/keeweb/keeweb/wiki/Plugins'
+    PluginDevelopStart: 'https://github.com/keeweb/keeweb/wiki/Plugins',
+    YubiKeyManual: 'https://github.com/keeweb/keeweb/wiki/YubiKey',
+    YubiKeyManagerInstall: 'https://github.com/Yubico/yubikey-manager#installation'
 };
 
 export { Links };

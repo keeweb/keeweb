@@ -62,7 +62,7 @@ class GeneratorView extends View {
         super(model);
         this.createPresets();
         const preset = this.preset;
-        this.gen = { ...this.presets.find(pr => pr.name === preset) };
+        this.gen = { ...this.presets.find((pr) => pr.name === preset) };
         this.hide = AppSettingsModel.generatorHidePassword;
         $('body').one('click', this.remove.bind(this));
         this.listenTo(Events, 'lock-workspace', this.remove.bind(this));
@@ -100,10 +100,10 @@ class GeneratorView extends View {
             this.presets.splice(0, 0, derivedPreset);
             this.preset = 'Derived';
         } else {
-            const defaultPreset = this.presets.filter(p => p.default)[0] || this.presets[0];
+            const defaultPreset = this.presets.filter((p) => p.default)[0] || this.presets[0];
             this.preset = defaultPreset.name;
         }
-        this.presets.forEach(pr => {
+        this.presets.forEach((pr) => {
             pr.pseudoLength = this.lengthToPseudoValue(pr.length);
         });
     }
@@ -133,7 +133,7 @@ class GeneratorView extends View {
         const val = this.valuesMap[e.target.value];
         if (val !== this.gen.length) {
             this.gen.length = val;
-            this.$el.find('.gen__length-range-val').html(val);
+            this.$el.find('.gen__length-range-val').text(val);
             this.optionChanged('length');
             this.generate();
         }
@@ -191,7 +191,7 @@ class GeneratorView extends View {
             return;
         }
         this.preset = name;
-        const preset = this.presets.find(t => t.name === name);
+        const preset = this.presets.find((t) => t.name === name);
         this.gen = { ...preset };
         this.render();
     }

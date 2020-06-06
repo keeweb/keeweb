@@ -16,7 +16,7 @@ const PopupNotifier = {
             window.open = noop;
         } else {
             const windowOpen = window.open;
-            window.open = function(...args) {
+            window.open = function (...args) {
                 const win = windowOpen.apply(window, args);
                 if (win) {
                     PopupNotifier.deferCheckClosed(win);

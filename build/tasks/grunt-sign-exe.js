@@ -4,11 +4,11 @@ const { spawnSync } = require('child_process');
 const AdmZip = require('adm-zip');
 const { runRemoteTask } = require('run-remote-task');
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     grunt.registerMultiTask(
         'sign-exe',
         'Signs exe file with authenticode certificate',
-        async function() {
+        async function () {
             const done = this.async();
             const opt = this.options();
 

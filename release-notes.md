@@ -1,5 +1,27 @@
 Release notes
 -------------
+##### v1.15.0 (2020-06-06)
+`+` YubiKey integration in two modes: OATH and Challenge-Response  
+`+` configs are now encrypted with a key stored in keychain  
+`*` default format for new files is now KDBX4  
+`+` #1460: auto-type on double-clicking field labels  
+`+` #557: Argon2 speed improvements in desktop apps  
+`+` #1503: ARM64 Windows support  
+`+` #1480: option to create a portable installation  
+`+` #1400: auto-apply tag when creating new entry in tag view  
+`*` default theme on macOS is now macOS-Dark   
+`+` #1342: hint that the data will be stored in unencrypted form after exporting  
+`*` #1471: WebDAV url validation, only HTTPS is allowed  
+`+` #1350: clearing master password after auto lock period  
+`+` #830: minimize instead of close option on macOS  
+`+` #448: minimized login option support on macOS  
+`+` #917: option to install without a desktop icon on Windows  
+`-` fix #1463: copying the original url instead of adding https:  
+`-` fix #620: clearing middle-click clipboard in Linux  
+`-` fix #1440: fixed auto-type for maximized windows  
+`-` fix #1509: fixed auto-type for tiling mode in Linux  
+`-` fix #1409: fixed auto-typing Tab character on Debian  
+
 ##### v1.14.3 (2020-05-15)
 `*` improved exporting files with markdown notes  
 

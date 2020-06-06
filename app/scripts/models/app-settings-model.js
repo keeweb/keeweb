@@ -9,7 +9,7 @@ class AppSettingsModel extends Model {
     }
 
     load() {
-        return SettingsStore.load('app-settings').then(data => {
+        return SettingsStore.load('app-settings').then((data) => {
             if (data) {
                 this.upgrade(data);
                 this.set(data, { silent: true });

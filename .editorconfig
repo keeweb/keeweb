@@ -17,3 +17,6 @@ trim_trailing_whitespace = false
 
 [*.nsh]
 indent_size = 2
+
+[{*.yml,*.yaml}]
+indent_size = 2

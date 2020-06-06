@@ -10,7 +10,7 @@
                 <i class="fa fa-caret-down"></i>
             </div>
         </div>
-        <div class="list__search-btn-new" title="{{res 'searchAddNew'}}">
+        <div class="list__search-btn-new {{#unless canCreate}}hide{{/unless}}" title="{{res 'searchAddNew'}}">
             <i class="fa fa-plus"></i>
         </div>
         <div class="list__search-btn-sort" title="{{res 'searchSort'}}">

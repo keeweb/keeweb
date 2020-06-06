@@ -1,8 +1,8 @@
 import { Launcher } from 'comp/launcher';
 
-const AutoTypeHelper = function() {};
+const AutoTypeHelper = function () {};
 
-AutoTypeHelper.prototype.getActiveWindowInfo = function(callback) {
+AutoTypeHelper.prototype.getActiveWindowInfo = function (callback) {
     Launcher.spawn({
         cmd: 'xdotool',
         args: ['getactivewindow', 'getwindowname', 'getactivewindow'],

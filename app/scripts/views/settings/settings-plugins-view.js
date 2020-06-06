@@ -52,7 +52,7 @@ class SettingsPluginsView extends View {
     render() {
         super.render({
             plugins: PluginManager.plugins
-                .map(plugin => ({
+                .map((plugin) => ({
                     id: plugin.id,
                     manifest: plugin.manifest,
                     status: plugin.status,
@@ -92,14 +92,14 @@ class SettingsPluginsView extends View {
         }
         const plugins = PluginManager.plugins;
         return PluginGallery.gallery.plugins
-            .map(pl => ({
+            .map((pl) => ({
                 url: pl.url,
                 manifest: pl.manifest,
                 installing: this.installing[pl.url],
                 installError: this.installErrors[pl.url],
                 official: pl.official
             }))
-            .filter(pl => !plugins.get(pl.manifest.name) && this.canInstallPlugin(pl))
+            .filter((pl) => !plugins.get(pl.manifest.name) && this.canInstallPlugin(pl))
             .sort((x, y) => x.manifest.name.localeCompare(y.manifest.name));
     }
 
@@ -137,7 +137,7 @@ class SettingsPluginsView extends View {
         const installBtn = this.$el.find('.settings_plugins-install-btn');
         const urlTextBox = this.$el.find('#settings__plugins-install-url');
         const errorBox = this.$el.find('.settings__plugins-install-error');
-        errorBox.html('');
+        errorBox.empty();
         const url = urlTextBox.val().trim();
         if (!url) {
             return;
@@ -152,7 +152,7 @@ class SettingsPluginsView extends View {
                 this.render();
                 this.$el.closest('.scroller').scrollTop(0);
             })
-            .catch(e => {
+            .catch((e) => {
                 this.installFinished();
                 this.installFromUrl.error = e;
                 this.$el.find('.settings__plugins-install-error').text(e.toString());
@@ -200,12 +200,12 @@ class SettingsPluginsView extends View {
     galleryInstallClick(e) {
         const installBtn = $(e.target);
         const pluginId = installBtn.data('plugin');
-        const plugin = PluginGallery.gallery.plugins.find(pl => pl.manifest.name === pluginId);
+        const plugin = PluginGallery.gallery.plugins.find((pl) => pl.manifest.name === pluginId);
         installBtn.text(Locale.setPlInstallBtnProgress + '...').prop('disabled', true);
         this.installing[plugin.url] = true;
         delete this.installErrors[plugin.url];
         PluginManager.install(plugin.url, plugin.manifest)
-            .catch(e => {
+            .catch((e) => {
                 this.installErrors[plugin.url] = e;
                 delete this.installing[plugin.url];
                 this.render();

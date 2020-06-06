@@ -45,6 +45,7 @@
         &-field-wrap {
             flex: 1;
             position: relative;
+            margin-right: $small-spacing;
         }
         &-field {
             width: 100%;
@@ -72,7 +73,6 @@
         }
         &-btn-new {
             @include icon-btn;
-            margin-left: $small-spacing;
         }
         &-btn-sort {
             @include icon-btn;

@@ -31,8 +31,8 @@ const PasswordGenerator = {
             return this.generatePronounceable(opts);
         }
         const ranges = Object.keys(CharRanges)
-            .filter(r => opts[r])
-            .map(r => CharRanges[r]);
+            .filter((r) => opts[r])
+            .map((r) => CharRanges[r]);
         if (opts.include && opts.include.length) {
             ranges.push(opts.include);
         }
@@ -84,7 +84,7 @@ const PasswordGenerator = {
         let length = 0;
         if (password) {
             const charRanges = CharRanges;
-            password.forEachChar(ch => {
+            password.forEachChar((ch) => {
                 length++;
                 ch = String.fromCharCode(ch);
                 for (const [range, chars] of Object.entries(charRanges)) {

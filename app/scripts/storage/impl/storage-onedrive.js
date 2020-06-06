@@ -17,7 +17,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     load(path, opts, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -27,7 +27,7 @@ class StorageOneDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'json',
-                success: response => {
+                success: (response) => {
                     const downloadUrl = response['@microsoft.graph.downloadUrl'];
                     let rev = response.eTag;
                     if (!downloadUrl || !response.eTag) {
@@ -49,13 +49,13 @@ class StorageOneDrive extends StorageBase {
                             this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
                             return callback && callback(null, response, { rev });
                         },
-                        error: err => {
+                        error: (err) => {
                             this.logger.error('Load error', path, err, this.logger.ts(ts));
                             return callback && callback(err);
                         }
                     });
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('Load error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
@@ -64,7 +64,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     stat(path, opts, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -74,7 +74,7 @@ class StorageOneDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'json',
-                success: response => {
+                success: (response) => {
                     const rev = response.eTag;
                     if (!rev) {
                         this.logger.error('Stat error', path, 'no eTag', this.logger.ts(ts));
@@ -96,7 +96,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     save(path, opts, data, callback, rev) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -123,7 +123,7 @@ class StorageOneDrive extends StorageBase {
                     this.logger.debug('Saved', path, rev, this.logger.ts(ts));
                     return callback && callback(null, { rev });
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('Save error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
@@ -132,7 +132,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     list(dir, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -142,15 +142,15 @@ class StorageOneDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'json',
-                success: response => {
+                success: (response) => {
                     if (!response || !response.value) {
                         this.logger.error('List error', this.logger.ts(ts), response);
                         return callback && callback('list error');
                     }
                     this.logger.debug('Listed', this.logger.ts(ts));
                     const fileList = response.value
-                        .filter(f => f.name)
-                        .map(f => ({
+                        .filter((f) => f.name)
+                        .map((f) => ({
                             name: f.name,
                             path: f.parentReference.path + '/' + f.name,
                             rev: f.eTag,
@@ -158,7 +158,7 @@ class StorageOneDrive extends StorageBase {
                         }));
                     return callback && callback(null, fileList);
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('List error', this.logger.ts(ts), err);
                     return callback && callback(err);
                 }
@@ -179,7 +179,7 @@ class StorageOneDrive extends StorageBase {
                 this.logger.debug('Removed', path, this.logger.ts(ts));
                 return callback && callback();
             },
-            error: err => {
+            error: (err) => {
                 this.logger.error('Remove error', path, err, this.logger.ts(ts));
                 return callback && callback(err);
             }
@@ -187,7 +187,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     mkdir(path, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -206,7 +206,7 @@ class StorageOneDrive extends StorageBase {
                     this.logger.debug('Made dir', path, this.logger.ts(ts));
                     return callback && callback();
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('Make dir error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }

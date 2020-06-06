@@ -47,7 +47,7 @@ BaseLocale.failStorage = 'Fail';
 
 Storage.failStorage = new FailStorage();
 
-module.exports.uninstall = function() {
+module.exports.uninstall = function () {
     delete BaseLocale.failStorage;
     delete Storage.failStorage;
 };

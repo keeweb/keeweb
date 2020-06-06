@@ -19,14 +19,14 @@ class MenuSectionModel extends Model {
     removeAllItems() {
         this.items.length = 0;
         if (this.defaultItems) {
-            this.items.push(...this.defaultItems.map(item => new MenuItemModel(item)));
+            this.items.push(...this.defaultItems.map((item) => new MenuItemModel(item)));
         }
         this.emit('change-items');
     }
 
     removeByFile(file) {
         const items = this.items;
-        items.find(item => {
+        items.find((item) => {
             if (item.file === file || item.file === file) {
                 items.remove(item);
                 return true;

@@ -32,8 +32,8 @@ class GeneratorPresetsView extends View {
 
     render() {
         this.presets = GeneratorPresets.all;
-        if (!this.selected || !this.presets.some(p => p.name === this.selected)) {
-            this.selected = (this.presets.filter(p => p.default)[0] || this.presets[0]).name;
+        if (!this.selected || !this.presets.some((p) => p.name === this.selected)) {
+            this.selected = (this.presets.filter((p) => p.default)[0] || this.presets[0]).name;
         }
         super.render({
             presets: this.presets,
@@ -61,7 +61,7 @@ class GeneratorPresetsView extends View {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
         };
         return ['Upper', 'Lower', 'Digits', 'Special', 'Brackets', 'High', 'Ambiguous'].map(
-            name => {
+            (name) => {
                 const nameLower = name.toLowerCase();
                 return {
                     name: nameLower,
@@ -74,7 +74,7 @@ class GeneratorPresetsView extends View {
     }
 
     getPreset(name) {
-        return this.presets.filter(p => p.name === name)[0];
+        return this.presets.filter((p) => p.name === name)[0];
     }
 
     returnToApp() {
@@ -92,7 +92,7 @@ class GeneratorPresetsView extends View {
         for (let i = 1; ; i++) {
             const newName = 'Custom' + i;
             const newTitle = Locale.genPsNew + ' ' + i;
-            if (!this.presets.filter(p => p.name === newName || p.title === newTitle).length) {
+            if (!this.presets.filter((p) => p.name === newName || p.title === newTitle).length) {
                 name = newName;
                 title = newTitle;
                 break;
@@ -128,9 +128,11 @@ class GeneratorPresetsView extends View {
     changeTitle(e) {
         const title = $.trim(e.target.value);
         if (title && title !== this.getPreset(this.selected).title) {
-            let duplicate = this.presets.some(p => p.title.toLowerCase() === title.toLowerCase());
+            let duplicate = this.presets.some((p) => p.title.toLowerCase() === title.toLowerCase());
             if (!duplicate) {
-                duplicate = this.reservedTitles.some(p => p.toLowerCase() === title.toLowerCase());
+                duplicate = this.reservedTitles.some(
+                    (p) => p.toLowerCase() === title.toLowerCase()
+                );
             }
             if (duplicate) {
                 $(e.target).addClass('input--error');

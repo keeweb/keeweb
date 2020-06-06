@@ -3,7 +3,7 @@ import { Ranking } from 'util/data/ranking';
 
 const urlPartsRegex = /^(\w+:\/\/)?(?:(?:www|wwws|secure)\.)?([^\/]+)\/?(.*)/;
 
-const AutoTypeFilter = function(windowInfo, appModel) {
+const AutoTypeFilter = function (windowInfo, appModel) {
     this.title = windowInfo.title;
     this.url = windowInfo.url;
     this.text = '';
@@ -11,34 +11,34 @@ const AutoTypeFilter = function(windowInfo, appModel) {
     this.appModel = appModel;
 };
 
-AutoTypeFilter.prototype.getEntries = function() {
+AutoTypeFilter.prototype.getEntries = function () {
     const filter = {
         text: this.text,
         autoType: true
     };
     this.prepareFilter();
-    let entries = this.appModel.getEntriesByFilter(filter).map(e => [e, this.getEntryRank(e)]);
+    let entries = this.appModel.getEntriesByFilter(filter).map((e) => [e, this.getEntryRank(e)]);
     if (!this.ignoreWindowInfo) {
-        entries = entries.filter(e => e[1]);
+        entries = entries.filter((e) => e[1]);
     }
     entries = entries.sort((x, y) =>
         x[1] === y[1] ? x[0].title.localeCompare(y[0].title) : y[1] - x[1]
     );
-    entries = entries.map(p => p[0]);
+    entries = entries.map((p) => p[0]);
     return new SearchResultCollection(entries, { comparator: 'none' });
 };
 
-AutoTypeFilter.prototype.hasWindowInfo = function() {
+AutoTypeFilter.prototype.hasWindowInfo = function () {
     return this.title || this.url;
 };
 
-AutoTypeFilter.prototype.prepareFilter = function() {
+AutoTypeFilter.prototype.prepareFilter = function () {
     this.titleLower = this.title ? this.title.toLowerCase() : null;
     this.urlLower = this.url ? this.url.toLowerCase() : null;
     this.urlParts = this.url ? urlPartsRegex.exec(this.urlLower) : null;
 };
 
-AutoTypeFilter.prototype.getEntryRank = function(entry) {
+AutoTypeFilter.prototype.getEntryRank = function (entry) {
     let rank = 0;
     if (this.titleLower && entry.title) {
         rank += Ranking.getStringRank(entry.title.toLowerCase(), this.titleLower);

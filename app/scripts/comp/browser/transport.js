@@ -27,7 +27,7 @@ const Transport = {
         logger.info('GET ' + config.url);
         const opts = Launcher.req('url').parse(config.url);
         opts.headers = { 'User-Agent': navigator.userAgent };
-        Launcher.resolveProxy(config.url, proxy => {
+        Launcher.resolveProxy(config.url, (proxy) => {
             logger.info(
                 'Request to ' +
                     config.url +
@@ -41,7 +41,7 @@ const Transport = {
                 opts.path = config.url;
             }
             Launcher.req(proto)
-                .get(opts, res => {
+                .get(opts, (res) => {
                     logger.info('Response from ' + config.url + ': ' + res.statusCode);
                     if (res.statusCode === 200) {
                         if (config.file) {
@@ -52,12 +52,12 @@ const Transport = {
                                     config.success(tmpFile);
                                 });
                             });
-                            file.on('error', err => {
+                            file.on('error', (err) => {
                                 config.error(err);
                             });
                         } else {
                             let data = [];
-                            res.on('data', chunk => {
+                            res.on('data', (chunk) => {
                                 data.push(chunk);
                             });
                             res.on('end', () => {
@@ -79,7 +79,7 @@ const Transport = {
                         config.error('HTTP status ' + res.statusCode);
                     }
                 })
-                .on('error', e => {
+                .on('error', (e) => {
                     logger.error('Cannot GET ' + config.url, e);
                     if (tmpFile) {
                         fs.unlink(tmpFile, noop);

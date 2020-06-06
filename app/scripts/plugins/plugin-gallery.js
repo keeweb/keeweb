@@ -19,10 +19,10 @@ const PluginGallery = {
         this.loading = true;
         this.loadError = false;
         const ts = this.logger.ts();
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this.logger.debug('Loading plugins...');
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', Links.Plugins + '/plugins.json?_=' + Date.now());
+            xhr.open('GET', Links.Plugins + '/plugins.json');
             xhr.responseType = 'json';
             xhr.send();
             xhr.addEventListener('load', () => {
@@ -34,14 +34,14 @@ const PluginGallery = {
                 resolve();
             });
         })
-            .then(data => {
+            .then((data) => {
                 this.loading = false;
                 if (!data) {
                     this.loadError = true;
                     Events.emit('plugin-gallery-load-complete');
                     return;
                 }
-                return this.verifySignature(data).then(gallery => {
+                return this.verifySignature(data).then((gallery) => {
                     this.loadError = !gallery;
                     if (gallery) {
                         this.logger.debug(
@@ -55,7 +55,7 @@ const PluginGallery = {
                     return gallery;
                 });
             })
-            .catch(e => {
+            .catch((e) => {
                 this.loadError = true;
                 this.logger.error('Error loading plugin gallery', e);
                 Events.emit('plugin-gallery-load-complete');
@@ -68,22 +68,22 @@ const PluginGallery = {
             kdbxweb.ByteUtils.stringToBytes(dataToVerify),
             gallery.signature
         )
-            .then(isValid => {
+            .then((isValid) => {
                 if (isValid) {
                     return gallery;
                 }
                 this.logger.error('JSON signature invalid');
             })
-            .catch(e => {
+            .catch((e) => {
                 this.logger.error('Error verifying plugins signature', e);
             });
     },
 
     getCachedGallery() {
         const ts = this.logger.ts();
-        return SettingsStore.load('plugin-gallery').then(data => {
+        return SettingsStore.load('plugin-gallery').then((data) => {
             if (data) {
-                return this.verifySignature(data).then(gallery => {
+                return this.verifySignature(data).then((gallery) => {
                     this.logger.debug(`Loaded cached plugin gallery`, this.logger.ts(ts));
                     return gallery;
                 });

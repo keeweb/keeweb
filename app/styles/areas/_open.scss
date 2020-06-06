@@ -108,7 +108,7 @@
             > i {
                 font-size: 3em;
                 @include mobile {
-                    line-height: .8;
+                    line-height: 0.8;
                 }
             }
         }
@@ -184,10 +184,16 @@
     input[type='password'].open__pass-input {
         font-size: $large-pass-font-size;
         margin-bottom: 0;
-        &[readonly] { cursor: pointer; }
+        &[readonly] {
+            cursor: pointer;
+        }
         width: 38vw;
-        @media (max-width: 1000px) { width: 16em; }
-        @include mobile { width: calc(100vw - 20px); }
+        @media (max-width: 1000px) {
+            width: 16em;
+        }
+        @include mobile {
+            width: calc(100vw - 20px);
+        }
     }
 
     &__settings {
@@ -240,6 +246,35 @@
             &:hover {
                 .open--file:not(.open--opening) & {
                     color: var(--medium-color);
+                }
+            }
+        }
+
+        &-yubikey {
+            display: none;
+            &--present,
+            &--active {
+                display: flex;
+            }
+            &__text {
+                margin-right: 0.4em;
+                display: none;
+                .open__settings-yubikey--active & {
+                    display: block;
+                }
+            }
+            &-img {
+                fill: var(--muted-color);
+                width: 2em;
+                position: relative;
+                top: -0.25em;
+                margin-right: $base-padding-h;
+                cursor: pointer;
+                &:hover {
+                    fill: var(--text-color);
+                }
+                .open__settings-yubikey--active & {
+                    fill: var(--text-color);
                 }
             }
         }
@@ -362,5 +397,21 @@
     &__check-label {
         width: 100%;
         display: inline-block;
+    }
+}
+
+.open-chal-resp {
+    &__head {
+        padding: $base-padding;
+    }
+    &__icon {
+        margin-right: $small-spacing;
+    }
+    &__item {
+        padding: $base-padding;
+        cursor: pointer;
+        &:hover {
+            background-color: var(--action-background-color-focus-tr);
+        }
     }
 }

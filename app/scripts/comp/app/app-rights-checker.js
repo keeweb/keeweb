@@ -17,7 +17,7 @@ const AppRightsChecker = {
         if (!Launcher.getAppPath().startsWith(this.AppPath)) {
             return;
         }
-        this.needRunInstaller(needRun => {
+        this.needRunInstaller((needRun) => {
             if (needRun) {
                 this.showAlert();
                 this.runInstaller();
@@ -26,7 +26,7 @@ const AppRightsChecker = {
     },
 
     needRunInstaller(callback) {
-        Launcher.statFile(this.AppPath, stat => {
+        Launcher.statFile(this.AppPath, (stat) => {
             const folderIsRoot = stat && stat.uid === 0;
             callback(!folderIsRoot);
         });
@@ -38,15 +38,15 @@ const AppRightsChecker = {
             icon: 'lock',
             header: Locale.appRightsAlert,
             body:
-                Locale.appRightsAlertBody1.replace('{}', `<code>${this.AppPath}</code>`) +
-                '<br/>' +
-                Locale.appRightsAlertBody2 +
-                `: <pre>${command}</pre>`,
+                Locale.appRightsAlertBody1.replace('{}', this.AppPath) +
+                '\n' +
+                Locale.appRightsAlertBody2,
+            pre: command,
             buttons: [
                 { result: 'skip', title: Locale.alertDoNotAsk, error: true },
                 Alerts.buttons.ok
             ],
-            success: result => {
+            success: (result) => {
                 if (result === 'skip') {
                     this.dontAskAnymore();
                 }
@@ -59,7 +59,7 @@ const AppRightsChecker = {
         Launcher.spawn({
             cmd: this.AppPath + '/Contents/Installer/KeeWeb Installer.app/Contents/MacOS/applet',
             complete: () => {
-                this.needRunInstaller(needRun => {
+                this.needRunInstaller((needRun) => {
                     if (this.alert && !needRun) {
                         this.alert.closeWithResult('cancel');
                     }
@@ -69,7 +69,7 @@ const AppRightsChecker = {
     },
 
     dontAskAnymore() {
-        this.needRunInstaller(needRun => {
+        this.needRunInstaller((needRun) => {
             if (needRun) {
                 AppSettingsModel.skipFolderRightsWarning = true;
             }

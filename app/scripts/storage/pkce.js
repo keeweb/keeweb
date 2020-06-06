@@ -11,7 +11,7 @@ function createOAuthSession() {
     const codeVerifierBytes = kdbxweb.ByteUtils.arrayToBuffer(
         kdbxweb.ByteUtils.stringToBytes(codeVerifier)
     );
-    kdbxweb.CryptoEngine.sha256(codeVerifierBytes).then(hash => {
+    kdbxweb.CryptoEngine.sha256(codeVerifierBytes).then((hash) => {
         const codeChallenge = kdbxweb.ByteUtils.bytesToBase64(hash)
             .replace(/\+/g, '-')
             .replace(/\//g, '_')

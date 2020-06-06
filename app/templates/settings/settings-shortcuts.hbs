@@ -1,37 +1,37 @@
 <div class="settings__content">
-    <h1><i class="fa fa-keyboard-o"></i> {{res 'setShTitle'}}</h1>
-    <div><span class="shortcut">{{{cmd}}}A</span> {{res 'or'}} <span class="shortcut">{{{alt}}}A</span> {{res 'setShShowAll'}}</div>
-    <div><span class="shortcut">{{{alt}}}C</span> {{res 'setShColors'}}</div>
-    <div><span class="shortcut">{{{alt}}}D</span> {{res 'setShTrash'}}</div>
-    <div><span class="shortcut">{{{cmd}}}F</span> {{res 'setShFind'}}</div>
+    <h1><i class="fa fa-keyboard-o settings__head-icon"></i> {{res 'setShTitle'}}</h1>
+    <div><span class="shortcut">{{cmd}}A</span> {{res 'or'}} <span class="shortcut">{{alt}}A</span> {{res 'setShShowAll'}}</div>
+    <div><span class="shortcut">{{alt}}C</span> {{res 'setShColors'}}</div>
+    <div><span class="shortcut">{{alt}}D</span> {{res 'setShTrash'}}</div>
+    <div><span class="shortcut">{{cmd}}F</span> {{res 'setShFind'}}</div>
     <div><span class="shortcut">esc</span> {{res 'setShClearSearch'}}</div>
-    <div><span class="shortcut">{{{cmd}}}C</span> {{res 'setShCopyPass'}}</div>
-    <div><span class="shortcut">{{{cmd}}}B</span> {{res 'setShCopyUser'}}</div>
-    <div><span class="shortcut">{{{cmd}}}U</span> {{res 'setShCopyUrl'}}</div>
+    <div><span class="shortcut">{{cmd}}C</span> {{res 'setShCopyPass'}}</div>
+    <div><span class="shortcut">{{cmd}}B</span> {{res 'setShCopyUser'}}</div>
+    <div><span class="shortcut">{{cmd}}U</span> {{res 'setShCopyUrl'}}</div>
     {{#if autoTypeSupported}}
-        <div><span class="shortcut">{{{cmd}}}T</span> {{res 'setShAutoType'}}</div>
+        <div><span class="shortcut">{{cmd}}T</span> {{res 'setShAutoType'}}</div>
     {{/if}}
     <div><span class="shortcut">&uarr;</span> {{res 'setShPrev'}}</div>
     <div><span class="shortcut">&darr;</span> {{res 'setShNext'}}</div>
-    <div><span class="shortcut">{{{alt}}}N</span> {{res 'setShCreateEntry'}}</div>
-    <div><span class="shortcut">{{{cmd}}}O</span> {{res 'setShOpen'}}</div>
-    <div><span class="shortcut">{{{cmd}}}S</span> {{res 'setShSave'}}</div>
-    <div><span class="shortcut">{{{cmd}}}G</span> {{res 'setShGen'}}</div>
-    <div><span class="shortcut">{{{cmd}}},</span> {{res 'setShSet'}}</div>
-    <div><span class="shortcut">{{{cmd}}}L</span> {{res 'setShLock'}}</div>
+    <div><span class="shortcut">{{alt}}N</span> {{res 'setShCreateEntry'}}</div>
+    <div><span class="shortcut">{{cmd}}O</span> {{res 'setShOpen'}}</div>
+    <div><span class="shortcut">{{cmd}}S</span> {{res 'setShSave'}}</div>
+    <div><span class="shortcut">{{cmd}}G</span> {{res 'setShGen'}}</div>
+    <div><span class="shortcut">{{cmd}},</span> {{res 'setShSet'}}</div>
+    <div><span class="shortcut">{{cmd}}L</span> {{res 'setShLock'}}</div>
     {{#if globalShortcuts}}
         <p>{{res 'setShGlobal'}}</p>
         <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
-                     data-shortcut="autoType">{{{globalShortcuts.autoType}}}</button> {{res 'setShAutoTypeGlobal'}}</div>
+                     data-shortcut="autoType">{{globalShortcuts.autoType}}</button> {{res 'setShAutoTypeGlobal'}}</div>
         <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
-                     data-shortcut="copyPassword">{{{globalShortcuts.copyPassword}}}</button> {{res 'setShCopyPassOnly'}}</div>
+                     data-shortcut="copyPassword">{{globalShortcuts.copyPassword}}</button> {{res 'setShCopyPassOnly'}}</div>
         <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
-                     data-shortcut="copyUser">{{{globalShortcuts.copyUser}}}</button> {{res 'setShCopyUser'}}</div>
+                     data-shortcut="copyUser">{{globalShortcuts.copyUser}}</button> {{res 'setShCopyUser'}}</div>
         <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
-                     data-shortcut="copyUrl">{{{globalShortcuts.copyUrl}}}</button> {{res 'setShCopyUrl'}}</div>
+                     data-shortcut="copyUrl">{{globalShortcuts.copyUrl}}</button> {{res 'setShCopyUrl'}}</div>
         <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
-                     data-shortcut="copyOtp">{{{globalShortcuts.copyOtp}}}</button> {{res 'setShCopyOtp'}}</div>
+                     data-shortcut="copyOtp">{{globalShortcuts.copyOtp}}</button> {{res 'setShCopyOtp'}}</div>
         <div><button class="shortcut btn-silent {{#if globalIsLarge}}shortcut-large{{/if}}"
-                     data-shortcut="restoreApp">{{{globalShortcuts.restoreApp}}}</button> {{#res 'setShRestoreApp'}}KeeWeb{{/res}}</div>
+                     data-shortcut="restoreApp">{{globalShortcuts.restoreApp}}</button> {{#res 'setShRestoreApp'}}KeeWeb{{/res}}</div>
     {{/if}}
 </div>

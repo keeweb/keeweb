@@ -70,7 +70,7 @@ class GrpView extends View {
     changeAutoTypeSeq(e) {
         const el = e.target;
         const seq = $.trim(el.value);
-        AutoType.validate(null, seq, err => {
+        AutoType.validate(null, seq, (err) => {
             $(e.target).toggleClass('input--error', !!err);
             if (!err) {
                 this.model.setAutoTypeSeq(seq);

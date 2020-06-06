@@ -1,7 +1,7 @@
 import { DateFormat } from 'util/formatting/date-format';
 import { Locale } from 'util/locale';
 
-const EntryPresenter = function(descField, noColor, activeEntryId) {
+const EntryPresenter = function (descField, noColor, activeEntryId) {
     this.entry = null;
     this.descField = descField;
     this.noColor = noColor || '';
@@ -12,8 +12,11 @@ EntryPresenter.prototype = {
     present(item) {
         if (item.entry) {
             this.entry = item;
-        } else {
+        } else if (item.group) {
             this.group = item;
+        } else if (item.external) {
+            this.entry = item;
+            this.external = true;
         }
         return this;
     },
@@ -68,6 +71,9 @@ EntryPresenter.prototype = {
         if (!this.entry) {
             return '[' + Locale.listGroup + ']';
         }
+        if (this.external) {
+            return this.entry.description;
+        }
         switch (this.descField) {
             case 'website':
                 return this.url || '(' + Locale.listNoWebsite + ')';
@@ -79,7 +85,7 @@ EntryPresenter.prototype = {
                 return this.updated;
             case 'attachments':
                 return (
-                    this.entry.attachments.map(a => a.title).join(', ') ||
+                    this.entry.attachments.map((a) => a.title).join(', ') ||
                     '(' + Locale.listNoAttachments + ')'
                 );
             default:

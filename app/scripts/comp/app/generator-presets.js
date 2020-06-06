@@ -67,16 +67,16 @@ const GeneratorPresets = {
 
     get all() {
         let presets = this.builtIn;
-        presets.forEach(preset => {
+        presets.forEach((preset) => {
             preset.builtIn = true;
         });
         const setting = AppSettingsModel.generatorPresets;
         if (setting) {
             if (setting.user) {
-                presets = presets.concat(setting.user.map(item => ({ ...item })));
+                presets = presets.concat(setting.user.map((item) => ({ ...item })));
             }
             let hasDefault = false;
-            presets.forEach(preset => {
+            presets.forEach((preset) => {
                 if (setting.disabled && setting.disabled[preset.name]) {
                     preset.disabled = true;
                 }
@@ -93,7 +93,7 @@ const GeneratorPresets = {
     },
 
     get enabled() {
-        const allPresets = this.all.filter(preset => !preset.disabled);
+        const allPresets = this.all.filter((preset) => !preset.disabled);
         if (!allPresets.length) {
             allPresets.push(this.defaultPreset);
         }
@@ -110,7 +110,7 @@ const GeneratorPresets = {
 
     add(preset) {
         const setting = this.getOrCreateSetting();
-        if (preset.name && !setting.user.filter(p => p.name === preset.name).length) {
+        if (preset.name && !setting.user.filter((p) => p.name === preset.name).length) {
             setting.user.push(preset);
             this.save(setting);
         }
@@ -118,13 +118,13 @@ const GeneratorPresets = {
 
     remove(name) {
         const setting = this.getOrCreateSetting();
-        setting.user = setting.user.filter(p => p.name !== name);
+        setting.user = setting.user.filter((p) => p.name !== name);
         this.save(setting);
     },
 
     setPreset(name, props) {
         const setting = this.getOrCreateSetting();
-        const preset = setting.user.filter(p => p.name === name)[0];
+        const preset = setting.user.filter((p) => p.name === name)[0];
         if (preset) {
             Object.assign(preset, props);
             this.save(setting);

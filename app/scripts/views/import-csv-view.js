@@ -3,7 +3,6 @@ import { View } from 'framework/views/view';
 import { Scrollable } from 'framework/views/scrollable';
 import template from 'templates/import-csv.hbs';
 import { EntryModel } from 'models/entry-model';
-import { escape } from 'util/fn';
 
 class ImportCsvView extends View {
     parent = '.app__body';
@@ -70,7 +69,7 @@ class ImportCsvView extends View {
         const col = +e.target.dataset.col;
         const field = e.target.value;
 
-        const isBuiltIn = this.knownFields.some(f => f.field === field);
+        const isBuiltIn = this.knownFields.some((f) => f.field === field);
         const mapping = field ? (isBuiltIn ? 'builtin' : 'custom') : 'ignore';
 
         this.fieldMapping[col] = {
@@ -97,7 +96,7 @@ class ImportCsvView extends View {
     guessFieldMapping() {
         const usedFields = {};
 
-        for (const fieldName of this.model.headers.map(f => f.trim())) {
+        for (const fieldName of this.model.headers.map((f) => f.trim())) {
             if (!fieldName || /^(group|grouping)$/i.test(fieldName)) {
                 this.fieldMapping.push({ type: 'ignore' });
                 continue;
@@ -122,12 +121,13 @@ class ImportCsvView extends View {
     fillGroups() {
         this.groups = [];
         for (const file of this.appModel.files) {
-            file.forEachGroup(group => {
-                let title = escape(group.title);
+            file.forEachGroup((group) => {
+                const title = group.title;
+                const spaces = [];
                 for (let parent = group; parent.parentGroup; parent = parent.parentGroup) {
-                    title = '&nbsp;&nbsp;' + title;
+                    spaces.push(' ', ' ');
                 }
-                this.groups.push({ id: group.id, fileId: file.id, title });
+                this.groups.push({ id: group.id, fileId: file.id, spaces, title });
             });
         }
     }

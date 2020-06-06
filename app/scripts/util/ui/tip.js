@@ -2,7 +2,7 @@ import { Events } from 'framework/events';
 import { Features } from 'util/features';
 import { pick } from 'util/fn';
 
-const Tip = function(el, config) {
+const Tip = function (el, config) {
     this.el = el;
     this.title = (config && config.title) || el.attr('title');
     this.placement = (config && config.placement) || el.attr('tip-placement');
@@ -19,7 +19,7 @@ const Tip = function(el, config) {
 
 Tip.enabled = !Features.isMobile;
 
-Tip.prototype.init = function() {
+Tip.prototype.init = function () {
     if (!Tip.enabled) {
         return;
     }
@@ -29,7 +29,7 @@ Tip.prototype.init = function() {
     this.el.click(this.mouseleave);
 };
 
-Tip.prototype.show = function() {
+Tip.prototype.show = function () {
     if ((!Tip.enabled && !this.force) || !this.title) {
         return;
     }
@@ -41,10 +41,7 @@ Tip.prototype.show = function() {
             this.hideTimeout = null;
         }
     }
-    const tipEl = (this.tipEl = $('<div></div>')
-        .addClass('tip')
-        .appendTo('body')
-        .text(this.title));
+    const tipEl = (this.tipEl = $('<div></div>').addClass('tip').appendTo('body').text(this.title));
     const rect = this.el[0].getBoundingClientRect();
     const tipRect = this.tipEl[0].getBoundingClientRect();
     const placement = this.placement || this.getAutoPlacement(rect, tipRect);
@@ -80,7 +77,7 @@ Tip.prototype.show = function() {
     tipEl.css({ top, left });
 };
 
-Tip.prototype.hide = function() {
+Tip.prototype.hide = function () {
     if (this.tipEl) {
         this.tipEl.remove();
         this.tipEl = null;
@@ -88,14 +85,24 @@ Tip.prototype.hide = function() {
     }
 };
 
-Tip.prototype.destroy = function() {
+Tip.prototype.destroy = function () {
     this.hide();
+
     this.el.off('mouseenter', this.mouseenter);
     this.el.off('mouseleave', this.mouseleave);
     this.el.off('click', this.mouseleave);
+
+    if (this.showTimeout) {
+        clearTimeout(this.showTimeout);
+        this.showTimeout = null;
+    }
+    if (this.hideTimeout) {
+        clearTimeout(this.hideTimeout);
+        this.hideTimeout = null;
+    }
 };
 
-Tip.prototype.mouseenter = function() {
+Tip.prototype.mouseenter = function () {
     if (this.showTimeout) {
         return;
     }
@@ -105,7 +112,7 @@ Tip.prototype.mouseenter = function() {
     }, 200);
 };
 
-Tip.prototype.mouseleave = function() {
+Tip.prototype.mouseleave = function () {
     if (this.tipEl) {
         this.tipEl.addClass('tip--hide');
         this.hideTimeout = setTimeout(() => {
@@ -119,7 +126,7 @@ Tip.prototype.mouseleave = function() {
     }
 };
 
-Tip.prototype.getAutoPlacement = function(rect, tipRect) {
+Tip.prototype.getAutoPlacement = function (rect, tipRect) {
     const padding = 20;
     const bodyRect = document.body.getBoundingClientRect();
     const canShowToBottom = bodyRect.bottom - rect.bottom > padding + tipRect.height;
@@ -145,7 +152,7 @@ Tip.prototype.getAutoPlacement = function(rect, tipRect) {
     }
 };
 
-Tip.createTips = function(container) {
+Tip.createTips = function (container) {
     if (!Tip.enabled) {
         return;
     }
@@ -154,7 +161,7 @@ Tip.createTips = function(container) {
     });
 };
 
-Tip.createTip = function(el, options) {
+Tip.createTip = function (el, options) {
     if (!Tip.enabled && (!options || !options.force)) {
         return;
     }
@@ -166,7 +173,7 @@ Tip.createTip = function(el, options) {
     return tip;
 };
 
-Tip.hideTips = function(container) {
+Tip.hideTips = function (container) {
     if (!Tip.enabled || !container) {
         return;
     }
@@ -175,13 +182,13 @@ Tip.hideTips = function(container) {
     });
 };
 
-Tip.hideTip = function(el) {
+Tip.hideTip = function (el) {
     if (el._tip) {
         el._tip.hide();
     }
 };
 
-Tip.updateTip = function(el, props) {
+Tip.updateTip = function (el, props) {
     if (el._tip) {
         el._tip.hide();
         Object.assign(
@@ -191,7 +198,7 @@ Tip.updateTip = function(el, props) {
     }
 };
 
-Tip.destroyTips = function(container) {
+Tip.destroyTips = function (container) {
     $('[data-title]', container).each((ix, el) => {
         if (el._tip) {
             el._tip.destroy();

@@ -93,19 +93,19 @@ class ListView extends View {
                 this.model.activeEntryId
             );
             const columns = {};
-            this.tableColumns.forEach(col => {
+            this.tableColumns.forEach((col) => {
                 if (col.enabled) {
                     columns[col.val] = true;
                 }
             });
             presenter.columns = columns;
             let itemsHtml = '';
-            this.items.forEach(item => {
+            this.items.forEach((item) => {
                 presenter.present(item);
                 itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
             }, this);
             const html = itemsTemplate(
-                { items: itemsHtml, columns: this.tableColumns },
+                { itemsHtml, columns: this.tableColumns },
                 DefaultTemplateOptions
             );
             this.itemsEl.html(html);
@@ -123,8 +123,8 @@ class ListView extends View {
         }
     }
 
-    renderPlainItems(itemsHtml) {
-        return itemsHtml.items;
+    renderPlainItems(data) {
+        return data.itemsHtml;
     }
 
     getItemTemplate() {
@@ -180,13 +180,13 @@ class ListView extends View {
     }
 
     createTemplate() {
-        if (!this.model.settings.templateHelpShown) {
+        if (!this.model.settings.templateHelpShown_) {
             Alerts.yesno({
                 icon: 'sticky-note-o',
                 header: Locale.listAddTemplateHeader,
                 body:
-                    Locale.listAddTemplateBody1.replace('{}', '<i class="fa fa-plus"></i>') +
-                    '<br/>' +
+                    Locale.listAddTemplateBody1.replace('{}', '"+"') +
+                    '\n' +
                     Locale.listAddTemplateBody2.replace('{}', 'Templates'),
                 buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                 success: () => {
@@ -250,7 +250,7 @@ class ListView extends View {
         this.throttleSetViewSizeSetting(size);
     }
 
-    throttleSetViewSizeSetting = throttle(size => {
+    throttleSetViewSizeSetting = throttle((size) => {
         AppSettingsModel.listViewWidth = size;
     }, 1000);
 
@@ -267,9 +267,7 @@ class ListView extends View {
 
     itemDragStart(e) {
         e.stopPropagation();
-        const id = $(e.target)
-            .closest('.list__item')
-            .attr('id');
+        const id = $(e.target).closest('.list__item').attr('id');
         e.dataTransfer.setData('text/entry', id);
         e.dataTransfer.effectAllowed = 'move';
         DragDropInfo.dragObject = this.items.get(id);
@@ -285,7 +283,7 @@ class ListView extends View {
         this.listenTo(view, 'cancel', this.hideOptionsDropdown);
         this.listenTo(view, 'select', this.optionsDropdownSelect);
         const targetElRect = this.$el.find('.list__table-options')[0].getBoundingClientRect();
-        const options = this.tableColumns.map(col => ({
+        const options = this.tableColumns.map((col) => ({
             value: col.val,
             icon: col.enabled ? 'check-square-o' : 'square-o',
             text: StringFormat.capFirst(Locale[col.name])
@@ -308,7 +306,7 @@ class ListView extends View {
     }
 
     optionsDropdownSelect(e) {
-        const col = this.tableColumns.find(c => c.val === e.item);
+        const col = this.tableColumns.find((c) => c.val === e.item);
         col.enabled = !col.enabled;
         e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
         this.render();
@@ -318,7 +316,7 @@ class ListView extends View {
     readTableColumnsEnabled() {
         const tableViewColumns = AppSettingsModel.tableViewColumns;
         if (tableViewColumns && tableViewColumns.length) {
-            this.tableColumns.forEach(col => {
+            this.tableColumns.forEach((col) => {
                 col.enabled = tableViewColumns.indexOf(col.name) >= 0;
             });
         }
@@ -326,8 +324,8 @@ class ListView extends View {
 
     saveTableColumnsEnabled() {
         const tableViewColumns = this.tableColumns
-            .filter(column => column.enabled)
-            .map(column => column.name);
+            .filter((column) => column.enabled)
+            .map((column) => column.name);
         AppSettingsModel.tableViewColumns = tableViewColumns;
     }
 }

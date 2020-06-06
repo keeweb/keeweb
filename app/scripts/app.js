@@ -5,6 +5,7 @@ import { AppRightsChecker } from 'comp/app/app-rights-checker';
 import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
 import { Updater } from 'comp/app/updater';
+import { UsbListener } from 'comp/app/usb-listener';
 import { FeatureTester } from 'comp/browser/feature-tester';
 import { FocusDetector } from 'comp/browser/focus-detector';
 import { IdleTracker } from 'comp/browser/idle-tracker';
@@ -24,6 +25,8 @@ import { KdbxwebInit } from 'util/kdbxweb/kdbxweb-init';
 import { Locale } from 'util/locale';
 import { AppView } from 'views/app-view';
 import 'hbs-helpers';
+import { AutoType } from './auto-type';
+import { Storage } from './storage';
 
 StartProfiler.milestone('loading modules');
 
@@ -40,9 +43,10 @@ ready(() => {
         .then(initModules)
         .then(loadRemoteConfig)
         .then(ensureCanRun)
+        .then(initStorage)
         .then(showApp)
         .then(postInit)
-        .catch(e => {
+        .catch((e) => {
             appModel.appLogger.error('Error starting app', e);
         });
 
@@ -53,10 +57,11 @@ ready(() => {
             );
         }
         return FeatureTester.test()
-            .catch(e => {
+            .catch((e) => {
                 Alerts.error({
                     header: Locale.appSettingsError,
-                    body: Locale.appNotSupportedError + '<br/><br/>' + e,
+                    body: Locale.appNotSupportedError,
+                    pre: e,
                     buttons: [],
                     esc: false,
                     enter: false,
@@ -82,10 +87,10 @@ ready(() => {
 
     function initModules() {
         KeyHandler.init();
-        IdleTracker.init();
         PopupNotifier.init();
         KdbxwebInit.init();
         FocusDetector.init();
+        AutoType.init();
         window.kw = ExportApi;
         return PluginManager.init().then(() => {
             StartProfiler.milestone('initializing modules');
@@ -114,7 +119,7 @@ ready(() => {
                         .then(() => {
                             SettingsManager.setBySettings(appModel.settings);
                         })
-                        .catch(e => {
+                        .catch((e) => {
                             if (!appModel.settings.cacheConfigSettings) {
                                 showSettingsLoadError();
                                 throw e;
@@ -127,6 +132,13 @@ ready(() => {
             });
     }
 
+    function initStorage() {
+        for (const prv of Object.values(Storage)) {
+            prv.init();
+        }
+        StartProfiler.milestone('initializing storage');
+    }
+
     function showApp() {
         return Promise.resolve().then(() => {
             const skipHttpsWarning =
@@ -134,14 +146,14 @@ ready(() => {
             const protocolIsInsecure = ['https:', 'file:', 'app:'].indexOf(location.protocol) < 0;
             const hostIsInsecure = location.hostname !== 'localhost';
             if (protocolIsInsecure && hostIsInsecure && !skipHttpsWarning) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     Alerts.error({
                         header: Locale.appSecWarn,
                         icon: 'user-secret',
                         esc: false,
                         enter: false,
                         click: false,
-                        body: Locale.appSecWarnBody1 + '<br/><br/>' + Locale.appSecWarnBody2,
+                        body: Locale.appSecWarnBody1 + '\n\n' + Locale.appSecWarnBody2,
                         buttons: [{ result: '', title: Locale.appSecWarnBtn, error: true }],
                         complete: () => {
                             showView();
@@ -151,6 +163,7 @@ ready(() => {
                 });
             } else {
                 showView();
+                return new Promise((resolve) => requestAnimationFrame(resolve));
             }
         });
     }
@@ -159,13 +172,14 @@ ready(() => {
         Updater.init();
         SingleInstanceChecker.init();
         AppRightsChecker.init();
-        setTimeout(() => PluginManager.runAutoUpdate(), Timeouts.AutoUpdatePluginsAfterStart);
+        IdleTracker.init();
+        UsbListener.init();
+        setTimeout(() => {
+            PluginManager.runAutoUpdate();
+        }, Timeouts.AutoUpdatePluginsAfterStart);
     }
 
     function showView() {
-        appModel.prepare();
-        StartProfiler.milestone('preparing app model');
-
         new AppView(appModel).render();
         StartProfiler.milestone('first view rendering');
 

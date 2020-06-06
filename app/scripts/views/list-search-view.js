@@ -99,7 +99,7 @@ class ListSearchView extends View {
             { value: '-rank', icon: 'sort-amount-desc', loc: () => Locale.searchRank }
         ];
         this.sortIcons = {};
-        this.sortOptions.forEach(opt => {
+        this.sortOptions.forEach((opt) => {
             this.sortIcons[opt.value] = opt.icon;
         });
         this.advancedSearch = {
@@ -127,6 +127,7 @@ class ListSearchView extends View {
         this.listenTo(Events, 'filter', this.filterChanged);
         this.listenTo(Events, 'set-locale', this.setLocale);
         this.listenTo(Events, 'page-blur', this.pageBlur);
+        this.listenTo(this.model.files, 'change', this.fileListUpdated);
 
         this.once('remove', () => {
             this.removeKeypressHandler();
@@ -134,18 +135,18 @@ class ListSearchView extends View {
     }
 
     setLocale() {
-        this.sortOptions.forEach(opt => {
-            opt.html = opt.loc();
+        this.sortOptions.forEach((opt) => {
+            opt.text = opt.loc();
         });
-        const entryDesc = Features.isMobile
-            ? ''
-            : ' <span class="muted-color">(' +
-              Locale.searchShiftClickOr +
-              ' ' +
-              Shortcuts.altShortcutSymbol(true) +
-              'N)</span>';
         this.createOptions = [
-            { value: 'entry', icon: 'key', html: StringFormat.capFirst(Locale.entry) + entryDesc },
+            {
+                value: 'entry',
+                icon: 'key',
+                text: StringFormat.capFirst(Locale.entry),
+                hint: Features.isMobile
+                    ? null
+                    : `(${Locale.searchShiftClickOr} ${Shortcuts.altShortcutSymbol(true)})`
+            },
             { value: 'group', icon: 'folder', text: StringFormat.capFirst(Locale.group) }
         ];
         if (this.el) {
@@ -160,7 +161,7 @@ class ListSearchView extends View {
     removeKeypressHandler() {}
 
     viewShown() {
-        const keypressHandler = e => this.documentKeyPress(e);
+        const keypressHandler = (e) => this.documentKeyPress(e);
         Events.on('keypress', keypressHandler);
         this.removeKeypressHandler = () => Events.off('keypress', keypressHandler);
     }
@@ -176,7 +177,8 @@ class ListSearchView extends View {
         }
         super.render({
             adv: this.advancedSearch,
-            advEnabled: this.advancedSearchEnabled
+            advEnabled: this.advancedSearchEnabled,
+            canCreate: this.model.canCreateEntries()
         });
         this.inputEl = this.$el.find('.list__search-field');
         if (searchVal) {
@@ -335,7 +337,7 @@ class ListSearchView extends View {
         view.isSort = true;
         this.listenTo(view, 'cancel', this.hideSearchOptions);
         this.listenTo(view, 'select', this.sortDropdownSelect);
-        this.sortOptions.forEach(function(opt) {
+        this.sortOptions.forEach(function (opt) {
             opt.active = this.model.sort === opt.value;
         }, this);
         view.render({
@@ -375,7 +377,7 @@ class ListSearchView extends View {
         const hasMultipleFiles = this.model.files.length > 1;
         this.entryTemplates = {};
         const options = [];
-        entryTemplates.forEach(tmpl => {
+        entryTemplates.forEach((tmpl) => {
             const id = 'tmpl:' + tmpl.entry.id;
             options.push({
                 value: id,
@@ -420,7 +422,11 @@ class ListSearchView extends View {
     }
 
     addArrow(str) {
-        return str.replace('{}', '&rarr;');
+        return str.replace('{}', '→');
+    }
+
+    fileListUpdated() {
+        this.render();
     }
 }
 

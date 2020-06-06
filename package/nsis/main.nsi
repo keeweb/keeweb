@@ -2,6 +2,11 @@
 !include package\nsis\includes.nsh
 !include package\nsis\check-running.nsh
 
+!define MUI_FINISHPAGE_SHOWREADME ""
+!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "Create a Shortcut on Desktop"
+!define MUI_FINISHPAGE_SHOWREADME_FUNCTION FinishPageCheckboxCheckedAction
+
 !insertmacro MUI_PAGE_WELCOME
 #!insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_DIRECTORY
@@ -11,17 +16,26 @@
 !insertmacro MUI_LANGUAGE "English"
 
 Function .onInit
-  ${If} ${RunningX64}
-    ${If} ${arch} == "x64"
-      SetRegView 64
-      StrCpy $InstDir "$PROGRAMFILES64\${PRODUCT_NAME}"
-    ${Else}
-      MessageBox MB_ICONSTOP|MB_OK "Please use 64-bit installer on 64-bit system"
+  ${If} ${IsNativeAMD64}
+    ${If} ${arch} != "x64"
+      MessageBox MB_ICONSTOP|MB_OK "Please use a 64-bit installer on a 64-bit system"
       Quit
     ${EndIf}
-  ${Else}
-    ${If} ${arch} == "x64"
-      MessageBox MB_ICONSTOP|MB_OK "Please use 32-bit installer on 32-bit system"
+    SetRegView 64
+    StrCpy $InstDir "$PROGRAMFILES64\${PRODUCT_NAME}"
+  ${EndIf}
+
+  ${If} ${IsNativeARM64}
+    ${If} ${arch} != "arm64"
+      MessageBox MB_ICONSTOP|MB_OK "Please use an ARM64 installer on an ARM64 system"
+      Quit
+    ${EndIf}
+    StrCpy $InstDir "$PROGRAMFILES64\${PRODUCT_NAME}"
+  ${EndIf}
+
+  ${If} ${IsNativeIA32}
+    ${If} ${arch} != "ia32"
+      MessageBox MB_ICONSTOP|MB_OK "Please use a 32-bit installer on a 32-bit system"
       Quit
     ${EndIf}
   ${EndIf}
@@ -39,6 +53,10 @@ Function .onInit
   ${EndIf}
 
   !insertmacro MULTIUSER_INIT
+FunctionEnd
+
+Function FinishPageCheckboxCheckedAction
+  CreateShortCut "$DESKTOP\KeeWeb.lnk" "$INSTDIR\${PRODUCT_EXE}"
 FunctionEnd
 
 Section "MainSection" SEC01
@@ -69,7 +87,6 @@ Section "MainSection" SEC01
   RMDir /r "$INSTDIR\resources\app"
   CreateDirectory "$SMPROGRAMS\KeeWeb"
   CreateShortCut "$SMPROGRAMS\KeeWeb\KeeWeb.lnk" "$INSTDIR\${PRODUCT_EXE}"
-  CreateShortCut "$DESKTOP\KeeWeb.lnk" "$INSTDIR\${PRODUCT_EXE}"
 
   !insertmacro APP_ASSOCIATE "kdbx" "kdbxfile" "KeePass Password Database" \
     "$INSTDIR\${PRODUCT_EXE},0" "Open with KeeWeb" "$INSTDIR\${PRODUCT_EXE} $\"%1$\""

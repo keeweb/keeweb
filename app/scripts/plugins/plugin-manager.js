@@ -21,7 +21,7 @@ class PluginManager extends Model {
 
     init() {
         const ts = logger.ts();
-        return SettingsStore.load('plugins').then(state => {
+        return SettingsStore.load('plugins').then((state) => {
             if (!state) {
                 return;
             }
@@ -32,10 +32,10 @@ class PluginManager extends Model {
             if (!state || !state.plugins || !state.plugins.length) {
                 return;
             }
-            return PluginGallery.getCachedGallery().then(gallery => {
-                const promises = state.plugins.map(plugin => this.loadPlugin(plugin, gallery));
-                return Promise.all(promises).then(loadedPlugins => {
-                    this.plugins.push(...loadedPlugins.filter(plugin => plugin));
+            return PluginGallery.getCachedGallery().then((gallery) => {
+                const promises = state.plugins.map((plugin) => this.loadPlugin(plugin, gallery));
+                return Promise.all(promises).then((loadedPlugins) => {
+                    this.plugins.push(...loadedPlugins.filter((plugin) => plugin));
                     logger.info(`Loaded ${this.plugins.length} plugins`, logger.ts(ts));
                 });
             });
@@ -45,7 +45,7 @@ class PluginManager extends Model {
     install(url, expectedManifest, skipSignatureValidation) {
         this.emit('change');
         return Plugin.loadFromUrl(url, expectedManifest)
-            .then(plugin => {
+            .then((plugin) => {
                 return this.uninstall(plugin.id).then(() => {
                     if (skipSignatureValidation) {
                         plugin.skipSignatureValidation = true;
@@ -57,14 +57,14 @@ class PluginManager extends Model {
                     });
                 });
             })
-            .catch(e => {
+            .catch((e) => {
                 this.emit('change');
                 throw e;
             });
     }
 
     installIfNew(url, expectedManifest, skipSignatureValidation) {
-        const plugin = this.plugins.find(p => p.url === url);
+        const plugin = this.plugins.find((p) => p.url === url);
         if (plugin && plugin.status !== 'invalid') {
             return Promise.resolve();
         }
@@ -123,19 +123,19 @@ class PluginManager extends Model {
         const url = oldPlugin.url;
         this.emit('change');
         return Plugin.loadFromUrl(url)
-            .then(newPlugin => {
+            .then((newPlugin) => {
                 return oldPlugin
                     .update(newPlugin)
                     .then(() => {
                         this.emit('change');
                         this.saveState();
                     })
-                    .catch(e => {
+                    .catch((e) => {
                         this.emit('change');
                         throw e;
                     });
             })
-            .catch(e => {
+            .catch((e) => {
                 this.emit('change');
                 throw e;
             });
@@ -152,7 +152,7 @@ class PluginManager extends Model {
     }
 
     runAutoUpdate() {
-        const queue = this.plugins.filter(p => p.autoUpdate).map(p => p.id);
+        const queue = this.plugins.filter((p) => p.autoUpdate).map((p) => p.id);
         if (!queue.length) {
             return Promise.resolve();
         }
@@ -172,9 +172,7 @@ class PluginManager extends Model {
         const updateNext = () => {
             const pluginId = queue.shift();
             if (pluginId) {
-                return this.update(pluginId)
-                    .catch(noop)
-                    .then(updateNext);
+                return this.update(pluginId).catch(noop).then(updateNext);
             }
         };
         return updateNext();
@@ -189,7 +187,7 @@ class PluginManager extends Model {
         let enabled = desc.enabled;
         if (enabled) {
             const galleryPlugin = gallery
-                ? gallery.plugins.find(pl => pl.manifest.name === desc.manifest.name)
+                ? gallery.plugins.find((pl) => pl.manifest.name === desc.manifest.name)
                 : null;
             const expectedPublicKeys = galleryPlugin
                 ? [galleryPlugin.manifest.publicKey]
@@ -206,7 +204,7 @@ class PluginManager extends Model {
         SettingsStore.save('plugins', {
             autoUpdateAppVersion: this.autoUpdateAppVersion,
             autoUpdateDate: this.autoUpdateDate,
-            plugins: this.plugins.map(plugin => ({
+            plugins: this.plugins.map((plugin) => ({
                 manifest: plugin.manifest,
                 url: plugin.url,
                 enabled: plugin.status === 'active',
