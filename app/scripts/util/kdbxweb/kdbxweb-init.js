@@ -1,8 +1,8 @@
 import kdbxweb from 'kdbxweb';
 import { Logger } from 'util/logger';
 import { Features } from 'util/features';
-import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { NativeModules } from 'comp/launcher/native-modules';
 
 const logger = new Logger('argon2');
 
@@ -29,36 +29,69 @@ const KdbxwebInit = {
         if (!global.WebAssembly) {
             return Promise.reject('WebAssembly is not supported');
         }
-        if (Launcher && AppSettingsModel.nativeArgon2) {
-            const ts = logger.ts();
-            const argon2 = Launcher.reqNative('argon2');
-            logger.debug('Native argon2 runtime loaded (main thread)', logger.ts(ts));
+        if (Features.isDesktop && AppSettingsModel.nativeArgon2) {
+            logger.debug('Using native argon2');
             this.runtimeModule = {
                 hash(args) {
-                    return new Promise((resolve, reject) => {
-                        const ts = logger.ts();
-                        argon2.hash(
-                            Buffer.from(args.password),
-                            Buffer.from(args.salt),
-                            {
-                                type: args.type,
-                                version: args.version,
-                                hashLength: args.length,
-                                saltLength: args.salt.length,
-                                timeCost: args.iterations,
-                                parallelism: args.parallelism,
-                                memoryCost: args.memory
-                            },
-                            (err, res) => {
-                                if (err) {
-                                    logger.error('Argon2 error', err);
-                                    return reject(err);
-                                }
-                                logger.debug('Argon2 hash calculated', logger.ts(ts));
-                                resolve(res);
-                            }
-                        );
-                    });
+                    const ts = logger.ts();
+
+                    const password = makeXoredValue(args.password);
+                    const salt = makeXoredValue(args.salt);
+
+                    return NativeModules.argon2(password, salt, {
+                        type: args.type,
+                        version: args.version,
+                        hashLength: args.length,
+                        saltLength: args.salt.length,
+                        timeCost: args.iterations,
+                        parallelism: args.parallelism,
+                        memoryCost: args.memory
+                    })
+                        .then((res) => {
+                            password.data.fill(0);
+                            salt.data.fill(0);
+
+                            logger.debug('Argon2 hash calculated', logger.ts(ts));
+
+                            return readXoredValue(res);
+                        })
+                        .catch((err) => {
+                            password.data.fill(0);
+                            salt.data.fill(0);
+
+                            logger.error('Argon2 error', err);
+                            throw err;
+                        });
+
+                    function makeXoredValue(val) {
+                        const data = Buffer.from(val);
+                        const random = Buffer.from(kdbxweb.Random.getBytes(data.length));
+
+                        for (let i = 0; i < data.length; i++) {
+                            data[i] ^= random[i];
+                        }
+
+                        const result = { data: [...data], random: [...random] };
+
+                        data.fill(0);
+                        random.fill(0);
+
+                        return result;
+                    }
+
+                    function readXoredValue(val) {
+                        const data = Buffer.from(val.data);
+                        const random = Buffer.from(val.random);
+
+                        for (let i = 0; i < data.length; i++) {
+                            data[i] ^= random[i];
+                        }
+
+                        val.data.fill(0);
+                        val.random.fill(0);
+
+                        return data;
+                    }
                 }
             };
             return Promise.resolve(this.runtimeModule);

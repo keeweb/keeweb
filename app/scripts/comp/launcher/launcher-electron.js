@@ -26,9 +26,6 @@ const Launcher = {
     remReq(mod) {
         return this.electron().remote.require(mod);
     },
-    reqNative(mod) {
-        return this.electron().remote.app.reqNative(mod);
-    },
     openLink(href) {
         if (/^(http|https|ftp|sftp|mailto):/i.test(href)) {
             this.electron().shell.openExternal(href);

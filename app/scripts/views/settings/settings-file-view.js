@@ -724,7 +724,7 @@ class SettingsFileView extends View {
         if (!Launcher || !AppSettingsModel.enableUsb || !AppSettingsModel.yubiKeyShowChalResp) {
             return;
         }
-        if (!UsbListener.attachedYubiKeys.length) {
+        if (!UsbListener.attachedYubiKeys) {
             if (this.yubiKeys.length) {
                 this.yubiKeys = [];
                 this.render();
@@ -738,7 +738,7 @@ class SettingsFileView extends View {
             this.render();
             if (
                 userInitiated &&
-                UsbListener.attachedYubiKeys.length &&
+                UsbListener.attachedYubiKeys &&
                 !yubiKeys.length &&
                 Features.isMac
             ) {

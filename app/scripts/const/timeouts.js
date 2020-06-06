@@ -15,7 +15,8 @@ const Timeouts = {
     DefaultHttpRequest: 60000,
     ExternalDeviceReconnect: 3000,
     ExternalDeviceAfterReconnect: 1000,
-    FieldLabelDoubleClick: 300
+    FieldLabelDoubleClick: 300,
+    NativeModuleHostRestartTime: 3000
 };
 
 export { Timeouts };

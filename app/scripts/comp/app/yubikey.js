@@ -1,5 +1,6 @@
 import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
+import { NativeModules } from 'comp/launcher/native-modules';
 import { Logger } from 'util/logger';
 import { UsbListener } from 'comp/app/usb-listener';
 import { AppSettingsModel } from 'models/app-settings-model';
@@ -13,13 +14,6 @@ const YubiKey = {
     ykmanStatus: undefined,
     process: null,
     aborted: false,
-
-    get ykChalResp() {
-        if (!this._ykChalResp) {
-            this._ykChalResp = Launcher.reqNative('yubikey-chalresp');
-        }
-        return this._ykChalResp;
-    },
 
     cmd() {
         if (this._cmd) {
@@ -70,21 +64,20 @@ const YubiKey = {
     },
 
     list(callback) {
-        this.ykChalResp.getYubiKeys({}, (err, yubiKeys) => {
-            if (err) {
-                return callback(err);
-            }
-            yubiKeys = yubiKeys.map(({ serial, vid, pid, version, slots }) => {
-                return {
-                    vid,
-                    pid,
-                    serial,
-                    slots,
-                    fullName: this.getKeyFullName(pid, version, serial)
-                };
-            });
-            callback(null, yubiKeys);
-        });
+        NativeModules.getYubiKeys({})
+            .then((yubiKeys) => {
+                yubiKeys = yubiKeys.map(({ serial, vid, pid, version, slots }) => {
+                    return {
+                        vid,
+                        pid,
+                        serial,
+                        slots,
+                        fullName: this.getKeyFullName(pid, version, serial)
+                    };
+                });
+                callback(null, yubiKeys);
+            })
+            .catch(callback);
     },
 
     getKeyFullName(pid, version, serial) {
@@ -113,7 +106,7 @@ const YubiKey = {
 
         logger.info('Listing YubiKeys');
 
-        if (UsbListener.attachedYubiKeys.length === 0) {
+        if (!UsbListener.attachedYubiKeys) {
             return callback(null, []);
         }
 
@@ -171,9 +164,9 @@ const YubiKey = {
         logger.info('Repairing a stuck YubiKey');
 
         let openTimeout;
-        const countYubiKeys = UsbListener.attachedYubiKeys.length;
+        const countYubiKeys = UsbListener.attachedYubiKeys;
         const onDevicesChangedDuringRepair = () => {
-            if (UsbListener.attachedYubiKeys.length === countYubiKeys) {
+            if (UsbListener.attachedYubiKeys === countYubiKeys) {
                 logger.info('YubiKey was reconnected');
                 Events.off('usb-devices-changed', onDevicesChangedDuringRepair);
                 clearTimeout(openTimeout);
@@ -274,22 +267,24 @@ const YubiKey = {
         const paddedChallenge = Buffer.alloc(YubiKeyChallengeSize, padLen);
         challenge.copy(paddedChallenge);
 
-        this.ykChalResp.challengeResponse(yubiKey, paddedChallenge, slot, (err, response) => {
-            if (err) {
-                if (err.code === this.ykChalResp.YK_ENOKEY) {
-                    err.noKey = true;
+        NativeModules.yubiKeyChallengeResponse(
+            yubiKey,
+            [...paddedChallenge],
+            slot,
+            (err, result) => {
+                if (result) {
+                    result = Buffer.from(result);
                 }
-                if (err.code === this.ykChalResp.YK_ETIMEOUT) {
-                    err.timeout = true;
+                if (err) {
+                    err.ykError = true;
                 }
-                return callback(err);
+                return callback(err, result);
             }
-            callback(null, response);
-        });
+        );
     },
 
     cancelChalResp() {
-        this.ykChalResp.cancelChallengeResponse();
+        NativeModules.yubiKeyCancelChallengeResponse();
     }
 };
 

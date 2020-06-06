@@ -1,7 +1,6 @@
 const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { EventEmitter } = require('events');
 
 let perfTimestamps = global.perfTimestamps;
 perfTimestamps.push({ name: 'loading app requires', ts: process.hrtime() });
@@ -16,7 +15,6 @@ let restartPending = false;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
 let mainWindowMaximized = false;
-let usbBinding = null;
 
 const windowPositionFileName = 'window-position.json';
 const portableConfigFileName = 'keeweb-portable.json';
@@ -187,10 +185,11 @@ app.setHookBeforeQuitEvent = (hooked) => {
     app.hookBeforeQuitEvent = !!hooked;
 };
 app.setGlobalShortcuts = setGlobalShortcuts;
-app.reqNative = reqNative;
 app.showAndFocusMainWindow = showAndFocusMainWindow;
 app.loadConfig = loadConfig;
 app.saveConfig = saveConfig;
+app.getAppMainRoot = getAppMainRoot;
+app.getAppContentRoot = getAppContentRoot;
 
 function setSystemAppearance() {
     if (process.platform === 'darwin') {
@@ -402,7 +401,6 @@ function mainWindowClosing() {
 }
 
 function mainWindowClosed() {
-    usbBinding?.removeAllListeners();
     app.removeAllListeners('remote-app-event');
 }
 
@@ -567,25 +565,13 @@ function setUserDataPaths() {
 
     perfTimestamps?.push({ name: 'portable check', ts: process.hrtime() });
 
-    // eslint-disable-next-line no-console
-    console.log('Is portable:', isPortable);
-
     if (isPortable) {
         const portableConfigDir = path.dirname(execPath);
         const portableConfigPath = path.join(portableConfigDir, portableConfigFileName);
 
-        // eslint-disable-next-line no-console
-        console.log('Portable config path:', portableConfigPath);
-
         if (fs.existsSync(portableConfigPath)) {
-            // eslint-disable-next-line no-console
-            console.log('Portable config path exists');
-
             const portableConfig = JSON.parse(fs.readFileSync(portableConfigPath, 'utf8'));
             const portableUserDataDir = path.resolve(portableConfigDir, portableConfig.userDataDir);
-
-            // eslint-disable-next-line no-console
-            console.log('Portable user data dir:', portableUserDataDir);
 
             if (!fs.existsSync(portableUserDataDir)) {
                 fs.mkdirSync(portableUserDataDir);
@@ -593,9 +579,6 @@ function setUserDataPaths() {
 
             app.setPath('userData', portableUserDataDir);
             usingPortableUserDataDir = true;
-        } else {
-            // eslint-disable-next-line no-console
-            console.log(`Portable config path doesn't exist`);
         }
     }
 
@@ -743,55 +726,25 @@ function reportStartProfile() {
     emitRemoteEvent('start-profile', startProfile);
 }
 
+function getAppMainRoot() {
+    if (isDev) {
+        return __dirname;
+    } else {
+        return process.mainModule.path;
+    }
+}
+
+function getAppContentRoot() {
+    return __dirname;
+}
+
 function reqNative(mod) {
     const fileName = `${mod}-${process.platform}-${process.arch}.node`;
 
     const modulePath = `../node_modules/@keeweb/keeweb-native-modules/${fileName}`;
-    let fullPath;
+    const fullPath = path.join(getAppMainRoot(), modulePath);
 
-    if (isDev) {
-        fullPath = path.join(__dirname, modulePath);
-    } else {
-        const mainAsarPath = process.mainModule.path;
-        fullPath = path.join(mainAsarPath, modulePath);
-
-        // Currently native modules can't be updated
-        // const latestAsarPath = __dirname;
-        //
-        // fullPath = path.join(latestAsarPath, modulePath);
-        //
-        // if (!fs.existsSync(fullPath)) {
-        //     fullPath = path.join(mainAsarPath, modulePath);
-        // }
-    }
-
-    const binding = require(fullPath);
-
-    if (mod === 'usb') {
-        usbBinding = initUsb(binding);
-    }
-
-    return binding;
-}
-
-function initUsb(binding) {
-    Object.keys(EventEmitter.prototype).forEach((key) => {
-        binding[key] = EventEmitter.prototype[key];
-    });
-
-    binding.on('newListener', () => {
-        if (binding.listenerCount('attach') === 0 && binding.listenerCount('detach') === 0) {
-            binding._enableHotplugEvents();
-        }
-    });
-
-    binding.on('removeListener', () => {
-        if (binding.listenerCount('attach') === 0 && binding.listenerCount('detach') === 0) {
-            binding._disableHotplugEvents();
-        }
-    });
-
-    return binding;
+    return require(fullPath);
 }
 
 function loadSettingsEncryptionKey() {

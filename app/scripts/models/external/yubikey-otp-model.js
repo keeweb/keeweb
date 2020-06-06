@@ -19,7 +19,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
     }
 
     onUsbDevicesChanged = () => {
-        if (UsbListener.attachedYubiKeys.length === 0) {
+        if (UsbListener.attachedYubiKeys === 0) {
             this.emit('ejected');
         }
     };

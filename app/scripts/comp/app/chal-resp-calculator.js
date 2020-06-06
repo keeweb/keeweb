@@ -41,6 +41,7 @@ const ChalRespCalculator = {
                         complete() {
                             const err = new Error(Locale.yubiKeyDisabledErrorHeader);
                             err.userCanceled = true;
+                            err.ykError = true;
 
                             reject(err);
                         }
@@ -158,6 +159,7 @@ const ChalRespCalculator = {
 
                 const err = new Error('User canceled the YubiKey no key prompt');
                 err.userCanceled = true;
+                err.ykError = true;
 
                 return callback(err);
             }
@@ -177,6 +179,7 @@ const ChalRespCalculator = {
 
                 const err = new Error('User canceled the YubiKey touch prompt');
                 err.userCanceled = true;
+                err.ykError = true;
 
                 return callback(err);
             }

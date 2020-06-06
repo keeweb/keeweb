@@ -532,7 +532,7 @@ class AppModel {
                 params,
                 (err, file) => {
                     if (err) {
-                        if (err.name === 'KdbxError' || err.userCanceled) {
+                        if (err.name === 'KdbxError' || err.ykError) {
                             return callback(err);
                         }
                         logger.info(
@@ -558,7 +558,7 @@ class AppModel {
                         setTimeout(() => this.syncFile(file), 0);
                         callback(err);
                     } else {
-                        if (err.name === 'KdbxError' || err.userCanceled) {
+                        if (err.name === 'KdbxError' || err.ykError) {
                             return callback(err);
                         }
                         logger.info(
@@ -1239,13 +1239,13 @@ class AppModel {
     usbDevicesChanged() {
         const attachedYubiKeysCount = this.attachedYubiKeysCount;
 
-        this.attachedYubiKeysCount = UsbListener.attachedYubiKeys.length;
+        this.attachedYubiKeysCount = UsbListener.attachedYubiKeys;
 
         if (!this.settings.yubiKeyAutoOpen) {
             return;
         }
 
-        const isNewYubiKey = UsbListener.attachedYubiKeys.length > attachedYubiKeysCount;
+        const isNewYubiKey = UsbListener.attachedYubiKeys > attachedYubiKeysCount;
         const hasOpenFiles = this.files.some((file) => file.active && !file.external);
 
         if (isNewYubiKey && hasOpenFiles && !this.openingOtpDevice) {
