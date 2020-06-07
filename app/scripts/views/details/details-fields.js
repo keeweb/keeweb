@@ -205,7 +205,7 @@ function createDetailsFields(detailsView) {
             if (field === 'otp' && model.otpGenerator) {
                 if (!otpEntry) {
                     fieldViews.push(
-                        FieldViewOtp({
+                        new FieldViewOtp({
                             name: '$' + field,
                             title: field,
                             value() {

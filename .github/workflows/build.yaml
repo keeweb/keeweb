@@ -534,3 +534,11 @@ jobs:
       - name: Sync the website
         if: ${{ github.repository == 'keeweb/keeweb' }}
         run: gsutil -m rsync -r -d -x "^\." gh-pages gs://app.keeweb.info/
+      - name: Purge CloudFlare cache
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/dbda8e7e454d23edb08d4bc3b3f6f872/purge_cache" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}'
