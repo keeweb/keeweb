@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.15.1 (2020-06-06)
+##### v1.15.1 (2020-06-07)
 `-` fix #1528: OTP generation for stored values  
 
 ##### v1.15.0 (2020-06-06)
