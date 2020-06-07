@@ -448,8 +448,8 @@ class DetailsView extends View {
             return;
         }
 
+        this.model.initOtpGenerator();
         if (this.model.external) {
-            this.model.initOtpGenerator();
             return;
         }
 
@@ -757,6 +757,7 @@ class DetailsView extends View {
 
     entryUpdated(skipRender) {
         Events.emit('entry-updated', { entry: this.model });
+        this.initOtp();
         if (!skipRender) {
             this.render();
         }
