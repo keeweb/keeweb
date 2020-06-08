@@ -574,7 +574,7 @@ function setUserDataPaths() {
             const portableUserDataDir = path.resolve(portableConfigDir, portableConfig.userDataDir);
 
             if (!fs.existsSync(portableUserDataDir)) {
-                fs.mkdirSync(portableUserDataDir);
+                fs.mkdirSync(portableUserDataDir, { recursive: true });
             }
 
             app.setPath('userData', portableUserDataDir);

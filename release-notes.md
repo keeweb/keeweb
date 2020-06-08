@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.15.2 (TBD)
+`-` fix #1530: recursive creation of the portable directory  
+
 ##### v1.15.1 (2020-06-07)
 `-` fix #1528: OTP generation for stored values  
 
