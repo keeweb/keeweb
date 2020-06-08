@@ -3,6 +3,12 @@ const path = require('path');
 const fs = require('fs');
 
 let perfTimestamps = global.perfTimestamps;
+global.perfTimestamps.push = (item) => {
+    // eslint-disable-next-line no-console
+    console.log('startup', item.name);
+    Array.prototype.push.call(global.perfTimestamps, item);
+};
+
 perfTimestamps.push({ name: 'loading app requires', ts: process.hrtime() });
 
 const app = electron.app;
