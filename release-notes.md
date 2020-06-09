@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.15.2 (TBD)
+##### v1.15.2 (2020-06-09)
 `-` fix #1530: recursive creation of the portable directory  
 `-` fix #1530: running from directories with hash symbols  
 `+` possibility to debug startup with `--start-logging`  
