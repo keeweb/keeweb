@@ -24,8 +24,8 @@ const portableConfigFileName = 'keeweb-portable.json';
 const isDev = !__dirname.endsWith('.asar');
 
 const startupLogging =
-    process.argv.some((arg) => arg.startsWith('--start-logging')) ||
-    process.env.KEEWEB_START_LOGGING === '1';
+    process.argv.some((arg) => arg.startsWith('--startup-logging')) ||
+    process.env.KEEWEB_STARTUP_LOGGING === '1';
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {

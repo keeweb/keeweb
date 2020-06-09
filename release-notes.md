@@ -3,6 +3,7 @@ Release notes
 ##### v1.15.2 (TBD)
 `-` fix #1530: recursive creation of the portable directory  
 `-` fix #1530: running from directories with hash symbols  
+`+` possibility to debug startup with `--start-logging`  
 
 ##### v1.15.1 (2020-06-07)
 `-` fix #1528: OTP generation for stored values  
