@@ -1,6 +1,7 @@
 const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
+const url = require('url');
 
 let perfTimestamps = global.perfTimestamps;
 perfTimestamps.push({ name: 'loading app requires', ts: process.hrtime() });
@@ -36,7 +37,9 @@ setUserDataPaths();
 let openFile = process.argv.filter((arg) => /\.kdbx$/i.test(arg))[0];
 
 const htmlPath =
-    (isDev && process.env.KEEWEB_HTML_PATH) || 'file://' + path.join(__dirname, 'index.html');
+    (isDev && process.env.KEEWEB_HTML_PATH) ||
+    url.format({ protocol: 'file', slashes: true, pathname: path.join(__dirname, 'index.html') });
+
 const showDevToolsOnStart =
     process.argv.some((arg) => arg.startsWith('--devtools')) ||
     process.env.KEEWEB_OPEN_DEVTOOLS === '1';
