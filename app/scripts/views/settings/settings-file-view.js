@@ -105,7 +105,7 @@ class SettingsFileView extends View {
             for (const yk of this.yubiKeys) {
                 for (const slot of yk.slots.filter((s) => s.valid)) {
                     yubiKeys.push({
-                        value: `${yk.serial}:${slot}`,
+                        value: `${yk.serial}:${slot.number}`,
                         fullName: yk.fullName,
                         vid: yk.vid,
                         pid: yk.pid,
