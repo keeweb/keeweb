@@ -4,7 +4,8 @@ const fs = require('fs');
 const url = require('url');
 
 let perfTimestamps = global.perfTimestamps;
-perfTimestamps.push({ name: 'loading app requires', ts: process.hrtime() });
+
+perfTimestamps?.push({ name: 'loading app requires', ts: process.hrtime() });
 
 const app = electron.app;
 
@@ -22,12 +23,16 @@ const portableConfigFileName = 'keeweb-portable.json';
 
 const isDev = !__dirname.endsWith('.asar');
 
+const startupLogging =
+    process.argv.some((arg) => arg.startsWith('--start-logging')) ||
+    process.env.KEEWEB_START_LOGGING === '1';
+
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
     app.quit();
 }
 
-perfTimestamps?.push({ name: 'single instance lock', ts: process.hrtime() });
+logProgress('single instance lock');
 
 let usingPortableUserDataDir = false;
 let execPath;
@@ -62,7 +67,7 @@ const themeBgColors = {
 };
 const defaultBgColor = '#282C34';
 
-perfTimestamps?.push({ name: 'defining args', ts: process.hrtime() });
+logProgress('defining args');
 
 setEnv();
 setDevAppIcon();
@@ -72,11 +77,11 @@ let appSettings;
 
 const settingsPromise = loadSettingsEncryptionKey().then((key) => {
     configEncryptionKey = key;
-    perfTimestamps?.push({ name: 'loading settings key', ts: process.hrtime() });
+    logProgress('loading settings key');
 
     return loadConfig('app-settings').then((settings) => {
         appSettings = settings ? JSON.parse(settings) : {};
-        perfTimestamps?.push({ name: 'reading app settings', ts: process.hrtime() });
+        logProgress('reading app settings');
     });
 });
 
@@ -91,7 +96,7 @@ app.on('window-all-closed', () => {
     }
 });
 app.on('ready', () => {
-    perfTimestamps?.push({ name: 'app on ready', ts: process.hrtime() });
+    logProgress('app on ready');
     appReady = true;
 
     settingsPromise
@@ -194,13 +199,21 @@ app.saveConfig = saveConfig;
 app.getAppMainRoot = getAppMainRoot;
 app.getAppContentRoot = getAppContentRoot;
 
+function logProgress(name) {
+    perfTimestamps?.push({ name, ts: process.hrtime() });
+    if (startupLogging) {
+        // eslint-disable-next-line no-console
+        console.log('[startup]', name);
+    }
+}
+
 function setSystemAppearance() {
     if (process.platform === 'darwin') {
         if (electron.nativeTheme.shouldUseDarkColors) {
             electron.systemPreferences.appLevelAppearance = 'dark';
         }
     }
-    perfTimestamps?.push({ name: 'setting system appearance', ts: process.hrtime() });
+    logProgress('setting system appearance');
 }
 
 function getDefaultTheme() {
@@ -229,14 +242,14 @@ function createMainWindow() {
         windowOptions.icon = path.join(__dirname, 'icon.png');
     }
     mainWindow = new electron.BrowserWindow(windowOptions);
-    perfTimestamps?.push({ name: 'creating main window', ts: process.hrtime() });
+    logProgress('creating main window');
 
     setMenu();
-    perfTimestamps?.push({ name: 'setting menu', ts: process.hrtime() });
+    logProgress('setting menu');
 
     mainWindow.loadURL(htmlPath);
     mainWindow.once('ready-to-show', () => {
-        perfTimestamps?.push({ name: 'main window ready', ts: process.hrtime() });
+        logProgress('main window ready');
         if (startMinimized) {
             emitRemoteEvent('launcher-started-minimized');
         } else {
@@ -244,7 +257,7 @@ function createMainWindow() {
         }
         ready = true;
         notifyOpenFile();
-        perfTimestamps?.push({ name: 'main window shown', ts: process.hrtime() });
+        logProgress('main window shown');
         reportStartProfile();
 
         if (showDevToolsOnStart) {
@@ -281,10 +294,10 @@ function createMainWindow() {
     mainWindow.on('session-end', () => {
         emitRemoteEvent('os-lock');
     });
-    perfTimestamps?.push({ name: 'configuring main window', ts: process.hrtime() });
+    logProgress('configuring main window');
 
     restoreMainWindowPosition();
-    perfTimestamps?.push({ name: 'restoring main window position', ts: process.hrtime() });
+    logProgress('restoring main window position');
 }
 
 function restoreMainWindow() {
@@ -526,7 +539,7 @@ function setGlobalShortcuts(appSettings) {
             } catch (e) {}
         }
     }
-    perfTimestamps?.push({ name: 'setting global shortcuts', ts: process.hrtime() });
+    logProgress('setting global shortcuts');
 }
 
 function subscribePowerEvents() {
@@ -539,7 +552,7 @@ function subscribePowerEvents() {
     electron.powerMonitor.on('lock-screen', () => {
         emitRemoteEvent('os-lock');
     });
-    perfTimestamps?.push({ name: 'subscribing to power events', ts: process.hrtime() });
+    logProgress('subscribing to power events');
 }
 
 function setUserDataPaths() {
@@ -566,7 +579,7 @@ function setUserDataPaths() {
         isPortable = !!JSON.parse(process.env.KEEWEB_IS_PORTABLE);
     }
 
-    perfTimestamps?.push({ name: 'portable check', ts: process.hrtime() });
+    logProgress('portable check');
 
     if (isPortable) {
         const portableConfigDir = path.dirname(execPath);
@@ -585,7 +598,7 @@ function setUserDataPaths() {
         }
     }
 
-    perfTimestamps?.push({ name: 'userdata dir', ts: process.hrtime() });
+    logProgress('userdata dir');
 }
 
 function setEnv() {
@@ -605,7 +618,7 @@ function setEnv() {
 
     app.allowRendererProcessReuse = true;
 
-    perfTimestamps?.push({ name: 'setting env', ts: process.hrtime() });
+    logProgress('setting env');
 }
 
 // TODO: delete after v1.15
@@ -657,7 +670,7 @@ function hookRequestHeaders() {
         }
         callback({ requestHeaders: details.requestHeaders });
     });
-    perfTimestamps?.push({ name: 'setting request handlers', ts: process.hrtime() });
+    logProgress('setting request handlers');
 }
 
 // If a display is disconnected while KeeWeb is minimized, Electron does not
