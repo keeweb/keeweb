@@ -235,7 +235,9 @@ function createMainWindow() {
             backgroundThrottling: false,
             nodeIntegration: true,
             nodeIntegrationInWorker: true,
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            spellcheck: false,
+            v8CacheOptions: 'none'
         }
     };
     if (process.platform !== 'win32') {
