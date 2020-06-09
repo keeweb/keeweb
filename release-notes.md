@@ -6,6 +6,7 @@ Release notes
 `+` possibility to debug startup with `--start-logging`  
 `*` updated electron version  
 `-` fixed duplicated YubiKeys displayed in file settings  
+`-` fix #1409: auto-type wrong character issues on Linux  
 
 ##### v1.15.1 (2020-06-07)
 `-` fix #1528: OTP generation for stored values  
