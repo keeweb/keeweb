@@ -42,6 +42,11 @@ module.exports = function (grunt) {
             const taskResult = await runRemoteTask(opt.windows, zipContents);
             const signedFile = taskResult.file;
 
+            const zip = new AdmZip(signedFile);
+            const data = zip.readFile(fileNameWithoutFolder);
+
+            fs.writeFileSync(signedFile, data);
+
             const signtool =
                 'C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\signtool.exe';
             const res = spawnSync(signtool, ['verify', '/pa', '/v', signedFile]);
