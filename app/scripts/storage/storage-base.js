@@ -7,7 +7,6 @@ import { StorageOAuthListener } from 'storage/storage-oauth-listener';
 import { UrlFormat } from 'util/formatting/url-format';
 import { Launcher } from 'comp/launcher';
 import { omitEmpty } from 'util/fn';
-import { Timeouts } from 'const/timeouts';
 import { Features } from 'util/features';
 import { createOAuthSession } from 'storage/pkce';
 
@@ -138,47 +137,11 @@ class StorageBase {
     }
 
     _httpRequestLauncher(config, onLoad) {
-        const net = Launcher.remReq('electron').net;
-
-        const opts = Launcher.req('url').parse(config.url);
-
-        opts.method = config.method || 'GET';
-        opts.headers = {
-            'User-Agent': navigator.userAgent,
-            ...config.headers
-        };
-        opts.timeout = Timeouts.DefaultHttpRequest;
-
-        let data;
-        if (config.data) {
-            if (config.dataIsMultipart) {
-                data = Buffer.concat(config.data.map((chunk) => Buffer.from(chunk)));
-            } else {
-                data = Buffer.from(config.data);
-            }
-            // Electron's API doesn't like that, while node.js needs it
-            // opts.headers['Content-Length'] = data.byteLength;
-        }
-
-        const req = net.request(opts);
-
-        let closed = false;
-        req.on('close', () => {
-            closed = true;
-        });
-
-        req.on('response', (res) => {
-            const chunks = [];
-            const onClose = () => {
-                this.logger.debug(
-                    'HTTP response',
-                    opts.method,
-                    config.url,
-                    res.statusCode,
-                    res.headers
-                );
-
-                let response = Buffer.concat(chunks);
+        Launcher.remoteApp().httpRequest(
+            config,
+            (level, ...args) => this.logger[level](...args),
+            ({ status, response, headers }) => {
+                response = Buffer.from(response, 'hex');
                 if (config.responseType === 'json') {
                     try {
                         response = JSON.parse(response.toString('utf8'));
@@ -192,33 +155,12 @@ class StorageBase {
                     );
                 }
                 onLoad({
-                    status: res.statusCode,
+                    status,
                     response,
-                    getResponseHeader: (name) => res.headers[name.toLowerCase()]
+                    getResponseHeader: (name) => headers[name.toLowerCase()]
                 });
-            };
-            res.on('data', (chunk) => {
-                chunks.push(chunk);
-                if (closed && !res.readable) {
-                    // sometimes 'close' event arrives faster in Electron
-                    onClose();
-                }
-            });
-            // in Electron it's not res.on('end'), like in node.js, which is a bit weird
-            req.on('close', onClose);
-        });
-        req.on('error', (e) => {
-            this.logger.error('HTTP error', opts.method, config.url, e);
-            return config.error && config.error('network error', {});
-        });
-        req.on('timeout', () => {
-            req.abort();
-            return config.error && config.error('timeout', {});
-        });
-        if (data) {
-            req.write(data);
-        }
-        req.end();
+            }
+        );
     }
 
     _openPopup(url, title, width, height, extras) {
