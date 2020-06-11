@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.15.3 (2020-06-11)
+`-` fix #1535: network errors in Dropbox and GDrive on Windows  
+
 ##### v1.15.2 (2020-06-09)
 `-` fix #1530: recursive creation of the portable directory  
 `-` fix #1530: running from directories with hash symbols  
