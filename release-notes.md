@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.15.4 (2020-06-?)
+`-` fix #1536: added a missing dependency on linux  
+
 ##### v1.15.3 (2020-06-11)
 `-` fix #1535: network errors in Dropbox and GDrive on Windows  
 
