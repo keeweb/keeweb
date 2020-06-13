@@ -65,8 +65,8 @@ module.exports = function (grunt) {
                 grunt.warn(`Verify error ${file}: expected hash was not found`);
             }
 
-            fs.unlinkSync(signedFile, file);
-            fs.writeFileSync(file, taskResult.data);
+            fs.unlinkSync(signedFile);
+            fs.writeFileSync(file, data);
             grunt.log.writeln(`Signed ${file}: ${name}`);
         } catch (e) {
             grunt.warn(`Sign error ${file}: ${e}`);
