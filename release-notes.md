@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.15.4 (2020-06-13)
+`-` fix #1536: added a missing dependency on linux  
+`-` fix #1532: crashes on some Windows builds (updated electron)  
+
 ##### v1.15.3 (2020-06-11)
 `-` fix #1535: network errors in Dropbox and GDrive on Windows  
 
