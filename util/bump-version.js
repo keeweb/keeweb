@@ -3,9 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const version = process.argv[2];
+const releaseNotesContents = fs.readFileSync('release-notes.md', 'utf8');
+
+const version = releaseNotesContents.match(/\d+\.\d+\.\d+/)[0];
 if (!/^\d+\.\d+\.\d+$/.test(version)) {
-    console.error('Bad version. Usage: node set-version.js 1.2.3');
+    console.error('Bad version');
     process.exit(1);
 }
 

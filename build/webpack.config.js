@@ -133,12 +133,16 @@ function config(options) {
                                 { pattern: /\(1,\s*eval\)\('this'\)/g, replacement: () => 'window' }
                             ]
                         }),
-                        { loader: 'exports-loader?baron; delete window.baron;' }
+                        {
+                            loader: 'exports-loader',
+                            options: { type: 'module', exports: 'default baron' }
+                        }
                     ]
                 },
                 {
                     test: /babel-helpers\.js$/,
-                    loader: 'exports-loader?global.babelHelpers; delete global.babelHelpers'
+                    loader: 'exports-loader',
+                    options: { type: 'module', exports: 'default babelHelpers' }
                 },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
                 {

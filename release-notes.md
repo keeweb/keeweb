@@ -1,8 +1,19 @@
 Release notes
 -------------
-##### v1.15.2 (TBD)
+##### v1.15.4 (2020-06-13)
+`-` fix #1536: added a missing dependency on linux  
+`-` fix #1532: crashes on some Windows builds (updated electron)  
+
+##### v1.15.3 (2020-06-11)
+`-` fix #1535: network errors in Dropbox and GDrive on Windows  
+
+##### v1.15.2 (2020-06-09)
 `-` fix #1530: recursive creation of the portable directory  
 `-` fix #1530: running from directories with hash symbols  
+`+` possibility to debug startup with `--start-logging`  
+`*` updated electron version  
+`-` fixed duplicated YubiKeys displayed in file settings  
+`-` fix #1409: auto-type wrong character issues on Linux  
 
 ##### v1.15.1 (2020-06-07)
 `-` fix #1528: OTP generation for stored values  

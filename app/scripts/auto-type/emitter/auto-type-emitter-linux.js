@@ -144,10 +144,13 @@ AutoTypeEmitter.prototype.modString = function () {
 };
 
 AutoTypeEmitter.prototype.runScript = function (script, callback) {
+    // xdotool doesn't like it when stdin doesn't end with a linebreak
+    // see https://github.com/keeweb/keeweb/issues/1409
+    const data = script + '\n';
     Launcher.spawn({
         cmd: 'xdotool',
         args: ['-'],
-        data: script,
+        data,
         complete: (err, stdout, code) => {
             if (err && err.code === 'ENOENT') {
                 err = Locale.autoTypeErrorNotInstalled.replace('{}', 'xdotool');

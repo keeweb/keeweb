@@ -410,10 +410,10 @@ module.exports = function (grunt) {
                             category: 'Utility'
                         },
                         rpm: {
-                            // depends: ['libappindicator1', 'libgconf-2-4']
+                            // depends: ['libappindicator1', 'libgconf-2-4', 'gnome-keyring']
                         },
                         snap: {
-                            stagePackages: ['libappindicator1', 'libgconf-2-4']
+                            stagePackages: ['libappindicator1', 'libgconf-2-4', 'gnome-keyring']
                         }
                     }
                 }
@@ -554,7 +554,7 @@ module.exports = function (grunt) {
                         pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
                         targetDir: 'dist/desktop',
                         appName: 'KeeWeb',
-                        depends: 'libappindicator1, libgconf-2-4',
+                        depends: 'libappindicator1, libgconf-2-4, gnome-keyring',
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
                         }
