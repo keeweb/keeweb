@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.15.5 (2020-06-13)
+`-` fix #1539: broken code signing on Windows  
+
 ##### v1.15.4 (2020-06-13)
 `-` fix #1536: added a missing dependency on linux  
 `-` fix #1532: crashes on some Windows builds (updated electron)  
