@@ -126,7 +126,7 @@ app.on('activate', () => {
     }
 });
 app.on('before-quit', (e) => {
-    if (app.hookBeforeQuitEvent) {
+    if (app.hookBeforeQuitEvent && mainWindow) {
         e.preventDefault();
         emitRemoteEvent('launcher-before-quit');
     }
