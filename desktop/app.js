@@ -105,7 +105,6 @@ app.on('ready', () => {
             createMainWindow();
             setGlobalShortcuts(appSettings);
             subscribePowerEvents();
-            deleteOldTempFiles();
             hookRequestHeaders();
         })
         .catch((e) => {
@@ -624,32 +623,6 @@ function setEnv() {
     logProgress('setting env');
 }
 
-// TODO: delete after v1.15
-function deleteOldTempFiles() {
-    if (app.oldTempFilesDeleted) {
-        return;
-    }
-    setTimeout(() => {
-        const tempPath = path.join(app.getPath('userData'), 'temp');
-        if (fs.existsSync(tempPath)) {
-            deleteRecursive(tempPath);
-        }
-        app.oldTempFilesDeleted = true; // this is added to prevent file deletion on restart
-    }, 1000);
-}
-
-function deleteRecursive(dir) {
-    for (const file of fs.readdirSync(dir)) {
-        const filePath = path.join(dir, file);
-        if (fs.lstatSync(filePath).isDirectory()) {
-            deleteRecursive(filePath);
-        } else {
-            fs.unlinkSync(filePath);
-        }
-    }
-    fs.rmdirSync(dir);
-}
-
 function setDevAppIcon() {
     if (isDev && htmlPath && process.platform === 'darwin') {
         const icon = electron.nativeImage.createFromPath(
@@ -769,14 +742,6 @@ function reqNative(mod) {
 function loadSettingsEncryptionKey() {
     return Promise.resolve().then(() => {
         if (usingPortableUserDataDir) {
-            return null;
-        }
-
-        const explicitlyDisabledFile = path.join(app.getPath('userData'), 'disable-keytar');
-        if (fs.existsSync(explicitlyDisabledFile)) {
-            // TODO: remove this fallback if everything goes well on v1.15
-            // This is a protective measure if everything goes terrible with native modules
-            // For example, the app can crash and it won't be possible to use it at all
             return null;
         }
 
