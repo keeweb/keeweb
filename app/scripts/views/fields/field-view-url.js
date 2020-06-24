@@ -1,7 +1,7 @@
 import { FieldViewText } from 'views/fields/field-view-text';
 import { escape } from 'util/fn';
 
-const AllowedProtocols = ['http:', 'https:', 'ftp:', 'ftps:', 'mailto:'];
+const AllowedProtocols = ['http:', 'https:', 'ftp:', 'ftps:', 'mailto:', 'firefox:', 'chrome:', 'shell:'];
 
 class FieldViewUrl extends FieldViewText {
     displayUrlRegex = /^https:\/\//i;
