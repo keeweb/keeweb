@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.15.6 (2020-08-08)
+`-` fix #1553: empty fields display for templates  
+
 ##### v1.15.5 (2020-06-13)
 `-` fix #1539: broken code signing on Windows  
 

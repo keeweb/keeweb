@@ -180,7 +180,7 @@ class ListView extends View {
     }
 
     createTemplate() {
-        if (!this.model.settings.templateHelpShown_) {
+        if (!this.model.settings.templateHelpShown) {
             Alerts.yesno({
                 icon: 'sticky-note-o',
                 header: Locale.listAddTemplateHeader,
