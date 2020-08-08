@@ -119,7 +119,7 @@ app.on('open-file', (e, path) => {
 });
 app.on('activate', () => {
     if (process.platform === 'darwin') {
-        if (appReady && !mainWindow) {
+        if (appReady && !mainWindow && appSettings) {
             createMainWindow();
         }
     }
