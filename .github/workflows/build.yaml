@@ -535,6 +535,7 @@ jobs:
         if: ${{ github.repository == 'keeweb/keeweb' }}
         run: gsutil -m rsync -r -d -x "^\." gh-pages gs://app.keeweb.info/
       - name: Purge CloudFlare cache
+        if: ${{ github.repository == 'keeweb/keeweb' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |

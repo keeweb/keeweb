@@ -156,11 +156,19 @@ class DetailsView extends View {
                 if (hideEmptyFields) {
                     const value = fieldView.model.value();
                     if (!value || value.length === 0 || value.byteLength === 0) {
-                        if (
-                            this.model.isJustCreated &&
-                            ['$UserName', '$Password'].indexOf(fieldView.model.name) >= 0
-                        ) {
-                            return; // don't hide user for new records
+                        if (this.model.isJustCreated) {
+                            const fieldsHiddenForNewEntriesWhenEmpty = [
+                                '$URL',
+                                '$Notes',
+                                'Tags',
+                                'Expires',
+                                'History'
+                            ];
+                            if (
+                                !fieldsHiddenForNewEntriesWhenEmpty.includes(fieldView.model.name)
+                            ) {
+                                continue;
+                            }
                         }
                         fieldView.hide();
                     }
