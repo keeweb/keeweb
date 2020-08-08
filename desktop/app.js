@@ -120,13 +120,13 @@ app.on('open-file', (e, path) => {
 });
 app.on('activate', () => {
     if (process.platform === 'darwin') {
-        if (appReady && !mainWindow) {
+        if (appReady && !mainWindow && appSettings) {
             createMainWindow();
         }
     }
 });
 app.on('before-quit', (e) => {
-    if (app.hookBeforeQuitEvent) {
+    if (app.hookBeforeQuitEvent && mainWindow) {
         e.preventDefault();
         emitRemoteEvent('launcher-before-quit');
     }
