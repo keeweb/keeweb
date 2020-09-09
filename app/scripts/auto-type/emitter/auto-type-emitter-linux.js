@@ -61,13 +61,11 @@ const ModMap = {
 
 const AutoTypeEmitter = function (callback, windowId) {
     this.callback = callback;
-    if (typeof windowId !== 'undefined' && windowId) {
-        this.windowParameter = '--window ' + windowId + ' ';
-    } else {
-        this.windowParameter = '';
-    }
     this.mod = {};
     this.pendingScript = [];
+    if (typeof windowId !== 'undefined' && windowId) {
+        this.pendingScript.push('windowactivate --sync ' + windowId);
+    }
 };
 
 AutoTypeEmitter.prototype.setMod = function (mod, enabled) {
@@ -81,15 +79,15 @@ AutoTypeEmitter.prototype.setMod = function (mod, enabled) {
 AutoTypeEmitter.prototype.text = function (text) {
     this.pendingScript.push('keyup ctrl alt shift t');
     Object.keys(this.mod).forEach((mod) => {
-        this.pendingScript.push('keydown ' + this.windowParameter + ModMap[mod]);
+        this.pendingScript.push('keydown ' + ModMap[mod]);
     });
     text.split('').forEach((char) => {
         this.pendingScript.push(
-            'key ' + this.windowParameter + 'U' + char.charCodeAt(0).toString(16)
+            'key ' + 'U' + char.charCodeAt(0).toString(16)
         );
     });
     Object.keys(this.mod).forEach((mod) => {
-        this.pendingScript.push('keyup ' + this.windowParameter + ModMap[mod]);
+        this.pendingScript.push('keyup ' + ModMap[mod]);
     });
     this.waitComplete();
 };
@@ -103,7 +101,7 @@ AutoTypeEmitter.prototype.key = function (key) {
         key = KeyMap[key].toString();
     }
     this.pendingScript.push(
-        'key --clearmodifiers ' + this.windowParameter + this.modString() + key
+        'key --clearmodifiers ' + this.modString() + key
     );
     if (isSpecialKey) {
         this.waitComplete();
@@ -115,7 +113,7 @@ AutoTypeEmitter.prototype.key = function (key) {
 AutoTypeEmitter.prototype.copyPaste = function (text) {
     this.pendingScript.push('sleep 0.5');
     Launcher.setClipboardText(text);
-    this.pendingScript.push('key --clearmodifiers ' + this.windowParameter + 'shift+Insert');
+    this.pendingScript.push('key --clearmodifiers ' + 'shift+Insert');
     this.pendingScript.push('sleep 0.5');
     this.waitComplete();
 };
