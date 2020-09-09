@@ -82,9 +82,7 @@ AutoTypeEmitter.prototype.text = function (text) {
         this.pendingScript.push('keydown ' + ModMap[mod]);
     });
     text.split('').forEach((char) => {
-        this.pendingScript.push(
-            'key ' + 'U' + char.charCodeAt(0).toString(16)
-        );
+        this.pendingScript.push('key ' + 'U' + char.charCodeAt(0).toString(16));
     });
     Object.keys(this.mod).forEach((mod) => {
         this.pendingScript.push('keyup ' + ModMap[mod]);
@@ -100,9 +98,7 @@ AutoTypeEmitter.prototype.key = function (key) {
         }
         key = KeyMap[key].toString();
     }
-    this.pendingScript.push(
-        'key --clearmodifiers ' + this.modString() + key
-    );
+    this.pendingScript.push('key --clearmodifiers ' + this.modString() + key);
     if (isSpecialKey) {
         this.waitComplete();
     } else {
