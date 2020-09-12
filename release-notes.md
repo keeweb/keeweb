@@ -6,6 +6,7 @@ Release notes
 `-` fix #1598: fixed header format for KDBX4+AES  
 `-` fix #1597: Dropbox sync now includes scopes  
 `*` PKCE enabled on Dropbox auth  
+`*` updated vulnerable dependencies  
 
 ##### v1.15.6 (2020-08-08)
 `-` fix #1553: empty fields display for templates  
