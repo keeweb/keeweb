@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.15.7 (2020-09-12)
+`-` fix #1597: Dropbox sync now includes scopes  
+
 ##### v1.15.6 (2020-08-08)
 `-` fix #1553: empty fields display for templates  
 `-` fix #1581: double-clicking KeeWeb icon in Dock  
