@@ -80,7 +80,7 @@ class StorageDropbox extends StorageBase {
             tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
             clientId: this._getKey(),
             clientSecret: this._getSecret(),
-            pkce: false,
+            pkce: true,
             width: 600,
             height: 400
         };
