@@ -74,12 +74,13 @@ class StorageDropbox extends StorageBase {
 
     _getOAuthConfig() {
         return {
-            scope: '',
+            scope:
+                'files.content.read files.content.write files.metadata.read files.metadata.write',
             url: 'https://www.dropbox.com/oauth2/authorize',
             tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
             clientId: this._getKey(),
             clientSecret: this._getSecret(),
-            pkce: false,
+            pkce: true,
             width: 600,
             height: 400
         };
