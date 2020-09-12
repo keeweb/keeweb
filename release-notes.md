@@ -1,6 +1,8 @@
 Release notes
 -------------
-##### v1.15.7 (2020-09-12)
+##### v1.15.7 (2020-09-12)  
+`-` fix #1591: error in old MS Edge  
+`-` fix #1598: fixed header format for KDBX4+AES  
 `-` fix #1597: Dropbox sync now includes scopes  
 `*` PKCE enabled on Dropbox auth  
 
