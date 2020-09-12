@@ -2,7 +2,7 @@ Release notes
 -------------
 ##### v1.15.7 (2020-09-12)
 `-` fix #1597: Dropbox sync now includes scopes  
-`-` PKCE enabled on Dropbox auth  
+`*` PKCE enabled on Dropbox auth  
 
 ##### v1.15.6 (2020-08-08)
 `-` fix #1553: empty fields display for templates  
