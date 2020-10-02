@@ -4,7 +4,8 @@ const FeatureTester = {
     test() {
         return Promise.resolve()
             .then(() => this.checkWebAssembly())
-            .then(() => this.checkLocalStorage());
+            .then(() => this.checkLocalStorage())
+            .then(() => this.checkWebCrypto());
     },
 
     checkWebAssembly() {
@@ -27,6 +28,12 @@ const FeatureTester = {
             localStorage.removeItem('_test');
         } catch (e) {
             throw 'LocalStorage is not supported';
+        }
+    },
+
+    checkWebCrypto() {
+        if (!global.crypto.subtle) {
+            throw 'WebCrypto is not supported';
         }
     }
 };
