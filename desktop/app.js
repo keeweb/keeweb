@@ -618,6 +618,9 @@ function setEnv() {
     app.commandLine.appendSwitch('disable-http-cache');
     app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
 
+    // fixes colors on Linux, see #1621
+    app.commandLine.appendSwitch('force-color-profile', 'srgb');
+
     app.allowRendererProcessReuse = true;
 
     logProgress('setting env');
