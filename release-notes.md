@@ -1,5 +1,13 @@
 Release notes
 -------------
+##### v1.15.7 (2020-09-12)  
+`-` fix #1564: broken auto-type on some Linux installations  
+`-` fix #1591: error in old MS Edge  
+`-` fix #1598: fixed header format for KDBX4+AES  
+`-` fix #1597: Dropbox sync now includes scopes  
+`*` PKCE enabled on Dropbox auth  
+`*` updated vulnerable dependencies  
+
 ##### v1.15.6 (2020-08-08)
 `-` fix #1553: empty fields display for templates  
 `-` fix #1581: double-clicking KeeWeb icon in Dock  
