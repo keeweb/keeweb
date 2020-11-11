@@ -691,7 +691,7 @@ class OpenView extends View {
                 Alerts.error({
                     header: Locale.openError,
                     body: Locale.openErrorDescription,
-                    pre: err.toString()
+                    pre: this.errorToString(err)
                 });
             }
         } else {
@@ -1027,7 +1027,7 @@ class OpenView extends View {
                         Alerts.error({
                             header: Locale.openError,
                             body: Locale.openErrorDescription,
-                            pre: err.toString()
+                            pre: this.errorToString(err)
                         });
                     }
                     this.otpDevice = null;
@@ -1070,6 +1070,17 @@ class OpenView extends View {
             click: '',
             view: chalRespView
         });
+    }
+
+    errorToString(err) {
+        const str = err.toString();
+        if (str !== {}.toString()) {
+            return str;
+        }
+        if (err.ykError && err.code) {
+            return Locale.yubiKeyErrorWithCode.replace('{}', err.code);
+        }
+        return undefined;
     }
 }
 
