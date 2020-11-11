@@ -73,6 +73,7 @@ class DetailsView extends View {
         );
         this.onKey(Keys.DOM_VK_B, this.copyUserName, KeyHandler.SHORTCUT_ACTION);
         this.onKey(Keys.DOM_VK_U, this.copyUrl, KeyHandler.SHORTCUT_ACTION);
+        this.onKey(Keys.DOM_VK_2, this.copyOtp, KeyHandler.SHORTCUT_OPT);
         if (AutoType.enabled) {
             this.onKey(Keys.DOM_VK_T, () => this.autoType(), KeyHandler.SHORTCUT_ACTION);
         }
