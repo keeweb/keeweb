@@ -793,16 +793,12 @@ class OpenView extends View {
                     dir: true
                 });
             }
-            const listView = new StorageFileListView({
-                files,
-                showHiddenFiles: config && config.showHiddenFiles
-            });
+            const listView = new StorageFileListView({ files });
             listView.on('selected', (file) => {
                 if (file.dir) {
                     this.listStorage(storage, {
                         dir: file.path,
-                        prevDir: (config && config.dir) || '',
-                        showHiddenFiles: true
+                        prevDir: (config && config.dir) || ''
                     });
                 } else {
                     this.openStorageFile(storage, file);

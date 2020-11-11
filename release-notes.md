@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.16.0 (TBD)
 `-` fixed a performance issue in searching entries  
+`*` improved the "Show all file" checkbox behavior  
 
 ##### v1.15.7 (2020-09-12)
 `-` fix #1564: broken auto-type on some Linux installations  
