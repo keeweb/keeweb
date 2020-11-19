@@ -243,7 +243,7 @@ const AutoType = {
             this.selectEntryView.remove();
             this.selectEntryView = null;
             this.hideWindow(() => {
-                if (result) {
+                if (result?.entry) {
                     this.activeWindowMatches(evt.windowInfo, (matches, activeWindowInfo) => {
                         if (matches) {
                             this.runAndHandleResult(result, evt.windowInfo.id);
