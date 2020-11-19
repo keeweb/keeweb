@@ -427,6 +427,7 @@ class AppView extends View {
             minimizeInsteadOfClose
         ) {
             Launcher.minimizeApp();
+            this.appMinimized();
             return Launcher.preventExit(e);
         }
     }
