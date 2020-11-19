@@ -4,6 +4,7 @@ Release notes
 `-` fixed a performance issue in searching entries  
 `*` improved the "Show all file" checkbox behavior  
 `+` shortcut to copy OTP  
+`-` fix #1561: error during loading configs after reset  
 
 ##### v1.15.7 (2020-09-12)
 `-` fix #1564: broken auto-type on some Linux installations  

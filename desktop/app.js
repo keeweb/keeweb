@@ -201,9 +201,13 @@ app.httpRequest = httpRequest;
 
 function logProgress(name) {
     perfTimestamps?.push({ name, ts: process.hrtime() });
+    logStartupMessage(name);
+}
+
+function logStartupMessage(msg) {
     if (startupLogging) {
         // eslint-disable-next-line no-console
-        console.log('[startup]', name);
+        console.log('[startup]', msg);
     }
 }
 
@@ -792,7 +796,8 @@ function loadConfig(name) {
 
                 resolve(data.toString('utf8'));
             } catch (err) {
-                reject(`Error reading config data ${name}: ${err}`);
+                logStartupMessage(`Error reading config data (config ignored) ${name}: ${err}`);
+                resolve(null);
             }
         });
     });
