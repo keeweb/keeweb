@@ -10,6 +10,7 @@ const IdleTracker = {
         const idleMinutes = (Date.now() - this.actionTime) / 1000 / 60;
         const maxIdleMinutes = AppSettingsModel.idleMinutes;
         if (maxIdleMinutes && idleMinutes > maxIdleMinutes) {
+            Events.emit('before-user-idle');
             Events.emit('user-idle');
         }
     },
