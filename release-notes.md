@@ -4,6 +4,7 @@ Release notes
 `-` fixed a performance issue in searching entries  
 `*` improved the "Show all file" checkbox behavior  
 `+` shortcut to copy OTP  
+`*` switched to Dropbox short-lived access tokens  
 `-` fixed several issues in field editing  
 `-` fix #1561: error during loading configs after reset  
 

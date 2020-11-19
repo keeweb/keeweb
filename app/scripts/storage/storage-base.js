@@ -244,7 +244,8 @@ class StorageBase {
             'state': session.state,
             'redirect_uri': session.redirectUri,
             'response_type': 'code',
-            ...pkceParams
+            ...pkceParams,
+            ...opts.urlParams
         });
 
         if (listener) {
