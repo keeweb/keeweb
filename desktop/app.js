@@ -238,6 +238,7 @@ function createMainWindow() {
         titleBarStyle: appSettings.titlebarStyle,
         backgroundColor: bgColor,
         webPreferences: {
+            contextIsolation: false,
             backgroundThrottling: false,
             nodeIntegration: true,
             nodeIntegrationInWorker: true,
