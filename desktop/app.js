@@ -121,6 +121,8 @@ app.on('activate', () => {
     if (process.platform === 'darwin') {
         if (appReady && !mainWindow && appSettings) {
             createMainWindow();
+        } else if (appIcon) {
+            restoreMainWindow();
         }
     }
 });

@@ -7,6 +7,7 @@ Release notes
 `*` switched to Dropbox short-lived access tokens  
 `-` fixed several issues in field editing  
 `-` fix #1561: error during loading configs after reset  
+`-` fixed some issues with minimizing to menubar on macOS  
 
 ##### v1.15.7 (2020-09-12)
 `-` fix #1564: broken auto-type on some Linux installations  
