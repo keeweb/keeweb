@@ -104,7 +104,6 @@ class StorageWebDav extends StorageBase {
             user: opts ? opts.user : null,
             password: opts ? opts.password : null
         };
-        const that = this;
         this._request(
             {
                 ...saveOpts,
@@ -117,15 +116,15 @@ class StorageWebDav extends StorageBase {
                     if (!err.notFound) {
                         return cb(err);
                     } else {
-                        that.logger.debug('Save: not found, creating');
+                        this.logger.debug('Save: not found, creating');
                         useTmpPath = false;
                     }
                 } else if (stat.rev !== rev) {
-                    that.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
+                    this.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
                     return cb({ revConflict: true }, xhr, stat);
                 }
                 if (useTmpPath) {
-                    that._request(
+                    this._request(
                         {
                             ...saveOpts,
                             op: 'Save:put',
@@ -138,7 +137,7 @@ class StorageWebDav extends StorageBase {
                             if (err) {
                                 return cb(err);
                             }
-                            that._request(
+                            this._request(
                                 {
                                     ...saveOpts,
                                     op: 'Save:stat',
@@ -146,7 +145,7 @@ class StorageWebDav extends StorageBase {
                                 },
                                 (err, xhr, stat) => {
                                     if (err) {
-                                        that._request({
+                                        this._request({
                                             ...saveOpts,
                                             op: 'Save:delete',
                                             method: 'DELETE',
@@ -155,14 +154,14 @@ class StorageWebDav extends StorageBase {
                                         return cb(err, xhr, stat);
                                     }
                                     if (stat.rev !== rev) {
-                                        that.logger.debug(
+                                        this.logger.debug(
                                             'Save error',
                                             path,
                                             'rev conflict',
                                             stat.rev,
                                             rev
                                         );
-                                        that._request({
+                                        this._request({
                                             ...saveOpts,
                                             op: 'Save:delete',
                                             method: 'DELETE',
@@ -181,7 +180,7 @@ class StorageWebDav extends StorageBase {
                                                 .replace(/[^/]*$/, movePath);
                                         }
                                     }
-                                    that._request(
+                                    this._request(
                                         {
                                             ...saveOpts,
                                             op: 'Save:move',
@@ -197,7 +196,7 @@ class StorageWebDav extends StorageBase {
                                             if (err) {
                                                 return cb(err);
                                             }
-                                            that._request(
+                                            this._request(
                                                 {
                                                     ...saveOpts,
                                                     op: 'Save:stat',
@@ -214,7 +213,7 @@ class StorageWebDav extends StorageBase {
                         }
                     );
                 } else {
-                    that._request(
+                    this._request(
                         {
                             ...saveOpts,
                             op: 'Save:put',
@@ -226,7 +225,7 @@ class StorageWebDav extends StorageBase {
                             if (err) {
                                 return cb(err);
                             }
-                            that._request(
+                            this._request(
                                 {
                                     ...saveOpts,
                                     op: 'Save:stat',
@@ -276,21 +275,20 @@ class StorageWebDav extends StorageBase {
     }
 
     _request(config, callback) {
-        const that = this;
         if (config.rev) {
-            that.logger.debug(config.op, config.path, config.rev);
+            this.logger.debug(config.op, config.path, config.rev);
         } else {
-            that.logger.debug(config.op, config.path);
+            this.logger.debug(config.op, config.path);
         }
-        const ts = that.logger.ts();
+        const ts = this.logger.ts();
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
             if ([200, 201, 204].indexOf(xhr.status) < 0) {
-                that.logger.debug(
+                this.logger.debug(
                     config.op + ' error',
                     config.path,
                     xhr.status,
-                    that.logger.ts(ts)
+                    this.logger.ts(ts)
                 );
                 let err;
                 switch (xhr.status) {
@@ -312,11 +310,11 @@ class StorageWebDav extends StorageBase {
             }
             const rev = xhr.getResponseHeader('Last-Modified');
             if (!rev && !config.nostat) {
-                that.logger.debug(
+                this.logger.debug(
                     config.op + ' error',
                     config.path,
                     'no headers',
-                    that.logger.ts(ts)
+                    this.logger.ts(ts)
                 );
                 if (callback) {
                     callback('No Last-Modified header', xhr);
@@ -326,21 +324,21 @@ class StorageWebDav extends StorageBase {
             }
             const completedOpName =
                 config.op + (config.op.charAt(config.op.length - 1) === 'e' ? 'd' : 'ed');
-            that.logger.debug(completedOpName, config.path, rev, that.logger.ts(ts));
+            this.logger.debug(completedOpName, config.path, rev, this.logger.ts(ts));
             if (callback) {
                 callback(null, xhr, rev ? { rev } : null);
                 callback = null;
             }
         });
         xhr.addEventListener('error', () => {
-            that.logger.debug(config.op + ' error', config.path, that.logger.ts(ts));
+            this.logger.debug(config.op + ' error', config.path, this.logger.ts(ts));
             if (callback) {
                 callback('network error', xhr);
                 callback = null;
             }
         });
         xhr.addEventListener('abort', () => {
-            that.logger.debug(config.op + ' error', config.path, 'aborted', that.logger.ts(ts));
+            this.logger.debug(config.op + ' error', config.path, 'aborted', this.logger.ts(ts));
             if (callback) {
                 callback('aborted', xhr);
                 callback = null;
