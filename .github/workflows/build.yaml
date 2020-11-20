@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Get current git tag
         id: get_tag
-        uses: keeweb/get-tag@v2
+        uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Get current git tag
         id: get_tag
-        uses: keeweb/get-tag@v2
+        uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
@@ -97,7 +97,7 @@ jobs:
     steps:
       - name: Get current git tag
         id: get_tag
-        uses: keeweb/get-tag@v2
+        uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
@@ -145,7 +145,7 @@ jobs:
     steps:
       - name: Get current git tag
         id: get_tag
-        uses: keeweb/get-tag@v2
+        uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
@@ -220,7 +220,7 @@ jobs:
     steps:
       - name: Get current git tag
         id: get_tag
-        uses: keeweb/get-tag@v2
+        uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
