@@ -1,4 +1,6 @@
+import kdbxweb from 'kdbxweb';
 import { StorageBase } from 'storage/storage-base';
+import { Locale } from 'util/locale';
 
 class StorageWebDav extends StorageBase {
     name = 'webdav';
@@ -48,6 +50,12 @@ class StorageWebDav extends StorageBase {
                     type: 'select',
                     value: this.appSettings.webdavSaveMethod || 'default',
                     options: { default: 'webdavSaveMove', put: 'webdavSavePut' }
+                },
+                {
+                    id: 'webdavStatReload',
+                    title: 'webdavStatReload',
+                    type: 'checkbox',
+                    value: !!this.appSettings.webdavStatReload
                 }
             ]
         };
@@ -64,31 +72,65 @@ class StorageWebDav extends StorageBase {
                 method: 'GET',
                 path,
                 user: opts ? opts.user : null,
-                password: opts ? opts.password : null
+                password: opts ? opts.password : null,
+                nostat: this.appSettings.webdavStatReload
             },
             callback
                 ? (err, xhr, stat) => {
-                      callback(err, xhr.response, stat);
+                      if (this.appSettings.webdavStatReload) {
+                          this._calcStatByContent(xhr).then((stat) =>
+                              callback(err, xhr.response, stat)
+                          );
+                      } else {
+                          callback(err, xhr.response, stat);
+                      }
                   }
                 : null
         );
     }
 
     stat(path, opts, callback) {
-        this._request(
-            {
-                op: 'Stat',
-                method: 'HEAD',
-                path,
-                user: opts ? opts.user : null,
-                password: opts ? opts.password : null
-            },
-            callback
-                ? (err, xhr, stat) => {
-                      callback(err, stat);
-                  }
-                : null
+        this._statRequest(
+            path,
+            opts,
+            'Stat',
+            callback ? (err, xhr, stat) => callback(err, stat) : null
         );
+    }
+
+    _statRequest(path, opts, op, callback) {
+        if (this.appSettings.webdavStatReload) {
+            this._request(
+                {
+                    op,
+                    method: 'GET',
+                    path,
+                    user: opts ? opts.user : null,
+                    password: opts ? opts.password : null,
+                    nostat: true
+                },
+                callback
+                    ? (err, xhr) => {
+                          this._calcStatByContent(xhr).then((stat) => callback(err, xhr, stat));
+                      }
+                    : null
+            );
+        } else {
+            this._request(
+                {
+                    op,
+                    method: 'HEAD',
+                    path,
+                    user: opts ? opts.user : null,
+                    password: opts ? opts.password : null
+                },
+                callback
+                    ? (err, xhr, stat) => {
+                          callback(err, xhr, stat);
+                      }
+                    : null
+            );
+        }
     }
 
     save(path, opts, data, callback, rev) {
@@ -104,142 +146,113 @@ class StorageWebDav extends StorageBase {
             user: opts ? opts.user : null,
             password: opts ? opts.password : null
         };
-        this._request(
-            {
-                ...saveOpts,
-                op: 'Save:stat',
-                method: 'HEAD'
-            },
-            (err, xhr, stat) => {
-                let useTmpPath = this.appSettings.webdavSaveMethod !== 'put';
-                if (err) {
-                    if (!err.notFound) {
-                        return cb(err);
-                    } else {
-                        this.logger.debug('Save: not found, creating');
-                        useTmpPath = false;
-                    }
-                } else if (stat.rev !== rev) {
-                    this.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
-                    return cb({ revConflict: true }, xhr, stat);
-                }
-                if (useTmpPath) {
-                    this._request(
-                        {
-                            ...saveOpts,
-                            op: 'Save:put',
-                            method: 'PUT',
-                            path: tmpPath,
-                            data,
-                            nostat: true
-                        },
-                        (err) => {
-                            if (err) {
-                                return cb(err);
-                            }
-                            this._request(
-                                {
-                                    ...saveOpts,
-                                    op: 'Save:stat',
-                                    method: 'HEAD'
-                                },
-                                (err, xhr, stat) => {
-                                    if (err) {
-                                        this._request({
-                                            ...saveOpts,
-                                            op: 'Save:delete',
-                                            method: 'DELETE',
-                                            path: tmpPath
-                                        });
-                                        return cb(err, xhr, stat);
-                                    }
-                                    if (stat.rev !== rev) {
-                                        this.logger.debug(
-                                            'Save error',
-                                            path,
-                                            'rev conflict',
-                                            stat.rev,
-                                            rev
-                                        );
-                                        this._request({
-                                            ...saveOpts,
-                                            op: 'Save:delete',
-                                            method: 'DELETE',
-                                            path: tmpPath
-                                        });
-                                        return cb({ revConflict: true }, xhr, stat);
-                                    }
-                                    let movePath = path;
-                                    if (movePath.indexOf('://') < 0) {
-                                        if (movePath.indexOf('/') === 0) {
-                                            movePath =
-                                                location.protocol + '//' + location.host + movePath;
-                                        } else {
-                                            movePath = location.href
-                                                .replace(/\?(.*)/, '')
-                                                .replace(/[^/]*$/, movePath);
-                                        }
-                                    }
-                                    this._request(
-                                        {
-                                            ...saveOpts,
-                                            op: 'Save:move',
-                                            method: 'MOVE',
-                                            path: tmpPath,
-                                            nostat: true,
-                                            headers: {
-                                                Destination: encodeURI(movePath),
-                                                'Overwrite': 'T'
-                                            }
-                                        },
-                                        (err) => {
-                                            if (err) {
-                                                return cb(err);
-                                            }
-                                            this._request(
-                                                {
-                                                    ...saveOpts,
-                                                    op: 'Save:stat',
-                                                    method: 'HEAD'
-                                                },
-                                                (err, xhr, stat) => {
-                                                    cb(err, xhr, stat);
-                                                }
-                                            );
-                                        }
-                                    );
-                                }
-                            );
-                        }
-                    );
+        this._statRequest(path, opts, 'Save:stat', (err, xhr, stat) => {
+            let useTmpPath = this.appSettings.webdavSaveMethod !== 'put';
+            if (err) {
+                if (!err.notFound) {
+                    return cb(err);
                 } else {
-                    this._request(
-                        {
-                            ...saveOpts,
-                            op: 'Save:put',
-                            method: 'PUT',
-                            data,
-                            nostat: true
-                        },
-                        (err) => {
+                    this.logger.debug('Save: not found, creating');
+                    useTmpPath = false;
+                }
+            } else if (stat.rev !== rev) {
+                this.logger.debug('Save error', path, 'rev conflict', stat.rev, rev);
+                return cb({ revConflict: true }, xhr, stat);
+            }
+            if (useTmpPath) {
+                this._request(
+                    {
+                        ...saveOpts,
+                        op: 'Save:put',
+                        method: 'PUT',
+                        path: tmpPath,
+                        data,
+                        nostat: true
+                    },
+                    (err) => {
+                        if (err) {
+                            return cb(err);
+                        }
+                        this._statRequest(path, opts, 'Save:stat', (err, xhr, stat) => {
                             if (err) {
-                                return cb(err);
+                                this._request({
+                                    ...saveOpts,
+                                    op: 'Save:delete',
+                                    method: 'DELETE',
+                                    path: tmpPath
+                                });
+                                return cb(err, xhr, stat);
+                            }
+                            if (stat.rev !== rev) {
+                                this.logger.debug(
+                                    'Save error',
+                                    path,
+                                    'rev conflict',
+                                    stat.rev,
+                                    rev
+                                );
+                                this._request({
+                                    ...saveOpts,
+                                    op: 'Save:delete',
+                                    method: 'DELETE',
+                                    path: tmpPath
+                                });
+                                return cb({ revConflict: true }, xhr, stat);
+                            }
+                            let movePath = path;
+                            if (movePath.indexOf('://') < 0) {
+                                if (movePath.indexOf('/') === 0) {
+                                    movePath = location.protocol + '//' + location.host + movePath;
+                                } else {
+                                    movePath = location.href
+                                        .replace(/\?(.*)/, '')
+                                        .replace(/[^/]*$/, movePath);
+                                }
                             }
                             this._request(
                                 {
                                     ...saveOpts,
-                                    op: 'Save:stat',
-                                    method: 'HEAD'
+                                    op: 'Save:move',
+                                    method: 'MOVE',
+                                    path: tmpPath,
+                                    nostat: true,
+                                    headers: {
+                                        Destination: encodeURI(movePath),
+                                        'Overwrite': 'T'
+                                    }
                                 },
-                                (err, xhr, stat) => {
-                                    cb(err, xhr, stat);
+                                (err) => {
+                                    if (err) {
+                                        return cb(err);
+                                    }
+                                    this._statRequest(path, opts, 'Save:stat', (err, xhr, stat) => {
+                                        cb(err, xhr, stat);
+                                    });
                                 }
                             );
+                        });
+                    }
+                );
+            } else {
+                this._request(
+                    {
+                        ...saveOpts,
+                        op: 'Save:put',
+                        method: 'PUT',
+                        data,
+                        nostat: true
+                    },
+                    (err) => {
+                        if (err) {
+                            return cb(err);
                         }
-                    );
-                }
+                        this._statRequest(path, opts, 'Save:stat', (err, xhr, stat) => {
+                            cb(err, xhr, stat);
+                        });
+                    }
+                );
             }
-        );
+        });
     }
 
     fileOptsToStoreOpts(opts, file) {
@@ -317,7 +330,7 @@ class StorageWebDav extends StorageBase {
                     this.logger.ts(ts)
                 );
                 if (callback) {
-                    callback('No Last-Modified header', xhr);
+                    callback(Locale.webdavNoLastModified, xhr);
                     callback = null;
                 }
                 return;
@@ -366,6 +379,23 @@ class StorageWebDav extends StorageBase {
         } else {
             xhr.send();
         }
+    }
+
+    _calcStatByContent(xhr) {
+        if (
+            xhr.status !== 200 ||
+            xhr.responseType !== 'arraybuffer' ||
+            !xhr.response ||
+            !xhr.response.byteLength
+        ) {
+            this.logger.debug('Cannot calculate rev by content');
+            return null;
+        }
+        return kdbxweb.CryptoEngine.sha256(xhr.response).then((hash) => {
+            const rev = kdbxweb.ByteUtils.bytesToHex(hash).substr(0, 10);
+            this.logger.debug('Calculated rev by content', `${xhr.response.byteLength} bytes`, rev);
+            return { rev };
+        });
     }
 }
 

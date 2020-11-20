@@ -65,6 +65,7 @@ const DefaultAppSettings = {
 
     webdav: true, // enable WebDAV integration
     webdavSaveMethod: 'move', // how to save files with WebDAV: "move" or "put"
+    webdavStatReload: false, // WebDAV: reload the file instead of relying on Last-Modified
 
     gdrive: true, // enable Google Drive integration
     gdriveClientId: null, // custom Google Drive client id

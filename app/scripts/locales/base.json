@@ -659,7 +659,9 @@
 
     "webdavSaveMethod": "Save method",
     "webdavSaveMove": "Upload a temporary file and move",
-    "webdavSavePut": "Overwrite kdbx file with PUT",
+    "webdavSavePut": "Overwrite the kdbx file with PUT",
+    "webdavNoLastModified": "Last-Modified HTTP header is absent",
+    "webdavStatReload": "Always reload the file instead of relying on Last-Modified HTTP header",
 
     "launcherSave": "Save Passwords Database",
     "launcherFileFilter": "KeePass files",
