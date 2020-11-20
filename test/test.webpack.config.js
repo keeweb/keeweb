@@ -22,6 +22,18 @@ module.exports = {
         alias: {
             ...appConfig.resolve.alias,
             test: path.resolve(rootDir, 'test')
+        },
+        fallback: {
+            console: false,
+            process: false,
+            crypto: false,
+            Buffer: false,
+            __filename: false,
+            __dirname: false,
+            fs: false,
+            setImmediate: false,
+            path: false,
+            moment: false
         }
     },
     module: {
