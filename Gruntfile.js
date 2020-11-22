@@ -454,7 +454,7 @@ module.exports = function (grunt) {
             options: {
                 title: 'KeeWeb',
                 icon: 'graphics/icon.icns',
-                background: 'graphics/background.png',
+                background: 'graphics/dmg-background.png',
                 'background-color': '#E0E6F9',
                 'icon-size': 80,
                 window: { size: { width: 658, height: 498 } },
