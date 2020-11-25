@@ -8,7 +8,7 @@ const IconMap = [
     'puzzle-piece',
     'edit',
     'plug',
-    'newspaper',
+    'address-card',
     'paperclip',
     'camera',
     'wifi',
@@ -22,7 +22,7 @@ const IconMap = [
     'cog',
     'clipboard',
     'paper-plane',
-    'address-card',
+    'newspaper',
     'bolt',
     'inbox',
     'save',
@@ -31,7 +31,7 @@ const IconMap = [
     'user-lock',
     'terminal',
     'print',
-    'map-signs',
+    'project-diagram',
     'flag-checkered',
     'wrench',
     'laptop',
@@ -66,7 +66,7 @@ const IconMap = [
     'apple',
     'wikipedia-w',
     'dollar-sign',
-    'calendar',
+    'signature',
     'mobile'
 ];
 
