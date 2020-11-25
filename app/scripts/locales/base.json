@@ -621,7 +621,7 @@
     "setAboutTitle": "About",
     "setAboutBuilt": "This app is built with these awesome tools",
     "setAboutLic": "License",
-    "setAboutLicComment": "The app itself and all included components which are not in public domain are licensed under MIT license",
+    "setAboutLicComment": "The app itself and all included components are licensed under MIT license",
     "setAboutFirst": "This is an open-source app created by {}",
     "setAboutSecond": "and licensed under {}.",
     "setAboutSource": "The source code and issues are on {}.",
