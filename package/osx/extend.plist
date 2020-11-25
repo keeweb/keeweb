@@ -9,8 +9,6 @@
         <array>
           <string>kdbx</string>
         </array>
-        <key>CFBundleTypeIconFile</key>
-        <string>electron.icns</string>
         <key>CFBundleTypeName</key>
         <string>Password Database</string>
         <key>CFBundleTypeOSTypes</key>
