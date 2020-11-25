@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.16.0 (TBD)
+`+` updated icons and visual design  
 `-` fixed a performance issue in searching entries  
 `*` improved the "Show all file" checkbox behavior  
 `+` shortcut to copy OTP  
