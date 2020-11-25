@@ -111,13 +111,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
-            fonts: {
-                src: 'node_modules/font-awesome/fonts/fontawesome-webfont.*',
-                dest: 'tmp/fonts/',
-                nonull: true,
-                expand: true,
-                flatten: true
-            },
             'desktop-html': {
                 src: 'dist/index.html',
                 dest: 'tmp/desktop/app/index.html',

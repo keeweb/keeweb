@@ -48,7 +48,7 @@ function getIcon(ext) {
         case 'log':
         case 'rtf':
         case 'pem':
-            return 'file-text-o';
+            return 'file-alt-o';
         case 'html':
         case 'htm':
         case 'js':

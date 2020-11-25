@@ -85,13 +85,3 @@
         }
     }
 }
-
-.svg-btn {
-    svg path {
-        transition: fill $base-duration $base-timing;
-        fill: var(--text-color);
-    }
-    &:hover svg path {
-        fill: var(--medium-color);
-    }
-}

@@ -327,7 +327,7 @@
                 }
                 &:before {
                     @include position(absolute, 0 0 null null);
-                    @include fa-icon();
+                    @include fa-icon;
                     cursor: pointer;
                     padding: 0.3em $base-padding-h;
                 }

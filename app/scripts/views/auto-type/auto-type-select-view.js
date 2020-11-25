@@ -241,7 +241,7 @@ class AutoTypeSelectView extends View {
         if (entry.fields.otp) {
             options.push({
                 value: '{TOTP}',
-                icon: 'clock-o',
+                icon: 'clock',
                 text: Locale.autoTypeSelectionOtp
             });
         }

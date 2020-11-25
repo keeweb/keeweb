@@ -162,20 +162,16 @@ class OpenView extends View {
 
     getLastOpenFiles() {
         return this.model.fileInfos.map((fileInfo) => {
-            let icon = 'file-text';
+            let icon = 'file-alt';
             const storage = Storage[fileInfo.storage];
             if (storage && storage.icon) {
                 icon = storage.icon;
-            }
-            if (storage && storage.iconSvg) {
-                icon = null;
             }
             return {
                 id: fileInfo.id,
                 name: fileInfo.name,
                 path: this.getDisplayedPath(fileInfo),
-                icon,
-                iconSvg: storage ? storage.iconSvg : undefined
+                icon
             };
         });
     }
@@ -807,7 +803,7 @@ class OpenView extends View {
             Alerts.alert({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
-                icon: storage.icon || 'files-o',
+                icon: storage.icon || 'file-alt-o',
                 buttons: [{ result: '', title: Locale.alertCancel }],
                 esc: '',
                 click: '',
@@ -1064,7 +1060,7 @@ class OpenView extends View {
 
         Alerts.alert({
             header: Locale.openChalRespHeader,
-            iconSvg: 'usb-token',
+            icon: 'usb-token',
             buttons: [{ result: '', title: Locale.alertCancel }],
             esc: '',
             click: '',

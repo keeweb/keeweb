@@ -15,7 +15,6 @@ const MaxRequestRetries = 3;
 class StorageBase {
     name = null;
     icon = null;
-    iconSvg = null;
     enabled = false;
     system = false;
     uipos = null;

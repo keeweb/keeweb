@@ -36,8 +36,7 @@
                 outline: focused-outline();
             }
         }
-        &-i,
-        &-svg {
+        &-i {
             font-size: 4em;
         }
         &-text {
@@ -46,15 +45,8 @@
                 color: var(--medium-color);
             }
         }
-        &-svg {
-            line-height: 0;
-            > svg {
-                @include size(1em);
-            }
-        }
         @include mobile() {
-            &-i,
-            &-svg {
+            &-i {
                 font-size: 4.6em;
             }
             &-text {
@@ -62,8 +54,7 @@
             }
             .open__icons--lower & {
                 margin: 14px;
-                &-i,
-                &-svg {
+                &-i {
                     font-size: 4.2em;
                     margin-bottom: 0.1em;
                 }
@@ -105,6 +96,8 @@
                 right: 0;
             }
             color: var(--muted-color);
+            line-height: 3em;
+            height: 3em;
             > i {
                 font-size: 3em;
                 @include mobile {
@@ -304,13 +297,8 @@
             }
             &-icon {
                 width: 2em;
-                &--svg > svg {
-                    vertical-align: middle;
-                    @include size(1em);
-                    path {
-                        fill: var(--muted-color);
-                    }
-                }
+                position: relative;
+                top: 0.1em;
             }
             &-text {
                 flex-grow: 1;

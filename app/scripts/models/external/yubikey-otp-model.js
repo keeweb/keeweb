@@ -71,7 +71,7 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
                         id: this.entryId(code.title, code.user),
                         device: this,
                         deviceSubId: serial,
-                        icon: 'clock-o',
+                        icon: 'clock',
                         title: code.title,
                         user: code.user,
                         needsTouch: code.needsTouch

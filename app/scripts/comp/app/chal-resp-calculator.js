@@ -150,7 +150,7 @@ const ChalRespCalculator = {
             header: Locale.yubiKeyNoKeyHeader,
             body: Locale.yubiKeyNoKeyBody.replace('{}', serial),
             buttons: [Alerts.buttons.cancel],
-            iconSvg: 'usb-token',
+            icon: 'usb-token',
             cancel: () => {
                 logger.info('No key alert closed');
 
@@ -173,7 +173,7 @@ const ChalRespCalculator = {
             header: Locale.yubiKeyTouchRequestedHeader,
             body: Locale.yubiKeyTouchRequestedBody.replace('{}', serial),
             buttons: [Alerts.buttons.cancel],
-            iconSvg: 'usb-token',
+            icon: 'usb-token',
             cancel: () => {
                 logger.info('Touch alert closed');
 

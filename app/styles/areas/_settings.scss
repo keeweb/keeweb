@@ -142,15 +142,11 @@
         display: inline-block;
         margin-right: $base-padding-h;
         text-align: center;
-        > i,
-        > svg {
+        > i {
             display: block;
             font-size: 3em;
             padding: $base-padding-px;
             margin: auto;
-        }
-        > svg {
-            @include size(1em);
         }
         &:hover {
             transition: color $base-duration $base-timing;

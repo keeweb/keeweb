@@ -11,7 +11,7 @@ class StorageGDrive extends StorageBase {
     name = 'gdrive';
     enabled = true;
     uipos = 30;
-    iconSvg = 'google-drive';
+    icon = 'google-drive';
 
     _baseUrl = 'https://www.googleapis.com/drive/v3';
     _baseUrlUpload = 'https://www.googleapis.com/upload/drive/v3';

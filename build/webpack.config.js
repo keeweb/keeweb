@@ -62,7 +62,7 @@ function config(options) {
                 'public-key.pem': path.join(rootDir, 'app/resources/public-key.pem'),
                 'public-key-new.pem': path.join(rootDir, 'app/resources/public-key-new.pem'),
                 'demo.kdbx': path.join(rootDir, 'app/resources/Demo.kdbx'),
-                svg: path.join(rootDir, 'app/resources/svg')
+                'fontawesome.woff2': '@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2'
             },
             fallback: {
                 console: false,
@@ -76,6 +76,9 @@ function config(options) {
                 path: false,
                 moment: false
             }
+        },
+        resolveLoader: {
+            modules: ['node_modules', path.join(__dirname, 'loaders')]
         },
         module: {
             rules: [
@@ -166,17 +169,13 @@ function config(options) {
                         MiniCssExtractPlugin.loader,
                         { loader: 'css-loader', options: { sourceMap: devMode } },
                         { loader: 'postcss-loader', options: { sourceMap: devMode } },
-                        { loader: 'sass-loader', options: { sourceMap: devMode } }
+                        { loader: 'sass-loader', options: { sourceMap: devMode } },
+                        { loader: 'scss-add-icons-loader' }
                     ]
                 },
-                {
-                    test: /fonts[\\/].*\.(woff|ttf|eot|svg)$/,
-                    use: ['base64-inline-loader', 'ignore-loader']
-                },
-                { test: /\.woff2$/, loader: 'base64-inline-loader' },
+                { test: /fontawesome.*\.woff2$/, loader: 'fontawesome-loader' },
                 { test: /\.pem$/, loader: 'raw-loader' },
-                { test: /\.kdbx$/, loader: 'base64-loader' },
-                { test: /\.svg$/, loader: 'raw-loader' }
+                { test: /\.kdbx$/, loader: 'base64-loader' }
             ]
         },
         optimization: {

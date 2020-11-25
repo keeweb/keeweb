@@ -8,7 +8,7 @@ class StorageOneDrive extends StorageBase {
     name = 'onedrive';
     enabled = true;
     uipos = 40;
-    iconSvg = 'onedrive';
+    icon = 'onedrive';
 
     _baseUrl = 'https://graph.microsoft.com/v1.0/me';
 

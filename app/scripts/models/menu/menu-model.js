@@ -42,7 +42,7 @@ class MenuModel extends Model {
         this.trashSection = new MenuSectionModel([
             {
                 locTitle: 'menuTrash',
-                icon: 'trash',
+                icon: 'trash-alt',
                 shortcut: Keys.DOM_VK_D,
                 filterKey: 'trash',
                 filterValue: true,

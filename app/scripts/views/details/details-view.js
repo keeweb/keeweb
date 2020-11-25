@@ -236,7 +236,7 @@ class DetailsView extends View {
                         if (fieldView.isHidden()) {
                             moreOptions.push({
                                 value: 'add:' + fieldView.model.name,
-                                icon: 'pencil',
+                                icon: 'pencil-alt',
                                 text: Locale.detMenuAddField.replace('{}', fieldView.model.title)
                             });
                         }
@@ -263,7 +263,7 @@ class DetailsView extends View {
                         text: Locale.detMenuHideEmpty
                     });
                 }
-                moreOptions.push({ value: 'otp', icon: 'clock-o', text: Locale.detSetupOtp });
+                moreOptions.push({ value: 'otp', icon: 'clock', text: Locale.detSetupOtp });
                 if (AutoType.enabled) {
                     moreOptions.push({
                         value: 'auto-type',
@@ -457,7 +457,7 @@ class DetailsView extends View {
             return;
         }
 
-        this.model.initOtpGenerator();
+        this.model.initOtpGenerator?.();
         if (this.model.external) {
             return;
         }
@@ -824,7 +824,7 @@ class DetailsView extends View {
             Alerts.yesno({
                 header: Locale.detDelToTrash,
                 body: Locale.detDelToTrashBody,
-                icon: 'trash',
+                icon: 'trash-alt',
                 success: doMove
             });
         } else {
@@ -865,19 +865,19 @@ class DetailsView extends View {
             if (this.model.external) {
                 options.push({
                     value: 'det-copy-otp',
-                    icon: 'clipboard',
+                    icon: 'copy',
                     text: Locale.detMenuCopyOtp
                 });
             } else {
                 options.push({
                     value: 'det-copy-password',
-                    icon: 'clipboard',
+                    icon: 'copy',
                     text: Locale.detMenuCopyPassword
                 });
             }
             options.push({
                 value: 'det-copy-user',
-                icon: 'clipboard',
+                icon: 'copy',
                 text: Locale.detMenuCopyUser
             });
         }
@@ -887,7 +887,7 @@ class DetailsView extends View {
             if (canCopy) {
                 options.push({
                     value: 'copy-to-clipboard',
-                    icon: 'copy',
+                    icon: 'clipboard',
                     text: Locale.detCopyEntryToClipboard
                 });
             }

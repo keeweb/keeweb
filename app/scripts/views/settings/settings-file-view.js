@@ -85,7 +85,6 @@ class SettingsFileView extends View {
                 storageProviders.push({
                     name: prv.name,
                     icon: prv.icon,
-                    iconSvg: prv.iconSvg,
                     own: name === fileStorage,
                     backup: prv.backup
                 });
@@ -337,7 +336,7 @@ class SettingsFileView extends View {
                     Alerts.alert({
                         header: '',
                         body: '',
-                        icon: storage.icon || 'files-o',
+                        icon: storage.icon || 'file-alt-o',
                         buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                         esc: '',
                         opaque: true,

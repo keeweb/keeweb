@@ -321,9 +321,9 @@ class FieldView extends View {
 
         const actions = [];
         if (this.value) {
-            actions.push({ name: 'copy', icon: 'clipboard' });
+            actions.push({ name: 'copy', icon: 'copy' });
         }
-        actions.push({ name: 'edit', icon: 'pencil' });
+        actions.push({ name: 'edit', icon: 'pencil-alt' });
         if (this.value instanceof kdbxweb.ProtectedValue) {
             actions.push({ name: 'reveal', icon: 'eye' });
         }

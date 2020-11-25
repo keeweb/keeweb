@@ -9,7 +9,6 @@ module.exports = function (grunt) {
         'copy:favicon',
         'copy:icons',
         'copy:manifest',
-        'copy:fonts',
         'webpack:app',
         'inline',
         'htmlmin',
