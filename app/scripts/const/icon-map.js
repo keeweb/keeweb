@@ -22,7 +22,7 @@ const IconMap = [
     'cog',
     'clipboard',
     'paper-plane',
-    'tv',
+    'address-card',
     'bolt',
     'inbox',
     'save',
