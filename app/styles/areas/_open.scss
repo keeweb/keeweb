@@ -258,10 +258,11 @@
             }
             &-img {
                 fill: var(--muted-color);
-                width: 2em;
+                width: 1em;
                 position: relative;
-                top: -0.25em;
-                margin-right: $base-padding-h;
+                top: -0.22em;
+                font-size: 1.5em;
+                margin-right: $tiny-spacing;
                 cursor: pointer;
                 &:hover {
                     fill: var(--text-color);
