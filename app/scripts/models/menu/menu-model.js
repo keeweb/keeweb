@@ -69,7 +69,7 @@ class MenuModel extends Model {
             { locTitle: 'menuSetGeneral', icon: 'cog', page: 'general', active: true }
         ]);
         this.shortcutsSection = new MenuSectionModel([
-            { locTitle: 'shortcuts', icon: 'keyboard-o', page: 'shortcuts' }
+            { locTitle: 'shortcuts', icon: 'keyboard', page: 'shortcuts' }
         ]);
         this.pluginsSection = new MenuSectionModel([
             { locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }

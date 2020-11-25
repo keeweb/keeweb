@@ -267,7 +267,7 @@ class DetailsView extends View {
                 if (AutoType.enabled) {
                     moreOptions.push({
                         value: 'auto-type',
-                        icon: 'keyboard-o',
+                        icon: 'keyboard',
                         text: Locale.detAutoTypeSettings
                     });
                 }
@@ -893,7 +893,7 @@ class DetailsView extends View {
             }
         }
         if (AutoType.enabled) {
-            options.push({ value: 'det-auto-type', icon: 'keyboard-o', text: Locale.detAutoType });
+            options.push({ value: 'det-auto-type', icon: 'keyboard', text: Locale.detAutoType });
         }
         Events.emit('show-context-menu', Object.assign(e, { options }));
     }

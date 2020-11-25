@@ -58,6 +58,11 @@
         &-post {
             display: none;
         }
+        &-post {
+            margin-left: $tiny-spacing;
+            margin-right: $small-spacing;
+            vertical-align: bottom;
+        }
         cursor: pointer;
         @include mobile {
             line-height: $mobile-back-button-height;

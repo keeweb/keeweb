@@ -803,7 +803,7 @@ class OpenView extends View {
             Alerts.alert({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
-                icon: storage.icon || 'file-alt-o',
+                icon: storage.icon || 'file-alt',
                 buttons: [{ result: '', title: Locale.alertCancel }],
                 esc: '',
                 click: '',

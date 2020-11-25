@@ -236,7 +236,7 @@ class FieldView extends View {
         }
 
         if (AutoType.enabled && this.model.sequence) {
-            options.push({ value: 'autotype', icon: 'keyboard-o', text: Locale.detAutoTypeField });
+            options.push({ value: 'autotype', icon: 'keyboard', text: Locale.detAutoTypeField });
         }
 
         const rect = this.$el[0].getBoundingClientRect();

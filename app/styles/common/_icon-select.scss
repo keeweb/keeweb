@@ -33,6 +33,9 @@
                 display: none;
             }
         }
+        &--progress > i:before {
+            content: $fa-var-spinner;
+        }
         &--download-error > i:before {
             content: $fa-var-ban;
         }
