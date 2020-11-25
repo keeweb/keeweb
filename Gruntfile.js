@@ -78,11 +78,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
-            favicon: {
-                src: 'app/favicon.png',
-                dest: 'tmp/favicon.png',
-                nonull: true
-            },
             icons: {
                 cwd: 'app/icons/',
                 src: ['*.png', '*.svg'],

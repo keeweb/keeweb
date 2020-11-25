@@ -6,7 +6,6 @@ module.exports = function (grunt) {
         'clean',
         'eslint',
         'copy:html',
-        'copy:favicon',
         'copy:icons',
         'copy:manifest',
         'webpack:app',
