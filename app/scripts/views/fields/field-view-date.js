@@ -30,9 +30,9 @@ class FieldViewDate extends FieldViewText {
             i18n: {
                 previousMonth: '',
                 nextMonth: '',
-                months: Locale.months,
-                weekdays: Locale.weekdays,
-                weekdaysShort: Locale.weekdaysShort
+                months: DateFormat.getMonthsForLocale(),
+                weekdays: DateFormat.getWeekDaysForLocale(),
+                weekdaysShort: DateFormat.getWeekdaysShortForLocale()
             }
         });
         this.picker.adjustPosition = this.adjustPickerPosition.bind(this);

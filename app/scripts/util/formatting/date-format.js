@@ -1,19 +1,46 @@
-import { StringFormat } from 'util/formatting/string-format';
-import { Locale } from 'util/locale';
+import { SettingsManager } from 'comp/settings/settings-manager';
 
 const DateFormat = {
+    getMonthsForLocale() {
+        const format = new Intl.DateTimeFormat(SettingsManager.activeLocale, { month: 'long' });
+        const months = [];
+        for (let month = 0; month < 12; month++) {
+            months.push(format.format(new Date(Date.UTC(2008, month))));
+        }
+        return months;
+    },
+
+    getWeekDaysForLocale() {
+        const format = new Intl.DateTimeFormat(SettingsManager.activeLocale, { weekday: 'long' });
+        const weekdays = [];
+        for (let day = 1; day < 8; day++) {
+            weekdays.push(format.format(new Date(Date.UTC(2007, 9, 6 + day))));
+        }
+        return weekdays;
+    },
+
+    getWeekdaysShortForLocale() {
+        const format = new Intl.DateTimeFormat(SettingsManager.activeLocale, { weekday: 'short' });
+        const weekdays = [];
+        for (let day = 1; day < 8; day++) {
+            weekdays.push(format.format(new Date(Date.UTC(2007, 9, 6 + day))));
+        }
+        return weekdays;
+    },
+
     dtStr(dt) {
         if (typeof dt === 'number') {
             dt = new Date(dt);
         }
         return dt
-            ? this.dStr(dt) +
-                  ' ' +
-                  StringFormat.pad(dt.getHours(), 2) +
-                  ':' +
-                  StringFormat.pad(dt.getMinutes(), 2) +
-                  ':' +
-                  StringFormat.pad(dt.getSeconds(), 2)
+            ? new Intl.DateTimeFormat(SettingsManager.activeLocale, {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit'
+              }).format(dt)
             : '';
     },
 
@@ -22,7 +49,11 @@ const DateFormat = {
             dt = new Date(dt);
         }
         return dt
-            ? dt.getDate() + ' ' + Locale.monthsShort[dt.getMonth()] + ' ' + dt.getFullYear()
+            ? new Intl.DateTimeFormat(SettingsManager.activeLocale, {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+              }).format(dt)
             : '';
     },
 
@@ -30,19 +61,7 @@ const DateFormat = {
         if (typeof dt === 'number') {
             dt = new Date(dt);
         }
-        return dt
-            ? dt.getFullYear() +
-                  '-' +
-                  StringFormat.pad(dt.getMonth() + 1, 2) +
-                  '-' +
-                  StringFormat.pad(dt.getDate(), 2) +
-                  'T' +
-                  StringFormat.pad(dt.getHours(), 2) +
-                  '-' +
-                  StringFormat.pad(dt.getMinutes(), 2) +
-                  '-' +
-                  StringFormat.pad(dt.getSeconds(), 2)
-            : '';
+        return dt ? new Date().toISOString().replaceAll(':', '-').slice(0, 19) : '';
     }
 };
 
