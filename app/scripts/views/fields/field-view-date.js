@@ -1,6 +1,5 @@
 import Pikaday from 'pikaday';
 import { DateFormat } from 'util/formatting/date-format';
-import { Locale } from 'util/locale';
 import { FieldViewText } from 'views/fields/field-view-text';
 
 class FieldViewDate extends FieldViewText {
