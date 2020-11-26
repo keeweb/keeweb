@@ -1,4 +1,5 @@
 import { SettingsManager } from 'comp/settings/settings-manager';
+import { StringFormat } from 'util/formatting/string-format';
 
 const DateFormat = {
     getMonthsForLocale() {
@@ -61,7 +62,19 @@ const DateFormat = {
         if (typeof dt === 'number') {
             dt = new Date(dt);
         }
-        return dt ? dt.toISOString().replaceAll(':', '-').slice(0, 19) : '';
+        return dt
+            ? dt.getFullYear() +
+                  '-' +
+                  StringFormat.pad(dt.getMonth() + 1, 2) +
+                  '-' +
+                  StringFormat.pad(dt.getDate(), 2) +
+                  'T' +
+                  StringFormat.pad(dt.getHours(), 2) +
+                  '-' +
+                  StringFormat.pad(dt.getMinutes(), 2) +
+                  '-' +
+                  StringFormat.pad(dt.getSeconds(), 2)
+            : '';
     }
 };
 
