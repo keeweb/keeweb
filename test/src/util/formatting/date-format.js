@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/util/date-format';
 
 describe('DateFormat', () => {
     const dt = new Date.UTC(2020, 0, 2, 3, 4, 5, 6);

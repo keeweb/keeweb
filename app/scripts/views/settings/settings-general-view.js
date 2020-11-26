@@ -12,7 +12,7 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { UpdateModel } from 'models/update-model';
 import { SemVer } from 'util/data/semver';
 import { Features } from 'util/features';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/util/date-format';
 import { Locale } from 'util/locale';
 import { SettingsLogsView } from 'views/settings/settings-logs-view';
 import { SettingsPrvView } from 'views/settings/settings-prv-view';

@@ -1,4 +1,4 @@
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/util/date-format';
 import { Locale } from 'util/locale';
 
 const EntryPresenter = function (descField, noColor, activeEntryId) {
