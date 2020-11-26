@@ -61,7 +61,7 @@ const DateFormat = {
         if (typeof dt === 'number') {
             dt = new Date(dt);
         }
-        return dt ? new Date().toISOString().replaceAll(':', '-').slice(0, 19) : '';
+        return dt ? dt.toISOString().replaceAll(':', '-').slice(0, 19) : '';
     }
 };
 
