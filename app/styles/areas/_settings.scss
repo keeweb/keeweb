@@ -175,6 +175,42 @@
     &__general-prv-logout {
         margin-bottom: $base-padding-v;
     }
+    &__general-themes {
+        width: calc(100% - 10em);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 10em);
+        grid-gap: $base-spacing;
+        margin-bottom: $base-spacing;
+    }
+    &__general-theme {
+        padding: $base-padding;
+        border: light-border();
+        border-radius: var(--input-border-radius);
+        text-align: center;
+        background: var(--background-color);
+        color: var(--text-color);
+        cursor: pointer;
+        body & {
+            --focus-shadow-blur: unset;
+            --focus-shadow-spread: unset;
+            --form-box-shadow-color-focus: unset;
+        }
+        &-name {
+            border-bottom: light-border();
+            padding-bottom: $tiny-spacing;
+            margin-bottom: $small-spacing;
+        }
+        &-button {
+            margin-bottom: $base-padding-v;
+        }
+        &:hover {
+            box-shadow: form-box-shadow-focus();
+        }
+        &--selected {
+            border: 1px solid var(--action-color);
+            box-shadow: form-box-shadow-focus();
+        }
+    }
     &__logs {
         user-select: text;
         margin-top: $base-padding-v;

@@ -23,7 +23,7 @@ class SettingsGeneralView extends View {
     template = template;
 
     events = {
-        'change .settings__general-theme': 'changeTheme',
+        'click .settings__general-theme': 'changeTheme',
         'change .settings__general-locale': 'changeLocale',
         'change .settings__general-font-size': 'changeFontSize',
         'change .settings__general-expand': 'changeExpandGroups',
@@ -205,8 +205,9 @@ class SettingsGeneralView extends View {
     }
 
     changeTheme(e) {
-        const theme = e.target.value;
+        const theme = e.target.closest('.settings__general-theme').dataset.theme;
         AppSettingsModel.theme = theme;
+        this.render();
     }
 
     changeLocale(e) {

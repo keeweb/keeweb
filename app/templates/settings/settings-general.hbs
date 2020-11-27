@@ -49,12 +49,18 @@
     </div>
     {{/if}}
     <div>
-        <label for="settings__general-theme">{{res 'setGenTheme'}}:</label>
-        <select class="settings__general-theme settings__select input-base" id="settings__general-theme">
+        <label>{{res 'setGenTheme'}}:</label>
+        <div class="settings__general-themes">
             {{#each themes as |name key|}}
-            <option value="{{key}}" {{#ifeq key ../activeTheme}}selected{{/ifeq}}>{{name}}</option>
+                <div class="th-{{key}} settings__general-theme
+                    {{~#ifeq key ../activeTheme}} settings__general-theme--selected{{/ifeq~}}"
+                     data-theme="{{key}}"
+                >
+                    <div class="settings__general-theme-name">{{name}}</div>
+                    <button class="settings__general-theme-button"><i class="fa fa-ellipsis-h"></i></button>
+                </div>
             {{/each}}
-        </select>
+        </div>
     </div>
     <div>
         <label for="settings__general-font-size">{{res 'setGenFontSize'}}:</label>
