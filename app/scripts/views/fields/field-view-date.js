@@ -1,5 +1,5 @@
 import Pikaday from 'pikaday';
-import { DateFormat } from 'comp/util/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { FieldViewText } from 'views/fields/field-view-text';
 
 class FieldViewDate extends FieldViewText {
@@ -29,9 +29,9 @@ class FieldViewDate extends FieldViewText {
             i18n: {
                 previousMonth: '',
                 nextMonth: '',
-                months: DateFormat.getMonthsForLocale(),
-                weekdays: DateFormat.getWeekDaysForLocale(),
-                weekdaysShort: DateFormat.getWeekdaysShortForLocale()
+                months: DateFormat.months(),
+                weekdays: DateFormat.weekDays(),
+                weekdaysShort: DateFormat.shortWeekDays()
             }
         });
         this.picker.adjustPosition = this.adjustPickerPosition.bind(this);

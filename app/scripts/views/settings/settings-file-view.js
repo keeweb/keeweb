@@ -8,7 +8,7 @@ import { YubiKey } from 'comp/app/yubikey';
 import { UsbListener } from 'comp/app/usb-listener';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
-import { DateFormat } from 'comp/util/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { UrlFormat } from 'util/formatting/url-format';
 import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { Locale } from 'util/locale';
