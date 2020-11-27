@@ -10,7 +10,7 @@ import { PluginManager } from 'plugins/plugin-manager';
 import { Comparators } from 'util/data/comparators';
 import { SemVer } from 'util/data/semver';
 import { Features } from 'util/features';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { Locale } from 'util/locale';
 import template from 'templates/settings/settings-plugins.hbs';
 

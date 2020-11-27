@@ -2,7 +2,7 @@
 import kdbxweb from 'kdbxweb';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Links } from 'const/links';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
 

@@ -1,6 +1,6 @@
 import { Locale } from 'util/locale';
 import { StringFormat } from 'util/formatting/string-format';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { AppModel } from 'models/app-model';
 import { FieldViewReadOnly } from 'views/fields/field-view-read-only';
 import { FieldViewOtp } from 'views/fields/field-view-otp';
