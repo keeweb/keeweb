@@ -212,7 +212,7 @@ class SettingsGeneralView extends View {
     changeLocale(e) {
         const locale = e.target.value;
         if (locale === '...') {
-            e.target.value = AppSettingsModel.locale || 'en';
+            e.target.value = AppSettingsModel.locale || 'en-US';
             this.appModel.menu.select({
                 item: this.appModel.menu.pluginsSection.items[0]
             });

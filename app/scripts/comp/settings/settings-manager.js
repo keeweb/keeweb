@@ -10,11 +10,11 @@ const extraThemes = Features.isMac || Features.isiOS ? appleThemes : {};
 
 const SettingsManager = {
     neutralLocale: null,
-    activeLocale: 'en',
+    activeLocale: 'en-US',
     activeTheme: null,
 
     allLocales: {
-        'en': 'English',
+        'en-US': 'English',
         'de-DE': 'Deutsch',
         'fr-FR': 'Français'
     },
@@ -83,7 +83,7 @@ const SettingsManager = {
             return;
         }
         let localeValues;
-        if (loc !== 'en') {
+        if (loc !== 'en-US') {
             if (this.customLocales[loc]) {
                 localeValues = this.customLocales[loc];
             } else {
@@ -100,8 +100,8 @@ const SettingsManager = {
 
     getBrowserLocale() {
         const language = (navigator.languages && navigator.languages[0]) || navigator.language;
-        if (language && language.lastIndexOf('en', 0) === 0) {
-            return 'en';
+        if (language && language.startsWith('en')) {
+            return 'en-US';
         }
         return language;
     }
