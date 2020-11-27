@@ -21,6 +21,9 @@ class AppSettingsModel extends Model {
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
         }
+        if (data.locale === 'en') {
+            data.locale = 'en-US';
+        }
     }
 
     save() {
