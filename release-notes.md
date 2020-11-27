@@ -3,6 +3,7 @@ Release notes
 ##### v1.16.0 (TBD)
 `+` updated icons and visual design  
 `-` fixed a performance issue in searching entries  
+`+` locale-aware date and time formats  
 `*` improved the "Show all file" checkbox behavior  
 `+` shortcut to copy OTP  
 `+` support for WebDAV servers without Last-Modified header  
