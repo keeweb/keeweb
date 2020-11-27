@@ -178,7 +178,7 @@
     &__general-themes {
         width: calc(100% - 10em);
         display: grid;
-        grid-template-columns: repeat(auto-fill, 10em);
+        grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
         grid-gap: $base-spacing;
         margin-bottom: $base-spacing;
     }
