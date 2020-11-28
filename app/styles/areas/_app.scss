@@ -146,5 +146,8 @@
         text-align: center;
         background-color: var(--error-color);
         color: var(--text-contrast-error-color);
+        > .fa {
+            vertical-align: bottom;
+        }
     }
 }
