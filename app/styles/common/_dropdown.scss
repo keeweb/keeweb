@@ -18,7 +18,7 @@
         @include nomobile {
             @include area-selectable();
             &:hover {
-                color: var(--text-color);
+                color: var(--selected-item-text-color);
                 background-color: var(--action-color);
             }
             &--active,
