@@ -185,6 +185,8 @@ input[type='checkbox'] {
         display: inline-block;
         width: 1.3em;
         color: var(--text-color);
+        font-size: 1.2em;
+        vertical-align: text-bottom;
     }
     &:checked + label:before {
         content: $fa-var-check-square-o;

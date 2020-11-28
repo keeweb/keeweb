@@ -61,7 +61,8 @@
         &-post {
             margin-left: $tiny-spacing;
             margin-right: $small-spacing;
-            vertical-align: bottom;
+            position: relative;
+            top: 0.2em;
         }
         cursor: pointer;
         @include mobile {
