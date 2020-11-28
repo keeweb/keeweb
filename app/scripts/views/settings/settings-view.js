@@ -32,7 +32,7 @@ class SettingsView extends View {
     }
 
     setPage(e) {
-        let { page, file } = e;
+        let { page, section, file } = e;
         if (page === 'file' && file && file.external) {
             page = 'file-external';
         }
@@ -48,6 +48,20 @@ class SettingsView extends View {
         this.file = file;
         this.page = page;
         this.pageResized();
+        this.scrollToSection(section);
+    }
+
+    scrollToSection(section) {
+        let scrollEl;
+        if (section) {
+            scrollEl = this.views.page.el.querySelector(`#${section}`);
+        }
+        if (!scrollEl) {
+            scrollEl = this.views.page.el.querySelector(`h1`);
+        }
+        if (scrollEl) {
+            scrollEl.scrollIntoView(true);
+        }
     }
 
     returnToApp() {

@@ -9,7 +9,7 @@
     box-sizing: border-box;
     z-index: $z-index-no-modal;
     opacity: 1;
-    padding: $base-padding;
+    padding: $medium-padding;
 
     .titlebar-hidden & {
         padding-top: $titlebar-padding-small;
@@ -108,10 +108,10 @@
         }
     }
     &__item {
-        @include area-selectable(right);
+        @include area-selectable();
         &--active,
         &--active:hover {
-            @include area-selected(right);
+            @include area-selected();
             cursor: pointer;
         }
         &--active {

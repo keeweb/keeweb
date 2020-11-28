@@ -1,26 +1,34 @@
-$black: #111;
-$white: #d8e5f1;
-$red: #df3c06;
-$orange: #fbac45;
-$yellow: #e9d92a;
-$green: #0dc94b;
-$blue: #4e6af8;
-$violet: #d946db;
-
-$all-colors: (
-    'white': $white,
-    'black': $black,
-    'red': $red,
-    'orange': $orange,
-    'yellow': $yellow,
-    'green': $green,
-    'blue': $blue,
-    'violet': $violet
+$dark-colors: (
+    white-color: #d8e5f1,
+    black-color: #111,
+    red-color: #ed5f5e,
+    orange-color: #e8873a,
+    yellow-color: #f7c644,
+    green-color: #78b756,
+    blue-color: #2f7cf7,
+    violet-color: #e55d9c
 );
 
-@each $col, $val in $all-colors {
-    .#{$col}-color {
-        color: #{$val};
+$light-colors: (
+    white-color: #d8e5f1,
+    black-color: #111,
+    red-color: #d04745,
+    orange-color: #e9873a,
+    yellow-color: #f7c84e,
+    green-color: #79b656,
+    blue-color: #2f7cf7,
+    violet-color: #e55d9c
+);
+
+body {
+    @each $name, $value in $dark-colors {
+        --#{$name}: #{$value};
+    }
+}
+
+@each $name in map-keys($dark-colors) {
+    .#{$name} {
+        color: var(--#{$name});
     }
 }
 .muted-color {

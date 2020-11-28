@@ -10,7 +10,7 @@
     position: relative;
 
     &__content {
-        margin: $base-padding;
+        margin: $medium-padding;
     }
 
     > .scroller {
@@ -192,9 +192,9 @@
         color: var(--text-color);
         cursor: pointer;
         body & {
-            --focus-shadow-blur: unset;
             --focus-shadow-spread: unset;
             --form-box-shadow-color-focus: unset;
+            --form-box-shadow-color-hover: unset;
         }
         &-name {
             border-bottom: light-border();
@@ -205,9 +205,10 @@
             margin-bottom: $base-padding-v;
         }
         &:hover {
-            box-shadow: form-box-shadow-focus();
+            box-shadow: form-box-shadow-hover();
         }
-        &--selected {
+        &--selected,
+        &--selected:hover {
             border: 1px solid var(--action-color);
             box-shadow: form-box-shadow-focus();
         }
@@ -219,17 +220,6 @@
         &-log {
             margin: 0;
             white-space: pre-wrap;
-            &--debug {
-                opacity: 0.8;
-            }
-            &--info {
-            }
-            &--warn {
-                color: $yellow;
-            }
-            &--error {
-                color: $red;
-            }
         }
     }
     &__plugins {
@@ -331,6 +321,8 @@
     }
 
     &__head-icon {
+        position: relative;
+        top: .1em;
         margin-right: 0.2em;
     }
 }

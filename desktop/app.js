@@ -56,14 +56,15 @@ const startMinimized =
     process.argv.some((arg) => arg.startsWith('--minimized'));
 
 const themeBgColors = {
+    dark: '#1e1e1e',
+    light: '#f6f6f6',
     db: '#342f2e',
     fb: '#282c34',
     wh: '#fafafa',
     te: '#222',
     hc: '#fafafa',
     sd: '#002b36',
-    sl: '#fdf6e3',
-    macdark: '#1f1f20'
+    sl: '#fdf6e3'
 };
 const defaultBgColor = '#282C34';
 
@@ -222,12 +223,26 @@ function setSystemAppearance() {
     logProgress('setting system appearance');
 }
 
+function checkSettingsTheme(theme) {
+    // old settings migration
+    if (theme === 'macdark') {
+        return 'dark';
+    }
+    if (theme === 'wh') {
+        return 'light';
+    }
+    return theme;
+}
+
 function getDefaultTheme() {
-    return process.platform === 'darwin' ? 'macdark' : 'fb';
+    if (process.platform === 'darwin' && !electron.nativeTheme.shouldUseDarkColors) {
+        return 'light';
+    }
+    return 'dark';
 }
 
 function createMainWindow() {
-    const theme = appSettings.theme || getDefaultTheme();
+    const theme = checkSettingsTheme(appSettings.theme) || getDefaultTheme();
     const bgColor = themeBgColors[theme] || defaultBgColor;
     const windowOptions = {
         show: false,

@@ -24,16 +24,15 @@
     }
 
     &__icon {
-        text-align: center;
-        cursor: pointer;
-        margin: 20px;
-        transition: color $base-duration $base-timing;
+        @include icon-btn();
+        padding-top: 0;
+        margin: 0.2em 0.5em;
         &:hover {
             color: var(--medium-color);
         }
         &:focus {
             .open--show-focus & {
-                outline: focused-outline();
+                box-shadow: focused-box-shadow();
             }
         }
         &-i {
@@ -91,15 +90,17 @@
             padding: 0.6em $base-spacing;
             position: absolute;
             left: 100%;
+            border-radius: var(--block-border-radius);
             @include mobile {
                 left: auto;
                 right: 0;
             }
             color: var(--muted-color);
             line-height: 3em;
-            height: 3em;
+            height: 3.2em;
             > i {
                 font-size: 3em;
+                line-height: 1;
                 @include mobile {
                     line-height: 0.8;
                 }
@@ -108,7 +109,7 @@
         .open--show-focus & {
             &-enter-btn:focus,
             &-opening-icon:focus {
-                outline: focused-outline();
+                box-shadow: focused-box-shadow();
             }
         }
         &-enter-btn {
@@ -197,6 +198,7 @@
         padding-left: $base-padding-h;
         height: 2em;
         &-key-file {
+            border-radius: var(--block-border-radius);
             .open--file:not(.open--opening) & {
                 cursor: pointer;
             }
@@ -228,7 +230,7 @@
             }
             &:focus {
                 .open--show-focus & {
-                    outline: focused-outline();
+                    box-shadow: focused-box-shadow();
                 }
             }
         }
@@ -291,9 +293,10 @@
             }
             color: var(--muted-color);
             padding: $base-padding;
+            border-radius: var(--block-border-radius);
             &:focus {
                 .open--show-focus & {
-                    outline: focused-outline();
+                    box-shadow: focused-box-shadow();
                 }
             }
             &-icon {
@@ -362,7 +365,7 @@
     &__file {
         cursor: pointer;
         padding: $base-padding;
-        border-radius: $base-border-radius;
+        border-radius: var(--block-border-radius);
         box-sizing: border-box;
         flex-basis: 100%;
         @include nomobile {

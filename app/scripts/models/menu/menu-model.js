@@ -66,7 +66,48 @@ class MenuModel extends Model {
         ]);
 
         this.generalSection = new MenuSectionModel([
-            { locTitle: 'menuSetGeneral', icon: 'cog', page: 'general', active: true }
+            {
+                locTitle: 'menuSetGeneral',
+                icon: 'cog',
+                page: 'general',
+                section: 'top',
+                active: true
+            },
+            {
+                locTitle: 'setGenAppearance',
+                icon: '0',
+                page: 'general',
+                section: 'appearance',
+                active: true
+            },
+            {
+                locTitle: 'setGenFunction',
+                icon: '0',
+                page: 'general',
+                section: 'function',
+                active: true
+            },
+            {
+                locTitle: 'setGenLock',
+                icon: '0',
+                page: 'general',
+                section: 'lock',
+                active: true
+            },
+            {
+                locTitle: 'setGenStorage',
+                icon: '0',
+                page: 'general',
+                section: 'storage',
+                active: true
+            },
+            {
+                locTitle: 'advanced',
+                icon: '0',
+                page: 'general',
+                section: 'advanced',
+                active: true
+            }
         ]);
         this.shortcutsSection = new MenuSectionModel([
             { locTitle: 'shortcuts', icon: 'keyboard', page: 'shortcuts' }
@@ -127,6 +168,7 @@ class MenuModel extends Model {
         } else if (sections === this.menus.settings) {
             Events.emit('set-page', {
                 page: sel.item.page,
+                section: sel.item.section,
                 file: sel.item.file
             });
         }

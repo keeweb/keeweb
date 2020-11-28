@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.16.0 (TBD)
 `+` updated icons and visual design  
+`+` new Dark (default) and Light themes  
 `-` fixed a performance issue in searching entries  
 `+` locale-aware date and time formats  
 `*` improved the "Show all file" checkbox behavior  

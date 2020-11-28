@@ -6,10 +6,12 @@ import template from 'templates/settings/settings-logs-view.hbs';
 class SettingsLogsView extends View {
     parent = '.settings__general-advanced';
     template = template;
+    levelToColor = { debug: 'muted', warn: 'yellow', error: 'red' };
 
     render() {
         const logs = Logger.getLast().map((item) => ({
             level: item.level,
+            color: this.levelToColor[item.level],
             msg:
                 '[' +
                 StringFormat.padStr(item.level.toUpperCase(), 5) +

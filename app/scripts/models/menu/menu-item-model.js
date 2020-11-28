@@ -57,7 +57,8 @@ MenuItemModel.defineModelProperties({
     defaultItem: false,
     page: null,
     editable: false,
-    file: null
+    file: null,
+    section: null
 });
 
 export { MenuItemModel };

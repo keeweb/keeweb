@@ -12,7 +12,7 @@
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
     display: inline-block;
-    line-height: 1;
+    line-height: $base-line-height;
 }
 
 .fa {

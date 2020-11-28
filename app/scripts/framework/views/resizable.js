@@ -25,7 +25,7 @@ const Resizable = {
         if (dragInfo.auto !== undefined) {
             this.$el.css(dragInfo.prop, dragInfo.auto);
         } else {
-            this.$el.css(dragInfo.prop, 'auto');
+            this.$el.css(dragInfo.prop, '');
         }
         this.fixSize(dragInfo);
         this.emit('view-resize', null);
@@ -55,7 +55,7 @@ const Resizable = {
         const propLower = prop.toLowerCase();
         const min = this.getSizeProp('min' + prop);
         const max = this.getSizeProp('max' + prop);
-        const auto = this.getSizeProp('auto' + prop) || 'auto';
+        const auto = this.getSizeProp('auto' + prop);
         const startSize = this.$el[propLower]();
         return { startSize, prop: propLower, min, max, auto };
     },

@@ -14,8 +14,9 @@
             base-border-color: mix(map-get($t, medium-color), map-get($t, background-color), 50%),
             accent-border-color: mix(map-get($t, medium-color), map-get($t, background-color), 65%),
             light-border-color: mix(map-get($t, medium-color), map-get($t, background-color), map-get($t, light-border-percent)),
-            form-box-border-focus: map-get($t, action-color),
-            form-box-shadow-color-focus: lightness-alpha(map-get($t, action-color), -5%, -0.3),
+            form-box-border-color-focus: mix(map-get($t, action-color), map-get($t, text-color), 70%),
+            form-box-shadow-color-focus: rgba(mix(map-get($t, action-color), map-get($t, text-color), 70%), 0.7),
+            form-box-shadow-color-hover: rgba(mix(map-get($t, action-color), map-get($t, text-color), 70%), 0.5),
             form-box-shadow-color-focus-error: lightness-alpha(map-get($t, error-color), -5%, -0.3),
             dropdown-box-shadow-color: rgba(map-get($t, medium-color), 0.05),
             secondary-background-color: mix(map-get($t, medium-color), map-get($t, background-color), 10%),
@@ -31,7 +32,11 @@
             error-background-color-active: shade(map-get($t, error-color), 25%),
             error-background-color-active-tr: rgba(shade(map-get($t, error-color), 25%), 0.15),
             modal-background-color: rgba(map-get($t, background-color), map-get($t, modal-opacity)),
-            modal-background-color-tr: rgba(map-get($t, background-color), 0)
+            modal-background-color-tr: rgba(map-get($t, background-color), 0),
+            selected-item-color: mix(map-get($t, action-color), map-get($t, background-color), 85%),
+            selected-on-secondary-item-color: mix(map-get($t, medium-color), map-get($t, background-color), 30%),
+            selectable-on-secondary-item-color: mix(map-get($t, medium-color), map-get($t, background-color), 14%),
+            clickable-on-secondary-color: mix(map-get($t, medium-color), map-get($t, background-color), 75%),
         )
     );
 }

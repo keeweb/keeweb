@@ -2,12 +2,6 @@ import { Events } from 'framework/events';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 
-const appleThemes = {
-    macdark: 'setGenThemeMacDark'
-};
-
-const extraThemes = Features.isMac || Features.isiOS ? appleThemes : {};
-
 const SettingsManager = {
     neutralLocale: null,
     activeLocale: 'en-US',
@@ -20,14 +14,14 @@ const SettingsManager = {
     },
 
     allThemes: {
+        dark: 'setGenThemeDark',
+        light: 'setGenThemeLight',
         fb: 'setGenThemeFb',
         db: 'setGenThemeDb',
         sd: 'setGenThemeSd',
         sl: 'setGenThemeSl',
-        wh: 'setGenThemeWh',
         te: 'setGenThemeTe',
-        hc: 'setGenThemeHc',
-        ...extraThemes
+        hc: 'setGenThemeHc'
     },
 
     customLocales: {},
@@ -46,7 +40,7 @@ const SettingsManager = {
     },
 
     getDefaultTheme() {
-        return Features.isMac ? 'macdark' : 'fb';
+        return 'dark';
     },
 
     setTheme(theme) {
