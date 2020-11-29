@@ -165,7 +165,7 @@ app.minimizeApp = function (menuItemLabels) {
     mainWindow.hide();
     if (process.platform === 'darwin') {
         app.dock.hide();
-        imagePath = 'mac-menubar-icon.png';
+        imagePath = 'macOS-MenubarTemplate.png';
     } else {
         imagePath = 'icon.png';
     }
