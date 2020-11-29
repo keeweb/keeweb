@@ -224,7 +224,7 @@ jobs:
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
-      - uses: google-github-actions/setup-gcloud
+      - uses: google-github-actions/github-actions/setup-gcloud@master
         with:
           version: '285.0.0'
           service_account_key: ${{ secrets.GCP_SA_KEY }}
