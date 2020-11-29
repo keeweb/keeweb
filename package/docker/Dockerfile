@@ -17,7 +17,7 @@ FROM nginx:stable
 LABEL maintainer="antelle.net@gmail.com"
 
 # install
-RUN apt-get -y update && apt-get -y install openssl curl unzip
+RUN apt-get -y update && apt-get -y install openssl curl unzip && rm -rf /var/lib/apt/lists/*
 
 # setup nginx
 RUN rm -rf /etc/nginx/conf.d/*; \
