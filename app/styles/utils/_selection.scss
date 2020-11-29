@@ -33,4 +33,7 @@
     @include area-selected();
     color: var(--text-color);
     background-color: var(--selected-on-secondary-item-color);
+    &:hover {
+        color: var(--text-color);
+    }
 }

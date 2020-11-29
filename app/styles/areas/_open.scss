@@ -25,6 +25,7 @@
 
     &__icon {
         @include icon-btn();
+        color: var(--open-icon-color);
         padding-top: 0;
         margin: 0.2em 0.5em;
         &:hover {
@@ -42,21 +43,6 @@
             color: var(--muted-color);
             .open__icon:hover > & {
                 color: var(--medium-color);
-            }
-        }
-        @include mobile() {
-            &-i {
-                font-size: 4.6em;
-            }
-            &-text {
-                font-size: 1.1em;
-            }
-            .open__icons--lower & {
-                margin: 14px;
-                &-i {
-                    font-size: 4.2em;
-                    margin-bottom: 0.1em;
-                }
             }
         }
     }
@@ -102,7 +88,7 @@
                 font-size: 3em;
                 line-height: 1;
                 @include mobile {
-                    line-height: 0.8;
+                    line-height: 1.1;
                 }
             }
         }

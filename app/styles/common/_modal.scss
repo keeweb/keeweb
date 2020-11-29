@@ -43,9 +43,6 @@
     }
     &__buttons {
         text-align: right;
-        button ~ button {
-            margin-left: $small-spacing;
-        }
         > button {
             margin-bottom: $small-spacing;
         }

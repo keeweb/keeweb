@@ -58,6 +58,9 @@
             content: $fa-var-eye-slash;
             color: inherit;
         }
+        &:not([disabled]) + label.gen__check-hide-label:hover:before {
+            color: var(--text-color);
+        }
     }
     &__btn-wrap {
         text-align: center;

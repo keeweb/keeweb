@@ -71,9 +71,11 @@
             padding: $base-padding;
             font-size: 1.2em;
             > i {
-                margin-right: 0.3em;
+                margin-right: 0.7em;
                 font-size: 1.2em;
-                vertical-align: text-bottom;
+                vertical-align: middle;
+                position: relative;
+                top: -0.15em;
             }
             &-pre {
                 display: inline;
@@ -136,27 +138,31 @@
         display: none;
     }
 
-    &__file-master-pass-warning,
-    &__file-confirm-master-pass-warning {
-        font-weight: normal;
-        float: right;
-        display: none;
-    }
-
-    &__file-save-to {
-        cursor: pointer;
-        display: inline-block;
-        margin-right: $base-padding-h;
-        text-align: center;
-        > i {
-            display: block;
-            font-size: 3em;
-            padding: $base-padding-px;
-            margin: auto;
+    &__file {
+        &-master-pass-warning,
+        &-confirm-master-pass-warning {
+            font-weight: normal;
+            float: right;
+            display: none;
         }
-        &:hover {
-            transition: color $base-duration $base-timing;
-            color: var(--medium-color);
+
+        &-save-to {
+            cursor: pointer;
+            display: inline-block;
+            margin-right: $base-padding-h;
+            text-align: center;
+
+            > i {
+                display: block;
+                font-size: 3em;
+                padding: $base-padding-px;
+                margin: auto;
+            }
+
+            &:hover {
+                transition: color $base-duration $base-timing;
+                color: var(--medium-color);
+            }
         }
     }
 
@@ -182,6 +188,9 @@
         grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
         grid-gap: $base-spacing;
         margin-bottom: $base-spacing;
+        @include mobile {
+            width: 100%;
+        }
     }
     &__general-theme {
         padding: $base-padding;
@@ -203,6 +212,9 @@
         }
         &-button {
             margin-bottom: $base-padding-v;
+        }
+        &-plugins-icon {
+            font-size: 3em;
         }
         &:hover {
             box-shadow: form-box-shadow-hover();
@@ -322,7 +334,7 @@
 
     &__head-icon {
         position: relative;
-        top: .1em;
+        top: 0.1em;
         margin-right: 0.2em;
     }
 }

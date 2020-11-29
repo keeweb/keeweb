@@ -180,6 +180,8 @@ class FieldView extends View {
             textEqual = this.value.equals(newVal);
         } else if (newVal && newVal.isProtected) {
             textEqual = newVal.equals(this.value);
+        } else if (newVal instanceof Date && this.value instanceof Date) {
+            textEqual = newVal.toDateString() === this.value.toDateString();
         } else {
             textEqual = isEqual(this.value, newVal);
         }

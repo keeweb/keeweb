@@ -33,6 +33,12 @@ $fa-glyph-counter: 61440; // 0xf000
     @return $glyph;
 }
 
+// position fixes for icons that need to be shifted because they're special
+
+.fa-keyboard {
+    @include position(relative, 0.1em null null null);
+}
+
 // icons listed below will be automatically added to the generated icon font, see build/loaders/fontawesome-loader.js
 // if the icon has "-o" suffix, it will be used from the "regular" font, otherwise from "solid" or "brands"
 // -o is used because it's similar to an empty bullet and this used to be a convention in fontawesome 4
@@ -182,3 +188,4 @@ $fa-var-twitter: next-fa-glyph();
 $fa-var-paint-brush: next-fa-glyph();
 $fa-var-at: next-fa-glyph();
 $fa-var-usb-token: next-fa-glyph();
+$fa-var-bell: next-fa-glyph();

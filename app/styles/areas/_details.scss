@@ -16,9 +16,11 @@
             height: $mobile-back-button-height;
             font-size: 1.2em;
             > i {
-                margin-right: 0.3em;
+                margin-right: 0.7em;
                 font-size: 1.2em;
-                vertical-align: text-bottom;
+                vertical-align: middle;
+                position: relative;
+                top: -0.15em;
             }
         }
     }
@@ -738,9 +740,11 @@
             padding: $base-padding;
             font-size: 1.2em;
             > i {
-                margin-right: 0.3em;
+                margin-right: 0.7em;
                 font-size: 1.2em;
-                vertical-align: text-bottom;
+                vertical-align: middle;
+                position: relative;
+                top: -0.15em;
             }
             &-pre {
                 display: inline;

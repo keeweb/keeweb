@@ -51,7 +51,7 @@ class MenuModel extends Model {
         ]);
         Colors.AllColors.forEach((color) => {
             const option = {
-                cls: 'fa ' + color + '-color',
+                cls: `fa ${color}-color`,
                 value: color,
                 filterValue: color
             };
@@ -157,9 +157,8 @@ class MenuModel extends Model {
             this.colorsItem.options.forEach((opt) => {
                 opt.active = opt === sel.option;
             });
-            const selColor =
-                sel.item === this.colorsItem && sel.option ? sel.option.value + '-color' : '';
-            this.colorsItem.cls = 'menu__item-colors ' + selColor;
+            this.colorsItem.iconCls =
+                sel.item === this.colorsItem && sel.option ? sel.option.value + '-color' : null;
             const filterKey = sel.item.filterKey;
             const filterValue = (sel.option || sel.item).filterValue;
             const filter = {};

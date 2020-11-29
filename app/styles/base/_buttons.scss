@@ -72,6 +72,11 @@
     }
 }
 
+.btn ~ .btn,
+button ~ button {
+    margin-left: $small-spacing;
+}
+
 @mixin icon-btn($error: false) {
     @include area-selectable();
     padding: $medium-padding;
@@ -82,6 +87,7 @@
         vertical-align: middle;
     }
     @if $error {
+        color: var(--muted-color);
         &:hover {
             color: var(--error-color);
         }

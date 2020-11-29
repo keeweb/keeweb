@@ -5,7 +5,7 @@
     background: var(--background-color);
     border: light-border();
     box-shadow: dropdown-box-shadow();
-    padding: $small-spacing;
+    padding: $tiny-spacing;
     &__item {
         padding: 8px 12px;
         cursor: pointer;

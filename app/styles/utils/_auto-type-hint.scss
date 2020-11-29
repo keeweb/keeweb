@@ -2,7 +2,7 @@
     @include common-dropdown;
     position: absolute;
     z-index: $z-index-no-modal;
-    border-radius: $base-border-radius;
+    border-radius: var(--block-border-radius);
     padding: $base-padding;
     box-sizing: border-box;
     overflow: hidden;

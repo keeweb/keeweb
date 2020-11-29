@@ -206,20 +206,28 @@ class SettingsGeneralView extends View {
 
     changeTheme(e) {
         const theme = e.target.closest('.settings__general-theme').dataset.theme;
-        AppSettingsModel.theme = theme;
-        this.render();
+        if (theme === '...') {
+            this.goToPlugins();
+        } else {
+            AppSettingsModel.theme = theme;
+            this.render();
+        }
     }
 
     changeLocale(e) {
         const locale = e.target.value;
         if (locale === '...') {
             e.target.value = AppSettingsModel.locale || 'en-US';
-            this.appModel.menu.select({
-                item: this.appModel.menu.pluginsSection.items[0]
-            });
-            return;
+            this.goToPlugins();
+        } else {
+            AppSettingsModel.locale = locale;
         }
-        AppSettingsModel.locale = locale;
+    }
+
+    goToPlugins() {
+        this.appModel.menu.select({
+            item: this.appModel.menu.pluginsSection.items[0]
+        });
     }
 
     changeFontSize(e) {

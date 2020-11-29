@@ -47,6 +47,7 @@ MenuItemModel.defineModelProperties({
     shortcut: null,
     options: null,
     cls: null,
+    iconCls: null,
     disabled: false,
     visible: true,
     drag: false,

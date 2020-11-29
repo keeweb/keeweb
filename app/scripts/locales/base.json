@@ -377,6 +377,7 @@
     "setGenThemeHc": "High contrast",
     "setGenThemeSd": "Solarized dark",
     "setGenThemeSl": "Solarized light",
+    "setGenMoreThemes": "More themes",
     "setGenLocale": "Language",
     "setGenLocOther": "other languages are available as plugins",
     "setGenFontSize": "Font size",

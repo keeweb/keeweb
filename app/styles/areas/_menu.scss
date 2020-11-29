@@ -66,7 +66,7 @@
                 display: block;
                 position: absolute;
                 cursor: pointer;
-                @include position(absolute, 50% null null 1em);
+                @include position(absolute, 50% null null 1.6em);
                 transform: translateY(-50%);
             }
         }
@@ -126,6 +126,8 @@
 
         &-icon {
             width: 0.8em;
+            position: relative;
+            top: 0.1em;
             &--image {
                 width: 12px;
                 height: 12px;
