@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.16.1 (TBD)
+`-` fix #1637: git commit in the About box  
+
 ##### v1.16.0 (2020-11-29)
 `+` updated icons and visual design  
 `+` new Dark (default) and Light themes  

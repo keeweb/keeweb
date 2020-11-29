@@ -2,6 +2,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const { execSync } = require('child_process');
 const debug = require('debug');
 
 const webpackConfig = require('./build/webpack.config');
@@ -33,12 +34,12 @@ module.exports = function (grunt) {
     const getCodeSignConfig = () =>
         skipSign ? { identities: {} } : require('./keys/codesign.json');
 
+    const sha = execSync('git rev-parse --short HEAD').toString('utf8').trim();
+
     const webpackOptions = {
         date,
         beta: !!grunt.option('beta'),
-        get sha() {
-            return grunt.config.get('gitinfo.local.branch.current.shortSHA');
-        }
+        sha
     };
 
     const windowsAppVersionString = {
@@ -51,16 +52,6 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         noop: { noop: {} },
-        gitinfo: {
-            branch: {
-                current: {
-                    SHA: 'Current HEAD SHA',
-                    shortSHA: 'Current HEAD short SHA',
-                    name: 'Current branch name',
-                    lastCommitTime: 'Last commit time'
-                }
-            }
-        },
         clean: {
             dist: ['dist', 'tmp'],
             desktop: ['tmp/desktop', 'dist/desktop']
@@ -325,7 +316,7 @@ module.exports = function (grunt) {
                 asar: true,
                 appCopyright: `Copyright © ${year} Antelle`,
                 appVersion: pkg.version,
-                buildVersion: '<%= gitinfo.local.branch.current.shortSHA %>'
+                buildVersion: sha
             },
             linux: {
                 options: {
@@ -464,9 +455,7 @@ module.exports = function (grunt) {
             options: {
                 vars: {
                     version: pkg.version,
-                    rev() {
-                        return grunt.config.get('gitinfo.local.branch.current.shortSHA');
-                    },
+                    rev: sha,
                     homepage: pkg.homepage
                 }
             },
@@ -530,9 +519,7 @@ module.exports = function (grunt) {
                     description: pkg.description,
                     author: pkg.author,
                     homepage: pkg.homepage,
-                    rev() {
-                        return grunt.config.get('gitinfo.local.branch.current.shortSHA');
-                    }
+                    rev: sha
                 }
             },
             'linux-x64': {
