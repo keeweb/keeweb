@@ -17,11 +17,11 @@ FROM armhf/alpine:latest
 MAINTAINER Antelle "antelle.net@gmail.com"
 
 # install nginx
-RUN apk add --update bash nginx && \
+RUN apk add --no-cache bash nginx && \
     mkdir -p /run/nginx/
 
 # install
-RUN apk add --update openssl wget unzip ca-certificates
+RUN apk add --no-cache openssl wget unzip ca-certificates
 
 # setup nginx
 RUN rm -rf /etc/nginx/conf.d/*; \
