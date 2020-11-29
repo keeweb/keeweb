@@ -397,6 +397,8 @@
   "setGenDownloadAndRestart": "Télécharger la mise à jour et redémarrer",
   "setGenAppearance": "Apparence",
   "setGenTheme": "Thème",
+  "setGenThemeDark": "Sombre",
+  "setGenThemeLight": "Clair",
   "setGenThemeFb": "Bleu plat",
   "setGenThemeDb": "Marron foncé",
   "setGenThemeWh": "Blanc",
@@ -404,6 +406,7 @@
   "setGenThemeHc": "Contraste élevé",
   "setGenThemeSd": "Solarized dark",
   "setGenThemeSl": "Solarized light",
+  "setGenMoreThemes": "Plus de thèmes",
   "setGenThemeMacDark": "Mode sombre de macOS",
   "setGenLocale": "Langue",
   "setGenLocOther": "d'autres langues sont disponibles en tant que modules",
@@ -648,6 +651,8 @@
   "webdavSaveMethod": "Méthode de sauvegarde",
   "webdavSaveMove": "Envoyer un fichier temporaire et le déplacer",
   "webdavSavePut": "Ecraser le fichier kdbx avec PUT",
+  "webdavNoLastModified": "L'entête HTTP \"Last-Modified\" est absent",
+  "webdavStatReload": "Toujours recharger le fichier au lieu de se fier à l'entête HTTP \"Last-Modified\"",
   "launcherSave": "Sauvegarder base des mots de passe",
   "launcherFileFilter": "Fichiers Keepass",
   "authPopupRequired": "Les pop-up sont bloquées",
@@ -667,5 +672,8 @@
   "yubiKeyNoKeyBody": "Merci d'insérer votre YubiKey avec le numéro de série {}",
   "yubiKeySlot": "port",
   "yubiKeyTouchRequestedHeader": "Touchez votre YubiKey",
-  "yubiKeyTouchRequestedBody": "Merci de toucher votre YubiKey avec le numéro de série {}"
+  "yubiKeyTouchRequestedBody": "Merci de toucher votre YubiKey avec le numéro de série {}",
+  "yubiKeyDisabledErrorHeader": "L'USB est désactivé",
+  "yubiKeyDisabledErrorBody": "Yubikey est nécessaire pour ouvrir ce fichier, merci d'activer les appareils USB dans les paramètres",
+  "yubiKeyErrorWithCode": "Erreur Yubikey code {}."
 }
