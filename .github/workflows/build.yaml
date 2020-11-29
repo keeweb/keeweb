@@ -13,7 +13,8 @@ jobs:
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
@@ -40,7 +41,8 @@ jobs:
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
@@ -101,7 +103,8 @@ jobs:
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
@@ -126,7 +129,8 @@ jobs:
           mkdir keys
           echo "$CODESIGN" > keys/codesign.json
           xcrun altool --store-password-in-keychain-item "AC_PASSWORD" -u "$APPLE_ID_USERNAME" -p "$APPLE_DEPLOY_PASSWORD"
-      - uses: keeweb/import-codesign-certs@v1
+      - name: Import certificates
+        uses: keeweb/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE }}
           p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -149,7 +153,8 @@ jobs:
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
@@ -224,12 +229,14 @@ jobs:
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
-      - uses: google-github-actions/github-actions/setup-gcloud@master
+      - name: Setup GCloud
+        uses: google-github-actions/github-actions/setup-gcloud@master
         with:
           version: '285.0.0'
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           path: keeweb
