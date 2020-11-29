@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.16.0 (TBD)
+##### v1.16.0 (2020-11-29)
 `+` updated icons and visual design  
 `+` new Dark (default) and Light themes  
 `-` fixed a performance issue in searching entries  
