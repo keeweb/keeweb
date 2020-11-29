@@ -72,26 +72,56 @@
     }
 }
 
+.btn ~ .btn,
+button ~ button {
+    margin-left: $small-spacing;
+}
+
 @mixin icon-btn($error: false) {
-    @include area-selectable(bottom);
-    padding: 0.7em 0.6em 0;
-    height: 1.6em;
+    @include area-selectable();
+    padding: $medium-padding;
+    text-align: center;
+    border-radius: var(--block-border-radius);
+    transition: color $base-duration $base-timing;
     > i {
-        display: block;
+        vertical-align: middle;
     }
     @if $error {
+        color: var(--muted-color);
         &:hover {
-            border-color: var(--error-color);
+            color: var(--error-color);
         }
     }
 }
 
-.svg-btn {
-    svg path {
-        transition: fill $base-duration $base-timing;
-        fill: var(--text-color);
+@mixin bg-btn() {
+    user-select: none;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    padding: $medium-padding;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: var(--block-border-radius);
+    background-color: var(--intermediate-background-color);
+    transition: color $base-duration $base-timing;
+    > i {
+        margin-right: 0.4em;
+        line-height: inherit;
+        vertical-align: bottom;
     }
-    &:hover svg path {
-        fill: var(--medium-color);
+    &:hover {
+        background-color: var(--intermediate-background-color);
+        color: var(--medium-color);
+        transform: background-color $base-duration $base-timing;
     }
+    &:active {
+        background-color: var(--intermediate-pressed-background-color);
+        color: var(--text-color);
+    }
+}
+
+@mixin bg-btn-active() {
+    color: var(--selected-item-text-color);
+    background-color: var(--selected-item-color);
 }

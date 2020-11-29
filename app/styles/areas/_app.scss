@@ -31,7 +31,8 @@
     &__menu {
         flex: 0 0 auto;
         display: flex;
-        width: 150px;
+        width: 15em;
+        background-color: var(--secondary-background-color);
         @include mobile {
             &:not(.menu-visible) {
                 display: none;
@@ -92,11 +93,14 @@
     }
 
     &__list {
-        flex: 0 0 250px;
+        flex: 0 0 25em;
         display: flex;
         align-items: stretch;
         flex-direction: column;
         overflow-y: auto;
+        .titlebar-hidden & {
+            padding-top: $titlebar-padding-tiny;
+        }
         @include mobile {
             flex: 1 1;
             .app--details-visible & {
@@ -134,6 +138,7 @@
     &__footer {
         flex: 0 0 auto;
         border-top: light-border();
+        background-color: var(--secondary-background-color);
     }
 
     &__beta {
@@ -141,5 +146,8 @@
         text-align: center;
         background-color: var(--error-color);
         color: var(--text-contrast-error-color);
+        > .fa {
+            vertical-align: bottom;
+        }
     }
 }

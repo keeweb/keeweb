@@ -37,6 +37,7 @@ class MenuItemView extends View {
         this.listenTo(this.model, 'change:active', this.changeActive);
         this.listenTo(this.model, 'change:expanded', this.changeExpanded);
         this.listenTo(this.model, 'change:cls', this.changeCls);
+        this.listenTo(this.model, 'change:iconCls', this.changeIconCls);
         this.listenTo(this.model, 'delete', this.remove);
         this.listenTo(this.model, 'insert', this.insertItem);
         const shortcut = this.model.shortcut;
@@ -106,6 +107,16 @@ class MenuItemView extends View {
             this.$el.removeClass(oldCls);
         }
         this.$el.addClass(cls);
+    }
+
+    changeIconCls(model, cls, oldCls) {
+        const iconEl = this.el.querySelector('.menu__item-icon');
+        if (oldCls) {
+            iconEl.classList.remove(oldCls);
+        }
+        if (cls) {
+            iconEl.classList.add(cls);
+        }
     }
 
     mouseover(e) {

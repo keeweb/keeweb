@@ -180,6 +180,8 @@ class FieldView extends View {
             textEqual = this.value.equals(newVal);
         } else if (newVal && newVal.isProtected) {
             textEqual = newVal.equals(this.value);
+        } else if (newVal instanceof Date && this.value instanceof Date) {
+            textEqual = newVal.toDateString() === this.value.toDateString();
         } else {
             textEqual = isEqual(this.value, newVal);
         }
@@ -236,7 +238,7 @@ class FieldView extends View {
         }
 
         if (AutoType.enabled && this.model.sequence) {
-            options.push({ value: 'autotype', icon: 'keyboard-o', text: Locale.detAutoTypeField });
+            options.push({ value: 'autotype', icon: 'keyboard', text: Locale.detAutoTypeField });
         }
 
         const rect = this.$el[0].getBoundingClientRect();
@@ -321,9 +323,9 @@ class FieldView extends View {
 
         const actions = [];
         if (this.value) {
-            actions.push({ name: 'copy', icon: 'clipboard' });
+            actions.push({ name: 'copy', icon: 'copy' });
         }
-        actions.push({ name: 'edit', icon: 'pencil' });
+        actions.push({ name: 'edit', icon: 'pencil-alt' });
         if (this.value instanceof kdbxweb.ProtectedValue) {
             actions.push({ name: 'reveal', icon: 'eye' });
         }

@@ -1,6 +1,19 @@
 Release notes
 -------------
-##### v1.15.7 (2020-09-12)  
+##### v1.16.0 (2020-11-29)
+`+` updated icons and visual design  
+`+` new Dark (default) and Light themes  
+`-` fixed a performance issue in searching entries  
+`+` locale-aware date and time formats  
+`*` improved the "Show all file" checkbox behavior  
+`+` shortcut to copy OTP  
+`+` support for WebDAV servers without Last-Modified header  
+`*` switched to Dropbox short-lived access tokens  
+`-` fixed several issues in field editing  
+`-` fix #1561: error during loading configs after reset  
+`-` fixed some issues with minimizing to menubar on macOS  
+
+##### v1.15.7 (2020-09-12)
 `-` fix #1564: broken auto-type on some Linux installations  
 `-` fix #1591: error in old MS Edge  
 `-` fix #1598: fixed header format for KDBX4+AES  

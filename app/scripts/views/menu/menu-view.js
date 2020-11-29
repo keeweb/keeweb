@@ -20,7 +20,6 @@ class MenuView extends View {
 
     minWidth = 130;
     maxWidth = 300;
-    autoWidth = 150;
 
     constructor(model, options) {
         super(model, options);

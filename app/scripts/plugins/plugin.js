@@ -434,7 +434,7 @@ class Plugin extends Model {
         delete SettingsManager.allLocales[locale.name];
         delete SettingsManager.customLocales[locale.name];
         if (SettingsManager.activeLocale === locale.name) {
-            AppSettingsModel.locale = 'en';
+            AppSettingsModel.locale = 'en-US';
         }
     }
 

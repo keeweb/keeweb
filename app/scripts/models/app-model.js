@@ -16,7 +16,7 @@ import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
 import { MenuModel } from 'models/menu/menu-model';
 import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { UrlFormat } from 'util/formatting/url-format';
 import { IdGenerator } from 'util/generators/id-generator';
 import { Locale } from 'util/locale';

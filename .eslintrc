@@ -50,7 +50,8 @@
         "import/first": "error",
         "import/no-namespace": "error",
         "import/no-default-export": "error",
-        "babel/no-unused-expressions": "error"
+        "babel/no-unused-expressions": "error",
+        "node/no-callback-literal": "off"
     },
     "parserOptions": {
         "sourceType": "module",

@@ -167,9 +167,7 @@ const AutoType = {
             } else {
                 if (!windowInfo.url) {
                     // try to find a URL in the title
-                    const urlMatcher = new RegExp(
-                        'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'
-                    );
+                    const urlMatcher = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\\+.~#?&\/=]*)/;
                     const urlMatches = urlMatcher.exec(windowInfo.title);
                     windowInfo.url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
                 }
@@ -243,7 +241,7 @@ const AutoType = {
             this.selectEntryView.remove();
             this.selectEntryView = null;
             this.hideWindow(() => {
-                if (result) {
+                if (result?.entry) {
                     this.activeWindowMatches(evt.windowInfo, (matches, activeWindowInfo) => {
                         if (matches) {
                             this.runAndHandleResult(result, evt.windowInfo.id);

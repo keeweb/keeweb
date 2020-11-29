@@ -93,11 +93,8 @@ img {
     max-width: 100%;
 }
 
-body:not(.edge) * {
-    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12132854/
-    &::selection {
-        background-color: var(--text-selection-bg-color);
-    }
+::selection {
+    background-color: var(--text-selection-bg-color);
 }
 
 code {

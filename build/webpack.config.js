@@ -3,7 +3,6 @@ const fs = require('fs');
 
 const webpack = require('webpack');
 
-const StringReplacePlugin = require('string-replace-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -24,18 +23,7 @@ function config(options) {
     return {
         mode,
         entry: {
-            app: ['babel-helpers', 'app', 'main.scss'],
-            vendor: [
-                'jquery',
-                'morphdom',
-                'kdbxweb',
-                'baron',
-                'pikaday',
-                'jsqrcode',
-                'argon2-wasm',
-                'argon2',
-                'marked'
-            ]
+            app: ['babel-helpers', 'app', 'main.scss']
         },
         output: {
             path: path.resolve('.', 'tmp'),
@@ -74,20 +62,39 @@ function config(options) {
                 'public-key.pem': path.join(rootDir, 'app/resources/public-key.pem'),
                 'public-key-new.pem': path.join(rootDir, 'app/resources/public-key-new.pem'),
                 'demo.kdbx': path.join(rootDir, 'app/resources/Demo.kdbx'),
-                svg: path.join(rootDir, 'app/resources/svg')
+                'fontawesome.woff2': '@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2'
+            },
+            fallback: {
+                console: false,
+                process: false,
+                crypto: false,
+                Buffer: false,
+                __filename: false,
+                __dirname: false,
+                fs: false,
+                setImmediate: false,
+                path: false,
+                moment: false
             }
+        },
+        resolveLoader: {
+            modules: ['node_modules', path.join(__dirname, 'loaders')]
         },
         module: {
             rules: [
                 {
                     test: /\.hbs$/,
                     use: [
-                        StringReplacePlugin.replace({
-                            replacements: [{ pattern: /\r?\n\s*/g, replacement: () => '\n' }]
-                        }),
+                        {
+                            loader: 'string-replace-loader',
+                            options: {
+                                search: /\r?\n\s*/g,
+                                replace: '\n'
+                            }
+                        },
                         {
                             loader: 'handlebars-loader',
-                            query: {
+                            options: {
                                 knownHelpers: fs
                                     .readdirSync(path.join(rootDir, 'app/scripts/hbs-helpers'))
                                     .map((f) => f.replace('.js', ''))
@@ -106,33 +113,36 @@ function config(options) {
                 },
                 {
                     test: /runtime-info\.js$/,
-                    loader: StringReplacePlugin.replace({
-                        replacements: [
+                    loader: 'string-replace-loader',
+                    options: {
+                        multiple: [
                             {
-                                pattern: /@@VERSION/g,
-                                replacement: () => pkg.version + (options.beta ? '-beta' : '')
+                                search: /@@VERSION/g,
+                                replace: pkg.version + (options.beta ? '-beta' : '')
                             },
                             {
-                                pattern: /@@BETA/g,
-                                replacement: () => (options.beta ? '1' : '')
+                                search: /@@BETA/g,
+                                replace: options.beta ? '1' : ''
                             },
-                            { pattern: /@@DATE/g, replacement: () => dt },
+                            { search: /@@DATE/g, replace: dt },
                             {
-                                pattern: /@@COMMIT/g,
-                                replacement: () => options.sha
+                                search: /@@COMMIT/g,
+                                replace: options.sha
                             },
-                            { pattern: /@@DEVMODE/g, replacement: () => (devMode ? '1' : '') }
+                            { search: /@@DEVMODE/g, replace: devMode ? '1' : '' }
                         ]
-                    })
+                    }
                 },
                 {
                     test: /baron(\.min)?\.js$/,
                     use: [
-                        StringReplacePlugin.replace({
-                            replacements: [
-                                { pattern: /\(1,\s*eval\)\('this'\)/g, replacement: () => 'window' }
-                            ]
-                        }),
+                        {
+                            loader: 'string-replace-loader',
+                            options: {
+                                search: /\(1,\s*eval\)\('this'\)/g,
+                                replace: 'window'
+                            }
+                        },
                         {
                             loader: 'exports-loader',
                             options: { type: 'module', exports: 'default baron' }
@@ -149,7 +159,7 @@ function config(options) {
                     test: /\.js$/,
                     exclude: /(node_modules|babel-helpers\.js)/,
                     loader: 'babel-loader',
-                    query: { cacheDirectory: true }
+                    options: { cacheDirectory: true }
                 },
                 { test: /argon2\.wasm/, type: 'javascript/auto', loader: 'base64-loader' },
                 { test: /argon2(\.min)?\.js/, loader: 'raw-loader' },
@@ -159,31 +169,18 @@ function config(options) {
                         MiniCssExtractPlugin.loader,
                         { loader: 'css-loader', options: { sourceMap: devMode } },
                         { loader: 'postcss-loader', options: { sourceMap: devMode } },
-                        { loader: 'sass-loader', options: { sourceMap: devMode } }
+                        { loader: 'sass-loader', options: { sourceMap: devMode } },
+                        { loader: 'scss-add-icons-loader' }
                     ]
                 },
-                {
-                    test: /fonts[\\/].*\.(woff|ttf|eot|svg)$/,
-                    use: ['base64-inline-loader', 'ignore-loader']
-                },
-                { test: /\.woff2$/, loader: 'base64-inline-loader' },
+                { test: /fontawesome.*\.woff2$/, loader: 'fontawesome-loader' },
                 { test: /\.pem$/, loader: 'raw-loader' },
-                { test: /\.kdbx$/, loader: 'base64-loader' },
-                { test: /\.svg$/, loader: 'raw-loader' }
+                { test: /\.kdbx$/, loader: 'base64-loader' }
             ]
         },
         optimization: {
             runtimeChunk: 'single',
             minimize: !devMode,
-            splitChunks: {
-                cacheGroups: {
-                    vendor: {
-                        test: /[\\/]node_modules[\\/]/,
-                        name: 'vendor',
-                        chunks: 'all'
-                    }
-                }
-            },
             minimizer: [
                 new TerserPlugin({
                     extractComments: 'never-extract-comments',
@@ -221,21 +218,13 @@ function config(options) {
                 babelHelpers: 'babel-helpers'
             }),
             new webpack.IgnorePlugin(/^(moment)$/),
-            new StringReplacePlugin(),
             new MiniCssExtractPlugin({
                 filename: 'css/[name].css'
             })
         ],
         node: {
-            console: false,
-            process: false,
-            crypto: false,
-            Buffer: false,
             __filename: false,
-            __dirname: false,
-            fs: false,
-            setImmediate: false,
-            path: false
+            __dirname: false
         },
         externals: {
             xmldom: 'null',

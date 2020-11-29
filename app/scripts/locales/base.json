@@ -1,35 +1,4 @@
 {
-    "months": [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    ],
-    "monthsShort": [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec"
-    ],
-    "weekdays": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-    "weekdaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-
     "retToApp": "return to app",
     "name": "name",
     "icon": "icon",
@@ -400,14 +369,15 @@
     "setGenDownloadAndRestart": "Download update and restart",
     "setGenAppearance": "Appearance",
     "setGenTheme": "Theme",
+    "setGenThemeDark": "Dark",
+    "setGenThemeLight": "Light",
     "setGenThemeFb": "Flat blue",
     "setGenThemeDb": "Dark brown",
-    "setGenThemeWh": "White",
     "setGenThemeTe": "Terminal",
     "setGenThemeHc": "High contrast",
     "setGenThemeSd": "Solarized dark",
     "setGenThemeSl": "Solarized light",
-    "setGenThemeMacDark": "macOS Dark",
+    "setGenMoreThemes": "More themes",
     "setGenLocale": "Language",
     "setGenLocOther": "other languages are available as plugins",
     "setGenFontSize": "Font size",
@@ -621,7 +591,7 @@
     "setAboutTitle": "About",
     "setAboutBuilt": "This app is built with these awesome tools",
     "setAboutLic": "License",
-    "setAboutLicComment": "The app itself and all included components which are not in public domain are licensed under MIT license",
+    "setAboutLicComment": "The app itself and all included components are licensed under MIT license",
     "setAboutFirst": "This is an open-source app created by {}",
     "setAboutSecond": "and licensed under {}.",
     "setAboutSource": "The source code and issues are on {}.",
@@ -659,7 +629,9 @@
 
     "webdavSaveMethod": "Save method",
     "webdavSaveMove": "Upload a temporary file and move",
-    "webdavSavePut": "Overwrite kdbx file with PUT",
+    "webdavSavePut": "Overwrite the kdbx file with PUT",
+    "webdavNoLastModified": "Last-Modified HTTP header is absent",
+    "webdavStatReload": "Always reload the file instead of relying on Last-Modified HTTP header",
 
     "launcherSave": "Save Passwords Database",
     "launcherFileFilter": "KeePass files",
@@ -686,5 +658,6 @@
     "yubiKeyTouchRequestedHeader": "Touch your YubiKey",
     "yubiKeyTouchRequestedBody": "Please touch your YubiKey with serial number {}",
     "yubiKeyDisabledErrorHeader": "USB is disabled",
-    "yubiKeyDisabledErrorBody": "YubiKey is required to open this file, please enable USB devices in settings."
+    "yubiKeyDisabledErrorBody": "YubiKey is required to open this file, please enable USB devices in settings.",
+    "yubiKeyErrorWithCode": "YubiKey error, code {}."
 }

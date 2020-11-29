@@ -1,5 +1,5 @@
 <div class="settings__content">
-    <h1><i class="fa fa-cog settings__head-icon"></i> {{res 'setGenTitle'}}</h1>
+    <h1 id="top"><i class="fa fa-cog settings__head-icon"></i> {{res 'setGenTitle'}}</h1>
 
     {{#if updateWaitingReload}}
     <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
@@ -36,7 +36,7 @@
     </div>
     {{/if}}
 
-    <h2>{{res 'setGenAppearance'}}</h2>
+    <h2 id="appearance">{{res 'setGenAppearance'}}</h2>
     {{#if locales}}
     <div>
         <label for="settings__general-locale">{{res 'setGenLocale'}}:</label>
@@ -49,12 +49,22 @@
     </div>
     {{/if}}
     <div>
-        <label for="settings__general-theme">{{res 'setGenTheme'}}:</label>
-        <select class="settings__general-theme settings__select input-base" id="settings__general-theme">
+        <label>{{res 'setGenTheme'}}:</label>
+        <div class="settings__general-themes">
             {{#each themes as |name key|}}
-            <option value="{{key}}" {{#ifeq key ../activeTheme}}selected{{/ifeq}}>{{name}}</option>
+                <div class="th-{{key}} settings__general-theme
+                    {{~#ifeq key ../activeTheme}} settings__general-theme--selected{{/ifeq~}}"
+                     data-theme="{{key}}"
+                >
+                    <div class="settings__general-theme-name">{{name}}</div>
+                    <button class="settings__general-theme-button"><i class="fa fa-ellipsis-h"></i></button>
+                </div>
             {{/each}}
-        </select>
+            <div class="settings__general-theme settings__general-theme-plugins" data-theme="...">
+                <div class="settings__general-theme-plugins-name">{{res 'setGenMoreThemes'}}</div>
+                <i class="settings__general-theme-plugins-icon fa fa-puzzle-piece"></i>
+            </div>
+        </div>
     </div>
     <div>
         <label for="settings__general-font-size">{{res 'setGenFontSize'}}:</label>
@@ -89,7 +99,7 @@
         <label for="settings__general-colorful-icons">{{res 'setGenColorfulIcons'}}</label>
     </div>
 
-    <h2>{{res 'setGenFunction'}}</h2>
+    <h2 id="function">{{res 'setGenFunction'}}</h2>
     {{#if canAutoSaveOnClose}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
@@ -163,7 +173,7 @@
         <label for="settings__general-use-group-icon-for-entries">{{res 'setGenUseGroupIconForEntries'}}</label>
     </div>
 
-    <h2>{{res 'setGenLock'}}</h2>
+    <h2 id="lock">{{res 'setGenLock'}}</h2>
     <div>
         <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>
         <select class="settings__general-idle-minutes settings__select input-base" id="settings__general-idle-minutes">
@@ -203,7 +213,8 @@
             <label for="settings__general-lock-on-os-lock">{{res 'setGenLockOrSleep'}}</label>
         </div>
     {{/if}}
-    <h2>{{res 'setGenStorage'}}</h2>
+
+    <h2 id="storage">{{res 'setGenStorage'}}</h2>
     {{#each storageProviders as |prv|}}
     <h4 class="settings__general-storage-header"><input
             type="checkbox" id="settings__general-prv-check-{{prv.name}}" class="settings__general-prv-check"
@@ -214,7 +225,7 @@
                                 data-storage="{{prv.name}}">{{res 'setGenStorageLogout'}}</button>{{/if}}
     {{/each}}
 
-    <h2>{{res 'advanced'}}</h2>
+    <h2 id="advanced">{{res 'advanced'}}</h2>
     <a class="settings__general-show-advanced">{{res 'setGenShowAdvanced'}}</a>
     <div class="settings__general-advanced hide">
         {{#if devTools}}

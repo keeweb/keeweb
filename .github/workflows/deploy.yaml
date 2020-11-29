@@ -6,11 +6,13 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
           ref: 'gh-pages'
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - name: Setup GCloud
+        uses: google-github-actions/github-actions/setup-gcloud@master
         with:
           version: '285.0.0'
           service_account_key: ${{ secrets.GCP_SA_KEY }}

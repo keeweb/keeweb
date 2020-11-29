@@ -15,3 +15,7 @@ $themes: map-merge(
             )
     )
 );
+
+body.th-sl {
+    --selected-item-text-color: #fdf6e3;
+}

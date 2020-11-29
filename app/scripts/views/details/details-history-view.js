@@ -1,7 +1,7 @@
 import { View } from 'framework/views/view';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
 import { Copyable } from 'framework/views/copyable';

@@ -12,7 +12,7 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { UpdateModel } from 'models/update-model';
 import { SemVer } from 'util/data/semver';
 import { Features } from 'util/features';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { Locale } from 'util/locale';
 import { SettingsLogsView } from 'views/settings/settings-logs-view';
 import { SettingsPrvView } from 'views/settings/settings-prv-view';
@@ -23,7 +23,7 @@ class SettingsGeneralView extends View {
     template = template;
 
     events = {
-        'change .settings__general-theme': 'changeTheme',
+        'click .settings__general-theme': 'changeTheme',
         'change .settings__general-locale': 'changeLocale',
         'change .settings__general-font-size': 'changeFontSize',
         'change .settings__general-expand': 'changeExpandGroups',
@@ -205,20 +205,29 @@ class SettingsGeneralView extends View {
     }
 
     changeTheme(e) {
-        const theme = e.target.value;
-        AppSettingsModel.theme = theme;
+        const theme = e.target.closest('.settings__general-theme').dataset.theme;
+        if (theme === '...') {
+            this.goToPlugins();
+        } else {
+            AppSettingsModel.theme = theme;
+            this.render();
+        }
     }
 
     changeLocale(e) {
         const locale = e.target.value;
         if (locale === '...') {
-            e.target.value = AppSettingsModel.locale || 'en';
-            this.appModel.menu.select({
-                item: this.appModel.menu.pluginsSection.items[0]
-            });
-            return;
+            e.target.value = AppSettingsModel.locale || 'en-US';
+            this.goToPlugins();
+        } else {
+            AppSettingsModel.locale = locale;
         }
-        AppSettingsModel.locale = locale;
+    }
+
+    goToPlugins() {
+        this.appModel.menu.select({
+            item: this.appModel.menu.pluginsSection.items[0]
+        });
     }
 
     changeFontSize(e) {

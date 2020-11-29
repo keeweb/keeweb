@@ -61,7 +61,7 @@ class FieldViewText extends FieldView {
         Events.on('click', fieldValueBlurBound);
         this.stopBlurListener = () => Events.off('click', fieldValueBlurBound);
         this.listenTo(Events, 'main-window-will-close', this.externalEndEdit);
-        this.listenTo(Events, 'user-idle', this.externalEndEdit);
+        this.listenTo(Events, 'before-user-idle', this.externalEndEdit);
         if (this.model.multiline) {
             this.setInputHeight();
         }

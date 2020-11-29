@@ -15,7 +15,6 @@ const MaxRequestRetries = 3;
 class StorageBase {
     name = null;
     icon = null;
-    iconSvg = null;
     enabled = false;
     system = false;
     uipos = null;
@@ -244,7 +243,8 @@ class StorageBase {
             'state': session.state,
             'redirect_uri': session.redirectUri,
             'response_type': 'code',
-            ...pkceParams
+            ...pkceParams,
+            ...opts.urlParams
         });
 
         if (listener) {

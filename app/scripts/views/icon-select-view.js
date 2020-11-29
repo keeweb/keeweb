@@ -51,9 +51,10 @@ class IconSelectView extends View {
             return;
         }
         this.downloadingFavicon = true;
-        this.$el.find('.icon-select__icon-download>i').addClass('fa-spinner fa-spin');
+        this.$el.find('.icon-select__icon-download>i').addClass('spin');
         this.$el
             .find('.icon-select__icon-download')
+            .addClass('icon-select__icon--progress')
             .removeClass('icon-select__icon--download-error');
         const url = this.getIconUrl(true);
         const img = document.createElement('img');
@@ -62,19 +63,20 @@ class IconSelectView extends View {
         img.onload = () => {
             this.setSpecialImage(img, 'download');
             this.$el.find('.icon-select__icon-download img').remove();
-            this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
+            this.$el.find('.icon-select__icon-download>i').removeClass('spin');
             this.$el
                 .find('.icon-select__icon-download')
+                .removeClass('icon-select__icon--progress')
                 .addClass('icon-select__icon--custom-selected')
                 .append(img);
             this.downloadingFavicon = false;
         };
         img.onerror = (e) => {
             logger.error('Favicon download error: ' + url, e);
-            this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
+            this.$el.find('.icon-select__icon-download>i').removeClass('spin');
             this.$el
                 .find('.icon-select__icon-download')
-                .removeClass('icon-select__icon--custom-selected')
+                .removeClass('icon-select__icon--custom-selected icon-select__icon--progress')
                 .addClass('icon-select__icon--download-error');
             this.downloadingFavicon = false;
         };

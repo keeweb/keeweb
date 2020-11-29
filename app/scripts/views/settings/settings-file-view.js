@@ -8,7 +8,7 @@ import { YubiKey } from 'comp/app/yubikey';
 import { UsbListener } from 'comp/app/usb-listener';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { UrlFormat } from 'util/formatting/url-format';
 import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { Locale } from 'util/locale';
@@ -85,7 +85,6 @@ class SettingsFileView extends View {
                 storageProviders.push({
                     name: prv.name,
                     icon: prv.icon,
-                    iconSvg: prv.iconSvg,
                     own: name === fileStorage,
                     backup: prv.backup
                 });
@@ -337,7 +336,7 @@ class SettingsFileView extends View {
                     Alerts.alert({
                         header: '',
                         body: '',
-                        icon: storage.icon || 'files-o',
+                        icon: storage.icon || 'file-alt',
                         buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                         esc: '',
                         opaque: true,

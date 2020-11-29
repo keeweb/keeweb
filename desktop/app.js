@@ -56,14 +56,15 @@ const startMinimized =
     process.argv.some((arg) => arg.startsWith('--minimized'));
 
 const themeBgColors = {
+    dark: '#1e1e1e',
+    light: '#f6f6f6',
     db: '#342f2e',
     fb: '#282c34',
     wh: '#fafafa',
     te: '#222',
     hc: '#fafafa',
     sd: '#002b36',
-    sl: '#fdf6e3',
-    macdark: '#1f1f20'
+    sl: '#fdf6e3'
 };
 const defaultBgColor = '#282C34';
 
@@ -105,7 +106,6 @@ app.on('ready', () => {
             createMainWindow();
             setGlobalShortcuts(appSettings);
             subscribePowerEvents();
-            deleteOldTempFiles();
             hookRequestHeaders();
         })
         .catch((e) => {
@@ -122,6 +122,8 @@ app.on('activate', () => {
     if (process.platform === 'darwin') {
         if (appReady && !mainWindow && appSettings) {
             createMainWindow();
+        } else if (appIcon) {
+            restoreMainWindow();
         }
     }
 });
@@ -163,7 +165,7 @@ app.minimizeApp = function (menuItemLabels) {
     mainWindow.hide();
     if (process.platform === 'darwin') {
         app.dock.hide();
-        imagePath = 'mac-menubar-icon.png';
+        imagePath = 'macOS-MenubarTemplate.png';
     } else {
         imagePath = 'icon.png';
     }
@@ -202,9 +204,13 @@ app.httpRequest = httpRequest;
 
 function logProgress(name) {
     perfTimestamps?.push({ name, ts: process.hrtime() });
+    logStartupMessage(name);
+}
+
+function logStartupMessage(msg) {
     if (startupLogging) {
         // eslint-disable-next-line no-console
-        console.log('[startup]', name);
+        console.log('[startup]', msg);
     }
 }
 
@@ -217,12 +223,26 @@ function setSystemAppearance() {
     logProgress('setting system appearance');
 }
 
+function checkSettingsTheme(theme) {
+    // old settings migration
+    if (theme === 'macdark') {
+        return 'dark';
+    }
+    if (theme === 'wh') {
+        return 'light';
+    }
+    return theme;
+}
+
 function getDefaultTheme() {
-    return process.platform === 'darwin' ? 'macdark' : 'fb';
+    if (process.platform === 'darwin' && !electron.nativeTheme.shouldUseDarkColors) {
+        return 'light';
+    }
+    return 'dark';
 }
 
 function createMainWindow() {
-    const theme = appSettings.theme || getDefaultTheme();
+    const theme = checkSettingsTheme(appSettings.theme) || getDefaultTheme();
     const bgColor = themeBgColors[theme] || defaultBgColor;
     const windowOptions = {
         show: false,
@@ -233,6 +253,7 @@ function createMainWindow() {
         titleBarStyle: appSettings.titlebarStyle,
         backgroundColor: bgColor,
         webPreferences: {
+            contextIsolation: false,
             backgroundThrottling: false,
             nodeIntegration: true,
             nodeIntegrationInWorker: true,
@@ -619,35 +640,14 @@ function setEnv() {
     app.commandLine.appendSwitch('disable-http-cache');
     app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
 
+    if (process.platform === 'linux') {
+        // fixes colors on Linux, see #1621
+        app.commandLine.appendSwitch('force-color-profile', 'srgb');
+    }
+
     app.allowRendererProcessReuse = true;
 
     logProgress('setting env');
-}
-
-// TODO: delete after v1.15
-function deleteOldTempFiles() {
-    if (app.oldTempFilesDeleted) {
-        return;
-    }
-    setTimeout(() => {
-        const tempPath = path.join(app.getPath('userData'), 'temp');
-        if (fs.existsSync(tempPath)) {
-            deleteRecursive(tempPath);
-        }
-        app.oldTempFilesDeleted = true; // this is added to prevent file deletion on restart
-    }, 1000);
-}
-
-function deleteRecursive(dir) {
-    for (const file of fs.readdirSync(dir)) {
-        const filePath = path.join(dir, file);
-        if (fs.lstatSync(filePath).isDirectory()) {
-            deleteRecursive(filePath);
-        } else {
-            fs.unlinkSync(filePath);
-        }
-    }
-    fs.rmdirSync(dir);
 }
 
 function setDevAppIcon() {
@@ -772,14 +772,6 @@ function loadSettingsEncryptionKey() {
             return null;
         }
 
-        const explicitlyDisabledFile = path.join(app.getPath('userData'), 'disable-keytar');
-        if (fs.existsSync(explicitlyDisabledFile)) {
-            // TODO: remove this fallback if everything goes well on v1.15
-            // This is a protective measure if everything goes terrible with native modules
-            // For example, the app can crash and it won't be possible to use it at all
-            return null;
-        }
-
         const keytar = reqNative('keytar');
 
         return keytar.getPassword('KeeWeb', 'settings-key').then((key) => {
@@ -822,7 +814,8 @@ function loadConfig(name) {
 
                 resolve(data.toString('utf8'));
             } catch (err) {
-                reject(`Error reading config data ${name}: ${err}`);
+                logStartupMessage(`Error reading config data (config ignored) ${name}: ${err}`);
+                resolve(null);
             }
         });
     });

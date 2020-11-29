@@ -24,49 +24,25 @@
     }
 
     &__icon {
-        text-align: center;
-        cursor: pointer;
-        margin: 20px;
-        transition: color $base-duration $base-timing;
+        @include icon-btn();
+        color: var(--open-icon-color);
+        padding-top: 0;
+        margin: 0.2em 0.5em;
         &:hover {
             color: var(--medium-color);
         }
         &:focus {
             .open--show-focus & {
-                outline: focused-outline();
+                box-shadow: focused-box-shadow();
             }
         }
-        &-i,
-        &-svg {
+        &-i {
             font-size: 4em;
         }
         &-text {
             color: var(--muted-color);
             .open__icon:hover > & {
                 color: var(--medium-color);
-            }
-        }
-        &-svg {
-            line-height: 0;
-            > svg {
-                @include size(1em);
-            }
-        }
-        @include mobile() {
-            &-i,
-            &-svg {
-                font-size: 4.6em;
-            }
-            &-text {
-                font-size: 1.1em;
-            }
-            .open__icons--lower & {
-                margin: 14px;
-                &-i,
-                &-svg {
-                    font-size: 4.2em;
-                    margin-bottom: 0.1em;
-                }
             }
         }
     }
@@ -100,22 +76,26 @@
             padding: 0.6em $base-spacing;
             position: absolute;
             left: 100%;
+            border-radius: var(--block-border-radius);
             @include mobile {
                 left: auto;
                 right: 0;
             }
             color: var(--muted-color);
+            line-height: 3em;
+            height: 3.2em;
             > i {
                 font-size: 3em;
+                line-height: 1;
                 @include mobile {
-                    line-height: 0.8;
+                    line-height: 1.1;
                 }
             }
         }
         .open--show-focus & {
             &-enter-btn:focus,
             &-opening-icon:focus {
-                outline: focused-outline();
+                box-shadow: focused-box-shadow();
             }
         }
         &-enter-btn {
@@ -204,6 +184,7 @@
         padding-left: $base-padding-h;
         height: 2em;
         &-key-file {
+            border-radius: var(--block-border-radius);
             .open--file:not(.open--opening) & {
                 cursor: pointer;
             }
@@ -235,7 +216,7 @@
             }
             &:focus {
                 .open--show-focus & {
-                    outline: focused-outline();
+                    box-shadow: focused-box-shadow();
                 }
             }
         }
@@ -265,10 +246,11 @@
             }
             &-img {
                 fill: var(--muted-color);
-                width: 2em;
+                width: 1em;
                 position: relative;
-                top: -0.25em;
-                margin-right: $base-padding-h;
+                top: -0.22em;
+                font-size: 1.5em;
+                margin-right: $tiny-spacing;
                 cursor: pointer;
                 &:hover {
                     fill: var(--text-color);
@@ -297,20 +279,16 @@
             }
             color: var(--muted-color);
             padding: $base-padding;
+            border-radius: var(--block-border-radius);
             &:focus {
                 .open--show-focus & {
-                    outline: focused-outline();
+                    box-shadow: focused-box-shadow();
                 }
             }
             &-icon {
                 width: 2em;
-                &--svg > svg {
-                    vertical-align: middle;
-                    @include size(1em);
-                    path {
-                        fill: var(--muted-color);
-                    }
-                }
+                position: relative;
+                top: 0.1em;
             }
             &-text {
                 flex-grow: 1;
@@ -373,7 +351,7 @@
     &__file {
         cursor: pointer;
         padding: $base-padding;
-        border-radius: $base-border-radius;
+        border-radius: var(--block-border-radius);
         box-sizing: border-box;
         flex-basis: 100%;
         @include nomobile {
@@ -410,6 +388,7 @@
     &__item {
         padding: $base-padding;
         cursor: pointer;
+        border-radius: var(--block-border-radius);
         &:hover {
             background-color: var(--action-background-color-focus-tr);
         }

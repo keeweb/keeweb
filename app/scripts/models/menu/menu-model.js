@@ -42,7 +42,7 @@ class MenuModel extends Model {
         this.trashSection = new MenuSectionModel([
             {
                 locTitle: 'menuTrash',
-                icon: 'trash',
+                icon: 'trash-alt',
                 shortcut: Keys.DOM_VK_D,
                 filterKey: 'trash',
                 filterValue: true,
@@ -51,7 +51,7 @@ class MenuModel extends Model {
         ]);
         Colors.AllColors.forEach((color) => {
             const option = {
-                cls: 'fa ' + color + '-color',
+                cls: `fa ${color}-color`,
                 value: color,
                 filterValue: color
             };
@@ -66,10 +66,51 @@ class MenuModel extends Model {
         ]);
 
         this.generalSection = new MenuSectionModel([
-            { locTitle: 'menuSetGeneral', icon: 'cog', page: 'general', active: true }
+            {
+                locTitle: 'menuSetGeneral',
+                icon: 'cog',
+                page: 'general',
+                section: 'top',
+                active: true
+            },
+            {
+                locTitle: 'setGenAppearance',
+                icon: '0',
+                page: 'general',
+                section: 'appearance',
+                active: true
+            },
+            {
+                locTitle: 'setGenFunction',
+                icon: '0',
+                page: 'general',
+                section: 'function',
+                active: true
+            },
+            {
+                locTitle: 'setGenLock',
+                icon: '0',
+                page: 'general',
+                section: 'lock',
+                active: true
+            },
+            {
+                locTitle: 'setGenStorage',
+                icon: '0',
+                page: 'general',
+                section: 'storage',
+                active: true
+            },
+            {
+                locTitle: 'advanced',
+                icon: '0',
+                page: 'general',
+                section: 'advanced',
+                active: true
+            }
         ]);
         this.shortcutsSection = new MenuSectionModel([
-            { locTitle: 'shortcuts', icon: 'keyboard-o', page: 'shortcuts' }
+            { locTitle: 'shortcuts', icon: 'keyboard', page: 'shortcuts' }
         ]);
         this.pluginsSection = new MenuSectionModel([
             { locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }
@@ -116,9 +157,8 @@ class MenuModel extends Model {
             this.colorsItem.options.forEach((opt) => {
                 opt.active = opt === sel.option;
             });
-            const selColor =
-                sel.item === this.colorsItem && sel.option ? sel.option.value + '-color' : '';
-            this.colorsItem.cls = 'menu__item-colors ' + selColor;
+            this.colorsItem.iconCls =
+                sel.item === this.colorsItem && sel.option ? sel.option.value + '-color' : null;
             const filterKey = sel.item.filterKey;
             const filterValue = (sel.option || sel.item).filterValue;
             const filter = {};
@@ -127,6 +167,7 @@ class MenuModel extends Model {
         } else if (sections === this.menus.settings) {
             Events.emit('set-page', {
                 page: sel.item.page,
+                section: sel.item.section,
                 file: sel.item.file
             });
         }

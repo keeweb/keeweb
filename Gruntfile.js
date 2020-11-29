@@ -78,11 +78,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
-            favicon: {
-                src: 'app/favicon.png',
-                dest: 'tmp/favicon.png',
-                nonull: true
-            },
             icons: {
                 cwd: 'app/icons/',
                 src: ['*.png', '*.svg'],
@@ -110,13 +105,6 @@ module.exports = function (grunt) {
                 dest: 'dist/',
                 expand: true,
                 nonull: true
-            },
-            fonts: {
-                src: 'node_modules/font-awesome/fonts/fontawesome-webfont.*',
-                dest: 'tmp/fonts/',
-                nonull: true,
-                expand: true,
-                flatten: true
             },
             'desktop-html': {
                 src: 'dist/index.html',
@@ -246,7 +234,7 @@ module.exports = function (grunt) {
                 algo: 'sha512',
                 expected: {
                     style: 1,
-                    script: 3
+                    script: 2
                 }
             },
             app: {
@@ -454,7 +442,7 @@ module.exports = function (grunt) {
             options: {
                 title: 'KeeWeb',
                 icon: 'graphics/icon.icns',
-                background: 'graphics/background.png',
+                background: 'graphics/dmg-background.png',
                 'background-color': '#E0E6F9',
                 'icon-size': 80,
                 window: { size: { width: 658, height: 498 } },

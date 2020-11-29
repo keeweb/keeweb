@@ -21,6 +21,15 @@ class AppSettingsModel extends Model {
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
         }
+        if (data.locale === 'en') {
+            data.locale = 'en-US';
+        }
+        if (data.theme === 'macdark') {
+            data.theme = 'dark';
+        }
+        if (data.theme === 'wh') {
+            data.theme = 'light';
+        }
     }
 
     save() {

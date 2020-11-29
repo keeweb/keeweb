@@ -24,7 +24,7 @@ class View extends EventEmitter {
     model = undefined;
     options = {};
     views = {};
-    hidden = false;
+    hidden = undefined;
     removed = false;
     modal = undefined;
     eventListeners = {};
@@ -239,6 +239,10 @@ class View extends EventEmitter {
         if (visible === undefined) {
             visible = this.hidden;
         }
+        if (this.hidden === !visible) {
+            this.debugLogger?.debug('Toggle: noop', visible);
+            return;
+        }
         this.hidden = !visible;
         if (this.modal) {
             if (visible) {
@@ -258,7 +262,7 @@ class View extends EventEmitter {
     }
 
     isHidden() {
-        return this.hidden;
+        return !!this.hidden;
     }
 
     isVisible() {

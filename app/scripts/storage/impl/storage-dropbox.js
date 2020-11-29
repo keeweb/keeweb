@@ -82,7 +82,8 @@ class StorageDropbox extends StorageBase {
             clientSecret: this._getSecret(),
             pkce: true,
             width: 600,
-            height: 400
+            height: 400,
+            urlParams: { 'token_access_type': 'offline' }
         };
     }
 

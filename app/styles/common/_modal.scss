@@ -30,11 +30,6 @@
     &__icon {
         font-size: $modal-icon-size;
         text-align: center;
-        &--svg {
-            fill: var(--text-color);
-            width: 1.4em;
-            align-self: center;
-        }
     }
     &__header {
         user-select: text;
@@ -48,9 +43,6 @@
     }
     &__buttons {
         text-align: right;
-        button ~ button {
-            margin-left: $small-spacing;
-        }
         > button {
             margin-bottom: $small-spacing;
         }

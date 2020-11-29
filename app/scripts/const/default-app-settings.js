@@ -35,7 +35,6 @@ const DefaultAppSettings = {
     allowIframes: false, // allow displaying the app in IFrames
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
     enableUsb: true, // enable interaction with USB devices
-    nativeArgon2: true, // use native argon2 module
     fieldLabelDblClickAutoType: false, // trigger auto-type by doubleclicking field label
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
@@ -66,6 +65,7 @@ const DefaultAppSettings = {
 
     webdav: true, // enable WebDAV integration
     webdavSaveMethod: 'move', // how to save files with WebDAV: "move" or "put"
+    webdavStatReload: false, // WebDAV: reload the file instead of relying on Last-Modified
 
     gdrive: true, // enable Google Drive integration
     gdriveClientId: null, // custom Google Drive client id

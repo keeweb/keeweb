@@ -427,6 +427,7 @@ class AppView extends View {
             minimizeInsteadOfClose
         ) {
             Launcher.minimizeApp();
+            this.appMinimized();
             return Launcher.preventExit(e);
         }
     }
@@ -533,7 +534,6 @@ class AppView extends View {
     saveAndLock(complete) {
         let pendingCallbacks = 0;
         const errorFiles = [];
-        const that = this;
         this.model.files.forEach(function (file) {
             if (!file.dirty) {
                 return;
@@ -549,7 +549,7 @@ class AppView extends View {
                 errorFiles.push(file.name);
             }
             if (--pendingCallbacks === 0) {
-                if (errorFiles.length && that.model.files.hasDirtyFiles()) {
+                if (errorFiles.length && this.model.files.hasDirtyFiles()) {
                     if (!Alerts.alertDisplayed) {
                         const alertBody =
                             errorFiles.length > 1
@@ -564,7 +564,7 @@ class AppView extends View {
                         complete(false);
                     }
                 } else {
-                    that.closeAllFilesAndShowFirst();
+                    this.closeAllFilesAndShowFirst();
                     if (complete) {
                         complete(true);
                     }

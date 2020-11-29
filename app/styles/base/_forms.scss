@@ -72,7 +72,7 @@ input:not([type]) {
     }
 
     &:focus {
-        border-color: var(--form-box-border-focus);
+        border-color: var(--form-box-border-color-focus);
         box-shadow: form-box-shadow-focus();
         outline: none;
     }
@@ -152,7 +152,7 @@ select {
         border-color: var(--accent-border-color);
     }
     &:focus {
-        border-color: var(--form-box-border-focus);
+        border-color: var(--form-box-border-color-focus);
         box-shadow: form-box-shadow-focus();
         outline: none;
     }
@@ -185,6 +185,10 @@ input[type='checkbox'] {
         display: inline-block;
         width: 1.3em;
         color: var(--text-color);
+        font-size: 1.2em;
+        vertical-align: bottom;
+        position: relative;
+        top: 0.08em;
     }
     &:checked + label:before {
         content: $fa-var-check-square-o;
