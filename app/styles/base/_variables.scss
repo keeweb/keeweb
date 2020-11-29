@@ -61,7 +61,7 @@ $titlebar-padding-large: 40px;
 
 // Shadows
 @function dropdown-box-shadow() {
-    @return 0 0 50px var(--dropdown-box-shadow-color);
+    @return 0 0.15rem 0.5rem 0.25rem var(--dropdown-box-shadow-color);
 }
 
 // Animations

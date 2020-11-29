@@ -388,6 +388,7 @@
     &__item {
         padding: $base-padding;
         cursor: pointer;
+        border-radius: var(--block-border-radius);
         &:hover {
             background-color: var(--action-background-color-focus-tr);
         }

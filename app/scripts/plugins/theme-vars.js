@@ -24,13 +24,14 @@ const ThemeVars = {
 
     apply(cssStyle) {
         this.init();
-        const lines = ThemeVarsScss.split('\n');
-        for (const line of lines) {
-            const match = line.match(/\s*([^:]+):\s*(.*?),?\s*$/);
-            if (!match) {
-                continue;
+        const matches = ThemeVarsScss.replace(/[\n\s]+/g, '').matchAll(/([\w\-]+):([^:]+),(\$)?/g);
+        for (let [, name, def, last] of matches) {
+            if (last && def.endsWith(')')) {
+                // definitions are written like this:
+                //      map-merge((def:val, def:val, ..., last-def:val),$t)
+                // so, the last item has "),$" captured, here we're removing that bracket
+                def = def.substr(0, def.length - 1);
             }
-            const [, name, def] = match;
             const propName = '--' + name;
             const currentValue = cssStyle.getPropertyValue(propName);
             if (currentValue) {
