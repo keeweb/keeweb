@@ -492,7 +492,7 @@ module.exports = function (grunt) {
                 dest: `dist/desktop/KeeWeb-${pkg.version}.mac.x64.dmg`
             },
             arm64: {
-                options: appdmgOptions('amd64'),
+                options: appdmgOptions('arm64'),
                 dest: `dist/desktop/KeeWeb-${pkg.version}.mac.arm64.dmg`
             }
         },
