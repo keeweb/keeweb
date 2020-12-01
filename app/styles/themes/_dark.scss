@@ -23,4 +23,8 @@ body.th-dark {
     --secondary-background-color: #2d2d2e;
     --selected-item-color: #2463c8;
     --selected-on-secondary-item-color: #403f40;
+
+    .list__item--active .blue-color {
+        color: #689ff7;
+    }
 }

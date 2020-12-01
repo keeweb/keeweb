@@ -29,4 +29,8 @@ body.th-light {
     --selected-on-secondary-item-color: #d6d6d6;
     --selected-item-text-color: #f6f6f6;
     --open-icon-color: var(--muted-color);
+
+    .list__item--active .blue-color {
+        color: #7baeff;
+    }
 }
