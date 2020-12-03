@@ -9,7 +9,7 @@ const DefaultAppSettings = {
     clipboardSeconds: 0, // number of seconds after which the clipboard will be cleared
     autoSave: true, // auto-save open files
     autoSaveInterval: 0, // interval between performing automatic sync, minutes
-    rememberKeyFiles: false, // remember keyfiles selected on the Open screen
+    rememberKeyFiles: 'path', // remember keyfiles selected on the Open screen
     idleMinutes: 15, // app lock timeout after inactivity, minutes
     minimizeOnClose: false, // minimise the app instead of closing
     tableView: false, // view entries as a table instead of list

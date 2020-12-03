@@ -4,6 +4,7 @@ Release notes
 `+` Argon2id KDF support  
 `-` fix #1637: git commit in the About box  
 `-` fixed some design glitches  
+`*` keyfile paths are saved by default  
 
 ##### v1.16.0 (2020-11-29)
 `+` updated icons and visual design  
