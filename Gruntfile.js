@@ -50,6 +50,24 @@ module.exports = function (grunt) {
         InternalName: 'KeeWeb'
     };
 
+    const appdmgOptions = (arch) => ({
+        title: 'KeeWeb',
+        icon: 'graphics/icon.icns',
+        background: 'graphics/dmg-background.png',
+        'background-color': '#E0E6F9',
+        'icon-size': 80,
+        window: { size: { width: 658, height: 498 } },
+        contents: [
+            { x: 438, y: 344, type: 'link', path: '/Applications' },
+            {
+                x: 192,
+                y: 344,
+                type: 'file',
+                path: `tmp/desktop/KeeWeb-darwin-${arch}/KeeWeb.app`
+            }
+        ]
+    });
+
     grunt.initConfig({
         noop: { noop: {} },
         clean: {
@@ -121,17 +139,32 @@ module.exports = function (grunt) {
                 dest: 'tmp/desktop/update/',
                 nonull: true
             },
-            'desktop-darwin-helper': {
+            'desktop-darwin-helper-x64': {
                 src: 'helper/darwin/KeeWebHelper',
                 dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
                 nonull: true,
                 options: { mode: '0755' }
             },
-            'desktop-darwin-installer-helper': {
+            'desktop-darwin-helper-arm64': {
+                src: 'helper/darwin/KeeWebHelper',
+                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Resources/',
+                nonull: true,
+                options: { mode: '0755' }
+            },
+            'desktop-darwin-installer-helper-x64': {
                 cwd: 'package/osx/KeeWeb Installer.app',
                 src: '**',
                 dest:
                     'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                expand: true,
+                nonull: true,
+                options: { mode: true }
+            },
+            'desktop-darwin-installer-helper-arm64': {
+                cwd: 'package/osx/KeeWeb Installer.app',
+                src: '**',
+                dest:
+                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
@@ -166,9 +199,14 @@ module.exports = function (grunt) {
                 dest: `dist/desktop/KeeWeb-${pkg.version}.win.arm64.exe`,
                 nonull: true
             },
-            'native-modules-darwin': {
+            'native-modules-darwin-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-darwin-x64.node',
                 dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
+                nonull: true
+            },
+            'native-modules-darwin-arm64': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-darwin-arm64.node',
+                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Resources/',
                 nonull: true
             },
             'native-modules-win32-x64': {
@@ -322,14 +360,24 @@ module.exports = function (grunt) {
                 options: {
                     name: 'keeweb',
                     platform: 'linux',
-                    arch: ['x64'],
+                    arch: 'x64',
                     icon: 'graphics/icon.ico'
                 }
             },
-            darwin: {
+            'darwin-x64': {
                 options: {
                     platform: 'darwin',
-                    arch: ['x64'],
+                    arch: 'x64',
+                    icon: 'graphics/icon.icns',
+                    appBundleId: 'net.antelle.keeweb',
+                    appCategoryType: 'public.app-category.productivity',
+                    extendInfo: 'package/osx/extend.plist'
+                }
+            },
+            'darwin-arm64': {
+                options: {
+                    platform: 'darwin',
+                    arch: 'arm64',
                     icon: 'graphics/icon.icns',
                     appBundleId: 'net.antelle.keeweb',
                     appCategoryType: 'public.app-category.productivity',
@@ -430,25 +478,13 @@ module.exports = function (grunt) {
             }
         },
         appdmg: {
-            options: {
-                title: 'KeeWeb',
-                icon: 'graphics/icon.icns',
-                background: 'graphics/dmg-background.png',
-                'background-color': '#E0E6F9',
-                'icon-size': 80,
-                window: { size: { width: 658, height: 498 } },
-                contents: [
-                    { x: 438, y: 344, type: 'link', path: '/Applications' },
-                    {
-                        x: 192,
-                        y: 344,
-                        type: 'file',
-                        path: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
-                    }
-                ]
+            x64: {
+                options: appdmgOptions('x64'),
+                dest: `dist/desktop/KeeWeb-${pkg.version}.mac.x64.dmg`
             },
-            app: {
-                dest: `dist/desktop/KeeWeb-${pkg.version}.mac.dmg`
+            arm64: {
+                options: appdmgOptions('arm64'),
+                dest: `dist/desktop/KeeWeb-${pkg.version}.mac.arm64.dmg`
             }
         },
         nsis: {
@@ -591,8 +627,11 @@ module.exports = function (grunt) {
                 'entitlements-inherit': 'package/osx/entitlements.mac.plist',
                 'gatekeeper-assess': false
             },
-            desktop: {
+            'desktop-x64': {
                 src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
+            },
+            'desktop-arm64': {
+                src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
             }
         },
         notarize: {
@@ -606,8 +645,11 @@ module.exports = function (grunt) {
                     return getCodeSignConfig().teamId;
                 }
             },
-            desktop: {
+            'desktop-x64': {
                 src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
+            },
+            'desktop-arm64': {
+                src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
             }
         },
         'sign-exe': {

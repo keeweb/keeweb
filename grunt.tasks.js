@@ -40,12 +40,18 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build-desktop-executables-darwin', [
-        'electron:darwin',
-        'copy:desktop-darwin-helper',
-        'copy:desktop-darwin-installer-helper',
-        'copy:native-modules-darwin',
-        sign ? 'osx-sign:desktop' : 'noop',
-        sign ? 'notarize:desktop' : 'noop'
+        'electron:darwin-x64',
+        'electron:darwin-arm64',
+        'copy:desktop-darwin-helper-x64',
+        'copy:desktop-darwin-helper-arm64',
+        'copy:desktop-darwin-installer-helper-x64',
+        'copy:desktop-darwin-installer-helper-arm64',
+        'copy:native-modules-darwin-x64',
+        'copy:native-modules-darwin-arm64',
+        sign ? 'osx-sign:desktop-x64' : 'noop',
+        sign ? 'osx-sign:desktop-arm64' : 'noop',
+        sign ? 'notarize:desktop-x64' : 'noop',
+        sign ? 'notarize:desktop-arm64' : 'noop'
     ]);
 
     grunt.registerTask('build-desktop-executables-win32', [
@@ -82,7 +88,7 @@ module.exports = function (grunt) {
         'build-desktop-archives-win32'
     ]);
 
-    grunt.registerTask('build-desktop-dist-darwin', ['appdmg']);
+    grunt.registerTask('build-desktop-dist-darwin', ['appdmg:x64', 'appdmg:arm64']);
 
     grunt.registerTask('build-desktop-dist-win32', [
         'nsis:win32-un-x64',
