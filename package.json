@@ -16,7 +16,7 @@
         "@babel/plugin-proposal-optional-chaining": "^7.12.7",
         "@babel/preset-env": "^7.12.7",
         "@fortawesome/fontawesome-free": "^5.15.1",
-        "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.5.2/keeweb-native-modules.tgz",
+        "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.5.3/keeweb-native-modules.tgz",
         "adm-zip": "^0.5.1",
         "argon2-browser": "1.15.2",
         "autoprefixer": "^10.0.4",
