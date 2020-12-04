@@ -3,7 +3,7 @@ Release notes
 ##### v1.16.1 (2020-12-04)
 `+` native Apple Silicon build  
 `+` Argon2id KDF support  
-`+` added an options to quit the app and lose all changes   
+`+` added an option to quit the app and lose all changes   
 `-` fix #1637: git commit in the About box  
 `-` fixed some design glitches  
 `*` keyfile paths are saved by default
