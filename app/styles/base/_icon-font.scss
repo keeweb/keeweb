@@ -17,7 +17,7 @@
 
 .fa {
     @include fa-icon;
-    a > & {
+    &.bottom {
         vertical-align: bottom;
     }
 }
