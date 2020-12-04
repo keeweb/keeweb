@@ -54,10 +54,10 @@ module.exports = function(grunt) {
     grunt.registerTask('dev-desktop-darwin', 'Build a macOS app in dev environment', [
         'default',
         'build-desktop-app-content',
-        'electron:darwin',
-        'copy:desktop-darwin-helper',
-        'copy:desktop-darwin-installer-helper',
-        'copy:native-modules-darwin'
+        'electron:darwin-x64',
+        'copy:desktop-darwin-helper-x64',
+        'copy:desktop-darwin-installer-helper-x64',
+        'copy:native-modules-darwin-x64'
     ]);
 
     grunt.registerTask('dev-desktop-win32', 'Build a Windows app in dev environment', [
@@ -75,7 +75,7 @@ module.exports = function(grunt) {
         'chmod:linux-desktop-x64',
         'copy:native-modules-linux-x64'
     ]);
-    
+
     grunt.registerTask('test', 'Build and run tests', [
         'build-test',
         'run-test'

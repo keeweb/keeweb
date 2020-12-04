@@ -17,7 +17,7 @@ FROM nginx:stable
 LABEL maintainer="antelle.net@gmail.com"
 
 # install
-RUN apt-get -y update && apt-get -y install openssl curl unzip
+RUN apt-get -y update && apt-get -y install openssl curl unzip && rm -rf /var/lib/apt/lists/*
 
 # setup nginx
 RUN rm -rf /etc/nginx/conf.d/*; \
@@ -27,13 +27,13 @@ RUN sed -i 's/access_log.*/access_log \/dev\/stdout;/g' /etc/nginx/nginx.conf; \
     sed -i 's/error_log.*/error_log \/dev\/stdout info;/g' /etc/nginx/nginx.conf; \
     sed -i 's/^pid/daemon off;\npid/g' /etc/nginx/nginx.conf
 
-ADD keeweb.conf /etc/nginx/conf.d/keeweb.conf
+COPY keeweb.conf /etc/nginx/conf.d/keeweb.conf
 
-ADD entrypoint.sh /opt/entrypoint.sh
+COPY entrypoint.sh /opt/entrypoint.sh
 RUN chmod a+x /opt/entrypoint.sh
 
 # add keeweb files
-ADD dist keeweb
+COPY dist keeweb
 
 # clone keeweb plugins
 RUN curl -Ss -L -O https://github.com/keeweb/keeweb-plugins/archive/master.zip; \
