@@ -42,8 +42,10 @@
             text-overflow: ellipsis;
             border-radius: var(--input-border-radius);
             border: 1px solid transparent;
-            height: 1.4em;
-            line-height: 1.4em;
+            // why px and not em? it's like this to prevent jumping in different browsers
+            // when switching from a div to an input and vice versa
+            height: 42px;
+            line-height: 40px;
             white-space: nowrap;
             &:hover {
                 transition: border-color $base-duration $base-timing;
@@ -54,8 +56,9 @@
             }
         }
         input.details__header-title-input {
-            height: calc(1.4em + 6px);
-            line-height: 1.4em;
+            // see the comment about px above
+            height: 48px;
+            line-height: 40px;
             user-select: text;
             flex: 1;
             margin: 0 6px;

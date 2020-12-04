@@ -22,4 +22,8 @@ $themes: map-merge(
 
 body.th-sd {
     --selected-item-text-color: #002b36;
+
+    .list__item--active .blue-color {
+        color: #0249bd;
+    }
 }

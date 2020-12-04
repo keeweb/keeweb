@@ -21,7 +21,6 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('desktop-linux', 'Build desktop apps on linux', [
-        'gitinfo',
         'clean:desktop',
         'build-desktop-app-content',
         'build-desktop-executables-linux',
@@ -31,7 +30,6 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('desktop-darwin', 'Build desktop apps on macos', [
-        'gitinfo',
         'clean:desktop',
         'build-desktop-app-content',
         'build-desktop-executables-darwin',
@@ -39,7 +37,6 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('desktop-win32', 'Build desktop apps on windows', [
-        'gitinfo',
         'clean:desktop',
         'build-desktop-app-content',
         'build-desktop-executables-win32',

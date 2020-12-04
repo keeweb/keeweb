@@ -189,8 +189,10 @@ class FileModel extends Model {
             if (uuid) {
                 uuid = kdbxweb.ByteUtils.bytesToBase64(uuid);
                 switch (uuid) {
-                    case kdbxweb.Consts.KdfId.Argon2:
-                        return 'Argon2';
+                    case kdbxweb.Consts.KdfId.Argon2d:
+                        return 'Argon2d';
+                    case kdbxweb.Consts.KdfId.Argon2id:
+                        return 'Argon2id';
                     case kdbxweb.Consts.KdfId.Aes:
                         return 'Aes';
                 }
@@ -212,7 +214,8 @@ class FileModel extends Model {
         }
         uuid = kdbxweb.ByteUtils.bytesToBase64(uuid);
         switch (uuid) {
-            case kdbxweb.Consts.KdfId.Argon2:
+            case kdbxweb.Consts.KdfId.Argon2d:
+            case kdbxweb.Consts.KdfId.Argon2id:
                 return {
                     parallelism: kdfParameters.get('P').valueOf(),
                     iterations: kdfParameters.get('I').valueOf(),
@@ -698,8 +701,11 @@ class FileModel extends Model {
             case 'Aes':
                 this.db.setKdf(kdbxweb.Consts.KdfId.Aes);
                 break;
-            case 'Argon2':
-                this.db.setKdf(kdbxweb.Consts.KdfId.Argon2);
+            case 'Argon2d':
+                this.db.setKdf(kdbxweb.Consts.KdfId.Argon2d);
+                break;
+            case 'Argon2id':
+                this.db.setKdf(kdbxweb.Consts.KdfId.Argon2id);
                 break;
             default:
                 throw new Error('Bad KDF name');
