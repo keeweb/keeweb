@@ -17,6 +17,9 @@
 
 .fa {
     @include fa-icon;
+    a > & {
+        vertical-align: bottom;
+    }
 }
 
 $fa-glyph-counter: 61440; // 0xf000
