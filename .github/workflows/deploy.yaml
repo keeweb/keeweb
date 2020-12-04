@@ -12,7 +12,7 @@ jobs:
           fetch-depth: 0
           ref: 'gh-pages'
       - name: Setup GCloud
-        uses: google-github-actions/github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@master
         with:
           version: '285.0.0'
           service_account_key: ${{ secrets.GCP_SA_KEY }}
