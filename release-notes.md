@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.16.1 (TBD)
+##### v1.16.1 (2020-12-04)
 `+` Argon2id KDF support  
 `-` fix #1637: git commit in the About box  
 `-` fixed some design glitches  
