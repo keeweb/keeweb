@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.16.2 (2020-12-??)
+`-` fixed a missing icon in the local file question box  
+`-` minor license screen fixes  
+
 ##### v1.16.1 (2020-12-04)
 `+` native Apple Silicon build  
 `+` Argon2id KDF support  
