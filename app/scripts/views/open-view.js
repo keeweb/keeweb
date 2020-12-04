@@ -191,7 +191,7 @@ class OpenView extends View {
         Alerts.alert({
             header: Locale.openLocalFile,
             body: Locale.openLocalFileBody,
-            icon: 'file-text',
+            icon: 'file-alt',
             buttons: [
                 { result: 'skip', title: Locale.openLocalFileDontShow, error: true },
                 { result: 'ok', title: Locale.alertOk }
