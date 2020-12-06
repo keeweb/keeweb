@@ -6,6 +6,10 @@
     padding: $base-padding;
     box-sizing: border-box;
     overflow: hidden;
+    &__body {
+        height: 100%;
+        overflow-y: auto;
+    }
     &__block {
         margin-bottom: $base-padding-v;
         > a,
