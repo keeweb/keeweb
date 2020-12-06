@@ -55,8 +55,8 @@ class ModalView extends View {
         this.closeWithResult(result);
     }
 
-    bodyClick() {
-        if (typeof this.model.click === 'string') {
+    bodyClick(e) {
+        if (typeof this.model.click === 'string' && !e.target.matches('button')) {
             this.closeWithResult(this.model.click);
         }
     }

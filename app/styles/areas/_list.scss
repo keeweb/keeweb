@@ -150,7 +150,9 @@
         }
 
         &:not(.list__item--table) {
-            border-radius: var(--block-border-radius);
+            @include nomobile {
+                border-radius: var(--block-border-radius);
+            }
             margin: 0 $small-spacing;
         }
 

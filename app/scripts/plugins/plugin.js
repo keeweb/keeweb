@@ -445,7 +445,7 @@ class Plugin extends Model {
     removeTheme(theme) {
         delete SettingsManager.allThemes[theme.name];
         if (AppSettingsModel.theme === theme.name) {
-            AppSettingsModel.theme = 'fb';
+            AppSettingsModel.theme = SettingsManager.getDefaultTheme();
         }
         delete BaseLocale[this.getThemeLocaleKey(theme.name)];
     }

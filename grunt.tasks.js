@@ -2,7 +2,6 @@ module.exports = function (grunt) {
     const sign = !grunt.option('skip-sign');
 
     grunt.registerTask('build-web-app', [
-        'gitinfo',
         'clean',
         'eslint',
         'copy:html',
@@ -124,7 +123,6 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build-desktop', [
-        'gitinfo',
         'clean:desktop',
         'build-desktop-app-content',
         'build-desktop-executables',

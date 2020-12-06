@@ -333,6 +333,8 @@
     "appSaveError": "Save Error",
     "appSaveErrorBody": "Failed to auto-save file",
     "appSaveErrorBodyMul": "Failed to auto-save files:",
+    "appSaveErrorExitLoseChanges": "Quit and lose all changes",
+    "appSaveErrorExitLoseChangesBody": "You can either quit the app and lose all changes, or go file settings to export data",
     "appSettingsError": "Error loading app",
     "appSettingsErrorBody": "There was an error loading app settings. Please double check the app URL or contact your administrator.",
     "appNotSupportedError": "Your browser doesn't support some important features we're using.",

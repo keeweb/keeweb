@@ -38,7 +38,7 @@ const Alerts = {
         Alerts.alertDisplayed = true;
         const view = new ModalView(config);
         view.render();
-        view.on('result', (res, check) => {
+        view.once('result', (res, check) => {
             if (res && config.success) {
                 config.success(res, check);
             }
