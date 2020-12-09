@@ -434,10 +434,11 @@ class SettingsFileView extends View {
     }
 
     generateKeyFile() {
-        const keyFile = this.model.generateAndSetKeyFile();
-        const blob = new Blob([keyFile], { type: 'application/octet-stream' });
-        FileSaver.saveAs(blob, this.model.name + '.key');
-        this.renderKeyFileSelect();
+        this.model.generateAndSetKeyFile().then((keyFile) => {
+            const blob = new Blob([keyFile], { type: 'application/octet-stream' });
+            FileSaver.saveAs(blob, this.model.name + '.key');
+            this.renderKeyFileSelect();
+        });
     }
 
     clearKeyFile() {

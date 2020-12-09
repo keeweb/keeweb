@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.16.2 (2020-12-??)
+`+` possibility to use V2 keyfiles (.keyx)  
 `-` fixed a missing icon in the local file question box  
 `-` minor license screen fixes  
 
