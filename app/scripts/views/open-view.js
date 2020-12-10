@@ -191,7 +191,7 @@ class OpenView extends View {
         Alerts.alert({
             header: Locale.openLocalFile,
             body: Locale.openLocalFileBody,
-            icon: 'file-text',
+            icon: 'file-alt',
             buttons: [
                 { result: 'skip', title: Locale.openLocalFileDontShow, error: true },
                 { result: 'ok', title: Locale.alertOk }
@@ -533,7 +533,7 @@ class OpenView extends View {
         this.$el.removeClass('open--drag');
         const files = [...(e.target.files || e.dataTransfer.files)];
         const dataFile = files.find((file) => /\.kdbx$/i.test(file.name));
-        const keyFile = files.find((file) => /\.key$/i.test(file.name));
+        const keyFile = files.find((file) => /\.keyx?$/i.test(file.name));
         if (dataFile) {
             this.setFile(
                 dataFile,
