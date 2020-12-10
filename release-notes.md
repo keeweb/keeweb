@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.16.2 (2020-12-??)
+##### v1.16.2 (2020-12-10)
 `+` possibility to use V2 keyfiles (.keyx)  
 `-` fixed a missing icon in the local file question box  
 `-` fix #1649: missing Argon2 options  
