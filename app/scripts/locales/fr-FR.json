@@ -1,6 +1,4 @@
 {
-  "appSaveErrorExitLoseChanges": "Afsluiten en alle aanpassingen kwijtraken",
-  "appSaveErrorExitLoseChangesBody": "Je kunt de app afsluiten en alle wijzigingen kwijtraken, of je kunt de bestandsinstellingen gebruiken om gegevens te exporteren",
   "retToApp": "retour vers l'appli",
   "name": "nom",
   "icon": "icône",
@@ -318,6 +316,8 @@
   "appSaveError": "Sauver l'erreur",
   "appSaveErrorBody": "Échec sauvegarde auto du fichier",
   "appSaveErrorBodyMul": "Échec sauvegarde auto des fichiers",
+  "appSaveErrorExitLoseChanges": "Afsluiten en alle aanpassingen kwijtraken",
+  "appSaveErrorExitLoseChangesBody": "Je kunt de app afsluiten en alle wijzigingen kwijtraken, of je kunt de bestandsinstellingen gebruiken om gegevens te exporteren",
   "appSettingsError": "Erreur lancement appli",
   "appSettingsErrorBody": "Il y a eu une erreur lors du chargement des paramètres. Merci de revérifier l'URL de l'application ou contacter votre administrateur.",
   "appNotSupportedError": "Votre navigateur n'est pas compatible avec certaines fonctionnalités importantes que nous utilisons.",
