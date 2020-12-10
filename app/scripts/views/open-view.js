@@ -533,7 +533,7 @@ class OpenView extends View {
         this.$el.removeClass('open--drag');
         const files = [...(e.target.files || e.dataTransfer.files)];
         const dataFile = files.find((file) => /\.kdbx$/i.test(file.name));
-        const keyFile = files.find((file) => /\.key$/i.test(file.name));
+        const keyFile = files.find((file) => /\.keyx?$/i.test(file.name));
         if (dataFile) {
             this.setFile(
                 dataFile,
