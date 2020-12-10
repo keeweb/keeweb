@@ -716,7 +716,9 @@ class FileModel extends Model {
     }
 
     static createKeyFileWithHash(hash) {
-        return kdbxweb.Credentials.createKeyFileWithHash(hash);
+        const hashData = kdbxweb.ByteUtils.base64ToBytes(hash);
+        const hexHash = kdbxweb.ByteUtils.bytesToHex(hashData);
+        return kdbxweb.ByteUtils.stringToBytes(hexHash);
     }
 }
 
