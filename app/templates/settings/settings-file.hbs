@@ -179,7 +179,7 @@
                        id="settings__file-kdf-rounds" data-field="rounds" value="{{kdfParameters.rounds}}" maxlength="10" />
             </div>
         {{/ifeq}}
-        {{#ifeq kdfName 'Argon2'}}
+        {{#if isArgon2Kdf}}
             <div class="settings__row">
                 <div class="settings__col-small">
                     <label class="settings__col-small-label" for="settings__file-kdf-iter">{{res 'setFileKdfParamsIter'}}:</label>
@@ -197,7 +197,7 @@
                            data-field="parallelism" id="settings__file-kdf-par" value="{{kdfParameters.parallelism}}" maxlength="2" />
                 </div>
             </div>
-        {{/ifeq}}
+        {{/if}}
     {{/if}}
 
     <label for="settings__file-key-change-force">{{res 'setFileKeyChangeForce'}}:</label>

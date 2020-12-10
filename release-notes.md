@@ -1,9 +1,18 @@
 Release notes
 -------------
+##### v1.16.3 (2020-12-10)
+`-` fix #1650: keyfiles stored in the app can't be used  
+
+##### v1.16.2 (2020-12-10)
+`+` possibility to use V2 keyfiles (.keyx)  
+`-` fixed a missing icon in the local file question box  
+`-` fix #1649: missing Argon2 options  
+`-` minor license screen fixes
+
 ##### v1.16.1 (2020-12-04)
 `+` native Apple Silicon build  
 `+` Argon2id KDF support  
-`+` added an options to quit the app and lose all changes   
+`+` added an option to quit the app and lose all changes   
 `-` fix #1637: git commit in the About box  
 `-` fixed some design glitches  
 `*` keyfile paths are saved by default

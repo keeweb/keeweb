@@ -164,7 +164,7 @@ class MenuModel extends Model {
             const filter = {};
             filter[filterKey] = filterValue;
             Events.emit('set-filter', filter);
-        } else if (sections === this.menus.settings) {
+        } else if (sections === this.menus.settings && sel.item.page) {
             Events.emit('set-page', {
                 page: sel.item.page,
                 section: sel.item.section,

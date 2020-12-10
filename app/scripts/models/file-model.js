@@ -522,10 +522,11 @@ class FileModel extends Model {
     }
 
     generateAndSetKeyFile() {
-        const keyFile = kdbxweb.Credentials.createRandomKeyFile();
-        const keyFileName = 'Generated';
-        this.setKeyFile(keyFile, keyFileName);
-        return keyFile;
+        return kdbxweb.Credentials.createRandomKeyFile().then((keyFile) => {
+            const keyFileName = 'Generated';
+            this.setKeyFile(keyFile, keyFileName);
+            return keyFile;
+        });
     }
 
     resetKeyFile() {
@@ -715,7 +716,9 @@ class FileModel extends Model {
     }
 
     static createKeyFileWithHash(hash) {
-        return kdbxweb.Credentials.createKeyFileWithHash(hash);
+        const hashData = kdbxweb.ByteUtils.base64ToBytes(hash);
+        const hexHash = kdbxweb.ByteUtils.bytesToHex(hashData);
+        return kdbxweb.ByteUtils.stringToBytes(hexHash);
     }
 }
 
