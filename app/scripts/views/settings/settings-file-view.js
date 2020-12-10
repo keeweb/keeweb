@@ -147,6 +147,7 @@ class SettingsFileView extends View {
             historyMaxSize: Math.round(this.model.historyMaxSize / 1024 / 1024),
             formatVersion: this.model.formatVersion,
             kdfName: this.model.kdfName,
+            isArgon2Kdf: this.model.kdfName.startsWith('Argon2'),
             keyEncryptionRounds: this.model.keyEncryptionRounds,
             keyChangeForce: this.model.keyChangeForce > 0 ? this.model.keyChangeForce : null,
             kdfParameters: this.kdfParametersToUi(this.model.kdfParameters),
