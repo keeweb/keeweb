@@ -179,7 +179,7 @@ function config(options) {
             ]
         },
         optimization: {
-            runtimeChunk: 'single',
+            runtimeChunk: false,
             minimize: !devMode,
             minimizer: [
                 new TerserPlugin({

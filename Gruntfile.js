@@ -263,7 +263,7 @@ module.exports = function (grunt) {
                 algo: 'sha512',
                 expected: {
                     style: 1,
-                    script: 2
+                    script: 1
                 }
             },
             app: {
