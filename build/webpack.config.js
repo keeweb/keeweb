@@ -86,13 +86,6 @@ function config(options) {
                     test: /\.hbs$/,
                     use: [
                         {
-                            loader: 'string-replace-loader',
-                            options: {
-                                search: /\r?\n\s*/g,
-                                replace: '\n'
-                            }
-                        },
-                        {
                             loader: 'handlebars-loader',
                             options: {
                                 knownHelpers: fs
@@ -107,6 +100,13 @@ function config(options) {
                                     );
                                     callback(null, location);
                                 }
+                            }
+                        },
+                        {
+                            loader: 'string-replace-loader',
+                            options: {
+                                search: /\r?\n\s*/g,
+                                replace: '\n'
                             }
                         }
                     ]
