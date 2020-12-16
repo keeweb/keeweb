@@ -32,6 +32,7 @@ jobs:
           echo "$VIRUS_TOTAL" > keys/virus-total.json
       - name: Check on VirusTotal
         run: grunt virustotal
+        if: ${{ github.repository == 'keeweb/keeweb' }}
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
