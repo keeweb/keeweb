@@ -762,6 +762,7 @@ module.exports = function (grunt) {
         },
         virustotal: {
             options: {
+                prefix: `keeweb.v${pkg.version}-${sha}.`,
                 timeout: 10 * 60 * 1000,
                 get apiKey() {
                     return require('./keys/virus-total.json').apiKey;

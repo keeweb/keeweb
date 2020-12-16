@@ -21,13 +21,13 @@ module.exports = function (grunt) {
 
             const timeStarted = Date.now();
 
-            const { apiKey, timeout = 60 * 1000 } = opt;
+            const { apiKey, prefix, timeout = 60 * 1000 } = opt;
             const interval = 5000;
 
             const headers = { 'x-apikey': apiKey };
 
             const fileData = fs.readFileSync(file);
-            const fileName = path.basename(file);
+            const fileName = (prefix || '') + path.basename(file);
 
             const form = new FormData();
             form.append('file', fileData, fileName);
