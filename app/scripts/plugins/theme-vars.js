@@ -5,6 +5,8 @@ import ThemeDefaults from '!!raw-loader!../../styles/themes/_theme-defaults.scss
 
 const ThemeVars = {
     themeDefaults: null,
+    newLineRegEx: /[\n\s]+/g, // don't inline it, see #1656
+    themeVarsRegEx: /([\w\-]+):([^:]+),(\$)?/g,
 
     init() {
         if (this.themeDefaults) {
@@ -24,7 +26,7 @@ const ThemeVars = {
 
     apply(cssStyle) {
         this.init();
-        const matches = ThemeVarsScss.replace(/[\n\s]+/g, '').matchAll(/([\w\-]+):([^:]+),(\$)?/g);
+        const matches = ThemeVarsScss.replace(this.newLineRegEx, '').matchAll(this.themeVarsRegEx);
         for (let [, name, def, last] of matches) {
             if (last && def.endsWith(')')) {
                 // definitions are written like this:
