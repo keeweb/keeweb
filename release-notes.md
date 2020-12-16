@@ -1,7 +1,8 @@
 Release notes
 -------------
-##### v1.16.4 (2020-12-16)
+##### v1.16.4 (2020-12-17)
 `-` fix #1656: false positive report on VirusTotal  
+`+` fix #1629: possibility to use OneDrive as SPA  
 
 ##### v1.16.3 (2020-12-10)
 `-` fix #1650: keyfiles stored in the app can't be used  
