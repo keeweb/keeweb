@@ -397,7 +397,7 @@ class StorageBase {
             skipAuth: true,
             data: UrlFormat.buildFormData({
                 'client_id': config.clientId,
-                'client_secret': config.clientSecret,
+                ...(config.clientSecret ? { 'client_secret': config.clientSecret } : null),
                 'grant_type': 'authorization_code',
                 'code': result.code,
                 'redirect_uri': session.redirectUri,
@@ -430,7 +430,7 @@ class StorageBase {
             skipAuth: true,
             data: UrlFormat.buildFormData({
                 'client_id': config.clientId,
-                'client_secret': config.clientSecret,
+                ...(config.clientSecret ? { 'client_secret': config.clientSecret } : null),
                 'grant_type': 'refresh_token',
                 'refresh_token': refreshToken
             }),
