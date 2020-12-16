@@ -759,6 +759,15 @@ module.exports = function (grunt) {
                 headless: true
             },
             default: 'test/runner.html'
+        },
+        virustotal: {
+            options: {
+                timeout: 10 * 60 * 1000,
+                get apiKey() {
+                    return require('./keys/virus-total.json').apiKey;
+                }
+            },
+            html: 'dist/index.html'
         }
     });
 };
