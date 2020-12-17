@@ -24,6 +24,15 @@ jobs:
         run: npm test
       - name: Grunt
         run: grunt
+      - name: Write secrets
+        env:
+          VIRUS_TOTAL: ${{ secrets.VIRUS_TOTAL }}
+        run: |
+          mkdir keys
+          echo "$VIRUS_TOTAL" > keys/virus-total.json
+      - name: Check on VirusTotal
+        run: grunt virustotal
+        if: ${{ github.repository == 'keeweb/keeweb' }}
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
