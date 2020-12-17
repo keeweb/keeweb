@@ -107,6 +107,7 @@
             align-items: stretch;
             flex-direction: row;
             flex-wrap: wrap;
+            padding: 0 $small-spacing;
             &-text {
                 flex: 100%;
                 padding: $base-padding-v 0;
