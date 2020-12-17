@@ -447,9 +447,12 @@ class StorageBase {
                 if (xhr.status === 400) {
                     delete this.runtimeData[this.name + 'OAuthToken'];
                     this._oauthToken = null;
+                    this.logger.error('Error exchanging refresh token, trying to authorize again');
+                    this._oauthAuthorize(callback);
+                } else {
+                    this.logger.error('Error exchanging refresh token', err);
+                    callback?.('Error exchanging refresh token');
                 }
-                this.logger.error('Error exchanging refresh token', err);
-                callback?.('Error exchanging refresh token');
             }
         });
     }
