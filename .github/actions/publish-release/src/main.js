@@ -19,15 +19,12 @@ async function run() {
             `#####\\s+v${version.replace(/\./g, '\\.')}.*?\n([\\s\\S]*?)\n#####`
         );
 
-        const bodyReleaseNotes = releaseNotes
-            .match(regex)[1]
-            .trim()
-            .replace(/\s*\n/g, '\n');
+        const bodyReleaseNotes = releaseNotes.match(regex)[1].trim().replace(/\s*\n/g, '\n');
 
         const bodyTemplate =
             '{release_notes}\n\n' +
             'Want to keep releases happening? ' +
-            'Donate to KeeWeb on [OpenCollective](https://opencollective.com/keeweb). ' +
+            'Donate to KeeWeb on [OpenCollective](https://opencollective.com/keeweb) or [GitHub](https://github.com/sponsors/keeweb). ' +
             'Thank you!';
         const body = bodyTemplate.replace('{release_notes}', bodyReleaseNotes);
 

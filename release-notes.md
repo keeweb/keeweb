@@ -3,6 +3,10 @@ Release notes
 ##### v1.17.0 (TBD)
 `+` clear searchbox button  
 
+##### v1.16.5 (2020-12-18)
+`-` using custom OneDrive without a secret  
+`+` GitHub funding link  
+
 ##### v1.16.4 (2020-12-17)
 `-` fix #1656: false positive report on VirusTotal  
 `+` #1629: possibility to use OneDrive as SPA  
