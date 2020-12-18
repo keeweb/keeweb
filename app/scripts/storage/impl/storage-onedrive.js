@@ -221,7 +221,7 @@ class StorageOneDrive extends StorageBase {
     _getOAuthConfig() {
         let clientId = this.appSettings.onedriveClientId;
         let clientSecret = this.appSettings.onedriveClientSecret;
-        if (!clientId || !clientSecret) {
+        if (!clientId) {
             if (Features.isLocal) {
                 ({ id: clientId, secret: clientSecret } = OneDriveApps.Local);
             } else {
