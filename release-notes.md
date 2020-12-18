@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.16.4 (2020-12-18)
+##### v1.16.5 (2020-12-18)
 `-` using custom OneDrive without a secret  
 `+` GitHub funding link  
 
