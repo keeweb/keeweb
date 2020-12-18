@@ -1,6 +1,6 @@
 {
     "name": "keeweb",
-    "version": "1.16.4",
+    "version": "1.16.5",
     "description": "Free cross-platform password manager compatible with KeePass",
     "main": "Gruntfile.js",
     "private": true,
