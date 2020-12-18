@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.16.4 (2020-12-18)
 `-` using custom OneDrive without a secret  
+`+` GitHub funding link  
 
 ##### v1.16.4 (2020-12-17)
 `-` fix #1656: false positive report on VirusTotal  
