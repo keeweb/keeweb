@@ -66,6 +66,10 @@ const themeBgColors = {
     sd: '#002b36',
     sl: '#fdf6e3'
 };
+const darkLightThemes = {
+    dark: 'light',
+    sd: 'sl'
+};
 const defaultBgColor = '#282C34';
 
 logProgress('defining args');
@@ -102,7 +106,6 @@ app.on('ready', () => {
 
     settingsPromise
         .then(() => {
-            setSystemAppearance();
             createMainWindow();
             setGlobalShortcuts(appSettings);
             subscribePowerEvents();
@@ -214,15 +217,6 @@ function logStartupMessage(msg) {
     }
 }
 
-function setSystemAppearance() {
-    if (process.platform === 'darwin') {
-        if (electron.nativeTheme.shouldUseDarkColors) {
-            electron.systemPreferences.appLevelAppearance = 'dark';
-        }
-    }
-    logProgress('setting system appearance');
-}
-
 function checkSettingsTheme(theme) {
     // old settings migration
     if (theme === 'macdark') {
@@ -235,14 +229,24 @@ function checkSettingsTheme(theme) {
 }
 
 function getDefaultTheme() {
-    if (process.platform === 'darwin' && !electron.nativeTheme.shouldUseDarkColors) {
-        return 'light';
-    }
     return 'dark';
 }
 
+function selectDarkOrLightTheme(theme) {
+    const dark = electron.nativeTheme.shouldUseDarkColors;
+    for (const [darkTheme, lightTheme] of Object.entries(darkLightThemes)) {
+        if (darkTheme === theme || lightTheme === theme) {
+            return dark ? darkTheme : lightTheme;
+        }
+    }
+    return theme;
+}
+
 function createMainWindow() {
-    const theme = checkSettingsTheme(appSettings.theme) || getDefaultTheme();
+    let theme = checkSettingsTheme(appSettings.theme) || getDefaultTheme();
+    if (appSettings.autoSwitchTheme) {
+        theme = selectDarkOrLightTheme(theme);
+    }
     const bgColor = themeBgColors[theme] || defaultBgColor;
     const windowOptions = {
         show: false,

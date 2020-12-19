@@ -67,6 +67,10 @@
         </div>
     </div>
     <div>
+        <input type="checkbox" class="settings__input input-base settings__general-auto-switch-theme" id="settings__general-auto-switch-theme" {{#if autoSwitchTheme}}checked{{/if}} />
+        <label for="settings__general-auto-switch-theme">{{res 'setGenAutoSwitchTheme'}}</label>
+    </div>
+    <div>
         <label for="settings__general-font-size">{{res 'setGenFontSize'}}:</label>
         <select class="settings__general-font-size settings__select input-base" id="settings__general-font-size">
             <option value="0" {{#ifeq fontSize 0}}selected{{/ifeq}}>{{res 'setGenFontSizeNormal'}}</option>

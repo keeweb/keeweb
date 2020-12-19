@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.17.0 (TBD)
+`+` automatically switching between dark and light theme  
 `+` clear searchbox button  
 
 ##### v1.16.5 (2020-12-18)

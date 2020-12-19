@@ -17,6 +17,7 @@ import { Locale } from 'util/locale';
 import { SettingsLogsView } from 'views/settings/settings-logs-view';
 import { SettingsPrvView } from 'views/settings/settings-prv-view';
 import { mapObject } from 'util/fn';
+import { ThemeWatcher } from 'comp/browser/theme-watcher';
 import template from 'templates/settings/settings-general.hbs';
 
 class SettingsGeneralView extends View {
@@ -24,6 +25,7 @@ class SettingsGeneralView extends View {
 
     events = {
         'click .settings__general-theme': 'changeTheme',
+        'click .settings__general-auto-switch-theme': 'changeAuthSwitchTheme',
         'change .settings__general-locale': 'changeLocale',
         'change .settings__general-font-size': 'changeFontSize',
         'change .settings__general-expand': 'changeExpandGroups',
@@ -63,6 +65,7 @@ class SettingsGeneralView extends View {
         super(model, options);
         this.listenTo(UpdateModel, 'change:status', this.render);
         this.listenTo(UpdateModel, 'change:updateStatus', this.render);
+        this.listenTo(Events, 'theme-applied', this.render);
     }
 
     render() {
@@ -72,7 +75,8 @@ class SettingsGeneralView extends View {
         const storageProviders = this.getStorageProviders();
 
         super.render({
-            themes: mapObject(SettingsManager.allThemes, (theme) => Locale[theme]),
+            themes: this.getAllThemes(),
+            autoSwitchTheme: AppSettingsModel.autoSwitchTheme,
             activeTheme: SettingsManager.activeTheme,
             locales: SettingsManager.allLocales,
             activeLocale: SettingsManager.activeLocale,
@@ -204,14 +208,47 @@ class SettingsGeneralView extends View {
         }));
     }
 
+    getAllThemes() {
+        const { autoSwitchTheme } = AppSettingsModel;
+        if (autoSwitchTheme) {
+            const themes = {};
+            const ignoredThemes = {};
+            for (const config of SettingsManager.autoSwitchedThemes) {
+                ignoredThemes[config.dark] = true;
+                ignoredThemes[config.light] = true;
+                const activeTheme = ThemeWatcher.dark ? config.dark : config.light;
+                themes[activeTheme] = Locale[config.name];
+            }
+            for (const [th, name] of Object.entries(SettingsManager.allThemes)) {
+                if (!ignoredThemes[th]) {
+                    themes[th] = Locale[name];
+                }
+            }
+            return themes;
+        } else {
+            return mapObject(SettingsManager.allThemes, (theme) => Locale[theme]);
+        }
+    }
+
     changeTheme(e) {
         const theme = e.target.closest('.settings__general-theme').dataset.theme;
         if (theme === '...') {
             this.goToPlugins();
         } else {
-            AppSettingsModel.theme = theme;
-            this.render();
+            const changedInSettings = AppSettingsModel.theme !== theme;
+            if (changedInSettings) {
+                AppSettingsModel.theme = theme;
+            } else {
+                SettingsManager.setTheme(theme);
+            }
         }
+    }
+
+    changeAuthSwitchTheme(e) {
+        const autoSwitchTheme = e.target.checked;
+        AppSettingsModel.autoSwitchTheme = autoSwitchTheme;
+        SettingsManager.darkModeChanged();
+        this.render();
     }
 
     changeLocale(e) {
