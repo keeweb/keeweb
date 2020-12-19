@@ -32,7 +32,7 @@ class DropdownView extends View {
             $('body').off('click contextmenu keydown', this.bodyClick);
         });
 
-        this.selectedOption = model.selectedOption;
+        this.selectedOption = model?.selectedOption;
     }
 
     render(config) {
