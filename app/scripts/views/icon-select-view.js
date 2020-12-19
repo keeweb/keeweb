@@ -70,6 +70,9 @@ class IconSelectView extends View {
                 .addClass('icon-select__icon--custom-selected')
                 .append(img);
             this.downloadingFavicon = false;
+
+            const id = this.model.file.addCustomIcon(this.special.download.data);
+            this.emit('select', { id, custom: true });
         };
         img.onerror = (e) => {
             logger.error('Favicon download error: ' + url, e);
