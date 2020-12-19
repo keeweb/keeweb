@@ -29,8 +29,8 @@ const SettingsManager = {
         lb: 'setGenThemeLb',
         te: 'setGenThemeTe',
         lt: 'setGenThemeLt',
-        hc: 'setGenThemeHc',
-        dc: 'setGenThemeDc'
+        dc: 'setGenThemeDc',
+        hc: 'setGenThemeHc'
     },
 
     autoSwitchedThemes: [
