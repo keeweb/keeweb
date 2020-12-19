@@ -4,6 +4,7 @@ Release notes
 `+` automatically switching between dark and light theme  
 `+` clear searchbox button  
 `+` favicon download improvements  
+`+` auto-type field selection dropdown improvements  
 
 ##### v1.16.5 (2020-12-18)
 `-` using custom OneDrive without a secret  
