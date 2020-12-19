@@ -85,7 +85,7 @@ const settingsPromise = loadSettingsEncryptionKey().then((key) => {
     logProgress('loading settings key');
 
     return loadConfig('app-settings').then((settings) => {
-        appSettings = settings ? JSON.parse(settings) : {};
+        appSettings = settings ? JSON.parse(settings) : { autoSwitchTheme: true };
         logProgress('reading app settings');
     });
 });

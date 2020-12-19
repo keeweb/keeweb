@@ -24,9 +24,13 @@ const SettingsManager = {
         sd: 'setGenThemeSd',
         sl: 'setGenThemeSl',
         fb: 'setGenThemeFb',
+        bl: 'setGenThemeBl',
         db: 'setGenThemeDb',
+        lb: 'setGenThemeLb',
         te: 'setGenThemeTe',
-        hc: 'setGenThemeHc'
+        lt: 'setGenThemeLt',
+        hc: 'setGenThemeHc',
+        dc: 'setGenThemeDc'
     },
 
     autoSwitchedThemes: [
@@ -39,6 +43,26 @@ const SettingsManager = {
             name: 'setGenThemeSol',
             dark: 'sd',
             light: 'sl'
+        },
+        {
+            name: 'setGenThemeBlue',
+            dark: 'fb',
+            light: 'bl'
+        },
+        {
+            name: 'setGenThemeBrown',
+            dark: 'db',
+            light: 'lb'
+        },
+        {
+            name: 'setGenThemeTerminal',
+            dark: 'te',
+            light: 'lt'
+        },
+        {
+            name: 'setGenThemeHighContrast',
+            dark: 'dc',
+            light: 'hc'
         }
     ],
 
