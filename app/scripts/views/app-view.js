@@ -145,7 +145,7 @@ class AppView extends View {
     showOpenFile() {
         this.hideContextMenu();
         this.views.menu.hide();
-        this.views.menuDrag.hide();
+        this.views.menuDrag.$el.parent().hide();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
@@ -190,7 +190,7 @@ class AppView extends View {
 
     showEntries() {
         this.views.menu.show();
-        this.views.menuDrag.show();
+        this.views.menuDrag.$el.parent().show();
         this.views.listWrap.show();
         this.views.list.show();
         this.views.listDrag.show();
@@ -254,7 +254,7 @@ class AppView extends View {
     showSettings(selectedMenuItem) {
         this.model.menu.setMenu('settings');
         this.views.menu.show();
-        this.views.menuDrag.show();
+        this.views.menuDrag.$el.parent().show();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
