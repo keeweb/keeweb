@@ -68,7 +68,11 @@ const themeBgColors = {
 };
 const darkLightThemes = {
     dark: 'light',
-    sd: 'sl'
+    sd: 'sl',
+    fb: 'bl',
+    db: 'lb',
+    te: 'lt',
+    dc: 'hc'
 };
 const defaultBgColor = '#282C34';
 
@@ -85,7 +89,7 @@ const settingsPromise = loadSettingsEncryptionKey().then((key) => {
     logProgress('loading settings key');
 
     return loadConfig('app-settings').then((settings) => {
-        appSettings = settings ? JSON.parse(settings) : { autoSwitchTheme: true };
+        appSettings = settings ? JSON.parse(settings) : {};
         logProgress('reading app settings');
     });
 });
@@ -244,7 +248,8 @@ function selectDarkOrLightTheme(theme) {
 
 function createMainWindow() {
     let theme = checkSettingsTheme(appSettings.theme) || getDefaultTheme();
-    if (appSettings.autoSwitchTheme) {
+    const autoSwitchTheme = appSettings.autoSwitchTheme ?? true;
+    if (autoSwitchTheme) {
         theme = selectDarkOrLightTheme(theme);
     }
     const bgColor = themeBgColors[theme] || defaultBgColor;

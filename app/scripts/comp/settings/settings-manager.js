@@ -33,6 +33,7 @@ const SettingsManager = {
         hc: 'setGenThemeHc'
     },
 
+    // changing something here? don't forget about desktop/app.js
     autoSwitchedThemes: [
         {
             name: 'setGenThemeDefault',
