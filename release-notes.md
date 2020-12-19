@@ -3,6 +3,7 @@ Release notes
 ##### v1.17.0 (TBD)
 `+` automatically switching between dark and light theme  
 `+` clear searchbox button  
+`+` favicon download improvements  
 
 ##### v1.16.5 (2020-12-18)
 `-` using custom OneDrive without a secret  
