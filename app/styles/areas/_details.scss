@@ -588,6 +588,9 @@
         &-body {
             padding: $medium-padding-v 0;
             flex-grow: 1;
+            > a {
+                color: var(--text-contrast-error-color);
+            }
         }
         &-icon {
             padding: $medium-padding;
