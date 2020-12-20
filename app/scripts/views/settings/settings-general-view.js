@@ -37,6 +37,7 @@ class SettingsGeneralView extends View {
         'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
         'change .settings__general-audit-passwords': 'changeAuditPasswords',
+        'change .settings__general-audit-password-entropy': 'changeAuditPasswordEntropy',
         'change .settings__general-exclude-pins-from-audit': 'changeExcludePinsFromAudit',
         'change .settings__general-check-passwords-on-hibp': 'changeCheckPasswordsOnHIBP',
         'click .settings__general-toggle-help-hibp': 'clickToggleHelpHIBP',
@@ -103,6 +104,7 @@ class SettingsGeneralView extends View {
             canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
             canAutoType: AutoType.enabled,
             auditPasswords: AppSettingsModel.auditPasswords,
+            auditPasswordEntropy: AppSettingsModel.auditPasswordEntropy,
             excludePinsFromAudit: AppSettingsModel.excludePinsFromAudit,
             checkPasswordsOnHIBP: AppSettingsModel.checkPasswordsOnHIBP,
             auditPasswordAge: AppSettingsModel.auditPasswordAge,
@@ -334,6 +336,11 @@ class SettingsGeneralView extends View {
     changeAuditPasswords(e) {
         const auditPasswords = e.target.checked || false;
         AppSettingsModel.auditPasswords = auditPasswords;
+    }
+
+    changeAuditPasswordEntropy(e) {
+        const auditPasswordEntropy = e.target.checked || false;
+        AppSettingsModel.auditPasswordEntropy = auditPasswordEntropy;
     }
 
     changeExcludePinsFromAudit(e) {

@@ -38,6 +38,7 @@ const DefaultAppSettings = {
     enableUsb: true, // enable interaction with USB devices
     fieldLabelDblClickAutoType: false, // trigger auto-type by doubleclicking field label
     auditPasswords: true, // enable password audit
+    auditPasswordEntropy: true, // show warnings for weak passwords
     excludePinsFromAudit: true, // exclude PIN codes from audit
     checkPasswordsOnHIBP: false, // check passwords on Have I Been Pwned
     auditPasswordAge: 0,

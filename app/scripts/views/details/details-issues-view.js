@@ -65,12 +65,13 @@ class DetailsIssuesView extends View {
             this.passwordIssue = null;
             return;
         }
+        const auditEntropy = AppSettingsModel.auditPasswordEntropy;
         const strength = passwordStrength(password);
         if (AppSettingsModel.excludePinsFromAudit && strength.onlyDigits && strength.length <= 6) {
             this.passwordIssue = null;
-        } else if (strength.level < PasswordStrengthLevel.Low) {
+        } else if (auditEntropy && strength.level < PasswordStrengthLevel.Low) {
             this.passwordIssue = 'poor';
-        } else if (strength.level < PasswordStrengthLevel.Good) {
+        } else if (auditEntropy && strength.level < PasswordStrengthLevel.Good) {
             this.passwordIssue = 'weak';
         } else if (AppSettingsModel.auditPasswordAge && this.isOld()) {
             this.passwordIssue = 'old';

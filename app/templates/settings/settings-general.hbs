@@ -185,6 +185,12 @@
     </div>
 
     <div>
+        <input type="checkbox" class="settings__input input-base settings__general-audit-password-entropy"
+               id="settings__general-audit-password-entropy" {{#if auditPasswordEntropy}}checked{{/if}} />
+        <label for="settings__general-audit-password-entropy">{{res 'setGenAuditPasswordEntropy'}}</label>
+    </div>
+
+    <div>
         <input type="checkbox" class="settings__input input-base settings__general-exclude-pins-from-audit"
                id="settings__general-exclude-pins-from-audit" {{#if excludePinsFromAudit}}checked{{/if}} />
         <label for="settings__general-exclude-pins-from-audit">{{res 'setGenExcludePinsFromAudit'}}</label>

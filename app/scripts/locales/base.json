@@ -450,6 +450,7 @@
     "setGenFieldLabelDblClickAutoType": "Auto-type on double-clicking field labels",
     "setGenAudit": "Audit",
     "setGenAuditPasswords": "Show warnings about password strength",
+    "setGenAuditPasswordEntropy": "Check password length and randomness",
     "setGenExcludePinsFromAudit": "Never check short numeric PIN codes, such as 123456",
     "setGenCheckPasswordsOnHIBP": "Check passwords using an online service {}",
     "setGenHelpHIBP": "KeeWeb can check if your passwords have been previously exposed in a data breach using an online service. Your password cannot be recovered based on data sent online, however the number of passwords checked this way may be exposed. More about your privacy when using this service can be found {}. If this option is enabled, KeeWeb will automatically check your passwords there.",
