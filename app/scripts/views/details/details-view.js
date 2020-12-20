@@ -20,6 +20,7 @@ import { DetailsAddFieldView } from 'views/details/details-add-field-view';
 import { DetailsAttachmentView } from 'views/details/details-attachment-view';
 import { DetailsAutoTypeView } from 'views/details/details-auto-type-view';
 import { DetailsHistoryView } from 'views/details/details-history-view';
+import { DetailsIssuesView } from 'views/details/details-issues-view';
 import { DropdownView } from 'views/dropdown-view';
 import { createDetailsFields } from 'views/details/details-fields';
 import { FieldViewCustom } from 'views/fields/field-view-custom';
@@ -117,11 +118,15 @@ class DetailsView extends View {
             super.render();
             return;
         }
-        const model = { deleted: this.appModel.filter.trash, ...this.model };
+        const model = {
+            deleted: this.appModel.filter.trash,
+            ...this.model
+        };
         this.template = template;
         super.render(model);
         this.setSelectedColor(this.model.color);
         this.addFieldViews();
+        this.checkPasswordIssues();
         this.createScroll({
             root: this.$el.find('.details__body')[0],
             scroller: this.$el.find('.scroller')[0],
@@ -576,6 +581,9 @@ class DetailsView extends View {
                 } else if (fieldName) {
                     this.model.setField(fieldName, e.val);
                 }
+                if (fieldName === 'Password' && this.views.issues) {
+                    this.views.issues.passwordChanged();
+                }
             } else if (e.field === 'Tags') {
                 this.model.setTags(e.val);
                 this.appModel.updateTags();
@@ -986,6 +994,13 @@ class DetailsView extends View {
             });
         } else {
             Events.emit('auto-type', { entry, sequence });
+        }
+    }
+
+    checkPasswordIssues() {
+        if (!this.model.readOnly) {
+            this.views.issues = new DetailsIssuesView(this.model);
+            this.views.issues.render();
         }
     }
 }

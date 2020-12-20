@@ -139,8 +139,6 @@ kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function (targetLower) {
     return firstCharIndex;
 };
 
-window.PV = kdbxweb.ProtectedValue;
-
 kdbxweb.ProtectedValue.prototype.equals = function (other) {
     if (!other) {
         return false;
@@ -175,4 +173,20 @@ kdbxweb.ProtectedValue.prototype.isFieldReference = function () {
         }
     });
     return true;
+};
+
+const RandomSalt = kdbxweb.Random.getBytes(128);
+
+kdbxweb.ProtectedValue.prototype.saltedValue = function () {
+    if (!this.byteLength) {
+        return 0;
+    }
+    const value = this._value;
+    const salt = this._salt;
+    let salted = '';
+    for (let i = 0, len = value.length; i < len; i++) {
+        const byte = value[i] ^ salt[i];
+        salted += String.fromCharCode(byte ^ RandomSalt[i % RandomSalt.length]);
+    }
+    return salted;
 };

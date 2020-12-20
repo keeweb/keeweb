@@ -37,6 +37,10 @@ const DefaultAppSettings = {
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
     enableUsb: true, // enable interaction with USB devices
     fieldLabelDblClickAutoType: false, // trigger auto-type by doubleclicking field label
+    auditPasswords: true, // enable password audit
+    excludePinsFromAudit: true, // exclude PIN codes from audit
+    checkPasswordsOnHIBP: false, // check passwords on Have I Been Pwned
+    auditPasswordAge: 0,
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
     yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files

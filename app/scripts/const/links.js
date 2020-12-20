@@ -17,7 +17,9 @@ const Links = {
     Plugins: 'https://plugins.keeweb.info',
     PluginDevelopStart: 'https://github.com/keeweb/keeweb/wiki/Plugins',
     YubiKeyManual: 'https://github.com/keeweb/keeweb/wiki/YubiKey',
-    YubiKeyManagerInstall: 'https://github.com/Yubico/yubikey-manager#installation'
+    YubiKeyManagerInstall: 'https://github.com/Yubico/yubikey-manager#installation',
+    HaveIBeenPwned: 'https://haveibeenpwned.com',
+    HaveIBeenPwnedPrivacy: 'https://haveibeenpwned.com/Passwords'
 };
 
 export { Links };

@@ -36,6 +36,11 @@ class SettingsGeneralView extends View {
         'change .settings__general-auto-save-interval': 'changeAutoSaveInterval',
         'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
+        'change .settings__general-audit-passwords': 'changeAuditPasswords',
+        'change .settings__general-exclude-pins-from-audit': 'changeExcludePinsFromAudit',
+        'change .settings__general-check-passwords-on-hibp': 'changeCheckPasswordsOnHIBP',
+        'click .settings__general-toggle-help-hibp': 'clickToggleHelpHIBP',
+        'change .settings__general-audit-password-age': 'changeAuditPasswordAge',
         'change .settings__general-lock-on-minimize': 'changeLockOnMinimize',
         'change .settings__general-lock-on-copy': 'changeLockOnCopy',
         'change .settings__general-lock-on-auto-type': 'changeLockOnAutoType',
@@ -97,6 +102,12 @@ class SettingsGeneralView extends View {
             canDetectMinimize: !!Launcher,
             canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
             canAutoType: AutoType.enabled,
+            auditPasswords: AppSettingsModel.auditPasswords,
+            excludePinsFromAudit: AppSettingsModel.excludePinsFromAudit,
+            checkPasswordsOnHIBP: AppSettingsModel.checkPasswordsOnHIBP,
+            auditPasswordAge: AppSettingsModel.auditPasswordAge,
+            hibpLink: Links.HaveIBeenPwned,
+            hibpPrivacyLink: Links.HaveIBeenPwnedPrivacy,
             lockOnMinimize: Launcher && AppSettingsModel.lockOnMinimize,
             lockOnCopy: AppSettingsModel.lockOnCopy,
             lockOnAutoType: AppSettingsModel.lockOnAutoType,
@@ -318,6 +329,33 @@ class SettingsGeneralView extends View {
     changeMinimize(e) {
         const minimizeOnClose = e.target.checked || false;
         AppSettingsModel.minimizeOnClose = minimizeOnClose;
+    }
+
+    changeAuditPasswords(e) {
+        const auditPasswords = e.target.checked || false;
+        AppSettingsModel.auditPasswords = auditPasswords;
+    }
+
+    changeExcludePinsFromAudit(e) {
+        const excludePinsFromAudit = e.target.checked || false;
+        AppSettingsModel.excludePinsFromAudit = excludePinsFromAudit;
+    }
+
+    changeCheckPasswordsOnHIBP(e) {
+        if (e.target.closest('a')) {
+            return;
+        }
+        const checkPasswordsOnHIBP = e.target.checked || false;
+        AppSettingsModel.checkPasswordsOnHIBP = checkPasswordsOnHIBP;
+    }
+
+    clickToggleHelpHIBP() {
+        this.el.querySelector('.settings__general-help-hibp').classList.toggle('hide');
+    }
+
+    changeAuditPasswordAge(e) {
+        const auditPasswordAge = e.target.value | 0;
+        AppSettingsModel.auditPasswordAge = auditPasswordAge;
     }
 
     changeLockOnMinimize(e) {

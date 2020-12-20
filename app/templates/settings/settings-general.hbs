@@ -177,6 +177,52 @@
         <label for="settings__general-use-group-icon-for-entries">{{res 'setGenUseGroupIconForEntries'}}</label>
     </div>
 
+    <h2 id="audit">{{res 'setGenAudit'}}</h2>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-audit-passwords"
+               id="settings__general-audit-passwords" {{#if auditPasswords}}checked{{/if}} />
+        <label for="settings__general-audit-passwords">{{res 'setGenAuditPasswords'}}</label>
+    </div>
+
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-exclude-pins-from-audit"
+               id="settings__general-exclude-pins-from-audit" {{#if excludePinsFromAudit}}checked{{/if}} />
+        <label for="settings__general-exclude-pins-from-audit">{{res 'setGenExcludePinsFromAudit'}}</label>
+    </div>
+
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-check-passwords-on-hibp"
+               id="settings__general-check-passwords-on-hibp" {{#if checkPasswordsOnHIBP}}checked{{/if}} />
+        <label for="settings__general-check-passwords-on-hibp">
+            {{~#res 'setGenCheckPasswordsOnHIBP'~}}
+                <a href="{{hibpLink}}" rel="noreferrer noopener" target="_blank">Have I Been Pwned</a>
+            {{~/res~}}
+        </label>
+        <i class="fa fa-info-circle info-btn settings__general-toggle-help-hibp"></i>
+        <div class="settings__general-help-hibp hide">
+            {{~#res 'setGenHelpHIBP'~}}
+                <a href="{{hibpPrivacyLink}}" rel="noreferrer noopener" target="_blank">{{res 'setGenHelpHIBPLink'}}</a>
+            {{~/res~}}
+        </div>
+    </div>
+
+    <div>
+        <label for="settings__general-audit-password-age">{{res 'setGenAuditPasswordAge'}}:</label>
+        <select class="settings__select input-base settings__general-audit-password-age"
+                id="settings__general-audit-password-age">
+            <option value="0" {{#ifeq auditPasswordAge 0}}selected{{/ifeq}}>{{res 'setGenAuditPasswordAgeOff'}}</option>
+            <option value="1" {{#ifeq auditPasswordAge 1}}selected{{/ifeq}}>{{res 'setGenAuditPasswordAgeOneYear'}}</option>
+            <option value="2" {{#ifeq auditPasswordAge 2}}selected{{/ifeq}}>{{#res 'setGenAuditPasswordAgeYears'}}
+                2{{/res}}</option>
+            <option value="3" {{#ifeq auditPasswordAge 3}}selected{{/ifeq}}>{{#res 'setGenAuditPasswordAgeYears'}}
+                3{{/res}}</option>
+            <option value="5" {{#ifeq auditPasswordAge 5}}selected{{/ifeq}}>{{#res 'setGenAuditPasswordAgeYears'}}
+                5{{/res}}</option>
+            <option value="10" {{#ifeq auditPasswordAge 10}}selected{{/ifeq}}>{{#res 'setGenAuditPasswordAgeYears'}}
+                10{{/res}}</option>
+        </select>
+    </div>
+
     <h2 id="lock">{{res 'setGenLock'}}</h2>
     <div>
         <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>

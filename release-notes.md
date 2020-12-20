@@ -1,10 +1,12 @@
 Release notes
 -------------
 ##### v1.17.0 (TBD)
+`+` password quality warnings  
+`+` "Have I Been Pwned" service integration (opt-in)  
 `+` automatically switching between dark and light theme  
 `+` clear searchbox button  
 `+` favicon download improvements  
-`+` auto-type field selection dropdown improvements  
+`+` auto-type field selection dropdown improvements
 
 ##### v1.16.5 (2020-12-18)
 `-` using custom OneDrive without a secret  

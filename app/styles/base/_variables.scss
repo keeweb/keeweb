@@ -66,9 +66,12 @@ $titlebar-padding-large: 40px;
 
 // Animations
 $base-duration: 150ms;
+$fast-duration: 80ms;
 $base-timing: ease;
 $slow-transition-in: $base-duration * 2 ease-in;
 $slow-transition-out: $base-duration ease-out;
+$fast-transition-in: $fast-duration ease-in;
+$fast-transition-out: $fast-duration ease-out;
 $tip-transition-in: 500ms $ease-in-expo;
 $tip-transition-out: $slow-transition-out;
 
