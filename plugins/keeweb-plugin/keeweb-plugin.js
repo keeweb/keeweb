@@ -13,7 +13,6 @@ const crypto = require('crypto');
 const https = require('https');
 
 const args = process.argv.splice(2);
-const pkg = require('./package.json');
 
 const op = args.shift();
 
@@ -42,7 +41,7 @@ switch (op) {
 }
 
 function showBanner() {
-    console.log(`KeeWeb plugin utils v${pkg.version}`);
+    console.log(`KeeWeb plugin utils`);
 }
 
 function showHelp() {
