@@ -34,9 +34,19 @@ module.exports = function (grunt) {
     const getCodeSignConfig = () =>
         skipSign ? { identities: {} } : require('./keys/codesign.json');
 
-    const sha = fs.existsSync('.git')
-        ? execSync('git rev-parse --short HEAD').toString('utf8').trim()
-        : '000';
+    let sha = grunt.option('commit-sha');
+    if (!sha) {
+        try {
+            sha = execSync('git rev-parse --short HEAD').toString('utf8').trim();
+        } catch (e) {
+            grunt.warn(
+                `Cannot get commit sha from git (${e.message}). It's recommended to build KeeWeb from a git repo ` +
+                    'because commit sha is displayed in the UI, however if you would like to build from a folder, ' +
+                    'you can override what will be displayed in the UI with --commit-sha=xxx'
+            );
+        }
+    }
+    grunt.log.writeln(`Building KeeWeb v${pkg.version} (${sha})`);
 
     const webpackOptions = {
         date,
