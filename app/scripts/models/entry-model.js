@@ -336,10 +336,10 @@ class EntryModel extends Model {
     }
 
     sanitizeFieldValue(val) {
-        if (val && !val.isProtected && val.indexOf('\x1A') >= 0) {
+        if (val && !val.isProtected) {
             // https://github.com/keeweb/keeweb/issues/910
             // eslint-disable-next-line no-control-regex
-            val = val.replace(/[\x00-\x1F]/g, '');
+            val = val.replace(/[\x00-\x1F\uFFF0-\uFFFF]/g, '');
         }
         return val;
     }
