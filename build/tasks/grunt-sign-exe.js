@@ -53,12 +53,16 @@ module.exports = function (grunt) {
 
             if (res.status) {
                 grunt.warn(
-                    `Verify error ${file}: exit code ${res.status}.\n${res.stdout.toString()}`
+                    `Verify error ${file}: exit code ${
+                        res.status
+                    }.\nSTDOUT:\n${res.stdout.toString()}\nSTDERR:\n${res.stderr.toString()}`
                 );
             }
 
             if (!res.stdout.includes('Successfully verified')) {
-                grunt.warn(`Verify error ${file}:\n${res.stdout.toString()}`);
+                grunt.warn(
+                    `Verify error ${file}.\nSTDOUT:\n${res.stdout.toString()}\nSTDERR:\n${res.stderr.toString()}`
+                );
             }
 
             if (!res.stdout.includes(opt.certHash)) {
