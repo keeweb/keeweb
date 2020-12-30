@@ -83,7 +83,8 @@ Object.defineProperty(SecureInput.prototype, 'value', {
         let ch;
         let bytes;
         for (let i = 0; i < len; i++) {
-            ch = String.fromCharCode(pseudoValue.charCodeAt(i) ^ salt[i]);
+            const pseudoCharCode = pseudoValue.charCodeAt(i);
+            ch = String.fromCharCode(salt[i] ^ pseudoCharCode);
             bytes = kdbxweb.ByteUtils.stringToBytes(ch);
             for (let j = 0; j < bytes.length; j++) {
                 valueBytes[byteLength] = bytes[j] ^ saltBytes[byteLength];

@@ -260,12 +260,7 @@ class StorageWebDav extends StorageBase {
         if (opts.password) {
             const fileId = file.uuid;
             const password = opts.password;
-            let encpass = '';
-            for (let i = 0; i < password.length; i++) {
-                encpass += String.fromCharCode(
-                    password.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length)
-                );
-            }
+            const encpass = this._xorString(password, fileId);
             result.encpass = btoa(encpass);
         }
         return result;
@@ -276,13 +271,19 @@ class StorageWebDav extends StorageBase {
         if (opts.encpass) {
             const fileId = file.uuid;
             const encpass = atob(opts.encpass);
-            let password = '';
-            for (let i = 0; i < encpass.length; i++) {
-                password += String.fromCharCode(
-                    encpass.charCodeAt(i) ^ fileId.charCodeAt(i % fileId.length)
-                );
-            }
-            result.password = password;
+            result.password = this._xorString(encpass, fileId);
+        }
+        return result;
+    }
+
+    _xorString(str, another) {
+        let result = '';
+        for (let i = 0; i < str.length; i++) {
+            const strCharCode = str.charCodeAt(i);
+            const anotherIx = i % another.length;
+            const anotherCharCode = another.charCodeAt(anotherIx);
+            const resultCharCode = strCharCode ^ anotherCharCode;
+            result += String.fromCharCode(resultCharCode);
         }
         return result;
     }
