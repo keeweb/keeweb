@@ -34,7 +34,9 @@ module.exports = function (grunt) {
     const getCodeSignConfig = () =>
         skipSign ? { identities: {} } : require('./keys/codesign.json');
 
-    const sha = execSync('git rev-parse --short HEAD').toString('utf8').trim();
+    const sha = fs.existsSync('.git')
+        ? execSync('git rev-parse --short HEAD').toString('utf8').trim()
+        : '000';
 
     const webpackOptions = {
         date,
