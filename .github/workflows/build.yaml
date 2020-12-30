@@ -24,6 +24,11 @@ jobs:
         run: npm test
       - name: Grunt
         run: grunt
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
+          path: dist
       - name: Write secrets
         env:
           VIRUS_TOTAL: ${{ secrets.VIRUS_TOTAL }}
@@ -33,11 +38,6 @@ jobs:
       - name: Check on VirusTotal
         run: grunt virustotal
         if: ${{ github.repository == 'keeweb/keeweb' }}
-      - name: Upload artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
-          path: dist
 
   linux:
     runs-on: ubuntu-latest
