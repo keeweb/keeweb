@@ -280,7 +280,8 @@ class StorageWebDav extends StorageBase {
         let result = '';
         for (let i = 0; i < str.length; i++) {
             const strCharCode = str.charCodeAt(i);
-            const anotherCharCode = another.charCodeAt(i % another.length);
+            const anotherIx = i % another.length;
+            const anotherCharCode = another.charCodeAt(anotherIx);
             const resultCharCode = strCharCode ^ anotherCharCode;
             result += String.fromCharCode(resultCharCode);
         }
