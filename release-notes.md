@@ -8,6 +8,10 @@ Release notes
 `+` favicon download improvements  
 `+` auto-type field selection dropdown improvements
 
+##### v1.16.6 (2020-12-30)
+`-` fix #1668: opening files with bad characters  
+`*` upgraded a vulnerable dependency  
+
 ##### v1.16.5 (2020-12-18)
 `-` using custom OneDrive without a secret  
 `+` GitHub funding link  
