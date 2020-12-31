@@ -339,7 +339,7 @@ class EntryModel extends Model {
         if (val && !val.isProtected) {
             // https://github.com/keeweb/keeweb/issues/910
             // eslint-disable-next-line no-control-regex
-            val = val.replace(/[\x00-\x1F\uFFF0-\uFFFF]/g, '');
+            val = val.replace(/[\x00-\x09\x0B-\x0C\x0E-\x1F\uFFF0-\uFFFF]/g, '');
         }
         return val;
     }
