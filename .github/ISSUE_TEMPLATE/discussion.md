@@ -1,8 +1,5 @@
 ---
 name: Discussion
 about: Discuss any topic or idea
-title: ''
-labels: ''
-assignees: ''
-
+url: https://github.com/keeweb/keeweb/discussions/new
 ---
