@@ -491,6 +491,9 @@ class DetailsView extends View {
     }
 
     copyPasswordFromShortcut(e) {
+        if (!this.model) {
+            return;
+        }
         if (this.model.external) {
             this.copyOtp();
             e.preventDefault();
