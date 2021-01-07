@@ -13,7 +13,7 @@ module.exports = function (grunt) {
         'csp-hashes',
         'copy:content-dist',
         'string-replace:service-worker',
-        'string-replace:manifest',
+        'string-replace:update-manifest',
         'copy:dist-icons',
         'copy:dist-manifest'
     ]);

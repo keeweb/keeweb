@@ -25,7 +25,6 @@ module.exports = function (grunt) {
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
-    const minElectronVersionForUpdate = '11.0.3';
     const zipCommentPlaceholderPart = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
     const zipCommentPlaceholder =
         zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
@@ -295,20 +294,20 @@ module.exports = function (grunt) {
             }
         },
         'string-replace': {
-            manifest: {
+            'update-manifest': {
                 options: {
                     replacements: [
                         {
-                            pattern: '# YYYY-MM-DD:v0.0.0',
-                            replacement: '# ' + dt + ':v' + pkg.version
+                            pattern: /"version":\s*".*?"/,
+                            replacement: `"version": "${pkg.version}"`
                         },
                         {
-                            pattern: '# updmin:v0.0.0',
-                            replacement: '# updmin:v' + minElectronVersionForUpdate
+                            pattern: /"date":\s*".*?"/,
+                            replacement: `"date": "${dt}"`
                         }
                     ]
                 },
-                files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
+                files: { 'dist/update.json': 'app/update.json' }
             },
             'service-worker': {
                 options: { replacements: [{ pattern: '0.0.0', replacement: pkg.version }] },
