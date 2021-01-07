@@ -8,6 +8,9 @@ Release notes
 `+` favicon download improvements  
 `+` auto-type field selection dropdown improvements
 
+##### v1.16.7 (2020-12-31)
+`-` fix #1671: new lines removal issue in notes  
+
 ##### v1.16.6 (2020-12-30)
 `-` fix #1668: opening files with bad characters  
 `*` upgraded a vulnerable dependency  
