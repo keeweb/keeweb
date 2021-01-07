@@ -27,4 +27,12 @@ body.th-dark {
     .list__item--active .blue-color {
         color: #689ff7;
     }
+
+    background-color: transparent !important;
+    .app__menu {
+        background-color: transparent !important;
+    }
+    .app__body > *:not(.app__menu) {
+        background-color: var(--background-color);
+    }
 }

@@ -3,6 +3,7 @@ import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 import { ThemeWatcher } from 'comp/browser/theme-watcher';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { Launcher } from 'comp/launcher';
 import { Logger } from 'util/logger';
 
 const logger = new Logger('settings-manager');
@@ -110,6 +111,14 @@ const SettingsManager = {
         if (metaThemeColor) {
             metaThemeColor.content = window.getComputedStyle(document.body).backgroundColor;
         }
+        if (Features.isMac) {
+            const prevVibrancy = this.getThemeVibrancy(this.activeTheme);
+            const newVibrancy = this.getThemeVibrancy(theme);
+            if (prevVibrancy !== newVibrancy) {
+                // Launcher.getMainWindow().setBackgroundColor('#00000000'); // this doesn't work
+                Launcher.getMainWindow().setVibrancy(newVibrancy);
+            }
+        }
         this.activeTheme = theme;
         logger.debug('Theme changed', theme);
         Events.emit('theme-applied');
@@ -117,6 +126,10 @@ const SettingsManager = {
 
     getThemeClass(theme) {
         return 'th-' + theme;
+    },
+
+    getThemeVibrancy(theme) {
+        return theme === 'dark' ? 'sidebar' : null;
     },
 
     selectDarkOrLightTheme(theme) {
