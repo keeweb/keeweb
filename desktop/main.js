@@ -7,7 +7,7 @@ let perfTimestamps = global.perfTimestamps;
 
 perfTimestamps?.push({ name: 'loading app requires', ts: process.hrtime() });
 
-const app = electron.app;
+const main = electron.app;
 
 let mainWindow = null;
 let appIcon = null;
@@ -27,9 +27,9 @@ const startupLogging =
     process.argv.some((arg) => arg.startsWith('--startup-logging')) ||
     process.env.KEEWEB_STARTUP_LOGGING === '1';
 
-const gotTheLock = app.requestSingleInstanceLock();
+const gotTheLock = main.requestSingleInstanceLock();
 if (!gotTheLock) {
-    app.quit();
+    main.quit();
 }
 
 logProgress('single instance lock');
@@ -49,7 +49,7 @@ const showDevToolsOnStart =
     process.argv.some((arg) => arg.startsWith('--devtools')) ||
     process.env.KEEWEB_OPEN_DEVTOOLS === '1';
 
-const loginItemSettings = process.platform === 'darwin' ? app.getLoginItemSettings() : {};
+const loginItemSettings = process.platform === 'darwin' ? main.getLoginItemSettings() : {};
 
 const startMinimized =
     loginItemSettings.wasOpenedAsHidden ||
@@ -94,17 +94,17 @@ const settingsPromise = loadSettingsEncryptionKey().then((key) => {
     });
 });
 
-app.on('window-all-closed', () => {
+main.on('window-all-closed', () => {
     if (restartPending) {
-        app.relaunch();
-        app.exit(0);
+        main.relaunch();
+        main.exit(0);
     } else {
         if (process.platform !== 'darwin') {
-            app.quit();
+            main.quit();
         }
     }
 });
-app.on('ready', () => {
+main.on('ready', () => {
     logProgress('app on ready');
     appReady = true;
 
@@ -120,12 +120,12 @@ app.on('ready', () => {
             process.exit(2);
         });
 });
-app.on('open-file', (e, path) => {
+main.on('open-file', (e, path) => {
     e.preventDefault();
     openFile = path;
     notifyOpenFile();
 });
-app.on('activate', () => {
+main.on('activate', () => {
     if (process.platform === 'darwin') {
         if (appReady && !mainWindow && appSettings) {
             createMainWindow();
@@ -134,21 +134,21 @@ app.on('activate', () => {
         }
     }
 });
-app.on('before-quit', (e) => {
-    if (app.hookBeforeQuitEvent && mainWindow) {
+main.on('before-quit', (e) => {
+    if (main.hookBeforeQuitEvent && mainWindow) {
         e.preventDefault();
         emitRemoteEvent('launcher-before-quit');
     }
 });
-app.on('will-quit', () => {
+main.on('will-quit', () => {
     electron.globalShortcut.unregisterAll();
 });
-app.on('second-instance', () => {
+main.on('second-instance', () => {
     if (mainWindow) {
         restoreMainWindow();
     }
 });
-app.on('web-contents-created', (event, contents) => {
+main.on('web-contents-created', (event, contents) => {
     contents.on('new-window', async (e, url) => {
         e.preventDefault();
         emitRemoteEvent('log', { message: `Prevented new window: ${url}` });
@@ -160,18 +160,18 @@ app.on('web-contents-created', (event, contents) => {
         }
     });
 });
-app.restartApp = function () {
+main.restartApp = function () {
     restartPending = true;
     mainWindow.close();
     setTimeout(() => {
         restartPending = false;
     }, 1000);
 };
-app.minimizeApp = function (menuItemLabels) {
+main.minimizeApp = function (menuItemLabels) {
     let imagePath;
     mainWindow.hide();
     if (process.platform === 'darwin') {
-        app.dock.hide();
+        main.dock.hide();
         imagePath = 'macOS-MenubarTemplate.png';
     } else {
         imagePath = 'icon.png';
@@ -189,25 +189,25 @@ app.minimizeApp = function (menuItemLabels) {
         appIcon.setToolTip('KeeWeb');
     }
 };
-app.minimizeThenHideIfInTray = function () {
+main.minimizeThenHideIfInTray = function () {
     // This function is called when auto-type has displayed a selection list and a selection was made.
     // To ensure focus returns to the previous window we must minimize first even if we're going to hide.
     mainWindow.minimize();
     if (appIcon) mainWindow.hide();
 };
-app.getMainWindow = function () {
+main.getMainWindow = function () {
     return mainWindow;
 };
-app.setHookBeforeQuitEvent = (hooked) => {
-    app.hookBeforeQuitEvent = !!hooked;
+main.setHookBeforeQuitEvent = (hooked) => {
+    main.hookBeforeQuitEvent = !!hooked;
 };
-app.setGlobalShortcuts = setGlobalShortcuts;
-app.showAndFocusMainWindow = showAndFocusMainWindow;
-app.loadConfig = loadConfig;
-app.saveConfig = saveConfig;
-app.getAppMainRoot = getAppMainRoot;
-app.getAppContentRoot = getAppContentRoot;
-app.httpRequest = httpRequest;
+main.setGlobalShortcuts = setGlobalShortcuts;
+main.showAndFocusMainWindow = showAndFocusMainWindow;
+main.loadConfig = loadConfig;
+main.saveConfig = saveConfig;
+main.getAppMainRoot = getAppMainRoot;
+main.getAppContentRoot = getAppContentRoot;
+main.httpRequest = httpRequest;
 
 function logProgress(name) {
     perfTimestamps?.push({ name, ts: process.hrtime() });
@@ -334,8 +334,8 @@ function createMainWindow() {
 }
 
 function restoreMainWindow() {
-    if (process.platform === 'darwin' && !app.dock.isVisible()) {
-        app.dock.show();
+    if (process.platform === 'darwin' && !main.dock.isVisible()) {
+        main.dock.show();
     }
     if (mainWindow.isMinimized()) {
         mainWindow.restore();
@@ -353,8 +353,8 @@ function showAndFocusMainWindow() {
         mainWindow.show();
     }
     mainWindow.focus();
-    if (process.platform === 'darwin' && !app.dock.isVisible()) {
-        app.dock.show();
+    if (process.platform === 'darwin' && !main.dock.isVisible()) {
+        main.dock.show();
     }
 }
 
@@ -408,7 +408,7 @@ function saveMainWindowPosition() {
     delete mainWindowPosition.changed;
     try {
         fs.writeFileSync(
-            path.join(app.getPath('userData'), windowPositionFileName),
+            path.join(main.getPath('userData'), windowPositionFileName),
             JSON.stringify(mainWindowPosition),
             'utf8'
         );
@@ -416,7 +416,7 @@ function saveMainWindowPosition() {
 }
 
 function restoreMainWindowPosition() {
-    const fileName = path.join(app.getPath('userData'), windowPositionFileName);
+    const fileName = path.join(main.getPath('userData'), windowPositionFileName);
     fs.readFile(fileName, 'utf8', (e, data) => {
         if (data) {
             mainWindowPosition = JSON.parse(data);
@@ -450,12 +450,12 @@ function mainWindowClosing() {
 }
 
 function mainWindowClosed() {
-    app.removeAllListeners('remote-app-event');
+    main.removeAllListeners('remote-app-event');
 }
 
 function emitRemoteEvent(e, arg) {
     if (mainWindow && mainWindow.webContents) {
-        app.emit('remote-app-event', {
+        main.emit('remote-app-event', {
             name: e,
             data: arg
         });
@@ -626,7 +626,7 @@ function setUserDataPaths() {
                 fs.mkdirSync(portableUserDataDir, { recursive: true });
             }
 
-            app.setPath('userData', portableUserDataDir);
+            main.setPath('userData', portableUserDataDir);
             usingPortableUserDataDir = true;
         }
     }
@@ -643,18 +643,18 @@ function setEnv() {
         process.env.XDG_CURRENT_DESKTOP = 'Unity';
     }
 
-    app.commandLine.appendSwitch('disable-background-timer-throttling');
+    main.commandLine.appendSwitch('disable-background-timer-throttling');
 
     // disable all caching, since we're not using old profile data anyway
-    app.commandLine.appendSwitch('disable-http-cache');
-    app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
+    main.commandLine.appendSwitch('disable-http-cache');
+    main.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
 
     if (process.platform === 'linux') {
         // fixes colors on Linux, see #1621
-        app.commandLine.appendSwitch('force-color-profile', 'srgb');
+        main.commandLine.appendSwitch('force-color-profile', 'srgb');
     }
 
-    app.allowRendererProcessReuse = true;
+    main.allowRendererProcessReuse = true;
 
     logProgress('setting env');
 }
@@ -664,7 +664,7 @@ function setDevAppIcon() {
         const icon = electron.nativeImage.createFromPath(
             path.join(__dirname, '../graphics/512x512.png')
         );
-        app.dock.setIcon(icon);
+        main.dock.setIcon(icon);
     }
 }
 
@@ -797,7 +797,7 @@ function loadSettingsEncryptionKey() {
 
 function loadConfig(name) {
     const ext = configEncryptionKey ? 'dat' : 'json';
-    const configFilePath = path.join(app.getPath('userData'), `${name}.${ext}`);
+    const configFilePath = path.join(main.getPath('userData'), `${name}.${ext}`);
 
     return new Promise((resolve, reject) => {
         fs.readFile(configFilePath, (err, data) => {
@@ -854,7 +854,7 @@ function saveConfig(name, data, key) {
         }
 
         const ext = key ? 'dat' : 'json';
-        const configFilePath = path.join(app.getPath('userData'), `${name}.${ext}`);
+        const configFilePath = path.join(main.getPath('userData'), `${name}.${ext}`);
         fs.writeFile(configFilePath, data, (err) => {
             if (err) {
                 reject(`Error writing config ${name}: ${err}`);
@@ -883,7 +883,7 @@ function migrateOldConfigs(key) {
             loadConfig(configName).then((data) => {
                 if (data) {
                     return saveConfig(configName, data, key).then(() => {
-                        fs.unlinkSync(path.join(app.getPath('userData'), `${configName}.json`));
+                        fs.unlinkSync(path.join(main.getPath('userData'), `${configName}.json`));
                     });
                 }
             })
