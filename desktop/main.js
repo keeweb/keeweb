@@ -1,9 +1,9 @@
+let perfTimestamps = [{ name: 'pre-init', ts: process.hrtime() }];
+
 const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
-
-let perfTimestamps = global.perfTimestamps;
 
 perfTimestamps?.push({ name: 'loading app requires', ts: process.hrtime() });
 
@@ -748,7 +748,7 @@ function reportStartProfile() {
         })
         .slice(1);
 
-    perfTimestamps = global.perfTimestamps = undefined;
+    perfTimestamps = undefined;
 
     const startProfile = { totalTime, timings };
     emitRemoteEvent('start-profile', startProfile);
