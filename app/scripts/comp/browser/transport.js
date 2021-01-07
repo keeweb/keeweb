@@ -62,8 +62,13 @@ const Transport = {
                             });
                             res.on('end', () => {
                                 data = window.Buffer.concat(data);
-                                if (config.utf8) {
+                                if (config.json) {
                                     data = data.toString('utf8');
+                                    try {
+                                        data = JSON.parse(data);
+                                    } catch (e) {
+                                        config.error('Error parsing JSON: ' + e.message);
+                                    }
                                 }
                                 config.success(data);
                             });

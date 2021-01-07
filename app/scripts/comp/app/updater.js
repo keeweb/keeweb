@@ -97,13 +97,12 @@ const Updater = {
         }
         logger.info('Checking for update...');
         Transport.httpGet({
-            url: Links.Manifest,
-            utf8: true,
-            success: (data) => {
+            url: Links.UpdateJson,
+            json: true,
+            success: (updateJson) => {
                 const dt = new Date();
-                const match = data.match(/#\s*(\d+\-\d+\-\d+):v([\d+\.\w]+)/);
-                logger.info('Update check: ' + (match ? match[0] : 'unknown'));
-                if (!match) {
+                logger.info('Update check: ' + (updateJson.version || 'unknown'));
+                if (!updateJson.version) {
                     const errMsg = 'No version info found';
                     UpdateModel.set({
                         status: 'error',
@@ -114,16 +113,15 @@ const Updater = {
                     this.scheduleNextCheck();
                     return;
                 }
-                const updateMinVersionMatch = data.match(/#\s*updmin:v([\d+\.\w]+)/);
                 const prevLastVersion = UpdateModel.lastVersion;
                 UpdateModel.set({
                     status: 'ok',
                     lastCheckDate: dt,
                     lastSuccessCheckDate: dt,
-                    lastVersionReleaseDate: new Date(match[1]),
-                    lastVersion: match[2],
+                    lastVersionReleaseDate: new Date(updateJson.date),
+                    lastVersion: updateJson.version,
                     lastCheckError: null,
-                    lastCheckUpdMin: updateMinVersionMatch ? updateMinVersionMatch[1] : null
+                    lastCheckUpdMin: updateJson.minVersion || null
                 });
                 UpdateModel.save();
                 this.scheduleNextCheck();
