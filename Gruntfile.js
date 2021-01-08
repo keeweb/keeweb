@@ -138,18 +138,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
-            'desktop-update': {
-                cwd: 'tmp/desktop/keeweb-linux-x64/resources/',
-                src: 'app.asar',
-                dest: 'tmp/desktop/update/',
-                expand: true,
-                nonull: true
-            },
-            'desktop-update-helper': {
-                src: ['helper/darwin/KeeWebHelper', 'helper/win32/KeeWebHelper.exe'],
-                dest: 'tmp/desktop/update/',
-                nonull: true
-            },
             'desktop-darwin-helper-x64': {
                 src: 'helper/darwin/KeeWebHelper',
                 dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
@@ -461,13 +449,6 @@ module.exports = function (grunt) {
             options: {
                 level: 6
             },
-            'desktop-update': {
-                options: {
-                    archive: 'dist/desktop/UpdateDesktop.zip',
-                    comment: zipCommentPlaceholder
-                },
-                files: [{ cwd: 'tmp/desktop/update', src: '**', expand: true, nonull: true }]
-            },
             'win32-x64': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.x64.zip` },
                 files: [{ cwd: 'tmp/desktop/KeeWeb-win32-x64', src: '**', expand: true }]
@@ -597,35 +578,6 @@ module.exports = function (grunt) {
                         nonull: true
                     }
                 ]
-            }
-        },
-        'sign-archive': {
-            'desktop-update': {
-                options: {
-                    file: 'dist/desktop/UpdateDesktop.zip',
-                    signature: zipCommentPlaceholder
-                }
-            }
-        },
-        'sign-desktop-files': {
-            'desktop-update': {
-                options: {
-                    path: 'tmp/desktop/update'
-                }
-            }
-        },
-        'validate-desktop-update': {
-            desktop: {
-                options: {
-                    file: 'dist/desktop/UpdateDesktop.zip',
-                    expected: [
-                        'app.asar',
-                        'helper/darwin/KeeWebHelper',
-                        'helper/win32/KeeWebHelper.exe'
-                    ],
-                    expectedCount: 7,
-                    publicKey: 'app/resources/public-key.pem'
-                }
             }
         },
         'osx-sign': {
@@ -758,10 +710,7 @@ module.exports = function (grunt) {
                     sign: 'dist/desktop/Verify.sign.sha256'
                 },
                 files: {
-                    'dist/desktop/Verify.sha256': [
-                        'dist/desktop/KeeWeb-*',
-                        'dist/desktop/UpdateDesktop.zip'
-                    ]
+                    'dist/desktop/Verify.sha256': ['dist/desktop/KeeWeb-*']
                 }
             }
         },

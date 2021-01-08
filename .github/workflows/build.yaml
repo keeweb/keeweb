@@ -95,11 +95,6 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x86_64.rpm
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x86_64.rpm
-      - name: Upload update artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: UpdateDesktop.zip
-          path: dist/desktop/UpdateDesktop.zip
 
   darwin:
     runs-on: macos-latest
@@ -123,9 +118,6 @@ jobs:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
       - name: Install npm modules
-        run: npm ci
-      - name: Install desktop npm modules
-        working-directory: desktop
         run: npm ci
       - name: Install grunt
         run: sudo npm i -g grunt-cli
@@ -178,9 +170,6 @@ jobs:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
       - name: Install npm modules
-        run: npm ci
-      - name: Install desktop npm modules
-        working-directory: desktop
         run: npm ci
       - name: Install grunt
         run: npm i -g grunt-cli
@@ -327,11 +316,6 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
-          path: assets
-      - name: Download update artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: UpdateDesktop.zip
           path: assets
       - name: Zip html
         working-directory: html
@@ -504,15 +488,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: assets/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
           asset_name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
-          asset_content_type: application/octet-stream
-      - name: Upload update asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: assets/UpdateDesktop.zip
-          asset_name: UpdateDesktop.zip
           asset_content_type: application/octet-stream
       - name: Upload verify.sign asset
         uses: actions/upload-release-asset@v1

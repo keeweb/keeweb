@@ -17,6 +17,9 @@ const Launcher = {
     platform() {
         return process.platform;
     },
+    arch() {
+        return process.arch;
+    },
     electron() {
         return this.req('electron');
     },
@@ -55,7 +58,15 @@ const Launcher = {
         return this.joinPath(this.userDataPath, fileName || '');
     },
     getTempPath(fileName) {
-        return this.joinPath(this.remoteApp().getPath('temp'), fileName || '');
+        let tempPath = this.joinPath(this.remoteApp().getPath('temp'), 'KeeWeb');
+        const fs = this.req('fs');
+        if (!fs.existsSync(tempPath)) {
+            fs.mkdirSync(tempPath);
+        }
+        if (fileName) {
+            tempPath = this.joinPath(tempPath, fileName);
+        }
+        return tempPath;
     },
     getDocumentsPath(fileName) {
         return this.joinPath(this.remoteApp().getPath('documents'), fileName || '');
@@ -164,18 +175,18 @@ const Launcher = {
     requestExit() {
         const app = this.remoteApp();
         app.setHookBeforeQuitEvent(false);
-        if (this.restartPending) {
-            app.restartApp();
+        if (this.pendingUpdateFile) {
+            app.restartAndUpdate(this.pendingUpdateFile);
         } else {
             app.quit();
         }
     },
-    requestRestart() {
-        this.restartPending = true;
+    requestRestartAndUpdate(updateFilePath) {
+        this.pendingUpdateFile = updateFilePath;
         this.requestExit();
     },
     cancelRestart() {
-        this.restartPending = false;
+        this.pendingUpdateFile = undefined;
     },
     setClipboardText(text) {
         return this.electron().clipboard.writeText(text);

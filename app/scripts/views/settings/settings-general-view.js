@@ -55,7 +55,7 @@ class SettingsGeneralView extends View {
             'changeFieldLabelDblClickAutoType',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
-        'click .settings__general-restart-btn': 'restartApp',
+        'click .settings__general-restart-btn': 'installUpdateAndRestart',
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
         'change .settings__general-prv-check': 'changeStorageEnabled',
@@ -421,9 +421,9 @@ class SettingsGeneralView extends View {
         Events.emit('refresh');
     }
 
-    restartApp() {
+    installUpdateAndRestart() {
         if (Launcher) {
-            Launcher.requestRestart();
+            Updater.installAndRestart();
         } else {
             window.location.reload();
         }
@@ -435,7 +435,7 @@ class SettingsGeneralView extends View {
 
     installFoundUpdate() {
         Updater.update(true, () => {
-            Launcher.requestRestart();
+            Updater.installAndRestart();
         });
     }
 

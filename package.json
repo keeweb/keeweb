@@ -76,7 +76,6 @@
         "morphdom": "^2.6.1",
         "node-fetch": "^2.6.1",
         "node-sass": "^5.0.0",
-        "node-stream-zip": "1.12.0",
         "normalize.css": "8.0.1",
         "optimize-css-assets-webpack-plugin": "^5.0.4",
         "pikaday": "1.8.2",
@@ -109,7 +108,6 @@
     "scripts": {
         "start": "grunt",
         "test": "grunt test",
-        "postinstall": "cd desktop && npm install",
         "build-beta": "grunt --beta && cp dist/index.html ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
         "electron": "cross-env KEEWEB_IS_PORTABLE=0 ELECTRON_DISABLE_SECURITY_WARNINGS=1 KEEWEB_HTML_PATH=http://localhost:8085 electron desktop --no-sandbox",
         "dev": "grunt dev",

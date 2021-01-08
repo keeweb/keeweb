@@ -373,7 +373,7 @@
     "setGenExtractingUpdate": "Extracting update...",
     "setGenCheckErr": "There was an error downloading new version",
     "setGenNeverChecked": "Never checked for updates",
-    "setGenRestartToUpdate": "Restart the app to update",
+    "setGenRestartToUpdate": "Restart KeeWeb to update",
     "setGenDownloadAndRestart": "Download update and restart",
     "setGenAppearance": "Appearance",
     "setGenTheme": "Theme",

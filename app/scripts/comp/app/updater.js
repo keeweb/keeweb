@@ -1,3 +1,4 @@
+import kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Transport } from 'comp/browser/transport';
@@ -15,7 +16,6 @@ const Updater = {
     UpdateInterval: 1000 * 60 * 60 * 24,
     MinUpdateTimeout: 500,
     MinUpdateSize: 10000,
-    UpdateCheckFiles: ['app.asar'],
     nextCheckTimeout: null,
     updateCheckDate: new Date(0),
     enabled: Launcher && Launcher.updaterEnabled(),
@@ -34,7 +34,7 @@ const Updater = {
     updateInProgress() {
         return (
             UpdateModel.status === 'checking' ||
-            ['downloading', 'extracting'].indexOf(UpdateModel.updateStatus) >= 0
+            ['downloading', 'extracting', 'updating'].indexOf(UpdateModel.updateStatus) >= 0
         );
     },
 
@@ -180,28 +180,61 @@ const Updater = {
         }
         UpdateModel.set({ updateStatus: 'downloading', updateError: null });
         logger.info('Downloading update', ver);
+        const updateAssetName = this.getUpdateAssetName(ver);
+        if (!updateAssetName) {
+            logger.error('Empty updater asset name for', Launcher.platform(), Launcher.arch());
+            return;
+        }
+        const updateUrlBasePath = Links.UpdateBasePath.replace('{ver}', ver);
+        const updateAssetUrl = updateUrlBasePath + updateAssetName;
+        const useCache = !startedByUser;
         Transport.httpGet({
-            url: Links.UpdateDesktop.replace('{ver}', ver),
-            file: 'KeeWeb-' + ver + '.zip',
-            cache: !startedByUser,
-            success: (filePath) => {
-                UpdateModel.set({ updateStatus: 'extracting' });
-                logger.info('Extracting update file', this.UpdateCheckFiles, filePath);
-                this.extractAppUpdate(filePath, (err) => {
-                    if (err) {
-                        logger.error('Error extracting update', err);
+            url: updateAssetUrl,
+            file: updateAssetName,
+            cleanupOldFiles: true,
+            cache: useCache,
+            success: (assetFilePath) => {
+                logger.info('Downloading update signatures');
+                Transport.httpGet({
+                    url: updateUrlBasePath + 'Verify.sign.sha256',
+                    text: true,
+                    file: updateAssetName + '.sign',
+                    cleanupOldFiles: true,
+                    cache: useCache,
+                    success: (assetFileSignaturePath) => {
+                        this.verifySignature(assetFilePath, updateAssetName, (err, valid) => {
+                            if (err) {
+                                UpdateModel.set({
+                                    updateStatus: 'error',
+                                    updateError: 'Error verifying update signature'
+                                });
+                                return;
+                            }
+                            if (!valid) {
+                                UpdateModel.set({
+                                    updateStatus: 'error',
+                                    updateError: 'Invalid update signature'
+                                });
+                                Launcher.deleteFile(assetFilePath);
+                                Launcher.deleteFile(assetFileSignaturePath);
+                                return;
+                            }
+                            logger.info('Update is ready', assetFilePath);
+                            UpdateModel.set({ updateStatus: 'ready', updateError: null });
+                            if (!startedByUser) {
+                                Events.emit('update-app');
+                            }
+                            if (typeof successCallback === 'function') {
+                                successCallback();
+                            }
+                        });
+                    },
+                    error(e) {
+                        logger.error('Error downloading update signatures', e);
                         UpdateModel.set({
                             updateStatus: 'error',
-                            updateError: 'Error extracting update'
+                            updateError: 'Error downloading update signatures'
                         });
-                    } else {
-                        UpdateModel.set({ updateStatus: 'ready', updateError: null });
-                        if (!startedByUser) {
-                            Events.emit('update-app');
-                        }
-                        if (typeof successCallback === 'function') {
-                            successCallback();
-                        }
                     }
                 });
             },
@@ -215,61 +248,64 @@ const Updater = {
         });
     },
 
-    extractAppUpdate(updateFile, cb) {
-        const expectedFiles = this.UpdateCheckFiles;
-        const appPath = Launcher.getUserDataPath();
-        const StreamZip = Launcher.req('node-stream-zip');
-        StreamZip.setFs(Launcher.req('original-fs'));
-        const zip = new StreamZip({ file: updateFile, storeEntries: true });
-        zip.on('error', cb);
-        zip.on('ready', () => {
-            const containsAll = expectedFiles.every((expFile) => {
-                const entry = zip.entry(expFile);
-                return entry && entry.isFile;
+    verifySignature(assetFilePath, assetName, callback) {
+        logger.info('Verifying update signature', assetName);
+        const fs = Launcher.req('fs');
+        const signaturesTxt = fs.readFileSync(assetFilePath + '.sign', 'utf8');
+        const assetSignatureLine = signaturesTxt
+            .split('\n')
+            .find((line) => line.endsWith(assetName));
+        if (!assetSignatureLine) {
+            logger.error('Signature not found for asset', assetName);
+            callback('Asset signature not found');
+            return;
+        }
+        const signature = kdbxweb.ByteUtils.hexToBytes(assetSignatureLine.split(' ')[0]);
+        const fileBytes = fs.readFileSync(assetFilePath);
+        SignatureVerifier.verify(fileBytes, signature)
+            .catch((e) => {
+                logger.error('Error verifying signature', e);
+                callback('Error verifying signature');
+            })
+            .then((valid) => {
+                logger.info(`Update asset signature is ${valid ? 'valid' : 'invalid'}`);
+                callback(undefined, valid);
             });
-            if (!containsAll) {
-                return cb('Bad archive');
-            }
-            this.validateArchiveSignature(updateFile, zip)
-                .then(() => {
-                    zip.extract(null, appPath, (err) => {
-                        zip.close();
-                        if (err) {
-                            return cb(err);
-                        }
-                        Launcher.deleteFile(updateFile);
-                        cb();
-                    });
-                })
-                .catch((e) => {
-                    return cb('Invalid archive: ' + e);
-                });
-        });
     },
 
-    validateArchiveSignature(archivePath, zip) {
-        if (!zip.comment) {
-            return Promise.reject('No comment in ZIP');
+    getUpdateAssetName(ver) {
+        const platform = Launcher.platform();
+        const arch = Launcher.arch();
+        switch (platform) {
+            case 'win32':
+                switch (arch) {
+                    case 'x64':
+                        return `KeeWeb-${ver}.win.x64.exe`;
+                    case 'ia32':
+                        return `KeeWeb-${ver}.win.ia32.exe`;
+                    case 'arm64':
+                        return `KeeWeb-${ver}.win.arm64.exe`;
+                }
+                break;
+            case 'darwin':
+                switch (arch) {
+                    case 'x64':
+                        return `KeeWeb-${ver}.mac.x64.dmg`;
+                    case 'arm64':
+                        return `KeeWeb-${ver}.mac.arm64.dmg`;
+                }
+                break;
         }
-        if (zip.comment.length !== 512) {
-            return Promise.reject('Bad comment length in ZIP: ' + zip.comment.length);
+        return undefined;
+    },
+
+    installAndRestart() {
+        if (!Launcher) {
+            return;
         }
-        try {
-            const zipFileData = Launcher.req('fs').readFileSync(archivePath);
-            const dataToVerify = zipFileData.slice(0, zip.centralDirectory.headerOffset + 22);
-            const signature = window.Buffer.from(zip.comment, 'hex');
-            return SignatureVerifier.verify(dataToVerify, signature)
-                .catch(() => {
-                    throw new Error('Error verifying signature');
-                })
-                .then((isValid) => {
-                    if (!isValid) {
-                        throw new Error('Invalid signature');
-                    }
-                });
-        } catch (err) {
-            return Promise.reject(err.toString());
-        }
+        const updateAssetName = this.getUpdateAssetName(UpdateModel.lastVersion);
+        const updateFilePath = Transport.cacheFilePath(updateAssetName);
+        Launcher.requestRestartAndUpdate(updateFilePath);
     }
 };
 

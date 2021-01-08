@@ -13,7 +13,7 @@ let mainWindow = null;
 let appIcon = null;
 let ready = false;
 let appReady = false;
-let restartPending = false;
+let pendingUpdateFilePath;
 let mainWindowPosition = {};
 let updateMainWindowPositionTimeout = null;
 let mainWindowMaximized = false;
@@ -95,9 +95,8 @@ const settingsPromise = loadSettingsEncryptionKey().then((key) => {
 });
 
 main.on('window-all-closed', () => {
-    if (restartPending) {
-        main.relaunch();
-        main.exit(0);
+    if (pendingUpdateFilePath) {
+        exitAndStartUpdate();
     } else {
         if (process.platform !== 'darwin') {
             main.quit();
@@ -160,11 +159,11 @@ main.on('web-contents-created', (event, contents) => {
         }
     });
 });
-main.restartApp = function () {
-    restartPending = true;
+main.restartAndUpdate = function (updateFilePath) {
+    pendingUpdateFilePath = updateFilePath;
     mainWindow.close();
     setTimeout(() => {
-        restartPending = false;
+        pendingUpdateFilePath = undefined;
     }, 1000);
 };
 main.minimizeApp = function (menuItemLabels) {
@@ -946,4 +945,11 @@ function httpRequest(config, log, onLoad) {
         req.write(data);
     }
     req.end();
+}
+
+function exitAndStartUpdate() {
+    if (pendingUpdateFilePath) {
+        // TODO: install the update
+        main.exit(0);
+    }
 }

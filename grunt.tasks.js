@@ -24,15 +24,6 @@ module.exports = function (grunt) {
         'string-replace:desktop-public-key'
     ]);
 
-    grunt.registerTask('build-desktop-update', [
-        'copy:desktop-update',
-        'copy:desktop-update-helper',
-        'sign-desktop-files:desktop-update',
-        'compress:desktop-update',
-        'sign-archive:desktop-update',
-        'validate-desktop-update'
-    ]);
-
     grunt.registerTask('build-desktop-executables-linux', [
         'electron:linux',
         'chmod:linux-desktop-x64',
@@ -126,7 +117,6 @@ module.exports = function (grunt) {
         'clean:desktop',
         'build-desktop-app-content',
         'build-desktop-executables',
-        'build-desktop-update',
         'build-desktop-archives',
         'build-desktop-dist',
         'sign-dist'
