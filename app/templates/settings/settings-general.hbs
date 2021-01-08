@@ -239,6 +239,8 @@
             <option value="15" {{#ifeq idleMinutes 15}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}15{{/res}}</option>
             <option value="30" {{#ifeq idleMinutes 30}}selected{{/ifeq}}>{{#res 'setGenLockMinutes'}}30{{/res}}</option>
             <option value="60" {{#ifeq idleMinutes 60}}selected{{/ifeq}}>{{res 'setGenLockHour'}}</option>
+            <option value="180" {{#ifeq idleMinutes 180}}selected{{/ifeq}}>{{#res 'setGenLockHours'}}3{{/res}}</option>
+            <option value="360" {{#ifeq idleMinutes 360}}selected{{/ifeq}}>{{#res 'setGenLockHours'}}6{{/res}}</option>
             <option value="720" {{#ifeq idleMinutes 720}}selected{{/ifeq}}>{{#res 'setGenLockHours'}}12{{/res}}</option>
             <option value="1440" {{#ifeq idleMinutes 1440}}selected{{/ifeq}}>{{res 'setGenLockDay'}}</option>
         </select>

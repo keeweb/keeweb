@@ -4,9 +4,11 @@ Release notes
 `+` password quality warnings  
 `+` "Have I Been Pwned" service integration (opt-in)  
 `+` automatically switching between dark and light theme  
+`*` new updater capable to upgrade major versions  
 `+` clear searchbox button  
+`+` more options for auto-lock timeout  
 `+` favicon download improvements  
-`+` auto-type field selection dropdown improvements
+`+` auto-type field selection dropdown improvements  
 
 ##### v1.16.7 (2020-12-31)
 `-` fix #1671: new lines removal issue in notes  
