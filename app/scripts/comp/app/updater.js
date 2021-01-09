@@ -187,12 +187,11 @@ const Updater = {
         }
         const updateUrlBasePath = Links.UpdateBasePath.replace('{ver}', ver);
         const updateAssetUrl = updateUrlBasePath + updateAssetName;
-        const useCache = !startedByUser;
         Transport.httpGet({
             url: updateAssetUrl,
             file: updateAssetName,
             cleanupOldFiles: true,
-            cache: useCache,
+            cache: true,
             success: (assetFilePath) => {
                 logger.info('Downloading update signatures');
                 Transport.httpGet({
@@ -200,20 +199,15 @@ const Updater = {
                     text: true,
                     file: updateAssetName + '.sign',
                     cleanupOldFiles: true,
-                    cache: useCache,
+                    cache: true,
                     success: (assetFileSignaturePath) => {
                         this.verifySignature(assetFilePath, updateAssetName, (err, valid) => {
-                            if (err) {
+                            if (err || !valid) {
                                 UpdateModel.set({
                                     updateStatus: 'error',
-                                    updateError: 'Error verifying update signature'
-                                });
-                                return;
-                            }
-                            if (!valid) {
-                                UpdateModel.set({
-                                    updateStatus: 'error',
-                                    updateError: 'Invalid update signature'
+                                    updateError: err
+                                        ? 'Error verifying update signature'
+                                        : 'Invalid update signature'
                                 });
                                 Launcher.deleteFile(assetFilePath);
                                 Launcher.deleteFile(assetFileSignaturePath);
