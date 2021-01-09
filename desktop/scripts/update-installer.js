@@ -7,6 +7,10 @@ function installUpdate(updateFilePath) {
     switch (process.platform) {
         case 'darwin':
             installDarwinUpdate(updateFilePath);
+            break;
+        case 'win32':
+            installWin32Update(updateFilePath);
+            break;
     }
 }
 
@@ -28,13 +32,22 @@ function installDarwinUpdate(updateFilePath) {
     }
 
     const installerExecutable = path.join(tempInstallerPath, 'Contents', 'MacOS', 'applet');
-    spawn(
-        installerExecutable,
-        ['--update', `--wait-pid=${process.pid}`, `--dmg=${updateFilePath}`, `--app=${appPath}`],
-        {
-            detached: true
-        }
-    ).unref();
+    spawnDetached(installerExecutable, [
+        '--update',
+        `--wait-pid=${process.pid}`,
+        `--dmg=${updateFilePath}`,
+        `--app=${appPath}`
+    ]);
+}
+
+function installWin32Update(updateFilePath) {
+    const appDir = path.dirname(electron.app.getPath('exe'));
+    spawnDetached(updateFilePath, [`/U1`, `/D=${appDir}`]);
+}
+
+function spawnDetached(command, args) {
+    const ps = spawn(command, args, { detached: true });
+    ps.unref();
 }
 
 module.exports.installUpdate = installUpdate;
