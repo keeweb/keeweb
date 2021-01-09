@@ -949,7 +949,7 @@ function httpRequest(config, log, onLoad) {
 
 function exitAndStartUpdate() {
     if (pendingUpdateFilePath) {
-        const { installUpdate } = require('./update-installer');
+        const { installUpdate } = require('./scripts/update-installer');
         installUpdate(pendingUpdateFilePath);
         main.exit(0);
     }
