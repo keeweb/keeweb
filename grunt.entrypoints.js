@@ -51,6 +51,8 @@ module.exports = function(grunt) {
         'default',
         'build-desktop-app-content',
         'electron:darwin-x64',
+        'osacompile:installer',
+        'copy:darwin-installer-icon',
         'copy:desktop-darwin-helper-x64',
         'copy:desktop-darwin-installer-helper-x64',
         'copy:native-modules-darwin-x64'
