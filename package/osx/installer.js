@@ -29,7 +29,8 @@ if (args.update) {
         `hdiutil attach -readonly -nobrowse -mountpoint ${tmpDir} ${dmg}`,
         `rm -rf ${target}`,
         `cp -pR ${tmpDir}/KeeWeb.app ${target}`,
-        `hdiutil detach ${tmpDir}``rm -rf ${tmpDir}`
+        `hdiutil detach ${tmpDir}`,
+        `rm -rf ${tmpDir}`
     ];
     const scriptOptions = {};
     if (setAdminRights) {
