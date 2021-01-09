@@ -33,6 +33,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build-desktop-executables-darwin', [
         'electron:darwin-x64',
         'electron:darwin-arm64',
+        'build-darwin-installer',
         'copy:desktop-darwin-helper-x64',
         'copy:desktop-darwin-helper-arm64',
         'copy:desktop-darwin-installer-helper-x64',
@@ -43,6 +44,12 @@ module.exports = function (grunt) {
         sign ? 'osx-sign:desktop-arm64' : 'noop',
         sign ? 'notarize:desktop-x64' : 'noop',
         sign ? 'notarize:desktop-arm64' : 'noop'
+    ]);
+
+    grunt.registerTask('build-darwin-installer', [
+        'osacompile:installer',
+        'copy:darwin-installer-icon',
+        sign ? 'osx-sign:installer' : 'noop'
     ]);
 
     grunt.registerTask('build-desktop-executables-win32', [

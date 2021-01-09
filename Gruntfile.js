@@ -25,9 +25,6 @@ module.exports = function (grunt) {
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
-    const zipCommentPlaceholderPart = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
-    const zipCommentPlaceholder =
-        zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
     const skipSign = grunt.option('skip-sign');
     const getCodeSignConfig = () =>
@@ -151,7 +148,7 @@ module.exports = function (grunt) {
                 options: { mode: '0755' }
             },
             'desktop-darwin-installer-helper-x64': {
-                cwd: 'package/osx/KeeWeb Installer.app',
+                cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
                 dest:
                     'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
@@ -160,7 +157,7 @@ module.exports = function (grunt) {
                 options: { mode: true }
             },
             'desktop-darwin-installer-helper-arm64': {
-                cwd: 'package/osx/KeeWeb Installer.app',
+                cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
                 dest:
                     'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
@@ -241,6 +238,11 @@ module.exports = function (grunt) {
             'electron-builder-dist-linux-appimage': {
                 src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.AppImage`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.AppImage`,
+                nonull: true
+            },
+            'darwin-installer-icon': {
+                src: 'graphics/icon.icns',
+                dest: 'tmp/desktop/KeeWeb Installer.app/Contents/Resources/applet.icns',
                 nonull: true
             }
         },
@@ -445,6 +447,16 @@ module.exports = function (grunt) {
                 }
             }
         },
+        osacompile: {
+            options: {
+                language: 'JavaScript'
+            },
+            installer: {
+                files: {
+                    'tmp/desktop/KeeWeb Installer.app': 'package/osx/installer/main.js'
+                }
+            }
+        },
         compress: {
             options: {
                 level: 6
@@ -595,6 +607,9 @@ module.exports = function (grunt) {
             },
             'desktop-arm64': {
                 src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
+            },
+            'installer': {
+                src: 'tmp/desktop/KeeWeb Installer.app'
             }
         },
         notarize: {
