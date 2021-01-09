@@ -214,7 +214,7 @@ const Launcher = {
         return process.platform !== 'linux';
     },
     updaterEnabled() {
-        return this.electron().remote.process.argv.indexOf('--disable-updater') === -1;
+        return process.platform !== 'linux';
     },
     getMainWindow() {
         return this.remoteApp().getMainWindow();
