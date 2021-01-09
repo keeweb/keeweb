@@ -177,7 +177,7 @@ main.minimizeApp = function (menuItemLabels) {
     }
     mainWindow.setSkipTaskbar(true);
     if (!appIcon) {
-        const image = electron.nativeImage.createFromPath(path.join(__dirname, imagePath));
+        const image = electron.nativeImage.createFromPath(path.join(__dirname, 'img', imagePath));
         appIcon = new electron.Tray(image);
         appIcon.on('click', restoreMainWindow);
         const contextMenu = electron.Menu.buildFromTemplate([
@@ -271,7 +271,7 @@ function createMainWindow() {
         }
     };
     if (process.platform !== 'win32') {
-        windowOptions.icon = path.join(__dirname, 'icon.png');
+        windowOptions.icon = path.join(__dirname, 'img', 'icon.png');
     }
     mainWindow = new electron.BrowserWindow(windowOptions);
     logProgress('creating main window');
