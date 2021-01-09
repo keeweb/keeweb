@@ -251,7 +251,8 @@ module.exports = function (grunt) {
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
             build: ['Gruntfile.js', 'grunt.*.js', 'build/**/*.js', 'webpack.config.js'],
             plugins: ['plugins/**/*.js'],
-            util: ['util/**/*.js']
+            util: ['util/**/*.js'],
+            installer: ['package/osx/installer.js']
         },
         inline: {
             app: {

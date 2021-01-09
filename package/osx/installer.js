@@ -14,7 +14,7 @@ if (args.update) {
     }
 
     const dmg = checkFilePath(args.dmg, 'dmg');
-    const target = checkFilePath(args.target, 'app');
+    const target = checkFilePath(args.app, 'app');
 
     const targetOwner = app.doShellScript(`stat -f '%Su' ${target}`);
     const setAdminRights = targetOwner === 'root';
@@ -37,6 +37,7 @@ rm -rf ${tmpDir}
         scriptOptions.administratorPrivileges = true;
     }
     app.doShellScript(script, scriptOptions);
+    Application(args.app).activate();
 } else if (args.install) {
     app.doShellScript('chown -R 0 /Applications/KeeWeb.app', { administratorPrivileges: true });
 } else {

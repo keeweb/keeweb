@@ -116,7 +116,7 @@ main.on('ready', () => {
         })
         .catch((e) => {
             electron.dialog.showErrorBox('KeeWeb', 'Error loading app: ' + e);
-            process.exit(2);
+            main.exit(2);
         });
 });
 main.on('open-file', (e, path) => {
@@ -949,7 +949,8 @@ function httpRequest(config, log, onLoad) {
 
 function exitAndStartUpdate() {
     if (pendingUpdateFilePath) {
-        // TODO: install the update
+        const { installUpdate } = require('./updater');
+        installUpdate(pendingUpdateFilePath);
         main.exit(0);
     }
 }
