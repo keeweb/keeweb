@@ -15,7 +15,17 @@ if (args.update) {
     var target = checkFilePath(args.app, 'app');
 
     var targetOwner = app.doShellScript("stat -f '%Su' " + target);
-    var setAdminRights = targetOwner === 'root';
+    var setOwnerToRoot = targetOwner === 'root';
+    var runAsAdmin = setOwnerToRoot;
+    if (!runAsAdmin) {
+        try {
+            app.doShellScript('test -w ' + target);
+            var targetDir = target.replace(/[^\/]*$/, '');
+            app.doShellScript('test -w ' + targetDir);
+        } catch (e) {
+            runAsAdmin = true;
+        }
+    }
 
     var tmpDir = dmg + '.mount';
 
@@ -31,15 +41,25 @@ if (args.update) {
         'rm -rf ' + tmpDir
     ];
     var scriptOptions = {};
-    if (setAdminRights) {
-        script.push('chown -R 0 ' + target);
+    if (runAsAdmin) {
         scriptOptions.administratorPrivileges = true;
+        if (setOwnerToRoot) {
+            script.push('chown -R 0 ' + target);
+        }
     }
     script.push('open ' + target);
     script = script.join('\n');
-    app.doShellScript(script, scriptOptions);
+    try {
+        runScriptOrDie(script, scriptOptions);
+    } catch (e) {
+        try {
+            app.doShellScript('hdiutil detach ' + tmpDir);
+            app.doShellScript('rm -rf ' + tmpDir);
+        } catch (e) {}
+        throw e;
+    }
 } else if (args.install) {
-    app.doShellScript('chown -R 0 /Applications/KeeWeb.app', { administratorPrivileges: true });
+    runScriptOrDie('chown -R 0 /Applications/KeeWeb.app', { administratorPrivileges: true });
 } else {
     throw 'Unknown operation';
 }
@@ -70,7 +90,9 @@ function waitForExitOrKill(pid) {
         }
         delay(1);
     }
-    app.doShellScript('kill ' + pid);
+    try {
+        app.doShellScript('kill ' + pid);
+    } catch (e) {}
 }
 
 function checkFilePath(path, ext) {
@@ -85,4 +107,16 @@ function checkFilePath(path, ext) {
         throw "File doesn't exist: " + ext + ' (' + path + ')';
     }
     return file.posixPath().replace(/ /g, '\\ ');
+}
+
+function runScriptOrDie(script, options) {
+    try {
+        return app.doShellScript(script, options || {});
+    } catch (e) {
+        if (e.message === 'User canceled.') {
+            $.exit(1);
+        } else {
+            throw e;
+        }
+    }
 }
