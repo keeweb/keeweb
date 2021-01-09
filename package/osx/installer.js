@@ -59,7 +59,11 @@ if (args.update) {
         throw e;
     }
 } else if (args.install) {
-    runScriptOrDie('chown -R 0 /Applications/KeeWeb.app', { administratorPrivileges: true });
+    try {
+        app.doShellScript('chown -R 0 /Applications/KeeWeb.app', { administratorPrivileges: true });
+    } catch (e) {
+        $.exit(1);
+    }
 } else {
     throw 'Unknown operation';
 }
