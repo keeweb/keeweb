@@ -1,5 +1,4 @@
 !macro EnsureAppIsNotRunning
-  Var /GLOBAL retryNumEnsureAppIsNotRunning
   ${For} $retryNumEnsureAppIsNotRunning 0 1000
     DetailPrint "Checking if ${PRODUCT_EXE} is running..."
     nsExec::ExecToStack /OEM 'tasklist /NH /FI "IMAGENAME eq ${PRODUCT_EXE}"'
