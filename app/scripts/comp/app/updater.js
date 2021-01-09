@@ -18,7 +18,7 @@ const Updater = {
     MinUpdateSize: 10000,
     nextCheckTimeout: null,
     updateCheckDate: new Date(0),
-    enabled: Launcher && Launcher.updaterEnabled(),
+    enabled: Launcher?.updaterEnabled(),
 
     getAutoUpdateType() {
         if (!this.enabled) {
