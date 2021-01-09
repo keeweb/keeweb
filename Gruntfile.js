@@ -453,7 +453,7 @@ module.exports = function (grunt) {
             },
             installer: {
                 files: {
-                    'tmp/desktop/KeeWeb Installer.app': 'package/osx/installer/main.js'
+                    'tmp/desktop/KeeWeb Installer.app': 'package/osx/installer.js'
                 }
             }
         },
