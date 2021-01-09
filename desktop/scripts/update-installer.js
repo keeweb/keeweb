@@ -41,12 +41,24 @@ function installDarwinUpdate(updateFilePath) {
 }
 
 function installWin32Update(updateFilePath) {
+    // spawn doesn't work on Windows in this case because of UAC
+    // exec doesn't work if KeeWeb is killed immediately
+    // so we write our command to a script and launch it
+
     const appDir = path.dirname(electron.app.getPath('exe'));
-    spawnDetached(updateFilePath, [`/U1`, `/D=${appDir}`]);
+
+    updateFilePath = updateFilePath.replace(/ /g, '\\ ');
+    const updateCommand = `${updateFilePath} /U1 /D=${appDir}`;
+
+    const tempPath = path.join(electron.app.getPath('temp'), 'KeeWeb');
+    const updateLauncherScriptPath = path.join(tempPath, 'update-keeweb.cmd');
+    fs.writeFileSync(updateLauncherScriptPath, updateCommand);
+
+    spawnDetached(updateLauncherScriptPath);
 }
 
 function spawnDetached(command, args) {
-    const ps = spawn(command, args, { detached: true });
+    const ps = spawn(command, args || [], { detached: true });
     ps.unref();
 }
 
