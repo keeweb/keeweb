@@ -2,9 +2,6 @@
     "env": {
         "applescript": true
     },
-    "globals": {
-        "app": false
-    },
     "rules": {
         "no-console": "off"
     }
