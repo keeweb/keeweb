@@ -46,7 +46,6 @@ function installWin32Update(updateFilePath) {
     // so we write our command to a script and launch it
 
     const appDir = path.dirname(electron.app.getPath('exe'));
-
     const updateCommand = `"${updateFilePath}" /U1 /D=${appDir}`;
 
     const tempPath = path.join(electron.app.getPath('temp'), 'KeeWeb');
