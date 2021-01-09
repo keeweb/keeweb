@@ -159,7 +159,7 @@ const Updater = {
     canAutoUpdate() {
         const minLauncherVersion = UpdateModel.lastCheckUpdMin;
         if (minLauncherVersion) {
-            const cmp = SemVer.compareVersions(Launcher.version, minLauncherVersion);
+            const cmp = SemVer.compareVersions(RuntimeInfo.version, minLauncherVersion);
             if (cmp < 0) {
                 UpdateModel.set({ updateStatus: 'ready', updateManual: true });
                 return false;
