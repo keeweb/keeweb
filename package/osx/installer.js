@@ -1,43 +1,41 @@
-#!/usr/bin/env osascript -l JavaScript
-
 ObjC.import('Foundation');
 ObjC.import('stdlib');
 
-const app = Application.currentApplication();
+var app = Application.currentApplication();
 app.includeStandardAdditions = true;
 
-const args = getArgs();
+var args = getArgs();
 if (args.update) {
-    const waitPid = args.waitPid | 0;
+    var waitPid = args.waitPid | 0;
     if (waitPid) {
         waitForExitOrKill(waitPid);
     }
 
-    const dmg = checkFilePath(args.dmg, 'dmg');
-    const target = checkFilePath(args.app, 'app');
+    var dmg = checkFilePath(args.dmg, 'dmg');
+    var target = checkFilePath(args.app, 'app');
 
-    const targetOwner = app.doShellScript(`stat -f '%Su' ${target}`);
-    const setAdminRights = targetOwner === 'root';
+    var targetOwner = app.doShellScript("stat -f '%Su' " + target);
+    var setAdminRights = targetOwner === 'root';
 
-    const tmpDir = dmg + '.mount';
+    var tmpDir = dmg + '.mount';
 
-    let script = [
-        `set -euxo pipefail`,
-        `hdiutil detach ${tmpDir} 2>/dev/null || true`,
-        `rm -rf ${tmpDir}`,
-        `mkdir -p ${tmpDir}`,
-        `hdiutil attach -readonly -nobrowse -mountpoint ${tmpDir} ${dmg}`,
-        `rm -rf ${target}`,
-        `cp -pR ${tmpDir}/KeeWeb.app ${target}`,
-        `hdiutil detach ${tmpDir}`,
-        `rm -rf ${tmpDir}`
+    var script = [
+        'set -euxo pipefail',
+        'hdiutil detach ' + tmpDir + ' 2>/dev/null || true',
+        'rm -rf ' + tmpDir,
+        'mkdir -p ' + tmpDir,
+        'hdiutil attach -readonly -nobrowse -mountpoint ' + tmpDir + ' ' + dmg,
+        'rm -rf ' + target,
+        'cp -pR ' + tmpDir + '/KeeWeb.app ' + target,
+        'hdiutil detach ' + tmpDir,
+        'rm -rf ' + tmpDir
     ];
-    const scriptOptions = {};
+    var scriptOptions = {};
     if (setAdminRights) {
-        script.push(`chown -R 0 ${target}`);
+        script.push('chown -R 0 ' + target);
         scriptOptions.administratorPrivileges = true;
     }
-    script.push(`open ${target}`);
+    script.push('open ' + target);
     script = script.join('\n');
     app.doShellScript(script, scriptOptions);
 } else if (args.install) {
@@ -48,14 +46,16 @@ if (args.update) {
 
 function getArgs() {
     // https://github.com/JXA-Cookbook/JXA-Cookbook/wiki/Shell-and-CLI-Interactions#arguments
-    const objcArgs = $.NSProcessInfo.processInfo.arguments;
-    const argc = objcArgs.count;
-    const args = {};
-    for (let i = 0; i < argc; i++) {
-        const arg = ObjC.unwrap(objcArgs.objectAtIndex(i));
-        const match = arg.match(/^--([^=]+)(=(.*))?/);
+    var objcArgs = $.NSProcessInfo.processInfo.arguments;
+    var argc = objcArgs.count;
+    var args = {};
+    for (var i = 0; i < argc; i++) {
+        var arg = ObjC.unwrap(objcArgs.objectAtIndex(i));
+        var match = arg.match(/^--([^=]+)(=(.*))?/);
         if (match) {
-            const argName = match[1].replace(/-./g, (m) => m[1].toUpperCase());
+            var argName = match[1].replace(/-./g, function (m) {
+                m[1].toUpperCase();
+            });
             args[argName] = match[3] || true;
         }
     }
@@ -63,26 +63,26 @@ function getArgs() {
 }
 
 function waitForExitOrKill(pid) {
-    for (let i = 0; i < 10; i++) {
-        const psCount = Application('System Events').processes.whose({ unixId: pid }).length;
+    for (var i = 0; i < 10; i++) {
+        var psCount = Application('System Events').processes.whose({ unixId: pid }).length;
         if (psCount === 0) {
             return;
         }
         delay(1);
     }
-    app.doShellScript(`kill ${pid}`);
+    app.doShellScript('kill ' + pid);
 }
 
 function checkFilePath(path, ext) {
     if (!path) {
-        throw `File not specified: ${ext}`;
+        throw 'File not specified: ' + ext;
     }
     if (!path.endsWith('.' + ext)) {
-        throw `Bad file extension: ${ext} (${path})`;
+        throw 'Bad file extension: ' + ext + ' (' + path + ')';
     }
-    const file = Application('System Events').files.byName(path);
+    var file = Application('System Events').files.byName(path);
     if (!file.exists()) {
-        throw `File doesn't exist: ${ext} (${path})`;
+        throw "File doesn't exist: " + ext + ' (' + path + ')';
     }
     return file.posixPath().replace(/ /g, '\\ ');
 }
