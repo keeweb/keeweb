@@ -12,6 +12,9 @@
     ${StrStr} $0 $1 "${PRODUCT_EXE}"
     ${If} $0 == ""
       DetailPrint "${PRODUCT_EXE} is not running"
+      ${If} $isUpdaterMode == 1
+        Sleep 2000
+      ${EndIf}
       ${ExitFor}
     ${Else}
       ${If} $isUpdaterMode == 1
