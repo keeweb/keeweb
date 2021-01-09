@@ -6,5 +6,6 @@
 !include LogicLib.nsh
 !include StrFunc.nsh
 !include WinVer.nsh
+!include FileFunc.nsh
 
 !include package\nsis\lib\FileAssoc.nsh
