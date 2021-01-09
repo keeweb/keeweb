@@ -69,8 +69,7 @@ class SettingsGeneralView extends View {
 
     constructor(model, options) {
         super(model, options);
-        this.listenTo(UpdateModel, 'change:status', this.render);
-        this.listenTo(UpdateModel, 'change:updateStatus', this.render);
+        this.listenTo(UpdateModel, 'change', this.render);
         this.listenTo(Events, 'theme-applied', this.render);
     }
 
