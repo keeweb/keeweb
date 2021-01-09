@@ -21,23 +21,24 @@ if (args.update) {
 
     const tmpDir = dmg + '.mount';
 
-    let script = `set -euxo pipefail
-hdiutil detach ${tmpDir} 2>/dev/null || true
-rm -rf ${tmpDir}
-mkdir -p ${tmpDir}
-hdiutil attach -readonly -nobrowse -mountpoint ${tmpDir} ${dmg}
-rm -rf ${target}
-cp -pR ${tmpDir}/KeeWeb.app ${target}
-hdiutil detach ${tmpDir}
-rm -rf ${tmpDir}
-`;
+    let script = [
+        `set -euxo pipefail`,
+        `hdiutil detach ${tmpDir} 2>/dev/null || true`,
+        `rm -rf ${tmpDir}`,
+        `mkdir -p ${tmpDir}`,
+        `hdiutil attach -readonly -nobrowse -mountpoint ${tmpDir} ${dmg}`,
+        `rm -rf ${target}`,
+        `cp -pR ${tmpDir}/KeeWeb.app ${target}`,
+        `hdiutil detach ${tmpDir}``rm -rf ${tmpDir}`
+    ];
     const scriptOptions = {};
     if (setAdminRights) {
-        script += `chown -R 0 ${target}`;
+        script.push(`chown -R 0 ${target}`);
         scriptOptions.administratorPrivileges = true;
     }
+    script.push(`open ${target}`);
+    script = script.join('\n');
     app.doShellScript(script, scriptOptions);
-    Application(args.app).activate();
 } else if (args.install) {
     app.doShellScript('chown -R 0 /Applications/KeeWeb.app', { administratorPrivileges: true });
 } else {
