@@ -599,14 +599,20 @@ module.exports = function (grunt) {
                     return getCodeSignConfig().identities.app;
                 },
                 hardenedRuntime: true,
-                entitlements: 'package/osx/entitlements.mac.plist',
-                'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                entitlements: 'package/osx/entitlements.plist',
+                'entitlements-inherit': 'package/osx/entitlements-inherit.plist',
                 'gatekeeper-assess': false
             },
             'desktop-x64': {
+                options: {
+                    'provisioning-profile': './keys/keeweb.provisionprofile'
+                },
                 src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
             },
             'desktop-arm64': {
+                options: {
+                    'provisioning-profile': './keys/keeweb.provisionprofile'
+                },
                 src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
             },
             'installer': {
