@@ -126,10 +126,12 @@ jobs:
           CODESIGN: ${{ secrets.CODESIGN }}
           APPLE_DEPLOY_PASSWORD: ${{ secrets.APPLE_DEPLOY_PASSWORD }}
           APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
+          APPLE_PROVISIONING_PROFILE: ${{ secrets.APPLE_PROVISIONING_PROFILE }}
         run: |
           mkdir keys
           echo "$CODESIGN" > keys/codesign.json
           xcrun altool --store-password-in-keychain-item "AC_PASSWORD" -u "$APPLE_ID_USERNAME" -p "$APPLE_DEPLOY_PASSWORD"
+          echo "$APPLE_PROVISIONING_PROFILE" | base64 -d > keys/keeweb.provisionprofile
       - name: Import certificates
         uses: keeweb/import-codesign-certs@v1
         with:
