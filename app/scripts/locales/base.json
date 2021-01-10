@@ -691,5 +691,5 @@
     "yubiKeyDisabledErrorBody": "YubiKey is required to open this file, please enable USB devices in settings.",
     "yubiKeyErrorWithCode": "YubiKey error, code {}.",
 
-    "bioOpenAuthPrompt": "open file {}"
+    "bioOpenAuthPrompt": "open \"{}\""
 }
