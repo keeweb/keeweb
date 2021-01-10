@@ -19,8 +19,8 @@
     ${Else}
       ${If} $isUpdaterMode == 1
       ${AndIf} $retryNumEnsureAppIsNotRunning < 5
-        DetailPrint "${PRODUCT_EXE} is running, waiting..."
-        Sleep 1000
+        DetailPrint "${PRODUCT_EXE} is running, waiting... next check in 2s"
+        Sleep 2000
       ${Else}
         MessageBox MB_ICONQUESTION|MB_OKCANCEL|MB_DEFBUTTON1 "To proceed, please close ${PRODUCT_NAME} and click OK" /SD IDCANCEL IDOK ok
         Quit
