@@ -951,6 +951,7 @@ function httpRequest(config, log, onLoad) {
 function setupIpcHandlers() {
     const { setupIpcHandlers } = require('./scripts/ipc');
     setupIpcHandlers();
+    logProgress('setting ipc handlers');
 }
 
 function exitAndStartUpdate() {
