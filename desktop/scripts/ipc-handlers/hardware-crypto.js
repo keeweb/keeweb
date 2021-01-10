@@ -20,8 +20,9 @@ async function hardwareCrypto(value, encrypt, touchIdPrompt) {
     }
 
     // This is a native module, but why is it here and not in native-module-host?
-    // It's because native-module-host is started as a fork, and macOS thinks it doesn't have necessary entitlements,
-    //  so any attempts to use secure enclave API fails with an error that there's no necessary entitlement.
+    // It's because native-module-host is started as a fork,
+    //  and macOS thinks it doesn't have necessary entitlements,
+    //  so any attempt to use Secure Enclave API fails with an error.
 
     const secureEnclave = reqNative('secure-enclave');
     const keyTag = 'net.antelle.keeweb.encryption-key';
