@@ -689,5 +689,7 @@
     "yubiKeyTouchRequestedBody": "Please touch your YubiKey with serial number {}",
     "yubiKeyDisabledErrorHeader": "USB is disabled",
     "yubiKeyDisabledErrorBody": "YubiKey is required to open this file, please enable USB devices in settings.",
-    "yubiKeyErrorWithCode": "YubiKey error, code {}."
+    "yubiKeyErrorWithCode": "YubiKey error, code {}.",
+
+    "bioOpenAuthPrompt": "open file {}"
 }
