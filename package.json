@@ -112,6 +112,7 @@
         "electron": "cross-env KEEWEB_IS_PORTABLE=0 ELECTRON_DISABLE_SECURITY_WARNINGS=1 KEEWEB_HTML_PATH=http://localhost:8085 electron desktop --no-sandbox",
         "dev": "grunt dev",
         "dev-desktop-macos": "grunt dev-desktop-darwin --skip-sign",
+        "dev-desktop-macos-signed": "grunt dev-desktop-darwin-signed",
         "dev-desktop-windows": "grunt dev-desktop-win32 --skip-sign",
         "dev-desktop-linux": "grunt dev-desktop-linux --skip-sign",
         "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js"
