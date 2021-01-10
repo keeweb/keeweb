@@ -951,6 +951,5 @@ function exitAndStartUpdate() {
     if (pendingUpdateFilePath) {
         const { installUpdate } = require('./scripts/update-installer');
         installUpdate(pendingUpdateFilePath);
-        main.exit(0);
     }
 }

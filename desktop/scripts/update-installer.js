@@ -38,6 +38,8 @@ function installDarwinUpdate(updateFilePath) {
         `--dmg=${updateFilePath}`,
         `--app=${appPath}`
     ]);
+
+    electron.app.exit(0);
 }
 
 function installWin32Update(updateFilePath) {
@@ -48,16 +50,16 @@ function installWin32Update(updateFilePath) {
     const appDir = path.dirname(electron.app.getPath('exe'));
     const updateCommand = `"${updateFilePath}" /U1 /D=${appDir}`;
 
-    const tempPath = path.join(electron.app.getPath('temp'), 'KeeWeb');
-    const updateLauncherScriptPath = path.join(tempPath, 'update-keeweb.cmd');
-    fs.writeFileSync(updateLauncherScriptPath, updateCommand);
-
-    spawnDetached(updateLauncherScriptPath);
+    const ps = spawnDetached('cmd');
+    ps.stdin.end(`${updateCommand}\nexit\n`, 'utf8', () => {
+        electron.app.exit(0);
+    });
 }
 
 function spawnDetached(command, args) {
     const ps = spawn(command, args || [], { detached: true });
     ps.unref();
+    return ps;
 }
 
 module.exports.installUpdate = installUpdate;
