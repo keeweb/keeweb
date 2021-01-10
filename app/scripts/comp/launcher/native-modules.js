@@ -200,12 +200,18 @@ if (Launcher) {
             return this.call('argon2', password, salt, options);
         },
 
-        hardwareCrypt: async (value, encrypt, touchIdPrompt) => {
-            // let enc = await NativeModules.hardwareCrypt(NativeModules.makeXoredValue('hello'), true);
-            // let dec = await NativeModules.hardwareCrypt(enc, false, 'decrypt');
-            // NativeModules.readXoredValue(dec).toString('utf8');
+        hardwareEncrypt: async (value) => {
             const { ipcRenderer } = Launcher.electron();
-            return await ipcRenderer.invoke('hardware-crypt', value, encrypt, touchIdPrompt);
+            value = NativeModules.makeXoredValue(value);
+            const encrypted = await ipcRenderer.invoke('hardware-encrypt', value);
+            return NativeModules.readXoredValue(encrypted);
+        },
+
+        hardwareDecrypt: async (value, touchIdPrompt) => {
+            const { ipcRenderer } = Launcher.electron();
+            value = NativeModules.makeXoredValue(value);
+            const decrypted = await ipcRenderer.invoke('hardware-decrypt', value, touchIdPrompt);
+            return NativeModules.readXoredValue(decrypted);
         }
     };
 

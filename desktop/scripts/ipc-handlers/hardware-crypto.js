@@ -1,7 +1,20 @@
 const { readXoredValue, makeXoredValue } = require('../util/byte-utils');
 const { reqNative } = require('../util/req-native');
 
-module.exports.hardwareCrypt = async function hardwareCrypt(e, value, encrypt, touchIdPrompt) {
+module.exports = {
+    hardwareEncrypt,
+    hardwareDecrypt
+};
+
+async function hardwareEncrypt(e, value) {
+    return await hardwareCrypto(value, true);
+}
+
+async function hardwareDecrypt(e, value, touchIdPrompt) {
+    return await hardwareCrypto(value, false, touchIdPrompt);
+}
+
+async function hardwareCrypto(value, encrypt, touchIdPrompt) {
     if (process.platform !== 'darwin') {
         throw new Error('Not supported');
     }
@@ -15,9 +28,9 @@ module.exports.hardwareCrypt = async function hardwareCrypt(e, value, encrypt, t
 
     const data = readXoredValue(value);
 
-    await checkKey();
     let res;
     if (encrypt) {
+        await checkKey();
         res = await secureEnclave.encrypt({ keyTag, data });
     } else {
         res = await secureEnclave.decrypt({ keyTag, data, touchIdPrompt });
@@ -40,4 +53,4 @@ module.exports.hardwareCrypt = async function hardwareCrypt(e, value, encrypt, t
             }
         }
     }
-};
+}
