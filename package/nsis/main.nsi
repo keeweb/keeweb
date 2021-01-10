@@ -84,7 +84,9 @@ Section "MainSection" SEC01
 
   SetOverwrite on
 
-  ${If} $isUpdaterMode != 1
+  ${If} $isUpdaterMode == 1
+    DetailPrint "Running in update mode"
+  ${Else}
     ReadRegStr $R0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString"
     ${If} $R0 != ""
       CopyFiles "$R0" "$TEMP\${PRODUCT_UNINST_TEMP_EXE}"
