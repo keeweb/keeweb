@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.17.0 (TBD)
+`+` opening files with Touch ID on macOS  
 `+` password quality warnings  
 `+` "Have I Been Pwned" service integration (opt-in)  
 `+` automatically switching between dark and light theme  

@@ -110,6 +110,7 @@ main.on('ready', () => {
     settingsPromise
         .then(() => {
             createMainWindow();
+            setupIpcHandlers();
             setGlobalShortcuts(appSettings);
             subscribePowerEvents();
             hookRequestHeaders();
@@ -945,6 +946,11 @@ function httpRequest(config, log, onLoad) {
         req.write(data);
     }
     req.end();
+}
+
+function setupIpcHandlers() {
+    const { setupIpcHandlers } = require('./scripts/ipc');
+    setupIpcHandlers();
 }
 
 function exitAndStartUpdate() {

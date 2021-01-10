@@ -1,9 +1,5 @@
-const path = require('path');
-const crypto = require('crypto');
-const { EventEmitter } = require('events');
-
-let appMainRoot;
-const nativeModules = {};
+const { readXoredValue, makeXoredValue } = require('./scripts/util/byte-utils');
+const { reqNative } = require('./scripts/util/req-native');
 
 const YubiKeyVendorIds = [0x1050];
 const attachedYubiKeys = [];
@@ -12,10 +8,6 @@ let usbListenerRunning = false;
 startListener();
 
 const messageHandlers = {
-    init(root) {
-        appMainRoot = root;
-    },
-
     'start-usb'() {
         if (usbListenerRunning) {
             return;
@@ -101,30 +93,13 @@ const messageHandlers = {
                     if (err) {
                         reject(err);
                     } else {
-                        const xoredRes = makeXoredValue(res);
-                        res.fill(0);
-
-                        resolve(xoredRes);
-
-                        setTimeout(() => {
-                            xoredRes.data.fill(0);
-                            xoredRes.random.fill(0);
-                        }, 0);
+                        resolve(makeXoredValue(res));
                     }
                 });
             } catch (e) {
                 reject(e);
             }
         });
-    }
-};
-
-const moduleInit = {
-    usb(binding) {
-        Object.keys(EventEmitter.prototype).forEach((key) => {
-            binding[key] = EventEmitter.prototype[key];
-        });
-        return binding;
     }
 };
 
@@ -157,54 +132,6 @@ function fillAttachedYubiKeys() {
 
 function reportYubiKeys() {
     callback('yubikeys', attachedYubiKeys.length);
-}
-
-function reqNative(mod) {
-    if (nativeModules[mod]) {
-        return nativeModules[mod];
-    }
-
-    const fileName = `${mod}-${process.platform}-${process.arch}.node`;
-
-    const modulePath = `../node_modules/@keeweb/keeweb-native-modules/${fileName}`;
-    const fullPath = path.join(appMainRoot, modulePath);
-
-    let binding = require(fullPath);
-
-    if (moduleInit[mod]) {
-        binding = moduleInit[mod](binding);
-    }
-
-    nativeModules[mod] = binding;
-    return binding;
-}
-
-function readXoredValue(val) {
-    const data = Buffer.from(val.data);
-    const random = Buffer.from(val.random);
-
-    val.data.fill(0);
-    val.random.fill(0);
-
-    for (let i = 0; i < data.length; i++) {
-        data[i] ^= random[i];
-    }
-
-    random.fill(0);
-
-    return data;
-}
-
-function makeXoredValue(val) {
-    const data = Buffer.from(val);
-    const random = crypto.randomBytes(data.length);
-    for (let i = 0; i < data.length; i++) {
-        data[i] ^= random[i];
-    }
-    const result = { data: [...data], random: [...random] };
-    data.fill(0);
-    random.fill(0);
-    return result;
 }
 
 function startListener() {

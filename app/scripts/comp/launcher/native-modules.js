@@ -1,3 +1,4 @@
+import kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
@@ -67,8 +68,6 @@ if (Launcher) {
 
             host.on('error', (e) => this.hostError(e));
             host.on('exit', (code, sig) => this.hostExit(code, sig));
-
-            this.call('init', Launcher.remoteApp().getAppMainRoot());
 
             if (this.usbListenerRunning) {
                 this.call('start-usb');
@@ -140,6 +139,36 @@ if (Launcher) {
             });
         },
 
+        makeXoredValue(val) {
+            const data = Buffer.from(val);
+            const random = Buffer.from(kdbxweb.Random.getBytes(data.length));
+
+            for (let i = 0; i < data.length; i++) {
+                data[i] ^= random[i];
+            }
+
+            const result = { data: [...data], random: [...random] };
+
+            data.fill(0);
+            random.fill(0);
+
+            return result;
+        },
+
+        readXoredValue(val) {
+            const data = Buffer.from(val.data);
+            const random = Buffer.from(val.random);
+
+            for (let i = 0; i < data.length; i++) {
+                data[i] ^= random[i];
+            }
+
+            val.data.fill(0);
+            val.random.fill(0);
+
+            return data;
+        },
+
         startUsbListener() {
             this.call('start-usb');
             this.usbListenerRunning = true;
@@ -169,8 +198,18 @@ if (Launcher) {
 
         argon2(password, salt, options) {
             return this.call('argon2', password, salt, options);
+        },
+
+        hardwareCrypt: async (value, encrypt, touchIdPrompt) => {
+            // let enc = await NativeModules.hardwareCrypt(NativeModules.makeXoredValue('hello'), true);
+            // let dec = await NativeModules.hardwareCrypt(enc, false, 'decrypt');
+            // NativeModules.readXoredValue(dec).toString('utf8');
+            const { ipcRenderer } = Launcher.electron();
+            return await ipcRenderer.invoke('hardware-crypt', value, encrypt, touchIdPrompt);
         }
     };
+
+    global.NativeModules = NativeModules;
 }
 
 export { NativeModules };
