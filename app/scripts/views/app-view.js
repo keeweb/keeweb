@@ -686,9 +686,7 @@ class AppView extends View {
                     this.views.open.toggleMore();
                 }
             } else {
-                if (menuItem) {
-                    this.model.menu.select({ item: menuItem });
-                }
+                this.model.menu.select({ item: menuItem });
             }
         } else {
             this.showSettings();

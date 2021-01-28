@@ -27,7 +27,7 @@ class MenuSectionModel extends Model {
     removeByFile(file) {
         const items = this.items;
         items.find((item) => {
-            if (item.file === file || item.file === file) {
+            if (item.file === file) {
                 items.remove(item);
                 return true;
             }
@@ -39,7 +39,7 @@ class MenuSectionModel extends Model {
     replaceByFile(file, newItem) {
         const items = this.items;
         items.find((item, ix) => {
-            if (item.file === file || item.file === file) {
+            if (item.file === file) {
                 items[ix] = newItem;
                 return true;
             }

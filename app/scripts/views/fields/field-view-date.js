@@ -64,7 +64,7 @@ class FieldViewDate extends FieldViewText {
             this.picker = null;
         }
         newVal = new Date(newVal);
-        if (!newVal || isNaN(newVal.getTime())) {
+        if (isNaN(newVal.getTime())) {
             newVal = null;
         }
         super.endEdit(newVal, extra);

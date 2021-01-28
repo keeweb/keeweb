@@ -858,7 +858,7 @@ class AppModel {
             path = Storage[storage].getPathForName(file.name);
         }
         const optionsForLogging = { ...options };
-        if (optionsForLogging && optionsForLogging.opts && optionsForLogging.opts.password) {
+        if (optionsForLogging.opts && optionsForLogging.opts.password) {
             optionsForLogging.opts = { ...optionsForLogging.opts };
             optionsForLogging.opts.password = '***';
         }
