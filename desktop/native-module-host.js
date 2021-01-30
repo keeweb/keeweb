@@ -4,6 +4,7 @@ const { reqNative } = require('./scripts/util/req-native');
 const YubiKeyVendorIds = [0x1050];
 const attachedYubiKeys = [];
 let usbListenerRunning = false;
+let autoType;
 
 startListener();
 
@@ -100,6 +101,49 @@ const messageHandlers = {
                 reject(e);
             }
         });
+    },
+
+    'kbd-get-active-window'(options) {
+        return getAutoType().activeWindow(options);
+    },
+
+    'kbd-get-active-pid'() {
+        return getAutoType().activePid();
+    },
+
+    'kbd-show-window'(win) {
+        return getAutoType().showWindow(win);
+    },
+
+    'kbd-text'(str) {
+        return getAutoType().text(str);
+    },
+
+    'kbd-key-press'(code, modifiers) {
+        const { KeyCode, Modifier } = reqNative('keyboard-auto-type');
+        code = KeyCode[code];
+        if (!code) {
+            throw new Error(`Bad code: ${code}`);
+        }
+        let modifier = Modifier.None;
+        if (modifiers) {
+            for (const mod of modifiers) {
+                if (!Modifier[mod]) {
+                    throw new Error(`Bad modifier: ${mod}`);
+                }
+                modifier |= Modifier[mod];
+            }
+        }
+        return getAutoType().keyPress(code, modifier);
+    },
+
+    'kbd-shortcut'(code) {
+        const { KeyCode } = reqNative('keyboard-auto-type');
+        code = KeyCode[code];
+        if (!code) {
+            throw new Error(`Bad code: ${code}`);
+        }
+        return getAutoType().shortcut(code);
     }
 };
 
@@ -132,6 +176,14 @@ function fillAttachedYubiKeys() {
 
 function reportYubiKeys() {
     callback('yubikeys', attachedYubiKeys.length);
+}
+
+function getAutoType() {
+    if (!autoType) {
+        const keyboardAutoType = reqNative('keyboard-auto-type');
+        autoType = new keyboardAutoType.AutoType();
+    }
+    return autoType;
 }
 
 function startListener() {

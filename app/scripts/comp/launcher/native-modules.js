@@ -212,6 +212,30 @@ if (Launcher) {
             value = NativeModules.makeXoredValue(value);
             const decrypted = await ipcRenderer.invoke('hardware-decrypt', value, touchIdPrompt);
             return NativeModules.readXoredValue(decrypted);
+        },
+
+        kbdGetActiveWindow(options) {
+            return this.call('kbd-get-active-window', options);
+        },
+
+        kbdGetActivePid() {
+            return this.call('kbd-get-active-pid');
+        },
+
+        kbdShowWindow(win) {
+            return this.call('kbd-show-window', win);
+        },
+
+        kbdText(str) {
+            return this.call('kbd-text', str);
+        },
+
+        kbdKeyPress(code, modifiers) {
+            return this.call('kbd-key-press', code, modifiers);
+        },
+
+        kbdShortcut(code, modifiers) {
+            return this.call('kbd-shortcut', code, modifiers);
         }
     };
 
