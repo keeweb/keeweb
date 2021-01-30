@@ -135,7 +135,7 @@ const messageHandlers = {
         return getAutoType().keyMoveWithModifier(down, kbdModifier(modifiers));
     },
 
-    kbdKeyPressWithCharacter(down, character, code, modifiers) {
+    kbdKeyPressWithCharacter(character, code, modifiers) {
         const typer = getAutoType();
         typer.keyMoveWithCharacter(true, character, code, kbdModifier(modifiers));
         typer.keyMoveWithCharacter(false, character, code, kbdModifier(modifiers));

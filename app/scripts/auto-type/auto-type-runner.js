@@ -240,7 +240,7 @@ AutoTypeRunner.prototype.tryParseCommand = function (op) {
             // {VKEY 10} {VKEY 0x1F}
             op.type = 'key';
             op.value = parseInt(op.arg);
-            if (isNaN(op.value) || op.value <= 0) {
+            if (isNaN(op.value) || op.value < 0) {
                 throw 'Bad vkey: ' + op.arg;
             }
             return true;
