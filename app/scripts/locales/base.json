@@ -448,6 +448,7 @@
     "setGenShowAppLogs": "Show app logs",
     "setGenReloadApp": "Reload the app",
     "setGenFieldLabelDblClickAutoType": "Auto-type on double-clicking field labels",
+    "setGenUseLegacyAutoType": "Use legacy auto-type (if you have issues)",
     "setGenAudit": "Audit",
     "setGenAuditPasswords": "Show warnings about password strength",
     "setGenAuditPasswordEntropy": "Check password length and randomness",

@@ -15,7 +15,6 @@ const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = !!localStorage.debugAutoType;
 
 const AutoType = {
-    helper: AutoTypeHelperFactory.create(),
     enabled: !!(Launcher && Launcher.autoTypeSupported),
     supportsEventsWithWindowId: !!(Launcher && Launcher.platform() === 'linux'),
     selectEntryView: false,
@@ -160,8 +159,10 @@ const AutoType = {
     },
 
     getActiveWindowInfo(callback) {
-        logger.debug('Getting window info');
-        return this.helper.getActiveWindowInfo((err, windowInfo) => {
+        const helperType = AppSettingsModel.useLegacyAutoType ? 'legacy' : 'native';
+        logger.debug(`Getting window info using ${helperType} helper`);
+        const helper = AutoTypeHelperFactory.create();
+        return helper.getActiveWindowInfo((err, windowInfo) => {
             if (err) {
                 logger.error('Error getting window info', err);
             } else {

@@ -286,6 +286,13 @@
     <h2 id="advanced">{{res 'advanced'}}</h2>
     <a class="settings__general-show-advanced">{{res 'setGenShowAdvanced'}}</a>
     <div class="settings__general-advanced hide">
+        {{#if canAutoType}}
+            <div>
+                <input type="checkbox" class="settings__input input-base settings__general-field-label-legacy-autotype"
+                       id="settings__general-field-label-use-legacy-autotype" {{#if useLegacyAutoType}}checked{{/if}} />
+                <label for="settings__general-field-label-use-legacy-autotype">{{res 'setGenUseLegacyAutoType'}}</label>
+            </div>
+        {{/if}}
         {{#if devTools}}
             <button class="btn-silent settings__general-dev-tools-link">{{res 'setGenDevTools'}}</button>
             <button class="btn-silent settings__general-try-beta-link">{{res 'setGenTryBeta'}}</button>

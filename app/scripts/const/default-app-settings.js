@@ -41,7 +41,8 @@ const DefaultAppSettings = {
     auditPasswordEntropy: true, // show warnings for weak passwords
     excludePinsFromAudit: true, // exclude PIN codes from audit
     checkPasswordsOnHIBP: false, // check passwords on Have I Been Pwned
-    auditPasswordAge: 0,
+    auditPasswordAge: 0, // show warnings about old passwords, number of years, 0 = disabled
+    useLegacyAutoType: false, // use legacy auto-type engine (will be removed in future versions)
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
     yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files
