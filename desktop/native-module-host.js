@@ -135,8 +135,10 @@ const messageHandlers = {
         return getAutoType().keyMoveWithModifier(down, kbdModifier(modifiers));
     },
 
-    kbdKeyMoveWithCharacter(down, character, code, modifiers) {
-        return getAutoType().keyMoveWithCharacter(down, character, code, kbdModifier(modifiers));
+    kbdKeyPressWithCharacter(down, character, code, modifiers) {
+        const typer = getAutoType();
+        typer.keyMoveWithCharacter(true, character, code, kbdModifier(modifiers));
+        typer.keyMoveWithCharacter(false, character, code, kbdModifier(modifiers));
     },
 
     kbdEnsureModifierNotPressed() {
@@ -179,6 +181,7 @@ function getAutoType() {
     if (!autoType) {
         const keyboardAutoType = reqNative('keyboard-auto-type');
         autoType = new keyboardAutoType.AutoType();
+        autoType.setCheckPressedModifiers(false);
     }
     return autoType;
 }

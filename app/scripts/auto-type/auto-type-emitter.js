@@ -69,6 +69,10 @@ class AutoTypeEmitter {
         this.mod = {};
     }
 
+    begin() {
+        this.withCallback(NativeModules.kbdEnsureModifierNotPressed());
+    }
+
     setMod(mod, enabled) {
         // TODO: press the modifier
         if (enabled) {
@@ -79,17 +83,21 @@ class AutoTypeEmitter {
     }
 
     text(str) {
-        this.withCallback(NativeModules.kbdText(str));
+        if (!str) {
+            return this.withCallback(Promise.resolve());
+        }
+        const mod = Object.keys(this.mod);
+        if (mod.length) {
+            // TODO
+        } else {
+            this.withCallback(NativeModules.kbdText(str));
+        }
     }
 
     key(key) {
         const mods = Object.keys(this.mod);
         if (typeof key === 'number') {
-            this.withCallback(
-                NativeModules.kbdKeyMoveWithCharacter(true, 0, key, mods).then(() =>
-                    NativeModules.kbdKeyMoveWithCharacter(false, 0, key, mods)
-                )
-            );
+            this.withCallback(NativeModules.kbdKeyPressWithCharacter(0, key, mods));
         } else {
             if (!KeyMap[key]) {
                 return this.callback('Bad key: ' + key);

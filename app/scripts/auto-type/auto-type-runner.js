@@ -445,7 +445,7 @@ AutoTypeRunner.prototype.run = function (callback, windowId) {
         activeMod: {},
         finished: null
     };
-    this.emitNext();
+    this.emitter.begin();
 };
 
 AutoTypeRunner.prototype.emitNext = function (err) {
