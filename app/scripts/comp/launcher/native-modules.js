@@ -36,7 +36,7 @@ if (Launcher) {
             }
         },
 
-        'yk-chal-resp-result'({ callbackId, error, result }) {
+        yubiKeyChallengeResponseResult({ callbackId, error, result }) {
             const callback = ykChalRespCallbacks[callbackId];
             if (callback) {
                 const willBeCalledAgain = error && error.touchRequested;
@@ -170,29 +170,29 @@ if (Launcher) {
         },
 
         startUsbListener() {
-            this.call('start-usb');
+            this.call('startUsbListener');
             this.usbListenerRunning = true;
         },
 
         stopUsbListener() {
             this.usbListenerRunning = false;
             if (host) {
-                this.call('stop-usb');
+                this.call('stopUsbListener');
             }
         },
 
         getYubiKeys(config) {
-            return this.call('get-yubikeys', config);
+            return this.call('getYubiKeys', config);
         },
 
         yubiKeyChallengeResponse(yubiKey, challenge, slot, callback) {
             ykChalRespCallbacks[callId] = callback;
-            return this.call('yk-chal-resp', yubiKey, challenge, slot, callId);
+            return this.call('yubiKeyChallengeResponse', yubiKey, challenge, slot, callId);
         },
 
         yubiKeyCancelChallengeResponse() {
             if (host) {
-                this.call('yk-cancel-chal-resp');
+                this.call('yubiKeyCancelChallengeResponse');
             }
         },
 
@@ -203,51 +203,55 @@ if (Launcher) {
         hardwareEncrypt: async (value) => {
             const { ipcRenderer } = Launcher.electron();
             value = NativeModules.makeXoredValue(value);
-            const encrypted = await ipcRenderer.invoke('hardware-encrypt', value);
+            const encrypted = await ipcRenderer.invoke('hardwareEncrypt', value);
             return NativeModules.readXoredValue(encrypted);
         },
 
         hardwareDecrypt: async (value, touchIdPrompt) => {
             const { ipcRenderer } = Launcher.electron();
             value = NativeModules.makeXoredValue(value);
-            const decrypted = await ipcRenderer.invoke('hardware-decrypt', value, touchIdPrompt);
+            const decrypted = await ipcRenderer.invoke('hardwareDecrypt', value, touchIdPrompt);
             return NativeModules.readXoredValue(decrypted);
         },
 
         kbdGetActiveWindow(options) {
-            return this.call('kbd-get-active-window', options);
+            return this.call('kbdGetActiveWindow', options);
         },
 
         kbdGetActivePid() {
-            return this.call('kbd-get-active-pid');
+            return this.call('kbdGetActivePid');
         },
 
         kbdShowWindow(win) {
-            return this.call('kbd-show-window', win);
+            return this.call('kbdShowWindow', win);
         },
 
         kbdText(str) {
-            return this.call('kbd-text', str);
+            return this.call('kbdText', str);
         },
 
         kbdKeyPress(code, modifiers) {
-            return this.call('kbd-key-press', code, modifiers);
+            return this.call('kbdKeyPress', code, modifiers);
         },
 
         kbdShortcut(code, modifiers) {
-            return this.call('kbd-shortcut', code, modifiers);
+            return this.call('kbdShortcut', code, modifiers);
         },
 
         kbdKeyMoveWithCode(down, code, modifiers) {
-            return this.call('kbd-key-move-with-code', down, code, modifiers);
+            return this.call('kbdKeyMoveWithCode', down, code, modifiers);
         },
 
         kbdKeyMoveWithModifier(down, modifiers) {
-            return this.call('kbd-key-move-with-modifier', down, modifiers);
+            return this.call('kbdKeyMoveWithModifier', down, modifiers);
         },
 
         kbdKeyMoveWithCharacter(down, character, code, modifiers) {
-            return this.call('kbd-key-move-with-character', down, character, code, modifiers);
+            return this.call('kbdKeyMoveWithCharacter', down, character, code, modifiers);
+        },
+
+        ensureModifierNotPressed() {
+            return this.call('kbdEnsureModifierNotPressed');
         }
     };
 

@@ -9,7 +9,7 @@ let autoType;
 startListener();
 
 const messageHandlers = {
-    'start-usb'() {
+    startUsbListener() {
         if (usbListenerRunning) {
             return;
         }
@@ -26,7 +26,7 @@ const messageHandlers = {
         usbListenerRunning = true;
     },
 
-    'stop-usb'() {
+    stopUsbListener() {
         if (!usbListenerRunning) {
             return;
         }
@@ -42,7 +42,7 @@ const messageHandlers = {
         attachedYubiKeys.length = 0;
     },
 
-    'get-yubikeys'(config) {
+    getYubiKeys(config) {
         return new Promise((resolve, reject) => {
             const ykChapResp = reqNative('yubikey-chalresp');
             ykChapResp.getYubiKeys(config, (err, yubiKeys) => {
@@ -55,7 +55,7 @@ const messageHandlers = {
         });
     },
 
-    'yk-chal-resp'(yubiKey, challenge, slot, callbackId) {
+    yubiKeyChallengeResponse(yubiKey, challenge, slot, callbackId) {
         const ykChalResp = reqNative('yubikey-chalresp');
         challenge = Buffer.from(challenge);
         ykChalResp.challengeResponse(yubiKey, challenge, slot, (error, result) => {
@@ -70,11 +70,11 @@ const messageHandlers = {
             if (result) {
                 result = [...result];
             }
-            return callback('yk-chal-resp-result', { callbackId, error, result });
+            return callback('yubiKeyChallengeResponseResult', { callbackId, error, result });
         });
     },
 
-    'yk-cancel-chal-resp'() {
+    yubiKeyCancelChallengeResponse() {
         const ykChalResp = reqNative('yubikey-chalresp');
         ykChalResp.cancelChallengeResponse();
     },
@@ -103,40 +103,44 @@ const messageHandlers = {
         });
     },
 
-    'kbd-get-active-window'(options) {
+    kbdGetActiveWindow(options) {
         return getAutoType().activeWindow(options);
     },
 
-    'kbd-get-active-pid'() {
+    kbdGetActivePid() {
         return getAutoType().activePid();
     },
 
-    'kbd-show-window'(win) {
+    kbdShowWindow(win) {
         return getAutoType().showWindow(win);
     },
 
-    'kbd-text'(str) {
+    kbdText(str) {
         return getAutoType().text(str);
     },
 
-    'kbd-key-press'(code, modifiers) {
+    kbdKeyPress(code, modifiers) {
         return getAutoType().keyPress(kbdKeyCode(code), kbdModifier(modifiers));
     },
 
-    'kbd-shortcut'(code) {
+    kbdShortcut(code) {
         return getAutoType().shortcut(kbdKeyCode(code));
     },
 
-    'kbd-key-move-with-code'(down, code, modifiers) {
+    kbdKeyMoveWithCode(down, code, modifiers) {
         return getAutoType().keyMoveWithCode(down, kbdKeyCode(code), kbdModifier(modifiers));
     },
 
-    'kbd-key-move-with-modifier'(down, modifiers) {
+    kbdKeyMoveWithModifier(down, modifiers) {
         return getAutoType().keyMoveWithModifier(down, kbdModifier(modifiers));
     },
 
-    'kbd-key-move-with-character'(down, character, code, modifiers) {
+    kbdKeyMoveWithCharacter(down, character, code, modifiers) {
         return getAutoType().keyMoveWithCharacter(down, character, code, kbdModifier(modifiers));
+    },
+
+    kbdEnsureModifierNotPressed() {
+        return getAutoType().ensureModifierNotPressed();
     }
 };
 
