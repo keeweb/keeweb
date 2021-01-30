@@ -2,11 +2,12 @@ import { AutoTypeEmitterFactory } from 'auto-type/auto-type-emitter-factory';
 import { AutoTypeObfuscator } from 'auto-type/auto-type-obfuscator';
 import { StringFormat } from 'util/formatting/string-format';
 import { Logger } from 'util/logger';
+import { AppSettingsModel } from 'models/app-settings-model';
 
 const emitterLogger = new Logger(
     'auto-type-emitter',
     undefined,
-    localStorage.debugAutoType ? Logger.Level.All : Logger.Level.Warn
+    localStorage.debugAutoType ? Logger.Level.All : Logger.Level.Info
 );
 
 const AutoTypeRunner = function (ops) {
@@ -432,6 +433,8 @@ AutoTypeRunner.prototype.obfuscateOp = function (op) {
 };
 
 AutoTypeRunner.prototype.run = function (callback, windowId) {
+    const emitterType = AppSettingsModel.useLegacyAutoType ? 'legacy' : 'native';
+    emitterLogger.info(`Using ${emitterType} auto-type emitter`);
     this.emitter = AutoTypeEmitterFactory.create(this.emitNext.bind(this), windowId);
     this.emitterState = {
         callback,
