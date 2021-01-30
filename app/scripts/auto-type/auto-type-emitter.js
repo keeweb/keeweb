@@ -1,7 +1,8 @@
 import { Features } from 'util/features';
 import { NativeModules } from 'comp/launcher/native-modules';
-import { CopyPaste } from 'comp/browser/copy-paste';
 import { Logger } from 'util/logger';
+import { Launcher } from 'comp/launcher';
+import { Timeouts } from 'const/timeouts';
 
 const logger = new Logger('auto-type-emitter');
 
@@ -84,7 +85,7 @@ class AutoTypeEmitter {
 
     key(key) {
         if (typeof key === 'number') {
-            // TODO
+            // TODO: platform-specific keycodes
         } else {
             if (!KeyMap[key]) {
                 return this.callback('Bad key: ' + key);
@@ -95,8 +96,12 @@ class AutoTypeEmitter {
     }
 
     copyPaste(text) {
-        CopyPaste.copy(text);
-        this.withCallback(NativeModules.kbdShortcut('V'));
+        setTimeout(() => {
+            Launcher.setClipboardText(text);
+            setTimeout(() => {
+                this.withCallback(NativeModules.kbdShortcut('V'));
+            }, Timeouts.AutoTypeCopyPaste);
+        }, Timeouts.AutoTypeCopyPaste);
     }
 
     wait(time) {
@@ -108,7 +113,7 @@ class AutoTypeEmitter {
     }
 
     setDelay(delay) {
-        // TODO
+        // TODO: set delay to {delay} milliseconds between keystrokes
     }
 
     withCallback(promise) {
