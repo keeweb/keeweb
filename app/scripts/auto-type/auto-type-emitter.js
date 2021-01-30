@@ -130,8 +130,8 @@ class AutoTypeEmitter {
         this.withCallback(Promise.resolve());
     }
 
-    setDelay(delay) {
-        // TODO: set delay to {delay} milliseconds between keystrokes
+    setDelay() {
+        this.callback('Not implemented');
     }
 
     withCallback(promise) {
