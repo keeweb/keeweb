@@ -119,16 +119,16 @@ const messageHandlers = {
         return getAutoType().text(str);
     },
 
+    kbdTextAsKeys(str, mods) {
+        return kbdTextAsKeys(str, mods);
+    },
+
     kbdKeyPress(code, modifiers) {
         return getAutoType().keyPress(kbdKeyCode(code), kbdModifier(modifiers));
     },
 
     kbdShortcut(code) {
         return getAutoType().shortcut(kbdKeyCode(code));
-    },
-
-    kbdKeyMoveWithCode(down, code, modifiers) {
-        return getAutoType().keyMoveWithCode(down, kbdKeyCode(code), kbdModifier(modifiers));
     },
 
     kbdKeyMoveWithModifier(down, modifiers) {
@@ -207,6 +207,30 @@ function kbdModifier(modifiers) {
         }
     }
     return modifier;
+}
+
+function kbdTextAsKeys(str, modifiers) {
+    const typer = getAutoType();
+    const modifier = kbdModifier(modifiers);
+    let ix = 0;
+    for (const kc of typer.osKeyCodesForChars(str)) {
+        const char = str[ix++];
+        let effectiveModifier = modifier;
+        if (kc?.modifier) {
+            typer.keyMoveWithModifier(true, kc.modifier);
+            effectiveModifier |= kc.modifier;
+        }
+        if (kc) {
+            typer.keyMoveWithCharacter(true, null, kc.code, effectiveModifier);
+            typer.keyMoveWithCharacter(false, null, kc.code, effectiveModifier);
+        } else {
+            typer.keyMoveWithCharacter(true, char, null, effectiveModifier);
+            typer.keyMoveWithCharacter(false, char, null, effectiveModifier);
+        }
+        if (kc?.modifier) {
+            typer.keyMoveWithModifier(false, kc.modifier);
+        }
+    }
 }
 
 function startListener() {

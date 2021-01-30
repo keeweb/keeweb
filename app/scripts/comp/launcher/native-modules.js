@@ -230,6 +230,10 @@ if (Launcher) {
             return this.call('kbdText', str);
         },
 
+        kbdTextAsKeys(str, mods) {
+            return this.call('kbdTextAsKeys', str, mods);
+        },
+
         kbdKeyPress(code, modifiers) {
             return this.call('kbdKeyPress', code, modifiers);
         },
@@ -238,13 +242,9 @@ if (Launcher) {
             return this.call('kbdShortcut', code, modifiers);
         },
 
-        // kbdKeyMoveWithCode(down, code, modifiers) {
-        //     return this.call('kbdKeyMoveWithCode', down, code, modifiers);
-        // },
-        //
-        // kbdKeyMoveWithModifier(down, modifiers) {
-        //     return this.call('kbdKeyMoveWithModifier', down, modifiers);
-        // },
+        kbdKeyMoveWithModifier(down, modifiers) {
+            return this.call('kbdKeyMoveWithModifier', down, modifiers);
+        },
 
         kbdKeyPressWithCharacter(character, code, modifiers) {
             return this.call('kbdKeyPressWithCharacter', character, code, modifiers);

@@ -74,11 +74,17 @@ class AutoTypeEmitter {
     }
 
     setMod(mod, enabled) {
-        // TODO: press the modifier
+        const nativeMod = ModMap[mod];
+        if (!nativeMod) {
+            return this.callback(`Bad modifier: ${mod}`);
+        }
+        NativeModules.kbdKeyMoveWithModifier(!!enabled, [nativeMod]).catch((e) => {
+            logger.error('Error moving modifier', mod, enabled ? 'down' : 'up', e);
+        });
         if (enabled) {
-            this.mod[ModMap[mod]] = true;
+            this.mod[nativeMod] = true;
         } else {
-            delete this.mod[ModMap[mod]];
+            delete this.mod[nativeMod];
         }
     }
 
@@ -86,9 +92,9 @@ class AutoTypeEmitter {
         if (!str) {
             return this.withCallback(Promise.resolve());
         }
-        const mod = Object.keys(this.mod);
-        if (mod.length) {
-            // TODO
+        const mods = Object.keys(this.mod);
+        if (mods.length) {
+            this.withCallback(NativeModules.kbdTextAsKeys(str, mods));
         } else {
             this.withCallback(NativeModules.kbdText(str));
         }
