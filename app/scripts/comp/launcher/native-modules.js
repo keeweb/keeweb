@@ -236,6 +236,18 @@ if (Launcher) {
 
         kbdShortcut(code, modifiers) {
             return this.call('kbd-shortcut', code, modifiers);
+        },
+
+        kbdKeyMoveWithCode(down, code, modifiers) {
+            return this.call('kbd-key-move-with-code', down, code, modifiers);
+        },
+
+        kbdKeyMoveWithModifier(down, modifiers) {
+            return this.call('kbd-key-move-with-modifier', down, modifiers);
+        },
+
+        kbdKeyMoveWithCharacter(down, character, code, modifiers) {
+            return this.call('kbd-key-move-with-character', down, character, code, modifiers);
         }
     };
 

@@ -64,9 +64,8 @@ const ModMap = {
 };
 
 class AutoTypeEmitter {
-    constructor(callback, windowId) {
+    constructor(callback) {
         this.callback = callback;
-        this.windowId = windowId;
         this.mod = {};
     }
 
@@ -80,18 +79,23 @@ class AutoTypeEmitter {
     }
 
     text(str) {
-        this.withCallback(NativeModules.kbdText(str)); // TODO: how to handle modifiers?
+        this.withCallback(NativeModules.kbdText(str));
     }
 
     key(key) {
+        const mods = Object.keys(this.mod);
         if (typeof key === 'number') {
-            // TODO: platform-specific keycodes
+            this.withCallback(
+                NativeModules.kbdKeyMoveWithCharacter(true, 0, key, mods).then(() =>
+                    NativeModules.kbdKeyMoveWithCharacter(false, 0, key, mods)
+                )
+            );
         } else {
             if (!KeyMap[key]) {
                 return this.callback('Bad key: ' + key);
             }
             const code = KeyMap[key];
-            this.withCallback(NativeModules.kbdKeyPress(code)); // TODO: modifier
+            this.withCallback(NativeModules.kbdKeyPress(code, mods));
         }
     }
 

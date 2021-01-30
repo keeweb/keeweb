@@ -120,30 +120,23 @@ const messageHandlers = {
     },
 
     'kbd-key-press'(code, modifiers) {
-        const { KeyCode, Modifier } = reqNative('keyboard-auto-type');
-        code = KeyCode[code];
-        if (!code) {
-            throw new Error(`Bad code: ${code}`);
-        }
-        let modifier = Modifier.None;
-        if (modifiers) {
-            for (const mod of modifiers) {
-                if (!Modifier[mod]) {
-                    throw new Error(`Bad modifier: ${mod}`);
-                }
-                modifier |= Modifier[mod];
-            }
-        }
-        return getAutoType().keyPress(code, modifier);
+        return getAutoType().keyPress(kbdKeyCode(code), kbdModifier(modifiers));
     },
 
     'kbd-shortcut'(code) {
-        const { KeyCode } = reqNative('keyboard-auto-type');
-        code = KeyCode[code];
-        if (!code) {
-            throw new Error(`Bad code: ${code}`);
-        }
-        return getAutoType().shortcut(code);
+        return getAutoType().shortcut(kbdKeyCode(code));
+    },
+
+    'kbd-key-move-with-code'(down, code, modifiers) {
+        return getAutoType().keyMoveWithCode(down, kbdKeyCode(code), kbdModifier(modifiers));
+    },
+
+    'kbd-key-move-with-modifier'(down, modifiers) {
+        return getAutoType().keyMoveWithModifier(down, kbdModifier(modifiers));
+    },
+
+    'kbd-key-move-with-character'(down, character, code, modifiers) {
+        return getAutoType().keyMoveWithCharacter(down, character, code, kbdModifier(modifiers));
     }
 };
 
@@ -184,6 +177,29 @@ function getAutoType() {
         autoType = new keyboardAutoType.AutoType();
     }
     return autoType;
+}
+
+function kbdKeyCode(code) {
+    const { KeyCode } = reqNative('keyboard-auto-type');
+    const kbdCode = KeyCode[code];
+    if (!kbdCode) {
+        throw new Error(`Bad code: ${code}`);
+    }
+    return kbdCode;
+}
+
+function kbdModifier(modifiers) {
+    const { Modifier } = reqNative('keyboard-auto-type');
+    let modifier = Modifier.None;
+    if (modifiers) {
+        for (const mod of modifiers) {
+            if (!Modifier[mod]) {
+                throw new Error(`Bad modifier: ${mod}`);
+            }
+            modifier |= Modifier[mod];
+        }
+    }
+    return modifier;
 }
 
 function startListener() {
