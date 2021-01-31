@@ -210,26 +210,31 @@ function kbdModifier(modifiers) {
 }
 
 function kbdTextAsKeys(str, modifiers) {
-    const typer = getAutoType();
     const modifier = kbdModifier(modifiers);
     let ix = 0;
-    for (const kc of typer.osKeyCodesForChars(str)) {
-        const char = str[ix++];
-        let effectiveModifier = modifier;
-        if (kc?.modifier) {
-            typer.keyMoveWithModifier(true, kc.modifier);
-            effectiveModifier |= kc.modifier;
+    const typer = getAutoType();
+    const tx = typer.beginBatchTextEntry();
+    try {
+        for (const kc of typer.osKeyCodesForChars(str)) {
+            const char = str[ix++];
+            let effectiveModifier = modifier;
+            if (kc?.modifier) {
+                typer.keyMoveWithModifier(true, kc.modifier);
+                effectiveModifier |= kc.modifier;
+            }
+            if (kc) {
+                typer.keyMoveWithCharacter(true, null, kc.code, effectiveModifier);
+                typer.keyMoveWithCharacter(false, null, kc.code, effectiveModifier);
+            } else {
+                typer.keyMoveWithCharacter(true, char, null, effectiveModifier);
+                typer.keyMoveWithCharacter(false, char, null, effectiveModifier);
+            }
+            if (kc?.modifier) {
+                typer.keyMoveWithModifier(false, kc.modifier);
+            }
         }
-        if (kc) {
-            typer.keyMoveWithCharacter(true, null, kc.code, effectiveModifier);
-            typer.keyMoveWithCharacter(false, null, kc.code, effectiveModifier);
-        } else {
-            typer.keyMoveWithCharacter(true, char, null, effectiveModifier);
-            typer.keyMoveWithCharacter(false, char, null, effectiveModifier);
-        }
-        if (kc?.modifier) {
-            typer.keyMoveWithModifier(false, kc.modifier);
-        }
+    } finally {
+        tx.done();
     }
 }
 
