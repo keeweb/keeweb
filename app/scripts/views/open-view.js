@@ -591,8 +591,6 @@ class OpenView extends View {
         this.displayOpenKeyFile();
         this.displayOpenChalResp();
 
-        this.openFileWithFingerprint(fileInfo);
-
         if (fileWasClicked) {
             this.focusInput(true);
         }
@@ -615,20 +613,6 @@ class OpenView extends View {
             this.params.keyFilePath = keyFilePath;
             this.params.keyFileData = null;
             this.displayOpenKeyFile();
-        }
-    }
-
-    openFileWithFingerprint(fileInfo) {
-        if (!fileInfo.fingerprint) {
-            return;
-        }
-
-        if (Launcher && Launcher.fingerprints) {
-            Launcher.fingerprints.auth(fileInfo.id, fileInfo.fingerprint, (password) => {
-                this.inputEl.val(password);
-                this.inputEl.trigger('input');
-                this.openDb();
-            });
         }
     }
 

@@ -664,7 +664,6 @@ class AppModel {
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
             backup: (fileInfo && fileInfo.backup) || null,
-            fingerprint: (fileInfo && fileInfo.fingerprint) || null,
             chalResp: params.chalResp
         });
         const openComplete = (err) => {
@@ -755,7 +754,6 @@ class AppModel {
             syncDate: file.syncDate || dt,
             openDate: dt,
             backup: file.backup,
-            fingerprint: file.fingerprint,
             chalResp: file.chalResp
         });
         switch (this.settings.rememberKeyFiles) {
@@ -807,9 +805,6 @@ class AppModel {
         const backup = file.backup;
         if (data && backup && backup.enabled && backup.pending) {
             this.scheduleBackupFile(file, data);
-        }
-        if (params) {
-            this.saveFileFingerprint(file, params.password);
         }
         if (this.settings.yubiKeyAutoOpen) {
             if (this.attachedYubiKeysCount > 0 && !this.files.some((f) => f.external)) {
@@ -1221,18 +1216,6 @@ class AppModel {
         }
         if (needBackup) {
             this.backupFile(file, data, noop);
-        }
-    }
-
-    saveFileFingerprint(file, password) {
-        if (Launcher && Launcher.fingerprints && !file.fingerprint) {
-            const fileInfo = this.fileInfos.get(file.id);
-            Launcher.fingerprints.register(file.id, password, (token) => {
-                if (token) {
-                    fileInfo.fingerprint = token;
-                    this.fileInfos.save();
-                }
-            });
         }
     }
 
