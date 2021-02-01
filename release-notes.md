@@ -11,6 +11,7 @@ Release notes
 `+` favicon download improvements  
 `+` auto-type field selection dropdown improvements  
 `+` new completion page after storage provider authentication  
+`-` fixed creating files with Argon2id KDF  
 
 ##### v1.16.7 (2020-12-31)
 `-` fix #1671: new lines removal issue in notes  
