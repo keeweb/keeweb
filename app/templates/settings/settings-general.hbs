@@ -176,6 +176,33 @@
                id="settings__general-use-group-icon-for-entries" {{#if useGroupIconForEntries}}checked{{/if}} />
         <label for="settings__general-use-group-icon-for-entries">{{res 'setGenUseGroupIconForEntries'}}</label>
     </div>
+    {{#if hasDeviceOwnerAuth}}
+        <div>
+            <label for="settings__general-device-owner-auth">{{res 'setGenTouchId'}}:</label>
+            <select class="settings__general-device-owner-auth settings__select input-base" id="settings__general-device-owner-auth">
+                <option value="" {{#unless deviceOwnerAuth}}selected{{/unless}}>{{res 'setGenTouchIdDisabled'}}</option>
+                <option value="unlock" {{#ifeq deviceOwnerAuth 'unlock'}}selected{{/ifeq}}>{{res 'setGenTouchIdUnlock'}}</option>
+                <option value="credentials" {{#ifeq deviceOwnerAuth 'credentials'}}selected{{/ifeq}}>{{res 'setGenTouchIdCredentials'}}</option>
+            </select>
+        </div>
+        {{#if deviceOwnerAuth}}
+            <label for="settings__general-device-owner-auth-timeout">{{res 'setGenTouchIdPass'}}:</label>
+            <select class="settings__general-device-owner-auth-timeout settings__select input-base" id="settings__general-device-owner-auth-timeout">
+                <option value="1" {{#ifeq deviceOwnerAuthTimeout 1}}selected{{/ifeq}}>{{Res 'oneMinute'}}</option>
+                <option value="5" {{#ifeq deviceOwnerAuthTimeout 5}}selected{{/ifeq}}>{{#Res 'minutes'}}5{{/Res}}</option>
+                <option value="30" {{#ifeq deviceOwnerAuthTimeout 30}}selected{{/ifeq}}>{{#Res 'minutes'}}30{{/Res}}</option>
+                <option value="60" {{#ifeq deviceOwnerAuthTimeout 60}}selected{{/ifeq}}>{{Res 'oneHour'}}</option>
+                <option value="120" {{#ifeq deviceOwnerAuthTimeout 120}}selected{{/ifeq}}>{{#Res 'hours'}}2{{/Res}}</option>
+                <option value="480" {{#ifeq deviceOwnerAuthTimeout 480}}selected{{/ifeq}}>{{#Res 'hours'}}8{{/Res}}</option>
+                <option value="1440" {{#ifeq deviceOwnerAuthTimeout 1440}}selected{{/ifeq}}>{{Res 'oneDay'}}</option>
+                <option value="10080" {{#ifeq deviceOwnerAuthTimeout 10080}}selected{{/ifeq}}>{{Res 'oneWeek'}}</option>
+                {{#ifeq deviceOwnerAuth 'credentials'}}
+                    <option value="43200" {{#ifeq deviceOwnerAuthTimeout 43200}}selected{{/ifeq}}>{{Res 'oneMonth'}}</option>
+                    <option value="525600" {{#ifeq deviceOwnerAuthTimeout 525600}}selected{{/ifeq}}>{{Res 'oneYear'}}</option>
+                {{/ifeq}}
+            </select>
+        {{/if}}
+    {{/if}}
 
     <h2 id="audit">{{res 'setGenAudit'}}</h2>
     <div>
@@ -288,9 +315,9 @@
     <div class="settings__general-advanced hide">
         {{#if canAutoType}}
             <div>
-                <input type="checkbox" class="settings__input input-base settings__general-field-label-legacy-autotype"
-                       id="settings__general-field-label-use-legacy-autotype" {{#if useLegacyAutoType}}checked{{/if}} />
-                <label for="settings__general-field-label-use-legacy-autotype">{{res 'setGenUseLegacyAutoType'}}</label>
+                <input type="checkbox" class="settings__input input-base settings__general-use-legacy-autotype"
+                       id="settings__general-use-legacy-autotype" {{#if useLegacyAutoType}}checked{{/if}} />
+                <label for="settings__general-use-legacy-autotype">{{res 'setGenUseLegacyAutoType'}}</label>
             </div>
         {{/if}}
         {{#if devTools}}

@@ -16,7 +16,7 @@ import { DateFormat } from 'comp/i18n/date-format';
 import { Locale } from 'util/locale';
 import { SettingsLogsView } from 'views/settings/settings-logs-view';
 import { SettingsPrvView } from 'views/settings/settings-prv-view';
-import { mapObject } from 'util/fn';
+import { mapObject, minmax } from 'util/fn';
 import { ThemeWatcher } from 'comp/browser/theme-watcher';
 import template from 'templates/settings/settings-general.hbs';
 
@@ -53,7 +53,9 @@ class SettingsGeneralView extends View {
         'change .settings__general-direct-autotype': 'changeDirectAutotype',
         'change .settings__general-field-label-dblclick-autotype':
             'changeFieldLabelDblClickAutoType',
-        'change .settings__general-field-label-legacy-autotype': 'changeUseLegacyAutoType',
+        'change .settings__general-use-legacy-autotype': 'changeUseLegacyAutoType',
+        'change .settings__general-device-owner-auth': 'changeDeviceOwnerAuth',
+        'change .settings__general-device-owner-auth-timeout': 'changeDeviceOwnerAuthTimeout',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
         'click .settings__general-restart-btn': 'installUpdateAndRestart',
@@ -134,7 +136,10 @@ class SettingsGeneralView extends View {
             supportsTitleBarStyles: Launcher && Features.supportsTitleBarStyles(),
             titlebarStyle: AppSettingsModel.titlebarStyle,
             storageProviders,
-            showReloadApp: Features.isStandalone
+            showReloadApp: Features.isStandalone,
+            hasDeviceOwnerAuth: Launcher && Features.isMac,
+            deviceOwnerAuth: AppSettingsModel.deviceOwnerAuth,
+            deviceOwnerAuthTimeout: AppSettingsModel.deviceOwnerAuthTimeoutMinutes
         });
         this.renderProviderViews(storageProviders);
     }
@@ -407,13 +412,11 @@ class SettingsGeneralView extends View {
     changeUseGroupIconForEntries(e) {
         const useGroupIconForEntries = e.target.checked || false;
         AppSettingsModel.useGroupIconForEntries = useGroupIconForEntries;
-        Events.emit('refresh');
     }
 
     changeDirectAutotype(e) {
         const directAutotype = e.target.checked || false;
         AppSettingsModel.directAutotype = directAutotype;
-        Events.emit('refresh');
     }
 
     changeFieldLabelDblClickAutoType(e) {
@@ -426,6 +429,25 @@ class SettingsGeneralView extends View {
         const useLegacyAutoType = e.target.checked || false;
         AppSettingsModel.useLegacyAutoType = useLegacyAutoType;
         Events.emit('refresh');
+    }
+
+    changeDeviceOwnerAuth(e) {
+        const deviceOwnerAuth = e.target.value || null;
+
+        let deviceOwnerAuthTimeoutMinutes = AppSettingsModel.deviceOwnerAuthTimeoutMinutes | 0;
+        if (deviceOwnerAuth) {
+            const timeouts = { unlock: [30, 10080], credentials: [30, 525600] };
+            const [tMin, tMax] = timeouts[deviceOwnerAuth] || [0, 0];
+            deviceOwnerAuthTimeoutMinutes = minmax(deviceOwnerAuthTimeoutMinutes, tMin, tMax);
+        }
+
+        AppSettingsModel.set({ deviceOwnerAuth, deviceOwnerAuthTimeoutMinutes });
+        this.render();
+    }
+
+    changeDeviceOwnerAuthTimeout(e) {
+        const deviceOwnerAuthTimeout = e.target.value | 0;
+        AppSettingsModel.deviceOwnerAuthTimeoutMinutes = deviceOwnerAuthTimeout;
     }
 
     installUpdateAndRestart() {
