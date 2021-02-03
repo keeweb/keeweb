@@ -137,7 +137,7 @@ class SettingsGeneralView extends View {
             titlebarStyle: AppSettingsModel.titlebarStyle,
             storageProviders,
             showReloadApp: Features.isStandalone,
-            hasDeviceOwnerAuth: Launcher && Features.isMac,
+            hasDeviceOwnerAuth: Launcher && Launcher.hasTouchId(),
             deviceOwnerAuth: AppSettingsModel.deviceOwnerAuth,
             deviceOwnerAuthTimeout: AppSettingsModel.deviceOwnerAuthTimeoutMinutes
         });
@@ -436,13 +436,15 @@ class SettingsGeneralView extends View {
 
         let deviceOwnerAuthTimeoutMinutes = AppSettingsModel.deviceOwnerAuthTimeoutMinutes | 0;
         if (deviceOwnerAuth) {
-            const timeouts = { unlock: [30, 10080], credentials: [30, 525600] };
+            const timeouts = { memory: [30, 10080], file: [30, 525600] };
             const [tMin, tMax] = timeouts[deviceOwnerAuth] || [0, 0];
             deviceOwnerAuthTimeoutMinutes = minmax(deviceOwnerAuthTimeoutMinutes, tMin, tMax);
         }
 
         AppSettingsModel.set({ deviceOwnerAuth, deviceOwnerAuthTimeoutMinutes });
         this.render();
+
+        this.appModel.checkEncryptedPasswordsStorage();
     }
 
     changeDeviceOwnerAuthTimeout(e) {

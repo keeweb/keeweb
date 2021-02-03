@@ -1,6 +1,8 @@
 const { readXoredValue, makeXoredValue } = require('../util/byte-utils');
 const { reqNative } = require('../util/req-native');
 
+let testCipherParams;
+
 module.exports = {
     hardwareEncrypt,
     hardwareDecrypt
@@ -30,11 +32,36 @@ async function hardwareCrypto(value, encrypt, touchIdPrompt) {
     const data = readXoredValue(value);
 
     let res;
-    if (encrypt) {
-        await checkKey();
-        res = await secureEnclave.encrypt({ keyTag, data });
+    const isDev = !__dirname.includes('.asar');
+    if (isDev && process.env.KEEWEB_EMULATE_HARDWARE_ENCRYPTION) {
+        const crypto = require('crypto');
+        if (!testCipherParams) {
+            let key, iv;
+            if (process.env.KEEWEB_EMULATE_HARDWARE_ENCRYPTION === 'persistent') {
+                key = Buffer.alloc(32, 0);
+                iv = Buffer.alloc(16, 0);
+            } else {
+                key = crypto.randomBytes(32);
+                iv = crypto.randomBytes(16);
+            }
+            testCipherParams = { key, iv };
+        }
+        const { key, iv } = testCipherParams;
+        const algo = 'aes-256-cbc';
+        let cipher;
+        if (encrypt) {
+            cipher = crypto.createCipheriv(algo, key, iv);
+        } else {
+            cipher = crypto.createDecipheriv(algo, key, iv);
+        }
+        res = Buffer.concat([cipher.update(data), cipher.final()]);
     } else {
-        res = await secureEnclave.decrypt({ keyTag, data, touchIdPrompt });
+        if (encrypt) {
+            await checkKey();
+            res = await secureEnclave.encrypt({ keyTag, data });
+        } else {
+            res = await secureEnclave.decrypt({ keyTag, data, touchIdPrompt });
+        }
     }
 
     data.fill(0);

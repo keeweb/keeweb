@@ -487,6 +487,13 @@ class FileModel extends Model {
             syncError: error
         });
 
+        if (!error && this.passwordChanged && this.encryptedPassword) {
+            this.set({
+                encryptedPassword: null,
+                encryptedPasswordDate: null
+            });
+        }
+
         if (!this.open) {
             return;
         }
@@ -757,7 +764,9 @@ FileModel.defineModelProperties({
     fingerprint: null, // obsolete
     oldPasswordHash: null,
     oldKeyFileHash: null,
-    oldKeyChangeDate: null
+    oldKeyChangeDate: null,
+    encryptedPassword: null,
+    encryptedPasswordDate: null
 });
 
 export { FileModel };

@@ -190,3 +190,22 @@ kdbxweb.ProtectedValue.prototype.saltedValue = function () {
     }
     return salted;
 };
+
+kdbxweb.ProtectedValue.prototype.dataAndSalt = function () {
+    return {
+        data: [...this._value],
+        salt: [...this._salt]
+    };
+};
+
+kdbxweb.ProtectedValue.prototype.toBase64 = function () {
+    const binary = this.getBinary();
+    const base64 = kdbxweb.ByteUtils.bytesToBase64(binary);
+    kdbxweb.ByteUtils.zeroBuffer(binary);
+    return base64;
+};
+
+kdbxweb.ProtectedValue.fromBase64 = function (base64) {
+    const bytes = kdbxweb.ByteUtils.base64ToBytes(base64);
+    return kdbxweb.ProtectedValue.fromBinary(bytes);
+};

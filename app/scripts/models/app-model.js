@@ -4,8 +4,8 @@ import { SearchResultCollection } from 'collections/search-result-collection';
 import { FileCollection } from 'collections/file-collection';
 import { FileInfoCollection } from 'collections/file-info-collection';
 import { RuntimeInfo } from 'const/runtime-info';
-import { Launcher } from 'comp/launcher';
 import { UsbListener } from 'comp/app/usb-listener';
+import { NativeModules } from 'comp/launcher/native-modules';
 import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { EntryModel } from 'models/entry-model';
@@ -37,6 +37,7 @@ class AppModel {
     isBeta = RuntimeInfo.beta;
     advancedSearch = null;
     attachedYubiKeysCount = 0;
+    memoryPasswordStorage = {};
 
     constructor() {
         Events.on('refresh', this.refresh.bind(this));
@@ -663,9 +664,13 @@ class AppModel {
             path: params.path,
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
-            backup: (fileInfo && fileInfo.backup) || null,
+            backup: fileInfo?.backup || null,
             chalResp: params.chalResp
         });
+        if (params.encryptedPassword) {
+            file.encryptedPassword = fileInfo.encryptedPassword;
+            file.encryptedPasswordDate = fileInfo?.encryptedPasswordDate || new Date();
+        }
         const openComplete = (err) => {
             if (err) {
                 return callback(err);
@@ -769,6 +774,14 @@ class AppModel {
                     keyFilePath: file.keyFilePath || null
                 });
         }
+        if (this.settings.deviceOwnerAuth === 'file' && file.encryptedPassword) {
+            const maxDate = new Date(file.encryptedPasswordDate);
+            maxDate.setMinutes(maxDate.getMinutes() + this.settings.deviceOwnerAuthTimeoutMinutes);
+            if (maxDate > new Date()) {
+                fileInfo.encryptedPassword = file.encryptedPassword;
+                fileInfo.encryptedPasswordDate = file.encryptedPasswordDate;
+            }
+        }
         this.fileInfos.remove(file.id);
         this.fileInfos.unshift(fileInfo);
         this.fileInfos.save();
@@ -810,6 +823,9 @@ class AppModel {
             if (this.attachedYubiKeysCount > 0 && !this.files.some((f) => f.external)) {
                 this.tryOpenOtpDeviceInBackground();
             }
+        }
+        if (this.settings.deviceOwnerAuth) {
+            this.saveEncryptedPassword(file, params);
         }
     }
 
@@ -1267,6 +1283,97 @@ class AppModel {
                     return matchingEntry;
                 }
             }
+        }
+    }
+
+    saveEncryptedPassword(file, params) {
+        if (!this.settings.deviceOwnerAuth || params.encryptedPassword) {
+            return;
+        }
+        NativeModules.hardwareEncrypt(params.password)
+            .then((encryptedPassword) => {
+                encryptedPassword = encryptedPassword.toBase64();
+                const fileInfo = this.fileInfos.get(file.id);
+                const encryptedPasswordDate = new Date();
+                file.encryptedPassword = encryptedPassword;
+                file.encryptedPasswordDate = encryptedPasswordDate;
+                if (this.settings.deviceOwnerAuth === 'file') {
+                    fileInfo.encryptedPassword = encryptedPassword;
+                    fileInfo.encryptedPasswordDate = encryptedPasswordDate;
+                    this.fileInfos.save();
+                } else if (this.settings.deviceOwnerAuth === 'memory') {
+                    this.memoryPasswordStorage[file.id] = {
+                        value: encryptedPassword,
+                        date: encryptedPasswordDate
+                    };
+                }
+            })
+            .catch((e) => {
+                file.encryptedPassword = null;
+                file.encryptedPasswordDate = null;
+                delete this.memoryPasswordStorage[file.id];
+                this.appLogger.error('Error encrypting password', e);
+            });
+    }
+
+    getMemoryPassword(fileId) {
+        return this.memoryPasswordStorage[fileId];
+    }
+
+    checkEncryptedPasswordsStorage() {
+        if (this.settings.deviceOwnerAuth === 'file') {
+            let changed = false;
+            for (const fileInfo of this.fileInfos) {
+                if (this.memoryPasswordStorage[fileInfo.id]) {
+                    fileInfo.encryptedPassword = this.memoryPasswordStorage[fileInfo.id].value;
+                    fileInfo.encryptedPasswordDate = this.memoryPasswordStorage[fileInfo.id].date;
+                    changed = true;
+                }
+            }
+            if (changed) {
+                this.fileInfos.save();
+            }
+            for (const file of this.files) {
+                if (this.memoryPasswordStorage[file.id]) {
+                    file.encryptedPassword = this.memoryPasswordStorage[file.id].value;
+                    file.encryptedPasswordDate = this.memoryPasswordStorage[file.id].date;
+                }
+            }
+        } else if (this.settings.deviceOwnerAuth === 'memory') {
+            let changed = false;
+            for (const fileInfo of this.fileInfos) {
+                if (fileInfo.encryptedPassword) {
+                    this.memoryPasswordStorage[fileInfo.id] = {
+                        value: fileInfo.encryptedPassword,
+                        date: fileInfo.encryptedPasswordDate
+                    };
+                    fileInfo.encryptedPassword = null;
+                    fileInfo.encryptedPasswordDate = null;
+                    changed = true;
+                }
+            }
+            if (changed) {
+                this.fileInfos.save();
+            }
+        } else {
+            let changed = false;
+            for (const fileInfo of this.fileInfos) {
+                if (fileInfo.encryptedPassword) {
+                    fileInfo.encryptedPassword = null;
+                    fileInfo.encryptedPasswordDate = null;
+                    changed = true;
+                }
+            }
+            if (changed) {
+                this.fileInfos.save();
+            }
+            for (const file of this.files) {
+                if (file.encryptedPassword) {
+                    file.encryptedPassword = null;
+                    file.encryptedPasswordDate = null;
+                }
+            }
+            this.memoryPasswordStorage = {};
         }
     }
 }

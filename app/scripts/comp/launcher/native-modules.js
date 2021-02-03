@@ -139,36 +139,6 @@ if (Launcher) {
             });
         },
 
-        makeXoredValue(val) {
-            const data = Buffer.from(val);
-            const random = Buffer.from(kdbxweb.Random.getBytes(data.length));
-
-            for (let i = 0; i < data.length; i++) {
-                data[i] ^= random[i];
-            }
-
-            const result = { data: [...data], random: [...random] };
-
-            data.fill(0);
-            random.fill(0);
-
-            return result;
-        },
-
-        readXoredValue(val) {
-            const data = Buffer.from(val.data);
-            const random = Buffer.from(val.random);
-
-            for (let i = 0; i < data.length; i++) {
-                data[i] ^= random[i];
-            }
-
-            val.data.fill(0);
-            val.random.fill(0);
-
-            return data;
-        },
-
         startUsbListener() {
             this.call('startUsbListener');
             this.usbListenerRunning = true;
@@ -202,16 +172,18 @@ if (Launcher) {
 
         hardwareEncrypt: async (value) => {
             const { ipcRenderer } = Launcher.electron();
-            value = NativeModules.makeXoredValue(value);
-            const encrypted = await ipcRenderer.invoke('hardwareEncrypt', value);
-            return NativeModules.readXoredValue(encrypted);
+            const { data, salt } = await ipcRenderer.invoke('hardwareEncrypt', value.dataAndSalt());
+            return new kdbxweb.ProtectedValue(data, salt);
         },
 
         hardwareDecrypt: async (value, touchIdPrompt) => {
             const { ipcRenderer } = Launcher.electron();
-            value = NativeModules.makeXoredValue(value);
-            const decrypted = await ipcRenderer.invoke('hardwareDecrypt', value, touchIdPrompt);
-            return NativeModules.readXoredValue(decrypted);
+            const { data, salt } = await ipcRenderer.invoke(
+                'hardwareDecrypt',
+                value.dataAndSalt(),
+                touchIdPrompt
+            );
+            return new kdbxweb.ProtectedValue(data, salt);
         },
 
         kbdGetActiveWindow(options) {

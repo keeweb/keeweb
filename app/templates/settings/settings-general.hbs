@@ -181,8 +181,8 @@
             <label for="settings__general-device-owner-auth">{{res 'setGenTouchId'}}:</label>
             <select class="settings__general-device-owner-auth settings__select input-base" id="settings__general-device-owner-auth">
                 <option value="" {{#unless deviceOwnerAuth}}selected{{/unless}}>{{res 'setGenTouchIdDisabled'}}</option>
-                <option value="unlock" {{#ifeq deviceOwnerAuth 'unlock'}}selected{{/ifeq}}>{{res 'setGenTouchIdUnlock'}}</option>
-                <option value="credentials" {{#ifeq deviceOwnerAuth 'credentials'}}selected{{/ifeq}}>{{res 'setGenTouchIdCredentials'}}</option>
+                <option value="memory" {{#ifeq deviceOwnerAuth 'memory'}}selected{{/ifeq}}>{{res 'setGenTouchIdMemory'}}</option>
+                <option value="file" {{#ifeq deviceOwnerAuth 'file'}}selected{{/ifeq}}>{{res 'setGenTouchIdFile'}}</option>
             </select>
         </div>
         {{#if deviceOwnerAuth}}
@@ -196,7 +196,7 @@
                 <option value="480" {{#ifeq deviceOwnerAuthTimeout 480}}selected{{/ifeq}}>{{#Res 'hours'}}8{{/Res}}</option>
                 <option value="1440" {{#ifeq deviceOwnerAuthTimeout 1440}}selected{{/ifeq}}>{{Res 'oneDay'}}</option>
                 <option value="10080" {{#ifeq deviceOwnerAuthTimeout 10080}}selected{{/ifeq}}>{{Res 'oneWeek'}}</option>
-                {{#ifeq deviceOwnerAuth 'credentials'}}
+                {{#ifeq deviceOwnerAuth 'file'}}
                     <option value="43200" {{#ifeq deviceOwnerAuthTimeout 43200}}selected{{/ifeq}}>{{Res 'oneMonth'}}</option>
                     <option value="525600" {{#ifeq deviceOwnerAuthTimeout 525600}}selected{{/ifeq}}>{{Res 'oneYear'}}</option>
                 {{/ifeq}}

@@ -34,8 +34,8 @@ const KdbxwebInit = {
                 hash(args) {
                     const ts = logger.ts();
 
-                    const password = NativeModules.makeXoredValue(args.password);
-                    const salt = NativeModules.makeXoredValue(args.salt);
+                    const password = kdbxweb.ProtectedValue.fromBinary(args.password).dataAndSalt();
+                    const salt = kdbxweb.ProtectedValue.fromBinary(args.salt).dataAndSalt();
 
                     return NativeModules.argon2(password, salt, {
                         type: args.type,
@@ -52,7 +52,8 @@ const KdbxwebInit = {
 
                             logger.debug('Argon2 hash calculated', logger.ts(ts));
 
-                            return NativeModules.readXoredValue(res);
+                            res = new kdbxweb.ProtectedValue(res.data, res.salt);
+                            return res.getBinary();
                         })
                         .catch((err) => {
                             password.data.fill(0);

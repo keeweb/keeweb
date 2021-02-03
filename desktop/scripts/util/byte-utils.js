@@ -3,35 +3,35 @@ const crypto = require('crypto');
 module.exports = {
     readXoredValue: function readXoredValue(val) {
         const data = Buffer.from(val.data);
-        const random = Buffer.from(val.random);
+        const salt = Buffer.from(val.salt);
 
         val.data.fill(0);
-        val.random.fill(0);
+        val.salt.fill(0);
 
         for (let i = 0; i < data.length; i++) {
-            data[i] ^= random[i];
+            data[i] ^= salt[i];
         }
 
-        random.fill(0);
+        salt.fill(0);
 
         return data;
     },
 
     makeXoredValue: function makeXoredValue(val) {
         const data = Buffer.from(val);
-        const random = crypto.randomBytes(data.length);
+        const salt = crypto.randomBytes(data.length);
         for (let i = 0; i < data.length; i++) {
-            data[i] ^= random[i];
+            data[i] ^= salt[i];
         }
-        const result = { data: [...data], random: [...random] };
+        const result = { data: [...data], salt: [...salt] };
         data.fill(0);
-        random.fill(0);
+        salt.fill(0);
 
         val.fill(0);
 
         setTimeout(() => {
             result.data.fill(0);
-            result.random.fill(0);
+            result.salt.fill(0);
         }, 0);
 
         return result;

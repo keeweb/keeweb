@@ -80,7 +80,10 @@
         <div class="open__pass-field-wrap">
             <input class="open__pass-input" name="password" type="password" size="30" autocomplete="new-password" maxlength="1024"
                    placeholder="{{#if canOpen}}{{res 'openClickToOpen'}}{{/if}}" readonly tabindex="23" />
-            <div class="open__pass-enter-btn" tabindex="24"><i class="fa fa-level-down-alt rotate-90"></i></div>
+            <div class="open__pass-enter-btn" tabindex="24">
+                <i class="fa fa-level-down-alt rotate-90 open__pass-enter-btn-icon-enter"></i>
+                <i class="fa fa-fingerprint open__pass-enter-btn-icon-touch-id"></i>
+            </div>
             <div class="open__pass-opening-icon"><i class="fa fa-spinner spin"></i></div>
         </div>
         <div class="open__settings">

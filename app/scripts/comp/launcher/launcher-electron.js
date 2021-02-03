@@ -312,6 +312,17 @@ const Launcher = {
     },
     setGlobalShortcuts(appSettings) {
         this.remoteApp().setGlobalShortcuts(appSettings);
+    },
+    hasTouchId() {
+        if (this.hasTouchId.value === undefined) {
+            if (RuntimeInfo.devMode) {
+                this.hasTouchId.value = !!process.env.KEEWEB_EMULATE_HARDWARE_ENCRYPTION;
+            } else {
+                const { systemPreferences } = this.electron().remote;
+                this.hasTouchId.value = !!systemPreferences.canPromptTouchID();
+            }
+        }
+        return this.hasTouchId.value;
     }
 };
 
