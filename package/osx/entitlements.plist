@@ -8,8 +8,6 @@
     <true/>
     <key>com.apple.security.cs.allow-dyld-environment-variables</key>
     <true/>
-    <key>com.apple.security.get-task-allow</key>
-    <true/>
     <key>keychain-access-groups</key>
     <array>
       <string>3LE7JZ657W.net.antelle.keeweb</string>
