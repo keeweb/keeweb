@@ -76,6 +76,15 @@ module.exports = function (grunt) {
         ]
     });
 
+    const linuxDependencies = [
+        'libappindicator1',
+        'libgconf-2-4',
+        'gnome-keyring',
+        'libxtst6',
+        'libx11-6',
+        'libatspi2.0-0'
+    ];
+
     grunt.initConfig({
         noop: { noop: {} },
         clean: {
@@ -439,10 +448,10 @@ module.exports = function (grunt) {
                             category: 'Utility'
                         },
                         rpm: {
-                            // depends: ['libappindicator1', 'libgconf-2-4', 'gnome-keyring']
+                            // depends: linuxDependencies
                         },
                         snap: {
-                            stagePackages: ['libappindicator1', 'libgconf-2-4', 'gnome-keyring']
+                            stagePackages: linuxDependencies
                         }
                     }
                 }
@@ -570,7 +579,7 @@ module.exports = function (grunt) {
                         pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
                         targetDir: 'dist/desktop',
                         appName: 'KeeWeb',
-                        depends: 'libappindicator1, libgconf-2-4, gnome-keyring',
+                        depends: linuxDependencies.join(', '),
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
                         }
