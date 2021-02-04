@@ -621,5 +621,6 @@
   "yubiKeyTouchRequestedHeader": "Bitte den YubiKey berühren",
   "yubiKeyTouchRequestedBody": "Bitte den YubiKey mit der Seriennummer {} berühren",
   "yubiKeyDisabledErrorHeader": "USB ist deaktiviert",
-  "yubiKeyDisabledErrorBody": "YubiKey ist zum Öffnen dieser Datei erforderlich. Bitte USB-Geräte in den Einstellungen aktivieren."
+  "yubiKeyDisabledErrorBody": "YubiKey ist zum Öffnen dieser Datei erforderlich. Bitte USB-Geräte in den Einstellungen aktivieren.",
+  "bioOpenAuthPrompt": "eine Datei entsperren: \"{}\""
 }
