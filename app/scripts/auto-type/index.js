@@ -3,12 +3,14 @@ import { AutoTypeFilter } from 'auto-type/auto-type-filter';
 import { AutoTypeHelperFactory } from 'auto-type/auto-type-helper-factory';
 import { AutoTypeParser } from 'auto-type/auto-type-parser';
 import { Launcher } from 'comp/launcher';
+import { Features } from 'util/features';
 import { Alerts } from 'comp/ui/alerts';
 import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { AppModel } from 'models/app-model';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
+import { Links } from 'const/links';
 import { AutoTypeSelectView } from 'views/auto-type/auto-type-select-view';
 
 const logger = new Logger('auto-type');
@@ -63,9 +65,16 @@ const AutoType = {
     runAndHandleResult(result, windowId) {
         this.run(result, windowId, (err) => {
             if (err) {
+                let body = Locale.autoTypeErrorGeneric.replace('{}', err.message || err.toString());
+                let link;
+                if (err.keyPressFailed && Features.isMac) {
+                    body = Locale.autoTypeErrorAccessibilityMacOS;
+                    link = Links.AutoTypeMacOS;
+                }
                 Alerts.error({
                     header: Locale.autoTypeError,
-                    body: Locale.autoTypeErrorGeneric.replace('{}', err.toString())
+                    body,
+                    link
                 });
             }
         });

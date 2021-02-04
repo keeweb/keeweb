@@ -12,6 +12,7 @@ const Links = {
     SelfHostedDropbox: 'https://github.com/keeweb/keeweb#self-hosting',
     UpdateJson: 'https://app.keeweb.info/update.json',
     AutoType: 'https://github.com/keeweb/keeweb/wiki/Auto-Type',
+    AutoTypeMacOS: 'https://github.com/keeweb/keeweb/wiki/Auto-Type#macos',
     Translation: 'https://keeweb.oneskyapp.com/',
     Donation: 'https://opencollective.com/keeweb#support',
     Plugins: 'https://plugins.keeweb.info',

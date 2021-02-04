@@ -10,6 +10,7 @@
                 {{#unless @last}}<br/>{{/unless}}
             {{/each}}
             {{#if pre}}<pre class="modal__pre">{{pre}}</pre>{{/if}}
+            {{#if link}}<a href="{{link}}" class="modal__link" target="_blank">{{link}}</a>{{/if}}
             {{#if hint}}<p class="muted-color">{{hint}}</p>{{/if}}
             {{#if checkbox}}
             <div class="modal__check-wrap"><input type="checkbox" id="modal__check" /><label for="modal__check">{{checkbox}}</label></div>

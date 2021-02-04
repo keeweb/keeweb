@@ -144,6 +144,10 @@ class AutoTypeEmitter {
                 }
             })
             .catch((err) => {
+                const keyPressFailed = err.message === 'Key press failed';
+                if (keyPressFailed) {
+                    err.keyPressFailed = true;
+                }
                 try {
                     this.callback(err);
                 } catch (err) {

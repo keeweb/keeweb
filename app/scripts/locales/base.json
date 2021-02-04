@@ -323,6 +323,7 @@
     "autoTypeLink": "more...",
     "autoTypeError": "Auto-type error",
     "autoTypeErrorGeneric": "There was an error performing auto-type: {}",
+    "autoTypeErrorAccessibilityMacOS": "We tried to send keystrokes to the application, but it doesn't seem to work. This may happen because of missing permissions, click here to read more about it:",
     "autoTypeErrorGlobal": "To use a system-wide shortcut, please focus the app where you want to type your password",
     "autoTypeErrorNotInstalled": "{} is not installed",
     "autoTypeHeader": "Auto-Type: Select",
