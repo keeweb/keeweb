@@ -51,6 +51,7 @@ module.exports = function(grunt) {
         'default',
         'build-desktop-app-content',
         'electron:darwin-x64',
+        'electron-patch:darwin-x64',
         'build-darwin-installer',
         'copy:desktop-darwin-helper-x64',
         'copy:desktop-darwin-installer-helper-x64',

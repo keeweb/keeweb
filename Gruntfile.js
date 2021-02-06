@@ -457,6 +457,14 @@ module.exports = function (grunt) {
                 }
             }
         },
+        'electron-patch': {
+            'win32-x64': 'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe',
+            'win32-ia32': 'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe',
+            'win32-arm64': 'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe',
+            'darwin-x64': 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app',
+            'darwin-arm64': 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app',
+            'linux': 'tmp/desktop/KeeWeb-linux-x64/keeweb'
+        },
         osacompile: {
             options: {
                 language: 'JavaScript'
