@@ -61,6 +61,7 @@ class SettingsGeneralView extends View {
         'click .settings__general-restart-btn': 'installUpdateAndRestart',
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
+        'change .settings__general-disable-offline-storage': 'changeDisableOfflineStorage',
         'change .settings__general-prv-check': 'changeStorageEnabled',
         'click .settings__general-prv-logout': 'logoutFromStorage',
         'click .settings__general-show-advanced': 'showAdvancedSettings',
@@ -139,7 +140,8 @@ class SettingsGeneralView extends View {
             showReloadApp: Features.isStandalone,
             hasDeviceOwnerAuth: Launcher && Launcher.hasTouchId(),
             deviceOwnerAuth: AppSettingsModel.deviceOwnerAuth,
-            deviceOwnerAuthTimeout: AppSettingsModel.deviceOwnerAuthTimeoutMinutes
+            deviceOwnerAuthTimeout: AppSettingsModel.deviceOwnerAuthTimeoutMinutes,
+            disableOfflineStorage: AppSettingsModel.disableOfflineStorage
         });
         this.renderProviderViews(storageProviders);
     }
@@ -474,6 +476,14 @@ class SettingsGeneralView extends View {
         const expand = e.target.checked;
         AppSettingsModel.expandGroups = expand;
         Events.emit('refresh');
+    }
+
+    changeDisableOfflineStorage(e) {
+        const disableOfflineStorage = e.target.checked;
+        AppSettingsModel.disableOfflineStorage = disableOfflineStorage;
+        if (disableOfflineStorage) {
+            this.appModel.deleteAllCachedFiles();
+        }
     }
 
     changeStorageEnabled(e) {

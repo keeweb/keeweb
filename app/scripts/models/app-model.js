@@ -526,7 +526,8 @@ class AppModel {
             fileInfo &&
             fileInfo.openDate &&
             fileInfo.rev === params.rev &&
-            fileInfo.storage !== 'file'
+            fileInfo.storage !== 'file' &&
+            !this.settings.disableOfflineStorage
         ) {
             logger.info('Open file from cache because it is latest');
             this.openFileFromCache(
@@ -547,7 +548,12 @@ class AppModel {
                 },
                 fileInfo
             );
-        } else if (!fileInfo || !fileInfo.openDate || params.storage === 'file') {
+        } else if (
+            !fileInfo ||
+            !fileInfo.openDate ||
+            params.storage === 'file' ||
+            this.settings.disableOfflineStorage
+        ) {
             this.openFileFromStorage(params, callback, fileInfo, logger);
         } else {
             logger.info('Open file from cache, will sync after load', params.storage);
@@ -595,7 +601,7 @@ class AppModel {
             logger.info('Load from storage');
             storage.load(params.path, params.opts, (err, data, stat) => {
                 if (err) {
-                    if (fileInfo && fileInfo.openDate) {
+                    if (fileInfo && fileInfo.openDate && !this.settings.disableOfflineStorage) {
                         logger.info('Open file from cache because of storage load error', err);
                         this.openFileFromCache(params, callback, fileInfo);
                     } else {
@@ -619,7 +625,8 @@ class AppModel {
                     !noCache &&
                     fileInfo &&
                     storage.name !== 'file' &&
-                    (err || (stat && stat.rev === cacheRev))
+                    (err || (stat && stat.rev === cacheRev)) &&
+                    !this.settings.disableOfflineStorage
                 ) {
                     logger.info(
                         'Open file from cache because ' + (err ? 'stat error' : 'it is latest'),
@@ -689,7 +696,7 @@ class AppModel {
             if (fileInfo) {
                 file.syncDate = fileInfo.syncDate;
             }
-            if (updateCacheOnSuccess) {
+            if (updateCacheOnSuccess && !this.settings.disableOfflineStorage) {
                 logger.info('Save loaded file to cache');
                 Storage.cache.save(file.id, null, params.fileData);
             }
@@ -976,6 +983,10 @@ class AppModel {
                             logger.info('Updated sync date, saving modified file');
                             saveToCacheAndStorage();
                         } else if (file.dirty) {
+                            if (this.settings.disableOfflineStorage) {
+                                logger.info('File is dirty and cache is disabled');
+                                return complete(err);
+                            }
                             logger.info('Saving not modified dirty file to cache');
                             Storage.cache.save(fileInfo.id, null, data, (err) => {
                                 if (err) {
@@ -1038,6 +1049,9 @@ class AppModel {
                     } else if (!file.dirty) {
                         logger.info('Saving to storage, skip cache because not dirty');
                         saveToStorage(data);
+                    } else if (this.settings.disableOfflineStorage) {
+                        logger.info('Saving to storage because cache is disabled');
+                        saveToStorage(data);
                     } else {
                         logger.info('Saving to cache');
                         Storage.cache.save(fileInfo.id, null, data, (err) => {
@@ -1061,6 +1075,10 @@ class AppModel {
                         logger.info('File does not exist in storage, creating');
                         saveToCacheAndStorage();
                     } else if (file.dirty) {
+                        if (this.settings.disableOfflineStorage) {
+                            logger.info('Stat error, dirty, cache is disabled', err || 'no error');
+                            return complete(err);
+                        }
                         logger.info('Stat error, dirty, save to cache', err || 'no error');
                         file.getData((data, e) => {
                             if (e) {
@@ -1095,6 +1113,14 @@ class AppModel {
                     loadFromStorageAndMerge();
                 }
             });
+        }
+    }
+
+    deleteAllCachedFiles() {
+        for (const fileInfo of this.fileInfos) {
+            if (fileInfo.storage && !fileInfo.modified) {
+                Storage.cache.remove(fileInfo.id);
+            }
         }
     }
 

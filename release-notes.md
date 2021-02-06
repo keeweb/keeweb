@@ -2,15 +2,16 @@ Release notes
 -------------
 ##### v1.17.0 (TBD)
 `+` opening files with Touch ID on macOS  
-`+` password quality warnings  
+`+` password quality warnings
 `+` "Have I Been Pwned" service integration (opt-in)  
 `+` automatically switching between dark and light theme  
 `*` new updater capable to upgrade major versions  
-`+` clear searchbox button  
+`+` clear searchbox button
 `+` more options for auto-lock timeout  
 `+` favicon download improvements  
 `+` auto-type field selection dropdown improvements  
 `+` new completion page after storage provider authentication  
+`+` option do disable caching files in offline storage  
 `-` fixed creating files with Argon2id KDF  
 
 ##### v1.16.7 (2020-12-31)
@@ -622,7 +623,8 @@ Performance, stability and quality improvements
 `+` track changes in local files  
 `+` mobile layout made more convenient  
 `+` command-line option to disable updater  
-`+` using system proxy settings for updater  
+`+` using system proxy se
+ttings for updater  
 `+` webapp icon for touch devices  
 `-` #80: prevent data loss on group move  
 `-` issues with clipboard clear fixed  

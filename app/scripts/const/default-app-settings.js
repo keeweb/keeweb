@@ -45,6 +45,7 @@ const DefaultAppSettings = {
     useLegacyAutoType: false, // use legacy auto-type engine (will be removed in future versions)
     deviceOwnerAuth: null, // Touch ID: null / 'memory' / 'file'
     deviceOwnerAuthTimeoutMinutes: 0, // how often master password is required with Touch ID
+    disableOfflineStorage: false, // don't cache loaded files in offline storage
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
     yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files

@@ -578,9 +578,13 @@ class AppView extends View {
                             complete: (res) => {
                                 if (res === 'ignore') {
                                     this.model.closeAllFiles();
-                                    complete(true);
+                                    if (complete) {
+                                        complete(true);
+                                    }
                                 } else {
-                                    complete(false);
+                                    if (complete) {
+                                        complete(false);
+                                    }
                                 }
                             }
                         });
