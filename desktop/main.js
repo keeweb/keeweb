@@ -1,5 +1,10 @@
 let perfTimestamps = [{ name: 'pre-init', ts: process.hrtime() }];
 
+if (process.send && process.argv.includes('--native-module-host')) {
+    require('./native-module-host');
+    return;
+}
+
 const electron = require('electron');
 const path = require('path');
 const fs = require('fs');

@@ -9,10 +9,17 @@ let NativeModules;
 if (Launcher) {
     const logger = new Logger('native-module-connector');
 
-    let host;
+    let hostRunning = false;
+    let hostStartPromise;
     let callId = 0;
     let promises = {};
     let ykChalRespCallbacks = {};
+
+    const { ipcRenderer } = Launcher.electron();
+    ipcRenderer.on('nativeModuleCallback', (e, msg) => NativeModules.hostCallback(msg));
+    ipcRenderer.on('nativeModuleHostError', (e, err) => NativeModules.hostError(err));
+    ipcRenderer.on('nativeModuleHostExit', (e, { code, sig }) => NativeModules.hostExit(code, sig));
+    ipcRenderer.on('nativeModuleHostDisconnect', () => NativeModules.hostDisconnect());
 
     const handlers = {
         yubikeys(numYubiKeys) {
@@ -50,37 +57,39 @@ if (Launcher) {
 
     NativeModules = {
         startHost() {
-            if (host) {
-                return;
+            if (hostRunning) {
+                return Promise.resolve();
+            }
+            if (hostStartPromise) {
+                return hostStartPromise;
             }
 
             logger.debug('Starting native module host');
 
-            const path = Launcher.req('path');
-            const appContentRoot = Launcher.remoteApp().getAppContentRoot();
-            const mainModulePath = path.join(appContentRoot, 'native-module-host.js');
+            hostStartPromise = this.callNoWait('start').then(() => {
+                hostStartPromise = undefined;
+                hostRunning = true;
 
-            const { fork } = Launcher.req('child_process');
+                if (this.usbListenerRunning) {
+                    return this.call('startUsbListener');
+                }
+            });
 
-            host = fork(mainModulePath);
-
-            host.on('message', (message) => this.hostCallback(message));
-
-            host.on('error', (e) => this.hostError(e));
-            host.on('exit', (code, sig) => this.hostExit(code, sig));
-
-            if (this.usbListenerRunning) {
-                this.call('start-usb');
-            }
+            return hostStartPromise;
         },
 
         hostError(e) {
             logger.error('Host error', e);
         },
 
+        hostDisconnect() {
+            logger.error('Host disconnected');
+        },
+
         hostExit(code, sig) {
             logger.error(`Host exited with code ${code} and signal ${sig}`);
-            host = null;
+
+            hostRunning = false;
 
             const err = new Error('Native module host crashed');
 
@@ -120,22 +129,19 @@ if (Launcher) {
         },
 
         call(cmd, ...args) {
-            return new Promise((resolve, reject) => {
-                if (!host) {
-                    try {
-                        this.startHost();
-                    } catch (e) {
-                        return reject(e);
-                    }
-                }
+            return this.startHost().then(() => this.callNoWait(cmd, ...args));
+        },
 
+        callNoWait(cmd, ...args) {
+            return new Promise((resolve, reject) => {
                 callId++;
                 if (callId === Number.MAX_SAFE_INTEGER) {
                     callId = 1;
                 }
                 // logger.debug('Call', cmd, args, callId);
                 promises[callId] = { cmd, resolve, reject };
-                host.send({ cmd, args, callId });
+
+                ipcRenderer.send('nativeModuleCall', { cmd, args, callId });
             });
         },
 
@@ -146,7 +152,7 @@ if (Launcher) {
 
         stopUsbListener() {
             this.usbListenerRunning = false;
-            if (host) {
+            if (hostRunning) {
                 this.call('stopUsbListener');
             }
         },
@@ -161,7 +167,7 @@ if (Launcher) {
         },
 
         yubiKeyCancelChallengeResponse() {
-            if (host) {
+            if (hostRunning) {
                 this.call('yubiKeyCancelChallengeResponse');
             }
         },
@@ -171,13 +177,11 @@ if (Launcher) {
         },
 
         hardwareEncrypt: async (value) => {
-            const { ipcRenderer } = Launcher.electron();
             const { data, salt } = await ipcRenderer.invoke('hardwareEncrypt', value.dataAndSalt());
             return new kdbxweb.ProtectedValue(data, salt);
         },
 
         hardwareDecrypt: async (value, touchIdPrompt) => {
-            const { ipcRenderer } = Launcher.electron();
             const { data, salt } = await ipcRenderer.invoke(
                 'hardwareDecrypt',
                 value.dataAndSalt(),
