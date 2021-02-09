@@ -61,6 +61,7 @@ const messageHandlers = {
         challenge = Buffer.from(challenge);
         ykChalResp.challengeResponse(yubiKey, challenge, slot, (error, result) => {
             if (error) {
+                error = errorToTransport(error);
                 if (error.code === ykChalResp.YK_ENOKEY) {
                     error.noKey = true;
                 }
@@ -253,14 +254,22 @@ function handleMessage({ callId, cmd, args }) {
             callback('result', { callId, result });
         })
         .catch((error) => {
-            error = {
-                name: error.name,
-                message: error.message,
-                stack: error.stack,
-                code: error.code
-            };
+            error = errorToTransport(error);
             callback('result', { callId, error });
         });
+}
+
+function errorToTransport(error) {
+    const obj = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        code: error.code
+    };
+    for (const [key, val] of Object.entries(error)) {
+        obj[key] = val;
+    }
+    return obj;
 }
 
 function startInOwnProcess() {
