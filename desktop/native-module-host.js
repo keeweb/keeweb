@@ -5,8 +5,7 @@ const YubiKeyVendorIds = [0x1050];
 const attachedYubiKeys = [];
 let usbListenerRunning = false;
 let autoType;
-
-startListener();
+let callback;
 
 const messageHandlers = {
     start() {},
@@ -240,38 +239,49 @@ function kbdTextAsKeys(str, modifiers) {
     }
 }
 
-function startListener() {
-    process.on('message', ({ callId, cmd, args }) => {
-        Promise.resolve()
-            .then(() => {
-                const handler = messageHandlers[cmd];
-                if (handler) {
-                    return handler(...args);
-                } else {
-                    throw new Error(`Handler not found: ${cmd}`);
-                }
-            })
-            .then((result) => {
-                callback('result', { callId, result });
-            })
-            .catch((error) => {
-                error = {
-                    name: error.name,
-                    message: error.message,
-                    stack: error.stack,
-                    code: error.code
-                };
-                callback('result', { callId, error });
-            });
-    });
+function handleMessage({ callId, cmd, args }) {
+    Promise.resolve()
+        .then(() => {
+            const handler = messageHandlers[cmd];
+            if (handler) {
+                return handler(...args);
+            } else {
+                throw new Error(`Handler not found: ${cmd}`);
+            }
+        })
+        .then((result) => {
+            callback('result', { callId, result });
+        })
+        .catch((error) => {
+            error = {
+                name: error.name,
+                message: error.message,
+                stack: error.stack,
+                code: error.code
+            };
+            callback('result', { callId, error });
+        });
+}
+
+function startInOwnProcess() {
+    callback = (cmd, ...args) => {
+        try {
+            process.send({ cmd, args });
+        } catch {}
+    };
+
+    process.on('message', handleMessage);
 
     process.on('disconnect', () => {
         process.exit(0);
     });
 }
 
-function callback(cmd, ...args) {
-    try {
-        process.send({ cmd, args });
-    } catch {}
+function startInMain(channel) {
+    channel.on('send', handleMessage);
+    callback = (cmd, ...args) => {
+        channel.emit('message', { cmd, args });
+    };
 }
+
+module.exports = { startInOwnProcess, startInMain };
