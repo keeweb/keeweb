@@ -6,8 +6,6 @@ const attachedYubiKeys = [];
 let usbListenerRunning = false;
 let autoType;
 
-process.on('disconnect', () => process.exit(0));
-
 startListener();
 
 const messageHandlers = {
