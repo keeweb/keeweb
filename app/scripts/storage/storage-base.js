@@ -264,11 +264,33 @@ class StorageBase {
 
         this.logger.debug('OAuth: popup opened');
 
-        const popupClosed = () => {
+        const processWindowMessage = (locationSearch) => {
+            const data = {};
+            for (const [key, value] of new URLSearchParams(locationSearch).entries()) {
+                data[key] = value;
+            }
+            if (data.error) {
+                this.logger.error('OAuth error', data.error, data.error_description);
+                callback('OAuth: ' + data.error);
+            } else if (data.code) {
+                Events.off('popup-closed', popupClosed);
+                window.removeEventListener('message', windowMessage);
+                this._oauthCodeReceived(data, session, callback);
+            } else {
+                this.logger.debug('Skipped OAuth message', data);
+            }
+        };
+
+        const popupClosed = (e) => {
             Events.off('popup-closed', popupClosed);
             window.removeEventListener('message', windowMessage);
-            this.logger.error('OAuth error', 'popup closed');
-            callback('OAuth: popup closed');
+            if (e.locationSearch) {
+                // see #1711: mobile Safari in PWA mode can't close the pop-up, but it returns the url
+                processWindowMessage(e.locationSearch);
+            } else {
+                this.logger.error('OAuth error', 'popup closed');
+                callback('OAuth: popup closed');
+            }
         };
 
         const windowMessage = (e) => {
@@ -283,20 +305,7 @@ class StorageBase {
                 this.logger.debug('Skipped OAuth message for another storage', e.data.storage);
                 return;
             }
-            const data = {};
-            for (const [key, value] of new URLSearchParams(e.data.search).entries()) {
-                data[key] = value;
-            }
-            if (data.error) {
-                this.logger.error('OAuth error', data.error, data.error_description);
-                callback('OAuth: ' + data.error);
-            } else if (data.code) {
-                Events.off('popup-closed', popupClosed);
-                window.removeEventListener('message', windowMessage);
-                this._oauthCodeReceived(data, session, callback);
-            } else {
-                this.logger.debug('Skipped OAuth message', data);
-            }
+            processWindowMessage(e.data.search);
         };
         Events.on('popup-closed', popupClosed);
         window.addEventListener('message', windowMessage);

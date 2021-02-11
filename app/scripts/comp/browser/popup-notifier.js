@@ -1,5 +1,6 @@
 import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
+import { Features } from 'util/features';
 import { Alerts } from 'comp/ui/alerts';
 import { Timeouts } from 'const/timeouts';
 import { Locale } from 'util/locale';
@@ -45,12 +46,30 @@ const PopupNotifier = {
                 Timeouts.CheckWindowClosed
             );
         } else {
+            if (Features.isStandalone) {
+                const loc = PopupNotifier.tryGetLocationSearch(win);
+                if (loc) {
+                    try {
+                        win.close();
+                    } catch {}
+                    PopupNotifier.triggerClosed(win, loc);
+                    return;
+                }
+            }
             PopupNotifier.deferCheckClosed(win);
         }
     },
 
-    triggerClosed(win) {
-        Events.emit('popup-closed', win);
+    tryGetLocationSearch(win) {
+        try {
+            if (win.location.host === location.host) {
+                return win.location.search;
+            }
+        } catch {}
+    },
+
+    triggerClosed(window, locationSearch) {
+        Events.emit('popup-closed', { window, locationSearch });
     }
 };
 
