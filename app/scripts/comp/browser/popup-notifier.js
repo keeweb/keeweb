@@ -46,7 +46,7 @@ const PopupNotifier = {
                 Timeouts.CheckWindowClosed
             );
         } else {
-            if (Features.isStandalone) {
+            if (Features.isiOS) {
                 const loc = PopupNotifier.tryGetLocationSearch(win);
                 if (loc) {
                     try {
