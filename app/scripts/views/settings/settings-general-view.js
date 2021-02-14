@@ -138,7 +138,7 @@ class SettingsGeneralView extends View {
             titlebarStyle: AppSettingsModel.titlebarStyle,
             storageProviders,
             showReloadApp: Features.isStandalone,
-            hasDeviceOwnerAuth: Launcher && Launcher.hasTouchId(),
+            hasDeviceOwnerAuth: Features.isDesktop && Features.isMac,
             deviceOwnerAuth: AppSettingsModel.deviceOwnerAuth,
             deviceOwnerAuthTimeout: AppSettingsModel.deviceOwnerAuthTimeoutMinutes,
             disableOfflineStorage: AppSettingsModel.disableOfflineStorage
