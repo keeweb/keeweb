@@ -443,6 +443,7 @@
     "setGenClearSeconds": "In {} seconds",
     "setGenClearMinute": "In a minute",
     "setGenMinInstead": "Minimize the app instead of close",
+    "setGenMinOnCopy": "Minimize on copy",
     "setGenLock": "Auto lock",
     "setGenLockMinimize": "When the app is minimized",
     "setGenLockCopy": "On password copy",

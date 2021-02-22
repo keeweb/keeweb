@@ -69,6 +69,7 @@ class AppView extends View {
         this.listenTo(Events, 'select-all', this.selectAll);
         this.listenTo(Events, 'menu-select', this.menuSelect);
         this.listenTo(Events, 'lock-workspace', this.lockWorkspace);
+        this.listenTo(Events, 'minimize-app', this.minimizeApp);
         this.listenTo(Events, 'show-file', this.showFileSettings);
         this.listenTo(Events, 'open-file', this.toggleOpenFile);
         this.listenTo(Events, 'save-all', this.saveAll);
@@ -601,6 +602,10 @@ class AppView extends View {
                 }
             }
         }
+    }
+
+    minimizeApp() {
+        Launcher.minimizeApp();
     }
 
     closeAllFilesAndShowFirst() {

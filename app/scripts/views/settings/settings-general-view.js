@@ -36,6 +36,7 @@ class SettingsGeneralView extends View {
         'change .settings__general-auto-save-interval': 'changeAutoSaveInterval',
         'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
+        'change .settings__general-minimize-on-copy': 'changeMinimizeOnCopy',
         'change .settings__general-audit-passwords': 'changeAuditPasswords',
         'change .settings__general-audit-password-entropy': 'changeAuditPasswordEntropy',
         'change .settings__general-exclude-pins-from-audit': 'changeExcludePinsFromAudit',

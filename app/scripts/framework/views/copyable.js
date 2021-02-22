@@ -19,6 +19,11 @@ const Copyable = {
         const msg = clipboardTime
             ? Locale.detFieldCopiedTime.replace('{}', clipboardTime)
             : Locale.detFieldCopied;
+        if (AppSettingsModel.minimizeOnCopy) {
+            setTimeout(() => {
+                Events.emit('minimize-app');
+            }, 0);
+        }
         let tip;
         if (!this.isHidden()) {
             tip = Tip.createTip(fieldLabel[0], {
