@@ -36,7 +36,7 @@ class SettingsGeneralView extends View {
         'change .settings__general-auto-save-interval': 'changeAutoSaveInterval',
         'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
-        'change .settings__general-minimize-on-copy': 'changeMinimizeOnCopy',
+        'change .settings__general-minimize-on-field-copy': 'changeMinimizeOnFieldCopy',
         'change .settings__general-audit-passwords': 'changeAuditPasswords',
         'change .settings__general-audit-password-entropy': 'changeAuditPasswordEntropy',
         'change .settings__general-exclude-pins-from-audit': 'changeExcludePinsFromAudit',
@@ -100,6 +100,7 @@ class SettingsGeneralView extends View {
             autoSaveInterval: AppSettingsModel.autoSaveInterval,
             idleMinutes: AppSettingsModel.idleMinutes,
             minimizeOnClose: AppSettingsModel.minimizeOnClose,
+            minimizeOnFieldCopy: AppSettingsModel.minimizeOnFieldCopy,
             devTools: Launcher && Launcher.devTools,
             canAutoUpdate: Updater.enabled,
             canAutoSaveOnClose: !!Launcher,
@@ -340,6 +341,11 @@ class SettingsGeneralView extends View {
     changeMinimize(e) {
         const minimizeOnClose = e.target.checked || false;
         AppSettingsModel.minimizeOnClose = minimizeOnClose;
+    }
+
+    changeMinimizeOnFieldCopy(e) {
+        const minimizeOnFieldCopy = e.target.checked || false;
+        AppSettingsModel.minimizeOnFieldCopy = minimizeOnFieldCopy;
     }
 
     changeAuditPasswords(e) {
