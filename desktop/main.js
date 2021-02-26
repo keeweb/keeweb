@@ -174,6 +174,11 @@ main.restartAndUpdate = function (updateFilePath) {
 };
 main.minimizeApp = function (menuItemLabels) {
     let imagePath;
+    // a workaround to correctly restore focus on windows platform
+    // without this workaround, focus is not restored to the previously focused field
+    if (process.platform === 'win32') {
+        mainWindow.minimize();
+    }
     mainWindow.hide();
     if (process.platform === 'darwin') {
         main.dock.hide();

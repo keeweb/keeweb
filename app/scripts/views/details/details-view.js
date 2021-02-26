@@ -29,6 +29,7 @@ import { isEqual } from 'util/fn';
 import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
+import { Launcher } from 'comp/launcher';
 
 class DetailsView extends View {
     parent = '.app__details';
@@ -157,7 +158,7 @@ class DetailsView extends View {
                 fieldView.parent = views === fieldViews ? fieldsMainEl[0] : fieldsAsideEl[0];
                 fieldView.render();
                 fieldView.on('change', this.fieldChanged.bind(this));
-                fieldView.on('copy', this.fieldCopied.bind(this));
+                fieldView.on('copy', (e) => this.copyFieldValue(e));
                 fieldView.on('autotype', (e) => this.autoType(e.source.model.sequence));
                 if (hideEmptyFields) {
                     const value = fieldView.model.value();
@@ -484,7 +485,8 @@ class DetailsView extends View {
                 CopyPaste.createHiddenInput(fieldText);
             }
             const copyRes = CopyPaste.copy(fieldText);
-            this.fieldCopied({ source: editView, copyRes });
+            this.copyFieldValue({ source: editView, copyRes });
+
             return true;
         }
         return false;
@@ -1004,6 +1006,13 @@ class DetailsView extends View {
         if (!this.model.readOnly) {
             this.views.issues = new DetailsIssuesView(this.model);
             this.views.issues.render();
+        }
+    }
+
+    copyFieldValue(e) {
+        this.fieldCopied(e);
+        if (AppSettingsModel.minimizeOnFieldCopy) {
+            Launcher.minimizeApp();
         }
     }
 }
