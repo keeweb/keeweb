@@ -11,7 +11,8 @@ Release notes
 `+` favicon download improvements  
 `+` auto-type field selection dropdown improvements  
 `+` new completion page after storage provider authentication  
-`+` option do disable caching files in offline storage  
+`+` option to disable caching files in offline storage  
+`+` option to minimize on field copy  
 `-` fixed creating files with Argon2id KDF  
 
 ##### v1.16.7 (2020-12-31)
