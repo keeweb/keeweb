@@ -1,5 +1,23 @@
 Release notes
 -------------
+##### v1.17.0 (TBD)
+`+` opening files with Touch ID on macOS  
+`+` password quality warnings
+`+` "Have I Been Pwned" service integration (opt-in)  
+`+` automatically switching between dark and light theme  
+`*` new updater capable to upgrade major versions  
+`+` clear searchbox button
+`+` more options for auto-lock timeout  
+`+` favicon download improvements  
+`+` auto-type field selection dropdown improvements  
+`+` new completion page after storage provider authentication  
+`+` option to disable caching files in offline storage  
+`+` option to minimize on field copy  
+`-` fixed creating files with Argon2id KDF  
+
+##### v1.16.8 (TBD)
+`-` fix #1726: search in protected fields  
+
 ##### v1.16.7 (2020-12-31)
 `-` fix #1671: new lines removal issue in notes  
 
