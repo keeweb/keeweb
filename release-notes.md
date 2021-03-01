@@ -15,6 +15,9 @@ Release notes
 `+` option to minimize on field copy  
 `-` fixed creating files with Argon2id KDF  
 
+##### v1.16.8 (TBD)
+`-` fix #1726: search in protected fields  
+
 ##### v1.16.7 (2020-12-31)
 `-` fix #1671: new lines removal issue in notes  
 

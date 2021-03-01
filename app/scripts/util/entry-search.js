@@ -127,8 +127,8 @@ class EntrySearch {
         return context.matches && context.matches.length === find.length;
     }
 
-    static matchStringMultiLower(str, find, context, lower) {
-        return EntrySearch.matchStringLower(str, find, context, true);
+    static matchStringMultiLower(str, find, context) {
+        return EntrySearch.matchStringMulti(str, find, context, true);
     }
 
     static matchRegex(str, regex) {
