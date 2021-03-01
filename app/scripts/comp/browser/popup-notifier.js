@@ -1,6 +1,5 @@
 import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
-import { Features } from 'util/features';
 import { Alerts } from 'comp/ui/alerts';
 import { Timeouts } from 'const/timeouts';
 import { Locale } from 'util/locale';
@@ -46,15 +45,13 @@ const PopupNotifier = {
                 Timeouts.CheckWindowClosed
             );
         } else {
-            if (Features.isiOS) {
-                const loc = PopupNotifier.tryGetLocationSearch(win);
-                if (loc) {
-                    try {
-                        win.close();
-                    } catch {}
-                    PopupNotifier.triggerClosed(win, loc);
-                    return;
-                }
+            const loc = PopupNotifier.tryGetLocationSearch(win);
+            if (loc) {
+                try {
+                    win.close();
+                } catch {}
+                PopupNotifier.triggerClosed(win, loc);
+                return;
             }
             PopupNotifier.deferCheckClosed(win);
         }
