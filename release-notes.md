@@ -17,6 +17,7 @@ Release notes
 
 ##### v1.16.8 (TBD)
 `-` fix #1726: search in protected fields  
+`-` fix #1713: OneDrive authentication on web  
 
 ##### v1.16.7 (2020-12-31)
 `-` fix #1671: new lines removal issue in notes  

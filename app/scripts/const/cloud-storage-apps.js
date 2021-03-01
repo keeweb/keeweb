@@ -26,10 +26,12 @@ const GDriveApps = {
 
 const OneDriveApps = {
     Local: {
-        id: 'b97c53d5-db5b-4124-aab9-d39195293815',
-        secret: 'V9b6:iJU]N7cImE1f_OLNjqZJDBnumR?'
+        id: 'b97c53d5-db5b-4124-aab9-d39195293815'
     },
     Production: {
+        id: 'bbc74d1b-3a9c-46e6-9da4-4c645e830923'
+    },
+    Desktop: {
         id: 'bbc74d1b-3a9c-46e6-9da4-4c645e830923',
         secret: 'aOMJaktJEAs_Tmh]fx4iQ[Zd3mp3KK7-'
     }
