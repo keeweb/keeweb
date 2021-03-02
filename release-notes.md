@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.16.8 (2020-03-02)
+##### v1.16.8 (2021-03-02)
 `-` fix #1726: search in protected fields  
 `-` fix #1713: OneDrive authentication on web  
 `-` fix #1715: storage authentication in Epiphany browser  
