@@ -5,7 +5,7 @@ const { EventEmitter } = require('events');
 let callbackWebContents;
 let nativeModuleHost;
 
-const spawnAnotherProcess = false;
+const spawnAnotherProcess = process.argv.includes('--native-module-host-process');
 
 function startHost() {
     if (spawnAnotherProcess) {
