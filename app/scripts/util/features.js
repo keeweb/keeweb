@@ -18,7 +18,10 @@ const Features = {
     isLocal: location.origin.indexOf('localhost') >= 0,
 
     supportsTitleBarStyles() {
-        return this.isMac;
+        return isDesktop && (this.isMac || this.isWindows);
+    },
+    renderCustomTitleBar() {
+        return isDesktop && this.isWindows;
     },
     hasUnicodeFlags() {
         return this.isMac;

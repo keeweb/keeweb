@@ -1,0 +1,19 @@
+.titlebar-buttons {
+    font-size: 0;
+
+    > .fa {
+        -webkit-app-region: no-drag;
+        font-size: 16px;
+        padding: 4px 16px;
+        height: $custom-titlebar-height;
+        box-sizing: border-box;
+        &:hover {
+            background: var(--titlebar-button-background-color);
+        }
+        &.fa-titlebar-close {
+            &:hover {
+                background: $titlebar-close-button-background-color;
+            }
+        }
+    }
+}

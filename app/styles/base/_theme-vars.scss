@@ -69,7 +69,8 @@
             selectable-on-secondary-item-color:
                 mix(map-get($t, medium-color), map-get($t, background-color), 14%),
             clickable-on-secondary-color:
-                mix(map-get($t, medium-color), map-get($t, background-color), 75%)
+                mix(map-get($t, medium-color), map-get($t, background-color), 75%),
+            titlebar-button-background-color: rgba(map-get($t, text-color), 0.085)
         ),
         $t
     );

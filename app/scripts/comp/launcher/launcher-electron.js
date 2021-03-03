@@ -312,6 +312,18 @@ const Launcher = {
     },
     setGlobalShortcuts(appSettings) {
         this.remoteApp().setGlobalShortcuts(appSettings);
+    },
+    minimizeMainWindow() {
+        this.getMainWindow().minimize();
+    },
+    maximizeMainWindow() {
+        this.getMainWindow().maximize();
+    },
+    restoreMainWindow() {
+        this.getMainWindow().restore();
+    },
+    mainWindowMaximized() {
+        return this.getMainWindow().isMaximized();
     }
 };
 
@@ -319,6 +331,8 @@ Events.on('launcher-exit-request', () => {
     setTimeout(() => Launcher.exit(), 0);
 });
 Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
+Events.on('launcher-maximize', () => setTimeout(() => Events.emit('app-maximized'), 0));
+Events.on('launcher-unmaximize', () => setTimeout(() => Events.emit('app-unmaximized'), 0));
 Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
 Events.on('start-profile', (data) => StartProfiler.reportAppProfile(data));
 Events.on('log', (e) => new Logger(e.category || 'remote-app')[e.method || 'info'](e.message));

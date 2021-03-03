@@ -263,6 +263,9 @@ function createMainWindow() {
         theme = selectDarkOrLightTheme(theme);
     }
     const bgColor = themeBgColors[theme] || defaultBgColor;
+    const frameless =
+        process.platform === 'win32' &&
+        ['hidden', 'hidden-inset'].includes(appSettings.titlebarStyle);
     const windowOptions = {
         show: false,
         width: 1000,
@@ -270,6 +273,7 @@ function createMainWindow() {
         minWidth: 700,
         minHeight: 400,
         titleBarStyle: appSettings.titlebarStyle,
+        frame: !frameless,
         backgroundColor: bgColor,
         webPreferences: {
             contextIsolation: false,
@@ -324,9 +328,11 @@ function createMainWindow() {
     });
     mainWindow.on('maximize', () => {
         mainWindowMaximized = true;
+        emitRemoteEvent('launcher-maximize');
     });
     mainWindow.on('unmaximize', () => {
         mainWindowMaximized = false;
+        emitRemoteEvent('launcher-unmaximize');
     });
     mainWindow.on('leave-full-screen', () => {
         emitRemoteEvent('leave-full-screen');
