@@ -10,10 +10,10 @@ class TitlebarView extends View {
     template = template;
 
     events = {
-        'click .titlebar-buttons-minimize': 'clickMinimize',
-        'click .titlebar-buttons-maximize': 'clickMaximize',
-        'click .titlebar-buttons-restore': 'clickRestore',
-        'click .titlebar-buttons-close': 'clickClose'
+        'click .titlebar__minimize': 'clickMinimize',
+        'click .titlebar__maximize': 'clickMaximize',
+        'click .titlebar__restore': 'clickRestore',
+        'click .titlebar__close': 'clickClose'
     };
 
     constructor() {
