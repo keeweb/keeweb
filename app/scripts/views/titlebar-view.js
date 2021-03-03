@@ -1,9 +1,10 @@
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
-import template from 'templates/titlebar-buttons.hbs';
+import { KeeWebLogo } from 'const/inline-images';
+import template from 'templates/titlebar.hbs';
 
-class TitlebarButtonsView extends View {
+class TitlebarView extends View {
     parent = '.app__titlebar';
 
     template = template;
@@ -26,7 +27,8 @@ class TitlebarButtonsView extends View {
 
     render() {
         super.render({
-            maximized: this.maximized
+            maximized: this.maximized,
+            iconSrc: KeeWebLogo
         });
     }
 
@@ -57,4 +59,4 @@ class TitlebarButtonsView extends View {
     }
 }
 
-export { TitlebarButtonsView };
+export { TitlebarView };

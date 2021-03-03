@@ -263,16 +263,21 @@ function createMainWindow() {
         theme = selectDarkOrLightTheme(theme);
     }
     const bgColor = themeBgColors[theme] || defaultBgColor;
-    const frameless =
-        process.platform === 'win32' &&
-        ['hidden', 'hidden-inset'].includes(appSettings.titlebarStyle);
+
+    const isWindows = process.platform === 'win32';
+    let titlebarStyle = appSettings.titlebarStyle;
+    if (titlebarStyle === 'hidden-inset') {
+        titlebarStyle = 'hiddenInset';
+    }
+    const frameless = isWindows && ['hidden', 'hiddenInset'].includes(titlebarStyle);
+
     const windowOptions = {
         show: false,
         width: 1000,
         height: 700,
         minWidth: 700,
         minHeight: 400,
-        titleBarStyle: appSettings.titlebarStyle,
+        titleBarStyle: titlebarStyle,
         frame: !frameless,
         backgroundColor: bgColor,
         webPreferences: {

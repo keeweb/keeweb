@@ -25,7 +25,7 @@ import { OpenView } from 'views/open-view';
 import { SettingsView } from 'views/settings/settings-view';
 import { TagView } from 'views/tag-view';
 import { ImportCsvView } from 'views/import-csv-view';
-import { TitlebarButtonsView } from 'views/titlebar-buttons-view';
+import { TitlebarView } from 'views/titlebar-view';
 import template from 'templates/app.hbs';
 
 class AppView extends View {
@@ -59,7 +59,7 @@ class AppView extends View {
         this.views.details = new DetailsView(undefined, { ownParent: true });
         this.views.details.appModel = this.model;
         if (this.titlebarStyle !== 'default' && Features.renderCustomTitleBar()) {
-            this.views.titlebarButtons = new TitlebarButtonsView(this.model);
+            this.views.titlebar = new TitlebarView(this.model);
         }
 
         this.views.menu.listenDrag(this.views.menuDrag);
@@ -148,7 +148,7 @@ class AppView extends View {
         this.views.list.render();
         this.views.listDrag.render();
         this.views.details.render();
-        this.views.titlebarButtons?.render();
+        this.views.titlebar?.render();
         this.showLastOpenFile();
     }
 

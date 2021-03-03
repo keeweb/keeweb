@@ -28,18 +28,6 @@
         pointer-events: none;
     }
 
-    &__titlebar {
-        .titlebar-custom & {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            -webkit-app-region: drag;
-            display: flex;
-            justify-content: flex-end;
-        }
-    }
-
     &__menu {
         flex: 0 0 auto;
         display: flex;
@@ -56,6 +44,10 @@
         }
         .titlebar-hidden-inset & {
             padding-top: $titlebar-padding-large;
+        }
+        .titlebar-custom.titlebar-hidden &,
+        .titlebar-custom.titlebar-hidden-inset & {
+            padding-top: $custom-titlebar-height;
         }
         .fullscreen .app & {
             padding-top: 0;

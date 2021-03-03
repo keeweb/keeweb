@@ -1,8 +1,27 @@
-.titlebar-buttons {
+.titlebar {
     font-size: 0;
 
+    .titlebar-custom & {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        display: flex;
+        height: $custom-titlebar-height;
+    }
+
+    &__logo {
+        @include size(30px);
+        padding: 6px;
+        pointer-events: none;
+    }
+
+    &__grow {
+        flex-grow: 1;
+        -webkit-app-region: drag;
+    }
+
     > .fa {
-        -webkit-app-region: no-drag;
         font-size: 16px;
         padding: 4px 16px;
         height: $custom-titlebar-height;
