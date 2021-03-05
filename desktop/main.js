@@ -258,8 +258,7 @@ function selectDarkOrLightTheme(theme) {
 
 function createMainWindow() {
     let theme = checkSettingsTheme(appSettings.theme) || getDefaultTheme();
-    const autoSwitchTheme = appSettings.autoSwitchTheme ?? true;
-    if (autoSwitchTheme) {
+    if (appSettings.autoSwitchTheme) {
         theme = selectDarkOrLightTheme(theme);
     }
     const bgColor = themeBgColors[theme] || defaultBgColor;
