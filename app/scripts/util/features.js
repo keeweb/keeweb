@@ -21,7 +21,7 @@ const Features = {
         return isDesktop && (this.isMac || this.isWindows);
     },
     renderCustomTitleBar() {
-        return isDesktop && this.isWindows;
+        return isDesktop && (this.isMac || this.isWindows); // revert me
     },
     hasUnicodeFlags() {
         return this.isMac;
