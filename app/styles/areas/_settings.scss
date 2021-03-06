@@ -8,6 +8,7 @@
     @include scrollbar-on-hover;
     overflow: hidden;
     position: relative;
+    @include padding-if-titlebar;
 
     &__content {
         margin: $medium-padding;

@@ -7,7 +7,7 @@
         left: 0;
         width: 100vw;
         display: flex;
-        height: $custom-titlebar-height;
+        height: $titlebar-custom-height;
     }
 
     &__logo {
@@ -24,7 +24,7 @@
     > .fa {
         font-size: 16px;
         padding: 4px 16px;
-        height: $custom-titlebar-height;
+        height: $titlebar-custom-height;
         box-sizing: border-box;
         &:hover {
             background: var(--titlebar-button-background-color);

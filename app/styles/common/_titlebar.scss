@@ -1,0 +1,5 @@
+@mixin padding-if-titlebar {
+    .titlebar-custom & {
+        margin-top: $titlebar-custom-height;
+    }
+}

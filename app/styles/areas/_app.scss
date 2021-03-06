@@ -47,7 +47,7 @@
         }
         .titlebar-custom.titlebar-hidden &,
         .titlebar-custom.titlebar-hidden-inset & {
-            padding-top: $custom-titlebar-height;
+            padding-top: $titlebar-custom-height;
         }
         .fullscreen .app & {
             padding-top: 0;
@@ -127,9 +127,7 @@
                 display: flex;
             }
         }
-        .titlebar-custom & {
-            margin-top: $custom-titlebar-height;
-        }
+        @include padding-if-titlebar;
     }
 
     &__panel {
