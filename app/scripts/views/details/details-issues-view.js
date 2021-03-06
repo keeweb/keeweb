@@ -2,10 +2,12 @@ import { View } from 'framework/views/view';
 import template from 'templates/details/details-issues.hbs';
 import { Alerts } from 'comp/ui/alerts';
 import { Timeouts } from 'const/timeouts';
+import { Locale } from 'util/locale';
 import { passwordStrength, PasswordStrengthLevel } from 'util/data/password-strength';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Links } from 'const/links';
 import { checkIfPasswordIsExposedOnline } from 'comp/app/online-password-checker';
+import { Events } from '../../framework/events';
 
 class DetailsIssuesView extends View {
     parent = '.details__issues-container';
@@ -60,6 +62,10 @@ class DetailsIssuesView extends View {
     }
 
     checkPasswordIssues() {
+        if (!this.model.canCheckPasswordIssues()) {
+            this.passwordIssue = null;
+            return;
+        }
         const { password } = this.model;
         if (!password || !password.isProtected || !password.byteLength) {
             this.passwordIssue = null;
@@ -116,7 +122,38 @@ class DetailsIssuesView extends View {
     }
 
     closeIssuesClick() {
-        Alerts.notImplemented();
+        Alerts.alert({
+            header: Locale.detIssueCloseAlertHeader,
+            body: Locale.detIssueCloseAlertBody,
+            icon: 'exclamation-triangle',
+            buttons: [
+                { result: 'entry', title: Locale.detIssueCloseAlertEntry, silent: true },
+                { result: 'settings', title: Locale.detIssueCloseAlertSettings, silent: true },
+                Alerts.buttons.cancel
+            ],
+            esc: '',
+            click: '',
+            success: (result) => {
+                switch (result) {
+                    case 'entry':
+                        this.disableAuditForEntry();
+                        break;
+                    case 'settings':
+                        this.openAuditSettings();
+                        break;
+                }
+            }
+        });
+    }
+
+    disableAuditForEntry() {
+        this.model.setIgnorePasswordIssues();
+        this.checkPasswordIssues();
+        this.render();
+    }
+
+    openAuditSettings() {
+        Events.emit('toggle-settings', 'general', 'audit');
     }
 }
 

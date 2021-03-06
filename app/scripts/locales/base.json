@@ -316,6 +316,10 @@
     "detIssuePwnedPassword": "This password has been exposed in a data breach according to {}, it's recommended to change it.",
     "detIssuePasswordCheckError": "There was an error checking password strength online.",
     "detIssueOldPassword": "The password is old.",
+    "detIssueCloseAlertHeader": "Hide password issues",
+    "detIssueCloseAlertBody": "There are different ways you can hide this warning:",
+    "detIssueCloseAlertEntry": "Don't show for this entry",
+    "detIssueCloseAlertSettings": "Adjust global settings",
 
     "autoTypeEntryFields": "Entry fields",
     "autoTypeModifiers": "Modifier keys",

@@ -627,6 +627,18 @@ class EntryModel extends Model {
         return KdbxToHtml.entryToHtml(this.file.db, this.entry);
     }
 
+    canCheckPasswordIssues() {
+        return !this.entry.customData?.IgnorePwIssues;
+    }
+
+    setIgnorePasswordIssues() {
+        if (!this.entry.customData) {
+            this.entry.customData = {};
+        }
+        this.entry.customData.IgnorePwIssues = '1';
+        this._entryModified();
+    }
+
     static fromEntry(entry, group, file) {
         const model = new EntryModel();
         model.setEntry(entry, group, file);

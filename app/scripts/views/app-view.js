@@ -686,10 +686,14 @@ class AppView extends View {
         }
     }
 
-    toggleSettings(page) {
+    toggleSettings(page, section) {
         let menuItem = page ? this.model.menu[page + 'Section'] : null;
         if (menuItem) {
-            menuItem = menuItem.items[0];
+            if (section) {
+                menuItem = menuItem.items.find((it) => it.section === section) || menuItem.items[0];
+            } else {
+                menuItem = menuItem.items[0];
+            }
         }
         if (this.views.settings) {
             if (this.views.settings.page === page || !menuItem) {
