@@ -20,6 +20,9 @@ const Features = {
     supportsTitleBarStyles() {
         return isDesktop && (this.isMac || this.isWindows);
     },
+    supportsCustomTitleBarAndDraggableWindow() {
+        return isDesktop && this.isMac;
+    },
     renderCustomTitleBar() {
         return isDesktop && this.isWindows;
     },

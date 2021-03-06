@@ -137,6 +137,7 @@ class SettingsGeneralView extends View {
             fieldLabelDblClickAutoType: AppSettingsModel.fieldLabelDblClickAutoType,
             useLegacyAutoType: AppSettingsModel.useLegacyAutoType,
             supportsTitleBarStyles: Features.supportsTitleBarStyles(),
+            supportsCustomTitleBarAndDraggableWindow: Features.supportsCustomTitleBarAndDraggableWindow(),
             titlebarStyle: AppSettingsModel.titlebarStyle,
             storageProviders,
             showReloadApp: Features.isStandalone,
