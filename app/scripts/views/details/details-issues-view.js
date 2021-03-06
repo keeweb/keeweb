@@ -1,4 +1,5 @@
 import { View } from 'framework/views/view';
+import { Events } from 'framework/events';
 import template from 'templates/details/details-issues.hbs';
 import { Alerts } from 'comp/ui/alerts';
 import { Timeouts } from 'const/timeouts';
@@ -7,7 +8,6 @@ import { passwordStrength, PasswordStrengthLevel } from 'util/data/password-stre
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Links } from 'const/links';
 import { checkIfPasswordIsExposedOnline } from 'comp/app/online-password-checker';
-import { Events } from '../../framework/events';
 
 class DetailsIssuesView extends View {
     parent = '.details__issues-container';
