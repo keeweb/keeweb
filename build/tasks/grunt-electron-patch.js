@@ -6,7 +6,6 @@ module.exports = function (grunt) {
             for (const path of src) {
                 grunt.log.writeln(`Patching ${path}...`);
                 patch({ path });
-                grunt.log.writeln('Done');
             }
         }
     });
