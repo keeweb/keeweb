@@ -7,6 +7,8 @@ Release notes
 `+` automatically switching between dark and light theme  
 `+` custom title bar on Windows  
 `*` new updater capable to upgrade major versions  
+`*` new auto-type rewritten from scratch  
+`+` possibility to detect browser URL on Linux  
 `*` external modification protection in desktop versions  
 `+` clear searchbox button  
 `+` more options for auto-lock timeout  
