@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.17.0 (TBD)
+##### v1.17.0 (2021-03-07)
 `+` opening files with Touch ID on macOS (opt-in)  
 `+` password quality warnings  
 `+` "Have I Been Pwned" service integration (opt-in)  
@@ -19,7 +19,7 @@ Release notes
 `+` option to minimize on field copy  
 `-` fixed creating files with Argon2id KDF  
 
-##### v1.16.8 (2021-03-07)
+##### v1.16.8 (2021-03-02)
 `-` fix #1726: search in protected fields  
 `-` fix #1713: OneDrive authentication on web  
 `-` fix #1715: storage authentication in Epiphany browser  
