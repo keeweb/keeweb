@@ -1,4 +1,5 @@
 import { View } from 'framework/views/view';
+import { Launcher } from 'comp/launcher';
 import { Keys } from 'const/keys';
 import template from 'templates/modal.hbs';
 
@@ -10,6 +11,7 @@ class ModalView extends View {
 
     events = {
         'click .modal__buttons button': 'buttonClick',
+        'click .modal__link': 'linkClick',
         'click': 'bodyClick'
     };
 
@@ -53,6 +55,13 @@ class ModalView extends View {
     buttonClick(e) {
         const result = $(e.target).data('result');
         this.closeWithResult(result);
+    }
+
+    linkClick(e) {
+        if (Launcher) {
+            e.preventDefault();
+            Launcher.openLink(e.target.href);
+        }
     }
 
     bodyClick(e) {

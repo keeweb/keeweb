@@ -1,0 +1,15 @@
+{
+    "root": true,
+    "parserOptions": {
+        "ecmaVersion": 5
+    },
+    "env": {
+        "es6": false,
+        "applescript": true
+    },
+    "rules": {
+        "no-console": "off",
+        "no-unused-vars": "error",
+        "no-undef": "error"
+    }
+}

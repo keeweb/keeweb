@@ -75,3 +75,7 @@ export function isEqual(a, b) {
     }
     return false;
 }
+
+export function minmax(val, min, max) {
+    return Math.min(max, Math.max(min, val));
+}

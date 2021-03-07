@@ -1,6 +1,11 @@
 import { Events } from 'framework/events';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
+import { ThemeWatcher } from 'comp/browser/theme-watcher';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Logger } from 'util/logger';
+
+const logger = new Logger('settings-manager');
 
 const SettingsManager = {
     neutralLocale: null,
@@ -16,23 +21,65 @@ const SettingsManager = {
     allThemes: {
         dark: 'setGenThemeDark',
         light: 'setGenThemeLight',
-        fb: 'setGenThemeFb',
-        db: 'setGenThemeDb',
         sd: 'setGenThemeSd',
         sl: 'setGenThemeSl',
+        fb: 'setGenThemeFb',
+        bl: 'setGenThemeBl',
+        db: 'setGenThemeDb',
+        lb: 'setGenThemeLb',
         te: 'setGenThemeTe',
+        lt: 'setGenThemeLt',
+        dc: 'setGenThemeDc',
         hc: 'setGenThemeHc'
     },
 
+    // changing something here? don't forget about desktop/app.js
+    autoSwitchedThemes: [
+        {
+            name: 'setGenThemeDefault',
+            dark: 'dark',
+            light: 'light'
+        },
+        {
+            name: 'setGenThemeSol',
+            dark: 'sd',
+            light: 'sl'
+        },
+        {
+            name: 'setGenThemeBlue',
+            dark: 'fb',
+            light: 'bl'
+        },
+        {
+            name: 'setGenThemeBrown',
+            dark: 'db',
+            light: 'lb'
+        },
+        {
+            name: 'setGenThemeTerminal',
+            dark: 'te',
+            light: 'lt'
+        },
+        {
+            name: 'setGenThemeHighContrast',
+            dark: 'dc',
+            light: 'hc'
+        }
+    ],
+
     customLocales: {},
 
-    setBySettings(settings) {
-        this.setTheme(settings.theme);
-        this.setFontSize(settings.fontSize);
-        const locale = settings.locale;
+    init() {
+        Events.on('dark-mode-changed', () => this.darkModeChanged());
+    },
+
+    setBySettings() {
+        this.setTheme(AppSettingsModel.theme);
+        this.setFontSize(AppSettingsModel.fontSize);
+        const locale = AppSettingsModel.locale;
         try {
             if (locale) {
-                this.setLocale(settings.locale);
+                this.setLocale(AppSettingsModel.locale);
             } else {
                 this.setLocale(this.getBrowserLocale());
             }
@@ -55,16 +102,43 @@ const SettingsManager = {
                 document.body.classList.remove(cls);
             }
         }
+        if (AppSettingsModel.autoSwitchTheme) {
+            theme = this.selectDarkOrLightTheme(theme);
+        }
         document.body.classList.add(this.getThemeClass(theme));
         const metaThemeColor = document.head.querySelector('meta[name=theme-color]');
         if (metaThemeColor) {
             metaThemeColor.content = window.getComputedStyle(document.body).backgroundColor;
         }
         this.activeTheme = theme;
+        logger.debug('Theme changed', theme);
+        Events.emit('theme-applied');
     },
 
     getThemeClass(theme) {
         return 'th-' + theme;
+    },
+
+    selectDarkOrLightTheme(theme) {
+        for (const config of this.autoSwitchedThemes) {
+            if (config.light === theme || config.dark === theme) {
+                return ThemeWatcher.dark ? config.dark : config.light;
+            }
+        }
+        return theme;
+    },
+
+    darkModeChanged() {
+        if (AppSettingsModel.autoSwitchTheme) {
+            for (const config of this.autoSwitchedThemes) {
+                if (config.light === this.activeTheme || config.dark === this.activeTheme) {
+                    const newTheme = ThemeWatcher.dark ? config.dark : config.light;
+                    logger.debug('Setting theme triggered by system settings change', newTheme);
+                    this.setTheme(newTheme);
+                    break;
+                }
+            }
+        }
     },
 
     setFontSize(fontSize) {

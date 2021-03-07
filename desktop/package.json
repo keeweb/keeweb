@@ -1,6 +1,6 @@
 {
     "name": "KeeWeb",
-    "version": "1.16.8",
+    "version": "1.17.0",
     "description": "Free cross-platform password manager compatible with KeePass",
     "main": "main.js",
     "homepage": "https://keeweb.info",
@@ -14,9 +14,5 @@
         "url": "http://antelle.net"
     },
     "license": "MIT",
-    "readme": "../README.md",
-    "dependencies": {
-        "node-stream-zip": "^1.4.2"
-    },
-    "devDependencies": {}
+    "readme": "../README.md"
 }

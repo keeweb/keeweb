@@ -1,3 +1,5 @@
+Unicode True
+
 !define PRODUCT_NAME "KeeWeb"
 !define PRODUCT_VERSION "${version}"
 !define PRODUCT_PUBLISHER "KeeWeb"

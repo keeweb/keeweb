@@ -31,6 +31,8 @@ class DropdownView extends View {
         this.once('remove', () => {
             $('body').off('click contextmenu keydown', this.bodyClick);
         });
+
+        this.selectedOption = model?.selectedOption;
     }
 
     render(config) {
@@ -47,6 +49,9 @@ class DropdownView extends View {
             top = Math.max(0, bodyRect.bottom - ownRect.height);
         }
         this.$el.css({ top, left });
+        if (typeof this.selectedOption === 'number') {
+            this.renderSelectedOption();
+        }
     }
 
     bodyClick(e) {

@@ -232,7 +232,7 @@ class AutoTypeSelectView extends View {
             this.highlightActive();
         }
 
-        const view = new DropdownView();
+        const view = new DropdownView({ selectedOption: 0 });
         this.listenTo(view, 'cancel', this.hideItemOptionsDropdown);
         this.listenTo(view, 'select', this.itemOptionsDropdownSelect);
 

@@ -8,6 +8,7 @@
     @include scrollbar-on-hover;
     overflow: hidden;
     position: relative;
+    @include padding-if-titlebar;
 
     &__content {
         margin: $medium-padding;
@@ -171,10 +172,10 @@
     }
     &__general-update-btn {
         width: 15em;
-        margin-right: $small-spacing;
     }
     &__general-storage-header {
         margin-bottom: 0;
+        line-height: 1.3em;
     }
     &__general-prv {
         margin-bottom: $base-padding-v;

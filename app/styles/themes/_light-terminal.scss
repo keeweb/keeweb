@@ -1,0 +1,26 @@
+$themes: map-merge(
+    $themes,
+    (
+        lt:
+            map-merge(
+                $theme-defaults,
+                (
+                    background-color: #eee,
+                    medium-color: #444,
+                    text-color: #222,
+                    action-color: #13a453,
+                    error-color: #c34034,
+                    mute-percent: 50%
+                )
+            )
+    )
+);
+
+body.th-lt {
+    .list__item--active .green-color {
+        color: #7be045;
+    }
+    .list__item--active .blue-color {
+        color: #0750c5;
+    }
+}

@@ -77,36 +77,37 @@ class MenuModel extends Model {
                 locTitle: 'setGenAppearance',
                 icon: '0',
                 page: 'general',
-                section: 'appearance',
-                active: true
+                section: 'appearance'
             },
             {
                 locTitle: 'setGenFunction',
                 icon: '0',
                 page: 'general',
-                section: 'function',
-                active: true
+                section: 'function'
+            },
+            {
+                locTitle: 'setGenAudit',
+                icon: '0',
+                page: 'general',
+                section: 'audit'
             },
             {
                 locTitle: 'setGenLock',
                 icon: '0',
                 page: 'general',
-                section: 'lock',
-                active: true
+                section: 'lock'
             },
             {
                 locTitle: 'setGenStorage',
                 icon: '0',
                 page: 'general',
-                section: 'storage',
-                active: true
+                section: 'storage'
             },
             {
                 locTitle: 'advanced',
                 icon: '0',
                 page: 'general',
-                section: 'advanced',
-                active: true
+                section: 'advanced'
             }
         ]);
         this.shortcutsSection = new MenuSectionModel([

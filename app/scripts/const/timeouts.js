@@ -16,7 +16,9 @@ const Timeouts = {
     ExternalDeviceReconnect: 3000,
     ExternalDeviceAfterReconnect: 1000,
     FieldLabelDoubleClick: 300,
-    NativeModuleHostRestartTime: 3000
+    NativeModuleHostRestartTime: 3000,
+    FastAnimation: 100,
+    AutoTypeCopyPaste: 300
 };
 
 export { Timeouts };

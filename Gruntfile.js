@@ -25,16 +25,24 @@ module.exports = function (grunt) {
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
-    const minElectronVersionForUpdate = '11.0.3';
-    const zipCommentPlaceholderPart = 'zip_comment_placeholder_that_will_be_replaced_with_hash';
-    const zipCommentPlaceholder =
-        zipCommentPlaceholderPart + '.'.repeat(512 - zipCommentPlaceholderPart.length);
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
     const skipSign = grunt.option('skip-sign');
     const getCodeSignConfig = () =>
         skipSign ? { identities: {} } : require('./keys/codesign.json');
 
-    const sha = execSync('git rev-parse --short HEAD').toString('utf8').trim();
+    let sha = grunt.option('commit-sha');
+    if (!sha) {
+        try {
+            sha = execSync('git rev-parse --short HEAD').toString('utf8').trim();
+        } catch (e) {
+            grunt.warn(
+                "Cannot get commit sha from git. It's recommended to build KeeWeb from a git repo " +
+                    'because commit sha is displayed in the UI, however if you would like to build from a folder, ' +
+                    'you can override what will be displayed in the UI with --commit-sha=xxx.'
+            );
+        }
+    }
+    grunt.log.writeln(`Building KeeWeb v${pkg.version} (${sha})`);
 
     const webpackOptions = {
         date,
@@ -67,6 +75,15 @@ module.exports = function (grunt) {
             }
         ]
     });
+
+    const linuxDependencies = [
+        'libappindicator1',
+        'libgconf-2-4',
+        'gnome-keyring',
+        'libxtst6',
+        'libx11-6',
+        'libatspi2.0-0'
+    ];
 
     grunt.initConfig({
         noop: { noop: {} },
@@ -127,18 +144,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
-            'desktop-update': {
-                cwd: 'tmp/desktop/keeweb-linux-x64/resources/',
-                src: 'app.asar',
-                dest: 'tmp/desktop/update/',
-                expand: true,
-                nonull: true
-            },
-            'desktop-update-helper': {
-                src: ['helper/darwin/KeeWebHelper', 'helper/win32/KeeWebHelper.exe'],
-                dest: 'tmp/desktop/update/',
-                nonull: true
-            },
             'desktop-darwin-helper-x64': {
                 src: 'helper/darwin/KeeWebHelper',
                 dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
@@ -152,7 +157,7 @@ module.exports = function (grunt) {
                 options: { mode: '0755' }
             },
             'desktop-darwin-installer-helper-x64': {
-                cwd: 'package/osx/KeeWeb Installer.app',
+                cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
                 dest:
                     'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
@@ -161,7 +166,7 @@ module.exports = function (grunt) {
                 options: { mode: true }
             },
             'desktop-darwin-installer-helper-arm64': {
-                cwd: 'package/osx/KeeWeb Installer.app',
+                cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
                 dest:
                     'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
@@ -243,6 +248,11 @@ module.exports = function (grunt) {
                 src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.AppImage`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.AppImage`,
                 nonull: true
+            },
+            'darwin-installer-icon': {
+                src: 'graphics/icon.icns',
+                dest: 'tmp/desktop/KeeWeb Installer.app/Contents/Resources/applet.icns',
+                nonull: true
             }
         },
         eslint: {
@@ -250,7 +260,8 @@ module.exports = function (grunt) {
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
             build: ['Gruntfile.js', 'grunt.*.js', 'build/**/*.js', 'webpack.config.js'],
             plugins: ['plugins/**/*.js'],
-            util: ['util/**/*.js']
+            util: ['util/**/*.js'],
+            installer: ['package/osx/installer.js']
         },
         inline: {
             app: {
@@ -263,7 +274,7 @@ module.exports = function (grunt) {
                 algo: 'sha512',
                 expected: {
                     style: 1,
-                    script: 2
+                    script: 1
                 }
             },
             app: {
@@ -283,20 +294,20 @@ module.exports = function (grunt) {
             }
         },
         'string-replace': {
-            manifest: {
+            'update-manifest': {
                 options: {
                     replacements: [
                         {
-                            pattern: '# YYYY-MM-DD:v0.0.0',
-                            replacement: '# ' + dt + ':v' + pkg.version
+                            pattern: /"version":\s*".*?"/,
+                            replacement: `"version": "${pkg.version}"`
                         },
                         {
-                            pattern: '# updmin:v0.0.0',
-                            replacement: '# updmin:v' + minElectronVersionForUpdate
+                            pattern: /"date":\s*".*?"/,
+                            replacement: `"date": "${dt}"`
                         }
                     ]
                 },
-                files: { 'dist/manifest.appcache': 'app/manifest.appcache' }
+                files: { 'dist/update.json': 'app/update.json' }
             },
             'service-worker': {
                 options: { replacements: [{ pattern: '0.0.0', replacement: pkg.version }] },
@@ -437,25 +448,36 @@ module.exports = function (grunt) {
                             category: 'Utility'
                         },
                         rpm: {
-                            // depends: ['libappindicator1', 'libgconf-2-4', 'gnome-keyring']
+                            // depends: linuxDependencies
                         },
                         snap: {
-                            stagePackages: ['libappindicator1', 'libgconf-2-4', 'gnome-keyring']
+                            stagePackages: linuxDependencies
                         }
                     }
+                }
+            }
+        },
+        'electron-patch': {
+            'win32-x64': 'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe',
+            'win32-ia32': 'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe',
+            'win32-arm64': 'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe',
+            'darwin-x64': 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app',
+            'darwin-arm64': 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app',
+            'linux': 'tmp/desktop/KeeWeb-linux-x64/keeweb'
+        },
+        osacompile: {
+            options: {
+                language: 'JavaScript'
+            },
+            installer: {
+                files: {
+                    'tmp/desktop/KeeWeb Installer.app': 'package/osx/installer.js'
                 }
             }
         },
         compress: {
             options: {
                 level: 6
-            },
-            'desktop-update': {
-                options: {
-                    archive: 'dist/desktop/UpdateDesktop.zip',
-                    comment: zipCommentPlaceholder
-                },
-                files: [{ cwd: 'tmp/desktop/update', src: '**', expand: true, nonull: true }]
             },
             'win32-x64': {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.win.x64.zip` },
@@ -565,7 +587,7 @@ module.exports = function (grunt) {
                         pkgName: `KeeWeb-${pkg.version}.linux.x64.deb`,
                         targetDir: 'dist/desktop',
                         appName: 'KeeWeb',
-                        depends: 'libappindicator1, libgconf-2-4, gnome-keyring',
+                        depends: linuxDependencies.join(', '),
                         scripts: {
                             postinst: 'package/deb/scripts/postinst'
                         }
@@ -588,50 +610,30 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        'sign-archive': {
-            'desktop-update': {
-                options: {
-                    file: 'dist/desktop/UpdateDesktop.zip',
-                    signature: zipCommentPlaceholder
-                }
-            }
-        },
-        'sign-desktop-files': {
-            'desktop-update': {
-                options: {
-                    path: 'tmp/desktop/update'
-                }
-            }
-        },
-        'validate-desktop-update': {
-            desktop: {
-                options: {
-                    file: 'dist/desktop/UpdateDesktop.zip',
-                    expected: [
-                        'app.asar',
-                        'helper/darwin/KeeWebHelper',
-                        'helper/win32/KeeWebHelper.exe'
-                    ],
-                    expectedCount: 7,
-                    publicKey: 'app/resources/public-key.pem'
-                }
-            }
-        },
         'osx-sign': {
             options: {
                 get identity() {
                     return getCodeSignConfig().identities.app;
                 },
                 hardenedRuntime: true,
-                entitlements: 'package/osx/entitlements.mac.plist',
-                'entitlements-inherit': 'package/osx/entitlements.mac.plist',
+                entitlements: 'package/osx/entitlements.plist',
+                'entitlements-inherit': 'package/osx/entitlements-inherit.plist',
                 'gatekeeper-assess': false
             },
             'desktop-x64': {
+                options: {
+                    'provisioning-profile': './keys/keeweb.provisionprofile'
+                },
                 src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
             },
             'desktop-arm64': {
+                options: {
+                    'provisioning-profile': './keys/keeweb.provisionprofile'
+                },
                 src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
+            },
+            'installer': {
+                src: 'tmp/desktop/KeeWeb Installer.app'
             }
         },
         notarize: {
@@ -747,10 +749,7 @@ module.exports = function (grunt) {
                     sign: 'dist/desktop/Verify.sign.sha256'
                 },
                 files: {
-                    'dist/desktop/Verify.sha256': [
-                        'dist/desktop/KeeWeb-*',
-                        'dist/desktop/UpdateDesktop.zip'
-                    ]
+                    'dist/desktop/Verify.sha256': ['dist/desktop/KeeWeb-*']
                 }
             }
         },

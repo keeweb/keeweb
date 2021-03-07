@@ -104,7 +104,7 @@ class FieldViewOtp extends FieldViewText {
             this.resetOtp();
             return;
         }
-        this.otpValue = pass || '';
+        this.otpValue = pass;
         this.otpTimeLeft = timeLeft || 0;
         this.otpValidUntil = Date.now() + timeLeft;
         if (!this.editing) {

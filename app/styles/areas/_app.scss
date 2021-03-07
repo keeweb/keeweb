@@ -45,6 +45,10 @@
         .titlebar-hidden-inset & {
             padding-top: $titlebar-padding-large;
         }
+        .titlebar-custom.titlebar-hidden &,
+        .titlebar-custom.titlebar-hidden-inset & {
+            padding-top: $titlebar-custom-height;
+        }
         .fullscreen .app & {
             padding-top: 0;
         }
@@ -123,6 +127,7 @@
                 display: flex;
             }
         }
+        @include padding-if-titlebar;
     }
 
     &__panel {

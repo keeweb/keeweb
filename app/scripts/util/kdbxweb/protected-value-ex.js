@@ -139,8 +139,6 @@ kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function (targetLower) {
     return firstCharIndex;
 };
 
-window.PV = kdbxweb.ProtectedValue;
-
 kdbxweb.ProtectedValue.prototype.equals = function (other) {
     if (!other) {
         return false;
@@ -175,4 +173,39 @@ kdbxweb.ProtectedValue.prototype.isFieldReference = function () {
         }
     });
     return true;
+};
+
+const RandomSalt = kdbxweb.Random.getBytes(128);
+
+kdbxweb.ProtectedValue.prototype.saltedValue = function () {
+    if (!this.byteLength) {
+        return 0;
+    }
+    const value = this._value;
+    const salt = this._salt;
+    let salted = '';
+    for (let i = 0, len = value.length; i < len; i++) {
+        const byte = value[i] ^ salt[i];
+        salted += String.fromCharCode(byte ^ RandomSalt[i % RandomSalt.length]);
+    }
+    return salted;
+};
+
+kdbxweb.ProtectedValue.prototype.dataAndSalt = function () {
+    return {
+        data: [...this._value],
+        salt: [...this._salt]
+    };
+};
+
+kdbxweb.ProtectedValue.prototype.toBase64 = function () {
+    const binary = this.getBinary();
+    const base64 = kdbxweb.ByteUtils.bytesToBase64(binary);
+    kdbxweb.ByteUtils.zeroBuffer(binary);
+    return base64;
+};
+
+kdbxweb.ProtectedValue.fromBase64 = function (base64) {
+    const bytes = kdbxweb.ByteUtils.base64ToBytes(base64);
+    return kdbxweb.ProtectedValue.fromBinary(bytes);
 };

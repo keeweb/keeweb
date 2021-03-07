@@ -1,15 +1,33 @@
 import { Launcher } from 'comp/launcher';
 import { Logger } from 'util/logger';
 import { noop } from 'util/fn';
+import { StringFormat } from 'util/formatting/string-format';
 
 const logger = new Logger('transport');
 
 const Transport = {
+    cacheFilePath(fileName) {
+        return Launcher.getTempPath(fileName);
+    },
+
     httpGet(config) {
         let tmpFile;
         const fs = Launcher.req('fs');
         if (config.file) {
-            tmpFile = Launcher.getTempPath(config.file);
+            const baseTempPath = Launcher.getTempPath();
+            if (config.cleanupOldFiles) {
+                const allFiles = fs.readdirSync(baseTempPath);
+                for (const file of allFiles) {
+                    if (
+                        file !== config.file &&
+                        StringFormat.replaceVersion(file, '0') ===
+                            StringFormat.replaceVersion(config.file, '0')
+                    ) {
+                        fs.unlinkSync(Launcher.joinPath(baseTempPath, file));
+                    }
+                }
+            }
+            tmpFile = Launcher.joinPath(baseTempPath, config.file);
             if (fs.existsSync(tmpFile)) {
                 try {
                     if (config.cache && fs.statSync(tmpFile).size > 0) {
@@ -62,8 +80,15 @@ const Transport = {
                             });
                             res.on('end', () => {
                                 data = window.Buffer.concat(data);
-                                if (config.utf8) {
+                                if (config.text || config.json) {
                                     data = data.toString('utf8');
+                                }
+                                if (config.json) {
+                                    try {
+                                        data = JSON.parse(data);
+                                    } catch (e) {
+                                        config.error('Error parsing JSON: ' + e.message);
+                                    }
                                 }
                                 config.success(data);
                             });

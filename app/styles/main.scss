@@ -23,6 +23,7 @@ $fa-font-path: '~font-awesome/fonts';
 @import 'common/modal';
 @import 'common/scroll';
 @import 'common/tip';
+@import 'common/titlebar';
 
 @import 'areas/app';
 @import 'areas/auto-type';
@@ -38,3 +39,4 @@ $fa-font-path: '~font-awesome/fonts';
 @import 'areas/open';
 @import 'areas/settings';
 @import 'areas/import-csv';
+@import 'areas/titlebar';

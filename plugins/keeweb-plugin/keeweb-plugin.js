@@ -13,7 +13,6 @@ const crypto = require('crypto');
 const https = require('https');
 
 const args = process.argv.splice(2);
-const pkg = require('./package.json');
 
 const op = args.shift();
 
@@ -42,7 +41,7 @@ switch (op) {
 }
 
 function showBanner() {
-    console.log(`KeeWeb plugin utils v${pkg.version}`);
+    console.log(`KeeWeb plugin utils`);
 }
 
 function showHelp() {
@@ -189,10 +188,6 @@ function servePlugin(packageName) {
             });
         }
     };
-    const serveManifestAppCache = (res) => {
-        res.writeHead(200);
-        res.end('CACHE MANIFEST\nNETWORK:\n*\n');
-    };
     const serveConfig = (res) => {
         res.writeHead(200);
         res.end(`{"settings":{},"plugins":[{"url":"/"}]}`);
@@ -212,8 +207,6 @@ function servePlugin(packageName) {
             }
             if (req.url === '/') {
                 return serveKeeWebHtml(res);
-            } else if (req.url === '/manifest.appcache') {
-                return serveManifestAppCache(res);
             } else if (req.url === '/config.json') {
                 return serveConfig(res);
             }

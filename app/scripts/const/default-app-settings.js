@@ -1,5 +1,6 @@
 const DefaultAppSettings = {
     theme: null, // UI theme
+    autoSwitchTheme: false, // automatically switch between light and dark theme
     locale: null, // user interface language
     expandGroups: true, // show entries from all subgroups
     listViewWidth: null, // width of the entry list representation
@@ -12,6 +13,7 @@ const DefaultAppSettings = {
     rememberKeyFiles: 'path', // remember keyfiles selected on the Open screen
     idleMinutes: 15, // app lock timeout after inactivity, minutes
     minimizeOnClose: false, // minimise the app instead of closing
+    minimizeOnFieldCopy: false, // minimise the app on copy
     tableView: false, // view entries as a table instead of list
     colorfulIcons: false, // use colorful custom icons instead of grayscale
     useMarkdown: true, // use Markdown in Notes field
@@ -36,6 +38,15 @@ const DefaultAppSettings = {
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
     enableUsb: true, // enable interaction with USB devices
     fieldLabelDblClickAutoType: false, // trigger auto-type by doubleclicking field label
+    auditPasswords: true, // enable password audit
+    auditPasswordEntropy: true, // show warnings for weak passwords
+    excludePinsFromAudit: true, // exclude PIN codes from audit
+    checkPasswordsOnHIBP: false, // check passwords on Have I Been Pwned
+    auditPasswordAge: 0, // show warnings about old passwords, number of years, 0 = disabled
+    useLegacyAutoType: false, // use legacy auto-type engine (will be removed in future versions)
+    deviceOwnerAuth: null, // Touch ID: null / 'memory' / 'file'
+    deviceOwnerAuthTimeoutMinutes: 0, // how often master password is required with Touch ID
+    disableOfflineStorage: false, // don't cache loaded files in offline storage
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
     yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files

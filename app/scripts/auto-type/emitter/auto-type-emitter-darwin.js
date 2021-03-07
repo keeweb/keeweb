@@ -65,6 +65,10 @@ const AutoTypeEmitter = function (callback) {
     this.pendingScript = [];
 };
 
+AutoTypeEmitter.prototype.begin = function () {
+    this.callback();
+};
+
 AutoTypeEmitter.prototype.setMod = function (mod, enabled) {
     if (enabled) {
         this.mod[ModMap[mod]] = true;

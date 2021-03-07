@@ -1,0 +1,45 @@
+$themes: map-merge(
+    $themes,
+    (
+        dc:
+            map-merge(
+                $theme-defaults,
+                map-merge(
+                    $light-colors,
+                    (
+                        background-color: #050505,
+                        medium-color: #fafafa,
+                        text-color: #fafafa,
+                        action-color: #1e5db8,
+                        error-color: #e74859,
+                        mute-percent: 60%,
+                        light-border-percent: 50%,
+                        modal-opacity: 1
+                    )
+                )
+            )
+    )
+);
+
+body.th-dc {
+    --selected-item-color: #1e5db8;
+    --selected-item-text-color: #fafafa;
+
+    .list__item--active .red-color {
+        color: #ff6d6b;
+    }
+    .list__item--active .orange-color {
+        color: #ffbb86;
+    }
+    .list__item--active .yellow-color {
+    }
+    .list__item--active .green-color {
+        color: #baff92;
+    }
+    .list__item--active .blue-color {
+        color: #c1d9ff;
+    }
+    .list__item--active .violet-color {
+        color: #ff93c5;
+    }
+}

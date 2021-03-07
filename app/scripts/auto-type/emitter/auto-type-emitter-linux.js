@@ -68,6 +68,10 @@ const AutoTypeEmitter = function (callback, windowId) {
     }
 };
 
+AutoTypeEmitter.prototype.begin = function () {
+    this.callback();
+};
+
 AutoTypeEmitter.prototype.setMod = function (mod, enabled) {
     if (enabled) {
         this.mod[ModMap[mod]] = true;

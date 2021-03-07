@@ -55,21 +55,30 @@
                 box-shadow: none !important;
                 border-radius: 0.6em !important;
                 border: none !important;
-                padding-left: 0.4em;
                 background-color: var(--secondary-background-color) !important;
             }
         }
-        &-icon-search {
+        &-icon-search,
+        &-icon-clear {
             color: var(--muted-color);
             position: absolute;
-            top: 0.5em;
-            right: 0.5em;
+            top: 0.53em;
             cursor: pointer;
             &:hover {
                 color: var(--medium-color);
             }
             @include mobile {
-                top: 0.5em;
+                top: 0.6em;
+            }
+        }
+        &-icon-search {
+            left: 0.6em;
+        }
+        &-icon-clear {
+            right: 0.6em;
+            display: none;
+            .list__search-field-wrap--text & {
+                display: block;
             }
         }
         &-btn-new,
@@ -98,6 +107,7 @@
             align-items: stretch;
             flex-direction: row;
             flex-wrap: wrap;
+            padding: 0 $small-spacing;
             &-text {
                 flex: 100%;
                 padding: $base-padding-v 0;

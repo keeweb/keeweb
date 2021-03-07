@@ -34,8 +34,8 @@ const KdbxwebInit = {
                 hash(args) {
                     const ts = logger.ts();
 
-                    const password = makeXoredValue(args.password);
-                    const salt = makeXoredValue(args.salt);
+                    const password = kdbxweb.ProtectedValue.fromBinary(args.password).dataAndSalt();
+                    const salt = kdbxweb.ProtectedValue.fromBinary(args.salt).dataAndSalt();
 
                     return NativeModules.argon2(password, salt, {
                         type: args.type,
@@ -52,7 +52,8 @@ const KdbxwebInit = {
 
                             logger.debug('Argon2 hash calculated', logger.ts(ts));
 
-                            return readXoredValue(res);
+                            res = new kdbxweb.ProtectedValue(res.data, res.salt);
+                            return res.getBinary();
                         })
                         .catch((err) => {
                             password.data.fill(0);
@@ -61,36 +62,6 @@ const KdbxwebInit = {
                             logger.error('Argon2 error', err);
                             throw err;
                         });
-
-                    function makeXoredValue(val) {
-                        const data = Buffer.from(val);
-                        const random = Buffer.from(kdbxweb.Random.getBytes(data.length));
-
-                        for (let i = 0; i < data.length; i++) {
-                            data[i] ^= random[i];
-                        }
-
-                        const result = { data: [...data], random: [...random] };
-
-                        data.fill(0);
-                        random.fill(0);
-
-                        return result;
-                    }
-
-                    function readXoredValue(val) {
-                        const data = Buffer.from(val.data);
-                        const random = Buffer.from(val.random);
-
-                        for (let i = 0; i < data.length; i++) {
-                            data[i] ^= random[i];
-                        }
-
-                        val.data.fill(0);
-                        val.random.fill(0);
-
-                        return data;
-                    }
                 }
             };
             return Promise.resolve(this.runtimeModule);

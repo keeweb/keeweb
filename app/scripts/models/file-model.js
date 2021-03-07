@@ -487,9 +487,11 @@ class FileModel extends Model {
             syncError: error
         });
 
-        const shouldResetFingerprint = this.passwordChanged && this.fingerprint;
-        if (shouldResetFingerprint && !error) {
-            this.fingerprint = null;
+        if (!error && this.passwordChanged && this.encryptedPassword) {
+            this.set({
+                encryptedPassword: null,
+                encryptedPasswordDate: null
+            });
         }
 
         if (!this.open) {
@@ -759,10 +761,12 @@ FileModel.defineModelProperties({
     keyEncryptionRounds: null,
     kdfName: null,
     kdfParameters: null,
-    fingerprint: null,
+    fingerprint: null, // obsolete
     oldPasswordHash: null,
     oldKeyFileHash: null,
-    oldKeyChangeDate: null
+    oldKeyChangeDate: null,
+    encryptedPassword: null,
+    encryptedPasswordDate: null
 });
 
 export { FileModel };

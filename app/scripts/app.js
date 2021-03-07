@@ -9,6 +9,7 @@ import { UsbListener } from 'comp/app/usb-listener';
 import { FeatureTester } from 'comp/browser/feature-tester';
 import { FocusDetector } from 'comp/browser/focus-detector';
 import { IdleTracker } from 'comp/browser/idle-tracker';
+import { ThemeWatcher } from 'comp/browser/theme-watcher';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { PopupNotifier } from 'comp/browser/popup-notifier';
 import { Launcher } from 'comp/launcher';
@@ -91,6 +92,8 @@ ready(() => {
         KdbxwebInit.init();
         FocusDetector.init();
         AutoType.init();
+        ThemeWatcher.init();
+        SettingsManager.init();
         window.kw = ExportApi;
         return PluginManager.init().then(() => {
             StartProfiler.milestone('initializing modules');
@@ -111,13 +114,13 @@ ready(() => {
     function loadRemoteConfig() {
         return Promise.resolve()
             .then(() => {
-                SettingsManager.setBySettings(appModel.settings);
+                SettingsManager.setBySettings();
                 const configParam = getConfigParam();
                 if (configParam) {
                     return appModel
                         .loadConfig(configParam)
                         .then(() => {
-                            SettingsManager.setBySettings(appModel.settings);
+                            SettingsManager.setBySettings();
                         })
                         .catch((e) => {
                             if (!appModel.settings.cacheConfigSettings) {

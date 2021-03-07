@@ -18,7 +18,6 @@ console.log('Change version to ' + version);
 processFile('package.json');
 processFile('package-lock.json');
 processFile('desktop/package.json');
-processFile('desktop/package-lock.json');
 
 console.log('Done');
 

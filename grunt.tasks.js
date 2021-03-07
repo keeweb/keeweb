@@ -13,7 +13,7 @@ module.exports = function (grunt) {
         'csp-hashes',
         'copy:content-dist',
         'string-replace:service-worker',
-        'string-replace:manifest',
+        'string-replace:update-manifest',
         'copy:dist-icons',
         'copy:dist-manifest'
     ]);
@@ -24,17 +24,9 @@ module.exports = function (grunt) {
         'string-replace:desktop-public-key'
     ]);
 
-    grunt.registerTask('build-desktop-update', [
-        'copy:desktop-update',
-        'copy:desktop-update-helper',
-        'sign-desktop-files:desktop-update',
-        'compress:desktop-update',
-        'sign-archive:desktop-update',
-        'validate-desktop-update'
-    ]);
-
     grunt.registerTask('build-desktop-executables-linux', [
         'electron:linux',
+        'electron-patch:linux',
         'chmod:linux-desktop-x64',
         'copy:native-modules-linux-x64'
     ]);
@@ -42,6 +34,9 @@ module.exports = function (grunt) {
     grunt.registerTask('build-desktop-executables-darwin', [
         'electron:darwin-x64',
         'electron:darwin-arm64',
+        'electron-patch:darwin-x64',
+        'electron-patch:darwin-arm64',
+        'build-darwin-installer',
         'copy:desktop-darwin-helper-x64',
         'copy:desktop-darwin-helper-arm64',
         'copy:desktop-darwin-installer-helper-x64',
@@ -54,10 +49,19 @@ module.exports = function (grunt) {
         sign ? 'notarize:desktop-arm64' : 'noop'
     ]);
 
+    grunt.registerTask('build-darwin-installer', [
+        'osacompile:installer',
+        'copy:darwin-installer-icon',
+        sign ? 'osx-sign:installer' : 'noop'
+    ]);
+
     grunt.registerTask('build-desktop-executables-win32', [
         'electron:win32-x64',
         'electron:win32-ia32',
         'electron:win32-arm64',
+        'electron-patch:win32-x64',
+        'electron-patch:win32-ia32',
+        'electron-patch:win32-arm64',
         sign ? 'sign-exe:win32-build-x64' : 'noop',
         sign ? 'sign-exe:win32-build-ia32' : 'noop',
         sign ? 'sign-exe:win32-build-arm64' : 'noop',
@@ -126,7 +130,6 @@ module.exports = function (grunt) {
         'clean:desktop',
         'build-desktop-app-content',
         'build-desktop-executables',
-        'build-desktop-update',
         'build-desktop-archives',
         'build-desktop-dist',
         'sign-dist'

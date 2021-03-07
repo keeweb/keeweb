@@ -20,6 +20,7 @@ import { DetailsAddFieldView } from 'views/details/details-add-field-view';
 import { DetailsAttachmentView } from 'views/details/details-attachment-view';
 import { DetailsAutoTypeView } from 'views/details/details-auto-type-view';
 import { DetailsHistoryView } from 'views/details/details-history-view';
+import { DetailsIssuesView } from 'views/details/details-issues-view';
 import { DropdownView } from 'views/dropdown-view';
 import { createDetailsFields } from 'views/details/details-fields';
 import { FieldViewCustom } from 'views/fields/field-view-custom';
@@ -28,6 +29,7 @@ import { isEqual } from 'util/fn';
 import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
+import { Launcher } from 'comp/launcher';
 
 class DetailsView extends View {
     parent = '.app__details';
@@ -117,11 +119,15 @@ class DetailsView extends View {
             super.render();
             return;
         }
-        const model = { deleted: this.appModel.filter.trash, ...this.model };
+        const model = {
+            deleted: this.appModel.filter.trash,
+            ...this.model
+        };
         this.template = template;
         super.render(model);
         this.setSelectedColor(this.model.color);
         this.addFieldViews();
+        this.checkPasswordIssues();
         this.createScroll({
             root: this.$el.find('.details__body')[0],
             scroller: this.$el.find('.scroller')[0],
@@ -152,7 +158,7 @@ class DetailsView extends View {
                 fieldView.parent = views === fieldViews ? fieldsMainEl[0] : fieldsAsideEl[0];
                 fieldView.render();
                 fieldView.on('change', this.fieldChanged.bind(this));
-                fieldView.on('copy', this.fieldCopied.bind(this));
+                fieldView.on('copy', (e) => this.copyFieldValue(e));
                 fieldView.on('autotype', (e) => this.autoType(e.source.model.sequence));
                 if (hideEmptyFields) {
                     const value = fieldView.model.value();
@@ -479,13 +485,17 @@ class DetailsView extends View {
                 CopyPaste.createHiddenInput(fieldText);
             }
             const copyRes = CopyPaste.copy(fieldText);
-            this.fieldCopied({ source: editView, copyRes });
+            this.copyFieldValue({ source: editView, copyRes });
+
             return true;
         }
         return false;
     }
 
     copyPasswordFromShortcut(e) {
+        if (!this.model) {
+            return;
+        }
         if (this.model.external) {
             this.copyOtp();
             e.preventDefault();
@@ -575,6 +585,9 @@ class DetailsView extends View {
                     return;
                 } else if (fieldName) {
                     this.model.setField(fieldName, e.val);
+                }
+                if (fieldName === 'Password' && this.views.issues) {
+                    this.views.issues.passwordChanged();
                 }
             } else if (e.field === 'Tags') {
                 this.model.setTags(e.val);
@@ -986,6 +999,20 @@ class DetailsView extends View {
             });
         } else {
             Events.emit('auto-type', { entry, sequence });
+        }
+    }
+
+    checkPasswordIssues() {
+        if (!this.model.readOnly) {
+            this.views.issues = new DetailsIssuesView(this.model);
+            this.views.issues.render();
+        }
+    }
+
+    copyFieldValue(e) {
+        this.fieldCopied(e);
+        if (AppSettingsModel.minimizeOnFieldCopy) {
+            Launcher.minimizeApp();
         }
     }
 }

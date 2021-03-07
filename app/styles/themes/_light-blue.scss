@@ -1,0 +1,25 @@
+$themes: map-merge(
+    $themes,
+    (
+        bl:
+            map-merge(
+                $theme-defaults,
+                (
+                    background-color: #e5e8ec,
+                    medium-color: #383b48,
+                    text-color: #282c34,
+                    action-color: #528bff,
+                    error-color: #c34034,
+                    mute-percent: 50%
+                )
+            )
+    )
+);
+
+body.th-bl {
+    --open-icon-color: #525462;
+
+    .list__item--active .blue-color {
+        color: #98bfff;
+    }
+}

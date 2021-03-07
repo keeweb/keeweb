@@ -16,8 +16,10 @@ const DefaultProperties = {
     keyFilePath: null,
     opts: null,
     backup: null,
-    fingerprint: null,
-    chalResp: null
+    fingerprint: null, // obsolete
+    chalResp: null,
+    encryptedPassword: null,
+    encryptedPasswordDate: null
 };
 
 class FileInfoModel extends Model {

@@ -29,4 +29,10 @@ describe('StringFormat', () => {
     it('should convert kebab case to pascal case', () => {
         expect(StringFormat.pascalCase('aa-bbb-c')).to.eql('AaBbbC');
     });
+
+    it('should replace version', () => {
+        expect(StringFormat.replaceVersion('KeeWeb-1.11.123.x64.dmg', 'ver')).to.eql(
+            'KeeWeb-ver.x64.dmg'
+        );
+    });
 });

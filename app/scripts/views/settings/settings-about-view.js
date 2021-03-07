@@ -15,7 +15,8 @@ class SettingsAboutView extends View {
             licenseLinkCCBY40: Links.LicenseLinkCCBY40,
             repoLink: Links.Repo,
             donationLink: Links.Donation,
-            isDesktop: Features.isDesktop
+            isDesktop: Features.isDesktop,
+            year: new Date().getFullYear()
         });
     }
 }

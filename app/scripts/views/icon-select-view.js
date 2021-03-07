@@ -21,11 +21,14 @@ class IconSelectView extends View {
     };
 
     render() {
+        const customIcons = this.model.file.getCustomIcons();
+        const hasCustomIcons = Object.keys(customIcons).length > 0;
         super.render({
             sel: this.model.iconId,
             icons: IconMap,
             canDownloadFavicon: !!this.model.url,
-            customIcons: this.model.file.getCustomIcons()
+            customIcons,
+            hasCustomIcons
         });
     }
 
@@ -70,6 +73,9 @@ class IconSelectView extends View {
                 .addClass('icon-select__icon--custom-selected')
                 .append(img);
             this.downloadingFavicon = false;
+
+            const id = this.model.file.addCustomIcon(this.special.download.data);
+            this.emit('select', { id, custom: true });
         };
         img.onerror = (e) => {
             logger.error('Favicon download error: ' + url, e);

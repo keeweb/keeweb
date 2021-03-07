@@ -17,6 +17,9 @@ const Launcher = {
     platform() {
         return process.platform;
     },
+    arch() {
+        return process.arch;
+    },
     electron() {
         return this.req('electron');
     },
@@ -55,7 +58,15 @@ const Launcher = {
         return this.joinPath(this.userDataPath, fileName || '');
     },
     getTempPath(fileName) {
-        return this.joinPath(this.remoteApp().getPath('temp'), fileName || '');
+        let tempPath = this.joinPath(this.remoteApp().getPath('temp'), 'KeeWeb');
+        const fs = this.req('fs');
+        if (!fs.existsSync(tempPath)) {
+            fs.mkdirSync(tempPath);
+        }
+        if (fileName) {
+            tempPath = this.joinPath(tempPath, fileName);
+        }
+        return tempPath;
     },
     getDocumentsPath(fileName) {
         return this.joinPath(this.remoteApp().getPath('documents'), fileName || '');
@@ -164,18 +175,18 @@ const Launcher = {
     requestExit() {
         const app = this.remoteApp();
         app.setHookBeforeQuitEvent(false);
-        if (this.restartPending) {
-            app.restartApp();
+        if (this.pendingUpdateFile) {
+            app.restartAndUpdate(this.pendingUpdateFile);
         } else {
             app.quit();
         }
     },
-    requestRestart() {
-        this.restartPending = true;
+    requestRestartAndUpdate(updateFilePath) {
+        this.pendingUpdateFile = updateFilePath;
         this.requestExit();
     },
     cancelRestart() {
-        this.restartPending = false;
+        this.pendingUpdateFile = undefined;
     },
     setClipboardText(text) {
         return this.electron().clipboard.writeText(text);
@@ -203,7 +214,7 @@ const Launcher = {
         return process.platform !== 'linux';
     },
     updaterEnabled() {
-        return this.electron().remote.process.argv.indexOf('--disable-updater') === -1;
+        return process.platform !== 'linux';
     },
     getMainWindow() {
         return this.remoteApp().getMainWindow();
@@ -301,6 +312,18 @@ const Launcher = {
     },
     setGlobalShortcuts(appSettings) {
         this.remoteApp().setGlobalShortcuts(appSettings);
+    },
+    minimizeMainWindow() {
+        this.getMainWindow().minimize();
+    },
+    maximizeMainWindow() {
+        this.getMainWindow().maximize();
+    },
+    restoreMainWindow() {
+        this.getMainWindow().restore();
+    },
+    mainWindowMaximized() {
+        return this.getMainWindow().isMaximized();
     }
 };
 
@@ -308,6 +331,8 @@ Events.on('launcher-exit-request', () => {
     setTimeout(() => Launcher.exit(), 0);
 });
 Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
+Events.on('launcher-maximize', () => setTimeout(() => Events.emit('app-maximized'), 0));
+Events.on('launcher-unmaximize', () => setTimeout(() => Events.emit('app-unmaximized'), 0));
 Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
 Events.on('start-profile', (data) => StartProfiler.reportAppProfile(data));
 Events.on('log', (e) => new Logger(e.category || 'remote-app')[e.method || 'info'](e.message));

@@ -24,6 +24,7 @@ class ListSearchView extends View {
         'click .list__search-btn-sort': 'sortOptionsClick',
         'click .list__search-icon-search': 'advancedSearchClick',
         'click .list__search-btn-menu': 'toggleMenu',
+        'click .list__search-icon-clear': 'clickClear',
         'change .list__search-adv input[type=checkbox]': 'toggleAdvCheck'
     };
 
@@ -212,7 +213,9 @@ class ListSearchView extends View {
     }
 
     inputChange() {
-        Events.emit('add-filter', { text: this.inputEl.val() });
+        const text = this.inputEl.val();
+        this.inputEl[0].parentElement.classList.toggle('list__search-field-wrap--text', text);
+        Events.emit('add-filter', { text });
     }
 
     inputFocus(e) {
@@ -427,6 +430,11 @@ class ListSearchView extends View {
 
     fileListUpdated() {
         this.render();
+    }
+
+    clickClear() {
+        this.inputEl.val('');
+        this.inputChange();
     }
 }
 

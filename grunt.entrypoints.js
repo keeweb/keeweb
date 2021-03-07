@@ -24,7 +24,6 @@ module.exports = function(grunt) {
         'clean:desktop',
         'build-desktop-app-content',
         'build-desktop-executables-linux',
-        'build-desktop-update',
         'build-desktop-archives-linux',
         'build-desktop-dist-linux'
     ]);
@@ -52,9 +51,16 @@ module.exports = function(grunt) {
         'default',
         'build-desktop-app-content',
         'electron:darwin-x64',
+        'electron-patch:darwin-x64',
+        'build-darwin-installer',
         'copy:desktop-darwin-helper-x64',
         'copy:desktop-darwin-installer-helper-x64',
         'copy:native-modules-darwin-x64'
+    ]);
+
+    grunt.registerTask('dev-desktop-darwin-signed', 'Build a signed macOS app in dev environment', [
+        'dev-desktop-darwin',
+        'osx-sign:desktop-x64'
     ]);
 
     grunt.registerTask('dev-desktop-win32', 'Build a Windows app in dev environment', [

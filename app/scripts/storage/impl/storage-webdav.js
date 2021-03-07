@@ -209,6 +209,10 @@ class StorageWebDav extends StorageBase {
                                         .replace(/[^/]*$/, movePath);
                                 }
                             }
+                            // prevent double encoding, see #1729
+                            const encodedMovePath = /%[A-Z0-9]{2}/.test(movePath)
+                                ? movePath
+                                : encodeURI(movePath);
                             this._request(
                                 {
                                     ...saveOpts,
@@ -217,7 +221,7 @@ class StorageWebDav extends StorageBase {
                                     path: tmpPath,
                                     nostat: true,
                                     headers: {
-                                        Destination: encodeURI(movePath),
+                                        Destination: encodedMovePath,
                                         'Overwrite': 'T'
                                     }
                                 },

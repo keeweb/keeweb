@@ -108,6 +108,18 @@
             .open--opening & {
                 display: none;
             }
+            &-icon-enter {
+                display: block;
+                .open__pass-enter-btn--touch-id & {
+                    display: none;
+                }
+            }
+            &-icon-touch-id {
+                display: none;
+                .open__pass-enter-btn--touch-id & {
+                    display: block;
+                }
+            }
         }
         &-opening-icon {
             display: none;

@@ -25,6 +25,7 @@ import { OpenView } from 'views/open-view';
 import { SettingsView } from 'views/settings/settings-view';
 import { TagView } from 'views/tag-view';
 import { ImportCsvView } from 'views/import-csv-view';
+import { TitlebarView } from 'views/titlebar-view';
 import template from 'templates/app.hbs';
 
 class AppView extends View {
@@ -45,6 +46,9 @@ class AppView extends View {
 
     constructor(model) {
         super(model);
+
+        this.titlebarStyle = this.model.settings.titlebarStyle;
+
         this.views.menu = new MenuView(this.model.menu, { ownParent: true });
         this.views.menuDrag = new DragView('x', { parent: '.app__menu-drag' });
         this.views.footer = new FooterView(this.model, { ownParent: true });
@@ -54,11 +58,12 @@ class AppView extends View {
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView(undefined, { ownParent: true });
         this.views.details.appModel = this.model;
+        if (this.titlebarStyle !== 'default' && Features.renderCustomTitleBar()) {
+            this.views.titlebar = new TitlebarView(this.model);
+        }
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
-
-        this.titlebarStyle = this.model.settings.titlebarStyle;
 
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
@@ -120,6 +125,9 @@ class AppView extends View {
         }
         if (this.titlebarStyle !== 'default') {
             document.body.classList.add('titlebar-' + this.titlebarStyle);
+            if (Features.renderCustomTitleBar()) {
+                document.body.classList.add('titlebar-custom');
+            }
         }
         if (Features.isMobile) {
             document.body.classList.add('mobile');
@@ -129,7 +137,8 @@ class AppView extends View {
     render() {
         super.render({
             beta: this.model.isBeta,
-            titlebarStyle: this.titlebarStyle
+            titlebarStyle: this.titlebarStyle,
+            customTitlebar: Features.renderCustomTitleBar()
         });
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.render();
@@ -139,13 +148,14 @@ class AppView extends View {
         this.views.list.render();
         this.views.listDrag.render();
         this.views.details.render();
+        this.views.titlebar?.render();
         this.showLastOpenFile();
     }
 
     showOpenFile() {
         this.hideContextMenu();
         this.views.menu.hide();
-        this.views.menuDrag.hide();
+        this.views.menuDrag.$el.parent().hide();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
@@ -190,7 +200,7 @@ class AppView extends View {
 
     showEntries() {
         this.views.menu.show();
-        this.views.menuDrag.show();
+        this.views.menuDrag.$el.parent().show();
         this.views.listWrap.show();
         this.views.list.show();
         this.views.listDrag.show();
@@ -254,7 +264,7 @@ class AppView extends View {
     showSettings(selectedMenuItem) {
         this.model.menu.setMenu('settings');
         this.views.menu.show();
-        this.views.menuDrag.show();
+        this.views.menuDrag.$el.parent().show();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
@@ -578,9 +588,13 @@ class AppView extends View {
                             complete: (res) => {
                                 if (res === 'ignore') {
                                     this.model.closeAllFiles();
-                                    complete(true);
+                                    if (complete) {
+                                        complete(true);
+                                    }
                                 } else {
-                                    complete(false);
+                                    if (complete) {
+                                        complete(false);
+                                    }
                                 }
                             }
                         });
@@ -672,10 +686,14 @@ class AppView extends View {
         }
     }
 
-    toggleSettings(page) {
+    toggleSettings(page, section) {
         let menuItem = page ? this.model.menu[page + 'Section'] : null;
         if (menuItem) {
-            menuItem = menuItem.items[0];
+            if (section) {
+                menuItem = menuItem.items.find((it) => it.section === section) || menuItem.items[0];
+            } else {
+                menuItem = menuItem.items[0];
+            }
         }
         if (this.views.settings) {
             if (this.views.settings.page === page || !menuItem) {
@@ -686,9 +704,7 @@ class AppView extends View {
                     this.views.open.toggleMore();
                 }
             } else {
-                if (menuItem) {
-                    this.model.menu.select({ item: menuItem });
-                }
+                this.model.menu.select({ item: menuItem });
             }
         } else {
             this.showSettings();
