@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.18.0 (TBD)
+`-` legacy auto-type removed  
+
 ##### v1.17.0 (2021-03-07)
 `+` opening files with Touch ID on macOS (opt-in)  
 `+` password quality warnings  
