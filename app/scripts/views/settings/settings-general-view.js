@@ -54,7 +54,6 @@ class SettingsGeneralView extends View {
         'change .settings__general-direct-autotype': 'changeDirectAutotype',
         'change .settings__general-field-label-dblclick-autotype':
             'changeFieldLabelDblClickAutoType',
-        'change .settings__general-use-legacy-autotype': 'changeUseLegacyAutoType',
         'change .settings__general-device-owner-auth': 'changeDeviceOwnerAuth',
         'change .settings__general-device-owner-auth-timeout': 'changeDeviceOwnerAuthTimeout',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
@@ -135,7 +134,6 @@ class SettingsGeneralView extends View {
             useGroupIconForEntries: AppSettingsModel.useGroupIconForEntries,
             directAutotype: AppSettingsModel.directAutotype,
             fieldLabelDblClickAutoType: AppSettingsModel.fieldLabelDblClickAutoType,
-            useLegacyAutoType: AppSettingsModel.useLegacyAutoType,
             supportsTitleBarStyles: Features.supportsTitleBarStyles(),
             supportsCustomTitleBarAndDraggableWindow: Features.supportsCustomTitleBarAndDraggableWindow(),
             titlebarStyle: AppSettingsModel.titlebarStyle,
@@ -432,12 +430,6 @@ class SettingsGeneralView extends View {
     changeFieldLabelDblClickAutoType(e) {
         const fieldLabelDblClickAutoType = e.target.checked || false;
         AppSettingsModel.fieldLabelDblClickAutoType = fieldLabelDblClickAutoType;
-        Events.emit('refresh');
-    }
-
-    changeUseLegacyAutoType(e) {
-        const useLegacyAutoType = e.target.checked || false;
-        AppSettingsModel.useLegacyAutoType = useLegacyAutoType;
         Events.emit('refresh');
     }
 

@@ -53,7 +53,6 @@ module.exports = function(grunt) {
         'electron:darwin-x64',
         'electron-patch:darwin-x64',
         'build-darwin-installer',
-        'copy:desktop-darwin-helper-x64',
         'copy:desktop-darwin-installer-helper-x64',
         'copy:native-modules-darwin-x64'
     ]);
@@ -67,7 +66,6 @@ module.exports = function(grunt) {
         'default',
         'build-desktop-app-content',
         'electron:win32-x64',
-        'copy:desktop-windows-helper-x64',
         'copy:native-modules-win32-x64'
     ]);
 

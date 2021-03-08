@@ -1,6 +1,6 @@
 import { Events } from 'framework/events';
 import { AutoTypeFilter } from 'auto-type/auto-type-filter';
-import { AutoTypeHelperFactory } from 'auto-type/auto-type-helper-factory';
+import { AutoTypeHelper } from 'auto-type/auto-type-helper';
 import { AutoTypeParser } from 'auto-type/auto-type-parser';
 import { Launcher } from 'comp/launcher';
 import { Features } from 'util/features';
@@ -168,9 +168,8 @@ const AutoType = {
     },
 
     getActiveWindowInfo(callback) {
-        const helperType = AppSettingsModel.useLegacyAutoType ? 'legacy' : 'native';
-        logger.debug(`Getting window info using ${helperType} helper`);
-        const helper = AutoTypeHelperFactory.create();
+        logger.debug('Getting window info');
+        const helper = new AutoTypeHelper();
         return helper.getActiveWindowInfo((err, windowInfo) => {
             if (err) {
                 logger.error('Error getting window info', err);

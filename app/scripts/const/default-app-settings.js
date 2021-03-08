@@ -43,7 +43,6 @@ const DefaultAppSettings = {
     excludePinsFromAudit: true, // exclude PIN codes from audit
     checkPasswordsOnHIBP: false, // check passwords on Have I Been Pwned
     auditPasswordAge: 0, // show warnings about old passwords, number of years, 0 = disabled
-    useLegacyAutoType: false, // use legacy auto-type engine (will be removed in future versions)
     deviceOwnerAuth: null, // Touch ID: null / 'memory' / 'file'
     deviceOwnerAuthTimeoutMinutes: 0, // how often master password is required with Touch ID
     disableOfflineStorage: false, // don't cache loaded files in offline storage

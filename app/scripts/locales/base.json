@@ -464,7 +464,6 @@
     "setGenShowAppLogs": "Show app logs",
     "setGenReloadApp": "Reload the app",
     "setGenFieldLabelDblClickAutoType": "Auto-type on double-clicking field labels",
-    "setGenUseLegacyAutoType": "Use legacy auto-type (if you have issues)",
     "setGenTouchId": "Touch ID",
     "setGenTouchIdDisabled": "Don't use Touch ID",
     "setGenTouchIdMemory": "Unlock with Touch ID only while KeeWeb is running",

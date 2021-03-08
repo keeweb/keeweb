@@ -37,8 +37,6 @@ module.exports = function (grunt) {
         'electron-patch:darwin-x64',
         'electron-patch:darwin-arm64',
         'build-darwin-installer',
-        'copy:desktop-darwin-helper-x64',
-        'copy:desktop-darwin-helper-arm64',
         'copy:desktop-darwin-installer-helper-x64',
         'copy:desktop-darwin-installer-helper-arm64',
         'copy:native-modules-darwin-x64',
@@ -65,9 +63,6 @@ module.exports = function (grunt) {
         sign ? 'sign-exe:win32-build-x64' : 'noop',
         sign ? 'sign-exe:win32-build-ia32' : 'noop',
         sign ? 'sign-exe:win32-build-arm64' : 'noop',
-        'copy:desktop-windows-helper-x64',
-        'copy:desktop-windows-helper-ia32',
-        'copy:desktop-windows-helper-arm64',
         'copy:native-modules-win32-x64',
         'copy:native-modules-win32-ia32',
         'copy:native-modules-win32-arm64'

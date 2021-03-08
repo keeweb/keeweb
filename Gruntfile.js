@@ -144,18 +144,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
-            'desktop-darwin-helper-x64': {
-                src: 'helper/darwin/KeeWebHelper',
-                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
-                nonull: true,
-                options: { mode: '0755' }
-            },
-            'desktop-darwin-helper-arm64': {
-                src: 'helper/darwin/KeeWebHelper',
-                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Resources/',
-                nonull: true,
-                options: { mode: '0755' }
-            },
             'desktop-darwin-installer-helper-x64': {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
@@ -173,21 +161,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true,
                 options: { mode: true }
-            },
-            'desktop-windows-helper-x64': {
-                src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
-                nonull: true
-            },
-            'desktop-windows-helper-ia32': {
-                src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-ia32/Resources/',
-                nonull: true
-            },
-            'desktop-windows-helper-arm64': {
-                src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-arm64/Resources/',
-                nonull: true
             },
             'desktop-win32-dist-x64': {
                 src: 'tmp/desktop/KeeWeb.win.x64.exe',
