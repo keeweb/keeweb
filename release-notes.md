@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.17.1 (2021-03-11)
+##### v1.17.1 (2021-03-10)
 `-` fix #1735: issue with auto-typing some characters on Windows  
 
 ##### v1.17.0 (2021-03-07)
