@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.17.2 (TBD)
+`-` fixed crashes in the USB module on Windows  
+
 ##### v1.17.1 (2021-03-10)
 `-` fix #1735: issue with auto-typing some characters on Windows  
 
