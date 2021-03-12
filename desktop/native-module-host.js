@@ -17,12 +17,12 @@ const messageHandlers = {
 
         const usbDetection = reqNative('usb-detection');
 
-        fillAttachedYubiKeys();
-
         usbDetection.registerAdded(usbDeviceAttached);
         usbDetection.registerRemoved(usbDeviceDetached);
 
         usbDetection.startMonitoring();
+
+        fillAttachedYubiKeys();
 
         usbListenerRunning = true;
     },
