@@ -3,6 +3,11 @@ Release notes
 ##### v1.18.0 (TBD)
 `-` legacy auto-type removed  
 
+##### v1.17.2 (2021-03-13)
+`-` fixed crashes in the USB module on Windows  
+`-` fix #1745: deleting selected text in auto-type selector  
+`-` fix #1738: fixed auto-type on Linux with NumLock pressed  
+
 ##### v1.17.1 (2021-03-10)
 `-` fix #1735: issue with auto-typing some characters on Windows  
 
