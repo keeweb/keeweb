@@ -15,14 +15,14 @@ const messageHandlers = {
             return;
         }
 
-        const usb = reqNative('usb');
+        const usbDetection = reqNative('usb-detection');
+
+        usbDetection.registerAdded(usbDeviceAttached);
+        usbDetection.registerRemoved(usbDeviceDetached);
+
+        usbDetection.startMonitoring();
 
         fillAttachedYubiKeys();
-
-        usb.on('attach', usbDeviceAttached);
-        usb.on('detach', usbDeviceDetached);
-
-        usb._enableHotplugEvents();
 
         usbListenerRunning = true;
     },
@@ -32,12 +32,9 @@ const messageHandlers = {
             return;
         }
 
-        const usb = reqNative('usb');
+        const usbDetection = reqNative('usb-detection');
 
-        usb.off('attach', usbDeviceAttached);
-        usb.off('detach', usbDeviceDetached);
-
-        usb._disableHotplugEvents();
+        usbDetection.stopMonitoring();
 
         usbListenerRunning = false;
         attachedYubiKeys.length = 0;
@@ -149,7 +146,7 @@ const messageHandlers = {
 };
 
 function isYubiKey(device) {
-    return YubiKeyVendorIds.includes(device.deviceDescriptor.idVendor);
+    return YubiKeyVendorIds.includes(device.vendorId);
 }
 
 function usbDeviceAttached(device) {
@@ -170,9 +167,14 @@ function usbDeviceDetached(device) {
 }
 
 function fillAttachedYubiKeys() {
-    const usb = reqNative('usb');
-    attachedYubiKeys.push(...usb.getDeviceList().filter(isYubiKey));
-    reportYubiKeys();
+    const usbDetection = reqNative('usb-detection');
+    usbDetection.find((err, devices) => {
+        if (!err && devices) {
+            attachedYubiKeys.push(...devices.filter(isYubiKey));
+            reportYubiKeys();
+        }
+        return undefined;
+    });
 }
 
 function reportYubiKeys() {
@@ -291,6 +293,11 @@ function startInMain(channel) {
     callback = (cmd, ...args) => {
         channel.emit('message', { cmd, args });
     };
+
+    const { app } = require('electron');
+    app.on('will-quit', () => {
+        messageHandlers.stopUsbListener();
+    });
 }
 
 module.exports = { startInOwnProcess, startInMain };
