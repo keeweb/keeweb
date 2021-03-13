@@ -177,10 +177,18 @@ class AutoTypeSelectView extends View {
 
     backSpacePressed() {
         if (this.model.filter.text) {
-            this.model.filter.text = this.model.filter.text.substr(
-                0,
-                this.model.filter.text.length - 1
-            );
+            const input = this.el.querySelector('.at-select__header-filter-input');
+            if (input.selectionStart < input.selectionEnd) {
+                this.model.filter.text =
+                    this.model.filter.text.substr(0, input.selectionStart) +
+                    this.model.filter.text.substr(input.selectionEnd);
+                input.selectionStart = input.selectionEnd = 0;
+            } else {
+                this.model.filter.text = this.model.filter.text.substr(
+                    0,
+                    this.model.filter.text.length - 1
+                );
+            }
             this.render();
         }
     }
