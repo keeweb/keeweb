@@ -3,6 +3,9 @@ Release notes
 ##### v1.18.0 (TBD)
 `-` legacy auto-type removed  
 
+##### v1.17.3 (2021-03-14)
+`-` fix #1747: white screen in old Safari  
+
 ##### v1.17.2 (2021-03-13)
 `-` fixed crashes in the USB module on Windows  
 `-` fix #1745: deleting selected text in auto-type selector  
