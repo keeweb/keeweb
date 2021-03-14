@@ -5,12 +5,14 @@ const ThemeWatcher = {
 
     init() {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', (e) => {
-            const dark = e.matches;
-            this.dark = dark;
-            Events.emit('dark-mode-changed', { dark });
-        });
-        this.dark = mediaQuery.matches;
+        if (mediaQuery && mediaQuery.addEventListener) {
+            mediaQuery.addEventListener('change', (e) => {
+                const dark = e.matches;
+                this.dark = dark;
+                Events.emit('dark-mode-changed', { dark });
+            });
+        }
+        this.dark = !!mediaQuery.matches;
     }
 };
 
