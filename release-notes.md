@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.17.4 (TBD)
+`-` fix #1740: Windows updater issues  
+
 ##### v1.17.3 (2021-03-14)
 `-` fix #1747: white screen in old Safari  
 
