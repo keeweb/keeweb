@@ -202,7 +202,7 @@ const Launcher = {
         }
     },
     quitOnRealQuitEventIfMinimizeOnQuitIsEnabled() {
-        return this.platform() === 'darwin';
+        return !!(this.platform() === 'darwin' || this.pendingUpdateFile);
     },
     minimizeApp() {
         this.remoteApp().minimizeApp({
