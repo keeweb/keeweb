@@ -4,6 +4,10 @@ Release notes
 `-` legacy auto-type removed  
 `+` opening XML and CSV files using the Open button  
 
+##### v1.17.4 (2021-03-18)
+`-` fix #1740: Windows updater issues  
+`-` fix #1749: auto-type freezes on macOS    
+
 ##### v1.17.3 (2021-03-14)
 `-` fix #1747: white screen in old Safari  
 
