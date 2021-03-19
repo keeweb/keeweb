@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.18.0 (TBD)
 `-` legacy auto-type removed  
+`+` optimized memory consumption for large files  
 `+` opening XML and CSV files using the Open button  
 
 ##### v1.17.4 (2021-03-18)
