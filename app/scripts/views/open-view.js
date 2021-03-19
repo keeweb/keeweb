@@ -211,11 +211,17 @@ class OpenView extends View {
     fileSelected(e) {
         const file = e.target.files[0];
         if (file) {
-            this.processFile(file, (success) => {
-                if (success && !file.path && this.reading === 'fileData') {
-                    this.showLocalFileAlert();
-                }
-            });
+            if (this.model.settings.canImportCsv && /\.csv$/.test(file.name)) {
+                Events.emit('import-csv-requested', file);
+            } else if (this.model.settings.canImportXml && /\.xml$/.test(file.name)) {
+                this.setFile(file, null, this.showLocalFileAlert.bind(this));
+            } else {
+                this.processFile(file, (success) => {
+                    if (success && !file.path && this.reading === 'fileData') {
+                        this.showLocalFileAlert();
+                    }
+                });
+            }
         }
     }
 

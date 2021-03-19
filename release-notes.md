@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.18.0 (TBD)
 `-` legacy auto-type removed  
+`+` opening XML and CSV files using the Open button  
 
 ##### v1.17.3 (2021-03-14)
 `-` fix #1747: white screen in old Safari  
