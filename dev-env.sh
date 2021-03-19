@@ -15,10 +15,6 @@ pushd keeweb >/dev/null
 
 git clone $KEEWEB_GH/keeweb.git -b develop keeweb
 
-pushd keeweb  >/dev/null
-git worktree add ../keeweb-dist gh-pages
-popd  >/dev/null
-
 git clone $KEEWEB_GH/favicon-proxy.git favicon-proxy
 git clone $KEEWEB_GH/kdbxweb.git kdbxweb
 git clone $KEEWEB_GH/beta.keeweb.info.git keeweb-beta
