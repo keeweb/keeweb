@@ -203,7 +203,7 @@ const YubiKey = {
 
         this.process = Launcher.spawn({
             cmd: this.cmd(),
-            args: ['-d', serial, 'oath', 'code'],
+            args: ['-d', serial, 'oath', 'accounts', 'code'],
             noStdOutLogging: true,
             throwOnStdErr: true,
             complete: (err, stdout) => {
