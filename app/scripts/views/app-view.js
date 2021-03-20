@@ -202,7 +202,6 @@ class AppView extends View {
         this.views.menu.show();
         this.views.menuDrag.$el.parent().show();
         this.views.listWrap.show();
-        this.views.list.show();
         this.views.listDrag.show();
         this.views.details.show();
         this.views.footer.show();
@@ -211,6 +210,8 @@ class AppView extends View {
         this.hideSettings();
         this.hideKeyChange();
         this.hideImportCsv();
+
+        this.views.list.show();
     }
 
     hideOpenFile() {
