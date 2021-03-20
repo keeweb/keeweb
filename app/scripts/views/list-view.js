@@ -371,6 +371,7 @@ class ListView extends View {
         const scrollTop = this.itemsEl[0].scrollTop;
         this.render();
         this.itemsEl[0].scrollTop = scrollTop;
+        this.renderVisibleItems();
     }
 
     itemDragStart(e) {
