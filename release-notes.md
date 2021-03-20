@@ -1,5 +1,11 @@
 Release notes
 -------------
+##### v1.18.0 (TBD)
+`-` legacy auto-type removed  
+`+` optimized memory consumption for large files  
+`+` opening XML and CSV files using the Open button  
+`-` ykman v4 support  
+
 ##### v1.17.4 (2021-03-18)
 `-` fix #1740: Windows updater issues  
 `-` fix #1749: auto-type freezes on macOS    
