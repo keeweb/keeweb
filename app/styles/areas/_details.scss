@@ -276,6 +276,9 @@
                 .details__field--protected & {
                     font-family: $monospace-font-family;
                 }
+                .details__field--can-gen & {
+                    padding-right: 2.4em;
+                }
                 transition: background-color $slow-transition-out, border-color $slow-transition-out;
                 .details__field--edit[active-mobile-action] & {
                     transition: background-color $slow-transition-in,
