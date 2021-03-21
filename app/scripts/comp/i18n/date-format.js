@@ -24,7 +24,7 @@ const DateFormat = {
         const format = new Intl.DateTimeFormat(SettingsManager.activeLocale, { weekday: 'short' });
         const weekdays = [];
         for (let day = 1; day < 8; day++) {
-            weekdays.push(format.format(new Date(Date.UTC(2007, 9, 6 + day))));
+            weekdays.push(format.format(new Date(2007, 9, 6 + day)));
         }
         return weekdays;
     },
