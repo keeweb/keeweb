@@ -455,6 +455,7 @@
     "setGenLockOrSleep": "When the computer is locked or put to sleep",
     "setGenStorage": "Storage",
     "setGenDisableOfflineStorage": "Don't cache loaded files in offline storage",
+    "setGenShortLivedStorageToken": "Use short-lived sessions in cloud storage providers",
     "setGenStorageLogout": "Log out",
     "setGenShowAdvanced": "Show advanced settings",
     "setGenDevTools": "Show dev tools",

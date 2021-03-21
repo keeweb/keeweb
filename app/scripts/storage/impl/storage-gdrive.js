@@ -254,9 +254,9 @@ class StorageGDrive extends StorageBase {
             width: 600,
             height: 400,
             pkce: true,
-            redirectUrlParams: {
-                'access_type': 'offline'
-            }
+            redirectUrlParams: this.appSettings.shortLivedStorageToken
+                ? {}
+                : { 'access_type': 'offline' }
         };
     }
 }

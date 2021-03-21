@@ -230,10 +230,14 @@ class StorageOneDrive extends StorageBase {
                 ({ id: clientId, secret: clientSecret } = OneDriveApps.Production);
             }
         }
+        let scope = 'files.readwrite';
+        if (!this.appSettings.shortLivedStorageToken) {
+            scope += ' offline_access';
+        }
         return {
             url: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
             tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-            scope: 'files.readwrite offline_access',
+            scope,
             clientId,
             clientSecret,
             pkce: true,

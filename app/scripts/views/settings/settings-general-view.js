@@ -62,6 +62,7 @@ class SettingsGeneralView extends View {
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
         'change .settings__general-disable-offline-storage': 'changeDisableOfflineStorage',
+        'change .settings__general-short-lived-storage-token': 'changeShortLivedStorageToken',
         'change .settings__general-prv-check': 'changeStorageEnabled',
         'click .settings__general-prv-logout': 'logoutFromStorage',
         'click .settings__general-show-advanced': 'showAdvancedSettings',
@@ -142,7 +143,8 @@ class SettingsGeneralView extends View {
             hasDeviceOwnerAuth: Features.isDesktop && Features.isMac,
             deviceOwnerAuth: AppSettingsModel.deviceOwnerAuth,
             deviceOwnerAuthTimeout: AppSettingsModel.deviceOwnerAuthTimeoutMinutes,
-            disableOfflineStorage: AppSettingsModel.disableOfflineStorage
+            disableOfflineStorage: AppSettingsModel.disableOfflineStorage,
+            shortLivedStorageToken: AppSettingsModel.shortLivedStorageToken
         });
         this.renderProviderViews(storageProviders);
     }
@@ -483,6 +485,16 @@ class SettingsGeneralView extends View {
         AppSettingsModel.disableOfflineStorage = disableOfflineStorage;
         if (disableOfflineStorage) {
             this.appModel.deleteAllCachedFiles();
+        }
+    }
+
+    changeShortLivedStorageToken(e) {
+        const shortLivedStorageToken = e.target.checked;
+        AppSettingsModel.shortLivedStorageToken = shortLivedStorageToken;
+        if (shortLivedStorageToken) {
+            for (const storage of Object.values(Storage)) {
+                storage.deleteStoredToken();
+            }
         }
     }
 

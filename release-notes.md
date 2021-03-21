@@ -1,11 +1,12 @@
 Release notes
 -------------
 ##### v1.18.0 (TBD)
-`-` legacy auto-type removed  
 `+` optimized memory consumption for large files  
+`+` option to use short-lived tokens in cloud storages  
 `+` opening XML and CSV files using the Open button  
 `-` ykman v4 support  
-`-` setting expire date in the past  
+`-` setting expiry date in the past
+`-` legacy auto-type removed
 
 ##### v1.17.4 (2021-03-18)
 `-` fix #1740: Windows updater issues  
