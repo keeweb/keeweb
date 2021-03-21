@@ -49,6 +49,8 @@ const PasswordPresenter = {
 
         const topEl = document.createElement('div');
         topEl.style.display = 'flex';
+        topEl.style.overflow = 'hidden';
+        topEl.style.textOverflow = 'ellipsis';
 
         for (const item of items) {
             const el = document.createElement('div');
