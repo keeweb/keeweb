@@ -45,6 +45,7 @@ class FieldView extends View {
             multiline: this.model.multiline,
             title: this.model.title,
             canEditTitle: this.model.newField,
+            canGen: this.model.canGen,
             protect: this.value && this.value.isProtected,
             hasOptions: !Features.isMobile && renderedValue && this.hasOptions
         });
