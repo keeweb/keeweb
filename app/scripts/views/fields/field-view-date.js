@@ -24,7 +24,6 @@ class FieldViewDate extends FieldViewText {
             onSelect: this.pickerSelect.bind(this),
             onClose: this.pickerClose.bind(this),
             defaultDate: this.value,
-            minDate: new Date(),
             firstDay: 1,
             i18n: {
                 previousMonth: '',
