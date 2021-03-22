@@ -29,6 +29,9 @@
             td.field {
                 white-space: pre-wrap;
             }
+            footer {
+                margin-top: 10px;
+            }
         </style>
     </head>
     <body>
@@ -49,11 +52,11 @@
         </tr>
     </table>
     <h2>{{res 'exportEntries'}}</h2>
-    <p>
+    <div>
         {{{contentHtml}}}
-    </p>
-    <p>
+    </div>
+    <footer>
         {{#res 'exportDescription'}}<a href="{{appLink}}" rel="noreferrer noopener" target="_blank">KeeWeb</a>{{/res}}
-    </p>
+    </footer>
     </body>
 </html>
