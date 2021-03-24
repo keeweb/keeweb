@@ -17,7 +17,7 @@ const MdToHtml = {
             return '';
         }
         const renderer = new MdRenderer();
-        const html = marked(md, { renderer });
+        const html = marked(md, { renderer, breaks: true });
         const htmlWithoutLineBreaks = html.replace(whiteSpaceRegex, '');
         const mdWithoutLineBreaks = md.replace(whiteSpaceRegex, '');
         if (htmlWithoutLineBreaks === mdWithoutLineBreaks) {
