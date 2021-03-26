@@ -8,6 +8,7 @@ Release notes
 `-` fix #1758: export format HTML issues  
 `-` fix #1755: calendar tooltips in different time zones  
 `-` restored the missing local file icon on the open screen  
+`*` new Windows code signing certificate  
 
 ##### v1.17.4 (2021-03-18)
 `-` fix #1740: Windows updater issues  
