@@ -105,7 +105,7 @@ function getArgs() {
         var match = arg.match(/^--([^=]+)(=(.*))?/);
         if (match) {
             var argName = match[1].replace(/-./g, function (m) {
-                m[1].toUpperCase();
+                return m[1].toUpperCase();
             });
             args[argName] = match[3] || true;
         }
