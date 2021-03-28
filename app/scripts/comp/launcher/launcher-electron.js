@@ -153,17 +153,6 @@ const Launcher = {
     saveConfig(name, data) {
         return this.remoteApp().saveConfig(name, data);
     },
-    ensureRunnable(path) {
-        if (process.platform !== 'win32') {
-            const fs = this.req('fs');
-            const stat = fs.statSync(path);
-            if ((stat.mode & 0o0111) === 0) {
-                const mode = stat.mode | 0o0100;
-                logger.info(`chmod 0${mode.toString(8)} ${path}`);
-                fs.chmodSync(path, mode);
-            }
-        }
-    },
     preventExit(e) {
         e.returnValue = false;
         return false;
@@ -244,57 +233,32 @@ const Launcher = {
     },
     spawn(config) {
         const ts = logger.ts();
-        let complete = config.complete;
-        const ps = this.req('child_process').spawn(config.cmd, config.args);
-        [ps.stdin, ps.stdout, ps.stderr].forEach((s) => s.setEncoding('utf-8'));
-        let stderr = '';
-        let stdout = '';
-        ps.stderr.on('data', (d) => {
-            stderr += d.toString('utf-8');
-            if (config.throwOnStdErr) {
-                try {
-                    ps.kill();
-                } catch {}
-            }
-        });
-        ps.stdout.on('data', (d) => {
-            stdout += d.toString('utf-8');
-        });
-        ps.on('close', (code) => {
-            stdout = stdout.trim();
-            stderr = stderr.trim();
-            const msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
-            if (code !== 0) {
-                logger.error(msg + '\n' + stdout + '\n' + stderr);
-            } else {
-                logger.info(msg + (stdout && !config.noStdOutLogging ? '\n' + stdout : ''));
-            }
-            if (complete) {
-                complete(code !== 0 ? 'Exit code ' + code : null, stdout, code);
+        const { ipcRenderer } = this.electron();
+        let { complete } = config;
+        delete config.complete;
+        ipcRenderer
+            .invoke('spawnProcess', config)
+            .then((res) => {
+                if (res.err) {
+                    logger.error('spawn error: ' + config.cmd + ', ' + logger.ts(ts), res.err);
+                    complete?.(res.err);
+                } else {
+                    const code = res.code;
+                    const stdout = res.stdout || '';
+                    const stderr = res.stderr || '';
+                    const msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
+                    if (code !== 0) {
+                        logger.error(msg + '\n' + stdout + '\n' + stderr);
+                    } else {
+                        logger.info(msg + (stdout && !config.noStdOutLogging ? '\n' + stdout : ''));
+                    }
+                    complete?.(code !== 0 ? 'Exit code ' + code : null, stdout, code);
+                }
                 complete = null;
-            }
-        });
-        ps.on('error', (err) => {
-            logger.error('spawn error: ' + config.cmd + ', ' + logger.ts(ts), err);
-            if (complete) {
-                complete(err);
-                complete = null;
-            }
-        });
-        if (config.data) {
-            try {
-                ps.stdin.end(config.data);
-            } catch (e) {
-                logger.error('spawn write error', e);
-            }
-        }
-        process.nextTick(() => {
-            // it should work without destroy, but a process doesn't get launched
-            // xubuntu-desktop 19.04 / xfce
-            // see https://github.com/keeweb/keeweb/issues/1234
-            ps.stdin.destroy();
-        });
-        return ps;
+            })
+            .catch((err) => {
+                complete?.(err);
+            });
     },
     checkOpenFiles() {
         this.readyToOpenFiles = true;
