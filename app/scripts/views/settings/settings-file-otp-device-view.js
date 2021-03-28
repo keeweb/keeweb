@@ -1,8 +1,8 @@
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
-import template from 'templates/settings/settings-file-external.hbs';
+import template from 'templates/settings/settings-file-otp-device.hbs';
 
-class SettingsFileExternalView extends View {
+class SettingsFileOtpDeviceView extends View {
     template = template;
 
     events = {
@@ -26,4 +26,4 @@ class SettingsFileExternalView extends View {
     }
 }
 
-export { SettingsFileExternalView };
+export { SettingsFileOtpDeviceView };

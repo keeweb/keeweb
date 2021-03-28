@@ -14,9 +14,6 @@ EntryPresenter.prototype = {
             this.entry = item;
         } else if (item.group) {
             this.group = item;
-        } else if (item.external) {
-            this.entry = item;
-            this.external = true;
         }
         return this;
     },
@@ -71,7 +68,7 @@ EntryPresenter.prototype = {
         if (!this.entry) {
             return '[' + Locale.listGroup + ']';
         }
-        if (this.external) {
+        if (this.entry.backend === 'otp-device') {
             return this.entry.description;
         }
         switch (this.descField) {

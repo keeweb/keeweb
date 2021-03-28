@@ -121,6 +121,9 @@ class DetailsView extends View {
         }
         const model = {
             deleted: this.appModel.filter.trash,
+            canEditColor: this.model.file.supportsColors && !this.model.readOnly,
+            canEditIcon: this.model.file.supportsIcons && !this.model.readOnly,
+            showButtons: !this.model.backend && !this.model.readOnly,
             ...this.model
         };
         this.template = template;
@@ -185,7 +188,7 @@ class DetailsView extends View {
 
         this.fieldViews = fieldViews.concat(fieldViewsAside);
 
-        if (!this.model.external) {
+        if (!this.model.backend) {
             this.moreView = new DetailsAddFieldView();
             this.moreView.render();
             this.moreView.on('add-field', this.addNewField.bind(this));
@@ -363,7 +366,7 @@ class DetailsView extends View {
     }
 
     toggleIcons() {
-        if (this.model.external) {
+        if (this.model.backend) {
             return;
         }
         if (this.views.sub && this.views.sub instanceof IconSelectView) {
@@ -464,7 +467,7 @@ class DetailsView extends View {
         }
 
         this.model.initOtpGenerator?.();
-        if (this.model.external) {
+        if (this.model.backend === 'otp-device') {
             return;
         }
 
@@ -496,7 +499,7 @@ class DetailsView extends View {
         if (!this.model) {
             return;
         }
-        if (this.model.external) {
+        if (this.model.backend === 'otp-device') {
             this.copyOtp();
             e.preventDefault();
         }
@@ -520,7 +523,7 @@ class DetailsView extends View {
 
     copyOtp() {
         const otpField = this.getFieldView('$otp');
-        if (this.model.external) {
+        if (this.model.backend === 'otp-device') {
             if (!otpField) {
                 return false;
             }
@@ -715,7 +718,7 @@ class DetailsView extends View {
     }
 
     editTitle() {
-        if (this.model.external) {
+        if (this.model.backend === 'otp-device') {
             return;
         }
         const input = $('<input/>')
@@ -875,7 +878,7 @@ class DetailsView extends View {
         const canCopy = document.queryCommandSupported('copy');
         const options = [];
         if (canCopy) {
-            if (this.model.external) {
+            if (this.model.backend === 'otp-device') {
                 options.push({
                     value: 'det-copy-otp',
                     icon: 'copy',
@@ -894,7 +897,7 @@ class DetailsView extends View {
                 text: Locale.detMenuCopyUser
             });
         }
-        if (!this.model.external) {
+        if (!this.model.backend) {
             options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
             options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });
             if (canCopy) {
@@ -985,7 +988,8 @@ class DetailsView extends View {
 
     autoType(sequence) {
         const entry = this.model;
-        const hasOtp = sequence?.includes('{TOTP}') || (entry.external && !sequence);
+        const hasOtp =
+            sequence?.includes('{TOTP}') || (entry.backend === 'otp-device' && !sequence);
         if (hasOtp) {
             const otpField = this.getFieldView('$otp');
             otpField.refreshOtp((err) => {

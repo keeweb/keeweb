@@ -616,7 +616,7 @@ class AppView extends View {
 
     closeAllFilesAndShowFirst() {
         let fileToShow = this.model.files.find(
-            (file) => !file.demo && !file.created && !file.external
+            (file) => !file.demo && !file.created && !file.skipOpenList
         );
         this.model.closeAllFiles();
         if (!fileToShow) {

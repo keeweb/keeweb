@@ -1,12 +1,10 @@
 import { Model } from 'framework/model';
-import { ExternalEntryCollection } from 'collections/external-entry-collection';
+import { OtpDeviceEntryCollection } from './otp-device-entry-collection';
 
-class ExternalDeviceModel extends Model {
-    entries = new ExternalEntryCollection();
+class OtpDeviceModel extends Model {
+    entries = new OtpDeviceEntryCollection();
     groups = [];
     entryMap = {};
-
-    close() {}
 
     forEachEntry(filter, callback) {
         if (filter.trash || filter.group || filter.tag) {
@@ -32,11 +30,28 @@ class ExternalDeviceModel extends Model {
             this.entryMap[entry.id.toLowerCase()] = entry;
         }
     }
+
+    open(callback) {
+        throw 'Not implemented';
+    }
+
+    cancelOpen() {
+        throw 'Not implemented';
+    }
+
+    close(callback) {
+        throw 'Not implemented';
+    }
+
+    getOtp(callback) {
+        throw 'Not implemented';
+    }
 }
 
-ExternalDeviceModel.defineModelProperties({
+OtpDeviceModel.defineModelProperties({
     id: '',
-    external: true,
+    backend: 'otp-device',
+    skipOpenList: true,
     readOnly: true,
     active: false,
     entries: undefined,
@@ -47,4 +62,4 @@ ExternalDeviceModel.defineModelProperties({
     entryMap: undefined
 });
 
-export { ExternalDeviceModel };
+export { OtpDeviceModel };

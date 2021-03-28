@@ -1,7 +1,7 @@
 import { Model } from 'framework/model';
 import { EntrySearch } from 'util/entry-search';
 
-class ExternalEntryModel extends Model {
+class OtpDeviceEntryModel extends Model {
     tags = [];
     fields = {};
 
@@ -44,9 +44,10 @@ class ExternalEntryModel extends Model {
     }
 }
 
-ExternalEntryModel.defineModelProperties({
+OtpDeviceEntryModel.defineModelProperties({
     id: '',
-    external: true,
+    file: null,
+    entry: true,
     readOnly: true,
     device: undefined,
     deviceSubId: null,
@@ -59,4 +60,4 @@ ExternalEntryModel.defineModelProperties({
     _search: undefined
 });
 
-export { ExternalEntryModel };
+export { OtpDeviceEntryModel };

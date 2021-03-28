@@ -766,7 +766,11 @@ FileModel.defineModelProperties({
     oldKeyFileHash: null,
     oldKeyChangeDate: null,
     encryptedPassword: null,
-    encryptedPasswordDate: null
+    encryptedPasswordDate: null,
+    supportsTags: true,
+    supportsColors: true,
+    supportsIcons: true,
+    supportsExpiration: true
 });
 
 export { FileModel };

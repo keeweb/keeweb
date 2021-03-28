@@ -505,7 +505,7 @@ class EntryModel extends Model {
             }
             try {
                 this.otpGenerator = Otp.parseUrl(otpUrl);
-            } catch (e) {
+            } catch {
                 this.otpGenerator = null;
             }
         } else {

@@ -1,6 +1,6 @@
-import { ExternalEntryModel } from 'models/external/external-entry-model';
+import { OtpDeviceEntryModel } from './otp-device-entry-model';
 
-class ExternalOtpEntryModel extends ExternalEntryModel {
+class OtpEntryModel extends OtpDeviceEntryModel {
     constructor(props) {
         super({
             ...props,
@@ -59,10 +59,11 @@ class ExternalOtpEntryModel extends ExternalEntryModel {
     }
 }
 
-ExternalOtpEntryModel.defineModelProperties({
+OtpEntryModel.defineModelProperties({
     user: undefined,
+    backend: 'otp-device',
     otpGenerator: undefined,
     needsTouch: false
 });
 
-export { ExternalOtpEntryModel };
+export { OtpEntryModel };

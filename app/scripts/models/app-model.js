@@ -12,7 +12,7 @@ import { EntryModel } from 'models/entry-model';
 import { FileInfoModel } from 'models/file-info-model';
 import { FileModel } from 'models/file-model';
 import { GroupModel } from 'models/group-model';
-import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
+import { YubiKeyOtpModel } from 'models/otp-device/yubikey-otp-model';
 import { MenuModel } from 'models/menu/menu-model';
 import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
@@ -307,12 +307,12 @@ class AppModel {
         const preparedFilter = this.prepareFilter(filter);
         const entries = new SearchResultCollection();
 
-        const devicesToMatchOtpEntries = this.files.filter((file) => file.external);
+        const devicesToMatchOtpEntries = this.files.filter((file) => file.backend === 'otp-device');
 
         const matchedOtpEntrySet = this.settings.yubiKeyMatchEntries ? new Set() : undefined;
 
         this.files
-            .filter((file) => !file.external)
+            .filter((file) => file.backend !== 'otp-device')
             .forEach((file) => {
                 file.forEachEntry(preparedFilter, (entry) => {
                     if (matchedOtpEntrySet) {
@@ -827,7 +827,10 @@ class AppModel {
             this.scheduleBackupFile(file, data);
         }
         if (this.settings.yubiKeyAutoOpen) {
-            if (this.attachedYubiKeysCount > 0 && !this.files.some((f) => f.external)) {
+            if (
+                this.attachedYubiKeysCount > 0 &&
+                !this.files.some((f) => f.backend === 'otp-device')
+            ) {
                 this.tryOpenOtpDeviceInBackground();
             }
         }
@@ -1271,7 +1274,9 @@ class AppModel {
         }
 
         const isNewYubiKey = UsbListener.attachedYubiKeys > attachedYubiKeysCount;
-        const hasOpenFiles = this.files.some((file) => file.active && !file.external);
+        const hasOpenFiles = this.files.some(
+            (file) => file.active && file.backend !== 'otp-device'
+        );
 
         if (isNewYubiKey && hasOpenFiles && !this.openingOtpDevice) {
             this.tryOpenOtpDeviceInBackground();
@@ -1303,7 +1308,7 @@ class AppModel {
             return null;
         }
         for (const file of this.files) {
-            if (file.external) {
+            if (file.backend === 'otp-device') {
                 const matchingEntry = file.getMatchingEntry(entry);
                 if (matchingEntry) {
                     return matchingEntry;

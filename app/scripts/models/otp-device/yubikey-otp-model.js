@@ -1,13 +1,13 @@
 import { Events } from 'framework/events';
-import { ExternalOtpDeviceModel } from 'models/external/external-otp-device-model';
-import { ExternalOtpEntryModel } from 'models/external/external-otp-entry-model';
+import { OtpDeviceModel } from './otp-device-model';
+import { OtpEntryModel } from './otp-entry-model';
 import { Logger } from 'util/logger';
 import { UsbListener } from 'comp/app/usb-listener';
 import { YubiKey } from 'comp/app/yubikey';
 
 const logger = new Logger('yubikey');
 
-class YubiKeyOtpModel extends ExternalOtpDeviceModel {
+class YubiKeyOtpModel extends OtpDeviceModel {
     constructor(props) {
         super({
             id: 'yubikey',
@@ -67,8 +67,9 @@ class YubiKeyOtpModel extends ExternalOtpDeviceModel {
 
             for (const code of codes) {
                 this.entries.push(
-                    new ExternalOtpEntryModel({
+                    new OtpEntryModel({
                         id: this.entryId(code.title, code.user),
+                        file: this,
                         device: this,
                         deviceSubId: serial,
                         icon: 'clock',
