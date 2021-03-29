@@ -354,7 +354,7 @@ jobs:
         run: docker tag antelle/keeweb:latest antelle/keeweb:${{ steps.get_tag.outputs.tag }}
       - name: Push the Docker image to the registry
         if: ${{ github.repository == 'keeweb/keeweb' }}
-        run: docker push antelle/keeweb
+        run: docker push --all-tags antelle/keeweb
       - name: Create a GitHub release
         id: create_release
         uses: actions/create-release@latest
