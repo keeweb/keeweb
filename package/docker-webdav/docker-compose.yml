@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  keeweb:
+    image: keeweb:dev
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8099:80
+      - 44399:443
+    volumes:
+      - webdav-store:/media/store:rw
+    environment:
+      WEBDAV_USERNAME: admin
+      WEBDAV_PASSWORD: changeme
+      DH_SIZE: 512
+    restart: always
+
+
+volumes:
+  webdav-store:
