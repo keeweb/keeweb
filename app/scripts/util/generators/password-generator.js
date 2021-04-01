@@ -1,5 +1,6 @@
 import kdbxweb from 'kdbxweb';
 import { phonetic } from 'util/generators/phonetic';
+import { shuffle } from 'util/fn';
 
 const CharRanges = {
     upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
@@ -41,18 +42,33 @@ const PasswordGenerator = {
         }
         const rangesByPatternChar = {
             ...DefaultCharRangesByPattern,
-            'X': ranges.join(''),
             'I': opts.include || ''
         };
         const pattern = opts.pattern || 'X';
+
+        const rangeIxRandomBytes = kdbxweb.Random.getBytes(opts.length);
+        const rangeCharRandomBytes = kdbxweb.Random.getBytes(opts.length);
+        const defaultRangeGeneratedChars = [];
+        for (let i = 0; i < opts.length; i++) {
+            const rangeIx = i < ranges.length ? i : rangeIxRandomBytes[i] % ranges.length;
+            const range = ranges[rangeIx];
+            const char = range[rangeCharRandomBytes[i] % range.length];
+            defaultRangeGeneratedChars.push(char);
+        }
+        shuffle(defaultRangeGeneratedChars);
+
         const randomBytes = kdbxweb.Random.getBytes(opts.length);
         const chars = [];
         for (let i = 0; i < opts.length; i++) {
             const rand = Math.round(Math.random() * 1000) + randomBytes[i];
             const patternChar = pattern[i % pattern.length];
-            const range = rangesByPatternChar[patternChar];
-            const char = range ? range[rand % range.length] : patternChar;
-            chars.push(char);
+            if (patternChar === 'X') {
+                chars.push(defaultRangeGeneratedChars.pop());
+            } else {
+                const range = rangesByPatternChar[patternChar];
+                const char = range ? range[rand % range.length] : patternChar;
+                chars.push(char);
+            }
         }
         return chars.join('');
     },

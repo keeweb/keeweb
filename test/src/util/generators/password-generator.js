@@ -57,4 +57,24 @@ describe('PasswordGenerator', () => {
             })
         ).to.match(/^([A-Z][a-z][0-9][0-9A-Z@#][@#]-){10}$/);
     });
+
+    it('should include all groups of characters at least once', () => {
+        for (let i = 0; i < 10; i++) {
+            const password = PasswordGenerator.generate({
+                length: 6,
+                upper: true,
+                lower: true,
+                digits: true,
+                brackets: true,
+                special: true,
+                ambiguous: true
+            });
+            expect(password).to.match(/[A-Z]/);
+            expect(password).to.match(/[a-z]/);
+            expect(password).to.match(/[0-9]/);
+            expect(password).to.match(/[(){}[\]<>]/);
+            expect(password).to.match(/[!-\/:-@[-`~]/);
+            expect(password).to.match(/[O0oIl]/);
+        }
+    });
 });
