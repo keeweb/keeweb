@@ -46,10 +46,18 @@ const PasswordGenerator = {
         };
         const pattern = opts.pattern || 'X';
 
-        const rangeIxRandomBytes = kdbxweb.Random.getBytes(opts.length);
-        const rangeCharRandomBytes = kdbxweb.Random.getBytes(opts.length);
-        const defaultRangeGeneratedChars = [];
+        let countDefaultChars = 0;
         for (let i = 0; i < opts.length; i++) {
+            const patternChar = pattern[i % pattern.length];
+            if (patternChar === 'X') {
+                countDefaultChars++;
+            }
+        }
+
+        const rangeIxRandomBytes = kdbxweb.Random.getBytes(countDefaultChars);
+        const rangeCharRandomBytes = kdbxweb.Random.getBytes(countDefaultChars);
+        const defaultRangeGeneratedChars = [];
+        for (let i = 0; i < countDefaultChars; i++) {
             const rangeIx = i < ranges.length ? i : rangeIxRandomBytes[i] % ranges.length;
             const range = ranges[rangeIx];
             const char = range[rangeCharRandomBytes[i] % range.length];
