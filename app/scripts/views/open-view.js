@@ -689,7 +689,10 @@ class OpenView extends View {
                 .catch((err) => {
                     if (err.message.includes('User refused')) {
                         err.userCanceled = true;
+                    } else if (err.message.includes('SecKeyCreateDecryptedData')) {
+                        err.maybeTouchIdChanged = true;
                     }
+                    logger.error('Error in hardware decryption', err);
                     this.openDbComplete(err);
                 });
         } else {
@@ -718,9 +721,13 @@ class OpenView extends View {
                 if (err.notFound) {
                     err = Locale.openErrorFileNotFound;
                 }
+                let alertBody = Locale.openErrorDescription;
+                if (err.maybeTouchIdChanged) {
+                    alertBody += '\n' + Locale.openErrorDescriptionMaybeTouchIdChanged;
+                }
                 Alerts.error({
                     header: Locale.openError,
-                    body: Locale.openErrorDescription,
+                    body: alertBody,
                     pre: this.errorToString(err)
                 });
             }

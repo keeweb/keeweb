@@ -224,6 +224,7 @@
     "openConfigErrorNotFound": "File not found",
     "openError": "Error",
     "openErrorDescription": "There was an error opening file",
+    "openErrorDescriptionMaybeTouchIdChanged": "The error looks similar to what usually happens when Touch ID setup is changed, for example, you added or removed an additional finger. If it's the case, go to Settings, disable Touch ID, and re-enable it again.",
     "openErrorFileNotFound": "File not found",
     "openListErrorBody": "There was an error loading file list",
     "openShowAllFiles": "Show all files",

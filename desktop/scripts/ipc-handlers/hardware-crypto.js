@@ -1,12 +1,22 @@
 const { readXoredValue, makeXoredValue } = require('../util/byte-utils');
 const { reqNative } = require('../util/req-native');
 
+const keyTag = 'net.antelle.keeweb.encryption-key';
+
 let testCipherParams;
+let keyChecked = false;
 
 module.exports = {
+    hardwareCryptoDeleteKey,
     hardwareEncrypt,
     hardwareDecrypt
 };
+
+async function hardwareCryptoDeleteKey() {
+    const secureEnclave = reqNative('secure-enclave');
+    await secureEnclave.deleteKeyPair({ keyTag });
+    keyChecked = false;
+}
 
 async function hardwareEncrypt(e, value) {
     return await hardwareCrypto(value, true);
@@ -27,7 +37,6 @@ async function hardwareCrypto(value, encrypt, touchIdPrompt) {
     //  so any attempt to use Secure Enclave API fails with an error.
 
     const secureEnclave = reqNative('secure-enclave');
-    const keyTag = 'net.antelle.keeweb.encryption-key';
 
     const data = readXoredValue(value);
 
@@ -69,12 +78,12 @@ async function hardwareCrypto(value, encrypt, touchIdPrompt) {
     return makeXoredValue(res);
 
     async function checkKey() {
-        if (checkKey.done) {
+        if (keyChecked) {
             return;
         }
         try {
             await secureEnclave.createKeyPair({ keyTag });
-            checkKey.done = true;
+            keyChecked = true;
         } catch (e) {
             if (!e.keyExists) {
                 throw e;

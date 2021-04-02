@@ -18,6 +18,7 @@ import { SettingsLogsView } from 'views/settings/settings-logs-view';
 import { SettingsPrvView } from 'views/settings/settings-prv-view';
 import { mapObject, minmax } from 'util/fn';
 import { ThemeWatcher } from 'comp/browser/theme-watcher';
+import { NativeModules } from 'comp/launcher/native-modules';
 import template from 'templates/settings/settings-general.hbs';
 
 class SettingsGeneralView extends View {
@@ -449,6 +450,9 @@ class SettingsGeneralView extends View {
         this.render();
 
         this.appModel.checkEncryptedPasswordsStorage();
+        if (!deviceOwnerAuth) {
+            NativeModules.hardwareCryptoDeleteKey().catch(() => {});
+        }
     }
 
     changeDeviceOwnerAuthTimeout(e) {

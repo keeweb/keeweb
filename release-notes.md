@@ -5,6 +5,7 @@ Release notes
 `+` option to use short-lived tokens in cloud storages  
 `+` opening XML and CSV files using the Open button  
 `*` password generator now includes all selected character ranges  
+`+` better Touch ID error messages  
 `-` legacy auto-type removed  
 
 ##### v1.17.5 (2021-03-27)

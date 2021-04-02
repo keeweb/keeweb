@@ -176,6 +176,10 @@ if (Launcher) {
             return this.call('argon2', password, salt, options);
         },
 
+        hardwareCryptoDeleteKey: async () => {
+            await ipcRenderer.invoke('hardwareCryptoDeleteKey');
+        },
+
         hardwareEncrypt: async (value) => {
             const { data, salt } = await ipcRenderer.invoke('hardwareEncrypt', value.dataAndSalt());
             return new kdbxweb.ProtectedValue(data, salt);
