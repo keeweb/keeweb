@@ -811,6 +811,38 @@ class AppModel {
     }
 
     fileOpened(file, data, params) {
+        function findEntry(group, url) {
+            for (const entry of group.entries) {
+                if (entry.fields.URL === url) {
+                    return entry;
+                }
+            }
+
+            for (const g of group.groups) {
+                const entry = findEntry(g, url);
+                if (entry) {
+                    return entry;
+                }
+            }
+        }
+        window.postMessage({ type: 'file-opened' });
+        window.addEventListener('message', (event) => {
+            // only accept messages from the same frame
+            if (event.source !== window) {
+                return;
+            }
+
+            if (event.data.type === 'get-creds') {
+                const entry = findEntry(file.db.groups[0], event.data.url);
+                if (entry) {
+                    window.postMessage({
+                        type: 'creds',
+                        username: entry.fields.UserName,
+                        password: entry.fields.Password.getText()
+                    });
+                }
+            }
+        });
         if (file.storage === 'file') {
             Storage.file.watch(
                 file.path,
@@ -840,6 +872,7 @@ class AppModel {
     }
 
     fileClosed(file) {
+        window.postMessage({ type: 'file-closed' });
         if (file.storage === 'file') {
             Storage.file.unwatch(file.path);
         }
