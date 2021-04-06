@@ -171,6 +171,7 @@ class AppModel {
         file.on('reload', this.reloadFile.bind(this));
         file.on('change', () => Events.emit('file-changed', file));
         file.on('ejected', () => this.closeFile(file));
+        Events.emit('file-opened');
         return true;
     }
 
@@ -244,6 +245,7 @@ class AppModel {
         this.tags.splice(0, this.tags.length);
         this.filter = {};
         this.menu.select({ item: this.menu.allItemsItem });
+        Events.emit('all-files-closed');
     }
 
     closeFile(file) {
@@ -254,6 +256,7 @@ class AppModel {
         this.menu.groupsSection.removeByFile(file);
         this.menu.filesSection.removeByFile(file);
         this.menu.select({ item: this.menu.allItemsSection.items[0] });
+        Events.emit('one-file-closed');
     }
 
     emptyTrash() {

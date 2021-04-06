@@ -1,8 +1,10 @@
 import kdbxweb from 'kdbxweb';
 import { box as tweetnaclBox } from 'tweetnacl';
+import { Events } from 'framework/events';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { AppModel } from 'models/app-model';
 
 const connectedClients = {};
 
@@ -104,8 +106,16 @@ const ProtocolHandlers = {
 };
 
 const BrowserExtensionConnector = {
+    enabled: false,
+
     init() {
+        this.browserWindowMessage = this.browserWindowMessage.bind(this);
+        this.fileOpened = this.fileOpened.bind(this);
+        this.oneFileClosed = this.oneFileClosed.bind(this);
+        this.allFilesClosed = this.allFilesClosed.bind(this);
+
         AppSettingsModel.on('change:browserExtension', (model, enabled) => {
+            this.enabled = enabled;
             if (enabled) {
                 this.start();
             } else {
@@ -113,6 +123,7 @@ const BrowserExtensionConnector = {
             }
         });
         if (AppSettingsModel.browserExtension) {
+            this.enabled = true;
             this.start();
         }
     },
@@ -121,12 +132,18 @@ const BrowserExtensionConnector = {
         if (!Launcher) {
             this.startWebMessageListener();
         }
+        Events.on('file-opened', this.fileOpened);
+        Events.on('one-file-closed', this.oneFileClosed);
+        Events.on('all-files-closed', this.allFilesClosed);
     },
 
     stop() {
         if (!Launcher) {
             this.stopWebMessageListener();
         }
+        Events.off('file-opened', this.fileOpened);
+        Events.off('one-file-closed', this.oneFileClosed);
+        Events.off('all-files-closed', this.allFilesClosed);
     },
 
     startWebMessageListener() {
@@ -158,9 +175,28 @@ const BrowserExtensionConnector = {
             response = { error: e.message || 'Unknown error' };
         }
         if (response) {
-            response.kwConnect = 'response';
-            postMessage(response, window.location.origin);
+            this.sendResponse(response);
         }
+    },
+
+    sendResponse(response) {
+        response.kwConnect = 'response';
+        postMessage(response, window.location.origin);
+    },
+
+    fileOpened() {
+        this.sendResponse({ action: 'database-unlocked' });
+    },
+
+    oneFileClosed() {
+        this.sendResponse({ action: 'database-locked' });
+        if (AppModel.instance.files.hasOpenFiles()) {
+            this.sendResponse({ action: 'database-unlocked' });
+        }
+    },
+
+    allFilesClosed() {
+        this.sendResponse({ action: 'database-locked' });
     }
 };
 
