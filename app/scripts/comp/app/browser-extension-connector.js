@@ -105,7 +105,9 @@ const ProtocolHandlers = {
                 action: 'hash',
                 version: RuntimeInfo.version,
                 hash: firstFile.defaultGroupHash,
-                hashes: AppModel.instance.files.map((file) => file.defaultGroupHash)
+                hashes: AppModel.instance.files
+                    .filter((file) => file.active && !file.backend)
+                    .map((file) => file.defaultGroupHash)
             });
         } else {
             return { action: 'get-databasehash', error: 'No open files', errorCode: '1' };
