@@ -90,6 +90,7 @@ const ProtocolHandlers = {
         return {
             action: 'change-public-keys',
             version: RuntimeInfo.version,
+            appName: 'KeeWeb',
             publicKey: kdbxweb.ByteUtils.bytesToBase64(keys.publicKey),
             success: 'true'
         };
