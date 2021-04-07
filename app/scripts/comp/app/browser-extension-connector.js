@@ -112,6 +112,18 @@ const ProtocolHandlers = {
         } else {
             return { action: 'get-databasehash', error: 'No open files', errorCode: '1' };
         }
+    },
+
+    'lock-database'(request) {
+        decryptRequest(request);
+
+        Events.emit('lock-workspace');
+
+        return encryptResponse(request, {
+            action: 'lock-database',
+            error: 'No open files',
+            errorCode: '1'
+        });
     }
 };
 
