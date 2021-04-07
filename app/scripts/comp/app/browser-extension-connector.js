@@ -97,11 +97,17 @@ const ProtocolHandlers = {
 
     'get-databasehash'(request) {
         decryptRequest(request);
-        return encryptResponse(request, {
-            action: 'hash',
-            version: RuntimeInfo.version,
-            hash: 'TODO'
-        });
+
+        const firstFile = AppModel.instance.files.firstActiveKdbxFile();
+        if (firstFile?.defaultGroupHash) {
+            return encryptResponse(request, {
+                action: 'hash',
+                version: RuntimeInfo.version,
+                hash: firstFile.defaultGroupHash
+            });
+        } else {
+            return { action: 'get-databasehash', error: 'No open files', errorCode: '1' };
+        }
     }
 };
 

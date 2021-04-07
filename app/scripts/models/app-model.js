@@ -469,7 +469,7 @@ class AppModel {
         }
     }
 
-    createNewFile(name) {
+    createNewFile(name, callback) {
         if (!name) {
             for (let i = 0; ; i++) {
                 name = Locale.openNewFile + (i || '');
@@ -479,9 +479,10 @@ class AppModel {
             }
         }
         const newFile = new FileModel({ id: IdGenerator.uuid() });
-        newFile.create(name);
-        this.addFile(newFile);
-        return newFile;
+        newFile.create(name, () => {
+            this.addFile(newFile);
+            callback?.(newFile);
+        });
     }
 
     openFile(params, callback) {

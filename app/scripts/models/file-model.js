@@ -31,6 +31,9 @@ class FileModel extends Model {
             kdbxweb.Kdbx.load(fileData, credentials)
                 .then((db) => {
                     this.db = db;
+                })
+                .then(() => this.setDefaultGroupHash())
+                .then(() => {
                     this.readModel();
                     this.setOpenFile({ passwordLength: password ? password.textLength : 0 });
                     if (keyFileData) {
@@ -43,7 +46,7 @@ class FileModel extends Model {
                             ': ' +
                             logger.ts(ts) +
                             ', ' +
-                            this.kdfArgsToString(db.header) +
+                            this.kdfArgsToString(this.db.header) +
                             ', ' +
                             Math.round(fileData.byteLength / 1024) +
                             ' kB'
@@ -90,13 +93,16 @@ class FileModel extends Model {
         }
     }
 
-    create(name) {
+    create(name, callback) {
         const password = kdbxweb.ProtectedValue.fromString('');
         const credentials = new kdbxweb.Credentials(password);
         this.db = kdbxweb.Kdbx.create(credentials, name);
         this.name = name;
         this.readModel();
-        this.set({ active: true, created: true, name });
+        return this.setDefaultGroupHash().then(() => {
+            this.set({ active: true, created: true, name });
+            callback();
+        });
     }
 
     importWithXml(fileXml, callback) {
@@ -107,6 +113,9 @@ class FileModel extends Model {
             kdbxweb.Kdbx.loadXml(fileXml, credentials)
                 .then((db) => {
                     this.db = db;
+                })
+                .then(() => this.setDefaultGroupHash())
+                .then(() => {
                     this.readModel();
                     this.set({ active: true, created: true });
                     logger.info('Imported file ' + this.name + ': ' + logger.ts(ts));
@@ -128,13 +137,17 @@ class FileModel extends Model {
         const demoFile = kdbxweb.ByteUtils.arrayToBuffer(
             kdbxweb.ByteUtils.base64ToBytes(demoFileData)
         );
-        kdbxweb.Kdbx.load(demoFile, credentials).then((db) => {
-            this.db = db;
-            this.name = 'Demo';
-            this.readModel();
-            this.setOpenFile({ passwordLength: 4, demo: true });
-            callback();
-        });
+        kdbxweb.Kdbx.load(demoFile, credentials)
+            .then((db) => {
+                this.db = db;
+            })
+            .then(() => this.setDefaultGroupHash())
+            .then(() => {
+                this.name = 'Demo';
+                this.readModel();
+                this.setOpenFile({ passwordLength: 4, demo: true });
+                callback();
+            });
     }
 
     setOpenFile(props) {
@@ -228,6 +241,17 @@ class FileModel extends Model {
             default:
                 return undefined;
         }
+    }
+
+    setDefaultGroupHash() {
+        const uuidStr = kdbxweb.ByteUtils.bytesToHex(this.db.getDefaultGroup().uuid.bytes);
+        const uuidBytes = kdbxweb.ByteUtils.stringToBytes(uuidStr);
+
+        return kdbxweb.CryptoEngine.sha256(uuidBytes)
+            .then((hashBytes) => kdbxweb.ByteUtils.bytesToHex(hashBytes))
+            .then((defaultGroupHash) => {
+                this.set({ defaultGroupHash }, { silent: true });
+            });
     }
 
     subId(id) {
@@ -770,7 +794,8 @@ FileModel.defineModelProperties({
     supportsTags: true,
     supportsColors: true,
     supportsIcons: true,
-    supportsExpiration: true
+    supportsExpiration: true,
+    defaultGroupHash: ''
 });
 
 export { FileModel };
