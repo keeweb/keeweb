@@ -104,7 +104,8 @@ const ProtocolHandlers = {
             return encryptResponse(request, {
                 action: 'hash',
                 version: RuntimeInfo.version,
-                hash: firstFile.defaultGroupHash
+                hash: firstFile.defaultGroupHash,
+                hashes: AppModel.instance.files.map((file) => file.defaultGroupHash)
             });
         } else {
             return { action: 'get-databasehash', error: 'No open files', errorCode: '1' };
