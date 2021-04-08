@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.18.0 (TBD)
 `+` optimized memory consumption for large files  
+`+` team drives support in Google Drive  
 `+` option to use short-lived tokens in cloud storages  
 `+` opening XML and CSV files using the Open button  
 `*` password generator now includes all selected character ranges  
