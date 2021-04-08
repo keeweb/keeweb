@@ -89,11 +89,11 @@ const ProtocolHandlers = {
         return { data };
     },
 
-    'change-public-keys'({ publicKey, clientID: clientId }) {
+    'change-public-keys'({ publicKey, extensionName, clientID: clientId }) {
         const keys = tweetnaclBox.keyPair();
         publicKey = kdbxweb.ByteUtils.base64ToBytes(publicKey);
 
-        connectedClients[clientId] = { publicKey, keys };
+        connectedClients[clientId] = { publicKey, extensionName, keys };
 
         return {
             action: 'change-public-keys',
