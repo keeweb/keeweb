@@ -307,7 +307,7 @@ class StorageGDrive extends StorageBase {
             width: 600,
             height: 400,
             pkce: true,
-            redirectUrlParams: {
+            urlParams: {
                 'access_type': 'offline'
             }
         };
