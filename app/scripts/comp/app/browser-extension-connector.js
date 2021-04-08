@@ -49,7 +49,10 @@ function decryptRequest(request) {
     const json = new TextDecoder().decode(data);
     const payload = JSON.parse(json);
 
-    if (payload?.action !== request.action) {
+    if (!payload) {
+        throw new Error('Empty request payload');
+    }
+    if (payload.action !== request.action) {
         throw new Error(`Bad action in decrypted payload`);
     }
 
@@ -57,18 +60,20 @@ function decryptRequest(request) {
 }
 
 function encryptResponse(request, payload) {
+    const nonceBytes = kdbxweb.ByteUtils.base64ToBytes(request.nonce);
+    incrementNonce(nonceBytes);
+    const nonce = kdbxweb.ByteUtils.bytesToBase64(nonceBytes);
+
     const client = getClient(request);
+
+    payload.nonce = nonce;
 
     const json = JSON.stringify(payload);
     const data = new TextEncoder().encode(json);
 
-    let nonce = kdbxweb.ByteUtils.base64ToBytes(request.nonce);
-    incrementNonce(nonce);
-
-    const encrypted = tweetnaclBox(data, nonce, client.publicKey, client.keys.secretKey);
+    const encrypted = tweetnaclBox(data, nonceBytes, client.publicKey, client.keys.secretKey);
 
     const message = kdbxweb.ByteUtils.bytesToBase64(encrypted);
-    nonce = kdbxweb.ByteUtils.bytesToBase64(nonce);
 
     return {
         action: request.action,
