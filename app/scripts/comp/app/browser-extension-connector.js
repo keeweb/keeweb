@@ -5,6 +5,7 @@ import { RuntimeInfo } from 'const/runtime-info';
 import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { AppModel } from 'models/app-model';
+import { Alerts } from 'comp/ui/alerts';
 
 const connectedClients = {};
 
@@ -119,6 +120,10 @@ const ProtocolHandlers = {
 
         Events.emit('lock-workspace');
 
+        if (Alerts.alertDisplayed) {
+            BrowserExtensionConnector.focusKeeWeb();
+        }
+
         return encryptResponse(request, {
             action: 'lock-database',
             error: 'No open files',
@@ -219,6 +224,10 @@ const BrowserExtensionConnector = {
 
     allFilesClosed() {
         this.sendResponse({ action: 'database-locked' });
+    },
+
+    focusKeeWeb() {
+        this.sendResponse({ action: 'attention-required' });
     }
 };
 
