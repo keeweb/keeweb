@@ -9,6 +9,8 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { Logger } from 'util/logger';
 import { mapObject } from 'util/fn';
+import { Locale } from 'util/locale';
+import { StringFormat } from 'util/formatting/string-format';
 import { ChalRespCalculator } from 'comp/app/chal-resp-calculator';
 
 const logger = new Logger('file');
@@ -431,7 +433,7 @@ class FileModel extends Model {
     createEntryTemplatesGroup() {
         const rootGroup = this.groups[0];
         const templatesGroup = GroupModel.newGroup(rootGroup, this);
-        templatesGroup.setName('Templates');
+        templatesGroup.setName(StringFormat.capFirst(Locale.templates));
         this.db.meta.entryTemplatesGroup = templatesGroup.group.uuid;
         this.reload();
         return templatesGroup;
