@@ -123,7 +123,7 @@ const ProtocolHandlers = {
     },
 
     'generate-password'(request) {
-        const password = PasswordGenerator.generate(GeneratorPresets.defaultPreset);
+        const password = PasswordGenerator.generate(GeneratorPresets.browserExtensionPreset);
 
         return encryptResponse(request, {
             action: 'generate-password',

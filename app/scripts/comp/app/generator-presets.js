@@ -13,6 +13,18 @@ const GeneratorPresets = {
         };
     },
 
+    get browserExtensionPreset() {
+        return {
+            name: 'BrowserExtension',
+            length: 20,
+            upper: true,
+            lower: true,
+            special: true,
+            brackets: true,
+            ambiguous: true
+        };
+    },
+
     get builtIn() {
         return [
             this.defaultPreset,
