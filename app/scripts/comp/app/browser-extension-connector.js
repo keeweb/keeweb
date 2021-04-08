@@ -6,6 +6,8 @@ import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { AppModel } from 'models/app-model';
 import { Alerts } from 'comp/ui/alerts';
+import { PasswordGenerator } from 'util/generators/password-generator';
+import { GeneratorPresets } from 'comp/app/generator-presets';
 
 const connectedClients = {};
 
@@ -118,6 +120,22 @@ const ProtocolHandlers = {
         } else {
             return { action: 'get-databasehash', error: 'No open files', errorCode: '1' };
         }
+    },
+
+    'generate-password'(request) {
+        const password = PasswordGenerator.generate(GeneratorPresets.defaultPreset);
+
+        return encryptResponse(request, {
+            action: 'generate-password',
+            version: RuntimeInfo.version,
+            success: 'true',
+            entries: [
+                {
+                    login: Math.random() * 200,
+                    password
+                }
+            ]
+        });
     },
 
     'lock-database'(request) {
