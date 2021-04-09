@@ -697,7 +697,7 @@
     "dropboxLinkCustom": "Own Dropbox app",
 
     "gdriveSharedWithMe": "Shared with me",
-    "gdriveTeamDrives": "Shared drives",
+    "gdriveSharedDrives": "Shared drives",
 
     "webdavSaveMethod": "Save method",
     "webdavSaveMove": "Upload a temporary file and move",

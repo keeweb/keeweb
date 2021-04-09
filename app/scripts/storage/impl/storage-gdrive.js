@@ -245,7 +245,7 @@ class StorageGDrive extends StorageBase {
                                 dir: true
                             });
                             fileList.unshift({
-                                name: Locale.gdriveTeamDrives,
+                                name: Locale.gdriveSharedDrives,
                                 path: 'drives',
                                 rev: undefined,
                                 dir: true
