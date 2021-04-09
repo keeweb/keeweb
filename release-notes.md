@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.17.6 (2021-04-09)
+`+` team drives support in Google Drive  
+
 ##### v1.17.5 (2021-03-27)
 `+` ykman v4 support  
 `+` fix #1725: setting expiry date in the past  
