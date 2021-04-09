@@ -7,6 +7,7 @@ Release notes
 `*` password generator now includes all selected character ranges  
 `+` better Touch ID error messages  
 `-` legacy auto-type removed  
+`-` fixed a crash after disabling USB devices on Linux    
 
 ##### v1.17.6 (2021-04-09)
 `+` team drives support in Google Drive  
