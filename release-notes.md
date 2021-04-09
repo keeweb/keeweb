@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.17.6 (2021-04-09)
 `+` team drives support in Google Drive  
+`-` fix #1786: saving refresh_token in Google Drive  
 
 ##### v1.17.5 (2021-03-27)
 `+` ykman v4 support  
