@@ -1,6 +1,7 @@
 import { StorageBase } from 'storage/storage-base';
 import { Locale } from 'util/locale';
 import { Features } from 'util/features';
+import { UrlFormat } from 'util/formatting/url-format';
 import { GDriveApps } from 'const/cloud-storage-apps';
 
 const NewFileIdPrefix = 'NewFile:';
@@ -27,11 +28,9 @@ class StorageGDrive extends StorageBase {
             }
             this.logger.debug('Load', path);
             const ts = this.logger.ts();
-            const url =
-                this._baseUrl +
-                '/files/{id}/revisions/{rev}?alt=media'
-                    .replace('{id}', path)
-                    .replace('{rev}', stat.rev);
+            const url = UrlFormat.makeUrl(`${this._baseUrl}/files/${path}/revisions/${stat.rev}`, {
+                'alt': 'media'
+            });
             this._xhr({
                 url,
                 responseType: 'arraybuffer',
@@ -57,7 +56,11 @@ class StorageGDrive extends StorageBase {
             }
             this.logger.debug('Stat', path);
             const ts = this.logger.ts();
-            const url = this._baseUrl + '/files/{id}?fields=headRevisionId'.replace('{id}', path);
+            const url = UrlFormat.makeUrl(`${this._baseUrl}/files/${path}`, {
+                fields: 'headRevisionId',
+                includeItemsFromAllDrives: true,
+                supportsAllDrives: true
+            });
             this._xhr({
                 url,
                 responseType: 'json',
@@ -95,9 +98,12 @@ class StorageGDrive extends StorageBase {
                 let dataType;
                 let dataIsMultipart = false;
                 if (isNew) {
-                    url =
-                        this._baseUrlUpload +
-                        '/files?uploadType=multipart&fields=id,headRevisionId';
+                    url = UrlFormat.makeUrl(`${this._baseUrlUpload}/files`, {
+                        uploadType: 'multipart',
+                        fields: 'id,headRevisionId',
+                        includeItemsFromAllDrives: true,
+                        supportsAllDrives: true
+                    });
                     const fileName = path.replace(NewFileIdPrefix, '') + '.kdbx';
                     const boundary = 'b' + Date.now() + 'x' + Math.round(Math.random() * 1000000);
                     data = [
@@ -123,9 +129,12 @@ class StorageGDrive extends StorageBase {
                     dataType = 'multipart/related; boundary="' + boundary + '"';
                     dataIsMultipart = true;
                 } else {
-                    url =
-                        this._baseUrlUpload +
-                        '/files/{id}?uploadType=media&fields=headRevisionId'.replace('{id}', path);
+                    url = UrlFormat.makeUrl(`${this._baseUrlUpload}/files/${path}`, {
+                        uploadType: 'media',
+                        fields: 'headRevisionId',
+                        includeItemsFromAllDrives: true,
+                        supportsAllDrives: true
+                    });
                 }
                 this._xhr({
                     url,
@@ -160,59 +169,103 @@ class StorageGDrive extends StorageBase {
                 return callback && callback(err);
             }
             this.logger.debug('List');
-            let query =
-                dir === 'shared'
-                    ? 'sharedWithMe=true'
-                    : dir
-                    ? `"${dir}" in parents`
-                    : '"root" in parents';
-            query += ' and trashed=false';
-            const url =
-                this._baseUrl +
-                '/files?fields={fields}&q={q}&pageSize=1000'
-                    .replace(
-                        '{fields}',
-                        encodeURIComponent('files(id,name,mimeType,headRevisionId)')
-                    )
-                    .replace('{q}', encodeURIComponent(query));
+
             const ts = this.logger.ts();
-            this._xhr({
-                url,
-                responseType: 'json',
-                success: (response) => {
-                    if (!response) {
-                        this.logger.error('List error', this.logger.ts(ts));
-                        return callback && callback('list error');
-                    }
-                    this.logger.debug('Listed', this.logger.ts(ts));
-                    const fileList = response.files.map((f) => ({
-                        name: f.name,
-                        path: f.id,
-                        rev: f.headRevisionId,
-                        dir: f.mimeType === 'application/vnd.google-apps.folder'
-                    }));
-                    if (!dir) {
-                        fileList.unshift({
-                            name: Locale.gdriveSharedWithMe,
-                            path: 'shared',
-                            rev: undefined,
+
+            if (dir === 'drives') {
+                const urlParams = {
+                    pageSize: 100
+                };
+
+                const url = UrlFormat.makeUrl(`${this._baseUrl}/drives`, urlParams);
+
+                this._xhr({
+                    url,
+                    responseType: 'json',
+                    success: (response) => {
+                        if (!response) {
+                            this.logger.error('Drive list error', this.logger.ts(ts));
+                            return callback?.('drive list error');
+                        }
+                        this.logger.debug('Listed drives', this.logger.ts(ts));
+
+                        const fileList = response.drives.map((d) => ({
+                            name: d.name,
+                            path: d.id,
                             dir: true
-                        });
+                        }));
+                        return callback?.(null, fileList);
+                    },
+                    error: (err) => {
+                        this.logger.error('Drive dist error', this.logger.ts(ts), err);
+                        return callback?.(err);
                     }
-                    return callback && callback(null, fileList);
-                },
-                error: (err) => {
-                    this.logger.error('List error', this.logger.ts(ts), err);
-                    return callback && callback(err);
+                });
+            } else {
+                let query = 'trashed=false and ';
+                if (dir === 'shared') {
+                    query += 'sharedWithMe=true';
+                } else if (dir) {
+                    query += `"${dir}" in parents`;
+                } else {
+                    query += '"root" in parents';
                 }
-            });
+
+                const urlParams = {
+                    fields: 'files(id,name,mimeType,headRevisionId)',
+                    q: query,
+                    pageSize: 1000,
+                    includeItemsFromAllDrives: true,
+                    supportsAllDrives: true
+                };
+
+                const url = UrlFormat.makeUrl(`${this._baseUrl}/files`, urlParams);
+
+                this._xhr({
+                    url,
+                    responseType: 'json',
+                    success: (response) => {
+                        if (!response) {
+                            this.logger.error('List error', this.logger.ts(ts));
+                            return callback?.('list error');
+                        }
+                        this.logger.debug('Listed', this.logger.ts(ts));
+
+                        const fileList = response.files.map((f) => ({
+                            name: f.name,
+                            path: f.id,
+                            rev: f.headRevisionId,
+                            dir: f.mimeType === 'application/vnd.google-apps.folder'
+                        }));
+                        if (!dir) {
+                            fileList.unshift({
+                                name: Locale.gdriveSharedWithMe,
+                                path: 'shared',
+                                rev: undefined,
+                                dir: true
+                            });
+                            fileList.unshift({
+                                name: Locale.gdriveTeamDrives,
+                                path: 'drives',
+                                rev: undefined,
+                                dir: true
+                            });
+                        }
+                        return callback?.(null, fileList);
+                    },
+                    error: (err) => {
+                        this.logger.error('List error', this.logger.ts(ts), err);
+                        return callback?.(err);
+                    }
+                });
+            }
         });
     }
 
     remove(path, callback) {
         this.logger.debug('Remove', path);
         const ts = this.logger.ts();
-        const url = this._baseUrl + '/files/{id}'.replace('{id}', path);
+        const url = `${this._baseUrl}/files/${path}`;
         this._xhr({
             url,
             method: 'DELETE',
