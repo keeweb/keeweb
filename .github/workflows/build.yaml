@@ -349,12 +349,10 @@ jobs:
         run: cp -r html keeweb/package/docker/dist
       - name: Build the Docker image
         working-directory: keeweb
-        run: docker build -t antelle/keeweb:latest package/docker
-      - name: Tag the Docker image
-        run: docker tag antelle/keeweb:latest antelle/keeweb:${{ steps.get_tag.outputs.tag }}
-      - name: Push the Docker image to the registry
+        run: docker build -t antelle/keeweb:latest -t antelle/keeweb:${{ steps.get_tag.outputs.tag }} package/docker
+      - name: Push the Docker image to dockerhub
         if: ${{ github.repository == 'keeweb/keeweb' }}
-        run: docker push antelle/keeweb
+        run: docker push --all-tags antelle/keeweb
       - name: Create a GitHub release
         id: create_release
         uses: actions/create-release@latest

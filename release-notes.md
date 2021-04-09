@@ -2,12 +2,16 @@ Release notes
 -------------
 ##### v1.18.0 (TBD)
 `+` optimized memory consumption for large files  
-`+` team drives support in Google Drive  
 `+` option to use short-lived tokens in cloud storages  
 `+` opening XML and CSV files using the Open button  
 `*` password generator now includes all selected character ranges  
 `+` better Touch ID error messages  
 `-` legacy auto-type removed  
+
+##### v1.17.6 (2021-04-09)
+`+` team drives support in Google Drive  
+`-` fix #1786: saving refresh_token in Google Drive  
+`-` fix #1767: updater issues on macOS  
 
 ##### v1.17.5 (2021-03-27)
 `+` ykman v4 support  
