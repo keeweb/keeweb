@@ -218,17 +218,11 @@ const BrowserExtensionConnector = {
             this.connectedSockets = [];
             this.connectedSocketState = new WeakMap();
             this.server = createServer((socket) => {
-                // TODO: identity check
                 this.connectedSockets.push(socket);
-                this.connectedSocketState.set(socket, { active: true });
-                socket.on('data', (data) => {
-                    this.onSocketData(socket, data);
-                });
-                socket.on('close', () => {
-                    // TODO: remove the client
-                    this.connectedSockets = this.connectedSockets.filter((s) => s !== socket);
-                    this.connectedSocketState.delete(socket);
-                });
+                this.connectedSocketState.set(socket, {});
+                this.checkSocketIdentity(socket);
+                socket.on('data', (data) => this.onSocketData(socket, data));
+                socket.on('close', () => this.onSocketClose(socket));
             });
             this.server.listen(sockName);
         });
@@ -245,6 +239,24 @@ const BrowserExtensionConnector = {
         this.connectedSocketState = new WeakMap();
     },
 
+    checkSocketIdentity(socket) {
+        const state = this.connectedSocketState.get(socket);
+        if (!state) {
+            return;
+        }
+
+        // TODO: check the process
+
+        state.active = true;
+        this.processPendingSocketData(socket);
+    },
+
+    onSocketClose(socket) {
+        // TODO: remove the client
+        this.connectedSockets = this.connectedSockets.filter((s) => s !== socket);
+        this.connectedSocketState.delete(socket);
+    },
+
     onSocketData(socket, data) {
         if (data.byteLength > MaxIncomingDataLength) {
             socket.destroy();
@@ -259,11 +271,22 @@ const BrowserExtensionConnector = {
         } else {
             state.pendingData = data;
         }
-        if (state.pendingData.length < 4) {
+        if (state.active) {
+            this.processPendingSocketData(socket);
+        }
+    },
+
+    processPendingSocketData(socket) {
+        const state = this.connectedSocketState.get(socket);
+        if (!state) {
             return;
         }
 
         while (state.pendingData) {
+            if (state.pendingData.length < 4) {
+                return;
+            }
+
             const lengthBuffer = state.pendingData.slice(0, 4);
             const length = new Uint32Array(lengthBuffer)[0];
 
