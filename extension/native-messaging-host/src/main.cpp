@@ -23,7 +23,9 @@ struct State {
 
 State state{};
 
-constexpr std::array allowed_origins = {
+constexpr auto kSockName = "keeweb.sock";
+
+constexpr std::array kAllowedOrigins = {
     std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj")};
 
 void process_keeweb_queue();
@@ -32,14 +34,12 @@ void close_keeweb_pipe();
 
 bool check_args(int argc, char *argv[]) {
     if (argc < 2) {
-        std::cerr << "Expected origin";
         return false;
     }
 
     std::string origin = argv[1];
-    auto found = std::find(allowed_origins.begin(), allowed_origins.end(), origin);
-    if (found == allowed_origins.end()) {
-        std::cerr << "Invalid origin";
+    auto found = std::find(kAllowedOrigins.begin(), kAllowedOrigins.end(), origin);
+    if (found == kAllowedOrigins.end()) {
         return false;
     }
 
@@ -51,7 +51,7 @@ void alloc_buf(uv_handle_t *, size_t size, uv_buf_t *buf) {
     buf->len = size;
 }
 
-void quit_after_stdio_error() {
+void quit_on_error() {
     if (state.keeweb_pipe) {
         close_keeweb_pipe();
     } else {
@@ -66,7 +66,7 @@ void stdin_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
         state.pending_to_keeweb.emplace(write_buf);
         process_keeweb_queue();
     } else if (nread < 0) {
-        quit_after_stdio_error();
+        quit_on_error();
     }
 }
 
@@ -84,7 +84,7 @@ void stdout_write_cb(uv_write_t *req, int status) {
     if (success) {
         process_stdout_queue();
     } else {
-        quit_after_stdio_error();
+        quit_on_error();
     }
 }
 
@@ -166,14 +166,22 @@ void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
         uv_read_start(pipe, alloc_buf, keeweb_pipe_read_cb);
         process_keeweb_queue();
     } else {
-        std::cerr << "Cannot connect to KeeWeb";
-        // TODO: start KeeWeb
+        uv_process_t child_req{};
+        const char *args[2]{"--browser-extension", nullptr};
+        uv_process_options_t options{
+            .file = "KeeWeb", .args = const_cast<char **>(args), .flags = UV_PROCESS_DETACHED};
+        auto spawn_error = uv_spawn(uv_default_loop(), &child_req, &options);
+        if (spawn_error) {
+            quit_on_error();
+        } else {
+            uv_unref(reinterpret_cast<uv_handle_t *>(&child_req));
+        }
     }
 }
 
 void connect_keeweb_pipe() {
     auto temp_path = std::filesystem::temp_directory_path();
-    auto keeweb_pipe_path = temp_path / "keeweb-example.sock";
+    auto keeweb_pipe_path = temp_path / kSockName;
     auto keeweb_pipe_name = keeweb_pipe_path.c_str();
 
     auto keeweb_pipe = new uv_pipe_t{};
