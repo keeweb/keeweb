@@ -4,12 +4,13 @@ import { Events } from 'framework/events';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
-import { AppModel } from 'models/app-model';
 import { Alerts } from 'comp/ui/alerts';
 import { PasswordGenerator } from 'util/generators/password-generator';
 import { GeneratorPresets } from 'comp/app/generator-presets';
 
+let appModel;
 const connectedClients = {};
+const MaxIncomingDataLength = 10000;
 
 function incrementNonce(nonce) {
     // from libsodium/utils.c, like it is in KeePassXC
@@ -107,13 +108,13 @@ const ProtocolHandlers = {
     'get-databasehash'(request) {
         decryptRequest(request);
 
-        const firstFile = AppModel.instance.files.firstActiveKdbxFile();
+        const firstFile = appModel.files.firstActiveKdbxFile();
         if (firstFile?.defaultGroupHash) {
             return encryptResponse(request, {
                 action: 'hash',
                 version: RuntimeInfo.version,
                 hash: firstFile.defaultGroupHash,
-                hashes: AppModel.instance.files
+                hashes: appModel.files
                     .filter((file) => file.active && !file.backend)
                     .map((file) => file.defaultGroupHash)
             });
@@ -158,7 +159,9 @@ const ProtocolHandlers = {
 const BrowserExtensionConnector = {
     enabled: false,
 
-    init() {
+    init(model) {
+        appModel = model;
+
         this.browserWindowMessage = this.browserWindowMessage.bind(this);
         this.fileOpened = this.fileOpened.bind(this);
         this.oneFileClosed = this.oneFileClosed.bind(this);
@@ -179,7 +182,9 @@ const BrowserExtensionConnector = {
     },
 
     start() {
-        if (!Launcher) {
+        if (Launcher) {
+            this.startDesktopAppListener();
+        } else {
             this.startWebMessageListener();
         }
         Events.on('file-opened', this.fileOpened);
@@ -188,7 +193,9 @@ const BrowserExtensionConnector = {
     },
 
     stop() {
-        if (!Launcher) {
+        if (Launcher) {
+            this.stopDesktopAppListener();
+        } else {
             this.stopWebMessageListener();
         }
         Events.off('file-opened', this.fileOpened);
@@ -202,6 +209,103 @@ const BrowserExtensionConnector = {
 
     stopWebMessageListener() {
         window.removeEventListener('message', this.browserWindowMessage);
+    },
+
+    startDesktopAppListener() {
+        Launcher.closeOldBrowserExtensionSocket(() => {
+            const sockName = Launcher.getBrowserExtensionSocketName();
+            const { createServer } = Launcher.req('net');
+            this.connectedSockets = [];
+            this.connectedSocketState = new WeakMap();
+            this.server = createServer((socket) => {
+                // TODO: identity check
+                this.connectedSockets.push(socket);
+                this.connectedSocketState.set(socket, { active: true });
+                socket.on('data', (data) => {
+                    this.onSocketData(socket, data);
+                });
+                socket.on('close', () => {
+                    // TODO: remove the client
+                    this.connectedSockets = this.connectedSockets.filter((s) => s !== socket);
+                    this.connectedSocketState.delete(socket);
+                });
+            });
+            this.server.listen(sockName);
+        });
+    },
+
+    stopDesktopAppListener() {
+        for (const socket of this.connectedSockets) {
+            socket.destroy();
+        }
+        if (this.server) {
+            this.server.close();
+        }
+        this.connectedSockets = [];
+        this.connectedSocketState = new WeakMap();
+    },
+
+    onSocketData(socket, data) {
+        if (data.byteLength > MaxIncomingDataLength) {
+            socket.destroy();
+            return;
+        }
+        const state = this.connectedSocketState.get(socket);
+        if (!state) {
+            return;
+        }
+        if (state.pendingData) {
+            state.pendingData = Buffer.concat([state.pendingData, data]);
+        } else {
+            state.pendingData = data;
+        }
+        if (state.pendingData.length < 4) {
+            return;
+        }
+
+        while (state.pendingData) {
+            const lengthBuffer = state.pendingData.slice(0, 4);
+            const length = new Uint32Array(lengthBuffer)[0];
+
+            if (length > MaxIncomingDataLength) {
+                socket.destroy();
+                return;
+            }
+
+            if (state.pendingData.byteLength < length + 4) {
+                return;
+            }
+
+            const messageBytes = state.pendingData.slice(4, length + 4);
+            if (state.pendingData.byteLength > length + 4) {
+                state.pendingData = state.pendingData.slice(length + 4);
+            } else {
+                state.pendingData = null;
+            }
+
+            const str = messageBytes.toString();
+            let request;
+            try {
+                request = JSON.parse(str);
+            } catch {
+                socket.destroy();
+                return;
+            }
+
+            let response;
+            try {
+                const handler = ProtocolHandlers[request.action];
+                if (!handler) {
+                    throw new Error(`Handler not found: ${request.action}`);
+                }
+                response = handler(request) || {};
+            } catch (e) {
+                response = { error: e.message || 'Unknown error' };
+            }
+            if (response) {
+                this.sendSocketResponse(socket, response);
+            }
+        }
     },
 
     browserWindowMessage(e) {
@@ -225,32 +329,60 @@ const BrowserExtensionConnector = {
             response = { error: e.message || 'Unknown error' };
         }
         if (response) {
-            this.sendResponse(response);
+            this.sendWebResponse(response);
         }
     },
 
-    sendResponse(response) {
+    sendWebResponse(response) {
         response.kwConnect = 'response';
         postMessage(response, window.location.origin);
     },
 
+    sendSocketResponse(socket, response) {
+        const responseData = Buffer.from(JSON.stringify(response));
+        const lengthBytes = Buffer.from(new Uint32Array([responseData.byteLength]).buffer);
+        const data = Buffer.concat([lengthBytes, responseData]);
+        socket.write(data);
+    },
+
+    sendSocketEvent(data) {
+        for (const socket of this.connectedSockets) {
+            const state = this.connectedSocketState.get(socket);
+            if (state?.active) {
+                this.sendSocketResponse(socket, data);
+            }
+        }
+    },
+
+    sendEvent(data) {
+        if (Launcher) {
+            this.sendSocketEvent(data);
+        } else {
+            this.sendWebResponse(data);
+        }
+    },
+
     fileOpened() {
-        this.sendResponse({ action: 'database-unlocked' });
+        this.sendEvent({ action: 'database-unlocked' });
     },
 
     oneFileClosed() {
-        this.sendResponse({ action: 'database-locked' });
-        if (AppModel.instance.files.hasOpenFiles()) {
-            this.sendResponse({ action: 'database-unlocked' });
+        this.sendEvent({ action: 'database-locked' });
+        if (appModel.files.hasOpenFiles()) {
+            this.sendEvent({ action: 'database-unlocked' });
         }
     },
 
     allFilesClosed() {
-        this.sendResponse({ action: 'database-locked' });
+        this.sendEvent({ action: 'database-locked' });
     },
 
     focusKeeWeb() {
-        this.sendResponse({ action: 'attention-required' });
+        if (Launcher) {
+            Launcher.showMainWindow();
+        } else {
+            this.sendEvent({ action: 'attention-required' });
+        }
     }
 };
 

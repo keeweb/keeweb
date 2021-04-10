@@ -6,7 +6,7 @@ import childProcess from 'child_process';
 import { expect } from 'chai';
 
 describe('KeeWeb extension native module host', function () {
-    const sockPath = path.join(os.tmpdir(), 'keeweb.sock');
+    const sockPath = path.join(os.tmpdir(), 'keeweb-browser.sock');
     const hostPath = 'build/keeweb-native-messaging-host';
     const extensionOrigin = 'chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj';
 

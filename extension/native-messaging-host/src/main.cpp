@@ -11,7 +11,7 @@
 // https://developer.chrome.com/docs/apps/nativeMessaging/#native-messaging-host-protocol
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#app_side
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
 #define APP_EXECUTABLE_FILE_NAME "KeeWeb.exe"
 #elif __APPLE__
 #define APP_EXECUTABLE_FILE_NAME "KeeWeb"
@@ -21,10 +21,10 @@
 
 constexpr auto kKeeWebLaunchArg = "--browser-extension";
 
-constexpr auto kSockName = "keeweb.sock";
+constexpr auto kSockName = "keeweb-browser.sock";
 
 constexpr std::array kAllowedOrigins = {
-    std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj")};
+    std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj/")};
 
 constexpr uint32_t kMaxKeeWebConnectAttempts = 10;
 constexpr uint32_t kMaxKeeWebConnectRetryTimeoutMillis = 500;

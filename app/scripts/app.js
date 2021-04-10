@@ -178,7 +178,7 @@ ready(() => {
         AppRightsChecker.init();
         IdleTracker.init();
         UsbListener.init();
-        BrowserExtensionConnector.init();
+        BrowserExtensionConnector.init(appModel);
         setTimeout(() => {
             PluginManager.runAutoUpdate();
         }, Timeouts.AutoUpdatePluginsAfterStart);

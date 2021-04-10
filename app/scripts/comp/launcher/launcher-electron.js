@@ -288,6 +288,18 @@ const Launcher = {
     },
     mainWindowMaximized() {
         return this.getMainWindow().isMaximized();
+    },
+    getBrowserExtensionSocketName() {
+        if (process.platform === 'win32') {
+            return '\\\\.\\pipe\\keeweb-browser';
+        } else {
+            return this.joinPath(this.remoteApp().getPath('temp'), 'keeweb-browser.sock');
+        }
+    },
+    closeOldBrowserExtensionSocket(done) {
+        if (process.platform !== 'win32') {
+            this.deleteFile(this.getBrowserExtensionSocketName(), done);
+        }
     }
 };
 
