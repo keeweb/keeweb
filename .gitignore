@@ -14,6 +14,7 @@ obj/
 xcuserdata/
 *.suo
 .idea/
-.vscode
+.vscode/
 *.iml
 test/dist/
+extension/native-messaging-host/build/
