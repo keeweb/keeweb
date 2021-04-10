@@ -75,7 +75,7 @@ void stdout_write_cb(uv_write_t *req, int status) {
 
     auto buf = state.pending_to_stdout.front();
     state.pending_to_stdout.pop();
-    delete buf.base;
+    delete[] buf.base;
 
     state.write_to_stdout_in_progress = false;
 
@@ -120,7 +120,7 @@ void keeweb_write_cb(uv_write_t *req, int status) {
 
     auto buf = state.pending_to_keeweb.front();
     state.pending_to_keeweb.pop();
-    delete buf.base;
+    delete[] buf.base;
 
     state.write_to_keeweb_in_progress = false;
 
