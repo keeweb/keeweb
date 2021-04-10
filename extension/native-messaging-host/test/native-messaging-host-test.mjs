@@ -66,7 +66,6 @@ describe('KeeWeb extension native module host', function () {
             done();
         });
         process.stdin.write('ping');
-        process.stderr.on('data', (data) => console.log(data.toString()));
         process.stdout.on('data', (data) => {
             expect(data.toString()).to.eql('ping response');
             server.close();
