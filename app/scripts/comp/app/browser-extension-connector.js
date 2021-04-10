@@ -2,6 +2,7 @@ import kdbxweb from 'kdbxweb';
 import { box as tweetnaclBox } from 'tweetnacl';
 import { Events } from 'framework/events';
 import { RuntimeInfo } from 'const/runtime-info';
+import { KnownAppVersions } from 'const/known-app-versions';
 import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Alerts } from 'comp/ui/alerts';
@@ -85,12 +86,23 @@ function encryptResponse(request, payload) {
     };
 }
 
+function getVersion(request) {
+    const extensionName = getClient(request)?.extensionName;
+    return extensionName ? RuntimeInfo.version : KnownAppVersions.KeePassXC;
+}
+
+function isKeeWebConnect(request) {
+    return getClient(request)?.extensionName === 'keeweb-connect';
+}
+
 const ProtocolHandlers = {
     'ping'({ data }) {
         return { data };
     },
 
-    'change-public-keys'({ publicKey, extensionName, clientID: clientId }) {
+    'change-public-keys'(request) {
+        let { publicKey, extensionName, clientID: clientId } = request;
+
         const keys = tweetnaclBox.keyPair();
         publicKey = kdbxweb.ByteUtils.base64ToBytes(publicKey);
 
@@ -98,7 +110,7 @@ const ProtocolHandlers = {
 
         return {
             action: 'change-public-keys',
-            version: RuntimeInfo.version,
+            version: getVersion(request),
             appName: 'KeeWeb',
             publicKey: kdbxweb.ByteUtils.bytesToBase64(keys.publicKey),
             success: 'true'
@@ -112,11 +124,15 @@ const ProtocolHandlers = {
         if (firstFile?.defaultGroupHash) {
             return encryptResponse(request, {
                 action: 'hash',
-                version: RuntimeInfo.version,
+                version: getVersion(request),
                 hash: firstFile.defaultGroupHash,
-                hashes: appModel.files
-                    .filter((file) => file.active && !file.backend)
-                    .map((file) => file.defaultGroupHash)
+                ...(isKeeWebConnect(request)
+                    ? {
+                          hashes: appModel.files
+                              .filter((file) => file.active && !file.backend)
+                              .map((file) => file.defaultGroupHash)
+                      }
+                    : undefined)
             });
         } else {
             return { action: 'get-databasehash', error: 'No open files', errorCode: '1' };
@@ -128,7 +144,7 @@ const ProtocolHandlers = {
 
         return encryptResponse(request, {
             action: 'generate-password',
-            version: RuntimeInfo.version,
+            version: getVersion(request),
             success: 'true',
             entries: [
                 {
