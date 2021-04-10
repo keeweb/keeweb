@@ -26,8 +26,8 @@ constexpr auto kSockName = "keeweb.sock";
 constexpr std::array kAllowedOrigins = {
     std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj")};
 
-constexpr uint32_t kMaxKeeWebConnectAttempts = 10;
-constexpr uint32_t kMaxKeeWebConnectRetryTimeoutMillis = 500;
+constexpr uint32_t kMaxKeeWebConnectAttempts = 100;
+constexpr uint32_t kMaxKeeWebConnectRetryTimeoutMillis = 600;
 
 struct State {
     uv_stream_t *tty_in = nullptr;
