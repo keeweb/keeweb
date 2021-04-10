@@ -15,8 +15,8 @@ struct State {
     uv_stream_t *tty_in = nullptr;
     uv_stream_t *tty_out = nullptr;
     uv_stream_t *keeweb_pipe = nullptr;
-    std::queue<uv_buf_t *> pending_to_keeweb{};
-    std::queue<uv_buf_t *> pending_to_stdout{};
+    std::queue<uv_buf_t> pending_to_keeweb{};
+    std::queue<uv_buf_t> pending_to_stdout{};
     bool write_to_keeweb_in_progress = false;
     bool write_to_stdout_in_progress = false;
 };
@@ -62,8 +62,8 @@ void quit_on_error() {
 
 void stdin_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
     if (nread > 0) {
-        auto write_buf = new uv_buf_t{.base = buf->base, .len = static_cast<size_t>(nread)};
-        state.pending_to_keeweb.emplace(write_buf);
+        state.pending_to_keeweb.emplace(
+            uv_buf_t{.base = buf->base, .len = static_cast<size_t>(nread)});
         process_keeweb_queue();
     } else if (nread < 0) {
         quit_on_error();
@@ -75,8 +75,7 @@ void stdout_write_cb(uv_write_t *req, int status) {
 
     auto buf = state.pending_to_stdout.front();
     state.pending_to_stdout.pop();
-    delete buf->base;
-    delete buf;
+    delete buf.base;
 
     state.write_to_stdout_in_progress = false;
 
@@ -95,7 +94,7 @@ void process_stdout_queue() {
     auto buf = state.pending_to_stdout.front();
 
     auto write_req = new uv_write_t{};
-    uv_write(write_req, state.tty_out, buf, 1, stdout_write_cb);
+    uv_write(write_req, state.tty_out, &buf, 1, stdout_write_cb);
 
     state.write_to_stdout_in_progress = true;
 }
@@ -121,8 +120,7 @@ void keeweb_write_cb(uv_write_t *req, int status) {
 
     auto buf = state.pending_to_keeweb.front();
     state.pending_to_keeweb.pop();
-    delete buf->base;
-    delete buf;
+    delete buf.base;
 
     state.write_to_keeweb_in_progress = false;
 
@@ -142,15 +140,15 @@ void process_keeweb_queue() {
     auto buf = state.pending_to_keeweb.front();
 
     auto write_req = new uv_write_t{};
-    uv_write(write_req, state.keeweb_pipe, buf, 1, keeweb_write_cb);
+    uv_write(write_req, state.keeweb_pipe, &buf, 1, keeweb_write_cb);
 
     state.write_to_keeweb_in_progress = true;
 }
 
 void keeweb_pipe_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
     if (nread > 0) {
-        auto write_buf = new uv_buf_t{.base = buf->base, .len = static_cast<size_t>(nread)};
-        state.pending_to_stdout.emplace(write_buf);
+        state.pending_to_stdout.emplace(
+            uv_buf_t{.base = buf->base, .len = static_cast<size_t>(nread)});
         process_stdout_queue();
     } else if (nread < 0) {
         close_keeweb_pipe();
