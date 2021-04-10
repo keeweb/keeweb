@@ -87,12 +87,12 @@ function encryptResponse(request, payload) {
 }
 
 function getVersion(request) {
-    const extensionName = getClient(request)?.extensionName;
+    const extensionName = getClient(request).extensionName;
     return extensionName ? RuntimeInfo.version : KnownAppVersions.KeePassXC;
 }
 
 function isKeeWebConnect(request) {
-    return getClient(request)?.extensionName === 'keeweb-connect';
+    return getClient(request).extensionName === 'keeweb-connect';
 }
 
 const ProtocolHandlers = {
