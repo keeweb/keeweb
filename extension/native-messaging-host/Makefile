@@ -11,3 +11,6 @@ format:
 
 run:
 	echo -n 020000007b7d | xxd -r -p | build/keeweb-native-messaging-host chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj
+
+tests:
+	../../node_modules/.bin/mocha test/native-host-test.mjs
