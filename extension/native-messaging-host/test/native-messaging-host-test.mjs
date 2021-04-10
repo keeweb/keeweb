@@ -44,6 +44,7 @@ describe('KeeWeb extension native module host', function () {
     it('exits on host exit', (done) => {
         startServer();
         const process = childProcess.spawn(hostPath, [extensionOrigin]);
+        process.stderr.on('data', (data) => console.error(data.toString()));
         process.on('exit', (code) => {
             expect(code).to.eql(0);
             done();
@@ -59,6 +60,7 @@ describe('KeeWeb extension native module host', function () {
     it('sends messages between stdio and socket', (done) => {
         startServer();
         const process = childProcess.spawn(hostPath, [extensionOrigin]);
+        process.stderr.on('data', (data) => console.error(data.toString()));
         process.on('exit', (code) => {
             expect(code).to.eql(0);
             done();
