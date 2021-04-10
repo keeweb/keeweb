@@ -11,6 +11,24 @@
 // https://developer.chrome.com/docs/apps/nativeMessaging/#native-messaging-host-protocol
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#app_side
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#define APP_EXECUTABLE_FILE_NAME "KeeWeb.exe"
+#elif __APPLE__
+#define APP_EXECUTABLE_FILE_NAME "KeeWeb"
+#else
+#define APP_EXECUTABLE_FILE_NAME "keeweb"
+#endif
+
+constexpr auto kKeeWebLaunchArg = "--browser-extension";
+
+constexpr auto kSockName = "keeweb.sock";
+
+constexpr std::array kAllowedOrigins = {
+    std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj")};
+
+constexpr uint32_t kMaxKeeWebConnectAttempts = 10;
+constexpr uint32_t kMaxKeeWebConnectRetryTimeoutMillis = 500;
+
 struct State {
     uv_stream_t *tty_in = nullptr;
     uv_stream_t *tty_out = nullptr;
@@ -19,18 +37,16 @@ struct State {
     std::queue<uv_buf_t> pending_to_stdout{};
     bool write_to_keeweb_in_progress = false;
     bool write_to_stdout_in_progress = false;
+    bool keeweb_launched = false;
+    uint32_t keeweb_connect_attempts = 0;
 };
 
 State state{};
 
-constexpr auto kSockName = "keeweb.sock";
-
-constexpr std::array kAllowedOrigins = {
-    std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj")};
-
 void process_keeweb_queue();
 void process_stdout_queue();
 void close_keeweb_pipe();
+void connect_keeweb_pipe();
 
 bool check_args(int argc, char *argv[]) {
     if (argc < 2) {
@@ -155,6 +171,17 @@ void keeweb_pipe_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
     }
 }
 
+void keeweb_connect_timer_cb(uv_timer_t *timer) {
+    delete timer;
+    connect_keeweb_pipe();
+}
+
+void set_keeweb_connect_timer() {
+    auto timer_req = new uv_timer_t();
+    uv_timer_init(uv_default_loop(), timer_req);
+    uv_timer_start(timer_req, keeweb_connect_timer_cb, kMaxKeeWebConnectRetryTimeoutMillis, 0);
+}
+
 void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
     auto pipe = req->handle;
     delete req;
@@ -163,21 +190,32 @@ void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
         state.keeweb_pipe = pipe;
         uv_read_start(pipe, alloc_buf, keeweb_pipe_read_cb);
         process_keeweb_queue();
+    } else if (state.keeweb_launched) {
+        if (state.keeweb_connect_attempts >= kMaxKeeWebConnectAttempts) {
+            quit_on_error();
+        } else {
+            set_keeweb_connect_timer();
+        }
     } else {
-        uv_process_t child_req{};
-        const char *args[2]{"--browser-extension", nullptr};
-        uv_process_options_t options{
-            .file = "KeeWeb", .args = const_cast<char **>(args), .flags = UV_PROCESS_DETACHED};
-        auto spawn_error = uv_spawn(uv_default_loop(), &child_req, &options);
+        auto child_req = new uv_process_t();
+        const char *args[2]{kKeeWebLaunchArg, nullptr};
+        uv_process_options_t options{.file = APP_EXECUTABLE_FILE_NAME,
+                                     .args = const_cast<char **>(args),
+                                     .flags = UV_PROCESS_DETACHED};
+        auto spawn_error = uv_spawn(uv_default_loop(), child_req, &options);
         if (spawn_error) {
             quit_on_error();
         } else {
             uv_unref(reinterpret_cast<uv_handle_t *>(&child_req));
+            state.keeweb_launched = true;
+            set_keeweb_connect_timer();
         }
     }
 }
 
 void connect_keeweb_pipe() {
+    state.keeweb_connect_attempts++;
+
     auto temp_path = std::filesystem::temp_directory_path();
     auto keeweb_pipe_path = temp_path / kSockName;
     auto keeweb_pipe_name = keeweb_pipe_path.c_str();
