@@ -111,9 +111,9 @@ const ProtocolHandlers = {
         return {
             action: 'change-public-keys',
             version: getVersion(request),
-            appName: 'KeeWeb',
             publicKey: kdbxweb.ByteUtils.bytesToBase64(keys.publicKey),
-            success: 'true'
+            success: 'true',
+            ...(isKeeWebConnect(request) ? { appName: 'KeeWeb' } : undefined)
         };
     },
 
