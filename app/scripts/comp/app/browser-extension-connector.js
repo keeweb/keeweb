@@ -98,6 +98,8 @@ function isKeeWebConnect(request) {
     return getClient(request).extensionName === 'keeweb-connect';
 }
 
+const noOpenFilesError = { error: 'No open files', errorCode: '1' };
+
 const ProtocolHandlers = {
     'ping'({ data }) {
         return { data };
@@ -122,10 +124,15 @@ const ProtocolHandlers = {
 
         logger.info('New client key created', clientId, extensionName, version);
 
+        const nonceBytes = kdbxweb.ByteUtils.base64ToBytes(request.nonce);
+        incrementNonce(nonceBytes);
+        const nonce = kdbxweb.ByteUtils.bytesToBase64(nonceBytes);
+
         return {
             action: 'change-public-keys',
             version: getVersion(request),
             publicKey: kdbxweb.ByteUtils.bytesToBase64(keys.publicKey),
+            nonce,
             success: 'true',
             ...(isKeeWebConnect(request) ? { appName: 'KeeWeb' } : undefined)
         };
@@ -137,9 +144,9 @@ const ProtocolHandlers = {
         const firstFile = appModel.files.firstActiveKdbxFile();
         if (firstFile?.defaultGroupHash) {
             return encryptResponse(request, {
-                action: 'hash',
-                version: getVersion(request),
                 hash: firstFile.defaultGroupHash,
+                success: 'true',
+                version: getVersion(request),
                 ...(isKeeWebConnect(request)
                     ? {
                           hashes: appModel.files
@@ -149,7 +156,7 @@ const ProtocolHandlers = {
                     : undefined)
             });
         } else {
-            return { action: 'get-databasehash', error: 'No open files', errorCode: '1' };
+            return { action: 'get-databasehash', ...noOpenFilesError };
         }
     },
 
@@ -157,32 +164,29 @@ const ProtocolHandlers = {
         const password = PasswordGenerator.generate(GeneratorPresets.browserExtensionPreset);
 
         return encryptResponse(request, {
-            action: 'generate-password',
             version: getVersion(request),
             success: 'true',
-            entries: [
-                {
-                    login: Math.random() * 200,
-                    password
-                }
-            ]
+            entries: [{ password }]
         });
     },
 
     'lock-database'(request) {
         decryptRequest(request);
 
-        Events.emit('lock-workspace');
+        if (appModel.files.hasOpenFiles()) {
+            Events.emit('lock-workspace');
 
-        if (Alerts.alertDisplayed) {
-            BrowserExtensionConnector.focusKeeWeb();
+            if (Alerts.alertDisplayed) {
+                BrowserExtensionConnector.focusKeeWeb();
+            }
+
+            return encryptResponse(request, {
+                success: 'true',
+                version: getVersion(request)
+            });
+        } else {
+            return { action: 'lock-database', ...noOpenFilesError };
         }
-
-        return encryptResponse(request, {
-            action: 'lock-database',
-            error: 'No open files',
-            errorCode: '1'
-        });
     }
 };
 
