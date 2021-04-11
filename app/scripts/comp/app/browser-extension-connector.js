@@ -98,7 +98,12 @@ function isKeeWebConnect(request) {
     return getClient(request).extensionName === 'keeweb-connect';
 }
 
-const noOpenFilesError = { error: 'No open files', errorCode: '1' };
+const ErrorMessages = {
+    noOpenFiles: 'No open files'
+};
+const ErrorCode = {
+    [ErrorMessages.noOpenFiles]: 1
+};
 
 const ProtocolHandlers = {
     'ping'({ data }) {
@@ -156,7 +161,7 @@ const ProtocolHandlers = {
                     : undefined)
             });
         } else {
-            return { action: 'get-databasehash', ...noOpenFilesError };
+            throw new Error(ErrorMessages.noOpenFiles);
         }
     },
 
@@ -185,7 +190,7 @@ const ProtocolHandlers = {
                 version: getVersion(request)
             });
         } else {
-            return { action: 'lock-database', ...noOpenFilesError };
+            throw new Error(ErrorMessages.noOpenFiles);
         }
     }
 };
@@ -386,7 +391,7 @@ const BrowserExtensionConnector = {
                 }
                 response = handler(request) || {};
             } catch (e) {
-                response = { error: e.message || 'Unknown error' };
+                response = this.errorToResponse(e, request);
             }
             if (response) {
                 this.sendSocketResponse(socket, response);
@@ -412,11 +417,19 @@ const BrowserExtensionConnector = {
             }
             response = handler(e.data) || {};
         } catch (e) {
-            response = { error: e.message || 'Unknown error' };
+            response = this.errorToResponse(e, e.data);
         }
         if (response) {
             this.sendWebResponse(response);
         }
+    },
+
+    errorToResponse(e, request) {
+        return {
+            action: request.action,
+            error: e.message || 'Unknown error',
+            code: ErrorCode[e.message] ?? 0
+        };
     },
 
     sendWebResponse(response) {
