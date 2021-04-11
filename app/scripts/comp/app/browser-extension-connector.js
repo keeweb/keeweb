@@ -13,7 +13,7 @@ import { Logger } from 'util/logger';
 const logger = new Logger('browser-extension-connector');
 
 let appModel;
-const connectedClients = {};
+const connectedClients = new Map();
 const MaxIncomingDataLength = 10000;
 
 function incrementNonce(nonce) {
@@ -31,7 +31,7 @@ function getClient(request) {
     if (!request.clientID) {
         throw new Error('Empty clientID');
     }
-    const client = connectedClients[request.clientID];
+    const client = connectedClients.get(request.clientID);
     if (!client) {
         throw new Error(`Client not connected: ${request.clientID}`);
     }
@@ -104,18 +104,23 @@ const ProtocolHandlers = {
     },
 
     'change-public-keys'(request) {
-        let { publicKey, extensionName, clientID: clientId } = request;
+        let { publicKey, extensionName, version, clientID: clientId } = request;
 
-        if (connectedClients[clientId]) {
+        if (connectedClients.has(clientId)) {
             throw new Error('Changing keys is not allowed');
+        }
+
+        if (!Launcher) {
+            // on web there can be only one connected client
+            connectedClients.clear();
         }
 
         const keys = tweetnaclBox.keyPair();
         publicKey = kdbxweb.ByteUtils.base64ToBytes(publicKey);
 
-        connectedClients[clientId] = { publicKey, extensionName, keys };
+        connectedClients.set(clientId, { publicKey, extensionName, version, keys });
 
-        logger.info('New client key', clientId, extensionName);
+        logger.info('New client key created', clientId, extensionName, version);
 
         return {
             action: 'change-public-keys',
@@ -282,10 +287,15 @@ const BrowserExtensionConnector = {
     },
 
     onSocketClose(socket) {
-        logger.info('Connection closed');
-        // TODO: remove the client
-        this.connectedSockets = this.connectedSockets.filter((s) => s !== socket);
+        const state = this.connectedSocketState.get(socket);
+        if (state?.clientId) {
+            connectedClients.delete(state.clientId);
+        }
         this.connectedSocketState.delete(socket);
+
+        this.connectedSockets = this.connectedSockets.filter((s) => s !== socket);
+
+        logger.info('Connection closed', state?.clientId);
     },
 
     onSocketData(socket, data) {
@@ -345,6 +355,21 @@ const BrowserExtensionConnector = {
                 request = JSON.parse(str);
             } catch {
                 logger.warn('Failed to parse message', str);
+                socket.destroy();
+                return;
+            }
+
+            const clientId = request?.clientID;
+            if (!clientId) {
+                logger.warn('Empty client ID in request', request);
+                socket.destroy();
+                return;
+            }
+
+            if (!state.clientId) {
+                state.clientId = clientId;
+            } else if (state.clientId !== clientId) {
+                logger.warn(`Changing client ID is not allowed: ${state.clientId} => ${clientId}`);
                 socket.destroy();
                 return;
             }
