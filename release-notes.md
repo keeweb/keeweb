@@ -8,6 +8,7 @@ Release notes
 `+` better Touch ID error messages  
 `-` legacy auto-type removed  
 `-` fixed a crash after disabling USB devices on Linux    
+`+` tightened content security policy  
 
 ##### v1.17.6 (2021-04-09)
 `+` team drives support in Google Drive  
