@@ -19,10 +19,6 @@ class FileCollection extends Collection {
     getByName(name) {
         return this.find((file) => file.name.toLowerCase() === name.toLowerCase());
     }
-
-    firstActiveKdbxFile() {
-        return this.find((file) => file.active && !file.backend);
-    }
 }
 
 export { FileCollection };

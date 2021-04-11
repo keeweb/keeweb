@@ -14,7 +14,9 @@ const logger = new Logger('browser-extension-connector');
 
 let appModel;
 const connectedClients = new Map();
-const MaxIncomingDataLength = 10000;
+const MaxIncomingDataLength = 10_000;
+const KeeWebAssociationId = 'KeeWeb';
+const KeeWebHash = '398d9c782ec76ae9e9877c2321cbda2b31fc6d18ccf0fed5ca4bd746bab4d64a'; // sha256('KeeWeb')
 
 function incrementNonce(nonce) {
     // from libsodium/utils.c, like it is in KeePassXC
@@ -89,6 +91,18 @@ function encryptResponse(request, payload) {
     };
 }
 
+function ensureAtLeastOneFileIsOpen() {
+    if (!appModel.files.hasOpenFiles()) {
+        throw new Error(ErrorMessages.noOpenFiles);
+    }
+}
+
+function validateAssociation(payload) {
+    if (payload.id !== KeeWebAssociationId) {
+        throw new Error(ErrorMessages.noOpenFiles);
+    }
+}
+
 function getVersion(request) {
     const extensionName = getClient(request).extensionName;
     return extensionName ? RuntimeInfo.version : KnownAppVersions.KeePassXC;
@@ -145,24 +159,13 @@ const ProtocolHandlers = {
 
     'get-databasehash'(request) {
         decryptRequest(request);
+        ensureAtLeastOneFileIsOpen();
 
-        const firstFile = appModel.files.firstActiveKdbxFile();
-        if (firstFile?.defaultGroupHash) {
-            return encryptResponse(request, {
-                hash: firstFile.defaultGroupHash,
-                success: 'true',
-                version: getVersion(request),
-                ...(isKeeWebConnect(request)
-                    ? {
-                          hashes: appModel.files
-                              .filter((file) => file.active && !file.backend)
-                              .map((file) => file.defaultGroupHash)
-                      }
-                    : undefined)
-            });
-        } else {
-            throw new Error(ErrorMessages.noOpenFiles);
-        }
+        return encryptResponse(request, {
+            hash: KeeWebHash,
+            success: 'true',
+            version: getVersion(request)
+        });
     },
 
     'generate-password'(request) {
@@ -177,21 +180,43 @@ const ProtocolHandlers = {
 
     'lock-database'(request) {
         decryptRequest(request);
+        ensureAtLeastOneFileIsOpen();
 
-        if (appModel.files.hasOpenFiles()) {
-            Events.emit('lock-workspace');
+        Events.emit('lock-workspace');
 
-            if (Alerts.alertDisplayed) {
-                BrowserExtensionConnector.focusKeeWeb();
-            }
-
-            return encryptResponse(request, {
-                success: 'true',
-                version: getVersion(request)
-            });
-        } else {
-            throw new Error(ErrorMessages.noOpenFiles);
+        if (Alerts.alertDisplayed) {
+            BrowserExtensionConnector.focusKeeWeb();
         }
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request)
+        });
+    },
+
+    'associate'(request) {
+        decryptRequest(request);
+        ensureAtLeastOneFileIsOpen();
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request),
+            hash: KeeWebHash,
+            id: KeeWebAssociationId
+        });
+    },
+
+    'test-associate'(request) {
+        const payload = decryptRequest(request);
+        ensureAtLeastOneFileIsOpen();
+        validateAssociation(payload);
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request),
+            hash: KeeWebHash,
+            id: payload.id
+        });
     }
 };
 
@@ -469,9 +494,8 @@ const BrowserExtensionConnector = {
     },
 
     oneFileClosed() {
-        this.sendEvent({ action: 'database-locked' });
-        if (appModel.files.hasOpenFiles()) {
-            this.sendEvent({ action: 'database-unlocked' });
+        if (!appModel.files.hasOpenFiles()) {
+            this.sendEvent({ action: 'database-locked' });
         }
     },
 

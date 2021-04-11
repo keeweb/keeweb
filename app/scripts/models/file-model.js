@@ -34,7 +34,6 @@ class FileModel extends Model {
                 .then((db) => {
                     this.db = db;
                 })
-                .then(() => this.setDefaultGroupHash())
                 .then(() => {
                     this.readModel();
                     this.setOpenFile({ passwordLength: password ? password.textLength : 0 });
@@ -101,10 +100,8 @@ class FileModel extends Model {
         this.db = kdbxweb.Kdbx.create(credentials, name);
         this.name = name;
         this.readModel();
-        return this.setDefaultGroupHash().then(() => {
-            this.set({ active: true, created: true, name });
-            callback();
-        });
+        this.set({ active: true, created: true, name });
+        callback();
     }
 
     importWithXml(fileXml, callback) {
@@ -116,7 +113,6 @@ class FileModel extends Model {
                 .then((db) => {
                     this.db = db;
                 })
-                .then(() => this.setDefaultGroupHash())
                 .then(() => {
                     this.readModel();
                     this.set({ active: true, created: true });
@@ -143,7 +139,6 @@ class FileModel extends Model {
             .then((db) => {
                 this.db = db;
             })
-            .then(() => this.setDefaultGroupHash())
             .then(() => {
                 this.name = 'Demo';
                 this.readModel();
@@ -243,17 +238,6 @@ class FileModel extends Model {
             default:
                 return undefined;
         }
-    }
-
-    setDefaultGroupHash() {
-        const uuidStr = kdbxweb.ByteUtils.bytesToHex(this.db.getDefaultGroup().uuid.bytes);
-        const uuidBytes = kdbxweb.ByteUtils.stringToBytes(uuidStr);
-
-        return kdbxweb.CryptoEngine.sha256(uuidBytes)
-            .then((hashBytes) => kdbxweb.ByteUtils.bytesToHex(hashBytes))
-            .then((defaultGroupHash) => {
-                this.set({ defaultGroupHash }, { silent: true });
-            });
     }
 
     subId(id) {
