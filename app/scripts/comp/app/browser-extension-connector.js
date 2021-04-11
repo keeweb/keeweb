@@ -179,11 +179,11 @@ function isKeeWebConnect(request) {
 const Errors = {
     noOpenFiles: {
         message: Locale.extensionErrorNoOpenFiles,
-        code: 1
+        code: '1'
     },
     userRejected: {
         message: Locale.extensionErrorUserRejected,
-        code: 6
+        code: '6'
     }
 };
 
@@ -582,7 +582,7 @@ const BrowserExtensionConnector = {
         return {
             action: request.action,
             error: e.message || 'Unknown error',
-            code: e.code || 0
+            errorCode: e.code || 0
         };
     },
 
