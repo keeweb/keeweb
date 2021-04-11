@@ -33,7 +33,7 @@ constexpr std::array kAllowedOrigins = {
 };
 
 constexpr uint32_t kMaxKeeWebConnectAttempts = 10;
-constexpr uint32_t kMaxKeeWebConnectRetryTimeoutMillis = 500;
+constexpr uint32_t kKeeWebConnectRetryTimeoutMillis = 500;
 
 struct State {
     uv_stream_t *tty_in = nullptr;
@@ -63,8 +63,8 @@ bool check_args(int argc, char *argv[]) {
     std::string origin = argv[1];
     auto found = std::find(kAllowedOrigins.begin(), kAllowedOrigins.end(), origin);
     if (found == kAllowedOrigins.end()) {
-       std::cerr << "Bad origin: " << origin << std::endl;
-       return false;
+        std::cerr << "Bad origin: " << origin << std::endl;
+        return false;
     }
 
     return true;
@@ -191,7 +191,7 @@ void keeweb_connect_timer_cb(uv_timer_t *timer) {
 void set_keeweb_connect_timer() {
     auto timer_req = new uv_timer_t();
     uv_timer_init(uv_default_loop(), timer_req);
-    uv_timer_start(timer_req, keeweb_connect_timer_cb, kMaxKeeWebConnectRetryTimeoutMillis, 0);
+    uv_timer_start(timer_req, keeweb_connect_timer_cb, kKeeWebConnectRetryTimeoutMillis, 0);
 }
 
 void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
