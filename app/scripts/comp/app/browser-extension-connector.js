@@ -11,6 +11,9 @@ import { GeneratorPresets } from 'comp/app/generator-presets';
 import { Logger } from 'util/logger';
 
 const logger = new Logger('browser-extension-connector');
+if (!localStorage.debugBrowserExtension) {
+    logger.level = Logger.Level.Info;
+}
 
 let appModel;
 const connectedClients = new Map();
@@ -58,6 +61,8 @@ function decryptRequest(request) {
     const json = new TextDecoder().decode(data);
     const payload = JSON.parse(json);
 
+    logger.debug('Extension -> KeeWeb -> (decrypted)', payload);
+
     if (!payload) {
         throw new Error('Empty request payload');
     }
@@ -69,6 +74,8 @@ function decryptRequest(request) {
 }
 
 function encryptResponse(request, payload) {
+    logger.debug('KeeWeb -> Extension (decrypted)', payload);
+
     const nonceBytes = kdbxweb.ByteUtils.base64ToBytes(request.nonce);
     incrementNonce(nonceBytes);
     const nonce = kdbxweb.ByteUtils.bytesToBase64(nonceBytes);
@@ -393,6 +400,8 @@ const BrowserExtensionConnector = {
                 return;
             }
 
+            logger.debug('Extension -> KeeWeb', request);
+
             const clientId = request?.clientID;
             if (!clientId) {
                 logger.warn('Empty client ID in request', request);
@@ -434,6 +443,7 @@ const BrowserExtensionConnector = {
         if (e?.data?.kwConnect !== 'request') {
             return;
         }
+        logger.debug('Extension -> KeeWeb', e.data);
         let response;
         try {
             const handler = ProtocolHandlers[e.data.action];
@@ -458,11 +468,13 @@ const BrowserExtensionConnector = {
     },
 
     sendWebResponse(response) {
+        logger.debug('KeeWeb -> Extension', response);
         response.kwConnect = 'response';
         postMessage(response, window.location.origin);
     },
 
     sendSocketResponse(socket, response) {
+        logger.debug('KeeWeb -> Extension', response);
         const responseData = Buffer.from(JSON.stringify(response));
         const lengthBuf = kdbxweb.ByteUtils.arrayToBuffer(
             new Uint32Array([responseData.byteLength])
