@@ -24,7 +24,13 @@ constexpr auto kKeeWebLaunchArg = "--browser-extension";
 constexpr auto kSockName = "keeweb-browser.sock";
 
 constexpr std::array kAllowedOrigins = {
-    std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj/")};
+    // KeeWeb Connect: Chrome
+    std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj/"),
+    // KeePassXC-Browser: Chrome
+    std::string_view("chrome-extension://oboonakemofpalcgghocfoadofidjkkk/"),
+    // KeePassXC-Browser: Edge
+    std::string_view("chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/"),
+};
 
 constexpr uint32_t kMaxKeeWebConnectAttempts = 10;
 constexpr uint32_t kMaxKeeWebConnectRetryTimeoutMillis = 500;
@@ -57,8 +63,8 @@ bool check_args(int argc, char *argv[]) {
     std::string origin = argv[1];
     auto found = std::find(kAllowedOrigins.begin(), kAllowedOrigins.end(), origin);
     if (found == kAllowedOrigins.end()) {
-        std::cerr << "Bad origin: " << origin << std::endl;
-        return false;
+       std::cerr << "Bad origin: " << origin << std::endl;
+       return false;
     }
 
     return true;
