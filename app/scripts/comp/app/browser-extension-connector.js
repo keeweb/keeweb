@@ -9,6 +9,7 @@ import { Alerts } from 'comp/ui/alerts';
 import { PasswordGenerator } from 'util/generators/password-generator';
 import { GeneratorPresets } from 'comp/app/generator-presets';
 import { Logger } from 'util/logger';
+import { Locale } from 'util/locale';
 
 const logger = new Logger('browser-extension-connector');
 if (!localStorage.debugBrowserExtension) {
@@ -17,6 +18,8 @@ if (!localStorage.debugBrowserExtension) {
 
 let appModel;
 const connectedClients = new Map();
+const pendingBrowserMessages = [];
+let processingBrowserMessage = false;
 const MaxIncomingDataLength = 10_000;
 const KeeWebAssociationId = 'KeeWeb';
 const KeeWebHash = '398d9c782ec76ae9e9877c2321cbda2b31fc6d18ccf0fed5ca4bd746bab4d64a'; // sha256('KeeWeb')
@@ -98,16 +101,70 @@ function encryptResponse(request, payload) {
     };
 }
 
+function makeError(def) {
+    const e = new Error(def.message);
+    e.code = def.code;
+    return e;
+}
+
 function ensureAtLeastOneFileIsOpen() {
     if (!appModel.files.hasOpenFiles()) {
-        throw new Error(ErrorMessages.noOpenFiles);
+        throw makeError(Errors.noOpenFiles);
     }
 }
 
 function validateAssociation(payload) {
     if (payload.id !== KeeWebAssociationId) {
-        throw new Error(ErrorMessages.noOpenFiles);
+        throw makeError(Errors.noOpenFiles);
     }
+}
+
+function checkContentRequestPermissions(request) {
+    ensureAtLeastOneFileIsOpen();
+
+    const client = getClient(request);
+    if (client.authorized) {
+        return;
+    }
+
+    return new Promise((resolve, reject) => {
+        if (Alerts.alertDisplayed) {
+            return reject(new Error(Locale.extensionErrorAlertDisplayed));
+        }
+
+        BrowserExtensionConnector.focusKeeWeb();
+
+        // TODO: make a proper dialog here instead of a simple question
+
+        if (Launcher) {
+            Alerts.yesno({
+                header: 'Extension connection',
+                body: 'Allow this extension to connect?',
+                success: () => {
+                    resolve();
+                },
+                cancel: () => reject(makeError(Errors.userRejected))
+            });
+        } else {
+            // it's 'confirm' here because other browser extensions can't interact with browser alerts
+            //  while they can easily press a button on our alert
+            // eslint-disable-next-line no-alert
+            const allowed = confirm('Allow this extension to connect?');
+            if (allowed) {
+                resolve();
+            } else {
+                reject(makeError(Errors.userRejected));
+            }
+        }
+    })
+        .then(() => {
+            client.authorized = true;
+            Launcher.hideApp();
+        })
+        .catch((e) => {
+            Launcher.hideApp();
+            throw e;
+        });
 }
 
 function getVersion(request) {
@@ -119,11 +176,15 @@ function isKeeWebConnect(request) {
     return getClient(request).extensionName === 'keeweb-connect';
 }
 
-const ErrorMessages = {
-    noOpenFiles: 'No open files'
-};
-const ErrorCode = {
-    [ErrorMessages.noOpenFiles]: 1
+const Errors = {
+    noOpenFiles: {
+        message: Locale.extensionErrorNoOpenFiles,
+        code: 1
+    },
+    userRejected: {
+        message: Locale.extensionErrorUserRejected,
+        code: 6
+    }
 };
 
 const ProtocolHandlers = {
@@ -224,6 +285,41 @@ const ProtocolHandlers = {
             hash: KeeWebHash,
             id: payload.id
         });
+    },
+
+    async 'get-logins'(request) {
+        decryptRequest(request);
+        await checkContentRequestPermissions(request);
+
+        throw new Error('Not implemented');
+    },
+
+    async 'get-totp'(request) {
+        decryptRequest(request);
+        await checkContentRequestPermissions(request);
+
+        throw new Error('Not implemented');
+    },
+
+    async 'set-login'(request) {
+        decryptRequest(request);
+        await checkContentRequestPermissions(request);
+
+        throw new Error('Not implemented');
+    },
+
+    async 'get-database-groups'(request) {
+        decryptRequest(request);
+        await checkContentRequestPermissions(request);
+
+        throw new Error('Not implemented');
+    },
+
+    async 'create-new-group'(request) {
+        decryptRequest(request);
+        await checkContentRequestPermissions(request);
+
+        throw new Error('Not implemented');
     }
 };
 
@@ -359,78 +455,83 @@ const BrowserExtensionConnector = {
         }
     },
 
-    processPendingSocketData(socket) {
+    async processPendingSocketData(socket) {
         const state = this.connectedSocketState.get(socket);
-        if (!state) {
+        if (!state?.pendingData || state.processingData) {
             return;
         }
 
-        while (state.pendingData) {
-            if (state.pendingData.length < 4) {
-                return;
-            }
-
-            const lengthBuffer = kdbxweb.ByteUtils.arrayToBuffer(state.pendingData.slice(0, 4));
-            const length = new Uint32Array(lengthBuffer)[0];
-
-            if (length > MaxIncomingDataLength) {
-                logger.warn('Large message rejected', length);
-                socket.destroy();
-                return;
-            }
-
-            if (state.pendingData.byteLength < length + 4) {
-                return;
-            }
-
-            const messageBytes = state.pendingData.slice(4, length + 4);
-            if (state.pendingData.byteLength > length + 4) {
-                state.pendingData = state.pendingData.slice(length + 4);
-            } else {
-                state.pendingData = null;
-            }
-
-            const str = messageBytes.toString();
-            let request;
-            try {
-                request = JSON.parse(str);
-            } catch {
-                logger.warn('Failed to parse message', str);
-                socket.destroy();
-                return;
-            }
-
-            logger.debug('Extension -> KeeWeb', request);
-
-            const clientId = request?.clientID;
-            if (!clientId) {
-                logger.warn('Empty client ID in request', request);
-                socket.destroy();
-                return;
-            }
-
-            if (!state.clientId) {
-                state.clientId = clientId;
-            } else if (state.clientId !== clientId) {
-                logger.warn(`Changing client ID is not allowed: ${state.clientId} => ${clientId}`);
-                socket.destroy();
-                return;
-            }
-
-            let response;
-            try {
-                const handler = ProtocolHandlers[request.action];
-                if (!handler) {
-                    throw new Error(`Handler not found: ${request.action}`);
-                }
-                response = handler(request) || {};
-            } catch (e) {
-                response = this.errorToResponse(e, request);
-            }
-            if (response) {
-                this.sendSocketResponse(socket, response);
-            }
+        if (state.pendingData.length < 4) {
+            return;
         }
+
+        const lengthBuffer = kdbxweb.ByteUtils.arrayToBuffer(state.pendingData.slice(0, 4));
+        const length = new Uint32Array(lengthBuffer)[0];
+
+        if (length > MaxIncomingDataLength) {
+            logger.warn('Large message rejected', length);
+            socket.destroy();
+            return;
+        }
+
+        if (state.pendingData.byteLength < length + 4) {
+            return;
+        }
+
+        const messageBytes = state.pendingData.slice(4, length + 4);
+        if (state.pendingData.byteLength > length + 4) {
+            state.pendingData = state.pendingData.slice(length + 4);
+        } else {
+            state.pendingData = null;
+        }
+
+        const str = messageBytes.toString();
+        let request;
+        try {
+            request = JSON.parse(str);
+        } catch {
+            logger.warn('Failed to parse message', str);
+            socket.destroy();
+            return;
+        }
+
+        logger.debug('Extension -> KeeWeb', request);
+
+        const clientId = request?.clientID;
+        if (!clientId) {
+            logger.warn('Empty client ID in request', request);
+            socket.destroy();
+            return;
+        }
+
+        if (!state.clientId) {
+            state.clientId = clientId;
+        } else if (state.clientId !== clientId) {
+            logger.warn(`Changing client ID is not allowed: ${state.clientId} => ${clientId}`);
+            socket.destroy();
+            return;
+        }
+
+        state.processingData = true;
+
+        let response;
+        try {
+            const handler = ProtocolHandlers[request.action];
+            if (!handler) {
+                throw new Error(`Handler not found: ${request.action}`);
+            }
+            response = await handler(request);
+        } catch (e) {
+            response = this.errorToResponse(e, request);
+        }
+
+        state.processingData = false;
+
+        if (response) {
+            this.sendSocketResponse(socket, response);
+        }
+
+        this.processPendingSocketData(socket);
     },
 
     browserWindowMessage(e) {
@@ -444,26 +545,44 @@ const BrowserExtensionConnector = {
             return;
         }
         logger.debug('Extension -> KeeWeb', e.data);
+        pendingBrowserMessages.push(e.data);
+        this.processBrowserMessages();
+    },
+
+    async processBrowserMessages() {
+        if (!pendingBrowserMessages.length || processingBrowserMessage) {
+            return;
+        }
+
+        processingBrowserMessage = true;
+
+        const request = pendingBrowserMessages.shift();
+
         let response;
         try {
-            const handler = ProtocolHandlers[e.data.action];
+            const handler = ProtocolHandlers[request.action];
             if (!handler) {
-                throw new Error(`Handler not found: ${e.data.action}`);
+                throw new Error(`Handler not found: ${request.action}`);
             }
-            response = handler(e.data) || {};
+            response = await handler(request);
         } catch (e) {
-            response = this.errorToResponse(e, e.data);
+            response = this.errorToResponse(e, request);
         }
+
+        processingBrowserMessage = false;
+
         if (response) {
             this.sendWebResponse(response);
         }
+
+        this.processBrowserMessages();
     },
 
     errorToResponse(e, request) {
         return {
             action: request.action,
             error: e.message || 'Unknown error',
-            code: ErrorCode[e.message] ?? 0
+            code: e.code || 0
         };
     },
 

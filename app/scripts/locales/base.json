@@ -733,5 +733,9 @@
     "yubiKeyDisabledErrorBody": "YubiKey is required to open this file, please enable USB devices in settings.",
     "yubiKeyErrorWithCode": "YubiKey error, code {}.",
 
-    "bioOpenAuthPrompt": "open \"{}\""
+    "bioOpenAuthPrompt": "open \"{}\"",
+
+    "extensionErrorNoOpenFiles": "No open files",
+    "extensionErrorUserRejected": "The request was denied",
+    "extensionErrorAlertDisplayed": "Cannot ask user a question now, please try again"
 }
