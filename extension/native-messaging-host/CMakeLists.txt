@@ -16,7 +16,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(libuv)
 
 set(OUTPUT_NAME ${PROJECT_NAME})
-set(SOURCES src/main.cpp)
+set(SOURCES src/native-messaging-host.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
