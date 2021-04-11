@@ -8,6 +8,9 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { Alerts } from 'comp/ui/alerts';
 import { PasswordGenerator } from 'util/generators/password-generator';
 import { GeneratorPresets } from 'comp/app/generator-presets';
+import { Logger } from 'util/logger';
+
+const logger = new Logger('browser-extension-connector');
 
 let appModel;
 const connectedClients = {};
@@ -103,10 +106,16 @@ const ProtocolHandlers = {
     'change-public-keys'(request) {
         let { publicKey, extensionName, clientID: clientId } = request;
 
+        if (connectedClients[clientId]) {
+            throw new Error('Changing keys is not allowed');
+        }
+
         const keys = tweetnaclBox.keyPair();
         publicKey = kdbxweb.ByteUtils.base64ToBytes(publicKey);
 
         connectedClients[clientId] = { publicKey, extensionName, keys };
+
+        logger.info('New client key', clientId, extensionName);
 
         return {
             action: 'change-public-keys',
@@ -206,6 +215,8 @@ const BrowserExtensionConnector = {
         Events.on('file-opened', this.fileOpened);
         Events.on('one-file-closed', this.oneFileClosed);
         Events.on('all-files-closed', this.allFilesClosed);
+
+        logger.info('Started');
     },
 
     stop() {
@@ -217,6 +228,8 @@ const BrowserExtensionConnector = {
         Events.off('file-opened', this.fileOpened);
         Events.off('one-file-closed', this.oneFileClosed);
         Events.off('all-files-closed', this.allFilesClosed);
+
+        logger.info('Stopped');
     },
 
     startWebMessageListener() {
@@ -234,6 +247,7 @@ const BrowserExtensionConnector = {
             this.connectedSockets = [];
             this.connectedSocketState = new WeakMap();
             this.server = createServer((socket) => {
+                logger.info('New connection');
                 this.connectedSockets.push(socket);
                 this.connectedSocketState.set(socket, {});
                 this.checkSocketIdentity(socket);
@@ -268,6 +282,7 @@ const BrowserExtensionConnector = {
     },
 
     onSocketClose(socket) {
+        logger.info('Connection closed');
         // TODO: remove the client
         this.connectedSockets = this.connectedSockets.filter((s) => s !== socket);
         this.connectedSocketState.delete(socket);
@@ -275,6 +290,7 @@ const BrowserExtensionConnector = {
 
     onSocketData(socket, data) {
         if (data.byteLength > MaxIncomingDataLength) {
+            logger.warn('Too many bytes rejected', data.byteLength);
             socket.destroy();
             return;
         }
@@ -303,10 +319,11 @@ const BrowserExtensionConnector = {
                 return;
             }
 
-            const lengthBuffer = state.pendingData.slice(0, 4);
+            const lengthBuffer = kdbxweb.ByteUtils.arrayToBuffer(state.pendingData.slice(0, 4));
             const length = new Uint32Array(lengthBuffer)[0];
 
             if (length > MaxIncomingDataLength) {
+                logger.warn('Large message rejected', length);
                 socket.destroy();
                 return;
             }
@@ -327,6 +344,7 @@ const BrowserExtensionConnector = {
             try {
                 request = JSON.parse(str);
             } catch {
+                logger.warn('Failed to parse message', str);
                 socket.destroy();
                 return;
             }
@@ -379,7 +397,10 @@ const BrowserExtensionConnector = {
 
     sendSocketResponse(socket, response) {
         const responseData = Buffer.from(JSON.stringify(response));
-        const lengthBytes = Buffer.from(new Uint32Array([responseData.byteLength]).buffer);
+        const lengthBuf = kdbxweb.ByteUtils.arrayToBuffer(
+            new Uint32Array([responseData.byteLength])
+        );
+        const lengthBytes = Buffer.from(lengthBuf);
         const data = Buffer.concat([lengthBytes, responseData]);
         socket.write(data);
     },
@@ -417,6 +438,7 @@ const BrowserExtensionConnector = {
     },
 
     focusKeeWeb() {
+        logger.debug('Focus KeeWeb');
         if (Launcher) {
             Launcher.showMainWindow();
         } else {

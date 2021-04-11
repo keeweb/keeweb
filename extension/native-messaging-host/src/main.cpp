@@ -50,12 +50,14 @@ void connect_keeweb_pipe();
 
 bool check_args(int argc, char *argv[]) {
     if (argc < 2) {
+        std::cerr << "Expected origin argument" << std::endl;
         return false;
     }
 
     std::string origin = argv[1];
     auto found = std::find(kAllowedOrigins.begin(), kAllowedOrigins.end(), origin);
     if (found == kAllowedOrigins.end()) {
+        std::cerr << "Bad origin: " << origin << std::endl;
         return false;
     }
 
@@ -82,6 +84,7 @@ void stdin_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
             uv_buf_t{.base = buf->base, .len = static_cast<size_t>(nread)});
         process_keeweb_queue();
     } else if (nread < 0) {
+        std::cerr << "STDIN read error: " << uv_err_name(nread) << std::endl;
         quit_on_error();
     }
 }
@@ -99,6 +102,7 @@ void stdout_write_cb(uv_write_t *req, int status) {
     if (success) {
         process_stdout_queue();
     } else {
+        std::cerr << "STDOUT write error: " << uv_err_name(status) << std::endl;
         quit_on_error();
     }
 }
@@ -144,6 +148,7 @@ void keeweb_write_cb(uv_write_t *req, int status) {
     if (success) {
         process_keeweb_queue();
     } else {
+        std::cerr << "Error writing to KeeWeb: " << uv_err_name(status) << std::endl;
         close_keeweb_pipe();
     }
 }
@@ -167,6 +172,7 @@ void keeweb_pipe_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
             uv_buf_t{.base = buf->base, .len = static_cast<size_t>(nread)});
         process_stdout_queue();
     } else if (nread < 0) {
+        std::cerr << "KeeWeb read error: " << uv_err_name(nread) << std::endl;
         close_keeweb_pipe();
     }
 }
@@ -192,6 +198,7 @@ void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
         process_keeweb_queue();
     } else if (state.keeweb_launched) {
         if (state.keeweb_connect_attempts >= kMaxKeeWebConnectAttempts) {
+            std::cerr << "Cannot connect to KeeWeb: timeout" << std::endl;
             quit_on_error();
         } else {
             set_keeweb_connect_timer();
@@ -204,6 +211,7 @@ void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
                                      .flags = UV_PROCESS_DETACHED};
         auto spawn_error = uv_spawn(uv_default_loop(), child_req, &options);
         if (spawn_error) {
+            std::cerr << "Cannot spawn KeeWeb: " << uv_err_name(spawn_error) << std::endl;
             quit_on_error();
         } else {
             uv_unref(reinterpret_cast<uv_handle_t *>(&child_req));
