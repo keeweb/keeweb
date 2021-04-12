@@ -6,7 +6,7 @@ import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
 import { Updater } from 'comp/app/updater';
 import { UsbListener } from 'comp/app/usb-listener';
-import { BrowserExtensionConnector } from 'comp/app/browser-extension-connector';
+import { BrowserExtensionConnector } from 'comp/extension/browser-extension-connector';
 import { FeatureTester } from 'comp/browser/feature-tester';
 import { FocusDetector } from 'comp/browser/focus-detector';
 import { IdleTracker } from 'comp/browser/idle-tracker';
