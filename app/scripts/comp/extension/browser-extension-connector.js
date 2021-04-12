@@ -1,16 +1,14 @@
 import kdbxweb from 'kdbxweb';
-import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Logger } from 'util/logger';
-import { ProtocolHandlers, initProtocolHandlers } from './protocol-handlers';
+import { ProtocolHandlers, initProtocolImpl } from './protocol-impl';
 
 const logger = new Logger('browser-extension-connector');
 if (!localStorage.debugBrowserExtension) {
     logger.level = Logger.Level.Info;
 }
 
-let appModel;
 const connectedClients = new Map();
 const pendingBrowserMessages = [];
 let processingBrowserMessage = false;
@@ -21,16 +19,11 @@ const BrowserExtensionConnector = {
     logger,
     connectedClients,
 
-    init(model) {
-        appModel = model;
-
+    init(appModel) {
         const sendEvent = this.sendEvent.bind(this);
-        initProtocolHandlers({ appModel, logger, connectedClients, sendEvent });
+        initProtocolImpl({ appModel, logger, connectedClients, sendEvent });
 
         this.browserWindowMessage = this.browserWindowMessage.bind(this);
-        this.fileOpened = this.fileOpened.bind(this);
-        this.oneFileClosed = this.oneFileClosed.bind(this);
-        this.allFilesClosed = this.allFilesClosed.bind(this);
 
         AppSettingsModel.on('change:browserExtension', (model, enabled) => {
             this.enabled = enabled;
@@ -53,9 +46,6 @@ const BrowserExtensionConnector = {
         } else {
             this.startWebMessageListener();
         }
-        Events.on('file-opened', this.fileOpened);
-        Events.on('one-file-closed', this.oneFileClosed);
-        Events.on('all-files-closed', this.allFilesClosed);
 
         logger.info('Started');
     },
@@ -66,9 +56,6 @@ const BrowserExtensionConnector = {
         } else {
             this.stopWebMessageListener();
         }
-        Events.off('file-opened', this.fileOpened);
-        Events.off('one-file-closed', this.oneFileClosed);
-        Events.off('all-files-closed', this.allFilesClosed);
 
         logger.info('Stopped');
     },
@@ -312,25 +299,14 @@ const BrowserExtensionConnector = {
     },
 
     sendEvent(data) {
+        if (!this.enabled) {
+            return;
+        }
         if (Launcher) {
             this.sendSocketEvent(data);
         } else {
             this.sendWebResponse(data);
         }
-    },
-
-    fileOpened() {
-        this.sendEvent({ action: 'database-unlocked' });
-    },
-
-    oneFileClosed() {
-        if (!appModel.files.hasOpenFiles()) {
-            this.sendEvent({ action: 'database-locked' });
-        }
-    },
-
-    allFilesClosed() {
-        this.sendEvent({ action: 'database-locked' });
     }
 };
 

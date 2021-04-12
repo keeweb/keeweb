@@ -28,11 +28,27 @@ let appModel;
 let connectedClients;
 let sendEvent;
 
-function initProtocolHandlers(vars) {
+function initProtocolImpl(vars) {
     appModel = vars.appModel;
     logger = vars.logger;
     connectedClients = vars.connectedClients;
     sendEvent = vars.sendEvent;
+
+    setupListeners();
+}
+
+function setupListeners() {
+    Events.on('file-opened', () => {
+        sendEvent({ action: 'database-unlocked' });
+    });
+    Events.on('one-file-closed', () => {
+        if (!appModel.files.hasOpenFiles()) {
+            sendEvent({ action: 'database-locked' });
+        }
+    });
+    Events.on('all-files-closed', () => {
+        sendEvent({ action: 'database-locked' });
+    });
 }
 
 function incrementNonce(nonce) {
@@ -378,4 +394,4 @@ const ProtocolHandlers = {
     }
 };
 
-export { ProtocolHandlers, initProtocolHandlers };
+export { ProtocolHandlers, initProtocolImpl };
