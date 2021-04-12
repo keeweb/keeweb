@@ -113,12 +113,6 @@ function ensureAtLeastOneFileIsOpen() {
     }
 }
 
-function validateAssociation(payload) {
-    if (payload.id !== KeeWebAssociationId) {
-        throw makeError(Errors.noOpenFiles);
-    }
-}
-
 function checkContentRequestPermissions(request) {
     ensureAtLeastOneFileIsOpen();
 
@@ -277,7 +271,10 @@ const ProtocolHandlers = {
     'test-associate'(request) {
         const payload = decryptRequest(request);
         ensureAtLeastOneFileIsOpen();
-        validateAssociation(payload);
+
+        if (payload.id !== KeeWebAssociationId) {
+            throw makeError(Errors.noOpenFiles);
+        }
 
         return encryptResponse(request, {
             success: 'true',
@@ -312,7 +309,32 @@ const ProtocolHandlers = {
         decryptRequest(request);
         await checkContentRequestPermissions(request);
 
-        throw new Error('Not implemented');
+        const makeGroups = (group) => {
+            const res = {
+                name: group.title,
+                uuid: kdbxweb.ByteUtils.bytesToHex(group.group.uuid.bytes),
+                children: []
+            };
+            for (const subGroup of group.items) {
+                if (subGroup.matches()) {
+                    res.children.push(makeGroups(subGroup));
+                }
+            }
+            return res;
+        };
+
+        const groups = [];
+        for (const file of appModel.files.filter((f) => f.active)) {
+            for (const group of file.groups) {
+                groups.push(makeGroups(group));
+            }
+        }
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request),
+            groups: { groups }
+        });
     },
 
     async 'create-new-group'(request) {
