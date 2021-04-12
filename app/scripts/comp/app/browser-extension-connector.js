@@ -338,10 +338,34 @@ const ProtocolHandlers = {
     },
 
     async 'create-new-group'(request) {
-        decryptRequest(request);
+        const payload = decryptRequest(request);
         await checkContentRequestPermissions(request);
 
+        if (!payload.groupName) {
+            throw new Error('No groupName');
+        }
+
+        // TODO: show file selector
+        // throw makeError(Errors.userRejected);
+
+        const groupNames = payload.groupName
+            .split('/')
+            .map((g) => g.trim())
+            .filter((g) => g);
+
+        if (!groupNames.length) {
+            throw new Error('Empty group path');
+        }
+
+        // TODO: create a new group
         throw new Error('Not implemented');
+
+        // return encryptResponse(request, {
+        //     success: 'true',
+        //     version: getVersion(request),
+        //     name: groupNames[groupNames.length - 1],
+        //     uuid: kdbxweb.ByteUtils.bytesToHex(appModel.files[0].groups[0].group.uuid.bytes)
+        // });
     }
 };
 
