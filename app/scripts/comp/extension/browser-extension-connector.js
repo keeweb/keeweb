@@ -1,6 +1,5 @@
 import kdbxweb from 'kdbxweb';
 import { Launcher } from 'comp/launcher';
-import { AppSettingsModel } from 'models/app-settings-model';
 import { Logger } from 'util/logger';
 import { ProtocolHandlers, initProtocolImpl } from './protocol-impl';
 
