@@ -15,7 +15,7 @@ let processingBrowserMessage = false;
 const MaxIncomingDataLength = 10_000;
 
 const BrowserExtensionConnector = {
-    enabled: false,
+    enabled: true,
     logger,
     connectedClients,
 
@@ -25,19 +25,7 @@ const BrowserExtensionConnector = {
 
         this.browserWindowMessage = this.browserWindowMessage.bind(this);
 
-        AppSettingsModel.on('change:browserExtension', (model, enabled) => {
-            this.enabled = enabled;
-            if (enabled) {
-                this.start();
-            } else {
-                this.stop();
-            }
-        });
-
-        if (AppSettingsModel.browserExtension) {
-            this.enabled = true;
-            this.start();
-        }
+        this.start();
     },
 
     start() {

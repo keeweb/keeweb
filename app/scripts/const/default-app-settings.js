@@ -47,7 +47,6 @@ const DefaultAppSettings = {
     deviceOwnerAuthTimeoutMinutes: 0, // how often master password is required with Touch ID
     disableOfflineStorage: false, // don't cache loaded files in offline storage
     shortLivedStorageToken: false, // short-lived sessions in cloud storage providers
-    browserExtension: false, // support browser extension interaction
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
     yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files
