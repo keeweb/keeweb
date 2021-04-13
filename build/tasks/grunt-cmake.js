@@ -16,7 +16,7 @@ module.exports = function (grunt) {
             }
 
             try {
-                await spawnCmake(['-B', 'build', '.', ...opt.cmakeConfigure], src);
+                await spawnCmake(['-B', 'build', '.', ...(opt.cmakeConfigure || [])], src);
             } catch (e) {
                 grunt.warn(`Configure error: ${e}`);
             }
