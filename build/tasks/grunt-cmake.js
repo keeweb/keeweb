@@ -28,7 +28,7 @@ module.exports = function (grunt) {
             }
 
             grunt.file.copy(binPath, dest);
-            fs.chmodSync(dest, 0o700);
+            fs.chmodSync(dest, 0o755);
 
             grunt.log.writeln(`Built ${dest}`);
 

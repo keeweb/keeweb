@@ -774,7 +774,7 @@ module.exports = function (grunt) {
                     outputName: 'keeweb-native-messaging-host'
                 },
                 files: {
-                    'tmp/desktop/KeeWeb-linux-x64/keeweb-native-messaging-host':
+                    'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host':
                         'extension/native-messaging-host'
                 }
             },
