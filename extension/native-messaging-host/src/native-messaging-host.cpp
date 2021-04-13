@@ -20,12 +20,13 @@
 #endif
 
 constexpr auto kKeeWebLaunchArg = "--browser-extension";
+constexpr auto kLaunchKeeWebIfNotRunning = false;
 
 constexpr auto kSockName = "keeweb-browser.sock";
 
 constexpr std::array kAllowedOrigins = {
     // KeeWeb Connect: Chrome
-    std::string_view("chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj/"),
+    std::string_view("chrome-extension://npmnaajonabmkjekongmjhdjpjdlhpkp/"),
     // KeeWeb Connect: Firefox
     std::string_view("keeweb-connect@keeweb.info"),
     // KeePassXC-Browser: Chrome
@@ -215,7 +216,7 @@ void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
         } else {
             set_keeweb_connect_timer();
         }
-    } else {
+    } else if (kLaunchKeeWebIfNotRunning) {
         auto child_req = new uv_process_t();
         const char *args[2]{kKeeWebLaunchArg, nullptr};
         uv_process_options_t options{.file = APP_EXECUTABLE_FILE_NAME,
@@ -230,6 +231,9 @@ void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
             state.keeweb_launched = true;
             set_keeweb_connect_timer();
         }
+    } else {
+        std::cerr << "Cannot connect to KeeWeb: " << uv_err_name(status) << std::endl;
+        quit_on_error();
     }
 }
 
