@@ -641,6 +641,8 @@ module.exports = function (grunt) {
                 options: {
                     files: {
                         'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe':
+                            'KeeWeb Native Messaging Host',
                         'tmp/desktop/KeeWeb-win32-x64/ffmpeg.dll': '',
                         'tmp/desktop/KeeWeb-win32-x64/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
@@ -653,6 +655,8 @@ module.exports = function (grunt) {
                 options: {
                     files: {
                         'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe':
+                            'KeeWeb Native Messaging Host',
                         'tmp/desktop/KeeWeb-win32-ia32/ffmpeg.dll': '',
                         'tmp/desktop/KeeWeb-win32-ia32/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
@@ -665,6 +669,8 @@ module.exports = function (grunt) {
                 options: {
                     files: {
                         'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe':
+                            'KeeWeb Native Messaging Host',
                         'tmp/desktop/KeeWeb-win32-arm64/ffmpeg.dll': '',
                         'tmp/desktop/KeeWeb-win32-arm64/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
