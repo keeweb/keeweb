@@ -22,7 +22,11 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE uv_a)
 target_include_directories(${PROJECT_NAME} PRIVATE ${libuv_SOURCE_DIR}/include)
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+if(WIN32)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX /permissive-)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -Werror)
+endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
