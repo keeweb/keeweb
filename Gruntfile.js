@@ -741,6 +741,67 @@ module.exports = function (grunt) {
                 }
             },
             html: 'dist/index.html'
+        },
+        cmake: {
+            'native-messaging-host-darwin-x64': {
+                options: {
+                    outputName: 'keeweb-native-messaging-host',
+                    cmakeConfigure: ['-DCMAKE_OSX_ARCHITECTURES=x86_64']
+                },
+                files: {
+                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/keeweb-native-messaging-host':
+                        'extension/native-messaging-host'
+                }
+            },
+            'native-messaging-host-darwin-arm64': {
+                options: {
+                    outputName: 'keeweb-native-messaging-host',
+                    cmakeConfigure: ['-DCMAKE_OSX_ARCHITECTURES=arm64']
+                },
+                files: {
+                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/keeweb-native-messaging-host':
+                        'extension/native-messaging-host'
+                }
+            },
+            'native-messaging-host-linux-x64': {
+                options: {
+                    outputName: 'keeweb-native-messaging-host'
+                },
+                files: {
+                    'tmp/desktop/KeeWeb-linux-x64/keeweb-native-messaging-host':
+                        'extension/native-messaging-host'
+                }
+            },
+            'native-messaging-host-win32-x64': {
+                options: {
+                    outputName: 'keeweb-native-messaging-host.exe',
+                    cmakeConfigure: ['-A', 'x64']
+                },
+                files: {
+                    'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe':
+                        'extension/native-messaging-host'
+                }
+            },
+            'native-messaging-host-win32-ia32': {
+                options: {
+                    outputName: 'keeweb-native-messaging-host.exe',
+                    cmakeConfigure: ['-A', 'win32']
+                },
+                files: {
+                    'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe':
+                        'extension/native-messaging-host'
+                }
+            },
+            'native-messaging-host-win32-arm64': {
+                options: {
+                    outputName: 'keeweb-native-messaging-host.exe',
+                    cmakeConfigure: ['-A', 'arm64']
+                },
+                files: {
+                    'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe':
+                        'extension/native-messaging-host'
+                }
+            }
         }
     });
 };

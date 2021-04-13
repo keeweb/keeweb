@@ -54,7 +54,8 @@ module.exports = function(grunt) {
         'electron-patch:darwin-x64',
         'build-darwin-installer',
         'copy:desktop-darwin-installer-helper-x64',
-        'copy:native-modules-darwin-x64'
+        'copy:native-modules-darwin-x64',
+        'cmake:native-messaging-host-darwin-x64'
     ]);
 
     grunt.registerTask('dev-desktop-darwin-signed', 'Build a signed macOS app in dev environment', [
@@ -66,7 +67,8 @@ module.exports = function(grunt) {
         'default',
         'build-desktop-app-content',
         'electron:win32-x64',
-        'copy:native-modules-win32-x64'
+        'copy:native-modules-win32-x64',
+        'cmake:native-messaging-host-win32-x64'
     ]);
 
     grunt.registerTask('dev-desktop-linux', 'Build a Linux app in dev environment', [
@@ -74,7 +76,8 @@ module.exports = function(grunt) {
         'build-desktop-app-content',
         'electron:linux',
         'chmod:linux-desktop-x64',
-        'copy:native-modules-linux-x64'
+        'copy:native-modules-linux-x64',
+        'cmake:native-messaging-host-linux-x64'
     ]);
 
     grunt.registerTask('test', 'Build and run tests', [
