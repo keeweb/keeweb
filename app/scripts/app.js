@@ -46,6 +46,7 @@ ready(() => {
         .then(loadRemoteConfig)
         .then(ensureCanRun)
         .then(initStorage)
+        .then(initUsbListener)
         .then(showApp)
         .then(postInit)
         .catch((e) => {
@@ -143,6 +144,11 @@ ready(() => {
         StartProfiler.milestone('initializing storage');
     }
 
+    function initUsbListener() {
+        UsbListener.init();
+        StartProfiler.milestone('starting usb');
+    }
+
     function showApp() {
         return Promise.resolve().then(() => {
             const skipHttpsWarning =
@@ -173,13 +179,12 @@ ready(() => {
     }
 
     function postInit() {
-        Updater.init();
-        SingleInstanceChecker.init();
-        AppRightsChecker.init();
-        IdleTracker.init();
-        UsbListener.init();
-        BrowserExtensionConnector.init(appModel);
         setTimeout(() => {
+            Updater.init();
+            SingleInstanceChecker.init();
+            AppRightsChecker.init();
+            IdleTracker.init();
+            BrowserExtensionConnector.init(appModel);
             PluginManager.runAutoUpdate();
         }, Timeouts.AutoUpdatePluginsAfterStart);
     }
