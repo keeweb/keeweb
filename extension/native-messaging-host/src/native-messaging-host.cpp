@@ -49,7 +49,7 @@ std::string keeweb_pipe_name() {
         std::cerr << "Error getting user: " << uv_err_name(err) << std::endl;
     } else {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-        pipe_name = "\\\\.pipe\\keeweb-browser-" + std::string{user_info.username} + ".sock";
+        pipe_name = "\\\\.\\pipe\\keeweb-browser-" + std::string{user_info.username};
 #else
         pipe_name = std::filesystem::temp_directory_path() /
                     ("keeweb-browser-" + std::to_string(user_info.uid) + ".sock");
