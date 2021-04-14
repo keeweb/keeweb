@@ -6,12 +6,19 @@ import childProcess from 'child_process';
 import { expect } from 'chai';
 
 describe('KeeWeb extension native module host', function () {
-    const sockPath = path.join(os.tmpdir(), 'keeweb-browser.sock');
     const hostPath = 'build/keeweb-native-messaging-host';
-    const extensionOrigin = 'chrome-extension://enjifmdnhaddmajefhfaoglcfdobkcpj';
+    const extensionOrigin = 'keeweb-connect@keeweb.info';
+
+    const userInfo = os.userInfo();
+    let sockPath;
+    if (process.platform === 'win32') {
+        sockPath = `\\\\.pipe\\keeweb-browser-${userInfo.username}`;
+    } else {
+        sockPath = path.join(os.tmpdir(), `keeweb-browser-${userInfo.uid}.sock`);
+    }
 
     let server;
-    let serverConnection = undefined;
+    let serverConnection;
 
     this.timeout(5000);
 

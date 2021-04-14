@@ -56,7 +56,6 @@ std::string keeweb_pipe_name() {
 #endif
         uv_os_free_passwd(&user_info);
     }
-    std::cout << pipe_name;
 
     return pipe_name;
 }
@@ -103,6 +102,8 @@ void stdin_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
         state.pending_to_keeweb.emplace(
             uv_buf_init(buf->base, static_cast<decltype(uv_buf_t::len)>(nread)));
         process_keeweb_queue();
+    } else if (nread == UV_EOF) {
+        quit_on_error();
     } else if (nread < 0) {
         std::cerr << "STDIN read error: " << uv_err_name(static_cast<int>(nread)) << std::endl;
         quit_on_error();
@@ -191,6 +192,8 @@ void keeweb_pipe_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
         state.pending_to_stdout.emplace(
             uv_buf_init(buf->base, static_cast<decltype(uv_buf_t::len)>(nread)));
         process_stdout_queue();
+    } else if (nread == UV_EOF) {
+        close_keeweb_pipe();
     } else if (nread < 0) {
         std::cerr << "KeeWeb read error: " << uv_err_name(static_cast<int>(nread)) << std::endl;
         close_keeweb_pipe();
