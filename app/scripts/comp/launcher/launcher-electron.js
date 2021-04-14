@@ -299,7 +299,9 @@ const Launcher = {
         }
     },
     closeOldBrowserExtensionSocket(done) {
-        if (process.platform !== 'win32') {
+        if (process.platform === 'win32') {
+            done();
+        } else {
             this.deleteFile(this.getBrowserExtensionSocketName(), done);
         }
     }
