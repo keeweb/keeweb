@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <uv.h>
 
 #include <algorithm>
@@ -6,12 +5,12 @@
 #include <filesystem>
 #include <iostream>
 #include <queue>
+#include <string>
+#include <string_view>
 #include <vector>
 
 // https://developer.chrome.com/docs/apps/nativeMessaging/#native-messaging-host-protocol
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#app_side
-
-constexpr auto kSockName = "keeweb-browser.sock";
 
 constexpr std::array kAllowedOrigins = {
     // KeeWeb Connect: Chrome
@@ -40,6 +39,28 @@ struct State {
 
 State state{};
 
+std::string keeweb_pipe_name() {
+    std::string pipe_name;
+
+    uv_passwd_t user_info;
+    auto err = uv_os_get_passwd(&user_info);
+
+    if (err) {
+        std::cerr << "Error getting user: " << uv_err_name(err) << std::endl;
+    } else {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+        pipe_name = "\\\\.pipe\\keeweb-browser-" + std::string{user_info.username} + ".sock";
+#else
+        pipe_name = std::filesystem::temp_directory_path() /
+                    ("keeweb-browser-" + std::to_string(user_info.uid) + ".sock");
+#endif
+        uv_os_free_passwd(&user_info);
+    }
+    std::cout << pipe_name;
+
+    return pipe_name;
+}
+
 void process_keeweb_queue();
 void process_stdout_queue();
 void close_keeweb_pipe();
@@ -60,12 +81,12 @@ bool check_args(int argc, char *argv[]) {
     }
     std::cerr << "Bad origin" << std::endl;
 
-    return true;
+    return false;
 }
 
 void alloc_buf(uv_handle_t *, size_t size, uv_buf_t *buf) {
     buf->base = new char[size];
-    buf->len = size;
+    buf->len = static_cast<decltype(uv_buf_t::len)>(size);
 }
 
 void quit_on_error() {
@@ -80,10 +101,10 @@ void quit_on_error() {
 void stdin_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
     if (nread > 0) {
         state.pending_to_keeweb.emplace(
-            uv_buf_t{.base = buf->base, .len = static_cast<size_t>(nread)});
+            uv_buf_init(buf->base, static_cast<decltype(uv_buf_t::len)>(nread)));
         process_keeweb_queue();
     } else if (nread < 0) {
-        std::cerr << "STDIN read error: " << uv_err_name(nread) << std::endl;
+        std::cerr << "STDIN read error: " << uv_err_name(static_cast<int>(nread)) << std::endl;
         quit_on_error();
     }
 }
@@ -168,10 +189,10 @@ void process_keeweb_queue() {
 void keeweb_pipe_read_cb(uv_stream_t *, ssize_t nread, const uv_buf_t *buf) {
     if (nread > 0) {
         state.pending_to_stdout.emplace(
-            uv_buf_t{.base = buf->base, .len = static_cast<size_t>(nread)});
+            uv_buf_init(buf->base, static_cast<decltype(uv_buf_t::len)>(nread)));
         process_stdout_queue();
     } else if (nread < 0) {
-        std::cerr << "KeeWeb read error: " << uv_err_name(nread) << std::endl;
+        std::cerr << "KeeWeb read error: " << uv_err_name(static_cast<int>(nread)) << std::endl;
         close_keeweb_pipe();
     }
 }
@@ -193,26 +214,24 @@ void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
 void connect_keeweb_pipe() {
     state.keeweb_connect_attempts++;
 
-    auto temp_path = std::filesystem::temp_directory_path();
-    auto keeweb_pipe_path = temp_path / kSockName;
-    auto keeweb_pipe_name = keeweb_pipe_path.c_str();
+    auto pipe_name = keeweb_pipe_name();
 
     auto keeweb_pipe = new uv_pipe_t{};
     uv_pipe_init(uv_default_loop(), keeweb_pipe, false);
 
     auto connect_req = new uv_connect_t();
-    uv_pipe_connect(connect_req, keeweb_pipe, keeweb_pipe_name, keeweb_pipe_connect_cb);
+    uv_pipe_connect(connect_req, keeweb_pipe, pipe_name.c_str(), keeweb_pipe_connect_cb);
 }
 
 void start_reading_stdin() { uv_read_start(state.tty_in, alloc_buf, stdin_read_cb); }
 
 void init_tty() {
     auto stdin_tty = new uv_tty_t{};
-    uv_tty_init(uv_default_loop(), stdin_tty, fileno(stdin), 0);
+    uv_tty_init(uv_default_loop(), stdin_tty, 0, 0);
     state.tty_in = reinterpret_cast<uv_stream_t *>(stdin_tty);
 
     auto stdout_tty = new uv_tty_t{};
-    uv_tty_init(uv_default_loop(), stdout_tty, fileno(stdout), 0);
+    uv_tty_init(uv_default_loop(), stdout_tty, 1, 0);
     state.tty_out = reinterpret_cast<uv_stream_t *>(stdout_tty);
 }
 

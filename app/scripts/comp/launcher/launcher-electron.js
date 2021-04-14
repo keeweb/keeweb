@@ -290,10 +290,12 @@ const Launcher = {
         return this.getMainWindow().isMaximized();
     },
     getBrowserExtensionSocketName() {
+        const userInfo = this.req('os').userInfo();
         if (process.platform === 'win32') {
-            return '\\\\.\\pipe\\keeweb-browser';
+            return `\\\\.\\pipe\\keeweb-browser-${userInfo.username}`;
         } else {
-            return this.joinPath(this.remoteApp().getPath('temp'), 'keeweb-browser.sock');
+            const sockFileName = `keeweb-browser-${userInfo.uid}.sock`;
+            return this.joinPath(this.remoteApp().getPath('temp'), sockFileName);
         }
     },
     closeOldBrowserExtensionSocket(done) {
