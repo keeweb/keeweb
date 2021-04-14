@@ -39,27 +39,6 @@ struct State {
 
 State state{};
 
-std::string keeweb_pipe_name() {
-    std::string pipe_name;
-
-    uv_passwd_t user_info;
-    auto err = uv_os_get_passwd(&user_info);
-
-    if (err) {
-        std::cerr << "Error getting user: " << uv_err_name(err) << std::endl;
-    } else {
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-        pipe_name = "\\\\.\\pipe\\keeweb-browser-" + std::string{user_info.username};
-#else
-        pipe_name = std::filesystem::temp_directory_path() /
-                    ("keeweb-browser-" + std::to_string(user_info.uid) + ".sock");
-#endif
-        uv_os_free_passwd(&user_info);
-    }
-
-    return pipe_name;
-}
-
 void process_keeweb_queue();
 void process_stdout_queue();
 void close_keeweb_pipe();
@@ -214,10 +193,35 @@ void keeweb_pipe_connect_cb(uv_connect_t *req, int status) {
     }
 }
 
+std::string keeweb_pipe_name() {
+    std::string pipe_name;
+
+    uv_passwd_t user_info;
+    auto err = uv_os_get_passwd(&user_info);
+
+    if (err) {
+        std::cerr << "Error getting user info: " << uv_err_name(err) << std::endl;
+    } else {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+        pipe_name = "\\\\.\\pipe\\keeweb-browser-" + std::string{user_info.username};
+#else
+        pipe_name = std::filesystem::temp_directory_path() /
+                    ("keeweb-browser-" + std::to_string(user_info.uid) + ".sock");
+#endif
+        uv_os_free_passwd(&user_info);
+    }
+
+    return pipe_name;
+}
+
 void connect_keeweb_pipe() {
     state.keeweb_connect_attempts++;
 
     auto pipe_name = keeweb_pipe_name();
+    if (pipe_name.empty()) {
+        quit_on_error();
+        return;
+    }
 
     auto keeweb_pipe = new uv_pipe_t{};
     uv_pipe_init(uv_default_loop(), keeweb_pipe, false);
