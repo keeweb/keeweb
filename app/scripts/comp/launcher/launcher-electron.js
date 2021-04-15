@@ -303,9 +303,16 @@ const Launcher = {
     },
     prepareBrowserExtensionSocket(done) {
         if (process.platform === 'darwin') {
-            const dir = this.req('path').dirname(this.getBrowserExtensionSocketName());
+            const sockName = this.getBrowserExtensionSocketName();
             const fs = this.req('fs');
-            fs.mkdir(dir, () => done());
+            fs.access(sockName, fs.constants.F_OK, (err) => {
+                if (err) {
+                    const dir = this.req('path').dirname(sockName);
+                    fs.mkdir(dir, () => done());
+                } else {
+                    fs.unlink(sockName, () => done());
+                }
+            });
         } else if (process.platform === 'win32') {
             done();
         } else {
