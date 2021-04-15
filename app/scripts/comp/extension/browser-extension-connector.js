@@ -55,9 +55,21 @@ const BrowserExtensionConnector = {
         window.removeEventListener('message', this.browserWindowMessage);
     },
 
+    isSocketNameTooLong(socketName) {
+        const maxLength = process.platform === 'win32' ? 256 : 104;
+        return socketName.length > maxLength;
+    },
+
     startDesktopAppListener() {
-        Launcher.closeOldBrowserExtensionSocket(() => {
+        Launcher.prepareBrowserExtensionSocket(() => {
             const sockName = Launcher.getBrowserExtensionSocketName();
+            if (this.isSocketNameTooLong(sockName)) {
+                logger.error(
+                    "Socket name is too big, browser connection won't be possible, probably OS username is very long.",
+                    sockName
+                );
+                return;
+            }
             const { createServer } = Launcher.req('net');
             this.connectedSockets = [];
             this.connectedSocketState = new WeakMap();

@@ -11,7 +11,10 @@ describe('KeeWeb extension native module host', function () {
     const userInfo = os.userInfo();
     let sockPath;
     let hostPath;
-    if (process.platform === 'win32') {
+    if (process.platform === 'darwin') {
+        sockPath = `/Users/${userInfo.username}/Library/Group Containers/3LE7JZ657W.keeweb/browser.sock`;
+        hostPath = 'build/keeweb-native-messaging-host';
+    } else if (process.platform === 'win32') {
         sockPath = `\\\\.\\pipe\\keeweb-browser-${userInfo.username}`;
         hostPath = 'build\\Debug\\keeweb-native-messaging-host.exe';
     } else {

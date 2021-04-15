@@ -290,16 +290,23 @@ const Launcher = {
         return this.getMainWindow().isMaximized();
     },
     getBrowserExtensionSocketName() {
-        const userInfo = this.req('os').userInfo();
-        if (process.platform === 'win32') {
-            return `\\\\.\\pipe\\keeweb-browser-${userInfo.username}`;
+        const { username, uid } = this.req('os').userInfo();
+        if (process.platform === 'darwin') {
+            const teamId = RuntimeInfo.appleTeamId;
+            return `/Users/${username}/Library/Group Containers/${teamId}.keeweb/browser.sock`;
+        } else if (process.platform === 'win32') {
+            return `\\\\.\\pipe\\keeweb-browser-${username}`;
         } else {
-            const sockFileName = `keeweb-browser-${userInfo.uid}.sock`;
+            const sockFileName = `keeweb-browser-${uid}.sock`;
             return this.joinPath(this.remoteApp().getPath('temp'), sockFileName);
         }
     },
-    closeOldBrowserExtensionSocket(done) {
-        if (process.platform === 'win32') {
+    prepareBrowserExtensionSocket(done) {
+        if (process.platform === 'darwin') {
+            const dir = this.req('path').dirname(this.getBrowserExtensionSocketName());
+            const fs = this.req('fs');
+            fs.mkdir(dir, () => done());
+        } else if (process.platform === 'win32') {
             done();
         } else {
             this.deleteFile(this.getBrowserExtensionSocketName(), done);

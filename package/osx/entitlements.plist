@@ -12,6 +12,10 @@
     <array>
       <string>3LE7JZ657W.net.antelle.keeweb</string>
     </array>
+    <key>com.apple.security.application-groups</key>
+    <array>
+      <string>3LE7JZ657W.keeweb</string>
+    </array>
     <key>com.apple.application-identifier</key>
     <string>3LE7JZ657W.net.antelle.keeweb</string>
     <key>com.apple.developer.team-identifier</key>

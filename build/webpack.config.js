@@ -130,7 +130,8 @@ function config(options) {
                                 search: /@@COMMIT/g,
                                 replace: options.sha
                             },
-                            { search: /@@DEVMODE/g, replace: devMode ? '1' : '' }
+                            { search: /@@DEVMODE/g, replace: devMode ? '1' : '' },
+                            { search: /@@APPLE_TEAM_ID/g, replace: options.appleTeamId }
                         ]
                     }
                 },

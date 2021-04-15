@@ -47,7 +47,8 @@ module.exports = function (grunt) {
     const webpackOptions = {
         date,
         beta: !!grunt.option('beta'),
-        sha
+        sha,
+        appleTeamId: getCodeSignConfig()?.teamId
     };
 
     const windowsAppVersionString = {
@@ -755,7 +756,7 @@ module.exports = function (grunt) {
                     cmakeConfigure: ['-DCMAKE_OSX_ARCHITECTURES=x86_64']
                 },
                 files: {
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/keeweb-native-messaging-host':
+                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host':
                         'extension/native-messaging-host'
                 }
             },
@@ -765,7 +766,7 @@ module.exports = function (grunt) {
                     cmakeConfigure: ['-DCMAKE_OSX_ARCHITECTURES=arm64']
                 },
                 files: {
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/keeweb-native-messaging-host':
+                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host':
                         'extension/native-messaging-host'
                 }
             },
