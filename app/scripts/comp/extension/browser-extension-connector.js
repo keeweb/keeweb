@@ -182,19 +182,27 @@ const BrowserExtensionConnector = {
 
         logger.debug('Extension -> KeeWeb', request);
 
-        const clientId = request?.clientID;
-        if (!clientId) {
-            logger.warn('Empty client ID in request', request);
+        if (!request) {
+            logger.warn('Empty request', request);
             socket.destroy();
             return;
         }
 
-        if (!state.clientId) {
-            state.clientId = clientId;
-        } else if (state.clientId !== clientId) {
-            logger.warn(`Changing client ID is not allowed: ${state.clientId} => ${clientId}`);
-            socket.destroy();
-            return;
+        if (request.clientID) {
+            const clientId = request.clientID;
+            if (!state.clientId) {
+                state.clientId = clientId;
+            } else if (state.clientId !== clientId) {
+                logger.warn(`Changing client ID is not allowed: ${state.clientId} => ${clientId}`);
+                socket.destroy();
+                return;
+            }
+        } else {
+            if (request.action !== 'ping') {
+                logger.warn('Empty client ID in request', request);
+                socket.destroy();
+                return;
+            }
         }
 
         state.processingData = true;
