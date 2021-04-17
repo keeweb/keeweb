@@ -105,6 +105,8 @@ const BrowserExtensionConnector = {
         // TODO: check the process
 
         state.active = true;
+        state.supportsNotifications = true; // TODO: = !isSafari
+
         this.processPendingSocketData(socket);
     },
 
@@ -299,8 +301,11 @@ const BrowserExtensionConnector = {
     sendSocketEvent(data) {
         for (const socket of this.connectedSockets) {
             const state = this.connectedSocketState.get(socket);
-            if (state?.active) {
-                this.sendSocketResponse(socket, data);
+            if (state?.active && state.notifications) {
+                const client = this.connectedClients.get(state.clientId);
+                if (client?.supportsNotifications) {
+                    this.sendSocketResponse(socket, data);
+                }
             }
         }
     },
