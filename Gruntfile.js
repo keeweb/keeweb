@@ -48,7 +48,7 @@ module.exports = function (grunt) {
         date,
         beta: !!grunt.option('beta'),
         sha,
-        appleTeamId: getCodeSignConfig()?.teamId
+        appleTeamId: '3LE7JZ657W'
     };
 
     const windowsAppVersionString = {
