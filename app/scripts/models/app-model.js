@@ -233,6 +233,9 @@ class AppModel {
     }
 
     closeAllFiles() {
+        if (!this.files.hasOpenFiles()) {
+            return;
+        }
         for (const file of this.files) {
             file.close();
             this.fileClosed(file);
