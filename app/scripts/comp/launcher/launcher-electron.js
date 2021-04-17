@@ -295,9 +295,9 @@ const Launcher = {
             const teamId = RuntimeInfo.appleTeamId;
             return `/Users/${username}/Library/Group Containers/${teamId}.keeweb/browser.sock`;
         } else if (process.platform === 'win32') {
-            return `\\\\.\\pipe\\keeweb-browser-${username}`;
+            return `\\\\.\\pipe\\keeweb-connect-${username}`;
         } else {
-            const sockFileName = `keeweb-browser-${uid}.sock`;
+            const sockFileName = `keeweb-connect-${uid}.sock`;
             return this.joinPath(this.remoteApp().getPath('temp'), sockFileName);
         }
     },

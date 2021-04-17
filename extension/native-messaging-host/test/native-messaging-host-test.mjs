@@ -15,10 +15,10 @@ describe('KeeWeb extension native module host', function () {
         sockPath = `/Users/${userInfo.username}/Library/Group Containers/3LE7JZ657W.keeweb/browser.sock`;
         hostPath = 'build/keeweb-native-messaging-host';
     } else if (process.platform === 'win32') {
-        sockPath = `\\\\.\\pipe\\keeweb-browser-${userInfo.username}`;
+        sockPath = `\\\\.\\pipe\\keeweb-connect-${userInfo.username}`;
         hostPath = 'build\\Debug\\keeweb-native-messaging-host.exe';
     } else {
-        sockPath = path.join(os.tmpdir(), `keeweb-browser-${userInfo.uid}.sock`);
+        sockPath = path.join(os.tmpdir(), `keeweb-connect-${userInfo.uid}.sock`);
         hostPath = 'build/keeweb-native-messaging-host';
     }
 

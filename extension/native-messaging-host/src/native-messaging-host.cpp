@@ -203,13 +203,13 @@ std::string keeweb_pipe_name() {
         std::cerr << "Error getting user info: " << uv_err_name(err) << std::endl;
     } else {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-        pipe_name = "\\\\.\\pipe\\keeweb-browser-" + std::string{user_info.username};
+        pipe_name = "\\\\.\\pipe\\keeweb-connect-" + std::string{user_info.username};
 #elif __APPLE__
         pipe_name = "/Users/" + std::string{user_info.username} +
                     "/Library/Group Containers/3LE7JZ657W.keeweb/browser.sock";
 #else
         pipe_name = std::filesystem::temp_directory_path() /
-                    ("keeweb-browser-" + std::to_string(user_info.uid) + ".sock");
+                    ("keeweb-connect-" + std::to_string(user_info.uid) + ".sock");
 #endif
         uv_os_free_passwd(&user_info);
     }
