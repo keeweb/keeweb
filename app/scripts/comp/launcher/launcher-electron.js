@@ -293,7 +293,7 @@ const Launcher = {
         const { username, uid } = this.req('os').userInfo();
         if (process.platform === 'darwin') {
             const teamId = RuntimeInfo.appleTeamId;
-            return `/Users/${username}/Library/Group Containers/${teamId}.keeweb/browser.sock`;
+            return `/Users/${username}/Library/Group Containers/${teamId}.keeweb/conn.sock`;
         } else if (process.platform === 'win32') {
             return `\\\\.\\pipe\\keeweb-connect-${username}`;
         } else {

@@ -206,7 +206,7 @@ std::string keeweb_pipe_name() {
         pipe_name = "\\\\.\\pipe\\keeweb-connect-" + std::string{user_info.username};
 #elif __APPLE__
         pipe_name = "/Users/" + std::string{user_info.username} +
-                    "/Library/Group Containers/3LE7JZ657W.keeweb/browser.sock";
+                    "/Library/Group Containers/3LE7JZ657W.keeweb/conn.sock";
 #else
         pipe_name = std::filesystem::temp_directory_path() /
                     ("keeweb-connect-" + std::to_string(user_info.uid) + ".sock");
