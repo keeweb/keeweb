@@ -58,7 +58,7 @@ class AppView extends View {
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView(undefined, { ownParent: true });
         this.views.details.appModel = this.model;
-        if (this.titlebarStyle !== 'default' && Features.renderCustomTitleBar()) {
+        if (this.titlebarStyle !== 'default' && Features.renderCustomTitleBar) {
             this.views.titlebar = new TitlebarView(this.model);
         }
 
@@ -119,13 +119,13 @@ class AppView extends View {
     }
 
     setWindowClass() {
-        const getBrowserCssClass = Features.getBrowserCssClass();
-        if (getBrowserCssClass) {
-            document.body.classList.add(getBrowserCssClass);
+        const browserCssClass = Features.browserCssClass;
+        if (browserCssClass) {
+            document.body.classList.add(browserCssClass);
         }
         if (this.titlebarStyle !== 'default') {
             document.body.classList.add('titlebar-' + this.titlebarStyle);
-            if (Features.renderCustomTitleBar()) {
+            if (Features.renderCustomTitleBar) {
                 document.body.classList.add('titlebar-custom');
             }
         }
@@ -138,7 +138,7 @@ class AppView extends View {
         super.render({
             beta: this.model.isBeta,
             titlebarStyle: this.titlebarStyle,
-            customTitlebar: Features.renderCustomTitleBar()
+            customTitlebar: Features.renderCustomTitleBar
         });
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.render();

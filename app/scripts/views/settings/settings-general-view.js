@@ -136,8 +136,9 @@ class SettingsGeneralView extends View {
             useGroupIconForEntries: AppSettingsModel.useGroupIconForEntries,
             directAutotype: AppSettingsModel.directAutotype,
             fieldLabelDblClickAutoType: AppSettingsModel.fieldLabelDblClickAutoType,
-            supportsTitleBarStyles: Features.supportsTitleBarStyles(),
-            supportsCustomTitleBarAndDraggableWindow: Features.supportsCustomTitleBarAndDraggableWindow(),
+            supportsTitleBarStyles: Features.supportsTitleBarStyles,
+            supportsCustomTitleBarAndDraggableWindow:
+                Features.supportsCustomTitleBarAndDraggableWindow,
             titlebarStyle: AppSettingsModel.titlebarStyle,
             storageProviders,
             showReloadApp: Features.isStandalone,

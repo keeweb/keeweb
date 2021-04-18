@@ -20,7 +20,16 @@ const Links = {
     YubiKeyManual: 'https://github.com/keeweb/keeweb/wiki/YubiKey',
     YubiKeyManagerInstall: 'https://github.com/Yubico/yubikey-manager#installation',
     HaveIBeenPwned: 'https://haveibeenpwned.com',
-    HaveIBeenPwnedPrivacy: 'https://haveibeenpwned.com/Passwords'
+    HaveIBeenPwnedPrivacy: 'https://haveibeenpwned.com/Passwords',
+    KeeWebConnectForChrome: 'https://TODO',
+    KeeWebConnectForFirefox: 'https://TODO',
+    KeeWebConnectForEdge: 'https://TODO',
+    KeeWebConnectForSafari: 'https://TODO',
+    KeePassXcBrowserForChrome:
+        'https://chrome.google.com/webstore/detail/keepassxc-browser/oboonakemofpalcgghocfoadofidjkkk',
+    KeePassXcBrowserForFirefox: 'https://addons.mozilla.org/firefox/addon/keepassxc-browser/',
+    KeePassXcBrowserForEdge:
+        'https://microsoftedge.microsoft.com/addons/detail/keepassxcbrowser/pdffhmdngciaglkoonimfcmckehcpafo'
 };
 
 export { Links };

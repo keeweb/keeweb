@@ -1,0 +1,64 @@
+<div class="settings__content">
+    <h1><i class="fa fa-{{icon}} settings__head-icon"></i> {{res 'setBrowserTitle'}}</h1>
+    {{#if desktop}}
+        <p>{{res 'setBrowserIntroDesktop'}}</p>
+        <p>KeeWeb Connect: {{res 'setBrowserIntroKeeWebConnect'}}</p>
+        <p>KeePassXC-Browser: {{res 'setBrowserIntroKeePassXcBrowser'}}</p>
+        {{#if anyBrowserIsEnabled}}
+            <p>{{res 'setBrowserEnablePerBrowser'}}</p>
+        {{else}}
+            <p class="error-color">{{res 'setBrowserNotEnabled'}}</p>
+        {{/if}}
+        <table class="settings__browser-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>KeeWeb Connect</th>
+                    <th>KeePassXC-Browser</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each settingsPerBrowser as |perBrowser|}}
+                    <tr>
+                        <td>{{perBrowser.browser}}</td>
+                        <td>
+                            <input type="checkbox"
+                                   class="check-enable-for-browser"
+                                   {{#if perBrowser.kwc}}checked{{/if}}
+                                   id="check-enable-kwc-for-{{perBrowser.browser}}"
+                                   data-browser="{{perBrowser.browser}}"
+                                   data-extension="kwc" />
+                            <label for="check-enable-kwc-for-{{perBrowser.browser}}"></label>
+                            {{#if perBrowser.kwc}}
+                                <i class="fa fa-download"></i>
+                            {{/if}}
+                        </td>
+                        {{#ifeq perBrowser.browser 'Safari'}}
+                            <td class="muted-color">
+                                <i class="fa fa-times"></i>
+                            </td>
+                        {{else}}
+                            <td>
+                                <input type="checkbox"
+                                       class="check-enable-for-browser"
+                                       {{#if perBrowser.kpxc}}checked{{/if}}
+                                       id="check-enable-kpxc-for-{{perBrowser.browser}}"
+                                       data-browser="{{perBrowser.browser}}"
+                                       data-extension="kpxc" />
+                                <label for="check-enable-kpxc-for-{{perBrowser.browser}}"></label>
+                                {{#if perBrowser.kpxc}}
+                                    <i class="fa fa-download"></i>
+                                {{/if}}
+                            </td>
+                        {{/ifeq}}
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <p>{{res 'setBrowserIntroWeb'}}</p>
+        <a href="{{extensionDownloadLink}}" target="_blank" rel="noreferrer">
+            KeeWeb Connect {{res 'for'}} {{extensionBrowserFamily}}
+        </a>
+    {{/if}}
+</div>
