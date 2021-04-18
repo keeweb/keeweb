@@ -4,6 +4,7 @@ const path = require('path');
 const net = require('net');
 const { ipcMain, app } = require('electron');
 const { Logger } = require('../logger');
+const { getProcessInfo } = require('../util/process-utils');
 
 ipcMain.handle('browserExtensionConnectorStart', browserExtensionConnectorStart);
 ipcMain.handle('browserExtensionConnectorStop', browserExtensionConnectorStop);
@@ -13,25 +14,34 @@ ipcMain.handle('browserExtensionConnectorSocketEvent', browserExtensionConnector
 const logger = new Logger('browser-extension-connector');
 
 const MaxIncomingDataLength = 10_000;
+const ExtensionOrigins = {
+    'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/': 'keeweb-connect',
+    'safari-keeweb-connect': 'keeweb-connect',
+    'keeweb-connect@keeweb.info': 'keeweb-connect',
+    'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/': 'keepassxc-browser',
+    'keepassxc-browser@keepassxc.org': 'keepassxc-browser',
+    'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/': 'keepassxc-browser'
+};
 
 let connectedSockets = new Map();
 let connectedSocketState = new WeakMap();
 let server;
+let serverSocketName;
 let socketId = 0;
 
 async function browserExtensionConnectorStart(e, config) {
-    await prepareBrowserExtensionSocket(config);
-    const sockName = getBrowserExtensionSocketName(config);
+    serverSocketName = getBrowserExtensionSocketName(config);
+    await prepareBrowserExtensionSocket();
 
-    if (isSocketNameTooLong(sockName)) {
+    if (isSocketNameTooLong(serverSocketName)) {
         logger.error(
             "Socket name is too long, browser connection won't be possible, probably OS username is very long.",
-            sockName
+            serverSocketName
         );
         return;
     }
 
-    server = net.createServer((socket) => {
+    server = net.createServer(async (socket) => {
         socketId++;
 
         logger.info(`New connection with socket ${socketId}`);
@@ -39,12 +49,10 @@ async function browserExtensionConnectorStart(e, config) {
         connectedSockets.set(socketId, socket);
         connectedSocketState.set(socket, { socketId });
 
-        checkSocketIdentity(socket);
-
         socket.on('data', (data) => onSocketData(socket, data));
         socket.on('close', () => onSocketClose(socket));
     });
-    server.listen(sockName);
+    server.listen(serverSocketName);
 
     logger.info('Started');
 }
@@ -83,22 +91,21 @@ function getBrowserExtensionSocketName(config) {
     }
 }
 
-function prepareBrowserExtensionSocket(config) {
+function prepareBrowserExtensionSocket() {
     return new Promise((resolve) => {
         if (process.platform === 'darwin') {
-            const sockName = getBrowserExtensionSocketName(config);
-            fs.access(sockName, fs.constants.F_OK, (err) => {
+            fs.access(serverSocketName, fs.constants.F_OK, (err) => {
                 if (err) {
-                    const dir = path.dirname(sockName);
+                    const dir = path.dirname(serverSocketName);
                     fs.mkdir(dir, () => resolve());
                 } else {
-                    fs.unlink(sockName, () => resolve());
+                    fs.unlink(serverSocketName, () => resolve());
                 }
             });
         } else if (process.platform === 'win32') {
             return resolve();
         } else {
-            fs.unlink(getBrowserExtensionSocketName(config), () => resolve());
+            fs.unlink(serverSocketName, () => resolve());
         }
     });
 }
@@ -106,38 +113,6 @@ function prepareBrowserExtensionSocket(config) {
 function isSocketNameTooLong(socketName) {
     const maxLength = process.platform === 'win32' ? 256 : 104;
     return socketName.length > maxLength;
-}
-
-function checkSocketIdentity(socket) {
-    const state = connectedSocketState.get(socket);
-    if (!state) {
-        return;
-    }
-
-    // TODO: implement this
-
-    state.active = true;
-    state.appName = 'TODO';
-    state.extensionName = 'TODO';
-    state.pid = 0;
-    state.supportsNotifications = state.appName !== 'Safari';
-
-    logger.info(
-        `Socket ${state.socketId} activated`,
-        `app: ${state.appName}`,
-        `extension: ${state.extensionName}`,
-        `pid: ${state.pid}`
-    );
-
-    sendToRenderer('browserExtensionSocketConnected', state.socketId, {
-        connectionId: state.socketId,
-        appName: state.appName,
-        extensionName: state.extensionName,
-        pid: state.pid,
-        supportsNotifications: state.supportsNotifications
-    });
-
-    processPendingSocketData(socket);
 }
 
 function onSocketClose(socket) {
@@ -174,7 +149,7 @@ function onSocketData(socket, data) {
 
 async function processPendingSocketData(socket) {
     const state = connectedSocketState.get(socket);
-    if (!state?.active) {
+    if (!state) {
         return;
     }
     if (!state.pendingData || state.processingData) {
@@ -218,6 +193,11 @@ async function processPendingSocketData(socket) {
         return;
     }
 
+    if (!state.active) {
+        await processFirstMessageFromSocket(socket, request);
+        return;
+    }
+
     logger.debug(`Extension[${state.socketId}] -> KeeWeb`, request);
 
     if (!request) {
@@ -249,6 +229,78 @@ async function processPendingSocketData(socket) {
     state.processingData = true;
 
     sendToRenderer('browserExtensionSocketRequest', state.socketId, request);
+}
+
+async function processFirstMessageFromSocket(socket, message) {
+    const state = connectedSocketState.get(socket);
+    if (!state) {
+        return;
+    }
+
+    logger.debug(`Init connection ${state.socketId}`, message);
+
+    if (!message.origin) {
+        logger.error('Empty origin');
+        socket.destroy();
+        return;
+    }
+    if (!message.pid) {
+        logger.error('Empty pid');
+        socket.destroy();
+        return;
+    }
+
+    const extensionName = ExtensionOrigins[message.origin] || 'unknown';
+    const isSafari = message.origin === 'safari-keeweb-connect';
+    let appName;
+
+    if (isSafari) {
+        appName = 'Safari';
+    } else {
+        if (!message.ppid) {
+            logger.error('Empty ppid');
+            socket.destroy();
+            return;
+        }
+
+        let parentProcessInfo;
+        try {
+            parentProcessInfo = await getProcessInfo(message.ppid);
+        } catch (e) {
+            logger.error(`Cannot get info for PID ${message.ppid}: ${e}`);
+            socket.destroy();
+            return;
+        }
+
+        appName = parentProcessInfo.commandLine.split('/').pop();
+        appName = appName[0].toUpperCase() + appName.substr(1);
+    }
+
+    state.active = true;
+    state.appName = appName;
+    state.extensionName = extensionName;
+    state.pid = message.pid;
+    state.ppid = message.ppid;
+    state.supportsNotifications = state.appName !== 'Safari';
+    state.processingData = false;
+
+    logger.info(
+        `Socket ${state.socketId} activated for ` +
+            `app: "${state.appName}", ` +
+            `extension: "${state.extensionName}", ` +
+            `pid: ${state.pid}, ` +
+            `ppid: ${state.ppid}`
+    );
+
+    sendToRenderer('browserExtensionSocketConnected', state.socketId, {
+        connectionId: state.socketId,
+        appName: state.appName,
+        extensionName: state.extensionName,
+        pid: state.pid,
+        supportsNotifications: state.supportsNotifications
+    });
+
+    processPendingSocketData(socket);
 }
 
 function sendResultToSocket(socketId, result) {

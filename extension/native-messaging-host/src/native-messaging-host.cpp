@@ -1,7 +1,6 @@
 #include <uv.h>
 
 #include <algorithm>
-#include <array>
 #include <filesystem>
 #include <iostream>
 #include <queue>
@@ -12,20 +11,8 @@
 // https://developer.chrome.com/docs/apps/nativeMessaging/#native-messaging-host-protocol
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#app_side
 
-constexpr std::array kAllowedOrigins = {
-    // KeeWeb Connect: Chrome
-    std::string_view("chrome-extension://npmnaajonabmkjekongmjhdjpjdlhpkp/"),
-    // KeeWeb Connect: Firefox
-    std::string_view("keeweb-connect@keeweb.info"),
-    // KeePassXC-Browser: Chrome
-    std::string_view("chrome-extension://oboonakemofpalcgghocfoadofidjkkk/"),
-    // KeePassXC-Browser: Firefox
-    std::string_view("keepassxc-browser@keepassxc.org"),
-    // KeePassXC-Browser: Edge
-    std::string_view("chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/"),
-};
-
 struct State {
+    std::string origin;
     uv_stream_t *tty_in = nullptr;
     uv_stream_t *tty_out = nullptr;
     uv_stream_t *keeweb_pipe = nullptr;
@@ -43,24 +30,6 @@ void process_keeweb_queue();
 void process_stdout_queue();
 void close_keeweb_pipe();
 void connect_keeweb_pipe();
-
-bool check_args(int argc, char *argv[]) {
-    if (argc < 2) {
-        std::cerr << "Expected origin argument" << std::endl;
-        return false;
-    }
-
-    for (int arg = 1; arg < argc; arg++) {
-        std::string origin = argv[arg];
-        auto found = std::find(kAllowedOrigins.begin(), kAllowedOrigins.end(), origin);
-        if (found != kAllowedOrigins.end()) {
-            return true;
-        }
-    }
-    std::cerr << "Bad origin" << std::endl;
-
-    return false;
-}
 
 void alloc_buf(uv_handle_t *, size_t size, uv_buf_t *buf) {
     buf->base = new char[size];
@@ -235,6 +204,25 @@ void connect_keeweb_pipe() {
 
 void start_reading_stdin() { uv_read_start(state.tty_in, alloc_buf, stdin_read_cb); }
 
+void push_first_message_to_keeweb() {
+    auto origin = state.origin;
+    std::replace(origin.begin(), origin.end(), '"', '\'');
+
+    auto message = "{\"pid\":" + std::to_string(uv_os_getpid()) +
+                   ",\"ppid\":" + std::to_string(uv_os_getppid()) + ",\"origin\":\"" + origin +
+                   "\"}";
+
+    auto message_length = message.length() + sizeof(uint32_t);
+    auto data = new char[message_length];
+    auto size_ptr = reinterpret_cast<uint32_t *>(data);
+
+    *size_ptr = message.length();
+    memcpy(data + sizeof(uint32_t), message.c_str(), message.length());
+
+    state.pending_to_keeweb.emplace(
+        uv_buf_init(data, static_cast<decltype(uv_buf_t::len)>(message_length)));
+}
+
 void init_tty() {
     auto stdin_tty = new uv_tty_t{};
     uv_tty_init(uv_default_loop(), stdin_tty, 0, 0);
@@ -246,9 +234,13 @@ void init_tty() {
 }
 
 int main(int argc, char *argv[]) {
-    if (!check_args(argc, argv)) {
+    if (argc < 2) {
+        std::cerr << "Expected origin argument" << std::endl;
         return 1;
     }
+    state.origin = argv[1];
+
+    push_first_message_to_keeweb();
 
     init_tty();
     start_reading_stdin();
