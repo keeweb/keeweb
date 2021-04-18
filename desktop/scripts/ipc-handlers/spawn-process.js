@@ -1,8 +1,7 @@
+const { ipcMain } = require('electron');
 const { spawn } = require('child_process');
 
-module.exports = {
-    spawnProcess
-};
+ipcMain.handle('spawnProcess', spawnProcess);
 
 function spawnProcess(e, config) {
     return new Promise((resolve) => {

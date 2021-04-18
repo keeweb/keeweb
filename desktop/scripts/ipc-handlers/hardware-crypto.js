@@ -1,16 +1,15 @@
+const { ipcMain } = require('electron');
 const { readXoredValue, makeXoredValue } = require('../util/byte-utils');
 const { reqNative } = require('../util/req-native');
+
+ipcMain.handle('hardwareCryptoDeleteKey', hardwareCryptoDeleteKey);
+ipcMain.handle('hardwareEncrypt', hardwareEncrypt);
+ipcMain.handle('hardwareDecrypt', hardwareDecrypt);
 
 const keyTag = 'net.antelle.keeweb.encryption-key';
 
 let testCipherParams;
 let keyChecked = false;
-
-module.exports = {
-    hardwareCryptoDeleteKey,
-    hardwareEncrypt,
-    hardwareDecrypt
-};
 
 async function hardwareCryptoDeleteKey() {
     const secureEnclave = reqNative('secure-enclave');
