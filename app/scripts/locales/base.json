@@ -647,6 +647,7 @@
     "setBrowserIntroWeb": "Install our browser extension to auto-fill passwords from KeeWeb on different pages. The browser extension will connect to a KeeWeb tab in your browser to fetch passwords. Click here to download the extension:",
     "setBrowserNotEnabled": "Browser integration is not enabled, extensions won't be able to connect to KeeWeb. Use the checkboxes below to enable it:",
     "setBrowserEnablePerBrowser": "Enable browser integration using the checkboxes below:",
+    "setBrowserFocusIfLocked": "Open KeeWeb is a browser extension tries to connect while the file is locked",
 
     "setDevicesTitle": "Devices",
     "setDevicesEnableUsb": "Enable interaction with USB devices",

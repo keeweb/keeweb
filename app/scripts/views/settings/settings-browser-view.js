@@ -8,13 +8,15 @@ class SettingsBrowserView extends View {
     template = template;
 
     events = {
-        'change .check-enable-for-browser': 'changeEnableForBrowser'
+        'change .check-enable-for-browser': 'changeEnableForBrowser',
+        'change .settings__browser-focus-if-locked': 'changeFocusIfLocked'
     };
 
     render() {
         const data = {
             desktop: Features.isDesktop,
-            icon: Features.browserIcon
+            icon: Features.browserIcon,
+            focusIfLocked: AppSettingsModel.extensionFocusIfLocked
         };
         if (Features.isDesktop) {
             data.settingsPerBrowser = this.getSettingsPerBrowser();
@@ -53,6 +55,11 @@ class SettingsBrowserView extends View {
             delete AppSettingsModel[setting];
         }
 
+        this.render();
+    }
+
+    changeFocusIfLocked(e) {
+        AppSettingsModel.extensionFocusIfLocked = e.target.checked;
         this.render();
     }
 }

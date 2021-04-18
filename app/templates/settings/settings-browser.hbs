@@ -61,4 +61,11 @@
             KeeWeb Connect {{res 'for'}} {{extensionBrowserFamily}}
         </a>
     {{/if}}
+
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__browser-focus-if-locked"
+               id="settings__browser-focus-if-locked"
+               {{#if focusIfLocked}}checked{{/if}} />
+        <label for="settings__browser-focus-if-locked">{{res 'setBrowserFocusIfLocked'}}</label>
+    </div>
 </div>
