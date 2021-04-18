@@ -281,7 +281,7 @@ async function processFirstMessageFromSocket(socket, message) {
     state.extensionName = extensionName;
     state.pid = message.pid;
     state.ppid = message.ppid;
-    state.supportsNotifications = state.appName !== 'Safari';
+    state.supportsNotifications = !isSafari;
     state.processingData = false;
 
     logger.info(
