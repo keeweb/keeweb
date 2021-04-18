@@ -9,10 +9,12 @@ const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
+const { Logger } = require('./scripts/logger');
 
 perfTimestamps?.push({ name: 'loading app requires', ts: process.hrtime() });
 
 const main = electron.app;
+const logger = new Logger('remote-app');
 
 let mainWindow = null;
 let appIcon = null;
@@ -154,14 +156,15 @@ main.on('second-instance', () => {
     }
 });
 main.on('web-contents-created', (event, contents) => {
-    contents.on('new-window', async (e, url) => {
-        e.preventDefault();
-        emitRemoteEvent('log', { message: `Prevented new window: ${url}` });
+    contents.setWindowOpenHandler((e) => {
+        logger.warn(`Prevented new window: ${e.url}`);
+        emitRemoteEvent('log', `Prevented new window: ${e.url}`);
+        return { action: 'deny' };
     });
     contents.on('will-navigate', (e, url) => {
         if (!url.startsWith('https://beta.keeweb.info/') && !url.startsWith(htmlPath)) {
             e.preventDefault();
-            emitRemoteEvent('log', { message: `Prevented navigation: ${url}` });
+            logger.warn(`Prevented navigation: ${url}`);
         }
     });
 });

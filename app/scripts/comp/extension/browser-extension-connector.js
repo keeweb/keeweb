@@ -1,28 +1,50 @@
-import kdbxweb from 'kdbxweb';
 import { Launcher } from 'comp/launcher';
 import { Logger } from 'util/logger';
-import { ProtocolHandlers, initProtocolImpl } from './protocol-impl';
+import {
+    ProtocolHandlers,
+    initProtocolImpl,
+    cleanupProtocolImpl,
+    deleteProtocolImplConnection
+} from './protocol-impl';
+import { RuntimeInfo } from 'const/runtime-info';
 
 const logger = new Logger('browser-extension-connector');
 if (!localStorage.debugBrowserExtension) {
     logger.level = Logger.Level.Info;
 }
 
-const connectedClients = new Map();
+const WebConnectionInfo = {
+    connectionId: 1,
+    extensionName: 'keeweb-connect',
+    supportsNotifications: true
+};
+
+const connections = new Map();
 const pendingBrowserMessages = [];
 let processingBrowserMessage = false;
-const MaxIncomingDataLength = 10_000;
 
 const BrowserExtensionConnector = {
     enabled: true,
     logger,
-    connectedClients,
 
     init(appModel) {
         const sendEvent = this.sendEvent.bind(this);
-        initProtocolImpl({ appModel, logger, connectedClients, sendEvent });
+        initProtocolImpl({ appModel, logger, sendEvent });
 
         this.browserWindowMessage = this.browserWindowMessage.bind(this);
+
+        if (Launcher) {
+            const { ipcRenderer } = Launcher.electron();
+            ipcRenderer.on('browserExtensionSocketConnected', (e, socketId, connectionInfo) =>
+                this.socketConnected(socketId, connectionInfo)
+            );
+            ipcRenderer.on('browserExtensionSocketClosed', (e, socketId) =>
+                this.socketClosed(socketId)
+            );
+            ipcRenderer.on('browserExtensionSocketRequest', (e, socketId, request) =>
+                this.socketRequest(socketId, request)
+            );
+        }
 
         this.start();
     },
@@ -33,8 +55,6 @@ const BrowserExtensionConnector = {
         } else {
             this.startWebMessageListener();
         }
-
-        logger.info('Started');
     },
 
     stop() {
@@ -44,189 +64,31 @@ const BrowserExtensionConnector = {
             this.stopWebMessageListener();
         }
 
+        cleanupProtocolImpl();
+        connections.clear();
+
         logger.info('Stopped');
     },
 
     startWebMessageListener() {
         window.addEventListener('message', this.browserWindowMessage);
+        logger.info('Started');
     },
 
     stopWebMessageListener() {
         window.removeEventListener('message', this.browserWindowMessage);
     },
 
-    isSocketNameTooLong(socketName) {
-        const maxLength = process.platform === 'win32' ? 256 : 104;
-        return socketName.length > maxLength;
-    },
-
-    startDesktopAppListener() {
-        Launcher.prepareBrowserExtensionSocket(() => {
-            const sockName = Launcher.getBrowserExtensionSocketName();
-            if (this.isSocketNameTooLong(sockName)) {
-                logger.error(
-                    "Socket name is too big, browser connection won't be possible, probably OS username is very long.",
-                    sockName
-                );
-                return;
-            }
-            const { createServer } = Launcher.req('net');
-            this.connectedSockets = [];
-            this.connectedSocketState = new WeakMap();
-            this.server = createServer((socket) => {
-                logger.info('New connection');
-                this.connectedSockets.push(socket);
-                this.connectedSocketState.set(socket, {});
-                this.checkSocketIdentity(socket);
-                socket.on('data', (data) => this.onSocketData(socket, data));
-                socket.on('close', () => this.onSocketClose(socket));
-            });
-            this.server.listen(sockName);
+    async startDesktopAppListener() {
+        const { ipcRenderer } = Launcher.electron();
+        ipcRenderer.invoke('browserExtensionConnectorStart', {
+            appleTeamId: RuntimeInfo.appleTeamId
         });
     },
 
     stopDesktopAppListener() {
-        for (const socket of this.connectedSockets) {
-            socket.destroy();
-        }
-        if (this.server) {
-            this.server.close();
-        }
-        this.connectedSockets = [];
-        this.connectedSocketState = new WeakMap();
-    },
-
-    checkSocketIdentity(socket) {
-        const state = this.connectedSocketState.get(socket);
-        if (!state) {
-            return;
-        }
-
-        // TODO: check the process
-
-        state.active = true;
-        state.supportsNotifications = true; // TODO: = !isSafari
-
-        this.processPendingSocketData(socket);
-    },
-
-    onSocketClose(socket) {
-        const state = this.connectedSocketState.get(socket);
-        if (state?.clientId) {
-            connectedClients.delete(state.clientId);
-        }
-        this.connectedSocketState.delete(socket);
-
-        this.connectedSockets = this.connectedSockets.filter((s) => s !== socket);
-
-        logger.info('Connection closed', state?.clientId);
-    },
-
-    onSocketData(socket, data) {
-        if (data.byteLength > MaxIncomingDataLength) {
-            logger.warn('Too many bytes rejected', data.byteLength);
-            socket.destroy();
-            return;
-        }
-        const state = this.connectedSocketState.get(socket);
-        if (!state) {
-            return;
-        }
-        if (state.pendingData) {
-            state.pendingData = Buffer.concat([state.pendingData, data]);
-        } else {
-            state.pendingData = data;
-        }
-        if (state.active) {
-            this.processPendingSocketData(socket);
-        }
-    },
-
-    async processPendingSocketData(socket) {
-        const state = this.connectedSocketState.get(socket);
-        if (!state?.pendingData || state.processingData) {
-            return;
-        }
-
-        if (state.pendingData.length < 4) {
-            return;
-        }
-
-        const lengthBuffer = kdbxweb.ByteUtils.arrayToBuffer(state.pendingData.slice(0, 4));
-        const length = new Uint32Array(lengthBuffer)[0];
-
-        if (length > MaxIncomingDataLength) {
-            logger.warn('Large message rejected', length);
-            socket.destroy();
-            return;
-        }
-
-        if (state.pendingData.byteLength < length + 4) {
-            return;
-        }
-
-        const messageBytes = state.pendingData.slice(4, length + 4);
-        if (state.pendingData.byteLength > length + 4) {
-            state.pendingData = state.pendingData.slice(length + 4);
-        } else {
-            state.pendingData = null;
-        }
-
-        const str = messageBytes.toString();
-        let request;
-        try {
-            request = JSON.parse(str);
-        } catch {
-            logger.warn('Failed to parse message', str);
-            socket.destroy();
-            return;
-        }
-
-        logger.debug('Extension -> KeeWeb', request);
-
-        if (!request) {
-            logger.warn('Empty request', request);
-            socket.destroy();
-            return;
-        }
-
-        if (request.clientID) {
-            const clientId = request.clientID;
-            if (!state.clientId) {
-                state.clientId = clientId;
-            } else if (state.clientId !== clientId) {
-                logger.warn(`Changing client ID is not allowed: ${state.clientId} => ${clientId}`);
-                socket.destroy();
-                return;
-            }
-        } else {
-            if (request.action !== 'ping') {
-                logger.warn('Empty client ID in request', request);
-                socket.destroy();
-                return;
-            }
-        }
-
-        state.processingData = true;
-
-        let response;
-        try {
-            const handler = ProtocolHandlers[request.action];
-            if (!handler) {
-                throw new Error(`Handler not found: ${request.action}`);
-            }
-            response = await handler(request);
-        } catch (e) {
-            response = this.errorToResponse(e, request);
-        }
-
-        state.processingData = false;
-
-        if (response) {
-            this.sendSocketResponse(socket, response);
-        }
-
-        this.processPendingSocketData(socket);
+        const { ipcRenderer } = Launcher.electron();
+        ipcRenderer.invoke('browserExtensionConnectorStop');
     },
 
     browserWindowMessage(e) {
@@ -259,7 +121,7 @@ const BrowserExtensionConnector = {
             if (!handler) {
                 throw new Error(`Handler not found: ${request.action}`);
             }
-            response = await handler(request);
+            response = await handler(request, WebConnectionInfo);
         } catch (e) {
             response = this.errorToResponse(e, request);
         }
@@ -275,7 +137,7 @@ const BrowserExtensionConnector = {
 
     errorToResponse(e, request) {
         return {
-            action: request.action,
+            action: request?.action,
             error: e.message || 'Unknown error',
             errorCode: e.code || 0
         };
@@ -287,27 +149,14 @@ const BrowserExtensionConnector = {
         postMessage(response, window.location.origin);
     },
 
-    sendSocketResponse(socket, response) {
-        logger.debug('KeeWeb -> Extension', response);
-        const responseData = Buffer.from(JSON.stringify(response));
-        const lengthBuf = kdbxweb.ByteUtils.arrayToBuffer(
-            new Uint32Array([responseData.byteLength])
-        );
-        const lengthBytes = Buffer.from(lengthBuf);
-        const data = Buffer.concat([lengthBytes, responseData]);
-        socket.write(data);
+    sendSocketEvent(data) {
+        const { ipcRenderer } = Launcher.electron();
+        ipcRenderer.invoke('browserExtensionConnectorSocketEvent', data);
     },
 
-    sendSocketEvent(data) {
-        for (const socket of this.connectedSockets) {
-            const state = this.connectedSocketState.get(socket);
-            if (state?.active && state.notifications) {
-                const client = this.connectedClients.get(state.clientId);
-                if (client?.supportsNotifications) {
-                    this.sendSocketResponse(socket, data);
-                }
-            }
-        }
+    sendSocketResult(socketId, data) {
+        const { ipcRenderer } = Launcher.electron();
+        ipcRenderer.invoke('browserExtensionConnectorSocketResult', socketId, data);
     },
 
     sendEvent(data) {
@@ -319,6 +168,33 @@ const BrowserExtensionConnector = {
         } else {
             this.sendWebResponse(data);
         }
+    },
+
+    socketConnected(socketId, connectionInfo) {
+        connections.set(socketId, connectionInfo);
+    },
+
+    socketClosed(socketId) {
+        connections.delete(socketId);
+        deleteProtocolImplConnection(socketId);
+    },
+
+    async socketRequest(socketId, request) {
+        let result;
+        try {
+            const connectionInfo = connections.get(socketId);
+            if (!connectionInfo) {
+                throw new Error(`Connection not found: ${socketId}`);
+            }
+            const handler = ProtocolHandlers[request.action];
+            if (!handler) {
+                throw new Error(`Handler not found: ${request.action}`);
+            }
+            result = await handler(request, connectionInfo);
+        } catch (e) {
+            result = this.errorToResponse(e, request);
+        }
+        this.sendSocketResult(socketId, result);
     }
 };
 

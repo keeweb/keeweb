@@ -288,36 +288,6 @@ const Launcher = {
     },
     mainWindowMaximized() {
         return this.getMainWindow().isMaximized();
-    },
-    getBrowserExtensionSocketName() {
-        const { username, uid } = this.req('os').userInfo();
-        if (process.platform === 'darwin') {
-            const teamId = RuntimeInfo.appleTeamId;
-            return `/Users/${username}/Library/Group Containers/${teamId}.keeweb/conn.sock`;
-        } else if (process.platform === 'win32') {
-            return `\\\\.\\pipe\\keeweb-connect-${username}`;
-        } else {
-            const sockFileName = `keeweb-connect-${uid}.sock`;
-            return this.joinPath(this.remoteApp().getPath('temp'), sockFileName);
-        }
-    },
-    prepareBrowserExtensionSocket(done) {
-        if (process.platform === 'darwin') {
-            const sockName = this.getBrowserExtensionSocketName();
-            const fs = this.req('fs');
-            fs.access(sockName, fs.constants.F_OK, (err) => {
-                if (err) {
-                    const dir = this.req('path').dirname(sockName);
-                    fs.mkdir(dir, () => done());
-                } else {
-                    fs.unlink(sockName, () => done());
-                }
-            });
-        } else if (process.platform === 'win32') {
-            done();
-        } else {
-            this.deleteFile(this.getBrowserExtensionSocketName(), done);
-        }
     }
 };
 
@@ -329,7 +299,6 @@ Events.on('launcher-maximize', () => setTimeout(() => Events.emit('app-maximized
 Events.on('launcher-unmaximize', () => setTimeout(() => Events.emit('app-unmaximized'), 0));
 Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
 Events.on('start-profile', (data) => StartProfiler.reportAppProfile(data));
-Events.on('log', (e) => new Logger(e.category || 'remote-app')[e.method || 'info'](e.message));
 
 window.launcherOpen = (file) => Launcher.openFile(file);
 if (window.launcherOpenedFile) {

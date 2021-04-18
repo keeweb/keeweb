@@ -23,18 +23,30 @@ const Errors = {
     }
 };
 
+const connectedClients = new Map();
+
 let logger;
 let appModel;
-let connectedClients;
 let sendEvent;
 
 function initProtocolImpl(vars) {
     appModel = vars.appModel;
     logger = vars.logger;
-    connectedClients = vars.connectedClients;
     sendEvent = vars.sendEvent;
 
     setupListeners();
+}
+
+function cleanupProtocolImpl() {
+    connectedClients.clear();
+}
+
+function deleteProtocolImplConnection(connectionId) {
+    for (const client of connectedClients.values()) {
+        if (client.connection.connectionId === connectionId) {
+            connectedClients.delete(client);
+        }
+    }
 }
 
 function setupListeners() {
@@ -189,12 +201,12 @@ function checkContentRequestPermissions(request) {
 }
 
 function getVersion(request) {
-    const extensionName = getClient(request).extensionName;
+    const extensionName = getClient(request).connection.extensionName;
     return extensionName ? RuntimeInfo.version : KnownAppVersions.KeePassXC;
 }
 
 function isKeeWebConnect(request) {
-    return getClient(request).extensionName === 'keeweb-connect';
+    return getClient(request).connection.extensionName === 'keeweb-connect';
 }
 
 function focusKeeWeb() {
@@ -211,8 +223,8 @@ const ProtocolHandlers = {
         return { data };
     },
 
-    'change-public-keys'(request) {
-        let { publicKey, extensionName, version, clientID: clientId } = request;
+    'change-public-keys'(request, connection) {
+        let { publicKey, version, clientID: clientId } = request;
 
         if (connectedClients.has(clientId)) {
             throw new Error('Changing keys is not allowed');
@@ -226,9 +238,9 @@ const ProtocolHandlers = {
         const keys = tweetnaclBox.keyPair();
         publicKey = kdbxweb.ByteUtils.base64ToBytes(publicKey);
 
-        connectedClients.set(clientId, { publicKey, extensionName, version, keys });
+        connectedClients.set(clientId, { connection, publicKey, version, keys });
 
-        logger.info('New client key created', clientId, extensionName, version);
+        logger.info('New client key created', clientId, version);
 
         const nonceBytes = kdbxweb.ByteUtils.base64ToBytes(request.nonce);
         incrementNonce(nonceBytes);
@@ -394,4 +406,4 @@ const ProtocolHandlers = {
     }
 };
 
-export { ProtocolHandlers, initProtocolImpl };
+export { ProtocolHandlers, initProtocolImpl, cleanupProtocolImpl, deleteProtocolImplConnection };

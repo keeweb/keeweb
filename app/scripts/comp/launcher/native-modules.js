@@ -20,6 +20,7 @@ if (Launcher) {
     ipcRenderer.on('nativeModuleHostError', (e, err) => NativeModules.hostError(err));
     ipcRenderer.on('nativeModuleHostExit', (e, { code, sig }) => NativeModules.hostExit(code, sig));
     ipcRenderer.on('nativeModuleHostDisconnect', () => NativeModules.hostDisconnect());
+    ipcRenderer.on('log', (e, ...args) => NativeModules.log(...args));
 
     const handlers = {
         yubikeys(numYubiKeys) {
@@ -116,6 +117,14 @@ if (Launcher) {
             } else {
                 logger.error('No callback', cmd);
             }
+        },
+
+        log(name, level, ...args) {
+            if (!name) {
+                return;
+            }
+            const logger = new Logger(name);
+            logger[level](...args);
         },
 
         autoRestartHost() {
