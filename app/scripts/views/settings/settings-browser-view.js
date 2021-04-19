@@ -22,7 +22,9 @@ class SettingsBrowserView extends View {
         if (Features.isDesktop) {
             data.extensionNames = ['KeeWeb Connect', 'KeePassXC-Browser'];
             data.settingsPerBrowser = this.getSettingsPerBrowser();
-            data.anyBrowserIsEnabled = data.settingsPerBrowser.some((s) => s.kwc || s.kpxc);
+            data.anyBrowserIsEnabled = data.settingsPerBrowser.some((perBrowser) =>
+                perBrowser.extensions.some((ext) => ext.enabled)
+            );
         } else {
             const extensionBrowserFamily = Features.extensionBrowserFamily;
             data.extensionBrowserFamily = Features.extensionBrowserFamily;
@@ -36,7 +38,7 @@ class SettingsBrowserView extends View {
         if (Features.isMac) {
             browsers.unshift('Safari');
         }
-        const settingsPerBrowser = browsers.map((browser) => {
+        return browsers.map((browser) => {
             const extensions = [
                 { alias: 'kwc', loc: 'KeeWebConnect' },
                 { alias: 'kpxc', loc: 'KeePassXcBrowser' }
@@ -55,8 +57,6 @@ class SettingsBrowserView extends View {
             }
             return { browser, extensions };
         });
-
-        return settingsPerBrowser;
     }
 
     changeEnableForBrowser(e) {
