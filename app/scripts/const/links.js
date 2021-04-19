@@ -23,14 +23,14 @@ const Links = {
     HaveIBeenPwnedPrivacy: 'https://haveibeenpwned.com/Passwords',
     ExtensionHelpForOtherBrowsers:
         'https://github.com/keeweb/keeweb/wiki/Browser-AutoFill#other-browsers',
-    KeeWebConnectForChrome: 'https://TODO',
-    KeeWebConnectForFirefox: 'https://TODO',
-    KeeWebConnectForEdge: 'https://TODO',
-    KeeWebConnectForSafari: 'https://TODO',
-    KeePassXcBrowserForChrome:
+    KWCForChrome: 'https://TODO',
+    KWCForFirefox: 'https://TODO',
+    KWCForEdge: 'https://TODO',
+    KWCForSafari: 'https://TODO',
+    KPXCForChrome:
         'https://chrome.google.com/webstore/detail/keepassxc-browser/oboonakemofpalcgghocfoadofidjkkk',
-    KeePassXcBrowserForFirefox: 'https://addons.mozilla.org/firefox/addon/keepassxc-browser/',
-    KeePassXcBrowserForEdge:
+    KPXCForFirefox: 'https://addons.mozilla.org/firefox/addon/keepassxc-browser/',
+    KPXCForEdge:
         'https://microsoftedge.microsoft.com/addons/detail/keepassxcbrowser/pdffhmdngciaglkoonimfcmckehcpafo'
 };
 

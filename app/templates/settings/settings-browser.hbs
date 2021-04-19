@@ -21,7 +21,7 @@
             <tbody>
                 {{#each settingsPerBrowser as |perBrowser|}}
                     <tr>
-                        <td>{{perBrowser.browser}}</td>
+                        <td>{{perBrowser.browserName}}</td>
                         {{#each perBrowser.extensions as |setting|}}
                             <td>
                                 {{#if setting.supported}}

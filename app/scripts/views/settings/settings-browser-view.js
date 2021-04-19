@@ -4,6 +4,7 @@ import { Features } from 'util/features';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Locale } from 'util/locale';
+import { SupportedBrowsers, SupportedExtensions } from 'comp/extension/browser-extension-connector';
 
 class SettingsBrowserView extends View {
     template = template;
@@ -34,28 +35,25 @@ class SettingsBrowserView extends View {
     }
 
     getSettingsPerBrowser() {
-        const browsers = ['Chrome', 'Firefox', 'Edge', Locale.setBrowserOtherBrowsers];
-        if (Features.isMac) {
-            browsers.unshift('Safari');
-        }
-        return browsers.map((browser) => {
-            const extensions = [
-                { alias: 'kwc', loc: 'KeeWebConnect' },
-                { alias: 'kpxc', loc: 'KeePassXcBrowser' }
-            ];
-            for (const ext of extensions) {
-                ext.supported = true;
-                ext.enabled = !!AppSettingsModel[`${ext.alias}EnabledFor${browser}`];
-                ext.installUrl = Links[`${ext.loc}For${browser}`];
+        return SupportedBrowsers.map((browser) => {
+            const browserName = browser === 'Other' ? Locale.setBrowserOtherBrowsers : browser;
+            const extensions = SupportedExtensions.map((ext) => {
+                ext = {
+                    ...ext,
+                    supported: true,
+                    enabled: !!AppSettingsModel[`extensionEnabled${ext.alias}${browser}`],
+                    installUrl: Links[`${ext.alias}For${browser}`]
+                };
                 if (!ext.installUrl) {
-                    if (browser === Locale.setBrowserOtherBrowsers) {
+                    if (browser === 'Other') {
                         ext.helpUrl = Links.ExtensionHelpForOtherBrowsers;
                     } else {
                         ext.supported = false;
                     }
                 }
-            }
-            return { browser, extensions };
+                return ext;
+            });
+            return { browser, browserName, extensions };
         });
     }
 
@@ -64,7 +62,7 @@ class SettingsBrowserView extends View {
         const browser = e.target.dataset.browser;
         const extension = e.target.dataset.extension;
 
-        const setting = `${extension}EnabledFor${browser}`;
+        const setting = `extensionEnabled${extension}${browser}`;
         if (setting) {
             AppSettingsModel[setting] = enabled;
         } else {

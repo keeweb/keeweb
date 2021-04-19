@@ -7,17 +7,28 @@ import {
     deleteProtocolImplConnection
 } from './protocol-impl';
 import { RuntimeInfo } from 'const/runtime-info';
-
-const logger = new Logger('browser-extension-connector');
-if (!localStorage.debugBrowserExtension) {
-    logger.level = Logger.Level.Info;
-}
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Features } from 'util/features';
 
 const WebConnectionInfo = {
     connectionId: 1,
     extensionName: 'keeweb-connect',
     supportsNotifications: true
 };
+
+const SupportedExtensions = [
+    { alias: 'KWC', name: 'KeeWeb Connect' },
+    { alias: 'KPXC', name: 'KeePassXC-Browser' }
+];
+const SupportedBrowsers = ['Chrome', 'Firefox', 'Edge', 'Other'];
+if (Features.isMac) {
+    SupportedBrowsers.unshift('Safari');
+}
+
+const logger = new Logger('browser-extension-connector');
+if (!localStorage.debugBrowserExtension) {
+    logger.level = Logger.Level.Info;
+}
 
 const connections = new Map();
 const pendingBrowserMessages = [];
@@ -77,6 +88,17 @@ const BrowserExtensionConnector = {
 
     stopWebMessageListener() {
         window.removeEventListener('message', this.browserWindowMessage);
+    },
+
+    isEnabledOnDesktop() {
+        for (const browser of SupportedBrowsers) {
+            for (const ext of SupportedExtensions) {
+                if (AppSettingsModel[`extensionEnabled${ext.alias}${browser}`]) {
+                    return true;
+                }
+            }
+        }
+        return false;
     },
 
     async startDesktopAppListener() {
@@ -198,4 +220,4 @@ const BrowserExtensionConnector = {
     }
 };
 
-export { BrowserExtensionConnector };
+export { BrowserExtensionConnector, SupportedExtensions, SupportedBrowsers };
