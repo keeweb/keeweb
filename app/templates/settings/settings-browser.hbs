@@ -30,7 +30,9 @@
                                    data-extension="kwc" />
                             <label for="check-enable-kwc-for-{{perBrowser.browser}}"></label>
                             {{#if perBrowser.kwc}}
-                                <i class="fa fa-download"></i>
+                                <a href="https://example.com" target="_blank" rel="noreferrer">
+                                    <i class="fa fa-download"></i>
+                                </a>
                             {{/if}}
                         </td>
                         {{#ifeq perBrowser.browser 'Safari'}}

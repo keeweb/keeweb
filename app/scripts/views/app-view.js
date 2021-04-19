@@ -836,7 +836,10 @@ class AppView extends View {
     extLinkClick(e) {
         if (Launcher) {
             e.preventDefault();
-            Launcher.openLink(e.target.href);
+            const link = e.target.closest('a');
+            if (link?.href) {
+                Launcher.openLink(link.href);
+            }
         }
     }
 
