@@ -1,11 +1,6 @@
 import { Launcher } from 'comp/launcher';
 import { Logger } from 'util/logger';
-import {
-    ProtocolHandlers,
-    initProtocolImpl,
-    cleanupProtocolImpl,
-    deleteProtocolImplConnection
-} from './protocol-impl';
+import { ProtocolHandlers, ProtocolImpl } from './protocol-impl';
 import { RuntimeInfo } from 'const/runtime-info';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Features } from 'util/features';
@@ -40,7 +35,7 @@ const BrowserExtensionConnector = {
 
     init(appModel) {
         const sendEvent = this.sendEvent.bind(this);
-        initProtocolImpl({ appModel, logger, sendEvent });
+        ProtocolImpl.init({ appModel, logger, sendEvent });
 
         this.browserWindowMessage = this.browserWindowMessage.bind(this);
 
@@ -75,7 +70,7 @@ const BrowserExtensionConnector = {
             this.stopWebMessageListener();
         }
 
-        cleanupProtocolImpl();
+        ProtocolImpl.cleanup();
         connections.clear();
 
         logger.info('Stopped');
@@ -198,7 +193,7 @@ const BrowserExtensionConnector = {
 
     socketClosed(socketId) {
         connections.delete(socketId);
-        deleteProtocolImplConnection(socketId);
+        ProtocolImpl.deleteConnection(socketId);
     },
 
     async socketRequest(socketId, request) {

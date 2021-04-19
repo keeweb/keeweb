@@ -29,25 +29,27 @@ let logger;
 let appModel;
 let sendEvent;
 
-function initProtocolImpl(vars) {
-    appModel = vars.appModel;
-    logger = vars.logger;
-    sendEvent = vars.sendEvent;
+const ProtocolImpl = {
+    init(vars) {
+        appModel = vars.appModel;
+        logger = vars.logger;
+        sendEvent = vars.sendEvent;
 
-    setupListeners();
-}
+        setupListeners();
+    },
 
-function cleanupProtocolImpl() {
-    connectedClients.clear();
-}
+    cleanup() {
+        connectedClients.clear();
+    },
 
-function deleteProtocolImplConnection(connectionId) {
-    for (const client of connectedClients.values()) {
-        if (client.connection.connectionId === connectionId) {
-            connectedClients.delete(client);
+    deleteConnection(connectionId) {
+        for (const client of connectedClients.values()) {
+            if (client.connection.connectionId === connectionId) {
+                connectedClients.delete(client);
+            }
         }
     }
-}
+};
 
 function setupListeners() {
     Events.on('file-opened', () => {
@@ -406,4 +408,4 @@ const ProtocolHandlers = {
     }
 };
 
-export { ProtocolHandlers, initProtocolImpl, cleanupProtocolImpl, deleteProtocolImplConnection };
+export { ProtocolHandlers, ProtocolImpl };
