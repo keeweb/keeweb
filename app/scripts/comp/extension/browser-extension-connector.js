@@ -1,6 +1,6 @@
 import { Launcher } from 'comp/launcher';
 import { Logger } from 'util/logger';
-import { ProtocolHandlers, ProtocolImpl } from './protocol-impl';
+import { ProtocolImpl } from './protocol-impl';
 import { RuntimeInfo } from 'const/runtime-info';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Features } from 'util/features';
@@ -132,16 +132,7 @@ const BrowserExtensionConnector = {
 
         const request = pendingBrowserMessages.shift();
 
-        let response;
-        try {
-            const handler = ProtocolHandlers[request.action];
-            if (!handler) {
-                throw new Error(`Handler not found: ${request.action}`);
-            }
-            response = await handler(request, WebConnectionInfo);
-        } catch (e) {
-            response = this.errorToResponse(e, request);
-        }
+        const response = await ProtocolImpl.handleRequest(request, WebConnectionInfo);
 
         processingBrowserMessage = false;
 
@@ -150,14 +141,6 @@ const BrowserExtensionConnector = {
         }
 
         this.processBrowserMessages();
-    },
-
-    errorToResponse(e, request) {
-        return {
-            action: request?.action,
-            error: e.message || 'Unknown error',
-            errorCode: e.code || 0
-        };
     },
 
     sendWebResponse(response) {
@@ -198,19 +181,15 @@ const BrowserExtensionConnector = {
 
     async socketRequest(socketId, request) {
         let result;
-        try {
-            const connectionInfo = connections.get(socketId);
-            if (!connectionInfo) {
-                throw new Error(`Connection not found: ${socketId}`);
-            }
-            const handler = ProtocolHandlers[request.action];
-            if (!handler) {
-                throw new Error(`Handler not found: ${request.action}`);
-            }
-            result = await handler(request, connectionInfo);
-        } catch (e) {
-            result = this.errorToResponse(e, request);
+
+        const connectionInfo = connections.get(socketId);
+        if (connectionInfo) {
+            result = await ProtocolImpl.handleRequest(request, connectionInfo);
+        } else {
+            const message = `Connection not found: ${socketId}`;
+            result = ProtocolImpl.errorToResponse({ message }, request);
         }
+
         this.sendSocketResult(socketId, result);
     }
 };

@@ -29,28 +29,6 @@ let logger;
 let appModel;
 let sendEvent;
 
-const ProtocolImpl = {
-    init(vars) {
-        appModel = vars.appModel;
-        logger = vars.logger;
-        sendEvent = vars.sendEvent;
-
-        setupListeners();
-    },
-
-    cleanup() {
-        connectedClients.clear();
-    },
-
-    deleteConnection(connectionId) {
-        for (const client of connectedClients.values()) {
-            if (client.connection.connectionId === connectionId) {
-                connectedClients.delete(client);
-            }
-        }
-    }
-};
-
 function setupListeners() {
     Events.on('file-opened', () => {
         sendEvent({ action: 'database-unlocked' });
@@ -408,4 +386,46 @@ const ProtocolHandlers = {
     }
 };
 
-export { ProtocolHandlers, ProtocolImpl };
+const ProtocolImpl = {
+    init(vars) {
+        appModel = vars.appModel;
+        logger = vars.logger;
+        sendEvent = vars.sendEvent;
+
+        setupListeners();
+    },
+
+    cleanup() {
+        connectedClients.clear();
+    },
+
+    deleteConnection(connectionId) {
+        for (const client of connectedClients.values()) {
+            if (client.connection.connectionId === connectionId) {
+                connectedClients.delete(client);
+            }
+        }
+    },
+
+    errorToResponse(e, request) {
+        return {
+            action: request?.action,
+            error: e.message || 'Unknown error',
+            errorCode: e.code || 0
+        };
+    },
+
+    async handleRequest(request, connectionInfo) {
+        try {
+            const handler = ProtocolHandlers[request.action];
+            if (!handler) {
+                throw new Error(`Handler not found: ${request.action}`);
+            }
+            return await handler(request, connectionInfo);
+        } catch (e) {
+            return this.errorToResponse(e, request);
+        }
+    }
+};
+
+export { ProtocolImpl };
