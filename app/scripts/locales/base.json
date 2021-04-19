@@ -640,9 +640,9 @@
     "setPlLoadGallery": "Load plugin gallery",
 
     "setBrowserTitle": "Browser",
-    "setBrowserIntroDesktop": "KeeWeb can enter passwords using auto-type, however, a browser extension may be more convenient. KeeWeb supports two browser extensions:",
-    "setBrowserIntroKeeWebConnect": "the official KeeWeb extension, it's built with features of KeeWeb in mind, but if you used other extensions before, you may miss some advanced features.",
-    "setBrowserIntroKeePassXcBrowser": "this extension was developed for KeePassXC, it's been on the market for a while and it is quite solid.",
+    "setBrowserIntroDesktop": "KeeWeb can enter passwords using auto-type, however, a browser extension may be a more convenient way of doing it. KeeWeb supports two browser extensions:",
+    "setBrowserIntroKeeWebConnect": "the official KeeWeb extension, it's built with features of KeeWeb in mind, but you may miss some advanced features that can be found in the other extension.",
+    "setBrowserIntroKeePassXcBrowser": "this extension was developed for KeePassXC, it's been on the market for a while and it is quite solid. The extension is not a part of KeeWeb and there may be compatibility issues.",
     "setBrowserIntroWeb": "Install our browser extension to auto-fill passwords from KeeWeb on different pages. The browser extension will connect to a KeeWeb tab in your browser to fetch passwords. Click here to download the extension:",
     "setBrowserNotEnabled": "Browser integration is not enabled, extensions won't be able to connect to KeeWeb. Use the checkboxes below to enable it:",
     "setBrowserEnablePerBrowser": "Enable browser integration using the checkboxes below:",
