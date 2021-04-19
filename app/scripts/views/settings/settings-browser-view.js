@@ -3,6 +3,7 @@ import template from 'templates/settings/settings-browser.hbs';
 import { Features } from 'util/features';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { Locale } from 'util/locale';
 
 class SettingsBrowserView extends View {
     template = template;
@@ -19,6 +20,7 @@ class SettingsBrowserView extends View {
             focusIfLocked: AppSettingsModel.extensionFocusIfLocked
         };
         if (Features.isDesktop) {
+            data.extensionNames = ['KeeWeb Connect', 'KeePassXC-Browser'];
             data.settingsPerBrowser = this.getSettingsPerBrowser();
             data.anyBrowserIsEnabled = data.settingsPerBrowser.some((s) => s.kwc || s.kpxc);
         } else {
@@ -30,17 +32,31 @@ class SettingsBrowserView extends View {
     }
 
     getSettingsPerBrowser() {
-        const browsers = ['Chrome', 'Firefox', 'Edge'];
+        const browsers = ['Chrome', 'Firefox', 'Edge', Locale.setBrowserOtherBrowsers];
         if (Features.isMac) {
             browsers.unshift('Safari');
         }
-        return browsers.map((browser) => {
-            return {
-                browser,
-                kwc: !!AppSettingsModel[`kwcEnabledFor${browser}`],
-                kpxc: !!AppSettingsModel[`kpxcEnabledFor${browser}`]
-            };
+        const settingsPerBrowser = browsers.map((browser) => {
+            const extensions = [
+                { alias: 'kwc', loc: 'KeeWebConnect' },
+                { alias: 'kpxc', loc: 'KeePassXcBrowser' }
+            ];
+            for (const ext of extensions) {
+                ext.supported = true;
+                ext.enabled = !!AppSettingsModel[`${ext.alias}EnabledFor${browser}`];
+                ext.installUrl = Links[`${ext.loc}For${browser}`];
+                if (!ext.installUrl) {
+                    if (browser === Locale.setBrowserOtherBrowsers) {
+                        ext.helpUrl = Links.ExtensionHelpForOtherBrowsers;
+                    } else {
+                        ext.supported = false;
+                    }
+                }
+            }
+            return { browser, extensions };
         });
+
+        return settingsPerBrowser;
     }
 
     changeEnableForBrowser(e) {

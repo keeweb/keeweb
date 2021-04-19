@@ -56,30 +56,6 @@ p {
     margin: 0 0 $small-spacing;
 }
 
-a {
-    color: var(--text-color);
-    text-decoration: none;
-    display: inline-block;
-    transition: color $base-duration $base-timing;
-    cursor: pointer;
-    height: 1.2em;
-    &:not(.no-border) {
-        border-bottom: 1px dotted;
-    }
-
-    &:active,
-    &:focus,
-    &:hover {
-        outline: none;
-        &:not(.no-border) {
-            border-bottom: 1px solid;
-        }
-        &.muted-color {
-            border-bottom: 1px solid;
-        }
-    }
-}
-
 hr {
     border-bottom: base-border();
     border-left: 0;

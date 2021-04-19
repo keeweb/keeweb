@@ -13,46 +13,48 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th>KeeWeb Connect</th>
-                    <th>KeePassXC-Browser</th>
+                    {{#each extensionNames as |ext|}}
+                        <th>{{ext}}</th>
+                    {{/each}}
                 </tr>
             </thead>
             <tbody>
                 {{#each settingsPerBrowser as |perBrowser|}}
                     <tr>
                         <td>{{perBrowser.browser}}</td>
-                        <td>
-                            <input type="checkbox"
-                                   class="check-enable-for-browser"
-                                   {{#if perBrowser.kwc}}checked{{/if}}
-                                   id="check-enable-kwc-for-{{perBrowser.browser}}"
-                                   data-browser="{{perBrowser.browser}}"
-                                   data-extension="kwc" />
-                            <label for="check-enable-kwc-for-{{perBrowser.browser}}"></label>
-                            {{#if perBrowser.kwc}}
-                                <a href="https://example.com" target="_blank" rel="noreferrer">
-                                    <i class="fa fa-download"></i>
-                                </a>
-                            {{/if}}
-                        </td>
-                        {{#ifeq perBrowser.browser 'Safari'}}
-                            <td class="muted-color">
-                                <i class="fa fa-times"></i>
-                            </td>
-                        {{else}}
+                        {{#each perBrowser.extensions as |setting|}}
                             <td>
-                                <input type="checkbox"
-                                       class="check-enable-for-browser"
-                                       {{#if perBrowser.kpxc}}checked{{/if}}
-                                       id="check-enable-kpxc-for-{{perBrowser.browser}}"
-                                       data-browser="{{perBrowser.browser}}"
-                                       data-extension="kpxc" />
-                                <label for="check-enable-kpxc-for-{{perBrowser.browser}}"></label>
-                                {{#if perBrowser.kpxc}}
-                                    <i class="fa fa-download"></i>
+                                {{#if setting.supported}}
+                                    <input type="checkbox"
+                                           class="check-enable-for-browser"
+                                           {{#if setting.enabled}}checked{{/if}}
+                                           id="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"
+                                           data-browser="{{perBrowser.browser}}"
+                                           data-extension="{{setting.alias}}" />
+                                    <label for="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"></label>
+                                {{else}}
+                                    <i class="fa fa-times muted-color" title="{{res 'setBrowserExtensionNotSupported'}}"></i>
+                                {{/if}}
+                                {{#if setting.enabled}}
+                                    {{#if setting.helpUrl}}
+                                        <a href="{{setting.helpUrl}}" target="_blank" rel="noreferrer"
+                                           class="settings__browser-extension-link icon-link"
+                                           title="{{res 'setBrowserExtensionHelp'}}"
+                                        >
+                                            <i class="fa fa-info-circle"></i>
+                                        </a>
+                                    {{/if}}
+                                    {{#if setting.installUrl}}
+                                        <a href="{{setting.installUrl}}" target="_blank" rel="noreferrer"
+                                           class="settings__browser-extension-link icon-link"
+                                           title="{{res 'setBrowserExtensionInstall'}}"
+                                        >
+                                            <i class="fa fa-download"></i>
+                                        </a>
+                                    {{/if}}
                                 {{/if}}
                             </td>
-                        {{/ifeq}}
+                        {{/each}}
                     </tr>
                 {{/each}}
             </tbody>
@@ -60,7 +62,7 @@
     {{else}}
         <p>{{res 'setBrowserIntroWeb'}}</p>
         <a href="{{extensionDownloadLink}}" target="_blank" rel="noreferrer">
-            KeeWeb Connect {{res 'for'}} {{extensionBrowserFamily}}
+            KeeWeb Connect {{#res 'setBrowserExtensionFor'}}{{extensionBrowserFamily}}{{/res}}
         </a>
     {{/if}}
     <p></p>

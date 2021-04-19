@@ -21,6 +21,8 @@ const Links = {
     YubiKeyManagerInstall: 'https://github.com/Yubico/yubikey-manager#installation',
     HaveIBeenPwned: 'https://haveibeenpwned.com',
     HaveIBeenPwnedPrivacy: 'https://haveibeenpwned.com/Passwords',
+    ExtensionHelpForOtherBrowsers:
+        'https://github.com/keeweb/keeweb/wiki/Browser-AutoFill#other-browsers',
     KeeWebConnectForChrome: 'https://TODO',
     KeeWebConnectForFirefox: 'https://TODO',
     KeeWebConnectForEdge: 'https://TODO',
