@@ -29,7 +29,7 @@ module.exports = function (grunt) {
         'electron-patch:linux',
         'chmod:linux-desktop-x64',
         'copy:native-modules-linux-x64',
-        'cmake:native-messaging-host-linux-x64'
+        'copy:native-messaging-host-linux-x64'
     ]);
 
     grunt.registerTask('build-desktop-executables-darwin', [
@@ -41,9 +41,9 @@ module.exports = function (grunt) {
         'copy:desktop-darwin-installer-helper-x64',
         'copy:desktop-darwin-installer-helper-arm64',
         'copy:native-modules-darwin-x64',
-        'cmake:native-messaging-host-darwin-x64',
+        'copy:native-messaging-host-darwin-x64',
         'copy:native-modules-darwin-arm64',
-        'cmake:native-messaging-host-darwin-arm64',
+        'copy:native-messaging-host-darwin-arm64',
         sign ? 'osx-sign:desktop-x64' : 'noop',
         sign ? 'osx-sign:desktop-arm64' : 'noop',
         sign ? 'notarize:desktop-x64' : 'noop',
@@ -69,9 +69,9 @@ module.exports = function (grunt) {
         'copy:native-modules-win32-x64',
         'copy:native-modules-win32-ia32',
         'copy:native-modules-win32-arm64',
-        'cmake:native-messaging-host-win32-x64',
-        'cmake:native-messaging-host-win32-ia32',
-        'cmake:native-messaging-host-win32-arm64'
+        'copy:native-messaging-host-win32-x64',
+        'copy:native-messaging-host-win32-ia32',
+        'copy:native-messaging-host-win32-arm64'
     ]);
 
     grunt.registerTask('build-desktop-executables', [
