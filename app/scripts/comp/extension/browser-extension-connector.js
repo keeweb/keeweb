@@ -30,7 +30,7 @@ const pendingBrowserMessages = [];
 let processingBrowserMessage = false;
 
 const BrowserExtensionConnector = {
-    enabled: true,
+    started: false,
     logger,
 
     init(appModel) {
@@ -41,6 +41,7 @@ const BrowserExtensionConnector = {
 
         if (Launcher) {
             const { ipcRenderer } = Launcher.electron();
+
             ipcRenderer.on('browserExtensionSocketConnected', (e, socketId, connectionInfo) =>
                 this.socketConnected(socketId, connectionInfo)
             );
@@ -50,9 +51,13 @@ const BrowserExtensionConnector = {
             ipcRenderer.on('browserExtensionSocketRequest', (e, socketId, request) =>
                 this.socketRequest(socketId, request)
             );
+
+            AppSettingsModel.on('change', () => this.appSettingsChanged());
         }
 
-        this.start();
+        if (this.isEnabled()) {
+            this.start();
+        }
     },
 
     start() {
@@ -61,6 +66,8 @@ const BrowserExtensionConnector = {
         } else {
             this.startWebMessageListener();
         }
+
+        this.started = true;
     },
 
     stop() {
@@ -73,7 +80,31 @@ const BrowserExtensionConnector = {
         ProtocolImpl.cleanup();
         connections.clear();
 
-        logger.info('Stopped');
+        this.started = false;
+    },
+
+    appSettingsChanged() {
+        if (this.isEnabled()) {
+            if (!this.started) {
+                this.start();
+            }
+        } else if (this.started) {
+            this.stop();
+        }
+    },
+
+    isEnabled() {
+        if (!Launcher) {
+            return true;
+        }
+        for (const ext of SupportedExtensions) {
+            for (const browser of SupportedBrowsers) {
+                if (AppSettingsModel[`extensionEnabled${ext.alias}${browser}`]) {
+                    return true;
+                }
+            }
+        }
+        return false;
     },
 
     startWebMessageListener() {
