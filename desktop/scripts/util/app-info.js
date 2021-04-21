@@ -1,1 +1,1 @@
-export const isDev = !__dirname.includes('.asar');
+module.exports.isDev = !__dirname.includes('.asar');
