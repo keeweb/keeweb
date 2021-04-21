@@ -4,7 +4,11 @@ import { Features } from 'util/features';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Locale } from 'util/locale';
-import { SupportedBrowsers, SupportedExtensions } from 'comp/extension/browser-extension-connector';
+import {
+    BrowserExtensionConnector,
+    SupportedBrowsers,
+    SupportedExtensions
+} from 'comp/extension/browser-extension-connector';
 
 class SettingsBrowserView extends View {
     template = template;
@@ -23,9 +27,7 @@ class SettingsBrowserView extends View {
         if (Features.isDesktop) {
             data.extensionNames = ['KeeWeb Connect', 'KeePassXC-Browser'];
             data.settingsPerBrowser = this.getSettingsPerBrowser();
-            data.anyBrowserIsEnabled = data.settingsPerBrowser.some((perBrowser) =>
-                perBrowser.extensions.some((ext) => ext.enabled)
-            );
+            data.anyBrowserIsEnabled = BrowserExtensionConnector.isEnabled();
         } else {
             const extensionBrowserFamily = Features.extensionBrowserFamily;
             data.extensionBrowserFamily = Features.extensionBrowserFamily;
@@ -68,6 +70,8 @@ class SettingsBrowserView extends View {
         } else {
             delete AppSettingsModel[setting];
         }
+
+        BrowserExtensionConnector.enable(browser, extension, enabled);
 
         this.render();
     }

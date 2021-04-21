@@ -5,9 +5,11 @@ const net = require('net');
 const { ipcMain, app } = require('electron');
 const { Logger } = require('../logger');
 const { getProcessInfo } = require('../util/process-utils');
+const browserExtensionInstaller = require('../util/browser-extension-installer');
 
 ipcMain.handle('browserExtensionConnectorStart', browserExtensionConnectorStart);
 ipcMain.handle('browserExtensionConnectorStop', browserExtensionConnectorStop);
+ipcMain.handle('browserExtensionConnectorEnable', browserExtensionConnectorEnable);
 ipcMain.handle('browserExtensionConnectorSocketResult', browserExtensionConnectorSocketResult);
 ipcMain.handle('browserExtensionConnectorSocketEvent', browserExtensionConnectorSocketEvent);
 
@@ -15,11 +17,11 @@ const logger = new Logger('browser-extension-connector');
 
 const MaxIncomingDataLength = 10_000;
 const ExtensionOrigins = {
-    'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/': 'keeweb-connect',
     'safari-keeweb-connect': 'keeweb-connect',
     'keeweb-connect@keeweb.info': 'keeweb-connect',
-    'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/': 'keepassxc-browser',
+    'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/': 'keeweb-connect',
     'keepassxc-browser@keepassxc.org': 'keepassxc-browser',
+    'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/': 'keepassxc-browser',
     'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/': 'keepassxc-browser'
 };
 
@@ -67,7 +69,22 @@ function browserExtensionConnectorStop() {
     }
     connectedSockets = new Map();
     connectedSocketState = new WeakMap();
+
     logger.info('Stopped');
+}
+
+async function browserExtensionConnectorEnable(e, browser, extension, enabled) {
+    logger.info(enabled ? 'Enable' : 'Disable', browser, extension);
+
+    try {
+        if (enabled) {
+            await browserExtensionInstaller.install(browser, extension);
+        } else {
+            await browserExtensionInstaller.uninstall(browser, extension);
+        }
+    } catch (e) {
+        logger.error(`Error installing extension: ${e}`);
+    }
 }
 
 function browserExtensionConnectorSocketResult(e, socketId, result) {

@@ -116,15 +116,9 @@ const BrowserExtensionConnector = {
         window.removeEventListener('message', this.browserWindowMessage);
     },
 
-    isEnabledOnDesktop() {
-        for (const browser of SupportedBrowsers) {
-            for (const ext of SupportedExtensions) {
-                if (AppSettingsModel[`extensionEnabled${ext.alias}${browser}`]) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    enable(browser, extension, enabled) {
+        const { ipcRenderer } = Launcher.electron();
+        ipcRenderer.invoke('browserExtensionConnectorEnable', browser, extension, enabled);
     },
 
     async startDesktopAppListener() {
