@@ -42,23 +42,31 @@ function getManifestFileName(extension) {
     }
 }
 
-function createManifest(extension) {
+function createManifest(browser, extension) {
     switch (extension) {
         case 'KWC':
             return {
-                'allowed_origins': ['chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/'],
-                'allowed_extensions': ['keeweb-connect@keeweb.info'],
+                ...(browser === 'Firefox'
+                    ? { 'allowed_extensions': ['keeweb-connect@keeweb.info'] }
+                    : {
+                          'allowed_origins': [
+                              'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/'
+                          ]
+                      }),
                 description: 'KeeWeb native messaging host',
                 name: 'net.antelle.keeweb.keeweb_connect',
                 type: 'stdio'
             };
         case 'KPXC':
             return {
-                'allowed_origins': [
-                    'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/',
-                    'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/'
-                ],
-                'allowed_extensions': ['keepassxc-browser@keepassxc.org'],
+                ...(browser === 'Firefox'
+                    ? { 'allowed_extensions': ['keepassxc-browser@keepassxc.org'] }
+                    : {
+                          'allowed_origins': [
+                              'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/',
+                              'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/'
+                          ]
+                      }),
                 description: 'Native messaging host created by KeeWeb',
                 name: 'org.keepassxc.keepassxc_browser',
                 type: 'stdio'
@@ -98,18 +106,7 @@ module.exports.install = async function (browser, extension) {
 
     const fullPath = path.join(manifestDir, manifestFileName);
 
-    let manifest;
-    if (extension === 'KPXC') {
-        try {
-            await fs.promises.access(fullPath);
-            manifest = JSON.parse(await fs.promises.readFile(fullPath, 'utf8'));
-            manifest.pathKPXC = manifest.path;
-        } catch {}
-    }
-
-    if (!manifest) {
-        manifest = createManifest(extension);
-    }
+    const manifest = createManifest(browser, extension);
     if (!manifest) {
         return;
     }
@@ -131,22 +128,5 @@ module.exports.uninstall = async function (browser, extension) {
     }
     const fullPath = path.join(manifestDir, manifestFileName);
 
-    try {
-        await fs.promises.access(fullPath);
-    } catch {
-        return;
-    }
-
-    if (extension === 'KPXC') {
-        const manifest = JSON.parse(await fs.promises.readFile(fullPath, 'utf8'));
-        if (manifest.pathKPXC) {
-            manifest.path = manifest.pathKPXC;
-            delete manifest.pathKPXC;
-            await fs.promises.writeFile(fullPath, JSON.stringify(manifest, null, 4));
-        } else {
-            await fs.promises.unlink(fullPath);
-        }
-    } else {
-        await fs.promises.unlink(fullPath);
-    }
+    await fs.promises.unlink(fullPath);
 };
