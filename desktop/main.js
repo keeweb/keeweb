@@ -10,6 +10,7 @@ const path = require('path');
 const fs = require('fs');
 const url = require('url');
 const { Logger } = require('./scripts/logger');
+const { isDev } = require('./scripts/util/app-info');
 
 perfTimestamps?.push({ name: 'loading app requires', ts: process.hrtime() });
 
@@ -27,8 +28,6 @@ let mainWindowMaximized = false;
 
 const windowPositionFileName = 'window-position.json';
 const portableConfigFileName = 'keeweb-portable.json';
-
-const isDev = !__dirname.endsWith('.asar');
 
 const startupLogging =
     process.argv.some((arg) => arg.startsWith('--startup-logging')) ||

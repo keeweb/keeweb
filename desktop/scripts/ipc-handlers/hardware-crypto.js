@@ -1,6 +1,7 @@
 const { ipcMain } = require('electron');
 const { readXoredValue, makeXoredValue } = require('../util/byte-utils');
 const { reqNative } = require('../util/req-native');
+const { isDev } = require('../util/app-info');
 
 ipcMain.handle('hardwareCryptoDeleteKey', hardwareCryptoDeleteKey);
 ipcMain.handle('hardwareEncrypt', hardwareEncrypt);
@@ -40,7 +41,6 @@ async function hardwareCrypto(value, encrypt, touchIdPrompt) {
     const data = readXoredValue(value);
 
     let res;
-    const isDev = !__dirname.includes('.asar');
     if (isDev && process.env.KEEWEB_EMULATE_HARDWARE_ENCRYPTION) {
         const crypto = require('crypto');
         if (!testCipherParams) {
