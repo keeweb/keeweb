@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const windowsRegistry = require('./windows-registry');
 const { isDev } = require('./app-info');
 const { app } = require('electron');
 
@@ -17,8 +18,6 @@ function getManifestDir(browser) {
                 default:
                     return undefined;
             }
-        case 'win32':
-            throw new Error('not implemented');
         case 'linux':
             switch (browser) {
                 case 'Chrome':
@@ -33,13 +32,37 @@ function getManifestDir(browser) {
     }
 }
 
-function getManifestFileName(extension) {
+function getWindowsRegistryPath(browser) {
+    switch (browser) {
+        case 'Chrome':
+            return 'HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\';
+        case 'Firefox':
+            return 'HKCU\\Software\\Mozilla\\NativeMessagingHosts\\';
+        case 'Edge':
+            return 'HKCU\\Software\\Microsoft\\Edge\\NativeMessagingHosts\\';
+        default:
+            return undefined;
+    }
+}
+
+function getWindowsManifestFileName(browser) {
+    const suffix = browser === 'Firefox' ? 'firefox' : 'chrome';
+    const manifestName = `native-messaging.${suffix}.json`;
+    return path.join(app.getPath('userData'), manifestName);
+}
+
+function getNativeHostName(extension) {
     switch (extension) {
         case 'KWC':
-            return 'net.antelle.keeweb.keeweb_connect.json';
+            return 'net.antelle.keeweb.keeweb_connect';
         case 'KPXC':
-            return 'org.keepassxc.keepassxc_browser.json';
+            return 'org.keepassxc.keepassxc_browser';
     }
+}
+
+function getManifestFileName(extension) {
+    const nativeHostName = getNativeHostName(extension);
+    return nativeHostName ? nativeHostName + '.json' : undefined;
 }
 
 function createManifest(browser, extension) {
@@ -92,41 +115,71 @@ function getNativeMessagingHostPath() {
 }
 
 module.exports.install = async function (browser, extension) {
-    const manifestDir = getManifestDir(browser);
-    if (!manifestDir) {
-        return;
-    }
-
-    await fs.promises.mkdir(manifestDir, { recursive: true });
-
-    const manifestFileName = getManifestFileName(extension);
-    if (!manifestFileName) {
-        return;
-    }
-
-    const fullPath = path.join(manifestDir, manifestFileName);
-
     const manifest = createManifest(browser, extension);
     if (!manifest) {
         return;
     }
-
     manifest.path = getNativeMessagingHostPath();
 
-    await fs.promises.writeFile(fullPath, JSON.stringify(manifest, null, 4));
+    if (process.platform === 'win32') {
+        const registryPath = getWindowsRegistryPath(browser);
+        if (!registryPath) {
+            return;
+        }
+
+        const registryKeyName = getNativeHostName(extension);
+        if (!registryKeyName) {
+            return;
+        }
+
+        const manifestFileName = getWindowsManifestFileName(browser);
+        await fs.promises.writeFile(manifestFileName, JSON.stringify(manifest, null, 4));
+
+        windowsRegistry.createKey(registryPath + registryKeyName, manifestFileName);
+    } else {
+        const manifestDir = getManifestDir(browser);
+        if (!manifestDir) {
+            return;
+        }
+
+        await fs.promises.mkdir(manifestDir, { recursive: true });
+
+        const manifestFileName = getManifestFileName(extension);
+        if (!manifestFileName) {
+            return;
+        }
+
+        const fullPath = path.join(manifestDir, manifestFileName);
+
+        await fs.promises.writeFile(fullPath, JSON.stringify(manifest, null, 4));
+    }
 };
 
 module.exports.uninstall = async function (browser, extension) {
-    const manifestDir = getManifestDir(browser);
-    if (!manifestDir) {
-        return;
-    }
+    if (process.platform === 'win32') {
+        const registryPath = getWindowsRegistryPath(browser);
+        if (!registryPath) {
+            return;
+        }
 
-    const manifestFileName = getManifestFileName(extension);
-    if (!manifestFileName) {
-        return;
-    }
-    const fullPath = path.join(manifestDir, manifestFileName);
+        const registryKeyName = getNativeHostName(extension);
+        if (!registryKeyName) {
+            return;
+        }
 
-    await fs.promises.unlink(fullPath);
+        windowsRegistry.deleteKey(registryPath + registryKeyName);
+    } else {
+        const manifestDir = getManifestDir(browser);
+        if (!manifestDir) {
+            return;
+        }
+
+        const manifestFileName = getManifestFileName(extension);
+        if (!manifestFileName) {
+            return;
+        }
+        const fullPath = path.join(manifestDir, manifestFileName);
+
+        await fs.promises.unlink(fullPath);
+    }
 };
