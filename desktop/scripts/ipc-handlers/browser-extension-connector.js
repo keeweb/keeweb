@@ -289,7 +289,7 @@ async function processFirstMessageFromSocket(socket, message) {
             return;
         }
 
-        appName = parentProcessInfo.commandLine.split('/').pop();
+        appName = parentProcessInfo.appName;
         appName = appName[0].toUpperCase() + appName.substr(1);
     }
 

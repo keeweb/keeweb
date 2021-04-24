@@ -10,13 +10,13 @@ function getProcessInfo(pid) {
                 'where',
                 `ProcessId=${pid}`,
                 'get',
-                'ProcessId,ParentProcessId,CommandLine',
+                'ProcessId,ParentProcessId,ExecutablePath',
                 '/format:value'
             ];
             parseOutput = parseWmicOutput;
         } else {
             cmd = '/bin/ps';
-            args = ['-opid=,ppid=,command=', '-p', pid];
+            args = ['-opid=,ppid=,comm=', '-p', pid];
             parseOutput = parsePsOutput;
         }
         const ps = childProcess.spawn(cmd, args);
@@ -31,8 +31,8 @@ function getProcessInfo(pid) {
                 if (result.pid !== pid) {
                     throw new Error(`PID mismatch: ${result.pid} <> ${pid}`);
                 }
-                if (!result.commandLine) {
-                    throw new Error(`Could not get command line for process ${pid}`);
+                if (!result.appName) {
+                    throw new Error(`Could not get app name for process ${pid}`);
                 }
                 resolve(result);
             } catch (e) {
@@ -53,7 +53,8 @@ function parsePsOutput(output) {
     return {
         pid: match[1] | 0,
         parentPid: match[2] | 0,
-        commandLine: match[3]
+        execPath: match[3],
+        appName: match[3].split('/').pop()
     };
 }
 
@@ -62,7 +63,7 @@ function parseWmicOutput(output) {
     const keyMap = {
         ProcessId: 'pid',
         ParentProcessId: 'parentPid',
-        CommandLine: 'commandLine'
+        ExecutablePath: 'execPath'
     };
     for (const line of output.split(/\n/)) {
         const match = line.trim().match(/^([^=]+)=(.*)$/);
@@ -70,7 +71,12 @@ function parseWmicOutput(output) {
             const [, key, value] = match;
             const mapped = keyMap[key];
             if (mapped) {
-                result[mapped] = mapped.endsWith('id') ? value | 0 : value;
+                if (mapped.endsWith('id')) {
+                    result[mapped] = value | 0;
+                } else if (mapped === 'execPath') {
+                    result[mapped] = value.replace(/^"([^"]+)"/g, '$1');
+                    result.appName = value.split('\\').pop();
+                }
             }
         }
     }
