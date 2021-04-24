@@ -261,6 +261,8 @@ async function processFirstMessageFromSocket(socket, message) {
 
     logger.debug(`Init connection ${state.socketId}`, message);
 
+    state.processingData = true;
+
     if (!message.origin) {
         logger.error('Empty origin');
         socket.destroy();
