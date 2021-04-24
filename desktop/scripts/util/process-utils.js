@@ -75,7 +75,7 @@ function parseWmicOutput(output) {
                     result[mapped] = value | 0;
                 } else if (mapped === 'execPath') {
                     result[mapped] = value.replace(/^"([^"]+)"/g, '$1');
-                    result.appName = value.split('\\').pop();
+                    result.appName = value.split('\\').pop().replace(/\.exe/i, '');
                 }
             }
         }
