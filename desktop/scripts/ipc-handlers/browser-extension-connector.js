@@ -25,6 +25,11 @@ const ExtensionOrigins = {
     'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/': 'keepassxc-browser'
 };
 
+const AppNames = {
+    'msedge': 'Microsoft Edge',
+    'chrome': 'Google Chrome'
+};
+
 let connectedSockets = new Map();
 let connectedSocketState = new WeakMap();
 let server;
@@ -289,7 +294,17 @@ async function processFirstMessageFromSocket(socket, message) {
             return;
         }
 
-        appName = parentProcessInfo.appName;
+        if (process.platform === 'win32' && parentProcessInfo.appName === 'cmd') {
+            try {
+                parentProcessInfo = await getProcessInfo(parentProcessInfo.ppid);
+            } catch (e) {
+                logger.error(
+                    `Cannot get info for PID ${parentProcessInfo.ppid}: ${e}, assuming cmd is the launcher`
+                );
+            }
+        }
+
+        appName = AppNames[parentProcessInfo.appName] ?? parentProcessInfo.appName;
         appName = appName[0].toUpperCase() + appName.substr(1);
     }
 

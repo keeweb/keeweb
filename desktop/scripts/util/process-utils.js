@@ -52,7 +52,7 @@ function parsePsOutput(output) {
     }
     return {
         pid: match[1] | 0,
-        parentPid: match[2] | 0,
+        ppid: match[2] | 0,
         execPath: match[3],
         appName: match[3].split('/').pop()
     };
@@ -62,7 +62,7 @@ function parseWmicOutput(output) {
     const result = {};
     const keyMap = {
         ProcessId: 'pid',
-        ParentProcessId: 'parentPid',
+        ParentProcessId: 'ppid',
         ExecutablePath: 'execPath'
     };
     for (const line of output.split(/\n/)) {
