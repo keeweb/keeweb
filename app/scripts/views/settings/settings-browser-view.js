@@ -3,12 +3,14 @@ import template from 'templates/settings/settings-browser.hbs';
 import { Features } from 'util/features';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { RuntimeDataModel } from 'models/runtime-data-model';
 import { Locale } from 'util/locale';
 import {
     BrowserExtensionConnector,
     SupportedBrowsers,
     SupportedExtensions
 } from 'comp/extension/browser-extension-connector';
+import { Alerts } from 'comp/ui/alerts';
 
 class SettingsBrowserView extends View {
     template = template;
@@ -64,6 +66,27 @@ class SettingsBrowserView extends View {
         const browser = e.target.dataset.browser;
         const extension = e.target.dataset.extension;
 
+        if (enabled && extension === 'KPXC' && !RuntimeDataModel.kpxcExtensionWarningShown) {
+            e.target.checked = false;
+
+            Alerts.yesno({
+                icon: 'exclamation-triangle',
+                header: Locale.setBrowserExtensionKPXCWarnHeader.replace('{}', 'KeePassXC'),
+                body:
+                    Locale.setBrowserExtensionKPXCWarnBody1.replace(/{}/g, 'KeePassXC') +
+                    '\n' +
+                    Locale.setBrowserExtensionKPXCWarnBody2,
+                success: () => {
+                    RuntimeDataModel.kpxcExtensionWarningShown = true;
+                    this.enableForBrowser(enabled, browser, extension);
+                }
+            });
+        } else {
+            this.enableForBrowser(enabled, browser, extension);
+        }
+    }
+
+    enableForBrowser(enabled, browser, extension) {
         const setting = `extensionEnabled${extension}${browser}`;
         if (setting) {
             AppSettingsModel[setting] = enabled;

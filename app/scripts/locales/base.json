@@ -652,6 +652,9 @@
     "setBrowserExtensionNotSupported": "Not supported",
     "setBrowserExtensionHelp": "How to install?",
     "setBrowserExtensionInstall": "Install the extension",
+    "setBrowserExtensionKPXCWarnHeader": "{} will stop working",
+    "setBrowserExtensionKPXCWarnBody1": "Unfortunately it's not possible to connect one extension to several apps. If you connect the extension to KeeWeb, we'll overwrite its app association, which means that integration with {} will stop working. Even if you uncheck this checkbox, the association with {} won't be restored. To make it work again, configure browser integration in {} settings.",
+    "setBrowserExtensionKPXCWarnBody2": "Configure the extension to use KeeWeb?",
 
     "setDevicesTitle": "Devices",
     "setDevicesEnableUsb": "Enable interaction with USB devices",
