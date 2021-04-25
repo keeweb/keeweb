@@ -142,6 +142,21 @@
                         </option>
                     </select>
                 </div>
+                {{#if session.showAskSave}}
+                    <div>
+                        <label for="settings__browser-session-ask-save--{{session.connectionId}}">{{res 'extensionConnectAskSave'}}</label>
+                        <select id="settings__browser-session-ask-save--{{session.connectionId}}"
+                                data-client-id="{{session.clientId}}"
+                                class="settings__browser-session-ask-save settings__select input-base">
+                            <option value="always" {{#ifeq session.permissions.askSave 'always'}}selected{{/ifeq}}>
+                                {{res 'extensionConnectAskSaveAlways'}}
+                            </option>
+                            <option value="auto" {{#ifeq session.permissions.askSave 'auto'}}selected{{/ifeq}}>
+                                {{res 'extensionConnectAskSaveAuto'}}
+                            </option>
+                        </select>
+                    </div>
+                {{/if}}
             {{/if}}
             {{#if session.passwordsRead}}<p>{{res 'setBrowserSessionsPasswordsRead'}}: {{session.passwordsRead}}</p>{{/if}}
             {{#if session.passwordsWritten}}<p>{{res 'setBrowserSessionsPasswordsWritten'}}: {{session.passwordsWritten}}</p>{{/if}}

@@ -782,5 +782,8 @@
     "extensionConnectAskGet": "Ask before returning passwords to the extension:",
     "extensionConnectAskGetMultiple": "if there's more than one match",
     "extensionConnectAskGetAlways": "always",
+    "extensionConnectAskSave": "Ask before saving new passwords to KeeWeb:",
+    "extensionConnectAskSaveAlways": "always",
+    "extensionConnectAskSaveAuto": "when it's not possible to save automatically",
     "extensionConnectSettingsAreForSession": "Settings you select here are valid only for the active session. You can view and manage sessions in KeeWeb settings."
 }

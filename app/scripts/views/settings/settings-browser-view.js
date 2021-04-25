@@ -21,6 +21,7 @@ class SettingsBrowserView extends View {
         'change .check-enable-for-browser': 'changeEnableForBrowser',
         'change .settings__browser-focus-if-locked': 'changeFocusIfLocked',
         'change .settings__browser-session-ask-get': 'changeSessionAskGet',
+        'change .settings__browser-session-ask-save': 'changeSessionAskSave',
         'change .settings__browser-session-file-check': 'changeSessionFileAccess',
         'click .settings__browser-btn-terminate-session': 'terminateSession'
     };
@@ -42,6 +43,7 @@ class SettingsBrowserView extends View {
                     ...session,
                     fileAccess,
                     noFileAccess: fileAccess && !fileAccess.some((f) => f.checked),
+                    showAskSave: session.permissions?.askSave !== undefined,
                     connectedDate: DateFormat.dtStr(session.connectedDate)
                 };
             })
@@ -160,6 +162,13 @@ class SettingsBrowserView extends View {
         const askGet = e.target.value;
 
         BrowserExtensionConnector.setClientPermissions(clientId, { askGet });
+    }
+
+    changeSessionAskSave(e) {
+        const clientId = e.target.dataset.clientId;
+        const askSave = e.target.value;
+
+        BrowserExtensionConnector.setClientPermissions(clientId, { askSave });
     }
 
     changeSessionFileAccess(e) {
