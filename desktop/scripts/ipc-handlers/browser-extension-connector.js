@@ -15,14 +15,19 @@ ipcMain.handle('browserExtensionConnectorSocketEvent', browserExtensionConnector
 
 const logger = new Logger('browser-extension-connector');
 
+const BrowserExtensionNames = {
+    KWC: 'KeeWeb Connect',
+    KPXC: 'KeePassXC-Browser'
+};
+
 const MaxIncomingDataLength = 10_000;
 const ExtensionOrigins = {
-    'safari-keeweb-connect': 'keeweb-connect',
-    'keeweb-connect@keeweb.info': 'keeweb-connect',
-    'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/': 'keeweb-connect',
-    'keepassxc-browser@keepassxc.org': 'keepassxc-browser',
-    'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/': 'keepassxc-browser',
-    'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/': 'keepassxc-browser'
+    'safari-keeweb-connect': BrowserExtensionNames.KWC,
+    'keeweb-connect@keeweb.info': BrowserExtensionNames.KWC,
+    'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/': BrowserExtensionNames.KWC,
+    'keepassxc-browser@keepassxc.org': BrowserExtensionNames.KPXC,
+    'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/': BrowserExtensionNames.KPXC,
+    'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/': BrowserExtensionNames.KPXC
 };
 
 const AppNames = {

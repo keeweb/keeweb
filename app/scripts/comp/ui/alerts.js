@@ -17,6 +17,12 @@ const Alerts = {
                 return Locale.alertYes;
             }
         },
+        allow: {
+            result: 'yes',
+            get title() {
+                return Locale.alertAllow;
+            }
+        },
         no: {
             result: '',
             get title() {
@@ -27,6 +33,12 @@ const Alerts = {
             result: '',
             get title() {
                 return Locale.alertCancel;
+            }
+        },
+        deny: {
+            result: '',
+            get title() {
+                return Locale.alertDeny;
             }
         }
     },

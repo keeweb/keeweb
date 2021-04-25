@@ -8,6 +8,8 @@ import { Alerts } from 'comp/ui/alerts';
 import { Locale } from 'util/locale';
 import { RuntimeInfo } from 'const/runtime-info';
 import { KnownAppVersions } from 'const/known-app-versions';
+import { ExtensionConnectView } from 'views/extension/extension-connect-view';
+import { RuntimeDataModel } from 'models/runtime-data-model';
 
 const KeeWebAssociationId = 'KeeWeb';
 const KeeWebHash = '398d9c782ec76ae9e9877c2321cbda2b31fc6d18ccf0fed5ca4bd746bab4d64a'; // sha256('KeeWeb')
@@ -136,7 +138,7 @@ function checkContentRequestPermissions(request) {
     ensureAtLeastOneFileIsOpen();
 
     const client = getClient(request);
-    if (client.authorized) {
+    if (client.permissions) {
         return;
     }
 
@@ -147,31 +149,41 @@ function checkContentRequestPermissions(request) {
 
         focusKeeWeb();
 
-        // TODO: make a proper dialog here instead of a simple question
-
-        if (Launcher) {
-            Alerts.yesno({
-                header: 'Extension connection',
-                body: 'Allow this extension to connect?',
-                success: () => {
-                    resolve();
-                },
-                cancel: () => reject(makeError(Errors.userRejected))
-            });
-        } else {
-            // it's 'confirm' here because other browser extensions can't interact with browser alerts
-            //  while they can easily press a button on our alert
-            // eslint-disable-next-line no-alert
-            const allowed = confirm('Allow this extension to connect?');
-            if (allowed) {
-                resolve();
-            } else {
-                reject(makeError(Errors.userRejected));
+        const config = RuntimeDataModel.extensionConnectConfig;
+        const files = appModel.files.map((f) => ({
+            id: f.id,
+            name: f.name,
+            checked: !config || config.allFiles || config.files.includes(f.id)
+        }));
+        if (!files.some((f) => f.checked)) {
+            for (const f of files) {
+                f.checked = true;
             }
         }
+
+        const extensionConnectView = new ExtensionConnectView({
+            extensionName: `${client.connection.extensionName} (${client.connection.appName})`,
+            identityVerified: !Launcher,
+            files,
+            allFiles: config?.allFiles ?? true,
+            askGet: config?.askGet || 'multiple'
+        });
+        Alerts.alert({
+            header: Locale.extensionConnectHeader,
+            icon: 'exchange-alt',
+            view: extensionConnectView,
+            wide: true,
+            opaque: true,
+            buttons: [Alerts.buttons.allow, Alerts.buttons.deny],
+            success: () => {
+                RuntimeDataModel.extensionConnectConfig = extensionConnectView.config;
+                client.permissions = extensionConnectView.config;
+                resolve();
+            },
+            cancel: () => reject(makeError(Errors.userRejected))
+        });
     })
         .then(() => {
-            client.authorized = true;
             Launcher.hideApp();
         })
         .catch((e) => {
@@ -186,7 +198,7 @@ function getVersion(request) {
 }
 
 function isKeeWebConnect(request) {
-    return getClient(request).connection.extensionName === 'keeweb-connect';
+    return getClient(request).connection.extensionName === 'KeeWeb Connect';
 }
 
 function focusKeeWeb() {

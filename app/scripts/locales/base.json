@@ -86,6 +86,8 @@
     "alertCopy": "Copy",
     "alertClose": "Close",
     "alertDoNotAsk": "Don't ask me anymore",
+    "alertAllow": "Allow",
+    "alertDeny": "Deny",
 
     "appBeta": "WARNING: beta version, only for preview",
 
@@ -755,5 +757,14 @@
 
     "extensionErrorNoOpenFiles": "No open files",
     "extensionErrorUserRejected": "The request was denied",
-    "extensionErrorAlertDisplayed": "Cannot ask user a question now, please try again"
+    "extensionErrorAlertDisplayed": "Cannot ask user a question now, please try again",
+    "extensionConnectHeader": "Extension data exchange",
+    "extensionConnectIntro": "A browser extension that identifies itself as {} tries to exchange data with KeeWeb.",
+    "extensionConnectUnknownActivity": "KeeWeb doesn't verify that the connected application is what it pretends to be. Approve the request only if you recognize this activity.",
+    "extensionConnectFiles": "In this session, allow access to files:",
+    "extensionConnectAllFiles": "All other files",
+    "extensionConnectAskGet": "Ask before returning passwords to the extension:",
+    "extensionConnectAskGetMultiple": "if there's more than one match",
+    "extensionConnectAskGetAlways": "always",
+    "extensionConnectSettingsAreForSession": "Settings you select here are valid only for the active session. You can view and manage sessions in KeeWeb settings."
 }

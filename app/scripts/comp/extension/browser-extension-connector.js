@@ -7,7 +7,7 @@ import { Features } from 'util/features';
 
 const WebConnectionInfo = {
     connectionId: 1,
-    extensionName: 'keeweb-connect',
+    extensionName: 'KeeWeb Connect',
     supportsNotifications: true
 };
 

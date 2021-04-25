@@ -284,3 +284,7 @@ input[type='range'] {
 .input-base {
     @extend .input-size-base;
 }
+
+select.input-base {
+    height: 2em;
+}
