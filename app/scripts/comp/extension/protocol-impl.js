@@ -162,8 +162,12 @@ function checkContentRequestPermissions(request) {
             }
         }
 
+        const extensionName = client.connection.appName
+            ? `${client.connection.extensionName} (${client.connection.appName})`
+            : client.connection.extensionName;
+
         const extensionConnectView = new ExtensionConnectView({
-            extensionName: `${client.connection.extensionName} (${client.connection.appName})`,
+            extensionName,
             identityVerified: !Launcher,
             files,
             allFiles: config?.allFiles ?? true,

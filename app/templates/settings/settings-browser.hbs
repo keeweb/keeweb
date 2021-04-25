@@ -80,7 +80,7 @@
 
         {{#each sessions as |session|}}
             <h3>
-                <div class="settings__browser-extension-status
+                <span class="settings__browser-extension-status
                      {{#if session.permissions}}
                          green-color
                      {{else if session.permissionsDenied}}
@@ -96,8 +96,8 @@
                      {{~else~}}
                          {{res 'setBrowserSessionsInactiveTooltip'}}
                      {{/if}}"
-                ></div>
-                {{session.extensionName}} ({{session.appName}})
+                ></span>
+                {{session.extensionName}}{{#if session.appName}} ({{session.appName}}){{/if}}
             </h3>
             <p>{{res 'setBrowserSessionsConnectedDate'}}: {{session.connectedDate}}</p>
             <p>
@@ -146,9 +146,11 @@
             {{#if session.passwordsRead}}<p>{{res 'setBrowserSessionsPasswordsRead'}}: {{session.passwordsRead}}</p>{{/if}}
             {{#if session.passwordsWritten}}<p>{{res 'setBrowserSessionsPasswordsWritten'}}: {{session.passwordsWritten}}</p>{{/if}}
             <div class="settings__browser-session-buttons">
-                <button class="btn btn-error settings__browser-btn-terminate-session"
-                        data-connection-id="{{session.connectionId}}"
-                >{{res 'setBrowserSessionsTerminate'}}</button>
+                {{#if ../desktop}}
+                    <button class="btn btn-error settings__browser-btn-terminate-session"
+                            data-connection-id="{{session.connectionId}}"
+                    >{{res 'setBrowserSessionsTerminate'}}</button>
+                {{/if}}
             </div>
         {{/each}}
     {{else}}
