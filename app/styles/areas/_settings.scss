@@ -325,6 +325,13 @@
         &-session-buttons {
             margin-top: $base-padding-h;
         }
+        &-session-files {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        &-session-file {
+            margin: $base-padding;
+        }
     }
     &__donate-btn {
         background: #fff;

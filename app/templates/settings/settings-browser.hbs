@@ -99,18 +99,56 @@
                 ></div>
                 {{session.extensionName}} ({{session.appName}})
             </h3>
-            <p>{{res 'setBrowserConnectedDate'}}: {{session.connectedDate}}</p>
+            <p>{{res 'setBrowserSessionsConnectedDate'}}: {{session.connectedDate}}</p>
+            <p>
+                {{#if session.permissions}}
+                    {{res 'setBrowserSessionsActiveText'}}
+                {{else if session.permissionsDenied}}
+                    {{res 'setBrowserSessionsDeniedText'}}
+                {{else}}
+                    {{res 'setBrowserSessionsInactiveText'}}
+                {{/if}}
+            </p>
             {{#if session.permissions}}
-                {{res 'setBrowserSessionsActiveText'}}
-            {{else if session.permissionsDenied}}
-                {{res 'setBrowserSessionsDeniedText'}}
-            {{else}}
-                {{res 'setBrowserSessionsInactiveText'}}
+                <div>
+                    <label>{{res 'setBrowserSessionsAccessToFiles'}}:</label>
+                    <div class="settings__browser-session-files">
+                        {{#each session.fileAccess as |file|}}
+                            <div class="settings__browser-session-file">
+                                <input type="checkbox" class="input-base settings__browser-session-file-check"
+                                       data-client-id="{{session.clientId}}"
+                                       data-file-id="{{file.id}}"
+                                       id="settings__browser-session-file-check--{{file.id}}"
+                                       {{#if file.checked}}checked{{/if}}
+                                />
+                                <label for="settings__browser-session-file-check--{{file.id}}">{{file.name}}</label>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{#if session.noFileAccess}}
+                    <p class="error-color">{{res 'setBrowserSessionsNoFileAccess'}}</p>
+                {{/if}}
+                <div>
+                    <label for="settings__browser-session-ask-get--{{session.connectionId}}">{{res 'extensionConnectAskGet'}}</label>
+                    <select id="settings__browser-session-ask-get--{{session.connectionId}}"
+                            data-client-id="{{session.clientId}}"
+                            class="settings__browser-session-ask-get settings__select input-base">
+                        <option value="multiple" {{#ifeq session.permissions.askGet 'multiple'}}selected{{/ifeq}}>
+                            {{res 'extensionConnectAskGetMultiple'}}
+                        </option>
+                        <option value="always" {{#ifeq session.permissions.askGet 'always'}}selected{{/ifeq}}>
+                            {{res 'extensionConnectAskGetAlways'}}
+                        </option>
+                    </select>
+                </div>
             {{/if}}
+            {{#if session.passwordsRead}}<p>{{res 'setBrowserSessionsPasswordsRead'}}: {{session.passwordsRead}}</p>{{/if}}
+            {{#if session.passwordsWritten}}<p>{{res 'setBrowserSessionsPasswordsWritten'}}: {{session.passwordsWritten}}</p>{{/if}}
             <div class="settings__browser-session-buttons">
                 <button class="btn btn-error settings__browser-btn-terminate-session"
                         data-connection-id="{{session.connectionId}}"
-                >{{res 'setBrowserTerminateSession'}}</button>
+                >{{res 'setBrowserSessionsTerminate'}}</button>
             </div>
         {{/each}}
     {{else}}

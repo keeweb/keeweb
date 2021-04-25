@@ -447,6 +447,17 @@ const ProtocolImpl = {
         Events.emit('browser-extension-sessions-changed');
     },
 
+    getClientPermissions(clientId) {
+        return connectedClients.get(clientId)?.permissions;
+    },
+
+    setClientPermissions(clientId, permissions) {
+        const client = connectedClients.get(clientId);
+        if (client?.permissions) {
+            client.permissions = { ...client.permissions, ...permissions };
+        }
+    },
+
     errorToResponse(e, request) {
         return {
             action: request?.action,

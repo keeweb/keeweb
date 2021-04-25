@@ -20,6 +20,8 @@ class SettingsBrowserView extends View {
     events = {
         'change .check-enable-for-browser': 'changeEnableForBrowser',
         'change .settings__browser-focus-if-locked': 'changeFocusIfLocked',
+        'change .settings__browser-session-ask-get': 'changeSessionAskGet',
+        'change .settings__browser-session-file-check': 'changeSessionFileAccess',
         'click .settings__browser-btn-terminate-session': 'terminateSession'
     };
 
@@ -34,10 +36,15 @@ class SettingsBrowserView extends View {
             desktop: Features.isDesktop,
             icon: Features.browserIcon,
             focusIfLocked: AppSettingsModel.extensionFocusIfLocked,
-            sessions: BrowserExtensionConnector.sessions.map((session) => ({
-                ...session,
-                connectedDate: DateFormat.dtStr(session.connectedDate)
-            }))
+            sessions: BrowserExtensionConnector.sessions.map((session) => {
+                const fileAccess = this.getSessionFileAccess(session);
+                return {
+                    ...session,
+                    fileAccess,
+                    noFileAccess: fileAccess && !fileAccess.some((f) => f.checked),
+                    connectedDate: DateFormat.dtStr(session.connectedDate)
+                };
+            })
         };
         if (Features.isDesktop) {
             data.extensionNames = ['KeeWeb Connect', 'KeePassXC-Browser'];
@@ -72,6 +79,37 @@ class SettingsBrowserView extends View {
             });
             return { browser, browserName, extensions };
         });
+    }
+
+    getSessionFileAccess(session) {
+        if (!session.permissions) {
+            return undefined;
+        }
+
+        const files = this.appModel.files.map((file) => ({
+            id: file.id,
+            name: file.name,
+            checked: session.permissions.files.includes(file.id) || session.permissions.allFiles
+        }));
+
+        for (const fileId of session.permissions.files) {
+            if (!this.appModel.files.get(fileId)) {
+                const fileInfo = this.appModel.fileInfos.get(fileId);
+                if (fileInfo) {
+                    files.push({ id: fileId, name: fileInfo.name, checked: true });
+                }
+            }
+        }
+
+        files.push({
+            id: 'all',
+            name: files.length
+                ? Locale.extensionConnectAllOtherFiles
+                : Locale.extensionConnectAllFiles,
+            checked: session.permissions.allFiles
+        });
+
+        return files;
     }
 
     changeEnableForBrowser(e) {
@@ -114,6 +152,42 @@ class SettingsBrowserView extends View {
 
     changeFocusIfLocked(e) {
         AppSettingsModel.extensionFocusIfLocked = e.target.checked;
+        this.render();
+    }
+
+    changeSessionAskGet(e) {
+        const clientId = e.target.dataset.clientId;
+        const askGet = e.target.value;
+
+        BrowserExtensionConnector.setClientPermissions(clientId, { askGet });
+    }
+
+    changeSessionFileAccess(e) {
+        const clientId = e.target.dataset.clientId;
+        const fileId = e.target.dataset.fileId;
+        const enabled = e.target.checked;
+
+        if (fileId === 'all') {
+            const allFiles = enabled;
+            const permChanges = { allFiles };
+            if (allFiles) {
+                permChanges.files = this.appModel.files.map((f) => f.id);
+            }
+            BrowserExtensionConnector.setClientPermissions(clientId, permChanges);
+        } else {
+            const permissions = BrowserExtensionConnector.getClientPermissions(clientId);
+            let files;
+            if (enabled) {
+                files = permissions.files.concat(fileId);
+            } else {
+                files = permissions.files.filter((f) => f !== fileId);
+            }
+            const permChanges = { files };
+            if (!enabled) {
+                permChanges.allFiles = false;
+            }
+            BrowserExtensionConnector.setClientPermissions(clientId, permChanges);
+        }
         this.render();
     }
 

@@ -230,6 +230,14 @@ const BrowserExtensionConnector = {
         } else {
             ProtocolImpl.deleteConnection(connectionId);
         }
+    },
+
+    getClientPermissions(clientId) {
+        return ProtocolImpl.getClientPermissions(clientId);
+    },
+
+    setClientPermissions(clientId, permissions) {
+        ProtocolImpl.setClientPermissions(clientId, permissions);
     }
 };
 
