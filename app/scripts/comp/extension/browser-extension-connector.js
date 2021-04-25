@@ -216,6 +216,20 @@ const BrowserExtensionConnector = {
         }
 
         this.sendSocketResult(socketId, result);
+    },
+
+    get sessions() {
+        return ProtocolImpl.sessions;
+    },
+
+    terminateConnection(connectionId) {
+        connectionId = +connectionId;
+        if (Launcher) {
+            const { ipcRenderer } = Launcher.electron();
+            ipcRenderer.invoke('browserExtensionConnectorCloseSocket', connectionId);
+        } else {
+            ProtocolImpl.deleteConnection(connectionId);
+        }
     }
 };
 

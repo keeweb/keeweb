@@ -1,3 +1,4 @@
+import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import template from 'templates/settings/settings-browser.hbs';
 import { Features } from 'util/features';
@@ -11,20 +12,32 @@ import {
     SupportedExtensions
 } from 'comp/extension/browser-extension-connector';
 import { Alerts } from 'comp/ui/alerts';
+import { DateFormat } from 'comp/i18n/date-format';
 
 class SettingsBrowserView extends View {
     template = template;
 
     events = {
         'change .check-enable-for-browser': 'changeEnableForBrowser',
-        'change .settings__browser-focus-if-locked': 'changeFocusIfLocked'
+        'change .settings__browser-focus-if-locked': 'changeFocusIfLocked',
+        'click .settings__browser-btn-terminate-session': 'terminateSession'
     };
+
+    constructor(model, options) {
+        super(model, options);
+
+        this.listenTo(Events, 'browser-extension-sessions-changed', this.render);
+    }
 
     render() {
         const data = {
             desktop: Features.isDesktop,
             icon: Features.browserIcon,
-            focusIfLocked: AppSettingsModel.extensionFocusIfLocked
+            focusIfLocked: AppSettingsModel.extensionFocusIfLocked,
+            sessions: BrowserExtensionConnector.sessions.map((session) => ({
+                ...session,
+                connectedDate: DateFormat.dtStr(session.connectedDate)
+            }))
         };
         if (Features.isDesktop) {
             data.extensionNames = ['KeeWeb Connect', 'KeePassXC-Browser'];
@@ -102,6 +115,11 @@ class SettingsBrowserView extends View {
     changeFocusIfLocked(e) {
         AppSettingsModel.extensionFocusIfLocked = e.target.checked;
         this.render();
+    }
+
+    terminateSession(e) {
+        const connectionId = e.target.dataset.connectionId;
+        BrowserExtensionConnector.terminateConnection(connectionId);
     }
 }
 

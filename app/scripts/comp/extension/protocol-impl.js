@@ -183,10 +183,13 @@ function checkContentRequestPermissions(request) {
                 clearTimeout(inactivityTimer);
                 RuntimeDataModel.extensionConnectConfig = extensionConnectView.config;
                 client.permissions = extensionConnectView.config;
+                Events.emit('browser-extension-sessions-changed');
                 resolve();
             },
             cancel: () => {
+                client.permissionsDenied = true;
                 clearTimeout(inactivityTimer);
+                Events.emit('browser-extension-sessions-changed');
                 reject(makeError(Errors.userRejected));
             }
         });
@@ -242,7 +245,13 @@ const ProtocolHandlers = {
         const keys = tweetnaclBox.keyPair();
         publicKey = kdbxweb.ByteUtils.base64ToBytes(publicKey);
 
-        connectedClients.set(clientId, { connection, publicKey, version, keys });
+        const stats = {
+            connectedDate: new Date()
+        };
+
+        connectedClients.set(clientId, { connection, publicKey, version, keys, stats });
+
+        Events.emit('browser-extension-sessions-changed');
 
         logger.info('New client key created', clientId, version);
 
@@ -420,15 +429,22 @@ const ProtocolImpl = {
     },
 
     cleanup() {
+        const wasNotEmpty = connectedClients.size;
+
         connectedClients.clear();
+
+        if (wasNotEmpty) {
+            Events.emit('browser-extension-sessions-changed');
+        }
     },
 
     deleteConnection(connectionId) {
-        for (const client of connectedClients.values()) {
+        for (const [clientId, client] of connectedClients.entries()) {
             if (client.connection.connectionId === connectionId) {
-                connectedClients.delete(client);
+                connectedClients.delete(clientId);
             }
         }
+        Events.emit('browser-extension-sessions-changed');
     },
 
     errorToResponse(e, request) {
@@ -449,6 +465,22 @@ const ProtocolImpl = {
         } catch (e) {
             return this.errorToResponse(e, request);
         }
+    },
+
+    get sessions() {
+        return [...connectedClients.entries()]
+            .map(([clientId, client]) => ({
+                clientId,
+                connectionId: client.connection.connectionId,
+                appName: client.connection.appName,
+                extensionName: client.connection.extensionName,
+                connectedDate: client.stats.connectedDate,
+                passwordsRead: client.stats.passwordsRead,
+                passwordsWritten: client.stats.passwordsWritten,
+                permissions: client.permissions,
+                permissionsDenied: client.permissionsDenied
+            }))
+            .sort((x, y) => y.connectedDate - x.connectedDate);
     }
 };
 

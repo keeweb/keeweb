@@ -12,6 +12,7 @@ ipcMain.handle('browserExtensionConnectorStop', browserExtensionConnectorStop);
 ipcMain.handle('browserExtensionConnectorEnable', browserExtensionConnectorEnable);
 ipcMain.handle('browserExtensionConnectorSocketResult', browserExtensionConnectorSocketResult);
 ipcMain.handle('browserExtensionConnectorSocketEvent', browserExtensionConnectorSocketEvent);
+ipcMain.handle('browserExtensionConnectorCloseSocket', browserExtensionConnectorCloseSocket);
 
 const logger = new Logger('browser-extension-connector');
 
@@ -103,6 +104,11 @@ function browserExtensionConnectorSocketResult(e, socketId, result) {
 
 function browserExtensionConnectorSocketEvent(e, data) {
     sendEventToAllSockets(data);
+}
+
+function browserExtensionConnectorCloseSocket(e, socketId) {
+    const socket = connectedSockets.get(socketId);
+    socket?.destroy();
 }
 
 function getBrowserExtensionSocketName(config) {

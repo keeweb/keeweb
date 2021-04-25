@@ -73,4 +73,47 @@
                {{#if focusIfLocked}}checked{{/if}} />
         <label for="settings__browser-focus-if-locked">{{res 'setBrowserFocusIfLocked'}}</label>
     </div>
+
+    <h2>{{res 'setBrowserSessions'}}</h2>
+    {{#if sessions.length}}
+        <p>{{res 'setBrowserSessionsIntro'}}</p>
+
+        {{#each sessions as |session|}}
+            <h3>
+                <div class="settings__browser-extension-status
+                     {{#if session.permissions}}
+                         green-color
+                     {{else if session.permissionsDenied}}
+                         red-color
+                     {{else}}
+                         muted-color
+                     {{/if}}"
+                     title="
+                     {{~#if session.permissions~}}
+                         {{res 'setBrowserSessionsActiveTooltip'}}
+                     {{~else if session.permissionsDenied~}}
+                         {{res 'setBrowserSessionsDeniedTooltip'}}
+                     {{~else~}}
+                         {{res 'setBrowserSessionsInactiveTooltip'}}
+                     {{/if}}"
+                ></div>
+                {{session.extensionName}} ({{session.appName}})
+            </h3>
+            <p>{{res 'setBrowserConnectedDate'}}: {{session.connectedDate}}</p>
+            {{#if session.permissions}}
+                {{res 'setBrowserSessionsActiveText'}}
+            {{else if session.permissionsDenied}}
+                {{res 'setBrowserSessionsDeniedText'}}
+            {{else}}
+                {{res 'setBrowserSessionsInactiveText'}}
+            {{/if}}
+            <div class="settings__browser-session-buttons">
+                <button class="btn btn-error settings__browser-btn-terminate-session"
+                        data-connection-id="{{session.connectionId}}"
+                >{{res 'setBrowserTerminateSession'}}</button>
+            </div>
+        {{/each}}
+    {{else}}
+        <p>{{res 'setBrowserSessionsEmpty'}}</p>
+    {{/if}}
 </div>
