@@ -10,6 +10,7 @@ import { RuntimeInfo } from 'const/runtime-info';
 import { KnownAppVersions } from 'const/known-app-versions';
 import { ExtensionConnectView } from 'views/extension/extension-connect-view';
 import { RuntimeDataModel } from 'models/runtime-data-model';
+import { Timeouts } from 'const/timeouts';
 
 const KeeWebAssociationId = 'KeeWeb';
 const KeeWebHash = '398d9c782ec76ae9e9877c2321cbda2b31fc6d18ccf0fed5ca4bd746bab4d64a'; // sha256('KeeWeb')
@@ -168,7 +169,10 @@ function checkContentRequestPermissions(request) {
             allFiles: config?.allFiles ?? true,
             askGet: config?.askGet || 'multiple'
         });
-        Alerts.alert({
+
+        let inactivityTimer = 0;
+
+        const alert = Alerts.alert({
             header: Locale.extensionConnectHeader,
             icon: 'exchange-alt',
             view: extensionConnectView,
@@ -176,12 +180,20 @@ function checkContentRequestPermissions(request) {
             opaque: true,
             buttons: [Alerts.buttons.allow, Alerts.buttons.deny],
             success: () => {
+                clearTimeout(inactivityTimer);
                 RuntimeDataModel.extensionConnectConfig = extensionConnectView.config;
                 client.permissions = extensionConnectView.config;
                 resolve();
             },
-            cancel: () => reject(makeError(Errors.userRejected))
+            cancel: () => {
+                clearTimeout(inactivityTimer);
+                reject(makeError(Errors.userRejected));
+            }
         });
+
+        inactivityTimer = setTimeout(() => {
+            alert.closeWithResult('');
+        }, Timeouts.KeeWebConnectRequest);
     })
         .then(() => {
             Launcher.hideApp();
