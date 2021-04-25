@@ -21,7 +21,13 @@
                    id="extension-connect__file-check--all"
                    {{#if allFiles}}checked{{/if}}
             />
-            <label for="extension-connect__file-check--all">{{res 'extensionConnectAllFiles'}}</label>
+            <label for="extension-connect__file-check--all">
+                {{#if files.length}}
+                    {{res 'extensionConnectAllOtherFiles'}}
+                {{else}}
+                    {{res 'extensionConnectAllFiles'}}
+                {{/if}}
+            </label>
         </div>
     </div>
     <div>
