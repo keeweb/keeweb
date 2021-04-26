@@ -10,8 +10,8 @@ import { RuntimeInfo } from 'const/runtime-info';
 import { KnownAppVersions } from 'const/known-app-versions';
 import { ExtensionConnectView } from 'views/extension/extension-connect-view';
 import { RuntimeDataModel } from 'models/runtime-data-model';
+import { AppSettingsModel } from 'models/app-settings-model';
 import { Timeouts } from 'const/timeouts';
-import { AppSettingsModel } from '../../models/app-settings-model';
 
 const KeeWebAssociationId = 'KeeWeb';
 const KeeWebHash = '398d9c782ec76ae9e9877c2321cbda2b31fc6d18ccf0fed5ca4bd746bab4d64a'; // sha256('KeeWeb')
