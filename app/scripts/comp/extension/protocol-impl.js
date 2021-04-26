@@ -250,12 +250,15 @@ function getAvailableFiles(request) {
 }
 
 function getVersion(request) {
-    const extensionName = getClient(request).connection.extensionName;
-    return extensionName ? RuntimeInfo.version : KnownAppVersions.KeePassXC;
+    return isKeePassXcBrowser(request) ? KnownAppVersions.KeePassXC : RuntimeInfo.version;
 }
 
 function isKeeWebConnect(request) {
     return getClient(request).connection.extensionName === 'KeeWeb Connect';
+}
+
+function isKeePassXcBrowser(request) {
+    return getClient(request).connection.extensionName === 'KeePassXC-Browser';
 }
 
 function focusKeeWeb() {
