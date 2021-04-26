@@ -38,7 +38,7 @@ class FieldViewCustom extends FieldViewText {
     endEdit(newVal, extra) {
         this.$el.removeClass('details__field--can-edit-title');
         extra = { ...extra };
-        if (this.model.titleChanged || this.model.newField) {
+        if (this.model.titleChanged) {
             extra.newField = this.model.title;
         }
         if (!this.editing) {
@@ -97,9 +97,9 @@ class FieldViewCustom extends FieldViewText {
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
 
-        if (this.model.titleEditable && this.model.newField) {
+        if (this.model.newField) {
             this.startEditTitle(true);
-        } else if (this.model.titleEditable && this.editing) {
+        } else if (this.editing) {
             this.startEditTitle();
         } else {
             super.fieldLabelClick.call(this, e);

@@ -188,6 +188,10 @@ class FieldView extends View {
         }
         const protectedEqual =
             (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
+        if (!extra?.newField && this.model.newField) {
+            extra ??= {};
+            extra.newField = this.model.newField;
+        }
         const nameChanged = extra && extra.newField;
         let arg;
         if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {

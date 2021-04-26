@@ -240,18 +240,30 @@ function createDetailsFields(detailsView) {
                 }
             } else {
                 const isUrl = field.startsWith(ExtraUrlFieldName);
-                fieldViews.push(
-                    new FieldViewCustom({
-                        name: '$' + field,
-                        title: isUrl ? StringFormat.capFirst(Locale.website) : field,
-                        multiline: !isUrl,
-                        titleEditable: !isUrl,
-                        value() {
-                            return model.fields[field];
-                        },
-                        sequence: `{S:${field}}`
-                    })
-                );
+                if (isUrl) {
+                    fieldViews.push(
+                        new FieldViewUrl({
+                            name: '$' + field,
+                            title: StringFormat.capFirst(Locale.website),
+                            value() {
+                                return model.fields[field];
+                            },
+                            sequence: `{S:${field}}`
+                        })
+                    );
+                } else {
+                    fieldViews.push(
+                        new FieldViewCustom({
+                            name: '$' + field,
+                            title: field,
+                            multiline: true,
+                            value() {
+                                return model.fields[field];
+                            },
+                            sequence: `{S:${field}}`
+                        })
+                    );
+                }
             }
         }
     }
@@ -259,4 +271,31 @@ function createDetailsFields(detailsView) {
     return { fieldViews, fieldViewsAside };
 }
 
-export { createDetailsFields };
+function createNewCustomField(newFieldTitle, newFieldOptions, model) {
+    const isUrl = newFieldTitle.startsWith(ExtraUrlFieldName);
+
+    if (isUrl) {
+        return new FieldViewUrl(
+            {
+                name: '$' + newFieldTitle,
+                title: StringFormat.capFirst(Locale.website),
+                newField: newFieldTitle,
+                value: () => model.fields[newFieldTitle]
+            },
+            newFieldOptions
+        );
+    } else {
+        return new FieldViewCustom(
+            {
+                name: '$' + newFieldTitle,
+                title: newFieldTitle,
+                newField: newFieldTitle,
+                multiline: true,
+                value: () => ''
+            },
+            newFieldOptions
+        );
+    }
+}
+
+export { createDetailsFields, createNewCustomField };

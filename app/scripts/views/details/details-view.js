@@ -22,7 +22,7 @@ import { DetailsAutoTypeView } from 'views/details/details-auto-type-view';
 import { DetailsHistoryView } from 'views/details/details-history-view';
 import { DetailsIssuesView } from 'views/details/details-issues-view';
 import { DropdownView } from 'views/dropdown-view';
-import { createDetailsFields } from 'views/details/details-fields';
+import { createDetailsFields, createNewCustomField } from 'views/details/details-fields';
 import { FieldViewCustom } from 'views/fields/field-view-custom';
 import { IconSelectView } from 'views/icon-select-view';
 import { isEqual } from 'util/fn';
@@ -30,8 +30,6 @@ import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
 import { Launcher } from 'comp/launcher';
-import { ExtraUrlFieldName } from 'models/entry-model';
-import { StringFormat } from '../../util/formatting/string-format';
 
 class DetailsView extends View {
     parent = '.app__details';
@@ -212,21 +210,12 @@ class DetailsView extends View {
             }
         }
 
-        const isUrl = newFieldTitle.startsWith(ExtraUrlFieldName);
-        const fieldView = new FieldViewCustom(
-            {
-                name: '$' + newFieldTitle,
-                title: isUrl ? StringFormat.capFirst(Locale.website) : newFieldTitle,
-                newField: newFieldTitle,
-                multiline: !isUrl,
-                titleEditable: !isUrl,
-                value() {
-                    return '';
-                }
-            },
+        const fieldView = createNewCustomField(
+            newFieldTitle,
             {
                 parent: this.$el.find('.details__body-fields')[0]
-            }
+            },
+            this.model
         );
 
         fieldView.on('change', this.fieldChanged.bind(this));
