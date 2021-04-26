@@ -1434,6 +1434,7 @@ class AppModel {
 
     unlockAnyFile(unlockRes, timeout) {
         this.rejectPendingFileUnlockPromise('Replaced with a new operation');
+        Events.emit('show-open-view');
         return new Promise((resolve, reject) => {
             this.fileUnlockPromise = { resolve, reject, unlockRes };
             if (timeout) {

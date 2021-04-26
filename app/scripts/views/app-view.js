@@ -82,6 +82,7 @@ class AppView extends View {
         this.listenTo(Events, 'toggle-settings', this.toggleSettings);
         this.listenTo(Events, 'toggle-menu', this.toggleMenu);
         this.listenTo(Events, 'toggle-details', this.toggleDetails);
+        this.listenTo(Events, 'show-open-view', this.showOpenIfNotThere);
         this.listenTo(Events, 'edit-group', this.editGroup);
         this.listenTo(Events, 'edit-tag', this.editTag);
         this.listenTo(Events, 'edit-generator-presets', this.editGeneratorPresets);
@@ -722,6 +723,12 @@ class AppView extends View {
     toggleDetails(visible) {
         this.$el.toggleClass('app--details-visible', visible);
         this.views.menu.switchVisibility(false);
+    }
+
+    showOpenIfNotThere() {
+        if (!this.views.open) {
+            this.showLastOpenFile();
+        }
     }
 
     editGroup(group) {
