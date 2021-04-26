@@ -84,6 +84,9 @@ function decryptRequest(request) {
     const message = kdbxweb.ByteUtils.base64ToBytes(request.message);
 
     const data = tweetnaclBox.open(message, nonce, client.publicKey, client.keys.secretKey);
+    if (!data) {
+        throw new Error('Failed to decrypt data');
+    }
 
     const json = new TextDecoder().decode(data);
     const payload = JSON.parse(json);
