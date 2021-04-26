@@ -262,7 +262,9 @@ const ProtocolHandlers = {
         publicKey = kdbxweb.ByteUtils.base64ToBytes(publicKey);
 
         const stats = {
-            connectedDate: new Date()
+            connectedDate: new Date(),
+            passwordsRead: 0,
+            passwordsWritten: 0
         };
 
         connectedClients.set(clientId, { connection, publicKey, version, keys, stats });
