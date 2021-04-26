@@ -146,9 +146,7 @@ async function checkContentRequestPermissions(request) {
                     Timeouts.KeeWebConnectRequest
                 );
             } catch {
-                if (Launcher) {
-                    Launcher.hideApp();
-                }
+                Launcher?.hideApp();
                 throw makeError(Errors.noOpenFiles);
             }
         } else {
@@ -219,14 +217,10 @@ async function checkContentRequestPermissions(request) {
         inactivityTimer = setTimeout(() => {
             alert.closeWithResult('');
         }, Timeouts.KeeWebConnectRequest);
-    })
-        .then(() => {
-            Launcher.hideApp();
-        })
-        .catch((e) => {
-            Launcher.hideApp();
-            throw e;
-        });
+    }).catch((e) => {
+        Launcher?.hideApp();
+        throw e;
+    });
 }
 
 function getVersion(request) {
