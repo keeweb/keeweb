@@ -8,6 +8,7 @@ Release notes
 `+` better Touch ID error messages  
 `-` legacy auto-type removed  
 `+` displaying the reason why unlock is requested  
+`+` adding multiple websites to one entry  
 `-` fixed a crash after disabling USB devices on Linux  
 `+` tightened content security policy  
 
