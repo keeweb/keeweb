@@ -17,6 +17,7 @@ import { MenuModel } from 'models/menu/menu-model';
 import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
 import { DateFormat } from 'comp/i18n/date-format';
+import { Launcher } from 'comp/launcher';
 import { UrlFormat } from 'util/formatting/url-format';
 import { IdGenerator } from 'util/generators/id-generator';
 import { Locale } from 'util/locale';
@@ -38,6 +39,8 @@ class AppModel {
     advancedSearch = null;
     attachedYubiKeysCount = 0;
     memoryPasswordStorage = {};
+    fileUnlockPromise = null;
+    hardwareDecryptInProgress = false;
 
     constructor() {
         Events.on('refresh', this.refresh.bind(this));
@@ -48,6 +51,9 @@ class AppModel {
         Events.on('select-entry', this.selectEntry.bind(this));
         Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
         Events.on('usb-devices-changed', this.usbDevicesChanged.bind(this));
+        Events.on('main-window-blur', this.mainWindowBlur.bind(this));
+        Events.on('hardware-decrypt-started', this.hardwareDecryptStarted.bind(this));
+        Events.on('hardware-decrypt-finished', this.hardwareDecryptFinished.bind(this));
 
         this.appLogger = new Logger('app');
         AppModel.instance = this;
@@ -167,11 +173,21 @@ class AppModel {
             page: 'file',
             file
         });
+
         this.refresh();
+
         file.on('reload', this.reloadFile.bind(this));
         file.on('change', () => Events.emit('file-changed', file));
         file.on('ejected', () => this.closeFile(file));
+
         Events.emit('file-opened');
+
+        if (this.fileUnlockPromise) {
+            this.appLogger.info('Running pending file unlock operation');
+            this.fileUnlockPromise.resolve(file);
+            this.fileUnlockPromise = null;
+        }
+
         return true;
     }
 
@@ -1412,6 +1428,39 @@ class AppModel {
                 }
             }
             this.memoryPasswordStorage = {};
+        }
+    }
+
+    unlockAnyFile() {
+        this.rejectPendingFileUnlockPromise('Replaced with a new operation');
+        return new Promise((resolve, reject) => {
+            this.fileUnlockPromise = { resolve, reject };
+            this.appLogger.info('Pending file unlock operation is set');
+        });
+    }
+
+    rejectPendingFileUnlockPromise(reason) {
+        if (this.fileUnlockPromise) {
+            this.appLogger.info('Cancel pending file unlock operation', reason);
+            this.fileUnlockPromise.reject(new Error(reason));
+            this.fileUnlockPromise = null;
+        }
+    }
+
+    mainWindowBlur() {
+        if (!this.hardwareDecryptInProgress) {
+            this.rejectPendingFileUnlockPromise('Main window blur');
+        }
+    }
+
+    hardwareDecryptStarted() {
+        this.hardwareDecryptInProgress = true;
+    }
+
+    hardwareDecryptFinished() {
+        this.hardwareDecryptInProgress = false;
+        if (!Launcher.isAppFocused()) {
+            this.rejectPendingFileUnlockPromise('App is not focused after hardware decrypt');
         }
     }
 }

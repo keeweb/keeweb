@@ -171,9 +171,6 @@ class AppView extends View {
         this.views.open.on('close', () => {
             this.showEntries();
         });
-        this.views.open.on('remove', () => {
-            Events.emit('closed-open-view');
-        });
     }
 
     showLastOpenFile() {

@@ -680,13 +680,18 @@ class OpenView extends View {
             const encryptedPassword = kdbxweb.ProtectedValue.fromBase64(
                 this.encryptedPassword.value
             );
+            Events.emit('hardware-decrypt-started');
             NativeModules.hardwareDecrypt(encryptedPassword, touchIdPrompt)
                 .then((password) => {
+                    Events.emit('hardware-decrypt-finished');
+
                     this.params.password = password;
                     this.params.encryptedPassword = this.encryptedPassword;
                     this.model.openFile(this.params, (err) => this.openDbComplete(err));
                 })
                 .catch((err) => {
+                    Events.emit('hardware-decrypt-finished');
+
                     if (err.message.includes('User refused')) {
                         err.userCanceled = true;
                     } else if (err.message.includes('SecKeyCreateDecryptedData')) {
