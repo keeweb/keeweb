@@ -157,9 +157,9 @@
                         </select>
                     </div>
                 {{/if}}
+                <p>{{res 'setBrowserSessionsPasswordsRead'}}: {{session.passwordsRead}}</p>
+                {{#if session.passwordsWritten}}<p>{{res 'setBrowserSessionsPasswordsWritten'}}: {{session.passwordsWritten}}</p>{{/if}}
             {{/if}}
-            <p>{{res 'setBrowserSessionsPasswordsRead'}}: {{session.passwordsRead}}</p>
-            {{#if session.passwordsWritten}}<p>{{res 'setBrowserSessionsPasswordsWritten'}}: {{session.passwordsWritten}}</p>{{/if}}
             <div class="settings__browser-session-buttons">
                 {{#if ../desktop}}
                     <button class="btn btn-error settings__browser-btn-terminate-session"
