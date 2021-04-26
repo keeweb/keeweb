@@ -218,7 +218,7 @@ const AutoType = {
                 logger.debug('auto-type event delayed');
                 this.focusMainWindow();
                 try {
-                    await AppModel.instance.unlockAnyFile();
+                    await AppModel.instance.unlockAnyFile('autoTypeUnlockMessage');
                 } catch {
                     logger.debug('auto-type event canceled');
                     return;

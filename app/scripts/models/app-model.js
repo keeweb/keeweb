@@ -186,6 +186,7 @@ class AppModel {
             this.appLogger.info('Running pending file unlock operation');
             this.fileUnlockPromise.resolve(file);
             this.fileUnlockPromise = null;
+            Events.emit('unlock-message-changed', null);
         }
 
         return true;
@@ -1431,12 +1432,17 @@ class AppModel {
         }
     }
 
-    unlockAnyFile() {
+    unlockAnyFile(unlockRes) {
         this.rejectPendingFileUnlockPromise('Replaced with a new operation');
         return new Promise((resolve, reject) => {
-            this.fileUnlockPromise = { resolve, reject };
+            this.fileUnlockPromise = { resolve, reject, unlockRes };
             this.appLogger.info('Pending file unlock operation is set');
+            Events.emit('unlock-message-changed', unlockRes);
         });
+    }
+
+    get unlockMessageRes() {
+        return this.fileUnlockPromise?.unlockRes;
     }
 
     rejectPendingFileUnlockPromise(reason) {
@@ -1444,6 +1450,7 @@ class AppModel {
             this.appLogger.info('Cancel pending file unlock operation', reason);
             this.fileUnlockPromise.reject(new Error(reason));
             this.fileUnlockPromise = null;
+            Events.emit('unlock-message-changed', null);
         }
     }
 

@@ -7,7 +7,8 @@ Release notes
 `*` password generator now includes all selected character ranges  
 `+` better Touch ID error messages  
 `-` legacy auto-type removed  
-`-` fixed a crash after disabling USB devices on Linux    
+`+` displaying the reason why unlock is requested  
+`-` fixed a crash after disabling USB devices on Linux  
 `+` tightened content security policy  
 
 ##### v1.17.6 (2021-04-09)

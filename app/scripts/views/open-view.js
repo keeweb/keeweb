@@ -52,6 +52,7 @@ class OpenView extends View {
         'click .open__settings-yubikey': 'selectYubiKeyChalResp',
         'click .open__last-item': 'openLast',
         'click .open__icon-generate': 'toggleGenerator',
+        'click .open__message-cancel-btn': 'openMessageCancelClick',
         dragover: 'dragover',
         dragleave: 'dragleave',
         drop: 'drop'
@@ -76,6 +77,7 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, null, 'open');
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
         this.listenTo(Events, 'usb-devices-changed', this.usbDevicesChanged.bind(this));
+        this.listenTo(Events, 'unlock-message-changed', this.unlockMessageChanged.bind(this));
         this.once('remove', () => {
             this.passwordInput.reset();
         });
@@ -118,6 +120,7 @@ class OpenView extends View {
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
             demoOpened: this.model.settings.demoOpened,
             storageProviders,
+            unlockMessageRes: this.model.unlockMessageRes,
             canOpen: this.model.settings.canOpen,
             canOpenDemo: this.model.settings.canOpenDemo,
             canOpenSettings: this.model.settings.canOpenSettings,
@@ -1158,6 +1161,20 @@ class OpenView extends View {
                 this.encryptedPassword = null;
             }
         }
+    }
+
+    unlockMessageChanged(unlockMessageRes) {
+        const messageEl = this.el.querySelector('.open__message');
+        messageEl.classList.toggle('hide', !unlockMessageRes);
+
+        if (unlockMessageRes) {
+            const contentEl = this.el.querySelector('.open__message-content');
+            contentEl.innerText = Locale[unlockMessageRes];
+        }
+    }
+
+    openMessageCancelClick() {
+        this.model.rejectPendingFileUnlockPromise('User canceled');
     }
 }
 

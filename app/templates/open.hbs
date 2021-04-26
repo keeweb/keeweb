@@ -1,5 +1,11 @@
 <div class="open">
     <input type="file" class="open__file-ctrl hide-by-pos" />
+    <div class="open__message {{#unless unlockMessageRes}}hide{{/unless}}">
+        <div class="open__message-content">{{#if unlockMessageRes}}{{res unlockMessageRes}}{{/if}}</div>
+        <div class="open__message-cancel-btn" title="{{res 'alertCancel'}}" tip-placement="left">
+            <i class="fa fa-times-circle open__message-cancel-btn-icon"></i>
+        </div>
+    </div>
     <div class="open__icons">
         {{#if canOpen}}
             <div class="open__icon open__icon-open" tabindex="1" id="open__icon-open">
