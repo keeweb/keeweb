@@ -1432,10 +1432,24 @@ class AppModel {
         }
     }
 
-    unlockAnyFile(unlockRes) {
+    unlockAnyFile(unlockRes, timeout) {
         this.rejectPendingFileUnlockPromise('Replaced with a new operation');
         return new Promise((resolve, reject) => {
             this.fileUnlockPromise = { resolve, reject, unlockRes };
+            if (timeout) {
+                const timer = setTimeout(
+                    () => this.rejectPendingFileUnlockPromise('Timeout'),
+                    timeout
+                );
+                this.fileUnlockPromise.resolve = (res) => {
+                    clearTimeout(timer);
+                    resolve(res);
+                };
+                this.fileUnlockPromise.reject = (err) => {
+                    clearTimeout(timer);
+                    reject(err);
+                };
+            }
             this.appLogger.info('Pending file unlock operation is set');
             Events.emit('unlock-message-changed', unlockRes);
         });
