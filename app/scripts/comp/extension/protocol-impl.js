@@ -223,6 +223,24 @@ async function checkContentRequestPermissions(request) {
     });
 }
 
+function getAvailableFiles(request) {
+    const client = getClient(request);
+    if (!client.permissions) {
+        return;
+    }
+
+    const files = appModel.files.filter(
+        (file) =>
+            file.active &&
+            (client.permissions.allFiles || client.permissions.files.includes(file.id))
+    );
+    if (!files.length) {
+        throw makeError(Errors.noOpenFiles);
+    }
+
+    return files;
+}
+
 function getVersion(request) {
     const extensionName = getClient(request).connection.extensionName;
     return extensionName ? RuntimeInfo.version : KnownAppVersions.KeePassXC;
@@ -392,7 +410,7 @@ const ProtocolHandlers = {
         };
 
         const groups = [];
-        for (const file of appModel.files.filter((f) => f.active)) {
+        for (const file of getAvailableFiles(request)) {
             for (const group of file.groups) {
                 groups.push(makeGroups(group));
             }
