@@ -316,9 +316,14 @@ const ProtocolHandlers = {
         };
     },
 
-    'get-databasehash'(request) {
+    async 'get-databasehash'(request) {
         decryptRequest(request);
-        ensureAtLeastOneFileIsOpen();
+
+        if (request.triggerUnlock) {
+            await checkContentRequestPermissions(request);
+        } else {
+            ensureAtLeastOneFileIsOpen();
+        }
 
         return encryptResponse(request, {
             hash: KeeWebHash,
