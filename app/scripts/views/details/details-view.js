@@ -30,6 +30,8 @@ import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
 import { Launcher } from 'comp/launcher';
+import { ExtraUrlFieldName } from 'models/entry-model';
+import { StringFormat } from '../../util/formatting/string-format';
 
 class DetailsView extends View {
     parent = '.app__details';
@@ -196,10 +198,10 @@ class DetailsView extends View {
         }
     }
 
-    addNewField() {
+    addNewField(title) {
         this.moreView.remove();
         this.moreView = null;
-        let newFieldTitle = Locale.detNetField;
+        let newFieldTitle = title || Locale.detNetField;
         if (this.model.fields[newFieldTitle]) {
             for (let i = 1; ; i++) {
                 const newFieldTitleVariant = newFieldTitle + i;
@@ -209,12 +211,15 @@ class DetailsView extends View {
                 }
             }
         }
+
+        const isUrl = newFieldTitle.startsWith(ExtraUrlFieldName);
         const fieldView = new FieldViewCustom(
             {
                 name: '$' + newFieldTitle,
-                title: newFieldTitle,
+                title: isUrl ? StringFormat.capFirst(Locale.website) : newFieldTitle,
                 newField: newFieldTitle,
-                multiline: true,
+                multiline: !isUrl,
+                titleEditable: !isUrl,
                 value() {
                     return '';
                 }
@@ -223,6 +228,7 @@ class DetailsView extends View {
                 parent: this.$el.find('.details__body-fields')[0]
             }
         );
+
         fieldView.on('change', this.fieldChanged.bind(this));
         fieldView.render();
         fieldView.edit();
@@ -255,6 +261,13 @@ class DetailsView extends View {
                         icon: 'plus',
                         text: Locale.detMenuAddNewField
                     });
+                    if (this.model.url) {
+                        moreOptions.push({
+                            value: 'add-website',
+                            icon: 'plus',
+                            text: Locale.detMenuAddNewWebsite
+                        });
+                    }
                     moreOptions.push({
                         value: 'toggle-empty',
                         icon: 'eye',
@@ -266,6 +279,13 @@ class DetailsView extends View {
                         icon: 'plus',
                         text: Locale.detMenuAddNewField
                     });
+                    if (this.model.url) {
+                        moreOptions.push({
+                            value: 'add-website',
+                            icon: 'plus',
+                            text: Locale.detMenuAddNewWebsite
+                        });
+                    }
                     moreOptions.push({
                         value: 'toggle-empty',
                         icon: 'eye-slash',
@@ -302,6 +322,9 @@ class DetailsView extends View {
         switch (e.item) {
             case 'add-new':
                 this.addNewField();
+                break;
+            case 'add-website':
+                this.addNewField(this.model.getNextUrlFieldName());
                 break;
             case 'toggle-empty': {
                 const hideEmptyFields = AppSettingsModel.hideEmptyFields;

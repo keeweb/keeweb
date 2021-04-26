@@ -16,6 +16,7 @@ const UrlRegex = /^https?:\/\//i;
 const FieldRefRegex = /^\{REF:([TNPAU])@I:(\w{32})}$/;
 const FieldRefFields = ['title', 'password', 'user', 'url', 'notes'];
 const FieldRefIds = { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' };
+const ExtraUrlFieldName = 'KP2A_URL';
 
 class EntryModel extends Model {
     constructor(props) {
@@ -639,6 +640,18 @@ class EntryModel extends Model {
         this._entryModified();
     }
 
+    getNextUrlFieldName() {
+        const takenFields = new Set(
+            Object.keys(this.entry.fields).filter((f) => f.startsWith(ExtraUrlFieldName))
+        );
+        for (let i = 0; ; i++) {
+            const fieldName = i ? `${ExtraUrlFieldName}_${i}` : ExtraUrlFieldName;
+            if (!takenFields.has(fieldName)) {
+                return fieldName;
+            }
+        }
+    }
+
     static fromEntry(entry, group, file) {
         const model = new EntryModel();
         model.setEntry(entry, group, file);
@@ -667,4 +680,4 @@ class EntryModel extends Model {
 
 EntryModel.defineModelProperties({}, { extensions: true });
 
-export { EntryModel };
+export { EntryModel, ExtraUrlFieldName };

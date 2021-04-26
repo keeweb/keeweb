@@ -96,9 +96,10 @@ class FieldViewCustom extends FieldViewText {
 
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
-        if (this.model.newField) {
+
+        if (this.model.titleEditable && this.model.newField) {
             this.startEditTitle(true);
-        } else if (this.editing) {
+        } else if (this.model.titleEditable && this.editing) {
             this.startEditTitle();
         } else {
             super.fieldLabelClick.call(this, e);

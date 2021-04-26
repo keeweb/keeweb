@@ -13,6 +13,7 @@ import { FieldViewDate } from 'views/fields/field-view-date';
 import { FieldViewHistory } from 'views/fields/field-view-history';
 import { FieldViewCustom } from 'views/fields/field-view-custom';
 import { FieldViewReadOnlyWithOptions } from 'views/fields/field-view-read-only-with-options';
+import { ExtraUrlFieldName } from 'models/entry-model';
 
 function createDetailsFields(detailsView) {
     const model = detailsView.model;
@@ -238,11 +239,13 @@ function createDetailsFields(detailsView) {
                     );
                 }
             } else {
+                const isUrl = field.startsWith(ExtraUrlFieldName);
                 fieldViews.push(
                     new FieldViewCustom({
                         name: '$' + field,
-                        title: field,
-                        multiline: true,
+                        title: isUrl ? StringFormat.capFirst(Locale.website) : field,
+                        multiline: !isUrl,
+                        titleEditable: !isUrl,
                         value() {
                             return model.fields[field];
                         },
