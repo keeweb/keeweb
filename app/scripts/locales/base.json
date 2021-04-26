@@ -788,5 +788,6 @@
     "extensionConnectAskSaveAlways": "always",
     "extensionConnectAskSaveAuto": "when it's not possible to save automatically",
     "extensionConnectSettingsAreForSession": "Settings you select here are valid only for the active session. You can view and manage sessions in KeeWeb settings.",
-    "extensionUnlockMessage": "Unlock to connect a browser extension"
+    "extensionUnlockMessage": "Unlock to connect a browser extension",
+    "extensionNewGroup": ""
 }

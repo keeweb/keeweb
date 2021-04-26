@@ -431,9 +431,6 @@ const ProtocolHandlers = {
             throw new Error('No groupName');
         }
 
-        // TODO: show file selector
-        // throw makeError(Errors.userRejected);
-
         const groupNames = payload.groupName
             .split('/')
             .map((g) => g.trim())
@@ -443,14 +440,35 @@ const ProtocolHandlers = {
             throw new Error('Empty group path');
         }
 
+        const files = getAvailableFiles(request);
+
+        for (const file of files) {
+            for (const rootGroup of file.groups) {
+                let foundGroup = rootGroup;
+                const pendingGroups = [...groupNames];
+                while (pendingGroups.length && foundGroup) {
+                    const title = pendingGroups.shift();
+                    foundGroup = foundGroup.items.find((g) => g.title === title);
+                }
+                if (foundGroup) {
+                    return encryptResponse(request, {
+                        success: 'true',
+                        version: getVersion(request),
+                        name: foundGroup.title,
+                        uuid: kdbxweb.ByteUtils.bytesToHex(foundGroup.group.uuid.bytes)
+                    });
+                }
+            }
+        }
+
         // TODO: create a new group
         throw new Error('Not implemented');
 
         // return encryptResponse(request, {
         //     success: 'true',
         //     version: getVersion(request),
-        //     name: groupNames[groupNames.length - 1],
-        //     uuid: kdbxweb.ByteUtils.bytesToHex(appModel.files[0].groups[0].group.uuid.bytes)
+        //     name: newGroup.title,
+        //     uuid: kdbxweb.ByteUtils.bytesToHex(newGroup.group.uuid.bytes)
         // });
     }
 };
@@ -510,6 +528,9 @@ const ProtocolImpl = {
             }
             return await handler(request, connectionInfo);
         } catch (e) {
+            if (!e.code) {
+                logger.error(`Error in handler ${request.action}`, e);
+            }
             return this.errorToResponse(e, request);
         }
     },
