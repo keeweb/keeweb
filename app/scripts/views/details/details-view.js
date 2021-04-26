@@ -30,7 +30,6 @@ import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
 import { Launcher } from 'comp/launcher';
-import { ExtraUrlFieldName } from '../../models/entry-model';
 
 class DetailsView extends View {
     parent = '.app__details';
