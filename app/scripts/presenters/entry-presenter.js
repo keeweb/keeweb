@@ -17,6 +17,10 @@ EntryPresenter.prototype = {
         }
         return this;
     },
+    reset() {
+        this.entry = null;
+        this.group = null;
+    },
     get id() {
         return this.entry ? this.entry.id : this.group.id;
     },

@@ -112,6 +112,7 @@ class ListView extends View {
             presenter.present(this.items[0]);
             const itemTemplate = this.getItemTemplate();
             const itemsHtml = itemTemplate(presenter, DefaultTemplateOptions);
+            presenter.reset();
 
             const html = itemsTemplate(
                 { itemsHtml, columns: this.tableColumns },
@@ -186,6 +187,7 @@ class ListView extends View {
             itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
             renderedIndices.push(ix);
         }
+        presenter.reset();
 
         const tempEl = document.createElement('div');
         tempEl.innerHTML = itemsHtml;
@@ -221,6 +223,7 @@ class ListView extends View {
 
         this.presenter.present(item);
         const itemHtml = itemTemplate(this.presenter, DefaultTemplateOptions);
+        this.presenter.reset();
 
         const tempEl = document.createElement('div');
         tempEl.innerHTML = itemHtml;
