@@ -471,6 +471,12 @@ class AppModel {
         return GroupModel.newGroup(sel.group, sel.file);
     }
 
+    createNewGroupWithName(group, file, name) {
+        const newGroup = GroupModel.newGroup(group, file);
+        newGroup.setName(name);
+        return newGroup;
+    }
+
     createNewTemplateEntry() {
         const file = this.getFirstSelectedGroupForCreation().file;
         const group = file.getEntryTemplatesGroup() || file.createEntryTemplatesGroup();

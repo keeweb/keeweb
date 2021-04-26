@@ -9,6 +9,7 @@ import { Locale } from 'util/locale';
 import { RuntimeInfo } from 'const/runtime-info';
 import { KnownAppVersions } from 'const/known-app-versions';
 import { ExtensionConnectView } from 'views/extension/extension-connect-view';
+import { ExtensionCreateGroupView } from 'views/extension/extension-create-group-view';
 import { RuntimeDataModel } from 'models/runtime-data-model';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Timeouts } from 'const/timeouts';
@@ -146,7 +147,6 @@ async function checkContentRequestPermissions(request) {
                     Timeouts.KeeWebConnectRequest
                 );
             } catch {
-                Launcher?.hideApp();
                 throw makeError(Errors.noOpenFiles);
             }
         } else {
@@ -159,57 +159,68 @@ async function checkContentRequestPermissions(request) {
         return;
     }
 
-    return new Promise((resolve, reject) => {
-        if (Alerts.alertDisplayed) {
-            return reject(new Error(Locale.extensionErrorAlertDisplayed));
+    if (Alerts.alertDisplayed) {
+        throw new Error(Locale.extensionErrorAlertDisplayed);
+    }
+
+    focusKeeWeb();
+
+    const config = RuntimeDataModel.extensionConnectConfig;
+    const files = appModel.files.map((f) => ({
+        id: f.id,
+        name: f.name,
+        checked: !config || config.allFiles || config.files.includes(f.id)
+    }));
+    if (!files.some((f) => f.checked)) {
+        for (const f of files) {
+            f.checked = true;
         }
+    }
 
-        focusKeeWeb();
+    const extensionName = client.connection.appName
+        ? `${client.connection.extensionName} (${client.connection.appName})`
+        : client.connection.extensionName;
 
-        const config = RuntimeDataModel.extensionConnectConfig;
-        const files = appModel.files.map((f) => ({
-            id: f.id,
-            name: f.name,
-            checked: !config || config.allFiles || config.files.includes(f.id)
-        }));
-        if (!files.some((f) => f.checked)) {
-            for (const f of files) {
-                f.checked = true;
-            }
-        }
+    const extensionConnectView = new ExtensionConnectView({
+        extensionName,
+        identityVerified: !Launcher,
+        files,
+        allFiles: config?.allFiles ?? true,
+        askGet: config?.askGet || 'multiple'
+    });
 
-        const extensionName = client.connection.appName
-            ? `${client.connection.extensionName} (${client.connection.appName})`
-            : client.connection.extensionName;
-
-        const extensionConnectView = new ExtensionConnectView({
-            extensionName,
-            identityVerified: !Launcher,
-            files,
-            allFiles: config?.allFiles ?? true,
-            askGet: config?.askGet || 'multiple'
+    try {
+        await alertWithTimeout({
+            header: Locale.extensionConnectHeader,
+            icon: 'exchange-alt',
+            buttons: [Alerts.buttons.allow, Alerts.buttons.deny],
+            view: extensionConnectView,
+            wide: true,
+            opaque: true
         });
+    } catch (e) {
+        client.permissionsDenied = true;
+        Events.emit('browser-extension-sessions-changed');
+        throw e;
+    }
 
+    RuntimeDataModel.extensionConnectConfig = extensionConnectView.config;
+    client.permissions = extensionConnectView.config;
+    Events.emit('browser-extension-sessions-changed');
+}
+
+function alertWithTimeout(config) {
+    return new Promise((resolve, reject) => {
         let inactivityTimer = 0;
 
         const alert = Alerts.alert({
-            header: Locale.extensionConnectHeader,
-            icon: 'exchange-alt',
-            view: extensionConnectView,
-            wide: true,
-            opaque: true,
-            buttons: [Alerts.buttons.allow, Alerts.buttons.deny],
-            success: () => {
+            ...config,
+            success: (res) => {
                 clearTimeout(inactivityTimer);
-                RuntimeDataModel.extensionConnectConfig = extensionConnectView.config;
-                client.permissions = extensionConnectView.config;
-                Events.emit('browser-extension-sessions-changed');
-                resolve();
+                resolve(res);
             },
             cancel: () => {
-                client.permissionsDenied = true;
                 clearTimeout(inactivityTimer);
-                Events.emit('browser-extension-sessions-changed');
                 reject(makeError(Errors.userRejected));
             }
         });
@@ -217,9 +228,6 @@ async function checkContentRequestPermissions(request) {
         inactivityTimer = setTimeout(() => {
             alert.closeWithResult('');
         }, Timeouts.KeeWebConnectRequest);
-    }).catch((e) => {
-        Launcher?.hideApp();
-        throw e;
     });
 }
 
@@ -461,15 +469,39 @@ const ProtocolHandlers = {
             }
         }
 
-        // TODO: create a new group
-        throw new Error('Not implemented');
+        const createGroupView = new ExtensionCreateGroupView({
+            groupPath: groupNames.join(' / '),
+            files: files.map((f, ix) => ({ id: f.id, name: f.name, selected: ix === 0 }))
+        });
 
-        // return encryptResponse(request, {
-        //     success: 'true',
-        //     version: getVersion(request),
-        //     name: newGroup.title,
-        //     uuid: kdbxweb.ByteUtils.bytesToHex(newGroup.group.uuid.bytes)
-        // });
+        await alertWithTimeout({
+            header: Locale.extensionNewGroupHeader,
+            icon: 'folder',
+            buttons: [Alerts.buttons.allow, Alerts.buttons.deny],
+            view: createGroupView
+        });
+
+        const selectedFile = files.find((f) => f.id === createGroupView.selectedFile);
+
+        let newGroup = selectedFile.groups[0];
+        const pendingGroups = [...groupNames];
+
+        while (pendingGroups.length) {
+            const title = pendingGroups.shift();
+            const item = newGroup.items.find((g) => g.title === title);
+            if (item) {
+                newGroup = item;
+            } else {
+                newGroup = appModel.createNewGroupWithName(newGroup, selectedFile, title);
+            }
+        }
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request),
+            name: newGroup.title,
+            uuid: kdbxweb.ByteUtils.bytesToHex(newGroup.group.uuid.bytes)
+        });
     }
 };
 
@@ -521,18 +553,27 @@ const ProtocolImpl = {
     },
 
     async handleRequest(request, connectionInfo) {
+        const appWindowWasFocused = Launcher?.isAppFocused();
+
+        let result;
         try {
             const handler = ProtocolHandlers[request.action];
             if (!handler) {
                 throw new Error(`Handler not found: ${request.action}`);
             }
-            return await handler(request, connectionInfo);
+            result = await handler(request, connectionInfo);
         } catch (e) {
             if (!e.code) {
                 logger.error(`Error in handler ${request.action}`, e);
             }
-            return this.errorToResponse(e, request);
+            result = this.errorToResponse(e, request);
         }
+
+        if (!appWindowWasFocused && Launcher?.isAppFocused()) {
+            Launcher.hideApp();
+        }
+
+        return result;
     },
 
     get sessions() {
