@@ -30,6 +30,7 @@ import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
 import { Launcher } from 'comp/launcher';
+import { ExtraUrlFieldName } from '../../models/entry-model';
 
 class DetailsView extends View {
     parent = '.app__details';
@@ -616,7 +617,7 @@ class DetailsView extends View {
             this.entryUpdated(true);
             this.fieldViews.forEach(function (fieldView, ix) {
                 if (
-                    fieldView instanceof FieldViewCustom &&
+                    (fieldView instanceof FieldViewCustom || fieldView.model.isExtraUrl) &&
                     !fieldView.model.newField &&
                     !this.model.hasField(fieldView.model.title)
                 ) {

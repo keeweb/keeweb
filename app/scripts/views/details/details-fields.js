@@ -245,6 +245,7 @@ function createDetailsFields(detailsView) {
                         new FieldViewUrl({
                             name: '$' + field,
                             title: StringFormat.capFirst(Locale.website),
+                            isExtraUrl: true,
                             value() {
                                 return model.fields[field];
                             },
@@ -280,6 +281,7 @@ function createNewCustomField(newFieldTitle, newFieldOptions, model) {
                 name: '$' + newFieldTitle,
                 title: StringFormat.capFirst(Locale.website),
                 newField: newFieldTitle,
+                isExtraUrl: true,
                 value: () => model.fields[newFieldTitle]
             },
             newFieldOptions
