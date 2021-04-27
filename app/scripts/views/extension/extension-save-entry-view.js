@@ -5,8 +5,8 @@ class ExtensionSaveEntryView extends View {
     template = template;
 
     events = {
-        'change #extension-create-entry__auto': 'autoChanged',
-        'change #extension-create-entry__group': 'groupChanged'
+        'change #extension-save-entry__auto': 'autoChanged',
+        'change #extension-save-entry__group': 'groupChanged'
     };
 
     constructor(model) {

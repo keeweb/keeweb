@@ -275,7 +275,9 @@ function isKeePassXcBrowser(request) {
 function focusKeeWeb() {
     logger.debug('Focus KeeWeb');
     if (Launcher) {
-        Launcher.showMainWindow();
+        if (!Launcher.isAppFocused()) {
+            Launcher.showMainWindow();
+        }
     } else {
         sendEvent({ action: 'attention-required' });
     }
@@ -443,9 +445,7 @@ const ProtocolHandlers = {
         const payload = decryptRequest(request);
         await checkContentRequestPermissions(request);
 
-        if (payload.uuid || payload.groupUuid) {
-            throw new Error('Modirying entries is not supported');
-        }
+        focusKeeWeb();
 
         if (!payload.url) {
             throw new Error('Empty url');
@@ -457,7 +457,28 @@ const ProtocolHandlers = {
 
         let selectedGroup;
 
-        if (client.permissions.askSave === 'auto' && client.permissions.saveTo) {
+        let entryToUpdate;
+        if (payload.uuid) {
+            for (const file of files) {
+                const entryId = kdbxweb.ByteUtils.bytesToBase64(
+                    kdbxweb.ByteUtils.hexToBytes(payload.uuid)
+                );
+                const foundEntry = file.getEntry(file.subId(entryId));
+                if (foundEntry) {
+                    if (entryToUpdate) {
+                        throw new Error('Two entries with the same ID found');
+                    } else {
+                        entryToUpdate = foundEntry;
+                        selectedGroup = foundEntry.group;
+                    }
+                }
+            }
+            if (!entryToUpdate) {
+                throw new Error('Updated entry not found');
+            }
+        }
+
+        if (client.permissions.askSave === 'auto' && client.permissions.saveTo && !selectedGroup) {
             const file = files.find((f) => f.id === client.permissions.saveTo.fileId);
             selectedGroup = file?.getGroup(client.permissions.saveTo.groupId);
         }
@@ -509,6 +530,7 @@ const ProtocolHandlers = {
                 url: payload.url,
                 user: payload.login,
                 askSave: RuntimeDataModel.extensionSaveConfig?.askSave || 'always',
+                update: !!entryToUpdate,
                 allGroups
             });
 
@@ -520,33 +542,46 @@ const ProtocolHandlers = {
             });
 
             const config = { ...saveEntryView.config };
-            if (config.groupId) {
-                const file = files.find((f) => f.id === config.fileId);
-                selectedGroup = file.getGroup(config.groupId);
-            } else {
-                selectedGroup = appModel.createNewGroupWithName(
-                    files[0].groups[0],
-                    files[0],
-                    DefaultExtensionGroupName
-                );
-                selectedGroup.setIcon(ExtensionGroupIconId);
-                config.groupId = selectedGroup.id;
+            if (!entryToUpdate) {
+                if (config.groupId) {
+                    const file = files.find((f) => f.id === config.fileId);
+                    selectedGroup = file.getGroup(config.groupId);
+                } else {
+                    selectedGroup = appModel.createNewGroupWithName(
+                        files[0].groups[0],
+                        files[0],
+                        DefaultExtensionGroupName
+                    );
+                    selectedGroup.setIcon(ExtensionGroupIconId);
+                    config.groupId = selectedGroup.id;
+                }
+
+                RuntimeDataModel.extensionSaveConfig = config;
+                client.permissions.saveTo = { fileId: config.fileId, groupId: config.groupId };
             }
 
-            RuntimeDataModel.extensionSaveConfig = config;
-
             client.permissions.askSave = config.askSave;
-            client.permissions.saveTo = { fileId: config.fileId, groupId: config.groupId };
         }
 
-        appModel.createNewEntryWithFields(selectedGroup, {
+        const entryFields = {
             Title: url.hostname,
             UserName: payload.login,
             Password: kdbxweb.ProtectedValue.fromString(payload.password || ''),
             URL: payload.url
-        });
+        };
+
+        if (entryToUpdate) {
+            for (const [field, value] of Object.entries(entryFields)) {
+                if (value) {
+                    entryToUpdate.setField(field, value);
+                }
+            }
+        } else {
+            appModel.createNewEntryWithFields(selectedGroup, entryFields);
+        }
 
         client.stats.passwordsWritten++;
+
         Events.emit('browser-extension-sessions-changed');
         Events.emit('refresh');
 
