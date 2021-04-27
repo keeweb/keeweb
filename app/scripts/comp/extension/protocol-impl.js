@@ -29,6 +29,10 @@ const Errors = {
     userRejected: {
         message: Locale.extensionErrorUserRejected,
         code: '6'
+    },
+    noMatches: {
+        message: Locale.extensionErrorNoMatches,
+        code: '15'
     }
 };
 
@@ -394,10 +398,38 @@ const ProtocolHandlers = {
     },
 
     async 'get-logins'(request) {
-        decryptRequest(request);
+        const payload = decryptRequest(request);
         await checkContentRequestPermissions(request);
 
-        throw new Error('Not implemented');
+        if (!payload.url) {
+            throw new Error('Empty url');
+        }
+
+        // const files = getAvailableFiles(request);
+        const client = getClient(request);
+
+        // throw makeError(Errors.noMatches);
+
+        client.stats.passwordsRead++;
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request),
+            hash: KeeWebHash,
+            count: 1,
+            entries: [
+                {
+                    group: 'Group1',
+                    login: 'urls-user',
+                    name: 'URLS',
+                    password: 'urls-passs',
+                    skipAutoSubmit: 'false',
+                    stringFields: [],
+                    uuid: '7cfc6ceb56674f26bad6ff79d73a06f5'
+                }
+            ],
+            id: ''
+        });
     },
 
     async 'get-totp'(request) {
