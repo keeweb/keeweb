@@ -185,7 +185,7 @@ const BrowserExtensionConnector = {
     },
 
     sendEvent(data) {
-        if (!this.enabled) {
+        if (!this.isEnabled()) {
             return;
         }
         if (Launcher) {
