@@ -41,6 +41,7 @@ class AppModel {
     memoryPasswordStorage = {};
     fileUnlockPromise = null;
     hardwareDecryptInProgress = false;
+    mainWindowBlurTimer = null;
 
     constructor() {
         Events.on('refresh', this.refresh.bind(this));
@@ -52,6 +53,8 @@ class AppModel {
         Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
         Events.on('usb-devices-changed', this.usbDevicesChanged.bind(this));
         Events.on('main-window-blur', this.mainWindowBlur.bind(this));
+        Events.on('main-window-focus', this.mainWindowFocus.bind(this));
+        Events.on('main-window-will-close', this.mainWindowWillClose.bind(this));
         Events.on('hardware-decrypt-started', this.hardwareDecryptStarted.bind(this));
         Events.on('hardware-decrypt-finished', this.hardwareDecryptFinished.bind(this));
 
@@ -1481,8 +1484,23 @@ class AppModel {
 
     mainWindowBlur() {
         if (!this.hardwareDecryptInProgress) {
-            this.rejectPendingFileUnlockPromise('Main window blur');
+            this.mainWindowBlurTimer = setTimeout(() => {
+                // macOS emits focus-blur-focus event in a row when triggering auto-type from minimized state
+                delete this.mainWindowBlurTimer;
+                this.rejectPendingFileUnlockPromise('Main window blur');
+            }, Timeouts.AutoTypeWindowFocusAfterBlur);
         }
+    }
+
+    mainWindowFocus() {
+        if (this.mainWindowBlurTimer) {
+            clearTimeout(this.mainWindowBlurTimer);
+            this.mainWindowBlurTimer = null;
+        }
+    }
+
+    mainWindowWillClose() {
+        this.rejectPendingFileUnlockPromise('Main window will close');
     }
 
     hardwareDecryptStarted() {
