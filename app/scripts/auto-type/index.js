@@ -27,6 +27,7 @@ const AutoType = {
             return;
         }
         Events.on('auto-type', (e) => this.handleEvent(e));
+        Events.on('main-window-blur', (e) => this.mainWindowBlur(e));
     },
 
     handleEvent(e) {
@@ -54,6 +55,12 @@ const AutoType = {
                 });
             }
             this.selectEntryAndRun();
+        }
+    },
+
+    mainWindowBlur() {
+        if (this.selectEntryView) {
+            this.selectEntryView.emit('result', undefined);
         }
     },
 
