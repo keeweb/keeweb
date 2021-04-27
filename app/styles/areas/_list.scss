@@ -133,6 +133,8 @@
             flex-grow: 1;
             flex-shrink: 0;
             flex-basis: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
             &:first-child {
                 text-align: center;
                 padding: 0;
