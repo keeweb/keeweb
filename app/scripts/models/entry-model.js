@@ -676,6 +676,14 @@ class EntryModel extends Model {
         file.setModified();
         return model;
     }
+
+    static newEntryWithFields(group, fields) {
+        const entry = EntryModel.newEntry(group, group.file);
+        for (const [field, value] of Object.entries(fields)) {
+            entry.setField(field, value);
+        }
+        return entry;
+    }
 }
 
 EntryModel.defineModelProperties({}, { extensions: true });

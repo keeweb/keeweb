@@ -10,12 +10,16 @@ import { RuntimeInfo } from 'const/runtime-info';
 import { KnownAppVersions } from 'const/known-app-versions';
 import { ExtensionConnectView } from 'views/extension/extension-connect-view';
 import { ExtensionCreateGroupView } from 'views/extension/extension-create-group-view';
+import { ExtensionSaveEntryView } from 'views/extension/extension-save-entry-view';
 import { RuntimeDataModel } from 'models/runtime-data-model';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Timeouts } from 'const/timeouts';
 
 const KeeWebAssociationId = 'KeeWeb';
 const KeeWebHash = '398d9c782ec76ae9e9877c2321cbda2b31fc6d18ccf0fed5ca4bd746bab4d64a'; // sha256('KeeWeb')
+const ExtensionGroupIconId = 1;
+const DefaultExtensionGroupName = 'Browser';
+const ExtensionGroupNames = new Set(['KeePassXC-Browser Passwords', DefaultExtensionGroupName]);
 
 const Errors = {
     noOpenFiles: {
@@ -404,10 +408,123 @@ const ProtocolHandlers = {
     },
 
     async 'set-login'(request) {
-        decryptRequest(request);
+        const payload = decryptRequest(request);
         await checkContentRequestPermissions(request);
 
-        throw new Error('Not implemented');
+        if (payload.uuid || payload.groupUuid) {
+            throw new Error('Modirying entries is not supported');
+        }
+
+        if (!payload.url) {
+            throw new Error('Empty url');
+        }
+        const url = new URL(payload.url);
+
+        const files = getAvailableFiles(request);
+        const client = getClient(request);
+
+        let selectedGroup;
+
+        if (client.permissions.askSave === 'auto' && client.permissions.saveTo) {
+            const file = files.find((f) => f.id === client.permissions.saveTo.fileId);
+            selectedGroup = file?.getGroup(client.permissions.saveTo.groupId);
+        }
+
+        if (client.permissions.askSave !== 'auto' || !selectedGroup) {
+            if (!selectedGroup && RuntimeDataModel.extensionSaveConfig) {
+                const file = files.find(
+                    (f) => f.id === RuntimeDataModel.extensionSaveConfig.fileId
+                );
+                selectedGroup = file?.getGroup(RuntimeDataModel.extensionSaveConfig.groupId);
+            }
+
+            const allGroups = [];
+            for (const file of files) {
+                file.forEachGroup((group) => {
+                    const spaces = [];
+                    for (let parent = group; parent.parentGroup; parent = parent.parentGroup) {
+                        spaces.push(' ', ' ');
+                    }
+
+                    if (
+                        !selectedGroup &&
+                        group.iconId === ExtensionGroupIconId &&
+                        ExtensionGroupNames.has(group.title)
+                    ) {
+                        selectedGroup = group;
+                    }
+
+                    allGroups.push({
+                        id: group.id,
+                        fileId: file.id,
+                        spaces,
+                        title: group.title,
+                        selected: group.id === selectedGroup?.id
+                    });
+                });
+            }
+            if (!selectedGroup) {
+                allGroups.splice(1, 0, {
+                    id: '',
+                    fileId: files[0].id,
+                    spaces: [' ', ' '],
+                    title: `${DefaultExtensionGroupName} (${Locale.extensionSaveEntryNewGroup})`,
+                    selected: true
+                });
+            }
+
+            const saveEntryView = new ExtensionSaveEntryView({
+                url: payload.url,
+                user: payload.login,
+                askSave: RuntimeDataModel.extensionSaveConfig?.askSave || 'always',
+                allGroups
+            });
+
+            await alertWithTimeout({
+                header: Locale.extensionSaveEntryHeader,
+                icon: 'plus',
+                buttons: [Alerts.buttons.allow, Alerts.buttons.deny],
+                view: saveEntryView
+            });
+
+            const config = { ...saveEntryView.config };
+            if (config.groupId) {
+                const file = files.find((f) => f.id === config.fileId);
+                selectedGroup = file.getGroup(config.groupId);
+            } else {
+                selectedGroup = appModel.createNewGroupWithName(
+                    files[0].groups[0],
+                    files[0],
+                    DefaultExtensionGroupName
+                );
+                selectedGroup.setIcon(ExtensionGroupIconId);
+                config.groupId = selectedGroup.id;
+            }
+
+            RuntimeDataModel.extensionSaveConfig = config;
+
+            client.permissions.askSave = config.askSave;
+            client.permissions.saveTo = { fileId: config.fileId, groupId: config.groupId };
+        }
+
+        appModel.createNewEntryWithFields(selectedGroup, {
+            Title: url.hostname,
+            UserName: payload.login,
+            Password: kdbxweb.ProtectedValue.fromString(payload.password || ''),
+            URL: payload.url
+        });
+
+        client.stats.passwordsWritten++;
+        Events.emit('browser-extension-sessions-changed');
+        Events.emit('refresh');
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request),
+            count: null,
+            entries: null,
+            hash: KeeWebHash
+        });
     },
 
     async 'get-database-groups'(request) {
@@ -487,7 +604,7 @@ const ProtocolHandlers = {
 
         await alertWithTimeout({
             header: Locale.extensionNewGroupHeader,
-            icon: 'folder',
+            icon: 'folder-plus',
             buttons: [Alerts.buttons.allow, Alerts.buttons.deny],
             view: createGroupView
         });
@@ -573,6 +690,9 @@ const ProtocolImpl = {
                 throw new Error(`Handler not found: ${request.action}`);
             }
             result = await handler(request, connectionInfo);
+            if (!result) {
+                throw new Error(`Handler returned an empty result: ${request.action}`);
+            }
         } catch (e) {
             if (!e.code) {
                 logger.error(`Error in handler ${request.action}`, e);

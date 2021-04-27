@@ -789,8 +789,12 @@
     "extensionConnectAskSaveAuto": "when it's not possible to save automatically",
     "extensionConnectSettingsAreForSession": "Settings you select here are valid only for the active session. You can view and manage sessions in KeeWeb settings.",
     "extensionUnlockMessage": "Unlock to connect a browser extension",
-    "extensionNewGroupHeader": "Create a new group?",
+    "extensionNewGroupHeader": "New group",
     "extensionNewGroupBody": "A browser extension is trying to create a new group. Allow this?",
     "extensionNewGroupPath": "Group path",
-    "extensionNewGroupFile": "This group will be created in:"
+    "extensionNewGroupFile": "This group will be created in:",
+    "extensionSaveEntryHeader": "Save password",
+    "extensionSaveEntryBody": "A browser extension is trying to save a password. Allow this?",
+    "extensionSaveEntryAuto": "Save other passwords automatically in this session",
+    "extensionSaveEntryNewGroup": "new group"
 }

@@ -1,0 +1,28 @@
+<div class="extension-create-entry">
+    <p>{{res 'extensionSaveEntryBody'}}</p>
+    <p>
+        <label for="extension-create-entry__url">{{Res 'website'}}:</label>
+        <span id="extension-create-entry__url">{{url}}</span>
+    </p>
+    <p>
+        <label for="extension-create-entry__user">{{Res 'user'}}:</label>
+        <span id="extension-create-entry__user">{{user}}</span>
+    </p>
+    <p>
+        <label for="extension-create-entry__group">{{Res 'group'}}:</label>
+        <select id="extension-create-entry__group" class="input-base">
+            {{#each allGroups as |group|}}
+                <option value="{{group.id}}" data-file="{{group.fileId}}"
+                        {{#if group.selected}}selected{{/if}}
+                >
+                    {{#if spaces}}{{#each spaces}}&nbsp;{{/each}}{{/if}}
+                    {{group.title}}
+                </option>
+            {{/each}}
+        </select>
+    </p>
+    <p>
+        <input type="checkbox" id="extension-create-entry__auto" {{#ifeq askSave 'auto'}}checked{{/ifeq}} />
+        <label for="extension-create-entry__auto">{{res 'extensionSaveEntryAuto'}}</label>
+    </p>
+</div>

@@ -450,7 +450,7 @@ class AppModel {
 
     createNewEntry(args) {
         const sel = this.getFirstSelectedGroupForCreation();
-        if (args && args.template) {
+        if (args?.template) {
             if (sel.file !== args.template.file) {
                 sel.file = args.template.file;
                 sel.group = args.template.file.groups[0];
@@ -464,6 +464,10 @@ class AppModel {
                 tag: this.filter.tag
             });
         }
+    }
+
+    createNewEntryWithFields(group, fields) {
+        return EntryModel.newEntryWithFields(group, fields);
     }
 
     createNewGroup() {
