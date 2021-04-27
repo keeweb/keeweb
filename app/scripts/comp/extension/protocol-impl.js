@@ -188,12 +188,8 @@ async function checkContentRequestPermissions(request) {
         }
     }
 
-    const extensionName = client.connection.appName
-        ? `${client.connection.extensionName} (${client.connection.appName})`
-        : client.connection.extensionName;
-
     const extensionConnectView = new ExtensionConnectView({
-        extensionName,
+        extensionName: getHumanReadableExtensionName(client),
         identityVerified: !Launcher,
         files,
         allFiles: config?.allFiles ?? true,
@@ -270,6 +266,12 @@ function isKeeWebConnect(request) {
 
 function isKeePassXcBrowser(request) {
     return getClient(request).connection.extensionName === 'KeePassXC-Browser';
+}
+
+function getHumanReadableExtensionName(client) {
+    return client.connection.appName
+        ? `${client.connection.extensionName} (${client.connection.appName})`
+        : client.connection.extensionName;
 }
 
 function focusKeeWeb() {
@@ -527,6 +529,7 @@ const ProtocolHandlers = {
             }
 
             const saveEntryView = new ExtensionSaveEntryView({
+                extensionName: getHumanReadableExtensionName(client),
                 url: payload.url,
                 user: payload.login,
                 askSave: RuntimeDataModel.extensionSaveConfig?.askSave || 'always',
@@ -664,7 +667,9 @@ const ProtocolHandlers = {
             }
         }
 
+        const client = getClient(request);
         const createGroupView = new ExtensionCreateGroupView({
+            extensionName: getHumanReadableExtensionName(client),
             groupPath: groupNames.join(' / '),
             files: files.map((f, ix) => ({ id: f.id, name: f.name, selected: ix === 0 }))
         });
