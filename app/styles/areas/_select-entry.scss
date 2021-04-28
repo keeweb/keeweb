@@ -27,19 +27,6 @@
             white-space: nowrap;
             padding-right: $base-padding-h;
         }
-        &-filter {
-            flex: auto 0;
-            position: relative;
-        }
-        &-filter-input {
-            width: 200px;
-        }
-        &-filter-clear {
-            cursor: pointer;
-            position: absolute;
-            right: 0.7em;
-            top: 0.5em;
-        }
     }
     &__message {
         display: flex;
@@ -128,5 +115,33 @@
     }
     &__empty-title {
         align-self: center;
+    }
+    &__filters {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+    &__filter {
+        display: flex;
+        margin-bottom: $small-spacing;
+        margin-right: $small-spacing;
+        border-radius: var(--button-border-radius);
+        background-color: var(--unselected-background-color);
+        cursor: pointer;
+        &:hover {
+            background-color: var(--unselected-background-color-hover);
+        }
+        &-text,
+        &-icon {
+            padding: $base-padding;
+        }
+        &-check {
+            font-size: 1.2em;
+            padding: 0.35em 0 0 $base-padding-h;
+        }
+        &-text {
+            padding-left: 0;
+        }
     }
 }

@@ -16,17 +16,24 @@
             {{else}}
                 <div class="select-entry__hint-text"><span class="shortcut">{{keyEnter}}</span>: {{res 'selectEntryEnterHint'}}</div>
                 <div class="select-entry__hint-text"><span class="shortcut">{{keyEsc}}</span>: {{res 'selectEntryEscHint'}}</div>
+                <div class="select-entry__hint-text">{{res 'selectEntryTypingHint'}}</div>
             {{/if}}
         </div>
-        {{#if filterText}}
-            <div class="select-entry__header-filter" id="select-entry__header-filter">
-                <input type="text" readonly value="{{filterText}}" class="select-entry__header-filter-input" />
-                <i class="select-entry__header-filter-clear fa fa-times"></i>
-            </div>
-        {{/if}}
     </div>
     <div class="select-entry__message">
         <div class="select-entry__message-text">{{topMessage}}</div>
+    </div>
+    <div class="select-entry__filters">
+        {{#each filters as |filter|}}
+            <div class="select-entry__filter {{#if filter.active}}select-entry__filter--active{{/if}}"
+                 data-filter="{{filter.id}}"
+                 data-active="{{filter.active}}"
+            >
+                <i class="fa {{#if filter.active}}fa-check-square-o{{else}}fa-square-o{{/if}} select-entry__filter-check"></i>
+                <i class="fa fa-filter select-entry__filter-icon"></i>
+                <div class="select-entry__filter-text">{{filter.type}}{{#if filter.text}}: {{/if}}{{filter.text}}</div>
+            </div>
+        {{/each}}
     </div>
     <div class="select-entry__items">
         <div class="scroller">

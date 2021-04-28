@@ -6,6 +6,7 @@ import { Keys } from 'const/keys';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { EntryPresenter } from 'presenters/entry-presenter';
 import { StringFormat } from 'util/formatting/string-format';
+import { UrlFormat } from 'util/formatting/url-format';
 import { Locale } from 'util/locale';
 import { Scrollable } from 'framework/views/scrollable';
 import { DropdownView } from 'views/dropdown-view';
@@ -23,7 +24,8 @@ class SelectEntryView extends View {
     events = {
         'click .select-entry__header-filter-clear': 'clearFilterText',
         'click .select-entry__item': 'itemClicked',
-        'contextmenu .select-entry__item': 'itemRightClicked'
+        'contextmenu .select-entry__item': 'itemRightClicked',
+        'click .select-entry__filter': 'filterClicked'
     };
 
     result = null;
@@ -73,10 +75,13 @@ class SelectEntryView extends View {
 
     render() {
         const noColor = AppSettingsModel.colorfulIcons ? '' : 'grayscale';
-        this.entries = this.model.filter.getEntries();
-        this.result = this.entries[0];
 
-        const presenter = new EntryPresenter(null, noColor, this.result && this.result.id);
+        this.entries = this.model.filter.getEntries();
+        if (!this.result || !this.entries.includes(this.result)) {
+            this.result = this.entries[0];
+        }
+
+        const presenter = new EntryPresenter(null, noColor, this.result?.id);
         presenter.itemOptions = this.model.itemOptions;
 
         let itemsHtml = '';
@@ -86,10 +91,43 @@ class SelectEntryView extends View {
             itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
         });
 
+        const filters = [];
+        if (this.model.filter.url) {
+            const shortUrl = UrlFormat.presentAsShortUrl(this.model.filter.url);
+            filters.push({
+                id: 'url',
+                type: StringFormat.capFirst(Locale.website),
+                text: shortUrl,
+                active: this.model.filter.useUrl
+            });
+
+            filters.push({
+                id: 'subdomains',
+                type: StringFormat.capFirst(Locale.selectEntrySubdomains),
+                active: this.model.filter.useUrl && this.model.filter.subdomains
+            });
+        }
+        if (this.model.filter.title) {
+            filters.push({
+                id: 'title',
+                type: StringFormat.capFirst(Locale.title),
+                text: this.model.filter.title,
+                active: this.model.filter.useTitle
+            });
+        }
+        if (this.model.filter.text) {
+            filters.push({
+                id: 'text',
+                type: StringFormat.capFirst(Locale.selectEntryContains),
+                text: this.model.filter.text,
+                active: true
+            });
+        }
+
         super.render({
             isAutoType: this.model.isAutoType,
-            filterText: this.model.filter.text,
             topMessage: this.model.topMessage,
+            filters,
             itemsHtml,
             actionSymbol: Shortcuts.actionShortcutSymbol(true),
             altSymbol: Shortcuts.altShortcutSymbol(true),
@@ -192,18 +230,10 @@ class SelectEntryView extends View {
 
     backSpacePressed() {
         if (this.model.filter.text) {
-            const input = this.el.querySelector('.select-entry__header-filter-input');
-            if (input.selectionStart < input.selectionEnd) {
-                this.model.filter.text =
-                    this.model.filter.text.substr(0, input.selectionStart) +
-                    this.model.filter.text.substr(input.selectionEnd);
-                input.selectionStart = input.selectionEnd = 0;
-            } else {
-                this.model.filter.text = this.model.filter.text.substr(
-                    0,
-                    this.model.filter.text.length - 1
-                );
-            }
+            this.model.filter.text = this.model.filter.text.substr(
+                0,
+                this.model.filter.text.length - 1
+            );
             this.render();
         }
     }
@@ -335,6 +365,34 @@ class SelectEntryView extends View {
                 resolve(result);
             });
         });
+    }
+
+    filterClicked(e) {
+        const filterEl = e.target.closest('.select-entry__filter');
+        const filter = filterEl.dataset.filter;
+        const active = filterEl.dataset.active !== 'true';
+
+        switch (filter) {
+            case 'url':
+                this.model.filter.useUrl = active;
+                break;
+            case 'subdomains':
+                this.model.filter.subdomains = active;
+                if (active) {
+                    this.model.filter.useUrl = true;
+                }
+                break;
+            case 'title':
+                this.model.filter.useTitle = active;
+                break;
+            case 'text':
+                if (!active) {
+                    this.model.filter.text = '';
+                }
+                break;
+        }
+
+        this.render();
     }
 }
 
