@@ -48,6 +48,7 @@ const DefaultAppSettings = {
     disableOfflineStorage: false, // don't cache loaded files in offline storage
     shortLivedStorageToken: false, // short-lived sessions in cloud storage providers
     extensionFocusIfLocked: true, // focus KeeWeb if a browser extension tries to connect while KeeWeb is locked
+    extensionFocusIfEmpty: true, // show the entry selection screen if there's no match found by URL
 
     yubiKeyShowIcon: true, // show an icon to open OTP codes from YubiKey
     yubiKeyAutoOpen: false, // auto-load one-time codes when there are open files

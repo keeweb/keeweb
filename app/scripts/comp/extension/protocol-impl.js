@@ -428,7 +428,11 @@ const ProtocolHandlers = {
 
             entries = filter.getEntries().length > 0;
             if (!entries.length) {
-                throw makeError(Errors.noMatches);
+                if (AppSettingsModel.extensionFocusIfEmpty) {
+                    filter.useUrl = false;
+                } else {
+                    throw makeError(Errors.noMatches);
+                }
             }
         }
 

@@ -73,6 +73,12 @@
                {{#if focusIfLocked}}checked{{/if}} />
         <label for="settings__browser-focus-if-locked">{{res 'setBrowserFocusIfLocked'}}</label>
     </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__browser-focus-if-empty"
+               id="settings__browser-focus-if-empty"
+               {{#if focusIfEmpty}}checked{{/if}} />
+        <label for="settings__browser-focus-if-empty">{{res 'setBrowserFocusIfEmpty'}}</label>
+    </div>
 
     <h2>{{res 'setBrowserSessions'}}</h2>
     {{#if sessions.length}}

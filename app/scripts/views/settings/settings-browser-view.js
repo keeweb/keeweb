@@ -20,6 +20,7 @@ class SettingsBrowserView extends View {
     events = {
         'change .check-enable-for-browser': 'changeEnableForBrowser',
         'change .settings__browser-focus-if-locked': 'changeFocusIfLocked',
+        'change .settings__browser-focus-if-empty': 'changeFocusIfEmpty',
         'change .settings__browser-session-ask-get': 'changeSessionAskGet',
         'change .settings__browser-session-ask-save': 'changeSessionAskSave',
         'change .settings__browser-session-file-check': 'changeSessionFileAccess',
@@ -37,6 +38,7 @@ class SettingsBrowserView extends View {
             desktop: Features.isDesktop,
             icon: Features.browserIcon,
             focusIfLocked: AppSettingsModel.extensionFocusIfLocked,
+            focusIfEmpty: AppSettingsModel.extensionFocusIfEmpty,
             sessions: BrowserExtensionConnector.sessions.map((session) => {
                 const fileAccess = this.getSessionFileAccess(session);
                 return {
@@ -154,6 +156,11 @@ class SettingsBrowserView extends View {
 
     changeFocusIfLocked(e) {
         AppSettingsModel.extensionFocusIfLocked = e.target.checked;
+        this.render();
+    }
+
+    changeFocusIfEmpty(e) {
+        AppSettingsModel.extensionFocusIfEmpty = e.target.checked;
         this.render();
     }
 

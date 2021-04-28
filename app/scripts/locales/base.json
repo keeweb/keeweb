@@ -652,6 +652,7 @@
     "setBrowserNotEnabled": "Browser integration is not enabled, extensions won't be able to connect to KeeWeb. Use the checkboxes below to enable it:",
     "setBrowserEnablePerBrowser": "Enable browser integration using the checkboxes below:",
     "setBrowserFocusIfLocked": "Open KeeWeb if a browser extension tries to connect while there's no open file",
+    "setBrowserFocusIfEmpty": "Show the entry selection screen if there's no match found by URL",
     "setBrowserOtherBrowsers": "Other browsers",
     "setBrowserExtensionFor": "for {}",
     "setBrowserExtensionNotSupported": "Not supported",
