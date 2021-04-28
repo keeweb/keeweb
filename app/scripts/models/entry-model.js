@@ -191,6 +191,7 @@ class EntryModel extends Model {
         }
         if (this.isJustCreated) {
             this.isJustCreated = false;
+            this.file.reload();
         }
         this.entry.times.update();
     }
