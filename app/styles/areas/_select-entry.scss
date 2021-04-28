@@ -144,4 +144,9 @@
             padding-left: 0;
         }
     }
+    &__buttons {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: $small-spacing;
+    }
 }

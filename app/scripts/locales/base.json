@@ -804,7 +804,6 @@
 
     "selectEntryHeader": "Select entry",
     "selectEntryEnterHint": "use the highlighted entry",
-    "selectEntryEscHint": "cancel",
     "selectEntryTypingHint": "Start typing to filter",
     "selectEntryContains": "Contains text",
     "selectEntrySubdomains": "Subdomains"

@@ -15,7 +15,6 @@
                 <div class="select-entry__hint-text"><span class="shortcut">{{shiftSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintShift'}}</div>
             {{else}}
                 <div class="select-entry__hint-text"><span class="shortcut">{{keyEnter}}</span>: {{res 'selectEntryEnterHint'}}</div>
-                <div class="select-entry__hint-text"><span class="shortcut">{{keyEsc}}</span>: {{res 'selectEntryEscHint'}}</div>
                 <div class="select-entry__hint-text">{{res 'selectEntryTypingHint'}}</div>
             {{/if}}
         </div>
@@ -44,5 +43,8 @@
             {{/if}}
         </div>
         <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
+    </div>
+    <div class="select-entry__buttons">
+        <button class="btn btn-error select-entry__cancel-btn">{{res 'alertCancel'}} ({{res 'keyEsc'}})</button>
     </div>
 </div>

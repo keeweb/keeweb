@@ -25,7 +25,8 @@ class SelectEntryView extends View {
         'click .select-entry__header-filter-clear': 'clearFilterText',
         'click .select-entry__item': 'itemClicked',
         'contextmenu .select-entry__item': 'itemRightClicked',
-        'click .select-entry__filter': 'filterClicked'
+        'click .select-entry__filter': 'filterClicked',
+        'click .select-entry__cancel-btn': 'cancelClicked'
     };
 
     result = null;
@@ -158,11 +159,7 @@ class SelectEntryView extends View {
     }
 
     escPressed() {
-        if (this.model.filter.text) {
-            this.clearFilterText();
-        } else {
-            this.cancelAndClose();
-        }
+        this.cancelAndClose();
     }
 
     enterPressed() {
@@ -393,6 +390,10 @@ class SelectEntryView extends View {
         }
 
         this.render();
+    }
+
+    cancelClicked() {
+        this.cancelAndClose();
     }
 }
 
