@@ -449,7 +449,7 @@ const ProtocolHandlers = {
 
             const inactivityTimer = setTimeout(() => {
                 selectEntryView.emit('result', undefined);
-            }, Timeouts.KeeWebConnectRequest / 10);
+            }, Timeouts.KeeWebConnectRequest);
 
             const result = await selectEntryView.showAndGetResult();
 
