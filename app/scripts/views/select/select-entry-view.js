@@ -10,6 +10,7 @@ import { UrlFormat } from 'util/formatting/url-format';
 import { Locale } from 'util/locale';
 import { Scrollable } from 'framework/views/scrollable';
 import { DropdownView } from 'views/dropdown-view';
+import { ExtraUrlFieldName } from 'models/entry-model';
 import template from 'templates/select/select-entry.hbs';
 import itemTemplate from 'templates/select/select-entry-item.hbs';
 
@@ -310,7 +311,7 @@ class SelectEntryView extends View {
         }
 
         for (const field of Object.keys(entry.fields)) {
-            if (field !== 'otp') {
+            if (field !== 'otp' && !field.startsWith(ExtraUrlFieldName)) {
                 options.push({
                     value: `{S:${field}}`,
                     icon: 'th-list',
