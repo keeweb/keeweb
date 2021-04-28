@@ -415,28 +415,31 @@ const ProtocolHandlers = {
         const client = getClient(request);
 
         const filter = new SelectEntryFilter({ url: payload.url }, appModel, files);
+        filter.subdomains = false;
+
         const entries = filter.getEntries();
         if (!entries.length) {
             throw makeError(Errors.noMatches);
         }
 
-        const topMessage = Locale.extensionSelectPasswordFor.replace(
-            '{}',
-            getHumanReadableExtensionName(client)
-        );
-        const selectEntryView = new SelectEntryView({
-            filter,
-            topMessage
-        });
+        let entry;
 
-        focusKeeWeb();
+        if (entries.length === 1 && client.permissions.askGet === 'multiple') {
+            entry = entries[0];
+        } else {
+            filter.subdomains = true;
+            const extName = getHumanReadableExtensionName(client);
+            const topMessage = Locale.extensionSelectPasswordFor.replace('{}', extName);
+            const selectEntryView = new SelectEntryView({ filter, topMessage });
 
-        const result = await selectEntryView.showAndGetResult();
-        if (!result?.entry) {
-            throw makeError(Errors.userRejected);
+            focusKeeWeb();
+
+            const result = await selectEntryView.showAndGetResult();
+            entry = result?.entry;
+            if (!entry) {
+                throw makeError(Errors.userRejected);
+            }
         }
-
-        const entry = result.entry;
 
         client.stats.passwordsRead++;
 
