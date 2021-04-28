@@ -447,7 +447,14 @@ const ProtocolHandlers = {
 
             focusKeeWeb();
 
+            const inactivityTimer = setTimeout(() => {
+                selectEntryView.emit('result', undefined);
+            }, Timeouts.KeeWebConnectRequest / 10);
+
             const result = await selectEntryView.showAndGetResult();
+
+            clearTimeout(inactivityTimer);
+
             entry = result?.entry;
             if (!entry) {
                 throw makeError(Errors.userRejected);
