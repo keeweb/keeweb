@@ -26,6 +26,8 @@ const ExtensionOrigins = {
     'safari-keeweb-connect': BrowserExtensionNames.KWC,
     'keeweb-connect@keeweb.info': BrowserExtensionNames.KWC,
     'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/': BrowserExtensionNames.KWC,
+    'chrome-extension://pikpfmjfkekaeinceagbebpfkmkdlcjk/': BrowserExtensionNames.KWC,
+    'chrome-extension://nmggpehkjmeaeocmaijenpejbepckinm/': BrowserExtensionNames.KWC,
     'keepassxc-browser@keepassxc.org': BrowserExtensionNames.KPXC,
     'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/': BrowserExtensionNames.KPXC,
     'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/': BrowserExtensionNames.KPXC

@@ -73,7 +73,9 @@ function createManifest(browser, extension) {
                     ? { 'allowed_extensions': ['keeweb-connect@keeweb.info'] }
                     : {
                           'allowed_origins': [
-                              'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/'
+                              'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/',
+                              'chrome-extension://pikpfmjfkekaeinceagbebpfkmkdlcjk/',
+                              'chrome-extension://nmggpehkjmeaeocmaijenpejbepckinm/'
                           ]
                       }),
                 description: 'KeeWeb native messaging host',
