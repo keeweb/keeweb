@@ -1,17 +1,28 @@
 <div class="select-entry">
     <div class="select-entry__header">
-        <h1 class="select-entry__header-text">{{res 'autoTypeHeader'}}</h1>
+        <h1 class="select-entry__header-text">
+            {{#if isAutoType}}
+                {{res 'autoTypeHeader'}}
+            {{else}}
+                {{res 'selectEntryHeader'}}
+            {{/if}}
+        </h1>
         <div class="select-entry__hint" id="select-entry__hint">
-            <div class="select-entry__hint-text"><span class="shortcut">{{keyEnter}}</span>: {{res 'autoTypeSelectionHint'}}</div>
-            <div class="select-entry__hint-text"><span class="shortcut">{{actionSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintAction'}}</div>
-            <div class="select-entry__hint-text"><span class="shortcut">{{altSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintOpt'}}</div>
-            <div class="select-entry__hint-text"><span class="shortcut">{{shiftSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintShift'}}</div>
+            {{#if isAutoType}}
+                <div class="select-entry__hint-text"><span class="shortcut">{{keyEnter}}</span>: {{res 'autoTypeSelectionHint'}}</div>
+                <div class="select-entry__hint-text"><span class="shortcut">{{actionSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintAction'}}</div>
+                <div class="select-entry__hint-text"><span class="shortcut">{{altSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintOpt'}}</div>
+                <div class="select-entry__hint-text"><span class="shortcut">{{shiftSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintShift'}}</div>
+            {{else}}
+                <div class="select-entry__hint-text"><span class="shortcut">{{keyEnter}}</span>: {{res 'selectEntryEnterHint'}}</div>
+                <div class="select-entry__hint-text"><span class="shortcut">{{keyEsc}}</span>: {{res 'selectEntryEscHint'}}</div>
+            {{/if}}
         </div>
         {{#if filterText}}
-        <div class="select-entry__header-filter" id="select-entry__header-filter">
-            <input type="text" readonly value="{{filterText}}" class="select-entry__header-filter-input" />
-            <i class="select-entry__header-filter-clear fa fa-times"></i>
-        </div>
+            <div class="select-entry__header-filter" id="select-entry__header-filter">
+                <input type="text" readonly value="{{filterText}}" class="select-entry__header-filter-input" />
+                <i class="select-entry__header-filter-clear fa fa-times"></i>
+            </div>
         {{/if}}
     </div>
     <div class="select-entry__message">

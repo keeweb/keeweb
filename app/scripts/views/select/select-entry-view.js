@@ -14,7 +14,7 @@ import itemTemplate from 'templates/select/select-entry-item.hbs';
 
 class SelectEntryView extends View {
     parent = 'body';
-    modal = 'auto-type';
+    modal = 'select-entry';
 
     template = template;
 
@@ -32,62 +32,74 @@ class SelectEntryView extends View {
     constructor(model) {
         super(model);
         this.initScroll();
-        this.listenTo(Events, 'keypress:auto-type', this.keyPressed);
+        this.listenTo(Events, 'main-window-blur', this.mainWindowBlur);
+        this.listenTo(Events, 'keypress:select-entry', this.keyPressed);
         this.setupKeys();
     }
 
     setupKeys() {
-        this.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, false, 'auto-type');
-        this.onKey(Keys.DOM_VK_RETURN, this.enterPressed, false, 'auto-type');
-        this.onKey(
-            Keys.DOM_VK_RETURN,
-            this.actionEnterPressed,
-            KeyHandler.SHORTCUT_ACTION,
-            'auto-type'
-        );
-        this.onKey(Keys.DOM_VK_RETURN, this.optEnterPressed, KeyHandler.SHORTCUT_OPT, 'auto-type');
-        this.onKey(
-            Keys.DOM_VK_RETURN,
-            this.shiftEnterPressed,
-            KeyHandler.SHORTCUT_SHIFT,
-            'auto-type'
-        );
-        this.onKey(Keys.DOM_VK_UP, this.upPressed, false, 'auto-type');
-        this.onKey(Keys.DOM_VK_DOWN, this.downPressed, false, 'auto-type');
-        this.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, false, 'auto-type');
-        this.onKey(Keys.DOM_VK_O, this.openKeyPressed, KeyHandler.SHORTCUT_ACTION, 'auto-type');
+        this.onKey(Keys.DOM_VK_ESCAPE, this.escPressed, false, 'select-entry');
+        this.onKey(Keys.DOM_VK_RETURN, this.enterPressed, false, 'select-entry');
+        if (this.model.isAutoType) {
+            this.onKey(
+                Keys.DOM_VK_RETURN,
+                this.actionEnterPressed,
+                KeyHandler.SHORTCUT_ACTION,
+                'select-entry'
+            );
+            this.onKey(
+                Keys.DOM_VK_RETURN,
+                this.optEnterPressed,
+                KeyHandler.SHORTCUT_OPT,
+                'select-entry'
+            );
+            this.onKey(
+                Keys.DOM_VK_RETURN,
+                this.shiftEnterPressed,
+                KeyHandler.SHORTCUT_SHIFT,
+                'select-entry'
+            );
+            this.onKey(
+                Keys.DOM_VK_O,
+                this.openKeyPressed,
+                KeyHandler.SHORTCUT_ACTION,
+                'select-entry'
+            );
+        }
+        this.onKey(Keys.DOM_VK_UP, this.upPressed, false, 'select-entry');
+        this.onKey(Keys.DOM_VK_DOWN, this.downPressed, false, 'select-entry');
+        this.onKey(Keys.DOM_VK_BACK_SPACE, this.backSpacePressed, false, 'select-entry');
     }
 
     render() {
-        let topMessage;
-        if (this.model.filter.title || this.model.filter.url) {
-            topMessage = Locale.autoTypeMsgMatchedByWindow.replace(
-                '{}',
-                this.model.filter.title || this.model.filter.url
-            );
-        } else {
-            topMessage = Locale.autoTypeMsgNoWindow;
-        }
         const noColor = AppSettingsModel.colorfulIcons ? '' : 'grayscale';
         this.entries = this.model.filter.getEntries();
         this.result = this.entries[0];
+
         const presenter = new EntryPresenter(null, noColor, this.result && this.result.id);
+        presenter.itemOptions = this.model.itemOptions;
+
         let itemsHtml = '';
         const itemTemplate = this.itemTemplate;
         this.entries.forEach((entry) => {
             presenter.present(entry);
             itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
         });
+
         super.render({
+            isAutoType: this.model.isAutoType,
             filterText: this.model.filter.text,
-            topMessage,
+            topMessage: this.model.topMessage,
             itemsHtml,
             actionSymbol: Shortcuts.actionShortcutSymbol(true),
             altSymbol: Shortcuts.altShortcutSymbol(true),
             shiftSymbol: Shortcuts.shiftShortcutSymbol(true),
-            keyEnter: Locale.keyEnter
+            keyEnter: Locale.keyEnter,
+            keyEsc: Locale.keyEsc
         });
+
         document.activeElement.blur();
+
         this.createScroll({
             root: this.$el.find('.select-entry__items')[0],
             scroller: this.$el.find('.scroller')[0],
@@ -167,6 +179,10 @@ class SelectEntryView extends View {
         }
     }
 
+    mainWindowBlur() {
+        this.emit('result', undefined);
+    }
+
     keyPressed(e) {
         if (e.which && e.which !== Keys.DOM_VK_RETURN) {
             this.model.filter.text += String.fromCharCode(e.which);
@@ -218,6 +234,9 @@ class SelectEntryView extends View {
     showItemOptions(itemEl, event) {
         if (event) {
             event.stopImmediatePropagation();
+        }
+        if (!this.model.itemOptions) {
+            return;
         }
 
         const id = itemEl.data('id');
@@ -306,6 +325,16 @@ class SelectEntryView extends View {
         this.hideItemOptionsDropdown();
         const sequence = e.item;
         this.closeWithResult(sequence);
+    }
+
+    showAndGetResult() {
+        this.render();
+        return new Promise((resolve) => {
+            this.once('result', (result) => {
+                this.remove();
+                resolve(result);
+            });
+        });
     }
 }
 

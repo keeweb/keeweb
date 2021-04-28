@@ -10,7 +10,9 @@
     <td>{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</td>
     <td>{{user}}</td>
     <td>{{url}}</td>
-    <td class="select-entry__item-options">
-        <i class="fa fa-ellipsis-h"></i>
-    </td>
+    {{#if itemOptions}}
+        <td class="select-entry__item-options">
+            <i class="fa fa-ellipsis-h"></i>
+        </td>
+    {{/if}}
 </tr>

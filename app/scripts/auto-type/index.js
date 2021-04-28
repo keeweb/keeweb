@@ -1,7 +1,7 @@
 import { Events } from 'framework/events';
-import { AutoTypeFilter } from 'auto-type/auto-type-filter';
 import { AutoTypeHelper } from 'auto-type/auto-type-helper';
 import { AutoTypeParser } from 'auto-type/auto-type-parser';
+import { SelectEntryFilter } from 'comp/app/select-entry-filter';
 import { Launcher } from 'comp/launcher';
 import { Features } from 'util/features';
 import { Alerts } from 'comp/ui/alerts';
@@ -27,7 +27,6 @@ const AutoType = {
             return;
         }
         Events.on('auto-type', (e) => this.handleEvent(e));
-        Events.on('main-window-blur', (e) => this.mainWindowBlur(e));
     },
 
     handleEvent(e) {
@@ -55,12 +54,6 @@ const AutoType = {
                 });
             }
             this.selectEntryAndRun();
-        }
-    },
-
-    mainWindowBlur() {
-        if (this.selectEntryView) {
-            this.selectEntryView.emit('result', undefined);
         }
     },
 
@@ -219,7 +212,14 @@ const AutoType = {
 
     selectEntryAndRun() {
         this.getActiveWindowInfo(async (e, windowInfo) => {
-            const filter = new AutoTypeFilter(windowInfo, AppModel.instance);
+            const filter = new SelectEntryFilter(
+                windowInfo,
+                AppModel.instance,
+                AppModel.instance.files,
+                {
+                    autoType: true
+                }
+            );
             const evt = { filter, windowInfo };
             if (!AppModel.instance.files.hasOpenFiles()) {
                 logger.debug('auto-type event delayed');
@@ -254,8 +254,18 @@ const AutoType = {
             return;
         }
         this.focusMainWindow();
-        evt.filter.ignoreWindowInfo = true;
-        this.selectEntryView = new SelectEntryView({ filter: evt.filter });
+
+        const humanReadableTarget = evt.filter.title || evt.filter.url;
+        const topMessage = humanReadableTarget
+            ? Locale.autoTypeMsgMatchedByWindow.replace('{}', humanReadableTarget)
+            : Locale.autoTypeMsgNoWindow;
+
+        this.selectEntryView = new SelectEntryView({
+            isAutoType: true,
+            itemOptions: true,
+            filter: evt.filter,
+            topMessage
+        });
         this.selectEntryView.on('result', (result) => {
             logger.debug('Entry selected', result);
             this.selectEntryView.off('result');
@@ -277,6 +287,7 @@ const AutoType = {
             try {
                 await AppModel.instance.unlockAnyFile('autoTypeUnlockMessage');
             } catch {
+                this.selectEntryView.emit('result', undefined);
                 return;
             }
             this.selectEntryView.show();

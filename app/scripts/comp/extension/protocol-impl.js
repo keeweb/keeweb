@@ -14,6 +14,8 @@ import { ExtensionSaveEntryView } from 'views/extension/extension-save-entry-vie
 import { RuntimeDataModel } from 'models/runtime-data-model';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Timeouts } from 'const/timeouts';
+import { SelectEntryView } from 'views/select/select-entry-view';
+import { SelectEntryFilter } from 'comp/app/select-entry-filter';
 
 const KeeWebAssociationId = 'KeeWeb';
 const KeeWebHash = '398d9c782ec76ae9e9877c2321cbda2b31fc6d18ccf0fed5ca4bd746bab4d64a'; // sha256('KeeWeb')
@@ -409,10 +411,30 @@ const ProtocolHandlers = {
             throw new Error('Empty url');
         }
 
-        // const files = getAvailableFiles(request);
+        const files = getAvailableFiles(request);
         const client = getClient(request);
 
-        // throw makeError(Errors.noMatches);
+        const filter = new SelectEntryFilter({ url: payload.url }, appModel, files);
+        const entries = filter.getEntries();
+        if (!entries.length) {
+            throw makeError(Errors.noMatches);
+        }
+
+        const topMessage = Locale.extensionSelectPasswordFor.replace(
+            '{}',
+            getHumanReadableExtensionName(client)
+        );
+        const selectEntryView = new SelectEntryView({
+            filter,
+            topMessage
+        });
+
+        const result = await selectEntryView.showAndGetResult();
+        if (!result?.entry) {
+            throw makeError(Errors.userRejected);
+        }
+
+        const entry = result.entry;
 
         client.stats.passwordsRead++;
 
@@ -423,13 +445,13 @@ const ProtocolHandlers = {
             count: 1,
             entries: [
                 {
-                    group: 'Group1',
-                    login: 'urls-user',
-                    name: 'URLS',
-                    password: 'urls-passs',
+                    group: entry.group.title,
+                    login: entry.user || '',
+                    name: entry.title || '',
+                    password: entry.password?.getText() || '',
                     skipAutoSubmit: 'false',
                     stringFields: [],
-                    uuid: '7cfc6ceb56674f26bad6ff79d73a06f5'
+                    uuid: kdbxweb.ByteUtils.bytesToHex(entry.entry.uuid.bytes)
                 }
             ],
             id: ''

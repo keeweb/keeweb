@@ -154,6 +154,7 @@
     "keyChangeMessageExpired": "Master key for this database is expired. Please enter a new key",
     "keyChangeRepeatPassword": "Password, once again",
     "keyEnter": "Enter",
+    "keyEsc": "Esc",
 
     "iconFavTitle": "Download and use website favicon",
     "iconSelCustom": "Select a custom icon",
@@ -797,5 +798,10 @@
     "extensionSaveEntryHeader": "Save password",
     "extensionSaveEntryBody": "{} is trying to save a password. Allow this?",
     "extensionSaveEntryAuto": "Save other passwords automatically in this session",
-    "extensionSaveEntryNewGroup": "new group"
+    "extensionSaveEntryNewGroup": "new group",
+    "extensionSelectPasswordFor": "Select a password for {}",
+
+    "selectEntryHeader": "Select entry",
+    "selectEntryEnterHint": "use the highlighted entry",
+    "selectEntryEscHint": "cancel"
 }

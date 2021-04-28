@@ -321,7 +321,7 @@ class AppModel {
     }
 
     getEntries() {
-        const entries = this.getEntriesByFilter(this.filter);
+        const entries = this.getEntriesByFilter(this.filter, this.files);
         entries.sortEntries(this.sort, this.filter);
         if (this.filter.trash) {
             this.addTrashGroups(entries);
@@ -329,15 +329,15 @@ class AppModel {
         return entries;
     }
 
-    getEntriesByFilter(filter) {
+    getEntriesByFilter(filter, files) {
         const preparedFilter = this.prepareFilter(filter);
         const entries = new SearchResultCollection();
 
-        const devicesToMatchOtpEntries = this.files.filter((file) => file.backend === 'otp-device');
+        const devicesToMatchOtpEntries = files.filter((file) => file.backend === 'otp-device');
 
         const matchedOtpEntrySet = this.settings.yubiKeyMatchEntries ? new Set() : undefined;
 
-        this.files
+        files
             .filter((file) => file.backend !== 'otp-device')
             .forEach((file) => {
                 file.forEachEntry(preparedFilter, (entry) => {
