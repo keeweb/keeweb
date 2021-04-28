@@ -417,17 +417,30 @@ const ProtocolHandlers = {
         const filter = new SelectEntryFilter({ url: payload.url }, appModel, files);
         filter.subdomains = false;
 
-        const entries = filter.getEntries();
+        let canReturnFirstEntry = false;
+
+        let entries = filter.getEntries();
+
+        filter.subdomains = true;
+
         if (!entries.length) {
-            throw makeError(Errors.noMatches);
+            canReturnFirstEntry = false;
+
+            entries = filter.getEntries().length > 0;
+            if (!entries.length) {
+                throw makeError(Errors.noMatches);
+            }
         }
 
         let entry;
 
-        if (entries.length === 1 && client.permissions.askGet === 'multiple') {
+        if (
+            canReturnFirstEntry &&
+            entries.length === 1 &&
+            client.permissions.askGet === 'multiple'
+        ) {
             entry = entries[0];
         } else {
-            filter.subdomains = true;
             const extName = getHumanReadableExtensionName(client);
             const topMessage = Locale.extensionSelectPasswordFor.replace('{}', extName);
             const selectEntryView = new SelectEntryView({ filter, topMessage });
