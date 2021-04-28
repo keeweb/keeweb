@@ -429,6 +429,8 @@ const ProtocolHandlers = {
             topMessage
         });
 
+        focusKeeWeb();
+
         const result = await selectEntryView.showAndGetResult();
         if (!result?.entry) {
             throw makeError(Errors.userRejected);
