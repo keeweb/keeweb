@@ -1,6 +1,8 @@
 Release notes
 -------------
 ##### v1.18.0 (TBD)
+`+` browser extension "KeeWeb Connect"  
+`+` support for KeePassXC-Browser
 `+` optimized memory consumption for large files  
 `+` option to use short-lived tokens in cloud storages  
 `+` opening XML and CSV files using the Open button  
@@ -12,6 +14,7 @@ Release notes
 `+` adding multiple websites to one entry  
 `-` fixed a crash after disabling USB devices on Linux  
 `+` tightened content security policy  
+`-` KeeWebHttp deprecated  
 
 ##### v1.17.6 (2021-04-09)
 `+` team drives support in Google Drive  
