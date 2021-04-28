@@ -1,4 +1,4 @@
-.at-select {
+.select-entry {
     @include position(absolute, 0 null null 0);
     @include size(100%);
     background-color: var(--background-color);
@@ -83,7 +83,7 @@
         overflow: hidden;
         border-collapse: collapse;
         table-layout: fixed;
-        tr.at-select__item {
+        tr.select-entry__item {
             border-right-width: 3px;
         }
         td,
@@ -120,7 +120,7 @@
             text-align: center;
             &:hover {
                 background: var(--background-color);
-                .at-select__item--active & {
+                .select-entry__item--active & {
                     background: var(--action-color);
                 }
             }

@@ -11,7 +11,7 @@ import { AppModel } from 'models/app-model';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
 import { Links } from 'const/links';
-import { AutoTypeSelectView } from 'views/auto-type/auto-type-select-view';
+import { SelectEntryView } from 'views/select/select-entry-view';
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = !!localStorage.debugAutoType;
@@ -255,7 +255,7 @@ const AutoType = {
         }
         this.focusMainWindow();
         evt.filter.ignoreWindowInfo = true;
-        this.selectEntryView = new AutoTypeSelectView({ filter: evt.filter });
+        this.selectEntryView = new SelectEntryView({ filter: evt.filter });
         this.selectEntryView.on('result', (result) => {
             logger.debug('Entry selected', result);
             this.selectEntryView.off('result');

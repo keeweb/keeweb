@@ -9,10 +9,10 @@ import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
 import { Scrollable } from 'framework/views/scrollable';
 import { DropdownView } from 'views/dropdown-view';
-import template from 'templates/auto-type/auto-type-select.hbs';
-import itemTemplate from 'templates/auto-type/auto-type-select-item.hbs';
+import template from 'templates/select/select-entry.hbs';
+import itemTemplate from 'templates/select/select-entry-item.hbs';
 
-class AutoTypeSelectView extends View {
+class SelectEntryView extends View {
     parent = 'body';
     modal = 'auto-type';
 
@@ -21,9 +21,9 @@ class AutoTypeSelectView extends View {
     itemTemplate = itemTemplate;
 
     events = {
-        'click .at-select__header-filter-clear': 'clearFilterText',
-        'click .at-select__item': 'itemClicked',
-        'contextmenu .at-select__item': 'itemRightClicked'
+        'click .select-entry__header-filter-clear': 'clearFilterText',
+        'click .select-entry__item': 'itemClicked',
+        'contextmenu .select-entry__item': 'itemRightClicked'
     };
 
     result = null;
@@ -89,7 +89,7 @@ class AutoTypeSelectView extends View {
         });
         document.activeElement.blur();
         this.createScroll({
-            root: this.$el.find('.at-select__items')[0],
+            root: this.$el.find('.select-entry__items')[0],
             scroller: this.$el.find('.scroller')[0],
             bar: this.$el.find('.scroller__bar')[0]
         });
@@ -132,7 +132,7 @@ class AutoTypeSelectView extends View {
     }
 
     shiftEnterPressed(e) {
-        const activeItem = this.$el.find('.at-select__item[data-id="' + this.result.id + '"]');
+        const activeItem = this.$el.find('.select-entry__item[data-id="' + this.result.id + '"]');
         this.showItemOptions(activeItem, e);
     }
 
@@ -155,9 +155,9 @@ class AutoTypeSelectView extends View {
     }
 
     highlightActive() {
-        this.$el.find('.at-select__item').removeClass('at-select__item--active');
-        const activeItem = this.$el.find('.at-select__item[data-id="' + this.result.id + '"]');
-        activeItem.addClass('at-select__item--active');
+        this.$el.find('.select-entry__item').removeClass('select-entry__item--active');
+        const activeItem = this.$el.find('.select-entry__item[data-id="' + this.result.id + '"]');
+        activeItem.addClass('select-entry__item--active');
         const itemRect = activeItem[0].getBoundingClientRect();
         const listRect = this.scroller[0].getBoundingClientRect();
         if (itemRect.top < listRect.top) {
@@ -176,7 +176,7 @@ class AutoTypeSelectView extends View {
 
     backSpacePressed() {
         if (this.model.filter.text) {
-            const input = this.el.querySelector('.at-select__header-filter-input');
+            const input = this.el.querySelector('.select-entry__header-filter-input');
             if (input.selectionStart < input.selectionEnd) {
                 this.model.filter.text =
                     this.model.filter.text.substr(0, input.selectionStart) +
@@ -198,8 +198,8 @@ class AutoTypeSelectView extends View {
     }
 
     itemClicked(e) {
-        const itemEl = $(e.target).closest('.at-select__item');
-        const optionsClicked = $(e.target).closest('.at-select__item-options').length;
+        const itemEl = $(e.target).closest('.select-entry__item');
+        const optionsClicked = $(e.target).closest('.select-entry__item-options').length;
 
         if (optionsClicked) {
             this.showItemOptions(itemEl, e);
@@ -211,7 +211,7 @@ class AutoTypeSelectView extends View {
     }
 
     itemRightClicked(e) {
-        const itemEl = $(e.target).closest('.at-select__item');
+        const itemEl = $(e.target).closest('.select-entry__item');
         this.showItemOptions(itemEl, e);
     }
 
@@ -231,7 +231,7 @@ class AutoTypeSelectView extends View {
         }
 
         this.result = entry;
-        if (!itemEl.hasClass('at-select__item--active')) {
+        if (!itemEl.hasClass('select-entry__item--active')) {
             this.highlightActive();
         }
 
@@ -309,6 +309,6 @@ class AutoTypeSelectView extends View {
     }
 }
 
-Object.assign(AutoTypeSelectView.prototype, Scrollable);
+Object.assign(SelectEntryView.prototype, Scrollable);
 
-export { AutoTypeSelectView };
+export { SelectEntryView };

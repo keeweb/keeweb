@@ -27,7 +27,6 @@ $fa-font-path: '~font-awesome/fonts';
 @import 'common/links';
 
 @import 'areas/app';
-@import 'areas/auto-type';
 @import 'areas/details';
 @import 'areas/extension';
 @import 'areas/footer';
@@ -39,6 +38,7 @@ $fa-font-path: '~font-awesome/fonts';
 @import 'areas/list';
 @import 'areas/menu';
 @import 'areas/open';
+@import 'areas/select-entry';
 @import 'areas/settings';
 @import 'areas/import-csv';
 @import 'areas/titlebar';

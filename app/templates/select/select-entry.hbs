@@ -1,0 +1,30 @@
+<div class="select-entry">
+    <div class="select-entry__header">
+        <h1 class="select-entry__header-text">{{res 'autoTypeHeader'}}</h1>
+        <div class="select-entry__hint" id="select-entry__hint">
+            <div class="select-entry__hint-text"><span class="shortcut">{{keyEnter}}</span>: {{res 'autoTypeSelectionHint'}}</div>
+            <div class="select-entry__hint-text"><span class="shortcut">{{actionSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintAction'}}</div>
+            <div class="select-entry__hint-text"><span class="shortcut">{{altSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintOpt'}}</div>
+            <div class="select-entry__hint-text"><span class="shortcut">{{shiftSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintShift'}}</div>
+        </div>
+        {{#if filterText}}
+        <div class="select-entry__header-filter" id="select-entry__header-filter">
+            <input type="text" readonly value="{{filterText}}" class="select-entry__header-filter-input" />
+            <i class="select-entry__header-filter-clear fa fa-times"></i>
+        </div>
+        {{/if}}
+    </div>
+    <div class="select-entry__message">
+        <div class="select-entry__message-text">{{topMessage}}</div>
+    </div>
+    <div class="select-entry__items">
+        <div class="scroller">
+            {{#if itemsHtml}}
+                <table class="select-entry__table">{{{itemsHtml}}}</table>
+            {{else}}
+                <h1 class="select-entry__empty-title muted-color">{{res 'autoTypeNoMatches'}}</h1>
+            {{/if}}
+        </div>
+        <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
+    </div>
+</div>
