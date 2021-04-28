@@ -240,7 +240,9 @@ const AutoType = {
     },
 
     focusMainWindow() {
-        setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
+        if (!Launcher.isAppFocused()) {
+            setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
+        }
     },
 
     processEventWithFilter(evt) {
@@ -270,9 +272,15 @@ const AutoType = {
             });
         });
         this.selectEntryView.render();
-        this.selectEntryView.on('show-open-files', () => {
+        this.selectEntryView.on('show-open-files', async () => {
             this.selectEntryView.hide();
-            Events.emit('open-file');
+            try {
+                await AppModel.instance.unlockAnyFile('autoTypeUnlockMessage');
+            } catch {
+                return;
+            }
+            this.selectEntryView.show();
+            this.selectEntryView.render();
         });
     }
 };
