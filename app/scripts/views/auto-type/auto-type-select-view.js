@@ -32,7 +32,6 @@ class AutoTypeSelectView extends View {
     constructor(model) {
         super(model);
         this.initScroll();
-        this.listenTo(Events, 'main-window-will-close', this.mainWindowWillClose);
         this.listenTo(Events, 'keypress:auto-type', this.keyPressed);
         this.setupKeys();
     }
@@ -214,10 +213,6 @@ class AutoTypeSelectView extends View {
     itemRightClicked(e) {
         const itemEl = $(e.target).closest('.at-select__item');
         this.showItemOptions(itemEl, e);
-    }
-
-    mainWindowWillClose(e) {
-        e.preventDefault();
     }
 
     showItemOptions(itemEl, event) {
