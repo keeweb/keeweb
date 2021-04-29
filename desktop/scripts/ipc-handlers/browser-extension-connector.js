@@ -5,6 +5,7 @@ const net = require('net');
 const { ipcMain, app } = require('electron');
 const { Logger } = require('../logger');
 const { getProcessInfo } = require('../util/process-utils');
+const { ExtensionIds } = require('../const/extension-ids');
 const browserExtensionInstaller = require('../util/browser-extension-installer');
 
 ipcMain.handle('browserExtensionConnectorStart', browserExtensionConnectorStart);
@@ -23,15 +24,18 @@ const BrowserExtensionNames = {
 
 const MaxIncomingDataLength = 10_000;
 const ExtensionOrigins = {
-    'safari-keeweb-connect': BrowserExtensionNames.KWC,
-    'keeweb-connect@keeweb.info': BrowserExtensionNames.KWC,
-    'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/': BrowserExtensionNames.KWC,
-    'chrome-extension://pikpfmjfkekaeinceagbebpfkmkdlcjk/': BrowserExtensionNames.KWC,
-    'chrome-extension://nmggpehkjmeaeocmaijenpejbepckinm/': BrowserExtensionNames.KWC,
-    'keepassxc-browser@keepassxc.org': BrowserExtensionNames.KPXC,
-    'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/': BrowserExtensionNames.KPXC,
-    'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/': BrowserExtensionNames.KPXC
+    [ExtensionIds.Origins.KeeWebConnectSafari]: BrowserExtensionNames.KWC,
+    [ExtensionIds.Origins.KeeWebConnectFirefox]: BrowserExtensionNames.KWC,
+    [ExtensionIds.Origins.KeeWebConnectChrome]: BrowserExtensionNames.KWC,
+    [ExtensionIds.Origins.KeeWebConnectEdge]: BrowserExtensionNames.KWC,
+    [ExtensionIds.Origins.KeePassXcBrowserFirefox]: BrowserExtensionNames.KPXC,
+    [ExtensionIds.Origins.KeePassXcBrowserChrome]: BrowserExtensionNames.KPXC,
+    [ExtensionIds.Origins.KeePassXcBrowserEdge]: BrowserExtensionNames.KPXC
 };
+
+for (const devExtId of process.env.KEEWEB_BROWSER_EXTENSION_IDS_CHROMIUM?.split(',') || []) {
+    ExtensionOrigins[`chrome-extension://${devExtId}/`] = BrowserExtensionNames.KWC;
+}
 
 const AppNames = {
     'msedge': 'Microsoft Edge',

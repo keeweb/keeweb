@@ -3,6 +3,7 @@ const path = require('path');
 const windowsRegistry = require('./windows-registry');
 const { isDev } = require('./app-info');
 const { app } = require('electron');
+const { ExtensionIds } = require('../const/extension-ids');
 
 function getManifestDir(browser) {
     const home = app.getPath('home');
@@ -67,29 +68,34 @@ function getManifestFileName(extension) {
 
 function createManifest(browser, extension) {
     switch (extension) {
-        case 'KWC':
+        case 'KWC': {
+            const devIdsChromium =
+                process.env.KEEWEB_BROWSER_EXTENSION_IDS_CHROMIUM?.split(',')?.map(
+                    (devExtId) => `chrome-extension://${devExtId}/`
+                ) || [];
             return {
                 ...(browser === 'Firefox'
-                    ? { 'allowed_extensions': ['keeweb-connect@keeweb.info'] }
+                    ? { 'allowed_extensions': [ExtensionIds.Origins.KeeWebConnectFirefox] }
                     : {
                           'allowed_origins': [
-                              'chrome-extension://aphablpbogbpmocgkpeeadeljldnphon/',
-                              'chrome-extension://pikpfmjfkekaeinceagbebpfkmkdlcjk/',
-                              'chrome-extension://nmggpehkjmeaeocmaijenpejbepckinm/'
+                              ExtensionIds.Origins.KeeWebConnectChrome,
+                              ExtensionIds.Origins.KeeWebConnectEdge,
+                              ...devIdsChromium
                           ]
                       }),
                 description: 'KeeWeb native messaging host',
                 name: 'net.antelle.keeweb.keeweb_connect',
                 type: 'stdio'
             };
+        }
         case 'KPXC':
             return {
                 ...(browser === 'Firefox'
-                    ? { 'allowed_extensions': ['keepassxc-browser@keepassxc.org'] }
+                    ? { 'allowed_extensions': [ExtensionIds.Origins.KeePassXcBrowserFirefox] }
                     : {
                           'allowed_origins': [
-                              'chrome-extension://pdffhmdngciaglkoonimfcmckehcpafo/',
-                              'chrome-extension://oboonakemofpalcgghocfoadofidjkkk/'
+                              ExtensionIds.Origins.KeePassXcBrowserChrome,
+                              ExtensionIds.Origins.KeePassXcBrowserEdge
                           ]
                       }),
                 description: 'Native messaging host created by KeeWeb',
