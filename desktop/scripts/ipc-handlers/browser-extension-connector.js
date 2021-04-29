@@ -292,7 +292,7 @@ async function processFirstMessageFromSocket(socket, message) {
     }
 
     const extensionName = ExtensionOrigins[message.origin] || 'unknown';
-    const isSafari = message.origin === 'safari-keeweb-connect';
+    const isSafari = message.origin === ExtensionIds.Origins.KeeWebConnectSafari;
     let appName;
 
     if (isSafari) {
