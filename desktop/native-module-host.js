@@ -175,8 +175,8 @@ function usbDeviceDetached(device) {
 
 function fillAttachedYubiKeys() {
     const usbDetection = reqNative('usb-detection');
-    usbDetection.find((err, devices) => {
-        if (!err && devices) {
+    usbDetection.find((ignoredError, devices) => {
+        if (devices) {
             attachedYubiKeys.push(...devices.filter(isYubiKey));
             reportYubiKeys();
         }
