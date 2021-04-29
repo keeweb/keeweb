@@ -653,6 +653,15 @@ class EntryModel extends Model {
         }
     }
 
+    getAllUrls() {
+        const urls = this.url ? [this.url] : [];
+        const extraUrls = Object.entries(this.fields)
+            .filter(([field]) => field.startsWith(ExtraUrlFieldName))
+            .map(([, value]) => (value.isProtected ? value.getText() : value))
+            .filter((value) => value);
+        return urls.concat(extraUrls);
+    }
+
     static fromEntry(entry, group, file) {
         const model = new EntryModel();
         model.setEntry(entry, group, file);

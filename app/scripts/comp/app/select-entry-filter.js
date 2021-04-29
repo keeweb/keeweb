@@ -21,7 +21,6 @@ class SelectEntryFilter {
             text: this.text,
             ...this.filterOptions
         };
-        this._prepareFilter();
         let entries = this.appModel
             .getEntriesByFilter(filter, this.files)
             .map((e) => [e, this._getEntryRank(e)]);
@@ -35,64 +34,54 @@ class SelectEntryFilter {
         return new SearchResultCollection(entries, { comparator: 'none' });
     }
 
-    _prepareFilter() {
-        this.titleLower = this.title ? this.title.toLowerCase() : null;
-        this.urlLower = this.url ? this.url.toLowerCase() : null;
-        this.urlParts = this.url ? urlPartsRegex.exec(this.urlLower) : null;
-    }
-
     _getEntryRank(entry) {
         let titleRank = 0;
         let urlRank = 0;
 
-        if (this.useTitle && this.titleLower && entry.title) {
-            titleRank = Ranking.getStringRank(entry.title.toLowerCase(), this.titleLower);
+        if (this.useTitle && this.title && entry.title) {
+            titleRank = Ranking.getStringRank(entry.title.toLowerCase(), this.title.toLowerCase());
             if (!titleRank) {
                 return 0;
             }
         }
 
-        if (this.useUrl && this.urlParts) {
-            if (entry.url) {
-                const entryUrlParts = urlPartsRegex.exec(entry.url.toLowerCase());
+        if (this.useUrl && this.url) {
+            const searchUrlLower = this.url.toLowerCase();
+            const searchUrlParts = urlPartsRegex.exec(searchUrlLower);
+
+            for (const url of entry.getAllUrls()) {
+                const entryUrlParts = urlPartsRegex.exec(url.toLowerCase());
                 if (entryUrlParts) {
                     const [, scheme, domain, path] = entryUrlParts;
-                    const [, thisScheme, thisDomain, thisPath] = this.urlParts;
+                    const [, searchScheme, searchDomain, searchPath] = searchUrlParts;
                     if (
-                        domain === thisDomain ||
-                        (this.subdomains && thisDomain.indexOf('.' + domain) > 0)
+                        domain === searchDomain ||
+                        (this.subdomains && searchDomain.indexOf('.' + domain) > 0)
                     ) {
-                        if (domain === thisDomain) {
+                        if (domain === searchDomain) {
                             urlRank += 20;
                         } else {
                             urlRank += 10;
                         }
-                        if (path === thisPath) {
+                        if (path === searchPath) {
                             urlRank += 10;
-                        } else if (path && thisPath) {
-                            if (path.lastIndexOf(thisPath, 0) === 0) {
+                        } else if (path && searchPath) {
+                            if (path.lastIndexOf(searchPath, 0) === 0) {
                                 urlRank += 5;
-                            } else if (thisPath.lastIndexOf(path, 0) === 0) {
+                            } else if (searchPath.lastIndexOf(path, 0) === 0) {
                                 urlRank += 3;
                             }
                         }
-                        if (scheme === thisScheme) {
+                        if (scheme === searchScheme) {
                             urlRank += 1;
-                        }
-                    } else {
-                        if (entry.searchText.indexOf(this.urlLower) >= 0) {
-                            // the url is in some field; include it
-                            urlRank += 5;
-                        } else {
-                            // another domain; don't show this record at all
                         }
                     }
                 }
-            } else {
-                if (entry.searchText.indexOf(this.urlLower) >= 0) {
-                    // the url is in some field; include it
-                    urlRank += 5;
-                }
+            }
+
+            if (entry.searchText.includes(searchUrlLower)) {
+                // the url is in some field; include it
+                urlRank += 5;
             }
         }
 

@@ -224,6 +224,8 @@ function alertWithTimeout(config) {
 
         const alert = Alerts.alert({
             ...config,
+            enter: 'yes',
+            esc: '',
             success: (res) => {
                 clearTimeout(inactivityTimer);
                 resolve(res);
@@ -426,7 +428,8 @@ const ProtocolHandlers = {
         if (!entries.length) {
             canReturnFirstEntry = false;
 
-            entries = filter.getEntries().length > 0;
+            entries = filter.getEntries();
+
             if (!entries.length) {
                 if (AppSettingsModel.extensionFocusIfEmpty) {
                     filter.useUrl = false;
