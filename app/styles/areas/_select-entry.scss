@@ -90,17 +90,17 @@
             overflow: hidden;
             text-overflow: ellipsis;
             word-wrap: break-word;
-            &:first-of-type {
+            &.select-entry__item-icon-cell {
                 width: 2em;
                 text-align: center;
             }
-            &:nth-of-type(3) {
+            &.select-entry__item-user-cell {
                 width: 25%;
             }
-            &:nth-of-type(4) {
+            &.select-entry__item-url-cell {
                 width: 25%;
             }
-            &:nth-of-type(5) {
+            &.select-entry__item-options {
                 width: 2em;
             }
         }

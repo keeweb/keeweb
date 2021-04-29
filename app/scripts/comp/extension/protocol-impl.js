@@ -290,7 +290,7 @@ function focusKeeWeb() {
     }
 }
 
-async function findEntry(request, filterOptions) {
+async function findEntry(request, returnIfOneMatch, filterOptions) {
     const payload = decryptRequest(request);
     await checkContentRequestPermissions(request);
 
@@ -316,7 +316,7 @@ async function findEntry(request, filterOptions) {
     let entry;
 
     if (entries.length) {
-        if (entries.length === 1 && client.permissions.askGet === 'multiple') {
+        if (entries.length === 1 && returnIfOneMatch && client.permissions.askGet === 'multiple') {
             entry = entries[0];
         }
     } else {
@@ -481,7 +481,7 @@ const ProtocolHandlers = {
     },
 
     async 'get-logins'(request) {
-        const entry = await findEntry(request);
+        const entry = await findEntry(request, true);
 
         return encryptResponse(request, {
             success: 'true',
@@ -504,7 +504,7 @@ const ProtocolHandlers = {
     },
 
     async 'get-totp-by-url'(request) {
-        const entry = await findEntry(request, { otp: true });
+        const entry = await findEntry(request, true, { otp: true });
 
         entry.initOtpGenerator();
 
@@ -545,6 +545,37 @@ const ProtocolHandlers = {
             success: 'true',
             version: getVersion(request),
             totp
+        });
+    },
+
+    async 'get-any-field'(request) {
+        const entry = await findEntry(request, false);
+
+        const selectEntryFieldView = new SelectEntryFieldView({
+            entry
+        });
+        const inactivityTimer = setTimeout(() => {
+            selectEntryFieldView.emit('result', undefined);
+        }, Timeouts.KeeWebConnectRequest);
+
+        const field = await selectEntryFieldView.showAndGetResult();
+
+        clearTimeout(inactivityTimer);
+
+        if (!field) {
+            throw makeError(Errors.userRejected);
+        }
+
+        let value = entry.fields[field];
+        if (value.isProtected) {
+            value = value.getText();
+        }
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request),
+            field,
+            value
         });
     },
 
