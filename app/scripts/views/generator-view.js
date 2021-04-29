@@ -175,10 +175,12 @@ class GeneratorView extends View {
     }
 
     btnOkClick() {
-        if (!CopyPaste.simpleCopy) {
-            CopyPaste.createHiddenInput(this.password);
+        if (this.model.copy) {
+            if (!CopyPaste.simpleCopy) {
+                CopyPaste.createHiddenInput(this.password);
+            }
+            CopyPaste.copy(this.password);
         }
-        CopyPaste.copy(this.password);
         this.emit('result', this.password);
         this.remove();
     }
