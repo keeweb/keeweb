@@ -566,7 +566,7 @@ const ProtocolHandlers = {
             throw makeError(Errors.userRejected);
         }
 
-        let value = entry.fields[field];
+        let value = entry.getAllFields()[field];
         if (value.isProtected) {
             value = value.getText();
         }
