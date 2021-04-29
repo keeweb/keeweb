@@ -35,6 +35,10 @@ class OtpDeviceEntryModel extends Model {
         return this.fields;
     }
 
+    getAllUrls() {
+        return [];
+    }
+
     getFieldValue(field) {
         return this.fields[field];
     }

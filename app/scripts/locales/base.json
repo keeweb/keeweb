@@ -806,5 +806,7 @@
     "selectEntryEnterHint": "use the highlighted entry",
     "selectEntryTypingHint": "Start typing to filter",
     "selectEntryContains": "Contains text",
-    "selectEntrySubdomains": "Subdomains"
+    "selectEntrySubdomains": "Subdomains",
+    "selectEntryFieldHeader": "Select field",
+    "selectEntryFieldTouch": "Press a button on your device to generate a one-time code."
 }

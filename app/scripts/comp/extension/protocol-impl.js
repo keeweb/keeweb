@@ -15,6 +15,7 @@ import { RuntimeDataModel } from 'models/runtime-data-model';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Timeouts } from 'const/timeouts';
 import { SelectEntryView } from 'views/select/select-entry-view';
+import { SelectEntryFieldView } from 'views/select/select-entry-field-view';
 import { SelectEntryFilter } from 'comp/app/select-entry-filter';
 
 const KeeWebAssociationId = 'KeeWeb';
@@ -289,6 +290,80 @@ function focusKeeWeb() {
     }
 }
 
+async function findEntry(request, filterOptions) {
+    const payload = decryptRequest(request);
+    await checkContentRequestPermissions(request);
+
+    if (!payload.url) {
+        throw new Error('Empty url');
+    }
+
+    const files = getAvailableFiles(request);
+    const client = getClient(request);
+
+    const filter = new SelectEntryFilter(
+        { url: payload.url, title: payload.title },
+        appModel,
+        files,
+        filterOptions
+    );
+    filter.subdomains = false;
+
+    let entries = filter.getEntries();
+
+    filter.subdomains = true;
+
+    let entry;
+
+    if (entries.length) {
+        if (entries.length === 1 && client.permissions.askGet === 'multiple') {
+            entry = entries[0];
+        }
+    } else {
+        entries = filter.getEntries();
+
+        if (!entries.length) {
+            if (AppSettingsModel.extensionFocusIfEmpty) {
+                filter.useUrl = false;
+                if (filter.title) {
+                    filter.useTitle = true;
+                    entries = filter.getEntries();
+                    if (!entries.length) {
+                        filter.useTitle = false;
+                    }
+                }
+            } else {
+                throw makeError(Errors.noMatches);
+            }
+        }
+    }
+
+    if (!entry) {
+        const extName = getHumanReadableExtensionName(client);
+        const topMessage = Locale.extensionSelectPasswordFor.replace('{}', extName);
+        const selectEntryView = new SelectEntryView({ filter, topMessage });
+
+        focusKeeWeb();
+
+        const inactivityTimer = setTimeout(() => {
+            selectEntryView.emit('result', undefined);
+        }, Timeouts.KeeWebConnectRequest);
+
+        const result = await selectEntryView.showAndGetResult();
+
+        clearTimeout(inactivityTimer);
+
+        entry = result?.entry;
+        if (!entry) {
+            throw makeError(Errors.userRejected);
+        }
+    }
+
+    client.stats.passwordsRead++;
+
+    return entry;
+}
+
 const ProtocolHandlers = {
     'ping'({ data }) {
         return { data };
@@ -406,69 +481,7 @@ const ProtocolHandlers = {
     },
 
     async 'get-logins'(request) {
-        const payload = decryptRequest(request);
-        await checkContentRequestPermissions(request);
-
-        if (!payload.url) {
-            throw new Error('Empty url');
-        }
-
-        const files = getAvailableFiles(request);
-        const client = getClient(request);
-
-        const filter = new SelectEntryFilter({ url: payload.url }, appModel, files);
-        filter.subdomains = false;
-
-        let canReturnFirstEntry = false;
-
-        let entries = filter.getEntries();
-
-        filter.subdomains = true;
-
-        if (!entries.length) {
-            canReturnFirstEntry = false;
-
-            entries = filter.getEntries();
-
-            if (!entries.length) {
-                if (AppSettingsModel.extensionFocusIfEmpty) {
-                    filter.useUrl = false;
-                } else {
-                    throw makeError(Errors.noMatches);
-                }
-            }
-        }
-
-        let entry;
-
-        if (
-            canReturnFirstEntry &&
-            entries.length === 1 &&
-            client.permissions.askGet === 'multiple'
-        ) {
-            entry = entries[0];
-        } else {
-            const extName = getHumanReadableExtensionName(client);
-            const topMessage = Locale.extensionSelectPasswordFor.replace('{}', extName);
-            const selectEntryView = new SelectEntryView({ filter, topMessage });
-
-            focusKeeWeb();
-
-            const inactivityTimer = setTimeout(() => {
-                selectEntryView.emit('result', undefined);
-            }, Timeouts.KeeWebConnectRequest);
-
-            const result = await selectEntryView.showAndGetResult();
-
-            clearTimeout(inactivityTimer);
-
-            entry = result?.entry;
-            if (!entry) {
-                throw makeError(Errors.userRejected);
-            }
-        }
-
-        client.stats.passwordsRead++;
+        const entry = await findEntry(request);
 
         return encryptResponse(request, {
             success: 'true',
@@ -487,6 +500,51 @@ const ProtocolHandlers = {
                 }
             ],
             id: ''
+        });
+    },
+
+    async 'get-totp-by-url'(request) {
+        const entry = await findEntry(request, { otp: true });
+
+        entry.initOtpGenerator();
+
+        if (!entry.otpGenerator) {
+            throw makeError(Errors.noMatches);
+        }
+
+        let selectEntryFieldView;
+        if (entry.needsTouch) {
+            selectEntryFieldView = new SelectEntryFieldView({
+                needsTouch: true,
+                deviceShortName: entry.device.shortName
+            });
+            selectEntryFieldView.render();
+        }
+
+        const otpPromise = new Promise((resolve, reject) => {
+            selectEntryFieldView.on('result', () => reject(makeError(Errors.userRejected)));
+            entry.otpGenerator.next((err, otp) => {
+                if (otp) {
+                    resolve(otp);
+                } else {
+                    reject(err || makeError(Errors.userRejected));
+                }
+            });
+        });
+
+        let totp;
+        try {
+            totp = await otpPromise;
+        } finally {
+            if (selectEntryFieldView) {
+                selectEntryFieldView.remove();
+            }
+        }
+
+        return encryptResponse(request, {
+            success: 'true',
+            version: getVersion(request),
+            totp
         });
     },
 

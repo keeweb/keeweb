@@ -48,6 +48,15 @@ class EntrySearch {
                 return false;
             }
         }
+        if (filter.otp) {
+            if (
+                !this.model.fields.otp &&
+                !this.model.fields['TOTP Seed'] &&
+                this.model.backend !== 'otp-device'
+            ) {
+                return false;
+            }
+        }
         return true;
     }
 

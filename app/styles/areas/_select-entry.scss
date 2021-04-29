@@ -1,4 +1,5 @@
-.select-entry {
+.select-entry,
+.select-entry-field {
     @include position(absolute, 0 null null 0);
     @include size(100%);
     background-color: var(--background-color);
@@ -63,6 +64,16 @@
             flex-direction: row;
             justify-content: center;
         }
+    }
+    &__large-text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    &__large-icon {
+        font-size: $modal-icon-size;
     }
     &__table {
         flex: 1;
