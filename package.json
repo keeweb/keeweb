@@ -16,7 +16,7 @@
         "@babel/plugin-proposal-optional-chaining": "^7.13.12",
         "@babel/preset-env": "^7.13.15",
         "@fortawesome/fontawesome-free": "^5.15.3",
-        "@keeweb/keeweb-native-messaging-host": "https://github.com/keeweb/keeweb-connect/releases/download/0.1.2/keeweb-native-messaging-host.tgz",
+        "@keeweb/keeweb-native-messaging-host": "https://github.com/keeweb/keeweb-connect/releases/download/0.1.3/keeweb-native-messaging-host.tgz",
         "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.11.6/keeweb-native-modules.tgz",
         "adm-zip": "^0.5.5",
         "argon2-browser": "1.15.4",
