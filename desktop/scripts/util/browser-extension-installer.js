@@ -46,9 +46,9 @@ function getWindowsRegistryPath(browser) {
     }
 }
 
-function getWindowsManifestFileName(browser) {
+function getWindowsManifestFileName(browser, extension) {
     const suffix = browser === 'Firefox' ? 'firefox' : 'chrome';
-    const manifestName = `native-messaging.${suffix}.json`;
+    const manifestName = `native-messaging-${extension.toLowerCase()}.${suffix}.json`;
     return path.join(app.getPath('userData'), manifestName);
 }
 
@@ -140,7 +140,7 @@ module.exports.install = async function (browser, extension) {
             return;
         }
 
-        const manifestFileName = getWindowsManifestFileName(browser);
+        const manifestFileName = getWindowsManifestFileName(browser, extension);
         await fs.promises.writeFile(manifestFileName, JSON.stringify(manifest, null, 4));
 
         windowsRegistry.createKey(registryPath + registryKeyName, manifestFileName);
