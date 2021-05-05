@@ -2,7 +2,7 @@ Release notes
 -------------
 ##### v1.18.0 (TBD)
 `+` browser extension "KeeWeb Connect"  
-`+` support for KeePassXC-Browser
+`+` support for KeePassXC-Browser  
 `+` optimized memory consumption for large files  
 `+` option to use short-lived tokens in cloud storages  
 `+` opening XML and CSV files using the Open button  
