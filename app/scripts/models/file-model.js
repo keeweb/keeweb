@@ -40,7 +40,6 @@ class FileModel extends Model {
                     if (keyFileData) {
                         kdbxweb.ByteUtils.zeroBuffer(keyFileData);
                     }
-                    this.fixVersion();
                     logger.info(
                         'Opened file ' +
                             this.name +
@@ -265,17 +264,6 @@ class FileModel extends Model {
         Object.keys(entryMap).forEach((e) => {
             entryMap[e].resolveFieldReferences();
         });
-    }
-
-    fixVersion() {
-        if (
-            this.db.meta.generator === 'KdbxWeb' &&
-            this.db.header.versionMajor === 4 &&
-            this.db.header.versionMinor === 1
-        ) {
-            this.db.header.versionMinor = 0;
-            logger.info('Fixed file version: 4.1 => 4.0');
-        }
     }
 
     reload() {
