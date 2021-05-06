@@ -331,7 +331,7 @@ class SettingsGeneralView extends View {
     }
 
     changeAutoSaveInterval(e) {
-        const autoSaveInterval = Number(e.target.value) || 0;
+        const autoSaveInterval = e.target.value | 0;
         AppSettingsModel.autoSaveInterval = autoSaveInterval;
     }
 

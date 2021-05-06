@@ -114,10 +114,11 @@
     </div>
     {{/if}}
     <div>
-        <label for="settings__general-auto-save-interval">{{res 'setGenAutoSyncTimer'}}</label>
+        <label for="settings__general-auto-save-interval">{{res 'setGenAutoSyncTimer'}}:</label>
         <select class="settings__select input-base settings__general-auto-save-interval"
                 id="settings__general-auto-save-interval">
             <option value="0" {{#ifeq autoSaveInterval 0}}selected{{/ifeq}}>{{res 'setGenAutoSyncTimerOff'}}</option>
+            <option value="-1" {{#ifeq autoSaveInterval -1}}selected{{/ifeq}}>{{res 'setGenAutoSyncTimerOnChange'}}</option>
             <option value="1" {{#ifeq autoSaveInterval 1}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}
                 1{{/res}}</option>
             <option value="5" {{#ifeq autoSaveInterval 5}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}

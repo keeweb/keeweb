@@ -7,6 +7,7 @@ Release notes
 `+` option to use short-lived tokens in cloud storages  
 `+` opening XML and CSV files using the Open button  
 `*` password generator now includes all selected character ranges  
+`*` option to auto-save on file change  
 `+` better Touch ID error messages  
 `-` legacy auto-type removed  
 `+` displaying the reason why unlock is requested  

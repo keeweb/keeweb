@@ -652,7 +652,7 @@ class AppView extends View {
         if (this.autoSaveTimer) {
             clearInterval(this.autoSaveTimer);
         }
-        if (this.model.settings.autoSaveInterval) {
+        if (this.model.settings.autoSaveInterval > 0) {
             this.autoSaveTimer = setInterval(
                 this.saveAll.bind(this),
                 this.model.settings.autoSaveInterval * 1000 * 60

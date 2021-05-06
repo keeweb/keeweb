@@ -437,6 +437,7 @@
   "setGenAutoSyncOnClose": "Automatically save and sync on close",
   "setGenAutoSyncTimer": "Automatically save and sync periodically",
   "setGenAutoSyncTimerOff": "Disabled",
+  "setGenAutoSyncTimerOnChange": "On every change",
   "setGenAutoSyncTimerInterval": "Every {} minute(s)",
   "setGenRememberKeyFiles": "Remember key files",
   "setGenNoRememberKeyFiles": "Don't remember",

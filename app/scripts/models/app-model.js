@@ -180,8 +180,15 @@ class AppModel {
         this.refresh();
 
         file.on('reload', this.reloadFile.bind(this));
-        file.on('change', () => Events.emit('file-changed', file));
+        file.on('change', () => {
+            Events.emit('file-changed', file);
+        });
         file.on('ejected', () => this.closeFile(file));
+        file.on('change:dirty', (file, dirty) => {
+            if (dirty && this.settings.autoSaveInterval === -1) {
+                this.syncFile(file);
+            }
+        });
 
         Events.emit('file-opened');
 

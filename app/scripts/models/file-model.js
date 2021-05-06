@@ -414,7 +414,6 @@ class FileModel extends Model {
     setModified() {
         if (!this.demo) {
             this.set({ modified: true, dirty: true });
-            Events.emit('file-modified');
         }
     }
 
