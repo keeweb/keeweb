@@ -350,7 +350,6 @@ class AppView extends View {
     launcherBeforeQuit() {
         // this is currently called only on macos
         const event = {
-            fromBeforeQuit: true,
             preventDefault() {}
         };
         const result = this.beforeUnload(event);
@@ -371,10 +370,8 @@ class AppView extends View {
         }
 
         let minimizeInsteadOfClose = this.model.settings.minimizeOnClose;
-        if (e.fromBeforeQuit) {
-            if (Launcher.quitOnRealQuitEventIfMinimizeOnQuitIsEnabled()) {
-                minimizeInsteadOfClose = false;
-            }
+        if (Launcher.quitOnRealQuitEventIfMinimizeOnQuitIsEnabled()) {
+            minimizeInsteadOfClose = false;
         }
 
         if (this.model.files.hasDirtyFiles()) {
