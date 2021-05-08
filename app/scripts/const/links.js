@@ -28,7 +28,7 @@ const Links = {
     KWCForFirefox: 'https://addons.mozilla.org/firefox/addon/keeweb-connect/',
     KWCForEdge:
         'https://microsoftedge.microsoft.com/addons/detail/keewebconnect/nmggpehkjmeaeocmaijenpejbepckinm',
-    KWCForSafari: 'https://github.com/keeweb/keeweb-connect/releases/latest',
+    KWCForSafari: 'https://apps.apple.com/app/keeweb-connect/id1565748094',
     KPXCForChrome:
         'https://chrome.google.com/webstore/detail/keepassxc-browser/oboonakemofpalcgghocfoadofidjkkk',
     KPXCForFirefox: 'https://addons.mozilla.org/firefox/addon/keepassxc-browser/',
