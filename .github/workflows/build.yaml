@@ -375,13 +375,14 @@ jobs:
         run: docker push --all-tags antelle/keeweb
       - name: Extract release notes
         run: node util/extract-release-notes.js --version=${{ steps.get_tag.outputs.tag }} --output=tmp/release-body.md
+        working-directory: keeweb
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Desktop apps v${{ steps.get_tag.outputs.tag }}
+          name: Desktop apps v${{ steps.get_tag.outputs.tag }}
           files: assets/*
           body_path: tmp/release-body.md
       - name: Checkout gh-pages
