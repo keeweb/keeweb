@@ -18,6 +18,11 @@ jobs:
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
+      - name: Upgrade Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
       - name: Test
@@ -117,6 +122,11 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
+      - name: Upgrade Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
       - name: Install grunt
@@ -171,6 +181,11 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
+      - name: Upgrade Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
       - name: Install grunt
@@ -246,6 +261,11 @@ jobs:
           repository: keeweb/keeweb
           path: keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
+      - name: Upgrade Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         working-directory: keeweb
         run: npm ci
