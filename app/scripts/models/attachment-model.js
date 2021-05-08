@@ -3,10 +3,10 @@ import { Model } from 'framework/model';
 class AttachmentModel extends Model {
     getBinary() {
         let data = this.data;
-        if (data && data.ref) {
+        if (data?.value) {
             data = data.value;
         }
-        if (data && data.getBinary) {
+        if (data?.getBinary) {
             data = data.getBinary();
         }
         if (data instanceof ArrayBuffer && data.byteLength) {
