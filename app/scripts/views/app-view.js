@@ -370,22 +370,22 @@ class AppView extends View {
         }
 
         let minimizeInsteadOfClose = this.model.settings.minimizeOnClose;
-        if (Launcher.quitOnRealQuitEventIfMinimizeOnQuitIsEnabled()) {
+        if (Launcher?.quitOnRealQuitEventIfMinimizeOnQuitIsEnabled()) {
             minimizeInsteadOfClose = false;
         }
 
         if (this.model.files.hasDirtyFiles()) {
-            const exit = () => {
-                if (minimizeInsteadOfClose) {
-                    Launcher.minimizeApp();
-                } else {
-                    Launcher.exit();
-                }
-            };
-            if (Launcher && Launcher.exitRequested) {
-                return;
-            }
             if (Launcher) {
+                const exit = () => {
+                    if (minimizeInsteadOfClose) {
+                        Launcher.minimizeApp();
+                    } else {
+                        Launcher.exit();
+                    }
+                };
+                if (Launcher.exitRequested) {
+                    return;
+                }
                 if (!this.exitAlertShown) {
                     if (this.model.settings.autoSave) {
                         this.saveAndLock(
