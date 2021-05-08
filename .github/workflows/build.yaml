@@ -381,7 +381,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
+          tag_name: v${{ steps.get_tag.outputs.tag }}
           name: Desktop apps v${{ steps.get_tag.outputs.tag }}
           files: assets/*
           body_path: keeweb/tmp/release-body.md
