@@ -8,7 +8,6 @@ import { GroupModel } from 'models/group-model';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { Logger } from 'util/logger';
-import { mapObject } from 'util/fn';
 import { Locale } from 'util/locale';
 import { StringFormat } from 'util/formatting/string-format';
 import { ChalRespCalculator } from 'comp/app/chal-resp-calculator';
