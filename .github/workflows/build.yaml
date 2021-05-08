@@ -122,6 +122,11 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
+      - name: Upgrade Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
       - name: Install grunt
@@ -176,6 +181,11 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
+      - name: Upgrade Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
       - name: Install grunt
