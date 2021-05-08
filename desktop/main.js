@@ -9,6 +9,8 @@ const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
+
+const { locale, setLocale, getLocaleValues } = require('./scripts/locale');
 const { Logger } = require('./scripts/logger');
 const { isDev } = require('./scripts/util/app-info');
 
@@ -120,6 +122,10 @@ main.on('ready', () => {
             setGlobalShortcuts(appSettings);
             subscribePowerEvents();
             hookRequestHeaders();
+
+            loadLocale().then(() => {
+                setMenu();
+            });
         })
         .catch((e) => {
             electron.dialog.showErrorBox('KeeWeb', 'Error loading app: ' + e);
@@ -296,9 +302,6 @@ function createMainWindow() {
     }
     mainWindow = new electron.BrowserWindow(windowOptions);
     logProgress('creating main window');
-
-    setMenu();
-    logProgress('setting menu');
 
     mainWindow.loadURL(htmlPath);
     mainWindow.once('ready-to-show', () => {
@@ -491,34 +494,50 @@ function setMenu() {
             {
                 label: name,
                 submenu: [
-                    { role: 'about' },
+                    { role: 'about', label: locale.sysMenuAboutKeeWeb?.replace('{}', 'KeeWeb') },
                     { type: 'separator' },
-                    { role: 'services', submenu: [] },
+                    { role: 'services', submenu: [], label: locale.sysMenuServices },
                     { type: 'separator' },
-                    { accelerator: 'Command+H', role: 'hide' },
-                    { accelerator: 'Command+Shift+H', role: 'hideothers' },
-                    { role: 'unhide' },
+                    {
+                        accelerator: 'Command+H',
+                        role: 'hide',
+                        label: locale.sysMenuHide?.replace('{}', 'KeeWeb')
+                    },
+                    {
+                        accelerator: 'Command+Shift+H',
+                        role: 'hideothers',
+                        label: locale.sysMenuHideOthers
+                    },
+                    { role: 'unhide', label: locale.sysMenuUnhide },
                     { type: 'separator' },
-                    { role: 'quit', accelerator: 'Command+Q' }
+                    {
+                        role: 'quit',
+                        accelerator: 'Command+Q',
+                        label: locale.sysMenuQuit?.replace('{}', 'KeeWeb')
+                    }
                 ]
             },
             {
-                label: 'Edit',
+                label: locale.sysMenuEdit || 'Edit',
                 submenu: [
-                    { accelerator: 'CmdOrCtrl+Z', role: 'undo' },
-                    { accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo' },
+                    { accelerator: 'CmdOrCtrl+Z', role: 'undo', label: locale.sysMenuUndo },
+                    { accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo', label: locale.sysMenuRedo },
                     { type: 'separator' },
-                    { accelerator: 'CmdOrCtrl+X', role: 'cut' },
-                    { accelerator: 'CmdOrCtrl+C', role: 'copy' },
-                    { accelerator: 'CmdOrCtrl+V', role: 'paste' },
-                    { accelerator: 'CmdOrCtrl+A', role: 'selectall' }
+                    { accelerator: 'CmdOrCtrl+X', role: 'cut', label: locale.sysMenuCut },
+                    { accelerator: 'CmdOrCtrl+C', role: 'copy', label: locale.sysMenuCopy },
+                    { accelerator: 'CmdOrCtrl+V', role: 'paste', label: locale.sysMenuPaste },
+                    {
+                        accelerator: 'CmdOrCtrl+A',
+                        role: 'selectall',
+                        label: locale.sysMenuSelectAll
+                    }
                 ]
             },
             {
-                label: 'Window',
+                label: locale.sysMenuWindow || 'Window',
                 submenu: [
-                    { accelerator: 'CmdOrCtrl+M', role: 'minimize' },
-                    { accelerator: 'Command+W', role: 'close' }
+                    { accelerator: 'CmdOrCtrl+M', role: 'minimize', label: locale.sysMenuMinimize },
+                    { accelerator: 'Command+W', role: 'close', label: locale.sysMenuClose }
                 ]
             }
         ];
@@ -883,6 +902,23 @@ function saveConfig(name, data, key) {
             } else {
                 resolve();
             }
+        });
+    });
+}
+
+function loadLocale() {
+    return loadConfig('locale').then((localeValues) => {
+        if (localeValues) {
+            try {
+                localeValues = JSON.parse(localeValues);
+                if (appSettings?.locale === localeValues?.locale) {
+                    setLocale(localeValues);
+                }
+            } catch {}
+        }
+        locale.on('changed', () => {
+            setMenu();
+            saveConfig('locale', JSON.stringify(getLocaleValues()));
         });
     });
 }

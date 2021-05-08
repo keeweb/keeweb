@@ -13,6 +13,7 @@ Release notes
 `+` displaying the reason why unlock is requested  
 `+` filters on the auto-type entry selection screen  
 `+` adding multiple websites to one entry  
+`+` translated application menu on macOS  
 `-` fixed a crash after disabling USB devices on Linux  
 `+` tightened content security policy  
 `-` KeeWebHttp deprecated  
