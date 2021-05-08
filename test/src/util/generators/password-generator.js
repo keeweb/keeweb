@@ -41,9 +41,11 @@ describe('PasswordGenerator', () => {
     });
 
     it('should generate a pronounceable password', () => {
-        expect(PasswordGenerator.generate({ length: 10, name: 'Pronounceable' })).to.match(
-            /^[a-zA-Z]{10}$/
-        );
+        for (let i = 0; i < 1000; i++) {
+            expect(PasswordGenerator.generate({ length: 10, name: 'Pronounceable' })).to.match(
+                /^[a-zA-Z]{10}$/
+            );
+        }
     });
 
     it('should generate a password with pattern', () => {
