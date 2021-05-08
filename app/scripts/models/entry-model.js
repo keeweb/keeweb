@@ -357,7 +357,7 @@ class EntryModel extends Model {
     addAttachment(name, data) {
         this._entryModified();
         return this.file.db.createBinary(data).then((binaryRef) => {
-            this.entry.binaries[name] = binaryRef;
+            this.entry.binaries.set(name, binaryRef);
             this._fillByEntry();
         });
     }
