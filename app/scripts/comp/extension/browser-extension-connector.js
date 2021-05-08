@@ -153,6 +153,10 @@ const BrowserExtensionConnector = {
             return;
         }
 
+        if (!connections.has(WebConnectionInfo.connectionId)) {
+            connections.set(WebConnectionInfo.connectionId, WebConnectionInfo);
+        }
+
         processingBrowserMessage = true;
 
         const request = pendingBrowserMessages.shift();
@@ -185,7 +189,7 @@ const BrowserExtensionConnector = {
     },
 
     sendEvent(data) {
-        if (!this.isEnabled()) {
+        if (!this.isEnabled() || !connections.size) {
             return;
         }
         if (Launcher) {
