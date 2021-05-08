@@ -63,15 +63,15 @@ module.exports = function (grunt) {
         'electron-patch:win32-x64',
         'electron-patch:win32-ia32',
         'electron-patch:win32-arm64',
-        sign ? 'sign-exe:win32-build-x64' : 'noop',
-        sign ? 'sign-exe:win32-build-ia32' : 'noop',
-        sign ? 'sign-exe:win32-build-arm64' : 'noop',
         'copy:native-modules-win32-x64',
         'copy:native-modules-win32-ia32',
         'copy:native-modules-win32-arm64',
         'copy:native-messaging-host-win32-x64',
         'copy:native-messaging-host-win32-ia32',
-        'copy:native-messaging-host-win32-arm64'
+        'copy:native-messaging-host-win32-arm64',
+        sign ? 'sign-exe:win32-build-x64' : 'noop',
+        sign ? 'sign-exe:win32-build-ia32' : 'noop',
+        sign ? 'sign-exe:win32-build-arm64' : 'noop'
     ]);
 
     grunt.registerTask('build-desktop-executables', [
