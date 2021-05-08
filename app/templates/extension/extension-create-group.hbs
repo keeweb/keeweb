@@ -1,0 +1,14 @@
+<div class="extension-create-group">
+    <p>{{#res 'extensionNewGroupBody'}}{{extensionName}}{{/res}}</p>
+    <p>{{res 'extensionNewGroupPath'}}: {{groupPath}}</p>
+    <div>
+        <label for="extension-create-group__file">{{res 'extensionNewGroupFile'}}</label>
+        <select id="extension-create-group__file" class="input-base">
+            {{#each files as |file|}}
+                <option value="{{file.id}}" {{#if file.selected}}selected{{/if}}>
+                    {{file.name}}
+                </option>
+            {{/each}}
+        </select>
+    </div>
+</div>

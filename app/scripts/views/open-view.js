@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { Storage } from 'storage';
@@ -52,6 +52,7 @@ class OpenView extends View {
         'click .open__settings-yubikey': 'selectYubiKeyChalResp',
         'click .open__last-item': 'openLast',
         'click .open__icon-generate': 'toggleGenerator',
+        'click .open__message-cancel-btn': 'openMessageCancelClick',
         dragover: 'dragover',
         dragleave: 'dragleave',
         drop: 'drop'
@@ -76,6 +77,7 @@ class OpenView extends View {
         this.onKey(Keys.DOM_VK_UP, this.moveOpenFileSelectionUp, null, 'open');
         this.listenTo(Events, 'main-window-focus', this.windowFocused.bind(this));
         this.listenTo(Events, 'usb-devices-changed', this.usbDevicesChanged.bind(this));
+        this.listenTo(Events, 'unlock-message-changed', this.unlockMessageChanged.bind(this));
         this.once('remove', () => {
             this.passwordInput.reset();
         });
@@ -118,6 +120,7 @@ class OpenView extends View {
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
             demoOpened: this.model.settings.demoOpened,
             storageProviders,
+            unlockMessageRes: this.model.unlockMessageRes,
             canOpen: this.model.settings.canOpen,
             canOpenDemo: this.model.settings.canOpenDemo,
             canOpenSettings: this.model.settings.canOpenSettings,
@@ -211,11 +214,17 @@ class OpenView extends View {
     fileSelected(e) {
         const file = e.target.files[0];
         if (file) {
-            this.processFile(file, (success) => {
-                if (success && !file.path && this.reading === 'fileData') {
-                    this.showLocalFileAlert();
-                }
-            });
+            if (this.model.settings.canImportCsv && /\.csv$/.test(file.name)) {
+                Events.emit('import-csv-requested', file);
+            } else if (this.model.settings.canImportXml && /\.xml$/.test(file.name)) {
+                this.setFile(file, null, this.showLocalFileAlert.bind(this));
+            } else {
+                this.processFile(file, (success) => {
+                    if (success && !file.path && this.reading === 'fileData') {
+                        this.showLocalFileAlert();
+                    }
+                });
+            }
         }
     }
 
@@ -674,16 +683,24 @@ class OpenView extends View {
             const encryptedPassword = kdbxweb.ProtectedValue.fromBase64(
                 this.encryptedPassword.value
             );
+            Events.emit('hardware-decrypt-started');
             NativeModules.hardwareDecrypt(encryptedPassword, touchIdPrompt)
                 .then((password) => {
+                    Events.emit('hardware-decrypt-finished');
+
                     this.params.password = password;
                     this.params.encryptedPassword = this.encryptedPassword;
                     this.model.openFile(this.params, (err) => this.openDbComplete(err));
                 })
                 .catch((err) => {
+                    Events.emit('hardware-decrypt-finished');
+
                     if (err.message.includes('User refused')) {
                         err.userCanceled = true;
+                    } else if (err.message.includes('SecKeyCreateDecryptedData')) {
+                        err.maybeTouchIdChanged = true;
                     }
+                    logger.error('Error in hardware decryption', err);
                     this.openDbComplete(err);
                 });
         } else {
@@ -712,9 +729,13 @@ class OpenView extends View {
                 if (err.notFound) {
                     err = Locale.openErrorFileNotFound;
                 }
+                let alertBody = Locale.openErrorDescription;
+                if (err.maybeTouchIdChanged) {
+                    alertBody += '\n' + Locale.openErrorDescriptionMaybeTouchIdChanged;
+                }
                 Alerts.error({
                     header: Locale.openError,
-                    body: Locale.openErrorDescription,
+                    body: alertBody,
                     pre: this.errorToString(err)
                 });
             }
@@ -1140,6 +1161,20 @@ class OpenView extends View {
                 this.encryptedPassword = null;
             }
         }
+    }
+
+    unlockMessageChanged(unlockMessageRes) {
+        const messageEl = this.el.querySelector('.open__message');
+        messageEl.classList.toggle('hide', !unlockMessageRes);
+
+        if (unlockMessageRes) {
+            const contentEl = this.el.querySelector('.open__message-content');
+            contentEl.innerText = Locale[unlockMessageRes];
+        }
+    }
+
+    openMessageCancelClick() {
+        this.model.rejectPendingFileUnlockPromise('User canceled');
     }
 }
 

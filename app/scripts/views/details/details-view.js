@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { AutoType } from 'auto-type';
@@ -22,7 +22,7 @@ import { DetailsAutoTypeView } from 'views/details/details-auto-type-view';
 import { DetailsHistoryView } from 'views/details/details-history-view';
 import { DetailsIssuesView } from 'views/details/details-issues-view';
 import { DropdownView } from 'views/dropdown-view';
-import { createDetailsFields } from 'views/details/details-fields';
+import { createDetailsFields, createNewCustomField } from 'views/details/details-fields';
 import { FieldViewCustom } from 'views/fields/field-view-custom';
 import { IconSelectView } from 'views/icon-select-view';
 import { isEqual } from 'util/fn';
@@ -121,6 +121,9 @@ class DetailsView extends View {
         }
         const model = {
             deleted: this.appModel.filter.trash,
+            canEditColor: this.model.file.supportsColors && !this.model.readOnly,
+            canEditIcon: this.model.file.supportsIcons && !this.model.readOnly,
+            showButtons: !this.model.backend && !this.model.readOnly,
             ...this.model
         };
         this.template = template;
@@ -185,7 +188,7 @@ class DetailsView extends View {
 
         this.fieldViews = fieldViews.concat(fieldViewsAside);
 
-        if (!this.model.external) {
+        if (!this.model.backend) {
             this.moreView = new DetailsAddFieldView();
             this.moreView.render();
             this.moreView.on('add-field', this.addNewField.bind(this));
@@ -193,10 +196,10 @@ class DetailsView extends View {
         }
     }
 
-    addNewField() {
+    addNewField(title) {
         this.moreView.remove();
         this.moreView = null;
-        let newFieldTitle = Locale.detNetField;
+        let newFieldTitle = title || Locale.detNetField;
         if (this.model.fields[newFieldTitle]) {
             for (let i = 1; ; i++) {
                 const newFieldTitleVariant = newFieldTitle + i;
@@ -206,20 +209,15 @@ class DetailsView extends View {
                 }
             }
         }
-        const fieldView = new FieldViewCustom(
-            {
-                name: '$' + newFieldTitle,
-                title: newFieldTitle,
-                newField: newFieldTitle,
-                multiline: true,
-                value() {
-                    return '';
-                }
-            },
+
+        const fieldView = createNewCustomField(
+            newFieldTitle,
             {
                 parent: this.$el.find('.details__body-fields')[0]
-            }
+            },
+            this.model
         );
+
         fieldView.on('change', this.fieldChanged.bind(this));
         fieldView.render();
         fieldView.edit();
@@ -252,6 +250,13 @@ class DetailsView extends View {
                         icon: 'plus',
                         text: Locale.detMenuAddNewField
                     });
+                    if (this.model.url) {
+                        moreOptions.push({
+                            value: 'add-website',
+                            icon: 'plus',
+                            text: Locale.detMenuAddNewWebsite
+                        });
+                    }
                     moreOptions.push({
                         value: 'toggle-empty',
                         icon: 'eye',
@@ -263,6 +268,13 @@ class DetailsView extends View {
                         icon: 'plus',
                         text: Locale.detMenuAddNewField
                     });
+                    if (this.model.url) {
+                        moreOptions.push({
+                            value: 'add-website',
+                            icon: 'plus',
+                            text: Locale.detMenuAddNewWebsite
+                        });
+                    }
                     moreOptions.push({
                         value: 'toggle-empty',
                         icon: 'eye-slash',
@@ -299,6 +311,9 @@ class DetailsView extends View {
         switch (e.item) {
             case 'add-new':
                 this.addNewField();
+                break;
+            case 'add-website':
+                this.addNewField(this.model.getNextUrlFieldName());
                 break;
             case 'toggle-empty': {
                 const hideEmptyFields = AppSettingsModel.hideEmptyFields;
@@ -363,7 +378,7 @@ class DetailsView extends View {
     }
 
     toggleIcons() {
-        if (this.model.external) {
+        if (this.model.backend) {
             return;
         }
         if (this.views.sub && this.views.sub instanceof IconSelectView) {
@@ -464,7 +479,7 @@ class DetailsView extends View {
         }
 
         this.model.initOtpGenerator?.();
-        if (this.model.external) {
+        if (this.model.backend === 'otp-device') {
             return;
         }
 
@@ -496,7 +511,7 @@ class DetailsView extends View {
         if (!this.model) {
             return;
         }
-        if (this.model.external) {
+        if (this.model.backend === 'otp-device') {
             this.copyOtp();
             e.preventDefault();
         }
@@ -520,7 +535,7 @@ class DetailsView extends View {
 
     copyOtp() {
         const otpField = this.getFieldView('$otp');
-        if (this.model.external) {
+        if (this.model.backend === 'otp-device') {
             if (!otpField) {
                 return false;
             }
@@ -600,10 +615,14 @@ class DetailsView extends View {
             }
             this.entryUpdated(true);
             this.fieldViews.forEach(function (fieldView, ix) {
+                // TODO: render the view instead
                 if (
-                    fieldView instanceof FieldViewCustom &&
-                    !fieldView.model.newField &&
-                    !this.model.hasField(fieldView.model.title)
+                    (fieldView instanceof FieldViewCustom &&
+                        !fieldView.model.newField &&
+                        !this.model.hasField(fieldView.model.title)) ||
+                    (fieldView.model.isExtraUrl &&
+                        !fieldView.model.newField &&
+                        !this.model.hasField(fieldView.model.name.replace('$', '')))
                 ) {
                     fieldView.remove();
                     this.fieldViews.splice(ix, 1);
@@ -715,7 +734,7 @@ class DetailsView extends View {
     }
 
     editTitle() {
-        if (this.model.external) {
+        if (this.model.backend === 'otp-device') {
             return;
         }
         const input = $('<input/>')
@@ -875,7 +894,7 @@ class DetailsView extends View {
         const canCopy = document.queryCommandSupported('copy');
         const options = [];
         if (canCopy) {
-            if (this.model.external) {
+            if (this.model.backend === 'otp-device') {
                 options.push({
                     value: 'det-copy-otp',
                     icon: 'copy',
@@ -894,7 +913,7 @@ class DetailsView extends View {
                 text: Locale.detMenuCopyUser
             });
         }
-        if (!this.model.external) {
+        if (!this.model.backend) {
             options.push({ value: 'det-add-new', icon: 'plus', text: Locale.detMenuAddNewField });
             options.push({ value: 'det-clone', icon: 'clone', text: Locale.detClone });
             if (canCopy) {
@@ -985,7 +1004,8 @@ class DetailsView extends View {
 
     autoType(sequence) {
         const entry = this.model;
-        const hasOtp = sequence?.includes('{TOTP}') || (entry.external && !sequence);
+        const hasOtp =
+            sequence?.includes('{TOTP}') || (entry.backend === 'otp-device' && !sequence);
         if (hasOtp) {
             const otpField = this.getFieldView('$otp');
             otpField.refreshOtp((err) => {

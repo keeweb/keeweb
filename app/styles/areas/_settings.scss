@@ -307,6 +307,32 @@
             }
         }
     }
+    &__browser {
+        &-table {
+            th,
+            td {
+                padding: $base-padding;
+            }
+        }
+        &-extension-status {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-radius: 100%;
+            border: 5px solid;
+            margin-right: 0.2em;
+        }
+        &-session-buttons {
+            margin-top: $base-padding-h;
+        }
+        &-session-files {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        &-session-file {
+            margin: $base-padding;
+        }
+    }
     &__donate-btn {
         background: #fff;
         border: 2px solid #89abed;

@@ -108,7 +108,12 @@ class IconSelectView extends View {
         return url;
     }
 
-    selectIcon() {
+    selectIcon(e) {
+        const btn = e.target.closest('.icon-select__icon-select');
+        if (btn.classList.contains('icon-select__icon--custom-selected')) {
+            return;
+        }
+
         this.$el.find('.icon-select__file-input').click();
     }
 

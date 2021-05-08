@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Keys } from 'const/keys';
 import { Locale } from 'util/locale';
 import { Tip } from 'util/ui/tip';
@@ -38,7 +38,7 @@ class FieldViewCustom extends FieldViewText {
     endEdit(newVal, extra) {
         this.$el.removeClass('details__field--can-edit-title');
         extra = { ...extra };
-        if (this.model.titleChanged || this.model.newField) {
+        if (this.model.titleChanged) {
             extra.newField = this.model.title;
         }
         if (!this.editing) {
@@ -96,6 +96,7 @@ class FieldViewCustom extends FieldViewText {
 
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
+
         if (this.model.newField) {
             this.startEditTitle(true);
         } else if (this.editing) {

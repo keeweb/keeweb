@@ -4,6 +4,7 @@ import { Locale } from 'util/locale';
 import { ThemeWatcher } from 'comp/browser/theme-watcher';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Logger } from 'util/logger';
+import { Launcher } from 'comp/launcher';
 
 const logger = new Logger('settings-manager');
 
@@ -164,6 +165,20 @@ const SettingsManager = {
         Object.assign(Locale, this.neutralLocale, localeValues);
         this.activeLocale = loc;
         Events.emit('set-locale', loc);
+
+        if (Launcher) {
+            const { ipcRenderer } = Launcher.electron();
+            const localeValuesForDesktopApp = {};
+            for (const [key, value] of Object.entries(Locale)) {
+                if (key.startsWith('sysMenu')) {
+                    localeValuesForDesktopApp[key] = value;
+                }
+            }
+            ipcRenderer.invoke('setLocale', {
+                locale: loc,
+                ...localeValuesForDesktopApp
+            });
+        }
     },
 
     getBrowserLocale() {

@@ -4,6 +4,7 @@ const { reqNative } = require('./scripts/util/req-native');
 const YubiKeyVendorIds = [0x1050];
 const attachedYubiKeys = [];
 let usbListenerRunning = false;
+let usbListenerInitialized = false;
 let autoType;
 let callback;
 
@@ -15,12 +16,16 @@ const messageHandlers = {
             return;
         }
 
-        const usbDetection = reqNative('usb-detection');
+        if (!usbListenerInitialized) {
+            const usbDetection = reqNative('usb-detection');
 
-        usbDetection.registerAdded(usbDeviceAttached);
-        usbDetection.registerRemoved(usbDeviceDetached);
+            usbDetection.registerAdded(usbDeviceAttached);
+            usbDetection.registerRemoved(usbDeviceDetached);
 
-        usbDetection.startMonitoring();
+            usbDetection.startMonitoring();
+
+            usbListenerInitialized = true;
+        }
 
         fillAttachedYubiKeys();
 
@@ -31,10 +36,6 @@ const messageHandlers = {
         if (!usbListenerRunning) {
             return;
         }
-
-        const usbDetection = reqNative('usb-detection');
-
-        usbDetection.stopMonitoring();
 
         usbListenerRunning = false;
         attachedYubiKeys.length = 0;
@@ -150,6 +151,9 @@ function isYubiKey(device) {
 }
 
 function usbDeviceAttached(device) {
+    if (!usbListenerRunning) {
+        return;
+    }
     if (isYubiKey(device)) {
         attachedYubiKeys.push(device);
         reportYubiKeys();
@@ -157,6 +161,9 @@ function usbDeviceAttached(device) {
 }
 
 function usbDeviceDetached(device) {
+    if (!usbListenerRunning) {
+        return;
+    }
     if (isYubiKey(device)) {
         const index = attachedYubiKeys.findIndex((yk) => yk.deviceAddress === device.deviceAddress);
         if (index >= 0) {
@@ -168,8 +175,8 @@ function usbDeviceDetached(device) {
 
 function fillAttachedYubiKeys() {
     const usbDetection = reqNative('usb-detection');
-    usbDetection.find((err, devices) => {
-        if (!err && devices) {
+    usbDetection.find((ignoredError, devices) => {
+        if (devices) {
             attachedYubiKeys.push(...devices.filter(isYubiKey));
             reportYubiKeys();
         }
@@ -296,7 +303,9 @@ function startInMain(channel) {
 
     const { app } = require('electron');
     app.on('will-quit', () => {
-        messageHandlers.stopUsbListener();
+        if (usbListenerInitialized) {
+            reqNative('usb-detection').stopMonitoring();
+        }
     });
 }
 

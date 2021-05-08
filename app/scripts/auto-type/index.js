@@ -1,7 +1,7 @@
 import { Events } from 'framework/events';
-import { AutoTypeFilter } from 'auto-type/auto-type-filter';
-import { AutoTypeHelperFactory } from 'auto-type/auto-type-helper-factory';
+import { AutoTypeHelper } from 'auto-type/auto-type-helper';
 import { AutoTypeParser } from 'auto-type/auto-type-parser';
+import { SelectEntryFilter } from 'comp/app/select-entry-filter';
 import { Launcher } from 'comp/launcher';
 import { Features } from 'util/features';
 import { Alerts } from 'comp/ui/alerts';
@@ -11,7 +11,7 @@ import { AppModel } from 'models/app-model';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
 import { Links } from 'const/links';
-import { AutoTypeSelectView } from 'views/auto-type/auto-type-select-view';
+import { SelectEntryView } from 'views/select/select-entry-view';
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = !!localStorage.debugAutoType;
@@ -20,7 +20,6 @@ const AutoType = {
     enabled: !!(Launcher && Launcher.autoTypeSupported),
     supportsEventsWithWindowId: !!(Launcher && Launcher.platform() === 'linux'),
     selectEntryView: false,
-    pendingEvent: null,
     running: false,
 
     init() {
@@ -28,10 +27,6 @@ const AutoType = {
             return;
         }
         Events.on('auto-type', (e) => this.handleEvent(e));
-        Events.on('main-window-blur', (e) => this.mainWindowBlur(e));
-        Events.on('main-window-focus', (e) => this.mainWindowFocus(e));
-        Events.on('main-window-will-close', (e) => this.mainWindowWillClose(e));
-        Events.on('closed-open-view', (e) => this.processPendingEvent(e));
     },
 
     handleEvent(e) {
@@ -168,9 +163,8 @@ const AutoType = {
     },
 
     getActiveWindowInfo(callback) {
-        const helperType = AppSettingsModel.useLegacyAutoType ? 'legacy' : 'native';
-        logger.debug(`Getting window info using ${helperType} helper`);
-        const helper = AutoTypeHelperFactory.create();
+        logger.debug('Getting window info');
+        const helper = new AutoTypeHelper();
         return helper.getActiveWindowInfo((err, windowInfo) => {
             if (err) {
                 logger.error('Error getting window info', err);
@@ -217,21 +211,38 @@ const AutoType = {
     },
 
     selectEntryAndRun() {
-        this.getActiveWindowInfo((e, windowInfo) => {
-            const filter = new AutoTypeFilter(windowInfo, AppModel.instance);
+        this.getActiveWindowInfo(async (e, windowInfo) => {
+            const filter = new SelectEntryFilter(
+                windowInfo,
+                AppModel.instance,
+                AppModel.instance.files,
+                {
+                    autoType: true
+                }
+            );
             const evt = { filter, windowInfo };
             if (!AppModel.instance.files.hasOpenFiles()) {
-                this.pendingEvent = evt;
                 logger.debug('auto-type event delayed');
                 this.focusMainWindow();
-            } else {
-                this.processEventWithFilter(evt);
+                try {
+                    await AppModel.instance.unlockAnyFile('autoTypeUnlockMessage');
+                } catch {
+                    logger.debug('auto-type event canceled');
+                    return;
+                }
+                if (this.selectEntryView) {
+                    this.selectEntryView.show();
+                }
             }
+            logger.debug('processing auto-type event');
+            this.processEventWithFilter(evt);
         });
     },
 
     focusMainWindow() {
-        setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
+        if (!Launcher.isAppFocused()) {
+            setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
+        }
     },
 
     processEventWithFilter(evt) {
@@ -243,8 +254,18 @@ const AutoType = {
             return;
         }
         this.focusMainWindow();
-        evt.filter.ignoreWindowInfo = true;
-        this.selectEntryView = new AutoTypeSelectView({ filter: evt.filter });
+
+        const humanReadableTarget = evt.filter.title || evt.filter.url;
+        const topMessage = humanReadableTarget
+            ? Locale.autoTypeMsgMatchedByWindow.replace('{}', humanReadableTarget)
+            : Locale.autoTypeMsgNoWindow;
+
+        this.selectEntryView = new SelectEntryView({
+            isAutoType: true,
+            itemOptions: true,
+            filter: evt.filter,
+            topMessage
+        });
         this.selectEntryView.on('result', (result) => {
             logger.debug('Entry selected', result);
             this.selectEntryView.off('result');
@@ -261,55 +282,17 @@ const AutoType = {
             });
         });
         this.selectEntryView.render();
-        this.selectEntryView.on('show-open-files', () => {
+        this.selectEntryView.on('show-open-files', async () => {
             this.selectEntryView.hide();
-            Events.emit('open-file');
-        });
-    },
-
-    mainWindowBlur() {
-        this.mainWindowBlurTimer = setTimeout(() => {
-            // macOS emits focus-blur-focus event in a row when triggering auto-type from minimized state
-            delete this.mainWindowBlurTimer;
-            this.resetPendingEvent();
-            if (this.selectEntryView) {
+            try {
+                await AppModel.instance.unlockAnyFile('autoTypeUnlockMessage');
+            } catch {
                 this.selectEntryView.emit('result', undefined);
+                return;
             }
-        }, Timeouts.AutoTypeWindowFocusAfterBlur);
-    },
-
-    mainWindowFocus() {
-        if (this.mainWindowBlurTimer) {
-            clearTimeout(this.mainWindowBlurTimer);
-            this.mainWindowBlurTimer = null;
-        }
-    },
-
-    mainWindowWillClose() {
-        this.resetPendingEvent();
-        if (this.selectEntryView) {
-            this.selectEntryView.emit('result', undefined);
-        }
-    },
-
-    resetPendingEvent() {
-        if (this.pendingEvent) {
-            this.pendingEvent = null;
-            logger.debug('auto-type event canceled');
-        }
-    },
-
-    processPendingEvent() {
-        if (this.selectEntryView) {
             this.selectEntryView.show();
-        }
-        if (!this.pendingEvent) {
-            return;
-        }
-        logger.debug('processing pending auto-type event');
-        const evt = this.pendingEvent;
-        this.pendingEvent = null;
-        this.processEventWithFilter(evt);
+            this.selectEntryView.render();
+        });
     }
 };
 

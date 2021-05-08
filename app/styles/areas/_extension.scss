@@ -1,0 +1,10 @@
+.extension-connect {
+    &__files {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    &__file {
+        margin: $base-padding;
+    }
+}

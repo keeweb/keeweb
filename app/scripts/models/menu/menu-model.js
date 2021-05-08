@@ -8,6 +8,7 @@ import { MenuSectionModel } from 'models/menu/menu-section-model';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
 import { Launcher } from 'comp/launcher';
+import { Features } from 'util/features';
 
 class MenuModel extends Model {
     constructor() {
@@ -113,6 +114,11 @@ class MenuModel extends Model {
         this.shortcutsSection = new MenuSectionModel([
             { locTitle: 'shortcuts', icon: 'keyboard', page: 'shortcuts' }
         ]);
+        if (Features.supportsBrowserExtensions) {
+            this.browserSection = new MenuSectionModel([
+                { locTitle: 'menuSetBrowser', icon: Features.browserIcon, page: 'browser' }
+            ]);
+        }
         this.pluginsSection = new MenuSectionModel([
             { locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }
         ]);
@@ -133,6 +139,7 @@ class MenuModel extends Model {
             [
                 this.generalSection,
                 this.shortcutsSection,
+                this.browserSection,
                 this.pluginsSection,
                 this.devicesSection,
                 this.aboutSection,

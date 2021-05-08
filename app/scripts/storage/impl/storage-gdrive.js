@@ -245,7 +245,7 @@ class StorageGDrive extends StorageBase {
                                 dir: true
                             });
                             fileList.unshift({
-                                name: Locale.gdriveTeamDrives,
+                                name: Locale.gdriveSharedDrives,
                                 path: 'drives',
                                 rev: undefined,
                                 dir: true
@@ -307,9 +307,7 @@ class StorageGDrive extends StorageBase {
             width: 600,
             height: 400,
             pkce: true,
-            urlParams: {
-                'access_type': 'offline'
-            }
+            urlParams: this.appSettings.shortLivedStorageToken ? {} : { 'access_type': 'offline' }
         };
     }
 }

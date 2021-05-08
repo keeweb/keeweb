@@ -47,7 +47,8 @@ module.exports = function (grunt) {
     const webpackOptions = {
         date,
         beta: !!grunt.option('beta'),
-        sha
+        sha,
+        appleTeamId: '3LE7JZ657W'
     };
 
     const windowsAppVersionString = {
@@ -144,18 +145,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
-            'desktop-darwin-helper-x64': {
-                src: 'helper/darwin/KeeWebHelper',
-                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Resources/',
-                nonull: true,
-                options: { mode: '0755' }
-            },
-            'desktop-darwin-helper-arm64': {
-                src: 'helper/darwin/KeeWebHelper',
-                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Resources/',
-                nonull: true,
-                options: { mode: '0755' }
-            },
             'desktop-darwin-installer-helper-x64': {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
@@ -173,21 +162,6 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true,
                 options: { mode: true }
-            },
-            'desktop-windows-helper-x64': {
-                src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-x64/Resources/',
-                nonull: true
-            },
-            'desktop-windows-helper-ia32': {
-                src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-ia32/Resources/',
-                nonull: true
-            },
-            'desktop-windows-helper-arm64': {
-                src: 'helper/win32/KeeWebHelper.exe',
-                dest: 'tmp/desktop/KeeWeb-win32-arm64/Resources/',
-                nonull: true
             },
             'desktop-win32-dist-x64': {
                 src: 'tmp/desktop/KeeWeb.win.x64.exe',
@@ -252,6 +226,47 @@ module.exports = function (grunt) {
             'darwin-installer-icon': {
                 src: 'graphics/icon.icns',
                 dest: 'tmp/desktop/KeeWeb Installer.app/Contents/Resources/applet.icns',
+                nonull: true
+            },
+            'native-messaging-host-darwin-x64': {
+                src:
+                    'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
+                dest:
+                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
+                nonull: true,
+                options: { mode: '0755' }
+            },
+            'native-messaging-host-darwin-arm64': {
+                src:
+                    'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
+                dest:
+                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
+                nonull: true,
+                options: { mode: '0755' }
+            },
+            'native-messaging-host-linux-x64': {
+                src:
+                    'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host',
+                nonull: true,
+                options: { mode: '0755' }
+            },
+            'native-messaging-host-win32-x64': {
+                src:
+                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
+                dest: 'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe',
+                nonull: true
+            },
+            'native-messaging-host-win32-ia32': {
+                src:
+                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
+                dest: 'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe',
+                nonull: true
+            },
+            'native-messaging-host-win32-arm64': {
+                src:
+                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
+                dest: 'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe',
                 nonull: true
             }
         },
@@ -668,6 +683,8 @@ module.exports = function (grunt) {
                 options: {
                     files: {
                         'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe':
+                            'KeeWeb Native Messaging Host',
                         'tmp/desktop/KeeWeb-win32-x64/ffmpeg.dll': '',
                         'tmp/desktop/KeeWeb-win32-x64/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
@@ -680,6 +697,8 @@ module.exports = function (grunt) {
                 options: {
                     files: {
                         'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe':
+                            'KeeWeb Native Messaging Host',
                         'tmp/desktop/KeeWeb-win32-ia32/ffmpeg.dll': '',
                         'tmp/desktop/KeeWeb-win32-ia32/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',
@@ -692,6 +711,8 @@ module.exports = function (grunt) {
                 options: {
                     files: {
                         'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe': 'KeeWeb',
+                        'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe':
+                            'KeeWeb Native Messaging Host',
                         'tmp/desktop/KeeWeb-win32-arm64/ffmpeg.dll': '',
                         'tmp/desktop/KeeWeb-win32-arm64/libEGL.dll':
                             'ANGLE libEGL Dynamic Link Library',

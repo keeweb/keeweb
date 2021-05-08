@@ -41,12 +41,12 @@ module.exports = function (grunt) {
 
             let htmlStr = html.toString('latin1');
             for (const [type, digests] of Object.entries(hashes)) {
-                const cspIndex = htmlStr.indexOf(`${type}-src`);
+                const cspIndex = htmlStr.indexOf(`${type}-src 'self'`);
                 if (cspIndex < 0) {
                     grunt.warn(`Not found: ${type}-src`);
                 }
                 const digestsList = digests.map((digest) => `'${algo}-${digest}'`).join(' ');
-                htmlStr = htmlStr.replace(`${type}-src`, `${type}-src ${digestsList}`);
+                htmlStr = htmlStr.replace(`${type}-src 'self'`, `${type}-src ${digestsList}`);
             }
 
             grunt.log.writeln(

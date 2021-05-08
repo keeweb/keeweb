@@ -114,10 +114,11 @@
     </div>
     {{/if}}
     <div>
-        <label for="settings__general-auto-save-interval">{{res 'setGenAutoSyncTimer'}}</label>
+        <label for="settings__general-auto-save-interval">{{res 'setGenAutoSyncTimer'}}:</label>
         <select class="settings__select input-base settings__general-auto-save-interval"
                 id="settings__general-auto-save-interval">
             <option value="0" {{#ifeq autoSaveInterval 0}}selected{{/ifeq}}>{{res 'setGenAutoSyncTimerOff'}}</option>
+            <option value="-1" {{#ifeq autoSaveInterval -1}}selected{{/ifeq}}>{{res 'setGenAutoSyncTimerOnChange'}}</option>
             <option value="1" {{#ifeq autoSaveInterval 1}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}
                 1{{/res}}</option>
             <option value="5" {{#ifeq autoSaveInterval 5}}selected{{/ifeq}}>{{#res 'setGenAutoSyncTimerInterval'}}
@@ -312,6 +313,11 @@
                {{#if disableOfflineStorage}}checked{{/if}} />
         <label for="settings__general-disable-offline-storage">{{res 'setGenDisableOfflineStorage'}}</label>
     </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-short-lived-storage-token" id="settings__general-short-lived-storage-token"
+               {{#if shortLivedStorageToken}}checked{{/if}} />
+        <label for="settings__general-short-lived-storage-token">{{res 'setGenShortLivedStorageToken'}}</label>
+    </div>
 
     {{#each storageProviders as |prv|}}
     <h4 class="settings__general-storage-header"><input
@@ -326,13 +332,6 @@
     <h2 id="advanced">{{res 'advanced'}}</h2>
     <a class="settings__general-show-advanced">{{res 'setGenShowAdvanced'}}</a>
     <div class="settings__general-advanced hide">
-        {{#if canAutoType}}
-            <div>
-                <input type="checkbox" class="settings__input input-base settings__general-use-legacy-autotype"
-                       id="settings__general-use-legacy-autotype" {{#if useLegacyAutoType}}checked{{/if}} />
-                <label for="settings__general-use-legacy-autotype">{{res 'setGenUseLegacyAutoType'}}</label>
-            </div>
-        {{/if}}
         {{#if devTools}}
             <button class="btn-silent settings__general-dev-tools-link">{{res 'setGenDevTools'}}</button>
             <button class="btn-silent settings__general-try-beta-link">{{res 'setGenTryBeta'}}</button>

@@ -56,6 +56,7 @@ function config(options) {
                 argon2: 'argon2-browser/dist/argon2.js',
                 marked: devMode ? 'marked/lib/marked.js' : 'marked/marked.min.js',
                 dompurify: `dompurify/dist/purify${devMode ? '' : '.min'}.js`,
+                tweetnacl: `tweetnacl/nacl${devMode ? '' : '.min'}.js`,
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
                 templates: path.join(rootDir, 'app/templates'),
@@ -129,7 +130,8 @@ function config(options) {
                                 search: /@@COMMIT/g,
                                 replace: options.sha
                             },
-                            { search: /@@DEVMODE/g, replace: devMode ? '1' : '' }
+                            { search: /@@DEVMODE/g, replace: devMode ? '1' : '' },
+                            { search: /@@APPLE_TEAM_ID/g, replace: options.appleTeamId }
                         ]
                     }
                 },

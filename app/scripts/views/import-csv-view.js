@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
 import { Scrollable } from 'framework/views/scrollable';
 import template from 'templates/import-csv.hbs';
@@ -145,31 +145,41 @@ class ImportCsvView extends View {
 
     runImport() {
         let group = this.targetGroup;
-        let file = group ? group.file : undefined;
-        if (!group) {
+
+        let filePromise;
+        if (group) {
+            filePromise = Promise.resolve(group.file);
+        } else {
             const fileName = this.fileName.replace(/\.csv$/i, '');
-            file = this.appModel.createNewFile(fileName);
-            group = file.groups[0];
+            filePromise = new Promise((resolve) => this.appModel.createNewFile(fileName, resolve));
         }
-        for (const row of this.model.rows) {
-            const newEntry = EntryModel.newEntry(group, file);
-            for (let ix = 0; ix < row.length; ix++) {
-                let value = row[ix];
-                if (!value) {
-                    continue;
-                }
-                const mapping = this.fieldMapping[ix];
-                if (mapping.type === 'ignore' || !mapping.field) {
-                    continue;
-                }
-                if (mapping.field === 'Password') {
-                    value = kdbxweb.ProtectedValue.fromString(value);
-                }
-                newEntry.setField(mapping.field, value);
+
+        filePromise.then((file) => {
+            if (!group) {
+                group = file.groups[0];
             }
-        }
-        file.reload();
-        this.emit('done');
+
+            for (const row of this.model.rows) {
+                const newEntry = EntryModel.newEntry(group, file);
+                for (let ix = 0; ix < row.length; ix++) {
+                    let value = row[ix];
+                    if (!value) {
+                        continue;
+                    }
+                    const mapping = this.fieldMapping[ix];
+                    if (mapping.type === 'ignore' || !mapping.field) {
+                        continue;
+                    }
+                    if (mapping.field === 'Password') {
+                        value = kdbxweb.ProtectedValue.fromString(value);
+                    }
+                    newEntry.setField(mapping.field, value);
+                }
+            }
+
+            file.reload();
+            this.emit('done');
+        });
     }
 }
 

@@ -41,4 +41,34 @@ describe('UrlFormat', () => {
             })
         ).to.eql('hello=world&data=%3D%20%26');
     });
+
+    it('should remove anchor for short urls', () => {
+        expect(
+            UrlFormat.presentAsShortUrl('https://example.com/path?query=1#anchor' + '0'.repeat(100))
+        ).to.eql('https://example.com/path?query=1#…');
+    });
+
+    it('should remove query string for short urls', () => {
+        expect(
+            UrlFormat.presentAsShortUrl(
+                'https://example.com/path?query=' + '1'.repeat(100) + '#anchor' + '0'.repeat(100)
+            )
+        ).to.eql('https://example.com/path?…');
+    });
+
+    it('should remove query parts of path for short urls', () => {
+        expect(
+            UrlFormat.presentAsShortUrl(
+                'https://example.com/path/' + '1'.repeat(100) + '/' + '0'.repeat(100)
+            )
+        ).to.eql('https://example.com/path/…');
+    });
+
+    it('should not remove domain for short urls', () => {
+        expect(
+            UrlFormat.presentAsShortUrl(
+                'https://example' + '0'.repeat(100) + '.com/' + '1'.repeat(100)
+            )
+        ).to.eql('https://example' + '0'.repeat(100) + '.com/…');
+    });
 });

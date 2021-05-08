@@ -53,6 +53,10 @@
             intermediate-pressed-background-color:
                 mix(map-get($t, medium-color), map-get($t, background-color), 2.6%),
             disabled-background-color: shade(map-get($t, background-color), 5%),
+            unselected-background-color:
+                mix(map-get($t, medium-color), map-get($t, background-color), 9%),
+            unselected-background-color-hover:
+                mix(map-get($t, medium-color), map-get($t, background-color), 14%),
             action-background-color-focus: shade(map-get($t, action-color), 20%),
             action-background-color-focus-tr: rgba(shade(map-get($t, action-color), 20%), 0.1),
             error-background-color-focus: shade(map-get($t, error-color), 20%),

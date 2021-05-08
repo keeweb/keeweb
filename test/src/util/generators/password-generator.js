@@ -41,9 +41,11 @@ describe('PasswordGenerator', () => {
     });
 
     it('should generate a pronounceable password', () => {
-        expect(PasswordGenerator.generate({ length: 10, name: 'Pronounceable' })).to.match(
-            /^[a-zA-Z]{10}$/
-        );
+        for (let i = 0; i < 1000; i++) {
+            expect(PasswordGenerator.generate({ length: 10, name: 'Pronounceable' })).to.match(
+                /^[a-zA-Z]{10}$/
+            );
+        }
     });
 
     it('should generate a password with pattern', () => {
@@ -56,5 +58,25 @@ describe('PasswordGenerator', () => {
                 upper: true
             })
         ).to.match(/^([A-Z][a-z][0-9][0-9A-Z@#][@#]-){10}$/);
+    });
+
+    it('should include all groups of characters at least once', () => {
+        for (let i = 0; i < 10; i++) {
+            const password = PasswordGenerator.generate({
+                length: 6,
+                upper: true,
+                lower: true,
+                digits: true,
+                brackets: true,
+                special: true,
+                ambiguous: true
+            });
+            expect(password).to.match(/[A-Z]/);
+            expect(password).to.match(/[a-z]/);
+            expect(password).to.match(/[0-9]/);
+            expect(password).to.match(/[(){}[\]<>]/);
+            expect(password).to.match(/[!-\/:-@[-`~]/);
+            expect(password).to.match(/[O0oIl]/);
+        }
     });
 });

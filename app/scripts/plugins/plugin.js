@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import BaseLocale from 'locales/base.json';
 import { Model } from 'framework/model';
 import { RuntimeInfo } from 'const/runtime-info';
@@ -373,25 +373,27 @@ class Plugin extends Model {
                 };
                 text = `(function(require, module){${text}})(window["${jsVar}"].require,window["${jsVar}"].module);`;
                 const ts = this.logger.ts();
-                const blob = new Blob([text], { type: 'text/javascript' });
-                const objectUrl = URL.createObjectURL(blob);
-                const elId = 'plugin-js-' + name;
-                const el = this.createElementInHead('script', elId, {
-                    src: objectUrl
-                });
-                el.addEventListener('load', () => {
-                    URL.revokeObjectURL(objectUrl);
-                    setTimeout(() => {
-                        delete global[jsVar];
-                        if (this.module.exports.uninstall) {
-                            this.logger.debug('Plugin script installed', this.logger.ts(ts));
-                            this.loadPluginSettings();
-                            resolve();
-                        } else {
-                            reject('Plugin script installation failed');
-                        }
-                    }, 0);
-                });
+
+                // Note that here we're calling eval to run the plugin code,
+                // previously it was loaded as 'blob:' scheme (see the code below), however:
+                // 1. we need to have eval enabled in our CSP anyway for WASM,
+                //      see https://github.com/WebAssembly/content-security-policy/issues/7
+                // 2. we would like to prevent Chrome extensions from injecting scripts to our page,
+                //      which is possible to do if we have 'blob:', but they can't call eval
+                // Previous implementation with 'blob:' can be found in git, if we ever need to restore it.
+
+                // eslint-disable-next-line no-eval
+                eval(text);
+                setTimeout(() => {
+                    delete global[jsVar];
+                    if (this.module.exports.uninstall) {
+                        this.logger.debug('Plugin script installed', this.logger.ts(ts));
+                        this.loadPluginSettings();
+                        resolve();
+                    } else {
+                        reject('Plugin script installation failed');
+                    }
+                }, 0);
             } catch (e) {
                 this.logger.error('Error installing plugin script', e);
                 reject(e);

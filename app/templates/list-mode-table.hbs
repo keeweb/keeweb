@@ -1,0 +1,11 @@
+<div class="list__table">
+    <div class="list__table-head list__table-row">
+        <div class="list__table-cell"><i class="fa fa-bars muted-color list__table-options"></i></div>
+        {{#each columns as |col|}}
+            {{#if col.enabled}}<div class="list__table-cell">{{Res col.name}}</div>{{/if}}
+        {{/each}}
+    </div>
+    <div class="list__table-body list__items-container">
+        {{{itemsHtml}}}
+    </div>
+</div>

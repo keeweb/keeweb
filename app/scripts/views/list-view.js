@@ -68,12 +68,20 @@ class ListView extends View {
         this.readTableColumnsEnabled();
 
         this.items = new SearchResultCollection();
+        this.renderedItems = new Map();
     }
 
     render() {
+        if (!this.isVisible()) {
+            this.pendingRender = true;
+            return;
+        }
+        this.pendingRender = false;
+
         if (!this.itemsEl) {
             super.render();
             this.itemsEl = this.$el.find('.list__items>.scroller');
+            this.itemsEl.on('scroll', () => this.renderVisibleItems());
             this.views.search.render();
             this.setTableView();
 
@@ -84,9 +92,9 @@ class ListView extends View {
             });
         }
         if (this.items.length) {
-            const itemTemplate = this.getItemTemplate();
             const itemsTemplate = this.getItemsTemplate();
             const noColor = AppSettingsModel.colorfulIcons ? '' : 'grayscale';
+
             const presenter = new EntryPresenter(
                 this.getDescField(),
                 noColor,
@@ -99,16 +107,29 @@ class ListView extends View {
                 }
             });
             presenter.columns = columns;
-            let itemsHtml = '';
-            this.items.forEach((item) => {
-                presenter.present(item);
-                itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
-            }, this);
+            this.presenter = presenter;
+
+            presenter.present(this.items[0]);
+            const itemTemplate = this.getItemTemplate();
+            const itemsHtml = itemTemplate(presenter, DefaultTemplateOptions);
+            presenter.reset();
+
             const html = itemsTemplate(
                 { itemsHtml, columns: this.tableColumns },
                 DefaultTemplateOptions
             );
             this.itemsEl.html(html);
+            this.itemsContainerEl = this.itemsEl.find('.list__items-container:first')[0];
+
+            const firstListItem = this.itemsContainerEl.firstElementChild;
+            this.itemHeight = firstListItem.getBoundingClientRect().height;
+
+            this.renderedItems = new Map([[0, firstListItem]]);
+
+            const totalHeight = this.itemHeight * this.items.length;
+            this.itemsContainerEl.style.minHeight = totalHeight + 'px';
+
+            this.renderVisibleItems();
         } else {
             this.itemsEl.html(this.emptyTemplate({}, DefaultTemplateOptions));
         }
@@ -117,14 +138,10 @@ class ListView extends View {
 
     getItemsTemplate() {
         if (this.model.settings.tableView) {
-            return require('templates/list-table.hbs');
+            return require('templates/list-mode-table.hbs');
         } else {
-            return this.renderPlainItems;
+            return require('templates/list-mode-list.hbs');
         }
-    }
-
-    renderPlainItems(data) {
-        return data.itemsHtml;
     }
 
     getItemTemplate() {
@@ -133,6 +150,90 @@ class ListView extends View {
         } else {
             return require('templates/list-item-short.hbs');
         }
+    }
+
+    renderVisibleItems() {
+        if (!this.isVisible()) {
+            return;
+        }
+
+        const scrollEl = this.itemsEl[0];
+        const rect = scrollEl.getBoundingClientRect();
+
+        const pxTop = scrollEl.scrollTop;
+        const pxHeight = rect.height;
+        const itemHeight = this.itemHeight;
+        const renderedItems = this.renderedItems;
+
+        let firstIx = Math.max(0, Math.floor(pxTop / itemHeight));
+        let lastIx = Math.min(this.items.length - 1, Math.ceil((pxTop + pxHeight) / itemHeight));
+
+        const visibleCount = lastIx - firstIx;
+        firstIx = Math.max(0, firstIx - visibleCount);
+        lastIx = Math.min(this.items.length - 1, lastIx + visibleCount);
+
+        const itemTemplate = this.getItemTemplate();
+        const presenter = this.presenter;
+
+        let itemsHtml = '';
+        const renderedIndices = [];
+
+        for (let ix = firstIx; ix <= lastIx; ix++) {
+            const item = this.items[ix];
+            if (renderedItems.has(ix)) {
+                continue;
+            }
+            presenter.present(item);
+            itemsHtml += itemTemplate(presenter, DefaultTemplateOptions);
+            renderedIndices.push(ix);
+        }
+        presenter.reset();
+
+        const tempEl = document.createElement('div');
+        tempEl.innerHTML = itemsHtml;
+        const renderedElements = [...tempEl.children];
+
+        for (let i = 0; i < renderedElements.length; i++) {
+            const el = renderedElements[i];
+            const ix = renderedIndices[i];
+            this.itemsContainerEl.append(el);
+            el.style.top = ix * itemHeight + 'px';
+            renderedItems.set(ix, el);
+        }
+
+        const maxRenderedItems = visibleCount * 5;
+
+        if (renderedItems.size > maxRenderedItems) {
+            for (const [ix, el] of this.renderedItems) {
+                if (ix < firstIx || ix > lastIx) {
+                    el.remove();
+                    renderedItems.delete(ix);
+                }
+            }
+        }
+    }
+
+    ensureItemRendered(ix) {
+        if (this.renderedItems.has(ix)) {
+            return;
+        }
+
+        const item = this.items[ix];
+        const itemTemplate = this.getItemTemplate();
+
+        this.presenter.present(item);
+        const itemHtml = itemTemplate(this.presenter, DefaultTemplateOptions);
+        this.presenter.reset();
+
+        const tempEl = document.createElement('div');
+        tempEl.innerHTML = itemHtml;
+
+        const [el] = tempEl.children;
+
+        this.itemsContainerEl.append(el);
+        el.style.top = ix * this.itemHeight + 'px';
+
+        this.renderedItems.set(ix, el);
     }
 
     getDescField() {
@@ -203,7 +304,12 @@ class ListView extends View {
     }
 
     selectItem(item) {
+        this.presenter.activeEntryId = item.id;
         this.model.activeEntryId = item.id;
+
+        const ix = this.items.indexOf(item);
+        this.ensureItemRendered(ix);
+
         Events.emit('entry-selected', item);
         this.itemsEl.find('.list__item--active').removeClass('list__item--active');
         const itemEl = document.getElementById(item.id);
@@ -220,6 +326,9 @@ class ListView extends View {
 
     viewShown() {
         this.views.search.show();
+        if (this.pendingRender) {
+            this.render();
+        }
     }
 
     viewHidden() {
@@ -248,6 +357,7 @@ class ListView extends View {
     viewResized(size) {
         this.setSize(size);
         this.throttleSetViewSizeSetting(size);
+        this.renderVisibleItems();
     }
 
     throttleSetViewSizeSetting = throttle((size) => {
@@ -256,6 +366,7 @@ class ListView extends View {
 
     filterChanged(filter) {
         this.items = filter.entries;
+        this.renderedItems = new Map();
         this.render();
     }
 
@@ -263,6 +374,7 @@ class ListView extends View {
         const scrollTop = this.itemsEl[0].scrollTop;
         this.render();
         this.itemsEl[0].scrollTop = scrollTop;
+        this.renderVisibleItems();
     }
 
     itemDragStart(e) {

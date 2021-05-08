@@ -58,7 +58,7 @@ class AppView extends View {
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView(undefined, { ownParent: true });
         this.views.details.appModel = this.model;
-        if (this.titlebarStyle !== 'default' && Features.renderCustomTitleBar()) {
+        if (this.titlebarStyle !== 'default' && Features.renderCustomTitleBar) {
             this.views.titlebar = new TitlebarView(this.model);
         }
 
@@ -82,6 +82,7 @@ class AppView extends View {
         this.listenTo(Events, 'toggle-settings', this.toggleSettings);
         this.listenTo(Events, 'toggle-menu', this.toggleMenu);
         this.listenTo(Events, 'toggle-details', this.toggleDetails);
+        this.listenTo(Events, 'show-open-view', this.showOpenIfNotThere);
         this.listenTo(Events, 'edit-group', this.editGroup);
         this.listenTo(Events, 'edit-tag', this.editTag);
         this.listenTo(Events, 'edit-generator-presets', this.editGeneratorPresets);
@@ -119,13 +120,13 @@ class AppView extends View {
     }
 
     setWindowClass() {
-        const getBrowserCssClass = Features.getBrowserCssClass();
-        if (getBrowserCssClass) {
-            document.body.classList.add(getBrowserCssClass);
+        const browserCssClass = Features.browserCssClass;
+        if (browserCssClass) {
+            document.body.classList.add(browserCssClass);
         }
         if (this.titlebarStyle !== 'default') {
             document.body.classList.add('titlebar-' + this.titlebarStyle);
-            if (Features.renderCustomTitleBar()) {
+            if (Features.renderCustomTitleBar) {
                 document.body.classList.add('titlebar-custom');
             }
         }
@@ -138,7 +139,7 @@ class AppView extends View {
         super.render({
             beta: this.model.isBeta,
             titlebarStyle: this.titlebarStyle,
-            customTitlebar: Features.renderCustomTitleBar()
+            customTitlebar: Features.renderCustomTitleBar
         });
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.render();
@@ -171,9 +172,6 @@ class AppView extends View {
         this.views.open.on('close', () => {
             this.showEntries();
         });
-        this.views.open.on('remove', () => {
-            Events.emit('closed-open-view');
-        });
     }
 
     showLastOpenFile() {
@@ -202,7 +200,6 @@ class AppView extends View {
         this.views.menu.show();
         this.views.menuDrag.$el.parent().show();
         this.views.listWrap.show();
-        this.views.list.show();
         this.views.listDrag.show();
         this.views.details.show();
         this.views.footer.show();
@@ -211,6 +208,8 @@ class AppView extends View {
         this.hideSettings();
         this.hideKeyChange();
         this.hideImportCsv();
+
+        this.views.list.show();
     }
 
     hideOpenFile() {
@@ -351,7 +350,6 @@ class AppView extends View {
     launcherBeforeQuit() {
         // this is currently called only on macos
         const event = {
-            fromBeforeQuit: true,
             preventDefault() {}
         };
         const result = this.beforeUnload(event);
@@ -372,24 +370,22 @@ class AppView extends View {
         }
 
         let minimizeInsteadOfClose = this.model.settings.minimizeOnClose;
-        if (e.fromBeforeQuit) {
-            if (Launcher.quitOnRealQuitEventIfMinimizeOnQuitIsEnabled()) {
-                minimizeInsteadOfClose = false;
-            }
+        if (Launcher?.quitOnRealQuitEventIfMinimizeOnQuitIsEnabled()) {
+            minimizeInsteadOfClose = false;
         }
 
         if (this.model.files.hasDirtyFiles()) {
-            const exit = () => {
-                if (minimizeInsteadOfClose) {
-                    Launcher.minimizeApp();
-                } else {
-                    Launcher.exit();
-                }
-            };
-            if (Launcher && Launcher.exitRequested) {
-                return;
-            }
             if (Launcher) {
+                const exit = () => {
+                    if (minimizeInsteadOfClose) {
+                        Launcher.minimizeApp();
+                    } else {
+                        Launcher.exit();
+                    }
+                };
+                if (Launcher.exitRequested) {
+                    return;
+                }
                 if (!this.exitAlertShown) {
                     if (this.model.settings.autoSave) {
                         this.saveAndLock(
@@ -614,8 +610,11 @@ class AppView extends View {
     }
 
     closeAllFilesAndShowFirst() {
+        if (!this.model.files.hasOpenFiles()) {
+            return;
+        }
         let fileToShow = this.model.files.find(
-            (file) => !file.demo && !file.created && !file.external
+            (file) => !file.demo && !file.created && !file.skipOpenList
         );
         this.model.closeAllFiles();
         if (!fileToShow) {
@@ -650,7 +649,7 @@ class AppView extends View {
         if (this.autoSaveTimer) {
             clearInterval(this.autoSaveTimer);
         }
-        if (this.model.settings.autoSaveInterval) {
+        if (this.model.settings.autoSaveInterval > 0) {
             this.autoSaveTimer = setInterval(
                 this.saveAll.bind(this),
                 this.model.settings.autoSaveInterval * 1000 * 60
@@ -721,6 +720,12 @@ class AppView extends View {
     toggleDetails(visible) {
         this.$el.toggleClass('app--details-visible', visible);
         this.views.menu.switchVisibility(false);
+    }
+
+    showOpenIfNotThere() {
+        if (!this.views.open) {
+            this.showLastOpenFile();
+        }
     }
 
     editGroup(group) {
@@ -832,7 +837,10 @@ class AppView extends View {
     extLinkClick(e) {
         if (Launcher) {
             e.preventDefault();
-            Launcher.openLink(e.target.href);
+            const link = e.target.closest('a');
+            if (link?.href) {
+                Launcher.openLink(link.href);
+            }
         }
     }
 

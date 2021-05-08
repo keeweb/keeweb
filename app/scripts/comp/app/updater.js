@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Transport } from 'comp/browser/transport';

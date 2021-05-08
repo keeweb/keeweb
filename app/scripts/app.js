@@ -6,6 +6,7 @@ import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
 import { Updater } from 'comp/app/updater';
 import { UsbListener } from 'comp/app/usb-listener';
+import { BrowserExtensionConnector } from 'comp/extension/browser-extension-connector';
 import { FeatureTester } from 'comp/browser/feature-tester';
 import { FocusDetector } from 'comp/browser/focus-detector';
 import { IdleTracker } from 'comp/browser/idle-tracker';
@@ -45,6 +46,7 @@ ready(() => {
         .then(loadRemoteConfig)
         .then(ensureCanRun)
         .then(initStorage)
+        .then(initUsbListener)
         .then(showApp)
         .then(postInit)
         .catch((e) => {
@@ -142,6 +144,11 @@ ready(() => {
         StartProfiler.milestone('initializing storage');
     }
 
+    function initUsbListener() {
+        UsbListener.init();
+        StartProfiler.milestone('starting usb');
+    }
+
     function showApp() {
         return Promise.resolve().then(() => {
             const skipHttpsWarning =
@@ -172,12 +179,12 @@ ready(() => {
     }
 
     function postInit() {
-        Updater.init();
-        SingleInstanceChecker.init();
-        AppRightsChecker.init();
-        IdleTracker.init();
-        UsbListener.init();
         setTimeout(() => {
+            Updater.init();
+            SingleInstanceChecker.init();
+            AppRightsChecker.init();
+            IdleTracker.init();
+            BrowserExtensionConnector.init(appModel);
             PluginManager.runAutoUpdate();
         }, Timeouts.AutoUpdatePluginsAfterStart);
     }

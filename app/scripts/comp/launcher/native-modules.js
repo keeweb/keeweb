@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
@@ -20,6 +20,7 @@ if (Launcher) {
     ipcRenderer.on('nativeModuleHostError', (e, err) => NativeModules.hostError(err));
     ipcRenderer.on('nativeModuleHostExit', (e, { code, sig }) => NativeModules.hostExit(code, sig));
     ipcRenderer.on('nativeModuleHostDisconnect', () => NativeModules.hostDisconnect());
+    ipcRenderer.on('log', (e, ...args) => NativeModules.log(...args));
 
     const handlers = {
         yubikeys(numYubiKeys) {
@@ -118,6 +119,14 @@ if (Launcher) {
             }
         },
 
+        log(name, level, ...args) {
+            if (!name) {
+                return;
+            }
+            const logger = new Logger(name);
+            logger[level](...args);
+        },
+
         autoRestartHost() {
             setTimeout(() => {
                 try {
@@ -174,6 +183,10 @@ if (Launcher) {
 
         argon2(password, salt, options) {
             return this.call('argon2', password, salt, options);
+        },
+
+        hardwareCryptoDeleteKey: async () => {
+            await ipcRenderer.invoke('hardwareCryptoDeleteKey');
         },
 
         hardwareEncrypt: async (value) => {

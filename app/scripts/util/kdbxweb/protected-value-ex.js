@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 
 const ExpectedFieldRefChars = '{REF:0@I:00000000000000000000000000000000}'.split('');
 const ExpectedFieldRefByteLength = ExpectedFieldRefChars.length;
@@ -175,7 +175,7 @@ kdbxweb.ProtectedValue.prototype.isFieldReference = function () {
     return true;
 };
 
-const RandomSalt = kdbxweb.Random.getBytes(128);
+const RandomSalt = kdbxweb.CryptoEngine.random(128);
 
 kdbxweb.ProtectedValue.prototype.saltedValue = function () {
     if (!this.byteLength) {

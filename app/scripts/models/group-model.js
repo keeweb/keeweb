@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { IconMap } from 'const/icon-map';
 import { EntryModel } from 'models/entry-model';
 import { MenuItemModel } from 'models/menu/menu-item-model';
@@ -86,7 +86,9 @@ class GroupModel extends MenuItemModel {
     _buildCustomIcon() {
         this.customIcon = null;
         if (this.group.customIcon) {
-            return IconUrlFormat.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
+            return IconUrlFormat.toDataUrl(
+                this.file.db.meta.customIcons.get(this.group.customIcon.id)?.data
+            );
         }
         return null;
     }

@@ -4,11 +4,11 @@
     </div>
     <div class="details__header">
         <i class="details__header-color fa fa-bookmark-o"
-            {{#unless readOnly}}
+            {{#if canEditColor}}
                 title="{{res 'detSetIconColor'}}" tip-placement="left"
-            {{/unless}}
+            {{/if}}
         >
-            {{#unless readOnly}}
+            {{#if canEditColor}}
                 <span class="details__colors-popup">
                     <span class="details__colors-popup-item yellow-color fa fa-bookmark-o" data-color="yellow"></span>
                     <span class="details__colors-popup-item green-color fa fa-bookmark-o" data-color="green"></span>
@@ -17,18 +17,18 @@
                     <span class="details__colors-popup-item blue-color fa fa-bookmark-o" data-color="blue"></span>
                     <span class="details__colors-popup-item violet-color fa fa-bookmark-o" data-color="violet"></span>
                 </span>
-            {{/unless}}
+            {{/if}}
         </i>
         <h1 class="details__header-title">{{#if title}}{{title}}{{else}}(no title){{/if}}</h1>
         {{#if customIcon}}
         <div class="details__header-icon details__header-icon--icon"
-             {{#unless readOnly}}title="{{res 'detSetIcon'}}"{{/unless}}
+             {{#if canEditIcon}}title="{{res 'detSetIcon'}}"{{/if}}
         >
             <img class="details__header-icon-img" src="{{customIcon}}" />
         </div>
         {{else}}
         <i class="details__header-icon fa fa-{{icon}}"
-           {{#unless readOnly}}title="{{res 'detSetIcon'}}"{{/unless}}
+           {{#if canEditIcon}}title="{{res 'detSetIcon'}}"{{/if}}
         ></i>
         {{/if}}
     </div>
@@ -42,9 +42,9 @@
         </div>
         <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
     </div>
-    {{#unless readOnly}}
-        <div class="details__issues-container">
-        </div>
+    <div class="details__issues-container">
+    </div>
+    {{#if showButtons}}
         <div class="details__buttons">
             {{#if deleted~}}
                 <i class="details__buttons-trash-del fa fa-minus-circle" title="{{res 'detDelEntryPerm'}}" tip-placement="top"></i>
@@ -67,7 +67,7 @@
                 {{/each}}
             </div>
         </div>
-    {{/unless}}
+    {{/if}}
     <div class="details__dropzone">
         <i class="fa fa-paperclip muted-color details__dropzone-icon"></i>
         <h1 class="muted-color details__dropzone-header">{{res 'detDropAttachments'}}</h1>

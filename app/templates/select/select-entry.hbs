@@ -1,0 +1,50 @@
+<div class="select-entry">
+    <div class="select-entry__header">
+        <h1 class="select-entry__header-text">
+            {{#if isAutoType}}
+                {{res 'autoTypeHeader'}}
+            {{else}}
+                {{res 'selectEntryHeader'}}
+            {{/if}}
+        </h1>
+        <div class="select-entry__hint" id="select-entry__hint">
+            {{#if isAutoType}}
+                <div class="select-entry__hint-text"><span class="shortcut">{{keyEnter}}</span>: {{res 'autoTypeSelectionHint'}}</div>
+                <div class="select-entry__hint-text"><span class="shortcut">{{actionSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintAction'}}</div>
+                <div class="select-entry__hint-text"><span class="shortcut">{{altSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintOpt'}}</div>
+                <div class="select-entry__hint-text"><span class="shortcut">{{shiftSymbol}} {{keyEnter}}</span>: {{res 'autoTypeSelectionHintShift'}}</div>
+            {{else}}
+                <div class="select-entry__hint-text"><span class="shortcut">{{keyEnter}}</span>: {{res 'selectEntryEnterHint'}}</div>
+                <div class="select-entry__hint-text">{{res 'selectEntryTypingHint'}}</div>
+            {{/if}}
+        </div>
+    </div>
+    <div class="select-entry__message">
+        <div class="select-entry__message-text">{{topMessage}}</div>
+    </div>
+    <div class="select-entry__filters">
+        {{#each filters as |filter|}}
+            <div class="select-entry__filter {{#if filter.active}}select-entry__filter--active{{/if}}"
+                 data-filter="{{filter.id}}"
+                 data-active="{{filter.active}}"
+            >
+                <i class="fa {{#if filter.active}}fa-check-square-o{{else}}fa-square-o{{/if}} select-entry__filter-check"></i>
+                <i class="fa fa-filter select-entry__filter-icon"></i>
+                <div class="select-entry__filter-text">{{filter.type}}{{#if filter.text}}: {{/if}}{{filter.text}}</div>
+            </div>
+        {{/each}}
+    </div>
+    <div class="select-entry__items">
+        <div class="scroller">
+            {{#if itemsHtml}}
+                <table class="select-entry__table">{{{itemsHtml}}}</table>
+            {{else}}
+                <h1 class="select-entry__empty-title muted-color">{{res 'autoTypeNoMatches'}}</h1>
+            {{/if}}
+        </div>
+        <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
+    </div>
+    <div class="select-entry__buttons">
+        <button class="btn btn-error select-entry__cancel-btn">{{res 'alertCancel'}} ({{res 'keyEsc'}})</button>
+    </div>
+</div>

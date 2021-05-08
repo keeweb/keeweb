@@ -15,8 +15,5 @@ trim_trailing_whitespace = true
 [*.md]
 trim_trailing_whitespace = false
 
-[*.nsh]
-indent_size = 2
-
-[{*.yml,*.yaml}]
+[{*.nsh,*.yml,*.yaml,*.json}]
 indent_size = 2

@@ -18,7 +18,8 @@ const Timeouts = {
     FieldLabelDoubleClick: 300,
     NativeModuleHostRestartTime: 3000,
     FastAnimation: 100,
-    AutoTypeCopyPaste: 300
+    AutoTypeCopyPaste: 300,
+    KeeWebConnectRequest: 60000
 };
 
 export { Timeouts };

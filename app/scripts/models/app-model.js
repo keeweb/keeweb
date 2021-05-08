@@ -12,11 +12,12 @@ import { EntryModel } from 'models/entry-model';
 import { FileInfoModel } from 'models/file-info-model';
 import { FileModel } from 'models/file-model';
 import { GroupModel } from 'models/group-model';
-import { YubiKeyOtpModel } from 'models/external/yubikey-otp-model';
+import { YubiKeyOtpModel } from 'models/otp-device/yubikey-otp-model';
 import { MenuModel } from 'models/menu/menu-model';
 import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
 import { DateFormat } from 'comp/i18n/date-format';
+import { Launcher } from 'comp/launcher';
 import { UrlFormat } from 'util/formatting/url-format';
 import { IdGenerator } from 'util/generators/id-generator';
 import { Locale } from 'util/locale';
@@ -38,6 +39,9 @@ class AppModel {
     advancedSearch = null;
     attachedYubiKeysCount = 0;
     memoryPasswordStorage = {};
+    fileUnlockPromise = null;
+    hardwareDecryptInProgress = false;
+    mainWindowBlurTimer = null;
 
     constructor() {
         Events.on('refresh', this.refresh.bind(this));
@@ -48,6 +52,11 @@ class AppModel {
         Events.on('select-entry', this.selectEntry.bind(this));
         Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
         Events.on('usb-devices-changed', this.usbDevicesChanged.bind(this));
+        Events.on('main-window-blur', this.mainWindowBlur.bind(this));
+        Events.on('main-window-focus', this.mainWindowFocus.bind(this));
+        Events.on('main-window-will-close', this.mainWindowWillClose.bind(this));
+        Events.on('hardware-decrypt-started', this.hardwareDecryptStarted.bind(this));
+        Events.on('hardware-decrypt-finished', this.hardwareDecryptFinished.bind(this));
 
         this.appLogger = new Logger('app');
         AppModel.instance = this;
@@ -167,10 +176,29 @@ class AppModel {
             page: 'file',
             file
         });
+
         this.refresh();
+
         file.on('reload', this.reloadFile.bind(this));
-        file.on('change', () => Events.emit('file-changed', file));
+        file.on('change', () => {
+            Events.emit('file-changed', file);
+        });
         file.on('ejected', () => this.closeFile(file));
+        file.on('change:dirty', (file, dirty) => {
+            if (dirty && this.settings.autoSaveInterval === -1) {
+                this.syncFile(file);
+            }
+        });
+
+        Events.emit('file-opened');
+
+        if (this.fileUnlockPromise) {
+            this.appLogger.info('Running pending file unlock operation');
+            this.fileUnlockPromise.resolve(file);
+            this.fileUnlockPromise = null;
+            Events.emit('unlock-message-changed', null);
+        }
+
         return true;
     }
 
@@ -232,6 +260,9 @@ class AppModel {
     }
 
     closeAllFiles() {
+        if (!this.files.hasOpenFiles()) {
+            return;
+        }
         for (const file of this.files) {
             file.close();
             this.fileClosed(file);
@@ -244,6 +275,7 @@ class AppModel {
         this.tags.splice(0, this.tags.length);
         this.filter = {};
         this.menu.select({ item: this.menu.allItemsItem });
+        Events.emit('all-files-closed');
     }
 
     closeFile(file) {
@@ -254,6 +286,7 @@ class AppModel {
         this.menu.groupsSection.removeByFile(file);
         this.menu.filesSection.removeByFile(file);
         this.menu.select({ item: this.menu.allItemsSection.items[0] });
+        Events.emit('one-file-closed');
     }
 
     emptyTrash() {
@@ -295,7 +328,7 @@ class AppModel {
     }
 
     getEntries() {
-        const entries = this.getEntriesByFilter(this.filter);
+        const entries = this.getEntriesByFilter(this.filter, this.files);
         entries.sortEntries(this.sort, this.filter);
         if (this.filter.trash) {
             this.addTrashGroups(entries);
@@ -303,16 +336,16 @@ class AppModel {
         return entries;
     }
 
-    getEntriesByFilter(filter) {
+    getEntriesByFilter(filter, files) {
         const preparedFilter = this.prepareFilter(filter);
         const entries = new SearchResultCollection();
 
-        const devicesToMatchOtpEntries = this.files.filter((file) => file.external);
+        const devicesToMatchOtpEntries = files.filter((file) => file.backend === 'otp-device');
 
         const matchedOtpEntrySet = this.settings.yubiKeyMatchEntries ? new Set() : undefined;
 
-        this.files
-            .filter((file) => !file.external)
+        files
+            .filter((file) => file.backend !== 'otp-device')
             .forEach((file) => {
                 file.forEachEntry(preparedFilter, (entry) => {
                     if (matchedOtpEntrySet) {
@@ -427,7 +460,7 @@ class AppModel {
 
     createNewEntry(args) {
         const sel = this.getFirstSelectedGroupForCreation();
-        if (args && args.template) {
+        if (args?.template) {
             if (sel.file !== args.template.file) {
                 sel.file = args.template.file;
                 sel.group = args.template.file.groups[0];
@@ -443,9 +476,19 @@ class AppModel {
         }
     }
 
+    createNewEntryWithFields(group, fields) {
+        return EntryModel.newEntryWithFields(group, fields);
+    }
+
     createNewGroup() {
         const sel = this.getFirstSelectedGroupForCreation();
         return GroupModel.newGroup(sel.group, sel.file);
+    }
+
+    createNewGroupWithName(group, file, name) {
+        const newGroup = GroupModel.newGroup(group, file);
+        newGroup.setName(name);
+        return newGroup;
     }
 
     createNewTemplateEntry() {
@@ -466,7 +509,7 @@ class AppModel {
         }
     }
 
-    createNewFile(name) {
+    createNewFile(name, callback) {
         if (!name) {
             for (let i = 0; ; i++) {
                 name = Locale.openNewFile + (i || '');
@@ -476,9 +519,10 @@ class AppModel {
             }
         }
         const newFile = new FileModel({ id: IdGenerator.uuid() });
-        newFile.create(name);
-        this.addFile(newFile);
-        return newFile;
+        newFile.create(name, () => {
+            this.addFile(newFile);
+            callback?.(newFile);
+        });
     }
 
     openFile(params, callback) {
@@ -827,7 +871,10 @@ class AppModel {
             this.scheduleBackupFile(file, data);
         }
         if (this.settings.yubiKeyAutoOpen) {
-            if (this.attachedYubiKeysCount > 0 && !this.files.some((f) => f.external)) {
+            if (
+                this.attachedYubiKeysCount > 0 &&
+                !this.files.some((f) => f.backend === 'otp-device')
+            ) {
                 this.tryOpenOtpDeviceInBackground();
             }
         }
@@ -1271,7 +1318,9 @@ class AppModel {
         }
 
         const isNewYubiKey = UsbListener.attachedYubiKeys > attachedYubiKeysCount;
-        const hasOpenFiles = this.files.some((file) => file.active && !file.external);
+        const hasOpenFiles = this.files.some(
+            (file) => file.active && file.backend !== 'otp-device'
+        );
 
         if (isNewYubiKey && hasOpenFiles && !this.openingOtpDevice) {
             this.tryOpenOtpDeviceInBackground();
@@ -1303,7 +1352,7 @@ class AppModel {
             return null;
         }
         for (const file of this.files) {
-            if (file.external) {
+            if (file.backend === 'otp-device') {
                 const matchingEntry = file.getMatchingEntry(entry);
                 if (matchingEntry) {
                     return matchingEntry;
@@ -1400,6 +1449,75 @@ class AppModel {
                 }
             }
             this.memoryPasswordStorage = {};
+        }
+    }
+
+    unlockAnyFile(unlockRes, timeout) {
+        this.rejectPendingFileUnlockPromise('Replaced with a new operation');
+        Events.emit('show-open-view');
+        return new Promise((resolve, reject) => {
+            this.fileUnlockPromise = { resolve, reject, unlockRes };
+            if (timeout) {
+                const timer = setTimeout(
+                    () => this.rejectPendingFileUnlockPromise('Timeout'),
+                    timeout
+                );
+                this.fileUnlockPromise.resolve = (res) => {
+                    clearTimeout(timer);
+                    resolve(res);
+                };
+                this.fileUnlockPromise.reject = (err) => {
+                    clearTimeout(timer);
+                    reject(err);
+                };
+            }
+            this.appLogger.info('Pending file unlock operation is set');
+            Events.emit('unlock-message-changed', unlockRes);
+        });
+    }
+
+    get unlockMessageRes() {
+        return this.fileUnlockPromise?.unlockRes;
+    }
+
+    rejectPendingFileUnlockPromise(reason) {
+        if (this.fileUnlockPromise) {
+            this.appLogger.info('Cancel pending file unlock operation', reason);
+            this.fileUnlockPromise.reject(new Error(reason));
+            this.fileUnlockPromise = null;
+            Events.emit('unlock-message-changed', null);
+        }
+    }
+
+    mainWindowBlur() {
+        if (!this.hardwareDecryptInProgress) {
+            this.mainWindowBlurTimer = setTimeout(() => {
+                // macOS emits focus-blur-focus event in a row when triggering auto-type from minimized state
+                delete this.mainWindowBlurTimer;
+                this.rejectPendingFileUnlockPromise('Main window blur');
+            }, Timeouts.AutoTypeWindowFocusAfterBlur);
+        }
+    }
+
+    mainWindowFocus() {
+        if (this.mainWindowBlurTimer) {
+            clearTimeout(this.mainWindowBlurTimer);
+            this.mainWindowBlurTimer = null;
+        }
+    }
+
+    mainWindowWillClose() {
+        this.rejectPendingFileUnlockPromise('Main window will close');
+    }
+
+    hardwareDecryptStarted() {
+        this.hardwareDecryptInProgress = true;
+    }
+
+    hardwareDecryptFinished() {
+        this.hardwareDecryptInProgress = false;
+        if (!Launcher.isAppFocused()) {
+            this.rejectPendingFileUnlockPromise('App is not focused after hardware decrypt');
         }
     }
 }

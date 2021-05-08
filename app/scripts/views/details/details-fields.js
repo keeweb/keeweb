@@ -13,6 +13,7 @@ import { FieldViewDate } from 'views/fields/field-view-date';
 import { FieldViewHistory } from 'views/fields/field-view-history';
 import { FieldViewCustom } from 'views/fields/field-view-custom';
 import { FieldViewReadOnlyWithOptions } from 'views/fields/field-view-read-only-with-options';
+import { ExtraUrlFieldName } from 'models/entry-model';
 
 function createDetailsFields(detailsView) {
     const model = detailsView.model;
@@ -21,7 +22,7 @@ function createDetailsFields(detailsView) {
     const fieldViews = [];
     const fieldViewsAside = [];
 
-    if (model.external) {
+    if (model.backend === 'otp-device') {
         fieldViewsAside.push(
             new FieldViewReadOnly({
                 name: 'Device',
@@ -73,15 +74,27 @@ function createDetailsFields(detailsView) {
                 })
             );
         } else {
-            fieldViewsAside.push(
-                new FieldViewReadOnly({
-                    name: 'File',
-                    title: StringFormat.capFirst(Locale.file),
-                    value() {
-                        return model.fileName;
-                    }
-                })
-            );
+            if (model.backend) {
+                fieldViewsAside.push(
+                    new FieldViewReadOnly({
+                        name: 'Storage',
+                        title: StringFormat.capFirst(Locale.storage),
+                        value() {
+                            return model.fileName;
+                        }
+                    })
+                );
+            } else {
+                fieldViewsAside.push(
+                    new FieldViewReadOnly({
+                        name: 'File',
+                        title: StringFormat.capFirst(Locale.file),
+                        value() {
+                            return model.fileName;
+                        }
+                    })
+                );
+            }
         }
         fieldViews.push(
             new FieldViewAutocomplete({
@@ -127,26 +140,30 @@ function createDetailsFields(detailsView) {
                 sequence: '{NOTES}'
             })
         );
-        fieldViews.push(
-            new FieldViewTags({
-                name: 'Tags',
-                title: StringFormat.capFirst(Locale.tags),
-                tags: AppModel.instance.tags,
-                value() {
-                    return model.tags;
-                }
-            })
-        );
-        fieldViews.push(
-            new FieldViewDate({
-                name: 'Expires',
-                title: Locale.detExpires,
-                lessThanNow: '(' + Locale.detExpired + ')',
-                value() {
-                    return model.expires;
-                }
-            })
-        );
+        if (model.file.supportsTags) {
+            fieldViews.push(
+                new FieldViewTags({
+                    name: 'Tags',
+                    title: StringFormat.capFirst(Locale.tags),
+                    tags: AppModel.instance.tags,
+                    value() {
+                        return model.tags;
+                    }
+                })
+            );
+        }
+        if (model.file.supportsExpiration) {
+            fieldViews.push(
+                new FieldViewDate({
+                    name: 'Expires',
+                    title: Locale.detExpires,
+                    lessThanNow: '(' + Locale.detExpired + ')',
+                    value() {
+                        return model.expires;
+                    }
+                })
+            );
+        }
         fieldViewsAside.push(
             new FieldViewReadOnly({
                 name: 'Group',
@@ -159,33 +176,39 @@ function createDetailsFields(detailsView) {
                 }
             })
         );
-        fieldViewsAside.push(
-            new FieldViewReadOnly({
-                name: 'Created',
-                title: Locale.detCreated,
-                value() {
-                    return DateFormat.dtStr(model.created);
-                }
-            })
-        );
-        fieldViewsAside.push(
-            new FieldViewReadOnly({
-                name: 'Updated',
-                title: Locale.detUpdated,
-                value() {
-                    return DateFormat.dtStr(model.updated);
-                }
-            })
-        );
-        fieldViewsAside.push(
-            new FieldViewHistory({
-                name: 'History',
-                title: StringFormat.capFirst(Locale.history),
-                value() {
-                    return { length: model.historyLength, unsaved: model.unsaved };
-                }
-            })
-        );
+        if (model.created) {
+            fieldViewsAside.push(
+                new FieldViewReadOnly({
+                    name: 'Created',
+                    title: Locale.detCreated,
+                    value() {
+                        return DateFormat.dtStr(model.created);
+                    }
+                })
+            );
+        }
+        if (model.updated) {
+            fieldViewsAside.push(
+                new FieldViewReadOnly({
+                    name: 'Updated',
+                    title: Locale.detUpdated,
+                    value() {
+                        return DateFormat.dtStr(model.updated);
+                    }
+                })
+            );
+        }
+        if (!model.backend) {
+            fieldViewsAside.push(
+                new FieldViewHistory({
+                    name: 'History',
+                    title: StringFormat.capFirst(Locale.history),
+                    value() {
+                        return { length: model.historyLength, unsaved: model.unsaved };
+                    }
+                })
+            );
+        }
         if (otpEntry) {
             fieldViews.push(
                 new FieldViewOtp({
@@ -207,7 +230,7 @@ function createDetailsFields(detailsView) {
                     fieldViews.push(
                         new FieldViewOtp({
                             name: '$' + field,
-                            title: field,
+                            title: Locale.detOtpField,
                             value() {
                                 return model.otpGenerator;
                             },
@@ -216,17 +239,32 @@ function createDetailsFields(detailsView) {
                     );
                 }
             } else {
-                fieldViews.push(
-                    new FieldViewCustom({
-                        name: '$' + field,
-                        title: field,
-                        multiline: true,
-                        value() {
-                            return model.fields[field];
-                        },
-                        sequence: `{S:${field}}`
-                    })
-                );
+                const isUrl = field.startsWith(ExtraUrlFieldName);
+                if (isUrl) {
+                    fieldViews.push(
+                        new FieldViewUrl({
+                            name: '$' + field,
+                            title: StringFormat.capFirst(Locale.website),
+                            isExtraUrl: true,
+                            value() {
+                                return model.fields[field];
+                            },
+                            sequence: `{S:${field}}`
+                        })
+                    );
+                } else {
+                    fieldViews.push(
+                        new FieldViewCustom({
+                            name: '$' + field,
+                            title: field,
+                            multiline: true,
+                            value() {
+                                return model.fields[field];
+                            },
+                            sequence: `{S:${field}}`
+                        })
+                    );
+                }
             }
         }
     }
@@ -234,4 +272,32 @@ function createDetailsFields(detailsView) {
     return { fieldViews, fieldViewsAside };
 }
 
-export { createDetailsFields };
+function createNewCustomField(newFieldTitle, newFieldOptions, model) {
+    const isUrl = newFieldTitle.startsWith(ExtraUrlFieldName);
+
+    if (isUrl) {
+        return new FieldViewUrl(
+            {
+                name: '$' + newFieldTitle,
+                title: StringFormat.capFirst(Locale.website),
+                newField: newFieldTitle,
+                isExtraUrl: true,
+                value: () => model.fields[newFieldTitle]
+            },
+            newFieldOptions
+        );
+    } else {
+        return new FieldViewCustom(
+            {
+                name: '$' + newFieldTitle,
+                title: newFieldTitle,
+                newField: newFieldTitle,
+                multiline: true,
+                value: () => ''
+            },
+            newFieldOptions
+        );
+    }
+}
+
+export { createDetailsFields, createNewCustomField };

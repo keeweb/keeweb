@@ -33,8 +33,8 @@ class SettingsView extends View {
 
     setPage(e) {
         let { page, section, file } = e;
-        if (page === 'file' && file && file.external) {
-            page = 'file-external';
+        if (page === 'file' && file && file.backend === 'otp-device') {
+            page = 'file-otp-device';
         }
         const module = require('./settings-' + page + '-view');
         const viewName = StringFormat.pascalCase(page);

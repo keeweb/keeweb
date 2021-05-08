@@ -340,6 +340,32 @@
             margin-top: 1em;
         }
     }
+
+    &__message {
+        display: flex;
+        justify-content: space-between;
+        min-width: 20vw;
+        background: var(--secondary-background-color);
+        border-radius: var(--block-border-radius);
+        margin-bottom: $large-padding;
+        &-content {
+            padding: $medium-padding;
+            padding-right: $small-spacing;
+        }
+        &-cancel-btn {
+            padding: $medium-padding;
+            padding-left: $small-spacing;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity $base-duration $base-timing;
+            &:hover {
+                opacity: 1;
+            }
+            &-icon {
+                vertical-align: bottom;
+            }
+        }
+    }
 }
 
 .open-list {

@@ -1,6 +1,9 @@
+const { ipcMain } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const { EventEmitter } = require('events');
+
+ipcMain.on('nativeModuleCall', nativeModuleCall);
 
 let callbackWebContents;
 let nativeModuleHost;

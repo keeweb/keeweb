@@ -14,11 +14,12 @@ EntryPresenter.prototype = {
             this.entry = item;
         } else if (item.group) {
             this.group = item;
-        } else if (item.external) {
-            this.entry = item;
-            this.external = true;
         }
         return this;
+    },
+    reset() {
+        this.entry = null;
+        this.group = null;
     },
     get id() {
         return this.entry ? this.entry.id : this.group.id;
@@ -71,7 +72,7 @@ EntryPresenter.prototype = {
         if (!this.entry) {
             return '[' + Locale.listGroup + ']';
         }
-        if (this.external) {
+        if (this.entry.backend === 'otp-device') {
             return this.entry.description;
         }
         switch (this.descField) {

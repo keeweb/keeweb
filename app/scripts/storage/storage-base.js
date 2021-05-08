@@ -50,6 +50,10 @@ class StorageBase {
 
     logout() {}
 
+    deleteStoredToken() {
+        delete this.runtimeData[this.name + 'OAuthToken'];
+    }
+
     _xhr(config) {
         this.logger.info('HTTP request', config.method || 'GET', config.url);
         if (config.data) {
@@ -315,7 +319,9 @@ class StorageBase {
         const token = this._oauthMsgToToken(message);
         if (token && !token.error) {
             this._oauthToken = token;
-            this.runtimeData[this.name + 'OAuthToken'] = token;
+            if (!this.appSettings.shortLivedStorageToken) {
+                this.runtimeData[this.name + 'OAuthToken'] = token;
+            }
             this.logger.debug('OAuth token received');
         }
         return token;
@@ -343,7 +349,9 @@ class StorageBase {
 
     _oauthGetNewToken(callback) {
         this._oauthToken.expired = true;
-        this.runtimeData[this.name + 'OAuthToken'] = this._oauthToken;
+        if (!this.appSettings.shortLivedStorageToken) {
+            this.runtimeData[this.name + 'OAuthToken'] = this._oauthToken;
+        }
         if (this._oauthToken.refreshToken) {
             this._oauthExchangeRefreshToken(callback);
         } else {

@@ -119,19 +119,30 @@
     }
 
     &__table {
-        border-collapse: collapse;
-        width: calc(100% - 2px);
-        td,
-        th {
+        &-body {
+            position: relative;
+        }
+        &-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        &-cell {
             padding: $base-padding;
             text-align: left;
+            flex-grow: 1;
+            flex-shrink: 0;
+            flex-basis: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
             &:first-child {
                 text-align: center;
+                padding: 0;
+                width: 3em;
+                flex-basis: 3em;
+                flex-grow: 0;
+                flex-shrink: 0;
             }
-        }
-        th:first-child {
-            padding: 0;
-            width: 3em;
         }
         &-options {
             @include icon-btn();
@@ -139,11 +150,18 @@
         }
     }
 
+    &__items-container {
+        position: relative;
+    }
+
     &__item {
-        padding: $base-padding;
+        left: 0;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        position: absolute;
+        top: 0;
+        box-sizing: border-box;
         @include nomobile {
             @include area-selectable();
             &--active,
@@ -163,7 +181,9 @@
             @include nomobile {
                 border-radius: var(--block-border-radius);
             }
+            padding: $base-padding;
             margin: 0 $small-spacing;
+            width: calc(100% - #{$small-spacing * 2});
         }
 
         &--expired {

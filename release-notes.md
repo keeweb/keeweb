@@ -1,5 +1,24 @@
 Release notes
 -------------
+##### v1.18.0 (2021-05-08)
+`+` browser extension "KeeWeb Connect"  
+`+` support for KeePassXC-Browser  
+`+` optimized memory consumption for large files  
+`+` KDBX4.1 support  
+`+` option to use short-lived tokens in cloud storages  
+`+` opening XML and CSV files using the Open button  
+`*` password generator now includes all selected character ranges  
+`*` option to auto-save on file change  
+`+` better Touch ID error messages  
+`-` legacy auto-type removed  
+`+` displaying the reason why unlock is requested  
+`+` filters on the auto-type entry selection screen  
+`+` adding multiple websites to one entry  
+`+` translated application menu on macOS  
+`-` fixed a crash after disabling USB devices on Linux  
+`+` tightened content security policy  
+`-` KeeWebHttp deprecated  
+
 ##### v1.17.6 (2021-04-09)
 `+` team drives support in Google Drive  
 `-` fix #1786: saving refresh_token in Google Drive  

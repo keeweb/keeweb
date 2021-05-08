@@ -83,7 +83,9 @@ class StorageDropbox extends StorageBase {
             pkce: true,
             width: 600,
             height: 400,
-            urlParams: { 'token_access_type': 'offline' }
+            urlParams: this.appSettings.shortLivedStorageToken
+                ? {}
+                : { 'token_access_type': 'offline' }
         };
     }
 

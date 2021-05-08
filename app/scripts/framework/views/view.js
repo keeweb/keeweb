@@ -251,7 +251,6 @@ class View extends EventEmitter {
                 FocusManager.setModal(null);
             }
         }
-        this.emit(visible ? 'show' : 'hide');
         if (this.el) {
             this.el.classList.toggle('show', !!visible);
             this.el.classList.toggle('hide', !visible);
@@ -259,6 +258,7 @@ class View extends EventEmitter {
                 Tip.hideTips(this.el);
             }
         }
+        this.emit(visible ? 'show' : 'hide');
     }
 
     isHidden() {
