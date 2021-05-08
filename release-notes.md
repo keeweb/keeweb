@@ -4,6 +4,7 @@ Release notes
 `+` browser extension "KeeWeb Connect"  
 `+` support for KeePassXC-Browser  
 `+` optimized memory consumption for large files  
+`+` KDBX4.1 support  
 `+` option to use short-lived tokens in cloud storages  
 `+` opening XML and CSV files using the Open button  
 `*` password generator now includes all selected character ranges  

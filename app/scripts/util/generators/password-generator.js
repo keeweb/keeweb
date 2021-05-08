@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { phonetic } from 'util/generators/phonetic';
 import { shuffle } from 'util/fn';
 
@@ -54,8 +54,8 @@ const PasswordGenerator = {
             }
         }
 
-        const rangeIxRandomBytes = kdbxweb.Random.getBytes(countDefaultChars);
-        const rangeCharRandomBytes = kdbxweb.Random.getBytes(countDefaultChars);
+        const rangeIxRandomBytes = kdbxweb.CryptoEngine.random(countDefaultChars);
+        const rangeCharRandomBytes = kdbxweb.CryptoEngine.random(countDefaultChars);
         const defaultRangeGeneratedChars = [];
         for (let i = 0; i < countDefaultChars; i++) {
             const rangeIx = i < ranges.length ? i : rangeIxRandomBytes[i] % ranges.length;
@@ -65,7 +65,7 @@ const PasswordGenerator = {
         }
         shuffle(defaultRangeGeneratedChars);
 
-        const randomBytes = kdbxweb.Random.getBytes(opts.length);
+        const randomBytes = kdbxweb.CryptoEngine.random(opts.length);
         const chars = [];
         for (let i = 0; i < opts.length; i++) {
             const rand = Math.round(Math.random() * 1000) + randomBytes[i];

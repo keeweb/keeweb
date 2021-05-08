@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';

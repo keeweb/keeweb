@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Logger } from 'util/logger';
 
 const logger = new Logger('online-password-checker');

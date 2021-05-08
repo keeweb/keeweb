@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { Launcher } from 'comp/launcher';
 import { box as tweetnaclBox } from 'tweetnacl';

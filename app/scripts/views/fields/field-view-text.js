@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';

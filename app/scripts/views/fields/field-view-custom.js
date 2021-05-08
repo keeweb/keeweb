@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Keys } from 'const/keys';
 import { Locale } from 'util/locale';
 import { Tip } from 'util/ui/tip';

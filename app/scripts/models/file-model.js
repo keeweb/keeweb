@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import demoFileData from 'demo.kdbx';
 import { Model } from 'framework/model';
 import { Events } from 'framework/events';
@@ -669,16 +669,19 @@ class FileModel extends Model {
     }
 
     getCustomIcons() {
-        return mapObject(this.db.meta.customIcons, (customIcon) =>
-            IconUrlFormat.toDataUrl(customIcon)
-        );
+        const customIcons = {};
+        for (const [id, icon] of this.db.meta.customIcons) {
+            customIcons[id] = IconUrlFormat.toDataUrl(icon.data);
+        }
+        return customIcons;
     }
 
     addCustomIcon(iconData) {
         const uuid = kdbxweb.KdbxUuid.random();
-        this.db.meta.customIcons[uuid] = kdbxweb.ByteUtils.arrayToBuffer(
-            kdbxweb.ByteUtils.base64ToBytes(iconData)
-        );
+        this.db.meta.customIcons[uuid] = {
+            data: kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData)),
+            lastModified: new Date()
+        };
         return uuid.toString();
     }
 

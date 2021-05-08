@@ -48,7 +48,6 @@
         "import/no-webpack-loader-syntax": "off",
         "import/no-relative-parent-imports": "error",
         "import/first": "error",
-        "import/no-namespace": "error",
         "import/no-default-export": "error",
         "babel/no-unused-expressions": "error",
         "node/no-callback-literal": "off"

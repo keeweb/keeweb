@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 
 const SecureInput = function () {
     this.el = null;
@@ -79,7 +79,7 @@ Object.defineProperty(SecureInput.prototype, 'value', {
         const len = pseudoValue.length;
         let byteLength = 0;
         const valueBytes = new Uint8Array(len * 4);
-        const saltBytes = kdbxweb.Random.getBytes(len * 4);
+        const saltBytes = kdbxweb.CryptoEngine.random(len * 4);
         let ch;
         let bytes;
         for (let i = 0; i < len; i++) {

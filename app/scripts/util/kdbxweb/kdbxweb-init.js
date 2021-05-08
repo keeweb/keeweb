@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Logger } from 'util/logger';
 import { Features } from 'util/features';
 import { NativeModules } from 'comp/launcher/native-modules';
@@ -7,7 +7,7 @@ const logger = new Logger('argon2');
 
 const KdbxwebInit = {
     init() {
-        kdbxweb.CryptoEngine.argon2 = (...args) => this.argon2(...args);
+        kdbxweb.CryptoEngine.setArgon2Impl((...args) => this.argon2(...args));
     },
 
     argon2(password, salt, memory, iterations, length, parallelism, type, version) {

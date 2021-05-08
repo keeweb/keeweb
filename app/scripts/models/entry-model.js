@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Model } from 'framework/model';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { KdbxToHtml } from 'comp/format/kdbx-to-html';
@@ -52,7 +52,7 @@ class EntryModel extends Model {
         this.icon = this._iconFromId(entry.icon);
         this.tags = entry.tags;
         this.color = this._colorToModel(entry.bgColor) || this._colorToModel(entry.fgColor);
-        this.fields = this._fieldsToModel(entry.fields);
+        this.fields = this._fieldsToModel();
         this.attachments = this._attachmentsToModel(entry.binaries);
         this.created = entry.times.creationTime;
         this.updated = entry.times.lastModTime;
@@ -71,7 +71,7 @@ class EntryModel extends Model {
     }
 
     _getPassword() {
-        const password = this.entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
+        const password = this.entry.fields.get('Password') || kdbxweb.ProtectedValue.fromString('');
         if (!password.isProtected) {
             return kdbxweb.ProtectedValue.fromString(password);
         }
@@ -79,7 +79,7 @@ class EntryModel extends Model {
     }
 
     _getFieldString(field) {
-        const val = this.entry.fields[field];
+        const val = this.entry.fields.get(field);
         if (!val) {
             return '';
         }
@@ -103,7 +103,7 @@ class EntryModel extends Model {
 
     _buildSearchText() {
         let text = '';
-        for (const value of Object.values(this.entry.fields)) {
+        for (const value of this.entry.fields.values()) {
             if (typeof value === 'string') {
                 text += value.toLowerCase() + '\n';
             }
@@ -122,7 +122,7 @@ class EntryModel extends Model {
         this.customIconId = null;
         if (this.entry.customIcon) {
             this.customIcon = IconUrlFormat.toDataUrl(
-                this.file.db.meta.customIcons[this.entry.customIcon]
+                this.file.db.meta.customIcons.get(this.entry.customIcon.id)?.data
             );
             this.customIconId = this.entry.customIcon.toString();
         }
@@ -164,13 +164,13 @@ class EntryModel extends Model {
         return color ? Color.getNearest(color) : null;
     }
 
-    _fieldsToModel(fields) {
-        return omit(fields, BuiltInFields);
+    _fieldsToModel() {
+        return omit(this.getAllFields(), BuiltInFields);
     }
 
     _attachmentsToModel(binaries) {
         const att = [];
-        for (let [title, data] of Object.entries(binaries)) {
+        for (let [title, data] of binaries) {
             if (data && data.ref) {
                 data = data.value;
             }
@@ -210,7 +210,11 @@ class EntryModel extends Model {
     }
 
     getAllFields() {
-        return this.entry.fields;
+        const fields = {};
+        for (const [key, value] of this.entry.fields) {
+            fields[key] = value;
+        }
+        return fields;
     }
 
     getHistoryEntriesForSearch() {
@@ -232,7 +236,7 @@ class EntryModel extends Model {
     getFieldValue(field) {
         field = field.toLowerCase();
         let resolvedField;
-        Object.keys(this.entry.fields).some((entryField) => {
+        [...this.entry.fields.keys()].some((entryField) => {
             if (entryField.toLowerCase() === field) {
                 resolvedField = entryField;
                 return true;
@@ -240,7 +244,7 @@ class EntryModel extends Model {
             return false;
         });
         if (resolvedField) {
-            let fieldValue = this.entry.fields[resolvedField];
+            let fieldValue = this.entry.fields.get(resolvedField);
             const refValue = this._resolveFieldReference(fieldValue);
             if (refValue !== undefined) {
                 fieldValue = refValue;
@@ -276,7 +280,7 @@ class EntryModel extends Model {
         if (!entry) {
             return;
         }
-        return entry.entry.fields[FieldRefIds[fieldRefId]];
+        return entry.entry.fields.get(FieldRefIds[fieldRefId]);
     }
 
     setColor(color) {
@@ -329,10 +333,10 @@ class EntryModel extends Model {
         if (hasValue || allowEmpty || BuiltInFields.indexOf(field) >= 0) {
             this._entryModified();
             val = this.sanitizeFieldValue(val);
-            this.entry.fields[field] = val;
-        } else if (Object.prototype.hasOwnProperty.call(this.entry.fields, field)) {
+            this.entry.fields.set(field, val);
+        } else if (this.entry.fields.has(field)) {
             this._entryModified();
-            delete this.entry.fields[field];
+            this.entry.fields.delete(field);
         }
         this._fillByEntry();
     }
@@ -347,7 +351,7 @@ class EntryModel extends Model {
     }
 
     hasField(field) {
-        return Object.prototype.hasOwnProperty.call(this.entry.fields, field);
+        return this.entry.fields.has(field);
     }
 
     addAttachment(name, data) {
@@ -360,7 +364,7 @@ class EntryModel extends Model {
 
     removeAttachment(name) {
         this._entryModified();
-        delete this.entry.binaries[name];
+        this.entry.binaries.delete(name);
         this._fillByEntry();
     }
 
@@ -390,8 +394,8 @@ class EntryModel extends Model {
         this.entry.pushHistory();
         this.unsaved = true;
         this.file.setModified();
-        this.entry.fields = {};
-        this.entry.binaries = {};
+        this.entry.fields = new Map();
+        this.entry.binaries = new Map();
         this.entry.copyFrom(historyEntry);
         this._entryModified();
         this._fillByEntry();
@@ -402,8 +406,8 @@ class EntryModel extends Model {
             this.unsaved = false;
             const historyEntry = this.entry.history[this.entry.history.length - 1];
             this.entry.removeHistory(this.entry.history.length - 1);
-            this.entry.fields = {};
-            this.entry.binaries = {};
+            this.entry.fields = new Map();
+            this.entry.binaries = new Map();
             this.entry.copyFrom(historyEntry);
             this._fillByEntry();
         }
@@ -476,14 +480,14 @@ class EntryModel extends Model {
                     otpUrl = Otp.makeUrl(args.key, args.step, args.size);
                 }
             }
-        } else if (this.entry.fields['TOTP Seed']) {
+        } else if (this.entry.fields.get('TOTP Seed')) {
             // TrayTOTP plugin format
-            let secret = this.entry.fields['TOTP Seed'];
+            let secret = this.entry.fields.get('TOTP Seed');
             if (secret.isProtected) {
                 secret = secret.getText();
             }
             if (secret) {
-                let settings = this.entry.fields['TOTP Settings'];
+                let settings = this.entry.fields.get('TOTP Settings');
                 if (settings && settings.isProtected) {
                     settings = settings.getText();
                 }
@@ -522,8 +526,8 @@ class EntryModel extends Model {
 
     setOtpUrl(url) {
         this.setField('otp', url ? kdbxweb.ProtectedValue.fromString(url) : undefined);
-        delete this.entry.fields['TOTP Seed'];
-        delete this.entry.fields['TOTP Settings'];
+        this.entry.fields.delete('TOTP Seed');
+        this.entry.fields.delete('TOTP Settings');
     }
 
     getEffectiveEnableAutoType() {
@@ -574,7 +578,7 @@ class EntryModel extends Model {
         newEntry.entry.uuid = uuid;
         newEntry.entry.times.update();
         newEntry.entry.times.creationTime = newEntry.entry.times.lastModTime;
-        newEntry.entry.fields.Title = this.title + nameSuffix;
+        newEntry.entry.fields.set('Title', this.title + nameSuffix);
         newEntry._fillByEntry();
         this.file.reload();
         return newEntry;
@@ -586,7 +590,7 @@ class EntryModel extends Model {
         this.entry.uuid = uuid;
         this.entry.times.update();
         this.entry.times.creationTime = this.entry.times.lastModTime;
-        this.entry.fields.Title = '';
+        this.entry.fields.set('Title', '');
         this._fillByEntry();
     }
 
@@ -612,7 +616,7 @@ class EntryModel extends Model {
         const allFields = Object.keys(fieldWeights).concat(Object.keys(this.fields));
 
         return allFields.reduce((rank, fieldName) => {
-            const val = this.entry.fields[fieldName];
+            const val = this.entry.fields.get(fieldName);
             if (!val) {
                 return rank;
             }
@@ -630,20 +634,20 @@ class EntryModel extends Model {
     }
 
     canCheckPasswordIssues() {
-        return !this.entry.customData?.IgnorePwIssues;
+        return !this.entry.customData?.has('IgnorePwIssues');
     }
 
     setIgnorePasswordIssues() {
         if (!this.entry.customData) {
-            this.entry.customData = {};
+            this.entry.customData = new Map();
         }
-        this.entry.customData.IgnorePwIssues = '1';
+        this.entry.customData.set('IgnorePwIssues', '1');
         this._entryModified();
     }
 
     getNextUrlFieldName() {
         const takenFields = new Set(
-            Object.keys(this.entry.fields).filter((f) => f.startsWith(ExtraUrlFieldName))
+            [...this.entry.fields.keys()].filter((f) => f.startsWith(ExtraUrlFieldName))
         );
         for (let i = 0; ; i++) {
             const fieldName = i ? `${ExtraUrlFieldName}_${i}` : ExtraUrlFieldName;

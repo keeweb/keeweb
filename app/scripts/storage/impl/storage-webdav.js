@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { StorageBase } from 'storage/storage-base';
 import { Locale } from 'util/locale';
 

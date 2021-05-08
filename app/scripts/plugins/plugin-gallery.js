@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { SettingsStore } from 'comp/settings/settings-store';
 import { Links } from 'const/links';

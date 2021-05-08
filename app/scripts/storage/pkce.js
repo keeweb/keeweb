@@ -1,12 +1,12 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 
 let newOAuthSession;
 
 function createOAuthSession() {
     const session = newOAuthSession;
 
-    const state = kdbxweb.ByteUtils.bytesToHex(kdbxweb.Random.getBytes(64));
-    const codeVerifier = kdbxweb.ByteUtils.bytesToHex(kdbxweb.Random.getBytes(50));
+    const state = kdbxweb.ByteUtils.bytesToHex(kdbxweb.CryptoEngine.random(64));
+    const codeVerifier = kdbxweb.ByteUtils.bytesToHex(kdbxweb.CryptoEngine.random(50));
 
     const codeVerifierBytes = kdbxweb.ByteUtils.arrayToBuffer(
         kdbxweb.ByteUtils.stringToBytes(codeVerifier)

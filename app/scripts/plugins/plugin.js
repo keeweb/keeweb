@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import BaseLocale from 'locales/base.json';
 import { Model } from 'framework/model';
 import { RuntimeInfo } from 'const/runtime-info';

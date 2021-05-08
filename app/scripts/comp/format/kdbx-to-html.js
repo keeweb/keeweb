@@ -1,5 +1,5 @@
 /* eslint-disable import/no-commonjs */
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Links } from 'const/links';
 import { DateFormat } from 'comp/i18n/date-format';
@@ -51,14 +51,14 @@ function walkEntry(db, entry, parents) {
             });
         }
     }
-    for (const fieldName of Object.keys(entry.fields)) {
+    for (const [fieldName, fieldValue] of entry.fields) {
         if (!KnownFields[fieldName]) {
             const value = entryField(entry, fieldName);
             if (value) {
                 fields.push({
                     title: fieldName,
                     value,
-                    protect: entry.fields[fieldName].isProtected
+                    protect: fieldValue.isProtected
                 });
             }
         }
@@ -69,7 +69,7 @@ function walkEntry(db, entry, parents) {
         expires = DateFormat.dtStr(entry.times.expiryTime);
     }
 
-    const attachments = Object.entries(entry.binaries)
+    const attachments = [...entry.binaries]
         .map(([name, data]) => {
             if (data && data.ref) {
                 data = data.value;
@@ -95,7 +95,7 @@ function walkEntry(db, entry, parents) {
 }
 
 function entryField(entry, fieldName) {
-    const value = entry.fields[fieldName];
+    const value = entry.fields.get(fieldName);
     return (value && value.isProtected && value.getText()) || value || '';
 }
 
