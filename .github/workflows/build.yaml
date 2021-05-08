@@ -122,11 +122,6 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
-      - name: Upgrade Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
       - name: Install grunt
@@ -181,11 +176,6 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
-      - name: Upgrade Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
       - name: Install grunt
@@ -384,7 +374,7 @@ jobs:
           tag_name: ${{ github.ref }}
           name: Desktop apps v${{ steps.get_tag.outputs.tag }}
           files: assets/*
-          body_path: tmp/release-body.md
+          body_path: keeweb/tmp/release-body.md
       - name: Checkout gh-pages
         uses: actions/checkout@v2
         with:
