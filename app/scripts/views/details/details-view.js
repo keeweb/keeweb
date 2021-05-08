@@ -615,10 +615,14 @@ class DetailsView extends View {
             }
             this.entryUpdated(true);
             this.fieldViews.forEach(function (fieldView, ix) {
+                // TODO: render the view instead
                 if (
-                    (fieldView instanceof FieldViewCustom || fieldView.model.isExtraUrl) &&
-                    !fieldView.model.newField &&
-                    !this.model.hasField(fieldView.model.title)
+                    (fieldView instanceof FieldViewCustom &&
+                        !fieldView.model.newField &&
+                        !this.model.hasField(fieldView.model.title)) ||
+                    (fieldView.model.isExtraUrl &&
+                        !fieldView.model.newField &&
+                        !this.model.hasField(fieldView.model.name.replace('$', '')))
                 ) {
                     fieldView.remove();
                     this.fieldViews.splice(ix, 1);
