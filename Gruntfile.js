@@ -234,7 +234,7 @@ module.exports = function (grunt) {
                 dest:
                     'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
-                options: { mode: true }
+                options: { mode: '0755' }
             },
             'native-messaging-host-darwin-arm64': {
                 src:
@@ -242,14 +242,14 @@ module.exports = function (grunt) {
                 dest:
                     'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
-                options: { mode: true }
+                options: { mode: '0755' }
             },
             'native-messaging-host-linux-x64': {
                 src:
                     'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
                 dest: 'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host',
                 nonull: true,
-                options: { mode: true }
+                options: { mode: '0755' }
             },
             'native-messaging-host-win32-x64': {
                 src:
