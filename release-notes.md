@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.18.0 (TBD)
+##### v1.18.0 (2021-05-08)
 `+` browser extension "KeeWeb Connect"  
 `+` support for KeePassXC-Browser  
 `+` optimized memory consumption for large files  
