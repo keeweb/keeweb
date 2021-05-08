@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { expect } from 'chai';
 import { PasswordPresenter } from 'util/formatting/password-presenter';
 
