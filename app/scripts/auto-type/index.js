@@ -246,7 +246,7 @@ const AutoType = {
     },
 
     processEventWithFilter(evt) {
-        const entries = evt.filter.getEntries();
+        let entries = evt.filter.getEntries();
         if (entries.length === 1 && AppSettingsModel.directAutotype) {
             this.hideWindow(() => {
                 this.runAndHandleResult({ entry: entries[0] }, evt.windowInfo.id);
@@ -254,6 +254,19 @@ const AutoType = {
             return;
         }
         this.focusMainWindow();
+
+        if (entries.length === 0) {
+            if (evt.filter.useUrl) {
+                evt.filter.useUrl = false;
+                if (evt.filter.title) {
+                    evt.filter.useTitle = true;
+                }
+            }
+            entries = evt.filter.getEntries();
+            if (entries.length === 0 && evt.filter.useTitle) {
+                evt.filter.useTitle = false;
+            }
+        }
 
         const humanReadableTarget = evt.filter.title || evt.filter.url;
         const topMessage = humanReadableTarget

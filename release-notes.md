@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.18.3 (2021-05-09)
 `-` fix #1804: filling OTP in browser extensions  
+`*` fix #1805: auto-unchecking auto-type filters if nothing found  
 
 ##### v1.18.2 (2021-05-08)
 `-` fix #1802: opening files with saved keyfiles  
