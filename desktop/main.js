@@ -97,7 +97,11 @@ const settingsPromise = loadSettingsEncryptionKey().then((key) => {
     logProgress('loading settings key');
 
     return loadConfig('app-settings').then((settings) => {
-        appSettings = settings ? JSON.parse(settings) : {};
+        try {
+            appSettings = settings ? JSON.parse(settings) : {};
+        } catch (e) {
+            logStartupMessage(`Error loading app settings: ${e}`);
+        }
         logProgress('reading app settings');
     });
 });
@@ -444,7 +448,11 @@ function restoreMainWindowPosition() {
     const fileName = path.join(main.getPath('userData'), windowPositionFileName);
     fs.readFile(fileName, 'utf8', (e, data) => {
         if (data) {
-            mainWindowPosition = JSON.parse(data);
+            try {
+                mainWindowPosition = JSON.parse(data);
+            } catch (e) {
+                logStartupMessage(`Error loading main window position: ${e}`);
+            }
             if (mainWindow && mainWindowPosition) {
                 if (mainWindowPosition.width && mainWindowPosition.height) {
                     mainWindow.setBounds(mainWindowPosition);
@@ -650,7 +658,9 @@ function setUserDataPaths() {
     }
 
     if (isDev && process.env.KEEWEB_IS_PORTABLE) {
-        isPortable = !!JSON.parse(process.env.KEEWEB_IS_PORTABLE);
+        try {
+            isPortable = !!JSON.parse(process.env.KEEWEB_IS_PORTABLE);
+        } catch {}
     }
 
     logProgress('portable check');
@@ -660,15 +670,22 @@ function setUserDataPaths() {
         const portableConfigPath = path.join(portableConfigDir, portableConfigFileName);
 
         if (fs.existsSync(portableConfigPath)) {
-            const portableConfig = JSON.parse(fs.readFileSync(portableConfigPath, 'utf8'));
-            const portableUserDataDir = path.resolve(portableConfigDir, portableConfig.userDataDir);
+            try {
+                const portableConfig = JSON.parse(fs.readFileSync(portableConfigPath, 'utf8'));
+                const portableUserDataDir = path.resolve(
+                    portableConfigDir,
+                    portableConfig.userDataDir
+                );
 
-            if (!fs.existsSync(portableUserDataDir)) {
-                fs.mkdirSync(portableUserDataDir, { recursive: true });
+                if (!fs.existsSync(portableUserDataDir)) {
+                    fs.mkdirSync(portableUserDataDir, { recursive: true });
+                }
+
+                main.setPath('userData', portableUserDataDir);
+                usingPortableUserDataDir = true;
+            } catch (e) {
+                logStartupMessage(`Error loading portable config: ${e}`);
             }
-
-            main.setPath('userData', portableUserDataDir);
-            usingPortableUserDataDir = true;
         }
     }
 
@@ -914,7 +931,9 @@ function loadLocale() {
                 if (appSettings?.locale === localeValues?.locale) {
                     setLocale(localeValues);
                 }
-            } catch {}
+            } catch (e) {
+                logStartupMessage(`Error loading locale: ${e}`);
+            }
         }
         locale.on('changed', () => {
             setMenu();
