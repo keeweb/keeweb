@@ -522,7 +522,7 @@ const ProtocolHandlers = {
         }
 
         const otpPromise = new Promise((resolve, reject) => {
-            selectEntryFieldView.on('result', () => reject(makeError(Errors.userRejected)));
+            selectEntryFieldView?.on('result', () => reject(makeError(Errors.userRejected)));
             entry.otpGenerator.next((err, otp) => {
                 if (otp) {
                     resolve(otp);
@@ -536,9 +536,7 @@ const ProtocolHandlers = {
         try {
             totp = await otpPromise;
         } finally {
-            if (selectEntryFieldView) {
-                selectEntryFieldView.remove();
-            }
+            selectEntryFieldView?.remove();
         }
 
         return encryptResponse(request, {
