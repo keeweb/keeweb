@@ -1,5 +1,11 @@
 Release notes
 -------------
+##### v1.18.2 (2021-05-08)
+`-` fix #1802: opening files with saved keyfiles  
+
+##### v1.18.1 (2021-05-08)
+`-` fixed entry attachments display  
+
 ##### v1.18.0 (2021-05-08)
 `+` browser extension "KeeWeb Connect"  
 `+` support for KeePassXC-Browser  

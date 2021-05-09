@@ -697,7 +697,7 @@ class AppModel {
         let needLoadKeyFile = false;
         if (!params.keyFileData && fileInfo && fileInfo.keyFileName) {
             params.keyFileName = fileInfo.keyFileName;
-            if (this.settings.rememberKeyFiles === 'data') {
+            if (this.settings.rememberKeyFiles === 'data' && fileInfo.keyFileHash) {
                 params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.keyFileHash);
             } else if (this.settings.rememberKeyFiles === 'path' && fileInfo.keyFilePath) {
                 params.keyFilePath = fileInfo.keyFilePath;
