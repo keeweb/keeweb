@@ -677,10 +677,10 @@ class FileModel extends Model {
 
     addCustomIcon(iconData) {
         const uuid = kdbxweb.KdbxUuid.random();
-        this.db.meta.customIcons[uuid] = {
+        this.db.meta.customIcons.set(uuid.id, {
             data: kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData)),
             lastModified: new Date()
-        };
+        });
         return uuid.toString();
     }
 

@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.18.4 (TBD)
 `-` fix #1810: fixed the extension on old macOS starting 10.11  
+`-` fix #1813: fixed custom icon selection  
 
 ##### v1.18.3 (2021-05-09)
 `-` fix #1804: filling OTP in browser extensions  
