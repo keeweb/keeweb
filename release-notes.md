@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.18.4 (TBD)
+`+` #1814: option to disable auto-type title filter by default  
 `-` fix #1810: extension connection on old macOS (10.11)  
 `-` fix #1813: custom icon selection  
 `-` fix #1811: app doesn't quit during update  

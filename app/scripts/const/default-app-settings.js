@@ -18,6 +18,7 @@ const DefaultAppSettings = {
     colorfulIcons: false, // use colorful custom icons instead of grayscale
     useMarkdown: true, // use Markdown in Notes field
     directAutotype: true, // if only one matching entry is found, select that one automatically
+    autoTypeTitleFilterEnabled: true, // enable the title filtering in auto-type by default
     titlebarStyle: 'default', // window titlebar style
     lockOnMinimize: true, // lock the app when it's minimized
     lockOnCopy: false, // lock the app after a password was copied
