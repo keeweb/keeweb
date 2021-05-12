@@ -39,7 +39,7 @@ function installDarwinUpdate(updateFilePath) {
         `--app=${appPath}`
     ]);
 
-    electron.app.exit(0);
+    electron.app.quit();
 }
 
 function installWin32Update(updateFilePath) {
@@ -52,7 +52,7 @@ function installWin32Update(updateFilePath) {
 
     const ps = spawnDetached('cmd');
     ps.stdin.end(`${updateCommand}\nexit\n`, 'utf8', () => {
-        electron.app.exit(0);
+        electron.app.quit();
     });
 }
 
