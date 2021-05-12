@@ -258,7 +258,7 @@ const AutoType = {
         if (entries.length === 0) {
             if (evt.filter.useUrl) {
                 evt.filter.useUrl = false;
-                if (evt.filter.title) {
+                if (evt.filter.title && AppSettingsModel.autoTypeTitleFilterEnabled) {
                     evt.filter.useTitle = true;
                 }
             }
