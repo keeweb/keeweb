@@ -53,6 +53,7 @@ class SettingsGeneralView extends View {
         'change .settings__general-use-markdown': 'changeUseMarkdown',
         'change .settings__general-use-group-icon-for-entries': 'changeUseGroupIconForEntries',
         'change .settings__general-direct-autotype': 'changeDirectAutotype',
+        'change .settings__general-autotype-title-filter': 'changeAutoTypeTitleFilter',
         'change .settings__general-field-label-dblclick-autotype':
             'changeFieldLabelDblClickAutoType',
         'change .settings__general-device-owner-auth': 'changeDeviceOwnerAuth',
@@ -135,6 +136,7 @@ class SettingsGeneralView extends View {
             useMarkdown: AppSettingsModel.useMarkdown,
             useGroupIconForEntries: AppSettingsModel.useGroupIconForEntries,
             directAutotype: AppSettingsModel.directAutotype,
+            autoTypeTitleFilterEnabled: AppSettingsModel.autoTypeTitleFilterEnabled,
             fieldLabelDblClickAutoType: AppSettingsModel.fieldLabelDblClickAutoType,
             supportsTitleBarStyles: Features.supportsTitleBarStyles,
             supportsCustomTitleBarAndDraggableWindow:
@@ -429,6 +431,11 @@ class SettingsGeneralView extends View {
     changeDirectAutotype(e) {
         const directAutotype = e.target.checked || false;
         AppSettingsModel.directAutotype = directAutotype;
+    }
+
+    changeAutoTypeTitleFilter(e) {
+        const autoTypeTitleFilterEnabled = e.target.checked || false;
+        AppSettingsModel.autoTypeTitleFilterEnabled = autoTypeTitleFilterEnabled;
     }
 
     changeFieldLabelDblClickAutoType(e) {

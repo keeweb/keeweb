@@ -1,5 +1,12 @@
 Release notes
 -------------
+##### v1.18.4 (2021-05-12)
+`+` #1814: option to disable auto-type title filter by default  
+`-` #1808: restore KeeWeb from system tray on extension request  
+`-` fix #1810: extension connection on old macOS (10.11)  
+`-` fix #1813: custom icon selection  
+`-` fix #1811: app doesn't quit during update  
+
 ##### v1.18.3 (2021-05-09)
 `-` fix #1804: filling OTP in browser extensions  
 `*` fix #1805: auto-unchecking auto-type filters if nothing found  

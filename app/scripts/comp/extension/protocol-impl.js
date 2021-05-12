@@ -325,7 +325,7 @@ async function findEntry(request, returnIfOneMatch, filterOptions) {
         if (!entries.length) {
             if (AppSettingsModel.extensionFocusIfEmpty) {
                 filter.useUrl = false;
-                if (filter.title) {
+                if (filter.title && AppSettingsModel.autoTypeTitleFilterEnabled) {
                     filter.useTitle = true;
                     entries = filter.getEntries();
                     if (!entries.length) {
