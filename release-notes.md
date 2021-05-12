@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.18.4 (TBD)
+##### v1.18.4 (2021-05-12)
 `+` #1814: option to disable auto-type title filter by default  
 `-` #1808: restore KeeWeb from system tray on extension request  
 `-` fix #1810: extension connection on old macOS (10.11)  
