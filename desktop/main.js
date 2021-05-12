@@ -376,6 +376,9 @@ function restoreMainWindow() {
 }
 
 function showAndFocusMainWindow() {
+    if (appIcon) {
+        restoreMainWindow();
+    }
     if (mainWindowMaximized) {
         mainWindow.maximize();
     } else {
