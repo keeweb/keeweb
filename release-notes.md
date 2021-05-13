@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.18.5 (TBD)
+`-` fix #1816: old Chromium support, such as Android Edge  
+
 ##### v1.18.4 (2021-05-12)
 `+` #1814: option to disable auto-type title filter by default  
 `-` #1808: restore KeeWeb from system tray on extension request  
