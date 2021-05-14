@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.18.5 (TBD)
 `-` fix #1816: old Chromium support, such as Android Edge  
+`-` fix #1817: crash on files with large attachments as KDBX3  
 
 ##### v1.18.4 (2021-05-12)
 `+` #1814: option to disable auto-type title filter by default  
