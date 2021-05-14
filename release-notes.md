@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.18.5 (TBD)
+##### v1.18.5 (2021-05-14)
 `-` fix #1816: old Chromium support, such as Android Edge  
 `-` fix #1817: crash on files with large attachments as KDBX3  
 
