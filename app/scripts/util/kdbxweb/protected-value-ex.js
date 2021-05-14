@@ -6,8 +6,8 @@ const ExpectedFieldRefByteLength = ExpectedFieldRefChars.length;
 kdbxweb.ProtectedValue.prototype.isProtected = true;
 
 kdbxweb.ProtectedValue.prototype.forEachChar = function (fn) {
-    const value = this._value;
-    const salt = this._salt;
+    const value = this.value;
+    const salt = this.salt;
     let b, b1, b2, b3;
     for (let i = 0, len = value.length; i < len; i++) {
         b = value[i] ^ salt[i];
@@ -154,7 +154,7 @@ kdbxweb.ProtectedValue.prototype.equals = function (other) {
         return false;
     }
     for (let i = 0; i < len; i++) {
-        if ((this._value[i] ^ this._salt[i]) !== (other._value[i] ^ other._salt[i])) {
+        if ((this.value[i] ^ this.salt[i]) !== (other.value[i] ^ other.salt[i])) {
             return false;
         }
     }
@@ -181,8 +181,8 @@ kdbxweb.ProtectedValue.prototype.saltedValue = function () {
     if (!this.byteLength) {
         return 0;
     }
-    const value = this._value;
-    const salt = this._salt;
+    const value = this.value;
+    const salt = this.salt;
     let salted = '';
     for (let i = 0, len = value.length; i < len; i++) {
         const byte = value[i] ^ salt[i];
@@ -193,8 +193,8 @@ kdbxweb.ProtectedValue.prototype.saltedValue = function () {
 
 kdbxweb.ProtectedValue.prototype.dataAndSalt = function () {
     return {
-        data: [...this._value],
-        salt: [...this._salt]
+        data: [...this.value],
+        salt: [...this.salt]
     };
 };
 
