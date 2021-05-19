@@ -202,7 +202,9 @@ main.minimizeApp = function (menuItemLabels) {
     if (!appIcon) {
         const image = electron.nativeImage.createFromPath(path.join(__dirname, 'img', imagePath));
         appIcon = new electron.Tray(image);
-        appIcon.on('click', restoreMainWindow);
+        if (process.platform !== 'darwin') {
+            appIcon.on('click', restoreMainWindow);
+        }
         const contextMenu = electron.Menu.buildFromTemplate([
             { label: menuItemLabels.restore, click: restoreMainWindow },
             { label: menuItemLabels.quit, click: closeMainWindow }

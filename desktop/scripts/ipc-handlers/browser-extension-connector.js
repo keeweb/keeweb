@@ -306,24 +306,29 @@ async function processFirstMessageFromSocket(socket, message) {
 
         let parentProcessInfo;
         try {
-            parentProcessInfo = await getProcessInfo(message.ppid);
-        } catch (e) {
-            logger.error(`Cannot get info for PID ${message.ppid}: ${e}`);
-            socket.destroy();
-            return;
-        }
-
-        if (process.platform === 'win32' && parentProcessInfo.appName === 'cmd') {
             try {
-                parentProcessInfo = await getProcessInfo(parentProcessInfo.ppid);
+                parentProcessInfo = await getProcessInfo(message.ppid);
             } catch (e) {
-                logger.error(
-                    `Cannot get info for PID ${parentProcessInfo.ppid}: ${e}, assuming cmd is the launcher`
-                );
+                logger.error(`Cannot get info for PID ${message.ppid}: ${e}`);
+                throw e;
             }
+
+            if (process.platform === 'win32' && parentProcessInfo.appName === 'cmd') {
+                try {
+                    parentProcessInfo = await getProcessInfo(parentProcessInfo.ppid);
+                } catch (e) {
+                    logger.error(
+                        `Cannot get info for PID ${parentProcessInfo.ppid}: ${e}, assuming cmd is the launcher`
+                    );
+                }
+            }
+        } catch (e) {
+            logger.warn('Cannot get process info, assuming the connection is not identified');
         }
 
-        appName = AppNames[parentProcessInfo.appName] ?? parentProcessInfo.appName;
+        appName = parentProcessInfo
+            ? AppNames[parentProcessInfo.appName] ?? parentProcessInfo.appName
+            : 'Unidentified browser';
         appName = appName[0].toUpperCase() + appName.substr(1);
     }
 
