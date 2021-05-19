@@ -3,6 +3,7 @@ Release notes
 ##### v1.18.6 (2021-05-19)
 `-` fix #1824: saving KDBX3 files with compression disabled  
 `-` fix #1818: extension connection error if browser cannot be identified  
+`-` fix #1820: minimize on close on macOS  
 
 ##### v1.18.5 (2021-05-14)
 `-` fix #1816: old Chromium support, such as Android Edge  
