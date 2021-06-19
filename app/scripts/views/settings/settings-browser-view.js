@@ -57,7 +57,7 @@ class SettingsBrowserView extends View {
         } else {
             const extensionBrowserFamily = Features.extensionBrowserFamily;
             data.extensionBrowserFamily = Features.extensionBrowserFamily;
-            data.extensionDownloadLink = Links[`KeeWebConnectFor${extensionBrowserFamily}`];
+            data.extensionDownloadLink = Links[`KWCFor${extensionBrowserFamily}`];
         }
         super.render(data);
     }
