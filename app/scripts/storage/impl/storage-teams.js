@@ -1,19 +1,65 @@
 import { StorageBase } from 'storage/storage-base';
-import { OneDriveApps } from 'const/cloud-storage-apps';
+import { TeamsApps } from 'const/cloud-storage-apps';
 import { Features } from 'util/features';
 
 // https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
 
-class StorageOneDrive extends StorageBase {
-    name = 'onedrive';
-    enabled = true;
-    uipos = 40;
-    icon = 'onedrive';
+// https://graph.microsoft.com/v1.0/me/transitiveMemberOf/microsoft.graph.group?$count=true
+// https://graph.microsoft.com/v1.0/groups?$filter=groupTypes/any(c:c+eq+'Unified')
+// https://graph.microsoft.com/v1.0/groups?$filter=groupTypes/any(c:c+eq+'Unified')&$orderby=displayName
+// https://graph.microsoft.com/v1.0/groups?$orderby=displayName
+// /me/joinedTeams
+// https://graph.microsoft.com/v1.0/groups/{group id}/drive/root/children
 
-    _baseUrl = 'https://graph.microsoft.com/v1.0/me';
+class StorageTeams extends StorageBase {
+    name = 'teams';
+    enabled = true;
+    uipos = 50;
+    icon = 'user-friends';
+
+    _graphUrl = 'https://graph.microsoft.com/v1.0';
+    _groupsUrl = `${this._graphUrl}/me/joinedTeams`;
+    _baseUrl = `${this._graphUrl}/groups`;
 
     getPathForName(fileName) {
         return '/drive/root:/' + fileName + '.kdbx';
+    }
+
+    genUrlAddress(groupId, path) {
+        if (groupId) {
+            return this._baseUrl + '/' + groupId + (path ? '/' + path.replace(/^\/+/, '') : '');
+        } else {
+            return this._groupsUrl;
+        }
+    }
+
+    genUrl(path) {
+        // console.warn('genUrl', path);
+        if (!path) {
+            const groupId = null;
+            const dir = null;
+            const url = this.genUrlAddress(groupId, dir);
+            return [groupId, dir, url];
+        }
+
+        const parts = path.replace(/^\/+/, '').split('/');
+        if (parts.length === 0) {
+            const groupId = null;
+            const dir = null;
+            const url = this.genUrlAddress(groupId, dir);
+            return [groupId, dir, url];
+        } else if (parts.length === 1) {
+            const groupId = parts[0];
+            const dir = null;
+            const url = this.genUrlAddress(groupId, dir);
+            return [groupId, dir, url];
+        } else {
+            path = path.replace(/\/drive\/root\:/, '');
+            const groupId = parts[0];
+            const dir = ('/' + parts.slice(1).join('/')).replace(/^\/+/, '');
+            const url = this.genUrlAddress(groupId, dir);
+            return [groupId, dir, url];
+        }
     }
 
     load(path, opts, callback) {
@@ -23,7 +69,16 @@ class StorageOneDrive extends StorageBase {
             }
             this.logger.debug('Load', path);
             const ts = this.logger.ts();
-            const url = this._baseUrl + path;
+
+            const urlParts = this.genUrl(path);
+            const groupId = urlParts[0];
+            path = urlParts[1];
+            const url = urlParts[2];
+            if (!groupId) {
+                const err = 'no group id defined';
+                return callback && callback(err);
+            }
+
             this._xhr({
                 url,
                 responseType: 'json',
@@ -70,7 +125,16 @@ class StorageOneDrive extends StorageBase {
             }
             this.logger.debug('Stat', path);
             const ts = this.logger.ts();
-            const url = this._baseUrl + path;
+
+            const urlParts = this.genUrl(path);
+            const groupId = urlParts[0];
+            path = urlParts[1];
+            const url = urlParts[2];
+            if (!groupId) {
+                const err = 'no group id defined';
+                return callback && callback(err);
+            }
+
             this._xhr({
                 url,
                 responseType: 'json',
@@ -102,7 +166,16 @@ class StorageOneDrive extends StorageBase {
             }
             this.logger.debug('Save', path, rev);
             const ts = this.logger.ts();
-            const url = this._baseUrl + path + ':/content';
+
+            const urlParts = this.genUrl(path);
+            const groupId = urlParts[0];
+            path = urlParts[1];
+            const url = urlParts[2] + ':/content';
+            if (!groupId) {
+                const err = 'no group id defined';
+                return callback && callback(err);
+            }
+
             this._xhr({
                 url,
                 method: 'PUT',
@@ -136,9 +209,24 @@ class StorageOneDrive extends StorageBase {
             if (err) {
                 return callback && callback(err);
             }
-            this.logger.debug('List');
+            this.logger.debug('List', dir);
             const ts = this.logger.ts();
-            const url = this._baseUrl + (dir ? `${dir}:/children` : '/drive/root/children');
+
+            // console.warn('dir     ', dir);
+            const urlParts = this.genUrl(dir);
+            const groupId = urlParts[0];
+            dir = urlParts[1];
+            const urlPath = groupId ? (dir ? ':/children' : '/drive/root/children') : '';
+            const url = urlParts[2] + urlPath;
+            // console.warn('urlParts', urlParts);
+            // console.warn('groupId ', groupId);
+            // console.warn('dir     ', dir);
+            // console.warn('urlPath ', urlPath);
+            // console.warn('url     ', url);
+
+            const self = this;
+            self._groupId = groupId;
+
             this._xhr({
                 url,
                 responseType: 'json',
@@ -148,14 +236,26 @@ class StorageOneDrive extends StorageBase {
                         return callback && callback('list error');
                     }
                     this.logger.debug('Listed', this.logger.ts(ts));
-                    const fileList = response.value
-                        .filter((f) => f.name)
-                        .map((f) => ({
-                            name: f.name,
-                            path: f.parentReference.path + '/' + f.name,
-                            rev: f.eTag,
-                            dir: !!f.folder
-                        }));
+                    let fileList;
+                    if (!self._groupId) {
+                        fileList = response.value
+                            .filter((f) => f.displayName)
+                            .map((f) => ({
+                                name: f.displayName,
+                                path: '/' + f.id,
+                                rev: f.id,
+                                dir: true
+                            }));
+                    } else {
+                        fileList = response.value
+                            .filter((f) => f.name)
+                            .map((f) => ({
+                                name: f.name,
+                                path: `/${self._groupId}${f.parentReference.path}/${f.name}`,
+                                rev: f.eTag,
+                                dir: !!f.folder
+                            }));
+                    }
                     return callback && callback(null, fileList);
                 },
                 error: (err) => {
@@ -169,7 +269,16 @@ class StorageOneDrive extends StorageBase {
     remove(path, callback) {
         this.logger.debug('Remove', path);
         const ts = this.logger.ts();
-        const url = this._baseUrl + path;
+
+        const urlParts = this.genUrl(path);
+        const groupId = urlParts[0];
+        path = urlParts[1];
+        const url = urlParts[2];
+        if (!groupId) {
+            const err = 'no group id defined';
+            return callback && callback(err);
+        }
+
         this._xhr({
             url,
             method: 'DELETE',
@@ -193,7 +302,16 @@ class StorageOneDrive extends StorageBase {
             }
             this.logger.debug('Make dir', path);
             const ts = this.logger.ts();
-            const url = this._baseUrl + '/drive/root/children';
+
+            const urlParts = this.genUrl(path);
+            const groupId = urlParts[0];
+            path = urlParts[1];
+            const url = urlParts[2] + '/drive/root/children';
+            if (!groupId) {
+                const err = 'no group id defined';
+                return callback && callback(err);
+            }
+
             const data = JSON.stringify({ name: path.replace('/drive/root:/', ''), folder: {} });
             this._xhr({
                 url,
@@ -219,22 +337,22 @@ class StorageOneDrive extends StorageBase {
     }
 
     _getOAuthConfig() {
-        let clientId = this.appSettings.onedriveClientId;
-        let clientSecret = this.appSettings.onedriveClientSecret;
-        let tenant = this.appSettings.onedriveTenantId;
+        let clientId = this.appSettings.teamsClientId;
+        let clientSecret = this.appSettings.teamsClientSecret;
+        let tenant = this.appSettings.teamsTenantId;
 
         if (!clientId) {
             if (Features.isDesktop) {
-                ({ id: clientId, secret: clientSecret, tenantId: tenant } = OneDriveApps.Desktop);
+                ({ id: clientId, secret: clientSecret, tenantId: tenant } = TeamsApps.Desktop);
             } else if (Features.isLocal) {
-                ({ id: clientId, secret: clientSecret, tenantId: tenant } = OneDriveApps.Local);
+                ({ id: clientId, secret: clientSecret, tenantId: tenant } = TeamsApps.Local);
             } else {
-                ({ id: clientId, secret: clientSecret, tenantId: tenant } = OneDriveApps.Production);
+                ({ id: clientId, secret: clientSecret, tenantId: tenant } = TeamsApps.Production);
             }
         }
         tenant = tenant || 'common';
 
-        let scope = 'files.readwrite';
+        let scope = 'Sites.ReadWrite.All Team.ReadBasic.All';
         if (!this.appSettings.shortLivedStorageToken) {
             scope += ' offline_access';
         }
@@ -251,4 +369,4 @@ class StorageOneDrive extends StorageBase {
     }
 }
 
-export { StorageOneDrive };
+export { StorageTeams };
