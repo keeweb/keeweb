@@ -87,7 +87,13 @@ const DefaultAppSettings = {
 
     onedrive: true, // enable OneDrive integration
     onedriveClientId: null, // custom OneDrive client id
-    onedriveClientSecret: null // custom OneDrive client secret
+    onedriveClientSecret: null, // custom OneDrive client secret
+    onedriveTenantId: null, // custom OneDrive tenant id
+
+    teams: true, // enable Teams integration
+    teamsClientId: null, // custom Teams client id
+    teamsClientSecret: null, // custom Teams client secret
+    teamsTenantId: null // custom Teams tenant id
 };
 
 export { DefaultAppSettings };
