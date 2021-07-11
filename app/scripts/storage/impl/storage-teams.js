@@ -12,7 +12,7 @@ import { Features } from 'util/features';
 // https://graph.microsoft.com/v1.0/groups/{group id}/drive/root/children
 
 class StorageTeams extends StorageBase {
-    name = 'teams';
+    name = 'msteams';
     enabled = true;
     uipos = 50;
     icon = 'user-friends';
@@ -34,7 +34,6 @@ class StorageTeams extends StorageBase {
     }
 
     genUrl(path) {
-        // console.warn('genUrl', path);
         if (!path) {
             const groupId = null;
             const dir = null;
@@ -212,17 +211,11 @@ class StorageTeams extends StorageBase {
             this.logger.debug('List', dir);
             const ts = this.logger.ts();
 
-            // console.warn('dir     ', dir);
             const urlParts = this.genUrl(dir);
             const groupId = urlParts[0];
             dir = urlParts[1];
             const urlPath = groupId ? (dir ? ':/children' : '/drive/root/children') : '';
             const url = urlParts[2] + urlPath;
-            // console.warn('urlParts', urlParts);
-            // console.warn('groupId ', groupId);
-            // console.warn('dir     ', dir);
-            // console.warn('urlPath ', urlPath);
-            // console.warn('url     ', url);
 
             const self = this;
             self._groupId = groupId;
@@ -337,9 +330,9 @@ class StorageTeams extends StorageBase {
     }
 
     _getOAuthConfig() {
-        let clientId = this.appSettings.teamsClientId;
-        let clientSecret = this.appSettings.teamsClientSecret;
-        let tenant = this.appSettings.teamsTenantId;
+        let clientId = this.appSettings.msteamsClientId;
+        let clientSecret = this.appSettings.msteamsClientSecret;
+        let tenant = this.appSettings.msteamsTenantId;
 
         if (!clientId) {
             if (Features.isDesktop) {
