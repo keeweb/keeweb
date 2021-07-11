@@ -229,7 +229,11 @@ class StorageOneDrive extends StorageBase {
             } else if (Features.isLocal) {
                 ({ id: clientId, secret: clientSecret, tenantId: tenant } = OneDriveApps.Local);
             } else {
-                ({ id: clientId, secret: clientSecret, tenantId: tenant } = OneDriveApps.Production);
+                ({
+                    id: clientId,
+                    secret: clientSecret,
+                    tenantId: tenant
+                } = OneDriveApps.Production);
             }
         }
         tenant = tenant || 'common';
