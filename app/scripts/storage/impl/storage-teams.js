@@ -336,11 +336,11 @@ class StorageTeams extends StorageBase {
 
         if (!clientId) {
             if (Features.isDesktop) {
-                ({ id: clientId, secret: clientSecret, tenantId: tenant } = TeamsApps.Desktop);
+                ({ id: clientId, secret: clientSecret, tenantId: tenant } = MsTeamsApps.Desktop);
             } else if (Features.isLocal) {
-                ({ id: clientId, secret: clientSecret, tenantId: tenant } = TeamsApps.Local);
+                ({ id: clientId, secret: clientSecret, tenantId: tenant } = MsTeamsApps.Local);
             } else {
-                ({ id: clientId, secret: clientSecret, tenantId: tenant } = TeamsApps.Production);
+                ({ id: clientId, secret: clientSecret, tenantId: tenant } = MsTeamsApps.Production);
             }
         }
         tenant = tenant || 'common';
