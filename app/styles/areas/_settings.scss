@@ -334,8 +334,11 @@
         }
     }
     &__donate-btn {
+        $donate-border-color: #89abed;
+
         background: #fff;
-        border: 2px solid #89abed;
+        border: 2px solid $donate-border-color;
+        border-bottom: 2px solid $donate-border-color;
         border-radius: 2.8rem;
         text-align: center;
         display: inline-block;
@@ -344,6 +347,10 @@
         line-height: 1.4;
         height: 2.8rem;
         margin-bottom: $base-padding-v * 2;
+
+        &:hover {
+            border-bottom: 2px solid $donate-border-color;
+        }
 
         &-top,
         &-bottom {
