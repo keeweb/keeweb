@@ -1,6 +1,7 @@
 Release notes
 -------------
 ##### v1.18.7 (2021-07-18)
+`+` added an option to diagnose YubiKey code listing issues  
 `-` fix #1845: fixed a visible crash on socket write error  
 
 ##### v1.18.6 (2021-05-19)
