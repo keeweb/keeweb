@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### v1.18.7 (2021-07-18)
+`-` fix #1845: fixed a visible crash on socket write error  
+
 ##### v1.18.6 (2021-05-19)
 `-` fix #1824: saving KDBX3 files with compression disabled  
 `-` fix #1818: extension connection error if browser cannot be identified  
