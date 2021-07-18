@@ -1,6 +1,8 @@
 Release notes
 -------------
 ##### v1.18.7 (2021-07-18)
+`+` added Microsoft Teams storage  
+`+` added a possibility to override tenant in Microsoft OneDrive  
 `!` disabled automatic installation of KeePassXC-Browser extension  
 `+` added an option to diagnose YubiKey code listing issues  
 `-` fix #1845: fixed a visible crash on socket write error  
