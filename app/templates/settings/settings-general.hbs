@@ -14,27 +14,6 @@
         <button class="settings__general-download-update-btn">{{res 'setGenDownloadUpdate'}}</button>
     </div>
     {{/if}}
-    {{#if showUpdateBlock}}
-    <h2>{{res 'setGenUpdate'}}</h2>
-    <div>
-        <select class="settings__general-auto-update settings__select input-base">
-            <option value="install" {{#ifeq autoUpdate 'install'}}selected{{/ifeq}}>{{res 'setGenUpdateAuto'}}</option>
-            <option value="check" {{#ifeq autoUpdate 'check'}}selected{{/ifeq}}>{{res 'setGenUpdateCheck'}}</option>
-            <option value="" {{#unless autoUpdate}}selected{{/unless}}>{{res 'setGenNoUpdate'}}</option>
-        </select>
-        <div>{{updateInfo}}</div>
-        <a href="{{releaseNotesLink}}" target="_blank">{{res 'setGenReleaseNotes'}}</a>
-    </div>
-    <div class="settings__general-update-buttons">
-        {{#if updateInProgress}}
-        <button class="settings__general-update-btn btn-silent" disabled>{{res 'setGenUpdateChecking'}}</button>
-        {{else}}
-        <button class="settings__general-update-btn btn-silent">{{res 'setGenCheckUpdate'}}</button>
-        {{/if}}
-        {{#if updateReady}}<button class="settings__general-restart-btn">{{res 'setGenRestartToUpdate'}}</button>{{/if}}
-        {{#if updateFound}}<button class="settings__general-update-found-btn">{{res 'setGenDownloadAndRestart'}}</button>{{/if}}
-    </div>
-    {{/if}}
 
     <h2 id="appearance">{{res 'setGenAppearance'}}</h2>
     {{#if locales}}

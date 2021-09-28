@@ -59,7 +59,6 @@ class SettingsGeneralView extends View {
         'change .settings__general-device-owner-auth-timeout': 'changeDeviceOwnerAuthTimeout',
         'change .settings__general-titlebar-style': 'changeTitlebarStyle',
         'click .settings__general-update-btn': 'checkUpdate',
-        'click .settings__general-restart-btn': 'installUpdateAndRestart',
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
         'change .settings__general-disable-offline-storage': 'changeDisableOfflineStorage',
@@ -449,14 +448,6 @@ class SettingsGeneralView extends View {
     changeDeviceOwnerAuthTimeout(e) {
         const deviceOwnerAuthTimeout = e.target.value | 0;
         AppSettingsModel.deviceOwnerAuthTimeoutMinutes = deviceOwnerAuthTimeout;
-    }
-
-    installUpdateAndRestart() {
-        if (Launcher) {
-            Updater.installAndRestart();
-        } else {
-            window.location.reload();
-        }
     }
 
     downloadUpdate() {
