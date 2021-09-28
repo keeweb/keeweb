@@ -15,3 +15,14 @@ $themes: map-merge(
             )
     )
 );
+
+body.th-sl {
+    --selected-item-text-color: #fdf6e3;
+
+    .list__item--active .orange-color {
+        color: #ff9846;
+    }
+    .list__item--active .green-color {
+        color: #63d823;
+    }
+}

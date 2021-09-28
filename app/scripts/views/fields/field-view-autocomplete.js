@@ -1,6 +1,6 @@
 import { Keys } from 'const/keys';
 import { FieldViewText } from 'views/fields/field-view-text';
-import { escape } from 'util/fn';
+import completionsTemplate from 'templates/details/fields/completions.hbs';
 
 class FieldViewAutocomplete extends FieldViewText {
     hasOptions = true;
@@ -10,7 +10,7 @@ class FieldViewAutocomplete extends FieldViewText {
             this.autocomplete.remove();
             this.autocomplete = null;
         }
-        delete this.selectedCopmletionIx;
+        delete this.selectedCompletionIx;
         super.endEdit(newVal, extra);
     }
 
@@ -24,7 +24,7 @@ class FieldViewAutocomplete extends FieldViewText {
             left: fieldRect.left,
             width: fieldRect.width - 2
         });
-        delete this.selectedCopmletionIx;
+        delete this.selectedCompletionIx;
         this.autocomplete.mousedown(this.autocompleteClick.bind(this));
         if (this.input.val()) {
             this.autocomplete.hide();
@@ -60,40 +60,29 @@ class FieldViewAutocomplete extends FieldViewText {
                 break;
             }
             default:
-                delete this.selectedCopmletionIx;
+                delete this.selectedCompletionIx;
         }
         super.fieldValueKeydown(e);
     }
 
     moveAutocomplete(next) {
         const completions = this.model.getCompletions(this.input.val());
-        if (typeof this.selectedCopmletionIx === 'number') {
-            this.selectedCopmletionIx =
-                (completions.length + this.selectedCopmletionIx + (next ? 1 : -1)) %
+        if (typeof this.selectedCompletionIx === 'number') {
+            this.selectedCompletionIx =
+                (completions.length + this.selectedCompletionIx + (next ? 1 : -1)) %
                 completions.length;
         } else {
-            this.selectedCopmletionIx = next ? 0 : completions.length - 1;
+            this.selectedCompletionIx = next ? 0 : completions.length - 1;
         }
         this.updateAutocomplete();
     }
 
     updateAutocomplete() {
         const completions = this.model.getCompletions(this.input.val());
-        const completionsHtml = completions
-            .map((item, ix) => {
-                const sel =
-                    ix === this.selectedCopmletionIx
-                        ? 'details__field-autocomplete-item--selected'
-                        : '';
-                return (
-                    '<div class="details__field-autocomplete-item ' +
-                    sel +
-                    '">' +
-                    escape(item) +
-                    '</div>'
-                );
-            })
-            .join('');
+        const completionsHtml = completionsTemplate({
+            completions,
+            selectedIx: this.selectedCompletionIx
+        });
         this.autocomplete.html(completionsHtml);
         this.autocomplete.toggle(!!completionsHtml);
     }

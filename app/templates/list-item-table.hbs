@@ -1,16 +1,16 @@
-<tr class="list__item list__item--table {{#if active}}list__item--active{{/if}} {{#if expired}}list__item--expired{{/if}}" id="{{id}}" draggable="true">
-    <td>
+<div class="list__item list__item--table list__table-row {{#if active}}list__item--active{{/if}} {{#if expired}}list__item--expired{{/if}}" id="{{id}}" draggable="true">
+    <div class="list__table-cell">
         {{~#if customIcon~}}
-            <img src="{{{customIcon}}}" class="list__item-icon list__item-icon--custom {{#if color}}{{color}}{{/if}}" />
+            <img src="{{customIcon}}" class="list__item-icon list__item-icon--custom {{#if color}}{{color}}{{/if}}" />
         {{~else~}}
             <i class="fa fa-{{icon}} {{#if color}}{{color}}-color{{/if}} list__item-icon"></i>
         {{~/if~}}
-    </td>
-    {{#if columns.title}}<td>{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</td>{{/if}}
-    {{#if columns.user}}<td>{{user}}</td>{{/if}}
-    {{#if columns.url}}<td>{{url}}</td>{{/if}}
-    {{#if columns.tags}}<td>{{tags}}</td>{{/if}}
-    {{#if columns.notes}}<td>{{notes}}</td>{{/if}}
-    {{#if columns.groupName}}<td>{{groupName}}</td>{{/if}}
-    {{#if columns.fileName}}<td>{{fileName}}</td>{{/if}}
-</tr>
+    </div>
+    {{#if columns.title}}<div class="list__table-cell">{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</div>{{/if}}
+    {{#if columns.user}}<div class="list__table-cell">{{user}}</div>{{/if}}
+    {{#if columns.url}}<div class="list__table-cell">{{url}}</div>{{/if}}
+    {{#if columns.tags}}<div class="list__table-cell">{{tags}}</div>{{/if}}
+    {{#if columns.notes}}<div class="list__table-cell">{{notes}}</div>{{/if}}
+    {{#if columns.groupName}}<div class="list__table-cell">{{groupName}}</div>{{/if}}
+    {{#if columns.fileName}}<div class="list__table-cell">{{fileName}}</div>{{/if}}
+</div>

@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Keys } from 'const/keys';
 import { Locale } from 'util/locale';
 import { Tip } from 'util/ui/tip';
@@ -38,7 +38,7 @@ class FieldViewCustom extends FieldViewText {
     endEdit(newVal, extra) {
         this.$el.removeClass('details__field--can-edit-title');
         extra = { ...extra };
-        if (this.model.titleChanged || this.model.newField) {
+        if (this.model.titleChanged) {
             extra.newField = this.model.title;
         }
         if (!this.editing) {
@@ -61,7 +61,7 @@ class FieldViewCustom extends FieldViewText {
     startEditTitle(emptyTitle) {
         const text = emptyTitle ? '' : this.model.title || '';
         this.labelInput = $('<input/>');
-        this.labelEl.html('').append(this.labelInput);
+        this.labelEl.empty().append(this.labelInput);
         this.labelInput
             .attr({ autocomplete: 'off', spellcheck: 'false' })
             .val(text)
@@ -70,6 +70,7 @@ class FieldViewCustom extends FieldViewText {
         this.labelInput.bind({
             input: this.fieldLabelInput.bind(this),
             keydown: this.fieldLabelKeydown.bind(this),
+            keyup: this.fieldLabelKeyup.bind(this),
             keypress: this.fieldLabelInput.bind(this),
             mousedown: this.fieldLabelInputClick.bind(this),
             click: this.fieldLabelInputClick.bind(this)
@@ -95,6 +96,7 @@ class FieldViewCustom extends FieldViewText {
 
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
+
         if (this.model.newField) {
             this.startEditTitle(true);
         } else if (this.editing) {
@@ -130,12 +132,17 @@ class FieldViewCustom extends FieldViewText {
     fieldLabelKeydown(e) {
         e.stopPropagation();
         const code = e.keyCode || e.which;
-        if (code === Keys.DOM_VK_RETURN) {
-            this.endEditTitle(e.target.value);
-        } else if (code === Keys.DOM_VK_ESCAPE) {
+        if (code === Keys.DOM_VK_ESCAPE) {
             this.endEditTitle();
         } else if (code === Keys.DOM_VK_TAB) {
             e.preventDefault();
+            this.endEditTitle(e.target.value);
+        }
+    }
+
+    fieldLabelKeyup(e) {
+        const code = e.keyCode || e.which;
+        if (code === Keys.DOM_VK_RETURN) {
             this.endEditTitle(e.target.value);
         }
     }

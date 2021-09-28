@@ -1,0 +1,45 @@
+<div class="extension-connect">
+    <p>{{#res 'extensionConnectIntro'}}{{extensionName}}{{/res}}</p>
+    {{#unless identityVerified}}
+        <p class="muted-color">{{res 'extensionConnectUnknownActivity'}}</p>
+    {{/unless}}
+    <div><label>{{res 'extensionConnectFiles'}}</label></div>
+    <div class="extension-connect__files">
+        {{#each files as |file|}}
+            <div class="extension-connect__file">
+                <input type="checkbox" class="input-base extension-connect__file-check"
+                       data-file="{{file.id}}"
+                       id="extension-connect__file-check--name-{{file.id}}"
+                       {{#if file.checked}}checked{{/if}}
+                />
+                <label for="extension-connect__file-check--name-{{file.id}}">{{file.name}}</label>
+            </div>
+        {{/each}}
+        <div class="extension-connect__file">
+            <input type="checkbox" class="input-base extension-connect__file-check"
+                   data-file="all"
+                   id="extension-connect__file-check--all"
+                   {{#if allFiles}}checked{{/if}}
+            />
+            <label for="extension-connect__file-check--all">
+                {{#if files.length}}
+                    {{res 'extensionConnectAllOtherFiles'}}
+                {{else}}
+                    {{res 'extensionConnectAllFiles'}}
+                {{/if}}
+            </label>
+        </div>
+    </div>
+    <div>
+        <div><label for="extension-connect__ask-get">{{res 'extensionConnectAskGet'}}</label></div>
+        <select id="extension-connect__ask-get" class="input-base">
+            <option value="multiple" {{#ifeq askGet 'multiple'}}selected{{/ifeq}}>
+                {{res 'extensionConnectAskGetMultiple'}}
+            </option>
+            <option value="always" {{#ifeq askGet 'always'}}selected{{/ifeq}}>
+                {{res 'extensionConnectAskGetAlways'}}
+            </option>
+        </select>
+    </div>
+    <p>{{res 'extensionConnectSettingsAreForSession'}}</p>
+</div>

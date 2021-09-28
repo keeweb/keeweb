@@ -3,6 +3,7 @@ import { Keys } from 'const/keys';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { Features } from 'util/features';
 import { StringFormat } from 'util/formatting/string-format';
+import { Locale } from 'util/locale';
 
 let allowedKeys;
 
@@ -55,7 +56,7 @@ const Shortcuts = {
         }
         return shortcutValue
             .split(/\+/g)
-            .map(part => {
+            .map((part) => {
                 switch (part) {
                     case 'Ctrl':
                         return this.ctrlShortcutSymbol(formatting);
@@ -72,16 +73,19 @@ const Shortcuts = {
             .join('');
     },
     actionShortcutSymbol(formatting) {
-        return Features.isMac ? '⌘' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl+';
+        return Features.isMac ? '⌘' : this.formatShortcut(Locale.ctrlKey, formatting);
     },
     altShortcutSymbol(formatting) {
-        return Features.isMac ? '⌥' : formatting ? '<span class="thin">alt + </span>' : 'alt+';
+        return Features.isMac ? '⌥' : this.formatShortcut(Locale.altKey, formatting);
     },
     shiftShortcutSymbol(formatting) {
-        return Features.isMac ? '⇧' : formatting ? '<span class="thin">shift + </span>' : 'shift+';
+        return Features.isMac ? '⇧' : this.formatShortcut(Locale.shiftKey, formatting);
     },
     ctrlShortcutSymbol(formatting) {
-        return Features.isMac ? '⌃' : formatting ? '<span class="thin">ctrl + </span>' : 'ctrl+';
+        return Features.isMac ? '⌃' : this.formatShortcut(Locale.ctrlKey, formatting);
+    },
+    formatShortcut(shortcut, formatting) {
+        return formatting ? `${shortcut} + ` : `${shortcut}+`;
     },
     globalShortcutText(type, formatting) {
         return this.presentShortcut(this.globalShortcut(type), formatting);

@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>{{name}}</title>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'none'; img-src data:; style-src 'unsafe-inline';" />
         <link href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon" />
         <style>
             body {
@@ -25,6 +26,12 @@
             td:first-of-type {
                 width: 30%;
             }
+            td.field {
+                white-space: pre-wrap;
+            }
+            footer {
+                margin-top: 10px;
+            }
         </style>
     </head>
     <body>
@@ -45,11 +52,11 @@
         </tr>
     </table>
     <h2>{{res 'exportEntries'}}</h2>
-    <p>
-        {{{content}}}
-    </p>
-    <p>
+    <div>
+        {{{contentHtml}}}
+    </div>
+    <footer>
         {{#res 'exportDescription'}}<a href="{{appLink}}" rel="noreferrer noopener" target="_blank">KeeWeb</a>{{/res}}
-    </p>
+    </footer>
     </body>
 </html>

@@ -17,11 +17,11 @@ FROM armhf/alpine:latest
 MAINTAINER Antelle "antelle.net@gmail.com"
 
 # install nginx
-RUN apk add --update bash nginx && \
+RUN apk add --no-cache bash nginx && \
     mkdir -p /run/nginx/
 
 # install
-RUN apk add --update openssl wget unzip ca-certificates
+RUN apk add --no-cache openssl wget unzip ca-certificates
 
 # setup nginx
 RUN rm -rf /etc/nginx/conf.d/*; \
@@ -31,24 +31,22 @@ RUN sed -i 's/access_log.*/access_log \/dev\/stdout;/g' /etc/nginx/nginx.conf; \
     sed -i 's/error_log.*/error_log \/dev\/stdout info;/g' /etc/nginx/nginx.conf; \
     sed -i 's/error_log \/dev\/stdout info;/error_log \/dev\/stdout info;\n\n# daemon mode off\ndaemon off;/g' /etc/nginx/nginx.conf
 
-ADD keeweb.conf /etc/nginx/conf.d/keeweb.conf
+COPY keeweb.conf /etc/nginx/conf.d/keeweb.conf
 
 # clone keeweb
 RUN wget https://github.com/keeweb/keeweb/archive/gh-pages.zip; \
     unzip gh-pages.zip; \
     rm gh-pages.zip; \
-    mv keeweb-gh-pages keeweb; \
-    rm keeweb/CNAME
+    mv keeweb-gh-pages keeweb;
 
 # clone keeweb plugins
 RUN wget https://github.com/keeweb/keeweb-plugins/archive/master.zip; \
     unzip master.zip; \
     rm master.zip; \
     mv keeweb-plugins-master/docs keeweb/plugins; \
-    rm -rf keeweb-plugins-master \
-    rm keeweb/plugins/CNAME
+    rm -rf keeweb-plugins-master;
 
-ADD entrypoint.sh /opt/entrypoint.sh
+COPY entrypoint.sh /opt/entrypoint.sh
 RUN chmod a+x /opt/entrypoint.sh
 
 ENTRYPOINT ["/opt/entrypoint.sh"]

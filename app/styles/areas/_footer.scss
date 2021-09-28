@@ -9,7 +9,7 @@
 
     &__db {
         flex: 0 0 auto;
-        @include area-selectable(top);
+        @include area-selectable-on-secondary();
         position: relative;
         padding: $medium-padding;
         padding-right: 1.3em;
@@ -21,6 +21,9 @@
             &:hover {
                 color: var(--medium-color);
             }
+        }
+        &:first-of-type {
+            padding-left: $base-spacing;
         }
 
         &--expanded {
@@ -64,7 +67,7 @@
 
     &__btn {
         flex: 0 0 auto;
-        @include area-selectable(top);
+        @include area-selectable-on-secondary();
         padding: $base-padding;
         .standalone & {
             padding-top: $base-padding-v;
@@ -73,6 +76,9 @@
         font-size: 1.4em;
         text-align: center;
         width: 1em;
+        &:last-of-type {
+            padding-right: $base-spacing;
+        }
     }
 
     &__update-icon {

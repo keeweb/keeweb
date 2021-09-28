@@ -44,6 +44,18 @@ export function omit(obj, props) {
     return result;
 }
 
+export function omitEmpty(obj) {
+    if (!obj) {
+        return obj;
+    }
+    return Object.entries(obj).reduce((result, [key, value]) => {
+        if (value) {
+            result[key] = value;
+        }
+        return result;
+    }, {});
+}
+
 export function mapObject(obj, fn) {
     return Object.entries(obj).reduce((result, [key, value]) => {
         result[key] = fn(value);
@@ -62,4 +74,8 @@ export function isEqual(a, b) {
         return a.join(',') === b.join(',');
     }
     return false;
+}
+
+export function minmax(val, min, max) {
+    return Math.min(max, Math.max(min, val));
 }

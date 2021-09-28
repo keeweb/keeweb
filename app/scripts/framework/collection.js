@@ -187,7 +187,7 @@ class Collection {
     }
 
     get(id) {
-        return this.find(model => model.id === id);
+        return this.find((model) => model.id === id);
     }
 
     remove(idOrModel) {

@@ -43,9 +43,6 @@
     }
     &__buttons {
         text-align: right;
-        button ~ button {
-            margin-left: $small-spacing;
-        }
         > button {
             margin-bottom: $small-spacing;
         }
@@ -54,6 +51,9 @@
     &__buttons {
         align-self: center;
         width: 40%;
+        .modal--wide & {
+            width: 80%;
+        }
         @include tablet {
             width: 90%;
         }

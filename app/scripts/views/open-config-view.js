@@ -47,7 +47,7 @@ class OpenConfigView extends View {
 
     getData() {
         let data = { storage: this.model.id };
-        this.model.fields.every(function(field) {
+        this.model.fields.every(function (field) {
             const input = this.$el.find('#open__config-field-' + field.id)[0];
             if (data && input.checkValidity()) {
                 data[field.id] = input.value;

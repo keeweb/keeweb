@@ -1,0 +1,15 @@
+<div class="titlebar">
+    <div class="titlebar__icon">
+        <img src="{{iconSrc}}" alt="logo" class="titlebar__logo" />
+    </div>
+
+    <div class="titlebar__grow"></div>
+
+    <i class="fa fa-titlebar-minimize titlebar__minimize"></i>
+    {{#if maximized}}
+        <i class="fa fa-titlebar-restore titlebar__restore"></i>
+    {{else}}
+        <i class="fa fa-titlebar-maximize titlebar__maximize"></i>
+    {{/if}}
+    <i class="fa fa-titlebar-close titlebar__close"></i>
+</div>

@@ -1,11 +1,11 @@
-module.exports = function(grunt) {
-    grunt.registerMultiTask('nsis', 'Launches NSIS installer', function() {
+module.exports = function (grunt) {
+    grunt.registerMultiTask('nsis', 'Launches NSIS installer', function () {
         const done = this.async();
         const opt = this.options();
         const args = [];
         const win = process.platform === 'win32';
         const prefix = win ? '/' : '-';
-        Object.keys(opt.vars).forEach(key => {
+        Object.keys(opt.vars).forEach((key) => {
             let value = opt.vars[key];
             if (typeof value === 'function') {
                 value = value();

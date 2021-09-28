@@ -1,6 +1,6 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 
-const SecureInput = function() {
+const SecureInput = function () {
     this.el = null;
     this.minChar = 0x1400 + Math.round(Math.random() * 100);
     this.maxLen = 1024;
@@ -9,13 +9,13 @@ const SecureInput = function() {
     this.salt = new Uint32Array(0);
 };
 
-SecureInput.prototype.setElement = function(el) {
+SecureInput.prototype.setElement = function (el) {
     this.el = el;
     this.el.val(this.pseudoValue);
     this.el.on('input', this._input.bind(this));
 };
 
-SecureInput.prototype.reset = function() {
+SecureInput.prototype.reset = function () {
     this.el = null;
     this.length = 0;
     this.pseudoValue = '';
@@ -28,7 +28,7 @@ SecureInput.prototype.reset = function() {
     this.salt = new Uint32Array(0);
 };
 
-SecureInput.prototype._input = function() {
+SecureInput.prototype._input = function () {
     const selStart = this.el[0].selectionStart;
     const value = this.el.val();
     let newPs = '';
@@ -63,11 +63,11 @@ SecureInput.prototype._input = function() {
     this.el[0].selectionEnd = selStart;
 };
 
-SecureInput.prototype._getChar = function(ix) {
+SecureInput.prototype._getChar = function (ix) {
     return String.fromCharCode(this.minChar + ix);
 };
 
-SecureInput.prototype._isSpecialChar = function(ch) {
+SecureInput.prototype._isSpecialChar = function (ch) {
     return ch >= this.minChar && ch <= this.minChar + this.maxLen;
 };
 
@@ -79,11 +79,12 @@ Object.defineProperty(SecureInput.prototype, 'value', {
         const len = pseudoValue.length;
         let byteLength = 0;
         const valueBytes = new Uint8Array(len * 4);
-        const saltBytes = kdbxweb.Random.getBytes(len * 4);
+        const saltBytes = kdbxweb.CryptoEngine.random(len * 4);
         let ch;
         let bytes;
         for (let i = 0; i < len; i++) {
-            ch = String.fromCharCode(pseudoValue.charCodeAt(i) ^ salt[i]);
+            const pseudoCharCode = pseudoValue.charCodeAt(i);
+            ch = String.fromCharCode(salt[i] ^ pseudoCharCode);
             bytes = kdbxweb.ByteUtils.stringToBytes(ch);
             for (let j = 0; j < bytes.length; j++) {
                 valueBytes[byteLength] = bytes[j] ^ saltBytes[byteLength];

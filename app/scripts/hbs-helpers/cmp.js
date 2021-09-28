@@ -1,6 +1,6 @@
 import Handlebars from 'hbs';
 
-Handlebars.registerHelper('cmp', function(lvalue, rvalue, op, options) {
+Handlebars.registerHelper('cmp', function (lvalue, rvalue, op, options) {
     let cond;
     switch (op) {
         case '<':

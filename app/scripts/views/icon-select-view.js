@@ -21,11 +21,14 @@ class IconSelectView extends View {
     };
 
     render() {
+        const customIcons = this.model.file.getCustomIcons();
+        const hasCustomIcons = Object.keys(customIcons).length > 0;
         super.render({
             sel: this.model.iconId,
             icons: IconMap,
             canDownloadFavicon: !!this.model.url,
-            customIcons: this.model.file.getCustomIcons()
+            customIcons,
+            hasCustomIcons
         });
     }
 
@@ -51,9 +54,10 @@ class IconSelectView extends View {
             return;
         }
         this.downloadingFavicon = true;
-        this.$el.find('.icon-select__icon-download>i').addClass('fa-spinner fa-spin');
+        this.$el.find('.icon-select__icon-download>i').addClass('spin');
         this.$el
             .find('.icon-select__icon-download')
+            .addClass('icon-select__icon--progress')
             .removeClass('icon-select__icon--download-error');
         const url = this.getIconUrl(true);
         const img = document.createElement('img');
@@ -62,19 +66,23 @@ class IconSelectView extends View {
         img.onload = () => {
             this.setSpecialImage(img, 'download');
             this.$el.find('.icon-select__icon-download img').remove();
-            this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
+            this.$el.find('.icon-select__icon-download>i').removeClass('spin');
             this.$el
                 .find('.icon-select__icon-download')
+                .removeClass('icon-select__icon--progress')
                 .addClass('icon-select__icon--custom-selected')
                 .append(img);
             this.downloadingFavicon = false;
+
+            const id = this.model.file.addCustomIcon(this.special.download.data);
+            this.emit('select', { id, custom: true });
         };
-        img.onerror = e => {
+        img.onerror = (e) => {
             logger.error('Favicon download error: ' + url, e);
-            this.$el.find('.icon-select__icon-download>i').removeClass('fa-spinner fa-spin');
+            this.$el.find('.icon-select__icon-download>i').removeClass('spin');
             this.$el
                 .find('.icon-select__icon-download')
-                .removeClass('icon-select__icon--custom-selected')
+                .removeClass('icon-select__icon--custom-selected icon-select__icon--progress')
                 .addClass('icon-select__icon--download-error');
             this.downloadingFavicon = false;
         };
@@ -86,18 +94,26 @@ class IconSelectView extends View {
         }
         let url = this.model.url.replace(
             /([^\/:]\/.*)?$/,
-            match => (match && match[0]) + '/favicon.ico'
+            (match) => (match && match[0]) + '/favicon.ico'
         );
         if (url.indexOf('://') < 0) {
             url = 'http://' + url;
         }
         if (useService) {
-            return 'https://favicon.keeweb.info/' + url.replace(/^.*:\/+/, '').replace(/\/.*/, '');
+            return (
+                'https://services.keeweb.info/favicon/' +
+                url.replace(/^.*:\/+/, '').replace(/\/.*/, '')
+            );
         }
         return url;
     }
 
-    selectIcon() {
+    selectIcon(e) {
+        const btn = e.target.closest('.icon-select__icon-select');
+        if (btn.classList.contains('icon-select__icon--custom-selected')) {
+            return;
+        }
+
         this.$el.find('.icon-select__file-input').click();
     }
 
@@ -105,7 +121,7 @@ class IconSelectView extends View {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = e => {
+            reader.onload = (e) => {
                 const img = document.createElement('img');
                 img.onload = () => {
                     this.setSpecialImage(img, 'select');

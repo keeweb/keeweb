@@ -1,27 +1,14 @@
 import { StorageBase } from 'storage/storage-base';
-import { noop } from 'util/fn';
+import { OneDriveApps } from 'const/cloud-storage-apps';
+import { Features } from 'util/features';
 
-const OneDriveClientId = {
-    Production: '000000004818ED3A',
-    Local: '0000000044183D18'
-};
+// https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
 
 class StorageOneDrive extends StorageBase {
     name = 'onedrive';
     enabled = true;
     uipos = 40;
-    iconSvg =
-        '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" width="256" height="256" version="1.1" viewBox="0 0 256 256">' +
-        '<g transform="translate(296.64282,-100.61434)"><g transform="translate(222.85714,-11.428576)"><g transform="matrix(0.83394139,0,0,0.83394139,' +
-        '-86.101383,10.950635)"><path d="m-419.5 365.94c-18.48-4.62-28.77-19.31-28.81-41.1-0.01-6.97 0.49-10.31 2.23-14.79 4.26-10.99 15.55-19.27 ' +
-        '30.41-22.33 7.39-1.52 9.67-3.15 9.67-6.92 0-1.18 0.88-4.71 1.95-7.83 4.88-14.2 13.93-26.03 23.59-30.87 10.11-5.07 15.22-6.21 27.45-6.14 17.38 ' +
-        '0.09 26.04 3.86 38.17 16.6l6.67 7 5.97-2.07c28.91-10.01 57.73 7.03 60.06 35.49l0.64 7.79 5.69 2.04c16.26 5.83 23.9 18.06 22.52 36.04-0.91 11.76-6.4 ' +
-        '21.15-15.11 25.81l-4.09 2.19-91 0.18c-69.93 0.13-92.16-0.11-96-1.07zM-487.72 353.36" fill="#000"/><path d="m-487.72 353.36c-10.79-2.56-22.22-12.09-' +
-        '27.58-22.99-3.04-6.18-3.2-7.09-3.2-18.03 0-10.4 0.26-12.07 2.68-17.23 5.1-10.89 14.88-18.75 27.15-21.84 2.59-0.65 5.02-1.69 5.41-2.31 0.38-0.62 ' +
-        '0.81-4 0.95-7.5 0.85-21.78 15.15-40.97 35.1-47.14 10.78-3.33 24.33-2.51 36.05 2.18 3.72 1.49 3.3 1.81 11.16-8.5 4.65-6.1 14.05-13.68 21.74-17.55 ' +
-        '8.3-4.17 16.94-6.09 27.26-6.07 28.86 0.07 53.73 18.12 62.92 45.67 2.94 8.8 2.79 11.27-0.67 11.34-1.51 0.03-5.85 0.86-9.63 1.85l-6.88 1.79-6.28-' +
-        '6.28c-17.7-17.7-46.59-21.53-71.15-9.42-9.81 4.84-17.7 11.78-23.65 20.83-4.25 6.45-9.66 18.48-9.66 21.47 0 2.12-1.72 3.18-9.05 5.58-22.69 7.44-' +
-        '35.94 24.63-35.93 46.62 0 8 2.06 17.8 4.93 23.41 1.08 2.11 1.68 4.13 1.34 4.47-0.88 0.88-29.11 0.58-33.01-0.35z" /></g></g></g></svg>';
+    icon = 'onedrive';
 
     _baseUrl = 'https://graph.microsoft.com/v1.0/me';
 
@@ -30,7 +17,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     load(path, opts, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -40,7 +27,7 @@ class StorageOneDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'json',
-                success: response => {
+                success: (response) => {
                     const downloadUrl = response['@microsoft.graph.downloadUrl'];
                     let rev = response.eTag;
                     if (!downloadUrl || !response.eTag) {
@@ -62,13 +49,13 @@ class StorageOneDrive extends StorageBase {
                             this.logger.debug('Loaded', path, rev, this.logger.ts(ts));
                             return callback && callback(null, response, { rev });
                         },
-                        error: err => {
+                        error: (err) => {
                             this.logger.error('Load error', path, err, this.logger.ts(ts));
                             return callback && callback(err);
                         }
                     });
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('Load error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
@@ -77,7 +64,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     stat(path, opts, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -87,7 +74,7 @@ class StorageOneDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'json',
-                success: response => {
+                success: (response) => {
                     const rev = response.eTag;
                     if (!rev) {
                         this.logger.error('Stat error', path, 'no eTag', this.logger.ts(ts));
@@ -109,7 +96,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     save(path, opts, data, callback, rev) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -121,7 +108,7 @@ class StorageOneDrive extends StorageBase {
                 method: 'PUT',
                 responseType: 'json',
                 headers: rev ? { 'If-Match': rev } : null,
-                data: new Blob([data], { type: 'application/octet-stream' }),
+                data,
                 statuses: [200, 201, 412],
                 success: (response, xhr) => {
                     rev = response.eTag;
@@ -136,7 +123,7 @@ class StorageOneDrive extends StorageBase {
                     this.logger.debug('Saved', path, rev, this.logger.ts(ts));
                     return callback && callback(null, { rev });
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('Save error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
@@ -145,7 +132,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     list(dir, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -155,15 +142,15 @@ class StorageOneDrive extends StorageBase {
             this._xhr({
                 url,
                 responseType: 'json',
-                success: response => {
+                success: (response) => {
                     if (!response || !response.value) {
                         this.logger.error('List error', this.logger.ts(ts), response);
                         return callback && callback('list error');
                     }
                     this.logger.debug('Listed', this.logger.ts(ts));
                     const fileList = response.value
-                        .filter(f => f.name)
-                        .map(f => ({
+                        .filter((f) => f.name)
+                        .map((f) => ({
                             name: f.name,
                             path: f.parentReference.path + '/' + f.name,
                             rev: f.eTag,
@@ -171,7 +158,7 @@ class StorageOneDrive extends StorageBase {
                         }));
                     return callback && callback(null, fileList);
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('List error', this.logger.ts(ts), err);
                     return callback && callback(err);
                 }
@@ -192,7 +179,7 @@ class StorageOneDrive extends StorageBase {
                 this.logger.debug('Removed', path, this.logger.ts(ts));
                 return callback && callback();
             },
-            error: err => {
+            error: (err) => {
                 this.logger.error('Remove error', path, err, this.logger.ts(ts));
                 return callback && callback(err);
             }
@@ -200,7 +187,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     mkdir(path, callback) {
-        this._oauthAuthorize(err => {
+        this._oauthAuthorize((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -213,12 +200,13 @@ class StorageOneDrive extends StorageBase {
                 method: 'POST',
                 responseType: 'json',
                 statuses: [200, 204],
-                data: new Blob([data], { type: 'application/json' }),
+                data,
+                dataType: 'application/json',
                 success: () => {
                     this.logger.debug('Made dir', path, this.logger.ts(ts));
                     return callback && callback();
                 },
-                error: err => {
+                error: (err) => {
                     this.logger.error('Make dir error', path, err, this.logger.ts(ts));
                     return callback && callback(err);
                 }
@@ -226,55 +214,44 @@ class StorageOneDrive extends StorageBase {
         });
     }
 
-    setEnabled(enabled) {
-        if (!enabled) {
-            const url = 'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={url}'.replace(
-                '{url}',
-                this._getOauthRedirectUrl()
-            );
-            this._oauthRevokeToken(url);
-        }
-        super.setEnabled(enabled);
-    }
-
-    _getClientId() {
-        let clientId = this.appSettings.onedriveClientId;
-        if (!clientId) {
-            clientId =
-                location.origin.indexOf('localhost') >= 0
-                    ? OneDriveClientId.Local
-                    : OneDriveClientId.Production;
-        }
-        return clientId;
+    logout(enabled) {
+        this._oauthRevokeToken();
     }
 
     _getOAuthConfig() {
-        const clientId = this._getClientId();
+        let clientId = this.appSettings.onedriveClientId;
+        let clientSecret = this.appSettings.onedriveClientSecret;
+        let tenant = this.appSettings.onedriveTenantId;
+
+        if (!clientId) {
+            if (Features.isDesktop) {
+                ({ id: clientId, secret: clientSecret, tenantId: tenant } = OneDriveApps.Desktop);
+            } else if (Features.isLocal) {
+                ({ id: clientId, secret: clientSecret, tenantId: tenant } = OneDriveApps.Local);
+            } else {
+                ({
+                    id: clientId,
+                    secret: clientSecret,
+                    tenantId: tenant
+                } = OneDriveApps.Production);
+            }
+        }
+        tenant = tenant || 'common';
+
+        let scope = 'files.readwrite';
+        if (!this.appSettings.shortLivedStorageToken) {
+            scope += ' offline_access';
+        }
         return {
-            url: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-            scope: 'files.readwrite',
+            url: `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/authorize`,
+            tokenUrl: `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`,
+            scope,
             clientId,
+            clientSecret,
+            pkce: true,
             width: 600,
             height: 500
         };
-    }
-
-    _popupOpened(popupWindow) {
-        if (popupWindow.webContents) {
-            popupWindow.webContents.on('did-finish-load', e => {
-                const webContents = e.sender.webContents;
-                const url = webContents.getURL();
-                if (
-                    url &&
-                    url.startsWith('https://login.microsoftonline.com/common/oauth2/v2.0/authorize')
-                ) {
-                    // click the login button mentioned in #821
-                    const script = `const selector = '[role="button"][aria-describedby="tileError loginHeader"]';
-if (document.querySelectorAll(selector).length === 1) document.querySelector(selector).click()`;
-                    webContents.executeJavaScript(script).catch(noop);
-                }
-            });
-        }
     }
 }
 

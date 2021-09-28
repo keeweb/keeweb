@@ -3,6 +3,8 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    position: relative;
+    @include padding-if-titlebar;
 
     &__body {
         @include scrollbar-on-hover;

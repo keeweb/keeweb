@@ -1,0 +1,30 @@
+​<?xml version="1.0" encoding="UTF-8"?>
+​<!-- Copyright 2021 Antelle <antelle.net@email.com> -->
+​<component type="desktop-application">
+​  <id>keeweb.desktop</id>
+​  <metadata_license>MIT</metadata_license>
+​  <project_license>MIT</project_license>
+​  <name>KeeWeb</name>
+​  <summary>Free cross-platform password manager compatible with KeePass</summary>
+​
+​  <description>
+​    <p>
+​      Free cross-platform password manager compatible with KeePass
+​    </p>
+​  </description>
+​
+​  <launchable type="desktop-id">keeweb.desktop</launchable>
+​
+​  <screenshots>
+​    <screenshot type="default">
+​      <caption>Main window</caption>
+​      <image>https://raw.githubusercontent.com/keeweb/keeweb/master/img/screenshot.png</image>
+​    </screenshot>
+​  </screenshots>
+​
+​  <url type="homepage">https://keeweb.info</url>
+​
+​  <provides>
+​    <binary>keeweb</binary>
+​  </provides>
+​</component>

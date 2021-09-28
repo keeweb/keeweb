@@ -1,6 +1,6 @@
 const idb = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
-const IoBrowserCache = function(config) {
+const IoBrowserCache = function (config) {
     this.db = null;
     this.cacheName = config.cacheName;
     this.logger = config.logger;
@@ -13,19 +13,19 @@ Object.assign(IoBrowserCache.prototype, {
         }
         try {
             const req = idb.open(this.cacheName);
-            req.onerror = e => {
+            req.onerror = (e) => {
                 this.logger.error('Error opening indexed db', e);
                 if (callback) {
                     callback(e);
                 }
             };
-            req.onsuccess = e => {
+            req.onsuccess = (e) => {
                 this.db = e.target.result;
                 if (callback) {
                     callback();
                 }
             };
-            req.onupgradeneeded = e => {
+            req.onupgradeneeded = (e) => {
                 const db = e.target.result;
                 db.createObjectStore('files');
             };
@@ -39,7 +39,7 @@ Object.assign(IoBrowserCache.prototype, {
 
     save(id, data, callback) {
         this.logger.debug('Save', id);
-        this.initDb(err => {
+        this.initDb((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -72,16 +72,13 @@ Object.assign(IoBrowserCache.prototype, {
 
     load(id, callback) {
         this.logger.debug('Load', id);
-        this.initDb(err => {
+        this.initDb((err) => {
             if (err) {
                 return callback && callback(err, null);
             }
             try {
                 const ts = this.logger.ts();
-                const req = this.db
-                    .transaction(['files'], 'readonly')
-                    .objectStore('files')
-                    .get(id);
+                const req = this.db.transaction(['files'], 'readonly').objectStore('files').get(id);
                 req.onsuccess = () => {
                     this.logger.debug('Loaded', id, this.logger.ts(ts));
                     if (callback) {
@@ -105,7 +102,7 @@ Object.assign(IoBrowserCache.prototype, {
 
     remove(id, callback) {
         this.logger.debug('Remove', id);
-        this.initDb(err => {
+        this.initDb((err) => {
             if (err) {
                 return callback && callback(err);
             }

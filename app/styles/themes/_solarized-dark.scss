@@ -4,15 +4,26 @@ $themes: map-merge(
         sd:
             map-merge(
                 $theme-defaults,
-                (
-                    background-color: #002b36,
-                    medium-color: #93a1a1,
-                    text-color: #839496,
-                    action-color: #859900,
-                    error-color: #dc322f,
-                    mute-percent: 60%,
-                    color-lightness-shift: 50%
+                map-merge(
+                    $light-colors,
+                    (
+                        background-color: #002b36,
+                        medium-color: #93a1a1,
+                        text-color: #839496,
+                        action-color: #859900,
+                        error-color: #dc322f,
+                        mute-percent: 60%,
+                        color-lightness-shift: 50%
+                    )
                 )
             )
     )
 );
+
+body.th-sd {
+    --selected-item-text-color: #002b36;
+
+    .list__item--active .blue-color {
+        color: #0249bd;
+    }
+}

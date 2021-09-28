@@ -7,6 +7,8 @@ import { GroupsMenuModel } from 'models/menu/groups-menu-model';
 import { MenuSectionModel } from 'models/menu/menu-section-model';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
+import { Launcher } from 'comp/launcher';
+import { Features } from 'util/features';
 
 class MenuModel extends Model {
     constructor() {
@@ -41,16 +43,16 @@ class MenuModel extends Model {
         this.trashSection = new MenuSectionModel([
             {
                 locTitle: 'menuTrash',
-                icon: 'trash',
+                icon: 'trash-alt',
                 shortcut: Keys.DOM_VK_D,
                 filterKey: 'trash',
                 filterValue: true,
                 drop: true
             }
         ]);
-        Colors.AllColors.forEach(color => {
+        Colors.AllColors.forEach((color) => {
             const option = {
-                cls: 'fa ' + color + '-color',
+                cls: `fa ${color}-color`,
                 value: color,
                 filterValue: color
             };
@@ -65,14 +67,66 @@ class MenuModel extends Model {
         ]);
 
         this.generalSection = new MenuSectionModel([
-            { locTitle: 'menuSetGeneral', icon: 'cog', page: 'general', active: true }
+            {
+                locTitle: 'menuSetGeneral',
+                icon: 'cog',
+                page: 'general',
+                section: 'top',
+                active: true
+            },
+            {
+                locTitle: 'setGenAppearance',
+                icon: '0',
+                page: 'general',
+                section: 'appearance'
+            },
+            {
+                locTitle: 'setGenFunction',
+                icon: '0',
+                page: 'general',
+                section: 'function'
+            },
+            {
+                locTitle: 'setGenAudit',
+                icon: '0',
+                page: 'general',
+                section: 'audit'
+            },
+            {
+                locTitle: 'setGenLock',
+                icon: '0',
+                page: 'general',
+                section: 'lock'
+            },
+            {
+                locTitle: 'setGenStorage',
+                icon: '0',
+                page: 'general',
+                section: 'storage'
+            },
+            {
+                locTitle: 'advanced',
+                icon: '0',
+                page: 'general',
+                section: 'advanced'
+            }
         ]);
         this.shortcutsSection = new MenuSectionModel([
-            { locTitle: 'shortcuts', icon: 'keyboard-o', page: 'shortcuts' }
+            { locTitle: 'shortcuts', icon: 'keyboard', page: 'shortcuts' }
         ]);
+        if (Features.supportsBrowserExtensions) {
+            this.browserSection = new MenuSectionModel([
+                { locTitle: 'menuSetBrowser', icon: Features.browserIcon, page: 'browser' }
+            ]);
+        }
         this.pluginsSection = new MenuSectionModel([
             { locTitle: 'plugins', icon: 'puzzle-piece', page: 'plugins' }
         ]);
+        if (Launcher) {
+            this.devicesSection = new MenuSectionModel([
+                { locTitle: 'menuSetDevices', icon: 'usb', page: 'devices' }
+            ]);
+        }
         this.aboutSection = new MenuSectionModel([
             { locTitle: 'menuSetAbout', icon: 'info', page: 'about' }
         ]);
@@ -81,11 +135,14 @@ class MenuModel extends Model {
         ]);
         this.filesSection = new MenuSectionModel();
         this.filesSection.set({ scrollable: true, grow: true });
-        this.menus.settings = new MenuSectionCollection([
-            this.shortcutsSection,
-            this.aboutSection,
-            this.filesSection
-        ]);
+        this.menus.settings = new MenuSectionCollection(
+            [
+                this.shortcutsSection,
+                this.browserSection,
+                this.aboutSection,
+                this.filesSection
+            ].filter((s) => s)
+        );
         this.sections = this.menus.app;
 
         Events.on('set-locale', this._setLocale.bind(this));
@@ -101,20 +158,20 @@ class MenuModel extends Model {
             this._select(section, sel.item);
         }
         if (sections === this.menus.app) {
-            this.colorsItem.options.forEach(opt => {
+            this.colorsItem.options.forEach((opt) => {
                 opt.active = opt === sel.option;
             });
-            const selColor =
-                sel.item === this.colorsItem && sel.option ? sel.option.value + '-color' : '';
-            this.colorsItem.cls = 'menu__item-colors ' + selColor;
+            this.colorsItem.iconCls =
+                sel.item === this.colorsItem && sel.option ? sel.option.value + '-color' : null;
             const filterKey = sel.item.filterKey;
             const filterValue = (sel.option || sel.item).filterValue;
             const filter = {};
             filter[filterKey] = filterValue;
             Events.emit('set-filter', filter);
-        } else if (sections === this.menus.settings) {
+        } else if (sections === this.menus.settings && sel.item.page) {
             Events.emit('set-page', {
                 page: sel.item.page,
+                section: sel.item.section,
                 file: sel.item.file
             });
         }
@@ -123,7 +180,7 @@ class MenuModel extends Model {
     _selectPrevious() {
         let previousItem = null;
 
-        const processSection = section => {
+        const processSection = (section) => {
             if (section.visible === false) {
                 return true;
             }
@@ -132,7 +189,7 @@ class MenuModel extends Model {
             }
             const items = section.items;
             if (items) {
-                items.forEach(it => {
+                items.forEach((it) => {
                     if (it.active && previousItem) {
                         this.select({ item: previousItem });
                         return false;
@@ -143,13 +200,13 @@ class MenuModel extends Model {
         };
 
         const sections = this.sections;
-        sections.forEach(section => processSection(section));
+        sections.forEach((section) => processSection(section));
     }
 
     _selectNext() {
         let activeItem = null;
 
-        const processSection = section => {
+        const processSection = (section) => {
             if (section.visible === false) {
                 return true;
             }
@@ -160,7 +217,7 @@ class MenuModel extends Model {
             }
             const items = section.items;
             if (items) {
-                items.forEach(it => {
+                items.forEach((it) => {
                     if (it.active) {
                         activeItem = it;
                     }
@@ -170,7 +227,7 @@ class MenuModel extends Model {
         };
 
         const sections = this.sections;
-        sections.forEach(section => processSection(section));
+        sections.forEach((section) => processSection(section));
     }
 
     _select(item, selectedItem) {

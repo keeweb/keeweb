@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 
 const IconUrlFormat = {
     toDataUrl(iconData) {

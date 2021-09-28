@@ -6,7 +6,6 @@ import { Otp } from 'util/data/otp';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
-import { escape } from 'util/fn';
 
 const logger = new Logger('otp-qr-reader');
 
@@ -22,17 +21,11 @@ class OtpQrReader {
     read() {
         let screenshotKey = Shortcuts.screenshotToClipboardShortcut();
         if (screenshotKey) {
-            screenshotKey = Locale.detSetupOtpAlertBodyWith.replace(
-                '{}',
-                '<code>' + screenshotKey + '</code>'
-            );
+            screenshotKey = Locale.detSetupOtpAlertBodyWith.replace('{}', screenshotKey);
         }
         const pasteKey = Features.isMobile
             ? ''
-            : Locale.detSetupOtpAlertBodyWith.replace(
-                  '{}',
-                  '<code>' + Shortcuts.actionShortcutSymbol() + 'V</code>'
-              );
+            : Locale.detSetupOtpAlertBodyWith.replace('{}', Shortcuts.actionShortcutSymbol() + 'V');
         this.startListenClipoard();
         const buttons = [
             { result: 'manually', title: Locale.detSetupOtpManualButton, silent: true },
@@ -53,12 +46,12 @@ class OtpQrReader {
                 Locale.detSetupOtpAlertBody2.replace('{}', screenshotKey || ''),
                 line3,
                 Locale.detSetupOtpAlertBody4
-            ].join('<br/>'),
+            ].join('\n'),
             esc: '',
             click: '',
             enter: '',
             buttons,
-            complete: res => {
+            complete: (res) => {
                 this.alert = null;
                 this.stopListenClipboard();
                 if (res === 'select') {
@@ -101,7 +94,7 @@ class OtpQrReader {
 
     pasteEvent(e) {
         const item = [...e.clipboardData.items].find(
-            item => item.kind === 'file' && item.type.indexOf('image') !== -1
+            (item) => item.kind === 'file' && item.type.indexOf('image') !== -1
         );
         if (!item) {
             logger.debug('Paste without file');
@@ -141,11 +134,8 @@ class OtpQrReader {
                     logger.error('Error parsing QR code', err);
                     Alerts.error({
                         header: Locale.detOtpQrWrong,
-                        body:
-                            Locale.detOtpQrWrongBody +
-                            '<pre class="modal__pre">' +
-                            escape(err.toString()) +
-                            '</pre>'
+                        body: Locale.detOtpQrWrongBody,
+                        pre: err.toString()
                     });
                 }
             } catch (e) {

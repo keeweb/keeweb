@@ -7,7 +7,8 @@ class SettingsPrvView extends View {
 
     events = {
         'change .settings__general-prv-field-sel': 'changeField',
-        'input .settings__general-prv-field-txt': 'changeField'
+        'input .settings__general-prv-field-txt': 'changeField',
+        'change .settings__general-prv-field-check': 'changeCheckbox'
     };
 
     render() {
@@ -20,7 +21,7 @@ class SettingsPrvView extends View {
     changeField(e) {
         const id = e.target.dataset.id;
         const value = e.target.value;
-        if (!e.target.checkValidity()) {
+        if (value && !e.target.checkValidity()) {
             return;
         }
         const storage = Storage[this.model.name];
@@ -28,6 +29,13 @@ class SettingsPrvView extends View {
         if ($(e.target).is('select')) {
             this.render();
         }
+    }
+
+    changeCheckbox(e) {
+        const id = e.target.dataset.id;
+        const value = !!e.target.checked;
+        const storage = Storage[this.model.name];
+        storage.applySetting(id, value);
     }
 }
 

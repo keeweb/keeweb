@@ -1,0 +1,11 @@
+.info-btn {
+    cursor: pointer;
+    color: var(--muted-color);
+    margin-left: $tiny-spacing;
+    position: relative;
+    top: 0.15em;
+    font-size: 1.1em;
+    &:hover {
+        color: var(--text-color);
+    }
+}

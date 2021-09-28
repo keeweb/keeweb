@@ -1,0 +1,36 @@
+<div class="select-entry-field">
+    {{#if needsTouch}}
+        <div class="select-entry__header">
+            <h1 class="select-entry__header-text">{{#res 'detOtpTouch'}}{{deviceShortName}}{{/res}}</h1>
+        </div>
+        <div class="select-entry-field__large-text">
+            <i class="fa fa-usb-token select-entry-field__large-icon"></i>
+            <p>{{res 'selectEntryFieldTouch'}}</p>
+        </div>
+    {{else}}
+        <div class="select-entry__header">
+            <h1 class="select-entry__header-text">{{res 'selectEntryFieldHeader'}}</h1>
+        </div>
+        <div class="select-entry-field__items">
+            <div class="scroller">
+                {{#if fields.length}}
+                    <table class="select-entry-field__table">
+                        {{#each fields as |f|}}
+                            <tr class="select-entry-field__item {{#ifeq f.field ../activeField}}select-entry-field__item--active{{/ifeq}}"
+                                data-field="{{f.field}}">
+                                <td>{{f.field}}</td>
+                                <td>{{f.value}}</td>
+                            </tr>
+                        {{/each}}
+                    </table>
+                {{else}}
+                    <h1 class="select-entry__empty-title muted-color">{{res 'autoTypeNoMatches'}}</h1>
+                {{/if}}
+            </div>
+            <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
+        </div>
+    {{/if}}
+    <div class="select-entry-field__buttons">
+        <button class="btn btn-error select-entry-field__cancel-btn">{{res 'alertCancel'}} ({{res 'keyEsc'}})</button>
+    </div>
+</div>

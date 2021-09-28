@@ -1,6 +1,6 @@
+/* This file is also parsed in JS to build theme styles, see theme-vars.js */
 @function set-theme-vars($t) {
     @return map-merge(
-        $t,
         (
             muted-color:
                 mix(
@@ -39,10 +39,13 @@
                     map-get($t, background-color),
                     map-get($t, light-border-percent)
                 ),
-            form-box-border-focus: map-get($t, action-color),
-            form-box-shadow-color-focus: lightness-alpha(map-get($t, action-color), -5%, -0.3),
+            form-box-border-color-focus:
+                mix(map-get($t, action-color), map-get($t, text-color), 70%),
+            form-box-shadow-color-focus:
+                rgba(mix(map-get($t, action-color), map-get($t, text-color), 70%), 0.7),
+            form-box-shadow-color-hover:
+                rgba(mix(map-get($t, action-color), map-get($t, text-color), 70%), 0.5),
             form-box-shadow-color-focus-error: lightness-alpha(map-get($t, error-color), -5%, -0.3),
-            dropdown-box-shadow-color: rgba(map-get($t, medium-color), 0.05),
             secondary-background-color:
                 mix(map-get($t, medium-color), map-get($t, background-color), 10%),
             intermediate-background-color:
@@ -50,6 +53,10 @@
             intermediate-pressed-background-color:
                 mix(map-get($t, medium-color), map-get($t, background-color), 2.6%),
             disabled-background-color: shade(map-get($t, background-color), 5%),
+            unselected-background-color:
+                mix(map-get($t, medium-color), map-get($t, background-color), 9%),
+            unselected-background-color-hover:
+                mix(map-get($t, medium-color), map-get($t, background-color), 14%),
             action-background-color-focus: shade(map-get($t, action-color), 20%),
             action-background-color-focus-tr: rgba(shade(map-get($t, action-color), 20%), 0.1),
             error-background-color-focus: shade(map-get($t, error-color), 20%),
@@ -59,7 +66,16 @@
             error-background-color-active: shade(map-get($t, error-color), 25%),
             error-background-color-active-tr: rgba(shade(map-get($t, error-color), 25%), 0.15),
             modal-background-color: rgba(map-get($t, background-color), map-get($t, modal-opacity)),
-            modal-background-color-tr: rgba(map-get($t, background-color), 0)
-        )
+            modal-background-color-tr: rgba(map-get($t, background-color), 0),
+            selected-item-color: mix(map-get($t, action-color), map-get($t, background-color), 85%),
+            selected-on-secondary-item-color:
+                mix(map-get($t, medium-color), map-get($t, background-color), 30%),
+            selectable-on-secondary-item-color:
+                mix(map-get($t, medium-color), map-get($t, background-color), 14%),
+            clickable-on-secondary-color:
+                mix(map-get($t, medium-color), map-get($t, background-color), 75%),
+            titlebar-button-background-color: rgba(map-get($t, text-color), 0.085)
+        ),
+        $t
     );
 }

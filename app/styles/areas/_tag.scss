@@ -6,7 +6,8 @@
     justify-content: flex-start;
     width: 100%;
     user-select: none;
-    padding: $base-padding;
+    padding: $medium-padding;
+    @include padding-if-titlebar;
 
     &__space {
         flex: 1;

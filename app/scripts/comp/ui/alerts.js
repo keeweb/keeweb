@@ -17,6 +17,12 @@ const Alerts = {
                 return Locale.alertYes;
             }
         },
+        allow: {
+            result: 'yes',
+            get title() {
+                return Locale.alertAllow;
+            }
+        },
         no: {
             result: '',
             get title() {
@@ -28,6 +34,12 @@ const Alerts = {
             get title() {
                 return Locale.alertCancel;
             }
+        },
+        deny: {
+            result: '',
+            get title() {
+                return Locale.alertDeny;
+            }
         }
     },
 
@@ -38,8 +50,7 @@ const Alerts = {
         Alerts.alertDisplayed = true;
         const view = new ModalView(config);
         view.render();
-        view.on('result', (res, check) => {
-            Alerts.alertDisplayed = false;
+        view.once('result', (res, check) => {
             if (res && config.success) {
                 config.success(res, check);
             }
@@ -49,6 +60,9 @@ const Alerts = {
             if (config.complete) {
                 config.complete(res, check);
             }
+        });
+        view.on('will-close', () => {
+            Alerts.alertDisplayed = false;
         });
         return view;
     },

@@ -1,6 +1,5 @@
 import Pikaday from 'pikaday';
-import { DateFormat } from 'util/formatting/date-format';
-import { Locale } from 'util/locale';
+import { DateFormat } from 'comp/i18n/date-format';
 import { FieldViewText } from 'views/fields/field-view-text';
 
 class FieldViewDate extends FieldViewText {
@@ -25,14 +24,13 @@ class FieldViewDate extends FieldViewText {
             onSelect: this.pickerSelect.bind(this),
             onClose: this.pickerClose.bind(this),
             defaultDate: this.value,
-            minDate: new Date(),
             firstDay: 1,
             i18n: {
                 previousMonth: '',
                 nextMonth: '',
-                months: Locale.months,
-                weekdays: Locale.weekdays,
-                weekdaysShort: Locale.weekdaysShort
+                months: DateFormat.months(),
+                weekdays: DateFormat.weekDays(),
+                weekdaysShort: DateFormat.shortWeekDays()
             }
         });
         this.picker.adjustPosition = this.adjustPickerPosition.bind(this);
@@ -65,7 +63,7 @@ class FieldViewDate extends FieldViewText {
             this.picker = null;
         }
         newVal = new Date(newVal);
-        if (!newVal || isNaN(newVal.getTime())) {
+        if (isNaN(newVal.getTime())) {
             newVal = null;
         }
         super.endEdit(newVal, extra);

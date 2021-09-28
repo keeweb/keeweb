@@ -9,6 +9,7 @@
     user-select: none;
     overflow: hidden;
     position: relative;
+    @include padding-if-titlebar;
 
     > .scroller {
         flex: 1;
@@ -37,5 +38,9 @@
     &__list,
     &__input {
         height: 2em;
+    }
+
+    &__pattern-help {
+        margin-bottom: $base-padding-v;
     }
 }

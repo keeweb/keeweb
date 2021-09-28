@@ -9,7 +9,6 @@
         float: right;
         cursor: pointer;
         position: relative;
-        top: 2px;
         & ~ .gen__top-btn {
             margin-right: 0.5em;
         }
@@ -45,6 +44,11 @@
         }
     }
     &__check-hide {
+        &-label {
+            text-align: center;
+            position: relative;
+            top: -2px;
+        }
         & + label.gen__check-hide-label:before {
             @include fa-icon;
             content: $fa-var-eye;
@@ -53,6 +57,9 @@
         &:checked + label.gen__check-hide-label:before {
             content: $fa-var-eye-slash;
             color: inherit;
+        }
+        &:not([disabled]) + label.gen__check-hide-label:hover:before {
+            color: var(--text-color);
         }
     }
     &__btn-wrap {

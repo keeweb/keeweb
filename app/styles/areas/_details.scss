@@ -16,9 +16,11 @@
             height: $mobile-back-button-height;
             font-size: 1.2em;
             > i {
-                margin-right: 0.3em;
+                margin-right: 0.7em;
                 font-size: 1.2em;
-                vertical-align: text-bottom;
+                vertical-align: middle;
+                position: relative;
+                top: -0.15em;
             }
         }
     }
@@ -38,12 +40,12 @@
             padding: 3px 6px 1px;
             overflow: hidden;
             text-overflow: ellipsis;
-            border-radius: $base-border-radius;
+            border-radius: var(--input-border-radius);
             border: 1px solid transparent;
-            height: 36px;
-            line-height: 34px;
-            position: relative;
-            top: -2px;
+            // why px and not em? it's like this to prevent jumping in different browsers
+            // when switching from a div to an input and vice versa
+            height: 42px;
+            line-height: 40px;
             white-space: nowrap;
             &:hover {
                 transition: border-color $base-duration $base-timing;
@@ -54,38 +56,38 @@
             }
         }
         input.details__header-title-input {
-            height: 42px;
-            line-height: 34px;
+            // see the comment about px above
+            height: 48px;
+            line-height: 40px;
             user-select: text;
             flex: 1;
             margin: 0 6px;
             padding: 0 6px;
             font-size: $large-header-font-size;
             font-weight: bold;
-            position: relative;
-            top: -2px;
             min-width: 0;
             @include mobile {
                 width: 100%;
             }
         }
-        &-color,
-        &-icon {
+        &-color {
             user-select: none;
-            @include area-selectable();
-            display: inline;
             font-size: $large-header-font-size;
-            height: 1em;
             padding-top: 0.1em;
         }
         &-icon {
-            width: 1.4em;
+            @include area-selectable();
+            user-select: none;
+            display: inline;
+            font-size: $large-header-font-size;
+            padding-top: 0.1em;
+            border-radius: var(--block-border-radius);
+            width: 1.8em;
+            height: 1.5em;
             text-align: center;
-            &--icon {
-                background-position: center center;
-                background-size: 28px 28px;
-                background-repeat: no-repeat;
-            }
+        }
+        &-icon-img {
+            vertical-align: middle;
         }
     }
 
@@ -97,8 +99,7 @@
         border-radius: $base-border-radius;
         background: var(--background-color);
         box-shadow: 0 0 3px var(--background-color);
-        top: 13px;
-        left: 6px;
+        left: 0.2em;
         font-size: $large-header-font-size;
         &:hover,
         .details__header-color:hover & {
@@ -107,7 +108,7 @@
             }
         }
         &-item {
-            padding: 8px 12px;
+            padding: 0 12px 0;
             cursor: pointer;
             display: block;
             position: relative;
@@ -121,8 +122,7 @@
                     content: $fa-var-bookmark;
                     opacity: 0.3;
                     position: absolute;
-                    left: 12px;
-                    top: 8px;
+                    left: 0.4em;
                 }
             }
         }
@@ -235,7 +235,7 @@
                 color: transparent;
             }
             .details__field--editable & {
-                border-radius: $base-border-radius;
+                border-radius: var(--input-border-radius);
                 &:hover {
                     @include nomobile {
                         transition: border-color $base-duration $base-timing;
@@ -270,11 +270,14 @@
             > textarea {
                 margin: 0;
                 padding: 0 $base-padding-h;
-                line-height: $details-field-line-height + 2px;
+                line-height: $details-field-line-height;
                 width: 100%;
                 height: 20px;
                 .details__field--protected & {
                     font-family: $monospace-font-family;
+                }
+                .details__field--can-gen & {
+                    padding-right: 2.4em;
                 }
                 transition: background-color $slow-transition-out, border-color $slow-transition-out;
                 .details__field--edit[active-mobile-action] & {
@@ -324,7 +327,7 @@
                 flex: 0 0 auto;
             }
             &-btn {
-                @include position(absolute, 0 0 null null);
+                @include position(absolute, -0.2em 0 null null);
                 color: var(--muted-color);
                 cursor: pointer;
                 &:hover {
@@ -332,7 +335,7 @@
                 }
                 &:before {
                     @include position(absolute, 0 0 null null);
-                    @include fa-icon();
+                    @include fa-icon;
                     cursor: pointer;
                     padding: 0.3em $base-padding-h;
                 }
@@ -450,7 +453,7 @@
             align-self: flex-start;
             width: 2em;
             text-align: center;
-            padding-top: 0.25em;
+            padding-top: 0.1em;
             .details__field:hover & {
                 opacity: 1;
                 transition: opacity $slow-transition-in;
@@ -488,36 +491,26 @@
     }
 
     &__attachment {
-        user-select: none;
-        @include area-selectable();
+        @include bg-btn();
         align-self: flex-end;
         flex: 0 1 auto;
-        border: light-border();
         margin-right: $small-spacing;
         margin-top: $small-spacing;
-        padding: $base-padding;
-        text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        i {
-            margin-right: 0.4em;
-        }
-        &--active {
-            border-bottom: 1px solid var(--action-color);
+        &--active,
+        &--active:hover {
+            @include bg-btn-active();
         }
     }
 
     &__attachment-add {
+        @include icon-btn();
         user-select: none;
         align-self: flex-end;
         flex: 0 0 auto;
         color: var(--muted-color);
-        border: 1px solid transparent;
         margin-right: $small-spacing;
-        padding: $base-padding;
         text-align: center;
         overflow: hidden;
-        transition: color $base-duration $base-timing;
         &:hover {
             color: var(--medium-color);
         }
@@ -563,8 +556,8 @@
             display: flex;
             flex-direction: column;
             flex: 1 0 auto;
-            justify-content: center;
-            align-self: center;
+            justify-content: flex-start;
+            align-self: flex-start;
             align-items: center;
             text-align: center;
             .details__attachment-preview-icon {
@@ -578,6 +571,53 @@
             }
             .details__attachment-preview-buttons {
                 margin-top: $large-padding;
+            }
+            .details__attachment-preview-data {
+                padding-top: $large-padding;
+            }
+        }
+    }
+
+    &__issues {
+        margin-top: $base-padding-v;
+        color: var(--text-contrast-error-color);
+        background-color: var(--error-color);
+        border-radius: var(--block-border-radius);
+        display: flex;
+        align-items: stretch;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        &-body {
+            padding: $medium-padding-v 0;
+            flex-grow: 1;
+            > a {
+                color: var(--text-contrast-error-color);
+            }
+        }
+        &-icon {
+            padding: $medium-padding;
+            width: 1em;
+            &-spin {
+                display: none;
+                .details__issues-icon--loading & {
+                    display: inline-block;
+                }
+            }
+            &-warning {
+                .details__issues-icon--loading & {
+                    display: none;
+                }
+            }
+        }
+        &-close-btn {
+            padding: $medium-padding;
+            cursor: pointer;
+            align-self: flex-start;
+            opacity: 0.8;
+            transition: opacity $base-duration $base-timing;
+            &:hover {
+                opacity: 1;
             }
         }
     }
@@ -642,9 +682,8 @@
             }
             &-item {
                 position: absolute;
-                top: 4px;
+                top: 0;
                 cursor: pointer;
-                transform: translateX(-48%);
                 &:hover {
                     color: var(--text-semi-muted-color);
                 }
@@ -723,10 +762,47 @@
             padding: $base-padding;
             display: inline-block;
             word-break: break-all;
-            @include area-selectable(bottom);
+            @include area-selectable();
             &--selected {
                 background-color: var(--secondary-background-color);
-                border-bottom: selected-hover-border();
+            }
+        }
+    }
+
+    &__subview-close {
+        align-self: flex-end;
+        float: right;
+        cursor: pointer;
+        user-select: none;
+        &-post {
+            margin-left: $tiny-spacing;
+            margin-right: $small-spacing;
+            position: relative;
+            top: 0.2em;
+        }
+        &-pre,
+        &-post {
+            display: none;
+        }
+        @include mobile {
+            line-height: $mobile-back-button-height;
+            height: $mobile-back-button-height;
+            padding: $base-padding;
+            font-size: 1.2em;
+            > i {
+                margin-right: 0.7em;
+                font-size: 1.2em;
+                vertical-align: middle;
+                position: relative;
+                top: -0.15em;
+            }
+            &-pre {
+                display: inline;
+            }
+        }
+        @include nomobile {
+            &-post {
+                display: inline;
             }
         }
     }

@@ -13,6 +13,18 @@ const GeneratorPresets = {
         };
     },
 
+    get browserExtensionPreset() {
+        return {
+            name: 'BrowserExtension',
+            length: 20,
+            upper: true,
+            lower: true,
+            special: true,
+            brackets: true,
+            ambiguous: true
+        };
+    },
+
     get builtIn() {
         return [
             this.defaultPreset,
@@ -47,39 +59,36 @@ const GeneratorPresets = {
                 name: 'Mac',
                 title: Locale.genPresetMac,
                 length: 17,
-                upper: true,
-                digits: true,
-                special: true
+                include: '0123456789ABCDEF',
+                pattern: 'XX-'
             },
             {
                 name: 'Hash128',
                 title: Locale.genPresetHash128,
                 length: 32,
-                lower: true,
-                digits: true
+                include: '0123456789abcdef'
             },
             {
                 name: 'Hash256',
                 title: Locale.genPresetHash256,
                 length: 64,
-                lower: true,
-                digits: true
+                include: '0123456789abcdef'
             }
         ];
     },
 
     get all() {
         let presets = this.builtIn;
-        presets.forEach(preset => {
+        presets.forEach((preset) => {
             preset.builtIn = true;
         });
         const setting = AppSettingsModel.generatorPresets;
         if (setting) {
             if (setting.user) {
-                presets = presets.concat(setting.user.map(item => ({ ...item })));
+                presets = presets.concat(setting.user.map((item) => ({ ...item })));
             }
             let hasDefault = false;
-            presets.forEach(preset => {
+            presets.forEach((preset) => {
                 if (setting.disabled && setting.disabled[preset.name]) {
                     preset.disabled = true;
                 }
@@ -96,7 +105,7 @@ const GeneratorPresets = {
     },
 
     get enabled() {
-        const allPresets = this.all.filter(preset => !preset.disabled);
+        const allPresets = this.all.filter((preset) => !preset.disabled);
         if (!allPresets.length) {
             allPresets.push(this.defaultPreset);
         }
@@ -113,7 +122,7 @@ const GeneratorPresets = {
 
     add(preset) {
         const setting = this.getOrCreateSetting();
-        if (preset.name && !setting.user.filter(p => p.name === preset.name).length) {
+        if (preset.name && !setting.user.filter((p) => p.name === preset.name).length) {
             setting.user.push(preset);
             this.save(setting);
         }
@@ -121,13 +130,13 @@ const GeneratorPresets = {
 
     remove(name) {
         const setting = this.getOrCreateSetting();
-        setting.user = setting.user.filter(p => p.name !== name);
+        setting.user = setting.user.filter((p) => p.name !== name);
         this.save(setting);
     },
 
     setPreset(name, props) {
         const setting = this.getOrCreateSetting();
-        const preset = setting.user.filter(p => p.name === name)[0];
+        const preset = setting.user.filter((p) => p.name === name)[0];
         if (preset) {
             Object.assign(preset, props);
             this.save(setting);

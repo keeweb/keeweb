@@ -45,37 +45,48 @@
         &-field-wrap {
             flex: 1;
             position: relative;
+            margin-right: $small-spacing;
         }
         &-field {
             width: 100%;
+            height: 2.5em;
             @include mobile {
                 font-size: 1.05em !important;
                 box-shadow: none !important;
                 border-radius: 0.6em !important;
                 border: none !important;
-                padding-left: 0.4em;
                 background-color: var(--secondary-background-color) !important;
             }
         }
-        &-icon-search {
+        &-icon-search,
+        &-icon-clear {
             color: var(--muted-color);
             position: absolute;
-            top: 0.5em;
-            right: 0.5em;
+            top: 0.53em;
             cursor: pointer;
             &:hover {
                 color: var(--medium-color);
             }
             @include mobile {
-                top: 0.5em;
+                top: 0.6em;
             }
         }
-        &-btn-new {
-            @include icon-btn;
-            margin-left: $small-spacing;
+        &-icon-search {
+            left: 0.6em;
         }
+        &-icon-clear {
+            right: 0.6em;
+            display: none;
+            .list__search-field-wrap--text & {
+                display: block;
+            }
+        }
+        &-btn-new,
         &-btn-sort {
             @include icon-btn;
+            height: 2.5em;
+            line-height: 2.3em;
+            padding: 0 $base-padding-h;
         }
         &-btn-menu {
             display: none;
@@ -96,8 +107,10 @@
             align-items: stretch;
             flex-direction: row;
             flex-wrap: wrap;
+            padding: 0 $small-spacing;
             &-text {
                 flex: 100%;
+                padding: $base-padding-v 0;
             }
         }
         &-check {
@@ -106,19 +119,30 @@
     }
 
     &__table {
-        border-collapse: collapse;
-        width: calc(100% - 2px);
-        td,
-        th {
+        &-body {
+            position: relative;
+        }
+        &-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        &-cell {
             padding: $base-padding;
             text-align: left;
+            flex-grow: 1;
+            flex-shrink: 0;
+            flex-basis: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
             &:first-child {
                 text-align: center;
+                padding: 0;
+                width: 3em;
+                flex-basis: 3em;
+                flex-grow: 0;
+                flex-shrink: 0;
             }
-        }
-        th:first-child {
-            padding: 0;
-            width: 3em;
         }
         &-options {
             @include icon-btn();
@@ -126,16 +150,23 @@
         }
     }
 
+    &__items-container {
+        position: relative;
+    }
+
     &__item {
-        padding: 6px 10px 0;
+        left: 0;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        position: absolute;
+        top: 0;
+        box-sizing: border-box;
         @include nomobile {
-            @include area-selectable(right);
+            @include area-selectable();
             &--active,
             &--active:hover {
-                @include area-selected(right);
+                @include area-selected();
             }
         }
         @include mobile {
@@ -147,7 +178,12 @@
         }
 
         &:not(.list__item--table) {
-            height: 3rem;
+            @include nomobile {
+                border-radius: var(--block-border-radius);
+            }
+            padding: $base-padding;
+            margin: 0 $small-spacing;
+            width: calc(100% - #{$small-spacing * 2});
         }
 
         &--expired {
@@ -158,9 +194,12 @@
         }
 
         &-icon {
-            margin-right: 2px;
+            margin-right: 0.2em;
             width: 14px;
             height: 14px;
+            vertical-align: top;
+            position: relative;
+            top: -1px;
             @include mobile {
                 margin-right: 4px;
             }
@@ -197,6 +236,10 @@
             display: block;
             text-overflow: ellipsis;
             overflow: hidden;
+            margin-bottom: $tiny-spacing;
+            .list__item--active & {
+                color: var(--selected-item-text-color);
+            }
         }
     }
 }

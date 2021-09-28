@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+    <true/>
+    <key>keychain-access-groups</key>
+    <array>
+      <string>3LE7JZ657W.net.antelle.keeweb</string>
+    </array>
+    <key>com.apple.security.application-groups</key>
+    <array>
+      <string>3LE7JZ657W.keeweb</string>
+    </array>
+    <key>com.apple.application-identifier</key>
+    <string>3LE7JZ657W.net.antelle.keeweb</string>
+    <key>com.apple.developer.team-identifier</key>
+    <string>3LE7JZ657W</string>
+  </dict>
+</plist>

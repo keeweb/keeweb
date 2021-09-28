@@ -24,6 +24,7 @@ class ListSearchView extends View {
         'click .list__search-btn-sort': 'sortOptionsClick',
         'click .list__search-icon-search': 'advancedSearchClick',
         'click .list__search-btn-menu': 'toggleMenu',
+        'click .list__search-icon-clear': 'clickClear',
         'change .list__search-adv input[type=checkbox]': 'toggleAdvCheck'
     };
 
@@ -39,67 +40,67 @@ class ListSearchView extends View {
         this.sortOptions = [
             {
                 value: 'title',
-                icon: 'sort-alpha-asc',
+                icon: 'sort-alpha-down',
                 loc: () =>
                     StringFormat.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-title',
-                icon: 'sort-alpha-desc',
+                icon: 'sort-alpha-down-alt',
                 loc: () =>
                     StringFormat.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'website',
-                icon: 'sort-alpha-asc',
+                icon: 'sort-alpha-down',
                 loc: () =>
                     StringFormat.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-website',
-                icon: 'sort-alpha-desc',
+                icon: 'sort-alpha-down-alt',
                 loc: () =>
                     StringFormat.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'user',
-                icon: 'sort-alpha-asc',
+                icon: 'sort-alpha-down',
                 loc: () => StringFormat.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-user',
-                icon: 'sort-alpha-desc',
+                icon: 'sort-alpha-down-alt',
                 loc: () => StringFormat.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'created',
-                icon: 'sort-numeric-asc',
+                icon: 'sort-numeric-down',
                 loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchON)
             },
             {
                 value: '-created',
-                icon: 'sort-numeric-desc',
+                icon: 'sort-numeric-down-alt',
                 loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO)
             },
             {
                 value: 'updated',
-                icon: 'sort-numeric-asc',
+                icon: 'sort-numeric-down',
                 loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON)
             },
             {
                 value: '-updated',
-                icon: 'sort-numeric-desc',
+                icon: 'sort-numeric-down-alt',
                 loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO)
             },
             {
                 value: '-attachments',
-                icon: 'sort-amount-desc',
+                icon: 'sort-amount-down',
                 loc: () => Locale.searchAttachments
             },
-            { value: '-rank', icon: 'sort-amount-desc', loc: () => Locale.searchRank }
+            { value: '-rank', icon: 'sort-amount-down', loc: () => Locale.searchRank }
         ];
         this.sortIcons = {};
-        this.sortOptions.forEach(opt => {
+        this.sortOptions.forEach((opt) => {
             this.sortIcons[opt.value] = opt.icon;
         });
         this.advancedSearch = {
@@ -127,6 +128,7 @@ class ListSearchView extends View {
         this.listenTo(Events, 'filter', this.filterChanged);
         this.listenTo(Events, 'set-locale', this.setLocale);
         this.listenTo(Events, 'page-blur', this.pageBlur);
+        this.listenTo(this.model.files, 'change', this.fileListUpdated);
 
         this.once('remove', () => {
             this.removeKeypressHandler();
@@ -134,18 +136,18 @@ class ListSearchView extends View {
     }
 
     setLocale() {
-        this.sortOptions.forEach(opt => {
+        this.sortOptions.forEach((opt) => {
             opt.text = opt.loc();
         });
-        const entryDesc = Features.isMobile
-            ? ''
-            : ' <span class="muted-color">(' +
-              Locale.searchShiftClickOr +
-              ' ' +
-              Shortcuts.altShortcutSymbol(true) +
-              'N)</span>';
         this.createOptions = [
-            { value: 'entry', icon: 'key', text: StringFormat.capFirst(Locale.entry) + entryDesc },
+            {
+                value: 'entry',
+                icon: 'key',
+                text: StringFormat.capFirst(Locale.entry),
+                hint: Features.isMobile
+                    ? null
+                    : `(${Locale.searchShiftClickOr} ${Shortcuts.altShortcutSymbol(true)})`
+            },
             { value: 'group', icon: 'folder', text: StringFormat.capFirst(Locale.group) }
         ];
         if (this.el) {
@@ -160,7 +162,7 @@ class ListSearchView extends View {
     removeKeypressHandler() {}
 
     viewShown() {
-        const keypressHandler = e => this.documentKeyPress(e);
+        const keypressHandler = (e) => this.documentKeyPress(e);
         Events.on('keypress', keypressHandler);
         this.removeKeypressHandler = () => Events.off('keypress', keypressHandler);
     }
@@ -176,7 +178,8 @@ class ListSearchView extends View {
         }
         super.render({
             adv: this.advancedSearch,
-            advEnabled: this.advancedSearchEnabled
+            advEnabled: this.advancedSearchEnabled,
+            canCreate: this.model.canCreateEntries()
         });
         this.inputEl = this.$el.find('.list__search-field');
         if (searchVal) {
@@ -210,7 +213,9 @@ class ListSearchView extends View {
     }
 
     inputChange() {
-        Events.emit('add-filter', { text: this.inputEl.val() });
+        const text = this.inputEl.val();
+        this.inputEl[0].parentElement.classList.toggle('list__search-field-wrap--text', text);
+        Events.emit('add-filter', { text });
     }
 
     inputFocus(e) {
@@ -335,7 +340,7 @@ class ListSearchView extends View {
         view.isSort = true;
         this.listenTo(view, 'cancel', this.hideSearchOptions);
         this.listenTo(view, 'select', this.sortDropdownSelect);
-        this.sortOptions.forEach(function(opt) {
+        this.sortOptions.forEach(function (opt) {
             opt.active = this.model.sort === opt.value;
         }, this);
         view.render({
@@ -375,7 +380,7 @@ class ListSearchView extends View {
         const hasMultipleFiles = this.model.files.length > 1;
         this.entryTemplates = {};
         const options = [];
-        entryTemplates.forEach(tmpl => {
+        entryTemplates.forEach((tmpl) => {
             const id = 'tmpl:' + tmpl.entry.id;
             options.push({
                 value: id,
@@ -420,7 +425,16 @@ class ListSearchView extends View {
     }
 
     addArrow(str) {
-        return str.replace('{}', '&rarr;');
+        return str.replace('{}', '→');
+    }
+
+    fileListUpdated() {
+        this.render();
+    }
+
+    clickClear() {
+        this.inputEl.val('');
+        this.inputChange();
     }
 }
 

@@ -312,7 +312,8 @@ function generate(options) {
         word: '',
         opts: options
     };
-    while (wordObj.word.length < length) {
+    const safeMaxLength = length + 5;
+    while (wordObj.word.length < safeMaxLength) {
         addSyllable(wordObj);
     }
     return postProcess(wordObj).substr(0, length);

@@ -1,0 +1,180 @@
+<div class="settings__content">
+    <h1><i class="fa fa-{{icon}} settings__head-icon"></i> {{res 'setBrowserTitle'}}</h1>
+    {{#if desktop}}
+        <p>{{res 'setBrowserIntroDesktop'}}</p>
+        <p>KeeWeb Connect: {{res 'setBrowserIntroKeeWebConnect'}}</p>
+        <p>KeePassXC-Browser: {{res 'setBrowserIntroKeePassXcBrowser'}}</p>
+        {{#if anyBrowserIsEnabled}}
+            <p>{{res 'setBrowserEnablePerBrowser'}}</p>
+        {{else}}
+            <p class="error-color">{{res 'setBrowserNotEnabled'}}</p>
+        {{/if}}
+        <table class="settings__browser-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    {{#each extensionNames as |ext|}}
+                        <th>{{ext}}</th>
+                    {{/each}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each settingsPerBrowser as |perBrowser|}}
+                    <tr>
+                        <td>{{perBrowser.browserName}}</td>
+                        {{#each perBrowser.extensions as |setting|}}
+                            <td>
+                                {{#if setting.supported}}
+                                    <input type="checkbox"
+                                           class="check-enable-for-browser"
+                                           {{#if setting.enabled}}checked{{/if}}
+                                           id="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"
+                                           data-browser="{{perBrowser.browser}}"
+                                           data-extension="{{setting.alias}}" />
+                                    <label for="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"></label>
+                                {{else}}
+                                    <i class="fa fa-times muted-color" title="{{res 'setBrowserExtensionNotSupported'}}"></i>
+                                {{/if}}
+                                {{#if setting.enabled}}
+                                    {{#if setting.helpUrl}}
+                                        <a href="{{setting.helpUrl}}" target="_blank" rel="noreferrer"
+                                           class="settings__browser-extension-link icon-link"
+                                           title="{{res 'setBrowserExtensionHelp'}}"
+                                        >
+                                            <i class="fa fa-info-circle"></i>
+                                        </a>
+                                    {{/if}}
+                                    {{#if setting.installUrl}}
+                                        <a href="{{setting.installUrl}}" target="_blank" rel="noreferrer"
+                                           class="settings__browser-extension-link icon-link"
+                                           title="{{res 'setBrowserExtensionInstall'}}"
+                                        >
+                                            <i class="fa fa-download"></i>
+                                        </a>
+                                    {{/if}}
+                                {{/if}}
+                            </td>
+                        {{/each}}
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <p>{{res 'setBrowserIntroWeb'}}</p>
+        <a href="{{extensionDownloadLink}}" target="_blank" rel="noreferrer">
+            KeeWeb Connect {{#res 'setBrowserExtensionFor'}}{{extensionBrowserFamily}}{{/res}}
+        </a>
+    {{/if}}
+    <p></p>
+
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__browser-focus-if-locked"
+               id="settings__browser-focus-if-locked"
+               {{#if focusIfLocked}}checked{{/if}} />
+        <label for="settings__browser-focus-if-locked">{{res 'setBrowserFocusIfLocked'}}</label>
+    </div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__browser-focus-if-empty"
+               id="settings__browser-focus-if-empty"
+               {{#if focusIfEmpty}}checked{{/if}} />
+        <label for="settings__browser-focus-if-empty">{{res 'setBrowserFocusIfEmpty'}}</label>
+    </div>
+
+    <h2>{{res 'setBrowserSessions'}}</h2>
+    {{#if sessions.length}}
+        <p>{{res 'setBrowserSessionsIntro'}}</p>
+
+        {{#each sessions as |session|}}
+            <h3>
+                <span class="settings__browser-extension-status
+                     {{#if session.permissions}}
+                         green-color
+                     {{else if session.permissionsDenied}}
+                         red-color
+                     {{else}}
+                         muted-color
+                     {{/if}}"
+                     title="
+                     {{~#if session.permissions~}}
+                         {{res 'setBrowserSessionsActiveTooltip'}}
+                     {{~else if session.permissionsDenied~}}
+                         {{res 'setBrowserSessionsDeniedTooltip'}}
+                     {{~else~}}
+                         {{res 'setBrowserSessionsInactiveTooltip'}}
+                     {{/if}}"
+                ></span>
+                {{session.extensionName}}{{#if session.appName}} ({{session.appName}}){{/if}}
+            </h3>
+            <p>{{res 'setBrowserSessionsConnectedDate'}}: {{session.connectedDate}}</p>
+            <p>
+                {{#if session.permissions}}
+                    {{res 'setBrowserSessionsActiveText'}}
+                {{else if session.permissionsDenied}}
+                    {{res 'setBrowserSessionsDeniedText'}}
+                {{else}}
+                    {{res 'setBrowserSessionsInactiveText'}}
+                {{/if}}
+            </p>
+            {{#if session.permissions}}
+                <div>
+                    <label>{{res 'setBrowserSessionsAccessToFiles'}}:</label>
+                    <div class="settings__browser-session-files">
+                        {{#each session.fileAccess as |file|}}
+                            <div class="settings__browser-session-file">
+                                <input type="checkbox" class="input-base settings__browser-session-file-check"
+                                       data-client-id="{{session.clientId}}"
+                                       data-file-id="{{file.id}}"
+                                       id="settings__browser-session-file-check--{{file.id}}"
+                                       {{#if file.checked}}checked{{/if}}
+                                />
+                                <label for="settings__browser-session-file-check--{{file.id}}">{{file.name}}</label>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{#if session.noFileAccess}}
+                    <p class="error-color">{{res 'setBrowserSessionsNoFileAccess'}}</p>
+                {{/if}}
+                <div>
+                    <label for="settings__browser-session-ask-get--{{session.connectionId}}">{{res 'extensionConnectAskGet'}}</label>
+                    <select id="settings__browser-session-ask-get--{{session.connectionId}}"
+                            data-client-id="{{session.clientId}}"
+                            class="settings__browser-session-ask-get settings__select input-base">
+                        <option value="multiple" {{#ifeq session.permissions.askGet 'multiple'}}selected{{/ifeq}}>
+                            {{res 'extensionConnectAskGetMultiple'}}
+                        </option>
+                        <option value="always" {{#ifeq session.permissions.askGet 'always'}}selected{{/ifeq}}>
+                            {{res 'extensionConnectAskGetAlways'}}
+                        </option>
+                    </select>
+                </div>
+                {{#if session.showAskSave}}
+                    <div>
+                        <label for="settings__browser-session-ask-save--{{session.connectionId}}">{{res 'extensionConnectAskSave'}}</label>
+                        <select id="settings__browser-session-ask-save--{{session.connectionId}}"
+                                data-client-id="{{session.clientId}}"
+                                class="settings__browser-session-ask-save settings__select input-base">
+                            <option value="always" {{#ifeq session.permissions.askSave 'always'}}selected{{/ifeq}}>
+                                {{res 'extensionConnectAskSaveAlways'}}
+                            </option>
+                            <option value="auto" {{#ifeq session.permissions.askSave 'auto'}}selected{{/ifeq}}>
+                                {{res 'extensionConnectAskSaveAuto'}}
+                            </option>
+                        </select>
+                    </div>
+                {{/if}}
+                <p>{{res 'setBrowserSessionsPasswordsRead'}}: {{session.passwordsRead}}</p>
+                {{#if session.passwordsWritten}}<p>{{res 'setBrowserSessionsPasswordsWritten'}}: {{session.passwordsWritten}}</p>{{/if}}
+            {{/if}}
+            <div class="settings__browser-session-buttons">
+                {{#if ../desktop}}
+                    <button class="btn btn-error settings__browser-btn-terminate-session"
+                            data-connection-id="{{session.connectionId}}"
+                    >{{res 'setBrowserSessionsTerminate'}}</button>
+                {{/if}}
+            </div>
+        {{/each}}
+    {{else}}
+        <p>{{res 'setBrowserSessionsEmpty'}}</p>
+    {{/if}}
+</div>

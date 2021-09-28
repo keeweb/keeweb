@@ -1,21 +1,23 @@
 import { Events } from 'framework/events';
-import { AutoType } from 'auto-type';
 import { Storage } from 'storage';
 import { SearchResultCollection } from 'collections/search-result-collection';
 import { FileCollection } from 'collections/file-collection';
 import { FileInfoCollection } from 'collections/file-info-collection';
 import { RuntimeInfo } from 'const/runtime-info';
-import { Launcher } from 'comp/launcher';
+import { UsbListener } from 'comp/app/usb-listener';
+import { NativeModules } from 'comp/launcher/native-modules';
 import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { EntryModel } from 'models/entry-model';
 import { FileInfoModel } from 'models/file-info-model';
 import { FileModel } from 'models/file-model';
 import { GroupModel } from 'models/group-model';
+import { YubiKeyOtpModel } from 'models/otp-device/yubikey-otp-model';
 import { MenuModel } from 'models/menu/menu-model';
 import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
+import { Launcher } from 'comp/launcher';
 import { UrlFormat } from 'util/formatting/url-format';
 import { IdGenerator } from 'util/generators/id-generator';
 import { Locale } from 'util/locale';
@@ -35,6 +37,11 @@ class AppModel {
     activeEntryId = null;
     isBeta = RuntimeInfo.beta;
     advancedSearch = null;
+    attachedYubiKeysCount = 0;
+    memoryPasswordStorage = {};
+    fileUnlockPromise = null;
+    hardwareDecryptInProgress = false;
+    mainWindowBlurTimer = null;
 
     constructor() {
         Events.on('refresh', this.refresh.bind(this));
@@ -44,16 +51,15 @@ class AppModel {
         Events.on('empty-trash', this.emptyTrash.bind(this));
         Events.on('select-entry', this.selectEntry.bind(this));
         Events.on('unset-keyfile', this.unsetKeyFile.bind(this));
+        Events.on('usb-devices-changed', this.usbDevicesChanged.bind(this));
+        Events.on('main-window-blur', this.mainWindowBlur.bind(this));
+        Events.on('main-window-focus', this.mainWindowFocus.bind(this));
+        Events.on('main-window-will-close', this.mainWindowWillClose.bind(this));
+        Events.on('hardware-decrypt-started', this.hardwareDecryptStarted.bind(this));
+        Events.on('hardware-decrypt-finished', this.hardwareDecryptFinished.bind(this));
 
         this.appLogger = new Logger('app');
-        AppModel.instance = this; // For KeeWebHttp. TODO: kill this
-    }
-
-    prepare() {
-        AutoType.init(this);
-        for (const prv of Object.values(Storage)) {
-            prv.init();
-        }
+        AppModel.instance = this;
     }
 
     loadConfig(configLocation) {
@@ -95,7 +101,7 @@ class AppModel {
                 this.appLogger.error('Error loading app config', xhr.statusText, xhr.status);
                 reject('Error loading app config');
             });
-        }).then(config => {
+        }).then((config) => {
             return this.applyUserConfig(config);
         });
     }
@@ -120,7 +126,7 @@ class AppModel {
             }
             config.files
                 .filter(
-                    file =>
+                    (file) =>
                         file &&
                         file.storage &&
                         file.name &&
@@ -128,7 +134,7 @@ class AppModel {
                         !this.fileInfos.getMatch(file.storage, file.name, file.path)
                 )
                 .map(
-                    file =>
+                    (file) =>
                         new FileInfoModel({
                             id: IdGenerator.uuid(),
                             name: file.name,
@@ -139,10 +145,10 @@ class AppModel {
                         })
                 )
                 .reverse()
-                .forEach(fi => this.fileInfos.unshift(fi));
+                .forEach((fi) => this.fileInfos.unshift(fi));
         }
         if (config.plugins) {
-            const pluginsPromises = config.plugins.map(plugin =>
+            const pluginsPromises = config.plugins.map((plugin) =>
                 PluginManager.installIfNew(plugin.url, plugin.manifest, true)
             );
             return Promise.all(pluginsPromises).then(() => {
@@ -171,9 +177,29 @@ class AppModel {
             page: 'file',
             file
         });
+
         this.refresh();
+
         file.on('reload', this.reloadFile.bind(this));
-        file.on('change', () => Events.emit('file-changed', file));
+        file.on('change', () => {
+            Events.emit('file-changed', file);
+        });
+        file.on('ejected', () => this.closeFile(file));
+        file.on('change:dirty', (file, dirty) => {
+            if (dirty && this.settings.autoSaveInterval === -1) {
+                this.syncFile(file);
+            }
+        });
+
+        Events.emit('file-opened');
+
+        if (this.fileUnlockPromise) {
+            this.appLogger.info('Running pending file unlock operation');
+            this.fileUnlockPromise.resolve(file);
+            this.fileUnlockPromise = null;
+            Events.emit('unlock-message-changed', null);
+        }
+
         return true;
     }
 
@@ -184,10 +210,10 @@ class AppModel {
 
     _addTags(file) {
         const tagsHash = {};
-        this.tags.forEach(tag => {
+        this.tags.forEach((tag) => {
             tagsHash[tag.toLowerCase()] = true;
         });
-        file.forEachEntry({}, entry => {
+        file.forEachEntry({}, (entry) => {
             for (const tag of entry.tags) {
                 if (!tagsHash[tag.toLowerCase()]) {
                     tagsHash[tag.toLowerCase()] = true;
@@ -202,7 +228,7 @@ class AppModel {
         if (this.tags.length) {
             this.menu.tagsSection.scrollable = true;
             this.menu.tagsSection.setItems(
-                this.tags.map(tag => {
+                this.tags.map((tag) => {
                     return {
                         title: tag,
                         icon: 'tag',
@@ -230,11 +256,14 @@ class AppModel {
     }
 
     renameTag(from, to) {
-        this.files.forEach(file => file.renameTag(from, to));
+        this.files.forEach((file) => file.renameTag && file.renameTag(from, to));
         this.updateTags();
     }
 
     closeAllFiles() {
+        if (!this.files.hasOpenFiles()) {
+            return;
+        }
         for (const file of this.files) {
             file.close();
             this.fileClosed(file);
@@ -247,6 +276,7 @@ class AppModel {
         this.tags.splice(0, this.tags.length);
         this.filter = {};
         this.menu.select({ item: this.menu.allItemsItem });
+        Events.emit('all-files-closed');
     }
 
     closeFile(file) {
@@ -257,10 +287,11 @@ class AppModel {
         this.menu.groupsSection.removeByFile(file);
         this.menu.filesSection.removeByFile(file);
         this.menu.select({ item: this.menu.allItemsSection.items[0] });
+        Events.emit('one-file-closed');
     }
 
     emptyTrash() {
-        this.files.forEach(file => file.emptyTrash());
+        this.files.forEach((file) => file.emptyTrash && file.emptyTrash());
         this.refresh();
     }
 
@@ -298,7 +329,7 @@ class AppModel {
     }
 
     getEntries() {
-        const entries = this.getEntriesByFilter(this.filter);
+        const entries = this.getEntriesByFilter(this.filter, this.files);
         entries.sortEntries(this.sort, this.filter);
         if (this.filter.trash) {
             this.addTrashGroups(entries);
@@ -306,20 +337,48 @@ class AppModel {
         return entries;
     }
 
-    getEntriesByFilter(filter) {
+    getEntriesByFilter(filter, files) {
         const preparedFilter = this.prepareFilter(filter);
         const entries = new SearchResultCollection();
-        this.files.forEach(file => {
-            file.forEachEntry(preparedFilter, entry => entries.push(entry));
-        });
+
+        const devicesToMatchOtpEntries = files.filter((file) => file.backend === 'otp-device');
+
+        const matchedOtpEntrySet = this.settings.yubiKeyMatchEntries ? new Set() : undefined;
+
+        files
+            .filter((file) => file.backend !== 'otp-device')
+            .forEach((file) => {
+                file.forEachEntry(preparedFilter, (entry) => {
+                    if (matchedOtpEntrySet) {
+                        for (const device of devicesToMatchOtpEntries) {
+                            const matchingEntry = device.getMatchingEntry(entry);
+                            if (matchingEntry) {
+                                matchedOtpEntrySet.add(matchingEntry);
+                            }
+                        }
+                    }
+                    entries.push(entry);
+                });
+            });
+
+        if (devicesToMatchOtpEntries.length) {
+            for (const device of devicesToMatchOtpEntries) {
+                device.forEachEntry(preparedFilter, (entry) => {
+                    if (!matchedOtpEntrySet || !matchedOtpEntrySet.has(entry)) {
+                        entries.push(entry);
+                    }
+                });
+            }
+        }
+
         return entries;
     }
 
     addTrashGroups(collection) {
-        this.files.forEach(file => {
-            const trashGroup = file.getTrashGroup();
+        this.files.forEach((file) => {
+            const trashGroup = file.getTrashGroup && file.getTrashGroup();
             if (trashGroup) {
-                trashGroup.getOwnSubGroups().forEach(group => {
+                trashGroup.getOwnSubGroups().forEach((group) => {
                     collection.unshift(GroupModel.fromGroup(group, file, trashGroup));
                 });
             }
@@ -335,10 +394,10 @@ class AppModel {
 
         const exact = filter.advanced && filter.advanced.exact;
         if (!exact && filter.text) {
-            const textParts = filter.text.split(/\s+/).filter(s => s);
+            const textParts = filter.text.split(/\s+/).filter((s) => s);
             if (textParts.length) {
                 filter.textParts = textParts;
-                filter.textLowerParts = filter.textLower.split(/\s+/).filter(s => s);
+                filter.textLowerParts = filter.textLower.split(/\s+/).filter((s) => s);
             }
         }
 
@@ -347,18 +406,18 @@ class AppModel {
         return filter;
     }
 
-    getFirstSelectedGroup() {
+    getFirstSelectedGroupForCreation() {
         const selGroupId = this.filter.group;
         let file, group;
         if (selGroupId) {
-            this.files.some(f => {
+            this.files.some((f) => {
                 file = f;
                 group = f.getGroup(selGroupId);
                 return group;
             });
         }
         if (!group) {
-            file = this.files[0];
+            file = this.files.find((f) => f.active && !f.readOnly);
             group = file.groups[0];
         }
         return { group, file };
@@ -366,10 +425,10 @@ class AppModel {
 
     completeUserNames(part) {
         const userNames = {};
-        this.files.forEach(file => {
+        this.files.forEach((file) => {
             file.forEachEntry(
                 { text: part, textLower: part.toLowerCase(), advanced: { user: true } },
-                entry => {
+                (entry) => {
                     const userName = entry.user;
                     if (userName) {
                         userNames[userName] = (userNames[userName] || 0) + 1;
@@ -383,22 +442,26 @@ class AppModel {
         if (matches.length > maxResults) {
             matches.length = maxResults;
         }
-        return matches.map(m => m[0]);
+        return matches.map((m) => m[0]);
     }
 
     getEntryTemplates() {
         const entryTemplates = [];
-        this.files.forEach(file => {
-            file.forEachEntryTemplate(entry => {
+        this.files.forEach((file) => {
+            file.forEachEntryTemplate?.((entry) => {
                 entryTemplates.push({ file, entry });
             });
         });
         return entryTemplates;
     }
 
+    canCreateEntries() {
+        return this.files.some((f) => f.active && !f.readOnly);
+    }
+
     createNewEntry(args) {
-        const sel = this.getFirstSelectedGroup();
-        if (args && args.template) {
+        const sel = this.getFirstSelectedGroupForCreation();
+        if (args?.template) {
             if (sel.file !== args.template.file) {
                 sel.file = args.template.file;
                 sel.group = args.template.file.groups[0];
@@ -408,17 +471,29 @@ class AppModel {
             newEntry.copyFromTemplate(templateEntry);
             return newEntry;
         } else {
-            return EntryModel.newEntry(sel.group, sel.file);
+            return EntryModel.newEntry(sel.group, sel.file, {
+                tag: this.filter.tag
+            });
         }
     }
 
+    createNewEntryWithFields(group, fields) {
+        return EntryModel.newEntryWithFields(group, fields);
+    }
+
     createNewGroup() {
-        const sel = this.getFirstSelectedGroup();
+        const sel = this.getFirstSelectedGroupForCreation();
         return GroupModel.newGroup(sel.group, sel.file);
     }
 
+    createNewGroupWithName(group, file, name) {
+        const newGroup = GroupModel.newGroup(group, file);
+        newGroup.setName(name);
+        return newGroup;
+    }
+
     createNewTemplateEntry() {
-        const file = this.getFirstSelectedGroup().file;
+        const file = this.getFirstSelectedGroupForCreation().file;
         const group = file.getEntryTemplatesGroup() || file.createEntryTemplatesGroup();
         return EntryModel.newEntry(group, file);
     }
@@ -435,7 +510,7 @@ class AppModel {
         }
     }
 
-    createNewFile(name) {
+    createNewFile(name, callback) {
         if (!name) {
             for (let i = 0; ; i++) {
                 name = Locale.openNewFile + (i || '');
@@ -445,9 +520,10 @@ class AppModel {
             }
         }
         const newFile = new FileModel({ id: IdGenerator.uuid() });
-        newFile.create(name);
-        this.addFile(newFile);
-        return newFile;
+        newFile.create(name, () => {
+            this.addFile(newFile);
+            callback?.(newFile);
+        });
     }
 
     openFile(params, callback) {
@@ -477,8 +553,17 @@ class AppModel {
             );
         } else if (params.fileData) {
             logger.info('Open file from supplied content');
-            const needSaveToCache = params.storage !== 'file';
-            this.openFileWithData(params, callback, fileInfo, params.fileData, needSaveToCache);
+            if (params.storage === 'file') {
+                Storage.file.stat(params.path, null, (err, stat) => {
+                    if (err) {
+                        return callback(err);
+                    }
+                    params.rev = stat.rev;
+                    this.openFileWithData(params, callback, fileInfo, params.fileData);
+                });
+            } else {
+                this.openFileWithData(params, callback, fileInfo, params.fileData, true);
+            }
         } else if (!params.storage) {
             logger.info('Open file from cache as main storage');
             this.openFileFromCache(params, callback, fileInfo);
@@ -486,14 +571,15 @@ class AppModel {
             fileInfo &&
             fileInfo.openDate &&
             fileInfo.rev === params.rev &&
-            fileInfo.storage !== 'file'
+            fileInfo.storage !== 'file' &&
+            !this.settings.disableOfflineStorage
         ) {
             logger.info('Open file from cache because it is latest');
             this.openFileFromCache(
                 params,
                 (err, file) => {
                     if (err) {
-                        if (err.name === 'KdbxError') {
+                        if (err.name === 'KdbxError' || err.ykError) {
                             return callback(err);
                         }
                         logger.info(
@@ -507,7 +593,12 @@ class AppModel {
                 },
                 fileInfo
             );
-        } else if (!fileInfo || !fileInfo.openDate || params.storage === 'file') {
+        } else if (
+            !fileInfo ||
+            !fileInfo.openDate ||
+            params.storage === 'file' ||
+            this.settings.disableOfflineStorage
+        ) {
             this.openFileFromStorage(params, callback, fileInfo, logger);
         } else {
             logger.info('Open file from cache, will sync after load', params.storage);
@@ -519,7 +610,7 @@ class AppModel {
                         setTimeout(() => this.syncFile(file), 0);
                         callback(err);
                     } else {
-                        if (err.name === 'KdbxError') {
+                        if (err.name === 'KdbxError' || err.ykError) {
                             return callback(err);
                         }
                         logger.info(
@@ -555,7 +646,7 @@ class AppModel {
             logger.info('Load from storage');
             storage.load(params.path, params.opts, (err, data, stat) => {
                 if (err) {
-                    if (fileInfo && fileInfo.openDate) {
+                    if (fileInfo && fileInfo.openDate && !this.settings.disableOfflineStorage) {
                         logger.info('Open file from cache because of storage load error', err);
                         this.openFileFromCache(params, callback, fileInfo);
                     } else {
@@ -579,7 +670,8 @@ class AppModel {
                     !noCache &&
                     fileInfo &&
                     storage.name !== 'file' &&
-                    (err || (stat && stat.rev === cacheRev))
+                    (err || (stat && stat.rev === cacheRev)) &&
+                    !this.settings.disableOfflineStorage
                 ) {
                     logger.info(
                         'Open file from cache because ' + (err ? 'stat error' : 'it is latest'),
@@ -606,7 +698,7 @@ class AppModel {
         let needLoadKeyFile = false;
         if (!params.keyFileData && fileInfo && fileInfo.keyFileName) {
             params.keyFileName = fileInfo.keyFileName;
-            if (this.settings.rememberKeyFiles === 'data') {
+            if (this.settings.rememberKeyFiles === 'data' && fileInfo.keyFileHash) {
                 params.keyFileData = FileModel.createKeyFileWithHash(fileInfo.keyFileHash);
             } else if (this.settings.rememberKeyFiles === 'path' && fileInfo.keyFilePath) {
                 params.keyFilePath = fileInfo.keyFilePath;
@@ -624,10 +716,14 @@ class AppModel {
             path: params.path,
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
-            backup: (fileInfo && fileInfo.backup) || null,
-            fingerprint: (fileInfo && fileInfo.fingerprint) || null
+            backup: fileInfo?.backup || null,
+            chalResp: params.chalResp
         });
-        const openComplete = err => {
+        if (params.encryptedPassword) {
+            file.encryptedPassword = fileInfo.encryptedPassword;
+            file.encryptedPasswordDate = fileInfo?.encryptedPasswordDate || new Date();
+        }
+        const openComplete = (err) => {
             if (err) {
                 return callback(err);
             }
@@ -645,7 +741,7 @@ class AppModel {
             if (fileInfo) {
                 file.syncDate = fileInfo.syncDate;
             }
-            if (updateCacheOnSuccess) {
+            if (updateCacheOnSuccess && !this.settings.disableOfflineStorage) {
                 logger.info('Save loaded file to cache');
                 Storage.cache.save(file.id, null, params.fileData);
             }
@@ -683,7 +779,7 @@ class AppModel {
             storage: params.storage,
             path: params.path
         });
-        file.importWithXml(params.fileXml, err => {
+        file.importWithXml(params.fileXml, (err) => {
             logger.info('Import xml complete ' + (err ? 'with error' : ''), err);
             if (err) {
                 return callback(err);
@@ -715,7 +811,7 @@ class AppModel {
             syncDate: file.syncDate || dt,
             openDate: dt,
             backup: file.backup,
-            fingerprint: file.fingerprint
+            chalResp: file.chalResp
         });
         switch (this.settings.rememberKeyFiles) {
             case 'data':
@@ -729,6 +825,14 @@ class AppModel {
                     keyFileName: file.keyFileName || null,
                     keyFilePath: file.keyFilePath || null
                 });
+        }
+        if (this.settings.deviceOwnerAuth === 'file' && file.encryptedPassword) {
+            const maxDate = new Date(file.encryptedPasswordDate);
+            maxDate.setMinutes(maxDate.getMinutes() + this.settings.deviceOwnerAuthTimeoutMinutes);
+            if (maxDate > new Date()) {
+                fileInfo.encryptedPassword = file.encryptedPassword;
+                fileInfo.encryptedPasswordDate = file.encryptedPasswordDate;
+            }
         }
         this.fileInfos.remove(file.id);
         this.fileInfos.unshift(fileInfo);
@@ -767,8 +871,16 @@ class AppModel {
         if (data && backup && backup.enabled && backup.pending) {
             this.scheduleBackupFile(file, data);
         }
-        if (params) {
-            this.saveFileFingerprint(file, params.password);
+        if (this.settings.yubiKeyAutoOpen) {
+            if (
+                this.attachedYubiKeysCount > 0 &&
+                !this.files.some((f) => f.backend === 'otp-device')
+            ) {
+                this.tryOpenOtpDeviceInBackground();
+            }
+        }
+        if (this.settings.deviceOwnerAuth) {
+            this.saveEncryptedPassword(file, params);
         }
     }
 
@@ -798,6 +910,9 @@ class AppModel {
         if (file.syncing) {
             return callback && callback('Sync in progress');
         }
+        if (!file.active) {
+            return callback && callback('File is closed');
+        }
         if (!options) {
             options = {};
         }
@@ -809,7 +924,7 @@ class AppModel {
             path = Storage[storage].getPathForName(file.name);
         }
         const optionsForLogging = { ...options };
-        if (optionsForLogging && optionsForLogging.opts && optionsForLogging.opts.password) {
+        if (optionsForLogging.opts && optionsForLogging.opts.password) {
             optionsForLogging.opts = { ...optionsForLogging.opts };
             optionsForLogging.opts.password = '***';
         }
@@ -833,20 +948,21 @@ class AppModel {
             });
         }
         file.setSyncProgress();
-        const complete = (err, savedToCache) => {
-            if (!err) {
-                savedToCache = true;
+        const complete = (err) => {
+            if (!file.active) {
+                return callback && callback('File is closed');
             }
             logger.info('Sync finished', err || 'no error');
-            file.setSyncComplete(path, storage, err ? err.toString() : null, savedToCache);
+            file.setSyncComplete(path, storage, err ? err.toString() : null);
             fileInfo.set({
                 name: file.name,
                 storage,
                 path,
                 opts: this.getStoreOpts(file),
-                modified: file.modified,
-                editState: file.getLocalEditState(),
-                syncDate: file.syncDate
+                modified: file.dirty ? fileInfo.modified : file.modified,
+                editState: file.dirty ? fileInfo.editState : file.getLocalEditState(),
+                syncDate: file.syncDate,
+                chalResp: file.chalResp
             });
             if (this.settings.rememberKeyFiles === 'data') {
                 fileInfo.set({
@@ -872,7 +988,7 @@ class AppModel {
                 if (err) {
                     return complete(err);
                 }
-                Storage.cache.save(fileInfo.id, null, data, err => {
+                Storage.cache.save(fileInfo.id, null, data, (err) => {
                     logger.info('Saved to cache', err || 'no error');
                     complete(err);
                     if (!err) {
@@ -890,10 +1006,13 @@ class AppModel {
                 logger.info('Load from storage, attempt ' + loadLoops);
                 Storage[storage].load(path, opts, (err, data, stat) => {
                     logger.info('Load from storage', stat, err || 'no error');
+                    if (!file.active) {
+                        return complete('File is closed');
+                    }
                     if (err) {
                         return complete(err);
                     }
-                    file.mergeOrUpdate(data, options.remoteKey, err => {
+                    file.mergeOrUpdate(data, options.remoteKey, (err) => {
                         logger.info('Merge complete', err || 'no error');
                         this.refresh();
                         if (err) {
@@ -912,8 +1031,12 @@ class AppModel {
                             logger.info('Updated sync date, saving modified file');
                             saveToCacheAndStorage();
                         } else if (file.dirty) {
+                            if (this.settings.disableOfflineStorage) {
+                                logger.info('File is dirty and cache is disabled');
+                                return complete(err);
+                            }
                             logger.info('Saving not modified dirty file to cache');
-                            Storage.cache.save(fileInfo.id, null, data, err => {
+                            Storage.cache.save(fileInfo.id, null, data, (err) => {
                                 if (err) {
                                     return complete(err);
                                 }
@@ -928,7 +1051,7 @@ class AppModel {
                     });
                 });
             };
-            const saveToStorage = data => {
+            const saveToStorage = (data) => {
                 logger.info('Save data to storage');
                 const storageRev = fileInfo.storage === storage ? fileInfo.rev : undefined;
                 Storage[storage].save(
@@ -974,9 +1097,12 @@ class AppModel {
                     } else if (!file.dirty) {
                         logger.info('Saving to storage, skip cache because not dirty');
                         saveToStorage(data);
+                    } else if (this.settings.disableOfflineStorage) {
+                        logger.info('Saving to storage because cache is disabled');
+                        saveToStorage(data);
                     } else {
                         logger.info('Saving to cache');
-                        Storage.cache.save(fileInfo.id, null, data, err => {
+                        Storage.cache.save(fileInfo.id, null, data, (err) => {
                             if (err) {
                                 return complete(err);
                             }
@@ -989,25 +1115,34 @@ class AppModel {
             };
             logger.info('Stat file');
             Storage[storage].stat(path, opts, (err, stat) => {
+                if (!file.active) {
+                    return complete('File is closed');
+                }
                 if (err) {
                     if (err.notFound) {
                         logger.info('File does not exist in storage, creating');
                         saveToCacheAndStorage();
                     } else if (file.dirty) {
+                        if (this.settings.disableOfflineStorage) {
+                            logger.info('Stat error, dirty, cache is disabled', err || 'no error');
+                            return complete(err);
+                        }
                         logger.info('Stat error, dirty, save to cache', err || 'no error');
-                        file.getData(data => {
-                            if (data) {
-                                Storage.cache.save(fileInfo.id, null, data, e => {
-                                    if (!e) {
-                                        file.dirty = false;
-                                    }
-                                    logger.info(
-                                        'Saved to cache, exit with error',
-                                        err || 'no error'
-                                    );
-                                    complete(err);
-                                });
+                        file.getData((data, e) => {
+                            if (e) {
+                                logger.error('Error getting file data', e);
+                                return complete(err);
                             }
+                            Storage.cache.save(fileInfo.id, null, data, (e) => {
+                                if (e) {
+                                    logger.error('Error saving to cache', e);
+                                }
+                                if (!e) {
+                                    file.dirty = false;
+                                }
+                                logger.info('Saved to cache, exit with error', err || 'no error');
+                                complete(err);
+                            });
                         });
                     } else {
                         logger.info('Stat error, not dirty', err || 'no error');
@@ -1026,6 +1161,14 @@ class AppModel {
                     loadFromStorageAndMerge();
                 }
             });
+        }
+    }
+
+    deleteAllCachedFiles() {
+        for (const fileInfo of this.fileInfos) {
+            if (fileInfo.storage && !fileInfo.modified) {
+                Storage.cache.remove(fileInfo.id);
+            }
         }
     }
 
@@ -1071,7 +1214,7 @@ class AppModel {
             if (Storage[backup.storage].getPathForName) {
                 path = Storage[backup.storage].getPathForName(path);
             }
-            Storage[backup.storage].save(path, opts, data, err => {
+            Storage[backup.storage].save(path, opts, data, (err) => {
                 if (err) {
                     logger.error('Backup error', err);
                 } else {
@@ -1089,14 +1232,14 @@ class AppModel {
         if (Storage[backup.storage].getPathForName) {
             folderPath = Storage[backup.storage].getPathForName(folderPath).replace('.kdbx', '');
         }
-        Storage[backup.storage].stat(folderPath, opts, err => {
+        Storage[backup.storage].stat(folderPath, opts, (err) => {
             if (err) {
                 if (err.notFound) {
                     logger.info('Backup folder does not exist');
                     if (!Storage[backup.storage].mkdir) {
                         return callback('Mkdir not supported by ' + backup.storage);
                     }
-                    Storage[backup.storage].mkdir(folderPath, err => {
+                    Storage[backup.storage].mkdir(folderPath, (err) => {
                         if (err) {
                             logger.error('Error creating backup folder', err);
                             callback('Error creating backup folder');
@@ -1166,15 +1309,216 @@ class AppModel {
         }
     }
 
-    saveFileFingerprint(file, password) {
-        if (Launcher && Launcher.fingerprints && !file.fingerprint) {
-            const fileInfo = this.fileInfos.get(file.id);
-            Launcher.fingerprints.register(file.id, password, token => {
-                if (token) {
-                    fileInfo.fingerprint = token;
-                    this.fileInfos.save();
+    usbDevicesChanged() {
+        const attachedYubiKeysCount = this.attachedYubiKeysCount;
+
+        this.attachedYubiKeysCount = UsbListener.attachedYubiKeys;
+
+        if (!this.settings.yubiKeyAutoOpen) {
+            return;
+        }
+
+        const isNewYubiKey = UsbListener.attachedYubiKeys > attachedYubiKeysCount;
+        const hasOpenFiles = this.files.some(
+            (file) => file.active && file.backend !== 'otp-device'
+        );
+
+        if (isNewYubiKey && hasOpenFiles && !this.openingOtpDevice) {
+            this.tryOpenOtpDeviceInBackground();
+        }
+    }
+
+    tryOpenOtpDeviceInBackground() {
+        this.appLogger.debug('Auto-opening a YubiKey');
+        this.openOtpDevice((err) => {
+            this.appLogger.debug('YubiKey auto-open complete', err);
+        });
+    }
+
+    openOtpDevice(callback) {
+        this.openingOtpDevice = true;
+        const device = new YubiKeyOtpModel();
+        device.open((err) => {
+            this.openingOtpDevice = false;
+            if (!err) {
+                this.addFile(device);
+            }
+            callback(err);
+        });
+        return device;
+    }
+
+    getMatchingOtpEntry(entry) {
+        if (!this.settings.yubiKeyMatchEntries) {
+            return null;
+        }
+        for (const file of this.files) {
+            if (file.backend === 'otp-device') {
+                const matchingEntry = file.getMatchingEntry(entry);
+                if (matchingEntry) {
+                    return matchingEntry;
                 }
+            }
+        }
+    }
+
+    saveEncryptedPassword(file, params) {
+        if (!this.settings.deviceOwnerAuth || params.encryptedPassword) {
+            return;
+        }
+        NativeModules.hardwareEncrypt(params.password)
+            .then((encryptedPassword) => {
+                encryptedPassword = encryptedPassword.toBase64();
+                const fileInfo = this.fileInfos.get(file.id);
+                const encryptedPasswordDate = new Date();
+                file.encryptedPassword = encryptedPassword;
+                file.encryptedPasswordDate = encryptedPasswordDate;
+                if (this.settings.deviceOwnerAuth === 'file') {
+                    fileInfo.encryptedPassword = encryptedPassword;
+                    fileInfo.encryptedPasswordDate = encryptedPasswordDate;
+                    this.fileInfos.save();
+                } else if (this.settings.deviceOwnerAuth === 'memory') {
+                    this.memoryPasswordStorage[file.id] = {
+                        value: encryptedPassword,
+                        date: encryptedPasswordDate
+                    };
+                }
+            })
+            .catch((e) => {
+                file.encryptedPassword = null;
+                file.encryptedPasswordDate = null;
+                delete this.memoryPasswordStorage[file.id];
+                this.appLogger.error('Error encrypting password', e);
             });
+    }
+
+    getMemoryPassword(fileId) {
+        return this.memoryPasswordStorage[fileId];
+    }
+
+    checkEncryptedPasswordsStorage() {
+        if (this.settings.deviceOwnerAuth === 'file') {
+            let changed = false;
+            for (const fileInfo of this.fileInfos) {
+                if (this.memoryPasswordStorage[fileInfo.id]) {
+                    fileInfo.encryptedPassword = this.memoryPasswordStorage[fileInfo.id].value;
+                    fileInfo.encryptedPasswordDate = this.memoryPasswordStorage[fileInfo.id].date;
+                    changed = true;
+                }
+            }
+            if (changed) {
+                this.fileInfos.save();
+            }
+            for (const file of this.files) {
+                if (this.memoryPasswordStorage[file.id]) {
+                    file.encryptedPassword = this.memoryPasswordStorage[file.id].value;
+                    file.encryptedPasswordDate = this.memoryPasswordStorage[file.id].date;
+                }
+            }
+        } else if (this.settings.deviceOwnerAuth === 'memory') {
+            let changed = false;
+            for (const fileInfo of this.fileInfos) {
+                if (fileInfo.encryptedPassword) {
+                    this.memoryPasswordStorage[fileInfo.id] = {
+                        value: fileInfo.encryptedPassword,
+                        date: fileInfo.encryptedPasswordDate
+                    };
+                    fileInfo.encryptedPassword = null;
+                    fileInfo.encryptedPasswordDate = null;
+                    changed = true;
+                }
+            }
+            if (changed) {
+                this.fileInfos.save();
+            }
+        } else {
+            let changed = false;
+            for (const fileInfo of this.fileInfos) {
+                if (fileInfo.encryptedPassword) {
+                    fileInfo.encryptedPassword = null;
+                    fileInfo.encryptedPasswordDate = null;
+                    changed = true;
+                }
+            }
+            if (changed) {
+                this.fileInfos.save();
+            }
+            for (const file of this.files) {
+                if (file.encryptedPassword) {
+                    file.encryptedPassword = null;
+                    file.encryptedPasswordDate = null;
+                }
+            }
+            this.memoryPasswordStorage = {};
+        }
+    }
+
+    unlockAnyFile(unlockRes, timeout) {
+        this.rejectPendingFileUnlockPromise('Replaced with a new operation');
+        Events.emit('show-open-view');
+        return new Promise((resolve, reject) => {
+            this.fileUnlockPromise = { resolve, reject, unlockRes };
+            if (timeout) {
+                const timer = setTimeout(
+                    () => this.rejectPendingFileUnlockPromise('Timeout'),
+                    timeout
+                );
+                this.fileUnlockPromise.resolve = (res) => {
+                    clearTimeout(timer);
+                    resolve(res);
+                };
+                this.fileUnlockPromise.reject = (err) => {
+                    clearTimeout(timer);
+                    reject(err);
+                };
+            }
+            this.appLogger.info('Pending file unlock operation is set');
+            Events.emit('unlock-message-changed', unlockRes);
+        });
+    }
+
+    get unlockMessageRes() {
+        return this.fileUnlockPromise?.unlockRes;
+    }
+
+    rejectPendingFileUnlockPromise(reason) {
+        if (this.fileUnlockPromise) {
+            this.appLogger.info('Cancel pending file unlock operation', reason);
+            this.fileUnlockPromise.reject(new Error(reason));
+            this.fileUnlockPromise = null;
+            Events.emit('unlock-message-changed', null);
+        }
+    }
+
+    mainWindowBlur() {
+        if (!this.hardwareDecryptInProgress) {
+            this.mainWindowBlurTimer = setTimeout(() => {
+                // macOS emits focus-blur-focus event in a row when triggering auto-type from minimized state
+                delete this.mainWindowBlurTimer;
+                this.rejectPendingFileUnlockPromise('Main window blur');
+            }, Timeouts.AutoTypeWindowFocusAfterBlur);
+        }
+    }
+
+    mainWindowFocus() {
+        if (this.mainWindowBlurTimer) {
+            clearTimeout(this.mainWindowBlurTimer);
+            this.mainWindowBlurTimer = null;
+        }
+    }
+
+    mainWindowWillClose() {
+        this.rejectPendingFileUnlockPromise('Main window will close');
+    }
+
+    hardwareDecryptStarted() {
+        this.hardwareDecryptInProgress = true;
+    }
+
+    hardwareDecryptFinished() {
+        this.hardwareDecryptInProgress = false;
+        if (!Launcher.isAppFocused()) {
+            this.rejectPendingFileUnlockPromise('App is not focused after hardware decrypt');
         }
     }
 }

@@ -85,9 +85,7 @@ class FooterView extends View {
     }
 
     showFile(e) {
-        const fileId = $(e.target)
-            .closest('.footer__db-item')
-            .data('file-id');
+        const fileId = $(e.target).closest('.footer__db-item').data('file-id');
         if (fileId) {
             Events.emit('show-file', { fileId });
         }

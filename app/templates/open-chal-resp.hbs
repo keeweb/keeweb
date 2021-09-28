@@ -1,0 +1,36 @@
+<div class="open-chal-resp">
+    {{#if loading}}
+        <div class="open-chal-resp__head">
+            <p>
+                <i class="open-chal-resp__icon fa fa-spinner spin"></i> {{res 'openChalRespLoading'}}
+            </p>
+        </div>
+    {{else if error}}
+        <div class="open-chal-resp__head">
+            <p>
+                <i class="open-chal-resp__icon fa fa-ban"></i> {{error}}
+            </p>
+            {{#if showEmptyMacWarning}}
+                <p>{{res 'openChalRespErrorEmptyMac'}}</p>
+            {{/if}}
+        </div>
+    {{else}}
+        <div class="open-chal-resp__head">
+            <p>
+                {{res 'openChalRespSelectYubiKey'}}:
+            </p>
+        </div>
+        <div>
+            {{#each yubiKeys as |yk|}}
+                <div class="open-chal-resp__item"
+                     data-vid="{{yk.vid}}"
+                     data-pid="{{yk.pid}}"
+                     data-serial="{{yk.serial}}"
+                     data-slot="{{yk.slot}}"
+                >
+                    {{yk.fullName}}, {{res 'yubiKeySlot'}} {{yk.slot}}
+                </div>
+            {{/each}}
+        </div>
+    {{/if}}
+</div>

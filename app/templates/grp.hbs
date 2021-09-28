@@ -1,6 +1,6 @@
 <div class="grp">
     <div class="back-button">
-        {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
+        {{res 'retToApp'}} <i class="fa fa-arrow-circle-left back-button__post"></i>
     </div>
     <div class="scroller">
         <div class="grp__content">
@@ -19,7 +19,7 @@
             <label>{{Res 'icon'}}:</label>
             <div class="grp__icon-wrap">
                 {{#if customIcon}}
-                <img src="{{{customIcon}}}" class="grp__icon grp__icon--image" />
+                <img src="{{customIcon}}" class="grp__icon grp__icon--image" />
                 {{else}}
                 <i class="fa fa-{{icon}} grp__icon"></i>
                 {{/if}}
@@ -43,7 +43,7 @@
     <div class="scroller__bar-wrapper"><div class="scroller__bar"></div></div>
     {{#unless readonly}}
     <div class="grp__buttons">
-        <i class="grp__buttons-trash fa fa-trash-o" title="{{res 'grpTrash'}}" tip-placement="right"></i>
+        <i class="grp__buttons-trash fa fa-trash-alt" title="{{res 'grpTrash'}}" tip-placement="right"></i>
     </div>
     {{/unless}}
 </div>

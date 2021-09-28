@@ -1,5 +1,5 @@
 <div class="settings__content">
-    <h1><i class="fa fa-lock"></i> {{name}}</h1>
+    <h1><i class="fa fa-lock settings__head-icon"></i> {{name}}</h1>
     {{#if storage}}
         {{#ifeq storage 'file'}}<p>{{res 'setFilePath'}}: {{path}}</p>{{/ifeq}}
         {{#ifneq storage 'file'}}<p>{{#res 'setFileStorage'}}{{res storage}}{{/res}}</p>{{/ifneq}}
@@ -21,14 +21,13 @@
         <h2>{{res 'setFileSaveTo'}}</h2>
         {{#ifneq storage 'file'}}
         <div class="settings__file-save-to settings__file-save-to-file">
-            <i class="fa fa-file-text-o"></i>{{Res 'file'}}
+            <i class="fa fa-file-alt"></i>{{Res 'file'}}
         </div>
         {{/ifneq}}
         {{#each storageProviders as |prv|}}
             {{#unless prv.own}}
-            <div class="settings__file-save-to settings__file-save-to-storage svg-btn" data-storage="{{prv.name}}">
+            <div class="settings__file-save-to settings__file-save-to-storage" data-storage="{{prv.name}}">
                 {{#if prv.icon}}<i class="fa fa-{{prv.icon}}"></i>{{/if}}
-                {{#if prv.iconSvg}}{{{prv.iconSvg}}}{{/if}}
                 <span>{{res prv.name}}</span>
             </div>
             {{/unless}}

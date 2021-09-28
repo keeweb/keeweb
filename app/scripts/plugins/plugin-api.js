@@ -1,3 +1,5 @@
+/* eslint-disable import/no-commonjs */
+
 const Libs = {
     kdbxweb: require('kdbxweb'),
     hbs: require('hbs'),

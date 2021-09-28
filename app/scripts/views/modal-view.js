@@ -1,4 +1,5 @@
 import { View } from 'framework/views/view';
+import { Launcher } from 'comp/launcher';
 import { Keys } from 'const/keys';
 import template from 'templates/modal.hbs';
 
@@ -10,6 +11,7 @@ class ModalView extends View {
 
     events = {
         'click .modal__buttons button': 'buttonClick',
+        'click .modal__link': 'linkClick',
         'click': 'bodyClick'
     };
 
@@ -29,21 +31,24 @@ class ModalView extends View {
     }
 
     render() {
-        super.render(this.model);
+        super.render({
+            ...this.model,
+            body: this.model.body ? this.model.body.toString().split('\n') : ''
+        });
         this.$el.addClass('modal--hidden');
         setTimeout(() => {
             this.$el.removeClass('modal--hidden');
             document.activeElement.blur();
         }, 20);
         if (this.model.view) {
-            this.model.view.parent = '.modal__body';
+            this.model.view.parent = this.el.querySelector('.modal__body');
             this.model.view.render();
         }
     }
 
     change(config) {
         if (config.header) {
-            this.$el.find('.modal__header').html(config.header);
+            this.$el.find('.modal__header').text(config.header);
         }
     }
 
@@ -52,8 +57,15 @@ class ModalView extends View {
         this.closeWithResult(result);
     }
 
-    bodyClick() {
-        if (typeof this.model.click === 'string') {
+    linkClick(e) {
+        if (Launcher) {
+            e.preventDefault();
+            Launcher.openLink(e.target.href);
+        }
+    }
+
+    bodyClick(e) {
+        if (typeof this.model.click === 'string' && !e.target.matches('button')) {
             this.closeWithResult(this.model.click);
         }
     }
@@ -72,13 +84,24 @@ class ModalView extends View {
         const checked = this.model.checkbox
             ? this.$el.find('#modal__check').is(':checked')
             : undefined;
+        this.emit('will-close');
         this.emit('result', result, checked);
+        this.removeView();
+    }
+
+    closeWithoutResult() {
+        this.emit('will-close');
+        this.removeView();
+    }
+
+    removeView() {
         this.$el.addClass('modal--hidden');
         this.unbindEvents();
         setTimeout(() => this.remove(), 100);
     }
 
     closeImmediate() {
+        this.emit('will-close');
         this.emit('result', undefined);
         this.unbindEvents();
         this.remove();

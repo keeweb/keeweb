@@ -1,13 +1,13 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 
 const ExpectedFieldRefChars = '{REF:0@I:00000000000000000000000000000000}'.split('');
 const ExpectedFieldRefByteLength = ExpectedFieldRefChars.length;
 
 kdbxweb.ProtectedValue.prototype.isProtected = true;
 
-kdbxweb.ProtectedValue.prototype.forEachChar = function(fn) {
-    const value = this._value;
-    const salt = this._salt;
+kdbxweb.ProtectedValue.prototype.forEachChar = function (fn) {
+    const value = this.value;
+    const salt = this.salt;
     let b, b1, b2, b3;
     for (let i = 0, len = value.length; i < len; i++) {
         b = value[i] ^ salt[i];
@@ -79,16 +79,16 @@ Object.defineProperty(kdbxweb.ProtectedValue.prototype, 'textLength', {
     }
 });
 
-kdbxweb.ProtectedValue.prototype.includesLower = function(findLower) {
+kdbxweb.ProtectedValue.prototype.includesLower = function (findLower) {
     return this.indexOfLower(findLower) !== -1;
 };
 
-kdbxweb.ProtectedValue.prototype.indexOfLower = function(findLower) {
+kdbxweb.ProtectedValue.prototype.indexOfLower = function (findLower) {
     let index = -1;
     const foundSeqs = [];
     const len = findLower.length;
     let chIndex = -1;
-    this.forEachChar(ch => {
+    this.forEachChar((ch) => {
         chIndex++;
         ch = String.fromCharCode(ch).toLowerCase();
         if (index !== -1) {
@@ -117,12 +117,12 @@ kdbxweb.ProtectedValue.prototype.indexOfLower = function(findLower) {
     return index;
 };
 
-kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function(targetLower) {
+kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function (targetLower) {
     let firstCharIndex = -1;
     let found = false;
     do {
         let chIndex = -1;
-        this.forEachChar(ch => {
+        this.forEachChar((ch) => {
             chIndex++;
             ch = String.fromCharCode(ch).toLowerCase();
             if (chIndex === 0) {
@@ -139,9 +139,7 @@ kdbxweb.ProtectedValue.prototype.indexOfSelfInLower = function(targetLower) {
     return firstCharIndex;
 };
 
-window.PV = kdbxweb.ProtectedValue;
-
-kdbxweb.ProtectedValue.prototype.equals = function(other) {
+kdbxweb.ProtectedValue.prototype.equals = function (other) {
     if (!other) {
         return false;
     }
@@ -156,23 +154,58 @@ kdbxweb.ProtectedValue.prototype.equals = function(other) {
         return false;
     }
     for (let i = 0; i < len; i++) {
-        if ((this._value[i] ^ this._salt[i]) !== (other._value[i] ^ other._salt[i])) {
+        if ((this.value[i] ^ this.salt[i]) !== (other.value[i] ^ other.salt[i])) {
             return false;
         }
     }
     return true;
 };
 
-kdbxweb.ProtectedValue.prototype.isFieldReference = function() {
+kdbxweb.ProtectedValue.prototype.isFieldReference = function () {
     if (this.byteLength !== ExpectedFieldRefByteLength) {
         return false;
     }
     let ix = 0;
-    this.forEachChar(ch => {
+    this.forEachChar((ch) => {
         const expected = ExpectedFieldRefChars[ix++];
         if (expected !== '0' && ch !== expected) {
             return false;
         }
     });
     return true;
+};
+
+const RandomSalt = kdbxweb.CryptoEngine.random(128);
+
+kdbxweb.ProtectedValue.prototype.saltedValue = function () {
+    if (!this.byteLength) {
+        return 0;
+    }
+    const value = this.value;
+    const salt = this.salt;
+    let salted = '';
+    for (let i = 0, len = value.length; i < len; i++) {
+        const byte = value[i] ^ salt[i];
+        salted += String.fromCharCode(byte ^ RandomSalt[i % RandomSalt.length]);
+    }
+    return salted;
+};
+
+kdbxweb.ProtectedValue.prototype.dataAndSalt = function () {
+    return {
+        data: [...this.value],
+        salt: [...this.salt]
+    };
+};
+
+kdbxweb.ProtectedValue.prototype.toBase64 = function () {
+    const binary = this.getBinary();
+    const base64 = kdbxweb.ByteUtils.bytesToBase64(binary);
+    kdbxweb.ByteUtils.zeroBuffer(binary);
+    return base64;
+};
+
+kdbxweb.ProtectedValue.fromBase64 = function (base64) {
+    const bytes = kdbxweb.ByteUtils.base64ToBytes(base64);
+    return kdbxweb.ProtectedValue.fromBinary(bytes);
 };

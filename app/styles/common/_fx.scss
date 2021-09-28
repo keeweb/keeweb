@@ -25,12 +25,57 @@
     animation: shake 50s cubic-bezier(0.36, 0.07, 0.19, 0.97) 0s;
 }
 
+.fade-in {
+    animation: fade-in $fast-transition-in 0s;
+}
+
+.fade-out {
+    opacity: 0;
+    animation: fade-out $fast-transition-out 0s;
+}
+
+.rotate-90,
+.fa.rotate-90:before {
+    transform: rotate(90deg);
+}
+
+.spin {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 @keyframes flip3d {
     from {
         transform: rotateY(0);
     }
     to {
         transform: rotateY(360deg);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
     }
 }
 

@@ -47,6 +47,7 @@ MenuItemModel.defineModelProperties({
     shortcut: null,
     options: null,
     cls: null,
+    iconCls: null,
     disabled: false,
     visible: true,
     drag: false,
@@ -57,7 +58,8 @@ MenuItemModel.defineModelProperties({
     defaultItem: false,
     page: null,
     editable: false,
-    file: null
+    file: null,
+    section: null
 });
 
 export { MenuItemModel };

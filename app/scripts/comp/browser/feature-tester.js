@@ -1,12 +1,11 @@
-import kdbxweb from 'kdbxweb';
 import { Features } from 'util/features';
 
 const FeatureTester = {
     test() {
         return Promise.resolve()
             .then(() => this.checkWebAssembly())
-            .then(() => this.checkWebCrypto())
-            .then(() => this.checkLocalStorage());
+            .then(() => this.checkLocalStorage())
+            .then(() => this.checkWebCrypto());
     },
 
     checkWebAssembly() {
@@ -20,36 +19,6 @@ const FeatureTester = {
         }
     },
 
-    checkWebCrypto() {
-        return Promise.resolve().then(() => {
-            const aesCbc = kdbxweb.CryptoEngine.createAesCbc();
-            const key = '6b2796fa863a6552986c428528d053b76de7ba8e12f8c0e74edb5ed44da3f601';
-            const data = 'e567554429098a38d5f819115edffd39';
-            const iv = '4db46dff4add42cb813b98de98e627c4';
-            const exp = '46ab4c37d9ec594e5742971f76f7c1620bc29f2e0736b27832d6bcc5c1c39dc1';
-            return aesCbc
-                .importKey(kdbxweb.ByteUtils.hexToBytes(key))
-                .then(() => {
-                    return aesCbc
-                        .encrypt(
-                            kdbxweb.ByteUtils.hexToBytes(data),
-                            kdbxweb.ByteUtils.hexToBytes(iv)
-                        )
-                        .then(res => {
-                            if (kdbxweb.ByteUtils.bytesToHex(res) !== exp) {
-                                throw 'AES is not working properly';
-                            }
-                            if (kdbxweb.CryptoEngine.random(1).length !== 1) {
-                                throw 'Random is not working';
-                            }
-                        });
-                })
-                .catch(e => {
-                    throw 'WebCrypto is not supported: ' + e;
-                });
-        });
-    },
-
     checkLocalStorage() {
         if (Features.isDesktop) {
             return;
@@ -59,6 +28,12 @@ const FeatureTester = {
             localStorage.removeItem('_test');
         } catch (e) {
             throw 'LocalStorage is not supported';
+        }
+    },
+
+    checkWebCrypto() {
+        if (!global.crypto.subtle) {
+            throw 'WebCrypto is not supported';
         }
     }
 };

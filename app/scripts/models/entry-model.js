@@ -1,30 +1,29 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Model } from 'framework/model';
+import { AppSettingsModel } from 'models/app-settings-model';
 import { KdbxToHtml } from 'comp/format/kdbx-to-html';
 import { IconMap } from 'const/icon-map';
+import { BuiltInFields } from 'const/entry-fields';
 import { AttachmentModel } from 'models/attachment-model';
 import { Color } from 'util/data/color';
 import { Otp } from 'util/data/otp';
 import { Ranking } from 'util/data/ranking';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { omit } from 'util/fn';
+import { EntrySearch } from 'util/entry-search';
 
 const UrlRegex = /^https?:\/\//i;
 const FieldRefRegex = /^\{REF:([TNPAU])@I:(\w{32})}$/;
-const BuiltInFields = [
-    'Title',
-    'Password',
-    'UserName',
-    'URL',
-    'Notes',
-    'TOTP Seed',
-    'TOTP Settings',
-    '_etm_template_uuid'
-];
 const FieldRefFields = ['title', 'password', 'user', 'url', 'notes'];
 const FieldRefIds = { T: 'Title', U: 'UserName', P: 'Password', A: 'URL', N: 'Notes' };
+const ExtraUrlFieldName = 'KP2A_URL';
 
 class EntryModel extends Model {
+    constructor(props) {
+        super(props);
+        this._search = new EntrySearch(this);
+    }
+
     setEntry(entry, group, file) {
         this.entry = entry;
         this.group = group;
@@ -44,7 +43,7 @@ class EntryModel extends Model {
         this.fileName = this.file.name;
         this.groupName = this.group.title;
         this.title = this._getFieldString('Title');
-        this.password = entry.fields.Password || kdbxweb.ProtectedValue.fromString('');
+        this.password = this._getPassword();
         this.notes = this._getFieldString('Notes');
         this.url = this._getFieldString('URL');
         this.displayUrl = this._getDisplayUrl(this._getFieldString('URL'));
@@ -53,13 +52,14 @@ class EntryModel extends Model {
         this.icon = this._iconFromId(entry.icon);
         this.tags = entry.tags;
         this.color = this._colorToModel(entry.bgColor) || this._colorToModel(entry.fgColor);
-        this.fields = this._fieldsToModel(entry.fields);
+        this.fields = this._fieldsToModel();
         this.attachments = this._attachmentsToModel(entry.binaries);
         this.created = entry.times.creationTime;
         this.updated = entry.times.lastModTime;
         this.expires = entry.times.expires ? entry.times.expiryTime : undefined;
         this.expired = entry.times.expires && entry.times.expiryTime <= new Date();
         this.historyLength = entry.history.length;
+        this.titleUserLower = `${this.title}:${this.user}`.toLowerCase();
         this._buildCustomIcon();
         this._buildSearchText();
         this._buildSearchTags();
@@ -70,8 +70,16 @@ class EntryModel extends Model {
         }
     }
 
+    _getPassword() {
+        const password = this.entry.fields.get('Password') || kdbxweb.ProtectedValue.fromString('');
+        if (!password.isProtected) {
+            return kdbxweb.ProtectedValue.fromString(password);
+        }
+        return password;
+    }
+
     _getFieldString(field) {
-        const val = this.entry.fields[field];
+        const val = this.entry.fields.get(field);
         if (!val) {
             return '';
         }
@@ -95,15 +103,15 @@ class EntryModel extends Model {
 
     _buildSearchText() {
         let text = '';
-        for (const value of Object.values(this.entry.fields)) {
+        for (const value of this.entry.fields.values()) {
             if (typeof value === 'string') {
                 text += value.toLowerCase() + '\n';
             }
         }
-        this.entry.tags.forEach(tag => {
+        this.entry.tags.forEach((tag) => {
             text += tag.toLowerCase() + '\n';
         });
-        this.attachments.forEach(att => {
+        this.attachments.forEach((att) => {
             text += att.title.toLowerCase() + '\n';
         });
         this.searchText = text;
@@ -114,14 +122,14 @@ class EntryModel extends Model {
         this.customIconId = null;
         if (this.entry.customIcon) {
             this.customIcon = IconUrlFormat.toDataUrl(
-                this.file.db.meta.customIcons[this.entry.customIcon]
+                this.file.db.meta.customIcons.get(this.entry.customIcon.id)?.data
             );
             this.customIconId = this.entry.customIcon.toString();
         }
     }
 
     _buildSearchTags() {
-        this.searchTags = this.entry.tags.map(tag => tag.toLowerCase());
+        this.searchTags = this.entry.tags.map((tag) => tag.toLowerCase());
     }
 
     _buildSearchColor() {
@@ -156,13 +164,13 @@ class EntryModel extends Model {
         return color ? Color.getNearest(color) : null;
     }
 
-    _fieldsToModel(fields) {
-        return omit(fields, BuiltInFields);
+    _fieldsToModel() {
+        return omit(this.getAllFields(), BuiltInFields);
     }
 
     _attachmentsToModel(binaries) {
         const att = [];
-        for (let [title, data] of Object.entries(binaries)) {
+        for (let [title, data] of binaries) {
             if (data && data.ref) {
                 data = data.value;
             }
@@ -176,11 +184,14 @@ class EntryModel extends Model {
     _entryModified() {
         if (!this.unsaved) {
             this.unsaved = true;
-            this.entry.pushHistory();
+            if (this.file.historyMaxItems !== 0) {
+                this.entry.pushHistory();
+            }
             this.file.setModified();
         }
         if (this.isJustCreated) {
             this.isJustCreated = false;
+            this.file.reload();
         }
         this.entry.times.update();
     }
@@ -195,180 +206,24 @@ class EntryModel extends Model {
     }
 
     matches(filter) {
-        if (!filter) {
-            return true;
-        }
-        if (filter.tagLower) {
-            if (this.searchTags.indexOf(filter.tagLower) < 0) {
-                return false;
-            }
-        }
-        if (filter.textLower) {
-            if (filter.advanced) {
-                if (!this.matchesAdv(filter)) {
-                    return false;
-                }
-            } else if (filter.textLowerParts) {
-                const parts = filter.textLowerParts;
-                for (let i = 0; i < parts.length; i++) {
-                    if (this.searchText.indexOf(parts[i]) < 0) {
-                        return false;
-                    }
-                }
-            } else {
-                if (this.searchText.indexOf(filter.textLower) < 0) {
-                    return false;
-                }
-            }
-        }
-        if (filter.color) {
-            if (filter.color === true) {
-                if (!this.searchColor) {
-                    return false;
-                }
-            } else {
-                if (this.searchColor !== filter.color) {
-                    return false;
-                }
-            }
-        }
-        if (filter.autoType) {
-            if (!this.autoTypeEnabled) {
-                return false;
-            }
-        }
-        return true;
+        return this._search.matches(filter);
     }
 
-    matchesAdv(filter) {
-        const adv = filter.advanced;
-        let search, match;
-        if (adv.regex) {
-            try {
-                search = new RegExp(filter.text, adv.cs ? '' : 'i');
-            } catch (e) {
-                return false;
-            }
-            match = this.matchRegex;
-        } else if (adv.cs) {
-            if (filter.textParts) {
-                search = filter.textParts;
-                match = this.matchStringMulti.bind(this, false);
-            } else {
-                search = filter.text;
-                match = this.matchString;
-            }
-        } else {
-            if (filter.textLowerParts) {
-                search = filter.textLowerParts;
-                match = this.matchStringMulti.bind(this, true);
-            } else {
-                search = filter.textLower;
-                match = this.matchStringLower;
-            }
+    getAllFields() {
+        const fields = {};
+        for (const [key, value] of this.entry.fields) {
+            fields[key] = value;
         }
-        if (this.matchEntry(this.entry, adv, match, search)) {
-            return true;
-        }
-        if (adv.history) {
-            for (let i = 0, len = this.entry.history.length; i < len; i++) {
-                if (this.matchEntry(this.entry.history[0], adv, match, search)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return fields;
     }
 
-    matchString(str, find) {
-        if (str.isProtected) {
-            return str.includes(find);
-        }
-        return str.indexOf(find) >= 0;
-    }
-
-    matchStringLower(str, findLower) {
-        if (str.isProtected) {
-            return str.includesLower(findLower);
-        }
-        return str.toLowerCase().indexOf(findLower) >= 0;
-    }
-
-    matchStringMulti(lower, str, find, context) {
-        if (lower) {
-            str = str.toLowerCase();
-        }
-        for (let i = 0; i < find.length; i++) {
-            const item = find[i];
-            let strMatches;
-            if (lower) {
-                strMatches = str.isProtected ? str.includesLower(item) : str.includes(item);
-            } else {
-                strMatches = str.isProtected ? str.includes(item) : str.includes(item);
-            }
-            if (strMatches) {
-                if (context.matches) {
-                    if (!context.matches.includes(item)) {
-                        context.matches.push(item);
-                    }
-                } else {
-                    context.matches = [item];
-                }
-            }
-        }
-        return context.matches && context.matches.length === find.length;
-    }
-
-    matchRegex(str, regex) {
-        if (str.isProtected) {
-            str = str.getText();
-        }
-        return regex.test(str);
-    }
-
-    matchEntry(entry, adv, compare, search) {
-        const matchField = this.matchField;
-        const context = {};
-        if (adv.user && matchField(entry, 'UserName', compare, search, context)) {
-            return true;
-        }
-        if (adv.url && matchField(entry, 'URL', compare, search, context)) {
-            return true;
-        }
-        if (adv.notes && matchField(entry, 'Notes', compare, search, context)) {
-            return true;
-        }
-        if (adv.pass && matchField(entry, 'Password', compare, search, context)) {
-            return true;
-        }
-        if (adv.title && matchField(entry, 'Title', compare, search, context)) {
-            return true;
-        }
-        let matches = false;
-        if (adv.other || adv.protect) {
-            const fieldNames = Object.keys(entry.fields);
-            matches = fieldNames.some(field => {
-                if (BuiltInFields.indexOf(field) >= 0) {
-                    return false;
-                }
-                if (typeof entry.fields[field] === 'string') {
-                    return adv.other && matchField(entry, field, compare, search, context);
-                } else {
-                    return adv.protect && matchField(entry, field, compare, search, context);
-                }
-            });
-        }
-        return matches;
-    }
-
-    matchField(entry, field, compare, search, context) {
-        const val = entry.fields[field];
-        return val ? compare(val, search, context) : false;
+    getHistoryEntriesForSearch() {
+        return this.entry.history;
     }
 
     resolveFieldReferences() {
         this.hasFieldRefs = false;
-        FieldRefFields.forEach(field => {
+        FieldRefFields.forEach((field) => {
             const fieldValue = this[field];
             const refValue = this._resolveFieldReference(fieldValue);
             if (refValue !== undefined) {
@@ -381,7 +236,7 @@ class EntryModel extends Model {
     getFieldValue(field) {
         field = field.toLowerCase();
         let resolvedField;
-        Object.keys(this.entry.fields).some(entryField => {
+        [...this.entry.fields.keys()].some((entryField) => {
             if (entryField.toLowerCase() === field) {
                 resolvedField = entryField;
                 return true;
@@ -389,7 +244,7 @@ class EntryModel extends Model {
             return false;
         });
         if (resolvedField) {
-            let fieldValue = this.entry.fields[resolvedField];
+            let fieldValue = this.entry.fields.get(resolvedField);
             const refValue = this._resolveFieldReference(fieldValue);
             if (refValue !== undefined) {
                 fieldValue = refValue;
@@ -425,7 +280,7 @@ class EntryModel extends Model {
         if (!entry) {
             return;
         }
-        return entry.entry.fields[FieldRefIds[fieldRefId]];
+        return entry.entry.fields.get(FieldRefIds[fieldRefId]);
     }
 
     setColor(color) {
@@ -461,7 +316,7 @@ class EntryModel extends Model {
     }
 
     renameTag(from, to) {
-        const ix = this.entry.tags.findIndex(tag => tag.toLowerCase() === from.toLowerCase());
+        const ix = this.entry.tags.findIndex((tag) => tag.toLowerCase() === from.toLowerCase());
         if (ix < 0) {
             return;
         }
@@ -478,43 +333,43 @@ class EntryModel extends Model {
         if (hasValue || allowEmpty || BuiltInFields.indexOf(field) >= 0) {
             this._entryModified();
             val = this.sanitizeFieldValue(val);
-            this.entry.fields[field] = val;
-        } else if (Object.prototype.hasOwnProperty.call(this.entry.fields, field)) {
+            this.entry.fields.set(field, val);
+        } else if (this.entry.fields.has(field)) {
             this._entryModified();
-            delete this.entry.fields[field];
+            this.entry.fields.delete(field);
         }
         this._fillByEntry();
     }
 
     sanitizeFieldValue(val) {
-        if (val && !val.isProtected && val.indexOf('\x1A') >= 0) {
+        if (val && !val.isProtected) {
             // https://github.com/keeweb/keeweb/issues/910
             // eslint-disable-next-line no-control-regex
-            val = val.replace(/\x1A/g, '');
+            val = val.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\uFFF0-\uFFFF]/g, '');
         }
         return val;
     }
 
     hasField(field) {
-        return Object.prototype.hasOwnProperty.call(this.entry.fields, field);
+        return this.entry.fields.has(field);
     }
 
     addAttachment(name, data) {
         this._entryModified();
-        return this.file.db.createBinary(data).then(binaryRef => {
-            this.entry.binaries[name] = binaryRef;
+        return this.file.db.createBinary(data).then((binaryRef) => {
+            this.entry.binaries.set(name, binaryRef);
             this._fillByEntry();
         });
     }
 
     removeAttachment(name) {
         this._entryModified();
-        delete this.entry.binaries[name];
+        this.entry.binaries.delete(name);
         this._fillByEntry();
     }
 
     getHistory() {
-        const history = this.entry.history.map(function(rec) {
+        const history = this.entry.history.map(function (rec) {
             return EntryModel.fromEntry(rec, this.group, this.file);
         }, this);
         history.push(this);
@@ -539,8 +394,8 @@ class EntryModel extends Model {
         this.entry.pushHistory();
         this.unsaved = true;
         this.file.setModified();
-        this.entry.fields = {};
-        this.entry.binaries = {};
+        this.entry.fields = new Map();
+        this.entry.binaries = new Map();
         this.entry.copyFrom(historyEntry);
         this._entryModified();
         this._fillByEntry();
@@ -551,8 +406,8 @@ class EntryModel extends Model {
             this.unsaved = false;
             const historyEntry = this.entry.history[this.entry.history.length - 1];
             this.entry.removeHistory(this.entry.history.length - 1);
-            this.entry.fields = {};
-            this.entry.binaries = {};
+            this.entry.fields = new Map();
+            this.entry.binaries = new Map();
             this.entry.copyFrom(historyEntry);
             this._fillByEntry();
         }
@@ -617,7 +472,7 @@ class EntryModel extends Model {
             } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {
                 // KeeOTP plugin format
                 const args = {};
-                otpUrl.split('&').forEach(part => {
+                otpUrl.split('&').forEach((part) => {
                     const parts = part.split('=', 2);
                     args[parts[0]] = decodeURIComponent(parts[1]).replace(/=/g, '');
                 });
@@ -625,14 +480,14 @@ class EntryModel extends Model {
                     otpUrl = Otp.makeUrl(args.key, args.step, args.size);
                 }
             }
-        } else if (this.entry.fields['TOTP Seed']) {
+        } else if (this.entry.fields.get('TOTP Seed')) {
             // TrayTOTP plugin format
-            let secret = this.entry.fields['TOTP Seed'];
+            let secret = this.entry.fields.get('TOTP Seed');
             if (secret.isProtected) {
                 secret = secret.getText();
             }
             if (secret) {
-                let settings = this.entry.fields['TOTP Settings'];
+                let settings = this.entry.fields.get('TOTP Settings');
                 if (settings && settings.isProtected) {
                     settings = settings.getText();
                 }
@@ -656,7 +511,7 @@ class EntryModel extends Model {
             }
             try {
                 this.otpGenerator = Otp.parseUrl(otpUrl);
-            } catch (e) {
+            } catch {
                 this.otpGenerator = null;
             }
         } else {
@@ -671,8 +526,8 @@ class EntryModel extends Model {
 
     setOtpUrl(url) {
         this.setField('otp', url ? kdbxweb.ProtectedValue.fromString(url) : undefined);
-        delete this.entry.fields['TOTP Seed'];
-        delete this.entry.fields['TOTP Settings'];
+        this.entry.fields.delete('TOTP Seed');
+        this.entry.fields.delete('TOTP Settings');
     }
 
     getEffectiveEnableAutoType() {
@@ -723,7 +578,7 @@ class EntryModel extends Model {
         newEntry.entry.uuid = uuid;
         newEntry.entry.times.update();
         newEntry.entry.times.creationTime = newEntry.entry.times.lastModTime;
-        newEntry.entry.fields.Title = this.title + nameSuffix;
+        newEntry.entry.fields.set('Title', this.title + nameSuffix);
         newEntry._fillByEntry();
         this.file.reload();
         return newEntry;
@@ -735,7 +590,7 @@ class EntryModel extends Model {
         this.entry.uuid = uuid;
         this.entry.times.update();
         this.entry.times.creationTime = this.entry.times.lastModTime;
-        this.entry.fields.Title = '';
+        this.entry.fields.set('Title', '');
         this._fillByEntry();
     }
 
@@ -761,7 +616,7 @@ class EntryModel extends Model {
         const allFields = Object.keys(fieldWeights).concat(Object.keys(this.fields));
 
         return allFields.reduce((rank, fieldName) => {
-            const val = this.entry.fields[fieldName];
+            const val = this.entry.fields.get(fieldName);
             if (!val) {
                 return rank;
             }
@@ -778,15 +633,54 @@ class EntryModel extends Model {
         return KdbxToHtml.entryToHtml(this.file.db, this.entry);
     }
 
+    canCheckPasswordIssues() {
+        return !this.entry.customData?.has('IgnorePwIssues');
+    }
+
+    setIgnorePasswordIssues() {
+        if (!this.entry.customData) {
+            this.entry.customData = new Map();
+        }
+        this.entry.customData.set('IgnorePwIssues', '1');
+        this._entryModified();
+    }
+
+    getNextUrlFieldName() {
+        const takenFields = new Set(
+            [...this.entry.fields.keys()].filter((f) => f.startsWith(ExtraUrlFieldName))
+        );
+        for (let i = 0; ; i++) {
+            const fieldName = i ? `${ExtraUrlFieldName}_${i}` : ExtraUrlFieldName;
+            if (!takenFields.has(fieldName)) {
+                return fieldName;
+            }
+        }
+    }
+
+    getAllUrls() {
+        const urls = this.url ? [this.url] : [];
+        const extraUrls = Object.entries(this.fields)
+            .filter(([field]) => field.startsWith(ExtraUrlFieldName))
+            .map(([, value]) => (value.isProtected ? value.getText() : value))
+            .filter((value) => value);
+        return urls.concat(extraUrls);
+    }
+
     static fromEntry(entry, group, file) {
         const model = new EntryModel();
         model.setEntry(entry, group, file);
         return model;
     }
 
-    static newEntry(group, file) {
+    static newEntry(group, file, opts) {
         const model = new EntryModel();
         const entry = file.db.createEntry(group.group);
+        if (AppSettingsModel.useGroupIconForEntries && group.icon && group.iconId) {
+            entry.icon = group.iconId;
+        }
+        if (opts && opts.tag) {
+            entry.tags = [opts.tag];
+        }
         model.setEntry(entry, group, file);
         model.entry.times.update();
         model.unsaved = true;
@@ -796,8 +690,16 @@ class EntryModel extends Model {
         file.setModified();
         return model;
     }
+
+    static newEntryWithFields(group, fields) {
+        const entry = EntryModel.newEntry(group, group.file);
+        for (const [field, value] of Object.entries(fields)) {
+            entry.setField(field, value);
+        }
+        return entry;
+    }
 }
 
 EntryModel.defineModelProperties({}, { extensions: true });
 
-export { EntryModel };
+export { EntryModel, ExtraUrlFieldName };

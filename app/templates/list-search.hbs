@@ -4,17 +4,20 @@
             <i class="fa fa-bars"></i>
         </div>
         <div class="list__search-field-wrap">
-            <input type="text" class="list__search-field input-padding-right" autocomplete="off" spellcheck="false">
+            <input type="text" class="list__search-field input-search" autocomplete="off" spellcheck="false">
             <div class="list__search-icon-search" title="{{res 'searchAdvTitle'}}">
                 <i class="fa fa-search"></i>
                 <i class="fa fa-caret-down"></i>
             </div>
+            <div class="list__search-icon-clear">
+                <i class="fa fa-times-circle"></i>
+            </div>
         </div>
-        <div class="list__search-btn-new" title="{{res 'searchAddNew'}}">
+        <div class="list__search-btn-new {{#unless canCreate}}hide{{/unless}}" title="{{res 'searchAddNew'}}">
             <i class="fa fa-plus"></i>
         </div>
         <div class="list__search-btn-sort" title="{{res 'searchSort'}}">
-            <i class="fa fa-sort-alpha-asc"></i>
+            <i class="fa fa-sort-alpha-down"></i>
         </div>
         <div class="list__search-adv {{#unless advEnabled}}hide{{/unless}}">
             <div class="list__search-adv-text">{{res 'searchSearchIn'}}:</div>

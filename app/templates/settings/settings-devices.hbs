@@ -1,0 +1,56 @@
+<div class="settings__content">
+    <h1><i class="fa fa-usb settings__head-icon"></i> {{res 'setDevicesTitle'}}</h1>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__devices-enable-usb" id="settings__devices-enable-usb"
+               {{#if enableUsb}}checked{{/if}} {{#unless supported}}disabled{{/unless}} />
+        <label for="settings__devices-enable-usb">{{res 'setDevicesEnableUsb'}}</label>
+    </div>
+
+    {{#if enableUsb}}
+        <h2>YubiKey</h2>
+        <p>{{#res 'setDevicesYubiKeyIntro'}}<a href="{{yubiKeyManualLink}}" target="_blank">{{res 'setDevicesYubiKeyIntroLink'}}</a>{{/res}}</p>
+        <h3>{{res 'setDevicesYubiKeyOtpTitle'}}</h3>
+        <p>{{res 'setDevicesYubiKeyOtpDesc'}}</p>
+        <p>
+            {{#res 'setDevicesYubiKeyToolsDesc'}}<code>ykman</code>{{/res}}
+            {{#res 'setDevicesYubiKeyToolsDesc2'}}<a href="{{ykmanInstallLink}}" target="_blank">{{res 'setDevicesYubiKeyToolsDescLink'}}</a>{{/res}}
+        </p>
+        <p>
+            {{#ifeq ykmanStatus 'checking'}}{{#res 'setDevicesYubiKeyToolsStatusChecking'}}<code>ykman</code>{{/res}}...{{/ifeq}}
+            {{#ifeq ykmanStatus 'ok'}}{{#res 'setDevicesYubiKeyToolsStatusOk'}}<code>ykman</code>{{/res}}{{/ifeq}}
+            {{#ifeq ykmanStatus 'error'}}{{#res 'setDevicesYubiKeyToolsStatusError'}}<code>ykman</code>{{/res}}{{/ifeq}}
+        </p>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-show-icon" id="settings__yubikey-show-icon"
+                   {{#if yubiKeyShowIcon}}checked{{/if}} />
+            <label for="settings__yubikey-show-icon">{{res 'setDevicesYubiKeyOtpShowIcon'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-match-entries" id="settings__yubikey-match-entries"
+                   {{#if yubiKeyMatchEntries}}checked{{/if}} />
+            <label for="settings__yubikey-match-entries">{{res 'setDevicesYubiKeyOtpMatchEntries'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-auto-open" id="settings__yubikey-auto-open"
+                   {{#if yubiKeyAutoOpen}}checked{{/if}} />
+            <label for="settings__yubikey-auto-open">{{res 'setDevicesYubiKeyOtpAutoOpen'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-stuck-workaround" id="settings__yubikey-stuck-workaround"
+                   {{#if yubiKeyStuckWorkaround}}checked{{/if}} />
+            <label for="settings__yubikey-stuck-workaround">{{res 'setDevicesYubiKeyStuckWorkaround'}}</label>
+        </div>
+        <h3>{{res 'setDevicesYubiKeyChalRespTitle'}}</h3>
+        <p>{{res 'setDevicesYubiKeyChalRespDesc'}}</p>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-chalresp-show" id="settings__yubikey-chalresp-show"
+                   {{#if yubiKeyShowChalResp}}checked{{/if}} />
+            <label for="settings__yubikey-chalresp-show">{{res 'setDevicesYubiKeyChalRespShow'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__yubikey-remember-chalresp" id="settings__yubikey-remember-chalresp"
+                   {{#if yubiKeyRememberChalResp}}checked{{/if}} />
+            <label for="settings__yubikey-remember-chalresp">{{res 'setDevicesYubiKeyRememberChalResp'}}</label>
+        </div>
+    {{/if}}
+</div>

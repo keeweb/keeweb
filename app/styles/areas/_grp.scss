@@ -9,6 +9,7 @@
     user-select: none;
     overflow: hidden;
     position: relative;
+    @include padding-if-titlebar;
 
     > .scroller {
         flex: 1;
@@ -17,7 +18,7 @@
 
     &__content,
     &__buttons {
-        padding: $base-padding;
+        padding: $medium-padding;
     }
 
     &__icon {

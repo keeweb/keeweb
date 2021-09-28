@@ -12,6 +12,11 @@ const DoesNotBubble = {
     focus: true
 };
 
+const DefaultTemplateOptions = {
+    allowProtoPropertiesByDefault: true,
+    allowedProtoProperties: { length: true, active: true }
+};
+
 class View extends EventEmitter {
     parent = undefined;
     template = undefined;
@@ -19,7 +24,7 @@ class View extends EventEmitter {
     model = undefined;
     options = {};
     views = {};
-    hidden = false;
+    hidden = undefined;
     removed = false;
     modal = undefined;
     eventListeners = {};
@@ -54,13 +59,13 @@ class View extends EventEmitter {
 
         Tip.createTips(this.el);
 
-        this.debugLogger && this.debugLogger.debug('Render finished', this.debugLogger.ts(ts));
+        this.debugLogger?.debug('Render finished', this.debugLogger.ts(ts));
 
         return this;
     }
 
     renderElement(templateData) {
-        const html = this.template(templateData);
+        const html = this.template(templateData, DefaultTemplateOptions);
         if (this.el) {
             const mountRoot = this.options.ownParent ? this.el.firstChild : this.el;
             morphdom(mountRoot, html);
@@ -124,8 +129,8 @@ class View extends EventEmitter {
             eventsMap[event].push({ selector, method });
         }
         for (const [event, handlers] of Object.entries(eventsMap)) {
-            this.debugLogger && this.debugLogger.debug('Bind', 'view', event, handlers);
-            const listener = e => this.eventListener(e, handlers);
+            this.debugLogger?.debug('Bind', 'view', event, handlers);
+            const listener = (e) => this.eventListener(e, handlers);
             this.eventListeners[event] = listener;
             this.el.addEventListener(event, listener);
         }
@@ -146,9 +151,8 @@ class View extends EventEmitter {
         this.unbindElementEvents();
         for (const cfg of this.elementEventListeners) {
             const els = this.el.querySelectorAll(cfg.selector);
-            this.debugLogger &&
-                this.debugLogger.debug('Bind', 'element', cfg.event, cfg.selector, els.length);
-            cfg.listener = e => this.eventListener(e, [cfg]);
+            this.debugLogger?.debug('Bind', 'element', cfg.event, cfg.selector, els.length);
+            cfg.listener = (e) => this.eventListener(e, [cfg]);
             for (const el of els) {
                 el.addEventListener(cfg.event, cfg.listener);
                 cfg.els.push(el);
@@ -169,7 +173,7 @@ class View extends EventEmitter {
     }
 
     eventListener(e, handlers) {
-        this.debugLogger && this.debugLogger.debug('Listener fired', e.type);
+        this.debugLogger?.debug('Listener fired', e.type);
         for (const { selector, method } of handlers) {
             if (selector) {
                 const closest = e.target.closest(selector);
@@ -178,10 +182,10 @@ class View extends EventEmitter {
                 }
             }
             if (!this[method]) {
-                this.debugLogger && this.debugLogger.debug('Method not defined', method);
+                this.debugLogger?.debug('Method not defined', method);
                 continue;
             }
-            this.debugLogger && this.debugLogger.debug('Handling event', e.type, method);
+            this.debugLogger?.debug('Handling event', e.type, method);
             this[method](e);
         }
     }
@@ -197,7 +201,7 @@ class View extends EventEmitter {
         this.el.remove();
         this.removed = true;
 
-        this.debugLogger && this.debugLogger.debug('Remove');
+        this.debugLogger?.debug('Remove');
     }
 
     removeInnerViews() {
@@ -205,7 +209,7 @@ class View extends EventEmitter {
             for (const view of Object.values(this.views)) {
                 if (view) {
                     if (view instanceof Array) {
-                        view.forEach(v => v.remove());
+                        view.forEach((v) => v.remove());
                     } else {
                         view.remove();
                     }
@@ -231,9 +235,13 @@ class View extends EventEmitter {
     }
 
     toggle(visible) {
-        this.debugLogger && this.debugLogger.debug(visible ? 'Show' : 'Hide');
+        this.debugLogger?.debug(visible ? 'Show' : 'Hide');
         if (visible === undefined) {
             visible = this.hidden;
+        }
+        if (this.hidden === !visible) {
+            this.debugLogger?.debug('Toggle: noop', visible);
+            return;
         }
         this.hidden = !visible;
         if (this.modal) {
@@ -243,7 +251,6 @@ class View extends EventEmitter {
                 FocusManager.setModal(null);
             }
         }
-        this.emit(visible ? 'show' : 'hide');
         if (this.el) {
             this.el.classList.toggle('show', !!visible);
             this.el.classList.toggle('hide', !visible);
@@ -251,10 +258,11 @@ class View extends EventEmitter {
                 Tip.hideTips(this.el);
             }
         }
+        this.emit(visible ? 'show' : 'hide');
     }
 
     isHidden() {
-        return this.hidden;
+        return !!this.hidden;
     }
 
     isVisible() {
@@ -279,4 +287,4 @@ class View extends EventEmitter {
     }
 }
 
-export { View };
+export { View, DefaultTemplateOptions };

@@ -19,7 +19,7 @@ class StorageFileCache extends StorageBase {
 
         const path = Launcher.getUserDataPath('OfflineFiles');
 
-        const setPath = err => {
+        const setPath = (err) => {
             this.path = err ? null : path;
             if (err) {
                 this.logger.error('Error opening local offline storage', err);
@@ -27,7 +27,7 @@ class StorageFileCache extends StorageBase {
             return callback && callback(err);
         };
 
-        Launcher.fileExists(path, exists => {
+        Launcher.fileExists(path, (exists) => {
             if (exists) {
                 setPath();
             } else {
@@ -38,12 +38,12 @@ class StorageFileCache extends StorageBase {
 
     save(id, opts, data, callback) {
         this.logger.debug('Save', id);
-        this.initFs(err => {
+        this.initFs((err) => {
             if (err) {
                 return callback && callback(err);
             }
             const ts = this.logger.ts();
-            Launcher.writeFile(this.getPath(id), data, err => {
+            Launcher.writeFile(this.getPath(id), data, (err) => {
                 if (err) {
                     this.logger.error('Error saving to cache', id, err);
                     return callback && callback(err);
@@ -58,7 +58,7 @@ class StorageFileCache extends StorageBase {
 
     load(id, opts, callback) {
         this.logger.debug('Load', id);
-        this.initFs(err => {
+        this.initFs((err) => {
             if (err) {
                 return callback && callback(null, err);
             }
@@ -78,7 +78,7 @@ class StorageFileCache extends StorageBase {
 
     remove(id, opts, callback) {
         this.logger.debug('Remove', id);
-        this.initFs(err => {
+        this.initFs((err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -86,9 +86,9 @@ class StorageFileCache extends StorageBase {
             const ts = this.logger.ts();
             const path = this.getPath(id);
 
-            Launcher.fileExists(path, exists => {
+            Launcher.fileExists(path, (exists) => {
                 if (exists) {
-                    Launcher.deleteFile(path, err => {
+                    Launcher.deleteFile(path, (err) => {
                         if (err) {
                             this.logger.error('Error removing from cache', id, err);
                         } else {

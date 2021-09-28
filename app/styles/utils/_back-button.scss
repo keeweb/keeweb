@@ -5,4 +5,10 @@
     right: $base-padding-h;
     padding: $base-padding-v * 2 0 1px 0;
     z-index: 1;
+    &__post {
+        margin-left: $tiny-spacing;
+        margin-right: $small-spacing;
+        position: relative;
+        top: 0.2em;
+    }
 }

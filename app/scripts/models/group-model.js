@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { IconMap } from 'const/icon-map';
 import { EntryModel } from 'models/entry-model';
 import { MenuItemModel } from 'models/menu/menu-item-model';
@@ -39,7 +39,7 @@ class GroupModel extends MenuItemModel {
         const items = this.items;
         const entries = this.entries;
 
-        const itemsArray = group.groups.map(subGroup => {
+        const itemsArray = group.groups.map((subGroup) => {
             let g = file.getGroup(file.subId(subGroup.uuid.id));
             if (g) {
                 g.setGroup(subGroup, file, this);
@@ -50,7 +50,7 @@ class GroupModel extends MenuItemModel {
         }, this);
         items.push(...itemsArray);
 
-        const entriesArray = group.entries.map(entry => {
+        const entriesArray = group.entries.map((entry) => {
             let e = file.getEntry(file.subId(entry.uuid.id));
             if (e) {
                 e.setEntry(entry, this, file);
@@ -86,7 +86,9 @@ class GroupModel extends MenuItemModel {
     _buildCustomIcon() {
         this.customIcon = null;
         if (this.group.customIcon) {
-            return IconUrlFormat.toDataUrl(this.file.db.meta.customIcons[this.group.customIcon]);
+            return IconUrlFormat.toDataUrl(
+                this.file.db.meta.customIcons.get(this.group.customIcon.id)?.data
+            );
         }
         return null;
     }
@@ -101,7 +103,7 @@ class GroupModel extends MenuItemModel {
 
     forEachGroup(callback, filter) {
         let result = true;
-        this.items.forEach(group => {
+        this.items.forEach((group) => {
             if (group.matches(filter)) {
                 result =
                     callback(group) !== false && group.forEachGroup(callback, filter) !== false;
@@ -111,7 +113,7 @@ class GroupModel extends MenuItemModel {
     }
 
     forEachOwnEntry(filter, callback) {
-        this.entries.forEach(function(entry) {
+        this.entries.forEach(function (entry) {
             if (entry.matches(filter)) {
                 callback(entry, this);
             }

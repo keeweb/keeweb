@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-module.exports.getSettings = function() {
+module.exports.getSettings = function () {
     return [
         {
             name: 'MyText',
@@ -33,7 +33,7 @@ module.exports.getSettings = function() {
     ];
 };
 
-module.exports.setSettings = function(changes) {
+module.exports.setSettings = function (changes) {
     // apply changed settings in plugin logic
     // this method will be called:
     // 1. when any of settings fields is modified by user
@@ -42,4 +42,4 @@ module.exports.setSettings = function(changes) {
     // example: { MyText: 'value', MySel: 'selected-value', MyCheckbox: true }
 };
 
-module.exports.uninstall = function() {};
+module.exports.uninstall = function () {};

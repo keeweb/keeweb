@@ -14,3 +14,12 @@ $themes: map-merge(
             )
     )
 );
+
+body.th-db {
+    .list__item--active .blue-color {
+        color: #0051d2;
+    }
+    .list__item--active .green-color {
+        color: #77d644;
+    }
+}

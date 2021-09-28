@@ -1,14 +1,18 @@
 $themes: ();
 
 @import 'theme-defaults';
+@import 'dark';
+@import 'light';
 @import 'dark-brown';
+@import 'light-brown';
 @import 'flat-blue';
-@import 'white';
+@import 'light-blue';
 @import 'terminal';
+@import 'light-terminal';
 @import 'high-contrast';
+@import 'dark-contrast';
 @import 'solarized-dark';
 @import 'solarized-light';
-@import 'macos-dark';
 
 @each $theme-name, $theme-vars in $themes {
     $theme-vars: set-theme-vars($theme-vars);

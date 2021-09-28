@@ -7,19 +7,19 @@
         flex-wrap: wrap;
         user-select: none;
         padding-bottom: $base-padding-h;
-        &--custom {
+        &--custom,
+        &--actions {
             padding-top: $base-padding-h;
             border-top: 1px solid var(--light-border-color);
         }
     }
     &__icon {
-        @include area-selectable(bottom);
+        @include icon-btn();
+        font-size: 1.6em;
         width: 26px;
-        text-align: center;
-        font-size: 20px;
-        padding: 10px;
+        padding: $base-padding-v;
         &.icon-select__icon--active {
-            @include area-selected(bottom);
+            @include area-selected();
         }
         &-btn {
             padding: 5px 10px;
@@ -32,6 +32,9 @@
             > i {
                 display: none;
             }
+        }
+        &--progress > i:before {
+            content: $fa-var-spinner;
         }
         &--download-error > i:before {
             content: $fa-var-ban;

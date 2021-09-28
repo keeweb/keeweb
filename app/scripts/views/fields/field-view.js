@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { CopyPaste } from 'comp/browser/copy-paste';
@@ -9,13 +9,16 @@ import { Locale } from 'util/locale';
 import { AutoType } from 'auto-type';
 import { PasswordPresenter } from 'util/formatting/password-presenter';
 import { DropdownView } from 'views/dropdown-view';
-import template from 'templates/details/field.hbs';
+import { AppSettingsModel } from 'models/app-settings-model';
+import { Timeouts } from 'const/timeouts';
+import template from 'templates/details/fields/field.hbs';
 
 class FieldView extends View {
     template = template;
 
     events = {
         'click .details__field-label': 'fieldLabelClick',
+        'dblclick .details__field-label': 'fieldLabelDblClick',
         'click .details__field-value': 'fieldValueClick',
         'dragstart .details__field-label': 'fieldLabelDrag',
         'click .details__field-options': 'fieldOptionsClick'
@@ -42,6 +45,7 @@ class FieldView extends View {
             multiline: this.model.multiline,
             title: this.model.title,
             canEditTitle: this.model.newField,
+            canGen: this.model.canGen,
             protect: this.value && this.value.isProtected,
             hasOptions: !Features.isMobile && renderedValue && this.hasOptions
         });
@@ -52,7 +56,7 @@ class FieldView extends View {
             this.tip = typeof this.model.tip === 'function' ? this.model.tip() : this.model.tip;
             if (this.tip) {
                 this.valueEl.attr('title', this.tip);
-                Tip.createTip(this.valueEl);
+                Tip.createTip(this.valueEl[0]);
             }
         }
     }
@@ -75,26 +79,36 @@ class FieldView extends View {
         if (this.preventCopy) {
             return;
         }
-        this.copyValue();
+        if (AutoType.enabled && AppSettingsModel.fieldLabelDblClickAutoType) {
+            if (this.fieldLabelClickTimer) {
+                clearTimeout(this.fieldLabelClickTimer);
+                this.fieldLabelClickTimer = null;
+                this.emit('autotype', { source: this });
+                return;
+            }
+            this.fieldLabelClickTimer = setTimeout(() => {
+                this.copyValue();
+                this.fieldLabelClickTimer = null;
+            }, Timeouts.FieldLabelDoubleClick);
+        } else {
+            this.copyValue();
+        }
     }
 
     copyValue() {
         const field = this.model.name;
         let copyRes;
         if (field) {
-            const value = this.value || '';
-            if (value && value.isProtected) {
-                const text = value.getText();
-                if (!text) {
-                    return;
-                }
-                if (!CopyPaste.simpleCopy) {
-                    CopyPaste.createHiddenInput(text);
-                }
-                copyRes = CopyPaste.copy(text);
-                this.emit('copy', { source: this, copyRes });
+            const text = this.getTextValue();
+            if (!text) {
                 return;
             }
+            if (!CopyPaste.simpleCopy) {
+                CopyPaste.createHiddenInput(text);
+            }
+            copyRes = CopyPaste.copy(text);
+            this.emit('copy', { source: this, copyRes });
+            return;
         }
         if (!this.value) {
             return;
@@ -134,7 +148,7 @@ class FieldView extends View {
             return;
         }
         const dt = e.dataTransfer;
-        const txtval = this.value.isProtected ? this.value.getText() : this.value;
+        const txtval = this.getTextValue();
         if (this.valueEl[0].tagName.toLowerCase() === 'a') {
             dt.setData('text/uri-list', txtval);
         }
@@ -167,11 +181,17 @@ class FieldView extends View {
             textEqual = this.value.equals(newVal);
         } else if (newVal && newVal.isProtected) {
             textEqual = newVal.equals(this.value);
+        } else if (newVal instanceof Date && this.value instanceof Date) {
+            textEqual = newVal.toDateString() === this.value.toDateString();
         } else {
             textEqual = isEqual(this.value, newVal);
         }
         const protectedEqual =
             (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
+        if (!extra?.newField && this.model.newField) {
+            extra ??= {};
+            extra.newField = this.model.newField;
+        }
         const nameChanged = extra && extra.newField;
         let arg;
         if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {
@@ -223,7 +243,7 @@ class FieldView extends View {
         }
 
         if (AutoType.enabled && this.model.sequence) {
-            options.push({ value: 'autotype', icon: 'keyboard-o', text: Locale.detAutoTypeField });
+            options.push({ value: 'autotype', icon: 'keyboard', text: Locale.detAutoTypeField });
         }
 
         const rect = this.$el[0].getBoundingClientRect();
@@ -266,8 +286,9 @@ class FieldView extends View {
     }
 
     revealValue() {
-        const valueHtml = PasswordPresenter.asHtml(this.value);
-        this.valueEl.addClass('details__field-value--revealed').html(valueHtml);
+        const revealedEl = PasswordPresenter.asDOM(this.value);
+        this.valueEl.addClass('details__field-value--revealed').empty();
+        this.valueEl.append(revealedEl);
     }
 
     hideValue() {
@@ -307,9 +328,9 @@ class FieldView extends View {
 
         const actions = [];
         if (this.value) {
-            actions.push({ name: 'copy', icon: 'clipboard' });
+            actions.push({ name: 'copy', icon: 'copy' });
         }
-        actions.push({ name: 'edit', icon: 'pencil' });
+        actions.push({ name: 'edit', icon: 'pencil-alt' });
         if (this.value instanceof kdbxweb.ProtectedValue) {
             actions.push({ name: 'reveal', icon: 'eye' });
         }
@@ -344,6 +365,13 @@ class FieldView extends View {
                 setTimeout(() => this.showGenerator(), 0);
                 break;
         }
+    }
+
+    getTextValue() {
+        if (!this.value) {
+            return '';
+        }
+        return this.value.isProtected ? this.value.getText() : this.value;
     }
 }
 

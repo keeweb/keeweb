@@ -1,129 +1,79 @@
-/**
- * This will require the latest (unreleased) version of `osslsigncode` with pkcs11 patch
- * Build it like this:
- *
- * curl -L http://sourceforge.net/projects/osslsigncode/files/osslsigncode/osslsigncode-1.7.1.tar.gz/download -o osslsigncode.tar.gz
- * tar -zxvf osslsigncode.tar.gz
- * git clone https://git.code.sf.net/p/osslsigncode/osslsigncode osslsigncode-master
- * cp osslsigncode-master/osslsigncode.c osslsigncode-1.7.1/osslsigncode.c
- * rm osslsigncode.tar.gz
- * rm -rf osslsigncode-master
- * cd osslsigncode-1.7.1/
- * export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
- * ./configure
- * make
- * sudo cp osslsigncode /usr/local/bin/osslsigncode
- *
- * Install this:
- *  brew install opensc
- *  brew install engine_pkcs11
- *
- * https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Build_Instructions/Signing_an_executable_with_Authenticode
- */
-
 const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+const AdmZip = require('adm-zip');
+const { runRemoteTask } = require('run-remote-task');
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     grunt.registerMultiTask(
         'sign-exe',
         'Signs exe file with authenticode certificate',
-        async function() {
-            const opt = this.options();
+        async function () {
             const done = this.async();
-            if (opt.pvk) {
-                const keytar = require('keytar');
-                keytar
-                    .getPassword(opt.keytarPasswordService, opt.keytarPasswordAccount)
-                    .then(password => {
-                        if (!password) {
-                            return grunt.warn('Code sign password not found');
-                        }
-                        const promises = Object.keys(opt.files).map(file =>
-                            signFile(file, opt.files[file], opt, password)
-                        );
-                        Promise.all(promises).then(done);
-                    })
-                    .catch(e => {
-                        grunt.warn('Code sign error: ' + e);
-                    });
-            } else {
-                const sign = require('../util/sign');
-                const pin = await sign.getPin();
-                for (const file of Object.keys(opt.files)) {
-                    await signFile(file, opt.files[file], opt, pin);
-                }
-                done();
+            const opt = this.options();
+
+            for (const [file, name] of Object.entries(opt.files)) {
+                await signFile(file, name, opt);
             }
+
+            done();
         }
     );
 
-    function signFile(file, name, opt, password) {
-        const signedFile = file + '.sign';
-        return new Promise((resolve, reject) => {
-            const pkcsArgs = opt.pvk
-                ? []
-                : [
-                      '-pkcs11engine',
-                      '/usr/local/lib/engines/engine_pkcs11.so',
-                      '-pkcs11module',
-                      '/usr/local/lib/opensc-pkcs11.so'
-                  ];
-            const args = [
-                '-spc',
-                opt.spc,
-                '-key',
-                opt.pvk ? require('path').resolve(opt.pvk) : opt.key,
-                '-pass',
-                password,
-                '-h',
-                opt.algo,
-                '-n',
-                name,
-                '-i',
-                opt.url,
-                '-t',
-                'http://timestamp.verisign.com/scripts/timstamp.dll',
-                ...pkcsArgs,
-                '-in',
-                file,
-                '-out',
-                signedFile
-            ];
-            const spawned = grunt.util.spawn(
-                {
-                    cmd: 'osslsigncode',
-                    args
-                },
-                (error, result, code) => {
-                    if (error || code) {
-                        spawned.kill();
-                        grunt.warn(`Cannot sign file ${file}, signtool error ${code}: ${error}`);
-                        return reject();
-                    }
-                    grunt.util.spawn(
-                        {
-                            cmd: 'osslsigncode',
-                            args: ['verify', signedFile]
-                        },
-                        (ex, result, code) => {
-                            if (code) {
-                                grunt.warn(`Verify error ${file}: \n${result.stdout.toString()}`);
-                                return;
-                            }
-                            if (fs.existsSync(file)) {
-                                fs.renameSync(signedFile, file);
-                            }
-                            grunt.log.writeln(`Signed ${file}: ${name}`);
-                            resolve();
-                        }
-                    );
-                }
-            );
-            // spawned.stdout.pipe(process.stdout);
-            spawned.stderr.pipe(process.stderr);
-            // spawned.stdin.setEncoding('utf-8');
-            // spawned.stdin.write(password);
-            // spawned.stdin.write('\n');
-        });
+    async function signFile(file, name, opt) {
+        grunt.log.writeln(`Signing ${file}...`);
+
+        const fileNameWithoutFolder = path.basename(file);
+
+        const actionConfig = {
+            exe: fileNameWithoutFolder,
+            name: name || fileNameWithoutFolder,
+            url: opt.url
+        };
+
+        const zip = new AdmZip();
+        zip.addFile('action.json', Buffer.from(JSON.stringify(actionConfig)));
+        zip.addLocalFile(file);
+        const zipContents = zip.toBuffer();
+
+        fs.writeFileSync('data.zip', zipContents);
+
+        try {
+            const taskResult = await runRemoteTask(opt.windows, zipContents);
+            const signedFile = taskResult.file;
+
+            const zip = new AdmZip(signedFile);
+            const data = zip.readFile(fileNameWithoutFolder);
+
+            fs.writeFileSync(signedFile, data);
+
+            const signtool =
+                'C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\signtool.exe';
+            const res = spawnSync(signtool, ['verify', '/pa', '/v', signedFile]);
+
+            if (res.status) {
+                grunt.warn(
+                    `Verify error ${file}: exit code ${
+                        res.status
+                    }.\nSTDOUT:\n${res.stdout.toString()}\nSTDERR:\n${res.stderr.toString()}`
+                );
+            }
+
+            if (!res.stdout.includes('Successfully verified')) {
+                grunt.warn(
+                    `Verify error ${file}.\nSTDOUT:\n${res.stdout.toString()}\nSTDERR:\n${res.stderr.toString()}`
+                );
+            }
+
+            if (!res.stdout.includes(opt.certHash)) {
+                grunt.warn(`Verify error ${file}: expected hash was not found`);
+            }
+
+            fs.unlinkSync(signedFile);
+            fs.writeFileSync(file, data);
+            grunt.log.writeln(`Signed ${file}: ${name}`);
+        } catch (e) {
+            grunt.warn(`Sign error ${file}: ${e}`);
+        }
     }
 };

@@ -1,7 +1,6 @@
 $fa-font-path: '~font-awesome/fonts';
 
 @import '~normalize.css/normalize';
-@import '~font-awesome/scss/font-awesome';
 @import '~pikaday/scss/pikaday';
 @import '~bourbon';
 
@@ -13,6 +12,7 @@ $fa-font-path: '~font-awesome/fonts';
 @import 'utils/common-dropdown';
 @import 'utils/auto-type-hint';
 @import 'utils/drag';
+@import 'utils/help';
 @import 'utils/selection';
 
 @import 'common/dates';
@@ -23,10 +23,12 @@ $fa-font-path: '~font-awesome/fonts';
 @import 'common/modal';
 @import 'common/scroll';
 @import 'common/tip';
+@import 'common/titlebar';
+@import 'common/links';
 
 @import 'areas/app';
-@import 'areas/auto-type';
 @import 'areas/details';
+@import 'areas/extension';
 @import 'areas/footer';
 @import 'areas/grp';
 @import 'areas/tag';
@@ -36,5 +38,7 @@ $fa-font-path: '~font-awesome/fonts';
 @import 'areas/list';
 @import 'areas/menu';
 @import 'areas/open';
+@import 'areas/select-entry';
 @import 'areas/settings';
 @import 'areas/import-csv';
+@import 'areas/titlebar';

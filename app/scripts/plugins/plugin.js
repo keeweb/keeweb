@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import BaseLocale from 'locales/base.json';
 import { Model } from 'framework/model';
 import { RuntimeInfo } from 'const/runtime-info';
@@ -64,7 +64,7 @@ class Plugin extends Model {
                 .then(() => {
                     this.installTime = this.logger.ts() - ts;
                 })
-                .catch(err => {
+                .catch((err) => {
                     this.logger.error('Error installing plugin', err);
                     this.set({
                         status: PluginStatus.STATUS_ERROR,
@@ -149,7 +149,11 @@ class Plugin extends Model {
             return 'Plugin name mismatch';
         }
         if (manifest.publicKey !== newManifest.publicKey) {
-            return 'Public key mismatch';
+            const wasOfficial = SignatureVerifier.getPublicKeys().includes(manifest.publicKey);
+            const isOfficial = SignatureVerifier.getPublicKeys().includes(newManifest.publicKey);
+            if (!wasOfficial || !isOfficial) {
+                return 'Public key mismatch';
+            }
         }
     }
 
@@ -162,7 +166,9 @@ class Plugin extends Model {
         );
         this.resources = {};
         const ts = this.logger.ts();
-        const results = Object.keys(manifest.resources).map(res => this.loadResource(res, local));
+        const results = Object.keys(manifest.resources).map((res) =>
+            this.loadResource(res, local, manifest)
+        );
         return Promise.all(results)
             .catch(() => {
                 throw 'Error loading plugin resources';
@@ -191,7 +197,7 @@ class Plugin extends Model {
         return this.id + '_' + this.getResourcePath(res);
     }
 
-    loadResource(type, local) {
+    loadResource(type, local, manifest) {
         const ts = this.logger.ts();
         let res;
         if (local) {
@@ -200,12 +206,12 @@ class Plugin extends Model {
                 io.load(storageKey, (err, data) => (err ? reject(err) : resolve(data)));
             });
         } else {
-            const url = this.url;
-            res = httpGet(url + this.getResourcePath(type), true);
+            const url = this.url + this.getResourcePath(type) + '?v=' + manifest.version;
+            res = httpGet(url, true);
         }
-        return res.then(data => {
+        return res.then((data) => {
             this.logger.debug('Resource data loaded', type, this.logger.ts(ts));
-            return this.verifyResource(data, type).then(data => {
+            return this.verifyResource(data, type).then((data) => {
                 this.resources[type] = data;
             });
         });
@@ -216,7 +222,7 @@ class Plugin extends Model {
         const manifest = this.manifest;
         const signature = manifest.resources[type];
         return SignatureVerifier.verify(data, signature, manifest.publicKey)
-            .then(valid => {
+            .then((valid) => {
                 if (valid) {
                     this.logger.debug('Resource signature validated', type, this.logger.ts(ts));
                     return data;
@@ -248,7 +254,7 @@ class Plugin extends Model {
             .then(() => {
                 this.status = PluginStatus.STATUS_ACTIVE;
             })
-            .catch(e => {
+            .catch((e) => {
                 this.logger.info('Install error', e);
                 this.status = PluginStatus.STATUS_ERROR;
                 return this.disable().then(() => {
@@ -262,7 +268,7 @@ class Plugin extends Model {
         for (const key of Object.keys(this.resources)) {
             resourceSavePromises.push(this.saveResource(key, this.resources[key]));
         }
-        return Promise.all(resourceSavePromises).catch(e => {
+        return Promise.all(resourceSavePromises).catch((e) => {
             this.logger.debug('Error saving plugin resources', e);
             return this.uninstall().then(() => {
                 throw 'Error saving plugin resources';
@@ -273,7 +279,7 @@ class Plugin extends Model {
     saveResource(key, value) {
         return new Promise((resolve, reject) => {
             const storageKey = this.getStorageResourcePath(key);
-            io.save(storageKey, value, e => {
+            io.save(storageKey, value, (e) => {
                 if (e) {
                     reject(e);
                 } else {
@@ -292,29 +298,42 @@ class Plugin extends Model {
     }
 
     deleteResource(key) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             const storageKey = this.getStorageResourcePath(key);
             io.remove(storageKey, () => resolve());
         });
     }
 
     applyCss(name, data, theme) {
-        return Promise.resolve().then(() => {
-            const text = kdbxweb.ByteUtils.bytesToString(data);
-            const id = 'plugin-css-' + name;
-            this.createElementInHead('style', id, 'text/css', text);
-            if (theme) {
-                const locKey = this.getThemeLocaleKey(theme.name);
-                SettingsManager.allThemes[theme.name] = locKey;
-                BaseLocale[locKey] = theme.title;
-                for (const styleSheet of Array.from(document.styleSheets)) {
-                    if (styleSheet.ownerNode.id === id) {
-                        this.processThemeStyleSheet(styleSheet, theme);
-                        break;
+        return new Promise((resolve, reject) => {
+            try {
+                const blob = new Blob([data], { type: 'text/css' });
+                const objectUrl = URL.createObjectURL(blob);
+                const id = 'plugin-css-' + name;
+                const el = this.createElementInHead('link', id, {
+                    rel: 'stylesheet',
+                    href: objectUrl
+                });
+                el.addEventListener('load', () => {
+                    URL.revokeObjectURL(objectUrl);
+                    if (theme) {
+                        const locKey = this.getThemeLocaleKey(theme.name);
+                        SettingsManager.allThemes[theme.name] = locKey;
+                        BaseLocale[locKey] = theme.title;
+                        for (const styleSheet of Array.from(document.styleSheets)) {
+                            if (styleSheet.ownerNode.id === id) {
+                                this.processThemeStyleSheet(styleSheet, theme);
+                                break;
+                            }
+                        }
                     }
-                }
+                    this.logger.debug('Plugin style installed');
+                    resolve();
+                });
+            } catch (e) {
+                this.logger.error('Error installing plugin style', e);
+                reject(e);
             }
-            this.logger.debug('Plugin style installed');
         });
     }
 
@@ -343,20 +362,30 @@ class Plugin extends Model {
     }
 
     applyJs(name, data) {
-        return Promise.resolve().then(() => {
-            let text = kdbxweb.ByteUtils.bytesToString(data);
-            this.module = { exports: {} };
-            const id = 'plugin-' + Date.now().toString() + Math.random().toString();
-            global[id] = {
-                require: PluginApi.require,
-                module: this.module
-            };
-            text = `(function(require, module){${text}})(window["${id}"].require,window["${id}"].module);`;
-            const ts = this.logger.ts();
-            this.createElementInHead('script', 'plugin-js-' + name, 'text/javascript', text);
-            return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
+            try {
+                let text = kdbxweb.ByteUtils.bytesToString(data);
+                this.module = { exports: {} };
+                const jsVar = 'plugin-' + Date.now().toString() + Math.random().toString();
+                global[jsVar] = {
+                    require: PluginApi.require,
+                    module: this.module
+                };
+                text = `(function(require, module){${text}})(window["${jsVar}"].require,window["${jsVar}"].module);`;
+                const ts = this.logger.ts();
+
+                // Note that here we're calling eval to run the plugin code,
+                // previously it was loaded as 'blob:' scheme (see the code below), however:
+                // 1. we need to have eval enabled in our CSP anyway for WASM,
+                //      see https://github.com/WebAssembly/content-security-policy/issues/7
+                // 2. we would like to prevent Chrome extensions from injecting scripts to our page,
+                //      which is possible to do if we have 'blob:', but they can't call eval
+                // Previous implementation with 'blob:' can be found in git, if we ever need to restore it.
+
+                // eslint-disable-next-line no-eval
+                eval(text);
                 setTimeout(() => {
-                    delete global[id];
+                    delete global[jsVar];
                     if (this.module.exports.uninstall) {
                         this.logger.debug('Plugin script installed', this.logger.ts(ts));
                         this.loadPluginSettings();
@@ -365,20 +394,25 @@ class Plugin extends Model {
                         reject('Plugin script installation failed');
                     }
                 }, 0);
-            });
+            } catch (e) {
+                this.logger.error('Error installing plugin script', e);
+                reject(e);
+            }
         });
     }
 
-    createElementInHead(tagName, id, type, text) {
+    createElementInHead(tagName, id, attrs) {
         let el = document.getElementById(id);
         if (el) {
             el.parentNode.removeChild(el);
         }
         el = document.createElement(tagName);
-        el.appendChild(document.createTextNode(text));
         el.setAttribute('id', id);
-        el.setAttribute('type', type);
+        for (const [name, value] of Object.entries(attrs)) {
+            el.setAttribute(name, value);
+        }
         document.head.appendChild(el);
+        return el;
     }
 
     removeElement(id) {
@@ -402,7 +436,7 @@ class Plugin extends Model {
         delete SettingsManager.allLocales[locale.name];
         delete SettingsManager.customLocales[locale.name];
         if (SettingsManager.activeLocale === locale.name) {
-            AppSettingsModel.locale = 'en';
+            AppSettingsModel.locale = 'en-US';
         }
     }
 
@@ -413,7 +447,7 @@ class Plugin extends Model {
     removeTheme(theme) {
         delete SettingsManager.allThemes[theme.name];
         if (AppSettingsModel.theme === theme.name) {
-            AppSettingsModel.theme = 'fb';
+            AppSettingsModel.theme = SettingsManager.getDefaultTheme();
         }
         delete BaseLocale[this.getThemeLocaleKey(theme.name)];
     }
@@ -478,7 +512,6 @@ class Plugin extends Model {
             }
             if (manifest.resources.js) {
                 this.uninstallPluginCode();
-                this.removeElement('plugin-js-' + this.name);
             }
             if (manifest.resources.loc) {
                 this.removeLoc(this.manifest.locale);
@@ -536,7 +569,7 @@ class Plugin extends Model {
                     });
                     this.logger.info('Update complete', this.logger.ts(ts));
                 })
-                .catch(err => {
+                .catch((err) => {
                     this.logger.error('Error updating plugin', err);
                     if (prevStatus === PluginStatus.STATUS_ACTIVE) {
                         this.logger.info('Activating previous version');
@@ -575,7 +608,7 @@ class Plugin extends Model {
                 const settings = this.module.exports.getSettings();
                 const settingsPrefix = this.getSettingPrefix();
                 if (settings instanceof Array) {
-                    return settings.map(setting => {
+                    return settings.map((setting) => {
                         setting = { ...setting };
                         const value = AppSettingsModel[settingsPrefix + setting.name];
                         if (value !== undefined) {
@@ -611,11 +644,11 @@ class Plugin extends Model {
         commonLogger.info('Installing plugin from url', url);
         const manifestUrl = url + 'manifest.json';
         return httpGet(manifestUrl)
-            .catch(e => {
+            .catch((e) => {
                 commonLogger.error('Error loading plugin manifest', e);
                 throw 'Error loading plugin manifest';
             })
-            .then(manifest => {
+            .then((manifest) => {
                 try {
                     manifest = JSON.parse(manifest);
                 } catch (e) {
@@ -659,7 +692,6 @@ Plugin.defineModelProperties({
 Object.assign(Plugin, PluginStatus);
 
 function httpGet(url, binary) {
-    url += '?ts=' + Date.now();
     commonLogger.debug('GET', url);
     const ts = commonLogger.ts();
     return new Promise((resolve, reject) => {

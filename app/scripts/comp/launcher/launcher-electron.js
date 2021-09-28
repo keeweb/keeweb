@@ -1,4 +1,5 @@
 import { Events } from 'framework/events';
+import { StartProfiler } from 'comp/app/start-profiler';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
@@ -16,6 +17,9 @@ const Launcher = {
     platform() {
         return process.platform;
     },
+    arch() {
+        return process.arch;
+    },
     electron() {
         return this.req('electron');
     },
@@ -26,13 +30,13 @@ const Launcher = {
         return this.electron().remote.require(mod);
     },
     openLink(href) {
-        this.electron().shell.openExternal(href);
+        if (/^(http|https|ftp|sftp|mailto):/i.test(href)) {
+            this.electron().shell.openExternal(href);
+        }
     },
     devTools: true,
     openDevTools() {
-        this.electron()
-            .remote.getCurrentWindow()
-            .openDevTools({ mode: 'bottom' });
+        this.electron().remote.getCurrentWindow().webContents.openDevTools({ mode: 'bottom' });
     },
     getSaveFileName(defaultPath, callback) {
         if (defaultPath) {
@@ -45,18 +49,24 @@ const Launcher = {
                 defaultPath,
                 filters: [{ name: Locale.launcherFileFilter, extensions: ['kdbx'] }]
             })
-            .then(res => callback(res.filePath));
+            .then((res) => callback(res.filePath));
     },
     getUserDataPath(fileName) {
         if (!this.userDataPath) {
-            const realUserDataPath = this.remoteApp().getPath('userData');
-            const suffixReplacementRegex = /[\\/]temp[\\/]\d+\.\d+[\\/]?$/;
-            this.userDataPath = realUserDataPath.replace(suffixReplacementRegex, '');
+            this.userDataPath = this.remoteApp().getPath('userData');
         }
         return this.joinPath(this.userDataPath, fileName || '');
     },
     getTempPath(fileName) {
-        return this.joinPath(this.remoteApp().getPath('temp'), fileName || '');
+        let tempPath = this.joinPath(this.remoteApp().getPath('temp'), 'KeeWeb');
+        const fs = this.req('fs');
+        if (!fs.existsSync(tempPath)) {
+            fs.mkdirSync(tempPath);
+        }
+        if (fileName) {
+            tempPath = this.joinPath(tempPath, fileName);
+        }
+        return tempPath;
     },
     getDocumentsPath(fileName) {
         return this.joinPath(this.remoteApp().getPath('documents'), fileName || '');
@@ -82,7 +92,12 @@ const Launcher = {
         });
     },
     fileExists(path, callback) {
-        this.req('fs').exists(path, callback);
+        const fs = this.req('fs');
+        fs.access(path, fs.constants.F_OK, (err) => callback(!err));
+    },
+    fileExistsSync(path) {
+        const fs = this.req('fs');
+        return !fs.accessSync(path, fs.constants.F_OK);
     },
     deleteFile(path, callback) {
         this.req('fs').unlink(path, callback || noop);
@@ -95,8 +110,8 @@ const Launcher = {
         const path = this.req('path');
         const stack = [];
 
-        const collect = function(dir, stack, callback) {
-            fs.exists(dir, exists => {
+        const collect = function (dir, stack, callback) {
+            fs.exists(dir, (exists) => {
                 if (exists) {
                     return callback();
                 }
@@ -111,12 +126,12 @@ const Launcher = {
             });
         };
 
-        const create = function(stack, callback) {
+        const create = function (stack, callback) {
             if (!stack.length) {
                 return callback();
             }
 
-            fs.mkdir(stack.shift(), err => (err ? callback(err) : create(stack, callback)));
+            fs.mkdir(stack.shift(), (err) => (err ? callback(err) : create(stack, callback)));
         };
 
         collect(dir, stack, () => create(stack, callback));
@@ -132,16 +147,11 @@ const Launcher = {
     createFsWatcher(path) {
         return this.req('fs').watch(path, { persistent: false });
     },
-    ensureRunnable(path) {
-        if (process.platform !== 'win32') {
-            const fs = this.req('fs');
-            const stat = fs.statSync(path);
-            if ((stat.mode & 0o0111) === 0) {
-                const mode = stat.mode | 0o0100;
-                logger.info(`chmod 0${mode.toString(8)} ${path}`);
-                fs.chmodSync(path, mode);
-            }
-        }
+    loadConfig(name) {
+        return this.remoteApp().loadConfig(name);
+    },
+    saveConfig(name, data) {
+        return this.remoteApp().saveConfig(name, data);
     },
     preventExit(e) {
         e.returnValue = false;
@@ -153,18 +163,19 @@ const Launcher = {
     },
     requestExit() {
         const app = this.remoteApp();
-        if (this.restartPending) {
-            app.restartApp();
+        app.setHookBeforeQuitEvent(false);
+        if (this.pendingUpdateFile) {
+            app.restartAndUpdate(this.pendingUpdateFile);
         } else {
             app.quit();
         }
     },
-    requestRestart() {
-        this.restartPending = true;
+    requestRestartAndUpdate(updateFilePath) {
+        this.pendingUpdateFile = updateFilePath;
         this.requestExit();
     },
     cancelRestart() {
-        this.restartPending = false;
+        this.pendingUpdateFile = undefined;
     },
     setClipboardText(text) {
         return this.electron().clipboard.writeText(text);
@@ -173,7 +184,14 @@ const Launcher = {
         return this.electron().clipboard.readText();
     },
     clearClipboardText() {
-        return this.electron().clipboard.clear();
+        const { clipboard } = this.electron();
+        clipboard.clear();
+        if (process.platform === 'linux') {
+            clipboard.clear('selection');
+        }
+    },
+    quitOnRealQuitEventIfMinimizeOnQuitIsEnabled() {
+        return !!this.pendingUpdateFile;
     },
     minimizeApp() {
         this.remoteApp().minimizeApp({
@@ -181,14 +199,11 @@ const Launcher = {
             quit: Locale.menuQuitApp.replace('{}', 'KeeWeb')
         });
     },
-    canMinimize() {
-        return process.platform !== 'darwin';
-    },
     canDetectOsSleep() {
         return process.platform !== 'linux';
     },
     updaterEnabled() {
-        return this.electron().remote.process.argv.indexOf('--disable-updater') === -1;
+        return process.platform !== 'linux';
     },
     getMainWindow() {
         return this.remoteApp().getMainWindow();
@@ -196,80 +211,54 @@ const Launcher = {
     resolveProxy(url, callback) {
         const window = this.getMainWindow();
         const session = window.webContents.session;
-        session.resolveProxy(url).then(proxy => {
+        session.resolveProxy(url).then((proxy) => {
             const match = /^proxy\s+([\w\.]+):(\d+)+\s*/i.exec(proxy);
             proxy = match && match[1] ? { host: match[1], port: +match[2] } : null;
             callback(proxy);
         });
     },
-    openWindow(opts) {
-        return this.remoteApp().openWindow(opts);
-    },
     hideApp() {
         const app = this.remoteApp();
-        if (this.canMinimize()) {
-            app.minimizeThenHideIfInTray();
-        } else {
+        if (this.platform() === 'darwin') {
             app.hide();
+        } else {
+            app.minimizeThenHideIfInTray();
         }
     },
     isAppFocused() {
         return !!this.electron().remote.BrowserWindow.getFocusedWindow();
     },
     showMainWindow() {
-        const win = this.getMainWindow();
-        win.show();
-        win.focus();
-        win.restore();
+        this.remoteApp().showAndFocusMainWindow();
     },
     spawn(config) {
         const ts = logger.ts();
-        let complete = config.complete;
-        const ps = this.req('child_process').spawn(config.cmd, config.args);
-        [ps.stdin, ps.stdout, ps.stderr].forEach(s => s.setEncoding('utf-8'));
-        let stderr = '';
-        let stdout = '';
-        ps.stderr.on('data', d => {
-            stderr += d.toString('utf-8');
-        });
-        ps.stdout.on('data', d => {
-            stdout += d.toString('utf-8');
-        });
-        ps.on('close', code => {
-            stdout = stdout.trim();
-            stderr = stderr.trim();
-            const msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
-            if (code) {
-                logger.error(msg + '\n' + stdout + '\n' + stderr);
-            } else {
-                logger.info(msg + (stdout ? '\n' + stdout : ''));
-            }
-            if (complete) {
-                complete(code ? 'Exit code ' + code : null, stdout, code);
+        const { ipcRenderer } = this.electron();
+        let { complete } = config;
+        delete config.complete;
+        ipcRenderer
+            .invoke('spawnProcess', config)
+            .then((res) => {
+                if (res.err) {
+                    logger.error('spawn error: ' + config.cmd + ', ' + logger.ts(ts), res.err);
+                    complete?.(res.err);
+                } else {
+                    const code = res.code;
+                    const stdout = res.stdout || '';
+                    const stderr = res.stderr || '';
+                    const msg = 'spawn ' + config.cmd + ': ' + code + ', ' + logger.ts(ts);
+                    if (code !== 0) {
+                        logger.error(msg + '\n' + stdout + '\n' + stderr);
+                    } else {
+                        logger.info(msg + (stdout && !config.noStdOutLogging ? '\n' + stdout : ''));
+                    }
+                    complete?.(code !== 0 ? 'Exit code ' + code : null, stdout, code);
+                }
                 complete = null;
-            }
-        });
-        ps.on('error', err => {
-            logger.error('spawn error: ' + config.cmd + ', ' + logger.ts(ts), err);
-            if (complete) {
-                complete(err);
-                complete = null;
-            }
-        });
-        if (config.data) {
-            try {
-                ps.stdin.end(config.data);
-            } catch (e) {
-                logger.error('spawn write error', e);
-            }
-        }
-        process.nextTick(() => {
-            // it should work without destroy, but a process doesn't get launched
-            // xubuntu-desktop 19.04 / xfce
-            // see https://github.com/keeweb/keeweb/issues/1234
-            ps.stdin.destroy();
-        });
-        return ps;
+            })
+            .catch((err) => {
+                complete?.(err);
+            });
     },
     checkOpenFiles() {
         this.readyToOpenFiles = true;
@@ -287,6 +276,18 @@ const Launcher = {
     },
     setGlobalShortcuts(appSettings) {
         this.remoteApp().setGlobalShortcuts(appSettings);
+    },
+    minimizeMainWindow() {
+        this.getMainWindow().minimize();
+    },
+    maximizeMainWindow() {
+        this.getMainWindow().maximize();
+    },
+    restoreMainWindow() {
+        this.getMainWindow().restore();
+    },
+    mainWindowMaximized() {
+        return this.getMainWindow().isMaximized();
     }
 };
 
@@ -294,9 +295,12 @@ Events.on('launcher-exit-request', () => {
     setTimeout(() => Launcher.exit(), 0);
 });
 Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
+Events.on('launcher-maximize', () => setTimeout(() => Events.emit('app-maximized'), 0));
+Events.on('launcher-unmaximize', () => setTimeout(() => Events.emit('app-unmaximized'), 0));
 Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
+Events.on('start-profile', (data) => StartProfiler.reportAppProfile(data));
 
-window.launcherOpen = file => Launcher.openFile(file);
+window.launcherOpen = (file) => Launcher.openFile(file);
 if (window.launcherOpenedFile) {
     logger.info('Open file request', window.launcherOpenedFile);
     Launcher.openFile(window.launcherOpenedFile);
@@ -312,6 +316,15 @@ Events.on('app-ready', () =>
     }, 0)
 );
 
-global.Events = Events;
+if (process.platform === 'darwin') {
+    Launcher.remoteApp().setHookBeforeQuitEvent(true);
+}
+
+Launcher.remoteApp().on('remote-app-event', (e) => {
+    if (window.debugRemoteAppEvents) {
+        logger.debug('remote-app-event', e.name);
+    }
+    Events.emit(e.name, e.data);
+});
 
 export { Launcher };

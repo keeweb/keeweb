@@ -1,22 +1,23 @@
 // Typography
-$base-font-family: -apple-system, 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'Roboto',
-    'Arial', 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', 'STXihei', '华文细黑',
-    sans-serif;
+$base-font-family: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Helvetica',
+    'Roboto', 'Arial', 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', 'STXihei',
+    '华文细黑', sans-serif;
 $heading-font-family: $base-font-family;
 $monospace-font-family: 'SFMono-Regular', Monaco, Consolas, 'Lucida Console', monospace;
 
 // Font Sizes
 $base-font-size: 12px;
-$large-pass-font-size: 22px;
+$large-pass-font-size: 2em;
 
 // Line height
 $base-line-height: 1.5;
 $heading-line-height: 1.2;
 
 // Other Sizes
-$base-border-radius: 1px;
+$base-border-radius: 2px;
 $base-spacing: $base-line-height * 1em;
 $small-spacing: $base-spacing / 2;
+$tiny-spacing: $small-spacing / 2;
 $base-z-index: 0;
 $base-padding-v: 0.5em;
 $base-padding-h: 1em;
@@ -28,6 +29,7 @@ $medium-padding: $medium-padding-v $medium-padding-h;
 $base-padding-px: 5px 10px;
 $modal-icon-size: 6em;
 $large-padding: 2em;
+$titlebar-padding-tiny: 8px;
 $titlebar-padding-small: 24px;
 $titlebar-padding-large: 40px;
 
@@ -38,20 +40,8 @@ $titlebar-padding-large: 40px;
 @function light-border() {
     @return 1px solid var(--light-border-color);
 }
-@function selected-border-width() {
-    @return var(--selected-border-width);
-}
-@function selected-border() {
-    @return selected-border-width() solid var(--action-color);
-}
-@function selected-hover-border() {
-    @return var(--accent-border-width) solid var(--action-color);
-}
-@function selected-transparent-border() {
-    @return var(--accent-border-width) solid transparent;
-}
-@function focused-outline() {
-    @return 1px solid var(--action-color);
+@function focused-box-shadow() {
+    @return 0 0 0 1px var(--action-color);
 }
 
 // Forms
@@ -59,25 +49,29 @@ $titlebar-padding-large: 40px;
     @return inset 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 @function form-box-shadow-focus() {
-    @return form-box-shadow(),
-        0 0 var(--focus-shadow-blur) var(--focus-shadow-spread) var(--form-box-shadow-color-focus);
+    @return form-box-shadow(), 0 0 0 var(--focus-shadow-spread) var(--form-box-shadow-color-focus);
+}
+@function form-box-shadow-hover() {
+    @return form-box-shadow(), 0 0 0 var(--focus-shadow-spread) var(--form-box-shadow-color-hover);
 }
 @function form-box-shadow-focus-error() {
     @return form-box-shadow(),
-        0 0 var(--focus-shadow-blur) var(--focus-shadow-spread)
-            var(--form-box-shadow-color-focus-error);
+        0 0 0 var(--focus-shadow-spread) var(--form-box-shadow-color-focus-error);
 }
 
 // Shadows
 @function dropdown-box-shadow() {
-    @return 0 0 50px var(--dropdown-box-shadow-color);
+    @return 0 0.15rem 0.5rem 0.25rem var(--dropdown-box-shadow-color);
 }
 
 // Animations
 $base-duration: 150ms;
+$fast-duration: 80ms;
 $base-timing: ease;
 $slow-transition-in: $base-duration * 2 ease-in;
 $slow-transition-out: $base-duration ease-out;
+$fast-transition-in: $fast-duration ease-in;
+$fast-transition-out: $fast-duration ease-out;
 $tip-transition-in: 500ms $ease-in-expo;
 $tip-transition-out: $slow-transition-out;
 
@@ -90,3 +84,7 @@ $z-index-modal: 100000;
 // Screen sizes
 $tablet-width: 736px;
 $mobile-width: 620px;
+
+// Title bar and window buttons
+$titlebar-custom-height: 32px;
+$titlebar-close-button-background-color: #d71525;

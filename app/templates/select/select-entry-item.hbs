@@ -1,0 +1,18 @@
+<tr class="select-entry__item {{#if active}}select-entry__item--active{{/if}}" data-id="{{id}}"
+    id="select-entry__item--{{id}}">
+    <td class="select-entry__item-icon-cell">
+        {{~#if customIcon~}}
+            <img src="{{customIcon}}" class="select-entry__item-icon select-entry__item-icon--custom {{#if color}}{{color}}{{/if}}" />
+        {{~else~}}
+            <i class="fa fa-{{icon}} {{#if color}}{{color}}-color{{/if}} select-entry__item-icon"></i>
+        {{~/if~}}
+    </td>
+    <td class="select-entry__item-title-cell">{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</td>
+    <td class="select-entry__item-user-cell">{{user}}</td>
+    <td class="select-entry__item-url-cell">{{url}}</td>
+    {{#if itemOptions}}
+        <td class="select-entry__item-options">
+            <i class="fa fa-ellipsis-h"></i>
+        </td>
+    {{/if}}
+</tr>

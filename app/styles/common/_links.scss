@@ -1,0 +1,43 @@
+a {
+    color: var(--text-color);
+    text-decoration: none;
+    display: inline-block;
+    transition: color $base-duration $base-timing;
+    cursor: pointer;
+    height: 1.2em;
+    border-bottom: 1px dotted;
+
+    &.no-border {
+        border-bottom: none;
+    }
+
+    &.icon-link {
+        @include area-selectable();
+        border-bottom: none;
+        display: inline-block;
+        text-align: center;
+        font-size: 1.1em;
+        width: 1.8em;
+        height: 1.6em;
+        border-radius: var(--button-border-radius);
+
+        > i {
+            position: relative;
+            top: 0.1em;
+        }
+
+        &:active,
+        &:focus,
+        &:hover {
+            outline: none;
+            border-bottom: none;
+        }
+    }
+
+    &:active,
+    &:focus,
+    &:hover {
+        outline: none;
+        border-bottom: 1px solid;
+    }
+}

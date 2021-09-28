@@ -5,16 +5,12 @@
     {{#each fields as |field|}}
         <tr>
             <td>{{field.title}}</td>
-            <td>
-                {{#if field.protect}}
+            <td class="field">
+                {{~#if field.protect~}}
                     <code>{{field.value}}</code>
-                {{else}}
-                    {{#if field.html}}
-                        {{{field.value}}}
-                    {{else}}
-                        {{field.value}}
-                    {{/if}}
-                {{/if}}
+                {{~else~}}
+                    {{field.value}}
+                {{~/if~}}
             </td>
         </tr>
     {{/each}}
@@ -36,7 +32,7 @@
                 <td>{{res 'detAttachments'}}</td>
                 <td>
                     {{#each attachments as |attachment|}}
-                        <a href="{{{attachment.data}}}" download="{{attachment.name}}">{{attachment.name}}</a>
+                        <a href="{{attachment.data}}" download="{{attachment.name}}">{{attachment.name}}</a>
                         {{~#unless @last}},&nbsp;{{/unless}}
                     {{/each}}
                 </td>

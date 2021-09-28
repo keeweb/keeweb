@@ -1,7 +1,7 @@
 import { Events } from 'framework/events';
 import { View } from 'framework/views/view';
 import { GeneratorPresets } from 'comp/app/generator-presets';
-import { PasswordGenerator } from 'util/generators/password-generator';
+import { PasswordGenerator, CharRanges } from 'util/generators/password-generator';
 import { Locale } from 'util/locale';
 import { Scrollable } from 'framework/views/scrollable';
 import template from 'templates/generator-presets.hbs';
@@ -16,12 +16,14 @@ class GeneratorPresetsView extends View {
         'change .gen-ps__list': 'changePreset',
         'click .gen-ps__btn-create': 'createPreset',
         'click .gen-ps__btn-delete': 'deletePreset',
+        'click .info-btn--pattern': 'togglePatternHelp',
         'input #gen-ps__field-title': 'changeTitle',
         'change #gen-ps__check-enabled': 'changeEnabled',
         'change #gen-ps__check-default': 'changeDefault',
         'input #gen-ps__field-length': 'changeLength',
         'change .gen-ps__check-range': 'changeRange',
-        'input #gen-ps__field-include': 'changeInclude'
+        'input #gen-ps__field-include': 'changeInclude',
+        'input #gen-ps__field-pattern': 'changePattern'
     };
 
     selected = null;
@@ -30,8 +32,8 @@ class GeneratorPresetsView extends View {
 
     render() {
         this.presets = GeneratorPresets.all;
-        if (!this.selected || !this.presets.some(p => p.name === this.selected)) {
-            this.selected = (this.presets.filter(p => p.default)[0] || this.presets[0]).name;
+        if (!this.selected || !this.presets.some((p) => p.name === this.selected)) {
+            this.selected = (this.presets.filter((p) => p.default)[0] || this.presets[0]).name;
         }
         super.render({
             presets: this.presets,
@@ -59,20 +61,20 @@ class GeneratorPresetsView extends View {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
         };
         return ['Upper', 'Lower', 'Digits', 'Special', 'Brackets', 'High', 'Ambiguous'].map(
-            name => {
+            (name) => {
                 const nameLower = name.toLowerCase();
                 return {
                     name: nameLower,
                     title: Locale['genPs' + name],
                     enabled: sel[nameLower],
-                    sample: rangeOverride[nameLower] || PasswordGenerator.charRanges[nameLower]
+                    sample: rangeOverride[nameLower] || CharRanges[nameLower]
                 };
             }
         );
     }
 
     getPreset(name) {
-        return this.presets.filter(p => p.name === name)[0];
+        return this.presets.filter((p) => p.name === name)[0];
     }
 
     returnToApp() {
@@ -90,7 +92,7 @@ class GeneratorPresetsView extends View {
         for (let i = 1; ; i++) {
             const newName = 'Custom' + i;
             const newTitle = Locale.genPsNew + ' ' + i;
-            if (!this.presets.filter(p => p.name === newName || p.title === newTitle).length) {
+            if (!this.presets.filter((p) => p.name === newName || p.title === newTitle).length) {
                 name = newName;
                 title = newTitle;
                 break;
@@ -119,12 +121,18 @@ class GeneratorPresetsView extends View {
         this.render();
     }
 
+    togglePatternHelp() {
+        this.$el.find('.gen-ps__pattern-help').toggleClass('hide');
+    }
+
     changeTitle(e) {
         const title = $.trim(e.target.value);
         if (title && title !== this.getPreset(this.selected).title) {
-            let duplicate = this.presets.some(p => p.title.toLowerCase() === title.toLowerCase());
+            let duplicate = this.presets.some((p) => p.title.toLowerCase() === title.toLowerCase());
             if (!duplicate) {
-                duplicate = this.reservedTitles.some(p => p.toLowerCase() === title.toLowerCase());
+                duplicate = this.reservedTitles.some(
+                    (p) => p.toLowerCase() === title.toLowerCase()
+                );
             }
             if (duplicate) {
                 $(e.target).addClass('input--error');
@@ -171,6 +179,15 @@ class GeneratorPresetsView extends View {
         const include = e.target.value;
         if (include !== this.getPreset(this.selected).include) {
             GeneratorPresets.setPreset(this.selected, { include });
+        }
+        this.presets = GeneratorPresets.all;
+        this.renderExample();
+    }
+
+    changePattern(e) {
+        const pattern = e.target.value;
+        if (pattern !== this.getPreset(this.selected).pattern) {
+            GeneratorPresets.setPreset(this.selected, { pattern });
         }
         this.presets = GeneratorPresets.all;
         this.renderExample();

@@ -3,10 +3,10 @@ import { Model } from 'framework/model';
 class AttachmentModel extends Model {
     getBinary() {
         let data = this.data;
-        if (data && data.ref) {
+        if (data?.value) {
             data = data.value;
         }
-        if (data && data.getBinary) {
+        if (data?.getBinary) {
             data = data.getBinary();
         }
         if (data instanceof ArrayBuffer && data.byteLength) {
@@ -48,7 +48,7 @@ function getIcon(ext) {
         case 'log':
         case 'rtf':
         case 'pem':
-            return 'file-text-o';
+            return 'file-alt';
         case 'html':
         case 'htm':
         case 'js':
@@ -74,9 +74,9 @@ function getIcon(ext) {
         case 'yml':
         case 'asm':
         case 'bat':
-            return 'file-code-o';
+            return 'file-code';
         case 'pdf':
-            return 'file-pdf-o';
+            return 'file-pdf';
         case 'zip':
         case 'rar':
         case 'bz':
@@ -89,16 +89,16 @@ function getIcon(ext) {
         case 'ace':
         case 'dmg':
         case 'jar':
-            return 'file-archive-o';
+            return 'file-archive';
         case 'doc':
         case 'docx':
-            return 'file-word-o';
+            return 'file-word';
         case 'xls':
         case 'xlsx':
-            return 'file-excel-o';
+            return 'file-excel';
         case 'ppt':
         case 'pptx':
-            return 'file-powerpoint-o';
+            return 'file-powerpoint';
         case 'jpeg':
         case 'jpg':
         case 'png':
@@ -108,7 +108,7 @@ function getIcon(ext) {
         case 'svg':
         case 'ico':
         case 'psd':
-            return 'file-image-o';
+            return 'file-image';
         case 'avi':
         case 'mp4':
         case '3gp':
@@ -117,13 +117,13 @@ function getIcon(ext) {
         case 'mpeg':
         case 'mpg':
         case 'mpe':
-            return 'file-video-o';
+            return 'file-video';
         case 'mp3':
         case 'wav':
         case 'flac':
-            return 'file-audio-o';
+            return 'file-audio';
     }
-    return 'file-o';
+    return 'file';
 }
 
 function getMimeType(ext) {

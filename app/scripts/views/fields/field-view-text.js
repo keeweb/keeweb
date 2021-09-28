@@ -1,4 +1,4 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { Events } from 'framework/events';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
@@ -24,7 +24,11 @@ class FieldViewText extends FieldView {
             if (value && value.isProtected) {
                 value = value.getText();
             }
-            return MdToHtml.convert(value);
+            const converted = MdToHtml.convert(value);
+            if (converted.html) {
+                return converted.html;
+            }
+            value = converted.text;
         }
         return value && value.isProtected
             ? PasswordPresenter.presentValueWithLineBreaks(value)
@@ -40,7 +44,7 @@ class FieldViewText extends FieldView {
         const isProtected = !!(this.value && this.value.isProtected);
         this.$el.toggleClass('details__field--protected', isProtected);
         this.input = $(document.createElement(this.model.multiline ? 'textarea' : 'input'));
-        this.valueEl.html('').append(this.input);
+        this.valueEl.empty().append(this.input);
         this.input
             .attr({ autocomplete: 'off', spellcheck: 'false' })
             .val(text)
@@ -53,11 +57,11 @@ class FieldViewText extends FieldView {
             click: this.fieldValueInputClick.bind(this),
             mousedown: this.fieldValueInputMouseDown.bind(this)
         });
-        const fieldValueBlurBound = e => this.fieldValueBlur(e);
+        const fieldValueBlurBound = (e) => this.fieldValueBlur(e);
         Events.on('click', fieldValueBlurBound);
         this.stopBlurListener = () => Events.off('click', fieldValueBlurBound);
         this.listenTo(Events, 'main-window-will-close', this.externalEndEdit);
-        this.listenTo(Events, 'user-idle', this.externalEndEdit);
+        this.listenTo(Events, 'before-user-idle', this.externalEndEdit);
         if (this.model.multiline) {
             this.setInputHeight();
         }
@@ -78,7 +82,7 @@ class FieldViewText extends FieldView {
 
     createMobileControls() {
         this.mobileControls = {};
-        ['cancel', 'apply'].forEach(action => {
+        ['cancel', 'apply'].forEach((action) => {
             this.mobileControls[action] = $('<div/>')
                 .addClass('details__field-value-btn details__field-value-btn-' + action)
                 .appendTo(this.labelEl)
@@ -105,8 +109,16 @@ class FieldViewText extends FieldView {
         } else {
             const fieldRect = this.input[0].getBoundingClientRect();
             const shadowSpread = parseInt(this.input.css('--focus-shadow-spread')) || 0;
+            const pos = { left: fieldRect.left };
+            const top = fieldRect.bottom + shadowSpread;
+            const windowHeight = document.documentElement.clientHeight;
+            if (top > windowHeight / 2 && top > 200) {
+                pos.bottom = windowHeight - fieldRect.top + shadowSpread;
+            } else {
+                pos.top = top;
+            }
             this.gen = new GeneratorView({
-                pos: { left: fieldRect.left, top: fieldRect.bottom + shadowSpread },
+                pos,
                 password: this.value
             });
             this.gen.render();

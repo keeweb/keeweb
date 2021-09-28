@@ -14,6 +14,16 @@
                     {{/each}}
                     </select>
                 </div>
+            {{else ifeq type 'checkbox'}}
+                <input type="checkbox"
+                       class="input-base settings__general-prv-field settings__input settings__general-prv-field-check"
+                       id="settings__general-prv-field-check-{{id}}"
+                       {{#if value}}checked{{/if}}
+                       value="{{value}}"
+                       data-id="{{id}}"
+                />
+                <label for="settings__general-prv-field-check-{{id}}">{{res title}}</label>
+                {{#if desc}}<div class="settings__general-prv-field-desc muted-color">{{res desc}}</div>{{/if}}
             {{else}}
                 <label for="settings__general-prv-field-txt-{{id}}">{{res title}}:</label>
                 {{#if desc}}<div class="settings__general-prv-field-desc muted-color">{{res desc}}</div>{{/if}}
@@ -25,7 +35,7 @@
                        data-id="{{id}}"
                        {{#if placeholder}}placeholder="{{res placeholder}}"{{/if}}
                     {{#if required}}required{{/if}}
-                    {{#if pattern}}pattern="{{{pattern}}}"{{/if}}
+                    {{#if pattern}}pattern="{{pattern}}"{{/if}}
                 />
             {{/ifeq}}
         {{/each}}

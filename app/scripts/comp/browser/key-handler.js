@@ -44,7 +44,7 @@ class KeyHandler {
     offKey(key, handler, thisArg) {
         if (this.shortcuts[key]) {
             this.shortcuts[key] = this.shortcuts[key].filter(
-                sh => sh.handler !== handler || sh.thisArg !== thisArg
+                (sh) => sh.handler !== handler || sh.thisArg !== thisArg
             );
         }
     }
@@ -59,7 +59,7 @@ class KeyHandler {
         const keyShortcuts = this.shortcuts[code];
         if (keyShortcuts && keyShortcuts.length) {
             for (const sh of keyShortcuts) {
-                if (FocusManager.modal && (sh.modal !== FocusManager.modal && sh.modal !== '*')) {
+                if (FocusManager.modal && sh.modal !== FocusManager.modal && sh.modal !== '*') {
                     e.stopPropagation();
                     continue;
                 }

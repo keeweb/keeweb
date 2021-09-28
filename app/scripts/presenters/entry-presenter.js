@@ -1,7 +1,7 @@
-import { DateFormat } from 'util/formatting/date-format';
+import { DateFormat } from 'comp/i18n/date-format';
 import { Locale } from 'util/locale';
 
-const EntryPresenter = function(descField, noColor, activeEntryId) {
+const EntryPresenter = function (descField, noColor, activeEntryId) {
     this.entry = null;
     this.descField = descField;
     this.noColor = noColor || '';
@@ -12,10 +12,14 @@ EntryPresenter.prototype = {
     present(item) {
         if (item.entry) {
             this.entry = item;
-        } else {
+        } else if (item.group) {
             this.group = item;
         }
         return this;
+    },
+    reset() {
+        this.entry = null;
+        this.group = null;
     },
     get id() {
         return this.entry ? this.entry.id : this.group.id;
@@ -68,6 +72,9 @@ EntryPresenter.prototype = {
         if (!this.entry) {
             return '[' + Locale.listGroup + ']';
         }
+        if (this.entry.backend === 'otp-device') {
+            return this.entry.description;
+        }
         switch (this.descField) {
             case 'website':
                 return this.url || '(' + Locale.listNoWebsite + ')';
@@ -79,7 +86,7 @@ EntryPresenter.prototype = {
                 return this.updated;
             case 'attachments':
                 return (
-                    this.entry.attachments.map(a => a.title).join(', ') ||
+                    this.entry.attachments.map((a) => a.title).join(', ') ||
                     '(' + Locale.listNoAttachments + ')'
                 );
             default:

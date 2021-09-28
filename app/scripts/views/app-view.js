@@ -6,7 +6,6 @@ import { Launcher } from 'comp/launcher';
 import { SettingsManager } from 'comp/settings/settings-manager';
 import { Alerts } from 'comp/ui/alerts';
 import { Keys } from 'const/keys';
-import { Timeouts } from 'const/timeouts';
 import { UpdateModel } from 'models/update-model';
 import { Features } from 'util/features';
 import { Locale } from 'util/locale';
@@ -26,6 +25,7 @@ import { OpenView } from 'views/open-view';
 import { SettingsView } from 'views/settings/settings-view';
 import { TagView } from 'views/tag-view';
 import { ImportCsvView } from 'views/import-csv-view';
+import { TitlebarView } from 'views/titlebar-view';
 import template from 'templates/app.hbs';
 
 class AppView extends View {
@@ -46,6 +46,9 @@ class AppView extends View {
 
     constructor(model) {
         super(model);
+
+        this.titlebarStyle = this.model.settings.titlebarStyle;
+
         this.views.menu = new MenuView(this.model.menu, { ownParent: true });
         this.views.menuDrag = new DragView('x', { parent: '.app__menu-drag' });
         this.views.footer = new FooterView(this.model, { ownParent: true });
@@ -55,15 +58,17 @@ class AppView extends View {
         this.views.list.dragView = this.views.listDrag;
         this.views.details = new DetailsView(undefined, { ownParent: true });
         this.views.details.appModel = this.model;
+        if (this.titlebarStyle !== 'default' && Features.renderCustomTitleBar) {
+            this.views.titlebar = new TitlebarView(this.model);
+        }
 
         this.views.menu.listenDrag(this.views.menuDrag);
         this.views.list.listenDrag(this.views.listDrag);
 
-        this.titlebarStyle = this.model.settings.titlebarStyle;
-
         this.listenTo(this.model.settings, 'change:theme', this.setTheme);
         this.listenTo(this.model.settings, 'change:locale', this.setLocale);
         this.listenTo(this.model.settings, 'change:fontSize', this.setFontSize);
+        this.listenTo(this.model.settings, 'change:autoSaveInterval', this.setupAutoSave);
         this.listenTo(this.model.files, 'change', this.fileListUpdated);
 
         this.listenTo(Events, 'select-all', this.selectAll);
@@ -77,6 +82,7 @@ class AppView extends View {
         this.listenTo(Events, 'toggle-settings', this.toggleSettings);
         this.listenTo(Events, 'toggle-menu', this.toggleMenu);
         this.listenTo(Events, 'toggle-details', this.toggleDetails);
+        this.listenTo(Events, 'show-open-view', this.showOpenIfNotThere);
         this.listenTo(Events, 'edit-group', this.editGroup);
         this.listenTo(Events, 'edit-tag', this.editTag);
         this.listenTo(Events, 'edit-generator-presets', this.editGeneratorPresets);
@@ -87,10 +93,10 @@ class AppView extends View {
         this.listenTo(Events, 'app-minimized', this.appMinimized);
         this.listenTo(Events, 'show-context-menu', this.showContextMenu);
         this.listenTo(Events, 'second-instance', this.showSingleInstanceAlert);
-        this.listenTo(Events, 'file-modified', this.handleAutoSaveTimer);
         this.listenTo(Events, 'enter-full-screen', this.enterFullScreen);
         this.listenTo(Events, 'leave-full-screen', this.leaveFullScreen);
         this.listenTo(Events, 'import-csv-requested', this.showImportCsv);
+        this.listenTo(Events, 'launcher-before-quit', this.launcherBeforeQuit);
         this.listenTo(Events, 'close-all', this.closeAllFilesAndShowFirst);
         this.listenTo(UpdateModel, 'change:updateReady', this.updateApp);
 
@@ -109,39 +115,31 @@ class AppView extends View {
             );
         }
 
-        setInterval(this.syncAllByTimer.bind(this), Timeouts.AutoSync);
-
         this.setWindowClass();
-        this.fixClicksInEdge();
+        this.setupAutoSave();
     }
 
     setWindowClass() {
-        const getBrowserCssClass = Features.getBrowserCssClass();
-        if (getBrowserCssClass) {
-            document.body.classList.add(getBrowserCssClass);
+        const browserCssClass = Features.browserCssClass;
+        if (browserCssClass) {
+            document.body.classList.add(browserCssClass);
         }
         if (this.titlebarStyle !== 'default') {
             document.body.classList.add('titlebar-' + this.titlebarStyle);
+            if (Features.renderCustomTitleBar) {
+                document.body.classList.add('titlebar-custom');
+            }
         }
-    }
-
-    fixClicksInEdge() {
-        // MS Edge doesn't want to handle clicks by default
-        // TODO: remove once Edge 14 share drops enough
-        // https://github.com/keeweb/keeweb/issues/636#issuecomment-304225634
-        // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5782378/
-        if (Features.needFixClicks) {
-            const msEdgeScrewer = $('<input/>')
-                .appendTo(this.$el)
-                .focus();
-            setTimeout(() => msEdgeScrewer.remove(), 0);
+        if (Features.isMobile) {
+            document.body.classList.add('mobile');
         }
     }
 
     render() {
         super.render({
             beta: this.model.isBeta,
-            titlebarStyle: this.titlebarStyle
+            titlebarStyle: this.titlebarStyle,
+            customTitlebar: Features.renderCustomTitleBar
         });
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.render();
@@ -151,13 +149,14 @@ class AppView extends View {
         this.views.list.render();
         this.views.listDrag.render();
         this.views.details.render();
+        this.views.titlebar?.render();
         this.showLastOpenFile();
     }
 
     showOpenFile() {
         this.hideContextMenu();
         this.views.menu.hide();
-        this.views.menuDrag.hide();
+        this.views.menuDrag.$el.parent().hide();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
@@ -172,9 +171,6 @@ class AppView extends View {
         this.views.open.render();
         this.views.open.on('close', () => {
             this.showEntries();
-        });
-        this.views.open.on('remove', () => {
-            Events.emit('closed-open-view');
         });
     }
 
@@ -202,9 +198,8 @@ class AppView extends View {
 
     showEntries() {
         this.views.menu.show();
-        this.views.menuDrag.show();
+        this.views.menuDrag.$el.parent().show();
         this.views.listWrap.show();
-        this.views.list.show();
         this.views.listDrag.show();
         this.views.details.show();
         this.views.footer.show();
@@ -213,6 +208,8 @@ class AppView extends View {
         this.hideSettings();
         this.hideKeyChange();
         this.hideImportCsv();
+
+        this.views.list.show();
     }
 
     hideOpenFile() {
@@ -266,7 +263,7 @@ class AppView extends View {
     showSettings(selectedMenuItem) {
         this.model.menu.setMenu('settings');
         this.views.menu.show();
-        this.views.menuDrag.show();
+        this.views.menuDrag.$el.parent().show();
         this.views.listWrap.hide();
         this.views.list.hide();
         this.views.listDrag.hide();
@@ -321,12 +318,14 @@ class AppView extends View {
             this.showEntries();
         } else {
             this.showOpenFile();
+            this.selectLastOpenFile();
         }
-        this.fixClicksInEdge();
     }
 
     showFileSettings(e) {
-        const menuItem = this.model.menu.filesSection.items.find(item => item.file.id === e.fileId);
+        const menuItem = this.model.menu.filesSection.items.find(
+            (item) => item.file.id === e.fileId
+        );
         if (this.views.settings) {
             if (this.views.settings.file === menuItem.file) {
                 this.showEntries();
@@ -348,6 +347,17 @@ class AppView extends View {
         }
     }
 
+    launcherBeforeQuit() {
+        // this is currently called only on macos
+        const event = {
+            preventDefault() {}
+        };
+        const result = this.beforeUnload(event);
+        if (result !== false) {
+            Launcher.exit();
+        }
+    }
+
     beforeUnload(e) {
         const exitEvent = {
             preventDefault() {
@@ -356,28 +366,36 @@ class AppView extends View {
         };
         Events.emit('main-window-will-close', exitEvent);
         if (exitEvent.prevented) {
-            Launcher.preventExit(e);
-            return;
+            return Launcher ? Launcher.preventExit(e) : false;
         }
+
+        let minimizeInsteadOfClose = this.model.settings.minimizeOnClose;
+        if (Launcher?.quitOnRealQuitEventIfMinimizeOnQuitIsEnabled()) {
+            minimizeInsteadOfClose = false;
+        }
+
         if (this.model.files.hasDirtyFiles()) {
-            const exit = () => {
-                if (Launcher.canMinimize() && this.model.settings.minimizeOnClose) {
-                    Launcher.minimizeApp();
-                } else {
-                    Launcher.exit();
-                }
-            };
-            if (Launcher && Launcher.exitRequested) {
-                return;
-            }
             if (Launcher) {
+                const exit = () => {
+                    if (minimizeInsteadOfClose) {
+                        Launcher.minimizeApp();
+                    } else {
+                        Launcher.exit();
+                    }
+                };
+                if (Launcher.exitRequested) {
+                    return;
+                }
                 if (!this.exitAlertShown) {
                     if (this.model.settings.autoSave) {
-                        this.saveAndLock(result => {
-                            if (result) {
-                                exit();
-                            }
-                        });
+                        this.saveAndLock(
+                            (result) => {
+                                if (result) {
+                                    exit();
+                                }
+                            },
+                            { appClosing: true }
+                        );
                         return Launcher.preventExit(e);
                     }
                     this.exitAlertShown = true;
@@ -389,13 +407,16 @@ class AppView extends View {
                             { result: 'exit', title: Locale.discardChanges, error: true },
                             { result: '', title: Locale.appDontExitBtn }
                         ],
-                        success: result => {
+                        success: (result) => {
                             if (result === 'save') {
-                                this.saveAndLock(result => {
-                                    if (result) {
-                                        exit();
-                                    }
-                                });
+                                this.saveAndLock(
+                                    (result) => {
+                                        if (result) {
+                                            exit();
+                                        }
+                                    },
+                                    { appClosing: true }
+                                );
                             } else {
                                 exit();
                             }
@@ -415,10 +436,10 @@ class AppView extends View {
             Launcher &&
             !Launcher.exitRequested &&
             !Launcher.restartPending &&
-            Launcher.canMinimize() &&
-            this.model.settings.minimizeOnClose
+            minimizeInsteadOfClose
         ) {
             Launcher.minimizeApp();
+            this.appMinimized();
             return Launcher.preventExit(e);
         }
     }
@@ -540,24 +561,10 @@ class AppView extends View {
         }
     }
 
-    handleAutoSaveTimer() {
-        if (this.model.settings.autoSaveInterval !== 0) {
-            // trigger periodical auto save
-            if (this.autoSaveTimeoutId) {
-                clearTimeout(this.autoSaveTimeoutId);
-            }
-            this.autoSaveTimeoutId = setTimeout(
-                this.saveAll.bind(this),
-                this.model.settings.autoSaveInterval * 1000 * 60
-            );
-        }
-    }
-
-    saveAndLock(complete) {
+    saveAndLock(complete, options) {
         let pendingCallbacks = 0;
         const errorFiles = [];
-        const that = this;
-        this.model.files.forEach(function(file) {
+        this.model.files.forEach(function (file) {
             if (!file.dirty) {
                 return;
             }
@@ -572,22 +579,46 @@ class AppView extends View {
                 errorFiles.push(file.name);
             }
             if (--pendingCallbacks === 0) {
-                if (errorFiles.length && that.model.files.hasDirtyFiles()) {
+                if (errorFiles.length && this.model.files.hasDirtyFiles()) {
                     if (!Alerts.alertDisplayed) {
-                        const alertBody =
+                        const buttons = [Alerts.buttons.ok];
+                        const errorStr =
                             errorFiles.length > 1
                                 ? Locale.appSaveErrorBodyMul
                                 : Locale.appSaveErrorBody;
+                        let body = errorStr + ' ' + errorFiles.join(', ') + '.';
+                        if (options?.appClosing) {
+                            buttons.unshift({
+                                result: 'ignore',
+                                title: Locale.appSaveErrorExitLoseChanges,
+                                error: true
+                            });
+                            body += '\n' + Locale.appSaveErrorExitLoseChangesBody;
+                        }
                         Alerts.error({
                             header: Locale.appSaveError,
-                            body: alertBody + ' ' + errorFiles.join(', ')
+                            body,
+                            buttons,
+                            complete: (res) => {
+                                if (res === 'ignore') {
+                                    this.model.closeAllFiles();
+                                    if (complete) {
+                                        complete(true);
+                                    }
+                                } else {
+                                    if (complete) {
+                                        complete(false);
+                                    }
+                                }
+                            }
                         });
-                    }
-                    if (complete) {
-                        complete(true);
+                    } else {
+                        if (complete) {
+                            complete(false);
+                        }
                     }
                 } else {
-                    that.closeAllFilesAndShowFirst();
+                    this.closeAllFilesAndShowFirst();
                     if (complete) {
                         complete(true);
                     }
@@ -597,7 +628,12 @@ class AppView extends View {
     }
 
     async closeAllFilesAndShowFirst() {
-        let fileToShow = this.model.files.find(file => !file.demo && !file.created);
+        if (!this.model.files.hasOpenFiles()) {
+            return;
+        }
+        let fileToShow = this.model.files.find(
+            (file) => !file.demo && !file.created && !file.skipOpenList
+        );
         this.model.closeAllFiles();
         if (!fileToShow) {
             fileToShow = this.model.fileInfos[0];
@@ -614,15 +650,28 @@ class AppView extends View {
         }
     }
 
+    selectLastOpenFile() {
+        const fileToShow = this.model.fileInfos[0];
+        if (fileToShow) {
+            this.views.open.showOpenFileInfo(fileToShow);
+        }
+    }
+
     saveAll() {
-        this.model.files.forEach(function(file) {
+        this.model.files.forEach(function (file) {
             this.model.syncFile(file);
         }, this);
     }
 
-    syncAllByTimer() {
-        if (this.model.settings.autoSave) {
-            this.saveAll();
+    setupAutoSave() {
+        if (this.autoSaveTimer) {
+            clearInterval(this.autoSaveTimer);
+        }
+        if (this.model.settings.autoSaveInterval > 0) {
+            this.autoSaveTimer = setInterval(
+                this.saveAll.bind(this),
+                this.model.settings.autoSaveInterval * 1000 * 60
+            );
         }
     }
 
@@ -654,10 +703,14 @@ class AppView extends View {
         }
     }
 
-    toggleSettings(page) {
+    toggleSettings(page, section) {
         let menuItem = page ? this.model.menu[page + 'Section'] : null;
         if (menuItem) {
-            menuItem = menuItem.items[0];
+            if (section) {
+                menuItem = menuItem.items.find((it) => it.section === section) || menuItem.items[0];
+            } else {
+                menuItem = menuItem.items[0];
+            }
         }
         if (this.views.settings) {
             if (this.views.settings.page === page || !menuItem) {
@@ -668,9 +721,7 @@ class AppView extends View {
                     this.views.open.toggleMore();
                 }
             } else {
-                if (menuItem) {
-                    this.model.menu.select({ item: menuItem });
-                }
+                this.model.menu.select({ item: menuItem });
             }
         } else {
             this.showSettings();
@@ -687,6 +738,12 @@ class AppView extends View {
     toggleDetails(visible) {
         this.$el.toggleClass('app--details-visible', visible);
         this.views.menu.switchVisibility(false);
+    }
+
+    showOpenIfNotThere() {
+        if (!this.views.open) {
+            this.showLastOpenFile();
+        }
     }
 
     editGroup(group) {
@@ -739,8 +796,8 @@ class AppView extends View {
                 position: { left: e.pageX, top: e.pageY },
                 options: e.options
             });
-            menu.on('cancel', e => this.hideContextMenu());
-            menu.on('select', e => this.contextMenuSelect(e));
+            menu.on('cancel', (e) => this.hideContextMenu());
+            menu.on('select', (e) => this.contextMenuSelect(e));
             this.views.contextMenu = menu;
         }
     }
@@ -798,7 +855,10 @@ class AppView extends View {
     extLinkClick(e) {
         if (Launcher) {
             e.preventDefault();
-            Launcher.openLink(e.target.href);
+            const link = e.target.closest('a');
+            if (link?.href) {
+                Launcher.openLink(link.href);
+            }
         }
     }
 
@@ -811,7 +871,7 @@ class AppView extends View {
         const reader = new FileReader();
         const logger = new Logger('import-csv');
         logger.info('Reading CSV...');
-        reader.onload = e => {
+        reader.onload = (e) => {
             logger.info('Parsing CSV...');
             const ts = logger.ts();
             const parser = new CsvParser();

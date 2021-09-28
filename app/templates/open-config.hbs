@@ -9,7 +9,7 @@
             autocomplete="off" autocapitalize="off"
             {{#if placeholder}}placeholder="{{res placeholder}}"{{/if}}
             {{#if required}}required{{/if}}
-            {{#if pattern}}pattern="{{{pattern}}}"{{/if}}
+            {{#if pattern}}pattern="{{pattern}}"{{/if}}
         />
         {{/each}}
     </div>
@@ -19,7 +19,7 @@
         <button class="btn-silent open__config-btn-cancel">{{res 'alertCancel'}}</button>
         <button class="open__config-btn-ok">
             <span class="open__config-btn-ok-text">{{res 'alertOk'}}</span>
-            <i class="open__config-btn-ok-spinner fa fa-spinner fa-spin"></i>
+            <i class="open__config-btn-ok-spinner fa fa-spinner spin"></i>
         </button>
     </div>
     {{/if}}

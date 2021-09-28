@@ -1,13 +1,16 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import demoFileData from 'demo.kdbx';
 import { Model } from 'framework/model';
 import { Events } from 'framework/events';
 import { GroupCollection } from 'collections/group-collection';
 import { KdbxToHtml } from 'comp/format/kdbx-to-html';
 import { GroupModel } from 'models/group-model';
+import { AppSettingsModel } from 'models/app-settings-model';
 import { IconUrlFormat } from 'util/formatting/icon-url-format';
 import { Logger } from 'util/logger';
-import { mapObject } from 'util/fn';
+import { Locale } from 'util/locale';
+import { StringFormat } from 'util/formatting/string-format';
+import { ChalRespCalculator } from 'comp/app/chal-resp-calculator';
 
 const logger = new Logger('file');
 
@@ -22,12 +25,15 @@ class FileModel extends Model {
 
     open(password, fileData, keyFileData, callback) {
         try {
-            const credentials = new kdbxweb.Credentials(password, keyFileData);
+            const challengeResponse = ChalRespCalculator.build(this.chalResp);
+            const credentials = new kdbxweb.Credentials(password, keyFileData, challengeResponse);
             const ts = logger.ts();
 
             kdbxweb.Kdbx.load(fileData, credentials)
-                .then(db => {
+                .then((db) => {
                     this.db = db;
+                })
+                .then(() => {
                     this.readModel();
                     this.setOpenFile({ passwordLength: password ? password.textLength : 0 });
                     if (keyFileData) {
@@ -39,14 +45,14 @@ class FileModel extends Model {
                             ': ' +
                             logger.ts(ts) +
                             ', ' +
-                            this.kdfArgsToString(db.header) +
+                            this.kdfArgsToString(this.db.header) +
                             ', ' +
                             Math.round(fileData.byteLength / 1024) +
                             ' kB'
                     );
                     callback();
                 })
-                .catch(err => {
+                .catch((err) => {
                     if (
                         err.code === kdbxweb.Consts.ErrorCodes.InvalidKey &&
                         password &&
@@ -70,14 +76,14 @@ class FileModel extends Model {
         if (header.kdfParameters) {
             return header.kdfParameters
                 .keys()
-                .map(key => {
+                .map((key) => {
                     const val = header.kdfParameters.get(key);
                     if (val instanceof ArrayBuffer) {
                         return undefined;
                     }
                     return key + '=' + val;
                 })
-                .filter(p => p)
+                .filter((p) => p)
                 .join('&');
         } else if (header.keyEncryptionRounds) {
             return header.keyEncryptionRounds + ' rounds';
@@ -86,13 +92,14 @@ class FileModel extends Model {
         }
     }
 
-    create(name) {
+    create(name, callback) {
         const password = kdbxweb.ProtectedValue.fromString('');
         const credentials = new kdbxweb.Credentials(password);
         this.db = kdbxweb.Kdbx.create(credentials, name);
         this.name = name;
         this.readModel();
         this.set({ active: true, created: true, name });
+        callback();
     }
 
     importWithXml(fileXml, callback) {
@@ -101,14 +108,16 @@ class FileModel extends Model {
             const password = kdbxweb.ProtectedValue.fromString('');
             const credentials = new kdbxweb.Credentials(password);
             kdbxweb.Kdbx.loadXml(fileXml, credentials)
-                .then(db => {
+                .then((db) => {
                     this.db = db;
+                })
+                .then(() => {
                     this.readModel();
                     this.set({ active: true, created: true });
                     logger.info('Imported file ' + this.name + ': ' + logger.ts(ts));
                     callback();
                 })
-                .catch(err => {
+                .catch((err) => {
                     logger.error('Error importing file', err.code, err.message, err);
                     callback(err);
                 });
@@ -124,13 +133,16 @@ class FileModel extends Model {
         const demoFile = kdbxweb.ByteUtils.arrayToBuffer(
             kdbxweb.ByteUtils.base64ToBytes(demoFileData)
         );
-        kdbxweb.Kdbx.load(demoFile, credentials).then(db => {
-            this.db = db;
-            this.name = 'Demo';
-            this.readModel();
-            this.setOpenFile({ passwordLength: 4, demo: true });
-            callback();
-        });
+        kdbxweb.Kdbx.load(demoFile, credentials)
+            .then((db) => {
+                this.db = db;
+            })
+            .then(() => {
+                this.name = 'Demo';
+                this.readModel();
+                this.setOpenFile({ passwordLength: 4, demo: true });
+                callback();
+            });
     }
 
     setOpenFile(props) {
@@ -165,7 +177,7 @@ class FileModel extends Model {
             },
             { silent: true }
         );
-        this.db.groups.forEach(function(group) {
+        this.db.groups.forEach(function (group) {
             let groupModel = this.getGroup(this.subId(group.uuid.id));
             if (groupModel) {
                 groupModel.setGroup(group, this);
@@ -185,8 +197,10 @@ class FileModel extends Model {
             if (uuid) {
                 uuid = kdbxweb.ByteUtils.bytesToBase64(uuid);
                 switch (uuid) {
-                    case kdbxweb.Consts.KdfId.Argon2:
-                        return 'Argon2';
+                    case kdbxweb.Consts.KdfId.Argon2d:
+                        return 'Argon2d';
+                    case kdbxweb.Consts.KdfId.Argon2id:
+                        return 'Argon2id';
                     case kdbxweb.Consts.KdfId.Aes:
                         return 'Aes';
                 }
@@ -208,7 +222,8 @@ class FileModel extends Model {
         }
         uuid = kdbxweb.ByteUtils.bytesToBase64(uuid);
         switch (uuid) {
-            case kdbxweb.Consts.KdfId.Argon2:
+            case kdbxweb.Consts.KdfId.Argon2d:
+            case kdbxweb.Consts.KdfId.Argon2id:
                 return {
                     parallelism: kdfParameters.get('P').valueOf(),
                     iterations: kdfParameters.get('I').valueOf(),
@@ -231,9 +246,9 @@ class FileModel extends Model {
         const entryMap = {};
         const groupMap = {};
         this.forEachGroup(
-            group => {
+            (group) => {
                 groupMap[group.id] = group;
-                group.forEachOwnEntry(null, entry => {
+                group.forEachOwnEntry(null, (entry) => {
                     entryMap[entry.id] = entry;
                 });
             },
@@ -245,7 +260,7 @@ class FileModel extends Model {
 
     resolveFieldReferences() {
         const entryMap = this.entryMap;
-        Object.keys(entryMap).forEach(e => {
+        Object.keys(entryMap).forEach((e) => {
             entryMap[e].resolveFieldReferences();
         });
     }
@@ -282,7 +297,7 @@ class FileModel extends Model {
         }
         credentialsPromise.then(() => {
             kdbxweb.Kdbx.load(fileData, credentials)
-                .then(remoteDb => {
+                .then((remoteDb) => {
                     if (this.modified) {
                         try {
                             if (remoteKey && remoteDb.meta.keyChanged > this.db.meta.keyChanged) {
@@ -304,7 +319,7 @@ class FileModel extends Model {
                     this.reload();
                     callback();
                 })
-                .catch(err => {
+                .catch((err) => {
                     logger.error('Error opening file to merge', err.code, err.message, err);
                     callback(err);
                 });
@@ -332,6 +347,9 @@ class FileModel extends Model {
             keyFileChanged: false,
             syncing: false
         });
+        if (this.chalResp && !AppSettingsModel.yubiKeyRememberChalResp) {
+            ChalRespCalculator.clearCache(this.chalResp);
+        }
     }
 
     getEntry(id) {
@@ -356,7 +374,7 @@ class FileModel extends Model {
                 top.forEachOwnEntry(filter, callback);
             }
             if (!filter.group || filter.subGroups) {
-                top.forEachGroup(group => {
+                top.forEachGroup((group) => {
                     group.forEachOwnEntry(filter, callback);
                 }, filter);
             }
@@ -364,7 +382,7 @@ class FileModel extends Model {
     }
 
     forEachGroup(callback, filter) {
-        this.groups.forEach(group => {
+        this.groups.forEach((group) => {
             if (callback(group) !== false) {
                 group.forEachGroup(callback, filter);
             }
@@ -386,7 +404,7 @@ class FileModel extends Model {
     createEntryTemplatesGroup() {
         const rootGroup = this.groups[0];
         const templatesGroup = GroupModel.newGroup(rootGroup, this);
-        templatesGroup.setName('Templates');
+        templatesGroup.setName(StringFormat.capFirst(Locale.templates));
         this.db.meta.entryTemplatesGroup = templatesGroup.group.uuid;
         this.reload();
         return templatesGroup;
@@ -395,7 +413,6 @@ class FileModel extends Model {
     setModified() {
         if (!this.demo) {
             this.set({ modified: true, dirty: true });
-            Events.emit('file-modified');
         }
     }
 
@@ -408,17 +425,17 @@ class FileModel extends Model {
         this.db.cleanup({ binaries: true });
         this.db
             .save()
-            .then(data => {
+            .then((data) => {
                 cb(data);
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.error('Error saving file', this.name, err);
                 cb(undefined, err);
             });
     }
 
     getXml(cb) {
-        this.db.saveXml(true).then(xml => {
+        this.db.saveXml(true).then((xml) => {
             cb(xml);
         });
     }
@@ -451,32 +468,33 @@ class FileModel extends Model {
         this.set({ syncing: true });
     }
 
-    setSyncComplete(path, storage, error, savedToCache) {
+    setSyncComplete(path, storage, error) {
         if (!error) {
             this.db.removeLocalEditState();
         }
         const modified = this.modified && !!error;
-        const dirty = this.dirty && !savedToCache;
         this.set({
             created: false,
             path: path || this.path,
             storage: storage || this.storage,
             modified,
-            dirty,
+            dirty: error ? this.dirty : false,
             syncing: false,
             syncError: error
         });
 
-        const shouldResetFingerprint = this.passwordChanged && this.fingerprint;
-        if (shouldResetFingerprint && !error) {
-            this.fingerprint = null;
+        if (!error && this.passwordChanged && this.encryptedPassword) {
+            this.set({
+                encryptedPassword: null,
+                encryptedPasswordDate: null
+            });
         }
 
         if (!this.open) {
             return;
         }
         this.setOpenFile({ passwordLength: this.passwordLength });
-        this.forEachEntry({ includeDisabled: true }, entry => entry.setSaved());
+        this.forEachEntry({ includeDisabled: true }, (entry) => entry.setSaved());
     }
 
     setPassword(password) {
@@ -502,10 +520,11 @@ class FileModel extends Model {
     }
 
     generateAndSetKeyFile() {
-        const keyFile = kdbxweb.Credentials.createRandomKeyFile();
-        const keyFileName = 'Generated';
-        this.setKeyFile(keyFile, keyFileName);
-        return keyFile;
+        return kdbxweb.Credentials.createRandomKeyFile().then((keyFile) => {
+            const keyFileName = 'Generated';
+            this.setKeyFile(keyFile, keyFileName);
+            return keyFile;
+        });
     }
 
     resetKeyFile() {
@@ -537,6 +556,16 @@ class FileModel extends Model {
         }
         const daysDiff = (Date.now() - this.db.meta.keyChanged) / 1000 / 3600 / 24;
         return daysDiff > expiryDays;
+    }
+
+    setChallengeResponse(chalResp) {
+        if (this.chalResp && !AppSettingsModel.yubiKeyRememberChalResp) {
+            ChalRespCalculator.clearCache(this.chalResp);
+        }
+        this.db.credentials.setChallengeResponse(ChalRespCalculator.build(chalResp));
+        this.db.meta.keyChanged = new Date();
+        this.chalResp = chalResp;
+        this.setModified();
     }
 
     setKeyChange(force, days) {
@@ -622,11 +651,11 @@ class FileModel extends Model {
             trashGroup
                 .getOwnSubGroups()
                 .slice()
-                .forEach(function(group) {
+                .forEach(function (group) {
                     this.db.move(group, null);
                     modified = true;
                 }, this);
-            trashGroup.group.entries.slice().forEach(function(entry) {
+            trashGroup.group.entries.slice().forEach(function (entry) {
                 this.db.move(entry, null);
                 modified = true;
             }, this);
@@ -639,21 +668,24 @@ class FileModel extends Model {
     }
 
     getCustomIcons() {
-        return mapObject(this.db.meta.customIcons, customIcon =>
-            IconUrlFormat.toDataUrl(customIcon)
-        );
+        const customIcons = {};
+        for (const [id, icon] of this.db.meta.customIcons) {
+            customIcons[id] = IconUrlFormat.toDataUrl(icon.data);
+        }
+        return customIcons;
     }
 
     addCustomIcon(iconData) {
         const uuid = kdbxweb.KdbxUuid.random();
-        this.db.meta.customIcons[uuid] = kdbxweb.ByteUtils.arrayToBuffer(
-            kdbxweb.ByteUtils.base64ToBytes(iconData)
-        );
+        this.db.meta.customIcons.set(uuid.id, {
+            data: kdbxweb.ByteUtils.arrayToBuffer(kdbxweb.ByteUtils.base64ToBytes(iconData)),
+            lastModified: new Date()
+        });
         return uuid.toString();
     }
 
     renameTag(from, to) {
-        this.forEachEntry({}, entry => entry.renameTag(from, to));
+        this.forEachEntry({}, (entry) => entry.renameTag(from, to));
     }
 
     setFormatVersion(version) {
@@ -671,8 +703,11 @@ class FileModel extends Model {
             case 'Aes':
                 this.db.setKdf(kdbxweb.Consts.KdfId.Aes);
                 break;
-            case 'Argon2':
-                this.db.setKdf(kdbxweb.Consts.KdfId.Argon2);
+            case 'Argon2d':
+                this.db.setKdf(kdbxweb.Consts.KdfId.Argon2d);
+                break;
+            case 'Argon2id':
+                this.db.setKdf(kdbxweb.Consts.KdfId.Argon2id);
                 break;
             default:
                 throw new Error('Bad KDF name');
@@ -682,7 +717,9 @@ class FileModel extends Model {
     }
 
     static createKeyFileWithHash(hash) {
-        return kdbxweb.Credentials.createKeyFileWithHash(hash);
+        const hashData = kdbxweb.ByteUtils.base64ToBytes(hash);
+        const hexHash = kdbxweb.ByteUtils.bytesToHex(hashData);
+        return kdbxweb.ByteUtils.stringToBytes(hexHash);
     }
 }
 
@@ -695,6 +732,7 @@ FileModel.defineModelProperties({
     groupMap: null,
     keyFileName: '',
     keyFilePath: null,
+    chalResp: null,
     passwordLength: 0,
     path: '',
     opts: null,
@@ -722,10 +760,17 @@ FileModel.defineModelProperties({
     keyEncryptionRounds: null,
     kdfName: null,
     kdfParameters: null,
-    fingerprint: null,
+    fingerprint: null, // obsolete
     oldPasswordHash: null,
     oldKeyFileHash: null,
-    oldKeyChangeDate: null
+    oldKeyChangeDate: null,
+    encryptedPassword: null,
+    encryptedPasswordDate: null,
+    supportsTags: true,
+    supportsColors: true,
+    supportsIcons: true,
+    supportsExpiration: true,
+    defaultGroupHash: ''
 });
 
 export { FileModel };

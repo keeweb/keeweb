@@ -1,15 +1,33 @@
 import { Launcher } from 'comp/launcher';
 import { Logger } from 'util/logger';
 import { noop } from 'util/fn';
+import { StringFormat } from 'util/formatting/string-format';
 
 const logger = new Logger('transport');
 
 const Transport = {
+    cacheFilePath(fileName) {
+        return Launcher.getTempPath(fileName);
+    },
+
     httpGet(config) {
         let tmpFile;
         const fs = Launcher.req('fs');
         if (config.file) {
-            tmpFile = Launcher.getTempPath(config.file);
+            const baseTempPath = Launcher.getTempPath();
+            if (config.cleanupOldFiles) {
+                const allFiles = fs.readdirSync(baseTempPath);
+                for (const file of allFiles) {
+                    if (
+                        file !== config.file &&
+                        StringFormat.replaceVersion(file, '0') ===
+                            StringFormat.replaceVersion(config.file, '0')
+                    ) {
+                        fs.unlinkSync(Launcher.joinPath(baseTempPath, file));
+                    }
+                }
+            }
+            tmpFile = Launcher.joinPath(baseTempPath, config.file);
             if (fs.existsSync(tmpFile)) {
                 try {
                     if (config.cache && fs.statSync(tmpFile).size > 0) {
@@ -27,7 +45,7 @@ const Transport = {
         logger.info('GET ' + config.url);
         const opts = Launcher.req('url').parse(config.url);
         opts.headers = { 'User-Agent': navigator.userAgent };
-        Launcher.resolveProxy(config.url, proxy => {
+        Launcher.resolveProxy(config.url, (proxy) => {
             logger.info(
                 'Request to ' +
                     config.url +
@@ -41,7 +59,7 @@ const Transport = {
                 opts.path = config.url;
             }
             Launcher.req(proto)
-                .get(opts, res => {
+                .get(opts, (res) => {
                     logger.info('Response from ' + config.url + ': ' + res.statusCode);
                     if (res.statusCode === 200) {
                         if (config.file) {
@@ -52,18 +70,25 @@ const Transport = {
                                     config.success(tmpFile);
                                 });
                             });
-                            file.on('error', err => {
+                            file.on('error', (err) => {
                                 config.error(err);
                             });
                         } else {
                             let data = [];
-                            res.on('data', chunk => {
+                            res.on('data', (chunk) => {
                                 data.push(chunk);
                             });
                             res.on('end', () => {
                                 data = window.Buffer.concat(data);
-                                if (config.utf8) {
+                                if (config.text || config.json) {
                                     data = data.toString('utf8');
+                                }
+                                if (config.json) {
+                                    try {
+                                        data = JSON.parse(data);
+                                    } catch (e) {
+                                        config.error('Error parsing JSON: ' + e.message);
+                                    }
                                 }
                                 config.success(data);
                             });
@@ -79,7 +104,7 @@ const Transport = {
                         config.error('HTTP status ' + res.statusCode);
                     }
                 })
-                .on('error', e => {
+                .on('error', (e) => {
                     logger.error('Cannot GET ' + config.url, e);
                     if (tmpFile) {
                         fs.unlink(tmpFile, noop);

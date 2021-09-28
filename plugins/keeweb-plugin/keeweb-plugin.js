@@ -13,20 +13,19 @@ const crypto = require('crypto');
 const https = require('https');
 
 const args = process.argv.splice(2);
-const pkg = require('./package.json');
 
 const op = args.shift();
 
-const bumpVersion = args.some(arg => arg === '--bump-version');
+const bumpVersion = args.some((arg) => arg === '--bump-version');
 const privateKeyPath = args
-    .filter(arg => arg.startsWith('--private-key='))
-    .map(arg => arg.replace('--private-key=', ''))[0];
+    .filter((arg) => arg.startsWith('--private-key='))
+    .map((arg) => arg.replace('--private-key=', ''))[0];
 const signerModule = args
-    .filter(arg => arg.startsWith('--signer-module='))
-    .map(arg => arg.replace('--signer-module=', ''))[0];
+    .filter((arg) => arg.startsWith('--signer-module='))
+    .map((arg) => arg.replace('--signer-module=', ''))[0];
 const serverPort = args
-    .filter(arg => arg.startsWith('--port='))
-    .map(arg => arg.replace('--port=', ''))[0];
+    .filter((arg) => arg.startsWith('--port='))
+    .map((arg) => arg.replace('--port=', ''))[0];
 
 showBanner();
 
@@ -42,7 +41,7 @@ switch (op) {
 }
 
 function showBanner() {
-    console.log(`KeeWeb plugin utils v${pkg.version}`);
+    console.log(`KeeWeb plugin utils`);
 }
 
 function showHelp() {
@@ -79,8 +78,8 @@ function signPlugin(packageName) {
                 fileName = manifest.locale.name + '.json';
                 break;
         }
-        signPromise = signPromise.then(changed => {
-            return signResource(packageName, fileName).then(signature => {
+        signPromise = signPromise.then((changed) => {
+            return signResource(packageName, fileName).then((signature) => {
                 if (manifest.resources[res] !== signature) {
                     manifest.resources[res] = signature;
                     changed = true;
@@ -90,10 +89,10 @@ function signPlugin(packageName) {
         });
     }
     signPromise
-        .then(changed => {
+        .then((changed) => {
             if (changed) {
                 if (bumpVersion) {
-                    manifest.version = manifest.version.replace(/\d+$/, v => +v + 1);
+                    manifest.version = manifest.version.replace(/\d+$/, (v) => +v + 1);
                 }
                 fs.writeFileSync(
                     path.join(packageName, 'manifest.json'),
@@ -104,7 +103,7 @@ function signPlugin(packageName) {
                 console.log('No changes');
             }
         })
-        .catch(e => {
+        .catch((e) => {
             console.error('Error', e);
         });
 }
@@ -158,12 +157,12 @@ function servePlugin(packageName) {
     };
     const port = serverPort || 8089;
     let keeWebHtmlCached;
-    const serveKeeWebHtml = res => {
+    const serveKeeWebHtml = (res) => {
         if (keeWebHtmlCached) {
             res.writeHead(200);
             res.end(keeWebHtmlCached);
         } else {
-            https.get('https://app.keeweb.info', kwRes => {
+            https.get('https://app.keeweb.info', (kwRes) => {
                 if (kwRes.statusCode !== 200) {
                     console.error(
                         'Error loading https://app.keeweb.info: HTTP status ' + kwRes.statusCode
@@ -174,14 +173,14 @@ function servePlugin(packageName) {
                     );
                 }
                 const data = [];
-                kwRes.on('data', chunk => data.push(chunk));
+                kwRes.on('data', (chunk) => data.push(chunk));
                 kwRes.on('end', () => {
                     keeWebHtmlCached = Buffer.concat(data)
                         .toString('utf8')
                         .replace('(no-config)', 'config.json');
                     serveKeeWebHtml(res);
                 });
-                kwRes.on('error', e => {
+                kwRes.on('error', (e) => {
                     console.error('Error loading https://app.keeweb.info', e);
                     res.writeHead(500);
                     res.end('Error loading https://app.keeweb.info');
@@ -189,11 +188,7 @@ function servePlugin(packageName) {
             });
         }
     };
-    const serveManifestAppCache = res => {
-        res.writeHead(200);
-        res.end('CACHE MANIFEST\nNETWORK:\n*\n');
-    };
-    const serveConfig = res => {
+    const serveConfig = (res) => {
         res.writeHead(200);
         res.end(`{"settings":{},"plugins":[{"url":"/"}]}`);
     };
@@ -212,8 +207,6 @@ function servePlugin(packageName) {
             }
             if (req.url === '/') {
                 return serveKeeWebHtml(res);
-            } else if (req.url === '/manifest.appcache') {
-                return serveManifestAppCache(res);
             } else if (req.url === '/config.json') {
                 return serveConfig(res);
             }

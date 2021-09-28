@@ -14,11 +14,11 @@ class StorageFileListView extends View {
     constructor(model) {
         super(model);
         this.allStorageFiles = {};
-        this.showHiddenFiles = !!this.model.showHiddenFiles;
+        this.showHiddenFiles = false;
     }
 
     render() {
-        let files = this.model.files.map(file => {
+        let files = this.model.files.map((file) => {
             this.allStorageFiles[file.path] = file;
             return {
                 path: file.path,
@@ -27,13 +27,11 @@ class StorageFileListView extends View {
                 dir: file.dir
             };
         });
-        const visibleFiles = files.filter(f => !f.dir && f.kdbx);
+        const visibleFiles = files.filter((f) => f.dir || f.kdbx);
         const canShowHiddenFiles = visibleFiles.length && files.length > visibleFiles.length;
         if (!this.showHiddenFiles) {
             if (visibleFiles.length > 0) {
                 files = visibleFiles;
-            } else {
-                this.showHiddenFiles = true;
             }
         }
         const density = files.length > 14 ? 3 : files.length > 7 ? 2 : 1;
@@ -46,9 +44,7 @@ class StorageFileListView extends View {
     }
 
     fileClick(e) {
-        const result = $(e.target)
-            .closest('.open-list__file')
-            .data('path');
+        const result = $(e.target).closest('.open-list__file').data('path');
         const file = this.allStorageFiles[result];
         this.emit('selected', file);
     }

@@ -6,15 +6,17 @@ import template from 'templates/settings/settings-logs-view.hbs';
 class SettingsLogsView extends View {
     parent = '.settings__general-advanced';
     template = template;
+    levelToColor = { debug: 'muted', warn: 'yellow', error: 'red' };
 
     render() {
-        const logs = Logger.getLast().map(item => ({
+        const logs = Logger.getLast().map((item) => ({
             level: item.level,
+            color: this.levelToColor[item.level],
             msg:
                 '[' +
                 StringFormat.padStr(item.level.toUpperCase(), 5) +
                 '] ' +
-                item.args.map(arg => this.mapArg(arg)).join(' ')
+                item.args.map((arg) => this.mapArg(arg)).join(' ')
         }));
         super.render({ logs });
     }
@@ -33,7 +35,7 @@ class SettingsLogsView extends View {
             return arg ? arg.toString() : arg;
         }
         if (arg instanceof Array) {
-            return '[' + arg.map(item => this.mapArg(item)).join(', ') + ']';
+            return '[' + arg.map((item) => this.mapArg(item)).join(', ') + ']';
         }
         let str = arg.toString();
         if (str === '[object Object]') {

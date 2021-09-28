@@ -32,18 +32,36 @@ class SettingsView extends View {
     }
 
     setPage(e) {
-        const module = require('./settings-' + e.page + '-view');
-        const viewName = StringFormat.capFirst(e.page);
+        let { page, section, file } = e;
+        if (page === 'file' && file && file.backend === 'otp-device') {
+            page = 'file-otp-device';
+        }
+        const module = require('./settings-' + page + '-view');
+        const viewName = StringFormat.pascalCase(page);
         const SettingsPageView = module[`Settings${viewName}View`];
         if (this.views.page) {
             this.views.page.remove();
         }
-        this.views.page = new SettingsPageView(e.file, { parent: this.pageEl[0] });
+        this.views.page = new SettingsPageView(file, { parent: this.pageEl[0] });
         this.views.page.appModel = this.model;
         this.views.page.render();
-        this.file = e.file;
-        this.page = e.page;
+        this.file = file;
+        this.page = page;
         this.pageResized();
+        this.scrollToSection(section);
+    }
+
+    scrollToSection(section) {
+        let scrollEl;
+        if (section) {
+            scrollEl = this.views.page.el.querySelector(`#${section}`);
+        }
+        if (!scrollEl) {
+            scrollEl = this.views.page.el.querySelector(`h1`);
+        }
+        if (scrollEl) {
+            scrollEl.scrollIntoView(true);
+        }
     }
 
     returnToApp() {

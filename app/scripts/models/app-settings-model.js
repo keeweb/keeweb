@@ -1,5 +1,6 @@
 import { Model } from 'framework/model';
 import { SettingsStore } from 'comp/settings/settings-store';
+import { DefaultAppSettings } from 'const/default-app-settings';
 
 class AppSettingsModel extends Model {
     constructor() {
@@ -8,7 +9,7 @@ class AppSettingsModel extends Model {
     }
 
     load() {
-        return SettingsStore.load('app-settings').then(data => {
+        return SettingsStore.load('app-settings').then((data) => {
             if (data) {
                 this.upgrade(data);
                 this.set(data, { silent: true });
@@ -20,67 +21,29 @@ class AppSettingsModel extends Model {
         if (data.rememberKeyFiles === true) {
             data.rememberKeyFiles = 'data';
         }
+        if (data.locale === 'en') {
+            data.locale = 'en-US';
+        }
+        if (data.theme === 'macdark') {
+            data.theme = 'dark';
+        }
+        if (data.theme === 'wh') {
+            data.theme = 'light';
+        }
     }
 
     save() {
-        SettingsStore.save('app-settings', this);
+        const values = {};
+        for (const [key, value] of Object.entries(this)) {
+            if (DefaultAppSettings[key] !== value) {
+                values[key] = value;
+            }
+        }
+        SettingsStore.save('app-settings', values);
     }
 }
 
-AppSettingsModel.defineModelProperties(
-    {
-        theme: 'fb',
-        locale: null,
-        expandGroups: true,
-        listViewWidth: null,
-        menuViewWidth: null,
-        tagsViewHeight: null,
-        autoUpdate: 'install',
-        clipboardSeconds: 0,
-        autoSave: true,
-        autoSaveInterval: 0,
-        rememberKeyFiles: false,
-        idleMinutes: 15,
-        minimizeOnClose: false,
-        tableView: false,
-        colorfulIcons: false,
-        useMarkdown: true,
-        directAutotype: true,
-        titlebarStyle: 'default',
-        lockOnMinimize: true,
-        lockOnCopy: false,
-        lockOnAutoType: false,
-        lockOnOsLock: false,
-        helpTipCopyShown: false,
-        templateHelpShown: false,
-        skipOpenLocalWarn: false,
-        hideEmptyFields: false,
-        skipHttpsWarning: false,
-        demoOpened: false,
-        fontSize: 0,
-        tableViewColumns: null,
-        generatorPresets: null,
-        generatorHidePassword: false,
-        cacheConfigSettings: false,
-        allowIframes: false,
-
-        canOpen: true,
-        canOpenDemo: true,
-        canOpenSettings: true,
-        canCreate: true,
-        canImportXml: true,
-        canImportCsv: true,
-        canRemoveLatest: true,
-        canExportXml: true,
-        canExportHtml: true,
-
-        dropbox: true,
-        webdav: true,
-        gdrive: true,
-        onedrive: true
-    },
-    { extensions: true }
-);
+AppSettingsModel.defineModelProperties(DefaultAppSettings, { extensions: true });
 
 const instance = new AppSettingsModel();
 

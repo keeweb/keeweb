@@ -1,9 +1,8 @@
-import kdbxweb from 'kdbxweb';
+import * as kdbxweb from 'kdbxweb';
 import { View } from 'framework/views/view';
 import { Scrollable } from 'framework/views/scrollable';
 import template from 'templates/import-csv.hbs';
 import { EntryModel } from 'models/entry-model';
-import { escape } from 'util/fn';
 
 class ImportCsvView extends View {
     parent = '.app__body';
@@ -70,7 +69,7 @@ class ImportCsvView extends View {
         const col = +e.target.dataset.col;
         const field = e.target.value;
 
-        const isBuiltIn = this.knownFields.some(f => f.field === field);
+        const isBuiltIn = this.knownFields.some((f) => f.field === field);
         const mapping = field ? (isBuiltIn ? 'builtin' : 'custom') : 'ignore';
 
         this.fieldMapping[col] = {
@@ -97,7 +96,7 @@ class ImportCsvView extends View {
     guessFieldMapping() {
         const usedFields = {};
 
-        for (const fieldName of this.model.headers.map(f => f.trim())) {
+        for (const fieldName of this.model.headers.map((f) => f.trim())) {
             if (!fieldName || /^(group|grouping)$/i.test(fieldName)) {
                 this.fieldMapping.push({ type: 'ignore' });
                 continue;
@@ -122,12 +121,13 @@ class ImportCsvView extends View {
     fillGroups() {
         this.groups = [];
         for (const file of this.appModel.files) {
-            file.forEachGroup(group => {
-                let title = escape(group.title);
+            file.forEachGroup((group) => {
+                const title = group.title;
+                const spaces = [];
                 for (let parent = group; parent.parentGroup; parent = parent.parentGroup) {
-                    title = '&nbsp;&nbsp;' + title;
+                    spaces.push(' ', ' ');
                 }
-                this.groups.push({ id: group.id, fileId: file.id, title });
+                this.groups.push({ id: group.id, fileId: file.id, spaces, title });
             });
         }
     }
@@ -145,31 +145,41 @@ class ImportCsvView extends View {
 
     runImport() {
         let group = this.targetGroup;
-        let file = group ? group.file : undefined;
-        if (!group) {
+
+        let filePromise;
+        if (group) {
+            filePromise = Promise.resolve(group.file);
+        } else {
             const fileName = this.fileName.replace(/\.csv$/i, '');
-            file = this.appModel.createNewFile(fileName);
-            group = file.groups[0];
+            filePromise = new Promise((resolve) => this.appModel.createNewFile(fileName, resolve));
         }
-        for (const row of this.model.rows) {
-            const newEntry = EntryModel.newEntry(group, file);
-            for (let ix = 0; ix < row.length; ix++) {
-                let value = row[ix];
-                if (!value) {
-                    continue;
-                }
-                const mapping = this.fieldMapping[ix];
-                if (mapping.type === 'ignore' || !mapping.field) {
-                    continue;
-                }
-                if (mapping.field === 'password') {
-                    value = kdbxweb.ProtectedValue.fromString(value);
-                }
-                newEntry.setField(mapping.field, value);
+
+        filePromise.then((file) => {
+            if (!group) {
+                group = file.groups[0];
             }
-        }
-        file.reload();
-        this.emit('done');
+
+            for (const row of this.model.rows) {
+                const newEntry = EntryModel.newEntry(group, file);
+                for (let ix = 0; ix < row.length; ix++) {
+                    let value = row[ix];
+                    if (!value) {
+                        continue;
+                    }
+                    const mapping = this.fieldMapping[ix];
+                    if (mapping.type === 'ignore' || !mapping.field) {
+                        continue;
+                    }
+                    if (mapping.field === 'Password') {
+                        value = kdbxweb.ProtectedValue.fromString(value);
+                    }
+                    newEntry.setField(mapping.field, value);
+                }
+            }
+
+            file.reload();
+            this.emit('done');
+        });
     }
 }
 

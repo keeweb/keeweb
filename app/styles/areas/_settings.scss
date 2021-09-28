@@ -8,9 +8,10 @@
     @include scrollbar-on-hover;
     overflow: hidden;
     position: relative;
+    @include padding-if-titlebar;
 
     &__content {
-        margin: $base-padding;
+        margin: $medium-padding;
     }
 
     > .scroller {
@@ -58,6 +59,12 @@
         &-post {
             display: none;
         }
+        &-post {
+            margin-left: $tiny-spacing;
+            margin-right: $small-spacing;
+            position: relative;
+            top: 0.2em;
+        }
         cursor: pointer;
         @include mobile {
             line-height: $mobile-back-button-height;
@@ -65,9 +72,11 @@
             padding: $base-padding;
             font-size: 1.2em;
             > i {
-                margin-right: 0.3em;
+                margin-right: 0.7em;
                 font-size: 1.2em;
-                vertical-align: text-bottom;
+                vertical-align: middle;
+                position: relative;
+                top: -0.15em;
             }
             &-pre {
                 display: inline;
@@ -130,31 +139,31 @@
         display: none;
     }
 
-    &__file-master-pass-warning,
-    &__file-confirm-master-pass-warning {
-        font-weight: normal;
-        float: right;
-        display: none;
-    }
+    &__file {
+        &-master-pass-warning,
+        &-confirm-master-pass-warning {
+            font-weight: normal;
+            float: right;
+            display: none;
+        }
 
-    &__file-save-to {
-        cursor: pointer;
-        display: inline-block;
-        margin-right: $base-padding-h;
-        text-align: center;
-        > i,
-        > svg {
-            display: block;
-            font-size: 3em;
-            padding: $base-padding-px;
-            margin: auto;
-        }
-        > svg {
-            @include size(1em);
-        }
-        &:hover {
-            transition: color $base-duration $base-timing;
-            color: var(--medium-color);
+        &-save-to {
+            cursor: pointer;
+            display: inline-block;
+            margin-right: $base-padding-h;
+            text-align: center;
+
+            > i {
+                display: block;
+                font-size: 3em;
+                padding: $base-padding-px;
+                margin: auto;
+            }
+
+            &:hover {
+                transition: color $base-duration $base-timing;
+                color: var(--medium-color);
+            }
         }
     }
 
@@ -163,13 +172,59 @@
     }
     &__general-update-btn {
         width: 15em;
-        margin-right: $small-spacing;
     }
     &__general-storage-header {
         margin-bottom: 0;
+        line-height: 1.3em;
     }
     &__general-prv {
         margin-bottom: $base-padding-v;
+    }
+    &__general-prv-logout {
+        margin-bottom: $base-padding-v;
+    }
+    &__general-themes {
+        width: calc(100% - 10em);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+        grid-gap: $base-spacing;
+        margin-bottom: $base-spacing;
+        @include mobile {
+            width: 100%;
+        }
+    }
+    &__general-theme {
+        padding: $base-padding;
+        border: light-border();
+        border-radius: var(--input-border-radius);
+        text-align: center;
+        background: var(--background-color);
+        color: var(--text-color);
+        cursor: pointer;
+        body & {
+            --focus-shadow-spread: unset;
+            --form-box-shadow-color-focus: unset;
+            --form-box-shadow-color-hover: unset;
+        }
+        &-name {
+            border-bottom: light-border();
+            padding-bottom: $tiny-spacing;
+            margin-bottom: $small-spacing;
+        }
+        &-button {
+            margin-bottom: $base-padding-v;
+        }
+        &-plugins-icon {
+            font-size: 3em;
+        }
+        &:hover {
+            box-shadow: form-box-shadow-hover();
+        }
+        &--selected,
+        &--selected:hover {
+            border: 1px solid var(--action-color);
+            box-shadow: form-box-shadow-focus();
+        }
     }
     &__logs {
         user-select: text;
@@ -178,17 +233,6 @@
         &-log {
             margin: 0;
             white-space: pre-wrap;
-            &--debug {
-                opacity: 0.8;
-            }
-            &--info {
-            }
-            &--warn {
-                color: $yellow;
-            }
-            &--error {
-                color: $red;
-            }
         }
     }
     &__plugins {
@@ -263,9 +307,38 @@
             }
         }
     }
+    &__browser {
+        &-table {
+            th,
+            td {
+                padding: $base-padding;
+            }
+        }
+        &-extension-status {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-radius: 100%;
+            border: 5px solid;
+            margin-right: 0.2em;
+        }
+        &-session-buttons {
+            margin-top: $base-padding-h;
+        }
+        &-session-files {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        &-session-file {
+            margin: $base-padding;
+        }
+    }
     &__donate-btn {
+        $donate-border-color: #89abed;
+
         background: #fff;
-        border: 2px solid #89abed;
+        border: 2px solid $donate-border-color;
+        border-bottom: 2px solid $donate-border-color;
         border-radius: 2.8rem;
         text-align: center;
         display: inline-block;
@@ -274,6 +347,10 @@
         line-height: 1.4;
         height: 2.8rem;
         margin-bottom: $base-padding-v * 2;
+
+        &:hover {
+            border-bottom: 2px solid $donate-border-color;
+        }
 
         &-top,
         &-bottom {
@@ -287,5 +364,11 @@
             color: #89abed;
             font-weight: bold;
         }
+    }
+
+    &__head-icon {
+        position: relative;
+        top: 0.1em;
+        margin-right: 0.2em;
     }
 }

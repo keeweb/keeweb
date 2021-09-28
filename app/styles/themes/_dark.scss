@@ -1,0 +1,30 @@
+$themes: map-merge(
+    $themes,
+    (
+        dark:
+            map-merge(
+                $theme-defaults,
+                (
+                    background-color: #1e1e1e,
+                    medium-color: #b7b7b8,
+                    text-color: #f7f7f7,
+                    action-color: #317ef6,
+                    error-color: #ec655a
+                )
+            )
+    )
+);
+
+body.th-dark {
+    --form-box-border-color-focus: #407091;
+    --form-box-shadow-color-focus: #3a698b;
+    --form-box-shadow-color-hover: rgba(58, 105, 139, 0.8);
+    --light-border-color: rgba(68, 68, 69, 0.7);
+    --secondary-background-color: #2d2d2e;
+    --selected-item-color: #2463c8;
+    --selected-on-secondary-item-color: #403f40;
+
+    .list__item--active .blue-color {
+        color: #689ff7;
+    }
+}

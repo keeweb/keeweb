@@ -1,6 +1,6 @@
 <div class="gen-ps">
     <div class="back-button">
-        {{res 'retToApp'}} <i class="fa fa-external-link-square"></i>
+        {{res 'retToApp'}} <i class="fa fa-arrow-circle-left back-button__post"></i>
     </div>
     <div class="scroller">
         <div class="gen-ps__content">
@@ -39,6 +39,25 @@
             <div class="gen-ps__field">
                 <label for="gen-ps__field-include">{{res 'genPsInclude'}}:</label>
                 <input type="text" class="input-base" id="gen-ps__field-include" value="{{selected.include}}"
+                       {{#if selected.builtIn}}readonly{{/if}} />
+            </div>
+            <div class="gen-ps__field">
+                <label for="gen-ps__field-pattern">{{res 'genPsPattern'}}: <i class="fa fa-info-circle info-btn info-btn--pattern"></i></label>
+                <div class="gen-ps__pattern-help hide">
+                    <p>{{res 'genPsPatternHelp'}}</p>
+                    <p>
+                        <code>X</code> – {{res 'genPsAllRanges'}}<br/>
+                        <code>A</code> – {{res 'genPsUpper'}}<br/>
+                        <code>a</code> – {{res 'genPsLower'}}<br/>
+                        <code>1</code> – {{res 'genPsDigits'}}<br/>
+                        <code>*</code> – {{res 'genPsSpecial'}}<br/>
+                        <code>[</code> – {{res 'genPsBrackets'}}<br/>
+                        <code>Ä</code> – {{res 'genPsHigh'}}<br/>
+                        <code>0</code> – {{res 'genPsAmbiguous'}}<br/>
+                        <code>I</code> – {{res 'genPsIncluded'}}
+                    </p>
+                </div>
+                <input type="text" class="input-base" id="gen-ps__field-pattern" value="{{selected.pattern}}"
                        {{#if selected.builtIn}}readonly{{/if}} />
             </div>
             <div class="gen-ps__field">

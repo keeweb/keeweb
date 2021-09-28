@@ -16,7 +16,10 @@ const DefaultProperties = {
     keyFilePath: null,
     opts: null,
     backup: null,
-    fingerprint: null,
+    fingerprint: null, // obsolete
+    chalResp: null,
+    encryptedPassword: null,
+    encryptedPasswordDate: null,
     icon: null
 };
 

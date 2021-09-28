@@ -1,25 +1,9 @@
+import 'util/kdbxweb/protected-value-ex';
 import { shuffle } from 'util/fn';
 
 class RandomNameGenerator {
-    usedNames = {};
-
     randomCharCode() {
         return 97 + Math.floor(Math.random() * 26);
-    }
-
-    randomElementName() {
-        for (let i = 0; i < 1000; i++) {
-            let result = '';
-            const length = 3 + Math.floor(Math.random() * 3);
-            for (let i = 0; i < length; i++) {
-                result += String.fromCharCode(this.randomCharCode());
-            }
-            if (!this.usedNames[result]) {
-                this.usedNames[result] = true;
-                return result;
-            }
-        }
-        throw new Error('Failed to generate a random name');
     }
 }
 
@@ -37,41 +21,49 @@ const PasswordPresenter = {
             return '';
         }
         let result = '';
-        value.forEachChar(ch => {
+        value.forEachChar((ch) => {
             result += ch === 10 ? '\n' : '•';
         });
         return result;
     },
 
-    asHtml(value) {
-        const html = [];
-        const style = [];
+    asDOM(value) {
+        const items = [];
 
         const gen = new RandomNameGenerator();
 
-        const wrapperClass = gen.randomElementName();
-
         let ix = 0;
-        value.forEachChar(char => {
-            const className = gen.randomElementName();
+        value.forEachChar((char) => {
             const charHtml = charCodeToHtml(char);
-            html.push(`<span class="${className}">${charHtml}</span>`);
-            style.push(`.${className}{order:${ix}}`);
+            items.push({ html: charHtml, order: ix });
 
             if (Math.random() > 0.5) {
-                const fakeClassName = gen.randomElementName();
                 const fakeChar = gen.randomCharCode();
                 const fakeCharHtml = charCodeToHtml(fakeChar);
-                html.push(`<span class="${fakeClassName}">${fakeCharHtml}</span>`);
-                style.push(`.${wrapperClass} .${fakeClassName}{display:none}`);
+                items.push({ html: fakeCharHtml, order: -1 });
             }
             ix++;
         });
 
-        const everything = html.concat(style.map(s => `<style>${s}</style>`));
-        const innerHtml = shuffle(everything).join('');
+        shuffle(items);
 
-        return `<div class="${wrapperClass}" style="display: flex">${innerHtml}</div>`;
+        const topEl = document.createElement('div');
+        topEl.style.display = 'flex';
+        topEl.style.overflow = 'hidden';
+        topEl.style.textOverflow = 'ellipsis';
+
+        for (const item of items) {
+            const el = document.createElement('div');
+            el.innerHTML = item.html;
+            if (item.order >= 0) {
+                el.style.order = item.order;
+            } else {
+                el.style.display = 'none';
+            }
+            topEl.appendChild(el);
+        }
+
+        return topEl;
     }
 };
 

@@ -5,6 +5,8 @@ import ThemeDefaults from '!!raw-loader!../../styles/themes/_theme-defaults.scss
 
 const ThemeVars = {
     themeDefaults: null,
+    newLineRegEx: /[\n\s]+/g, // don't inline it, see #1656
+    themeVarsRegEx: /([\w\-]+):([^:]+),(\$)?/g,
 
     init() {
         if (this.themeDefaults) {
@@ -24,13 +26,14 @@ const ThemeVars = {
 
     apply(cssStyle) {
         this.init();
-        const lines = ThemeVarsScss.split('\n');
-        for (const line of lines) {
-            const match = line.match(/\s*([^:]+):\s*(.*?),?\s*$/);
-            if (!match) {
-                continue;
+        const matches = ThemeVarsScss.replace(this.newLineRegEx, '').matchAll(this.themeVarsRegEx);
+        for (let [, name, def, last] of matches) {
+            if (last && def.endsWith(')')) {
+                // definitions are written like this:
+                //      map-merge((def:val, def:val, ..., last-def:val),$t)
+                // so, the last item has "),$" captured, here we're removing that bracket
+                def = def.substr(0, def.length - 1);
             }
-            const [, name, def] = match;
             const propName = '--' + name;
             const currentValue = cssStyle.getPropertyValue(propName);
             if (currentValue) {
@@ -41,14 +44,14 @@ const ThemeVars = {
             const locals = [];
             while (replaced) {
                 replaced = false;
-                result = result.replace(/([\w\-]+)\([^()]+\)/, fnText => {
+                result = result.replace(/([\w\-]+)\([^()]+\)/, (fnText) => {
                     replaced = true;
                     const [, name, argsStr] = fnText.match(/([\w\-]+)\((.*)\)/);
                     const args = argsStr
                         .trim()
                         .split(/\s*,\s*/)
-                        .filter(arg => arg)
-                        .map(arg => this.resolveArg(arg, cssStyle, locals));
+                        .filter((arg) => arg)
+                        .map((arg) => this.resolveArg(arg, cssStyle, locals));
                     locals.push(this.fn[name](...args));
                     return 'L' + (locals.length - 1);
                 });

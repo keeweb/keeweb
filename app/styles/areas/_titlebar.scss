@@ -1,0 +1,38 @@
+.titlebar {
+    font-size: 0;
+
+    .titlebar-custom & {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        display: flex;
+        height: $titlebar-custom-height;
+    }
+
+    &__logo {
+        @include size(30px);
+        padding: 6px;
+        pointer-events: none;
+    }
+
+    &__grow {
+        flex-grow: 1;
+        -webkit-app-region: drag;
+    }
+
+    > .fa {
+        font-size: 16px;
+        padding: 4px 16px;
+        height: $titlebar-custom-height;
+        box-sizing: border-box;
+        &:hover {
+            background: var(--titlebar-button-background-color);
+        }
+        &.fa-titlebar-close {
+            &:hover {
+                background: $titlebar-close-button-background-color;
+            }
+        }
+    }
+}

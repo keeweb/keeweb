@@ -12,6 +12,7 @@
         @include scrollbar-on-hover;
         position: relative;
         overflow: hidden;
+        padding: $small-spacing 0;
 
         &--grow {
             flex: 1;
@@ -65,25 +66,23 @@
                 display: block;
                 position: absolute;
                 cursor: pointer;
-                @include position(absolute, 50% null null 1em);
+                @include position(absolute, 50% null null 1.6em);
                 transform: translateY(-50%);
             }
         }
 
         &-body {
-            @include area-selectable();
+            @include area-selectable-on-secondary();
             padding: $base-padding;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
-            border-right: selected-transparent-border();
-            .menu__item--hover > & {
-                border-right: selected-hover-border();
-            }
+            border-radius: var(--block-border-radius);
+            margin: 0 $small-spacing;
 
             .menu__item--active > &,
             .menu__item--active.menu__item--hover > & {
-                @include area-selected(right);
+                @include area-selected-on-secondary();
             }
 
             .menu__item > .menu__item > & {
@@ -127,6 +126,8 @@
 
         &-icon {
             width: 0.8em;
+            position: relative;
+            top: 0.1em;
             &--image {
                 width: 12px;
                 height: 12px;
@@ -160,11 +161,11 @@
             display: none;
             opacity: 0;
             position: absolute;
-            right: 1.1em;
-            top: 0.75em;
+            right: 1.2em;
+            top: 0.55em;
             cursor: pointer;
             transition: opacity $base-duration $base-timing, color $base-duration $base-timing;
-            color: var(--muted-color);
+            color: var(--clickable-on-secondary-color);
             &:hover {
                 color: var(--medium-color);
             }

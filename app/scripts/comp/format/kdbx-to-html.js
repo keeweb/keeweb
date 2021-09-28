@@ -1,11 +1,10 @@
-import kdbxweb from 'kdbxweb';
+/* eslint-disable import/no-commonjs */
+import * as kdbxweb from 'kdbxweb';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Links } from 'const/links';
-import { DateFormat } from 'util/formatting/date-format';
-import { MdToHtml } from 'util/formatting/md-to-html';
+import { DateFormat } from 'comp/i18n/date-format';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
-import { AppSettingsModel } from 'models/app-settings-model';
 
 const Templates = {
     db: require('templates/export/db.hbs'),
@@ -16,7 +15,7 @@ const FieldMapping = [
     { name: 'UserName', locStr: 'user' },
     { name: 'Password', locStr: 'password', protect: true },
     { name: 'URL', locStr: 'website' },
-    { name: 'Notes', locStr: 'notes', markdown: true }
+    { name: 'Notes', locStr: 'notes' }
 ];
 
 const KnownFields = { 'Title': true };
@@ -32,41 +31,34 @@ function walkGroup(db, group, parents) {
     ) {
         return '';
     }
-    const self = group.entries.map(entry => walkEntry(db, entry, parents)).join('\n');
-    const children = group.groups.map(childGroup => walkGroup(db, childGroup, parents)).join('\n');
+    const self = group.entries.map((entry) => walkEntry(db, entry, parents)).join('\n');
+    const children = group.groups
+        .map((childGroup) => walkGroup(db, childGroup, parents))
+        .join('\n');
     return self + children;
 }
 
 function walkEntry(db, entry, parents) {
-    const path = parents.map(group => group.name).join(' / ');
+    const path = parents.map((group) => group.name).join(' / ');
     const fields = [];
     for (const field of FieldMapping) {
-        let value = entryField(entry, field.name);
+        const value = entryField(entry, field.name);
         if (value) {
-            let html = false;
-            if (field.markdown && AppSettingsModel.useMarkdown) {
-                const converted = MdToHtml.convert(value);
-                if (converted !== value) {
-                    value = converted;
-                    html = true;
-                }
-            }
             fields.push({
                 title: StringFormat.capFirst(Locale[field.locStr]),
                 value,
-                protect: field.protect,
-                html
+                protect: field.protect
             });
         }
     }
-    for (const fieldName of Object.keys(entry.fields)) {
+    for (const [fieldName, fieldValue] of entry.fields) {
         if (!KnownFields[fieldName]) {
             const value = entryField(entry, fieldName);
             if (value) {
                 fields.push({
                     title: fieldName,
                     value,
-                    protect: entry.fields[fieldName].isProtected
+                    protect: fieldValue.isProtected
                 });
             }
         }
@@ -77,7 +69,7 @@ function walkEntry(db, entry, parents) {
         expires = DateFormat.dtStr(entry.times.expiryTime);
     }
 
-    const attachments = Object.entries(entry.binaries)
+    const attachments = [...entry.binaries]
         .map(([name, data]) => {
             if (data && data.ref) {
                 data = data.value;
@@ -88,7 +80,7 @@ function walkEntry(db, entry, parents) {
             }
             return { name, data };
         })
-        .filter(att => att.name && att.data);
+        .filter((att) => att.name && att.data);
 
     return Templates.entry({
         path,
@@ -103,19 +95,19 @@ function walkEntry(db, entry, parents) {
 }
 
 function entryField(entry, fieldName) {
-    const value = entry.fields[fieldName];
+    const value = entry.fields.get(fieldName);
     return (value && value.isProtected && value.getText()) || value || '';
 }
 
 const KdbxToHtml = {
     convert(db, options) {
-        const content = db.groups.map(group => walkGroup(db, group, [])).join('\n');
+        const content = db.groups.map((group) => walkGroup(db, group, [])).join('\n');
         return Templates.db({
             name: options.name,
             date: DateFormat.dtStr(Date.now()),
             appLink: Links.Homepage,
             appVersion: RuntimeInfo.version,
-            content
+            contentHtml: content
         });
     },
 

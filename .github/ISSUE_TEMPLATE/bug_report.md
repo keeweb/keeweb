@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve KeeWeb
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
@@ -24,7 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Environment**
-Your user-agent (from Settings/Help section)
+Please copy all version information from Settings/Help
 
 **Kdbx File**
 Does it happen on Demo or New database?  

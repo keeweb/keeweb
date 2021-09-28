@@ -1,39 +1,38 @@
 import { Events } from 'framework/events';
-import { AutoTypeFilter } from 'auto-type/auto-type-filter';
-import { AutoTypeHelperFactory } from 'auto-type/auto-type-helper-factory';
+import { AutoTypeHelper } from 'auto-type/auto-type-helper';
 import { AutoTypeParser } from 'auto-type/auto-type-parser';
+import { SelectEntryFilter } from 'comp/app/select-entry-filter';
 import { Launcher } from 'comp/launcher';
+import { Features } from 'util/features';
 import { Alerts } from 'comp/ui/alerts';
 import { Timeouts } from 'const/timeouts';
 import { AppSettingsModel } from 'models/app-settings-model';
+import { AppModel } from 'models/app-model';
 import { Locale } from 'util/locale';
 import { Logger } from 'util/logger';
-import { AutoTypeSelectView } from 'views/auto-type/auto-type-select-view';
+import { Links } from 'const/links';
+import { SelectEntryView } from 'views/select/select-entry-view';
 
 const logger = new Logger('auto-type');
 const clearTextAutoTypeLog = !!localStorage.debugAutoType;
 
 const AutoType = {
-    helper: AutoTypeHelperFactory.create(),
     enabled: !!(Launcher && Launcher.autoTypeSupported),
+    supportsEventsWithWindowId: !!(Launcher && Launcher.platform() === 'linux'),
     selectEntryView: false,
-    pendingEvent: null,
     running: false,
 
-    init(appModel) {
+    init() {
         if (!this.enabled) {
             return;
         }
-        this.appModel = appModel;
-        Events.on('auto-type', e => this.handleEvent(e));
-        Events.on('main-window-blur', e => this.resetPendingEvent(e));
-        Events.on('main-window-will-close', e => this.resetPendingEvent(e));
-        Events.on('closed-open-view', e => this.processPendingEvent(e));
+        Events.on('auto-type', (e) => this.handleEvent(e));
     },
 
     handleEvent(e) {
         const entry = (e && e.entry) || null;
         const sequence = (e && e.sequence) || null;
+        const context = (e && e.context) || null;
         logger.debug('Auto type event', entry);
         if (this.running) {
             logger.debug('Already running, skipping event');
@@ -41,7 +40,7 @@ const AutoType = {
         }
         if (entry) {
             this.hideWindow(() => {
-                this.runAndHandleResult({ entry, sequence });
+                this.runAndHandleResult({ entry, sequence, context });
             });
         } else {
             if (this.selectEntryView) {
@@ -58,12 +57,19 @@ const AutoType = {
         }
     },
 
-    runAndHandleResult(result) {
-        this.run(result, err => {
+    runAndHandleResult(result, windowId) {
+        this.run(result, windowId, (err) => {
             if (err) {
+                let body = Locale.autoTypeErrorGeneric.replace('{}', err.message || err.toString());
+                let link;
+                if (err.keyPressFailed && Features.isMac) {
+                    body = Locale.autoTypeErrorAccessibilityMacOS;
+                    link = Links.AutoTypeMacOS;
+                }
                 Alerts.error({
                     header: Locale.autoTypeError,
-                    body: Locale.autoTypeErrorGeneric.replace('{}', err.toString())
+                    body,
+                    link
                 });
             }
         });
@@ -73,16 +79,17 @@ const AutoType = {
         }
     },
 
-    run(result, callback) {
+    run(result, windowId, callback) {
         this.running = true;
         const sequence = result.sequence || result.entry.getEffectiveAutoTypeSeq();
+        const context = result.context;
         logger.debug('Start', sequence);
         const ts = logger.ts();
         try {
             const parser = new AutoTypeParser(sequence);
             const runner = parser.parse();
             logger.debug('Parsed', this.printOps(runner.ops));
-            runner.resolve(result.entry, err => {
+            runner.resolve(result.entry, context, (err) => {
                 if (err) {
                     this.running = false;
                     logger.error('Resolve error', err);
@@ -99,7 +106,7 @@ const AutoType = {
                     }
                     logger.debug('Obfuscated');
                 }
-                runner.run(err => {
+                runner.run((err) => {
                     this.running = false;
                     if (err) {
                         logger.error('Run error', err);
@@ -107,7 +114,7 @@ const AutoType = {
                     }
                     logger.debug('Complete', logger.ts(ts));
                     return callback && callback();
-                });
+                }, windowId);
             });
         } catch (ex) {
             this.running = false;
@@ -120,7 +127,7 @@ const AutoType = {
         try {
             const parser = new AutoTypeParser(sequence);
             const runner = parser.parse();
-            runner.resolve(entry, callback);
+            runner.resolve(entry, null, callback);
         } catch (ex) {
             return callback(ex);
         }
@@ -157,15 +164,14 @@ const AutoType = {
 
     getActiveWindowInfo(callback) {
         logger.debug('Getting window info');
-        return this.helper.getActiveWindowInfo((err, windowInfo) => {
+        const helper = new AutoTypeHelper();
+        return helper.getActiveWindowInfo((err, windowInfo) => {
             if (err) {
                 logger.error('Error getting window info', err);
             } else {
                 if (!windowInfo.url) {
                     // try to find a URL in the title
-                    const urlMatcher = new RegExp(
-                        'https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'
-                    );
+                    const urlMatcher = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\\+.~#?&\/=]*)/;
                     const urlMatches = urlMatcher.exec(windowInfo.title);
                     windowInfo.url = urlMatches && urlMatches.length > 0 ? urlMatches[0] : null;
                 }
@@ -185,14 +191,14 @@ const AutoType = {
                 logger.debug('Error during active window check, something is wrong', err);
                 return callback(false);
             }
-            if (activeWindowInfo.id !== windowInfo.id) {
+            if (activeWindowInfo.id !== windowInfo.id && !this.supportsEventsWithWindowId) {
                 logger.info(
                     `Active window doesn't match: ID is different. ` +
                         `Expected ${windowInfo.id}, got ${activeWindowInfo.id}`
                 );
                 return callback(false, activeWindowInfo);
             }
-            if (activeWindowInfo.url !== windowInfo.url) {
+            if (activeWindowInfo.url !== windowInfo.url && !this.supportsEventsWithWindowId) {
                 logger.info(
                     `Active window doesn't match: url is different. ` +
                         `Expected "${windowInfo.url}", got "${activeWindowInfo.url}"`
@@ -205,74 +211,101 @@ const AutoType = {
     },
 
     selectEntryAndRun() {
-        this.getActiveWindowInfo((e, windowInfo) => {
-            const filter = new AutoTypeFilter(windowInfo, this.appModel);
+        this.getActiveWindowInfo(async (e, windowInfo) => {
+            const filter = new SelectEntryFilter(
+                windowInfo,
+                AppModel.instance,
+                AppModel.instance.files,
+                {
+                    autoType: true
+                }
+            );
             const evt = { filter, windowInfo };
-            if (!this.appModel.files.hasOpenFiles()) {
-                this.pendingEvent = evt;
+            if (!AppModel.instance.files.hasOpenFiles()) {
                 logger.debug('auto-type event delayed');
                 this.focusMainWindow();
-            } else {
-                this.processEventWithFilter(evt);
+                try {
+                    await AppModel.instance.unlockAnyFile('autoTypeUnlockMessage');
+                } catch {
+                    logger.debug('auto-type event canceled');
+                    return;
+                }
+                if (this.selectEntryView) {
+                    this.selectEntryView.show();
+                }
             }
+            logger.debug('processing auto-type event');
+            this.processEventWithFilter(evt);
         });
     },
 
     focusMainWindow() {
-        setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
+        if (!Launcher.isAppFocused()) {
+            setTimeout(() => Launcher.showMainWindow(), Timeouts.RedrawInactiveWindow);
+        }
     },
 
     processEventWithFilter(evt) {
-        const entries = evt.filter.getEntries();
+        let entries = evt.filter.getEntries();
         if (entries.length === 1 && AppSettingsModel.directAutotype) {
             this.hideWindow(() => {
-                this.runAndHandleResult({ entry: entries[0] });
+                this.runAndHandleResult({ entry: entries[0] }, evt.windowInfo.id);
             });
             return;
         }
         this.focusMainWindow();
-        evt.filter.ignoreWindowInfo = true;
-        this.selectEntryView = new AutoTypeSelectView({ filter: evt.filter });
-        this.selectEntryView.on('result', result => {
+
+        if (entries.length === 0) {
+            if (evt.filter.useUrl) {
+                evt.filter.useUrl = false;
+                if (evt.filter.title && AppSettingsModel.autoTypeTitleFilterEnabled) {
+                    evt.filter.useTitle = true;
+                }
+            }
+            entries = evt.filter.getEntries();
+            if (entries.length === 0 && evt.filter.useTitle) {
+                evt.filter.useTitle = false;
+            }
+        }
+
+        const humanReadableTarget = evt.filter.title || evt.filter.url;
+        const topMessage = humanReadableTarget
+            ? Locale.autoTypeMsgMatchedByWindow.replace('{}', humanReadableTarget)
+            : Locale.autoTypeMsgNoWindow;
+
+        this.selectEntryView = new SelectEntryView({
+            isAutoType: true,
+            itemOptions: true,
+            filter: evt.filter,
+            topMessage
+        });
+        this.selectEntryView.on('result', (result) => {
             logger.debug('Entry selected', result);
             this.selectEntryView.off('result');
             this.selectEntryView.remove();
             this.selectEntryView = null;
             this.hideWindow(() => {
-                if (result) {
+                if (result?.entry) {
                     this.activeWindowMatches(evt.windowInfo, (matches, activeWindowInfo) => {
                         if (matches) {
-                            this.runAndHandleResult(result);
+                            this.runAndHandleResult(result, evt.windowInfo.id);
                         }
                     });
                 }
             });
         });
         this.selectEntryView.render();
-        this.selectEntryView.on('show-open-files', () => {
+        this.selectEntryView.on('show-open-files', async () => {
             this.selectEntryView.hide();
-            Events.emit('open-file');
-        });
-    },
-
-    resetPendingEvent() {
-        if (this.pendingEvent) {
-            this.pendingEvent = null;
-            logger.debug('auto-type event cancelled');
-        }
-    },
-
-    processPendingEvent() {
-        if (this.selectEntryView) {
+            try {
+                await AppModel.instance.unlockAnyFile('autoTypeUnlockMessage');
+            } catch {
+                this.selectEntryView.emit('result', undefined);
+                return;
+            }
             this.selectEntryView.show();
-        }
-        if (!this.pendingEvent) {
-            return;
-        }
-        logger.debug('processing pending auto-type event');
-        const evt = this.pendingEvent;
-        this.pendingEvent = null;
-        this.processEventWithFilter(evt);
+            this.selectEntryView.render();
+        });
     }
 };
 

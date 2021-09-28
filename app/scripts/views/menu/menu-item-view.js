@@ -37,6 +37,7 @@ class MenuItemView extends View {
         this.listenTo(this.model, 'change:active', this.changeActive);
         this.listenTo(this.model, 'change:expanded', this.changeExpanded);
         this.listenTo(this.model, 'change:cls', this.changeCls);
+        this.listenTo(this.model, 'change:iconCls', this.changeIconCls);
         this.listenTo(this.model, 'delete', this.remove);
         this.listenTo(this.model, 'insert', this.insertItem);
         const shortcut = this.model.shortcut;
@@ -60,7 +61,7 @@ class MenuItemView extends View {
         this.iconEl = this.$el.find('.menu__item-icon');
         const items = this.model.items;
         if (items) {
-            items.forEach(item => {
+            items.forEach((item) => {
                 if (item.visible) {
                     this.insertItem(item);
                 }
@@ -76,7 +77,7 @@ class MenuItemView extends View {
     }
 
     removeInnerViews() {
-        this.itemViews.forEach(itemView => itemView.remove());
+        this.itemViews.forEach((itemView) => itemView.remove());
         this.itemViews = [];
     }
 
@@ -108,6 +109,16 @@ class MenuItemView extends View {
         this.$el.addClass(cls);
     }
 
+    changeIconCls(model, cls, oldCls) {
+        const iconEl = this.el.querySelector('.menu__item-icon');
+        if (oldCls) {
+            iconEl.classList.remove(oldCls);
+        }
+        if (cls) {
+            iconEl.classList.add(cls);
+        }
+    }
+
     mouseover(e) {
         if (!e.button) {
             this.$el.addClass('menu__item--hover');
@@ -137,7 +148,7 @@ class MenuItemView extends View {
         const options = this.model.options;
         const value = $(e.target).data('value');
         if (options && options.length) {
-            const option = options.find(op => op.value === value);
+            const option = options.find((op) => op.value === value);
             if (option) {
                 Events.emit('menu-select', { item: this.model, option });
             }
@@ -183,7 +194,7 @@ class MenuItemView extends View {
         const types = e.dataTransfer.types;
         for (let i = 0; i < types.length; i++) {
             if (types[i] === 'text/group' || types[i] === 'text/entry') {
-                return true;
+                return DragDropInfo.dragObject && !DragDropInfo.dragObject.readOnly;
             }
         }
         return false;

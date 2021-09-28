@@ -14,3 +14,9 @@ $themes: map-merge(
             )
     )
 );
+
+body.th-fb {
+    .list__item--active .blue-color {
+        color: #98bfff;
+    }
+}
