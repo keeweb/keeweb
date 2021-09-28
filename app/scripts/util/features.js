@@ -13,9 +13,7 @@ const Features = {
     isPopup: !!(window.parent !== window.top || window.opener),
     isStandalone: !!navigator.standalone,
     isFrame: window.top !== window,
-    isSelfHosted:
-        !isDesktop &&
-        !/^http(s?):\/\/((localhost:8085)|((app|beta)\.keeweb\.info))/.test(location.href),
+    isSelfHosted: !isDesktop,
     isLocal: location.origin.indexOf('localhost') >= 0,
 
     get supportsTitleBarStyles() {
