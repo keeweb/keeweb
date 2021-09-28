@@ -3,12 +3,13 @@
     <head lang="en">
         <meta charset="UTF-8" />
         <title>Passordbank</title>
+        <!--The double self inside script-src is intentional since the first one is replaced by the hash of the inline app.js when compiling-->
         <meta
             http-equiv="Content-Security-Policy"
             content="
                             default-src 'self';
                             font-src data:;
-                            script-src 'self' 'unsafe-eval';
+                            script-src 'self' 'self' 'unsafe-eval';
                             style-src 'self' blob:;
                             connect-src 'self' ws: https:;
                             child-src 'self' blob:;
@@ -70,16 +71,7 @@
             media="(min-device-width: 1024px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)"
         />
         <link rel="stylesheet" href="css/app.css?__inline=true" />
-        <script type="text/javascript">
-            if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
-                document.addEventListener("DOMContentLoaded", function (){
-                    document.body.style.maxWidth = "600px";
-                    document.body.style.margin = "40px auto";
-                    document.body.style.position = "static";
-                    document.body.innerHTML += "<p>IDS password bank does not support Internet Explorer. Please use Google Chrome instead.</p>";
-                });
-            }
-        </script>
+        <script src="ie.js"></script>
         <script src='js/app.js?__inline=true'></script>
     </head>
     <body class="th-d">
