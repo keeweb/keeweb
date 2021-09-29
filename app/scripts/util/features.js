@@ -62,7 +62,7 @@ const Features = {
         return this._browserIcon;
     },
     get supportsBrowserExtensions() {
-        return !this.isMobile && (this.isDesktop || this.browserIcon !== 'safari');
+        return false;
     },
     get extensionBrowserFamily() {
         if (Features.isDesktop) {
