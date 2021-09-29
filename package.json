@@ -79,7 +79,7 @@
     "morphdom": "^2.6.1",
     "node-fetch": "^2.6.1",
     "normalize.css": "8.0.1",
-    "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "optimize-css-assets-webpack-plugin": "^6.0.0",
     "pikaday": "1.8.2",
     "pkcs11-smartcard-sign": "^1.0.1",
     "postcss": "^8.2.14",
