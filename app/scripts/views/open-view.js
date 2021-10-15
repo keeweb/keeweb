@@ -101,11 +101,6 @@ class OpenView extends View {
             storageProviders.length ||
             this.model.settings.canOpenSettings ||
             this.model.settings.canOpenGenerator;
-        const showLogo =
-            !showMore &&
-            !this.model.settings.canOpen &&
-            !this.model.settings.canCreate &&
-            !(this.model.settings.canOpenDemo && !this.model.settings.demoOpened);
         const hasYubiKeys = !!UsbListener.attachedYubiKeys;
         const canOpenYubiKey =
             hasYubiKeys &&
@@ -128,8 +123,7 @@ class OpenView extends View {
             canRemoveLatest: this.model.settings.canRemoveLatest,
             canOpenYubiKey,
             canUseChalRespYubiKey,
-            showMore,
-            showLogo
+            showMore
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);

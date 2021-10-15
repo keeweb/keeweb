@@ -6,6 +6,12 @@
             <i class="fa fa-times-circle open__message-cancel-btn-icon"></i>
         </div>
     </div>
+    <div class="open__icon open__icon-more id=open__icon-more">
+        <a href="/">
+            <img src="icons/brand.png" height="100" width="100"/>   
+        </a>
+        <div class="open__icon-text">Passordbank</div>
+    </div>
     <div class="open__icons">
         {{#if canOpen}}
             <div class="open__icon open__icon-open" tabindex="1" id="open__icon-open">
@@ -36,14 +42,6 @@
             <div class="open__icon open__icon-more" tabindex="5" id="open__icon-more">
                 <i class="fa fa-ellipsis-h open__icon-i"></i>
                 <div class="open__icon-text">{{res 'openMore'}}</div>
-            </div>
-        {{/if}}
-        {{#if showLogo}}
-            <div class="open__icon open__icon-more id=open__icon-more">
-                <a href="/">
-                    <img src="icons/brand.png" height="100" width="100"/>
-                </a>
-                <div class="open__icon-text">Passordbank</div>
             </div>
         {{/if}}
     </div>
@@ -107,7 +105,7 @@
                     <span class="open__last-item-text">{{file.name}}</span>
                 </div>
             {{/each}}
-        </div>
+            </div>
     </div>
     <div class="open__config-wrap">
     </div>
