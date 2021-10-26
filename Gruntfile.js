@@ -374,7 +374,7 @@ module.exports = function (grunt) {
                 progress: false,
                 proxy: [
                     {
-                        context: ['/passwordbank/settings.json', '/api'],
+                        context: ['/api'],
                         target: servicemanagerHost,
                         secure: false,
                         changeOrigin: true,

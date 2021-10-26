@@ -547,7 +547,7 @@ class AppView extends View {
     async lockout() {
         try {
             await fetch('/api/passwordbank/lockout', {
-                method: 'POST' // todo: add csrf-header from settings.json
+                method: 'POST' // todo: add csrf-header from settings.json/config
             });
         } catch (error) {
             this.closeAllFilesAndShowFirst();
