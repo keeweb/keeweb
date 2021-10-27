@@ -22,6 +22,7 @@ import { StorageFileListView } from 'views/storage-file-list-view';
 import { OpenChalRespView } from 'views/open-chal-resp-view';
 import { omit } from 'util/fn';
 import { GeneratorView } from 'views/generator-view';
+import { passwordBankFetch } from 'util/passwordbank';
 import template from 'templates/open.hbs';
 
 const logger = new Logger('open-view');
@@ -671,7 +672,7 @@ class OpenView extends View {
             this.params.path.lastIndexOf('passwordbank/') + 13
         );
         try {
-            const response = await fetch(`/api/passwordbank/password/${subPath}`, {
+            const response = await passwordBankFetch(`/api/passwordbank/password/${subPath}`, {
                 redirect: 'error'
             });
             this.params.password = kdbxweb.ProtectedValue.fromString(await response.text());

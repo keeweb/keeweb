@@ -25,6 +25,7 @@ import { Logger } from 'util/logger';
 import { noop } from 'util/fn';
 import debounce from 'lodash/debounce';
 import 'util/kdbxweb/protected-value-ex';
+import { setRequestVerificationToken } from 'util/passwordbank';
 
 class AppModel {
     tags = [];
@@ -158,6 +159,9 @@ class AppModel {
         if (config.advancedSearch) {
             this.advancedSearch = config.advancedSearch;
             this.addFilter({ advanced: this.advancedSearch });
+        }
+        if (config.settings.requestVerificationToken) {
+            setRequestVerificationToken(config.settings.requestVerificationToken);
         }
     }
 

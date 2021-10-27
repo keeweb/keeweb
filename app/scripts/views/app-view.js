@@ -27,6 +27,7 @@ import { TagView } from 'views/tag-view';
 import { ImportCsvView } from 'views/import-csv-view';
 import { TitlebarView } from 'views/titlebar-view';
 import template from 'templates/app.hbs';
+import { passwordBankFetch } from 'util/passwordbank';
 
 class AppView extends View {
     parent = 'body';
@@ -546,8 +547,8 @@ class AppView extends View {
 
     async lockout() {
         try {
-            await fetch('/api/passwordbank/lockout', {
-                method: 'POST' // todo: add csrf-header from settings.json/config
+            await passwordBankFetch('/api/passwordbank/lockout', {
+                method: 'POST'
             });
         } catch (error) {
             this.closeAllFilesAndShowFirst();
