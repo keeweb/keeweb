@@ -22,6 +22,7 @@ import { StorageFileListView } from 'views/storage-file-list-view';
 import { OpenChalRespView } from 'views/open-chal-resp-view';
 import { omit } from 'util/fn';
 import { GeneratorView } from 'views/generator-view';
+import { CreateNewPasswordBankView } from 'views/create-new-password-bank-view';
 import { passwordBankFetch } from 'util/passwordbank';
 import template from 'templates/open.hbs';
 
@@ -650,9 +651,42 @@ class OpenView extends View {
     }
 
     createNew() {
-        if (!this.busy) {
-            this.model.createNewFile();
+        if (this.busy) {
+            return;
         }
+        if (this.views.createDb) {
+            this.views.createDb.remove();
+        }
+        // Todo sjekk koss generator view og de andre kommer inn
+        // legg til felt for valg av type passordbank og dersom ikkje personlig, navn og leietaker
+        this.views.createDb = new CreateNewPasswordBankView(
+            this.model.settings.tenantsAvailableForCreate
+        );
+        this.views.createDb.on('cancel', this.cancelCreate.bind(this));
+        this.views.createDb.on('create', this.createPasswordBank.bind(this));
+        this.views.createDb.render();
+        this.$el.find('.open__last').addClass('hide');
+        this.$el.find('.open__icons').addClass('hide');
+        // this.model.createNewFile();
+    }
+
+    cancelCreate() {
+        if (this.busy) {
+            this.busy = false;
+        }
+        if (this.views.createDb) {
+            this.views.createDb.remove();
+            delete this.views.createDb;
+        }
+        this.$el.find('.open__last').removeClass('hide');
+        this.$el.find('.open__icons').removeClass('hide');
+        this.focusInput();
+    }
+
+    // eslint-disable-next-line prettier/prettier
+    createPasswordBank(formData) {
+        // eslint-disable-next-line no-console
+        console.log(formData);
     }
 
     async openDb() {

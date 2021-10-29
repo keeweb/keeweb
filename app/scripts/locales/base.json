@@ -777,5 +777,11 @@
   "selectEntryFieldHeader": "Select field",
   "selectEntryFieldTouch": "Press the button on your device to generate a one-time code.",
   "lockErrorHeader": "Unable to lock the password bank",
-  "lockErrorBody": "Please close the browser window to protect the password. The error was:"
+  "lockErrorBody": "Please close the browser window to protect the password. The error was:",
+  "newPasswordBank": "New password bank",
+  "passwordBankTypeLabel": "Type",
+  "passwordBankTypePersonal": "Personal",
+  "passwordBankTypeShared": "Shared",
+  "passwordBankTenantLabel": "Tenant",
+  "passwordBankTitleLabel": "Tittel"
 }
