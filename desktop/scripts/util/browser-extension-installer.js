@@ -5,42 +5,67 @@ const { isDev } = require('./app-info');
 const { app } = require('electron');
 const { ExtensionIds } = require('../const/extension-ids');
 
-function getManifestDir(browser) {
+function getManifestDirs(browser) {
     const home = app.getPath('home');
     switch (process.platform) {
         case 'darwin':
             switch (browser) {
                 case 'Chrome':
-                    return `${home}/Library/Application Support/Google/Chrome/NativeMessagingHosts/`;
+                    return [
+                        `${home}/Library/Application Support/Google/Chrome/NativeMessagingHosts/`,
+                        `${home}/Library/Application Support/Google/Chrome Beta/NativeMessagingHosts/`,
+                        `${home}/Library/Application Support/Google/Chrome Canary/NativeMessagingHosts/`,
+                        `${home}/Library/Application Support/Chromium/NativeMessagingHosts/`,
+                    ];
                 case 'Firefox':
-                    return `${home}/Library/Application Support/Mozilla/NativeMessagingHosts/`;
+                    return [
+                        `${home}/Library/Application Support/Mozilla/NativeMessagingHosts/`,
+                    ];
                 case 'Edge':
-                    return `${home}/Library/Application Support/Microsoft Edge/NativeMessagingHosts/`;
+                    return [
+                        `${home}/Library/Application Support/Microsoft Edge/NativeMessagingHosts/`,
+                    ];
                 default:
                     return undefined;
             }
         case 'linux':
             switch (browser) {
                 case 'Chrome':
-                    return `${home}/.config/google-chrome/NativeMessagingHosts/`;
+                    return [
+                        `${home}/.config/google-chrome/NativeMessagingHosts/`,
+                        `${home}/.config/google-chrome-dev/NativeMessagingHosts/`,
+                        `${home}/.config/google-chrome-unstable/NativeMessagingHosts/`,
+                        `${home}/.config/chromium/NativeMessagingHosts/`,
+                    ];
                 case 'Firefox':
-                    return `${home}/.mozilla/native-messaging-hosts/`;
+                    return [
+                        `${home}/.mozilla/native-messaging-hosts/`,
+                    ];
                 case 'Edge':
-                    return `${home}/.config/microsoft-edge/NativeMessagingHosts/`;
+                    return [
+                        `${home}/.config/microsoft-edge/NativeMessagingHosts/`,
+                    ];
                 default:
                     return undefined;
             }
     }
 }
 
-function getWindowsRegistryPath(browser) {
+function getWindowsRegistryPaths(browser) {
     switch (browser) {
         case 'Chrome':
-            return 'HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\';
+            return [
+                'HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\',
+                'HKCU\\Software\\Chromium\\NativeMessagingHosts\\',
+            ];
         case 'Firefox':
-            return 'HKCU\\Software\\Mozilla\\NativeMessagingHosts\\';
+            return [
+                'HKCU\\Software\\Mozilla\\NativeMessagingHosts\\',
+            ];
         case 'Edge':
-            return 'HKCU\\Software\\Microsoft\\Edge\\NativeMessagingHosts\\';
+            return [
+                'HKCU\\Software\\Microsoft\\Edge\\NativeMessagingHosts\\',
+            ];
         default:
             return undefined;
     }
@@ -130,8 +155,8 @@ module.exports.install = async function (browser, extension) {
     manifest.path = getNativeMessagingHostPath();
 
     if (process.platform === 'win32') {
-        const registryPath = getWindowsRegistryPath(browser);
-        if (!registryPath) {
+        const registryPaths = getWindowsRegistryPaths(browser);
+        if (!registryPaths) {
             return;
         }
 
@@ -143,30 +168,34 @@ module.exports.install = async function (browser, extension) {
         const manifestFileName = getWindowsManifestFileName(browser, extension);
         await fs.promises.writeFile(manifestFileName, JSON.stringify(manifest, null, 4));
 
-        windowsRegistry.createKey(registryPath + registryKeyName, manifestFileName);
+        for (const path of registryPaths) {
+            windowsRegistry.createKey(path + registryKeyName, manifestFileName);
+        }
     } else {
-        const manifestDir = getManifestDir(browser);
-        if (!manifestDir) {
+        const manifestDirs = getManifestDirs(browser);
+        if (!manifestDirs) {
             return;
         }
-
-        await fs.promises.mkdir(manifestDir, { recursive: true });
 
         const manifestFileName = getManifestFileName(extension);
         if (!manifestFileName) {
             return;
         }
 
-        const fullPath = path.join(manifestDir, manifestFileName);
+        for (const dir of manifestDirs) {
+            await fs.promises.mkdir(dir, { recursive: true });
 
-        await fs.promises.writeFile(fullPath, JSON.stringify(manifest, null, 4));
+            const fullPath = path.join(dir, manifestFileName);
+
+            await fs.promises.writeFile(fullPath, JSON.stringify(manifest, null, 4));
+        }
     }
 };
 
 module.exports.uninstall = async function (browser, extension) {
     if (process.platform === 'win32') {
-        const registryPath = getWindowsRegistryPath(browser);
-        if (!registryPath) {
+        const registryPaths = getWindowsRegistryPaths(browser);
+        if (!registryPaths) {
             return;
         }
 
@@ -175,10 +204,12 @@ module.exports.uninstall = async function (browser, extension) {
             return;
         }
 
-        windowsRegistry.deleteKey(registryPath + registryKeyName);
+        for (const path of registryPaths) {
+            windowsRegistry.deleteKey(path + registryKeyName);
+        }
     } else {
-        const manifestDir = getManifestDir(browser);
-        if (!manifestDir) {
+        const manifestDirs = getManifestDirs(browser);
+        if (!manifestDirs) {
             return;
         }
 
@@ -186,8 +217,11 @@ module.exports.uninstall = async function (browser, extension) {
         if (!manifestFileName) {
             return;
         }
-        const fullPath = path.join(manifestDir, manifestFileName);
 
-        await fs.promises.unlink(fullPath);
+        for (const dir of manifestDirs) {
+            const fullPath = path.join(dir, manifestFileName);
+
+            await fs.promises.unlink(fullPath);
+        }
     }
 };
