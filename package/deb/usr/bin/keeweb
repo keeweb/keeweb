@@ -1,2 +1,6 @@
 #!/bin/bash
-/usr/share/keeweb-desktop/keeweb "$@"
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    /usr/share/keeweb-desktop/keeweb --enable-features=UseOzonePlatform --ozone-platform=wayland "$@"
+else
+    /usr/share/keeweb-desktop/keeweb "$@"
+fi
