@@ -5,6 +5,8 @@ import {
     generatePasswordForDatabase
 } from 'util/passwordbank';
 import template from 'templates/create-new-password-bank.hbs';
+import { FileModel } from 'models/file-model';
+import { FileInfoModel } from 'models/file-info-model';
 
 class CreateNewPasswordBankView extends View {
     parent = '.open__config-wrap';
@@ -16,9 +18,10 @@ class CreateNewPasswordBankView extends View {
         'input input': 'checkValidity'
     };
 
-    constructor(tenantsAvailableForCreate) {
+    constructor(model) {
         super();
-        this.tenantsAvailableForCreate = tenantsAvailableForCreate;
+        this.tenantsAvailableForCreate = model.settings.tenantsAvailableForCreate;
+        this.model = model;
     }
 
     getType() {
@@ -51,6 +54,7 @@ class CreateNewPasswordBankView extends View {
     }
 
     checkValidity() {
+        this.setError('');
         const type = this.getType();
         let isValid = false;
         if (type === 'Personal') {
@@ -66,9 +70,12 @@ class CreateNewPasswordBankView extends View {
         const data = {};
         data.type = this.getType();
         if (data.type === 'Shared') {
-            data.tenantId = document.getElementById('open__config-field-tenant').value;
+            const tenantSelector = document.getElementById('open__config-field-tenant');
+            data.tenantId = tenantSelector.value;
+            data.tenantName = tenantSelector.options[tenantSelector.selectedIndex].text;
             data.title = this.getTitleField().value;
         } else {
+            data.tenantName = '';
             throw 'Personal password bank is not implemented yet!!';
         }
         return data;
@@ -82,13 +89,53 @@ class CreateNewPasswordBankView extends View {
         if (!this.checkValidity()) {
             return;
         }
+        const okButton = this.$el.find('.open__config-btn-ok');
+        okButton.prop('disabled', true);
         const formData = this.getFormData();
         const password = generatePasswordForDatabase();
         const db = createKdbxDatabase(formData.title, password);
-        if (formData.type === 'Shared') {
-            await createSharedPasswordBank(formData.tenantId, formData.title, password, db);
+        let path = '/api/passwordbank/';
+        let icon = '';
+        try {
+            if (formData.type === 'Shared') {
+                path += await createSharedPasswordBank(
+                    formData.tenantId,
+                    formData.title,
+                    password,
+                    db
+                );
+                icon = 'users';
+            }
+        } catch (error) {
+            this.setError(error.message);
+            okButton.prop('disabled', false);
+            return;
         }
-        this.emit('create', formData);
+        const newFile = new FileModel({
+            db,
+            name: formData.title,
+            tenantName: formData.tenantName,
+            storage: 'webdav',
+            path,
+            writeAccess: true
+        });
+        newFile.readModel();
+        newFile.set({ active: true, name: newFile.name });
+        const fileInfo = new FileInfoModel({
+            id: newFile.id,
+            name: formData.title,
+            storage: 'webdav',
+            path,
+            tenantName: formData.tenantName,
+            icon,
+            writeAccess: true
+        });
+        this.model.fileInfos.unshift(fileInfo);
+        this.model.addFile(newFile);
+    }
+
+    setError(error) {
+        this.$el.find('.open__config-error').text(error);
     }
 }
 export { CreateNewPasswordBankView };

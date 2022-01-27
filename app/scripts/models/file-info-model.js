@@ -20,7 +20,9 @@ const DefaultProperties = {
     chalResp: null,
     encryptedPassword: null,
     encryptedPasswordDate: null,
-    icon: null
+    icon: null,
+    tenantName: '',
+    writeAccess: false
 };
 
 class FileInfoModel extends Model {

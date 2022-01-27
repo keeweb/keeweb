@@ -102,7 +102,7 @@
                 <div class="open__last-item" data-id="{{file.id}}" tabindex="{{add @index 30}}"
                      id="open__last-item--{{file.id}}">
                     {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
-                    <span class="open__last-item-text">{{file.name}}</span>
+                    <span class="open__last-item-text">{{#if file.tenantName}}{{file.tenantName}} - {{/if}}{{file.name}}</span>
                 </div>
             {{/each}}
             </div>

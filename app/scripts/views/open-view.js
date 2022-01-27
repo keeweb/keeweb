@@ -172,7 +172,8 @@ class OpenView extends View {
                 id: fileInfo.id,
                 name: fileInfo.name,
                 path: this.getDisplayedPath(fileInfo),
-                icon
+                icon,
+                tenantName: fileInfo.tenantName
             };
         });
     }
@@ -611,6 +612,8 @@ class OpenView extends View {
         this.params.keyFileData = null;
         this.params.opts = fileInfo.opts;
         this.params.chalResp = fileInfo.chalResp;
+        this.params.tenantName = fileInfo.tenantName;
+        this.params.writeAccess = fileInfo.writeAccess;
         if (fileWasClicked) {
             this.openDb();
         }
@@ -659,11 +662,8 @@ class OpenView extends View {
         }
         // Todo sjekk koss generator view og de andre kommer inn
         // legg til felt for valg av type passordbank og dersom ikkje personlig, navn og leietaker
-        this.views.createDb = new CreateNewPasswordBankView(
-            this.model.settings.tenantsAvailableForCreate
-        );
+        this.views.createDb = new CreateNewPasswordBankView(this.model);
         this.views.createDb.on('cancel', this.cancelCreate.bind(this));
-        this.views.createDb.on('create', this.createPasswordBank.bind(this));
         this.views.createDb.render();
         this.$el.find('.open__last').addClass('hide');
         this.$el.find('.open__icons').addClass('hide');
@@ -681,12 +681,6 @@ class OpenView extends View {
         this.$el.find('.open__last').removeClass('hide');
         this.$el.find('.open__icons').removeClass('hide');
         this.focusInput();
-    }
-
-    // eslint-disable-next-line prettier/prettier
-    createPasswordBank(formData) {
-        // eslint-disable-next-line no-console
-        console.log(formData);
     }
 
     async openDb() {
@@ -709,7 +703,7 @@ class OpenView extends View {
             const response = await passwordBankFetch(`/api/passwordbank/password/${subPath}`, {
                 redirect: 'error'
             });
-            this.params.password = kdbxweb.ProtectedValue.fromString(await response.text());
+            this.params.password = kdbxweb.ProtectedValue.fromString(await response.json());
             this.afterPaint(() => {
                 this.model.openFile(this.params, (err) => this.openDbComplete(err));
             });

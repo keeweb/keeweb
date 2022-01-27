@@ -18,7 +18,8 @@ class FooterView extends View {
         'click .footer__btn-settings': 'toggleSettings',
         'click .footer__btn-generate': 'genPass',
         'click .footer__btn-lock': 'lockWorkspace',
-        'click .footer__btn-back': 'lockAndExitWorkspace'
+        'click .footer__btn-back': 'lockAndExitWorkspace',
+        'click .footer__btn-save': 'saveAll'
     };
 
     constructor(model, options) {

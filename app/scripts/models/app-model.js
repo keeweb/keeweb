@@ -142,7 +142,9 @@ class AppModel {
                             storage: file.storage,
                             path: file.path,
                             opts: file.options,
-                            icon: file.icon
+                            icon: file.icon,
+                            tenantName: file.tenantName,
+                            writeAccess: file.writeAccess
                         })
                 )
                 .reverse()
@@ -721,7 +723,9 @@ class AppModel {
             keyFileName: params.keyFileName,
             keyFilePath: params.keyFilePath,
             backup: fileInfo?.backup || null,
-            chalResp: params.chalResp
+            chalResp: params.chalResp,
+            tenantName: params.tenantName,
+            writeAccess: params.writeAccess
         });
         if (params.encryptedPassword) {
             file.encryptedPassword = fileInfo.encryptedPassword;
@@ -749,9 +753,7 @@ class AppModel {
                 logger.info('Save loaded file to cache');
                 Storage.cache.save(file.id, null, params.fileData);
             }
-            const rev = params.rev || (fileInfo && fileInfo.rev);
             this.setFileOpts(file, params.opts);
-            this.addToLastOpenFiles(file, rev);
             this.addFile(file);
             callback(null, file);
             this.fileOpened(file, data, params);
@@ -908,7 +910,7 @@ class AppModel {
     }
 
     syncFile(file, options, callback) {
-        if (file.demo) {
+        if (file.demo || !file.writeAccess) {
             return callback && callback();
         }
         if (file.syncing) {

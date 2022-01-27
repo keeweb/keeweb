@@ -79,6 +79,7 @@
         &:last-of-type {
             padding-right: $base-spacing;
         }
+        position: relative;
     }
 
     &__update-icon {

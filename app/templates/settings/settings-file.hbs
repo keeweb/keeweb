@@ -9,13 +9,16 @@
             <p>{{res 'setFileLocalHint'}} <a href="{{desktopLink}}" target="_blank">{{res 'setFileDownloadApp'}}</a></p>
         {{/unless}}
     {{/if}}
-
-    <div class="settings__file-buttons">
-        <button class="settings__file-button-save-default" {{#if syncing}}disabled{{/if}}>
-            {{#ifeq storage 'file'}}{{res 'setFileSave'}}{{/ifeq}}
-            {{#ifneq storage 'file'}}{{res 'setFileSyncVerb'}}{{/ifneq}}
-        </button>
-    </div>
+    {{#if writeAccess}}
+        <div class="settings__file-buttons">
+            <button class="settings__file-button-save-default" {{#if syncing}}disabled{{/if}}>
+                {{#ifeq storage 'file'}}{{res 'setFileSave'}}{{/ifeq}}
+                {{#ifneq storage 'file'}}{{res 'setFileSyncVerb'}}{{/ifneq}}
+            </button>
+        </div>
+    {{else}}
+        <p>{{res 'noWriteAccess'}}</p>
+    {{/if}}
 
     <div class="settings__file-save-choose hide">
         <h2>{{res 'setFileSaveTo'}}</h2>

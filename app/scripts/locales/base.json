@@ -783,5 +783,8 @@
   "passwordBankTypePersonal": "Personal",
   "passwordBankTypeShared": "Shared",
   "passwordBankTenantLabel": "Tenant",
-  "passwordBankTitleLabel": "Tittel"
+  "passwordBankTitleLabel": "Title",
+  "footerSave": "Save",
+  "unknownError": "An unknown error occurred",
+  "noWriteAccess": "You are missing write access."
 }

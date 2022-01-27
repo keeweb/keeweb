@@ -1,4 +1,5 @@
 import { PasswordGenerator } from './generators/password-generator';
+import { Locale } from './locale';
 import * as kdbxweb from 'kdbxweb';
 
 let requestVerificationToken;
@@ -86,7 +87,7 @@ async function createSharedPasswordBank(tenantId, title, password, db) {
         new Blob([dbBytes], { type: 'application/octet-stream' }),
         'passwordbank.kdbx'
     );
-    await passwordBankFetch(
+    const response = await passwordBankFetch(
         `/api/passwordbank/shared/${tenantId}`,
         {
             method: 'POST',
@@ -95,6 +96,17 @@ async function createSharedPasswordBank(tenantId, title, password, db) {
         },
         true
     );
+    if (!response.ok) {
+        let message = Locale.unknownError;
+        if (response.status === 400) {
+            const body = await response.json();
+            if (body && body.message) {
+                message = body.message;
+            }
+        }
+        throw new Error(message);
+    }
+    return response.json();
 }
 
 export {

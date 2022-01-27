@@ -770,7 +770,9 @@ FileModel.defineModelProperties({
     supportsColors: true,
     supportsIcons: true,
     supportsExpiration: true,
-    defaultGroupHash: ''
+    defaultGroupHash: '',
+    tenantName: '',
+    writeAccess: false
 });
 
 export { FileModel };

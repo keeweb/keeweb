@@ -598,5 +598,8 @@
   "passwordBankTypePersonal": "Personlig",
   "passwordBankTypeShared": "Delt",
   "passwordBankTenantLabel": "Leietaker",
-  "passwordBankTitleLabel": "Tittel"
+  "passwordBankTitleLabel": "Tittel",
+  "footerSave": "Lagre",
+  "unknownError": "En ukjent feil oppstod",
+  "noWriteAccess": "Du mangler skrivetilgang."
 }

@@ -158,7 +158,8 @@ class SettingsFileView extends View {
             canExportHtml: AppSettingsModel.canExportHtml,
             showYubiKeyBlock,
             selectedYubiKey,
-            yubiKeys
+            yubiKeys,
+            writeAccess: this.model.writeAccess
         });
         if (!this.model.created) {
             this.$el.find('.settings__file-master-pass-warning').toggle(this.model.passwordChanged);
