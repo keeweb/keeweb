@@ -92,6 +92,7 @@ class CreateNewPasswordBankView extends View {
         const okButton = this.$el.find('.open__config-btn-ok');
         okButton.prop('disabled', true);
         const formData = this.getFormData();
+        // todo add upload function of existing database with provided password
         const password = generatePasswordForDatabase();
         const db = createKdbxDatabase(formData.title, password);
         let path = '/api/passwordbank/';
