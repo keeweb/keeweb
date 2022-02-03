@@ -1,0 +1,2 @@
+# Ignore ie.js since we have a linter in the service manager repo that hates single quotes
+app/content/ie.js
