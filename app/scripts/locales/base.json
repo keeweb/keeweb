@@ -786,5 +786,8 @@
   "passwordBankTitleLabel": "Title",
   "footerSave": "Save",
   "unknownError": "An unknown error occurred",
-  "noWriteAccess": "You are missing write access."
+  "noWriteAccess": "You are missing write access.",
+  "confirmDeleteFileHeader": "Confirm delete",
+  "confirmDeleteFileWarning": "Warning! Deletion is permanent. If someone has deleted a password bank by accident it can potentially be recovered from a database backup.",
+  "confirmDeleteFileQuestion": "Do you still want to delete this password bank?"
 }

@@ -25,7 +25,7 @@ import { Logger } from 'util/logger';
 import { noop } from 'util/fn';
 import debounce from 'lodash/debounce';
 import 'util/kdbxweb/protected-value-ex';
-import { setRequestVerificationToken } from 'util/passwordbank';
+import { deletePasswordBank, setRequestVerificationToken } from 'util/passwordbank';
 
 class AppModel {
     tags = [];
@@ -58,6 +58,7 @@ class AppModel {
         Events.on('main-window-will-close', this.mainWindowWillClose.bind(this));
         Events.on('hardware-decrypt-started', this.hardwareDecryptStarted.bind(this));
         Events.on('hardware-decrypt-finished', this.hardwareDecryptFinished.bind(this));
+        Events.on('delete-file', this.deleteFile.bind(this));
 
         this.appLogger = new Logger('app');
         AppModel.instance = this;
@@ -144,7 +145,8 @@ class AppModel {
                             opts: file.options,
                             icon: file.icon,
                             tenantName: file.tenantName,
-                            writeAccess: file.writeAccess
+                            writeAccess: file.writeAccess,
+                            deleteAccess: file.deleteAccess
                         })
                 )
                 .reverse()
@@ -725,7 +727,8 @@ class AppModel {
             backup: fileInfo?.backup || null,
             chalResp: params.chalResp,
             tenantName: params.tenantName,
-            writeAccess: params.writeAccess
+            writeAccess: params.writeAccess,
+            deleteAccess: params.deleteAccess
         });
         if (params.encryptedPassword) {
             file.encryptedPassword = fileInfo.encryptedPassword;
@@ -900,6 +903,14 @@ class AppModel {
         Storage.cache.remove(id);
         this.fileInfos.remove(id);
         this.fileInfos.save();
+    }
+
+    async deleteFile(file) {
+        await deletePasswordBank(file.path);
+        this.closeFile(file);
+        this.removeFileInfo(file.id);
+        this.files.remove(file);
+        Events.emit('file-deleted');
     }
 
     getFileInfo(file) {

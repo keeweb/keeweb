@@ -97,16 +97,35 @@ async function createSharedPasswordBank(tenantId, title, password, db) {
         true
     );
     if (!response.ok) {
-        let message = Locale.unknownError;
-        if (response.status === 400) {
-            const body = await response.json();
-            if (body && body.message) {
-                message = body.message;
-            }
-        }
-        throw new Error(message);
+        await ParseAndThrowError(response);
     }
     return response.json();
+}
+
+async function ParseAndThrowError(response) {
+    let message = Locale.unknownError;
+    if (response.status === 400) {
+        const body = await response.json();
+        if (body && body.message) {
+            message = body.message;
+        }
+    }
+    throw new Error(message);
+}
+
+async function deletePasswordBank(path) {
+    const splittedPath = path.split('/');
+    const passwordBankToDelete = splittedPath[splittedPath.length - 1];
+    const response = await passwordBankFetch(
+        `/api/passwordbank/delete/${passwordBankToDelete}`,
+        {
+            method: 'POST'
+        },
+        true
+    );
+    if (!response.ok) {
+        await ParseAndThrowError(response);
+    }
 }
 
 export {
@@ -115,5 +134,6 @@ export {
     passwordBankFetch,
     generatePasswordForDatabase,
     createKdbxDatabase,
-    createSharedPasswordBank
+    createSharedPasswordBank,
+    deletePasswordBank
 };

@@ -51,5 +51,13 @@
     <h2>{{res 'setFileSync'}}</h2>
     <div>{{res 'setFileLastSync'}}: {{#if syncDate}}{{syncDate}}{{else}}{{res 'setFileLastSyncUnknown'}}{{/if}} {{#if syncing}}({{res 'setFileSyncInProgress'}}...){{/if}}</div>
     {{#if syncError}}<div>{{res 'setFileSyncError'}}: {{syncError}}</div>{{/if}}
+    {{/if}}
+    {{#if deleteAccess}}
+        <h2>Slett passordbank</h2>
+        <div class="settings__file-buttons">
+             <button class="settings__file-button-delete">
+                Slett
+            </button>
+        </div>
     {{/if}}    
 </div>

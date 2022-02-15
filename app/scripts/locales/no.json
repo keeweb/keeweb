@@ -430,7 +430,7 @@
   "setGenTryBetaWarningBody": "Vennligst lagre alle filer og trykk på denne knappen på nytt",
   "setGenShowAppLogs": "Vis applogger",
   "setFilePath": "Filsti",
-  "setFileStorage": "Denne filer at lastet fra {}.",
+  "setFileStorage": "Denne filen er lastet fra {}.",
   "setFileIntl": "Denne filer er lagret i det interne app-lageret",
   "setFileLocalHint": "Ønsker du å jobbe sømløst med lokale filer?",
   "setFileDownloadApp": "Last ned en skrivebordsapp",
@@ -601,5 +601,8 @@
   "passwordBankTitleLabel": "Tittel",
   "footerSave": "Lagre",
   "unknownError": "En ukjent feil oppstod",
-  "noWriteAccess": "Du mangler skrivetilgang."
+  "noWriteAccess": "Du mangler skrivetilgang.",
+  "confirmDeleteFileHeader": "Bekreft sletting",
+  "confirmDeleteFileWarning": "NB! Sletting er permanent. Dersom noen har slettet en passordbank i vanvare kan den eventuelt gjenopprettes fra backup av databasen.",
+  "confirmDeleteFileQuestion": "Vil du fremdeles slette denne passordbanken?"
 }

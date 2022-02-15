@@ -83,6 +83,7 @@ class OpenView extends View {
             this.passwordInput.reset();
         });
         this.listenTo(Events, 'user-idle', this.userIdle);
+        this.listenTo(Events, 'file-deleted', this.render);
     }
 
     render() {
@@ -614,6 +615,7 @@ class OpenView extends View {
         this.params.chalResp = fileInfo.chalResp;
         this.params.tenantName = fileInfo.tenantName;
         this.params.writeAccess = fileInfo.writeAccess;
+        this.params.deleteAccess = fileInfo.deleteAccess;
         if (fileWasClicked) {
             this.openDb();
         }

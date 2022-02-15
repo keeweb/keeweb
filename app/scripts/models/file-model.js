@@ -772,7 +772,8 @@ FileModel.defineModelProperties({
     supportsExpiration: true,
     defaultGroupHash: '',
     tenantName: '',
-    writeAccess: false
+    writeAccess: false,
+    deleteAccess: false
 });
 
 export { FileModel };

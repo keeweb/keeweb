@@ -120,7 +120,8 @@ class CreateNewPasswordBankView extends View {
             tenantName: formData.tenantName,
             storage: 'webdav',
             path,
-            writeAccess: true
+            writeAccess: true,
+            deleteAccess: true
         });
         newFile.readModel();
         newFile.set({ active: true, name: newFile.name });
@@ -131,7 +132,8 @@ class CreateNewPasswordBankView extends View {
             path,
             tenantName: formData.tenantName,
             icon,
-            writeAccess: true
+            writeAccess: true,
+            deleteAccess: true
         });
         this.model.fileInfos.unshift(fileInfo);
         this.model.addFile(newFile);

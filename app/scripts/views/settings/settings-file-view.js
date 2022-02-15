@@ -17,6 +17,7 @@ import { FileSaver } from 'util/ui/file-saver';
 import { OpenConfigView } from 'views/open-config-view';
 import { omit } from 'util/fn';
 import template from 'templates/settings/settings-file.hbs';
+import { Events } from 'framework/events';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';
@@ -57,7 +58,8 @@ class SettingsFileView extends View {
         'input #settings__file-key-rounds': 'changeKeyRounds',
         'input #settings__file-key-change-force': 'changeKeyChangeForce',
         'input .settings__input-kdf': 'changeKdfParameter',
-        'change #settings__file-yubikey': 'changeYubiKey'
+        'change #settings__file-yubikey': 'changeYubiKey',
+        'click .settings__file-button-delete': 'delete'
     };
 
     constructor(model, options) {
@@ -159,7 +161,8 @@ class SettingsFileView extends View {
             showYubiKeyBlock,
             selectedYubiKey,
             yubiKeys,
-            writeAccess: this.model.writeAccess
+            writeAccess: this.model.writeAccess,
+            deleteAccess: this.model.deleteAccess
         });
         if (!this.model.created) {
             this.$el.find('.settings__file-master-pass-warning').toggle(this.model.passwordChanged);
@@ -239,6 +242,16 @@ class SettingsFileView extends View {
         }
 
         this.appModel.syncFile(this.model, arg);
+    }
+
+    delete() {
+        Alerts.yesno({
+            header: Locale.confirmDeleteFileHeader,
+            body: `${Locale.confirmDeleteFileWarning}\n${Locale.confirmDeleteFileQuestion}`,
+            success: () => {
+                Events.emit('delete-file', this.model);
+            }
+        });
     }
 
     saveDefault() {
