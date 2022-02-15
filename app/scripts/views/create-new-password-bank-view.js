@@ -7,6 +7,7 @@ import {
 import template from 'templates/create-new-password-bank.hbs';
 import { FileModel } from 'models/file-model';
 import { FileInfoModel } from 'models/file-info-model';
+import { IdGenerator } from 'util/generators/id-generator';
 
 class CreateNewPasswordBankView extends View {
     parent = '.open__config-wrap';
@@ -113,6 +114,7 @@ class CreateNewPasswordBankView extends View {
             return;
         }
         const newFile = new FileModel({
+            id: IdGenerator.uuid(),
             db,
             name: formData.title,
             tenantName: formData.tenantName,
