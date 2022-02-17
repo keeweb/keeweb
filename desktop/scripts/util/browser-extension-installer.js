@@ -15,15 +15,13 @@ function getManifestDirs(browser) {
                         `${home}/Library/Application Support/Google/Chrome/NativeMessagingHosts/`,
                         `${home}/Library/Application Support/Google/Chrome Beta/NativeMessagingHosts/`,
                         `${home}/Library/Application Support/Google/Chrome Canary/NativeMessagingHosts/`,
-                        `${home}/Library/Application Support/Chromium/NativeMessagingHosts/`,
+                        `${home}/Library/Application Support/Chromium/NativeMessagingHosts/`
                     ];
                 case 'Firefox':
-                    return [
-                        `${home}/Library/Application Support/Mozilla/NativeMessagingHosts/`,
-                    ];
+                    return [`${home}/Library/Application Support/Mozilla/NativeMessagingHosts/`];
                 case 'Edge':
                     return [
-                        `${home}/Library/Application Support/Microsoft Edge/NativeMessagingHosts/`,
+                        `${home}/Library/Application Support/Microsoft Edge/NativeMessagingHosts/`
                     ];
                 default:
                     return undefined;
@@ -35,16 +33,12 @@ function getManifestDirs(browser) {
                         `${home}/.config/google-chrome/NativeMessagingHosts/`,
                         `${home}/.config/google-chrome-dev/NativeMessagingHosts/`,
                         `${home}/.config/google-chrome-unstable/NativeMessagingHosts/`,
-                        `${home}/.config/chromium/NativeMessagingHosts/`,
+                        `${home}/.config/chromium/NativeMessagingHosts/`
                     ];
                 case 'Firefox':
-                    return [
-                        `${home}/.mozilla/native-messaging-hosts/`,
-                    ];
+                    return [`${home}/.mozilla/native-messaging-hosts/`];
                 case 'Edge':
-                    return [
-                        `${home}/.config/microsoft-edge/NativeMessagingHosts/`,
-                    ];
+                    return [`${home}/.config/microsoft-edge/NativeMessagingHosts/`];
                 default:
                     return undefined;
             }
@@ -56,16 +50,12 @@ function getWindowsRegistryPaths(browser) {
         case 'Chrome':
             return [
                 'HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\',
-                'HKCU\\Software\\Chromium\\NativeMessagingHosts\\',
+                'HKCU\\Software\\Chromium\\NativeMessagingHosts\\'
             ];
         case 'Firefox':
-            return [
-                'HKCU\\Software\\Mozilla\\NativeMessagingHosts\\',
-            ];
+            return ['HKCU\\Software\\Mozilla\\NativeMessagingHosts\\'];
         case 'Edge':
-            return [
-                'HKCU\\Software\\Microsoft\\Edge\\NativeMessagingHosts\\',
-            ];
+            return ['HKCU\\Software\\Microsoft\\Edge\\NativeMessagingHosts\\'];
         default:
             return undefined;
     }
