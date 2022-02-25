@@ -18,6 +18,7 @@ import { OpenConfigView } from 'views/open-config-view';
 import { omit } from 'util/fn';
 import template from 'templates/settings/settings-file.hbs';
 import { Events } from 'framework/events';
+import { renamePasswordBank } from 'util/passwordbank';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';
@@ -59,7 +60,8 @@ class SettingsFileView extends View {
         'input #settings__file-key-change-force': 'changeKeyChangeForce',
         'input .settings__input-kdf': 'changeKdfParameter',
         'change #settings__file-yubikey': 'changeYubiKey',
-        'click .settings__file-button-delete': 'delete'
+        'click .settings__file-button-delete': 'delete',
+        'click .settings__file-button-rename': 'rename'
     };
 
     constructor(model, options) {
@@ -70,7 +72,6 @@ class SettingsFileView extends View {
                 setTimeout(() => this.render(), 0);
             });
         }
-
         this.refreshYubiKeys(false);
     }
 
@@ -441,6 +442,24 @@ class SettingsFileView extends View {
                 this.clearKeyFile();
                 break;
         }
+    }
+
+    async rename(event) {
+        const okButton = event.target;
+        okButton.setAttribute('disabled', '');
+        const newName = document.getElementById('settings-field-title').value.trim();
+        try {
+            await renamePasswordBank(this.model.path, newName);
+        } catch (error) {
+            const errorParent = document.getElementById('settings-field-title-error');
+            // replaceChildren with a string is safe for any injection attacks
+            errorParent.replaceChildren(error.message);
+            okButton.removeAttribute('disabled');
+            return;
+        }
+        // if ok
+        this.model.setName(newName);
+        this.save();
     }
 
     selectOldKeyFile() {

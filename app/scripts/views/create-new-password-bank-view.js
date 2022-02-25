@@ -74,7 +74,7 @@ class CreateNewPasswordBankView extends View {
             const tenantSelector = document.getElementById('open__config-field-tenant');
             data.tenantId = tenantSelector.value;
             data.tenantName = tenantSelector.options[tenantSelector.selectedIndex].text;
-            data.title = this.getTitleField().value;
+            data.title = this.getTitleField().value.trim();
         } else {
             data.tenantName = '';
             throw 'Personal password bank is not implemented yet!!';

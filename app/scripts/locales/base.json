@@ -791,5 +791,7 @@
   "confirmDeleteFileWarning": "Warning! Deletion is permanent. If someone has deleted a password bank by accident it can potentially be recovered from a database backup.",
   "confirmDeleteFileQuestion": "Do you still want to delete this password bank?",
   "deletePasswordBank": "Delete password bank",
-  "deletePasswordBankButtonText": "Delete"
+  "deletePasswordBankButtonText": "Delete",
+  "renamePasswordBank": "Rename password bank",
+  "renamePasswordBankButtonText": "Rename"
 }

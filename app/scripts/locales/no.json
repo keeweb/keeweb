@@ -606,5 +606,7 @@
   "confirmDeleteFileWarning": "NB! Sletting er permanent. Dersom noen har slettet en passordbank i vanvare kan den eventuelt gjenopprettes fra backup av databasen.",
   "confirmDeleteFileQuestion": "Vil du fremdeles slette denne passordbanken?",
   "deletePasswordBank": "Slett passordbank",
-  "deletePasswordBankButtonText": "Slett"
+  "deletePasswordBankButtonText": "Slett",
+  "renamePasswordBank": "Endre tittel",
+  "renamePasswordBankButtonText": "Endre"
 }

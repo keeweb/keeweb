@@ -97,12 +97,12 @@ async function createSharedPasswordBank(tenantId, title, password, db) {
         true
     );
     if (!response.ok) {
-        await ParseAndThrowError(response);
+        await parseAndThrowError(response);
     }
     return response.json();
 }
 
-async function ParseAndThrowError(response) {
+async function parseAndThrowError(response) {
     let message = Locale.unknownError;
     if (response.status === 400) {
         const body = await response.json();
@@ -114,8 +114,7 @@ async function ParseAndThrowError(response) {
 }
 
 async function deletePasswordBank(path) {
-    const splittedPath = path.split('/');
-    const passwordBankToDelete = splittedPath[splittedPath.length - 1];
+    const passwordBankToDelete = getPasswordBankFromPath(path);
     const response = await passwordBankFetch(
         `/api/passwordbank/delete/${passwordBankToDelete}`,
         {
@@ -124,7 +123,23 @@ async function deletePasswordBank(path) {
         true
     );
     if (!response.ok) {
-        await ParseAndThrowError(response);
+        await parseAndThrowError(response);
+    }
+}
+
+function getPasswordBankFromPath(path) {
+    const splittedPath = path.split('/');
+    return splittedPath[splittedPath.length - 1];
+}
+
+async function renamePasswordBank(path, title) {
+    const passwordBankToRename = getPasswordBankFromPath(path);
+    const response = await passwordBankFetch(`/api/passwordbank/rename/${passwordBankToRename}`, {
+        method: 'POST',
+        body: JSON.stringify(title)
+    });
+    if (!response.ok) {
+        await parseAndThrowError(response);
     }
 }
 
@@ -135,5 +150,6 @@ export {
     generatePasswordForDatabase,
     createKdbxDatabase,
     createSharedPasswordBank,
-    deletePasswordBank
+    deletePasswordBank,
+    renamePasswordBank
 };
