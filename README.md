@@ -62,7 +62,10 @@ npm run dev-desktop-macos
 npm run dev-desktop-windows
 npm run dev-desktop-linux
 ```
-
+## Publish new version
+1. Authenticate yourself by running `npm adduser`
+1. Bump package version in package.json
+1. run `npm publish`
 ## Contributing
 
 Please read contribution guidelines [for pull requests](.github/PULL_REQUEST_TEMPLATE.md).  

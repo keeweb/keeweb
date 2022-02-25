@@ -19,3 +19,4 @@ xcuserdata/
 test/dist/
 .env
 .vs/
+identitystream-passwordbank*.tgz
