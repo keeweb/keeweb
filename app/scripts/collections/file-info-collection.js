@@ -32,6 +32,10 @@ class FileInfoCollection extends Collection {
     getByName(name) {
         return this.find((file) => file.name.toLowerCase() === name.toLowerCase());
     }
+
+    getByPath(path) {
+        return this.find((file) => file.path.toLowerCase() === path.toLowerCase());
+    }
 }
 
 const instance = new FileInfoCollection();

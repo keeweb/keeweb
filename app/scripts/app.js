@@ -193,7 +193,10 @@ ready(() => {
     function openBankFromQueryParam() {
         const bank = getBankParam();
         if (bank) {
-            const fileInfo = appModel.fileInfos.getByName(bank);
+            let fileInfo = appModel.fileInfos.getByPath(`/api/passwordbank/${bank}`);
+            if (!fileInfo) {
+                fileInfo = appModel.fileInfos.getByName(bank);
+            }
             if (fileInfo) {
                 appView.views.open.showOpenFileInfo(fileInfo, true);
             }
