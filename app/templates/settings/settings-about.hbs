@@ -1,12 +1,14 @@
 <div class="settings__content">
-    <h1><i class="fa fa-info settings__head-icon"></i> {{res 'setAboutTitle'}} KeeWeb v{{version}}</h1>
-    <p>{{#res 'setAboutFirst'}}<a href="https://antelle.net" target="_blank">Antelle</a>{{/res~}}&nbsp;
+    <h1><i class="fa fa-info settings__head-icon"></i> {{res 'setAboutTitle'}} IdentityStream Passordbank v{{version}}</h1>
+    <p>{{#res 'setAboutFirst'}}<a href="https://identitystream.com" target="_blank">IdentityStream AS</a>{{/res~}}&nbsp;
         {{~#res 'setAboutSecond'}}<a href="{{licenseLink}}" target="_blank">MIT</a>{{/res}}
         {{#res 'setAboutSource'}}<a href="{{repoLink}}" target="_blank">GitHub <i class="fa fa-github-alt bottom"></i></a>{{/res}}</p>
-    <a href="{{donationLink}}" target="_blank" class="settings__donate-btn">
-        <span class="settings__donate-btn-top">Become a</span><span class="settings__donate-btn-bottom">Backer</span>
-    </a>
     <p>{{res 'setAboutBuilt'}}:</p>
+    <h3>Forked from:</h3>
+    <ul>
+        <li><a href="{{repoLinkKeeweb}}">Keeweb</a><span class="muted-color">, a free cross-platform password manager compatible with KeePass, &copy; Antelle</span></li>
+    </ul>
+    
     <h3>Libraries</h3>
     <ul>
         {{#if isDesktop}}<li><a href="https://electron.atom.io/" target="_blank">electron</a><span class="muted-color">, cross-platform desktop apps framework, &copy; 2013-2020 GitHub Inc.</span></li>{{/if}}

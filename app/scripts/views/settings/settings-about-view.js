@@ -14,6 +14,7 @@ class SettingsAboutView extends View {
             licenseLinkApache: Links.LicenseApache,
             licenseLinkCCBY40: Links.LicenseLinkCCBY40,
             repoLink: Links.Repo,
+            repoLinkKeeweb: Links.RepoKeeweb,
             donationLink: Links.Donation,
             isDesktop: Features.isDesktop,
             year: new Date().getFullYear()
