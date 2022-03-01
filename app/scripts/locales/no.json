@@ -601,7 +601,7 @@
   "passwordBankTitleLabel": "Tittel",
   "footerSave": "Lagre",
   "unknownError": "En ukjent feil oppstod",
-  "noWriteAccess": "Du mangler skrivetilgang.",
+  "noWriteAccess": "Du har kun lesetilgang.",
   "confirmDeleteFileHeader": "Bekreft sletting",
   "confirmDeleteFileWarning": "NB! Sletting er permanent. Dersom noen har slettet en passordbank i vanvare kan den eventuelt gjenopprettes fra backup av databasen.",
   "confirmDeleteFileQuestion": "Vil du fremdeles slette denne passordbanken?",
