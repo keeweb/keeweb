@@ -493,6 +493,9 @@ class AppView extends View {
     }
 
     userIdle() {
+        if (!this.model.files.hasOpenFiles()) {
+            return;
+        }
         this.lockWorkspace(true);
     }
 
