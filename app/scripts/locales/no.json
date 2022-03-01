@@ -608,5 +608,6 @@
   "deletePasswordBank": "Slett passordbank",
   "deletePasswordBankButtonText": "Slett",
   "renamePasswordBank": "Endre tittel",
-  "renamePasswordBankButtonText": "Endre"
+  "renamePasswordBankButtonText": "Endre",
+  "setShCopyOtp": "Kopiér engangskode (OTP)"
 }
