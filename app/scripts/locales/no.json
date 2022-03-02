@@ -237,6 +237,8 @@
   "detHistoryNoTitle": "ingen tittel",
   "detHistoryCurState": "nåværende tilstand",
   "detHistoryCurUnsavedState": "nåværende ulagrede tilstand",
+  "detHistoryRevertAlert": "Tilbakefør til denne tilstanden?",
+  "detHistoryRevertAlertBody": "Din nåværende tilstand vil lagres i historikken.",
   "detHistoryDeleteAlert": "Slette dette lagringsstadiet?",
   "detHistoryDeleteAlertBody": "Du vil ikke kunne gjenopprette den.",
   "detHistoryDiscardChangesAlert": "Angre de utførte endringene til oppføringen?",
