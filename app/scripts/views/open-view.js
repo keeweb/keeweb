@@ -23,7 +23,7 @@ import { OpenChalRespView } from 'views/open-chal-resp-view';
 import { omit } from 'util/fn';
 import { GeneratorView } from 'views/generator-view';
 import { CreateNewPasswordBankView } from 'views/create-new-password-bank-view';
-import { passwordBankFetch } from 'util/passwordbank';
+import { getPasswordForPasswordBank } from 'util/passwordbank';
 import template from 'templates/open.hbs';
 
 const logger = new Logger('open-view');
@@ -698,22 +698,11 @@ class OpenView extends View {
         this.busy = true;
         // EncryptedPassword is used by kdbx to support iOS fingerprint unlock in the keeweb iOS app => Set this to null since we don't support iOS
         this.params.encryptedPassword = null;
-        const subPath = this.params.path.substring(
-            this.params.path.lastIndexOf('passwordbank/') + 13
-        );
-        try {
-            const response = await passwordBankFetch(`/api/passwordbank/password/${subPath}`, {
-                redirect: 'error'
-            });
-            this.params.password = kdbxweb.ProtectedValue.fromString(await response.json());
-            this.afterPaint(() => {
-                this.model.openFile(this.params, (err) => this.openDbComplete(err));
-            });
-        } catch (error) {
-            window.location = `/onetimecode?title=Passordbanken&redirectUri=${encodeURIComponent(
-                `/passwordbank/?bank=${this.params.name}`
-            )}`;
-        }
+        const password = await getPasswordForPasswordBank(this.params.path);
+        this.params.password = kdbxweb.ProtectedValue.fromString(password);
+        this.afterPaint(() => {
+            this.model.openFile(this.params, (err) => this.openDbComplete(err));
+        });
     }
 
     openDbComplete(err) {

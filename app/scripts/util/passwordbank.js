@@ -143,13 +143,37 @@ async function renamePasswordBank(path, title) {
     }
 }
 
+async function getPasswordForPasswordBank(path) {
+    const passwordBankToGetPasswordFor = getPasswordBankFromPath(path);
+    try {
+        const response = await passwordBankFetch(
+            `/api/passwordbank/password/${passwordBankToGetPasswordFor}`,
+            {
+                redirect: 'error'
+            }
+        );
+        return await response.json();
+    } catch (error) {
+        window.location = `/onetimecode?title=Passordbanken&redirectUri=${encodeURIComponent(
+            `/passwordbank/?bank=${passwordBankToGetPasswordFor}`
+        )}`;
+    }
+}
+
+async function lock() {
+    await passwordBankFetch('/api/passwordbank/lockout', {
+        method: 'POST'
+    });
+}
+
 export {
     csrfSafeMethod,
     setRequestVerificationToken,
-    passwordBankFetch,
     generatePasswordForDatabase,
     createKdbxDatabase,
     createSharedPasswordBank,
     deletePasswordBank,
-    renamePasswordBank
+    renamePasswordBank,
+    getPasswordForPasswordBank,
+    lock
 };

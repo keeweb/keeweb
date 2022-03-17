@@ -27,7 +27,7 @@ import { TagView } from 'views/tag-view';
 import { ImportCsvView } from 'views/import-csv-view';
 import { TitlebarView } from 'views/titlebar-view';
 import template from 'templates/app.hbs';
-import { passwordBankFetch } from 'util/passwordbank';
+import { lock as lockPasswordBank } from 'util/passwordbank';
 
 class AppView extends View {
     parent = 'body';
@@ -550,9 +550,7 @@ class AppView extends View {
 
     async lockout() {
         try {
-            await passwordBankFetch('/api/passwordbank/lockout', {
-                method: 'POST'
-            });
+            await lockPasswordBank();
         } catch (error) {
             this.closeAllFilesAndShowFirst();
             Alerts.error({
