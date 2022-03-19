@@ -85,6 +85,13 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.snap
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.snap
+      - name: Publish to Snap Store
+        run: |
+          sudo snap install snapcraft --classic
+          echo "$SNAP_TOKEN" | snapcraft login --with -
+          snapcraft upload --release=stable ./dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.snap
+        env:
+          SNAP_TOKEN: ${{secrets.snap_token}}
       - name: Upload deb artifact
         uses: actions/upload-artifact@v1
         with:
