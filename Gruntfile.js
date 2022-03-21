@@ -28,7 +28,7 @@ module.exports = function (grunt) {
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
-    const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
+    const electronVersion = pkg.devDependencies.electron.replace(/^\D/, '');
     const skipSign = grunt.option('skip-sign');
     const getCodeSignConfig = () =>
         skipSign ? { identities: {} } : require('./keys/codesign.json');
