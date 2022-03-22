@@ -1,6 +1,6 @@
 {
   "name": "@identitystream/passwordbank",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "IdentityStream ServiceManager Password Bank",
   "homepage": "https://identitystream.com",
   "private": false,
@@ -115,7 +115,7 @@
     "grunt-string-replace": "1.3.1",
     "grunt-webpack": "4.0.3",
     "handlebars-loader": "1.7.1",
-    "keytar": "^7.7.0",
+    "keytar": "^7.9.0",
     "load-grunt-tasks": "5.1.0",
     "mini-css-extract-plugin": "^1.6.0",
     "mocha": "^9.2.0",
@@ -147,7 +147,11 @@
     "time-grunt":{
       "ansi-regex": "2.1.1"
     },
+    "strip-ansi":{
+      "ansi-regex": "^5.0.1"
+    },
     "minimist": "^1.2.6",
     "uglify-js": "^3.15.3"
+    
   }
 }
