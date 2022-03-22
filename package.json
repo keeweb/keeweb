@@ -1,6 +1,6 @@
 {
   "name": "@identitystream/passwordbank",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "IdentityStream ServiceManager Password Bank",
   "homepage": "https://identitystream.com",
   "private": false,
@@ -146,6 +146,8 @@
     "ansi-regex": "^6.0.1",
     "time-grunt":{
       "ansi-regex": "2.1.1"
-    }
+    },
+    "minimist": "^1.2.6",
+    "uglify-js": "^3.15.3"
   }
 }
