@@ -143,6 +143,9 @@
   },
   "overrides": {
     "shelljs": "0.8.5",
-    "ansi-regex": "^6.0.1"
+    "ansi-regex": "^6.0.1",
+    "time-grunt":{
+      "ansi-regex": "2.1.1"
+    }
   }
 }
