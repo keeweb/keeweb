@@ -143,15 +143,7 @@
   },
   "overrides": {
     "shelljs": "0.8.5",
-    "ansi-regex": "^6.0.1",
-    "time-grunt":{
-      "ansi-regex": "2.1.1"
-    },
-    "strip-ansi":{
-      "ansi-regex": "^5.0.1"
-    },
     "minimist": "^1.2.6",
     "uglify-js": "^3.15.3"
-    
   }
 }
