@@ -96,11 +96,10 @@ class CreateNewPasswordBankView extends View {
         // todo add upload function of existing database with provided password
         const password = generatePasswordForDatabase();
         const db = createKdbxDatabase(formData.title, password);
-        let path = '/api/passwordbank/';
-        let icon = '';
+        let path, icon;
         try {
             if (formData.type === 'Shared') {
-                path += await createSharedPasswordBank(
+                path = await createSharedPasswordBank(
                     formData.tenantId,
                     formData.title,
                     password,
