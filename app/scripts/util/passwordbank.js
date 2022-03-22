@@ -2,6 +2,7 @@ import { PasswordGenerator } from './generators/password-generator';
 import { Locale } from './locale';
 import * as kdbxweb from 'kdbxweb';
 
+const passwordBankApi = '/api/passwordBank';
 let requestVerificationToken;
 
 const originalOpen = XMLHttpRequest.prototype.open;
@@ -88,7 +89,7 @@ async function createSharedPasswordBank(tenantId, title, password, db) {
         'passwordbank.kdbx'
     );
     const response = await passwordBankFetch(
-        `/api/passwordbank/shared/${tenantId}`,
+        `${passwordBankApi}/shared/${tenantId}`,
         {
             method: 'POST',
             'Content-Type': 'multipart/form-data',
@@ -116,7 +117,7 @@ async function parseAndThrowError(response) {
 async function deletePasswordBank(path) {
     const passwordBankToDelete = getPasswordBankFromPath(path);
     const response = await passwordBankFetch(
-        `/api/passwordbank/delete/${passwordBankToDelete}`,
+        `${passwordBankApi}/delete/${passwordBankToDelete}`,
         {
             method: 'POST'
         },
@@ -134,7 +135,7 @@ function getPasswordBankFromPath(path) {
 
 async function renamePasswordBank(path, title) {
     const passwordBankToRename = getPasswordBankFromPath(path);
-    const response = await passwordBankFetch(`/api/passwordbank/rename/${passwordBankToRename}`, {
+    const response = await passwordBankFetch(`${passwordBankApi}/rename/${passwordBankToRename}`, {
         method: 'POST',
         body: JSON.stringify(title)
     });
@@ -147,7 +148,7 @@ async function getPasswordForPasswordBank(path) {
     const passwordBankToGetPasswordFor = getPasswordBankFromPath(path);
     try {
         const response = await passwordBankFetch(
-            `/api/passwordbank/password/${passwordBankToGetPasswordFor}`,
+            `${passwordBankApi}/password/${passwordBankToGetPasswordFor}`,
             {
                 redirect: 'error'
             }
@@ -161,7 +162,7 @@ async function getPasswordForPasswordBank(path) {
 }
 
 async function lock() {
-    await passwordBankFetch('/api/passwordbank/lockout', {
+    await passwordBankFetch(`${passwordBankApi}/lockout`, {
         method: 'POST'
     });
 }
