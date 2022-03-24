@@ -25,7 +25,11 @@ import { Logger } from 'util/logger';
 import { noop } from 'util/fn';
 import debounce from 'lodash/debounce';
 import 'util/kdbxweb/protected-value-ex';
-import { deletePasswordBank, setRequestVerificationToken } from 'util/passwordbank';
+import {
+    deletePasswordBank,
+    isPersonalPasswordBank,
+    setRequestVerificationToken
+} from 'util/passwordbank';
 
 class AppModel {
     tags = [];
@@ -909,6 +913,10 @@ class AppModel {
         await deletePasswordBank(file.path);
         this.closeFile(file);
         this.removeFileInfo(file.id);
+        if (isPersonalPasswordBank(file.path)) {
+            this.settings.canCreatePersonalPasswordBank = true;
+            this.settings.canCreate = true;
+        }
         this.files.remove(file);
         Events.emit('file-deleted');
     }

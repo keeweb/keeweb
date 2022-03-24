@@ -79,6 +79,14 @@ function createKdbxDatabase(title, password) {
 }
 
 async function createSharedPasswordBank(tenantId, title, password, db) {
+    return createPasswordBank(`shared/${tenantId}`, title, password, db);
+}
+
+async function createPersonalPasswordBank(title, password, db) {
+    return createPasswordBank('personal', title, password, db);
+}
+
+async function createPasswordBank(subPath, title, password, db) {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('password', password);
@@ -89,7 +97,7 @@ async function createSharedPasswordBank(tenantId, title, password, db) {
         'passwordbank.kdbx'
     );
     const response = await passwordBankFetch(
-        `${passwordBankApi}/shared/${tenantId}`,
+        `${passwordBankApi}/${subPath}`,
         {
             method: 'POST',
             'Content-Type': 'multipart/form-data',
@@ -133,6 +141,10 @@ function getPasswordBankFromPath(path) {
     return splittedPath[splittedPath.length - 1];
 }
 
+function isPersonalPasswordBank(path) {
+    return path.endsWith('personal.kdbx');
+}
+
 async function renamePasswordBank(path, title) {
     const passwordBankToRename = getPasswordBankFromPath(path);
     const response = await passwordBankFetch(`${passwordBankApi}/rename/${passwordBankToRename}`, {
@@ -173,8 +185,10 @@ export {
     generatePasswordForDatabase,
     createKdbxDatabase,
     createSharedPasswordBank,
+    createPersonalPasswordBank,
     deletePasswordBank,
     renamePasswordBank,
     getPasswordForPasswordBank,
-    lock
+    lock,
+    isPersonalPasswordBank
 };

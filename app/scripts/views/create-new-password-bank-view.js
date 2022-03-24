@@ -1,6 +1,7 @@
 import { View } from 'framework/views/view';
 import {
     createKdbxDatabase,
+    createPersonalPasswordBank,
     createSharedPasswordBank,
     generatePasswordForDatabase
 } from 'util/passwordbank';
@@ -22,6 +23,7 @@ class CreateNewPasswordBankView extends View {
     constructor(model) {
         super();
         this.tenantsAvailableForCreate = model.settings.tenantsAvailableForCreate;
+        this.canCreatePersonalPasswordBank = model.settings.canCreatePersonalPasswordBank;
         this.model = model;
     }
 
@@ -35,7 +37,8 @@ class CreateNewPasswordBankView extends View {
 
     render() {
         super.render({
-            tenantsAvailableForCreate: this.tenantsAvailableForCreate
+            tenantsAvailableForCreate: this.tenantsAvailableForCreate,
+            canCreatePersonalPasswordBank: this.canCreatePersonalPasswordBank
         });
         this.typeSet();
     }
@@ -56,13 +59,7 @@ class CreateNewPasswordBankView extends View {
 
     checkValidity() {
         this.setError('');
-        const type = this.getType();
-        let isValid = false;
-        if (type === 'Personal') {
-            isValid = true;
-        } else {
-            isValid = this.getTitleField().checkValidity();
-        }
+        const isValid = this.getTitleField().checkValidity();
         this.$el.find('.open__config-btn-ok').prop('disabled', !isValid);
         return isValid;
     }
@@ -74,11 +71,8 @@ class CreateNewPasswordBankView extends View {
             const tenantSelector = document.getElementById('open__config-field-tenant');
             data.tenantId = tenantSelector.value;
             data.tenantName = tenantSelector.options[tenantSelector.selectedIndex].text;
-            data.title = this.getTitleField().value.trim();
-        } else {
-            data.tenantName = '';
-            throw 'Personal password bank is not implemented yet!!';
         }
+        data.title = this.getTitleField().value.trim();
         return data;
     }
 
@@ -106,6 +100,11 @@ class CreateNewPasswordBankView extends View {
                     db
                 );
                 icon = 'users';
+            } else {
+                path = await createPersonalPasswordBank(formData.title, password, db);
+                icon = 'user';
+                this.model.settings.canCreatePersonalPasswordBank = false;
+                this.model.settings.canCreate = this.tenantsAvailableForCreate.length > 0;
             }
         } catch (error) {
             this.setError(error.message);
@@ -120,7 +119,8 @@ class CreateNewPasswordBankView extends View {
             storage: 'webdav',
             path,
             writeAccess: true,
-            deleteAccess: true
+            deleteAccess: true,
+            passwordLength: password.length
         });
         newFile.readModel();
         newFile.set({ active: true, name: newFile.name });
