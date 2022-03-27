@@ -20,11 +20,11 @@ function checkIfPasswordIsExposedOnline(password) {
         .then((sha1) => {
             kdbxweb.ByteUtils.zeroBuffer(passwordBytes);
             sha1 = kdbxweb.ByteUtils.bytesToHex(sha1).toUpperCase();
-            const shaFirst = sha1.substr(0, 5);
+            const shaFirst = sha1.slice(0, 5);
             return fetch(`https://api.pwnedpasswords.com/range/${shaFirst}`)
                 .then((response) => response.text())
                 .then((response) => {
-                    const isPresent = response.includes(sha1.substr(5));
+                    const isPresent = response.includes(sha1.slice(5));
                     exposedPasswords[saltedValue] = isPresent;
                     return isPresent;
                 });

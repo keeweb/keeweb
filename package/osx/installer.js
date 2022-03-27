@@ -135,7 +135,7 @@ function checkFilePath(path, ext) {
     if (!path) {
         throw 'File not specified: ' + ext;
     }
-    if (path.substr(-(ext.length + 1)) !== '.' + ext) {
+    if (path.slice(-(ext.length + 1)) !== '.' + ext) {
         throw 'Bad file extension: ' + ext + ' (' + path + ')';
     }
     var file = Application('System Events').files.byName(path);
