@@ -6,36 +6,43 @@ const GeneratorPresets = {
         return [
             {
                 name: 'upper',
+                title: Locale.genPsUpper,
                 label: 'ABC',
                 type: 'checkbox'
             },
             {
                 name: 'lower',
+                title: Locale.genPsLower,
                 label: 'abc',
                 type: 'checkbox'
             },
             {
                 name: 'digits',
+                title: Locale.genPsDigits,
                 label: '123',
                 type: 'checkbox'
             },
             {
                 name: 'special',
+                title: Locale.genPsSpecial,
                 label: '!@#',
                 type: 'checkbox'
             },
             {
                 name: 'brackets',
+                title: Locale.genPsBrackets,
                 label: '({<',
                 type: 'checkbox'
             },
             {
                 name: 'high',
+                title: Locale.genPsHigh,
                 label: 'äæ±',
                 type: 'checkbox'
             },
             {
                 name: 'ambiguous',
+                title: Locale.genPsAmbiguous,
                 label: '0Oo',
                 type: 'checkbox'
             }
@@ -110,7 +117,7 @@ const GeneratorPresets = {
                 name: 'Mac',
                 title: Locale.genPresetMac,
                 length: 17,
-                options: this.getBasicOptions(),
+                options: [],
                 include: '0123456789ABCDEF',
                 pattern: 'XX-'
             },
@@ -118,14 +125,14 @@ const GeneratorPresets = {
                 name: 'Hash128',
                 title: Locale.genPresetHash128,
                 length: 32,
-                options: this.getBasicOptions(),
+                options: [],
                 include: '0123456789abcdef'
             },
             {
                 name: 'Hash256',
                 title: Locale.genPresetHash256,
                 length: 64,
-                options: this.getBasicOptions(),
+                options: [],
                 include: '0123456789abcdef'
             }
         ];
