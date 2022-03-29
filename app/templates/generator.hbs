@@ -24,8 +24,10 @@
     <div>
         {{#with (lookupfield presets "name" preset)}}
             {{#each options as |optn|}}
-                <div class="gen__check"><input type="{{optn.type}}" id="gen__check-{{optn.name}}"
-                    data-id="{{optn.name}}" {{#if (lookup ../../opt optn.name)}}checked{{/if}}><label for="gen__check-{{optn.name}}">{{optn.label}}</label></div>
+                {{#ifeq optn.type "checkbox"}}
+                    <div class="gen__check"><input type="checkbox" id="gen__check-{{optn.name}}"
+                        data-id="{{optn.name}}" {{#if (lookup ../../opt optn.name)}}checked{{/if}}><label for="gen__check-{{optn.name}}">{{optn.label}}</label></div>
+                {{/ifeq}}
             {{/each}}
         {{/with}}
     </div>

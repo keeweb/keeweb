@@ -45,6 +45,11 @@ const GeneratorPresets = {
                 title: Locale.genPsAmbiguous,
                 label: '0Oo',
                 type: 'checkbox'
+            },
+            {
+                name: 'include',
+                title: Locale.genPsInclude,
+                type: 'text'
             }
         ];
     },
@@ -117,7 +122,13 @@ const GeneratorPresets = {
                 name: 'Mac',
                 title: Locale.genPresetMac,
                 length: 17,
-                options: [],
+                options: [
+                    {
+                        name: 'include',
+                        title: Locale.genPsInclude,
+                        type: 'text'
+                    }
+                ],
                 include: '0123456789ABCDEF',
                 pattern: 'XX-'
             },
@@ -125,14 +136,26 @@ const GeneratorPresets = {
                 name: 'Hash128',
                 title: Locale.genPresetHash128,
                 length: 32,
-                options: [],
+                options: [
+                    {
+                        name: 'include',
+                        title: Locale.genPsInclude,
+                        type: 'text'
+                    }
+                ],
                 include: '0123456789abcdef'
             },
             {
                 name: 'Hash256',
                 title: Locale.genPresetHash256,
                 length: 64,
-                options: [],
+                options: [
+                    {
+                        name: 'include',
+                        title: Locale.genPsInclude,
+                        type: 'text'
+                    }
+                ],
                 include: '0123456789abcdef'
             }
         ];

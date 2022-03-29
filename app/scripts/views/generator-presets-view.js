@@ -21,8 +21,8 @@ class GeneratorPresetsView extends View {
         'change #gen-ps__check-enabled': 'changeEnabled',
         'change #gen-ps__check-default': 'changeDefault',
         'input #gen-ps__field-length': 'changeLength',
-        'change .gen-ps__check-range': 'changeRange',
-        'input #gen-ps__field-include': 'changeInclude',
+        'change .gen-ps__checkbox-option': 'changeCheckboxOption',
+        'input .gen-ps__text-option': 'changeTextOption',
         'input #gen-ps__field-pattern': 'changePattern'
     };
 
@@ -38,7 +38,7 @@ class GeneratorPresetsView extends View {
         super.render({
             presets: this.presets,
             selected: this.getPreset(this.selected),
-            ranges: this.getSelectedRanges()
+            options: this.getSelectedOptions()
         });
         this.createScroll({
             root: this.$el.find('.gen-ps')[0],
@@ -55,18 +55,15 @@ class GeneratorPresetsView extends View {
         this.pageResized();
     }
 
-    getSelectedRanges() {
+    getSelectedOptions() {
         const sel = this.getPreset(this.selected);
         const rangeOverride = {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
         };
         return sel.options.map((option) => {
-            const nameLower = option.name.toLowerCase();
             return {
-                name: nameLower,
-                title: option.title,
-                enabled: sel[nameLower],
-                sample: rangeOverride[nameLower] || CharRanges[nameLower]
+                sample: rangeOverride[option.name] || CharRanges[option.name],
+                ...option
             };
         });
     }
@@ -157,18 +154,19 @@ class GeneratorPresetsView extends View {
         this.renderExample();
     }
 
-    changeRange(e) {
+    changeCheckboxOption(e) {
         const enabled = e.target.checked;
-        const range = e.target.dataset.range;
-        GeneratorPresets.setPreset(this.selected, { [range]: enabled });
+        const option = e.target.dataset.option;
+        GeneratorPresets.setPreset(this.selected, { [option]: enabled });
         this.presets = GeneratorPresets.all;
         this.renderExample();
     }
 
-    changeInclude(e) {
-        const include = e.target.value;
-        if (include !== this.getPreset(this.selected).include) {
-            GeneratorPresets.setPreset(this.selected, { include });
+    changeTextOption(e) {
+        const value = e.target.value;
+        const option = e.target.dataset.option;
+        if (value !== this.getPreset(this.selected)[option]) {
+            GeneratorPresets.setPreset(this.selected, { [option]: value });
         }
         this.presets = GeneratorPresets.all;
         this.renderExample();
