@@ -62,7 +62,7 @@ class GeneratorPresetsView extends View {
         };
         return sel.options.map((option) => {
             return {
-                sample: rangeOverride[option.name] || CharRanges[option.name],
+                sample: option.sample || rangeOverride[option.name] || CharRanges[option.name],
                 ...option
             };
         });
