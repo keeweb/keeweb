@@ -107,7 +107,8 @@ class CreateNewPasswordBankView extends View {
                 this.model.settings.canCreate = this.tenantsAvailableForCreate.length > 0;
             }
         } catch (error) {
-            this.setError(error.message);
+            const errorIsHtml = error.statusCode === 500;
+            this.setError(error.message, errorIsHtml);
             okButton.prop('disabled', false);
             return;
         }
@@ -138,8 +139,13 @@ class CreateNewPasswordBankView extends View {
         this.model.addFile(newFile);
     }
 
-    setError(error) {
-        this.$el.find('.open__config-error').text(error);
+    setError(error, isHtml) {
+        const errorElement = this.$el.find('.open__config-error');
+        if (isHtml) {
+            errorElement.html(error);
+        } else {
+            errorElement.text(error);
+        }
     }
 }
 export { CreateNewPasswordBankView };

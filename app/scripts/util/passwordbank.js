@@ -2,6 +2,14 @@ import { PasswordGenerator } from './generators/password-generator';
 import { Locale } from './locale';
 import * as kdbxweb from 'kdbxweb';
 
+class PasswordBankError extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+        this.name = this.constructor.name;
+    }
+}
+
 const passwordBankApi = '/api/passwordBank';
 let requestVerificationToken;
 
@@ -113,7 +121,7 @@ async function createPasswordBank(subPath, title, password, db) {
 
 async function parseAndThrowError(response) {
     let message = Locale.unknownError;
-    if (response.status === 400) {
+    if (response.status === 400 || response.status === 500) {
         const body = await response.json();
         if (body && body.message) {
             message = body.message;
@@ -121,7 +129,7 @@ async function parseAndThrowError(response) {
     } else if (response.status === 403) {
         message = Locale.accessDenied;
     }
-    throw new Error(message);
+    throw new PasswordBankError(message, response.status);
 }
 
 async function deletePasswordBank(path) {
