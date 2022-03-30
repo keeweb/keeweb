@@ -793,5 +793,6 @@
   "deletePasswordBank": "Delete password bank",
   "deletePasswordBankButtonText": "Delete",
   "renamePasswordBank": "Rename password bank",
-  "renamePasswordBankButtonText": "Rename"
+  "renamePasswordBankButtonText": "Rename",
+  "accessDenied": "Access denied."
 }

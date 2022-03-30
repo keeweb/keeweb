@@ -118,6 +118,8 @@ async function parseAndThrowError(response) {
         if (body && body.message) {
             message = body.message;
         }
+    } else if (response.status === 403) {
+        message = Locale.accessDenied;
     }
     throw new Error(message);
 }
