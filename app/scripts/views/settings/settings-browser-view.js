@@ -57,7 +57,7 @@ class SettingsBrowserView extends View {
         } else {
             const extensionBrowserFamily = Features.extensionBrowserFamily;
             data.extensionBrowserFamily = Features.extensionBrowserFamily;
-            data.extensionDownloadLink = Links[`KeeWebConnectFor${extensionBrowserFamily}`];
+            data.extensionDownloadLink = Links[`KWCFor${extensionBrowserFamily}`];
         }
         super.render(data);
     }
@@ -72,6 +72,9 @@ class SettingsBrowserView extends View {
                     enabled: !!AppSettingsModel[`extensionEnabled${ext.alias}${browser}`],
                     installUrl: Links[`${ext.alias}For${browser}`]
                 };
+                if (ext.alias === 'KPXC') {
+                    ext.manualUrl = Links.ExtensionHelpForKPXC;
+                }
                 if (!ext.installUrl) {
                     if (browser === 'Other') {
                         ext.helpUrl = Links.ExtensionHelpForOtherBrowsers;

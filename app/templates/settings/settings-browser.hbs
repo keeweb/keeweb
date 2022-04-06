@@ -24,33 +24,42 @@
                         <td>{{perBrowser.browserName}}</td>
                         {{#each perBrowser.extensions as |setting|}}
                             <td>
-                                {{#if setting.supported}}
-                                    <input type="checkbox"
-                                           class="check-enable-for-browser"
-                                           {{#if setting.enabled}}checked{{/if}}
-                                           id="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"
-                                           data-browser="{{perBrowser.browser}}"
-                                           data-extension="{{setting.alias}}" />
-                                    <label for="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"></label>
+                                {{#if setting.manualUrl}}
+                                    <a href="{{setting.manualUrl}}" target="_blank" rel="noreferrer"
+                                       class="settings__browser-extension-link icon-link"
+                                       title="{{res 'setBrowserExtensionHelp'}}"
+                                    >
+                                        <i class="fa fa-info-circle"></i>
+                                    </a>
                                 {{else}}
-                                    <i class="fa fa-times muted-color" title="{{res 'setBrowserExtensionNotSupported'}}"></i>
-                                {{/if}}
-                                {{#if setting.enabled}}
-                                    {{#if setting.helpUrl}}
-                                        <a href="{{setting.helpUrl}}" target="_blank" rel="noreferrer"
-                                           class="settings__browser-extension-link icon-link"
-                                           title="{{res 'setBrowserExtensionHelp'}}"
-                                        >
-                                            <i class="fa fa-info-circle"></i>
-                                        </a>
+                                    {{#if setting.supported}}
+                                        <input type="checkbox"
+                                               class="check-enable-for-browser"
+                                               {{#if setting.enabled}}checked{{/if}}
+                                               id="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"
+                                               data-browser="{{perBrowser.browser}}"
+                                               data-extension="{{setting.alias}}" />
+                                        <label for="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"></label>
+                                    {{else}}
+                                        <i class="fa fa-times muted-color" title="{{res 'setBrowserExtensionNotSupported'}}"></i>
                                     {{/if}}
-                                    {{#if setting.installUrl}}
-                                        <a href="{{setting.installUrl}}" target="_blank" rel="noreferrer"
-                                           class="settings__browser-extension-link icon-link"
-                                           title="{{res 'setBrowserExtensionInstall'}}"
-                                        >
-                                            <i class="fa fa-download"></i>
-                                        </a>
+                                    {{#if setting.enabled}}
+                                        {{#if setting.helpUrl}}
+                                            <a href="{{setting.helpUrl}}" target="_blank" rel="noreferrer"
+                                               class="settings__browser-extension-link icon-link"
+                                               title="{{res 'setBrowserExtensionHelp'}}"
+                                            >
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        {{/if}}
+                                        {{#if setting.installUrl}}
+                                            <a href="{{setting.installUrl}}" target="_blank" rel="noreferrer"
+                                               class="settings__browser-extension-link icon-link"
+                                               title="{{res 'setBrowserExtensionInstall'}}"
+                                            >
+                                                <i class="fa fa-download"></i>
+                                            </a>
+                                        {{/if}}
                                     {{/if}}
                                 {{/if}}
                             </td>

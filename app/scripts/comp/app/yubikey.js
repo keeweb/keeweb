@@ -209,6 +209,10 @@ const YubiKey = {
             complete: (err, stdout) => {
                 this.process = null;
 
+                if (window.debugYubiKey) {
+                    logger.info('received codes', err, stdout);
+                }
+
                 if (this.aborted) {
                     return callback('Aborted');
                 }
