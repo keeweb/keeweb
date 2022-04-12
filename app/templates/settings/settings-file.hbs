@@ -53,21 +53,21 @@
     {{#if syncError}}<div>{{res 'setFileSyncError'}}: {{syncError}}</div>{{/if}}
     {{/if}}
     {{#if writeAccess}}
-        <h2>{{res 'renamePasswordBank'}}</h2>
-        <label for="settings-field-title">{{res 'passwordBankTitleLabel'}}:</label>
+        <h2>{{res 'renamePasswordVault'}}</h2>
+        <label for="settings-field-title">{{res 'passwordVaultTitleLabel'}}:</label>
         <input type="text" class="settings-field input-base" id="settings-field-title"
             autocomplete="off" autocapitalize="off" required="required" value="{{name}}"
         />
         <p class="settings__field-error error-color" id="settings-field-title-error"></p>
         <button class="settings__file-button-rename">
-            {{res 'renamePasswordBankButtonText'}}
+            {{res 'renamePasswordVaultButtonText'}}
         </button>
     {{/if}}
     {{#if deleteAccess}}
-        <h2>{{res 'deletePasswordBank'}}</h2>
+        <h2>{{res 'deletePasswordVault'}}</h2>
         <div class="settings__file-buttons">
             <button class="settings__file-button-delete">
-                {{res 'deletePasswordBankButtonText'}}
+                {{res 'deletePasswordVaultButtonText'}}
             </button>
         </div>
     {{/if}}    

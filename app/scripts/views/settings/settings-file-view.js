@@ -18,7 +18,7 @@ import { OpenConfigView } from 'views/open-config-view';
 import { omit } from 'util/fn';
 import template from 'templates/settings/settings-file.hbs';
 import { Events } from 'framework/events';
-import { renamePasswordBank } from 'util/passwordbank';
+import { renamePasswordVault } from 'util/passwordbank';
 
 const DefaultBackupPath = 'Backups/{name}.{date}.bak';
 const DefaultBackupSchedule = '1w';
@@ -449,7 +449,7 @@ class SettingsFileView extends View {
         okButton.setAttribute('disabled', '');
         const newName = document.getElementById('settings-field-title').value.trim();
         try {
-            await renamePasswordBank(this.model.path, newName);
+            await renamePasswordVault(this.model.path, newName);
         } catch (error) {
             const errorParent = document.getElementById('settings-field-title-error');
             // replaceChildren with a string is safe for any injection attacks

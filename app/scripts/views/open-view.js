@@ -22,8 +22,8 @@ import { StorageFileListView } from 'views/storage-file-list-view';
 import { OpenChalRespView } from 'views/open-chal-resp-view';
 import { omit } from 'util/fn';
 import { GeneratorView } from 'views/generator-view';
-import { CreateNewPasswordBankView } from 'views/create-new-password-bank-view';
-import { getPasswordForPasswordBank } from 'util/passwordbank';
+import { CreateNewPasswordVaultView } from 'views/create-new-password-vault-view';
+import { getPasswordForPasswordVault } from 'util/passwordbank';
 import template from 'templates/open.hbs';
 
 const logger = new Logger('open-view');
@@ -662,9 +662,7 @@ class OpenView extends View {
         if (this.views.createDb) {
             this.views.createDb.remove();
         }
-        // Todo sjekk koss generator view og de andre kommer inn
-        // legg til felt for valg av type passordbank og dersom ikkje personlig, navn og leietaker
-        this.views.createDb = new CreateNewPasswordBankView(this.model);
+        this.views.createDb = new CreateNewPasswordVaultView(this.model);
         this.views.createDb.on('cancel', this.cancelCreate.bind(this));
         this.views.createDb.render();
         this.$el.find('.open__last').addClass('hide');
@@ -698,7 +696,7 @@ class OpenView extends View {
         this.busy = true;
         // EncryptedPassword is used by kdbx to support iOS fingerprint unlock in the keeweb iOS app => Set this to null since we don't support iOS
         this.params.encryptedPassword = null;
-        const password = await getPasswordForPasswordBank(this.params.path);
+        const password = await getPasswordForPasswordVault(this.params.path);
         this.params.password = kdbxweb.ProtectedValue.fromString(password);
         this.afterPaint(() => {
             this.model.openFile(this.params, (err) => this.openDbComplete(err));

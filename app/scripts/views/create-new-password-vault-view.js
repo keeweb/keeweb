@@ -1,16 +1,16 @@
 import { View } from 'framework/views/view';
 import {
     createKdbxDatabase,
-    createPersonalPasswordBank,
-    createSharedPasswordBank,
+    createPersonalPasswordVault,
+    createSharedPasswordVault,
     generatePasswordForDatabase
 } from 'util/passwordbank';
-import template from 'templates/create-new-password-bank.hbs';
+import template from 'templates/create-new-password-vault.hbs';
 import { FileModel } from 'models/file-model';
 import { FileInfoModel } from 'models/file-info-model';
 import { IdGenerator } from 'util/generators/id-generator';
 
-class CreateNewPasswordBankView extends View {
+class CreateNewPasswordVaultView extends View {
     parent = '.open__config-wrap';
     template = template;
     events = {
@@ -23,7 +23,7 @@ class CreateNewPasswordBankView extends View {
     constructor(model) {
         super();
         this.tenantsAvailableForCreate = model.settings.tenantsAvailableForCreate;
-        this.canCreatePersonalPasswordBank = model.settings.canCreatePersonalPasswordBank;
+        this.canCreatePersonalPasswordVault = model.settings.canCreatePersonalPasswordVault;
         this.model = model;
     }
 
@@ -38,7 +38,7 @@ class CreateNewPasswordBankView extends View {
     render() {
         super.render({
             tenantsAvailableForCreate: this.tenantsAvailableForCreate,
-            canCreatePersonalPasswordBank: this.canCreatePersonalPasswordBank
+            canCreatePersonalPasswordVault: this.canCreatePersonalPasswordVault
         });
         this.typeSet();
     }
@@ -93,7 +93,7 @@ class CreateNewPasswordBankView extends View {
         let path, icon;
         try {
             if (formData.type === 'Shared') {
-                path = await createSharedPasswordBank(
+                path = await createSharedPasswordVault(
                     formData.tenantId,
                     formData.title,
                     password,
@@ -101,9 +101,9 @@ class CreateNewPasswordBankView extends View {
                 );
                 icon = 'users';
             } else {
-                path = await createPersonalPasswordBank(formData.title, password, db);
+                path = await createPersonalPasswordVault(formData.title, password, db);
                 icon = 'user';
-                this.model.settings.canCreatePersonalPasswordBank = false;
+                this.model.settings.canCreatePersonalPasswordVault = false;
                 this.model.settings.canCreate = this.tenantsAvailableForCreate.length > 0;
             }
         } catch (error) {
@@ -148,4 +148,4 @@ class CreateNewPasswordBankView extends View {
         }
     }
 }
-export { CreateNewPasswordBankView };
+export { CreateNewPasswordVaultView };

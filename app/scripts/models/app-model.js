@@ -26,8 +26,8 @@ import { noop } from 'util/fn';
 import debounce from 'lodash/debounce';
 import 'util/kdbxweb/protected-value-ex';
 import {
-    deletePasswordBank,
-    isPersonalPasswordBank,
+    deletePasswordVault,
+    isPersonalPasswordVault,
     setRequestVerificationToken
 } from 'util/passwordbank';
 
@@ -910,11 +910,11 @@ class AppModel {
     }
 
     async deleteFile(file) {
-        await deletePasswordBank(file.path);
+        await deletePasswordVault(file.path);
         this.closeFile(file);
         this.removeFileInfo(file.id);
-        if (isPersonalPasswordBank(file.path)) {
-            this.settings.canCreatePersonalPasswordBank = true;
+        if (isPersonalPasswordVault(file.path)) {
+            this.settings.canCreatePersonalPasswordVault = true;
             this.settings.canCreate = true;
         }
         this.files.remove(file);

@@ -186,12 +186,12 @@ ready(() => {
             IdleTracker.init();
             BrowserExtensionConnector.init(appModel);
             PluginManager.runAutoUpdate();
-            openBankFromQueryParam();
+            openVaultFromQueryParam();
         }, Timeouts.AutoUpdatePluginsAfterStart);
     }
 
-    function openBankFromQueryParam() {
-        const bank = getBankParam();
+    function openVaultFromQueryParam() {
+        const bank = getVaultParam();
         if (bank) {
             let fileInfo = appModel.fileInfos.getByPath(`/api/passwordbank/${bank}`);
             if (!fileInfo) {
@@ -225,8 +225,8 @@ ready(() => {
         }
     }
 
-    function getBankParam() {
-        const match = location.search.match(/[?&]bank=([^&]+)/i);
+    function getVaultParam() {
+        const match = location.search.match(/[?&]vault=([^&]+)/i);
         if (match && match[1]) {
             return decodeURIComponent(match[1]);
         }

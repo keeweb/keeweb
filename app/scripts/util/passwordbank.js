@@ -10,7 +10,7 @@ class PasswordBankError extends Error {
     }
 }
 
-const passwordBankApi = '/api/passwordBank';
+const passwordBankApi = '/api/passwordbank';
 let requestVerificationToken;
 
 const originalOpen = XMLHttpRequest.prototype.open;
@@ -86,15 +86,15 @@ function createKdbxDatabase(title, password) {
     return db;
 }
 
-async function createSharedPasswordBank(tenantId, title, password, db) {
-    return createPasswordBank(`shared/${tenantId}`, title, password, db);
+async function createSharedPasswordVault(tenantId, title, password, db) {
+    return createPasswordVault(`shared/${tenantId}`, title, password, db);
 }
 
-async function createPersonalPasswordBank(title, password, db) {
-    return createPasswordBank('personal', title, password, db);
+async function createPersonalPasswordVault(title, password, db) {
+    return createPasswordVault('personal', title, password, db);
 }
 
-async function createPasswordBank(subPath, title, password, db) {
+async function createPasswordVault(subPath, title, password, db) {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('password', password);
@@ -102,10 +102,10 @@ async function createPasswordBank(subPath, title, password, db) {
     formData.append(
         'kdbx',
         new Blob([dbBytes], { type: 'application/octet-stream' }),
-        'passwordbank.kdbx'
+        'passwordvault.kdbx'
     );
     const response = await passwordBankFetch(
-        `${passwordBankApi}/${subPath}`,
+        `${passwordBankApi}/vaults/${subPath}`,
         {
             method: 'POST',
             'Content-Type': 'multipart/form-data',
@@ -132,10 +132,10 @@ async function parseAndThrowError(response) {
     throw new PasswordBankError(message, response.status);
 }
 
-async function deletePasswordBank(path) {
-    const passwordBankToDelete = getPasswordBankFromPath(path);
+async function deletePasswordVault(path) {
+    const passwordVaultToDelete = getPasswordVaultFromPath(path);
     const response = await passwordBankFetch(
-        `${passwordBankApi}/delete/${passwordBankToDelete}`,
+        `${passwordBankApi}/vaults/delete/${passwordVaultToDelete}`,
         {
             method: 'POST'
         },
@@ -146,39 +146,44 @@ async function deletePasswordBank(path) {
     }
 }
 
-function getPasswordBankFromPath(path) {
+function getPasswordVaultFromPath(path) {
     const splittedPath = path.split('/');
     return splittedPath[splittedPath.length - 1];
 }
 
-function isPersonalPasswordBank(path) {
+function isPersonalPasswordVault(path) {
     return path.endsWith('personal.kdbx');
 }
 
-async function renamePasswordBank(path, title) {
-    const passwordBankToRename = getPasswordBankFromPath(path);
-    const response = await passwordBankFetch(`${passwordBankApi}/rename/${passwordBankToRename}`, {
-        method: 'POST',
-        body: JSON.stringify(title)
-    });
+async function renamePasswordVault(path, title) {
+    const passwordVaultToRename = getPasswordVaultFromPath(path);
+    const response = await passwordBankFetch(
+        `${passwordBankApi}/vaults/rename/${passwordVaultToRename}`,
+        {
+            method: 'POST',
+            body: JSON.stringify(title)
+        }
+    );
     if (!response.ok) {
         await parseAndThrowError(response);
     }
 }
 
-async function getPasswordForPasswordBank(path) {
-    const passwordBankToGetPasswordFor = getPasswordBankFromPath(path);
+async function getPasswordForPasswordVault(path) {
+    const passwordVaultToGetPasswordFor = getPasswordVaultFromPath(path);
     try {
         const response = await passwordBankFetch(
-            `${passwordBankApi}/password/${passwordBankToGetPasswordFor}`,
+            `${passwordBankApi}/vaults/password/${passwordVaultToGetPasswordFor}`,
             {
                 redirect: 'error'
             }
         );
         return await response.json();
     } catch (error) {
-        window.location = `/onetimecode?title=Passordbanken&redirectUri=${encodeURIComponent(
-            `/passwordbank/?bank=${passwordBankToGetPasswordFor}`
+        window.location = `/onetimecode?title=${encodeURIComponent(
+            Locale.passwordBankTitle
+        )}&redirectUri=${encodeURIComponent(
+            `/passwordbank/?vault=${passwordVaultToGetPasswordFor}`
         )}`;
     }
 }
@@ -194,11 +199,11 @@ export {
     setRequestVerificationToken,
     generatePasswordForDatabase,
     createKdbxDatabase,
-    createSharedPasswordBank,
-    createPersonalPasswordBank,
-    deletePasswordBank,
-    renamePasswordBank,
-    getPasswordForPasswordBank,
+    createSharedPasswordVault,
+    createPersonalPasswordVault,
+    deletePasswordVault,
+    renamePasswordVault,
+    getPasswordForPasswordVault,
     lock,
-    isPersonalPasswordBank
+    isPersonalPasswordVault
 };
