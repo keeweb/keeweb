@@ -1,6 +1,6 @@
 {
   "name": "@identitystream/passwordbank",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "IdentityStream ServiceManager Password Bank",
   "homepage": "https://identitystream.com",
   "private": false,
