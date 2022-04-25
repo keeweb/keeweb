@@ -191,11 +191,11 @@ ready(() => {
     }
 
     function openVaultFromQueryParam() {
-        const bank = getVaultParam();
-        if (bank) {
-            let fileInfo = appModel.fileInfos.getByPath(`/api/passwordbank/${bank}`);
+        const vault = getVaultParam();
+        if (vault) {
+            let fileInfo = appModel.fileInfos.getByPath(`/api/passwordbank/vaults/${vault}`);
             if (!fileInfo) {
-                fileInfo = appModel.fileInfos.getByName(bank);
+                fileInfo = appModel.fileInfos.getByName(vault);
             }
             if (fileInfo) {
                 appView.views.open.showOpenFileInfo(fileInfo, true);
