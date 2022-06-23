@@ -7,7 +7,7 @@ const UrlFormat = {
     getDataFileName(url) {
         const ix = url.lastIndexOf('/');
         if (ix >= 0) {
-            url = url.substr(ix + 1);
+            url = url.slice(ix + 1);
         }
         url = url.replace(/\?.*/, '').replace(/\.kdbx/i, '');
         return url;
