@@ -536,7 +536,7 @@ class FileModel extends Model {
     }
 
     removeKeyFile() {
-        this.db.credentials.keyFileHash = null;
+        this.db.credentials.setKeyFile(null);
         const changed = !!this.oldKeyFileHash;
         if (!changed && this.db.credentials.passwordHash === this.oldPasswordHash) {
             this.db.meta.keyChanged = this.oldKeyChangeDate;
