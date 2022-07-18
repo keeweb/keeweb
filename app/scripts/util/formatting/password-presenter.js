@@ -8,6 +8,8 @@ class RandomNameGenerator {
 }
 
 function charCodeToHtml(char) {
+    // In case of SPACE character we change to non-breaking space, so it will be shown as &#nbsp;
+    if (char === 32) char = 160;
     return Math.random() < 0.2 ? String.fromCharCode(char) : `&#x${char.toString(16)};`;
 }
 
