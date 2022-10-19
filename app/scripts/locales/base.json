@@ -794,5 +794,9 @@
   "deletePasswordVaultButtonText": "Delete",
   "renamePasswordVault": "Rename password vault",
   "renamePasswordVaultButtonText": "Rename",
-  "accessDenied": "Access denied."
+  "accessDenied": "Access denied.",
+  "importPassword": "Import password",
+  "uploadCSV": "Upload CSV",
+  "csvFormat": "Format",
+  "csvExtraFieldsHelperText": "It is possible to import extra fields by adding them to the csv."
 }

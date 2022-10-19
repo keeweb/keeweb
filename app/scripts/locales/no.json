@@ -614,5 +614,9 @@
   "renamePasswordVault": "Endre tittel",
   "renamePasswordVaultButtonText": "Endre",
   "setShCopyOtp": "Kopiér engangskode (OTP)",
-  "accessDenied": "Du har ikke tilgang til dette."
+  "accessDenied": "Du har ikke tilgang til dette.",
+  "importPassword": "Importer passord",
+  "uploadCSV": "Last opp CSV",
+  "csvFormat": "Format",
+  "csvExtraFieldsHelperText": "Det er mulig å importere flere felter ved å legge de til i csv-en."
 }

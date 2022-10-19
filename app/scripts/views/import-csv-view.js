@@ -128,6 +128,10 @@ class ImportCsvView extends View {
                     spaces.push(' ', ' ');
                 }
                 this.groups.push({ id: group.id, fileId: file.id, spaces, title });
+                // select the first group
+                if (this.targetGroup === undefined) {
+                    this.targetGroup = group;
+                }
             });
         }
     }

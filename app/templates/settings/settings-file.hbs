@@ -53,6 +53,17 @@
     {{#if syncError}}<div>{{res 'setFileSyncError'}}: {{syncError}}</div>{{/if}}
     {{/if}}
     {{#if writeAccess}}
+        <h2>{{res 'importPassword'}}</h2>
+        <label for="settings-field-import-csv">{{res 'uploadCSV'}}:</label>
+        <input id="settings-field-import-csv" type="file" accept="text/csv"/>
+        <h3>{{res 'csvFormat'}}:</h3>
+        <pre>
+title,username,password
+"my account","user","pass"
+"my account 2","user2","pass2"
+        </pre>
+        <p>{{res 'csvExtraFieldsHelperText'}}</p>
+
         <h2>{{res 'renamePasswordVault'}}</h2>
         <label for="settings-field-title">{{res 'passwordVaultTitleLabel'}}:</label>
         <input type="text" class="settings-field input-base" id="settings-field-title"

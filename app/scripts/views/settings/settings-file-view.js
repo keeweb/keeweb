@@ -61,7 +61,8 @@ class SettingsFileView extends View {
         'input .settings__input-kdf': 'changeKdfParameter',
         'change #settings__file-yubikey': 'changeYubiKey',
         'click .settings__file-button-delete': 'delete',
-        'click .settings__file-button-rename': 'rename'
+        'click .settings__file-button-rename': 'rename',
+        'change #settings-field-import-csv': 'importCsv'
     };
 
     constructor(model, options) {
@@ -809,6 +810,15 @@ class SettingsFileView extends View {
                 this.render();
             }
         });
+    }
+
+    importCsv(e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (/\.csv$/.test(file.name)) {
+                Events.emit('import-csv-requested', file);
+            }
+        }
     }
 }
 
