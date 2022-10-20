@@ -814,10 +814,8 @@ class SettingsFileView extends View {
 
     importCsv(e) {
         const file = e.target.files[0];
-        if (file) {
-            if (/\.csv$/.test(file.name)) {
-                Events.emit('import-csv-requested', file);
-            }
+        if (file && /\.csv$/.test(file.name)) {
+            Events.emit('import-csv-requested', file);
         }
     }
 }
