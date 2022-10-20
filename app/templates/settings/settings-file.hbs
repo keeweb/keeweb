@@ -63,7 +63,10 @@ title,username,password
 "my account 2","user2","pass2"
         </pre>
         <p>{{res 'csvExtraFieldsHelperText'}}</p>
-
+        <pre>
+title,username,password,SSN,Customer Email
+"account","user"," password with spaces ","123456","customer@email.com"
+        </pre>
         <h2>{{res 'renamePasswordVault'}}</h2>
         <label for="settings-field-title">{{res 'passwordVaultTitleLabel'}}:</label>
         <input type="text" class="settings-field input-base" id="settings-field-title"
@@ -81,5 +84,5 @@ title,username,password
                 {{res 'deletePasswordVaultButtonText'}}
             </button>
         </div>
-    {{/if}}    
+    {{/if}}
 </div>
