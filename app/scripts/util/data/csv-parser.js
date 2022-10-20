@@ -8,12 +8,15 @@ class CsvParser {
     error = undefined;
 
     parse(csv) {
-        this.csv = csv.trim().replace(/\r\n/g, '\n');
+        this.csv = csv.replace(/\r\n/g, '\n');
         this.result = [];
         this.next = this.handleBeforeValue;
         this.index = 0;
         while (this.next && this.index < this.csv.length) {
             this.next = this.next(this);
+        }
+        if (this.line?.length > 0) {
+            this.lines.push(this.line);
         }
         if (this.lines.length <= 1) {
             throw new Error('Empty CSV');
