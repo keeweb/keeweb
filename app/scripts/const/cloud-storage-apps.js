@@ -37,17 +37,19 @@ const OneDriveApps = {
     }
 };
 
-const MsTeamsApps = {
-    Local: {
-        id: '8fbe2245-13d5-446f-bedc-74c3b2e1f635'
-    },
-    Production: {
-        id: '8fbe2245-13d5-446f-bedc-74c3b2e1f635'
-    },
-    Desktop: {
-        id: '8fbe2245-13d5-446f-bedc-74c3b2e1f635',
-        secret: 'F02~HYaWs-~7MndJcVRtv9~h-50Brk_9ho'
-    }
-};
+const MsTeamsApps = OneDriveApps;
+
+// const MsTeamsApps = {
+//     Local: {
+//         id: '8fbe2245-13d5-446f-bedc-74c3b2e1f635'
+//     },
+//     Production: {
+//         id: '8fbe2245-13d5-446f-bedc-74c3b2e1f635'
+//     },
+//     Desktop: {
+//         id: '8fbe2245-13d5-446f-bedc-74c3b2e1f635',
+//         secret: 'F02~HYaWs-~7MndJcVRtv9~h-50Brk_9ho'
+//     }
+// };
 
 export { DropboxApps, GDriveApps, OneDriveApps, MsTeamsApps };
