@@ -306,8 +306,10 @@ class StorageBase {
                 return;
             }
             if (e.data.storage !== this.name) {
-                this.logger.debug('Skipped OAuth message for another storage', e.data.storage);
-                return;
+                if (e.data.storage !== 'teams') {
+                    this.logger.debug('Skipped OAuth message for another storage', e.data.storage);
+                    return;
+                }
             }
             processWindowMessage(e.data.search);
         };
