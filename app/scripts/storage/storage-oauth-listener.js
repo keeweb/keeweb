@@ -49,7 +49,13 @@ const StorageOAuthListener = {
             listener.emit('ready');
         });
 
-        listener.redirectUri = `http://localhost:${port}/oauth-result/${storageName}.html`;
+        const redirectUriPrefix = `http://localhost:${port}/oauth-result`;
+        if (storageName === 'msteams') {//  quickFix because I can't change the registered app redirect url
+
+            listener.redirectUri = `${redirectUriPrefix}/onedrive.html`;
+        } else {
+            listener.redirectUri = `${redirectUriPrefix}/${storageName}.html`;
+        }
         return listener;
     },
 
