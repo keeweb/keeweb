@@ -3,13 +3,13 @@ import { Logger } from 'util/logger';
 const logger = new Logger('otp');
 
 const Otp = function (url, params) {
-    if (['hotp', 'totp'].indexOf(params.type) < 0) {
+    if (['hotp', 'totp'].indexOf(params.type.toLowerCase()) < 0) {
         throw 'Bad type: ' + params.type;
     }
     if (!params.secret) {
         throw 'Empty secret';
     }
-    if (params.algorithm && ['SHA1', 'SHA256', 'SHA512'].indexOf(params.algorithm) < 0) {
+    if (params.algorithm && ['SHA1', 'SHA256', 'SHA512'].indexOf(params.algorithm.toUpperCase()) < 0) {
         throw 'Bad algorithm: ' + params.algorithm;
     }
     if (params.digits && ['6', '7', '8'].indexOf(params.digits) < 0) {
@@ -18,13 +18,13 @@ const Otp = function (url, params) {
     if (params.type === 'hotp' && !params.counter) {
         throw 'Bad counter: ' + params.counter;
     }
-    if ((params.period && isNaN(params.period)) || params.period < 1) {
+    if ((params.period && Number.isNaN(params.period)) || params.period < 1) {
         throw 'Bad period: ' + params.period;
     }
 
     this.url = url;
 
-    this.type = params.type;
+    this.type = params.type.toLowerCase();
     this.account = params.account;
     this.secret = params.secret;
     this.issuer = params.issuer;
