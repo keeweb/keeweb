@@ -54,6 +54,8 @@
             flex-direction: column;
             justify-content: flex-start;
             position: relative;
+            max-height: 50vh;
+            overflow-y: auto;
             .open--drag & {
                 display: none;
             }
