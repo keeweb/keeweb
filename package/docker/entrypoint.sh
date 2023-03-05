@@ -2,13 +2,6 @@
 
 echo "Welcome to KeeWeb docker container!"
 
-if [ -z ${DH_SIZE+x} ]
-then
-  >&2 echo ">> no \$DH_SIZE specified using default"
-  DH_SIZE="512"
-fi
-
-
 DH="/etc/nginx/external/dh.pem"
 
 if [ ! -e "$DH" ]
@@ -16,6 +9,12 @@ then
   echo ">> seems like the first start of nginx"
   echo ">> doing some preparations..."
   echo ""
+
+  if [ -z ${DH_SIZE+x} ]
+  then
+    >&2 echo ">> no \$DH_SIZE specified using default"
+    DH_SIZE="1024"
+  fi
 
   echo ">> generating $DH with size: $DH_SIZE"
   openssl dhparam -out "$DH" $DH_SIZE
