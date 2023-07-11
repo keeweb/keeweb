@@ -1,5 +1,3 @@
-let perfTimestamps = [{ name: 'pre-init', ts: process.hrtime() }];
-
 if (process.send && process.argv.includes('--native-module-host')) {
     require('./native-module-host').startInOwnProcess();
     return;
@@ -14,6 +12,7 @@ const { locale, setLocale, getLocaleValues } = require('./scripts/locale');
 const { Logger } = require('./scripts/logger');
 const { isDev } = require('./scripts/util/app-info');
 
+let perfTimestamps = [{ name: 'pre-init', ts: process.hrtime() }];
 perfTimestamps?.push({ name: 'loading app requires', ts: process.hrtime() });
 
 const main = electron.app;
