@@ -78,7 +78,7 @@
     "morphdom": "^2.6.1",
     "node-fetch": "^2.6.7",
     "normalize.css": "8.0.1",
-    "optimize-css-assets-webpack-plugin": "^5.0.5",
+    "optimize-css-assets-webpack-plugin": "^6.0.1",
     "pikaday": "1.8.2",
     "pkcs11-smartcard-sign": "^1.0.1",
     "postcss": "^8.2.14",
@@ -93,7 +93,7 @@
     "string-replace-loader": "^3.0.1",
     "strip-sourcemap-loader": "0.0.1",
     "sumchecker": "^3.0.1",
-    "svg2ttf": "^5.2.0",
+    "svg2ttf": "^6.0.3",
     "svgicons2svgfont": "^9.2.0",
     "terser-webpack-plugin": "^5.1.1",
     "time-grunt": "2.0.0",
@@ -102,7 +102,7 @@
     "wawoff2": "^2.0.0",
     "webpack": "^5.76.0",
     "webpack-bundle-analyzer": "^4.4.1",
-    "webpack-dev-server": "^4.0.0"
+    "webpack-dev-server": "^4.11.1"
   },
   "optionalDependencies": {
     "grunt-appdmg": "github:keeweb/grunt-appdmg#874ad83",
