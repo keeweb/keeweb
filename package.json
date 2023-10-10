@@ -95,7 +95,7 @@
     "sumchecker": "^3.0.1",
     "svg2ttf": "^6.0.3",
     "svgicons2svgfont": "^12.0.0",
-    "terser-webpack-plugin": "^5.1.1",
+    "terser-webpack-plugin": "^5.3.9",
     "time-grunt": "2.0.0",
     "tweetnacl": "^1.0.3",
     "url-loader": "^4.1.1",
