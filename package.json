@@ -14,7 +14,7 @@
     "@babel/plugin-external-helpers": "^7.12.13",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
-    "@babel/preset-env": "^7.14.1",
+    "@babel/preset-env": "^7.22.20",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@keeweb/keeweb-native-messaging-host": "https://github.com/keeweb/keeweb-connect/releases/download/0.3.5/keeweb-native-messaging-host.tgz",
     "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.11.6/keeweb-native-modules.tgz",
