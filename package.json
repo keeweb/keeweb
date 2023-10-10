@@ -84,7 +84,7 @@
     "postcss": "^8.4.31",
     "postcss-loader": "^5.2.0",
     "prettier": "^2.2.1",
-    "puppeteer": "^9.1.1",
+    "puppeteer": "^21.3.8",
     "raw-loader": "^4.0.2",
     "run-remote-task": "^0.5.0",
     "sass": "^1.32.12",
