@@ -48,7 +48,7 @@
     "eslint-plugin-standard": "5.0.0",
     "exports-loader": "4.0.0",
     "form-data": "^4.0.0",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^11.1.1",
     "grunt": "1.4.0",
     "grunt-chmod": "^1.1.1",
     "grunt-contrib-clean": "2.0.1",
