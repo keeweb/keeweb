@@ -74,7 +74,7 @@
     "lodash": "^4.17.21",
     "marked": "^2.0.3",
     "mini-css-extract-plugin": "^2.7.6",
-    "mocha": "^8.4.0",
+    "mocha": "^10.2.0",
     "morphdom": "^2.7.1",
     "node-fetch": "^2.6.1",
     "normalize.css": "8.0.1",
