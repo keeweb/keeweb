@@ -93,7 +93,7 @@
     "string-replace-loader": "^3.0.1",
     "strip-sourcemap-loader": "0.0.1",
     "sumchecker": "^3.0.1",
-    "svg2ttf": "^5.2.0",
+    "svg2ttf": "^6.0.3",
     "svgicons2svgfont": "^9.2.0",
     "terser-webpack-plugin": "^5.1.1",
     "time-grunt": "2.0.0",
