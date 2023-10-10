@@ -31,7 +31,7 @@
     "chai": "^4.3.4",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
-    "dompurify": "^2.2.8",
+    "dompurify": "^3.0.6",
     "electron": "^27.0.0",
     "electron-builder": "^24.6.4",
     "electron-evil-feature-patcher": "^1.2.1",
