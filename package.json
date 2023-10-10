@@ -32,7 +32,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
     "dompurify": "^2.2.8",
-    "electron": "^12.0.7",
+    "electron": "^27.0.0",
     "electron-builder": "^24.6.4",
     "electron-evil-feature-patcher": "^1.2.1",
     "electron-notarize": "^1.2.2",
