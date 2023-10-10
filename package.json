@@ -100,7 +100,7 @@
     "tweetnacl": "^1.0.3",
     "url-loader": "^4.1.1",
     "wawoff2": "^2.0.0",
-    "webpack": "^5.36.2",
+    "webpack": "^5.88.2",
     "webpack-bundle-analyzer": "^4.9.1",
     "webpack-dev-server": "^3.11.2"
   },
