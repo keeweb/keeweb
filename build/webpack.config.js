@@ -219,7 +219,10 @@ function config(options) {
                 $: 'jquery',
                 babelHelpers: 'babel-helpers'
             }),
-            new webpack.IgnorePlugin(/^(moment)$/),
+            new webpack.IgnorePlugin({
+                resourceRegExp: /^\.\/locale$/,
+                contextRegExp: /^(moment)$/
+            }),
             new MiniCssExtractPlugin({
                 filename: 'css/[name].css'
             })
