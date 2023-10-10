@@ -90,7 +90,7 @@
     "sass": "^1.32.12",
     "sass-loader": "^11.0.1",
     "stats-webpack-plugin": "0.7.0",
-    "string-replace-loader": "^3.0.1",
+    "string-replace-loader": "^3.1.0",
     "strip-sourcemap-loader": "0.0.1",
     "sumchecker": "^3.0.1",
     "svg2ttf": "^6.0.3",
