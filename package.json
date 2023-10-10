@@ -81,7 +81,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "pikaday": "1.8.2",
     "pkcs11-smartcard-sign": "^1.0.1",
-    "postcss": "^8.2.14",
+    "postcss": "^8.4.31",
     "postcss-loader": "^5.2.0",
     "prettier": "^2.2.1",
     "puppeteer": "^9.1.1",
