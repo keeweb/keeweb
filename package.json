@@ -75,7 +75,7 @@
     "marked": "^2.0.3",
     "mini-css-extract-plugin": "^1.6.0",
     "mocha": "^8.4.0",
-    "morphdom": "^2.6.1",
+    "morphdom": "^2.7.1",
     "node-fetch": "^2.6.1",
     "normalize.css": "8.0.1",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
