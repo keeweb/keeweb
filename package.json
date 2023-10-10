@@ -27,7 +27,7 @@
     "baron": "3.0.3",
     "base64-inline-loader": "^2.0.1",
     "base64-loader": "1.0.0",
-    "bourbon": "^7.0.0",
+    "bourbon": "^7.3.0",
     "chai": "^4.3.4",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.4",
