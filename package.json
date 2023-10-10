@@ -76,7 +76,7 @@
     "mini-css-extract-plugin": "^2.7.6",
     "mocha": "^10.2.0",
     "morphdom": "^2.7.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.3.2",
     "normalize.css": "8.0.1",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "pikaday": "1.8.2",
