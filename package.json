@@ -88,7 +88,7 @@
     "raw-loader": "^4.0.2",
     "run-remote-task": "^0.5.0",
     "sass": "^1.32.12",
-    "sass-loader": "^11.0.1",
+    "sass-loader": "^13.3.2",
     "stats-webpack-plugin": "0.7.0",
     "string-replace-loader": "^3.0.1",
     "strip-sourcemap-loader": "0.0.1",
