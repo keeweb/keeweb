@@ -37,7 +37,7 @@
     "electron-evil-feature-patcher": "^1.2.1",
     "electron-notarize": "^1.2.2",
     "electron-osx-sign": "^0.6.0",
-    "eslint": "^7.26.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-babel": "^5.3.1",
