@@ -25,7 +25,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "8.2.2",
     "baron": "3.0.3",
-    "base64-inline-loader": "^1.1.1",
+    "base64-inline-loader": "^2.0.1",
     "base64-loader": "1.0.0",
     "bourbon": "^7.0.0",
     "chai": "^4.3.4",
