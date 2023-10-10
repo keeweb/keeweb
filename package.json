@@ -13,7 +13,7 @@
     "@babel/core": "^7.14.0",
     "@babel/plugin-external-helpers": "^7.12.13",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/plugin-proposal-optional-chaining": "^7.13.12",
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@babel/preset-env": "^7.14.1",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@keeweb/keeweb-native-messaging-host": "https://github.com/keeweb/keeweb-connect/releases/download/0.3.5/keeweb-native-messaging-host.tgz",
