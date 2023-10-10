@@ -82,7 +82,7 @@
     "pikaday": "1.8.2",
     "pkcs11-smartcard-sign": "^1.0.1",
     "postcss": "^8.4.31",
-    "postcss-loader": "^5.2.0",
+    "postcss-loader": "^7.3.3",
     "prettier": "^2.2.1",
     "puppeteer": "^21.3.8",
     "raw-loader": "^4.0.2",
