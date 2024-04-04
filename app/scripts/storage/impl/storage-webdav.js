@@ -133,7 +133,7 @@ class StorageWebDav extends StorageBase {
         }
     }
 
-    save(path, opts, data, callback, rev) {
+    save(path, opts, data, callback, rev, metadata) {
         const cb = function (err, xhr, stat) {
             if (callback) {
                 callback(err, stat);
@@ -244,7 +244,8 @@ class StorageWebDav extends StorageBase {
                         op: 'Save:put',
                         method: 'PUT',
                         data,
-                        nostat: true
+                        nostat: true,
+                        metadata
                     },
                     (err) => {
                         if (err) {
@@ -379,8 +380,19 @@ class StorageWebDav extends StorageBase {
             xhr.setRequestHeader('Cache-Control', 'no-cache');
         }
         if (config.data) {
-            const blob = new Blob([config.data], { type: 'application/octet-stream' });
-            xhr.send(blob);
+            if (config.metadata) {
+                const formData = new FormData();
+                formData.append('metadata', JSON.stringify(config.metadata));
+                formData.append(
+                    'kdbx',
+                    new Blob([config.data], { type: 'application/octet-stream' }),
+                    'passwordvault.kdbx'
+                );
+                xhr.send(formData);
+            } else {
+                const blob = new Blob([config.data], { type: 'application/octet-stream' });
+                xhr.send(blob);
+            }
         } else {
             xhr.send();
         }

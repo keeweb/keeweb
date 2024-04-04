@@ -772,6 +772,7 @@ FileModel.defineModelProperties({
     supportsExpiration: true,
     defaultGroupHash: '',
     tenantName: '',
+    entries: null,
     writeAccess: false,
     deleteAccess: false
 });

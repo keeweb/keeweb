@@ -150,7 +150,8 @@ class AppModel {
                             icon: file.icon,
                             tenantName: file.tenantName,
                             writeAccess: file.writeAccess,
-                            deleteAccess: file.deleteAccess
+                            deleteAccess: file.deleteAccess,
+                            entries: file.entries
                         })
                 )
                 .reverse()
@@ -1076,6 +1077,7 @@ class AppModel {
                     });
                 });
             };
+
             const saveToStorage = (data) => {
                 logger.info('Save data to storage');
                 const storageRev = fileInfo.storage === storage ? fileInfo.rev : undefined;
@@ -1107,9 +1109,11 @@ class AppModel {
                             complete();
                         }
                     },
-                    storageRev
+                    storageRev,
+                    this.getEntryMetadata(file)
                 );
             };
+
             const saveToCacheAndStorage = () => {
                 logger.info('Getting file data for saving');
                 file.getData((data, err) => {
@@ -1224,6 +1228,23 @@ class AppModel {
             fileInfo.backup = backup;
         }
         this.fileInfos.save();
+    }
+
+    getEntryMetadata(file) {
+        if (!file) {
+            return null;
+        }
+        return {
+            entries: Object.values(file.entryMap)
+                .filter((x) => x.group.getEffectiveEnableSearching())
+                .map((x) => {
+                    return {
+                        id: x.id,
+                        title: x.title,
+                        searchText: x.searchText
+                    };
+                })
+        };
     }
 
     backupFile(file, data, callback) {

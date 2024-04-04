@@ -23,7 +23,8 @@ const DefaultProperties = {
     icon: null,
     tenantName: '',
     writeAccess: false,
-    deleteAccess: false
+    deleteAccess: false,
+    entries: null
 };
 
 class FileInfoModel extends Model {
