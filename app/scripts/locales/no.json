@@ -597,7 +597,7 @@
   "lockErrorHeader": "Kunne ikke låse passordbanken",
   "lockErrorBody": "Vennligst lukk nettleservinduet for å beskytte passordene. Feilen var:",
   "newPasswordVault": "Nytt passordhvelv",
-  "passwordBankTitle":"Passordbanken",
+  "passwordBankTitle": "Passordbanken",
   "passwordVaultTypeLabel": "Type",
   "passwordVaultTypePersonal": "Personlig",
   "passwordVaultTypeShared": "Delt",
