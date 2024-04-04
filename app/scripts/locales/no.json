@@ -618,5 +618,6 @@
   "importPassword": "Importer passord",
   "uploadCSV": "Last opp CSV",
   "csvFormat": "Format",
-  "csvExtraFieldsHelperText": "Det er mulig å importere flere felter ved å legge de til i csv-en."
+  "csvExtraFieldsHelperText": "Det er mulig å importere flere felter ved å legge de til i csv-en.",
+  "updateSearchIndex": "Oppdater søkeindex",
 }

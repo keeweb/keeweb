@@ -15,6 +15,9 @@
                 {{#ifeq storage 'file'}}{{res 'setFileSave'}}{{/ifeq}}
                 {{#ifneq storage 'file'}}{{res 'setFileSyncVerb'}}{{/ifneq}}
             </button>
+            <button class="settings__file-button-update-search-index" {{#if syncing }}disabled{{/if}}>
+                {{res 'updateSearchIndex'}}
+            </button>
         </div>
     {{else}}
         <p>{{res 'noWriteAccess'}}</p>

@@ -62,7 +62,8 @@ class SettingsFileView extends View {
         'change #settings__file-yubikey': 'changeYubiKey',
         'click .settings__file-button-delete': 'delete',
         'click .settings__file-button-rename': 'rename',
-        'change #settings-field-import-csv': 'importCsv'
+        'change #settings-field-import-csv': 'importCsv',
+        'click .settings__file-button-update-search-index': 'updateSearchIndex'
     };
 
     constructor(model, options) {
@@ -257,6 +258,12 @@ class SettingsFileView extends View {
     }
 
     saveDefault() {
+        this.save();
+    }
+
+    updateSearchIndex() {
+        // Hack for bypassing dirty check.
+        this.model.modified = Date();
         this.save();
     }
 
