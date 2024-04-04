@@ -12,9 +12,9 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
-      # - name: Install npm modules
-      #   run: npm ci
-      - name: Test
+      - name: Install npm modules
+        run: npm ci
+      - name: Lint
         run: npm run lint
   test:
     runs-on: ubuntu-latest
