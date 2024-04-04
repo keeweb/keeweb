@@ -799,4 +799,5 @@
   "uploadCSV": "Upload CSV",
   "csvFormat": "Format",
   "csvExtraFieldsHelperText": "It is possible to import extra fields by adding them to the csv."
+  "passwordBankTitle": "Passwordbank",
 }
