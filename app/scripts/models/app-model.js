@@ -320,7 +320,11 @@ class AppModel {
             this.activeEntryId = firstEntry ? firstEntry.id : null;
         }
         Events.emit('filter', { filter: this.filter, sort: this.sort, entries });
-        Events.emit('entry-selected', entries.get(this.activeEntryId));
+        const activeEntry = entries.get(this.activeEntryId);
+        Events.emit('entry-selected', activeEntry);
+        if (this.activeEntryId && activeEntry) {
+            Events.emit('select-list-item', activeEntry);
+        }
     }
 
     refresh() {
