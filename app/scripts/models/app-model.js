@@ -1005,6 +1005,14 @@ class AppModel {
                     keyFileHash: file.getKeyFileHash()
                 });
             }
+
+            if (!err) {
+                const entries = this.getEntryMetadata(file);
+                if (entries) {
+                    fileInfo.set(entries);
+                }
+            }
+
             if (!this.fileInfos.get(fileInfo.id)) {
                 this.fileInfos.unshift(fileInfo);
             }
