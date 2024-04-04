@@ -1,0 +1,44 @@
+name: Verify
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: "Lint › Checkout"
+        uses: actions/checkout@v3
+
+      - name: "Lint › Setup NodeJS"
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: "Lint › Install NPM Modules"
+        run: npm ci
+
+      - name: "Lint › Run"
+        run: npm run lint
+
+  test:
+    needs:
+      - lint
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: "Test › Checkout"
+        uses: actions/checkout@v3
+
+      - name: "Test › Setup NodeJS"
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: "Test › Install NPM Modules"
+        run: npm ci
+
+      - name: "Test › Run"
+        run: npm test
