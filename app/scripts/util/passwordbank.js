@@ -169,7 +169,7 @@ async function renamePasswordVault(path, title) {
     }
 }
 
-async function getPasswordForPasswordVault(path) {
+async function getPasswordForPasswordVault(path, entryId) {
     const passwordVaultToGetPasswordFor = getPasswordVaultFromPath(path);
     try {
         const response = await passwordBankFetch(
@@ -180,11 +180,17 @@ async function getPasswordForPasswordVault(path) {
         );
         return await response.json();
     } catch (error) {
-        window.location = `/onetimecode?title=${encodeURIComponent(
-            Locale.passwordBankTitle
-        )}&redirectUri=${encodeURIComponent(
-            `/passwordbank/?vault=${passwordVaultToGetPasswordFor}`
-        )}`;
+        const oneTimeCodeUri = new URL('/onetimecode');
+        oneTimeCodeUri.searchParams.set('title', Locale.passwordBankTitle);
+
+        const redirectUri = new URL('/passwordbank');
+        redirectUri.searchParams.set('vault', passwordVaultToGetPasswordFor);
+
+        if (entryId) {
+            redirectUri.searchParams.set('entryId', entryId);
+        }
+        oneTimeCodeUri.searchParams.set('redirectUri', redirectUri.toString());
+        window.location = oneTimeCodeUri.toString();
     }
 }
 

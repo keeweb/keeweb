@@ -191,14 +191,15 @@ ready(() => {
     }
 
     function openVaultFromQueryParam() {
-        const vault = getVaultParam();
+        const vault = getQueryParamByName('vault');
+        const entryId = getQueryParamByName('entryId');
         if (vault) {
             let fileInfo = appModel.fileInfos.getByPath(`/api/passwordbank/vaults/${vault}`);
             if (!fileInfo) {
                 fileInfo = appModel.fileInfos.getByName(vault);
             }
             if (fileInfo) {
-                appView.views.open.showOpenFileInfo(fileInfo, true);
+                appView.views.open.showOpenFileInfo(fileInfo, true, entryId);
             }
         }
     }
@@ -219,16 +220,14 @@ ready(() => {
         if (metaConfig && metaConfig.content && metaConfig.content[0] !== '(') {
             return metaConfig.content;
         }
-        const match = location.search.match(/[?&]config=([^&]+)/i);
-        if (match && match[1]) {
-            return match[1];
-        }
+        return getQueryParamByName('config');
     }
 
-    function getVaultParam() {
-        const match = location.search.match(/[?&]vault=([^&]+)/i);
-        if (match && match[1]) {
-            return decodeURIComponent(match[1]);
+    function getQueryParamByName(name) {
+        const searchParams = new URLSearchParams(location.search);
+        if (searchParams.has(name)) {
+            return searchParams.get(name);
         }
+        return null;
     }
 });
