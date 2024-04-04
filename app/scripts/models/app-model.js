@@ -870,6 +870,11 @@ class AppModel {
     }
 
     fileOpened(file, data, params) {
+        if (params.entryId) {
+            // File id always changes.
+            this.activeEntryId = file.id + ':' + params.entryId.split(':')[1];
+            this.refresh();
+        }
         if (file.storage === 'file') {
             Storage.file.watch(
                 file.path,

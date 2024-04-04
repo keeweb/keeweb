@@ -25,6 +25,7 @@ import { GeneratorView } from 'views/generator-view';
 import { CreateNewPasswordVaultView } from 'views/create-new-password-vault-view';
 import { getPasswordForPasswordVault } from 'util/passwordbank';
 import template from 'templates/open.hbs';
+import throttle from 'lodash/throttle';
 
 const logger = new Logger('open-view');
 
@@ -51,9 +52,15 @@ class OpenView extends View {
         'click .open__pass-enter-btn': 'openDb',
         'click .open__settings-key-file': 'openKeyFile',
         'click .open__settings-yubikey': 'selectYubiKeyChalResp',
-        'click .open__last-item': 'openLast',
+        'click .open__last-item-text': 'openLast',
         'click .open__icon-generate': 'toggleGenerator',
         'click .open__message-cancel-btn': 'openMessageCancelClick',
+        'input .list__search-field': 'searchInputChanged',
+        'click .list__search-icon-clear': 'clearSearchInput',
+        'click .open__last-item-expand': 'expandItem',
+        'click .open__last-item-collapse': 'collapseItem',
+        'click .open__last-item-entry-text': 'openEntry',
+        'click .icon-missing-index': 'showNotIndexedAlert',
         dragover: 'dragover',
         dragleave: 'dragleave',
         drop: 'drop'
@@ -64,6 +71,12 @@ class OpenView extends View {
     busy = false;
     currentSelectedIndex = -1;
     encryptedPassword = null;
+    searchInput = null;
+    lastOpenFiles = null;
+    searchText = null;
+    loadingContainer = null;
+    openPassArea = null;
+    openIcons = null;
 
     constructor(model) {
         super(model);
@@ -111,9 +124,9 @@ class OpenView extends View {
             this.model.settings.yubiKeyShowIcon &&
             !this.model.files.get('yubikey');
         const canUseChalRespYubiKey = hasYubiKeys && this.model.settings.yubiKeyShowChalResp;
-
+        this.lastOpenFiles = this.getLastOpenFiles();
         super.render({
-            lastOpenFiles: this.getLastOpenFiles(),
+            lastOpenFiles: this.lastOpenFiles,
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
             demoOpened: this.model.settings.demoOpened,
             storageProviders,
@@ -130,6 +143,10 @@ class OpenView extends View {
         });
         this.inputEl = this.$el.find('.open__pass-input');
         this.passwordInput.setElement(this.inputEl);
+        this.searchInput = this.$el.find('.list__search-field');
+        this.loadingContainer = this.$el.find('.loading__container');
+        this.openPassArea = this.$el.find('.open__pass-area');
+        this.openIcons = this.$el.find('.open__icons');
     }
 
     resetParams() {
@@ -144,7 +161,8 @@ class OpenView extends View {
             fileData: null,
             rev: null,
             opts: null,
-            chalResp: null
+            chalResp: null,
+            entryId: null
         };
     }
 
@@ -161,22 +179,26 @@ class OpenView extends View {
 
     getLastOpenFiles() {
         return this.model.fileInfos.map((fileInfo) => {
-            let icon = 'file-alt';
-            const storage = Storage[fileInfo.storage];
-            if (storage && storage.icon) {
-                icon = storage.icon;
-            }
-            if (fileInfo.icon) {
-                icon = fileInfo.icon;
-            }
             return {
                 id: fileInfo.id,
                 name: fileInfo.name,
                 path: this.getDisplayedPath(fileInfo),
-                icon,
-                tenantName: fileInfo.tenantName
+                icon: this.getFileIcon(fileInfo),
+                tenantName: fileInfo.tenantName,
+                entries: fileInfo.entries
             };
         });
+    }
+
+    getFileIcon(fileInfo) {
+        if (fileInfo.icon) {
+            return fileInfo.icon;
+        }
+        const storage = Storage[fileInfo.storage];
+        if (storage && storage.icon) {
+            return storage.icon;
+        }
+        return 'file-alt';
     }
 
     getDisplayedPath(fileInfo) {
@@ -463,9 +485,12 @@ class OpenView extends View {
             this.removeFile(id);
             return;
         }
+        this.openFileById(id);
+    }
 
-        const fileInfo = this.model.fileInfos.get(id);
-        this.showOpenFileInfo(fileInfo, true);
+    openFileById(fileId, entryId) {
+        const fileInfo = this.model.fileInfos.get(fileId);
+        this.showOpenFileInfo(fileInfo, true, entryId);
     }
 
     removeFile(id) {
@@ -598,7 +623,7 @@ class OpenView extends View {
         }
     }
 
-    showOpenFileInfo(fileInfo, fileWasClicked) {
+    showOpenFileInfo(fileInfo, fileWasClicked, entryId) {
         if (this.busy || !fileInfo) {
             return;
         }
@@ -616,6 +641,7 @@ class OpenView extends View {
         this.params.tenantName = fileInfo.tenantName;
         this.params.writeAccess = fileInfo.writeAccess;
         this.params.deleteAccess = fileInfo.deleteAccess;
+        this.params.entryId = entryId;
         if (fileWasClicked) {
             this.openDb();
         }
@@ -667,6 +693,7 @@ class OpenView extends View {
         this.views.createDb.render();
         this.$el.find('.open__last').addClass('hide');
         this.$el.find('.open__icons').addClass('hide');
+        this.$el.find('.list__search-field-wrap--text').addClass('hide');
         // this.model.createNewFile();
     }
 
@@ -680,6 +707,7 @@ class OpenView extends View {
         }
         this.$el.find('.open__last').removeClass('hide');
         this.$el.find('.open__icons').removeClass('hide');
+        this.$el.find('.list__search-field-wrap--text').removeClass('hide');
         this.focusInput();
     }
 
@@ -696,15 +724,23 @@ class OpenView extends View {
         this.busy = true;
         // EncryptedPassword is used by kdbx to support iOS fingerprint unlock in the keeweb iOS app => Set this to null since we don't support iOS
         this.params.encryptedPassword = null;
-        const password = await getPasswordForPasswordVault(this.params.path);
+        const password = await getPasswordForPasswordVault(this.params.path, this.params.entryId);
         this.params.password = kdbxweb.ProtectedValue.fromString(password);
         this.afterPaint(() => {
+            this.toggleLoadingIndicator(true);
             this.model.openFile(this.params, (err) => this.openDbComplete(err));
         });
     }
 
+    toggleLoadingIndicator(isLoading) {
+        this.loadingContainer.toggleClass('hide', !isLoading);
+        this.openPassArea.toggleClass('hide', isLoading);
+        this.openIcons.toggleClass('hide', isLoading);
+    }
+
     openDbComplete(err) {
         this.busy = false;
+        this.toggleLoadingIndicator(false);
         this.$el.toggleClass('open--opening', false);
         const showInputError = err && !err.userCanceled;
         this.inputEl.removeAttr('disabled').toggleClass('input--error', !!showInputError);
@@ -1168,6 +1204,126 @@ class OpenView extends View {
     openMessageCancelClick() {
         this.model.rejectPendingFileUnlockPromise('User canceled');
     }
+
+    clearSearchInput() {
+        this.searchInput.val('');
+        this.searchInputChanged();
+    }
+
+    searchInputChanged() {
+        this.searchText = this.searchInput.val();
+        const hasSearchText = this.searchText?.length > 0;
+        this.el.querySelector('.list__search-icon-clear').classList.toggle('hide', !hasSearchText);
+        if (hasSearchText) {
+            // Hide all expand/collapse icons.
+            this.el.querySelectorAll('.expand-collapse-container').forEach((element) => {
+                element.children.item(0).classList.toggle('hide', true);
+                element.children.item(1).classList.toggle('hide', true);
+            });
+            this.searchThrottler();
+        } else {
+            // Show all files.
+            this.el.querySelectorAll('.open__last-item-header').forEach((element) => {
+                element.classList.toggle('hide', false);
+            });
+            // Hide all entries.
+            this.el.querySelectorAll('.open__last-item-entry').forEach((element) => {
+                element.classList.toggle('hide', true);
+            });
+            // Reset expand/collapse icons.
+            this.el.querySelectorAll('.expand-collapse-container').forEach((element) => {
+                element.children.item(0).classList.toggle('hide', false);
+                element.children.item(1).classList.toggle('hide', true);
+            });
+        }
+    }
+
+    showNotIndexedAlert() {
+        Alerts.info({
+            header: Locale.iconMissingIndexHeader,
+            body: Locale.iconMissingIndexBody
+        });
+    }
+
+    openEntry(e) {
+        if (this.busy) {
+            return;
+        }
+        const parent = $(e.target).closest('.open__last-item');
+        const entryId = parent.data('id').toString();
+        const fileId = parent.data('parent-id').toString();
+        this.openFileById(fileId, entryId);
+
+        // Details is not shown by default on mobile.
+        if (entryId && Features.isMobile) {
+            Events.emit('toggle-details', true);
+        }
+    }
+
+    expandItem(e) {
+        $(e.target).toggleClass('hide', true);
+        const fileId = e.target.getAttribute('data-id');
+        this.$el
+            .find('.open__last-item-collapse[data-id=' + fileId + ']')
+            .toggleClass('hide', false);
+
+        this.toggleVisibilityForEntries(fileId, true);
+    }
+
+    collapseItem(e) {
+        $(e.target).toggleClass('hide', true);
+        const fileId = e.target.getAttribute('data-id');
+        this.$el.find('.open__last-item-expand[data-id=' + fileId + ']').toggleClass('hide', false);
+        this.toggleVisibilityForEntries(fileId, false);
+    }
+
+    toggleVisibilityForEntries(fileId, toggle) {
+        this.$el
+            .find('.open__last-item-entry[data-parent-id=' + fileId + ']')
+            .toggleClass('hide', !toggle);
+    }
+
+    toggleSearchResults(searchText) {
+        const filesIdsToShow = new Set();
+        const entryIdsToShow = new Set();
+        this.lastOpenFiles.forEach((file) => {
+            const entryIds = this.getEntryIdsToShow(file.entries, searchText);
+            if (entryIds?.length > 0) {
+                entryIds.forEach((id) => entryIdsToShow.add(id));
+                filesIdsToShow.add(file.id);
+            } else if (
+                file.name.includes(searchText) ||
+                file.tenantName.toLowerCase().includes(searchText)
+            ) {
+                filesIdsToShow.add(file.id);
+            }
+        });
+
+        // Toggle files.
+        this.el.querySelectorAll('.open__last-item-header').forEach((element) => {
+            element.classList.toggle('hide', !filesIdsToShow.has(element.getAttribute('data-id')));
+        });
+        // Toggle entries.
+        this.el.querySelectorAll('.open__last-item-entry').forEach((element) => {
+            element.classList.toggle('hide', !entryIdsToShow.has(element.getAttribute('data-id')));
+        });
+    }
+
+    getEntryIdsToShow(entries, searchText) {
+        if (!entries) {
+            return null;
+        }
+        return entries
+            .filter((entry) => entry.searchText.includes(searchText))
+            .map((entry) => entry.id);
+    }
+
+    searchThrottler = throttle(() => {
+        // Use current value in case it has changed during throttling.
+        if (this.searchText?.length > 0) {
+            this.toggleSearchResults(this.searchText.toLowerCase());
+        }
+    }, 300);
 }
 
 export { OpenView };

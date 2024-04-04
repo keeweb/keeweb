@@ -151,6 +151,8 @@
   "keyEnter": "Enter",
   "iconFavTitle": "Last ned og bruk nettstedsikon",
   "iconSelCustom": "Velg eget ikon",
+  "iconMissingIndexHeader": "Mangler søkeindeks for innhold",
+  "iconMissingIndexBody": "Åpne passordhvelvet, gå til innstillinger og trykk på 'Oppdater søkeindeks' eller gjør en vilkårlig endring og lagre.",
   "listEmptyTitle": "Tom",
   "listEmptyAdd": "legg til med {}-knappen over",
   "listGroup": "Gruppe",
@@ -173,6 +175,7 @@
   "searchAdvTitle": "Bytt til avansert søk",
   "searchSearchIn": "Søk i",
   "searchOther": "Andre felt",
+  "searchPlaceholder": "Søk i oppføringer",
   "searchProtect": "Sikre felt",
   "searchOptions": "Innstillinger",
   "searchCase": "Skill små/store",
@@ -619,5 +622,6 @@
   "uploadCSV": "Last opp CSV",
   "csvFormat": "Format",
   "csvExtraFieldsHelperText": "Det er mulig å importere flere felter ved å legge de til i csv-en.",
-  "updateSearchIndex": "Oppdater søkeindex",
+  "updateSearchIndex": "Oppdater søkeindeks",
+  "openFileLoadingText": "Låser opp passordhvelv"
 }

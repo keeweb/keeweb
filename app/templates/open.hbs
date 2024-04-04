@@ -8,9 +8,13 @@
     </div>
     <div class="open__icon open__icon-more id=open__icon-more">
         <a href="/">
-            <img src="icons/brand.png" height="100" width="100"/>   
+            <img src="icons/brand.png" height="100" width="100"/>
         </a>
         <div class="open__icon-text">{{res 'passwordBankTitle'}}</div>
+    </div>
+    <div class="loading__container hide">
+        <i class="fa fa-spinner spin"></i>
+        <span class="loading__text">{{res 'openFileLoadingText'}}</span>
     </div>
     <div class="open__icons">
         {{#if canOpen}}
@@ -74,6 +78,15 @@
             <input type="text" name="username">
             <input type="password" name="password">
         </div>
+         <div class="list__search-field-wrap list__search-field-wrap--text">
+            <input type="text" placeholder="{{res 'searchPlaceholder'}}" class="list__search-field input-search" autocomplete="off" spellcheck="false">
+            <div class="list__search-icon-search" >
+                <i class="fa fa-search"></i>
+            </div>
+            <div class="list__search-icon-clear hide">
+                <i class="fa fa-times-circle"></i>
+            </div>
+        </div>
         <div class="open__pass-warn-wrap hide">
             <div class="open__pass-warning muted-color invisible"><i class="fa fa-exclamation-triangle"></i> {{res 'openCaps'}}</div>
         </div>
@@ -99,13 +112,29 @@
         </div>
         <div class="open__last">
             {{#each lastOpenFiles as |file|}}
-                <div class="open__last-item" data-id="{{file.id}}" tabindex="{{add @index 30}}"
+                <div class="open__last-item open__last-item-header" data-id="{{file.id}}" tabindex="{{add @index 30}}"
                      id="open__last-item--{{file.id}}">
                     {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
                     <span class="open__last-item-text">{{#if file.tenantName}}{{file.tenantName}} - {{/if}}{{file.name}}</span>
+                    {{#if file.entries}}
+                    <span class="expand-collapse-container">
+                        <i class="fa fa-caret-down open__last-item-expand" data-id="{{file.id}}"></i>
+                        <i class="fa fa-caret-up open__last-item-collapse hide" data-id="{{file.id}}"></i>
+                    </span>
+                    {{else}}
+                        <i class="fa fa-info-circle icon-missing-index" title="{{res 'iconMissingIndexBody'}}"></i>
+                    {{/if}}
                 </div>
+                {{#if file.entries}}
+                    {{#each file.entries as |entry|}}
+                    <div class="open__last-item open__last-item-entry hide" data-id="{{entry.id}}" data-parent-id="{{file.id}}">
+                        <i class="fa fa-key open__last-item-icon"></i>
+                        <span class="list__item-title open__last-item-entry-text">{{#if entry.title}}{{entry.title}}{{else}}({{res 'noTitle'}}){{/if}}</span>
+                    </div>
+                    {{/each}}
+                {{/if}}
             {{/each}}
-            </div>
+        </div>
     </div>
     <div class="open__config-wrap">
     </div>

@@ -148,6 +148,8 @@
   "keyEsc": "Esc",
   "iconFavTitle": "Download and use website favicon",
   "iconSelCustom": "Select a custom icon",
+  "iconMissingIndexHeader": "Missing search index for content",
+  "iconMissingIndexBody": "Open password vault, go to settings and click on 'Update search index' or simply edit some data and save.",
   "listEmptyTitle": "Empty",
   "listEmptyAdd": "add with {} button above",
   "listGroup": "Group",
@@ -170,6 +172,7 @@
   "searchAdvTitle": "Toggle advanced search",
   "searchSearchIn": "Search in",
   "searchOther": "Other fields",
+  "searchPlaceholder": "Search in entries",
   "searchProtect": "Secure fields",
   "searchOptions": "Options",
   "searchCase": "Match case",
@@ -801,4 +804,5 @@
   "csvExtraFieldsHelperText": "It is possible to import extra fields by adding them to the csv.",
   "updateSearchIndex": "Opprett search index",
   "passwordBankTitle": "Passwordbank",
+  "openFileLoadingText": "Loading password vault"
 }
