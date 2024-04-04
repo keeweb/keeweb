@@ -7,9 +7,7 @@ module.exports = function (grunt) {
         const puppeteer = require('puppeteer');
         (async function () {
             grunt.log.writeln('Running tests...');
-
             const fullPath = 'file://' + path.resolve(file);
-
             const browser = await puppeteer.launch({
                 headless: opt.headless,
                 executablePath: process.env.CHROME_BIN || null,
@@ -18,7 +16,6 @@ module.exports = function (grunt) {
             grunt.log.writeln('puppeteer launched...');
             const page = await browser.newPage();
             await page.goto(fullPath);
-            
             async function check() {
                 const result = await page.evaluate(() => {
                     const { output, done } = window;
