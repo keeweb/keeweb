@@ -110,6 +110,7 @@
   },
   "scripts": {
     "start": "grunt",
+    "lint": "grunt eslint",
     "test": "grunt test",
     "build-beta": "grunt --beta && cp dist/index.html ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
     "electron": "cross-env KEEWEB_IS_PORTABLE=0 ELECTRON_DISABLE_SECURITY_WARNINGS=1 KEEWEB_EMULATE_HARDWARE_ENCRYPTION=persistent KEEWEB_HTML_PATH=http://localhost:8085 electron desktop --no-sandbox",
