@@ -72,6 +72,9 @@ class SettingsBrowserView extends View {
                     enabled: !!AppSettingsModel[`extensionEnabled${ext.alias}${browser}`],
                     installUrl: Links[`${ext.alias}For${browser}`]
                 };
+                if (ext.alias === 'KPXC') {
+                    ext.manualUrl = Links.ExtensionHelpForKPXC;
+                }
                 if (!ext.installUrl) {
                     if (browser === 'Other') {
                         ext.helpUrl = Links.ExtensionHelpForOtherBrowsers;

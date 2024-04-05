@@ -398,7 +398,11 @@ function sendMessageToSocket(socket, message) {
     const lengthBytes = Buffer.from(lengthBuf);
     const data = Buffer.concat([lengthBytes, responseData]);
 
-    socket.write(data);
+    try {
+        socket.write(data);
+    } catch (e) {
+        logger.error(`Error writing to socket ${state.socketId}`, e);
+    }
 }
 
 function sendToRenderer(event, socketId, data) {

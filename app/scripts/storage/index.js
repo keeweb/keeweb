@@ -18,7 +18,7 @@ const ThirdPartyStorage = {
     dropbox: new StorageDropbox(),
     gdrive: new StorageGDrive(),
     onedrive: new StorageOneDrive(),
-    teams: new StorageTeams(),
+    msteams: new StorageTeams(),
     webdav: new StorageWebDav()
 };
 
