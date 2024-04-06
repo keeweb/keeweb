@@ -5,7 +5,8 @@ const webpack = require('webpack');
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+// const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 
 const rootDir = path.join(__dirname, '..');
@@ -190,11 +191,12 @@ function config(options) {
                         ecma: 6
                     }
                 }),
-                new OptimizeCSSAssetsPlugin({
-                    cssProcessorPluginOptions: {
-                        preset: ['default', { discardComments: { removeAll: true } }]
-                    }
-                }),
+                // new OptimizeCSSAssetsPlugin({
+                //     cssProcessorPluginOptions: {
+                //         preset: ['default', { discardComments: { removeAll: true } }]
+                //     }
+                // }),
+                new CssMinimizerPlugin(),
                 new BundleAnalyzerPlugin({
                     openAnalyzer: false,
                     analyzerMode: 'static',
@@ -219,7 +221,7 @@ function config(options) {
                 $: 'jquery',
                 babelHelpers: 'babel-helpers'
             }),
-            new webpack.IgnorePlugin(/^(moment)$/),
+            new webpack.IgnorePlugin({ resourceRegExp: /^(moment)$/ }),
             new MiniCssExtractPlugin({
                 filename: 'css/[name].css'
             })
