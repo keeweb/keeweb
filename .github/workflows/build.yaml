@@ -21,7 +21,7 @@ jobs:
       - name: Upgrade Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
@@ -125,7 +125,7 @@ jobs:
       - name: Upgrade Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
@@ -184,7 +184,7 @@ jobs:
       - name: Upgrade Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         run: npm ci
@@ -264,7 +264,7 @@ jobs:
       - name: Upgrade Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
       - name: Install npm modules
         working-directory: keeweb
