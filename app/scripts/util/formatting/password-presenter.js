@@ -7,14 +7,13 @@ class RandomNameGenerator {
     }
 }
 
-// activated when user presses 'reveal' on password
 function charCodeToHtml(char) {
     // convert certain special chars like space into to non-breaking space
     // ' ' to &#nbsp;
-    if ( char === 32 || char === 8193 || char === 8239 ) {
+    if (char === 32 || char === 8193 || char === 8239) {
         char = 160;
     }
-    return Math.random( ) < 0.2 ? String.fromCharCode( char ) : `&#x${ char.toString( 16 ) };`;
+    return Math.random() < 0.2 ? String.fromCharCode(char) : `&#x${char.toString(16)};`;
 }
 
 const PasswordPresenter = {
