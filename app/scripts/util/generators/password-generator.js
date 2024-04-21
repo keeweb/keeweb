@@ -35,15 +35,15 @@ const PasswordGenerator = {
             return '';
         }
 
-        if (opts.name.toLowerCase() === 'uuid') {
+        if (opts.name && opts.name.toLowerCase() === 'uuid') {
             return this.generateUUIDv4(opts);
         }
 
-        if (opts.name.toLowerCase() === 'passphrase') {
+        if (opts.name && opts.name.toLowerCase() === 'passphrase') {
             return this.generatePassphrase(opts);
         }
 
-        if (opts.name.toLowerCase() === 'pronounceable') {
+        if (opts.name && opts.name.toLowerCase() === 'pronounceable') {
             return this.generatePronounceable(opts);
         }
 
