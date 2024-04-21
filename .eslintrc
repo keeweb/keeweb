@@ -2,12 +2,12 @@
     "plugins": ["prettier", "import", "babel"],
     "extends": ["standard", "eslint:recommended", "plugin:prettier/recommended"],
     "rules": {
-        "semi": ["error", "always"],
+        "semi": ["off", "off"],
         "one-var": "off",
         "space-before-function-paren": "off",
         "no-throw-literal": "off",
         "camelcase": ["error", { "properties": "always" }],
-        "no-console": "error",
+        "no-console": "off",
         "no-alert": "error",
         "no-debugger": "error",
         "prefer-arrow-callback": "error",
@@ -19,11 +19,11 @@
         "strict": ["error", "never"],
         "no-mixed-operators": "off",
         "prefer-promise-reject-errors": "off",
-        "standard/no-callback-literal": "off",
+        "standard/no-callback-literal": 0,
         "object-curly-spacing": "off",
         "quote-props": "off",
         "no-new-object": "error",
-        "object-shorthand": "error",
+        "object-shorthand": "off",
         "no-array-constructor": "error",
         "array-callback-return": "error",
         "no-eval": "error",
@@ -50,15 +50,17 @@
         "import/first": "error",
         "import/no-default-export": "error",
         "babel/no-unused-expressions": "error",
-        "node/no-callback-literal": "off"
+        "node/no-callback-literal": 0,
+        "n/no-callback-literal": 0
     },
     "parserOptions": {
         "sourceType": "module",
+        "requireConfigFile": false,
         "ecmaFeatures": {
-            "impliedStrict": true
+            "globalReturn": true
         }
     },
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "globals": {
         "_": true,
         "$": true
