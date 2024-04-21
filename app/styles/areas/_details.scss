@@ -181,7 +181,7 @@
     }
 
     &__field {
-        $details-field-line-height: 18px;
+        $details-field-line-height: 20px;
 
         display: flex;
         align-items: stretch;
@@ -374,7 +374,7 @@
                 }
                 &-btn-cancel {
                     &:before {
-                        content: $fa-var-times;
+                        content: $fa-var-x;
                     }
                     left: 0;
                 }

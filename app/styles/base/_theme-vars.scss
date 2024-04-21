@@ -16,7 +16,7 @@
                 ),
             text-selection-bg-color: rgba(map-get($t, action-color), 0.3),
             text-selection-bg-color-error: rgba(map-get($t, error-color), 0.8),
-            text-semi-muted-color: mix(map-get($t, action-color), map-get($t, text-color), 0.5),
+            text-semi-muted-color: mix(map-get($t, action-color), map-get($t, text-color), 50%),
             text-contrast-action-color:
                 text-contrast-color(
                     map-get($t, action-color),
