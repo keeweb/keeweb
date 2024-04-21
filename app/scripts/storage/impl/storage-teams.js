@@ -15,7 +15,7 @@ class StorageTeams extends StorageBase {
     name = 'msteams';
     enabled = true;
     uipos = 50;
-    icon = 'user-friends';
+    icon = 'user-group';
 
     _graphUrl = 'https://graph.microsoft.com/v1.0';
     _groupsUrl = `${this._graphUrl}/me/joinedTeams`;

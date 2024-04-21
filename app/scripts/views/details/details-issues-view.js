@@ -125,7 +125,7 @@ class DetailsIssuesView extends View {
         Alerts.alert({
             header: Locale.detIssueCloseAlertHeader,
             body: Locale.detIssueCloseAlertBody,
-            icon: 'exclamation-triangle',
+            icon: 'triangle-exclamation',
             buttons: [
                 { result: 'entry', title: Locale.detIssueCloseAlertEntry, silent: true },
                 { result: 'settings', title: Locale.detIssueCloseAlertSettings, silent: true },

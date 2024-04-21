@@ -165,7 +165,7 @@ class OpenView extends View {
 
     getLastOpenFiles() {
         return this.model.fileInfos.map((fileInfo) => {
-            let icon = 'file-alt';
+            let icon = 'file-lines';
             const storage = Storage[fileInfo.storage];
             if (storage && storage.icon) {
                 icon = storage.icon;
@@ -194,7 +194,7 @@ class OpenView extends View {
         Alerts.alert({
             header: Locale.openLocalFile,
             body: Locale.openLocalFileBody,
-            icon: 'file-alt',
+            icon: 'file-lines',
             buttons: [
                 { result: 'skip', title: Locale.openLocalFileDontShow, error: true },
                 { result: 'ok', title: Locale.alertOk }
@@ -852,7 +852,7 @@ class OpenView extends View {
             Alerts.alert({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
-                icon: storage.icon || 'file-alt',
+                icon: storage.icon || 'file-lines',
                 buttons: [{ result: '', title: Locale.alertCancel }],
                 esc: '',
                 click: '',

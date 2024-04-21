@@ -48,7 +48,7 @@ function getIcon(ext) {
         case 'log':
         case 'rtf':
         case 'pem':
-            return 'file-alt';
+            return 'file-lines';
         case 'html':
         case 'htm':
         case 'js':
@@ -89,7 +89,7 @@ function getIcon(ext) {
         case 'ace':
         case 'dmg':
         case 'jar':
-            return 'file-archive';
+            return 'file-zipper';
         case 'doc':
         case 'docx':
             return 'file-word';

@@ -240,7 +240,7 @@ class DetailsView extends View {
                         if (fieldView.isHidden()) {
                             moreOptions.push({
                                 value: 'add:' + fieldView.model.name,
-                                icon: 'pencil-alt',
+                                icon: 'pencil',
                                 text: Locale.detMenuAddField.replace('{}', fieldView.model.title)
                             });
                         }
@@ -856,7 +856,7 @@ class DetailsView extends View {
             Alerts.yesno({
                 header: Locale.detDelToTrash,
                 body: Locale.detDelToTrashBody,
-                icon: 'trash-alt',
+                icon: 'trash-can',
                 success: doMove
             });
         } else {
@@ -878,7 +878,7 @@ class DetailsView extends View {
             header: Locale.detDelFromTrash,
             body: Locale.detDelFromTrashBody,
             hint: Locale.detDelFromTrashBodyHint,
-            icon: 'minus-circle',
+            icon: 'circle-minus',
             success: () => {
                 this.model.deleteFromTrash();
                 Events.emit('refresh');

@@ -26,7 +26,7 @@
         <h2>{{res 'setFileSaveTo'}}</h2>
         {{#ifneq storage 'file'}}
         <div class="settings__file-save-to settings__file-save-to-file">
-            <i class="fa fa-file-alt"></i>{{Res 'file'}}
+            <i class="fa fa-file-lines"></i>{{Res 'file'}}
         </div>
         {{/ifneq}}
         {{#each storageProviders as |prv|}}
@@ -58,7 +58,7 @@
     <h2>{{res 'settings'}}</h2>
     <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFilePass'}}:
         <span class="settings__file-master-pass-warning">
-            <i class="fa fa-exclamation-triangle"></i> <span id="settings__file-master-pass-warning-text">{{res 'setFilePassChange'}}</span>
+            <i class="fa fa-triangle-exclamation"></i> <span id="settings__file-master-pass-warning-text">{{res 'setFilePassChange'}}</span>
         </span>
     </label>
     <div class="hide">
@@ -70,7 +70,7 @@
     <div id="settings__file-confirm-master-pass-group">
         <label for="settings__file-confirm-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFileConfirmPass'}}:
             <span class="settings__file-confirm-master-pass-warning">
-                <i class="fa fa-exclamation-triangle"></i> {{res 'setFilePassNotMatch'}}
+                <i class="fa fa-triangle-exclamation"></i> {{res 'setFilePassNotMatch'}}
             </span>
         </label>
         <input type="password" class="settings__input input-base" id="settings__file-confirm-master-pass" autocomplete="confirm-password" />

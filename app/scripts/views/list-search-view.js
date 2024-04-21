@@ -40,64 +40,64 @@ class ListSearchView extends View {
         this.sortOptions = [
             {
                 value: 'title',
-                icon: 'sort-alpha-down',
+                icon: 'arrow-down-a-z',
                 loc: () =>
                     StringFormat.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-title',
-                icon: 'sort-alpha-down-alt',
+                icon: 'arrow-down-z-a',
                 loc: () =>
                     StringFormat.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'website',
-                icon: 'sort-alpha-down',
+                icon: 'arrow-down-a-z',
                 loc: () =>
                     StringFormat.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-website',
-                icon: 'sort-alpha-down-alt',
+                icon: 'arrow-down-z-a',
                 loc: () =>
                     StringFormat.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'user',
-                icon: 'sort-alpha-down',
+                icon: 'arrow-down-a-z',
                 loc: () => StringFormat.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-user',
-                icon: 'sort-alpha-down-alt',
+                icon: 'arrow-down-z-a',
                 loc: () => StringFormat.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'created',
-                icon: 'sort-numeric-down',
+                icon: 'arrow-down-1-9',
                 loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchON)
             },
             {
                 value: '-created',
-                icon: 'sort-numeric-down-alt',
+                icon: 'arrow-down-9-1',
                 loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO)
             },
             {
                 value: 'updated',
-                icon: 'sort-numeric-down',
+                icon: 'arrow-down-1-9',
                 loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON)
             },
             {
                 value: '-updated',
-                icon: 'sort-numeric-down-alt',
+                icon: 'arrow-down-9-1',
                 loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO)
             },
             {
                 value: '-attachments',
-                icon: 'sort-amount-down',
+                icon: 'arrow-down-wide-short',
                 loc: () => Locale.searchAttachments
             },
-            { value: '-rank', icon: 'sort-amount-down', loc: () => Locale.searchRank }
+            { value: '-rank', icon: 'arrow-down-wide-short', loc: () => Locale.searchRank }
         ];
         this.sortIcons = {};
         this.sortOptions.forEach((opt) => {
@@ -394,7 +394,7 @@ class ListSearchView extends View {
         options.sort(Comparators.stringComparator('text', true));
         options.push({
             value: 'tmpl',
-            icon: 'sticky-note-o',
+            icon: 'note-sticky-o',
             text: StringFormat.capFirst(Locale.template)
         });
         return options;

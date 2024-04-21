@@ -1,7 +1,7 @@
 {{#if passwordIssue}}
     <div class="details__issues {{#if fadeIn}}fade-in{{/if}}">
         <div class="details__issues-icon">
-            <i class="fa fa-exclamation-triangle details__issues-icon-warning"></i>
+            <i class="fa fa-triangle-exclamation details__issues-icon-warning"></i>
             <i class="fa fa-spinner spin details__issues-icon-spin"></i>
         </div>
         <div class="details__issues-body">
@@ -20,7 +20,7 @@
             {{/ifeq}}
         </div>
         <div class="details__issues-close-btn" title="{{res 'detIssuesHideTooltip'}}">
-            <i class="fa fa-times-circle"></i>
+            <i class="fa fa-circle-xmark"></i>
         </div>
     </div>
 {{else}}

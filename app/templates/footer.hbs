@@ -4,7 +4,7 @@
          data-file-id="{{file.id}}" id="footer__db--{{file.id}}">
         <i class="fa fa-{{#if file.active}}unlock{{else}}lock{{/if}}"></i> {{file.name}}
         {{#if file.syncing~}}
-            <i class="fa fa-sync-alt spin footer__db-sign"></i>
+            <i class="fa fa-rotate spin footer__db-sign"></i>
         {{~else if file.syncError~}}
             <i class="fa {{#if file.modified}}fa-circle{{else}}fa-circle-o{{/if}} footer__db-sign footer__db-sign--error"
                title="{{res 'footerSyncError'}}: {{file.syncError}}"></i>
@@ -21,9 +21,9 @@
         {{#if updateAvailable}}
         <i class="fa fa-bell footer__update-icon"></i>
         {{else}}
-        <i class="fa fa-cog"></i>
+        <i class="fa fa-gear"></i>
         {{/if}}
     </div>
     <div class="footer__btn footer__btn-generate" title="{{res 'footerTitleGen'}}" tip-placement="top" id="footer__btn-generate"><i class="fa fa-bolt"></i></div>
-    <div class="footer__btn footer__btn-lock" title="{{res 'footerTitleLock'}}" tip-placement="top-left" id="footer__btn-lock"><i class="fa fa-sign-out-alt"></i></div>
+    <div class="footer__btn footer__btn-lock" title="{{res 'footerTitleLock'}}" tip-placement="top-left" id="footer__btn-lock"><i class="fa fa-right-from-bracket"></i></div>
 </div>

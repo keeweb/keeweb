@@ -330,7 +330,7 @@ class FieldView extends View {
         if (this.value) {
             actions.push({ name: 'copy', icon: 'copy' });
         }
-        actions.push({ name: 'edit', icon: 'pencil-alt' });
+        actions.push({ name: 'edit', icon: 'pencil' });
         if (this.value instanceof kdbxweb.ProtectedValue) {
             actions.push({ name: 'reveal', icon: 'eye' });
         }

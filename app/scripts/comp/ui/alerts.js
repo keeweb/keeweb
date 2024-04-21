@@ -71,7 +71,7 @@ const Alerts = {
         this.alert({
             header: Locale.notImplemented,
             body: '',
-            icon: 'exclamation-triangle',
+            icon: 'triangle-exclamation',
             buttons: [this.buttons.ok],
             esc: '',
             click: '',
@@ -96,7 +96,7 @@ const Alerts = {
         this.alert({
             header: '',
             body: '',
-            icon: 'exclamation-circle',
+            icon: 'circle-exclamation',
             buttons: [this.buttons.ok],
             esc: '',
             click: '',
