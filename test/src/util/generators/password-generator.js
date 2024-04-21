@@ -79,4 +79,54 @@ describe('PasswordGenerator', () => {
             expect(password).to.match(/[O0oIl]/);
         }
     });
+
+    it('should generate passphrase with 8 words', () => {
+        expect(
+            PasswordGenerator.generate({
+                length: 8,
+                name: 'Passphrase',
+                spaces: true,
+                upper: true
+            })
+        ).to.match(/^\w+(?: \w+){7,}$/);
+    });
+
+    it('should generate passphrase with 6 words ending in number', () => {
+        expect(
+            PasswordGenerator.generate({
+                length: 6,
+                name: 'Passphrase',
+                digits: true,
+                spaces: true,
+                upper: true
+            })
+        ).to.match(/^\w+(?:[0-9] \w+){5,}$/);
+    });
+
+    it('should generate passphrase with 7 words seperated by hyphens', () => {
+        expect(
+            PasswordGenerator.generate({
+                length: 6,
+                name: 'Passphrase',
+                digits: false,
+                spaces: false,
+                high: true,
+                upper: true
+            })
+        ).to.match(/^\w+(?:[\-]\w+){5,}$/);
+    });
+
+    it('should generate passphrase with 10 words seperated by hyphens, spaces with number at end', () => {
+        expect(
+            PasswordGenerator.generate({
+                length: 10,
+                name: 'Passphrase',
+                digits: true,
+                spaces: true,
+                high: true,
+                upper: true
+            })
+        ).to.match(/^\w+(?: [\-] \w+[0-9]+){9,}$/);
+    });
+
 });
