@@ -116,6 +116,9 @@
     "grunt-appdmg": "github:keeweb/grunt-appdmg#874ad83",
     "keytar": "7.7.0"
   },
+  "devDependencies": {
+    "prettier-eslint": "^16.3.0"
+  },
   "extraResources": [
     "./node_modules/@electron/remote/**"
   ],
