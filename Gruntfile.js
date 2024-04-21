@@ -86,6 +86,12 @@ module.exports = function (grunt) {
         'libatspi2.0-0'
     ];
 
+    const appConfig = webpackConfig({
+        ...webpackOptions,
+        mode: 'development',
+        sha: 'dev'
+    });
+
     grunt.initConfig({
         noop: { noop: {} },
         clean: {
@@ -148,8 +154,7 @@ module.exports = function (grunt) {
             'desktop-darwin-installer-helper-x64': {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
@@ -157,8 +162,7 @@ module.exports = function (grunt) {
             'desktop-darwin-installer-helper-arm64': {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
@@ -229,47 +233,40 @@ module.exports = function (grunt) {
                 nonull: true
             },
             'native-messaging-host-darwin-x64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-darwin-arm64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-linux-x64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
                 dest: 'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-win32-x64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-ia32': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-arm64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe',
                 nonull: true
             }
         },
+
         eslint: {
             app: ['app/scripts/**/*.js'],
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
@@ -278,12 +275,14 @@ module.exports = function (grunt) {
             util: ['util/**/*.js'],
             installer: ['package/osx/installer.js']
         },
+
         inline: {
             app: {
                 src: 'tmp/index.html',
                 dest: 'tmp/app.html'
             }
         },
+
         'csp-hashes': {
             options: {
                 algo: 'sha512',
@@ -297,6 +296,7 @@ module.exports = function (grunt) {
                 dest: 'dist/index.html'
             }
         },
+
         htmlmin: {
             options: {
                 removeComments: true,
@@ -308,6 +308,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'string-replace': {
             'update-manifest': {
                 options: {
@@ -347,29 +348,56 @@ module.exports = function (grunt) {
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
             }
         },
+
         webpack: {
-            app: webpackConfig.config(webpackOptions),
+            app: webpackConfig(webpackOptions),
             test: webpackConfigTest
         },
+
         'webpack-dev-server': {
-            options: {
-                webpack: webpackConfig.config({
-                    ...webpackOptions,
-                    mode: 'development',
-                    sha: 'dev'
-                }),
-                publicPath: '/',
-                contentBase: [
-                    path.resolve(__dirname, 'tmp'),
-                    path.resolve(__dirname, 'app/content')
-                ],
-                progress: false
-            },
-            js: {
-                keepalive: true,
-                port: 8085
+            options: appConfig,
+            start: {
+                devServer: {
+                    port: 8085,
+                    client: {
+                        logging: 'error',
+                        overlay: true
+                    },
+                    hot: 'only',
+                    static: [
+                        {
+                            directory: path.resolve(__dirname, 'tmp'),
+                            staticOptions: {},
+                            // Don't be confused with `devMiddleware.publicPath`, it is `publicPath` for static directory
+                            // Can be:
+                            // publicPath: ['/static-public-path-one/', '/static-public-path-two/'],
+                            publicPath: '/',
+                            // Can be:
+                            // serveIndex: {} (options for the `serveIndex` option you can find https://github.com/expressjs/serve-index)
+                            serveIndex: true,
+                            // Can be:
+                            // watch: {} (options for the `watch` option you can find https://github.com/paulmillr/chokidar)
+                            watch: true
+                        },
+                        {
+                            directory: path.resolve(__dirname, 'app/content'),
+                            staticOptions: {},
+                            // Don't be confused with `devMiddleware.publicPath`, it is `publicPath` for static directory
+                            // Can be:
+                            // publicPath: ['/static-public-path-one/', '/static-public-path-two/'],
+                            publicPath: '/',
+                            // Can be:
+                            // serveIndex: {} (options for the `serveIndex` option you can find https://github.com/expressjs/serve-index)
+                            serveIndex: true,
+                            // Can be:
+                            // watch: {} (options for the `watch` option you can find https://github.com/paulmillr/chokidar)
+                            watch: true
+                        }
+                    ]
+                }
             }
         },
+
         electron: {
             options: {
                 name: 'KeeWeb',
@@ -438,6 +466,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'electron-builder': {
             linux: {
                 options: {
@@ -472,6 +501,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'electron-patch': {
             'win32-x64': 'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe',
             'win32-ia32': 'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe',
@@ -480,6 +510,7 @@ module.exports = function (grunt) {
             'darwin-arm64': 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app',
             'linux': 'tmp/desktop/KeeWeb-linux-x64/keeweb'
         },
+
         osacompile: {
             options: {
                 language: 'JavaScript'
@@ -490,6 +521,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         compress: {
             options: {
                 level: 6
@@ -514,6 +546,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
+
         appdmg: {
             x64: {
                 options: appdmgOptions('x64'),
@@ -524,6 +557,7 @@ module.exports = function (grunt) {
                 dest: `dist/desktop/KeeWeb-${pkg.version}.mac.arm64.dmg`
             }
         },
+
         nsis: {
             options: {
                 vars: {
@@ -575,6 +609,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         chmod: {
             'linux-desktop-x64': {
                 options: {
@@ -583,6 +618,7 @@ module.exports = function (grunt) {
                 src: ['tmp/desktop/keeweb-linux-x64/chrome-sandbox']
             }
         },
+
         deb: {
             options: {
                 tmpPath: 'tmp/desktop/',
@@ -625,6 +661,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
+
         'osx-sign': {
             options: {
                 get identity() {
@@ -651,6 +688,7 @@ module.exports = function (grunt) {
                 src: 'tmp/desktop/KeeWeb Installer.app'
             }
         },
+
         notarize: {
             options: {
                 appBundleId: 'net.antelle.keeweb',
@@ -669,6 +707,7 @@ module.exports = function (grunt) {
                 src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
             }
         },
+
         'sign-exe': {
             options: {
                 url: pkg.homepage,
@@ -764,6 +803,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'sign-dist': {
             dist: {
                 options: {
@@ -774,12 +814,14 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'run-test': {
             options: {
-                headless: true
+                headless: 'new'
             },
             default: 'test/runner.html'
         },
+
         virustotal: {
             options: {
                 prefix: `keeweb.v${pkg.version}-${sha}.`,
