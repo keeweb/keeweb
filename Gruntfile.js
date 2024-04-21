@@ -358,6 +358,29 @@ module.exports = function (grunt) {
             options: appConfig,
             start: {
                 devServer: {
+                    setupMiddlewares: function (middlewares, devServer) {
+                        const port = devServer.options.port;
+                        const https = devServer.options.https ? 's' : '';
+
+                        const domain1 = `http${https}://${devServer.options.host}:${port}`;
+                        const domain2 = `http://[::1]:${port}`;
+
+                        grunt.log.writeln(
+                            `\n---------------------------------------------------------------------`
+                                .grey.bold
+                        );
+                        grunt.log.writeln(
+                            `  KeeWeb server succesfully started! Access it at:\n`.yellow.bold
+                        );
+                        grunt.log.writeln(`       → ${domain1}`.green.bold);
+                        grunt.log.writeln(`       → ${domain2}`.green.bold);
+                        grunt.log.writeln(
+                            `---------------------------------------------------------------------\n\n`
+                                .grey.bold
+                        );
+
+                        return middlewares;
+                    },
                     port: 8085,
                     client: {
                         logging: 'error',
@@ -365,32 +388,25 @@ module.exports = function (grunt) {
                     },
                     hot: 'only',
                     static: [
+                        /*
+                            publicPath: ['/static-public-path-one/', '/static-public-path-two/'],
+                            serveIndex: {}
+                                https://github.com/expressjs/serve-index
+                            watch: {}
+                                https://github.com/paulmillr/chokidar
+                        */
+
                         {
                             directory: path.resolve(__dirname, 'tmp'),
                             staticOptions: {},
-                            // Don't be confused with `devMiddleware.publicPath`, it is `publicPath` for static directory
-                            // Can be:
-                            // publicPath: ['/static-public-path-one/', '/static-public-path-two/'],
-                            publicPath: '/',
-                            // Can be:
-                            // serveIndex: {} (options for the `serveIndex` option you can find https://github.com/expressjs/serve-index)
                             serveIndex: true,
-                            // Can be:
-                            // watch: {} (options for the `watch` option you can find https://github.com/paulmillr/chokidar)
                             watch: true
                         },
                         {
                             directory: path.resolve(__dirname, 'app/content'),
                             staticOptions: {},
-                            // Don't be confused with `devMiddleware.publicPath`, it is `publicPath` for static directory
-                            // Can be:
-                            // publicPath: ['/static-public-path-one/', '/static-public-path-two/'],
                             publicPath: '/',
-                            // Can be:
-                            // serveIndex: {} (options for the `serveIndex` option you can find https://github.com/expressjs/serve-index)
                             serveIndex: true,
-                            // Can be:
-                            // watch: {} (options for the `watch` option you can find https://github.com/paulmillr/chokidar)
                             watch: true
                         }
                     ]
