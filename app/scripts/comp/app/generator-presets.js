@@ -21,7 +21,8 @@ const GeneratorPresets = {
             lower: true,
             special: true,
             brackets: true,
-            ambiguous: true
+            ambiguous: true,
+            spaces: true
         };
     },
 
@@ -54,7 +55,29 @@ const GeneratorPresets = {
                 lower: true,
                 digits: true
             },
-            { name: 'Pin4', title: Locale.genPresetPin4, length: 4, digits: true },
+            {
+                name: 'Passphrase',
+                title: Locale.genPresetPassphrase,
+                length: 4,
+                digits: false,
+                lower: true,
+                spaces: true,
+                disabledElements: ['ambiguous', 'brackets']
+            },
+            {
+                name: 'UUID',
+                title: Locale.genPresetUUIDv4,
+                length: 36,
+                digits: true,
+                lower: true,
+                disabledElements: ['ambiguous', 'brackets', 'high', 'special', 'spaces']
+            },
+            {
+                name: 'Pin4',
+                title: Locale.genPresetPin4,
+                length: 4,
+                digits: true
+            },
             {
                 name: 'Mac',
                 title: Locale.genPresetMac,
@@ -66,13 +89,25 @@ const GeneratorPresets = {
                 name: 'Hash128',
                 title: Locale.genPresetHash128,
                 length: 32,
-                include: '0123456789abcdef'
+                lower: true,
+                include: '0123456789abcdef',
+                disabledElements: ['digits', 'special', 'brackets', 'high', 'ambiguous', 'spaces']
             },
             {
                 name: 'Hash256',
                 title: Locale.genPresetHash256,
                 length: 64,
-                include: '0123456789abcdef'
+                lower: true,
+                include: '0123456789abcdef',
+                disabledElements: ['digits', 'special', 'brackets', 'high', 'ambiguous', 'spaces']
+            },
+            {
+                name: 'Hash512',
+                title: Locale.genPresetHash512,
+                length: 128,
+                lower: true,
+                include: '0123456789abcdef',
+                disabledElements: ['digits', 'special', 'brackets', 'high', 'ambiguous', 'spaces']
             }
         ];
     },
