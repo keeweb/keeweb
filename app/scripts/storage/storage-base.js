@@ -33,7 +33,7 @@ class StorageBase {
                 this.enabled = enabled;
             }
         }
-        this.logger = new Logger('storage-' + this.name);
+        // this.logger = new Logger('storage-' + this.name);
         return this;
     }
 
@@ -55,7 +55,8 @@ class StorageBase {
     }
 
     _xhr(config) {
-        this.logger.info('HTTP request', config.method || 'GET', config.url);
+        // this.logger.info(JSON.stringify(config));
+        // this.logger.info('HTTP request', config.method || 'GET', config.url);
         if (config.data) {
             if (!config.dataType) {
                 config.dataType = 'application/octet-stream';
@@ -71,12 +72,14 @@ class StorageBase {
                 'Authorization': 'Bearer ' + this._oauthToken.accessToken
             };
         }
+
         this._httpRequest(config, (response) => {
-            this.logger.info('HTTP response', response.status);
+            // this.logger.info('inside status response', response.status);
             const statuses = config.statuses || [200];
             if (statuses.indexOf(response.status) >= 0) {
                 return config.success && config.success(response.response, response);
             }
+            // this.logger.info(response.status);
             if (response.status === 401 && this._oauthToken) {
                 this._oauthGetNewToken((err) => {
                     if (err) {
@@ -140,7 +143,7 @@ class StorageBase {
     }
 
     _httpRequestLauncher(config, onLoad) {
-        Launcher.remoteApp().httpRequest(
+        Launcher.remoteApp().httpRequestQuery(
             config,
             (level, ...args) => this.logger[level](...args),
             ({ status, response, headers }) => {
@@ -173,13 +176,13 @@ class StorageBase {
         const winWidth = window.innerWidth
             ? window.innerWidth
             : document.documentElement.clientWidth
-            ? document.documentElement.clientWidth
-            : screen.width;
+              ? document.documentElement.clientWidth
+              : screen.width;
         const winHeight = window.innerHeight
             ? window.innerHeight
             : document.documentElement.clientHeight
-            ? document.documentElement.clientHeight
-            : screen.height;
+              ? document.documentElement.clientHeight
+              : screen.height;
 
         const left = winWidth / 2 - width / 2 + dualScreenLeft;
         const top = winHeight / 2 - height / 2 + dualScreenTop;
@@ -221,6 +224,7 @@ class StorageBase {
         }
 
         if (oldToken && oldToken.refreshToken) {
+            // this.logger.debug('_oauthAuthorize 1');
             return this._oauthExchangeRefreshToken(callback);
         }
 
@@ -437,7 +441,6 @@ class StorageBase {
     }
 
     _oauthExchangeRefreshToken(callback) {
-        this.logger.debug('Exchanging refresh token');
         const { refreshToken } = this.runtimeData[this.name + 'OAuthToken'];
         const config = this._getOAuthConfig();
         this._xhr({
@@ -467,7 +470,6 @@ class StorageBase {
                     this.logger.error('Error exchanging refresh token, trying to authorize again');
                     this._oauthAuthorize(callback);
                 } else {
-                    this.logger.error('Error exchanging refresh token', err);
                     callback?.('Error exchanging refresh token');
                 }
             }

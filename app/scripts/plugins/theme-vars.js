@@ -27,6 +27,7 @@ const ThemeVars = {
     apply(cssStyle) {
         this.init();
         const matches = ThemeVarsScss.replace(this.newLineRegEx, '').matchAll(this.themeVarsRegEx);
+        // eslint-disable-next-line prefer-const
         for (let [, name, def, last] of matches) {
             if (last && def.endsWith(')')) {
                 // definitions are written like this:
