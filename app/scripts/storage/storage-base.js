@@ -2,6 +2,7 @@ import { Events } from 'framework/events';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { RuntimeDataModel } from 'models/runtime-data-model';
+// eslint-disable-next-line no-unused-vars
 import { Logger } from 'util/logger';
 import { StorageOAuthListener } from 'storage/storage-oauth-listener';
 import { UrlFormat } from 'util/formatting/url-format';
@@ -33,7 +34,7 @@ class StorageBase {
                 this.enabled = enabled;
             }
         }
-        // this.logger = new Logger('storage-' + this.name);
+        this.logger = new Logger('storage-' + this.name);
         return this;
     }
 
@@ -55,8 +56,8 @@ class StorageBase {
     }
 
     _xhr(config) {
-        // this.logger.info(JSON.stringify(config));
-        // this.logger.info('HTTP request', config.method || 'GET', config.url);
+        this.logger.info(JSON.stringify(config));
+        this.logger.info('HTTP request', config.method || 'GET', config.url);
         if (config.data) {
             if (!config.dataType) {
                 config.dataType = 'application/octet-stream';
@@ -74,12 +75,12 @@ class StorageBase {
         }
 
         this._httpRequest(config, (response) => {
-            // this.logger.info('inside status response', response.status);
+            this.logger.info('inside status response', response.status);
             const statuses = config.statuses || [200];
             if (statuses.indexOf(response.status) >= 0) {
                 return config.success && config.success(response.response, response);
             }
-            // this.logger.info(response.status);
+            this.logger.info(response.status);
             if (response.status === 401 && this._oauthToken) {
                 this._oauthGetNewToken((err) => {
                     if (err) {
@@ -143,10 +144,15 @@ class StorageBase {
     }
 
     _httpRequestLauncher(config, onLoad) {
+        console.log('-----------_httpRequestLauncher-----------');
+        console.log(config);
+        console.log(onLoad);
+        console.log('-----------===================-----------');
         Launcher.remoteApp().httpRequestQuery(
             config,
             (level, ...args) => this.logger[level](...args),
             ({ status, response, headers }) => {
+                console.log('aaa');
                 response = Buffer.from(response, 'hex');
                 if (config.responseType === 'json') {
                     try {
@@ -154,6 +160,7 @@ class StorageBase {
                     } catch (e) {
                         return config.error && config.error('json parse error');
                     }
+                    console.log('bbb');
                 } else {
                     response = response.buffer.slice(
                         response.byteOffset,
@@ -224,7 +231,7 @@ class StorageBase {
         }
 
         if (oldToken && oldToken.refreshToken) {
-            // this.logger.debug('_oauthAuthorize 1');
+            this.logger.debug('_oauthAuthorize 1');
             return this._oauthExchangeRefreshToken(callback);
         }
 
@@ -357,6 +364,7 @@ class StorageBase {
             this.runtimeData[this.name + 'OAuthToken'] = this._oauthToken;
         }
         if (this._oauthToken.refreshToken) {
+            this.logger.debug('_oauthAuthorize 2');
             this._oauthExchangeRefreshToken(callback);
         } else {
             this._oauthAuthorize(callback);
@@ -441,8 +449,12 @@ class StorageBase {
     }
 
     _oauthExchangeRefreshToken(callback) {
+        this.logger.debug('Exchanging refresh token');
+        this.logger.debug('Sucking dick');
         const { refreshToken } = this.runtimeData[this.name + 'OAuthToken'];
+        this.logger.debug(refreshToken);
         const config = this._getOAuthConfig();
+        this.logger.debug(config);
         this._xhr({
             url: config.tokenUrl,
             method: 'POST',
@@ -470,7 +482,8 @@ class StorageBase {
                     this.logger.error('Error exchanging refresh token, trying to authorize again');
                     this._oauthAuthorize(callback);
                 } else {
-                    callback?.('Error exchanging refresh token');
+                    this.logger.error('Error exchanging refresh aaaaaaaaa', err);
+                    callback?.('Error exchanging refresh aaaaaaaaaaa');
                 }
             }
         });
