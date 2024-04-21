@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { DateFormat } from 'comp/i18n/date-format';
 
 describe('DateFormat', () => {
-    const dt = new Date(2020, 0, 2, 3, 4, 5, 6);
+    const dt = new Date(2024, 0, 2, 3, 4, 5, 6);
 
     it('should return months', () => {
         expect(DateFormat.months()).to.eql([
@@ -46,14 +46,14 @@ describe('DateFormat', () => {
     });
 
     it('should format date', () => {
-        expect(DateFormat.dStr(dt)).to.eql('Jan 2, 2020');
+        expect(DateFormat.dStr(dt)).to.eql('Jan 2, 2024');
     });
 
     it('should format date and time', () => {
-        expect(DateFormat.dtStr(dt)).to.eql('Jan 2, 2020, 3:04:05 AM');
+        expect(DateFormat.dtStr(dt)).to.eql('Jan 2, 2024, 3:04:05 AM');
     });
 
     it('should format date and time in sortable format', () => {
-        expect(DateFormat.dtStrFs(dt)).to.eql('2020-01-02T03-04-05');
+        expect(DateFormat.dtStrFs(dt)).to.eql('2024-01-02T03-04-05');
     });
 });

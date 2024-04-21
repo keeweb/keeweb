@@ -16,8 +16,7 @@ Donate: [OpenCollective](https://opencollective.com/keeweb#support), [GitHub](ht
 
 ## Status
 
-The app is quite stable now. Basic stuff, as well as more advanced operations, should be rather reliable.  
-Looking for a new maintainer, see [#2022](https://github.com/keeweb/keeweb/issues/2022)
+The app is quite stable now. Basic stuff, as well as more advanced operations, should be rather reliable.
 
 ## Self-hosting
 
