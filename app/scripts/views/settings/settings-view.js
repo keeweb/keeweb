@@ -32,6 +32,7 @@ class SettingsView extends View {
     }
 
     setPage(e) {
+        // eslint-disable-next-line prefer-const
         let { page, section, file } = e;
         if (page === 'file' && file && file.backend === 'otp-device') {
             page = 'file-otp-device';
