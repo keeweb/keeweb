@@ -117,7 +117,10 @@
     "keytar": "7.7.0"
   },
   "devDependencies": {
-    "prettier-eslint": "^16.3.0"
+    "all-contributors-cli": "^6.26.1",
+    "@types/uuid": "^9.0.8",
+    "prettier-eslint": "^16.3.0",
+    "nyc": "^15.1.0"
   },
   "extraResources": [
     "./node_modules/@electron/remote/**"
@@ -145,7 +148,16 @@
     "dev-desktop-windows": "grunt dev-desktop-win32 --skip-sign",
     "dev-desktop-linux": "grunt dev-desktop-linux --skip-sign",
     "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js",
-    "set-legacy": "export NODE_OPTIONS=--openssl-legacy-provider"
+    "contrib:add": "all-contributors add",
+    "contrib:generate": "all-contributors generate",
+    "keeweb": "node keeweb.js",
+    "keeweb:generate": "node keeweb.js generate",
+    "env-keeweb": "npx --quiet env-cmd --no-override node keeweb.js",
+    "env-uuid": "npx --quiet env-cmd --no-override node keeweb.js uuid",
+    "env-guid": "npx --quiet env-cmd --no-override node keeweb.js guid",
+    "env-version": "node -p require('./package.json').version;",
+    "coverage": "nyc --reporter=lcov --reporter=text npm run test",
+    "coverage:report": "nyc report --reporter=lcov --reporter=text"
   },
   "author": {
     "name": "Antelle",
