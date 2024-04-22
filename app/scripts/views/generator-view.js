@@ -62,6 +62,7 @@ class GeneratorView extends View {
             presetLC: this.preset.toLowerCase(),
             showTemplateEditor: !this.model.noTemplateEditor
         });
+
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
         this.generate();
@@ -69,6 +70,7 @@ class GeneratorView extends View {
 
     createPresets() {
         this.presets = GeneratorPresets.enabled;
+
         if (
             this.model.password &&
             (!this.model.password.isProtected || this.model.password.byteLength)
@@ -81,6 +83,7 @@ class GeneratorView extends View {
             const defaultPreset = this.presets.filter((p) => p.default)[0] || this.presets[0];
             this.preset = defaultPreset.name;
         }
+
         this.presetLC = this.preset.toLowerCase();
         this.presets.forEach((pr) => {
             pr.pseudoLength = this.lengthToPseudoValue(pr.length);
@@ -93,6 +96,7 @@ class GeneratorView extends View {
                 return ix;
             }
         }
+
         return this.valuesMap.length - 1;
     }
 
@@ -125,6 +129,7 @@ class GeneratorView extends View {
             this.gen.length = val;
             this.$el.find('.gen__length-range-val').text(val);
             this.optionChanged('length');
+
             // dont allow spaces unless password is a certain length
             if (this.presetLC !== 'passphrase') {
                 const cboxSpaces = document.getElementsByClassName('checkbox-spaces');
@@ -152,6 +157,7 @@ class GeneratorView extends View {
         if (this.presetLC === 'passphrase') {
             const cbSpecial = document.getElementsByClassName('checkbox-special');
             const cbHigh = document.getElementsByClassName('checkbox-high');
+
             if (id === 'special') {
                 // upper checked -> uncheck and re-enable lower
                 if (cbSpecial.item(0).checked) {
@@ -228,6 +234,17 @@ class GeneratorView extends View {
         const label = this.$el.find('.gen__check-hide-label');
         Tip.updateTip(label[0], { title: this.hide ? Locale.genShowPass : Locale.genHidePass });
         this.showPassword();
+
+        /*
+            if user clicks 'hide password' button while on passphrase, the dots need
+            to wrap. otherwise they go off-screen
+        */
+
+        if (this.hide) {
+            this.resultEl.toggleClass('__pass-hidden');
+        } else {
+            this.resultEl.removeClass('__pass-hidden');
+        }
     }
 
     btnOkClick() {
@@ -237,6 +254,7 @@ class GeneratorView extends View {
             }
             CopyPaste.copy(this.password);
         }
+
         this.emit('result', this.password);
         this.remove();
     }
@@ -248,11 +266,25 @@ class GeneratorView extends View {
             this.remove();
             return;
         }
+
         this.preset = name;
         this.presetLC = this.preset.toLowerCase();
         const preset = this.presets.find((t) => t.name === name);
         this.gen = { ...preset };
         this.render();
+
+        /*
+            if user clicks 'hide password' button while on passphrase, the dots need
+            to wrap. otherwise they go off-screen.
+
+            check if user changed to passphrase preset and set wrapping
+        */
+
+        if (this.presetLC === 'passphrase' && this.hide) {
+            this.resultEl.toggleClass('__pass-hidden');
+        } else {
+            this.resultEl.removeClass('__pass-hidden');
+        }
     }
 
     setInputHeight() {
