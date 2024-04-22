@@ -11,7 +11,10 @@ const Otp = function (url, params) {
         throw 'Empty secret';
     }
 
-    if (params.algorithm && ['SHA1', 'SHA256', 'SHA512'].indexOf(params.algorithm.toUpperCase()) < 0) {
+    if (
+        params.algorithm &&
+        ['SHA1', 'SHA256', 'SHA512'].indexOf(params.algorithm.toUpperCase()) < 0
+    ) {
         throw 'Bad algorithm: ' + params.algorithm;
     }
 
