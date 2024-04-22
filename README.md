@@ -8,7 +8,7 @@
 <br />
 
 <!-- prettier-ignore-start -->
-[![Test Status][badge-test]][link-build]
+[![Test Status][badge-tests]][link-tests]
 [![Code Coverage][badge-coverage]][link-coverage]
 [![Last Commit][badge-commit]][badge-commit]
 [![Size][badge-size]][badge-size]
@@ -278,13 +278,13 @@ The following people have helped get this project going:
 [link-license]: https://github.com/Aetherinox/keeweb/blob/master/LICENSE
 [link-package]: https://npmjs.com/package/Aetherinox/keeweb
 [link-coverage]: https://codecov.io/github/Aetherinox/keeweb
-[link-build]: https://github.com/Aetherinox/keeweb/actions/workflows/build.yml?query=workflow%3Abuild.yml
-[link-tests]: https://github.com/Aetherinox/keeweb/actions/workflows/tests.yml?query=workflow%3Atests.yml
+[link-build]: https://github.com/Aetherinox/keeweb/actions/workflows/build.yaml?query=workflow%3Abuild.yml
+[link-tests]: https://github.com/Aetherinox/keeweb/actions/workflows/tests.yaml?query=workflow%3Atests.yml
 
 [badge-commit]: https://img.shields.io/github/last-commit/Aetherinox/keeweb?color=b43bcc
 [badge-size]: https://img.shields.io/github/repo-size/Aetherinox/keeweb?label=size&color=59702a
 [badge-build]: https://img.shields.io/github/actions/workflow/status/Aetherinox/keeweb/build.yml?logo=github&label=Build&color=%23278b30
-[badge-test]: https://img.shields.io/github/actions/workflow/status/Aetherinox/keeweb/tests.yml?logo=github&label=Tests&color=%23278b30
+[badge-tests]: https://img.shields.io/github/actions/workflow/status/Aetherinox/keeweb/tests.yml?logo=github&label=Tests&color=%23278b30
 [badge-coverage]: https://img.shields.io/codecov/c/github/Aetherinox/keeweb?token=MPAVASGIOG&logo=codecov&logoColor=FFFFFF&label=Coverage&color=354b9e
 [badge-version]: https://img.shields.io/npm/v/keeweb/keeweb
 [badge-downloads]: https://img.shields.io/npm/dm/keeweb.svg
