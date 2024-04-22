@@ -1,7 +1,15 @@
-// built in modules
+/*
+    Load modules
+*/
+
 @use 'sass:math';
 @use "sass:meta";
 @use 'sass:color';
+@use 'sass:list';
+
+/*
+    define font
+*/
 
 @font-face {
     font-family: 'Font Awesome 6 Free';
@@ -30,25 +38,47 @@
 $fa-glyph-counter: 61440; // 0xf000
 
 /*
-    sass 1.49.10
+    Replaces old next-fa-glyph method for assigning unicode to font-awesome icons.
+    the old method relied on hoping that all colors would be serialized as hex codes, and this
+    method allows for a number to be converted into unicodes directly.
 
-    package modified library to return 'rgb/a' with every color.
+    @debug int-to-hex(25);
+    @debug int-to-hex($fa-glyph-counter);
+
+    @ref    : https://sass-lang.com/playground/#eJztVUtvm0AQvvMrpo4rSMrGPGwnxT1YbSK1UhMfWqmXXDAsBgnvOrDkoSj/vTu8DThN1Uq9lMPYzHwzO8x+365pLrOUgpq6aepsXRGqCyX3jAoPFe6o9BQYj8c8UfdccZQK6VEmJwoAo/cgs0LuKycTRRkHLtnEj7uQeDxjgiYOzM3p1FjAZALGQ2AYhjImIX0gXugmqQOqoeqgmmgsNDaaKZoZmjmaMzTnaN6jcdGs0XhofDQUTYBdLX26zjYwIuUDV5ffP68uHLi+/AGVk4wQGWTMExFnEDFBBMe2tDHLtsfwJL8MYBkFgO/wAYzSlbsTKrKEySWOnlqZJE99lpUR9AxLGsuRNSXM+UANnOUpE6HWGopeZLwD83i/Vj+9tXwi5+1rPr9nZf5ErqjLGseyUucD4a2MVcWV5/YoGH0QpN5EubtaNY2Bre25sGl4s4n52o2L8uNU0J2z10A3STZSjLvcuWt678DRU55ZjLOolCc5kLHbjAuqqaObmxqldouUYAnI/1Xb0mXH8NMsWg26qLLAWWH/d25C0tvMTSixnaGZLXowwg8AFamMsq3WlKzZTMYGQ6Z1fihkzeYvhOxpHi6Ey2O/LdyDsll9vTgkm73P+QOeFGkxJzs3EUPotyC7z4+QiHkJ3VImINtBkPAtmEV2GJXZeKid+tFdn2dA6kV0KCZVM5SYDuRH3WlEcyWmItGSzdrVqsp6K1mKqp1rOSDhJI0jj2plOR2mOpx1WflNxsCs2U3MLi9zgNUArNcJAHH/TAJOlwg98nepr9Us9Ph2HTFaU1G6RBil6Jejpql8oyB/s1gAD/K3hrjgMr91AUEa+ZSsHwn+DpC6pvSn1dXHL9eXFa9fILWUbdXhf34P87uB2b93zK9iv8fz4UuA2D0VWC/KoMHZwzi7wvUFg/xqRNPrq8Cwsrtijb+jLCuX1i+vlzYjX3PL7OPl8xOosd4o
+
+*/
+
+$-hex-chars: '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f';
+
+@function int-to-hex($num) {
+    @if $num < 0 {
+        @return "-#{int-to-hex(-$num)}";
+    } @else if $num < 16 {
+        @return list.nth($-hex-chars, $num + 1);
+    } @else {
+        @return int-to-hex(round(down, $num / 16, 1)) + int-to-hex($num % 16);
+    }
+}
+
+/*
+    @since  : sass 1.49.10
 */
 
 @function next-fa-glyph() {
     $fa-glyph-counter: $fa-glyph-counter + 1 !global;
 
     $lo-part: $fa-glyph-counter % 256; // increment up from 1
-    $hi-part: math.div($fa-glyph-counter - $lo-part, 256);
-    $step-1: color.ie-hex-str(rgba($hi-part, $lo-part, 1));
-    $step-2: str-slice($step-1, 4, 7);
+    $step: int-to-hex($fa-glyph-counter);
 
-    $glyph: unquote('"\\#{$step-2}"');
+    $glyph: unquote('"\\#{$step}"');
 
     @return $glyph;
 }
 
-// position fixes for icons that need to be shifted because they're special
+/*
+    position fixes for icons that need to be shifted because they're special
+*/
 
 .fa-keyboard {
     @include position(relative, 0.1em null null null);
