@@ -1,7 +1,11 @@
 coverage
 dist
 .opt-*
-node_modules
+node_modules/
+
+# tests and coverage
+.nyc_output
+coverage
 
 .dev
 .idea
