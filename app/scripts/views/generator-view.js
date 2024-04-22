@@ -99,10 +99,8 @@ class GeneratorView extends View {
     showPassword() {
         if (this.hide && !this.model.copy) {
             this.resultEl.text(PasswordPresenter.present(this.password.length));
-            // this.resultEl.prop('value', PasswordPresenter.present(this.password.length));
         } else {
             this.resultEl.text(this.password);
-            // this.resultEl.prop('value', this.password);
         }
     }
 

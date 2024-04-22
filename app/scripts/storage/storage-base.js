@@ -144,15 +144,10 @@ class StorageBase {
     }
 
     _httpRequestLauncher(config, onLoad) {
-        console.log('-----------_httpRequestLauncher-----------');
-        console.log(config);
-        console.log(onLoad);
-        console.log('-----------===================-----------');
         Launcher.remoteApp().httpRequestQuery(
             config,
             (level, ...args) => this.logger[level](...args),
             ({ status, response, headers }) => {
-                console.log('aaa');
                 response = Buffer.from(response, 'hex');
                 if (config.responseType === 'json') {
                     try {
@@ -160,7 +155,6 @@ class StorageBase {
                     } catch (e) {
                         return config.error && config.error('json parse error');
                     }
-                    console.log('bbb');
                 } else {
                     response = response.buffer.slice(
                         response.byteOffset,
@@ -482,8 +476,8 @@ class StorageBase {
                     this.logger.error('Error exchanging refresh token, trying to authorize again');
                     this._oauthAuthorize(callback);
                 } else {
-                    this.logger.error('Error exchanging refresh aaaaaaaaa', err);
-                    callback?.('Error exchanging refresh aaaaaaaaaaa');
+                    this.logger.error('Error exchanging refresh token', err);
+                    callback?.('Error exchanging refresh token');
                 }
             }
         });
