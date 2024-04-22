@@ -1,9 +1,11 @@
 let perfTimestamps = [{ name: 'pre-init', ts: process.hrtime() }];
 
-if (process.send && process.argv.includes('--native-module-host')) {
-    require('./native-module-host').startInOwnProcess();
-    return;
-}
+// @TODO: Yest
+(function () {
+    if (process.send && process.argv.includes('--native-module-host')) {
+        require('./native-module-host').startInOwnProcess();
+    }
+})();
 
 const electron = require('electron');
 const path = require('path');
@@ -217,7 +219,10 @@ main.minimizeThenHideIfInTray = function () {
     // This function is called when auto-type has displayed a selection list and a selection was made.
     // To ensure focus returns to the previous window we must minimize first even if we're going to hide.
     mainWindow.minimize();
-    if (appIcon) mainWindow.hide();
+
+    if (appIcon) {
+        mainWindow.hide();
+    }
 };
 main.getMainWindow = function () {
     return mainWindow;
@@ -231,7 +236,7 @@ main.loadConfig = loadConfig;
 main.saveConfig = saveConfig;
 main.getAppMainRoot = getAppMainRoot;
 main.getAppContentRoot = getAppContentRoot;
-main.httpRequest = httpRequest;
+main.httpRequestQuery = httpRequestQuery;
 
 function logProgress(name) {
     perfTimestamps?.push({ name, ts: process.hrtime() });
@@ -275,13 +280,15 @@ function createMainWindow() {
     if (appSettings.autoSwitchTheme) {
         theme = selectDarkOrLightTheme(theme);
     }
-    const bgColor = themeBgColors[theme] || defaultBgColor;
 
+    const bgColor = themeBgColors[theme] || defaultBgColor;
     const isWindows = process.platform === 'win32';
+
     let titlebarStyle = appSettings.titlebarStyle;
     if (titlebarStyle === 'hidden-inset') {
         titlebarStyle = 'hiddenInset';
     }
+
     const frameless = isWindows && ['hidden', 'hiddenInset'].includes(titlebarStyle);
 
     const windowOptions = {
@@ -303,10 +310,13 @@ function createMainWindow() {
             v8CacheOptions: 'none'
         }
     };
+
     if (process.platform !== 'win32') {
         windowOptions.icon = path.join(__dirname, 'img', 'icon.png');
     }
+
     mainWindow = new electron.BrowserWindow(windowOptions);
+    mainWindow.webContents.openDevTools();
     logProgress('creating main window');
 
     mainWindow.loadURL(htmlPath);
@@ -326,6 +336,7 @@ function createMainWindow() {
             mainWindow.webContents.openDevTools({ mode: 'bottom' });
         }
     });
+
     mainWindow.webContents.on('context-menu', onContextMenu);
     mainWindow.on('resize', delaySaveMainWindowPosition);
     mainWindow.on('move', delaySaveMainWindowPosition);
@@ -338,26 +349,33 @@ function createMainWindow() {
         mainWindow = null;
         saveMainWindowPosition();
     });
+
     mainWindow.on('minimize', () => {
         emitRemoteEvent('launcher-minimize');
     });
+
     mainWindow.on('maximize', () => {
         mainWindowMaximized = true;
         emitRemoteEvent('launcher-maximize');
     });
+
     mainWindow.on('unmaximize', () => {
         mainWindowMaximized = false;
         emitRemoteEvent('launcher-unmaximize');
     });
+
     mainWindow.on('leave-full-screen', () => {
         emitRemoteEvent('leave-full-screen');
     });
+
     mainWindow.on('enter-full-screen', () => {
         emitRemoteEvent('enter-full-screen');
     });
+
     mainWindow.on('session-end', () => {
         emitRemoteEvent('os-lock');
     });
+
     logProgress('configuring main window');
 
     restoreMainWindowPosition();
@@ -368,9 +386,11 @@ function restoreMainWindow() {
     if (process.platform === 'darwin' && !main.dock.isVisible()) {
         main.dock.show();
     }
+
     if (mainWindow.isMinimized()) {
         mainWindow.restore();
     }
+
     mainWindow.setSkipTaskbar(false);
     mainWindow.show();
     coerceMainWindowPositionToConnectedDisplay();
@@ -381,11 +401,13 @@ function showAndFocusMainWindow() {
     if (appIcon) {
         restoreMainWindow();
     }
+
     if (mainWindowMaximized) {
         mainWindow.maximize();
     } else {
         mainWindow.show();
     }
+
     mainWindow.focus();
     if (process.platform === 'darwin' && !main.dock.isVisible()) {
         main.dock.show();
@@ -408,6 +430,7 @@ function delaySaveMainWindowPosition() {
     if (updateMainWindowPositionTimeout) {
         clearTimeout(updateMainWindowPositionTimeout);
     }
+
     updateMainWindowPositionTimeout = setTimeout(updateMainWindowPosition, 500);
 }
 
@@ -422,6 +445,7 @@ function updateMainWindowPosition() {
     if (!mainWindow) {
         return;
     }
+
     updateMainWindowPositionTimeout = null;
     const bounds = mainWindow.getBounds();
     if (!mainWindow.isMaximized() && !mainWindow.isMinimized() && !mainWindow.isFullScreen()) {
@@ -430,6 +454,7 @@ function updateMainWindowPosition() {
         mainWindowPosition.width = bounds.width;
         mainWindowPosition.height = bounds.height;
     }
+
     mainWindowPosition.maximized = mainWindow.isMaximized();
     mainWindowPosition.fullScreen = mainWindow.isFullScreen();
     mainWindowPosition.changed = true;
@@ -439,7 +464,9 @@ function saveMainWindowPosition() {
     if (!mainWindowPosition.changed) {
         return;
     }
+
     delete mainWindowPosition.changed;
+
     try {
         fs.writeFileSync(
             path.join(main.getPath('userData'), windowPositionFileName),
@@ -567,6 +594,7 @@ function onContextMenu(e, props) {
     if (props.inputFieldType !== 'plainText' || !props.isEditable) {
         return;
     }
+
     const Menu = electron.Menu;
     const inputMenu = Menu.buildFromTemplate([
         { role: 'undo' },
@@ -578,6 +606,7 @@ function onContextMenu(e, props) {
         { type: 'separator' },
         { role: 'selectall' }
     ]);
+
     inputMenu.popup(mainWindow);
 }
 
@@ -609,7 +638,9 @@ function setGlobalShortcuts(appSettings) {
         CopyOtp: { event: 'copy-otp' },
         RestoreApp: { action: restoreMainWindow }
     };
+
     electron.globalShortcut.unregisterAll();
+
     for (const [key, shortcutDef] of Object.entries(defaultShortcuts)) {
         const fromSettings = appSettings[`globalShortcut${key}`];
         const shortcut = fromSettings || shortcutDef.shortcut;
@@ -626,6 +657,7 @@ function setGlobalShortcuts(appSettings) {
             } catch (e) {}
         }
     }
+
     logProgress('setting global shortcuts');
 }
 
@@ -633,12 +665,15 @@ function subscribePowerEvents() {
     electron.powerMonitor.on('suspend', () => {
         emitRemoteEvent('power-monitor-suspend');
     });
+
     electron.powerMonitor.on('resume', () => {
         emitRemoteEvent('power-monitor-resume');
     });
+
     electron.powerMonitor.on('lock-screen', () => {
         emitRemoteEvent('os-lock');
     });
+
     logProgress('subscribing to power events');
 }
 
@@ -717,7 +752,7 @@ function setEnv() {
         main.commandLine.appendSwitch('force-color-profile', 'srgb');
     }
 
-    main.allowRendererProcessReuse = true;
+    // main.allowRendererProcessReuse = true;
 
     logProgress('setting env');
 }
@@ -757,7 +792,11 @@ function hookRequestHeaders() {
 function coerceMainWindowPositionToConnectedDisplay() {
     const eScreen = electron.screen;
     const displays = eScreen.getAllDisplays();
-    if (!displays || !displays.length) return;
+
+    if (!displays || !displays.length) {
+        return;
+    }
+
     const windowBounds = mainWindow.getBounds();
     const contentBounds = mainWindow.getContentBounds();
     const tbLeft = windowBounds.x;
@@ -771,7 +810,10 @@ function coerceMainWindowPositionToConnectedDisplay() {
             Math.min(tbRight, workArea.x + workArea.width) - Math.max(tbLeft, workArea.x);
         const overlapHeight =
             Math.min(tbBottom, workArea.y + workArea.height) - Math.max(tbTop, workArea.y);
-        if (overlapWidth >= 160 && 3 * overlapHeight >= 2 * (tbBottom - tbTop)) return;
+
+        if (overlapWidth >= 160 && 3 * overlapHeight >= 2 * (tbBottom - tbTop)) {
+            return;
+        }
     }
     // If we get here, no display contains a big enough strip of the title bar
     // that we can be confident the user can drag it into visibility.  Rather than
@@ -975,8 +1017,8 @@ function migrateOldConfigs(key) {
     return Promise.all(promises);
 }
 
-function httpRequest(config, log, onLoad) {
-    // eslint-disable-next-line node/no-deprecated-api
+function httpRequestQuery(config, log, onLoad) {
+    // eslint-disable-next-line n/no-deprecated-api
     const opts = url.parse(config.url);
 
     opts.method = config.method || 'GET';
@@ -998,7 +1040,6 @@ function httpRequest(config, log, onLoad) {
     }
 
     const req = electron.net.request(opts);
-
     req.on('response', (res) => {
         const chunks = [];
         const onClose = () => {
@@ -1016,17 +1057,21 @@ function httpRequest(config, log, onLoad) {
             onClose();
         });
     });
+
     req.on('error', (e) => {
         log('error', 'HTTP error', opts.method, config.url, e);
         return config.error && config.error('network error', {});
     });
+
     req.on('timeout', () => {
         req.abort();
         return config.error && config.error('timeout', {});
     });
+
     if (data) {
         req.write(data);
     }
+
     req.end();
 }
 
