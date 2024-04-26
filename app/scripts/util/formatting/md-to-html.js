@@ -15,9 +15,10 @@ const whiteSpaceRegex = /<\/?p>|<br>|\r|\n/g;
 
 class MdRenderer extends marked.Renderer {
     checkbox(text) {
-        const checkLabel = ( text === true ? 'checked="true"' : '' )
-        return `<label class="task-list-label" contenteditable="false"><input class="checkbox" type="checkbox" ${checkLabel}></label>`
-    };
+        const checkLabel = text === true ? 'checked="true"' : '';
+        return `<label class="task-list-label" contenteditable="false"><input class="checkbox" type="checkbox" ${checkLabel}></label>`;
+    }
+
     link(href, title, text) {
         return super
             .link(href, title, text)
