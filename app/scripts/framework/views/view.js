@@ -114,8 +114,8 @@ class View extends EventEmitter {
             const spaceIx = eventDef.indexOf(' ');
             let event, selector;
             if (spaceIx > 0) {
-                event = eventDef.substr(0, spaceIx);
-                selector = eventDef.substr(spaceIx + 1);
+                event = eventDef.slice(0, spaceIx);
+                selector = eventDef.slice(spaceIx + 1);
                 if (DoesNotBubble[event]) {
                     this.elementEventListeners.push({ event, selector, method, els: [] });
                     continue;

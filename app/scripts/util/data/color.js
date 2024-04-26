@@ -15,9 +15,9 @@ const Color = function (arg) {
         if (hexMatch) {
             const digits = hexMatch[1];
             const len = digits.length === 3 ? 1 : 2;
-            this.r = parseInt(digits.substr(0, len), 16);
-            this.g = parseInt(digits.substr(len, len), 16);
-            this.b = parseInt(digits.substr(len * 2, len), 16);
+            this.r = parseInt(digits.slice(0, len), 16);
+            this.g = parseInt(digits.slice(len, len * 2), 16);
+            this.b = parseInt(digits.slice(len * 2, len * 3), 16);
             this.a = 1;
             this.setHsl();
         } else if (arg instanceof Color) {

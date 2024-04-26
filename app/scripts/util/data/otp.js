@@ -101,7 +101,7 @@ Otp.prototype.hmac = function (data, callback) {
 
 Otp.hmacToDigits = function (hmac, length) {
     let code = hmac.toString();
-    code = Otp.leftPad(code.substr(code.length - length), length);
+    code = Otp.leftPad(code.slice(-length), length);
     return code;
 };
 
@@ -129,7 +129,7 @@ Otp.fromBase32 = function (str) {
     }
     const hex = new Uint8Array(Math.floor(bin.length / 8));
     for (i = 0; i < hex.length; i++) {
-        const chunk = bin.substr(i * 8, 8);
+        const chunk = bin.slice(i * 8, i * 8 + 8);
         hex[i] = parseInt(chunk, 2);
     }
     return hex.buffer;

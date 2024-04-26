@@ -18,7 +18,7 @@ for (const svgDir of svgDirs) {
         .filter((icon) => icon.endsWith('.svg'))
         .forEach((icon) => {
             const svgIconPath = path.join(svgDir, icon);
-            const iconName = icon.substr(0, icon.length - 4) + suffix;
+            const iconName = icon.slice(0, -4) + suffix;
 
             allIcons[iconName] = svgIconPath;
         });

@@ -5,7 +5,7 @@ const StringFormat = {
         if (!str) {
             return '';
         }
-        return str[0].toUpperCase() + str.substr(1);
+        return str[0].toUpperCase() + str.slice(1);
     },
 
     pad(num, digits) {
