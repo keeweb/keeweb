@@ -24,7 +24,7 @@ class FieldViewText extends FieldView {
             if (value && value.isProtected) {
                 value = value.getText();
             }
-            const converted = MdToHtml.convert(value);
+            const converted = MdToHtml.convert(value, true, false);
             if (converted.html) {
                 return converted.html;
             }

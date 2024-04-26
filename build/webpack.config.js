@@ -186,7 +186,9 @@ module.exports = function (options) {
                             options: {
                                 esModule: false,
                                 importLoaders: 2,
-                                sourceMap: !devMode
+                                sourceMap: !devMode,
+                                url: true,
+                                import: true
                             }
                         },
                         {
