@@ -45,13 +45,17 @@ class DetailsAttachmentView extends View {
             case 'md': {
                 const reader = new FileReader();
                 reader.addEventListener('loadend', () => {
-                    const converted = MdToHtml.convert(reader.result);
+                    const converted = MdToHtml.convert(reader.result, false, true);
                     let text = '';
                     if (converted.html) {
                         text = converted.html;
                     } else {
                         text = converted.text;
                     }
+
+                    $('<div class="details__attachment-md-title">')
+                        .html('<i class="fa fa-markdown"></i> ' + this.model.title)
+                        .appendTo(dataEl);
 
                     $('<div>').html(text).appendTo(dataEl);
                     complete();
