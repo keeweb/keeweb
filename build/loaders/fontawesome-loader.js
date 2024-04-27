@@ -8,7 +8,7 @@ const wawoff2 = require('wawoff2');
 const svgBaseDir = path.resolve('node_modules/@fortawesome/fontawesome-free/svgs/');
 const svgDirs = ['brands', 'regular', 'solid']
     .map((dir) => path.join(svgBaseDir, dir))
-    .concat('graphics/svg');
+    .concat(path.resolve('graphics/svg'));
 
 const allIcons = {};
 
@@ -133,6 +133,7 @@ function buildFont(loader, scssSource) {
         // console.log(toSymbol(charCode));
         fontStream.write(glyph);
     }
+
     fontStream.end();
 
     return new Promise((resolve, reject) => {
