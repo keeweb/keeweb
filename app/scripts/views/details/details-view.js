@@ -739,7 +739,7 @@ class DetailsView extends View {
         }
         const input = $('<input/>')
             .addClass('details__header-title-input')
-            .attr({ autocomplete: 'off', spellcheck: 'false', placeholder: 'Title' })
+            .attr({ autocomplete: 'off', spellcheck: 'false', placeholder: Locale.title })
             .val(this.model.title);
         input.bind({
             blur: this.titleInputBlur.bind(this),
@@ -788,11 +788,16 @@ class DetailsView extends View {
         if (this.model.title instanceof kdbxweb.ProtectedValue) {
             title = kdbxweb.ProtectedValue.fromString(title);
         }
+
         if (title !== this.model.title) {
             this.model.setField('Title', title);
             this.entryUpdated(true);
         }
-        const newTitle = $('<h1 class="details__header-title"></h1>').text(title || '(no title)');
+
+        const newTitle = $('<h1 class="details__header-title"></h1>').text(
+            title || `(${Locale.noTitle})`
+        );
+
         this.$el.find('.details__header-title-input').replaceWith(newTitle);
     }
 
