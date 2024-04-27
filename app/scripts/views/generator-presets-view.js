@@ -21,8 +21,8 @@ class GeneratorPresetsView extends View {
         'change #gen-ps__check-enabled': 'changeEnabled',
         'change #gen-ps__check-default': 'changeDefault',
         'input #gen-ps__field-length': 'changeLength',
-        'change .gen-ps__check-range': 'changeRange',
-        'input #gen-ps__field-include': 'changeInclude',
+        'change .gen-ps__checkbox-option': 'changeCheckboxOption',
+        'input .gen-ps__text-option': 'changeTextOption',
         'input #gen-ps__field-pattern': 'changePattern'
     };
 
@@ -38,7 +38,7 @@ class GeneratorPresetsView extends View {
         super.render({
             presets: this.presets,
             selected: this.getPreset(this.selected),
-            ranges: this.getSelectedRanges()
+            options: this.getSelectedOptions()
         });
         this.createScroll({
             root: this.$el.find('.gen-ps')[0],
@@ -55,22 +55,17 @@ class GeneratorPresetsView extends View {
         this.pageResized();
     }
 
-    getSelectedRanges() {
+    getSelectedOptions() {
         const sel = this.getPreset(this.selected);
         const rangeOverride = {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
         };
-        return ['Upper', 'Lower', 'Digits', 'Special', 'Brackets', 'High', 'Ambiguous'].map(
-            (name) => {
-                const nameLower = name.toLowerCase();
-                return {
-                    name: nameLower,
-                    title: Locale['genPs' + name],
-                    enabled: sel[nameLower],
-                    sample: rangeOverride[nameLower] || CharRanges[nameLower]
-                };
-            }
-        );
+        return sel.options.map((option) => {
+            return {
+                sample: option.sample || rangeOverride[option.name] || CharRanges[option.name],
+                ...option
+            };
+        });
     }
 
     getPreset(name) {
@@ -99,18 +94,10 @@ class GeneratorPresetsView extends View {
             }
         }
         const selected = this.getPreset(this.selected);
-        const preset = {
-            name,
-            title,
-            length: selected.length,
-            upper: selected.upper,
-            lower: selected.lower,
-            digits: selected.digits,
-            special: selected.special,
-            brackets: selected.brackets,
-            ambiguous: selected.ambiguous,
-            include: selected.include
-        };
+        const preset = { ...selected };
+        delete preset.builtIn;
+        preset.name = name;
+        preset.title = title;
         GeneratorPresets.add(preset);
         this.selected = name;
         this.render();
@@ -167,18 +154,19 @@ class GeneratorPresetsView extends View {
         this.renderExample();
     }
 
-    changeRange(e) {
+    changeCheckboxOption(e) {
         const enabled = e.target.checked;
-        const range = e.target.dataset.range;
-        GeneratorPresets.setPreset(this.selected, { [range]: enabled });
+        const option = e.target.dataset.option;
+        GeneratorPresets.setPreset(this.selected, { [option]: enabled });
         this.presets = GeneratorPresets.all;
         this.renderExample();
     }
 
-    changeInclude(e) {
-        const include = e.target.value;
-        if (include !== this.getPreset(this.selected).include) {
-            GeneratorPresets.setPreset(this.selected, { include });
+    changeTextOption(e) {
+        const value = e.target.value;
+        const option = e.target.dataset.option;
+        if (value !== this.getPreset(this.selected)[option]) {
+            GeneratorPresets.setPreset(this.selected, { [option]: value });
         }
         this.presets = GeneratorPresets.all;
         this.renderExample();

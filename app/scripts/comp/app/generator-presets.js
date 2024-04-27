@@ -2,11 +2,64 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { Locale } from 'util/locale';
 
 const GeneratorPresets = {
+    getBasicOptions() {
+        return [
+            {
+                name: 'upper',
+                title: Locale.genPsUpper,
+                label: 'ABC',
+                type: 'checkbox'
+            },
+            {
+                name: 'lower',
+                title: Locale.genPsLower,
+                label: 'abc',
+                type: 'checkbox'
+            },
+            {
+                name: 'digits',
+                title: Locale.genPsDigits,
+                label: '123',
+                type: 'checkbox'
+            },
+            {
+                name: 'special',
+                title: Locale.genPsSpecial,
+                label: '!@#',
+                type: 'checkbox'
+            },
+            {
+                name: 'brackets',
+                title: Locale.genPsBrackets,
+                label: '({<',
+                type: 'checkbox'
+            },
+            {
+                name: 'high',
+                title: Locale.genPsHigh,
+                label: 'äæ±',
+                type: 'checkbox'
+            },
+            {
+                name: 'ambiguous',
+                title: Locale.genPsAmbiguous,
+                label: '0Oo',
+                type: 'checkbox'
+            },
+            {
+                name: 'include',
+                title: Locale.genPsInclude,
+                type: 'text'
+            }
+        ];
+    },
+
     get defaultPreset() {
         return {
             name: 'Default',
             title: Locale.genPresetDefault,
             length: 16,
+            options: this.getBasicOptions(),
             upper: true,
             lower: true,
             digits: true
@@ -17,6 +70,7 @@ const GeneratorPresets = {
         return {
             name: 'BrowserExtension',
             length: 20,
+            options: this.getBasicOptions(),
             upper: true,
             lower: true,
             special: true,
@@ -32,6 +86,7 @@ const GeneratorPresets = {
                 name: 'Pronounceable',
                 title: Locale.genPresetPronounceable,
                 length: 10,
+                options: this.getBasicOptions(),
                 lower: true,
                 upper: true
             },
@@ -39,6 +94,7 @@ const GeneratorPresets = {
                 name: 'Med',
                 title: Locale.genPresetMed,
                 length: 16,
+                options: this.getBasicOptions(),
                 upper: true,
                 lower: true,
                 digits: true,
@@ -50,15 +106,29 @@ const GeneratorPresets = {
                 name: 'Long',
                 title: Locale.genPresetLong,
                 length: 32,
+                options: this.getBasicOptions(),
                 upper: true,
                 lower: true,
                 digits: true
             },
-            { name: 'Pin4', title: Locale.genPresetPin4, length: 4, digits: true },
+            {
+                name: 'Pin4',
+                title: Locale.genPresetPin4,
+                length: 4,
+                options: this.getBasicOptions(),
+                digits: true
+            },
             {
                 name: 'Mac',
                 title: Locale.genPresetMac,
                 length: 17,
+                options: [
+                    {
+                        name: 'include',
+                        title: Locale.genPsInclude,
+                        type: 'text'
+                    }
+                ],
                 include: '0123456789ABCDEF',
                 pattern: 'XX-'
             },
@@ -66,12 +136,26 @@ const GeneratorPresets = {
                 name: 'Hash128',
                 title: Locale.genPresetHash128,
                 length: 32,
+                options: [
+                    {
+                        name: 'include',
+                        title: Locale.genPsInclude,
+                        type: 'text'
+                    }
+                ],
                 include: '0123456789abcdef'
             },
             {
                 name: 'Hash256',
                 title: Locale.genPresetHash256,
                 length: 64,
+                options: [
+                    {
+                        name: 'include',
+                        title: Locale.genPsInclude,
+                        type: 'text'
+                    }
+                ],
                 include: '0123456789abcdef'
             }
         ];
