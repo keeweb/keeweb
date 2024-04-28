@@ -190,7 +190,7 @@ input[type='checkbox'] {
     }
     & + label:before {
         @include fa-icon;
-        content: $fa-var-square-check;
+        content: $fa-var-square-o;
         display: inline-block;
         width: 1.3em;
         color: var(--text-color);
@@ -200,7 +200,7 @@ input[type='checkbox'] {
         top: 0.14em;
     }
     &:checked + label:before {
-        content: $fa-var-square-check;
+        content: $fa-var-check;
     }
 }
 

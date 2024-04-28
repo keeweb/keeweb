@@ -88,9 +88,15 @@ $-hex-chars: '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd
 // if the icon has "-o" suffix, it will be used from the "regular" font, otherwise from "solid" or "brands"
 // -o is used because it's similar to an empty bullet and this used to be a convention in fontawesome 4
 
+$fa-var-circle-arrow-left: next-fa-glyph();
 $fa-var-square: next-fa-glyph();
 $fa-var-square-o: next-fa-glyph();
 $fa-var-square-check: next-fa-glyph();
+$fa-var-square-check-o: next-fa-glyph();
+$fa-var-circle-check-o: next-fa-glyph();
+$fa-var-circle-xmark: next-fa-glyph();
+$fa-var-circle-o: next-fa-glyph();
+$fa-var-check: next-fa-glyph();
 $fa-var-bookmark: next-fa-glyph();
 $fa-var-bookmark-o: next-fa-glyph();
 $fa-var-eye: next-fa-glyph();
@@ -98,9 +104,7 @@ $fa-var-eye-slash: next-fa-glyph();
 $fa-var-bolt: next-fa-glyph();
 $fa-var-unlock: next-fa-glyph();
 $fa-var-lock: next-fa-glyph();
-$fa-var-check: next-fa-glyph();
 $fa-var-x: next-fa-glyph();
-$fa-var-circle-xmark: next-fa-glyph();
 $fa-var-folder: next-fa-glyph();
 $fa-var-folder-open: next-fa-glyph();
 $fa-var-ban: next-fa-glyph();
@@ -141,6 +145,8 @@ $fa-var-info: next-fa-glyph();
 $fa-var-circle-info: next-fa-glyph();
 $fa-var-key: next-fa-glyph();
 $fa-var-globe: next-fa-glyph();
+$fa-var-github: next-fa-glyph();
+$fa-var-heart: next-fa-glyph();
 $fa-var-note-sticky: next-fa-glyph();
 $fa-var-note-sticky-o: next-fa-glyph();
 $fa-var-lightbulb: next-fa-glyph();
@@ -220,9 +226,6 @@ $fa-var-arrow-down-1-9: next-fa-glyph();
 $fa-var-arrow-down-9-1: next-fa-glyph();
 $fa-var-arrow-down-wide-short: next-fa-glyph();
 $fa-var-language: next-fa-glyph();
-$fa-var-circle: next-fa-glyph();
-$fa-var-circle-o: next-fa-glyph();
-$fa-var-circle-arrow-left: next-fa-glyph();
 $fa-var-cloud-arrow-down: next-fa-glyph();
 $fa-var-caret-down: next-fa-glyph();
 $fa-var-left-long: next-fa-glyph();
