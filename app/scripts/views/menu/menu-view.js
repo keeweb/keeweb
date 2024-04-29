@@ -19,7 +19,7 @@ class MenuView extends View {
     sectionViews = [];
 
     minWidth = 130;
-    maxWidth = 300;
+    maxWidth = 450;
 
     constructor(model, options) {
         super(model, options);
