@@ -159,6 +159,7 @@
     "contrib:generate": "all-contributors generate",
     "init": "node init.js",
     "init:generate": "node init.js generate",
+    "keeweb:generate": "node keeweb.js generate",
     "init-keeweb": "npx --quiet env-cmd --no-override node init.js",
     "init-uuid": "npx --quiet env-cmd --no-override node init.js uuid",
     "init-guid": "npx --quiet env-cmd --no-override node init.js guid",
