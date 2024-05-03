@@ -85,6 +85,7 @@ jobs:
 
           - name: "🪪 .ENV › Generate"
             id: task_initialize_npm_env_generate
+            continue-on-error: true
             run: |
               npm run keeweb:generate
 
@@ -94,6 +95,7 @@ jobs:
 
           - name: "🪪 .ENV › Get"
             id: task_initialize_dotenv_get
+            continue-on-error: true
             uses: falti/dotenv-action@v1
 
           # ---------------------------------------------------------------------------------------
@@ -102,6 +104,7 @@ jobs:
 
           - name: "🪪 .ENV › Read"
             id: task_dotenv_debug_print
+            continue-on-error: true
             run: |
               echo "VER: ${{ steps.task_initialize_dotenv_get.outputs.VERSION }}"
               echo "GUID: ${{ steps.task_initialize_dotenv_get.outputs.GUID }}"
