@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const { execSync } = require('child_process');
 const debug = require('debug');
+const { v5: pkgUuid } = require('uuid');
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
@@ -19,7 +20,12 @@ module.exports = function (grunt) {
     require('./grunt.entrypoints')(grunt);
 
     const date = new Date();
+    const guid = pkgUuid(`${pkg.repository.url}`, pkgUuid.URL);
+    const uuid = pkgUuid(pkg.version, guid);
+
     grunt.config.set('date', date);
+    grunt.config.set('guid', guid);
+    grunt.config.set('uuid', uuid);
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
@@ -44,6 +50,7 @@ module.exports = function (grunt) {
 
     const webpackOptions = {
         date,
+        guid,
         beta: !!grunt.option('beta'),
         sha,
         appleTeamId: '3LE7JZ657W'
@@ -318,6 +325,10 @@ module.exports = function (grunt) {
                         {
                             pattern: /"date":\s*".*?"/,
                             replacement: `"date": "${dt}"`
+                        },
+                        {
+                            pattern: /"guid":\s*".*?"/,
+                            replacement: `"guid": "${guid}"`
                         }
                     ]
                 },

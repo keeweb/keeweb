@@ -73,12 +73,14 @@ class DetailsView extends View {
             false,
             true
         );
+
         this.onKey(Keys.DOM_VK_B, this.copyUserName, KeyHandler.SHORTCUT_ACTION);
         this.onKey(Keys.DOM_VK_U, this.copyUrl, KeyHandler.SHORTCUT_ACTION);
         this.onKey(Keys.DOM_VK_2, this.copyOtp, KeyHandler.SHORTCUT_OPT);
         if (AutoType.enabled) {
             this.onKey(Keys.DOM_VK_T, () => this.autoType(), KeyHandler.SHORTCUT_ACTION);
         }
+
         this.onKey(
             Keys.DOM_VK_DELETE,
             this.deleteKeyPress,
@@ -86,6 +88,7 @@ class DetailsView extends View {
             false,
             true
         );
+
         this.onKey(
             Keys.DOM_VK_BACK_SPACE,
             this.deleteKeyPress,
@@ -93,6 +96,7 @@ class DetailsView extends View {
             false,
             true
         );
+
         this.once('remove', () => {
             this.removeFieldViews();
         });
@@ -114,11 +118,13 @@ class DetailsView extends View {
             super.render();
             return;
         }
+
         if (this.model instanceof GroupModel) {
             this.template = groupTemplate;
             super.render();
             return;
         }
+
         const model = {
             deleted: this.appModel.filter.trash,
             canEditColor: this.model.file.supportsColors && !this.model.readOnly,
@@ -126,6 +132,7 @@ class DetailsView extends View {
             showButtons: !this.model.backend && !this.model.readOnly,
             ...this.model
         };
+
         this.template = template;
         super.render(model);
         this.setSelectedColor(this.model.color);
@@ -136,11 +143,13 @@ class DetailsView extends View {
             scroller: this.$el.find('.scroller')[0],
             bar: this.$el.find('.scroller__bar')[0]
         });
+
         this.$el.find('.details').removeClass('details--drag');
         this.dragging = false;
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
+
         this.pageResized();
         this.showCopyTip();
     }
@@ -151,7 +160,6 @@ class DetailsView extends View {
 
     addFieldViews() {
         const { fieldViews, fieldViewsAside } = createDetailsFields(this);
-
         const hideEmptyFields = AppSettingsModel.hideEmptyFields;
 
         const fieldsMainEl = this.$el.find('.details__body-fields');
@@ -200,6 +208,7 @@ class DetailsView extends View {
         this.moreView.remove();
         this.moreView = null;
         let newFieldTitle = title || Locale.detNetField;
+
         if (this.model.fields[newFieldTitle]) {
             for (let i = 1; ; i++) {
                 const newFieldTitleVariant = newFieldTitle + i;
@@ -281,6 +290,7 @@ class DetailsView extends View {
                         text: Locale.detMenuHideEmpty
                     });
                 }
+
                 moreOptions.push({ value: 'otp', icon: 'clock', text: Locale.detSetupOtp });
                 if (AutoType.enabled) {
                     moreOptions.push({
@@ -289,17 +299,20 @@ class DetailsView extends View {
                         text: Locale.detAutoTypeSettings
                     });
                 }
+
                 moreOptions.push({ value: 'clone', icon: 'clone', text: Locale.detClone });
                 moreOptions.push({
                     value: 'copy-to-clipboard',
                     icon: 'copy',
                     text: Locale.detCopyEntryToClipboard
                 });
+
                 const rect = this.moreView.labelEl[0].getBoundingClientRect();
                 dropdownView.render({
                     position: { top: rect.bottom, left: rect.left },
                     options: moreOptions
                 });
+
                 this.views.dropdownView = dropdownView;
             });
         }
@@ -352,11 +365,13 @@ class DetailsView extends View {
             .find('.details__colors-popup > .details__colors-popup-item')
             .removeClass('details__colors-popup-item--active');
         const colorEl = this.$el.find('.details__header-color')[0];
+
         for (const cls of colorEl.classList) {
             if (cls.indexOf('color') > 0 && cls.lastIndexOf('details', 0) !== 0) {
                 colorEl.classList.remove(cls);
             }
         }
+
         if (color) {
             this.$el
                 .find('.details__colors-popup > .' + color + '-color')
@@ -370,9 +385,11 @@ class DetailsView extends View {
         if (!color) {
             return;
         }
+
         if (color === this.model.color) {
             color = null;
         }
+
         this.model.setColor(color);
         this.entryUpdated();
     }
@@ -381,10 +398,12 @@ class DetailsView extends View {
         if (this.model.backend) {
             return;
         }
+
         if (this.views.sub && this.views.sub instanceof IconSelectView) {
             this.render();
             return;
         }
+
         this.removeSubView();
         const subView = new IconSelectView(
             {
@@ -397,6 +416,7 @@ class DetailsView extends View {
                 replace: true
             }
         );
+
         this.listenTo(subView, 'select', this.iconSelected);
         subView.render();
         this.pageResized();
@@ -411,15 +431,18 @@ class DetailsView extends View {
             this.downloadAttachment(attachment);
             return;
         }
+
         if (this.views.sub && this.views.sub.attId === id) {
             this.render();
             return;
         }
+
         this.removeSubView();
         const subView = new DetailsAttachmentView(attachment, {
             parent: this.scroller[0],
             replace: true
         });
+
         subView.attId = id;
         subView.render(this.pageResized.bind(this));
         subView.on('download', () => this.downloadAttachment(attachment));
@@ -441,6 +464,7 @@ class DetailsView extends View {
         if (!data) {
             return;
         }
+
         const mimeType = attachment.mimeType || 'application/octet-stream';
         const blob = new Blob([data], { type: mimeType });
         FileSaver.saveAs(blob, attachment.title);
@@ -466,6 +490,7 @@ class DetailsView extends View {
         this.model = entry;
         this.initOtp();
         this.render();
+
         if (entry && !entry.title && entry.isJustCreated) {
             this.editTitle();
         }
@@ -491,14 +516,17 @@ class DetailsView extends View {
         if (!editView || this.isHidden()) {
             return false;
         }
+
         if (!window.getSelection().toString()) {
             const fieldText = editView.getTextValue();
             if (!fieldText) {
                 return;
             }
+
             if (!CopyPaste.simpleCopy) {
                 CopyPaste.createHiddenInput(fieldText);
             }
+
             const copyRes = CopyPaste.copy(fieldText);
             this.copyFieldValue({ source: editView, copyRes });
 
@@ -613,6 +641,7 @@ class DetailsView extends View {
                     this.model.setExpires(dt);
                 }
             }
+
             this.entryUpdated(true);
             this.fieldViews.forEach(function (fieldView, ix) {
                 // TODO: render the view instead

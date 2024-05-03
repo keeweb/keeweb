@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
 const pkg = require('../package.json');
+const { v5: pkgUuid } = require('uuid');
 
 const PluginBundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PluginMiniCssExtract = require('mini-css-extract-plugin');
@@ -13,11 +14,18 @@ const rootDir = path.join(__dirname, '..');
 process.noDeprecation = true; // for css loaders
 
 module.exports = function (options) {
+    const kwGuid = pkgUuid(`${pkg.repository.url}`, pkgUuid.URL);
+    const kwUuid = pkgUuid(pkg.version, kwGuid);
+
     const mode = options.mode || 'production';
     const devMode = mode === 'development';
     const date = options.date;
+    const guid = options.guid || kwGuid;
+    // eslint-disable-next-line no-unused-vars
+    const uuid = options.uuid || kwUuid;
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
+
     return {
         mode,
         entry: {
@@ -137,6 +145,7 @@ module.exports = function (options) {
                                 replace: options.beta ? '1' : ''
                             },
                             { search: /@@DATE/g, replace: dt },
+                            { search: /@@GUID/g, replace: guid },
                             {
                                 search: /@@COMMIT/g,
                                 replace: options.sha
@@ -210,6 +219,14 @@ module.exports = function (options) {
                         },
                         {
                             loader: 'scss-add-icons-loader'
+                        }
+                    ]
+                },
+                {
+                    test: /\.(png|jpe?g|gif)$/i,
+                    use: [
+                        {
+                            loader: 'file-loader'
                         }
                     ]
                 },
