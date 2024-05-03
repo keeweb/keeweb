@@ -85,6 +85,7 @@ jobs:
 
           - name: "🪪 .ENV › Generate"
             id: task_initialize_npm_env_generate
+            continue-on-error: true
             run: |
               npm run keeweb:generate
 
@@ -94,6 +95,7 @@ jobs:
 
           - name: "🪪 .ENV › Get"
             id: task_initialize_dotenv_get
+            if: steps.task_initialize_npm_env_generate.outcome == 'success'
             uses: falti/dotenv-action@v1
 
           # ---------------------------------------------------------------------------------------
@@ -102,6 +104,7 @@ jobs:
 
           - name: "🪪 .ENV › Read"
             id: task_dotenv_debug_print
+            if: steps.task_initialize_npm_env_generate.outcome == 'success'
             run: |
               echo "VER: ${{ steps.task_initialize_dotenv_get.outputs.VERSION }}"
               echo "GUID: ${{ steps.task_initialize_dotenv_get.outputs.GUID }}"
@@ -162,6 +165,7 @@ jobs:
 
           - name: "🕘 NPM › Coverage"
             id: task_lint_npm_coverage
+            if: always()
             run: |
               npm run coverage
 
@@ -171,6 +175,7 @@ jobs:
 
           - name: "📝 Upload Coverage Reports › Codecov"
             id: task_lint_codecov_upload
+            if: steps.task_lint_npm_coverage.outcome == 'success'
             uses: codecov/codecov-action@v4.0.1
             with:
                 token: ${{ secrets.CODECOV_TOKEN }}
