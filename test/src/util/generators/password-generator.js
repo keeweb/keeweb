@@ -22,7 +22,7 @@ describe('PasswordGenerator', () => {
 
     it('should generate a password with ambiguous characters', () => {
         expect(PasswordGenerator.generate({ length: 10, ambiguous: true })).to.match(
-            new RegExp(`^[O0oIl]{10}$`)
+            /^[O0oIl]{10}$/
         );
     });
 
@@ -100,7 +100,7 @@ describe('PasswordGenerator', () => {
                 spaces: true,
                 upper: true
             })
-        ).to.match(/^\w+(?:[0-9] \w+){5,}$/);
+        ).to.match(/^[\w-]+(?:[\d]\s[a-zA-Z]+){5,}\d+$/);
     });
 
     it('should generate passphrase with 7 words seperated by hyphens', () => {
@@ -128,5 +128,4 @@ describe('PasswordGenerator', () => {
             })
         ).to.match(/^\w+(?: [\-] \w+[0-9]+){9,}$/);
     });
-
 });
