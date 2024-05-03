@@ -201,7 +201,7 @@ class ListView extends View {
             renderedItems.set(ix, el);
         }
 
-        const maxRenderedItems = visibleCount * 5;
+        const maxRenderedItems = visibleCount * 6;
 
         if (renderedItems.size > maxRenderedItems) {
             for (const [ix, el] of this.renderedItems) {
@@ -397,7 +397,7 @@ class ListView extends View {
         const targetElRect = this.$el.find('.list__table-options')[0].getBoundingClientRect();
         const options = this.tableColumns.map((col) => ({
             value: col.val,
-            icon: col.enabled ? 'square-check' : 'square-o',
+            icon: col.enabled ? 'square-check-o' : 'square-o',
             text: StringFormat.capFirst(Locale[col.name])
         }));
         view.render({
