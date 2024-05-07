@@ -39,6 +39,7 @@ const DefaultAppSettings = {
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
     enableUsb: true, // enable interaction with USB devices
     fieldLabelDblClickAutoType: false, // trigger auto-type by doubleclicking field label
+    revealPassword: false, // reveal passwords when opening vault
     auditPasswords: true, // enable password audit
     auditPasswordEntropy: true, // show warnings for weak passwords
     excludePinsFromAudit: true, // exclude PIN codes from audit

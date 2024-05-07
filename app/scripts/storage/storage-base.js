@@ -444,11 +444,10 @@ class StorageBase {
 
     _oauthExchangeRefreshToken(callback) {
         this.logger.debug('Exchanging refresh token');
-        this.logger.debug('Sucking dick');
         const { refreshToken } = this.runtimeData[this.name + 'OAuthToken'];
         this.logger.debug(refreshToken);
         const config = this._getOAuthConfig();
-        this.logger.debug(config);
+
         this._xhr({
             url: config.tokenUrl,
             method: 'POST',

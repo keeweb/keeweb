@@ -87,6 +87,12 @@ class MenuModel extends Model {
                 section: 'function'
             },
             {
+                locTitle: 'setGenSecurity',
+                icon: '0',
+                page: 'general',
+                section: 'security'
+            },
+            {
                 locTitle: 'setGenAudit',
                 icon: '0',
                 page: 'general',

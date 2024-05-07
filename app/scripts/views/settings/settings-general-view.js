@@ -38,6 +38,7 @@ class SettingsGeneralView extends View {
         'change .settings__general-remember-key-files': 'changeRememberKeyFiles',
         'change .settings__general-minimize': 'changeMinimize',
         'change .settings__general-minimize-on-field-copy': 'changeMinimizeOnFieldCopy',
+        'change .settings__general-security-password-reveal': 'changeRevealPassword',
         'change .settings__general-audit-passwords': 'changeAuditPasswords',
         'change .settings__general-audit-password-entropy': 'changeAuditPasswordEntropy',
         'change .settings__general-exclude-pins-from-audit': 'changeExcludePinsFromAudit',
@@ -110,6 +111,7 @@ class SettingsGeneralView extends View {
             canDetectMinimize: !!Launcher,
             canDetectOsSleep: Launcher && Launcher.canDetectOsSleep(),
             canAutoType: AutoType.enabled,
+            revealPassword: AppSettingsModel.revealPassword,
             auditPasswords: AppSettingsModel.auditPasswords,
             auditPasswordEntropy: AppSettingsModel.auditPasswordEntropy,
             excludePinsFromAudit: AppSettingsModel.excludePinsFromAudit,
@@ -351,6 +353,11 @@ class SettingsGeneralView extends View {
     changeMinimizeOnFieldCopy(e) {
         const minimizeOnFieldCopy = e.target.checked || false;
         AppSettingsModel.minimizeOnFieldCopy = minimizeOnFieldCopy;
+    }
+
+    changeRevealPassword(e) {
+        const revealPassword = e.target.checked || false;
+        AppSettingsModel.revealPassword = revealPassword;
     }
 
     changeAuditPasswords(e) {

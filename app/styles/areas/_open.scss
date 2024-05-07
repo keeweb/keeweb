@@ -7,6 +7,34 @@
     justify-content: center;
     background: var(--background-color);
 
+    &__showpass {
+        position: absolute;
+        left: 100%;
+        border-radius: var(--block-border-radius);
+        @include mobile {
+            left: 65px;
+        }
+        color: #FFF;
+        line-height: 3em;
+        height: 3.2em;
+        margin-left: -65px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 16px;
+        padding-right: 16px;
+        z-index: 99999;
+        cursor: pointer;
+        font-size: 1.7em;
+        line-height: 1.8;
+        @include mobile {
+            line-height: 1.9;
+        }
+
+        &:hover {
+            color: #ec2b55;
+        }
+    }
+
     .mobile & {
         overflow-y: auto;
     }
@@ -62,6 +90,7 @@
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
+            padding-bottom: 10px;
         }
         &-field-wrap {
             display: flex;
@@ -73,7 +102,6 @@
         }
         &-enter-btn,
         &-opening-icon {
-            padding: 0.6em $base-spacing;
             position: absolute;
             left: 100%;
             border-radius: var(--block-border-radius);
@@ -84,6 +112,11 @@
             color: var(--muted-color);
             line-height: 3em;
             height: 3.2em;
+            margin-left: 15px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 16px;
+            padding-right: 16px;
             > i {
                 font-size: 3em;
                 line-height: 1;
@@ -173,18 +206,21 @@
         }
     }
 
-    input[type='password'].open__pass-input {
+    input[type='password'].open__pass-input,
+    input[type='text'].open__pass-input {
         font-size: $large-pass-font-size;
-        margin-bottom: 0;
+        margin-bottom: 10px;
         &[readonly] {
             cursor: pointer;
         }
         width: 38vw;
+        padding-right: 65px;
         @media (max-width: 1000px) {
             width: 16em;
         }
         @include mobile {
             width: calc(100vw - 20px);
+            padding-left: 55px;
         }
     }
 
