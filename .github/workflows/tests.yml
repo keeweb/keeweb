@@ -140,6 +140,7 @@ jobs:
             uses: actions/setup-node@v4
             with:
               node-version-file: '.nvmrc'
+              registry-url: https://registry.npmjs.org/
 
           # ---------------------------------------------------------------------------------------
           #   Job > Lint > NPM Install
@@ -148,6 +149,7 @@ jobs:
           - name: "🕛 NPM › Clean Install"
             id: task_lint_npm_install
             run: |
+              npm set registry=https://registry.npmjs.org/
               npm ci
 
           # ---------------------------------------------------------------------------------------
