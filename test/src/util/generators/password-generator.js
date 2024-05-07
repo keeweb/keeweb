@@ -80,6 +80,7 @@ describe('PasswordGenerator', () => {
         }
     });
 
+    // https://regex101.com/r/NUNE7G/3
     it('should generate passphrase with 8 words', () => {
         expect(
             PasswordGenerator.generate({
@@ -88,9 +89,10 @@ describe('PasswordGenerator', () => {
                 spaces: true,
                 upper: true
             })
-        ).to.match(/^\w+(?: \w+){7,}$/);
+        ).to.match(/^[a-zA-Z-]+(?:\s{1}[a-zA-Z-]+){7,}$/);
     });
 
+    // https://regex101.com/r/vc2fWR/2
     it('should generate passphrase with 6 words ending in number', () => {
         expect(
             PasswordGenerator.generate({
@@ -100,22 +102,24 @@ describe('PasswordGenerator', () => {
                 spaces: true,
                 upper: true
             })
-        ).to.match(/^[\w-]+(?:[\d]\s[a-zA-Z]+){5,}\d+$/);
+        ).to.match(/^[a-zA-Z-]+(?:[\d{1}]\s{1}[a-zA-Z-]+){5,}\d{1}$/);
     });
 
+    // https://regex101.com/r/w5gPht/3
     it('should generate passphrase with 7 words seperated by hyphens', () => {
         expect(
             PasswordGenerator.generate({
-                length: 6,
+                length: 7,
                 name: 'Passphrase',
                 digits: false,
                 spaces: false,
                 high: true,
                 upper: true
             })
-        ).to.match(/^\w+(?:[\-]\w+){5,}$/);
+        ).to.match(/^[a-zA-Z-]+(?:[\-{1}][a-zA-Z-]+){6,}$/);
     });
 
+    // https://regex101.com/r/vbK2KN/2
     it('should generate passphrase with 10 words seperated by hyphens, spaces with number at end', () => {
         expect(
             PasswordGenerator.generate({
@@ -126,6 +130,6 @@ describe('PasswordGenerator', () => {
                 high: true,
                 upper: true
             })
-        ).to.match(/^\w+(?: [\-] \w+[0-9]+){9,}$/);
+        ).to.match(/^[a-zA-Z-]+(?:\d{1}\s{1}\-{1}\s{1}[a-zA-Z-]+){9,}\d{1}$/);
     });
 });
