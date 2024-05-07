@@ -3,6 +3,8 @@ const IconMap = [
     'globe',
     'triangle-exclamation',
     'note-sticky',
+    'eye-o',
+    'eye-slash-o',
     'github',
     'heart',
     'lightbulb',
