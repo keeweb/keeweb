@@ -66,6 +66,7 @@ class DetailsView extends View {
         this.listenTo(Events, 'set-locale', this.render);
         this.listenTo(Events, 'qr-read', this.otpCodeRead);
         this.listenTo(Events, 'qr-enter-manually', this.otpEnterManually);
+
         this.onKey(
             Keys.DOM_VK_C,
             this.copyPasswordFromShortcut,
@@ -254,11 +255,13 @@ class DetailsView extends View {
                             });
                         }
                     }, this);
+
                     moreOptions.push({
                         value: 'add-new',
                         icon: 'plus',
                         text: Locale.detMenuAddNewField
                     });
+
                     if (this.model.url) {
                         moreOptions.push({
                             value: 'add-website',
@@ -266,6 +269,7 @@ class DetailsView extends View {
                             text: Locale.detMenuAddNewWebsite
                         });
                     }
+
                     moreOptions.push({
                         value: 'toggle-empty',
                         icon: 'eye',
@@ -277,6 +281,7 @@ class DetailsView extends View {
                         icon: 'plus',
                         text: Locale.detMenuAddNewField
                     });
+
                     if (this.model.url) {
                         moreOptions.push({
                             value: 'add-website',
@@ -284,6 +289,7 @@ class DetailsView extends View {
                             text: Locale.detMenuAddNewWebsite
                         });
                     }
+
                     moreOptions.push({
                         value: 'toggle-empty',
                         icon: 'eye-slash',
@@ -325,24 +331,30 @@ class DetailsView extends View {
             case 'add-new':
                 this.addNewField();
                 break;
+
             case 'add-website':
                 this.addNewField(this.model.getNextUrlFieldName());
                 break;
+
             case 'toggle-empty': {
                 const hideEmptyFields = AppSettingsModel.hideEmptyFields;
                 AppSettingsModel.hideEmptyFields = !hideEmptyFields;
                 this.render();
                 break;
             }
+
             case 'otp':
                 this.setupOtp();
                 break;
+
             case 'auto-type':
                 this.toggleAutoType();
                 break;
+
             case 'clone':
                 this.clone();
                 break;
+
             case 'copy-to-clipboard':
                 this.copyToClipboard();
                 break;
@@ -532,6 +544,7 @@ class DetailsView extends View {
 
             return true;
         }
+
         return false;
     }
 
@@ -539,10 +552,12 @@ class DetailsView extends View {
         if (!this.model) {
             return;
         }
+
         if (this.model.backend === 'otp-device') {
             this.copyOtp();
             e.preventDefault();
         }
+
         const copied = this.copyKeyPress(this.getFieldView('$Password'));
         if (copied) {
             e.preventDefault();
@@ -570,6 +585,7 @@ class DetailsView extends View {
             otpField.copyValue();
             return true;
         }
+
         this.copyKeyPress(otpField);
     }
 
@@ -577,10 +593,12 @@ class DetailsView extends View {
         if (this.helpTipCopyShown) {
             return;
         }
+
         this.helpTipCopyShown = AppSettingsModel.helpTipCopyShown;
         if (this.helpTipCopyShown) {
             return;
         }
+
         AppSettingsModel.helpTipCopyShown = true;
         this.helpTipCopyShown = true;
         const label = this.moreView.labelEl;
@@ -609,12 +627,15 @@ class DetailsView extends View {
                     if (fieldName) {
                         this.model.setField(fieldName, undefined);
                     }
+
                     fieldName = e.newField;
+
                     let i = 0;
                     while (this.model.hasField(fieldName)) {
                         i++;
                         fieldName = e.newField + i;
                     }
+
                     const allowEmpty = this.model.group.isEntryTemplatesGroup();
                     this.model.setField(fieldName, e.val, allowEmpty);
                     this.entryUpdated();
@@ -629,6 +650,7 @@ class DetailsView extends View {
                 } else if (fieldName) {
                     this.model.setField(fieldName, e.val);
                 }
+
                 if (fieldName === 'Password' && this.views.issues) {
                     this.views.issues.passwordChanged();
                 }
@@ -663,6 +685,7 @@ class DetailsView extends View {
             this.render();
             return;
         }
+
         if (e.tab) {
             this.focusNextField(e.tab);
         }
@@ -673,13 +696,16 @@ class DetailsView extends View {
         if (oldValue && oldValue.isProtected) {
             oldValue = oldValue.getText();
         }
+
         if (value && value.isProtected) {
             value = value.getText();
         }
+
         if (oldValue === value) {
             this.render();
             return false;
         }
+
         this.model.setOtpUrl(value);
         return true;
     }
@@ -687,6 +713,7 @@ class DetailsView extends View {
     dragover(e) {
         e.preventDefault();
         e.stopPropagation();
+
         const dt = e.dataTransfer;
         if (
             !dt.types ||
@@ -695,10 +722,12 @@ class DetailsView extends View {
             dt.dropEffect = 'none';
             return;
         }
+
         dt.dropEffect = 'copy';
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
+
         if (this.model && !this.dragging) {
             this.dragging = true;
             this.$el.find('.details').addClass('details--drag');
@@ -709,6 +738,7 @@ class DetailsView extends View {
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
+
         this.dragTimeout = setTimeout(() => {
             this.$el.find('.details').removeClass('details--drag');
             this.dragging = false;
@@ -720,9 +750,11 @@ class DetailsView extends View {
         if (!this.model) {
             return;
         }
+
         if (this.dragTimeout) {
             clearTimeout(this.dragTimeout);
         }
+
         this.$el.find('.details').removeClass('details--drag');
         this.dragging = false;
         const files = e.target.files || e.dataTransfer.files;
@@ -743,6 +775,7 @@ class DetailsView extends View {
             reader.onload = () => {
                 this.addAttachment(file.name, reader.result);
             };
+
             reader.readAsArrayBuffer(file);
         }
     }
@@ -766,18 +799,24 @@ class DetailsView extends View {
         if (this.model.backend === 'otp-device') {
             return;
         }
+
         const input = $('<input/>')
             .addClass('details__header-title-input')
             .attr({ autocomplete: 'off', spellcheck: 'false', placeholder: Locale.title })
             .val(this.model.title);
-        input.bind({
+
+        input.on({
             blur: this.titleInputBlur.bind(this),
             input: this.titleInputInput.bind(this),
             keydown: this.titleInputKeydown.bind(this),
             keypress: this.titleInputInput.bind(this)
         });
+
         $('.details__header-title').replaceWith(input);
-        input.focus()[0].setSelectionRange(this.model.title.length, this.model.title.length);
+
+        input
+            .trigger('focus')[0]
+            .setSelectionRange(this.model.title.length, this.model.title.length);
     }
 
     titleInputBlur(e) {
@@ -793,10 +832,10 @@ class DetailsView extends View {
         e.stopPropagation();
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
-            $(e.target).unbind('blur');
+            $(e.target).off('blur');
             this.setTitle(e.target.value);
         } else if (code === Keys.DOM_VK_ESCAPE) {
-            $(e.target).unbind('blur');
+            $(e.target).off('blur');
             if (this.model.isJustCreated) {
                 this.model.removeWithoutHistory();
                 Events.emit('refresh');
@@ -805,7 +844,7 @@ class DetailsView extends View {
             this.render();
         } else if (code === Keys.DOM_VK_TAB) {
             e.preventDefault();
-            $(e.target).unbind('blur');
+            $(e.target).off('blur');
             this.setTitle(e.target.value);
             if (!e.shiftKey) {
                 this.focusNextField({ field: '$Title' });
@@ -886,6 +925,7 @@ class DetailsView extends View {
             this.model.moveToTrash();
             Events.emit('refresh');
         };
+
         if (Features.isMobile) {
             Alerts.yesno({
                 header: Locale.detDelToTrash,
@@ -958,9 +998,11 @@ class DetailsView extends View {
                 });
             }
         }
+
         if (AutoType.enabled) {
             options.push({ value: 'det-auto-type', icon: 'keyboard', text: Locale.detAutoType });
         }
+
         Events.emit('show-context-menu', Object.assign(e, { options }));
     }
 
@@ -969,21 +1011,27 @@ class DetailsView extends View {
             case 'det-copy-password':
                 this.copyPassword();
                 break;
+
             case 'det-copy-user':
                 this.copyUserName();
                 break;
+
             case 'det-copy-otp':
                 this.copyOtp();
                 break;
+
             case 'det-add-new':
                 this.addNewField();
                 break;
+
             case 'det-clone':
                 this.clone();
                 break;
+
             case 'det-auto-type':
                 this.autoType();
                 break;
+
             case 'copy-to-clipboard':
                 this.copyToClipboard();
                 break;
@@ -1019,6 +1067,7 @@ class DetailsView extends View {
                     parent: this.$el.find('.details__body-fields')[0]
                 }
             );
+
             fieldView.on('change', this.fieldChanged.bind(this));
             fieldView.render();
             fieldView.edit();
@@ -1032,6 +1081,7 @@ class DetailsView extends View {
             delete this.views.autoType;
             return;
         }
+
         this.views.autoType = new DetailsAutoTypeView(this.model);
         this.views.autoType.render();
     }
@@ -1040,6 +1090,7 @@ class DetailsView extends View {
         const entry = this.model;
         const hasOtp =
             sequence?.includes('{TOTP}') || (entry.backend === 'otp-device' && !sequence);
+
         if (hasOtp) {
             const otpField = this.getFieldView('$otp');
             otpField.refreshOtp((err) => {

@@ -13,8 +13,8 @@ class KeyHandler {
     shortcuts = {};
 
     init() {
-        $(document).bind('keypress', this.keypress.bind(this));
-        $(document).bind('keydown', this.keydown.bind(this));
+        $(document).on('keypress', this.keypress.bind(this));
+        $(document).on('keydown', this.keydown.bind(this));
 
         this.shortcuts[Keys.DOM_VK_A] = [
             {

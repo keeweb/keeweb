@@ -72,8 +72,8 @@ class FieldViewText extends FieldView {
                 $('<div/>')
                     .addClass('details__field-value-btn details__field-value-btn-gen')
                     .appendTo(this.valueEl)
-                    .click(this.showGeneratorClick.bind(this))
-                    .mousedown(this.showGenerator.bind(this));
+                    .on('click', this.showGeneratorClick.bind(this))
+                    .on('mousedown', this.showGenerator.bind(this));
             }
         }
         Tip.hideTip(this.valueEl[0]);

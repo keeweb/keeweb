@@ -448,7 +448,7 @@ class SettingsFileView extends View {
     }
 
     triggerSelectFile() {
-        this.$el.find('#settings__file-file-select').click();
+        this.$el.find('#settings__file-file-select').trigger('click');
     }
 
     fileSelected(e) {

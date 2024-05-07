@@ -10,6 +10,7 @@ class FieldViewAutocomplete extends FieldViewText {
             this.autocomplete.remove();
             this.autocomplete = null;
         }
+
         delete this.selectedCompletionIx;
         super.endEdit(newVal, extra);
     }
@@ -24,8 +25,10 @@ class FieldViewAutocomplete extends FieldViewText {
             left: fieldRect.left,
             width: fieldRect.width - 2
         });
+
         delete this.selectedCompletionIx;
-        this.autocomplete.mousedown(this.autocompleteClick.bind(this));
+        this.autocomplete.on('mousedown', this.autocompleteClick.bind(this));
+
         if (this.input.val()) {
             this.autocomplete.hide();
         } else {
@@ -45,10 +48,12 @@ class FieldViewAutocomplete extends FieldViewText {
                 this.moveAutocomplete(false);
                 e.preventDefault();
                 break;
+
             case Keys.DOM_VK_DOWN:
                 this.moveAutocomplete(true);
                 e.preventDefault();
                 break;
+
             case Keys.DOM_VK_RETURN: {
                 const selectedItem = this.autocomplete
                     .find('.details__field-autocomplete-item--selected')
@@ -59,6 +64,7 @@ class FieldViewAutocomplete extends FieldViewText {
                 }
                 break;
             }
+
             default:
                 delete this.selectedCompletionIx;
         }
@@ -74,6 +80,7 @@ class FieldViewAutocomplete extends FieldViewText {
         } else {
             this.selectedCompletionIx = next ? 0 : completions.length - 1;
         }
+
         this.updateAutocomplete();
     }
 
@@ -83,6 +90,7 @@ class FieldViewAutocomplete extends FieldViewText {
             completions,
             selectedIx: this.selectedCompletionIx
         });
+
         this.autocomplete.html(completionsHtml);
         this.autocomplete.toggle(!!completionsHtml);
     }
@@ -95,7 +103,7 @@ class FieldViewAutocomplete extends FieldViewText {
             this.endEdit(selectedItem);
         } else {
             this.afterPaint(() => {
-                this.input.focus();
+                this.input.trigger('focus');
             });
         }
     }
