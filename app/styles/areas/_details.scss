@@ -1153,6 +1153,22 @@
         justify-content: flex-start;
         max-width: 100%;
         &-top {
+
+            :hover .details__history-timeline-item {
+                opacity: 0.4;
+                transition: opacity .3s ease-in-out;
+            }
+
+            .details__history-timeline-item:hover {
+                opacity: 1;
+                transition: opacity .3s ease-in-out;
+            }
+
+            .details__history-timeline-item {
+                opacity: 1;
+                transition: opacity .3s ease-in-out;
+            }
+
             flex: 0 0 auto;
             display: flex;
             align-items: stretch;
@@ -1181,12 +1197,28 @@
                 cursor: pointer;
                 &:hover {
                     color: var(--text-semi-muted-color);
+                    transform: scale( 1.3 );
+                    cursor: pointer;
+                    animation-name: atx-tcv2-anim-scale-in;
+                    animation-duration: 0.3s;
+                    animation-timing-function: ease-in-out;
+                    animation-iteration-count: 1;
+                    animation-direction: normal;
+                    background: none;
                 }
                 &--active,
                 &--active:hover {
                     z-index: $z-index-no-modal;
                     cursor: default;
                     color: var(--action-color);
+                    opacity: 1 !important;
+                    transform: scale( 1.3 );
+                    animation-name: atx-tcv2-anim-scale-in;
+                    animation-duration: 0.3s;
+                    animation-timing-function: ease-in-out;
+                    animation-iteration-count: 1;
+                    animation-direction: normal;
+                    background: none;
                 }
             }
             &-label {

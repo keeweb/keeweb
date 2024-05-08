@@ -10,17 +10,143 @@
     position: relative;
     @include padding-if-titlebar;
 
+    .badge-repo {
+        background-color: #822959;
+        color: #FFF;
+        height: 34px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 7.6pt;
+        text-transform: uppercase;
+        font-weight: bolder;
+        letter-spacing: 2px;
+
+        .fa {
+            font-size: 10pt;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        &:hover {
+            transition: all 200ms ease-in-out;
+            filter: brightness(150%);
+        }
+    }
+
+    .badge-donate {
+        background-color: #294c82;
+        color: #FFF;
+        height: 34px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 7.6pt;
+        text-transform: uppercase;
+        font-weight: bolder;
+        letter-spacing: 2px;
+
+        .fa {
+            font-size: 10pt;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        &:hover {
+            transition: all 200ms ease-in-out;
+            filter: brightness(150%);
+        }
+    }
+
+    .about-lib-list {
+        td:nth-child(1) {
+            width: 100px;
+        }
+    }
+
+    hr {
+        margin-bottom: 40px;
+        margin-top: 40px;
+        border-bottom: 1px solid var(hr-color);
+    }
+
     &__content {
         margin: $medium-padding;
+        padding-left: 15px;
     }
 
     > .scroller {
         flex: 1 0 0;
     }
 
-    h2,
-    h3 {
+    h1 {
+        padding-top: 20px;
+        margin-top: 5px;
+        color: var(--h1-color);
+    }
+
+    h2 {
         margin-top: 20px;
+        color: var(--h2-color);
+    }
+
+    h3 {
+        margin-top: 10px;
+        color: var(--h3-color);
+    }
+
+    h4 {
+        margin-top: 10px;
+        color: var(--h4-color);
+    }
+
+    h5 {
+        margin-top: 10px;
+        color: var(--h5-color);
+    }
+
+    h6 {
+        margin-top: 10px;
+        color: var(--h6-color);
+    }
+
+    p {
+        padding-bottom: 30px;
+
+        .fa {
+            color: var(--text-color);
+        }
+    }
+
+    p.para-slim {
+        padding-bottom: 0px;
+
+        .fa {
+            color: var(--text-color);
+        }
+    }
+
+    ul.segment {
+        padding-bottom: 30px;
+    }
+
+    div.help-platforms {
+        .fa:before {
+            font-size: 30px;
+            padding-right: 5px;
+        }
+    }
+
+    a {
+        color: var(--selected-item-color);
+        border-bottom: 1px dotted var(--text-color);
+
+        &:hover {
+            color: dotted var(--text-color);
+            border-bottom: 1px dotted var(--selected-item-color);
+        }
     }
 
     .shortcut {
@@ -35,12 +161,15 @@
         min-width: unset;
         box-sizing: border-box;
         vertical-align: baseline;
+
         &-large {
             width: 12em;
         }
+
         &:first-of-type {
             margin-left: 0;
         }
+
         &__editor {
             margin-bottom: $base-padding-v;
             &-input {
@@ -226,6 +355,7 @@
             box-shadow: form-box-shadow-focus();
         }
     }
+
     &__logs {
         user-select: text;
         margin-top: $base-padding-v;
@@ -235,7 +365,63 @@
             white-space: pre-wrap;
         }
     }
+
     &__plugins {
+
+        &-plugin {
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-bottom: 5px;
+            padding-top: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px dotted #797979;
+
+            &-left {
+                float: left;
+
+                .title {
+                    font-size: 18px;
+                    font-weight: lighter;
+
+                    a {
+                        border: none;
+                    }
+
+                    .fa {
+                        color: var(--text-color);
+                        padding-right: 5px;
+                        font-size: 9pt;
+                    }
+                }
+            }
+
+            &-right {
+                float: right;
+                padding-top: 5px;
+            }
+
+            &-clear {
+                clear: both;
+                height: 1px;
+            }
+
+            &-buttons {
+
+            }
+
+            .description {
+                font-size: 12px;
+                font-weight: normal;
+                padding-bottom: 20px;
+            }
+
+            h2 {
+                padding: 0;
+                margin: 0;
+                padding-bottom: 10px;
+            }
+        }
+
         &-install-error {
             margin-top: $base-padding-v;
         }
@@ -251,6 +437,7 @@
         }
         &-plugin-updates {
             > label {
+                padding-top: 5px;
                 font-weight: normal;
             }
         }
