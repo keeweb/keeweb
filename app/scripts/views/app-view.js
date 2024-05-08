@@ -142,6 +142,7 @@ class AppView extends View {
             titlebarStyle: this.titlebarStyle,
             customTitlebar: Features.renderCustomTitleBar
         });
+
         this.panelEl = this.$el.find('.app__panel:first');
         this.views.listWrap.render();
         this.views.menu.render();

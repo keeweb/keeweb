@@ -6,9 +6,7 @@ import template from 'templates/auto-type-hint.hbs';
 
 class AutoTypeHintView extends View {
     parent = 'body';
-
     template = template;
-
     events = {};
 
     constructor(model) {
@@ -30,12 +28,14 @@ class AutoTypeHintView extends View {
             hasCtrl: Features.isMac,
             link: Links.AutoType
         });
+
         const rect = this.input.getBoundingClientRect();
         this.$el.appendTo(document.body).css({
             left: rect.left,
             top: rect.bottom + 1,
             width: rect.width
         });
+
         const selfRect = this.$el[0].getBoundingClientRect();
         const bodyRect = document.body.getBoundingClientRect();
         if (selfRect.bottom > bodyRect.bottom) {
@@ -48,10 +48,12 @@ class AutoTypeHintView extends View {
             clearTimeout(this.removeTimer);
             this.removeTimer = null;
         }
+
         if (e.target === this.input) {
             e.stopPropagation();
             return;
         }
+
         if ($.contains(this.$el[0], e.target) || e.target === this.$el[0]) {
             e.stopPropagation();
             if (e.target.tagName.toLowerCase() === 'a' && !e.target.href) {
@@ -61,6 +63,7 @@ class AutoTypeHintView extends View {
                 }
                 this.insertText(text);
             }
+
             this.input.focus();
         } else {
             this.remove();

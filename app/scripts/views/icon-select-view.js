@@ -35,6 +35,7 @@ class IconSelectView extends View {
     iconClick(e) {
         const target = $(e.target).closest('.icon-select__icon');
         const iconId = target[0].getAttribute('data-val');
+
         if (iconId === 'special') {
             const iconData = this.special[target.data('special')];
             if (iconData) {
@@ -53,12 +54,14 @@ class IconSelectView extends View {
         if (this.downloadingFavicon) {
             return;
         }
+
         this.downloadingFavicon = true;
         this.$el.find('.icon-select__icon-download>i').addClass('spin');
         this.$el
             .find('.icon-select__icon-download')
             .addClass('icon-select__icon--progress')
             .removeClass('icon-select__icon--download-error');
+
         const url = this.getIconUrl(true);
         const img = document.createElement('img');
         img.crossOrigin = 'Anonymous';
@@ -77,6 +80,7 @@ class IconSelectView extends View {
             const id = this.model.file.addCustomIcon(this.special.download.data);
             this.emit('select', { id, custom: true });
         };
+
         img.onerror = (e) => {
             logger.error('Favicon download error: ' + url, e);
             this.$el.find('.icon-select__icon-download>i').removeClass('spin');
@@ -92,19 +96,23 @@ class IconSelectView extends View {
         if (!this.model.url) {
             return null;
         }
+
         let url = this.model.url.replace(
             /([^\/:]\/.*)?$/,
             (match) => (match && match[0]) + '/favicon.ico'
         );
+
         if (url.indexOf('://') < 0) {
             url = 'http://' + url;
         }
+
         if (useService) {
             return (
                 'https://services.keeweb.info/favicon/' +
                 url.replace(/^.*:\/+/, '').replace(/\/.*/, '')
             );
         }
+
         return url;
     }
 
@@ -114,7 +122,7 @@ class IconSelectView extends View {
             return;
         }
 
-        this.$el.find('.icon-select__file-input').click();
+        this.$el.find('.icon-select__file-input').trigger('click');
     }
 
     iconSelected(e) {
@@ -131,8 +139,10 @@ class IconSelectView extends View {
                         .addClass('icon-select__icon--custom-selected')
                         .append(img);
                 };
+
                 img.src = e.target.result;
             };
+
             reader.readAsDataURL(file);
         } else {
             this.$el.find('.icon-select__icon-select img').remove();

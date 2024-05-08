@@ -15,7 +15,7 @@ class OpenConfigView extends View {
 
     render() {
         super.render(this.model);
-        this.$el.find(':input:first').focus();
+        this.$el.find(':input:first').trigger('focus');
         this.checkValidity();
     }
 

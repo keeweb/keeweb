@@ -174,6 +174,7 @@ class SettingsGeneralView extends View {
         switch (UpdateModel.status) {
             case 'checking':
                 return Locale.setGenUpdateChecking + '...';
+
             case 'error': {
                 let errMsg = Locale.setGenErrorChecking;
                 if (UpdateModel.lastError) {
@@ -191,6 +192,7 @@ class SettingsGeneralView extends View {
                 }
                 return errMsg;
             }
+
             case 'ok': {
                 let msg =
                     Locale.setGenCheckedAt +
@@ -206,6 +208,7 @@ class SettingsGeneralView extends View {
                         ' ' +
                         DateFormat.dStr(UpdateModel.lastVersionReleaseDate);
                 }
+
                 switch (UpdateModel.updateStatus) {
                     case 'downloading':
                         return msg + '. ' + Locale.setGenDownloadingUpdate;
@@ -216,6 +219,7 @@ class SettingsGeneralView extends View {
                 }
                 return msg;
             }
+
             default:
                 return Locale.setGenNeverChecked;
         }
