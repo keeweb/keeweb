@@ -2,10 +2,12 @@ const fs = require('fs-extra');
 const path = require('path');
 const { execSync } = require('child_process');
 const debug = require('debug');
+const chalk = require('chalk'); // requires chalk v4 for non ESM modules. v5 does not have require.
 const { v5: pkgUuid } = require('uuid');
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
+const serialHooks = require('electron-packager/src/hooks').serialHooks;
 const pkg = require('./package.json');
 
 debug.enable('electron-notarize');
@@ -130,6 +132,20 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
+            wallpapers: {
+                cwd: 'app/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'tmp/wallpapers/',
+                expand: true,
+                nonull: true
+            },
+            'dist-wallpapers': {
+                cwd: 'app/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'dist/wallpapers/',
+                expand: true,
+                nonull: true
+            },
             manifest: {
                 cwd: 'app/manifest/',
                 src: ['*.json', '*.xml'],
@@ -147,6 +163,13 @@ module.exports = function (grunt) {
             'desktop-html': {
                 src: 'dist/index.html',
                 dest: 'tmp/desktop/app/index.html',
+                nonull: true
+            },
+            'desktop-html-wallpaper': {
+                cwd: 'dist/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'tmp/desktop/app/wallpapers/',
+                expand: true,
                 nonull: true
             },
             'desktop-app-content': {
@@ -195,6 +218,13 @@ module.exports = function (grunt) {
             'native-modules-darwin-arm64': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-darwin-arm64.node',
                 dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Resources/',
+                nonull: true
+            },
+            'desktop-win32-dist-wallpapers': {
+                cwd: 'app/wallpapers/',
+                src: ['*.jpg'],
+                dest: `tmp/desktop/KeeWeb-win32-x64/wallpapers/`,
+                expand: true,
                 nonull: true
             },
             'native-modules-win32-x64': {
@@ -288,6 +318,15 @@ module.exports = function (grunt) {
             }
         },
 
+        'html-preload': {
+            options: {
+                resources: 'app/wallpapers'
+            },
+            app: {
+                src: 'tmp/index.html'
+            }
+        },
+
         'csp-hashes': {
             options: {
                 algo: 'sha512',
@@ -333,6 +372,16 @@ module.exports = function (grunt) {
                     ]
                 },
                 files: { 'dist/update.json': 'app/update.json' }
+            },
+            'index': {
+                options: {
+                    replacements: [
+                        {
+                            pattern: /<!--{{PRELOADER}}-->/,
+                            replacement: `a`
+                        }
+                    ]
+                }
             },
             'service-worker': {
                 options: { replacements: [{ pattern: '0.0.0', replacement: pkg.version }] },
@@ -433,7 +482,45 @@ module.exports = function (grunt) {
                 asar: true,
                 appCopyright: `Copyright © ${year} Antelle`,
                 appVersion: pkg.version,
-                buildVersion: sha
+                buildVersion: sha,
+                extraResource: path.join(__dirname, 'app/wallpapers'),
+                afterExtract: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            const pathWallpapersTo = path.join(buildPath, 'wallpapers/');
+                            grunt.log.writeln(
+                                chalk.green(`Electron → Extract Complete →`),
+                                chalk.yellow(buildPath)
+                            );
+                            fs.copySync('./app/wallpapers', pathWallpapersTo);
+
+                            grunt.log.writeln(
+                                chalk.green(`Electron → Moving Wallpapers →`),
+                                chalk.yellow(pathWallpapersTo)
+                            );
+                        }
+                    ])
+                ],
+                afterCopy: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            grunt.log.writeln(
+                                chalk.green(`Electron → Copy Complete →`),
+                                chalk.yellow(buildPath)
+                            );
+                        }
+                    ])
+                ],
+                afterPrune: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            grunt.log.writeln(
+                                chalk.green(`Electron → Prune Complete →`),
+                                chalk.yellow(buildPath)
+                            );
+                        }
+                    ])
+                ]
             },
             linux: {
                 options: {
