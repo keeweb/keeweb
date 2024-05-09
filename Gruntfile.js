@@ -311,9 +311,76 @@ module.exports = function (grunt) {
             }
         },
 
-        'html-preload': {
+        /*
+            HTML Link Rel
+
+            used primarily for preloading
+
+            rel         : alternate, canonical, author, bookmark, dns-prefetch, expect,
+                          external, help, icon, manifest, modulepreload, license, next,
+                          nofollow, noopener, noreferrer, opener, pingback, preconnect,
+                          prefetch, preload, prev, privacy-policy, search, stylesheet,
+                          tag, terms-of-service
+
+            as          : fetch, font, image, script, style, track
+
+            type        : image/webp, image/jpeg, image/png, image/x-icon, font/ttf, font/woff2, text/css
+                          application/rss+xml, application/json
+
+            cors        : defines how to handle crossorigin requests. Setting the crossorigin attribute
+                          (equivalent to crossorigin="anonymous") will switch the request to a CORS
+                          request using the same-origin policy. It is required on the rel="preload" as
+                          font requests require same-origin policy.
+
+                          An invalid keyword and an empty string will be handled as the anonymous keyword.
+
+                          specifying 'true' will be the same as 'anonymous' / "".
+
+                          > anonymous
+                            Request uses CORS headers and credentials flag is set to 'same-origin'.
+                            There is no exchange of user credentials via cookies, client-side TLS
+                            certificates or HTTP authentication, unless destination is the same origin.
+
+                          > use-credentials
+                            Request uses CORS headers, credentials flag is set to 'include' and user
+                            credentials are always included.
+
+                          > ""
+                            Setting the attribute name to an empty value, like crossorigin or
+                            crossorigin="", is the same as anonymous.
+
+        */
+
+        'html-linkrel': {
             options: {
-                resources: 'app/wallpapers'
+                replacements: [
+                    {
+                        name: 'Preload: Wallpapers',
+                        rel: 'preload',
+                        pattern: /<!--{{PRELOAD_IMAGES}}-->/,
+                        hrefPath: 'wallpapers',
+                        searchPath: 'app/wallpapers',
+                        as: 'image',
+                        type: 'image/jpeg',
+                        cors: 'anonymous'
+                    },
+                    {
+                        name: 'Preload: CSS',
+                        rel: 'preload',
+                        pattern: /<!--{{PRELOAD_CSS}}-->/,
+                        hrefPath: 'css/app.css',
+                        as: 'style',
+                        cors: false
+                    },
+                    {
+                        name: 'Preload: Javascript',
+                        rel: 'preload',
+                        pattern: /<!--{{PRELOAD_JS}}-->/,
+                        hrefPath: 'js/app.js',
+                        as: 'script',
+                        cors: false
+                    }
+                ]
             },
             app: {
                 src: 'tmp/index.html'

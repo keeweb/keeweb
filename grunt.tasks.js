@@ -6,7 +6,7 @@ module.exports = function (grunt) {
         copy:icons          : copies /app/icons to /dist/icons
         copy:wallpapers     : copies /app/wallpapers .jpg to /tmp/wallpapers
         copy:manifest       : copies /app/manifest json, xml to /tmp/
-        html-preload        : injects preloading into /tmp/index.html
+        html-linkrel        : injects preloading into /tmp/index.html
                               must be ran before other tasks modify /tmp/index.html and move it to /dist/
         inline              : brings externally referenced resources, such as js, css and images, into a single file
                               https://github.com/marcusklaas/grunt-inline-alt
@@ -20,7 +20,7 @@ module.exports = function (grunt) {
         'copy:icons',
         'copy:wallpapers',
         'copy:manifest',
-        'html-preload',
+        'html-linkrel',
         'webpack:app',
         'inline',
         'htmlmin',

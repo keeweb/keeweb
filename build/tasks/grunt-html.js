@@ -1,10 +1,64 @@
+const chalk = require('chalk'); // requires chalk v4 for non ESM modules. v5 does not have require.
+
 module.exports = function (grunt) {
-    grunt.registerMultiTask('html-preload', 'Inject preloader for images', function () {
+    /*
+        Injects <link rel=''> where placeholder pattern is found.
+        used prmarily for preloading assets.
+
+        Example Gruntfile.js Config:
+
+            'html-linkrel': {
+                options: {
+                    replacements: [
+                        {
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_IMAGES}}-->/,
+                            hrefPath: 'wallpapers',
+                            searchPath: 'app/wallpapers',
+                            as: 'image',
+                            type: 'image/jpeg',
+                            cors: 'anonymous'
+                        },
+                        {
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_CSS}}-->/,
+                            hrefPath: 'css/app.css',
+                            as: 'style',
+                            cors: false
+                        },
+                        {
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_JS}}-->/,
+                            hrefPath: 'js/app.js',
+                            as: 'script',
+                            cors: false
+                        },
+                        {
+                            pattern: /<!--{{ICONS_APPLE}}-->/,
+                            assets: [
+                                {
+                                    rel: 'apple-touch-startup-image',
+                                    href: 'icons/splash-640x1136.png',
+                                    media: '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                app: {
+                    src: 'tmp/index.html'
+                }
+            }
+    */
+
+    grunt.registerMultiTask('html-linkrel', 'Inject html rel tags', function () {
         /*
             options
         */
 
-        const opt = this.options();
+        const opt = this.options({
+            replacements: []
+        });
 
         /*
             requires
@@ -14,35 +68,282 @@ module.exports = function (grunt) {
         const path = require('path');
 
         /*
-            Wallpapers
+            Loop replacements
         */
 
-        const wallpaperFolder = path.join(__dirname, '..', '..', opt.resources);
-        const wallpaperFiles = fs.readdirSync(wallpaperFolder);
-        let headerPreload = '';
+        let i = 0;
+        while (i < opt.replacements.length) {
+            // option: name
+            const name = opt.replacements[i].name || 'untitled';
 
-        /*
-            loop all wallpaper files, find path, concat new string for preload
-        */
+            // option: rel
+            const rel = opt.replacements[i].rel || 'preload';
+            const relString = rel && typeof rel === 'string' ? ` rel="${rel}"` : ``;
 
-        wallpaperFiles.forEach((file) => {
-            const fileStat = fs.statSync(wallpaperFolder + '/' + file).isDirectory();
-            if (!fileStat) {
-                headerPreload +=
-                    "<link rel='preload' href='wallpapers/" + file + "' as='image'>\n\t";
+            // option: href
+            const hrefPath = opt.replacements[i].hrefPath || false;
+            const hrefString =
+                hrefPath && typeof hrefPath === 'string' ? ` href="${hrefPath}"` : ``;
+
+            // option: general
+            const searchPath = opt.replacements[i].searchPath || '';
+            const pattern = opt.replacements[i].pattern;
+
+            // option: as
+            const as = opt.replacements[i].as || false;
+            const asString = as && typeof as === 'string' ? ` as="${as}"` : ``;
+
+            // option: media
+            const media = opt.replacements[i].media || false;
+            const mediaString = media && typeof media === 'string' ? ` media="${media}"` : ``;
+
+            // option: type
+            const type = opt.replacements[i].type || false;
+            const typeString = type && typeof type === 'string' ? ` type="${type}"` : ``;
+
+            // option: sizes
+            const sizes = opt.replacements[i].sizes || false;
+            const sizesString = sizes && typeof sizes === 'string' ? ` sizes="${sizes}"` : ``;
+
+            // option: color
+            const color = opt.replacements[i].color || false;
+            const colorString = color && typeof color === 'string' ? ` color="${color}"` : ``;
+
+            // option: class
+            const classes = opt.replacements[i].class || false;
+            const classString = classes && typeof classes === 'string' ? ` class="${classes}"` : ``;
+
+            // option: cors
+            const cors = opt.replacements[i].cors || false;
+            const corsBool = typeof cors === 'boolean';
+            const corsString =
+                cors && corsBool
+                    ? ` crossorigin`
+                    : cors && !corsBool
+                      ? ` crossorigin="${cors}"`
+                      : ``;
+
+            /*
+                Assets
+
+                assets allow for repeating link rel with various different attributes.
+                requires assets: [] to be defined in Gruntfile.js.
+                See example at top of file.
+            */
+
+            const assets = opt.replacements[i].assets || false;
+
+            if (assets) {
+                let assetsInclude = '';
+
+                let a = 0;
+                // loop assets
+                while (a < assets.length) {
+                    // option: rel
+                    const relAsset = assets[a].rel || 'preload';
+                    const relAssetString =
+                        relAsset && typeof relAsset === 'string' ? ` rel="${relAsset}"` : ``;
+
+                    // option: href
+                    const hrefAssetPath = assets[a].hrefPath || false;
+                    const hrefAssetString =
+                        hrefAssetPath && typeof hrefAssetPath === 'string'
+                            ? ` href="${hrefAssetPath}"`
+                            : ``;
+
+                    // option: as
+                    const asAsset = assets[a].as || false;
+                    const asAssetString =
+                        asAsset && typeof asAsset === 'string' ? ` as="${asAsset}"` : ``;
+
+                    // option: media
+                    const mediaAsset = assets[a].media || false;
+                    const mediaAssetString =
+                        mediaAsset && typeof mediaAsset === 'string'
+                            ? ` media="${mediaAsset}"`
+                            : ``;
+
+                    // option: type
+                    const typeAsset = assets[a].type || false;
+                    const typeAssetString =
+                        typeAsset && typeof typeAsset === 'string' ? ` type="${typeAsset}"` : ``;
+
+                    // option: sizes
+                    const sizesAsset = assets[a].sizes || false;
+                    const sizesAssetString =
+                        sizesAsset && typeof sizesAsset === 'string'
+                            ? ` sizes="${sizesAsset}"`
+                            : ``;
+
+                    // option: color
+                    const colorAsset = assets[a].color || false;
+                    const colorAssetString =
+                        colorAsset && typeof colorAsset === 'string'
+                            ? ` color="${colorAsset}"`
+                            : ``;
+
+                    // option: class
+                    const classesAsset = assets[a].class || false;
+                    const classAssetString =
+                        classesAsset && typeof classesAsset === 'string'
+                            ? ` class="${classesAsset}"`
+                            : ``;
+
+                    // option: cors
+                    const corsAsset = assets[a].cors || false;
+                    const corsAssetBool = typeof corsAsset === 'boolean';
+                    const corsAssetString =
+                        corsAsset && corsAssetBool
+                            ? ` crossorigin`
+                            : corsAsset && !corsAssetBool
+                              ? ` crossorigin="${corsAsset}"`
+                              : ``;
+
+                    /*
+                        Append link
+                    */
+
+                    assetsInclude += `<link${relAssetString}${hrefAssetString}${asAssetString}${mediaAssetString}${typeAssetString}${sizesAssetString}${corsAssetString}${colorAssetString}${classAssetString}>`;
+
+                    // add spaces to beginning of each line just to keep formatting for non-minified html
+                    if (a !== assets.length - 1) {
+                        assetsInclude += `\n        `;
+                    }
+
+                    a++;
+                }
+
+                for (const file of this.files) {
+                    const html = grunt.file.read(file.src[0], { encoding: 'utf8' });
+                    const regex = new RegExp(pattern, 'gim');
+                    const htmlUpdated = html.replace(regex, assetsInclude);
+
+                    grunt.log.writeln(
+                        chalk.green(`→ Inject Rel Link → Add Asset`),
+                        chalk.gray(`→ ${name}`),
+                        chalk.gray(`→ ${file.src[0]}`)
+                    );
+
+                    grunt.file.write(file.src[0], htmlUpdated);
+
+                    i++;
+                }
+
+                continue;
             }
-        });
 
-        for (const file of this.files) {
-            const html = grunt.file.read(file.src[0], { encoding: 'utf8' });
-            const htmlUpdated = html.replace(/<!--{{PRELOADER}}-->/gim, headerPreload);
+            /*
+                Missing required options
+            */
 
-            grunt.log.writeln(
-                `→ Injecting HTML preloader into ${file.src[0]} for images in ${wallpaperFolder}`
-                    .green.bold
-            );
+            if (!pattern) {
+                grunt.log.writeln(
+                    chalk.red(`Inject Rel Link → no regex pattern specified → `),
+                    chalk.yellow(`Aborting`)
+                );
+                break;
+            }
 
-            grunt.file.write(file.src[0], htmlUpdated);
+            if (!hrefPath) {
+                grunt.log.writeln(
+                    chalk.red(`Inject Rel Link → no public path specified → `),
+                    chalk.yellow(`Aborting`)
+                );
+                break;
+            }
+
+            /*
+                Modified HTML output
+            */
+
+            let htmlInclude = '';
+
+            if (!searchPath) {
+                /*
+                    Static Load
+
+                    this route forces a specific static file to be preloaded.
+                    Option 'searchPath' optional.
+                */
+
+                htmlInclude += `<link${relString}${hrefString}${asString}${mediaString}${typeString}${sizesString}${colorString}${classString}${corsString}>`;
+
+                for (const file of this.files) {
+                    const html = grunt.file.read(file.src[0], { encoding: 'utf8' });
+                    const regex = new RegExp(pattern, 'gim');
+                    const htmlUpdated = html.replace(regex, htmlInclude);
+
+                    const href = hrefString.match(/(?<=\")(.*?)(?=\")/gim) || hrefString;
+
+                    grunt.log.writeln(
+                        chalk.green(`→ Inject Rel Link → Add Static`),
+                        chalk.gray(`→ ${name}`),
+                        chalk.gray(`→ ${href}`),
+                        chalk.gray(`→ ${file.src[0]}`)
+                    );
+
+                    grunt.file.write(file.src[0], htmlUpdated);
+                }
+
+                i++;
+            } else {
+                /*
+                    Dynamic Load
+
+                    this route forces a series of files to be preloaded.
+                    Option 'searchPath' required.
+                */
+
+                const searchFolder = path.join(__dirname, '..', '..', searchPath);
+                const files = fs.readdirSync(searchFolder);
+
+                /*
+                    loop all files, find path, concat new string for preload
+                */
+
+                let iCurrent = 1;
+                files.forEach((file) => {
+                    const bIsFile = fs.statSync(searchFolder + '/' + file).isDirectory();
+                    if (!bIsFile) {
+                        if (hrefString && typeof hrefString === 'string') {
+                            // append file name before last quotation mark in href path
+                            const n = hrefString.lastIndexOf('"');
+                            if (n > 0) {
+                                // append filename to end of hrefString for newly added file
+                                // eslint-disable-next-line prettier/prettier
+                                const hrefStringEach = hrefString.substring(0, n) + `/${file}` + hrefString.substring(n);
+                                htmlInclude += `<link${relString}${hrefStringEach}${asString}${mediaString}${typeString}${sizesString}${colorString}${classString}${corsString}>`;
+
+                                if (files.length !== iCurrent) {
+                                    // add spaces to beginning of each line just to keep formatting for non-minified html
+                                    htmlInclude += `\n        `;
+                                }
+
+                                iCurrent++;
+                            }
+                        }
+                    }
+                });
+
+                for (const file of this.files) {
+                    const html = grunt.file.read(file.src[0], { encoding: 'utf8' });
+                    const regex = new RegExp(pattern, 'gim');
+                    const htmlUpdated = html.replace(regex, htmlInclude);
+
+                    const folder = searchPath.match(/(?<=\")(.*?)(?=\")/gim) || searchPath;
+
+                    grunt.log.writeln(
+                        chalk.green(`→ Inject Rel Link → Add Dynamic`),
+                        chalk.gray(`→ ${name}`),
+                        chalk.gray(`→ ${folder}`),
+                        chalk.gray(`→ ${file.src[0]}`)
+                    );
+
+                    grunt.file.write(file.src[0], htmlUpdated);
+                }
+
+                i++;
+            }
         }
     });
 };
