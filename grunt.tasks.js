@@ -28,7 +28,6 @@ module.exports = function (grunt) {
         'copy:content-dist',
         'string-replace:service-worker',
         'string-replace:update-manifest',
-        'string-replace:index',
         'copy:dist-icons',
         'copy:dist-wallpapers',
         'copy:dist-manifest'

@@ -220,13 +220,6 @@ module.exports = function (grunt) {
                 dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Resources/',
                 nonull: true
             },
-            'desktop-win32-dist-wallpapers': {
-                cwd: 'app/wallpapers/',
-                src: ['*.jpg'],
-                dest: `tmp/desktop/KeeWeb-win32-x64/wallpapers/`,
-                expand: true,
-                nonull: true
-            },
             'native-modules-win32-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-modules/*-win32-x64.node',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/resources/',
@@ -372,16 +365,6 @@ module.exports = function (grunt) {
                     ]
                 },
                 files: { 'dist/update.json': 'app/update.json' }
-            },
-            'index': {
-                options: {
-                    replacements: [
-                        {
-                            pattern: /<!--{{PRELOADER}}-->/,
-                            replacement: `a`
-                        }
-                    ]
-                }
             },
             'service-worker': {
                 options: { replacements: [{ pattern: '0.0.0', replacement: pkg.version }] },
