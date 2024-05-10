@@ -351,39 +351,54 @@ module.exports = function (grunt) {
 
         */
 
-        'html-linkrel': {
-            options: {
-                replacements: [
-                    {
-                        name: 'Preload: Wallpapers',
-                        rel: 'preload',
-                        pattern: /<!--{{PRELOAD_IMAGES}}-->/,
-                        hrefPath: 'wallpapers',
-                        searchPath: 'app/wallpapers',
-                        as: 'image',
-                        type: 'image/jpeg',
-                        cors: 'anonymous'
-                    },
-                    {
-                        name: 'Preload: CSS',
-                        rel: 'preload',
-                        pattern: /<!--{{PRELOAD_CSS}}-->/,
-                        hrefPath: 'css/app.css',
-                        as: 'style',
-                        cors: false
-                    },
-                    {
-                        name: 'Preload: Javascript',
-                        rel: 'preload',
-                        pattern: /<!--{{PRELOAD_JS}}-->/,
-                        hrefPath: 'js/app.js',
-                        as: 'script',
-                        cors: false
-                    }
-                ]
+        'htmlinkrel': {
+            'images': {
+                options: {
+                    replacements: [
+                        {
+                            name: 'Preload: Wallpapers',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_IMAGES}}-->/,
+                            hrefPath: 'wallpapers',
+                            searchPath: 'app/wallpapers',
+                            as: 'image',
+                            type: 'image/jpeg',
+                            cors: 'anonymous'
+                        }
+                    ],
+                    app: [
+                        {
+                            src: 'tmp/index.html'
+                        }
+                    ]
+                }
             },
-            app: {
-                src: 'tmp/index.html'
+            'assets': {
+                options: {
+                    replacements: [
+                        {
+                            name: 'Preload: CSS',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_CSS}}-->/,
+                            hrefPath: 'css/app.css',
+                            as: 'style',
+                            cors: false
+                        },
+                        {
+                            name: 'Preload: Javascript',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_JS}}-->/,
+                            hrefPath: 'js/app.js',
+                            as: 'script',
+                            cors: false
+                        }
+                    ],
+                    app: [
+                        {
+                            src: 'tmp/index.html'
+                        }
+                    ]
+                }
             }
         },
 
