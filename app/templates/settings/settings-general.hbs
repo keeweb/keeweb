@@ -1,5 +1,5 @@
 <div class="settings__content">
-    <h1 id="top"><i class="fa fa-cog settings__head-icon"></i> {{res 'setGenTitle'}}</h1>
+    <h1 id="top"><i class="fa fa-gear settings__head-icon"></i> {{res 'setGenTitle'}}</h1>
 
     {{#if updateWaitingReload}}
     <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
@@ -36,6 +36,7 @@
     </div>
     {{/if}}
 
+    <br />
     <h2 id="appearance">{{res 'setGenAppearance'}}</h2>
     {{#if locales}}
     <div>
@@ -73,9 +74,10 @@
     <div>
         <label for="settings__general-font-size">{{res 'setGenFontSize'}}:</label>
         <select class="settings__general-font-size settings__select input-base" id="settings__general-font-size">
-            <option value="0" {{#ifeq fontSize 0}}selected{{/ifeq}}>{{res 'setGenFontSizeNormal'}}</option>
-            <option value="1" {{#ifeq fontSize 1}}selected{{/ifeq}}>{{res 'setGenFontSizeLarge'}}</option>
-            <option value="2" {{#ifeq fontSize 2}}selected{{/ifeq}}>{{res 'setGenFontSizeLargest'}}</option>
+            <option value="0" {{#ifeq fontSize 0}}selected{{/ifeq}}>{{res 'setGenFontSizeSmall'}}</option>
+            <option value="1" {{#ifeq fontSize 0}}selected{{/ifeq}}>{{res 'setGenFontSizeNormal'}}</option>
+            <option value="2" {{#ifeq fontSize 1}}selected{{/ifeq}}>{{res 'setGenFontSizeLarge'}}</option>
+            <option value="3" {{#ifeq fontSize 2}}selected{{/ifeq}}>{{res 'setGenFontSizeLargest'}}</option>
         </select>
     </div>
     {{#if supportsTitleBarStyles}}
@@ -105,6 +107,7 @@
         <label for="settings__general-colorful-icons">{{res 'setGenColorfulIcons'}}</label>
     </div>
 
+    <br />
     <h2 id="function">{{res 'setGenFunction'}}</h2>
     {{#if canAutoSaveOnClose}}
     <div>
@@ -217,6 +220,16 @@
         {{/if}}
     {{/if}}
 
+    <br />
+    <h2 id="security">{{res 'setGenSecurity'}}</h2>
+    <div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-security-password-reveal"
+               id="settings__general-security-password-reveal" {{#if revealPassword}}checked{{/if}} />
+        <label for="settings__general-security-password-reveal">{{res 'setOpenRevealPassword'}}</label>
+    </div>
+
+    <br />
     <h2 id="audit">{{res 'setGenAudit'}}</h2>
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-audit-passwords"
@@ -269,6 +282,7 @@
         </select>
     </div>
 
+    <br />
     <h2 id="lock">{{res 'setGenLock'}}</h2>
     <div>
         <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>
@@ -312,6 +326,7 @@
         </div>
     {{/if}}
 
+    <br />
     <h2 id="storage">{{res 'setGenStorage'}}</h2>
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-disable-offline-storage" id="settings__general-disable-offline-storage"
@@ -334,6 +349,7 @@
                                 data-storage="{{prv.name}}">{{res 'setGenStorageLogout'}}</button>{{/if}}
     {{/each}}
 
+    <br />
     <h2 id="advanced">{{res 'advanced'}}</h2>
     <a class="settings__general-show-advanced">{{res 'setGenShowAdvanced'}}</a>
     <div class="settings__general-advanced hide">

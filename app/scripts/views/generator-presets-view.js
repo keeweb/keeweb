@@ -60,17 +60,24 @@ class GeneratorPresetsView extends View {
         const rangeOverride = {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
         };
-        return ['Upper', 'Lower', 'Digits', 'Special', 'Brackets', 'High', 'Ambiguous'].map(
-            (name) => {
-                const nameLower = name.toLowerCase();
-                return {
-                    name: nameLower,
-                    title: Locale['genPs' + name],
-                    enabled: sel[nameLower],
-                    sample: rangeOverride[nameLower] || CharRanges[nameLower]
-                };
-            }
-        );
+        return [
+            'Upper',
+            'Lower',
+            'Digits',
+            'Special',
+            'Brackets',
+            'High',
+            'Ambiguous',
+            'Spaces'
+        ].map((name) => {
+            const nameLower = name.toLowerCase();
+            return {
+                name: nameLower,
+                title: Locale['genPs' + name],
+                enabled: sel[nameLower],
+                sample: rangeOverride[nameLower] || CharRanges[nameLower]
+            };
+        });
     }
 
     getPreset(name) {
@@ -109,6 +116,7 @@ class GeneratorPresetsView extends View {
             special: selected.special,
             brackets: selected.brackets,
             ambiguous: selected.ambiguous,
+            spaces: selected.spaces,
             include: selected.include
         };
         GeneratorPresets.add(preset);

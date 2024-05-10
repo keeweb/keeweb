@@ -128,7 +128,7 @@ class SettingsBrowserView extends View {
             e.target.checked = false;
 
             Alerts.yesno({
-                icon: 'exclamation-triangle',
+                icon: 'triangle-exclamation',
                 header: Locale.setBrowserExtensionKPXCWarnHeader.replace('{}', 'KeePassXC'),
                 body:
                     Locale.setBrowserExtensionKPXCWarnBody1.replace(/{}/g, 'KeePassXC') +

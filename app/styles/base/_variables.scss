@@ -1,3 +1,6 @@
+// built in modules
+@use 'sass:math';
+
 // Typography
 $base-font-family: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Helvetica',
     'Roboto', 'Arial', 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', 'STXihei',
@@ -16,11 +19,12 @@ $heading-line-height: 1.2;
 // Other Sizes
 $base-border-radius: 2px;
 $base-spacing: $base-line-height * 1em;
-$small-spacing: $base-spacing / 2;
-$tiny-spacing: $small-spacing / 2;
+$small-spacing: math.div($base-spacing, 2);
+$tiny-spacing: math.div($small-spacing, 2);
 $base-z-index: 0;
 $base-padding-v: 0.5em;
 $base-padding-h: 1em;
+$base-menu-w: 0.7em;
 $mobile-back-button-height: 3em;
 $base-padding: $base-padding-v $base-padding-h;
 $medium-padding-v: 1em;

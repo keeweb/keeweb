@@ -316,7 +316,8 @@ function generate(options) {
     while (wordObj.word.length < safeMaxLength) {
         addSyllable(wordObj);
     }
-    return postProcess(wordObj).substr(0, length);
+
+    return postProcess(wordObj).slice(0, length);
 }
 
 const phonetic = { generate };

@@ -14,26 +14,38 @@ class FieldViewCustom extends FieldViewText {
         };
     }
 
+    /*
+        Edit > Start
+    */
+
     startEdit() {
         super.startEdit();
         this.$el.addClass('details__field--can-edit-title');
         if (this.isProtected === undefined) {
             this.isProtected = this.value instanceof kdbxweb.ProtectedValue;
         }
+
         this.$el.toggleClass('details__field--protected', this.isProtected);
         $('<div/>')
             .addClass('details__field-value-btn details__field-value-btn-protect')
             .appendTo(this.valueEl)
-            .mousedown(this.protectBtnClick.bind(this));
+            .on('mousedown', this.protectBtnClick.bind(this));
+
         let securityTipTitle = Locale.detLockField;
         if (this.isProtected) {
             securityTipTitle = Locale.detUnlockField;
         }
+
         const securityTip = new Tip($(this.valueEl).find('.details__field-value-btn'), {
             title: securityTipTitle
         });
+
         securityTip.init();
     }
+
+    /*
+        Edit > End
+    */
 
     endEdit(newVal, extra) {
         this.$el.removeClass('details__field--can-edit-title');
@@ -41,22 +53,29 @@ class FieldViewCustom extends FieldViewText {
         if (this.model.titleChanged) {
             extra.newField = this.model.title;
         }
+
         if (!this.editing) {
             return;
         }
+
         delete this.input;
         if (typeof newVal === 'string') {
             if (this.isProtected) {
                 newVal = kdbxweb.ProtectedValue.fromString(newVal);
             } else {
-                newVal = $.trim(newVal);
+                newVal = newVal.trim();
             }
         }
+
         FieldView.prototype.endEdit.call(this, newVal, extra);
         if (this.model.titleChanged) {
             delete this.model.titleChanged;
         }
     }
+
+    /*
+        Edit Title > Start
+    */
 
     startEditTitle(emptyTitle) {
         const text = emptyTitle ? '' : this.model.title || '';
@@ -65,9 +84,10 @@ class FieldViewCustom extends FieldViewText {
         this.labelInput
             .attr({ autocomplete: 'off', spellcheck: 'false' })
             .val(text)
-            .focus()[0]
+            .trigger('focus')[0]
             .setSelectionRange(text.length, text.length);
-        this.labelInput.bind({
+
+        this.labelInput.on({
             input: this.fieldLabelInput.bind(this),
             keydown: this.fieldLabelKeydown.bind(this),
             keyup: this.fieldLabelKeyup.bind(this),
@@ -76,6 +96,10 @@ class FieldViewCustom extends FieldViewText {
             click: this.fieldLabelInputClick.bind(this)
         });
     }
+
+    /*
+        Edit Title > End
+    */
 
     endEditTitle(newTitle) {
         if (newTitle && newTitle !== this.model.title) {
@@ -87,12 +111,17 @@ class FieldViewCustom extends FieldViewText {
                 val: ''
             });
         }
+
         this.$el.find('.details__field-label').text(this.model.title);
         delete this.labelInput;
         if (this.editing && this.input) {
-            this.input.focus();
+            this.input.trigger('focus');
         }
     }
+
+    /*
+        Inline Field > Label > Click
+    */
 
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
@@ -106,28 +135,49 @@ class FieldViewCustom extends FieldViewText {
         }
     }
 
+    /*
+        Inline Field > Label > Mousedown
+    */
+
     fieldLabelMousedown(e) {
         if (this.editing) {
             e.stopPropagation();
         }
     }
 
+    /*
+        Inline Field > Value > Blur
+    */
+
     fieldValueBlur() {
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
+
         if (this.input) {
             this.endEdit(this.input.val());
         }
     }
 
+    /*
+        Inline Field > Label > Input
+    */
+
     fieldLabelInput(e) {
         e.stopPropagation();
     }
 
+    /*
+        Inline Field > Label > Click
+    */
+
     fieldLabelInputClick(e) {
         e.stopPropagation();
     }
+
+    /*
+        Inline Field > Label > Key down
+    */
 
     fieldLabelKeydown(e) {
         e.stopPropagation();
@@ -140,6 +190,10 @@ class FieldViewCustom extends FieldViewText {
         }
     }
 
+    /*
+        Inline Field > Label > Key up
+    */
+
     fieldLabelKeyup(e) {
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
@@ -147,12 +201,21 @@ class FieldViewCustom extends FieldViewText {
         }
     }
 
+    /*
+        Inline Field > Value > Click
+    */
+
     fieldValueInputClick() {
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
+
         super.fieldValueInputClick.call(this);
     }
+
+    /*
+        Protect Button > Click
+    */
 
     protectBtnClick(e) {
         e.stopPropagation();
@@ -161,7 +224,8 @@ class FieldViewCustom extends FieldViewText {
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
-        setTimeout(() => this.input.focus());
+
+        setTimeout(() => this.input.trigger('focus'));
     }
 }
 

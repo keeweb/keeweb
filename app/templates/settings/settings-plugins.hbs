@@ -12,7 +12,7 @@
             <div>
                 <ul class="settings__plugins-plugin-files">
                     {{#if plugin.manifest.resources.js}}<li class="settings__plugins-plugin-file"><i class="fa fa-code"></i> {{res 'setPlJs'}}</li>{{/if}}
-                    {{#if plugin.manifest.resources.css}}<li class="settings__plugins-plugin-file"><i class="fa fa-paint-brush"></i> {{res 'setPlCss'}}</li>{{/if}}
+                    {{#if plugin.manifest.resources.css}}<li class="settings__plugins-plugin-file"><i class="fa fa-paintbrush"></i> {{res 'setPlCss'}}</li>{{/if}}
                     {{#if plugin.manifest.resources.loc}}<li class="settings__plugins-plugin-file"><i class="fa fa-language"></i>&nbsp;
                         {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}} {{#if ../hasUnicodeFlags}}{{#if plugin.manifest.locale}}{{#if plugin.manifest.locale.flag}}&nbsp;{{plugin.manifest.locale.flag}}{{/if}}{{/if}}{{/if}}</li>
                     {{/if}}
@@ -123,7 +123,7 @@
                     <div class="settings__plugins-gallery-plugin-desc">{{plugin.manifest.description}}</div>
                     <ul class="settings__plugins-plugin-files">
                         {{#if plugin.manifest.resources.js}}<li class="settings__plugins-plugin-file"><i class="fa fa-code"></i> {{res 'setPlJs'}}</li>{{/if}}
-                        {{#if plugin.manifest.resources.css}}<li class="settings__plugins-plugin-file"><i class="fa fa-paint-brush"></i> {{res 'setPlCss'}}</li>{{/if}}
+                        {{#if plugin.manifest.resources.css}}<li class="settings__plugins-plugin-file"><i class="fa fa-paintbrush"></i> {{res 'setPlCss'}}</li>{{/if}}
                         {{#if plugin.manifest.resources.loc}}<li class="settings__plugins-plugin-file"><i class="fa fa-language"></i> {{res 'setPlLoc'}}: {{plugin.manifest.locale.title}}</li>{{/if}}
                     </ul>
                     <div class="settings__plugins-gallery-plugin-author muted-color">

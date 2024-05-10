@@ -13,6 +13,7 @@ function charCodeToHtml(char) {
     if (char === 32 || char === 8193 || char === 8239) {
         char = 160;
     }
+
     return Math.random() < 0.2 ? String.fromCharCode(char) : `&#x${char.toString(16)};`;
 }
 

@@ -32,7 +32,7 @@ Logger.prototype.debug = function (...args) {
     args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Debug) {
         Logger.saveLast('debug', args);
-        console.log(...args); // eslint-disable-line no-console
+        console.log(...args);
     }
 };
 
@@ -40,7 +40,7 @@ Logger.prototype.info = function (...args) {
     args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Info) {
         Logger.saveLast('info', args);
-        console.info(...args); // eslint-disable-line no-console
+        console.info(...args);
     }
 };
 
@@ -48,7 +48,7 @@ Logger.prototype.warn = function (...args) {
     args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Warn) {
         Logger.saveLast('warn', args);
-        console.warn(...args); // eslint-disable-line no-console
+        console.warn(...args);
     }
 };
 
@@ -56,7 +56,7 @@ Logger.prototype.error = function (...args) {
     args[0] = this.getPrefix() + args[0];
     if (this.level >= Level.Error) {
         Logger.saveLast('error', args);
-        console.error(...args); // eslint-disable-line no-console
+        console.error(...args);
     }
 };
 

@@ -10,7 +10,14 @@ $themes: map-merge(
                     text-color: #282c34,
                     action-color: #528bff,
                     error-color: #c34034,
-                    mute-percent: 50%
+                    mute-percent: 50%,
+                    h1-color: #416dc4,
+                    h2-color: #616161,
+                    h3-color: #616161,
+                    h4-color: #616161,
+                    h5-color: #616161,
+                    h6-color: #616161,
+                    hr-color: #363636
                 )
             )
     )
@@ -19,7 +26,221 @@ $themes: map-merge(
 body.th-bl {
     --open-icon-color: #525462;
 
+    /*!
+        Markdown Viewer
+    */
+
+    --md-title-color: #4d4d4d;
+    --md-icon-color: #6899fc;
+    --md-text-color: #494949;
+    --md-header-border: 1px dashed #585858;
+    --md-header-title-align: right;
+    --md-header-return-align: right;
+
+    --md-h1-color: #4d7ac6;
+    --md-h2-color: #6c95dd;
+    --md-h3-color: #6d6d6d;
+    --md-h4-color: #6d6d6d;
+    --md-h5-color: #6d6d6d;
+    --md-h6-color: #6d6d6d;
+    --md-h1-text-transform: normal;
+    --md-h2-text-transform: normal;
+    --md-h3-text-transform: normal;
+    --md-h4-text-transform: normal;
+    --md-h5-text-transform: uppercase;
+    --md-h6-text-transform: uppercase;
+    --md-h1-text-weight: normal;
+    --md-h2-text-weight: bolder;
+    --md-h3-text-weight: normal;
+    --md-h4-text-weight: normal;
+    --md-h5-text-weight: bolder;
+    --md-h6-text-weight: bolder;
+
+    --md-hx-link-weight: lighter;
+    --md-hx-link-align: super;
+
+    --md-link-n-color: #5271a7;
+    --md-link-h-color: #df6071;
+    --md-link-decorator-color: #c56829;
+
+    --md-paragraph-spacing-start: 1;
+    --md-paragraph-spacing-end: 2;
+    --md-ul-indent: 2;
+    --md-ul-spacing-start: 1;
+    --md-ul-spacing-end: 1;
+    --md-ul-text-weight: normal;
+
+    --md-accent-em-color: #df6333;
+    --md-strong-em-color-1: #7756c4;
+    --md-strong-em-color-2: #6654b6;
+    --md-accent-strong-color: #FF7190;
+    --md-accent-abbr-color: #949494;
+    --md-accent-abbr-line-color: #6260c4;
+    --md-accent-strike-text-color: rgba(255, 255, 255, 0.3);
+    --md-accent-strike-line-color: rgba(255, 255, 255, 1);
+
+    --md-code-block-text-color: #636363;
+    --md-code-block-text-weight: normal;
+    --md-code-block-accent-style: 6px solid #6899fc;;
+    --md-code-inline-text-color: #6285c8;
+    --md-code-inline-text-weight: bolder;
+    --md-code-bg-color: #dbdbdb;
+
+    --md-table-head-bg-color: #6883aa;
+    --md-table-body-bg-color: #eeeeee;
+    --md-table-head-text-color: #FFFFFF;
+    --md-table-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 0.85);
+    --md-table-body-left-color: hsla(var(--md-hue), 0%, 0%, 0.05);
+    --md-table-text-left-color: #272727;
+    --md-table-text-right-color: #272727;
+    --md-table-border-rows-color: hsla(var(--md-hue), 15%, 95%, 0.12);
+    --md-table-border-outside-color: #97979734;
+
+    --md-blockquote-text-color: #4b4b4b;
+    --md-blockquote-text-style: italic;
+    --md-blockquote-body-bg-color: #9191911c;
+    --md-blockquote-accent-color: #4d7bbe;
+    --md-blockquote-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 0.75);
+
+    --md-hr-color-1: #7fabdde7;
+    --md-hr-color-2: #7fabdde7;
+    --md-hr-color-3: #7fabdde7;
+    --md-hr-color-4: #7fabdde7;
+
+    --md-alert-note-color: #539bf5;
+    --md-alert-tip-color: #57ab5a;
+    --md-alert-important-color: #986ee2;
+    --md-alert-warning-color: #c69026;
+    --md-alert-caution-color: #e5534b;
+    --md-alert-bg-color: #dbdbdb;
+    --md-alert-border-style: 4px solid #444c56;;
+
+    --md-checkbox-bg-unchecked-color: #d4d4d4;
+    --md-checkbox-border-unchecked-color: #a0a0a0;
+    --md-checkbox-bg-checked-color: #6899fc;
+    --md-checkbox-bg-hover-color: #449b4b;
+    --md-checkbox-border-hover-color: #FFFFFF;
+
+    --md-footnote-opacity-full: 1;
+    --md-footnote-opacity-min: 0.4;
+
+    /*!
+        General
+    */
+
     .list__item--active .blue-color {
         color: #98bfff;
     }
+
+    /*!
+        Syntax Highlighting
+
+        These colors are taken from highlight.js.
+        to change the theme or create your own theme, you can find the highlighter themes at:
+            https://github.com/highlightjs/highlight.js/tree/main/src/styles
+
+        Theme Viewer:
+            https://highlightjs.org/demo
+
+        @theme  : panda-syntax-light.css
+    */
+
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1em
+        }
+        code.hljs {
+            padding: 3px 5px
+        }
+
+        .hljs {
+            color: #2a2c2d;
+            background: #e6e6e6
+        }
+
+        .hljs-emphasis {
+            font-style: italic
+        }
+
+        .hljs-strong {
+            font-weight: bold
+        }
+
+        .hljs-link {
+            text-decoration: underline
+        }
+
+        .hljs-comment,
+        .hljs-quote {
+            color: #676B79;
+            font-style: italic
+        }
+
+        .hljs-params {
+            color: #676B79
+        }
+
+        .hljs-punctuation,
+        .hljs-attr {
+            color: #2a2c2d
+        }
+
+        .hljs-selector-tag,
+        .hljs-name,
+        .hljs-meta,
+        .hljs-operator,
+        .hljs-char.escape_ {
+            color: #c56200
+        }
+
+        .hljs-keyword,
+        .hljs-deletion {
+            color: #d92792
+        }
+
+        .hljs-regexp,
+        .hljs-selector-pseudo,
+        .hljs-selector-attr,
+        .hljs-variable.language_ {
+            color: #cc5e91
+        }
+
+        .hljs-subst,
+        .hljs-property,
+        .hljs-code,
+        .hljs-formula,
+        .hljs-section,
+        .hljs-title.function_ {
+            color: #3787c7
+        }
+
+        .hljs-string,
+        .hljs-symbol,
+        .hljs-bullet,
+        .hljs-addition,
+        .hljs-selector-class,
+        .hljs-title.class_,
+        .hljs-title.class_.inherited__,
+        .hljs-meta .hljs-string {
+            color: #0d7d6c
+        }
+
+        .hljs-variable,
+        .hljs-template-variable,
+        .hljs-number,
+        .hljs-literal,
+        .hljs-type,
+        .hljs-link,
+        .hljs-built_in,
+        .hljs-title,
+        .hljs-selector-id,
+        .hljs-tag,
+        .hljs-doctag,
+        .hljs-attribute,
+        .hljs-template-tag,
+        .hljs-meta .hljs-keyword {
+            color: #7641bb
+        }
+
 }

@@ -4,7 +4,7 @@
     {{~#if options.length}} menu__item--with-options {{/if~}}
     {{~#if cls}} {{cls}}{{/if~}}
     ">
-    {{#if collapsible}}<i class="menu__item-collapse fa fa-ellipsis-v muted-color" title="{{res 'menuItemCollapsed'}}"></i>{{/if}}
+    {{#if collapsible}}<i class="menu__item-collapse fa fa-ellipsis-vertical muted-color" title="{{res 'menuItemCollapsed'}}"></i>{{/if}}
     <div class="menu__item-body" {{#if drag}}draggable="true"{{/if}}>
         {{#if drag}}<div class="menu__item-drag-top"></div>{{/if}}
         {{#if customIcon~}}
@@ -22,8 +22,8 @@
             {{/each}}
         </div>
         {{/if}}
-        {{#if editable}}<i class="menu__item-edit fa fa-cog"></i>{{/if}}
-        {{#ifeq filterKey 'trash'}}<i class="menu__item-empty-trash fa fa-minus-circle" title="{{res 'menuEmptyTrash'}}"
+        {{#if editable}}<i class="menu__item-edit fa fa-gear"></i>{{/if}}
+        {{#ifeq filterKey 'trash'}}<i class="menu__item-empty-trash fa fa-circle-minus" title="{{res 'menuEmptyTrash'}}"
             tip-placement="right"></i>{{/ifeq}}
     </div>
 </div>

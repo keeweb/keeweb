@@ -24,7 +24,7 @@ class FieldViewText extends FieldView {
             if (value && value.isProtected) {
                 value = value.getText();
             }
-            const converted = MdToHtml.convert(value);
+            const converted = MdToHtml.convert(value, true, false);
             if (converted.html) {
                 return converted.html;
             }
@@ -72,8 +72,8 @@ class FieldViewText extends FieldView {
                 $('<div/>')
                     .addClass('details__field-value-btn details__field-value-btn-gen')
                     .appendTo(this.valueEl)
-                    .click(this.showGeneratorClick.bind(this))
-                    .mousedown(this.showGenerator.bind(this));
+                    .on('click', this.showGeneratorClick.bind(this))
+                    .on('mousedown', this.showGenerator.bind(this));
             }
         }
         Tip.hideTip(this.valueEl[0]);

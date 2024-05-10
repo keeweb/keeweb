@@ -28,7 +28,7 @@ class FieldViewSelect extends FieldView {
     render() {
         super.render();
         this.valueEl.addClass('details__field-value--select');
-        this.valueEl.find('select:first').change((e) => {
+        this.valueEl.find('select:first').on('change', (e) => {
             this.triggerChange({ val: e.target.value, field: this.model.name });
         });
     }

@@ -201,7 +201,7 @@ class ListView extends View {
             renderedItems.set(ix, el);
         }
 
-        const maxRenderedItems = visibleCount * 5;
+        const maxRenderedItems = visibleCount * 6;
 
         if (renderedItems.size > maxRenderedItems) {
             for (const [ix, el] of this.renderedItems) {
@@ -283,7 +283,7 @@ class ListView extends View {
     createTemplate() {
         if (!this.model.settings.templateHelpShown) {
             Alerts.yesno({
-                icon: 'sticky-note-o',
+                icon: 'note-sticky-o',
                 header: Locale.listAddTemplateHeader,
                 body:
                     Locale.listAddTemplateBody1.replace('{}', '"+"') +
@@ -397,7 +397,7 @@ class ListView extends View {
         const targetElRect = this.$el.find('.list__table-options')[0].getBoundingClientRect();
         const options = this.tableColumns.map((col) => ({
             value: col.val,
-            icon: col.enabled ? 'check-square-o' : 'square-o',
+            icon: col.enabled ? 'square-check-o' : 'square-o',
             text: StringFormat.capFirst(Locale[col.name])
         }));
         view.render({
@@ -420,7 +420,7 @@ class ListView extends View {
     optionsDropdownSelect(e) {
         const col = this.tableColumns.find((c) => c.val === e.item);
         col.enabled = !col.enabled;
-        e.el.find('i:first').toggleClass('fa-check-square-o fa-square-o');
+        e.el.find('i:first').toggleClass('fa-square-check fa-square-o');
         this.render();
         this.saveTableColumnsEnabled();
     }

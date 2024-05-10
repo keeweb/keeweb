@@ -31,6 +31,7 @@ class FieldView extends View {
                 Tip.hideTip(this.valueEl[0]);
             }
         });
+
         if (Features.isMobile) {
             this.listenTo(Events, 'click', this.bodyClick);
         }
@@ -39,6 +40,7 @@ class FieldView extends View {
     render() {
         this.value = typeof this.model.value === 'function' ? this.model.value() : this.model.value;
         const renderedValue = this.renderValue(this.value);
+
         super.render({
             cls: this.cssClass,
             editable: !this.readonly,
@@ -49,9 +51,11 @@ class FieldView extends View {
             protect: this.value && this.value.isProtected,
             hasOptions: !Features.isMobile && renderedValue && this.hasOptions
         });
+
         this.valueEl = this.$el.find('.details__field-value');
         this.valueEl.html(renderedValue);
         this.labelEl = this.$el.find('.details__field-label');
+
         if (this.model.tip) {
             this.tip = typeof this.model.tip === 'function' ? this.model.tip() : this.model.tip;
             if (this.tip) {
@@ -76,9 +80,11 @@ class FieldView extends View {
     fieldLabelClick(e) {
         e.stopImmediatePropagation();
         this.hideOptionsDropdown();
+
         if (this.preventCopy) {
             return;
         }
+
         if (AutoType.enabled && AppSettingsModel.fieldLabelDblClickAutoType) {
             if (this.fieldLabelClickTimer) {
                 clearTimeout(this.fieldLabelClickTimer);
@@ -86,6 +92,7 @@ class FieldView extends View {
                 this.emit('autotype', { source: this });
                 return;
             }
+
             this.fieldLabelClickTimer = setTimeout(() => {
                 this.copyValue();
                 this.fieldLabelClickTimer = null;
@@ -103,22 +110,27 @@ class FieldView extends View {
             if (!text) {
                 return;
             }
+
             if (!CopyPaste.simpleCopy) {
                 CopyPaste.createHiddenInput(text);
             }
+
             copyRes = CopyPaste.copy(text);
             this.emit('copy', { source: this, copyRes });
             return;
         }
+
         if (!this.value) {
             return;
         }
+
         const selection = window.getSelection();
         const range = document.createRange();
         range.selectNodeContents(this.valueEl[0]);
         selection.removeAllRanges();
         selection.addRange(range);
         copyRes = CopyPaste.copy(this.valueEl[0].innerText || this.valueEl.text());
+
         if (copyRes) {
             selection.removeAllRanges();
             this.emit('copy', { source: this, copyRes });
@@ -127,10 +139,13 @@ class FieldView extends View {
 
     fieldValueClick(e) {
         this.hideOptionsDropdown();
+
         if (['a', 'input', 'textarea'].indexOf(e.target.tagName.toLowerCase()) >= 0) {
             return;
         }
+
         const sel = window.getSelection().toString();
+
         if (!sel) {
             if (Features.isMobile) {
                 e.stopPropagation();
@@ -147,11 +162,14 @@ class FieldView extends View {
         if (!this.value) {
             return;
         }
+
         const dt = e.dataTransfer;
         const txtval = this.getTextValue();
+
         if (this.valueEl[0].tagName.toLowerCase() === 'a') {
             dt.setData('text/uri-list', txtval);
         }
+
         dt.setData('text/plain', txtval);
         dt.effectAllowed = 'copy';
     }
@@ -160,6 +178,7 @@ class FieldView extends View {
         if (this.readonly || this.editing) {
             return;
         }
+
         this.valueEl.removeClass('details__field-value--revealed');
         this.$el.addClass('details__field--edit');
         this.startEdit();
@@ -172,11 +191,15 @@ class FieldView extends View {
         if (!this.editing) {
             return;
         }
+
         this.editing = false;
+
         setTimeout(() => {
             this.preventCopy = false;
         }, 300);
+
         let textEqual;
+
         if (this.value && this.value.isProtected) {
             textEqual = this.value.equals(newVal);
         } else if (newVal && newVal.isProtected) {
@@ -186,14 +209,17 @@ class FieldView extends View {
         } else {
             textEqual = isEqual(this.value, newVal);
         }
+
         const protectedEqual =
             (newVal && newVal.isProtected) === (this.value && this.value.isProtected);
         if (!extra?.newField && this.model.newField) {
             extra ??= {};
             extra.newField = this.model.newField;
         }
+
         const nameChanged = extra && extra.newField;
         let arg;
+
         if (newVal !== undefined && (!textEqual || !protectedEqual || nameChanged)) {
             arg = { val: newVal, field: this.model.name };
             if (extra) {
@@ -202,9 +228,11 @@ class FieldView extends View {
         } else if (extra) {
             arg = extra;
         }
+
         if (arg) {
             this.triggerChange(arg);
         }
+
         this.valueEl
             .removeClass('details__field-value--revealed')
             .html(this.renderValue(this.value));
@@ -273,12 +301,15 @@ class FieldView extends View {
             case 'copy':
                 this.copyValue();
                 break;
+
             case 'reveal':
                 this.revealValue();
                 break;
+
             case 'hide':
                 this.hideValue();
                 break;
+
             case 'autotype':
                 this.emit('autotype', { source: this });
                 break;
@@ -301,9 +332,11 @@ class FieldView extends View {
         if (!this.mobileActionsEl) {
             return;
         }
+
         if (this.valueEl[0].contains(e.target) || this.mobileActionsEl[0].contains(e.target)) {
             return;
         }
+
         this.mobileActionsEl.remove();
         delete this.mobileActionsEl;
     }
@@ -312,11 +345,13 @@ class FieldView extends View {
         if (this.readonly) {
             return;
         }
+
         if (this.mobileActionsEl) {
             this.mobileActionsEl.remove();
             delete this.mobileActionsEl;
             return;
         }
+
         const left = this.valueEl.position().left;
         const width = this.$el.width() - left;
         const top = this.valueEl.height();
@@ -330,18 +365,21 @@ class FieldView extends View {
         if (this.value) {
             actions.push({ name: 'copy', icon: 'copy' });
         }
-        actions.push({ name: 'edit', icon: 'pencil-alt' });
+
+        actions.push({ name: 'edit', icon: 'pencil' });
         if (this.value instanceof kdbxweb.ProtectedValue) {
             actions.push({ name: 'reveal', icon: 'eye' });
         }
+
         if (this.model.canGen) {
             actions.push({ name: 'generate', icon: 'bolt' });
         }
+
         for (const action of actions) {
             $('<div></div>')
                 .addClass(`details__field-mobile-action fa fa-${action.icon}`)
                 .appendTo(mobileActionsEl)
-                .click(() => this.doMobileAction(action.name));
+                .on('click', () => this.doMobileAction(action.name));
         }
 
         this.mobileActionsEl = mobileActionsEl;
@@ -354,12 +392,15 @@ class FieldView extends View {
             case 'copy':
                 this.copyValue();
                 break;
+
             case 'edit':
                 this.edit();
                 break;
+
             case 'reveal':
                 this.revealValue();
                 break;
+
             case 'generate':
                 this.edit();
                 setTimeout(() => this.showGenerator(), 0);
@@ -371,6 +412,7 @@ class FieldView extends View {
         if (!this.value) {
             return '';
         }
+
         return this.value.isProtected ? this.value.getText() : this.value;
     }
 }

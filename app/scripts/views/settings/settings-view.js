@@ -7,9 +7,7 @@ import template from 'templates/settings/settings.hbs';
 
 class SettingsView extends View {
     parent = '.app__body';
-
     template = template;
-
     events = {
         'click .settings__back-button': 'returnToApp'
     };
@@ -28,27 +26,38 @@ class SettingsView extends View {
             scroller: this.$el.find('.scroller')[0],
             bar: this.$el.find('.scroller__bar')[0]
         });
+
         this.pageEl = this.$el.find('.scroller');
     }
 
     setPage(e) {
+        // eslint-disable-next-line prefer-const
         let { page, section, file } = e;
         if (page === 'file' && file && file.backend === 'otp-device') {
             page = 'file-otp-device';
         }
+
         const module = require('./settings-' + page + '-view');
         const viewName = StringFormat.pascalCase(page);
         const SettingsPageView = module[`Settings${viewName}View`];
+
         if (this.views.page) {
             this.views.page.remove();
         }
+
         this.views.page = new SettingsPageView(file, { parent: this.pageEl[0] });
         this.views.page.appModel = this.model;
         this.views.page.render();
         this.file = file;
         this.page = page;
         this.pageResized();
-        this.scrollToSection(section);
+
+        this.$el.scrollTop(0, 0);
+
+        // ensure section not null, otherwise scroll wont go directly to top
+        if (section !== null) {
+            this.scrollToSection(section);
+        }
     }
 
     scrollToSection(section) {
@@ -56,9 +65,11 @@ class SettingsView extends View {
         if (section) {
             scrollEl = this.views.page.el.querySelector(`#${section}`);
         }
+
         if (!scrollEl) {
             scrollEl = this.views.page.el.querySelector(`h1`);
         }
+
         if (scrollEl) {
             scrollEl.scrollIntoView(true);
         }

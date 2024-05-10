@@ -29,7 +29,7 @@
                                        class="settings__browser-extension-link icon-link"
                                        title="{{res 'setBrowserExtensionHelp'}}"
                                     >
-                                        <i class="fa fa-info-circle"></i>
+                                        <i class="fa fa-circle-info"></i>
                                     </a>
                                 {{else}}
                                     {{#if setting.supported}}
@@ -41,7 +41,7 @@
                                                data-extension="{{setting.alias}}" />
                                         <label for="check-enable-{{setting.alias}}-for-{{perBrowser.browser}}"></label>
                                     {{else}}
-                                        <i class="fa fa-times muted-color" title="{{res 'setBrowserExtensionNotSupported'}}"></i>
+                                        <i class="fa fa-x muted-color" title="{{res 'setBrowserExtensionNotSupported'}}"></i>
                                     {{/if}}
                                     {{#if setting.enabled}}
                                         {{#if setting.helpUrl}}
@@ -49,7 +49,7 @@
                                                class="settings__browser-extension-link icon-link"
                                                title="{{res 'setBrowserExtensionHelp'}}"
                                             >
-                                                <i class="fa fa-info-circle"></i>
+                                                <i class="fa fa-circle-info"></i>
                                             </a>
                                         {{/if}}
                                         {{#if setting.installUrl}}

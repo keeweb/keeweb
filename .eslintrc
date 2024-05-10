@@ -1,69 +1,117 @@
 {
-    "plugins": ["prettier", "import", "babel"],
-    "extends": ["standard", "eslint:recommended", "plugin:prettier/recommended"],
-    "rules": {
-        "semi": ["error", "always"],
-        "one-var": "off",
-        "space-before-function-paren": "off",
-        "no-throw-literal": "off",
-        "camelcase": ["error", { "properties": "always" }],
-        "no-console": "error",
-        "no-alert": "error",
-        "no-debugger": "error",
-        "prefer-arrow-callback": "error",
-        "object-property-newline": "off",
-        "no-useless-escape": "off",
-        "no-var": "error",
-        "prefer-const": "error",
-        "no-unused-expressions": "off",
-        "strict": ["error", "never"],
-        "no-mixed-operators": "off",
-        "prefer-promise-reject-errors": "off",
-        "standard/no-callback-literal": "off",
-        "object-curly-spacing": "off",
-        "quote-props": "off",
-        "no-new-object": "error",
-        "object-shorthand": "error",
-        "no-array-constructor": "error",
-        "array-callback-return": "error",
-        "no-eval": "error",
-        "no-new-func": "error",
-        "prefer-rest-params": "error",
-        "prefer-spread": "error",
-        "no-useless-constructor": "error",
-        "no-dupe-class-members": "error",
-        "no-duplicate-imports": "error",
-        "eqeqeq": "error",
-        "no-unneeded-ternary": "error",
-        "curly": "error",
-        "prettier/prettier": "error",
-        "no-empty": "off",
-        "no-restricted-syntax": [
-            "error",
-            {
-                "selector": "ExportDefaultDeclaration",
-                "message": "Prefer named exports"
-            }
-        ],
-        "import/no-webpack-loader-syntax": "off",
-        "import/no-relative-parent-imports": "error",
-        "import/first": "error",
-        "import/no-default-export": "error",
-        "babel/no-unused-expressions": "error",
-        "node/no-callback-literal": "off"
-    },
-    "parserOptions": {
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "impliedStrict": true
-        }
-    },
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "globals": {
-        "_": true,
-        "$": true
+      "_": true,
+      "$": true
     },
     "env": {
-        "browser": true
+      "browser": true,
+      "node": true,
+      "es6": true,
+      "jest": true,
+      "jquery": true
+    },
+    "parserOptions": {
+      "requireConfigFile": false,
+      "ecmaVersion": 6,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "arrowFunctions": true,
+        "binaryLiterals": true,
+        "blockBindings": true,
+        "classes": true,
+        "defaultParams": true,
+        "destructuring": true,
+        "forOf": true,
+        "generators": true,
+        "modules": true,
+        "objectLiteralComputedProperties": true,
+        "objectLiteralDuplicateProperties": true,
+        "objectLiteralShorthandMethods": true,
+        "objectLiteralShorthandProperties": true,
+        "octalLiterals": true,
+        "regexUFlag": true,
+        "regexYFlag": true,
+        "spread": true,
+        "superInFunctions": true,
+        "templateStrings": true,
+        "unicodeCodePointEscapes": true,
+        "globalReturn": true,
+        "jsx": true,
+        "experimentalObjectRestSpread": true
+      }
+    },
+    "plugins": [
+      "prettier",
+      "import",
+      "babel"
+    ],
+    "extends": [
+      "standard",
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
+    "rules": {
+      "semi": [
+        "off",
+        "off"
+      ],
+      "one-var": "off",
+      "space-before-function-paren": "off",
+      "no-throw-literal": "off",
+      "camelcase": [
+        "error",
+        {
+          "properties": "always"
+        }
+      ],
+      "no-console": "off",
+      "no-alert": "error",
+      "no-debugger": "error",
+      "prefer-arrow-callback": "error",
+      "object-property-newline": "off",
+      "no-useless-escape": "off",
+      "no-var": "error",
+      "prefer-const": "error",
+      "no-unused-expressions": "off",
+      "strict": [
+        "error",
+        "never"
+      ],
+      "no-mixed-operators": "off",
+      "prefer-promise-reject-errors": "off",
+      "standard/no-callback-literal": 0,
+      "object-curly-spacing": "off",
+      "quote-props": "off",
+      "no-new-object": "error",
+      "object-shorthand": "off",
+      "no-array-constructor": "error",
+      "array-callback-return": "error",
+      "no-eval": "error",
+      "no-new-func": "error",
+      "prefer-rest-params": "error",
+      "prefer-spread": "error",
+      "no-useless-constructor": "error",
+      "no-dupe-class-members": "error",
+      "no-duplicate-imports": "error",
+      "eqeqeq": "error",
+      "no-unneeded-ternary": "error",
+      "curly": "error",
+      "prettier/prettier": "error",
+      "no-empty": "off",
+      "no-restricted-syntax": [
+        "error",
+        {
+          "selector": "ExportDefaultDeclaration",
+          "message": "Prefer named exports"
+        }
+      ],
+      "import/no-webpack-loader-syntax": "off",
+      "import/no-relative-parent-imports": "error",
+      "import/first": "error",
+      "import/no-default-export": "error",
+      "babel/no-unused-expressions": "error",
+      "node/no-callback-literal": 0,
+      "n/no-callback-literal": 0
     }
-}
+  }

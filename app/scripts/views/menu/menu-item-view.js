@@ -183,7 +183,7 @@ class MenuItemView extends View {
         Alerts.yesno({
             header: Locale.menuEmptyTrashAlert,
             body: Locale.menuEmptyTrashAlertBody,
-            icon: 'minus-circle',
+            icon: 'circle-minus',
             success() {
                 Events.emit('empty-trash');
             }

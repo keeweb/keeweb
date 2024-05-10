@@ -273,7 +273,7 @@ class EntryModel extends Model {
     _getReferenceValue(fieldRefId, idStr) {
         const id = new Uint8Array(16);
         for (let i = 0; i < 16; i++) {
-            id[i] = parseInt(idStr.substr(i * 2, 2), 16);
+            id[i] = parseInt(idStr.slice(i * 2, i * 2 + 2), 16);
         }
         const uuid = new kdbxweb.KdbxUuid(id);
         const entry = this.file.getEntry(this.file.subId(uuid.id));
@@ -467,7 +467,6 @@ class EntryModel extends Model {
             if (otpUrl.isProtected) {
                 otpUrl = otpUrl.getText();
             }
-            // called only if secret provided, no formatted url
             if (Otp.isSecret(otpUrl.replace(/\s/g, ''))) {
                 otpUrl = Otp.makeUrl(otpUrl.replace(/\s/g, '').toUpperCase());
             } else if (otpUrl.toLowerCase().lastIndexOf('otpauth:', 0) !== 0) {

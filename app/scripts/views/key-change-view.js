@@ -68,7 +68,7 @@ class KeyChangeView extends View {
             this.keyFile = null;
             this.$el.find('.key-change__keyfile-name').empty();
         }
-        this.$el.find('.key-change__file').val(null).click();
+        this.$el.find('.key-change__file').val(null).trigger('click');
         this.inputEl.focus();
     }
 

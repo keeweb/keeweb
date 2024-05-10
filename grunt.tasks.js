@@ -1,25 +1,42 @@
 module.exports = function (grunt) {
     const sign = !grunt.option('skip-sign');
 
+    /*
+        copy:html           : copies /app/index.html to /tmp/index.html
+        copy:icons          : copies /app/icons to /dist/icons
+        copy:wallpapers     : copies /app/wallpapers .jpg to /tmp/wallpapers
+        copy:manifest       : copies /app/manifest json, xml to /tmp/
+        html-linkrel        : injects preloading into /tmp/index.html
+                              must be ran before other tasks modify /tmp/index.html and move it to /dist/
+        inline              : brings externally referenced resources, such as js, css and images, into a single file
+                              https://github.com/marcusklaas/grunt-inline-alt
+        csp-hashes          : adds SHA512 nonce hashes for CSP into /tmp/index.html, sends to /dist/index.html
+    */
+
     grunt.registerTask('build-web-app', [
         'clean',
         'eslint',
         'copy:html',
         'copy:icons',
+        'copy:wallpapers',
         'copy:manifest',
+        'htmlinkrel:images',
         'webpack:app',
         'inline',
+        'htmlinkrel:assets',
         'htmlmin',
         'csp-hashes',
         'copy:content-dist',
         'string-replace:service-worker',
         'string-replace:update-manifest',
         'copy:dist-icons',
+        'copy:dist-wallpapers',
         'copy:dist-manifest'
     ]);
 
     grunt.registerTask('build-desktop-app-content', [
         'copy:desktop-html',
+        'copy:desktop-html-wallpaper',
         'copy:desktop-app-content',
         'string-replace:desktop-public-key'
     ]);

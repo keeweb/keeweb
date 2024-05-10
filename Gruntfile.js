@@ -1,12 +1,13 @@
-/* eslint-env node */
-
 const fs = require('fs-extra');
 const path = require('path');
 const { execSync } = require('child_process');
 const debug = require('debug');
+const chalk = require('chalk'); // requires chalk v4 for non ESM modules. v5 does not have require.
+const { v5: pkgUuid } = require('uuid');
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
+const serialHooks = require('electron-packager/src/hooks').serialHooks;
 const pkg = require('./package.json');
 
 debug.enable('electron-notarize');
@@ -21,7 +22,12 @@ module.exports = function (grunt) {
     require('./grunt.entrypoints')(grunt);
 
     const date = new Date();
+    const guid = pkgUuid(`${pkg.repository.url}`, pkgUuid.URL);
+    const uuid = pkgUuid(pkg.version, guid);
+
     grunt.config.set('date', date);
+    grunt.config.set('guid', guid);
+    grunt.config.set('uuid', uuid);
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
@@ -46,6 +52,7 @@ module.exports = function (grunt) {
 
     const webpackOptions = {
         date,
+        guid,
         beta: !!grunt.option('beta'),
         sha,
         appleTeamId: '3LE7JZ657W'
@@ -86,6 +93,12 @@ module.exports = function (grunt) {
         'libatspi2.0-0'
     ];
 
+    const appConfig = webpackConfig({
+        ...webpackOptions,
+        mode: 'development',
+        sha: 'dev'
+    });
+
     grunt.initConfig({
         noop: { noop: {} },
         clean: {
@@ -119,6 +132,20 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
+            wallpapers: {
+                cwd: 'app/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'tmp/wallpapers/',
+                expand: true,
+                nonull: true
+            },
+            'dist-wallpapers': {
+                cwd: 'app/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'dist/wallpapers/',
+                expand: true,
+                nonull: true
+            },
             manifest: {
                 cwd: 'app/manifest/',
                 src: ['*.json', '*.xml'],
@@ -138,6 +165,13 @@ module.exports = function (grunt) {
                 dest: 'tmp/desktop/app/index.html',
                 nonull: true
             },
+            'desktop-html-wallpaper': {
+                cwd: 'dist/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'tmp/desktop/app/wallpapers/',
+                expand: true,
+                nonull: true
+            },
             'desktop-app-content': {
                 cwd: 'desktop/',
                 src: ['**', '!package-lock.json'],
@@ -148,8 +182,7 @@ module.exports = function (grunt) {
             'desktop-darwin-installer-helper-x64': {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
@@ -157,8 +190,7 @@ module.exports = function (grunt) {
             'desktop-darwin-installer-helper-arm64': {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
+                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
@@ -229,47 +261,40 @@ module.exports = function (grunt) {
                 nonull: true
             },
             'native-messaging-host-darwin-x64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-darwin-arm64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-linux-x64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
                 dest: 'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-win32-x64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-ia32': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-arm64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe',
                 nonull: true
             }
         },
+
         eslint: {
             app: ['app/scripts/**/*.js'],
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
@@ -278,12 +303,105 @@ module.exports = function (grunt) {
             util: ['util/**/*.js'],
             installer: ['package/osx/installer.js']
         },
+
         inline: {
             app: {
                 src: 'tmp/index.html',
                 dest: 'tmp/app.html'
             }
         },
+
+        /*
+            HTML Link Rel
+
+            used primarily for preloading
+
+            rel         : alternate, canonical, author, bookmark, dns-prefetch, expect,
+                          external, help, icon, manifest, modulepreload, license, next,
+                          nofollow, noopener, noreferrer, opener, pingback, preconnect,
+                          prefetch, preload, prev, privacy-policy, search, stylesheet,
+                          tag, terms-of-service
+
+            as          : fetch, font, image, script, style, track
+
+            type        : image/webp, image/jpeg, image/png, image/x-icon, font/ttf, font/woff2, text/css
+                          application/rss+xml, application/json
+
+            cors        : defines how to handle crossorigin requests. Setting the crossorigin attribute
+                          (equivalent to crossorigin="anonymous") will switch the request to a CORS
+                          request using the same-origin policy. It is required on the rel="preload" as
+                          font requests require same-origin policy.
+
+                          An invalid keyword and an empty string will be handled as the anonymous keyword.
+
+                          specifying 'true' will be the same as 'anonymous' / "".
+
+                          > anonymous
+                            Request uses CORS headers and credentials flag is set to 'same-origin'.
+                            There is no exchange of user credentials via cookies, client-side TLS
+                            certificates or HTTP authentication, unless destination is the same origin.
+
+                          > use-credentials
+                            Request uses CORS headers, credentials flag is set to 'include' and user
+                            credentials are always included.
+
+                          > ""
+                            Setting the attribute name to an empty value, like crossorigin or
+                            crossorigin="", is the same as anonymous.
+
+        */
+
+        'htmlinkrel': {
+            'images': {
+                options: {
+                    replacements: [
+                        {
+                            name: 'Preload: Wallpapers',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_IMAGES}}-->/,
+                            hrefPath: 'wallpapers',
+                            searchPath: 'app/wallpapers',
+                            as: 'image',
+                            type: 'image/jpeg',
+                            cors: 'anonymous'
+                        }
+                    ],
+                    app: [
+                        {
+                            src: 'tmp/index.html'
+                        }
+                    ]
+                }
+            },
+            'assets': {
+                options: {
+                    replacements: [
+                        {
+                            name: 'Preload: CSS',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_CSS}}-->/,
+                            hrefPath: 'css/app.css',
+                            as: 'style',
+                            cors: false
+                        },
+                        {
+                            name: 'Preload: Javascript',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_JS}}-->/,
+                            hrefPath: 'js/app.js',
+                            as: 'script',
+                            cors: false
+                        }
+                    ],
+                    app: [
+                        {
+                            src: 'tmp/index.html'
+                        }
+                    ]
+                }
+            }
+        },
+
         'csp-hashes': {
             options: {
                 algo: 'sha512',
@@ -297,6 +415,7 @@ module.exports = function (grunt) {
                 dest: 'dist/index.html'
             }
         },
+
         htmlmin: {
             options: {
                 removeComments: true,
@@ -308,6 +427,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'string-replace': {
             'update-manifest': {
                 options: {
@@ -319,6 +439,10 @@ module.exports = function (grunt) {
                         {
                             pattern: /"date":\s*".*?"/,
                             replacement: `"date": "${dt}"`
+                        },
+                        {
+                            pattern: /"guid":\s*".*?"/,
+                            replacement: `"guid": "${guid}"`
                         }
                     ]
                 },
@@ -347,29 +471,72 @@ module.exports = function (grunt) {
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
             }
         },
+
         webpack: {
-            app: webpackConfig.config(webpackOptions),
+            app: webpackConfig(webpackOptions),
             test: webpackConfigTest
         },
+
         'webpack-dev-server': {
-            options: {
-                webpack: webpackConfig.config({
-                    ...webpackOptions,
-                    mode: 'development',
-                    sha: 'dev'
-                }),
-                publicPath: '/',
-                contentBase: [
-                    path.resolve(__dirname, 'tmp'),
-                    path.resolve(__dirname, 'app/content')
-                ],
-                progress: false
-            },
-            js: {
-                keepalive: true,
-                port: 8085
+            options: appConfig,
+            start: {
+                devServer: {
+                    setupMiddlewares: function (middlewares, devServer) {
+                        const port = devServer.options.port;
+                        const https = devServer.options.https ? 's' : '';
+
+                        const domain1 = `http${https}://${devServer.options.host}:${port}`;
+                        const domain2 = `http://[::1]:${port}`;
+
+                        grunt.log.writeln(
+                            `\n---------------------------------------------------------------------`
+                                .grey.bold
+                        );
+                        grunt.log.writeln(
+                            `  KeeWeb server succesfully started! Access it at:\n`.yellow.bold
+                        );
+                        grunt.log.writeln(`       → ${domain1}`.green.bold);
+                        grunt.log.writeln(`       → ${domain2}`.green.bold);
+                        grunt.log.writeln(
+                            `---------------------------------------------------------------------\n\n`
+                                .grey.bold
+                        );
+
+                        return middlewares;
+                    },
+                    port: 8085,
+                    client: {
+                        logging: 'error',
+                        overlay: true
+                    },
+                    hot: 'only',
+                    static: [
+                        /*
+                            publicPath: ['/static-public-path-one/', '/static-public-path-two/'],
+                            serveIndex: {}
+                                https://github.com/expressjs/serve-index
+                            watch: {}
+                                https://github.com/paulmillr/chokidar
+                        */
+
+                        {
+                            directory: path.resolve(__dirname, 'tmp'),
+                            staticOptions: {},
+                            serveIndex: true,
+                            watch: true
+                        },
+                        {
+                            directory: path.resolve(__dirname, 'app/content'),
+                            staticOptions: {},
+                            publicPath: '/',
+                            serveIndex: true,
+                            watch: true
+                        }
+                    ]
+                }
             }
         },
+
         electron: {
             options: {
                 name: 'KeeWeb',
@@ -380,7 +547,45 @@ module.exports = function (grunt) {
                 asar: true,
                 appCopyright: `Copyright © ${year} Antelle`,
                 appVersion: pkg.version,
-                buildVersion: sha
+                buildVersion: sha,
+                extraResource: path.join(__dirname, 'app/wallpapers'),
+                afterExtract: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            const pathWallpapersTo = path.join(buildPath, 'wallpapers/');
+                            grunt.log.writeln(
+                                chalk.green(`Electron → Extract Complete →`),
+                                chalk.yellow(buildPath)
+                            );
+                            fs.copySync('./app/wallpapers', pathWallpapersTo);
+
+                            grunt.log.writeln(
+                                chalk.green(`Electron → Moving Wallpapers →`),
+                                chalk.yellow(pathWallpapersTo)
+                            );
+                        }
+                    ])
+                ],
+                afterCopy: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            grunt.log.writeln(
+                                chalk.green(`Electron → Copy Complete →`),
+                                chalk.yellow(buildPath)
+                            );
+                        }
+                    ])
+                ],
+                afterPrune: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            grunt.log.writeln(
+                                chalk.green(`Electron → Prune Complete →`),
+                                chalk.yellow(buildPath)
+                            );
+                        }
+                    ])
+                ]
             },
             linux: {
                 options: {
@@ -438,6 +643,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'electron-builder': {
             linux: {
                 options: {
@@ -472,6 +678,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'electron-patch': {
             'win32-x64': 'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe',
             'win32-ia32': 'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe',
@@ -480,6 +687,7 @@ module.exports = function (grunt) {
             'darwin-arm64': 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app',
             'linux': 'tmp/desktop/KeeWeb-linux-x64/keeweb'
         },
+
         osacompile: {
             options: {
                 language: 'JavaScript'
@@ -490,6 +698,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         compress: {
             options: {
                 level: 6
@@ -514,6 +723,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
+
         appdmg: {
             x64: {
                 options: appdmgOptions('x64'),
@@ -524,6 +734,7 @@ module.exports = function (grunt) {
                 dest: `dist/desktop/KeeWeb-${pkg.version}.mac.arm64.dmg`
             }
         },
+
         nsis: {
             options: {
                 vars: {
@@ -575,6 +786,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         chmod: {
             'linux-desktop-x64': {
                 options: {
@@ -583,6 +795,7 @@ module.exports = function (grunt) {
                 src: ['tmp/desktop/keeweb-linux-x64/chrome-sandbox']
             }
         },
+
         deb: {
             options: {
                 tmpPath: 'tmp/desktop/',
@@ -625,6 +838,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
+
         'osx-sign': {
             options: {
                 get identity() {
@@ -651,6 +865,7 @@ module.exports = function (grunt) {
                 src: 'tmp/desktop/KeeWeb Installer.app'
             }
         },
+
         notarize: {
             options: {
                 appBundleId: 'net.antelle.keeweb',
@@ -669,6 +884,7 @@ module.exports = function (grunt) {
                 src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
             }
         },
+
         'sign-exe': {
             options: {
                 url: pkg.homepage,
@@ -764,6 +980,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'sign-dist': {
             dist: {
                 options: {
@@ -774,12 +991,14 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'run-test': {
             options: {
-                headless: true
+                headless: 'new'
             },
             default: 'test/runner.html'
         },
+
         virustotal: {
             options: {
                 prefix: `keeweb.v${pkg.version}-${sha}.`,

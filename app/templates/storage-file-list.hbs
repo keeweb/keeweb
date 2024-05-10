@@ -15,7 +15,7 @@
                 {{#each files as |file|}}
                     {{#unless file.dir}}
                     <div class="open-list__file {{#unless file.kdbx}}open-list__file--another{{/unless}}" data-path="{{file.path}}">
-                        <i class="open-list__file-icon fa fa-{{#if file.kdbx}}keeweb{{else}}file-alt-o{{/if}}"></i>
+                        <i class="open-list__file-icon fa fa-{{#if file.kdbx}}keeweb{{else}}file-lines-o{{/if}}"></i>
                         <span class="open-list__file-text">{{file.name}}</span>
                     </div>
                     {{/unless}}

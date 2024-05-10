@@ -202,7 +202,7 @@ async function checkContentRequestPermissions(request) {
     try {
         await alertWithTimeout({
             header: Locale.extensionConnectHeader,
-            icon: 'exchange-alt',
+            icon: 'right-left',
             buttons: [Alerts.buttons.allow, Alerts.buttons.deny],
             view: extensionConnectView,
             wide: true,
@@ -370,6 +370,7 @@ const ProtocolHandlers = {
     },
 
     'change-public-keys'(request, connection) {
+        // eslint-disable-next-line prefer-const
         let { publicKey, version, clientID: clientId } = request;
 
         if (connectedClients.has(clientId)) {

@@ -30,7 +30,7 @@ const DefaultAppSettings = {
     hideEmptyFields: false, // hide empty fields in entries
     skipHttpsWarning: false, // disable the non-HTTPS warning
     demoOpened: false, // hide the demo button inside the More... menu
-    fontSize: 0, // font size: 0, 1, 2
+    fontSize: 1, // font size: 0, 1, 2, 3
     tableViewColumns: null, // columns displayed in the table view
     generatorPresets: null, // presets used in the password generator
     generatorHidePassword: false, // hide password in the generator
@@ -39,6 +39,7 @@ const DefaultAppSettings = {
     useGroupIconForEntries: false, // automatically use group icon when creating new entries
     enableUsb: true, // enable interaction with USB devices
     fieldLabelDblClickAutoType: false, // trigger auto-type by doubleclicking field label
+    revealPassword: false, // reveal passwords when opening vault
     auditPasswords: true, // enable password audit
     auditPasswordEntropy: true, // show warnings for weak passwords
     excludePinsFromAudit: true, // exclude PIN codes from audit

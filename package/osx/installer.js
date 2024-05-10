@@ -58,6 +58,7 @@ if (args.update) {
         args.verbose ? 'echo cleaning tmp dir...' : '',
         'rm -rf ' + tmpDir
     ];
+
     var scriptOptions = {};
     if (runAsAdmin) {
         scriptOptions.administratorPrivileges = true;
@@ -66,6 +67,7 @@ if (args.update) {
             script.push('chown -R 0 ' + target);
         }
     }
+
     if (args.verbose) script.push('echo launching the app...');
     script.push('open ' + target);
     script = script.join('\n');
@@ -123,6 +125,7 @@ function waitForExitOrKill(pid, verbose) {
         }
         delay(1);
     }
+
     try {
         if (verbose) console.log('killing process');
         app.doShellScript('kill ' + pid);
@@ -135,13 +138,16 @@ function checkFilePath(path, ext) {
     if (!path) {
         throw 'File not specified: ' + ext;
     }
-    if (path.substr(-(ext.length + 1)) !== '.' + ext) {
+
+    if (path.slice(-(ext.length + 1)) !== '.' + ext) {
         throw 'Bad file extension: ' + ext + ' (' + path + ')';
     }
+
     var file = Application('System Events').files.byName(path);
     if (!file.exists()) {
         throw "File doesn't exist: " + ext + ' (' + path + ')';
     }
+
     return file.posixPath().replace(/ /g, '\\ ');
 }
 

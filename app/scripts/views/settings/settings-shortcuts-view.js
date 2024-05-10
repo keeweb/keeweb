@@ -72,7 +72,7 @@ class SettingsShortcutsView extends View {
         }
 
         shortcutEditor.insertAfter($(e.target).parent());
-        shortcutEditorInput.focus();
+        shortcutEditorInput.trigger('focus');
         shortcutEditorInput.on('keypress', (e) => e.preventDefault());
         shortcutEditorInput.on('keydown', (e) => {
             e.preventDefault();
@@ -84,7 +84,7 @@ class SettingsShortcutsView extends View {
                 return;
             }
             if (e.which === Keys.DOM_VK_ESCAPE) {
-                shortcutEditorInput.blur();
+                shortcutEditorInput.trigger('blur');
                 return;
             }
 

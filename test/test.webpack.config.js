@@ -1,7 +1,7 @@
 const path = require('path');
 const webpackConfig = require('../build/webpack.config');
 
-const appConfig = webpackConfig.config({
+const appConfig = webpackConfig({
     mode: 'development',
     date: new Date(),
     sha: 'tests'

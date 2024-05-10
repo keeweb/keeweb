@@ -1,0 +1,260 @@
+name: "🧰 Tests"
+run-name: "🧰 Tests"
+
+on:
+    push:
+        branches:
+        - 'main'
+        - 'master'
+        - 'develop'
+        - 'development'
+        - '!all-contributors/**'
+
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+
+    # ---------------------------------------------------------------------------------------
+    #   JOB > INITIALIZE
+    # ---------------------------------------------------------------------------------------
+
+    job-initialize-run:
+        name: >-
+            💡 Initialize
+        runs-on: ubuntu-latest
+        outputs:
+          package_version: ${{ steps.task_initialize_package_getversion.outputs.PACKAGE_VERSION }}
+        permissions:
+            contents: write
+            packages: write
+        steps:
+
+          - name: "✅ Start"
+            id: task_initialize_start
+            run: |
+                  echo "Starting build"
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > Checkout
+          # ---------------------------------------------------------------------------------------
+
+          - name: "☑️ Checkout"
+            id: task_lint_run_checkout
+            uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > Setup Node
+          # ---------------------------------------------------------------------------------------
+
+          - name: "⚙️ Setup Node"
+            id: task_lint_node_setup
+            uses: actions/setup-node@v4
+            with:
+              node-version-file: '.nvmrc'
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > NPM Install
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🕛 NPM › Clean Install"
+            id: task_lint_npm_install
+            run: |
+              npm ci
+
+          # ---------------------------------------------------------------------------------------
+          #   Get version from package.json VERSION value
+          # ---------------------------------------------------------------------------------------
+
+          - name: "👁️‍🗨️ Get Package Version"
+            id: task_initialize_package_getversion
+            run: |
+              VER=$(cat package.json | jq -r '.version')
+              echo "PACKAGE_VERSION=$VER" >> $GITHUB_OUTPUT
+
+          - name: "👁️‍🗨️ Found KeeWeb v${{ steps.task_initialize_package_getversion.outputs.PACKAGE_VERSION }}"
+            id: task_initialize_package_getversion_debug
+            run: |
+              echo Found KeeWeb ${{ steps.task_initialize_package_getversion.outputs.PACKAGE_VERSION }}
+
+          # ---------------------------------------------------------------------------------------
+          #   generate guid and uuid
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🪪 .ENV › Generate"
+            id: task_initialize_npm_env_generate
+            continue-on-error: true
+            run: |
+              npm run keeweb:generate
+
+          # ---------------------------------------------------------------------------------------
+          #   assign guid and uuid to env variable
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🪪 .ENV › Get"
+            id: task_initialize_dotenv_get
+            if: steps.task_initialize_npm_env_generate.outcome == 'success'
+            uses: falti/dotenv-action@v1
+
+          # ---------------------------------------------------------------------------------------
+          #   read back guid and uuid
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🪪 .ENV › Read"
+            id: task_dotenv_debug_print
+            if: steps.task_initialize_npm_env_generate.outcome == 'success'
+            run: |
+              echo "VER: ${{ steps.task_initialize_dotenv_get.outputs.VERSION }}"
+              echo "GUID: ${{ steps.task_initialize_dotenv_get.outputs.GUID }}"
+              echo "UUID: ${{ steps.task_initialize_dotenv_get.outputs.UUID }}"
+
+    # ---------------------------------------------------------------------------------------
+    #   JOB > LINT
+    # ---------------------------------------------------------------------------------------
+
+    job-lint-run:
+        name: >-
+            📚 Lint
+        runs-on: ubuntu-latest
+        needs: [ job-initialize-run ]
+        env:
+          PACKAGE_VERSION: ${{ needs.job-initialize-run.outputs.package_version }}
+        steps:
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > Checkout
+          # ---------------------------------------------------------------------------------------
+
+          - name: "☑️ Checkout"
+            id: task_lint_run_checkout
+            uses: actions/checkout@v4
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > Setup Node
+          # ---------------------------------------------------------------------------------------
+
+          - name: "⚙️ Setup Node"
+            id: task_lint_node_setup
+            uses: actions/setup-node@v4
+            with:
+              node-version-file: '.nvmrc'
+              registry-url: https://registry.npmjs.org/
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > NPM Install
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🕛 NPM › Clean Install"
+            id: task_lint_npm_install
+            run: |
+              npm set registry=https://registry.npmjs.org/
+              npm ci
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > Run
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🕞 NPM › Lint"
+            id: task_lint_npm_lint
+            run: |
+              npm run lint
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > Generate Coverage
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🕘 NPM › Coverage"
+            id: task_lint_npm_coverage
+            if: always()
+            run: |
+              npm run coverage
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Lint > Upload Coverage to Codecov
+          # ---------------------------------------------------------------------------------------
+
+          - name: "📝 Upload Coverage Reports › Codecov"
+            id: task_lint_codecov_upload
+            if: steps.task_lint_npm_coverage.outcome == 'success'
+            uses: codecov/codecov-action@v4.0.1
+            with:
+                token: ${{ secrets.CODECOV_TOKEN }}
+                slug: keeweb/keeweb
+
+    # ---------------------------------------------------------------------------------------
+    #   JOB > TESTS
+    # ---------------------------------------------------------------------------------------
+
+    job-tests-run:
+        name: >-
+            🧪 Tests
+        runs-on: ubuntu-latest
+        needs: [ job-initialize-run ]
+        env:
+          PACKAGE_VERSION: ${{ needs.job-initialize-run.outputs.package_version }}
+        steps:
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Tests > Fix Line Endings
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🛒 Fix Git Checkout Line Endings"
+            id: task_tests_git-fixlines
+            run: |
+              git config --global core.autocrlf input
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Tests > Checkout
+          # ---------------------------------------------------------------------------------------
+
+          - name: "☑️ Checkout"
+            id: task_tests_run_checkout
+            uses: actions/checkout@v4
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Tests > Setup Node
+          # ---------------------------------------------------------------------------------------
+
+          - name: "⚙️ Setup Node"
+            id: task_tests_node_setup
+            uses: actions/setup-node@v4
+            with:
+              node-version-file: '.nvmrc'
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Tests > NPM Install
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🕛 NPM › Clean Install"
+            id: task_tests_npm_install
+            run: |
+              npm ci
+
+          # ---------------------------------------------------------------------------------------
+          #   Job > Tests > Run Lint
+          # ---------------------------------------------------------------------------------------
+
+          - name: "🕘 NPM › Lint"
+            id: task_tests_npm_lint
+            run: |
+              npm run test
+
+    # ---------------------------------------------------------------------------------------
+    #   JOB > COMPLETE
+    # ---------------------------------------------------------------------------------------
+
+    job-complete-run:
+        name: >-
+            ✅ Complete
+        runs-on: ubuntu-latest
+        needs: [ job-initialize-run, job-lint-run, job-tests-run ]
+        env:
+          PACKAGE_VERSION: ${{ needs.job-initialize-run.outputs.package_version }}
+        steps:
+
+            - name: "☑️ Tests Complete"
+              id: task_tests_complete
+              run: |
+                echo 'Linting and tests successfully completed for KeeWeb ${{ env.PACKAGE_VERSION }}'

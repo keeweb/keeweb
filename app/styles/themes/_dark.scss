@@ -9,7 +9,14 @@ $themes: map-merge(
                     medium-color: #b7b7b8,
                     text-color: #f7f7f7,
                     action-color: #317ef6,
-                    error-color: #ec655a
+                    error-color: #ec655a,
+                    h1-color: #e0e0e0,
+                    h2-color: #616161,
+                    h3-color: #616161,
+                    h4-color: #616161,
+                    h5-color: #616161,
+                    h6-color: #616161,
+                    hr-color: #363636
                 )
             )
     )
@@ -24,7 +31,260 @@ body.th-dark {
     --selected-item-color: #2463c8;
     --selected-on-secondary-item-color: #403f40;
 
-    .list__item--active .blue-color {
-        color: #689ff7;
-    }
+    /*!
+        Markdown Viewer
+    */
+
+    --md-title-color: #4d4d4d;
+    --md-icon-color: #ec655a;
+    --md-text-color: #c4c4c4;
+    --md-header-border: 1px dashed #585858;
+    --md-header-title-align: right;
+    --md-header-return-align: right;
+
+    --md-h1-color: #646464;
+    --md-h2-color: #EF5471;
+    --md-h3-color: #565656;
+    --md-h4-color: #BD1E55;
+    --md-h5-color: #565656;
+    --md-h6-color: #565656;
+    --md-h1-text-transform: normal;
+    --md-h2-text-transform: normal;
+    --md-h3-text-transform: normal;
+    --md-h4-text-transform: normal;
+    --md-h5-text-transform: uppercase;
+    --md-h6-text-transform: uppercase;
+    --md-h1-text-weight: lighter;
+    --md-h2-text-weight: normal;
+    --md-h3-text-weight: normal;
+    --md-h4-text-weight: normal;
+    --md-h5-text-weight: normal;
+    --md-h6-text-weight: normal;
+
+    --md-hx-link-weight: lighter;
+    --md-hx-link-align: super;
+
+    --md-link-n-color: #6e70cf;
+    --md-link-h-color: #FFFFFF;
+    --md-link-decorator-color: #6260c4;
+
+    --md-paragraph-spacing-start: 1;
+    --md-paragraph-spacing-end: 2;
+    --md-ul-indent: 2;
+    --md-ul-spacing-start: 1;
+    --md-ul-spacing-end: 1;
+    --md-ul-text-weight: lighter;
+
+    --md-accent-em-color: #E0DB92;
+    --md-strong-em-color-1: #43D3FF;
+    --md-strong-em-color-2: #BAAAFF;
+    --md-accent-strong-color: #FF7190;
+    --md-accent-abbr-color: #c2c2c2;
+    --md-accent-abbr-line-color: #6260c4;
+    --md-accent-strike-text-color: rgba(255, 255, 255, 0.3);
+    --md-accent-strike-line-color: rgba(255, 255, 255, 1);
+
+    --md-code-block-text-color: #dbdbdb;
+    --md-code-block-text-weight: bold;
+    --md-code-block-accent-style: 6px solid #2463c8;;
+    --md-code-inline-text-color: #F3945E;
+    --md-code-inline-text-weight: bolder;
+    --md-code-bg-color: #312f2f;
+
+    --md-table-head-bg-color: #b10f52;
+    --md-table-body-bg-color: #110f0f;
+    --md-table-head-text-color: #FFFFFF;
+    --md-table-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 0.17);
+    --md-table-body-left-color: hsla(var(--md-hue), 0%, 0%, 0.45);
+    --md-table-text-left-color: #FFFFFF;
+    --md-table-text-right-color: #FFFFFF;
+    --md-table-border-rows-color: hsla(var(--md-hue), 15%, 95%, 0.12);
+    --md-table-border-outside-color: #222222;
+
+    --md-blockquote-text-color: #adadad;
+    --md-blockquote-text-style: italic;
+    --md-blockquote-body-bg-color: #9191911c;
+    --md-blockquote-accent-color: #DD1862;
+    --md-blockquote-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 30%, 0.75);
+
+    --md-hr-color-1: #84143B;
+    --md-hr-color-4: #84143B;
+    --md-hr-color-2: #CF2460;
+    --md-hr-color-3: #CF2460;
+
+    --md-alert-note-color: #539bf5;
+    --md-alert-tip-color: #57ab5a;
+    --md-alert-important-color: #986ee2;
+    --md-alert-warning-color: #c69026;
+    --md-alert-caution-color: #e5534b;
+    --md-alert-bg-color: #2c2c2c;
+    --md-alert-border-style: 4px solid #444c56;;
+
+    --md-checkbox-bg-unchecked-color: #3a3a3a;
+    --md-checkbox-border-unchecked-color: #4e4e4e;
+    --md-checkbox-bg-checked-color: #7181D3;
+    --md-checkbox-bg-hover-color: #449b4b;
+    --md-checkbox-border-hover-color: #FFFFFF;
+
+    --md-footnote-opacity-full: 1;
+    --md-footnote-opacity-min: 0.4;
+
+    /*!
+        General
+    */
+
+        .list__item--active .blue-color {
+            color: #689ff7;
+        }
+
+    /*!
+        primary window div
+
+        this will determine how your markdown file is viewed.
+    */
+
+        .markdown {
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    /*!
+        Syntax Highlighting
+
+        These colors are taken from highlight.js.
+        to change the theme or create your own theme, you can find the highlighter themes at:
+            https://github.com/highlightjs/highlight.js/tree/main/src/styles
+
+        Theme Viewer:
+            https://highlightjs.org/demo
+
+        @theme  : github-dark.css
+    */
+
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1em
+        }
+
+        code.hljs {
+            padding: 3px 5px
+        }
+
+        .hljs {
+            color: #adbac7;
+            background: #22272e
+        }
+
+        .hljs-doctag,
+        .hljs-keyword,
+        .hljs-meta .hljs-keyword,
+        .hljs-template-tag,
+        .hljs-template-variable,
+        .hljs-type,
+        .hljs-variable.language_ {
+            /* prettylights-syntax-keyword */
+            color: #f47067
+        }
+
+        .hljs-title,
+        .hljs-title.class_,
+        .hljs-title.class_.inherited__,
+        .hljs-title.function_ {
+            /* prettylights-syntax-entity */
+            color: #dcbdfb
+        }
+
+        .hljs-attr,
+        .hljs-attribute,
+        .hljs-literal,
+        .hljs-meta,
+        .hljs-number,
+        .hljs-operator,
+        .hljs-variable,
+        .hljs-selector-attr,
+        .hljs-selector-class,
+        .hljs-selector-id {
+            /* prettylights-syntax-constant */
+            color: #6cb6ff
+        }
+
+        .hljs-regexp,
+        .hljs-string,
+        .hljs-meta .hljs-string {
+            /* prettylights-syntax-string */
+            color: #96d0ff
+        }
+
+        .hljs-built_in,
+        .hljs-symbol {
+            /* prettylights-syntax-variable */
+            color: #f69d50
+        }
+
+        .hljs-comment,
+        .hljs-code,
+        .hljs-formula {
+            /* prettylights-syntax-comment */
+            color: #768390
+        }
+
+        .hljs-name,
+        .hljs-quote,
+        .hljs-selector-tag,
+        .hljs-selector-pseudo {
+            /* prettylights-syntax-entity-tag */
+            color: #8ddb8c
+        }
+
+        .hljs-subst {
+            /* prettylights-syntax-storage-modifier-import */
+            color: #adbac7
+        }
+
+        .hljs-section {
+            /* prettylights-syntax-markup-heading */
+            color: #316dca;
+            font-weight: bold
+        }
+
+        .hljs-bullet {
+            /* prettylights-syntax-markup-list */
+            color: #eac55f
+        }
+
+        .hljs-emphasis {
+            /* prettylights-syntax-markup-italic */
+            color: #adbac7;
+            font-style: italic
+        }
+
+        .hljs-strong {
+            /* prettylights-syntax-markup-bold */
+            color: #adbac7;
+            font-weight: bold
+        }
+
+        .hljs-addition {
+            /* prettylights-syntax-markup-inserted */
+            color: #b4f1b4;
+            background-color: #1b4721
+        }
+
+        .hljs-deletion {
+            /* prettylights-syntax-markup-deleted */
+            color: #ffd8d3;
+            background-color: #78191b
+        }
+
+        .hljs-char.escape_,
+        .hljs-link,
+        .hljs-params,
+        .hljs-property,
+        .hljs-punctuation,
+        .hljs-tag {
+            /* purposely ignored */
+        }
+
 }

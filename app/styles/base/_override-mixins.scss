@@ -1,5 +1,8 @@
 @charset "UTF-8";
 
+// built in modules
+@use 'sass:math';
+
 // Copied from bourbon/core/bourbon/library/_triangle.scss
 // Disabled is-color because it doesn't work with CSS variables
 
@@ -49,25 +52,25 @@
 
         @if $direction == 'up' {
             border-color: transparent transparent $color;
-            border-width: 0 ($width / 2) $height;
+            border-width: 0 math.div($width, 2) $height;
         } @else if $direction == 'up-right' {
             border-color: transparent $color transparent transparent;
             border-width: 0 $width $width 0;
         } @else if $direction == 'right' {
             border-color: transparent transparent transparent $color;
-            border-width: ($height / 2) 0 ($height / 2) $width;
+            border-width: math.div($height, 2) 0 math.div($height, 2) $width;
         } @else if $direction == 'down-right' {
             border-color: transparent transparent $color;
             border-width: 0 0 $width $width;
         } @else if $direction == 'down' {
             border-color: $color transparent transparent;
-            border-width: $height ($width / 2) 0;
+            border-width: $height math.div($width, 2) 0;
         } @else if $direction == 'down-left' {
             border-color: transparent transparent transparent $color;
             border-width: $width 0 0 $width;
         } @else if $direction == 'left' {
             border-color: transparent $color transparent transparent;
-            border-width: ($height / 2) $width ($height / 2) 0;
+            border-width: math.div($height, 2) $width math.div($height, 2) 0;
         } @else if $direction == 'up-left' {
             border-color: $color transparent transparent;
             border-width: $width $width 0 0;

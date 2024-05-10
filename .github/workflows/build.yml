@@ -13,20 +13,25 @@ jobs:
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
+
       - name: Upgrade Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install npm modules
         run: npm ci
+
       - name: Test
         run: npm test
+
       - name: Grunt
         run: grunt
       - name: Upload artifact
@@ -34,6 +39,7 @@ jobs:
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
+
       - name: Write secrets
         env:
           VIRUS_TOTAL: ${{ secrets.VIRUS_TOTAL }}
@@ -49,22 +55,26 @@ jobs:
     needs:
       - web
     steps:
+
       - name: Get current git tag
         id: get_tag
         uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
+
       - name: Download artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
+
       - name: Write secrets
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
@@ -73,28 +83,34 @@ jobs:
           mkdir keys
           echo "$PRIVATE_KEY" > keys/private-key.pem
           echo "$KEEWEB_SIGN" > keys/keeweb-sign.json
+
       - name: Build in Docker
         uses: ./.github/actions/linux-build
+
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.AppImage
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.AppImage
+
       - name: Upload snap artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.snap
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.snap
+
       - name: Upload deb artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x64.deb
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x64.deb
+
       - name: Upload zip artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x64.zip
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x64.zip
+
       - name: Upload rpm artifact
         uses: actions/upload-artifact@v1
         with:
@@ -106,31 +122,38 @@ jobs:
     needs:
       - web
     steps:
+
       - name: Get current git tag
         id: get_tag
         uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
+
       - name: Download artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
+
       - name: Upgrade Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install npm modules
         run: npm ci
+
       - name: Install grunt
         run: sudo npm i -g grunt-cli
+
       - name: Write secrets
         env:
           CODESIGN: ${{ secrets.CODESIGN }}
@@ -142,18 +165,22 @@ jobs:
           echo "$CODESIGN" > keys/codesign.json
           xcrun altool --store-password-in-keychain-item "AC_PASSWORD" -u "$APPLE_ID_USERNAME" -p "$APPLE_DEPLOY_PASSWORD"
           echo "$APPLE_PROVISIONING_PROFILE" | base64 -d > keys/keeweb.provisionprofile
+
       - name: Import certificates
         uses: keeweb/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE }}
           p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+
       - name: Grunt
         run: grunt --max-old-space-size=4096 desktop-darwin ${{ github.repository != 'keeweb/keeweb' && '--skip-sign' || '' }}
+
       - name: Upload x64 dmg artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.mac.x64.dmg
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.mac.x64.dmg
+
       - name: Upload arm64 dmg artifact
         uses: actions/upload-artifact@v1
         with:
@@ -165,31 +192,38 @@ jobs:
     needs:
       - web
     steps:
+
       - name: Get current git tag
         id: get_tag
         uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
+
       - name: Download artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: dist
+
       - name: Upgrade Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install npm modules
         run: npm ci
+
       - name: Install grunt
         run: npm i -g grunt-cli
+
       - name: Write secrets
         env:
           CODESIGN: ${{ secrets.CODESIGN }}
@@ -203,33 +237,40 @@ jobs:
           echo $Env:MS_CODESIGN_PRIVATE_KEY_CLIENT > keys/code-signing/private-key-client.pem
           echo $Env:MS_CODESIGN_PUBLIC_KEY_CLIENT > keys/code-signing/public-key-client.pem
           echo $Env:MS_CODESIGN_PUBLIC_KEY_SERVER > keys/code-signing/public-key-server.pem
+
       - name: Grunt
         run: grunt desktop-win32 ${{ github.repository != 'keeweb/keeweb' && '--skip-sign' || '' }}
+
       - name: Upload ia32 exe artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.ia32.exe
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.ia32.exe
+
       - name: Upload ia32 zip artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.ia32.zip
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.ia32.zip
+
       - name: Upload x64 exe artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.exe
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.exe
+
       - name: Upload x64 zip artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.zip
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.zip
+
       - name: Upload arm64 exe artifact
         uses: actions/upload-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.exe
           path: dist/desktop/KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.exe
+
       - name: Upload arm64 zip artifact
         uses: actions/upload-artifact@v1
         with:
@@ -243,107 +284,129 @@ jobs:
       - darwin
       - win32
     steps:
+
       - name: Get current git tag
         id: get_tag
         uses: keeweb/get-git-tag@v3.0.2
         with:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
+
       - name: Setup GCloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0
         with:
           version: '285.0.0'
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
           repository: keeweb/keeweb
           path: keeweb
           ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
+
       - name: Upgrade Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install npm modules
         working-directory: keeweb
         run: npm ci
+
       - name: Download html artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.html
           path: html
+
       - name: Download linux.AppImage artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.AppImage
           path: assets
+
       - name: Download linux.snap artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.snap
           path: assets
+
       - name: Download linux.deb artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x64.deb
           path: assets
+
       - name: Download linux.zip artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x64.zip
           path: assets
+
       - name: Download linux.rpm artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.linux.x86_64.rpm
           path: assets
+
       - name: Download darwin.x64.dmg artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.mac.x64.dmg
           path: assets
+
       - name: Download darwin.arm64.dmg artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.mac.arm64.dmg
           path: assets
+
       - name: Download win32.ia32.exe artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.ia32.exe
           path: assets
+
       - name: Download win32.ia32.zip artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.ia32.zip
           path: assets
+
       - name: Download win32.x64.exe artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.exe
           path: assets
+
       - name: Download win32.x64.zip artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.x64.zip
           path: assets
+
       - name: Download win32.arm64.exe artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.exe
           path: assets
+
       - name: Download win32.arm64.zip artifact
         uses: actions/download-artifact@v1
         with:
           name: KeeWeb-${{ steps.get_tag.outputs.tag }}.win.arm64.zip
           path: assets
+
       - name: Zip html
         working-directory: html
         run: zip -vr ../assets/KeeWeb-${{ steps.get_tag.outputs.tag }}.html.zip .
+
       - name: Copy assets to dist
         run: mkdir -p keeweb/dist/desktop && cp assets/* keeweb/dist/desktop
+
       - name: Write secrets
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
@@ -353,29 +416,38 @@ jobs:
           mkdir keys
           echo "$PRIVATE_KEY" > keys/private-key.pem
           echo "$KEEWEB_SIGN" > keys/keeweb-sign.json
+
       - name: Grunt
         working-directory: keeweb
         run: grunt finish-release
+
       - name: Copy signatures to assets
         run: cp keeweb/dist/desktop/Verify.sign.sha256 assets
+
       - name: Copy checksums to assets
         run: cp keeweb/dist/desktop/Verify.sha256 assets
+
       - name: Login to DockerHub Registry
         env:
           DOCKERHUB_ACCESS_TOKEN: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: echo $DOCKERHUB_ACCESS_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+
       - name: Copy dist to the Docker context
         run: cp -r html keeweb/package/docker/dist
+
       - name: Build the Docker image
         working-directory: keeweb
         run: docker build -t antelle/keeweb:latest -t antelle/keeweb:${{ steps.get_tag.outputs.tag }} package/docker
+
       - name: Push the Docker image to dockerhub
         if: ${{ github.repository == 'keeweb/keeweb' }}
         run: docker push --all-tags antelle/keeweb
+
       - name: Extract release notes
         run: node util/extract-release-notes.js --version=${{ steps.get_tag.outputs.tag }} --output=tmp/release-body.md
         working-directory: keeweb
+
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v1
         env:
@@ -385,12 +457,14 @@ jobs:
           name: Desktop apps v${{ steps.get_tag.outputs.tag }}
           files: assets/*
           body_path: keeweb/tmp/release-body.md
+
       - name: Checkout gh-pages
         uses: actions/checkout@v2
         with:
           ref: gh-pages
           path: gh-pages
           fetch-depth: 0
+
       - name: Commit dist to gh-pages
         working-directory: gh-pages
         run: |
@@ -403,18 +477,22 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git commit -am v${{ steps.get_tag.outputs.tag }}
+
       - name: Push gh-pages
         uses: keeweb/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
           directory: gh-pages
+
       - name: Restore git mtime
         working-directory: gh-pages
         run: python3 ../keeweb/.github/actions/scripts/git-restore-mtime.py
+
       - name: Sync the website
         if: ${{ github.repository == 'keeweb/keeweb' }}
         run: gsutil -m rsync -r -d -x "^\." gh-pages gs://app.keeweb.info/
+
       - name: Purge CloudFlare cache
         if: ${{ github.repository == 'keeweb/keeweb' }}
         env:

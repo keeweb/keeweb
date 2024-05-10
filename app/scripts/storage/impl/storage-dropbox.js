@@ -30,9 +30,9 @@ class StorageDropbox extends StorageBase {
         if (rootFolder) {
             const ix = path.toLowerCase().indexOf(rootFolder.toLowerCase());
             if (ix === 0) {
-                path = path.substr(rootFolder.length);
+                path = path.slice(rootFolder.length);
             } else if (ix === 1) {
-                path = path.substr(rootFolder.length + 1);
+                path = path.slice(rootFolder.length + 1);
             }
             path = UrlFormat.fixSlashes('/' + path);
         }
@@ -42,7 +42,7 @@ class StorageDropbox extends StorageBase {
     _fixConfigFolder(folder) {
         folder = folder.replace(/\\/g, '/').trim();
         if (folder[0] === '/') {
-            folder = folder.substr(1);
+            folder = folder.slice(1);
         }
         return folder;
     }
@@ -74,8 +74,7 @@ class StorageDropbox extends StorageBase {
 
     _getOAuthConfig() {
         return {
-            scope:
-                'files.content.read files.content.write files.metadata.read files.metadata.write',
+            scope: 'files.content.read files.content.write files.metadata.read files.metadata.write',
             url: 'https://www.dropbox.com/oauth2/authorize',
             tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
             clientId: this._getKey(),

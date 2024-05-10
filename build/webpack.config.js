@@ -1,25 +1,31 @@
 const path = require('path');
 const fs = require('fs');
-
 const webpack = require('webpack');
+const pkg = require('../package.json');
+const { v5: pkgUuid } = require('uuid');
 
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const PluginBundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const PluginMiniCssExtract = require('mini-css-extract-plugin');
+const PluginMinimizeCss = require('css-minimizer-webpack-plugin');
+const PluginTerser = require('terser-webpack-plugin');
 
 const rootDir = path.join(__dirname, '..');
 
-const pkg = require('../package.json');
-
 process.noDeprecation = true; // for css loaders
 
-function config(options) {
+module.exports = function (options) {
+    const kwGuid = pkgUuid(`${pkg.repository.url}`, pkgUuid.URL);
+    const kwUuid = pkgUuid(pkg.version, kwGuid);
+
     const mode = options.mode || 'production';
     const devMode = mode === 'development';
     const date = options.date;
+    const guid = options.guid || kwGuid;
+    // eslint-disable-next-line no-unused-vars
+    const uuid = options.uuid || kwUuid;
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
+
     return {
         mode,
         entry: {
@@ -27,6 +33,7 @@ function config(options) {
         },
         output: {
             path: path.resolve('.', 'tmp'),
+            publicPath: '',
             filename: 'js/[name].js'
         },
         target: 'web',
@@ -34,9 +41,20 @@ function config(options) {
             hints: false
         },
         stats: {
-            colors: false,
-            modules: true,
-            reasons: true
+            builtAt: false,
+            env: false,
+            hash: false,
+            colors: true,
+            modules: false,
+            reasons: false,
+            children: false,
+            warnings: false,
+            errorDetails: false,
+            errorStack: false,
+            errorsCount: false,
+            logging: false, // false, 'none' | 'error' | 'warn' | 'info' | 'log' | 'verbose'
+            loggingTrace: false,
+            loggingDebug: ['sass', 'sass-loader']
         },
         progress: false,
         failOnError: true,
@@ -44,6 +62,7 @@ function config(options) {
             modules: [
                 path.join(rootDir, 'app/scripts'),
                 path.join(rootDir, 'app/styles'),
+                path.join(rootDir, 'app/wallpapers'),
                 path.join(rootDir, 'node_modules')
             ],
             alias: {
@@ -54,7 +73,6 @@ function config(options) {
                 baron: `baron/baron${devMode ? '' : '.min'}.js`,
                 qrcode: `jsqrcode/dist/qrcode${devMode ? '' : '.min'}.js`,
                 argon2: 'argon2-browser/dist/argon2.js',
-                marked: devMode ? 'marked/lib/marked.js' : 'marked/marked.min.js',
                 dompurify: `dompurify/dist/purify${devMode ? '' : '.min'}.js`,
                 tweetnacl: `tweetnacl/nacl${devMode ? '' : '.min'}.js`,
                 hbs: 'handlebars/runtime.js',
@@ -63,7 +81,14 @@ function config(options) {
                 'public-key.pem': path.join(rootDir, 'app/resources/public-key.pem'),
                 'public-key-new.pem': path.join(rootDir, 'app/resources/public-key-new.pem'),
                 'demo.kdbx': path.join(rootDir, 'app/resources/Demo.kdbx'),
-                'fontawesome.woff2': '@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2'
+                'fontawesome.woff2': path.resolve(
+                    __dirname,
+                    '../node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2'
+                ),
+                'wallpaper-1.jpg': path.join(rootDir, 'app/wallpapers/1.jpg'),
+                'wallpaper-2.jpg': path.join(rootDir, 'app/wallpapers/2.jpg'),
+                'wallpaper-3.jpg': path.join(rootDir, 'app/wallpapers/3.jpg'),
+                'wallpaper-4.jpg': path.join(rootDir, 'app/wallpapers/4.jpg')
             },
             fallback: {
                 console: false,
@@ -126,6 +151,7 @@ function config(options) {
                                 replace: options.beta ? '1' : ''
                             },
                             { search: /@@DATE/g, replace: dt },
+                            { search: /@@GUID/g, replace: guid },
                             {
                                 search: /@@COMMIT/g,
                                 replace: options.sha
@@ -168,12 +194,43 @@ function config(options) {
                 {
                     test: /\.s?css$/,
                     use: [
-                        MiniCssExtractPlugin.loader,
-                        { loader: 'css-loader', options: { sourceMap: devMode } },
-                        { loader: 'postcss-loader', options: { sourceMap: devMode } },
-                        { loader: 'sass-loader', options: { sourceMap: devMode } },
-                        { loader: 'scss-add-icons-loader' }
+                        PluginMiniCssExtract.loader,
+                        {
+                            // translates CSS into CommonJS
+                            loader: 'css-loader',
+                            options: {
+                                esModule: false,
+                                importLoaders: 2,
+                                sourceMap: !devMode,
+                                url: true,
+                                import: true
+                            }
+                        },
+                        {
+                            // autoprefixing, linting and more
+                            loader: 'postcss-loader',
+                            options: {
+                                sourceMap: !devMode
+                            }
+                        },
+                        {
+                            // compile Sass to CSS
+                            loader: 'sass-loader',
+                            options: {
+                                sassOptions: {
+                                    outputStyle: 'expanded'
+                                },
+                                sourceMap: !devMode
+                            }
+                        },
+                        {
+                            loader: 'scss-add-icons-loader'
+                        }
                     ]
+                },
+                {
+                    test: /\.(svg|png|jpe?g|gif)$/,
+                    loader: 'file-loader'
                 },
                 { test: /fontawesome.*\.woff2$/, loader: 'fontawesome-loader' },
                 { test: /\.pem$/, loader: 'raw-loader' },
@@ -182,20 +239,27 @@ function config(options) {
         },
         optimization: {
             runtimeChunk: false,
-            minimize: !devMode,
+            minimize: !devMode, // set true to minimize in dev + production mode
             minimizer: [
-                new TerserPlugin({
+                new PluginTerser({
+                    minify: PluginTerser.terserMinify,
                     extractComments: 'never-extract-comments',
                     terserOptions: {
                         ecma: 6
                     }
                 }),
-                new OptimizeCSSAssetsPlugin({
-                    cssProcessorPluginOptions: {
-                        preset: ['default', { discardComments: { removeAll: true } }]
+                new PluginMinimizeCss({
+                    test: /\.min\.css$/i,
+                    minimizerOptions: {
+                        preset: [
+                            'default',
+                            {
+                                discardComments: { removeAll: true }
+                            }
+                        ]
                     }
                 }),
-                new BundleAnalyzerPlugin({
+                new PluginBundleAnalyzer({
                     openAnalyzer: false,
                     analyzerMode: 'static',
                     reportFilename: 'stats/analyzer_report.html',
@@ -219,8 +283,8 @@ function config(options) {
                 $: 'jquery',
                 babelHelpers: 'babel-helpers'
             }),
-            new webpack.IgnorePlugin(/^(moment)$/),
-            new MiniCssExtractPlugin({
+            new webpack.IgnorePlugin({ resourceRegExp: /^(moment)$/ }),
+            new PluginMiniCssExtract({
                 filename: 'css/[name].css'
             })
         ],
@@ -236,6 +300,4 @@ function config(options) {
         },
         devtool: devMode ? 'source-map' : undefined
     };
-}
-
-module.exports.config = config;
+};

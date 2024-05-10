@@ -22,7 +22,7 @@ describe('PasswordGenerator', () => {
 
     it('should generate a password with ambiguous characters', () => {
         expect(PasswordGenerator.generate({ length: 10, ambiguous: true })).to.match(
-            new RegExp(`^[O0oIl]{10}$`)
+            /^[O0oIl]{10}$/
         );
     });
 
@@ -78,5 +78,58 @@ describe('PasswordGenerator', () => {
             expect(password).to.match(/[!-\/:-@[-`~]/);
             expect(password).to.match(/[O0oIl]/);
         }
+    });
+
+    // https://regex101.com/r/NUNE7G/3
+    it('should generate passphrase with 8 words', () => {
+        expect(
+            PasswordGenerator.generate({
+                length: 8,
+                name: 'Passphrase',
+                spaces: true,
+                upper: true
+            })
+        ).to.match(/^[a-zA-Z-]+(?:\s{1}[a-zA-Z-]+){7,}$/);
+    });
+
+    // https://regex101.com/r/vc2fWR/2
+    it('should generate passphrase with 6 words ending in number', () => {
+        expect(
+            PasswordGenerator.generate({
+                length: 6,
+                name: 'Passphrase',
+                digits: true,
+                spaces: true,
+                upper: true
+            })
+        ).to.match(/^[a-zA-Z-]+(?:[\d{1}]\s{1}[a-zA-Z-]+){5,}\d{1}$/);
+    });
+
+    // https://regex101.com/r/w5gPht/3
+    it('should generate passphrase with 7 words seperated by hyphens', () => {
+        expect(
+            PasswordGenerator.generate({
+                length: 7,
+                name: 'Passphrase',
+                digits: false,
+                spaces: false,
+                high: true,
+                upper: true
+            })
+        ).to.match(/^[a-zA-Z-]+(?:[\-{1}][a-zA-Z-]+){6,}$/);
+    });
+
+    // https://regex101.com/r/vbK2KN/2
+    it('should generate passphrase with 10 words seperated by hyphens, spaces with number at end', () => {
+        expect(
+            PasswordGenerator.generate({
+                length: 10,
+                name: 'Passphrase',
+                digits: true,
+                spaces: true,
+                high: true,
+                upper: true
+            })
+        ).to.match(/^[a-zA-Z-]+(?:\d{1}\s{1}\-{1}\s{1}[a-zA-Z-]+){9,}\d{1}$/);
     });
 });

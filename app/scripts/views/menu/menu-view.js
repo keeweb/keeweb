@@ -11,15 +11,13 @@ import template from 'templates/menu/menu.hbs';
 
 class MenuView extends View {
     parent = '.app__menu';
-
     template = template;
 
     events = {};
-
     sectionViews = [];
 
     minWidth = 130;
-    maxWidth = 300;
+    maxWidth = 450;
 
     constructor(model, options) {
         super(model, options);

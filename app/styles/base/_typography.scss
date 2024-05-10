@@ -27,6 +27,7 @@ h5,
 h6 {
     font-family: $heading-font-family;
     line-height: $heading-line-height;
+    font-weight: lighter;
     margin: 0 0 $small-spacing;
 }
 
@@ -44,12 +45,15 @@ h4 {
 }
 h3 {
     font-size: modular-scale(3, 1rem, 1.1);
+    font-weight: lighter;
 }
 h2 {
     font-size: $small-header-font-size;
+    font-weight: lighter;
 }
 h1 {
     font-size: $large-header-font-size;
+    font-weight: lighter;
 }
 
 p {

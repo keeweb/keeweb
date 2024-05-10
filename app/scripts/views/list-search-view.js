@@ -12,7 +12,6 @@ import template from 'templates/list-search.hbs';
 
 class ListSearchView extends View {
     parent = '.list__header';
-
     template = template;
 
     events = {
@@ -40,69 +39,71 @@ class ListSearchView extends View {
         this.sortOptions = [
             {
                 value: 'title',
-                icon: 'sort-alpha-down',
+                icon: 'arrow-down-a-z',
                 loc: () =>
                     StringFormat.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-title',
-                icon: 'sort-alpha-down-alt',
+                icon: 'arrow-down-z-a',
                 loc: () =>
                     StringFormat.capFirst(Locale.title) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'website',
-                icon: 'sort-alpha-down',
+                icon: 'arrow-down-a-z',
                 loc: () =>
                     StringFormat.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-website',
-                icon: 'sort-alpha-down-alt',
+                icon: 'arrow-down-z-a',
                 loc: () =>
                     StringFormat.capFirst(Locale.website) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'user',
-                icon: 'sort-alpha-down',
+                icon: 'arrow-down-a-z',
                 loc: () => StringFormat.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchAZ)
             },
             {
                 value: '-user',
-                icon: 'sort-alpha-down-alt',
+                icon: 'arrow-down-z-a',
                 loc: () => StringFormat.capFirst(Locale.user) + ' ' + this.addArrow(Locale.searchZA)
             },
             {
                 value: 'created',
-                icon: 'sort-numeric-down',
+                icon: 'arrow-down-1-9',
                 loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchON)
             },
             {
                 value: '-created',
-                icon: 'sort-numeric-down-alt',
+                icon: 'arrow-down-9-1',
                 loc: () => Locale.searchCreated + ' ' + this.addArrow(Locale.searchNO)
             },
             {
                 value: 'updated',
-                icon: 'sort-numeric-down',
+                icon: 'arrow-down-1-9',
                 loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchON)
             },
             {
                 value: '-updated',
-                icon: 'sort-numeric-down-alt',
+                icon: 'arrow-down-9-1',
                 loc: () => Locale.searchUpdated + ' ' + this.addArrow(Locale.searchNO)
             },
             {
                 value: '-attachments',
-                icon: 'sort-amount-down',
+                icon: 'arrow-down-wide-short',
                 loc: () => Locale.searchAttachments
             },
-            { value: '-rank', icon: 'sort-amount-down', loc: () => Locale.searchRank }
+            { value: '-rank', icon: 'arrow-down-wide-short', loc: () => Locale.searchRank }
         ];
+
         this.sortIcons = {};
         this.sortOptions.forEach((opt) => {
             this.sortIcons[opt.value] = opt.icon;
         });
+
         this.advancedSearch = {
             user: true,
             other: true,
@@ -115,6 +116,7 @@ class ListSearchView extends View {
             history: false,
             title: true
         };
+
         if (this.model.advancedSearch) {
             this.advancedSearch = { ...this.model.advancedSearch };
         }
@@ -176,11 +178,13 @@ class ListSearchView extends View {
         if (this.inputEl) {
             searchVal = this.inputEl.val();
         }
+
         super.render({
             adv: this.advancedSearch,
             advEnabled: this.advancedSearchEnabled,
             canCreate: this.model.canCreateEntries()
         });
+
         this.inputEl = this.$el.find('.list__search-field');
         if (searchVal) {
             this.inputEl.val(searchVal);
@@ -219,7 +223,7 @@ class ListSearchView extends View {
     }
 
     inputFocus(e) {
-        $(e.target).select();
+        $(e.target).trigger('select');
     }
 
     documentKeyPress(e) {
@@ -270,12 +274,14 @@ class ListSearchView extends View {
         if (filter.filter.text !== this.inputEl.val()) {
             this.inputEl.val(filter.text || '');
         }
+
         const sortIconCls = this.sortIcons[filter.sort] || 'sort';
         this.$el.find('.list__search-btn-sort>i').attr('class', 'fa fa-' + sortIconCls);
         let adv = !!filter.filter.advanced;
         if (this.model.advancedSearch) {
             adv = filter.filter.advanced !== this.model.advancedSearch;
         }
+
         if (this.advancedSearchEnabled !== adv) {
             this.advancedSearchEnabled = adv;
             this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
@@ -289,6 +295,7 @@ class ListSearchView extends View {
             this.emit('create-entry');
             return;
         }
+
         this.toggleCreateOptions();
     }
 
@@ -301,11 +308,13 @@ class ListSearchView extends View {
         this.advancedSearchEnabled = !this.advancedSearchEnabled;
         this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
         let advanced = false;
+
         if (this.advancedSearchEnabled) {
             advanced = this.advancedSearch;
         } else if (this.model.advancedSearch) {
             advanced = this.model.advancedSearch;
         }
+
         Events.emit('add-filter', { advanced });
     }
 
@@ -334,6 +343,7 @@ class ListSearchView extends View {
             this.hideSearchOptions();
             return;
         }
+
         this.hideSearchOptions();
         this.$el.find('.list__search-btn-sort').addClass('sel--active');
         const view = new DropdownView();
@@ -394,7 +404,7 @@ class ListSearchView extends View {
         options.sort(Comparators.stringComparator('text', true));
         options.push({
             value: 'tmpl',
-            icon: 'sticky-note-o',
+            icon: 'note-sticky-o',
             text: StringFormat.capFirst(Locale.template)
         });
         return options;
@@ -411,12 +421,15 @@ class ListSearchView extends View {
             case 'entry':
                 this.emit('create-entry');
                 break;
+
             case 'group':
                 this.emit('create-group');
                 break;
+
             case 'tmpl':
                 this.emit('create-template');
                 break;
+
             default:
                 if (this.entryTemplates[e.item]) {
                     this.emit('create-entry', { template: this.entryTemplates[e.item] });

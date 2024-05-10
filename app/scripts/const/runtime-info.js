@@ -4,6 +4,8 @@ const RuntimeInfo = {
     buildDate: '@@DATE',
     commit: '@@COMMIT',
     devMode: '@@DEVMODE',
+    guid: '@@GUID',
+    uuid: '@@UUID',
     appleTeamId: '@@APPLE_TEAM_ID'
 };
 

@@ -1,3 +1,6 @@
+// built in modules
+@use 'sass:math';
+
 .menu {
     width: 100%;
     display: flex;
@@ -100,6 +103,18 @@
             .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
                 padding-left: $base-padding-h * 6;
             }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 7;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 8;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 9;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 10;
+            }
         }
 
         &-options {
@@ -178,7 +193,7 @@
         }
 
         .fa {
-            margin-right: $base-padding-h / 2;
+            margin-right: math.div($base-padding-h, 2);
         }
 
         &-drag-top {

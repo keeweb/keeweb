@@ -48,6 +48,7 @@ class OpenView extends View {
         'keyup .open__pass-input': 'inputKeyup',
         'keypress .open__pass-input': 'inputKeypress',
         'click .open__pass-enter-btn': 'openDb',
+        'click .open__pass-show-btn': 'revealPassword',
         'click .open__settings-key-file': 'openKeyFile',
         'click .open__settings-yubikey': 'selectYubiKeyChalResp',
         'click .open__last-item': 'openLast',
@@ -82,6 +83,7 @@ class OpenView extends View {
             this.passwordInput.reset();
         });
         this.listenTo(Events, 'user-idle', this.userIdle);
+        this.listenTo(Events, 'user-idle-login', this.userIdleLogin);
     }
 
     render() {
@@ -127,13 +129,18 @@ class OpenView extends View {
             canOpenGenerator: this.model.settings.canOpenGenerator,
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
+            revealPassword: this.model.settings.revealPassword,
             canOpenYubiKey,
             canUseChalRespYubiKey,
             showMore,
             showLogo
         });
+
         this.inputEl = this.$el.find('.open__pass-input');
-        this.passwordInput.setElement(this.inputEl);
+        this.passwordInput.setElement(
+            this.inputEl,
+            (this.model.settings.revealPassword && true) || false
+        );
     }
 
     resetParams() {
@@ -165,7 +172,7 @@ class OpenView extends View {
 
     getLastOpenFiles() {
         return this.model.fileInfos.map((fileInfo) => {
-            let icon = 'file-alt';
+            let icon = 'file-lines';
             const storage = Storage[fileInfo.storage];
             if (storage && storage.icon) {
                 icon = storage.icon;
@@ -194,7 +201,7 @@ class OpenView extends View {
         Alerts.alert({
             header: Locale.openLocalFile,
             body: Locale.openLocalFileBody,
-            icon: 'file-alt',
+            icon: 'file-lines',
             buttons: [
                 { result: 'skip', title: Locale.openLocalFileDontShow, error: true },
                 { result: 'ok', title: Locale.alertOk }
@@ -665,6 +672,32 @@ class OpenView extends View {
         }
     }
 
+    revealPassword() {
+        if (this.params.id && this.model.files.get(this.params.id)) {
+            this.emit('close');
+            return;
+        }
+        if (this.busy || !this.params.name) {
+            return;
+        }
+
+        /*
+            @ref    : https://github.com/keeweb/keeweb/issues/2050
+
+            add ability for users to view the master password. However, this is only available if the user
+            has opted in by enabling the KeeWeb setting. ensures that the password is still processed through SecureInput()
+        */
+
+        this.inputEl = this.$el.find('.open__pass-input');
+
+        this.bRevealPassword = !this.bRevealPassword;
+        this.inputEl.attr('type', (this.bRevealPassword && 'text') || 'password');
+        this.$el
+            .find((this.bRevealPassword && '.fa-eye-slash') || '.fa-eye')
+            .removeClass((this.bRevealPassword && 'fa-eye-slash') || 'fa-eye')
+            .addClass((this.bRevealPassword && 'fa-eye') || 'fa-eye-slash');
+    }
+
     openDb() {
         if (this.params.id && this.model.files.get(this.params.id)) {
             this.emit('close');
@@ -852,7 +885,7 @@ class OpenView extends View {
             Alerts.alert({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
-                icon: storage.icon || 'file-alt',
+                icon: storage.icon || 'file-lines',
                 buttons: [{ result: '', title: Locale.alertCancel }],
                 esc: '',
                 click: '',
@@ -1032,7 +1065,23 @@ class OpenView extends View {
     userIdle() {
         this.inputEl.val('');
         this.passwordInput.reset();
-        this.passwordInput.setElement(this.inputEl);
+        this.passwordInput.setElement(
+            this.inputEl,
+            (this.model.settings.revealPassword && true) || false
+        );
+    }
+
+    /*
+        Check 'open vault' screen idle time. wipe any passwordsin the textbox after X time of no activity.
+    */
+
+    userIdleLogin() {
+        this.inputEl.val('');
+        this.passwordInput.reset();
+        this.passwordInput.setElement(
+            this.inputEl,
+            (this.model.settings.revealPassword && true) || false
+        );
     }
 
     usbDevicesChanged() {

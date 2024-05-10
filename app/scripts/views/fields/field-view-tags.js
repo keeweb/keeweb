@@ -94,7 +94,7 @@ class FieldViewTags extends FieldViewText {
                 const last = tags[tags.length - 1];
                 const isLastPart = last && this.model.tags.indexOf(last) < 0;
                 if (isLastPart) {
-                    newVal = newVal.substr(0, newVal.lastIndexOf(last)) + selectedTag;
+                    newVal = newVal.substring(0, newVal.lastIndexOf(last)) + selectedTag;
                 } else {
                     newVal += ', ' + selectedTag;
                 }

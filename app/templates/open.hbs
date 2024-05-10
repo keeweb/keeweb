@@ -3,7 +3,7 @@
     <div class="open__message {{#unless unlockMessageRes}}hide{{/unless}}">
         <div class="open__message-content">{{#if unlockMessageRes}}{{res unlockMessageRes}}{{/if}}</div>
         <div class="open__message-cancel-btn" title="{{res 'alertCancel'}}" tip-placement="left">
-            <i class="fa fa-times-circle open__message-cancel-btn-icon"></i>
+            <i class="fa fa-circle-xmark open__message-cancel-btn-icon"></i>
         </div>
     </div>
     <div class="open__icons">
@@ -27,14 +27,14 @@
         {{#if canOpenDemo}}
             {{#ifeq demoOpened false}}
                 <div class="open__icon open__icon-demo" tabindex="4" id="open__icon-demo">
-                    <i class="fa fa-magic open__icon-i"></i>
+                    <i class="fa fa-wand-magic-sparkles open__icon-i"></i>
                     <div class="open__icon-text">{{res 'openDemo'}}</div>
                 </div>
             {{/ifeq}}
         {{/if}}
         {{#if showMore}}
             <div class="open__icon open__icon-more" tabindex="5" id="open__icon-more">
-                <i class="fa fa-ellipsis-h open__icon-i"></i>
+                <i class="fa fa-ellipsis open__icon-i"></i>
                 <div class="open__icon-text">{{res 'openMore'}}</div>
             </div>
         {{/if}}
@@ -56,7 +56,7 @@
         {{#if canOpenDemo}}
             {{#if demoOpened}}
                 <div class="open__icon open__icon-demo" tabindex="20" id="open__icon-demo">
-                    <i class="fa fa-magic open__icon-i"></i>
+                    <i class="fa fa-wand-magic-sparkles open__icon-i"></i>
                     <div class="open__icon-text">{{res 'openDemo'}}</div>
                 </div>
             {{/if}}
@@ -69,7 +69,7 @@
         {{/if}}
         {{#if canOpenSettings}}
             <div class="open__icon open__icon-settings" tabindex="22" id="open__icon-settings">
-                <i class="fa fa-cog open__icon-i"></i>
+                <i class="fa fa-gear open__icon-i"></i>
                 <div class="open__icon-text">{{res 'settings'}}</div>
             </div>
         {{/if}}
@@ -81,25 +81,30 @@
             <input type="password" name="password">
         </div>
         <div class="open__pass-warn-wrap">
-            <div class="open__pass-warning muted-color invisible"><i class="fa fa-exclamation-triangle"></i> {{res 'openCaps'}}</div>
+            <div class="open__pass-warning muted-color invisible"><i class="fa fa-triangle-exclamation"></i> {{res 'openCaps'}}</div>
         </div>
         <div class="open__pass-field-wrap">
+            {{#if revealPassword}}
+                <div class="open__pass-show-btn" tabindex="24">
+                    <i class="fa fa-eye-slash open__showpass"></i>
+                </div>
+            {{/if}}
             <input class="open__pass-input" name="password" type="password" size="30" autocomplete="new-password" maxlength="1024"
                    placeholder="{{#if canOpen}}{{res 'openClickToOpen'}}{{/if}}" readonly tabindex="23" />
-            <div class="open__pass-enter-btn" tabindex="24">
-                <i class="fa fa-level-down-alt rotate-90 open__pass-enter-btn-icon-enter"></i>
+            <div class="open__pass-enter-btn" tabindex="25">
+                <i class="fa fa-turn-down rotate-90 open__pass-enter-btn-icon-enter"></i>
                 <i class="fa fa-fingerprint open__pass-enter-btn-icon-touch-id"></i>
             </div>
             <div class="open__pass-opening-icon"><i class="fa fa-spinner spin"></i></div>
         </div>
         <div class="open__settings">
-            <div class="open__settings-key-file hide" tabindex="25">
+            <div class="open__settings-key-file hide" tabindex="26">
                 <i class="fa fa-key open__settings-key-file-icon">
                 </i><span class="open__settings-key-file-name">{{res 'openKeyFile'}}</span>
                 {{#if canOpenKeyFromDropbox}}<span class="open__settings-key-file-dropbox"> {{res 'openKeyFileDropbox'}}</span>{{/if}}
             </div>
             <div class="open__settings-yubikey {{#if canUseChalRespYubiKey}}open__settings-yubikey--present{{/if}} hide"
-                 tabindex="26" title="YubiKey">
+                 tabindex="27" title="YubiKey">
                 <div class="open__settings-yubikey__text">YK</div> <i class="fa fa-usb-token open__settings-yubikey-img"></i>
             </div>
         </div>
@@ -109,7 +114,7 @@
                      id="open__last-item--{{file.id}}">
                     {{#if file.icon}}<i class="fa fa-{{file.icon}} open__last-item-icon"></i>{{/if}}
                     <span class="open__last-item-text">{{file.name}}</span>
-                    {{#if ../canRemoveLatest}}<i class="fa fa-times open__last-item-icon-del"></i>{{/if}}
+                    {{#if ../canRemoveLatest}}<i class="fa fa-x open__last-item-icon-del"></i>{{/if}}
                 </div>
             {{/each}}
         </div>

@@ -2,7 +2,7 @@
     position: absolute;
     @include common-dropdown;
     padding: $base-spacing;
-    width: 11em;
+    width: 17em;
     &__length-range {
     }
     &__top-btn {
@@ -34,13 +34,44 @@
         font-family: $monospace-font-family;
         margin-top: 6px;
         margin-bottom: 3px;
-        height: 50px;
+        min-height: 20px;
         text-align: center;
         white-space: pre-wrap;
         word-break: break-all;
-        overflow: hidden;
-        &--long-pass {
-            font-size: 0.75em;
+        overflow-y: auto;
+        width: -webkit-calc(100% - 20px);
+        width:    -moz-calc(100% - 20px);
+        width:         calc(100% - 20px);
+        padding: 10px;
+        font-size: 1.1rem;
+        background-color: #131212;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+
+        &::-webkit-scrollbar {
+            width: 9px;
+            height: 5px;
+            margin-right: 9px;
+            padding-block: 5px 5px;
+            padding-inline: 7px;
+        }
+
+        &::-webkit-scrollbar-button {
+            display: none;
+        }
+
+        &::-webkit-scrollbar-corner {
+            display: none;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #7166b7;
+            border-radius: 6px;
+            background-clip: content-box;
+            border: 3px solid transparent;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
         }
     }
     &__check-hide {
@@ -64,12 +95,31 @@
     }
     &__btn-wrap {
         text-align: center;
+        padding-top: 15px;
     }
 }
 
 @-moz-document url-prefix() {
-    .gen__result {
-        white-space: pre-wrap;
-        word-break: break-all;
+    .gen__result_textbox {
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
+}
+
+.__wrap {
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.__nowrap {
+    white-space: wrap;
+    word-break: normal;
+}
+
+/*
+    Required if user hides / shows passphrases.
+    dots need to be wrapped in textarea
+*/
+
+.__pass-hidden {
+    word-break: break-word;
 }

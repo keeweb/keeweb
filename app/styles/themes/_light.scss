@@ -25,12 +25,253 @@ body.th-light {
     --form-box-shadow-color-hover: rgb(144, 178, 242, 0.8);
     --light-border-color: #dedede;
     --secondary-background-color: #efefef;
-    --selected-item-color: #2366d9;
+    --selected-item-color: #2c59a5;
     --selected-on-secondary-item-color: #d6d6d6;
     --selected-item-text-color: #f6f6f6;
     --open-icon-color: #565656;
 
+    /*!
+        Markdown Viewer
+    */
+
+    --md-title-color: #919191;
+    --md-icon-color: #2c59a5;
+    --md-text-color: #616161;
+    --md-header-border: 1px dashed #585858;
+    --md-header-title-align: right;
+    --md-header-return-align: right;
+
+    --md-h1-color: #4d7ac6;
+    --md-h2-color: #dd1862;
+    --md-h3-color: #dd1862;
+    --md-h4-color: #dd1862;
+    --md-h5-color: #797979;
+    --md-h6-color: #797979;
+    --md-h1-text-transform: normal;
+    --md-h2-text-transform: normal;
+    --md-h3-text-transform: normal;
+    --md-h4-text-transform: normal;
+    --md-h5-text-transform: uppercase;
+    --md-h6-text-transform: uppercase;
+    --md-h1-text-weight: normal;
+    --md-h2-text-weight: bold;
+    --md-h3-text-weight: normal;
+    --md-h4-text-weight: normal;
+    --md-h5-text-weight: bolder;
+    --md-h6-text-weight: bolder;
+
+    --md-hx-link-weight: lighter;
+    --md-hx-link-align: super;
+
+    --md-link-n-color: #5271a7;
+    --md-link-h-color: #df6071;
+    --md-link-decorator-color: #c56829;
+
+    --md-paragraph-spacing-start: 1;
+    --md-paragraph-spacing-end: 2;
+    --md-ul-indent: 2;
+    --md-ul-spacing-start: 1;
+    --md-ul-spacing-end: 1;
+    --md-ul-text-weight: normal;
+
+    --md-accent-em-color: #df6333;
+    --md-strong-em-color-1: #7756c4;
+    --md-strong-em-color-2: #6654b6;
+    --md-accent-strong-color: #FF7190;
+    --md-accent-abbr-color: #949494;
+    --md-accent-abbr-line-color: #6260c4;
+    --md-accent-strike-text-color: rgba(97, 97, 97, 0.3);
+    --md-accent-strike-line-color: rgb(48, 48, 48);
+
+    --md-code-block-text-color: #636363;
+    --md-code-block-text-weight: bold;
+    --md-code-block-accent-style: 6px solid #2c59a5;;
+    --md-code-inline-text-color: #df4772;
+    --md-code-inline-text-weight: bolder;
+    --md-code-bg-color: #ebeae6;
+
+    --md-table-head-bg-color: #4d7bbe;
+    --md-table-body-bg-color: #eeeeee;
+    --md-table-head-text-color: #FFFFFF;
+    --md-table-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 0.85);
+    --md-table-body-left-color: hsla(var(--md-hue), 0%, 0%, 0.05);
+    --md-table-text-left-color: #272727;
+    --md-table-text-right-color: #272727;
+    --md-table-border-rows-color: hsla(var(--md-hue), 15%, 95%, 0.12);
+    --md-table-border-outside-color: #97979734;
+
+    --md-blockquote-text-color: #4b4b4b;
+    --md-blockquote-text-style: italic;
+    --md-blockquote-body-bg-color: #9191911c;
+    --md-blockquote-accent-color: #4d7bbe;
+    --md-blockquote-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 1);
+
+    --md-hr-color-1: #4690e691;
+    --md-hr-color-2: #4181e2;
+    --md-hr-color-3: #3f7bec;
+    --md-hr-color-4: #428bdf8a;
+
+    --md-alert-note-color: #539bf5;
+    --md-alert-tip-color: #57ab5a;
+    --md-alert-important-color: #986ee2;
+    --md-alert-warning-color: #c69026;
+    --md-alert-caution-color: #e5534b;
+    --md-alert-bg-color: #ebeae6;
+    --md-alert-border-style: 4px solid #444c56;
+
+    --md-checkbox-bg-unchecked-color: #d4d4d4;
+    --md-checkbox-border-unchecked-color: #a0a0a0;
+    --md-checkbox-bg-checked-color: #7181D3;
+    --md-checkbox-bg-hover-color: #449b4b;
+    --md-checkbox-border-hover-color: #FFFFFF;
+
+    --md-footnote-opacity-full: 1;
+    --md-footnote-opacity-min: 0.4;
+
+    /*!
+        General
+    */
+
     .list__item--active .blue-color {
         color: #7baeff;
     }
+
+    /*!
+        Syntax Highlighting
+
+        These colors are taken from highlight.js.
+
+        to change the theme or create your own theme, you can find the highlighter themes at:
+            https://github.com/highlightjs/highlight.js/tree/main/src/styles
+
+        Theme Viewer:
+            https://highlightjs.org/demo
+
+        @theme  : github.css
+    */
+
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1em
+        }
+
+        code.hljs {
+            padding: 3px 5px
+        }
+
+        .hljs {
+            color: #24292e;
+            background: #ffffff
+        }
+
+        .hljs-doctag,
+        .hljs-keyword,
+        .hljs-meta .hljs-keyword,
+        .hljs-template-tag,
+        .hljs-template-variable,
+        .hljs-type,
+        .hljs-variable.language_ {
+            /* prettylights-syntax-keyword */
+            color: #d73a49
+        }
+
+        .hljs-title,
+        .hljs-title.class_,
+        .hljs-title.class_.inherited__,
+        .hljs-title.function_ {
+            /* prettylights-syntax-entity */
+            color: #6f42c1
+        }
+
+        .hljs-attr,
+        .hljs-attribute,
+        .hljs-literal,
+        .hljs-meta,
+        .hljs-number,
+        .hljs-operator,
+        .hljs-variable,
+        .hljs-selector-attr,
+        .hljs-selector-class,
+        .hljs-selector-id {
+            /* prettylights-syntax-constant */
+            color: #005cc5
+        }
+
+        .hljs-regexp,
+        .hljs-string,
+        .hljs-meta .hljs-string {
+            /* prettylights-syntax-string */
+            color: #032f62
+        }
+
+        .hljs-built_in,
+        .hljs-symbol {
+            /* prettylights-syntax-variable */
+            color: #e36209
+        }
+
+        .hljs-comment,
+        .hljs-code,
+        .hljs-formula {
+            /* prettylights-syntax-comment */
+            color: #6a737d
+        }
+        .hljs-name,
+        .hljs-quote,
+        .hljs-selector-tag,
+        .hljs-selector-pseudo {
+            /* prettylights-syntax-entity-tag */
+            color: #22863a
+        }
+
+        .hljs-subst {
+            /* prettylights-syntax-storage-modifier-import */
+            color: #24292e
+        }
+
+        .hljs-section {
+            /* prettylights-syntax-markup-heading */
+            color: #005cc5;
+            font-weight: bold
+        }
+
+        .hljs-bullet {
+            /* prettylights-syntax-markup-list */
+            color: #735c0f
+        }
+
+        .hljs-emphasis {
+            /* prettylights-syntax-markup-italic */
+            color: #24292e;
+            font-style: italic
+        }
+
+        .hljs-strong {
+            /* prettylights-syntax-markup-bold */
+            color: #24292e;
+            font-weight: bold
+        }
+
+        .hljs-addition {
+            /* prettylights-syntax-markup-inserted */
+            color: #22863a;
+            background-color: #f0fff4
+        }
+
+        .hljs-deletion {
+            /* prettylights-syntax-markup-deleted */
+            color: #b31d28;
+            background-color: #ffeef0
+        }
+
+        .hljs-char.escape_,
+        .hljs-link,
+        .hljs-params,
+        .hljs-property,
+        .hljs-punctuation,
+        .hljs-tag {
+            /* purposely ignored */
+        }
+
 }
