@@ -114,7 +114,8 @@
     "webpack-bundle-analyzer": "4.10.2",
     "webpack-dev-server": "5.0.4",
     "pkg-dir": "^8.0.0",
-    "chalk": "^4.1.2"
+    "chalk": "^4.1.2",
+    "file-loader": "^6.2.0"
   },
   "optionalDependencies": {
     "grunt-appdmg": "github:keeweb/grunt-appdmg#874ad83",
