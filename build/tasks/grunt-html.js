@@ -51,7 +51,7 @@ module.exports = function (grunt) {
             }
     */
 
-    grunt.registerMultiTask('html-linkrel', 'Inject html rel tags', function () {
+    grunt.registerMultiTask('htmlinkrel', 'Inject html rel tags', function () {
         /*
             options
         */
@@ -213,18 +213,18 @@ module.exports = function (grunt) {
                     a++;
                 }
 
-                for (const file of this.files) {
-                    const html = grunt.file.read(file.src[0], { encoding: 'utf8' });
+                for (const file of opt.app) {
+                    const html = grunt.file.read(file.src, { encoding: 'utf8' });
                     const regex = new RegExp(pattern, 'gim');
                     const htmlUpdated = html.replace(regex, assetsInclude);
 
                     grunt.log.writeln(
-                        chalk.green(`→ Inject Rel Link → Add Asset`),
+                        chalk.green(`→ Htmlinkrel → Add Asset`),
                         chalk.gray(`→ ${name}`),
-                        chalk.gray(`→ ${file.src[0]}`)
+                        chalk.gray(`→ ${file.src}`)
                     );
 
-                    grunt.file.write(file.src[0], htmlUpdated);
+                    grunt.file.write(file.src, htmlUpdated);
 
                     i++;
                 }
@@ -238,7 +238,7 @@ module.exports = function (grunt) {
 
             if (!pattern) {
                 grunt.log.writeln(
-                    chalk.red(`Inject Rel Link → no regex pattern specified → `),
+                    chalk.red(`Htmlinkrel → no regex pattern specified → `),
                     chalk.yellow(`Aborting`)
                 );
                 break;
@@ -246,7 +246,7 @@ module.exports = function (grunt) {
 
             if (!hrefPath) {
                 grunt.log.writeln(
-                    chalk.red(`Inject Rel Link → no public path specified → `),
+                    chalk.red(`Htmlinkrel → no public path specified → `),
                     chalk.yellow(`Aborting`)
                 );
                 break;
@@ -268,21 +268,21 @@ module.exports = function (grunt) {
 
                 htmlInclude += `<link${relString}${hrefString}${asString}${mediaString}${typeString}${sizesString}${colorString}${classString}${corsString}>`;
 
-                for (const file of this.files) {
-                    const html = grunt.file.read(file.src[0], { encoding: 'utf8' });
+                for (const file of opt.app) {
+                    const html = grunt.file.read(file.src, { encoding: 'utf8' });
                     const regex = new RegExp(pattern, 'gim');
                     const htmlUpdated = html.replace(regex, htmlInclude);
 
                     const href = hrefString.match(/(?<=\")(.*?)(?=\")/gim) || hrefString;
 
                     grunt.log.writeln(
-                        chalk.green(`→ Inject Rel Link → Add Static`),
+                        chalk.green(`→ Htmlinkrel → Add Static`),
                         chalk.gray(`→ ${name}`),
                         chalk.gray(`→ ${href}`),
-                        chalk.gray(`→ ${file.src[0]}`)
+                        chalk.gray(`→ ${file.src}`)
                     );
 
-                    grunt.file.write(file.src[0], htmlUpdated);
+                    grunt.file.write(file.src, htmlUpdated);
                 }
 
                 i++;
@@ -325,21 +325,21 @@ module.exports = function (grunt) {
                     }
                 });
 
-                for (const file of this.files) {
-                    const html = grunt.file.read(file.src[0], { encoding: 'utf8' });
+                for (const file of opt.app) {
+                    const html = grunt.file.read(file.src, { encoding: 'utf8' });
                     const regex = new RegExp(pattern, 'gim');
                     const htmlUpdated = html.replace(regex, htmlInclude);
 
                     const folder = searchPath.match(/(?<=\")(.*?)(?=\")/gim) || searchPath;
 
                     grunt.log.writeln(
-                        chalk.green(`→ Inject Rel Link → Add Dynamic`),
+                        chalk.green(`→ Htmlinkrel → Add Dynamic`),
                         chalk.gray(`→ ${name}`),
                         chalk.gray(`→ ${folder}`),
-                        chalk.gray(`→ ${file.src[0]}`)
+                        chalk.gray(`→ ${file.src}`)
                     );
 
-                    grunt.file.write(file.src[0], htmlUpdated);
+                    grunt.file.write(file.src, htmlUpdated);
                 }
 
                 i++;

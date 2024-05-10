@@ -33,6 +33,7 @@ module.exports = function (options) {
         },
         output: {
             path: path.resolve('.', 'tmp'),
+            publicPath: '',
             filename: 'js/[name].js'
         },
         target: 'web',
@@ -61,6 +62,7 @@ module.exports = function (options) {
             modules: [
                 path.join(rootDir, 'app/scripts'),
                 path.join(rootDir, 'app/styles'),
+                path.join(rootDir, 'app/wallpapers'),
                 path.join(rootDir, 'node_modules')
             ],
             alias: {
@@ -82,7 +84,11 @@ module.exports = function (options) {
                 'fontawesome.woff2': path.resolve(
                     __dirname,
                     '../node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2'
-                )
+                ),
+                'wallpaper-1.jpg': path.join(rootDir, 'app/wallpapers/1.jpg'),
+                'wallpaper-2.jpg': path.join(rootDir, 'app/wallpapers/2.jpg'),
+                'wallpaper-3.jpg': path.join(rootDir, 'app/wallpapers/3.jpg'),
+                'wallpaper-4.jpg': path.join(rootDir, 'app/wallpapers/4.jpg')
             },
             fallback: {
                 console: false,
@@ -223,12 +229,8 @@ module.exports = function (options) {
                     ]
                 },
                 {
-                    test: /\.(png|jpe?g|gif)$/i,
-                    use: [
-                        {
-                            loader: 'file-loader'
-                        }
-                    ]
+                    test: /\.(svg|png|jpe?g|gif)$/,
+                    loader: 'file-loader'
                 },
                 { test: /fontawesome.*\.woff2$/, loader: 'fontawesome-loader' },
                 { test: /\.pem$/, loader: 'raw-loader' },
