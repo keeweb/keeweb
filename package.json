@@ -32,7 +32,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.4",
     "dompurify": "^2.2.8",
-    "electron": "^12.0.7",
+    "electron": "^13.6.9",
     "electron-builder": "^22.11.1",
     "electron-evil-feature-patcher": "^1.2.1",
     "electron-notarize": "^1.0.0",
@@ -110,15 +110,18 @@
   },
   "scripts": {
     "start": "grunt",
+    "lint": "grunt eslint",
     "test": "grunt test",
     "build-beta": "grunt --beta && cp dist/index.html ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
     "electron": "cross-env KEEWEB_IS_PORTABLE=0 ELECTRON_DISABLE_SECURITY_WARNINGS=1 KEEWEB_EMULATE_HARDWARE_ENCRYPTION=persistent KEEWEB_HTML_PATH=http://localhost:8085 electron desktop --no-sandbox",
     "dev": "grunt dev",
+    "dev-legacy": "cross-env NODE_OPTIONS='--openssl-legacy-provider' grunt dev",
     "dev-desktop-macos": "grunt dev-desktop-darwin --skip-sign",
     "dev-desktop-macos-signed": "grunt dev-desktop-darwin-signed",
     "dev-desktop-windows": "grunt dev-desktop-win32 --skip-sign",
     "dev-desktop-linux": "grunt dev-desktop-linux --skip-sign",
-    "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js"
+    "babel-helpers": "babel-external-helpers -l 'slicedToArray,toConsumableArray,defineProperty,typeof' -t global > app/lib/babel-helpers.js",
+    "set-legacy": "export NODE_OPTIONS=--openssl-legacy-provider"
   },
   "author": {
     "name": "Antelle",

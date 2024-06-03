@@ -135,12 +135,12 @@ Otp.leftPad = function (str, len) {
 };
 
 Otp.parseUrl = function (url) {
-    const match = /^otpauth:\/\/(\w+)\/([^\?]+)\?(.*)/i.exec(url);
+    const match = /^otpauth:\/\/(\w+)(?:\/([^\?]+)\?|\?)(.*)/i.exec(url);
     if (!match) {
         throw 'Not OTP url';
     }
     const params = {};
-    const label = decodeURIComponent(match[2]);
+    const label = decodeURIComponent(match[2] ?? 'default');
     if (label) {
         const parts = label.split(':');
         params.issuer = parts[0].trim();
@@ -148,7 +148,8 @@ Otp.parseUrl = function (url) {
             params.account = parts[1].trim();
         }
     }
-    params.type = match[1].toLowerCase();
+    params.type = match[1].toLowerCase(); // returns "totp"
+    // match[3] =  secret=XXXXXXXXXXXXX&period=30&digits=6&algorithm=SHA1
     match[3].split('&').forEach((part) => {
         const parts = part.split('=', 2);
         params[parts[0].toLowerCase()] = decodeURIComponent(parts[1]);

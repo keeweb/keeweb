@@ -1,0 +1,169 @@
+name: "🐛 Bug Report"
+description: Create a report to help us improve KeeWeb!
+title: "🐛 Bug: <title>"
+labels: [
+  "Type ◦ Bug"
+]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        1. Please speak `English`.
+        2. Make sure you are using the latest version and take a moment to check that your issue hasn't been reported before.
+        3. It's really important to provide pertinent details and logs,
+           incomplete details will be handled as an invalid report.
+
+        <br />
+
+  - type: dropdown
+    id: priority-type
+    attributes:
+      label: Priority
+      description: |
+        How critical is the issue?
+        Do not abuse this. Issues that completely break KeeWeb would be classified as critical.
+        If you are requesting a new feature, then it would be low or normal.
+      options:
+        - "Low"
+        - "Normal"
+        - "High"
+        - "Urgent"
+    validations:
+      required: true
+
+  - type: input
+    id: ver-keeweb
+    attributes:
+      label: "Version: KeeWeb"
+      description: |
+        Version of KeeWeb you are running
+        Version is located in Settings › Help › App Information
+      placeholder: "Ex: v1.18.7"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: build-env
+    attributes:
+      label: Environment
+      description: |
+        What environment are you running KeeWeb as?
+      options:
+        - "Web"
+        - "Desktop"
+
+  - type: dropdown
+    id: build-os
+    attributes:
+      label: Operating System
+      description: |
+        Select which OS you are running:
+      options:
+        - "Windows"
+        - "Mac"
+        - "Linux"
+
+  - type: dropdown
+    id: issue-target
+    attributes:
+      label: Range of issue
+      description: |
+        Where does this issue occur?
+        Before submitting your bug report, try to see if the issue also occurs on the official demo site at https://app.keeweb.info/
+      options:
+        - "The issue occurs on my own setup AND demo site"
+        - "The issue only occurs on my own setup, demo site works correctly"
+
+  - type: dropdown
+    id: issue-db-type
+    attributes:
+      label: Database Type
+      description: |
+        What type of database are you having this issue with?
+      options:
+        - "Issue occurs only on new databases"
+        - "Issue occurs only on existing databases"
+        - "Issue occurs on both new and existing databases"
+
+  - type: textarea
+    id: logs-env
+    attributes:
+      label: Environment Copy/Paste
+      description: |
+        Copy all information from Settings › Help inside KeeWeb
+      render: shell
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        Please provide a description of your issue here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-reproduce
+    attributes:
+      label: Steps To Reproduce
+      description: |
+        Describe the steps that need taken by the developer(s) to get the error / issue you're experiencing.
+      value: |
+        - 
+        - 
+        - 
+        - 
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: |
+        Describe what you expect KeeWeb to actually do if it were working properly
+      value: |
+        - 
+        - 
+        - 
+        - 
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs-console
+    attributes:
+      label: Logs
+      description: |
+        List any error messages you received in the developer console.
+        Developer console for **web** can be opened with **SHIFT + CTRL + I**
+        Open **dev tools** in your browser and attach output log from **CONSOLE** tab. If you are using a desktop app, devtools can be opened from Settings › General › Advanced.
+      render: shell
+
+  - type: textarea
+    id: references
+    attributes:
+      label: Referenced Issues
+      description: |
+        List any existing issues this ticket may be associated with.
+        Structure each issue as:
+           - #NUMBER
+           - #3
+      value: |
+        - #
+
+  - type: textarea
+    id: attachment-db
+    attributes:
+      label: "Attachments: Database kdbx File"
+      description: |
+        Attach a test database below that does give you the described issue.
+        Ensure it has no real security information within it as it will be publicly visible to all.
+
+  - type: textarea
+    id: attachment-screenshots
+    attributes:
+      label: "Attachments: Screenshots"
+      description: |
+        Please provide screenshots of any errors or the issue you're having. 
+        Gifs are even better.
