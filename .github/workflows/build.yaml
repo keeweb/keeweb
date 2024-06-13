@@ -250,7 +250,7 @@ jobs:
           tagRegex: "^v(\\d+\\.\\d+\\.\\d+)$"
           tagRegexGroup: 1
       - name: Setup GCloud
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0.7.0
         with:
           version: '285.0.0'
           service_account_key: ${{ secrets.GCP_SA_KEY }}
@@ -418,9 +418,9 @@ jobs:
       - name: Purge CloudFlare cache
         if: ${{ github.repository == 'keeweb/keeweb' }}
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_TOKEN: ${{ secrets.CF_TOKEN }}
         run: |
           curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/dbda8e7e454d23edb08d4bc3b3f6f872/purge_cache" \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Authorization: Bearer $CF_TOKEN" \
             -H "Content-Type: application/json" \
             --data '{"purge_everything":true}'
