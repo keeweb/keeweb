@@ -397,7 +397,7 @@ class StorageWebDav extends StorageBase {
             return null;
         }
         return kdbxweb.CryptoEngine.sha256(xhr.response).then((hash) => {
-            const rev = kdbxweb.ByteUtils.bytesToHex(hash).substr(0, 10);
+            const rev = kdbxweb.ByteUtils.bytesToHex(hash).slice(0, 10);
             this.logger.debug('Calculated rev by content', `${xhr.response.byteLength} bytes`, rev);
             return { rev };
         });

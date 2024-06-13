@@ -29,7 +29,7 @@ module.exports = function (grunt) {
                 if (stat && stat.isDirectory()) {
                     await walk(file);
                 } else {
-                    const relFile = file.substr(appPath.length + 1);
+                    const relFile = file.slice(appPath.length + 1);
                     const fileData = grunt.file.read(file, { encoding: null });
                     signatures[relFile] = await getSignature(fileData);
                     signedFiles.push(relFile);

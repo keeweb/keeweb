@@ -32,7 +32,7 @@ const ThemeVars = {
                 // definitions are written like this:
                 //      map-merge((def:val, def:val, ..., last-def:val),$t)
                 // so, the last item has "),$" captured, here we're removing that bracket
-                def = def.substr(0, def.length - 1);
+                def = def.slice(0, -1);
             }
             const propName = '--' + name;
             const currentValue = cssStyle.getPropertyValue(propName);
@@ -78,7 +78,7 @@ const ThemeVars = {
             }
         }
         if (/^L/.test(arg)) {
-            return locals[arg.substr(1)];
+            return locals[arg.slice(1)];
         }
         if (/%$/.test(arg)) {
             return arg.replace(/%$/, '') / 100;
