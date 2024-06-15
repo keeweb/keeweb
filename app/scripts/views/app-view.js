@@ -832,6 +832,7 @@ class AppView extends View {
             this.showSettings();
         }
         this.$el.find('.app__beta:first').text(Locale.appBeta);
+        $('html').attr('lang', SettingsManager.activeLocale);
     }
 
     extLinkClick(e) {
