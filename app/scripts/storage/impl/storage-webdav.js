@@ -85,12 +85,12 @@ class StorageWebDav extends StorageBase {
         client
             .getFileContents(pathUrl.pathname, { details: true })
             .then((result) => {
-                this.logger.debug('load response', result);
+                this.logger.debug('load: success', result);
                 const stat = { rev: result.headers['last-modified'] };
                 callback(null, result.data, stat);
             })
             .catch((err) => {
-                this.logger.error('load error', err);
+                this.logger.error('load: error', err);
                 callback(err);
             });
     }
@@ -101,19 +101,28 @@ class StorageWebDav extends StorageBase {
 
         this._stat(client, pathUrl.pathname)
             .then((stat) => callback(null, stat))
-            .catch((err) => {
-                this.logger.error('stat error', err);
-                callback(err);
-            });
+            .catch((err) => callback(err));
     }
 
     _stat(client, path) {
         this.logger.debug('stat', path);
 
-        return client.stat(path).then((result) => {
-            this.logger.debug('stat response', result);
-            return { rev: result.lastmod };
-        });
+        return client
+            .stat(path)
+            .then((result) => {
+                this.logger.debug('stat: success', result);
+
+                return { rev: result.lastmod };
+            })
+            .catch((err) => {
+                this.logger.error('stat: error', err);
+
+                if (err.response.status === 404) {
+                    err = { notFound: true };
+                }
+
+                return Promise.reject(err);
+            });
     }
 
     save(path, opts, data, callback, rev) {
@@ -122,31 +131,50 @@ class StorageWebDav extends StorageBase {
         const client = this._createClient(path, opts);
         const pathUrl = new URL(path);
 
-        const useTmpPath = this.appSettings.webdavSaveMethod !== 'put';
-        if (useTmpPath) {
-            const tmpPath = path.replace(/[^\/]+$/, (m) => '.' + m) + '.' + Date.now();
-            const tmpUrl = new URL(tmpPath);
+        const upload = (useTmpPath) => {
+            if (useTmpPath) {
+                const tmpPath = path.replace(/[^\/]+$/, (m) => '.' + m) + '.' + Date.now();
+                const tmpUrl = new URL(tmpPath);
 
-            client
-                .putFileContents(tmpUrl.pathname, data)
-                .then(() => {
-                    return client.moveFile(tmpUrl.pathname, pathUrl.pathname).then(() => {
+                return client
+                    .putFileContents(tmpUrl.pathname, data)
+                    .then(() => client.moveFile(tmpUrl.pathname, pathUrl.pathname));
+            } else {
+                return client.putFileContents(pathUrl.pathname, data);
+            }
+        };
+
+        this._stat(client, pathUrl.pathname)
+            .then((stat) => {
+                this.logger.debug(`save: remote rev:${stat.rev} local rev:${rev}`);
+                if (stat.rev !== rev) {
+                    this.logger.warn('save: remote rev != local rev');
+                    return callback({ revConflict: true });
+                }
+
+                const useTmpPath = this.appSettings.webdavSaveMethod !== 'put';
+                return upload(useTmpPath)
+                    .then(() => {
                         return this._stat(client, pathUrl.pathname).then((stat) =>
                             callback(null, stat)
                         );
-                    });
-                })
-                .catch((err) => callback(err));
-        } else {
-            client
-                .putFileContents(pathUrl.pathname, data)
-                .then(() => {
-                    return this._stat(client, pathUrl.pathname).then((stat) =>
-                        callback(null, stat)
-                    );
-                })
-                .catch((err) => callback(err));
-        }
+                    })
+                    .catch((err) => callback(err));
+            })
+            .catch((err) => {
+                if (err.notFound) {
+                    this.logger.debug('save: not found, creating');
+                    return upload(false)
+                        .then(() => {
+                            return this._stat(client, pathUrl.pathname).then((stat) =>
+                                callback(null, stat)
+                            );
+                        })
+                        .catch((err) => callback(err));
+                }
+
+                callback(err);
+            });
     }
 
     fileOptsToStoreOpts(opts, file) {
