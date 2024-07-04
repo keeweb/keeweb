@@ -46,6 +46,13 @@ class StorageWebDav extends StorageBase {
         return {
             fields: [
                 {
+                    id: 'webdavAuthType',
+                    title: 'webdavAuthType',
+                    type: 'select',
+                    value: this.appSettings.webdavAuthType || 'basic',
+                    options: { basic: 'webdavAuthBasic', digest: 'webdavAuthDigest' }
+                },
+                {
                     id: 'webdavSaveMethod',
                     title: 'webdavSaveMethod',
                     type: 'select',
@@ -69,8 +76,11 @@ class StorageWebDav extends StorageBase {
     _createClient(path, opts) {
         const pathUrl = new URL(path);
 
+        const authType =
+            this.appSettings.webdavAuthType === 'digest' ? AuthType.Digest : AuthType.Basic;
+
         return createClient(pathUrl.origin, {
-            authType: AuthType.Digest,
+            authType,
             username: opts.user,
             password: opts.password
         });
