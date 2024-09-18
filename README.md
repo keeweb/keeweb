@@ -31,6 +31,10 @@ If you are using Docker:
 docker run --name keeweb -d -p 443:443 -p 80:80 -v $EXT_DIR:/etc/nginx/external/ antelle/keeweb
 ```
 
+You can deploy Keeweb on Elestio using one-click deployment. Elestio supports Keeweb by providing revenue share so go ahead click below and start using Keeweb.
+
+[![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.png)](https://elest.io/open-source/keeweb)
+
 To make Dropbox work in your self-hosted app, [go to this Wiki page](https://github.com/keeweb/keeweb/wiki/Dropbox-and-GDrive).
 
 ## Building
