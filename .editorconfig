@@ -1,19 +1,22 @@
-# http://EditorConfig.org
+# http://editorconfig.org
 
-# top-most EditorConfig file
+# is top-most EditorConfig file
 root = true
 
-# Unix-style newlines with a newline ending every file
+# All Files
 [*]
-end_of_line = lf
-insert_final_newline = true
-charset = utf-8
 indent_style = space
 indent_size = 4
+end_of_line = lf
+charset = utf-8
 trim_trailing_whitespace = true
+insert_final_newline = true
 
+# Markdown Files
 [*.md]
 trim_trailing_whitespace = false
 
+# Other
 [{*.nsh,*.yml,*.yaml,*.json}]
+indent_style = space
 indent_size = 2

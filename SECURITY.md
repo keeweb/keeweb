@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Only the latest version of the product is supported. This version can be accessed at https://app.keeweb.info 
+Only the latest version of the product is supported. This version can be accessed at https://app.keeweb.info
 and downloaded from https://keeweb.info or GitHub releases ([latest release link](https://github.com/keeweb/keeweb/releases/latest)).
 
 ## Reporting a Vulnerability

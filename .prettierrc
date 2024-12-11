@@ -1,8 +1,264 @@
-{
-    "tabWidth": 4,
-    "singleQuote": true,
-    "printWidth": 100,
-    "trailingComma": "none",
-    "quoteProps": "preserve",
-    "endOfLine": "auto"
-}
+# #
+#   Try prettier's new ternary formatting before it becomes the
+#   default behavior.
+#
+#   only in prettier v3.x
+#
+#   Moves the ? in multiline ternaries to the end of the first line
+#   instead of the start of the second, along with several related
+#   changes.
+#
+#   @default    : false
+#   @ref        : https://prettier.io/docs/en/options.html
+#                 https://prettier.io/docs/en/options.html#experimental-ternaries
+#                 https://github.com/prettier/prettier/pull/13183
+# #
+# experimentalTernaries: false
+
+# #
+#   Specify the line length that the printer will wrap on.
+#
+#   @default    : 80
+#   @ref        : https://prettier.io/docs/en/options.html#print-width
+# #
+printWidth: 120
+
+# #
+#   Specify the number of spaces per indentation-level.
+#
+#   @default    : 2
+#   @ref        : https://prettier.io/docs/en/options.html#tab-width
+# #
+tabWidth: 4
+
+# #
+#   Indent lines with tabs instead of spaces.
+#
+#   @default    : false
+#   @ref        : https://prettier.io/docs/en/options.html#tabs
+# #
+useTabs: false
+
+# #
+#   Print semicolons at the ends of statements.
+#
+#   true            : Add a semicolon at the end of every statement.
+#   false           : Only add semicolons at the beginning of lines that
+#                     may introduce ASI failures.
+#
+#   @default        : true
+#   @ref            : https://prettier.io/docs/en/options.html#semicolons
+# #
+semi: true
+
+# #
+#   Use single quotes instead of double quotes.
+#
+#   @default        : false
+#   @ref            : https://prettier.io/docs/en/options.html#quotes
+# #
+singleQuote: true
+
+# #
+#   Change when properties in objects are quoted.
+#
+#   "as-needed"     : Only add quotes around object properties where required.
+#   "consistent"    : If at least one property in an object requires quotes, quote all properties.
+#   "preserve"      : Respect the input use of quotes in object properties.
+#
+#
+#   @default        : "as-needed"
+#   @ref            : https://prettier.io/docs/en/options.html#quote-props
+# #
+quoteProps: 'preserve'
+
+# #
+#   Use single quotes instead of double quotes in JSX.
+#
+#   @default        : false
+#   @ref            : https://prettier.io/docs/en/options.html#jsx-quotes
+# #
+jsxSingleQuote: true
+
+# #
+#   Print trailing commas wherever possible in multi-line comma-separated
+#   syntactic structures.
+#
+#   (A single-line array, for example, never gets trailing commas.)
+#
+#   Default value changed from es5 to all in v3.0.0
+#
+#   "all"           : Trailing commas wherever possible (including
+#                     function parameters and calls). To run, JavaScript
+#                     code formatted this way needs an engine that
+#                     supports ES2017 (Node.js 8+ or a modern browser)
+#                     or downlevel compilation. This also enables
+#                     trailing commas in type parameters in TypeScript
+#                     (supported since TypeScript 2.7 released in January 2018).
+#
+#   "es5"           : Trailing commas where valid in ES5 (objects, arrays, etc.).
+#
+#                     Trailing commas in type parameters in TypeScript and Flow.
+#   "none"          : No trailing commas.
+#
+#
+#   @default        : "all"
+#   @ref            : https://prettier.io/docs/en/options.html#trailing-commas
+# #
+trailingComma: none
+
+# #
+#   Print spaces between brackets in object literals.
+#
+#   true            : Example: { foo: bar }.
+#   false           : Example: {foo: bar}.
+#
+#   @default        : true
+#   @ref            : https://prettier.io/docs/en/options.html#bracket-spacing
+# #
+bracketSpacing: true
+
+# #
+#   Put the > of a multi-line HTML (HTML, JSX, Vue, Angular) element at the end of the
+#   last line instead of being alone on the next line (does not apply to self closing
+#   elements).
+#
+#   true            : Example:
+#
+#                   <button
+#                     className="prettier-class"
+#                     id="prettier-id"
+#                     onClick={this.handleClick}>
+#                     Click Here
+#                   </button>
+#
+#   false           : Example:
+#
+#                   <button
+#                     className="prettier-class"
+#                     id="prettier-id"
+#                     onClick={this.handleClick}
+#                   >
+#                     Click Here
+#                   </button>
+#
+#   @default        : false
+#   @ref            : https://prettier.io/docs/en/options.html#bracket-line
+# #
+bracketSameLine: false
+
+# #
+#   Include parentheses around a sole arrow function parameter.
+#
+#   First available in v1.9.0, default value changed from avoid to always in v2.0.0
+#
+#   "always"        : Always include parens. Example: (x) => x
+#   "avoid"         : Omit parens when possible. Example: x => x
+#
+#
+#   @default        : "always"
+#   @ref            : https://prettier.io/docs/en/options.html#arrow-function-parentheses
+# #
+arrowParens: always
+
+# #
+#   By default, Prettier will not change wrapping in markdown text since some services
+#   use a linebreak-sensitive renderer, e.g. GitHub comments and BitBucket. To have
+#   Prettier wrap prose to the print width, change this option to "always". If you want
+#   Prettier to force all prose blocks to be on a single line and rely on editor/viewer
+#   soft wrapping instead, you can use "never".
+#
+#   First available in v1.8.2
+#
+#   "always"        : Wrap prose if it exceeds the print width.
+#   "never"         : Un-wrap each block of prose into one line.
+#   "preserve"      : Do nothing, leave prose as-is. First available in v1.9.0
+#
+#
+#   @default        : "preserve"
+#   @ref            : https://prettier.io/docs/en/options.html#prose-wrap
+# #
+proseWrap: 'preserve'
+
+# #
+#   Specify the global whitespace sensitivity for HTML, Vue, Angular, and Handlebars.
+#   See whitespace-sensitive formatting for more info.
+#
+#   First available in v1.15.0. First available for Handlebars in 2.3.0
+#
+#   "css"           : Respect the default value of CSS display property.
+#                     For Handlebars treated same as strict.
+#   "strict"        : Whitespace (or the lack of it) around all tags is considered significant.
+#   "ignore"        : Whitespace (or the lack of it) around all tags is considered insignificant.
+#
+#
+#   @default        : "css"
+#   @ref            : https://prettier.io/docs/en/options.html#html-whitespace-sensitivity
+#                     https://prettier.io/blog/2018/11/07/1.15.0.html#whitespace-sensitive-formatting
+# #
+htmlWhitespaceSensitivity: 'ignore'
+
+# #
+#   For historical reasons, there exist two common flavors of line endings in text
+#   files. That is:
+#       - \n (or LF for Line Feed)
+#       - \r\n (or CRLF for Carriage Return + Line Feed).
+#
+#   The former is common on Linux and macOS, while the latter is prevalent on Windows.
+#   Some details explaining why it is so can be found on Wikipedia.
+#
+#   When people collaborate on a project from different operating systems, it becomes
+#   easy to end up with mixed line endings in a shared git repository. It is also possible
+#   for Windows users to accidentally change line endings in a previously committed file
+#   from LF to CRLF. Doing so produces a large git diff and thus makes the line-by-line
+#   history for a file (git blame) harder to explore.
+#
+#   All modern text editors in all operating systems are able to correctly display line
+#   endings when \n (LF) is used. However, old versions of Notepad for Windows will visually
+#   squash such lines into one as they can only deal with \r\n (CRLF).
+#
+#   First available in v1.15.0, default value changed from auto to lf in v2.0.0
+#
+#   "lf"            : Line Feed only (\n), common on Linux and macOS as well as inside git repos
+#   "crlf"          : Carriage Return + Line Feed characters (\r\n), common on Windows
+#   "cr"            : Carriage Return character only (\r), used very rarely
+#   "auto"          : Maintain existing line endings (mixed values within one file are normalised
+#                     by looking at what’s used after the first line)
+#
+#   @default        : "lf"
+#   @ref            : https://prettier.io/docs/en/options.html#end-of-line
+# #
+endOfLine: 'auto'
+
+# #
+#   Control whether Prettier formats quoted code embedded in the file.
+#
+#   When Prettier identifies cases where it looks like you've placed some code it knows
+#   how to format within a string in another file, like in a tagged template in
+#   JavaScript with a tag named html or in code blocks in Markdown, it will by default try
+#   to format that code.
+#
+#   Sometimes this behavior is undesirable, particularly in cases where you might not have
+#   intended the string to be interpreted as code. This option allows you to switch between
+#   the default behavior (auto) and disabling this feature entirely (off).
+#
+#   First available in v2.1.0
+#
+#   "auto"          : Format embedded code if Prettier can automatically identify it.
+#   "off"           : Never automatically format embedded code.
+#
+#   @default        : "auto"
+#   @ref            : https://prettier.io/docs/en/options.html#embedded-language-formatting
+# #
+embeddedLanguageFormatting: 'auto'
+
+# #
+#   Enforce single attribute per line in HTML, Vue and JSX.
+#
+#   true            : Enforce single attribute per line.
+#   false           : Do not enforce single attribute per line.
+#
+#   @default        : false
+#   @ref            : https://prettier.io/docs/en/options.html#single-attribute-per-line
+# #
+singleAttributePerLine: true

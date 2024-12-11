@@ -1,19 +1,23 @@
-workspace.xml
-misc.xml
-.DS_Store
+coverage
+dist
+.opt-*
 node_modules/
+
+# tests and coverage
+.nyc_output
+coverage
+
+.dev
+.idea
+.vscode
+test/dist
 *.log
-/dist/
 tmp/
-coverage/
-keys
 *.user
 bin/
-obj/
-*.xcworkspace/
-xcuserdata/
 *.suo
-.idea/
-.vscode/
-*.iml
-test/dist/
+
+# Private
+.dev
+.env
+keys
