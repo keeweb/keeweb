@@ -26,6 +26,10 @@ class SettingsGeneralView extends View {
 
     events = {
         'click .settings__general-theme': 'changeTheme',
+        'change .settings__general-backgroundState': 'changeBackgroundState',
+        'change .settings__general-background-opacity-light': 'changeWallpaperOpacityLight',
+        'change .settings__general-background-opacity-dark': 'changeWallpaperOpacityDark',
+        'click .settings__general-background-url-save-btn': 'changeBackgroundUrl',
         'click .settings__general-auto-switch-theme': 'changeAuthSwitchTheme',
         'change .settings__general-locale': 'changeLocale',
         'change .settings__general-font-size': 'changeFontSize',
@@ -88,6 +92,11 @@ class SettingsGeneralView extends View {
 
         super.render({
             themes: this.getAllThemes(),
+            backgroundState: AppSettingsModel.backgroundState,
+            backgroundId: AppSettingsModel.backgroundId,
+            backgroundUrl: AppSettingsModel.backgroundUrl,
+            backgroundOpacityLight: AppSettingsModel.backgroundOpacityLight,
+            backgroundOpacityDark: AppSettingsModel.backgroundOpacityDark,
             autoSwitchTheme: AppSettingsModel.autoSwitchTheme,
             activeTheme: SettingsManager.activeTheme,
             locales: SettingsManager.allLocales,
@@ -172,6 +181,7 @@ class SettingsGeneralView extends View {
         switch (UpdateModel.status) {
             case 'checking':
                 return Locale.setGenUpdateChecking + '...';
+
             case 'error': {
                 let errMsg = Locale.setGenErrorChecking;
                 if (UpdateModel.lastError) {
@@ -189,6 +199,7 @@ class SettingsGeneralView extends View {
                 }
                 return errMsg;
             }
+
             case 'ok': {
                 let msg =
                     Locale.setGenCheckedAt +
@@ -204,6 +215,7 @@ class SettingsGeneralView extends View {
                         ' ' +
                         DateFormat.dStr(UpdateModel.lastVersionReleaseDate);
                 }
+
                 switch (UpdateModel.updateStatus) {
                     case 'downloading':
                         return msg + '. ' + Locale.setGenDownloadingUpdate;
@@ -214,6 +226,7 @@ class SettingsGeneralView extends View {
                 }
                 return msg;
             }
+
             default:
                 return Locale.setGenNeverChecked;
         }
@@ -270,6 +283,84 @@ class SettingsGeneralView extends View {
                 SettingsManager.setTheme(theme);
             }
         }
+    }
+
+    /*
+        Called every time the background dropdown state is changed.
+    */
+
+    changeBackgroundState(e) {
+        const val = e.target.value;
+        if (val === '...') {
+            e.target.value = AppSettingsModel.backgroundState || 'random';
+        } else {
+            AppSettingsModel.backgroundState = val;
+        }
+
+        /*
+            This ensures all aspects are refreshed when the wallpaper is changed.
+        */
+
+        Events.emit('wallpaper-change');
+        this.render();
+    }
+
+    /*
+        Called every time opacity is changed. This setting uses the cached background image / path
+        so that the wallpaper is not changed every time the opacity is changed, if the user has opted
+        for 'random'.
+    */
+
+    changeWallpaperOpacityLight(e) {
+        const val = e.target.value;
+        if (val === '...') {
+            e.target.value = AppSettingsModel.backgroundOpacityLight || '0.8';
+        } else {
+            AppSettingsModel.backgroundOpacityLight = val;
+        }
+
+        Events.emit('wallpaper-opacity');
+        this.render();
+    }
+
+    changeWallpaperOpacityDark(e) {
+        const val = e.target.value;
+        if (val === '...') {
+            e.target.value = AppSettingsModel.backgroundOpacityDark || '0.8';
+        } else {
+            AppSettingsModel.backgroundOpacityDark = val;
+        }
+
+        Events.emit('wallpaper-opacity');
+        this.render();
+    }
+
+    /*
+        Wallpaper URL > Custom
+    */
+
+    changeBackgroundUrl(e) {
+        // eslint-disable-next-line no-unused-vars
+        const savetn = this.$el.find('.settings__general-background-url-save-btn');
+        const urlTextBox = this.$el.find('#settings__general-background-url');
+        const errorBox = this.$el.find('.settings__general-background-save-error');
+
+        errorBox.empty();
+
+        const url = urlTextBox.val().trim();
+        if (!url) {
+            AppSettingsModel.backgroundUrl = null;
+            return;
+        }
+
+        const wallpaperUrl = encodeURI(url)
+            .replace(/[!'()]/g, encodeURI)
+            .replace(/\*/g, '%2A');
+
+        AppSettingsModel.backgroundUrl = wallpaperUrl;
+
+        Events.emit('wallpaper-change');
+        this.render();
     }
 
     changeAuthSwitchTheme(e) {

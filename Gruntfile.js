@@ -124,6 +124,20 @@ module.exports = function (grunt) {
                 expand: true,
                 nonull: true
             },
+            wallpapers: {
+                cwd: 'app/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'tmp/wallpapers/',
+                expand: true,
+                nonull: true
+            },
+            'dist-wallpapers': {
+                cwd: 'app/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'dist/wallpapers/',
+                expand: true,
+                nonull: true
+            },
             manifest: {
                 cwd: 'app/manifest/',
                 src: ['*.json', '*.xml'],
@@ -141,6 +155,13 @@ module.exports = function (grunt) {
             'desktop-html': {
                 src: 'dist/index.html',
                 dest: 'tmp/desktop/app/index.html',
+                nonull: true
+            },
+            'desktop-html-wallpaper': {
+                cwd: 'dist/wallpapers/',
+                src: ['*.jpg'],
+                dest: 'tmp/desktop/app/wallpapers/',
+                expand: true,
                 nonull: true
             },
             'desktop-app-content': {
@@ -284,12 +305,76 @@ module.exports = function (grunt) {
             util: ['util/**/*.js'],
             installer: ['package/osx/installer.js']
         },
+
         inline: {
             app: {
                 src: 'tmp/index.html',
                 dest: 'tmp/app.html'
             }
         },
+
+        /*
+            HTML Link Rel
+            used primarily for preloading
+
+            rel             alternate, canonical, author, bookmark, dns-prefetch, expect,
+                            external, help, icon, manifest, modulepreload, license, next,
+                            nofollow, noopener, noreferrer, opener, pingback, preconnect,
+                            prefetch, preload, prev, privacy-policy, search, stylesheet,
+                            tag, terms-of-service
+
+            as              fetch, font, image, script, style, track
+
+            type            image/webp, image/jpeg, image/png, image/x-icon, font/ttf, font/woff2, text/css
+                            application/rss+xml, application/json
+
+            cors            defines how to handle crossorigin requests. Setting the crossorigin attribute
+                            (equivalent to crossorigin="anonymous") will switch the request to a CORS
+                            request using the same-origin policy. It is required on the rel="preload" as
+                            font requests require same-origin policy.
+
+                            An invalid keyword and an empty string will be handled as the anonymous keyword.
+
+                            specifying 'true' will be the same as 'anonymous' / "".
+
+                            >   anonymous
+                                Request uses CORS headers and credentials flag is set to 'same-origin'.
+                                There is no exchange of user credentials via cookies, client-side TLS
+                                certificates or HTTP authentication, unless destination is the same origin.
+
+                            >   use-credentials
+                                Request uses CORS headers, credentials flag is set to 'include' and user
+                                credentials are always included.
+
+                            >   ""
+                                Setting the attribute name to an empty value, like crossorigin or
+                                crossorigin="", is the same as anonymous.
+
+        */
+
+        'htmlinkrel': {
+            'images': {
+                options: {
+                    replacements: [
+                        {
+                            name: 'Preload: Wallpapers',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_IMAGES}}-->/,
+                            hrefPath: 'wallpapers',
+                            searchPath: 'app/wallpapers',
+                            as: 'image',
+                            type: 'image/jpeg',
+                            cors: 'anonymous'
+                        }
+                    ],
+                    app: [
+                        {
+                            src: 'tmp/index.html'
+                        }
+                    ]
+                }
+            },
+
         'csp-hashes': {
             options: {
                 algo: 'sha512',
@@ -303,6 +388,7 @@ module.exports = function (grunt) {
                 dest: 'dist/index.html'
             }
         },
+
         htmlmin: {
             options: {
                 removeComments: true,
@@ -314,6 +400,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'string-replace': {
             'update-manifest': {
                 options: {
@@ -487,6 +574,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'electron-builder': {
             linux: {
                 options: {
@@ -521,6 +609,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'electron-patch': {
             'win32-x64': 'tmp/desktop/KeeWeb-win32-x64/KeeWeb.exe',
             'win32-ia32': 'tmp/desktop/KeeWeb-win32-ia32/KeeWeb.exe',
@@ -529,6 +618,7 @@ module.exports = function (grunt) {
             'darwin-arm64': 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app',
             'linux': 'tmp/desktop/KeeWeb-linux-x64/keeweb'
         },
+
         osacompile: {
             options: {
                 language: 'JavaScript'
@@ -539,6 +629,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         compress: {
             options: {
                 level: 6
@@ -563,6 +654,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
+
         appdmg: {
             x64: {
                 options: appdmgOptions('x64'),
@@ -573,6 +665,7 @@ module.exports = function (grunt) {
                 dest: `dist/desktop/KeeWeb-${pkg.version}.mac.arm64.dmg`
             }
         },
+
         nsis: {
             options: {
                 vars: {
@@ -624,6 +717,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         chmod: {
             'linux-desktop-x64': {
                 options: {
@@ -632,6 +726,7 @@ module.exports = function (grunt) {
                 src: ['tmp/desktop/keeweb-linux-x64/chrome-sandbox']
             }
         },
+
         deb: {
             options: {
                 tmpPath: 'tmp/desktop/',
@@ -674,6 +769,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
+
         'osx-sign': {
             options: {
                 get identity() {
@@ -700,6 +796,7 @@ module.exports = function (grunt) {
                 src: 'tmp/desktop/KeeWeb Installer.app'
             }
         },
+
         notarize: {
             options: {
                 appBundleId: 'net.antelle.keeweb',
@@ -718,6 +815,7 @@ module.exports = function (grunt) {
                 src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
             }
         },
+
         'sign-exe': {
             options: {
                 url: pkg.homepage,
@@ -813,6 +911,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'sign-dist': {
             dist: {
                 options: {

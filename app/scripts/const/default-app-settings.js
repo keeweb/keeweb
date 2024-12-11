@@ -1,5 +1,10 @@
 const DefaultAppSettings = {
     theme: null, // UI theme
+    backgroundState: 'random', // interface backgrounds
+    backgroundUrl: null, // interface background url
+    backgroundId: 1, // interface background identifier
+    backgroundOpacityLight: '0.8', // background opacity (light themes), 0 - 1
+    backgroundOpacityDark: '0.8', // background opacity (dark themes), 0 - 1
     autoSwitchTheme: false, // automatically switch between light and dark theme
     locale: null, // user interface language
     expandGroups: true, // show entries from all subgroups

@@ -60,6 +60,7 @@ module.exports = function (options) {
             modules: [
                 path.join(rootDir, 'app/scripts'),
                 path.join(rootDir, 'app/styles'),
+                path.join(rootDir, 'app/wallpapers'),
                 path.join(rootDir, 'node_modules')
             ],
             alias: {
@@ -83,6 +84,10 @@ module.exports = function (options) {
                     __dirname,
                     '../node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2'
                 ),
+                'wallpaper1': path.join(rootDir, 'app/wallpapers/1.jpg'),
+                'wallpaper2': path.join(rootDir, 'app/wallpapers/2.jpg'),
+                'wallpaper3': path.join(rootDir, 'app/wallpapers/3.jpg'),
+                'wallpaper4': path.join(rootDir, 'app/wallpapers/4.jpg')
             },
             fallback: {
                 console: false,
@@ -220,6 +225,21 @@ module.exports = function (options) {
                             loader: 'scss-add-icons-loader'
                         }
                     ]
+                },
+                {
+                    test: /\.(svg|png|jpe?g|gif)$/,
+                    loader: 'file-loader',
+                    options: {
+                        name: 'wallpapers/[name].[ext]'
+                    }
+                },
+                {
+                    test: /\.(svg|png|jpe?g|gif)$/,
+                    include: [path.resolve(__dirname, 'app/wallpapers/')],
+                    type: 'asset/resource',
+                    generator: {
+                        filename: '[name][ext]'
+                    }
                 },
                 { test: /fontawesome.*\.woff2$/, loader: 'fontawesome-loader' },
                 { test: /\.pem$/, loader: 'raw-loader' },

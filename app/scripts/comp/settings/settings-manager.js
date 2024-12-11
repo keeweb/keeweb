@@ -8,6 +8,31 @@ import { Launcher } from 'comp/launcher';
 
 const logger = new Logger('settings-manager');
 
+/*
+    Defines if a particular theme is either dark or light.
+    used throughout keeweb to determine what css properties
+    are added depending on the user scheme selected.
+
+    when adding a new theme, add it to:
+        - themeSchemes
+        - autoSwitchedThemes
+*/
+
+const themeSchemes = {
+    dark: 'dark',
+    light: 'light',
+    sd: 'dark',
+    sl: 'light',
+    fb: 'dark',
+    bl: 'light',
+    db: 'dark',
+    lb: 'light',
+    te: 'dark',
+    lt: 'light',
+    dc: 'dark',
+    hc: 'light'
+};
+
 const SettingsManager = {
     neutralLocale: null,
     activeLocale: 'en-US',
@@ -38,33 +63,33 @@ const SettingsManager = {
     autoSwitchedThemes: [
         {
             name: 'setGenThemeDefault',
-            dark: 'dark',
-            light: 'light'
+            dark: themeSchemes.dark,
+            light: themeSchemes.light
         },
         {
             name: 'setGenThemeSol',
-            dark: 'sd',
-            light: 'sl'
+            dark: themeSchemes.sd,
+            light: themeSchemes.sl
         },
         {
             name: 'setGenThemeBlue',
-            dark: 'fb',
-            light: 'bl'
+            dark: themeSchemes.fb,
+            light: themeSchemes.bl
         },
         {
             name: 'setGenThemeBrown',
-            dark: 'db',
-            light: 'lb'
+            dark: themeSchemes.db,
+            light: themeSchemes.lb
         },
         {
             name: 'setGenThemeTerminal',
-            dark: 'te',
-            light: 'lt'
+            dark: themeSchemes.te,
+            light: themeSchemes.lt
         },
         {
             name: 'setGenThemeHighContrast',
-            dark: 'dc',
-            light: 'hc'
+            dark: themeSchemes.dc,
+            light: themeSchemes.hc
         }
     ],
 
@@ -114,10 +139,18 @@ const SettingsManager = {
         this.activeTheme = theme;
         logger.debug('Theme changed', theme);
         Events.emit('theme-applied');
+        Events.emit('wallpaper-change');
     },
 
     getThemeClass(theme) {
         return 'th-' + theme;
+    },
+
+    getThemeScheme(theme) {
+        if (!theme) {
+            return themeSchemes[AppSettingsModel.theme];
+        }
+        return themeSchemes[theme];
     },
 
     selectDarkOrLightTheme(theme) {

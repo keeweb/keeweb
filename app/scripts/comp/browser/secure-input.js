@@ -25,6 +25,7 @@ SecureInput.prototype.reset = function () {
             this.salt[i] = 0;
         }
     }
+
     this.salt = new Uint32Array(0);
 };
 
@@ -35,10 +36,12 @@ SecureInput.prototype._input = function () {
     const newSalt = new Uint32Array(this.maxLen);
     let valIx = 0,
         psIx = 0;
+
     while (valIx < value.length) {
         const valCh = value.charCodeAt(valIx);
         const psCh = this.pseudoValue.charCodeAt(psIx);
         const isSpecial = this._isSpecialChar(valCh);
+
         if (psCh === valCh) {
             // not changed
             newPs += this._getChar(newPs.length);
@@ -55,6 +58,7 @@ SecureInput.prototype._input = function () {
             valIx++;
         }
     }
+
     this.length = newPs.length;
     this.pseudoValue = newPs;
     this.salt = newSalt;

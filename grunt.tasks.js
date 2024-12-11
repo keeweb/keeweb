@@ -6,6 +6,7 @@ module.exports = function (grunt) {
         'eslint',
         'copy:html',
         'copy:icons',
+        'copy:wallpapers',
         'copy:manifest',
         'webpack:app',
         'inline',
@@ -20,6 +21,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build-desktop-app-content', [
         'copy:desktop-html',
+        'copy:desktop-html-wallpaper',
         'copy:desktop-app-content',
         'string-replace:desktop-public-key'
     ]);

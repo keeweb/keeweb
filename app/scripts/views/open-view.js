@@ -97,6 +97,9 @@ class OpenView extends View {
                 }
             });
         }
+        if (typeof this.model.settings._temp === 'undefined') {
+            this.model.settings._temp = {};
+        }
         storageProviders.sort((x, y) => (x.uipos || Infinity) - (y.uipos || Infinity));
         const showMore =
             storageProviders.length ||
@@ -118,6 +121,11 @@ class OpenView extends View {
         super.render({
             lastOpenFiles: this.getLastOpenFiles(),
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
+            backgroundState: this.model.settings.backgroundState,
+            backgroundId: this.model.settings.backgroundId,
+            backgroundUrl: this.model.settings.backgroundUrl,
+            backgroundOpacityLight: this.model.settings.backgroundOpacityLight,
+            backgroundOpacityDark: this.model.settings.backgroundOpacityDark,
             demoOpened: this.model.settings.demoOpened,
             storageProviders,
             unlockMessageRes: this.model.unlockMessageRes,
