@@ -299,7 +299,7 @@ class StorageGDrive extends StorageBase {
             }
         }
         return {
-            scope: 'https://www.googleapis.com/auth/drive',
+            scope: 'https://www.googleapis.com/auth/drive.file',
             url: 'https://accounts.google.com/o/oauth2/v2/auth',
             tokenUrl: 'https://oauth2.googleapis.com/token',
             clientId,
