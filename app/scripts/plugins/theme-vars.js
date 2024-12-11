@@ -32,7 +32,7 @@ const ThemeVars = {
                 // definitions are written like this:
                 //      map-merge((def:val, def:val, ..., last-def:val),$t)
                 // so, the last item has "),$" captured, here we're removing that bracket
-                def = def.substr(0, def.length - 1);
+                def = def.slice(0, -1);
             }
             const propName = '--' + name;
             const currentValue = cssStyle.getPropertyValue(propName);
@@ -78,7 +78,7 @@ const ThemeVars = {
             }
         }
         if (/^L/.test(arg)) {
-            return locals[arg.substr(1)];
+            return locals[arg.slice(1)];
         }
         if (/%$/.test(arg)) {
             return arg.replace(/%$/, '') / 100;
@@ -96,20 +96,24 @@ const ThemeVars = {
         'mix'(color1, color2, percent) {
             return color1.mix(color2, percent).toRgba();
         },
+
         'semi-mute-percent'(mutePercent) {
             return mutePercent / 2;
         },
+
         'rgba'(color, alpha) {
             const res = new Color(color);
             res.a = alpha;
             return res.toRgba();
         },
+
         'text-contrast-color'(color, lshift, thBg, thText) {
             if (color.l - lshift >= thBg.l) {
                 return thText.toRgba();
             }
             return thBg.toRgba();
         },
+
         'lightness-alpha'(color, lightness, alpha) {
             const res = new Color(color);
             res.l += Math.min(0, Math.max(1, lightness));

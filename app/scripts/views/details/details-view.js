@@ -340,7 +340,7 @@ class DetailsView extends View {
                 break;
             default:
                 if (e.item.lastIndexOf('add:', 0) === 0) {
-                    const fieldName = e.item.substr(4);
+                    const fieldName = e.item.slice(4);
                     const fieldView = this.fieldViews.find((f) => f.model.name === fieldName);
                     fieldView.show();
                     fieldView.edit();
@@ -580,7 +580,7 @@ class DetailsView extends View {
     fieldChanged(e) {
         if (e.field) {
             if (e.field[0] === '$') {
-                let fieldName = e.field.substr(1);
+                let fieldName = e.field.slice(1);
                 if (fieldName === 'otp') {
                     if (this.otpFieldChanged(e.val)) {
                         this.entryUpdated();
