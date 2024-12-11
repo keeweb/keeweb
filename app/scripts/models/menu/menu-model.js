@@ -17,7 +17,7 @@ class MenuModel extends Model {
         this.allItemsSection = new MenuSectionModel([
             {
                 locTitle: 'menuAllItems',
-                icon: 'th-large',
+                icon: 'table-cells-large',
                 active: true,
                 shortcut: Keys.DOM_VK_A,
                 filterKey: '*'
@@ -43,7 +43,7 @@ class MenuModel extends Model {
         this.trashSection = new MenuSectionModel([
             {
                 locTitle: 'menuTrash',
-                icon: 'trash-alt',
+                icon: 'trash-can',
                 shortcut: Keys.DOM_VK_D,
                 filterKey: 'trash',
                 filterValue: true,
@@ -69,7 +69,7 @@ class MenuModel extends Model {
         this.generalSection = new MenuSectionModel([
             {
                 locTitle: 'menuSetGeneral',
-                icon: 'cog',
+                icon: 'gear',
                 page: 'general',
                 section: 'top',
                 active: true
@@ -85,6 +85,12 @@ class MenuModel extends Model {
                 icon: '0',
                 page: 'general',
                 section: 'function'
+            },
+            {
+                locTitle: 'setGenSecurity',
+                icon: '0',
+                page: 'general',
+                section: 'security'
             },
             {
                 locTitle: 'setGenAudit',

@@ -5,7 +5,7 @@ const fileWatchers = {};
 
 class StorageFile extends StorageBase {
     name = 'file';
-    icon = 'hdd';
+    icon = 'hard-drive';
     enabled = !!Launcher;
     system = true;
     backup = true;

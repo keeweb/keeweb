@@ -26,7 +26,7 @@
         <h2>{{res 'setFileSaveTo'}}</h2>
         {{#ifneq storage 'file'}}
         <div class="settings__file-save-to settings__file-save-to-file">
-            <i class="fa fa-file-alt"></i>{{Res 'file'}}
+            <i class="fa fa-file-lines"></i>{{Res 'file'}}
         </div>
         {{/ifneq}}
         {{#each storageProviders as |prv|}}
@@ -55,32 +55,39 @@
     {{#if syncError}}<div>{{res 'setFileSyncError'}}: {{syncError}}</div>{{/if}}
     {{/if}}
 
+    <hr>
+
     <h2>{{res 'settings'}}</h2>
     <label for="settings__file-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFilePass'}}:
         <span class="settings__file-master-pass-warning">
-            <i class="fa fa-exclamation-triangle"></i> <span id="settings__file-master-pass-warning-text">{{res 'setFilePassChange'}}</span>
+            <i class="fa fa-triangle-exclamation"></i> <span id="settings__file-master-pass-warning-text">{{res 'setFilePassChange'}}</span>
         </span>
     </label>
+
     <div class="hide">
         {{!-- we need these inputs to screw browsers passwords autocompletion --}}
         <input type="text" name="username">
         <input type="password" name="password">
     </div>
+
     <input type="password" class="settings__input input-base" id="settings__file-master-pass" value="{{password}}" autocomplete="new-password" />
+
     <div id="settings__file-confirm-master-pass-group">
         <label for="settings__file-confirm-master-pass" class="settings__file-master-pass-label input-base">{{res 'setFileConfirmPass'}}:
             <span class="settings__file-confirm-master-pass-warning">
-                <i class="fa fa-exclamation-triangle"></i> {{res 'setFilePassNotMatch'}}
+                <i class="fa fa-triangle-exclamation"></i> {{res 'setFilePassNotMatch'}}
             </span>
         </label>
         <input type="password" class="settings__input input-base" id="settings__file-confirm-master-pass" autocomplete="confirm-password" />
     </div>
+
     <p>
         <label for="settings__file-key-file">{{res 'setFileKeyFile'}}:</label>
         <select class="settings__select settings__select-no-margin input-base" id="settings__file-key-file"></select>
         <a id="settings__file-file-select-link">{{res 'setFileSelKeyFile'}}</a>
         <input type="file" id="settings__file-file-select" class="hide-by-pos" />
     </p>
+
     {{#if showYubiKeyBlock}}
         <p>
             <label for="settings__file-yubikey">{{res 'setFileYubiKey'}}:</label>
@@ -102,6 +109,8 @@
         </p>
     {{/if}}
 
+    <br />
+
     <h2>{{res 'setFileNames'}}</h2>
     <label for="settings__file-name">{{Res 'name'}}:</label>
     <input type="text" class="settings__input input-base" id="settings__file-name" value="{{name}}" required />
@@ -114,6 +123,7 @@
         <input type="checkbox" class="settings__input input-base" id="settings__file-backup-enabled" {{#if backupEnabled}}checked{{/if}} />
         <label for="settings__file-backup-enabled">{{res 'setFileBackupEnable'}}</label>
     </div>
+
     <div class="settings__file-backups {{#unless backupEnabled}}hide{{/unless}}">
         <select class="settings__select input-base" id="settings__file-backup-storage">
             {{#if supportFiles}}<option value="file" {{#ifeq backupStorage 'file'}}selected{{/ifeq}}>{{Res 'file'}}</option>{{/if}}
@@ -138,11 +148,13 @@
     </div>
     {{/if}}
 
+    <br />
+
     <h2>{{Res 'history'}}</h2>
-    <div>
+    <p>
         <input type="checkbox" class="settings__input input-base" id="settings__file-trash" {{#if recycleBinEnabled}}checked{{/if}} />
         <label for="settings__file-trash">{{res 'setFileEnableTrash'}}</label>
-    </div>
+    </p>
     <label for="settings__file-hist-type">{{res 'setFileHistMode'}}</label>
     <select class="settings__select input-base" id="settings__file-hist-type">
         <option value="1" {{#cmp historyMaxItems 0 '>'}}selected{{/cmp}}>{{res 'setFileHistLimited'}}</option>
@@ -151,10 +163,12 @@
     </select>
     {{#cmp historyMaxItems 0 '>'}}
         <label for="settings__file-hist-len">{{res 'setFileHistLen'}}:</label>
-        <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" maxlength="6" />
+        <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-len" value="{{historyMaxItems}}" maxlength="7" />
     {{/cmp}}
     <label for="settings__file-hist-size">{{res 'setFileHistSize'}}:</label>
     <input type="text" pattern="\d+" required class="settings__input input-base" id="settings__file-hist-size" value="{{historyMaxSize}}" maxlength="3" />
+
+    <br />
 
     <h2>{{res 'advanced'}}</h2>
     <label for="settings__file-format-version">{{res 'setFileFormatVersion'}}</label>

@@ -19,7 +19,7 @@
                 </span>
             {{/if}}
         </i>
-        <h1 class="details__header-title">{{#if title}}{{title}}{{else}}(no title){{/if}}</h1>
+        <h1 class="details__header-title">{{#if title}}{{title}}{{else}}({{res 'noTitle'}}){{/if}}</h1>
         {{#if customIcon}}
         <div class="details__header-icon details__header-icon--icon"
              {{#if canEditIcon}}title="{{res 'detSetIcon'}}"{{/if}}
@@ -47,9 +47,9 @@
     {{#if showButtons}}
         <div class="details__buttons">
             {{#if deleted~}}
-                <i class="details__buttons-trash-del fa fa-minus-circle" title="{{res 'detDelEntryPerm'}}" tip-placement="top"></i>
+                <i class="details__buttons-trash-del fa fa-circle-minus" title="{{res 'detDelEntryPerm'}}" tip-placement="top"></i>
             {{~else~}}
-                <i class="details__buttons-trash fa fa-trash-alt" title="{{res 'detDelEntry'}}" tip-placement="top"></i>
+                <i class="details__buttons-trash fa fa-trash-can" title="{{res 'detDelEntry'}}" tip-placement="top"></i>
             {{~/if~}}
             <div class="details__attachments">
                 <input type="file" class="details__attachment-input-file hide-by-pos" multiple />
