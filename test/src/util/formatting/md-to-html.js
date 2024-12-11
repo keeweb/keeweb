@@ -1,6 +1,11 @@
 import { expect } from 'chai';
 import { MdToHtml } from 'util/formatting/md-to-html';
 
+/*
+    Uses internal library which converts markdown to html
+    @ref        app/scripts/util/formatting/md-to-html.js
+*/
+
 describe('MdToHtml', () => {
     it('should convert markdown', () => {
         expect(MdToHtml.convert('## head\n_italic_', true, false)).to.eql({
@@ -17,6 +22,37 @@ describe('MdToHtml', () => {
             html:
                 '<div class="markdown">' +
                 '<p><a href="https://x" rel="noreferrer noopener" target="_blank">link</a></p>\n' +
+                '</div>'
+        });
+    });
+
+    it('should convert markdown image to html', () => {
+        expect(
+            MdToHtml.convert('![keeweb logo](https://keeweb.info/img/logo.png)', true, false)
+        ).to.eql({
+            html:
+                '<div class="markdown">' +
+                '<p><img alt="keeweb logo" src="https://keeweb.info/img/logo.png"></p>\n' +
+                '</div>'
+        });
+    });
+
+    it('should convert markdown unordered lists to html', () => {
+        expect(MdToHtml.convert('- unordered 1\n- unordered 2\n- unordered 3', true, false)).to.eql(
+            {
+                html:
+                    '<div class="markdown">' +
+                    '<ul>\n<li>unordered 1</li>\n<li>unordered 2</li>\n<li>unordered 3</li>\n</ul>\n' +
+                    '</div>'
+            }
+        );
+    });
+
+    it('should convert markdown codeblock to html', () => {
+        expect(MdToHtml.convert('```php<?php   echo "Hello";?>```', true, false)).to.eql({
+            html:
+                '<div class="markdown">' +
+                '<p><code>php&lt;?php   echo "Hello";?&gt;</code></p>\n' +
                 '</div>'
         });
     });
