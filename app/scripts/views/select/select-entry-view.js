@@ -229,9 +229,6 @@ class SelectEntryView extends View {
     backSpacePressed() {
         if (this.model.filter.text) {
             this.model.filter.text = this.model.filter.text.slice(0, -1);
-                0,
-                this.model.filter.text.length - 1
-            );
             this.render();
         }
     }

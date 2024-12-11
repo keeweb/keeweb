@@ -892,7 +892,7 @@ class OpenView extends View {
             Alerts.alert({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
-                icon: storage.icon || 'file-alt',
+                icon: storage.icon || 'file-lines',
                 buttons: [{ result: '', title: Locale.alertCancel }],
                 esc: '',
                 click: '',

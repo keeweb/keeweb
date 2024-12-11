@@ -337,7 +337,7 @@ class SettingsFileView extends View {
                     Alerts.alert({
                         header: '',
                         body: '',
-                        icon: storage.icon || 'file-alt',
+                        icon: storage.icon || 'file-lines',
                         buttons: [Alerts.buttons.ok, Alerts.buttons.cancel],
                         esc: '',
                         opaque: true,
