@@ -114,7 +114,7 @@ class IconSelectView extends View {
             return;
         }
 
-        this.$el.find('.icon-select__file-input').click();
+        this.$el.find('.icon-select__file-input').trigger('click');
     }
 
     iconSelected(e) {

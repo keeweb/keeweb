@@ -2,6 +2,7 @@
 // This config is never used for building. The real thing is in build/webpack.config.js
 
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
     stats: {
@@ -31,5 +32,6 @@ module.exports = {
             templates: path.join(__dirname, 'app/templates'),
             tests: path.join(__dirname, 'tests')
         }
-    }
+    },
+    plugins: [new webpack.ProvidePlugin({ process: 'process/browser' })]
 };

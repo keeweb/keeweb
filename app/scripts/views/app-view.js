@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { View } from 'framework/views/view';
 import { Events } from 'framework/events';
 import { IdleTracker } from 'comp/browser/idle-tracker';
@@ -80,6 +81,7 @@ class AppView extends View {
         this.listenTo(Events, 'menu-select', this.menuSelect);
         this.listenTo(Events, 'lock-workspace', this.lockWorkspace);
         this.listenTo(Events, 'open-devtools', this.openDevTools);
+        this.listenTo(Events, 'show-file', this.toggleShowFile);
         this.listenTo(Events, 'open-file', this.toggleOpenFile);
         this.listenTo(Events, 'save-all', this.saveAll);
         this.listenTo(Events, 'remote-key-changed', this.remoteKeyChanged);
@@ -335,19 +337,52 @@ class AppView extends View {
         }
     }
 
-    showFileSettings(e) {
+    /*
+        @TAG        v1.9.0
+                    actions when switching between open vaults
+    */
+
+    toggleShowFile(e) {
         const menuItem = this.model.menu.filesSection.items.find(
-            (item) => item.file.id === e.fileId
+            (item) => item.file.id === e.fileId // 1fac5844-1693-5261-41f0-92928fcaee0a
         );
-        if (this.views.settings) {
-            if (this.views.settings.file === menuItem.file) {
-                this.showEntries();
-            } else {
-                this.model.menu.select({ item: menuItem });
-            }
-        } else {
-            this.showSettings(menuItem);
+
+        const items = this.model.menu.filesSection.items; // match all menu vault items
+        const vault_id = `${menuItem.file.id}:${menuItem.file.uuid}`;
+
+        // action > already clicked
+        if (this.model.filter.group === vault_id) {
+            return;
         }
+
+        // de-select all in vault menu
+        this.item = this.$el.find(`.footer__db-item`);
+        this.item.toggleClass('footer__center-vault-item-active', false);
+
+        // set all menu items as inactive
+        if (items) {
+            items.forEach((item) => {
+                item.active = false;
+            });
+        }
+
+        // reset interface and select the clicked vault
+        this.showEntries();
+        this.model.menu.select({ item: menuItem });
+
+        // get vault group
+        this.model.filterKey = 'group';
+        const filterKey = this.model.filterKey;
+        const filterValue = vault_id;
+        const filter = {};
+        filter[filterKey] = filterValue;
+
+        // Events.emit('menu-select', { item: menuItem });
+        Events.emit('set-filter', filter);
+        Events.emit('change:active', true);
+
+        this.item = this.$el.find(`#footer__db--${menuItem.file.id}`);
+        this.item.toggleClass('footer__center-vault-item-active');
     }
 
     toggleOpenFile() {

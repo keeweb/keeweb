@@ -1,17 +1,17 @@
 {
-  "version": "0.0.1",
-  "manifestVersion": "0.1.0",
-  "name": "fail-storage",
-  "description": "KeeWeb storage that always fails",
-  "author": {
-    "name": "antelle",
-    "email": "antelle.net@gmail.com",
-    "url": "http://antelle.net"
-  },
-  "license": "MIT",
-  "url": "https://keeweb.info",
-  "resources": {
-    "js": "GkZuvYFiRx6UZk1hvJjInhmunMxyFVuI3u4UpCB6rjho1hgfR9CtebwU6dyTYARfivzZAsD4kVxx8TnbsU+Wu4PuS0cvE9e7+C3I8yGwoTgpk8GOCnORsaQBXMRvi93Snb/B8TXwT7wpSVFraiNGsuf5VKGZqN7YB0DyZHmeAtZf8KXMeg5XrSiwUtTokdozFQKSAx9pyKpIBvEQ7c03wQfZu9L6xSYJsLTjNje2UbEH6TS7yVt5F1lqaitaHRUMAYGbVgZkAK75jboUitWKebXaJUJbF8VxWJJDp7cmYkq6Zc6Qy1uTElzAu8sR/jTxHsJ0UpgaUeXxqpMZjLEjYQ=="
-  },
-  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB"
+    "version": "0.0.1",
+    "manifestVersion": "0.1.0",
+    "name": "fail-storage",
+    "description": "KeeWeb storage that always fails",
+    "author": {
+        "name": "antelle",
+        "email": "antelle.net@gmail.com",
+        "url": "http://antelle.net"
+    },
+    "license": "MIT",
+    "url": "https://keeweb.info",
+    "resources": {
+        "js": "GkZuvYFiRx6UZk1hvJjInhmunMxyFVuI3u4UpCB6rjho1hgfR9CtebwU6dyTYARfivzZAsD4kVxx8TnbsU+Wu4PuS0cvE9e7+C3I8yGwoTgpk8GOCnORsaQBXMRvi93Snb/B8TXwT7wpSVFraiNGsuf5VKGZqN7YB0DyZHmeAtZf8KXMeg5XrSiwUtTokdozFQKSAx9pyKpIBvEQ7c03wQfZu9L6xSYJsLTjNje2UbEH6TS7yVt5F1lqaitaHRUMAYGbVgZkAK75jboUitWKebXaJUJbF8VxWJJDp7cmYkq6Zc6Qy1uTElzAu8sR/jTxHsJ0UpgaUeXxqpMZjLEjYQ=="
+    },
+    "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB"
 }

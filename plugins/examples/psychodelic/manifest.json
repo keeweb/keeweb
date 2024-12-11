@@ -1,18 +1,18 @@
 {
-  "version": "0.0.1",
-  "manifestVersion": "0.1.0",
-  "name": "psychodelic",
-  "description": "Crazy animations",
-  "author": {
-    "name": "antelle",
-    "email": "antelle.net@gmail.com",
-    "url": "http://antelle.net"
-  },
-  "license": "MIT",
-  "url": "https://keeweb.info",
-  "resources": {
-    "js": "CYFYasnvIMZdFX6C4MB8IG8viR967TR2pnopW9vSNAPkBVCnKp7/Q5T6vOnxrbC/CBJMCPR4DiPnu/sLMce7AgSh60ubgOKdke5eQSxEwMZ4JV3sA5WaeEffzEFwwkqkSRFRss7tAeHjcwgjsshzbykzWJ4YGtwGtBiOgEcLFciFam9aQmyTBkyAVdx9qAilinSqKVmn4zCl2/+ycS4a6HaPf8Nz47TPskB2txyzK6gaJJAt/tn7Exeeoh3LI2bAMwsxiAdyKMaLKMU0A0k/iEmrQv3enBquPr7vR9YaesOawZB2U8fwLdzB23nF5vGq8N1kBVH8xg6Nz5AYwuO10A==",
-    "css": "P3qX1ccKLeHI/75sWC/46O/Qs8cq6UFyoW2qPYRn05q8dtAfXr7YKXEndt1BqSqaa+ZanaA6TDmb5FJ/GKQpG1KfuXy+ug92uwSvp6QUd7/hj++OR6RRY/bsL4hA9J2BwMB3jYc58lCPcK2jcu3HCYX5T+I1tFLmqOAKbTUGQxl+a4lc0w/zAq9sEFIvm7Nj66HhF7TMqVoPt6pUBz7oWdTYuKJ3rz46rLd9kzTeaeG6WxGorFc6Sk5tlvy+o9e5S2T0lHJwCHw24rMeOSgwV8rA/RXXnKowVc9Qbb3KwVh2TlKUWRtUuygIIgSsp4GmzT+w8+5hXke7iXDTGczp1Q=="
-  },
-  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB"
+    "version": "0.0.1",
+    "manifestVersion": "0.1.0",
+    "name": "psychodelic",
+    "description": "Crazy animations",
+    "author": {
+        "name": "antelle",
+        "email": "antelle.net@gmail.com",
+        "url": "http://antelle.net"
+    },
+    "license": "MIT",
+    "url": "https://keeweb.info",
+    "resources": {
+        "js": "CYFYasnvIMZdFX6C4MB8IG8viR967TR2pnopW9vSNAPkBVCnKp7/Q5T6vOnxrbC/CBJMCPR4DiPnu/sLMce7AgSh60ubgOKdke5eQSxEwMZ4JV3sA5WaeEffzEFwwkqkSRFRss7tAeHjcwgjsshzbykzWJ4YGtwGtBiOgEcLFciFam9aQmyTBkyAVdx9qAilinSqKVmn4zCl2/+ycS4a6HaPf8Nz47TPskB2txyzK6gaJJAt/tn7Exeeoh3LI2bAMwsxiAdyKMaLKMU0A0k/iEmrQv3enBquPr7vR9YaesOawZB2U8fwLdzB23nF5vGq8N1kBVH8xg6Nz5AYwuO10A==",
+        "css": "P3qX1ccKLeHI/75sWC/46O/Qs8cq6UFyoW2qPYRn05q8dtAfXr7YKXEndt1BqSqaa+ZanaA6TDmb5FJ/GKQpG1KfuXy+ug92uwSvp6QUd7/hj++OR6RRY/bsL4hA9J2BwMB3jYc58lCPcK2jcu3HCYX5T+I1tFLmqOAKbTUGQxl+a4lc0w/zAq9sEFIvm7Nj66HhF7TMqVoPt6pUBz7oWdTYuKJ3rz46rLd9kzTeaeG6WxGorFc6Sk5tlvy+o9e5S2T0lHJwCHw24rMeOSgwV8rA/RXXnKowVc9Qbb3KwVh2TlKUWRtUuygIIgSsp4GmzT+w8+5hXke7iXDTGczp1Q=="
+    },
+    "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB"
 }

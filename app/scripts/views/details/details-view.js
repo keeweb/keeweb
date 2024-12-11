@@ -26,10 +26,11 @@ import { createDetailsFields, createNewCustomField } from 'views/details/details
 import { FieldViewCustom } from 'views/fields/field-view-custom';
 import { IconSelectView } from 'views/icon-select-view';
 import { isEqual } from 'util/fn';
+import { Launcher } from 'comp/launcher';
+import dompurify from 'dompurify';
 import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
-import { Launcher } from 'comp/launcher';
 
 class DetailsView extends View {
     parent = '.app__details';
@@ -164,7 +165,6 @@ class DetailsView extends View {
 
     addFieldViews() {
         const { fieldViews, fieldViewsAside } = createDetailsFields(this);
-
         const hideEmptyFields = AppSettingsModel.hideEmptyFields;
 
         const fieldsMainEl = this.$el.find('.details__body-fields');
@@ -830,11 +830,16 @@ class DetailsView extends View {
         if (this.model.title instanceof kdbxweb.ProtectedValue) {
             title = kdbxweb.ProtectedValue.fromString(title);
         }
+
         if (title !== this.model.title) {
             this.model.setField('Title', title);
             this.entryUpdated(true);
         }
-        const newTitle = $('<h1 class="details__header-title"></h1>').text(title || '(no title)');
+
+        const newTitle = $('<h1 class="details__header-title"></h1>').text(
+            title || `(${Locale.noTitle})`
+        );
+
         this.$el.find('.details__header-title-input').replaceWith(newTitle);
     }
 

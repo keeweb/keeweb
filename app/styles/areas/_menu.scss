@@ -103,6 +103,18 @@
             .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
                 padding-left: $base-padding-h * 6;
             }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 7;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 8;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 9;
+            }
+            .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > .menu__item > & {
+                padding-left: $base-padding-h * 10;
+            }
         }
 
         &-options {

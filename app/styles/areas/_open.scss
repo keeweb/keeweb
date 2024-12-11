@@ -5,7 +5,12 @@
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    background: var(--background-color);
+    -webkit-animation: fade-in 1s;
+       -moz-animation: fade-in 1s;
+        -ms-animation: fade-in 1s;
+         -o-animation: fade-in 1s;
+            animation: fade-in 1s;
+
     &__showpass {
         position: absolute;
         left: 100%;
@@ -53,11 +58,16 @@
 
     &__icon {
         @include icon-btn();
-        color: var(--open-icon-color);
+        color: var(--open-icon-icon-n-color);
         padding-top: 0;
         margin: 0.2em 0.5em;
         &:hover {
-            color: var(--medium-color);
+            color: var(--open-icon-icon-h-color);
+            background-color: var(--open-icon-box-h-color);
+            transition: background-color 0.2s ease-in-out;
+            >.open__icon-i {
+                color: var(--open-icon-icon-h-color);
+            }
         }
         &:focus {
             .open--show-focus & {
@@ -66,16 +76,24 @@
         }
         &-i {
             font-size: 4em;
+            color: var(--open-icon-icon-n-color);
+            &:hover {
+                color: var(--open-icon-icon-h-color);
+            }
         }
         &-text {
-            color: var(--muted-color);
+            color: var(--open-icon-text-n-color);
             .open__icon:hover > & {
-                color: var(--medium-color);
+                color: var(--open-icon-text-h-color);
             }
         }
     }
 
     &__pass {
+        &-warning {
+            font-size: 1.1em;
+            animation: fade-in-partial 1s infinite alternate;
+        }
         &-area {
             display: flex;
             align-items: stretch;
@@ -90,6 +108,7 @@
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
+            padding-bottom: 10px;
         }
         &-field-wrap {
             display: flex;
@@ -101,7 +120,6 @@
         }
         &-enter-btn,
         &-opening-icon {
-            padding: 0.6em $base-spacing;
             position: absolute;
             left: 100%;
             border-radius: var(--block-border-radius);
@@ -112,6 +130,11 @@
             color: var(--muted-color);
             line-height: 3em;
             height: 3.2em;
+            margin-left: 15px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 16px;
+            padding-right: 16px;
             > i {
                 font-size: 3em;
                 line-height: 1;
@@ -127,6 +150,10 @@
             }
         }
         &-enter-btn {
+            :hover {
+                color: #ec2b55;
+                cursor: pointer;
+            }
             .open--file & {
                 cursor: pointer;
                 &:hover {
@@ -341,6 +368,7 @@
                 .open__last-item:hover & {
                     opacity: 0.3;
                     cursor: pointer;
+                    color: var(--open-last-del-h-color);
                 }
                 color: var(--muted-color);
                 &:hover {

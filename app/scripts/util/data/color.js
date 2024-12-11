@@ -79,9 +79,26 @@ Color.prototype.toRgba = function () {
 };
 
 Color.prototype.toHsla = function () {
-    return `hsla(${Math.round(this.h * 100)},${Math.round(this.s * 100)}%,${Math.round(
-        this.l * 100
-    )}%,${this.a})`;
+    return `hsla(${Math.round(this.h * 100)},${Math.round(this.s * 100)}%,${Math.round(this.l * 100)}%,${this.a})`;
+};
+
+Color.prototype.hslToRgb = function () {
+    if (this.t < 0) {
+        this.t += 1;
+    }
+    if (this.t > 1) {
+        this.t -= 1;
+    }
+    if (this.t < 1 / 6) {
+        return this.p + (this.q - this.p) * 6 * this.t;
+    }
+    if (this.t < 1 / 2) {
+        return this.q;
+    }
+    if (this.t < 2 / 3) {
+        return this.p + (this.q - this.p) * (2 / 3 - this.t) * 6;
+    }
+    return this.p;
 };
 
 Color.prototype.distanceTo = function (color) {

@@ -2,52 +2,43 @@
     <h1 id="top"><i class="fa fa-gear settings__head-icon"></i> {{res 'setGenTitle'}}</h1>
 
     {{#if updateWaitingReload}}
-    <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
-    <div>{{res 'setGenNewVersion'}}. <a href="{{releaseNotesLink}}" target="_blank">{{res 'setGenReleaseNotes'}}</a></div>
-    <div class="settings__general-update-buttons">
-        <button class="settings__general-restart-btn">{{res 'setGenReloadToUpdate'}}</button>
-    </div>
+        <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
+        <div>{{res 'setGenNewVersion'}}. <a href="{{releaseNotesLink}}" target="_blank">{{res 'setGenReleaseNotes'}}</a></div>
+        <div class="settings__general-update-buttons">
+            <button class="settings__general-restart-btn">{{res 'setGenReloadToUpdate'}}</button>
+        </div>
     {{else if updateManual}}
-    <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
-    <div>{{res 'setGenUpdateManual'}}</div>
-    <div class="settings__general-update-buttons">
-        <button class="settings__general-download-update-btn">{{res 'setGenDownloadUpdate'}}</button>
-    </div>
+        <h2 class="action-color">{{res 'setGenUpdate'}}</h2>
+        <div>{{res 'setGenUpdateManual'}}</div>
+        <div class="settings__general-update-buttons">
+            <button class="settings__general-download-update-btn">{{res 'setGenDownloadUpdate'}}</button>
+        </div>
     {{/if}}
     {{#if showUpdateBlock}}
-    <h2>{{res 'setGenUpdate'}}</h2>
-    <div>
-        <select class="settings__general-auto-update settings__select input-base">
-            <option value="install" {{#ifeq autoUpdate 'install'}}selected{{/ifeq}}>{{res 'setGenUpdateAuto'}}</option>
-            <option value="check" {{#ifeq autoUpdate 'check'}}selected{{/ifeq}}>{{res 'setGenUpdateCheck'}}</option>
-            <option value="" {{#unless autoUpdate}}selected{{/unless}}>{{res 'setGenNoUpdate'}}</option>
-        </select>
-        <div>{{updateInfo}}</div>
-        <a href="{{releaseNotesLink}}" target="_blank">{{res 'setGenReleaseNotes'}}</a>
-    </div>
-    <div class="settings__general-update-buttons">
-        {{#if updateInProgress}}
-        <button class="settings__general-update-btn btn-silent" disabled>{{res 'setGenUpdateChecking'}}</button>
-        {{else}}
-        <button class="settings__general-update-btn btn-silent">{{res 'setGenCheckUpdate'}}</button>
-        {{/if}}
-        {{#if updateReady}}<button class="settings__general-restart-btn">{{res 'setGenRestartToUpdate'}}</button>{{/if}}
-        {{#if updateFound}}<button class="settings__general-update-found-btn">{{res 'setGenDownloadAndRestart'}}</button>{{/if}}
-    </div>
+        <h2>{{res 'setGenUpdate'}}</h2>
+        <div>
+            <select class="settings__general-auto-update settings__select input-base">
+                <option value="install" {{#ifeq autoUpdate 'install'}}selected{{/ifeq}}>{{res 'setGenUpdateAuto'}}</option>
+                <option value="check" {{#ifeq autoUpdate 'check'}}selected{{/ifeq}}>{{res 'setGenUpdateCheck'}}</option>
+                <option value="" {{#unless autoUpdate}}selected{{/unless}}>{{res 'setGenNoUpdate'}}</option>
+            </select>
+            <div>{{updateInfo}}</div>
+            <a href="{{releaseNotesLink}}" target="_blank">{{res 'setGenReleaseNotes'}}</a>
+        </div>
+        <div class="settings__general-update-buttons">
+            {{#if updateInProgress}}
+            <button class="settings__general-update-btn btn-silent" disabled>{{res 'setGenUpdateChecking'}}</button>
+            {{else}}
+            <button class="settings__general-update-btn btn-silent">{{res 'setGenCheckUpdate'}}</button>
+            {{/if}}
+            {{#if updateReady}}<button class="settings__general-restart-btn">{{res 'setGenRestartToUpdate'}}</button>{{/if}}
+            {{#if updateFound}}<button class="settings__general-update-found-btn">{{res 'setGenDownloadAndRestart'}}</button>{{/if}}
+        </div>
     {{/if}}
 
+    <br />
+
     <h2 id="appearance">{{res 'setGenAppearance'}}</h2>
-    {{#if locales}}
-    <div>
-        <label for="settings__general-locale">{{res 'setGenLocale'}}:</label>
-        <select class="settings__general-locale settings__select input-base" id="settings__general-locale">
-            {{#each locales as |name key|}}
-                <option value="{{key}}" {{#ifeq key ../activeLocale}}selected{{/ifeq}}>{{name}}</option>
-            {{/each}}
-            <option value="...">({{res 'setGenLocOther'}})</option>
-        </select>
-    </div>
-    {{/if}}
     <div>
         <label>{{res 'setGenTheme'}}:</label>
         <div class="settings__general-themes">
@@ -66,10 +57,9 @@
             </div>
         </div>
     </div>
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-auto-switch-theme" id="settings__general-auto-switch-theme" {{#if autoSwitchTheme}}checked{{/if}} />
-        <label for="settings__general-auto-switch-theme">{{res 'setGenAutoSwitchTheme'}}</label>
-    </div>
+
+    <br />
+
     <div>
         <label for="settings__general-font-size">{{res 'setGenFontSize'}}:</label>
         <select class="settings__general-font-size settings__select input-base" id="settings__general-font-size">
@@ -80,40 +70,121 @@
         </select>
     </div>
 
-    {{#if supportsTitleBarStyles}}
+    {{#if locales}}
+        <div>
+            <label for="settings__general-locale">{{res 'setGenLocale'}}:</label>
+            <select class="settings__general-locale settings__select input-base" id="settings__general-locale">
+                {{#each locales as |name key|}}
+                    <option value="{{key}}" {{#ifeq key ../activeLocale}}selected{{/ifeq}}>{{name}}</option>
+                {{/each}}
+                <option value="...">({{res 'setGenLocOther'}})</option>
+            </select>
+        </div>
+    {{/if}}
+
     <div>
-        <label for="settings__general-titlebar-style">{{res 'setGenTitlebarStyle'}}:</label>
-        <select class="settings__general-titlebar-style settings__select input-base" id="settings__general-titlebar-style">
-            <option value="default" {{#ifeq titlebarStyle 'default'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleDefault'}}</option>
-            <option value="hidden" {{#ifeq titlebarStyle 'hidden'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHidden'}}</option>
-            {{#if supportsCustomTitleBarAndDraggableWindow}}
-                <option value="hidden-inset" {{#ifeq titlebarStyle 'hidden-inset'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHiddenInset'}}</option>
-            {{/if}}
+        <label for="settings__general-backgroundState">{{res 'setGenBackgroundLabel'}}:</label>
+        <select class="settings__general-backgroundState settings__select input-base" id="settings__general-backgroundState">
+            <option value="disabled" {{#ifeq backgroundState 'disabled'}}selected{{/ifeq}}>{{res 'setGenBackgroundOpt1'}}</option>
+            <option value="random" {{#ifeq backgroundState 'random'}}selected{{/ifeq}}>{{res 'setGenBackgroundOpt2'}}</option>
+            <option value="custom" {{#ifeq backgroundState 'custom'}}selected{{/ifeq}}>{{res 'setGenBackgroundOpt3'}}</option>
         </select>
     </div>
+
+    {{#ifor backgroundState '["random", "custom"]'}}
+        <div>
+            <label for="settings__general-background-opacity-light">{{res 'setGenBackgroundOpacityLightLabel'}}:</label>
+            <select class="settings__general-background-opacity-light settings__select input-base" id="settings__general-background-opacity-light">
+                <option value="0" {{#ifeq backgroundOpacityLight "0"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight0'}}</option>
+                <option value="0.1" {{#ifeq backgroundOpacityLight "0.1"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight1'}}</option>
+                <option value="0.2" {{#ifeq backgroundOpacityLight "0.2"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight2'}}</option>
+                <option value="0.3" {{#ifeq backgroundOpacityLight "0.3"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight3'}}</option>
+                <option value="0.4" {{#ifeq backgroundOpacityLight "0.4"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight4'}}</option>
+                <option value="0.5" {{#ifeq backgroundOpacityLight "0.5"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight5'}}</option>
+                <option value="0.6" {{#ifeq backgroundOpacityLight "0.6"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight6'}}</option>
+                <option value="0.7" {{#ifeq backgroundOpacityLight "0.7"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight7'}}</option>
+                <option value="0.8" {{#ifeq backgroundOpacityLight "0.8"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight8'}}</option>
+                <option value="0.9" {{#ifeq backgroundOpacityLight "0.9"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight9'}}</option>
+                <option value="0.95" {{#ifeq backgroundOpacityLight "0.95"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight95'}}</option>
+                <option value="1" {{#ifeq backgroundOpacityLight "1"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityLight10'}}</option>
+            </select>
+        </div>
+    {{/ifor}}
+
+    {{#ifor backgroundState '["random", "custom"]'}}
+        <div>
+            <label for="settings__general-background-opacity-dark">{{res 'setGenBackgroundOpacityDarkLabel'}}:</label>
+            <select class="settings__general-background-opacity-dark settings__select input-base" id="settings__general-background-opacity-dark">
+                <option value="0" {{#ifeq backgroundOpacityDark "0"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark0'}}</option>
+                <option value="0.1" {{#ifeq backgroundOpacityDark "0.1"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark1'}}</option>
+                <option value="0.2" {{#ifeq backgroundOpacityDark "0.2"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark2'}}</option>
+                <option value="0.3" {{#ifeq backgroundOpacityDark "0.3"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark3'}}</option>
+                <option value="0.4" {{#ifeq backgroundOpacityDark "0.4"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark4'}}</option>
+                <option value="0.5" {{#ifeq backgroundOpacityDark "0.5"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark5'}}</option>
+                <option value="0.6" {{#ifeq backgroundOpacityDark "0.6"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark6'}}</option>
+                <option value="0.7" {{#ifeq backgroundOpacityDark "0.7"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark7'}}</option>
+                <option value="0.8" {{#ifeq backgroundOpacityDark "0.8"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark8'}}</option>
+                <option value="0.9" {{#ifeq backgroundOpacityDark "0.9"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark9'}}</option>
+                <option value="0.95" {{#ifeq backgroundOpacityDark "0.95"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark95'}}</option>
+                <option value="1" {{#ifeq backgroundOpacityDark "1"}}selected{{/ifeq}}>{{res 'setGenBackgroundOpacityDark10'}}</option>
+            </select>
+        </div>
+    {{/ifor}}
+
+    {{#ifeq backgroundState 'custom'}}
+        <div>{{res 'setGenBackgroundStateDesc'}}</div>
+        <label for="settings__general-background-url">{{res 'setGenBackgroundStateLabel'}}</label>
+        <input type="text" class="settings__input input-base" id="settings__general-background-url" value="{{backgroundUrl}}" />
+        {{#if backgroundSaveError}}<div class="error-color settings__general-background-save-error"><pre>{{backgroundSaveError}}</pre></div>{{/if}}
+
+        <button class="settings__general-background-url-save-btn">
+            {{res 'setBackgroundCustomSaveBtn'}}
+        </button>
+
+        <br />
+        <br />
+    {{/ifeq}}
+
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-auto-switch-theme" id="settings__general-auto-switch-theme" {{#if autoSwitchTheme}}checked{{/if}} />
+        <label for="settings__general-auto-switch-theme">{{res 'setGenAutoSwitchTheme'}}</label>
+    </div>
+    {{#if supportsTitleBarStyles}}
+        <div>
+            <label for="settings__general-titlebar-style">{{res 'setGenTitlebarStyle'}}:</label>
+            <select class="settings__general-titlebar-style settings__select input-base" id="settings__general-titlebar-style">
+                <option value="default" {{#ifeq titlebarStyle 'default'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleDefault'}}</option>
+                <option value="hidden" {{#ifeq titlebarStyle 'hidden'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHidden'}}</option>
+                {{#if supportsCustomTitleBarAndDraggableWindow}}
+                    <option value="hidden-inset" {{#ifeq titlebarStyle 'hidden-inset'}}selected{{/ifeq}}>{{res 'setGenTitlebarStyleHiddenInset'}}</option>
+                {{/if}}
+            </select>
+        </div>
     {{/if}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-expand" id="settings__general-expand" {{#if expandGroups}}checked{{/if}} />
         <label for="settings__general-expand">{{res 'setGenShowSubgroups'}}</label>
     </div>
     {{#if canSetTableView}}
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-table-view" id="settings__general-table-view" {{#if tableView}}checked{{/if}} />
-        <label for="settings__general-table-view">{{res 'setGenTableView'}}</label>
-    </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-table-view" id="settings__general-table-view" {{#if tableView}}checked{{/if}} />
+            <label for="settings__general-table-view">{{res 'setGenTableView'}}</label>
+        </div>
     {{/if}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-colorful-icons" id="settings__general-colorful-icons" {{#if colorfulIcons}}checked{{/if}} />
         <label for="settings__general-colorful-icons">{{res 'setGenColorfulIcons'}}</label>
     </div>
 
+    <hr class="hr40-l"/>
+
     <h2 id="function">{{res 'setGenFunction'}}</h2>
     {{#if canAutoSaveOnClose}}
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
-            {{#if autoSave}}checked{{/if}} />
-        <label for="settings__general-auto-save">{{res 'setGenAutoSyncOnClose'}}</label>
-    </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-auto-save" id="settings__general-auto-save"
+                {{#if autoSave}}checked{{/if}} />
+            <label for="settings__general-auto-save">{{res 'setGenAutoSyncOnClose'}}</label>
+        </div>
     {{/if}}
     <div>
         <label for="settings__general-auto-save-interval">{{res 'setGenAutoSyncTimer'}}:</label>
@@ -142,45 +213,45 @@
         </select>
     </div>
     {{#if canClearClipboard}}
-    <div>
-        <label for="settings__general-clipboard">{{res 'setGenClearClip'}}:</label>
-        <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
-            <option value="0" {{#unless clipboardSeconds}}selected{{/unless}}>{{res 'setGenNoClear'}}</option>
-            <option value="5" {{#ifeq clipboardSeconds 5}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}5{{/res}}</option>
-            <option value="10" {{#ifeq clipboardSeconds 10}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}10{{/res}}</option>
-            <option value="15" {{#ifeq clipboardSeconds 15}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}15{{/res}}</option>
-            <option value="60" {{#ifeq clipboardSeconds 60}}selected{{/ifeq}}>{{res 'setGenClearMinute'}}</option>
-        </select>
-    </div>
+        <div>
+            <label for="settings__general-clipboard">{{res 'setGenClearClip'}}:</label>
+            <select class="settings__general-clipboard settings__select input-base" id="settings__general-clipboard">
+                <option value="0" {{#unless clipboardSeconds}}selected{{/unless}}>{{res 'setGenNoClear'}}</option>
+                <option value="5" {{#ifeq clipboardSeconds 5}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}5{{/res}}</option>
+                <option value="10" {{#ifeq clipboardSeconds 10}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}10{{/res}}</option>
+                <option value="15" {{#ifeq clipboardSeconds 15}}selected{{/ifeq}}>{{#res 'setGenClearSeconds'}}15{{/res}}</option>
+                <option value="60" {{#ifeq clipboardSeconds 60}}selected{{/ifeq}}>{{res 'setGenClearMinute'}}</option>
+            </select>
+        </div>
     {{/if}}
     {{#if canMinimize}}
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-minimize" id="settings__general-minimize"
-            {{#if minimizeOnClose}}checked{{/if}} />
-        <label for="settings__general-minimize">{{res 'setGenMinInstead'}}</label>
-    </div>
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-minimize-on-field-copy" id="settings__general-minimize-on-field-copy"
-            {{#if minimizeOnFieldCopy}}checked{{/if}} />
-        <label for="settings__general-minimize-on-field-copy">{{res 'setGenMinOnFieldCopy'}}</label>
-    </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-minimize" id="settings__general-minimize"
+                {{#if minimizeOnClose}}checked{{/if}} />
+            <label for="settings__general-minimize">{{res 'setGenMinInstead'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-minimize-on-field-copy" id="settings__general-minimize-on-field-copy"
+                {{#if minimizeOnFieldCopy}}checked{{/if}} />
+            <label for="settings__general-minimize-on-field-copy">{{res 'setGenMinOnFieldCopy'}}</label>
+        </div>
     {{/if}}
     {{#if canAutoType}}
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-direct-autotype"
-            id="settings__general-direct-autotype" {{#if directAutotype}}checked{{/if}} />
-        <label for="settings__general-direct-autotype">{{res 'setGenDirectAutotype'}}</label>
-    </div>
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-autotype-title-filter"
-               id="settings__general-autotype-title-filter" {{#if autoTypeTitleFilterEnabled}}checked{{/if}} />
-        <label for="settings__general-autotype-title-filter">{{res 'setGenAutoTypeTitleFilterEnabled'}}</label>
-    </div>
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-field-label-dblclick-autotype"
-               id="settings__general-field-label-dblclick-autotype" {{#if fieldLabelDblClickAutoType}}checked{{/if}} />
-        <label for="settings__general-field-label-dblclick-autotype">{{res 'setGenFieldLabelDblClickAutoType'}}</label>
-    </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-direct-autotype"
+                id="settings__general-direct-autotype" {{#if directAutotype}}checked{{/if}} />
+            <label for="settings__general-direct-autotype">{{res 'setGenDirectAutotype'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-autotype-title-filter"
+                id="settings__general-autotype-title-filter" {{#if autoTypeTitleFilterEnabled}}checked{{/if}} />
+            <label for="settings__general-autotype-title-filter">{{res 'setGenAutoTypeTitleFilterEnabled'}}</label>
+        </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-field-label-dblclick-autotype"
+                id="settings__general-field-label-dblclick-autotype" {{#if fieldLabelDblClickAutoType}}checked{{/if}} />
+            <label for="settings__general-field-label-dblclick-autotype">{{res 'setGenFieldLabelDblClickAutoType'}}</label>
+        </div>
     {{/if}}
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-use-markdown" id="settings__general-use-markdown" {{#if useMarkdown}}checked{{/if}} />
@@ -218,6 +289,18 @@
             </select>
         {{/if}}
     {{/if}}
+
+    <hr class="hr40-l"/>
+
+    <h2 id="security">{{res 'setGenSecurity'}}</h2>
+    <div>
+    <div>
+        <input type="checkbox" class="settings__input input-base settings__general-security-password-reveal"
+               id="settings__general-security-password-reveal" {{#if revealPassword}}checked{{/if}} />
+        <label for="settings__general-security-password-reveal">{{res 'setOpenRevealPassword'}}</label>
+    </div>
+
+    <hr class="hr40-l"/>
 
     <h2 id="audit">{{res 'setGenAudit'}}</h2>
     <div>
@@ -271,6 +354,8 @@
         </select>
     </div>
 
+    <hr class="hr40-l"/>
+
     <h2 id="lock">{{res 'setGenLock'}}</h2>
     <div>
         <label for="settings__general-idle-minutes">{{res 'setGenLockInactive'}}:</label>
@@ -287,25 +372,29 @@
             <option value="1440" {{#ifeq idleMinutes 1440}}selected{{/ifeq}}>{{res 'setGenLockDay'}}</option>
         </select>
     </div>
+
     {{#if canDetectMinimize}}
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-lock-on-minimize" id="settings__general-lock-on-minimize"
-               {{#if lockOnMinimize}}checked{{/if}} />
-        <label for="settings__general-lock-on-minimize">{{res 'setGenLockMinimize'}}</label>
-    </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-lock-on-minimize" id="settings__general-lock-on-minimize"
+                {{#if lockOnMinimize}}checked{{/if}} />
+            <label for="settings__general-lock-on-minimize">{{res 'setGenLockMinimize'}}</label>
+        </div>
     {{/if}}
+
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-lock-on-copy" id="settings__general-lock-on-copy"
                {{#if lockOnCopy}}checked{{/if}} />
         <label for="settings__general-lock-on-copy">{{res 'setGenLockCopy'}}</label>
     </div>
+
     {{#if canAutoType}}
-    <div>
-        <input type="checkbox" class="settings__input input-base settings__general-lock-on-auto-type" id="settings__general-lock-on-auto-type"
-               {{#if lockOnAutoType}}checked{{/if}} />
-        <label for="settings__general-lock-on-auto-type">{{res 'setGenLockAutoType'}}</label>
-    </div>
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-lock-on-auto-type" id="settings__general-lock-on-auto-type"
+                {{#if lockOnAutoType}}checked{{/if}} />
+            <label for="settings__general-lock-on-auto-type">{{res 'setGenLockAutoType'}}</label>
+        </div>
     {{/if}}
+
     {{#if canDetectOsSleep}}
         <div>
             <input type="checkbox" class="settings__input input-base settings__general-lock-on-os-lock" id="settings__general-lock-on-os-lock"
@@ -314,7 +403,18 @@
         </div>
     {{/if}}
 
+    <hr class="hr40-l"/>
+
     <h2 id="storage">{{res 'setGenStorage'}}</h2>
+
+    {{#if desktop}}
+        <div>
+            <input type="checkbox" class="settings__input input-base settings__general-enable-full-path-storage" id="settings__general-enable-full-path-storage"
+                {{#if enableFullPathStorage}}checked{{/if}} />
+            <label for="settings__general-enable-full-path-storage">{{res 'setGenShowFullPaths'}}</label>
+        </div>
+    {{/if}}
+
     <div>
         <input type="checkbox" class="settings__input input-base settings__general-disable-offline-storage" id="settings__general-disable-offline-storage"
                {{#if disableOfflineStorage}}checked{{/if}} />
@@ -327,14 +427,16 @@
     </div>
 
     {{#each storageProviders as |prv|}}
-    <h4 class="settings__general-storage-header"><input
-            type="checkbox" id="settings__general-prv-check-{{prv.name}}" class="settings__general-prv-check"
-            data-storage="{{prv.name}}" {{#if prv.enabled}}checked{{/if}}
-    /><label for="settings__general-prv-check-{{prv.name}}">{{res prv.name}}</label></h4>
-    <div class="settings__general-prv-wrap settings__general-{{prv.name}} {{#ifeq prv.enabled false}}hide{{/ifeq}}"></div>
-    {{#if prv.loggedIn}}<button class="btn-silent settings__general-prv-logout"
-                                data-storage="{{prv.name}}">{{res 'setGenStorageLogout'}}</button>{{/if}}
+        <h4 class="settings__general-storage-header"><input
+                type="checkbox" id="settings__general-prv-check-{{prv.name}}" class="settings__general-prv-check"
+                data-storage="{{prv.name}}" {{#if prv.enabled}}checked{{/if}}
+        /><label for="settings__general-prv-check-{{prv.name}}">{{res prv.name}}</label></h4>
+        <div class="settings__general-prv-wrap settings__general-{{prv.name}} {{#ifeq prv.enabled false}}hide{{/ifeq}}"></div>
+        {{#if prv.loggedIn}}<button class="btn-silent settings__general-prv-logout"
+                                    data-storage="{{prv.name}}">{{res 'setGenStorageLogout'}}</button>{{/if}}
     {{/each}}
+
+    <hr class="hr40-l"/>
 
     <h2 id="advanced">{{res 'advanced'}}</h2>
     <a class="settings__general-show-advanced">{{res 'setGenShowAdvanced'}}</a>

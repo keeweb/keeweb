@@ -16,6 +16,15 @@
         flex-direction: row;
         justify-content: flex-start;
         overflow: hidden;
+
+        /*
+            @ref            https://addons.mozilla.org/en-US/firefox/addon/showhide-passwords/
+                            removes the 'show' button automatically injected by this plugin. it conflicts with ours and isn't needed.
+        */
+
+        a[href="Show"] {
+            display: none !important;
+        }
     }
 
     &__titlebar-drag {

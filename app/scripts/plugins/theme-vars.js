@@ -27,6 +27,7 @@ const ThemeVars = {
     apply(cssStyle) {
         this.init();
         const matches = ThemeVarsScss.replace(this.newLineRegEx, '').matchAll(this.themeVarsRegEx);
+        // eslint-disable-next-line prefer-const
         for (let [, name, def, last] of matches) {
             if (last && def.endsWith(')')) {
                 // definitions are written like this:
@@ -120,6 +121,38 @@ const ThemeVars = {
             res.a += Math.min(0, Math.max(1, alpha));
             return res.toHsla();
         },
+
+        // https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB_alternative
+        // https://en.wikipedia.org/wiki/HSL_color_space
+        'hsla'(h, s, l, alpha) {
+            const res = new Color();
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const res = new Color();
+                res.q = l < 0.5 ? l * (1 + s) : l * s - (l + s);
+                res.p = 2 * l - res.q;
+                res.t = h + 1 / 3;
+
+                r = res.hslToRgb();
+                res.t = h;
+
+                g = res.hslToRgb();
+                res.t = h - 1 / 3;
+
+                b = res.hslToRgb();
+            }
+
+            res.r = Math.round(Math.min(255, Math.max(0, r * 255)));
+            res.g = Math.round(Math.min(255, Math.max(0, g * 255)));
+            res.b = Math.round(Math.min(255, Math.max(0, b * 255)));
+            res.a = Math.min(1, Math.max(0, alpha));
+
+            return res.toRgba();
+        },
+
         'shade'(color, percent) {
             return Color.black.mix(color, percent).toRgba();
         }

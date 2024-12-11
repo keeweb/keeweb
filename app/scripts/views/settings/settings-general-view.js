@@ -68,6 +68,7 @@ class SettingsGeneralView extends View {
         'click .settings__general-restart-btn': 'installUpdateAndRestart',
         'click .settings__general-download-update-btn': 'downloadUpdate',
         'click .settings__general-update-found-btn': 'installFoundUpdate',
+        'change .settings__general-enable-full-path-storage': 'changeEnableFullPathStorage',
         'change .settings__general-disable-offline-storage': 'changeDisableOfflineStorage',
         'change .settings__general-short-lived-storage-token': 'changeShortLivedStorageToken',
         'change .settings__general-prv-check': 'changeStorageEnabled',
@@ -93,6 +94,7 @@ class SettingsGeneralView extends View {
 
         super.render({
             themes: this.getAllThemes(),
+            desktop: Features.isDesktop,
             backgroundState: AppSettingsModel.backgroundState,
             backgroundId: AppSettingsModel.backgroundId,
             backgroundUrl: AppSettingsModel.backgroundUrl,
@@ -158,6 +160,7 @@ class SettingsGeneralView extends View {
             hasDeviceOwnerAuth: Features.isDesktop && Features.isMac,
             deviceOwnerAuth: AppSettingsModel.deviceOwnerAuth,
             deviceOwnerAuthTimeout: AppSettingsModel.deviceOwnerAuthTimeoutMinutes,
+            enableFullPathStorage: AppSettingsModel.enableFullPathStorage,
             disableOfflineStorage: AppSettingsModel.disableOfflineStorage,
             shortLivedStorageToken: AppSettingsModel.shortLivedStorageToken
         });
@@ -588,6 +591,11 @@ class SettingsGeneralView extends View {
         const expand = e.target.checked;
         AppSettingsModel.expandGroups = expand;
         Events.emit('refresh');
+    }
+
+    changeEnableFullPathStorage(e) {
+        const enableFullPathStorage = e.target.checked;
+        AppSettingsModel.enableFullPathStorage = enableFullPathStorage;
     }
 
     changeDisableOfflineStorage(e) {

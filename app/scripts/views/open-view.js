@@ -83,6 +83,7 @@ class OpenView extends View {
             this.passwordInput.reset();
         });
         this.listenTo(Events, 'user-idle', this.userIdle);
+        this.listenTo(Events, 'user-idle-login', this.userIdleLogin);
     }
 
     render() {
@@ -120,6 +121,7 @@ class OpenView extends View {
         const canUseChalRespYubiKey = hasYubiKeys && this.model.settings.yubiKeyShowChalResp;
 
         super.render({
+            desktop: Features.isDesktop,
             lastOpenFiles: this.getLastOpenFiles(),
             canOpenKeyFromDropbox: !Launcher && Storage.dropbox.enabled,
             backgroundState: this.model.settings.backgroundState,
@@ -137,6 +139,7 @@ class OpenView extends View {
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
             revealPassword: this.model.settings.revealPassword,
+            enableFullPathStorage: this.model.settings.enableFullPathStorage,
             canOpenYubiKey,
             canUseChalRespYubiKey,
             showMore,
@@ -177,13 +180,15 @@ class OpenView extends View {
         }
     }
 
+    /*
+        Generate a list of recently opened files at the main screen
+    */
+
     getLastOpenFiles() {
         return this.model.fileInfos.map((fileInfo) => {
-            let icon = 'file-alt';
             const storage = Storage[fileInfo.storage];
-            if (storage && storage.icon) {
-                icon = storage.icon;
-            }
+            const icon = storage && storage.icon ? storage.icon : 'file-lines';
+
             return {
                 id: fileInfo.id,
                 name: fileInfo.name,
@@ -193,11 +198,34 @@ class OpenView extends View {
         });
     }
 
+    /*
+        Return file location
+
+        KeeWeb local / web build cannot get the path of where the original vault came from as
+        Javascript doesn't have access to that info.
+
+        Desktop build (Electron) can get the path to the original vault location.
+    */
+
     getDisplayedPath(fileInfo) {
         const storage = fileInfo.storage;
+
+        /*
+            Gdrive returns an id for the file, not a path, so use the name instead.
+        */
+
+        logger.dev('(var) enableFullPathStorage: ' + this.model.settings.enableFullPathStorage);
+
+        if (this.model.settings.enableFullPathStorage && Features.isDesktop) {
+            return fileInfo.storage === 'gdrive' ? fileInfo.name : fileInfo.path;
+        }
+
         if (storage === 'file' || storage === 'webdav') {
             return fileInfo.path;
+        } else if (storage === 'gdrive') {
+            return fileInfo.name;
         }
+
         return null;
     }
 
@@ -208,7 +236,7 @@ class OpenView extends View {
         Alerts.alert({
             header: Locale.openLocalFile,
             body: Locale.openLocalFileBody,
-            icon: 'file-alt',
+            icon: 'file-lines',
             buttons: [
                 { result: 'skip', title: Locale.openLocalFileDontShow, error: true },
                 { result: 'ok', title: Locale.alertOk }
@@ -227,6 +255,15 @@ class OpenView extends View {
 
     fileSelected(e) {
         const file = e.target.files[0];
+
+        // this will return C:\fakepath\somefile.ext
+        // const value = e.target.value;
+        // console.log(value);
+
+        // this will return an ARRAY of File object
+        // const files = e.target.files;
+        // console.log(files);
+
         if (file) {
             if (this.model.settings.canImportCsv && /\.csv$/.test(file.name)) {
                 Events.emit('import-csv-requested', file);
@@ -447,7 +484,10 @@ class OpenView extends View {
                 }
             });
         } else {
-            fileInput.click();
+            fileInput.trigger('click');
+            fileInput.on('onchange', (file) => {
+                logger.debug('File selected ' + file);
+            });
         }
     }
 
@@ -1069,10 +1109,29 @@ class OpenView extends View {
         this.views.gen = generator;
     }
 
-    userIdle() {
+    /*
+        Clears password input
+    */
+
+    wipePassword() {
         this.inputEl.val('');
         this.passwordInput.reset();
-        this.passwordInput.setElement(this.inputEl);
+        this.passwordInput.setElement(
+            this.inputEl,
+            (this.model.settings.revealPassword && true) || false
+        );
+    }
+
+    userIdle() {
+        this.wipePassword();
+    }
+
+    /*
+        Check 'open vault' screen idle time. wipe any passwords in the textbox after X time of no activity.
+    */
+
+    userIdleLogin() {
+        this.wipePassword();
     }
 
     usbDevicesChanged() {

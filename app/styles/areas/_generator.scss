@@ -3,6 +3,7 @@
     @include common-dropdown;
     padding: $base-spacing;
     width: 17em;
+    z-index: 99999;
     &__length-range {
     }
     &__top-btn {

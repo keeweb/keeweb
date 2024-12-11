@@ -7,6 +7,31 @@
         background: var(--intermediate-background-color);
     }
 
+    &__center {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        flex: auto;
+        justify-content: center;
+
+        &-vault-item {
+            align-content: center;
+            justify-content: center;
+            flex: auto;
+            display: flex;
+
+            &-active {
+                background-color: #FFFFFF0D;
+                border-left: 1px solid var(--light-border-color);
+                border-right: 1px solid var(--light-border-color);
+            }
+
+            & > i {
+                padding-right: 7px;
+            }
+        }
+    }
+
     &__db {
         flex: 0 0 auto;
         @include area-selectable-on-secondary();
@@ -27,9 +52,9 @@
         }
 
         &--expanded {
-            flex: 1;
+            /*flex: 1;*/
             @include mobile {
-                flex: 0 0 auto;
+                /*flex: 0 0 auto;*/
                 > .footer__db-text {
                     display: none;
                 }

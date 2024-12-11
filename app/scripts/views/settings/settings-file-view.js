@@ -214,7 +214,7 @@ class SettingsFileView extends View {
                     continueCallback();
                 },
                 cancel: () => {
-                    this.$el.find('#settings__file-master-pass').focus();
+                    this.$el.find('#settings__file-master-pass').trigger('focus');
                 }
             });
             return false;
@@ -448,7 +448,7 @@ class SettingsFileView extends View {
     }
 
     triggerSelectFile() {
-        this.$el.find('#settings__file-file-select').click();
+        this.$el.find('#settings__file-file-select').trigger('click');
     }
 
     fileSelected(e) {

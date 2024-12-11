@@ -1,30 +1,94 @@
-const path = require('path');
+/*
+    Required Modules
+
+    fs                  : filesystem
+    moment              : datetime library
+    uid                 : uuid v5
+*/
+
 const fs = require('fs');
-
+const path = require('path');
 const webpack = require('webpack');
+const moment = require('moment');
+const { v5: uid } = require('uuid');
 
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+/*
+    Plugins
+*/
+
 const PluginBundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const PluginMiniCssExtract = require('mini-css-extract-plugin');
 const PluginMinimizeCss = require('css-minimizer-webpack-plugin');
 const PluginTerser = require('terser-webpack-plugin');
 
-const rootDir = path.join(__dirname, '..');
+/*
+    Misc
+*/
 
 const pkg = require('../package.json');
-
+const rootDir = path.join(__dirname, '..');
 process.noDeprecation = true; // for css loaders
 
-function config(options) {
+/*
+    Module > Exports
+*/
+
 module.exports = function (options) {
+    /*
+        Build IDs
+
+        guid        : should never change, based on repository url
+        uuid        : changes with each new version based on version number
+    */
+
+    const kwGuid = uid(`${pkg.repository.url}`, uid.URL);
+    const kwUuid = uid(pkg.version, kwGuid);
+
+    const guid = options.guid || kwGuid;
+    const uuid = options.uuid || kwUuid;
+
+    /*
+        Env mode
+    */
+
     const mode = options.mode || 'production';
     const devMode = mode === 'development';
-    const date = options.date;
-    const dt = date.toISOString().replace(/T.*/, '');
-    const year = date.getFullYear();
+
+    /*
+        Timestamps
+
+        times based on UTC
+
+        now             : Fri May 10 2024 19:35:54 GMT+0000
+        nowYyyymmdd     : 2024-05-10
+        nowYear         : 2024
+
+        'options.date' can also come from test.webpack.config.js
+    */
+
+    const now = options.date || moment().utc();
+    const nowYyyymmdd = moment(now).format('YYYY-MM-DD');
+    const nowYear = moment(now).year();
+
+    /*
+        banner
+    */
+
+    const jsBanner = `
+/*!
+*    @name:        ${pkg.name} v${pkg.version}
+*    @url:         ${pkg.repository.url}
+*    @copyright:   (c) ${nowYear}
+*    @license:     opensource.org/licenses/${pkg.license}
+*    @build:       ${now}
+*    @guid:        ${guid}
+*    @uuid:        ${uuid}
+*/
+console.log("%c${pkg.name} Developer Console", "color:#7f6df2; font-size:30px; font-weight:bold;");
+console.log("%cIf you have an issue with this app, copy the contents of this window and submit it to https://github.com/keeweb/keeweb/issues", "color:#ffffff; font-size:12px; font-weight:bold;");
+console.log("%cNever do anything in this window if you are asked by someone outside of ${pkg.name} developers", "color:#ef1d53; font-size:12px; font-weight:bold;");
+    `;
+
     return {
         mode,
         entry: {
@@ -32,6 +96,7 @@ module.exports = function (options) {
         },
         output: {
             path: path.resolve('.', 'tmp'),
+            publicPath: '',
             filename: 'js/[name].js'
         },
         target: 'web',
@@ -71,7 +136,6 @@ module.exports = function (options) {
                 baron: `baron/baron${devMode ? '' : '.min'}.js`,
                 qrcode: `jsqrcode/dist/qrcode${devMode ? '' : '.min'}.js`,
                 argon2: 'argon2-browser/dist/argon2.js',
-                marked: devMode ? 'marked/lib/marked.js' : 'marked/marked.min.js',
                 dompurify: `dompurify/dist/purify${devMode ? '' : '.min'}.js`,
                 tweetnacl: `tweetnacl/nacl${devMode ? '' : '.min'}.js`,
                 hbs: 'handlebars/runtime.js',
@@ -149,7 +213,9 @@ module.exports = function (options) {
                                 search: /@@BETA/g,
                                 replace: options.beta ? '1' : ''
                             },
-                            { search: /@@DATE/g, replace: dt },
+                            { search: /@@DATE/g, replace: nowYyyymmdd },
+                            { search: /@@GUID/g, replace: guid },
+                            { search: /@@UUID/g, replace: uuid },
                             {
                                 search: /@@COMMIT/g,
                                 replace: options.sha
@@ -278,16 +344,11 @@ module.exports = function (options) {
             ]
         },
         plugins: [
-            new webpack.BannerPlugin(
-                'keeweb v' +
-                    pkg.version +
-                    ', (c) ' +
-                    year +
-                    ' ' +
-                    pkg.author.name +
-                    ', opensource.org/licenses/' +
-                    pkg.license
-            ),
+            new webpack.BannerPlugin({
+                entryOnly: true,
+                raw: true,
+                banner: jsBanner
+            }),
             new webpack.ProvidePlugin({
                 $: 'jquery',
                 babelHelpers: 'babel-helpers'
@@ -311,5 +372,3 @@ module.exports = function (options) {
         devtool: devMode ? 'source-map' : undefined
     };
 };
-
-module.exports.config = config;

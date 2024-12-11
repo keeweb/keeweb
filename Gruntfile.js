@@ -1,32 +1,101 @@
-/* eslint-env node */
+/*
+    Required Modules
+
+    fs                  : filesystem
+    moment              : datetime library
+    chalk               : chalk v4 for cjs modules. v5 for esm.
+    uid                 : uuid v5, uuid and guid
+*/
 
 const fs = require('fs-extra');
 const path = require('path');
-const { execSync } = require('child_process');
+const moment = require('moment');
 const debug = require('debug');
+// const chalk = require('chalk'); // chalk v4 cjs
+const chalk = import('chalk').then((m) => m.default); // chalk v5 esm
+const { v5: uid } = require('uuid');
+const { execSync } = require('child_process');
+
+/*
+    serialHooks             required for electron builder; hooks are [ afterExtract, afterCopy, afterPrune ]
+    pkg                     package.json contents
+*/
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const serialHooks = require('electron-packager/src/hooks').serialHooks;
 const pkg = require('./package.json');
 
+/*
+    chalk.level
+
+    @ref        https://npmjs.com/package/chalk
+                - 0 	All colors disabled
+                - 1 	Basic color support (16 colors)
+                - 2 	256 color support
+                - 3 	Truecolor support (16 million colors)
+*/
+
+chalk.level = 3;
 debug.enable('electron-notarize');
 
+/*
+    Module > Exports
+*/
+
 module.exports = function (grunt) {
+    /*
+        Grunt Tasks
+    */
+
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
-
     grunt.loadTasks('build/tasks');
-
     require('./grunt.tasks')(grunt);
     require('./grunt.entrypoints')(grunt);
 
-    const date = new Date();
-    grunt.config.set('date', date);
+    /*
+        Timestamps
 
-    const dt = date.toISOString().replace(/T.*/, '');
-    const year = date.getFullYear();
+        times based on UTC
+
+        now                 Fri Dec 10 2024 19:35:54 GMT+0000
+        nowShort            2024-12-10
+        nowYear             2024
+    */
+
+    const now = moment().utc();
+    const nowShort = moment(now).format('YYYY-MM-DD');
+    const nowYear = moment(now).year();
+
+    /*
+        Build IDs
+
+        guid                should never change, based on repository url
+        uuid                changes with each new version based on version number
+    */
+
+    const guid = uid(`${pkg.repository.url}`, uid.URL);
+    const uuid = uid(pkg.version, guid);
+
+    /*
+        Grunt > Set Configs
+    */
+
+    grunt.config.set('date', now);
+    grunt.config.set('guid', guid);
+    grunt.config.set('uuid', uuid);
+
+    /*
+        Misc declarations
+    */
+
     const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
+
+    /*
+        Code Signing
+    */
+
     const skipSign = grunt.option('skip-sign');
     const getCodeSignConfig = () =>
         skipSign ? { identities: {} } : require('./keys/codesign.json');
@@ -43,19 +112,65 @@ module.exports = function (grunt) {
             );
         }
     }
-    grunt.log.writeln(`Building KeeWeb v${pkg.version} (${sha})`);
+
+    /*
+        Build info printed to console
+    */
+
+    chalk.then(async (c) =>
+        grunt.log.writeln(
+            c.white.bgBlueBright.bold(` ${pkg.name} `),
+            c.white(` → `),
+            c.yellow(`VERSION .. v${pkg.version}`)
+        )
+    );
+
+    chalk.then(async (c) =>
+        grunt.log.writeln(
+            c.white.bgBlueBright.bold(` ${pkg.name} `),
+            c.white(` → `),
+            c.yellow(`SHA ...... ${sha}`)
+        )
+    );
+
+    chalk.then(async (c) =>
+        grunt.log.writeln(
+            c.white.bgBlueBright.bold(` ${pkg.name} `),
+            c.white(` → `),
+            c.yellow(`GUID ..... ${guid}`)
+        )
+    );
+
+    chalk.then(async (c) =>
+        grunt.log.writeln(
+            c.white.bgBlueBright.bold(` ${pkg.name} `),
+            c.white(` → `),
+            c.yellow(`UUID ..... ${uuid}`)
+        )
+    );
 
     const webpackOptions = {
-        date,
+        now,
+        guid,
+        uuid,
         beta: !!grunt.option('beta'),
         sha,
         appleTeamId: '3LE7JZ657W'
     };
+
+    /*
+        Application Configs
+    */
+
     const appConfig = webpackConfig({
         ...webpackOptions,
         mode: 'development',
         sha: 'dev'
     });
+
+    /*
+        App Info > Windows
+    */
 
     const windowsAppVersionString = {
         CompanyName: 'KeeWeb',
@@ -64,6 +179,10 @@ module.exports = function (grunt) {
         ProductName: 'KeeWeb',
         InternalName: 'KeeWeb'
     };
+
+    /*
+        App Info > MacOS
+    */
 
     const appdmgOptions = (arch) => ({
         title: 'KeeWeb',
@@ -83,6 +202,10 @@ module.exports = function (grunt) {
         ]
     });
 
+    /*
+        App Info > Linux
+    */
+
     const linuxDependencies = [
         'libappindicator1',
         'libgconf-2-4',
@@ -91,6 +214,10 @@ module.exports = function (grunt) {
         'libx11-6',
         'libatspi2.0-0'
     ];
+
+    /*
+        Grunt Configurations
+    */
 
     grunt.initConfig({
         noop: { noop: {} },
@@ -176,7 +303,6 @@ module.exports = function (grunt) {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
                 dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
@@ -185,7 +311,6 @@ module.exports = function (grunt) {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
                 dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
                 options: { mode: true }
@@ -258,41 +383,33 @@ module.exports = function (grunt) {
             'native-messaging-host-darwin-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
                 dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-darwin-arm64': {
                 src: 'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
                 dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
-                dest:
-                    'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-linux-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
-                    'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
                 dest: 'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-win32-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-ia32': {
                 src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-arm64': {
                 src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
-                    'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe',
                 nonull: true
             }
@@ -440,7 +557,15 @@ module.exports = function (grunt) {
                         },
                         {
                             pattern: /"date":\s*".*?"/,
-                            replacement: `"date": "${dt}"`
+                            replacement: `"date": "${nowShort}"`
+                        },
+                        {
+                            pattern: /"guid":\s*".*?"/,
+                            replacement: `"guid": "${guid}"`
+                        },
+                        {
+                            pattern: /"uuid":\s*".*?"/,
+                            replacement: `"uuid": "${uuid}"`
                         }
                     ]
                 },
@@ -543,7 +668,7 @@ module.exports = function (grunt) {
                 electronVersion,
                 overwrite: true,
                 asar: true,
-                appCopyright: `Copyright © ${year} Antelle`,
+                appCopyright: `Copyright © ${nowYear} Antelle`,
                 appVersion: pkg.version,
                 buildVersion: sha,
                 extraResource: path.join(__dirname, 'app/wallpapers'),
@@ -661,7 +786,7 @@ module.exports = function (grunt) {
                     config: {
                         appId: 'net.antelle.keeweb',
                         productName: 'keeweb',
-                        copyright: `Copyright © ${year} Antelle`,
+                        copyright: `Copyright © ${nowYear} Antelle`,
                         directories: {
                             output: 'tmp/desktop/electron-builder',
                             app: 'desktop',

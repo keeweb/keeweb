@@ -1,15 +1,17 @@
 {
-  "name": "keeweb-plugin",
-  "version": "0.1.12",
-  "description": "KeeWeb plugin utils",
-  "main": "keeweb-plugin.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "antelle",
-  "license": "MIT",
-  "keywords": ["keeweb"],
-  "bin": {
-    "keeweb-plugin": "keeweb-plugin.js"
-  }
+    "name": "keeweb-plugin",
+    "version": "0.1.12",
+    "description": "KeeWeb plugin utils",
+    "main": "keeweb-plugin.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "antelle",
+    "license": "MIT",
+    "keywords": [
+        "keeweb"
+    ],
+    "bin": {
+        "keeweb-plugin": "keeweb-plugin.js"
+    }
 }

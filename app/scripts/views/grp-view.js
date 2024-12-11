@@ -36,7 +36,7 @@ class GrpView extends View {
             defaultAutoTypeSeq: this.model.getParentEffectiveAutoTypeSeq()
         });
         if (!this.model.title) {
-            this.$el.find('#grp__field-title').focus();
+            this.$el.find('#grp__field-title').trigger('focus');
         }
         this.createScroll({
             root: this.$el.find('.grp')[0],

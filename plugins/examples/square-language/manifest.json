@@ -1,21 +1,21 @@
 {
-  "version": "0.0.1",
-  "manifestVersion": "0.1.0",
-  "name": "square-language",
-  "description": "Language which replaces everything with squares",
-  "author": {
-    "name": "antelle",
-    "email": "antelle.net@gmail.com",
-    "url": "http://antelle.net"
-  },
-  "license": "MIT",
-  "url": "https://keeweb.info",
-  "resources": {
-    "loc": "iQeeuzk/MuNvmqIboqMMvz+Jyw7dHBJtqNe9ja2i8GJrjbPIG0wPgiRohSFwiAqNDrRQlvfhoNdyvp7UlGO4fAWLaN4h4IUP/iQo7CElYQFMuN+4psJnAkx7HJajtMrJ5lHH5w5aeHxVW5jEYzY0SR2zxzYqxZVifOwJmj8/oKweWzkxt7Cs/2NfcFXLnrU83IyFk75yunvbDP7jlt08mEyrfOQIwzGnsrEiEZ6ha6w0kG2cd6Mmda/12Jnk95ZpQrZcK5J+nafIXYcGwvaQhmWMjZzIWp7/tDdqhBRUhiRDFQwl3rjdubeKUBjYvxZDkDH2DPiOR8kMw2kT6mNqiQ=="
-  },
-  "locale": {
-    "name": "xs-XS",
-    "title": "▮▮▮▮▮▮▮"
-  },
-  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB"
+    "version": "0.0.1",
+    "manifestVersion": "0.1.0",
+    "name": "square-language",
+    "description": "Language which replaces everything with squares",
+    "author": {
+        "name": "antelle",
+        "email": "antelle.net@gmail.com",
+        "url": "http://antelle.net"
+    },
+    "license": "MIT",
+    "url": "https://keeweb.info",
+    "resources": {
+        "loc": "iQeeuzk/MuNvmqIboqMMvz+Jyw7dHBJtqNe9ja2i8GJrjbPIG0wPgiRohSFwiAqNDrRQlvfhoNdyvp7UlGO4fAWLaN4h4IUP/iQo7CElYQFMuN+4psJnAkx7HJajtMrJ5lHH5w5aeHxVW5jEYzY0SR2zxzYqxZVifOwJmj8/oKweWzkxt7Cs/2NfcFXLnrU83IyFk75yunvbDP7jlt08mEyrfOQIwzGnsrEiEZ6ha6w0kG2cd6Mmda/12Jnk95ZpQrZcK5J+nafIXYcGwvaQhmWMjZzIWp7/tDdqhBRUhiRDFQwl3rjdubeKUBjYvxZDkDH2DPiOR8kMw2kT6mNqiQ=="
+    },
+    "locale": {
+        "name": "xs-XS",
+        "title": "▮▮▮▮▮▮▮"
+    },
+    "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1QB+yQofkqIHbHFVAtWhjEFjaxvNekyQx/aK7nEpZzqM8ReoVWbJGVA+7z7MhymwZanbL8uAUrSpNTp5eFWltDksxqHqmXT4UcFU+4reLjYfgwjIaA3c9Q+2JA1Iowqbv3NDcDKm6Ug+dROr04VDCfYE4WRYgGdTYHDbJs5svxUgQ25uc0KKUWAvhYbSKsw43AwmbPbKkHdfZHiS5ZST99HVEJWxn3Kd2zLY9Kk70nu9MzypMLDqxUqjKgdeRCIyZeAYzB75miH3B5vMKhFcdmA8+D6WU2N+6gzKsY5BfqF729uFKSTo4JUKQ5fMU0lKSDHG4qGrkgnURfAUuj9YMQIDAQAB"
 }

@@ -139,6 +139,7 @@ function checkFilePath(path, ext) {
         throw 'File not specified: ' + ext;
     }
 
+    if (path.slice(-(ext.length + 1)) !== '.' + ext) {
         throw 'Bad file extension: ' + ext + ' (' + path + ')';
     }
 

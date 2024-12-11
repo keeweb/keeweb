@@ -201,7 +201,7 @@ class ListView extends View {
             renderedItems.set(ix, el);
         }
 
-        const maxRenderedItems = visibleCount * 5;
+        const maxRenderedItems = visibleCount * 6;
 
         if (renderedItems.size > maxRenderedItems) {
             for (const [ix, el] of this.renderedItems) {
