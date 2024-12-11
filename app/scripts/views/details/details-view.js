@@ -27,7 +27,6 @@ import { FieldViewCustom } from 'views/fields/field-view-custom';
 import { IconSelectView } from 'views/icon-select-view';
 import { isEqual } from 'util/fn';
 import { Launcher } from 'comp/launcher';
-import dompurify from 'dompurify';
 import template from 'templates/details/details.hbs';
 import emptyTemplate from 'templates/details/details-empty.hbs';
 import groupTemplate from 'templates/details/details-group.hbs';
@@ -434,8 +433,6 @@ class DetailsView extends View {
 
     toggleAttachment(e) {
         // since keeweb can render markdown, remove .app__details background image. only solid color should appear behind markdown
-        const cssBackground = dompurify.sanitize('none');
-        this.$el.css('background', cssBackground);
 
         const attBtn = $(e.target).closest('.details__attachment');
         const id = attBtn.data('id');
@@ -445,7 +442,10 @@ class DetailsView extends View {
             return;
         }
 
+        // remove subview / markdown file from view when double-clicking attachment file button
+        // for 'return to entry/ top button, see details-attachment-view.js
         if (this.views.sub && this.views.sub.attId === id) {
+            Events.emit('wallpaper-toggle');
             this.render();
             return;
         }
@@ -455,6 +455,8 @@ class DetailsView extends View {
             parent: this.scroller[0],
             replace: true
         });
+
+        Events.emit('wallpaper-toggle', true);
 
         subView.attId = id;
         subView.render(this.pageResized.bind(this));
@@ -772,6 +774,7 @@ class DetailsView extends View {
             const attachment = this.model.attachments[this.views.sub.attId];
             this.model.removeAttachment(attachment.title);
             this.render();
+            Events.emit('wallpaper-toggle');
         }
     }
 

@@ -106,7 +106,7 @@ class AppView extends View {
         this.listenTo(Events, 'launcher-before-quit', this.launcherBeforeQuit);
         this.listenTo(Events, 'wallpaper-change', this.wallpaperChange);
         this.listenTo(Events, 'wallpaper-opacity', this.wallpaperOpacity);
-
+        this.listenTo(Events, 'wallpaper-toggle', this.wallpaperToggle);
         this.listenTo(UpdateModel, 'change:updateReady', this.updateApp);
 
         window.onbeforeunload = this.beforeUnload.bind(this);
@@ -427,22 +427,22 @@ class AppView extends View {
                     ? 'rgba(32, 32, 32, ' + this.model.settings.backgroundOpacityDark + ')'
                     : 'rgba(255, 255, 255, ' + this.model.settings.backgroundOpacityLight + ')';
 
-            const wallpaperPath = encodeURI(`${this.model.settings.backgroundPath}`)
+            const imgPath = encodeURI(`${this.model.settings.backgroundPath}`)
                 .replace(/[!'()]/g, encodeURI)
                 .replace(/\*/g, '%2A');
 
             // sanitize for xss
-            const cssBackground = dompurify.sanitize(
+            const imgCssStyle = dompurify.sanitize(
                 'linear-gradient(' +
                     bgColor +
                     ', ' +
                     bgColor +
                     '), url(' +
-                    wallpaperPath +
+                    imgPath +
                     ') 0% 0% / cover'
             );
 
-            this.panelAppEl.css('background', cssBackground);
+            this.panelAppEl.css('background', imgCssStyle);
         } else {
             this.panelAppEl.css('background', '');
         }
@@ -465,21 +465,68 @@ class AppView extends View {
             const wallpaperArr = [wallpaper1, wallpaper2, wallpaper3, wallpaper4];
             const wallpaperSel = wallpaperArr[Math.floor(Math.random() * wallpaperArr.length)];
 
-            let wallpaperPath = `${wallpaperDir}${wallpaperSel}`;
+            let imgPath = `${wallpaperDir}${wallpaperSel}`;
 
             if (
                 this.model.settings.backgroundUrl &&
                 this.model.settings.backgroundUrl !== '' &&
                 this.model.settings.backgroundState === 'custom'
             ) {
-                wallpaperPath = encodeURI(this.model.settings.backgroundUrl)
+                imgPath = encodeURI(this.model.settings.backgroundUrl)
                     .replace(/[!'()]/g, encodeURI)
                     .replace(/\*/g, '%2A');
             }
 
-            this.model.settings.backgroundPath = wallpaperPath;
+            this.model.settings.backgroundPath = imgPath;
 
             this.wallpaperOpacity();
+        }
+    }
+
+    /*
+        @event          wallpaper-toggle
+
+        toggles the opacity of user wallpaper to ensure we can disable it in certain instances
+        such as when viewing markdown.
+
+        wallpaperToggle(true)           hide
+        wallpaperToggle()               show
+    */
+
+    wallpaperToggle(bOff) {
+        const logger = new Logger('events');
+        logger.dev('triggered wallpaper-toggle [status] ' + bOff);
+
+        if (
+            this.model.settings.backgroundState !== 'disabled' &&
+            this.model.settings.backgroundPath
+        ) {
+            const themeScheme = SettingsManager.getThemeScheme();
+            const bgColor =
+                themeScheme === 'dark'
+                    ? 'rgba(32, 32, 32, ' +
+                      (bOff === true ? 1 : this.model.settings.backgroundOpacityDark) +
+                      ')'
+                    : 'rgba(255, 255, 255, ' +
+                      (bOff === true ? 1 : this.model.settings.backgroundOpacityLight) +
+                      ')';
+
+            const imgPath = encodeURI(`${this.model.settings.backgroundPath}`)
+                .replace(/[!'()]/g, encodeURI)
+                .replace(/\*/g, '%2A');
+
+            // sanitize for xss
+            const imgCssStyle = dompurify.sanitize(
+                'linear-gradient(' +
+                    bgColor +
+                    ', ' +
+                    bgColor +
+                    '), url(' +
+                    imgPath +
+                    ') 0% 0% / cover'
+            );
+
+            this.panelAppEl.css('background', imgCssStyle);
         }
     }
 
