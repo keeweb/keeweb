@@ -15,7 +15,7 @@ Handlebars.registerHelper('res', function (key, options) {
 Handlebars.registerHelper('Res', (key, options) => {
     let value = Locale[key];
     if (value) {
-        value = value[0].toUpperCase() + value.substr(1);
+        value = value[0].toUpperCase() + value.slice(1);
         const ix = value.indexOf('{}');
         if (ix >= 0) {
             value = value.replace('{}', options.fn(this));
