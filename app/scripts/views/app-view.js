@@ -79,7 +79,7 @@ class AppView extends View {
         this.listenTo(Events, 'select-all', this.selectAll);
         this.listenTo(Events, 'menu-select', this.menuSelect);
         this.listenTo(Events, 'lock-workspace', this.lockWorkspace);
-        this.listenTo(Events, 'show-file', this.showFileSettings);
+        this.listenTo(Events, 'open-devtools', this.openDevTools);
         this.listenTo(Events, 'open-file', this.toggleOpenFile);
         this.listenTo(Events, 'save-all', this.saveAll);
         this.listenTo(Events, 'remote-key-changed', this.remoteKeyChanged);
@@ -565,7 +565,9 @@ class AppView extends View {
     }
 
     openDevTools() {
-        if (Launcher && Launcher.devTools) {
+        const logger = new Logger('launcher');
+        logger.info('Initializing developer console');
+        if (Launcher) {
             Launcher.openDevTools();
         }
     }
@@ -957,7 +959,7 @@ class AppView extends View {
             }
             logger.info(`Parsed CSV: ${data.rows.length} records, ${logger.ts(ts)}`);
 
-            // TODO: refactor this
+            // @TODO            refactor
             this.hideSettings();
             this.hidePanelView();
             this.hideOpenFile();

@@ -98,6 +98,10 @@ class FooterView extends View {
     toggleSettings() {
         Events.emit('toggle-settings', 'general');
     }
+
+    openDevTools() {
+        Events.emit('open-devtools');
+    }
 }
 
 export { FooterView };
