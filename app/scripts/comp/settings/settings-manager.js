@@ -143,7 +143,7 @@ const SettingsManager = {
     },
 
     setFontSize(fontSize) {
-        const defaultFontSize = Features.isMobile ? 14 : 12;
+        const defaultFontSize = Features.isMobile ? 14 : 10;
         document.documentElement.style.fontSize = defaultFontSize + (fontSize || 0) * 2 + 'px';
     },
 
