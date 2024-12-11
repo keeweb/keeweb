@@ -21,10 +21,7 @@ for (let i = 65 /* 'A' */; i <= 90 /* 'Z' */; i++) {
 }
 
 const symbolsPerCharClass = new Uint8Array([
-    95 /* ASCII symbols */,
-    10 /* digits */,
-    26 /* lowercase letters */,
-    26 /* uppercase letters */
+    95 /* ASCII symbols */, 10 /* digits */, 26 /* lowercase letters */, 26 /* uppercase letters */
 ]);
 
 function passwordStrength(password) {
