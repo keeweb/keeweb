@@ -793,7 +793,9 @@ class DetailsView extends View {
             keypress: this.titleInputInput.bind(this)
         });
         $('.details__header-title').replaceWith(input);
-        input.focus()[0].setSelectionRange(this.model.title.length, this.model.title.length);
+        input
+            .trigger('focus')[0]
+            .setSelectionRange(this.model.title.length, this.model.title.length);
     }
 
     titleInputBlur(e) {

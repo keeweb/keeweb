@@ -170,13 +170,13 @@ class OpenView extends View {
     }
 
     windowFocused() {
-        this.inputEl.focus();
+        this.inputEl.trigger('focus');
         this.checkIfEncryptedPasswordDateIsValid();
     }
 
     focusInput(focusOnMobile) {
         if (FocusDetector.hasFocus() && (focusOnMobile || !Features.isMobile)) {
-            this.inputEl.focus();
+            this.inputEl.trigger('focus');
         }
     }
 

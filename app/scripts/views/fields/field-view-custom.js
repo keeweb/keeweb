@@ -65,7 +65,7 @@ class FieldViewCustom extends FieldViewText {
         this.labelInput
             .attr({ autocomplete: 'off', spellcheck: 'false' })
             .val(text)
-            .focus()[0]
+            .trigger('focus')[0]
             .setSelectionRange(text.length, text.length);
         this.labelInput.bind({
             input: this.fieldLabelInput.bind(this),
@@ -90,7 +90,7 @@ class FieldViewCustom extends FieldViewText {
         this.$el.find('.details__field-label').text(this.model.title);
         delete this.labelInput;
         if (this.editing && this.input) {
-            this.input.focus();
+            this.input.trigger('focus');
         }
     }
 
@@ -161,7 +161,7 @@ class FieldViewCustom extends FieldViewText {
         if (this.labelInput) {
             this.endEditTitle(this.labelInput.val());
         }
-        setTimeout(() => this.input.focus());
+        setTimeout(() => this.input.trigger('focus'));
     }
 }
 

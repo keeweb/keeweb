@@ -48,7 +48,7 @@ class KeyChangeView extends View {
         this.inputEl = this.$el.find('.key-change__pass');
         this.passwordInput.reset();
         this.passwordInput.setElement(this.inputEl);
-        this.inputEl.focus();
+        this.inputEl.trigger('focus');
         if (repeat) {
             this.passwordRepeatInput = new SecureInput();
             this.passwordRepeatInput.reset();
@@ -69,7 +69,7 @@ class KeyChangeView extends View {
             this.$el.find('.key-change__keyfile-name').empty();
         }
         this.$el.find('.key-change__file').val(null).trigger('click');
-        this.inputEl.focus();
+        this.inputEl.trigger('focus');
     }
 
     keyFileSelected(e) {
@@ -88,12 +88,12 @@ class KeyChangeView extends View {
         } else {
             this.$el.find('.key-change__keyfile-name').empty();
         }
-        this.inputEl.focus();
+        this.inputEl.trigger('focus');
     }
 
     accept() {
         if (!this.passwordInput.value.byteLength) {
-            this.passwordInput.el.focus();
+            this.passwordInput.el.trigger('focus');
             this.passwordRepeatInput.el.addClass('input--error');
             InputFx.shake(this.passwordInput.el);
             return;
@@ -103,7 +103,7 @@ class KeyChangeView extends View {
         if (this.passwordRepeatInput) {
             if (!this.passwordRepeatInput.value.equals(this.passwordInput.value)) {
                 this.passwordRepeatInput.el.addClass('input--error');
-                this.passwordRepeatInput.el.focus();
+                this.passwordRepeatInput.el.trigger('focus');
                 InputFx.shake(this.passwordRepeatInput.el);
                 return;
             }

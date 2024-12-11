@@ -39,7 +39,7 @@ const CopyPaste = {
             .appendTo(document.body);
         hiddenInput[0].selectionStart = 0;
         hiddenInput[0].selectionEnd = text.length;
-        hiddenInput.focus();
+        hiddenInput.trigger('focus');
         hiddenInput.on({
             'copy cut paste'() {
                 setTimeout(() => hiddenInput.blur(), 0);

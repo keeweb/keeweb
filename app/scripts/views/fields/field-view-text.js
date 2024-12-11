@@ -48,7 +48,7 @@ class FieldViewText extends FieldView {
         this.input
             .attr({ autocomplete: 'off', spellcheck: 'false' })
             .val(text)
-            .focus()[0]
+            .trigger('focus')[0]
             .setSelectionRange(text.length, text.length);
         this.input.bind({
             input: this.fieldValueInput.bind(this),
@@ -99,7 +99,7 @@ class FieldViewText extends FieldView {
     showGeneratorClick(e) {
         e.stopPropagation();
         if (!this.gen) {
-            this.input.focus();
+            this.input.trigger('focus');
         }
     }
 

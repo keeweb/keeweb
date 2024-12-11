@@ -95,7 +95,7 @@ class FieldViewAutocomplete extends FieldViewText {
             this.endEdit(selectedItem);
         } else {
             this.afterPaint(() => {
-                this.input.focus();
+                this.input.trigger('focus');
             });
         }
     }

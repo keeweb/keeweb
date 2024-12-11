@@ -102,11 +102,11 @@ class FieldViewTags extends FieldViewText {
                 newVal = selectedTag;
             }
             this.input.val(newVal);
-            this.input.focus();
+            this.input.trigger('focus');
             this.setTags();
         }
         this.afterPaint(() => {
-            this.input.focus();
+            this.input.trigger('focus');
         });
     }
 }
