@@ -20,22 +20,24 @@
             <option value="...">...</option>
         {{/if}}
     </select>
-    <input type="range" class="gen__length-range" value="{{opt.pseudoLength}}" min="0" max="25" />
+    <input type="range" class="gen__length-range" value="{{opt.pseudoLength}}" min="0" max="26" />
     <div>
-        <div class="gen__check"><input type="checkbox" id="gen__check-upper"
+        <div class="gen__check"><input class="checkbox-upper" type="checkbox" id="gen__check-upper"
             data-id="upper" {{#if opt.upper}}checked{{/if}}><label for="gen__check-upper">ABC</label></div>
-        <div class="gen__check"><input type="checkbox" id="gen__check-lower"
+        <div class="gen__check"><input class="checkbox-lower" type="checkbox" id="gen__check-lower"
             data-id="lower" {{#if opt.lower}}checked{{/if}}><label for="gen__check-lower">abc</label></div>
-        <div class="gen__check"><input type="checkbox" id="gen__check-digits"
+        <div class="gen__check"><input class="checkbox-digits" type="checkbox" id="gen__check-digits"
             data-id="digits" {{#if opt.digits}}checked{{/if}}><label for="gen__check-digits">123</label></div>
-        <div class="gen__check"><input type="checkbox" id="gen__check-special"
+        <div class="gen__check"><input class="checkbox-special" type="checkbox" id="gen__check-special"
             data-id="special" {{#if opt.special}}checked{{/if}}><label for="gen__check-special">!@#</label></div>
-        <div class="gen__check"><input type="checkbox" id="gen__check-brackets"
+        <div class="gen__check"><input class="checkbox-brackets" type="checkbox" id="gen__check-brackets"
             data-id="brackets" {{#if opt.brackets}}checked{{/if}}><label for="gen__check-brackets">({&lt;</label></div>
-        <div class="gen__check"><input type="checkbox" id="gen__check-high"
+        <div class="gen__check"><input class="checkbox-high" type="checkbox" id="gen__check-high"
             data-id="high" {{#if opt.high}}checked{{/if}}><label for="gen__check-high">äæ±</label></div>
-        <div class="gen__check"><input type="checkbox" id="gen__check-ambiguous"
+        <div class="gen__check"><input class="checkbox-ambiguous" type="checkbox" id="gen__check-ambiguous"
             data-id="ambiguous" {{#if opt.ambiguous}}checked{{/if}}><label for="gen__check-ambiguous">0Oo</label></div>
+        <div class="gen__check spaces"><input class="checkbox-spaces" type="checkbox" id="gen__check-spaces"
+            data-id="spaces" {{#if opt.spaces}}checked{{/if}}><label for="gen__check-spaces">Spaces</label></div>
     </div>
     <div class="gen__result"></div>
     <div class="gen__btn-wrap"><button class="gen__btn-ok">{{btnTitle}}</button></div>
