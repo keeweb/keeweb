@@ -3,28 +3,36 @@ import { Logger } from 'util/logger';
 const logger = new Logger('otp');
 
 const Otp = function (url, params) {
-    if (['hotp', 'totp'].indexOf(params.type) < 0) {
+    if (['hotp', 'totp'].indexOf(params.type.toLowerCase()) < 0) {
         throw 'Bad type: ' + params.type;
     }
+
     if (!params.secret) {
         throw 'Empty secret';
     }
-    if (params.algorithm && ['SHA1', 'SHA256', 'SHA512'].indexOf(params.algorithm) < 0) {
+
+    if (
+        params.algorithm &&
+        ['SHA1', 'SHA256', 'SHA512'].indexOf(params.algorithm.toUpperCase()) < 0
+    ) {
         throw 'Bad algorithm: ' + params.algorithm;
     }
+
     if (params.digits && ['6', '7', '8'].indexOf(params.digits) < 0) {
         throw 'Bad digits: ' + params.digits;
     }
+
     if (params.type === 'hotp' && !params.counter) {
         throw 'Bad counter: ' + params.counter;
     }
-    if ((params.period && isNaN(params.period)) || params.period < 1) {
+
+    if ((params.period && Number.isNaN(params.period)) || params.period < 1) {
         throw 'Bad period: ' + params.period;
     }
 
     this.url = url;
 
-    this.type = params.type;
+    this.type = params.type.toLowerCase();
     this.account = params.account;
     this.secret = params.secret;
     this.issuer = params.issuer;
@@ -93,7 +101,7 @@ Otp.prototype.hmac = function (data, callback) {
 
 Otp.hmacToDigits = function (hmac, length) {
     let code = hmac.toString();
-    code = Otp.leftPad(code.substr(code.length - length), length);
+    code = Otp.leftPad(code.slice(-length), length);
     return code;
 };
 
@@ -121,7 +129,7 @@ Otp.fromBase32 = function (str) {
     }
     const hex = new Uint8Array(Math.floor(bin.length / 8));
     for (i = 0; i < hex.length; i++) {
-        const chunk = bin.substr(i * 8, 8);
+        const chunk = bin.slice(i * 8, i * 8 + 8);
         hex[i] = parseInt(chunk, 2);
     }
     return hex.buffer;
@@ -135,12 +143,12 @@ Otp.leftPad = function (str, len) {
 };
 
 Otp.parseUrl = function (url) {
-    const match = /^otpauth:\/\/(\w+)(?:\/([^\?]+)\?|\?)(.*)/i.exec(url);
+    const match = /^otpauth:\/\/(\w+)\/([^\?]+)\?(.*)/i.exec(url);
     if (!match) {
         throw 'Not OTP url';
     }
     const params = {};
-    const label = decodeURIComponent(match[2] ?? 'default');
+    const label = decodeURIComponent(match[2]);
     if (label) {
         const parts = label.split(':');
         params.issuer = parts[0].trim();
@@ -148,8 +156,7 @@ Otp.parseUrl = function (url) {
             params.account = parts[1].trim();
         }
     }
-    params.type = match[1].toLowerCase(); // returns "totp"
-    // match[3] =  secret=XXXXXXXXXXXXX&period=30&digits=6&algorithm=SHA1
+    params.type = match[1].toLowerCase();
     match[3].split('&').forEach((part) => {
         const parts = part.split('=', 2);
         params[parts[0].toLowerCase()] = decodeURIComponent(parts[1]);
