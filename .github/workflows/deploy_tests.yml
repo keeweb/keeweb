@@ -1,5 +1,13 @@
-name: '🧰 Tests'
-run-name: '🧰 Tests'
+# #
+#   @type           github workflow
+#   @desc           run linter and build tests on repository
+#   @author         Aetherinox
+#   @project        KeeWeb
+#   @repo           https://github.com/keeweb/keeweb
+# #
+
+name: '📦 Deploy › Tests'
+run-name: '📦 Deploy › Tests'
 
 # #
 #   triggers
@@ -10,23 +18,23 @@ on:
         branches:
             - 'main'
             - 'master'
-            - 'develop'
-            - 'development'
+            - 'develop-v?[0-9]+.[0-9]+.[0-9]+'
+            - 'v?[0-9]+.[0-9]+.[0-9]+'
             - '!all-contributors/**'
-
     pull_request:
     workflow_dispatch:
+        inputs:
 
-          # #
-          #   Name of the plugin to use when creating the release zip / exe filename
-          #     e.g: keeweb-v1.0.0.zip
-          # #
+            # #
+            #   Name of the plugin to use when creating the release zip / exe filename
+            #     e.g: keeweb-v1.0.0.zip
+            # #
 
-          PLUGIN_NAME:
-              description:  "📦 Name of App"
-              required:     true
-              default:      'keeweb'
-              type:         string
+            PLUGIN_NAME:
+                description:  "📦 Name of App"
+                required:     true
+                default:      'keeweb'
+                type:         string
 
 
 # #
