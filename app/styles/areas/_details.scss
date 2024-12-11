@@ -590,7 +590,7 @@
                 color: var(--md-code-block-text-color);
                 padding: 10px;
                 padding-left: 15px;
-                white-space: pre;
+                white-space: pre-wrap;
                 display: block;
                 grid-template-columns: min-content auto;
                 grid-template-rows: auto;
