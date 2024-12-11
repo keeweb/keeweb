@@ -3,9 +3,7 @@ import { UrlFormat } from 'util/formatting/url-format';
 
 describe('UrlFormat', () => {
     it('should extract file name from url', () => {
-        expect(UrlFormat.getDataFileName('https://example.com/data/My.file.kDBx?x=1')).to.eql(
-            'My.file'
-        );
+        expect(UrlFormat.getDataFileName('https://example.com/data/My.file.kDBx?x=1')).to.eql('My.file');
     });
 
     it('should determine if url represents a kdbx file', () => {
@@ -43,9 +41,9 @@ describe('UrlFormat', () => {
     });
 
     it('should remove anchor for short urls', () => {
-        expect(
-            UrlFormat.presentAsShortUrl('https://example.com/path?query=1#anchor' + '0'.repeat(100))
-        ).to.eql('https://example.com/path?query=1#…');
+        expect(UrlFormat.presentAsShortUrl('https://example.com/path?query=1#anchor' + '0'.repeat(100))).to.eql(
+            'https://example.com/path?query=1#…'
+        );
     });
 
     it('should remove query string for short urls', () => {
@@ -58,17 +56,13 @@ describe('UrlFormat', () => {
 
     it('should remove query parts of path for short urls', () => {
         expect(
-            UrlFormat.presentAsShortUrl(
-                'https://example.com/path/' + '1'.repeat(100) + '/' + '0'.repeat(100)
-            )
+            UrlFormat.presentAsShortUrl('https://example.com/path/' + '1'.repeat(100) + '/' + '0'.repeat(100))
         ).to.eql('https://example.com/path/…');
     });
 
     it('should not remove domain for short urls', () => {
-        expect(
-            UrlFormat.presentAsShortUrl(
-                'https://example' + '0'.repeat(100) + '.com/' + '1'.repeat(100)
-            )
-        ).to.eql('https://example' + '0'.repeat(100) + '.com/…');
+        expect(UrlFormat.presentAsShortUrl('https://example' + '0'.repeat(100) + '.com/' + '1'.repeat(100))).to.eql(
+            'https://example' + '0'.repeat(100) + '.com/…'
+        );
     });
 });

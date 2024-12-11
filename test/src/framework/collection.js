@@ -72,7 +72,10 @@ describe('Collection', () => {
         const modelB = new TestModel('b');
         collection.push(modelA, modelB);
         expect(callsChange).to.eql([[{ added: [modelA, modelB], removed: [] }, collection]]);
-        expect(callsAdd).to.eql([[modelA, collection], [modelB, collection]]);
+        expect(callsAdd).to.eql([
+            [modelA, collection],
+            [modelB, collection]
+        ]);
         expect(collection.length).to.eql(3);
         expect(JSON.stringify(collection)).to.eql('[{"id":1},{"id":"a"},{"id":"b"}]');
     });
@@ -101,7 +104,10 @@ describe('Collection', () => {
         const modelB = new TestModel('b');
         collection.unshift(modelA, modelB);
         expect(callsChange).to.eql([[{ added: [modelA, modelB], removed: [] }, collection]]);
-        expect(callsAdd).to.eql([[modelA, collection], [modelB, collection]]);
+        expect(callsAdd).to.eql([
+            [modelA, collection],
+            [modelB, collection]
+        ]);
         expect(collection.length).to.eql(4);
         expect(JSON.stringify(collection)).to.eql('[{"id":"a"},{"id":"b"},{"id":2},{"id":1}]');
     });
@@ -198,7 +204,10 @@ describe('Collection', () => {
 
         collection.length = 1;
         expect(callsChange).to.eql([[{ added: [], removed: [model2, model3] }, collection]]);
-        expect(callsRemove).to.eql([[model2, collection], [model3, collection]]);
+        expect(callsRemove).to.eql([
+            [model2, collection],
+            [model3, collection]
+        ]);
         expect(collection.length).to.eql(1);
         expect(JSON.stringify(collection)).to.eql('[{"id":1}]');
         callsChange.length = 0;
@@ -364,10 +373,12 @@ describe('Collection', () => {
 
         expect(collection.length).to.eql(5);
         expect(JSON.stringify(collection)).to.eql('[{"id":1},{"id":4},{"id":5},{"id":6},{"id":3}]');
-        expect(callsChange).to.eql([
-            [{ added: [model4, model5, model6], removed: [model2] }, collection]
+        expect(callsChange).to.eql([[{ added: [model4, model5, model6], removed: [model2] }, collection]]);
+        expect(callsAdd).to.eql([
+            [model4, collection],
+            [model5, collection],
+            [model6, collection]
         ]);
-        expect(callsAdd).to.eql([[model4, collection], [model5, collection], [model6, collection]]);
         expect(callsRemove).to.eql([[model2, collection]]);
     });
 });
