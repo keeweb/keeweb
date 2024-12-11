@@ -212,7 +212,7 @@ class StorageGDrive extends StorageBase {
                 }
 
                 const urlParams = {
-                    fields: 'files(id,name,mimeType,headRevisionId)',
+                    fields: 'files(id,name,mimeType,headRevisionId,shortcutDetails)',
                     q: query,
                     pageSize: 1000,
                     includeItemsFromAllDrives: true,
@@ -233,9 +233,12 @@ class StorageGDrive extends StorageBase {
 
                         const fileList = response.files.map((f) => ({
                             name: f.name,
-                            path: f.id,
+                            path: f.shortcutDetails?.targetId ?? f.id,
                             rev: f.headRevisionId,
-                            dir: f.mimeType === 'application/vnd.google-apps.folder'
+                            dir:
+                                f.mimeType === 'application/vnd.google-apps.folder' ||
+                                f.shortcutDetails?.targetMimeType ===
+                                    'application/vnd.google-apps.folder'
                         }));
                         if (!dir) {
                             fileList.unshift({
@@ -299,7 +302,9 @@ class StorageGDrive extends StorageBase {
             }
         }
         return {
-            scope: 'https://www.googleapis.com/auth/drive',
+            // @ref https://github.com/keeweb/keeweb/pull/2208/
+            // scope: 'https://www.googleapis.com/auth/drive',
+            scope: 'https://www.googleapis.com/auth/drive.file',
             url: 'https://accounts.google.com/o/oauth2/v2/auth',
             tokenUrl: 'https://oauth2.googleapis.com/token',
             clientId,
