@@ -7,6 +7,7 @@ const debug = require('debug');
 
 const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
+const serialHooks = require('electron-packager/src/hooks').serialHooks;
 const pkg = require('./package.json');
 
 debug.enable('electron-notarize');
@@ -544,7 +545,55 @@ module.exports = function (grunt) {
                 asar: true,
                 appCopyright: `Copyright © ${year} Antelle`,
                 appVersion: pkg.version,
-                buildVersion: sha
+                buildVersion: sha,
+                extraResource: path.join(__dirname, 'app/wallpapers'),
+                afterExtract: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            const pathWallpapersTo = path.join(buildPath, 'wallpapers/');
+
+                            chalk.then(async (c) =>
+                                grunt.log.writeln(
+                                    c.green(`Electron → Extract Complete →`),
+                                    c.yellow(buildPath)
+                                )
+                            );
+
+                            fs.copySync('./app/wallpapers', pathWallpapersTo);
+
+                            chalk.then(async (c) =>
+                                grunt.log.writeln(
+                                    c.green(`Electron → Moving Wallpapers →`),
+                                    c.yellow(pathWallpapersTo)
+                                )
+                            );
+                        }
+                    ])
+                ],
+                afterCopy: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            chalk.then(async (c) =>
+                                grunt.log.writeln(
+                                    c.green(`Electron → Copy Complete →`),
+                                    c.yellow(buildPath)
+                                )
+                            );
+                        }
+                    ])
+                ],
+                afterPrune: [
+                    serialHooks([
+                        function (buildPath, electronVersion, platform, arch) {
+                            chalk.then(async (c) =>
+                                grunt.log.writeln(
+                                    c.green(`Electron → Prune Complete →`),
+                                    c.yellow(buildPath)
+                                )
+                            );
+                        }
+                    ])
+                ]
             },
             linux: {
                 options: {
