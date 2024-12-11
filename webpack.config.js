@@ -4,6 +4,22 @@
 const path = require('path');
 
 module.exports = {
+    stats: {
+        builtAt: false,
+        env: false,
+        hash: false,
+        colors: true,
+        modules: true,
+        reasons: true,
+        children: true,
+        warnings: false,
+        errorDetails: false,
+        errorStack: false,
+        errorsCount: false,
+        logging: false, // false, 'none' | 'error' | 'warn' | 'info' | 'log' | 'verbose'
+        loggingTrace: false,
+        loggingDebug: ['sass', 'sass-loader']
+    },
     resolve: {
         modules: [
             path.join(__dirname, 'app/scripts'),

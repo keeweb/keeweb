@@ -50,6 +50,11 @@ module.exports = function (grunt) {
         sha,
         appleTeamId: '3LE7JZ657W'
     };
+    const appConfig = webpackConfig({
+        ...webpackOptions,
+        mode: 'development',
+        sha: 'dev'
+    });
 
     const windowsAppVersionString = {
         CompanyName: 'KeeWeb',
@@ -148,7 +153,7 @@ module.exports = function (grunt) {
             'desktop-darwin-installer-helper-x64': {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
-                dest:
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                     'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
@@ -157,7 +162,7 @@ module.exports = function (grunt) {
             'desktop-darwin-installer-helper-arm64': {
                 cwd: 'tmp/desktop/KeeWeb Installer.app',
                 src: '**',
-                dest:
+                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                     'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/Installer/KeeWeb Installer.app',
                 expand: true,
                 nonull: true,
@@ -229,47 +234,48 @@ module.exports = function (grunt) {
                 nonull: true
             },
             'native-messaging-host-darwin-x64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/darwin-x64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 dest:
                     'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-darwin-arm64': {
-                src:
-                    'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/darwin-arm64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 dest:
                     'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app/Contents/MacOS/util/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-linux-x64': {
-                src:
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
                     'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
                 dest: 'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
             'native-messaging-host-win32-x64': {
-                src:
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
                     'node_modules/@keeweb/keeweb-native-messaging-host/win32-x64/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-x64/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-ia32': {
-                src:
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
                     'node_modules/@keeweb/keeweb-native-messaging-host/win32-ia32/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-ia32/keeweb-native-messaging-host.exe',
                 nonull: true
             },
             'native-messaging-host-win32-arm64': {
-                src:
+                src: 'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
                     'node_modules/@keeweb/keeweb-native-messaging-host/win32-arm64/keeweb-native-messaging-host.exe',
                 dest: 'tmp/desktop/KeeWeb-win32-arm64/keeweb-native-messaging-host.exe',
                 nonull: true
             }
         },
+
         eslint: {
             app: ['app/scripts/**/*.js'],
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
@@ -347,29 +353,72 @@ module.exports = function (grunt) {
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
             }
         },
+
         webpack: {
-            app: webpackConfig.config(webpackOptions),
+            app: webpackConfig(webpackOptions),
             test: webpackConfigTest
         },
+
         'webpack-dev-server': {
-            options: {
-                webpack: webpackConfig.config({
-                    ...webpackOptions,
-                    mode: 'development',
-                    sha: 'dev'
-                }),
-                publicPath: '/',
-                contentBase: [
-                    path.resolve(__dirname, 'tmp'),
-                    path.resolve(__dirname, 'app/content')
-                ],
-                progress: false
-            },
-            js: {
-                keepalive: true,
-                port: 8085
+            options: appConfig,
+            start: {
+                devServer: {
+                    setupMiddlewares: function (middlewares, devServer) {
+                        const port = devServer.options.port;
+                        const https = devServer.options.https ? 's' : '';
+
+                        const domain1 = `http${https}://${devServer.options.host}:${port}`;
+                        const domain2 = `http://[::1]:${port}`;
+
+                        grunt.log.writeln(
+                            `\n---------------------------------------------------------------------`
+                                .grey.bold
+                        );
+                        grunt.log.writeln(
+                            `  KeeWeb server succesfully started! Access it at:\n`.yellow.bold
+                        );
+                        grunt.log.writeln(`       → ${domain1}`.green.bold);
+                        grunt.log.writeln(`       → ${domain2}`.green.bold);
+                        grunt.log.writeln(
+                            `---------------------------------------------------------------------\n\n`
+                                .grey.bold
+                        );
+
+                        return middlewares;
+                    },
+                    port: 8085,
+                    client: {
+                        logging: 'error',
+                        overlay: true
+                    },
+                    hot: 'only',
+                    static: [
+                        /*
+                            publicPath: ['/static-public-path-one/', '/static-public-path-two/'],
+                            serveIndex: {}
+                                https://github.com/expressjs/serve-index
+                            watch: {}
+                                https://github.com/paulmillr/chokidar
+                        */
+
+                        {
+                            directory: path.resolve(__dirname, 'tmp'),
+                            staticOptions: {},
+                            serveIndex: true,
+                            watch: true
+                        },
+                        {
+                            directory: path.resolve(__dirname, 'app/content'),
+                            staticOptions: {},
+                            publicPath: '/',
+                            serveIndex: true,
+                            watch: true
+                        }
+                    ]
+                }
             }
         },
+
         electron: {
             options: {
                 name: 'KeeWeb',
@@ -774,12 +823,14 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         'run-test': {
             options: {
-                headless: true
+                headless: 'new'
             },
             default: 'test/runner.html'
         },
+
         virustotal: {
             options: {
                 prefix: `keeweb.v${pkg.version}-${sha}.`,
