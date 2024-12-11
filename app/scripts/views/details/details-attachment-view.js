@@ -43,7 +43,8 @@ class DetailsAttachmentView extends View {
                 File Type > Markdown
             */
 
-            case 'md': {
+            case 'md':
+            case 'markdown': {
                 const reader = new FileReader();
                 reader.addEventListener('loadend', () => {
                     const converted = MdToHtml.convert(reader.result, false, true);
