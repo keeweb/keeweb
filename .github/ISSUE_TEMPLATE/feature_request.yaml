@@ -1,45 +1,43 @@
-name: "💡 Feature Request"
+name: '💡 Feature Request'
 description: Got a suggestion? Submit your request here.
-title: "💡 Feature: <title>"
-labels: [
-  "Type ◦ Feature"
-]
+title: '💡 Feature: <title>'
+labels: ['Type ◦ Feature']
 body:
-  - type: markdown
-    attributes:
-      value: |
-        1. Please speak English.
-        2. Please take a moment to check that your feature hasn't already been suggested.
-        3. Be detailed but to the point.
-        
-  - type: textarea
-    id: text-description
-    attributes:
-      label: Feature Description
-      description: |
-        Explain your feature. Be detailed.
-        If your feature addresses a problem; explain the problem.
-      placeholder: |
-        I would like to request ...
-    validations:
-      required: true
+    - type: markdown
+      attributes:
+          value: |
+              1. Please speak English.
+              2. Please take a moment to check that your feature hasn't already been suggested.
+              3. Be detailed but to the point.
 
-  - type: textarea
-    id: text-alternatives
-    attributes:
-      label: Alternatives Considered
-      description: |
-        A clear and concise description of any alternative solutions or features you've considered.
-    validations:
-      required: false
+    - type: textarea
+      id: text-description
+      attributes:
+          label: Feature Description
+          description: |
+              Explain your feature. Be detailed.
+              If your feature addresses a problem; explain the problem.
+          placeholder: |
+              I would like to request ...
+      validations:
+          required: true
 
-  - type: textarea
-    id: attachment-screenshots
-    attributes:
-      label: "Attachments: Screenshots"
-      description: |
-        If possible, provide screenshots.
-        Want a feature placed in a specific location? Mark it in a screenshot.
-        Want something modified? Try creating a mockup. 
-        The more details about how it should look, the better.
-        Not required, but appreciated.
+    - type: textarea
+      id: text-alternatives
+      attributes:
+          label: Alternatives Considered
+          description: |
+              A clear and concise description of any alternative solutions or features you've considered.
+      validations:
+          required: false
+
+    - type: textarea
+      id: attachment-screenshots
+      attributes:
+          label: 'Attachments: Screenshots'
+          description: |
+              If possible, provide screenshots.
+              Want a feature placed in a specific location? Mark it in a screenshot.
+              Want something modified? Try creating a mockup. 
+              The more details about how it should look, the better.
+              Not required, but appreciated.

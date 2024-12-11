@@ -1,5 +1,5 @@
 name: 'Linux Build'
 description: 'Build KeeWeb on Linux in Docker'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+    using: 'docker'
+    image: 'Dockerfile'

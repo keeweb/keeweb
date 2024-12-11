@@ -10,6 +10,6 @@ Please follow these steps:
 6. don't add any dependencies
 7. test your code: it must work in all browsers, Windows, OSX, and Linux
 8. if your code is platform-dependent, please add corresponding switches
-9. respect each platform: don't create a behaviour that breaks interface guidelines or user expectations 
-10. run `grunt` and make sure it's passing 
+9. respect each platform: don't create a behaviour that breaks interface guidelines or user expectations
+10. run `grunt` and make sure it's passing
 11. replace this message with the actual description
