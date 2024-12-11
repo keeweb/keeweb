@@ -1,3 +1,6 @@
+// built in modules
+@use 'sass:math';
+
 @function text-contrast-color($bg, $lshift, $th-bg, $th-text) {
     @if (lightness($bg) - $lshift >= lightness($th-bg)) {
         @return $th-text;
@@ -10,5 +13,5 @@
 }
 
 @function semi-mute-percent($percent) {
-    @return $percent / 2;
+    @return math.div($percent, 2);
 }

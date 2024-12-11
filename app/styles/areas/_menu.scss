@@ -1,3 +1,6 @@
+// built in modules
+@use 'sass:math';
+
 .menu {
     width: 100%;
     display: flex;
@@ -178,7 +181,7 @@
         }
 
         .fa {
-            margin-right: $base-padding-h / 2;
+            margin-right: math.div($base-padding-h, 2);
         }
 
         &-drag-top {

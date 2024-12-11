@@ -1,12 +1,25 @@
+/*
+    Load modules
+*/
+
+@use 'sass:math';
+@use "sass:meta";
+@use 'sass:color';
+@use 'sass:list';
+
+/*
+    define font
+*/
+
 @font-face {
-    font-family: 'Font Awesome 5 Free';
+    font-family: 'Font Awesome 6 Free';
     font-style: normal;
     font-weight: 400;
     src: url('fontawesome.woff2') format('woff2');
 }
 
 @mixin fa-icon {
-    font-family: 'Font Awesome 5 Free';
+    font-family: 'Font Awesome 6 Free';
     font-weight: 400;
     font-style: normal;
     text-rendering: auto;
@@ -24,19 +37,48 @@
 
 $fa-glyph-counter: 61440; // 0xf000
 
+/*
+    Replaces old next-fa-glyph method for assigning unicode to font-awesome icons.
+    the old method relied on hoping that all colors would be serialized as hex codes, and this
+    method allows for a number to be converted into unicodes directly.
+
+    @debug int-to-hex(25);
+    @debug int-to-hex($fa-glyph-counter);
+
+    @ref    : https://sass-lang.com/playground/#eJztVUtvm0AQvvMrpo4rSMrGPGwnxT1YbSK1UhMfWqmXXDAsBgnvOrDkoSj/vTu8DThN1Uq9lMPYzHwzO8x+365pLrOUgpq6aepsXRGqCyX3jAoPFe6o9BQYj8c8UfdccZQK6VEmJwoAo/cgs0LuKycTRRkHLtnEj7uQeDxjgiYOzM3p1FjAZALGQ2AYhjImIX0gXugmqQOqoeqgmmgsNDaaKZoZmjmaMzTnaN6jcdGs0XhofDQUTYBdLX26zjYwIuUDV5ffP68uHLi+/AGVk4wQGWTMExFnEDFBBMe2tDHLtsfwJL8MYBkFgO/wAYzSlbsTKrKEySWOnlqZJE99lpUR9AxLGsuRNSXM+UANnOUpE6HWGopeZLwD83i/Vj+9tXwi5+1rPr9nZf5ErqjLGseyUucD4a2MVcWV5/YoGH0QpN5EubtaNY2Bre25sGl4s4n52o2L8uNU0J2z10A3STZSjLvcuWt678DRU55ZjLOolCc5kLHbjAuqqaObmxqldouUYAnI/1Xb0mXH8NMsWg26qLLAWWH/d25C0tvMTSixnaGZLXowwg8AFamMsq3WlKzZTMYGQ6Z1fihkzeYvhOxpHi6Ey2O/LdyDsll9vTgkm73P+QOeFGkxJzs3EUPotyC7z4+QiHkJ3VImINtBkPAtmEV2GJXZeKid+tFdn2dA6kV0KCZVM5SYDuRH3WlEcyWmItGSzdrVqsp6K1mKqp1rOSDhJI0jj2plOR2mOpx1WflNxsCs2U3MLi9zgNUArNcJAHH/TAJOlwg98nepr9Us9Ph2HTFaU1G6RBil6Jejpql8oyB/s1gAD/K3hrjgMr91AUEa+ZSsHwn+DpC6pvSn1dXHL9eXFa9fILWUbdXhf34P87uB2b93zK9iv8fz4UuA2D0VWC/KoMHZwzi7wvUFg/xqRNPrq8Cwsrtijb+jLCuX1i+vlzYjX3PL7OPl8xOosd4o
+
+*/
+
+$-hex-chars: '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f';
+
+@function int-to-hex($num) {
+    @if $num < 0 {
+        @return "-#{int-to-hex(-$num)}";
+    } @else if $num < 16 {
+        @return list.nth($-hex-chars, $num + 1);
+    } @else {
+        @return int-to-hex(round(down, $num / 16, 1)) + int-to-hex($num % 16);
+    }
+}
+
+/*
+    @since  : sass 1.49.10
+*/
+
 @function next-fa-glyph() {
     $fa-glyph-counter: $fa-glyph-counter + 1 !global;
 
-    $lo-part: $fa-glyph-counter % 256;
-    $hi-part: ($fa-glyph-counter - $lo-part) / 256;
-    $hex-num-str: str-slice(#{rgb($hi-part, $lo-part, 1)}, 2, 5);
+    $lo-part: $fa-glyph-counter % 256; // increment up from 1
+    $step: int-to-hex($fa-glyph-counter);
 
-    $glyph: unquote('"\\#{$hex-num-str}"');
+    $glyph: unquote('"\\#{$step}"');
 
     @return $glyph;
 }
 
-// position fixes for icons that need to be shifted because they're special
+/*
+    position fixes for icons that need to be shifted because they're special
+*/
 
 .fa-keyboard {
     @include position(relative, 0.1em null null null);
@@ -46,9 +88,16 @@ $fa-glyph-counter: 61440; // 0xf000
 // if the icon has "-o" suffix, it will be used from the "regular" font, otherwise from "solid" or "brands"
 // -o is used because it's similar to an empty bullet and this used to be a convention in fontawesome 4
 
+$fa-var-circle-arrow-left: next-fa-glyph();
 $fa-var-square: next-fa-glyph();
 $fa-var-square-o: next-fa-glyph();
-$fa-var-check-square-o: next-fa-glyph();
+$fa-var-square-check: next-fa-glyph();
+$fa-var-square-check-o: next-fa-glyph();
+$fa-var-circle-check-o: next-fa-glyph();
+$fa-var-circle-xmark: next-fa-glyph();
+$fa-var-circle-o: next-fa-glyph();
+$fa-var-circle: next-fa-glyph();
+$fa-var-check: next-fa-glyph();
 $fa-var-bookmark: next-fa-glyph();
 $fa-var-bookmark-o: next-fa-glyph();
 $fa-var-eye: next-fa-glyph();
@@ -56,25 +105,23 @@ $fa-var-eye-slash: next-fa-glyph();
 $fa-var-bolt: next-fa-glyph();
 $fa-var-unlock: next-fa-glyph();
 $fa-var-lock: next-fa-glyph();
-$fa-var-check: next-fa-glyph();
-$fa-var-times: next-fa-glyph();
-$fa-var-times-circle: next-fa-glyph();
+$fa-var-x: next-fa-glyph();
 $fa-var-folder: next-fa-glyph();
 $fa-var-folder-open: next-fa-glyph();
 $fa-var-ban: next-fa-glyph();
 $fa-var-dropbox: next-fa-glyph();
 $fa-var-google-drive: next-fa-glyph();
 $fa-var-plus: next-fa-glyph();
-$fa-var-ellipsis-h: next-fa-glyph();
-$fa-var-ellipsis-v: next-fa-glyph();
-$fa-var-magic: next-fa-glyph();
-$fa-var-cog: next-fa-glyph();
+$fa-var-ellipsis: next-fa-glyph();
+$fa-var-ellipsis-vertical: next-fa-glyph();
+$fa-var-wand-magic-sparkles: next-fa-glyph();
+$fa-var-gear: next-fa-glyph();
 $fa-var-server: next-fa-glyph();
-$fa-var-file-alt: next-fa-glyph();
-$fa-var-file-alt-o: next-fa-glyph();
+$fa-var-file-lines: next-fa-glyph();
+$fa-var-file-lines-o: next-fa-glyph();
 $fa-var-file-code: next-fa-glyph();
 $fa-var-file-pdf: next-fa-glyph();
-$fa-var-file-archive: next-fa-glyph();
+$fa-var-file-zipper: next-fa-glyph();
 $fa-var-file-word: next-fa-glyph();
 $fa-var-file-excel: next-fa-glyph();
 $fa-var-file-powerpoint: next-fa-glyph();
@@ -82,31 +129,39 @@ $fa-var-file-image: next-fa-glyph();
 $fa-var-file-video: next-fa-glyph();
 $fa-var-file-audio: next-fa-glyph();
 $fa-var-onedrive: next-fa-glyph();
-$fa-var-user-friends: next-fa-glyph();
+$fa-var-user-group: next-fa-glyph();
 $fa-var-question: next-fa-glyph();
-$fa-var-sign-out-alt: next-fa-glyph();
-$fa-var-sync-alt: next-fa-glyph();
-$fa-var-level-down-alt: next-fa-glyph();
+$fa-var-right-from-bracket: next-fa-glyph();
+$fa-var-rotate: next-fa-glyph();
+$fa-var-turn-down: next-fa-glyph();
 $fa-var-tag: next-fa-glyph();
 $fa-var-tags: next-fa-glyph();
-$fa-var-th-large: next-fa-glyph();
+$fa-var-table-cells-large: next-fa-glyph();
 $fa-var-trash: next-fa-glyph();
-$fa-var-trash-alt: next-fa-glyph();
+$fa-var-trash-can: next-fa-glyph();
 $fa-var-keyboard: next-fa-glyph();
 $fa-var-puzzle-piece: next-fa-glyph();
 $fa-var-usb: next-fa-glyph();
 $fa-var-info: next-fa-glyph();
-$fa-var-info-circle: next-fa-glyph();
+$fa-var-circle-info: next-fa-glyph();
 $fa-var-key: next-fa-glyph();
 $fa-var-globe: next-fa-glyph();
-$fa-var-exclamation-triangle: next-fa-glyph();
-$fa-var-exclamation-circle: next-fa-glyph();
+$fa-var-github: next-fa-glyph();
+$fa-var-heart: next-fa-glyph();
+$fa-var-note-sticky: next-fa-glyph();
+$fa-var-note-sticky-o: next-fa-glyph();
+$fa-var-eye-o: next-fa-glyph();
+$fa-var-eye-slash-o: next-fa-glyph();
+$fa-var-lightbulb: next-fa-glyph();
+$fa-var-triangle-exclamation: next-fa-glyph();
+$fa-var-circle-exclamation: next-fa-glyph();
 $fa-var-thumbtack: next-fa-glyph();
 $fa-var-comments: next-fa-glyph();
-$fa-var-edit: next-fa-glyph();
+$fa-var-pen-to-square: next-fa-glyph();
 $fa-var-plug: next-fa-glyph();
 $fa-var-newspaper: next-fa-glyph();
 $fa-var-paperclip: next-fa-glyph();
+$fa-var-markdown: next-fa-glyph();
 $fa-var-camera: next-fa-glyph();
 $fa-var-wifi: next-fa-glyph();
 $fa-var-link: next-fa-glyph();
@@ -122,39 +177,37 @@ $fa-var-clipboard: next-fa-glyph();
 $fa-var-paper-plane: next-fa-glyph();
 $fa-var-address-card: next-fa-glyph();
 $fa-var-inbox: next-fa-glyph();
-$fa-var-save: next-fa-glyph();
-$fa-var-hdd: next-fa-glyph();
-$fa-var-dot-circle: next-fa-glyph();
+$fa-var-floppy-disk: next-fa-glyph();
+$fa-var-hard-drive: next-fa-glyph();
+$fa-var-circle-dot: next-fa-glyph();
 $fa-var-user: next-fa-glyph();
 $fa-var-user-lock: next-fa-glyph();
 $fa-var-terminal: next-fa-glyph();
 $fa-var-print: next-fa-glyph();
-$fa-var-project-diagram: next-fa-glyph();
+$fa-var-diagram-project: next-fa-glyph();
 $fa-var-flag-checkered: next-fa-glyph();
 $fa-var-wrench: next-fa-glyph();
 $fa-var-laptop: next-fa-glyph();
-$fa-var-archive: next-fa-glyph();
+$fa-var-box-archive: next-fa-glyph();
 $fa-var-credit-card: next-fa-glyph();
 $fa-var-windows: next-fa-glyph();
 $fa-var-clock: next-fa-glyph();
-$fa-var-search: next-fa-glyph();
+$fa-var-magnifying-glass: next-fa-glyph();
 $fa-var-flask: next-fa-glyph();
 $fa-var-gamepad: next-fa-glyph();
-$fa-var-sticky-note: next-fa-glyph();
-$fa-var-sticky-note-o: next-fa-glyph();
-$fa-var-question-circle: next-fa-glyph();
+$fa-var-circle-question: next-fa-glyph();
 $fa-var-cube: next-fa-glyph();
 $fa-var-folder-o: next-fa-glyph();
 $fa-var-folder-open-o: next-fa-glyph();
 $fa-var-database: next-fa-glyph();
-$fa-var-unlock-alt: next-fa-glyph();
-$fa-var-pencil-alt: next-fa-glyph();
+$fa-var-unlock-keyhole: next-fa-glyph();
+$fa-var-pencil: next-fa-glyph();
 $fa-var-image: next-fa-glyph();
 $fa-var-book: next-fa-glyph();
-$fa-var-list-alt: next-fa-glyph();
+$fa-var-rectangle-list: next-fa-glyph();
 $fa-var-user-secret: next-fa-glyph();
 $fa-var-utensils: next-fa-glyph();
-$fa-var-home: next-fa-glyph();
+$fa-var-house: next-fa-glyph();
 $fa-var-star: next-fa-glyph();
 $fa-var-linux: next-fa-glyph();
 $fa-var-map-pin: next-fa-glyph();
@@ -163,26 +216,23 @@ $fa-var-wikipedia-w: next-fa-glyph();
 $fa-var-dollar-sign: next-fa-glyph();
 $fa-var-mobile: next-fa-glyph();
 $fa-var-spinner: next-fa-glyph();
-$fa-var-minus-circle: next-fa-glyph();
+$fa-var-circle-minus: next-fa-glyph();
 $fa-var-keeweb: next-fa-glyph();
 $fa-var-copy: next-fa-glyph();
 $fa-var-clone: next-fa-glyph();
 $fa-var-chevron-down: next-fa-glyph();
 $fa-var-chevron-left: next-fa-glyph();
 $fa-var-qrcode: next-fa-glyph();
-$fa-var-sort-alpha-down: next-fa-glyph();
-$fa-var-sort-alpha-down-alt: next-fa-glyph();
-$fa-var-sort-numeric-down: next-fa-glyph();
-$fa-var-sort-numeric-down-alt: next-fa-glyph();
-$fa-var-sort-amount-down: next-fa-glyph();
+$fa-var-arrow-down-a-z: next-fa-glyph();
+$fa-var-arrow-down-z-a: next-fa-glyph();
+$fa-var-arrow-down-1-9: next-fa-glyph();
+$fa-var-arrow-down-9-1: next-fa-glyph();
+$fa-var-arrow-down-wide-short: next-fa-glyph();
 $fa-var-language: next-fa-glyph();
-$fa-var-circle: next-fa-glyph();
-$fa-var-circle-o: next-fa-glyph();
-$fa-var-arrow-circle-left: next-fa-glyph();
-$fa-var-cloud-download-alt: next-fa-glyph();
+$fa-var-cloud-arrow-down: next-fa-glyph();
 $fa-var-caret-down: next-fa-glyph();
-$fa-var-long-arrow-alt-left: next-fa-glyph();
-$fa-var-long-arrow-alt-right: next-fa-glyph();
+$fa-var-left-long: next-fa-glyph();
+$fa-var-right-long: next-fa-glyph();
 $fa-var-github-alt: next-fa-glyph();
 $fa-var-code: next-fa-glyph();
 $fa-var-html5: next-fa-glyph();
@@ -192,7 +242,7 @@ $fa-var-safari: next-fa-glyph();
 $fa-var-opera: next-fa-glyph();
 $fa-var-edge: next-fa-glyph();
 $fa-var-twitter: next-fa-glyph();
-$fa-var-paint-brush: next-fa-glyph();
+$fa-var-paintbrush: next-fa-glyph();
 $fa-var-at: next-fa-glyph();
 $fa-var-usb-token: next-fa-glyph();
 $fa-var-bell: next-fa-glyph();
@@ -203,6 +253,6 @@ $fa-var-titlebar-minimize: next-fa-glyph();
 $fa-var-titlebar-restore: next-fa-glyph();
 $fa-var-window-maximize: next-fa-glyph();
 $fa-var-download: next-fa-glyph();
-$fa-var-exchange-alt: next-fa-glyph();
+$fa-var-right-left: next-fa-glyph();
 $fa-var-folder-plus: next-fa-glyph();
 $fa-var-filter: next-fa-glyph();
