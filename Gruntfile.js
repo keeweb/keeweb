@@ -374,6 +374,34 @@ module.exports = function (grunt) {
                     ]
                 }
             },
+            'assets': {
+                options: {
+                    replacements: [
+                        {
+                            name: 'Preload: CSS',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_CSS}}-->/,
+                            hrefPath: 'css/app.css',
+                            as: 'style',
+                            cors: false
+                        },
+                        {
+                            name: 'Preload: Javascript',
+                            rel: 'preload',
+                            pattern: /<!--{{PRELOAD_JS}}-->/,
+                            hrefPath: 'js/app.js',
+                            as: 'script',
+                            cors: false
+                        }
+                    ],
+                    app: [
+                        {
+                            src: 'tmp/index.html'
+                        }
+                    ]
+                }
+            }
+        },
 
         'csp-hashes': {
             options: {
