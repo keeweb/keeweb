@@ -16,10 +16,280 @@ $themes: map-merge(
 );
 
 body.th-te {
+
+    /*!
+        Markdown Viewer
+    */
+
+    --md-title-color: #4d4d4d;
+    --md-icon-color: #15914c;
+    --md-text-color: #c4c4c4;
+    --md-header-border: 1px dashed #585858;
+    --md-header-title-align: right;
+    --md-header-return-align: right;
+
+    --md-h1-color: #646464;
+    --md-h2-color: #EF5471;
+    --md-h3-color: #565656;
+    --md-h4-color: #BD1E55;
+    --md-h5-color: #565656;
+    --md-h6-color: #565656;
+    --md-h1-text-transform: normal;
+    --md-h2-text-transform: normal;
+    --md-h3-text-transform: normal;
+    --md-h4-text-transform: normal;
+    --md-h5-text-transform: uppercase;
+    --md-h6-text-transform: uppercase;
+    --md-h1-text-weight: lighter;
+    --md-h2-text-weight: normal;
+    --md-h3-text-weight: normal;
+    --md-h4-text-weight: normal;
+    --md-h5-text-weight: normal;
+    --md-h6-text-weight: normal;
+
+    --md-hx-link-weight: lighter;
+    --md-hx-link-align: super;
+
+    --md-link-n-color: #6e70cf;
+    --md-link-h-color: #FFFFFF;
+    --md-link-decorator-color: #6260c4;
+
+    --md-paragraph-spacing-start: 1;
+    --md-paragraph-spacing-end: 2;
+    --md-ul-indent: 2;
+    --md-ul-spacing-start: 1;
+    --md-ul-spacing-end: 1;
+    --md-ul-text-weight: lighter;
+
+    --md-accent-em-color: #E0DB92;
+    --md-strong-em-color-1: #43D3FF;
+    --md-strong-em-color-2: #BAAAFF;
+    --md-accent-strong-color: #FF7190;
+    --md-accent-abbr-color: #c2c2c2;
+    --md-accent-abbr-line-color: #6260c4;
+    --md-accent-strike-text-color: rgba(255, 255, 255, 0.3);
+    --md-accent-strike-line-color: rgba(255, 255, 255, 1);
+
+    --md-code-block-text-color: #525252;
+    --md-code-block-text-weight: bold;
+    --md-code-block-accent-style: 6px solid #c34034;;
+    --md-code-inline-text-color: #F3945E;
+    --md-code-inline-text-weight: bolder;
+    --md-code-bg-color: hsla(var(--md-hue), 0%, 100%, 1);
+
+    --md-table-head-bg-color: #2c5e42;
+    --md-table-body-bg-color: #110f0f;
+    --md-table-head-text-color: #FFFFFF;
+    --md-table-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 1);
+    --md-table-body-left-color: hsla(var(--md-hue), 0%, 0%, 0.45);
+    --md-table-text-left-color: #a3a3a3;
+    --md-table-text-right-color: #c7c7c7;
+    --md-table-border-rows-color: hsla(var(--md-hue), 15%, 95%, 0.12);
+    --md-table-border-outside-color: #222222;
+
+    --md-blockquote-text-color: #adadad;
+    --md-blockquote-text-style: italic;
+    --md-blockquote-body-bg-color: #9191911c;
+    --md-blockquote-accent-color: #15914c;
+    --md-blockquote-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 1);
+
+    --md-hr-color-1: #84143B;
+    --md-hr-color-4: #84143B;
+    --md-hr-color-2: #CF2460;
+    --md-hr-color-3: #CF2460;
+
+    --md-alert-note-color: #539bf5;
+    --md-alert-tip-color: #57ab5a;
+    --md-alert-important-color: #986ee2;
+    --md-alert-warning-color: #c69026;
+    --md-alert-caution-color: #e5534b;
+    --md-alert-bg-color: #2e2e2e;
+    --md-alert-border-style: 4px solid #444c56;;
+
+    --md-checkbox-bg-unchecked-color: #3a3a3a;
+    --md-checkbox-border-unchecked-color: #4e4e4e;
+    --md-checkbox-bg-checked-color: #15914c;
+    --md-checkbox-bg-hover-color: #449b4b;
+    --md-checkbox-border-hover-color: #FFFFFF;
+
+    --md-footnote-opacity-full: 1;
+    --md-footnote-opacity-min: 0.4;
+
+    /*!
+        General
+    */
+
     .list__item--active .green-color {
         color: #7be045;
     }
     .list__item--active .blue-color {
         color: #0750c5;
     }
+
+    /*!
+        Syntax Highlighting
+
+        These colors are taken from highlight.js.
+
+        to change the theme or create your own theme, you can find the highlighter themes at:
+            https://github.com/highlightjs/highlight.js/tree/main/src/styles
+
+        Theme Viewer:
+            https://highlightjs.org/demo
+
+        @theme  : windows-nt-light.css
+    */
+
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1em
+        }
+
+        code.hljs {
+            padding: 3px 5px
+        }
+
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1em
+        }
+
+        code.hljs {
+            padding: 3px 5px
+        }
+
+        .hljs {
+            color: #808080;
+            background: #ffffff
+        }
+
+        .hljs::selection,
+        .hljs ::selection {
+            background-color: #d5d5d5;
+            color: #808080
+        }
+
+        /* purposely do not highlight these things */
+        .hljs-formula,
+        .hljs-params,
+        .hljs-property {
+
+        }
+
+        /* base03 - #c0c0c0 -  Comments, Invisibles, Line Highlighting */
+        .hljs-comment {
+            color: #c0c0c0
+        }
+
+        /* base04 - #a0a0a0 -  Dark Foreground (Used for status bars) */
+        .hljs-tag {
+            color: #a0a0a0
+        }
+
+        /* base05 - #808080 -  Default Foreground, Caret, Delimiters, Operators */
+        .hljs-subst,
+        .hljs-punctuation,
+        .hljs-operator {
+            color: #808080
+        }
+
+        .hljs-operator {
+            opacity: 0.7
+        }
+
+        /* base08 - Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted */
+        .hljs-bullet,
+        .hljs-variable,
+        .hljs-template-variable,
+        .hljs-selector-tag,
+        .hljs-name,
+        .hljs-deletion {
+            color: #800000
+        }
+
+        /* base09 - Integers, Boolean, Constants, XML Attributes, Markup Link Url */
+        .hljs-symbol,
+        .hljs-number,
+        .hljs-link,
+        .hljs-attr,
+        .hljs-variable.constant_,
+        .hljs-literal {
+            color: #ffff00
+        }
+
+        /* base0A - Classes, Markup Bold, Search Text Background */
+        .hljs-title,
+        .hljs-class .hljs-title,
+        .hljs-title.class_ {
+            color: #808000
+        }
+
+        .hljs-strong {
+            font-weight: bold;
+            color: #808000
+        }
+
+        /* base0B - Strings, Inherited Class, Markup Code, Diff Inserted */
+        .hljs-code,
+        .hljs-addition,
+        .hljs-title.class_.inherited__,
+        .hljs-string {
+            color: #008000
+        }
+
+        /* base0C - Support, Regular Expressions, Escape Characters, Markup Quotes */
+        /* guessing */
+        .hljs-built_in,
+        .hljs-doctag,
+        .hljs-quote,
+        .hljs-keyword.hljs-atrule,
+        .hljs-regexp {
+            color: #008080
+        }
+
+        /* base0D - Functions, Methods, Attribute IDs, Headings */
+        .hljs-function .hljs-title,
+        .hljs-attribute,
+        .ruby .hljs-property,
+        .hljs-title.function_,
+        .hljs-section {
+            color: #000080
+        }
+
+        /* base0E - Keywords, Storage, Selector, Markup Italic, Diff Changed */
+        /* .hljs-selector-id, */
+        /* .hljs-selector-class, */
+        /* .hljs-selector-attr, */
+        /* .hljs-selector-pseudo, */
+        .hljs-type,
+        .hljs-template-tag,
+        .diff .hljs-meta,
+        .hljs-keyword {
+            color: #800080
+        }
+
+        .hljs-emphasis {
+            color: #800080;
+            font-style: italic
+        }
+
+        /* base0F - Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?> */
+        /*
+            prevent top level .keyword and .string scopes
+            from leaking into meta by accident
+        */
+        .hljs-meta,
+        .hljs-meta .hljs-keyword,
+        .hljs-meta .hljs-string {
+            color: #00ff00
+        }
+
+        /* for v10 compatible themes */
+        .hljs-meta .hljs-keyword,
+        .hljs-meta-keyword {
+            font-weight: bold
+        }
+
 }

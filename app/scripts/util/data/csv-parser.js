@@ -66,8 +66,6 @@ class CsvParser {
             const charAfterBackslash = this.csv[nextBackslashIndex + 1];
             if (charAfterBackslash === '"' || charAfterBackslash === '\\') {
                 this.value += this.csv.slice(this.index, nextBackslashIndex) + charAfterBackslash;
-                    this.csv.substr(this.index, nextBackslashIndex - this.index) +
-                    charAfterBackslash;
                 this.index = nextBackslashIndex + 2;
             } else {
                 this.value += this.csv.slice(this.index, nextBackslashIndex + 1);

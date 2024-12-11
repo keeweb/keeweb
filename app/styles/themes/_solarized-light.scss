@@ -19,10 +19,211 @@ $themes: map-merge(
 body.th-sl {
     --selected-item-text-color: #fdf6e3;
 
+    /*!
+        Markdown Viewer
+    */
+
+    --md-title-color: #4d4d4d;
+    --md-icon-color: #97a722;
+    --md-text-color: #585858;
+    --md-header-border: 1px dashed #585858;
+    --md-header-title-align: right;
+    --md-header-return-align: right;
+
+    --md-h1-color: #464646;
+    --md-h2-color: #6e6e6e;
+    --md-h3-color: #5e5e5e;
+    --md-h4-color: #5e5e5e;
+    --md-h5-color: #929292;
+    --md-h6-color: #929292;
+    --md-h1-text-transform: normal;
+    --md-h2-text-transform: normal;
+    --md-h3-text-transform: normal;
+    --md-h4-text-transform: normal;
+    --md-h5-text-transform: uppercase;
+    --md-h6-text-transform: uppercase;
+    --md-h1-text-weight: lighter;
+    --md-h2-text-weight: bold;
+    --md-h3-text-weight: normal;
+    --md-h4-text-weight: normal;
+    --md-h5-text-weight: bolder;
+    --md-h6-text-weight: bolder;
+
+    --md-hx-link-weight: normal;
+    --md-hx-link-align: super;
+
+    --md-link-n-color: #47975b;
+    --md-link-h-color: #6e70cf;
+    --md-link-decorator-color: #6260c4;
+
+    --md-paragraph-spacing-start: 1;
+    --md-paragraph-spacing-end: 2;
+    --md-ul-indent: 2;
+    --md-ul-spacing-start: 1;
+    --md-ul-spacing-end: 1;
+    --md-ul-text-weight: lighter;
+
+    --md-accent-em-color: #52A242;
+    --md-strong-em-color-1: #43D3FF;
+    --md-strong-em-color-2: #BAAAFF;
+    --md-accent-strong-color: #FF7190;
+    --md-accent-abbr-color: #c2c2c2;
+    --md-accent-abbr-line-color: #6260c4;
+    --md-accent-strike-text-color: rgba(97, 97, 97, 0.3);
+    --md-accent-strike-line-color: rgb(48, 48, 48);
+
+    --md-code-block-text-color: #646464;
+    --md-code-block-text-weight: bold;
+    --md-code-block-accent-style: 6px solid #dc322f;;
+    --md-code-inline-text-color: #9daa3f;
+    --md-code-inline-text-weight: bold;
+    --md-code-bg-color: #dfdfdf;
+
+    --md-table-head-bg-color: #a2ad4b;
+    --md-table-body-bg-color: #eeeeee;
+    --md-table-head-text-color: #FFFFFF;
+    --md-table-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 0.9);
+    --md-table-body-left-color: hsla(var(--md-hue), 0%, 0%, 0.05);
+    --md-table-text-left-color: #414141;
+    --md-table-text-right-color: #414141;
+    --md-table-border-rows-color: hsla(var(--md-hue), 15%, 95%, 0.12);
+    --md-table-border-outside-color: #97979734;
+
+    --md-blockquote-text-color: #4b4b4b;
+    --md-blockquote-text-style: italic;
+    --md-blockquote-body-bg-color: #9191911c;
+    --md-blockquote-accent-color: #97a722;
+    --md-blockquote-inline-codeblock-bg-color: hsla(var(--md-hue), 0%, 100%, 1);
+
+    --md-hr-color-1: #bebebe;
+    --md-hr-color-2: #bebebe;
+    --md-hr-color-3: #bebebe;
+    --md-hr-color-4: #bebebe;
+
+    --md-alert-note-color: #539bf5;
+    --md-alert-tip-color: #57ab5a;
+    --md-alert-important-color: #986ee2;
+    --md-alert-warning-color: #c69026;
+    --md-alert-caution-color: #e5534b;
+    --md-alert-bg-color: #dfdfdf;
+    --md-alert-border-style: 4px solid #444c56;;
+
+    --md-checkbox-bg-unchecked-color: #d4d4d4;
+    --md-checkbox-border-unchecked-color: #a0a0a0;
+    --md-checkbox-bg-checked-color: #97a722;
+    --md-checkbox-bg-hover-color: #449b4b;
+    --md-checkbox-border-hover-color: #FFFFFF;
+
+    --md-footnote-opacity-full: 1;
+    --md-footnote-opacity-min: 0.4;
+
+    /*!
+        General
+    */
+
     .list__item--active .orange-color {
         color: #ff9846;
     }
     .list__item--active .green-color {
         color: #63d823;
     }
+
+    /*!
+        Syntax Highlighting
+
+        These colors are taken from highlight.js.
+        to change the theme or create your own theme, you can find the highlighter themes at:
+            https://github.com/highlightjs/highlight.js/tree/main/src/styles
+
+        Theme Viewer:
+            https://highlightjs.org/demo
+
+        @theme  : atom-one-light.css
+    */
+
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1em
+        }
+
+        code.hljs {
+            padding: 3px 5px
+        }
+
+        .hljs {
+            color: #383a42;
+            background: #fafafa
+        }
+
+        .hljs-comment,
+        .hljs-quote {
+            color: #a0a1a7;
+            font-style: italic
+        }
+
+        .hljs-doctag,
+        .hljs-keyword,
+        .hljs-formula {
+            color: #a626a4
+        }
+
+        .hljs-section,
+        .hljs-name,
+        .hljs-selector-tag,
+        .hljs-deletion,
+        .hljs-subst {
+            color: #e45649
+        }
+
+        .hljs-literal {
+            color: #0184bb
+        }
+
+        .hljs-string,
+        .hljs-regexp,
+        .hljs-addition,
+        .hljs-attribute,
+        .hljs-meta .hljs-string {
+            color: #50a14f
+        }
+
+        .hljs-attr,
+        .hljs-variable,
+        .hljs-template-variable,
+        .hljs-type,
+        .hljs-selector-class,
+        .hljs-selector-attr,
+        .hljs-selector-pseudo,
+        .hljs-number {
+            color: #986801
+        }
+
+        .hljs-symbol,
+        .hljs-bullet,
+        .hljs-link,
+        .hljs-meta,
+        .hljs-selector-id,
+        .hljs-title {
+            color: #4078f2
+        }
+
+        .hljs-built_in,
+        .hljs-title.class_,
+        .hljs-class .hljs-title {
+            color: #c18401
+        }
+
+        .hljs-emphasis {
+            font-style: italic
+        }
+
+        .hljs-strong {
+            font-weight: bold
+        }
+
+        .hljs-link {
+            text-decoration: underline
+        }
+
 }
