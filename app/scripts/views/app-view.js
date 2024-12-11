@@ -83,6 +83,7 @@ class AppView extends View {
         this.listenTo(Events, 'open-devtools', this.openDevTools);
         this.listenTo(Events, 'show-file', this.toggleShowFile);
         this.listenTo(Events, 'open-file', this.toggleOpenFile);
+        this.listenTo(Events, 'settings-file', this.showFileSettings);
         this.listenTo(Events, 'save-all', this.saveAll);
         this.listenTo(Events, 'remote-key-changed', this.remoteKeyChanged);
         this.listenTo(Events, 'key-change-pending', this.keyChangePending);
@@ -340,9 +341,15 @@ class AppView extends View {
     /*
         @TAG        v1.9.0
                     actions when switching between open vaults
+
+        @arg        obj e 
+                    Object { fileId: "abcdef12-1a2b-3c4d-5ef0-1a23ac802ab4" }
     */
 
     toggleShowFile(e) {
+        const logger = new Logger('file:app-view');
+        logger.dev('run toggleShowFile [event] show-file ');
+
         const menuItem = this.model.menu.filesSection.items.find(
             (item) => item.file.id === e.fileId // 1fac5844-1693-5261-41f0-92928fcaee0a
         );
@@ -350,8 +357,9 @@ class AppView extends View {
         const items = this.model.menu.filesSection.items; // match all menu vault items
         const vault_id = `${menuItem.file.id}:${menuItem.file.uuid}`;
 
-        // action > already clicked
+        // action > already clicked; open file settings
         if (this.model.filter.group === vault_id) {
+            this.showFileSettings(e);
             return;
         }
 
@@ -385,6 +393,31 @@ class AppView extends View {
         this.item.toggleClass('footer__center-vault-item-active');
     }
 
+    /*
+        File > Open Settings
+        
+        allows the user to modify settings specifically for the opened vault.
+        change password, add/remove key, backups, clear history, etc.
+
+        @arg        obj e 
+                    Object { fileId: "abcdef12-1a2b-3c4d-5ef0-1a23ac802ab4" }
+    */
+
+    showFileSettings(e) {
+        const menuItem = this.model.menu.filesSection.items.find(
+            (item) => item.file.id === e.fileId
+        );
+        if (this.views.settings) {
+            if (this.views.settings.file === menuItem.file) {
+                this.showEntries();
+            } else {
+                this.model.menu.select({ item: menuItem });
+            }
+        } else {
+            this.showSettings(menuItem);
+        }
+    }
+
     toggleOpenFile() {
         if (this.views.open) {
             if (this.model.files.hasOpenFiles()) {
@@ -414,8 +447,8 @@ class AppView extends View {
     */
 
     wallpaperOpacity() {
-        const logger = new Logger('events');
-        logger.dev('triggered wallpaper-opacity');
+        const logger = new Logger('file:app-view');
+        logger.dev('run wallpaperOpacity [event] wallpaper-opacity');
 
         if (
             this.model.settings.backgroundPath &&
@@ -457,8 +490,8 @@ class AppView extends View {
     */
 
     wallpaperChange() {
-        const logger = new Logger('events');
-        logger.dev('triggered wallpaper-change');
+        const logger = new Logger('file:app-view');
+        logger.dev('run wallpaperChange [event] wallpaper-change');
 
         if (this.model.settings.backgroundState !== 'disabled') {
             const wallpaperDir = Features.isDesktop ? '../../' : '';
@@ -494,8 +527,8 @@ class AppView extends View {
     */
 
     wallpaperToggle(bOff) {
-        const logger = new Logger('events');
-        logger.dev('triggered wallpaper-toggle [status] ' + bOff);
+        const logger = new Logger('file:app-view');
+        logger.dev('run wallpaperToggle [event] wallpaper-toggle [status] ' + bOff);
 
         if (
             this.model.settings.backgroundState !== 'disabled' &&
@@ -1025,8 +1058,9 @@ class AppView extends View {
 
     showImportCsv(file) {
         const reader = new FileReader();
-        const logger = new Logger('import-csv');
-        logger.info('Reading CSV...');
+        const logger = new Logger('file:app-view');
+        logger.dev('run showImportCsv [status] reading CSV file');
+
         reader.onload = (e) => {
             logger.info('Parsing CSV...');
             const ts = logger.ts();
