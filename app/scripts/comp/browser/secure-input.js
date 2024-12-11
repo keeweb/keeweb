@@ -9,10 +9,10 @@ const SecureInput = function () {
     this.salt = new Uint32Array(0);
 };
 
-SecureInput.prototype.setElement = function (el) {
+SecureInput.prototype.setElement = function (el, bRaw) {
     this.el = el;
     this.el.val(this.pseudoValue);
-    this.el.on('input', this._input.bind(this));
+    this.el.on('input', this._input.bind(this, bRaw));
 };
 
 SecureInput.prototype.reset = function () {
@@ -29,7 +29,11 @@ SecureInput.prototype.reset = function () {
     this.salt = new Uint32Array(0);
 };
 
-SecureInput.prototype._input = function () {
+/*
+    Replaces standard input textbox with a secure input
+*/
+
+SecureInput.prototype._input = function (bRaw) {
     const selStart = this.el[0].selectionStart;
     const value = this.el.val();
     let newPs = '';
@@ -62,7 +66,7 @@ SecureInput.prototype._input = function () {
     this.length = newPs.length;
     this.pseudoValue = newPs;
     this.salt = newSalt;
-    this.el.val(newPs);
+    this.el.val((bRaw && value) || newPs);
     this.el[0].selectionStart = selStart;
     this.el[0].selectionEnd = selStart;
 };

@@ -48,6 +48,7 @@ class OpenView extends View {
         'keyup .open__pass-input': 'inputKeyup',
         'keypress .open__pass-input': 'inputKeypress',
         'click .open__pass-enter-btn': 'openDb',
+        'click .open__pass-show-btn': 'revealPassword',
         'click .open__settings-key-file': 'openKeyFile',
         'click .open__settings-yubikey': 'selectYubiKeyChalResp',
         'click .open__last-item': 'openLast',
@@ -135,13 +136,18 @@ class OpenView extends View {
             canOpenGenerator: this.model.settings.canOpenGenerator,
             canCreate: this.model.settings.canCreate,
             canRemoveLatest: this.model.settings.canRemoveLatest,
+            revealPassword: this.model.settings.revealPassword,
             canOpenYubiKey,
             canUseChalRespYubiKey,
             showMore,
             showLogo
         });
+
         this.inputEl = this.$el.find('.open__pass-input');
-        this.passwordInput.setElement(this.inputEl);
+        this.passwordInput.setElement(
+            this.inputEl,
+            (this.model.settings.revealPassword && true) || false
+        );
     }
 
     resetParams() {
@@ -671,6 +677,32 @@ class OpenView extends View {
         if (!this.busy) {
             this.model.createNewFile();
         }
+    }
+
+    revealPassword() {
+        if (this.params.id && this.model.files.get(this.params.id)) {
+            this.emit('close');
+            return;
+        }
+        if (this.busy || !this.params.name) {
+            return;
+        }
+
+        /*
+            @ref            https://github.com/keeweb/keeweb/issues/2050
+
+            add ability for users to view the master password. However, this is only available if the user
+            has opted in by enabling the KeeWeb setting. ensures that the password is still processed through SecureInput()
+        */
+
+        this.inputEl = this.$el.find('.open__pass-input');
+
+        this.bRevealPassword = !this.bRevealPassword;
+        this.inputEl.attr('type', (this.bRevealPassword && 'text') || 'password');
+        this.$el
+            .find((this.bRevealPassword && '.fa-eye-slash') || '.fa-eye')
+            .removeClass((this.bRevealPassword && 'fa-eye-slash') || 'fa-eye')
+            .addClass((this.bRevealPassword && 'fa-eye') || 'fa-eye-slash');
     }
 
     openDb() {
