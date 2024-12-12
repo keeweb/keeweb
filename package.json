@@ -36,7 +36,7 @@
         "@fortawesome/fontawesome-free": "6.7.1",
         "@keeweb/keeweb-native-messaging-host": "https://github.com/keeweb/keeweb-connect/releases/download/0.3.5/keeweb-native-messaging-host.tgz",
         "@keeweb/keeweb-native-modules": "https://github.com/keeweb/keeweb-native-modules/releases/download/0.11.6/keeweb-native-modules.tgz",
-        "adm-zip": "0.5.12",
+        "adm-zip": "0.5.16",
         "argon2-browser": "1.18.0",
         "autoprefixer": "10.4.19",
         "babel-loader": "9.1.3",
