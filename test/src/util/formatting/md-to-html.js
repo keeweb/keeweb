@@ -56,4 +56,16 @@ describe('MdToHtml', () => {
                 '</div>'
         });
     });
+
+    it('should convert markdown codeblock to html with highlight.js syntax highlighting', () => {
+        expect(MdToHtml.convert('```php\n<?php\necho "Hello";\n?>\n```', true, false)).to.eql({
+            html:
+                '<div class="markdown">' +
+                '<pre><code class="language-php"><span class="hljs-meta">&lt;?php</span>\n' +
+                '<span class="hljs-keyword">echo</span> <span class="hljs-string">"Hello"</span>;\n' +
+                '<span class="hljs-meta">?&gt;</span>\n' +
+                '</code></pre>\n' +
+                '</div>'
+        });
+    });
 });
