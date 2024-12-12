@@ -24,7 +24,7 @@
         "@babel/cli": "7.26.4",
         "@babel/core": "7.26.0",
         "@babel/eslint-parser": "7.25.9",
-        "@babel/plugin-external-helpers": "7.24.1",
+        "@babel/plugin-external-helpers": "7.25.9",
         "@babel/plugin-transform-class-properties": "7.24.1",
         "@babel/plugin-transform-logical-assignment-operators": "7.24.1",
         "@babel/plugin-transform-nullish-coalescing-operator": "7.24.1",
