@@ -90,7 +90,7 @@
         "lodash": "4.17.21",
         "highlight.js": "11.9.0",
         "marked": "^15.0.3",
-        "marked-highlight": "^2.1.1",
+        "marked-highlight": "^2.2.1",
         "marked-footnote": "1.2.4",
         "@aetherinox/marked-alert-fa": "^2.0.5",
         "mini-css-extract-plugin": "2.9.0",
