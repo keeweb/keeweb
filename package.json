@@ -28,7 +28,7 @@
         "@babel/plugin-transform-class-properties": "7.25.9",
         "@babel/plugin-transform-logical-assignment-operators": "7.25.9",
         "@babel/plugin-transform-nullish-coalescing-operator": "7.25.9",
-        "@babel/plugin-transform-object-rest-spread": "7.24.5",
+        "@babel/plugin-transform-object-rest-spread": "7.25.9",
         "@babel/plugin-transform-optional-catch-binding": "7.24.1",
         "@babel/plugin-transform-optional-chaining": "7.24.5",
         "@babel/preset-env": "7.24.5",
