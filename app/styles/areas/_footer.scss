@@ -66,8 +66,8 @@
             vertical-align: top;
             margin-left: $base-padding-h;
             position: absolute;
-            right: 1em;
-            top: 1em;
+            right: 0em;
+            top: 0.5em;
             color: var(--action-color);
             &--error {
                 color: var(--error-color);
