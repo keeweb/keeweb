@@ -38,7 +38,7 @@ class AppView extends View {
     parent = 'body';
 
     template = template;
-
+    titlebarStyle = 'default';
     events = {
         contextmenu: 'contextMenu',
         drop: 'drop',
@@ -339,19 +339,32 @@ class AppView extends View {
     }
 
     /*
-        @TAG        v1.9.0
-                    actions when switching between open vaults
-
-        @arg        obj e 
-                    Object { fileId: "abcdef12-1a2b-3c4d-5ef0-1a23ac802ab4" }
+        @tag            v1.9.0
+                        actions when switching between open vaults.
+                        should be called when a new vault file is opened, which auto selects it in the footer ui.
+        @event          show-file
+        @arg            obj e 
+                        Object { fileId: "abcdef12-1a2b-3c4d-5ef0-1a23ac802ab4" }
     */
 
     toggleShowFile(e) {
-        const logger = new Logger('file:app-view');
-        logger.dev('run toggleShowFile [event] show-file ');
+        new Logger('app-view').dev('<f>:toggleShowFile', '<act>:start', '<evn>:show-file');
+
+        const file_id = e.fileId || e.file.id;
+
+        if (!file_id) {
+            new Logger('app-view').error(
+                '<f>:toggleShowFile',
+                '<act>:error',
+                '<nsg>:could not locate invalid file id to show',
+                e
+            );
+            Alerts.error({ header: Locale.openFailedRead, body: e.toString() });
+            return;
+        }
 
         const menuItem = this.model.menu.filesSection.items.find(
-            (item) => item.file.id === e.fileId // 1fac5844-1693-5261-41f0-92928fcaee0a
+            (item) => item.file.id === file_id // 1fac5844-1693-5261-41f0-92928fcaee0a
         );
 
         const items = this.model.menu.filesSection.items; // match all menu vault items

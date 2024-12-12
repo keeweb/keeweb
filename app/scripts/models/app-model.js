@@ -881,6 +881,8 @@ class AppModel {
         if (this.settings.deviceOwnerAuth) {
             this.saveEncryptedPassword(file, params);
         }
+
+        Events.emit('show-file', { file });
     }
 
     fileClosed(file) {
