@@ -306,6 +306,7 @@ if (window.launcherOpenedFile) {
     Launcher.openFile(window.launcherOpenedFile);
     delete window.launcherOpenedFile;
 }
+
 Events.on('app-ready', () =>
     setTimeout(() => {
         Launcher.checkOpenFiles();

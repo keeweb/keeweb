@@ -693,6 +693,7 @@ class AppModel {
     }
 
     openFileWithData(params, callback, fileInfo, data, updateCacheOnSuccess) {
+        new Logger('app-model').dev('<fnc>:openFileWithData', '<act>:start');
         const logger = new Logger('open', params.name);
         let needLoadKeyFile = false;
         if (!params.keyFileData && fileInfo && fileInfo.keyFileName) {
@@ -749,18 +750,22 @@ class AppModel {
             this.addToLastOpenFiles(file, rev);
             this.addFile(file);
             callback(null, file);
+            new Logger('app-model').dev('<fnc>:openFileWithData', '<act>:x1');
             this.fileOpened(file, data, params);
         };
         const open = () => {
+            new Logger('app-model').dev('<fnc>:openFileWithData', '<act>:x2');
             file.open(params.password, data, params.keyFileData, openComplete);
         };
         if (needLoadKeyFile) {
             Storage.file.load(params.keyFilePath, {}, (err, data) => {
                 if (err) {
+                    new Logger('app-model').dev('<fnc>:openFileWithData', '<act>:e1');
                     logger.info('Storage load error', err);
                     callback(err);
                 } else {
                     params.keyFileData = data;
+                    new Logger('app-model').dev('<fnc>:openFileWithData', '<act>:x3');
                     open();
                 }
             });
@@ -770,25 +775,40 @@ class AppModel {
     }
 
     importFileWithXml(params, callback) {
-        const logger = new Logger('import', params.name);
-        logger.info('File import request with supplied xml');
+        new Logger('app-model').info(
+            '<fnc>:importFileWithXml',
+            '<act>:start',
+            '<msg>:File import request with supplied xml'
+        );
+
         const file = new FileModel({
             id: IdGenerator.uuid(),
             name: params.name,
             storage: params.storage,
             path: params.path
         });
+
         file.importWithXml(params.fileXml, (err) => {
-            logger.info('Import xml complete ' + (err ? 'with error' : ''), err);
+            new Logger('app-model').info(
+                '<fnc>:importFileWithXml',
+                '<act>:importWithXml',
+                '<msg>:Import xml complete ' + (err ? 'with error' : ''),
+                err
+            );
+
             if (err) {
+                new Logger('app-model').dev('<fnc>:importFileWithXml', '<act>:r1');
                 return callback(err);
             }
+
+            new Logger('app-model').dev('<fnc>:importFileWithXml', '<act>:x1');
             this.addFile(file);
             this.fileOpened(file);
         });
     }
 
     addToLastOpenFiles(file, rev) {
+        new Logger('app-model').dev('<fnc>:addToLastOpenFiles', '<act>:start');
         this.appLogger.debug(
             'Add last open file',
             file.id,
@@ -797,6 +817,7 @@ class AppModel {
             file.path,
             rev
         );
+
         const dt = new Date();
         const fileInfo = new FileInfoModel({
             id: file.id,
@@ -839,6 +860,7 @@ class AppModel {
     }
 
     getStoreOpts(file) {
+        new Logger('app-model').dev('<fnc>:getStoreOpts', '<act>:start');
         const opts = file.opts;
         const storage = file.storage;
         if (Storage[storage] && Storage[storage].fileOptsToStoreOpts && opts) {
@@ -848,6 +870,7 @@ class AppModel {
     }
 
     setFileOpts(file, opts) {
+        new Logger('app-model').dev('<fnc>:setFileOpts', '<act>:start');
         const storage = file.storage;
         if (Storage[storage] && Storage[storage].storeOptsToFileOpts && opts) {
             file.opts = Storage[storage].storeOptsToFileOpts(opts, file);
@@ -855,6 +878,7 @@ class AppModel {
     }
 
     fileOpened(file, data, params) {
+        new Logger('app-model').dev('<fnc>:fileOpened', '<act>:start');
         if (file.storage === 'file') {
             Storage.file.watch(
                 file.path,
@@ -864,10 +888,12 @@ class AppModel {
             );
         }
         if (file.isKeyChangePending(true)) {
+            new Logger('app-model').dev('<fnc>:fileOpened', '<act>:x1');
             Events.emit('key-change-pending', { file });
         }
         const backup = file.backup;
         if (data && backup && backup.enabled && backup.pending) {
+            new Logger('app-model').dev('<fnc>:fileOpened', '<act>:x2');
             this.scheduleBackupFile(file, data);
         }
         if (this.settings.yubiKeyAutoOpen) {
@@ -875,23 +901,28 @@ class AppModel {
                 this.attachedYubiKeysCount > 0 &&
                 !this.files.some((f) => f.backend === 'otp-device')
             ) {
+                new Logger('app-model').dev('<fnc>:fileOpened', '<act>:x3');
                 this.tryOpenOtpDeviceInBackground();
             }
         }
         if (this.settings.deviceOwnerAuth) {
+            new Logger('app-model').dev('<fnc>:fileOpened', '<act>:x4');
             this.saveEncryptedPassword(file, params);
         }
 
+        new Logger('app-model').dev('<fnc>:fileOpened', '<act>:x5');
         Events.emit('show-file', { file });
     }
 
     fileClosed(file) {
+        new Logger('app-model').dev('<fnc>:fileClosed', '<act>:start');
         if (file.storage === 'file') {
             Storage.file.unwatch(file.path);
         }
     }
 
     removeFileInfo(id) {
+        new Logger('app-model').dev('<fnc>:removeFileInfo', '<act>:start');
         Storage.cache.remove(id);
         this.fileInfos.remove(id);
         this.fileInfos.save();
@@ -905,6 +936,7 @@ class AppModel {
     }
 
     syncFile(file, options, callback) {
+        new Logger('app-model').dev('<fnc>:syncFile', '<act>:start');
         if (file.demo) {
             return callback && callback();
         }

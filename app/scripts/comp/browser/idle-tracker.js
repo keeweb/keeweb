@@ -3,12 +3,6 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { Logger } from 'util/logger';
 
 /*
-    Logger > Create
-*/
-
-const logger = new Logger('idle-tracker');
-
-/*
     Idle Tracker
 */
 
@@ -16,14 +10,15 @@ const IdleTracker = {
     actionTime: Date.now(),
     init() {
         setInterval(this.checkIdle.bind(this), 1000 * 60);
-        logger.dev('Started');
+        new Logger('idle-tracker').dev('<fnc>:init', '<act>:start');
     },
     checkIdle() {
         const idleMinutes = (Date.now() - this.actionTime) / 1000 / 60;
         const maxIdleMinutes = AppSettingsModel.idleMinutes;
 
-        logger.dev(
-            'Logging user out in ' + Math.round(idleMinutes) + '/' + maxIdleMinutes + ' minutes'
+        new Logger('idle-tracker').dev(
+            '<fnc>:checkIdle',
+            '<msg>:Logout in ' + Math.round(idleMinutes) + '/' + maxIdleMinutes + ' min'
         );
 
         if (maxIdleMinutes && idleMinutes > maxIdleMinutes) {
@@ -44,7 +39,12 @@ const IdleTracker = {
         */
 
         if (idleMinutes >= AppSettingsModel.idleWipeCredsMinutes) {
-            logger.dev('Running user-idle-login to wipe user creds');
+            new Logger('idle-tracker').dev(
+                '<fnc>:checkIdle',
+                '<evn>:user-idle-login',
+                '<msg>:wiping user credentials'
+            );
+
             Events.emit('user-idle-login');
         }
     },

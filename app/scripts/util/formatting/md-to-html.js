@@ -32,9 +32,16 @@ class MdRenderer extends marked.Renderer {
     once markdown has been loaded, convert it over to HTML to display
     within the interface.
 
-    @arg str md
-    @arg bool bBreak
-    @arg bool bGfm
+    @ref    https://marked.js.org/using_advanced
+
+    @arg    str md
+            markdown to convert to html
+
+    @arg    bool bBreak
+            If true, add <br> on a single line break (copies GitHub behavior on comments, but not on rendered markdown files). Requires gfm be true.
+
+    @arg    bool bGfm
+            If true, use approved GitHub Flavored Markdown (GFM) specification.
 */
 
 const MdToHtml = {

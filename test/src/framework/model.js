@@ -1,3 +1,4 @@
+/* eslint-disable babel/no-unused-expressions */
 import { expect } from 'chai';
 import { Model } from 'framework/model';
 
@@ -25,7 +26,7 @@ describe('Model', () => {
         expect(JSON.stringify(model)).to.eql('{"foo":"bar","baz":1}');
     });
 
-    it('should throw an error for unknown properties', () => {
+    it('should throw "unknown properties" error', () => {
         const model = new TestModel();
         expect(() => {
             model.xxx = 'value';

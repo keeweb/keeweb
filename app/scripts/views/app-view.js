@@ -36,7 +36,6 @@ import wallpaper4 from 'wallpaper4';
 
 class AppView extends View {
     parent = 'body';
-
     template = template;
     titlebarStyle = 'default';
     events = {
@@ -47,8 +46,6 @@ class AppView extends View {
         'click a[target=_blank]': 'extLinkClick',
         mousedown: 'bodyClick'
     };
-
-    titlebarStyle = 'default';
 
     constructor(model) {
         super(model);
@@ -412,8 +409,9 @@ class AppView extends View {
         allows the user to modify settings specifically for the opened vault.
         change password, add/remove key, backups, clear history, etc.
 
-        @arg        obj e 
-                    Object { fileId: "abcdef12-1a2b-3c4d-5ef0-1a23ac802ab4" }
+        @event          settings-file
+        @arg            obj e 
+                        Object { fileId: "abcdef12-1a2b-3c4d-5ef0-1a23ac802ab4" }
     */
 
     showFileSettings(e) {
@@ -431,6 +429,12 @@ class AppView extends View {
         }
     }
 
+    /*
+        File > Open
+
+        @event          open-file
+    */
+
     toggleOpenFile() {
         if (this.views.open) {
             if (this.model.files.hasOpenFiles()) {
@@ -441,8 +445,16 @@ class AppView extends View {
         }
     }
 
+    /*
+        Launcher Before Quit
+
+        calls main.on('before-quit').
+        only utilized by MacOS.
+
+        @event          launcher-before-quit
+    */
+
     launcherBeforeQuit() {
-        // this is currently called only on macos
         const event = {
             preventDefault() {}
         };
@@ -453,15 +465,18 @@ class AppView extends View {
     }
 
     /*
-        @event          wallpaper-opacity
-
         triggered within settings. changes the opacity of the wallpaper without re-loading
         the wallpaper itself.
+
+        @event          wallpaper-opacity
     */
 
     wallpaperOpacity() {
-        const logger = new Logger('file:app-view');
-        logger.dev('run wallpaperOpacity [event] wallpaper-opacity');
+        new Logger('app-view').dev(
+            '<fnc>:wallpaperOpacity',
+            '<act>:start',
+            '<evn>:wallpaper-opacity'
+        );
 
         if (
             this.model.settings.backgroundPath &&
@@ -495,16 +510,19 @@ class AppView extends View {
     }
 
     /*
-        @event          wallpaper-change
-
         usually triggered when the theme is changed. will see if the theme is classified as
         a dark or light theme, and then adjust the background wallpaper opacity depending on
         the choice.
+
+        @event          wallpaper-change
     */
 
     wallpaperChange() {
-        const logger = new Logger('file:app-view');
-        logger.dev('run wallpaperChange [event] wallpaper-change');
+        new Logger('app-view').dev(
+            '<fnc>:wallpaperChange',
+            '<act>:start',
+            '<evn>:wallpaper-change'
+        );
 
         if (this.model.settings.backgroundState !== 'disabled') {
             const wallpaperDir = Features.isDesktop ? '../../' : '';
@@ -530,18 +548,21 @@ class AppView extends View {
     }
 
     /*
-        @event          wallpaper-toggle
-
         toggles the opacity of user wallpaper to ensure we can disable it in certain instances
         such as when viewing markdown.
 
-        wallpaperToggle(true)           hide
-        wallpaperToggle()               show
+        @usage          wallpaperToggle(true)       hides wallpaper
+                        wallpaperToggle()           shows wallpaper
+        @event          wallpaper-toggle
+        @arg            bool bOff 
     */
 
     wallpaperToggle(bOff) {
-        const logger = new Logger('file:app-view');
-        logger.dev('run wallpaperToggle [event] wallpaper-toggle [status] ' + bOff);
+        new Logger('app-view').dev(
+            '<fnc>:wallpaperToggle',
+            '<act>:start',
+            '<evn>:wallpaper-toggle [' + bOff + ']'
+        );
 
         if (
             this.model.settings.backgroundState !== 'disabled' &&
@@ -1071,10 +1092,10 @@ class AppView extends View {
 
     showImportCsv(file) {
         const reader = new FileReader();
-        const logger = new Logger('file:app-view');
-        logger.dev('run showImportCsv [status] reading CSV file');
+        new Logger('app-view').dev('<fnc>:showImportCsv', '<act>:start', '<msg>:reading CSV file');
 
         reader.onload = (e) => {
+            const logger = new Logger('app-view');
             logger.info('Parsing CSV...');
             const ts = logger.ts();
             const parser = new CsvParser();

@@ -39,27 +39,31 @@ const Updater = {
     },
 
     init() {
-        console.log('service worker');
+        logger.dev(
+            '<fnc>:init',
+            '<msg>:service worker initialized [launcher] ' +
+                Launcher +
+                ' [worker] ' +
+                navigator.serviceWorker
+        );
+
         this.scheduleNextCheck();
-        console.log('Launcher ' + Launcher);
-        console.log('Navigator Service Worker  ' + navigator.serviceWorker);
-        console.log('Beta  Mode: ' + RuntimeInfo.beta);
-        console.log('Dev Mode: ' + RuntimeInfo.devMode);
         if (!Launcher && navigator.serviceWorker && !RuntimeInfo.beta && !RuntimeInfo.devMode) {
             navigator.serviceWorker
                 .register('service-worker.js')
                 .then((reg) => {
-                    logger.info('Service worker registered');
+                    logger.info('<fnc>:init', '<msg>:service worker registered');
+
                     reg.addEventListener('updatefound', () => {
                         if (reg.active) {
-                            logger.info('Service worker found an update');
+                            logger.info('<fnc>:init', '<msg>:service worker found an update');
                             UpdateModel.set({ updateStatus: 'ready' });
                         }
                     });
                 })
                 .catch((e) => {
-                    console.log('Checking service worker');
-                    logger.error('Failed to register a service worker', e);
+                    logger.dev('<fnc>:init', '<msg>:checking service worker');
+                    logger.error('<fnc>:init', '<msg>:Failed to register a service worker', e);
                 });
         }
     },
@@ -81,7 +85,11 @@ const Updater = {
             );
         }
         this.nextCheckTimeout = setTimeout(this.check.bind(this), timeDiff);
-        logger.info('Next update check will happen in ' + Math.round(timeDiff / 1000) + 's');
+
+        logger.info(
+            '<fnc>:scheduleNextCheck',
+            '<msg>:Next update check will happen in ' + Math.round(timeDiff / 1000) + 's'
+        );
     },
 
     check(startedByUser) {
@@ -94,20 +102,30 @@ const Updater = {
             const diffMs = new Date() - this.updateCheckDate;
             if (isNaN(diffMs) || diffMs < 1000 * 60 * 60) {
                 logger.error(
-                    'Prevented update check; last check was performed at ' + this.updateCheckDate
+                    '<fnc>:check',
+                    '<msg>:Prevented update check; last check was performed at ' +
+                        this.updateCheckDate
                 );
+
                 this.scheduleNextCheck();
                 return;
             }
             this.updateCheckDate = new Date();
         }
-        logger.info('Checking for update...');
+
+        logger.error('<fnc>:check', '<msg>:Checking for updates');
+
         Transport.httpGet({
             url: Links.UpdateJson,
             json: true,
             success: (updateJson) => {
                 const dt = new Date();
-                logger.info('Update check: ' + (updateJson.version || 'unknown'));
+
+                logger.info(
+                    '<fnc>:check',
+                    '<msg>:Update check: ' + (updateJson.version || 'unknown')
+                );
+
                 if (!updateJson.version) {
                     const errMsg = 'No version info found';
                     UpdateModel.set({
@@ -138,7 +156,11 @@ const Updater = {
                     prevLastVersion === UpdateModel.lastVersion &&
                     UpdateModel.updateStatus === 'ready'
                 ) {
-                    logger.info('Waiting for the user to apply downloaded update');
+                    logger.info(
+                        '<fnc>:check',
+                        '<msg>:Waiting for the user to apply downloaded update'
+                    );
+
                     return;
                 }
                 if (!startedByUser && this.getAutoUpdateType() === 'install') {
@@ -150,7 +172,8 @@ const Updater = {
                 }
             },
             error: (e) => {
-                logger.error('Update check error', e);
+                logger.error('<fnc>:check', '<msg>:Update check error', e);
+
                 UpdateModel.set({
                     status: 'error',
                     lastCheckDate: new Date(),
@@ -177,18 +200,23 @@ const Updater = {
     update(startedByUser, successCallback) {
         const ver = UpdateModel.lastVersion;
         if (!this.enabled) {
-            logger.info('Updater is disabled');
+            logger.info('<fnc>:update', '<msg>:Updater is disabled');
             return;
         }
         if (SemVer.compareVersions(RuntimeInfo.version, ver) >= 0) {
-            logger.info('You are using the latest version');
+            logger.info('<fnc>:update', '<msg>:You are using the latest version');
             return;
         }
         UpdateModel.set({ updateStatus: 'downloading', updateError: null });
         logger.info('Downloading update', ver);
         const updateAssetName = this.getUpdateAssetName(ver);
         if (!updateAssetName) {
-            logger.error('Empty updater asset name for', Launcher.platform(), Launcher.arch());
+            logger.error(
+                '<fnc>:update',
+                '<msg>:Empty updater asset name for',
+                Launcher.platform(),
+                Launcher.arch()
+            );
             return;
         }
         const updateUrlBasePath = Links.UpdateBasePath.replace('{ver}', ver);
@@ -199,7 +227,8 @@ const Updater = {
             cleanupOldFiles: true,
             cache: true,
             success: (assetFilePath) => {
-                logger.info('Downloading update signatures');
+                logger.info('<fnc>:update', '<msg>:Downloading update signatures');
+
                 Transport.httpGet({
                     url: updateUrlBasePath + 'Verify.sign.sha256',
                     text: true,
@@ -219,7 +248,8 @@ const Updater = {
                                 Launcher.deleteFile(assetFileSignaturePath);
                                 return;
                             }
-                            logger.info('Update is ready', assetFilePath);
+
+                            logger.info('<fnc>:update', '<msg>:Update is ready', assetFilePath);
                             UpdateModel.set({ updateStatus: 'ready', updateError: null });
                             if (!startedByUser) {
                                 Events.emit('update-app');
@@ -230,7 +260,12 @@ const Updater = {
                         });
                     },
                     error(e) {
-                        logger.error('Error downloading update signatures', e);
+                        logger.error(
+                            '<fnc>:update',
+                            '<msg>:Error downloading update signatures',
+                            e
+                        );
+
                         UpdateModel.set({
                             updateStatus: 'error',
                             updateError: 'Error downloading update signatures'
@@ -239,7 +274,8 @@ const Updater = {
                 });
             },
             error(e) {
-                logger.error('Error downloading update', e);
+                logger.error('<fnc>:update', '<msg>:Error downloading update', e);
+
                 UpdateModel.set({
                     updateStatus: 'error',
                     updateError: 'Error downloading update'
@@ -249,14 +285,15 @@ const Updater = {
     },
 
     verifySignature(assetFilePath, assetName, callback) {
-        logger.info('Verifying update signature', assetName);
+        logger.info('<fnc>:verifySignature', '<msg>:Verifying update signature', assetName);
+
         const fs = Launcher.req('fs');
         const signaturesTxt = fs.readFileSync(assetFilePath + '.sign', 'utf8');
         const assetSignatureLine = signaturesTxt
             .split('\n')
             .find((line) => line.endsWith(assetName));
         if (!assetSignatureLine) {
-            logger.error('Signature not found for asset', assetName);
+            logger.error('<fnc>:verifySignature', '<msg>:Signature not found for asset', assetName);
             callback('Asset signature not found');
             return;
         }
@@ -264,11 +301,13 @@ const Updater = {
         const fileBytes = fs.readFileSync(assetFilePath);
         SignatureVerifier.verify(fileBytes, signature)
             .catch((e) => {
-                logger.error('Error verifying signature', e);
+                logger.error('<fnc>:verifySignature', '<msg>:Error verifying signature', e);
                 callback('Error verifying signature');
             })
             .then((valid) => {
-                logger.info(`Update asset signature is ${valid ? 'valid' : 'invalid'}`);
+                logger.info(
+                    `<fnc>:verifySignature', '<msg>:Update asset signature is ${valid ? 'valid' : 'invalid'}`
+                );
                 callback(undefined, valid);
             });
     },

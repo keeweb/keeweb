@@ -23,6 +23,10 @@ class FileModel extends Model {
         });
     }
 
+    /*
+        File > Open Vault
+    */
+
     open(password, fileData, keyFileData, callback) {
         try {
             const challengeResponse = ChalRespCalculator.build(this.chalResp);

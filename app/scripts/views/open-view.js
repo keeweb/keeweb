@@ -214,7 +214,10 @@ class OpenView extends View {
             Gdrive returns an id for the file, not a path, so use the name instead.
         */
 
-        logger.dev('(var) enableFullPathStorage: ' + this.model.settings.enableFullPathStorage);
+        new Logger('open-view').dev(
+            '<fnc>:getDisplayedPath',
+            '<var>:enableFullPathStorage = ' + this.model.settings.enableFullPathStorage
+        );
 
         if (this.model.settings.enableFullPathStorage && Features.isDesktop) {
             return fileInfo.storage === 'gdrive' ? fileInfo.name : fileInfo.path;
@@ -746,7 +749,10 @@ class OpenView extends View {
     }
 
     openDb() {
+        new Logger('open-view').dev('<fnc>:openDb', '<act>:start');
+
         if (this.params.id && this.model.files.get(this.params.id)) {
+            new Logger('open-view').dev('<fnc>:openDb', '<act>:x1');
             this.emit('close');
             return;
         }
@@ -770,6 +776,7 @@ class OpenView extends View {
 
                     this.params.password = password;
                     this.params.encryptedPassword = this.encryptedPassword;
+                    new Logger('open-view').dev('<fnc>:openDb', '<act>:x2');
                     this.model.openFile(this.params, (err) => this.openDbComplete(err));
                 })
                 .catch((err) => {
@@ -781,17 +788,20 @@ class OpenView extends View {
                         err.maybeTouchIdChanged = true;
                     }
                     logger.error('Error in hardware decryption', err);
+                    new Logger('open-view').dev('<fnc>:openDb', '<act>:x3');
                     this.openDbComplete(err);
                 });
         } else {
             this.params.encryptedPassword = null;
             this.afterPaint(() => {
+                new Logger('open-view').dev('<fnc>:openDb', '<act>:x4');
                 this.model.openFile(this.params, (err) => this.openDbComplete(err));
             });
         }
     }
 
     openDbComplete(err) {
+        new Logger('open-view').dev('<fnc>:openDbComplete', '<act>:start');
         this.busy = false;
         this.$el.toggleClass('open--opening', false);
         const showInputError = err && !err.userCanceled;
@@ -804,7 +814,7 @@ class OpenView extends View {
             if (err.code === 'InvalidKey') {
                 InputFx.shake(this.inputEl);
             } else if (err.userCanceled) {
-                // nothing to do
+                new Logger('open-view').dev('<fnc>:openDbComplete', '<act>:r1');
             } else {
                 if (err.notFound) {
                     err = Locale.openErrorFileNotFound;
@@ -813,6 +823,7 @@ class OpenView extends View {
                 if (err.maybeTouchIdChanged) {
                     alertBody += '\n' + Locale.openErrorDescriptionMaybeTouchIdChanged;
                 }
+                new Logger('open-view').dev('<fnc>:openDbComplete', '<act>:r2');
                 Alerts.error({
                     header: Locale.openError,
                     body: alertBody,
@@ -820,6 +831,7 @@ class OpenView extends View {
                 });
             }
         } else {
+            new Logger('open-view').dev('<fnc>:openDbComplete', '<act>:x1');
             this.emit('close');
         }
     }

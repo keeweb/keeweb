@@ -23,6 +23,7 @@ import { RuntimeDataModel } from 'models/runtime-data-model';
 import { UpdateModel } from 'models/update-model';
 import { PluginManager } from 'plugins/plugin-manager';
 import { Features } from 'util/features';
+import { Logger } from 'util/logger';
 import { KdbxwebInit } from 'util/kdbxweb/kdbxweb-init';
 import { Locale } from 'util/locale';
 import { AppView } from 'views/app-view';
@@ -189,14 +190,20 @@ ready(() => {
         }, Timeouts.AutoUpdatePluginsAfterStart);
     }
 
-    function showView() {
-        new AppView(appModel).render();
-        StartProfiler.milestone('first view rendering');
+    /*
+        Initializes app view model
+    */
 
+    function showView() {
+        new Logger('app').dev('<fnc>:showView', '<act>:start');
+        new AppView(appModel).render();
+
+        StartProfiler.milestone('first view rendering');
         Events.emit('app-ready');
         StartProfiler.milestone('app ready event');
-
         StartProfiler.report();
+
+        new Logger('app').dev('<fnc>:showView', '<act>:finish');
     }
 
     function getConfigParam() {
