@@ -89,7 +89,7 @@
         "load-grunt-tasks": "5.1.0",
         "lodash": "4.17.21",
         "highlight.js": "11.9.0",
-        "marked": "^12.0.2",
+        "marked": "^15.0.3",
         "marked-highlight": "^2.1.1",
         "marked-footnote": "1.2.2",
         "@aetherinox/marked-alert-fa": "^2.0.5",
