@@ -21,7 +21,7 @@
     "readme": "README.md",
     "dependencies": {
         "@aetherinox/noxenv": "^1.0.0",
-        "@babel/cli": "7.24.5",
+        "@babel/cli": "7.26.4",
         "@babel/core": "7.24.5",
         "@babel/eslint-parser": "7.24.5",
         "@babel/plugin-external-helpers": "7.24.1",
