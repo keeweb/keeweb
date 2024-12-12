@@ -88,7 +88,7 @@
         "kdbxweb": "2.0.4",
         "load-grunt-tasks": "5.1.0",
         "lodash": "4.17.21",
-        "highlight.js": "11.9.0",
+        "highlight.js": "11.10.0",
         "marked": "^15.0.3",
         "marked-highlight": "^2.2.1",
         "marked-footnote": "1.2.4",
