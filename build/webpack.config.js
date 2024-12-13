@@ -136,7 +136,6 @@ console.log("%cNever do anything in this window if you are asked by someone outs
                 baron: `baron/baron${devMode ? '' : '.min'}.js`,
                 qrcode: `jsqrcode/dist/qrcode${devMode ? '' : '.min'}.js`,
                 argon2: 'argon2-browser/dist/argon2.js',
-                dompurify: `dompurify/dist/purify${devMode ? '' : '.min'}.js`,
                 tweetnacl: `tweetnacl/nacl${devMode ? '' : '.min'}.js`,
                 hbs: 'handlebars/runtime.js',
                 'argon2-wasm': 'argon2-browser/dist/argon2.wasm',
@@ -282,15 +281,7 @@ console.log("%cNever do anything in this window if you are asked by someone outs
                             loader: 'sass-loader',
                             options: {
                                 sassOptions: {
-                                    outputStyle: 'expanded',
-                                    quietDeps: true,
-                                    silenceDeprecations: [
-                                        'import',
-                                        'global-builtin',
-                                        'legacy-js-api',
-                                        'mixed-decls',
-                                        'color-functions'
-                                    ]
+                                    outputStyle: 'expanded'
                                 },
                                 sourceMap: !devMode
                             }

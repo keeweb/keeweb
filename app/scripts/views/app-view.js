@@ -27,7 +27,7 @@ import { SettingsView } from 'views/settings/settings-view';
 import { TagView } from 'views/tag-view';
 import { ImportCsvView } from 'views/import-csv-view';
 import { TitlebarView } from 'views/titlebar-view';
-import DOMPurify from 'DOMPurify';
+import DOMPurify from 'dompurify';
 import template from 'templates/app.hbs';
 import wallpaper1 from 'wallpaper1';
 import wallpaper2 from 'wallpaper2';

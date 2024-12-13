@@ -1,4 +1,4 @@
-import DOMPurify from 'DOMPurify';
+import DOMPurify from 'dompurify';
 import { Marked, marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import markedAlertFa from '@aetherinox/marked-alert-fa';
