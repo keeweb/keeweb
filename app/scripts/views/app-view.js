@@ -482,7 +482,7 @@ class AppView extends View {
             this.model.settings.backgroundPath &&
             this.model.settings.backgroundState !== 'disabled'
         ) {
-            const themeScheme = SettingsManager.getThemeScheme();
+            const themeScheme = SettingsManager.getThemeScheme() || 'dark';
             const bgColor =
                 themeScheme === 'dark'
                     ? 'rgba(32, 32, 32, ' + this.model.settings.backgroundOpacityDark + ')'
