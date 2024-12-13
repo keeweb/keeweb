@@ -44,12 +44,14 @@
     "plugins": [
       "prettier",
       "import",
-      "babel"
+      "babel",
+      "chai-friendly"
     ],
     "extends": [
       "standard",
       "eslint:recommended",
-      "plugin:prettier/recommended"
+      "plugin:prettier/recommended",
+      "plugin:chai-friendly/recommended"
     ],
     "rules": {
       "semi": [
@@ -73,7 +75,8 @@
       "no-useless-escape": "off",
       "no-var": "error",
       "prefer-const": "error",
-      "no-unused-expressions": "off",
+      "no-unused-expressions": 0, // disable original rule
+      "chai-friendly/no-unused-expressions": 2,
       "strict": [
         "error",
         "never"
@@ -132,7 +135,7 @@
       "import/no-relative-parent-imports": "error",
       "import/first": "error",
       "import/no-default-export": "error",
-      "babel/no-unused-expressions": "error",
+      "babel/no-unused-expressions": "off",
       "node/no-callback-literal": 0,
       "n/no-callback-literal": 0
     }
