@@ -111,7 +111,7 @@
         "tweetnacl": "1.0.3",
         "url-loader": "4.1.1",
         "wawoff2": "2.0.1",
-        "webpack": "5.91.0",
+        "webpack": "5.97.1",
         "webpack-bundle-analyzer": "4.10.2",
         "webpack-dev-server": "5.0.4",
         "pkg-dir": "^8.0.0",
